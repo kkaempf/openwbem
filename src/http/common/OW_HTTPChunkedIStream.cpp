@@ -117,7 +117,7 @@ OW_HTTPChunkedIStreamBuffer::resetInput()
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedIStream::OW_HTTPChunkedIStream(istream& istr) 
+OW_HTTPChunkedIStream::OW_HTTPChunkedIStream(istream& istr)
 	: OW_HTTPChunkedIStreamBase(istr, this)
 	, OW_CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
@@ -145,14 +145,14 @@ OW_HTTPChunkedIStream::buildTrailerMap()
 {
 	if (!OW_HTTPUtils::parseHeader(m_trailerMap, m_istr))
 	{
-		m_trailerMap.clear(); 
+		m_trailerMap.clear();
 		OW_THROW(OW_HTTPException, "Error parsing trailers");
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-OW_String 
+OW_String
 OW_HTTPChunkedIStream::getError() const
 {
 	for (OW_Map<OW_String, OW_String>::const_iterator iter = m_trailerMap.begin();
@@ -163,7 +163,7 @@ OW_HTTPChunkedIStream::getError() const
 			return iter->second;
 		}
 	}
-	return OW_String("");
+	return OW_String();
 }
 
 OW_UInt32

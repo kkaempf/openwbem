@@ -68,7 +68,7 @@ class OW_Exec
 
 		static int safeSystem(const OW_Array<OW_String>& command);
 		static OW_PopenStreams safePopen(const OW_Array<OW_String>& command,
-				const OW_String& initialInput = "");
+				const OW_String& initialInput = OW_String());
 
 };
 

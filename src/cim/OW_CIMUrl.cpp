@@ -220,7 +220,7 @@ OW_CIMUrl::setDefaultValues()
 	if(m_pdata->m_file.length() == 0)
 	{
 		m_pdata->m_file = "cimom";
-		m_pdata->m_ref = "";
+		m_pdata->m_ref = OW_String();
 	}
 
 	buildSpec();
@@ -278,11 +278,11 @@ OW_CIMUrl::setComponents()
 		return;
 
 	OW_String spec(m_pdata->m_spec);
-	m_pdata->m_protocol = "";
-	m_pdata->m_host = "";
+	m_pdata->m_protocol = OW_String();
+	m_pdata->m_host = OW_String();
 	m_pdata->m_port = 0;
-	m_pdata->m_file = "";
-	m_pdata->m_ref = "";
+	m_pdata->m_file = OW_String();
+	m_pdata->m_ref = OW_String();
 	m_pdata->m_localHost = true;
 
 	int ndx = spec.indexOf("://");

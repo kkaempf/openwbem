@@ -26,7 +26,7 @@ clean-local:
 
 
 
-# Shouldn't depend on anything not in common. 
+# Shouldn't depend on anything not in common.
 INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs
@@ -108,7 +108,7 @@ OW_Reference.hpp \
 OW_Select.hpp \
 OW_SelectEngine.hpp \
 OW_Semaphore.hpp \
-OW_SortedVector.hpp \
+OW_SortedVectorMap.hpp \
 OW_Stack.hpp \
 OW_StackTrace.hpp \
 OW_String.hpp \

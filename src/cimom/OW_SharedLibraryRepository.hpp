@@ -197,6 +197,16 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
+	virtual void referencesClasses(const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String &resultClass, const OW_String &role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+	{
+		m_ref->referencesClasses(path, result, resultClass, role, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
 	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
 		OW_CIMInstance &ci, const OW_ACLInfo &aclInfo)
 	{
@@ -235,6 +245,18 @@ public:
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
 		m_ref->associators(path, result, assocClass, resultClass, role,
+			resultRole, includeQualifiers, includeClassOrigin, propertyList,
+			aclInfo);
+	}
+
+	virtual void associatorsClasses(const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String &assocClass, const OW_String &resultClass,
+		const OW_String &role, const OW_String &resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+	{
+		m_ref->associatorsClasses(path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
 			aclInfo);
 	}

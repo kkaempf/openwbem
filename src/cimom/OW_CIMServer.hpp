@@ -510,6 +510,15 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
+	virtual void associatorsClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& assocClass,
+		const OW_String& resultClass, const OW_String& role,
+		const OW_String& resultRole,  OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo);
+
 	virtual void referenceNames(
 		const OW_CIMObjectPath& path,
 		OW_CIMObjectPathResultHandlerIFC& result,
@@ -519,6 +528,14 @@ public:
 	virtual void references(
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& resultClass,
+		const OW_String& role, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo);
+	
+	virtual void referencesClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
@@ -573,14 +590,23 @@ private:
 		const OW_String& role, const OW_String& resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
+		OW_CIMObjectPathResultHandlerIFC* popresult,
+		OW_CIMClassResultHandlerIFC* pcresult,
+		const OW_ACLInfo& aclInfo);
 
 	void _staticAssociators(const OW_CIMObjectPath& path,
-		const OW_CIMClassArray& assocClasses, const OW_StringArray& resultClasses,
+		const OW_SortedVectorSet<OW_String>* passocClasses,
+		const OW_SortedVectorSet<OW_String>* presultClasses,
 		const OW_String& role, const OW_String& resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList,
+		OW_CIMInstanceResultHandlerIFC& result);
+
+	void _staticAssociators(const OW_CIMObjectPath& path,
+		const OW_SortedVectorSet<OW_String>* passocClasses,
+		const OW_SortedVectorSet<OW_String>* presultClasses,
+		const OW_String& role, const OW_String& resultRole,
+		OW_CIMObjectPathResultHandlerIFC& result);
 
 	void _dynamicAssociators(const OW_CIMObjectPath& path,
 		const OW_CIMClassArray& assocClasses, const OW_String& resultClass,
@@ -589,17 +615,39 @@ private:
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
 
+	void _staticAssociatorsClass(const OW_CIMObjectPath& path,
+		const OW_SortedVectorSet<OW_String>* assocClassNames,
+		const OW_SortedVectorSet<OW_String>* resultClasses,
+		const OW_String& role, const OW_String& resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		OW_CIMObjectPathResultHandlerIFC* popresult,
+		OW_CIMClassResultHandlerIFC* pcresult);
+
 	void _commonReferences(const OW_CIMObjectPath& path,
 		const OW_String& resultClass, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
+		OW_CIMObjectPathResultHandlerIFC* popresult,
+		OW_CIMClassResultHandlerIFC* pcresult,
+		const OW_ACLInfo& aclInfo);
 
 	void _staticReferences(const OW_CIMObjectPath& path,
-		const OW_CIMClassArray& refClasses, const OW_String& role,
+		const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result);
+
+	void _staticReferences(const OW_CIMObjectPath& path,
+		const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
+		OW_CIMObjectPathResultHandlerIFC& result);
+
+	void _staticReferencesClass(const OW_CIMObjectPath& path,
+		const OW_SortedVectorSet<OW_String>* resultClasses,
+		const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		OW_CIMObjectPathResultHandlerIFC* popresult,
+		OW_CIMClassResultHandlerIFC* pcresult);
 
 
 	void _dynamicReferences(const OW_CIMObjectPath& path,
@@ -611,7 +659,8 @@ private:
 	OW_Bool _isInStringArray(const OW_StringArray& sra, const OW_String& val);
 
 	void _getAssociationClasses(const OW_String& ns,
-		const OW_String& className, OW_CIMClassResultHandlerIFC& result);
+		const OW_String& className, OW_CIMClassResultHandlerIFC& result,
+		const OW_String& role);
 
 	/**
 	 * Get the special __Namespace class

@@ -63,8 +63,8 @@ using std::ofstream;
 using std::fstream;
 using std::ios;
 
-OW_String OW_SocketBaseImpl::m_traceFileOut = "";
-OW_String OW_SocketBaseImpl::m_traceFileIn = "";
+OW_String OW_SocketBaseImpl::m_traceFileOut = OW_String();
+OW_String OW_SocketBaseImpl::m_traceFileIn = OW_String();
 
 //////////////////////////////////////////////////////////////////////////////
 OW_SocketBaseImpl::OW_SocketBaseImpl()

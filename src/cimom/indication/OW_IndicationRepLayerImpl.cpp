@@ -511,6 +511,19 @@ OW_IndicationRepLayerImpl::associators(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_IndicationRepLayerImpl::associatorsClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+{
+	m_pServer->associatorsClasses(path, result, assocClass, resultClass, role,
+		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_IndicationRepLayerImpl::referenceNames(const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
@@ -528,6 +541,18 @@ OW_IndicationRepLayerImpl::references(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	m_pServer->references(path, result, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationRepLayerImpl::referencesClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+{
+	m_pServer->referencesClasses(path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 }
 

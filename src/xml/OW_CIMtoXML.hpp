@@ -143,4 +143,7 @@ void OW_CIMtoXML(OW_CIMMethod const& cm, std::ostream& ostr,
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMParameter const& cp, std::ostream& ostr);
 
+/////////////////////////////////////////////////////////////
+void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
+
 #endif				

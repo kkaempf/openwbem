@@ -748,6 +748,38 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+		const OW_String& resultClass, const OW_String& role,
+		const OW_String& resultRole)
+{
+	OW_String pstr;
+	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
+			assocClass, resultClass, role, resultRole);
+	testStart("associatorNamesClass", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
+					assocClass, resultClass, role, resultRole);
+
+		while (enu.hasMoreElements())
+		{
+			cout << "Associated path: " << enu.nextElement().toString() << endl;
+		}
+
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, OW_Bool includeQualifiers,
@@ -779,14 +811,61 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 			if (includeClassOrigin)
 			{
 				cout << "Association Instance: ";
-			  	OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+				OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-			  	cout << endl;
+				cout << endl;
 			}
 			else
 			{
 				cout << "Association Instance: " << enu.nextElement().toMOF() << endl;
+			}
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+		const OW_String& resultClass, const OW_String& role,
+		const OW_String& resultRole, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
+{
+	OW_String pstr;
+	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
+			"%4, includeQualifiers = %5, includeClassOrigin = %6, propertyList? "
+			"%7",
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, propertyList != 0);
+	testStart("associatorsClasses", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClassEnumeration enu = hdl.associatorsClassesE(cop,
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, propertyList);
+
+		while (enu.hasMoreElements())
+		{
+			// XML is an easy way to easily see if the classorigin was sent.
+			if (includeClassOrigin)
+			{
+				cout << "Association Class: ";
+				OW_CIMtoXML(enu.nextElement(), cout,
+					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+				cout << endl;
+			}
+			else
+			{
+				cout << "Association Class: " << enu.nextElement().toMOF() << endl;
 			}
 		}
 	}
@@ -814,6 +893,37 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
+				resultClass, role);
+
+		while (enu.hasMoreElements())
+		{
+			cout << "Associated path: " << enu.nextElement().toString() << endl;
+		}
+
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+referenceNamesClass(OW_CIMOMHandleIFC& hdl,
+		const OW_String& resultClass, const OW_String& role)
+{
+	OW_String pstr;
+	pstr = format("resultClass = %1, role = %2", resultClass, role);
+	testStart("referenceNamesClass", pstr.c_str());
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
 
 		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
 				resultClass, role);
@@ -871,6 +981,54 @@ references(OW_CIMOMHandleIFC& hdl,
 			else
 			{
 				cout << "Associated Instance: " << enu.nextElement().toMOF() << endl;
+			}
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+referencesClasses(OW_CIMOMHandleIFC& hdl,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_String pstr;
+	pstr = format("resultClass = %1, role = %2, includeQualifiers = %3, "
+			"includeClassOrigin = %4, propertyList? %5",
+			resultClass, role, includeQualifiers, includeClassOrigin,
+			propertyList != 0);
+	testStart("referencesClasses", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+
+		OW_CIMClassEnumeration enu = hdl.referencesClassesE(cop,
+				resultClass, role, includeQualifiers, includeClassOrigin,
+				propertyList);
+
+		while (enu.hasMoreElements())
+		{
+			// XML is an easy way to easily see if the classorigin was sent.
+			if (includeClassOrigin)
+			{
+				cout << "Referencing Class: ";
+			  	OW_CIMtoXML(enu.nextElement(), cout,
+					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			  	cout << endl;
+			}
+			else
+			{
+				OW_CIMClass cc = enu.nextElement();
+				cout << "Referencing Class: " << cc.toMOF() << endl;
 			}
 		}
 	}
@@ -1332,37 +1490,68 @@ main(int argc, char* argv[])
 		{
 			setupAssociations(rch);
 
-			associatorNames(rch, "", "", "", "");
-			associatorNames(rch, "CIM_SystemDevice", "", "", "");
-			associatorNames(rch, "", "CIM_ComputerSystem", "", "");
-			associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
-			associatorNames(rch, "", "", "GroupComponent", "");
-			associatorNames(rch, "", "", "PartComponent", "");
-			associatorNames(rch, "", "", "PartComponent", "PartComponent");
-			associatorNames(rch, "", "", "", "PartComponent");
-			associatorNames(rch, "", "", "", "GroupComponent");
+            associatorNames(rch, "", "", "", "");
+            associatorNames(rch, "CIM_SystemDevice", "", "", "");
+            associatorNames(rch, "", "CIM_ComputerSystem", "", "");
+            associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
+            associatorNames(rch, "", "", "GroupComponent", "");
+            associatorNames(rch, "", "", "PartComponent", "");
+            associatorNames(rch, "", "", "PartComponent", "PartComponent");
+            associatorNames(rch, "", "", "", "PartComponent");
+            associatorNames(rch, "", "", "", "GroupComponent");
+            associatorNamesClass(rch, "", "", "", "");
+            associatorNamesClass(rch, "CIM_SystemDevice", "", "", "");
+            associatorNamesClass(rch, "", "CIM_ComputerSystem", "", "");
+            associatorNamesClass(rch, "", "EXP_BionicComputerSystem", "", "");
+            associatorNamesClass(rch, "", "", "GroupComponent", "");
+            associatorNamesClass(rch, "", "", "PartComponent", "");
+            associatorNamesClass(rch, "", "", "PartComponent", "PartComponent");
+            associatorNamesClass(rch, "", "", "", "PartComponent");
+            associatorNamesClass(rch, "", "", "", "GroupComponent");
 
-			associators(rch, "", "", "", "", false, false, 0);
-			associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-			associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-			associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-			associators(rch, "", "", "GroupComponent", "", false, false, 0);
-			associators(rch, "", "", "PartComponent", "", false, false, 0);
-			associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-			associators(rch, "", "", "", "PartComponent", false, false, 0);
-			associators(rch, "", "", "", "GroupComponent", false, false, 0);
-			associators(rch, "", "", "", "", true, false, 0);
-			associators(rch, "", "", "", "", false, true, 0);
-			sa.clear();
-			associators(rch, "", "", "", "", false, false, &sa);
-			sa.push_back(OW_String("BrandNewProperty"));
-			associators(rch, "", "", "", "", false, false, &sa);
+            associators(rch, "", "", "", "", false, false, 0);
+            associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
+            associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
+            associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+            associators(rch, "", "", "GroupComponent", "", false, false, 0);
+            associators(rch, "", "", "PartComponent", "", false, false, 0);
+            associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
+            associators(rch, "", "", "", "PartComponent", false, false, 0);
+            associators(rch, "", "", "", "GroupComponent", false, false, 0);
+            associators(rch, "", "", "", "", true, false, 0);
+            associators(rch, "", "", "", "", false, true, 0);
+            sa.clear();
+            associators(rch, "", "", "", "", false, false, &sa);
+            sa.push_back(OW_String("BrandNewProperty"));
+            associators(rch, "", "", "", "", false, false, &sa);
 
-			referenceNames(rch, "", "");
-			referenceNames(rch, "cim_systemdevice", "");
-			referenceNames(rch, "cim_component", "");
-			referenceNames(rch, "", "GroupComponent");
-			referenceNames(rch, "", "PartComponent");
+            associatorsClasses(rch, "", "", "", "", false, false, 0);
+            associatorsClasses(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
+            associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
+            associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+            associatorsClasses(rch, "", "", "GroupComponent", "", false, false, 0);
+            associatorsClasses(rch, "", "", "PartComponent", "", false, false, 0);
+            associatorsClasses(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
+            associatorsClasses(rch, "", "", "", "PartComponent", false, false, 0);
+            associatorsClasses(rch, "", "", "", "GroupComponent", false, false, 0);
+            associatorsClasses(rch, "", "", "", "", true, false, 0);
+            associatorsClasses(rch, "", "", "", "", false, true, 0);
+            sa.clear();
+            associatorsClasses(rch, "", "", "", "", false, false, &sa);
+            sa.push_back(OW_String("BrandNewProperty"));
+            associatorsClasses(rch, "", "", "", "", false, false, &sa);
+
+            referenceNames(rch, "", "");
+            referenceNames(rch, "cim_systemdevice", "");
+            referenceNames(rch, "cim_component", "");
+            referenceNames(rch, "", "GroupComponent");
+            referenceNames(rch, "", "PartComponent");
+
+            referenceNamesClass(rch, "", "");
+            referenceNamesClass(rch, "cim_systemdevice", "");
+            referenceNamesClass(rch, "cim_component", "");
+            referenceNamesClass(rch, "", "GroupComponent");
+            referenceNamesClass(rch, "", "PartComponent");
 
 			references(rch, "", "", false, false, 0);
 			references(rch, "cim_systemdevice", "", false, false, 0);
@@ -1376,8 +1565,19 @@ main(int argc, char* argv[])
 			sa.push_back(OW_String("GroupComponent"));
 			references(rch, "", "", false, false, &sa);
 
-			execQuery(rch);
+			referencesClasses(rch, "", "", false, false, 0);
+			referencesClasses(rch, "cim_systemdevice", "", false, false, 0);
+			referencesClasses(rch, "cim_component", "", false, false, 0);
+			referencesClasses(rch, "", "GroupComponent", false, false, 0);
+			referencesClasses(rch, "", "PartComponent", false, false, 0);
+			referencesClasses(rch, "", "", true, false, 0);
+			referencesClasses(rch, "", "", false, true, 0);
+			sa.clear();
+			referencesClasses(rch, "", "", false, false, &sa);
+			sa.push_back(OW_String("GroupComponent"));
+			referencesClasses(rch, "", "", false, false, &sa);
 
+			execQuery(rch);
 			deleteAssociations(rch);
 		}
 

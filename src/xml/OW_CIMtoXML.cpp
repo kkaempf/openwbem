@@ -302,57 +302,59 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName)
 {
-	//
-	// Instance path
-	//
-	if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
+	if (cop.getKeys().size() == 0)
 	{
-		ostr << "<INSTANCEPATH>";
-		OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
-	}
-
-	ostr << "<INSTANCENAME CLASSNAME=\"";
-	ostr << cop.getObjectName() << "\">";
-
-
-	if(cop.getKeys().size() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"No keys available in object path");
-	}
-
-	size_t numkeys = cop.getKeys().size();
-
-	//
-	// If keys > 1 then must use KEYBINDING - we also use it for
-	// the key == 1 case - most implementations can't cope with
-	// a single KEYVALUE without a KEYBINDING element
-	//
-	if(numkeys > 0)
-	{
-		for(size_t i = 0; i < numkeys; i++)
-		{
-			OW_CIMProperty cp = cop.getKeys()[i];
-			ostr << "<KEYBINDING NAME=\"";
-			ostr << cp.getName() << "\">";
-			outputKEYVALUE(ostr, cp);
-			ostr << "</KEYBINDING>";
-		}
+		// Class path
+		ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/>";
 	}
 	else
 	{
 		//
-		// No keys, so no instances
+		// Instance path
 		//
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"No instance path because no keys");
-	}
+		if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
+		{
+			ostr << "<INSTANCEPATH>";
+			OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
+		}
 
-	ostr << "</INSTANCENAME>";
+		ostr << "<INSTANCENAME CLASSNAME=\"";
+		ostr << cop.getObjectName() << "\">";
 
-	if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
-	{
-		ostr << "</INSTANCEPATH>";
+
+		size_t numkeys = cop.getKeys().size();
+
+		//
+		// If keys > 1 then must use KEYBINDING - we also use it for
+		// the key == 1 case - most implementations can't cope with
+		// a single KEYVALUE without a KEYBINDING element
+		//
+		if(numkeys > 0)
+		{
+			for(size_t i = 0; i < numkeys; i++)
+			{
+				OW_CIMProperty cp = cop.getKeys()[i];
+				ostr << "<KEYBINDING NAME=\"";
+				ostr << cp.getName() << "\">";
+				outputKEYVALUE(ostr, cp);
+				ostr << "</KEYBINDING>";
+			}
+		}
+		else
+		{
+			//
+			// No keys, so no instances
+			//
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				"No instance path because no keys");
+		}
+
+		ostr << "</INSTANCENAME>";
+
+		if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
+		{
+			ostr << "</INSTANCEPATH>";
+		}
 	}
 }
 
@@ -396,7 +398,7 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 		{
 			ostr << "PROPAGATED=\"true\" ";
 		}
-		ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE> </QUALIFIER>";
+		ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE></QUALIFIER>";
 	}
 	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
 	{
@@ -442,7 +444,7 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 			includeClassOrigin);
 	}
 
-	ostr << "</CLASS>";
+	ostr << "</CLASS>\n";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -514,7 +516,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 		}
 	}
 
-	ostr << "</INSTANCE>";
+	ostr << "</INSTANCE>\n";
 }
 
 
@@ -522,14 +524,14 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 template<class T>
 void raToXml(ostream& out, const OW_Array<T>& ra)
 {
-	out << "<VALUE.ARRAY>\n";
+	out << "<VALUE.ARRAY>";
 	for(size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << ra[i];
-		out << "</VALUE>\n";
+		out << "</VALUE>";
 	}
-	out << "</VALUE.ARRAY>\n";
+	out << "</VALUE.ARRAY>";
 }
 
 template <typename T>
@@ -557,27 +559,27 @@ static void raToXmlCOP(ostream& out, const OW_Array<OW_CIMObjectPath>& ra)
 
 static void raToXmlSA(ostream& out, const OW_Array<OW_String>& ra)
 {
-	out << "<VALUE.ARRAY>\n";
+	out << "<VALUE.ARRAY>";
 	for(size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << OW_XMLEscape(ra[i]);
-		out << "</VALUE>\n";
+		out << "</VALUE>";
 	}
-	out << "</VALUE.ARRAY>\n";
+	out << "</VALUE.ARRAY>";
 }
 
 static void raToXmlChar16(ostream& out, const OW_Array<OW_Char16>& ra)
 {
 	char bfr[20];
-	out << "<VALUE.ARRAY>\n";
+	out << "<VALUE.ARRAY>";
 	for(size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
 		out << OW_Char16::xmlExcape(ra[i].getValue(), bfr);
-		out << "</VALUE>\n";
+		out << "</VALUE>";
 	}
-	out << "</VALUE.ARRAY>\n";
+	out << "</VALUE.ARRAY>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -907,7 +909,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				OW_ASSERT(0);
 		}
 
-		out << "</VALUE>\n";
+		out << "</VALUE>";
 	}
 }
 
@@ -1378,4 +1380,25 @@ OW_CIMtoXML(OW_CIMParameter const& cp, ostream& ostr)
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////
+void
+OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr)
+{
+	if (cop.getKeys().size() != 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
+	}
+
+	ostr << "<CLASSPATH>";
+	OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
+
+	ostr << "<CLASSNAME NAME=\"";
+	ostr << cop.getObjectName() << "\">";
+
+	ostr << "</CLASSNAME>";
+
+	ostr << "</CLASSPATH>\n";
+}
+
 

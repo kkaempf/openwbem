@@ -50,7 +50,7 @@ OW_RequestHandlerIFCXML::OW_RequestHandlerIFCXML()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+	ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
 {
 
 	OW_ASSERT(ostrEntity);
@@ -84,7 +84,7 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 	}
 
 	OW_String userName;
-	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
 	if (i != handlerVars.end())
 	{
 		userName = (*i).second;
@@ -98,10 +98,10 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 void
 OW_RequestHandlerIFCXML::makeXMLHeader(const OW_String& messageID, ostream& ostr)
 {
-	ostr << XML_CIM_HEADER1 << "\r\n";
-	ostr << XML_CIM_HEADER2 << "\r\n";
+	ostr << XML_CIM_HEADER1;
+	ostr << XML_CIM_HEADER2;
 	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\""
-		<< CIM_PROTOCOL_VERSION << "\">" << "\r\n";
+		<< CIM_PROTOCOL_VERSION << "\">";
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -346,7 +346,14 @@ OW_CIMDataType::toString() const
 OW_String
 OW_CIMDataType::toMOF() const
 {
-	return toString();
+	if (m_pdata->m_type == REFERENCE)
+	{
+		return m_pdata->m_reference + " REF";
+	}
+	else
+	{
+		return toString();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,7 @@
 #include "OW_LogLevel.hpp"
 #include "OW_Reference.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_SortedVector.hpp"
+#include "OW_SortedVectorMap.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_AuthManager.hpp"
 #include "OW_RequestHandlerIFC.hpp"
@@ -85,7 +85,7 @@ class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 
 		OW_LoggerRef m_Logger;
 		
-		typedef OW_SortedVector<OW_String, OW_String> config_t;
+		typedef OW_SortedVectorMap<OW_String, OW_String> config_t;
 		config_t m_configItems;
 		
 		typedef std::pair<OW_SelectableIFCRef, OW_SelectableCallbackIFCRef> SelectablePair_t;

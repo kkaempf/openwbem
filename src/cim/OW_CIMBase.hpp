@@ -39,8 +39,6 @@
 
 class OW_String;
 
-DEFINE_EXCEPTION(BadCIMSignature);
-
 /**
  * The OW_CIMBase class is used as the base class for all CIM related classes.
  * (i.e. OW_CIMClass, OW_CIMInstance, etc...). It ensures that all derived

@@ -56,13 +56,13 @@ OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLListener::doProcess(std::istream* istr, std::ostream* ostrEntity,
-        std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+        std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
 {
 
 	OW_ASSERT(ostrEntity);
 	OW_ASSERT(ostrError);
 
-	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
+	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
 	if (i != handlerVars.end())
 	{
 		setPath((*i).second);
@@ -110,9 +110,9 @@ OW_XMLListener::doProcess(std::istream* istr, std::ostream* ostrEntity,
 static void
 makeXMLHeader(const OW_String& messageID, ostream& ostr)
 {
-	ostr << "<?xml version=\"1.0\" ?>\r\n";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">\r\n";
-	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\"1.0\">\r\n";
+	ostr << "<?xml version=\"1.0\" ?>";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
+	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\"1.0\">";
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -174,7 +174,7 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
+OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
 {
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
 	cf.cimProduct = OW_CIMFeatures::LISTENER;
@@ -205,12 +205,12 @@ OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
 		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(node);
 		m_callback->indicationOccurred(inst, m_path);
-		ostrEntity << "<SIMPLEEXPRSP>\r\n";
-		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">\r\n";
+		ostrEntity << "<SIMPLEEXPRSP>";
+		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
 
-		ostrEntity << "</EXPMETHODRESPONSE>\r\n";
+		ostrEntity << "</EXPMETHODRESPONSE>";
 
-		ostrEntity << "</SIMPLEEXPRSP>\r\n";
+		ostrEntity << "</SIMPLEEXPRSP>";
 	}
 	catch(OW_CIMException& ce)
 	{
@@ -226,18 +226,18 @@ OW_XMLListener::outputError(const OW_CIMException& ce, ostream& ostr, const OW_S
 	int errorCode;
 	makeXMLHeader(messageId, ostr);
 
-	ostr << "<SIMPLEEXPRSP>\r\n";
-	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">\r\n";
+	ostr << "<SIMPLEEXPRSP>";
+	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
 
 	errorCode = ce.getErrNo();
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
 		OW_XMLEscape(ce.getMessage()) <<
-		"\"></ERROR>\r\n";
+		"\"></ERROR>";
 
-	ostr << "</EXPMETHODRESPONSE>\r\n";
+	ostr << "</EXPMETHODRESPONSE>";
 
-	ostr << "</SIMPLEEXPRSP>\r\n";
+	ostr << "</SIMPLEEXPRSP>";
 	ostr << "</MESSAGE></CIM>\r\n";
 }
 

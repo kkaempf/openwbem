@@ -231,7 +231,7 @@ OW_HTTPUtils::status2String(int code)
 	case SC_NOT_EXTENDED:
 		return OW_String("Not Extended");
 	default:
-		return OW_String("") ;
+		return OW_String() ;
 	}
 }
 

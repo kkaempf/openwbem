@@ -239,6 +239,25 @@ OW_CIMOMHandleIFC::associatorsE(
 	return rval;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClassEnumeration
+OW_CIMOMHandleIFC::associatorsClassesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_CIMClassEnumeration rval;
+	CIMClassEnumBuilder handler(rval);
+	associatorsClasses(path, handler, assocClass, resultClass, role, resultRole,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
@@ -266,6 +285,23 @@ OW_CIMOMHandleIFC::referencesE(
 	OW_CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
 	references(path, handler, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClassEnumeration
+OW_CIMOMHandleIFC::referencesClassesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_CIMClassEnumeration rval;
+	CIMClassEnumBuilder handler(rval);
+	referencesClasses(path, handler, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }

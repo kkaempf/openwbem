@@ -123,7 +123,7 @@ OW_ProviderManager::doGetIndicationExportProviders(
 
 	for(size_t i = 0; i < m_noIdProviders.size(); i++)
 	{
-		OW_CppIndicationExportProviderIFC* pIEP = 
+		OW_CppIndicationExportProviderIFC* pIEP =
 			m_noIdProviders[i].m_pProv->getIndicationExportProvider();
 		if (pIEP)
 		{
@@ -156,7 +156,7 @@ OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 
 	for(size_t i = 0; i < m_noIdProviders.size(); i++)
 	{
-		OW_CppPolledProviderIFC* pPP = 
+		OW_CppPolledProviderIFC* pPP =
 			m_noIdProviders[i].m_pProv->getPolledProvider();
 		if(pPP)
 		{
@@ -292,7 +292,7 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_ProviderManager::unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	for(size_t i = 0; i < m_IFCArray.size(); i++)
@@ -309,7 +309,7 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 {
 	OW_ProviderIFCBaseIFCRef rref;
 
-	provStr = "";
+	provStr = OW_String();
 	if(!qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_PROVIDER))
 	{
 		env->getLogger()->logError(format("Provider Manager - invalid provider qualifier: %1",

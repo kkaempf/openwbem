@@ -51,26 +51,7 @@ using std::istream;
 struct OW_CIMClass::CLSData
 {
 	CLSData() :
-		m_name(), m_parentClassName(), m_qualifiers(), m_properties(),
-		m_methods(), m_associationFlag(false), m_isKeyed(false){  }
-
-	CLSData(const CLSData& x) :
-		m_name(x.m_name), m_parentClassName(x.m_parentClassName),
-		m_qualifiers(x.m_qualifiers), m_properties(x.m_properties),
-		m_methods(x.m_methods), m_associationFlag(x.m_associationFlag),
-		m_isKeyed(x.m_isKeyed){  }
-
-	CLSData& operator= (const CLSData& x)
-	{
-		m_name = x.m_name;
-		m_parentClassName = x.m_parentClassName;
-		m_qualifiers = x.m_qualifiers;
-		m_properties = x.m_properties;
-		m_methods = x.m_methods;
-		m_associationFlag = x.m_associationFlag;
-		m_isKeyed = x.m_isKeyed;
-		return *this;
-	}
+		m_associationFlag(false), m_isKeyed(false){  }
 
 	OW_String m_name;
 	OW_String m_parentClassName;
@@ -83,20 +64,20 @@ struct OW_CIMClass::CLSData
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass::OW_CIMClass(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new CLSData : NULL)
+	m_pdata((notNull) ? new CLSData : NULL)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass::OW_CIMClass(const char* name) :
-	OW_CIMElement(), m_pdata(new CLSData)
+	m_pdata(new CLSData)
 {
 	m_pdata->m_name = name;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass::OW_CIMClass(const OW_String& name) :
-	OW_CIMElement(), m_pdata(new CLSData)
+	m_pdata(new CLSData)
 {
 	m_pdata->m_name = name;
 }
@@ -781,7 +762,7 @@ OW_CIMClass::toMOF() const
 	size_t i;
 	OW_StringBuffer rv;
 
-	if(m_pdata->m_qualifiers.size() != 0)
+	if(m_pdata->m_qualifiers.size() != 0 || m_pdata->m_associationFlag)
 	{
 		rv += "[\n";
 
@@ -894,8 +875,16 @@ OW_CIMClass::~OW_CIMClass()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass::OW_CIMClass(const OW_CIMClass& x)
-	: OW_CIMElement(), m_pdata(x.m_pdata)
+	: OW_CIMElement(x)
+	, m_pdata(x.m_pdata)
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClass& OW_CIMClass::operator=(const OW_CIMClass& x)
+{
+	m_pdata = x.m_pdata;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -903,14 +892,6 @@ void
 OW_CIMClass::setNull()
 {
 	m_pdata = NULL;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMClass&
-OW_CIMClass::operator= (const OW_CIMClass& x)
-{
-	m_pdata = x.m_pdata;
-	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

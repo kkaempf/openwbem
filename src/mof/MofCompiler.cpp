@@ -47,14 +47,14 @@ MofCompiler::~MofCompiler()
 {
 	MofCompiler::theErrorHandler = 0;
 	MofCompiler::mofSpecification = 0;
-	MofCompiler::basepath = "";
-	MofCompiler::theLineInfo = lineInfo("",1);
+	MofCompiler::basepath = OW_String();
+	MofCompiler::theLineInfo = lineInfo(OW_String(),1);
 }
 
 long MofCompiler::compile( const OW_String& filename )
 {
 	MofCompiler::mofSpecification = 0;
-	MofCompiler::basepath = "";
+	MofCompiler::basepath = OW_String();
 	MofCompiler::theLineInfo = lineInfo(filename,1);
 
     try
@@ -68,7 +68,7 @@ long MofCompiler::compile( const OW_String& filename )
             }
             else
             {
-                MofCompiler::basepath = "";
+                MofCompiler::basepath = OW_String();
             }
             yyin = fopen(filename.c_str(), "r");
             if (!yyin)

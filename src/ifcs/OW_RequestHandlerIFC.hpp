@@ -36,7 +36,7 @@
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
-#include "OW_SortedVector.hpp"
+#include "OW_SortedVectorMap.hpp"
 #include <iosfwd>
 
 class OW_CIMFeatures;
@@ -72,7 +72,7 @@ public:
 	 * @userName the name of the user accessing the CIM Product.
 	 */
 	void process(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars);
+		std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 
 	/**
 	 * Did an error occur during process()?  (should ostrEntity
@@ -86,7 +86,7 @@ public:
 	 * What options are available for a particular path?
 	 * @param cf a OW_CIMFeatures object to fill out.
 	 */
-	void options(OW_CIMFeatures& cf, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+	void options(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
 		{  doOptions(cf, handlerVars); }
 
 	virtual OW_RequestHandlerIFC* clone() const = 0;
@@ -111,7 +111,7 @@ protected:
 	 * @userName the name of the user accessing the CIM Product.
 	 */
 	virtual void doProcess(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars) = 0;
+		std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
 
 	/**
 	 * Did an error occur during process()?  (should ostrEntity
@@ -125,7 +125,7 @@ protected:
 	 * @param cf The features to fill out.
 	 * @param path The requested path
 	 */
-	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVector<OW_String, OW_String>& handlerVars) = 0;
+	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
 
 private:
 	OW_ServiceEnvironmentIFCRef m_env;

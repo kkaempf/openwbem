@@ -76,7 +76,7 @@ OW_BinaryRequestHandler::setEnvironment(OW_ServiceEnvironmentIFCRef env)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
-	const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
+	const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
 {
 	cf.cimom = "openwbem";
 	cf.cimProduct = OW_CIMFeatures::SERVER;
@@ -92,10 +92,10 @@ OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+	std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
 {
 	OW_String userName;
-	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
 	if (i != handlerVars.end())
 	{
 		userName = (*i).second;
@@ -807,12 +807,26 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
-	BinaryCIMInstanceWriter handler(ostrm);
-	chdl->associators(op, handler, assocClass, resultClass,
-		role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
-	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	if (op.getKeys().size() == 0)
+	{
+		// class path
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
+		BinaryCIMClassWriter handler(ostrm);
+		chdl->associatorsClasses(op, handler, assocClass, resultClass,
+			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
+		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
+		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
+	}
+	else
+	{
+		// instance path
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+		BinaryCIMInstanceWriter handler(ostrm);
+		chdl->associators(op, handler, assocClass, resultClass,
+			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
+		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -856,12 +870,26 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
-	BinaryCIMInstanceWriter handler(ostrm);
-	chdl->references(op, handler, resultClass, role,
-		includeQualifiers, includeClassOrigin, propListPtr);
-	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
-	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	if (op.getKeys().size() == 0)
+	{
+		// class path
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
+		BinaryCIMClassWriter handler(ostrm);
+		chdl->referencesClasses(op, handler, resultClass,
+			role, includeQualifiers, includeClassOrigin, propListPtr);
+		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
+		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
+	}
+	else
+	{
+		// instance path
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+		BinaryCIMInstanceWriter handler(ostrm);
+		chdl->references(op, handler, resultClass,
+			role, includeQualifiers, includeClassOrigin, propListPtr);
+		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -80,38 +80,21 @@ public:
 	 */
 	OW_CIMClass(const char* name);
 
-	/**
-	 * Create an OW_CIMClass object using the the given OW_XMLNode
-	 * @param node	The OW_XMLNode that contains all of the information needed to
-	 *		create an OW_CIMClass object (see the DTD for CIMCLASS).
-	 */
-	//OW_CIMClass(const OW_XMLNode& node);
-
-	/**
-	 * Copy constructor
-	 * @param arg The OW_CIMClass object to be assigned to this one.
-	 */
-	OW_CIMClass(const OW_CIMClass& arg);
-
+	OW_CIMClass(const OW_CIMClass& x);
+	
 	/**
 	 * Destroy this OW_CIMClass object and decrement the refcount on the
 	 * underlying data.
 	 */
 	~OW_CIMClass();
 
+	OW_CIMClass& operator=(const OW_CIMClass& x);
+
 	/**
 	 * Set this to a null object. All subsequent oprations on this object will
 	 * fail.
 	 */
 	virtual void setNull();
-
-	/**
-	 * Assignment operator
-	 * @param arg The OW_CIMClass object to be assigned to this one.
-	 * @return A reference to this OW_CIMClass object after the assignment has
-	 * been made.
-	 */
-	OW_CIMClass& operator= (const OW_CIMClass& arg);
 
 	/**
 	 * @return The name of the parent CIM class of this OW_CIMClass object.

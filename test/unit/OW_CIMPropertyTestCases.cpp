@@ -74,6 +74,7 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 
 	OW_XMLNode node;
 	unitAssertNoThrow(node = parser.parse());
+	unitAssert(node);
 
 	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
 
@@ -104,6 +105,7 @@ void OW_CIMPropertyTestCases::testEmbeddedInstance()
 
 	OW_XMLNode node;
 	unitAssertNoThrow(node = parser.parse());
+	unitAssert(node);
 
 	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
 

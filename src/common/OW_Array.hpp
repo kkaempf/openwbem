@@ -52,6 +52,9 @@
 class OW_BinIfcIO;
 
 #include <iosfwd>
+#ifdef OW_DEBUG
+#include <cassert>
+#endif
 
 DEFINE_EXCEPTION(OutOfBounds);
 
@@ -222,6 +225,9 @@ private:
 	{
 		if (index >= size())
 		{
+#ifdef OW_DEBUG
+			assert(0); // segfault so we can get a core
+#endif
 			OW_THROW(OW_OutOfBoundsException,
 				"Array Index out of bounds");
 		}

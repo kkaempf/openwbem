@@ -431,6 +431,17 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
 
+	virtual void associatorsClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
+
 	/**
 	 * Get the specified CIM instance property.
 	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
@@ -474,6 +485,12 @@ public:
 	 */
 	virtual void references(const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String &resultClass, const OW_String &role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList);
+
+	virtual void referencesClasses(const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
@@ -608,7 +625,22 @@ private:
 		const OW_CIMObjectPath& path, const OW_String& operation,
 		const OW_Array<OW_Param>& params = OW_Array<OW_Param>(),
 		const OW_String& extra = OW_String());
+	
+	void associatorsCommon(const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC* iresult,
+		OW_CIMClassResultHandlerIFC* cresult,
+		const OW_String& assocClass, const OW_String& resultClass,
+		const OW_String& role, const OW_String& resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList);
 
+	void referencesCommon(const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC* iresult,
+		OW_CIMClassResultHandlerIFC* cresult,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList);
 	
 	OW_CIMProtocolIFCRef m_protocol;
 

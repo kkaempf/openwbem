@@ -53,7 +53,7 @@ extern "C"
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL) 
+OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL)
 	: m_sockfd(-1)
 	, m_localAddress(OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET))
 	, m_isActive(false)
@@ -163,13 +163,13 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
     {
         if (::unlink(filename.c_str()) != 0)
         {
-            OW_THROW(OW_SocketException, 
-                format("Unable to unlink Unix Domain Socket: %1, errno: %2", 
+            OW_THROW(OW_SocketException,
+                format("Unable to unlink Unix Domain Socket: %1, errno: %2",
                     filename, errno).c_str());
         }
     }
 		
-	if(bind(m_sockfd, m_localAddress.getNativeForm(), 
+	if(bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
@@ -277,19 +277,19 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 #else
 		clntfd = ::accept(m_sockfd, pSA, &clntlen);
 #endif
-		// check to see if client aborts connection between select and accept.
-		// see Unix Network Programming pages 422-424.
-		// TODO should we just check for one? eg. the proper one for
-		if (errno == EWOULDBLOCK
-			 || errno == ECONNABORTED
-			 || errno == EPROTO)
-		{
-			OW_THROW(OW_SocketException, "Client aborted TCP connection "
-				"between select() and accept()");
-		}
-		
 		if(clntfd < 0)
 		{
+			// check to see if client aborts connection between select and accept.
+			// see Unix Network Programming pages 422-424.
+			// TODO should we just check for one? eg. the proper one for
+			if (errno == EWOULDBLOCK
+				 || errno == ECONNABORTED
+				 || errno == EPROTO)
+			{
+				OW_THROW(OW_SocketException, "Client aborted TCP connection "
+					"between select() and accept()");
+			}
+		
 			OW_THROW(OW_SocketException, "OW_ServerSocketImpl::accept");
 		}
 

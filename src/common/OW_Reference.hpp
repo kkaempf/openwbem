@@ -35,7 +35,9 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Exception.hpp"
 
-#include <iostream>
+#ifdef OW_DEBUG
+#include <cassert>
+#endif
 //////////////////////////////////////////////////////////////////////////////
 
 struct OW_RefCount
@@ -291,6 +293,9 @@ void OW_Reference<T>::checkNull() const
 {
 	if (this == 0 || isNull())
 	{
+#ifdef OW_DEBUG
+		assert(0); // segfault so we can get a core
+#endif
 		OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
 		//throw OW_Exception(__FILE__, __LINE__,
 			//"NULL OW_Reference dereferenced");
@@ -312,7 +317,7 @@ OW_Reference<T>::cast_to()
 
 template <class T>
 template <class U>
-void 
+void
 OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
 {
 	if(m_pRefCount)

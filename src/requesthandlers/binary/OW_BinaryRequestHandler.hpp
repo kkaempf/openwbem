@@ -44,11 +44,11 @@ public:
 	virtual OW_RequestHandlerIFC* clone() const;
 
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-            std::ostream *ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars);
+            std::ostream *ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 	
 	virtual OW_Bool doHasError();
 
-	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVector<OW_String, OW_String>& handlerVars);
+	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 
 	virtual void setEnvironment(OW_ServiceEnvironmentIFCRef env);
 

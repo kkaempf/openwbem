@@ -428,6 +428,17 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
 
+	virtual void associatorsClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
+
 	/**
 	 * Get the specified CIM instance property.
 	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
@@ -471,6 +482,12 @@ public:
 	 */
 	virtual void references(const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String &resultClass, const OW_String &role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList);
+
+	virtual void referencesClasses(const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);

@@ -114,6 +114,11 @@ OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_Strin
 	OW_XMLParser parser(istr.getPtr());
 
 	OW_XMLNode retval = parser.parse();
+	if (!retval)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Failed parsing XML response from listener.");
+	}
 	return checkNodeForCIMError(retval, methodName);
 }
 

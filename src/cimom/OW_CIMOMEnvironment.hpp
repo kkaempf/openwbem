@@ -37,7 +37,7 @@
 #include "OW_LogLevel.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibrary.hpp"
-#include "OW_SortedVector.hpp"
+#include "OW_SortedVectorMap.hpp"
 #include "OW_Map.hpp"
 #include "OW_Array.hpp"
 #include "OW_SharedLibraryReference.hpp"
@@ -155,7 +155,7 @@ private:
 
 	typedef OW_Map<OW_String, OW_String> ConfigMap;
 	typedef OW_Reference<ConfigMap> ConfigMapRef;
-	typedef OW_SortedVector<OW_String, ReqHandlerData> ReqHandlerMap;
+	typedef OW_SortedVectorMap<OW_String, ReqHandlerData> ReqHandlerMap;
 
 	mutable OW_Mutex m_monitor;
 	OW_RepositoryIFCRef m_cimServer;

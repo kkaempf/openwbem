@@ -640,10 +640,12 @@ namespace
 	class CIMClassDeleter : public OW_CIMClassResultHandlerIFC
 	{
 	public:
-		CIMClassDeleter(OW_MetaRepository& mr, OW_String& ns_, OW_InstanceRepository& mi)
+		CIMClassDeleter(OW_MetaRepository& mr, OW_String& ns_,
+			OW_InstanceRepository& mi, OW_AssocDb& m_assocDb_)
 		: m_mStore(mr)
 		, ns(ns_)
 		, m_iStore(mi)
+		, m_assocDb(m_assocDb_)
 		{}
 	protected:
 		virtual void doHandleClass(const OW_CIMClass &c)
@@ -657,11 +659,19 @@ namespace
 			// delete any instances of the class
 			m_iStore.deleteClass(ns, cname);
 
+			// remove class from association index
+			if (c.isAssociation())
+			{
+				OW_AssocDbHandle hdl = m_assocDb.getHandle();
+				hdl.deleteEntries(ns,c);
+			}
+
 		}
 	private:
 		OW_MetaRepository& m_mStore;
 		OW_String& ns;
 		OW_InstanceRepository& m_iStore;
+		OW_AssocDb& m_assocDb;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -688,29 +698,13 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 
 		// delete the class and any subclasses
 		OW_ACLInfo intAcl;
-		CIMClassDeleter ccd(m_mStore, ns, m_iStore);
+		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_assocDb);
 		this->enumClasses(path, ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
             intAcl);
 		ccd.handleClass(cc);
-//         children.addElement(cc);
-//         while (children.hasMoreElements())
-//         {
-//             OW_CIMClass toDelete;
-//             children.nextElement(toDelete);
-//
-//             cname = toDelete.getName();
-//             if(!m_mStore.deleteClass(ns, cname))
-//             {
-//                 OW_THROWCIM(OW_CIMException::NOT_FOUND);
-//             }
-//
-//             // delete any instances of the class
-//             m_iStore.deleteClass(ns, cname);
-//
-//         }
 
 		return cc;
 	}
@@ -744,6 +738,11 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 		OW_String ns = path.getNameSpace();
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
+		if (cimClass.isAssociation())
+		{
+			OW_AssocDbHandle hdl = m_assocDb.getHandle();
+			hdl.addEntries(ns,cimClass);
+		}
 	}
 	catch (OW_HDBException&)
 	{
@@ -1302,8 +1301,7 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 	try
 	{
 		OW_CIMClass theClass;
-		OW_CIMInstance oldInst;
-		oldInst = getInstance(cop, false, true, true, NULL,
+		OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
 			&theClass, intAclInfo);
 
 		OW_AssocDbHandle hdl = m_assocDb.getHandle();
@@ -1343,7 +1341,7 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 			// delete the entries from the database for this association.
 			if(!assocP)
 			{
-				hdl.deleteEntries(cop, oldInst);
+				hdl.deleteEntries(cop.getNameSpace(), oldInst);
 			}
 		}
 
@@ -1498,9 +1496,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			if(!assocP)
 			{
 				OW_AssocDbHandle hdl = m_assocDb.getHandle();
-				OW_CIMObjectPath icop(cop);
-				icop.setKeys(ci.getKeyValuePairs());
-				hdl.addEntries(icop, ci);
+				hdl.addEntries(cop.getNameSpace(), ci);
 			}
 		}
 
@@ -1575,8 +1571,8 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			if(!assocP)
 			{
 				OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
-				adbHdl.deleteEntries(cop, oldInst);
-				adbHdl.addEntries(cop, ci);
+				adbHdl.deleteEntries(cop.getNameSpace(), oldInst);
+				adbHdl.addEntries(cop.getNameSpace(), ci);
 			}
 		}
 
@@ -1961,7 +1957,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 		}
 		catch(...)
 		{
-			className = "";
+			className = OW_String();
 		}
 	}
 
@@ -2065,7 +2061,24 @@ OW_CIMServer::associators(const OW_CIMObjectPath& path,
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path, aclInfo);
 
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, &result, NULL,
+		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
+		aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+{
+	// Check to see if user has rights to get associators
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path, aclInfo);
+
+	_commonAssociators(path, assocClass, resultClass, role, resultRole,
+		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
 		aclInfo);
 }
 
@@ -2081,7 +2094,7 @@ OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path, aclInfo);
 
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
-		false, false, NULL, NULL, &result, aclInfo);
+		false, false, 0, 0, &result, 0, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2096,7 +2109,22 @@ OW_CIMServer::references(const OW_CIMObjectPath& path,
 	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path, aclInfo);
 
 	_commonReferences(path, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, &result, NULL, aclInfo);
+		includeClassOrigin, propertyList, &result, 0, 0, aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::referencesClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+{
+	// Check to see if user has rights to get associators
+	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path, aclInfo);
+
+	_commonReferences(path, resultClass, role, includeQualifiers,
+		includeClassOrigin, propertyList, 0, 0, &result, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2109,7 +2137,7 @@ OW_CIMServer::referenceNames(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCENAMES, path, aclInfo);
 
-	_commonReferences(path, resultClass, role, false, false, NULL, NULL, &result,
+	_commonReferences(path, resultClass, role, false, false, 0, 0, &result, 0,
 		aclInfo);
 }
 
@@ -2132,6 +2160,11 @@ namespace
 	protected:
 		virtual void doHandleClass(const OW_CIMClass &cc)
 		{
+			if (!cc.isAssociation())
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+					format("class %1 is not an association", cc.getName()).c_str());
+			}
 			// Now separate the association classes that have associator provider from
 			// the ones that don't
 			OW_CIMClassArray* pra = (server._isDynamicAssoc(cc, aclInfo)) ? &dynamicAssocs
@@ -2154,10 +2187,16 @@ OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
+	OW_CIMObjectPathResultHandlerIFC* popresult,
+	OW_CIMClassResultHandlerIFC* pcresult,
+	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass assocClass;
 	OW_String ns = path.getNameSpace();
+	if (!m_nStore.nameSpaceExists(ns))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+	}
 
 	// Get all association classes from the repository
 	// If the assoc class was specified, only children of it will be
@@ -2167,15 +2206,49 @@ OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 	OW_CIMClassArray dynamicAssocs;
 
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, resultClass, assocClassResult);
+	_getAssociationClasses(ns, resultClass, assocClassResult, role);
+	OW_StringArray resultClassNames;
+	for(size_t i = 0; i < staticAssocs.size(); i++)
+	{
+		resultClassNames.append(staticAssocs[i].getName());
+	}
+	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 
-	// Process all of the association classes without providers
-	_staticReferences(path, staticAssocs, role, includeQualifiers,
-		includeClassOrigin, propertyList, piresult, popresult, aclInfo);
+	if (path.getKeys().size() == 0)
+	{
+		// it's a class path
+		// Process all of the association classes without providers
+		_staticReferencesClass(path,
+			resultClass.length() == 0 ? 0 : &resultClassNamesSet,
+			role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult);
+	}
+	else // it's an instance path
+	{
+		// Process all of the association classes without providers
+		if (piresult != 0)
+		{
+			// do instances
+			_staticReferences(path,
+				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role,
+				includeQualifiers, includeClassOrigin, propertyList, *piresult);
+		}
+		else if (popresult != 0)
+		{
+			// do names (object paths)
+			_staticReferences(path,
+				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role,
+				*popresult);
+		}
+		else
+		{
+			OW_ASSERT(0);
+		}
 
-	// Process all of the association classes with providers
-	_dynamicReferences(path, dynamicAssocs, role, includeQualifiers,
-		includeClassOrigin, propertyList, piresult, popresult, aclInfo);
+		// Process all of the association classes with providers
+		_dynamicReferences(path, dynamicAssocs, role, includeQualifiers,
+			includeClassOrigin, propertyList, piresult, popresult, aclInfo);
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2243,66 +2316,164 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	}
 }
 
+namespace
+{
+//////////////////////////////////////////////////////////////////////////////
+	class staticReferencesObjectPathResultHandler : public OW_AssocDbEntryResultHandlerIFC
+	{
+	public:
+		staticReferencesObjectPathResultHandler(
+			OW_CIMObjectPathResultHandlerIFC& result_)
+		: result(result_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		{
+			result.handleObjectPath(e.getAssociationPath());
+		}
+	private:
+		OW_CIMObjectPathResultHandlerIFC& result;
+	};
+	
+//////////////////////////////////////////////////////////////////////////////
+	class staticReferencesClassResultHandler : public OW_AssocDbEntryResultHandlerIFC
+	{
+	public:
+		staticReferencesClassResultHandler(
+			OW_CIMClassResultHandlerIFC& result_,
+			OW_CIMServer& server_,
+			OW_String& ns_,
+			bool includeQualifiers_,
+			bool includeClassOrigin_,
+			const OW_StringArray* propList_,
+			OW_ACLInfo& aclInfo_)
+		: result(result_)
+		, server(server_)
+		, ns(ns_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propList(propList_)
+		, aclInfo(aclInfo_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		{
+			OW_CIMObjectPath cop = e.getAssociationPath();
+			if (cop.getNameSpace().length() == 0)
+			{
+				cop.setNameSpace(ns);
+			}
+			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
+			result.handleClass(cc);
+		}
+	private:
+		OW_CIMClassResultHandlerIFC& result;
+		OW_CIMServer& server;
+		OW_String& ns;
+		bool includeQualifiers;
+		bool includeClassOrigin;
+		const OW_StringArray* propList;
+		OW_ACLInfo& aclInfo;
+	};
+
+//////////////////////////////////////////////////////////////////////////////
+	class staticAssociatorsInstResultHandler : public OW_AssocDbEntryResultHandlerIFC
+	{
+	public:
+		staticAssociatorsInstResultHandler(const OW_ACLInfo& intAclInfo_,
+			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_,
+			bool includeQualifiers_, bool includeClassOrigin_,
+			const OW_StringArray* propertyList_)
+		: intAclInfo(intAclInfo_)
+		, server(server_)
+		, result(result_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propertyList(propertyList_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		{
+			OW_CIMObjectPath op = e.getAssociatedObject();
+			OW_CIMClass cc;
+			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
+				&cc, intAclInfo);
+
+			result.handleInstance(ci.clone(false, includeQualifiers,
+				includeClassOrigin, propertyList));
+		}
+	private:
+		const OW_ACLInfo& intAclInfo;
+		OW_CIMServer& server;
+		OW_CIMInstanceResultHandlerIFC& result;
+		bool includeQualifiers;
+		bool includeClassOrigin;
+		const OW_StringArray* propertyList;
+	};
+	
+//////////////////////////////////////////////////////////////////////////////
+	class staticReferencesInstResultHandler : public OW_AssocDbEntryResultHandlerIFC
+	{
+	public:
+		staticReferencesInstResultHandler(const OW_ACLInfo& intAclInfo_,
+			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_,
+			bool includeQualifiers_, bool includeClassOrigin_,
+			const OW_StringArray* propertyList_)
+		: intAclInfo(intAclInfo_)
+		, server(server_)
+		, result(result_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propertyList(propertyList_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		{
+			OW_CIMObjectPath op = e.getAssociationPath();
+			OW_CIMClass cc;
+			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
+				&cc, intAclInfo);
+
+			result.handleInstance(ci.clone(false, includeQualifiers,
+				includeClassOrigin, propertyList));
+		}
+	private:
+		const OW_ACLInfo& intAclInfo;
+		OW_CIMServer& server;
+		OW_CIMInstanceResultHandlerIFC& result;
+		bool includeQualifiers;
+		bool includeClassOrigin;
+		const OW_StringArray* propertyList;
+	};
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
-	const OW_CIMClassArray& refClasses, const OW_String& role,
+	const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& /*aclInfo*/)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result)
 {
-	// refClasses should always have something in it
-	if(refClasses.size() == 0)
-	{
-		return;
-	}
-
-	OW_StringArray assocClassNames;
-	for(size_t i = 0; i < refClasses.size(); i++)
-	{
-		assocClassNames.append(refClasses[i].getName());
-	}
-
 	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
-	OW_AssocDbEntryArray adbentries = dbhdl.getAllEntries(path.toString(),
-		assocClassNames, role);
-
 	OW_ACLInfo intAclInfo;
-	for(size_t i = 0; i < adbentries.size(); i++)
-	{
-		OW_CIMObjectPath assocPath = OW_CIMObjectPath::parse(
-			adbentries[i].getAssocKey());
+	staticReferencesInstResultHandler handler(intAclInfo, *this, result,
+		includeQualifiers, includeClassOrigin, propertyList);
 
-		// If we are only doing reference names, then just add the association's
-		// object path to the object path enumeration
-		// Get the instance of the association
-		OW_CIMClass cc;
-		OW_CIMInstance ainst = getInstance(assocPath, false, true, true,
-			NULL, &cc, intAclInfo);
+	dbhdl.getAllEntries(path,
+		refClasses, 0, role, OW_String(), handler);
+}
 
-		if(!ainst)
-		{
-			OW_THROW(OW_Exception,
-				format("Instance not found for association: %1",
-					assocPath.toString()).c_str());
-		}
 
-		ainst.syncWithClass(cc, includeQualifiers);
-		if(popresult != 0)
-		{
-			assocPath.setKeys(ainst.getKeyValuePairs());
-			popresult->handleObjectPath(assocPath);
-		}
-		else if (piresult != 0)
-		{
-			piresult->handleInstance(ainst.clone(false, includeQualifiers,
-				includeClassOrigin, propertyList));
-		}
-		else
-		{
-			OW_ASSERT(0);
-		}
-	}
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
+	const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
+	OW_CIMObjectPathResultHandlerIFC& result)
+{
+	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	staticReferencesObjectPathResultHandler handler(result);
+	dbhdl.getAllEntries(path,
+		refClasses, 0, role, OW_String(), handler);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2311,19 +2482,24 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList,
+	OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult,
+	OW_CIMClassResultHandlerIFC* pcresult,
+	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass assocClass;
 	OW_String ns = path.getNameSpace();
+	if (!m_nStore.nameSpaceExists(ns))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+	}
 
-	// Get all association classes from the repository
-	// If the assoc class was specified, only children of it will be
-	// returned.
+	// Get association classes from the association repository
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, assocClassName, assocClassResult);
+	_getAssociationClasses(ns, assocClassName, assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
@@ -2334,15 +2510,49 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 		resultClassNames.append(resultClass);
 	}
 
-	// Process all of the association classes without providers
-	_staticAssociators(path, staticAssocs, resultClassNames, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
-		aclInfo);
+	OW_StringArray assocClassNames;
+	for(size_t i = 0; i < staticAssocs.size(); i++)
+	{
+		assocClassNames.append(staticAssocs[i].getName());
+	}
+	OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(), assocClassNames.end());
+	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 
-	// Process all of the association classes with providers
-	_dynamicAssociators(path, dynamicAssocs, resultClass, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
-		aclInfo);
+	if (path.getKeys().size() == 0)
+	{
+		// it's a class path
+		// Process all of the association classes without providers
+		_staticAssociatorsClass(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
+			resultClass.length() == 0 ? 0 : &resultClassNamesSet,
+			role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult);
+	}
+	else // it's an instance path
+	{
+		// Process all of the association classes without providers
+		if (piresult != 0)
+		{
+			// do instances
+			_staticAssociators(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
+				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role, resultRole,
+				includeQualifiers, includeClassOrigin, propertyList, *piresult);
+		}
+		else if (popresult != 0)
+		{
+			// do names (object paths)
+			_staticAssociators(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
+				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role, resultRole,
+				*popresult);
+		}
+		else
+		{
+			OW_ASSERT(0);
+		}
+
+		// Process all of the association classes with providers
+		_dynamicAssociators(path, dynamicAssocs, resultClass, role, resultRole,
+			includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
+			aclInfo);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2410,126 +2620,197 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
-	const OW_CIMClassArray& assocClasses, const OW_StringArray& resultClasses,
+	const OW_SortedVectorSet<OW_String>* passocClasses,
+	const OW_SortedVectorSet<OW_String>* presultClasses,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& /*aclInfo*/)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result)
 {
-	// AssocClasses should always have something in it
-	if(assocClasses.size() == 0)
-	{
-		return;
-	}
-
-	OW_StringArray assocClassNames;
-	for(size_t i = 0; i < assocClasses.size(); i++)
-	{
-		assocClassNames.append(assocClasses[i].getName());
-	}
 
 	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
-	OW_AssocDbEntryArray adbentries = dbhdl.getAllEntries(path.toString(),
-		assocClassNames, role);
-
 	OW_ACLInfo intAclInfo;
-	for(size_t i = 0; i < adbentries.size(); i++)
+	staticAssociatorsInstResultHandler handler(intAclInfo, *this, result,
+		includeQualifiers, includeClassOrigin, propertyList);
+	dbhdl.getAllEntries(path,
+		passocClasses, presultClasses, role, resultRole, handler);
+		
+}
+
+namespace
+{
+//////////////////////////////////////////////////////////////////////////////
+	class staticAssociatorsObjectPathResultHandler : public OW_AssocDbEntryResultHandlerIFC
 	{
-		// Get the instance of the association
-		OW_CIMObjectPath assocPath = OW_CIMObjectPath::parse(
-			adbentries[i].getAssocKey());
-
-		OW_CIMInstance ainst = getInstance(assocPath, false, true, true,
-			NULL, NULL, intAclInfo);
-
-		if(!ainst)
+	public:
+		staticAssociatorsObjectPathResultHandler(
+			OW_CIMObjectPathResultHandlerIFC& result_)
+		: result(result_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
 		{
-			OW_THROW(OW_Exception,
-				format("Instance not found for association: %1",
-					assocPath.toString()).c_str());
+			result.handleObjectPath(e.getAssociatedObject());
 		}
-
-		OW_CIMPropertyArray pra;
-
-		// If result role specified, only get the property with the name of
-		// the result role.
-		if(resultRole.length() > 0)
+	private:
+		OW_CIMObjectPathResultHandlerIFC& result;
+	};
+	
+//////////////////////////////////////////////////////////////////////////////
+	class staticAssociatorsClassResultHandler : public OW_AssocDbEntryResultHandlerIFC
+	{
+	public:
+		staticAssociatorsClassResultHandler(
+			OW_CIMClassResultHandlerIFC& result_,
+			OW_CIMServer& server_,
+			OW_String& ns_,
+			bool includeQualifiers_,
+			bool includeClassOrigin_,
+			const OW_StringArray* propList_,
+			OW_ACLInfo& aclInfo_)
+		: result(result_)
+		, server(server_)
+		, ns(ns_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propList(propList_)
+		, aclInfo(aclInfo_)
+		{}
+	protected:
+		virtual void doHandleEntry(const OW_AssocDbEntry &e)
 		{
-			OW_CIMProperty cprop = ainst.getProperty(resultRole);
-			if(!cprop)
+			OW_CIMObjectPath cop = e.getAssociatedObject();
+			if (cop.getNameSpace().length() == 0)
 			{
-				continue;
+				cop.setNameSpace(ns);
 			}
+			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
+			result.handleClass(cc);
+		}
+	private:
+		OW_CIMClassResultHandlerIFC& result;
+		OW_CIMServer& server;
+		OW_String& ns;
+		bool includeQualifiers;
+		bool includeClassOrigin;
+		const OW_StringArray* propList;
+		OW_ACLInfo& aclInfo;
+	};
 
-			pra.append(cprop);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
+	const OW_SortedVectorSet<OW_String>* passocClasses,
+	const OW_SortedVectorSet<OW_String>* presultClasses,
+	const OW_String& role, const OW_String& resultRole,
+	OW_CIMObjectPathResultHandlerIFC& result)
+{
+
+	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	staticAssociatorsObjectPathResultHandler handler(result);
+	dbhdl.getAllEntries(path,
+		passocClasses, presultClasses, role, resultRole, handler);
+		
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::_staticAssociatorsClass(const OW_CIMObjectPath& path,
+	const OW_SortedVectorSet<OW_String>* assocClassNames,
+	const OW_SortedVectorSet<OW_String>* resultClasses,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, OW_CIMObjectPathResultHandlerIFC* popresult,
+	OW_CIMClassResultHandlerIFC* pcresult)
+{
+	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+
+	// need to run the query for every superclass of the class arg.
+	OW_String curClsName = path.getObjectName();
+	OW_CIMObjectPath curPath = path;
+	while (curClsName.length())
+	{
+		if (popresult != 0)
+		{
+			staticAssociatorsObjectPathResultHandler handler(*popresult);
+			dbhdl.getAllEntries(curPath, assocClassNames, resultClasses, role, resultRole,
+				handler);
+		}
+		else if (pcresult != 0)
+		{
+			OW_ACLInfo intAclInfo;
+			OW_String ns = path.getNameSpace();
+			staticAssociatorsClassResultHandler handler(*pcresult,*this,
+				ns, includeQualifiers, includeClassOrigin,
+				propertyList, intAclInfo);
+			dbhdl.getAllEntries(curPath, assocClassNames, resultClasses, role, resultRole,
+				handler);
 		}
 		else
 		{
-			// No result role specified, so get all reference properties
-			pra = ainst.getProperties(OW_CIMDataType::REFERENCE);
+			OW_ASSERT(0);
 		}
 
-		// Check instances referred to by the reference properties of the
-		// association instance
-		for(size_t j = 0; j < pra.size(); j++)
-		{
-			OW_CIMValue cv = pra[j].getValue();
-			if(!cv)
-			{
-				continue;
-			}
-
-			OW_CIMObjectPath op;
-			cv.get(op);
-
-			if(!op)
-			{
-				continue;
-			}
-
-			// Ignore the target object reference
-			if(path.equals(op))
-			{
-				continue;
-			}
-
-			// If result class specified, ensure it is a desired class
-			if(resultClasses.size() > 0
-				&& !_isInStringArray(resultClasses, op.getObjectName()))
-			{
-				continue;
-			}
-
-			OW_CIMClass cc;
-			OW_CIMInstance ci = getInstance(op, false, true, true, NULL,
-				&cc, intAclInfo);
-
-			if(!ci)
-			{
-				OW_THROW(OW_Exception,
-					format("Instance referenced by association does not exist:"
-						" %1", op.toString()).c_str());
-			}
-
-			ci.syncWithClass(cc, includeQualifiers);
-
-			if(popresult != 0)
-			{
-				op.setKeys(ci.getKeyValuePairs());
-				popresult->handleObjectPath(op);
-			}
-			else if (piresult != 0)
-			{
-				piresult->handleInstance(ci.clone(false, includeQualifiers,
-					includeClassOrigin, propertyList));
-			}
-			else
-			{
-				OW_ASSERT(0);
-			}
-		}
+		// get the current class so we can get the name of the superclass
+		OW_CIMClass theClass;
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath, theClass);
+		checkGetClassRvalAndThrow(rval, curPath);
+		curClsName = theClass.getSuperClass();
+		curPath.setObjectName(curClsName);
 	}
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::_staticReferencesClass(const OW_CIMObjectPath& path,
+	const OW_SortedVectorSet<OW_String>* resultClasses,
+	const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList,
+	OW_CIMObjectPathResultHandlerIFC* popresult,
+	OW_CIMClassResultHandlerIFC* pcresult)
+{
+	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+
+	// need to run the query for every superclass of the class arg.
+	OW_String curClsName = path.getObjectName();
+	OW_CIMObjectPath curPath = path;
+	while (curClsName.length())
+	{
+		if (popresult != 0)
+		{
+			staticReferencesObjectPathResultHandler handler(*popresult);
+			dbhdl.getAllEntries(curPath, resultClasses, 0, role, OW_String(),
+				handler);
+		}
+		else if (pcresult != 0)
+		{
+			OW_ACLInfo intAclInfo;
+			OW_String ns = path.getNameSpace();
+			staticReferencesClassResultHandler handler(*pcresult,*this,
+				ns, includeQualifiers, includeClassOrigin,
+				propertyList, intAclInfo);
+			dbhdl.getAllEntries(curPath, resultClasses, 0, role, OW_String(),
+				handler);
+		}
+		else
+		{
+			OW_ASSERT(0);
+		}
+
+		// get the current class so we can get the name of the superclass
+		OW_CIMClass theClass;
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(curPath, theClass);
+		checkGetClassRvalAndThrow(rval, curPath);
+		curClsName = theClass.getSuperClass();
+		curPath.setObjectName(curClsName);
+	}
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -2561,7 +2842,8 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-	const OW_String& className, OW_CIMClassResultHandlerIFC& result)
+	const OW_String& className, OW_CIMClassResultHandlerIFC& result,
+	const OW_String& role)
 {
 	if(className.length() > 0)
 	{
@@ -2576,8 +2858,9 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	}
 	else
 	{
-		assocHelper handler(result, m_mStore, ns);
-		m_mStore.getTopLevelAssociations(ns, handler);
+		// need to get all the assoc classes with dynamic providers
+		OW_CIMObjectPath cop(className, ns);
+		_staticReferencesClass(cop,0,role,true,false,0,0,&result);
 	}
 }
 

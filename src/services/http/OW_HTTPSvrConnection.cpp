@@ -48,7 +48,7 @@
 #include "OW_CIMFeatures.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_SortedVector.hpp"
+#include "OW_SortedVectorMap.hpp"
 #include "OW_StringBuffer.hpp"
 
 using std::ios;
@@ -1037,7 +1037,7 @@ OW_HTTPSvrConnection::post(istream& istr)
 	beginPostResponse();
 
 	// process the request
-	OW_SortedVector<OW_String, OW_String> handlerVars;
+	OW_SortedVectorMap<OW_String, OW_String> handlerVars;
 	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
 	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
 	m_requestHandler->process(&istr, ostrEntity, &ostrError, handlerVars);
@@ -1074,7 +1074,7 @@ OW_HTTPSvrConnection::options()
 
 	m_requestHandler->setEnvironment(m_options.env);
 
-	OW_SortedVector<OW_String, OW_String> handlerVars;
+	OW_SortedVectorMap<OW_String, OW_String> handlerVars;
 	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
 	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
 	

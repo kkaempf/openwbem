@@ -36,6 +36,7 @@
 #include "OW_Bool.hpp"
 #include "OW_Reference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_String.hpp"
 
 /**
  * The OW_CIMOMHandleIFC class is an abstract class used as an interface
@@ -519,25 +520,24 @@ public:
 	virtual void associatorNames(
 		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole) = 0;
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String()) = 0;
 
 	virtual OW_CIMObjectPathEnumeration associatorNamesE(
 		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole);
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String());
 
 	/**
 	 * This operation is used to enumerate CIMInstances
-	 * that are associated to a particular source CIM Object.
+	 * that are associated to a particular source CIM Instance.
 	 *
-	 * @param objectName Defines the source CIM Object whose associated Instances
-	 * are to be returned. This may be either a Class name or Instance name
-	 * (modelpath).
+	 * @param objectName Defines the source CIM Instance whose associated Instances
+	 * are to be returned.
 	 *
 	 * @param assocClass The AssocClass input parameter, if not "", MUST be a
 	 * valid CIM Association Class name. It acts as a filter on the returned set
@@ -608,20 +608,114 @@ public:
 	virtual void associators(
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMInstanceEnumeration associatorsE(
 		const OW_CIMObjectPath& path,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
+
+	/**
+	 * This operation is used to enumerate CIMClasses
+	 * that are associated to a particular source CIM Object.
+	 *
+	 * @param objectName Defines the source CIM Class whose associated classes
+	 * are to be returned.
+	 *
+	 * @param assocClass The AssocClass input parameter, if not "", MUST be a
+	 * valid CIM Association Class name. It acts as a filter on the returned set
+	 * of Objects by mandating that each returned Object MUST be associated to
+	 * the source Object via an Instance of this Class or one of its subclasses.
+	 *
+	 * @param resultClass The ResultClass input parameter, if not "", MUST be
+	 * a valid CIM Class name. It acts as a filter on the returned set of
+	 * Objects by mandating that each returned Object MUST be either an Instance
+	 * of this Class (or one of its subclasses) or be this Class (or one of its
+	 * subclasses).
+	 *
+	 * @param role The Role input parameter, if not NULL, "" be a valid
+	 * Property name. It acts as a filter on the returned set of Objects by
+	 * mandating that each returned Object MUST be associated to the source
+	 * Object via an Association in which the source Object plays the specified
+	 * role (i.e. the name of the Property in the Association Class that refers
+	 * to the source Object MUST match the value of this parameter).
+	 *
+	 * @param resultRole The ResultRole input parameter, if not "", MUST be a
+	 * valid Property name. It acts as a filter on the returned set of Objects
+	 * by mandating that each returned Object MUST be associated to the source
+	 * Object via an Association in which the returned Object plays the
+	 * specified role (i.e. the name of the Property in the Association Class
+	 * that refers to the returned Object MUST match the value of this
+	 * parameter).
+	 *
+	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS then all
+	 *		Qualifiers for each Object (including Qualifiers on the Object and
+	 *		on any returned Properties) MUST be included as elements in the
+	 *		response.If set to EXCLUDE_QUALIFIERS, then no qualifiers will be
+	 *		present in the returned object(s).
+	 *
+	 * @param includeClassOrigin If the IncludeClassOrigin input parameter is
+	 * true, this specifies that the CLASSORIGIN attribute MUST be present on
+	 * all appropriate elements in each returned Object. If false, no
+	 * CLASSORIGIN attributes are present in each returned Object.
+	 *
+	 * @param propertyList If the PropertyList input parameter is not NULL, the
+	 * members of the array define one or more Property names. Each returned
+	 * Object MUST NOT include elements for any Properties missing from this
+	 * list. Note that if LocalOnly is specified as true (or DeepInheritance is
+	 * specified as false) this acts as an additional filter on the set of
+	 * Properties returned (for example, if Property A is included in the
+	 * PropertyList but LocalOnly is set to true and A is not local to a
+	 * returned Instance, then it will not be included in that Instance). If the
+	 * PropertyList input parameter is an empty array this signifies that no
+	 * Properties are included in each returned Object. If the PropertyList input
+	 * parameter is NULL this specifies that all Properties (subject to the
+	 * conditions expressed by the other parameters) are included in each
+	 * returned Object. If the PropertyList contains duplicate elements, the
+	 * Server ignores the duplicates but otherwise process the request normally.
+	 * If the PropertyList contains elements which are invalid Property names for
+	 * any target Object, the Server ignores such entries but otherwise process
+	 * the request normally. Clients SHOULD NOT explicitly specify properties in
+	 * the PropertyList parameter unless they have specified a non-NULL value for
+	 * the ResultClass parameter.
+	 *
+	 * @return If successful, the method returns zero or more CIM Instances
+	 * meeting the requested criteria.
+	 *
+	 * @exception CIMException. The following IDs can be expected.
+	 * CIM_ERR_ACCESS_DENIED CIM_ERR_NOT_SUPPORTED CIM_ERR_INVALID_NAMESPACE
+	 * CIM_ERR_INVALID_PARAMETER (including missing, duplicate, unrecognized or
+	 * otherwise incorrect parameters) CIM_ERR_FAILED (some other unspecified
+	 * error occurred)
+	 */
+	virtual void associatorsClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0) = 0;
+
+	virtual OW_CIMClassEnumeration associatorsClassesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& assocClass=OW_String(),
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		const OW_String& resultRole=OW_String(),
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
@@ -642,13 +736,13 @@ public:
 	virtual void referenceNames(
 		const OW_CIMObjectPath& path,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& resultClass,
-		const OW_String& role) = 0;
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String()) = 0;
 
 	virtual OW_CIMObjectPathEnumeration referenceNamesE(
 		const OW_CIMObjectPath& path,
-		const OW_String& resultClass,
-		const OW_String& role);
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String());
 
 	/**
 	 * This operation is used to enumerate the association objects that refer to
@@ -683,16 +777,33 @@ public:
 	virtual void references(
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& resultClass,
-		const OW_String& role,
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMInstanceEnumeration referencesE(
 		const OW_CIMObjectPath& path,
-		const OW_String& resultClass,
-		const OW_String& role,
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
+
+	virtual void referencesClasses(
+		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0) = 0;
+
+	virtual OW_CIMClassEnumeration referencesClassesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass=OW_String(),
+		const OW_String& role=OW_String(),
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);

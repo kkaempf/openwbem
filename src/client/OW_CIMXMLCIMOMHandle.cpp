@@ -148,6 +148,10 @@ OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const O
 	try
 	{
 		retval = parser.parse();
+		if (!retval)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed parsing XML response from server.");
+		}
 		OW_HTTPUtils::eatEntity(*istr);
 	}
 	catch (OW_XMLException& xmlE)
@@ -165,6 +169,10 @@ OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const O
 		istr->getError(error);
 		OW_XMLParser errorParser(&error);
 		OW_XMLNode errNode = errorParser.parse();
+		if (!errNode)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed parsing error trailer XML from server.");
+		}
 		return checkNodeForCIMError(errNode, methodName);
 		// TODO this needs to be more robust.
 	}
@@ -1020,7 +1028,45 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 		 	 			 OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		 				 const OW_StringArray* propertyList)
 {
+	if (path.getKeys().size() == 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"associators requires an instance path not a class path");
+	}
 
+	associatorsCommon(path, &result, 0, assocClass, resultClass, role,
+		resultRole, includeQualifiers, includeClassOrigin, propertyList);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
+{
+	if (path.getKeys().size() > 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"associatorsClasses requires a class path not an instance path");
+	}
+
+	associatorsCommon(path, 0, &result, assocClass, resultClass, role,
+		resultRole, includeQualifiers, includeClassOrigin, propertyList);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC* iresult,
+	OW_CIMClassResultHandlerIFC* cresult,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
+{
 	static const char* const commandName = "Associators";
 
 	OW_Array<OW_Param> params;
@@ -1087,12 +1133,22 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 		OW_CIMObjectPath cop = getObjectWithPath(node, cca, cia);
 		if (cop)
 		{
-			if (cia.size() != 1)
+			if (iresult)
 			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED, "getObjectWithPath "
-									"returned multiple values.");
+				if (cia.size() != 1)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
+				}
+				iresult->handleInstance(cia[0]);
 			}
-			result.handleInstance(cia[0]);
+			if (cresult)
+			{
+				if (cca.size() != 1)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
+				}
+				cresult->handleClass(cca[0]);
+			}
 		}
 	}
 }
@@ -1164,6 +1220,44 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
+	if (path.getKeys().size() == 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"references requires an instance path not a class path");
+	}
+
+	referencesCommon(path, &result, 0, resultClass, role, includeQualifiers,
+		includeClassOrigin, propertyList);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	if (path.getKeys().size() > 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"referencesClasses requires a class path not an instance path");
+	}
+
+	referencesCommon(path, 0, &result, resultClass, role, includeQualifiers,
+		includeClassOrigin, propertyList);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC* iresult,
+		OW_CIMClassResultHandlerIFC* cresult,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
 	static const char* const commandName = "References";
 
 	OW_Array<OW_Param> params;
@@ -1222,12 +1316,22 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 		OW_CIMObjectPath cop = getObjectWithPath(node, cca, cia);
 		if (cop)
 		{
-			if (cia.size() != 1)
+			if (iresult)
 			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED, "getObjectWithName "
-									"returned multiple values.");
+				if (cia.size() != 1)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
+				}
+				iresult->handleInstance(cia[0]);
 			}
-			result.handleInstance(cia[0]);
+			if (cresult)
+			{
+				if (cca.size() != 1)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
+				}
+				cresult->handleClass(cca[0]);
+			}
 		}
 	}
 }

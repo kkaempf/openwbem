@@ -333,6 +333,21 @@ OW_LocalCIMOMHandle::associators(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_LocalCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
+{
+	OW_ReadLock rl = getReadLock();
+	m_pServer->associatorsClasses(path, result, assocClass, resultClass, role,
+		resultRole, includeQualifiers, includeClassOrigin, propertyList,
+		m_aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_LocalCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role)
@@ -351,6 +366,19 @@ OW_LocalCIMOMHandle::references(const OW_CIMObjectPath& path,
 {
 	OW_ReadLock rl = getReadLock();
 	m_pServer->references(path, result, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
+{
+	OW_ReadLock rl = getReadLock();
+	m_pServer->referencesClasses(path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
 
@@ -382,7 +410,7 @@ OW_LocalCIMOMHandle::getServerFeatures()
 	cf.supportedGroups.push_back("association-traversal");
 	cf.supportedQueryLanguages.clear();
 	cf.supportsBatch = true;
-	cf.validation = "";
+	cf.validation = OW_String();
 	return cf;
 }
 

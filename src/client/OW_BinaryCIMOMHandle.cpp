@@ -653,6 +653,49 @@ OW_BinaryCIMOMHandle::associators(const OW_CIMObjectPath& path,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+	if (path.getKeys().size() == 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"associators requires an instance path not a class path");
+	}
+
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"Associators", path.getNameSpace());;
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
+	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, assocClass);
+	OW_BinIfcIO::writeString(strm, resultClass);
+	OW_BinIfcIO::writeString(strm, role);
+	OW_BinIfcIO::writeString(strm, resultRole);
+	OW_BinIfcIO::writeBool(strm, includeQualifiers);
+	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
+	OW_Bool nullPropertyList = (propertyList == 0);
+	OW_BinIfcIO::writeBool(strm, nullPropertyList);
+	if(!nullPropertyList)
+	{
+		OW_BinIfcIO::writeStringArray(strm, *propertyList);
+	}
+
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "Associators", path.getNameSpace());
+
+	readAndDeliver(in, result);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
+{
+	if (path.getKeys().size() > 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"associatorsClasses requires a class path not an instance path");
+	}
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", path.getNameSpace());;
 	std::iostream& strm = *strmRef;
@@ -699,11 +742,51 @@ OW_BinaryCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
-								OW_CIMInstanceResultHandlerIFC& result,
-		 						const OW_String& resultClass, const OW_String& role,
-		 						OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-								const OW_StringArray* propertyList)
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
 {
+	if (path.getKeys().size() == 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"references requires an instance path not a class path");
+	}
+
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"ReferenceNames", path.getNameSpace());;
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
+	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, resultClass);
+	OW_BinIfcIO::writeString(strm, role);
+	OW_BinIfcIO::writeBool(strm, includeQualifiers);
+	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
+	OW_Bool nullPropertyList = (propertyList == 0);
+	OW_BinIfcIO::writeBool(strm, nullPropertyList);
+	if(!nullPropertyList)
+	{
+		OW_BinIfcIO::writeStringArray(strm, *propertyList);
+	}
+
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
+	
+	readAndDeliver(in, result);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	if (path.getKeys().size() > 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"referencesClasses requires a class path not an instance path");
+	}
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", path.getNameSpace());;
 	std::iostream& strm = *strmRef;

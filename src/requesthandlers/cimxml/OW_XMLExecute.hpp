@@ -54,7 +54,7 @@ public:
 	virtual OW_RequestHandlerIFC* clone() const;
 
 protected:
-	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVector<OW_String, OW_String>& handlerVars);
+	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 	OW_Bool doHasError() { return m_hasError; }
 	virtual void doLogDebug(const OW_String& message);
 	virtual void doLogError(const OW_String& message);

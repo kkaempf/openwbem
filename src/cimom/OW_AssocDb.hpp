@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_ASSOCDB_HPP__
-#define __OW_ASSOCDB_HPP__
+#ifndef OW_ASSOCDB_HPP_
+#define OW_ASSOCDB_HPP_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -40,6 +40,8 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_SortedVectorSet.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 /**
  * The OW_AssocDbEntry represents an entry in the association database.
@@ -50,41 +52,58 @@ public:
 	OW_AssocDbEntry(std::istream& istrm);
 
 	OW_AssocDbEntry() :
-		m_targetObject(), m_assocClassName(), m_propertyName(), m_assocKey(),
 		m_offset(-1L) {}
 
-	OW_AssocDbEntry(const OW_AssocDbEntry& arg);
-
-	OW_AssocDbEntry(const OW_String& targetObject,
-		const OW_String& assocClassName, const OW_String& propertyName,
-		const OW_String& assocKey);
-
-	OW_AssocDbEntry& operator= (const OW_AssocDbEntry& arg);
+	OW_AssocDbEntry(const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		const OW_CIMObjectPath& associatedObject,
+		const OW_CIMObjectPath& associationPath);
 
 	OW_Bool operator == (const OW_AssocDbEntry& arg) const;
 
-	OW_String getTargetObject() const { return m_targetObject; }
-	void setTargetObject(const OW_String& targetObject)
+	OW_CIMObjectPath getObjectName() const { return m_objectName; }
+	void setObjectName(const OW_CIMObjectPath& objectName)
 	{
-		m_targetObject = targetObject;
+		m_objectName = objectName;
 	}
 
-	OW_String getAssocClassName() const { return m_assocClassName; }
-	void setAssocClassName(const OW_String& assocClassName)
+	OW_String getAssocClass() const { return m_assocClass; }
+	void setAssocClass(const OW_String& assocClass)
 	{
-		m_assocClassName = assocClassName;
+		m_assocClass = assocClass;
 	}
 
-	OW_String getPropertyName() const { return m_propertyName; }
-	void setPropertyName(const OW_String& propertyName)
+	OW_String getResultClass() const { return m_resultClass; }
+	void setResultClass(const OW_String& resultClass)
 	{
-		m_propertyName = propertyName;
+		m_resultClass = resultClass;
 	}
 
-	OW_String getAssocKey() const { return m_assocKey; }
-	void setAssocKey(const OW_String& assocKey)
+	OW_String getRole() const { return m_role; }
+	void setRole(const OW_String& role)
 	{
-		m_assocKey = assocKey;
+		m_role = role;
+	}
+
+	OW_String getResultRole() const { return m_resultRole; }
+	void setResultRole(const OW_String& resultRole)
+	{
+		m_resultRole = resultRole;
+	}
+
+	OW_CIMObjectPath getAssociatedObject() const { return m_associatedObject; }
+	void setAssociatedObject(const OW_CIMObjectPath& associatedObject)
+	{
+		m_associatedObject = associatedObject;
+	}
+
+	OW_CIMObjectPath getAssociationPath() const { return m_associationPath; }
+	void setAssociationPath(const OW_CIMObjectPath& associationPath)
+	{
+		m_associationPath = associationPath;
 	}
 
 	void writeObject(std::ostream& ostrm) const;
@@ -93,23 +112,22 @@ public:
 	OW_Int32 getOffset() const { return m_offset; }
 	void setOffset(OW_Int32 offset) { m_offset = offset; }
 
-	operator void* () const { return (void*) m_targetObject.length(); }
+	static OW_String makeKey(const OW_CIMObjectPath& objectName, const OW_String& role,
+		const OW_String& resultRole);
 	
+	OW_String makeKey() const;
+
+	operator void* () const { return (void*)m_objectName; }
+
 private:
 
-	/** The key to the target object */
-	OW_String m_targetObject;
-
-	/** The class name for the association that references the target object. */
-	OW_String m_assocClassName;
-
-	/**
-	 * Name of the property that references the target object in the association
-	 */
-	OW_String m_propertyName;
-
-	/** Key to the association instance */
-	OW_String m_assocKey;
+	OW_CIMObjectPath m_objectName; // part 1 of key
+	OW_String m_assocClass;
+	OW_String m_resultClass;
+	OW_String m_role; // part 2 of key
+	OW_String m_resultRole; // part 3 of key
+	OW_CIMObjectPath m_associatedObject; // value for associtor(Name)s
+	OW_CIMObjectPath m_associationPath;  // value for reference(Name)s
 
 	OW_Int32 m_offset;
 };
@@ -121,6 +139,8 @@ typedef OW_Array<OW_AssocDbEntry> OW_AssocDbEntryArray;
 //////////////////////////////////////////////////////////////////////////////
 
 class OW_AssocDb;
+
+class OW_AssocDbEntryResultHandlerIFC;
 
 class OW_AssocDbHandle
 {
@@ -154,7 +174,7 @@ public:
 	 * @return true if there are association entries in the association
 	 * database for the given target object.
 	 */
-	OW_Bool isEntries(const OW_String& targetObject);
+	OW_Bool isEntries(const OW_String& objectName);
 
 	/**
 	 * Add an OW_AssocDbEntry& to the database.
@@ -169,8 +189,8 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void addEntries(const OW_CIMObjectPath& assocKey,
-		const OW_CIMInstance& assocInstance);
+	void addEntries(const OW_String& ns, const OW_CIMInstance& assocInstance);
+	void addEntries(const OW_String& ns, const OW_CIMClass& assocClass);
 
 	/**
 	 * Remove an OW_AssocDbEntry& from the database.
@@ -182,7 +202,7 @@ public:
 	 * Remove all OW_AssocDbEntry objects specified in an array.
 	 * @param entryra	The Array OW_AssocDbEntry objects to delete.
 	 */
-	void deleteEntries(const OW_AssocDbEntryArray& entryra);
+	//void deleteEntries(const OW_AssocDbEntryArray& entryra);
 
 	/**
 	 * Remove all entries from the database that are reference by the
@@ -191,42 +211,42 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void deleteEntries(const OW_CIMObjectPath& assocKey,
-		const OW_CIMInstance& assocInstance);
+	void deleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance);
+	void deleteEntries(const OW_String& ns, const OW_CIMClass& assocClass);
 
 	/**
 	 * Delete all entries in the association database that referenct the
 	 * given target object name.
-	 * @param targetObjectName	The name of the object to delete the entries for.
+	 * @param objectName	The name of the object to delete the entries for.
 	 *									This is the string version of the object path for
 	 *									the target object.
 	 */
-	void deleteEntries(const OW_String& targetObjectName);
+	//void deleteEntries(const OW_String& objectName);
 
 	/**
 	 * Get all of the OW_AssocDbEntries that fit the given criterion.
-	 * @param targetObject	The target object that all entries must have.
+	 * @param objectName	The target object that all entries must have.
 	 * @param assocClasses	If specified, the association class name from all
 	 *								entries must be found in this array.
 	 * @param propertyName	All entries must have this property name.
 	 * @return An OW_AssocDbEntryArray that contains all of the entries that
 	 * meet the given criterion.
 	 */
-	OW_AssocDbEntryArray getAllEntries(const OW_String& targetObject,
-		const OW_StringArray& assocClasses=OW_StringArray(),
-		const OW_String& propertyName=OW_String());
-
-
-	OW_AssocDbEntryArray getAllEntries(const OW_String& targetObject,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& propertyName=OW_String());
+	void getAllEntries(const OW_CIMObjectPath& objectName,
+		const OW_SortedVectorSet<OW_String>* passocClasses,
+		const OW_SortedVectorSet<OW_String>* presultClasses,
+		const OW_String& role,
+		const OW_String& resultRole,
+		OW_AssocDbEntryResultHandlerIFC& result);
 
 	OW_File getFile() const { return m_pdata->m_file; }
 
 	operator void* () const { return (void*)(!m_pdata.isNull()); }
 
 private:
-
+	
+	void addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance, bool add);
+	void addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& assocClass, bool add);
 	OW_AssocDbHandle(OW_AssocDb* pdb, OW_File file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
 
@@ -237,7 +257,16 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////
-
+class OW_AssocDbEntryResultHandlerIFC
+{
+public:
+	void handleEntry(const OW_AssocDbEntry& e)
+	{
+		doHandleEntry(e);
+	}
+protected:
+	virtual void doHandleEntry(const OW_AssocDbEntry& e) = 0;
+};
 
 // The following structure represents the format of header that
 // preceeds all records in the associations db
@@ -314,7 +343,7 @@ public:
 
 private:
 
-	OW_AssocDbEntry findEntry(const OW_String& targetObject,
+	OW_AssocDbEntry findEntry(const OW_String& objectKey,
 		OW_AssocDbHandle& hdl);
 	OW_AssocDbEntry nextEntry(OW_AssocDbHandle& hdl);
 	void deleteEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl);

@@ -44,7 +44,7 @@ OW_RequestHandlerIFC::~OW_RequestHandlerIFC()
 
 ///////////////////////////////////////////////////////////////////////////////
 void OW_RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
-	std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+	std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
 {
 	doProcess(istr, ostrEntity, ostrError, handlerVars);
 }

@@ -176,7 +176,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 
 	if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIREQ)
 	{
-		(*m_ostrEntity) << "<MULTIRSP>\r\n";
+		(*m_ostrEntity) << "<MULTIRSP>";
 		node = node.getChild();
 
 		while (node)
@@ -200,7 +200,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 			node = node.getNext();
 		} // while
 
-		(*m_ostrEntity) << "</MULTIRSP>\r\n";
+		(*m_ostrEntity) << "</MULTIRSP>";
 	} // if MULTIRSP
 	else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
 	{
@@ -248,11 +248,11 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	else
 	{
 		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName <<
-			"\"><IRETURNVALUE>\r\n";
+			"\"><IRETURNVALUE>";
 
 		// call the member function that was found
 		(this->*((*i).func))(ostr, node, path, hdl);
-		ostr << "</IRETURNVALUE></IMETHODRESPONSE>\r\n";
+		ostr << "</IRETURNVALUE></IMETHODRESPONSE>";
 	}
 }
 
@@ -266,7 +266,7 @@ OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_XMLNode node,
 
 	doInvokeMethod(ostr, node, m_functionName, lch);
 
-	ostr << "</RETURNVALUE></METHODRESPONSE>\r\n";
+	ostr << "</RETURNVALUE></METHODRESPONSE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -413,24 +413,24 @@ void
 OW_XMLExecute::outputError(const OW_CIMException& ce, ostream& ostr)
 {
 	int errorCode;
-	ostr << "<SIMPLERSP>\r\n";
+	ostr << "<SIMPLERSP>";
 	if (m_isIntrinsic)
-		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">";
 	else
-		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">";
 
 	errorCode = ce.getErrNo();
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
 		OW_XMLEscape(ce.getMessage()) <<
-		"\"></ERROR>\r\n";
+		"\"></ERROR>";
 
 	if (m_isIntrinsic)
-		ostr << "</IMETHODRESPONSE>\r\n";
+		ostr << "</IMETHODRESPONSE>";
 	else
-		ostr << "</METHODRESPONSE>\r\n";
+		ostr << "</METHODRESPONSE>";
 
-	ostr << "</SIMPLERSP>\r\n";
+	ostr << "</SIMPLERSP>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -485,11 +485,6 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 
 		path = OW_XMLCIMFactory::createObjectPath(tmpNode);
 		path.setNameSpace(ns);
-		if (path.getKeys().size() == 0)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					"Class paths not supported");
-		}
 		break;
 	}
 
@@ -527,7 +522,7 @@ namespace
 	protected:
 		virtual void doHandleInstance(const OW_CIMInstance &ci)
 		{
-			ostr <<  "<VALUE.OBJECTWITHPATH>\r\n";
+			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
 			OW_CIMObjectPath cop( ci.getClassName(), ci.getKeyValuePairs() );
 			cop.setNameSpace( path.getNameSpace() );
@@ -537,13 +532,52 @@ namespace
 				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 				propertyList, (isPropertyList && propertyList.size() == 0));
 
-			ostr << "</VALUE.OBJECTWITHPATH>\r\n";
+			ostr << "</VALUE.OBJECTWITHPATH>\n";
 		
 		}
 		std::ostream& ostr;
 		OW_CIMObjectPath& path;
 		bool includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
+
+	};
+	class AssocCIMClassXMLOutputter : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		AssocCIMClassXMLOutputter(
+			std::ostream& ostr_,
+			OW_CIMObjectPath& path_,
+			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
+			OW_StringArray& propertyList_,
+			OW_String& ns_)
+		: ostr(ostr_)
+		, path(path_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, isPropertyList(isPropertyList_)
+		, propertyList(propertyList_)
+		, ns(ns_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &cc)
+		{
+			ostr <<  "<VALUE.OBJECTWITHPATH>";
+
+			OW_CIMObjectPath cop(cc.getName(), ns);
+			OW_CIMClassPathtoXML(cop,ostr);
+			OW_CIMtoXML(cc, ostr, OW_CIMtoXMLFlags::notLocalOnly,
+				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
+				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
+				propertyList, (isPropertyList && propertyList.size() == 0));
+
+			ostr << "</VALUE.OBJECTWITHPATH>\n";
+		
+		}
+		std::ostream& ostr;
+		OW_CIMObjectPath& path;
+		bool includeQualifiers, includeClassOrigin, isPropertyList;
+		OW_StringArray& propertyList;
+		OW_String& ns;
 
 	};
 }
@@ -577,10 +611,10 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 	OW_Bool isPropertyList;
 	OW_String role = OW_String(node.extractParameterValue(XMLP_ROLE,
-		OW_String("")));
+		OW_String()));
 
 	OW_String resultRole = OW_String(node.extractParameterValue(XMLP_RESULTROLE,
-		OW_String("")));
+		OW_String()));
 
 	OW_StringArray propertyList = node.extractParameterStringArray(
 		XMLP_PROPERTYLIST, isPropertyList);
@@ -601,12 +635,26 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 
-	AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
-		includeClassOrigin, isPropertyList, propertyList);
+	if (path.getKeys().size() == 0)
+	{
+		// class path
+		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
+			includeClassOrigin, isPropertyList, propertyList, ns);
 
-	hdl.associators(path, handler,
-		assocClass, resultClass, role, resultRole, includeQualifiers,
-		includeClassOrigin, pPropList);
+		hdl.associatorsClasses(path, handler,
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, pPropList);
+	}
+	else
+	{
+		// instance path
+		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+			includeClassOrigin, isPropertyList, propertyList);
+
+		hdl.associators(path, handler,
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, pPropList);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -741,7 +789,7 @@ namespace
 		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
 		{
 			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() <<
-				"\"/>\r\n";
+				"\"/>";
 		}
 	private:
 		std::ostream& ostr;
@@ -1225,7 +1273,7 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 	OW_Bool includeClassOrigin;
 
 	OW_String role = OW_String(node.extractParameterValue(
-		OW_String(XMLP_ROLE), OW_String("")));
+		OW_String(XMLP_ROLE), OW_String()));
 
 	propertyList = node.extractParameterStringArray(XMLP_PROPERTYLIST,
 		isPropertyList);
@@ -1263,11 +1311,23 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 	
-	AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
-		includeClassOrigin, isPropertyList, propertyList);
-	
-	hdl.references(path, handler, resultClass,
-		role, includeQualifiers, includeClassOrigin, pPropList);
+	if (path.getKeys().size() == 0)
+	{
+		// It's a class
+		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
+			includeClassOrigin, isPropertyList, propertyList, ns);
+
+		hdl.referencesClasses(path, handler, resultClass,
+			role, includeQualifiers, includeClassOrigin, pPropList);
+	}
+	else
+	{
+		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+			includeClassOrigin, isPropertyList, propertyList);
+
+		hdl.references(path, handler, resultClass,
+			role, includeQualifiers, includeClassOrigin, pPropList);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1346,8 +1406,8 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String queryLanguage =
-		node.extractParameterValue(XMLP_QUERYLANGUAGE, OW_String(""));
-	OW_String query = node.extractParameterValue(XMLP_QUERY, OW_String(""));
+		node.extractParameterValue(XMLP_QUERYLANGUAGE, OW_String());
+	OW_String query = node.extractParameterValue(XMLP_QUERY, OW_String());
 
 	if (queryLanguage.length() == 0 || query.length() == 0)
 	{
@@ -1436,7 +1496,7 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 
 			OW_CIMNameSpace ns(OW_Bool(true));
 			ns.setNameSpace(nameSpace);
-			OW_CIMObjectPath path("", nameSpace);
+			OW_CIMObjectPath path = OW_CIMObjectPath(OW_String(), nameSpace);
 
 			newnode = newnode.getNext();
 			executeIntrinsic(ostrEntity, newnode, *hdl, path);
@@ -1451,7 +1511,7 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 
 			executeExtrinsic(ostrEntity, newnode, *hdl);
 		}
-		ostrEntity << "</SIMPLERSP>\r\n";
+		ostrEntity << "</SIMPLERSP>";
 	}
 	catch (OW_CIMException& ce)
 	{
@@ -1488,9 +1548,9 @@ OW_XMLExecute::doLogError(const OW_String& message)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::doOptions(OW_CIMFeatures& cf,
-	const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
+	const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
 {
-	cf = this->getEnvironment()->getCIMOMHandle("", false)->getServerFeatures();
+	cf = this->getEnvironment()->getCIMOMHandle(OW_String(), false)->getServerFeatures();
 }
 
 //////////////////////////////////////////////////////////////////////////////

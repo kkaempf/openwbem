@@ -288,6 +288,19 @@ OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_WQLFilterRep::associatorsClasses(const OW_CIMObjectPath &/*path*/,
+	OW_CIMClassResultHandlerIFC&,
+	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/,
+	const OW_String &/*role*/, const OW_String &/*resultRole*/,
+	OW_Bool /*includeQualifiers*/, OW_Bool /*includeClassOrigin*/,
+	const OW_StringArray* /*propertyList*/, const OW_ACLInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/,
 	const OW_String& /*propertyName*/, const OW_CIMValue &/*cv*/,
 	const OW_ACLInfo& /*aclInfo*/)
@@ -345,6 +358,20 @@ void
 OW_WQLFilterRep::references(
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMInstanceResultHandlerIFC&,
+	const OW_String &/*resultClass*/,
+	const OW_String &/*role*/, OW_Bool /*includeQualifiers*/,
+	OW_Bool /*includeClassOrigin*/, const OW_StringArray*  /*propertyList*/,
+	const OW_ACLInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::referencesClasses(
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMClassResultHandlerIFC&,
 	const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, OW_Bool /*includeQualifiers*/,
 	OW_Bool /*includeClassOrigin*/, const OW_StringArray*  /*propertyList*/,
