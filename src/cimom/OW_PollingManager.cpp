@@ -54,17 +54,10 @@ OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::~OW_PollingManager()
 {
-	try
-	{
-		shutdown();
-	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class PollingManagerProviderEnvironment : public OW_ProviderEnvironmentIFC
