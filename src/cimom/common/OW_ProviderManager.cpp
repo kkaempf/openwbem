@@ -46,6 +46,9 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CppProviderIFC.hpp"
+#include "OW_OperationContext.hpp"
+#include "OW_Platform.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -318,10 +321,62 @@ void processProviderInfo(
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentIFC
+{
+public:
+	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
+		: env(env_)
+		, m_context()
+	{}
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const
+	{
+		return env->getCIMOMHandle(m_context);
+	}
+	
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+	{
+		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
+			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+	}
+	
+	virtual RepositoryIFCRef getRepository() const
+	{
+		return env->getRepository();
+	}
+	virtual LoggerRef getLogger() const
+	{
+		return env->getLogger();
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return env->getLogger(componentName);
+	}
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const
+	{
+		return env->getConfigItem(name, defRetVal);
+	}
+	virtual String getUserName() const
+	{
+		return Platform::getCurrentUserName();
+	}
+	virtual OperationContext& getOperationContext()
+	{
+		return m_context;
+	}
+private:
+	ServiceEnvironmentIFCRef env;
+	mutable OperationContext m_context;
+};
+
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
+void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 {
+	ProviderEnvironmentIFCRef penv = ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(env));
+
 	m_logger = env->getLogger(COMPONENT_NAME);
 
 	for (size_t i = 0; i < m_IFCArray.size(); ++i)
@@ -336,7 +391,7 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 		MethodProviderInfoArray methodProviderInfo;
 		IndicationProviderInfoArray indicationProviderInfo;
 
-		m_IFCArray[i]->init(env,
+		m_IFCArray[i]->init(penv,
 			instanceProviderInfo,
 			secondaryInstanceProviderInfo,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -345,15 +400,15 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 			methodProviderInfo,
 			indicationProviderInfo);
 
-		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
-		processProviderInfo(env, secondaryInstanceProviderInfo, m_IFCArray[i], m_registeredSecInstProvs);
+		processProviderInfo(penv, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
+		processProviderInfo(penv, secondaryInstanceProviderInfo, m_IFCArray[i], m_registeredSecInstProvs);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
+		processProviderInfo(penv, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
 #endif
 
-		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
-		processProviderInfo(env, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
+		processProviderInfo(penv, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
+		processProviderInfo(penv, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 }
 

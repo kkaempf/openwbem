@@ -232,55 +232,6 @@ CIMOMEnvironment::init()
 	_createLogger();
 }
 //////////////////////////////////////////////////////////////////////////////
-namespace {
-class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentIFC
-{
-public:
-	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
-		: env(env_)
-		, m_context()
-	{}
-	virtual CIMOMHandleIFCRef getCIMOMHandle() const
-	{
-		return env->getCIMOMHandle(m_context);
-	}
-	
-	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
-	{
-		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
-			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
-	}
-	
-	virtual RepositoryIFCRef getRepository() const
-	{
-		return env->getRepository();
-	}
-	virtual LoggerRef getLogger() const
-	{
-		return env->getLogger();
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return env->getLogger(componentName);
-	}
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const
-	{
-		return env->getConfigItem(name, defRetVal);
-	}
-	virtual String getUserName() const
-	{
-		return Platform::getCurrentUserName();
-	}
-	virtual OperationContext& getOperationContext()
-	{
-		return m_context;
-	}
-private:
-	ServiceEnvironmentIFCRef env;
-	mutable OperationContext m_context;
-};
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 CIMOMEnvironment::startServices()
 {
@@ -322,10 +273,10 @@ CIMOMEnvironment::startServices()
 		m_running = true;
 	}
 
-	ProviderEnvironmentIFCRef penvRef = ProviderEnvironmentIFCRef(
-		new ProviderEnvironmentServiceEnvironmentWrapper(this));
+//	ProviderEnvironmentIFCRef penvRef = ProviderEnvironmentIFCRef(
+//		new ProviderEnvironmentServiceEnvironmentWrapper(this));
 
-	m_providerManager->init(penvRef);
+	m_providerManager->init(this);
 	m_authorizerManager->init(this);
 
 	// 3. start

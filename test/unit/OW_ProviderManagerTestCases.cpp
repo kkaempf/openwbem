@@ -45,6 +45,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_CerrLogger.hpp"
 
 using namespace OpenWBEM;
 
@@ -66,7 +67,27 @@ void OW_ProviderManagerTestCases::testInit()
 	pm.load(testCreateMuxLoader());
 }
 
+namespace
+{
 
+class TestServiceEnvironmentIFC : public ServiceEnvironmentIFC
+{
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return LoggerRef(new CerrLogger);
+	}
+	virtual LoggerRef getLogger() const
+	{
+		return LoggerRef(new CerrLogger);
+	}
+};
+
+ServiceEnvironmentIFCRef createServiceEnvRef()
+{
+	return ServiceEnvironmentIFCRef(new TestServiceEnvironmentIFC);
+}
+
+}
 
 void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
@@ -74,7 +95,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	mgr.load(testCreateMuxLoader());
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
-	mgr.init(createProvEnvRef(hdl));
+	mgr.init(createServiceEnvRef());
 
 	// test qualifier on class
 	CIMClass c1("TestClass");
@@ -137,7 +158,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	mgr.load(testCreateMuxLoader());
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
-	mgr.init(createProvEnvRef(hdl));
+	mgr.init(createServiceEnvRef());
 
 	// test qualifier on method
 	CIMClass c1("TestClass");
@@ -246,7 +267,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	mgr.load(testCreateMuxLoader());
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
-	mgr.init(createProvEnvRef(hdl));
+	mgr.init(createServiceEnvRef());
 
 	// test qualifier on class
 	CIMClass c1("TestClass");
@@ -308,7 +329,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	mgr.load(testCreateMuxLoader());
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
-	mgr.init(createProvEnvRef(hdl));
+	mgr.init(createServiceEnvRef());
 
 	CIMNameArray noLifeCycleClasses;
 	// self-registering provider all namespaces

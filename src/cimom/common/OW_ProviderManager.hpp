@@ -48,8 +48,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_HashMultiMap.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServiceIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
@@ -61,7 +60,7 @@ namespace OpenWBEM
  * It will keep the list of provider interfaces and query them when searching
  * for providers.
  */
-class ProviderManager : public IntrusiveCountableBase
+class ProviderManager : public ServiceIFC
 {
 public:
 	/**
@@ -72,17 +71,20 @@ public:
 	 * 	ProviderIFCBaseIFC classes.
 	 */
 	void load(const ProviderIFCLoaderRef& ifcLoader);
+
 	/**
 	 * Initialize the provider interfaces and providers.  This is called after
 	 * the CIM Server is up and running, so the providers can access the
 	 * repository.  None of the services have been started yet however.
 	 */
-	void init(const ProviderEnvironmentIFCRef& env);
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	
 	/**
 	 * Called when the cimom is shutting down.  All the provider IFCs will be
 	 * unloaded.
 	 */
-	void shutdown();
+	virtual void shutdown();
+
 	/**
 	 * Locate an Instance provider.
 	 *
