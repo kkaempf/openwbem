@@ -106,13 +106,7 @@ void
 daemonize(bool dbgFlg, const String& daemonName)
 {
 	initDaemonizePipe(); 
-	if (!dbgFlg)
-	{
-		if (getuid() != 0)
-		{
-			OW_THROW(DaemonException, Format("%1 must run as root. aborting...", daemonName).c_str());
-		}
-	}
+
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += OW_PACKAGE_PREFIX;
