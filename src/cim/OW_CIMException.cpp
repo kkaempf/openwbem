@@ -38,6 +38,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_String.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_StringBuffer.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -46,19 +47,55 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+String createLongMessage(CIMException::ErrNoType errval, const char* msg)
+{
+	const char* rv(0);
+	try
+	{
+		StringBuffer codeDesc(CIMException::getCodeDescription(errval));
+		String msgStr(msg);
+        // avoid multiple appendings of the exception message
+		if (codeDesc == msgStr.substring(0, codeDesc.length()))
+		{
+			codeDesc = msgStr;
+		}
+		else if (!msgStr.empty())
+		{
+			codeDesc += " (";
+			codeDesc += msgStr;
+			codeDesc += ')';
+		}
+		return codeDesc.releaseString();
+	}
+	catch (std::bad_alloc&)
+	{
+		return String();
+	}
+}
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
-	const char* msg, const Exception* otherException) :
-	Exception(file, line, msg, errval, otherException, ExceptionIds::CIMExceptionId)
+	const char* msg, const Exception* otherException)
+	: Exception(file, line, createLongMessage(errval, msg).c_str(), errval, otherException, ExceptionIds::CIMExceptionId)
+	, m_description(Exception::dupString(msg))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMException::~CIMException() throw()
 {
+	if (m_description)
+	{
+		delete[] m_description;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const CIMException& x)
 	: Exception(x)
+	, m_description(Exception::dupString(x.m_description))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -72,6 +109,7 @@ CIMException::operator=(const CIMException& x)
 void
 CIMException::swap(CIMException& x)
 {
+	std::swap(m_description, x.m_description);
 	Exception::swap(x);
 }
 //////////////////////////////////////////////////////////////////////////////					
@@ -79,6 +117,13 @@ const char*
 CIMException::type() const
 {
 	return "CIMException";
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+CIMException::getDescription() const
+{
+	return m_description;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -104,6 +104,13 @@ public:
 	
 	ErrNoType getErrNo() const { return ErrNoType(getErrorCode()); }
 	void setErrNo(ErrNoType e) { setErrorCode(e); }
+	/**
+	 * A CIMException consists of a code (ErrNoType), and an optional message for further clarification.
+	 * getMessage() returns the textual representation of the code (as returned by getCodeDescription) followed by
+	 * the optional message in parenthesis.
+	 * This function returns just the optional message, as passed to the constructor. If not available, 0 will be returned.
+	 */
+	const char* getDescription() const;
 	virtual const char* type() const;
 	virtual CIMException* clone() const throw();
 
@@ -115,6 +122,8 @@ public:
 	 */
 	static const char* getCodeDescription(ErrNoType errCode);
 
+private:
+	const char* m_description;
 };
 
 /**
