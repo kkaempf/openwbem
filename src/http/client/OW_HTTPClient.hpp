@@ -190,7 +190,15 @@ class HTTPClient : public CIMProtocolIFC
 		SocketAddress m_serverAddress;
 		URL m_url;
 		HTTPHeaderMap m_responseHeaders;
+		// Persistant headers remain for the life of the 
+		// HTTPClient.  They are included in each request
+		Array<String> m_requestHeadersPersistent;
+		// Common headers are used for only a single request, 
+		// but are reused if the request must be repeated (with 
+		// new authentication credentials, for instance). 
 		Array<String> m_requestHeadersCommon;
+		// New headers are replaced each time the client repeats 
+		// a request (with new auth credentials, for instance). 
 		Array<String> m_requestHeadersNew;
 		Reference<CIMProtocolIStreamIFC> m_pIstrReturn;
 		mutable Socket m_socket;
@@ -217,6 +225,10 @@ class HTTPClient : public CIMProtocolIFC
 		void addHeaderCommon(const String& key, const String& value)
 		{
 			HTTPUtils::addHeader(m_requestHeadersCommon, key, value);
+		}
+		void addHeaderPersistent(const String& key, const String& value)
+		{
+			HTTPUtils::addHeader(m_requestHeadersPersistent, key, value);
 		}
 		void addHeaderNew(const String& key, const String& value)
 		{

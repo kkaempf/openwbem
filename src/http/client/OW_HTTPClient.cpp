@@ -81,6 +81,8 @@ HTTPClient::HTTPClient( const String &sURL )
 	signal(SIGPIPE, SIG_IGN);
 
 	setUrl();
+	addHeaderPersistent("Host", m_url.host);
+	addHeaderPersistent("User-Agent", OW_PACKAGE"/"OW_VERSION);
 	//m_socket.setReceiveTimeout(300);
 	//m_socket.setSendTimeout(300);
 }
@@ -305,7 +307,7 @@ void HTTPClient::getCredentialsIfNecessary()
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::addCustomHeader(const String& name, const String& value)
 {
-	this->addHeaderCommon(name, value); 
+	this->addHeaderPersistent(name, value); 
 }
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendAuthorization()
@@ -614,6 +616,10 @@ HTTPClient::sendHeaders(const String& method,
 	const String& prot)
 {
 	m_ostr << method << ' ' << m_httpPath << ' ' << prot << "\r\n";
+	for (size_t i = 0; i < m_requestHeadersPersistent.size(); i++)
+	{
+		m_ostr << m_requestHeadersPersistent[i] << "\r\n";
+	}
 	for (size_t i = 0; i < m_requestHeadersCommon.size(); i++)
 	{
 		m_ostr << m_requestHeadersCommon[i] << "\r\n";
@@ -860,8 +866,6 @@ void
 HTTPClient::prepareHeaders()
 {
 	m_requestHeadersCommon.clear();
-	addHeaderCommon("Host", m_url.host);
-	addHeaderCommon("User-Agent", OW_PACKAGE"/"OW_VERSION);
 	m_responseHeaders.clear();
 }
 //////////////////////////////////////////////////////////////////////////////
