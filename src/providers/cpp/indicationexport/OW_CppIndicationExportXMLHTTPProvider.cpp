@@ -63,7 +63,9 @@ OW_CppIndicationExportXMLHTTPProvider::exportIndication(
 		 || indHandlerInst.getClassName().
 			equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS")
 		 || indHandlerInst.getClassName().
-			equalsIgnoreCase("CIM_IndicationHandlerCIM-XML"))
+			equalsIgnoreCase("CIM_IndicationHandlerCIM-XML")
+		 || indHandlerInst.getClassName().
+			equalsIgnoreCase("CIM_IndicationHandlerCIMXML"))
 	{
 		OW_String listenerUrl;
 		indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
@@ -101,6 +103,7 @@ OW_CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 	rv.append("CIM_IndicationHandlerXMLHTTP");
 	rv.append("CIM_IndicationHandlerXMLHTTPS");
 	rv.append("CIM_IndicationHandlerCIM-XML"); // new name in the 2.6 schema
+	rv.append("CIM_IndicationHandlerCIMXML"); // new name in the 2.6 schema
 	return rv;
 }
 
