@@ -45,11 +45,6 @@ OW_String OW_String_getslice(const OW_String& s, int i, int j)
     return s.substring(i, j - i);
 }
 
-OW_String OW_String_copy(const OW_String& s)
-{
-    return s;
-}
-
 PyObject* OW_String_repr(const OW_String& s)
 {
     OW_String str("owclient.OW_String(\"" + s + "\")");
@@ -65,6 +60,8 @@ BOOST_PYTHON_MODULE(owclient)
         .def(init<OW_UInt64>())
         .def(init<OW_Real64>())
         .def(init<const char*>())
+// Uncomment this to activate implicit string conversion
+//        .def(init<const std::string&>())
         .def(init<const OW_Char16Array&>())
         .def(init<OW_Bool>())
         .def(init<const OW_Char16&>())
@@ -72,12 +69,9 @@ BOOST_PYTHON_MODULE(owclient)
         .def(init<const OW_CIMObjectPath&>())
         .def(init<OW_Bool, char*, size_t>())
         .def(init<const char*, size_t>())
-        .def("copy", &OW_String_copy) // need copy ctor?
 // this seems to prevent the const char* ctor from working, and we don't
 // really need it since a char and a char* are the same in python.
 //        .def(init<char>())
-// We don't need this function since it's just for NPI anyway.
-//        .def("allocateCString", &OW_String::allocateCString)
         .def("length", &OW_String::length)
         .def("__len__", &OW_String::length)
         .def("empty", &OW_String::empty)
@@ -159,6 +153,76 @@ BOOST_PYTHON_MODULE(owclient)
         ;
 
     to_python_converter<OW_Bool, OW_BoolToPython>();
-    implicitly_convertible<char*,OW_String>();
+//    To make a python string implicitly convertible to OW_String, add a
+//    constructor to OW_String that takes a std::string, and then uncomment
+//    this.
+//    implicitly_convertible<std::string, OW_String>();
+    //
+    //
+    //    OW_CIMClient
+    //
+    //    OW_CIMOMInfo
+    //
+    //    OW_CIMOMLocator
+    //
+    //    OW_ClientAuthCBIFC
+    //
+    //    OW_CIMClass
+    //
+    //    OW_CIMDataType
+    //
+    //    OW_CIMDateTime
+    //
+    //    OW_CIMException
+    //
+    //    OW_CIMFlavor
+    //
+    //    OW_CIMInstance
+    //
+    //    OW_CIMMethod
+    //
+    //    OW_CIMNameSpace ???
+    //
+    //    OW_CIMObjectPath
+    //
+    //    OW_CIMParamValue
+    //
+    //    OW_CIMParameter
+    //
+    //    OW_CIMProperty
+    //
+    //    OW_CIMQualifier
+    //
+    //    OW_CIMQualifierType
+    //
+    //    OW_CIMScope
+    //
+    //    OW_CIMValue
+    //
+    //    OW_CIMValueCast
+    //
+    //    OW_StringArray
+    //
+    //    OW_StringResultHandlerIFC
+    //
+    //    OW_CIMClassResultHandlerIFC
+    //
+    //    OW_CIMClassEnumeration
+    //
+    //    OW_CIMObjectPathResultHandlerIFC
+    //
+    //    OW_CIMObjectPathEnumeration
+    //
+    //    OW_CIMInstanceResultHandlerIFC
+    //
+    //    OW_CIMInstanceEnumeration
+    //
+    //    OW_CIMQualifierTypeResultHandlerIFC
+    //
+    //    OW_CIMQualifierTypeEnumeration
+    //
+    //    OW_CIMParamValueArray
+    //
+    //
 }
 
