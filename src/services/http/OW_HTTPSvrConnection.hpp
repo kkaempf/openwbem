@@ -198,7 +198,9 @@ private:
 	// Don't switch the order of the next 2 member vars. The order is important, since Deflate may hold a pointer to Chunked,
 	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
 	Reference<HTTPChunkedOStream> m_HTTPChunkedOStreamRef;
+#ifdef OW_HAVE_ZLIB_H
 	Reference<HTTPDeflateOStream> m_HTTPDeflateOStreamRef;
+#endif
 
 	Reference<TempFileStream> m_TempFileStreamRef;
 

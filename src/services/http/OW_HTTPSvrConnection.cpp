@@ -420,7 +420,9 @@ HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 
 	// Clear out any previous instance. The order is important, since Deflate may hold a pointer to Chunked,
 	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
+#ifdef OW_HAVE_ZLIB_H
 	m_HTTPDeflateOStreamRef = 0;
+#endif
 	m_HTTPChunkedOStreamRef = 0;
 	m_TempFileStreamRef = 0;
 
