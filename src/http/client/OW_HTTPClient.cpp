@@ -109,8 +109,8 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 	addHeaderPersistent("User-Agent", OW_PACKAGE"/"OW_VERSION);
 
 	m_socket.setConnectTimeout(60);
-	//m_socket.setReceiveTimeout(300);
-	//m_socket.setSendTimeout(300);
+	m_socket.setReceiveTimeout(600);
+	m_socket.setSendTimeout(600);
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::~HTTPClient()
@@ -985,6 +985,56 @@ void HTTPClient::checkForClosedConnection()
 		close();
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::setReceiveTimeout(int seconds)
+{
+	m_socket.setReceiveTimeout(seconds);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+HTTPClient::getReceiveTimeout() const
+{
+	return m_socket.getReceiveTimeout();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::setSendTimeout(int seconds)
+{
+	m_socket.setSendTimeout(seconds);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+HTTPClient::getSendTimeout() const
+{
+	return m_socket.getSendTimeout();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::setConnectTimeout(int seconds)
+{
+	m_socket.setConnectTimeout(seconds);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+HTTPClient::getConnectTimeout() const
+{
+	return m_socket.getConnectTimeout();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::setTimeouts(int seconds)
+{
+	m_socket.setTimeouts(seconds);
+}
+
 
 } // end namespace OpenWBEM
 
