@@ -72,11 +72,11 @@ $(CXXBINLINKFLAGS) \
 -o CIMOMLocator$(EXEEXT)
 
 CIMOMLocator_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
@@ -123,9 +123,9 @@ wqlTest1.cpp
 
 #wqlTest2
 wqlTest2_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/wql/common -lowwqlcommon \
 -L$(top_builddir)/src/wql -lowwql \
+-L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
