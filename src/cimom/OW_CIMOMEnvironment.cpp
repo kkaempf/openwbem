@@ -419,7 +419,7 @@ OW_CIMOMEnvironment::_createIndicationServer()
 			indicationLib += "/";
 		}
 
-		indicationLib += "libowindicationserver.so";
+		indicationLib += "libowindicationserver"OW_SHAREDLIB_EXTENSION;
 
 		m_indicationServer = OW_SafeLibCreate<OW_IndicationServer>::loadAndCreateObject(
 				indicationLib, "createIndicationServer", getLogger());
@@ -469,7 +469,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 	int reqHandlerCount = 0;
 	for(size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(".so"))
+		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
@@ -545,7 +545,7 @@ OW_CIMOMEnvironment::_loadServices()
 
 	for(size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(".so"))
+		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
@@ -779,7 +779,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 		if (!m_indicationRepLayerLib)
 		{
 			OW_String libname = getConfigItem(OW_ConfigOpts::OWLIB_DIR_opt);
-			libname += "/libowindicationreplayer.so";
+			libname += "/libowindicationreplayer"OW_SHAREDLIB_EXTENSION;
 
 			m_Logger->logDebug(format("CIMOM loading indication libary %1",
 				libname));

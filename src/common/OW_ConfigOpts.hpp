@@ -73,7 +73,7 @@
 #endif
 
 #ifndef DEFAULT_AUTH_MOD
-#define DEFAULT_AUTH_MOD DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
+#define DEFAULT_AUTH_MOD DEFAULT_OWLIB_DIR"/authentication/libpamauthentication"OW_SHAREDLIB_EXTENSION
 #endif
 									
 #ifndef DEFAULT_AUTHORIZER_LIBS_LOCATION
@@ -117,7 +117,7 @@
 #endif
 
 #ifndef DEFAULT_WQL_LIB
-#define DEFAULT_WQL_LIB OW_DEFAULT_LIB_DIR"/libowwql.so"
+#define DEFAULT_WQL_LIB OW_DEFAULT_LIB_DIR"/libowwql"OW_SHAREDLIB_EXTENSION
 #endif
 
 #ifndef DEFAULT_ENABLE_DEFLATE
