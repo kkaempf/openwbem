@@ -63,24 +63,55 @@ using std::ostream;
 OW_DEFINE_EXCEPTION(StringConversion);
 
 //////////////////////////////////////////////////////////////////////////////
+// TODO: Move these 2 functions into UTF8Utils
+// TODO: I18N: These don't work right!
 static inline int
 strcmpi(const char* s1, const char* s2)
 {
+	while (true)
+	{
+		char c1 = *s1++;
+		char c2 = *s2++;
+		// short-curcuit evaluation will keep us from calling tolower
+		// unnecessarily
+		if (c1 != 0 && (c1 == c2 || tolower(c1) == tolower(c2)))
+			continue;
+		return static_cast<int>(c1) - static_cast<int>(c2);
+	}
+#if 0
 	String ls1(s1);
 	String ls2(s2);
 	ls1.toUpperCase();
 	ls2.toUpperCase();
 	return ls1.compareTo(ls2);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 static inline int
 strncmpi(const char* s1, const char* s2, size_t n)
 {
+	using namespace UTF8Utils;
+	while (n > 0)
+	{
+		char c1 = *s1++;
+		char c2 = *s2++;
+		// short-curcuit evaluation will keep us from calling tolower
+		// unnecessarily
+		if (c1 != 0 && (c1 == c2 || tolower(c1) == tolower(c2)))
+		{
+			--n;
+			continue;
+		}
+		return static_cast<int>(c1) - static_cast<int>(c2);
+	}
+	return 0;
+#if 0
 	String ls1(s1, n);
 	String ls2(s2, n);
 	ls1.toUpperCase();
 	ls2.toUpperCase();
 	return ls1.compareTo(ls2);
+#endif
 }
 
 // class invariant: m_buf points to a null-terminated sequence of characters. m_buf is m_len+1 bytes long.
