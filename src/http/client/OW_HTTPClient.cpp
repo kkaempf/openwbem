@@ -109,6 +109,22 @@ HTTPClient::cleanUpIStreams()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	inline bool isUInt16(const String& s)
+	{
+		try
+		{
+			s.toUInt16();
+			return true;
+		}
+		catch (StringConversionException& e)
+		{
+			return false;
+		}
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
 void HTTPClient::setUrl()
 {
 	if (m_url.scheme.empty())
@@ -139,10 +155,14 @@ void HTTPClient::setUrl()
 	{
 		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
 	}
-	else
+	else if (isUInt16(m_url.port))
 	{
-		m_serverAddress = SocketAddress::getByName(m_url.host,
+		m_serverAddress = SocketAddress::getByName(HTTPUtils::unescapeForURL(m_url.host),
 			m_url.port.toUInt16());
+	}
+	else // port may be a path to the UDS
+	{
+		m_serverAddress = SocketAddress::getUDS(HTTPUtils::unescapeForURL(m_url.port));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
