@@ -309,7 +309,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 				int type = OW_CIMDataType::strToSimpleType(valueType);
 				if(type == OW_CIMDataType::INVALID)
 				{
-					OW_THROWCIMMSG(OW_CIMException::FAILED,
+					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 						"Invalid data type on node");
 				}
 
@@ -435,7 +435,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 						}
 
 					default:
-						OW_THROWCIMMSG(OW_CIMException::FAILED,
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							"Invalid data type on node");
 				}
 
@@ -469,7 +469,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 							OW_XMLClass::getInstanceName(valueNode, cop);
 							break;
 						default:
-							OW_THROWCIMMSG(OW_CIMException::FAILED,
+							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 								"Attempting to extract object path");
 					}
 
@@ -501,7 +501,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 						OW_XMLClass::getInstanceName(valueNode, cop);
 						break;
 					default:
-						OW_THROWCIMMSG(OW_CIMException::FAILED,
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							"Attempting to extract object path");
 				}
 
@@ -557,9 +557,8 @@ OW_XMLCIMFactory::createQualifier(OW_XMLNode const& node)
 
 	if(!dt)
 	{
-		OW_String msg("Qualifier not assigned a data type: ");
-		msg += name;
-		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			format("Qualifier not assigned a data type: %1", name).c_str());
 	}
 
 	OW_CIMQualifierType cqt(OW_Bool(true));

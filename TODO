@@ -21,7 +21,7 @@ x Unload request handlers if not used after X minutes.
 
 - Binary Indications
 - clean up stale indication subscriptions
-- smaller schema for make check
+- smaller schema for make check.  create classes to exercise all aspects of mof and xml.
 - various make check components to have separate namespaces.
 - long and short versions of make check
 - CMPI (replace NPI)

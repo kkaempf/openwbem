@@ -45,6 +45,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMDataType.hpp"
+#include "OW_CIMMethod.hpp"
 #include "OW_Format.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
@@ -56,6 +57,14 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+
+//////////////////////////////////////////////////////////////////////////////
+// This program tries to get the CIMOM to produce each type of CIM error.
+// We don't try for CIM_ERR_ACCESS_DENIED because the aclTest does that.
+// We also don't try for CIM_ERR_FAILED, because that usually only happens when
+// the CIMOM has a really bad internal error (such as a full filesystem).
+/////////////////////////////////////////////////////////////////////////////
+
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -172,6 +181,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 
 	// GetInstance
+
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
@@ -213,6 +223,118 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
+
+
+	// DeleteClass
+	
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->deleteClass(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
+
+	// CIM_ERR_INVALID_PARAMETER - Can only be done with doctored XML
+
+	// CIM_ERR_NOT_FOUND
+	try
+	{
+		hdl->deleteClass(OW_CIMObjectPath("fooXXX", "root"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+
+
+	// CIM_ERR_CLASS_HAS_CHILDREN - Impossible to produce with OpenWBEM
+
+	// CIM_ERR_CLASS_HAS_INSTANCES - Impossible to produce with OpenWBEM
+
+
+	// DeleteInstance
+
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->deleteInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
+	// CIM_ERR_INVALID_PARAMETER - Can only be done with doctored XML
+
+	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("fooXXX", "root");
+		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->deleteInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
+	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMObjectPath cop("CIM_PhysicalElement", "root");
+		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
+		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->deleteInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+
+
+	// CreateClass
+
+	OW_CIMClass cc("footest");
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->createClass(cop, cc);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
+	// CIM_ERR_INVALID_PARAMETER - thrown from OW_MetaRepository::_throwIfBadClass() and OW_MetaRepository::adjustClass()
+	try
+	{
+		OW_CIMClass cc2(cc);
+		cc2.addMethod(OW_CIMMethod(""));
+		OW_CIMObjectPath cop("footest", "root");
+		hdl->createClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
+	// CIM_ERR_ALREADY_EXISTS
+	// CIM_ERR_INVALID_SUPERCLASS
 
 }
 

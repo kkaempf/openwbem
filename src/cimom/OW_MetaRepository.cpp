@@ -710,6 +710,8 @@ OW_MetaRepository::_resolveQualifiers(const OW_String& ns,
 		{
 			logError(format("Unable to find qualifier: %1",
 				quals[i].getName()));
+
+			// TODO: Throw a CIM_ERR_INVALID_PARAMETER ?
 		}
 	}
 }
@@ -795,7 +797,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			{
 				if (pqual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
 				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 						format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
 							"Child cannot override it.", pqual.getName()).c_str());
 				}
@@ -828,7 +830,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 				// keyed class.
 				if(parentClass.isKeyed())
 				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 						format("Parent class has keys. Child cannot have additional"
 							" key properties: %1", childClass.getName()).c_str());
 				}
@@ -864,7 +866,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
   // Don't allow the child class to be an association if the parent class isn't.
   if(childClass.isAssociation() && !parentClass.isAssociation())
   {
-	  OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+	  OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 		  format("Association class is derived from non-association class: %1",
 			  childClass.getName()).c_str());
   }

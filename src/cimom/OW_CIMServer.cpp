@@ -653,22 +653,34 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(path, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
+			if (rc == OW_CIMException::NOT_FOUND)
+			{
+				if (!m_nStore.nameSpaceExists(path.getNameSpace()))
+				{
+					rc = OW_CIMException::INVALID_NAMESPACE;
+				}
+			}
 			OW_THROWCIM(rc);
 		}
 
-		//if(m_iStore.classHasInstances(path))
-		//{
-		//	OW_THROWCIM(OW_CIMException::CLASS_HAS_INSTANCES);
-		//}
-
 		OW_String ns = path.getNameSpace();
 		OW_String cname = path.getObjectName();
+
+		// TODO: this doesn't work quite right.  what about associations to
+		// the instances we delete?  What about instances of subclasses?
+		// should this operation be atomic?  If something fails, how can we
+		// undo so as to not leave things in a weird state?
+
+		// delete the class and any subclasses
 		if(!m_mStore.deleteClass(ns, cname))
 		{
 			OW_THROWCIM(OW_CIMException::NOT_FOUND);
 		}
 
+		// delete any instances of the class
 		m_iStore.deleteClass(ns, cname);
+
+
 		OW_ASSERT(cc);
 		return cc;
 	}
@@ -692,7 +704,7 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 
 	if(cimClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS,
 			format("Creation of class %1 is not allowed",
 				cimClass.getName()).c_str());
 	}
