@@ -39,7 +39,6 @@
 #include <iosfwd>
 #include <exception>
 #include <new>
-#include "OW_AutoPtr.hpp"
 
 namespace OpenWBEM
 {
@@ -172,11 +171,15 @@ namespace ExceptionDetail
 
 	class FormatMsg
 	{
-		AutoPtr<FormatMsgImpl> pImpl;
+		// note: This used to be an AutoPtr, but the dumb HPUX aCC compiler instantiates it's destructor and won't compile it.
+		FormatMsgImpl* pImpl;
 	public:
 		FormatMsg(char const * msg, int errnum);
 		~FormatMsg();
 		char const * get() const;
+	private:
+		FormatMsg(const FormatMsg&);
+		FormatMsg& operator=(const FormatMsg&);
 	};
 
 	unsigned const BUFSZ = 1024;

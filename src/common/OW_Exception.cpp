@@ -276,6 +276,17 @@ Exception::setErrorCode(int errorCode)
 
 namespace ExceptionDetail
 {
+
+// HPUX has a thread safe strerror(), and has deprecated strerror_r() so we'll just use strerror()
+#if defined(OW_HPUX)
+
+	void portable_strerror_r(int errnum, char * buf, unsigned n)
+	{
+		::strncpy(buf, strerror(errnum), n);
+		buf[n-1] = '\0'; // just in case...
+	}
+
+#else
 	typedef int (*posix_fct)(int, char *, ::std::size_t);
 	typedef char * (*gnu_fct)(int, char *, ::std::size_t);
 
@@ -323,6 +334,7 @@ namespace ExceptionDetail
 		}
 		buf[n-1] = '\0'; // just in case...
 	}
+#endif
 
 	struct FormatMsgImpl
 	{
@@ -332,14 +344,23 @@ namespace ExceptionDetail
 	FormatMsg::FormatMsg(char const * msg, int errnum)
 		: pImpl(new FormatMsgImpl)
 	{
-		char arr[BUFSZ];
-		portable_strerror_r(errnum, arr, BUFSZ);
-		char const * sarr = static_cast<char const *>(arr);
-		pImpl->fm = Format("%1: %2(%3)", msg, errnum, sarr).toString();
+		try
+		{
+			char arr[BUFSZ];
+			portable_strerror_r(errnum, arr, BUFSZ);
+			char const * sarr = static_cast<char const *>(arr);
+			pImpl->fm = Format("%1: %2(%3)", msg, errnum, sarr).toString();
+		}
+		catch (...)
+		{
+			delete pImpl;
+			throw;
+		}
 	}
 
 	FormatMsg::~FormatMsg()
 	{
+		delete pImpl;
 	}
 
 	char const * FormatMsg::get() const
