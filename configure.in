@@ -662,7 +662,7 @@ then
     AC_MSG_RESULT("None")
   fi
 else
-  AC_MSG_RESULT("None (pkg-config not found)")
+  AC_MSG_RESULT("None \(pkg-config not found\)")
 fi
 
 dnl End of the ssl check
