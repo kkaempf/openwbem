@@ -24,6 +24,7 @@ Fix problems:
     - use DIST_SUBDIRS
     - enumClassNames is way too slow.
     - Fix assocName parameter in associator providers.  Change to OW_String and put it in the same order as in the spec.
+    - Verify that classes maintain their invariant.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -166,6 +167,7 @@ Documentation:
       - Copy semantics
       - Thread safety
       - Exception safety
+    - Define/document invariants for classes (especially OW_CIM*)
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
