@@ -39,6 +39,9 @@
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 
+// TODO: Remove this
+#include "OW_String.hpp"
+
 namespace OpenWBEM
 {
 
@@ -65,7 +68,8 @@ public:
 	 * @return An String representing this CIMElement.
 	 */
 	virtual String toString() const;
-	/*
+	
+	// TODO: Deprecate these
 	int compare(const CIMElement& arg)
 	{
 		return getName().compareToIgnoreCase(arg.getName());
@@ -82,7 +86,7 @@ public:
 	{
 		return compare(arg) != 0;
 	}
-	*/
+
 };
 
 } // end namespace OpenWBEM
