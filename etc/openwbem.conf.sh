@@ -156,6 +156,14 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.polling_manager_max_threads = 256
 
 ################################################################################
+# owcimomd.max_indication_export_threads specifies the maximum number of 
+# concurrent threads to export indications that will be allowed to run by the 
+# indication server.
+# This may need to be increased if a lot of indications are being exported.
+# The default is 30
+;owcimomd.max_indication_export_threads = 30
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option

@@ -160,6 +160,11 @@
 #define OW_DEFAULT_HTTP_TIMEOUT "300"
 #endif
 
+#ifndef OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS
+#define OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS "30"
+#endif
+
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -209,9 +214,10 @@ namespace OW_ConfigOpts
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
  	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
-    static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
+	static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
+	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
 };
 
 #endif
