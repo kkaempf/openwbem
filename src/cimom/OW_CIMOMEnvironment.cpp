@@ -606,7 +606,7 @@ OW_CIMOMEnvironment::getWQLRef()
 		}
     }
 
-	return  OW_WQLIFCRef(m_wqlLib, OW_SafeLibCreate<OW_WQLIFC>::createObj(
+	return  OW_WQLIFCRef(m_wqlLib, OW_SafeLibCreate<OW_WQLIFC>::create(
 		m_wqlLib, "createWQL", m_Logger));
 }
 
@@ -648,7 +648,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 		}
 
 		OW_IndicationRepLayer* pirep =
-			OW_SafeLibCreate<OW_IndicationRepLayer>::createObj(
+			OW_SafeLibCreate<OW_IndicationRepLayer>::create(
 				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
 
 		if(pirep)

@@ -81,7 +81,7 @@ public:
 		T* ptr = 0;
 		if ( !sl.isNull() )
 		{
-			ptr = createObj(sl, createFuncName, logger);
+			ptr = create(sl, createFuncName, logger);
 		}
 		else
 		{
@@ -92,78 +92,6 @@ public:
 		return return_obj(sl, ptr);
 	}
 
-	static T*
-	createObj(OW_SharedLibraryRef sl, OW_String const& createFuncName,
-		const OW_LoggerRef& logger)
-	{
-		try
-		{
-			int sigtype;
-			OW_SignalScope r1( SIGFPE,  theSignalHandler );
-			OW_SignalScope r3( SIGSEGV, theSignalHandler );
-			OW_SignalScope r4( SIGBUS,  theSignalHandler );
-			OW_SignalScope r5( SIGABRT, theSignalHandler );
-			sigtype = setjmp(theLoaderBuf);
-			if ( sigtype == 0 )
-			{
-				versionFunc_t versFunc;
-				if (!OW_SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
-				{
-					logger->logError("safeLibCreate::create failed getting"
-						" function pointer to \"getOWVersion\" from library");
-	
-					return 0;
-				}
-	
-				const char* strVer = (*versFunc)();
-				if(strcmp(strVer, OW_VERSION))
-				{
-					logger->logError("safeLibCreate::create -"
-						" Invalid version returned from \"getOWVersion\"");
-					return 0;
-				}
-				else
-				{
-					createFunc_t createFunc;
-					if (!OW_SharedLibrary::getFunctionPointer( sl, createFuncName
-						, createFunc ))
-					{
-						logger->logError("safeLibCreate::create failed"
-							" getting function pointer to \"createWQL\" from"
-							" library");
-	
-						return 0;
-					}
-	
-					T* ptr = (*createFunc)();
-					return ptr;
-				}
-			}
-			else
-			{
-				logger->logError("safeLibCreate::create setjmp call"
-					" failed");
-	
-				return 0;
-			}
-		}
-		catch(OW_Exception& e)
-		{
-			logger->logError("safeLibCreate::create");
-			logger->logError(format("File: %1", e.getFile()));
-			logger->logError(format("Line: %1", e.getLine()));
-			logger->logError(format("Msg: %1", e.getMessage()));
-		}
-		catch (...)
-		{
-			logger->logError("safeLibCreate::create caught unknown"
-				" exception");
-		}
-	
-		return 0;
-	}
-
-	// OLD
 	static T*
 	create(OW_SharedLibraryRef sl, OW_String const& createFuncName,
 		const OW_LoggerRef& logger)
@@ -203,9 +131,9 @@ public:
 					if (!OW_SharedLibrary::getFunctionPointer( sl, createFuncName
 						, createFunc ))
 					{
-						logger->logError("safeLibCreate::create failed"
-							" getting function pointer to \"createWQL\" from"
-							" library");
+						logger->logError(format("safeLibCreate::create failed"
+							" getting function pointer to \"%1\" from"
+							" library", createFuncName));
 	
 						return 0;
 					}

@@ -43,8 +43,8 @@ OW_ProviderIFCBaseIFCRef
 OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const OW_String& libname) const
 {
-	/*
-	m_env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
+	m_env->getLogger()->logDebug(format(
+		"OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 
 	OW_SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
@@ -53,7 +53,8 @@ OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	OW_ProviderIFCBaseIFC* ptr = 0;
 	if ( !sl.isNull() )
 	{
-		ptr = safeCreateIFC(sl);
+		ptr = OW_SafeLibCreate<OW_ProviderIFCBaseIFC>::create(sl,
+                "createProviderIFC", m_env->getLogger());
 	}
 	else
 	{
@@ -61,99 +62,9 @@ OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
 
-	ifc_lib_pair retval;
-	retval.first = ptr;
-	retval.second = sl;
+	OW_ProviderIFCBaseIFCRef retval(sl, ptr);
 	return retval;
-	*/
-	return OW_SafeLibCreate<OW_ProviderIFCBaseIFC>::loadAndCreateObject(libname,"createProviderIFC", m_env->getLogger());
 }
-
-//////////////////////////////////////////////////////////////////////////////
-/*
-OW_ProviderIFCBaseIFC*
-OW_ProviderIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
-{
-	m_env->getLogger()->logDebug("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC called");
-
-	try
-	{
-		int sigtype;
-		OW_SignalScope r1( SIGFPE, &providerIFCLoaderSignalHandler );
-		OW_SignalScope r3( SIGSEGV, &providerIFCLoaderSignalHandler );
-		OW_SignalScope r4( SIGBUS,  &providerIFCLoaderSignalHandler);
-		OW_SignalScope r5( SIGABRT, &providerIFCLoaderSignalHandler );
-		sigtype = setjmp(ifcLoaderBuf);
-		if ( sigtype == 0 )
-		{
-			versionFunc_t versFunc;
-			if(!OW_SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
-			{
-				m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC failed getting"
-					" function pointer to \"getOWVersion\" from library");
-
-				return 0;
-			}
-
-			const char* strVer = (*versFunc)();
-			if(strcmp(strVer, OW_VERSION))
-			{
-				m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC -"
-					" Invalid version returned from \"getOWVersion\"");
-				return 0;
-			}
-			else
-			{
-				createFunc_t createFunc;
-				if (!OW_SharedLibrary::getFunctionPointer( sl, "createProviderIFC", createFunc ))
-				{
-					m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
-						" failed getting function pointer to"
-						" \"createProviderIFC\" from library");
-
-					return 0;
-				}
-
-				OW_ProviderIFCBaseIFC* ptr = (*createFunc)();
-
-				if (ptr->signature != 0xABCDEFA0)
-				{
-					m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
-						" encountered invalid signature on OW_ProviderIFCBaseIFC"
-						" object");
-
-					return 0;
-				}
-				return ptr;
-			}
-		}
-		else
-		{
-			m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC setjmp"
-				" called failed");
-
-			return 0;
-		}
-	}
-	catch(OW_Exception& e)
-	{
-		m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
-			" OW_HDBException:");
-
-		m_env->getLogger()->logError(format("File: %1", e.getFile()));
-		m_env->getLogger()->logError(format("Line: %1", e.getLine()));
-		m_env->getLogger()->logError(format("Msg: %1", e.getMessage()));
-	}
-	catch (...)
-	{
-		m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC caught unknown"
-			" exception");
-	}
-
-	return 0;
-}
-*/
-
 
 //////////////////////////////////////////////////////////////////////////////
 void
