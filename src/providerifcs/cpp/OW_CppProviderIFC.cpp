@@ -548,10 +548,11 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 		return CppProviderBaseIFCRef();
 	}
 
+	CppProviderBaseIFCRef rval(theLib, pProv);
+
 	logger->logDebug(Format("C++ provider ifc successfully loaded"
 		" library %1 for provider %2", libName, provId));
 
-	CppProviderBaseIFCRef rval(theLib, pProv);
 	return rval;
 }
 
@@ -562,8 +563,7 @@ CppProviderIFC::getProvider(
 	StoreProviderFlag storeP, InitializeProviderFlag initP)
 {
 	MutexLock ml(m_guard);
-	String libName;
-	SharedLibraryRef theLib;
+
 	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
 	if(it != m_provs.end())
@@ -571,16 +571,9 @@ CppProviderIFC::getProvider(
 		return it->second;
 	}
 
-	SharedLibraryLoaderRef ldr =
-		SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
-	{
-		env->getLogger()->logError("C++ provider ifc FAILED to get shared"
-			" lib loader");
-		return CppProviderBaseIFCRef();
-	}
+	String libName;
+	CppProviderBaseIFCRef rval;
 
-	CppProviderBaseIFC* pProv = 0;
 	String libPathsStr = env->getConfigItem(
 		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
 	StringArray paths = libPathsStr.tokenize(";:");
@@ -600,75 +593,20 @@ CppProviderIFC::getProvider(
 		env->getLogger()->logDebug(Format("CppProviderIFC::getProvider loading"
 			" library: %1", libName));
 
-		theLib = ldr->loadSharedLibrary(libName, env->getLogger());
+		rval = loadProvider(libName, env->getLogger());
 
-		if(theLib.isNull())
-		{
-			env->getLogger()->logError(
-				"****************************************");
-			env->getLogger()->logError(Format("C++ provider ifc failed to load"
-				" library: %1 for provider id %2. Skipping.", libName, provId));
-			env->getLogger()->logError(
-				"****************************************");
-			continue;
-		}
-
-		versionFunc_t versFunc;
-		if (!theLib->getFunctionPointer("getOWVersion", versFunc))
-		{
-			env->getLogger()->logError(
-				"****************************************");
-			env->getLogger()->logError(Format("C++ provider ifc failed getting"
-				" function pointer to \"getOWVersion\" from library %1."
-				" Skipping.", libName));
-			env->getLogger()->logError(
-				"****************************************");
-			continue;
-		}
-		const char* strVer = (*versFunc)();
-		if(strcmp(strVer, OW_VERSION))
-		{
-			env->getLogger()->logError(
-				"****************************************");
-			env->getLogger()->logError(Format("C++ provider ifc got invalid"
-				" version from provider: %1. Skipping", libName));
-			env->getLogger()->logError(
-				"****************************************");
-			continue;
-		}
-		ProviderCreationFunc createProvider;
-		String creationFuncName = String(CREATIONFUNC) + provId;
-		if(!theLib->getFunctionPointer(creationFuncName, createProvider))
-		{
-			env->getLogger()->logError(
-				"****************************************");
-			env->getLogger()->logError(Format("C++ provider ifc: Libary %1 does"
-				" not contain %2 function. Skipping.",
-				libName, creationFuncName));
-			env->getLogger()->logError(
-				"****************************************");
-			continue;
-		}
-
-		if((pProv = (*createProvider)()))
+		if(rval)
 		{
 			break;
 		}
 
-		env->getLogger()->logError(
-			"****************************************");
-		env->getLogger()->logError(Format("C++ provider ifc: Libary %1 -"
-			" %2 returned null provider. Skipping.",
-			libName, creationFuncName));
-		env->getLogger()->logError(
-			"****************************************");
 	}
 
-	if(!pProv)
+	if (!rval)
 	{
-		env->getLogger()->logError(Format("!!! C++ provider ifc FAILED to find"
-			" provider %1. Not Loaded !!!", provIdString));
-		return CppProviderBaseIFCRef();
+		env->getLogger()->logError(Format("C++ provider ifc failed to load"
+			" library: %1 for provider id %2. Skipping.", libName, provId));
+		return rval;
 	}
 
 	env->getLogger()->logDebug(Format("C++ provider ifc successfully loaded"
@@ -679,7 +617,7 @@ CppProviderIFC::getProvider(
 		env->getLogger()->logDebug(Format("C++ provider ifc calling initialize"
 			" for provider %1", provId));
 
-		pProv->initialize(env);	// Let provider initialize itself
+		rval->initialize(env); // Let provider initialize itself
 
 		env->getLogger()->logDebug(Format("C++ provider ifc: provider %1"
 			" loaded and initialized", provId));
@@ -690,7 +628,6 @@ CppProviderIFC::getProvider(
 			" loaded but not initialized", provId));
 	}
 
-	CppProviderBaseIFCRef rval(theLib, pProv);
 	if (storeP == storeProvider)
 	{
 		m_provs[provId] = rval;
