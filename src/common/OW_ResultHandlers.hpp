@@ -31,6 +31,7 @@
 #define OW_RESULT_HANDLERS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_StringEnumeration.hpp"
 
 namespace OpenWBEM
 {

@@ -29,6 +29,12 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_ResultHandlers.hpp"
+#include "OW_Array.hpp"
+#include "OW_Enumeration.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 namespace OpenWBEM
 {
@@ -155,6 +161,5 @@ CIMQualifierTypeArrayBuilder::~CIMQualifierTypeArrayBuilder()
 
 } // end namespace OpenWBEM
 
-#endif
 
 
