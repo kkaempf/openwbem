@@ -2224,12 +2224,16 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 	
 							if (i < propNames.size() - 1)
 							{
-								if (cp.getValue().getType() != CIMDataType::EMBEDDEDINSTANCE)
+								CIMValue v(cp.getValue());
+								if (v)
 								{
-									cp.setNull();
-									break;
+									if (v.getType() != CIMDataType::EMBEDDEDINSTANCE)
+									{
+										cp.setNull();
+										break;
+									}
+									v.get(curci);
 								}
-								cp.getValue().get(curci);
 							}
 						}
 					}
