@@ -76,13 +76,6 @@ void Usage()
 }
 
 
-
-// void usage(const char* cmd)
-// {
-//     cerr << "Usage: " << cmd << " -l <login_name> [-h <hostname>] "
-//         "-f <password_file> [-p <password>]" << endl;
-// }
-
 int main(int argc, char* argv[])
 {
 	try
@@ -122,7 +115,7 @@ int main(int argc, char* argv[])
 		if (!outfile)
 		{
 			cerr << "Unable to open password file " << filename << endl;
-			exit(1);
+			return 1;
 		}
 		
 		if (passwd.empty())
