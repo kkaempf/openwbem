@@ -33,6 +33,9 @@
 
 #include "OW_config.h"
 #include "OW_String.hpp"
+#include "OW_Exception.hpp"
+
+DECLARE_EXCEPTION(UUID);
 
 /**
  * UUIDs (Universally Unique IDentifiers), also known as GUIDs (Globally Unique 
@@ -91,7 +94,7 @@ public:
 
 
 private:
-	char m_uuid[16];
+	unsigned char m_uuid[16];
 
 	friend bool operator==(const OW_UUID& x, const OW_UUID& y);
 	friend bool operator<(const OW_UUID& x, const OW_UUID& y);
