@@ -54,6 +54,9 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
+namespace
+{
+
 //////////////////////////////////////////////////////////////////////////////
 class UtilKeyArray
 {
@@ -103,6 +106,7 @@ UtilKeyArray::toString(const String& className)
 	}
 	return rv.releaseString();
 }
+} // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
 String
 InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
@@ -320,9 +324,9 @@ InstanceRepository::getCIMInstance(
 	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	
 	// only filter if we need to
-	if (propertyList 
-		|| localOnly == E_LOCAL_ONLY 
-		|| includeQualifiers == E_EXCLUDE_QUALIFIERS 
+	if (propertyList
+		|| localOnly == E_LOCAL_ONLY
+		|| includeQualifiers == E_EXCLUDE_QUALIFIERS
 		|| includeClassOrigin == E_EXCLUDE_CLASS_ORIGIN)
 	{
 		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
