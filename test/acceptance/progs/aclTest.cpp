@@ -52,6 +52,7 @@
 #include "OW_CIMParamValue.hpp"
 
 #include <iostream>
+#include <cassert>
 
 
 using std::cerr;
