@@ -34,9 +34,6 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 
-// TODO: Create a configure test for bsd sockets and use that for a test here.
-//#if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX) || defined(OW_SOLARIS) || defined(OW_OPENSERVER)
-
 extern "C"
 {
 #include <unistd.h>
@@ -75,7 +72,5 @@ typedef unsigned socklen_t;
 #endif
 #endif
 
-
-//#endif //  #if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX)
 
 #endif

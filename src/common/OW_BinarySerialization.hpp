@@ -123,11 +123,7 @@ const OW_UInt8 OW_END_INSTENUM =		152;
 const OW_UInt8 OW_END_QUALENUM =		153;
 
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////
-// TODO: Refactor this and put these in a more common place, since they're used in more than just the binary protocol
 namespace OW_BinarySerialization
 {
 

@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_ConfigOpts.hpp"
-#include "OW_OS.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_BinaryRequestHandler.hpp"
 #include "OW_BinarySerialization.hpp"
@@ -41,6 +40,15 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+
+extern "C"
+{
+#include <unistd.h>
+#include <pwd.h>
+#include <sys/types.h>
+}
 
 #include <exception>
 
@@ -81,6 +89,42 @@ OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
 	cf.validation.erase();
 }
 
+static OW_Mutex g_pwdLock;
+
+//////////////////////////////////////////////////////////////////////////////
+static OW_Bool
+getUserId(const OW_String& userName, OW_UserId& userId)
+{
+	OW_MutexLock ml(g_pwdLock);
+	OW_Bool rv = false;
+	struct passwd* pwd;
+	pwd = ::getpwnam(userName.c_str());
+	if(pwd)
+	{
+		userId = pwd->pw_uid;
+		rv = true;
+	}
+	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static OW_Bool
+getUserName(const OW_UserId& userId, OW_String& userName)
+{
+	OW_MutexLock ml(g_pwdLock);
+	OW_Bool rv = false;
+	struct passwd* pwd;
+	pwd = ::getpwuid(userId);
+	if(pwd)
+	{
+		userName = pwd->pw_name;
+		rv = true;
+	}
+	return rv;
+}
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
@@ -94,7 +138,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	}
 	if(!userName.empty())
 	{
-		if(!OW_OS::getUserId(userName, m_userId))
+		if(!getUserId(userName, m_userId))
 		{
 			m_userId = OW_UserId(-1);
 		}
