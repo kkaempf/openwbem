@@ -598,6 +598,10 @@ SocketBaseImpl::waitForInput(int timeOutSecs)
 	{
 		m_recvTimeoutExprd = true;
 	}
+	else
+	{
+		m_recvTimeoutExprd = false;
+	}
 	return (rval != 0);
 }
 //////////////////////////////////////////////////////////////////////////////
