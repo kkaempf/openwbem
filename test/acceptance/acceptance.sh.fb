@@ -146,7 +146,7 @@ CreateNameSpace()
 StartDaemon()
 {
 	echo "Starting owcimomd..."
-	if [ $OWVALGRIND = "1" ]; then
+	if [ "$OWVALGRIND" = "1" ]; then
 		valgrind \
 			--leak-check=yes \
 			--error-limit=no \
@@ -165,7 +165,7 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	if [ $OWVALGRIND = "1" ]; then
+	if [ "$OWVALGRIND" = "1" ]; then
 		sleep 30
 	else
 		sleep 3
@@ -204,7 +204,7 @@ RestartDaemon()
         fi
 	fi
 	echo "Waiting for daemon to re-initialize"
-	if [ $OWVALGRIND = "1" ]; then
+	if [ "$OWVALGRIND" = "1" ]; then
 		sleep 30
 	else
 		sleep 4
@@ -235,7 +235,7 @@ StopDaemon()
 	  Exit 1
 	fi
 	kill -15 $PID # TERM
-	if [ $OWVALGRIND = "1" ]; then
+	if [ "$OWVALGRIND" = "1" ]; then
 		sleep 10
 	else
 		sleep 1
@@ -499,8 +499,8 @@ TestIndications()
 
 	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.so  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
+#	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.so  \
+#		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 
