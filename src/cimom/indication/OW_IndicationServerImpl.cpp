@@ -695,17 +695,31 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	}
 
 
+	// verify that there is an indication export provider that can handle the handler for the subscription
+	OW_CIMObjectPath handlerPath = subInst.getProperty("Handler").getValueT().toCIMObjectPath();
+	OW_String handlerClass = handlerPath.getObjectName();
+	if (!getProvider(handlerClass))
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "No indication export provider found for this subscription");
+	}
+
+	// call authorizeFilter on all the indication providers
+	for (size_t i = 0; i < providers.size(); ++i)
+	{
+		providers[i]->authorizeFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
+			selectStmt, selectStmt.getClassName(), ns, isaClassNames, ""); // TODO: figure out the user name
+	}
+
 	// create a subscription (save the compiled filter)
 	Subscription sub;
-
-	// verify that there is a provider that can handle the handler for the subscription
-
-	// call authorize on all the providers
+	//sub.m_subPath
 
 	// get the lock and put it in m_subscriptions
 
 	// call enableSubscription on all the providers
-	// enableSubscription calls fail or throw, just ignore it and keep going.  If none succeed, we need to throw to indicate that subscription creation failed.
+	// If enableSubscription calls fail or throw, just ignore it and keep going.
+	// If none succeed, we need to remove it from m_subscriptions and throw 
+	// to indicate that subscription creation failed.
 
 }
 

@@ -57,24 +57,24 @@ class OW_IndicationProviderTest1 : public OW_CppIndicationProviderIFC, public OW
 {
 public:
 	// Indication provider methods
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &) 
+	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest1::mustPoll");
 		// going to be lazy and make the cimom poll
 		return 1;
 	}
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
+	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest1::authorizeFilter");
 		// This is called when someone creates a subscription for an indication we generate.
 		// If we wanted to deny access and cause the subscription creation to fail, we would throw an OW_CIMException::ACCESS_DENIED exception here.  
 	}
-	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, bool) 
+	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, bool) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest1::activateFilter");
 		// this should never be called if we return > 0 from mustPoll
 	}
-	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, bool ) 
+	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, bool ) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest1::deActivateFilter");
 		// this should never be called if we return > 0 from mustPoll

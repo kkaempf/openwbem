@@ -240,7 +240,7 @@ private:
 				&lgr);						// Give cimom handle to callback
 			if(err != SLP_OK)
 			{
-				env->getLogger()->logError(format("cimom failed to registered url with SLP: %1",
+				env->getLogger()->logError(format("cimom failed to register url with SLP: %1",
 					urlString).c_str());
 			}
 			else

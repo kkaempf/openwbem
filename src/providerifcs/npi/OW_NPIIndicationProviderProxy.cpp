@@ -42,7 +42,8 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
 	bool lastActivation)
 {
 	env->getLogger()->logDebug("deactivateFilter");
@@ -56,7 +57,12 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
+
+		OW_CIMObjectPath mutablePath(true);
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
+
 		SelectExp exp = {&mutableFilter};
 		CIMObjectPath cop = {&mutablePath};
 
@@ -76,7 +82,8 @@ OW_NPIIndicationProviderProxy::activateFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
 	bool firstActivation)
 {
 	env->getLogger()->logDebug("activateFilter");
@@ -89,8 +96,12 @@ OW_NPIIndicationProviderProxy::activateFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
 		SelectExp exp = {&mutableFilter};
+		
+		OW_CIMObjectPath mutablePath(true);
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 		CIMObjectPath cop = {&mutablePath};
 
 		m_ftable->fp_activateFilter( &_npiHandle, exp, eventType.c_str(), cop, firstActivation);
@@ -109,7 +120,8 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
 	const OW_String &owner)
 {
 	env->getLogger()->logDebug("deactivateFilter");
@@ -123,8 +135,12 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
 		SelectExp exp = {&mutableFilter};
+		
+		OW_CIMObjectPath mutablePath(true);
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 		CIMObjectPath cop = {&mutablePath};
 
 		m_ftable->fp_authorizeFilter( &_npiHandle, exp, eventType.c_str(), cop, owner.c_str());
@@ -143,7 +159,8 @@ OW_NPIIndicationProviderProxy::mustPoll(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath)
+	const OW_String& nameSpace,
+	const OW_StringArray& classes)
 {
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
@@ -156,8 +173,13 @@ OW_NPIIndicationProviderProxy::mustPoll(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
 		SelectExp exp = {&mutableFilter};
+		
+		OW_CIMObjectPath mutablePath(true);
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
+
 		CIMObjectPath cop = {&mutablePath};
 
 		int rval = m_ftable->fp_mustPoll( &_npiHandle, exp, eventType.c_str(), cop);

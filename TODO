@@ -47,28 +47,28 @@ New features:
       X Indication providers must also indicate what class they are 
         instrumenting if they are a lifecycle type.
       X Add tests for provider manager getIndicationProvider
-      - Add example of types of indication providers: 
-        X indication (mustPoll = true) OW_IndicationProviderTest1
-        X indication (mustPoll = false) w/ extra thread
-        X indication/polled (mustPoll = false) and no extra thread.
-        - Remove OW_TriggerProviderTest*.
-        - Fix cimListener.cpp to use the new indication providers.
       X Add a command line event listener.
-      - OW_IndicationServerImpl::deleteSubscription
-      - OW_IndicationServerImpl::createSubscription
-        - Only allow subscriptions if a) There is a provider capable of
-          generating the requested Indication in the filter. And
-          b) There is a provider that can handle the requested 
-             IndicationHandler.
       X polled providers need a way to indicate they provide indications.
         I decided that the way for them to do that is to implement the
         OW_CppIndicationProviderIFC.  A "pure" polled provider should not
         deliver indications.
       X Indication/polled providers need a way to stop/restart polling.
         To stop: return 0 from poll().  To start: call addPolledProvider().
+      X OW_IndicationServerImpl::deleteSubscription
+      - OW_IndicationServerImpl::createSubscription
+        - Only allow subscriptions if a) There is a provider capable of
+          generating the requested Indication in the filter. And
+          b) There is a provider that can handle the requested 
+             IndicationHandler.
       - OW_IndicationServerImpl::modifySubscription
       - OW_IndicationServerImpl::_processIndication
         - Create a wql filter property source.
+      - Add example of types of indication providers: 
+        X indication (mustPoll = true) OW_IndicationProviderTest1
+        X indication (mustPoll = false) w/ extra thread
+        X indication/polled (mustPoll = false) and no extra thread.
+        - Remove OW_TriggerProviderTest*.
+        - Fix cimListener.cpp to use the new indication providers.
       - OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
     - Add an option to the mof compiler to output provider skeleton code for

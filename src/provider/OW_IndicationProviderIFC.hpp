@@ -50,7 +50,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
 		bool firstActivation
 		) = 0;
 
@@ -58,7 +59,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
 		const OW_String& owner
 		) = 0;
 
@@ -66,7 +68,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
 		bool lastActivation
 		) = 0;
 
@@ -91,7 +94,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath
+		const OW_String& nameSpace,
+		const OW_StringArray& classes
 		) = 0;
 
 

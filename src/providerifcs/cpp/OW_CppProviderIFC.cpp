@@ -592,6 +592,8 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 		if (provDt < dt)
 		{
 			env->getLogger()->logCustInfo(format("Unloading Provider %1", iter->first));
+			iter->second->cleanup();
+			iter->second.setNull();
 			m_provs.erase(iter++);
 		}
 		else

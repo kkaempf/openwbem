@@ -77,7 +77,7 @@ public:
 	}
 
 	// Indication provider methods
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &) 
+	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest3::mustPoll");
 		// if this were a real provider, we should check that we can really understand the select statement.  If our thread can't generate the correct indications, then we
@@ -85,7 +85,7 @@ public:
 		return 0; // means don't poll enumInstances.
 	}
 
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
+	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest3::authorizeFilter");
 		// This is called when someone creates a subscription for an indication we generate.
@@ -96,7 +96,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& /*nameSpace*/,
+		const OW_StringArray& classes, 
 		bool firstActivation)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest3::activateFilter");
@@ -122,9 +123,9 @@ public:
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest3 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest3)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest3"))
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") != classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
@@ -146,7 +147,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& /*nameSpace*/,
+		const OW_StringArray& classes, 
 		bool lastActivation)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest3::deActivateFilter");
@@ -172,9 +174,9 @@ public:
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest3 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest3)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest3"))
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") != classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");

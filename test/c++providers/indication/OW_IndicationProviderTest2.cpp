@@ -45,6 +45,8 @@
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
 
+#include <iostream>
+
 // anonymous namespace to prevent library symbol conflicts
 namespace
 {
@@ -144,7 +146,7 @@ class OW_IndicationProviderTest2 : public OW_CppIndicationProviderIFC, public OW
 {
 public:
 	// Indication provider methods
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &) 
+	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::mustPoll");
 		// if this were a real provider, we should check that we can really understand the select statement.  If our thread can't generate the correct indications, then we
@@ -152,7 +154,7 @@ public:
 		return 0; // means don't poll enumInstances.
 	}
 
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
+	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::authorizeFilter");
 		// This is called when someone creates a subscription for an indication we generate.
@@ -163,7 +165,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& /*nameSpace*/,
+		const OW_StringArray& classes, 
 		bool firstActivation)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::activateFilter");
@@ -189,9 +192,9 @@ public:
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest2)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest2"))
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest2")
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") != classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
@@ -204,6 +207,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (firstActivation)
 		{
+			env->getLogger()->logDebug("OW_IndicationProviderTest2::activateFilter starting helper thread");
 			m_thread->start();
 		}
 	}
@@ -212,7 +216,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
+		const OW_String& /*nameSpace*/,
+		const OW_StringArray& classes, 
 		bool lastActivation)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter");
@@ -238,9 +243,9 @@ public:
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest2)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest2"))
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest2")
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") != classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
@@ -253,8 +258,10 @@ public:
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation)
 		{
+			env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
+			env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter helper thread stopped");
 		}
 	}
 
@@ -382,16 +389,22 @@ public:
 
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
 	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest2::initialize - creating the thread");
 		m_thread = new OW_TestProviderThread(env->getCIMOMHandle());
 	}
 
 	virtual void cleanup() 
 	{
+		using std::cout;
+		using std::endl;
 		// we've got to stop the thread we started
+		cout << "OW_IndicationProviderTest2::cleanup" << endl;
 		if (m_thread->isRunning())
 		{
+			cout << "OW_IndicationProviderTest2::cleanup - stopping thread" << endl;
 			m_thread->shutdown();
 			m_thread->join();
+			cout << "OW_IndicationProviderTest2::cleanup - thread stopped" << endl;
 		}
 	}
 
