@@ -137,7 +137,9 @@ private:
 	void loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		OpenWBEM::InstanceProviderInfoArray& i,
 		OpenWBEM::SecondaryInstanceProviderInfoArray& si,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OpenWBEM::AssociatorProviderInfoArray& a,
+#endif
 		OpenWBEM::MethodProviderInfoArray& m,
 		OpenWBEM::IndicationProviderInfoArray& ind);
 	

@@ -187,11 +187,13 @@ namespace
 		//TODO:
 		return OpenWBEM::SecondaryInstanceProviderInfo();
 	}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OpenWBEM::AssociatorProviderInfo convertAssociatorProviderInfo(const OWBI1::AssociatorProviderInfo& in)
 	{
 		//TODO:
 		return OpenWBEM::AssociatorProviderInfo();
 	}
+#endif
 	OpenWBEM::MethodProviderInfo convertMethodProviderInfo(const OWBI1::MethodProviderInfo& in)
 	{
 		//TODO:
@@ -298,13 +300,11 @@ BI1ProviderIFC::doInit(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 	OpenWBEM::MethodProviderInfoArray& m,
 	OpenWBEM::IndicationProviderInfoArray& ind)
 {
-#ifdef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	OpenWBEM::AssociatorProviderInfoArray a;
-#endif
-
 	loadProviders(env, i,
 		si,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		a,
+#endif
 		m,
 		ind);
 }
@@ -472,7 +472,9 @@ void
 BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 	OpenWBEM::InstanceProviderInfoArray& instanceProviderInfo,
 	OpenWBEM::SecondaryInstanceProviderInfoArray& secondaryInstanceProviderInfo,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OpenWBEM::AssociatorProviderInfoArray& associatorProviderInfo,
+#endif
 	OpenWBEM::MethodProviderInfoArray& methodProviderInfo,
 	OpenWBEM::IndicationProviderInfoArray& indicationProviderInfo)
 {
@@ -612,6 +614,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 				secondaryInstanceProviderInfo.push_back(convertSecondaryInstanceProviderInfo(info));
 			}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			BI1AssociatorProviderIFC* p_ap = p->getAssociatorProvider();
 			if (p_ap)
 			{
@@ -620,6 +623,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 				p_ap->getAssociatorProviderInfo(info);
 				associatorProviderInfo.push_back(convertAssociatorProviderInfo(info));
 			}
+#endif
 
 			BI1MethodProviderIFC* p_mp = p->getMethodProvider();
 			if (p_mp)
