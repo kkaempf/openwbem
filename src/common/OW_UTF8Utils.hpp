@@ -31,11 +31,16 @@
 #define OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
+#include "OW_ArrayFwd.hpp"
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
 
 class String;
+
+OW_DECLARE_EXCEPTION(InvalidUTF8);
+
 namespace UTF8Utils
 {
 /**
@@ -74,7 +79,7 @@ UInt32 UTF8toUCS4(const char* utf8char);
  */
 String UCS4toUTF8(UInt32 ucs4char);
 /**
- * Compares 2 UTF8 strings, ignoring any case differences as defined by the
+ * Compares 2 UTF-8 strings, ignoring any case differences as defined by the
  * Unicode spec CaseFolding.txt file.
  * @param str1 first string
  * @param str2 second string
@@ -82,6 +87,13 @@ String UCS4toUTF8(UInt32 ucs4char);
  * be less than, equal to, or greater than str2
  */
 int compareToIgnoreCase(const char* str1, const char* str2);
+/**
+ * Convert a UTF-8 (or ASCII) string into a UCS2 string
+ * @param input The UTF-8 string
+ * @return An Array of UCS2 characters
+ * @throws InvalidUTF8Exception if input contains invalid UTF-8 characters.
+ */
+Array<UInt16> StringToUCS2(const String& input);
 
 } // end namespace UTF8Utils
 

@@ -39,9 +39,15 @@
 #include "OW_UTF8Utils.hpp"
 #include "OW_String.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Array.hpp"
+#include "OW_Format.hpp"
+
+#include <string.h> // for strlen
 
 namespace OpenWBEM
 {
+
+OW_DEFINE_EXCEPTION(InvalidUTF8);
 
 namespace UTF8Utils
 {
@@ -112,24 +118,8 @@ UInt16 UTF8toUCS2(const char* utf8char)
 /////////////////////////////////////////////////////////////////////////////
 String UCS2toUTF8(UInt16 ucs2char)
 {
-	char rval[4] = {0,0,0,0};
-	if(ucs2char < 0x80u)
-	{
-		// one byte
-		rval[0] = static_cast<char>(static_cast<UInt8>(ucs2char));
-	}
-	else if(ucs2char < 0x800u)
-	{
-		rval[0] = static_cast<char>(static_cast<UInt8>(0xc0u | (ucs2char >> 6)));
-		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs2char & 0x3fu)));
-	}
-	else // if(ucs2char < 0x10000u) - always true
-	{
-		rval[0] = static_cast<char>(static_cast<UInt8>(0xe0u | (ucs2char >> 12)));
-		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs2char >> 6) & 0x3fu)));
-		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs2char & 0x3fu)));
-	}
-	return rval;
+	// UCS2 and UCS4 are the same, only different sizes.
+	return UCS4toUTF8(ucs2char);
 }
 /////////////////////////////////////////////////////////////////////////////
 UInt32 UTF8toUCS4(const char* utf8char)
@@ -211,6 +201,74 @@ String UCS4toUTF8(UInt32 ucs4char)
 	}
 	return rval;
 }
+
+/////////////////////////////////////////////////////////////////////////////
+Array<UInt16> StringToUCS2(const String& input)
+{
+	// TODO: Remove the duplication between this function and UTF8toUCS2()
+	Array<UInt16> rval;
+	OW_ASSERT(input.length() == ::strlen(input.c_str()));
+	const char* begin = input.c_str();
+	const char* end = begin + input.length();
+
+	const char* p = begin;
+	while (p < end)
+	{
+		const UInt32 c0 = static_cast<UInt8>(p[0]);
+		switch (SequenceLengthTable[c0])
+		{
+			case 1:
+			{
+				rval.push_back(c0);
+				++p;
+			}
+			break;
+			case 2:
+			{
+				// check for short (invalid) utf8 sequence
+				if (p[1] == '\0')
+					OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				const UInt32 c1 = static_cast<UInt8>(p[1]);
+				rval.push_back(((c0 & 0x1fu) << 6) | (c1 & 0x3fu));
+				p += 2;
+			}
+			break;
+			case 3:
+			{
+				// check for short (invalid) utf8 sequence
+				if (p[1] == '\0' || p[2] == '\0')
+					OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				const UInt32 c1 = static_cast<UInt8>(p[1]);
+				const UInt32 c2 = static_cast<UInt8>(p[2]);
+				rval.push_back(((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu));
+				p += 3;
+			}
+			break;
+			case 4:
+			{
+				// UCS2 can't hold a value this big
+				OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+
+				// check for short (invalid) utf8 sequence
+//                     if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
+//                         return bad;
+//
+//                     const UInt32 c1 = static_cast<UInt8>(p[1]);
+//                     const UInt32 c2 = static_cast<UInt8>(p[2]);
+//                     const UInt32 c3 = static_cast<UInt8>(p[3]);
+//
+//                     return ((c0 & 0x03u) << 18) | ((c1 & 0x3fu) << 12) | ((c2 & 0x3fu) << 6) | (c3 & 0x3fu);
+			}
+			break;
+			default:
+			{
+				OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+			}
+		}
+	}
+	return rval;
+}
+
 } // end namespace OW_UTF8Utils
 
 } // end namespace OpenWBEM
