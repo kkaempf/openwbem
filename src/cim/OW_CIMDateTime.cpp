@@ -321,7 +321,9 @@ static void
 fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 {
 	if(str == NULL || *str == '\0')
+	{
 		return;
+	}
 	char bfr[35];
 	::strncpy(bfr, str, sizeof(bfr));
 	bfr[34] = '\0';

@@ -219,9 +219,13 @@ CIMObjectPath::keyHasValue(const String& name) const
 	{
 		CIMValue v = p.getValue();
 		if (v)
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 	}
 	return false;
 }

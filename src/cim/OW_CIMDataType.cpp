@@ -213,7 +213,9 @@ bool
 CIMDataType::syncWithValue(const CIMValue& value)
 {
 	if(!value && !(*this))
+	{
 		return false;
+	}
 	bool rv(false);
 	if(!m_pdata)
 	{
@@ -361,37 +363,69 @@ CIMDataType::strToSimpleType(const String& strType)
 	OW_String strType(strType_);
 	strType.toLowerCase();
 	if(strType == "uint8")
+	{
 		return UINT8;
+	}
 	else if(strType == "sint8")
+	{
 		return SINT8;
+	}
 	else if(strType == "uint16")
+	{
 		return UINT16;
+	}
 	else if(strType == "sint16")
+	{
 		return SINT16;
+	}
 	else if(strType == "uint32")
+	{
 		return UINT32;
+	}
 	else if(strType == "sint32")
+	{
 		return SINT32;
+	}
 	else if(strType == "uint64")
+	{
 		return UINT64;
+	}
 	else if(strType == "sint64")
+	{
 		return SINT64;
+	}
 	else if(strType == "real64")
+	{
 		return REAL64;
+	}
 	else if(strType == "real32")
+	{
 		return REAL32;
+	}
 	else if(strType == "char16")
+	{
 		return CHAR16;
+	}
 	else if(strType == "string")
+	{
 		return STRING;
+	}
 	else if(strType == "boolean")
+	{
 		return BOOLEAN;
+	}
 	else if(strType == "datetime")
+	{
 		return DATETIME;
+	}
 	else if(strType == "ref")
+	{
 		return REFERENCE;
+	}
 	else if(strType == "reference")
+	{
 		return REFERENCE;
+	}
 	return INVALID;
 #endif
 // This function is heavily used, and needs to be as fast as possible, so it's

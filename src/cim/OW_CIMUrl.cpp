@@ -256,7 +256,9 @@ void
 CIMUrl::setComponents()
 {
 	if(m_pdata->m_spec.empty())
+	{
 		return;
+	}
 	String spec(m_pdata->m_spec);
 	m_pdata->m_protocol = String();
 	m_pdata->m_host = String();

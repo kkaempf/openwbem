@@ -211,7 +211,9 @@ CIMQualifierType::hasScope(const CIMScope& scopeArg) const
 		for(size_t i = 0; i < tsize; i++)
 		{
 			if(m_pdata->m_scope[i].getScope() == scopeArg.getScope())
+			{
 				return true;
+			}
 		}
 	}
 	return false;
@@ -226,7 +228,9 @@ CIMQualifierType::hasFlavor(const CIMFlavor& flavorArg) const
 		for(size_t i = 0; i < tsize; i++)
 		{
 			if(m_pdata->m_flavor[i].getFlavor() == flavorArg.getFlavor())
+			{
 				return true;
+			}
 		}
 	}
 	return false;

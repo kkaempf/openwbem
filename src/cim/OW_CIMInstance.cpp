@@ -254,14 +254,18 @@ CIMProperty
 CIMInstance::getProperty(const String& propertyName) const
 {
 	if(propertyName.empty())
+	{
 		return CIMProperty(CIMNULL);
+	}
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
 		String pname = cp.getName();
 		if(propertyName.equalsIgnoreCase(cp.getName()))
+		{
 			return(cp);
+		}
 	}
 	return CIMProperty(CIMNULL);
 }
@@ -296,9 +300,13 @@ CIMInstance::propertyHasValue(const String& name) const
 	{
 		CIMValue v = p.getValue();
 		if (v)
+		{
 			return true;
+		}
 		else
+		{
 			return false;
+		}
 	}
 	return false;
 }
