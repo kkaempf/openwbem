@@ -78,8 +78,12 @@ void AtomicDec(Atomic_t &v)
 } // end namespace OWBI1
 
 #elif defined(OWBI1_USE_OWBI1_DEFAULT_ATOMIC_OPS)
-#include "OWBI1_Mutex.hpp"
-#include "OWBI1_MutexLock.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+#include "OW_ThreadOnce.hpp"
 
 namespace OWBI1
 {
@@ -87,36 +91,34 @@ namespace OWBI1
 // this needs to be a pointer because of static initialization order conflicts.  
 // It shouldn't ever be deleted b/c it may be referenced by a destructor of a 
 // static variable that is being deleted.
-static Mutex* guard = 0;
+static OpenWBEM::Mutex* guard = 0;
+static OpenWBEM::OnceFlag g_once = OW_ONCE_INIT;
 static void initGuard()
 {
-	if (guard == 0)
-	{
-		guard = new Mutex();
-	}
+	guard = new OpenWBEM::Mutex();
 }
 void AtomicInc(Atomic_t &v)
 {
-	initGuard();
-	MutexLock lock(*guard);
+	OpenWBEM::callOnce(g_once, initGuard);
+	OpenWBEM::MutexLock lock(*guard);
 	++v.val;
 }
 bool AtomicDecAndTest(Atomic_t &v)
 {
-	initGuard();
-	MutexLock lock(*guard);
+	OpenWBEM::callOnce(g_once, initGuard);
+	OpenWBEM::MutexLock lock(*guard);
 	return --v.val == 0;
 }
 int AtomicGet(Atomic_t const &v)
 {
-	initGuard();
-	MutexLock lock(*guard);
+	OpenWBEM::callOnce(g_once, initGuard);
+	OpenWBEM::MutexLock lock(*guard);
 	return v.val;
 }
 void AtomicDec(Atomic_t &v)
 {
-	initGuard();
-	MutexLock lock(*guard);
+	OpenWBEM::callOnce(g_once, initGuard);
+	OpenWBEM::MutexLock lock(*guard);
 	--v.val;
 }
 
