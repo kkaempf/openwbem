@@ -1084,48 +1084,6 @@ OW_CIMServer::createInstance(
 			"instance = %2", ns, lci.toMOF()));
 	}
 
-	if(theClass.isAssociation())
-	{
-		OW_ACLInfo intAclInfo;
-		OW_CIMPropertyArray pra = lci.getProperties(
-			OW_CIMDataType::REFERENCE);
-
-		for(size_t j = 0; j < pra.size(); j++)
-		{
-			OW_CIMValue cv = pra[j].getValue();
-			if(!cv)
-			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					"Association has a NULL reference");
-			}
-
-			OW_CIMObjectPath op(OW_CIMNULL);
-			cv.get(op);
-
-			if(!op)
-			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					"Association has a NULL reference");
-			}
-
-			OW_CIMClass rcc(OW_CIMNULL);
-			OW_ACLInfo intAclInfo;
-			try
-			{
-				getInstance(ns,op,false,true,true,0,&rcc,intAclInfo);
-			}
-			catch (OW_CIMException&)
-			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					format("Association references an invalid instance:"
-						" %1", op.toString()).c_str());
-			}
-
-		}
-
-	}
-
-
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{

@@ -139,6 +139,15 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.request_handler_TTL = 5
 
 ################################################################################
+# owcimomd.check_referential_integrity specifies whether the CIM Repository
+# will perform extra checks to help ensure referential integrity between
+# associations and propagated keys.  Since these checks can add overhead,
+# it is recommended to enable this option during development and debugging
+# and disable it in production if the overhead is too expensive.
+# The default is false.
+;owcimomd.check_referential_integrity = false
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option

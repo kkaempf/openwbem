@@ -148,6 +148,10 @@
 #define DEFAULT_MAX_CLASS_CACHE_SIZE 128
 #endif
 
+#ifndef DEFAULT_CHECK_REFERENTIAL_INTEGRITY
+#define DEFAULT_CHECK_REFERENTIAL_INTEGRITY "false"
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -196,6 +200,7 @@ namespace OW_ConfigOpts
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
  	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
+    static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
 };
 
 #endif

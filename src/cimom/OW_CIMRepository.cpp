@@ -42,6 +42,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_IOException.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_ConfigOpts.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMRepository::OW_CIMRepository(OW_CIMOMEnvironmentRef env)
@@ -54,6 +55,10 @@ OW_CIMRepository::OW_CIMRepository(OW_CIMOMEnvironmentRef env)
 	, m_env(env)
     , m_checkReferentialIntegrity(false)
 {
+    if (m_env->getConfigItem(OW_ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt).equalsIgnoreCase("true"))
+    {
+        m_checkReferentialIntegrity = true;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -848,6 +853,47 @@ OW_CIMRepository::createInstance(
 
         if (m_checkReferentialIntegrity)
         {
+            if(theClass.isAssociation())
+            {
+                OW_CIMPropertyArray pra = ci.getProperties(
+                    OW_CIMDataType::REFERENCE);
+
+                for(size_t j = 0; j < pra.size(); j++)
+                {
+                    OW_CIMValue cv = pra[j].getValue();
+                    if(!cv)
+                    {
+                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+                            "Association has a NULL reference");
+                    }
+
+                    OW_CIMObjectPath op(OW_CIMNULL);
+                    cv.get(op);
+
+                    if(!op)
+                    {
+                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+                            "Association has a NULL reference");
+                    }
+
+                    OW_CIMClass rcc(OW_CIMNULL);
+                    try
+                    {
+                        rcc = _instGetClass(ns,op.getObjectName());
+                        m_iStore.getCIMInstance(ns, op,rcc,false,true,true,0);
+                    }
+                    catch (OW_CIMException&)
+                    {
+                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+                            format("Association references an invalid instance:"
+                                " %1", op.toString()).c_str());
+                    }
+
+                }
+
+            }
+
+
             _validatePropagatedKeys(ns, ci, theClass);
         }
 		//TODO: _checkRequiredProperties(theClass, ci);
@@ -1845,9 +1891,8 @@ OW_CIMRepository::_validatePropagatedKeys(const OW_String& ns,
         // since we don't know what class the keys refer to, we get all subclasses
         // and try calling getInstance for each to see if we can find one with
         // the matching keys.
-        OW_StringArray classes;
-        ClassNameArrayBuilder result(classes);
-        enumClassNames(ns,clsname,result, true, OW_ACLInfo());
+		OW_StringArray classes = m_mStore.getClassChildren(ns,
+			theClass.getName());
         classes.push_back(clsname);
 
         op.setKeys(it->second);
