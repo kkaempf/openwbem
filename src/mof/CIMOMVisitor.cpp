@@ -44,7 +44,7 @@
 CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_CIMNameSpace& ns)
 : m_curClass(OW_Bool(true))
 , m_curInstance(OW_Bool(true))
-, m_curValue(OW_Bool(true))
+, m_curValue()
 , m_curProperty(OW_Bool(true))
 , m_curMethod(OW_Bool(true))
 , m_hdl(handle)
@@ -778,7 +778,7 @@ OW_CIMValue CIMOMVisitor::convertValuesIntoValueArray( const OW_CIMValueArray& v
 			return doArrayConversion(temp, values);
 		}
 	}
-	return OW_CIMValue(OW_Bool(true));
+	return OW_CIMValue();
 }
 
 
