@@ -140,6 +140,15 @@ public:
 	}
 
 	/**
+	 * @return true if this thread is currently running. Otherwise false.
+	 */
+	OW_Bool isRunning()
+	{
+		return OW_Bool(m_isRunning == true);
+	}
+
+
+	/**
 	 * Join with this OW_Thread's execution. The thread must be a joinable
 	 * thread for this method to be called. This method must be called at on
 	 * all joinable threads. If this OW_Thread object is executing, this method
@@ -206,8 +215,17 @@ protected:
 	OW_Thread_t m_id;
 	OW_Bool m_isJoinable;
 	OW_Bool m_deleteSelf;
+	OW_Bool m_isRunning;
+	OW_Bool m_isStarting;
 
 private:
+
+	// this is what's really passed to threadRunner
+	struct OW_ThreadParam
+	{
+		OW_Thread* thread;
+		OW_Reference<OW_ThreadDoneCallback> cb;
+	};
 
 	static void* threadRunner(void* paramPtr);
 };

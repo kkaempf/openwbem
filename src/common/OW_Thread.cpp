@@ -33,9 +33,6 @@
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
-#include "OW_Condition.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -83,43 +80,11 @@ sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
 	return OW_ThreadImpl::sameThreads(t1, t2);
 }
 
-// this is what's really passed to threadRunner
-struct OW_ThreadParam
-{
-	OW_Thread* thread;
-	OW_Reference<OW_ThreadDoneCallback> cb;
-	bool m_started;
-	OW_NonRecursiveMutex m_mutex;
-	OW_Condition m_cond;
-
-	OW_ThreadParam(OW_Thread* t, const OW_Reference<OW_ThreadDoneCallback>& c)
-		: thread(t)
-		, cb(c)
-		, m_started(false)
-	{
-	}
-
-	void wait()
-	{
-		OW_NonRecursiveMutexLock l(m_mutex);
-		while (!m_started)
-		{
-			m_cond.wait(l);
-		}
-	}
-
-	void started()
-	{
-		OW_NonRecursiveMutexLock l(m_mutex);
-		m_started = true;
-		m_cond.notifyOne();
-	}
-};
-
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
 OW_Thread::OW_Thread(OW_Bool isjoinable) :
-	m_id(NULLTHREAD), m_isJoinable(isjoinable), m_deleteSelf(false)
+	m_id(NULLTHREAD), m_isJoinable(isjoinable), m_deleteSelf(false),
+	m_isRunning(false), m_isStarting(false)
 {
 }
 
@@ -127,8 +92,15 @@ OW_Thread::OW_Thread(OW_Bool isjoinable) :
 // Destructor
 OW_Thread::~OW_Thread()
 {
+	// Should never have to do this
+	// while(m_isRunning)
+	//{
+	//	OW_Thread::sleep(1);
+	//}
+
 	try
 	{
+		OW_ASSERT(m_isRunning == false);
 		if(!sameId(m_id, NULLTHREAD))
 		{
 			OW_ThreadImpl::destroyThread(m_id);
@@ -145,23 +117,37 @@ OW_Thread::~OW_Thread()
 void
 OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadException)*/
 {
+	if(isRunning())
+	{
+		OW_THROW(OW_ThreadException,
+			"OW_Thread::start - thread is already running");
+	}
+
 	if(!sameId(m_id, NULLTHREAD))
 	{
 		OW_THROW(OW_ThreadException,
 			"OW_Thread::start - cannot start previously run thread");
 	}
 
+	m_isStarting = true;
+
 	OW_UInt32 flgs = (m_isJoinable == true) ? OW_THREAD_FLG_JOINABLE : 0;
 
-	OW_ThreadParam p(this, cb);
-//	p.thread = this;
-//	p.cb = cb;
-//	p.m_started = false;
-	if(OW_ThreadImpl::createThread(m_id, threadRunner, &p, flgs) != 0)
+	// p will be delted by threadRunner
+	OW_ThreadParam* p = new OW_ThreadParam;
+	p->thread = this;
+	p->cb = cb;
+	if(OW_ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
-	p.wait();
+
+	while(!m_isRunning)
+	{
+		yield();
+	}
+
+	m_isStarting = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -176,6 +162,12 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 
 	if(!sameId(m_id, NULLTHREAD))
 	{
+		// If thread is starting up, let it finish
+		while(!m_isRunning && m_isStarting)
+		{
+			yield();
+		}
+
 		if(OW_ThreadImpl::joinThread(m_id) != 0)
 		{
 			OW_THROW(OW_ThreadException,
@@ -223,31 +215,24 @@ OW_Thread::threadRunner(void* paramPtr)
 		OW_ThreadParam* pParam = static_cast<OW_ThreadParam*>(paramPtr);
 		OW_Thread* pTheThread = pParam->thread;
 		theThreadID = pTheThread->m_id;
+		pTheThread->m_isRunning = true;
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
-		pParam->started();
 
-		try
+		while(pTheThread->m_isStarting)
 		{
-			pTheThread->run();
+			yield();
 		}
-		catch(OW_Exception& ex)
-		{
-#ifdef OW_DEBUG		
-			std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread::threadRunner. Msg: " << ex.getMessage() << "\n";
-			std::cerr << ex << std::endl;
-#endif
-		}
-		catch (...)
-		{
-#ifdef OW_DEBUG		
-			std::cerr << "!!! Unknown Exception caught in OW_Thread::threadRunner" << std::endl;
-#endif
-		}
+
+		pTheThread->run();
+
+		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
 		if(pTheThread->getSelfDelete() == true)
 		{
 			delete pTheThread;
 		}
+
+		delete pParam;
 
 		if (cb)
 		{
@@ -257,14 +242,14 @@ OW_Thread::threadRunner(void* paramPtr)
 	catch(OW_Exception& ex)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread::threadRunner. Msg: " << ex.getMessage() << "\n";
+		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread class\n";
 		std::cerr << ex << std::endl;
 #endif
 	}
 	catch(...)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Unknown Exception caught in OW_Thread::threadRunner." << std::endl;
+		std::cerr << "!!! Unknown Exception caught in OW_Thread class" << std::endl;
 #endif
 	}
 
