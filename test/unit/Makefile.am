@@ -158,6 +158,12 @@ INCLUDES = \
 -I$(top_srcdir)/src/mof \
 -I$(top_srcdir)/src/repositories/tdbcr
 
+if ENABLE_DB4_REPOSITORY
+REPLIBFLAGS=-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr
+else
+REPLIBFLAGS=
+endif
+
 unitMain_LDADD = \
 -L$(top_builddir)/test/CppUnit -lCppUnit \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
@@ -172,7 +178,7 @@ unitMain_LDADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
--L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr \
+$(REPLIBFLAGS) \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \

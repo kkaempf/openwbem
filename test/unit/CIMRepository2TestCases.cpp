@@ -30,6 +30,9 @@
 
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
+#include "OW_config.h"
+
+#ifdef OW_ENABLE_DB4_REPOSITORY
 #include "CIMRepository2TestCases.hpp"
 #include "OW_CIMRepository2.hpp"
 #include "OW_Logger.hpp"
@@ -164,3 +167,4 @@ Test* CIMRepository2TestCases::suite()
 	return testSuite;
 }
 
+#endif // #ifdef OW_ENABLE_DB4_REPOSITORY
