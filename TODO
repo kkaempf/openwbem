@@ -148,6 +148,8 @@ Refactorings:
     - Rewrite the provider manager lookup so it's simpler/less code.
     - simplify the provider manager lookup structure
     - rename cimom to wbem server
+    - Rename OW_NonRecursiveMutex -> OW_Mutex and OW_Mutex -> OW_RecursiveMutex
+    - Templatetize/inline the mutex lock classes.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
@@ -160,6 +162,10 @@ Documentation:
       OpenWBEM.
     - Update javadoc on header files in ifcs, common, client, and provider.
     - Document how to create an SSL key+cert
+    - Document each class's:
+      - Copy semantics
+      - Thread safety
+      - Exception safety
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
