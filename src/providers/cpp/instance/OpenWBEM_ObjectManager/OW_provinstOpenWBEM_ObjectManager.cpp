@@ -173,7 +173,7 @@ public:
 			m_inst.updatePropertyValue("Started", CIMValue(false));
 			indicationInst.updatePropertyValue("SourceInstance", CIMValue(m_inst));
 			hdl->exportIndication(indicationInst, interopNS);
-			// Wait half a second to give the indication server time to export it.
+			// Wait a bit to give the indication server time to export it.
 			// Yeah this doesn't guarantee the listeners will receive the indication,
 			// but shutting down is more important. And if we don't sleep, there's no chance
 			// they'll ever get it.
