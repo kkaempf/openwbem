@@ -18,6 +18,10 @@ class OpenWBEM_CommMechanismForManager : CIM_CommMechanismForManager
 {
 };
 
+class OpenWBEM_UnitaryComputerSystem : CIM_UnitaryComputerSystem
+{
+}; 
+
 /* These aren't in cim 2.7 final
 class OpenWBEM_Provider : CIM_Provider
 {

@@ -1004,6 +1004,9 @@ SetupInteropSchema()
 	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
                         $TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
+	$STAGEDIR/$OWBINDIR/owmofc -u owbinary.wbem://test1:pass1@localhost:30926/ -n root \
+                        $TOPSRCDIR/schemas/cim28/System28_SystemElements.mof || \
+			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:owipc/ -e owbinary -n root \
 			$TOPSRCDIR/schemas/cim28/CIM_Interop28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."

@@ -1374,6 +1374,7 @@ src/providers/cpp/instance/Makefile
 src/providers/cpp/instance/CIM_IndicationSubscription/Makefile
 src/providers/cpp/instance/CIM_IndicationFilter/Makefile
 src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile
+src/providers/cpp/instance/OpenWBEM_UnitaryComputerSystem/Makefile
 src/providers/cpp/instance/CIM_Namespace/Makefile
 src/providers/cpp/instance/CIM_NamespaceInManager/Makefile
 src/providers/cpp/instance/OW_NameSpace/Makefile
