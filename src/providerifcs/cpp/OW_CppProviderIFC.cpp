@@ -245,10 +245,21 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		{
 			env->getLogger()->logDebug(Format("CPPProviderIFC found indication provider %1",
 				provIdString));
+
+			IndicationProviderMap::const_iterator ci = m_indicationProviders.find(provIdString);
+			if (ci != m_indicationProviders.end())
+			{
+				return ci->second;
+			}
+
 			CppIndicationProviderIFCRef apRef(pProv.getLibRef(), pAP);
 			apRef.useRefCountOf(pProv);
-			return IndicationProviderIFCRef(new
+			IndicationProviderIFCRef rv(new
 				CppIndicationProviderProxy(apRef));
+			
+			m_indicationProviders.insert(IndicationProviderMap::value_type(provIdString, rv));
+
+			return rv;
 		}
 		env->getLogger()->logError(Format("Provider %1 is not an indication provider",
 			provIdString));

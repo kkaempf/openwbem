@@ -89,6 +89,7 @@ protected:
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 private:
 	typedef Map<String, CppProviderBaseIFCRef> ProviderMap;
+	typedef Map<String, IndicationProviderIFCRef> IndicationProviderMap;
 	typedef Array<CppProviderBaseIFCRef> LoadedProviderArray;
 	enum StoreProviderFlag
 	{
@@ -112,6 +113,7 @@ private:
 		MethodProviderInfoArray& m,
 		IndicationProviderInfoArray& ind);
 	ProviderMap m_provs;
+	IndicationProviderMap m_indicationProviders;
 	Mutex m_guard;
 	LoadedProviderArray m_noUnloadProviders;
 	bool m_loadDone;
