@@ -97,6 +97,8 @@ New features:
     - Create a CIM class & provider to control the provider manager (re-scan
       providers, reload/unload providers, register new providers, etc.)
     - Deprecated property providers.
+    - Make OW_Cpp*ProviderIFC method virtual (non-pure), so providers don't
+      have to override non-implemented methods.
 
 Refactorings:
     - Create a base class for all the common code in the provider interfaces.
@@ -135,4 +137,6 @@ Optimizations:
     - Change instance/associator provider interface to pass in a list of
       properties which should be returned, so providers can optimize and avoid
       calculating unrequested properties.  OW_CIMServer will have to calculate
-      the property list based on local-only, propertyList, deep, etc.
+      the property list based on local-only, propertyList, deep, etc. Also,
+      pass all the parameters (localOnly, deep, propertyList, etc.) to the
+      generic *ProviderIFC, so that various interfaces can make use of them.

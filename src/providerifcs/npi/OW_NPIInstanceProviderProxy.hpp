@@ -49,14 +49,11 @@ public:
 
 	/**
 	 * This method enumerates
-	 * all instances of the class which is specified in cop.  The entire
-	 * instances and not just the names are returned.  Deep or shallow
-	 * enumeration is possible.
+	 * all instances of the class which is specified in className.  The entire
+	 * instances and not just the names are returned.
 	 *
 	 * @param cop The object path specifies the class that must be
 	 * 	enumerated.
-	 *
-	 * @param deep If true, deep enumeration must be done, otherwise shallow.
 	 *
 	 * @param cimClass The class reference.
 	 *
@@ -73,7 +70,6 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_Bool& deep,
 			const OW_CIMClass& cimClass );
 
 	virtual void enumInstances(
@@ -81,9 +77,7 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly );
+			const OW_CIMClass& cimClass );
 	
 	/**
 	 * This method deletes the instance specified in the object path
@@ -117,8 +111,7 @@ public:
 	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly);
+		const OW_CIMClass& cimClass);
 
 	/**
 	 * This method creates the instance specified in the object path.  If the

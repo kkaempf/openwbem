@@ -104,10 +104,8 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
-		(void)deep;
 		(void)cimClass;
 		(void)env;
 
@@ -137,7 +135,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	struct InstanceCreator : public OW_CIMObjectPathResultHandlerIFC
 	{
-		InstanceCreator(OW_CIMInstanceResultHandlerIFC& result, bool localOnly, const OW_CIMClass& cimClass_) : m_result(result), m_localOnly(localOnly), cimClass(cimClass_) {}
+		InstanceCreator(OW_CIMInstanceResultHandlerIFC& result, const OW_CIMClass& cimClass_) : m_result(result), cimClass(cimClass_) {}
 		void doHandle(const OW_CIMObjectPath& path)
 		{
 			OW_CIMInstance rval = cimClass.newInstance();
@@ -151,7 +149,6 @@ public:
 			m_result.handle(rval);
 		}
 		OW_CIMInstanceResultHandlerIFC& m_result;
-		bool m_localOnly;
 		OW_CIMClass cimClass;
 	};
 
@@ -161,12 +158,10 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_Bool& deep,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
-		InstanceCreator handler(result, localOnly, cimClass);
-		enumInstanceNames(env, ns, className, handler, deep, cimClass );
+		InstanceCreator handler(result, cimClass);
+		enumInstanceNames(env, ns, className, handler, cimClass );
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -175,13 +170,11 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimClass;
-		(void)localOnly;
 
 		OW_CIMInstance rval = cimClass.newInstance();
 		rval.setProperties(instanceName.getKeys());

@@ -981,7 +981,7 @@ OW_CIMServer::enumInstanceNames(
 	{
 		OW_CIMClass theClass = _instGetClass(ns, className);
 
-		_getCIMInstanceNames(ns, className, theClass, result, deep, aclInfo);
+		_getCIMInstanceNames(ns, className, theClass, result, aclInfo);
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
@@ -1001,7 +1001,7 @@ OW_CIMServer::enumInstanceNames(
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
 			theClass = _instGetClass(ns, classNames[i]);
-			_getCIMInstanceNames(ns, classNames[i], theClass, result, deep, aclInfo);
+			_getCIMInstanceNames(ns, classNames[i], theClass, result, aclInfo);
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
 				m_env->logDebug(format("Enumerated derived instance names: %1:%2", ns,
@@ -1060,7 +1060,7 @@ namespace
 void
 OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& className,
 	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep, const OW_ACLInfo& aclInfo)
+	const OW_ACLInfo& aclInfo)
 {
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
@@ -1072,7 +1072,7 @@ OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& classNa
 	if (instancep)
 	{
 		instancep->enumInstanceNames(createProvEnvRef(real_ch),
-			ns, className, result, deep, theClass);
+			ns, className, result, theClass);
 	}
 	else
 	{
@@ -1268,7 +1268,7 @@ OW_CIMServer::_getCIMInstances(
 		HandleProviderInstance handler2(theClass,aclInfo,
 			includeQualifiers, includeClassOrigin, propertyList, ns, *this, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), ns, className, handler2, deep, theClass, localOnly);
+			createProvEnvRef(real_ch), ns, className, handler2, theClass);
 	}
 	else
 	{
@@ -1340,7 +1340,7 @@ OW_CIMServer::getInstance(
 	{
 		ci = instancep->getInstance(
 			createProvEnvRef(real_ch),
-				ns, instanceName, cc, localOnly);
+				ns, instanceName, cc);
 		if (!ci)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
@@ -1723,8 +1723,7 @@ OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, true);
 
-		return OW_Bool((ip->getInstance(createProvEnvRef(real_ch), ns, icop, cc,
-			false)) != 0);
+		return OW_Bool((ip->getInstance(createProvEnvRef(real_ch), ns, icop, cc)) != 0);
 	}
 	else
 	{

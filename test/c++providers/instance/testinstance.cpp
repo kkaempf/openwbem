@@ -72,12 +72,10 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)cimClass;
-		(void)deep;
 		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
@@ -94,15 +92,11 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_Bool& deep,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)className;
 		(void)env;
-		(void)localOnly;
-		(void)deep;
 		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
@@ -120,12 +114,10 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)env;
-		(void)localOnly;
 		OW_CIMInstance rval = cimClass.newInstance();
 		OW_String name;
 		instanceName.getKeys()[0].getValue().get(name);

@@ -64,10 +64,8 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
-		(void)deep;
 		(void)cimClass;
 		(void)env;
 
@@ -88,15 +86,11 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_Bool& deep,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)className;
-		(void)deep;
-		(void)localOnly;
 
 		OW_UInt64 count = 0;
 		OW_CIMInstance newInst = cimClass.newInstance();
@@ -114,14 +108,12 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)instanceName;
 		(void)cimClass;
-		(void)localOnly;
 
 		OW_THROWCIM(OW_CIMException::FAILED);
 

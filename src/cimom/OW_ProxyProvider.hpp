@@ -139,10 +139,9 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_Bool& deep,
 			const OW_CIMClass& cimClass)
 	{
-		m_pProv->enumInstanceNames(env, ns, className, result,deep,cimClass);
+		m_pProv->enumInstanceNames(env, ns, className, result, cimClass);
 	}
 
 	virtual void enumInstances(
@@ -150,21 +149,18 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly)
+			const OW_CIMClass& cimClass)
 	{
-		m_pProv->enumInstances(env,ns,className,result,deep,cimClass,localOnly);
+		m_pProv->enumInstances(env,ns,className,result,cimClass);
 	}
 
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
 			const OW_CIMObjectPath& instanceName,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly)
+			const OW_CIMClass& cimClass)
 	{
-		return m_pProv->getInstance(env, ns, instanceName, cimClass, localOnly);
+		return m_pProv->getInstance(env, ns, instanceName, cimClass);
 	}
 
 	virtual OW_CIMObjectPath createInstance(

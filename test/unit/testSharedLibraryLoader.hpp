@@ -70,13 +70,13 @@ class testSharedLibrary: public OW_SharedLibrary
 class TestInstanceProvider : public OW_InstanceProviderIFC
 {
 public:
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMInstanceResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &, const OW_Bool &)
+	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMInstanceResultHandlerIFC &, const OW_CIMClass &)
 	{
 	}
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &)
+	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_CIMClass &)
 	{
 	}
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMClass &, const OW_Bool &)
+	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMClass &)
 	{
 		return OW_CIMInstance();
 	}

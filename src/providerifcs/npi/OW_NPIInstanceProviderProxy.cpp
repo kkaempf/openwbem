@@ -47,11 +47,8 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-        const OW_Bool& deep,
         const OW_CIMClass& cimClass )
 {
-		  (void)deep;
-
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::enumInstanceNames()");
 
@@ -107,9 +104,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-        const OW_Bool& deep,
-        const OW_CIMClass& cimClass,
-        const OW_Bool& localOnly )
+        const OW_CIMClass& cimClass )
 {
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
@@ -132,8 +127,8 @@ OW_NPIInstanceProviderProxy::enumInstances(
 			OW_CIMObjectPath cop(className, ns);
 			CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop) };
 
-			int de = deep;
-			int lo = localOnly;
+			int de = 0;
+			int lo = 0;
 			::Vector v =
 				 m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
 
@@ -200,7 +195,7 @@ OW_CIMInstance
 OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	const OW_CIMClass& cimClass, const OW_Bool& localOnly)
+	const OW_CIMClass& cimClass)
 {
         OW_CIMInstance rval;
 
@@ -223,7 +218,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 			cop.setNameSpace(ns);
             CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
-            int lo = localOnly;
+            int lo = 0;
 
             CIMInstance my_inst =
                 m_ftable->fp_getInstance(&_npiHandle, _cop, _cc, lo);

@@ -39,8 +39,6 @@
 /**
  * This is the interface implemented by method providers.  These providers are
  * used to provide implementation for all methods of CIM classes.
- * All calls to the derived provider will be serialized so that providers need
- * not worry about multi-threading issues.
  */
 class OW_MethodProviderIFC: public OW_ProviderBaseIFC
 {

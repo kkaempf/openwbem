@@ -594,7 +594,7 @@ private:
 
 	void _getCIMInstanceNames(const OW_String& ns, const OW_String& className,
 		const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Determines if an instance already exists

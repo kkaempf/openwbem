@@ -70,7 +70,6 @@ public:
 	 * specified in cop.
 	 *
 	 * @param cop The object path specifies the class that must be enumerated.
-	 * @param deep If true, deep enumeration is done, otherwise shallow.
 	 * @param cimClass The class reference
 	 *
 	 * @returns An array of OW_CIMObjectPath containing names of the
@@ -83,19 +82,15 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_Bool& deep,
 			const OW_CIMClass& cimClass ) = 0;
 
 	/**
 	 * This method enumerates
-	 * all instances of the class which is specified in cop.  The entire
-	 * instances and not just the names are returned.  Deep or shallow
-	 * enumeration is possible.
+	 * all instances of the class which is specified in className.  The entire
+	 * instances and not just the names are returned.  
 	 *
 	 * @param cop The object path specifies the class that must be
 	 * 	enumerated.
-	 *
-	 * @param deep If true, deep enumeration must be done, otherwise shallow.
 	 *
 	 * @param cimClass The class reference.
 	 *
@@ -112,9 +107,7 @@ public:
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly ) = 0;
+			const OW_CIMClass& cimClass ) = 0;
 
 	/**
 	 * This method retrieves the instance specified in the object path.
@@ -137,8 +130,7 @@ public:
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
 			const OW_CIMObjectPath& instanceName,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly ) = 0;
+			const OW_CIMClass& cimClass ) = 0;
 
 	/**
 	 * This method creates the instance specified in the object path.  If the

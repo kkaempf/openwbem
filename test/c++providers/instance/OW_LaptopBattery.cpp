@@ -77,12 +77,10 @@ namespace
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_Bool& deep,
 			const OW_CIMClass& cimClass )
 		{
 			(void)env;
 			(void)cimClass;
-			(void)deep;
 			OW_CIMObjectPath instCop = OW_CIMObjectPath(className, ns);
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
@@ -101,15 +99,11 @@ namespace
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly )
+			const OW_CIMClass& cimClass )
 		{
 			(void)ns;
 			(void)className;
 			(void)env;
-			(void)localOnly;
-			(void)deep;
 			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
 			result.handle(inst);
 		}
@@ -119,13 +113,11 @@ namespace
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
 			const OW_CIMObjectPath& instanceName,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly )
+			const OW_CIMClass& cimClass )
 		{
 			(void)ns;
 			(void)instanceName;
 			(void)env;
-			(void)localOnly;
 			OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
 			return rval;
 		}

@@ -184,37 +184,13 @@ OW_SimpleCppInstanceProviderProxy::enumInstanceNames(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
-	(void)deep;
 	(void)ns;
 	return m_pProv->enumInstanceNames(env, className, result, cimClass);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class localOnlyFilter : public OW_CIMInstanceResultHandlerIFC
-	{
-	public:
-		localOnlyFilter(
-			OW_CIMInstanceResultHandlerIFC& result_,
-			bool localOnly_)
-		: result(result_)
-		, localOnly(localOnly_)
-		{}
-	protected:
-		virtual void doHandle(const OW_CIMInstance &i)
-		{
-			result.handle(i.clone(localOnly, true, true));
-		}
-	private:
-		OW_CIMInstanceResultHandlerIFC& result;
-		bool localOnly;
-	};
-}
 //////////////////////////////////////////////////////////////////////////////		
 void
 OW_SimpleCppInstanceProviderProxy::enumInstances(
@@ -222,15 +198,11 @@ OW_SimpleCppInstanceProviderProxy::enumInstances(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_Bool& deep,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly)
+		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
-	(void)deep;
 	(void)ns;
-	localOnlyFilter filter(result,localOnly);
-	m_pProv->enumInstances(env, className, filter, cimClass);
+	m_pProv->enumInstances(env, className, result, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -239,13 +211,11 @@ OW_SimpleCppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly)
+		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	(void)ns;
 	OW_CIMInstance ci = m_pProv->getInstance(env, instanceName, cimClass);
-	ci = ci.clone(localOnly,true,true);
 	return ci;
 }
 

@@ -34,10 +34,8 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
-		(void)deep;
 		(void)cimClass;
 		(void)env;
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsz";
@@ -76,14 +74,10 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_Bool& deep,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
-		(void)deep;
-		(void)localOnly;
 
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsize,pcpu";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
@@ -128,13 +122,11 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass,
-		const OW_Bool& localOnly )
+		const OW_CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimClass;
-		(void)localOnly;
 		OW_CIMInstance inst = cimClass.newInstance();
 		inst.setProperties(instanceName.getKeys());
 		OW_String pid;
