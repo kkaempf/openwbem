@@ -84,7 +84,7 @@ strncmpi(const char* s1, const char* s2, size_t n)
 {
 	String ls1(s1, n);
 	String ls2(s2, n);
-	return ls1.equalsIgnoreCase(ls2);
+	return ls1.compareToIgnoreCase(ls2);
 }
 
 // class invariant: m_buf points to a null-terminated sequence of characters. m_buf is m_len+1 bytes long.
