@@ -35,6 +35,7 @@
 
 #include <cstring>
 #include <cstdio>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_RunnableThread : public OW_Thread
