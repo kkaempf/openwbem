@@ -81,7 +81,9 @@ HTTPServer::HTTPServer()
 	, m_allowAllUsers(false)
 	, m_sslCtx(0)
 	, m_shuttingDown(false)
+#ifndef OW_NO_SSL
 	, m_trustStore(0)
+#endif
 {
 #ifdef OW_WIN32
 	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -148,7 +150,6 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
                 getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
 				if (!uid.empty())
 				{
-					context.setStringData(OperationContext::CIMOM_UIDKEY, String("0"));
 					context.setStringData(OperationContext::CURUSER_UIDKEY, uid); 
 				}
                 return true; 

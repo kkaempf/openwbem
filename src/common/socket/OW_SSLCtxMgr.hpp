@@ -276,8 +276,26 @@ struct OW_COMMON_API OWSSLContext
 
 //////////////////////////////////////////////////////////////////////////////
 
-} // end namespace OpenWBEM
+
+#else // ifdef OW_HAVE_OPENSSL
+
+namespace OpenWBEM
+{
+
+class OW_COMMON_API SSLServerCtx : public IntrusiveCountableBase
+{
+};
+
+class OW_COMMON_API SSLClientCtx : public IntrusiveCountableBase
+{
+};
 
 #endif // ifdef OW_HAVE_OPENSSL
+
+typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
+typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
+
+} // end namespace OpenWBEM
+
 
 #endif

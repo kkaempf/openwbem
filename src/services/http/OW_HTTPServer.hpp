@@ -155,8 +155,10 @@ private:
 	SSLServerCtxRef m_sslCtx; 
 	Mutex m_shutdownGuard; 
 	bool m_shuttingDown;
+#ifndef OW_NO_SSL
 	SSLOpts m_sslopts; 
 	SSLTrustStoreRef m_trustStore; 
+#endif //  OW_HAVE_SSL
 
 	friend class HTTPSvrConnection;
 	friend class HTTPListener;

@@ -78,8 +78,8 @@ int main(int argc, char* argv[])
 	try
 	{
 
-#ifdef OW_HAVE_OPENSSL
 		SSLClientCtxRef sslctx; 
+#ifdef OW_HAVE_OPENSSL
 		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
 		char* sslcert = getenv("OW_SSL_CLIENT_CERT"); 
 		if (sslcert)
