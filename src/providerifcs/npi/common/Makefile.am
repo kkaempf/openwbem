@@ -27,8 +27,6 @@ NPIExternal.hpp \
 npicrash.c \
 npicrash.h \
 provider.h \
-mlogsup.c \
-mlogsup.h \
 npi.h \
 npi_import.h \
 os_compile.h
