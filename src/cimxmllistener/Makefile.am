@@ -33,7 +33,8 @@ pkginclude_HEADERS = \
 OW_CIMListenerCallback.hpp \
 OW_ListenerAuthenticator.hpp \
 OW_XMLListener.hpp \
-OW_HTTPXMLCIMListener.hpp
+OW_HTTPXMLCIMListener.hpp \
+OW_CIMXMLListenerFwd.hpp
 
 
 INCLUDES = \

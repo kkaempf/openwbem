@@ -41,7 +41,8 @@ OW_CIMClient.hpp \
 OW_ClientCIMOMHandle.hpp \
 OW_CIMXMLCIMOMHandle.hpp \
 OW_BinaryCIMOMHandle.hpp \
-OW_ClientCIMOMHandleConnectionPool.hpp
+OW_ClientCIMOMHandleConnectionPool.hpp \
+OW_ClientFwd.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

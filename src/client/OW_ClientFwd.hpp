@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,67 +29,33 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
 
-#ifndef OW_CIMOMINFO_HPP_INCLUDE_GUARD_
-#define OW_CIMOMINFO_HPP_INCLUDE_GUARD_
+#ifndef OW_CLIENT_FWD_HPP_INCLUDE_GUARD_
+#define OW_CLIENT_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_ArrayFwd.hpp"
 
 namespace OpenWBEM
 {
 
-/**
- * A CIMOMInfo object represents information about a CIMOM
- * that is known via a discovery mechanism (slp).
- */
-class OW_CLIENT_API CIMOMInfo
-{
-public:
-	/**
-	 * Get a URL that can be used to access the CIMOM.  This url
-	 * is suitable for passing to a HTTPClient ctor.
-	 * @return An String containing a URL to the CIMOM.
-	 */
-	String getURL() const { return m_url; }
-	void setURL(const String& url) { m_url = url; }
-	/**
-	 * The subscript operator can be used to access the
-	 * various attributes associated with a CIMOM.
-	 */
-	const String operator[](const String& key) const;
-	String& operator[](const String& key);
-private:
-	String m_url;
-
-#ifdef OW_WIN32
-#pragma warning (push)
-#pragma warning (disable: 4251)
-#endif
-
-	Map<String, String> m_attributes;
-
-#ifdef OW_WIN32
-#pragma warning (pop)
-#endif
-
-};
-inline bool operator<(const CIMOMInfo& x, const CIMOMInfo& y)
-{
-	return x.getURL() < y.getURL();
-}
-inline bool operator==(const CIMOMInfo& x, const CIMOMInfo& y)
-{
-	return x.getURL() == y.getURL();
-}
-inline bool operator!=(const CIMOMInfo& x, const CIMOMInfo& y)
-{
-	return !(x == y);
-}
+class BinaryCIMOMHandle;
+class CIMClient;
+class CIMOMInfo;
+typedef Array<CIMOMInfo> CIMOMInfoArray;
+class CIMOMLocator;
+typedef IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
+class CIMXMLCIMOMHandle;
+class ClientCIMOMHandleConnectionPool;
+typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+class ClientCIMOMHandle;
+typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 
 } // end namespace OpenWBEM
 
 #endif
+
+
+

@@ -36,27 +36,22 @@
 #ifndef OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
 #define OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CIMOMInfo.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "OW_ClientFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include <utility>
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_APIEXCEPTION(CIMOMLocator, OW_CLIENT_API);
-typedef std::pair<String, String> CIMOMAttribute;
-typedef Array<CIMOMAttribute> CIMOMAttributeArray;
-class CIMOMLocator;
-typedef IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
+
 class OW_CLIENT_API CIMOMLocator : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMOMLocator();
 	/**
-	 * Find available CIMOMs.  
+	 * Find available CIMOMs.
 	 * @return An Array or CIMOMInfo objects.
 	 */
 	virtual CIMOMInfoArray findCIMOMs() = 0;

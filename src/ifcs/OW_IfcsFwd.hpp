@@ -74,6 +74,13 @@ typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
 typedef ResultHandlerIFC<String> StringResultHandlerIFC;
 typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
+class CIMProtocolIFC;
+typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
+
+class CIMProtocolIStreamIFC;
+typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
+
+
 
 } // end namespace OpenWBEM
 

@@ -38,13 +38,14 @@
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_Exception.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_String.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(CIMOMLocator);
 //////////////////////////////////////////////////////////////////////////////
-CIMOMLocator::~CIMOMLocator() 
+CIMOMLocator::~CIMOMLocator()
 {
 }
 //////////////////////////////////////////////////////////////////////////////

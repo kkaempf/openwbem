@@ -48,13 +48,13 @@
 #endif
 #include "OW_Mutex.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_CIMXMLListenerFwd.hpp"
 
 namespace OpenWBEM
 {
 
 class HTTPServer;
-class ListenerAuthenticator;
-class Thread;
 
 class OW_LISTENER_API HTTPXMLCIMListener : public CIMListenerCallback
 {
@@ -86,9 +86,9 @@ public:
 	 */
 	String registerForIndication(const String& url,
 		const String& ns, const String& filter,
-		const String& querylanguage, 
+		const String& querylanguage,
 		const String& sourceNamespace,
-		const CIMListenerCallbackRef& cb, 
+		const CIMListenerCallbackRef& cb,
 		const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 
 	/**

@@ -51,6 +51,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_NullLogger.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 
 #include <algorithm> // for std::find
 

@@ -38,6 +38,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_RequestHandlerIFCXML.hpp"
+#include "OW_CIMXMLListenerFwd.hpp"
 #include <iosfwd>
 
 // The classes and functions defined in this file are not meant for general

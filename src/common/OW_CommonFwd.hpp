@@ -79,6 +79,7 @@ class OperationContext;
 template <class T> class Enumeration;
 typedef Enumeration<String> StringEnumeration;
 
+class Thread;
 class ThreadPool;
 typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 

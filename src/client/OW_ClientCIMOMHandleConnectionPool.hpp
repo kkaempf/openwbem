@@ -36,10 +36,12 @@
 #define OW_CLIENT_CIMOM_HANDLE_CONNECTION_POOL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
+#include "OW_ClientFwd.hpp"
 #include "OW_Mutex.hpp"
-#include "OW_String.hpp"
-#include "OW_ClientCIMOMHandle.hpp"
-#include "OW_IntrusiveReference.hpp"
+//#include "OW_String.hpp"
+//#include "OW_ClientCIMOMHandle.hpp"
+//#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
 #include <map>
@@ -47,16 +49,13 @@
 namespace OpenWBEM
 {
 
-class ClientCIMOMHandleConnectionPool;
-typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
-
 /**
  * This class is responsible for pooling ClientCIMOMHandleRef instances.
  * Each separate url is considered a different cimom.  Connections are
  * persistent.
- * 
- * Invariant: For each given url, a maximum of m_maxConnectionsPerUrl will be 
- *  stored. 
+ *
+ * Invariant: For each given url, a maximum of m_maxConnectionsPerUrl will be
+ *  stored.
  * Thread safety: read/write
  * Copy semantics: Non-copyable
  * Exception safety: Strong
@@ -75,13 +74,13 @@ public:
 	 * pool, it will be retrieved, otherwise a new connection will be created.
 	 * The http protocol only authenticates when the connection is established,
 	 * so each existing connection will already be authenticated.  For this
-	 * reason, the credentials should be part of the url, and a 
+	 * reason, the credentials should be part of the url, and a
 	 * ClientAuthCBIFCRef will not be supplied to the ClientCIMOMHandleRef.
-	 * 
+	 *
 	 * @param url The url.
-	 * 
+	 *
 	 * @return A ClientCIMOMHandleRef connected to url.
-	 * 
+	 *
 	 * @throws MalformedURLException If the url is bad
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
@@ -93,7 +92,7 @@ public:
 	 * to url. If there are already m_maxConnectionsPerUrl ClientCIMOMHandleRef
 	 * instances for url already in the pool, it won't be added to the pool.
 	 * After calling this function, the caller can no longer use handle.
-	 * 
+	 *
 	 * @param handle The ClientCIMOMHandleRef to add to the pool.
 	 * @param url The url handle is connected to.
 	 */

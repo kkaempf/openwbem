@@ -37,12 +37,11 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CIMFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMInstance;
-class String;
 /**
  * An abstract base class for CIM Listener callbacks.
  */

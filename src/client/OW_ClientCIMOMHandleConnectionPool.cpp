@@ -35,6 +35,8 @@
 #include "OW_config.h"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
+#include "OW_String.hpp"
 
 namespace OpenWBEM
 {
@@ -46,7 +48,7 @@ ClientCIMOMHandleConnectionPool::ClientCIMOMHandleConnectionPool(unsigned maxCon
 }
 
 //////////////////////////////////////////////////////////////////////////////
-ClientCIMOMHandleRef 
+ClientCIMOMHandleRef
 ClientCIMOMHandleConnectionPool::getConnection(const String& url)
 {
 	MutexLock lock(m_guard);
@@ -64,7 +66,7 @@ ClientCIMOMHandleConnectionPool::getConnection(const String& url)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 ClientCIMOMHandleConnectionPool::addConnectionToPool(const ClientCIMOMHandleRef& handle, const String& url)
 {
 	MutexLock lock(m_guard);

@@ -36,6 +36,9 @@
 #define OW_REMOTE_PROVIDER_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_ClientFwd.hpp"
+#include "OW_ProviderFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -43,32 +46,24 @@
 namespace OpenWBEM
 {
 
-class String;
-class ProviderEnvironmentIFC;
-typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
-class ClientCIMOMHandleConnectionPool;
-typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
-class ClientCIMOMHandle;
-typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
-
 namespace RemoteProviderUtils
 {
 
 /**
  * Get a ClientCIMOMHandleRef from pool and configure it according to the given parameters.
- * 
+ *
  * @param remoteUrl Base url for the server. This is an out parameter which may be modified
  *  if useConnectionCredentials == true.
- * @param useConnectionCredentials If true, then modify the url to include the 
+ * @param useConnectionCredentials If true, then modify the url to include the
  *  principal and credentials stored in env->getOperationContext().
  * @param env The provider environment used to get a logger and the OperationContext.
  * @param pool The new connection will be retrieved from pool.
  * @param alwaysSendCredentials If true, assumeBasicAuth() will be called on the
- *  HTTPClient of the new connection.  If the server supports Basic HTTP authentication, 
+ *  HTTPClient of the new connection.  If the server supports Basic HTTP authentication,
  *  this is helpful to avoid an extra round trip for the client to discover what the
  *  server supports.
  */
-ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl, 
+ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	bool useConnectionCredentials, const ProviderEnvironmentIFCRef &env,
 	const ClientCIMOMHandleConnectionPoolRef& pool, bool alwaysSendCredentials);
 
@@ -78,6 +73,6 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 
 #endif
 
-					 
+					
 
 

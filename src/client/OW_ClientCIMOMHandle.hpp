@@ -35,22 +35,14 @@
 #ifndef OW_CLIENTCIMOMHANDLE_HPP_
 #define OW_CLIENTCIMOMHANDLE_HPP_
 #include "OW_config.h"										
+#include "OW_IfcsFwd.hpp"
+#include "OW_ClientFwd.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_Map.hpp"
 
 namespace OpenWBEM
 {
-
-class CIMProtocolIFC;
-typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
-
-class ClientCIMOMHandle;
-typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
-
-class CIMProtocolIStreamIFC;
-typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
 
 // This class is meant to hold common functionality in the client-side CIMOM
 // handles	
@@ -99,8 +91,8 @@ public:
 	/**
 	 * Factory function.  Parses url and creates either a CIMXMLCIMOMHandle or
 	 * a BinaryCIMOMHandle along with a HTTPClient.
-	 * 
-	 * @param url If the url begins with "owbinary" 
+	 *
+	 * @param url If the url begins with "owbinary"
 	 * (e.g. owbinary.wbem://test1:pass1@localhost:30926/), then the openwbem
 	 * binary protocol will be used.  Otherwise CIM/XML is the default.
 	 * If the url's port is an integer, TCP will be used.  If the url's port is
@@ -108,14 +100,14 @@ public:
 	 * (OW_DOMAIN_SOCKET_NAME) domain socket.  If the port is anything else,
 	 * it will be used as the identifier for the ipc mechanism.  On Unix this
 	 * is the filename of the domain socket.  Note that to represent a filename
-	 * in the port, the url escape mechanism must be used, since a / (among 
+	 * in the port, the url escape mechanism must be used, since a / (among
 	 * other chars) isn't allowed in the port.
-	 * 
+	 *
 	 * @param authCb If authentication is necessary, and authCb != NULL, then
 	 * authCb->getCredentials() will be called to obtain credentials.
-	 * 
+	 *
 	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
-	 * 
+	 *
 	 * @throws MalformedURLException If the url is bad
 	 * @throws std::bad_alloc
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
