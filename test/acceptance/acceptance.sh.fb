@@ -287,7 +287,7 @@ EOS
 			   && [ ! "$EXECFILE" = "config.h" ] \
 				&& [ ! "$EXECFILE" = "OW_MemTracer.hpp" ];
 			 then
-			   grep -q "OW_config.h" $i
+			   grep "OW_config.h" $i > /dev/null
 				if [ ! "$?" = "0" ]; then
 				  echo " ##### Doesn't include \"OW_config.h\"!"
 				  INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
