@@ -1325,6 +1325,16 @@ OW_IndicationServerImpl::modifySubscription(const OW_String& ns, const OW_CIMIns
 
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationServerImpl::modifyFilter(const OW_String& ns, const OW_CIMInstance& filterInst)
+{
+	(void)ns;(void)filterInst;
+	// TODO: Make this update the filters.
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "modifying a filter is not supported");
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 extern "C" OW_IndicationServer*
 createIndicationServer()
 {

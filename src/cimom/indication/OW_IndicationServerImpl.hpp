@@ -86,6 +86,7 @@ public:
 	virtual void deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath);
 	virtual void createSubscription(const OW_String& ns, const OW_CIMInstance& subInst, const OW_String& username);
 	virtual void modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst);
+	virtual void modifyFilter(const OW_String& ns, const OW_CIMInstance& filterInst);
 private:
 
 	struct Subscription

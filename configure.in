@@ -73,7 +73,8 @@ dnl Checks for programs.
 AC_CANONICAL_HOST
 AC_PROG_CC
 AC_PROG_CXX
-AC_LANG_CPLUSPLUS
+AC_LANG_C
+#AC_LANG_CPLUSPLUS
 AM_PROG_LEX
 AC_PROG_RANLIB
 AM_CONDITIONAL(HAVE_FLEX, test x$LEX = xflex)
@@ -96,8 +97,8 @@ if test "$with_perl" != no; then
   PGAC_CHECK_PERL_EMBED_CCFLAGS
   PGAC_CHECK_PERL_EMBED_LDFLAGS
   saved_LDFLAGS="$LDFLAGS"
-  saved_CXXFLAGS="$CXXFLAGS"
-  CXXFLAGS="$CXXFLAGS $perl_embed_ccflags"
+  saved_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS $perl_embed_ccflags"
   LDFLAGS="$LDFLAGS $perl_embed_ldflags"
 
   # Basic test to check for compilation success
@@ -118,7 +119,7 @@ if test "$with_perl" != no; then
        HAVE_PERL=no
 	 ]
   )
-  CXXFLAGS="$saved_CXXFLAGS"
+  CFLAGS="$saved_CFLAGS"
   LDFLAGS="$saved_LDFLAGS"
 fi
 AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
@@ -146,8 +147,16 @@ fi
 AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
-sys/cdefs.h sys/queue.h sys/int_types.h streambuf streambuf.h ostream \
-ostream.h istream istream.h inttypes.h getopt.h hash_map ext/hash_map)
+sys/cdefs.h sys/queue.h sys/int_types.h \
+inttypes.h getopt.h)
+
+# check for C++ headers
+AC_LANG_CPLUSPLUS
+
+AC_CHECK_HEADERS(streambuf streambuf.h ostream \
+ostream.h istream istream.h hash_map ext/hash_map)
+
+AC_LANG_C
 
 AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace)
 
@@ -693,6 +702,7 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/polled/slp/Makefile
 ./src/providers/cpp/instance/Makefile
 ./src/providers/cpp/instance/CIM_IndicationSubscription/Makefile
+./src/providers/cpp/instance/CIM_IndicationFilter/Makefile
 ./src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile
 ./src/providers/cpp/instance/CIM_Namespace/Makefile
 ./src/providers/cpp/instance/CIM_NamespaceInManager/Makefile
