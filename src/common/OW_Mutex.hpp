@@ -51,12 +51,9 @@ public:
 
 	/**
 	 * Acquire ownership of this OW_Mutex object.
-	 * If this is a recursive mutex, this call will block if another thread has
-	 * ownership of this OW_Mutex. When it returns, the current thread will be
+	 * This call will block if another thread has ownership of 
+	 * this OW_Mutex. When it returns, the current thread will be
 	 * the owner of this OW_Mutex object.
-	 * If this is not a recursive mutex, the behaviour is similar to recursive
-	 * with the exception that more than one call to acquire will block the
-	 * thread indefinately.
 	 */
 	void acquire();
 
