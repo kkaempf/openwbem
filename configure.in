@@ -589,7 +589,6 @@ AC_OUTPUT(./Makefile
 ./src/server/Makefile
 ./src/services/Makefile
 ./src/services/http/Makefile
-./src/services/ipc/Makefile
 ./src/tools/Makefile
 ./src/tools/owmofc/Makefile
 ./src/wql/Makefile

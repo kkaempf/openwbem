@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
-#include "OW_IPCClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_SocketBaseImpl.hpp"

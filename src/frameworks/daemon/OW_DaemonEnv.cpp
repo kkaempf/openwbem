@@ -41,8 +41,8 @@
 #include "OW_SelectEngine.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_CIMProtocolIFC.hpp"
-#include "OW_IPCClient.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_HTTPClient.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -129,7 +129,7 @@ OW_DaemonEnv::getCIMOMHandle(const OW_String& username, OW_Bool doIndications)
 	(void)doIndications;
 	// TODO: come up with a decent URL for the IPCCIMOMHandle
 	OW_CIMProtocolIFCRef client;
-	client = new OW_IPCClient("localhost");
+	client = new OW_HTTPClient("ipc://localhost");
 
 	OW_CIMOMHandleIFCRef chRef;
 	chRef = new OW_BinaryCIMOMHandle(client);

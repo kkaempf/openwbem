@@ -2,9 +2,7 @@ SUBDIRS = test
 
 noinst_LIBRARIES = libOW_Socket.a
 libOW_Socket_a_SOURCES = \
-OW_DomainSocketConnection.cpp \
 OW_GetPass.cpp \
-OW_IPCConnection.cpp \
 OW_SocketAddress.cpp \
 OW_SSLSocketImpl.cpp \
 OW_ServerSocketImpl.cpp \
@@ -17,9 +15,7 @@ OW_SocketStreamBuffer.cpp \
 OW_SocketUtils.cpp
 
 pkginclude_HEADERS = \
-OW_DomainSocketConnection.hpp \
 OW_GetPass.hpp \
-OW_IPCConnection.hpp \
 OW_SocketAddress.hpp \
 OW_SSLSocketImpl.hpp \
 OW_ServerSocket.hpp \

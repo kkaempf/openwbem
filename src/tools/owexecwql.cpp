@@ -35,7 +35,6 @@
 #include "OW_GetPass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
-#include "OW_IPCClient.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 
 #include <iostream>

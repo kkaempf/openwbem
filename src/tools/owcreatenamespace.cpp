@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_IPCClient.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
@@ -80,14 +79,8 @@ int main(int argc, char* argv[])
 		OW_URL owurl(url);
 
 		OW_CIMProtocolIFCRef client;
-		if (owurl.protocol.equalsIgnoreCase("ipc"))
-		{
-			client = new OW_IPCClient(url);
-		}
-		else
-		{
-			client = new OW_HTTPClient(url);
-		}
+		client = new OW_HTTPClient(url);
+		
 
 
 		/**********************************************************************
