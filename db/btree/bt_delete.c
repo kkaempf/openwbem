@@ -33,6 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#include "OW_config.h"
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)bt_delete.c	8.13 (Berkeley) 7/28/94";

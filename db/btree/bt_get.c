@@ -34,12 +34,13 @@
  * SUCH DAMAGE.
  */
 
+#include "OW_config.h"
+
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)bt_get.c	8.6 (Berkeley) 7/20/94";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
-
 #include <errno.h>
 #include <stddef.h>
 #include <stdio.h>

@@ -36,7 +36,9 @@
 
 #include "OW_config.h"
 
+#if !defined(OW_WIN32)
 #include <sys/param.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

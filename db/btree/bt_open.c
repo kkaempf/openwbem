@@ -33,6 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#include "OW_config.h"
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)bt_open.c	8.10 (Berkeley) 8/17/94";
@@ -46,7 +47,13 @@ static char sccsid[] = "@(#)bt_open.c	8.10 (Berkeley) 8/17/94";
  * is wholly independent of the Postgres code.
  */
 
+#if defined(OW_WIN32)
+#include <io.h>
+#else
 #include <sys/param.h>
+#include <unistd.h>
+#endif
+
 #include <sys/stat.h>
 
 #include <errno.h>
@@ -56,7 +63,6 @@ static char sccsid[] = "@(#)bt_open.c	8.10 (Berkeley) 8/17/94";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 /* defined so we got special macros from db.h */
 #define __DBINTERFACE_PRIVATE
@@ -218,8 +224,10 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 		F_SET(t, B_INMEM);
 	}
 
+#if !defined(OW_WIN32)
 	if (fcntl(t->bt_fd, F_SETFD, 1) == -1)
 		goto err;
+#endif
 
 	if (fstat(t->bt_fd, &sb))
 		goto err;
@@ -265,7 +273,11 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 		 * Don't overflow the page offset type.
 		 */
 		if (b.psize == 0) {
+#if defined(OW_WIN32)
+			b.psize = 1024;
+#else
 			b.psize = sb.st_blksize;
+#endif
 			if (b.psize < MINPSIZE)
 				b.psize = MINPSIZE;
 			if (b.psize > MAX_PAGE_OFFSET + 1)
@@ -392,6 +404,16 @@ nroot(t)
 static int
 tmp()
 {
+#if defined(OW_WIN32)
+	int fd;
+	char *filename;
+	
+	if((filename = _tempnam(NULL, "owtempfile")) == NULL)
+		return -1;
+
+	fd = open(filename, _O_WRONLY | _O_CREAT, _S_IREAD | _S_IWRITE);
+	free(filename);
+#else
 	sigset_t set, oset;
 	int fd;
 	char *envtmp;
@@ -406,6 +428,7 @@ tmp()
 	if ((fd = mkstemp(path)) != -1)
 		(void)unlink(path);
 	(void)sigprocmask(SIG_SETMASK, &oset, NULL);
+#endif
 	return(fd);
 }
 

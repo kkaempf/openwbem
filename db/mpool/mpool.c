@@ -33,7 +33,12 @@
 
 #include "OW_config.h"
 
+#if defined(OW_WIN32)
+#include <io.h>
+#else
 #include <sys/param.h>
+#include <unistd.h>
+#endif
 
 /*
 //#ifdef OW_HAVE_SYS_QUEUE_H
@@ -51,7 +56,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 /* defined so we got special macros from db.h */
 #define __DBINTERFACE_PRIVATE
@@ -311,7 +315,11 @@ mpool_sync(mp)
 			return (RET_ERROR);
 
 	/* Sync the file descriptor. */
+#if defined(OW_WIN32)
+	return (_commit(mp->fd) ? RET_ERROR : RET_SUCCESS);
+#else
 	return (fsync(mp->fd) ? RET_ERROR : RET_SUCCESS);
+#endif
 }
 
 /*

@@ -106,7 +106,7 @@ static int __sigtemp;		/* For the use of sigprocmask */
 #define	BYTE_ORDER	LITTLE_ENDIAN	/* Set for your system. */
 #endif
 
-#if defined(SYSV) || defined(SYSTEM5)
+#if defined(SYSV) || defined(SYSTEM5) || defined(OW_WIN32)
 #define	index(a, b)		strchr(a, b)
 #define	rindex(a, b)		strrchr(a, b)
 #define	bzero(a, b)		memset(a, 0, b)
@@ -215,6 +215,11 @@ static int __sigtemp;		/* For the use of sigprocmask */
 /* The type of a va_list. */
 #ifndef _BSD_VA_LIST_			/* 4.4BSD #define. */
 #define	_BSD_VA_LIST_	char *
+#endif
+
+#if defined(OW_WIN32)
+typedef char* caddr_t;
+typedef SSIZE_T ssize_t;
 #endif
 
 #endif /* !_COMPAT_H_ */

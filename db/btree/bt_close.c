@@ -34,17 +34,23 @@
  * SUCH DAMAGE.
  */
 
+#include <OW_config.h>
+
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)bt_close.c	8.7 (Berkeley) 8/17/94";
 #endif /* LIBC_SCCS and not lint */
 
+#if defined(OW_WIN32)
+#include <io.h>
+#else
 #include <sys/param.h>
+#include <unistd.h>
+#endif
 
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 /* defined so we got special macros from db.h */
 #define __DBINTERFACE_PRIVATE

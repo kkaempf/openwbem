@@ -55,9 +55,16 @@ dbopen(fname, flags, mode, type, openinfo)
 {
 
 #define	DB_FLAGS	(DB_LOCK | DB_SHMEM | DB_TXN)
+
+#if defined(OW_WIN32)
+#define	USE_OPEN_FLAGS							\
+	(O_CREAT | O_EXCL | O_EXLOCK | O_RDONLY |		\
+	O_RDWR | O_SHLOCK | O_TRUNC)
+#else
 #define	USE_OPEN_FLAGS							\
 	(O_CREAT | O_EXCL | O_EXLOCK | O_NONBLOCK | O_RDONLY |		\
 	 O_RDWR | O_SHLOCK | O_TRUNC)
+#endif
 
 	if ((flags & ~(USE_OPEN_FLAGS | DB_FLAGS)) == 0)
 		switch (type) {

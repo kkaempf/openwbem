@@ -136,9 +136,9 @@
 /* #undef OW_HAVE_HASH_MAP */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#ifndef OW_HAVE_INTTYPES_H 
-#define OW_HAVE_INTTYPES_H  1 
-#endif
+//#ifndef OW_HAVE_INTTYPES_H 
+//#define OW_HAVE_INTTYPES_H  1 
+//#endif
 
 /* Define to 1 if you have the <istream> header file. */
 #ifndef OW_HAVE_ISTREAM 
@@ -536,6 +536,7 @@
 
 #define _WIN32_WINNT 0x0400
 #define OW_USE_DLL 1
+#define NO_POSIX_SIGNALS 1
 //#define OW_DEBUG_MEMORY 1
 
 // Including winsock2.h should also bring in windows.h
