@@ -46,6 +46,11 @@
 #include <vector>
 #include <cstdlib> // for strtol
 
+extern "C"
+{
+#include <errno.h>
+}
+
 namespace OpenWBEM
 {
 
