@@ -349,6 +349,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 		{
 			char string[] = "OCTYPE";
 			char *curChar = string;
+			m_current++;
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
