@@ -3,8 +3,9 @@
 # Note:
 #  All lines that start with a '#' or a ';' character are ignored.
 #
-#  All of the options in this file are read by owcimomd at start up. The 
-#  options that are prefixed with "owcimomd." are meant specifically for 
+#  All of the options in this file are read by owcimomd at start up. The file
+#  will only be re-read on restart when a SIGHUP is received.
+#  The options that are prefixed with "owcimomd." are meant specifically for 
 #  owcimomd.
 #  Other options are prefixed with an identifier of the component that is
 #  specifically interested in the options. For example the
@@ -15,7 +16,7 @@
 
 ################################################################################
 # If owcimomd.allow_anonymous is set to true anonymous logins are allowed by
-# owcimomd (i.e. No user name or password is required).
+# owcimomd, authentication is disabled and no user name or password is required.
 # The default for this option is false
 ;owcimomd.allow_anonymous = false
 
