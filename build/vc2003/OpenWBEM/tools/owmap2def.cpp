@@ -196,8 +196,30 @@ int convertFile(const string& filename, const string& outfilename)
 			continue;
 		}
 
-		sprintf(wkbfr, " %s @%lu NONAME",
-			decoratedName.c_str(), ordinalNumber);
+		// Identify Data vs. function
+		// This seems like a major hack, but in haste I'm going to give
+		// it a try.
+		const char *dataTag = "";
+		ndx = decoratedName.rfind("@@");
+		if(ndx != string::npos)
+		{
+			wk = decoratedName.substr(ndx);
+			if(wk.length() > 2)
+			{
+				wk = wk.substr(2);
+				if(wk[0] == '2')
+				{
+					ndx = wk.find('@');
+					if(ndx == string::npos)
+					{
+						dataTag = "   DATA";
+					}
+				}
+			}
+		}
+
+		sprintf(wkbfr, " %s @%lu NONAME%s",
+			decoratedName.c_str(), ordinalNumber, dataTag);
 		outputLine = wkbfr;
 		memset(undecoratedNameBuf, 0, sizeof(undecoratedNameBuf));
 

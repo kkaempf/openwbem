@@ -16,12 +16,12 @@ MAP2DEF = $(TOOLSDIR)\owmap2def.exe
 
 !IFDEF DEBUG
 BUILDTYPE = Debug
-CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
+CPPDEFS = /D"OW_LIBOPENWBEM_DLL" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
 CPPFLAGS = /GF /EHsc /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
 BUILDTYPE = Release
-CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
+CPPDEFS = /D"OW_LIBOPENWBEM_DLL" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
 CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
 LINKDBG = 
 !ENDIF
@@ -111,6 +111,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_StringStream.obj \
 	$(OBJDIR)\OW_System.obj \
 	$(OBJDIR)\OW_TempFileStream.obj \
+	$(OBJDIR)\OW_TempFileEnumerationImplBase.obj \
 	$(OBJDIR)\OW_Thread.obj \
 	$(OBJDIR)\OW_ThreadBarrier.obj \
 	$(OBJDIR)\OW_ThreadCancelledException.obj \
@@ -399,6 +400,9 @@ $(OBJDIR)\OW_System.obj: $(COMMONSRCDIR)\OW_System.cpp
 
 $(OBJDIR)\OW_TempFileStream.obj: $(COMMONSRCDIR)\OW_TempFileStream.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_TempFileStream.cpp
+
+$(OBJDIR)\OW_TempFileEnumerationImplBase.obj: $(COMMONSRCDIR)\OW_TempFileEnumerationImplBase.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_TempFileEnumerationImplBase.cpp
 
 $(OBJDIR)\OW_Thread.obj: $(COMMONSRCDIR)\OW_Thread.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_Thread.cpp
