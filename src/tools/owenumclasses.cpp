@@ -46,6 +46,7 @@ using std::cin;
 using std::endl;
 using std::cerr;
 using namespace WBEMFlags;
+// TODO: put this in a common spot.
 class GetLoginInfo : public ClientAuthCBIFC
 {
 	public:
