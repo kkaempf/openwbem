@@ -57,24 +57,33 @@ do
 	shift
 done
 
-rm -rf ow_ar$$
-mkdir ow_ar$$
-OLDDIR=`pwd`
-cd ow_ar$$
+# extract each archive into it's own directory so that we
+# can safely handle name collisions, i.e. if files are named the
+# same, also rename each *.o to be prefixed by it's archive name
+# so that when the archive is extracted we don't overwrite files
+# that have the same name
 for i in $ARCHIVES;
 do
-	$AR x $OLDDIR/$i
+	name=`basename $i .a`
+	ar_dir=".${name}_dir"
+	rm -rf $ar_dir
+	mkdir $ar_dir
+	cd $ar_dir
+	$AR x ../$i
+	for j in *.o; do
+		mv $j ${name}_$j
+	done
+	cd ..
+	NEWOBJS="$NEWOBJS $ar_dir/*.o"
 done
 
-if test -z "$ARCHIVES";
-then
-	NEWOBJS=""
-else
-	NEWOBJS="ow_ar$$/*.o"
-fi
-
-cd $OLDDIR
 $AR cru $TARGET $NEWOBJS $OBJECTS
 
-rm -rf ow_ar$$
+# clean up each archive dir
+for i in $ARCHIVES;
+do
+	name=`basename $i .a`
+	ar_dir=".${name}_dir"
+	rm -rf $ar_dir
+done
 
