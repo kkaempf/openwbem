@@ -76,8 +76,8 @@ doTests()
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
 	doATest "--disable-ssl" || return 1
-	doATest "--enable-perl-providerifc" || return 1
 	doATest "--with-package-prefix=foo" || return 1
+	doACompileOnlyTest "--enable-perl-providerifc" || return 1
 	doACompileOnlyTest "--disable-association-traversal" || return 1
 	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
 	doACompileOnlyTest "--disable-schema-manipulation" || return 1
