@@ -44,6 +44,12 @@ Fix problems:
       providers.
     - Domain socket should be under the statedir (/var) not /tmp
     - Add forwarding headers for each directory.
+    - Create a way to not have extrinsic methods not require the write lock.
+      If a qualifier is available for this, that will work, and the CIM Server
+      can look at it in begin/endOperation and pass the result down to the
+      CIM Repository.  If a qualifier won't work, then it can query the
+      provider.  This will necessitate a change to the provider interface
+      interface, so don't forget to tell Jason Long.
 
 New features:
     - Start to use __attribute__ ((warn_unused_result)) where applicable.
