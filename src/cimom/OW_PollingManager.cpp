@@ -305,7 +305,21 @@ void
 OW_PollingManager::TriggerRunner::run()
 {
 	m_indServer->m_runCount.signal();
-	OW_Int32 nextInterval = m_itp->poll(createProvEnvRef(m_lch, m_env));
+
+	OW_Int32 nextInterval = 0;
+	try
+	{
+		nextInterval = m_itp->poll(createProvEnvRef(m_lch, m_env));
+	}
+	catch(std::exception& e)
+	{
+		m_env->logError(OW_Format("Caught Exception while running poll: %1", 
+			e.what()));
+	}
+	catch(...)
+	{
+		m_env->logError("Caught Unknown Exception while running poll");
+	}
 
 	if(nextInterval == 0)
 	{

@@ -42,3 +42,5 @@ x search for all reads and writes.  check return values and throw.
   and OW_BinaryCIMOMHandle) and put common code there (namespace funcs in 
   particular).
 
+- change XML parser to be lazy. 
+

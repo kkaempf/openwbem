@@ -1354,7 +1354,8 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
 
-	execQueryXMLOutputter handler(ostr, path.getNameSpace());
+	OW_String nameSpace = path.getNameSpace();
+	execQueryXMLOutputter handler(ostr, nameSpace);
 	hdl.execQuery(path.getFullNameSpace(), handler, query, queryLanguage);
 }
 
