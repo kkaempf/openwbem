@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Center 7 nor the names of its
+*  - Neither the name of Vintela, Inc nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -43,1455 +43,3471 @@ int compareToIgnoreCase(const char* cstr1, const char* cstr2)
 {
 	const unsigned char* str1 = reinterpret_cast<const unsigned char*>(cstr1);
 	const unsigned char* str2 = reinterpret_cast<const unsigned char*>(cstr2);
+	const unsigned char* str1marker = 0;
+	const unsigned char* str2marker = 0;
+	goto state0;
+no_match:
+	if (str1marker) {
+		str1 = str1marker; str1marker = 0;
+		str2 = str2marker; str2marker = 0;
+		goto state0;
+	}
+	return *(str1-1) - *(str2-1);
+zero:
+	return 0 - *str2;
 state0:
 	switch(*(str1++)){
 		case 0x0: goto zero;
-		case 0x1: goto statee20;
-		case 0x2: goto statee22;
-		case 0x3: goto statee24;
-		case 0x4: goto statee26;
-		case 0x5: goto statee28;
-		case 0x6: goto statee2a;
-		case 0x7: goto statee2c;
-		case 0x8: goto statee2e;
-		case 0x9: goto statee30;
-		case 0xa: goto statee32;
-		case 0xb: goto statee34;
-		case 0xc: goto statee36;
-		case 0xd: goto statee38;
-		case 0xe: goto statee3a;
-		case 0xf: goto statee3c;
-		case 0x10: goto statee3e;
-		case 0x11: goto statee40;
-		case 0x12: goto statee42;
-		case 0x13: goto statee44;
-		case 0x14: goto statee46;
-		case 0x15: goto statee48;
-		case 0x16: goto statee4a;
-		case 0x17: goto statee4c;
-		case 0x18: goto statee4e;
-		case 0x19: goto statee50;
-		case 0x1a: goto statee52;
-		case 0x1b: goto statee54;
-		case 0x1c: goto statee56;
-		case 0x1d: goto statee58;
-		case 0x1e: goto statee5a;
-		case 0x1f: goto statee5c;
-		case 0x20: goto statee5e;
-		case 0x21: goto statee60;
-		case 0x22: goto statee62;
-		case 0x23: goto statee64;
-		case 0x24: goto statee66;
-		case 0x25: goto statee68;
-		case 0x26: goto statee6a;
-		case 0x27: goto statee6c;
-		case 0x28: goto statee6e;
-		case 0x29: goto statee70;
-		case 0x2a: goto statee72;
-		case 0x2b: goto statee74;
-		case 0x2c: goto statee76;
-		case 0x2d: goto statee78;
-		case 0x2e: goto statee7a;
-		case 0x2f: goto statee7c;
-		case 0x30: goto statee7e;
-		case 0x31: goto statee80;
-		case 0x32: goto statee82;
-		case 0x33: goto statee84;
-		case 0x34: goto statee86;
-		case 0x35: goto statee88;
-		case 0x36: goto statee8a;
-		case 0x37: goto statee8c;
-		case 0x38: goto statee8e;
-		case 0x39: goto statee90;
-		case 0x3a: goto statee92;
-		case 0x3b: goto statee94;
-		case 0x3c: goto statee96;
-		case 0x3d: goto statee98;
-		case 0x3e: goto statee9a;
-		case 0x3f: goto statee9c;
-		case 0x40: goto statee9e;
-		case 0x41: goto state1;
-		case 0x42: goto state5;
-		case 0x43: goto state9;
-		case 0x44: goto stated;
-		case 0x45: goto state11;
-		case 0x46: goto state15;
-		case 0x47: goto state19;
-		case 0x48: goto state1d;
-		case 0x49: goto state21;
-		case 0x4a: goto state28;
-		case 0x4b: goto state2c;
-		case 0x4c: goto state30;
-		case 0x4d: goto state34;
-		case 0x4e: goto state38;
-		case 0x4f: goto state3c;
-		case 0x50: goto state40;
-		case 0x51: goto state44;
-		case 0x52: goto state48;
-		case 0x53: goto state4c;
-		case 0x54: goto state50;
-		case 0x55: goto state54;
-		case 0x56: goto state58;
-		case 0x57: goto state5c;
-		case 0x58: goto state60;
-		case 0x59: goto state64;
-		case 0x5a: goto state68;
-		case 0x5b: goto stateeba;
-		case 0x5c: goto stateebc;
-		case 0x5d: goto stateebe;
-		case 0x5e: goto stateec0;
-		case 0x5f: goto stateec2;
-		case 0x60: goto stateec4;
-		case 0x61: goto state3;
-		case 0x62: goto state7;
-		case 0x63: goto stateb;
-		case 0x64: goto statef;
-		case 0x65: goto state13;
-		case 0x66: goto state17;
-		case 0x67: goto state1b;
-		case 0x68: goto state1f;
-		case 0x69: goto state23;
-		case 0x6a: goto state2a;
-		case 0x6b: goto state2e;
-		case 0x6c: goto state32;
-		case 0x6d: goto state36;
-		case 0x6e: goto state3a;
-		case 0x6f: goto state3e;
-		case 0x70: goto state42;
-		case 0x71: goto state46;
-		case 0x72: goto state4a;
-		case 0x73: goto state4e;
-		case 0x74: goto state52;
+		case 0x1: goto state1;
+		case 0x2: goto state3;
+		case 0x3: goto state4;
+		case 0x4: goto state5;
+		case 0x5: goto state6;
+		case 0x6: goto state7;
+		case 0x7: goto state8;
+		case 0x8: goto state9;
+		case 0x9: goto statea;
+		case 0xa: goto stateb;
+		case 0xb: goto statec;
+		case 0xc: goto stated;
+		case 0xd: goto statee;
+		case 0xe: goto statef;
+		case 0xf: goto state10;
+		case 0x10: goto state11;
+		case 0x11: goto state12;
+		case 0x12: goto state13;
+		case 0x13: goto state14;
+		case 0x14: goto state15;
+		case 0x15: goto state16;
+		case 0x16: goto state17;
+		case 0x17: goto state18;
+		case 0x18: goto state19;
+		case 0x19: goto state1a;
+		case 0x1a: goto state1b;
+		case 0x1b: goto state1c;
+		case 0x1c: goto state1d;
+		case 0x1d: goto state1e;
+		case 0x1e: goto state1f;
+		case 0x1f: goto state20;
+		case 0x20: goto state21;
+		case 0x21: goto state22;
+		case 0x22: goto state23;
+		case 0x23: goto state24;
+		case 0x24: goto state25;
+		case 0x25: goto state26;
+		case 0x26: goto state27;
+		case 0x27: goto state28;
+		case 0x28: goto state29;
+		case 0x29: goto state2a;
+		case 0x2a: goto state2b;
+		case 0x2b: goto state2c;
+		case 0x2c: goto state2d;
+		case 0x2d: goto state2e;
+		case 0x2e: goto state2f;
+		case 0x2f: goto state30;
+		case 0x30: goto state31;
+		case 0x31: goto state32;
+		case 0x32: goto state33;
+		case 0x33: goto state34;
+		case 0x34: goto state35;
+		case 0x35: goto state36;
+		case 0x36: goto state37;
+		case 0x37: goto state38;
+		case 0x38: goto state39;
+		case 0x39: goto state3a;
+		case 0x3a: goto state3b;
+		case 0x3b: goto state3c;
+		case 0x3c: goto state3d;
+		case 0x3d: goto state3e;
+		case 0x3e: goto state3f;
+		case 0x3f: goto state40;
+		case 0x40: goto state41;
+		case 0x41: goto state42;
+		case 0x42: goto state43;
+		case 0x43: goto state44;
+		case 0x44: goto state45;
+		case 0x45: goto state46;
+		case 0x46: goto state47;
+		case 0x47: goto state48;
+		case 0x48: goto state49;
+		case 0x49: goto state4a;
+		case 0x4a: goto state4b;
+		case 0x4b: goto state4c;
+		case 0x4c: goto state4d;
+		case 0x4d: goto state4e;
+		case 0x4e: goto state4f;
+		case 0x4f: goto state50;
+		case 0x50: goto state51;
+		case 0x51: goto state52;
+		case 0x52: goto state53;
+		case 0x53: goto state54;
+		case 0x54: goto state55;
+		case 0x55: goto state56;
+		case 0x56: goto state57;
+		case 0x57: goto state58;
+		case 0x58: goto state59;
+		case 0x59: goto state5a;
+		case 0x5a: goto state5b;
+		case 0x5b: goto state5c;
+		case 0x5c: goto state5d;
+		case 0x5d: goto state5e;
+		case 0x5e: goto state5f;
+		case 0x5f: goto state60;
+		case 0x60: goto state61;
+		case 0x61: goto state62;
+		case 0x62: goto state43;
+		case 0x63: goto state44;
+		case 0x64: goto state45;
+		case 0x65: goto state46;
+		case 0x66: goto state63;
+		case 0x67: goto state48;
+		case 0x68: goto state64;
+		case 0x69: goto state65;
+		case 0x6a: goto state66;
+		case 0x6b: goto state67;
+		case 0x6c: goto state4d;
+		case 0x6d: goto state4e;
+		case 0x6e: goto state4f;
+		case 0x6f: goto state50;
+		case 0x70: goto state51;
+		case 0x71: goto state52;
+		case 0x72: goto state53;
+		case 0x73: goto state68;
+		case 0x74: goto state69;
 		case 0x75: goto state56;
-		case 0x76: goto state5a;
-		case 0x77: goto state5e;
-		case 0x78: goto state62;
-		case 0x79: goto state66;
-		case 0x7a: goto state6a;
-		case 0x7b: goto stateee0;
-		case 0x7c: goto stateee2;
-		case 0x7d: goto stateee4;
-		case 0x7e: goto stateee6;
-		case 0x7f: goto stateee8;
-		case 0x80: goto stateeea;
-		case 0x81: goto stateeec;
-		case 0x82: goto stateeee;
-		case 0x83: goto stateef0;
-		case 0x84: goto stateef2;
-		case 0x85: goto stateef4;
-		case 0x86: goto stateef6;
-		case 0x87: goto stateef8;
-		case 0x88: goto stateefa;
-		case 0x89: goto stateefc;
-		case 0x8a: goto stateefe;
-		case 0x8b: goto statef00;
-		case 0x8c: goto statef02;
-		case 0x8d: goto statef04;
-		case 0x8e: goto statef06;
-		case 0x8f: goto statef08;
-		case 0x90: goto statef0a;
-		case 0x91: goto statef0c;
-		case 0x92: goto statef0e;
-		case 0x93: goto statef10;
-		case 0x94: goto statef12;
-		case 0x95: goto statef14;
-		case 0x96: goto statef16;
-		case 0x97: goto statef18;
-		case 0x98: goto statef1a;
-		case 0x99: goto statef1c;
-		case 0x9a: goto statef1e;
-		case 0x9b: goto statef20;
-		case 0x9c: goto statef22;
-		case 0x9d: goto statef24;
-		case 0x9e: goto statef26;
-		case 0x9f: goto statef28;
-		case 0xa0: goto statef2a;
-		case 0xa1: goto statef2c;
-		case 0xa2: goto statef2e;
-		case 0xa3: goto statef30;
-		case 0xa4: goto statef32;
-		case 0xa5: goto statef34;
-		case 0xa6: goto statef36;
-		case 0xa7: goto statef38;
-		case 0xa8: goto statef3a;
-		case 0xa9: goto statef3c;
-		case 0xaa: goto statef3e;
-		case 0xab: goto statef40;
-		case 0xac: goto statef42;
-		case 0xad: goto statef44;
-		case 0xae: goto statef46;
-		case 0xaf: goto statef48;
-		case 0xb0: goto statef4a;
-		case 0xb1: goto statef4c;
-		case 0xb2: goto statef4e;
-		case 0xb3: goto statef50;
-		case 0xb4: goto statef52;
-		case 0xb5: goto statef54;
-		case 0xb6: goto statef56;
-		case 0xb7: goto statef58;
-		case 0xb8: goto statef5a;
-		case 0xb9: goto statef5c;
-		case 0xba: goto statef5e;
-		case 0xbb: goto statef60;
-		case 0xbc: goto statef62;
-		case 0xbd: goto statef64;
-		case 0xbe: goto statef66;
-		case 0xbf: goto statef68;
-		case 0xc0: goto statef6a;
-		case 0xc1: goto statef6c;
-		case 0xc2: goto state6c;
-		case 0xc3: goto state74;
-		case 0xc4: goto state26;
-		case 0xc5: goto state176;
-		case 0xc6: goto state202;
-		case 0xc7: goto state22a;
-		case 0xc8: goto state31f;
-		case 0xc9: goto state206;
-		case 0xca: goto state18e;
-		case 0xcb: goto statef71;
-		case 0xcc: goto statef73;
-		case 0xcd: goto state38b;
-		case 0xce: goto state70;
-		case 0xcf: goto state3a6;
-		case 0xd0: goto state480;
-		case 0xd1: goto state484;
-		case 0xd2: goto state586;
-		case 0xd3: goto state5f8;
-		case 0xd4: goto state666;
-		case 0xd5: goto state68b;
-		case 0xd6: goto state70b;
-		case 0xd7: goto statef77;
-		case 0xd8: goto statef79;
-		case 0xd9: goto statef7b;
-		case 0xda: goto statef7d;
-		case 0xdb: goto statef7f;
-		case 0xdc: goto statef81;
-		case 0xdd: goto statef83;
-		case 0xde: goto statef85;
-		case 0xdf: goto statef87;
-		case 0xe0: goto statef89;
-		case 0xe1: goto state72b;
-		case 0xe2: goto statec16;
-		case 0xe3: goto statef8b;
-		case 0xe4: goto statef8d;
-		case 0xe5: goto statef8f;
-		case 0xe6: goto statef91;
-		case 0xe7: goto statef93;
-		case 0xe8: goto statef95;
-		case 0xe9: goto statef97;
-		case 0xea: goto statef99;
-		case 0xeb: goto statef9b;
-		case 0xec: goto statef9d;
-		case 0xed: goto statef9f;
-		case 0xee: goto statefa1;
-		case 0xef: goto statecd5;
-		case 0xf0: goto stated77;
-		case 0xf1: goto statefa3;
-		case 0xf2: goto statefa5;
-		case 0xf3: goto statefa7;
-		case 0xf4: goto statefa9;
-		case 0xf5: goto statefab;
-		case 0xf6: goto statefad;
-		case 0xf7: goto statefaf;
-		case 0xf8: goto statefb1;
-		case 0xf9: goto statefb3;
-		case 0xfa: goto statefb5;
-		case 0xfb: goto statefb7;
-		case 0xfc: goto statefb9;
-		case 0xfd: goto statefbb;
-		case 0xfe: goto statefbd;
-		case 0xff: goto statefbf;
+		case 0x76: goto state57;
+		case 0x77: goto state6a;
+		case 0x78: goto state59;
+		case 0x79: goto state6b;
+		case 0x7a: goto state5b;
+		case 0x7b: goto state6c;
+		case 0x7c: goto state6d;
+		case 0x7d: goto state6e;
+		case 0x7e: goto state6f;
+		case 0x7f: goto state70;
+		case 0x80: goto state71;
+		case 0x81: goto state72;
+		case 0x82: goto state73;
+		case 0x83: goto state74;
+		case 0x84: goto state75;
+		case 0x85: goto state76;
+		case 0x86: goto state77;
+		case 0x87: goto state78;
+		case 0x88: goto state79;
+		case 0x89: goto state7a;
+		case 0x8a: goto state7b;
+		case 0x8b: goto state7c;
+		case 0x8c: goto state7d;
+		case 0x8d: goto state7e;
+		case 0x8e: goto state7f;
+		case 0x8f: goto state80;
+		case 0x90: goto state81;
+		case 0x91: goto state82;
+		case 0x92: goto state83;
+		case 0x93: goto state84;
+		case 0x94: goto state85;
+		case 0x95: goto state86;
+		case 0x96: goto state87;
+		case 0x97: goto state88;
+		case 0x98: goto state89;
+		case 0x99: goto state8a;
+		case 0x9a: goto state8b;
+		case 0x9b: goto state8c;
+		case 0x9c: goto state8d;
+		case 0x9d: goto state8e;
+		case 0x9e: goto state8f;
+		case 0x9f: goto state90;
+		case 0xa0: goto state91;
+		case 0xa1: goto state92;
+		case 0xa2: goto state93;
+		case 0xa3: goto state94;
+		case 0xa4: goto state95;
+		case 0xa5: goto state96;
+		case 0xa6: goto state97;
+		case 0xa7: goto state98;
+		case 0xa8: goto state99;
+		case 0xa9: goto state9a;
+		case 0xaa: goto state9b;
+		case 0xab: goto state9c;
+		case 0xac: goto state9d;
+		case 0xad: goto state9e;
+		case 0xae: goto state9f;
+		case 0xaf: goto statea0;
+		case 0xb0: goto statea1;
+		case 0xb1: goto statea2;
+		case 0xb2: goto statea3;
+		case 0xb3: goto statea4;
+		case 0xb4: goto statea5;
+		case 0xb5: goto statea6;
+		case 0xb6: goto statea7;
+		case 0xb7: goto statea8;
+		case 0xb8: goto statea9;
+		case 0xb9: goto stateaa;
+		case 0xba: goto stateab;
+		case 0xbb: goto stateac;
+		case 0xbc: goto statead;
+		case 0xbd: goto stateae;
+		case 0xbe: goto stateaf;
+		case 0xbf: goto stateb0;
+		case 0xc0: goto stateb1;
+		case 0xc1: goto stateb2;
+		case 0xc2: goto stateb3;
+		case 0xc3: goto stateb4;
+		case 0xc4: goto stateb6;
+		case 0xc5: goto stateb8;
+		case 0xc6: goto stateba;
+		case 0xc7: goto statebc;
+		case 0xc8: goto statebe;
+		case 0xc9: goto statec0;
+		case 0xca: goto statec1;
+		case 0xcb: goto statec2;
+		case 0xcc: goto statec3;
+		case 0xcd: goto statec4;
+		case 0xce: goto statec5;
+		case 0xcf: goto statec7;
+		case 0xd0: goto statec9;
+		case 0xd1: goto statecb;
+		case 0xd2: goto statecd;
+		case 0xd3: goto statecf;
+		case 0xd4: goto stated1;
+		case 0xd5: goto stated3;
+		case 0xd6: goto stated5;
+		case 0xd7: goto stated6;
+		case 0xd8: goto stated7;
+		case 0xd9: goto stated8;
+		case 0xda: goto stated9;
+		case 0xdb: goto stateda;
+		case 0xdc: goto statedb;
+		case 0xdd: goto statedc;
+		case 0xde: goto statedd;
+		case 0xdf: goto statede;
+		case 0xe0: goto statedf;
+		case 0xe1: goto statee0;
+		case 0xe2: goto statee2;
+		case 0xe3: goto statee4;
+		case 0xe4: goto statee5;
+		case 0xe5: goto statee6;
+		case 0xe6: goto statee7;
+		case 0xe7: goto statee8;
+		case 0xe8: goto statee9;
+		case 0xe9: goto stateea;
+		case 0xea: goto stateeb;
+		case 0xeb: goto stateec;
+		case 0xec: goto stateed;
+		case 0xed: goto stateee;
+		case 0xee: goto stateef;
+		case 0xef: goto statef0;
+		case 0xf0: goto statef2;
+		case 0xf1: goto statef4;
+		case 0xf2: goto statef5;
+		case 0xf3: goto statef6;
+		case 0xf4: goto statef7;
+		case 0xf5: goto statef8;
+		case 0xf6: goto statef9;
+		case 0xf7: goto statefa;
+		case 0xf8: goto statefb;
+		case 0xf9: goto statefc;
+		case 0xfa: goto statefd;
+		case 0xfb: goto statefe;
+		case 0xfc: goto stateff;
+		case 0xfd: goto state100;
+		case 0xfe: goto state101;
+		case 0xff: goto state102;
 		default: goto no_match;
 	}
 state1:
 	switch(*(str2++)){
-		case 0x41: goto state0;
-		case 0x61: goto state0;
+		case 0x1: goto state2;
 		default: goto no_match;
 	}
+state2:
+	goto state0;
 state3:
 	switch(*(str2++)){
-		case 0x41: goto state0;
-		case 0x61: goto state0;
-		case 0xe1: goto state88c;
+		case 0x2: goto state2;
+		default: goto no_match;
+	}
+state4:
+	switch(*(str2++)){
+		case 0x3: goto state2;
 		default: goto no_match;
 	}
 state5:
 	switch(*(str2++)){
-		case 0x42: goto state0;
-		case 0x62: goto state0;
+		case 0x4: goto state2;
+		default: goto no_match;
+	}
+state6:
+	switch(*(str2++)){
+		case 0x5: goto state2;
 		default: goto no_match;
 	}
 state7:
 	switch(*(str2++)){
-		case 0x42: goto state0;
-		case 0x62: goto state0;
+		case 0x6: goto state2;
+		default: goto no_match;
+	}
+state8:
+	switch(*(str2++)){
+		case 0x7: goto state2;
 		default: goto no_match;
 	}
 state9:
 	switch(*(str2++)){
-		case 0x43: goto state0;
-		case 0x63: goto state0;
+		case 0x8: goto state2;
+		default: goto no_match;
+	}
+statea:
+	switch(*(str2++)){
+		case 0x9: goto state2;
 		default: goto no_match;
 	}
 stateb:
 	switch(*(str2++)){
-		case 0x43: goto state0;
-		case 0x63: goto state0;
+		case 0xa: goto state2;
+		default: goto no_match;
+	}
+statec:
+	switch(*(str2++)){
+		case 0xb: goto state2;
 		default: goto no_match;
 	}
 stated:
 	switch(*(str2++)){
-		case 0x44: goto state0;
-		case 0x64: goto state0;
+		case 0xc: goto state2;
+		default: goto no_match;
+	}
+statee:
+	switch(*(str2++)){
+		case 0xd: goto state2;
 		default: goto no_match;
 	}
 statef:
 	switch(*(str2++)){
-		case 0x44: goto state0;
-		case 0x64: goto state0;
+		case 0xe: goto state2;
+		default: goto no_match;
+	}
+state10:
+	switch(*(str2++)){
+		case 0xf: goto state2;
 		default: goto no_match;
 	}
 state11:
 	switch(*(str2++)){
-		case 0x45: goto state0;
-		case 0x65: goto state0;
+		case 0x10: goto state2;
+		default: goto no_match;
+	}
+state12:
+	switch(*(str2++)){
+		case 0x11: goto state2;
 		default: goto no_match;
 	}
 state13:
 	switch(*(str2++)){
-		case 0x45: goto state0;
-		case 0x65: goto state0;
+		case 0x12: goto state2;
+		default: goto no_match;
+	}
+state14:
+	switch(*(str2++)){
+		case 0x13: goto state2;
 		default: goto no_match;
 	}
 state15:
 	switch(*(str2++)){
-		case 0x46: goto state0;
-		case 0x66: goto state0;
+		case 0x14: goto state2;
+		default: goto no_match;
+	}
+state16:
+	switch(*(str2++)){
+		case 0x15: goto state2;
 		default: goto no_match;
 	}
 state17:
 	switch(*(str2++)){
-		case 0x46: goto state0;
-		case 0x66: goto state0;
-		case 0xef: goto statecd9;
+		case 0x16: goto state2;
+		default: goto no_match;
+	}
+state18:
+	switch(*(str2++)){
+		case 0x17: goto state2;
 		default: goto no_match;
 	}
 state19:
 	switch(*(str2++)){
-		case 0x47: goto state0;
-		case 0x67: goto state0;
+		case 0x18: goto state2;
+		default: goto no_match;
+	}
+state1a:
+	switch(*(str2++)){
+		case 0x19: goto state2;
 		default: goto no_match;
 	}
 state1b:
 	switch(*(str2++)){
-		case 0x47: goto state0;
-		case 0x67: goto state0;
+		case 0x1a: goto state2;
+		default: goto no_match;
+	}
+state1c:
+	switch(*(str2++)){
+		case 0x1b: goto state2;
 		default: goto no_match;
 	}
 state1d:
 	switch(*(str2++)){
-		case 0x48: goto state0;
-		case 0x68: goto state0;
+		case 0x1c: goto state2;
+		default: goto no_match;
+	}
+state1e:
+	switch(*(str2++)){
+		case 0x1d: goto state2;
 		default: goto no_match;
 	}
 state1f:
 	switch(*(str2++)){
-		case 0x48: goto state0;
-		case 0x68: goto state0;
-		case 0xe1: goto state864;
+		case 0x1e: goto state2;
+		default: goto no_match;
+	}
+state20:
+	switch(*(str2++)){
+		case 0x1f: goto state2;
 		default: goto no_match;
 	}
 state21:
 	switch(*(str2++)){
-		case 0x49: goto state0;
-		case 0x69: goto state0;
-		case 0xc4: goto state0;
+		case 0x20: goto state2;
+		default: goto no_match;
+	}
+state22:
+	switch(*(str2++)){
+		case 0x21: goto state2;
 		default: goto no_match;
 	}
 state23:
 	switch(*(str2++)){
-		case 0x49: goto state0;
-		case 0x69: goto state0;
-		case 0xc4: goto state158;
+		case 0x22: goto state2;
+		default: goto no_match;
+	}
+state24:
+	switch(*(str2++)){
+		case 0x23: goto state2;
+		default: goto no_match;
+	}
+state25:
+	switch(*(str2++)){
+		case 0x24: goto state2;
 		default: goto no_match;
 	}
 state26:
 	switch(*(str2++)){
-		case 0x49: goto state0;
-		case 0x69: goto state155;
-		case 0xc4: goto statef4;
-		case 0xc5: goto state173;
+		case 0x25: goto state2;
+		default: goto no_match;
+	}
+state27:
+	switch(*(str2++)){
+		case 0x26: goto state2;
 		default: goto no_match;
 	}
 state28:
 	switch(*(str2++)){
-		case 0x4a: goto state0;
-		case 0x6a: goto state0;
+		case 0x27: goto state2;
+		default: goto no_match;
+	}
+state29:
+	switch(*(str2++)){
+		case 0x28: goto state2;
 		default: goto no_match;
 	}
 state2a:
 	switch(*(str2++)){
-		case 0x4a: goto state0;
-		case 0x6a: goto state0;
-		case 0xc7: goto state2f9;
+		case 0x29: goto state2;
+		default: goto no_match;
+	}
+state2b:
+	switch(*(str2++)){
+		case 0x2a: goto state2;
 		default: goto no_match;
 	}
 state2c:
 	switch(*(str2++)){
-		case 0x4b: goto state0;
-		case 0x6b: goto state0;
+		case 0x2b: goto state2;
+		default: goto no_match;
+	}
+state2d:
+	switch(*(str2++)){
+		case 0x2c: goto state2;
 		default: goto no_match;
 	}
 state2e:
 	switch(*(str2++)){
-		case 0x4b: goto state0;
-		case 0x6b: goto state0;
-		case 0xe2: goto state0;
+		case 0x2d: goto state2;
+		default: goto no_match;
+	}
+state2f:
+	switch(*(str2++)){
+		case 0x2e: goto state2;
 		default: goto no_match;
 	}
 state30:
 	switch(*(str2++)){
-		case 0x4c: goto state0;
-		case 0x6c: goto state0;
+		case 0x2f: goto state2;
+		default: goto no_match;
+	}
+state31:
+	switch(*(str2++)){
+		case 0x30: goto state2;
 		default: goto no_match;
 	}
 state32:
 	switch(*(str2++)){
-		case 0x4c: goto state0;
-		case 0x6c: goto state0;
+		case 0x31: goto state2;
+		default: goto no_match;
+	}
+state33:
+	switch(*(str2++)){
+		case 0x32: goto state2;
 		default: goto no_match;
 	}
 state34:
 	switch(*(str2++)){
-		case 0x4d: goto state0;
-		case 0x6d: goto state0;
+		case 0x33: goto state2;
+		default: goto no_match;
+	}
+state35:
+	switch(*(str2++)){
+		case 0x34: goto state2;
 		default: goto no_match;
 	}
 state36:
 	switch(*(str2++)){
-		case 0x4d: goto state0;
-		case 0x6d: goto state0;
+		case 0x35: goto state2;
+		default: goto no_match;
+	}
+state37:
+	switch(*(str2++)){
+		case 0x36: goto state2;
 		default: goto no_match;
 	}
 state38:
 	switch(*(str2++)){
-		case 0x4e: goto state0;
-		case 0x6e: goto state0;
+		case 0x37: goto state2;
+		default: goto no_match;
+	}
+state39:
+	switch(*(str2++)){
+		case 0x38: goto state2;
 		default: goto no_match;
 	}
 state3a:
 	switch(*(str2++)){
-		case 0x4e: goto state0;
-		case 0x6e: goto state0;
+		case 0x39: goto state2;
+		default: goto no_match;
+	}
+state3b:
+	switch(*(str2++)){
+		case 0x3a: goto state2;
 		default: goto no_match;
 	}
 state3c:
 	switch(*(str2++)){
-		case 0x4f: goto state0;
-		case 0x6f: goto state0;
+		case 0x3b: goto state2;
+		default: goto no_match;
+	}
+state3d:
+	switch(*(str2++)){
+		case 0x3c: goto state2;
 		default: goto no_match;
 	}
 state3e:
 	switch(*(str2++)){
-		case 0x4f: goto state0;
-		case 0x6f: goto state0;
+		case 0x3d: goto state2;
+		default: goto no_match;
+	}
+state3f:
+	switch(*(str2++)){
+		case 0x3e: goto state2;
 		default: goto no_match;
 	}
 state40:
 	switch(*(str2++)){
-		case 0x50: goto state0;
-		case 0x70: goto state0;
+		case 0x3f: goto state2;
+		default: goto no_match;
+	}
+state41:
+	switch(*(str2++)){
+		case 0x40: goto state2;
 		default: goto no_match;
 	}
 state42:
 	switch(*(str2++)){
-		case 0x50: goto state0;
-		case 0x70: goto state0;
+		case 0x41: goto state2;
+		case 0x61: goto state2;
+		default: goto no_match;
+	}
+state43:
+	switch(*(str2++)){
+		case 0x42: goto state2;
+		case 0x62: goto state2;
 		default: goto no_match;
 	}
 state44:
 	switch(*(str2++)){
-		case 0x51: goto state0;
-		case 0x71: goto state0;
+		case 0x43: goto state2;
+		case 0x63: goto state2;
+		default: goto no_match;
+	}
+state45:
+	switch(*(str2++)){
+		case 0x44: goto state2;
+		case 0x64: goto state2;
 		default: goto no_match;
 	}
 state46:
 	switch(*(str2++)){
-		case 0x51: goto state0;
-		case 0x71: goto state0;
+		case 0x45: goto state2;
+		case 0x65: goto state2;
+		default: goto no_match;
+	}
+state47:
+	switch(*(str2++)){
+		case 0x46: goto state2;
+		case 0x66: goto state2;
 		default: goto no_match;
 	}
 state48:
 	switch(*(str2++)){
-		case 0x52: goto state0;
-		case 0x72: goto state0;
+		case 0x47: goto state2;
+		case 0x67: goto state2;
+		default: goto no_match;
+	}
+state49:
+	switch(*(str2++)){
+		case 0x48: goto state2;
+		case 0x68: goto state2;
 		default: goto no_match;
 	}
 state4a:
 	switch(*(str2++)){
-		case 0x52: goto state0;
-		case 0x72: goto state0;
+		case 0x49: goto state2;
+		case 0x69: goto state2;
+		case 0xc4: goto statea2;
+		default: goto no_match;
+	}
+state4b:
+	switch(*(str2++)){
+		case 0x4a: goto state2;
+		case 0x6a: goto state2;
 		default: goto no_match;
 	}
 state4c:
 	switch(*(str2++)){
-		case 0x53: goto state0;
-		case 0x73: goto state0;
+		case 0x4b: goto state2;
+		case 0x6b: goto state2;
+		default: goto no_match;
+	}
+state4d:
+	switch(*(str2++)){
+		case 0x4c: goto state2;
+		case 0x6c: goto state2;
 		default: goto no_match;
 	}
 state4e:
 	switch(*(str2++)){
-		case 0x53: goto state0;
-		case 0x73: goto state0;
-		case 0xc3: goto statef1;
-		case 0xc5: goto state0;
-		case 0xef: goto stateced;
+		case 0x4d: goto state2;
+		case 0x6d: goto state2;
+		default: goto no_match;
+	}
+state4f:
+	switch(*(str2++)){
+		case 0x4e: goto state2;
+		case 0x6e: goto state2;
 		default: goto no_match;
 	}
 state50:
 	switch(*(str2++)){
-		case 0x54: goto state0;
-		case 0x74: goto state0;
+		case 0x4f: goto state2;
+		case 0x6f: goto state2;
+		default: goto no_match;
+	}
+state51:
+	switch(*(str2++)){
+		case 0x50: goto state2;
+		case 0x70: goto state2;
 		default: goto no_match;
 	}
 state52:
 	switch(*(str2++)){
-		case 0x54: goto state0;
-		case 0x74: goto state0;
-		case 0xe1: goto state86e;
+		case 0x51: goto state2;
+		case 0x71: goto state2;
+		default: goto no_match;
+	}
+state53:
+	switch(*(str2++)){
+		case 0x52: goto state2;
+		case 0x72: goto state2;
 		default: goto no_match;
 	}
 state54:
 	switch(*(str2++)){
-		case 0x55: goto state0;
-		case 0x75: goto state0;
+		case 0x53: goto state2;
+		case 0x73: goto state2;
+		default: goto no_match;
+	}
+state55:
+	switch(*(str2++)){
+		case 0x54: goto state2;
+		case 0x74: goto state2;
 		default: goto no_match;
 	}
 state56:
 	switch(*(str2++)){
-		case 0x55: goto state0;
-		case 0x75: goto state0;
+		case 0x55: goto state2;
+		case 0x75: goto state2;
+		default: goto no_match;
+	}
+state57:
+	switch(*(str2++)){
+		case 0x56: goto state2;
+		case 0x76: goto state2;
 		default: goto no_match;
 	}
 state58:
 	switch(*(str2++)){
-		case 0x56: goto state0;
-		case 0x76: goto state0;
+		case 0x57: goto state2;
+		case 0x77: goto state2;
+		default: goto no_match;
+	}
+state59:
+	switch(*(str2++)){
+		case 0x58: goto state2;
+		case 0x78: goto state2;
 		default: goto no_match;
 	}
 state5a:
 	switch(*(str2++)){
-		case 0x56: goto state0;
-		case 0x76: goto state0;
+		case 0x59: goto state2;
+		case 0x79: goto state2;
+		default: goto no_match;
+	}
+state5b:
+	switch(*(str2++)){
+		case 0x5a: goto state2;
+		case 0x7a: goto state2;
 		default: goto no_match;
 	}
 state5c:
 	switch(*(str2++)){
-		case 0x57: goto state0;
-		case 0x77: goto state0;
+		case 0x5b: goto state2;
+		default: goto no_match;
+	}
+state5d:
+	switch(*(str2++)){
+		case 0x5c: goto state2;
 		default: goto no_match;
 	}
 state5e:
 	switch(*(str2++)){
-		case 0x57: goto state0;
-		case 0x77: goto state0;
-		case 0xe1: goto state878;
+		case 0x5d: goto state2;
+		default: goto no_match;
+	}
+state5f:
+	switch(*(str2++)){
+		case 0x5e: goto state2;
 		default: goto no_match;
 	}
 state60:
 	switch(*(str2++)){
-		case 0x58: goto state0;
-		case 0x78: goto state0;
+		case 0x5f: goto state2;
+		default: goto no_match;
+	}
+state61:
+	switch(*(str2++)){
+		case 0x60: goto state2;
 		default: goto no_match;
 	}
 state62:
 	switch(*(str2++)){
-		case 0x58: goto state0;
-		case 0x78: goto state0;
+		case 0x41: goto state2;
+		case 0x61: goto state2;
+		case 0xe1: goto state165;
+		default: goto no_match;
+	}
+state63:
+	switch(*(str2++)){
+		case 0x46: goto state2;
+		case 0x66: goto state2;
+		case 0xef: goto state207;
 		default: goto no_match;
 	}
 state64:
 	switch(*(str2++)){
-		case 0x59: goto state0;
-		case 0x79: goto state0;
+		case 0x48: goto state2;
+		case 0x68: goto state2;
+		case 0xe1: goto state14d;
+		default: goto no_match;
+	}
+state65:
+	switch(*(str2++)){
+		case 0x49: goto state2;
+		case 0x69: goto state2;
+		case 0xc4: goto state10b;
 		default: goto no_match;
 	}
 state66:
 	switch(*(str2++)){
-		case 0x59: goto state0;
-		case 0x79: goto state0;
-		case 0xe1: goto state882;
+		case 0x4a: goto state2;
+		case 0x6a: goto state2;
+		case 0xc7: goto state124;
+		default: goto no_match;
+	}
+state67:
+	switch(*(str2++)){
+		case 0x4b: goto state2;
+		case 0x6b: goto state2;
+		case 0xe2: goto state1f7;
 		default: goto no_match;
 	}
 state68:
 	switch(*(str2++)){
-		case 0x5a: goto state0;
-		case 0x7a: goto state0;
+		case 0x53: goto state2;
+		case 0x73: goto state2;
+		case 0xc3: goto state108;
+		case 0xc5: goto stateb0;
+		case 0xef: goto state211;
+		default: goto no_match;
+	}
+state69:
+	switch(*(str2++)){
+		case 0x54: goto state2;
+		case 0x74: goto state2;
+		case 0xe1: goto state153;
 		default: goto no_match;
 	}
 state6a:
 	switch(*(str2++)){
-		case 0x5a: goto state0;
-		case 0x7a: goto state0;
+		case 0x57: goto state2;
+		case 0x77: goto state2;
+		case 0xe1: goto state159;
+		default: goto no_match;
+	}
+state6b:
+	switch(*(str2++)){
+		case 0x59: goto state2;
+		case 0x79: goto state2;
+		case 0xe1: goto state15f;
 		default: goto no_match;
 	}
 state6c:
 	switch(*(str2++)){
-		case 0xc2: goto state0;
-		case 0xce: goto state6d;
+		case 0x7b: goto state2;
 		default: goto no_match;
 	}
 state6d:
-	switch(*(str1++)){
-		case 0xb5: goto state6e;
+	switch(*(str2++)){
+		case 0x7c: goto state2;
 		default: goto no_match;
 	}
 state6e:
 	switch(*(str2++)){
-		case 0xbc: goto state0;
+		case 0x7d: goto state2;
+		default: goto no_match;
+	}
+state6f:
+	switch(*(str2++)){
+		case 0x7e: goto state2;
 		default: goto no_match;
 	}
 state70:
 	switch(*(str2++)){
-		case 0xc2: goto state71;
-		case 0xcd: goto state38f;
-		case 0xce: goto state392;
-		case 0xcf: goto state3a3;
-		case 0xe1: goto stateb3b;
+		case 0x7f: goto state2;
 		default: goto no_match;
 	}
 state71:
-	switch(*(str1++)){
-		case 0xbc: goto state72;
+	switch(*(str2++)){
+		case 0x80: goto state2;
 		default: goto no_match;
 	}
 state72:
 	switch(*(str2++)){
-		case 0xb5: goto state0;
+		case 0x81: goto state2;
+		default: goto no_match;
+	}
+state73:
+	switch(*(str2++)){
+		case 0x82: goto state2;
 		default: goto no_match;
 	}
 state74:
 	switch(*(str2++)){
-		case 0x73: goto stateee;
-		case 0xc3: goto state75;
-		case 0xc5: goto state1f1;
-		case 0xe2: goto statec22;
+		case 0x83: goto state2;
 		default: goto no_match;
 	}
 state75:
-	switch(*(str1++)){
-		case 0x80: goto state76;
-		case 0x81: goto state7a;
-		case 0x82: goto state7e;
-		case 0x83: goto state82;
-		case 0x84: goto state86;
-		case 0x85: goto state8a;
-		case 0x86: goto state8e;
-		case 0x87: goto state92;
-		case 0x88: goto state96;
-		case 0x89: goto state9a;
-		case 0x8a: goto state9e;
-		case 0x8b: goto statea2;
-		case 0x8c: goto statea6;
-		case 0x8d: goto stateaa;
-		case 0x8e: goto stateae;
-		case 0x8f: goto stateb2;
-		case 0x90: goto stateb6;
-		case 0x91: goto stateba;
-		case 0x92: goto statebe;
-		case 0x93: goto statec2;
-		case 0x94: goto statec6;
-		case 0x95: goto stateca;
-		case 0x96: goto statece;
-		case 0x98: goto stated2;
-		case 0x99: goto stated6;
-		case 0x9a: goto stateda;
-		case 0x9b: goto statede;
-		case 0x9c: goto statee2;
-		case 0x9d: goto statee6;
-		case 0x9e: goto stateea;
-		case 0xa0: goto state78;
-		case 0xa1: goto state7c;
-		case 0xa2: goto state80;
-		case 0xa3: goto state84;
-		case 0xa4: goto state88;
-		case 0xa5: goto state8c;
-		case 0xa6: goto state90;
-		case 0xa7: goto state94;
-		case 0xa8: goto state98;
-		case 0xa9: goto state9c;
-		case 0xaa: goto statea0;
-		case 0xab: goto statea4;
-		case 0xac: goto statea8;
-		case 0xad: goto stateac;
-		case 0xae: goto stateb0;
-		case 0xaf: goto stateb4;
-		case 0xb0: goto stateb8;
-		case 0xb1: goto statebc;
-		case 0xb2: goto statec0;
-		case 0xb3: goto statec4;
-		case 0xb4: goto statec8;
-		case 0xb5: goto statecc;
-		case 0xb6: goto stated0;
-		case 0xb8: goto stated4;
-		case 0xb9: goto stated8;
-		case 0xba: goto statedc;
-		case 0xbb: goto statee0;
-		case 0xbc: goto statee4;
-		case 0xbd: goto statee8;
-		case 0xbe: goto stateec;
+	switch(*(str2++)){
+		case 0x84: goto state2;
 		default: goto no_match;
 	}
 state76:
 	switch(*(str2++)){
-		case 0xa0: goto state0;
+		case 0x85: goto state2;
+		default: goto no_match;
+	}
+state77:
+	switch(*(str2++)){
+		case 0x86: goto state2;
 		default: goto no_match;
 	}
 state78:
 	switch(*(str2++)){
-		case 0x80: goto state0;
+		case 0x87: goto state2;
+		default: goto no_match;
+	}
+state79:
+	switch(*(str2++)){
+		case 0x88: goto state2;
 		default: goto no_match;
 	}
 state7a:
 	switch(*(str2++)){
-		case 0xa1: goto state0;
+		case 0x89: goto state2;
+		default: goto no_match;
+	}
+state7b:
+	switch(*(str2++)){
+		case 0x8a: goto state2;
 		default: goto no_match;
 	}
 state7c:
 	switch(*(str2++)){
-		case 0x81: goto state0;
+		case 0x8b: goto state2;
+		default: goto no_match;
+	}
+state7d:
+	switch(*(str2++)){
+		case 0x8c: goto state2;
 		default: goto no_match;
 	}
 state7e:
 	switch(*(str2++)){
-		case 0xa2: goto state0;
+		case 0x8d: goto state2;
+		default: goto no_match;
+	}
+state7f:
+	switch(*(str2++)){
+		case 0x8e: goto state2;
 		default: goto no_match;
 	}
 state80:
 	switch(*(str2++)){
-		case 0x82: goto state0;
+		case 0x8f: goto state2;
+		default: goto no_match;
+	}
+state81:
+	switch(*(str2++)){
+		case 0x90: goto state2;
 		default: goto no_match;
 	}
 state82:
 	switch(*(str2++)){
-		case 0xa3: goto state0;
+		case 0x91: goto state2;
+		default: goto no_match;
+	}
+state83:
+	switch(*(str2++)){
+		case 0x92: goto state2;
 		default: goto no_match;
 	}
 state84:
 	switch(*(str2++)){
-		case 0x83: goto state0;
+		case 0x93: goto state2;
+		default: goto no_match;
+	}
+state85:
+	switch(*(str2++)){
+		case 0x94: goto state2;
 		default: goto no_match;
 	}
 state86:
 	switch(*(str2++)){
-		case 0xa4: goto state0;
+		case 0x95: goto state2;
+		default: goto no_match;
+	}
+state87:
+	switch(*(str2++)){
+		case 0x96: goto state2;
 		default: goto no_match;
 	}
 state88:
 	switch(*(str2++)){
-		case 0x84: goto state0;
+		case 0x97: goto state2;
+		default: goto no_match;
+	}
+state89:
+	switch(*(str2++)){
+		case 0x98: goto state2;
 		default: goto no_match;
 	}
 state8a:
 	switch(*(str2++)){
-		case 0xa5: goto state0;
+		case 0x99: goto state2;
+		default: goto no_match;
+	}
+state8b:
+	switch(*(str2++)){
+		case 0x9a: goto state2;
 		default: goto no_match;
 	}
 state8c:
 	switch(*(str2++)){
-		case 0x85: goto state0;
+		case 0x9b: goto state2;
+		default: goto no_match;
+	}
+state8d:
+	switch(*(str2++)){
+		case 0x9c: goto state2;
 		default: goto no_match;
 	}
 state8e:
 	switch(*(str2++)){
-		case 0xa6: goto state0;
+		case 0x9d: goto state2;
+		default: goto no_match;
+	}
+state8f:
+	switch(*(str2++)){
+		case 0x9e: goto state2;
 		default: goto no_match;
 	}
 state90:
 	switch(*(str2++)){
-		case 0x86: goto state0;
+		case 0x9f: goto state2;
+		default: goto no_match;
+	}
+state91:
+	switch(*(str2++)){
+		case 0xa0: goto state2;
 		default: goto no_match;
 	}
 state92:
 	switch(*(str2++)){
-		case 0xa7: goto state0;
+		case 0xa1: goto state2;
+		default: goto no_match;
+	}
+state93:
+	switch(*(str2++)){
+		case 0xa2: goto state2;
 		default: goto no_match;
 	}
 state94:
 	switch(*(str2++)){
-		case 0x87: goto state0;
+		case 0xa3: goto state2;
+		default: goto no_match;
+	}
+state95:
+	switch(*(str2++)){
+		case 0xa4: goto state2;
 		default: goto no_match;
 	}
 state96:
 	switch(*(str2++)){
-		case 0xa8: goto state0;
+		case 0xa5: goto state2;
+		default: goto no_match;
+	}
+state97:
+	switch(*(str2++)){
+		case 0xa6: goto state2;
 		default: goto no_match;
 	}
 state98:
 	switch(*(str2++)){
-		case 0x88: goto state0;
+		case 0xa7: goto state2;
+		default: goto no_match;
+	}
+state99:
+	switch(*(str2++)){
+		case 0xa8: goto state2;
 		default: goto no_match;
 	}
 state9a:
 	switch(*(str2++)){
-		case 0xa9: goto state0;
+		case 0xa9: goto state2;
+		default: goto no_match;
+	}
+state9b:
+	switch(*(str2++)){
+		case 0xaa: goto state2;
 		default: goto no_match;
 	}
 state9c:
 	switch(*(str2++)){
-		case 0x89: goto state0;
+		case 0xab: goto state2;
+		default: goto no_match;
+	}
+state9d:
+	switch(*(str2++)){
+		case 0xac: goto state2;
 		default: goto no_match;
 	}
 state9e:
 	switch(*(str2++)){
-		case 0xaa: goto state0;
+		case 0xad: goto state2;
+		default: goto no_match;
+	}
+state9f:
+	switch(*(str2++)){
+		case 0xae: goto state2;
 		default: goto no_match;
 	}
 statea0:
 	switch(*(str2++)){
-		case 0x8a: goto state0;
+		case 0xaf: goto state2;
+		default: goto no_match;
+	}
+statea1:
+	switch(*(str2++)){
+		case 0xb0: goto state2;
 		default: goto no_match;
 	}
 statea2:
 	switch(*(str2++)){
-		case 0xab: goto state0;
+		case 0xb1: goto state2;
+		default: goto no_match;
+	}
+statea3:
+	switch(*(str2++)){
+		case 0xb2: goto state2;
 		default: goto no_match;
 	}
 statea4:
 	switch(*(str2++)){
-		case 0x8b: goto state0;
+		case 0xb3: goto state2;
+		default: goto no_match;
+	}
+statea5:
+	switch(*(str2++)){
+		case 0xb4: goto state2;
 		default: goto no_match;
 	}
 statea6:
 	switch(*(str2++)){
-		case 0xac: goto state0;
+		case 0xb5: goto state2;
+		default: goto no_match;
+	}
+statea7:
+	switch(*(str2++)){
+		case 0xb6: goto state2;
 		default: goto no_match;
 	}
 statea8:
 	switch(*(str2++)){
-		case 0x8c: goto state0;
+		case 0xb7: goto state2;
+		default: goto no_match;
+	}
+statea9:
+	switch(*(str2++)){
+		case 0xb8: goto state2;
 		default: goto no_match;
 	}
 stateaa:
 	switch(*(str2++)){
-		case 0xad: goto state0;
+		case 0xb9: goto state2;
+		default: goto no_match;
+	}
+stateab:
+	switch(*(str2++)){
+		case 0xba: goto state2;
 		default: goto no_match;
 	}
 stateac:
 	switch(*(str2++)){
-		case 0x8d: goto state0;
+		case 0xbb: goto state2;
+		default: goto no_match;
+	}
+statead:
+	switch(*(str2++)){
+		case 0xbc: goto state2;
 		default: goto no_match;
 	}
 stateae:
 	switch(*(str2++)){
-		case 0xae: goto state0;
+		case 0xbd: goto state2;
+		default: goto no_match;
+	}
+stateaf:
+	switch(*(str2++)){
+		case 0xbe: goto state2;
 		default: goto no_match;
 	}
 stateb0:
 	switch(*(str2++)){
-		case 0x8e: goto state0;
+		case 0xbf: goto state2;
+		default: goto no_match;
+	}
+stateb1:
+	switch(*(str2++)){
+		case 0xc0: goto state2;
 		default: goto no_match;
 	}
 stateb2:
 	switch(*(str2++)){
-		case 0xaf: goto state0;
+		case 0xc1: goto state2;
+		default: goto no_match;
+	}
+stateb3:
+	switch(*(str2++)){
+		case 0xc2: goto state2;
+		case 0xce: goto state104;
 		default: goto no_match;
 	}
 stateb4:
 	switch(*(str2++)){
-		case 0x8f: goto state0;
+		case 0x73: goto state106;
+		case 0xc3: goto stateb5;
+		case 0xc5: goto state117;
+		case 0xe2: goto state1fb;
+		default: goto no_match;
+	}
+stateb5:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state91;
+		case 0x81: goto state92;
+		case 0x82: goto state93;
+		case 0x83: goto state94;
+		case 0x84: goto state95;
+		case 0x85: goto state96;
+		case 0x86: goto state97;
+		case 0x87: goto state98;
+		case 0x88: goto state99;
+		case 0x89: goto state9a;
+		case 0x8a: goto state9b;
+		case 0x8b: goto state9c;
+		case 0x8c: goto state9d;
+		case 0x8d: goto state9e;
+		case 0x8e: goto state9f;
+		case 0x8f: goto statea0;
+		case 0x90: goto statea1;
+		case 0x91: goto statea2;
+		case 0x92: goto statea3;
+		case 0x93: goto statea4;
+		case 0x94: goto statea5;
+		case 0x95: goto statea6;
+		case 0x96: goto statea7;
+		case 0x98: goto statea9;
+		case 0x99: goto stateaa;
+		case 0x9a: goto stateab;
+		case 0x9b: goto stateac;
+		case 0x9c: goto statead;
+		case 0x9d: goto stateae;
+		case 0x9e: goto stateaf;
+		case 0xa0: goto state71;
+		case 0xa1: goto state72;
+		case 0xa2: goto state73;
+		case 0xa3: goto state74;
+		case 0xa4: goto state75;
+		case 0xa5: goto state76;
+		case 0xa6: goto state77;
+		case 0xa7: goto state78;
+		case 0xa8: goto state79;
+		case 0xa9: goto state7a;
+		case 0xaa: goto state7b;
+		case 0xab: goto state7c;
+		case 0xac: goto state7d;
+		case 0xad: goto state7e;
+		case 0xae: goto state7f;
+		case 0xaf: goto state80;
+		case 0xb0: goto state81;
+		case 0xb1: goto state82;
+		case 0xb2: goto state83;
+		case 0xb3: goto state84;
+		case 0xb4: goto state85;
+		case 0xb5: goto state86;
+		case 0xb6: goto state87;
+		case 0xb8: goto state89;
+		case 0xb9: goto state8a;
+		case 0xba: goto state8b;
+		case 0xbb: goto state8c;
+		case 0xbc: goto state8d;
+		case 0xbd: goto state8e;
+		case 0xbe: goto state8f;
 		default: goto no_match;
 	}
 stateb6:
 	switch(*(str2++)){
-		case 0xb0: goto state0;
+		case 0x49: goto state103;
+		case 0x69: goto state109;
+		case 0xc4: goto stateb7;
+		case 0xc5: goto state10e;
+		default: goto no_match;
+	}
+stateb7:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb9: goto stateab;
+		case 0xba: goto stateaa;
+		case 0xbb: goto statead;
+		case 0xbc: goto stateac;
+		case 0xbd: goto stateaf;
+		case 0xbe: goto stateae;
 		default: goto no_match;
 	}
 stateb8:
 	switch(*(str2++)){
-		case 0x90: goto state0;
+		case 0x73: goto state118;
+		case 0xc3: goto state116;
+		case 0xc4: goto state10f;
+		case 0xc5: goto stateb9;
+		case 0xca: goto state110;
+		default: goto no_match;
+	}
+stateb9:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x81: goto state73;
+		case 0x82: goto state72;
+		case 0x83: goto state75;
+		case 0x84: goto state74;
+		case 0x85: goto state77;
+		case 0x86: goto state76;
+		case 0x87: goto state79;
+		case 0x88: goto state78;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb9: goto stateab;
+		case 0xba: goto stateaa;
+		case 0xbb: goto statead;
+		case 0xbc: goto stateac;
+		case 0xbd: goto stateaf;
+		case 0xbe: goto stateae;
 		default: goto no_match;
 	}
 stateba:
 	switch(*(str2++)){
-		case 0xb1: goto state0;
+		case 0xc6: goto statebb;
+		case 0xc7: goto state11b;
+		case 0xc8: goto state129;
+		case 0xc9: goto state119;
+		case 0xca: goto state11d;
+		default: goto no_match;
+	}
+statebb:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x87: goto state79;
+		case 0x88: goto state78;
+		case 0x8b: goto state7d;
+		case 0x8c: goto state7c;
+		case 0x91: goto state83;
+		case 0x92: goto state82;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa7: goto state99;
+		case 0xa8: goto state98;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xaf: goto statea1;
+		case 0xb0: goto statea0;
+		case 0xb3: goto statea5;
+		case 0xb4: goto statea4;
+		case 0xb5: goto statea7;
+		case 0xb6: goto statea6;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
 		default: goto no_match;
 	}
 statebc:
 	switch(*(str2++)){
-		case 0x91: goto state0;
+		case 0x6a: goto state122;
+		case 0xc6: goto state11c;
+		case 0xc7: goto statebd;
+		default: goto no_match;
+	}
+statebd:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x84: goto state77;
+		case 0x85: goto state77;
+		case 0x86: goto state11f;
+		case 0x87: goto state7a;
+		case 0x88: goto state7a;
+		case 0x89: goto state120;
+		case 0x8a: goto state7d;
+		case 0x8b: goto state7d;
+		case 0x8c: goto state121;
+		case 0x8d: goto state7f;
+		case 0x8e: goto state7e;
+		case 0x8f: goto state81;
+		case 0x90: goto state80;
+		case 0x91: goto state83;
+		case 0x92: goto state82;
+		case 0x93: goto state85;
+		case 0x94: goto state84;
+		case 0x95: goto state87;
+		case 0x96: goto state86;
+		case 0x97: goto state89;
+		case 0x98: goto state88;
+		case 0x99: goto state8b;
+		case 0x9a: goto state8a;
+		case 0x9b: goto state8d;
+		case 0x9c: goto state8c;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb1: goto statea4;
+		case 0xb2: goto statea4;
+		case 0xb3: goto state127;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
+		case 0xbe: goto stateb0;
+		case 0xbf: goto stateaf;
 		default: goto no_match;
 	}
 statebe:
 	switch(*(str2++)){
-		case 0xb2: goto state0;
+		case 0xc6: goto state128;
+		case 0xc8: goto statebf;
+		default: goto no_match;
+	}
+statebf:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
 		default: goto no_match;
 	}
 statec0:
 	switch(*(str2++)){
-		case 0x92: goto state0;
+		case 0xc6: goto state11a;
+		case 0xc9: goto state2;
+		default: goto no_match;
+	}
+statec1:
+	switch(*(str2++)){
+		case 0xc5: goto state113;
+		case 0xc6: goto state11e;
+		case 0xca: goto state2;
 		default: goto no_match;
 	}
 statec2:
 	switch(*(str2++)){
-		case 0xb3: goto state0;
+		case 0xcb: goto state2;
+		default: goto no_match;
+	}
+statec3:
+	switch(*(str2++)){
+		case 0xcc: goto state2;
 		default: goto no_match;
 	}
 statec4:
 	switch(*(str2++)){
-		case 0x93: goto state0;
+		case 0xcd: goto state2;
+		case 0xce: goto state12a;
+		default: goto no_match;
+	}
+statec5:
+	switch(*(str2++)){
+		case 0xc2: goto state105;
+		case 0xcd: goto state12b;
+		case 0xce: goto statec6;
+		case 0xcf: goto state12c;
+		case 0xe1: goto state1bd;
 		default: goto no_match;
 	}
 statec6:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x86: goto state9d;
+		case 0x88: goto state9e;
+		case 0x89: goto state9f;
+		case 0x8a: goto statea0;
+		case 0x90: goto state12e;
+		case 0x91: goto statea2;
+		case 0x92: goto statea3;
+		case 0x93: goto statea4;
+		case 0x94: goto statea5;
+		case 0x95: goto statea6;
+		case 0x96: goto statea7;
+		case 0x97: goto statea8;
+		case 0x98: goto statea9;
+		case 0x99: goto stateaa;
+		case 0x9a: goto stateab;
+		case 0x9b: goto stateac;
+		case 0x9c: goto statead;
+		case 0x9d: goto stateae;
+		case 0x9e: goto stateaf;
+		case 0x9f: goto stateb0;
+		case 0xac: goto state77;
+		case 0xad: goto state79;
+		case 0xae: goto state7a;
+		case 0xaf: goto state7b;
+		case 0xb1: goto state82;
+		case 0xb2: goto state83;
+		case 0xb3: goto state84;
+		case 0xb4: goto state85;
+		case 0xb5: goto state86;
+		case 0xb6: goto state87;
+		case 0xb7: goto state88;
+		case 0xb8: goto state89;
+		case 0xb9: goto state132;
+		case 0xba: goto state8b;
+		case 0xbb: goto state8c;
+		case 0xbc: goto state8d;
+		case 0xbd: goto state8e;
+		case 0xbe: goto state8f;
+		case 0xbf: goto state90;
+		default: goto no_match;
+	}
+statec7:
 	switch(*(str2++)){
-		case 0xb4: goto state0;
+		case 0xce: goto state12d;
+		case 0xcf: goto statec8;
+		case 0xe1: goto state174;
+		case 0xe2: goto state1f3;
 		default: goto no_match;
 	}
 statec8:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state87;
+		case 0x81: goto statea2;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x86: goto state86;
+		case 0x95: goto state77;
+		case 0x96: goto state71;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb1: goto state72;
+		case 0xb2: goto stateaa;
+		case 0xb7: goto statea9;
+		case 0xb8: goto statea8;
+		case 0xb9: goto statea3;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		default: goto no_match;
+	}
+statec9:
 	switch(*(str2++)){
-		case 0x94: goto state0;
+		case 0xd0: goto stateca;
+		case 0xd1: goto state13a;
 		default: goto no_match;
 	}
 stateca:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x90: goto statea1;
+		case 0x91: goto statea2;
+		case 0x92: goto statea3;
+		case 0x93: goto statea4;
+		case 0x94: goto statea5;
+		case 0x95: goto statea6;
+		case 0x96: goto statea7;
+		case 0x97: goto statea8;
+		case 0x98: goto statea9;
+		case 0x99: goto stateaa;
+		case 0x9a: goto stateab;
+		case 0x9b: goto stateac;
+		case 0x9c: goto statead;
+		case 0x9d: goto stateae;
+		case 0x9e: goto stateaf;
+		case 0x9f: goto stateb0;
+		case 0xb0: goto state81;
+		case 0xb1: goto state82;
+		case 0xb2: goto state83;
+		case 0xb3: goto state84;
+		case 0xb4: goto state85;
+		case 0xb5: goto state86;
+		case 0xb6: goto state87;
+		case 0xb7: goto state88;
+		case 0xb8: goto state89;
+		case 0xb9: goto state8a;
+		case 0xba: goto state8b;
+		case 0xbb: goto state8c;
+		case 0xbc: goto state8d;
+		case 0xbd: goto state8e;
+		case 0xbe: goto state8f;
+		case 0xbf: goto state90;
+		default: goto no_match;
+	}
+statecb:
 	switch(*(str2++)){
-		case 0xb5: goto state0;
+		case 0xd0: goto state13b;
+		case 0xd1: goto statecc;
 		default: goto no_match;
 	}
 statecc:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
+		case 0xbe: goto stateb0;
+		case 0xbf: goto stateaf;
+		default: goto no_match;
+	}
+statecd:
 	switch(*(str2++)){
-		case 0x95: goto state0;
+		case 0xd2: goto statece;
 		default: goto no_match;
 	}
 statece:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
+		case 0xbe: goto stateb0;
+		case 0xbf: goto stateaf;
+		default: goto no_match;
+	}
+statecf:
 	switch(*(str2++)){
-		case 0xb6: goto state0;
+		case 0xd3: goto stated0;
 		default: goto no_match;
 	}
 stated0:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x81: goto state73;
+		case 0x82: goto state72;
+		case 0x83: goto state75;
+		case 0x84: goto state74;
+		case 0x85: goto state77;
+		case 0x86: goto state76;
+		case 0x87: goto state79;
+		case 0x88: goto state78;
+		case 0x89: goto state7b;
+		case 0x8a: goto state7a;
+		case 0x8b: goto state7d;
+		case 0x8c: goto state7c;
+		case 0x8d: goto state7f;
+		case 0x8e: goto state7e;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		default: goto no_match;
+	}
+stated1:
 	switch(*(str2++)){
-		case 0x96: goto state0;
+		case 0xd4: goto stated2;
+		case 0xd5: goto state13c;
 		default: goto no_match;
 	}
 stated2:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		default: goto no_match;
+	}
+stated3:
 	switch(*(str2++)){
-		case 0xb8: goto state0;
+		case 0xd4: goto state13d;
+		case 0xd5: goto stated4;
+		case 0xd6: goto state13e;
+		case 0xef: goto state218;
 		default: goto no_match;
 	}
 stated4:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x80: goto statea1;
+		case 0x81: goto statea2;
+		case 0x82: goto statea3;
+		case 0x83: goto statea4;
+		case 0x84: goto statea5;
+		case 0x85: goto statea6;
+		case 0x86: goto statea7;
+		case 0x87: goto statea8;
+		case 0x88: goto statea9;
+		case 0x89: goto stateaa;
+		case 0x8a: goto stateab;
+		case 0x8b: goto stateac;
+		case 0x8c: goto statead;
+		case 0x8d: goto stateae;
+		case 0x8e: goto stateaf;
+		case 0x8f: goto stateb0;
+		case 0xb0: goto state71;
+		case 0xb1: goto state72;
+		case 0xb2: goto state73;
+		case 0xb3: goto state74;
+		case 0xb4: goto state75;
+		case 0xb5: goto state76;
+		case 0xb6: goto state77;
+		case 0xb7: goto state78;
+		case 0xb8: goto state79;
+		case 0xb9: goto state7a;
+		case 0xba: goto state7b;
+		case 0xbb: goto state7c;
+		case 0xbc: goto state7d;
+		case 0xbd: goto state7e;
+		case 0xbe: goto state7f;
+		case 0xbf: goto state80;
+		default: goto no_match;
+	}
+stated5:
 	switch(*(str2++)){
-		case 0x98: goto state0;
+		case 0xd5: goto state13f;
+		case 0xd6: goto state2;
 		default: goto no_match;
 	}
 stated6:
 	switch(*(str2++)){
-		case 0xb9: goto state0;
+		case 0xd7: goto state2;
+		default: goto no_match;
+	}
+stated7:
+	switch(*(str2++)){
+		case 0xd8: goto state2;
 		default: goto no_match;
 	}
 stated8:
 	switch(*(str2++)){
-		case 0x99: goto state0;
+		case 0xd9: goto state2;
+		default: goto no_match;
+	}
+stated9:
+	switch(*(str2++)){
+		case 0xda: goto state2;
 		default: goto no_match;
 	}
 stateda:
 	switch(*(str2++)){
-		case 0xba: goto state0;
+		case 0xdb: goto state2;
+		default: goto no_match;
+	}
+statedb:
+	switch(*(str2++)){
+		case 0xdc: goto state2;
 		default: goto no_match;
 	}
 statedc:
 	switch(*(str2++)){
-		case 0x9a: goto state0;
+		case 0xdd: goto state2;
+		default: goto no_match;
+	}
+statedd:
+	switch(*(str2++)){
+		case 0xde: goto state2;
 		default: goto no_match;
 	}
 statede:
 	switch(*(str2++)){
-		case 0xbb: goto state0;
+		case 0xdf: goto state2;
+		default: goto no_match;
+	}
+statedf:
+	switch(*(str2++)){
+		case 0xe0: goto state2;
 		default: goto no_match;
 	}
 statee0:
 	switch(*(str2++)){
-		case 0x9b: goto state0;
+		case 0x61: goto state162;
+		case 0x68: goto state14a;
+		case 0x74: goto state150;
+		case 0x77: goto state156;
+		case 0x79: goto state15c;
+		case 0xce: goto state1ba;
+		case 0xcf: goto state170;
+		case 0xe1: goto statee1;
+		default: goto no_match;
+	}
+statee1:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0xb8: goto state145;
+		case 0xb9: goto state147;
+		case 0xba: goto state148;
+		case 0xbb: goto state16a;
+		case 0xbc: goto state16c;
+		case 0xbd: goto state16e;
+		case 0xbe: goto state187;
+		case 0xbf: goto state1ca;
 		default: goto no_match;
 	}
 statee2:
 	switch(*(str2++)){
-		case 0xbc: goto state0;
+		case 0x6b: goto state1f5;
+		case 0xc3: goto state1f8;
+		case 0xcf: goto state1f0;
+		case 0xe2: goto statee3;
+		default: goto no_match;
+	}
+statee3:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x85: goto state1fd;
+		case 0x92: goto state1ff;
+		case 0x93: goto state201;
 		default: goto no_match;
 	}
 statee4:
 	switch(*(str2++)){
-		case 0x9c: goto state0;
+		case 0xe3: goto state2;
+		default: goto no_match;
+	}
+statee5:
+	switch(*(str2++)){
+		case 0xe4: goto state2;
 		default: goto no_match;
 	}
 statee6:
 	switch(*(str2++)){
-		case 0xbd: goto state0;
+		case 0xe5: goto state2;
+		default: goto no_match;
+	}
+statee7:
+	switch(*(str2++)){
+		case 0xe6: goto state2;
 		default: goto no_match;
 	}
 statee8:
 	switch(*(str2++)){
-		case 0x9d: goto state0;
+		case 0xe7: goto state2;
+		default: goto no_match;
+	}
+statee9:
+	switch(*(str2++)){
+		case 0xe8: goto state2;
 		default: goto no_match;
 	}
 stateea:
 	switch(*(str2++)){
-		case 0xbe: goto state0;
+		case 0xe9: goto state2;
+		default: goto no_match;
+	}
+stateeb:
+	switch(*(str2++)){
+		case 0xea: goto state2;
 		default: goto no_match;
 	}
 stateec:
 	switch(*(str2++)){
-		case 0x9e: goto state0;
+		case 0xeb: goto state2;
+		default: goto no_match;
+	}
+stateed:
+	switch(*(str2++)){
+		case 0xec: goto state2;
 		default: goto no_match;
 	}
 stateee:
-	switch(*(str1++)){
-		case 0x9f: goto stateef;
+	switch(*(str2++)){
+		case 0xed: goto state2;
 		default: goto no_match;
 	}
 stateef:
 	switch(*(str2++)){
-		case 0x73: goto state0;
+		case 0xee: goto state2;
+		default: goto no_match;
+	}
+statef0:
+	switch(*(str2++)){
+		case 0x66: goto state204;
+		case 0x73: goto state20e;
+		case 0xd5: goto state214;
+		case 0xef: goto statef1;
 		default: goto no_match;
 	}
 statef1:
+	str1marker = str1;
+	str2marker = str2;
 	switch(*(str1++)){
-		case 0x73: goto statef2;
+		case 0xbc: goto state226;
+		case 0xbd: goto state228;
 		default: goto no_match;
 	}
 statef2:
 	switch(*(str2++)){
-		case 0x9f: goto state0;
+		case 0xf0: goto statef3;
+		default: goto no_match;
+	}
+statef3:
+	str1marker = str1;
+	str2marker = str2;
+	switch(*(str1++)){
+		case 0x90: goto state22a;
 		default: goto no_match;
 	}
 statef4:
-	switch(*(str1++)){
-		case 0x80: goto statef5;
-		case 0x81: goto statef7;
-		case 0x82: goto statef9;
-		case 0x83: goto statefb;
-		case 0x84: goto statefd;
-		case 0x85: goto stateff;
-		case 0x86: goto state101;
-		case 0x87: goto state103;
-		case 0x88: goto state105;
-		case 0x89: goto state107;
-		case 0x8a: goto state109;
-		case 0x8b: goto state10b;
-		case 0x8c: goto state10d;
-		case 0x8d: goto state10f;
-		case 0x8e: goto state111;
-		case 0x8f: goto state113;
-		case 0x90: goto state115;
-		case 0x91: goto state117;
-		case 0x92: goto state119;
-		case 0x93: goto state11b;
-		case 0x94: goto state11d;
-		case 0x95: goto state11f;
-		case 0x96: goto state121;
-		case 0x97: goto state123;
-		case 0x98: goto state125;
-		case 0x99: goto state127;
-		case 0x9a: goto state129;
-		case 0x9b: goto state12b;
-		case 0x9c: goto state12d;
-		case 0x9d: goto state12f;
-		case 0x9e: goto state131;
-		case 0x9f: goto state133;
-		case 0xa0: goto state135;
-		case 0xa1: goto state137;
-		case 0xa2: goto state139;
-		case 0xa3: goto state13b;
-		case 0xa4: goto state13d;
-		case 0xa5: goto state13f;
-		case 0xa6: goto state141;
-		case 0xa7: goto state143;
-		case 0xa8: goto state145;
-		case 0xa9: goto state147;
-		case 0xaa: goto state149;
-		case 0xab: goto state14b;
-		case 0xac: goto state14d;
-		case 0xad: goto state14f;
-		case 0xae: goto state151;
-		case 0xaf: goto state153;
-		case 0xb2: goto state15b;
-		case 0xb3: goto state15d;
-		case 0xb4: goto state15f;
-		case 0xb5: goto state161;
-		case 0xb6: goto state163;
-		case 0xb7: goto state165;
-		case 0xb9: goto state167;
-		case 0xba: goto state169;
-		case 0xbb: goto state16b;
-		case 0xbc: goto state16d;
-		case 0xbd: goto state16f;
-		case 0xbe: goto state171;
+	switch(*(str2++)){
+		case 0xf1: goto state2;
 		default: goto no_match;
 	}
 statef5:
 	switch(*(str2++)){
-		case 0x81: goto state0;
+		case 0xf2: goto state2;
+		default: goto no_match;
+	}
+statef6:
+	switch(*(str2++)){
+		case 0xf3: goto state2;
 		default: goto no_match;
 	}
 statef7:
 	switch(*(str2++)){
-		case 0x80: goto state0;
+		case 0xf4: goto state2;
+		default: goto no_match;
+	}
+statef8:
+	switch(*(str2++)){
+		case 0xf5: goto state2;
 		default: goto no_match;
 	}
 statef9:
 	switch(*(str2++)){
-		case 0x83: goto state0;
+		case 0xf6: goto state2;
+		default: goto no_match;
+	}
+statefa:
+	switch(*(str2++)){
+		case 0xf7: goto state2;
 		default: goto no_match;
 	}
 statefb:
 	switch(*(str2++)){
-		case 0x82: goto state0;
+		case 0xf8: goto state2;
+		default: goto no_match;
+	}
+statefc:
+	switch(*(str2++)){
+		case 0xf9: goto state2;
 		default: goto no_match;
 	}
 statefd:
 	switch(*(str2++)){
-		case 0x85: goto state0;
+		case 0xfa: goto state2;
+		default: goto no_match;
+	}
+statefe:
+	switch(*(str2++)){
+		case 0xfb: goto state2;
 		default: goto no_match;
 	}
 stateff:
 	switch(*(str2++)){
-		case 0x84: goto state0;
+		case 0xfc: goto state2;
+		default: goto no_match;
+	}
+state100:
+	switch(*(str2++)){
+		case 0xfd: goto state2;
 		default: goto no_match;
 	}
 state101:
 	switch(*(str2++)){
-		case 0x87: goto state0;
+		case 0xfe: goto state2;
+		default: goto no_match;
+	}
+state102:
+	switch(*(str2++)){
+		case 0xff: goto state2;
 		default: goto no_match;
 	}
 state103:
-	switch(*(str2++)){
-		case 0x86: goto state0;
+	switch(*(str1++)){
+		case 0xb1: goto state2;
+		default: goto no_match;
+	}
+state104:
+	switch(*(str1++)){
+		case 0xb5: goto statead;
 		default: goto no_match;
 	}
 state105:
-	switch(*(str2++)){
-		case 0x89: goto state0;
+	switch(*(str1++)){
+		case 0xbc: goto statea6;
+		default: goto no_match;
+	}
+state106:
+	switch(*(str1++)){
+		case 0x9f: goto state107;
 		default: goto no_match;
 	}
 state107:
 	switch(*(str2++)){
-		case 0x88: goto state0;
+		case 0x73: goto state2;
+		default: goto no_match;
+	}
+state108:
+	switch(*(str1++)){
+		case 0x73: goto state90;
 		default: goto no_match;
 	}
 state109:
+	switch(*(str1++)){
+		case 0xb0: goto state10a;
+		default: goto no_match;
+	}
+state10a:
+	str1marker = str1;
+	str2marker = str2;
 	switch(*(str2++)){
-		case 0x8b: goto state0;
+		case 0xcc: goto state78;
 		default: goto no_match;
 	}
 state10b:
+	switch(*(str1++)){
+		case 0xcc: goto state10c;
+	}
+	--str1;
 	switch(*(str2++)){
-		case 0x8a: goto state0;
+		case 0xb0: goto state2;
+		default: goto no_match;
+	}
+state10c:
+	switch(*(str2++)){
+		case 0xb0: goto state10d;
 		default: goto no_match;
 	}
 state10d:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
+	switch(*(str1++)){
+		case 0x87: goto state2;
+		default: goto no_match;
+	}
+state10e:
+	switch(*(str1++)){
+		case 0xbf: goto state71;
 		default: goto no_match;
 	}
 state10f:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
+	switch(*(str1++)){
+		case 0x80: goto stateb0;
+		default: goto no_match;
+	}
+state110:
+	switch(*(str1++)){
+		case 0x89: goto state111;
 		default: goto no_match;
 	}
 state111:
 	switch(*(str2++)){
-		case 0x8f: goto state0;
+		case 0xbc: goto state112;
+		default: goto no_match;
+	}
+state112:
+	switch(*(str2++)){
+		case 0x6e: goto state2;
 		default: goto no_match;
 	}
 state113:
+	switch(*(str1++)){
+		case 0xbc: goto state114;
+		default: goto no_match;
+	}
+state114:
 	switch(*(str2++)){
-		case 0x8e: goto state0;
+		case 0x89: goto state115;
 		default: goto no_match;
 	}
 state115:
-	switch(*(str2++)){
-		case 0x91: goto state0;
+	switch(*(str1++)){
+		case 0x6e: goto state2;
+		default: goto no_match;
+	}
+state116:
+	switch(*(str1++)){
+		case 0xb8: goto stateb0;
 		default: goto no_match;
 	}
 state117:
-	switch(*(str2++)){
-		case 0x90: goto state0;
+	switch(*(str1++)){
+		case 0xbf: goto statea9;
+		default: goto no_match;
+	}
+state118:
+	switch(*(str1++)){
+		case 0xbf: goto state2;
 		default: goto no_match;
 	}
 state119:
-	switch(*(str2++)){
-		case 0x93: goto state0;
+	switch(*(str1++)){
+		case 0x81: goto state84;
+		case 0x86: goto state85;
+		case 0x89: goto state87;
+		case 0x8a: goto state88;
+		case 0x8f: goto state8a;
+		case 0x90: goto state8c;
+		case 0x93: goto state91;
+		case 0x94: goto state94;
+		case 0x96: goto state9a;
+		case 0x97: goto state99;
+		case 0x9c: goto statea0;
+		case 0x9d: goto statea3;
+		case 0x9f: goto statea6;
+		default: goto no_match;
+	}
+state11a:
+	switch(*(str1++)){
+		case 0x93: goto state72;
+		case 0x94: goto state77;
+		case 0x96: goto state7a;
+		case 0x97: goto state7b;
+		case 0x99: goto state80;
+		case 0x9b: goto state81;
+		case 0xa0: goto state84;
+		case 0xa3: goto state85;
+		case 0xa8: goto state88;
+		case 0xa9: goto state87;
+		case 0xaf: goto state8d;
+		case 0xb2: goto state8e;
+		case 0xb5: goto state90;
 		default: goto no_match;
 	}
 state11b:
-	switch(*(str2++)){
-		case 0x92: goto state0;
+	switch(*(str1++)){
+		case 0x8e: goto state8e;
+		case 0x95: goto statea7;
+		case 0xbf: goto statea8;
+		default: goto no_match;
+	}
+state11c:
+	switch(*(str1++)){
+		case 0x9d: goto state7f;
+		case 0xb6: goto state86;
+		case 0xb7: goto stateb0;
 		default: goto no_match;
 	}
 state11d:
-	switch(*(str2++)){
-		case 0x95: goto state0;
+	switch(*(str1++)){
+		case 0xa6: goto state71;
+		case 0xa9: goto state74;
+		case 0xae: goto state79;
+		case 0xb1: goto state7b;
+		case 0xb2: goto state7c;
+		case 0xb7: goto state83;
+		default: goto no_match;
+	}
+state11e:
+	switch(*(str1++)){
+		case 0x80: goto state97;
+		case 0x83: goto state9a;
+		case 0x88: goto state9f;
+		case 0x8a: goto statea2;
+		case 0x8b: goto statea3;
+		case 0x92: goto statea8;
 		default: goto no_match;
 	}
 state11f:
 	switch(*(str2++)){
-		case 0x94: goto state0;
+		case 0x84: goto state2;
+		case 0x85: goto state2;
+		default: goto no_match;
+	}
+state120:
+	switch(*(str2++)){
+		case 0x87: goto state2;
+		case 0x88: goto state2;
 		default: goto no_match;
 	}
 state121:
 	switch(*(str2++)){
-		case 0x97: goto state0;
+		case 0x8a: goto state2;
+		case 0x8b: goto state2;
+		default: goto no_match;
+	}
+state122:
+	switch(*(str1++)){
+		case 0xb0: goto state123;
 		default: goto no_match;
 	}
 state123:
 	switch(*(str2++)){
-		case 0x96: goto state0;
+		case 0xcc: goto state7d;
+		default: goto no_match;
+	}
+state124:
+	switch(*(str1++)){
+		case 0xcc: goto state125;
 		default: goto no_match;
 	}
 state125:
 	switch(*(str2++)){
-		case 0x99: goto state0;
+		case 0xb0: goto state126;
+		default: goto no_match;
+	}
+state126:
+	switch(*(str1++)){
+		case 0x8c: goto state2;
 		default: goto no_match;
 	}
 state127:
 	switch(*(str2++)){
-		case 0x98: goto state0;
+		case 0xb1: goto state2;
+		case 0xb2: goto state2;
+		default: goto no_match;
+	}
+state128:
+	switch(*(str1++)){
+		case 0xa0: goto state8f;
 		default: goto no_match;
 	}
 state129:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
+	switch(*(str1++)){
+		case 0x9e: goto state91;
+		default: goto no_match;
+	}
+state12a:
+	switch(*(str1++)){
+		case 0x85: goto stateaa;
 		default: goto no_match;
 	}
 state12b:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
+	switch(*(str1++)){
+		case 0xb9: goto state76;
+		default: goto no_match;
+	}
+state12c:
+	switch(*(str1++)){
+		case 0x8c: goto state7d;
+		case 0x8e: goto state7e;
+		case 0x8f: goto state7f;
+		case 0xa0: goto state71;
+		case 0xa1: goto state72;
+		case 0xa3: goto state74;
+		case 0xa4: goto state75;
+		case 0xa5: goto state76;
+		case 0xa6: goto state77;
+		case 0xa7: goto state78;
+		case 0xa8: goto state79;
+		case 0xa9: goto state7a;
+		case 0xaa: goto state7b;
+		case 0xab: goto state7c;
+		case 0xb0: goto state138;
+		case 0xb2: goto state81;
+		case 0xb5: goto statea6;
+		case 0xb8: goto state139;
+		case 0xba: goto statea1;
 		default: goto no_match;
 	}
 state12d:
+	switch(*(str1++)){
+		case 0x80: goto state91;
+		case 0x81: goto state92;
+		case 0x83: goto state94;
+		case 0x84: goto state95;
+		case 0x85: goto state137;
+		case 0x86: goto state97;
+		case 0x87: goto state98;
+		case 0x88: goto state99;
+		case 0x89: goto state9a;
+		case 0x8a: goto state9b;
+		case 0x8b: goto state9c;
+		case 0x8c: goto state7d;
+		case 0x8d: goto state7f;
+		case 0x8e: goto state80;
+		case 0x90: goto statea3;
+		case 0x91: goto statea9;
+		case 0xb0: goto stateab;
+		case 0xb4: goto statea9;
+		case 0xb5: goto statea6;
+		default: goto no_match;
+	}
+state12e:
 	switch(*(str2++)){
-		case 0x9d: goto state0;
+		case 0xb9: goto state12f;
 		default: goto no_match;
 	}
 state12f:
 	switch(*(str2++)){
-		case 0x9c: goto state0;
+		case 0xcc: goto state130;
+		default: goto no_match;
+	}
+state130:
+	switch(*(str2++)){
+		case 0x88: goto state131;
 		default: goto no_match;
 	}
 state131:
 	switch(*(str2++)){
-		case 0x9f: goto state0;
+		case 0xcc: goto state72;
+		default: goto no_match;
+	}
+state132:
+	switch(*(str2++)){
+		case 0x90: goto state133;
+		case 0x99: goto state2;
 		default: goto no_match;
 	}
 state133:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
+	switch(*(str1++)){
+		case 0xcc: goto state134;
+		default: goto no_match;
+	}
+state134:
+	switch(*(str1++)){
+		case 0x88: goto state135;
 		default: goto no_match;
 	}
 state135:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
+	switch(*(str1++)){
+		case 0xcc: goto state136;
+		default: goto no_match;
+	}
+state136:
+	switch(*(str1++)){
+		case 0x81: goto state2;
 		default: goto no_match;
 	}
 state137:
 	switch(*(str2++)){
-		case 0xa0: goto state0;
+		case 0xa5: goto state2;
+		case 0xb0: goto state133;
+		default: goto no_match;
+	}
+state138:
+	switch(*(str2++)){
+		case 0x85: goto state12f;
 		default: goto no_match;
 	}
 state139:
 	switch(*(str2++)){
-		case 0xa3: goto state0;
+		case 0x91: goto state2;
+		case 0xb4: goto state2;
+		default: goto no_match;
+	}
+state13a:
+	switch(*(str1++)){
+		case 0x80: goto state81;
+		case 0x81: goto state82;
+		case 0x82: goto state83;
+		case 0x83: goto state84;
+		case 0x84: goto state85;
+		case 0x85: goto state86;
+		case 0x86: goto state87;
+		case 0x87: goto state88;
+		case 0x88: goto state89;
+		case 0x89: goto state8a;
+		case 0x8a: goto state8b;
+		case 0x8b: goto state8c;
+		case 0x8c: goto state8d;
+		case 0x8d: goto state8e;
+		case 0x8e: goto state8f;
+		case 0x8f: goto state90;
+		case 0xa0: goto state71;
+		case 0xa1: goto state72;
+		case 0xa2: goto state73;
+		case 0xa3: goto state74;
+		case 0xa4: goto state75;
+		case 0xa5: goto state76;
+		case 0xa6: goto state77;
+		case 0xa7: goto state78;
+		case 0xa8: goto state79;
+		case 0xa9: goto state7a;
+		case 0xaa: goto state7b;
+		case 0xab: goto state7c;
+		case 0xac: goto state7d;
+		case 0xad: goto state7e;
+		case 0xae: goto state7f;
+		case 0xaf: goto state80;
 		default: goto no_match;
 	}
 state13b:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
+	switch(*(str1++)){
+		case 0x80: goto state91;
+		case 0x81: goto state92;
+		case 0x82: goto state93;
+		case 0x83: goto state94;
+		case 0x84: goto state95;
+		case 0x85: goto state96;
+		case 0x86: goto state97;
+		case 0x87: goto state98;
+		case 0x88: goto state99;
+		case 0x89: goto state9a;
+		case 0x8a: goto state9b;
+		case 0x8b: goto state9c;
+		case 0x8c: goto state9d;
+		case 0x8d: goto state9e;
+		case 0x8e: goto state9f;
+		case 0x8f: goto statea0;
+		case 0x90: goto state71;
+		case 0x91: goto state72;
+		case 0x92: goto state73;
+		case 0x93: goto state74;
+		case 0x94: goto state75;
+		case 0x95: goto state76;
+		case 0x96: goto state77;
+		case 0x97: goto state78;
+		case 0x98: goto state79;
+		case 0x99: goto state7a;
+		case 0x9a: goto state7b;
+		case 0x9b: goto state7c;
+		case 0x9c: goto state7d;
+		case 0x9d: goto state7e;
+		case 0x9e: goto state7f;
+		case 0x9f: goto state80;
+		default: goto no_match;
+	}
+state13c:
+	switch(*(str1++)){
+		case 0xb1: goto state92;
+		case 0xb2: goto state93;
+		case 0xb3: goto state94;
+		case 0xb4: goto state95;
+		case 0xb5: goto state96;
+		case 0xb6: goto state97;
+		case 0xb7: goto state98;
+		case 0xb8: goto state99;
+		case 0xb9: goto state9a;
+		case 0xba: goto state9b;
+		case 0xbb: goto state9c;
+		case 0xbc: goto state9d;
+		case 0xbd: goto state9e;
+		case 0xbe: goto state9f;
+		case 0xbf: goto statea0;
 		default: goto no_match;
 	}
 state13d:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
+	switch(*(str1++)){
+		case 0xa1: goto statea2;
+		case 0xa2: goto statea3;
+		case 0xa3: goto statea4;
+		case 0xa4: goto statea5;
+		case 0xa5: goto statea6;
+		case 0xa6: goto statea7;
+		case 0xa7: goto statea8;
+		case 0xa8: goto statea9;
+		case 0xa9: goto stateaa;
+		case 0xaa: goto stateab;
+		case 0xab: goto stateac;
+		case 0xac: goto statead;
+		case 0xad: goto stateae;
+		case 0xae: goto stateaf;
+		case 0xaf: goto stateb0;
+		default: goto no_match;
+	}
+state13e:
+	switch(*(str1++)){
+		case 0x90: goto state71;
+		case 0x91: goto state72;
+		case 0x92: goto state73;
+		case 0x93: goto state74;
+		case 0x94: goto state75;
+		case 0x95: goto state76;
+		case 0x96: goto state77;
+		case 0xa5: goto state142;
 		default: goto no_match;
 	}
 state13f:
+	switch(*(str1++)){
+		case 0x80: goto state81;
+		case 0x81: goto state82;
+		case 0x82: goto state83;
+		case 0x83: goto state84;
+		case 0x84: goto state85;
+		case 0x85: goto state86;
+		case 0x86: goto state87;
+		case 0x87: goto state140;
+		default: goto no_match;
+	}
+state140:
 	switch(*(str2++)){
-		case 0xa4: goto state0;
+		case 0xa5: goto state141;
 		default: goto no_match;
 	}
 state141:
 	switch(*(str2++)){
-		case 0xa7: goto state0;
+		case 0xd6: goto state73;
+		default: goto no_match;
+	}
+state142:
+	switch(*(str2++)){
+		case 0x87: goto state143;
 		default: goto no_match;
 	}
 state143:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
+	switch(*(str1++)){
+		case 0xd6: goto state144;
+		default: goto no_match;
+	}
+state144:
+	switch(*(str1++)){
+		case 0x82: goto state2;
 		default: goto no_match;
 	}
 state145:
 	switch(*(str2++)){
-		case 0xa9: goto state0;
+		case 0xb8: goto state146;
+		default: goto no_match;
+	}
+state146:
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
+		case 0xbe: goto stateb0;
+		case 0xbf: goto stateaf;
 		default: goto no_match;
 	}
 state147:
 	switch(*(str2++)){
-		case 0xa8: goto state0;
+		case 0xb9: goto state146;
+		case 0xba: goto state169;
+		default: goto no_match;
+	}
+state148:
+	switch(*(str2++)){
+		case 0xb9: goto state168;
+		case 0xba: goto state149;
 		default: goto no_match;
 	}
 state149:
-	switch(*(str2++)){
-		case 0xab: goto state0;
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		case 0xba: goto stateac;
+		case 0xbb: goto stateab;
+		case 0xbc: goto stateae;
+		case 0xbd: goto statead;
+		case 0xbe: goto stateb0;
+		case 0xbf: goto stateaf;
+		default: goto no_match;
+	}
+state14a:
+	switch(*(str1++)){
+		case 0xba: goto state14b;
 		default: goto no_match;
 	}
 state14b:
 	switch(*(str2++)){
-		case 0xaa: goto state0;
+		case 0xcc: goto state14c;
+		default: goto no_match;
+	}
+state14c:
+	switch(*(str1++)){
+		case 0x96: goto statea2;
 		default: goto no_match;
 	}
 state14d:
+	switch(*(str1++)){
+		case 0xcc: goto state14e;
+		default: goto no_match;
+	}
+state14e:
 	switch(*(str2++)){
-		case 0xad: goto state0;
+		case 0xba: goto state14f;
 		default: goto no_match;
 	}
 state14f:
-	switch(*(str2++)){
-		case 0xac: goto state0;
+	switch(*(str1++)){
+		case 0xb1: goto state87;
+		default: goto no_match;
+	}
+state150:
+	switch(*(str1++)){
+		case 0xba: goto state151;
 		default: goto no_match;
 	}
 state151:
 	switch(*(str2++)){
-		case 0xaf: goto state0;
+		case 0xcc: goto state152;
+		default: goto no_match;
+	}
+state152:
+	switch(*(str1++)){
+		case 0x97: goto state79;
 		default: goto no_match;
 	}
 state153:
+	switch(*(str1++)){
+		case 0xcc: goto state154;
+		default: goto no_match;
+	}
+state154:
 	switch(*(str2++)){
-		case 0xae: goto state0;
+		case 0xba: goto state155;
 		default: goto no_match;
 	}
 state155:
 	switch(*(str1++)){
-		case 0xb0: goto state156;
+		case 0x88: goto state88;
 		default: goto no_match;
 	}
 state156:
+	switch(*(str1++)){
+		case 0xba: goto state157;
+		default: goto no_match;
+	}
+state157:
 	switch(*(str2++)){
-		case 0xcc: goto state0;
+		case 0xcc: goto state158;
 		default: goto no_match;
 	}
 state158:
 	switch(*(str1++)){
-		case 0xcc: goto state159;
+		case 0x98: goto state7b;
 		default: goto no_match;
 	}
 state159:
+	switch(*(str1++)){
+		case 0xcc: goto state15a;
+		default: goto no_match;
+	}
+state15a:
 	switch(*(str2++)){
-		case 0xb0: goto state0;
+		case 0xba: goto state15b;
 		default: goto no_match;
 	}
 state15b:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
+	switch(*(str1++)){
+		case 0x8a: goto state89;
+		default: goto no_match;
+	}
+state15c:
+	switch(*(str1++)){
+		case 0xba: goto state15d;
 		default: goto no_match;
 	}
 state15d:
 	switch(*(str2++)){
-		case 0xb2: goto state0;
+		case 0xcc: goto state15e;
+		default: goto no_match;
+	}
+state15e:
+	switch(*(str1++)){
+		case 0x99: goto state7b;
 		default: goto no_match;
 	}
 state15f:
+	switch(*(str1++)){
+		case 0xcc: goto state160;
+		default: goto no_match;
+	}
+state160:
 	switch(*(str2++)){
-		case 0xb5: goto state0;
+		case 0xba: goto state161;
 		default: goto no_match;
 	}
 state161:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
+	switch(*(str1++)){
+		case 0x8a: goto state8a;
+		default: goto no_match;
+	}
+state162:
+	switch(*(str1++)){
+		case 0xba: goto state163;
 		default: goto no_match;
 	}
 state163:
 	switch(*(str2++)){
-		case 0xb7: goto state0;
+		case 0xca: goto state164;
+		default: goto no_match;
+	}
+state164:
+	switch(*(str1++)){
+		case 0x9a: goto stateaf;
 		default: goto no_match;
 	}
 state165:
+	switch(*(str1++)){
+		case 0xca: goto state166;
+		default: goto no_match;
+	}
+state166:
 	switch(*(str2++)){
-		case 0xb6: goto state0;
+		case 0xba: goto state167;
 		default: goto no_match;
 	}
 state167:
-	switch(*(str2++)){
-		case 0xba: goto state0;
+	switch(*(str1++)){
+		case 0xbe: goto state8b;
+		default: goto no_match;
+	}
+state168:
+	switch(*(str1++)){
+		case 0x9b: goto state92;
 		default: goto no_match;
 	}
 state169:
+	switch(*(str1++)){
+		case 0xa1: goto state8c;
+		default: goto no_match;
+	}
+state16a:
 	switch(*(str2++)){
-		case 0xb9: goto state0;
+		case 0xbb: goto state16b;
 		default: goto no_match;
 	}
 state16b:
+	switch(*(str1++)){
+		case 0x80: goto state72;
+		case 0x81: goto state71;
+		case 0x82: goto state74;
+		case 0x83: goto state73;
+		case 0x84: goto state76;
+		case 0x85: goto state75;
+		case 0x86: goto state78;
+		case 0x87: goto state77;
+		case 0x88: goto state7a;
+		case 0x89: goto state79;
+		case 0x8a: goto state7c;
+		case 0x8b: goto state7b;
+		case 0x8c: goto state7e;
+		case 0x8d: goto state7d;
+		case 0x8e: goto state80;
+		case 0x8f: goto state7f;
+		case 0x90: goto state82;
+		case 0x91: goto state81;
+		case 0x92: goto state84;
+		case 0x93: goto state83;
+		case 0x94: goto state86;
+		case 0x95: goto state85;
+		case 0x96: goto state88;
+		case 0x97: goto state87;
+		case 0x98: goto state8a;
+		case 0x99: goto state89;
+		case 0x9a: goto state8c;
+		case 0x9b: goto state8b;
+		case 0x9c: goto state8e;
+		case 0x9d: goto state8d;
+		case 0x9e: goto state90;
+		case 0x9f: goto state8f;
+		case 0xa0: goto state92;
+		case 0xa1: goto state91;
+		case 0xa2: goto state94;
+		case 0xa3: goto state93;
+		case 0xa4: goto state96;
+		case 0xa5: goto state95;
+		case 0xa6: goto state98;
+		case 0xa7: goto state97;
+		case 0xa8: goto state9a;
+		case 0xa9: goto state99;
+		case 0xaa: goto state9c;
+		case 0xab: goto state9b;
+		case 0xac: goto state9e;
+		case 0xad: goto state9d;
+		case 0xae: goto statea0;
+		case 0xaf: goto state9f;
+		case 0xb0: goto statea2;
+		case 0xb1: goto statea1;
+		case 0xb2: goto statea4;
+		case 0xb3: goto statea3;
+		case 0xb4: goto statea6;
+		case 0xb5: goto statea5;
+		case 0xb6: goto statea8;
+		case 0xb7: goto statea7;
+		case 0xb8: goto stateaa;
+		case 0xb9: goto statea9;
+		default: goto no_match;
+	}
+state16c:
 	switch(*(str2++)){
-		case 0xbc: goto state0;
+		case 0xbc: goto state16d;
+		case 0xbe: goto state18b;
 		default: goto no_match;
 	}
 state16d:
+	switch(*(str1++)){
+		case 0x80: goto state79;
+		case 0x81: goto state7a;
+		case 0x82: goto state7b;
+		case 0x83: goto state7c;
+		case 0x84: goto state7d;
+		case 0x85: goto state7e;
+		case 0x86: goto state7f;
+		case 0x87: goto state80;
+		case 0x88: goto state71;
+		case 0x89: goto state72;
+		case 0x8a: goto state73;
+		case 0x8b: goto state74;
+		case 0x8c: goto state75;
+		case 0x8d: goto state76;
+		case 0x8e: goto state77;
+		case 0x8f: goto state78;
+		case 0x90: goto state89;
+		case 0x91: goto state8a;
+		case 0x92: goto state8b;
+		case 0x93: goto state8c;
+		case 0x94: goto state8d;
+		case 0x95: goto state8e;
+		case 0x98: goto state81;
+		case 0x99: goto state82;
+		case 0x9a: goto state83;
+		case 0x9b: goto state84;
+		case 0x9c: goto state85;
+		case 0x9d: goto state86;
+		case 0xa0: goto state99;
+		case 0xa1: goto state9a;
+		case 0xa2: goto state9b;
+		case 0xa3: goto state9c;
+		case 0xa4: goto state9d;
+		case 0xa5: goto state9e;
+		case 0xa6: goto state9f;
+		case 0xa7: goto statea0;
+		case 0xa8: goto state91;
+		case 0xa9: goto state92;
+		case 0xaa: goto state93;
+		case 0xab: goto state94;
+		case 0xac: goto state95;
+		case 0xad: goto state96;
+		case 0xae: goto state97;
+		case 0xaf: goto state98;
+		case 0xb0: goto statea9;
+		case 0xb1: goto stateaa;
+		case 0xb2: goto stateab;
+		case 0xb3: goto stateac;
+		case 0xb4: goto statead;
+		case 0xb5: goto stateae;
+		case 0xb6: goto stateaf;
+		case 0xb7: goto stateb0;
+		case 0xb8: goto statea1;
+		case 0xb9: goto statea2;
+		case 0xba: goto statea3;
+		case 0xbb: goto statea4;
+		case 0xbc: goto statea5;
+		case 0xbd: goto statea6;
+		case 0xbe: goto statea7;
+		case 0xbf: goto statea8;
+		default: goto no_match;
+	}
+state16e:
 	switch(*(str2++)){
-		case 0xbb: goto state0;
+		case 0xbd: goto state16f;
+		case 0xbe: goto state1af;
+		case 0xbf: goto state1cd;
 		default: goto no_match;
 	}
 state16f:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
+	switch(*(str1++)){
+		case 0x80: goto state79;
+		case 0x81: goto state7a;
+		case 0x82: goto state7b;
+		case 0x83: goto state7c;
+		case 0x84: goto state7d;
+		case 0x85: goto state7e;
+		case 0x88: goto state71;
+		case 0x89: goto state72;
+		case 0x8a: goto state73;
+		case 0x8b: goto state74;
+		case 0x8c: goto state75;
+		case 0x8d: goto state76;
+		case 0x91: goto state8a;
+		case 0x93: goto state8c;
+		case 0x95: goto state8e;
+		case 0x97: goto state90;
+		case 0x99: goto state82;
+		case 0x9b: goto state84;
+		case 0x9d: goto state86;
+		case 0x9f: goto state88;
+		case 0xa0: goto state99;
+		case 0xa1: goto state9a;
+		case 0xa2: goto state9b;
+		case 0xa3: goto state9c;
+		case 0xa4: goto state9d;
+		case 0xa5: goto state9e;
+		case 0xa6: goto state9f;
+		case 0xa7: goto statea0;
+		case 0xa8: goto state91;
+		case 0xa9: goto state92;
+		case 0xaa: goto state93;
+		case 0xab: goto state94;
+		case 0xac: goto state95;
+		case 0xad: goto state96;
+		case 0xae: goto state97;
+		case 0xaf: goto state98;
+		default: goto no_match;
+	}
+state170:
+	switch(*(str1++)){
+		case 0xbd: goto state171;
+		case 0xbf: goto state1e4;
 		default: goto no_match;
 	}
 state171:
 	switch(*(str2++)){
-		case 0xbd: goto state0;
+		case 0x85: goto state172;
+		default: goto no_match;
+	}
+state172:
+	switch(*(str1++)){
+		case 0x90: goto state173;
+		case 0x92: goto state179;
+		case 0x94: goto state17f;
+		case 0x96: goto state182;
 		default: goto no_match;
 	}
 state173:
-	switch(*(str1++)){
-		case 0xbf: goto state174;
+	switch(*(str2++)){
+		case 0xcc: goto state84;
 		default: goto no_match;
 	}
 state174:
+	switch(*(str1++)){
+		case 0x81: goto state1e9;
+		case 0x85: goto state175;
+		case 0x89: goto state1ee;
+		case 0x8e: goto state1ef;
+		default: goto no_match;
+	}
+state175:
 	switch(*(str2++)){
-		case 0x80: goto state0;
+		case 0xbd: goto state176;
+		case 0xbf: goto state1e6;
 		default: goto no_match;
 	}
 state176:
-	switch(*(str2++)){
-		case 0x73: goto state0;
-		case 0xc3: goto state1ee;
-		case 0xc4: goto state177;
-		case 0xc5: goto state17a;
-		case 0xca: goto state18b;
+	switch(*(str1++)){
+		case 0xcc: goto state177;
 		default: goto no_match;
 	}
 state177:
-	switch(*(str1++)){
-		case 0x80: goto state178;
+	switch(*(str2++)){
+		case 0x90: goto state178;
+		case 0x92: goto state17c;
+		case 0x94: goto state181;
+		case 0x96: goto state185;
 		default: goto no_match;
 	}
 state178:
+	switch(*(str1++)){
+		case 0x93: goto state2;
+		default: goto no_match;
+	}
+state179:
 	switch(*(str2++)){
-		case 0xbf: goto state0;
+		case 0xcc: goto state17a;
 		default: goto no_match;
 	}
 state17a:
+	switch(*(str2++)){
+		case 0x93: goto state17b;
+		default: goto no_match;
+	}
+state17b:
+	switch(*(str2++)){
+		case 0xcc: goto state71;
+		default: goto no_match;
+	}
+state17c:
 	switch(*(str1++)){
-		case 0x81: goto state17b;
-		case 0x82: goto state17d;
-		case 0x83: goto state17f;
-		case 0x84: goto state181;
-		case 0x85: goto state183;
-		case 0x86: goto state185;
-		case 0x87: goto state187;
+		case 0x93: goto state17d;
+		default: goto no_match;
+	}
+state17d:
+	switch(*(str1++)){
+		case 0xcc: goto state17e;
+		default: goto no_match;
+	}
+state17e:
+	switch(*(str1++)){
+		case 0x80: goto state2;
+		default: goto no_match;
+	}
+state17f:
+	switch(*(str2++)){
+		case 0xcc: goto state180;
+		default: goto no_match;
+	}
+state180:
+	switch(*(str2++)){
+		case 0x93: goto state131;
+		default: goto no_match;
+	}
+state181:
+	switch(*(str1++)){
+		case 0x93: goto state135;
+		default: goto no_match;
+	}
+state182:
+	switch(*(str2++)){
+		case 0xcc: goto state183;
+		default: goto no_match;
+	}
+state183:
+	switch(*(str2++)){
+		case 0x93: goto state184;
+		default: goto no_match;
+	}
+state184:
+	switch(*(str2++)){
+		case 0xcd: goto state73;
+		default: goto no_match;
+	}
+state185:
+	switch(*(str1++)){
+		case 0x93: goto state186;
+		default: goto no_match;
+	}
+state186:
+	switch(*(str1++)){
+		case 0xcd: goto state144;
+		default: goto no_match;
+	}
+state187:
+	switch(*(str2++)){
+		case 0xbc: goto state188;
+		case 0xbd: goto state1ae;
+		case 0xbe: goto state19d;
+		default: goto no_match;
+	}
+state188:
+	switch(*(str1++)){
+		case 0x80: goto state189;
+		case 0x81: goto state18f;
+		case 0x82: goto state191;
+		case 0x83: goto state193;
+		case 0x84: goto state195;
+		case 0x85: goto state197;
+		case 0x86: goto state199;
+		case 0x87: goto state19b;
 		case 0x88: goto state189;
-		case 0x8a: goto state192;
-		case 0x8b: goto state194;
-		case 0x8c: goto state196;
-		case 0x8d: goto state198;
-		case 0x8e: goto state19a;
-		case 0x8f: goto state19c;
+		case 0x89: goto state18f;
+		case 0x8a: goto state191;
+		case 0x8b: goto state193;
+		case 0x8c: goto state195;
+		case 0x8d: goto state197;
+		case 0x8e: goto state199;
+		case 0x8f: goto state19b;
 		case 0x90: goto state19e;
 		case 0x91: goto state1a0;
 		case 0x92: goto state1a2;
@@ -1500,10826 +3516,1283 @@ state17a:
 		case 0x95: goto state1a8;
 		case 0x96: goto state1aa;
 		case 0x97: goto state1ac;
-		case 0x98: goto state1ae;
-		case 0x99: goto state1b0;
-		case 0x9a: goto state1b2;
-		case 0x9b: goto state1b4;
-		case 0x9c: goto state1b6;
-		case 0x9d: goto state1b8;
-		case 0x9e: goto state1ba;
-		case 0x9f: goto state1bc;
-		case 0xa0: goto state1be;
-		case 0xa1: goto state1c0;
-		case 0xa2: goto state1c2;
-		case 0xa3: goto state1c4;
-		case 0xa4: goto state1c6;
-		case 0xa5: goto state1c8;
-		case 0xa6: goto state1ca;
-		case 0xa7: goto state1cc;
-		case 0xa8: goto state1ce;
-		case 0xa9: goto state1d0;
-		case 0xaa: goto state1d2;
-		case 0xab: goto state1d4;
-		case 0xac: goto state1d6;
-		case 0xad: goto state1d8;
-		case 0xae: goto state1da;
-		case 0xaf: goto state1dc;
-		case 0xb0: goto state1de;
-		case 0xb1: goto state1e0;
-		case 0xb2: goto state1e2;
-		case 0xb3: goto state1e4;
-		case 0xb4: goto state1e6;
-		case 0xb5: goto state1e8;
-		case 0xb6: goto state1ea;
-		case 0xb7: goto state1ec;
-		case 0xb9: goto state1f4;
-		case 0xba: goto state1f6;
-		case 0xbb: goto state1f8;
-		case 0xbc: goto state1fa;
-		case 0xbd: goto state1fc;
-		case 0xbe: goto state1fe;
-		default: goto no_match;
-	}
-state17b:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state17d:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state17f:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state181:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state183:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state185:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state187:
-	switch(*(str2++)){
-		case 0x88: goto state0;
+		case 0x98: goto state19e;
+		case 0x99: goto state1a0;
+		case 0x9a: goto state1a2;
+		case 0x9b: goto state1a4;
+		case 0x9c: goto state1a6;
+		case 0x9d: goto state1a8;
+		case 0x9e: goto state1aa;
+		case 0x9f: goto state1ac;
 		default: goto no_match;
 	}
 state189:
 	switch(*(str2++)){
-		case 0x87: goto state0;
+		case 0x80: goto state18a;
+		default: goto no_match;
+	}
+state18a:
+	switch(*(str2++)){
+		case 0xce: goto stateaa;
 		default: goto no_match;
 	}
 state18b:
 	switch(*(str1++)){
-		case 0x89: goto state18c;
+		case 0x80: goto state18c;
+		case 0x81: goto state190;
+		case 0x82: goto state192;
+		case 0x83: goto state194;
+		case 0x84: goto state196;
+		case 0x85: goto state198;
+		case 0x86: goto state19a;
+		case 0x87: goto state19c;
+		case 0xa0: goto state19f;
+		case 0xa1: goto state1a1;
+		case 0xa2: goto state1a3;
+		case 0xa3: goto state1a5;
+		case 0xa4: goto state1a7;
+		case 0xa5: goto state1a9;
+		case 0xa6: goto state1ab;
+		case 0xa7: goto state1ad;
 		default: goto no_match;
 	}
 state18c:
 	switch(*(str2++)){
-		case 0xbc: goto state0;
+		case 0x80: goto state18d;
+		case 0x88: goto state18d;
+		default: goto no_match;
+	}
+state18d:
+	switch(*(str1++)){
+		case 0xce: goto state18e;
 		default: goto no_match;
 	}
 state18e:
-	switch(*(str2++)){
-		case 0xc5: goto state18f;
-		case 0xc6: goto state269;
-		case 0xca: goto state0;
+	switch(*(str1++)){
+		case 0xb9: goto state2;
 		default: goto no_match;
 	}
 state18f:
-	switch(*(str1++)){
-		case 0xbc: goto state190;
+	switch(*(str2++)){
+		case 0x81: goto state18a;
 		default: goto no_match;
 	}
 state190:
 	switch(*(str2++)){
-		case 0x89: goto state0;
+		case 0x81: goto state18d;
+		case 0x89: goto state18d;
+		default: goto no_match;
+	}
+state191:
+	switch(*(str2++)){
+		case 0x82: goto state18a;
 		default: goto no_match;
 	}
 state192:
 	switch(*(str2++)){
-		case 0x8b: goto state0;
+		case 0x82: goto state18d;
+		case 0x8a: goto state18d;
+		default: goto no_match;
+	}
+state193:
+	switch(*(str2++)){
+		case 0x83: goto state18a;
 		default: goto no_match;
 	}
 state194:
 	switch(*(str2++)){
-		case 0x8a: goto state0;
+		case 0x83: goto state18d;
+		case 0x8b: goto state18d;
+		default: goto no_match;
+	}
+state195:
+	switch(*(str2++)){
+		case 0x84: goto state18a;
 		default: goto no_match;
 	}
 state196:
 	switch(*(str2++)){
-		case 0x8d: goto state0;
+		case 0x84: goto state18d;
+		case 0x8c: goto state18d;
+		default: goto no_match;
+	}
+state197:
+	switch(*(str2++)){
+		case 0x85: goto state18a;
 		default: goto no_match;
 	}
 state198:
 	switch(*(str2++)){
-		case 0x8c: goto state0;
+		case 0x85: goto state18d;
+		case 0x8d: goto state18d;
+		default: goto no_match;
+	}
+state199:
+	switch(*(str2++)){
+		case 0x86: goto state18a;
 		default: goto no_match;
 	}
 state19a:
 	switch(*(str2++)){
-		case 0x8f: goto state0;
+		case 0x86: goto state18d;
+		case 0x8e: goto state18d;
+		default: goto no_match;
+	}
+state19b:
+	switch(*(str2++)){
+		case 0x87: goto state18a;
 		default: goto no_match;
 	}
 state19c:
 	switch(*(str2++)){
-		case 0x8e: goto state0;
+		case 0x87: goto state18d;
+		case 0x8f: goto state18d;
+		default: goto no_match;
+	}
+state19d:
+	switch(*(str1++)){
+		case 0x80: goto state79;
+		case 0x81: goto state7a;
+		case 0x82: goto state7b;
+		case 0x83: goto state7c;
+		case 0x84: goto state7d;
+		case 0x85: goto state7e;
+		case 0x86: goto state7f;
+		case 0x87: goto state80;
+		case 0x88: goto state71;
+		case 0x89: goto state72;
+		case 0x8a: goto state73;
+		case 0x8b: goto state74;
+		case 0x8c: goto state75;
+		case 0x8d: goto state76;
+		case 0x8e: goto state77;
+		case 0x8f: goto state78;
+		case 0x90: goto state89;
+		case 0x91: goto state8a;
+		case 0x92: goto state8b;
+		case 0x93: goto state8c;
+		case 0x94: goto state8d;
+		case 0x95: goto state8e;
+		case 0x96: goto state8f;
+		case 0x97: goto state90;
+		case 0x98: goto state81;
+		case 0x99: goto state82;
+		case 0x9a: goto state83;
+		case 0x9b: goto state84;
+		case 0x9c: goto state85;
+		case 0x9d: goto state86;
+		case 0x9e: goto state87;
+		case 0x9f: goto state88;
+		case 0xa0: goto state99;
+		case 0xa1: goto state9a;
+		case 0xa2: goto state9b;
+		case 0xa3: goto state9c;
+		case 0xa4: goto state9d;
+		case 0xa5: goto state9e;
+		case 0xa6: goto state9f;
+		case 0xa7: goto statea0;
+		case 0xa8: goto state91;
+		case 0xa9: goto state92;
+		case 0xaa: goto state93;
+		case 0xab: goto state94;
+		case 0xac: goto state95;
+		case 0xad: goto state96;
+		case 0xae: goto state97;
+		case 0xaf: goto state98;
+		case 0xb0: goto statea9;
+		case 0xb1: goto stateaa;
+		case 0xb3: goto statead;
+		case 0xb8: goto statea1;
+		case 0xb9: goto statea2;
+		case 0xbc: goto statea4;
 		default: goto no_match;
 	}
 state19e:
 	switch(*(str2++)){
-		case 0x91: goto state0;
+		case 0xa0: goto state18a;
+		default: goto no_match;
+	}
+state19f:
+	switch(*(str2++)){
+		case 0x90: goto state18d;
+		case 0x98: goto state18d;
 		default: goto no_match;
 	}
 state1a0:
 	switch(*(str2++)){
-		case 0x90: goto state0;
+		case 0xa1: goto state18a;
+		default: goto no_match;
+	}
+state1a1:
+	switch(*(str2++)){
+		case 0x91: goto state18d;
+		case 0x99: goto state18d;
 		default: goto no_match;
 	}
 state1a2:
 	switch(*(str2++)){
-		case 0x93: goto state0;
+		case 0xa2: goto state18a;
+		default: goto no_match;
+	}
+state1a3:
+	switch(*(str2++)){
+		case 0x92: goto state18d;
+		case 0x9a: goto state18d;
 		default: goto no_match;
 	}
 state1a4:
 	switch(*(str2++)){
-		case 0x92: goto state0;
+		case 0xa3: goto state18a;
+		default: goto no_match;
+	}
+state1a5:
+	switch(*(str2++)){
+		case 0x93: goto state18d;
+		case 0x9b: goto state18d;
 		default: goto no_match;
 	}
 state1a6:
 	switch(*(str2++)){
-		case 0x95: goto state0;
+		case 0xa4: goto state18a;
+		default: goto no_match;
+	}
+state1a7:
+	switch(*(str2++)){
+		case 0x94: goto state18d;
+		case 0x9c: goto state18d;
 		default: goto no_match;
 	}
 state1a8:
 	switch(*(str2++)){
-		case 0x94: goto state0;
+		case 0xa5: goto state18a;
+		default: goto no_match;
+	}
+state1a9:
+	switch(*(str2++)){
+		case 0x95: goto state18d;
+		case 0x9d: goto state18d;
 		default: goto no_match;
 	}
 state1aa:
 	switch(*(str2++)){
-		case 0x97: goto state0;
+		case 0xa6: goto state18a;
+		default: goto no_match;
+	}
+state1ab:
+	switch(*(str2++)){
+		case 0x96: goto state18d;
+		case 0x9e: goto state18d;
 		default: goto no_match;
 	}
 state1ac:
 	switch(*(str2++)){
-		case 0x96: goto state0;
+		case 0xa7: goto state18a;
+		default: goto no_match;
+	}
+state1ad:
+	switch(*(str2++)){
+		case 0x97: goto state18d;
+		case 0x9f: goto state18d;
 		default: goto no_match;
 	}
 state1ae:
-	switch(*(str2++)){
-		case 0x99: goto state0;
+	switch(*(str1++)){
+		case 0xa0: goto state19e;
+		case 0xa1: goto state1a0;
+		case 0xa2: goto state1a2;
+		case 0xa3: goto state1a4;
+		case 0xa4: goto state1a6;
+		case 0xa5: goto state1a8;
+		case 0xa6: goto state1aa;
+		case 0xa7: goto state1ac;
+		case 0xa8: goto state19e;
+		case 0xa9: goto state1a0;
+		case 0xaa: goto state1a2;
+		case 0xab: goto state1a4;
+		case 0xac: goto state1a6;
+		case 0xad: goto state1a8;
+		case 0xae: goto state1aa;
+		case 0xaf: goto state1ac;
+		case 0xb2: goto state1b8;
+		case 0xba: goto statea1;
+		case 0xbb: goto statea2;
+		default: goto no_match;
+	}
+state1af:
+	switch(*(str1++)){
+		case 0xa0: goto state1b0;
+		case 0xa1: goto state1b1;
+		case 0xa2: goto state1b2;
+		case 0xa3: goto state1b3;
+		case 0xa4: goto state1b4;
+		case 0xa5: goto state1b5;
+		case 0xa6: goto state1b6;
+		case 0xa7: goto state1b7;
+		case 0xb0: goto state1b9;
+		case 0xb1: goto stateac;
 		default: goto no_match;
 	}
 state1b0:
 	switch(*(str2++)){
-		case 0x98: goto state0;
+		case 0xa0: goto state18d;
+		case 0xa8: goto state18d;
+		default: goto no_match;
+	}
+state1b1:
+	switch(*(str2++)){
+		case 0xa1: goto state18d;
+		case 0xa9: goto state18d;
 		default: goto no_match;
 	}
 state1b2:
 	switch(*(str2++)){
-		case 0x9b: goto state0;
+		case 0xa2: goto state18d;
+		case 0xaa: goto state18d;
+		default: goto no_match;
+	}
+state1b3:
+	switch(*(str2++)){
+		case 0xa3: goto state18d;
+		case 0xab: goto state18d;
 		default: goto no_match;
 	}
 state1b4:
 	switch(*(str2++)){
-		case 0x9a: goto state0;
+		case 0xa4: goto state18d;
+		case 0xac: goto state18d;
+		default: goto no_match;
+	}
+state1b5:
+	switch(*(str2++)){
+		case 0xa5: goto state18d;
+		case 0xad: goto state18d;
 		default: goto no_match;
 	}
 state1b6:
 	switch(*(str2++)){
-		case 0x9d: goto state0;
+		case 0xa6: goto state18d;
+		case 0xae: goto state18d;
+		default: goto no_match;
+	}
+state1b7:
+	switch(*(str2++)){
+		case 0xa7: goto state18d;
+		case 0xaf: goto state18d;
 		default: goto no_match;
 	}
 state1b8:
 	switch(*(str2++)){
-		case 0x9c: goto state0;
+		case 0xb0: goto state18a;
+		default: goto no_match;
+	}
+state1b9:
+	switch(*(str2++)){
+		case 0xb2: goto state18d;
+		case 0xba: goto state2;
 		default: goto no_match;
 	}
 state1ba:
+	switch(*(str1++)){
+		case 0xbe: goto state1bb;
+		case 0xbf: goto state1cf;
+		default: goto no_match;
+	}
+state1bb:
 	switch(*(str2++)){
-		case 0x9f: goto state0;
+		case 0xac: goto state1c1;
+		case 0xb1: goto state1bc;
+		case 0xb9: goto state1c8;
 		default: goto no_match;
 	}
 state1bc:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
+	switch(*(str1++)){
+		case 0xb3: goto state18a;
+		case 0xb6: goto state184;
+		case 0xb7: goto state1c6;
+		case 0xbc: goto state18a;
+		default: goto no_match;
+	}
+state1bd:
+	switch(*(str1++)){
+		case 0xac: goto state1c2;
+		case 0xae: goto state1d5;
+		case 0xb1: goto state1be;
+		case 0xb7: goto state1d1;
+		case 0xb9: goto state1c9;
 		default: goto no_match;
 	}
 state1be:
 	switch(*(str2++)){
-		case 0xa1: goto state0;
+		case 0xbe: goto state1bf;
+		default: goto no_match;
+	}
+state1bf:
+	switch(*(str1++)){
+		case 0xcd: goto state1c5;
+		case 0xce: goto state1c0;
 		default: goto no_match;
 	}
 state1c0:
 	switch(*(str2++)){
-		case 0xa0: goto state0;
+		case 0xb3: goto state18e;
+		case 0xbc: goto state18e;
+		default: goto no_match;
+	}
+state1c1:
+	switch(*(str1++)){
+		case 0xb4: goto state18a;
 		default: goto no_match;
 	}
 state1c2:
 	switch(*(str2++)){
-		case 0xa3: goto state0;
+		case 0xbe: goto state1c3;
+		default: goto no_match;
+	}
+state1c3:
+	switch(*(str1++)){
+		case 0xce: goto state1c4;
 		default: goto no_match;
 	}
 state1c4:
 	switch(*(str2++)){
-		case 0xa2: goto state0;
+		case 0xb4: goto state18e;
+		default: goto no_match;
+	}
+state1c5:
+	switch(*(str2++)){
+		case 0xb6: goto state144;
+		case 0xb7: goto state1c7;
 		default: goto no_match;
 	}
 state1c6:
 	switch(*(str2++)){
-		case 0xa5: goto state0;
+		case 0xcd: goto state191;
+		default: goto no_match;
+	}
+state1c7:
+	switch(*(str1++)){
+		case 0x82: goto state18d;
 		default: goto no_match;
 	}
 state1c8:
+	switch(*(str1++)){
+		case 0xbe: goto state2;
+		default: goto no_match;
+	}
+state1c9:
 	switch(*(str2++)){
-		case 0xa4: goto state0;
+		case 0xbe: goto stateaf;
+		case 0xbf: goto state1dd;
 		default: goto no_match;
 	}
 state1ca:
 	switch(*(str2++)){
-		case 0xa7: goto state0;
+		case 0xbd: goto state1cb;
+		case 0xbf: goto state1d9;
+		default: goto no_match;
+	}
+state1cb:
+	switch(*(str1++)){
+		case 0x82: goto state1cc;
+		case 0x88: goto statea3;
+		case 0x89: goto statea4;
+		case 0x8a: goto statea5;
+		case 0x8b: goto statea6;
+		case 0x9a: goto statea7;
+		case 0x9b: goto statea8;
+		case 0xaa: goto stateab;
+		case 0xab: goto stateac;
+		case 0xb2: goto state1ed;
+		case 0xb8: goto statea9;
+		case 0xb9: goto stateaa;
+		case 0xba: goto statead;
+		case 0xbb: goto stateae;
 		default: goto no_match;
 	}
 state1cc:
 	switch(*(str2++)){
-		case 0xa6: goto state0;
+		case 0xb4: goto state18a;
+		default: goto no_match;
+	}
+state1cd:
+	switch(*(str1++)){
+		case 0xb2: goto state79;
+		case 0xb3: goto state7a;
+		case 0xb4: goto state1ce;
+		case 0xb5: goto state7c;
+		case 0xb6: goto state8b;
+		case 0xb7: goto state8c;
+		case 0xb8: goto statea9;
+		case 0xb9: goto stateaa;
+		case 0xba: goto state9b;
+		case 0xbb: goto state9c;
+		case 0xbc: goto state1b9;
+		case 0xbd: goto stateac;
 		default: goto no_match;
 	}
 state1ce:
 	switch(*(str2++)){
-		case 0xa9: goto state0;
+		case 0x82: goto state18d;
+		case 0x8a: goto state2;
+		default: goto no_match;
+	}
+state1cf:
+	switch(*(str2++)){
+		case 0xae: goto state1d4;
+		case 0xb7: goto state1d0;
+		case 0xb9: goto state1da;
 		default: goto no_match;
 	}
 state1d0:
+	switch(*(str1++)){
+		case 0x83: goto state18a;
+		case 0x86: goto state184;
+		case 0x87: goto state1c6;
+		case 0x8c: goto state18a;
+		default: goto no_match;
+	}
+state1d1:
 	switch(*(str2++)){
-		case 0xa8: goto state0;
+		case 0xbf: goto state1d2;
 		default: goto no_match;
 	}
 state1d2:
+	switch(*(str1++)){
+		case 0xcd: goto state1d8;
+		case 0xce: goto state1d3;
+		default: goto no_match;
+	}
+state1d3:
 	switch(*(str2++)){
-		case 0xab: goto state0;
+		case 0x83: goto state18e;
+		case 0x8c: goto state18e;
 		default: goto no_match;
 	}
 state1d4:
+	switch(*(str1++)){
+		case 0x84: goto state18a;
+		default: goto no_match;
+	}
+state1d5:
 	switch(*(str2++)){
-		case 0xaa: goto state0;
+		case 0xbf: goto state1d6;
 		default: goto no_match;
 	}
 state1d6:
+	switch(*(str1++)){
+		case 0xce: goto state1d7;
+		default: goto no_match;
+	}
+state1d7:
 	switch(*(str2++)){
-		case 0xad: goto state0;
+		case 0x84: goto state18e;
 		default: goto no_match;
 	}
 state1d8:
 	switch(*(str2++)){
-		case 0xac: goto state0;
+		case 0x86: goto state144;
+		case 0x87: goto state1c7;
+		default: goto no_match;
+	}
+state1d9:
+	switch(*(str1++)){
+		case 0x83: goto state7d;
+		case 0x8c: goto state74;
+		case 0x90: goto state89;
+		case 0x91: goto state8a;
+		case 0x98: goto state81;
+		case 0x99: goto state82;
+		case 0xa0: goto state99;
+		case 0xa1: goto state9a;
+		case 0xa5: goto state9d;
+		case 0xa8: goto state91;
+		case 0xa9: goto state92;
+		case 0xac: goto state96;
+		case 0xb3: goto statead;
+		case 0xbc: goto statea4;
 		default: goto no_match;
 	}
 state1da:
+	switch(*(str1++)){
+		case 0x92: goto state1db;
+		case 0x93: goto state12f;
+		case 0x96: goto state184;
+		case 0x97: goto state1e1;
+		default: goto no_match;
+	}
+state1db:
 	switch(*(str2++)){
-		case 0xaf: goto state0;
+		case 0xcc: goto state1dc;
 		default: goto no_match;
 	}
 state1dc:
 	switch(*(str2++)){
-		case 0xae: goto state0;
+		case 0x88: goto state17b;
+		default: goto no_match;
+	}
+state1dd:
+	switch(*(str1++)){
+		case 0xcc: goto state1de;
+		case 0xcd: goto state1e0;
 		default: goto no_match;
 	}
 state1de:
 	switch(*(str2++)){
-		case 0xb1: goto state0;
+		case 0x92: goto state1df;
+		case 0x93: goto state134;
+		case 0x97: goto state1e3;
+		default: goto no_match;
+	}
+state1df:
+	switch(*(str1++)){
+		case 0x88: goto state17d;
 		default: goto no_match;
 	}
 state1e0:
 	switch(*(str2++)){
-		case 0xb0: goto state0;
+		case 0x96: goto state144;
+		default: goto no_match;
+	}
+state1e1:
+	switch(*(str2++)){
+		case 0xcc: goto state1e2;
 		default: goto no_match;
 	}
 state1e2:
 	switch(*(str2++)){
-		case 0xb3: goto state0;
+		case 0x88: goto state184;
+		default: goto no_match;
+	}
+state1e3:
+	switch(*(str1++)){
+		case 0x88: goto state186;
 		default: goto no_match;
 	}
 state1e4:
 	switch(*(str2++)){
-		case 0xb2: goto state0;
+		case 0x81: goto state1e8;
+		case 0x85: goto state1e5;
+		case 0x89: goto state1bc;
+		case 0x8e: goto state1c1;
+		default: goto no_match;
+	}
+state1e5:
+	switch(*(str1++)){
+		case 0xa2: goto state1db;
+		case 0xa3: goto state12f;
+		case 0xa6: goto state184;
+		case 0xa7: goto state1e1;
 		default: goto no_match;
 	}
 state1e6:
+	switch(*(str1++)){
+		case 0xcc: goto state1e7;
+		case 0xcd: goto state1ec;
+		default: goto no_match;
+	}
+state1e7:
 	switch(*(str2++)){
-		case 0xb5: goto state0;
+		case 0xa2: goto state1df;
+		case 0xa3: goto state134;
+		case 0xa7: goto state1e3;
 		default: goto no_match;
 	}
 state1e8:
+	switch(*(str1++)){
+		case 0xa4: goto state173;
+		default: goto no_match;
+	}
+state1e9:
 	switch(*(str2++)){
-		case 0xb4: goto state0;
+		case 0xbf: goto state1ea;
 		default: goto no_match;
 	}
 state1ea:
+	switch(*(str1++)){
+		case 0xcc: goto state1eb;
+		default: goto no_match;
+	}
+state1eb:
 	switch(*(str2++)){
-		case 0xb7: goto state0;
+		case 0xa4: goto state178;
 		default: goto no_match;
 	}
 state1ec:
 	switch(*(str2++)){
-		case 0xb6: goto state0;
+		case 0xa6: goto state144;
+		default: goto no_match;
+	}
+state1ed:
+	switch(*(str2++)){
+		case 0xbc: goto state18a;
 		default: goto no_match;
 	}
 state1ee:
-	switch(*(str1++)){
-		case 0xb8: goto state1ef;
+	switch(*(str2++)){
+		case 0xbf: goto state1bf;
 		default: goto no_match;
 	}
 state1ef:
 	switch(*(str2++)){
-		case 0xbf: goto state0;
+		case 0xbf: goto state1c3;
+		default: goto no_match;
+	}
+state1f0:
+	switch(*(str1++)){
+		case 0x84: goto state1f1;
 		default: goto no_match;
 	}
 state1f1:
-	switch(*(str1++)){
-		case 0xbf: goto state1f2;
+	switch(*(str2++)){
+		case 0x89: goto state1f2;
 		default: goto no_match;
 	}
 state1f2:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
+	switch(*(str1++)){
+		case 0xa6: goto state2;
+		default: goto no_match;
+	}
+state1f3:
+	switch(*(str1++)){
+		case 0x89: goto state1f4;
 		default: goto no_match;
 	}
 state1f4:
 	switch(*(str2++)){
-		case 0xba: goto state0;
+		case 0x84: goto state97;
+		default: goto no_match;
+	}
+state1f5:
+	switch(*(str1++)){
+		case 0x84: goto state1f6;
 		default: goto no_match;
 	}
 state1f6:
+	switch(*(str1++)){
+		case 0xaa: goto state2;
+		default: goto no_match;
+	}
+state1f7:
 	switch(*(str2++)){
-		case 0xb9: goto state0;
+		case 0x84: goto state9b;
 		default: goto no_match;
 	}
 state1f8:
+	switch(*(str1++)){
+		case 0x84: goto state1f9;
+		default: goto no_match;
+	}
+state1f9:
 	switch(*(str2++)){
-		case 0xbc: goto state0;
+		case 0xa5: goto state1fa;
 		default: goto no_match;
 	}
 state1fa:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
+	switch(*(str1++)){
+		case 0xab: goto state2;
+		default: goto no_match;
+	}
+state1fb:
+	switch(*(str1++)){
+		case 0xa5: goto state1fc;
 		default: goto no_match;
 	}
 state1fc:
 	switch(*(str2++)){
-		case 0xbe: goto state0;
+		case 0x84: goto state9c;
+		default: goto no_match;
+	}
+state1fd:
+	switch(*(str2++)){
+		case 0x85: goto state1fe;
 		default: goto no_match;
 	}
 state1fe:
+	switch(*(str1++)){
+		case 0xa0: goto statea1;
+		case 0xa1: goto statea2;
+		case 0xa2: goto statea3;
+		case 0xa3: goto statea4;
+		case 0xa4: goto statea5;
+		case 0xa5: goto statea6;
+		case 0xa6: goto statea7;
+		case 0xa7: goto statea8;
+		case 0xa8: goto statea9;
+		case 0xa9: goto stateaa;
+		case 0xaa: goto stateab;
+		case 0xab: goto stateac;
+		case 0xac: goto statead;
+		case 0xad: goto stateae;
+		case 0xae: goto stateaf;
+		case 0xaf: goto stateb0;
+		case 0xb0: goto state91;
+		case 0xb1: goto state92;
+		case 0xb2: goto state93;
+		case 0xb3: goto state94;
+		case 0xb4: goto state95;
+		case 0xb5: goto state96;
+		case 0xb6: goto state97;
+		case 0xb7: goto state98;
+		case 0xb8: goto state99;
+		case 0xb9: goto state9a;
+		case 0xba: goto state9b;
+		case 0xbb: goto state9c;
+		case 0xbc: goto state9d;
+		case 0xbd: goto state9e;
+		case 0xbe: goto state9f;
+		case 0xbf: goto statea0;
+		default: goto no_match;
+	}
+state1ff:
 	switch(*(str2++)){
-		case 0xbd: goto state0;
+		case 0x93: goto state200;
+		default: goto no_match;
+	}
+state200:
+	switch(*(str1++)){
+		case 0xb6: goto state81;
+		case 0xb7: goto state82;
+		case 0xb8: goto state83;
+		case 0xb9: goto state84;
+		case 0xba: goto state85;
+		case 0xbb: goto state86;
+		case 0xbc: goto state87;
+		case 0xbd: goto state88;
+		case 0xbe: goto state89;
+		case 0xbf: goto state8a;
+		default: goto no_match;
+	}
+state201:
+	switch(*(str2++)){
+		case 0x92: goto state202;
+		case 0x93: goto state203;
 		default: goto no_match;
 	}
 state202:
-	switch(*(str2++)){
-		case 0xc6: goto state20a;
-		case 0xc7: goto state227;
-		case 0xc8: goto state364;
-		case 0xc9: goto state203;
-		case 0xca: goto state266;
+	switch(*(str1++)){
+		case 0x90: goto statea7;
+		case 0x91: goto statea8;
+		case 0x92: goto statea9;
+		case 0x93: goto stateaa;
+		case 0x94: goto stateab;
+		case 0x95: goto stateac;
+		case 0x96: goto statead;
+		case 0x97: goto stateae;
+		case 0x98: goto stateaf;
+		case 0x99: goto stateb0;
 		default: goto no_match;
 	}
 state203:
 	switch(*(str1++)){
-		case 0x81: goto state204;
-		case 0x86: goto state213;
-		case 0x89: goto state21b;
-		case 0x8a: goto state21f;
-		case 0x8f: goto state22e;
-		case 0x90: goto state232;
-		case 0x93: goto state23a;
-		case 0x94: goto state23e;
-		case 0x96: goto state242;
-		case 0x97: goto state246;
-		case 0x9c: goto state24e;
-		case 0x9d: goto state252;
-		case 0x9f: goto state256;
+		case 0x80: goto state8b;
+		case 0x81: goto state8c;
+		case 0x82: goto state8d;
+		case 0x83: goto state8e;
+		case 0x84: goto state8f;
+		case 0x85: goto state90;
+		case 0x86: goto state91;
+		case 0x87: goto state92;
+		case 0x88: goto state93;
+		case 0x89: goto state94;
+		case 0x8a: goto state95;
+		case 0x8b: goto state96;
+		case 0x8c: goto state97;
+		case 0x8d: goto state98;
+		case 0x8e: goto state99;
+		case 0x8f: goto state9a;
+		case 0x9a: goto state71;
+		case 0x9b: goto state72;
+		case 0x9c: goto state73;
+		case 0x9d: goto state74;
+		case 0x9e: goto state75;
+		case 0x9f: goto state76;
+		case 0xa0: goto state77;
+		case 0xa1: goto state78;
+		case 0xa2: goto state79;
+		case 0xa3: goto state7a;
+		case 0xa4: goto state7b;
+		case 0xa5: goto state7c;
+		case 0xa6: goto state7d;
+		case 0xa7: goto state7e;
+		case 0xa8: goto state7f;
+		case 0xa9: goto state80;
 		default: goto no_match;
 	}
 state204:
+	switch(*(str1++)){
+		case 0xac: goto state205;
+		default: goto no_match;
+	}
+state205:
 	switch(*(str2++)){
-		case 0x93: goto state0;
+		case 0x66: goto state206;
+		case 0x69: goto state136;
+		case 0x6c: goto state144;
 		default: goto no_match;
 	}
 state206:
-	switch(*(str2++)){
-		case 0xc6: goto state207;
-		case 0xc9: goto state0;
+	switch(*(str1++)){
+		case 0x80: goto state2;
+		case 0x83: goto state20c;
+		case 0x84: goto state20d;
 		default: goto no_match;
 	}
 state207:
 	switch(*(str1++)){
-		case 0x93: goto state208;
-		case 0x94: goto state215;
-		case 0x96: goto state21d;
-		case 0x97: goto state221;
-		case 0x99: goto state230;
-		case 0x9b: goto state234;
-		case 0xa0: goto state23c;
-		case 0xa3: goto state240;
-		case 0xa8: goto state248;
-		case 0xa9: goto state244;
-		case 0xaf: goto state250;
-		case 0xb2: goto state254;
-		case 0xb5: goto state258;
+		case 0x66: goto state208;
+		case 0x69: goto state20a;
+		case 0x6c: goto state20b;
 		default: goto no_match;
 	}
 state208:
 	switch(*(str2++)){
-		case 0x81: goto state0;
+		case 0xac: goto state209;
+		default: goto no_match;
+	}
+state209:
+	switch(*(str1++)){
+		case 0x69: goto state74;
+		case 0x6c: goto state75;
+	}
+	--str1;
+	switch(*(str2++)){
+		case 0x80: goto state2;
 		default: goto no_match;
 	}
 state20a:
-	switch(*(str1++)){
-		case 0x82: goto state20b;
-		case 0x83: goto state20d;
-		case 0x84: goto state20f;
-		case 0x85: goto state211;
-		case 0x87: goto state217;
-		case 0x88: goto state219;
-		case 0x8b: goto state223;
-		case 0x8c: goto state225;
-		case 0x91: goto state236;
-		case 0x92: goto state238;
-		case 0x98: goto state24a;
-		case 0x99: goto state24c;
-		case 0xa0: goto state25a;
-		case 0xa1: goto state25c;
-		case 0xa2: goto state25e;
-		case 0xa3: goto state260;
-		case 0xa4: goto state262;
-		case 0xa5: goto state264;
-		case 0xa7: goto state26c;
-		case 0xa8: goto state26e;
-		case 0xac: goto state274;
-		case 0xad: goto state276;
-		case 0xaf: goto state27c;
-		case 0xb0: goto state27e;
-		case 0xb3: goto state288;
-		case 0xb4: goto state28a;
-		case 0xb5: goto state28c;
-		case 0xb6: goto state28e;
-		case 0xb8: goto state294;
-		case 0xb9: goto state296;
-		case 0xbc: goto state298;
-		case 0xbd: goto state29a;
+	switch(*(str2++)){
+		case 0xac: goto state72;
 		default: goto no_match;
 	}
 state20b:
 	switch(*(str2++)){
-		case 0x83: goto state0;
+		case 0xac: goto state73;
+		default: goto no_match;
+	}
+state20c:
+	switch(*(str2++)){
+		case 0x69: goto state2;
 		default: goto no_match;
 	}
 state20d:
 	switch(*(str2++)){
-		case 0x82: goto state0;
+		case 0x6c: goto state2;
+		default: goto no_match;
+	}
+state20e:
+	switch(*(str1++)){
+		case 0xac: goto state20f;
 		default: goto no_match;
 	}
 state20f:
 	switch(*(str2++)){
-		case 0x85: goto state0;
+		case 0x74: goto state210;
+		default: goto no_match;
+	}
+state210:
+	switch(*(str1++)){
+		case 0x85: goto state2;
+		case 0x86: goto state2;
 		default: goto no_match;
 	}
 state211:
+	switch(*(str1++)){
+		case 0x74: goto state212;
+		default: goto no_match;
+	}
+state212:
 	switch(*(str2++)){
-		case 0x84: goto state0;
+		case 0xac: goto state213;
 		default: goto no_match;
 	}
 state213:
 	switch(*(str2++)){
-		case 0x94: goto state0;
+		case 0x85: goto state2;
+		case 0x86: goto state2;
+		default: goto no_match;
+	}
+state214:
+	switch(*(str1++)){
+		case 0xac: goto state215;
 		default: goto no_match;
 	}
 state215:
 	switch(*(str2++)){
-		case 0x86: goto state0;
+		case 0xb4: goto state216;
+		case 0xbe: goto state220;
+		default: goto no_match;
+	}
+state216:
+	switch(*(str1++)){
+		case 0x93: goto state217;
+		case 0x94: goto state21d;
+		case 0x95: goto state21f;
+		case 0x97: goto state224;
 		default: goto no_match;
 	}
 state217:
 	switch(*(str2++)){
-		case 0x88: goto state0;
+		case 0xd5: goto statea7;
+		default: goto no_match;
+	}
+state218:
+	switch(*(str1++)){
+		case 0xb4: goto state219;
+		case 0xbe: goto state221;
 		default: goto no_match;
 	}
 state219:
 	switch(*(str2++)){
-		case 0x87: goto state0;
+		case 0xac: goto state21a;
+		default: goto no_match;
+	}
+state21a:
+	switch(*(str1++)){
+		case 0xd5: goto state21b;
 		default: goto no_match;
 	}
 state21b:
 	switch(*(str2++)){
-		case 0x96: goto state0;
+		case 0x93: goto state21c;
+		case 0x94: goto state21e;
+		case 0x95: goto state1fa;
+		case 0x97: goto state225;
+		default: goto no_match;
+	}
+state21c:
+	switch(*(str1++)){
+		case 0xb6: goto state2;
 		default: goto no_match;
 	}
 state21d:
 	switch(*(str2++)){
-		case 0x89: goto state0;
+		case 0xd5: goto state96;
+		default: goto no_match;
+	}
+state21e:
+	switch(*(str1++)){
+		case 0xa5: goto state2;
 		default: goto no_match;
 	}
 state21f:
 	switch(*(str2++)){
-		case 0x97: goto state0;
+		case 0xd5: goto state9c;
+		default: goto no_match;
+	}
+state220:
+	switch(*(str1++)){
+		case 0x96: goto state217;
 		default: goto no_match;
 	}
 state221:
 	switch(*(str2++)){
-		case 0x8a: goto state0;
+		case 0xac: goto state222;
+		default: goto no_match;
+	}
+state222:
+	switch(*(str1++)){
+		case 0xd5: goto state223;
 		default: goto no_match;
 	}
 state223:
 	switch(*(str2++)){
-		case 0x8c: goto state0;
+		case 0x96: goto state21c;
+		default: goto no_match;
+	}
+state224:
+	switch(*(str2++)){
+		case 0xd5: goto state9e;
 		default: goto no_match;
 	}
 state225:
+	switch(*(str1++)){
+		case 0xad: goto state2;
+		default: goto no_match;
+	}
+state226:
 	switch(*(str2++)){
-		case 0x8b: goto state0;
+		case 0xbd: goto state227;
 		default: goto no_match;
 	}
 state227:
 	switch(*(str1++)){
-		case 0x8e: goto state228;
-		case 0x95: goto state309;
-		case 0xbf: goto state30d;
+		case 0xa1: goto state72;
+		case 0xa2: goto state73;
+		case 0xa3: goto state74;
+		case 0xa4: goto state75;
+		case 0xa5: goto state76;
+		case 0xa6: goto state77;
+		case 0xa7: goto state78;
+		case 0xa8: goto state79;
+		case 0xa9: goto state7a;
+		case 0xaa: goto state7b;
+		case 0xab: goto state7c;
+		case 0xac: goto state7d;
+		case 0xad: goto state7e;
+		case 0xae: goto state7f;
+		case 0xaf: goto state80;
+		case 0xb0: goto state81;
+		case 0xb1: goto state82;
+		case 0xb2: goto state83;
+		case 0xb3: goto state84;
+		case 0xb4: goto state85;
+		case 0xb5: goto state86;
+		case 0xb6: goto state87;
+		case 0xb7: goto state88;
+		case 0xb8: goto state89;
+		case 0xb9: goto state8a;
+		case 0xba: goto state8b;
 		default: goto no_match;
 	}
 state228:
 	switch(*(str2++)){
-		case 0x9d: goto state0;
+		case 0xbc: goto state229;
+		default: goto no_match;
+	}
+state229:
+	switch(*(str1++)){
+		case 0x81: goto state92;
+		case 0x82: goto state93;
+		case 0x83: goto state94;
+		case 0x84: goto state95;
+		case 0x85: goto state96;
+		case 0x86: goto state97;
+		case 0x87: goto state98;
+		case 0x88: goto state99;
+		case 0x89: goto state9a;
+		case 0x8a: goto state9b;
+		case 0x8b: goto state9c;
+		case 0x8c: goto state9d;
+		case 0x8d: goto state9e;
+		case 0x8e: goto state9f;
+		case 0x8f: goto statea0;
+		case 0x90: goto statea1;
+		case 0x91: goto statea2;
+		case 0x92: goto statea3;
+		case 0x93: goto statea4;
+		case 0x94: goto statea5;
+		case 0x95: goto statea6;
+		case 0x96: goto statea7;
+		case 0x97: goto statea8;
+		case 0x98: goto statea9;
+		case 0x99: goto stateaa;
+		case 0x9a: goto stateab;
 		default: goto no_match;
 	}
 state22a:
 	switch(*(str2++)){
-		case 0x6a: goto state2f6;
-		case 0xc6: goto state22b;
-		case 0xc7: goto state29c;
+		case 0x90: goto state22b;
 		default: goto no_match;
 	}
 state22b:
 	switch(*(str1++)){
-		case 0x9d: goto state22c;
-		case 0xb6: goto state307;
-		case 0xb7: goto state30b;
+		case 0x90: goto state22c;
+		case 0x91: goto state22f;
 		default: goto no_match;
 	}
 state22c:
 	switch(*(str2++)){
-		case 0x8e: goto state0;
+		case 0x90: goto state22d;
+		case 0x91: goto state22e;
+		default: goto no_match;
+	}
+state22d:
+	switch(*(str1++)){
+		case 0x80: goto state99;
+		case 0x81: goto state9a;
+		case 0x82: goto state9b;
+		case 0x83: goto state9c;
+		case 0x84: goto state9d;
+		case 0x85: goto state9e;
+		case 0x86: goto state9f;
+		case 0x87: goto statea0;
+		case 0x88: goto statea1;
+		case 0x89: goto statea2;
+		case 0x8a: goto statea3;
+		case 0x8b: goto statea4;
+		case 0x8c: goto statea5;
+		case 0x8d: goto statea6;
+		case 0x8e: goto statea7;
+		case 0x8f: goto statea8;
+		case 0x90: goto statea9;
+		case 0x91: goto stateaa;
+		case 0x92: goto stateab;
+		case 0x93: goto stateac;
+		case 0x94: goto statead;
+		case 0x95: goto stateae;
+		case 0x96: goto stateaf;
+		case 0x97: goto stateb0;
+		case 0xa8: goto state71;
+		case 0xa9: goto state72;
+		case 0xaa: goto state73;
+		case 0xab: goto state74;
+		case 0xac: goto state75;
+		case 0xad: goto state76;
+		case 0xae: goto state77;
+		case 0xaf: goto state78;
+		case 0xb0: goto state79;
+		case 0xb1: goto state7a;
+		case 0xb2: goto state7b;
+		case 0xb3: goto state7c;
+		case 0xb4: goto state7d;
+		case 0xb5: goto state7e;
+		case 0xb6: goto state7f;
+		case 0xb7: goto state80;
+		case 0xb8: goto state81;
+		case 0xb9: goto state82;
+		case 0xba: goto state83;
+		case 0xbb: goto state84;
+		case 0xbc: goto state85;
+		case 0xbd: goto state86;
+		case 0xbe: goto state87;
+		case 0xbf: goto state88;
 		default: goto no_match;
 	}
 state22e:
+	switch(*(str1++)){
+		case 0x98: goto state71;
+		case 0x99: goto state72;
+		case 0x9a: goto state73;
+		case 0x9b: goto state74;
+		case 0x9c: goto state75;
+		case 0x9d: goto state76;
+		case 0x9e: goto state77;
+		case 0x9f: goto state78;
+		case 0xa0: goto state79;
+		case 0xa1: goto state7a;
+		case 0xa2: goto state7b;
+		case 0xa3: goto state7c;
+		case 0xa4: goto state7d;
+		case 0xa5: goto state7e;
+		case 0xa6: goto state7f;
+		case 0xa7: goto state80;
+		default: goto no_match;
+	}
+state22f:
 	switch(*(str2++)){
-		case 0x99: goto state0;
+		case 0x90: goto state230;
 		default: goto no_match;
 	}
 state230:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state232:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state234:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state236:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state238:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state23a:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state23c:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state23e:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state240:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state242:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state244:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state246:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state248:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state24a:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state24c:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state24e:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state250:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state252:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state254:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state256:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state258:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state25a:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state25c:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state25e:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state260:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state262:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state264:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state266:
-	switch(*(str1++)){
-		case 0xa6: goto state267;
-		case 0xa9: goto state270;
-		case 0xae: goto state278;
-		case 0xb1: goto state280;
-		case 0xb2: goto state284;
-		case 0xb7: goto state290;
-		default: goto no_match;
-	}
-state267:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state269:
-	switch(*(str1++)){
-		case 0x80: goto state26a;
-		case 0x83: goto state272;
-		case 0x88: goto state27a;
-		case 0x8a: goto state282;
-		case 0x8b: goto state286;
-		case 0x92: goto state292;
-		default: goto no_match;
-	}
-state26a:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state26c:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state26e:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state270:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state272:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state274:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state276:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state278:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state27a:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state27c:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state27e:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state280:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state282:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state284:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state286:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state288:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state28a:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state28c:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state28e:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state290:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state292:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state294:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state296:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state298:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state29a:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state29c:
-	switch(*(str1++)){
-		case 0x84: goto state29d;
-		case 0x85: goto state2a1;
-		case 0x86: goto state29f;
-		case 0x87: goto state2a4;
-		case 0x88: goto state2a8;
-		case 0x89: goto state2a6;
-		case 0x8a: goto state2ab;
-		case 0x8b: goto state2af;
-		case 0x8c: goto state2ad;
-		case 0x8d: goto state2b2;
-		case 0x8e: goto state2b4;
-		case 0x8f: goto state2b6;
-		case 0x90: goto state2b8;
-		case 0x91: goto state2ba;
-		case 0x92: goto state2bc;
-		case 0x93: goto state2be;
-		case 0x94: goto state2c0;
-		case 0x95: goto state2c2;
-		case 0x96: goto state2c4;
-		case 0x97: goto state2c6;
-		case 0x98: goto state2c8;
-		case 0x99: goto state2ca;
-		case 0x9a: goto state2cc;
-		case 0x9b: goto state2ce;
-		case 0x9c: goto state2d0;
-		case 0x9e: goto state2d2;
-		case 0x9f: goto state2d4;
-		case 0xa0: goto state2d6;
-		case 0xa1: goto state2d8;
-		case 0xa2: goto state2da;
-		case 0xa3: goto state2dc;
-		case 0xa4: goto state2de;
-		case 0xa5: goto state2e0;
-		case 0xa6: goto state2e2;
-		case 0xa7: goto state2e4;
-		case 0xa8: goto state2e6;
-		case 0xa9: goto state2e8;
-		case 0xaa: goto state2ea;
-		case 0xab: goto state2ec;
-		case 0xac: goto state2ee;
-		case 0xad: goto state2f0;
-		case 0xae: goto state2f2;
-		case 0xaf: goto state2f4;
-		case 0xb1: goto state2fc;
-		case 0xb2: goto state300;
-		case 0xb3: goto state2fe;
-		case 0xb4: goto state303;
-		case 0xb5: goto state305;
-		case 0xb8: goto state30f;
-		case 0xb9: goto state311;
-		case 0xba: goto state313;
-		case 0xbb: goto state315;
-		case 0xbc: goto state317;
-		case 0xbd: goto state319;
-		case 0xbe: goto state31b;
-		case 0xbf: goto state31d;
-		default: goto no_match;
-	}
-state29d:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state29f:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state2a1:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state2a4:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state2a6:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state2a8:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state2ab:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state2ad:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state2af:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state2b2:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state2b4:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state2b6:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state2b8:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state2ba:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state2bc:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state2be:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state2c0:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state2c2:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state2c4:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state2c6:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state2c8:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state2ca:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state2cc:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state2ce:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state2d0:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state2d2:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state2d4:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state2d6:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state2d8:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state2da:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state2dc:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state2de:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state2e0:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state2e2:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state2e4:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state2e6:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state2e8:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state2ea:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state2ec:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state2ee:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state2f0:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state2f2:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state2f4:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state2f6:
-	switch(*(str1++)){
-		case 0xb0: goto state2f7;
-		default: goto no_match;
-	}
-state2f7:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-state2f9:
-	switch(*(str1++)){
-		case 0xcc: goto state2fa;
-		default: goto no_match;
-	}
-state2fa:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state2fc:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state2fe:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state300:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state303:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state305:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state307:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state309:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state30b:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state30d:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state30f:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state311:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state313:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state315:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state317:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state319:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state31b:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state31d:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state31f:
-	switch(*(str2++)){
-		case 0xc6: goto state361;
-		case 0xc8: goto state320;
-		default: goto no_match;
-	}
-state320:
 	switch(*(str1++)){
-		case 0x80: goto state321;
-		case 0x81: goto state323;
-		case 0x82: goto state325;
-		case 0x83: goto state327;
-		case 0x84: goto state329;
-		case 0x85: goto state32b;
-		case 0x86: goto state32d;
-		case 0x87: goto state32f;
-		case 0x88: goto state331;
-		case 0x89: goto state333;
-		case 0x8a: goto state335;
-		case 0x8b: goto state337;
-		case 0x8c: goto state339;
-		case 0x8d: goto state33b;
-		case 0x8e: goto state33d;
-		case 0x8f: goto state33f;
-		case 0x90: goto state341;
-		case 0x91: goto state343;
-		case 0x92: goto state345;
-		case 0x93: goto state347;
-		case 0x94: goto state349;
-		case 0x95: goto state34b;
-		case 0x96: goto state34d;
-		case 0x97: goto state34f;
-		case 0x98: goto state351;
-		case 0x99: goto state353;
-		case 0x9a: goto state355;
-		case 0x9b: goto state357;
-		case 0x9c: goto state359;
-		case 0x9d: goto state35b;
-		case 0x9e: goto state35d;
-		case 0x9f: goto state35f;
-		case 0xa2: goto state367;
-		case 0xa3: goto state369;
-		case 0xa4: goto state36b;
-		case 0xa5: goto state36d;
-		case 0xa6: goto state36f;
-		case 0xa7: goto state371;
-		case 0xa8: goto state373;
-		case 0xa9: goto state375;
-		case 0xaa: goto state377;
-		case 0xab: goto state379;
-		case 0xac: goto state37b;
-		case 0xad: goto state37d;
-		case 0xae: goto state37f;
-		case 0xaf: goto state381;
-		case 0xb0: goto state383;
-		case 0xb1: goto state385;
-		case 0xb2: goto state387;
-		case 0xb3: goto state389;
-		default: goto no_match;
-	}
-state321:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state323:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state325:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state327:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state329:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state32b:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state32d:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state32f:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state331:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state333:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state335:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state337:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state339:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state33b:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state33d:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state33f:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state341:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state343:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state345:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state347:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state349:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state34b:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state34d:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state34f:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state351:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state353:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state355:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state357:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state359:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state35b:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state35d:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state35f:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state361:
-	switch(*(str1++)){
-		case 0xa0: goto state362;
-		default: goto no_match;
-	}
-state362:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state364:
-	switch(*(str1++)){
-		case 0x9e: goto state365;
-		default: goto no_match;
-	}
-state365:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state367:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state369:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state36b:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state36d:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state36f:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state371:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state373:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state375:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state377:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state379:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state37b:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state37d:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state37f:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state381:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state383:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state385:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state387:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state389:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state38b:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		case 0xce: goto state38c;
-		default: goto no_match;
-	}
-state38c:
-	switch(*(str1++)){
-		case 0x85: goto state38d;
-		default: goto no_match;
-	}
-state38d:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state38f:
-	switch(*(str1++)){
-		case 0xb9: goto state390;
-		default: goto no_match;
-	}
-state390:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state392:
-	switch(*(str1++)){
-		case 0x86: goto state393;
-		case 0x88: goto state397;
-		case 0x89: goto state39b;
-		case 0x8a: goto state39f;
-		case 0x90: goto state3b2;
-		case 0x91: goto state3b6;
-		case 0x92: goto state3ba;
-		case 0x93: goto state3be;
-		case 0x94: goto state3c2;
-		case 0x95: goto state3c6;
-		case 0x96: goto state3ca;
-		case 0x97: goto state3ce;
-		case 0x98: goto state3d2;
-		case 0x99: goto state3d6;
-		case 0x9a: goto state3d9;
-		case 0x9b: goto state3dd;
-		case 0x9c: goto state3e1;
-		case 0x9d: goto state3e5;
-		case 0x9e: goto state3e9;
-		case 0x9f: goto state3ed;
-		case 0xac: goto state395;
-		case 0xad: goto state399;
-		case 0xae: goto state39d;
-		case 0xaf: goto state3a1;
-		case 0xb1: goto state3b8;
-		case 0xb2: goto state3bc;
-		case 0xb3: goto state3c0;
-		case 0xb4: goto state3c4;
-		case 0xb5: goto state3c8;
-		case 0xb6: goto state3cc;
-		case 0xb7: goto state3d0;
-		case 0xb8: goto state3d4;
-		case 0xb9: goto state3b4;
-		case 0xba: goto state3db;
-		case 0xbb: goto state3df;
-		case 0xbc: goto state3e3;
-		case 0xbd: goto state3e7;
-		case 0xbe: goto state3eb;
-		case 0xbf: goto state3ef;
-		default: goto no_match;
-	}
-state393:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state395:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state397:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state399:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state39b:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state39d:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state39f:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state3a1:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state3a3:
-	switch(*(str1++)){
-		case 0x8c: goto state3a4;
-		case 0x8e: goto state3aa;
-		case 0x8f: goto state3ae;
-		case 0xa0: goto state3f1;
-		case 0xa1: goto state3f5;
-		case 0xa3: goto state3f9;
-		case 0xa4: goto state3fd;
-		case 0xa5: goto state401;
-		case 0xa6: goto state405;
-		case 0xa7: goto state409;
-		case 0xa8: goto state40d;
-		case 0xa9: goto state411;
-		case 0xaa: goto state415;
-		case 0xab: goto state419;
-		case 0xb0: goto state41d;
-		case 0xb2: goto state427;
-		case 0xb5: goto state472;
-		case 0xb8: goto state42b;
-		case 0xba: goto state467;
-		default: goto no_match;
-	}
-state3a4:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state3a6:
-	switch(*(str2++)){
-		case 0xce: goto state3a7;
-		case 0xcf: goto state420;
-		case 0xe1: goto state9e6;
-		case 0xe2: goto statec1a;
-		default: goto no_match;
-	}
-state3a7:
-	switch(*(str1++)){
-		case 0x80: goto state3f3;
-		case 0x81: goto state3f7;
-		case 0x83: goto state3fb;
-		case 0x84: goto state3ff;
-		case 0x85: goto state403;
-		case 0x86: goto state407;
-		case 0x87: goto state40b;
-		case 0x88: goto state40f;
-		case 0x89: goto state413;
-		case 0x8a: goto state417;
-		case 0x8b: goto state41b;
-		case 0x8c: goto state3a8;
-		case 0x8d: goto state3ac;
-		case 0x8e: goto state3b0;
-		case 0x90: goto state425;
-		case 0x91: goto state429;
-		case 0xb0: goto state465;
-		case 0xb4: goto state46d;
-		case 0xb5: goto state470;
-		default: goto no_match;
-	}
-state3a8:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state3aa:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state3ac:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state3ae:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state3b0:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state3b2:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state3b4:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state3b6:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state3b8:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state3ba:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state3bc:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state3be:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state3c0:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state3c2:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state3c4:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state3c6:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state3c8:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state3ca:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state3cc:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state3ce:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state3d0:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state3d2:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state3d4:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state3d6:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state3d9:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state3db:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state3dd:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state3df:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state3e1:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state3e3:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state3e5:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state3e7:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state3e9:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state3eb:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state3ed:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state3ef:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state3f1:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state3f3:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state3f5:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state3f7:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state3f9:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state3fb:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state3fd:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state3ff:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state401:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state403:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state405:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state407:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state409:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state40b:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state40d:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state40f:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state411:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state413:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state415:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state417:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state419:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state41b:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state41d:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state420:
-	switch(*(str1++)){
-		case 0x80: goto state433;
-		case 0x81: goto state46b;
-		case 0x82: goto state421;
-		case 0x83: goto state423;
-		case 0x86: goto state42f;
-		case 0x95: goto state42d;
-		case 0x96: goto state431;
-		case 0x98: goto state435;
-		case 0x99: goto state437;
-		case 0x9a: goto state439;
-		case 0x9b: goto state43b;
-		case 0x9c: goto state43d;
-		case 0x9d: goto state43f;
-		case 0x9e: goto state441;
-		case 0x9f: goto state443;
-		case 0xa0: goto state445;
-		case 0xa1: goto state447;
-		case 0xa2: goto state449;
-		case 0xa3: goto state44b;
-		case 0xa4: goto state44d;
-		case 0xa5: goto state44f;
-		case 0xa6: goto state451;
-		case 0xa7: goto state453;
-		case 0xa8: goto state455;
-		case 0xa9: goto state457;
-		case 0xaa: goto state459;
-		case 0xab: goto state45b;
-		case 0xac: goto state45d;
-		case 0xad: goto state45f;
-		case 0xae: goto state461;
-		case 0xaf: goto state463;
-		case 0xb1: goto state469;
-		case 0xb2: goto state47a;
-		case 0xb7: goto state474;
-		case 0xb8: goto state476;
-		case 0xb9: goto state478;
-		case 0xba: goto state47c;
-		case 0xbb: goto state47e;
-		default: goto no_match;
-	}
-state421:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state423:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state425:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state427:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state429:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state42b:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state42d:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state42f:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state431:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state433:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state435:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state437:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state439:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state43b:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state43d:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state43f:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state441:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state443:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state445:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state447:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state449:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state44b:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state44d:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state44f:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state451:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state453:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state455:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state457:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state459:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state45b:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state45d:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state45f:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state461:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state463:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state465:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state467:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state469:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state46b:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state46d:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state470:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state472:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state474:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state476:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state478:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state47a:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state47c:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state47e:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state480:
-	switch(*(str2++)){
-		case 0xd0: goto state4c4;
-		case 0xd1: goto state481;
-		default: goto no_match;
-	}
-state481:
-	switch(*(str1++)){
-		case 0x80: goto state482;
-		case 0x81: goto state488;
-		case 0x82: goto state48c;
-		case 0x83: goto state490;
-		case 0x84: goto state494;
-		case 0x85: goto state498;
-		case 0x86: goto state49c;
-		case 0x87: goto state4a0;
-		case 0x88: goto state4a4;
-		case 0x89: goto state4a8;
-		case 0x8a: goto state4ac;
-		case 0x8b: goto state4b0;
-		case 0x8c: goto state4b4;
-		case 0x8d: goto state4b8;
-		case 0x8e: goto state4bc;
-		case 0x8f: goto state4c0;
-		case 0xa0: goto state505;
-		case 0xa1: goto state509;
-		case 0xa2: goto state50d;
-		case 0xa3: goto state511;
-		case 0xa4: goto state515;
-		case 0xa5: goto state519;
-		case 0xa6: goto state51d;
-		case 0xa7: goto state521;
-		case 0xa8: goto state525;
-		case 0xa9: goto state529;
-		case 0xaa: goto state52d;
-		case 0xab: goto state531;
-		case 0xac: goto state535;
-		case 0xad: goto state539;
-		case 0xae: goto state53d;
-		case 0xaf: goto state541;
-		default: goto no_match;
-	}
-state482:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state484:
-	switch(*(str2++)){
-		case 0xd0: goto state485;
-		case 0xd1: goto state545;
-		default: goto no_match;
-	}
-state485:
-	switch(*(str1++)){
-		case 0x80: goto state507;
-		case 0x81: goto state50b;
-		case 0x82: goto state50f;
-		case 0x83: goto state513;
-		case 0x84: goto state517;
-		case 0x85: goto state51b;
-		case 0x86: goto state51f;
-		case 0x87: goto state523;
-		case 0x88: goto state527;
-		case 0x89: goto state52b;
-		case 0x8a: goto state52f;
-		case 0x8b: goto state533;
-		case 0x8c: goto state537;
-		case 0x8d: goto state53b;
-		case 0x8e: goto state53f;
-		case 0x8f: goto state543;
-		case 0x90: goto state486;
-		case 0x91: goto state48a;
-		case 0x92: goto state48e;
-		case 0x93: goto state492;
-		case 0x94: goto state496;
-		case 0x95: goto state49a;
-		case 0x96: goto state49e;
-		case 0x97: goto state4a2;
-		case 0x98: goto state4a6;
-		case 0x99: goto state4aa;
-		case 0x9a: goto state4ae;
-		case 0x9b: goto state4b2;
-		case 0x9c: goto state4b6;
-		case 0x9d: goto state4ba;
-		case 0x9e: goto state4be;
-		case 0x9f: goto state4c2;
-		default: goto no_match;
-	}
-state486:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state488:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state48a:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state48c:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state48e:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state490:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state492:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state494:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state496:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state498:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state49a:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state49c:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state49e:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state4a0:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state4a2:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state4a4:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state4a6:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state4a8:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state4aa:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state4ac:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state4ae:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state4b0:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state4b2:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state4b4:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state4b6:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state4b8:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state4ba:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state4bc:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state4be:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state4c0:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state4c2:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state4c4:
-	switch(*(str1++)){
-		case 0x90: goto state4c5;
-		case 0x91: goto state4c9;
-		case 0x92: goto state4cd;
-		case 0x93: goto state4d1;
-		case 0x94: goto state4d5;
-		case 0x95: goto state4d9;
-		case 0x96: goto state4dd;
-		case 0x97: goto state4e1;
-		case 0x98: goto state4e5;
-		case 0x99: goto state4e9;
-		case 0x9a: goto state4ed;
-		case 0x9b: goto state4f1;
-		case 0x9c: goto state4f5;
-		case 0x9d: goto state4f9;
-		case 0x9e: goto state4fd;
-		case 0x9f: goto state501;
-		case 0xb0: goto state4c7;
-		case 0xb1: goto state4cb;
-		case 0xb2: goto state4cf;
-		case 0xb3: goto state4d3;
-		case 0xb4: goto state4d7;
-		case 0xb5: goto state4db;
-		case 0xb6: goto state4df;
-		case 0xb7: goto state4e3;
-		case 0xb8: goto state4e7;
-		case 0xb9: goto state4eb;
-		case 0xba: goto state4ef;
-		case 0xbb: goto state4f3;
-		case 0xbc: goto state4f7;
-		case 0xbd: goto state4fb;
-		case 0xbe: goto state4ff;
-		case 0xbf: goto state503;
-		default: goto no_match;
-	}
-state4c5:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state4c7:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state4c9:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state4cb:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state4cd:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state4cf:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state4d1:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state4d3:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state4d5:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state4d7:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state4d9:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state4db:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state4dd:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state4df:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state4e1:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state4e3:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state4e5:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state4e7:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state4e9:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state4eb:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state4ed:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state4ef:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state4f1:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state4f3:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state4f5:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state4f7:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state4f9:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state4fb:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state4fd:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state4ff:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state501:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state503:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state505:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state507:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state509:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state50b:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state50d:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state50f:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state511:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state513:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state515:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state517:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state519:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state51b:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state51d:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state51f:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state521:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state523:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state525:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state527:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state529:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state52b:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state52d:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state52f:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state531:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state533:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state535:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state537:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state539:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state53b:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state53d:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state53f:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state541:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state543:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state545:
-	switch(*(str1++)){
-		case 0xa0: goto state546;
-		case 0xa1: goto state548;
-		case 0xa2: goto state54a;
-		case 0xa3: goto state54c;
-		case 0xa4: goto state54e;
-		case 0xa5: goto state550;
-		case 0xa6: goto state552;
-		case 0xa7: goto state554;
-		case 0xa8: goto state556;
-		case 0xa9: goto state558;
-		case 0xaa: goto state55a;
-		case 0xab: goto state55c;
-		case 0xac: goto state55e;
-		case 0xad: goto state560;
-		case 0xae: goto state562;
-		case 0xaf: goto state564;
-		case 0xb0: goto state566;
-		case 0xb1: goto state568;
-		case 0xb2: goto state56a;
-		case 0xb3: goto state56c;
-		case 0xb4: goto state56e;
-		case 0xb5: goto state570;
-		case 0xb6: goto state572;
-		case 0xb7: goto state574;
-		case 0xb8: goto state576;
-		case 0xb9: goto state578;
-		case 0xba: goto state57a;
-		case 0xbb: goto state57c;
-		case 0xbc: goto state57e;
-		case 0xbd: goto state580;
-		case 0xbe: goto state582;
-		case 0xbf: goto state584;
-		default: goto no_match;
-	}
-state546:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state548:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state54a:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state54c:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state54e:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state550:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state552:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state554:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state556:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state558:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state55a:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state55c:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state55e:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state560:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state562:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state564:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state566:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state568:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state56a:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state56c:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state56e:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state570:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state572:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state574:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state576:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state578:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state57a:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state57c:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state57e:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state580:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state582:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state584:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state586:
-	switch(*(str2++)){
-		case 0xd2: goto state587;
-		default: goto no_match;
-	}
-state587:
-	switch(*(str1++)){
-		case 0x80: goto state588;
-		case 0x81: goto state58a;
-		case 0x8a: goto state58c;
-		case 0x8b: goto state58e;
-		case 0x8c: goto state590;
-		case 0x8d: goto state592;
-		case 0x8e: goto state594;
-		case 0x8f: goto state596;
-		case 0x90: goto state598;
-		case 0x91: goto state59a;
-		case 0x92: goto state59c;
-		case 0x93: goto state59e;
-		case 0x94: goto state5a0;
-		case 0x95: goto state5a2;
-		case 0x96: goto state5a4;
-		case 0x97: goto state5a6;
-		case 0x98: goto state5a8;
-		case 0x99: goto state5aa;
-		case 0x9a: goto state5ac;
-		case 0x9b: goto state5ae;
-		case 0x9c: goto state5b0;
-		case 0x9d: goto state5b2;
-		case 0x9e: goto state5b4;
-		case 0x9f: goto state5b6;
-		case 0xa0: goto state5b8;
-		case 0xa1: goto state5ba;
-		case 0xa2: goto state5bc;
-		case 0xa3: goto state5be;
-		case 0xa4: goto state5c0;
-		case 0xa5: goto state5c2;
-		case 0xa6: goto state5c4;
-		case 0xa7: goto state5c6;
-		case 0xa8: goto state5c8;
-		case 0xa9: goto state5ca;
-		case 0xaa: goto state5cc;
-		case 0xab: goto state5ce;
-		case 0xac: goto state5d0;
-		case 0xad: goto state5d2;
-		case 0xae: goto state5d4;
-		case 0xaf: goto state5d6;
-		case 0xb0: goto state5d8;
-		case 0xb1: goto state5da;
-		case 0xb2: goto state5dc;
-		case 0xb3: goto state5de;
-		case 0xb4: goto state5e0;
-		case 0xb5: goto state5e2;
-		case 0xb6: goto state5e4;
-		case 0xb7: goto state5e6;
-		case 0xb8: goto state5e8;
-		case 0xb9: goto state5ea;
-		case 0xba: goto state5ec;
-		case 0xbb: goto state5ee;
-		case 0xbc: goto state5f0;
-		case 0xbd: goto state5f2;
-		case 0xbe: goto state5f4;
-		case 0xbf: goto state5f6;
-		default: goto no_match;
-	}
-state588:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state58a:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state58c:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state58e:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state590:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state592:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state594:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state596:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state598:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state59a:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state59c:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state59e:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state5a0:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state5a2:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state5a4:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state5a6:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state5a8:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state5aa:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state5ac:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state5ae:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state5b0:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state5b2:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state5b4:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state5b6:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state5b8:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state5ba:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state5bc:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state5be:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state5c0:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state5c2:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state5c4:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state5c6:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state5c8:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state5ca:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state5cc:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state5ce:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state5d0:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state5d2:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state5d4:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state5d6:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state5d8:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state5da:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state5dc:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state5de:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state5e0:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state5e2:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state5e4:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state5e6:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state5e8:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state5ea:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state5ec:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state5ee:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state5f0:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state5f2:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state5f4:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state5f6:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state5f8:
-	switch(*(str2++)){
-		case 0xd3: goto state5f9;
-		default: goto no_match;
-	}
-state5f9:
-	switch(*(str1++)){
-		case 0x81: goto state5fa;
-		case 0x82: goto state5fc;
-		case 0x83: goto state5fe;
-		case 0x84: goto state600;
-		case 0x85: goto state602;
-		case 0x86: goto state604;
-		case 0x87: goto state606;
-		case 0x88: goto state608;
-		case 0x89: goto state60a;
-		case 0x8a: goto state60c;
-		case 0x8b: goto state60e;
-		case 0x8c: goto state610;
-		case 0x8d: goto state612;
-		case 0x8e: goto state614;
-		case 0x90: goto state616;
-		case 0x91: goto state618;
-		case 0x92: goto state61a;
-		case 0x93: goto state61c;
-		case 0x94: goto state61e;
-		case 0x95: goto state620;
-		case 0x96: goto state622;
-		case 0x97: goto state624;
-		case 0x98: goto state626;
-		case 0x99: goto state628;
-		case 0x9a: goto state62a;
-		case 0x9b: goto state62c;
-		case 0x9c: goto state62e;
-		case 0x9d: goto state630;
-		case 0x9e: goto state632;
-		case 0x9f: goto state634;
-		case 0xa0: goto state636;
-		case 0xa1: goto state638;
-		case 0xa2: goto state63a;
-		case 0xa3: goto state63c;
-		case 0xa4: goto state63e;
-		case 0xa5: goto state640;
-		case 0xa6: goto state642;
-		case 0xa7: goto state644;
-		case 0xa8: goto state646;
-		case 0xa9: goto state648;
-		case 0xaa: goto state64a;
-		case 0xab: goto state64c;
-		case 0xac: goto state64e;
-		case 0xad: goto state650;
-		case 0xae: goto state652;
-		case 0xaf: goto state654;
-		case 0xb0: goto state656;
-		case 0xb1: goto state658;
-		case 0xb2: goto state65a;
-		case 0xb3: goto state65c;
-		case 0xb4: goto state65e;
-		case 0xb5: goto state660;
-		case 0xb8: goto state662;
-		case 0xb9: goto state664;
-		default: goto no_match;
-	}
-state5fa:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state5fc:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state5fe:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state600:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state602:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state604:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state606:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state608:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state60a:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state60c:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state60e:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state610:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state612:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state614:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state616:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state618:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state61a:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state61c:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state61e:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state620:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state622:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state624:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state626:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state628:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state62a:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state62c:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state62e:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state630:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state632:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state634:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state636:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state638:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state63a:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state63c:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state63e:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state640:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state642:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state644:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state646:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state648:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state64a:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state64c:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state64e:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state650:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state652:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state654:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state656:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state658:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state65a:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state65c:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state65e:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state660:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state662:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state664:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state666:
-	switch(*(str2++)){
-		case 0xd4: goto state667;
-		case 0xd5: goto state688;
-		default: goto no_match;
-	}
-state667:
-	switch(*(str1++)){
-		case 0x80: goto state668;
-		case 0x81: goto state66a;
-		case 0x82: goto state66c;
-		case 0x83: goto state66e;
-		case 0x84: goto state670;
-		case 0x85: goto state672;
-		case 0x86: goto state674;
-		case 0x87: goto state676;
-		case 0x88: goto state678;
-		case 0x89: goto state67a;
-		case 0x8a: goto state67c;
-		case 0x8b: goto state67e;
-		case 0x8c: goto state680;
-		case 0x8d: goto state682;
-		case 0x8e: goto state684;
-		case 0x8f: goto state686;
-		default: goto no_match;
-	}
-state668:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state66a:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state66c:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state66e:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state670:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state672:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state674:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state676:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state678:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state67a:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state67c:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state67e:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state680:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state682:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state684:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state686:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state688:
-	switch(*(str1++)){
-		case 0xb1: goto state689;
-		case 0xb2: goto state68f;
-		case 0xb3: goto state693;
-		case 0xb4: goto state697;
-		case 0xb5: goto state69b;
-		case 0xb6: goto state69f;
-		case 0xb7: goto state6a3;
-		case 0xb8: goto state6a7;
-		case 0xb9: goto state6ab;
-		case 0xba: goto state6af;
-		case 0xbb: goto state6b3;
-		case 0xbc: goto state6b7;
-		case 0xbd: goto state6bb;
-		case 0xbe: goto state6bf;
-		case 0xbf: goto state6c3;
-		default: goto no_match;
-	}
-state689:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state68b:
-	switch(*(str2++)){
-		case 0xd4: goto state68c;
-		case 0xd5: goto state6c7;
-		case 0xd6: goto state708;
-		case 0xef: goto statecf5;
-		default: goto no_match;
-	}
-state68c:
-	switch(*(str1++)){
-		case 0xa1: goto state68d;
-		case 0xa2: goto state691;
-		case 0xa3: goto state695;
-		case 0xa4: goto state699;
-		case 0xa5: goto state69d;
-		case 0xa6: goto state6a1;
-		case 0xa7: goto state6a5;
-		case 0xa8: goto state6a9;
-		case 0xa9: goto state6ad;
-		case 0xaa: goto state6b1;
-		case 0xab: goto state6b5;
-		case 0xac: goto state6b9;
-		case 0xad: goto state6bd;
-		case 0xae: goto state6c1;
-		case 0xaf: goto state6c5;
-		default: goto no_match;
-	}
-state68d:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state68f:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state691:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state693:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state695:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state697:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state699:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state69b:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state69d:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state69f:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state6a1:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state6a3:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state6a5:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state6a7:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state6a9:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state6ab:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state6ad:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state6af:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state6b1:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state6b3:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state6b5:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state6b7:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state6b9:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state6bb:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state6bd:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state6bf:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state6c1:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state6c3:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state6c5:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state6c7:
-	switch(*(str1++)){
-		case 0x80: goto state6c8;
-		case 0x81: goto state6cc;
-		case 0x82: goto state6d0;
-		case 0x83: goto state6d4;
-		case 0x84: goto state6d8;
-		case 0x85: goto state6dc;
-		case 0x86: goto state6e0;
-		case 0x87: goto state6e4;
-		case 0x88: goto state6e8;
-		case 0x89: goto state6ec;
-		case 0x8a: goto state6f0;
-		case 0x8b: goto state6f4;
-		case 0x8c: goto state6f8;
-		case 0x8d: goto state6fc;
-		case 0x8e: goto state700;
-		case 0x8f: goto state704;
-		case 0xb0: goto state6ca;
-		case 0xb1: goto state6ce;
-		case 0xb2: goto state6d2;
-		case 0xb3: goto state6d6;
-		case 0xb4: goto state6da;
-		case 0xb5: goto state6de;
-		case 0xb6: goto state6e2;
-		case 0xb7: goto state6e6;
-		case 0xb8: goto state6ea;
-		case 0xb9: goto state6ee;
-		case 0xba: goto state6f2;
-		case 0xbb: goto state6f6;
-		case 0xbc: goto state6fa;
-		case 0xbd: goto state6fe;
-		case 0xbe: goto state702;
-		case 0xbf: goto state706;
-		default: goto no_match;
-	}
-state6c8:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state6ca:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state6cc:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state6ce:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state6d0:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state6d2:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state6d4:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state6d6:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state6d8:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state6da:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state6dc:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state6de:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state6e0:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state6e2:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state6e4:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state6e6:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state6e8:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state6ea:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state6ec:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state6ee:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state6f0:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state6f2:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state6f4:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state6f6:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state6f8:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state6fa:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state6fc:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state6fe:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state700:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state702:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state704:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state706:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state708:
-	switch(*(str1++)){
-		case 0x90: goto state709;
-		case 0x91: goto state70f;
-		case 0x92: goto state713;
-		case 0x93: goto state717;
-		case 0x94: goto state71b;
-		case 0x95: goto state71f;
-		case 0x96: goto state723;
-		case 0xa5: goto state729;
-		default: goto no_match;
-	}
-state709:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state70b:
-	switch(*(str2++)){
-		case 0xd5: goto state70c;
-		case 0xd6: goto state0;
-		default: goto no_match;
-	}
-state70c:
-	switch(*(str1++)){
-		case 0x80: goto state70d;
-		case 0x81: goto state711;
-		case 0x82: goto state715;
-		case 0x83: goto state719;
-		case 0x84: goto state71d;
-		case 0x85: goto state721;
-		case 0x86: goto state725;
-		case 0x87: goto state727;
-		default: goto no_match;
-	}
-state70d:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state70f:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state711:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state713:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state715:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state717:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state719:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state71b:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state71d:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state71f:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state721:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state723:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state725:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state727:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state729:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state72b:
-	switch(*(str2++)){
-		case 0x61: goto state887;
-		case 0x68: goto state85f;
-		case 0x74: goto state869;
-		case 0x77: goto state873;
-		case 0x79: goto state87d;
-		case 0xce: goto stateb36;
-		case 0xcf: goto state9e1;
-		case 0xe1: goto state72c;
-		default: goto no_match;
-	}
-state72c:
-	switch(*(str1++)){
-		case 0xb8: goto state72d;
-		case 0xb9: goto state7af;
-		case 0xba: goto state831;
-		case 0xbb: goto state8d7;
-		case 0xbc: goto state94d;
-		case 0xbd: goto state9c7;
-		case 0xbe: goto statea24;
-		case 0xbf: goto stateb67;
-		default: goto no_match;
-	}
-state72d:
-	switch(*(str2++)){
-		case 0xb8: goto state72e;
-		default: goto no_match;
-	}
-state72e:
-	switch(*(str1++)){
-		case 0x80: goto state72f;
-		case 0x81: goto state731;
-		case 0x82: goto state733;
-		case 0x83: goto state735;
-		case 0x84: goto state737;
-		case 0x85: goto state739;
-		case 0x86: goto state73b;
-		case 0x87: goto state73d;
-		case 0x88: goto state73f;
-		case 0x89: goto state741;
-		case 0x8a: goto state743;
-		case 0x8b: goto state745;
-		case 0x8c: goto state747;
-		case 0x8d: goto state749;
-		case 0x8e: goto state74b;
-		case 0x8f: goto state74d;
-		case 0x90: goto state74f;
-		case 0x91: goto state751;
-		case 0x92: goto state753;
-		case 0x93: goto state755;
-		case 0x94: goto state757;
-		case 0x95: goto state759;
-		case 0x96: goto state75b;
-		case 0x97: goto state75d;
-		case 0x98: goto state75f;
-		case 0x99: goto state761;
-		case 0x9a: goto state763;
-		case 0x9b: goto state765;
-		case 0x9c: goto state767;
-		case 0x9d: goto state769;
-		case 0x9e: goto state76b;
-		case 0x9f: goto state76d;
-		case 0xa0: goto state76f;
-		case 0xa1: goto state771;
-		case 0xa2: goto state773;
-		case 0xa3: goto state775;
-		case 0xa4: goto state777;
-		case 0xa5: goto state779;
-		case 0xa6: goto state77b;
-		case 0xa7: goto state77d;
-		case 0xa8: goto state77f;
-		case 0xa9: goto state781;
-		case 0xaa: goto state783;
-		case 0xab: goto state785;
-		case 0xac: goto state787;
-		case 0xad: goto state789;
-		case 0xae: goto state78b;
-		case 0xaf: goto state78d;
-		case 0xb0: goto state78f;
-		case 0xb1: goto state791;
-		case 0xb2: goto state793;
-		case 0xb3: goto state795;
-		case 0xb4: goto state797;
-		case 0xb5: goto state799;
-		case 0xb6: goto state79b;
-		case 0xb7: goto state79d;
-		case 0xb8: goto state79f;
-		case 0xb9: goto state7a1;
-		case 0xba: goto state7a3;
-		case 0xbb: goto state7a5;
-		case 0xbc: goto state7a7;
-		case 0xbd: goto state7a9;
-		case 0xbe: goto state7ab;
-		case 0xbf: goto state7ad;
-		default: goto no_match;
-	}
-state72f:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state731:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state733:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state735:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state737:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state739:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state73b:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state73d:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state73f:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state741:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state743:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state745:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state747:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state749:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state74b:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state74d:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state74f:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state751:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state753:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state755:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state757:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state759:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state75b:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state75d:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state75f:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state761:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state763:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state765:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state767:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state769:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state76b:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state76d:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state76f:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state771:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state773:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state775:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state777:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state779:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state77b:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state77d:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state77f:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state781:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state783:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state785:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state787:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state789:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state78b:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state78d:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state78f:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state791:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state793:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state795:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state797:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state799:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state79b:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state79d:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state79f:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state7a1:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state7a3:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state7a5:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state7a7:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state7a9:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state7ab:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state7ad:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state7af:
-	switch(*(str2++)){
-		case 0xb9: goto state7b0;
-		case 0xba: goto state894;
-		default: goto no_match;
-	}
-state7b0:
-	switch(*(str1++)){
-		case 0x80: goto state7b1;
-		case 0x81: goto state7b3;
-		case 0x82: goto state7b5;
-		case 0x83: goto state7b7;
-		case 0x84: goto state7b9;
-		case 0x85: goto state7bb;
-		case 0x86: goto state7bd;
-		case 0x87: goto state7bf;
-		case 0x88: goto state7c1;
-		case 0x89: goto state7c3;
-		case 0x8a: goto state7c5;
-		case 0x8b: goto state7c7;
-		case 0x8c: goto state7c9;
-		case 0x8d: goto state7cb;
-		case 0x8e: goto state7cd;
-		case 0x8f: goto state7cf;
-		case 0x90: goto state7d1;
-		case 0x91: goto state7d3;
-		case 0x92: goto state7d5;
-		case 0x93: goto state7d7;
-		case 0x94: goto state7d9;
-		case 0x95: goto state7db;
-		case 0x96: goto state7dd;
-		case 0x97: goto state7df;
-		case 0x98: goto state7e1;
-		case 0x99: goto state7e3;
-		case 0x9a: goto state7e5;
-		case 0x9b: goto state7e7;
-		case 0x9c: goto state7e9;
-		case 0x9d: goto state7eb;
-		case 0x9e: goto state7ed;
-		case 0x9f: goto state7ef;
-		case 0xa0: goto state7f1;
-		case 0xa1: goto state7f3;
-		case 0xa2: goto state7f5;
-		case 0xa3: goto state7f7;
-		case 0xa4: goto state7f9;
-		case 0xa5: goto state7fb;
-		case 0xa6: goto state7fd;
-		case 0xa7: goto state7ff;
-		case 0xa8: goto state801;
-		case 0xa9: goto state803;
-		case 0xaa: goto state805;
-		case 0xab: goto state807;
-		case 0xac: goto state809;
-		case 0xad: goto state80b;
-		case 0xae: goto state80d;
-		case 0xaf: goto state80f;
-		case 0xb0: goto state811;
-		case 0xb1: goto state813;
-		case 0xb2: goto state815;
-		case 0xb3: goto state817;
-		case 0xb4: goto state819;
-		case 0xb5: goto state81b;
-		case 0xb6: goto state81d;
-		case 0xb7: goto state81f;
-		case 0xb8: goto state821;
-		case 0xb9: goto state823;
-		case 0xba: goto state825;
-		case 0xbb: goto state827;
-		case 0xbc: goto state829;
-		case 0xbd: goto state82b;
-		case 0xbe: goto state82d;
-		case 0xbf: goto state82f;
-		default: goto no_match;
-	}
-state7b1:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state7b3:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state7b5:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state7b7:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state7b9:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state7bb:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state7bd:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state7bf:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state7c1:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state7c3:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state7c5:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state7c7:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state7c9:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state7cb:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state7cd:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state7cf:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state7d1:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state7d3:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state7d5:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state7d7:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state7d9:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state7db:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state7dd:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state7df:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state7e1:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state7e3:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state7e5:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state7e7:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state7e9:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state7eb:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state7ed:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state7ef:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state7f1:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state7f3:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state7f5:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state7f7:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state7f9:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state7fb:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state7fd:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state7ff:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state801:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state803:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state805:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state807:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state809:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state80b:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state80d:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state80f:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state811:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state813:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state815:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state817:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state819:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state81b:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state81d:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state81f:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state821:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state823:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state825:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state827:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state829:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state82b:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state82d:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state82f:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state831:
-	switch(*(str2++)){
-		case 0xb9: goto state891;
-		case 0xba: goto state832;
-		default: goto no_match;
-	}
-state832:
-	switch(*(str1++)){
-		case 0x80: goto state833;
-		case 0x81: goto state835;
-		case 0x82: goto state837;
-		case 0x83: goto state839;
-		case 0x84: goto state83b;
-		case 0x85: goto state83d;
-		case 0x86: goto state83f;
-		case 0x87: goto state841;
-		case 0x88: goto state843;
-		case 0x89: goto state845;
-		case 0x8a: goto state847;
-		case 0x8b: goto state849;
-		case 0x8c: goto state84b;
-		case 0x8d: goto state84d;
-		case 0x8e: goto state84f;
-		case 0x8f: goto state851;
-		case 0x90: goto state853;
-		case 0x91: goto state855;
-		case 0x92: goto state857;
-		case 0x93: goto state859;
-		case 0x94: goto state85b;
-		case 0x95: goto state85d;
-		case 0xa0: goto state897;
-		case 0xa1: goto state899;
-		case 0xa2: goto state89b;
-		case 0xa3: goto state89d;
-		case 0xa4: goto state89f;
-		case 0xa5: goto state8a1;
-		case 0xa6: goto state8a3;
-		case 0xa7: goto state8a5;
-		case 0xa8: goto state8a7;
-		case 0xa9: goto state8a9;
-		case 0xaa: goto state8ab;
-		case 0xab: goto state8ad;
-		case 0xac: goto state8af;
-		case 0xad: goto state8b1;
-		case 0xae: goto state8b3;
-		case 0xaf: goto state8b5;
-		case 0xb0: goto state8b7;
-		case 0xb1: goto state8b9;
-		case 0xb2: goto state8bb;
-		case 0xb3: goto state8bd;
-		case 0xb4: goto state8bf;
-		case 0xb5: goto state8c1;
-		case 0xb6: goto state8c3;
-		case 0xb7: goto state8c5;
-		case 0xb8: goto state8c7;
-		case 0xb9: goto state8c9;
-		case 0xba: goto state8cb;
-		case 0xbb: goto state8cd;
-		case 0xbc: goto state8cf;
-		case 0xbd: goto state8d1;
-		case 0xbe: goto state8d3;
-		case 0xbf: goto state8d5;
-		default: goto no_match;
-	}
-state833:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state835:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state837:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state839:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state83b:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state83d:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state83f:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state841:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state843:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state845:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state847:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state849:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state84b:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state84d:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state84f:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state851:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state853:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state855:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state857:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state859:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state85b:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state85d:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state85f:
-	switch(*(str1++)){
-		case 0xba: goto state860;
-		default: goto no_match;
-	}
-state860:
-	switch(*(str2++)){
-		case 0xcc: goto state861;
-		default: goto no_match;
-	}
-state861:
-	switch(*(str1++)){
-		case 0x96: goto state862;
-		default: goto no_match;
-	}
-state862:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state864:
-	switch(*(str1++)){
-		case 0xcc: goto state865;
-		default: goto no_match;
-	}
-state865:
-	switch(*(str2++)){
-		case 0xba: goto state866;
-		default: goto no_match;
-	}
-state866:
-	switch(*(str1++)){
-		case 0xb1: goto state867;
-		default: goto no_match;
-	}
-state867:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state869:
-	switch(*(str1++)){
-		case 0xba: goto state86a;
-		default: goto no_match;
-	}
-state86a:
-	switch(*(str2++)){
-		case 0xcc: goto state86b;
-		default: goto no_match;
-	}
-state86b:
-	switch(*(str1++)){
-		case 0x97: goto state86c;
-		default: goto no_match;
-	}
-state86c:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state86e:
-	switch(*(str1++)){
-		case 0xcc: goto state86f;
-		default: goto no_match;
-	}
-state86f:
-	switch(*(str2++)){
-		case 0xba: goto state870;
-		default: goto no_match;
-	}
-state870:
-	switch(*(str1++)){
-		case 0x88: goto state871;
-		default: goto no_match;
-	}
-state871:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state873:
-	switch(*(str1++)){
-		case 0xba: goto state874;
-		default: goto no_match;
-	}
-state874:
-	switch(*(str2++)){
-		case 0xcc: goto state875;
-		default: goto no_match;
-	}
-state875:
-	switch(*(str1++)){
-		case 0x98: goto state876;
-		default: goto no_match;
-	}
-state876:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state878:
-	switch(*(str1++)){
-		case 0xcc: goto state879;
-		default: goto no_match;
-	}
-state879:
-	switch(*(str2++)){
-		case 0xba: goto state87a;
-		default: goto no_match;
-	}
-state87a:
-	switch(*(str1++)){
-		case 0x8a: goto state87b;
-		default: goto no_match;
-	}
-state87b:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state87d:
-	switch(*(str1++)){
-		case 0xba: goto state87e;
-		default: goto no_match;
-	}
-state87e:
-	switch(*(str2++)){
-		case 0xcc: goto state87f;
-		default: goto no_match;
-	}
-state87f:
-	switch(*(str1++)){
-		case 0x99: goto state880;
-		default: goto no_match;
-	}
-state880:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state882:
-	switch(*(str1++)){
-		case 0xcc: goto state883;
-		default: goto no_match;
-	}
-state883:
-	switch(*(str2++)){
-		case 0xba: goto state884;
-		default: goto no_match;
-	}
-state884:
-	switch(*(str1++)){
-		case 0x8a: goto state885;
-		default: goto no_match;
-	}
-state885:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state887:
-	switch(*(str1++)){
-		case 0xba: goto state888;
-		default: goto no_match;
-	}
-state888:
-	switch(*(str2++)){
-		case 0xca: goto state889;
-		default: goto no_match;
-	}
-state889:
-	switch(*(str1++)){
-		case 0x9a: goto state88a;
-		default: goto no_match;
-	}
-state88a:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state88c:
-	switch(*(str1++)){
-		case 0xca: goto state88d;
-		default: goto no_match;
-	}
-state88d:
-	switch(*(str2++)){
-		case 0xba: goto state88e;
-		default: goto no_match;
-	}
-state88e:
-	switch(*(str1++)){
-		case 0xbe: goto state88f;
-		default: goto no_match;
-	}
-state88f:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state891:
-	switch(*(str1++)){
-		case 0x9b: goto state892;
-		default: goto no_match;
-	}
-state892:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state894:
-	switch(*(str1++)){
-		case 0xa1: goto state895;
-		default: goto no_match;
-	}
-state895:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state897:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state899:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state89b:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state89d:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state89f:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state8a1:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state8a3:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state8a5:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state8a7:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state8a9:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state8ab:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state8ad:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state8af:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state8b1:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state8b3:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state8b5:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state8b7:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state8b9:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state8bb:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state8bd:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state8bf:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state8c1:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state8c3:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state8c5:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state8c7:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state8c9:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state8cb:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state8cd:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state8cf:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state8d1:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state8d3:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state8d5:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state8d7:
-	switch(*(str2++)){
-		case 0xbb: goto state8d8;
-		default: goto no_match;
-	}
-state8d8:
-	switch(*(str1++)){
-		case 0x80: goto state8d9;
-		case 0x81: goto state8db;
-		case 0x82: goto state8dd;
-		case 0x83: goto state8df;
-		case 0x84: goto state8e1;
-		case 0x85: goto state8e3;
-		case 0x86: goto state8e5;
-		case 0x87: goto state8e7;
-		case 0x88: goto state8e9;
-		case 0x89: goto state8eb;
-		case 0x8a: goto state8ed;
-		case 0x8b: goto state8ef;
-		case 0x8c: goto state8f1;
-		case 0x8d: goto state8f3;
-		case 0x8e: goto state8f5;
-		case 0x8f: goto state8f7;
-		case 0x90: goto state8f9;
-		case 0x91: goto state8fb;
-		case 0x92: goto state8fd;
-		case 0x93: goto state8ff;
-		case 0x94: goto state901;
-		case 0x95: goto state903;
-		case 0x96: goto state905;
-		case 0x97: goto state907;
-		case 0x98: goto state909;
-		case 0x99: goto state90b;
-		case 0x9a: goto state90d;
-		case 0x9b: goto state90f;
-		case 0x9c: goto state911;
-		case 0x9d: goto state913;
-		case 0x9e: goto state915;
-		case 0x9f: goto state917;
-		case 0xa0: goto state919;
-		case 0xa1: goto state91b;
-		case 0xa2: goto state91d;
-		case 0xa3: goto state91f;
-		case 0xa4: goto state921;
-		case 0xa5: goto state923;
-		case 0xa6: goto state925;
-		case 0xa7: goto state927;
-		case 0xa8: goto state929;
-		case 0xa9: goto state92b;
-		case 0xaa: goto state92d;
-		case 0xab: goto state92f;
-		case 0xac: goto state931;
-		case 0xad: goto state933;
-		case 0xae: goto state935;
-		case 0xaf: goto state937;
-		case 0xb0: goto state939;
-		case 0xb1: goto state93b;
-		case 0xb2: goto state93d;
-		case 0xb3: goto state93f;
-		case 0xb4: goto state941;
-		case 0xb5: goto state943;
-		case 0xb6: goto state945;
-		case 0xb7: goto state947;
-		case 0xb8: goto state949;
-		case 0xb9: goto state94b;
-		default: goto no_match;
-	}
-state8d9:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state8db:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state8dd:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state8df:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state8e1:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state8e3:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state8e5:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state8e7:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state8e9:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state8eb:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state8ed:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state8ef:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state8f1:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state8f3:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state8f5:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state8f7:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state8f9:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state8fb:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state8fd:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state8ff:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state901:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state903:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state905:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-state907:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state909:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state90b:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state90d:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state90f:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state911:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state913:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state915:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-state917:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-state919:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state91b:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state91d:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state91f:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state921:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state923:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state925:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state927:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state929:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state92b:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state92d:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state92f:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state931:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state933:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state935:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state937:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state939:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state93b:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state93d:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state93f:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state941:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state943:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state945:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state947:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state949:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state94b:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state94d:
-	switch(*(str2++)){
-		case 0xbc: goto state94e;
-		case 0xbe: goto statea28;
-		default: goto no_match;
-	}
-state94e:
-	switch(*(str1++)){
-		case 0x80: goto state951;
-		case 0x81: goto state955;
-		case 0x82: goto state959;
-		case 0x83: goto state95d;
-		case 0x84: goto state961;
-		case 0x85: goto state965;
-		case 0x86: goto state969;
-		case 0x87: goto state96d;
-		case 0x88: goto state94f;
-		case 0x89: goto state953;
-		case 0x8a: goto state957;
-		case 0x8b: goto state95b;
-		case 0x8c: goto state95f;
-		case 0x8d: goto state963;
-		case 0x8e: goto state967;
-		case 0x8f: goto state96b;
-		case 0x90: goto state971;
-		case 0x91: goto state975;
-		case 0x92: goto state979;
-		case 0x93: goto state97d;
-		case 0x94: goto state981;
-		case 0x95: goto state985;
-		case 0x98: goto state96f;
-		case 0x99: goto state973;
-		case 0x9a: goto state977;
-		case 0x9b: goto state97b;
-		case 0x9c: goto state97f;
-		case 0x9d: goto state983;
-		case 0xa0: goto state989;
-		case 0xa1: goto state98d;
-		case 0xa2: goto state991;
-		case 0xa3: goto state995;
-		case 0xa4: goto state999;
-		case 0xa5: goto state99d;
-		case 0xa6: goto state9a1;
-		case 0xa7: goto state9a5;
-		case 0xa8: goto state987;
-		case 0xa9: goto state98b;
-		case 0xaa: goto state98f;
-		case 0xab: goto state993;
-		case 0xac: goto state997;
-		case 0xad: goto state99b;
-		case 0xae: goto state99f;
-		case 0xaf: goto state9a3;
-		case 0xb0: goto state9a9;
-		case 0xb1: goto state9ad;
-		case 0xb2: goto state9b1;
-		case 0xb3: goto state9b5;
-		case 0xb4: goto state9b9;
-		case 0xb5: goto state9bd;
-		case 0xb6: goto state9c1;
-		case 0xb7: goto state9c5;
-		case 0xb8: goto state9a7;
-		case 0xb9: goto state9ab;
-		case 0xba: goto state9af;
-		case 0xbb: goto state9b3;
-		case 0xbc: goto state9b7;
-		case 0xbd: goto state9bb;
-		case 0xbe: goto state9bf;
-		case 0xbf: goto state9c3;
-		default: goto no_match;
-	}
-state94f:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state951:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state953:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state955:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state957:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state959:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state95b:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state95d:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state95f:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state961:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state963:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state965:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state967:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-state969:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-state96b:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-state96d:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-state96f:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-state971:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-state973:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state975:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state977:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-state979:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-state97b:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state97d:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state97f:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-state981:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-state983:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state985:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-state987:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-state989:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-state98b:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-state98d:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-state98f:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-state991:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-state993:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-state995:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-state997:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-state999:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-state99b:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-state99d:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-state99f:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-state9a1:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-state9a3:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-state9a5:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-state9a7:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-state9a9:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-state9ab:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-state9ad:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-state9af:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-state9b1:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-state9b3:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-state9b5:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-state9b7:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-state9b9:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-state9bb:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-state9bd:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-state9bf:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-state9c1:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-state9c3:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-state9c5:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-state9c7:
-	switch(*(str2++)){
-		case 0xbd: goto state9c8;
-		case 0xbe: goto stateadb;
-		case 0xbf: goto stateb6b;
-		default: goto no_match;
-	}
-state9c8:
-	switch(*(str1++)){
-		case 0x80: goto state9cb;
-		case 0x81: goto state9cf;
-		case 0x82: goto state9d3;
-		case 0x83: goto state9d7;
-		case 0x84: goto state9db;
-		case 0x85: goto state9df;
-		case 0x88: goto state9c9;
-		case 0x89: goto state9cd;
-		case 0x8a: goto state9d1;
-		case 0x8b: goto state9d5;
-		case 0x8c: goto state9d9;
-		case 0x8d: goto state9dd;
-		case 0x91: goto state9f6;
-		case 0x93: goto state9fa;
-		case 0x95: goto state9fe;
-		case 0x97: goto statea02;
-		case 0x99: goto state9f4;
-		case 0x9b: goto state9f8;
-		case 0x9d: goto state9fc;
-		case 0x9f: goto statea00;
-		case 0xa0: goto statea06;
-		case 0xa1: goto statea0a;
-		case 0xa2: goto statea0e;
-		case 0xa3: goto statea12;
-		case 0xa4: goto statea16;
-		case 0xa5: goto statea1a;
-		case 0xa6: goto statea1e;
-		case 0xa7: goto statea22;
-		case 0xa8: goto statea04;
-		case 0xa9: goto statea08;
-		case 0xaa: goto statea0c;
-		case 0xab: goto statea10;
-		case 0xac: goto statea14;
-		case 0xad: goto statea18;
-		case 0xae: goto statea1c;
-		case 0xaf: goto statea20;
-		default: goto no_match;
-	}
-state9c9:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-state9cb:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-state9cd:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-state9cf:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-state9d1:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-state9d3:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-state9d5:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-state9d7:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-state9d9:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-state9db:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-state9dd:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-state9df:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-state9e1:
-	switch(*(str1++)){
-		case 0xbd: goto state9e2;
-		case 0xbf: goto statebbb;
-		default: goto no_match;
-	}
-state9e2:
-	switch(*(str2++)){
-		case 0x85: goto state9e3;
-		default: goto no_match;
-	}
-state9e3:
-	switch(*(str1++)){
-		case 0x90: goto state9e4;
-		case 0x92: goto state9eb;
-		case 0x94: goto state9ee;
-		case 0x96: goto state9f1;
-		default: goto no_match;
-	}
-state9e4:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-state9e6:
-	switch(*(str1++)){
-		case 0x81: goto statebc8;
-		case 0x85: goto state9e7;
-		case 0x89: goto statebee;
-		case 0x8e: goto statebf5;
-		default: goto no_match;
-	}
-state9e7:
-	switch(*(str2++)){
-		case 0xbd: goto state9e8;
-		case 0xbf: goto statebbf;
-		default: goto no_match;
-	}
-state9e8:
-	switch(*(str1++)){
-		case 0xcc: goto state9e9;
-		default: goto no_match;
-	}
-state9e9:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		case 0x92: goto state0;
-		case 0x94: goto state0;
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-state9eb:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-state9ee:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-state9f1:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-state9f4:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-state9f6:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-state9f8:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-state9fa:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-state9fc:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-state9fe:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-statea00:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-statea02:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-statea04:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statea06:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-statea08:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statea0a:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-statea0c:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statea0e:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-statea10:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statea12:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-statea14:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statea16:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statea18:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statea1a:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-statea1c:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statea1e:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-statea20:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statea22:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-statea24:
-	switch(*(str2++)){
-		case 0xbc: goto statea25;
-		case 0xbd: goto statead8;
-		case 0xbe: goto statea4a;
-		default: goto no_match;
-	}
-statea25:
-	switch(*(str1++)){
-		case 0x80: goto statea26;
-		case 0x81: goto statea2b;
-		case 0x82: goto statea2f;
-		case 0x83: goto statea33;
-		case 0x84: goto statea37;
-		case 0x85: goto statea3b;
-		case 0x86: goto statea3f;
-		case 0x87: goto statea43;
-		case 0x88: goto statea47;
-		case 0x89: goto statea4f;
-		case 0x8a: goto statea56;
-		case 0x8b: goto statea5d;
-		case 0x8c: goto statea64;
-		case 0x8d: goto statea6b;
-		case 0x8e: goto statea72;
-		case 0x8f: goto statea79;
-		case 0x90: goto statea80;
-		case 0x91: goto statea84;
-		case 0x92: goto statea88;
-		case 0x93: goto statea8c;
-		case 0x94: goto statea90;
-		case 0x95: goto statea94;
-		case 0x96: goto statea98;
-		case 0x97: goto statea9c;
-		case 0x98: goto stateaa0;
-		case 0x99: goto stateaa7;
-		case 0x9a: goto stateaae;
-		case 0x9b: goto stateab5;
-		case 0x9c: goto stateabc;
-		case 0x9d: goto stateac3;
-		case 0x9e: goto stateaca;
-		case 0x9f: goto statead1;
-		default: goto no_match;
-	}
-statea26:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-statea28:
-	switch(*(str1++)){
-		case 0x80: goto statea29;
-		case 0x81: goto statea2d;
-		case 0x82: goto statea31;
-		case 0x83: goto statea35;
-		case 0x84: goto statea39;
-		case 0x85: goto statea3d;
-		case 0x86: goto statea41;
-		case 0x87: goto statea45;
-		case 0xa0: goto statea82;
-		case 0xa1: goto statea86;
-		case 0xa2: goto statea8a;
-		case 0xa3: goto statea8e;
-		case 0xa4: goto statea92;
-		case 0xa5: goto statea96;
-		case 0xa6: goto statea9a;
-		case 0xa7: goto statea9e;
-		default: goto no_match;
-	}
-statea29:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-statea2b:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-statea2d:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-statea2f:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-statea31:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-statea33:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-statea35:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statea37:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statea39:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statea3b:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-statea3d:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-statea3f:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-statea41:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statea43:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-statea45:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statea47:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-statea4a:
-	switch(*(str1++)){
-		case 0x80: goto statea4d;
-		case 0x81: goto statea54;
-		case 0x82: goto statea5b;
-		case 0x83: goto statea62;
-		case 0x84: goto statea69;
-		case 0x85: goto statea70;
-		case 0x86: goto statea77;
-		case 0x87: goto statea7e;
-		case 0x88: goto statea4b;
-		case 0x89: goto statea52;
-		case 0x8a: goto statea59;
-		case 0x8b: goto statea60;
-		case 0x8c: goto statea67;
-		case 0x8d: goto statea6e;
-		case 0x8e: goto statea75;
-		case 0x8f: goto statea7c;
-		case 0x90: goto stateaa5;
-		case 0x91: goto stateaac;
-		case 0x92: goto stateab3;
-		case 0x93: goto stateaba;
-		case 0x94: goto stateac1;
-		case 0x95: goto stateac8;
-		case 0x96: goto stateacf;
-		case 0x97: goto statead6;
-		case 0x98: goto stateaa3;
-		case 0x99: goto stateaaa;
-		case 0x9a: goto stateab1;
-		case 0x9b: goto stateab8;
-		case 0x9c: goto stateabf;
-		case 0x9d: goto stateac6;
-		case 0x9e: goto stateacd;
-		case 0x9f: goto statead4;
-		case 0xa0: goto stateaff;
-		case 0xa1: goto stateb06;
-		case 0xa2: goto stateb0d;
-		case 0xa3: goto stateb14;
-		case 0xa4: goto stateb1b;
-		case 0xa5: goto stateb22;
-		case 0xa6: goto stateb29;
-		case 0xa7: goto stateb30;
-		case 0xa8: goto stateafd;
-		case 0xa9: goto stateb04;
-		case 0xaa: goto stateb0b;
-		case 0xab: goto stateb12;
-		case 0xac: goto stateb19;
-		case 0xad: goto stateb20;
-		case 0xae: goto stateb27;
-		case 0xaf: goto stateb2e;
-		case 0xb0: goto stateb50;
-		case 0xb1: goto stateb54;
-		case 0xb3: goto stateb62;
-		case 0xb8: goto stateb4e;
-		case 0xb9: goto stateb52;
-		case 0xbc: goto stateb60;
-		default: goto no_match;
-	}
-statea4b:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-statea4d:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-statea4f:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-statea52:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-statea54:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-statea56:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-statea59:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-statea5b:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-statea5d:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-statea60:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-statea62:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statea64:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statea67:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statea69:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statea6b:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-statea6e:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-statea70:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-statea72:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-statea75:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-statea77:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statea79:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-statea7c:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-statea7e:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statea80:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statea82:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-statea84:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statea86:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-statea88:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statea8a:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-statea8c:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statea8e:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-statea90:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statea92:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-statea94:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statea96:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-statea98:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statea9a:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-statea9c:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statea9e:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-stateaa0:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-stateaa3:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-stateaa5:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-stateaa7:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-stateaaa:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-stateaac:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-stateaae:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-stateab1:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-stateab3:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-stateab5:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-stateab8:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-stateaba:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-stateabc:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-stateabf:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-stateac1:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-stateac3:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-stateac6:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-stateac8:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-stateaca:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-stateacd:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-stateacf:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-statead1:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statead4:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-statead6:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-statead8:
-	switch(*(str1++)){
-		case 0xa0: goto statead9;
-		case 0xa1: goto stateade;
-		case 0xa2: goto stateae2;
-		case 0xa3: goto stateae6;
-		case 0xa4: goto stateaea;
-		case 0xa5: goto stateaee;
-		case 0xa6: goto stateaf2;
-		case 0xa7: goto stateaf6;
-		case 0xa8: goto stateafa;
-		case 0xa9: goto stateb01;
-		case 0xaa: goto stateb08;
-		case 0xab: goto stateb0f;
-		case 0xac: goto stateb16;
-		case 0xad: goto stateb1d;
-		case 0xae: goto stateb24;
-		case 0xaf: goto stateb2b;
-		case 0xb2: goto stateb32;
-		case 0xba: goto stateb56;
-		case 0xbb: goto stateb59;
-		default: goto no_match;
-	}
-statead9:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-stateadb:
-	switch(*(str1++)){
-		case 0xa0: goto stateadc;
-		case 0xa1: goto stateae0;
-		case 0xa2: goto stateae4;
-		case 0xa3: goto stateae8;
-		case 0xa4: goto stateaec;
-		case 0xa5: goto stateaf0;
-		case 0xa6: goto stateaf4;
-		case 0xa7: goto stateaf8;
-		case 0xb0: goto stateb34;
-		case 0xb1: goto stateb5b;
-		default: goto no_match;
-	}
-stateadc:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-stateade:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-stateae0:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-stateae2:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-stateae4:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-stateae6:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-stateae8:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-stateaea:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-stateaec:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-stateaee:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-stateaf0:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-stateaf2:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-stateaf4:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-stateaf6:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-stateaf8:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-stateafa:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-stateafd:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-stateaff:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-stateb01:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-stateb04:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-stateb06:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-stateb08:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-stateb0b:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-stateb0d:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-stateb0f:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-stateb12:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-stateb14:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-stateb16:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-stateb19:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-stateb1b:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-stateb1d:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-stateb20:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-stateb22:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-stateb24:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-stateb27:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-stateb29:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-stateb2b:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-stateb2e:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-stateb30:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-stateb32:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-stateb34:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-stateb36:
-	switch(*(str1++)){
-		case 0xbe: goto stateb37;
-		case 0xbf: goto stateb6e;
-		default: goto no_match;
-	}
-stateb37:
-	switch(*(str2++)){
-		case 0xac: goto stateb40;
-		case 0xb1: goto stateb38;
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-stateb38:
-	switch(*(str1++)){
-		case 0xb3: goto stateb39;
-		case 0xb6: goto stateb47;
-		case 0xb7: goto stateb4b;
-		case 0xbc: goto stateb5d;
-		default: goto no_match;
-	}
-stateb39:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb3b:
-	switch(*(str1++)){
-		case 0xac: goto stateb43;
-		case 0xae: goto stateb79;
-		case 0xb1: goto stateb3c;
-		case 0xb7: goto stateb72;
-		case 0xb9: goto stateb65;
-		default: goto no_match;
-	}
-stateb3c:
-	switch(*(str2++)){
-		case 0xbe: goto stateb3d;
-		default: goto no_match;
-	}
-stateb3d:
-	switch(*(str1++)){
-		case 0xcd: goto stateb49;
-		case 0xce: goto stateb3e;
-		default: goto no_match;
-	}
-stateb3e:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-stateb40:
-	switch(*(str1++)){
-		case 0xb4: goto stateb41;
-		default: goto no_match;
-	}
-stateb41:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb43:
-	switch(*(str2++)){
-		case 0xbe: goto stateb44;
-		default: goto no_match;
-	}
-stateb44:
-	switch(*(str1++)){
-		case 0xce: goto stateb45;
-		default: goto no_match;
-	}
-stateb45:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-stateb47:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-stateb49:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-stateb4b:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-stateb4e:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-stateb50:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-stateb52:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-stateb54:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-stateb56:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-stateb59:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-stateb5b:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-stateb5d:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb60:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-stateb62:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-stateb65:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		case 0xbf: goto stateb9e;
-		default: goto no_match;
-	}
-stateb67:
-	switch(*(str2++)){
-		case 0xbd: goto stateb68;
-		case 0xbf: goto stateb96;
-		default: goto no_match;
-	}
-stateb68:
-	switch(*(str1++)){
-		case 0x82: goto stateb69;
-		case 0x88: goto stateb84;
-		case 0x89: goto stateb88;
-		case 0x8a: goto stateb8c;
-		case 0x8b: goto stateb8f;
-		case 0x9a: goto statebb3;
-		case 0x9b: goto statebb7;
-		case 0xaa: goto statebdb;
-		case 0xab: goto statebdf;
-		case 0xb2: goto statebe7;
-		case 0xb8: goto statec00;
-		case 0xb9: goto statec04;
-		case 0xba: goto statec08;
-		case 0xbb: goto statec0b;
-		default: goto no_match;
-	}
-stateb69:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-stateb6b:
-	switch(*(str1++)){
-		case 0xb2: goto stateb86;
-		case 0xb3: goto stateb8a;
-		case 0xb4: goto stateb6c;
-		case 0xb5: goto stateb91;
-		case 0xb6: goto statebb5;
-		case 0xb7: goto statebb9;
-		case 0xb8: goto statec02;
-		case 0xb9: goto statec06;
-		case 0xba: goto statebdd;
-		case 0xbb: goto statebe1;
-		case 0xbc: goto statebe9;
-		case 0xbd: goto statec0d;
-		default: goto no_match;
-	}
-stateb6c:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-stateb6e:
-	switch(*(str2++)){
-		case 0xae: goto stateb76;
-		case 0xb7: goto stateb6f;
-		case 0xb9: goto stateb9b;
-		default: goto no_match;
-	}
-stateb6f:
-	switch(*(str1++)){
-		case 0x83: goto stateb70;
-		case 0x86: goto stateb7d;
-		case 0x87: goto stateb81;
-		case 0x8c: goto stateb93;
-		default: goto no_match;
-	}
-stateb70:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb72:
-	switch(*(str2++)){
-		case 0xbf: goto stateb73;
-		default: goto no_match;
-	}
-stateb73:
-	switch(*(str1++)){
-		case 0xcd: goto stateb7f;
-		case 0xce: goto stateb74;
-		default: goto no_match;
-	}
-stateb74:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-stateb76:
-	switch(*(str1++)){
-		case 0x84: goto stateb77;
-		default: goto no_match;
-	}
-stateb77:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb79:
-	switch(*(str2++)){
-		case 0xbf: goto stateb7a;
-		default: goto no_match;
-	}
-stateb7a:
-	switch(*(str1++)){
-		case 0xce: goto stateb7b;
-		default: goto no_match;
-	}
-stateb7b:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-stateb7d:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-stateb7f:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-stateb81:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-stateb84:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-stateb86:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-stateb88:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-stateb8a:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-stateb8c:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-stateb8f:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-stateb91:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-stateb93:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-stateb96:
-	switch(*(str1++)){
-		case 0x83: goto stateb99;
-		case 0x8c: goto stateb97;
-		case 0x90: goto statebad;
-		case 0x91: goto statebb1;
-		case 0x98: goto statebab;
-		case 0x99: goto statebaf;
-		case 0xa0: goto statebd5;
-		case 0xa1: goto statebd9;
-		case 0xa5: goto statebe5;
-		case 0xa8: goto statebd3;
-		case 0xa9: goto statebd7;
-		case 0xac: goto statebe3;
-		case 0xb3: goto statec14;
-		case 0xbc: goto statec12;
-		default: goto no_match;
-	}
-stateb97:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-stateb99:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-stateb9b:
-	switch(*(str1++)){
-		case 0x92: goto stateb9c;
-		case 0x93: goto stateba1;
-		case 0x96: goto stateba4;
-		case 0x97: goto stateba8;
-		default: goto no_match;
-	}
-stateb9c:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-stateb9e:
-	switch(*(str1++)){
-		case 0xcc: goto stateb9f;
-		case 0xcd: goto stateba6;
-		default: goto no_match;
-	}
-stateb9f:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		case 0x93: goto state0;
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-stateba1:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-stateba4:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-stateba6:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-stateba8:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statebab:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-statebad:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-statebaf:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-statebb1:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-statebb3:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-statebb5:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-statebb7:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statebb9:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-statebbb:
-	switch(*(str2++)){
-		case 0x81: goto statebc5;
-		case 0x85: goto statebbc;
-		case 0x89: goto statebeb;
-		case 0x8e: goto statebf2;
-		default: goto no_match;
-	}
-statebbc:
-	switch(*(str1++)){
-		case 0xa2: goto statebbd;
-		case 0xa3: goto statebc2;
-		case 0xa6: goto statebcc;
-		case 0xa7: goto statebd0;
-		default: goto no_match;
-	}
-statebbd:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statebbf:
-	switch(*(str1++)){
-		case 0xcc: goto statebc0;
-		case 0xcd: goto statebce;
-		default: goto no_match;
-	}
-statebc0:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		case 0xa3: goto state0;
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statebc2:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statebc5:
-	switch(*(str1++)){
-		case 0xa4: goto statebc6;
-		default: goto no_match;
-	}
-statebc6:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statebc8:
-	switch(*(str2++)){
-		case 0xbf: goto statebc9;
-		default: goto no_match;
-	}
-statebc9:
-	switch(*(str1++)){
-		case 0xcc: goto statebca;
-		default: goto no_match;
-	}
-statebca:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statebcc:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-statebce:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statebd0:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statebd3:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statebd5:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-statebd7:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statebd9:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-statebdb:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statebdd:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-statebdf:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statebe1:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-statebe3:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statebe5:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statebe7:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statebe9:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statebeb:
-	switch(*(str1++)){
-		case 0xb3: goto statebec;
-		case 0xb6: goto statebf9;
-		case 0xb7: goto statebfd;
-		case 0xbc: goto statec0f;
-		default: goto no_match;
-	}
-statebec:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-statebee:
-	switch(*(str2++)){
-		case 0xbf: goto statebef;
-		default: goto no_match;
-	}
-statebef:
-	switch(*(str1++)){
-		case 0xcd: goto statebfb;
-		case 0xce: goto statebf0;
-		default: goto no_match;
-	}
-statebf0:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statebf2:
-	switch(*(str1++)){
-		case 0xb4: goto statebf3;
-		default: goto no_match;
-	}
-statebf3:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-statebf5:
-	switch(*(str2++)){
-		case 0xbf: goto statebf6;
-		default: goto no_match;
-	}
-statebf6:
-	switch(*(str1++)){
-		case 0xce: goto statebf7;
-		default: goto no_match;
-	}
-statebf7:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-statebf9:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-statebfb:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statebfd:
-	switch(*(str2++)){
-		case 0xcd: goto state0;
-		default: goto no_match;
-	}
-statec00:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statec02:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statec04:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statec06:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statec08:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statec0b:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-statec0d:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statec0f:
-	switch(*(str2++)){
-		case 0xce: goto state0;
-		default: goto no_match;
-	}
-statec12:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-statec14:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statec16:
-	switch(*(str2++)){
-		case 0x6b: goto state0;
-		case 0xc3: goto statec1f;
-		case 0xcf: goto statec17;
-		case 0xe2: goto statec25;
-		default: goto no_match;
-	}
-statec17:
-	switch(*(str1++)){
-		case 0x84: goto statec18;
-		default: goto no_match;
-	}
-statec18:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-statec1a:
-	switch(*(str1++)){
-		case 0x89: goto statec1b;
-		default: goto no_match;
-	}
-statec1b:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statec1f:
-	switch(*(str1++)){
-		case 0x84: goto statec20;
-		default: goto no_match;
-	}
-statec20:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statec22:
-	switch(*(str1++)){
-		case 0xa5: goto statec23;
-		default: goto no_match;
-	}
-statec23:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statec25:
-	switch(*(str1++)){
-		case 0x85: goto statec26;
-		case 0x92: goto statec68;
-		case 0x93: goto statec6c;
-		default: goto no_match;
-	}
-statec26:
-	switch(*(str2++)){
-		case 0x85: goto statec27;
-		default: goto no_match;
-	}
-statec27:
-	switch(*(str1++)){
-		case 0xa0: goto statec28;
-		case 0xa1: goto statec2c;
-		case 0xa2: goto statec30;
-		case 0xa3: goto statec34;
-		case 0xa4: goto statec38;
-		case 0xa5: goto statec3c;
-		case 0xa6: goto statec40;
-		case 0xa7: goto statec44;
-		case 0xa8: goto statec48;
-		case 0xa9: goto statec4c;
-		case 0xaa: goto statec50;
-		case 0xab: goto statec54;
-		case 0xac: goto statec58;
-		case 0xad: goto statec5c;
-		case 0xae: goto statec60;
-		case 0xaf: goto statec64;
-		case 0xb0: goto statec2a;
-		case 0xb1: goto statec2e;
-		case 0xb2: goto statec32;
-		case 0xb3: goto statec36;
-		case 0xb4: goto statec3a;
-		case 0xb5: goto statec3e;
-		case 0xb6: goto statec42;
-		case 0xb7: goto statec46;
-		case 0xb8: goto statec4a;
-		case 0xb9: goto statec4e;
-		case 0xba: goto statec52;
-		case 0xbb: goto statec56;
-		case 0xbc: goto statec5a;
-		case 0xbd: goto statec5e;
-		case 0xbe: goto statec62;
-		case 0xbf: goto statec66;
-		default: goto no_match;
-	}
-statec28:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-statec2a:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statec2c:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-statec2e:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statec30:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-statec32:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statec34:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-statec36:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statec38:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-statec3a:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statec3c:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-statec3e:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statec40:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-statec42:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statec44:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statec46:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statec48:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statec4a:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-statec4c:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statec4e:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-statec50:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statec52:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-statec54:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statec56:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-statec58:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statec5a:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statec5c:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-statec5e:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-statec60:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-statec62:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-statec64:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-statec66:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-statec68:
-	switch(*(str2++)){
-		case 0x93: goto statec69;
-		default: goto no_match;
-	}
-statec69:
-	switch(*(str1++)){
-		case 0xb6: goto statec6a;
-		case 0xb7: goto statec70;
-		case 0xb8: goto statec74;
-		case 0xb9: goto statec78;
-		case 0xba: goto statec7c;
-		case 0xbb: goto statec80;
-		case 0xbc: goto statec84;
-		case 0xbd: goto statec88;
-		case 0xbe: goto statec8c;
-		case 0xbf: goto statec90;
-		default: goto no_match;
-	}
-statec6a:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-statec6c:
-	switch(*(str2++)){
-		case 0x92: goto statec6d;
-		case 0x93: goto statec94;
-		default: goto no_match;
-	}
-statec6d:
-	switch(*(str1++)){
-		case 0x90: goto statec6e;
-		case 0x91: goto statec72;
-		case 0x92: goto statec76;
-		case 0x93: goto statec7a;
-		case 0x94: goto statec7e;
-		case 0x95: goto statec82;
-		case 0x96: goto statec86;
-		case 0x97: goto statec8a;
-		case 0x98: goto statec8e;
-		case 0x99: goto statec92;
-		default: goto no_match;
-	}
-statec6e:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-statec70:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-statec72:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statec74:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-statec76:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statec78:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-statec7a:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statec7c:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-statec7e:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statec80:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-statec82:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statec84:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-statec86:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statec88:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-statec8a:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-statec8c:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-statec8e:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-statec90:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-statec92:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-statec94:
-	switch(*(str1++)){
-		case 0x80: goto statec95;
-		case 0x81: goto statec99;
-		case 0x82: goto statec9d;
-		case 0x83: goto stateca1;
-		case 0x84: goto stateca5;
-		case 0x85: goto stateca9;
-		case 0x86: goto statecad;
-		case 0x87: goto statecb1;
-		case 0x88: goto statecb5;
-		case 0x89: goto statecb9;
-		case 0x8a: goto statecbd;
-		case 0x8b: goto statecc1;
-		case 0x8c: goto statecc5;
-		case 0x8d: goto statecc9;
-		case 0x8e: goto stateccd;
-		case 0x8f: goto statecd1;
-		case 0x9a: goto statec97;
-		case 0x9b: goto statec9b;
-		case 0x9c: goto statec9f;
-		case 0x9d: goto stateca3;
-		case 0x9e: goto stateca7;
-		case 0x9f: goto statecab;
-		case 0xa0: goto statecaf;
-		case 0xa1: goto statecb3;
-		case 0xa2: goto statecb7;
-		case 0xa3: goto statecbb;
-		case 0xa4: goto statecbf;
-		case 0xa5: goto statecc3;
-		case 0xa6: goto statecc7;
-		case 0xa7: goto stateccb;
-		case 0xa8: goto stateccf;
-		case 0xa9: goto statecd3;
-		default: goto no_match;
-	}
-statec95:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-statec97:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-statec99:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-statec9b:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-statec9d:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-statec9f:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-stateca1:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-stateca3:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-stateca5:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-stateca7:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-stateca9:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-statecab:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-statecad:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statecaf:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-statecb1:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statecb3:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-statecb5:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statecb7:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-statecb9:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statecbb:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-statecbd:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statecbf:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-statecc1:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statecc3:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statecc5:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statecc7:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statecc9:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-stateccb:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-stateccd:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-stateccf:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statecd1:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-statecd3:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statecd5:
-	switch(*(str2++)){
-		case 0x66: goto statecd6;
-		case 0x73: goto statecea;
-		case 0xd5: goto statecf0;
-		case 0xef: goto stated0a;
-		default: goto no_match;
-	}
-statecd6:
-	switch(*(str1++)){
-		case 0xac: goto statecd7;
-		default: goto no_match;
-	}
-statecd7:
-	switch(*(str2++)){
-		case 0x66: goto statecd8;
-		case 0x69: goto state0;
-		case 0x6c: goto state0;
-		default: goto no_match;
-	}
-statecd8:
-	switch(*(str1++)){
-		case 0x83: goto statece2;
-		case 0x84: goto statece6;
-		default: goto no_match;
-	}
-statecd9:
-	switch(*(str1++)){
-		case 0x66: goto statecda;
-		case 0x69: goto statecdd;
-		case 0x6c: goto statece0;
-		default: goto no_match;
-	}
-statecda:
-	switch(*(str2++)){
-		case 0xac: goto statecdb;
-		default: goto no_match;
-	}
-statecdb:
-	switch(*(str1++)){
-		case 0x69: goto statece4;
-		case 0x6c: goto statece8;
-		default: goto no_match;
-	}
-statecdd:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statece0:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statece2:
-	switch(*(str2++)){
-		case 0x69: goto state0;
-		default: goto no_match;
-	}
-statece4:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-statece6:
-	switch(*(str2++)){
-		case 0x6c: goto state0;
-		default: goto no_match;
-	}
-statece8:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statecea:
-	switch(*(str1++)){
-		case 0xac: goto stateceb;
-		default: goto no_match;
-	}
-stateceb:
-	switch(*(str2++)){
-		case 0x74: goto state0;
-		default: goto no_match;
-	}
-stateced:
-	switch(*(str1++)){
-		case 0x74: goto statecee;
-		default: goto no_match;
-	}
-statecee:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statecf0:
-	switch(*(str1++)){
-		case 0xac: goto statecf1;
-		default: goto no_match;
-	}
-statecf1:
-	switch(*(str2++)){
-		case 0xb4: goto statecf2;
-		case 0xbe: goto stated00;
-		default: goto no_match;
-	}
-statecf2:
-	switch(*(str1++)){
-		case 0x93: goto statecf3;
-		case 0x94: goto statecfa;
-		case 0x95: goto statecfd;
-		case 0x97: goto stated07;
-		default: goto no_match;
-	}
-statecf3:
-	switch(*(str2++)){
-		case 0xd5: goto state0;
-		default: goto no_match;
-	}
-statecf5:
-	switch(*(str1++)){
-		case 0xb4: goto statecf6;
-		case 0xbe: goto stated03;
-		default: goto no_match;
-	}
-statecf6:
-	switch(*(str2++)){
-		case 0xac: goto statecf7;
-		default: goto no_match;
-	}
-statecf7:
-	switch(*(str1++)){
-		case 0xd5: goto statecf8;
-		default: goto no_match;
-	}
-statecf8:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		case 0x94: goto state0;
-		case 0x95: goto state0;
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-statecfa:
-	switch(*(str2++)){
-		case 0xd5: goto state0;
-		default: goto no_match;
-	}
-statecfd:
-	switch(*(str2++)){
-		case 0xd5: goto state0;
-		default: goto no_match;
-	}
-stated00:
-	switch(*(str1++)){
-		case 0x96: goto stated01;
-		default: goto no_match;
-	}
-stated01:
-	switch(*(str2++)){
-		case 0xd5: goto state0;
-		default: goto no_match;
-	}
-stated03:
-	switch(*(str2++)){
-		case 0xac: goto stated04;
-		default: goto no_match;
-	}
-stated04:
-	switch(*(str1++)){
-		case 0xd5: goto stated05;
-		default: goto no_match;
-	}
-stated05:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-stated07:
-	switch(*(str2++)){
-		case 0xd5: goto state0;
-		default: goto no_match;
-	}
-stated0a:
-	switch(*(str1++)){
-		case 0xbc: goto stated0b;
-		case 0xbd: goto stated0f;
-		default: goto no_match;
-	}
-stated0b:
-	switch(*(str2++)){
-		case 0xbd: goto stated0c;
-		default: goto no_match;
-	}
-stated0c:
-	switch(*(str1++)){
-		case 0xa1: goto stated0d;
-		case 0xa2: goto stated13;
-		case 0xa3: goto stated17;
-		case 0xa4: goto stated1b;
-		case 0xa5: goto stated1f;
-		case 0xa6: goto stated23;
-		case 0xa7: goto stated27;
-		case 0xa8: goto stated2b;
-		case 0xa9: goto stated2f;
-		case 0xaa: goto stated33;
-		case 0xab: goto stated37;
-		case 0xac: goto stated3b;
-		case 0xad: goto stated3f;
-		case 0xae: goto stated43;
-		case 0xaf: goto stated47;
-		case 0xb0: goto stated4b;
-		case 0xb1: goto stated4f;
-		case 0xb2: goto stated53;
-		case 0xb3: goto stated57;
-		case 0xb4: goto stated5b;
-		case 0xb5: goto stated5f;
-		case 0xb6: goto stated63;
-		case 0xb7: goto stated67;
-		case 0xb8: goto stated6b;
-		case 0xb9: goto stated6f;
-		case 0xba: goto stated73;
-		default: goto no_match;
-	}
-stated0d:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-stated0f:
-	switch(*(str2++)){
-		case 0xbc: goto stated10;
-		default: goto no_match;
-	}
-stated10:
-	switch(*(str1++)){
-		case 0x81: goto stated11;
-		case 0x82: goto stated15;
-		case 0x83: goto stated19;
-		case 0x84: goto stated1d;
-		case 0x85: goto stated21;
-		case 0x86: goto stated25;
-		case 0x87: goto stated29;
-		case 0x88: goto stated2d;
-		case 0x89: goto stated31;
-		case 0x8a: goto stated35;
-		case 0x8b: goto stated39;
-		case 0x8c: goto stated3d;
-		case 0x8d: goto stated41;
-		case 0x8e: goto stated45;
-		case 0x8f: goto stated49;
-		case 0x90: goto stated4d;
-		case 0x91: goto stated51;
-		case 0x92: goto stated55;
-		case 0x93: goto stated59;
-		case 0x94: goto stated5d;
-		case 0x95: goto stated61;
-		case 0x96: goto stated65;
-		case 0x97: goto stated69;
-		case 0x98: goto stated6d;
-		case 0x99: goto stated71;
-		case 0x9a: goto stated75;
-		default: goto no_match;
-	}
-stated11:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-stated13:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-stated15:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-stated17:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-stated19:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-stated1b:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-stated1d:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-stated1f:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-stated21:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-stated23:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-stated25:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-stated27:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-stated29:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-stated2b:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-stated2d:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-stated2f:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-stated31:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-stated33:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-stated35:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-stated37:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-stated39:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-stated3b:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-stated3d:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-stated3f:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-stated41:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-stated43:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-stated45:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-stated47:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-stated49:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-stated4b:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-stated4d:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-stated4f:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-stated51:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-stated53:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-stated55:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-stated57:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-stated59:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-stated5b:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-stated5d:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-stated5f:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-stated61:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-stated63:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-stated65:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-stated67:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-stated69:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-stated6b:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-stated6d:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-stated6f:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-stated71:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-stated73:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-stated75:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-stated77:
-	switch(*(str2++)){
-		case 0xf0: goto stated78;
-		default: goto no_match;
-	}
-stated78:
-	switch(*(str1++)){
-		case 0x90: goto stated79;
-		default: goto no_match;
-	}
-stated79:
-	switch(*(str2++)){
-		case 0x90: goto stated7a;
-		default: goto no_match;
-	}
-stated7a:
-	switch(*(str1++)){
-		case 0x90: goto stated7b;
-		case 0x91: goto statede0;
-		default: goto no_match;
-	}
-stated7b:
-	switch(*(str2++)){
-		case 0x90: goto stated7c;
-		case 0x91: goto stateddd;
-		default: goto no_match;
-	}
-stated7c:
-	switch(*(str1++)){
-		case 0x80: goto stated7d;
-		case 0x81: goto stated81;
-		case 0x82: goto stated85;
-		case 0x83: goto stated89;
-		case 0x84: goto stated8d;
-		case 0x85: goto stated91;
-		case 0x86: goto stated95;
-		case 0x87: goto stated99;
-		case 0x88: goto stated9d;
-		case 0x89: goto stateda1;
-		case 0x8a: goto stateda5;
-		case 0x8b: goto stateda9;
-		case 0x8c: goto statedad;
-		case 0x8d: goto statedb1;
-		case 0x8e: goto statedb5;
-		case 0x8f: goto statedb9;
-		case 0x90: goto statedbd;
-		case 0x91: goto statedc1;
-		case 0x92: goto statedc5;
-		case 0x93: goto statedc9;
-		case 0x94: goto statedcd;
-		case 0x95: goto statedd1;
-		case 0x96: goto statedd5;
-		case 0x97: goto statedd9;
-		case 0xa8: goto stated7f;
-		case 0xa9: goto stated83;
-		case 0xaa: goto stated87;
-		case 0xab: goto stated8b;
-		case 0xac: goto stated8f;
-		case 0xad: goto stated93;
-		case 0xae: goto stated97;
-		case 0xaf: goto stated9b;
-		case 0xb0: goto stated9f;
-		case 0xb1: goto stateda3;
-		case 0xb2: goto stateda7;
-		case 0xb3: goto statedab;
-		case 0xb4: goto statedaf;
-		case 0xb5: goto statedb3;
-		case 0xb6: goto statedb7;
-		case 0xb7: goto statedbb;
-		case 0xb8: goto statedbf;
-		case 0xb9: goto statedc3;
-		case 0xba: goto statedc7;
-		case 0xbb: goto statedcb;
-		case 0xbc: goto statedcf;
-		case 0xbd: goto statedd3;
-		case 0xbe: goto statedd7;
-		case 0xbf: goto stateddb;
-		default: goto no_match;
-	}
-stated7d:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-stated7f:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-stated81:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-stated83:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-stated85:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-stated87:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-stated89:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-stated8b:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-stated8d:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-stated8f:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-stated91:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-stated93:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-stated95:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-stated97:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-stated99:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-stated9b:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-stated9d:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-stated9f:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-stateda1:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-stateda3:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-stateda5:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-stateda7:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-stateda9:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-statedab:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statedad:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-statedaf:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statedb1:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-statedb3:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-statedb5:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-statedb7:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statedb9:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statedbb:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statedbd:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statedbf:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-statedc1:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statedc3:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-statedc5:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statedc7:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-statedc9:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statedcb:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-statedcd:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statedcf:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-statedd1:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-statedd3:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-statedd5:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-statedd7:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-statedd9:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-stateddb:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-stateddd:
-	switch(*(str1++)){
-		case 0x98: goto statedde;
-		case 0x99: goto statede4;
-		case 0x9a: goto statede8;
-		case 0x9b: goto statedec;
-		case 0x9c: goto statedf0;
-		case 0x9d: goto statedf4;
-		case 0x9e: goto statedf8;
-		case 0x9f: goto statedfc;
-		case 0xa0: goto statee00;
-		case 0xa1: goto statee04;
-		case 0xa2: goto statee08;
-		case 0xa3: goto statee0c;
-		case 0xa4: goto statee10;
-		case 0xa5: goto statee14;
-		case 0xa6: goto statee18;
-		case 0xa7: goto statee1c;
-		default: goto no_match;
-	}
-statedde:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-statede0:
-	switch(*(str2++)){
-		case 0x90: goto statede1;
-		default: goto no_match;
-	}
-statede1:
-	switch(*(str1++)){
-		case 0x80: goto statede2;
-		case 0x81: goto statede6;
-		case 0x82: goto statedea;
-		case 0x83: goto statedee;
-		case 0x84: goto statedf2;
-		case 0x85: goto statedf6;
-		case 0x86: goto statedfa;
-		case 0x87: goto statedfe;
-		case 0x88: goto statee02;
-		case 0x89: goto statee06;
-		case 0x8a: goto statee0a;
-		case 0x8b: goto statee0e;
-		case 0x8c: goto statee12;
-		case 0x8d: goto statee16;
-		case 0x8e: goto statee1a;
-		case 0x8f: goto statee1e;
-		default: goto no_match;
-	}
-statede2:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-statede4:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-statede6:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-statede8:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-statedea:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-statedec:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-statedee:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-statedf0:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-statedf2:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-statedf4:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-statedf6:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-statedf8:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-statedfa:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-statedfc:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-statedfe:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-statee00:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-statee02:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statee04:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-statee06:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statee08:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-statee0a:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statee0c:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statee0e:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statee10:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statee12:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statee14:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-statee16:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statee18:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statee1a:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statee1c:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statee1e:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statee20:
-	switch(*(str2++)){
-		case 0x1: goto state0;
-		default: goto no_match;
-	}
-statee22:
-	switch(*(str2++)){
-		case 0x2: goto state0;
-		default: goto no_match;
-	}
-statee24:
-	switch(*(str2++)){
-		case 0x3: goto state0;
-		default: goto no_match;
-	}
-statee26:
-	switch(*(str2++)){
-		case 0x4: goto state0;
-		default: goto no_match;
-	}
-statee28:
-	switch(*(str2++)){
-		case 0x5: goto state0;
-		default: goto no_match;
-	}
-statee2a:
-	switch(*(str2++)){
-		case 0x6: goto state0;
-		default: goto no_match;
-	}
-statee2c:
-	switch(*(str2++)){
-		case 0x7: goto state0;
-		default: goto no_match;
-	}
-statee2e:
-	switch(*(str2++)){
-		case 0x8: goto state0;
-		default: goto no_match;
-	}
-statee30:
-	switch(*(str2++)){
-		case 0x9: goto state0;
-		default: goto no_match;
-	}
-statee32:
-	switch(*(str2++)){
-		case 0xa: goto state0;
-		default: goto no_match;
-	}
-statee34:
-	switch(*(str2++)){
-		case 0xb: goto state0;
-		default: goto no_match;
-	}
-statee36:
-	switch(*(str2++)){
-		case 0xc: goto state0;
-		default: goto no_match;
-	}
-statee38:
-	switch(*(str2++)){
-		case 0xd: goto state0;
-		default: goto no_match;
-	}
-statee3a:
-	switch(*(str2++)){
-		case 0xe: goto state0;
-		default: goto no_match;
-	}
-statee3c:
-	switch(*(str2++)){
-		case 0xf: goto state0;
-		default: goto no_match;
-	}
-statee3e:
-	switch(*(str2++)){
-		case 0x10: goto state0;
-		default: goto no_match;
-	}
-statee40:
-	switch(*(str2++)){
-		case 0x11: goto state0;
-		default: goto no_match;
-	}
-statee42:
-	switch(*(str2++)){
-		case 0x12: goto state0;
-		default: goto no_match;
-	}
-statee44:
-	switch(*(str2++)){
-		case 0x13: goto state0;
-		default: goto no_match;
-	}
-statee46:
-	switch(*(str2++)){
-		case 0x14: goto state0;
-		default: goto no_match;
-	}
-statee48:
-	switch(*(str2++)){
-		case 0x15: goto state0;
-		default: goto no_match;
-	}
-statee4a:
-	switch(*(str2++)){
-		case 0x16: goto state0;
-		default: goto no_match;
-	}
-statee4c:
-	switch(*(str2++)){
-		case 0x17: goto state0;
-		default: goto no_match;
-	}
-statee4e:
-	switch(*(str2++)){
-		case 0x18: goto state0;
-		default: goto no_match;
-	}
-statee50:
-	switch(*(str2++)){
-		case 0x19: goto state0;
-		default: goto no_match;
-	}
-statee52:
-	switch(*(str2++)){
-		case 0x1a: goto state0;
-		default: goto no_match;
-	}
-statee54:
-	switch(*(str2++)){
-		case 0x1b: goto state0;
-		default: goto no_match;
-	}
-statee56:
-	switch(*(str2++)){
-		case 0x1c: goto state0;
-		default: goto no_match;
-	}
-statee58:
-	switch(*(str2++)){
-		case 0x1d: goto state0;
-		default: goto no_match;
-	}
-statee5a:
-	switch(*(str2++)){
-		case 0x1e: goto state0;
-		default: goto no_match;
-	}
-statee5c:
-	switch(*(str2++)){
-		case 0x1f: goto state0;
-		default: goto no_match;
-	}
-statee5e:
-	switch(*(str2++)){
-		case 0x20: goto state0;
-		default: goto no_match;
-	}
-statee60:
-	switch(*(str2++)){
-		case 0x21: goto state0;
-		default: goto no_match;
-	}
-statee62:
-	switch(*(str2++)){
-		case 0x22: goto state0;
-		default: goto no_match;
-	}
-statee64:
-	switch(*(str2++)){
-		case 0x23: goto state0;
-		default: goto no_match;
-	}
-statee66:
-	switch(*(str2++)){
-		case 0x24: goto state0;
-		default: goto no_match;
-	}
-statee68:
-	switch(*(str2++)){
-		case 0x25: goto state0;
-		default: goto no_match;
-	}
-statee6a:
-	switch(*(str2++)){
-		case 0x26: goto state0;
-		default: goto no_match;
-	}
-statee6c:
-	switch(*(str2++)){
-		case 0x27: goto state0;
-		default: goto no_match;
-	}
-statee6e:
-	switch(*(str2++)){
-		case 0x28: goto state0;
-		default: goto no_match;
-	}
-statee70:
-	switch(*(str2++)){
-		case 0x29: goto state0;
-		default: goto no_match;
-	}
-statee72:
-	switch(*(str2++)){
-		case 0x2a: goto state0;
-		default: goto no_match;
-	}
-statee74:
-	switch(*(str2++)){
-		case 0x2b: goto state0;
-		default: goto no_match;
-	}
-statee76:
-	switch(*(str2++)){
-		case 0x2c: goto state0;
-		default: goto no_match;
-	}
-statee78:
-	switch(*(str2++)){
-		case 0x2d: goto state0;
-		default: goto no_match;
-	}
-statee7a:
-	switch(*(str2++)){
-		case 0x2e: goto state0;
-		default: goto no_match;
-	}
-statee7c:
-	switch(*(str2++)){
-		case 0x2f: goto state0;
-		default: goto no_match;
-	}
-statee7e:
-	switch(*(str2++)){
-		case 0x30: goto state0;
-		default: goto no_match;
-	}
-statee80:
-	switch(*(str2++)){
-		case 0x31: goto state0;
-		default: goto no_match;
-	}
-statee82:
-	switch(*(str2++)){
-		case 0x32: goto state0;
-		default: goto no_match;
-	}
-statee84:
-	switch(*(str2++)){
-		case 0x33: goto state0;
-		default: goto no_match;
-	}
-statee86:
-	switch(*(str2++)){
-		case 0x34: goto state0;
-		default: goto no_match;
-	}
-statee88:
-	switch(*(str2++)){
-		case 0x35: goto state0;
-		default: goto no_match;
-	}
-statee8a:
-	switch(*(str2++)){
-		case 0x36: goto state0;
-		default: goto no_match;
-	}
-statee8c:
-	switch(*(str2++)){
-		case 0x37: goto state0;
-		default: goto no_match;
-	}
-statee8e:
-	switch(*(str2++)){
-		case 0x38: goto state0;
-		default: goto no_match;
-	}
-statee90:
-	switch(*(str2++)){
-		case 0x39: goto state0;
-		default: goto no_match;
-	}
-statee92:
-	switch(*(str2++)){
-		case 0x3a: goto state0;
-		default: goto no_match;
-	}
-statee94:
-	switch(*(str2++)){
-		case 0x3b: goto state0;
-		default: goto no_match;
-	}
-statee96:
-	switch(*(str2++)){
-		case 0x3c: goto state0;
-		default: goto no_match;
-	}
-statee98:
-	switch(*(str2++)){
-		case 0x3d: goto state0;
-		default: goto no_match;
-	}
-statee9a:
-	switch(*(str2++)){
-		case 0x3e: goto state0;
-		default: goto no_match;
-	}
-statee9c:
-	switch(*(str2++)){
-		case 0x3f: goto state0;
-		default: goto no_match;
-	}
-statee9e:
-	switch(*(str2++)){
-		case 0x40: goto state0;
-		default: goto no_match;
-	}
-stateeba:
-	switch(*(str2++)){
-		case 0x5b: goto state0;
-		default: goto no_match;
-	}
-stateebc:
-	switch(*(str2++)){
-		case 0x5c: goto state0;
-		default: goto no_match;
-	}
-stateebe:
-	switch(*(str2++)){
-		case 0x5d: goto state0;
-		default: goto no_match;
-	}
-stateec0:
-	switch(*(str2++)){
-		case 0x5e: goto state0;
-		default: goto no_match;
-	}
-stateec2:
-	switch(*(str2++)){
-		case 0x5f: goto state0;
-		default: goto no_match;
-	}
-stateec4:
-	switch(*(str2++)){
-		case 0x60: goto state0;
-		default: goto no_match;
-	}
-stateee0:
-	switch(*(str2++)){
-		case 0x7b: goto state0;
-		default: goto no_match;
-	}
-stateee2:
-	switch(*(str2++)){
-		case 0x7c: goto state0;
-		default: goto no_match;
-	}
-stateee4:
-	switch(*(str2++)){
-		case 0x7d: goto state0;
-		default: goto no_match;
-	}
-stateee6:
-	switch(*(str2++)){
-		case 0x7e: goto state0;
-		default: goto no_match;
-	}
-stateee8:
-	switch(*(str2++)){
-		case 0x7f: goto state0;
-		default: goto no_match;
-	}
-stateeea:
-	switch(*(str2++)){
-		case 0x80: goto state0;
-		default: goto no_match;
-	}
-stateeec:
-	switch(*(str2++)){
-		case 0x81: goto state0;
-		default: goto no_match;
-	}
-stateeee:
-	switch(*(str2++)){
-		case 0x82: goto state0;
-		default: goto no_match;
-	}
-stateef0:
-	switch(*(str2++)){
-		case 0x83: goto state0;
-		default: goto no_match;
-	}
-stateef2:
-	switch(*(str2++)){
-		case 0x84: goto state0;
-		default: goto no_match;
-	}
-stateef4:
-	switch(*(str2++)){
-		case 0x85: goto state0;
-		default: goto no_match;
-	}
-stateef6:
-	switch(*(str2++)){
-		case 0x86: goto state0;
-		default: goto no_match;
-	}
-stateef8:
-	switch(*(str2++)){
-		case 0x87: goto state0;
-		default: goto no_match;
-	}
-stateefa:
-	switch(*(str2++)){
-		case 0x88: goto state0;
-		default: goto no_match;
-	}
-stateefc:
-	switch(*(str2++)){
-		case 0x89: goto state0;
-		default: goto no_match;
-	}
-stateefe:
-	switch(*(str2++)){
-		case 0x8a: goto state0;
-		default: goto no_match;
-	}
-statef00:
-	switch(*(str2++)){
-		case 0x8b: goto state0;
-		default: goto no_match;
-	}
-statef02:
-	switch(*(str2++)){
-		case 0x8c: goto state0;
-		default: goto no_match;
-	}
-statef04:
-	switch(*(str2++)){
-		case 0x8d: goto state0;
-		default: goto no_match;
-	}
-statef06:
-	switch(*(str2++)){
-		case 0x8e: goto state0;
-		default: goto no_match;
-	}
-statef08:
-	switch(*(str2++)){
-		case 0x8f: goto state0;
-		default: goto no_match;
-	}
-statef0a:
-	switch(*(str2++)){
-		case 0x90: goto state0;
-		default: goto no_match;
-	}
-statef0c:
-	switch(*(str2++)){
-		case 0x91: goto state0;
-		default: goto no_match;
-	}
-statef0e:
-	switch(*(str2++)){
-		case 0x92: goto state0;
-		default: goto no_match;
-	}
-statef10:
-	switch(*(str2++)){
-		case 0x93: goto state0;
-		default: goto no_match;
-	}
-statef12:
-	switch(*(str2++)){
-		case 0x94: goto state0;
-		default: goto no_match;
-	}
-statef14:
-	switch(*(str2++)){
-		case 0x95: goto state0;
-		default: goto no_match;
-	}
-statef16:
-	switch(*(str2++)){
-		case 0x96: goto state0;
-		default: goto no_match;
-	}
-statef18:
-	switch(*(str2++)){
-		case 0x97: goto state0;
-		default: goto no_match;
-	}
-statef1a:
-	switch(*(str2++)){
-		case 0x98: goto state0;
-		default: goto no_match;
-	}
-statef1c:
-	switch(*(str2++)){
-		case 0x99: goto state0;
-		default: goto no_match;
-	}
-statef1e:
-	switch(*(str2++)){
-		case 0x9a: goto state0;
-		default: goto no_match;
-	}
-statef20:
-	switch(*(str2++)){
-		case 0x9b: goto state0;
-		default: goto no_match;
-	}
-statef22:
-	switch(*(str2++)){
-		case 0x9c: goto state0;
-		default: goto no_match;
-	}
-statef24:
-	switch(*(str2++)){
-		case 0x9d: goto state0;
-		default: goto no_match;
-	}
-statef26:
-	switch(*(str2++)){
-		case 0x9e: goto state0;
-		default: goto no_match;
-	}
-statef28:
-	switch(*(str2++)){
-		case 0x9f: goto state0;
-		default: goto no_match;
-	}
-statef2a:
-	switch(*(str2++)){
-		case 0xa0: goto state0;
-		default: goto no_match;
-	}
-statef2c:
-	switch(*(str2++)){
-		case 0xa1: goto state0;
-		default: goto no_match;
-	}
-statef2e:
-	switch(*(str2++)){
-		case 0xa2: goto state0;
-		default: goto no_match;
-	}
-statef30:
-	switch(*(str2++)){
-		case 0xa3: goto state0;
-		default: goto no_match;
-	}
-statef32:
-	switch(*(str2++)){
-		case 0xa4: goto state0;
-		default: goto no_match;
-	}
-statef34:
-	switch(*(str2++)){
-		case 0xa5: goto state0;
-		default: goto no_match;
-	}
-statef36:
-	switch(*(str2++)){
-		case 0xa6: goto state0;
-		default: goto no_match;
-	}
-statef38:
-	switch(*(str2++)){
-		case 0xa7: goto state0;
-		default: goto no_match;
-	}
-statef3a:
-	switch(*(str2++)){
-		case 0xa8: goto state0;
-		default: goto no_match;
-	}
-statef3c:
-	switch(*(str2++)){
-		case 0xa9: goto state0;
-		default: goto no_match;
-	}
-statef3e:
-	switch(*(str2++)){
-		case 0xaa: goto state0;
-		default: goto no_match;
-	}
-statef40:
-	switch(*(str2++)){
-		case 0xab: goto state0;
-		default: goto no_match;
-	}
-statef42:
-	switch(*(str2++)){
-		case 0xac: goto state0;
-		default: goto no_match;
-	}
-statef44:
-	switch(*(str2++)){
-		case 0xad: goto state0;
-		default: goto no_match;
-	}
-statef46:
-	switch(*(str2++)){
-		case 0xae: goto state0;
-		default: goto no_match;
-	}
-statef48:
-	switch(*(str2++)){
-		case 0xaf: goto state0;
-		default: goto no_match;
-	}
-statef4a:
-	switch(*(str2++)){
-		case 0xb0: goto state0;
-		default: goto no_match;
-	}
-statef4c:
-	switch(*(str2++)){
-		case 0xb1: goto state0;
-		default: goto no_match;
-	}
-statef4e:
-	switch(*(str2++)){
-		case 0xb2: goto state0;
-		default: goto no_match;
-	}
-statef50:
-	switch(*(str2++)){
-		case 0xb3: goto state0;
-		default: goto no_match;
-	}
-statef52:
-	switch(*(str2++)){
-		case 0xb4: goto state0;
-		default: goto no_match;
-	}
-statef54:
-	switch(*(str2++)){
-		case 0xb5: goto state0;
-		default: goto no_match;
-	}
-statef56:
-	switch(*(str2++)){
-		case 0xb6: goto state0;
-		default: goto no_match;
-	}
-statef58:
-	switch(*(str2++)){
-		case 0xb7: goto state0;
-		default: goto no_match;
-	}
-statef5a:
-	switch(*(str2++)){
-		case 0xb8: goto state0;
-		default: goto no_match;
-	}
-statef5c:
-	switch(*(str2++)){
-		case 0xb9: goto state0;
-		default: goto no_match;
-	}
-statef5e:
-	switch(*(str2++)){
-		case 0xba: goto state0;
-		default: goto no_match;
-	}
-statef60:
-	switch(*(str2++)){
-		case 0xbb: goto state0;
-		default: goto no_match;
-	}
-statef62:
-	switch(*(str2++)){
-		case 0xbc: goto state0;
-		default: goto no_match;
-	}
-statef64:
-	switch(*(str2++)){
-		case 0xbd: goto state0;
-		default: goto no_match;
-	}
-statef66:
-	switch(*(str2++)){
-		case 0xbe: goto state0;
-		default: goto no_match;
-	}
-statef68:
-	switch(*(str2++)){
-		case 0xbf: goto state0;
-		default: goto no_match;
-	}
-statef6a:
-	switch(*(str2++)){
-		case 0xc0: goto state0;
-		default: goto no_match;
-	}
-statef6c:
-	switch(*(str2++)){
-		case 0xc1: goto state0;
-		default: goto no_match;
-	}
-statef71:
-	switch(*(str2++)){
-		case 0xcb: goto state0;
-		default: goto no_match;
-	}
-statef73:
-	switch(*(str2++)){
-		case 0xcc: goto state0;
-		default: goto no_match;
-	}
-statef77:
-	switch(*(str2++)){
-		case 0xd7: goto state0;
-		default: goto no_match;
-	}
-statef79:
-	switch(*(str2++)){
-		case 0xd8: goto state0;
-		default: goto no_match;
-	}
-statef7b:
-	switch(*(str2++)){
-		case 0xd9: goto state0;
-		default: goto no_match;
-	}
-statef7d:
-	switch(*(str2++)){
-		case 0xda: goto state0;
-		default: goto no_match;
-	}
-statef7f:
-	switch(*(str2++)){
-		case 0xdb: goto state0;
-		default: goto no_match;
-	}
-statef81:
-	switch(*(str2++)){
-		case 0xdc: goto state0;
-		default: goto no_match;
-	}
-statef83:
-	switch(*(str2++)){
-		case 0xdd: goto state0;
-		default: goto no_match;
-	}
-statef85:
-	switch(*(str2++)){
-		case 0xde: goto state0;
-		default: goto no_match;
-	}
-statef87:
-	switch(*(str2++)){
-		case 0xdf: goto state0;
-		default: goto no_match;
-	}
-statef89:
-	switch(*(str2++)){
-		case 0xe0: goto state0;
-		default: goto no_match;
-	}
-statef8b:
-	switch(*(str2++)){
-		case 0xe3: goto state0;
-		default: goto no_match;
-	}
-statef8d:
-	switch(*(str2++)){
-		case 0xe4: goto state0;
-		default: goto no_match;
-	}
-statef8f:
-	switch(*(str2++)){
-		case 0xe5: goto state0;
-		default: goto no_match;
-	}
-statef91:
-	switch(*(str2++)){
-		case 0xe6: goto state0;
-		default: goto no_match;
-	}
-statef93:
-	switch(*(str2++)){
-		case 0xe7: goto state0;
-		default: goto no_match;
-	}
-statef95:
-	switch(*(str2++)){
-		case 0xe8: goto state0;
-		default: goto no_match;
-	}
-statef97:
-	switch(*(str2++)){
-		case 0xe9: goto state0;
-		default: goto no_match;
-	}
-statef99:
-	switch(*(str2++)){
-		case 0xea: goto state0;
-		default: goto no_match;
-	}
-statef9b:
-	switch(*(str2++)){
-		case 0xeb: goto state0;
-		default: goto no_match;
-	}
-statef9d:
-	switch(*(str2++)){
-		case 0xec: goto state0;
-		default: goto no_match;
-	}
-statef9f:
-	switch(*(str2++)){
-		case 0xed: goto state0;
-		default: goto no_match;
-	}
-statefa1:
-	switch(*(str2++)){
-		case 0xee: goto state0;
-		default: goto no_match;
-	}
-statefa3:
-	switch(*(str2++)){
-		case 0xf1: goto state0;
-		default: goto no_match;
-	}
-statefa5:
-	switch(*(str2++)){
-		case 0xf2: goto state0;
-		default: goto no_match;
-	}
-statefa7:
-	switch(*(str2++)){
-		case 0xf3: goto state0;
-		default: goto no_match;
-	}
-statefa9:
-	switch(*(str2++)){
-		case 0xf4: goto state0;
-		default: goto no_match;
-	}
-statefab:
-	switch(*(str2++)){
-		case 0xf5: goto state0;
-		default: goto no_match;
-	}
-statefad:
-	switch(*(str2++)){
-		case 0xf6: goto state0;
-		default: goto no_match;
-	}
-statefaf:
-	switch(*(str2++)){
-		case 0xf7: goto state0;
-		default: goto no_match;
-	}
-statefb1:
-	switch(*(str2++)){
-		case 0xf8: goto state0;
-		default: goto no_match;
-	}
-statefb3:
-	switch(*(str2++)){
-		case 0xf9: goto state0;
-		default: goto no_match;
-	}
-statefb5:
-	switch(*(str2++)){
-		case 0xfa: goto state0;
-		default: goto no_match;
-	}
-statefb7:
-	switch(*(str2++)){
-		case 0xfb: goto state0;
-		default: goto no_match;
-	}
-statefb9:
-	switch(*(str2++)){
-		case 0xfc: goto state0;
-		default: goto no_match;
-	}
-statefbb:
-	switch(*(str2++)){
-		case 0xfd: goto state0;
-		default: goto no_match;
-	}
-statefbd:
-	switch(*(str2++)){
-		case 0xfe: goto state0;
-		default: goto no_match;
-	}
-statefbf:
-	switch(*(str2++)){
-		case 0xff: goto state0;
+		case 0x80: goto state89;
+		case 0x81: goto state8a;
+		case 0x82: goto state8b;
+		case 0x83: goto state8c;
+		case 0x84: goto state8d;
+		case 0x85: goto state8e;
+		case 0x86: goto state8f;
+		case 0x87: goto state90;
+		case 0x88: goto state91;
+		case 0x89: goto state92;
+		case 0x8a: goto state93;
+		case 0x8b: goto state94;
+		case 0x8c: goto state95;
+		case 0x8d: goto state96;
+		case 0x8e: goto state97;
+		case 0x8f: goto state98;
 		default: goto no_match;
 	}
-no_match:
-	return *(str1-1) - *(str2-1);
-zero:
-	return 0 - *str2;
 }
 
 } // end namespace UTF8Utils

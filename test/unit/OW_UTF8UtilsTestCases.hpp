@@ -50,6 +50,7 @@ private:
 	void testUCS2toUTF8();
 	void testUTF8toUCS4();
 	void testUCS4toUTF8();
+	void testcompareToIgnoreCase();
 };
 
 #endif
