@@ -37,6 +37,12 @@ endif
 
 SUBDIRS = $(MOFC_DIR)
 
+noinst_LIBRARIES = libtoolscommon.a
+
+libtoolscommon_a_SOURCES = \
+OW_ToolsCommon.hpp \
+OW_ToolsCommon.cpp
+
 sbin_PROGRAMS = owdigestgenpass 
 bin_PROGRAMS = \
 owexecwql \
@@ -52,11 +58,10 @@ owrepositorydump
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = \
-OW_DigestPasswdGen.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+OW_DigestPasswdGen.cpp
 
 owdigestgenpass_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(Z_LIBS) $(SSL_LIBS)\
@@ -68,11 +73,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owexecwql
 owexecwql_SOURCES = \
-owexecwql.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owexecwql.cpp
 
 owexecwql_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -87,11 +91,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owcreatenamespace
 owcreatenamespace_SOURCES = \
-owcreatenamespace.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owcreatenamespace.cpp
 
 owcreatenamespace_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -106,11 +109,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owdeletenamespace
 owdeletenamespace_SOURCES = \
-owdeletenamespace.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owdeletenamespace.cpp
 
 owdeletenamespace_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -125,11 +127,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owenumnamespace
 owenumnamespace_SOURCES = \
-owenumnamespace.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owenumnamespace.cpp
 
 owenumnamespace_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -144,11 +145,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owenumqualifiers
 owenumqualifiers_SOURCES = \
-owenumqualifiers.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owenumqualifiers.cpp
 
 owenumqualifiers_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -163,11 +163,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owenumclassnames
 owenumclassnames_SOURCES = \
-owenumclassnames.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owenumclassnames.cpp
 
 owenumclassnames_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -182,11 +181,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owenumclasses
 owenumclasses_SOURCES = \
-owenumclasses.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owenumclasses.cpp
 
 owenumclasses_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -201,11 +199,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owcimindicationlistener
 owcimindicationlistener_SOURCES = \
-owcimindicationlistener.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owcimindicationlistener.cpp
 
 owcimindicationlistener_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
@@ -222,11 +219,10 @@ $(CXXBINLINKFLAGS) \
 
 ### owrepositorydump
 owrepositorydump_SOURCES = \
-owrepositorydump.cpp \
-OW_ToolsCommon.cpp \
-OW_ToolsCommon.hpp
+owrepositorydump.cpp
 
 owrepositorydump_LDADD = \
+libtoolscommon.a \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -241,6 +237,7 @@ $(CXXBINLINKFLAGS) \
 #owtruststore_SOURCES = owtruststore.cpp
 
 #owtruststore_LDADD = \
+#libtoolscommon.a \
 #-L$(top_builddir)/src/common -lopenwbem \
 #$(Z_LIBS) $(SSL_LIBS)\
 #$(BINLINKAPPENDFLAGS)
