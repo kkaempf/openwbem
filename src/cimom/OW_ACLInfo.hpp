@@ -118,6 +118,7 @@ private:
 	friend class OW_PollingManager;
 	friend class OW_IndicationServerImpl;
 	friend class OW_CIMOMEnvironment;
+	friend class OW_CIMRepository;
 };
 
 #endif
