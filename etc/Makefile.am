@@ -18,6 +18,7 @@ SUFFIXES = .sh
 		-e 's!@''localstatedir''@!$(localstatedir)!g' \
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
 		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
+		-e 's!@''PIDFILE_DIR''@!$(PIDFILE_DIR)!g' \
 	$< > $@-t
 	@MV@	$@-t $@
 
