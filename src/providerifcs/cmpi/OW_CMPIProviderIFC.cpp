@@ -584,9 +584,8 @@ CMPIProviderIFC::getProvider(
 
 	env->getLogger()->logDebug(format("CMPI provider ifc: provider %1 loaded and initialized",
 		provId));
-	CompleteMI * completeMI = new  CompleteMI();
+	CompleteMI * completeMI = new  CompleteMI;
 	completeMI->miVector = miVector;
-	delete ((ProviderEnvironmentIFC *)completeMI->broker.hdl);
 	completeMI->broker = _broker;
 	//MIs * _miVector = new MIs(miVector);
 	if (completeMI->miVector.instMI != miVector.instMI)
