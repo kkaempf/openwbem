@@ -237,10 +237,31 @@ void restartDaemon()
 	// called twice.
 	pthread_kill_other_threads_np();
 #endif
-	// It would be good to close all file handles > 2, but we can't do it.
 	// On Linux pthreads will kill off all the threads when we call
 	// execv().  If we close all the fds, then that breaks pthreads and
 	// execv() will just hang.
+	// Instead set the close on exec flag so all file descriptors are closed 
+	// by the kernel when we evecv() and we won't leak them.
+	rlimit rl;
+	int i = sysconf(_SC_OPEN_MAX);
+	if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+	{
+	  if( i < 0 )
+	  {
+		i = rl.rlim_max;
+	  }
+	  else
+	  {
+		i = std::min<int>(rl.rlim_max, i);
+	  }
+	}
+	while (i > 2)
+	{
+		::fcntl(i, F_SETFD, FD_CLOEXEC);
+		i--;
+	}
+
+
 	// This doesn't return. execv() will replace the current process with a
 	// new copy of g_argv[0] (owcimomd).
 	::execv(g_argv[0], g_argv);
