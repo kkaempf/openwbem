@@ -50,17 +50,17 @@ New features:
         X indication (mustPoll = false) w/ extra thread
         X indication/polled (mustPoll = false) and no extra thread.
         X Remove OW_TriggerProviderTest*.
-      - OW_IndicationRepLayer needs an indication provider to interface with
+      X OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
-      - Fix cimListener.cpp to use the new indication providers.
-        - Modifying existing filters will affect the indication server, and
-          may mean that indication providers need to be notified, etc. So:
-          Create an CIM_IndicationFilter pass-thru provider so we can either:
-          1. Prevent modifications to existing filters, or
-          2. Do the work to re-initialize everything correctly in 
-             OW_IndicationServerImpl.
-       - Handle the various options in the CIM_IndicationSubscription and
-          CIM_IndicationHandler classes.
+      X Fix cimListener.cpp to use the new indication providers.
+      - Modifying existing filters will affect the indication server, and
+        may mean that indication providers need to be notified, etc. So:
+        Create an CIM_IndicationFilter pass-thru provider so we can either:
+        1. Prevent modifications to existing filters, or
+        2. Do the work to re-initialize everything correctly in 
+           OW_IndicationServerImpl.
+      - Handle the various options in the CIM_IndicationSubscription and
+        CIM_IndicationHandler classes.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -190,7 +190,7 @@ Optimizations:
     - Switch OW_Reference to be intrusive reference counted.
     - See if using OW_StringBuffer as the OW_String internal representation is 
       faster than ByteBuf.
-    - Redo WQL to only process on instance at a time for better scalability.
+    - Redo WQL to only process one instance at a time for better scalability.
     - Use OW_HashMap class where appropriate.
     - Change instance/associator provider interface to pass in a list of
       properties which should be returned, so providers can optimize and avoid
