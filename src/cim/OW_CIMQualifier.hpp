@@ -239,6 +239,19 @@ public:
 	 */
 	bool getPropagated() const;
 
+	/**
+	 * Set the qualifier's language.  In MOF this is specified as a postfix
+	 * to the name (e.g. Description_es_mx).
+	 * Precondition: The qualifier has the TRANSLATE flavor.
+	 * @param language The language
+	 * @return a reference to *this
+	 */
+	CIMQualifier& setLanguage(const String& language);
+	/**
+	 * @return The qualifier's language
+	 */
+	String getLanguage() const;
+
 	typedef COWIntrusiveReference<QUALData> CIMQualifier::*safe_bool;
 	operator safe_bool () const
 		{  return m_pdata ? &CIMQualifier::m_pdata : 0; }
@@ -276,6 +289,13 @@ public:
 	 * Create a key qualifier
 	 */
 	static CIMQualifier createKeyQualifier();
+
+	/**
+	 * Binary serialization version.
+	 * Version 1 added a language.
+	 */
+	enum { VERSION = 1 };
+
 private:
 	COWIntrusiveReference<QUALData> m_pdata;
 	friend bool operator<(const CIMQualifier& x, const CIMQualifier& y);

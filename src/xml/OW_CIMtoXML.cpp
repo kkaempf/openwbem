@@ -418,13 +418,6 @@ void CIMtoXML(CIMClass const& cc, ostream& ostr)
 		ostr << cc.getSuperClass();
 	}
 
-	String lang = cc.getLanguage();
-	if(!lang.empty())
-	{
-		ostr << "\" xml:lang=\"";
-		ostr << lang;
-	}
-
 	ostr << "\">";
 	const CIMQualifierArray& ccquals = cc.getQualifiers();
 	for(size_t i = 0; i < ccquals.size(); i++)
@@ -1000,6 +993,15 @@ CIMtoXML(CIMQualifier const& cq, ostream& ostr)
 		//
 		// Not needed, because TRANSLATABLE defaults to false!
 	}
+
+	String lang = cq.getLanguage();
+	if(!lang.empty())
+	{
+		ostr << " xml:lang=\"";
+		ostr << lang;
+		ostr << '\"';
+	}
+
 	ostr << '>';
 	if(cv)
 	{

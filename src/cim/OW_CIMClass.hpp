@@ -60,7 +60,13 @@ public:
 	struct CLSData;
 	/** Name of the internal namespace class */
 	static const char* const NAMESPACECLASS;
-	enum { _VERSION_ = 1 };
+
+	/**
+	 * Binary serialization version.
+	 * Version 1 had a language.
+	 * Since a class doesn't actually have a language it was removed for version 2
+	 */
+	enum { VERSION = 2 };
 	/**
 	 * Create a new CIMClass object.
 	 */
@@ -371,15 +377,6 @@ public:
 	 * @param name	The new name for this CIMClass object.
 	 */
 	virtual void setName(const String& name);
-	/**
-	 * @return the language this CIMClass is using
-	 */
-	String getLanguage() const;
-	/**
-	 * Set the language this CIMClass is using
-	 * @param language The new language for this CIMClass
-	 */
-	void setLanguage(const String& language);
 	/**
 	 * Read this CIMClass object from an input stream.
 	 * @param istrm The input stream to read this CIMClass from.

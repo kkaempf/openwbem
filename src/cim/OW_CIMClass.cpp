@@ -69,7 +69,6 @@ struct CIMClass::CLSData : public COWIntrusiveCountableBase
 	CIMMethodArray m_methods;
 	Bool m_associationFlag;
 	Bool m_isKeyed;
-	String m_language;
 	CLSData* clone() const { return new CLSData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -566,18 +565,6 @@ CIMClass::filterProperties(const StringArray& propertyList,
 		propertyList, false);
 }
 //////////////////////////////////////////////////////////////////////////////
-String
-CIMClass::getLanguage() const
-{
-	return m_pdata->m_language;
-}
-//////////////////////////////////////////////////////////////////////////////
-void 
-CIMClass::setLanguage(const String& language)
-{
-	m_pdata->m_language = language;
-}
-//////////////////////////////////////////////////////////////////////////////
 CIMClass
 CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray& propertyList,
@@ -592,7 +579,6 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 	theClass.m_pdata->m_parentClassName = m_pdata->m_parentClassName;
 	theClass.m_pdata->m_associationFlag = m_pdata->m_associationFlag;
 	theClass.m_pdata->m_isKeyed = m_pdata->m_isKeyed;
-	theClass.m_pdata->m_language = m_pdata->m_language;
 	//
 	// Process qualifiers
 	//
@@ -663,14 +649,13 @@ CIMClass::readObject(istream &istrm)
 {
 	String name;
 	String pcName;
-	String language;
 	CIMQualifierArray qra;
 	CIMPropertyArray pra;
 	CIMMethodArray mra;
 	Bool isAssocFlag;
 	Bool isK;
 
-	UInt32 version = CIMBase::readSig(istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V);
+	UInt32 version = CIMBase::readSig(istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V, CIMClass::VERSION);
 	name.readObject(istrm);
 	pcName.readObject(istrm);
 	isAssocFlag.readObject(istrm);
@@ -678,9 +663,11 @@ CIMClass::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, qra);
 	BinarySerialization::readArray(istrm, pra);
 	BinarySerialization::readArray(istrm, mra);
-	// If dealing with versioned format, then read language
-	if(version > 0)
+	// If dealing with version 1 format, then read language (it was removed in version 2)
+	// TODO: This was only present in CVS builds and never released.  Remove it right before the release.
+	if(version == 1)
 	{
+		String language;
 		language.readObject(istrm);
 	}
 	if(!m_pdata)
@@ -694,7 +681,6 @@ CIMClass::readObject(istream &istrm)
 	m_pdata->m_qualifiers = qra;
 	m_pdata->m_properties = pra;
 	m_pdata->m_methods = mra;
-	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -702,7 +688,11 @@ CIMClass::writeObject(ostream &ostrm) const
 {
 	// ATTENTION: There is a bad hack in MetaRepository::_getClassNameFromNode which relies on the format of a CIMClass.
 	// If you update/change this function, make sure you update it too!
-	CIMBase::writeSig(ostrm, OW_CIMCLASSSIG_V, _VERSION_);
+
+	// Since version 2 is the same a version 0, we're just using version 0 here, since it's more efficient.
+	// When/if the version changes to 3, uncomment the next line.
+	//CIMBase::writeSig(ostrm, OW_CIMCLASSSIG_V, VERSION);
+	CIMBase::writeSig(ostrm, OW_CIMCLASSSIG);
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_parentClassName.writeObject(ostrm);
 	m_pdata->m_associationFlag.writeObject(ostrm);
@@ -710,7 +700,6 @@ CIMClass::writeObject(ostream &ostrm) const
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_methods);
-	m_pdata->m_language.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

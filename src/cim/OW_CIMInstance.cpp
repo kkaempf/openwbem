@@ -799,7 +799,7 @@ CIMInstance::readObject(istream &istrm)
 	String language;
 
 	UInt32 version = CIMBase::readSig(istrm, OW_CIMINSTANCESIG,
-		OW_CIMINSTANCESIG_V);
+		OW_CIMINSTANCESIG_V, CIMInstance::VERSION);
 
 	owningClassName.readObject(istrm);
 	BinarySerialization::readArray(istrm, keys);
@@ -824,7 +824,7 @@ CIMInstance::readObject(istream &istrm)
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
-	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, _VERSION_);
+	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, CIMInstance::VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);

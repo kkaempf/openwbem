@@ -294,12 +294,6 @@ createClass(CIMXMLParser& parser)
 		rval.setSuperClass(superClassName);
 	}
 
-	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
-	if(!language.empty())
-	{
-		rval.setLanguage(language);
-	}
-
 	//
 	// Find qualifier information
 	//
@@ -709,6 +703,9 @@ createQualifier(CIMXMLParser& parser)
 	//	XMLParameters::paramToInstance);
 	String translatable = parser.getAttribute(
 		CIMXMLParser::A_TRANSLATABLE);
+
+	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
+
 	//
 	// Build qualifier
 	//
@@ -751,6 +748,12 @@ createQualifier(CIMXMLParser& parser)
 		rval.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 	}
 	rval.setPropagated(propagate.equalsIgnoreCase("true"));
+	
+	if(!language.empty())
+	{
+		rval.setLanguage(language);
+	}
+
 	parser.mustGetNextTag();
 	if(parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
 		|| parser.tokenIsId(CIMXMLParser::E_VALUE))

@@ -93,21 +93,23 @@ public:
 	 *
 	 * @param istrm The input stream to read the signature from.
 	 * @param sig The old signature. This will be the signature that was used
-	 * 		before versioning was implemented on the derived class. Must be a
-	 * 		NULL terminated string. If the signature read does not match then
-	 * 		verSig will be checked.
+	 *  before versioning was implemented on the derived class. Must be a
+	 *  NULL terminated string. If the signature read does not match then
+	 *  verSig will be checked.
 	 * @param verSig The new signature. This will be the signature that is
-	 * 		used after implementing versioning on the derived class. Must be a
-	 * 		NULL terminated string. If the signature read does not match then
-	 * 		a BadCIMSignatureException will be thrown. Otherwise this method
-	 * 		will read the version data that follows the signature.
+	 *  used after implementing versioning on the derived class. Must be a
+	 *  NULL terminated string. If the signature read does not match then
+	 *  a BadCIMSignatureException will be thrown. Otherwise this method
+	 *  will read the version data that follows the signature.
+	 * @param maxVersion The largest version that is supported.
 	 * @return Version number for the derived class. If version returned == 0,
-	 * 		then the old signature was the match. If version returned > 0,
-	 * 		then the derived class has implemented versioning.
-	 * @throws BadCIMSignatureException
+	 *  then the old signature was the match. If version returned > 0,
+	 *  then the derived class has implemented versioning.
+	 * @throws BadCIMSignatureException If the signature doesn't match sig or
+	 *  verSig, or if the version read is > maxVersion.
 	 */
 	static UInt32 readSig(std::istream& istrm, const char* const sig,
-		const char* const verSig);
+		const char* const verSig, UInt32 maxVersion);
 
 	/**
 	 * Write the given class signature to an output stream.

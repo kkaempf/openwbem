@@ -68,7 +68,7 @@ CIMBase::readSig( istream& istr, const char* const sig )
 // static
 UInt32 
 CIMBase::readSig(std::istream& istr, const char* const sig,
-	const char* const verSig)
+	const char* const verSig, UInt32 maxVersion)
 {
 	UInt32 version = 0;
 	char ch;
@@ -88,6 +88,12 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 
 		// Version is ASN.1 length encoded
 		BinarySerialization::readLen(istr, version);
+		if (version > maxVersion)
+		{
+			OW_THROW(BadCIMSignatureException,
+				Format("CIMBase::readSig. Unknown version %1, only versions <= %2 are handled.",
+				version, maxVersion).c_str() );
+		}
 	}
 
 	return version;

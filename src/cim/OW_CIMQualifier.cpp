@@ -62,6 +62,7 @@ struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 	CIMQualifierType m_qualifierType;
 	Bool m_propagated;
 	CIMFlavorArray m_flavors;
+	String m_language;
 	QUALData* clone() const { return new QUALData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,7 @@ bool operator<(const CIMQualifier::QUALData& x, const CIMQualifier::QUALData& y)
 {
 	return StrictWeakOrdering(
 		x.m_name, y.m_name,
+		x.m_language, y.m_language,
 		x.m_qualifierValue, y.m_qualifierValue,
 		x.m_qualifierType, y.m_qualifierType,
 		x.m_propagated, y.m_propagated,
@@ -280,6 +282,20 @@ CIMQualifier::getPropagated() const
 	return m_pdata->m_propagated;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMQualifier& 
+CIMQualifier::setLanguage(const String& language)
+{
+	OW_ASSERT(hasFlavor(CIMFlavor::TRANSLATE));
+	m_pdata->m_language = language;
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMQualifier::getLanguage() const
+{
+	return m_pdata->m_language;
+}
+//////////////////////////////////////////////////////////////////////////////
 String
 CIMQualifier::getName() const
 {
@@ -301,7 +317,10 @@ CIMQualifier::readObject(istream &istrm)
 	Bool propagated;
 	CIMFlavorArray flavors;
 	Bool isValue;
-	CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG );
+	String language;
+
+	UInt32 version = CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG, OW_CIMQUALIFIERSIG_V, CIMQualifier::VERSION );
+
 	name.readObject(istrm);
 	isValue.readObject(istrm);
 	if(isValue)
@@ -311,6 +330,13 @@ CIMQualifier::readObject(istream &istrm)
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
 	BinarySerialization::readArray(istrm, flavors);
+
+	// language was added in version 1
+	if (version > 0)
+	{
+		language.readObject(istrm);
+	}
+
 	if(!m_pdata)
 	{
 		m_pdata = new QUALData;
@@ -320,12 +346,14 @@ CIMQualifier::readObject(istream &istrm)
 	m_pdata->m_qualifierType = qualifierType;
 	m_pdata->m_propagated = propagated;
 	m_pdata->m_flavors = flavors;
+	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMQualifier::writeObject(ostream &ostrm) const
 {
-	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
+	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG_V, CIMQualifier::VERSION);
+
 	m_pdata->m_name.writeObject(ostrm);
 	CIMValue qv = m_pdata->m_qualifierValue;
 	if(!qv && m_pdata->m_qualifierType)
@@ -344,6 +372,7 @@ CIMQualifier::writeObject(ostream &ostrm) const
 	m_pdata->m_qualifierType.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_flavors);
+	m_pdata->m_language.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -351,20 +380,35 @@ CIMQualifier::toMOF() const
 {
 	StringBuffer rv;
 	rv += m_pdata->m_name;
+	
+	if (!m_pdata->m_language.empty())
+	{
+		rv += '_';
+		rv += m_pdata->m_language;
+	}
+
 	if(m_pdata->m_qualifierValue)
 	{
 		rv += '(';
 		rv += m_pdata->m_qualifierValue.toMOF();
 		rv += ')';
 	}
+	
 	return rv.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMQualifier::toString() const
 {
-	String rv = "CIMQualifier(" + m_pdata->m_name + ')';
-	return rv;
+	StringBuffer rv("CIMQualifier(");
+	rv += m_pdata->m_name;
+	if (!m_pdata->m_language.empty())
+	{
+		rv += '_';
+		rv += m_pdata->m_language;
+	}
+	rv += ')';
+	return rv.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
