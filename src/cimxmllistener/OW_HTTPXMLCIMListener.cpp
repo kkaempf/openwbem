@@ -141,7 +141,10 @@ public:
 	
 	virtual RequestHandlerIFCRef getRequestHandler(const String&)
 	{
-		return m_XMLListener;
+		RequestHandlerIFCRef ref(m_XMLListener.getLibRef(),
+				m_XMLListener->clone());
+		ref->setEnvironment(ServiceEnvironmentIFCRef(this));
+		return ref;
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
 		ESendIndicationsFlag /*doIndications*/,
