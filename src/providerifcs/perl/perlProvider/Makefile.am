@@ -29,6 +29,9 @@ noinst_LIBRARIES = libperlProvider.a
 OW_SHARED_LIBS = libperlProvider.$(LIB_EXT)
 SHAREDLIBADD = $(perl_embed_ldflags)
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 thelibdir = $(pkglibdir)/perlproviders
 
 mostlyclean-compile:

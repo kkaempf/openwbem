@@ -12,6 +12,8 @@ EXPORT_PREFIX=createAuthenticator
 
 OW_SHARED_LIBS = libaixauthentication.$(LIB_EXT)
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
 
 noinst_LIBRARIES = \
 	libaixauthentication.a 

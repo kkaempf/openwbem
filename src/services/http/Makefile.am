@@ -34,6 +34,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 $(SSL_LIBS)
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 owstatlib_LIBRARIES = \
 libowservicehttp.a
 

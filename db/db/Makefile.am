@@ -10,6 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 owstatlib_LIBRARIES = libowdb.a 
 OW_SHARED_LIBS = libowdb.$(LIB_EXT)
+LIBRARY_BINARY_VERSION = 4
 
 
 thelibdir = $(libdir)

@@ -209,7 +209,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-no-cpp-precomp -fno-common -D_REENTRANT"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS=""
-	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version $OPENWBEM_VERSION -current_version $OPENWBEM_VERSION"
+	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
 	PIDFILEDIR="/var/run"
@@ -228,7 +228,7 @@ case "$host" in
 	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
 	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s"
 	CXXBINLINKFLAGS="$LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS="-b"
+	CXXSHAREDLIBLINKFLAGS="-b +h $@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="sl"
@@ -245,7 +245,7 @@ case "$host" in
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION) -lpthread'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
@@ -276,7 +276,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	CXXCOMMONLINKFLAGS="-pthread"
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION)'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
@@ -288,7 +288,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
 	CXXCOMMONLINKFLAGS="-pthreads $LDFLAGS"
 	CXXBINLINKFLAGS="-Wl,-Bdynamic"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-h -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	RPATH_LINK_FLAG="-R"
@@ -303,7 +303,7 @@ case "$host" in
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION) -lpthread'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
@@ -338,7 +338,7 @@ esac
 OW_COMPILER=`basename $CXX`
 case $OW_COMPILER in 
 g++* | c++*)
-	# Check for gcc 2.96 which is known to be broken.
+	# Check for gcc versions which are known to be broken.
 	GCC_COMPILER_VERSION=`$CXX --version | head -n1 | cut -f3 -d' '`
 	case $GCC_COMPILER_VERSION in
 	2.96 | 3.0*)
@@ -549,7 +549,7 @@ AC_TRY_COMPILE(
 	AC_DEFINE(INTTYPES_H_DEFINES_PRI, 1, [Define to 1 if <inttypes.h> defines PRIu32 and PRIx32.])
 ],
 [
-  AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 	AC_DEFINE(INTTYPES_H_DOES_NOT_DEFINE_PRI, 1, [Define to 1 if <inttypes.h> does not define PRIu32 or PRIx32.])
 ])
 				

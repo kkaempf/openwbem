@@ -14,6 +14,8 @@ SHAREDLIBADD =  \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/wql/common -lowwqlcommon
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)

@@ -24,6 +24,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 libowprovpollUnloader_a_SOURCES = \
 OW_UnloaderProvider.hpp \
 OW_UnloaderProvider.cpp

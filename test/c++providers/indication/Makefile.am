@@ -8,6 +8,9 @@ noinst_LIBRARIES = libindicationtest1.a libindicationtest2.a libindicationtest3.
 
 OW_SHARED_LIBS = libindicationtest1.$(LIB_EXT) libindicationtest2.$(LIB_EXT) libindicationtest3.$(LIB_EXT)
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 libindicationtest1_a_SOURCES = \
 OW_IndicationProviderTest1.cpp
 

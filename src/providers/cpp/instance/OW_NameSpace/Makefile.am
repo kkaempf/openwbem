@@ -15,6 +15,9 @@ thelibdir = $(pkglibdir)/c++providers
 
 OW_SHARED_LIBS = libowprovinstOW_NameSpace.$(LIB_EXT)
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 libowprovinstOW_NameSpace_a_SOURCES = \
 OW_NameSpaceProvider.hpp \
 OW_NameSpaceProvider.cpp

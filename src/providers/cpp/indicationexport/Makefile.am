@@ -20,6 +20,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/xml -lowxml 
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 thelibdir = $(pkglibdir)/c++providers
 
 libcppindicationexportxmlhttpprovider_a_SOURCES = \

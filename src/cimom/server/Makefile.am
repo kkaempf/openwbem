@@ -15,6 +15,8 @@ SHAREDLIBADD = \
 OW_SHARED_LIBS = libowserver.$(LIB_EXT)
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

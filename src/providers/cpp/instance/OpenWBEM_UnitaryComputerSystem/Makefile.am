@@ -15,6 +15,9 @@ thelibdir = $(pkglibdir)/c++providers
 
 OW_SHARED_LIBS = libowprovinstOpenWBEM_UnitaryComputerSystem.$(LIB_EXT)
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 libowprovinstOpenWBEM_UnitaryComputerSystem_a_SOURCES = \
 OW_provinstOpenWBEM_UnitaryComputerSystem.cpp
 

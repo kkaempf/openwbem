@@ -16,6 +16,8 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
 
 owstatlib_LIBRARIES = \
 libowhttpxmllistener.a

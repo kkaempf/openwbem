@@ -30,6 +30,8 @@ INCLUDES = \
 
 
 OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
 

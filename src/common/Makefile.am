@@ -1,4 +1,3 @@
-MAKEDYLIB=1
 SUBDIRS = socket
 
 include $(top_srcdir)/Makefile-shared-lib.inc
@@ -11,6 +10,9 @@ uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT) 
 SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS)
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+MAKEDYLIB=1
 
 
 

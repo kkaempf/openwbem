@@ -12,6 +12,9 @@ libsampleprovider.a
 OW_SHARED_LIBS = \
 libsampleprovider.$(LIB_EXT) 
 
+# increment this number every time a release breaks binary compatibility
+LIBRARY_BINARY_VERSION = 4
+
 #libindprovider.$(LIB_EXT)
 
 #libindprovider_a_SOURCES = \

@@ -1,5 +1,5 @@
 
-SO_EXT = $(OPENWBEM_VERSION)
+SO_EXT = $(LIBRARY_BINARY_VERSION)
 SOFILENAME = $@.$(SO_EXT)
 DYFILENAME = `basename -s .dylib $@`.$(SO_EXT).$(LIB_EXT)
 TMPLIBDIR = .$@.libs
