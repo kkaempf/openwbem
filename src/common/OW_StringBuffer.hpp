@@ -132,7 +132,11 @@ public:
 	 * @param is The input stream to retrieve the next line from
 	 * @return const char* pointer to the line of text just read.
 	 */
-	const char* getLine(std::istream& is);
+	const char* getLine(std::istream& is, bool resetBuffer=true);
+
+	bool endsWith(char ch) const;
+	void chop();
+	void trim();
 
 	size_t allocated() const {  return m_allocated; }
 	void reset();

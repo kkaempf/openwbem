@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+// TEST
+#include <iostream>
+using std::cout;
+using std::endl;
+
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMDateTime.hpp"
@@ -35,6 +40,7 @@
 #include "OW_CIMDateTime.hpp"
 #include <cstring>
 #include <cstdio>
+#include <cctype>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -124,7 +130,7 @@ StringBuffer::truncate(size_t index)
 	if(index < m_len)
 	{
 		m_bfr[index] = '\0';
-		m_len = index+1;
+		m_len = index;
 	}
 }
 
@@ -261,16 +267,65 @@ StringBuffer::append(const char* str, const size_t len)
 bool
 StringBuffer::equals(const char* arg) const
 {
-	return strcmp(arg, m_bfr) == 0;
+	return ::strcmp(arg, m_bfr) == 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+bool
+StringBuffer::endsWith(char ch) const
+{
+	return (m_len && m_bfr[m_len-1] == ch);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StringBuffer::chop()
+{
+	if(m_len)
+	{
+		truncate(m_len-1);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StringBuffer::trim()
+{
+	if(m_len)
+	{
+		while(m_len && isspace(m_bfr[m_len-1]))
+		{
+			m_bfr[--m_len] = 0;
+		}
+
+		if(m_len)
+		{
+			char *p;
+			for(p = m_bfr; *p && isspace(*p); p++)
+			{
+				// Empty
+			}
+
+			if(*p && p > m_bfr)
+			{
+				m_len -= (p - m_bfr);
+				memmove(m_bfr, p, m_len+1);
+			}
+		}
+	}
+}
+		
 //////////////////////////////////////////////////////////////////////////////
 // Get one line from an input stream. This StringBuffer object will be
 // reset (cleared) before an attempt is made to retrieve the line.
 const char*
-StringBuffer::getLine(std::istream& is)
+StringBuffer::getLine(std::istream& is, bool resetBuffer)
 {
-	reset();
+	if(resetBuffer)
+	{
+		reset();
+	}
+
 	if(is)
 	{
 		size_t count = 0;
