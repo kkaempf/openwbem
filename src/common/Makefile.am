@@ -49,6 +49,7 @@ OW_ConfigOpts.cpp \
 OW_COWIntrusiveCountableBase.cpp \
 OW_COWIntrusiveReference.cpp \
 OW_COWReferenceBase.cpp \
+OW_CryptographicRandomNumber.cpp \
 OW_DataStreams.cpp \
 OW_DateTime.cpp \
 OW_dlSharedLibrary.cpp \
@@ -152,6 +153,7 @@ OW_COWIntrusiveCountableBase.hpp \
 OW_COWIntrusiveReference.hpp \
 OW_COWReferenceBase.hpp \
 OW_COWReference.hpp \
+OW_CryptographicRandomNumber.hpp \
 OW_DataStreams.hpp \
 OW_DateTime.hpp \
 OW_dlSharedLibrary.hpp \

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,38 +28,27 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Bart Whiteley
- * @author Dan Nuffer
- */
+#ifndef OW_CryptographicRandomNumber_TEST_CASES_HPP_
+#define OW_CryptographicRandomNumber_TEST_CASES_HPP_
 
-#ifndef OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
-#define OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include <stdlib.h> // for RAND_MAX
+#include "TestCase.hpp"
 
-namespace OW_NAMESPACE
-{
-
-class OW_COMMON_API RandomNumber
+class CryptographicRandomNumberTestCases : public TestCase
 {
 public:
-	// Precondition: lowVal < highVal
-	RandomNumber(Int32 lowVal = 0, Int32 highVal = RAND_MAX);
-	Int32 getNextNumber();
-	
-public:
-	// This function can be called to control when the prng will be initialized.
-	// If it hasn't been previously called, it will be called the first time a RandomNumber instance is instantiated.
-	static void initRandomness();
-	static void saveRandomState();
+	CryptographicRandomNumberTestCases( const char* name )
+		: TestCase( name ) {}
+
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
 private:
-	Int32 m_lowVal;
-	Int32 m_highVal;
+	// test methods
+	void testRandomNumbers();
+	void doTestRange(int low, int high);
 };
 
-} // end namespace OW_NAMESPACE
-
 #endif
+

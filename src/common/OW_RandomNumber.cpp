@@ -55,8 +55,7 @@
 namespace OW_NAMESPACE
 {
 
-static Mutex guard;
-static unsigned int seed = 0;
+/////////////////////////////////////////////////////////////////////////////
 RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 : m_lowVal(lowVal), m_highVal(highVal)
 {
@@ -65,6 +64,17 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 		m_lowVal = highVal;
 		m_highVal = lowVal;
 	}
+	RandomNumber::initRandomness();
+}
+	
+/////////////////////////////////////////////////////////////////////////////
+static Mutex guard;
+static unsigned int seed = 0;
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RandomNumber::initRandomness()
+{
 	// double-checked locking pattern. See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
 	ThreadImpl::memoryBarrier();
 	if (seed == 0)
@@ -104,7 +114,15 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 		}
 	}
 }
-	
+
+/////////////////////////////////////////////////////////////////////////////
+void
+RandomNumber::saveRandomState()
+{
+	// Do nothing. This function is so that RandomNumber has the same interface as CryptographicRandomNumber
+}
+
+/////////////////////////////////////////////////////////////////////////////
 Int32
 RandomNumber::getNextNumber()
 {

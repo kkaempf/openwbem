@@ -36,6 +36,8 @@ MemTracerTest.cpp
 check_PROGRAMS = unitMain
 # Note: Do not change the following line, unless you also update the newtest.sh script
 unitMain_SOURCES = \
+CryptographicRandomNumberTestCases.cpp \
+CryptographicRandomNumberTestCases.hpp \
 CIMObjectPathTestCases.cpp \
 CIMObjectPathTestCases.hpp \
 CIMRepository2TestCases.cpp \

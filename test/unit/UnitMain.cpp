@@ -40,6 +40,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "CryptographicRandomNumberTestCases.hpp"
 #include "COWIntrusiveReferenceTestCases.hpp"
 #include "CmdLineParserTestCases.hpp"
 #include "CIMObjectPathTestCases.hpp"
@@ -102,6 +103,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "CryptographicRandomNumber", CryptographicRandomNumberTestCases::suite());
 	runner.addTest( "COWIntrusiveReference", COWIntrusiveReferenceTestCases::suite());
 	runner.addTest( "CmdLineParser", CmdLineParserTestCases::suite());
 	runner.addTest( "CIMObjectPath", CIMObjectPathTestCases::suite());

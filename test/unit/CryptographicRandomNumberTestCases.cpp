@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,58 +28,58 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Dan Nuffer
- */
-
-
+#include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include "OW_RandomNumberTestCases.hpp"
-#include "OW_RandomNumber.hpp"
+#include "CryptographicRandomNumberTestCases.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 
 using namespace OpenWBEM;
 
-void OW_RandomNumberTestCases::setUp()
+void CryptographicRandomNumberTestCases::setUp()
 {
-	RandomNumber::initRandomness();
+	CryptographicRandomNumber::initRandomness();
 }
 
-void OW_RandomNumberTestCases::tearDown()
+void CryptographicRandomNumberTestCases::tearDown()
 {
-	RandomNumber::saveRandomState();
+	CryptographicRandomNumber::saveRandomState();
 }
 
 // Need a fairly high test count to get a good test of randomness.
 // But don't make it too high, or else the unit tests will be too slow.
 const int MIN_TEST_COUNT = 1000;
 const int LONG_TEST_COUNT = 100000;
-const int MAX_TEST_COUNT = 10000000;
+const long long MAX_TEST_COUNT = 10000000;
 
-void OW_RandomNumberTestCases::doTestRange(int low, int high)
+void CryptographicRandomNumberTestCases::doTestRange(int low, int high)
 {
-	RandomNumber gen(low, high);
+	CryptographicRandomNumber gen(low, high);
 	bool saw_low = false;
 	bool saw_high = false;
-	int i = 0;
+	long long i = 0;
 	while ((i < MIN_TEST_COUNT) || ((i < MAX_TEST_COUNT) && (!saw_low || !saw_high)))
 	{
 		Int32 rn = gen.getNextNumber();
 		unitAssert(rn >= low && rn <= high);
 		if (rn == low)
+		{
 			saw_low = true;
+		}
 		if (rn == high)
+		{
 			saw_high = true;
+		}
 		++i;
 	}
 	unitAssert(saw_low);
 	unitAssert(saw_high);
 }
 
-void OW_RandomNumberTestCases::testRandomNumbers()
+void CryptographicRandomNumberTestCases::testRandomNumbers()
 {
 	// test default.  range: 0-RAND_MAX
-	RandomNumber g1;
+	CryptographicRandomNumber g1;
 	int count = MIN_TEST_COUNT;
 	if (getenv("OWLONGTEST"))
 	{
@@ -91,22 +91,26 @@ void OW_RandomNumberTestCases::testRandomNumbers()
 		unitAssert(rn >= 0 && rn <= RAND_MAX);
 	}
 
-	// test 0-10
-	doTestRange(0, 10);
-
-	// test 1000001-1000010
-	doTestRange(1000001, 1000010);
-
-	// test 0-1
 	doTestRange(0, 1);
+	doTestRange(0, 2);
+	doTestRange(0, 4);
+	doTestRange(0, 10);
+	doTestRange(0, 15);
+	doTestRange(0, 16);
+	doTestRange(0, 17);
+	doTestRange(1, 16);
+	doTestRange(1, 17);
+	doTestRange(1, 18);
+	doTestRange(0, 1024);
+	doTestRange(1000001, 1000010);
 
 }
 
-Test* OW_RandomNumberTestCases::suite()
+Test* CryptographicRandomNumberTestCases::suite()
 {
-	TestSuite *testSuite = new TestSuite ("OW_RandomNumber");
+	TestSuite *testSuite = new TestSuite ("CryptographicRandomNumber");
 
-	ADD_TEST_TO_SUITE(OW_RandomNumberTestCases, testRandomNumbers);
+	ADD_TEST_TO_SUITE(CryptographicRandomNumberTestCases, testRandomNumbers);
 
 	return testSuite;
 }

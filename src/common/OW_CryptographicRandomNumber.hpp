@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,33 +33,66 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
-#define OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
+#ifndef OW_CRYPTOGRAPHIC_RANDOM_NUMBER_HPP_INCLUDE_GUARD_
+#define OW_CRYPTOGRAPHIC_RANDOM_NUMBER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_Exception.hpp"
+
+namespace OW_NAMESPACE
+{
+
+OW_DECLARE_APIEXCEPTION(CryptographicRandomNumber, OW_COMMON_API);
+
+} // end namespace OW_NAMESPACE
+
+#if defined(OW_HAVE_OPENSSL)
 #include "OW_Types.hpp"
+
 #include <stdlib.h> // for RAND_MAX
 
 namespace OW_NAMESPACE
 {
 
-class OW_COMMON_API RandomNumber
+class OW_COMMON_API CryptographicRandomNumber
 {
 public:
 	// Precondition: lowVal < highVal
-	RandomNumber(Int32 lowVal = 0, Int32 highVal = RAND_MAX);
+	CryptographicRandomNumber(Int32 lowVal = 0, Int32 highVal = RAND_MAX);
+	/**
+	 * @throws CryptographicRandomNumberException on failure. The caller should treat this as a serious error.
+	 */
 	Int32 getNextNumber();
 	
 public:
-	// This function can be called to control when the prng will be initialized.
-	// If it hasn't been previously called, it will be called the first time a RandomNumber instance is instantiated.
+	// This function can be called to control when the openssl cryptographic prng will be initialized.
+	// It may be a lengthy process on some OSs which don't have /dev/urandom. If it hasn't been previously
+	// called, it will be called the first time a CryptographicRandomNumber instance is instantiated.
+	// It's okay to call this function multiple times from multiple threads.
 	static void initRandomness();
 	static void saveRandomState();
 
 private:
 	Int32 m_lowVal;
 	Int32 m_highVal;
+	Int32 m_range;
+	int m_numBits;
 };
 
 } // end namespace OW_NAMESPACE
 
+#else
+
+// no openssl, so just typedef the class to RandomNumber
+#include "OW_RandomNumber.hpp"
+
+namespace OW_NAMESPACE
+{
+
+typedef RandomNumber CryptographicRandomNumber;
+
+} // end namespace OW_NAMESPACE
+
+#endif // #if defined(OW_HAVE_OPENSSL)
+
 #endif
+
