@@ -87,15 +87,6 @@ public:
 	 */
 	Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL) OW_DEPRECATED;
 	/**
-	 * Copy ctor
-	 */
-	Socket(const Socket& arg)
-		: SelectableIFC()
-		, IOIFC()
-		, m_impl(arg.m_impl) {}
-	Socket& operator=(const Socket& arg)
-		{ m_impl = arg.m_impl; return *this; }
-	/**
 	 * Connect to a peer node
 	 * @param addr The address of the machine to connect to.
 	 * @exception SocketException
@@ -171,20 +162,18 @@ public:
 	/**
 	 * Wait for input on the socket for a specified length of time.
 	 * @param timeOutSecs the number of seconds to wait.
-	 * 	-1 means infinite
 	 * @return true if the timeout expired
 	 * @throws SocketException
 	 */
-	bool waitForInput(int timeOutSecs=-1)
+	bool waitForInput(int timeOutSecs=INFINITE_TIMEOUT)
 		{ return m_impl->waitForInput(timeOutSecs); }
 	/**
 	 * Wait for output on the socket for a specified length of time.
 	 * @param timeOutSecs the number of seconds to wait.
-	 * 	-1 means infinite
 	 * @return true if the timeout expired
 	 * @throws SocketException
 	 */
-	bool waitForOutput(int timeOutSecs=-1)
+	bool waitForOutput(int timeOutSecs=INFINITE_TIMEOUT)
 		{ return m_impl->waitForOutput(timeOutSecs); }
 
 	/**
