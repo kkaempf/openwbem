@@ -340,6 +340,46 @@ int cpiNSSetProtocolPart(cpiNSHdl ns, const char* protocolPart);
 int cpiNSGetPort(cpiNSHdl ns);
 const char* cpiNSGetFileNamePart(cpiNSHdl ns);
 
+/*-----------------------------------------------------------------------------
+	Reference (Object Path)  related APIs
+-----------------------------------------------------------------------------*/
+int cpiRefAlloc(cpiRefHdl* pref);
+int cpiRefFree(cpiRefHdl ref);
+const char* cpiRefToString(cpiRefHdl ref);
+const char* cpiRefEscape(cpiRefHdl ref);
+const char* cpiRefUnEscape(cpiRefHdl ref);
+int cpiRefSetFromStr(cpiRefHdl ref, const char* refStr);
+int cpiRefSetNS(cpiRefHdl ref, const char* nsStr);
+int cpiRefAddKeyProp(cpiRefHdl ref, const char* propertyName, cpiValHdl propValue);
+int cpiRefGetKeys(cpiRefHdl ref, cpiVectHdl* keyProps);
+int cpiRefSetKeys(cpiRefHdl ref, cpiVectHdl newKeyProps);
+const char* cpiRefGetNS(cpiRefHdl ref);
+int cpiRefSetNS(cpiRefHdl ref, const char* nsStr);
+const char* cpiRefGetHost(cpiRefHdl ref);
+int cpiRefSetHost(cpiRefHdl ref, const char* hostStr);
+const char* cpiRefGetClsName(cpiRefHdl ref);
+int cpiRefSetClsName(cpiRefHdl ref, const char* clsNamaeStr);
+int cpiRefIsEqual(cipRefHdl ref1, cpiRefHdl ref2, cpiBool* result);
+const char* cpiRefGetModelPath(cpiRefHdl ref);
+
+/*-----------------------------------------------------------------------------
+	Parameter related APIs
+-----------------------------------------------------------------------------*/
+int cpiParmAlloc(cpiParmHdl* pparm);
+int cpiParmFree(cpiParmHdl* parm);
+const char* cpiParmGetName(cpiParmHdl parm);
+int cpiParmSetName(cpiParmHdl parm, const char* name);
+const char* cpiParmToString(cpiParmHdl parm);
+int cpiParmGetQual(cpiParmHdl parm, const char* qualName, cpiQualHdl* pQual);
+int cpiParmGetQuals(cpiParmHdl parm, cpiVectHdl* qualifiers);
+int cpiParmAddQual(cpiParmHdl parm, cpiQualHdl qualifier);
+int cpiParmSetQual(cpiParmHdl parm, cpiQualHdl qualifier);
+int cpiParmSetQuals(cpiParmHdl parm, cpiVectHdl qualifiers);
+int cpiParmRemoveQual(cpiParmHdl parm, const char* qualifierName);
+int cpiParmSetDataType(cpiParmHdl parm, int dataType);
+int cpiParmGetDataType(cpiParmHdl parm);
+int cpiParmGetDataSize(cpiParmHdl parm);
+
 
 #ifdef __cplusplus
 }
