@@ -122,6 +122,11 @@ the filename and line number, which is a great debugging help.
 Anytime you need to report a specific WBEM error (from CIM Operations over
 HTTP), throw an OpenWBEM::CIMException.  Use the OW_THROWCIM and OW_THROWCIMMSG
 macros to do this.
+
+Almost any function in OW may throw a std::bad_alloc if memory is exhausted.
+Keep this in mind when writing exception safe code.  Almost anything can
+throw.
+
 -----------------------------------------------------------------------------
 The following CIM elements are case-insensitive: Classes, Instances, Methods,
 Properties, Qualifiers and Method Parameters.
@@ -145,7 +150,7 @@ into a namespace, this is especially important for pluggable shared libaries
 like providers.
 Don't use a class with all static functions/data, instead use a namespace.
 
-Put all library & cimom code into namespace OpenWBEM.
+Put all library & cimom code into namespace OpenWBEM or a sub-namespace.
 -----------------------------------------------------------------------------
 If at all possible avoid static objects that have a constructor.  These can
 lead to the dreaded "static initialization dependency order" problem.  You're
@@ -191,6 +196,8 @@ Use all caps and put underscores between words in the filename (where it would
 be a new capital letter in the class name)  It's important to not get a
 collision with the same include guard of another file, that will cause
 unexplainable errors that lead to a lot of head-scratching and wasted time.
+Note that identifiers containing __ are reserved for the standard c++
+library, and MUST not be used in other code.
 -----------------------------------------------------------------------------
 All files must include "OW_config.h" as the first include file.
 cpp files must include it's corresponding header file as the 2nd include file.
@@ -216,6 +223,7 @@ should do 1 thing.
 Define a class's invariant.  Only functions that maintain or check the
 invariant belong in a class.  Other functions belong outside the class as
 utility/helper functions.
+Use OW_ASSERT macros to validate invariants and function pre-conditions.
 -----------------------------------------------------------------------------
 Don't use spaces to indent the code.  This is so you can set your tab
 spacing to your own liking in your editor.  If it's all spaces, you're stuck
@@ -286,25 +294,31 @@ If something is too complicated to test in the unit tests, make sure you get
 it covered by the acceptance test.
 -----------------------------------------------------------------------------
 Creating a new class.
+Use javadoc-type comments.  We use doxygen to generate API docs.
+
 When you create a new class, make sure you define and document the following:
-- Class invariant.
-- Thread safety: 
-   non-reentrant (need a mutex protecting it)
+- Invariants (Class invariants, expressions which are always true.)
+- Thread safety: (this is for all member functions of the class)
+   non-reentrant (need a mutex protecting it & the class cannot call back into
+    itself.)
    reentrant (need a mutex protecting it)
-   read threadsafe (multiple readers are okay, need a rw lock protecting it)
-   read/write threadsafe (don't need any mutex protection)
+   read (multiple readers are okay, need a rw lock protecting it)
+   read/write (don't need any mutex protection)
 - Copy semantics:
    Value (copies make a full deep copy)
    Copy On Write (uses COWReference to store implementation.  Copies are fast, 
     calling a non-const method will make a deep copy if needed to make it
-    unique.  It can be passed as parameters and returned from functions will
-    little overhead.)
+    unique.  It can be passed as parameters and returned from functions with
+    little overhead. Making copies is thread-safe.  Modifying separate copies
+    in separate threads is safe.)
    Pointer (class probably uses Reference to store a pointer to the
     implementation.  Copies are fast.  All copies refer to the same
-    implementation.)
+    implementation.  Modifying separate copies from separate threads is safe
+    only if the class is thread safe.)
    Non-copyable (copy ctor and operator= are private.  Use Reference if you
-    need to refer to the class in multiple places.)
-- Exception safety (document the lowest level of all the member functions for
+    need to refer to an instance of the class in multiple places.)
+   Clone (polymorphic class which supports Clone())
+- Exception safety: (document the lowest level of all the member functions for
    the class, and document each member function as well)
    Fubared (If an exception was thrown, the function may have leaked memory
     and/or left the instance in a non-usable inconsistent state (the invariant
@@ -315,5 +329,37 @@ When you create a new class, make sure you define and document the following:
    Strong (If an exception was thrown, the instance is in the state it was in
     before the method was called. Basically commit/rollback semantics.)
    No-throw (The method will never throw an exception)
+- Error conditions: what causes the errors and how they're reported. This item
+   only applies to [member] functions.
+
+There is no reason to document default constructor, destructor, copy
+constructor, or assignment operator if they have standard behavior. Do
+document constructors with arguments.
+
+If a class implements an interface, and the behavior is unchanged from the
+interface documentation, don't duplicate the member function interface docs, 
+as this simply creates an additional maintenance point.
+
+Here is an example of good class documentation:
+
+
+All new code must have some sort of test.  A unit test is preferable,
+however in some *extremely rare* conditions, the code may not be sufficiently
+self-contained to be tested as a unit.  In this case, first review the code
+to see if you can make it unit testable, and fix it. Also make sure there's an
+acceptance test that exercises the functionality.  Don't forget to test for
+negative conditions and correct error detection & reporting.
+-----------------------------------------------------------------------------
+Inline functions.
+Avoid using inline functions in any header file which may be included by a
+provider.  C++ includes all functions when creating a shared library, so
+all inline functions the library calls may be expanded inline and will also
+be included in the library (probably a provider).  This can cause a lot of
+duplication of code.  This in unavoidable with standard C++ templates, but
+for some templates with g++, it's possible to use explicit external template
+instantiation.  However, this is not always the best solution.  Experiments
+with Array<> actually raised code size significantly, because *all* the
+member functions get instantiated, whereas normally only functions which are
+actually called get instantiated.
 -----------------------------------------------------------------------------
 
