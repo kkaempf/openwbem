@@ -377,7 +377,6 @@ OW_CIMOMEnvironment::shutdown()
 
 	logDebug("CIMOM Environment has shut down");
 
-	//m_Logger = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
