@@ -30,9 +30,9 @@
 #ifndef OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
 #define OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_SSLException.hpp"
 #ifdef OW_HAVE_OPENSSL
 #include "OW_String.hpp"
-#include "OW_SSLException.hpp"
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
 #include <openssl/bio.h>

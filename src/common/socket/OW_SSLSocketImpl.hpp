@@ -37,10 +37,10 @@
 #ifndef OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
 #define OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#ifndef OW_NO_SSL
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_SSLException.hpp"
+#ifndef OW_NO_SSL
 
 namespace OpenWBEM
 {
