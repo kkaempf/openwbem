@@ -119,10 +119,7 @@ public:
 	virtual void deleteClass(const OW_String& ns, const OW_String& className) = 0;
 
 	/**
-	 * Deletes the CIM instance specified by the CIM object path.
-	 * A CIM object path consists of two  parts: namespace + model path. The
-	 * model path is created by concatenating the properties of a class that are
-	 * qualified with the KEY qualifier.
+	 * Deletes the CIM instance specified by path in namespace ns.
 	 * @param ns The namespace containing the instance
 	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
 	 * @exception OW_CIMException If the instance does not exist.
@@ -141,6 +138,31 @@ public:
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated.
+	 * @param result A callback object that will handle the classes as they are
+	 *		received.
+	 * @param deep If set to DEEP, the enumeration returned will
+	 *		contain the names of all classes derived from the enumerated class.
+	 *		If set to SHALLOW the enumermation will return only
+	 *		the names of the first level children of the enumerated class.
+	 * @param localOnly If set to LOCAL_ONLY, only the non-inherited properties
+	 *		are returned on each instance, otherwise all properties are returned.
+	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all class,
+	 *		property and method qualifiers will be returned.
+	 * @param includeClassOrigin If true, then the class origin attribute will
+	 *		be included with all appropriate elements of each class.
+	 * @exception OW_CIMException If the specified class cannot be found
+	 */
+	virtual void enumClass(const OW_String& ns,
+		const OW_String& className,
+		OW_CIMClassResultHandlerIFC& result,
+		OW_Bool deep=SHALLOW, OW_Bool localOnly=NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers=INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=INCLUDE_CLASS_ORIGIN) = 0;
+
+	/**
+	 * Enumerates the class specified by the OW_CIMObjectPath.
+	 * @param ns The namespace.
+	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
@@ -152,16 +174,8 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be included with all appropriate elements of each class.
 	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
-	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
-	 *		be found
+	 * @exception OW_CIMException If the specified class cannot be found
 	 */
-	virtual void enumClass(const OW_String& ns,
-		const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result,
-		OW_Bool deep=SHALLOW, OW_Bool localOnly=NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers=INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=INCLUDE_CLASS_ORIGIN) = 0;
-
 	virtual OW_CIMClassEnumeration enumClassE(const OW_String& ns,
 		const OW_String& className,
 		OW_Bool deep=SHALLOW,
@@ -170,17 +184,18 @@ public:
 		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
 
 	/**
-	 * Enumerates the class specified by className.
+	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
-	 * @param className The class to be enumerated.
+	 * @param className The class to be enumerated. Pass an empty string if
+	 *		you wish to enumerate all classes.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
 	 *		the names of the first level children of the enumerated class.
 	 * @return An enumeration of OW_CIMObjectPath objects
 	 *		(OW_CIMObjectPathEnumeration)
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be found
+	 * @exception OW_CIMException If the specified CIMObjectPath object
+	 *		cannot be found
 	 */
 	virtual void enumClassNames(
 		const OW_String& ns,
