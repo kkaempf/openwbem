@@ -343,7 +343,7 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillInetAddrParms: getsockname");
+				format("OW_SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
 	}
 	m_localAddress.assignFromNativeForm(&addr, len);
 
@@ -351,7 +351,7 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 	if(getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillInetAddrParms: getpeername");
+				format("OW_SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
 	}
 
 	m_peerAddress.assignFromNativeForm(&addr, len);
