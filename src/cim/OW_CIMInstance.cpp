@@ -59,6 +59,7 @@ struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 	CIMPropertyArray m_keys;
 	CIMPropertyArray m_properties;
 	CIMQualifierArray m_qualifiers;
+	String m_language;
 	INSTData* clone() const { return new INSTData(*this); }
 };
 bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
@@ -124,6 +125,18 @@ String
 CIMInstance::getClassName() const
 {
 	return m_pdata->m_owningClassName;
+}
+//////////////////////////////////////////////////////////////////////////////
+String 
+CIMInstance::getLanguage() const
+{
+	return m_pdata->m_language;
+}
+//////////////////////////////////////////////////////////////////////////////
+void 
+CIMInstance::setLanguage(const String& language)
+{
+	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
@@ -481,6 +494,7 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	CIMInstance ci;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
+	ci.m_pdata->m_language = m_pdata->m_language;
 	//
 	// Process qualifiers
 	//
@@ -769,11 +783,20 @@ CIMInstance::readObject(istream &istrm)
 	CIMPropertyArray properties;
 	CIMPropertyArray keys;
 	CIMQualifierArray qualifiers;
-	CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
+	String language;
+
+	UInt32 version = CIMBase::readSig(istrm, OW_CIMINSTANCESIG,
+		OW_CIMINSTANCESIG_V);
+
 	owningClassName.readObject(istrm);
 	BinarySerialization::readArray(istrm, keys);
 	BinarySerialization::readArray(istrm, properties);
 	BinarySerialization::readArray(istrm, qualifiers);
+	// If dealing with versioned format, then read language
+	if(version > 0)
+	{
+		language.readObject(istrm);
+	}
 	if(!m_pdata)
 	{
 		m_pdata = new INSTData;
@@ -782,16 +805,18 @@ CIMInstance::readObject(istream &istrm)
 	m_pdata->m_keys = keys;
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
+	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
-	CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
+	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, VERSION);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	m_pdata->m_language.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

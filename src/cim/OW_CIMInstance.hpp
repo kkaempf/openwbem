@@ -67,6 +67,7 @@ class CIMInstance : public CIMElement
 {
 public:
 	struct INSTData;
+	static const UInt32 VERSION = 1;	// Version # for serialization
 	/**
 	 * Default ctor
 	 */
@@ -121,6 +122,15 @@ public:
 	 * @return a reference to *this
 	 */
 	CIMInstance& setClassName(const String& name);
+	/**
+	 * @return the language this CIMClass is using
+	 */
+	String getLanguage() const;
+	/**
+	 * Set the language this CIMClass is using
+	 * @param language The new language for this CIMClass
+	 */
+	void setLanguage(const String& language);
 	/**
 	 * @return The qualifiers for this instance as an array of CIMQualifiers.
 	 */

@@ -36,6 +36,7 @@
 #ifndef OW_CIMBASE_HPP_
 #define OW_CIMBASE_HPP_
 #include "OW_config.h"
+#include "OW_Types.hpp"
 #include "OW_SerializableIFC.hpp"
 #include <iosfwd>
 
@@ -83,6 +84,34 @@ public:
 	 * @throws BadCIMSignatureException
 	 */
 	static void readSig(std::istream& istrm, const char* const sig);
+
+	/**
+	 * Read one of two given signatures from the input stream. Each class
+	 * derived from CIMBase must have a uniqe signature associated with it.
+	 * Older class signatures represent a data format that do not have a format
+	 * version associated with it. If the older signature is read then the
+	 * format version is assumed to be zero. If the new signature is read, then
+	 * the version is read as well. This version will be given to the caller so
+	 * the object can be read in it's proper form. 
+	 *
+	 * @param istrm The input stream to read the signature from.
+	 * @param sig The old signature. This will be the signature that was used
+	 * 		before versioning was implemented on the derived class. Must be a
+	 * 		NULL terminated string. If the signature read does not match then
+	 * 		verSig will be checked.
+	 * @param verSig The new signature. This will be the signature that is
+	 * 		used after implementing versioning on the derived class. Must be a
+	 * 		NULL terminated string. If the signature read does not match then
+	 * 		a BadCIMSignatureException will be thrown. Otherwise this method
+	 * 		will read the version data that follows the signature.
+	 * @return Version number for the derived class. If version returned == 0,
+	 * 		then the old signature was the match. If version returned > 0,
+	 * 		then the derived class has implemented versioning.
+	 * @throws BadCIMSignatureException
+	 */
+	static UInt32 readSig(std::istream& istrm, const char* const sig,
+		const char* const verSig);
+
 	/**
 	 * Write the given class signature to an output stream.
 	 *
@@ -92,10 +121,22 @@ public:
 	 *		terminated string.
 	 */
 	static void writeSig(std::ostream& ostrm, const char* const sig);
+
+	/**
+	 * Write the given class signature and version to the output stream.
+	 * @param ostrm The output stream to write the signature to.
+	 * @param sig The signature to write to the output stream as a NULL
+	 *		terminated string.
+	 * @param version The version value to write to the output stream.
+	 */
+	static void writeSig(std::ostream& ostrm, const char* const sig,
+		UInt32 version);
+
 };
 std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 ///////////////////////////////////////////////////////////////////////////////
-// signatures to be passed to readSig and writeSig
+// signatures for non-versioned format of objects. These are pass to the
+// readSig and writeSig methods.
 #define OW_CIMCLASSSIG					"C"	// OW_CIMClass
 #define OW_CIMINSTANCESIG				"I"	// OW_CIMInstance
 #define OW_CIMMETHODSIG					"M"	// OW_CIMMethod
@@ -113,6 +154,28 @@ std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 #define OW_CIMURLSIG					"U"	// OW_CIMUrl
 #define OW_INTERNNAMESPACESIG			"E"	// Internval namespace class
 #define OW_CIMPARAMVALUESIG				"L"	// OW_CIMParamValue
+
+///////////////////////////////////////////////////////////////////////////////
+// signatures for versioned format of objects. These are pass to the
+// readSig and writeSig methods.
+#define OW_CIMCLASSSIG_V   				"c"	// OW_CIMClass
+#define OW_CIMINSTANCESIG_V				"i"	// OW_CIMInstance
+#define OW_CIMMETHODSIG_V				"m"	// OW_CIMMethod
+#define OW_CIMPARAMETERSIG_V 			"p"	// OW_CIMParameter
+#define OW_CIMPARAMVALSIG_V				"a"	// OW_CIMParamValue
+#define OW_CIMPROPERTYSIG_V				"r"	// OW_CIMProperty
+#define OW_CIMQUALIFIERSIG_V			"q"	// OW_CIMQualifier
+#define OW_CIMQUALIFIERTYPESIG_V		"t"	// OW_CIMQualifierType
+#define OW_CIMDATATYPESIG_V				"d"	// OW_CIMDataType
+#define OW_CIMFLAVORSIG_V				"f"	// OW_CIMFlavor
+#define OW_CIMNAMESPACESIG_V			"n"	// OW_CIMNameSpace
+#define OW_CIMOBJECTPATHSIG_V			"o"	// OW_CIMObjectPath
+#define OW_CIMSCOPESIG_V				"s"	// OW_CIMScope
+#define OW_CIMVALUESIG_V				"v"	// OW_CIMValue
+#define OW_CIMURLSIG_V					"u"	// OW_CIMUrl
+#define OW_INTERNNAMESPACESIG_V			"e"	// Internval namespace class
+#define OW_CIMPARAMVALUESIG_V			"l"	// OW_CIMParamValue
+
 
 } // end namespace OpenWBEM
 

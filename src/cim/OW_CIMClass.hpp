@@ -60,6 +60,7 @@ public:
 	struct CLSData;
 	/** Name of the internal namespace class */
 	static const char* const NAMESPACECLASS;
+	static const UInt32 VERSION = 1;	// Version # for serialization
 	/**
 	 * Create a new CIMClass object.
 	 */
@@ -370,6 +371,15 @@ public:
 	 * @param name	The new name for this CIMClass object.
 	 */
 	virtual void setName(const String& name);
+	/**
+	 * @return the language this CIMClass is using
+	 */
+	String getLanguage() const;
+	/**
+	 * Set the language this CIMClass is using
+	 * @param language The new language for this CIMClass
+	 */
+	void setLanguage(const String& language);
 	/**
 	 * Read this CIMClass object from an input stream.
 	 * @param istrm The input stream to read this CIMClass from.

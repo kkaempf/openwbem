@@ -69,6 +69,7 @@ struct CIMClass::CLSData : public COWIntrusiveCountableBase
 	CIMMethodArray m_methods;
 	Bool m_associationFlag;
 	Bool m_isKeyed;
+	String m_language;
 	CLSData* clone() const { return new CLSData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -558,10 +559,23 @@ CIMClass::newInstance() const
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
 CIMClass::filterProperties(const StringArray& propertyList,
-	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin) const
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin) const
 {
-	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
-		false);
+	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin,
+		propertyList, false);
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMClass::getLanguage() const
+{
+	return m_pdata->m_language;
+}
+//////////////////////////////////////////////////////////////////////////////
+void 
+CIMClass::setLanguage(const String& language)
+{
+	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
@@ -578,6 +592,7 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 	theClass.m_pdata->m_parentClassName = m_pdata->m_parentClassName;
 	theClass.m_pdata->m_associationFlag = m_pdata->m_associationFlag;
 	theClass.m_pdata->m_isKeyed = m_pdata->m_isKeyed;
+	theClass.m_pdata->m_language = m_pdata->m_language;
 	//
 	// Process qualifiers
 	//
@@ -648,12 +663,14 @@ CIMClass::readObject(istream &istrm)
 {
 	String name;
 	String pcName;
+	String language;
 	CIMQualifierArray qra;
 	CIMPropertyArray pra;
 	CIMMethodArray mra;
 	Bool isAssocFlag;
 	Bool isK;
-	CIMBase::readSig( istrm, OW_CIMCLASSSIG );
+
+	UInt32 version = CIMBase::readSig(istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V);
 	name.readObject(istrm);
 	pcName.readObject(istrm);
 	isAssocFlag.readObject(istrm);
@@ -661,6 +678,11 @@ CIMClass::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, qra);
 	BinarySerialization::readArray(istrm, pra);
 	BinarySerialization::readArray(istrm, mra);
+	// If dealing with versioned format, then read language
+	if(version > 0)
+	{
+		language.readObject(istrm);
+	}
 	if(!m_pdata)
 	{
 		m_pdata = new CLSData;
@@ -672,12 +694,13 @@ CIMClass::readObject(istream &istrm)
 	m_pdata->m_qualifiers = qra;
 	m_pdata->m_properties = pra;
 	m_pdata->m_methods = mra;
+	m_pdata->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMClass::writeObject(ostream &ostrm) const
 {
-	CIMBase::writeSig( ostrm, OW_CIMCLASSSIG );
+	CIMBase::writeSig(ostrm, OW_CIMCLASSSIG_V, VERSION);
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_parentClassName.writeObject(ostrm);
 	m_pdata->m_associationFlag.writeObject(ostrm);
@@ -685,6 +708,7 @@ CIMClass::writeObject(ostream &ostrm) const
 	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_methods);
+	m_pdata->m_language.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

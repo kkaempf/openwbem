@@ -66,11 +66,53 @@ CIMBase::readSig( istream& istr, const char* const sig )
 }
 //////////////////////////////////////////////////////////////////////////////		
 // static
-void CIMBase::writeSig( ostream& ostr, const char* const sig )
+UInt32 
+CIMBase::readSig(std::istream& istr, const char* const sig,
+	const char* const verSig)
+{
+	UInt32 version = 0;
+	char expected, ch;
+	OW_ASSERT( strlen(sig) == 1);
+	OW_ASSERT( strlen(verSig) == 1);
+
+	expected = sig[0];
+	BinarySerialization::read(istr, &ch, sizeof(ch));
+	if(sig[0] != ch)
+	{
+		if(verSig[0] != ch)
+		{
+			OW_THROW(BadCIMSignatureException,
+				Format("Signature does not match. In CIMBase::readSig. "
+					"signature read: %1, expected: %2 or %3",
+					ch, sig, verSig).c_str() );
+		}
+
+		// Version is ASN.1 length encoded
+		BinarySerialization::readLen(istr, version);
+	}
+
+	return version;
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+// static
+void
+CIMBase::writeSig( ostream& ostr, const char* const sig )
 {
 	OW_ASSERT(strlen(sig) == 1);
 	BinarySerialization::write(ostr, sig, 1);
 }
+//////////////////////////////////////////////////////////////////////////////		
+// static
+void 
+CIMBase::writeSig(std::ostream& ostr, const char* const sig, UInt32 version)
+{
+	OW_ASSERT(strlen(sig) == 1);
+	BinarySerialization::write(ostr, sig, 1);
+	// Use ASN.1 length encoding for version
+	BinarySerialization::writeLen(ostr, version);
+}
+
 //////////////////////////////////////////////////////////////////////////////		
 std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb)
 {
