@@ -247,7 +247,7 @@ processCommandLineOptions(int argc, char** argv)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void restartDaemon()
+void rerunDaemon()
 {
 #ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
 	// do this, since it seems that on some distros (debian sarge for instance) 
@@ -286,6 +286,12 @@ void restartDaemon()
 
 	// If we get here we're pretty much hosed.
 	OW_THROW_ERRNO_MSG(DaemonException, "execv() failed");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void restartDaemon()
+{
+	::kill(::getpid(), SIGHUP);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -357,13 +363,13 @@ theSigHandler(int sig)
 static void 
 abortHandler(int sig)
 {
-	Platform::restartDaemon();
+	Platform::rerunDaemon();
 }
 
 static void
 fatalSigHandler(int sig)
 {
-	Platform::restartDaemon();
+	Platform::rerunDaemon();
 }
 } // extern "C"
 //////////////////////////////////////////////////////////////////////////////

@@ -90,13 +90,23 @@ namespace Platform
 	using UserUtils::getCurrentUserName;
 
 	/** 
-	 * Restart the daemon.  This closes all file handles and then calls
+	 * Re-run the daemon.  This closes all file handles and then calls
 	 * execv to replace the current process with a new copy of the daemon.
 	 * precondition: daemonInit() must have been called previously, because
 	 * the same set of arguments will be passed to execv().
+	 * 
+	 * This function does not return.
+	 * 
 	 * @throws DaemonException in the case execv() fails.
 	 */
+	void rerunDaemon();
+
+	/**
+	 * Restart the daemon. This initiates the restart process. On POSIX
+	 * platforms, it just sends a SIGHUP to the main process.
+	 */
 	void restartDaemon();
+
 	void installFatalSignalHandlers();
 	void removeFatalSignalHandlers();
 }; // end namespace Platform

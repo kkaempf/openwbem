@@ -42,14 +42,22 @@
 #include "OW_Format.hpp"
 #include <exception>
 #include <iostream> // for cout
+#include <new> // for new handler stuff
 
 #include <unistd.h> // for execv
 
 using namespace OpenWBEM;
 
-static bool processCommandLine(int argc, char* argv[],
+namespace
+{
+
+bool processCommandLine(int argc, char* argv[],
 	CIMOMEnvironmentRef env);
-static void printUsage(std::ostream& ostrm);
+void printUsage(std::ostream& ostrm);
+
+void owcimomd_new_handler();
+
+}
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
@@ -78,6 +86,8 @@ int main(int argc, char* argv[])
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
 		std::terminate_handler oldTerminateHandler = 0;
+		std::new_handler oldNewHandler = std::set_new_handler(owcimomd_new_handler);
+
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
 			const char* const restartDisabledMessage = 
@@ -91,8 +101,8 @@ int main(int argc, char* argv[])
 			if ((debugMode == false) && argv[0][0] == '/') // if argv[0][0] != '/' the restart will not be predictable
 			{
 				Platform::installFatalSignalHandlers();
-				std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
-				std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
+				oldUnexpectedHandler = std::set_unexpected(Platform::rerunDaemon);
+				oldTerminateHandler = std::set_terminate(Platform::rerunDaemon);
 			}
 			else
 			{
@@ -142,7 +152,14 @@ int main(int argc, char* argv[])
 					env->clearConfigItems();
 					env = CIMOMEnvironment::g_cimomEnvironment = 0;
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
-					Platform::restartDaemon();
+					Platform::rerunDaemon();
+
+					// typically on *nix, restartDaemon() doesn't return, however to account for environments where 
+					// it won't we'll leave this code here to re-initialize.
+					env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
+					processCommandLine(argc, argv, env);
+					env->init();
+					env->startServices();
 					break;
 				default:
 					break;
@@ -184,8 +201,12 @@ int main(int argc, char* argv[])
 	env->logInfo("CIMOM has shutdown");
 	return rval;
 }
+
+namespace
+{
+
 //////////////////////////////////////////////////////////////////////////////
-static bool
+bool
 processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 {
 	// Process command line options
@@ -212,8 +233,9 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 	}
 	return  opts.debug;
 }
+
 //////////////////////////////////////////////////////////////////////////////
-static void
+void
 printUsage(std::ostream& ostrm)
 {
 	ostrm << OW_DAEMON_NAME << " [OPTIONS]..." << std::endl;
@@ -223,3 +245,15 @@ printUsage(std::ostream& ostrm)
 	ostrm << "\t-h, --help   Print this help information" << std::endl;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void owcimomd_new_handler()
+{
+#ifdef OW_DEBUG
+	abort();
+#endif
+
+	Platform::restartDaemon();
+	throw std::bad_alloc();
+}
+
+} // end unnamed namespace
