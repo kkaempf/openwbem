@@ -164,9 +164,8 @@ Notifier::run()
 	CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 	try
 	{
-		m_trans.m_provider->exportIndication(createProvEnvRef(
-			m_pmgr->getEnvironment()), m_trans.m_ns, m_trans.m_handler,
-			m_trans.m_indication);
+		m_trans.m_provider->exportIndication(createProvEnvRef(env), 
+			m_trans.m_ns, m_trans.m_handler, m_trans.m_indication);
 	}
 	catch(Exception& e)
 	{
