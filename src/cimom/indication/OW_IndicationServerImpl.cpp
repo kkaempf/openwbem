@@ -1118,6 +1118,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		}
 	}
 
+	// get rid of duplicate providers - unique() requires that the range be sorted
+	std::sort(providers.begin(), providers.end());
+	providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
+
     log->logDebug(format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
