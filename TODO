@@ -44,6 +44,9 @@ Fix problems:
       providers.
     - Domain socket should be under the statedir (/var) not /tmp
     - Add forwarding headers for each directory.
+    - Doxygen appears to ignore global functions associated with a class in 
+      the header file for that class -- for example, when you look up String, 
+      it doesn't show you the associated relational operators ==, !=, <, etc.
     - Create a way to not have extrinsic methods not require the write lock.
       If a qualifier is available for this, that will work, and the CIM Server
       can look at it in begin/endOperation and pass the result down to the
