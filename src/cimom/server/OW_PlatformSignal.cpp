@@ -54,13 +54,10 @@ namespace OW_NAMESPACE
 				fileDescriptor(0),
 				band(0)
 			{
-#if defined(OW_HAVE_SIGVAL_TYPE)
-				// This nastyness is here because there doesn't appear to be any common way of setting this field.
-#if defined(OW_HAVE_SIGVAL_T_SIVAL_INT)
-				timerValue.sival_int = 0;
-#elif defined(OW_HAVE_SIGVAL_T_SIGVAL_INT)
+#if defined(OW_HAVE_SIGVAL_TYPE_SIGVAL_INT)
 				timerValue.sigval_int = 0;
-#endif
+#elif defined(OW_HAVE_SIGVAL_TYPE_SIVAL_INT)
+				timerValue.sival_int = 0;
 #else
 				timerValue = 0;
 #endif

@@ -51,12 +51,8 @@ namespace OW_NAMESPACE
 
 			// Some platforms define a sigval_t struct, others define sigval.
 			// Autoconf magic was done to define these macros.
-#if defined(OW_HAVE_SIGVAL_TYPE)
-#if defined(OW_HAVE_SIGVAL_T)
-			typedef ::sigval_t sigval_type;
-#elif defined(OW_HAVE_SIGVAL)
-			typedef ::sigval sigval_type;
-#endif
+#if defined(OW_SIGVAL_TYPE)
+			typedef OW_SIGVAL_TYPE sigval_type;
 #else
 			// This won't be used, except as a placeholder, but a typedef here is
 			// much better than a bunch of #ifdefs later.

@@ -686,16 +686,21 @@ AC_CHECK_FUNC(gethostbyname_r,
 ] )
 dnl end of gethostbyname_r checks.
 
-dnl Check for the sighandler_t, sigval, and sigval_t typedefs
+dnl Check for the sighandler_t type
 AC_CHECK_TYPES([sighandler_t], , ,[#include <signal.h>])
-AC_CHECK_TYPES([sigval, sigval_t],AC_DEFINE(HAVE_SIGVAL_TYPE, 1, Have a known form of sigval_t), ,[#include <signal.h>])
+dnl Check for sigval or sigval_t typedefs (normal, struct, or union)
+AC_CHECK_TYPES([sigval],[AC_DEFINE(SIGVAL_TYPE, sigval, The sigval type)], ,[#include <signal.h>])
+AC_CHECK_TYPES([union sigval],[AC_DEFINE(SIGVAL_TYPE, union sigval, The sigval type)], ,[#include <signal.h>])
+AC_CHECK_TYPES([struct sigval],[AC_DEFINE(SIGVAL_TYPE, struct sigval, The sigval type)], ,[#include <signal.h>])
+AC_CHECK_TYPES([sigval_t],[AC_DEFINE(SIGVAL_TYPE, sigval_t, The sigval type)], ,[#include <signal.h>])
+AC_CHECK_TYPES([union sigval_t],[AC_DEFINE(SIGVAL_TYPE, union sigval_t, The sigval type)], ,[#include <signal.h>])
+AC_CHECK_TYPES([struct sigval_t],[AC_DEFINE(SIGVAL_TYPE, struct sigval_t, The sigval type)], ,[#include <signal.h>])
 
 dnl Check the existance of strsignal.
 AC_CHECK_FUNCS(strsignal)
 
 dnl Check the availability siginfo_t and sigval_t members.
-AC_CHECK_MEMBERS([siginfo_t.si_fd, sigval_t.sival_int, sigval_t.sigval_int], , ,[#include <signal.h>])
-
+AC_CHECK_MEMBERS([siginfo_t.si_fd, SIGVAL_TYPE.sival_int, SIGVAL_TYPE.sigval_int], , ,[#include <signal.h>])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
