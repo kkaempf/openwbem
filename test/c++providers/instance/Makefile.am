@@ -6,18 +6,17 @@ clean-local : clean-ow-shared-libs
 noinst_LIBRARIES = \
 liblaptopbat.a \
 liblinuxprocess.a \
+librpmip.a \
 libtestinstance.a \
 libinfiniteip.a
 
-#librpmip.a 
 
 OW_SHARED_LIBS = \
 liblaptopbat.so \
 liblinuxprocess.so \
+librpmip.so \
 libtestinstance.so \
 libinfiniteip.so
-
-#librpmip.so 
 
 libinfiniteip_a_SOURCES = \
 OW_Infinity.cpp
@@ -28,8 +27,8 @@ OW_LaptopBattery.cpp
 liblinuxprocess_a_SOURCES = \
 OW_LinuxProcess.cpp
 
-#librpmip_a_SOURCES = \
-#OW_RPM.cpp
+librpmip_a_SOURCES = \
+OW_RPM.cpp
 
 libtestinstance_a_SOURCES = \
 testinstance.cpp
