@@ -88,9 +88,8 @@ Install()
 	echo "test3:pass3" >> $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
 
 	# set a symlink to the server SSL key+certificate
-	mkdir -p $STAGEDIR/etc/ssl/private
 	cp $TOPSRCDIR/test/acceptance/testfiles/hostkey+cert.pem \
-		$STAGEDIR/etc/ssl/private
+		$STAGEDIR/$OWSYSCONFDIR/openwbem
 	
 	# for client driver and acl test.
 	ln -sf $BUILDDIR/test/c++providers/method/libmethodtest.so  \
