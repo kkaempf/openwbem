@@ -1,6 +1,6 @@
 #! /bin/sh
 
-rm -f config.cache config.guess config.sub depcomp missing mkinstalldirs
+rm -rf config.cache config.guess config.sub depcomp missing mkinstalldirs autom4te.cache
 
 aclocal \
 && autoconf \
