@@ -70,7 +70,6 @@ bool XMLParserCore::next(XMLToken& entry)
 		m_tagIsEmpty = false;
 		entry.type = XMLToken::END_TAG;
 		entry.attributeCount = 0;
-		entry.text.reset();
 		return true;
 	}
 	// Either a "<...>" or content begins next:
