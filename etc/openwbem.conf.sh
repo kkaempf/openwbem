@@ -15,8 +15,8 @@
 ###############################################################################
 
 ################################################################################
-# If owcimomd.allow_anonymous is set to true anonymous logins are allowed by
-# owcimomd, authentication is disabled and no user name or password is required.
+# If owcimomd.allow_anonymous is set to true, anonymous logins are allowed by
+# owcimomd, authentication is disabled, and no user name or password is required.
 # The default is false
 ;owcimomd.allow_anonymous = false
 
