@@ -116,10 +116,10 @@
 #
 # Examples:
 #   Log4j TTCC layout:
-#   "%r [%t] %-5p %c %x - %m"
+#   "%r [%t] %-5p %c - %m"
 #
 #   Similar to TTCC, but with some fixed size fields:
-#   "%-6r [%15.15t] %-5p %30.30c %x - %m"
+#   "%-6r [%15.15t] %-5p %30.30c - %m"
 #
 #   XML output conforming to log4j.dtd 1.2 which can be processed by Chainsaw.
 #   If used, this has to be on one line, it's split up here for readability.
