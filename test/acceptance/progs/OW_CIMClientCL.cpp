@@ -85,6 +85,16 @@ usage(const char* name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+template <typename T>
+struct sorter
+{
+	bool operator()(const T& x, const T& y)
+	{
+		return x.toString() < y.toString();
+	}
+};
+
+//////////////////////////////////////////////////////////////////////////////
 void
 createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 {
@@ -720,7 +730,7 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			cout << "Associated path: " << v[x].toString() << endl;
@@ -756,7 +766,7 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			cout << "Associated path: " << v[x].toString() << endl;
@@ -801,7 +811,7 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::vector<OW_CIMInstance> v = std::vector<OW_CIMInstance>(
 			OW_Enumeration_input_iterator<OW_CIMInstance>(enu),
 			OW_Enumeration_input_iterator<OW_CIMInstance>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMInstance>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
@@ -852,7 +862,7 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::vector<OW_CIMClass> v = std::vector<OW_CIMClass>(
 			OW_Enumeration_input_iterator<OW_CIMClass>(enu),
 			OW_Enumeration_input_iterator<OW_CIMClass>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMClass>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
@@ -901,7 +911,7 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			cout << "Associated path: " << v[x].toString() << endl;
@@ -936,7 +946,7 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			cout << "Associated path: " << v[x].toString() << endl;
@@ -979,7 +989,7 @@ references(OW_CIMOMHandleIFC& hdl,
 		std::vector<OW_CIMInstance> v = std::vector<OW_CIMInstance>(
 			OW_Enumeration_input_iterator<OW_CIMInstance>(enu),
 			OW_Enumeration_input_iterator<OW_CIMInstance>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMInstance>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
@@ -1030,7 +1040,7 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 		std::vector<OW_CIMClass> v = std::vector<OW_CIMClass>(
 			OW_Enumeration_input_iterator<OW_CIMClass>(enu),
 			OW_Enumeration_input_iterator<OW_CIMClass>());
-		std::sort(v.begin(), v.end());
+		std::sort(v.begin(), v.end(), sorter<OW_CIMClass>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
