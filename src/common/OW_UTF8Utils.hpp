@@ -138,8 +138,11 @@ OW_COMMON_API String UCS2ToString(const void* input, size_t inputLength);
 
 /**
  * Convert the UTF-8 string to upper case. The string is modified in place.
- * If a character is encountered whose replacement occupies a different number
+ * If a character is encountered whose replacement occupies a greater number
  * of bytes than the original, processing will cease and false will be returned.
+ * The current implementation does not handle any of the special cases
+ * as defined in the Unicode SpecialCasing.txt file, and thus characters will
+ * not grow, so currently false will never be returned.
  * @return true if successful. false if the upper-cased replacement would be 
  * larger than the original.
  */
@@ -152,8 +155,11 @@ OW_COMMON_API String toUpperCase(const char* input);
 
 /**
  * Convert the UTF-8 string to lower case. The string is modified in place.
- * If a character is encountered whose replacement occupies a different number
+ * If a character is encountered whose replacement occupies a greater number
  * of bytes than the original, processing will cease and false will be returned.
+ * The current implementation does not handle any of the special cases
+ * as defined in the Unicode SpecialCasing.txt file, and thus characters will
+ * not grow, so currently false will never be returned.
  * @return true if successful. false if the lower-cased replacement would be 
  * larger than the original.
  */
