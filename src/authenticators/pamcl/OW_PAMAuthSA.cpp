@@ -36,6 +36,9 @@
 #include "OW_config.h"
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 extern "C"
 {
 #if defined OW_HAVE_PAM_PAM_APPL_H 
