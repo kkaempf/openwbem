@@ -1917,13 +1917,29 @@ OW_CIMServer::invokeMethod(
 			intAclInfo, false);
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, false);
-		try
+		
+		OW_CIMClass cctemp(cc);
+
+		// we need to query for providers for this class and all base classes.
+		// One provider may instrument an entire hierarchy of classes.
+		// loop until we've got a provider or hit a root class
+		while (true)
 		{
-			methodp = m_provManager->getMethodProvider(
-				createProvEnvRef(internal_ch), ns, cc, method);
-		}
-		catch (const OW_NoSuchProviderException&)
-		{
+			try
+			{
+				methodp = m_provManager->getMethodProvider(
+					createProvEnvRef(internal_ch), ns, cctemp, method);
+			}
+			catch (const OW_NoSuchProviderException&)
+			{
+			}
+			OW_String parentClassName = cctemp.getSuperClass();
+			if (parentClassName.empty() || methodp)
+			{
+				// loop until we've got a provider or hit a root class
+				break;
+			}
+			cctemp = _getClass(ns, parentClassName);
 		}
 
 		if(!methodp)
@@ -2108,79 +2124,124 @@ OW_CIMServer::invokeMethod(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
-OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc)
+OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 {
-	// TODO: Determine if we need to also check for providers for all base classes of cc
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_InstanceProviderIFCRef instancep;
-	try
+	OW_CIMClass cc(cc_);
+
+	// we need to query for providers for this class and all base classes.
+	// One provider may instrument an entire hierarchy of classes.
+	// loop until we've got a provider or hit a root class
+	while (true)
 	{
-		instancep =
-			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch), ns, cc);
-	}
-	catch (const OW_NoSuchProviderException&)
-	{
-		// if it's not an instance or associator provider, then ERROR!
 		try
 		{
-			m_provManager->getAssociatorProvider(
-				createProvEnvRef(internal_ch), ns, cc);
+			instancep =
+				m_provManager->getInstanceProvider(createProvEnvRef(internal_ch), ns, cc);
 		}
-		catch (const OW_NoSuchProviderException& e)
+		catch (const OW_NoSuchProviderException&)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				format("Invalid provider: %1", e.getMessage()).c_str());
+			// if it's not an instance or associator provider, then ERROR!
+			try
+			{
+				m_provManager->getAssociatorProvider(
+					createProvEnvRef(internal_ch), ns, cc);
+			}
+			catch (const OW_NoSuchProviderException& e)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					format("Invalid provider: %1", e.getMessage()).c_str());
+			}
 		}
+		OW_String parentClassName = cc.getSuperClass();
+		if (parentClassName.empty() || instancep)
+		{
+			// loop until we've got a provider or hit a root class
+			break;
+		}
+		cc = _getClass(ns, parentClassName);
 	}
+
 	return instancep;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
-OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc)
+OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_)
 {
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_AssociatorProviderIFCRef ap;
-	try
+	OW_CIMClass cc(cc_);
+
+	// we need to query for providers for this class and all base classes.
+	// One provider may instrument an entire hierarchy of classes.
+	// loop until we've got a provider or hit a root class
+	while (true)
 	{
-		ap =  m_provManager->getAssociatorProvider(
-			createProvEnvRef(internal_ch), ns, cc);
-	}
-	catch (const OW_NoSuchProviderException&)
-	{
-		// if it's not an instance or associator provider, then ERROR!
 		try
 		{
-			m_provManager->getInstanceProvider(
+			ap =  m_provManager->getAssociatorProvider(
 				createProvEnvRef(internal_ch), ns, cc);
 		}
-		catch (const OW_NoSuchProviderException& e)
+		catch (const OW_NoSuchProviderException&)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				format("Invalid provider: %1", e.getMessage()).c_str());
+			// if it's not an instance or associator provider, then ERROR!
+			try
+			{
+				m_provManager->getInstanceProvider(
+					createProvEnvRef(internal_ch), ns, cc);
+			}
+			catch (const OW_NoSuchProviderException& e)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					format("Invalid provider: %1", e.getMessage()).c_str());
+			}
 		}
+		OW_String parentClassName = cc.getSuperClass();
+		if (parentClassName.empty() || ap)
+		{
+			// loop until we've got a provider or hit a root class
+			break;
+		}
+		cc = _getClass(ns, parentClassName);
 	}
 	return ap;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
-OW_CIMServer::_getPropertyProvider(const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& prop)
+OW_CIMServer::_getPropertyProvider(const OW_String& ns, const OW_CIMClass& cc_, const OW_CIMProperty& prop)
 {
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_PropertyProviderIFCRef propp;
-	try
+	OW_CIMClass cc(cc_);
+
+	// we need to query for providers for this class and all base classes.
+	// One provider may instrument an entire hierarchy of classes.
+	// loop until we've got a provider or hit a root class
+	while (true)
 	{
-		propp =
-			m_provManager->getPropertyProvider(createProvEnvRef(internal_ch), ns, cc, prop);
-	}
-	catch (const OW_NoSuchProviderException& e)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			format("Invalid provider: %1", e.getMessage()).c_str());
+		try
+		{
+			propp =
+				m_provManager->getPropertyProvider(createProvEnvRef(internal_ch), ns, cc, prop);
+		}
+		catch (const OW_NoSuchProviderException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				format("Invalid provider: %1", e.getMessage()).c_str());
+		}
+		OW_String parentClassName = cc.getSuperClass();
+		if (parentClassName.empty() || propp)
+		{
+			// loop until we've got a provider or hit a root class
+			break;
+		}
+		cc = _getClass(ns, parentClassName);
 	}
 	return propp;
 }
