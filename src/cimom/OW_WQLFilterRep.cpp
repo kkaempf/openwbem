@@ -395,30 +395,58 @@ OW_WQLFilterRep::execQuery(const OW_String& /*ns*/,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::getReadLock()
+OW_WQLFilterRep::getSchemaReadLock()
 {
-	m_pCIMServer->getReadLock();
+	m_pCIMServer->getSchemaReadLock();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::getWriteLock()
+OW_WQLFilterRep::getSchemaWriteLock()
 {
-	m_pCIMServer->getWriteLock();
+	m_pCIMServer->getSchemaWriteLock();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::releaseReadLock()
+OW_WQLFilterRep::releaseSchemaReadLock()
 {
-	m_pCIMServer->releaseReadLock();
+	m_pCIMServer->releaseSchemaReadLock();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::releaseWriteLock()
+OW_WQLFilterRep::releaseSchemaWriteLock()
 {
-	return m_pCIMServer->releaseWriteLock();
+	return m_pCIMServer->releaseSchemaWriteLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::getInstanceReadLock()
+{
+	m_pCIMServer->getInstanceReadLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::getInstanceWriteLock()
+{
+	m_pCIMServer->getInstanceWriteLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::releaseInstanceReadLock()
+{
+	m_pCIMServer->releaseInstanceReadLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::releaseInstanceWriteLock()
+{
+	return m_pCIMServer->releaseInstanceWriteLock();
 }
 
 

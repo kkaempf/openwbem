@@ -310,24 +310,44 @@ public:
 		m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
 	}
 
-	virtual void getReadLock()
+	virtual void getSchemaReadLock()
 	{
-		m_ref->getReadLock();
+		m_ref->getSchemaReadLock();
 	}
 
-	virtual void getWriteLock()
+	virtual void getSchemaWriteLock()
 	{
-		m_ref->getWriteLock();
+		m_ref->getSchemaWriteLock();
 	}
 
-	virtual void releaseReadLock()
+	virtual void releaseSchemaReadLock()
 	{
-		m_ref->releaseReadLock();
+		m_ref->releaseSchemaReadLock();
 	}
 
-	virtual void releaseWriteLock()
+	virtual void releaseSchemaWriteLock()
 	{
-		m_ref->releaseWriteLock();
+		m_ref->releaseSchemaWriteLock();
+	}
+
+	virtual void getInstanceReadLock()
+	{
+		m_ref->getInstanceReadLock();
+	}
+
+	virtual void getInstanceWriteLock()
+	{
+		m_ref->getInstanceWriteLock();
+	}
+
+	virtual void releaseInstanceReadLock()
+	{
+		m_ref->releaseInstanceReadLock();
+	}
+
+	virtual void releaseInstanceWriteLock()
+	{
+		m_ref->releaseInstanceWriteLock();
 	}
 
 private:

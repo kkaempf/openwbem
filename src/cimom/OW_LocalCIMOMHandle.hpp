@@ -658,25 +658,15 @@ private:
 	OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, OW_RepositoryIFCRef pRepos,
 		const OW_ACLInfo& aclInfo, OW_Bool noLock);
 
-	/**
-	 * Acquire a read lock on the OW_CIMServer if m_noLock is false.
-	 */
-	void getReadLock();
+	void getSchemaReadLock();
+	void getSchemaWriteLock();
+	void releaseSchemaReadLock();
+	void releaseSchemaWriteLock();
 
-	/**
-	 * Acquire a write lock on the OW_CIMServer if m_noLock is false.
-	 */
-	void getWriteLock();
-
-	/**
-	 * Release a read lock on the OW_CIMServer if m_noLock is false.
-	 */
-	void releaseReadLock();
-
-	/**
-	 * Release a write lock on the OW_CIMServer if m_noLock is false.
-	 */
-	void releaseWriteLock();
+	void getInstanceReadLock();
+	void getInstanceWriteLock();
+	void releaseInstanceReadLock();
+	void releaseInstanceWriteLock();
 
 	/**
 	 * A Reference to the OW_Repository interface that this OW_LocalCIMOMHandle
@@ -699,8 +689,10 @@ private:
 	OW_CIMOMEnvironmentRef m_env;
 
 	friend class OW_CIMServer;
-	friend class OW_CIMServerWriteLocker;
-	friend class OW_CIMServerReadLocker;
+	friend class OW_CIMServerSchemaWriteLocker;
+	friend class OW_CIMServerSchemaReadLocker;
+	friend class OW_CIMServerInstanceWriteLocker;
+	friend class OW_CIMServerInstanceReadLocker;
 };
 
 typedef OW_Reference<OW_LocalCIMOMHandle> OW_LocalCIMOMHandleRef;

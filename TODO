@@ -91,6 +91,9 @@ Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
       Architecture and Developers Guide" found at 
       http://www.opengroup.org/snia-cimom/) Also see: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wmisdk/wmi/supporting_features_for_wmi.asp
+    - Document locking from a provider perspective, and which operations are
+      safe for providers to perform.  Method providers may run concurrently
+      (no locks are held.)
 
 Optimizations:
     - Use KCacheGrind to find any hot spots

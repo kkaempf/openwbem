@@ -81,34 +81,68 @@ OW_LocalCIMOMHandle::operator= (const OW_LocalCIMOMHandle& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_CIMServerWriteLocker
+class OW_CIMServerSchemaReadLocker
 {
 public:
-	OW_CIMServerWriteLocker(OW_LocalCIMOMHandle* pHdl)
+	OW_CIMServerSchemaReadLocker(OW_LocalCIMOMHandle* pHdl)
 	: m_pHdl(pHdl) 
 	{
-		m_pHdl->getWriteLock();
+		m_pHdl->getSchemaReadLock();
 	}
-	~OW_CIMServerWriteLocker()
+	~OW_CIMServerSchemaReadLocker()
 	{
-		m_pHdl->releaseWriteLock();
+		m_pHdl->releaseSchemaReadLock();
 	}
 private:
 	OW_LocalCIMOMHandle* m_pHdl;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_CIMServerReadLocker
+class OW_CIMServerSchemaWriteLocker
 {
 public:
-	OW_CIMServerReadLocker(OW_LocalCIMOMHandle* pHdl)
+	OW_CIMServerSchemaWriteLocker(OW_LocalCIMOMHandle* pHdl)
 	: m_pHdl(pHdl) 
 	{
-		m_pHdl->getReadLock();
+		m_pHdl->getSchemaWriteLock();
 	}
-	~OW_CIMServerReadLocker()
+	~OW_CIMServerSchemaWriteLocker()
 	{
-		m_pHdl->releaseReadLock();
+		m_pHdl->releaseSchemaWriteLock();
+	}
+private:
+	OW_LocalCIMOMHandle* m_pHdl;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_CIMServerInstanceReadLocker
+{
+public:
+	OW_CIMServerInstanceReadLocker(OW_LocalCIMOMHandle* pHdl)
+	: m_pHdl(pHdl) 
+	{
+		m_pHdl->getInstanceReadLock();
+	}
+	~OW_CIMServerInstanceReadLocker()
+	{
+		m_pHdl->releaseInstanceReadLock();
+	}
+private:
+	OW_LocalCIMOMHandle* m_pHdl;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_CIMServerInstanceWriteLocker
+{
+public:
+	OW_CIMServerInstanceWriteLocker(OW_LocalCIMOMHandle* pHdl)
+	: m_pHdl(pHdl) 
+	{
+		m_pHdl->getInstanceWriteLock();
+	}
+	~OW_CIMServerInstanceWriteLocker()
+	{
+		m_pHdl->releaseInstanceWriteLock();
 	}
 private:
 	OW_LocalCIMOMHandle* m_pHdl;
@@ -118,7 +152,8 @@ private:
 void
 OW_LocalCIMOMHandle::createNameSpace(const OW_String& ns)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker swl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->createNameSpace(ns, m_aclInfo);
 }
 
@@ -132,7 +167,8 @@ OW_LocalCIMOMHandle::close()
 void
 OW_LocalCIMOMHandle::deleteNameSpace(const OW_String& ns)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker swl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->deleteNameSpace(ns, m_aclInfo);
 }
 
@@ -140,7 +176,8 @@ OW_LocalCIMOMHandle::deleteNameSpace(const OW_String& ns)
 void
 OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker swl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->deleteClass(ns, className, m_aclInfo);
 }
 
@@ -148,7 +185,8 @@ OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className
 void
 OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->deleteInstance(ns, path, m_aclInfo);
 }
 
@@ -156,7 +194,7 @@ OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath&
 void
 OW_LocalCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker wl(this);
 	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
 }
 
@@ -165,7 +203,7 @@ void
 OW_LocalCIMOMHandle::enumNameSpace(const OW_String& ns,
 	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker rl(this);
 	m_pServer->enumNameSpace(ns, result, deep, m_aclInfo);
 }
 
@@ -176,7 +214,7 @@ OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker rl(this);
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, m_aclInfo);
 }
@@ -188,7 +226,7 @@ OW_LocalCIMOMHandle::enumClassNames(const OW_String& ns,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker rl(this);
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
 }
 
@@ -201,7 +239,8 @@ OW_LocalCIMOMHandle::enumInstances(
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -213,7 +252,8 @@ OW_LocalCIMOMHandle::enumInstanceNames(
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	return m_pServer->enumInstanceNames(ns, className, result, true, m_aclInfo);
 }
 
@@ -223,7 +263,7 @@ OW_LocalCIMOMHandle::enumQualifierTypes(
 	const OW_String& ns,
 	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
 	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
 }
 
@@ -236,7 +276,7 @@ OW_LocalCIMOMHandle::getClass(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
 	OW_CIMClass cls = m_pServer->getClass(ns, className, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 	return cls;
@@ -252,7 +292,8 @@ OW_LocalCIMOMHandle::getInstance(
 	OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -265,7 +306,11 @@ OW_LocalCIMOMHandle::invokeMethod(
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams)
 {
-	OW_CIMServerWriteLocker wl(this);
+	// Don't assume anything about locking for invokeMethod.
+	// OW_CIMServer gives the method provider a fully locking cimomhandle so whatever
+	// it does will be properly protected, although it may not be completely
+	// atomic (i.e. other operations may happen inbetween calls the provider
+	// makes)
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
 }
@@ -275,7 +320,7 @@ OW_CIMQualifierType
 OW_LocalCIMOMHandle::getQualifierType(const OW_String& ns,
 		const OW_String& qualifierName)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker rl(this);
 	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
 }
 
@@ -284,7 +329,7 @@ void
 OW_LocalCIMOMHandle::setQualifierType(const OW_String& ns,
 	const OW_CIMQualifierType& qt)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker wl(this);
 	m_pServer->setQualifierType(ns, qt, m_aclInfo);
 }
 
@@ -294,7 +339,9 @@ OW_LocalCIMOMHandle::modifyClass(
 	const OW_String& ns,
 	const OW_CIMClass& cc)
 {
-	OW_CIMServerWriteLocker wl(this);
+	// modify class will modify the class as well as any instances of that class
+	OW_CIMServerSchemaWriteLocker swl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->modifyClass(ns, cc, m_aclInfo);
 }
 
@@ -303,7 +350,7 @@ void
 OW_LocalCIMOMHandle::createClass(const OW_String& ns,
 	const OW_CIMClass& cc)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaWriteLocker wl(this);
 	m_pServer->createClass(ns, cc, m_aclInfo);
 }
 
@@ -315,7 +362,8 @@ OW_LocalCIMOMHandle::modifyInstance(
 	OW_Bool includeQualifiers,
 	OW_StringArray* propertyList)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
 		propertyList, m_aclInfo);
 }
@@ -325,7 +373,8 @@ OW_CIMObjectPath
 OW_LocalCIMOMHandle::createInstance(const OW_String& ns,
 	const OW_CIMInstance& ci)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	return m_pServer->createInstance(ns, ci, m_aclInfo);
 }
 
@@ -336,7 +385,8 @@ OW_LocalCIMOMHandle::getProperty(
 	const OW_CIMObjectPath& name,
 	const OW_String& propertyName)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
 }
 
@@ -347,7 +397,8 @@ OW_LocalCIMOMHandle::setProperty(
 	const OW_CIMObjectPath& name,
 	const OW_String& propertyName, const OW_CIMValue& cv)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
 }
 
@@ -360,7 +411,8 @@ OW_LocalCIMOMHandle::associatorNames(
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
 		resultRole, m_aclInfo);
 }
@@ -376,7 +428,8 @@ OW_LocalCIMOMHandle::associators(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
@@ -393,7 +446,7 @@ OW_LocalCIMOMHandle::associatorsClasses(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
@@ -407,7 +460,8 @@ OW_LocalCIMOMHandle::referenceNames(
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->referenceNames(ns, path, result, resultClass, role, m_aclInfo);
 }
 
@@ -421,7 +475,8 @@ OW_LocalCIMOMHandle::references(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->references(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -436,7 +491,7 @@ OW_LocalCIMOMHandle::referencesClasses(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	OW_CIMServerReadLocker rl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -449,7 +504,8 @@ OW_LocalCIMOMHandle::execQuery(
 	const OW_String& query,
 	const OW_String& queryLanguage)
 {
-	OW_CIMServerWriteLocker wl(this);
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceWriteLocker irl(this);
 	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
 }
 
@@ -484,41 +540,80 @@ OW_LocalCIMOMHandle::exportIndication(const OW_CIMInstance& instance,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::getReadLock()
+OW_LocalCIMOMHandle::getSchemaReadLock()
 {
 	if(!m_noLock)
 	{
-		m_pServer->getReadLock();
+		m_pServer->getSchemaReadLock();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::getWriteLock()
+OW_LocalCIMOMHandle::getSchemaWriteLock()
 {
 	if(!m_noLock)
 	{
-		m_pServer->getWriteLock();
+		m_pServer->getSchemaWriteLock();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::releaseReadLock()
+OW_LocalCIMOMHandle::releaseSchemaReadLock()
 {
 	if(!m_noLock)
 	{
-		m_pServer->releaseReadLock();
+		m_pServer->releaseSchemaReadLock();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::releaseWriteLock()
+OW_LocalCIMOMHandle::releaseSchemaWriteLock()
 {
 	if(!m_noLock)
 	{
-		m_pServer->releaseWriteLock();
+		m_pServer->releaseSchemaWriteLock();
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::getInstanceReadLock()
+{
+	if(!m_noLock)
+	{
+		m_pServer->getInstanceReadLock();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::getInstanceWriteLock()
+{
+	if(!m_noLock)
+	{
+		m_pServer->getInstanceWriteLock();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::releaseInstanceReadLock()
+{
+	if(!m_noLock)
+	{
+		m_pServer->releaseInstanceReadLock();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::releaseInstanceWriteLock()
+{
+	if(!m_noLock)
+	{
+		m_pServer->releaseInstanceWriteLock();
 	}
 }
 

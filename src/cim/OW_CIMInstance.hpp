@@ -361,11 +361,7 @@ public:
 	virtual OW_String toString() const;
 
 private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-
+	struct dummy { void nonnull() {}; };
 	typedef void (dummy::*safe_bool)();
 
 public:

@@ -326,24 +326,44 @@ public:
 	}
 
 
-	virtual void getReadLock()
+	virtual void getSchemaReadLock()
 	{
-		m_pServer->getReadLock();
+		m_pServer->getSchemaReadLock();
 	}
 
-	virtual void getWriteLock()
+	virtual void getSchemaWriteLock()
 	{
-		m_pServer->getWriteLock();
+		m_pServer->getSchemaWriteLock();
 	}
 
-	virtual void releaseReadLock()
+	virtual void releaseSchemaReadLock()
 	{
-		m_pServer->releaseReadLock();
+		m_pServer->releaseSchemaReadLock();
 	}
 
-	virtual void releaseWriteLock()
+	virtual void releaseSchemaWriteLock()
 	{
-		m_pServer->releaseWriteLock();
+		m_pServer->releaseSchemaWriteLock();
+	}
+
+	virtual void getInstanceReadLock()
+	{
+		m_pServer->getInstanceReadLock();
+	}
+
+	virtual void getInstanceWriteLock()
+	{
+		m_pServer->getInstanceWriteLock();
+	}
+
+	virtual void releaseInstanceReadLock()
+	{
+		m_pServer->releaseInstanceReadLock();
+	}
+
+	virtual void releaseInstanceWriteLock()
+	{
+		m_pServer->releaseInstanceWriteLock();
 	}
 
 

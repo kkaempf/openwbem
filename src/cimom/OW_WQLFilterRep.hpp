@@ -481,10 +481,14 @@ public:
 		const OW_String &query, const OW_String &queryLanguage,
 		const OW_ACLInfo& aclInfo);
 
-	virtual void getReadLock();
-	virtual void getWriteLock();
-	virtual void releaseReadLock();
-	virtual void releaseWriteLock();
+	virtual void getSchemaReadLock();
+	virtual void getSchemaWriteLock();
+	virtual void releaseSchemaReadLock();
+	virtual void releaseSchemaWriteLock();
+	virtual void getInstanceReadLock();
+	virtual void getInstanceWriteLock();
+	virtual void releaseInstanceReadLock();
+	virtual void releaseInstanceWriteLock();
 
 private:
 	OW_CIMInstance m_inst;

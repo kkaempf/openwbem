@@ -341,8 +341,10 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 	, m_iStore(env)
 	, m_mStore(env)
 	, m_provManager(provManager)
-	, m_assocDb(env)
-	, m_rwLocker()
+	, m_classAssocDb(env)
+	, m_instAssocDb(env)
+	, m_rwSchemaLocker()
+	, m_rwInstanceLocker()
 	, m_accessMgr(new OW_AccessMgr(this, env))
 	, m_nsClass__Namespace()
 	, m_nsClassCIM_Namespace()
@@ -367,7 +369,8 @@ OW_CIMServer::~OW_CIMServer()
 void
 OW_CIMServer::open(const OW_String& path)
 {
-	OW_WriteLock wl(m_rwLocker);
+	OW_WriteLock swl(m_rwSchemaLocker);
+	OW_WriteLock iwl(m_rwInstanceLocker);
 
 	if(m_nStore.isOpen())
 	{
@@ -400,7 +403,8 @@ OW_CIMServer::open(const OW_String& path)
 	m_nStore.open(fname + NS_REPOS_NAME);
 	m_iStore.open(fname + INST_REPOS_NAME);
 	m_mStore.open(fname + META_REPOS_NAME);
-	m_assocDb.open(fname + ASSOC_REPOS_NAME);
+	m_classAssocDb.open(fname + CLASS_ASSOC_REPOS_NAME);
+	m_instAssocDb.open(fname + INST_ASSOC_REPOS_NAME);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -409,11 +413,13 @@ OW_CIMServer::close()
 {
 	if(m_nStore.isOpen())
 	{
-		OW_WriteLock wl(m_rwLocker);
+		OW_WriteLock swl(m_rwSchemaLocker);
+		OW_WriteLock iwl(m_rwInstanceLocker);
 		m_nStore.close();
 		m_iStore.close();
 		m_mStore.close();
-		m_assocDb.close();
+		m_classAssocDb.close();
+		m_instAssocDb.close();
 	}
 }
 
@@ -580,6 +586,7 @@ OW_CIMServer::deleteQualifierType(const OW_String& ns, const OW_String& qualName
 	// Check to see if user has rights to delete the qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::DELETEQUALIFIER, ns, aclInfo);
 
+	// TODO: What happens if the qualifier is being used???
 	if(!m_mStore.deleteQualifierType(ns, qualName))
 	{
 		if (m_mStore.nameSpaceExists(ns))
@@ -762,7 +769,7 @@ OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
 
 		// delete the class and any subclasses
 		OW_ACLInfo intAcl;
-		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_assocDb);
+		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_classAssocDb);
 		this->enumClasses(ns, className, ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
@@ -809,7 +816,7 @@ OW_CIMServer::createClass(const OW_String& ns, const OW_CIMClass& cimClass,
 		m_iStore.createClass(ns, cimClass);
 		if (cimClass.isAssociation())
 		{
-			OW_AssocDbHandle hdl = m_assocDb.getHandle();
+			OW_AssocDbHandle hdl = m_classAssocDb.getHandle();
 			hdl.addEntries(ns,cimClass);
 		}
 
@@ -1396,7 +1403,7 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, intAclInfo);
 
-		OW_AssocDbHandle hdl = m_assocDb.getHandle();
+		OW_AssocDbHandle hdl = m_instAssocDb.getHandle();
 
 		// Ensure no associations exist for this instance
 		if(hdl.hasAssocEntries(ns, cop))
@@ -1560,7 +1567,7 @@ OW_CIMServer::createInstance(
 
 			if(!assocP)
 			{
-				OW_AssocDbHandle hdl = m_assocDb.getHandle();
+				OW_AssocDbHandle hdl = m_instAssocDb.getHandle();
 				hdl.addEntries(ns, ci);
 			}
 		}
@@ -1656,6 +1663,7 @@ OW_CIMServer::modifyInstance(
 				newInst);
 		}
 
+		// TODO: Verify that this code is needed.  Aren't all references keys, and thus can't be changed?  So why update the assoc db?
 		if(theClass.isAssociation())
 		{
 			OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true),
@@ -1664,7 +1672,7 @@ OW_CIMServer::modifyInstance(
 
 			if(!assocP)
 			{
-				OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
+				OW_AssocDbHandle adbHdl = m_instAssocDb.getHandle();
 				adbHdl.deleteEntries(ns, oldInst);
 				adbHdl.addEntries(ns, newInst);
 			}
@@ -1904,10 +1912,11 @@ OW_CIMServer::invokeMethod(
 
 	try
 	{
+		// this is a fully locking cimomhandle.
 		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			intAclInfo, true);
+			intAclInfo, false);
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-			aclInfo, true);
+			aclInfo, false);
 		try
 		{
 			methodp = m_provManager->getMethodProvider(
@@ -2673,7 +2682,7 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result)
 {
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	OW_ACLInfo intAclInfo;
 	staticReferencesInstResultHandler handler(intAclInfo, *this, result,
 		includeQualifiers, includeClassOrigin, propertyList);
@@ -2689,7 +2698,7 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticReferencesObjectPathResultHandler handler(result);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, OW_String(), handler);
@@ -2840,7 +2849,7 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result)
 {
 
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	OW_ACLInfo intAclInfo;
 	staticAssociatorsInstResultHandler handler(intAclInfo, *this, result,
 		includeQualifiers, includeClassOrigin, propertyList);
@@ -2925,7 +2934,7 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
 
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticAssociatorsObjectPathResultHandler handler(result);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -2943,7 +2952,7 @@ OW_CIMServer::_staticAssociatorsClass(
 	const OW_StringArray* propertyList, OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult)
 {
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 
 	// need to run the query for every superclass of the class arg.
 	OW_String curClsName = path.getObjectName();
@@ -2990,7 +2999,7 @@ OW_CIMServer::_staticReferencesClass(const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult)
 {
-	OW_AssocDbHandle dbhdl = m_assocDb.getHandle();
+	OW_AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 
 	// need to run the query for every superclass of the class arg.
 	OW_String curClsName = path.getObjectName();
@@ -3326,5 +3335,6 @@ OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval,
 const char* const OW_CIMServer::INST_REPOS_NAME = "instances";
 const char* const OW_CIMServer::META_REPOS_NAME = "schema";
 const char* const OW_CIMServer::NS_REPOS_NAME = "namespaces";
-const char* const OW_CIMServer::ASSOC_REPOS_NAME = "association";
+const char* const OW_CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
+const char* const OW_CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
 const char* const OW_CIMServer::NAMESPACE_PROVIDER = "owcimomd::namespace";

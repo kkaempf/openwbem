@@ -50,7 +50,8 @@ public:
 	static const char* const INST_REPOS_NAME;
 	static const char* const META_REPOS_NAME;
 	static const char* const NS_REPOS_NAME;
-	static const char* const ASSOC_REPOS_NAME;
+	static const char* const CLASS_ASSOC_REPOS_NAME;
+	static const char* const INST_ASSOC_REPOS_NAME;
 
 	static const char* const NAMESPACE_PROVIDER;
 
@@ -578,10 +579,14 @@ public:
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_ACLInfo& aclInfo);
 
-	virtual void getReadLock() { m_rwLocker.getReadLock(); }
-	virtual void getWriteLock() { m_rwLocker.getWriteLock(); }
-	virtual void releaseReadLock() { m_rwLocker.releaseReadLock(); }
-	virtual void releaseWriteLock() { m_rwLocker.releaseWriteLock(); }
+	virtual void getSchemaReadLock() { m_rwSchemaLocker.getReadLock(); }
+	virtual void getSchemaWriteLock() { m_rwSchemaLocker.getWriteLock(); }
+	virtual void releaseSchemaReadLock() { m_rwSchemaLocker.releaseReadLock(); }
+	virtual void releaseSchemaWriteLock() { m_rwSchemaLocker.releaseWriteLock(); }
+	virtual void getInstanceReadLock() { m_rwInstanceLocker.getReadLock(); }
+	virtual void getInstanceWriteLock() { m_rwInstanceLocker.getWriteLock(); }
+	virtual void releaseInstanceReadLock() { m_rwInstanceLocker.releaseReadLock(); }
+	virtual void releaseInstanceWriteLock() { m_rwInstanceLocker.releaseWriteLock(); }
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
@@ -734,8 +739,10 @@ private:
 	OW_InstanceRepository m_iStore;
 	OW_MetaRepository m_mStore;
 	OW_ProviderManagerRef m_provManager;
-	OW_AssocDb m_assocDb;
-	mutable OW_RWLocker m_rwLocker;
+	OW_AssocDb m_classAssocDb;
+	OW_AssocDb m_instAssocDb;
+	mutable OW_RWLocker m_rwSchemaLocker;
+	mutable OW_RWLocker m_rwInstanceLocker;
 	OW_Reference<OW_AccessMgr> m_accessMgr;
 	OW_CIMClass m_nsClass__Namespace;
 	OW_CIMClass m_nsClassCIM_Namespace;

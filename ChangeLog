@@ -1,3 +1,9 @@
+Wed Dec  4 07:34:42 MST 2002
+- Made the locking more granular by creating a rw lock for the schema and
+  one for instance data, instead of just one big rw lock.
+- Split the association db into a two, one to store class info and one to store
+  instance info.  This was to accomodate the finer grained locking.
+
 Tue Dec  3 11:25:46 MST 2002
 - Fixed mof compiler wrt default qualifiers (see cim spec 4.7).  Now the CIM
   2.7 schema imports without errors.

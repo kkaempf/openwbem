@@ -487,10 +487,14 @@ public:
 	virtual void exportIndication(const OW_CIMInstance&,
 		const OW_String&) {}
 
-	virtual void getReadLock() = 0;
-	virtual void getWriteLock() = 0;
-	virtual void releaseReadLock() = 0;
-	virtual void releaseWriteLock() = 0;
+	virtual void getSchemaReadLock() = 0;
+	virtual void getSchemaWriteLock() = 0;
+	virtual void releaseSchemaReadLock() = 0;
+	virtual void releaseSchemaWriteLock() = 0;
+	virtual void getInstanceReadLock() = 0;
+	virtual void getInstanceWriteLock() = 0;
+	virtual void releaseInstanceReadLock() = 0;
+	virtual void releaseInstanceWriteLock() = 0;
 };
 
 typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
