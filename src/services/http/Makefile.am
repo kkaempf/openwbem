@@ -14,8 +14,8 @@ install-exec-local:
 	@INSTALL@ -d $(DESTDIR)$(thelibdir)
 	for i in $(OW_SHARED_LIBS); do \
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-		ln -s $(DESTDIR)$(thelibdir)/$$i $(DESTDIR)$(libdir); \
+		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+		ln -sf $(DESTDIR)$(thelibdir)/$$i $(DESTDIR)$(libdir); \
 	done
 	
 clean-local:

@@ -9,7 +9,6 @@ thelibdir = $(pkglibdir)/perlproviders
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT) core *.core $(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c
 	-rm -f perlNPI.marker
-	-rm -rf perlNPI
 
 all-local: perlNPI.marker $(OW_SHARED_LIBS)
 
@@ -28,7 +27,7 @@ install-exec-local:
 	for i in $(OW_SHARED_LIBS); do \
 		PREFIX=$(DESTDIR); \
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
 	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
 
