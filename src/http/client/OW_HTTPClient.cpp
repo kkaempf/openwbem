@@ -423,7 +423,10 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 		}
 	}
 	m_pIstrReturn = convertToFiniteStream();
-	OW_ASSERT(m_pIstrReturn);
+	if (!m_pIstrReturn)
+	{
+		OW_THROW(HTTPException, "HTTPClient: unable to understand server response. There may be no content in the reply.");
+	}
 	return m_pIstrReturn;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -681,10 +684,6 @@ HTTPClient::convertToFiniteStream()
 		OW_THROW(HTTPException, "Response is deflated but we're not "
 			"compiled with zlib!");
 #endif // #ifdef OW_HAVE_ZLIB_H
-	}
-	if (!rval)
-	{
-		OW_THROW(HTTPException, "HTTPClient::convertToFiniteStream: unable to understand server response!");
 	}
 	return rval;
 }
