@@ -1,3 +1,1349 @@
+2004-05-27 15:32  jcarey
+
+	* src/common/socket/OW_SocketUtils.cpp: Win32 port.
+
+2004-05-27 15:24  jcarey
+
+	* src/common/socket/: OW_GetPass.cpp, OW_SSLCtxMgr.cpp,
+	  OW_SSLSocketImpl.cpp, OW_SocketBaseImpl.hpp, OW_SocketImpl.cpp,
+	  OW_Win32SocketBaseImpl.cpp: Win32 port.
+
+2004-05-27 12:57  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_AtomicOps.hpp, src/common/OW_NetworkTypes.hpp,
+	  src/common/OW_PosixFile.cpp, src/common/OW_ThreadTypes.hpp,
+	  src/common/OW_Types.h, src/common/OW_Types.hpp,
+	  src/common/OW_UUID.cpp, src/common/socket/OW_Socket.cpp,
+	  src/common/socket/OW_Socket.hpp,
+	  src/common/socket/OW_SocketAddress.cpp,
+	  src/common/socket/OW_SocketAddress.hpp,
+	  src/common/socket/OW_SocketBaseImpl.cpp,
+	  src/common/socket/OW_SocketBaseImpl.hpp,
+	  src/common/socket/OW_SocketUtils.cpp,
+	  src/common/socket/OW_SocketUtils.hpp,
+	  src/common/socket/OW_Win32SocketBaseImpl.cpp: Win32 port.
+
+2004-05-26 12:36  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_MemTracer.cpp, src/common/OW_Select.cpp,
+	  src/common/OW_Types.h, src/common/OW_Types.hpp: Win32 port.
+
+2004-05-26 07:01  nuffer
+
+	* test/unit/: OW_SharedLibraryTestCases.cpp,
+	  testSharedLibraryLoader.hpp: Modified testFunction to return i +
+	  0xABCDEF01 instead of i + 1, since that is more likely to cause a
+	  segfault when dereferenced as a pointer.
+
+2004-05-26 06:01  nuffer
+
+	* src/provider/OW_ProviderIFCBaseIFC.hpp: Fixed the docs.
+	  PROVIDERIFCFACTORY->OW_PROVIDERIFCFACTORY
+
+2004-05-26 06:00  nuffer
+
+	* src/common/OW_SafeLibCreate.hpp: Fixed error message in
+	  safeLibCreate if a segfault is caught.
+
+2004-05-26 05:59  nuffer
+
+	* src/cim/OW_CIMBase.hpp: Fixed docs for readSig()
+
+2004-05-25 18:00  nuffer
+
+	* acconfig.h, configure.in: Changed test for
+	  pthread_kill_other_threads_np to be AC_CHECK_FUNCS
+
+2004-05-25 16:11  nuffer
+
+	* configure.in: Removing main()s from AC_TRY_COMPILE macros.
+
+2004-05-25 15:41  nuffer
+
+	* test/acceptance/acceptance.sh.fb: Use $MAKE instead of make
+
+2004-05-25 15:40  nuffer
+
+	* configure.in: Fixed CXXCOMMONLINKFLAGS on hpux.
+	  $(libdir)->${libdir}
+
+2004-05-25 15:15  nuffer
+
+	* configure.in: Switched AC_TRY_RUN macros to AC_TRY_COMPILE.
+
+2004-05-25 15:04  nuffer
+
+	* src/providerifcs/cpp/OW_CppInstanceProviderIFC.hpp: Removed
+	  inaccurate comment.
+
+2004-05-24 22:14  nuffer
+
+	* cvsbootstrap.sh: Remove autom4te.cache dir.
+
+2004-05-24 18:15  nuffer
+
+	* test/unit/OW_UUIDTestCases.cpp: Commenting out a test which
+	  intermittently fails.  Its okay, really.
+
+2004-05-24 18:06  nuffer
+
+	* src/tools/Makefile.am: Fixed for static linking of
+	  owrepositorydump.
+
+2004-05-24 18:05  nuffer
+
+	* configure.in: Removed old unused variables.
+
+2004-05-24 12:14  nuffer
+
+	* Makefile-shared-lib-inst.inc: Fixed so it will work. Removed
+	  extra trailing space. Please run make check before commiting
+	  things.
+
+2004-05-24 11:47  nuffer
+
+	* src/common/OW_Cache.hpp: Added a missing typename.
+
+2004-05-24 11:40  nuffer
+
+	* src/common/: OW_List.hpp, OW_SortedVectorSet.hpp: Added forward
+	  declarations for operator== and operator< which are necessary for
+	  template friends.
+
+2004-05-24 11:35  nuffer
+
+	* src/common/OW_Map.hpp: Added forward declarations for operator==
+	  and operator< which are necessary for template friends.
+
+2004-05-24 11:31  nuffer
+
+	* src/common/OW_SortedVectorMap.hpp: Added forward declarations for
+	  operator== and operator< and swap which are necessary for
+	  template friends.
+
+2004-05-24 10:38  nuffer
+
+	* src/http/client/: OW_HTTPClient.cpp, OW_HTTPClient.hpp: Added
+	  assumeBasicAuth()
+
+2004-05-24 10:31  edge
+
+	* Makefile-shared-lib-inst.inc: Put back a missing command
+
+2004-05-24 10:05  edge
+
+	* src/cimom/common/: OW_CIMOMEnvironment.cpp,
+	  OW_ProviderIFCLoader.cpp: Added protection against double loading
+	  of libs on OSX because of extensions
+
+2004-05-24 10:02  edge
+
+	* src/providerifcs/: cmpi/OW_CMPIProviderIFC.cpp,
+	  npi/OW_NPIProviderIFC.cpp, cpp/OW_CppProviderIFC.cpp: Added
+	  protection against double loading of libs on OSX because of
+	  naming convention
+
+2004-05-24 07:47  edge
+
+	* Makefile-shared-lib-inst.inc: Added dylib installation and
+	  deinstallation
+
+2004-05-21 13:29  nuffer
+
+	* configure.in: Adding linker flag to that the libdir will be
+	  searched for libs on HPUX
+
+2004-05-20 08:48  nuffer
+
+	* src/cimom/indication/Makefile.am: Removed -ldl, since it should
+	  not be linked in.
+
+2004-05-20 06:18  edge
+
+	* db/test/run.test: Add export of DYLD_LIBRARY_PATH for OSX
+
+2004-05-20 06:08  edge
+
+	* src/cimom/indication/Makefile.am: Fixed typo on library -Ldl ->
+	  -ldl
+
+2004-05-19 14:26  jcarey
+
+	* src/common/: OW_DLLSharedLibrary.cpp, OW_DLLSharedLibrary.hpp:
+	  Removed isFakeLibrary stuff from DLLSharedLib...
+
+2004-05-19 14:13  jcarey
+
+	* src/common/OW_ThreadImpl.cpp: Fixed thead cancel processing.
+
+2004-05-19 13:35  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_DLLSharedLibrary.cpp,
+	  src/common/OW_DLLSharedLibrary.hpp,
+	  src/common/OW_DLLSharedLibraryLoader.cpp,
+	  src/common/OW_DLLSharedLibraryLoader.hpp,
+	  src/common/OW_TmpFile.cpp, src/common/OW_UUID.cpp: Win32 port.
+
+2004-05-18 18:53  jcarey
+
+	* src/common/OW_ThreadImpl.cpp: Win32 ThreadImpl cancel stuff.
+
+2004-05-18 17:53  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h, src/common/OW_Condition.cpp,
+	  src/common/OW_MutexImpl.cpp,
+	  src/common/OW_NonRecursiveMutexImpl.cpp,
+	  src/common/OW_Thread.cpp, src/common/OW_ThreadImpl.cpp,
+	  src/common/OW_ThreadImpl.hpp, src/common/OW_ThreadTypes.hpp:
+	  Added Win32 code.
+
+2004-05-17 21:55  nuffer
+
+	* src/cimom/server/OW_Platform.cpp: Switching to use
+	  OW_THROW_ERRNO_MSG
+
+2004-05-17 21:54  nuffer
+
+	* test/unit/: OW_ExceptionTestCases.cpp, OW_ExceptionTestCases.hpp:
+	  Adding some tests for Exception.
+
+2004-05-17 21:54  nuffer
+
+	* src/common/: OW_Exception.cpp, OW_Exception.hpp: Doing a bit more
+	  clean up on the Exception class and documentation.
+
+2004-05-17 19:07  nuffer
+
+	* src/: Makefile.am, cimom/Makefile.am: Added a clean-local target
+	  to the else of the conditional so make clean will work.
+
+2004-05-17 17:45  nuffer
+
+	* src/: cim/OW_CIMException.cpp, cim/OW_CIMException.hpp,
+	  cim/OW_CIMValueCast.cpp, cimom/common/OW_CIMOMEnvironment.cpp,
+	  cimom/indication/OW_IndicationServerImpl.cpp,
+	  cimom/server/OW_AuthManager.cpp, cimom/server/OW_Platform.cpp,
+	  client/OW_CIMOMLocator.cpp, common/Makefile.am,
+	  common/OW_Assertion.cpp, common/OW_CIMErrorException.hpp,
+	  common/OW_COWReferenceBase.cpp, common/OW_Condition.cpp,
+	  common/OW_ConfigException.cpp, common/OW_DateTime.cpp,
+	  common/OW_EnumerationException.cpp, common/OW_Exception.cpp,
+	  common/OW_Exception.hpp, common/OW_ExceptionIds.hpp,
+	  common/OW_Exec.cpp, common/OW_IOException.cpp,
+	  common/OW_Logger.cpp, common/OW_NULLValueException.cpp,
+	  common/OW_NoSuchPropertyException.cpp,
+	  common/OW_NoSuchProviderException.cpp,
+	  common/OW_NoSuchQualifierException.cpp,
+	  common/OW_NonRecursiveMutex.cpp, common/OW_OperationContext.cpp,
+	  common/OW_OutOfBoundsException.cpp,
+	  common/OW_PosixFileSystem.cpp, common/OW_RWLocker.cpp,
+	  common/OW_ReferenceBase.cpp, common/OW_SelectEngine.cpp,
+	  common/OW_SharedLibraryException.cpp, common/OW_String.cpp,
+	  common/OW_Thread.cpp, common/OW_ThreadBarrier.cpp,
+	  common/OW_TimeoutException.cpp, common/OW_URL.cpp,
+	  common/OW_UTF8Utils.cpp, common/OW_UUID.cpp,
+	  common/OW_UnnamedPipe.cpp, common/socket/OW_Socket.cpp,
+	  common/socket/OW_SocketAddress.cpp,
+	  http/common/OW_HTTPException.hpp, http/common/OW_HTTPUtils.cpp,
+	  http/common/OW_HTTPUtils.hpp, http/common/OW_MD5.cpp,
+	  ifcs/OW_AuthenticationException.cpp,
+	  ifcs/OW_CIMProtocolException.cpp, mof/OW_MOFCompiler.cpp,
+	  mof/OW_MOFParseFatalErrorException.cpp,
+	  repositories/hdb/Makefile.am, repositories/hdb/OW_HDBCommon.hpp,
+	  repositories/hdb/OW_HDBException.cpp,
+	  repositories/hdb/OW_IndexImpl.cpp,
+	  requesthandlers/cimxml/OW_XMLExecute.cpp,
+	  services/http/OW_HTTPServer.cpp, wql/common/OW_WQLOperand.cpp,
+	  xml/OW_XMLParseException.cpp, xml/OW_XMLParseException.hpp,
+	  xml/OW_XMLParserDOM.cpp: Enhanced the Exception class by adding a
+	  subclass code, an error code, sub exception tracking and macros
+	  to use the new features.  Documented Exception.  Fixed most
+	  Exception subclasses to have an id.
+
+2004-05-17 17:25  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_Condition.cpp, src/common/OW_MutexImpl.cpp,
+	  src/common/OW_NonRecursiveMutexImpl.cpp,
+	  src/common/OW_ThreadTypes.hpp: Added Win32 code.
+
+2004-05-17 15:06  nuffer
+
+	* src/cim/OW_CIMNameSpaceUtils.hpp: Use OW_DEFAULT_INTEROP_NS for
+	  default interopNs parameter instead of hardcoding "root"
+
+2004-05-16 21:13  jcarey
+
+	* src/common/: OW_NonRecursiveMutexImpl.cpp, OW_ThreadImpl.cpp,
+	  OW_ThreadImpl.hpp, OW_ThreadTypes.hpp: Win32 port.
+
+2004-05-14 16:32  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_MutexImpl.cpp,
+	  src/common/OW_NonRecursiveMutexImpl.cpp,
+	  src/common/OW_ThreadTypes.hpp: Added Win32 code.
+
+2004-05-14 14:06  nuffer
+
+	* src/cimom/server/: OW_ConfigException.cpp,
+	  OW_ConfigException.hpp: Removing old file.
+
+2004-05-14 07:27  nuffer
+
+	* acconfig.h, configure.in, run_tests.sh,
+	  doc/HowToCreateAMinimalOpenWBEM,
+	  src/authorizers/simple/OW_SimpleAuthorizer.cpp,
+	  src/authorizers/simple/OW_SimpleAuthorizer.hpp,
+	  src/cimom/common/OW_CIMServer.cpp,
+	  src/cimom/common/OW_CIMServer.hpp,
+	  src/cimom/common/OW_ProviderProxies.cpp,
+	  src/cimom/common/OW_SharedLibraryRepository.cpp,
+	  src/cimom/common/OW_SharedLibraryRepository.hpp,
+	  src/cimom/common/OW_WQLFilterRep.cpp,
+	  src/cimom/common/OW_WQLFilterRep.hpp,
+	  src/cimom/indication/OW_IndicationRepLayerImpl.cpp,
+	  src/cimom/indication/OW_IndicationRepLayerImpl.hpp,
+	  src/client/OW_BinaryCIMOMHandle.cpp,
+	  src/client/OW_BinaryCIMOMHandle.hpp, src/client/OW_CIMClient.cpp,
+	  src/client/OW_CIMClient.hpp, src/client/OW_CIMXMLCIMOMHandle.cpp,
+	  src/client/OW_CIMXMLCIMOMHandle.hpp,
+	  src/common/OW_RepositoryCIMOMHandle.cpp,
+	  src/common/OW_RepositoryCIMOMHandle.hpp,
+	  src/common/utf8CodeGenerators/OW_GenCaseFoldingCompareTests.cpp,
+	  src/ifcs/OW_CIMOMHandleIFC.hpp, src/ifcs/OW_RepositoryIFC.hpp,
+	  src/providerifcs/cmpi/common/cmpiBroker.cpp,
+	  src/repositories/hdb/OW_CIMRepository.cpp,
+	  src/repositories/hdb/OW_CIMRepository.hpp,
+	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
+	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
+	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
+	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
+	  src/tools/.cvsignore, src/tools/Makefile.am,
+	  src/tools/owrepositorydump.cpp,
+	  test/acceptance/progs/Makefile.am: Added a
+	  --disable-property-operations option to configure and a
+	  OW_DISABLE_PROPERTY_OPERATIONS #define to remove getProperty and
+	  setProperty WBEM operations.
+
+2004-05-13 18:12  jcarey
+
+	* build/vc2003/OpenWBEM/OW_config.h,
+	  src/common/OW_PosixUnnamedPipe.cpp: Added Win32 code.
+
+2004-05-12 17:53  jcarey
+
+	* src/common/: OW_PosixFileSystem.cpp, OW_UUID.cpp: Added Win32
+	  code.
+
+2004-05-12 16:22  jcarey
+
+	* src/common/: OW_PosixFile.cpp, OW_PosixFileSystem.cpp,
+	  OW_Types.hpp: Added Win32 code.
+
+2004-05-11 10:05  nuffer
+
+	* src/providerifcs/npi/common/NPIExternal.cpp: Put a catch block
+	  around most things that can fail when called erroneously from a
+	  NPI/perlNPI provider. When the try {} block fails, an npi error
+	  is thrown via NPI's raiseError method.
+
+2004-05-11 09:44  nuffer
+
+	* src/providerifcs/npi/OW_NPIAssociatorProviderProxy.cpp: The NPI
+	  interface does not provide any methods to NPI providers to
+	  control whether Qualifiers are included in a response or not. In
+	  the OW_NPIInstanceProviderProxy.cpp part of NPI, the provider
+	  interface takes care of the recognition of the includeQualifier
+	  flag in enumerateInstances calls.
+
+	  This patch adds the same functionality to
+	  OW_NPIAssociationProviderProxy.cpp, with the result that the lNPI
+	  provider interfaces takes care of the recognition of the
+	  includeQualifiers flag in associators and references calls, too.
+
+2004-05-11 09:42  nuffer
+
+	* src/providerifcs/perl/OW_PerlAssociatorProviderProxy.cpp: The
+	  perlNPI interface does not provide any methods to perlNPI
+	  providers to control whether Qualifiers are included in a
+	  response or not. In the OW_PerlInstanceProviderProxy.cpp part of
+	  perlNPI, the provider interface takes care of the recognition of
+	  the includeQualifier flag in enumerateInstances calls.
+
+	  This patch adds the same functionality to
+	  OW_PerlAssociationProviderProxy.cpp, with the result that the
+	  perlNPI provider interfaces takes care of the recognition of the
+	  includeQualifiers flag in associators and references calls, too.
+
+2004-05-11 09:17  nuffer
+
+	* src/providerifcs/cmpi/: OW_CMPIAssociatorProviderProxy.cpp,
+	  OW_CMPIInstanceProviderProxy.cpp: Only include alloca.h if
+	  available and include stdlib.h for alloca() on FreeBSD.
+
+2004-05-11 09:16  nuffer
+
+	* src/common/socket/OW_SocketBaseImpl.cpp: Changed static_cast to
+	  reinterpret_cast for FreeBSD.
+
+2004-05-11 09:16  nuffer
+
+	* src/authenticators/pamcl/OW_PAMAuthSA.cpp: Adding includes for
+	  stdlib.h and string.h for FreeBSD support.
+
+2004-05-11 08:53  nuffer
+
+	* configure.in: Added alloca.h to the header check.
+
+2004-05-10 18:04  kpharris
+
+	* test/unit/UnitMain.cpp: Restoring the tests to their proper
+	  order.
+
+2004-05-10 18:01  kpharris
+
+	* test/unit/: OW_StringTestCases.cpp, OW_StringTestCases.hpp,
+	  UnitMain.cpp: Adding tests for the string tokenize function.
+
+2004-05-10 18:00  kpharris
+
+	* src/common/: OW_String.cpp, OW_String.hpp: Adding a flag for
+	  tokenize so that it is possible to get empty tokens from between
+	  adjacent delimiters.
+
+2004-05-06 15:26  nuffer
+
+	* src/mof/OW_MOFLexer.ll: Fixed to close the files after owmofc is
+	  done parsing them, since flex doesnt do it for us.
+
+2004-05-06 14:22  sedgewick_de
+
+	* test/perlproviders/instance/Linux_LocalFileSystem.pl,
+	  src/providerifcs/npi/common/npi.h,
+	  src/providerifcs/npi/common/provider.h,
+	  src/providerifcs/perl/OW_PerlInstanceProviderProxy.cpp,
+	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
+	  src/providerifcs/perl/perlProvider/perlProvider.c: Got perl
+	  indication providers working
+
+2004-05-06 11:01  edge
+
+	* Makefile-shared-lib.inc: changed lib naming for osx compliance
+
+2004-05-05 18:35  kpharris
+
+	* ow_ar.sh: Allowing the option (by way of an environment variable)
+	  to prevent library names from being prepended to the names of the
+	  members.
+
+2004-05-05 18:04  nuffer
+
+	* src/mof/OW_MOFLexer.ll: Improved the error message for being
+	  unable to open a file.
+
+2004-05-05 17:34  nuffer
+
+	* src/Makefile.am, test/acceptance/acceptance.sh.fb: Fixes so that
+	  static mode will work and pass the long acceptance test.
+
+2004-05-05 17:34  nuffer
+
+	* src/: client/Makefile.am, providers/cpp/polled/slp/Makefile.am:
+	  Change in handling of slp library so that its linked to
+	  libowclient and the slp provider.
+
+2004-05-05 17:33  nuffer
+
+	* configure.in: Attempt to prevent pthread_spin_lock test from
+	  hanging on ppc.  Change in handling of slp library so that its
+	  linked to libowclient and the slp provider.
+
+2004-05-05 14:36  kpharris
+
+	* test/unit/Makefile.am: Doing a little dance (the library
+	  shuffle).
+
+2004-05-05 13:58  kpharris
+
+	* src/Makefile.am: Removing an extra backslash.
+
+2004-05-05 13:56  kpharris
+
+	* src/Makefile.am: Removing the STATIC_SERVICES tests, since they
+	  are wrapped inside an automake conditional.  Shortening the
+	  temporary directory name (as the command line length is too
+	  large).
+
+2004-05-05 11:04  kpharris
+
+	* ow_ar.sh: Replacing -e with -f, to test for the existance of a
+	  file.
+
+2004-05-05 09:43  edge
+
+	* test/acceptance/runCimom.sh: Added OSX
+
+2004-05-05 09:43  edge
+
+	* test/acceptance/setup_paths: added export
+
+2004-05-05 09:41  edge
+
+	* test/acceptance/setup_paths: Added DYLD_LIBRARY_PATH for OSX
+
+2004-05-04 22:40  nuffer
+
+	* src/providers/cpp/instance/:
+	  CIM_Namespace/OW_provinstCIM_Namespace.cpp,
+	  CIM_NamespaceInManager/OW_provinstCIM_NamespaceInManager.cpp:
+	  Fixed to still work in the absence of OpenWBEM_ObjectManager.
+
+2004-05-04 22:16  nuffer
+
+	* src/repositories/hdb/OW_CIMRepository.cpp: Fixed so that static
+	  associations can point to dynamic instances.
+
+2004-05-04 22:12  nuffer
+
+	*
+	  src/providers/cpp/instance/OpenWBEM_ObjectManager/OW_provinstOpenWBEM_ObjectManager.cpp:
+	  Changed EnabledStatus to EnabledState since it changed in the mof
+	  since the provider was written against a preliminary version.
+
+2004-05-04 22:11  nuffer
+
+	* etc/: Makefile.am, openwbem.conf.sh: Added PACKAGE_PREFIX to the
+	  uds_filename.
+
+2004-05-04 15:40  bartw
+
+	* src/http/client/OW_HTTPClient.cpp: fixed to retry on timeout
+
+2004-05-04 15:28  sedgewick_de
+
+	* src/providerifcs/npi/: OW_FTABLERef.hpp, common/NPIExternal.cpp,
+	  common/npi_import.h: fixed compile warning in perlNPI.xs
+
+2004-05-04 15:26  sedgewick_de
+
+	* src/providerifcs/perl/perlProvider/perlNPI/perlNPI.xs: fix some
+	  indication relation code
+
+2004-05-04 15:25  sedgewick_de
+
+	* src/providerifcs/perl/OW_PerlIndicationProviderProxy.cpp:
+	  StringArray is empty for some reason
+
+2004-05-04 10:20  edge
+
+	* Makefile-shared-lib.inc, db/db/Makefile.am,
+	  src/authenticators/pam/Makefile.am,
+	  src/authenticators/pamcl/Makefile.am,
+	  src/authenticators/simple/Makefile.am,
+	  src/authorizers/simple/Makefile.am, src/cimom/common/Makefile.am,
+	  src/cimom/indication/Makefile.am, src/cimom/server/Makefile.am,
+	  src/cimxmllistener/Makefile.am, src/client/Makefile.am,
+	  src/common/Makefile.am, src/common/socket/OW_SocketAddress.cpp,
+	  src/http/client/Makefile.am, src/http/common/Makefile.am,
+	  src/mof/Makefile.am, src/provider/Makefile.am,
+	  src/providerifcs/cmpi/Makefile.am,
+	  src/providerifcs/cmpi/common/Makefile.am,
+	  src/providerifcs/cpp/Makefile.am,
+	  src/providerifcs/npi/Makefile.am,
+	  src/providerifcs/npi/common/Makefile.am,
+	  src/providerifcs/perl/Makefile.am,
+	  src/providers/cpp/indication/IndicationRepLayer/Makefile.am,
+	  src/providers/cpp/indicationexport/Makefile.am,
+	  src/providers/cpp/instance/CIM_IndicationFilter/Makefile.am,
+	  src/providers/cpp/instance/CIM_IndicationSubscription/Makefile.am,
+	  src/providers/cpp/instance/CIM_Namespace/Makefile.am,
+	  src/providers/cpp/instance/CIM_NamespaceInManager/Makefile.am,
+	  src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/Makefile.am,
+	  src/providers/cpp/instance/OW_NameSpace/Makefile.am,
+	  src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile.am,
+	  src/providers/cpp/polled/slp/Makefile.am,
+	  src/providers/cpp/polled/unloader/Makefile.am,
+	  src/pythonbinding/Makefile.am, src/repositories/hdb/Makefile.am,
+	  src/repositories/tdbcr/Makefile.am,
+	  src/requesthandlers/binary/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
+	  src/services/http/Makefile.am, src/wql/Makefile.am,
+	  src/wql/common/Makefile.am, src/xml/Makefile.am,
+	  test/c++providers/associator/Makefile.am,
+	  test/c++providers/indication/Makefile.am,
+	  test/c++providers/instance/Makefile.am,
+	  test/c++providers/method/Makefile.am,
+	  test/c++providers/secondary_instance/Makefile.am,
+	  test/cmpiproviders/Makefile.am, test/npiproviders/Makefile.am:
+	  build changes for OSX so I can get both bundles and dylibs where
+	  I need them. Also a fix in SocketAddress
+
+2004-05-02 08:35  nuffer
+
+	* test/acceptance/acceptance.sh.fb: Updated for changes to the
+	  config file.
+
+2004-04-30 22:41  nuffer
+
+	* etc/openwbem.conf.sh, src/cimom/common/OW_CIMOMEnvironment.cpp,
+	  src/common/OW_ConfigOpts.hpp, test/acceptance/acceptance.sh.fb:
+	  Doing a little editing of the config file.  Moved some options
+	  that shouldnt need to be changed to the end.	Adding notes about
+	  the defaults for some of the options.  Documented option for the
+	  uds_filename.
+
+2004-04-30 13:36  nuffer
+
+	* website/: CIMOMBenchMarks.pdf, index.html: Adding
+	  CIMOMBenchMarks.pdf.
+
+2004-04-30 12:39  bartw
+
+	* src/cim/OW_CIMNameSpaceUtils.cpp: fixed to work with pegasus
+
+2004-04-30 10:07  kpharris
+
+	* configure.in, src/Makefile.am: Adding an automake conditional for
+	  static linking.
+
+2004-04-30 10:06  kpharris
+
+	* src/cimom/Makefile.am: Adding a clean rule for the static cimom.
+	  Shuffling the libraries around, to make them link properly on
+	  Linux.
+
+2004-04-29 08:53  nuffer
+
+	* src/common/: OW_Enumeration.hpp, OW_File.hpp, OW_FileSystem.hpp,
+	  OW_PosixFileSystem.cpp, socket/OW_SSLCtxMgr.cpp: Fixed up the
+	  File and FileSystem classes to be 64-bit clean by using off_t
+	  instead of int and long for file offsets.
+
+2004-04-29 07:53  edge
+
+	* src/common/OW_Enumeration.hpp: lseek seems to be broken on OSX,
+	  added a position to f.read
+
+2004-04-29 07:51  edge
+
+	* Makefile-shared-lib.inc: OSX - Add a not where a not wasn't
+
+2004-04-29 05:42  edge
+
+	* configure.in: OSX Change to configure
+
+2004-04-28 22:28  nuffer
+
+	* src/http/client/OW_HTTPClient.cpp: Added the ability to specify
+	  the path to the UDS in the port portion of the URL.
+
+2004-04-28 22:16  nuffer
+
+	* src/http/common/OW_HTTPUtils.cpp,
+	  src/http/common/OW_HTTPUtils.hpp,
+	  test/unit/OW_HTTPUtilsTestCases.cpp,
+	  test/unit/OW_HTTPUtilsTestCases.hpp: Added
+	  HTTPUtils::unescapeCharForURL and unescapeForURL
+
+2004-04-28 19:46  nuffer
+
+	* src/providerifcs/perl/OW_PerlProviderIFC.cpp: Updated for new
+	  macro.
+
+2004-04-28 17:48  edge
+
+	* test/unit/OW_ExecTestCases.cpp: the author fell off
+
+2004-04-28 16:48  edge
+
+	* test/unit/OW_ExecTestCases.cpp: OSX Specific changes
+
+2004-04-28 09:20  nuffer
+
+	* website/: index.html, license.html: Updated.
+
+2004-04-27 16:17  nuffer
+
+	* src/Makefile.am: Added  a clean-local rule to remove some
+	  temporary files.
+
+2004-04-27 12:14  nuffer
+
+	* doc/OpenWBEM-pg.sxw: Updated.
+
+2004-04-27 12:13  nuffer
+
+	* openwbem.spec: Fixed up the doc file list.
+
+2004-04-27 12:13  nuffer
+
+	* doc/Makefile.am: Added PerlIFC.sxw to the list.
+
+2004-04-27 08:21  nuffer
+
+	* configure.in: Remove test/npiproviders/Makefile and
+	  test/cmpiproviders/Makefile
+
+2004-04-27 08:21  nuffer
+
+	* openwbem.spec: Added the repository to the file list.
+
+2004-04-26 22:02  nuffer
+
+	* openwbem.spec: Add step in install to compile the mof.
+
+2004-04-26 22:01  nuffer
+
+	* generic-company-openwbem.spec.in: add OpenWBEM_Interop.mof and
+	  OpenWBEM_Acl1.0.mof to the repository.
+
+2004-04-26 21:56  nuffer
+
+	* ChangeLog, acconfig.h, configure.in,
+	  generic-company-openwbem.spec.in, openwbem.spec,
+	  src/authenticators/pam/OW_PAMAuthentication.cpp,
+	  src/authenticators/pamcl/OW_LinuxPAMAuthenticationCL.cpp,
+	  src/authenticators/pamcl/OW_PAMAuthSA.cpp,
+	  src/authenticators/simple/OW_SimpleAuthenticator.cpp,
+	  src/authorizers/simple/OW_SimpleAuthorizer.cpp,
+	  src/authorizers/simple/OW_SimpleAuthorizer.hpp,
+	  src/cim/OW_CIMBase.cpp, src/cim/OW_CIMClass.cpp,
+	  src/cim/OW_CIMClass.hpp, src/cim/OW_CIMClassEnumeration.hpp,
+	  src/cim/OW_CIMDataType.cpp, src/cim/OW_CIMDataType.hpp,
+	  src/cim/OW_CIMDateTime.cpp, src/cim/OW_CIMDateTime.hpp,
+	  src/cim/OW_CIMElement.cpp, src/cim/OW_CIMElement.hpp,
+	  src/cim/OW_CIMException.cpp, src/cim/OW_CIMException.hpp,
+	  src/cim/OW_CIMFlavor.cpp, src/cim/OW_CIMFlavor.hpp,
+	  src/cim/OW_CIMFwd.hpp, src/cim/OW_CIMInstance.cpp,
+	  src/cim/OW_CIMInstance.hpp,
+	  src/cim/OW_CIMInstanceEnumeration.hpp, src/cim/OW_CIMMethod.cpp,
+	  src/cim/OW_CIMMethod.hpp, src/cim/OW_CIMNULL.hpp,
+	  src/cim/OW_CIMNameSpace.cpp, src/cim/OW_CIMNameSpace.hpp,
+	  src/cim/OW_CIMNameSpaceUtils.cpp,
+	  src/cim/OW_CIMNameSpaceUtils.hpp, src/cim/OW_CIMObjectPath.cpp,
+	  src/cim/OW_CIMObjectPath.hpp,
+	  src/cim/OW_CIMObjectPathEnumeration.hpp,
+	  src/cim/OW_CIMParamValue.cpp, src/cim/OW_CIMParamValue.hpp,
+	  src/cim/OW_CIMParameter.cpp, src/cim/OW_CIMParameter.hpp,
+	  src/cim/OW_CIMProperty.cpp, src/cim/OW_CIMProperty.hpp,
+	  src/cim/OW_CIMQualifier.cpp, src/cim/OW_CIMQualifier.hpp,
+	  src/cim/OW_CIMQualifierEnumeration.hpp,
+	  src/cim/OW_CIMQualifierType.cpp, src/cim/OW_CIMQualifierType.hpp,
+	  src/cim/OW_CIMScope.cpp, src/cim/OW_CIMScope.hpp,
+	  src/cim/OW_CIMUrl.cpp, src/cim/OW_CIMUrl.hpp,
+	  src/cim/OW_CIMValue.cpp, src/cim/OW_CIMValue.hpp,
+	  src/cim/OW_CIMValueCast.cpp, src/cim/OW_CIMValueCast.hpp,
+	  src/cimom/owcimomd_main.cpp,
+	  src/cimom/common/OW_CIMOMEnvironment.cpp,
+	  src/cimom/common/OW_CIMOMEnvironment.hpp,
+	  src/cimom/common/OW_CIMServer.cpp,
+	  src/cimom/common/OW_CIMServer.hpp,
+	  src/cimom/common/OW_IndicationRepLayerMediator.cpp,
+	  src/cimom/common/OW_IndicationRepLayerMediator.hpp,
+	  src/cimom/common/OW_LocalCIMOMHandle.cpp,
+	  src/cimom/common/OW_LocalCIMOMHandle.hpp,
+	  src/cimom/common/OW_PollingManager.cpp,
+	  src/cimom/common/OW_PollingManager.hpp,
+	  src/cimom/common/OW_ProviderIFCLoader.cpp,
+	  src/cimom/common/OW_ProviderIFCLoader.hpp,
+	  src/cimom/common/OW_ProviderManager.cpp,
+	  src/cimom/common/OW_ProviderManager.hpp,
+	  src/cimom/common/OW_ProviderProxies.cpp,
+	  src/cimom/common/OW_ProviderProxies.hpp,
+	  src/cimom/common/OW_SharedLibraryRepository.cpp,
+	  src/cimom/common/OW_SharedLibraryRepository.hpp,
+	  src/cimom/common/OW_WQLFilterRep.cpp,
+	  src/cimom/common/OW_WQLFilterRep.hpp,
+	  src/cimom/indication/OW_IndicationRepLayerImpl.cpp,
+	  src/cimom/indication/OW_IndicationRepLayerImpl.hpp,
+	  src/cimom/indication/OW_IndicationServerImpl.cpp,
+	  src/cimom/indication/OW_IndicationServerImpl.hpp,
+	  src/cimom/indication/OW_LifecycleIndicationPoller.cpp,
+	  src/cimom/indication/OW_LifecycleIndicationPoller.hpp,
+	  src/cimom/server/OW_AuthManager.cpp,
+	  src/cimom/server/OW_ConfigException.cpp,
+	  src/cimom/server/OW_ConfigException.hpp,
+	  src/cimom/server/OW_IndicationRepLayer.hpp,
+	  src/cimom/server/OW_IndicationServer.hpp,
+	  src/cimom/server/OW_LoggerImpls.cpp,
+	  src/cimom/server/OW_PidFile.cpp, src/cimom/server/OW_PidFile.hpp,
+	  src/cimom/server/OW_Platform.cpp,
+	  src/cimom/server/OW_Platform.hpp,
+	  src/cimxmllistener/OW_CIMListenerCallback.cpp,
+	  src/cimxmllistener/OW_CIMListenerCallback.hpp,
+	  src/cimxmllistener/OW_HTTPXMLCIMListener.cpp,
+	  src/cimxmllistener/OW_HTTPXMLCIMListener.hpp,
+	  src/cimxmllistener/OW_ListenerAuthenticator.cpp,
+	  src/cimxmllistener/OW_ListenerAuthenticator.hpp,
+	  src/cimxmllistener/OW_XMLListener.cpp,
+	  src/cimxmllistener/OW_XMLListener.hpp,
+	  src/client/OW_BinaryCIMOMHandle.cpp,
+	  src/client/OW_BinaryCIMOMHandle.hpp, src/client/OW_CIMClient.cpp,
+	  src/client/OW_CIMClient.hpp, src/client/OW_CIMOMInfo.cpp,
+	  src/client/OW_CIMOMInfo.hpp, src/client/OW_CIMOMLocator.cpp,
+	  src/client/OW_CIMOMLocator.hpp,
+	  src/client/OW_CIMOMLocatorSLP.cpp,
+	  src/client/OW_CIMOMLocatorSLP.hpp,
+	  src/client/OW_CIMXMLCIMOMHandle.cpp,
+	  src/client/OW_CIMXMLCIMOMHandle.hpp,
+	  src/client/OW_ClientCIMOMHandle.cpp,
+	  src/client/OW_ClientCIMOMHandle.hpp, src/common/OW_Array.cpp,
+	  src/common/OW_Array.hpp, src/common/OW_ArrayFwd.hpp,
+	  src/common/OW_ArrayImpl.hpp, src/common/OW_Assertion.cpp,
+	  src/common/OW_Assertion.hpp, src/common/OW_AtomicOps.cpp,
+	  src/common/OW_AtomicOps.hpp, src/common/OW_AutoPtr.hpp,
+	  src/common/OW_BaseStreamBuffer.cpp,
+	  src/common/OW_BaseStreamBuffer.hpp,
+	  src/common/OW_BinarySerialization.cpp,
+	  src/common/OW_BinarySerialization.hpp, src/common/OW_Bool.cpp,
+	  src/common/OW_Bool.hpp, src/common/OW_ByteSwap.hpp,
+	  src/common/OW_CIMErrorException.cpp,
+	  src/common/OW_CIMErrorException.hpp,
+	  src/common/OW_CIMFeatures.hpp, src/common/OW_COWReference.hpp,
+	  src/common/OW_COWReferenceBase.cpp,
+	  src/common/OW_COWReferenceBase.hpp, src/common/OW_Cache.hpp,
+	  src/common/OW_Char16.cpp, src/common/OW_Char16.hpp,
+	  src/common/OW_Condition.cpp, src/common/OW_Condition.hpp,
+	  src/common/OW_ConfigException.cpp,
+	  src/common/OW_ConfigException.hpp, src/common/OW_ConfigFile.cpp,
+	  src/common/OW_ConfigFile.hpp, src/common/OW_ConfigOpts.hpp,
+	  src/common/OW_DataStreams.cpp, src/common/OW_DataStreams.hpp,
+	  src/common/OW_DateTime.cpp, src/common/OW_DateTime.hpp,
+	  src/common/OW_Enumeration.hpp,
+	  src/common/OW_EnumerationException.cpp,
+	  src/common/OW_Exception.cpp, src/common/OW_Exception.hpp,
+	  src/common/OW_Exec.cpp, src/common/OW_Exec.hpp,
+	  src/common/OW_File.hpp, src/common/OW_FileSystem.hpp,
+	  src/common/OW_Format.cpp, src/common/OW_Format.hpp,
+	  src/common/OW_FuncNamePrinter.hpp, src/common/OW_HashMap.hpp,
+	  src/common/OW_HashMultiMap.hpp, src/common/OW_IOException.cpp,
+	  src/common/OW_IOException.hpp,
+	  src/common/OW_IOIFCStreamBuffer.cpp,
+	  src/common/OW_IOIFCStreamBuffer.hpp,
+	  src/common/OW_IntrusiveReference.hpp,
+	  src/common/OW_IstreamBufIterator.hpp, src/common/OW_List.hpp,
+	  src/common/OW_LogLevel.hpp, src/common/OW_Logger.cpp,
+	  src/common/OW_Logger.hpp, src/common/OW_Map.hpp,
+	  src/common/OW_MemTracer.cpp, src/common/OW_MemTracer.hpp,
+	  src/common/OW_Mutex.cpp, src/common/OW_Mutex.hpp,
+	  src/common/OW_MutexImpl.cpp, src/common/OW_MutexImpl.hpp,
+	  src/common/OW_MutexLock.hpp,
+	  src/common/OW_NULLValueException.cpp,
+	  src/common/OW_NULLValueException.hpp,
+	  src/common/OW_NetworkTypes.hpp,
+	  src/common/OW_NoSuchPropertyException.cpp,
+	  src/common/OW_NoSuchPropertyException.hpp,
+	  src/common/OW_NoSuchProviderException.cpp,
+	  src/common/OW_NoSuchProviderException.hpp,
+	  src/common/OW_NoSuchQualifierException.cpp,
+	  src/common/OW_NoSuchQualifierException.hpp,
+	  src/common/OW_NonRecursiveMutex.cpp,
+	  src/common/OW_NonRecursiveMutex.hpp,
+	  src/common/OW_NonRecursiveMutexImpl.cpp,
+	  src/common/OW_NonRecursiveMutexImpl.hpp,
+	  src/common/OW_NonRecursiveMutexLock.hpp,
+	  src/common/OW_OperationContext.cpp,
+	  src/common/OW_OperationContext.hpp,
+	  src/common/OW_OutOfBoundsException.cpp,
+	  src/common/OW_PosixFile.cpp, src/common/OW_PosixFileSystem.cpp,
+	  src/common/OW_PosixUnnamedPipe.cpp,
+	  src/common/OW_PosixUnnamedPipe.hpp, src/common/OW_RWLocker.cpp,
+	  src/common/OW_RWLocker.hpp, src/common/OW_RandomNumber.cpp,
+	  src/common/OW_RandomNumber.hpp, src/common/OW_RefCount.hpp,
+	  src/common/OW_Reference.hpp, src/common/OW_ReferenceBase.cpp,
+	  src/common/OW_ReferenceBase.hpp,
+	  src/common/OW_RepositoryCIMOMHandle.cpp,
+	  src/common/OW_RepositoryCIMOMHandle.hpp,
+	  src/common/OW_ResultHandlers.cpp,
+	  src/common/OW_ResultHandlers.hpp, src/common/OW_Runnable.cpp,
+	  src/common/OW_Runnable.hpp, src/common/OW_SafeLibCreate.hpp,
+	  src/common/OW_Select.cpp, src/common/OW_Select.hpp,
+	  src/common/OW_SelectEngine.cpp, src/common/OW_SelectEngine.hpp,
+	  src/common/OW_Semaphore.hpp, src/common/OW_SharedLibrary.cpp,
+	  src/common/OW_SharedLibrary.hpp,
+	  src/common/OW_SharedLibraryException.cpp,
+	  src/common/OW_SharedLibraryException.hpp,
+	  src/common/OW_SharedLibraryLoader.hpp,
+	  src/common/OW_SharedLibraryReference.hpp,
+	  src/common/OW_SignalScope.hpp, src/common/OW_SortedVectorMap.hpp,
+	  src/common/OW_SortedVectorSet.hpp, src/common/OW_Stack.hpp,
+	  src/common/OW_StackTrace.cpp, src/common/OW_StackTrace.hpp,
+	  src/common/OW_StrictWeakOrdering.hpp, src/common/OW_String.cpp,
+	  src/common/OW_String.hpp, src/common/OW_StringBuffer.cpp,
+	  src/common/OW_StringBuffer.hpp,
+	  src/common/OW_StringEnumeration.hpp,
+	  src/common/OW_StringStream.cpp, src/common/OW_StringStream.hpp,
+	  src/common/OW_TempFileStream.cpp,
+	  src/common/OW_TempFileStream.hpp, src/common/OW_Thread.cpp,
+	  src/common/OW_Thread.hpp, src/common/OW_ThreadBarrier.cpp,
+	  src/common/OW_ThreadBarrier.hpp,
+	  src/common/OW_ThreadCancelledException.cpp,
+	  src/common/OW_ThreadCancelledException.hpp,
+	  src/common/OW_ThreadCounter.cpp, src/common/OW_ThreadCounter.hpp,
+	  src/common/OW_ThreadDoneCallback.cpp,
+	  src/common/OW_ThreadDoneCallback.hpp,
+	  src/common/OW_ThreadImpl.cpp, src/common/OW_ThreadImpl.hpp,
+	  src/common/OW_ThreadPool.cpp, src/common/OW_ThreadPool.hpp,
+	  src/common/OW_ThreadTypes.hpp,
+	  src/common/OW_TimeoutException.cpp,
+	  src/common/OW_TimeoutException.hpp, src/common/OW_TmpFile.cpp,
+	  src/common/OW_TmpFile.hpp, src/common/OW_Types.h,
+	  src/common/OW_Types.hpp, src/common/OW_URL.cpp,
+	  src/common/OW_URL.hpp, src/common/OW_UTF8Utils.cpp,
+	  src/common/OW_UTF8Utils.hpp, src/common/OW_UUID.cpp,
+	  src/common/OW_UUID.hpp, src/common/OW_UnnamedPipe.cpp,
+	  src/common/OW_UnnamedPipe.hpp, src/common/OW_UserInfo.cpp,
+	  src/common/OW_UserInfo.hpp, src/common/OW_WBEMFlags.hpp,
+	  src/common/OW_dlSharedLibrary.cpp,
+	  src/common/OW_dlSharedLibrary.hpp,
+	  src/common/OW_dlSharedLibraryLoader.cpp,
+	  src/common/OW_dlSharedLibraryLoader.hpp,
+	  src/common/OW_dyldSharedLibrary.cpp,
+	  src/common/OW_dyldSharedLibrary.hpp,
+	  src/common/OW_dyldSharedLibraryLoader.cpp,
+	  src/common/OW_dyldSharedLibraryLoader.hpp,
+	  src/common/OW_shlSharedLibrary.cpp,
+	  src/common/OW_shlSharedLibrary.hpp,
+	  src/common/OW_shlSharedLibraryLoader.cpp,
+	  src/common/OW_shlSharedLibraryLoader.hpp,
+	  src/common/socket/OW_GetPass.cpp,
+	  src/common/socket/OW_NwIface.cpp,
+	  src/common/socket/OW_NwIface.hpp,
+	  src/common/socket/OW_SSLCtxMgr.cpp,
+	  src/common/socket/OW_SSLCtxMgr.hpp,
+	  src/common/socket/OW_SSLException.hpp,
+	  src/common/socket/OW_SSLSocketImpl.cpp,
+	  src/common/socket/OW_SSLSocketImpl.hpp,
+	  src/common/socket/OW_ServerSocket.hpp,
+	  src/common/socket/OW_ServerSocketImpl.cpp,
+	  src/common/socket/OW_ServerSocketImpl.hpp,
+	  src/common/socket/OW_Socket.cpp, src/common/socket/OW_Socket.hpp,
+	  src/common/socket/OW_SocketAddress.cpp,
+	  src/common/socket/OW_SocketAddress.hpp,
+	  src/common/socket/OW_SocketBaseImpl.cpp,
+	  src/common/socket/OW_SocketBaseImpl.hpp,
+	  src/common/socket/OW_SocketException.hpp,
+	  src/common/socket/OW_SocketFlags.hpp,
+	  src/common/socket/OW_SocketImpl.cpp,
+	  src/common/socket/OW_SocketImpl.hpp,
+	  src/common/socket/OW_SocketStreamBuffer.cpp,
+	  src/common/socket/OW_SocketStreamBuffer.hpp,
+	  src/common/socket/OW_SocketUtils.cpp,
+	  src/common/socket/OW_SocketUtils.hpp,
+	  src/common/utf8CodeGenerators/OW_GenCaseFoldingCompare.cpp,
+	  src/common/utf8CodeGenerators/OW_GenCaseFoldingCompareTests.cpp,
+	  src/common/utf8CodeGenerators/OW_to_UTF8.cpp,
+	  src/http/client/OW_HTTPClient.cpp,
+	  src/http/client/OW_HTTPClient.hpp,
+	  src/http/common/OW_Base64FormatException.hpp,
+	  src/http/common/OW_HTTPChunkException.hpp,
+	  src/http/common/OW_HTTPChunkedIStream.cpp,
+	  src/http/common/OW_HTTPChunkedIStream.hpp,
+	  src/http/common/OW_HTTPChunkedOStream.cpp,
+	  src/http/common/OW_HTTPChunkedOStream.hpp,
+	  src/http/common/OW_HTTPCounter.cpp,
+	  src/http/common/OW_HTTPCounter.hpp,
+	  src/http/common/OW_HTTPDeflateIStream.cpp,
+	  src/http/common/OW_HTTPDeflateIStream.hpp,
+	  src/http/common/OW_HTTPDeflateOStream.cpp,
+	  src/http/common/OW_HTTPDeflateOStream.hpp,
+	  src/http/common/OW_HTTPException.hpp,
+	  src/http/common/OW_HTTPLenLimitIStream.cpp,
+	  src/http/common/OW_HTTPLenLimitIStream.hpp,
+	  src/http/common/OW_HTTPStatusCodes.hpp,
+	  src/http/common/OW_HTTPUtils.cpp,
+	  src/http/common/OW_HTTPUtils.hpp, src/http/common/OW_MD5.cpp,
+	  src/http/common/OW_MD5.hpp,
+	  src/ifcs/OW_AuthenticationException.cpp,
+	  src/ifcs/OW_AuthenticatorIFC.cpp,
+	  src/ifcs/OW_AuthenticatorIFC.hpp, src/ifcs/OW_AuthorizerIFC.cpp,
+	  src/ifcs/OW_AuthorizerIFC.hpp, src/ifcs/OW_CIMOMHandleIFC.cpp,
+	  src/ifcs/OW_CIMOMHandleIFC.hpp,
+	  src/ifcs/OW_CIMProtocolException.cpp,
+	  src/ifcs/OW_CIMProtocolIFC.cpp, src/ifcs/OW_CIMProtocolIFC.hpp,
+	  src/ifcs/OW_CIMProtocolIStreamIFC.cpp,
+	  src/ifcs/OW_CIMProtocolIStreamIFC.hpp,
+	  src/ifcs/OW_ClientAuthCBIFC.cpp, src/ifcs/OW_ClientAuthCBIFC.hpp,
+	  src/ifcs/OW_IOIFC.cpp, src/ifcs/OW_IOIFC.hpp,
+	  src/ifcs/OW_RepositoryIFC.cpp, src/ifcs/OW_RepositoryIFC.hpp,
+	  src/ifcs/OW_RequestHandlerIFC.cpp,
+	  src/ifcs/OW_RequestHandlerIFC.hpp,
+	  src/ifcs/OW_ResultHandlerIFC.hpp,
+	  src/ifcs/OW_SelectableCallbackIFC.cpp,
+	  src/ifcs/OW_SelectableCallbackIFC.hpp,
+	  src/ifcs/OW_SelectableIFC.cpp, src/ifcs/OW_SelectableIFC.hpp,
+	  src/ifcs/OW_SerializableIFC.cpp, src/ifcs/OW_SerializableIFC.hpp,
+	  src/ifcs/OW_ServiceEnvironmentIFC.cpp,
+	  src/ifcs/OW_ServiceEnvironmentIFC.hpp,
+	  src/ifcs/OW_ServiceIFC.cpp, src/ifcs/OW_ServiceIFC.hpp,
+	  src/ifcs/OW_WQLIFC.hpp, src/mof/OW_MOFCIMOMVisitor.cpp,
+	  src/mof/OW_MOFCIMOMVisitor.hpp, src/mof/OW_MOFCompiler.cpp,
+	  src/mof/OW_MOFCompiler.hpp, src/mof/OW_MOFGrammar.hpp,
+	  src/mof/OW_MOFLexer.ll, src/mof/OW_MOFLineInfo.hpp,
+	  src/mof/OW_MOFParseFatalErrorException.cpp,
+	  src/mof/OW_MOFParser.yy, src/mof/OW_MOFParserDecls.hpp,
+	  src/mof/OW_MOFParserErrorHandlerIFC.cpp,
+	  src/mof/OW_MOFParserErrorHandlerIFC.hpp,
+	  src/mof/OW_MOFVisitor.cpp, src/mof/OW_MOFVisitor.hpp,
+	  src/provider/OW_AssociatorProviderIFC.cpp,
+	  src/provider/OW_AssociatorProviderIFC.hpp,
+	  src/provider/OW_AssociatorProviderInfo.hpp,
+	  src/provider/OW_IndicationExportProviderIFC.cpp,
+	  src/provider/OW_IndicationExportProviderIFC.hpp,
+	  src/provider/OW_IndicationProviderIFC.cpp,
+	  src/provider/OW_IndicationProviderIFC.hpp,
+	  src/provider/OW_IndicationProviderInfo.hpp,
+	  src/provider/OW_InstanceProviderIFC.cpp,
+	  src/provider/OW_InstanceProviderIFC.hpp,
+	  src/provider/OW_InstanceProviderInfo.hpp,
+	  src/provider/OW_MethodProviderIFC.cpp,
+	  src/provider/OW_MethodProviderIFC.hpp,
+	  src/provider/OW_MethodProviderInfo.cpp,
+	  src/provider/OW_MethodProviderInfo.hpp,
+	  src/provider/OW_PolledProviderIFC.cpp,
+	  src/provider/OW_PolledProviderIFC.hpp,
+	  src/provider/OW_ProviderBaseIFC.cpp,
+	  src/provider/OW_ProviderBaseIFC.hpp,
+	  src/provider/OW_ProviderEnvironmentIFC.cpp,
+	  src/provider/OW_ProviderEnvironmentIFC.hpp,
+	  src/provider/OW_ProviderIFCBaseIFC.cpp,
+	  src/provider/OW_ProviderIFCBaseIFC.hpp,
+	  src/provider/OW_ProviderInfoBase.cpp,
+	  src/provider/OW_ProviderInfoBase.hpp,
+	  src/provider/OW_SecondaryInstanceProviderIFC.cpp,
+	  src/provider/OW_SecondaryInstanceProviderIFC.hpp,
+	  src/provider/OW_SecondaryInstanceProviderInfo.hpp,
+	  src/providerifcs/cpp/OW_CppAssociatorProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppIndicationExportProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppIndicationProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppIndicationProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppInstanceProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppInstanceProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppMethodProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppPolledProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppProviderBaseIFC.hpp,
+	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppProxyProvider.cpp,
+	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
+	  src/providerifcs/cpp/OW_CppReadOnlyInstanceProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppReadOnlyInstanceProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppSecondaryInstanceProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppSecondaryInstanceProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppSimpleAssociatorProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppSimpleAssociatorProviderIFC.hpp,
+	  src/providerifcs/cpp/OW_CppSimpleInstanceProviderIFC.cpp,
+	  src/providerifcs/cpp/OW_CppSimpleInstanceProviderIFC.hpp,
+	  src/providers/cpp/indication/IndicationRepLayer/OW_provindIndicationRepLayer.cpp,
+	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
+	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
+	  src/providers/cpp/indicationexport/OW_IndicationExporter.cpp,
+	  src/providers/cpp/indicationexport/OW_IndicationExporter.hpp,
+	  src/providers/cpp/instance/CIM_IndicationFilter/OW_provinstCIM_IndicationFilter.cpp,
+	  src/providers/cpp/instance/CIM_IndicationSubscription/OW_provCIM_IndicationSubscription.cpp,
+	  src/providers/cpp/instance/CIM_Namespace/OW_provinstCIM_Namespace.cpp,
+	  src/providers/cpp/instance/CIM_NamespaceInManager/OW_provinstCIM_NamespaceInManager.cpp,
+	  src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/OW_provinstCIM_ObjectManagerCommunicationMechanism.cpp,
+	  src/providers/cpp/instance/OW_NameSpace/OW_NameSpaceProvider.cpp,
+	  src/providers/cpp/instance/OW_NameSpace/OW_NameSpaceProvider.hpp,
+	  src/providers/cpp/instance/OpenWBEM_ObjectManager/OW_provinstOpenWBEM_ObjectManager.cpp,
+	  src/providers/cpp/polled/slp/OW_SLPProvider.cpp,
+	  src/providers/cpp/polled/unloader/OW_UnloaderProvider.cpp,
+	  src/providers/cpp/polled/unloader/OW_UnloaderProvider.hpp,
+	  src/pythonbinding/PyOW_Array.cpp,
+	  src/pythonbinding/PyOW_Array.hpp,
+	  src/pythonbinding/PyOW_BoolArray.cpp,
+	  src/pythonbinding/PyOW_CIMClassArray.cpp,
+	  src/pythonbinding/PyOW_CIMClient.cpp,
+	  src/pythonbinding/PyOW_CIMDataTypeArray.cpp,
+	  src/pythonbinding/PyOW_CIMDateTimeArray.cpp,
+	  src/pythonbinding/PyOW_CIMFlavorArray.cpp,
+	  src/pythonbinding/PyOW_CIMInstanceArray.cpp,
+	  src/pythonbinding/PyOW_CIMMethodArray.cpp,
+	  src/pythonbinding/PyOW_CIMOMInfo.cpp,
+	  src/pythonbinding/PyOW_CIMOMInfoArray.cpp,
+	  src/pythonbinding/PyOW_CIMOMLocator.cpp,
+	  src/pythonbinding/PyOW_CIMObjectPathArray.cpp,
+	  src/pythonbinding/PyOW_CIMParamValueArray.cpp,
+	  src/pythonbinding/PyOW_CIMParameterArray.cpp,
+	  src/pythonbinding/PyOW_CIMPropertyArray.cpp,
+	  src/pythonbinding/PyOW_CIMQualifierArray.cpp,
+	  src/pythonbinding/PyOW_CIMQualifierTypeArray.cpp,
+	  src/pythonbinding/PyOW_CIMScopeArray.cpp,
+	  src/pythonbinding/PyOW_CIMValueArray.cpp,
+	  src/pythonbinding/PyOW_Char16Array.cpp,
+	  src/pythonbinding/PyOW_Client.cpp,
+	  src/pythonbinding/PyOW_ClientAuthCBIFC.cpp,
+	  src/pythonbinding/PyOW_Int16Array.cpp,
+	  src/pythonbinding/PyOW_Int32Array.cpp,
+	  src/pythonbinding/PyOW_Int64Array.cpp,
+	  src/pythonbinding/PyOW_Int8Array.cpp,
+	  src/pythonbinding/PyOW_Real32Array.cpp,
+	  src/pythonbinding/PyOW_Real64Array.cpp,
+	  src/pythonbinding/PyOW_String.cpp,
+	  src/pythonbinding/PyOW_StringArray.cpp,
+	  src/pythonbinding/PyOW_UInt16Array.cpp,
+	  src/pythonbinding/PyOW_UInt32Array.cpp,
+	  src/pythonbinding/PyOW_UInt64Array.cpp,
+	  src/pythonbinding/PyOW_UInt8Array.cpp,
+	  src/repositories/hdb/OW_AssocDb.cpp,
+	  src/repositories/hdb/OW_AssocDb.hpp,
+	  src/repositories/hdb/OW_CIMRepository.cpp,
+	  src/repositories/hdb/OW_CIMRepository.hpp,
+	  src/repositories/hdb/OW_GenericHDBRepository.cpp,
+	  src/repositories/hdb/OW_GenericHDBRepository.hpp,
+	  src/repositories/hdb/OW_HDB.cpp, src/repositories/hdb/OW_HDB.hpp,
+	  src/repositories/hdb/OW_HDBCommon.hpp,
+	  src/repositories/hdb/OW_HDBNode.cpp,
+	  src/repositories/hdb/OW_HDBNode.hpp,
+	  src/repositories/hdb/OW_Index.cpp,
+	  src/repositories/hdb/OW_Index.hpp,
+	  src/repositories/hdb/OW_IndexImpl.cpp,
+	  src/repositories/hdb/OW_InstanceRepository.cpp,
+	  src/repositories/hdb/OW_InstanceRepository.hpp,
+	  src/repositories/hdb/OW_MetaRepository.cpp,
+	  src/repositories/hdb/OW_MetaRepository.hpp,
+	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
+	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
+	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
+	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
+	  src/services/http/OW_DigestAuthentication.cpp,
+	  src/services/http/OW_DigestAuthentication.hpp,
+	  src/services/http/OW_HTTPServer.cpp,
+	  src/services/http/OW_HTTPServer.hpp,
+	  src/services/http/OW_HTTPSvrConnection.cpp,
+	  src/services/http/OW_HTTPSvrConnection.hpp,
+	  src/tools/OW_DigestPasswdGen.cpp,
+	  src/tools/owcimindicationlistener.cpp,
+	  src/tools/owcreatenamespace.cpp, src/tools/owdeletenamespace.cpp,
+	  src/tools/owenumclasses.cpp, src/tools/owenumclassnames.cpp,
+	  src/tools/owenumnamespace.cpp, src/tools/owenumqualifiers.cpp,
+	  src/tools/owexecwql.cpp,
+	  src/tools/owmofc/OW_MOFCompCIMOMHandle.cpp,
+	  src/tools/owmofc/OW_MOFCompCIMOMHandle.hpp,
+	  src/tools/owmofc/owmofc.cpp, src/wql/OW_WQLAst.cpp,
+	  src/wql/OW_WQLAst.hpp, src/wql/OW_WQLImpl.cpp,
+	  src/wql/OW_WQLImpl.hpp, src/wql/OW_WQLLexer.ll,
+	  src/wql/OW_WQLParser.yy, src/wql/OW_WQLProcessor.cpp,
+	  src/wql/OW_WQLProcessor.hpp, src/wql/OW_WQLScanUtils.cpp,
+	  src/wql/OW_WQLScanUtils.hpp,
+	  src/wql/OW_WQLSelectStatementGen.cpp,
+	  src/wql/OW_WQLSelectStatementGen.hpp, src/wql/OW_WQLVisitor.hpp,
+	  src/wql/common/OW_WQLInstancePropertySource.cpp,
+	  src/wql/common/OW_WQLInstancePropertySource.hpp,
+	  src/wql/common/OW_WQLPropertySource.cpp, src/xml/Makefile.am,
+	  src/xml/OW_CIMXMLParser.cpp, src/xml/OW_CIMXMLParser.hpp,
+	  src/xml/OW_CIMtoXML.cpp, src/xml/OW_CIMtoXML.hpp,
+	  src/xml/OW_Param.cpp, src/xml/OW_Param.hpp,
+	  src/xml/OW_RequestHandlerIFCXML.cpp,
+	  src/xml/OW_RequestHandlerIFCXML.hpp, src/xml/OW_XMLAttribute.cpp,
+	  src/xml/OW_XMLAttribute.hpp, src/xml/OW_XMLCIMFactory.cpp,
+	  src/xml/OW_XMLCIMFactory.hpp, src/xml/OW_XMLClass.cpp,
+	  src/xml/OW_XMLClass.hpp, src/xml/OW_XMLEscape.cpp,
+	  src/xml/OW_XMLEscape.hpp, src/xml/OW_XMLEscape.re,
+	  src/xml/OW_XMLNode.cpp, src/xml/OW_XMLNode.hpp,
+	  src/xml/OW_XMLOperationGeneric.cpp,
+	  src/xml/OW_XMLOperationGeneric.hpp, src/xml/OW_XMLParameters.cpp,
+	  src/xml/OW_XMLParameters.hpp, src/xml/OW_XMLParseException.cpp,
+	  src/xml/OW_XMLParseException.hpp, src/xml/OW_XMLParserCore.cpp,
+	  src/xml/OW_XMLParserCore.hpp, src/xml/OW_XMLParserDOM.cpp,
+	  src/xml/OW_XMLParserDOM.hpp, src/xml/OW_XMLParserSAX.cpp,
+	  src/xml/OW_XMLParserSAX.hpp, src/xml/OW_XMLPrettyPrint.cpp,
+	  src/xml/OW_XMLPrettyPrint.hpp, src/xml/OW_XMLPullParser.cpp,
+	  src/xml/OW_XMLPullParser.hpp, src/xml/OW_XMLQualifier.cpp,
+	  src/xml/OW_XMLQualifier.hpp, src/xml/OW_XMLUnescape.cpp,
+	  src/xml/OW_XMLUnescape.hpp, src/xml/OW_XMLUnescape.re,
+	  test/acceptance/progs/CIMOMLocator.cpp,
+	  test/acceptance/progs/InfiniteClient.cpp,
+	  test/acceptance/progs/OW_CIMClientCL.cpp,
+	  test/acceptance/progs/OW_InstProvTest.cpp,
+	  test/acceptance/progs/aclTest.cpp,
+	  test/acceptance/progs/cimListenerTest.cpp,
+	  test/acceptance/progs/fakeClient.cpp,
+	  test/acceptance/progs/fileSender.cpp,
+	  test/acceptance/progs/hammerClient.cpp,
+	  test/acceptance/progs/testCIMExceptions.cpp,
+	  test/acceptance/progs/testLargeRequest.cpp,
+	  test/acceptance/progs/testMisc.cpp,
+	  test/acceptance/progs/testNamespaces.cpp,
+	  test/acceptance/progs/testSecondaryInstanceProviders.cpp,
+	  test/acceptance/progs/wqlTest1.cpp,
+	  test/acceptance/progs/wqlTest2.cpp,
+	  test/c++providers/associator/OW_AssociatorTest.cpp,
+	  test/c++providers/indication/OW_IndicationProviderTest1.cpp,
+	  test/c++providers/indication/OW_IndicationProviderTest2.cpp,
+	  test/c++providers/indication/OW_IndicationProviderTest3.cpp,
+	  test/c++providers/instance/OW_Infinity.cpp,
+	  test/c++providers/instance/OW_LaptopBattery.cpp,
+	  test/c++providers/instance/OW_LinuxProcess.cpp,
+	  test/c++providers/instance/OW_RPM.cpp,
+	  test/c++providers/instance/testinstance.cpp,
+	  test/c++providers/method/OW_MethodProviderTest.cpp,
+	  test/c++providers/secondary_instance/SecondaryInstanceTest1.cpp,
+	  test/c++providers/secondary_instance/SecondaryInstanceTest2.cpp,
+	  test/unit/CIMObjectPathTestCases.cpp,
+	  test/unit/CIMObjectPathTestCases.hpp,
+	  test/unit/MOFCompilerTestCases.cpp,
+	  test/unit/MOFCompilerTestCases.hpp, test/unit/MemTracerTest.cpp,
+	  test/unit/OW_Base64TestCases.cpp,
+	  test/unit/OW_Base64TestCases.hpp,
+	  test/unit/OW_BinarySerializationTestCases.cpp,
+	  test/unit/OW_BinarySerializationTestCases.hpp,
+	  test/unit/OW_CIMClassTestCases.cpp,
+	  test/unit/OW_CIMClassTestCases.hpp,
+	  test/unit/OW_CIMDateTimeTestCases.cpp,
+	  test/unit/OW_CIMDateTimeTestCases.hpp,
+	  test/unit/OW_CIMInstanceTestCases.cpp,
+	  test/unit/OW_CIMInstanceTestCases.hpp,
+	  test/unit/OW_CIMPropertyTestCases.cpp,
+	  test/unit/OW_CIMPropertyTestCases.hpp,
+	  test/unit/OW_CIMUrlTestCases.cpp,
+	  test/unit/OW_CIMUrlTestCases.hpp,
+	  test/unit/OW_CIMValueTestCases.cpp,
+	  test/unit/OW_CIMValueTestCases.hpp,
+	  test/unit/OW_DateTimeTestCases.cpp,
+	  test/unit/OW_DateTimeTestCases.hpp,
+	  test/unit/OW_EnumerationTestCases.cpp,
+	  test/unit/OW_EnumerationTestCases.hpp,
+	  test/unit/OW_ExceptionTestCases.cpp,
+	  test/unit/OW_ExceptionTestCases.hpp,
+	  test/unit/OW_ExecTestCases.cpp, test/unit/OW_ExecTestCases.hpp,
+	  test/unit/OW_FileSystemTestCases.cpp,
+	  test/unit/OW_FileSystemTestCases.hpp,
+	  test/unit/OW_FormatTestCases.cpp,
+	  test/unit/OW_FormatTestCases.hpp,
+	  test/unit/OW_HTTPChunkerTestCases.cpp,
+	  test/unit/OW_HTTPChunkerTestCases.hpp,
+	  test/unit/OW_HTTPUtilsTestCases.cpp,
+	  test/unit/OW_HTTPUtilsTestCases.hpp,
+	  test/unit/OW_InetAddressTestCases.cpp,
+	  test/unit/OW_InetAddressTestCases.hpp,
+	  test/unit/OW_LinuxSharedLibraryLoaderTestCases.cpp,
+	  test/unit/OW_LinuxSharedLibraryLoaderTestCases.hpp,
+	  test/unit/OW_ListenerAuthenticatorTestCases.cpp,
+	  test/unit/OW_ListenerAuthenticatorTestCases.hpp,
+	  test/unit/OW_LoggerTestCases.cpp,
+	  test/unit/OW_LoggerTestCases.hpp, test/unit/OW_MD5TestCases.cpp,
+	  test/unit/OW_MD5TestCases.hpp,
+	  test/unit/OW_MemTracerTestCases.cpp,
+	  test/unit/OW_MemTracerTestCases.hpp,
+	  test/unit/OW_MutexTestCases.cpp, test/unit/OW_MutexTestCases.hpp,
+	  test/unit/OW_ProviderManagerTestCases.cpp,
+	  test/unit/OW_ProviderManagerTestCases.hpp,
+	  test/unit/OW_ProviderMuxLoaderTestCases.cpp,
+	  test/unit/OW_ProviderMuxLoaderTestCases.hpp,
+	  test/unit/OW_ProviderMuxTestCases.cpp,
+	  test/unit/OW_ProviderMuxTestCases.hpp,
+	  test/unit/OW_RWLockerTestCases.cpp,
+	  test/unit/OW_RWLockerTestCases.hpp,
+	  test/unit/OW_RandomNumberTestCases.cpp,
+	  test/unit/OW_RandomNumberTestCases.hpp,
+	  test/unit/OW_ReferenceTestCases.cpp,
+	  test/unit/OW_ReferenceTestCases.hpp,
+	  test/unit/OW_SharedLibraryLoaderTestCases.cpp,
+	  test/unit/OW_SharedLibraryLoaderTestCases.hpp,
+	  test/unit/OW_SharedLibraryTestCases.cpp,
+	  test/unit/OW_SharedLibraryTestCases.hpp,
+	  test/unit/OW_SocketUtilsTestCases.cpp,
+	  test/unit/OW_SocketUtilsTestCases.hpp,
+	  test/unit/OW_StackTraceTestCases.cpp,
+	  test/unit/OW_StackTraceTestCases.hpp,
+	  test/unit/OW_StringArrayPropertyTestCases.cpp,
+	  test/unit/OW_StringArrayPropertyTestCases.hpp,
+	  test/unit/OW_StringStreamTestCases.cpp,
+	  test/unit/OW_StringStreamTestCases.hpp,
+	  test/unit/OW_StringTestCases.cpp,
+	  test/unit/OW_StringTestCases.hpp,
+	  test/unit/OW_ThreadBarrierTestCases.cpp,
+	  test/unit/OW_ThreadBarrierTestCases.hpp,
+	  test/unit/OW_ThreadPoolTestCases.cpp,
+	  test/unit/OW_ThreadPoolTestCases.hpp,
+	  test/unit/OW_ThreadTestCases.cpp,
+	  test/unit/OW_ThreadTestCases.hpp,
+	  test/unit/OW_UTF8UtilsTestCases.cpp,
+	  test/unit/OW_UTF8UtilsTestCases.hpp,
+	  test/unit/OW_UUIDTestCases.cpp, test/unit/OW_UUIDTestCases.hpp,
+	  test/unit/OW_XMLEscapeTestCases.cpp,
+	  test/unit/OW_XMLEscapeTestCases.hpp,
+	  test/unit/OW_XMLUnescapeTestCases.cpp,
+	  test/unit/OW_XMLUnescapeTestCases.hpp,
+	  test/unit/OperationContextTestCases.cpp,
+	  test/unit/OperationContextTestCases.hpp,
+	  test/unit/URLTestCases.cpp, test/unit/URLTestCases.hpp,
+	  test/unit/UnitMain.cpp, test/unit/UnitTestEnvironment.cpp,
+	  test/unit/UnitTestEnvironment.hpp,
+	  test/unit/testSharedLibraryLoader.hpp: Merging in changes from
+	  BRANCH_3_0_0
+
+2004-04-26 18:16  nuffer
+
+	* website/index.html: Fixed the link to the TODO.
+
+2004-04-26 18:04  nuffer
+
+	* website/: OpenWBEM-GettingStarted.doc,
+	  OpenWBEM-GettingStarted.html, OpenWBEM-GettingStarted.pdf:
+	  Updated.
+
+2004-04-26 18:01  nuffer
+
+	* website/: index.html, openwbem-faq.html, ports.html,
+	  roadmap.html: Updated for 3.0.0 release.
+
+2004-04-26 16:34  nuffer
+
+	* configure.in: Fixed to set the ssl vars correctly when ssl is not
+	  found.
+
+2004-04-26 15:12  nuffer
+
+	* configure.in, openwbem.spec: Version to 3.0.0.  Yea! Finally!
+
+2004-04-26 15:11  nuffer
+
+	* src/: common/OW_ConfigOpts.hpp, common/socket/OW_Socket.hpp,
+	  services/http/OW_HTTPServer.cpp, services/http/OW_HTTPServer.hpp:
+	  Adding option to allow the UDS the http server listens on to be
+	  specified via a config item.
+
+2004-04-26 08:21  nuffer
+
+	* openwbem.spec: Added creating a self-signed cert to the Post
+	  install script.
+
+2004-04-26 08:20  nuffer
+
+	* generic-company-openwbem.spec.in: Fixed a typo.
+
+2004-04-26 07:57  nuffer
+
+	* Makefile.am: Update rpm target to build the rpm locally by
+	  overriding the _topdir variable.
+
+2004-04-26 07:56  nuffer
+
+	* src/providers/cpp/polled/slp/OW_SLPProvider.cpp: Updated
+	  OW_PROVIDERFACTORY_NOID for the change necessary to build OW
+	  statically.
+
+2004-04-26 07:56  nuffer
+
+	* src/client/OW_CIMXMLCIMOMHandle.cpp: Switched
+	  sendExtrinsicXMLHeader to use CIMLocalInstancePathtoXML.
+
+2004-04-25 21:33  nuffer
+
+	* ChangeLog: Updated.
+
 2004-04-25 21:13  nuffer
 
 	* src/: client/OW_CIMXMLCIMOMHandle.cpp,
@@ -17,6 +1363,14 @@
 	* src/: client/OW_CIMXMLCIMOMHandle.cpp,
 	  xml/OW_XMLOperationGeneric.hpp: Removed #include
 	  "OW_XMLParameters.hpp"
+
+2004-04-25 10:53  nuffer
+
+	* src/xml/OW_CIMtoXML.cpp, src/xml/OW_CIMtoXML.hpp,
+	  test/acceptance/testfiles/testsuite28.out,
+	  test/acceptance/testfiles/testsuite28.out.long: Modified XML
+	  generation to use LOCALINSTANCEPATH for reference properties
+	  which are local.
 
 2004-04-23 16:22  nuffer
 
@@ -594,14 +1948,187 @@
 	  test/unit/testSharedLibraryLoader.hpp: Adding author statements
 	  so its known.
 
+2004-04-23 10:50  edge
+
+	* Makefile-shared-lib.inc: Additional build files for DARWIN port
+
+2004-04-22 05:43  edge
+
+	* src/common/OW_PosixFileSystem.cpp: Added explicit flush for
+	  DARWIN
+
+2004-04-20 19:18  kpharris
+
+	* src/: Makefile.am, cimom/Makefile.am: Fixing the install rules to
+	  not depend on a library which may not exist.	Cleaning up after
+	  fake libraries are installed.  Creating the static cimom main
+	  library (for later relinking).
+
+2004-04-20 19:17  kpharris
+
+	* Makefile-shared-lib-inst.inc: Making the install rule much
+	  quieter.
+
+2004-04-20 17:40  kpharris
+
+	* db/test/dbtest.c, src/common/OW_BinarySerialization.hpp,
+	  src/tools/owmofc/owmofc.cpp,
+	  test/unit/testSharedLibraryLoader.hpp: Changes to remove warnings
+
+2004-04-20 15:38  kpharris
+
+	* fake_library_creator.sh: Fix for non-bash shells, to prevent
+	  garbage from being displayed.
+
+2004-04-20 15:10  nuffer
+
+	* run_tests.sh: Add a test for --enable-static-services.
+
+2004-04-20 15:03  kpharris
+
+	* src/cimom/Makefile.am: Creating a library for the cimom main
+	  (when static).
+
+2004-04-20 15:02  kpharris
+
+	* Makefile-shared-lib-inst.inc: Removing the temporary fake library
+	  file after a copy has been installed.
+
 2004-04-20 11:43  nuffer
 
-	* build/vc2003/OpenWBEM/OW_config.h: Added OW_DEPRECATED.
+	* build/vc2003/OpenWBEM/: OW_config.h: Added OW_DEPRECATED.
 
-2004-04-19 10:45  nuffer
+2004-04-19 16:01  kpharris
+
+	* src/ifcs/OW_RequestHandlerIFC.hpp: Removing a useless warning.
+
+2004-04-19 13:49  kpharris
+
+	* Makefile.am, db/test/Makefile.am,
+	  src/authenticators/pam/Makefile.am,
+	  src/authenticators/pamcl/Makefile.am,
+	  src/authenticators/simple/Makefile.am,
+	  src/authorizers/simple/Makefile.am, src/cimom/Makefile.am,
+	  src/providerifcs/cmpi/Makefile.am,
+	  src/providerifcs/npi/Makefile.am,
+	  src/providers/cpp/indication/IndicationRepLayer/Makefile.am,
+	  src/providers/cpp/indicationexport/Makefile.am,
+	  src/providers/cpp/instance/CIM_IndicationFilter/Makefile.am,
+	  src/providers/cpp/instance/CIM_IndicationSubscription/Makefile.am,
+	  src/providers/cpp/instance/CIM_Namespace/Makefile.am,
+	  src/providers/cpp/instance/CIM_NamespaceInManager/Makefile.am,
+	  src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/Makefile.am,
+	  src/providers/cpp/instance/OW_NameSpace/Makefile.am,
+	  src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile.am,
+	  src/providers/cpp/polled/slp/Makefile.am,
+	  src/providers/cpp/polled/unloader/Makefile.am,
+	  src/requesthandlers/binary/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
+	  src/services/http/Makefile.am, src/tools/Makefile.am,
+	  src/tools/owmofc/Makefile.am, src/wql/Makefile.am,
+	  test/acceptance/progs/Makefile.am, test/unit/Makefile.am: Fixes
+	  for static linking, and creation of fake libraries.
+
+2004-04-19 13:48  kpharris
+
+	* src/Makefile.am: Adding rules to install a static version of the
+	  cimomd.
+
+2004-04-19 13:47  kpharris
+
+	* Makefile-shared-lib-inst.inc: Fixes for static linking.
+
+2004-04-19 13:46  kpharris
+
+	* configure.in: Additions for static linking.  Fixes for AIX.
+
+2004-04-19 13:43  kpharris
+
+	* test/acceptance/: Makefile.am, acceptance.sh.fb: Changes to allow
+	  static linking.
+
+2004-04-19 13:42  kpharris
+
+	* test/unit/UnitMain.cpp: Preventing the test which loads
+	  libopenwbem.so when everything is static.
+
+2004-04-19 13:40  kpharris
+
+	* fake_library_creator.sh, src/common/OW_dlSharedLibrary.cpp,
+	  src/common/OW_dlSharedLibrary.hpp,
+	  src/common/OW_dlSharedLibraryLoader.cpp: Adding the ability to
+	  load "fake" libraries (which are just text files mapping a symbol
+	  from a library to the corresponding symbol name in a static
+	  binary).
+
+2004-04-19 13:35  kpharris
+
+	* src/cimom/indication/: OW_IndicationRepLayerImpl.cpp,
+	  OW_IndicationServerImpl.cpp: Avoiding multiple definitions of
+	  getOWVersion when performing a static link.
+
+2004-04-19 13:33  kpharris
+
+	* src/cimom/common/OW_CIMOMEnvironment.cpp: Fixes to the pathnames
+	  so that they use the platform specific separator macros.
+
+2004-04-19 13:28  kpharris
+
+	* src/: authenticators/pam/OW_PAMAuthentication.cpp,
+	  authenticators/pamcl/OW_LinuxPAMAuthenticationCL.cpp,
+	  authenticators/simple/OW_SimpleAuthenticator.cpp,
+	  authorizers/simple/OW_SimpleAuthorizer.cpp,
+	  ifcs/OW_AuthenticatorIFC.hpp, ifcs/OW_AuthorizerIFC.hpp,
+	  ifcs/OW_RequestHandlerIFC.hpp, ifcs/OW_ServiceIFC.hpp,
+	  ifcs/OW_WQLIFC.hpp, provider/OW_ProviderIFCBaseIFC.hpp,
+	  providerifcs/cmpi/OW_CMPIProviderIFC.cpp,
+	  providerifcs/cpp/OW_CppProviderBaseIFC.hpp,
+	  providerifcs/npi/OW_NPIProviderIFC.cpp,
+	  providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
+	  providers/cpp/polled/slp/OW_SLPProvider.cpp,
+	  providers/cpp/polled/unloader/OW_UnloaderProvider.cpp,
+	  requesthandlers/binary/OW_BinaryRequestHandler.cpp,
+	  requesthandlers/cimxml/OW_XMLExecute.cpp,
+	  services/http/OW_HTTPServer.cpp, wql/OW_WQLImpl.cpp: Changes to
+	  the factory macros which allow the creation of unique function
+	  names (for static linking).
+
+2004-04-19 12:25  nuffer
+
+	* configure.in, openwbem.spec: Version -> 3.0.1
+
+2004-04-19 12:21  nuffer
+
+	* configure.in, etc/Makefile.am, etc/openwbem.conf.sh,
+	  src/common/OW_Types.h, src/common/OW_Types.hpp,
+	  src/common/socket/OW_SocketBaseImpl.cpp, test/Makefile.am,
+	  test/acceptance/runCimom.sh, test/acceptance/setup_paths,
+	  test/acceptance/progs/testLargeRequest.cpp,
+	  test/npiproviders/Makefile.am, test/unit/Makefile.am: Fixes for
+	  HPUX
+
+2004-04-19 10:44  nuffer
 
 	* configure.in: Dont reset the flags, since they contain the
 	  necessary flags for using openssl.
+
+2004-04-16 18:24  kpharris
+
+	* ow_ar.sh: Added some error checking, made changes to allow
+	  absolute paths for archives.
+
+2004-04-16 17:49  nuffer
+
+	* configure.in, openwbem.spec: Version -> 3.0.0pre4
+
+2004-04-16 16:51  nuffer
+
+	* src/: client/OW_CIMXMLCIMOMHandle.hpp,
+	  http/client/OW_HTTPClient.hpp: Added some docs.
+
+2004-04-16 16:50  nuffer
+
+	* ChangeLog: Updated.
 
 2004-04-16 16:30  nuffer
 
@@ -2775,10 +4302,6 @@
 	* website/index.html: Fixed a few links which pointed to the old
 	  cvs.
 
-2004-02-26 10:27  nuffer
-
-	* src/server/OW_Platform.cpp: Removed.
-
 2004-02-26 09:15  nuffer
 
 	* configure.in, src/Makefile.am, src/cimom/Makefile.am,
@@ -2847,10 +4370,6 @@
 	  src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile.am,
 	  src/providers/cpp/polled/slp/Makefile.am,
 	  src/providers/cpp/polled/unloader/Makefile.am,
-	  src/server/.cvsignore, src/server/Makefile.am,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_LoggerImpls.cpp, src/server/OW_PidFile.cpp,
-	  src/server/OW_PidFile.hpp, src/server/OW_Platform.hpp,
 	  test/acceptance/Makefile.am, test/acceptance/progs/Makefile.am,
 	  test/c++providers/associator/Makefile.am,
 	  test/c++providers/indication/Makefile.am,
@@ -2893,9 +4412,8 @@
 	  src/providers/cpp/polled/unloader/Makefile.am,
 	  src/repositories/hdb/Makefile.am,
 	  src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
-	  src/server/OW_LoggerImpls.cpp, src/server/OW_PidFile.cpp,
-	  src/server/OW_Platform.cpp, src/services/http/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
+	  src/services/http/Makefile.am,
 	  src/services/http/OW_HTTPSvrConnection.cpp, src/wql/Makefile.am,
 	  src/wql/OW_WQLAst.cpp, src/wql/OW_WQLAst.hpp,
 	  src/wql/OW_WQLImpl.hpp, src/wql/OW_WQLLexer.ll,
@@ -2922,8 +4440,8 @@
 	  common/Makefile.am, common/OW_Exec.cpp,
 	  common/OW_PosixUnnamedPipe.cpp, common/OW_PosixUnnamedPipe.hpp,
 	  common/OW_UnnamedPipe.hpp, common/socket/OW_Socket.cpp,
-	  server/OW_Platform.cpp, services/http/OW_HTTPServer.cpp: Changed
-	  UnnamedPipe to default to be blocking with a timeout.
+	  services/http/OW_HTTPServer.cpp: Changed UnnamedPipe to default
+	  to be blocking with a timeout.
 
 2004-02-20 08:42  nuffer
 
@@ -3291,10 +4809,10 @@
 
 2004-01-28 11:32  nuffer
 
-	* acconfig.h, configure.in, src/cimom/owcimomd_main.cpp,
-	  src/server/OW_Platform.cpp: Fixing some issues with restarting.
-	  detect pthread_kill_other_threads_np and call it before
-	  restarting. call set_unexpected and set_terminate
+	* acconfig.h, configure.in, src/cimom/owcimomd_main.cpp: Fixing
+	  some issues with restarting.	detect
+	  pthread_kill_other_threads_np and call it before restarting. call
+	  set_unexpected and set_terminate
 
 2004-01-27 11:27  nuffer
 
@@ -3452,7 +4970,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPServer.hpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
@@ -3620,10 +5137,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_LoggerImpls.cpp, src/server/OW_PidFile.cpp,
-	  src/server/OW_PidFile.hpp, src/server/OW_Platform.cpp,
-	  src/server/OW_Platform.hpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_DigestAuthentication.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
@@ -4330,11 +5843,6 @@
 	* src/cimom/OW_CIMOMEnvironment.hpp: Have OW_PACKAGE_PREFIX be part
 	  of the name.
 
-2004-01-17 16:43  nuffer
-
-	* src/server/OW_LoggerImpls.cpp: Use OW_PACKAGE_PREFIX when calling
-	  openlog.
-
 2004-01-17 16:41  nuffer
 
 	* src/common/socket/OW_Socket.hpp: Changed UDS socket name to use
@@ -4346,11 +5854,6 @@
 	  src/authenticators/pam/OW_LinuxPAMAuthentication.cpp,
 	  src/authenticators/pamcl/OW_PAMAuthSA.cpp: Changed pam
 	  authentication to use OW_PACKAGE_PREFIX.
-
-2004-01-17 16:35  nuffer
-
-	* src/server/OW_Platform.cpp: Modified to use OW_PACKAGE_PREFIX as
-	  part of the pid file filename.
 
 2004-01-17 16:31  nuffer
 
@@ -4481,8 +5984,7 @@
 
 2004-01-12 17:52  nuffer
 
-	* src/: cimom/owcimomd_main.cpp, server/OW_Platform.cpp,
-	  server/OW_Platform.hpp: Modified to remove the fatal signal
+	* src/cimom/owcimomd_main.cpp: Modified to remove the fatal signal
 	  handlers while shutting down, so the cimom will not restart when
 	  it is supposed to be shutting down.
 
@@ -4516,26 +6018,15 @@
 2004-01-08 21:26  nuffer
 
 	* etc/openwbem.conf.sh, src/cimom/owcimomd_main.cpp,
-	  src/common/OW_ConfigOpts.hpp, src/server/OW_Platform.cpp: Added
-	  the owcimomd.restart_on_error option to control whether the cimom
-	  will rerun itself if a fatal signal is received.
-
-2004-01-08 20:22  nuffer
-
-	* src/server/: OW_Platform.cpp, OW_Platform.hpp: Only install the
-	  fatal signal handlers after the cimom is initialized to prevent
-	  an infinite loop if initialization crashes.
+	  src/common/OW_ConfigOpts.hpp: Added the owcimomd.restart_on_error
+	  option to control whether the cimom will rerun itself if a fatal
+	  signal is received.
 
 2004-01-08 20:15  nuffer
 
 	* src/cimom/owcimomd_main.cpp: Only install the fatal signal
 	  handlers after the cimom is initialized to prevent an infinite
 	  loop if initialization crashes.
-
-2004-01-08 20:03  nuffer
-
-	* src/server/OW_Platform.cpp: Initial implementation of fatal
-	  signal handler.
 
 2004-01-07 21:30  nuffer
 
@@ -4592,10 +6083,6 @@
 
 	* test/unit/GenericTestCases.cpp.tmpl: Changed #include
 	  "Generic.hpp" to #include "OW_Generic.hpp"
-
-2004-01-07 12:31  nuffer
-
-	* src/server/OW_Platform.cpp: Set umask(0077)
 
 2004-01-07 12:29  nuffer
 
@@ -4674,20 +6161,17 @@
 	  cimom/OW_CIMOMEnvironment.hpp, common/Makefile.am,
 	  common/OW_ConfigException.cpp, common/OW_ConfigException.hpp,
 	  common/OW_ConfigFile.cpp, common/OW_ConfigFile.hpp,
-	  common/OW_ConfigOpts.hpp, server/Makefile.am,
-	  server/OW_ConfigException.cpp, server/OW_ConfigException.hpp:
-	  Moved config file loading from
+	  common/OW_ConfigOpts.hpp: Moved config file loading from
 	  CIMOMEnvironment::_loadConfigItemsFromFile to
 	  ConfigFile::loadConfigFile and moved ConfigException from
 	  src/server to src/common.
 
 2004-01-06 08:54  nuffer
 
-	* src/: cimom/owcimomd_main.cpp, server/OW_Platform.cpp,
-	  server/OW_Platform.hpp: Switched restart to actually re-run the
-	  daemon.  Started implementation of some signal handlers to re-run
-	  the daemon in the case of terminal signals such as SIGABRT,
-	  SIGSEGV, etc.
+	* src/cimom/owcimomd_main.cpp: Switched restart to actually re-run
+	  the daemon.  Started implementation of some signal handlers to
+	  re-run the daemon in the case of terminal signals such as
+	  SIGABRT, SIGSEGV, etc.
 
 2004-01-06 06:56  nuffer
 
@@ -4785,8 +6269,7 @@
 	  src/repositories/hdb/OW_CIMRepository.cpp,
 	  src/repositories/hdb/OW_GenericHDBRepository.hpp,
 	  src/repositories/hdb/OW_MetaRepository.cpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_LoggerImpls.cpp,
-	  src/server/OW_Platform.cpp, src/services/http/OW_HTTPServer.cpp,
+	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
 	  src/tools/owcimindicationlistener.cpp,
 	  src/tools/owmofc/owmofc.cpp, src/xml/OW_RequestHandlerIFCXML.hpp,
@@ -4962,8 +6445,6 @@
 	  src/providerifcs/cmpi/common/cmpiThreadContext.cpp,
 	  src/repositories/hdb/OW_HDBCommon.hpp,
 	  src/repositories/hdb/OW_InstanceRepository.cpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_LoggerImpls.cpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPServer.hpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
@@ -5064,9 +6545,8 @@
 
 2003-12-18 11:26  bnesse
 
-	* src/: providerifcs/npi/NPIProvider.hpp,
-	  providerifcs/npi/OW_NPIProviderIFC.cpp, server/OW_PidFile.cpp,
-	  server/OW_Platform.cpp: Fixes for the Darwin build.
+	* src/providerifcs/npi/: NPIProvider.hpp, OW_NPIProviderIFC.cpp:
+	  Fixes for the Darwin build.
 
 2003-12-18 11:10  bnesse
 
@@ -5780,10 +7260,6 @@
 	* src/providerifcs/perl/perlProvider/perlProvider.c: Removed use of
 	  non-standard alloca
 
-2003-11-29 19:52  nuffer
-
-	* src/server/OW_Platform.cpp: Some workaround for FreeBSD.
-
 2003-11-29 17:02  nuffer
 
 	* src/common/OW_ByteSwap.hpp: Fixed an issue with namespaces and
@@ -5853,9 +7329,7 @@
 	  src/repositories/hdb/OW_HDBNode.cpp,
 	  src/repositories/hdb/OW_IndexImpl.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
-	  src/server/OW_ConfigException.cpp,
-	  src/server/OW_ConfigException.hpp, src/server/OW_Platform.cpp,
-	  src/server/OW_Platform.hpp, src/wql/common/OW_WQLOperand.cpp,
+	  src/wql/common/OW_WQLOperand.cpp,
 	  src/wql/common/OW_WQLOperand.hpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/unit/OW_ExceptionTestCases.cpp: Removed or renamed all
@@ -5991,7 +7465,6 @@
 	  src/repositories/hdb/OW_HDB.cpp,
 	  src/repositories/hdb/OW_MetaRepository.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
-	  src/server/OW_PidFile.cpp, src/server/OW_Platform.hpp,
 	  src/tools/owcimindicationlistener.cpp,
 	  src/tools/owcreatenamespace.cpp, src/tools/owdeletenamespace.cpp,
 	  src/tools/owenumnamespace.cpp, src/tools/owexecwql.cpp,
@@ -6095,9 +7568,9 @@
 	  common/OW_StringBuffer.cpp, common/OW_Thread.cpp,
 	  common/OW_ThreadImpl.cpp, common/OW_ThreadPool.cpp,
 	  providerifcs/cmpi/common/cmpiBrokerEnc.cpp,
-	  server/OW_Platform.cpp, wql/common/OW_WQLSelectStatement.cpp,
-	  xml/OW_CIMtoXML.cpp: Cleaned up StackTrace and removed/cleaned up
-	  #include <iostream> lines.
+	  wql/common/OW_WQLSelectStatement.cpp, xml/OW_CIMtoXML.cpp:
+	  Cleaned up StackTrace and removed/cleaned up #include <iostream>
+	  lines.
 
 2003-11-28 14:38  nuffer
 
@@ -6137,8 +7610,6 @@
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_PidFile.cpp, src/server/OW_PidFile.hpp,
-	  src/server/OW_Platform.cpp, src/server/OW_Platform.hpp,
 	  src/xml/CIM_DTD_V101.dtd, src/xml/CIM_DTD_V211.dtd,
 	  src/xml/OW_CIMXMLParser.cpp, src/xml/OW_CIMXMLParser.hpp,
 	  src/xml/OW_XMLCIMFactory.cpp, src/xml/OW_XMLClass.cpp,
@@ -6150,13 +7621,6 @@
 	  constant strings so they are all in CIMXMLParser.  Changed
 	  OW_SharedLibrary::getFunctionPointer from a static function to a
 	  member function.
-
-2003-11-28 14:21  nuffer
-
-	* src/frameworks/: .cvsignore, Makefile.am, daemon/.cvsignore,
-	  daemon/Makefile.am, daemon/OW_DaemonEnv.cpp,
-	  daemon/OW_DaemonEnv.hpp, daemon/owdaemon_main.cpp: Removed old
-	  unused code
 
 2003-11-27 19:03  nuffer
 
@@ -6460,9 +7924,6 @@
 	  src/common/socket/test/gethttpdata.cpp,
 	  src/common/socket/test/gethttpsdata.cpp,
 	  src/common/socket/test/server.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/client/OW_HTTPClient.hpp,
 	  src/http/common/OW_Base64FormatException.hpp,
@@ -6693,11 +8154,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_ConfigException.cpp,
-	  src/server/OW_ConfigException.hpp, src/server/OW_LoggerImpls.cpp,
-	  src/server/OW_PidFile.cpp, src/server/OW_PidFile.hpp,
-	  src/server/OW_Platform.cpp, src/server/OW_Platform.hpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_DigestAuthentication.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
@@ -6839,7 +8295,6 @@
 	  src/common/socket/OW_SocketBaseImpl.hpp,
 	  src/common/socket/OW_SocketStreamBuffer.hpp,
 	  src/common/socket/OW_SocketUtils.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
 	  src/http/common/OW_HTTPDeflateOStream.hpp,
 	  src/http/common/OW_HTTPLenLimitIStream.hpp,
 	  src/http/common/OW_MD5.hpp, src/ifcs/OW_SelectableIFC.hpp,
@@ -6894,7 +8349,6 @@
 	  src/repositories/hdb/OW_IndexImpl.cpp,
 	  src/repositories/hdb/OW_MetaRepository.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_Platform.hpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
 	  src/xml/OW_XMLOperationGeneric.hpp, src/xml/OW_XMLParser.cpp,
 	  src/xml/OW_XMLQualifier.hpp,
@@ -7059,9 +8513,6 @@
 	  src/common/socket/OW_SocketFlags.hpp,
 	  src/common/socket/OW_SocketUtils.cpp,
 	  src/common/socket/OW_SocketUtils.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/common/OW_HTTPChunkedIStream.hpp,
 	  src/http/common/OW_HTTPLenLimitIStream.hpp,
@@ -7111,9 +8562,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_LoggerImpls.cpp, src/server/OW_Platform.cpp,
-	  src/server/OW_Platform.hpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_DigestAuthentication.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
@@ -7542,10 +8990,9 @@
 	* test/acceptance/progs/hammerClient.cpp: Adjusted for new thread
 	  pool constructor.
 
-2003-11-16 16:39  nuffer
+2003-11-16 16:40  nuffer
 
-	* src/: server/OW_AuthManager.cpp,
-	  services/http/OW_HTTPSvrConnection.cpp,
+	* src/: services/http/OW_HTTPSvrConnection.cpp,
 	  xml/OW_RequestHandlerIFCXML.cpp: Added catch block for
 	  OW_ThreadCancelledException
 
@@ -7634,11 +9081,6 @@
 
 	* test/unit/run_make_check.sh: Modified to pass along cmd line
 	  args.
-
-2003-11-12 07:14  nuffer
-
-	* src/server/OW_Platform.cpp: Cleaned up signal handling, and use
-	  sigaction() instead of signal()
 
 2003-11-12 07:12  nuffer
 
@@ -7976,8 +9418,7 @@
 
 2003-10-30 17:41  nuffer
 
-	* etc/openwbem.conf.sh, src/server/OW_LoggerImpls.cpp: Added option
-	  for a null logger.
+	* etc/openwbem.conf.sh: Added option for a null logger.
 
 2003-10-30 17:40  nuffer
 
@@ -8274,20 +9715,8 @@
 2003-10-22 19:53  nuffer
 
 	* configure.in, etc/openwbem.conf.sh, src/common/OW_ConfigOpts.hpp,
-	  src/providerifcs/Makefile.am,
-	  src/providerifcs/simplecpp/.cvsignore,
-	  src/providerifcs/simplecpp/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp: Removed
-	  the simple c++ provider interface.
+	  src/providerifcs/Makefile.am: Removed the simple c++ provider
+	  interface.
 
 2003-10-22 11:35  nuffer
 
@@ -8670,11 +10099,10 @@
 	  src/mof/Makefile.am, src/providerifcs/cpp/Makefile.am,
 	  src/providerifcs/npi/Makefile.am,
 	  src/providerifcs/npi/common/Makefile.am,
-	  src/providerifcs/simplecpp/Makefile.am,
 	  src/providers/cpp/indicationexport/Makefile.am,
 	  src/providers/cpp/polled/slp/Makefile.am,
 	  src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am, src/wql/Makefile.am,
 	  src/xml/Makefile.am: Backported some of the makefile changes from
 	  HEAD so uninstall will work and we can create a distribution on
@@ -8685,12 +10113,6 @@
 	* doc/man/man1/Makefile.am, doc/man/man8/Makefile.am,
 	  src/cimxmllistener/Makefile.am, test/npiproviders/Makefile.am:
 	  Changes to work with automake 1.6.3
-
-2003-10-08 22:47  nuffer
-
-	* src/server/: OW_AuthManager.cpp: Fixed a bug that could cause a
-	  segfault if an auth module threw an exception where the code for
-	  the exception is in the auth module itself.
 
 2003-10-08 10:56  nuffer
 
@@ -8778,7 +10200,7 @@
 2003-09-25 14:35  nuffer
 
 	* src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am, src/wql/Makefile.am,
 	  src/wql/common/Makefile.am, src/xml/Makefile.am,
 	  test/c++providers/associator/Makefile.am,
@@ -8794,7 +10216,6 @@
 	  providerifcs/npi/common/Makefile.am,
 	  providerifcs/perl/Makefile.am,
 	  providerifcs/perl/perlProvider/Makefile.am,
-	  providerifcs/simplecpp/Makefile.am,
 	  providers/cpp/indication/IndicationRepLayer/Makefile.am,
 	  providers/cpp/indicationexport/Makefile.am,
 	  providers/cpp/instance/CIM_IndicationFilter/Makefile.am,
@@ -8848,7 +10269,6 @@
 	  src/providerifcs/npi/common/Makefile.am,
 	  src/providerifcs/perl/Makefile.am,
 	  src/providerifcs/perl/perlProvider/Makefile.am,
-	  src/providerifcs/simplecpp/Makefile.am,
 	  src/providers/cpp/indication/IndicationRepLayer/Makefile.am: Got
 	  make uninstall to work on rh9.  Simplified the Makefile.am files.
 
@@ -8893,7 +10313,6 @@
 	  src/cimxmllistener/OW_ListenerAuthenticator.cpp,
 	  src/client/OW_CIMOMLocatorSLP.cpp,
 	  src/common/OW_SafeLibCreate.hpp, src/common/OW_String.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/http/common/OW_HTTPUtils.cpp, src/mof/MofCompiler.cpp,
 	  src/providers/cpp/instance/OW_NameSpace/OW_NameSpaceProvider.cpp,
 	  src/repositories/hdb/OW_CIMRepository.cpp,
@@ -9157,7 +10576,6 @@
 	  src/common/OW_ThreadCounter.hpp,
 	  src/common/OW_TimeoutException.cpp,
 	  src/common/OW_TimeoutException.hpp,
-	  src/server/OW_ConfigException.cpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  test/unit/OW_RWLockerTestCases.cpp: Added timeouts to OW_RWLocker
 	  and OW_ThreadCounter
@@ -9259,20 +10677,7 @@
 	  src/providerifcs/npi/OW_NPIProviderIFC.hpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.hpp,
-	  src/providerifcs/simplecpp/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/c++providers/Makefile.am,
-	  test/c++providers/property/.cvsignore,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
-	  test/c++providers/property/OpenLinuxVersion.mof,
 	  test/unit/OW_ProviderManagerTestCases.cpp,
 	  test/unit/OW_ProviderManagerTestCases.hpp,
 	  test/unit/testSharedLibraryLoader.hpp: Removed property
@@ -9397,10 +10802,6 @@
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
 	  src/providerifcs/perl/OW_PerlInstanceProviderProxy.cpp,
 	  src/providerifcs/perl/OW_PerlInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/providers/cpp/instance/CIM_IndicationFilter/OW_provinstCIM_IndicationFilter.cpp,
 	  src/providers/cpp/instance/CIM_IndicationSubscription/OW_provCIM_IndicationSubscription.cpp,
 	  src/providers/cpp/instance/CIM_Namespace/OW_provinstCIM_Namespace.cpp,
@@ -9536,13 +10937,6 @@
 	  src/providerifcs/perl/Makefile.am,
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.hpp,
-	  src/providerifcs/simplecpp/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/providers/cpp/instance/CIM_NamespaceInManager/OW_provinstCIM_NamespaceInManager.cpp,
 	  src/pythonbinding/PyOW_CIMClient.cpp,
 	  src/repositories/hdb/Makefile.am,
@@ -9571,16 +10965,12 @@
 	  src/cimom/OW_NameSpaceProvider.hpp,
 	  src/providerifcs/cpp/OW_CppProviderBaseIFC.hpp,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
 	  src/providers/cpp/polled/slp/OW_SLPProvider.cpp,
 	  test/c++providers/associator/OW_AssociatorTest.cpp,
 	  test/c++providers/indication/OW_IndicationProviderTest2.cpp,
 	  test/c++providers/indication/OW_IndicationProviderTest3.cpp,
-	  test/c++providers/method/OW_MethodProviderTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp: Removed the
+	  test/c++providers/method/OW_MethodProviderTest.cpp: Removed the
 	  cleanup method from the cpp provider interface, since it is
 	  redundant with the destructor, and could actually be called when
 	  the provider is still doing something.
@@ -9751,20 +11141,6 @@
 	* test/acceptance/progs/aclTest.cpp: Added include of assert.h for
 	  Darwin build.
 
-2003-07-08 16:56  bnesse
-
-	* src/server/OW_Platform.cpp: #ifdefed out undefined sig on Darwin.
-
-2003-07-08 16:54  bnesse
-
-	* src/server/OW_PidFile.cpp: Added file lock/unlock ifdefs for
-	  Darwin.
-
-2003-07-08 15:27  bnesse
-
-	* src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp: Replaced
-	  hard coded .so references with OW_SHAREDLIB_EXTENSION define.
-
 2003-07-08 15:26  bnesse
 
 	* src/providerifcs/npi/common/Makefile.am: Removed unsued files
@@ -9837,10 +11213,6 @@
 	* src/common/socket/: OW_SSLCtxMgr.cpp, OW_SSLCtxMgr.hpp: Fixed a
 	  one-time memory leak.
 
-2003-07-07 07:53  nuffer
-
-	* src/providerifcs/simplecpp/Makefile.am: added a missing file.
-
 2003-07-02 16:19  nuffer
 
 	* test/acceptance/acceptance.sh.fb: Fixed to only test digest if it
@@ -9906,17 +11278,14 @@
 	  src/cimom/OW_PollingManager.cpp,
 	  src/cimxmllistener/OW_HTTPXMLCIMListener.cpp,
 	  src/common/OW_ConfigOpts.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/ifcs/OW_ServiceEnvironmentIFC.hpp,
 	  src/provider/OW_ProviderEnvironmentIFC.hpp,
 	  src/providerifcs/cmpi/OW_CMPIProviderIFC.cpp,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
 	  src/repositories/hdb/OW_CIMRepository.cpp,
 	  src/repositories/hdb/OW_MetaRepository.cpp,
-	  src/server/OW_AuthManager.cpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  test/unit/UnitTestEnvironment.hpp,
 	  test/unit/testSharedLibraryLoader.hpp,
@@ -10015,13 +11384,6 @@
 	  src/providerifcs/npi/OW_NPIProviderIFC.hpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.hpp,
-	  src/providerifcs/simplecpp/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/unit/OW_ProviderManagerTestCases.cpp,
 	  test/unit/OW_ProviderManagerTestCases.hpp,
 	  test/unit/testSharedLibraryLoader.hpp: Made property providers be
@@ -10143,15 +11505,6 @@
 	  src/providerifcs/perl/OW_PerlPolledProviderProxy.cpp,
 	  src/providerifcs/perl/OW_PerlPolledProviderProxy.hpp,
 	  src/providerifcs/perl/perlProvider/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
 	  src/repositories/hdb/Makefile.am,
 	  src/repositories/hdb/OW_Index.cpp,
 	  src/repositories/hdb/OW_Index.hpp,
@@ -10215,11 +11568,6 @@
 
 	* src/common/: OW_Logger.cpp, OW_Logger.hpp: Restructured slightly
 	  to avoid including OW_MutexLock from OW_Logger.hpp
-
-2003-06-06 16:00  nuffer
-
-	* src/server/: Makefile.am, OW_Logger.cpp, OW_LoggerImpls.cpp:
-	  Renamed OW_Logger.cpp to OW_LoggerImpls.cpp
 
 2003-06-05 17:24  nuffer
 
@@ -10413,7 +11761,7 @@
 	  src/providers/cpp/polled/slp/Makefile.am,
 	  src/pythonbinding/Makefile.am,
 	  src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am, src/wql/Makefile.am,
 	  src/wql/common/Makefile.am, src/xml/Makefile.am,
 	  test/cmpiproviders/Makefile.am: Fixed so multiple make install
@@ -10434,7 +11782,6 @@
 	  src/providerifcs/npi/common/Makefile.am,
 	  src/providerifcs/perl/Makefile.am,
 	  src/providerifcs/perl/perlProvider/Makefile.am,
-	  src/providerifcs/simplecpp/Makefile.am,
 	  src/providers/cpp/indication/IndicationRepLayer/Makefile.am,
 	  src/providers/cpp/indicationexport/Makefile.am: Fixed so multiple
 	  make install runs will work.	Thanks to Matthias Hoelzer Kluepfel
@@ -10521,11 +11868,6 @@
 
 	* src/cimom/: OW_CIMServer.cpp, OW_CIMServer.hpp: Removed
 	  _validatePropagatedKeys because it is broken.
-
-2003-05-16 12:58  nuffer
-
-	* src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp: Fixed the
-	  name.
 
 2003-05-16 05:31  sedgewick_de
 
@@ -11327,11 +12669,6 @@
 	  Added a getUserName function to the provider environment.  Fixed
 	  up a few things in the indication server.
 
-2003-03-29 22:25  nuffer
-
-	* src/server/: OW_Platform.cpp, OW_Platform.hpp: Added
-	  getCurrentUserName
-
 2003-03-28 16:14  nuffer
 
 	* src/requesthandlers/cimxml/OW_XMLExecute.cpp,
@@ -11629,9 +12966,6 @@
 	  src/common/socket/test/gethttpdata.cpp,
 	  src/common/socket/test/gethttpsdata.cpp,
 	  src/common/socket/test/server.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/client/OW_HTTPClient.hpp,
 	  src/http/common/OW_Base64FormatException.hpp,
@@ -11747,17 +13081,6 @@
 	  src/providerifcs/perl/OW_PerlPolledProviderProxy.hpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/providers/cpp/indication/IndicationRepLayer/OW_provindIndicationRepLayer.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
@@ -11769,11 +13092,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_ConfigException.cpp,
-	  src/server/OW_ConfigException.hpp, src/server/OW_Logger.cpp,
-	  src/server/OW_PidFile.cpp, src/server/OW_PidFile.hpp,
-	  src/server/OW_Platform.cpp, src/server/OW_Platform.hpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_DigestAuthentication.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
@@ -11833,7 +13151,6 @@
 	  test/c++providers/instance/OW_RPM.cpp,
 	  test/c++providers/instance/testinstance.cpp,
 	  test/c++providers/method/OW_MethodProviderTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
 	  test/unit/GenericTestCases.cpp.tmpl,
 	  test/unit/GenericTestCases.hpp.tmpl,
 	  test/unit/OW_Base64TestCases.cpp,
@@ -12088,9 +13405,6 @@
 	  src/common/socket/test/gethttpdata.cpp,
 	  src/common/socket/test/gethttpsdata.cpp,
 	  src/common/socket/test/server.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/client/OW_HTTPClient.hpp,
 	  src/http/common/OW_Base64FormatException.hpp,
@@ -12207,17 +13521,6 @@
 	  src/providerifcs/perl/OW_PerlProviderIFC.cpp,
 	  src/providerifcs/perl/OW_PerlProviderIFC.hpp,
 	  src/providerifcs/perl/perlProvider/Makefile.in,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/providers/cpp/indication/IndicationRepLayer/OW_provindIndicationRepLayer.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
@@ -12229,11 +13532,6 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/OW_AuthManager.cpp, src/server/OW_AuthManager.hpp,
-	  src/server/OW_ConfigException.cpp,
-	  src/server/OW_ConfigException.hpp, src/server/OW_Logger.cpp,
-	  src/server/OW_PidFile.cpp, src/server/OW_PidFile.hpp,
-	  src/server/OW_Platform.cpp, src/server/OW_Platform.hpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_DigestAuthentication.hpp,
 	  src/services/http/OW_HTTPServer.cpp,
@@ -12293,7 +13591,6 @@
 	  test/c++providers/instance/OW_RPM.cpp,
 	  test/c++providers/instance/testinstance.cpp,
 	  test/c++providers/method/OW_MethodProviderTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
 	  test/unit/OW_Base64TestCases.cpp,
 	  test/unit/OW_Base64TestCases.hpp,
 	  test/unit/OW_CIMClassTestCases.cpp,
@@ -12651,7 +13948,6 @@
 	  src/cimom/OW_ProviderManager.cpp,
 	  src/providerifcs/cpp/Makefile.am,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
 	  test/unit/Makefile.am,
 	  test/unit/OW_ProviderMuxLoaderTestCases.cpp,
 	  test/unit/run_make_check.sh: Made the cpp provider ifc be linked
@@ -12984,9 +14280,8 @@
 	  src/providerifcs/cpp/OW_CppIndicationProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppInstanceProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppProviderBaseIFC.hpp,
-	  src/server/Makefile.am, test/unit/testSharedLibraryLoader.hpp:
-	  Fixed a problem with a segfault when a indication provider was
-	  unloaded.
+	  test/unit/testSharedLibraryLoader.hpp: Fixed a problem with a
+	  segfault when a indication provider was unloaded.
 
 2003-01-31 08:14  nuffer
 
@@ -13024,10 +14319,6 @@
 	  test/c++providers/indication/OW_IndicationProviderTest1.cpp,
 	  test/c++providers/indication/OW_IndicationProviderTest2.cpp,
 	  test/c++providers/indication/OW_IndicationProviderTest3.cpp,
-	  test/c++providers/trigger/.cvsignore,
-	  test/c++providers/trigger/Makefile.am,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/Makefile.am: Working on the acceptance test suite with
 	  indication providers.
 
@@ -13039,10 +14330,7 @@
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  src/server/Makefile.am, src/server/OW_AuthManager.hpp,
-	  src/server/OW_ConfigException.cpp,
-	  src/server/OW_ConfigException.hpp, src/server/OW_Platform.cpp,
-	  src/server/OW_Platform.hpp, src/services/http/OW_HTTPServer.cpp,
+	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPServer.hpp,
 	  src/services/http/OW_HTTPSvrConnection.hpp,
 	  src/wql/common/OW_WQLOperand.cpp,
@@ -13452,8 +14740,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/c++providers/instance/OW_Infinity.cpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
@@ -13497,8 +14783,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/c++providers/instance/OW_Infinity.cpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
@@ -13517,8 +14801,6 @@
 	  src/cimom/OW_NameSpaceProvider.hpp,
 	  src/cimom/OW_ProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/c++providers/instance/OW_Infinity.cpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
@@ -13564,8 +14846,6 @@
 	  providerifcs/npi/common/npi_import.h,
 	  providerifcs/npi/common/npicrash.h,
 	  providerifcs/npi/common/provider.h,
-	  providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
 	  wql/common/OW_WQLSelectStatement.cpp,
 	  wql/common/OW_WQLSelectStatement.hpp: Separated OW_CIMServer and
 	  made OW_CIMRepository that is responsible for storing the data.
@@ -13596,8 +14876,6 @@
 	  src/cimxmllistener/OW_HTTPXMLCIMListener.cpp,
 	  src/common/Makefile.am, src/common/OW_HashMap.hpp,
 	  src/common/OW_HashMultiMap.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
 	  src/ifcs/OW_ServiceEnvironmentIFC.hpp, src/provider/Makefile.am,
 	  src/provider/OW_IndicationProviderIFC.hpp,
 	  src/provider/OW_IndicationProviderInfo.hpp,
@@ -13626,8 +14904,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  test/c++providers/instance/OW_Infinity.cpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
@@ -13907,8 +15183,6 @@
 	  src/providerifcs/npi/OW_NPIProviderIFCUtils.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
 	  src/providers/cpp/polled/slp/Makefile.am,
-	  src/server/OW_AuthManager.cpp, src/server/OW_Logger.cpp,
-	  src/server/OW_Platform.cpp, src/server/OW_Platform.hpp,
 	  src/wql/OW_WQLProcessor.cpp, test/CppUnit/CppUnitException.cpp,
 	  test/CppUnit/CppUnitException.hpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
@@ -13975,8 +15249,6 @@
 	  src/providerifcs/cpp/OW_CppProviderIFC.hpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.cpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
 	  test/unit/OW_ProviderManagerTestCases.cpp,
 	  test/unit/testSharedLibraryLoader.hpp: Finished property provider
 	  self-registration.
@@ -14034,8 +15306,6 @@
 	  src/providerifcs/cpp/OW_CppProviderIFC.hpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.cpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
 	  test/unit/OW_ProviderManagerTestCases.cpp,
 	  test/unit/UnitMain.cpp, test/unit/UnitTestEnvironment.hpp,
 	  test/unit/testSharedLibraryLoader.hpp: - Got provider
@@ -14098,9 +15368,6 @@
 	  src/providerifcs/npi/OW_NPIProviderIFC.cpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLProcessor.cpp,
@@ -14163,11 +15430,6 @@
 	* src/services/http/OW_HTTPSvrConnection.cpp: Added a better error
 	  message if the select was interrupted.
 
-2002-11-28 21:23  nuffer
-
-	* src/server/OW_Logger.cpp: Added OW_NullLogger so the user may
-	  specify no logging.
-
 2002-11-28 15:14  nuffer
 
 	* src/cimom/: OW_CIMOMEnvironment.cpp: Fix to keep the logger
@@ -14193,8 +15455,6 @@
 	  src/common/OW_ThreadEvent.hpp, src/common/OW_ThreadImpl.cpp,
 	  src/common/OW_ThreadImpl.hpp, src/common/OW_ThreadTypes.hpp,
 	  src/common/socket/OW_SocketBaseImpl.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPServer.hpp,
 	  test/acceptance/acceptance.sh.fb,
@@ -14220,11 +15480,6 @@
 
 	* src/services/http/OW_HTTPServer.hpp: Removed OW_ThreadEvent
 	  include.
-
-2002-11-27 07:15  nuffer
-
-	* src/server/OW_AuthManager.cpp: Throw if fail to load an auth
-	  module.
 
 2002-11-27 07:14  nuffer
 
@@ -14284,16 +15539,6 @@
 	  Working on fixing up the threading classes.  Created OW_Condition
 	  and Fixed OW_RWLocker.  Still need to fix up OW_Mutex and purge
 	  OW_ThreadEvent.
-
-2002-11-24 22:12  nuffer
-
-	* src/server/OW_Platform.hpp: Changed pushSig not to throw as it
-	  can deadlock if called from a signal handler.
-
-2002-11-24 22:12  nuffer
-
-	* src/server/OW_Platform.cpp: Catch all exceptions in the signal
-	  handler.
 
 2002-11-24 22:10  nuffer
 
@@ -14901,7 +16146,6 @@
 	  http/common/OW_HTTPDeflateOStream.cpp, mof/MofCompiler.cpp,
 	  providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  providerifcs/npi/OW_NPIProviderIFC.cpp,
-	  providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
 	  services/http/OW_HTTPSvrConnection.cpp: Fixed destructors that
 	  might throw.
 
@@ -15028,11 +16272,9 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
-	  src/server/OW_Platform.hpp, src/services/http/OW_HTTPServer.cpp,
-	  src/wql/OW_WQLLexer.ll, src/xml/OW_CIMXMLParser.cpp,
-	  src/xml/OW_CIMXMLParser.hpp, src/xml/OW_XMLCIMFactory.cpp,
+	  src/services/http/OW_HTTPServer.cpp, src/wql/OW_WQLLexer.ll,
+	  src/xml/OW_CIMXMLParser.cpp, src/xml/OW_CIMXMLParser.hpp,
+	  src/xml/OW_XMLCIMFactory.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
 	  test/acceptance/testfiles/testsuite.out,
 	  test/acceptance/testfiles/testsuite.out.long,
@@ -15106,9 +16348,6 @@
 	* TODO, src/cimom/OW_NameSpaceProvider.cpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
 	  test/c++providers/instance/OW_RPM.cpp: Fixed bad NOT_SUPPORTED
@@ -15142,8 +16381,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/tools/owexecwql.cpp,
@@ -15228,8 +16465,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
@@ -15342,8 +16577,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.cpp,
@@ -15354,8 +16587,7 @@
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
 	  test/acceptance/progs/aclTest.cpp,
 	  test/acceptance/progs/testCIMExceptions.cpp,
-	  test/c++providers/associator/OW_AssociatorTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp: Switched
+	  test/c++providers/associator/OW_AssociatorTest.cpp: Switched
 	  setProperty and exportIndication to take a separate namespace
 	  parameter.
 
@@ -15366,17 +16598,12 @@
 	  src/providerifcs/cpp/OW_CppPropertyProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppProxyProvider.cpp,
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
 	  test/acceptance/progs/aclTest.cpp,
-	  test/acceptance/progs/testCIMExceptions.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp: Switched
-	  getProperty to take a separate namespace parameter.
+	  test/acceptance/progs/testCIMExceptions.cpp: Switched getProperty
+	  to take a separate namespace parameter.
 
 2002-09-18 12:05  nuffer
 
@@ -15425,10 +16652,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLProcessor.cpp, src/xml/OW_XMLCIMFactory.cpp,
@@ -15471,10 +16694,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLProcessor.cpp, src/xml/OW_XMLParameters.cpp,
@@ -15647,10 +16866,6 @@
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
@@ -15663,10 +16878,8 @@
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
 	  test/c++providers/instance/OW_RPM.cpp,
-	  test/c++providers/instance/testinstance.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp: Switched
-	  getInstance to take a separate namespace parameter.
+	  test/c++providers/instance/testinstance.cpp: Switched getInstance
+	  to take a separate namespace parameter.
 
 2002-09-17 10:32  nuffer
 
@@ -15698,9 +16911,7 @@
 	  test/acceptance/progs/aclTest.cpp,
 	  test/acceptance/progs/cimListenerTest.cpp,
 	  test/acceptance/progs/testCIMExceptions.cpp,
-	  test/c++providers/associator/OW_AssociatorTest.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp: Switched
+	  test/c++providers/associator/OW_AssociatorTest.cpp: Switched
 	  getClass to take a separate namespace parameter.
 
 2002-09-16 17:04  nuffer
@@ -15728,10 +16939,6 @@
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
@@ -15773,10 +16980,6 @@
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLProcessor.cpp, src/wql/OW_WQLProcessor.hpp,
@@ -15845,18 +17048,15 @@
 	  src/common/OW_String.hpp, src/common/OW_URL.cpp,
 	  src/common/socket/OW_SSLCtxMgr.cpp,
 	  src/common/socket/OW_SocketBaseImpl.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/common/OW_HTTPChunkedIStream.cpp,
 	  src/http/common/OW_HTTPChunkedOStream.cpp,
 	  src/http/common/OW_HTTPUtils.cpp, src/mof/CIMOMVisitor.cpp,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  src/providerifcs/npi/OW_NPIProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.cpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
-	  src/server/OW_AuthManager.cpp,
 	  src/services/http/OW_DigestAuthentication.cpp,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
@@ -15919,10 +17119,8 @@
 	  src/cimom/indication/OW_IndicationServerImpl.cpp,
 	  src/client/OW_CIMXMLCIMOMHandle.cpp,
 	  test/acceptance/testfiles/testsuite.out,
-	  test/acceptance/testfiles/testsuite.out.long,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp: Got long
-	  test working in new namespace.
+	  test/acceptance/testfiles/testsuite.out.long: Got long test
+	  working in new namespace.
 
 2002-09-16 10:08  bartw
 
@@ -15948,11 +17146,9 @@
 	  test/acceptance/progs/testCIMExceptions.cpp,
 	  test/acceptance/progs/wqlTest1.cpp,
 	  test/acceptance/testfiles/MultiReqInput.xml,
-	  test/acceptance/testfiles/testsuite.out,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp: Moved
-	  testsuite to run in /root/testsuite namespace, and fixed various
-	  problems that cropped up as a result.
+	  test/acceptance/testfiles/testsuite.out: Moved testsuite to run
+	  in /root/testsuite namespace, and fixed various problems that
+	  cropped up as a result.
 
 2002-09-13 16:36  bartw
 
@@ -16001,10 +17197,6 @@
 	  src/providerifcs/cpp/OW_CppProxyProvider.hpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLImpl.cpp, src/wql/OW_WQLImpl.hpp,
@@ -16464,9 +17656,6 @@
 	  src/ifcs/OW_CIMOMHandleIFC.cpp, src/ifcs/OW_ResultHandlerIFC.hpp,
 	  src/providerifcs/npi/OW_NPIAssociatorProviderProxy.cpp,
 	  src/providerifcs/npi/OW_NPIInstanceProviderProxy.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/wql/OW_WQLImpl.cpp, src/wql/OW_WQLProcessor.cpp,
@@ -16528,8 +17717,7 @@
 
 	* src/cim/OW_CIMBase.cpp, src/cim/OW_CIMClass.cpp,
 	  src/cim/OW_CIMDataType.cpp, src/cimom/owcimomd_main.cpp,
-	  src/common/OW_Exec.cpp, src/frameworks/daemon/owdaemon_main.cpp,
-	  src/http/common/OW_HTTPUtils.cpp, src/server/OW_Logger.cpp,
+	  src/common/OW_Exec.cpp, src/http/common/OW_HTTPUtils.cpp,
 	  test/acceptance/progs/cimListenerTest.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp: Fixed iostream
 	  problems.
@@ -16581,7 +17769,6 @@
 	  src/common/socket/OW_Socket.hpp, src/ifcs/OW_CIMOMHandleIFC.cpp,
 	  src/ifcs/OW_CIMOMHandleIFC.hpp,
 	  src/providerifcs/npi/common/NPIExternal.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  test/acceptance/acceptance.sh.fb,
@@ -16671,21 +17858,8 @@
 2002-08-13 15:00  nuffer
 
 	* configure.in, src/common/OW_ConfigOpts.hpp,
-	  src/ifcs/OW_ResultHandlerIFC.hpp, src/providerifcs/Makefile.am,
-	  src/providerifcs/simplecpp/.cvsignore,
-	  src/providerifcs/simplecpp/Makefile.am,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppAssociatorProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppInstanceProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppPropertyProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderBaseIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.hpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.cpp,
-	  src/providerifcs/simplecpp/OW_SimpleCppProxyProvider.hpp: Added
-	  simple cpp provider interface.
+	  src/ifcs/OW_ResultHandlerIFC.hpp, src/providerifcs/Makefile.am:
+	  Added simple cpp provider interface.
 
 2002-08-13 14:16  bartw
 
@@ -16717,7 +17891,6 @@
 	  src/common/OW_SortedVector.hpp,
 	  src/common/socket/OW_ServerSocketImpl.cpp,
 	  src/common/socket/OW_SocketBaseImpl.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
 	  src/http/common/OW_HTTPChunkedIStream.cpp,
 	  src/http/common/OW_HTTPUtils.cpp, src/ifcs/OW_CIMOMHandleIFC.cpp,
 	  src/ifcs/OW_CIMOMHandleIFC.hpp,
@@ -17021,7 +18194,7 @@
 	  src/common/socket/OW_SocketBaseImpl.cpp,
 	  src/http/common/OW_HTTPDeflateOStream.cpp,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
-	  src/server/OW_Platform.hpp, src/services/http/OW_HTTPServer.cpp,
+	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
 	  test/acceptance/progs/cimListenerTest.cpp: Fixing bugs and making
@@ -17151,7 +18324,6 @@
 	  src/client/OW_CIMXMLCIMOMHandle.cpp,
 	  src/client/OW_CIMXMLCIMOMHandle.hpp, src/common/OW_BinIfcIO.hpp,
 	  src/common/socket/OW_SocketUtils.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/http/common/OW_HTTPLenLimitIStream.cpp,
 	  src/ifcs/OW_CIMOMHandleIFC.hpp, src/mof/CIMOMVisitor.cpp,
 	  src/provider/OW_InstanceProviderIFC.hpp,
@@ -17384,8 +18556,7 @@
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
 	  test/c++providers/instance/OW_RPM.cpp,
-	  test/c++providers/instance/testinstance.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp: made provider
+	  test/c++providers/instance/testinstance.cpp: made provider
 	  interface more consistent.
 
 2002-07-18 11:23  bartw
@@ -17435,7 +18606,6 @@
 	  src/cimom/indication/OW_IndicationRepLayerImpl.cpp,
 	  src/common/OW_Exception.cpp, src/common/OW_Exception.hpp,
 	  src/common/OW_StackTrace.cpp, src/common/OW_StackTrace.hpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
 	  src/requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
 	  test/acceptance/progs/OW_CIMClientCL.cpp,
@@ -17663,8 +18833,6 @@
 	  src/cimom/OW_UnloaderProvider.hpp,
 	  src/cimxmllistener/OW_HTTPXMLCIMListener.cpp,
 	  src/common/OW_ConfigOpts.hpp, src/common/OW_SortedVector.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
 	  src/ifcs/OW_ServiceEnvironmentIFC.hpp,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  src/tools/owcreatenamespace.cpp, src/tools/owdeletenamespace.cpp,
@@ -17743,10 +18911,7 @@
 	  test/c++providers/instance/OW_LinuxProcess.cpp,
 	  test/c++providers/instance/OW_RPM.cpp,
 	  test/c++providers/instance/testinstance.cpp,
-	  test/c++providers/method/OW_MethodProviderTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp: changed
+	  test/c++providers/method/OW_MethodProviderTest.cpp: changed
 	  provider creation func to include provider name, moved slp reg
 	  from http server to polled provider
 
@@ -17759,8 +18924,6 @@
 	  src/common/socket/OW_DomainSocketConnection.hpp,
 	  src/common/socket/OW_IPCConnection.cpp,
 	  src/common/socket/OW_IPCConnection.hpp,
-	  src/frameworks/daemon/Makefile.am,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/tools/owcreatenamespace.cpp, src/tools/owdeletenamespace.cpp,
 	  src/tools/owenumnamespace.cpp, src/tools/owexecwql.cpp,
 	  src/tools/owmofc/owmofc.cpp,
@@ -17857,11 +19020,10 @@
 	  common/socket/OW_SocketUtils.cpp,
 	  common/socket/test/gethttpdata.cpp,
 	  common/socket/test/gethttpsdata.cpp,
-	  common/socket/test/server.cpp,
-	  frameworks/daemon/OW_DaemonEnv.cpp,
-	  http/client/OW_HTTPClient.hpp, http/test/chunker_client.cpp,
-	  http/test/chunker_server.cpp, http/test/pamtest.cpp,
-	  services/http/OW_HTTPServer.cpp, services/http/OW_HTTPServer.hpp,
+	  common/socket/test/server.cpp, http/client/OW_HTTPClient.hpp,
+	  http/test/chunker_client.cpp, http/test/chunker_server.cpp,
+	  http/test/pamtest.cpp, services/http/OW_HTTPServer.cpp,
+	  services/http/OW_HTTPServer.hpp,
 	  services/http/OW_HTTPSvrConnection.cpp,
 	  services/http/OW_HTTPSvrConnection.hpp: renamed socket classes
 	  and added support for Unix Domain Sockets
@@ -17899,7 +19061,6 @@
 	  src/common/socket/test/gethttpdata.cpp,
 	  src/common/socket/test/gethttpsdata.cpp,
 	  src/common/socket/test/server.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/http/client/OW_HTTPClient.cpp,
 	  src/http/client/OW_HTTPClient.hpp,
 	  src/http/test/chunker_client.cpp,
@@ -17964,8 +19125,6 @@
 	  test/acceptance/testfiles/IPCClientTest.out,
 	  test/acceptance/testfiles/clientDriver.out,
 	  test/acceptance/testfiles/indicationTest.mof,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/OW_CIMPropertyTestCases.cpp,
 	  test/unit/OW_CIMPropertyTestCases.hpp: added WQL support for ISA
 
@@ -18005,7 +19164,6 @@
 	  src/common/OW_BinIfcIO.cpp, src/common/OW_SortedVector.hpp,
 	  src/common/OW_TempFileStream.hpp, src/common/OW_UnnamedPipe.cpp,
 	  src/common/socket/OW_DomainSocketConnection.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
 	  src/http/client/OW_HTTPClient.cpp, src/http/test/httpclient.cpp,
 	  src/ifcs/OW_CIMProtocolIFC.hpp,
 	  src/ifcs/OW_RequestHandlerIFC.hpp, src/mof/Grammar.h,
@@ -18263,7 +19421,6 @@
 	  src/providerifcs/cpp/OW_CppPropertyProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  src/providerifcs/cpp/OW_CppProxyProvider.cpp,
-	  src/server/OW_Platform.cpp,
 	  test/c++providers/instance/.cvsignore,
 	  test/c++providers/instance/Makefile.am,
 	  test/c++providers/instance/OW_LaptopBattery.cpp,
@@ -18365,8 +19522,7 @@
 	  src/client/OW_CIMXMLCIMOMHandle.cpp,
 	  src/client/OW_CIMXMLCIMOMHandle.hpp, src/client/OW_IPCClient.cpp,
 	  src/client/OW_IPCClient.hpp, src/common/Makefile.am,
-	  src/frameworks/daemon/Makefile.am, src/http/client/Makefile.am,
-	  src/http/client/OW_HTTPClient.cpp,
+	  src/http/client/Makefile.am, src/http/client/OW_HTTPClient.cpp,
 	  src/http/client/OW_HTTPClient.hpp, src/http/common/Makefile.am,
 	  src/http/common/OW_HTTPException.hpp, src/ifcs/Makefile.am,
 	  src/ifcs/OW_CIMProtocolIFC.hpp, src/mof/CIMOMVisitor.cpp,
@@ -18378,7 +19534,7 @@
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.hpp,
 	  src/requesthandlers/binary/Makefile.am,
 	  src/requesthandlers/binary/OW_BinaryRequestHandler.cpp,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPServer.hpp,
@@ -18401,9 +19557,7 @@
 	  test/acceptance/testfiles/Makefile.am,
 	  test/acceptance/testfiles/clientDriver.out,
 	  test/c++providers/associator/Makefile.am,
-	  test/c++providers/method/Makefile.am,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/trigger/Makefile.am, test/unit/Makefile.am: Bug
+	  test/c++providers/method/Makefile.am, test/unit/Makefile.am: Bug
 	  fixes. cleanup. Resurrected pam auth module.
 
 2002-03-11 14:13  nuffer
@@ -18414,12 +19568,8 @@
 	  src/cimom/OW_PollingManager.cpp, src/cimom/OW_PollingManager.hpp,
 	  src/cimom/main.cpp, src/cimom/owcimomd_main.cpp,
 	  src/cimom/indication/OW_IndicationServerImpl.cpp,
-	  src/common/OW_PthDefines.hpp, src/frameworks/daemon/.cvsignore,
-	  src/frameworks/daemon/Makefile.am,
-	  src/frameworks/daemon/main.cpp,
-	  src/frameworks/daemon/owdaemon_main.cpp,
-	  src/providerifcs/Makefile.am, src/providerifcs/npi/Makefile.am,
-	  src/tools/owmofc/owmofc.cpp,
+	  src/common/OW_PthDefines.hpp, src/providerifcs/Makefile.am,
+	  src/providerifcs/npi/Makefile.am, src/tools/owmofc/owmofc.cpp,
 	  test/acceptance/testfiles/Makefile.am: Got make distcheck to
 	  work.
 
@@ -18568,15 +19718,13 @@
 	  cimxmllistener/OW_HTTPXMLCIMListener.hpp,
 	  cimxmllistener/OW_XMLListener.hpp,
 	  common/OW_SharedLibraryReference.hpp,
-	  frameworks/daemon/OW_DaemonEnv.cpp,
-	  frameworks/daemon/OW_DaemonEnv.hpp, ifcs/OW_AuthenticatorIFC.hpp,
-	  ifcs/OW_RequestHandlerIFC.hpp, ifcs/OW_ServiceEnvironmentIFC.hpp,
-	  ifcs/OW_ServiceIFC.hpp, ifcs/OW_WQLIFC.hpp,
+	  ifcs/OW_AuthenticatorIFC.hpp, ifcs/OW_RequestHandlerIFC.hpp,
+	  ifcs/OW_ServiceEnvironmentIFC.hpp, ifcs/OW_ServiceIFC.hpp,
+	  ifcs/OW_WQLIFC.hpp,
 	  requesthandlers/binary/OW_BinaryRequestHandler.cpp,
 	  requesthandlers/binary/OW_BinaryRequestHandler.hpp,
 	  requesthandlers/cimxml/OW_XMLExecute.cpp,
 	  requesthandlers/cimxml/OW_XMLExecute.hpp,
-	  server/OW_AuthManager.cpp, server/OW_AuthManager.hpp,
 	  services/http/OW_HTTPServer.cpp, services/ipc/OW_IPCService.cpp:
 	  Changed over to new OW_SharedLibaryReference
 
@@ -18627,15 +19775,9 @@
 	  common/OW_dlSharedLibrary.cpp, common/OW_dlSharedLibrary.hpp,
 	  common/OW_dlSharedLibraryLoader.cpp,
 	  common/OW_dlSharedLibraryLoader.hpp,
-	  providers/cpp/indicationexport/OW_IndicationExporter.cpp,
-	  server/Makefile.am, server/OW_SafeLibCreate.hpp,
-	  server/OW_SharedLibrary.hpp,
-	  server/OW_SharedLibraryException.hpp,
-	  server/OW_SharedLibraryLoader.hpp, server/OW_SignalScope.hpp,
-	  server/OW_dlSharedLibrary.cpp, server/OW_dlSharedLibrary.hpp,
-	  server/OW_dlSharedLibraryLoader.cpp,
-	  server/OW_dlSharedLibraryLoader.hpp: Moved shared library stuff
-	  to common, and create the OW_SharedLibaryObject class
+	  providers/cpp/indicationexport/OW_IndicationExporter.cpp: Moved
+	  shared library stuff to common, and create the
+	  OW_SharedLibaryObject class
 
 2002-03-05 11:38  nuffer
 
@@ -18645,13 +19787,13 @@
 	  src/cimom/indication/Makefile.am, src/cimxmllistener/Makefile.am,
 	  src/client/Makefile.am, src/common/Makefile.am,
 	  src/common/OW_SelectEngine.cpp, src/common/OW_SelectEngine.hpp,
-	  src/frameworks/daemon/Makefile.am, src/http/client/Makefile.am,
-	  src/http/client/OW_HTTPClient.cpp, src/http/common/Makefile.am,
-	  src/mof/Makefile.am, src/providerifcs/cpp/Makefile.am,
+	  src/http/client/Makefile.am, src/http/client/OW_HTTPClient.cpp,
+	  src/http/common/Makefile.am, src/mof/Makefile.am,
+	  src/providerifcs/cpp/Makefile.am,
 	  src/providerifcs/cpp/OW_CppProviderIFC.cpp,
 	  src/providers/cpp/indicationexport/Makefile.am,
 	  src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am,
 	  src/services/http/OW_HTTPServer.cpp,
 	  src/services/http/OW_HTTPSvrConnection.cpp,
@@ -18661,9 +19803,7 @@
 	  test/acceptance/progs/Makefile.am,
 	  test/acceptance/testfiles/IPCClientTest.out,
 	  test/c++providers/associator/Makefile.am,
-	  test/c++providers/method/Makefile.am,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/trigger/Makefile.am, test/unit/Makefile.am:
+	  test/c++providers/method/Makefile.am, test/unit/Makefile.am:
 	  Fixing problems.
 
 2002-03-04 11:47  nuffer
@@ -18748,9 +19888,9 @@
 	  src/common/OW_CIMErrorException.hpp,
 	  src/common/OW_CIMFeatures.hpp, src/common/socket/Makefile.am,
 	  src/common/socket/OW_IPCConnection.hpp,
-	  src/frameworks/daemon/Makefile.am, src/http/client/.cvsignore,
-	  src/http/client/Makefile.am, src/http/client/OW_HTTPClient.hpp,
-	  src/http/common/.cvsignore, src/http/common/Makefile.am,
+	  src/http/client/.cvsignore, src/http/client/Makefile.am,
+	  src/http/client/OW_HTTPClient.hpp, src/http/common/.cvsignore,
+	  src/http/common/Makefile.am,
 	  src/http/common/OW_CIMErrorException.cpp,
 	  src/http/common/OW_CIMErrorException.hpp,
 	  src/http/common/OW_HTTPException.hpp, src/ifcs/Makefile.am,
@@ -18767,17 +19907,15 @@
 	  src/requesthandlers/cimxml/Makefile.am,
 	  src/requesthandlers/cimxml/OW_RequestHandlerIFCXML.cpp,
 	  src/requesthandlers/cimxml/OW_RequestHandlerIFCXML.hpp,
-	  src/server/Makefile.am, src/services/http/Makefile.am,
-	  src/services/ipc/Makefile.am, src/tools/.cvsignore,
-	  src/tools/Makefile.am, src/wql/Makefile.am, src/xml/.cvsignore,
-	  src/xml/Makefile.am, src/xml/OW_RequestHandlerIFCXML.cpp,
+	  src/services/http/Makefile.am, src/services/ipc/Makefile.am,
+	  src/tools/.cvsignore, src/tools/Makefile.am, src/wql/Makefile.am,
+	  src/xml/.cvsignore, src/xml/Makefile.am,
+	  src/xml/OW_RequestHandlerIFCXML.cpp,
 	  src/xml/OW_RequestHandlerIFCXML.hpp,
 	  src/xml/OW_XMLOperationGeneric.hpp,
 	  test/acceptance/progs/Makefile.am,
 	  test/c++providers/associator/Makefile.am,
-	  test/c++providers/method/Makefile.am,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/trigger/Makefile.am: Got the build process
+	  test/c++providers/method/Makefile.am: Got the build process
 	  working.
 
 2002-03-01 11:24  nuffer
@@ -18789,11 +19927,11 @@
 2002-03-01 11:21  nuffer
 
 	* src/.cvsignore, src/authenticators/.cvsignore,
-	  src/frameworks/.cvsignore, src/http/.cvsignore,
-	  src/http/common/.cvsignore, src/http/test/.cvsignore,
-	  src/ifcs/.cvsignore, src/provider/.cvsignore,
-	  src/providerifcs/.cvsignore, src/providerifcs/cpp/.cvsignore,
-	  src/providers/.cvsignore, src/providers/cpp/.cvsignore,
+	  src/http/.cvsignore, src/http/common/.cvsignore,
+	  src/http/test/.cvsignore, src/ifcs/.cvsignore,
+	  src/provider/.cvsignore, src/providerifcs/.cvsignore,
+	  src/providerifcs/cpp/.cvsignore, src/providers/.cvsignore,
+	  src/providers/cpp/.cvsignore,
 	  src/providers/cpp/indicationexport/.cvsignore,
 	  src/tools/.cvsignore, src/tools/owmofc/.cvsignore,
 	  test/Makefile.am: Added .cvsignore files.
@@ -18812,8 +19950,7 @@
 	  src/cimom/indication/OW_IndicationServerImpl.cpp,
 	  src/cimxmllistener/Makefile.am, src/client/Makefile.am,
 	  src/common/Makefile.am, src/common/socket/Makefile.am,
-	  src/common/socket/test/Makefile.am, src/frameworks/Makefile.am,
-	  src/frameworks/daemon/Makefile.am, src/http/Makefile.am,
+	  src/common/socket/test/Makefile.am, src/http/Makefile.am,
 	  src/http/client/Makefile.am, src/http/common/Makefile.am,
 	  src/http/test/Makefile.am, src/ifcs/Makefile.am,
 	  src/mof/Makefile.am, src/mof/testfiles/Makefile.am,
@@ -18842,7 +19979,7 @@
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
 	  src/requesthandlers/binary/Makefile.am,
-	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am,
 	  src/services/http/Makefile.am,
 	  src/services/http/OW_SLPProvider.cpp,
 	  src/services/ipc/Makefile.am, src/tools/Makefile.am,
@@ -18850,9 +19987,6 @@
 	  src/xml/Makefile.am,
 	  test/c++providers/associator/OW_AssociatorTest.cpp,
 	  test/c++providers/method/OW_MethodProviderTest.cpp,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/OW_ProviderManagerTestCases.cpp,
 	  test/unit/testSharedLibraryLoader.hpp: Working on building and a
 	  rename.
@@ -18871,11 +20005,9 @@
 	  src/client/OW_CIMXMLCIMOMHandle.cpp,
 	  src/client/OW_CIMXMLCIMOMHandle.hpp,
 	  src/client/OW_IPCCIMOMHandle.cpp,
-	  src/client/OW_IPCCIMOMHandle.hpp,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/ifcs/OW_CIMOMHandle.cpp, src/ifcs/OW_CIMOMHandle.hpp,
-	  src/ifcs/OW_CIMOMHandleIFC.cpp, src/ifcs/OW_CIMOMHandleIFC.hpp,
+	  src/client/OW_IPCCIMOMHandle.hpp, src/ifcs/OW_CIMOMHandle.cpp,
+	  src/ifcs/OW_CIMOMHandle.hpp, src/ifcs/OW_CIMOMHandleIFC.cpp,
+	  src/ifcs/OW_CIMOMHandleIFC.hpp,
 	  src/ifcs/OW_ServiceEnvironmentIFC.hpp, src/ifcs/OW_WQLIFC.hpp,
 	  src/mof/CIMOMVisitor.cpp, src/mof/CIMOMVisitor.hpp,
 	  src/mof/MofCompiler.cpp, src/mof/MofCompiler.hpp,
@@ -18899,8 +20031,6 @@
 	  test/acceptance/progs/aclTest.cpp,
 	  test/acceptance/progs/cimListenerTest.cpp,
 	  test/c++providers/associator/OW_AssociatorTest.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/OW_ProviderManagerTestCases.cpp: Renamed OW_CIMOMHandle
 	  to OW_CIMOMHandleIFC
 
@@ -18919,17 +20049,7 @@
 
 2002-03-01 10:16  nuffer
 
-	* configure.in, src/provider/ifcs/cpp/Makefile.am,
-	  src/provider/ifcs/cpp/OW_CppAssociatorProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppIndicationExportProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppInstanceProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppMethodProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPolledProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPropertyProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderBaseIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.cpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.hpp,
-	  src/providerifcs/cpp/Makefile.am,
+	* configure.in, src/providerifcs/cpp/Makefile.am,
 	  src/providerifcs/cpp/OW_CppAssociatorProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppIndicationExportProviderIFC.hpp,
 	  src/providerifcs/cpp/OW_CppInstanceProviderIFC.hpp,
@@ -19228,13 +20348,9 @@
 	  src/common/socket/test/root.pem,
 	  src/common/socket/test/server.cpp,
 	  src/common/socket/test/server.pem,
-	  src/frameworks/daemon/.cvsignore,
-	  src/frameworks/daemon/Makefile.am,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/main.cpp, src/ifcs/OW_AuthenticatorIFC.hpp,
-	  src/ifcs/OW_CIMOMHandle.cpp, src/ifcs/OW_CIMOMHandle.hpp,
-	  src/ifcs/OW_IOIFC.hpp, src/ifcs/OW_RequestHandlerIFC.cpp,
+	  src/ifcs/OW_AuthenticatorIFC.hpp, src/ifcs/OW_CIMOMHandle.cpp,
+	  src/ifcs/OW_CIMOMHandle.hpp, src/ifcs/OW_IOIFC.hpp,
+	  src/ifcs/OW_RequestHandlerIFC.cpp,
 	  src/ifcs/OW_RequestHandlerIFC.hpp,
 	  src/ifcs/OW_SelectableCallbackIFC.hpp,
 	  src/ifcs/OW_SelectableIFC.hpp,
@@ -19260,11 +20376,7 @@
 	  src/mof/testfiles/Solaris_Schema1.0.mof,
 	  src/mof/testfiles/Solaris_System1.0.mof,
 	  src/mof/testfiles/Solaris_Users1.0.mof,
-	  src/mof/testfiles/testInstance.mof, src/server/.cvsignore,
-	  src/server/Makefile.am, src/server/OW_AuthManager.cpp,
-	  src/server/OW_AuthManager.hpp, src/server/OW_ConfigException.hpp,
-	  src/server/OW_Platform.hpp, src/server/OW_SafeLibCreate.hpp,
-	  src/server/OW_dlSharedLibrary.cpp, src/wql/.cvsignore,
+	  src/mof/testfiles/testInstance.mof, src/wql/.cvsignore,
 	  src/wql/Makefile.am, src/wql/OW_WQLAst.hpp,
 	  src/wql/OW_WQLImpl.cpp, src/wql/OW_WQLImpl.hpp,
 	  src/wql/OW_WQLLexer.ll, src/wql/OW_WQLParser.yy,
@@ -19288,29 +20400,11 @@
 	  src/provider/OW_ProviderBaseIFC.hpp,
 	  src/provider/OW_ProviderEnvironment.hpp,
 	  src/provider/OW_ProviderIFC.hpp,
-	  src/provider/ifcs/cpp/Makefile.am,
-	  src/provider/ifcs/cpp/OW_CppAssociatorProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppIndicationExportProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppInstanceProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppMethodProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPolledProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPropertyProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderBaseIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.cpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.hpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.cpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.hpp,
-	  src/server/OW_Logger.cpp, src/server/OW_PidFile.cpp,
-	  src/server/OW_PidFile.hpp, src/server/OW_Platform.cpp,
-	  src/server/OW_SharedLibrary.hpp,
-	  src/server/OW_SharedLibraryException.hpp,
-	  src/server/OW_SharedLibraryLoader.hpp,
-	  src/server/OW_SignalScope.hpp, src/server/OW_dlSharedLibrary.hpp,
-	  src/server/OW_dlSharedLibraryLoader.cpp,
-	  src/server/OW_dlSharedLibraryLoader.hpp, src/xml/.cvsignore,
-	  src/xml/Makefile.am, src/xml/OW_CIMtoXML.cpp,
+	  src/xml/.cvsignore, src/xml/Makefile.am, src/xml/OW_CIMtoXML.cpp,
 	  src/xml/OW_CIMtoXML.hpp, src/xml/OW_Param.cpp,
 	  src/xml/OW_Param.hpp, src/xml/OW_RequestHandlerIFCXML.cpp,
 	  src/xml/OW_RequestHandlerIFCXML.hpp, src/xml/OW_XML.hpp,
@@ -19372,14 +20466,6 @@
 	  test/c++providers/method/Makefile.am,
 	  test/c++providers/method/OW_MethodProviderTest.cpp,
 	  test/c++providers/method/OW_MethodProviderTest.mof,
-	  test/c++providers/property/.cvsignore,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
-	  test/c++providers/property/OpenLinuxVersion.mof,
-	  test/c++providers/trigger/.cvsignore,
-	  test/c++providers/trigger/Makefile.am,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/.cvsignore, test/unit/GenericTestCases.cpp.tmpl,
 	  test/unit/GenericTestCases.hpp.tmpl, test/unit/Makefile.am,
 	  test/unit/MemTracerTest.cpp, test/unit/OW_Base64TestCases.cpp,
@@ -19721,13 +20807,9 @@
 	  src/common/socket/test/root.pem,
 	  src/common/socket/test/server.cpp,
 	  src/common/socket/test/server.pem,
-	  src/frameworks/daemon/.cvsignore,
-	  src/frameworks/daemon/Makefile.am,
-	  src/frameworks/daemon/OW_DaemonEnv.cpp,
-	  src/frameworks/daemon/OW_DaemonEnv.hpp,
-	  src/frameworks/daemon/main.cpp, src/ifcs/OW_AuthenticatorIFC.hpp,
-	  src/ifcs/OW_CIMOMHandle.cpp, src/ifcs/OW_CIMOMHandle.hpp,
-	  src/ifcs/OW_IOIFC.hpp, src/ifcs/OW_RequestHandlerIFC.cpp,
+	  src/ifcs/OW_AuthenticatorIFC.hpp, src/ifcs/OW_CIMOMHandle.cpp,
+	  src/ifcs/OW_CIMOMHandle.hpp, src/ifcs/OW_IOIFC.hpp,
+	  src/ifcs/OW_RequestHandlerIFC.cpp,
 	  src/ifcs/OW_RequestHandlerIFC.hpp,
 	  src/ifcs/OW_SelectableCallbackIFC.hpp,
 	  src/ifcs/OW_SelectableIFC.hpp,
@@ -19753,11 +20835,7 @@
 	  src/mof/testfiles/Solaris_Schema1.0.mof,
 	  src/mof/testfiles/Solaris_System1.0.mof,
 	  src/mof/testfiles/Solaris_Users1.0.mof,
-	  src/mof/testfiles/testInstance.mof, src/server/.cvsignore,
-	  src/server/Makefile.am, src/server/OW_AuthManager.cpp,
-	  src/server/OW_AuthManager.hpp, src/server/OW_ConfigException.hpp,
-	  src/server/OW_Platform.hpp, src/server/OW_SafeLibCreate.hpp,
-	  src/server/OW_dlSharedLibrary.cpp, src/wql/.cvsignore,
+	  src/mof/testfiles/testInstance.mof, src/wql/.cvsignore,
 	  src/wql/Makefile.am, src/wql/OW_WQLAst.hpp,
 	  src/wql/OW_WQLImpl.cpp, src/wql/OW_WQLImpl.hpp,
 	  src/wql/OW_WQLLexer.ll, src/wql/OW_WQLParser.yy,
@@ -19781,29 +20859,11 @@
 	  src/provider/OW_ProviderBaseIFC.hpp,
 	  src/provider/OW_ProviderEnvironment.hpp,
 	  src/provider/OW_ProviderIFC.hpp,
-	  src/provider/ifcs/cpp/Makefile.am,
-	  src/provider/ifcs/cpp/OW_CppAssociatorProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppIndicationExportProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppInstanceProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppMethodProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPolledProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppPropertyProviderIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderBaseIFC.hpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.cpp,
-	  src/provider/ifcs/cpp/OW_CppProviderIFC.hpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.cpp,
 	  src/providers/cpp/indicationexport/OW_CppIndicationExportXMLHTTPProvider.hpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.cpp,
 	  src/providers/cpp/indicationexport/OW_IndicationExporter.hpp,
-	  src/server/OW_Logger.cpp, src/server/OW_PidFile.cpp,
-	  src/server/OW_PidFile.hpp, src/server/OW_Platform.cpp,
-	  src/server/OW_SharedLibrary.hpp,
-	  src/server/OW_SharedLibraryException.hpp,
-	  src/server/OW_SharedLibraryLoader.hpp,
-	  src/server/OW_SignalScope.hpp, src/server/OW_dlSharedLibrary.hpp,
-	  src/server/OW_dlSharedLibraryLoader.cpp,
-	  src/server/OW_dlSharedLibraryLoader.hpp, src/xml/.cvsignore,
-	  src/xml/Makefile.am, src/xml/OW_CIMtoXML.cpp,
+	  src/xml/.cvsignore, src/xml/Makefile.am, src/xml/OW_CIMtoXML.cpp,
 	  src/xml/OW_CIMtoXML.hpp, src/xml/OW_Param.cpp,
 	  src/xml/OW_Param.hpp, src/xml/OW_RequestHandlerIFCXML.cpp,
 	  src/xml/OW_RequestHandlerIFCXML.hpp, src/xml/OW_XML.hpp,
@@ -19865,14 +20925,6 @@
 	  test/c++providers/method/Makefile.am,
 	  test/c++providers/method/OW_MethodProviderTest.cpp,
 	  test/c++providers/method/OW_MethodProviderTest.mof,
-	  test/c++providers/property/.cvsignore,
-	  test/c++providers/property/Makefile.am,
-	  test/c++providers/property/OW_OpenLinuxVersion.cpp,
-	  test/c++providers/property/OpenLinuxVersion.mof,
-	  test/c++providers/trigger/.cvsignore,
-	  test/c++providers/trigger/Makefile.am,
-	  test/c++providers/trigger/OW_TriggerProviderTest1.cpp,
-	  test/c++providers/trigger/OW_TriggerProviderTest2.cpp,
 	  test/unit/.cvsignore, test/unit/GenericTestCases.cpp.tmpl,
 	  test/unit/GenericTestCases.hpp.tmpl, test/unit/Makefile.am,
 	  test/unit/MemTracerTest.cpp, test/unit/OW_Base64TestCases.cpp,
