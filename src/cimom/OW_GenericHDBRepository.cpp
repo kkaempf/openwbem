@@ -293,6 +293,28 @@ OW_GenericHDBRepository::deleteNameSpace(const OW_String& key)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+bool
+OW_GenericHDBRepository::nameSpaceExists(const OW_String& key)
+{
+	throwIfNotOpen();
+
+	OW_String k(key.toString().toLowerCase());
+
+	OW_HDBHandleLock hdl(this, getHandle());
+	OW_HDBNode node = hdl->getNode(k);
+	if(node)
+	{
+		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		{
+			return false;
+		}
+
+		return true;
+	}
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_GenericHDBRepository::nodeToCIMObject(OW_CIMBase& cimObj,
 	const OW_HDBNode& node)
@@ -327,8 +349,8 @@ OW_GenericHDBRepository::updateCIMObject(const OW_CIMBase& cimObj,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
-OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj, 
+void
+OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
 	const OW_String& key, OW_HDBNode& parentNode, OW_HDBHandle hdl,
 	unsigned int nodeFlags)
 {
@@ -340,8 +362,8 @@ OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
-OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj, 
+void
+OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
 	const OW_String& key, OW_HDBHandle hdl, unsigned int nodeFlags)
 {
 	OW_RepositoryOStream ostrm;

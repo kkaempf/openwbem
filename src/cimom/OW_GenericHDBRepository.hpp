@@ -95,6 +95,15 @@ public:
 	void deleteNameSpace(const OW_String& key);
 
 	/**
+	 * Check whether a namespace exists
+	 * @param key	The key to the namespace
+	 * @exception OW_IOException If the database is not opened.
+	 * @exception OW_HDBException
+	 * @return Whether the namespace key exists.
+	 */
+	bool nameSpaceExists(const OW_String& key);
+
+	/**
 	 * @return true if this repository is open. Otherwise false.
 	 */
 	OW_Bool isOpen() { return m_opened; }
