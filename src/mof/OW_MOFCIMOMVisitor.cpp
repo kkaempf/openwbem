@@ -934,7 +934,8 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 								{
 									castValue = CIMValue(CIMNULL);
 									theErrorHandler->recoverableError(
-										Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(), CIMDataType(CIMDataType::STRING).toString()).c_str(), pInstanceDeclaration->theLineInfo);
+										Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(), 
+											CIMDataType(CIMDataType::STRING).toString()).c_str(), pInstanceDeclaration->theLineInfo);
 								}
 								else
 								{
