@@ -62,7 +62,7 @@ class FileLogger : public Logger
 		virtual ~FileLogger() {}
 	protected:
 		virtual void doLogMessage( const String& s,
-			const LogLevel /*level*/ ) const
+			const ELogLevel /*level*/ ) const
 		{
 			DateTime DateTime;
 			DateTime.setToCurrent();
@@ -86,18 +86,21 @@ class SyslogLogger : public Logger
 		}
 		virtual ~SyslogLogger() {}
 	protected:
-		virtual void doLogMessage( const String& s, const LogLevel level ) const
+		virtual void doLogMessage( const String& s, const ELogLevel level ) const
 		{
 			int syslogPriority;
 			switch( level )
 			{
-				case ErrorLevel:
+				case E_FATAL_ERROR_LEVEL:
+					syslogPriority = LOG_CRIT;
+					break;
+				case E_ERROR_LEVEL:
 					syslogPriority = LOG_ERR;
 					break;
-				case CustInfoLevel:
+				case E_INFO_LEVEL:
 					syslogPriority = LOG_INFO;
 					break;
-				case DebugLevel:
+				case E_DEBUG_LEVEL:
 				default:
 					syslogPriority = LOG_DEBUG;
 					break;
@@ -113,29 +116,33 @@ class TeeLogger : public Logger
 		TeeLogger( LoggerRef const& first, LoggerRef const& second ):
 			m_first(first), m_second(second)
 		{
-			m_first->setLogLevel(DebugLevel);
-			m_second->setLogLevel(DebugLevel);
+			m_first->setLogLevel(E_DEBUG_LEVEL);
+			m_second->setLogLevel(E_DEBUG_LEVEL);
 		}
 		virtual ~TeeLogger()
 		{
 		}
 	protected:
 		virtual void doLogMessage( const String& s,
-			const LogLevel level) const
+			const ELogLevel level) const
 		{
 			switch (level)
 			{
-				case ErrorLevel:
+				case E_FATAL_ERROR_LEVEL:
+					m_first->logFatalError(s);
+					m_second->logFatalError(s);
+					break;
+				case E_ERROR_LEVEL:
 					m_first->logError(s);
 					m_second->logError(s);
 					break;
-				case DebugLevel:
+				case E_DEBUG_LEVEL:
 					m_first->logDebug(s);
 					m_second->logDebug(s);
 					break;
-				case CustInfoLevel:
-					m_first->logCustInfo(s);
-					m_second->logCustInfo(s);
+				case E_INFO_LEVEL:
+					m_first->logInfo(s);
+					m_second->logInfo(s);
 					break;
 				default:
 					break;
@@ -151,7 +158,7 @@ class CerrLogger : public Logger
 		virtual ~CerrLogger(){}
 	protected:
 		virtual void doLogMessage( const String& s,
-			const LogLevel /*level*/ ) const
+			const ELogLevel /*level*/ ) const
 		{
 			std::cerr << '[' << getpid() << "] " << s << std::endl;
 		}
@@ -161,8 +168,8 @@ class NullLogger : public Logger
 public:
 	virtual ~NullLogger() {}
 protected:
-	virtual void doLogMessage(const String &, 
-		const LogLevel) const 
+	virtual void doLogMessage(const String &,
+		const ELogLevel) const
 	{
 	}
 };

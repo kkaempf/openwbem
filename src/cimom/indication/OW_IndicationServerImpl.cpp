@@ -496,7 +496,7 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 	WQLIFCRef wqlRef = m_env->getWQLRef();
 	if (!wqlRef)
 	{
-		m_env->logError("Cannot process indications, because there is no "
+		m_env->logFatalError("Cannot process indications, because there is no "
 			"WQL library.");
 		return;
 	}

@@ -668,6 +668,7 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	{
 		m_env->getLogger()->logError(format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
+		OW_THROW(IOException, "Failed to add entry to association index");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////

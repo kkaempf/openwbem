@@ -257,7 +257,7 @@ void deleteClass(CIMOMHandleIFC& hdl)
 class ListenerLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const String &message, const LogLevel) const
+	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{
 		cout << message << endl;
 	}

@@ -90,30 +90,60 @@ void OW_LoggerTestCases::testFileLogging()
 {
 	String filename = "/tmp/test";
 	LoggerRef pLogger = Logger::createLogger(filename, false);
+	pLogger->logFatalError("fatalerror1");
 	pLogger->logError( "error1" );
-	pLogger->logCustInfo( "custinfo1" );
+	pLogger->logInfo( "custinfo1" );
 	pLogger->logDebug( "debug1" );
-	verifyFileLog( __FILE__, __LINE__, filename.c_str(), "error1\n" );
+	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
+				   "fatalerror1\n"
+				   "error1\n" );
 
-	pLogger->setLogLevel( CustInfoLevel );
+	pLogger->setLogLevel( E_INFO_LEVEL );
+	pLogger->logFatalError("fatalerror2");
 	pLogger->logError( "error2" );
-	pLogger->logCustInfo( "custinfo2" );
+	pLogger->logInfo( "custinfo2" );
 	pLogger->logDebug( "debug2" );
-	verifyFileLog( __FILE__, __LINE__, filename.c_str(), "error1\n"
+	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
+				    "fatalerror1\n"
+				    "error1\n"
+					"fatalerror2\n"
 					"error2\n"
 					"custinfo2\n"
 					 );
 
-	pLogger->setLogLevel( DebugLevel );
+	pLogger->setLogLevel( E_DEBUG_LEVEL );
+	pLogger->logFatalError("fatalerror3");
 	pLogger->logError( "error3" );
-	pLogger->logCustInfo( "custinfo3" );
+	pLogger->logInfo( "custinfo3" );
 	pLogger->logDebug( "debug3" );
-	verifyFileLog( __FILE__, __LINE__, filename.c_str(), "error1\n"
+	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
+					"fatalerror1\n"
+					"error1\n"
+					"fatalerror2\n"
 					"error2\n"
 					"custinfo2\n"
+					"fatalerror3\n"
 					"error3\n"
 					"custinfo3\n"
 					"debug3\n"
+					 );
+	
+	pLogger->setLogLevel( E_FATAL_ERROR_LEVEL );
+	pLogger->logFatalError("fatalerror4");
+	pLogger->logError( "error4" );
+	pLogger->logInfo( "custinfo4" );
+	pLogger->logDebug( "debug4" );
+	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
+					"fatalerror1\n"
+					"error1\n"
+					"fatalerror2\n"
+					"error2\n"
+					"custinfo2\n"
+					"fatalerror3\n"
+					"error3\n"
+					"custinfo3\n"
+					"debug3\n"
+				    "fatalerror4\n"
 					 );
 	remove( filename.c_str() );
 }
@@ -122,19 +152,10 @@ void OW_LoggerTestCases::testSyslogLogging()
 {
 	String filename = "syslog";
 	LoggerRef pLogger = Logger::createLogger(filename, false);
+	pLogger->logFatalError("fatalerror1");
 	pLogger->logError( "error1" );
-	pLogger->logCustInfo( "custinfo1" );
+	pLogger->logInfo( "custinfo1" );
 	pLogger->logDebug( "debug1" );
-
-	pLogger->setLogLevel( CustInfoLevel );
-	pLogger->logError( "error2" );
-	pLogger->logCustInfo( "custinfo2" );
-	pLogger->logDebug( "debug2" );
-
-	pLogger->setLogLevel( DebugLevel );
-	pLogger->logError( "error3" );
-	pLogger->logCustInfo( "custinfo3" );
-	pLogger->logDebug( "debug3" );
 }
 
 Test* OW_LoggerTestCases::suite()

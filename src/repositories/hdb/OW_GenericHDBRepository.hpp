@@ -128,8 +128,9 @@ public:
 	 * Otherwise a null HDBNode
 	 */
 	HDBNode getNameSpaceNode(HDBHandleLock& hdl, String key);
+	void logFatalError(const String& s) { m_env->getLogger()->logFatalError(s); }
 	void logError(const String& s) { m_env->getLogger()->logError(s); }
-	void logCustInfo(const String& s) { m_env->getLogger()->logCustInfo(s); }
+	void logInfo(const String& s) { m_env->getLogger()->logInfo(s); }
 	void logDebug(const String& s) { m_env->getLogger()->logDebug(s); }
 protected:
 	/**

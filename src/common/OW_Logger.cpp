@@ -44,7 +44,7 @@ Logger::~Logger()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logMessage( const LogLevel l, const String& s ) const
+Logger::logMessage( const ELogLevel l, const String& s ) const
 {
 	MutexLock mtxlck( loggerMutex );
 	if ( l <= m_level )
@@ -54,17 +54,21 @@ Logger::logMessage( const LogLevel l, const String& s ) const
 void
 Logger::setLogLevel( const String& l )
 {
-	if (l.equalsIgnoreCase("custinfo"))
+	if (l.equalsIgnoreCase("info"))
 	{
-		setLogLevel(CustInfoLevel);
+		setLogLevel(E_INFO_LEVEL);
 	}
 	else if (l.equalsIgnoreCase("debug"))
 	{
-		setLogLevel(DebugLevel);
+		setLogLevel(E_DEBUG_LEVEL);
+	}
+	else if (l.equalsIgnoreCase("error"))
+	{
+		setLogLevel(E_ERROR_LEVEL);
 	}
 	else
 	{
-		setLogLevel(ErrorLevel);
+		setLogLevel(E_FATAL_ERROR_LEVEL);
 	}
 }
 

@@ -62,9 +62,10 @@ owcimomd.datadir = @localstatedir@/openwbem
 ################################################################################
 # The owcimomd.log_level option specifies the level of logging. This can be
 # any one of the following:
-#   "debug"    - All debug, custinfo and error messages are logged
-#   "custinfo" - All custinfo and error messages are logged
-#   "error"    - Only error messages are logged. This is the default.
+#   "debug"    - All debug, info, error and fatalerror messages are logged
+#   "info"     - All info, error and fatalerror messages are logged
+#   "error"    - All error and fatalerror messages are logged. This is the default.
+#   "fatalerror" - Only fatalerror messages are logged.
 ;owcimomd.log_level = error
 
 ################################################################################

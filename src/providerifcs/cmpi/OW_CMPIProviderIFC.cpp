@@ -304,7 +304,6 @@ CMPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 void
 CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
-   env->getLogger()->logError("LoadNoIDproviders");
    MutexLock ml(m_guard);
 
    if(m_loadDone)
@@ -314,7 +313,6 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 
    m_loadDone = true;
    String libPath = env->getConfigItem(ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
-   env->getLogger()->logError("LoadNoIDproviders 2");
    SharedLibraryLoaderRef ldr =
        SharedLibraryLoader::createSharedLibraryLoader();
 
@@ -332,7 +330,6 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  return;
    }
 
-   env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
 		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))

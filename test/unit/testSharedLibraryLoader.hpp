@@ -517,7 +517,7 @@ namespace
 	class DummyLogger : public Logger
 	{
 	protected:
-		virtual void doLogMessage(const String &message, const LogLevel) const
+		virtual void doLogMessage(const String &message, const ELogLevel) const
 		{
 			std::cout << message << std::endl;
 		}
@@ -579,7 +579,7 @@ namespace
 	ProviderEnvironmentIFCRef createProvEnvRef(const LocalCIMOMHandle& ch)
 	{
 		LoggerRef log(new DummyLogger);
-		log->setLogLevel(DebugLevel);
+		log->setLogLevel(E_DEBUG_LEVEL);
 		return ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
 			log));
 	}

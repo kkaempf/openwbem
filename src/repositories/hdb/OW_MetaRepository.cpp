@@ -71,7 +71,7 @@ void
 MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
-	logCustInfo(format("Using MetaRepository: %1", path));
+	logInfo(format("Using MetaRepository: %1", path));
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
 	String qcontk(QUAL_CONTAINER);
@@ -725,7 +725,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						}
 						else
 						{
-							logCustInfo(format("Error: %1.%2: qualifier %3 was "
+							logInfo(format("Error: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),

@@ -169,7 +169,7 @@ protected:
 				logDebug(Format("Calling definitiveCancel on thread %1", i));
 				if (!m_threads[i]->definitiveCancel(shutdownSecs))
 				{
-					logError(Format("Thread %1 was forcibly cancelled.", i));
+					logFatalError(Format("Thread %1 was forcibly cancelled.", i));
 				}
 			}
 		}
@@ -228,7 +228,7 @@ protected:
 
 	void logDebug(const String& msg)
 	{
-		if (m_logger && m_logger->getLogLevel() == DebugLevel)
+		if (m_logger && m_logger->getLogLevel() == E_DEBUG_LEVEL)
 		{
 			m_logger->logDebug(Format("ThreadPool %1: %2", m_poolName, msg));
 		}
@@ -239,6 +239,14 @@ protected:
 		if (m_logger)
 		{
 			m_logger->logError(Format("ThreadPool %1 Error: %2", m_poolName, msg));
+		}
+	}
+
+	void logFatalError(const String& msg)
+	{
+		if (m_logger)
+		{
+			m_logger->logFatalError(Format("ThreadPool %1 Fatal Error: %2", m_poolName, msg));
 		}
 	}
 
@@ -296,7 +304,7 @@ public:
 			m_queueNotFull.wait(l);
 		}
 		// the pool is in the process of being destroyed
-		if (queueClosed()) 
+		if (queueClosed())
 		{
 			logDebug("Queue was closed out from underneath us. Not adding work and returning false");
 			return false;

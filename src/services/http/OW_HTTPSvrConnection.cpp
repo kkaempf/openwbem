@@ -65,7 +65,10 @@ using std::flush;
 #define OW_LOGERROR(x) m_options.env->getLogger()->logError(x)
 #endif
 #ifndef OW_LOGCUSTINFO
-#define OW_LOGCUSTINFO(x) m_options.env->getLogger()->logCustInfo(x)
+#define OW_LOGCUSTINFO(x) m_options.env->getLogger()->logInfo(x)
+#endif
+#ifndef OW_LOGFATALERROR
+#define OW_LOGFATALERROR(x) m_options.env->getLogger()->logFatalError(x)
 #endif
 //////////////////////////////////////////////////////////////////////////////
 HTTPSvrConnection::HTTPSvrConnection(Socket socket,

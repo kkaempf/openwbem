@@ -156,7 +156,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 	{
 		return;
 	}
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		m_env->logDebug(format("Checking access to namespace: \"%1\"", ns));
 		m_env->logDebug(format("UserName is: \"%1\" Operation is : %2",
@@ -223,7 +223,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (capability.indexOf(opType) == String::npos)
 					{
-						m_env->logError(format(
+						m_env->logInfo(format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -233,13 +233,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (!capability.equals("rw") && !capability.equals("wr"))
 					{
-						m_env->logError(format(
+						m_env->logInfo(format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
-				m_env->logCustInfo(format(
+				m_env->logInfo(format(
 					"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 					userInfo.m_userName, lns));
 				return;
@@ -268,7 +268,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 			{
 				m_env->logDebug(format("Caught exception: %1 in"
 					" AccessMgr::checkAccess", ce));
@@ -294,7 +294,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (capability.indexOf(opType) == String::npos)
 				{
-					m_env->logError(format(
+					m_env->logInfo(format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -304,13 +304,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (!capability.equals("rw") && !capability.equals("wr"))
 				{
-					m_env->logError(format(
+					m_env->logInfo(format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
-			m_env->logCustInfo(format(
+			m_env->logInfo(format(
 				"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 				userInfo.m_userName, lns));
 			return;
@@ -322,7 +322,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		lns = lns.substring(0, idx);
 	}
-	m_env->logError(format(
+	m_env->logInfo(format(
 		"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 		userInfo.m_userName, lns));
 	OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -585,7 +585,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 			{
 				m_env->logDebug(format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 					cc.getName()));
@@ -736,7 +736,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &cc)
 		{
-			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 			{
 				m_env->logDebug(format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
 					cc.getName()));
@@ -898,7 +898,7 @@ CIMServer::_getCIMInstances(
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass, context));
 	if (instancep)
 	{
-		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 		{
 			m_env->logDebug(format("CIMServer calling provider to enumerate instances: %1:%2", ns,
 				className));
@@ -1008,7 +1008,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		m_env->logDebug(format("CIMServer::deleteInstance.  cop = %1",
 			cop.toString()));
@@ -1058,7 +1058,7 @@ CIMServer::createInstance(
 	// Make sure instance jives with class definition
 	CIMInstance lci(ci);
 	lci.syncWithClass(theClass);
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		m_env->logDebug(format("CIMServer::createInstance.  ns = %1, "
 			"instance = %2", ns, lci.toMOF()));
@@ -1353,7 +1353,7 @@ CIMServer::invokeMethod(
 			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 	}
 	StringBuffer methodStr;
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		methodStr += "CIMServer invoking extrinsic method provider: ";
 		methodStr += ns;
@@ -1392,7 +1392,7 @@ CIMServer::invokeMethod(
 			}
 		}
 	}
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		methodStr.reset();
 		methodStr += "CIMServer finished invoking extrinsic method provider: ";

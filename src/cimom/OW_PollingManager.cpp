@@ -241,7 +241,7 @@ PollingManager::processTriggers()
 			m_triggerRunners[i]->m_isRunning = true;
 			if (!m_triggerRunnerThreadPool->tryAddWork(m_triggerRunners[i]))
 			{
-				m_env->logCustInfo("Failed to run polled provider, because there are too many already running!");
+				m_env->logInfo("Failed to run polled provider, because there are too many already running!");
 			}
 		}
 	}

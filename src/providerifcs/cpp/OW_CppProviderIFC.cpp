@@ -90,11 +90,11 @@ CppProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 	MethodProviderInfoArray& m,
 	IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, 
+	loadProviders(env, i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		a, 
+		a,
 #endif
-		m, 
+		m,
 		ind);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -305,7 +305,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			String providerid = dirEntries[i];
 			// chop off lib and .so
 			providerid = providerid.substring(3, providerid.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
-			CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(), 
+			CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(),
 				dontStoreProvider, dontInitializeProvider);
 			if (!p)
 			{
@@ -490,7 +490,7 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 		provDt.addMinutes(iTimeWindow);
 		if (provDt < dt && iter->second->canUnload())
 		{
-			env->getLogger()->logCustInfo(format("Unloading Provider %1", iter->first));
+			env->getLogger()->logInfo(format("Unloading Provider %1", iter->first));
 			iter->second.setNull();
 			m_provs.erase(iter++);
 		}

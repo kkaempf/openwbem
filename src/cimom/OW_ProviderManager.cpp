@@ -296,11 +296,11 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 #endif
 		MethodProviderInfoArray methodProviderInfo;
 		IndicationProviderInfoArray indicationProviderInfo;
-		m_IFCArray[i]->init(env, instanceProviderInfo, 
+		m_IFCArray[i]->init(env, instanceProviderInfo,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			associatorProviderInfo,
 #endif
-			methodProviderInfo, 
+			methodProviderInfo,
 			indicationProviderInfo);
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -485,8 +485,8 @@ ProviderManager::getPolledProviders(
 }
 //////////////////////////////////////////////////////////////////////////////
 IndicationProviderIFCRefArray
-ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env, 
-	const String& ns, const String& indicationClassName, 
+ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
+	const String& ns, const String& indicationClassName,
 	const String& monitoredClassName) const
 {
 	String lowerName = indicationClassName;
@@ -593,9 +593,13 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	size_t ndx = qvstr.indexOf("::");
 	if(ndx == String::npos)
 	{
-		env->getLogger()->logError(format(
-			"Provider Manager - Invalid format for provider string: %1", qvstr));
-		return rref;
+		ndx = qvstr.indexOf(":");
+		if (ndx == String::npos)
+		{
+			env->getLogger()->logError(format(
+				"Provider Manager - Invalid format for provider string: %1", qvstr));
+			return rref;
+		}
 	}
 	String ifcStr = qvstr.substring(0, ndx);
 	provStr = qvstr.substring(ndx+2);

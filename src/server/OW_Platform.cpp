@@ -156,7 +156,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	PidFile::writePid(pidFile.c_str());
 	//String msg;
 	//msg.format(DAEMON_NAME " is now running [PID=%d]", getpid());
-	//Environment::logCustInfo(msg);
+	//Environment::logInfo(msg);
 	initSig();
 	setupSigHandler(dbgFlg);
 }
@@ -238,7 +238,7 @@ handleSignalAux(int sig, sighandler_t handler)
 	{
 		temp.sa_handler = handler;
 		sigemptyset(&temp.sa_mask);
-		/* Here's a note from the glibc documentation: 
+		/* Here's a note from the glibc documentation:
 		 * When you don't specify with `sigaction' or `siginterrupt' what a
 		 * particular handler should do, it uses a default choice.  The default
 		 * choice in the GNU library depends on the feature test macros you have
@@ -360,9 +360,9 @@ String getCurrentUserName()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void initSig() 
-{ 
-	plat_upipe = UnnamedPipe::createUnnamedPipe(); 
+void initSig()
+{
+	plat_upipe = UnnamedPipe::createUnnamedPipe();
 }
 //////////////////////////////////////////////////////////////////////////////
 void pushSig(int sig)
@@ -379,9 +379,9 @@ int popSig()
 	return tmp;
 }
 //////////////////////////////////////////////////////////////////////////////
-void shutdownSig() 
-{ 
-	plat_upipe = 0; 
+void shutdownSig()
+{
+	plat_upipe = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

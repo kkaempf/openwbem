@@ -34,11 +34,12 @@
 namespace OpenWBEM
 {
 
-enum LogLevel
+enum ELogLevel
 {
-	ErrorLevel,
-	CustInfoLevel,
-	DebugLevel
+	E_FATAL_ERROR_LEVEL,
+	E_ERROR_LEVEL,
+	E_INFO_LEVEL,
+	E_DEBUG_LEVEL
 };
 
 } // end namespace OpenWBEM

@@ -104,9 +104,10 @@ namespace FileSystem
 	/**
 	 * Create a directory
 	 * @param path	The name of the directory to create.
+	 * @param mode specifies the permissions to use.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool makeDirectory(const String& path);
+	bool makeDirectory(const String& path, int mode=0777);
 	/**
 	 * Get the size of the file in bytes
 	 * @param path	The name of the file to get the size for.

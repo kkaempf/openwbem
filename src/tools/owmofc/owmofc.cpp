@@ -181,7 +181,7 @@ processCommandLineOptions(int argc, char** argv)
 }
 class coutLogger : public Logger
 {
-	virtual void doLogMessage(const String &message, const LogLevel) const
+	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{
 		cout << message << endl;
 	}

@@ -131,9 +131,10 @@ public:
 	void shutdown();
 	ProviderManagerRef getProviderManager();
 	void runSelectEngine();
-	void logCustInfo(const String& s) const;
+	void logInfo(const String& s) const;
 	void logDebug(const String& s) const;
 	void logError(const String& s) const;
+	void logFatalError(const String& s) const;
 	void exportIndication(const CIMInstance& instance,
 		const String& instNS);
 	void unloadReqHandlers();

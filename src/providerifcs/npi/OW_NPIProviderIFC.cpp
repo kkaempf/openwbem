@@ -237,8 +237,7 @@ NPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 void
 NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
-   
-   env->getLogger()->logError("LoadNoIDproviders");
+
    MutexLock ml(m_guard);
    if(m_loadDone)
    {
@@ -246,7 +245,6 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    }
    m_loadDone = true;
    String libPath = env->getConfigItem(ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
-   env->getLogger()->logError("LoadNoIDproviders 2");
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
    if(ldr.isNull())
@@ -261,7 +259,6 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		 "directory: %1", libPath));
 	  return;
    }
-   env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
 	  if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
@@ -282,14 +279,12 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  }
 	::FP_INIT_FT createProvider;
 	String creationFuncName = guessProvId + "_initFunctionTable";
-   env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
 	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
 		continue;
 	}
-   env->getLogger()->logError("LoadNoIDproviders 5");
 	::FTABLE fTable_ = (*createProvider)();
 	if(!fTable_.fp_initialize)
 	{
@@ -299,10 +294,9 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	}
 		// only initialize polled and indicationexport providers
 	// since NPI doesn't support indicationexport providers ....
-   env->getLogger()->logError("LoadNoIDproviders 6");
 	if (!fTable_.fp_activateFilter) continue;
-	// 
-		// else it must be a polled provider - initialize it 
+	//
+		// else it must be a polled provider - initialize it
 	env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, guessProvId));
 	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is

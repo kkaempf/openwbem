@@ -453,14 +453,14 @@ CIMOMEnvironment::_loadRequestHandlers()
 	{
 		libPath += "/";
 	}
-	logCustInfo(format("CIMOM loading request handlers from"
+	logInfo(format("CIMOM loading request handlers from"
 		" directory %1", libPath));
 	StringArray dirEntries;
 	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		logError(format("CIMOM failed geeting the contents of the"
+		logFatalError(format("CIMOM failed geeting the contents of the"
 			" request handler directory: %1", libPath));
-		return;
+		OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
 	}
 	int reqHandlerCount = 0;
 	for(size_t i = 0; i < dirEntries.size(); i++)
@@ -479,7 +479,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 			++reqHandlerCount;
 			rh->setEnvironment(g_cimomEnvironment);
 			StringArray supportedContentTypes = rh->getSupportedContentTypes();
-			logCustInfo(format("CIMOM loaded request handler from file: %1",
+			logInfo(format("CIMOM loaded request handler from file: %1",
 				libName));
 			for (StringArray::const_iterator iter = supportedContentTypes.begin();
 				  iter != supportedContentTypes.end(); iter++)
@@ -489,7 +489,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 				MutexLock ml(m_reqHandlersLock);
 				m_reqHandlers[(*iter)] = rqData;
 				ml.release();
-				logCustInfo(format(
+				logInfo(format(
 					"CIMOM associating Content-Type %1 with Request Handler %2",
 					*iter, libName));
 			}
@@ -500,7 +500,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 				" %1", libName));
 		}
 	}
-	logCustInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
+	logInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
 		m_reqHandlers.size(), reqHandlerCount));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -514,14 +514,14 @@ CIMOMEnvironment::_loadServices()
 	{
 		libPath += "/";
 	}
-	logCustInfo(format("CIMOM loading services from directory %1",
+	logInfo(format("CIMOM loading services from directory %1",
 		libPath));
 	StringArray dirEntries;
 	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		logError(format("CIMOM failed geeting the contents of the"
+		logFatalError(format("CIMOM failed geeting the contents of the"
 			" services directory: %1", libPath));
-		return;
+		OW_THROW(CIMOMEnvironmentException, "No Services");
 	}
 	for(size_t i = 0; i < dirEntries.size(); i++)
 	{
@@ -540,7 +540,7 @@ CIMOMEnvironment::_loadServices()
 			// unloaded until later.
 			m_services.append(srv);
 			srv->setServiceEnvironment(g_cimomEnvironment);
-			logCustInfo(format("CIMOM loaded service from file: %1", libName));
+			logInfo(format("CIMOM loaded service from file: %1", libName));
 		}
 		else
 		{
@@ -548,7 +548,7 @@ CIMOMEnvironment::_loadServices()
 				libName));
 		}
 	}
-	logCustInfo(format("CIMOM: Number of services loaded: %1",
+	logInfo(format("CIMOM: Number of services loaded: %1",
 		m_services.size()));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -761,7 +761,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 			if(!sll)
 			{
 				m_indicationRepLayerDisabled = true;
-				logError(format("CIMOM failed to create SharedLibraryLoader"
+				logFatalError(format("CIMOM failed to create SharedLibraryLoader"
 					" library %1", libname));
 				return retref;
 			}
@@ -769,7 +769,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 			if(!m_indicationRepLayerLib)
 			{
 				m_indicationRepLayerDisabled = true;
-				logError(format("CIMOM failed to load indication rep layer"
+				logFatalError(format("CIMOM failed to load indication rep layer"
 					" library %1", libname));
 				return retref;
 			}
@@ -974,11 +974,11 @@ CIMOMEnvironment::exportIndication(const CIMInstance& instance,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMOMEnvironment::logCustInfo(const String& s) const
+CIMOMEnvironment::logInfo(const String& s) const
 {
 	if (m_Logger)
 	{
-		m_Logger->logCustInfo(s);
+		m_Logger->logInfo(s);
 	}
 	else
 	{
@@ -1005,6 +1005,19 @@ CIMOMEnvironment::logError(const String& s) const
 	if (m_Logger)
 	{
 		m_Logger->logError(s);
+	}
+	else
+	{
+		std::cerr << s << std::endl;
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMOMEnvironment::logFatalError(const String& s) const
+{
+	if (m_Logger)
+	{
+		m_Logger->logFatalError(s);
 	}
 	else
 	{

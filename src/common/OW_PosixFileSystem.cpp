@@ -129,9 +129,9 @@ FileSystem::changeDirectory(const String& path)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::makeDirectory(const String& path)
+FileSystem::makeDirectory(const String& path, int mode)
 {
-	return mkdir(path.c_str(), 0777) == 0;
+	return mkdir(path.c_str(), mode) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -184,7 +184,7 @@ FileSystem::renameFile(const String& oldFileName,
 	return ::rename(oldFileName.c_str(), newFileName.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-size_t 
+size_t
 FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	long offset)
 {
@@ -199,7 +199,7 @@ FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
-size_t 
+size_t
 FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	long offset)
 {
@@ -214,31 +214,31 @@ FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
-int 
+int
 FileSystem::seek(FileHandle& hdl, off_t offset, int whence)
 {
 	return ::lseek(hdl, offset, whence);
 }
 //////////////////////////////////////////////////////////////////////////////
-off_t 
+off_t
 FileSystem::tell(FileHandle& hdl)
 {
 	return ::lseek(hdl, 0, SEEK_CUR);
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 FileSystem::rewind(FileHandle& hdl)
 {
 	::lseek(hdl, 0, SEEK_SET);
 }
 //////////////////////////////////////////////////////////////////////////////
-int 
+int
 FileSystem::close(FileHandle& hdl)
 {
 	return ::close(hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
-int 
+int
 FileSystem::flush(FileHandle&)
 {
 	return 0;

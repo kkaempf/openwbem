@@ -43,7 +43,7 @@ using namespace OpenWBEM;
 class TestLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const String &message, const LogLevel) const {
+	virtual void doLogMessage(const String &message, const ELogLevel) const {
 		std::cout << message << std::endl;
 	}
 };

@@ -103,7 +103,7 @@ PerlProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 	MethodProviderInfoArray& m,
 	IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, a, m, 
+	loadProviders(env, i, a, m,
 		ind);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -309,8 +309,8 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			delete ((NPIContext *)fTable.npicontext);
 			continue;
 		}
-		// now register the perl script for every type 
-		// without trying to call 
+		// now register the perl script for every type
+		// without trying to call
 		// TODO: implement check for perl subroutines
 		InstanceProviderInfo inst_info;
 		inst_info.setProviderName(guessProvId);
@@ -346,8 +346,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 void
 PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
-   
-   env->getLogger()->logError("LoadNoID Perl providers");
+
    MutexLock ml(m_guard);
    if(m_loadDone)
    {
@@ -355,7 +354,6 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    }
    m_loadDone = true;
    String libPath = env->getConfigItem(ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
-   env->getLogger()->logError("LoadNoIDproviders 2");
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
    if(ldr.isNull())
@@ -370,7 +368,6 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 		 "directory: %1", libPath));
 	  return;
    }
-   env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
 	  if(!dirEntries[i].endsWith(".pl"))
@@ -411,14 +408,12 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	NPIFP_INIT_FT createProvider;
 	//String creationFuncName = guessProvId + "_initFunctionTable";
 	String creationFuncName = "perlProvider_initFunctionTable";
-   env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
 	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("Perl provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
 		continue;
 	}
-   env->getLogger()->logError("LoadNoIDproviders 5");
 	NPIFTABLE fTable = (*createProvider)();
 	fTable.npicontext = new NPIContext;
 	
@@ -433,8 +428,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	}
 		// only initialize polled and indicationexport providers
 	// since Perl doesn't support indicationexport providers ....
-   env->getLogger()->logError("LoadNoIDproviders 6");
-		// else it must be a polled provider - initialize it 
+		// else it must be a polled provider - initialize it
 	env->getLogger()->logDebug(format("Perl provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, guessProvId));
 	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
@@ -525,7 +519,7 @@ PerlProviderIFC::getProvider(
 			delete ((NPIContext *)fTable.npicontext);
 		return FTABLERef();
 		}
-	   
+	
 	env->getLogger()->logDebug(format("Perl provider ifc: provider %1 loaded and initialized (script %2)",
 		provId, fTable.npicontext->scriptName));
 	m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));

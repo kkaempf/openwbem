@@ -57,13 +57,13 @@ int main(int argc, char* argv[])
 		}
 		catch (const DaemonException& e)
 		{
-			env->logError(e.getMessage());
-			env->logError("CIMOM failed to initialize. Aborting...");
+			env->logFatalError(e.getMessage());
+			env->logFatalError("CIMOM failed to initialize. Aborting...");
 			return 1;
 		}
 		// Start all of the cimom services
 		env->startServices();
-		env->logCustInfo("CIMOM is now running!");
+		env->logInfo("CIMOM is now running!");
 		int sig;
 		bool shuttingDown(false);
 		while(!shuttingDown)
@@ -76,12 +76,12 @@ int main(int argc, char* argv[])
 			{
 				case Platform::SHUTDOWN:
 					shuttingDown = true;
-					env->logCustInfo("CIMOM received shutdown notification."
+					env->logInfo("CIMOM received shutdown notification."
 						" Initiating shutdown");
 					env->shutdown();
 					break;
 				case Platform::REINIT:
-					env->logCustInfo("CIMOM received restart notification."
+					env->logInfo("CIMOM received restart notification."
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
@@ -100,38 +100,38 @@ int main(int argc, char* argv[])
 	}
 	catch (Assertion& e)
 	{
-		env->logError("**************************************************");
-		env->logError("* OW_ASSERTION CAUGHT IN CIMOM MAIN!");
-		env->logError(format("* Condition: %1", e.getMessage()));
-		env->logError(format("* File: %1", e.getFile()));
-		env->logError(format("* Line: %1", e.getLine()));
-		env->logError("**************************************************");
+		env->logFatalError("**************************************************");
+		env->logFatalError("* OW_ASSERTION CAUGHT IN CIMOM MAIN!");
+		env->logFatalError(format("* Condition: %1", e.getMessage()));
+		env->logFatalError(format("* File: %1", e.getFile()));
+		env->logFatalError(format("* Line: %1", e.getLine()));
+		env->logFatalError("**************************************************");
 	}
 	catch (Exception& e)
 	{
-		env->logError("**************************************************");
-		env->logError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logError(format("* Type: %1", e.type()));
-		env->logError(format("* Msg: %1", e.getMessage()));
-		env->logError(format("* File: %1", e.getFile()));
-		env->logError(format("* Line: %1", e.getLine()));
-		env->logError("**************************************************");
+		env->logFatalError("**************************************************");
+		env->logFatalError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
+		env->logFatalError(format("* Type: %1", e.type()));
+		env->logFatalError(format("* Msg: %1", e.getMessage()));
+		env->logFatalError(format("* File: %1", e.getFile()));
+		env->logFatalError(format("* Line: %1", e.getLine()));
+		env->logFatalError("**************************************************");
 	}
 	catch (std::exception& se)
 	{
-		env->logError("**************************************************");
-		env->logError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logError(format("* Type: %1", se.what()));
-		env->logError("**************************************************");
+		env->logFatalError("**************************************************");
+		env->logFatalError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
+		env->logFatalError(format("* Type: %1", se.what()));
+		env->logFatalError("**************************************************");
 	}
 	catch(...)
 	{
-		env->logError("**************************************************");
-		env->logError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
-		env->logError("**************************************************");
+		env->logFatalError("**************************************************");
+		env->logFatalError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
+		env->logFatalError("**************************************************");
 	}
 	CIMOMEnvironment::g_cimomEnvironment = 0;
-	env->logCustInfo("CIMOM has shutdown");
+	env->logInfo("CIMOM has shutdown");
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////

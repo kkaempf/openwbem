@@ -59,7 +59,7 @@ protected:
 class ListenerLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const String &message, const LogLevel) const
+	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{
 		cerr << message << endl;
 	}
@@ -68,7 +68,7 @@ protected:
 // TODO: Using a Semaphore from a signal handler isn't safe.  It could deadlock.
 // Figure out a better way to do it.
 Semaphore shutdownSem;
-extern "C" 
+extern "C"
 void sig_handler(int)
 {
 	shutdownSem.signal();

@@ -143,7 +143,7 @@ private:
 	class DummyLogger : public Logger
 	{
 	protected:
-		virtual void doLogMessage(const String &, const LogLevel) const
+		virtual void doLogMessage(const String &, const ELogLevel) const
 		{
 			return;
 		}

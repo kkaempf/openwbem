@@ -47,33 +47,40 @@ class Logger
 {
 	public:
 		/**
+		 * Log a fatal error.
+		 * @param s The string to log.
+		 */
+		void logFatalError( const String& s ) const
+			{  logMessage( E_FATAL_ERROR_LEVEL, s ); }
+		/**
 		 * Log an error.
 		 * @param s The string to log.
 		 */
 		void logError( const String& s ) const
-			{  logMessage( ErrorLevel, s ); }
+			{  logMessage( E_ERROR_LEVEL, s ); }
 		/**
 		 * Log customer info.
 		 * @param s The string to log.
 		 */
-		void logCustInfo( const String& s ) const
-			{  logMessage( CustInfoLevel, s ); }
+		void logInfo( const String& s ) const
+			{  logMessage( E_INFO_LEVEL, s ); }
 		/**
 		 * Log debug info.
 		 * @param s The string to log.
 		 */
 		void logDebug( const String& s ) const
-			{  logMessage( DebugLevel, s ); }
+			{  logMessage( E_DEBUG_LEVEL, s ); }
 		/**
 		 * Set the logging level.  All messages with priority > l will be logged.
+		 * Valid values are: debug, info, error, fatalerror
 		 * @param l The level of messages to log
 		 */
-		void setLogLevel( const LogLevel l ) {  m_level = l; }
+		void setLogLevel( const ELogLevel l ) {  m_level = l; }
 		void setLogLevel( const String& l );
 		/**
 		 * @return The current logging level
 		 */
-		LogLevel getLogLevel() {  return m_level; }
+		ELogLevel getLogLevel() {  return m_level; }
 		/**
 		 * Create a concrete logger depending on the type string passed in.
 		 * On Linux, if type == "syslog" a logger the writes to the syslog
@@ -89,18 +96,18 @@ class Logger
 			bool debug );
 		virtual ~Logger();
 	protected:
-		Logger() : m_level(ErrorLevel) { }
-		Logger( const LogLevel l ) : m_level(l) {  }
+		Logger() : m_level(E_ERROR_LEVEL) { }
+		Logger( const ELogLevel l ) : m_level(l) {  }
 		/**
 		 * To be overridden by derived classes with a function that does the
 		 * actual logging.
 		 */
 		virtual void doLogMessage( const String& message,
-			const LogLevel level) const = 0;
+			const ELogLevel level) const = 0;
 	private:
-		void logMessage( const LogLevel l, const String& s ) const;
+		void logMessage( const ELogLevel l, const String& s ) const;
 	private: // data
-		LogLevel m_level;
+		ELogLevel m_level;
 };
 typedef Reference<Logger> LoggerRef;
 

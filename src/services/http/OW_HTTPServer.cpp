@@ -207,7 +207,7 @@ public:
 			}
 			Socket socket = pServerSocket->accept(2);
 			LoggerRef logger = m_HTTPServer->m_options.env->getLogger();
-			logger->logCustInfo(
+			logger->logInfo(
 				 format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
@@ -222,23 +222,23 @@ public:
 			{
 				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
 				// main thread can't block.
-				logger->logError("Server too busy, closing connection");
+				logger->logInfo("Server too busy, closing connection");
 				socket.disconnect();
 			}
 		}
 		catch (SSLException& se)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logError(
+			m_HTTPServer->m_options.env->getLogger()->logInfo(
 				"SSL Handshake failed");
 		}
 		catch (SocketTimeoutException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logError(format(
+			m_HTTPServer->m_options.env->getLogger()->logInfo(format(
 				"Socket TimeOut in HTTPServer: %1", e));
 		}
 		catch (SocketException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logError(format(
+			m_HTTPServer->m_options.env->getLogger()->logInfo(format(
 				"Socket Exception in HTTPServer: %1", e));
 		}
 		catch (IOException &e)
@@ -287,7 +287,7 @@ HTTPServer::startService()
 		{
 			m_pUDSServerSocket = new ServerSocket;
 			m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000, m_options.reuseAddr);
-			lgr->logCustInfo("HTTP server listening on Unix Domain Socket");
+			lgr->logInfo("HTTP server listening on Unix Domain Socket");
 			String theURL = "ipc://localhost/cimom";
 			addURL(URL(theURL));
 			
@@ -307,12 +307,12 @@ HTTPServer::startService()
 		{
 			UInt16 lport = static_cast<UInt16>(m_options.httpPort);
 			m_pHttpServerSocket = new ServerSocket;
-			m_pHttpServerSocket->doListen(lport, 
-				SocketFlags::E_NOT_SSL, 1000, 
-				SocketFlags::E_ALL_INTERFACES, 
+			m_pHttpServerSocket->doListen(lport,
+				SocketFlags::E_NOT_SSL, 1000,
+				SocketFlags::E_ALL_INTERFACES,
 				m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 			m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
-			lgr->logCustInfo(format("HTTP server listening on port: %1",
+			lgr->logInfo(format("HTTP server listening on port: %1",
 			   m_options.httpPort));
 			String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
 				+ ":" + String(m_options.httpPort) + "/cimom";
@@ -348,13 +348,13 @@ HTTPServer::startService()
 			try
 			{
 				m_pHttpsServerSocket = new ServerSocket;
-				m_pHttpsServerSocket->doListen(lport, 
+				m_pHttpsServerSocket->doListen(lport,
 				SocketFlags::E_SSL, 1000,
-				SocketFlags::E_ALL_INTERFACES, 
+				SocketFlags::E_ALL_INTERFACES,
 				m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 				m_options.httpsPort =
 				   m_pHttpsServerSocket->getLocalAddress().getPort();
-				lgr->logCustInfo(format("HTTPS server listening on port: %1",
+				lgr->logInfo(format("HTTPS server listening on port: %1",
 				   m_options.httpsPort));
 				String theURL = "https://" +
 					SocketAddress::getAnyLocalHost().getName() + ":" +
@@ -385,7 +385,7 @@ HTTPServer::startService()
 	} // if (m_httpsPort > 0)
 	if (!gotuds && !gothttp && !gothttps)
 	{
-		lgr->logError("HTTP Server failed to start any services");
+		lgr->logFatalError("HTTP Server failed to start any services");
 		OW_THROW(SocketException, "HTTP Server failed to start any services");
 	}
 	lgr->logDebug("HTTP Service has started");
