@@ -45,17 +45,20 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(const LoggerRef& logger, 
-								 const ConfigFile::ConfigMap& configMap,
-								 OperationContext& operationContext, 
-								 const String& callbackURL,
-								 ClientCIMOMHandleConnectionPool& pool)
+ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(
+	const LoggerRef& logger, 
+	const ConfigFile::ConfigMap& configMap,
+	OperationContext& operationContext, 
+	const String& callbackURL,
+	ClientCIMOMHandleConnectionPool& pool,
+	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials)
 	: m_logger(logger)
 	, m_configMap(configMap)
 	, m_operationContext(operationContext)
 	, m_callbackURL(callbackURL)
 	, m_connectionPool(pool)
 	, m_CIMOMHandleRA()
+	, m_useConnectionCredentials(useConnectionCredentials)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -76,7 +79,23 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 	{
 		return CIMOMHandleIFCRef(0); 
 	}
-	ClientCIMOMHandleRef client = m_connectionPool.getConnection(m_callbackURL); 
+
+	String callbackURL(m_callbackURL);
+	if (m_useConnectionCredentials)
+	{
+		URL url(m_callbackURL);
+		try
+		{
+			url.principal = m_operationContext.getStringData(OperationContext::USER_NAME);
+			url.credential = m_operationContext.getStringData(OperationContext::USER_PASSWD);
+		}
+		catch (ContextDataNotFoundException& e)
+		{
+		}
+		callbackURL = url.toString();
+	}
+
+	ClientCIMOMHandleRef client = m_connectionPool.getConnection(callbackURL); 
 
 	CIMProtocolIFCRef tmp = client->getWBEMProtocolHandler();
 	if (tmp)

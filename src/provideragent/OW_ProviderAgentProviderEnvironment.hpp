@@ -41,6 +41,7 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
 #include "OW_ConfigFile.hpp"
+#include "OW_ProviderAgentEnvironment.hpp"
 
 namespace OpenWBEM
 {
@@ -48,11 +49,13 @@ namespace OpenWBEM
 class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
-	ProviderAgentProviderEnvironment(const LoggerRef& logger, 
-									 const ConfigFile::ConfigMap& configMap,
-									 OperationContext& operationContext, 
-									 const String& callbackURL, 
-									 ClientCIMOMHandleConnectionPool& pool); 
+	ProviderAgentProviderEnvironment(
+		const LoggerRef& logger, 
+		const ConfigFile::ConfigMap& configMap,
+		OperationContext& operationContext, 
+		const String& callbackURL, 
+		ClientCIMOMHandleConnectionPool& pool,
+		ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials); 
 	~ProviderAgentProviderEnvironment(); 
 		// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const; 
@@ -73,7 +76,8 @@ private:
 	OperationContext& m_operationContext; 
 	String m_callbackURL; 
 	ClientCIMOMHandleConnectionPool& m_connectionPool; 
-	mutable Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA; 
+	mutable Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA;
+	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 };
 
 } // end namespace OpenWBEM

@@ -60,7 +60,7 @@ public:
 							 const Map<String, CppProviderBaseIFCRef>& methodProvs, 
 							 Cache<CIMClass>& cimClasses, 
 							 const ProviderEnvironmentIFCRef& env,
-							 ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
+							 ProviderAgentEnvironment::EClassRetrievalFlag classRetrieval, 
 							 const ProviderAgentLockerIFCRef& locker); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
@@ -709,7 +709,7 @@ private:
 	Cache<CIMClass>& m_cimClasses; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
 	ProviderAgentLockerIFCRef m_locker; 
-	ProviderAgentEnvironment::ClassRetrievalFlag m_classRetrieval; 
+	ProviderAgentEnvironment::EClassRetrievalFlag m_classRetrieval; 
 
 	CppInstanceProviderIFC* getInstanceProvider(const String& ns, 
 												const String& className) const; 

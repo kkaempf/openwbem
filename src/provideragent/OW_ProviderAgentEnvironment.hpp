@@ -59,17 +59,25 @@ typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
 class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	enum LockingType
+	enum ELockingType
 	{
-		NONE, 
-		SWMR, 
-		SINGLE_THREADED
+		E_NONE, 
+		E_SWMR, 
+		E_SINGLE_THREADED
 	}; 
-	enum ClassRetrievalFlag
+	
+	enum EClassRetrievalFlag
 	{
-		DONT_RETRIEVE_CLASSES, 
-		RETRIEVE_CLASSES
-	}; 
+		E_DONT_RETRIEVE_CLASSES, 
+		E_RETRIEVE_CLASSES
+	};
+
+	enum EConnectionCredentialsUsageFlag
+	{
+		E_DONT_USE_CONNECTION_CREDENTIALS,
+		E_USE_CONNECTION_CREDENTIALS
+	};
+
 	ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
 		const Array<CppProviderBaseIFCRef>& providers, 
 		const Array<CIMClass>& cimClasses, 
@@ -124,13 +132,14 @@ private:
 	// (&, not Reference) to m_cimClasses, and modify it. 
 	Cache<CIMClass> m_cimClasses; 
 	ProviderAgentLockerIFCRef m_locker;
-	ClassRetrievalFlag m_classRetrieval; 
+	EClassRetrievalFlag m_classRetrieval; 
 	ClientCIMOMHandleConnectionPool m_connectionPool; 
+	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 
 	class PALocker : public ProviderAgentLockerIFC
 	{
 	public: 
-		PALocker(ProviderAgentEnvironment::LockingType lt, UInt32 timeout); 
+		PALocker(ProviderAgentEnvironment::ELockingType lt, UInt32 timeout); 
 		~PALocker(); 
 		virtual void doGetReadLock(); 
 		virtual void doGetWriteLock(); 
@@ -141,7 +150,7 @@ private:
 		PALocker(const PALocker&);
 		PALocker& operator=(const PALocker&);
 
-		ProviderAgentEnvironment::LockingType m_lt; 
+		ProviderAgentEnvironment::ELockingType m_lt; 
 		Reference<Mutex> m_mutex; 
 		Reference<RWLocker> m_rwlocker; 
 		UInt32 m_timeout; 

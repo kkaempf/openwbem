@@ -109,7 +109,9 @@ const char* const ProviderAgent::LockingTypeSWMR = "swmr";
 const char* const ProviderAgent::LockingTypeSingleThreaded = "single_threaded";
 
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
-const char* const ProviderAgent::DynamicClassRetrieval_opt = "provider_agent.dynamic_class_retrieval"; 
+const char* const ProviderAgent::DynamicClassRetrieval_opt = "provider_agent.dynamic_class_retrieval";
+const char* const ProviderAgent::UseConnectionCredentials_opt = "provider_agent.use_connection_credentials";
+
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(
 	const ConfigFile::ConfigMap& configMap, 

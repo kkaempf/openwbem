@@ -82,6 +82,11 @@ public:
 	// If not specified the default of "false" is assumed.
 	static const char* const DynamicClassRetrieval_opt; 
 
+	// option which specifies whether to use the connection credentials when calling back into the cimom
+	// valid values are "true" or "false".
+	// If not specified the default of "false" is assumed.
+	static const char* const UseConnectionCredentials_opt;
+
 	/**
 	 * Create a new provider agent, and start the HTTP server. 
 	 * The ProviderAgent can be used as a stand alone process by 

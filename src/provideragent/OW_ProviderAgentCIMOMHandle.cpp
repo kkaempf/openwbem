@@ -64,7 +64,7 @@ ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(
 	const Map<String, CppProviderBaseIFCRef>& methodProvs, 
 	Cache<CIMClass>& cimClasses, 
 	const ProviderEnvironmentIFCRef& env, 
-	ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
+	ProviderAgentEnvironment::EClassRetrievalFlag classRetrieval, 
 	const ProviderAgentLockerIFCRef& locker)
 	: m_assocProvs(assocProvs)
 	, m_instProvs(instProvs)
@@ -703,7 +703,7 @@ ProviderAgentCIMOMHandle::helperGetClass(const String& ns,
 	{
 		return rval; 
 	}
-	if (m_classRetrieval == ProviderAgentEnvironment::RETRIEVE_CLASSES)
+	if (m_classRetrieval == ProviderAgentEnvironment::E_RETRIEVE_CLASSES)
 	{
 		CIMOMHandleIFCRef ch = m_PAEnv->getCIMOMHandle(); 
 		if (ch)

@@ -84,8 +84,9 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	, m_requestHandlers(requestHandlers)
 	, m_selectables(selectables)
 	, m_locker(locker)
-	, m_classRetrieval(DONT_RETRIEVE_CLASSES)
+	, m_classRetrieval(E_DONT_RETRIEVE_CLASSES)
 	, m_connectionPool(5)
+	, m_useConnectionCredentials(E_DONT_USE_CONNECTION_CREDENTIALS)
 {
 	m_cimClasses.setMaxCacheSize(cimClasses.size() + 100); // 100 extra just in case.
 	for (Array<CIMClass>::const_iterator iter = cimClasses.begin(); 
@@ -102,11 +103,8 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 		CppProviderBaseIFCRef prov = *iter; 
 
 		OperationContext oc; 
-		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
-																		  m_configItems, 
-																		  oc, 
-																		  m_callbackURL, 
-																		  m_connectionPool)); 
+		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
+			m_logger, m_configItems, oc, m_callbackURL, m_connectionPool, E_DONT_USE_CONNECTION_CREDENTIALS)); 
 		prov->initialize(pe); 
 		CppMethodProviderIFC* methodProv = prov->getMethodProvider(); 
 		if (methodProv)
@@ -226,18 +224,18 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	{
 		String confItem = getConfigItem(ProviderAgent::LockingType_opt, "none"); 
 		confItem.toLowerCase(); 
-		LockingType lockingType(SINGLE_THREADED);
+		ELockingType lockingType(E_SINGLE_THREADED);
 		if (confItem == ProviderAgent::LockingTypeNone)
 		{
-			lockingType = NONE; 
+			lockingType = E_NONE; 
 		}
 		else if (confItem == ProviderAgent::LockingTypeSWMR)
 		{
-			lockingType = SWMR; 
+			lockingType = E_SWMR; 
 		}
 		else if (confItem == ProviderAgent::LockingTypeSingleThreaded)
 		{
-			lockingType = SINGLE_THREADED;  
+			lockingType = E_SINGLE_THREADED;  
 		}
 		else
 		{
@@ -260,7 +258,22 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	confItem.toLowerCase(); 
 	if (confItem == "true")
 	{
-		m_classRetrieval = RETRIEVE_CLASSES; 
+		m_classRetrieval = E_RETRIEVE_CLASSES; 
+	}
+	else
+	{
+		m_classRetrieval = E_DONT_RETRIEVE_CLASSES;
+	}
+
+	confItem = getConfigItem(ProviderAgent::UseConnectionCredentials_opt, "false");
+	confItem.toLowerCase(); 
+	if (confItem == "true")
+	{
+		m_useConnectionCredentials = E_USE_CONNECTION_CREDENTIALS; 
+	}
+	else
+	{
+		m_useConnectionCredentials = E_DONT_USE_CONNECTION_CREDENTIALS;
 	}
 }
 
@@ -341,19 +354,11 @@ ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/)
 {
-	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
-																	  m_configItems, 
-																	  context, 
-																	  m_callbackURL, 
-																	  m_connectionPool)); 
-	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(m_assocProvs, 
-														  m_instProvs, 
-														  m_secondaryInstProvs, 
-														  m_methodProvs, 
-														  m_cimClasses, 
-														  pe, 
-														  m_classRetrieval, 
-														  m_locker)); 
+	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
+		m_logger, m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials)); 
+	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(
+		m_assocProvs, m_instProvs, m_secondaryInstProvs, m_methodProvs, 
+		m_cimClasses, pe, m_classRetrieval, m_locker)); 
 }
 //////////////////////////////////////////////////////////////////////////////
 LoggerRef 
@@ -378,7 +383,7 @@ ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentEnvironment::PALocker::PALocker(ProviderAgentEnvironment::LockingType lt, 
+ProviderAgentEnvironment::PALocker::PALocker(ProviderAgentEnvironment::ELockingType lt, 
 											 UInt32 timeout)
 	: m_lt(lt)
 	, m_mutex(0)
@@ -387,12 +392,12 @@ ProviderAgentEnvironment::PALocker::PALocker(ProviderAgentEnvironment::LockingTy
 {
 	switch (m_lt)
 	{
-	case ProviderAgentEnvironment::NONE:
+	case ProviderAgentEnvironment::E_NONE:
 		break; 
-	case ProviderAgentEnvironment::SWMR:
+	case ProviderAgentEnvironment::E_SWMR:
 		m_rwlocker = new RWLocker; 
 		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
+	case ProviderAgentEnvironment::E_SINGLE_THREADED:
 		m_mutex = new Mutex; 
 		break; 
 	default: 
@@ -411,12 +416,12 @@ ProviderAgentEnvironment::PALocker::doReleaseReadLock()
 {
 	switch (m_lt)
 	{
-	case ProviderAgentEnvironment::NONE:
+	case ProviderAgentEnvironment::E_NONE:
 		break; 
-	case ProviderAgentEnvironment::SWMR:
+	case ProviderAgentEnvironment::E_SWMR:
 		m_rwlocker->releaseReadLock(); 
 		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
+	case ProviderAgentEnvironment::E_SINGLE_THREADED:
 		m_mutex->release(); 
 		break; 
 	default: 
@@ -429,12 +434,12 @@ ProviderAgentEnvironment::PALocker::doGetReadLock()
 {
 	switch (m_lt)
 	{
-	case ProviderAgentEnvironment::NONE:
+	case ProviderAgentEnvironment::E_NONE:
 		break; 
-	case ProviderAgentEnvironment::SWMR:
+	case ProviderAgentEnvironment::E_SWMR:
 		m_rwlocker->getReadLock(m_timeout); 
 		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
+	case ProviderAgentEnvironment::E_SINGLE_THREADED:
 		m_mutex->acquire(); 
 		break; 
 	default: 
@@ -447,12 +452,12 @@ ProviderAgentEnvironment::PALocker::doReleaseWriteLock()
 {
 	switch (m_lt)
 	{
-	case ProviderAgentEnvironment::NONE:
+	case ProviderAgentEnvironment::E_NONE:
 		break; 
-	case ProviderAgentEnvironment::SWMR:
+	case ProviderAgentEnvironment::E_SWMR:
 		m_rwlocker->releaseWriteLock(); 
 		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
+	case ProviderAgentEnvironment::E_SINGLE_THREADED:
 		m_mutex->release(); 
 		break; 
 	default: 
@@ -465,12 +470,12 @@ ProviderAgentEnvironment::PALocker::doGetWriteLock()
 {
 	switch (m_lt)
 	{
-	case ProviderAgentEnvironment::NONE:
+	case ProviderAgentEnvironment::E_NONE:
 		break; 
-	case ProviderAgentEnvironment::SWMR:
+	case ProviderAgentEnvironment::E_SWMR:
 		m_rwlocker->getWriteLock(m_timeout); 
 		break; 
-	case ProviderAgentEnvironment::SINGLE_THREADED:
+	case ProviderAgentEnvironment::E_SINGLE_THREADED:
 		m_mutex->acquire(); 
 		break; 
 	default: 
