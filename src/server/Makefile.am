@@ -1,8 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libowserver.a
-SHAREDLIBADD = \
-../provider/libowprovider.a
+SHAREDLIBADD =
 
 OW_SHARED_LIBS = libowserver.so
 thelibdir = $(libdir)

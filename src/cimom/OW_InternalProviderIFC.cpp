@@ -411,3 +411,6 @@ OW_InternalProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCR
 
 
 
+OW_CppProviderBaseIFC::~OW_CppProviderBaseIFC() {}
+OW_CppIndicationProviderIFC::~OW_CppIndicationProviderIFC() {}
+OW_CppInstanceProviderIFC::~OW_CppInstanceProviderIFC() {}

@@ -57,7 +57,7 @@ class OW_CppIndicationProviderIFC;
 class OW_CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppProviderBaseIFC() {}
+	virtual ~OW_CppProviderBaseIFC();
 
 	/**
 	 * Called by the CIMOM when the provider is initialized

@@ -44,7 +44,7 @@ class OW_WQLSelectStatement;
 class OW_CppIndicationProviderIFC: public virtual OW_CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppIndicationProviderIFC() {}
+	virtual ~OW_CppIndicationProviderIFC();
 
 	/**
 	 * A provider should override this method to report which classes in
