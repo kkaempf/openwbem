@@ -22,23 +22,25 @@ OW_SHARED_LIBS = libowclient.$(LIB_EXT)
 
 thelibdir = $(libdir)
 
-libowclient_a_SOURCES =	\
+libowclient_a_SOURCES = \
 OW_CIMOMLocator.cpp \
-OW_CIMOMInfo.cpp	\
+OW_CIMOMInfo.cpp \
 OW_CIMClient.cpp \
 OW_CIMOMLocatorSLP.cpp \
 OW_ClientCIMOMHandle.cpp \
 OW_CIMXMLCIMOMHandle.cpp \
-OW_BinaryCIMOMHandle.cpp
+OW_BinaryCIMOMHandle.cpp \
+OW_ClientCIMOMHandleConnectionPool.cpp
 
-pkginclude_HEADERS =		\
-OW_CIMOMLocator.hpp	\
-OW_CIMOMLocatorSLP.hpp	\
-OW_CIMOMInfo.hpp	\
+pkginclude_HEADERS = \
+OW_CIMOMLocator.hpp \
+OW_CIMOMLocatorSLP.hpp \
+OW_CIMOMInfo.hpp \
 OW_CIMClient.hpp \
 OW_ClientCIMOMHandle.hpp \
 OW_CIMXMLCIMOMHandle.hpp \
-OW_BinaryCIMOMHandle.hpp 
+OW_BinaryCIMOMHandle.hpp \
+OW_ClientCIMOMHandleConnectionPool.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
