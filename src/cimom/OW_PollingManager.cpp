@@ -176,7 +176,14 @@ OW_PollingManager::run()
 
 			if(!rightNow)
 			{
-				m_triggerCondition.timedWait(l, sleepTime);
+				if (sleepTime == 0)
+				{
+					m_triggerCondition.wait(l);
+				}
+				else
+				{
+					m_triggerCondition.timedWait(l, sleepTime);
+				}
 			}
 
 			if (m_shuttingDown)
