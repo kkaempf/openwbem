@@ -35,6 +35,7 @@
 #include "OW_Format.hpp"
 #include "OW_Array.hpp"
 #include <fstream>
+#include <iostream>
 
 extern "C"
 {
@@ -100,7 +101,7 @@ void OW_StackTrace::getStackTrace()
 	}
 	if (retval)
 	{
-		std::cerr << *retval << endl;
+		std::cerr << *retval << std::endl;
 	}
 }
 
