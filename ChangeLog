@@ -1,3 +1,116 @@
+2004-05-30 19:16  bartw
+
+	* src/cimom/: owcimomd_main.cpp, server/OW_Platform.cpp,
+	  server/OW_Platform.hpp: now owcimomd will return non-zero if the
+	  daemon fails to initialize -- like if the config file is bad.
+	  before it always returned zero even if the cimom did not start.
+
+2004-05-29 19:10  nuffer
+
+	* src/services/http/OW_HTTPSvrConnection.cpp: Fixed a potential
+	  memory leak.
+
+2004-05-29 19:09  nuffer
+
+	* src/providers/cpp/polled/slp/OW_SLPProvider.cpp: Modified to use
+	  RAII idiom to close the slp handle.
+
+2004-05-29 19:08  nuffer
+
+	* src/providerifcs/cpp/OW_CppProviderIFC.cpp: Fixed potential
+	  memory leak.
+
+2004-05-29 19:07  nuffer
+
+	* src/common/socket/: OW_NwIface.cpp, OW_SocketBaseImpl.cpp: Added
+	  a newline at the end of the file, which lack of bugs gcc.
+
+2004-05-29 19:06  nuffer
+
+	* src/common/: OW_ThreadBarrier.cpp, OW_ThreadImpl.cpp,
+	  OW_dlSharedLibrary.cpp: Added --enable-valgrind-support option.
+
+2004-05-29 19:00  nuffer
+
+	* configure.in, run_tests.sh: Added --enable-valgrind-support
+	  option.
+
+2004-05-29 18:53  nuffer
+
+	* acconfig.h: Added VALGRIND_SUPPORT variable.
+
+2004-05-29 18:48  nuffer
+
+	* src/providerifcs/cmpi/: OW_CMPIAssociatorProviderProxy.cpp,
+	  OW_CMPIIndicationProviderProxy.cpp,
+	  OW_CMPIInstanceProviderProxy.cpp, OW_CMPIMethodProviderProxy.cpp,
+	  common/cmpiBroker.cpp, common/cmpisrv.h: Fixed to store a broker
+	  on the stack so that multiple threads dont cause a segfault.
+
+2004-05-29 14:30  nuffer
+
+	* schemas/cim28/: CIM_Network28.mof, Makefile.am,
+	  Network28_VLAN.mof, System28_Help.mof: Updated to 2.8.1
+
+2004-05-29 13:27  nuffer
+
+	* src/providerifcs/cmpi/OW_CMPIProviderIFC.cpp: Fixed a memory leak
+	  and a potential memory leak when loading a cmpi provider.
+
+2004-05-29 13:26  nuffer
+
+	* src/providerifcs/cmpi/common/cmpiBrokerEnc.cpp: Fixed to retrieve
+	  the CMPIBroker from thread local storage instead of using the
+	  version the providers pass in which is invalid.
+
+2004-05-29 12:48  nuffer
+
+	* src/providerifcs/cmpi/common/cmpiBroker.cpp: Fixed to retrieve
+	  the CMPIBroker from thread local storage instead of using the
+	  version the providers pass in which is invalid.
+
+2004-05-29 09:37  bartw
+
+	* src/cimom/common/: OW_CIMOMEnvironment.hpp, OW_CIMServer.cpp:
+	  backed out previous change.  previous behavior is prefferred
+
+2004-05-29 03:35  bartw
+
+	* src/cimom/common/: OW_CIMOMEnvironment.hpp, OW_CIMServer.cpp:
+	  added experimental change for sblim testsuite.  only affects
+	  cimom if lifecycle indications are disabled
+
+2004-05-28 14:06  jcarey
+
+	* build/vc2003/OpenWBEM/libopenwbem/libopenwbem.vcproj,
+	  src/common/OW_PosixUnnamedPipe.cpp,
+	  src/common/socket/OW_NwIface.cpp,
+	  src/common/socket/OW_NwIface.hpp,
+	  src/common/socket/OW_ServerSocketImpl.cpp,
+	  src/common/socket/OW_ServerSocketImpl.hpp,
+	  src/common/socket/OW_SocketBaseImpl.cpp,
+	  src/common/socket/OW_SocketUtils.cpp,
+	  src/common/socket/OW_SocketUtils.hpp,
+	  src/common/socket/OW_Win32SocketBaseImpl.cpp: Win32 port.
+
+2004-05-28 14:04  nuffer
+
+	* test/acceptance/acceptance.sh.fb: Forgot a fi.  whoops.
+
+2004-05-28 13:42  nuffer
+
+	* test/acceptance/acceptance.sh.fb: Be a little bit smarter about
+	  assigning the MAKE variable.
+
+2004-05-28 13:26  nuffer
+
+	* src/providerifcs/cmpi/common/cmpiBrokerEnc.cpp: Fixed a few
+	  memory leaks.
+
+2004-05-28 09:10  nuffer
+
+	* ChangeLog: Updated.
+
 2004-05-27 15:32  jcarey
 
 	* src/common/socket/OW_SocketUtils.cpp: Win32 port.
