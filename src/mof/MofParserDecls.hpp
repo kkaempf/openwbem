@@ -35,7 +35,7 @@
 #include <stdio.h>
 
 extern int yydebug;
-extern int yyparse(void);
+extern int yyparse(void *context);
 extern FILE* yyin;
 
 #endif // MOF_PARSER_DECLS_HPP_

@@ -40,13 +40,16 @@
 //#define YYDEBUG 1
 
 // Lexer functions
-void lexIncludeFile( const OW_String& filename );
-int yylex( void );
+void lexIncludeFile( void* context, const OW_String& filename );
 void yyerror( char* );
 
-/*************** Standard ytab.c continues here *********************/
+/* This is so we can avoid static variables and pass a pointer into yyparse */
+#define YYPARSE_PARAM context
+#define MOF_COMPILER ((MofCompiler*)context)
 %}
 
+/* avoid non-reentrant global variables */
+%pure_parser
 
 
 /* List of tokens */
@@ -123,6 +126,11 @@ void yyerror( char* );
 	ObjectHandle*					pObjectHandle;
 }
 
+%{
+#define YYLEX_PARAM context
+int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
+%}
+
 %type <pMOFSpecification>			mofSpecification
 %type <pMOFProductionList>			mofProductionList
 %type <pMOFProduction>				mofProduction
@@ -189,7 +197,7 @@ void yyerror( char* );
 mofSpecification:
 	mofProductionList {
 		OW_AutoPtr<MOFSpecification> p(new MOFSpecification($1));
-		MofCompiler::mofSpecification = p;
+		MOF_COMPILER->mofSpecification = p;
 		}
 	;
 
@@ -209,10 +217,10 @@ mofProduction:
 compilerDirective:
 	PRAGMA_TOK pragmaName LPAREN_TOK pragmaParameter RPAREN_TOK
 		{
-			$$ = new CompilerDirective($2, $4, MofCompiler::theLineInfo);
+			$$ = new CompilerDirective($2, $4, MOF_COMPILER->theLineInfo);
 			if ($2->pPragmaName->equalsIgnoreCase("include"))
 			{
-				lexIncludeFile(MofCompiler::fixParsedString(*($4->pPragmaParameter)));
+				lexIncludeFile(MOF_COMPILER, MOF_COMPILER->fixParsedString(*($4->pPragmaParameter)));
 			}
                         delete $1;
                         delete $3;
@@ -231,7 +239,7 @@ pragmaParameter:
 classDeclaration:
 	CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, 0, 0, $4, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration(0, $2, 0, 0, $4, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $3;
                 delete $5;
@@ -239,7 +247,7 @@ classDeclaration:
         }
 	| CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, 0, $3, $5, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration(0, $2, 0, $3, $5, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $4;
                 delete $6;
@@ -247,7 +255,7 @@ classDeclaration:
         }
 	| CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, $3, 0, $5, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration(0, $2, $3, 0, $5, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $4;
                 delete $6;
@@ -255,7 +263,7 @@ classDeclaration:
         }
 	| CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration(0, $2, $3, $4, $6, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration(0, $2, $3, $4, $6, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $5;
                 delete $7;
@@ -263,7 +271,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, 0, 0, $5, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration($1, $3, 0, 0, $5, MOF_COMPILER->theLineInfo);
                 delete $2;
                 delete $4;
                 delete $6;
@@ -271,7 +279,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, 0, $4, $6, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration($1, $3, 0, $4, $6, MOF_COMPILER->theLineInfo);
                 delete $2;
                 delete $5;
                 delete $7;
@@ -279,7 +287,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, $4, 0, $6, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration($1, $3, $4, 0, $6, MOF_COMPILER->theLineInfo);
                 delete $2;
                 delete $5;
                 delete $7;
@@ -287,7 +295,7 @@ classDeclaration:
         }
 	| qualifierList CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new ClassDeclaration($1, $3, $4, $5, $7, MofCompiler::theLineInfo);
+                $$ = new ClassDeclaration($1, $3, $4, $5, $7, MOF_COMPILER->theLineInfo);
                 delete $2;
                 delete $5;
                 delete $8;
@@ -302,7 +310,7 @@ classFeatureList: /* empty */ {$$ = new OW_List<ClassFeature*>; }
 assocDeclaration:
 	LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, 0, 0, $8, MofCompiler::theLineInfo);
+                $$ = new AssocDeclaration($3, $6, 0, 0, $8, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -313,7 +321,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className superClass LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, 0, $7, $9, MofCompiler::theLineInfo);
+                $$ = new AssocDeclaration($3, $6, 0, $7, $9, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -324,7 +332,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, $7, 0, $9, MofCompiler::theLineInfo);
+                $$ = new AssocDeclaration($3, $6, $7, 0, $9, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -335,7 +343,7 @@ assocDeclaration:
         }
 	| LBRACK_TOK ASSOCIATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias superClass LBRACE_TOK associationFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new AssocDeclaration($3, $6, $7, $8, $10, MofCompiler::theLineInfo);
+                $$ = new AssocDeclaration($3, $6, $7, $8, $10, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -358,7 +366,7 @@ associationFeatureList: /* empty */ {$$ = new OW_List<AssociationFeature*>; }
 indicDeclaration:
 	LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, 0, 0, $8, MofCompiler::theLineInfo);
+                $$ = new IndicDeclaration($3, $6, 0, 0, $8, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -369,7 +377,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, 0, $7, $9, MofCompiler::theLineInfo);
+                $$ = new IndicDeclaration($3, $6, 0, $7, $9, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -380,7 +388,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, $7, 0, $9, MofCompiler::theLineInfo);
+                $$ = new IndicDeclaration($3, $6, $7, 0, $9, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -391,7 +399,7 @@ indicDeclaration:
         }
 	| LBRACK_TOK INDICATION_TOK qualifierListEmpty RBRACK_TOK CLASS_TOK className alias superClass LBRACE_TOK classFeatureList RBRACE_TOK SEMICOLON_TOK
 	{
-                $$ = new IndicDeclaration($3, $6, $7, $8, $10, MofCompiler::theLineInfo);
+                $$ = new IndicDeclaration($3, $6, $7, $8, $10, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $2;
                 delete $4;
@@ -413,7 +421,7 @@ alias:
 aliasIdentifier:
 	DOLLAR_TOK IDENTIFIER
         {
-                $$ = new AliasIdentifier($2, MofCompiler::theLineInfo);
+                $$ = new AliasIdentifier($2, MOF_COMPILER->theLineInfo);
                 delete $1;
         }
 	;
@@ -439,16 +447,16 @@ qualifierList:
 	;
 
 qualifier:
-	qualifierName {$$ = new Qualifier($1, 0, 0, MofCompiler::theLineInfo); }
+	qualifierName {$$ = new Qualifier($1, 0, 0, MOF_COMPILER->theLineInfo); }
 	| qualifierName COLON_TOK flavorList
         {
-                $$ = new Qualifier($1, 0, $3, MofCompiler::theLineInfo);
+                $$ = new Qualifier($1, 0, $3, MOF_COMPILER->theLineInfo);
                 delete $2;
         }
-	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MofCompiler::theLineInfo); }
+	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MOF_COMPILER->theLineInfo); }
 	| qualifierName qualifierParameter COLON_TOK flavorList
 	{
-                $$ = new Qualifier($1, $2, $4, MofCompiler::theLineInfo);
+                $$ = new Qualifier($1, $2, $4, MOF_COMPILER->theLineInfo);
                 delete $3;
         }
 	;
@@ -461,60 +469,60 @@ flavorList:
 qualifierParameter:
 	LPAREN_TOK constantValue RPAREN_TOK
         {
-                $$ = new QualifierParameterConstantValue($2, MofCompiler::theLineInfo);
+                $$ = new QualifierParameterConstantValue($2, MOF_COMPILER->theLineInfo);
                 delete $1;
                 delete $3;
         }
-	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MofCompiler::theLineInfo); }
+	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MOF_COMPILER->theLineInfo); }
 	;
 
 flavor:
-	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
-	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
-	| RESTRICTED_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
-	| TOSUBCLASS_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
-	| TRANSLATABLE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
+	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
+	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
+	| RESTRICTED_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
+	| TOSUBCLASS_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
+	| TRANSLATABLE_TOK {$$ = new Flavor($1, MOF_COMPILER->theLineInfo); }
 	;
 
 propertyDeclaration:
 	dataType propertyName SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, 0, 0, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, 0, 0, MOF_COMPILER->theLineInfo);
 		delete $3;
 	}
 	| dataType propertyName defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, 0, $3, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, 0, $3, MOF_COMPILER->theLineInfo);
 		delete $4;
 	}
 	| dataType propertyName array SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, $3, 0, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, $3, 0, MOF_COMPILER->theLineInfo);
 		delete $4;
 	}
 	| dataType propertyName array defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration(0, $1, $2, $3, $4, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration(0, $1, $2, $3, $4, MOF_COMPILER->theLineInfo);
 		delete $5;
 	}
 	| qualifierList dataType propertyName SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, 0, 0, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, 0, 0, MOF_COMPILER->theLineInfo);
 		delete $4;
 	}
 	| qualifierList dataType propertyName defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, 0, $4, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, 0, $4, MOF_COMPILER->theLineInfo);
 		delete $5;
 	}
 	| qualifierList dataType propertyName array SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, $4, 0, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, $4, 0, MOF_COMPILER->theLineInfo);
 		delete $5;
 	}
 	| qualifierList dataType propertyName array defaultValue SEMICOLON_TOK
 	{
-		$$ = new PropertyDeclaration($1, $2, $3, $4, $5, MofCompiler::theLineInfo);
+		$$ = new PropertyDeclaration($1, $2, $3, $4, $5, MOF_COMPILER->theLineInfo);
 		delete $6;
 	}
 	;
@@ -718,13 +726,13 @@ keyValuePair:
 qualifierDeclaration:
 	QUALIFIER_TOK qualifierName qualifierType scope SEMICOLON_TOK
 	{
-			$$= new QualifierDeclaration($2, $3, $4, 0, MofCompiler::theLineInfo);
+			$$= new QualifierDeclaration($2, $3, $4, 0, MOF_COMPILER->theLineInfo);
 			delete $1;
 			delete $5;
 	}
 	| QUALIFIER_TOK qualifierName qualifierType scope defaultFlavor SEMICOLON_TOK
 	{
-			$$= new QualifierDeclaration($2, $3, $4, $5, MofCompiler::theLineInfo);
+			$$= new QualifierDeclaration($2, $3, $4, $5, MOF_COMPILER->theLineInfo);
 			delete $1;
 			delete $6;
 	}
@@ -775,16 +783,16 @@ metaElementList:
 	;
 
 metaElement:
-	SCHEMA_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| CLASS_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| ASSOCIATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| INDICATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| QUALIFIER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| PROPERTY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| REFERENCE_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| METHOD_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| PARAMETER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
-	| ANY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	SCHEMA_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| CLASS_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| ASSOCIATION_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| INDICATION_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| QUALIFIER_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| PROPERTY_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| REFERENCE_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| METHOD_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| PARAMETER_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
+	| ANY_TOK {$$ = new MetaElement($1, MOF_COMPILER->theLineInfo); }
 	;
 
 defaultFlavor:
@@ -810,7 +818,7 @@ flavorListWithComma:
 instanceDeclaration:
 	INSTANCE_TOK OF_TOK className LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration(0, $3, 0, $5, MofCompiler::theLineInfo);
+			$$ = new InstanceDeclaration(0, $3, 0, $5, MOF_COMPILER->theLineInfo);
 			delete $1;
 			delete $2;
 			delete $4;
@@ -819,7 +827,7 @@ instanceDeclaration:
 	}
 	| INSTANCE_TOK OF_TOK className alias LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration(0, $3, $4, $6, MofCompiler::theLineInfo);
+			$$ = new InstanceDeclaration(0, $3, $4, $6, MOF_COMPILER->theLineInfo);
 			delete $1;
 			delete $2;
 			delete $5;
@@ -828,7 +836,7 @@ instanceDeclaration:
 	}
 	| qualifierList INSTANCE_TOK OF_TOK className LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration($1, $4, 0, $6, MofCompiler::theLineInfo);
+			$$ = new InstanceDeclaration($1, $4, 0, $6, MOF_COMPILER->theLineInfo);
 			delete $2;
 			delete $3;
 			delete $5;
@@ -837,7 +845,7 @@ instanceDeclaration:
 	}
 	| qualifierList INSTANCE_TOK OF_TOK className alias LBRACE_TOK valueInitializerList RBRACE_TOK SEMICOLON_TOK
 	{
-			$$ = new InstanceDeclaration($1, $4, $5, $7, MofCompiler::theLineInfo);
+			$$ = new InstanceDeclaration($1, $4, $5, $7, MOF_COMPILER->theLineInfo);
 			delete $2;
 			delete $3;
 			delete $6;
@@ -900,7 +908,7 @@ IDENTIFIER:
 %%
 void yyerror(char* string)
 {
-	MofCompiler::theErrorHandler->fatalError(string, MofCompiler::theLineInfo);
+	OW_THROW(OW_Exception, string);
 }
 
 

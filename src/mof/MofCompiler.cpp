@@ -37,32 +37,20 @@
 #include <cctype>
 
 MofCompiler::MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh )
-	: m_ch(ch)
+	: theErrorHandler(mpeh)
+	, include_stack_ptr(0)
+	, m_ch(ch)
 	, m_nameSpace(nameSpace)
 {
-	MofCompiler::theErrorHandler = mpeh;
 }
 
 MofCompiler::~MofCompiler()
 {
-	try
-	{
-		MofCompiler::theErrorHandler = 0;
-		MofCompiler::mofSpecification = 0;
-		MofCompiler::basepath = OW_String();
-		MofCompiler::theLineInfo = lineInfo(OW_String(),1);
-	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
 }
 
 long MofCompiler::compile( const OW_String& filename )
 {
-	MofCompiler::mofSpecification = 0;
-	MofCompiler::basepath = OW_String();
-	MofCompiler::theLineInfo = lineInfo(filename,1);
+	theLineInfo = lineInfo(filename,1);
 
     try
     {
@@ -71,32 +59,97 @@ long MofCompiler::compile( const OW_String& filename )
             int i = filename.lastIndexOf('/');
             if (i != -1)
             {
-                MofCompiler::basepath = filename.substring(0,i);
+                basepath = filename.substring(0,i);
             }
             else
             {
-                MofCompiler::basepath = OW_String();
+                basepath = OW_String();
             }
             yyin = fopen(filename.c_str(), "r");
             if (!yyin)
             {
-                MofCompiler::theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
+                theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
                 return 1;
             }
 
-            MofCompiler::theErrorHandler->progressMessage("Starting parsing",
+            theErrorHandler->progressMessage("Starting parsing",
                     lineInfo(filename, 0));
             #ifdef YYOW_DEBUG
             yydebug = 1;
             #endif
 
-            yyparse();
+            yyparse(this);
 
-            MofCompiler::theErrorHandler->progressMessage("Finished parsing",
-                    MofCompiler::theLineInfo);
+            theErrorHandler->progressMessage("Finished parsing",
+                    theLineInfo);
 
-            CIMOMVisitor v(m_ch, m_nameSpace);
-            MofCompiler::mofSpecification->Accept(&v);
+            CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+            mofSpecification->Accept(&v);
+        }
+        catch (const OW_MofParseFatalErrorException&)
+        {
+            // error has already been reported.
+        }
+        catch (OW_Assertion& e)
+        {
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+        }
+        catch (OW_Exception& e)
+        {
+            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+        }
+        catch (std::exception& e)
+        {
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+        }
+        catch(...)
+        {
+            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
+        }
+    }
+    catch (const OW_MofParseFatalErrorException&)
+    {
+        // error has already been reported.
+    }
+    return theErrorHandler->errorCount();
+}
+
+void yy_delete_buffer(YY_BUFFER_STATE b);
+YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
+namespace {
+
+	struct yyBufferDeleter
+	{
+		yyBufferDeleter(YY_BUFFER_STATE buf) : m_buf(buf) {}
+		~yyBufferDeleter() {yy_delete_buffer(m_buf);}
+		YY_BUFFER_STATE m_buf;
+	};
+}
+
+long MofCompiler::compileString( const OW_String& mof )
+{
+	OW_String filename = "string";
+	theLineInfo = lineInfo(filename,1);
+
+    try
+    {
+        try
+        {
+			YY_BUFFER_STATE buf = yy_scan_bytes(mof.c_str(), mof.length());
+			yyBufferDeleter deleter(buf);
+            theErrorHandler->progressMessage("Starting parsing",
+                    lineInfo(filename, 0));
+            #ifdef YYOW_DEBUG
+            yydebug = 1;
+            #endif
+
+            yyparse(this);
+
+            theErrorHandler->progressMessage("Finished parsing",
+                    theLineInfo);
+
+            CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+            mofSpecification->Accept(&v);
         }
         catch (const OW_MofParseFatalErrorException&)
         {
@@ -226,10 +279,4 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 	
 	return unescaped.releaseString();
 }
-
-// static vars
-OW_Reference<OW_MofParserErrorHandlerIFC> MofCompiler::theErrorHandler;
-lineInfo MofCompiler::theLineInfo;
-OW_AutoPtr<MOFSpecification> MofCompiler::mofSpecification;
-OW_String MofCompiler::basepath;
 

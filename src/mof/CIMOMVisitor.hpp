@@ -45,13 +45,15 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_MofParserErrorHandlerIFC.hpp"
 
 struct lineInfo;
 
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_String& ns );
+	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_String& ns,
+		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler);
 	~CIMOMVisitor();
 
 	void VisitMOFSpecification( const MOFSpecification * );
@@ -165,6 +167,8 @@ private:
 	void CIMOMsetQualifierType(const lineInfo& li);
 	void CIMOMcreateInstance(const lineInfo& li);
 	OW_CIMQualifierType CIMOMgetQualifierType(const OW_String& qualName, const lineInfo& li);
+
+	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
 };
 
 #endif
