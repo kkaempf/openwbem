@@ -35,11 +35,14 @@ OW_ProviderAgentEnvironment.cpp \
 OW_ProviderAgentProviderEnvironment.hpp \
 OW_ProviderAgentProviderEnvironment.cpp \
 OW_ProviderAgent.cpp \
-OW_ProviderAgentLockerIFC.cpp
+OW_ProviderAgentLockerIFC.cpp \
+OW_ProviderAgentLifecycleCallbackIFC.cpp
 
 pkginclude_HEADERS = \
 OW_ProviderAgent.hpp \
-OW_ProviderAgentLockerIFC.hpp
+OW_ProviderAgentLockerIFC.hpp \
+OW_ProviderAgentLifecycleCallbackIFC.hpp \
+OW_ProviderAgentFwd.hpp
 
 
 INCLUDES = \

@@ -1,6 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
-* Copyright (C) 2004 Novell, Inc. All rights reserved.
+* Copyright (C) 2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -30,57 +29,34 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
-#ifndef OW_PROVIDER_AGENT_LOCKER_IFC_HPP_INCLUDE_GUARD_
-#define OW_PROVIDER_AGENT_LOCKER_IFC_HPP_INCLUDE_GUARD_
 
+#ifndef OW_PROVIDER_AGENT_LIFECYCLE_CALLBACK_IFC_HPP_INCLUDE_GUARD_
+#define OW_PROVIDER_AGENT_LIFECYCLE_CALLBACK_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-
-#include "OW_ProviderAgentFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public IntrusiveCountableBase
+/**
+ * The implementation must be thread safe.
+ */
+class OW_PROVIDERAGENT_API ProviderAgentLifecycleCallbackIFC : public IntrusiveCountableBase
 {
-public: 
-	ProviderAgentLockerIFC(); 
-	virtual ~ProviderAgentLockerIFC(); 
-	void getReadLock()
-	{
-		doGetReadLock();
-	}
-	void getWriteLock()
-	{
-		doGetWriteLock();
-	}
-	void releaseReadLock()
-	{
-		doReleaseReadLock();
-	}
-	void releaseWriteLock()
-	{
-		doReleaseWriteLock();
-	}
-private: 
+public:
+	ProviderAgentLifecycleCallbackIFC();
+	virtual ~ProviderAgentLifecycleCallbackIFC();
 
-	// derived interface
-	virtual void doGetReadLock() = 0;
-	virtual void doGetWriteLock() = 0;
-	virtual void doReleaseReadLock() = 0;
-	virtual void doReleaseWriteLock() = 0;
-
-	//non-copyable
-	ProviderAgentLockerIFC(const ProviderAgentLockerIFC&);
-	ProviderAgentLockerIFC& operator=(const ProviderAgentLockerIFC&);
-
-}; 
-
-OW_EXPORT_TEMPLATE(OW_PROVIDERAGENT_API, IntrusiveReference, ProviderAgentLockerIFC);
-
+	// will be called when the provider agent is ready to begin processing incoming connections
+	virtual void started();
+	// will be called when the provider agent is beginning the process of shutting down.
+	virtual void shuttingDown();
+	// will be called if the provider agent has encountered an unrecoverable error and has stopped functioning.
+	virtual void fatalError(const String& errorDescription);
+};
 
 } // end namespace OW_NAMESPACE
 

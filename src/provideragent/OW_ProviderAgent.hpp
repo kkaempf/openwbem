@@ -45,9 +45,11 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_ProviderAgentLockerIFC.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_ServicesHttpFwd.hpp"
+#include "OW_ProviderAgentFwd.hpp"
+#include "OW_ProviderAgentLifecycleCallbackIFC.hpp"
+#include "OW_ProviderAgentLockerIFC.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -142,14 +144,16 @@ public:
 	 *        items LockingType_opt and LockingTimeout_opt will be used to
 	 *        control the locking.
 	 */
-	ProviderAgent(const ConfigFile::ConfigMap& configMap,
-				  const Array<CppProviderBaseIFCRef>& providers,
-				  const Array<CIMClass>& classes,
-				  const Array<RequestHandlerIFCRef>& requestHandlers,
-				  const AuthenticatorIFCRef& authenticator,
-				  const LoggerRef& logger = LoggerRef(),
-				  const String& callbackURL = String(""),
-				  const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef());
+	ProviderAgent(
+		const ConfigFile::ConfigMap& configMap,
+		const Array<CppProviderBaseIFCRef>& providers,
+		const Array<CIMClass>& classes,
+		const Array<RequestHandlerIFCRef>& requestHandlers,
+		const AuthenticatorIFCRef& authenticator,
+		const LoggerRef& logger = LoggerRef(),
+		const String& callbackURL = String(""),
+		const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef(),
+		const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB = ProviderAgentLifecycleCallbackIFCRef());
 	~ProviderAgent();
 	/**
 	 * Shut down the http server embedded within the ProviderAgent.
@@ -161,6 +165,7 @@ private:
 	HTTPServerRef m_httpServer;
 	ThreadRef m_httpThread;
 	UnnamedPipeRef m_stopHttpPipe;
+	ProviderAgentLifecycleCallbackIFCRef m_lifecycleCB;
 };
 
 } // end namespace OW_NAMESPACE

@@ -1,6 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
-* Copyright (C) 2004 Novell, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -30,59 +29,31 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
-#ifndef OW_PROVIDER_AGENT_LOCKER_IFC_HPP_INCLUDE_GUARD_
-#define OW_PROVIDER_AGENT_LOCKER_IFC_HPP_INCLUDE_GUARD_
 
+#ifndef OW_PROVIDER_AGENT_FWD_HPP_INCLUDE_GUARD_
+#define OW_PROVIDER_AGENT_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-
-#include "OW_ProviderAgentFwd.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public IntrusiveCountableBase
-{
-public: 
-	ProviderAgentLockerIFC(); 
-	virtual ~ProviderAgentLockerIFC(); 
-	void getReadLock()
-	{
-		doGetReadLock();
-	}
-	void getWriteLock()
-	{
-		doGetWriteLock();
-	}
-	void releaseReadLock()
-	{
-		doReleaseReadLock();
-	}
-	void releaseWriteLock()
-	{
-		doReleaseWriteLock();
-	}
-private: 
+class OW_PROVIDERAGENT_API ProviderAgent;
 
-	// derived interface
-	virtual void doGetReadLock() = 0;
-	virtual void doGetWriteLock() = 0;
-	virtual void doReleaseReadLock() = 0;
-	virtual void doReleaseWriteLock() = 0;
+class OW_PROVIDERAGENT_API ProviderAgentLockerIFC;
+typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef;
 
-	//non-copyable
-	ProviderAgentLockerIFC(const ProviderAgentLockerIFC&);
-	ProviderAgentLockerIFC& operator=(const ProviderAgentLockerIFC&);
-
-}; 
-
-OW_EXPORT_TEMPLATE(OW_PROVIDERAGENT_API, IntrusiveReference, ProviderAgentLockerIFC);
+class OW_PROVIDERAGENT_API ProviderAgentLifecycleCallbackIFC;
+typedef IntrusiveReference<ProviderAgentLifecycleCallbackIFC> ProviderAgentLifecycleCallbackIFCRef;
 
 
 } // end namespace OW_NAMESPACE
 
 #endif
+
+
+
+
 

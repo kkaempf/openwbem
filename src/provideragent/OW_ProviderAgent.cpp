@@ -44,6 +44,7 @@
 #include "OW_Thread.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
+#include "OW_Format.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -61,10 +62,12 @@ namespace
 class SelectEngineThread : public Thread
 {
 public:
-	SelectEngineThread(const Reference<Array<SelectablePair_t> >& selectables)
+	SelectEngineThread(const Reference<Array<SelectablePair_t> >& selectables,
+		const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB)
 	: Thread()
 	, m_selectables(selectables)
 	, m_stopObject(UnnamedPipe::createUnnamedPipe())
+	, m_lifecycleCB(lifecycleCB)
 	{
 		m_stopObject->setBlocking(UnnamedPipe::E_NONBLOCKING);
 	}
@@ -74,15 +77,38 @@ public:
 	 */
 	virtual Int32 run()
 	{
-		SelectEngine engine;
-		SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
-		m_selectables->push_back(std::make_pair(m_stopObject, cb));
-		for (size_t i = 0; i < m_selectables->size(); ++i)
+		try
 		{
-			engine.addSelectableObject((*m_selectables)[i].first,
-				(*m_selectables)[i].second);
+			SelectEngine engine;
+			SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
+			m_selectables->push_back(std::make_pair(m_stopObject, cb));
+			for (size_t i = 0; i < m_selectables->size(); ++i)
+			{
+				engine.addSelectableObject((*m_selectables)[i].first,
+					(*m_selectables)[i].second);
+			}
+			if (m_lifecycleCB)
+			{
+				m_lifecycleCB->started();
+			}
+			engine.go();
 		}
-		engine.go();
+		catch (Exception& e)
+		{
+			if (m_lifecycleCB)
+			{
+				m_lifecycleCB->fatalError(Format("%1", e));
+			}
+			throw;
+		}
+		catch (...)
+		{
+			if (m_lifecycleCB)
+			{
+				m_lifecycleCB->fatalError("unknown");
+			}
+			throw;
+		}
 		return 0;
 	}
 	virtual void doCooperativeCancel()
@@ -97,6 +123,7 @@ public:
 private:
 	Reference<Array<SelectablePair_t> > m_selectables;
 	UnnamedPipeRef m_stopObject;
+	ProviderAgentLifecycleCallbackIFCRef m_lifecycleCB;
 };
 
 
@@ -121,8 +148,10 @@ ProviderAgent::ProviderAgent(
 	const AuthenticatorIFCRef& authenticator,
 	const LoggerRef& logger,
 	const String& callbackURL,
-	const ProviderAgentLockerIFCRef& locker)
+	const ProviderAgentLockerIFCRef& locker,
+	const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB)
 	: m_httpServer(new HTTPServer)
+	, m_lifecycleCB(lifecycleCB)
 {
 	Reference<Array<SelectablePair_t> >
 			selectables(new Array<SelectablePair_t>);
@@ -136,7 +165,7 @@ ProviderAgent::ProviderAgent(
 	// thread below which will use them to run the select engine.
 	
 	// start a thread to run the http server
-	m_httpThread = new SelectEngineThread(selectables);
+	m_httpThread = new SelectEngineThread(selectables, m_lifecycleCB);
 	m_httpThread->start();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -156,6 +185,10 @@ ProviderAgent::~ProviderAgent()
 void
 ProviderAgent::shutdownHttpServer()
 {
+	if (m_lifecycleCB)
+	{
+		m_lifecycleCB->shuttingDown();
+	}
 	if (m_httpThread)
 	{
 		m_httpThread->definitiveCancel();
