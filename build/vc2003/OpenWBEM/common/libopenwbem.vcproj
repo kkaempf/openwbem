@@ -220,6 +220,9 @@
 				RelativePath="..\..\..\..\src\common\OW_EnumerationException.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_EnvVars.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_Exception.cpp">
 			</File>
 			<File
@@ -538,6 +541,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_EnumerationException.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_EnvVars.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_Exception.hpp">

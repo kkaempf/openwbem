@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -63,7 +63,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
