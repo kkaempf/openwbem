@@ -32,6 +32,8 @@
  * @author Dan Nuffer
  */
 
+// The source of the Unicode data is: http://www.unicode.org/Public/UNIDATA/
+
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_StringStream.hpp"
