@@ -70,7 +70,6 @@ HTTPClient::HTTPClient( const String &sURL )
 	, m_pIstrReturn(0)
 	, m_socket(m_url.scheme.endsWith('s') ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL) // covers https, cimxml.wbems, owbinary.wbems
 	, m_requestMethod("M-POST"), m_authRequired(false)
-	, m_needsConnect(true)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
 	, m_doDeflateOut(false)
 	, m_retryCount(0)
@@ -646,7 +645,7 @@ HTTPClient::processHeaders(String& statusLine)
 {
 	if (getHeaderValue("Connection").equalsIgnoreCase("close"))
 	{
-		m_needsConnect = true;
+		close();
 	}
 
 	Resp_t rt = RETRY;
@@ -698,7 +697,7 @@ HTTPClient::processHeaders(String& statusLine)
 			rt = FATAL; // support redirects?  I think not...
 			break;
 		case '4':
-			m_needsConnect = true;
+			close();
 			switch (isc)
 			{
 				case SC_REQUEST_TIMEOUT: 
@@ -730,7 +729,7 @@ HTTPClient::processHeaders(String& statusLine)
 					}
 					break;
 			default:
-					m_needsConnect = true;
+					close();
 					rt = RETRY;
 					break;
 			} // switch (isc)
@@ -746,7 +745,7 @@ HTTPClient::processHeaders(String& statusLine)
 						m_requestMethod = "POST";
 						rt = RETRY;
 						// only do this for JWS, since it doesn't eat the entity.
-						m_needsConnect = true;
+						close();
 					}
 					else
 					{
@@ -812,15 +811,10 @@ HTTPClient::handleAuth()
 void
 HTTPClient::checkConnection()
 {
-	if (!m_istr || !m_ostr)
-	{
-		m_needsConnect = true;
-	}
-	if (m_needsConnect)
+	if (!m_istr || !m_ostr || !m_socket.isConnected())
 	{
 		m_socket.disconnect();
 		m_socket.connect(m_serverAddress);
-		m_needsConnect = false;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -838,7 +832,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 		while(statusLine.trim().empty() && m_istr);
 		if (!m_istr)
 		{
-			m_needsConnect = true;
+			close();
 			// ATTN:
 			// used to be RETRY, but this caused problems if
 			// attempting a http connection to a https port
@@ -882,10 +876,9 @@ HTTPClient::prepareHeaders()
 SocketAddress
 HTTPClient::getLocalAddress() const
 {
-	if (m_needsConnect)
+	if (!m_socket.isConnected())
 	{
 		m_socket.connect(m_serverAddress);
-		m_needsConnect = false;
 	}
 	return m_socket.getLocalAddress();
 }
@@ -893,10 +886,9 @@ HTTPClient::getLocalAddress() const
 SocketAddress
 HTTPClient::getPeerAddress() const
 {
-	if (m_needsConnect)
+	if (!m_socket.isConnected())
 	{
 		m_socket.connect(m_serverAddress);
-		m_needsConnect = false;
 	}
 	return m_socket.getPeerAddress();
 }
@@ -911,7 +903,7 @@ HTTPClient::setHTTPPath(const String& newPath)
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::assumeBasicAuth()
 {
-	m_needsConnect = true;
+	close();
 	m_authRequired = true;
 	m_sAuthorization = "Basic";
 	m_uselocalAuthentication = false;
@@ -921,7 +913,6 @@ void HTTPClient::assumeBasicAuth()
 void HTTPClient::close()
 {
 	m_socket.disconnect();
-	m_needsConnect = true;
 }
 
 

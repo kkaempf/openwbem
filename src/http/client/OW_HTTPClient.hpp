@@ -204,7 +204,6 @@ class HTTPClient : public CIMProtocolIFC
 		mutable Socket m_socket;
 		String m_requestMethod;
 		bool m_authRequired;
-		mutable bool m_needsConnect;
 		std::istream& m_istr;
 		std::ostream& m_ostr;
 		bool m_doDeflateOut;
