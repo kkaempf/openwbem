@@ -749,7 +749,6 @@ DateTime::DateTime(const String& str)
 		String weekday;
 		String day;
 		String time;
-		String timezone;
 		int timezone_number = LOCAL_TIME_OFFSET - 1;
 		Int32 month_number = -1;
 		String year;

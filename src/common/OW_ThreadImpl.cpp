@@ -292,7 +292,7 @@ setThreadDetached(Thread_t& handle)
 int
 joinThread(Thread_t& handle, Int32& rval)
 {
-	void* prval;
+	void* prval(0);
 	if ((errno = pthread_join(handle, &prval)) == 0)
 	{
 		rval = static_cast<Int32>(reinterpret_cast<ptrdiff_t>(prval));

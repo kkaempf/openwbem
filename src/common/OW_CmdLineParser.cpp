@@ -89,17 +89,17 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 	OW_ASSERT(options != 0);
 	char const* const* argv = argv_;
 	char const* const* argvEnd = argv + argc;
-	const Option* optionsEnd;
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longopt.
-	optionsEnd = options;
+	const Option* optionsEnd(options);
 	while (optionsEnd->shortopt != '\0' || optionsEnd->longopt != 0)
 	{
 		++optionsEnd;
 	}
 
 	// skip the first argv, which is the program name and loop through the rest
-	for (++argv ;argv != argvEnd; ++argv)
+	++argv;
+	while (argv != argvEnd)
 	{
 		OW_ASSERT(*argv != 0);
 		String arg(*argv);
@@ -107,7 +107,7 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 		// look for an option
 		if ((arg.length() >= 2) && (arg[0] == '-'))
 		{
-			const Option* theOpt;
+			const Option* theOpt(0);
 			bool longOpt = false;
 			if (arg[1] == '-')
 			{
@@ -131,6 +131,7 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 			if (theOpt->argtype == E_NO_ARG)
 			{
 				m_parsedOptions[theOpt->id]; // if one is already there, don't modify it, else insert a new one
+				++argv;
 				continue;
 			}
 			// now see if we can get the value
@@ -176,7 +177,7 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 		{
 			m_nonOptionArgs.push_back(arg);
 		}
-		
+		++argv;
 	}
 }
 

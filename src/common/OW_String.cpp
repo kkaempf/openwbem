@@ -540,7 +540,7 @@ String::indexOf(const char* arg, size_t fromIndex) const
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
-		char* p;
+		char* p(0);
 		if (arg && *arg)
 		{
 			p = ::strstr(m_buf->data()+fromIndex, arg);
@@ -945,7 +945,7 @@ T convertToRealType(const String::buf_t& m_buf, const char* type)
 {
 	if (m_buf)
 	{
-		char* endptr;
+		char* endptr(0);
 		errno = 0;		// errno is thread local
 		double v = ::strtod(m_buf->data(), &endptr);
 		T rv = static_cast<T>(v);
@@ -997,7 +997,7 @@ T doConvertToIntType(const String::buf_t& m_buf, const char* type, FP fp, int ba
 {
 	if (m_buf)
 	{
-		char* endptr;
+		char* endptr(0);
 		errno = 0;		// errno is thread local
 		FPRT v = fp(m_buf->data(), &endptr, base);
 		T rv = static_cast<T>(v);

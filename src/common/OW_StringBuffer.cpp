@@ -308,10 +308,10 @@ StringBuffer::trim()
 
 		if (m_len)
 		{
-			char *p;
-			for (p = m_bfr; *p && isspace(*p); p++)
+			char *p = m_bfr;
+			while (*p && isspace(*p))
 			{
-				// Empty
+				++p;
 			}
 
 			if (*p && p > m_bfr)

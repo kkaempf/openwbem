@@ -46,6 +46,7 @@
 #include <cerrno>
 #include <iostream> // for cerr
 #include <csignal>
+#include <cassert>
 
 namespace OpenWBEM
 {
@@ -95,7 +96,7 @@ Thread::~Thread()
 		{
 			join();
 		}
-		OW_ASSERT(m_isRunning == false);
+		assert(m_isRunning == false);
 		if (!sameId(m_id, NULLTHREAD))
 		{
 			ThreadImpl::destroyThread(m_id);

@@ -107,7 +107,7 @@ NwIface::NwIface()
 {
 	int s, lerrno;
 	struct ifreq ifr;
-	struct sockaddr_in *sin;
+	struct sockaddr_in *sin(0);
 	if ((s = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		OW_THROW(SocketException, "socket");
@@ -224,14 +224,15 @@ NwIface::stringToAddress(const String& straddr)
 void
 NwIface::getInterfaceName(SocketHandle_t sockfd)
 {
-	char *p;
+	char *p(0);
 	int numreqs = 30;
 	struct ifconf ifc;
-	struct ifreq *ifr, ifrcopy;
+	struct ifreq *ifr(0);
+	struct ifreq ifrcopy;
 	int n;
 	int oldlen = -1;
 	int lerrno = 0;
-	const char* appliesTo;
+	const char* appliesTo(0);
 	ifc.ifc_buf = NULL;
 	for (;;)
 	{

@@ -354,8 +354,9 @@ Array<char> base64Decode(const char* src)
 	int b64val;
 	state = 0;
 	destidx = 0;
-	while ( (ch = *src++) != '\0' )
+	while ( (ch = *src) != '\0' )
 	{
+		++src;
 		if ( isspace(ch) ) // Skip whitespace
 		{
 			continue;
@@ -487,8 +488,9 @@ String base64Encode(const UInt8* src, size_t len)
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
 	AutoPtrVec<char> dest(new char[szdest]);
 	dest[0] = '\0'; // null terminate in case input is empty
-	char a, b, c, d, *dst;
-	const UInt8* cp;
+	char a, b, c, d;
+	char *dst(0);
+	const UInt8* cp(0);
 	int i, srclen, enclen, remlen;
 	cp = src;
 	dst = dest.get();

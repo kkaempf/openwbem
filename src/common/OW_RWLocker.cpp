@@ -153,12 +153,16 @@ RWLocker::releaseReadLock()
 		doWakeups();
 	}
 	Thread_t tid = ThreadImpl::currentThread();
-	for (size_t i = 0; i < m_readers.size(); ++i)
+	size_t i = 0;
+	while (i < m_readers.size())
 	{
 		if (ThreadImpl::sameThreads(m_readers[i], tid))
 		{
 			m_readers.remove(i);
-			i--;
+		}
+		else
+		{
+			++i;
 		}
 	}
 }

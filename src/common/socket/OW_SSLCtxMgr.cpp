@@ -174,8 +174,7 @@ public:
 		if (SSLCtxMgr::isClient() || SSLCtxMgr::isServer())
 		{
 			char randFile[MAXPATHLEN];
-			const char* rval;
-			rval = RAND_file_name(randFile, MAXPATHLEN);
+			const char* rval = RAND_file_name(randFile, MAXPATHLEN);
 			if (rval)
 			{
 				RAND_write_file(randFile);
@@ -193,18 +192,16 @@ void
 SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const String& file)
 {
 	DH* ret = 0;
-	BIO* bio;
-	if ((bio = BIO_new_file(file.c_str(),"r")) == NULL)
+	BIO* bio = BIO_new_file(file.c_str(),"r");
+	if (bio == NULL)
 	{
 		OW_THROW(SSLException, "Couldn't open DH file");
 	}
 	ret = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
 	BIO_free(bio);
+	if (SSL_CTX_set_tmp_dh(ctx, ret) < 0)
 	{
-		if (SSL_CTX_set_tmp_dh(ctx, ret) < 0)
-		{
-			OW_THROW(SSLException, "Couldn't set DH parameters");
-		}
+		OW_THROW(SSLException, "Couldn't set DH parameters");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -304,7 +301,6 @@ bool
 SSLCtxMgr::checkCert(SSL* ssl, const String& hostName, 
 	certVerifyFuncPtr_t certVerifyCB)
 {
-	X509 *peer;
 	/* TODO this isn't working.
 	if (SSL_get_verify_result(ssl)!=X509_V_OK)
 	{
@@ -316,7 +312,7 @@ SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 	  is automatically checked by OpenSSL when we
 	  set the verify depth in the ctx */
 	/*Check the common name*/
-	peer=SSL_get_peer_certificate(ssl);
+	X509 *peer = SSL_get_peer_certificate(ssl);
 	if (certVerifyCB)
 	{
 		if (certVerifyCB(peer, hostName) == 0)
@@ -360,15 +356,14 @@ SSLCtxMgr::sslWrite(SSL* ssl, const char* buf, int len)
 	while (myLen > 0)
 	{
 		r = SSL_write(ssl, buf + offset, myLen);
-		switch (SSL_get_error(ssl, r))
+		if (SSL_get_error(ssl, r) == SSL_ERROR_NONE)
 		{
-			case SSL_ERROR_NONE:
-				myLen -= r;
-				offset += r;
-				break;
-			default:
-				//OW_THROW(SSLException, "SSL write problem");
-				return -1;
+			myLen -= r;
+			offset += r;
+		}
+		else
+		{
+			return -1;
 		}
 	}
 	return len;

@@ -89,6 +89,11 @@ protected:
 private:
 	void* m_libhandle;
 	String m_libName;
+
+	// non-copyable
+	dlSharedLibrary(const dlSharedLibrary&);
+	dlSharedLibrary& operator=(const dlSharedLibrary&);
+
 #if defined(OW_USE_FAKE_LIBS)
 	bool m_fakeLibrary;
 	Map<String, String> m_symbolMap;

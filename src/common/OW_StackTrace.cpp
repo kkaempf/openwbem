@@ -78,15 +78,13 @@ void StackTrace::printStackTrace()
 		// faster!
 #ifdef OW_HAVE_BACKTRACE
 		void *array[200];
-		size_t size;
-		char **strings;
-		size_t i;
 		
-		size = backtrace (array, 200);
-		strings = backtrace_symbols (array, size);
+		size_t size = backtrace (array, 200);
+		char **strings = backtrace_symbols (array, size);
 		
 		String bt;
 		
+		size_t i;
 		for (i = 0; i < size; i++)
 		{
 #if defined(OW_HAVE_CXXABI_H)

@@ -66,7 +66,11 @@ public:
 	typedef const value_type* const_pointer;
 	typedef value_type& reference;
 	typedef const value_type& const_reference;
-	template <class U> struct rebind { typedef MemTracerAllocator<U> other; };
+	template <class U> struct rebind 
+	{ 
+		typedef MemTracerAllocator<U> other; 
+	};
+
 	MemTracerAllocator() throw() {}
 	template <class U> MemTracerAllocator(const MemTracerAllocator<U>& other) throw() {}
 	pointer address(reference r) const { return &r; }

@@ -117,7 +117,7 @@ MD5::getDigest()
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-MD5::convertBinToHex( const unsigned char sBin[ 16 ])
+MD5::convertBinToHex( const unsigned char* sBin)
 {
 	unsigned short i;
 	unsigned char j;
@@ -186,7 +186,7 @@ typedef unsigned char *POINTER;
 #define S42 10
 #define S43 15
 #define S44 21
-static void MD5Transform(UInt32 [4], const unsigned char [64]);
+static void MD5Transform(UInt32*, const unsigned char*);
 static void Encode(unsigned char *, UInt32 *, UInt32);
 static void Decode(UInt32 *, const unsigned char *, UInt32);
 //static void MD5_memcpy(POINTER, POINTER, UInt32);
@@ -282,7 +282,7 @@ void
   the message digest and zeroizing the context.
  */ // STATIC
 void
-	MD5::MD5Final (unsigned char digest[16], MD5_CTX* context)
+	MD5::MD5Final (unsigned char* digest, MD5_CTX* context)
 {
 	unsigned char bits[8];
 	UInt32 index, padLen;
@@ -303,7 +303,7 @@ void
 }
 /* MD5 basic transformation. Transforms state based on block.
  */
-static void MD5Transform (UInt32 state[4], const unsigned char block[64])
+static void MD5Transform (UInt32* state, const unsigned char* block)
 {
 	UInt32 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 	Decode (x, block, 64);

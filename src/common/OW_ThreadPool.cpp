@@ -76,6 +76,10 @@ public:
 	virtual Int32 run();
 private:
 	FixedSizePoolImpl* m_thePool;
+
+	// non-copyable
+	FixedSizePoolWorkerThread(const FixedSizePoolWorkerThread&);
+	FixedSizePoolWorkerThread& operator=(const FixedSizePoolWorkerThread&);
 };
 /////////////////////////////////////////////////////////////////////////////
 class CommonPoolImpl : public ThreadPoolImpl
@@ -87,6 +91,10 @@ protected:
 		, m_shutdown(false)
 		, m_logger(logger)
 		, m_poolName(poolName)
+	{
+	}
+
+	virtual ~CommonPoolImpl()
 	{
 	}
 	
@@ -409,6 +417,10 @@ public:
 	virtual Int32 run();
 private:
 	DynamicSizePoolImpl* m_thePool;
+
+	// non-copyable
+	DynamicSizePoolWorkerThread(const DynamicSizePoolWorkerThread&);
+	DynamicSizePoolWorkerThread& operator=(const DynamicSizePoolWorkerThread&);
 };
 /////////////////////////////////////////////////////////////////////////////
 class DynamicSizePoolImpl : public CommonPoolImpl
@@ -461,15 +473,21 @@ public:
 		l.lock();
 
 		// clean up dead threads (before we add the new one, so we don't need to check it)
-		for (size_t i = 0; i < m_threads.size(); ++i)
+		size_t i = 0;
+		while (i < m_threads.size())
 		{
 			if (!m_threads[i]->isRunning())
 			{
 				logDebug(Format("Thread %1 is finished. Cleaning up it's remains.", i));
 				m_threads[i]->join();
-				m_threads.remove(i--);
+				m_threads.remove(i);
+			}
+			else
+			{
+				++i;
 			}
 		}
+
 		// Start up a new thread to handle the work in the queue.
 		if (!m_queue.empty() && m_threads.size() < m_maxThreads)
 		{

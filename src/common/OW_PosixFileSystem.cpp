@@ -286,8 +286,8 @@ getDirectoryContents(const String& path,
 	}
 	_findclose(hFile);
 #else
-	DIR* dp;
-	struct dirent* dentry;
+	DIR* dp(0);
+	struct dirent* dentry(0);
 	if ((dp = opendir(path.c_str())) == NULL)
 	{
 		return false;

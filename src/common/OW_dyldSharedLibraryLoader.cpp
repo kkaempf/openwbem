@@ -46,12 +46,18 @@ std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 #define SIMPLE_NSOBJ_CASE(X) case X: o << ""#X
 	switch (code)
 	{
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); break;
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); break;
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageInappropriateFile); break;
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageArch); break;
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageFormat); break;
-		SIMPLE_NSOBJ_CASE(NSObjectFileImageAccess); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); 
+		break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); 
+		break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageInappropriateFile); 
+		break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageArch); 
+		break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageFormat); 
+		break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageAccess); 
+		break;
 	}
 #undef SIMPLE_NSOBJ_CASE
 	return o;

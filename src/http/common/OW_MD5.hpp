@@ -129,11 +129,11 @@ private:
 	MD5_CTX m_ctx;
 	unsigned char m_digest[16];
 	bool m_finished;
-	String convertBinToHex( const unsigned char sBin[ 16 ]);
+	String convertBinToHex( const unsigned char* sBin);
 	static void MD5Init(MD5_CTX * md5ctx);
 	static void MD5Update(MD5_CTX *md5ctx, const unsigned char* input,
 		UInt32 inputLen);
-	static void MD5Final(unsigned char [16], MD5_CTX *);
+	static void MD5Final(unsigned char*, MD5_CTX *);
 	friend class MD5StreamBuffer;
 };
 

@@ -443,7 +443,9 @@ safePopen(const Array<String>& command,
 		UnnamedPipeRef foo3 = retval.err();
 		PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
 		
-		OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
+		OW_ASSERT(in); 
+		OW_ASSERT(out); 
+		OW_ASSERT(err);
 		// connect stdin, stdout, and stderr to the return pipes.
 		dup2(in->getInputHandle(), 0);
 		dup2(out->getOutputHandle(), 1);
@@ -485,7 +487,9 @@ safePopen(const Array<String>& command,
 	PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
 	UnnamedPipeRef foo3 = retval.err();	
 	PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
-	OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
+	OW_ASSERT(in); 
+	OW_ASSERT(out); 
+	OW_ASSERT(err);
 	// prevent the parent from using the child's end of the pipes.
 	in->closeInputHandle();
 	out->closeOutputHandle();

@@ -56,10 +56,11 @@ const char* Format::c_str() const
 /////////////////////////////////////////////////////////////////////////////
 char Format::process(String& str, char numArgs)
 {
-	int i, len(str.length());
+	int len(str.length());
 	char c(' ');
 	bool err = false;
-	for (i=0; i<len && c == ' ' && !err; ++i)
+	int i = 0;
+	while (i < len && c == ' ' && !err)
 	{
 		switch (str[i])
 		{
@@ -85,6 +86,7 @@ char Format::process(String& str, char numArgs)
 				oss << str[i];
 				break;
 		} // outer switch
+		++i;
 	} // for
 	if ( i <= len && c > numArgs )
 	{
