@@ -52,6 +52,7 @@ private:
 	void testGetMethodProvider();
 	void testGetPropertyProvider();
 	void testGetAssociatorProvider();
+	void testGetIndicationProvider();
 };
 
 #endif

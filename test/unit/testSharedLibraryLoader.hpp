@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2001-3 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -314,6 +314,18 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					indi.addInstrumentedClass(ci);
 					inda.push_back(indi);
 				}
+				{
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider1");
+					indi.addInstrumentedClass("SelfReg2");
+					inda.push_back(indi);
+				}
+				{
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider2");
+					indi.addInstrumentedClass("SelfReg2");
+					inda.push_back(indi);
+				}
 
 			}
 		}
@@ -361,7 +373,9 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (OW_String(provIdString) == "TestIndicationProvider")
+			if (OW_String(provIdString) == "TestIndicationProvider"
+				|| OW_String(provIdString) == "TestIndicationProvider1"
+				|| OW_String(provIdString) == "TestIndicationProvider2")
 			{
 				return OW_IndicationProviderIFCRef(new TestIndicationProvider);
 			}

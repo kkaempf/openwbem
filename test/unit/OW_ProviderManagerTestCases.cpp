@@ -384,10 +384,57 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "rooT/fOo", c6);
 	unitAssert(provRef);
-	
-
 }
 
+void OW_ProviderManagerTestCases::testGetIndicationProvider()
+{
+	OW_ProviderManager mgr;
+	mgr.load(testCreateMuxLoader());
+	OW_LocalCIMOMHandle hdl;
+	mgr.init(createProvEnvRef(hdl));
+
+	// self-registering provider all namespaces
+	OW_IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root", "SelfReg");
+	unitAssert(provRefs.size() == 1);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/foo", "SelfReg");
+	unitAssert(provRefs.size() == 1);
+	
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root", "SelfReg2");
+	unitAssert(provRefs.size() == 2);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/foo", "SelfReg2");
+	unitAssert(provRefs.size() == 2);
+	
+	// self-registering provider two namespaces
+	OW_String c4("SelfRegTwoNamespaces");
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root", c4);
+	unitAssert(provRefs.size() == 1);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/foo", c4);
+	unitAssert(provRefs.size() == 0);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/good", c4);
+	unitAssert(provRefs.size() == 1);
+	
+	// nothing
+	OW_String c5("Nothing");
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root", c5);
+	unitAssert(provRefs.size() == 0);
+
+	// self-registering provider all namespaces - case insensitivity
+	OW_String c6("selFreG");
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "Root", c6);
+	unitAssert(provRefs.size() == 1);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "rooT/fOo", c6);
+	unitAssert(provRefs.size() == 1);
+}
 
 Test* OW_ProviderManagerTestCases::suite()
 {
@@ -409,6 +456,9 @@ Test* OW_ProviderManagerTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetAssociatorProvider",
 			&OW_ProviderManagerTestCases::testGetAssociatorProvider));
+	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
+			("testGetIndicationProvider",
+			&OW_ProviderManagerTestCases::testGetIndicationProvider));
 
 	return testSuite;
 }
