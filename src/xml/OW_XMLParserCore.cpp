@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
 * Copyright (C) 2001 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -263,7 +263,7 @@ void XMLParserCore::getCData(XMLToken& entry)
 		}
 		if (*m_current == '\n')
 			++m_line;
-		entry.text += *m_current++;
+		entry.text += *m_current;
 	}
 	// If it got this far, then the cdata is unterminated:
 	OW_THROWXMLLINE(XMLParseException::UNTERMINATED_CDATA, m_line);
@@ -330,6 +330,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 		{
 			char string[] = "CDATA[";
 			char *curChar = string;
+			m_current++;
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
