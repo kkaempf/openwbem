@@ -1223,6 +1223,13 @@ CIMServer::modifyInstance(
 	if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
 	{
 		m_env->logInfo(Format("ModifyInstance: modified instance = %1", lci));
+		if (propertyList && !propertyList->empty())
+		{
+			OStringStream ss;
+			ss << "PropertyList: ";
+			std::copy(propertyList->begin(), propertyList->end(), std::ostream_iterator<String>(ss, " "));
+			m_env->logInfo(ss.releaseString());
+		}
 	}
 
 	if(!instancep)
