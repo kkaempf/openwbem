@@ -38,9 +38,14 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
+#include "OW_ConfigOpts.hpp"
 
 void OW_ProviderManagerTestCases::setUp()
 {
+	g_testEnvironment->setConfigItem(
+		OW_ConfigOpts::CPPIFC_PROV_LOC_opt,
+		"this is set to a dummy value so that the default won't be used, "
+		"which may break things, if providers are actually installed there." );
 }
 
 void OW_ProviderManagerTestCases::tearDown()
