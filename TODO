@@ -63,6 +63,9 @@ New features:
       to getting indications from the overflow queue, and it that's empty it
       will wait for a configurable period of time for a new indication to
       arrive before exiting.
+      This will also allow for exporting a batch of indications.  If there are
+      already > 1 indication in the queue for delivery after the connection is
+      made, then batch export can be used for greater efficiency.
     - Implement the CIM_Interop27 build-in providers.
       - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
@@ -203,6 +206,8 @@ Refactorings:
     - Rename OW_NonRecursiveMutex -> OW_Mutex and OW_Mutex -> OW_RecursiveMutex
     - Templatetize/inline the mutex lock classes.
     - Verify that classes maintain their invariant.
+    - Split the http client/server classes into 2 layers, one that just deals
+      with plain http, and another layer that knows about wbem http.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
