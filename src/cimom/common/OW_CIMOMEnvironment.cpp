@@ -433,21 +433,23 @@ CIMOMEnvironment::_createIndicationServer()
 	{
 		// load the indication server library
 		String indicationLib = getConfigItem(ConfigOpts::OWLIB_DIR_opt);
-		if(!indicationLib.endsWith("/"))
+		if(!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
 		{
-			indicationLib += "/";
+			indicationLib += OW_FILENAME_SEPARATOR;
 		}
 		indicationLib += "libowindicationserver"OW_SHAREDLIB_EXTENSION;
 		m_indicationServer = SafeLibCreate<IndicationServer>::loadAndCreateObject(
 				indicationLib, "createIndicationServer", getLogger());
 		if (!m_indicationServer)
 		{
+
 			logError(Format("CIMOM Failed to load indication server"
 				" from library %1. Indication are currently DISABLED!",
 				indicationLib));
 			m_indicationsDisabled = true;
 			return;
 		}
+	
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -457,9 +459,9 @@ CIMOMEnvironment::_loadRequestHandlers()
 	m_reqHandlers.clear();
 	String libPath = getConfigItem(
 		ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt, OW_DEFAULT_CIMOM_REQHANDLER_LOCATION);
-	if(!libPath.endsWith("/"))
+	if(!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
-		libPath += "/";
+		libPath += OW_FILENAME_SEPARATOR;
 	}
 	logInfo(Format("CIMOM loading request handlers from"
 		" directory %1", libPath));
@@ -518,9 +520,9 @@ CIMOMEnvironment::_loadServices()
 	m_services.clear();
 	String libPath = getConfigItem(
 		ConfigOpts::CIMOM_SERVICES_LOCATION_opt, OW_DEFAULT_CIMOM_SERVICES_LOCATION);
-	if(!libPath.endsWith("/"))
+	if(!libPath.endsWith(OW_FILENAME_SEPARATOR))
 	{
-		libPath += "/";
+		libPath += OW_FILENAME_SEPARATOR;
 	}
 	logInfo(Format("CIMOM loading services from directory %1",
 		libPath));
@@ -728,12 +730,14 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 		MutexLock ml(m_indicationLock);
 		if (!m_indicationRepLayerLib)
 		{
-			String libname = getConfigItem(ConfigOpts::OWLIB_DIR_opt);
-			libname += "/libowindicationreplayer"OW_SHAREDLIB_EXTENSION;
+			const String libPath = getConfigItem(ConfigOpts::OWLIB_DIR_opt) + OW_FILENAME_SEPARATOR;
+			const String libBase = "libowindicationreplayer";
+			String libname = libPath + libBase + OW_SHAREDLIB_EXTENSION;
 			logDebug(Format("CIMOM loading indication libary %1",
 				libname));
 			SharedLibraryLoaderRef sll =
 				SharedLibraryLoader::createSharedLibraryLoader();
+
 			if(!sll)
 			{
 				m_indicationRepLayerDisabled = true;
