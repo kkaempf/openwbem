@@ -28,11 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- *
- *
- */
-
 #include "OW_config.h"
 #include "OW_HTTPChunkedOStream.hpp"
 
