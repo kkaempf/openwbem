@@ -843,6 +843,11 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
                         }
                         else
                         {
+							logCustInfo(format("Error: %1.%2: qualifier %3 was "
+								"overridden, but the qualifier can't be "
+								"overridden because it has DisableOverride flavor",
+								childClass.getName(), propArray[i].getName(), 
+								qual.getName()));
                             propArray[i].setQualifier(qual);
                         }
                     }
