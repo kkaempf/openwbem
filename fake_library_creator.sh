@@ -40,7 +40,7 @@ fi
 
 DEMANGLE_PREVENTION_FLAGS=
 
-if nm --version 2>&1 > /dev/null
+if nm --version 2>/dev/null >/dev/null
 then
   DEMANGLE_PREVENTION_FLAGS="--no-demangle"
 else
