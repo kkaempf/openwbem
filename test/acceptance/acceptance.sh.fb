@@ -170,13 +170,13 @@ RestartDaemon()
 	fi
 	# the nightly cronjob on solaris doesn't seem to deliver the HUP, so do it
 	# the hard way.
-#	if [ "x$HOSTTYPE" = "xsparc" ]; then
-#		StopDaemon
-#		StartDaemon
-#	else
+	if [ "x$HOSTTYPE" = "xsparc" ]; then
+		StopDaemon
+		StartDaemon
+	else
 		PID=`cat $PIDFILE`
 		kill -1 $PID # HUP
-#	fi
+	fi
 	echo "Waiting for daemon to re-initialize"
 	sleep 4
 }
