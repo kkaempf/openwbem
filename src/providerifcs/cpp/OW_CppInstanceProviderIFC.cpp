@@ -94,6 +94,9 @@ namespace OpenWBEM
             const StringArray* _propertyList;
             const CIMClass& _cimClass;
         };
+        RH rh(*this,env , ns,result ,localOnly ,deep ,includeQualifiers ,
+              includeClassOrigin ,propertyList , cimClass); 
+        enumInstanceNames(env,ns ,className , rh,cimClass); 
     }
 
 } // end namespace OpenWBEM
