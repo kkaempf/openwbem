@@ -23,7 +23,7 @@ Fix problems:
     - Fix memory leak in openssl (when restarting) & in npi.
     - Add a page to the website similar to http://cygwin.com/bugs.html
     - Add a segfault handler on linux that will create a stack trace using
-      the glibc functions.
+      the glibc functions. (replace slow & somewhat broken gdb stack trace)
     - Man pages aren't getting included in the rpm.
     - Create a non-recursive mutex, and use it with condition variables,
       since using a recursive mutex with condition variables can deadlock
@@ -32,6 +32,11 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
+    - Wrap OW_*Repository into one class that implements OW_RepositoryIFC.
+      Have a way for providers to access it, so they can basically be
+      "pass-thru" providers.  They store their instances in the repository,
+      but perform operations as the instances are accessed.  The
+      CIM_Indication* providers will need this functionality.
 
 New features:
     - Add an option to the mof compiler to output provider skeleton code for
@@ -127,3 +132,7 @@ Optimizations:
       faster than ByteBuf.
     - Redo WQL to only process on instance at a time for better scalability.
     - Use OW_HashMap class where appropriate.
+    - Change instance/associator provider interface to pass in a list of
+      properties which should be returned, so providers can optimize and avoid
+      calculating unrequested properties.  OW_CIMServer will have to calculate
+      the property list based on local-only, propertyList, deep, etc.
