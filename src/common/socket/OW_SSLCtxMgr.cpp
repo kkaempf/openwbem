@@ -28,6 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
+#ifdef OW_HAVE_OPENSSL
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_Format.hpp"
@@ -35,7 +36,6 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_ThreadImpl.hpp"
-#ifdef OW_HAVE_OPENSSL
 #include <openssl/rand.h>
 #include <openssl/err.h>
 #include <string.h>
@@ -400,7 +400,8 @@ SSLCtxMgr::uninitServer()
 		m_ctxServer = NULL;
 	}
 }
-#endif // #ifdef OW_HAVE_OPENSSL
 
 } // end namespace OpenWBEM
+
+#endif // #ifdef OW_HAVE_OPENSSL
 

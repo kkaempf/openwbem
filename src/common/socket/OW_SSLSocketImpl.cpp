@@ -191,8 +191,9 @@ SSLSocketImpl::readAux(void* dataIn, int dataInLen)
 	return SSLCtxMgr::sslRead(m_ssl, static_cast<char*>(dataIn), 
 			dataInLen);
 }
-//////////////////////////////////////////////////////////////////////////////
-#endif // #ifdef OW_HAVE_OPENSSL
 
 } // end namespace OpenWBEM
+
+//////////////////////////////////////////////////////////////////////////////
+#endif // #ifdef OW_HAVE_OPENSSL
 
