@@ -39,6 +39,10 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/client
 
+else
+
+clean-local:
+
 endif
 
 
