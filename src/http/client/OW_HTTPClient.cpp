@@ -640,6 +640,8 @@ HTTPClient::processHeaders(String& statusLine)
 					{
 						m_requestMethod = "POST";
 						rt = RETRY;
+						// only do this for JWS, since it doesn't eat the entity.
+						m_needsConnect = true;
 					}
 					else
 					{
