@@ -34,6 +34,7 @@
 namespace OpenWBEM
 {
 
+// TODO: Rename this and don't allow the stupid copy semantics.
 template <class X> class AutoPtr
 {
 private:
