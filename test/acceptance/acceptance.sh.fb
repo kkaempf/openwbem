@@ -157,8 +157,6 @@ StartDaemon()
 #############################################################################
 RestartDaemon()
 {
-#	StopDaemon
-#	StartDaemon
 	echo "Restarting owcimomd..."
 	if [ ! "$OWTESTLIST" = "" ]; then
 		if [ ! -f $PIDFILE ]; then
@@ -167,8 +165,15 @@ RestartDaemon()
 			return
 		fi
 	fi
-	PID=`cat $PIDFILE`
-	kill -HUP $PID
+	# the nightly cronjob on solaris doesn't seem to deliver the HUP, so do it
+	# the hard way.
+	if [ "x$HOSTTYPE" = "xsparc" ]; then
+		StopDaemon
+		StartDaemon
+	else
+		PID=`cat $PIDFILE`
+		kill -HUP $PID
+	fi
 	echo "Waiting for daemon to re-initialize"
 	sleep 4
 }
@@ -519,7 +524,7 @@ TestAuth()
 	echo "2. Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-		> $RESULTDIR/AuthTest.out 2>&1
+		>> $RESULTDIR/AuthTest.out 2>&1
     RVAL=$?
 	[ "$RVAL" = "2" ] || \
 	ExitWithFail "2. Authentication test (simple): fakeclient return wrong code. $RVAL != 2"
@@ -720,6 +725,7 @@ GatherResults()
 Exit()
 {
 	GatherResults
+	CoreCheck
 	exit $1
 }
 
