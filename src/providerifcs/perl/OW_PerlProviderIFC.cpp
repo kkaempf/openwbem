@@ -463,7 +463,7 @@ OW_PerlProviderIFC::getProvider(
 		return OW_FTABLERef();
 	}
 
-	::PerlFP_INIT_FT createProvider;
+	::NPIFP_INIT_FT createProvider;
 	OW_String creationFuncName = "perlProvider_initFunctionTable";
 
 	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
@@ -473,15 +473,16 @@ OW_PerlProviderIFC::getProvider(
 		return OW_FTABLERef();
 	}
 
-	::PerlFTABLE fTable = (*createProvider)();
-	fTable.perlcontext = new ::PerlContext;
+	::NPIFTABLE fTable = (*createProvider)();
+	fTable.npicontext = new ::NPIContext;
 	
-	fTable.perlcontext->scriptName = provId.allocateCString();
+	fTable.npicontext->scriptName = provId.allocateCString();
 
 	if(!fTable.fp_initialize)
 	{
 		env->getLogger()->logError(format("Perl provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
+	        delete ((::NPIContext *)fTable.npicontext);
 		return OW_FTABLERef();
 	}
 
@@ -493,15 +494,23 @@ OW_PerlProviderIFC::getProvider(
 
 	//OW_Reference<PerlEnv> npiHandle(); // TODO: createEnv(...);
 
-
-	//fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.perlcontext};
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
 	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
+        // take care of the errorOccurred field
+        // that might indicate a buggy perl script
+        if (_npiHandle.errorOccurred)
+        {
+	         env->getLogger()->logDebug(format("Perl provider ifc loaded library %1. Initialize failed"
+		" for provider %2", libName, provId));
+	        delete ((::NPIContext *)fTable.npicontext);
+		return OW_FTABLERef();
+        }
+       
 
 	env->getLogger()->logDebug(format("Perl provider ifc: provider %1 loaded and initialized (script %2)",
-		provId, fTable.perlcontext->scriptName));
+		provId, fTable.npicontext->scriptName));
 
-	m_provs[provId] = OW_FTABLERef(theLib, new ::PerlFTABLE(fTable));
+	m_provs[provId] = OW_FTABLERef(theLib, new ::NPIFTABLE(fTable));
 
 	return m_provs[provId];
 }

@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
+#include "OW_FTABLERef.hpp"
 #include "OW_PerlInstanceProviderProxy.hpp"
-#include "PerlExternal.hpp"
+#include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
-#include "OW_PerlProviderIFCUtils.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 
 // debugging
 #define DDD(X) // X
@@ -54,10 +54,12 @@ OW_PerlInstanceProviderProxy::enumInstanceNames(
 
         if (m_ftable->fp_enumInstanceNames!= NULL)
         {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 
-			OW_ProviderEnvironmentIFCRef env2(env);
+	    OW_NPIHandleFreer nhf(_npiHandle);
+
+	    OW_ProviderEnvironmentIFCRef env2(env);
+
             _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
@@ -65,13 +67,14 @@ OW_PerlInstanceProviderProxy::enumInstanceNames(
 			OW_CIMClass cimClass2(cimClass);
             CIMClass _cc = { static_cast<void *> (&cimClass2)};
 
-			OW_CIMObjectPath cop(className, ns);
+	    OW_CIMObjectPath cop(className, ns);
             CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
             ::Vector v =
                 m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
 
-            OW_NPIVectorFreer vf1(v);
+	    // the vector and its contents are
+            //  deleted by the global garbage collector (npiHandle)
 
             if (_npiHandle.errorOccurred)
             {
@@ -86,10 +89,10 @@ OW_PerlInstanceProviderProxy::enumInstanceNames(
                 OW_CIMObjectPath ow_cop(*
                     static_cast<OW_CIMObjectPath *>(my_cop.ptr) );
 
-// FIXME
                 ow_cop.setObjectName(cimClass.getName());
-				result.handle(ow_cop);
+		result.handle(ow_cop);
             }
+            //printf("Leaving enumInstanceNames\n");
 
         }
         else
@@ -121,7 +124,7 @@ OW_PerlInstanceProviderProxy::enumInstances(
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 	}
 
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	OW_NPIHandleFreer nhf(_npiHandle);
 
 	OW_ProviderEnvironmentIFCRef env2(env);
@@ -141,7 +144,7 @@ OW_PerlInstanceProviderProxy::enumInstances(
 	::Vector v =
 	m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
 
-	OW_NPIVectorFreer vf1(v);
+	//OW_NPIVectorFreer vf1(v);
 
 	if (_npiHandle.errorOccurred)
 	{
@@ -174,7 +177,7 @@ OW_PerlInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef 
 
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -219,7 +222,7 @@ OW_PerlInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &en
 
         if (m_ftable->fp_getInstance != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			OW_ProviderEnvironmentIFCRef env2(env);
@@ -277,7 +280,7 @@ OW_PerlInstanceProviderProxy::createInstance(
 
         if (m_ftable->fp_createInstance != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			OW_ProviderEnvironmentIFCRef env2(env);
@@ -327,7 +330,7 @@ OW_PerlInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 
 	if (m_ftable->fp_setInstance != NULL)
 	{
-	        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);

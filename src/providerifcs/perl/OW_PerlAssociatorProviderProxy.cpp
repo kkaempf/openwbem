@@ -30,10 +30,10 @@
 
 #include "OW_config.h"
 #include "OW_PerlAssociatorProviderProxy.hpp"
-#include "PerlExternal.hpp"
+#include "NPIExternal.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
-#include "OW_PerlProviderIFCUtils.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -52,10 +52,10 @@ OW_PerlAssociatorProviderProxy::associatorNames(
 
     if (m_ftable->fp_associatorNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
@@ -75,8 +75,6 @@ OW_PerlAssociatorProviderProxy::associatorNames(
 				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str());
 
-        OW_NPIVectorFreer vf1(v);
-
         if (_npiHandle.errorOccurred)
         {
             OW_THROWCIMMSG(OW_CIMException::FAILED, _npiHandle.providerError);
@@ -89,7 +87,7 @@ OW_PerlAssociatorProviderProxy::associatorNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath *>(cop.ptr) );
 
-			result.handle(ow_cop);
+	    result.handle(ow_cop);
         }
     }
     else
@@ -118,22 +116,22 @@ OW_PerlAssociatorProviderProxy::associators(
 
     if (m_ftable->fp_associators != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
@@ -162,8 +160,6 @@ OW_PerlAssociatorProviderProxy::associators(
             free(const_cast<void*>(static_cast<const void*>(*i)));
         }
 
-        OW_NPIVectorFreer vf1(v);
-
         if (_npiHandle.errorOccurred)
         {
             OW_THROWCIMMSG(OW_CIMException::FAILED, _npiHandle.providerError);
@@ -180,7 +176,7 @@ OW_PerlAssociatorProviderProxy::associators(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-			result.handle(ow_inst);
+	    result.handle(ow_inst);
         }
     }
     else
@@ -206,22 +202,22 @@ OW_PerlAssociatorProviderProxy::references(
 
     if (m_ftable->fp_references != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
@@ -248,8 +244,6 @@ OW_PerlAssociatorProviderProxy::references(
             free(const_cast<void*>(static_cast<const void*>(*i)));
         }
 
-        OW_NPIVectorFreer vf1(v);
-
         if (_npiHandle.errorOccurred)
         {
             OW_THROWCIMMSG(OW_CIMException::FAILED, _npiHandle.providerError);
@@ -266,7 +260,7 @@ OW_PerlAssociatorProviderProxy::references(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-			result.handle(ow_inst);
+	    result.handle(ow_inst);
         }
     }
     else
@@ -290,29 +284,27 @@ OW_PerlAssociatorProviderProxy::referenceNames(
 
     if (m_ftable->fp_referenceNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,
                     role.empty() ? 0 : role.c_str());
-
-        OW_NPIVectorFreer vf1(v);
 
         if (_npiHandle.errorOccurred)
         {
@@ -328,7 +320,7 @@ OW_PerlAssociatorProviderProxy::referenceNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath*>(my_cop.ptr) );
 
-			result.handle(ow_cop);
+	    result.handle(ow_cop);
         }
     }
     else

@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
+#include "OW_FTABLERef.hpp"
 #include "OW_PerlMethodProviderProxy.hpp"
-#include "PerlExternal.hpp"
+#include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
-#include "OW_PerlProviderIFCUtils.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
@@ -55,17 +55,17 @@ OW_PerlMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 
         if (m_ftable->fp_invokeMethod != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-			OW_ProviderEnvironmentIFCRef env2(env);
+		OW_ProviderEnvironmentIFCRef env2(env);
             _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
             OW_CIMObjectPath owcop = path;
-			owcop.setNameSpace(ns);
+		owcop.setNameSpace(ns);
             CIMObjectPath _cop= {static_cast<void *> (&owcop)};
 
             Vector parm_in = VectorNew(&_npiHandle);
@@ -78,17 +78,14 @@ OW_PerlMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
                     &_npiHandle, parm_in, static_cast<void *> (owpv) );
             }
 
-            OW_NPIVectorFreer vf1(parm_in);
-            OW_NPIVectorFreer vf2(parm_out);
-
             CIMValue cv = m_ftable->fp_invokeMethod(
                 &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
 
-			if (_npiHandle.errorOccurred)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					_npiHandle.providerError);
-			}
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				_npiHandle.providerError);
+		}
 
             rval = * static_cast<OW_CIMValue *> (cv.ptr);
 

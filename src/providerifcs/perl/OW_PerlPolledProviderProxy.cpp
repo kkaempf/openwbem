@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
+#include "OW_FTABLERef.hpp"
 #include "OW_PerlPolledProviderProxy.hpp"
-#include "PerlExternal.hpp"
+#include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
-#include "OW_PerlProviderIFCUtils.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
@@ -60,7 +60,7 @@ OW_PerlPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
 
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -89,7 +89,7 @@ void OW_PerlPolledProviderProxy::activateFilter(
 	if (m_ftable->fp_activateFilter != NULL)
 	{
         env->getLogger()->logDebug("activateFilter2");
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -119,7 +119,7 @@ void OW_PerlPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter2");

@@ -30,10 +30,10 @@
 
 #include "OW_config.h"
 #include "OW_PerlIndicationProviderProxy.hpp"
-#include "PerlExternal.hpp"
+#include "NPIExternal.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
-#include "OW_PerlProviderIFCUtils.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ OW_PerlIndicationProviderProxy::deActivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter");
@@ -86,7 +86,7 @@ OW_PerlIndicationProviderProxy::activateFilter(
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -120,7 +120,7 @@ OW_PerlIndicationProviderProxy::authorizeFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter2");
@@ -155,7 +155,7 @@ OW_PerlIndicationProviderProxy::mustPoll(
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("mustPoll2");
