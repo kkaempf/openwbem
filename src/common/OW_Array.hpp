@@ -193,9 +193,9 @@ public:
 		OW_MutexLock mlock(m_impl.getWriteLock());
 		m_impl->clear();
 		OW_UInt32 len;
-		OW_BinIfcIO::read(istr, &len, sizeof(len));
-		len = OW_ntoh32(len);
+		OW_BinIfcIO::read(istr, len);
 		
+		m_impl->reserve(len);
 		for(OW_UInt32 i = 0; i < len; i++)
 		{
 			T x;
@@ -208,8 +208,7 @@ public:
 	void writeObject(std::ostream& ostrm) const
 	{
 		OW_UInt32 len = m_impl->size();
-		OW_UInt32 nl = OW_hton32(len);
-		OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
+		OW_BinIfcIO::write(ostrm, len);
 		for(OW_UInt32 i = 0; i < len; i++)
 		{
 			m_impl->operator[](i).writeObject(ostrm);
