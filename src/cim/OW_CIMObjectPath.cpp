@@ -203,6 +203,22 @@ CIMObjectPath::setKeys(const CIMInstance& instance)
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMObjectPath& 
+CIMObjectPath::setKeyValue(const String& name, const CIMValue& value)
+{
+	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
+	{
+		if (m_pdata->m_keys[i].getName().equalsIgnoreCase(name))
+		{
+			m_pdata->m_keys[i].setValue(value);
+			return *this;
+		}
+	}
+	// didn't find it
+	addKey(name, value);
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
 String
 CIMObjectPath::getNameSpace() const
 {

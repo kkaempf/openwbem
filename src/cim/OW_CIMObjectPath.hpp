@@ -170,6 +170,14 @@ public:
 	 */
 	CIMObjectPath& setKeys(const CIMInstance& instance);
 	/**
+	 * Set a key value. This will update an existing key, or add a new key if
+	 * one if a key with name doesn't already exist.
+	 * @param name The name of the key
+	 * @param value The value of the key
+	 * @return a reference to *this
+	 */
+	CIMObjectPath& setKeyValue(const String& name, const CIMValue& value);
+	/**
 	 * @return The namespace component of the CIMNameSpace for this object path
 	 */
 	String getNameSpace() const;
