@@ -79,37 +79,51 @@ void OW_AtomicDec(OW_Atomic_t &v)
 
 #if defined(OW_USE_DEFAULT_ATOMIC_OPS)
 
-
-// pth doesn't have pth_spin_lock
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
-static OW_Mutex guard;
+// this needs to be a pointer because of static initialization order conflicts.  
+// It shouldn't ever be deleted b/c it may be referenced by a destructor of a 
+// static variable that is being deleted.
+static OW_Mutex* guard = 0;
+
+static void initGuard()
+{
+	if (guard == 0)
+	{
+		guard = new OW_Mutex();
+	}
+}
+
 void OW_AtomicInc(OW_Atomic_t &v)
 {
-    OW_MutexLock lock(guard);
-    ++v.val;
+	initGuard();
+	OW_MutexLock lock(*guard);
+	++v.val;
 }
 
 bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 {
-    OW_MutexLock lock(guard);
-    return --v.val == 0;
+	initGuard();
+	OW_MutexLock lock(*guard);
+	return --v.val == 0;
 }
 
 int OW_AtomicGet(OW_Atomic_t const &v)
 {
-    OW_MutexLock lock(guard);
+	initGuard();
+	OW_MutexLock lock(*guard);
 	return v.val;
 }
 
 void OW_AtomicDec(OW_Atomic_t &v)
 {
-    OW_MutexLock lock(guard);
-    --v.val;
+	initGuard();
+	OW_MutexLock lock(*guard);
+	--v.val;
 }
 
-#endif
+	#endif
 
 #endif
 
