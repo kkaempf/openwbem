@@ -77,9 +77,9 @@ utf8_4_1 \xF0[\x90-\xBF][\x80-\xBF][\x80-\xBF]
 utf8_4_2 [\xF1-\xF3][\x80-\xBF][\x80-\xBF][\x80-\xBF]
 utf8_4_3 \xF4[\x80-\x8F][\x80-\xBF][\x80-\xBF]
 
-utf8Char utf8_2|utf8_3_1|utf8_3_2|utf8_3_3|utf8_3_4|utf8_4_1|utf8_4_2|utf8_4_3
+utf8Char {utf8_2}|{utf8_3_1}|{utf8_3_2}|{utf8_3_3}|{utf8_3_4}|{utf8_4_1}|{utf8_4_2}|{utf8_4_3}
 
-identifier ([a-zA-Z_]|utf8Char)([0-9a-zA-Z_]|utf8Char)*
+identifier ([a-zA-Z_]|{utf8Char})([0-9a-zA-Z_]|{utf8Char})*
 
 binaryValue [+-]?[01]+[bB]
 octalValue [+-]?"0"[0-7]+
