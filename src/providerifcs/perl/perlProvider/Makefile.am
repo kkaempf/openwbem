@@ -20,7 +20,7 @@ perlNPI.marker:
 	cd perlNPI;$(PERL) Makefile.PL;cd ..
 	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI
 
-$(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c:
+perlxsi.c:
 	$(PERL) -MExtUtils::Embed -e xsinit -- -o $(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c
 
 install-exec-local:
