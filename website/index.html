@@ -129,6 +129,9 @@
       
       <h1 id="News">News</h1>
       <ul>
+        <li>Tues Dec 7 2004: OpenWBEM 3.1.0 has been released.
+          <a href="http://sourceforge.net/project/shownotes.php?release_id=288179">Release notes.</a>
+        </li>
         <li>Wed Oct 13 2004: <a href="http://www.prnewswire.com/cgi-bin/stories.pl?ACCT=104&STORY=/www/story/10-11-2004/0002271983&EDATE=">
           Novell supports OpenWBEM Press Release</a>
         </li>
@@ -139,18 +142,6 @@
         <li>Sat Sep 11 2004: Dan and Bart will be manning the OpenWBEM booth at 
           <a href="http://www.emwusa.com/">Enterprise Management World</a> on Sep. 13 &amp; 14.
           Stop by and say &quot;Hi&quot; if you can.
-        </li>
-        <li>Mon May 31 2004: OpenWBEM 3.0.2 has been released. 
-          <a href="http://sourceforge.net/project/shownotes.php?group_id=16214&amp;release_id=242230">Release 
-          notes.</a>
-        </li>
-        <li>Mon Apr 26 2004: OpenWBEM 3.0.0 has been released.
-          <a href="http://sourceforge.net/project/shownotes.php?release_id=234133">Release
-          notes.</a>
-        </li>
-        <li>Sun Feb 2 2004: We have moved CVS to a new dedicated server
-          (cvs.openwbem.org).&nbsp; <a href="http://cvs.openwbem.org/">More info
-          here.</a>
         </li>
       </ul>
       
@@ -177,7 +168,7 @@
       <ul>
         <li>CIM Server
           <ul>
-            <li><a href="CIMOMBenchMarks.pdf">Fast and small.</a></li>
+            <li>Architected to be fast and small.</li>
             <li>CIM Operations over HTTP 1.1 is fully supported.</li>
             <li>CIM 2.2 is supported, including embedded instances, which are
               necessary for proper indication support.</li>
@@ -190,10 +181,10 @@
                 <li>HTTP Digest (Useful because it doesn't send passwords in
                   clear text)</li>
                 <li>Local (No password required, it relies on the filesystem permissions and
-                  trusts the operating system correctly authenticated the user. New as of release
-                  3.1.0)</li>
+                  trusts the operating system correctly authenticated the user.)</li>
                 <li>Simple (Uses a password file. A good sample of how to write
                   an Authentication Module)</li>
+                <li>SSL client certificate trust store</li>
               </ul>
             </li>
             
@@ -203,13 +194,12 @@
             <li>Supported Provider Interface Types:
               <ul>
                 <li>C++</li>
-                <li><a href="http://wbemsource.org/">CMPI</a>. Thanks to Jon
-                  Carey/Novell</li>
-                <li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a>
-                  Provider Interface.</li>
+                <li><a href="http://wbemsource.org/">CMPI</a></li>
+                <li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a> Provider Interface.</li>
                 <li>Perl based on NPI.</li>
                 <li><a href="http://jason.long.name/owperl/">Perl using SWIG</a>, created by
                   Jason Long.</li>
+                <li>Remote. Another WBEM server will be called to fulfill the request.</li>
               </ul>
             </li>
             
@@ -223,8 +213,7 @@
                   much easier to write a robust provider free from deadlocks and race
                   conditions.</li>
                 <li>OpenWBEM C++ Providers are automatically detected, so there
-                  is no need
-                  to use the provider qualifier or registration schema.</li>
+                  is no need to use the provider qualifier or registration schema.</li>
                 <li>Instance</li>
                 <li>Secondary Instance</li>
                 <li>Method</li>
@@ -241,6 +230,7 @@
                 <li>Authorization</li>
                 <li>CIM Repository</li>
                 <li><acronym title="WBEM Query Language">WQL</acronym></li>
+                <li>Service</li>
               </ul>
             </li>
             
@@ -253,11 +243,9 @@
               on the <acronym title="CIM Object Manager">CIMOM</acronym> and client side
               using any RFC 2614 compliant <acronym title="Service Location Protocol">SLP</acronym>
               implementation (e.g. <a href="http://openslp.org">OpenSLP</a>)</li>
-            <li>Support for a binary protocol that is much more efficient
-              than CIM/XML</li>
+            <li>Support for a binary protocol that is more efficient than CIM/XML</li>
             <li>HTTP deflate compression with <a href="http://www.gzip.org/zlib/">zlib</a>. 
-              (Using the binary
-              protocol together with compression is very bandwidth efficient.)</li>
+              (Using the binary protocol together with compression is very bandwidth efficient.)</li>
             <li>HTTP chunking &amp; trailers allows OpenWBEM to transfer
               large transactions (e.g. enumClasses on the entire schema) with no
               buffering. Memory usage stays constant. Even if the client doesn't
@@ -295,6 +283,8 @@
                   Manipulation, etc.)</li>
               </ul>
             </li>
+            <li>SMI-S Server profile is fully implemented.</li>
+            <li>Experimental support for WBEM i18n as defined in the preliminary CIM Operations over HTTP 1.2</li>
             
             <li>Available Providers:
               <ul>
@@ -303,12 +293,16 @@
                   owcimomd.</li>
                 <li>CIM_NamespaceInManager - Association between CIM_Namespace
                   and CIM_ObjectManager.</li>
-                <!-- <li>CIM_ObjectManagerCommunicationMechanism</li>
-                <li>CIM_IndicationSubscription - For indication support.</li>
-                <li>CIM_IndicationFilter - For indication support.</li> -->
+                <li>OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager</li>
+                <li>OpenWBEM_HostedObjectManager</li>
+                <li>OpenWBEM_UnitaryComputerSystem</li>
+                <li>CIM_HostedAccessPoint</li>
+                <li>CIM_CIMXMLCommunicationMechanism</li>
                 <li>SLP advertisement</li>
                 <li>__Namespace - Allows manipulation of namespaces for legacy
                   CIM Clients using the deprecated __Namespace class.</li>
+                <li>Novell has written a number of Open Source providers for Linux as 
+                  part of the <a href="http://forge.novell.com/modules/xfmod/project/?life">LIFE</a> project.</li>
                 <li>IBM has a lot of system level providers available via the
                   SBLIM project. All these NPI &amp; CMPI providers work with OpenWBEM.</li>
                 <li>Example providers show how to implement providers. These
@@ -328,10 +322,21 @@
             <li>MOF API &amp; library can be utilized from any application.
               Includes an API to convert mof text into a C++ CIM
                   class/instance without talking to a cimom.</li>
-            
             <li>WQL command-line utility</li>
             <li>WQL client library. Use WQL with servers which don't support
               it or don't support your particular queries.</li>
+            <li>Provider Agent API. An application can embed a mini-WBEM server to be used in conjunction with the remote provider interface.</li>
+          </ul>
+        </li>
+
+        <li>Supported Platforms
+          <ul>
+            <li>Linux</li>
+            <li>Solaris</li>
+            <li>HP-UX</li>
+            <li>AIX</li>
+            <li>Mac OS X</li>
+            <li>Novell Netware</li>
           </ul>
         </li>
       </ul>
@@ -374,8 +379,10 @@
         <dt><a href="openwbem-faq.html">FAQ</a></dt>
         <dd>A list of Frequently Asked Questions with answers.</dd>
         
+<!-- This is way out of date
         <dt><a href="pg/index.html">OpenWBEM Programmer's Guide</a>&nbsp;<a href="pg.pdf">pdf</a></dt>
         <dd>A brief introduction to programming with the OpenWBEM API</dd>
+-->
       </dl>
         
     
@@ -389,7 +396,7 @@
           </span>
           <blockquote cite="http://forge.novell.com/modules/xfmod/project/?life">
             This project represents a CIM/WBEM approach to instumenting the Linux platform. The 
-            goal is to provide OpenWBEM providers and utilities for the instumentation of devices,
+            goal is to provide OpenWBEM providers and utilities for the instumentation of devices and
             services.
           </blockquote>
           <!-- LIFE has the following providers:
