@@ -48,13 +48,14 @@ public:
 
 	virtual ~OW_IndicationServer() {}
 
-	virtual void init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem) = 0;
+	virtual void init(OW_CIMOMEnvironmentRef env) = 0;
 
 	virtual void shutdown() = 0;
 
 	virtual void processIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS) = 0;
 
+	virtual void setStartedSemaphore(OW_Semaphore* sem) = 0;
 protected:
 };
 

@@ -174,10 +174,9 @@ OW_IndicationServerImpl::OW_IndicationServerImpl()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem)
+OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 {
 	m_env = env;
-	m_startedSem = sem;
 	OW_ACLInfo aclInfo;
 
 	//-----------------
@@ -205,6 +204,13 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem)
 				" indication type %1", clsNames[j]));
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationServerImpl::setStartedSemaphore(OW_Semaphore* sem)
+{
+	m_startedSem = sem;
 }
 
 //////////////////////////////////////////////////////////////////////////////

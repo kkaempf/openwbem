@@ -60,7 +60,9 @@ public:
 	OW_IndicationServerImpl();
 	~OW_IndicationServerImpl();
 
-	virtual void init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem);
+	virtual void init(OW_CIMOMEnvironmentRef env);
+
+	virtual void setStartedSemaphore(OW_Semaphore* sem);
 
 	virtual void run();
 	void shutdown();

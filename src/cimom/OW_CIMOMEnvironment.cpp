@@ -296,25 +296,26 @@ OW_CIMOMEnvironment::startServices()
 
 	if (!getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
 	{
-        if (m_pollingManager)
-        {
-            // Start up the polling manager
-            logDebug("CIMOM starting Polling Manager");
+		if (m_pollingManager)
+		{
+			// Start up the polling manager
+			logDebug("CIMOM starting Polling Manager");
 			OW_Semaphore sem;
 			m_pollingManager->setStartedSemaphore(&sem);
-            m_pollingManager->start();
-            sem.wait();
-        }
+			m_pollingManager->start();
+			sem.wait();
+		}
 
-        if (m_indicationServer)
-        {
-            // Start up the indication server
-            logDebug("CIMOM starting IndicationServer");
+		if (m_indicationServer)
+		{
+			// Start up the indication server
+			logDebug("CIMOM starting IndicationServer");
 			OW_Semaphore sem;
-            m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true), &sem);
-            m_indicationServer->start();
-            sem.wait();
-        }
+			m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+			m_indicationServer->setStartedSemaphore(&sem);
+			m_indicationServer->start();
+			sem.wait();
+		}
 	}
 }
 
