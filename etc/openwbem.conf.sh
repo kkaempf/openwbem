@@ -259,6 +259,27 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 ;http_server.allow_local_authentication = false
 
 ################################################################################
+# Determines if the server should attempt to authenticate clients
+# with SSL Client Certificate verification. 
+# disabled: no client certificate checking will take place.
+# optional: A trusted cert is authenticated (no HTTP auth necessary)
+#   An untrusted cert still passes the SSL handshake, but the client
+#   will have to pass HTTP authentication.
+# autoupdate: Same as optional, but previously unknown client certificates
+#   which pass HTTP authentication are added to the trust store, so that
+#   subsequent client connections with the same certificate won't 
+#   require HTTP authentication. 
+# required: A trusted cert is required for the the SSL handshake to
+#   succeed.
+# The default is disabled
+;http_server.ssl_client_verification = disabled
+
+################################################################################
+# Specify the directory containing the OpenSSL trust store. 
+# The default is "@sysconfdir@/openwbem/truststore"
+;http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
+
+################################################################################
 # http_server.single_thread specifies whether or not owcimomd process connection
 # in a separate thread or in the same thread as the server. This option is
 # really only for debug purposes and should not be of any use to the
@@ -393,27 +414,5 @@ cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 # The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 
-################################################################################
-# Determines if the server should attempt to authenticate clients
-# with SSL Client Certificate verification. 
-# disabled: no client certificate checking will take place.
-# optional: A trusted cert is authenticated (no HTTP auth necessary)
-#   An untrusted cert still passes the SSL handshake, but the client
-#   will have to pass HTTP authentication.
-# autoupdate: Same as optional, but previously unknown client certificates
-#   which pass HTTP authentication are added to the trust store, so that
-#   subsequent client connections with the same certificate won't 
-#   require HTTP authentication. 
-# required: A trusted cert is required for the the SSL handshake to
-#   succeed.
-#
-;http_server.ssl_client_verification = optional
-
-################################################################################
-# Specify the directory containing the OpenSSL trust store. 
-;http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
-
-################################################################################
-#
 
 
