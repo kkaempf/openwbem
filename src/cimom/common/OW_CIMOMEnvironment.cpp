@@ -351,7 +351,6 @@ CIMOMEnvironment::shutdown()
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_SHUTTING_DOWN;
 	}
-	MutexLock ml(m_monitor);
 
 	// PHASE 1: SHUTDOWNS
 
@@ -397,7 +396,15 @@ CIMOMEnvironment::shutdown()
 		}
 	}
 
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_SHUTDOWN;
+	}
+
 	// PHASE 2: unload/delete
+
+	// get this lock here so that we delete everything atomically
+	MutexLock ml(m_monitor);
 
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment unloading and deleting services");
 
@@ -414,11 +421,6 @@ CIMOMEnvironment::shutdown()
 	}
 	catch(...)
 	{
-	}
-
-	{
-		MutexLock l(m_stateGuard);
-		m_state = E_STATE_SHUTDOWN;
 	}
 
 	// We need to unload these in the opposite order that
