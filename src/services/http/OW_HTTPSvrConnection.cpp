@@ -352,14 +352,14 @@ HTTPSvrConnection::beginPostResponse()
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
 		if (m_clientIsOpenWBEM2) // it uses different pre-standard trailer names
 		{
-			addHeader("Trailers",
+			addHeader("Trailer",
 				m_respHeaderPrefix + "CIMError, "
 				+ m_respHeaderPrefix + "CIMErrorCode, "
 				+ m_respHeaderPrefix + "CIMErrorDescription");
 		}
 		else // talking to someone who can understand new WBEM Ops 1.2 trailers
 		{
-			addHeader("Trailers",
+			addHeader("Trailer",
 				m_respHeaderPrefix + "CIMError, "
 				+ m_respHeaderPrefix + "CIMStatusCode, "
 				+ m_respHeaderPrefix + "CIMStatusDescription");
