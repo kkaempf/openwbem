@@ -205,8 +205,7 @@ int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
 /* rules */
 mofSpecification:
 	mofProductionList {
-		AutoPtr<MOFSpecification> p(new MOFSpecification($1));
-		MOF_COMPILER->mofSpecification = p;
+		MOF_COMPILER->mofSpecification = new MOFSpecification($1);
 		}
 	;
 

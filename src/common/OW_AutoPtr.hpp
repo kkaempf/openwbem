@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-4 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -34,36 +34,29 @@
 namespace OpenWBEM
 {
 
-// TODO: Rename this and don't allow the stupid copy semantics.
+// TODO: Rename this
 template <class X> class AutoPtr
 {
 private:
 	X* _ptr;
+	
+	// no copying
+	AutoPtr(const AutoPtr& a);
+	AutoPtr& operator= (const AutoPtr& a);
+
 public:
 	typedef X element_type;
 	/**
 	 * Construct a new AutoPtr.
-	 * @param isArray true if memory is allocated with new[], false if
-	 *        memory is allocated with new.
 	 * @param p pointer to the object
 	 */
 	explicit AutoPtr(X* p = 0) : _ptr(p) {}
-	AutoPtr(AutoPtr& a) : _ptr(a.release()) {}
 	AutoPtr& operator= (X* p)
 	{
 		if(p != _ptr)
 		{
 			reset();
 			_ptr = p;
-		}
-		return *this;
-	}
-	AutoPtr& operator= (AutoPtr& a)
-	{
-		if(&a != this)
-		{
-			delete _ptr;
-			_ptr = a.release();
 		}
 		return *this;
 	}
@@ -91,31 +84,24 @@ template <class X> class AutoPtrVec
 {
 private:
 	X* _ptr;
+	
+	// no copying
+	AutoPtrVec(const AutoPtrVec& a);
+	AutoPtrVec& operator= (const AutoPtrVec& a);
+
 public:
 	typedef X element_type;
 	/**
 	 * Construct a new AutoPtrVec.
-	 * @param isArray true if memory is allocated with new[], false if
-	 *        memory is allocated with new.
 	 * @param p pointer to the object
 	 */
 	explicit AutoPtrVec(X* p = 0) : _ptr(p) {}
-	AutoPtrVec(AutoPtrVec& a) : _ptr(a.release()) {}
 	AutoPtrVec& operator= (X* p)
 	{
 		if(p != _ptr)
 		{
 			reset();
 			_ptr = p;
-		}
-		return *this;
-	}
-	AutoPtrVec& operator= (AutoPtrVec& a)
-	{
-		if(&a != this)
-		{
-			delete [] _ptr;
-			_ptr = a.release();
 		}
 		return *this;
 	}
