@@ -32,6 +32,7 @@
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_Format.hpp"
+#include "OW_Assertion.hpp"
 
 extern "C"
 {
@@ -70,8 +71,8 @@ OW_SocketBaseImpl::OW_SocketBaseImpl()
 	, OW_IOIFC()
 	, m_isConnected(false)
 	, m_sockfd(-1)
-	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
-	, m_peerAddress(OW_SocketAddress::allocEmptyAddress())
+	, m_localAddress()
+	, m_peerAddress()
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -85,7 +86,8 @@ OW_SocketBaseImpl::OW_SocketBaseImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd)
+OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd, 
+		OW_SocketAddress::AddressType addrType)
 	: OW_SelectableIFC()
 	, OW_IOIFC()
 	, m_isConnected(true)
@@ -102,7 +104,18 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd)
 	, m_connectTimeout(0)
 {
 	m_in.tie(&m_out);
-	fillAddrParms();
+	if (addrType == OW_SocketAddress::INET)
+	{
+		fillInetAddrParms();
+	}
+	else if (addrType == OW_SocketAddress::UDS)
+	{
+		fillUnixAddrParms();
+	}
+	else
+	{
+		OW_ASSERT(0);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -151,7 +164,11 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	m_out.clear();
 	m_inout.clear();
 
-	if((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	OW_ASSERT(addr.getType() == OW_SocketAddress::INET 
+			|| addr.getType() == OW_SocketAddress::UDS);
+
+	if((m_sockfd = ::socket(addr.getType() == OW_SocketAddress::INET ?
+		AF_INET : AF_LOCAL, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(OW_SocketException,
 			format("Failed to create a socket: %1", strerror(errno)).c_str());
@@ -166,10 +183,10 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
 
 #ifdef OW_USE_GNU_PTH
-		if((n = ::pth_connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
+		if((n = ::pth_connect(m_sockfd, addr.getNativeForm(),
 						addr.getNativeFormSize())) < 0)
 #else
-		if((n = ::connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
+		if((n = ::connect(m_sockfd, addr.getNativeForm(),
 						addr.getNativeFormSize())) < 0)
 #endif
 		{
@@ -227,10 +244,10 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	else
 	{
 #ifdef OW_USE_GNU_PTH
-		if(::pth_connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
+		if(::pth_connect(m_sockfd, addr.getNativeForm(),
 					addr.getNativeFormSize()) == -1)
 #else
-		if(::connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
+		if(::connect(m_sockfd, addr.getNativeForm(),
 					addr.getNativeFormSize()) == -1)
 #endif
 		{
@@ -242,7 +259,18 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	}
 
 	m_isConnected = true;
-	fillAddrParms();
+	if (addr.getType() == OW_SocketAddress::INET)
+	{
+		fillInetAddrParms();
+	}
+	else if (addr.getType() == OW_SocketAddress::UDS)
+	{
+		fillUnixAddrParms();
+	}
+	else
+	{
+		OW_ASSERT(0);
+	}
 }
 
 
@@ -300,17 +328,17 @@ OW_SocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
 //////////////////////////////////////////////////////////////////////////////
 // JBW this needs reworked.
 void
-OW_SocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 {
 	socklen_t len;
-	struct sockaddr_in addr;
+	OW_InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
 
 	len = sizeof(addr);
 	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillAddrParms: getsockname");
+				"OW_SocketBaseImpl::fillInetAddrParms: getsockname");
 	}
 	m_localAddress.assignFromNativeForm(&addr, len);
 
@@ -318,9 +346,27 @@ OW_SocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
 	if(getpeername(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillAddrParms: getpeername");
+				"OW_SocketBaseImpl::fillInetAddrParms: getpeername");
 	}
 
+	m_peerAddress.assignFromNativeForm(&addr, len);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_SocketBaseImpl::fillUnixAddrParms() /*throw (OW_SocketException)*/
+{
+	socklen_t len;
+	OW_UnixSocketAddress_t addr;
+	memset(&addr, 0, sizeof(addr));
+
+	len = sizeof(addr);
+	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+	{
+		OW_THROW(OW_SocketException,
+				"OW_SocketBaseImpl::fillUnixAddrParms: getsockname");
+	}
+	m_localAddress.assignFromNativeForm(&addr, len);
 	m_peerAddress.assignFromNativeForm(&addr, len);
 }
 

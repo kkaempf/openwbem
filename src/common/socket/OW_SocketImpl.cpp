@@ -29,58 +29,75 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetServerSocketImpl.hpp
- * @author	Jon M. Carey
+ * @name		OW_SocketImpl.cpp
+ * @author	J. Bart Whiteley
  * @company	Caldera Systems, Inc.
- * @since	4/20/2000
+ * @since	1997/07/16
  *
  * @description
- *		Interface file for the OW_InetServerSocketImpl class
+ *		Implementation file for the OW_SocketImpl class.
  */
-#ifndef __OW_INETSERVERSOCKETIMPL_HPP__
-#define __OW_INETSERVERSOCKETIMPL_HPP__
-
 #include "OW_config.h"
-#include "OW_SelectableIFC.hpp"
-#include "OW_InetSocket.hpp"
-#include "OW_SocketAddress.hpp"
-#include "OW_Types.h"
+#include "OW_SocketImpl.hpp"
 
-class OW_InetServerSocketImpl : public OW_SelectableIFC
+#ifdef OW_USE_GNU_PTH
+extern "C"
 {
-public:
-	OW_InetServerSocketImpl(OW_Bool isSSL);
-	OW_InetServerSocketImpl(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-		OW_Bool allInterfaces=false);
-	~OW_InetServerSocketImpl();
-	OW_String addrString();
-	OW_InetSocket accept(int timeoutSecs=-1);
+#include <pth.h>
+}
+#endif
 
-	void close();
-//	unsigned long getLocalAddressRaw() { return m_localAddress; }
-//	unsigned short getLocalPortRaw() { return m_localPort; }
 
-	OW_SocketAddress getLocalAddress() { return m_localAddress; }
-	OW_SocketHandle_t getfd() const { return m_sockfd; }
-	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-		OW_Bool allInterfaces=false);
-	OW_Bool waitForIO(int fd, int timeOutSecs, OW_Bool forInput);
-	OW_Select_t getSelectObj() const;
+//////////////////////////////////////////////////////////////////////////////
+OW_SocketImpl::OW_SocketImpl() 
+	: OW_SocketBaseImpl()
+{
+}
 
-private:
+//////////////////////////////////////////////////////////////////////////////
+OW_SocketImpl::OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType) /*throw (OW_SocketException)*/ 
+	: OW_SocketBaseImpl(fd, addrType)
+{
+}
 
-	void fillAddrParms();
+//////////////////////////////////////////////////////////////////////////////
+OW_SocketImpl::OW_SocketImpl(const OW_SocketAddress addr) 
+	/*throw (OW_SocketException)*/ : OW_SocketBaseImpl(addr)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+OW_SocketImpl::~OW_SocketImpl()
+{
+}
 
-	OW_SocketHandle_t m_sockfd;
-//	unsigned long m_localAddress;
-//	unsigned short m_localPort;
-	OW_SocketAddress m_localAddress;
-	OW_Bool m_isActive;
+//////////////////////////////////////////////////////////////////////////////
+OW_Select_t
+OW_SocketImpl::getSelectObj() const
+{
+	return m_sockfd;
+}
 
-	OW_InetServerSocketImpl(const OW_InetServerSocketImpl& arg);
-	OW_InetServerSocketImpl operator=(const OW_InetServerSocketImpl& arg);
+//////////////////////////////////////////////////////////////////////////////
+int OW_SocketImpl::readAux(void* dataIn, int dataInLen) 
+		/*throw (OW_SocketException)*/
+{
+#ifdef OW_USE_GNU_PTH
+	return ::read(m_sockfd, dataIn, dataInLen);
+#else
+	return ::read(m_sockfd, dataIn, dataInLen);
+#endif
+}
 
-	OW_Bool m_isSSL;
-};
+//////////////////////////////////////////////////////////////////////////////
+int OW_SocketImpl::writeAux(const void* dataOut, int dataOutLen)
+		/*throw (OW_SocketException)*/
+{
+#ifdef OW_USE_GNU_PTH
+	return ::write(m_sockfd, dataOut, dataOutLen);
+#else
+	return ::write(m_sockfd, dataOut, dataOutLen);
+#endif
+}
 
-#endif	// __INETSERVERSOCKETIMPL_HPP__
+//////////////////////////////////////////////////////////////////////////////
+

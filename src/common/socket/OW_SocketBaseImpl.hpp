@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetSocketBaseImpl.hpp
+ * @name		OW_SocketBaseImpl.hpp
  * @author	Jon M. Carey
  * @company	Caldera Systems, Inc.
  * @since	4/20/2000
  *
  * @description
- *		Interface file for the OW_InetSocketBaseImpl class
+ *		Interface file for the OW_SocketBaseImpl class
  */
 #ifndef _OW_SOCKETBASEIMPL_HPP__
 #define _OW_SOCKETBASEIMPL_HPP__
@@ -60,7 +60,7 @@ class OW_SocketBaseImpl : public OW_SelectableIFC, public OW_IOIFC
 public:
 
 	OW_SocketBaseImpl();
-	OW_SocketBaseImpl(OW_SocketHandle_t fd);
+	OW_SocketBaseImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
 	OW_SocketBaseImpl(const OW_SocketAddress& addr);
 	virtual ~OW_SocketBaseImpl();
 
@@ -102,7 +102,8 @@ protected:
 	OW_SocketAddress m_peerAddress;
 
 private:
-	void fillAddrParms();
+	void fillInetAddrParms();
+	void fillUnixAddrParms();
 
 	OW_Bool m_recvTimeoutExprd;
 	OW_SocketStreamBuffer m_streamBuf;

@@ -74,7 +74,7 @@ using std::flush;
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_InetSocket socket,
+OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
 	OW_HTTPServer* htin,
 	OW_Reference<OW_UnnamedPipe>& upipe,
 	const OW_HTTPServer::Options& opts)
@@ -174,7 +174,7 @@ OW_HTTPSvrConnection::run()
 
 			if (!OW_HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
 			{
-				if (OW_InetSocket::gotShutDown())
+				if (OW_Socket::gotShutDown())
 				{
 					m_errDetails = "Server is shutting down!";
 					m_resCode = SC_INTERNAL_SERVER_ERROR;
@@ -1122,7 +1122,7 @@ OW_HTTPSvrConnection::sendError(int resCode)	/*throw (OW_IOException)*/
 		resCode = SC_REQUEST_TIMEOUT;
 		m_errDetails = "Timeout waiting for request.";
 	}
-	else if (OW_InetSocket::gotShutDown())
+	else if (OW_Socket::gotShutDown())
 	{
 		resCode = SC_SERVICE_UNAVAILABLE;
 		m_errDetails = "The server is shutting down.  Please try "

@@ -29,75 +29,66 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetSocketImpl.cpp
+ * @name		OW_SSLSocketImpl.hpp
  * @author	J. Bart Whiteley
  * @company	Caldera Systems, Inc.
  * @since	1997/07/16
  *
  * @description
- *		Implementation file for the OW_InetSocketImpl class.
+ *		Interface file for the OW_SSLSocketImpl class
  */
+#ifndef __OW_INETSSLSOCKETIMPL_HPP__
+#define __OW_INETSSLSOCKETIMPL_HPP__
+
+#ifndef OW_NO_SSL
+
 #include "OW_config.h"
-#include "OW_InetSocketImpl.hpp"
 
-#ifdef OW_USE_GNU_PTH
-extern "C"
+#include "OW_SocketBaseImpl.hpp"
+#include "OW_SSLCtxMgr.hpp"
+#include "OW_SSLException.hpp"
+#include "OW_Bool.hpp"
+
+
+class OW_SSLSocketImpl : public OW_SocketBaseImpl
 {
-#include <pth.h>
-}
-#endif
+public:
+
+	OW_SSLSocketImpl();
+	/**
+	 * This constructor is to be used only for server sockets.
+	 * @param fd A socket handle, presumably created by a ServerSocket's
+	 * accept().
+	 */
+	OW_SSLSocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
+
+	OW_SSLSocketImpl(const OW_SocketAddress& addr)
+		/*throw (OW_SocketException)*/;
+
+	virtual ~OW_SSLSocketImpl();
+
+	virtual void connect(const OW_SocketAddress& addr) /*throw (OW_SocketException)*/;
+	virtual void disconnect();
+
+	OW_Select_t getSelectObj() const;
 
 
-//////////////////////////////////////////////////////////////////////////////
-OW_InetSocketImpl::OW_InetSocketImpl() 
-	: OW_SocketBaseImpl()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_InetSocketImpl::OW_InetSocketImpl(OW_SocketHandle_t fd) /*throw (OW_SocketException)*/ 
-	: OW_SocketBaseImpl(fd)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_InetSocketImpl::OW_InetSocketImpl(const OW_SocketAddress addr) 
-	/*throw (OW_SocketException)*/ : OW_SocketBaseImpl(addr)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-OW_InetSocketImpl::~OW_InetSocketImpl()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_InetSocketImpl::getSelectObj() const
-{
-	return m_sockfd;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int OW_InetSocketImpl::readAux(void* dataIn, int dataInLen) 
+private:
+	virtual int readAux(void* dataIn, int dataInLen);
 		/*throw (OW_SocketException)*/
-{
-#ifdef OW_USE_GNU_PTH
-	return ::read(m_sockfd, dataIn, dataInLen);
-#else
-	return ::read(m_sockfd, dataIn, dataInLen);
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int OW_InetSocketImpl::writeAux(const void* dataOut, int dataOutLen)
+	virtual int writeAux(const void* dataOut, int dataOutLen);
 		/*throw (OW_SocketException)*/
-{
-#ifdef OW_USE_GNU_PTH
-	return ::write(m_sockfd, dataOut, dataOutLen);
-#else
-	return ::write(m_sockfd, dataOut, dataOutLen);
-#endif
-}
 
-//////////////////////////////////////////////////////////////////////////////
+	void connectSSL();
+
+	SSL* m_ssl;
+	BIO* m_sbio;
+
+	OW_SSLSocketImpl(const OW_SSLSocketImpl& arg);
+	OW_SSLSocketImpl operator =(const OW_SSLSocketImpl& arg);
+};
+
+#endif // #ifndef OW_NO_SSL
+
+#endif	// __OW_INETSSLSOCKETIMPL_HPP__
 

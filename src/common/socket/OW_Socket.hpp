@@ -28,13 +28,13 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_INETSOCKET_HPP__
-#define __OW_INETSOCKET_HPP__
+#ifndef _OW_SOCKET_HPP__
+#define _OW_SOCKET_HPP__
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
-#include "OW_InetSocketImpl.hpp"
-#include "OW_InetSSLSocketImpl.hpp"
+#include "OW_SocketImpl.hpp"
+#include "OW_SSLSocketImpl.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
@@ -43,47 +43,48 @@
 
 DEFINE_EXCEPTION(TimeOut)
 
-class OW_InetSocket : public OW_SelectableIFC, public OW_IOIFC
+class OW_Socket : public OW_SelectableIFC, public OW_IOIFC
 {
 public:
 
-	/* Create a net OW_InetSocket object. THIS CONSTRUCTOR ASSUMES THE peerPort
+	/* Create a net OW_Socket object. THIS CONSTRUCTOR ASSUMES THE peerPort
 	 * PARAMETER IS ALREADY IN NETWORK BYTE ORDER.
 	 */
-//	OW_InetSocket(unsigned long peerAddress, unsigned short peerPort);
+//	OW_Socket(unsigned long peerAddress, unsigned short peerPort);
 
-	/** Allocate a new Inet Socket
+	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	OW_InetSocket(OW_Bool isSSL = false);
+	OW_Socket(OW_Bool isSSL = false);
 
 	/**
-	 * Allocate a new Inet Socket based on an existing handle.
-	 * This is used by OW_InetServerSocket::accept()
+	 * Allocate a new  Socket based on an existing handle.
+	 * This is used by OW_ServerSocket::accept()
 	 * @param fd a handle to the existing socket
 	 * @param isSSL is it an SSL socket?
 	 */
-	OW_InetSocket(OW_SocketHandle_t fd, OW_Bool isSSL= false);
-//	OW_InetSocket(const OW_String& hostName, unsigned short port) /*throw (OW_SocketException)*/;
+	OW_Socket(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType, 
+		OW_Bool isSSL= false);
+//	OW_Socket(const OW_String& hostName, unsigned short port) /*throw (OW_SocketException)*/;
 
 	/**
-	 * Allocate a new OW_InetSocket and connect it to a peer machine
+	 * Allocate a new OW_Socket and connect it to a peer machine
 	 * @param addr the address of the peer machine
 	 * @isSSL is it an SSL socket?
 	 * @exception OW_SocketException
 	 */
-	OW_InetSocket(const OW_SocketAddress& addr, OW_Bool isSSL = false);
+	OW_Socket(const OW_SocketAddress& addr, OW_Bool isSSL = false);
 
 	/**
 	 * Copy ctor
 	 */
-	OW_InetSocket(const OW_InetSocket& arg)
+	OW_Socket(const OW_Socket& arg)
 		: OW_SelectableIFC()
 		, OW_IOIFC()
 		, m_impl(arg.m_impl) {}
 
 
-	OW_InetSocket& operator=(const OW_InetSocket& arg)
+	OW_Socket& operator=(const OW_Socket& arg)
 		{ m_impl = arg.m_impl; return *this; }
 
 	/**

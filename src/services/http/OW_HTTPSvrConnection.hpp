@@ -37,7 +37,7 @@
 #include "OW_String.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPStatusCodes.hpp"
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
@@ -59,7 +59,7 @@ public:
 	 * @param upipe a pipe to receive a shutdown signal from
 	 * @param opts The configuration options struct (see OW_HTTPServer.hpp)
 	 */
-	OW_HTTPSvrConnection(OW_InetSocket socket, OW_HTTPServer* htin,
+	OW_HTTPSvrConnection(OW_Socket socket, OW_HTTPServer* htin,
 		OW_Reference<OW_UnnamedPipe>& upipe,
 		const OW_HTTPServer::Options& opts);
 	~OW_HTTPSvrConnection();
@@ -149,7 +149,7 @@ private:
 	OW_HTTPServer* m_pHTTPServer;
 	std::istream* m_pIn;
 	std::ofstream m_tempFile;
-	OW_InetSocket m_socket;
+	OW_Socket m_socket;
 	std::ostream& m_ostr;
 	int m_resCode;
 	OW_Bool m_needSendError;

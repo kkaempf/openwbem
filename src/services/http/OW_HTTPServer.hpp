@@ -48,7 +48,7 @@
 #include "OW_CIMOMLocatorSLP.hpp"
 #include <ctime>
 
-class OW_InetServerSocket;
+class OW_ServerSocket;
 class OW_IPCHandler;
 class OW_HTTPSvrConnection;
 class OW_DigestAuthentication;
@@ -158,8 +158,8 @@ private:
 	OW_Reference<OW_UnnamedPipe> m_upipe;
 	OW_Array<OW_URL> m_urls;
 
-	OW_Reference<OW_InetServerSocket> m_pHttpServerSocket;
-	OW_Reference<OW_InetServerSocket> m_pHttpsServerSocket;
+	OW_Reference<OW_ServerSocket> m_pHttpServerSocket;
+	OW_Reference<OW_ServerSocket> m_pHttpsServerSocket;
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
 	OW_Mutex m_authGuard;
 	HTTPSlpRegistrator m_slpRegistrator;

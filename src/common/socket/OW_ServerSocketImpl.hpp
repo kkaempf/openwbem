@@ -29,39 +29,58 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetSocketImpl.hpp
- * @author	J. Bart Whiteley
+ * @name		OW_ServerSocketImpl.hpp
+ * @author	Jon M. Carey
  * @company	Caldera Systems, Inc.
- * @since	1997/07/16
+ * @since	4/20/2000
  *
  * @description
- *		Interface file for the OW_InetSocketImpl class
+ *		Interface file for the OW_ServerSocketImpl class
  */
-#ifndef __OW_INETSOCKETIMPL_HPP__
-#define __OW_INETSOCKETIMPL_HPP__
+#ifndef __OW_INETSERVERSOCKETIMPL_HPP__
+#define __OW_INETSERVERSOCKETIMPL_HPP__
 
 #include "OW_config.h"
-#include "OW_SocketStreamBuffer.hpp"
-#include "OW_SocketBaseImpl.hpp"
+#include "OW_SelectableIFC.hpp"
+#include "OW_Socket.hpp"
+#include "OW_SocketAddress.hpp"
+#include "OW_Types.h"
 
-
-class OW_InetSocketImpl : public OW_SocketBaseImpl
+class OW_ServerSocketImpl : public OW_SelectableIFC
 {
 public:
+	OW_ServerSocketImpl(OW_Bool isSSL);
+	OW_ServerSocketImpl(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
+		OW_Bool allInterfaces=false);
+	~OW_ServerSocketImpl();
+	OW_String addrString();
+	OW_Socket accept(int timeoutSecs=-1);
 
-	OW_InetSocketImpl();
-	OW_InetSocketImpl(OW_SocketHandle_t fd);
-	OW_InetSocketImpl(const OW_SocketAddress addr);
+	void close();
+//	unsigned long getLocalAddressRaw() { return m_localAddress; }
+//	unsigned short getLocalPortRaw() { return m_localPort; }
 
-	virtual ~OW_InetSocketImpl();
-
+	OW_SocketAddress getLocalAddress() { return m_localAddress; }
+	OW_SocketHandle_t getfd() const { return m_sockfd; }
+	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
+		OW_Bool allInterfaces=false);
+	OW_Bool waitForIO(int fd, int timeOutSecs, OW_Bool forInput);
 	OW_Select_t getSelectObj() const;
 
-protected:
+private:
 
-	virtual int readAux(void* dataIn, int dataInLen);
-	virtual int writeAux(const void* dataOut, int dataOutLen);
+	void fillAddrParms();
+
+	OW_SocketHandle_t m_sockfd;
+//	unsigned long m_localAddress;
+//	unsigned short m_localPort;
+	OW_SocketAddress m_localAddress;
+	OW_Bool m_isActive;
+
+	OW_ServerSocketImpl(const OW_ServerSocketImpl& arg);
+	OW_ServerSocketImpl operator=(const OW_ServerSocketImpl& arg);
+
+	OW_Bool m_isSSL;
 };
 
-#endif	// __INETSOCKETIMPL_HPP__
-
+#endif	// __INETSERVERSOCKETIMPL_HPP__

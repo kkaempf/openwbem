@@ -37,7 +37,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Platform.hpp"
 #include "OW_Thread.hpp"
-#include "OW_InetServerSocket.hpp"
+#include "OW_ServerSocket.hpp"
 #include "OW_SelectEngine.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_CIMProtocolIFC.hpp"

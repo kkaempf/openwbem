@@ -33,7 +33,7 @@
 #include <config.h>
 #endif
 
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_String.hpp"
@@ -64,7 +64,7 @@ main(int argc, char* argv[])
 		addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
 
 		cout << "\n\nTrying to connect..." << endl;
-		OW_InetSocket sock(addr);
+		OW_Socket sock(addr);
 
 
 		sock.waitForOutput();

@@ -45,7 +45,7 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_InetServerSocket.hpp"
+#include "OW_ServerSocket.hpp"
 #include "OW_SelectEngine.hpp"
 #include "OW_SelectableIFC.hpp"
 

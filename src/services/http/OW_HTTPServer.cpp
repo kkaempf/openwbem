@@ -31,9 +31,9 @@
 #include "OW_config.h"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_InetServerSocket.hpp"
+#include "OW_ServerSocket.hpp"
 #include "OW_IOException.hpp"
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_Format.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SelectableIFC.hpp"
@@ -235,7 +235,7 @@ public:
 		{
 			(void)selectedObject;
 
-			OW_Reference<OW_InetServerSocket> pServerSocket;
+			OW_Reference<OW_ServerSocket> pServerSocket;
 			if(m_isHTTPS)
 			{
 				pServerSocket = m_HTTPServer->m_pHttpsServerSocket;
@@ -245,7 +245,7 @@ public:
 				pServerSocket = m_HTTPServer->m_pHttpServerSocket;
 			}
 
-			OW_InetSocket socket = pServerSocket->accept(2);
+			OW_Socket socket = pServerSocket->accept(2);
 
 			m_HTTPServer->m_options.env->getLogger()->logCustInfo(
 				 format("Received connection on port %1 from %2",
@@ -320,7 +320,7 @@ OW_HTTPServer::startService()
 	if (m_options.httpPort >= 0)
 	{
 		OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
-		m_pHttpServerSocket = new OW_InetServerSocket;
+		m_pHttpServerSocket = new OW_ServerSocket;
 		m_pHttpServerSocket->doListen(lport, false, 1000, true);
 		m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
 
@@ -354,7 +354,7 @@ OW_HTTPServer::startService()
 		OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpsPort);
 		if (OW_SSLCtxMgr::isServer())
 		{
-			m_pHttpsServerSocket = new OW_InetServerSocket;
+			m_pHttpsServerSocket = new OW_ServerSocket;
 			m_pHttpsServerSocket->doListen(lport, true, 1000, true);
 
 			m_options.httpsPort =
@@ -389,7 +389,7 @@ OW_HTTPServer::startService()
 		}
 	} // if (m_httpsPort > 0)
 
-	OW_InetSocket::createShutDownMechanism();
+	OW_Socket::createShutDownMechanism();
 
 
 	if(env->getConfigItem(
@@ -472,14 +472,14 @@ OW_HTTPServer::shutdown()
 
 	m_slpRegistrator.shutdown();
 
-	OW_InetSocket::shutdownAllSockets();
+	OW_Socket::shutdownAllSockets();
 	m_upipe->write("shutdown");
 	while (m_threadCountSemaphore->getCount() < m_options.maxConnections)
 	{
 		OW_Thread::yield();
 	}
 	OW_Thread::yield();
-	OW_InetSocket::deleteShutDownMechanism();
+	OW_Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;
 

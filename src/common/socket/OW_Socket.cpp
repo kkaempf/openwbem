@@ -35,58 +35,64 @@
  */
 
 #include "OW_config.h"
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_SSLException.hpp"
+#include "OW_Exception.hpp"
 
-OW_UnnamedPipeRef OW_InetSocket::m_pUpipe;
+OW_UnnamedPipeRef OW_Socket::m_pUpipe;
 
-OW_InetSocket::OW_InetSocket(OW_Bool isSSL)
+OW_Socket::OW_Socket(OW_Bool isSSL)
 {
 	if (isSSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl);
+		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl);
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
 	{
-		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl);
+		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocket::OW_InetSocket(OW_SocketHandle_t fd, OW_Bool isSSL)
+OW_Socket::OW_Socket(OW_SocketHandle_t fd, 
+	OW_SocketAddress::AddressType addrType, OW_Bool isSSL)
 		/*throw (OW_SocketException)*/
 {
 	if (isSSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl(fd));
+		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(fd, addrType));
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
-		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl(fd));
+	{
+		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl(fd, addrType));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocket::OW_InetSocket(const OW_SocketAddress& addr, OW_Bool isSSL)
+OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_Bool isSSL)
 		/*throw (OW_SocketException)*/
 {
 	if (isSSL)
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl(addr));
+		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(addr));
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	else
-		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl(addr));
+	{
+		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl(addr));
+	}
 }
 
 static OW_Bool b_gotShutDown = false;
@@ -95,7 +101,7 @@ static OW_Mutex shutdownMutex;
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_InetSocket::shutdownAllSockets()
+OW_Socket::shutdownAllSockets()
 {
 	OW_MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
@@ -106,7 +112,7 @@ OW_InetSocket::shutdownAllSockets()
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_InetSocket::createShutDownMechanism()
+OW_Socket::createShutDownMechanism()
 {
 	OW_MutexLock mlock(shutdownMutex);
 	OW_ASSERT(!m_pUpipe);
@@ -117,7 +123,7 @@ OW_InetSocket::createShutDownMechanism()
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_InetSocket::deleteShutDownMechanism()
+OW_Socket::deleteShutDownMechanism()
 {
 	OW_MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
@@ -127,7 +133,7 @@ OW_InetSocket::deleteShutDownMechanism()
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_Bool
-OW_InetSocket::gotShutDown()
+OW_Socket::gotShutDown()
 {
 	OW_MutexLock mlock(shutdownMutex);
 	return b_gotShutDown;

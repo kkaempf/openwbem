@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
 		OW_SocketAddress addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
 		OW_HTTPServer htIn(9877);
-		OW_InetSocket sock(addr);
+		OW_Socket sock(addr);
 		OW_HTTPSvrConnection svr(sock, &htIn);
 		int sc;
 		for(int i = 0; i < 10; i++)

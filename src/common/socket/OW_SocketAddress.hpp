@@ -119,7 +119,7 @@ public:
 
 	const OW_String getAddress() const;
 
-	const OW_SocketAddress_t* getInetNativeForm() const;
+	const OW_SocketAddress_t* getNativeForm() const;
 
 
 	size_t getNativeFormSize() const;
@@ -138,8 +138,30 @@ public:
 	//operator void*() const { return (void*)m_impl; }
 
 	void assignFromNativeForm(const OW_InetSocketAddress_t* address, size_t len);
+	void assignFromNativeForm(const OW_UnixSocketAddress_t* address, size_t len);
 
 	OW_SocketAddress();
+	OW_SocketAddress(const OW_SocketAddress& arg)
+		: m_name(arg.m_name)
+		, m_address(arg.m_address)
+		, m_nativeSize(arg.m_nativeSize)
+		, m_inetNativeAddress(arg.m_inetNativeAddress)
+		, m_UDSNativeAddress(arg.m_UDSNativeAddress)
+		, m_type(arg.m_type)
+	{
+	}
+
+	OW_SocketAddress& operator=(const OW_SocketAddress& arg)
+	{
+		m_name = arg.m_name;
+		m_address = arg.m_address;
+		m_nativeSize = arg.m_nativeSize;
+		m_inetNativeAddress = arg.m_inetNativeAddress;
+		m_UDSNativeAddress = arg.m_UDSNativeAddress;
+		m_type = arg.m_type;
+		return *this;
+	}
+
 private:
 	OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm);
 

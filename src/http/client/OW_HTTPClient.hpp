@@ -32,7 +32,7 @@
 #define OW_HTTPCLIENT_HPP_
 
 #include "OW_config.h"
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Map.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -130,7 +130,7 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		OW_Array<OW_String> m_requestHeadersCommon;
 		OW_Array<OW_String> m_requestHeadersNew;
 		std::istream* m_pIstrReturn;
-		mutable OW_InetSocket m_socket;
+		mutable OW_Socket m_socket;
 		OW_String m_requestMethod;
 		bool m_authRequired;
 		mutable bool m_needsConnect;

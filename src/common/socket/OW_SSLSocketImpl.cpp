@@ -29,16 +29,16 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetSSLSocketImpl.cpp
+ * @name		OW_SSLSocketImpl.cpp
  * @author	J. Bart Whiteley
  * @company	Caldera Systems, Inc.
  * @since	1997/07/16
  *
  * @description
- *		Implementation file for the OW_InetSSLSocketImpl class.
+ *		Implementation file for the OW_SSLSocketImpl class.
  */
 #include "OW_config.h"
-#include "OW_InetSSLSocketImpl.hpp"
+#include "OW_SSLSocketImpl.hpp"
 #ifdef OW_USE_GNU_PTH
 extern "C"
 {
@@ -49,14 +49,15 @@ extern "C"
 #ifdef OW_HAVE_OPENSSL
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSSLSocketImpl::OW_InetSSLSocketImpl() 
+OW_SSLSocketImpl::OW_SSLSocketImpl() 
 	: OW_SocketBaseImpl()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(OW_SocketHandle_t fd) 
-	: OW_SocketBaseImpl(fd)
+OW_SSLSocketImpl::OW_SSLSocketImpl(OW_SocketHandle_t fd, 
+	OW_SocketAddress::AddressType addrType) 
+	: OW_SocketBaseImpl(fd, addrType)
 {
 #ifdef OW_USE_GNU_PTH
     pth_yield(NULL);
@@ -74,13 +75,13 @@ OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(OW_SocketHandle_t fd)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(const OW_SocketAddress& addr) 
+OW_SSLSocketImpl::OW_SSLSocketImpl(const OW_SocketAddress& addr) 
 	: OW_SocketBaseImpl(addr)
 {
 	connectSSL();
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSSLSocketImpl::~OW_InetSSLSocketImpl()
+OW_SSLSocketImpl::~OW_SSLSocketImpl()
 {
 	if(m_sockfd != -1 && m_isConnected)
 	{
@@ -91,14 +92,14 @@ OW_InetSSLSocketImpl::~OW_InetSSLSocketImpl()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Select_t
-OW_InetSSLSocketImpl::getSelectObj() const
+OW_SSLSocketImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_InetSSLSocketImpl::connect(const OW_SocketAddress& addr)
+OW_SSLSocketImpl::connect(const OW_SocketAddress& addr)
 	/*throw (OW_SocketException)*/
 {
 	OW_SocketBaseImpl::connect(addr);
@@ -107,7 +108,7 @@ OW_InetSSLSocketImpl::connect(const OW_SocketAddress& addr)
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_InetSSLSocketImpl::connectSSL()
+OW_SSLSocketImpl::connectSSL()
 {
 #ifdef OW_USE_GNU_PTH
     pth_yield(NULL);
@@ -131,7 +132,7 @@ OW_InetSSLSocketImpl::connectSSL()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InetSSLSocketImpl::disconnect()
+OW_SSLSocketImpl::disconnect()
 {
 #ifdef OW_USE_GNU_PTH
     pth_yield(NULL);
@@ -147,7 +148,7 @@ OW_InetSSLSocketImpl::disconnect()
 
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_InetSSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
+OW_SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 	/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH
@@ -160,7 +161,7 @@ OW_InetSSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_InetSSLSocketImpl::readAux(void* dataIn, int dataInLen)
+OW_SSLSocketImpl::readAux(void* dataIn, int dataInLen)
 	/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH

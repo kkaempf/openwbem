@@ -33,7 +33,7 @@
 #include <config.h>
 #endif
 
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunker.hpp"
 #include "OW_String.hpp"
@@ -69,7 +69,7 @@ main(int argc, char* argv[])
 		addr = OW_SocketAddress::getByName(argv[1], 80);
 
 		cout << "\n\nTrying to connect on port 80...\n";
-		OW_InetSocket sock(addr);
+		OW_Socket sock(addr);
 
 		cout << "Getting /\n";
 

@@ -29,66 +29,40 @@
 *******************************************************************************/
 
 /**
- * @name		OW_InetSSLSocketImpl.hpp
+ * @name		OW_SocketImpl.hpp
  * @author	J. Bart Whiteley
  * @company	Caldera Systems, Inc.
  * @since	1997/07/16
  *
  * @description
- *		Interface file for the OW_InetSSLSocketImpl class
+ *		Interface file for the OW_SocketImpl class
  */
-#ifndef __OW_INETSSLSOCKETIMPL_HPP__
-#define __OW_INETSSLSOCKETIMPL_HPP__
-
-#ifndef OW_NO_SSL
+#ifndef __OW_INETSOCKETIMPL_HPP__
+#define __OW_INETSOCKETIMPL_HPP__
 
 #include "OW_config.h"
-
+#include "OW_SocketStreamBuffer.hpp"
 #include "OW_SocketBaseImpl.hpp"
-#include "OW_SSLCtxMgr.hpp"
-#include "OW_SSLException.hpp"
-#include "OW_Bool.hpp"
+#include "OW_Assertion.hpp"
 
 
-class OW_InetSSLSocketImpl : public OW_SocketBaseImpl
+class OW_SocketImpl : public OW_SocketBaseImpl
 {
 public:
 
-	OW_InetSSLSocketImpl();
-	/**
-	 * This constructor is to be used only for server sockets.
-	 * @param fd A socket handle, presumably created by a ServerSocket's
-	 * accept().
-	 */
-	OW_InetSSLSocketImpl(OW_SocketHandle_t fd) /*throw (OW_SocketException)*/;
+	OW_SocketImpl();
+	OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
+	OW_SocketImpl(const OW_SocketAddress addr);
 
-	OW_InetSSLSocketImpl(const OW_SocketAddress& addr)
-		/*throw (OW_SocketException)*/;
-
-	virtual ~OW_InetSSLSocketImpl();
-
-	virtual void connect(const OW_SocketAddress& addr) /*throw (OW_SocketException)*/;
-	virtual void disconnect();
+	virtual ~OW_SocketImpl();
 
 	OW_Select_t getSelectObj() const;
 
+protected:
 
-private:
 	virtual int readAux(void* dataIn, int dataInLen);
-		/*throw (OW_SocketException)*/
 	virtual int writeAux(const void* dataOut, int dataOutLen);
-		/*throw (OW_SocketException)*/
-
-	void connectSSL();
-
-	SSL* m_ssl;
-	BIO* m_sbio;
-
-	OW_InetSSLSocketImpl(const OW_InetSSLSocketImpl& arg);
-	OW_InetSSLSocketImpl operator =(const OW_InetSSLSocketImpl& arg);
 };
 
-#endif // #ifndef OW_NO_SSL
-
-#endif	// __OW_INETSSLSOCKETIMPL_HPP__
+#endif	// __INETSOCKETIMPL_HPP__
 

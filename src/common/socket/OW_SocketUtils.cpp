@@ -33,7 +33,7 @@
 #include "OW_SocketUtils.hpp"
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_InetSocket.hpp"
+#include "OW_Socket.hpp"
 
 extern "C"
 {
@@ -82,9 +82,9 @@ OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInpu
 
 	int pipefd = 0;
 
-	if (OW_InetSocket::m_pUpipe)
+	if (OW_Socket::m_pUpipe)
 	{
-		lUPipe = dynamic_cast<OW_PosixUnnamedPipe*>(OW_InetSocket::m_pUpipe.getPtr());
+		lUPipe = dynamic_cast<OW_PosixUnnamedPipe*>(OW_Socket::m_pUpipe.getPtr());
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
 		

@@ -36,7 +36,7 @@
 #include "easyserver.h"
 */
 
-#include "OW_InetServerSocket.hpp"
+#include "OW_ServerSocket.hpp"
 #include "OW_SocketAddress.hpp"
 
 #include <iostream>
@@ -55,14 +55,14 @@ int main(void)
 		unsigned short port;
 		cin >> port;
 
-		OW_InetServerSocket svr(port);
+		OW_ServerSocket svr(port);
 		OW_SocketAddress localAddr = svr.getLocalAddress();
 		cout << "Listening on address " << localAddr.getName() << 
 			"(" << localAddr.getAddress() << ")" << ":" 
 			<< localAddr.getPort() << endl;
 		cout.flush();
 
-		OW_InetSocket sock = svr.accept();
+		OW_Socket sock = svr.accept();
 		OW_SocketAddress peerAddr = sock.getPeerAddress();
 		cout << "Connection is made. Client is " << peerAddr.getName() << 
 			"(" << peerAddr.getAddress() << ")" << ":" 

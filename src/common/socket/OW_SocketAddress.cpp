@@ -141,9 +141,17 @@ OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm,
 	return p;
 }
 
-const OW_SocketAddress_t* OW_SocketAddress::getInetNativeForm() const
+const OW_SocketAddress_t* OW_SocketAddress::getNativeForm() const
 {
-	return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
+	if (m_type == INET)
+	{
+		return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
+	}
+	else if (m_type == UDS)
+	{
+		return reinterpret_cast<const sockaddr*>(&m_UDSNativeAddress);
+	}
+	else return 0;
 }
 
 OW_SocketAddress 
@@ -189,6 +197,15 @@ void OW_SocketAddress::assignFromNativeForm(
 	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
 	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
 	m_nativeSize = sizeof(m_inetNativeAddress);
+}
+
+void OW_SocketAddress::assignFromNativeForm(
+	const OW_UnixSocketAddress_t* address, size_t /*size*/)
+{
+	m_type = UDS;
+	memcpy(&m_UDSNativeAddress, address, sizeof(m_UDSNativeAddress));
+	m_address = m_name = m_UDSNativeAddress.sun_path;
+	m_nativeSize = sizeof(m_UDSNativeAddress);
 }
 
 OW_UInt16 OW_SocketAddress::getPort() const

@@ -33,27 +33,27 @@
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
-#include "OW_InetServerSocketImpl.hpp"
+#include "OW_ServerSocketImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Types.h"
 
-class OW_InetServerSocket : public OW_SelectableIFC
+class OW_ServerSocket : public OW_SelectableIFC
 {
 public:
 
 	/** Allocate a new Inet Server Socket.
 	 * @param isSSL is the Server Socket an SSL socket?
 	 */
-	OW_InetServerSocket(OW_Bool isSSL = false) 
+	OW_ServerSocket(OW_Bool isSSL = false) 
 	  : OW_SelectableIFC()
-	  , m_impl(new OW_InetServerSocketImpl(isSSL))
+	  , m_impl(new OW_ServerSocketImpl(isSSL))
    {
    }
 
 	/**
 	 * Copy ctor
 	 */
-	OW_InetServerSocket(const OW_InetServerSocket& arg)
+	OW_ServerSocket(const OW_ServerSocket& arg)
 		: OW_SelectableIFC()
 		, m_impl(arg.m_impl) {}
 
@@ -64,10 +64,10 @@ public:
 	 * @param allInterfaces do we listen on all interfaces?
 	 *
 	 */
-	OW_InetServerSocket(OW_UInt16 port, OW_Bool isSSL = false, int queueSize=10, 
+	OW_ServerSocket(OW_UInt16 port, OW_Bool isSSL = false, int queueSize=10, 
 			OW_Bool allInterfaces=false)
 		: OW_SelectableIFC()
-		, m_impl(new OW_InetServerSocketImpl(port, isSSL,
+		, m_impl(new OW_ServerSocketImpl(port, isSSL,
 			queueSize, allInterfaces))
 	{
 	}
@@ -75,9 +75,9 @@ public:
 	/**
 	 * Accept a connection to the server socket
 	 * @param timeoutSecs the timeout
-	 * @return an OW_InetSocket for the connection just accepted.
+	 * @return an OW_Socket for the connection just accepted.
 	 */
-	OW_InetSocket accept(int timeoutSecs=-1) 
+	OW_Socket accept(int timeoutSecs=-1) 
 	//throw(OW_SocketException, OW_TimeOutException)
 	{
 		return m_impl->accept(timeoutSecs);
@@ -122,7 +122,7 @@ public:
 	OW_Select_t getSelectObj() const { return m_impl->getSelectObj(); }
 
 private:
-	OW_Reference<OW_InetServerSocketImpl> m_impl;
+	OW_Reference<OW_ServerSocketImpl> m_impl;
 };
 
 #endif	// __INETSERVERSOCKET_HPP__
