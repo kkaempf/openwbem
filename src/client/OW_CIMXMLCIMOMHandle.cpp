@@ -101,7 +101,7 @@ OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
 		{
 			ostr << "<LOCALINSTANCEPATH>";
 			OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal);
-			OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+			OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
 			ostr << "</LOCALINSTANCEPATH>";
 		}
 		else // it's a class

@@ -24,38 +24,52 @@ x add a test for the matrix on the bottom of
 x change XML parser to be lazy. 
 x fix execQuery XML
 x pretty-print the XML in the test suites.
+x add a test for extrinsic methods with OUT and IN/OUT parameters
+x Add executeMethod fail tests to testCIMExceptions
 
 
-- Providers/Provider interfaces in a different process.
-- Internationalization.
-- Deal with locale on WBEM requests.
+Testing:
+    - smaller schema for make check.  create classes to exercise all aspects 
+      of mof and xml.
+    - bad xml tests
+    - do some interop testing (client-server & server-client)
+      - snia old and new (http://www.opengroup.org/snia-cimom/)
+      - wbem services
+      - pegasus
+      - openwbem 1.3.2 1.2.x (make sure binary fails)
+    - various make check components to have separate namespaces.
+    - review CIM operations over HTTP v1.1 and see where we deviate.
+      specifically, the indication delivery is known to be different. 
 
-- Binary Indications
-- clean up stale indication subscriptions
-- smaller schema for make check.  create classes to exercise all aspects of mof and xml.
-- various make check components to have separate namespaces.
-- CMPI (replace NPI)
+Fix problems:
+    - Fix CIM Server so that an instance provider can provide associations.
 
-- review CIM operations over HTTP v1.1 and see where we deviate.
-  specifically, the indication delivery is known to be different. 
 
-- Create a mechanism for built-in classes (possibly internal class providers?)
-	- add handling for new namespace model
-	- New model for provider registration .
+New features:
+    - Providers/Provider interfaces in a different process.
+    - Internationalization.
+    - Deal with locale on WBEM requests. (at least reject those that won't work)
+    - Add better error handling/messages to the MOF compiler.
+    - Binary Indications (Possibly re-factor and use CIMXMLListener)
+    - clean up stale indication subscriptions (write provider for this)
+    - CMPI (replace NPI)
+    - Create a mechanism for built-in classes (possibly internal class 
+      providers?)
+        - add handling for new namespace model
+        - New model for provider registration .
 
-- XMLExecute has handling of flags like localonly, etc.  remove this
-  and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
+Refactorings:
+    - split out namespace parameters to cimom handle calls.
+    - Move some of the XML code around.  Get rid of param* strings.  Move 
+      XMLQualifier::* to XMLCIMFactory.
+    - Split out the internal provider ifc from the Provider Manager.  Create a 
+      common base class for C++ provider ifcs (internal, c++, simplec++)
+    - inline the smaller functions in OW_String, OW_StringBuffer, and other 
+      commonly used classes.
+    - XMLExecute has handling of flags like localonly, etc.  remove this
+      and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 
-- Fix? socket write/read also select on shutdown pipe.
-- inline the smaller functions in OW_String, OW_StringBuffer, and other commonly used classes.
-- add a test for extrinsic methods with OUT and IN/OUT parameters
-- do some interop testing
-  - snia old and new (http://www.opengroup.org/snia-cimom/)
-  - wbem services
-  - pegasus
-  - openwbem 1.3.2 1.2.x (make sure binary fails)
-- split out namespace parameters to cimom handle calls.
-- Add better error handling/messages to the MOF compiler.
-- Fix CIM Server so that an instance provider can provide associations.
-
-- Write developer documentation (similar to "SNIA CIM Object Manager Architecture and Developers Guide" found at http://www.opengroup.org/snia-cimom/)
+Documentation:
+    - Write developer documentation (similar to "SNIA CIM Object Manager 
+      Architecture and Developers Guide" found at 
+      http://www.opengroup.org/snia-cimom/)

@@ -20,3 +20,9 @@ class EXP_BartComputerSystem : CIM_ComputerSystem
 	[IN] string newState);
 };
 
+instance of EXP_BartComputerSystem
+{
+    CreationClassName = "EXP_BartComputerSystem";
+    Name = "test";
+};
+

@@ -1229,6 +1229,9 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 		switch (num)
 		{
 			case 1:
+                cop.addKey("CreationClassName",
+                      OW_CIMValue(OW_String("EXP_BartComputerSystem")));
+                cop.addKey("Name", OW_CIMValue(OW_String("test")));
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
 				hdl.invokeMethod(cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;

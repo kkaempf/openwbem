@@ -1959,8 +1959,16 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 			{
 				if (methodInParams[i].getType().getType() != v.getType())
 				{
-					orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-						v, methodInParams[i].getType()));
+                    try
+                    {
+                        orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+                            v, methodInParams[i].getType()));
+                    }
+                    catch (OW_CIMException& ce)
+                    {
+                        ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
+                        throw;
+                    }
 				}
 			}
 
@@ -2029,8 +2037,8 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 			{
 				if (methodOutParams[i].getType().getType() != v.getType())
 				{
-					outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-						v, methodOutParams[i].getType()));
+                    outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+                        v, methodOutParams[i].getType()));
 				}
 			}
 		}

@@ -51,6 +51,7 @@
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <iostream>
 
@@ -1124,6 +1125,135 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// DeleteNamespace
 	// EnumNameSpaces
 
+
+    // invokeMethod
+
+    // CIM_ERR_INVALID_NAMESPACE
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "badNamespace"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+    }
+    
+    // CIM_ERR_INVALID_PARAMETER - wrong number of params
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+    }
+    
+    // CIM_ERR_INVALID_PARAMETER - wrong name of some parameter
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));    
+        OW_UInt8Array uint8array;
+        in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));
+        OW_CIMObjectPathArray paths;
+        in.push_back(OW_CIMParamValue("pathsBAD", OW_CIMValue(paths)));
+                
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+    }
+    
+    // CIM_ERR_INVALID_PARAMETER - wrong type of some parameter
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));    
+        OW_StringArray sarray;
+        sarray.push_back("x");
+        in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(sarray)));
+        OW_CIMObjectPathArray paths;
+        in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
+                
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+    }
+
+    // CIM_ERR_INVALID_PARAMETER - duplicate parameter
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));    
+        OW_UInt8Array uint8array;
+        in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));
+        OW_CIMObjectPathArray paths;
+        in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(paths)));
+                
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+    }
+    
+    // CIM_ERR_NOT_FOUND - no class
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        hdl->invokeMethod(OW_CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+    }
+    
+    // CIM_ERR_NOT_FOUND - no instance
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        OW_CIMObjectPath cop("EXP_BartComputerSystem");
+        cop.addKey("Name", OW_CIMValue("badKey"));
+        cop.addKey("CreationClassName", OW_CIMValue("badKey"));
+        hdl->invokeMethod(cop, "getstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+    }
+    
+    // CIM_ERR_METHOD_NOT_FOUND
+    try
+    {
+        OW_CIMParamValueArray in, out;
+        OW_CIMObjectPath cop("EXP_BartComputerSystem");
+        hdl->invokeMethod(cop, "BADgetstate", in, out);
+		assert(0);
+    }
+    catch (const OW_CIMException& e)
+    {
+        assert(e.getErrNo() == OW_CIMException::METHOD_NOT_FOUND);
+    }
+    
+    
 	// cleanup
 
 	hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
