@@ -208,9 +208,16 @@ well as any types used as member variables.  Everything else can be forward
 declared.  If you use the pimpl idiom, you can get away with only including
 Reference (or COWReference).  This helps to greatly reduce compilation
 time and also helps prevent bloat from inline functions.
-When creating forward declarations, for commonly used classes, it's good to
-create a *Fwd.hpp header, especially for template classes, since the number
-& type of template parameters has to be part of the declaration.
+Avoid putting forward declarations in the header which needs it.  This
+causes a problem when the type changes, because all the forward declarations
+need to be changed as well.
+The other extreme of creating a forward declaration header for each class.
+isn't a good solution either because it's too much work to create and causes
+a proliferation of headers.
+The method we use is to use one forward declaration header per library 
+(or sub-set of classes. e.g. OW_CIMFwd.hpp).  When adding a new class, add
+it to the appropriate forward declaration header.  This way, each class is
+defined in exactly one place, and has only one forward declaration.
 -----------------------------------------------------------------------------
 If a function has unused parameters, don't comment out or omit the parameter
 name to avoid an unused parameter warning.  Cast it to void at the beginning
@@ -285,9 +292,8 @@ Before you modify or write any new code, make a test for it.  There are 2
 types of tests in OpenWBEM: unit tests and acceptance tests.  The unit tests
 are under test/unit, and are organized by class.  You can create a new test by
 running the newtest.sh script and passing in as the first argument the
-old-style classname, which is also the header filename, minus the .hpp.  So if
-you're writing a new class called OpenWBEM::Foo, you'd put it in
-OW_Foo.{hpp,cpp}, you'd run ./newtest OW_Foo.  Rename testSomething to be
+classname.  So if you're writing a new class called OpenWBEM::Foo, you'd put 
+it in OW_Foo.{hpp,cpp}, you'd run ./newtest Foo.  Rename testSomething to be
 something meaningful, and create a new test function (don't forget to add it
 to the suite) for each different type of functionality that you're going to
 test.  There is also the acceptance test (also known as integration or system
@@ -299,14 +305,33 @@ it covered by the acceptance test.
 Creating a new class.
 Use javadoc-type comments.  We use doxygen to generate API docs.
 
-When you create a new class, make sure you define and document the following:
+When you create a new class, make sure you design and document the following:
 - Invariants (Class invariants, expressions which are always true.)
+
+- Repsponsibilities
+   "Responsibilities identify problems to be solved. The solutions will exist in
+   many versions and refinements. A responsibility serves as a handle for
+   discussing potential solutions. The responsibilities of an object are
+   expressed by a handful of short verb phrases, each containing an active verb.
+   The more that can be expressed by these phrases, the more powerful and concise
+   the design. Again, searching for just the right words is a valuable use of
+   time while designing." (Kent Beck, Ward Cunningham)
+
+- Collaborators
+   "One of the distinguishing features of object design is that no object is an
+   island. All objects stand in relationship to others, on whom they rely for
+   services and control. The last dimension we use in characterizing object
+   designs is the collaborators of an object. We name as collaborators objects
+   which will send or be sent messages in the course of satisfying
+   responsibilities." (Kent Beck, Ward Cunningham)
+
 - Thread safety: (this is for all member functions of the class)
    non-reentrant (need a mutex protecting it & the class cannot call back into
     itself.)
    reentrant (need a mutex protecting it)
    read (multiple readers are okay, need a rw lock protecting it)
    read/write (don't need any mutex protection)
+
 - Copy semantics:
    Value (copies make a full deep copy)
    Copy On Write (uses COWReference to store implementation.  Copies are fast, 
@@ -321,6 +346,7 @@ When you create a new class, make sure you define and document the following:
    Non-copyable (copy ctor and operator= are private.  Use Reference if you
     need to refer to an instance of the class in multiple places.)
    Clone (polymorphic class which supports Clone())
+
 - Exception safety: (document the lowest level of all the member functions for
    the class, and document each member function as well)
    Fubared (If an exception was thrown, the function may have leaked memory
@@ -332,6 +358,7 @@ When you create a new class, make sure you define and document the following:
    Strong (If an exception was thrown, the instance is in the state it was in
     before the method was called. Basically commit/rollback semantics.)
    No-throw (The method will never throw an exception)
+
 - Error conditions: what causes the errors and how they're reported. This item
    only applies to [member] functions.
 
@@ -343,15 +370,17 @@ If a class implements an interface, and the behavior is unchanged from the
 interface documentation, don't duplicate the member function interface docs, 
 as this simply creates an additional maintenance point.
 
-Here is an example of good class documentation:
-
-
 All new code must have some sort of test.  A unit test is preferable,
 however in some *extremely rare* conditions, the code may not be sufficiently
 self-contained to be tested as a unit.  In this case, first review the code
 to see if you can make it unit testable, and fix it. Also make sure there's an
 acceptance test that exercises the functionality.  Don't forget to test for
 negative conditions and correct error detection & reporting.
+
+All public classes must be contained in a header file named the same as
+the class itself.  Avoid being lazy and defining multiple public classes in
+the same header.  This makes it difficult for developers to know which header
+to include to get the class definition.  This also applies to exceptions.
 -----------------------------------------------------------------------------
 Inline functions.
 Avoid using inline functions in any header file which may be included by a
@@ -376,7 +405,10 @@ try to test for features in configure.in and then #ifdef on the presense
 of the feature.  Sometime this is pointless, as in the case of win32 threads
 which are completely different, so just a whole chunk of the file is
 enclosed inside an #ifdef OW_WIN32.  Also sometimes the build system does
-the selection of code using automake conditionals.  
+the selection of code using automake conditionals.
+Try to minimize the number of #ifdefs.  If possible create a facade so
+certain functionality is only ifdef'ed in one place instead of in 10 places
+where it may be used.
 -----------------------------------------------------------------------------
 All blocks must have braces on their own line. The only exception is the
 closing brace on a do/while loop.
