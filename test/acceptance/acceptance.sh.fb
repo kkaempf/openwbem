@@ -114,7 +114,7 @@ SwitchToLinks()
 CreateNameSpace() 
 {
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	OWURL="http://test1:pass1@localhost:30926"
+	OWURL="ipc://test1:pass1@localhost:30926"
 	$WQLEXEC $OWURL /root 'insert into __Namespace values ("'"$1"'")'
 }
 
@@ -310,7 +310,7 @@ TestSuite()
 	if [ "$METHODTESTMOFDONE" = "0" ]; then
 		METHODTESTMOFDONE=1
 		echo "Importing mof file for method provider test"
-		$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
+		$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 	fi
@@ -338,21 +338,18 @@ TestSuiteIPC()
 		return
 	fi
 
-	# Set up user for IPC test
-	echo "test1:pass1" >> $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
-	
 	RestartDaemon
 	
 	if [ "$METHODTESTMOFDONE" = "0" ]; then
 		METHODTESTMOFDONE=1
 		echo "Importing mof file for method provider test"
-		$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
+		$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 			ExitWithFail "TestSuiteIPC: MOF compiler exited with error."
 	fi
 
 	echo "Executing IPC test suite, saving output in " $RESULTDIR/IPCClientTest.out
-	$BUILDDIR/test/acceptance/progs/IPCClientTest \
+	$BUILDDIR/test/acceptance/progs/owcimclientcl ipc://test1:pass1@localhost:30926/owbinary \
 		> $RESULTDIR/IPCClientTest.out 2>&1 || \
 		ExitWithFail "TestSuiteIPC: IPCClientTest failed with an error.  "
 
@@ -376,7 +373,7 @@ TestWQL()
 
 	RestartDaemon
 	echo "Executing wql test suite, saving output in " $RESULTDIR/wqlTest.out
-	$BUILDDIR/test/acceptance/progs/wqlTest1 http://test1:pass1@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/wqlTest1 ipc://test1:pass1@localhost:30926 \
 		> $RESULTDIR/wqlTest.out 2>&1 || \
 		ExitWithFail "WQL test exited with error"
 
@@ -591,7 +588,7 @@ TestACL()
 	cd $OLDDIR
 	ACLPROG=$BUILDDIR/test/acceptance/progs/aclTest
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	SUACLURL="http://test1:pass1@localhost:30926"
+	SUACLURL="ipc://test1:pass1@localhost:30926"
 	RestartDaemon
 	echo "Importing MOF to enable ACLs..."
 	CreateNameSpace "security"
@@ -600,7 +597,7 @@ TestACL()
 		$TOPSRCDIR/mof/OpenWBEM_Acl1.0.mof || 
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root/acltest \
-		$TOPSRCDIR/src/mof/testfiles/CIM_Core25.mof || \
+		$TOPSRCDIR/test/acceptance/testfiles/CIM_Min25.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root/acltest \
 		$TOPSRCDIR/test/acceptance/testfiles/ACLTest.mof || \
@@ -638,7 +635,7 @@ TestACL()
 	echo "Testing read-only ACL..."
 	$WQLEXEC $SUACLURL /root/security 'insert into OpenWBEM_UserACL (nspace, username, capability) values ("root/acltest", "test2", "r")' 
 	CREDS="test2:pass2"
-	ACLURL="http://$CREDS@localhost:30926"
+	ACLURL="ipc://$CREDS@localhost:30926"
 	$ACLPROG $ACLURL r || \
 		ExitWithFail "ACL test (user): Read-Only test failed."
 
@@ -659,7 +656,7 @@ TestACL()
 
 	echo "Testing namespace ACL read-only..."
 	CREDS="test3:pass3"
-	ACLURL="http://$CREDS@localhost:30926"
+	ACLURL="ipc://$CREDS@localhost:30926"
 	$WQLEXEC $SUACLURL /root/security 'insert into OpenWBEM_NamespaceACL (nspace, capability) values ("root/acltest", "r")'
 	$ACLPROG $ACLURL r || \
 		ExitWithFail "ACL test (namespace): Read-Only test failed."
@@ -691,13 +688,13 @@ TestMof()
 	fi
 
 	RestartDaemon
-	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
 			$TOPSRCDIR/src/mof/testfiles/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 }

@@ -29,87 +29,90 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_IPCCIMOMHandle.hpp"
-#include "OW_Assertion.hpp"
-#include "OW_GetPass.hpp"
-#include "OW_CIMNameSpace.hpp"
-#include "OW_CIMUrl.hpp"
-
+#include "OW_Exec.hpp"
+#include "OW_ConfigOpts.hpp"
+#include "OW_String.hpp"
+#include "OW_AuthenticatorIFC.hpp"
 #include <iostream>
+#include <string.h>
 
-using std::cout;
-using std::cin;
-using std::endl;
-using std::cerr;
-
-class GetLoginInfo : public OW_ClientAuthCBIFC
+class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC
 {
-	public:
-		OW_Bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = OW_String::getLine(cin);
-			passwd = OW_GetPass::getPass("Enter the password for " +
-				name + ": ");
-			return OW_Bool(true);
-		}
+	/**
+	 * Authenticates a user
+	 *
+	 * @param userName
+	 *   The name of the of the user being authenticated
+	 * @param info
+	 *   The authentication credentials
+	 * @param details
+	 *	An out parameter used to provide information as to why the
+	 *   authentication failed.
+	 * @return
+	 *   True if user is authenticated
+	 */
+private:
+	virtual OW_Bool doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details);
+	
+	virtual void doInit(OW_ServiceEnvironmentIFCRef env)
+	{
+		m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
+		m_libexecdir = env->getConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt);
+	}
+
+	OW_String m_allowedUsers;
+	OW_String m_libexecdir;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
+	const OW_String &info, OW_String &details)
+{
+	if (info.length() < 1)
+	{
+		details = "You must authenticate to access this resource";
+		return OW_Bool(false);
+	}
+
+	OW_Array<OW_String> allowedUsers = m_allowedUsers.tokenize();
+
+	bool nameFound = false;
+	for (size_t i = 0; i < allowedUsers.size(); i++)
+	{
+		if (allowedUsers[i].equals(userName))
+		{
+			nameFound = true;
+			break;
+		}
+	}
+	if (!nameFound)
+	{
+		return OW_Bool(false);
+	}
+
+	OW_String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
+	OW_Array<OW_String> commandLine;
+	commandLine.push_back(pathToPamAuth);
+
+	OW_Bool rval;
+	OW_PopenStreams ps = OW_Exec::safePopen(commandLine,
+		userName + " " + info + "\n");
+
+	if (ps.getExitStatus() == 0)
+	{
+		rval = true;
+	}
+	else
+	{
+		rval = false;
+	}
+
+	return OW_Bool(rval);
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
+OW_AUTHENTICATOR_FACTORY(OW_LinuxPAMAuthenticationCL);
 
-int main(int argc, char* argv[])
-{
-	if (argc != 3)
-	{
-		cout << "Usage: <URL> <namespace>" << endl;
-		return 1;
-	}
 
-	try
-	{
-		OW_String url = argv[1];
-		OW_String ns = argv[2];
-
-		OW_CIMOMHandleIFCRef rch;
-
-		if(OW_URL(url).protocol.equalsIgnoreCase("IPC"))
-		{
-			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(url);
-			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			rch = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
-		}
-		else
-		{
-			OW_HTTPClient* pHttpClient = new OW_HTTPClient(url);
-			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_CIMProtocolIFCRef httpClient(pHttpClient);
-			rch = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(httpClient));
-		}
-
-		OW_CIMUrl nsurl(url);
-		OW_CIMNameSpace toCreate(url, ns);
-
-		cout << "Deleting namespace (" << ns << ")" << endl;
-		rch->deleteNameSpace(toCreate);
-
-		return 0;
-	}
-	catch(const OW_Exception& e)
-	{
-		cerr << e << endl;
-	}
-    catch(const std::exception& e)
-    {
-        cerr << e.what() << endl;
-    }
-	catch(...)
-	{
-		cerr << "Caught unknown exception in main" << endl;
-	}
-	return 1;
-}

@@ -6,7 +6,7 @@ noinst_LIBRARIES = libowmofc.a
 thelibdir = $(libdir)
 
 OW_SHARED_LIBS = libowmofc.so
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD =
 
 all-local: $(OW_SHARED_LIBS)
 

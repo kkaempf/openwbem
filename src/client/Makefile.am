@@ -1,7 +1,7 @@
 SUBDIRS = test
 
 include $(top_srcdir)/Makefile-shared-lib.inc
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD =
 
 noinst_LIBRARIES = libowclient.a
 
@@ -41,8 +41,7 @@ OW_CIMOMInfo.hpp	\
 OW_CIMXMLCIMOMHandle.hpp \
 OW_BinaryCIMOMHandle.hpp \
 OW_IPCCIMOMHandle.hpp \
-OW_IPCClient.hpp \
-OW_CIMProtocol.hpp
+OW_IPCClient.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

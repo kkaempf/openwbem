@@ -3,7 +3,7 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libnpiprovifc.a
 OW_SHARED_LIBS = libnpiprovifc.so
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD =
 
 thelibdir = $(pkglibdir)/provifcs
 

@@ -355,7 +355,7 @@ int main(int argc, char* argv[])
 		OW_CIMNameSpace path("/root");
 		OW_CIMObjectPath cop("", "/root");
 
-		OW_Reference<OW_CIMProtocol> httpClient(new OW_HTTPClient(url));
+		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);
 
 		rch.execQuery(path, "delete from CIM_IndicationSubscription", "wql1");

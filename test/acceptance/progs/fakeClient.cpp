@@ -76,9 +76,9 @@ int main(int argc, char* argv[])
 		if (argc == 3)
 		{
 			ifstream infile(argv[2]);
-			OW_TempFileStream tfsOut;
-			tfsOut << infile.rdbuf();
-			istream& istr = hc.sendRequest(tfsOut, "CIMBatch", "");
+			OW_Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
+			*tfsOut << infile.rdbuf();
+			istream& istr = hc.endRequest(tfsOut, "CIMBatch", "");
 			cout << istr.rdbuf() << endl;
 		}
 		else
@@ -156,25 +156,25 @@ void display_name(const char* prefix, X509_NAME* name)
 {
     char buf[256];
 
-    X509_NAME_get_text_by_NID(name, 
+    X509_NAME_get_text_by_NID(name,
                               NID_organizationName,
                               buf,
-                              256); 
+                              256);
     printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name, 
+    X509_NAME_get_text_by_NID(name,
                               NID_organizationalUnitName,
                               buf,
-                              256); 
+                              256);
     printf("%s%s\n",prefix,buf);
     X509_NAME_get_text_by_NID(name,
                               NID_commonName,
                               buf,
-                              256); 
+                              256);
     printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name, 
+    X509_NAME_get_text_by_NID(name,
                               NID_pkcs9_emailAddress,
                               buf,
-                              256); 
+                              256);
     printf("%s%s\n",prefix,buf);
 }
 
@@ -191,7 +191,7 @@ void display_cert(X509* cert)
     printf("   issuer:\n");
     name = X509_get_issuer_name(cert);
     display_name("      ",name);
-    
+
     /* print the subject */
     name = X509_get_subject_name(cert);
     printf("   subject:\n");

@@ -221,13 +221,14 @@ void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclarat
 	CIMOMcreateClass(pClassDeclaration->theLineInfo);
 }
 
-
 void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclaration )
 {
 	m_curClass = OW_CIMClass(*pAssocDeclaration->pClassName->pClassName);
 
 	OW_CIMQualifierType qt = getQualifierType("ASSOCIATION", pAssocDeclaration->theLineInfo);
 	OW_CIMQualifier q("ASSOCIATION", qt);
+	q.setValue(OW_CIMValue(OW_Bool(true)));
+
 	m_curClass.addQualifier(q);
 	if ( pAssocDeclaration->pQualifier.get() != 0 )
 	{
@@ -269,6 +270,7 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 	
 	OW_CIMQualifierType qt = getQualifierType("INDICATION", pIndicDeclaration->theLineInfo);
 	OW_CIMQualifier q("INDICATION", qt);
+	q.setValue(OW_CIMValue(OW_Bool(true)));
 	m_curClass.addQualifier(q);
 	if ( pIndicDeclaration->pQualifier.get() != 0 )
 	{
@@ -983,7 +985,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 				}
 
 				OW_CIMValue castValue = OW_CIMValueCast::castValueToDataType(
-						m_curProperty.getValue(), 
+						m_curProperty.getValue(),
 						OW_CIMDataType(tempProp.getDataType()));
 
 				if (castValue.getType() == OW_CIMDataType::REFERENCE)
@@ -1121,13 +1123,15 @@ OW_CIMDataType CIMOMVisitor::getQualifierDataType(const OW_String& qualName, con
 
 OW_CIMQualifierType CIMOMVisitor::getQualifierType(const OW_String& qualName, const lineInfo& li)
 {
-	OW_Map<OW_String, OW_CIMQualifierType>::const_iterator i = m_dataTypeCache.find(qualName);
+	OW_String lcqualName = qualName;
+	lcqualName.toLowerCase();
+	OW_Map<OW_String, OW_CIMQualifierType>::const_iterator i = m_dataTypeCache.find(lcqualName);
 	if (i == m_dataTypeCache.end())
 	{
-		m_dataTypeCache[qualName] = CIMOMgetQualifierType(qualName, li);
+		m_dataTypeCache[lcqualName] = CIMOMgetQualifierType(lcqualName, li);
 	}
 	
-	return m_dataTypeCache[qualName];
+	return m_dataTypeCache[lcqualName];
 }
 
 
@@ -1167,7 +1171,9 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 		MofCompiler::theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
 		m_hdl->setQualifierType(OW_CIMObjectPath(m_curQualifierType.getName(), m_namespace.getNameSpace()), m_curQualifierType);
 		// save it in the cache
-		m_dataTypeCache[m_curQualifierType.getName()] = m_curQualifierType;
+		OW_String lcqualName = m_curQualifierType.getName();
+		lcqualName.toLowerCase();
+		m_dataTypeCache[lcqualName] = m_curQualifierType;
 	}
 	catch (const OW_CIMException& ce)
 	{

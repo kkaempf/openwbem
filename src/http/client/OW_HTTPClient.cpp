@@ -50,7 +50,7 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
- : m_sRealm()
+	: m_sRealm()
   	, m_sDigestNonce()
 	, m_sDigestCNonce()
 	, m_iDigestNonceCount(1)
@@ -65,7 +65,6 @@ OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
 	, m_needsConnect(true)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
 	, m_doDeflateOut(false)
-	, m_loginCB(0)
 	, m_retryCount(0)
 {
 	signal(SIGPIPE, SIG_IGN);
@@ -289,7 +288,7 @@ void OW_HTTPClient::sendAuthorization()
 
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_HTTPClient::sendDataToServer( OW_TempFileStream* tfs,
+void OW_HTTPClient::sendDataToServer( OW_Reference<OW_TempFileStream> tfs,
 	const OW_String& methodName, const OW_String& nameSpace )
 {
 	// Make sure our connection is good
@@ -350,7 +349,7 @@ void OW_HTTPClient::sendDataToServer( OW_TempFileStream* tfs,
 	}
 	else
 	{
-		m_ostr << tfs->rdbuf() << flush;
+		m_ostr << tfs->rdbuf() << "\r\n" << flush;
 	}
 
 	m_requestHeadersNew.clear();
@@ -360,17 +359,19 @@ void OW_HTTPClient::sendDataToServer( OW_TempFileStream* tfs,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Reference<std::iostream>
-OW_HTTPClient::getStream()
+OW_HTTPClient::beginRequest(const OW_String& methodName,
+	const OW_String& nameSpace)
 {
-	return OW_Reference<std::iostream>(new OW_TempFileStream());
+	(void)methodName; (void)nameSpace;
+    return OW_Reference<std::iostream>(new OW_TempFileStream());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 istream&
-OW_HTTPClient::sendRequest(istream& request, const OW_String& methodName,
+OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& methodName,
 			const OW_String& nameSpace)
 {
-	OW_TempFileStream* tfs = dynamic_cast<OW_TempFileStream*>(&request);
+	OW_Reference<OW_TempFileStream> tfs = request.cast_to<OW_TempFileStream>();
 	OW_ASSERT(tfs);
 	int len = tfs->getSize();
 
@@ -542,6 +543,7 @@ void
 OW_HTTPClient::sendHeaders(const OW_String& method,
 	const OW_String& prot)
 {
+	m_ostr << "\r\n";
 	m_ostr << method << " " << m_url.path << " " << prot << "\r\n";
 	for (size_t i = 0; i < m_requestHeadersCommon.size(); i++)
 	{

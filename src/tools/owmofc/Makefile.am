@@ -1,7 +1,6 @@
 bin_PROGRAMS = owmofc
 
 INCLUDES = \
--lpthread \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \

@@ -76,7 +76,7 @@ OW_CppIndicationExportXMLHTTPProvider::exportIndication(
 			}
 		}
 
-		OW_IndicationExporter exporter(OW_Reference<OW_CIMProtocol>(
+		OW_IndicationExporter exporter(OW_CIMProtocolIFCRef(
 			new OW_HTTPClient(listenerUrl)));
 		exporter.exportIndication(indicationInst);
 	}

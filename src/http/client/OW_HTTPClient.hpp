@@ -37,14 +37,13 @@
 #include "OW_Map.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_Bool.hpp"
-#include "OW_CIMProtocol.hpp"
-#include "OW_ClientAuthCBIFC.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 
 
 class OW_TempFileStream;
 
-class OW_HTTPClient : public OW_CIMProtocol
+class OW_HTTPClient : public OW_CIMProtocolIFC
 {
 	public:
 		/**
@@ -57,27 +56,23 @@ class OW_HTTPClient : public OW_CIMProtocol
 		OW_HTTPClient( const OW_String& url);
 		virtual ~OW_HTTPClient();
 
-		virtual OW_Reference<std::iostream> getStream();
+		virtual OW_Reference<std::iostream> beginRequest(
+				const OW_String& methodName, const OW_String& nameSpace);
 		/**
 		 * Establishes a connection (if not already connected) to the
-		 * CIMOM and sends an http request.  HTTP headers are added,
-		 * appropriate for the request.  An istream& is returned containing
-		 * the response from the CIMOM, after http header processing is done.
-		 * Adds http headers/etc. to request and sends to server.
-		 * returns the response (with http stuff stripped off
+		 * CIMOM and sends a request.  An istream& is returned containing
+		 * the response from the CIMOM, after protocol processing is done.
 		 * @param request An istream& containing the request to be send to
 		 * 	the CIMOM.
 		 * @param methodName The CIM method that corresponds to the request.
 		 * @nameSpace the namespace the request applies to.
-		 * @return an istream& containing the response from the server,
-		 * 	once the headers have been processed.
+		 * @return an istream& containing the response from the server
 		 * @exception OW_HTTPException
 		 * @exception OW_SocketException
 		 *
 		 */
-		virtual std::istream& sendRequest(std::istream& request,
-				const OW_String& methodName,
-				const OW_String& nameSpace);
+		virtual std::istream& endRequest(OW_Reference<std::iostream> request,
+				const OW_String& methodName, const OW_String& nameSpace);
 
 		/**
 		 * Sends an OPTIONS request to the HTTP server, and reports the
@@ -99,13 +94,6 @@ class OW_HTTPClient : public OW_CIMProtocol
 		 */
 		OW_InetAddress getPeerAddress()  const;
 
-		/**
-		 * Assigns a login callback object.
-		 * @param loginCB A OW_Reference to a OW_ClientAuthCB object
-		 * 	containing the callback method.
-		 */
-		void setLoginCallBack(OW_ClientAuthCBIFCRef loginCB)
-			{ m_loginCB = loginCB; }
 
 
 	private:
@@ -149,7 +137,6 @@ class OW_HTTPClient : public OW_CIMProtocol
 		std::istream& m_istr;
 		std::ostream& m_ostr;
 		OW_Bool m_doDeflateOut;
-		OW_ClientAuthCBIFCRef m_loginCB;
 		int m_retryCount;
 
 
@@ -181,7 +168,7 @@ class OW_HTTPClient : public OW_CIMProtocol
 		OW_String checkResponse(Resp_t& rt);
 		void prepareHeaders();
 
-		void sendDataToServer( OW_TempFileStream* tfs, const OW_String& methodName, const OW_String& nameSpace );
+		void sendDataToServer( OW_Reference<OW_TempFileStream> tfs, const OW_String& methodName, const OW_String& nameSpace );
 
 		OW_HTTPClient(const OW_HTTPClient&);
 		OW_HTTPClient& operator=(const OW_HTTPClient&);

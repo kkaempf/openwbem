@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMProtocol.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 
 
 class OW_BinaryCIMOMHandle : public OW_CIMOMHandleIFC
@@ -51,7 +51,7 @@ public:
 	 * 	// now the binary over ipc connection is established, and
 	 * 	// the remote CIMOM handle can be used.
 	 */
-	OW_BinaryCIMOMHandle( OW_Reference<OW_CIMProtocol> prot );
+	OW_BinaryCIMOMHandle( OW_CIMProtocolIFCRef prot );
 
 	/**
 	 * Create a cim namespace.
@@ -616,7 +616,7 @@ private:
 		OW_Bool deep);
 
 	void checkError(std::istream& istrm);	
-	OW_Reference<OW_CIMProtocol> m_protocol;
+	OW_CIMProtocolIFCRef m_protocol;
 };
 
 #endif

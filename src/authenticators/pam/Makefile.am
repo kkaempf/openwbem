@@ -1,11 +1,12 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
-noinst_LIBRARIES = libowhttpclient.a
-SHAREDLIBADD =
+OW_SHARED_LIBS = libpamauthentication.so
+SHAREDLIBADD = 
 
-OW_SHARED_LIBS = libowhttpclient.so
-thelibdir = $(libdir)
+noinst_LIBRARIES = \
+	libpamauthentication.a 
 
+thelibdir = $(pkglibdir)/authentication
 all-local: $(OW_SHARED_LIBS)
 
 install-exec-local:
@@ -20,16 +21,10 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
-libowhttpclient_a_SOURCES =	\
-OW_HTTPClient.cpp 
-
-pkginclude_HEADERS =	\
-OW_HTTPClient.hpp
+libpamauthentication_a_SOURCES = \
+OW_LinuxPAMAuthentication.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/common/socket \
--I$(top_srcdir)/src/ifcs \
--I$(top_srcdir)/src/client \
--I$(top_srcdir)/src/http/common
+-I$(top_srcdir)/src/ifcs
 

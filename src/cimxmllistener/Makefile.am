@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowhttpxmllistener.so
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD = 
 
 noinst_LIBRARIES = \
 libowhttpxmllistener.a

@@ -66,7 +66,7 @@ static const char* _xmlMessages[] =
 
 
 OW_XMLParseException::OW_XMLParseException(
-		OW_XMLParseException::Code code, 
+		OW_XMLParseException::Code code,
 		unsigned int lineNumber)
 : OW_Exception(format("%1: on line %2", _xmlMessages[code - 1], lineNumber).c_str())
 {
@@ -74,10 +74,10 @@ OW_XMLParseException::OW_XMLParseException(
 }
 
 OW_XMLParseException::OW_XMLParseException(
-		OW_XMLParseException::Code code, 
+		OW_XMLParseException::Code code,
 		unsigned int lineNumber,
-		const char* message) 
-: OW_Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber, 
+		const char* message)
+: OW_Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber,
 	message).c_str())
 {
 
@@ -118,12 +118,8 @@ OW_XMLParseSemanticError::OW_XMLParseSemanticError(
 ////////////////////////////////////////////////////////////////////////////////
 OW_Bool OW_XMLParserSax::next(OW_XMLToken& entry)
 {
-	// Skip over any whitespace:
-
-	_skipWhitespace();
-
 	OW_IstreamBufIterator iterEOF;
-	if (_current == iterEOF)
+	if (_current == iterEOF || *_current == 0)
 	{
 		if (!_stack.empty())
 			throw OW_XMLParseException(OW_XMLParseException::UNCLOSED_TAGS, _line);
@@ -135,6 +131,10 @@ OW_Bool OW_XMLParserSax::next(OW_XMLToken& entry)
 
 	if (*_current == '<')
 	{
+		// Skip over any whitespace:
+
+		_skipWhitespace();
+
 		_current++;
 		_getElement(entry);
 
@@ -192,8 +192,8 @@ OW_Bool OW_XMLParserSax::_getElementName(OW_XMLToken& entry)
 		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
 
 	entry.text.reset();
-	while (*_current && 
-			(isalnum(*_current) || *_current == '_' || *_current == '-' || 
+	while (*_current &&
+			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.'))
 	{
 		entry.text += *_current++;
@@ -223,8 +223,8 @@ OW_Bool OW_XMLParserSax::_getOpenElementName(OW_XMLToken& entry, OW_Bool& openCl
 		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
 
 	entry.text.reset();
-	while (*_current && 
-			(isalnum(*_current) || *_current == '_' || *_current == '-' || 
+	while (*_current &&
+			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.'))
 	{
 		entry.text += *_current++;
@@ -261,12 +261,12 @@ OW_Bool OW_XMLParserSax::_getOpenElementName(OW_XMLToken& entry, OW_Bool& openCl
 void OW_XMLParserSax::_getAttributeNameAndEqual(OW_XMLToken::Attribute& att)
 {
 	if (!isalpha(*_current) && *_current != '_')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME, 
+		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME,
 			_line, format("Expected alpha or _; got %1", *_current).c_str());
 
 	att.name.reset();
-	while (*_current && 
-			(isalnum(*_current) || *_current == '_' || *_current == '-' || 
+	while (*_current &&
+			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.'))
 	{
 		att.name += *_current++;
@@ -275,7 +275,7 @@ void OW_XMLParserSax::_getAttributeNameAndEqual(OW_XMLToken::Attribute& att)
 	_skipWhitespace();
 
 	if (*_current != '=')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME, 
+		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME,
 			_line, format("Expected =; got %1", *_current).c_str());
 
 	_current++;
@@ -289,7 +289,7 @@ void OW_XMLParserSax::_getAttributeValue(OW_XMLToken::Attribute& att)
 	// ATTN-B: handle values contained in semiquotes:
 
 	if (*_current != '"' && *_current != '\'')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE, 
+		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
 			_line, format("Expecting \" or '; got %1", *_current).c_str());
 
 	char startChar = *_current++;
@@ -302,7 +302,7 @@ void OW_XMLParserSax::_getAttributeValue(OW_XMLToken::Attribute& att)
 		
 
 	if (*_current != startChar)
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE, 
+		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
 			_line, format("Expecting %1; Got %2", startChar, (int)*_current).c_str());
 
 	++_current;
@@ -533,7 +533,7 @@ void OW_XMLParserSax::_getElement(OW_XMLToken& entry)
 			}
 			else
 			{
-				throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE, 
+				throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
 					_line, format("Expecting >; Got %1", *_current).c_str());
 			}
 		}

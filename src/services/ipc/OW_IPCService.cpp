@@ -35,6 +35,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Select.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_TempFileStream.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -53,7 +54,7 @@ public:
 		return m_env->getLogger();
 	}
 
-	virtual OW_String getConfigItem(const OW_String &name) const 
+	virtual OW_String getConfigItem(const OW_String &name) const
 	{
 		return (name.equals(OW_BINARY_USER_NAME_OPT)) ? m_userName
 			: m_env->getConfigItem(name);
@@ -103,7 +104,7 @@ private:
 class IPCSelectableCallback : public OW_SelectableCallbackIFC
 {
 public:
-	IPCSelectableCallback(OW_IPCService* pservice) 
+	IPCSelectableCallback(OW_IPCService* pservice)
 		: OW_SelectableCallbackIFC(), m_pservice(pservice) {}
 
 protected:
@@ -254,7 +255,6 @@ OW_IPCConnectionHandler::run()
 
 	try
 	{
-		// TODO: put OW_BINARY_ID in the right spot
 		OW_RequestHandlerIFCRef handler = env->getRequestHandler(OW_BINARY_ID);
 
 		if(!handler)
@@ -308,12 +308,13 @@ OW_IPCConnectionHandler::run()
 					break;
 
 				case OW_IPC_FUNCTIONCALL:
-					handler->process(&istrm, &ostrm, &ostrm, userName);
-					if(handler->hasError())
 					{
-						actionValue = OW_IPC_CLOSECONN;
-						lgr->logDebug(format("IPC Service: Encountered an error"
-							" closing connection to %1", m_conn.getUserName()));
+						OW_TempFileStream tfs;
+						handler->process(&istrm, &ostrm, &tfs, userName);
+						if(handler->hasError())
+						{
+							ostrm << tfs.rdbuf() << flush;
+						}
 					}
 					break;
 

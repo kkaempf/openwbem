@@ -7,6 +7,7 @@ OW_RequestHandlerIFC.cpp
 pkginclude_HEADERS = \
 OW_AuthenticatorIFC.hpp \
 OW_CIMOMHandleIFC.hpp \
+OW_CIMProtocolIFC.hpp \
 OW_IOIFC.hpp \
 OW_RequestHandlerIFC.hpp \
 OW_SelectableCallbackIFC.hpp \

@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+CIM_Min25.mof \
 ACLTest.mof \
 EnumClassesInput.xml \
 GetFeatures.out \

@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMProtocol.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
@@ -54,7 +54,7 @@ public:
 	 * 	// now the XML over HTTPS connection is established, and
 	 * 	// the remote CIMOM handle can be used.
 	 */
-	OW_CIMXMLCIMOMHandle( OW_Reference<OW_CIMProtocol> prot );
+	OW_CIMXMLCIMOMHandle( OW_CIMProtocolIFCRef prot );
 
 	/**
 	 * Create a cim namespace.
@@ -618,8 +618,8 @@ private:
 	void sendXMLHeader( const OW_String &, const OW_CIMObjectPath &,
 		std::ostream& ostr, bool intrinsic = true);
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
-	OW_XMLNode doSendRequest(std::iostream& ostr, const OW_String& methodName,
-	const OW_CIMObjectPath& path);
+	OW_XMLNode doSendRequest(OW_Reference<std::iostream> ostr,
+		const OW_String& methodName, const OW_CIMObjectPath& path);
 	OW_XMLNode checkNodeForCIMError(OW_XMLNode reply,
 		const OW_String& operation); // throws a CIMException
 	OW_XMLNode intrinsicMethod(
@@ -630,7 +630,7 @@ private:
 		OW_Bool deep);
 
 	
-	OW_Reference<OW_CIMProtocol> m_protocol;
+	OW_CIMProtocolIFCRef m_protocol;
 
 	OW_UInt32 m_iMessageID;
 };

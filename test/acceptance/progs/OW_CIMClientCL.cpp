@@ -29,7 +29,9 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
+#include "OW_IPCClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_InetSocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
@@ -1147,6 +1149,7 @@ main(int argc, char* argv[])
 		}
 
 		OW_String url(argv[1]);
+		OW_URL owurl(url);
 
 		/**********************************************************************
 		 * We assign our SSL certificate callback into the OW_SSLCtxMgr.
@@ -1176,7 +1179,15 @@ main(int argc, char* argv[])
 		 * be provided to retrieve authentication credentials.
 		 **********************************************************************/
 
-		OW_HTTPClient* phttpClient = new OW_HTTPClient(url);
+		OW_CIMProtocolIFCRef client;
+		if (owurl.protocol.equalsIgnoreCase("ipc"))
+		{
+			client = new OW_IPCClient(url);
+		}
+		else
+		{
+			client = new OW_HTTPClient(url);
+		}
 
 
 		/**********************************************************************
@@ -1189,7 +1200,7 @@ main(int argc, char* argv[])
 		 * Assign our callback to the HTTP Client.
 		 **********************************************************************/
 
-		phttpClient->setLoginCallBack(getLoginInfo);
+		client->setLoginCallBack(getLoginInfo);
 
 		/**********************************************************************
 		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
@@ -1201,8 +1212,18 @@ main(int argc, char* argv[])
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
 
-		OW_Reference<OW_CIMProtocol> hc(phttpClient);
-		OW_CIMXMLCIMOMHandle rch(hc);
+		OW_CIMOMHandleIFCRef chRef;
+		if (owurl.protocol.equalsIgnoreCase("ipc") ||
+			owurl.path.equalsIgnoreCase("owbinary"))
+		{
+			chRef = new OW_BinaryCIMOMHandle(client);
+		}
+		else
+		{
+			chRef = new OW_CIMXMLCIMOMHandle(client);
+		}
+
+		OW_CIMOMHandleIFC& rch = *chRef;
 
 		/**********************************************************************
 		 * Now we have essentially established a "connection" to the CIM

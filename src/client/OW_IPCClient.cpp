@@ -39,11 +39,10 @@
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IPCClient::OW_IPCClient(const OW_String &url)
-	: OW_CIMProtocol()
+	: OW_CIMProtocolIFC()
 	, m_conn()
 	, m_url(url)
 	, m_authenticated(false)
-	, m_loginCB()
 {
 	m_conn.connect();
 }
@@ -65,21 +64,26 @@ OW_IPCClient::~OW_IPCClient()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Reference<std::iostream>
-OW_IPCClient::getStream()
+OW_IPCClient::beginRequest(const OW_String& methodName,
+	const OW_String& nameSpace)
 {
+	(void)methodName; (void)nameSpace;
+	authenticateIfNeeded();
 	// create no-delete reference, since we can't copy the stream
-	return OW_Reference<std::iostream>(&m_conn.getIOStream(), true);
+	OW_Reference<std::iostream> rval(&m_conn.getIOStream(), true);
+	OW_BinIfcIO::write(*rval, (OW_Int32)OW_IPC_FUNCTIONCALL, OW_Bool(true));
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 istream&
-OW_IPCClient::sendRequest(istream& request, const OW_String& methodName,
+OW_IPCClient::endRequest(OW_Reference<std::iostream> request, const OW_String& methodName,
 			const OW_String& nameSpace)
 {
 	(void)methodName;
 	(void)nameSpace;
-	authenticateIfNeeded();
-	return request;
+	(void)request;
+	return m_conn.getInputStream();
 }
 
 //////////////////////////////////////////////////////////////////////////////

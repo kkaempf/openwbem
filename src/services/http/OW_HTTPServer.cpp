@@ -45,6 +45,7 @@
 #include "OW_HTTPUtils.hpp"
 #include "OW_DigestAuthentication.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_InetSocketBaseImpl.hpp" // for setDumpFiles()
 
 #ifdef OW_HAVE_SLP_H
 #ifdef OW_GNU_LINUX
@@ -193,8 +194,6 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	}
 	m_options.useDigest = !item.equalsIgnoreCase("false");
 
-	// TODO: Fix this
-	//m_options.requestHandler = env->getRequestHandler("CIM/XML");
 	m_options.env = env;
 
 	m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);
@@ -206,6 +205,10 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 		m_digestAuth = OW_Reference<OW_DigestAuthentication>(
 			new OW_DigestAuthentication(passwdFile));
 	}
+
+	OW_InetSocketBaseImpl::setDumpFiles(
+		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpIn",
+		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpOut");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -595,10 +598,6 @@ HTTPSlpRegistrator::run()
 		}
 
 		m_pServer->doSlpRegister();
-		if(m_shuttingDown)
-		{
-			break;
-		}
 	}
 
 	m_isRunning = false;
@@ -609,5 +608,5 @@ HTTPSlpRegistrator::run()
 #endif	// OW_HAVE_SLP_H
 
 //////////////////////////////////////////////////////////////////////////////
-// This allow the http server to be dynamically loaded
+// This allows the http server to be dynamically loaded
 OW_SERVICE_FACTORY(OW_HTTPServer)

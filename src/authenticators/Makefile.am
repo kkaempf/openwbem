@@ -1,2 +1,4 @@
 SUBDIRS = \
-simple
+simple \
+pam \
+pamcl

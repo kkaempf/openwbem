@@ -32,14 +32,14 @@
 #define OW_INDICATION_EXPORTER_HPP_
 
 #include "OW_config.h"
-#include "OW_CIMProtocol.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
 class OW_IndicationExporter : OW_XMLQualifier
 {
 public:
-	OW_IndicationExporter( OW_Reference<OW_CIMProtocol> prot );
+	OW_IndicationExporter( OW_CIMProtocolIFCRef prot );
 
 	/**
 	 * Export the indication.
@@ -52,12 +52,12 @@ public:
 private:
 	void sendXMLHeader(std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr);
-	OW_XMLNode doSendRequest(std::iostream& ostr, const OW_String& methodName,
+	OW_XMLNode doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
 		const OW_CIMObjectPath& path);
 	OW_XMLNode checkNodeForCIMError(OW_XMLNode reply,
 		const OW_String& operation); // throws a CIMException
 	
-	OW_Reference<OW_CIMProtocol> m_protocol;
+	OW_CIMProtocolIFCRef m_protocol;
 
 	OW_Int32 m_iMessageID;
 

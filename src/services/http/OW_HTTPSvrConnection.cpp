@@ -46,6 +46,7 @@
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMFeatures.hpp"
+#include "OW_HTTPException.hpp"
 
 using std::ios;
 using std::istream;
@@ -974,10 +975,20 @@ OW_HTTPSvrConnection::post(istream& istr)
 */
 
 	// set the path for the handler
-
-	// TODO: Fix this to get the id from the path somehow
-	m_requestHandler =
-		m_options.env->getRequestHandler(OW_CIMXML_ID);
+	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
+	{
+		m_options.env->getLogger()->logDebug("Using binary request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
+	}
+	else
+	{
+		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
+	}
+	if (!m_requestHandler)
+	{
+		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
+	}
 
 	// create a wrapper environment that will report the path to the
 	// request handler
@@ -1017,8 +1028,20 @@ OW_HTTPSvrConnection::options(istream& istr)
 	OW_CIMFeatures cf;
 	
 	// set the path for the handler
-	m_requestHandler =
-		m_options.env->getRequestHandler(OW_CIMXML_ID);
+	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
+	{
+		m_options.env->getLogger()->logDebug("Using binary request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
+	}
+	else
+	{
+		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
+	}
+	if (!m_requestHandler)
+	{
+		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
+	}
 
 	// create a wrapper environment that will report the path to the
 	// request handler

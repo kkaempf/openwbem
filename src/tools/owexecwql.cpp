@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 		{
 			OW_HTTPClient* pHttpClient = new OW_HTTPClient(url);
 			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_Reference<OW_CIMProtocol> httpClient(pHttpClient);
+			OW_CIMProtocolIFCRef httpClient(pHttpClient);
 			rch = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(httpClient));
 		}
 

@@ -38,6 +38,8 @@
 #include "OW_CIMScope.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMDataType.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_XMLCIMFactory.hpp"
 
 // Static
 OW_XMLNode
@@ -112,40 +114,37 @@ OW_XMLQualifier::processQualifierDecl(const OW_XMLNode& result,
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TRANSLATE));
 	}
 
-	OW_XMLNode scope = result.getChild();
-	if(!scope)
+	OW_XMLNode child = result.getChild();
+	if(child)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Could not find child element for scope");
-	}
+		OW_XMLNode scopeNode = child.findElement(OW_XMLNode::XML_ELEMENT_SCOPE);
 
-  	OW_XMLNode scopeNode = scope.findElement(OW_XMLNode::XML_ELEMENT_SCOPE);
-
-	if(!scopeNode)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Could not find scope");
-	}
-
-	processScope(scope,cimQualifier,"CLASS",OW_CIMScope::CLASS);
-	processScope(scope,cimQualifier,"INSTANCE",OW_CIMScope::INSTANCE);
-	processScope(scope,cimQualifier,"ASSOCIATION",OW_CIMScope::ASSOCIATION);
-	processScope(scope,cimQualifier,"REFERENCE",OW_CIMScope::REFERENCE);
-	processScope(scope,cimQualifier,"PROPERTY",OW_CIMScope::PROPERTY);
-	processScope(scope,cimQualifier,"METHOD",OW_CIMScope::METHOD);
-	processScope(scope,cimQualifier,"PARAMETER",OW_CIMScope::PARAMETER);
-	processScope(scope,cimQualifier,"INDICATION",OW_CIMScope::INDICATION);
-
-	OW_XMLNode valueNode = scope.findElement(OW_XMLNode::XML_ELEMENT_VALUE);
-	if(!scopeNode) // TODO is this right? test scopeNode?
-	{
-		valueNode = scope.findElement(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY);
-		if(!scopeNode) // TODO is this right? test scopeNode?
+		if(scopeNode)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					"Could not find value or array or values");
+			processScope(child,cimQualifier,"CLASS",OW_CIMScope::CLASS);
+			processScope(child,cimQualifier,"INSTANCE",OW_CIMScope::INSTANCE);
+			processScope(child,cimQualifier,"ASSOCIATION",OW_CIMScope::ASSOCIATION);
+			processScope(child,cimQualifier,"REFERENCE",OW_CIMScope::REFERENCE);
+			processScope(child,cimQualifier,"PROPERTY",OW_CIMScope::PROPERTY);
+			processScope(child,cimQualifier,"METHOD",OW_CIMScope::METHOD);
+			processScope(child,cimQualifier,"PARAMETER",OW_CIMScope::PARAMETER);
+			processScope(child,cimQualifier,"INDICATION",OW_CIMScope::INDICATION);
+		}
+
+		OW_XMLNode valueNode = child.findElement(OW_XMLNode::XML_ELEMENT_VALUE);
+		if(!valueNode)
+		{
+			valueNode = child.findElement(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY);
+		}
+
+		if(valueNode)
+		{
+			OW_CIMValue val = OW_XMLCIMFactory::createValue(valueNode,qualType);
+			cimQualifier.setDefaultValue(val);
 		}
 	}
+
+
 	return result.getNext();
 }
 
@@ -154,7 +153,6 @@ void
 OW_XMLQualifier::processScope(const OW_XMLNode& result,
 		OW_CIMQualifierType& cqt, const OW_String& attrName,
 		int scopeValue)
-		/*throw (OW_CIMException)*/
 {
 	OW_String scope = result.getAttribute(attrName);
 	if(scope.length() == 0)
@@ -163,7 +161,6 @@ OW_XMLQualifier::processScope(const OW_XMLNode& result,
 	}
 	if(scope.equalsIgnoreCase("true"))
 	{
-		//cqt.addScope(OW_CIMScope::getScope()); //TODO arg? // scopeValue));
 		cqt.addScope(OW_CIMScope(scopeValue));
 	}
 	else if(!scope.equalsIgnoreCase("false"))
@@ -203,4 +200,4 @@ const char* const OW_XMLQualifier::XMLP_QUALIFIERNAME = "QualifierName";
 const char* const OW_XMLQualifier::XMLP_QUALIFIERDECL = "QualifierDeclaration";
 const char* const OW_XMLQualifier::paramISARRAY="ISARRAY";
 const char* const OW_XMLQualifier::paramQualifierFlavor="QualifierFlavor";
-const char* const OW_XMLQualifier::paramArraySize="ArraySize"; 
+const char* const OW_XMLQualifier::paramArraySize="ArraySize";

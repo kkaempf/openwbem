@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowwql.so
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD =
 thelibdir = $(libdir)
 
 all-local: $(OW_SHARED_LIBS)

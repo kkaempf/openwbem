@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 	try
 	{
 		OW_String url = argv[1];
-		OW_Reference<OW_CIMProtocol> httpClient( new OW_HTTPClient(url) );
+		OW_CIMProtocolIFCRef httpClient( new OW_HTTPClient(url) );
 		OW_CIMXMLCIMOMHandle rch(httpClient);
 
 		OW_CIMInstanceArray cia;

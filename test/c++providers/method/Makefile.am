@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libmethodtest.a 
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD =
 
 
 OW_SHARED_LIBS = libmethodtest.so

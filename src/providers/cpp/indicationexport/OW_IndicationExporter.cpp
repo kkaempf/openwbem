@@ -39,7 +39,7 @@ using std::ostream;
 using std::istream;
 using std::iostream;
 
-OW_IndicationExporter::OW_IndicationExporter( OW_Reference<OW_CIMProtocol> prot )
+OW_IndicationExporter::OW_IndicationExporter( OW_CIMProtocolIFCRef prot )
 	: m_protocol(prot), m_iMessageID(0)
 {
 }
@@ -51,17 +51,16 @@ OW_IndicationExporter::exportIndication( const OW_CIMInstance& ci )
 	static const char* const commandName = "ExportIndication";
 	OW_Array<OW_Param> params;
 	
-	OW_TempFileStream iostr;
-	sendXMLHeader(iostr);
-	iostr << "<IPARAMVALUE NAME=\"NewIndication\">";
-	OW_CIMtoXML(ci, iostr, OW_CIMObjectPath(),
+	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
+	sendXMLHeader(*iostr);
+	*iostr << "<IPARAMVALUE NAME=\"NewIndication\">";
+	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
-	//ci.toXML(iostr);
-	iostr << "</IPARAMVALUE>";
-	sendXMLTrailer(iostr);
+	*iostr << "</IPARAMVALUE>";
+	sendXMLTrailer(*iostr);
 	doSendRequest(iostr, commandName, path);
 }
 
@@ -90,10 +89,10 @@ OW_IndicationExporter::sendXMLTrailer(ostream& ostr)
 }
 	
 OW_XMLNode
-OW_IndicationExporter::doSendRequest(iostream& ostr, const OW_String& methodName,
+OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_String& methodName,
 		const OW_CIMObjectPath& path)
 {
-	istream& istr = m_protocol->sendRequest(ostr, methodName,
+	istream& istr = m_protocol->endRequest(ostr, methodName,
 		path.getNameSpace());
 
 	// Debug stuff

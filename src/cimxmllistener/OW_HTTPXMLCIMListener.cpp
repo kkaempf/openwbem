@@ -293,7 +293,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	OW_HTTPClient* pHttpClient = new OW_HTTPClient( curl.toString() );
 	OW_String ipAddress = pHttpClient->getLocalAddress().getAddress();
-	OW_Reference<OW_CIMProtocol> client( pHttpClient );
+	OW_CIMProtocolIFCRef client( pHttpClient );
 
 	OW_CIMXMLCIMOMHandle hdl(client);
 
@@ -466,7 +466,7 @@ void
 OW_HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 {
 	OW_HTTPClient* pHttpClient = new OW_HTTPClient( reg.cimomUrl.toString() );
-	OW_Reference<OW_CIMProtocol> client( pHttpClient );
+	OW_CIMProtocolIFCRef client( pHttpClient );
 	OW_CIMXMLCIMOMHandle hdl(client);
 
 	hdl.deleteInstance(reg.subscription);

@@ -130,7 +130,6 @@ public:
 		OW_Int32 httpPort;
 		OW_Int32 httpsPort;
 		OW_Int32 maxConnections;
-		//OW_RequestHandlerIFCRef requestHandler;
 		bool isSepThread;
 		bool enableDeflate;
 		bool useDigest;

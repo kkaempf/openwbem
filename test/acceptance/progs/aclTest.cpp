@@ -795,7 +795,7 @@ int main(int argc, char* argv[])
 
 		OW_String url(argv[1]);
 
-		OW_Reference<OW_CIMProtocol> hc(new OW_HTTPClient(url));
+		OW_CIMProtocolIFCRef hc(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(hc);
 
 		createNameSpace(rch);

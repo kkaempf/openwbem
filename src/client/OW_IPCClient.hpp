@@ -33,11 +33,10 @@
 
 #include "OW_config.h"
 #include "OW_Bool.hpp"
-#include "OW_CIMProtocol.hpp"
-#include "OW_ClientAuthCBIFC.hpp"
+#include "OW_CIMProtocolIFC.hpp"
 #include "OW_IPCConnection.hpp"
 
-class OW_IPCClient : public OW_CIMProtocol
+class OW_IPCClient : public OW_CIMProtocolIFC
 {
 	public:
 		/**
@@ -50,27 +49,24 @@ class OW_IPCClient : public OW_CIMProtocol
 		OW_IPCClient( const OW_String& url);
 		virtual ~OW_IPCClient();
 
-		virtual OW_Reference<std::iostream> getStream();
+		//virtual OW_Reference<std::iostream> getStream();
+		virtual OW_Reference<std::iostream> beginRequest(
+				const OW_String& methodName, const OW_String& nameSpace);
 		/**
 		 * Establishes a connection (if not already connected) to the
-		 * CIMOM and sends an http request.  HTTP headers are added,
-		 * appropriate for the request.  An istream& is returned containing
-		 * the response from the CIMOM, after http header processing is done.
-		 * Adds http headers/etc. to request and sends to server.
-		 * returns the response (with http stuff stripped off
+		 * CIMOM and sends a request.  An istream& is returned containing
+		 * the response from the CIMOM, after protocol processing is done.
 		 * @param request An istream& containing the request to be send to
 		 * 	the CIMOM.
 		 * @param methodName The CIM method that corresponds to the request.
 		 * @nameSpace the namespace the request applies to.
-		 * @return an istream& containing the response from the server,
-		 * 	once the headers have been processed.
+		 * @return an istream& containing the response from the server
 		 * @exception OW_HTTPException
 		 * @exception OW_SocketException
 		 *
 		 */
-		virtual std::istream& sendRequest(std::istream& request,
-				const OW_String& methodName,
-				const OW_String& nameSpace);
+		virtual std::istream& endRequest(OW_Reference<std::iostream> request,
+				const OW_String& methodName, const OW_String& nameSpace);
 
 		/**
 		 * Sends an OPTIONS request to the HTTP server, and reports the
@@ -80,9 +76,6 @@ class OW_IPCClient : public OW_CIMProtocol
 		virtual OW_CIMFeatures getFeatures();
 
 
-		void setLoginCallBack(OW_ClientAuthCBIFCRef loginCB)
-			{ m_loginCB = loginCB; }
-
 		OW_Bool authenticate(const OW_String& userName,
 			const OW_String& info, OW_String& details, OW_Bool throwIfFailure);
 
@@ -91,7 +84,6 @@ class OW_IPCClient : public OW_CIMProtocol
 		OW_IPCConnection m_conn;
 		OW_String m_url;
 		OW_Bool m_authenticated;
-		OW_ClientAuthCBIFCRef m_loginCB;
 		
 		void authenticateIfNeeded();
 		void checkError();

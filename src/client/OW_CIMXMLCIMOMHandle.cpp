@@ -61,7 +61,7 @@ using std::istream;
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_Reference<OW_CIMProtocol> prot)
+OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
 : OW_CIMOMHandleIFC(), m_protocol(prot)
 {
 	m_iMessageID = 0;
@@ -130,11 +130,11 @@ OW_CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLNode
-OW_CIMXMLCIMOMHandle::doSendRequest(iostream& ostr, const OW_String& methodName,
+OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const OW_String& methodName,
 												const OW_CIMObjectPath& path)
 {
-	istream& istr = m_protocol->sendRequest(ostr, methodName,
-														 path.getNameSpace());
+	istream& istr = m_protocol->endRequest(ostrRef, methodName,
+											 path.getNameSpace());
 	// Debug stuff
 	/*
 	OW_TempFileStream buf;
@@ -816,7 +816,8 @@ OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 											  const OW_CIMValueArray& inParams,
 											  OW_CIMValueArray& outParams)
 {
-	OW_Reference<std::iostream> iostrRef = m_protocol->getStream();
+	OW_Reference<std::iostream> iostrRef =
+		m_protocol->beginRequest(methodName, name.getNameSpace());
 	std::iostream& tfs = *iostrRef;
 
 	OW_CIMClass cc = getClass(name);
@@ -856,7 +857,7 @@ OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 
 	sendXMLTrailer(tfs, false);
 
-	OW_XMLNode node = doSendRequest(tfs, methodName, name);
+	OW_XMLNode node = doSendRequest(iostrRef, methodName, name);
 
 	node = node.mustGetChild();
 
@@ -1448,7 +1449,7 @@ OW_CIMXMLCIMOMHandle::intrinsicMethod(
 	  				 const OW_CIMObjectPath& path, const OW_String& operation,
 	  				 const OW_Array<OW_Param>& params, const OW_String& extra)
 {
-	OW_Reference<std::iostream> iostrRef = m_protocol->getStream();
+	OW_Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, path.getNameSpace());
 	std::iostream& iostr = *iostrRef;
 
 	sendXMLHeader( operation, path, iostr);
@@ -1462,7 +1463,7 @@ OW_CIMXMLCIMOMHandle::intrinsicMethod(
 		iostr << extra;
 	}
 	sendXMLTrailer(iostr);
-	return doSendRequest(iostr, operation, path);
+	return doSendRequest(iostrRef, operation, path);
 }
 
 

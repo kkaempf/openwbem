@@ -106,7 +106,7 @@ OW_BinaryRequestHandler::doGetId() const
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* /*ostrError*/, const OW_String& userName)
+	std::ostream* ostrError, const OW_String& userName)
 {
 	OW_Int32 funcNo = 0;
 
@@ -277,7 +277,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 				default:
 					lgr->logDebug(format("OW_BinaryRequestHandler: Received"
 						" invalid function number: %1", funcNo));
-					writeError(*ostrm, "Invalid function number");
+					writeError(*ostrError, "Invalid function number");
 					break;
 			}
 		}
@@ -285,12 +285,13 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		{
 			lgr->logDebug(format("CIM Exception caught in"
 				" OW_BinaryRequestHandler: %1", e));
-			OW_BinIfcIO::write(*ostrm, OW_Int32(OW_BIN_EXCEPTION),
+			OW_BinIfcIO::write(*ostrError, OW_Int32(OW_BIN_EXCEPTION),
 				OW_Bool(true));
-			OW_BinIfcIO::write(*ostrm, OW_Int32(e.getErrNo()),
+			OW_BinIfcIO::write(*ostrError, OW_Int32(e.getErrNo()),
 				OW_Bool(true));
-			OW_BinIfcIO::write(*ostrm, e.getMessage(),
+			OW_BinIfcIO::write(*ostrError, e.getMessage(),
 				OW_Bool(true));
+			m_isError = true;
 		}
 	}
 	catch(OW_Exception& e)

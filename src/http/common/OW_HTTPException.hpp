@@ -61,7 +61,7 @@ private:
 	int m_response;
 };
 
-#define OW_HTTP_THROW(exType, msg, code) throw exType(OW_CUR_FILE, OW_CUR_LINE, msg, code)
+#define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
 
 #endif //__HTTPEXCEPTION_HPP__

@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libowindicationserver.a libowindicationreplayer.a
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD = 
 
 OW_SHARED_LIBS = libowindicationserver.so libowindicationreplayer.so
 thelibdir = $(libdir)/openwbem

@@ -103,22 +103,27 @@ int main(int argc, char** argv)
 		OW_URL url(argv[1]);
 		OW_Reference<OW_CIMOMHandleIFC> handle;
 		OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
+		OW_CIMProtocolIFCRef client;
 		
 		if(url.protocol.equalsIgnoreCase("IPC"))
 		{
-			OW_IPCClient *ipchdl = new OW_IPCClient(argv[1]);
-			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_Reference<OW_CIMProtocol> ipcClient(ipchdl);
-			handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(ipcClient));
+			client = new OW_IPCClient(argv[1]);
+			handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
 		}
 		else
 		{
-			OW_HTTPClient* pHttpClient = new OW_HTTPClient(argv[1]);
-			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_Reference<OW_CIMProtocol> httpClient(pHttpClient);
-			handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(
-				httpClient));
+			client = new OW_HTTPClient(argv[1]);
+			if (url.path.equalsIgnoreCase("/owbinary"))
+			{
+				handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
+			}
+			else
+			{
+				handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(
+					client));
+			}
 		}
+		client->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
 
 		MofCompiler theCompiler(handle, argv[2], theErrorHandler);
 		errors = theCompiler.compile(argv[3]);
