@@ -1870,7 +1870,7 @@ const UInt32 LockTimeout = 300; // seconds - 5 mins.
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
+CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
 	switch (op)
 	{

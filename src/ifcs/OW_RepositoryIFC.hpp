@@ -463,7 +463,7 @@ public:
 		const String&);
 
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context) = 0;
-	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context) = 0;
+	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result) = 0;
 };
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef>

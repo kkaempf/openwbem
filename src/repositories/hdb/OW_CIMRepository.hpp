@@ -540,7 +540,7 @@ public:
 		OperationContext& context);
 	
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
-	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
