@@ -221,6 +221,12 @@
 				RelativePath="..\..\..\..\src\common\OW_Condition.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_DateTime.cpp">
 			</File>
 			<File
@@ -282,6 +288,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_RandomNumber.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ReferenceBase.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ReferenceBase.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_RepositoryIFC.cpp">
