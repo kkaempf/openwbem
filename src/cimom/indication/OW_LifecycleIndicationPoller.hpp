@@ -46,7 +46,7 @@ namespace OpenWBEM
 class LifecycleIndicationPoller : public CppPolledProviderIFC
 {
 public:
-	LifecycleIndicationPoller(const String& ns, const String& className,
+	LifecycleIndicationPoller(const String& ns, const CIMName& className,
 		UInt32 pollInterval);
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env);
 	virtual Int32 poll(const ProviderEnvironmentIFCRef &env);
@@ -73,7 +73,7 @@ public:
 private:
 	UInt32 getPollInterval() const;
 	String m_ns;
-	String m_classname;
+	CIMName m_classname;
 	UInt32 m_pollInterval;
 	UInt32 m_pollCreation;
 	UInt32 m_pollModification;

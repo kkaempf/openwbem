@@ -60,7 +60,7 @@ class OW_COMMON_API CIMClass : public CIMElement
 public:
 	struct CLSData;
 	/** Name of the internal namespace class */
-	static const char* const NAMESPACECLASS;
+	static const char* const NAMESPACECLASS OW_DEPRECATED; // in 3.1.0
 
 	/**
 	 * Binary serialization version.
@@ -102,10 +102,12 @@ public:
 	 */
 	virtual void setNull();
 	/**
+	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of the parent CIM class of this CIMClass object.
 	 */
 	String getSuperClass() const;
 	/**
+	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of the CIM class that declared the keys for this class.
 	 */
 	String getKeyClass() const;
@@ -318,7 +320,7 @@ public:
 	 *		appropriate component filtered according to the parameters.
 	 */
 	CIMClass clone(
-		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY, 
+		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
 		const StringArray& propertyList=StringArray(),
@@ -342,13 +344,13 @@ public:
 	 * expensive operations needlessly.
 	 * @param localOnly If true, don't include superclass properties.
 	 * @param deep If true, include subclass properties.
-	 * @param propertyList A list that specifies the properties list of 
+	 * @param propertyList A list that specifies the properties list of
 	 *		properties that can be returned.
 	 * @param requestedClass The class that was requested in enumInstances.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
 	StringArray getCloneProps(
-		WBEMFlags::ELocalOnlyFlag localOnly, 
+		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EDeepFlag deep,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass) const;
@@ -359,7 +361,7 @@ public:
 	 * of the properties that the client requested, so it can avoid doing
 	 * expensive operations needlessly.
 	 * @param localOnly If true, don't include superclass properties.
-	 * @param propertyList A list that specifies the properties list of 
+	 * @param propertyList A list that specifies the properties list of
 	 *		properties that can be returned.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
@@ -369,6 +371,7 @@ public:
 	// CIMElement implementation
 	//////////////////////////////////////////////////////////////////////
 	/**
+	 * In the future, this function will be changed to return a CIMName
 	 * @return The name associated with this CIMClass object as an String
 	 * object.
 	 */

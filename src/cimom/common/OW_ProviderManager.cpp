@@ -477,9 +477,9 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRefArray
 ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
-	const String& ns, const String& className) const
+	const String& ns, const CIMName& className) const
 {
-	String lowerName = className;
+	String lowerName = className.toString();
 	lowerName.toLowerCase();
 	MultiProvRegMap_t::const_iterator lci;
 	MultiProvRegMap_t::const_iterator uci;
@@ -517,7 +517,7 @@ MethodProviderIFCRef
 ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const CIMClass& cc, const CIMMethod& method) const
 {
-	String methodName = method.getName();
+	CIMName methodName = method.getName();
 	// lookup just the class name to see if a provider registered for the
 	// class in all namespaces.
 	ProvRegMap_t::const_iterator ci = m_registeredMethProvs.find(cc.getName().toLowerCase());
@@ -528,7 +528,7 @@ ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	}
 	// next lookup classname/methodname to see if we've got one for the
 	// specific class/method for any namespace
-	String classAndMethodName = cc.getName() + '/' + methodName;
+	String classAndMethodName = cc.getName() + '/' + methodName.toString();
 	classAndMethodName.toLowerCase();
 	ci = m_registeredMethProvs.find(classAndMethodName);
 	if (ci != m_registeredMethProvs.end())
@@ -548,7 +548,7 @@ ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	}
 	// next lookup namespace:classname/methodname to see if we've got one for the
 	// specific namespace/class/method
-	String name = ns + ':' + cc.getName() + '/' + methodName;
+	String name = ns + ':' + cc.getName() + '/' + methodName.toString();
 	name.toLowerCase();
 	ci = m_registeredMethProvs.find(name);
 	if (ci != m_registeredMethProvs.end())
@@ -665,14 +665,14 @@ namespace
 {
 void findIndicationProviders(const ProviderEnvironmentIFCRef& env,
 	const String& ns,
-	const String& className,
+	const CIMName& className,
 	const ProviderManager::MultiProvRegMap_t& indProvs,
 	IndicationProviderIFCRefArray& rval)
 {
 	// lookup just the class className to see if a provider registered for the
 	// class in all classNamespaces.
 	typedef ProviderManager::MultiProvRegMap_t::const_iterator citer_t;
-	std::pair<citer_t, citer_t> range = indProvs.equal_range(className);
+	std::pair<citer_t, citer_t> range = indProvs.equal_range(className.toString());
 	citer_t lci = range.first;
 	citer_t uci = range.second;
 	if (lci == indProvs.end())
@@ -680,7 +680,7 @@ void findIndicationProviders(const ProviderEnvironmentIFCRef& env,
 		// didn't find any, so
 		// next lookup Namespace:className to see if we've got one for the
 		// specific Namespace
-		String nsAndClassName = ns + ':' + className;
+		String nsAndClassName = ns + ':' + className.toString();
 		nsAndClassName.toLowerCase();
 		range = indProvs.equal_range(nsAndClassName);
 		lci = range.first;
@@ -701,11 +701,11 @@ void findIndicationProviders(const ProviderEnvironmentIFCRef& env,
 //////////////////////////////////////////////////////////////////////////////
 IndicationProviderIFCRefArray
 ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
-	const String& ns, const String& indicationClassName,
-	const StringArray& monitoredClassNames) const
+	const String& ns, const CIMName& indicationClassName,
+	const CIMNameArray& monitoredClassNames) const
 {
 	IndicationProviderIFCRefArray providers;
-	String lowerName = indicationClassName;
+	String lowerName = indicationClassName.toString();
 	lowerName.toLowerCase();
 
 	// first get all the non-lifecycle indication providers
@@ -722,7 +722,7 @@ ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 		for (size_t i = 0; i < monitoredClassNames.size(); ++i)
 		{
 			// lookup indicationClassName/monitoredClassName
-			String key = lowerName + '/' + monitoredClassNames[i];
+			String key = lowerName + '/' + monitoredClassNames[i].toString();
 			key.toLowerCase();
 			findIndicationProviders(env, ns, key, m_registeredIndProvs, providers);
 		}

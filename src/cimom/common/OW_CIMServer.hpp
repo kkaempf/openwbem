@@ -574,12 +574,12 @@ public:
 
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 public:
-	void _getCIMInstanceNames(const String& ns, const String& className,
+	void _getCIMInstanceNames(const String& ns, const CIMName& className,
 		const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result,
 		OperationContext& context);
 	void _getCIMInstances(
 		const String& ns,
-		const String& className,
+		const CIMName& className,
 		const CIMClass& theTopClass,
 		const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
@@ -605,36 +605,36 @@ private:
 	void _commonAssociators(
 		const String& ns,
 		const CIMObjectPath& path,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 		CIMObjectPathResultHandlerIFC* popresult,
 		CIMClassResultHandlerIFC* pcresult,
 		OperationContext& context);
 	void _dynamicAssociators(const CIMObjectPath& path,
-		const CIMClassArray& assocClasses, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMClassArray& assocClasses, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 		CIMObjectPathResultHandlerIFC* popresult, OperationContext& context);
 	void _commonReferences(
 		const String& ns,
 		const CIMObjectPath& path,
-		const String& resultClass, const String& role,
+		const CIMName& resultClass, const CIMName& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 		CIMObjectPathResultHandlerIFC* popresult,
 		CIMClassResultHandlerIFC* pcresult,
 		OperationContext& context);
 	void _dynamicReferences(const CIMObjectPath& path,
-		const CIMClassArray& dynamicAssocs, const String& role,
+		const CIMClassArray& dynamicAssocs, const CIMName& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 		CIMObjectPathResultHandlerIFC* popresult, OperationContext& context);
 	void _getAssociationClasses(const String& ns,
-		const String& assocClassName, const String& className,
-		CIMClassResultHandlerIFC& result, const String& role, OperationContext& context);
+		const CIMName& assocClassName, const CIMName& className,
+		CIMClassResultHandlerIFC& result, const CIMName& role, OperationContext& context);
 #endif
 	/**
 	 * Get the special __Namespace class
@@ -642,16 +642,16 @@ private:
 	 * @return If className is __Namespace a valid CIMClass. Otherwise a
 	 * null CIMClass.
 	 */
-	CIMClass _getNameSpaceClass(const String& className);
+	CIMClass _getNameSpaceClass(const CIMName& className);
 	InstanceProviderIFCRef _getInstanceProvider(const String& ns,
 		const CIMClass& cls, OperationContext& context);
-	SecondaryInstanceProviderIFCRefArray _getSecondaryInstanceProviders(const String& ns, const String& className, OperationContext& context);
+	SecondaryInstanceProviderIFCRefArray _getSecondaryInstanceProviders(const String& ns, const CIMName& className, OperationContext& context);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderIFCRef _getAssociatorProvider(const String& ns, const CIMClass& cls, OperationContext& context);
 #endif
 private:
-	CIMClass _instGetClass(const String& ns, const String& className,
+	CIMClass _instGetClass(const String& ns, const CIMName& className,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, OperationContext& context);

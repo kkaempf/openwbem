@@ -205,10 +205,10 @@ WQLFilterRep::enumInstances(
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, OperationContext& context)
 {
-	String superClassName = m_inst.getClassName();
-	while (!superClassName.empty())
+	CIMName superClassName = m_inst.getClassName();
+	while (superClassName != CIMName())
 	{
-		if (superClassName.equalsIgnoreCase(className))
+		if (superClassName == className)
 		{
 			// Don't need to do correct localOnly & deep processing.
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
@@ -218,7 +218,7 @@ WQLFilterRep::enumInstances(
 			break;
 		}
 		
-		superClassName = m_pCIMServer->getClass(ns, superClassName,
+		superClassName = m_pCIMServer->getClass(ns, superClassName.toString(),
 			E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN,
 			NULL, context).getSuperClass();
 	}

@@ -48,7 +48,7 @@ WQLInstancePropertySource::~WQLInstancePropertySource()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////	
-bool WQLInstancePropertySource::evaluateISA(const String &propertyName, const String &className) const 
+bool WQLInstancePropertySource::evaluateISA(const String &propertyName, const String &className) const
 {
 	StringArray propNames = propertyName.tokenize(".");
 	if (propNames.empty())
@@ -62,7 +62,7 @@ bool WQLInstancePropertySource::evaluateISA(const String &propertyName, const St
 	return evaluateISAAux(ci, propNames, className);
 }
 ///////////////////////////////////////////////////////////////////////////////	
-bool WQLInstancePropertySource::getValue(const String &propertyName, WQLOperand &value) const 
+bool WQLInstancePropertySource::getValue(const String &propertyName, WQLOperand &value) const
 {
 	StringArray propNames = propertyName.tokenize(".");
 	if (propNames.empty())
@@ -76,7 +76,7 @@ bool WQLInstancePropertySource::getValue(const String &propertyName, WQLOperand 
 	return getValueAux(ci, propNames, value);
 }
 ///////////////////////////////////////////////////////////////////////////////	
-bool WQLInstancePropertySource::evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const 
+bool WQLInstancePropertySource::evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const
 {
 	if (propNames.empty())
 	{
@@ -108,15 +108,15 @@ bool WQLInstancePropertySource::evaluateISAAux(const CIMInstance& ci, StringArra
 ///////////////////////////////////////////////////////////////////////////////	
 bool WQLInstancePropertySource::classIsDerivedFrom(const String& cls, const String& className) const
 {
-	String curClassName = cls;
-	while (!curClassName.empty())
+	CIMName curClassName = cls;
+	while (curClassName != CIMName())
 	{
-		if (curClassName.equalsIgnoreCase(className))
+		if (curClassName == className)
 		{
 			return true;
 		}
 		// didn't match, so try the superclass of curClassName
-		CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
+		CIMClass cls2 = m_hdl->getClass(m_ns, curClassName.toString());
 		curClassName = cls2.getSuperClass();
 	}
 	return false;

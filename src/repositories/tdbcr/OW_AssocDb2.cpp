@@ -195,9 +195,9 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance,
 					{
 						objectName.setNameSpace(ns);
 					}
-					String resultClass = associatedObject.getClassName();
-					String role = propRa[i].getName();
-					String resultRole = propRa[j].getName();
+					CIMName resultClass = associatedObject.getClassName();
+					CIMName role = propRa[i].getName();
+					CIMName resultRole = propRa[j].getName();
 					if (add)
 					{
 						addEntry(objectName, assocClass, resultClass,
@@ -241,7 +241,7 @@ AssocDb2::deleteEntries(const String& ns, const CIMClass& assocClass)
 void
 AssocDb2::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add)
 {
-	String assocClassName = assocClass.getName();
+	CIMName assocClassName = assocClass.getName();
 	CIMObjectPath assocClassPath(assocClassName, ns);
 	// search for references
 	CIMPropertyArray propRa = assocClass.getAllProperties();
@@ -263,9 +263,9 @@ AssocDb2::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool 
 					// found another reference, now set up the vars we need
 					// and create index entries.
 					CIMObjectPath objectName(p1.getDataType().getRefClassName(), ns);
-					String resultClass = p2.getDataType().getRefClassName();
-					String role = p1.getName();
-					String resultRole = p2.getName();
+					CIMName resultClass = p2.getDataType().getRefClassName();
+					CIMName role = p1.getName();
+					CIMName resultRole = p2.getName();
 					CIMObjectPath associatedObject(resultClass, ns);
 					if (add)
 					{

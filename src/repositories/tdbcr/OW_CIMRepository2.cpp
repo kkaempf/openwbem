@@ -1446,7 +1446,7 @@ CIMRepository2::_staticAssociatorsClass(
 	OperationContext& context)
 {
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getClassName();
+	CIMName curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{
@@ -1487,7 +1487,7 @@ CIMRepository2::_staticReferencesClass(const CIMObjectPath& path,
 	OperationContext& context)
 {
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getClassName();
+	CIMName curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{

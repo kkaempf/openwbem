@@ -279,7 +279,7 @@ CIMClass
 createClass(CIMXMLParser& parser)
 {
 	CIMClass rval;
-	String superClassName;
+	CIMName superClassName;
 	
 	if (!parser.tokenIsId(CIMXMLParser::E_CLASS))
 	{
@@ -289,7 +289,7 @@ createClass(CIMXMLParser& parser)
 	String inClassName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	rval.setName(inClassName);
 	superClassName = parser.getAttribute(CIMXMLParser::A_SUPERCLASS);
-	if (!superClassName.empty())
+	if (superClassName != "")
 	{
 		rval.setSuperClass(superClassName);
 	}

@@ -310,7 +310,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
-	StringArray noLifeCycleClasses;
+	CIMNameArray noLifeCycleClasses;
 	// self-registering provider all namespaces
 	IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root", "SelfReg", noLifeCycleClasses);
@@ -354,7 +354,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	unitAssert(provRefs.size() == 1);
 
 	// lifecycle providers
-	StringArray lifeCycleClasses;
+	CIMNameArray lifeCycleClasses;
 	lifeCycleClasses.push_back("TestClass1");
 	provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", lifeCycleClasses);

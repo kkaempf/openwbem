@@ -181,7 +181,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	)
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY, 
+	CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	CIMInstance ci = cc.newInstance();
 	CIMPropertyArray cpa = ci.getProperties();
@@ -252,7 +252,7 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 	)
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY, 
+	CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	if (pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_pcolumnList2->size() !=
 		pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->size())
@@ -1017,7 +1017,7 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 			{
 				//If the rhs isn't a root class, it doesn't define a dynasty.
 				CIMClass cl= m_hdl->getClass(m_ns, rhs.str);
-				if (cl && cl.getSuperClass() == String(""))
+				if (cl && cl.getSuperClass() == "")
 				{
 					//Find the rhs,and all subclasses.
 					//result will push_back instances with embeded class into newInstances.
@@ -1388,15 +1388,15 @@ bool WQLProcessor::instanceIsDerivedFrom(const CIMInstance& inst,
 bool WQLProcessor::classIsDerivedFrom(const String& cls,
 	const String& className)
 {
-	String curClassName = cls;
-	while (!curClassName.empty())
+	CIMName curClassName = cls;
+	while (curClassName != CIMName())
 	{
-		if (curClassName.equalsIgnoreCase(className))
+		if (curClassName == className)
 		{
 			return true;
 		}
 		// didn't match, so try the superclass of curClassName
-		CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
+		CIMClass cls2 = m_hdl->getClass(m_ns, curClassName.toString());
 		curClassName = cls2.getSuperClass();
 	}
 	return false;

@@ -111,7 +111,7 @@ public:
 	 * for the class identified by the className argument.
 	 */
 	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
-		const String& ns, const String& className) const;
+		const String& ns, const CIMName& className) const;
 	/**
 	 * Locate a Method provider.
 	 *
@@ -169,8 +169,8 @@ public:
 	 */
 	IndicationProviderIFCRefArray
 		getIndicationProviders(const ProviderEnvironmentIFCRef& env,
-			const String& ns, const String& indicationClassName,
-			const StringArray& monitoredClassNames) const;
+			const String& ns, const CIMName& indicationClassName,
+			const CIMNameArray& monitoredClassNames) const;
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been
 	 * used for a while

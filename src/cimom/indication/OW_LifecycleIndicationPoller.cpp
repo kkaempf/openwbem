@@ -47,7 +47,7 @@ namespace OpenWBEM
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 LifecycleIndicationPoller::LifecycleIndicationPoller(
-	const String& ns, const String& className,
+	const String& ns, const CIMName& className,
 	UInt32 pollInterval)
 	: m_ns(ns)
 	, m_classname(className)
@@ -166,7 +166,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	if (!m_initializedInstances)
 	{
 		InstanceArrayBuilder iab(m_prevInsts);
-		env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+		env->getCIMOMHandle()->enumInstances(m_ns, m_classname.toString(), iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 		m_initializedInstances = true;
 		return 1; // have poll called again in 1 second.
 	}
@@ -185,7 +185,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	try
 	{
-		hdl->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+		hdl->enumInstances(m_ns, m_classname.toString(), iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	}
 	catch (const CIMException& e)
 	{

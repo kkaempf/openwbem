@@ -109,7 +109,7 @@ MetaRepository::_getQualContainer(HDBHandleLock& hdl, const String& ns_)
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-MetaRepository::_makeQualPath(const String& ns_, const String& qualName)
+MetaRepository::_makeQualPath(const String& ns_, const CIMName& qualName)
 {
 	String ns(ns_);
 	//while (!ns.empty() && ns[0] == '/')
@@ -119,17 +119,17 @@ MetaRepository::_makeQualPath(const String& ns_, const String& qualName)
 	String qp(QUAL_CONTAINER);
 	qp += "/";
 	qp += ns;
-	if (!qualName.empty())
+	if (qualName != CIMName())
 	{
 		qp += "/";
-		qp += qualName;
+		qp += qualName.toString();
 	}
 	return qp.toLowerCase();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 MetaRepository::_makeClassPath(const String& ns,
-	const String& className)
+	const CIMName& className)
 {
 	//while (!cp.empty() && cp[0] == '/')
 	//{
@@ -139,13 +139,13 @@ MetaRepository::_makeClassPath(const String& ns,
 	cp += "/";
 	cp += ns;
 	cp += "/";
-	cp += className;
+	cp += className.toString();
 	return cp.toLowerCase();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType
 MetaRepository::getQualifierType(const String& ns,
-	const String& qualName, HDBHandle* phdl)
+	const CIMName& qualName, HDBHandle* phdl)
 {
 	throwIfNotOpen();
 	String qkey = _makeQualPath(ns, qualName);
@@ -219,7 +219,7 @@ MetaRepository::enumQualifierTypes(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 bool
 MetaRepository::deleteQualifierType(const String& ns,
-	const String& qualName)
+	const CIMName& qualName)
 {
 	throwIfNotOpen();
 	String qkey = _makeQualPath(ns, qualName);
@@ -312,7 +312,7 @@ MetaRepository::setQualifierType(const String& ns,
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 CIMException::ErrNoType
-MetaRepository::getCIMClass(const String& ns, const String& className,
+MetaRepository::getCIMClass(const String& ns, const CIMName& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
@@ -383,10 +383,10 @@ MetaRepository::_getClassFromNode(HDBNode& node, HDBHandle hdl,
 	return theClass;
 }
 //////////////////////////////////////////////////////////////////////////////
-String
+CIMName
 MetaRepository::_getClassNameFromNode(HDBNode& node)
 {
-	String name;
+	CIMName name;
 	DataIStream istrm(node.getDataLen(), node.getData());
 	// Not going to do this, it's too slow! cimObj.readObject(istrm);
 	// This is breaking abstraction, and may bite us later if CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
@@ -422,10 +422,10 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 	}
 	HDBNode pnode;
 	CIMClass parentClass(CIMNULL);
-	String superID = child.getSuperClass();
+	CIMName superID = child.getSuperClass();
 	// If class doesn't have a super class - don't propagate anything
 	// Should always have a parent because of namespaces
-	if (superID.empty())
+	if (superID == CIMName())
 	{
 		return;
 	}
@@ -540,7 +540,7 @@ MetaRepository::_resolveClass(CIMClass& child, HDBNode& node,
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 bool
-MetaRepository::deleteClass(const String& ns, const String& className)
+MetaRepository::deleteClass(const String& ns, const CIMName& className)
 {
 	throwIfNotOpen();
 	String ckey = _makeClassPath(ns, className);
@@ -616,11 +616,11 @@ HDBNode
 MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	HDBHandle hdl)
 {
-	String childName = childClass.getName();
-	String parentName = childClass.getSuperClass();
+	CIMName childName = childClass.getName();
+	CIMName parentName = childClass.getSuperClass();
 	CIMClass parentClass(CIMNULL);
 	HDBNode parentNode;
-	if (!parentName.empty())
+	if (parentName != CIMName())
 	{
 		// Get the parent class
 		String superID = _makeClassPath(ns, parentName);
@@ -631,13 +631,13 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 			if (!parentNode)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_SUPERCLASS,
-						parentName.c_str());
+						parentName.toString().c_str());
 			}
 			parentClass = _getClassFromNode(parentNode, hdl, ns);
 			if (!parentClass)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_SUPERCLASS,
-						parentName.c_str());
+						parentName.toString().c_str());
 			}
 		}
 	}
@@ -869,7 +869,7 @@ MetaRepository::getTopLevelAssociations(const String& ns,
 #endif
 //////////////////////////////////////////////////////////////////////////////
 void
-MetaRepository::enumClass(const String& ns, const String& className,
+MetaRepository::enumClass(const String& ns, const CIMName& className,
 	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
@@ -877,7 +877,7 @@ MetaRepository::enumClass(const String& ns, const String& className,
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode pnode;
-	if (!className.empty())
+	if (className != CIMName())
 	{
 		String ckey = _makeClassPath(ns, className);
 		pnode = hdl->getNode(ckey);
@@ -890,7 +890,7 @@ MetaRepository::enumClass(const String& ns, const String& className,
 			}
 			else
 			{
-				OW_THROWCIMMSG(CIMException::INVALID_CLASS, className.c_str());
+				OW_THROWCIMMSG(CIMException::INVALID_CLASS, className.toString().c_str());
 			}
 		}
 	}
@@ -941,14 +941,14 @@ MetaRepository::_getClassNodes(const String& ns, CIMClassResultHandlerIFC& resul
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-MetaRepository::enumClassNames(const String& ns, const String& className,
+MetaRepository::enumClassNames(const String& ns, const CIMName& className,
 	StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	HDBNode pnode;
-	if (!className.empty())
+	if (className != CIMName())
 	{
 		String ckey = _makeClassPath(ns, className);
 		pnode = hdl->getNode(ckey);
@@ -961,7 +961,7 @@ MetaRepository::enumClassNames(const String& ns, const String& className,
 			}
 			else
 			{
-				OW_THROWCIMMSG(CIMException::INVALID_CLASS, className.c_str());
+				OW_THROWCIMMSG(CIMException::INVALID_CLASS, className.toString().c_str());
 			}
 		}
 	}
@@ -993,8 +993,8 @@ void
 MetaRepository::_getClassNameNodes(StringResultHandlerIFC& result, HDBNode node,
 	HDBHandle hdl, EDeepFlag deep)
 {
-	String cimClsName = _getClassNameFromNode(node);
-	result.handle(cimClsName);
+	CIMName cimClsName = _getClassNameFromNode(node);
+	result.handle(cimClsName.toString());
 	if (deep)
 	{
 		node = hdl.getFirstChild(node);

@@ -319,19 +319,19 @@ CIMRepository::getClass(
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
-CIMRepository::_getClass(const String& ns, const String& className)
+CIMRepository::_getClass(const String& ns, const CIMName& className)
 {
 	CIMClass theClass(CIMNULL);
-	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
+	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className.toString(), E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
 	checkGetClassRvalAndThrow(rval, ns, className);
 	return theClass;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
-CIMRepository::_instGetClass(const String& ns, const String& className)
+CIMRepository::_instGetClass(const String& ns, const CIMName& className)
 {
 	CIMClass theClass(CIMNULL);
-	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
+	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className.toString(), E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
 	checkGetClassRvalAndThrowInst(rval, ns, className);
 	return theClass;
 }
@@ -358,8 +358,8 @@ namespace
 	protected:
 		virtual void doHandle(const CIMClass &c)
 		{
-			String cname = c.getName();
-			if (!m_mStore.deleteClass(ns, cname))
+			CIMName cname = c.getName();
+			if (!m_mStore.deleteClass(ns, cname.toString()))
 			{
 				OW_THROWCIM(CIMException::NOT_FOUND);
 			}
@@ -368,7 +368,7 @@ namespace
 			// associations, then we could just call enumInstances and then
 			// deleteInstance for all instances.
 			// delete any instances of the class
-			m_iStore.deleteClass(ns, cname);
+			m_iStore.deleteClass(ns, cname.toString());
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			// remove class from association index
 			if (c.isAssociation())
@@ -560,10 +560,10 @@ CIMRepository::enumClassNames(
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace {
-class stringArrayBuilder : public StringResultHandlerIFC
+class CIMNameArrayBuilder : public StringResultHandlerIFC
 {
 public:
-	stringArrayBuilder(StringArray& result)
+	CIMNameArrayBuilder(CIMNameArray& result)
 		: m_result(result)
 	{}
 	void doHandle(const String& name)
@@ -571,14 +571,14 @@ public:
 		m_result.push_back(name);
 	}
 private:
-	StringArray& m_result;
+	CIMNameArray& m_result;
 };
 // utility function
-StringArray getClassChildren(MetaRepository& rep, const String& ns, const String& clsName)
+CIMNameArray getClassChildren(MetaRepository& rep, const String& ns, const CIMName& clsName)
 {
-	StringArray result;
-	stringArrayBuilder handler(result);
-	rep.enumClassNames(ns, clsName, handler, E_DEEP);
+	CIMNameArray result;
+	CIMNameArrayBuilder handler(result);
+	rep.enumClassNames(ns, clsName.toString(), handler, E_DEEP);
 	return result;
 }
 }
@@ -1147,7 +1147,7 @@ void
 CIMRepository::_commonReferences(
 	const String& ns,
 	const CIMObjectPath& path_,
-	const String& resultClass, const String& role,
+	const CIMName& resultClass, const CIMName& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult,
@@ -1170,12 +1170,12 @@ CIMRepository::_commonReferences(
 	{
 		resultClassNames.append(Assocs[i].getName());
 	}
-	SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+	SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 	if (path.isClassPath())
 	{
 		// Process all of the association classes without providers
 		_staticReferencesClass(path,
-			resultClass.empty() ? 0 : &resultClassNamesSet,
+			resultClass == CIMName() ? 0 : &resultClassNamesSet,
 			role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 	}
 	else // it's an instance path
@@ -1185,14 +1185,14 @@ CIMRepository::_commonReferences(
 		{
 			// do instances
 			_staticReferences(path,
-				resultClass.empty() ? 0 : &resultClassNamesSet, role,
+				resultClass == CIMName() ? 0 : &resultClassNamesSet, role,
 				includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
 			_staticReferenceNames(path,
-				resultClass.empty() ? 0 : &resultClassNamesSet, role,
+				resultClass == CIMName() ? 0 : &resultClassNamesSet, role,
 				*popresult);
 		}
 		else
@@ -1332,7 +1332,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_staticReferences(const CIMObjectPath& path,
-	const SortedVectorSet<String>* refClasses, const String& role,
+	const SortedVectorSet<CIMName>* refClasses, const CIMName& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
 	OperationContext& context)
@@ -1341,26 +1341,26 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
-		refClasses, 0, role, String(), handler);
+		refClasses, 0, role, CIMName(), handler);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_staticReferenceNames(const CIMObjectPath& path,
-	const SortedVectorSet<String>* refClasses, const String& role,
+	const SortedVectorSet<CIMName>* refClasses, const CIMName& role,
 	CIMObjectPathResultHandlerIFC& result)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticReferencesObjectPathResultHandler handler(result);
 	dbhdl.getAllEntries(path,
-		refClasses, 0, role, String(), handler);
+		refClasses, 0, role, CIMName(), handler);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_commonAssociators(
 	const String& ns,
 	const CIMObjectPath& path_,
-	const String& assocClassName, const String& resultClass,
-	const String& role, const String& resultRole,
+	const CIMName& assocClassName, const CIMName& resultClass,
+	const CIMName& role, const CIMName& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	CIMInstanceResultHandlerIFC* piresult,
@@ -1380,8 +1380,8 @@ CIMRepository::_commonAssociators(
 	_getAssociationClasses(ns, assocClassName, path.getClassName(), assocClassResult, role, context);
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
-	StringArray resultClassNames;
-	if (!resultClass.empty())
+	CIMNameArray resultClassNames;
+	if (resultClass != CIMName())
 	{
 		resultClassNames = getClassChildren(m_mStore, ns, resultClass);
 		resultClassNames.append(resultClass);
@@ -1391,15 +1391,15 @@ CIMRepository::_commonAssociators(
 	{
 		assocClassNames.append(Assocs[i].getName());
 	}
-	SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
+	SortedVectorSet<CIMName> assocClassNamesSet(assocClassNames.begin(),
 			assocClassNames.end());
-	SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
+	SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(),
 			resultClassNames.end());
 	if (path.isClassPath())
 	{
 		// Process all of the association classes without providers
-		_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-			resultClass.empty() ? 0 : &resultClassNamesSet,
+		_staticAssociatorsClass(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+			resultClass == CIMName() ? 0 : &resultClassNamesSet,
 			role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 	}
 	else // it's an instance path
@@ -1408,15 +1408,15 @@ CIMRepository::_commonAssociators(
 		if (piresult != 0)
 		{
 			// do instances
-			_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+			_staticAssociators(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+				resultClass == CIMName() ? 0 : &resultClassNamesSet, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			_staticAssociatorNames(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+			_staticAssociatorNames(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+				resultClass == CIMName() ? 0 : &resultClassNamesSet, role, resultRole,
 				*popresult);
 		}
 		else
@@ -1428,9 +1428,9 @@ CIMRepository::_commonAssociators(
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_staticAssociators(const CIMObjectPath& path,
-	const SortedVectorSet<String>* passocClasses,
-	const SortedVectorSet<String>* presultClasses,
-	const String& role, const String& resultRole,
+	const SortedVectorSet<CIMName>* passocClasses,
+	const SortedVectorSet<CIMName>* presultClasses,
+	const CIMName& role, const CIMName& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
 	OperationContext& context)
@@ -1507,9 +1507,9 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_staticAssociatorNames(const CIMObjectPath& path,
-	const SortedVectorSet<String>* passocClasses,
-	const SortedVectorSet<String>* presultClasses,
-	const String& role, const String& resultRole,
+	const SortedVectorSet<CIMName>* passocClasses,
+	const SortedVectorSet<CIMName>* presultClasses,
+	const CIMName& role, const CIMName& resultRole,
 	CIMObjectPathResultHandlerIFC& result)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
@@ -1522,9 +1522,9 @@ CIMRepository::_staticAssociatorNames(const CIMObjectPath& path,
 void
 CIMRepository::_staticAssociatorsClass(
 	const CIMObjectPath& path,
-	const SortedVectorSet<String>* assocClassNames,
-	const SortedVectorSet<String>* resultClasses,
-	const String& role, const String& resultRole,
+	const SortedVectorSet<CIMName>* assocClassNames,
+	const SortedVectorSet<CIMName>* resultClasses,
+	const CIMName& role, const CIMName& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMObjectPathResultHandlerIFC* popresult,
 	CIMClassResultHandlerIFC* pcresult,
@@ -1532,9 +1532,9 @@ CIMRepository::_staticAssociatorsClass(
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getClassName();
+	CIMName curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
-	while (!curClsName.empty())
+	while (curClsName != CIMName())
 	{
 		if (popresult != 0)
 		{
@@ -1564,8 +1564,8 @@ CIMRepository::_staticAssociatorsClass(
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
-	const SortedVectorSet<String>* resultClasses,
-	const String& role,
+	const SortedVectorSet<CIMName>* resultClasses,
+	const CIMName& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	CIMObjectPathResultHandlerIFC* popresult,
@@ -1574,15 +1574,15 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getClassName();
+	CIMName curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
-	while (!curClsName.empty())
+	while (curClsName != CIMName())
 	{
 		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("curPath = %1", curPath.toString()));
 		if (popresult != 0)
 		{
 			staticReferencesObjectPathResultHandler handler(*popresult);
-			dbhdl.getAllEntries(curPath, resultClasses, 0, role, String(),
+			dbhdl.getAllEntries(curPath, resultClasses, 0, role, CIMName(),
 				handler);
 		}
 		else if (pcresult != 0)
@@ -1591,7 +1591,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 			staticReferencesClassResultHandler handler(*pcresult,*this,
 				ns, includeQualifiers, includeClassOrigin,
 				propertyList, context);
-			dbhdl.getAllEntries(curPath, resultClasses, 0, role, String(),
+			dbhdl.getAllEntries(curPath, resultClasses, 0, role, CIMName(),
 				handler);
 		}
 		else
@@ -1633,17 +1633,17 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::_getAssociationClasses(const String& ns,
-		const String& assocClassName, const String& className,
-		CIMClassResultHandlerIFC& result, const String& role,
+		const CIMName& assocClassName, const CIMName& className,
+		CIMClassResultHandlerIFC& result, const CIMName& role,
 		OperationContext& context)
 {
-	if (!assocClassName.empty())
+	if (assocClassName != CIMName())
 	{
 		// they gave us a class name so we can use the class association index
 		// to only look at the ones that could provide associations
-		m_mStore.enumClass(ns, assocClassName, result, E_DEEP, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
+		m_mStore.enumClass(ns, assocClassName.toString(), result, E_DEEP, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
 		CIMClass cc(CIMNULL);
-		CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, assocClassName, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, cc);
+		CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, assocClassName.toString(), E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, cc);
 		if (rc != CIMException::SUCCESS)
 		{
 			OW_THROWCIM(CIMException::FAILED);
@@ -1664,7 +1664,7 @@ CIMRepository::_getAssociationClasses(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::checkGetClassRvalAndThrow(CIMException::ErrNoType rval,
-	const String& ns, const String& className)
+	const String& ns, const CIMName& className)
 {
 	if (rval != CIMException::SUCCESS)
 	{
@@ -1681,7 +1681,7 @@ CIMRepository::checkGetClassRvalAndThrow(CIMException::ErrNoType rval,
 }
 void
 CIMRepository::checkGetClassRvalAndThrowInst(CIMException::ErrNoType rval,
-	const String& ns, const String& className)
+	const String& ns, const CIMName& className)
 {
 	if (rval != CIMException::SUCCESS)
 	{
@@ -1728,7 +1728,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 	{
 		return;
 	}
-	Map<String, CIMPropertyArray> theMap;
+	Map<CIMName, CIMPropertyArray> theMap;
 	Bool hasPropagatedKeys = false;
 	// Look at all propagated key properties
 	for (size_t i = 0; i < kprops.size(); i++)
@@ -1752,7 +1752,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 			continue;
 		}
 		size_t idx = cls.indexOf('.');
-		String ppropName;
+		CIMName ppropName;
 		if (idx != String::npos)
 		{
 			ppropName = cls.substring(idx+1);
@@ -1765,7 +1765,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 				Format("Cannot create instance. Propagated key field missing:"
 					" %1", kprops[i].getName()).c_str());
 		}
-		if (!ppropName.empty())
+		if (ppropName != CIMName())
 		{
 			// We need to use the propagated property name, not the property
 			// name on ci.  e.g. Given
@@ -1786,15 +1786,15 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 			"Cannot create instance. Propagated key properties missing");
 	}
 	CIMObjectPath op(ns, ci);
-	Map<String, CIMPropertyArray>::iterator it = theMap.begin();
+	Map<CIMName, CIMPropertyArray>::iterator it = theMap.begin();
 	while (it != theMap.end())
 	{
-		String clsname = it->first;
+		CIMName clsname = it->first;
 		
 		// since we don't know what class the keys refer to, we get all subclasses
 		// and try calling getInstance for each to see if we can find one with
 		// the matching keys.
-		StringArray classes = getClassChildren(m_mStore, ns,
+		CIMNameArray classes = getClassChildren(m_mStore, ns,
 			theClass.getName());
 		classes.push_back(clsname);
 		op.setKeys(it->second);

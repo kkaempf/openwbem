@@ -59,14 +59,14 @@ namespace OpenWBEM
 struct OW_HDB_API AssocDbEntry
 {
 	AssocDbEntry(std::istream& istrm);
-	AssocDbEntry() 
+	AssocDbEntry()
 		: m_objectName(CIMNULL)
 		, m_offset(-1L)
 	{}
 
 	AssocDbEntry(const CIMObjectPath& objectName,
-		const String& role,
-		const String& resultRole);
+		const CIMName& role,
+		const CIMName& resultRole);
 
 	struct entry
 	{
@@ -74,8 +74,8 @@ struct OW_HDB_API AssocDbEntry
 			: m_associatedObject(CIMNULL)
 			, m_associationPath(CIMNULL)
 		{}
-		String m_assocClass;
-		String m_resultClass;
+		CIMName m_assocClass;
+		CIMName m_resultClass;
 		CIMObjectPath m_associatedObject; // value for associtor(Name)s
 		CIMObjectPath m_associationPath;  // value for reference(Name)s
 		
@@ -88,8 +88,8 @@ struct OW_HDB_API AssocDbEntry
 	Int32 getOffset() const { return m_offset; }
 	void setOffset(Int32 offset) { m_offset = offset; }
 
-	static String makeKey(const CIMObjectPath& objectName, const String& role,
-		const String& resultRole);
+	static String makeKey(const CIMObjectPath& objectName, const CIMName& role,
+		const CIMName& resultRole);
 	
 	String makeKey() const;
 
@@ -105,8 +105,8 @@ struct OW_HDB_API AssocDbEntry
 #endif
 
 	CIMObjectPath m_objectName; // part 1 of key
-	String m_role; // part 2 of key
-	String m_resultRole; // part 3 of key
+	CIMName m_role; // part 2 of key
+	CIMName m_resultRole; // part 3 of key
 	Array<entry> m_entries;
 	Int32 m_offset;
 
@@ -155,10 +155,10 @@ public:
 	 * @param newEntry	The AssocDbEntry to add to the database.
 	 */
 	//void addEntry(const AssocDbEntry& newEntry);
-	void addEntry(const CIMObjectPath& objectName, 
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+	void addEntry(const CIMObjectPath& objectName,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath);
 	/**
 	 * Add all entries to the database that are reference by the
@@ -174,10 +174,10 @@ public:
 	 * @param entryToDelete	The AssocDbEntry to delete from the database.
 	 */
 	//void deleteEntry(const AssocDbEntry& entryToDelete);
-	void deleteEntry(const CIMObjectPath& objectName, 
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+	void deleteEntry(const CIMObjectPath& objectName,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath);
 	/**
 	 * Remove all AssocDbEntry objects specified in an array.
@@ -211,10 +211,10 @@ public:
 	 * meet the given criterion.
 	 */
 	void getAllEntries(const CIMObjectPath& objectName,
-		const SortedVectorSet<String>* passocClasses,
-		const SortedVectorSet<String>* presultClasses,
-		const String& role,
-		const String& resultRole,
+		const SortedVectorSet<CIMName>* passocClasses,
+		const SortedVectorSet<CIMName>* presultClasses,
+		const CIMName& role,
+		const CIMName& resultRole,
 		AssocDbEntryResultHandlerIFC& result);
 	File getFile() const { return m_pdata->m_file; }
 
@@ -314,16 +314,16 @@ private:
 		AssocDbHandle& hdl);
 	AssocDbEntry nextEntry(AssocDbHandle& hdl);
 	void deleteEntry(const AssocDbEntry& entry, AssocDbHandle& hdl);
-	void deleteEntry(const CIMObjectPath& objectName, 
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+	void deleteEntry(const CIMObjectPath& objectName,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl);
 	void addEntry(const AssocDbEntry& entry, AssocDbHandle& hdl);
-	void addEntry(const CIMObjectPath& objectName, 
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+	void addEntry(const CIMObjectPath& objectName,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl);
 	void decHandleCount();
 	MutexLock getDbLock() { return MutexLock(m_guard); }

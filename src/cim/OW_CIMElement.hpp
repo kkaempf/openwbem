@@ -56,6 +56,7 @@ class OW_COMMON_API CIMElement : public CIMBase
 public:
 	virtual ~CIMElement();
 	/**
+	 * In the future, this function will be changed to return a CIMName
 	 * @return The name of this CIMElement object as an String.
 	 */
 	virtual String getName() const = 0;

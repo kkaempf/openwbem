@@ -562,18 +562,18 @@ public:
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
 private:
-	CIMClass _getClass(const String& ns, const String& className);
-	CIMClass _instGetClass(const String& ns, const String& className);
+	CIMClass _getClass(const String& ns, const CIMName& className);
+	CIMClass _instGetClass(const String& ns, const CIMName& className);
 	void checkGetClassRvalAndThrow(CIMException::ErrNoType rval,
-		const String& ns, const String& className);
+		const String& ns, const CIMName& className);
 	void checkGetClassRvalAndThrowInst(CIMException::ErrNoType rval,
-		const String& ns, const String& className);
+		const String& ns, const CIMName& className);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void _commonAssociators(
 		const String& ns,
 		const CIMObjectPath& path_,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
@@ -584,50 +584,50 @@ private:
 	void _commonReferences(
 		const String& ns,
 		const CIMObjectPath& path_,
-		const String& resultClass, const String& role,
+		const CIMName& resultClass, const CIMName& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 		CIMObjectPathResultHandlerIFC* popresult,
 		CIMClassResultHandlerIFC* pcresult, OperationContext& context);
 	
 	void _getAssociationClasses(const String& ns,
-		const String& assocClassName, const String& className,
-		CIMClassResultHandlerIFC& result, const String& role,
+		const CIMName& assocClassName, const CIMName& className,
+		CIMClassResultHandlerIFC& result, const CIMName& role,
 		OperationContext& context);
 	void _staticReferences(const CIMObjectPath& path,
-		const SortedVectorSet<String>* refClasses, const String& role,
+		const SortedVectorSet<CIMName>* refClasses, const CIMName& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
 		OperationContext& context);
 	
 	void _staticReferenceNames(const CIMObjectPath& path,
-		const SortedVectorSet<String>* refClasses, const String& role,
+		const SortedVectorSet<CIMName>* refClasses, const CIMName& role,
 		CIMObjectPathResultHandlerIFC& result);
 	void _staticReferencesClass(const CIMObjectPath& path,
-		const SortedVectorSet<String>* resultClasses,
-		const String& role,
+		const SortedVectorSet<CIMName>* resultClasses,
+		const CIMName& role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		CIMObjectPathResultHandlerIFC* popresult,
 		CIMClassResultHandlerIFC* pcresult,
 		OperationContext& context);
 	void _staticAssociators(const CIMObjectPath& path,
-		const SortedVectorSet<String>* passocClasses,
-		const SortedVectorSet<String>* presultClasses,
-		const String& role, const String& resultRole,
+		const SortedVectorSet<CIMName>* passocClasses,
+		const SortedVectorSet<CIMName>* presultClasses,
+		const CIMName& role, const CIMName& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
 		OperationContext& context);
 	void _staticAssociatorNames(const CIMObjectPath& path,
-		const SortedVectorSet<String>* passocClasses,
-		const SortedVectorSet<String>* presultClasses,
-		const String& role, const String& resultRole,
+		const SortedVectorSet<CIMName>* passocClasses,
+		const SortedVectorSet<CIMName>* presultClasses,
+		const CIMName& role, const CIMName& resultRole,
 		CIMObjectPathResultHandlerIFC& result);
 	void _staticAssociatorsClass(
 		const CIMObjectPath& path,
-		const SortedVectorSet<String>* assocClassNames,
-		const SortedVectorSet<String>* resultClasses,
-		const String& role, const String& resultRole,
+		const SortedVectorSet<CIMName>* assocClassNames,
+		const SortedVectorSet<CIMName>* resultClasses,
+		const CIMName& role, const CIMName& resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, CIMObjectPathResultHandlerIFC* popresult,
 		CIMClassResultHandlerIFC* pcresult,

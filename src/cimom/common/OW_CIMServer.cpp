@@ -384,7 +384,7 @@ CIMServer::getClass(
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
-CIMServer::_instGetClass(const String& ns, const String& className,
+CIMServer::_instGetClass(const String& ns, const CIMName& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
@@ -394,7 +394,7 @@ CIMServer::_instGetClass(const String& ns, const String& className,
 	{
 		try
 		{
-			theClass = m_cimRepository->getClass(ns,className,localOnly,
+			theClass = m_cimRepository->getClass(ns,className.toString(),localOnly,
 				includeQualifiers,includeClassOrigin,propertyList,context);
 		}
 		catch (CIMException& e)
@@ -582,7 +582,7 @@ CIMServer::enumInstanceNames(
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-CIMServer::_getCIMInstanceNames(const String& ns, const String& className,
+CIMServer::_getCIMInstanceNames(const String& ns, const CIMName& className,
 	const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result,
 	OperationContext& context)
 {
@@ -590,11 +590,11 @@ CIMServer::_getCIMInstanceNames(const String& ns, const String& className,
 	if (instancep)
 	{
 		instancep->enumInstanceNames(createProvEnvRef(context, m_env),
-			ns, className, result, theClass);
+			ns, className.toString(), result, theClass);
 	}
 	else
 	{
-		m_cimRepository->enumInstanceNames(ns,className,result,E_SHALLOW,context);
+		m_cimRepository->enumInstanceNames(ns,className.toString(),result,E_SHALLOW,context);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -746,14 +746,14 @@ namespace
 			CIMPropertyArray props = inst.getProperties();
 			CIMPropertyArray newprops;
 			CIMInstance newInst(inst);
-			String requestedClassName = requestedClass.getName();
+			CIMName requestedClassName = requestedClass.getName();
 			for (size_t i = 0; i < props.size(); ++i)
 			{
 				CIMProperty p = props[i];
 				CIMProperty clsp = requestedClass.getProperty(p.getName());
 				if (clsp)
 				{
-					if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
+					if (clsp.getOriginClass() == requestedClassName)
 					{
 						newprops.push_back(p);
 						continue;
@@ -830,7 +830,7 @@ namespace
 			for (size_t i = 0; i < secProvs.size(); ++i)
 			{
 				secProvs[i]->filterInstances(createProvEnvRef(context, env), ns,
-					className, savedInstances, localOnly, deep, includeQualifiers,
+					className.toString(), savedInstances, localOnly, deep, includeQualifiers,
 					includeClassOrigin, propertyList, theTopClass, theClass );
 			}
 			for (size_t i = 0; i < savedInstances.size(); ++i)
@@ -842,7 +842,7 @@ namespace
 		OperationContext& context;
 		const CIMOMEnvironmentRef& env;
 		const String& ns;
-		const String& className;
+		const CIMName& className;
 		ELocalOnlyFlag localOnly;
 		EDeepFlag deep;
 		EIncludeQualifiersFlag includeQualifiers;
@@ -859,7 +859,7 @@ namespace
 void
 CIMServer::_getCIMInstances(
 	const String& ns,
-	const String& className,
+	const CIMName& className,
 	const CIMClass& theTopClass,
 	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
@@ -870,7 +870,7 @@ CIMServer::_getCIMInstances(
 	// See if the authorizer allows reading of these instances and give it
 	// an opportunity to modify the property list
 	StringArray authorizedPropertyList;
-	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className,
+	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(),
 		propertyList, authorizedPropertyList, context))
 	{
 		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
@@ -895,7 +895,7 @@ CIMServer::_getCIMInstances(
 		_getSecondaryInstanceProviders(ns, className, context);
 
 	SecondaryInstanceProviderHandler secondaryHandler(context, m_env, ns,
-		className, localOnly, deep, includeQualifiers, includeClassOrigin,
+		className.toString(), localOnly, deep, includeQualifiers, includeClassOrigin,
 		propertyList, theTopClass, theClass, secProvs, result);
 
 	CIMInstanceResultHandlerIFC* presult = &result;
@@ -917,7 +917,7 @@ CIMServer::_getCIMInstances(
 		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
 		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(context, m_env), ns, className, *presult,
+			createProvEnvRef(context, m_env), ns, className.toString(), *presult,
 			localOnly, deep, includeQualifiers, includeClassOrigin,
 			propertyList, theTopClass, theClass);
 	}
@@ -927,7 +927,7 @@ CIMServer::_getCIMInstances(
 		// don't pass along deep and localOnly flags, because the handler has
 		// to take care of it.  m_cimRepository can't do it right, because we
 		// can't pass in theTopClass.
-		m_cimRepository->enumInstances(ns, className, handler, E_DEEP,
+		m_cimRepository->enumInstances(ns, className.toString(), handler, E_DEEP,
 			E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin,
 			propertyList, E_DONT_ENUM_SUBCLASSES, context);
 	}
@@ -958,7 +958,7 @@ CIMServer::getInstance(
 	logOperation(m_logger, context, "GetInstance", ns, instanceName_.toString());
 
 	CIMObjectPath instanceName(instanceName_);
-	String className = instanceName.getClassName();
+	CIMName className = instanceName.getClassName();
 	CIMClass cc = _instGetClass(ns, className,
 		E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS,
@@ -974,7 +974,7 @@ CIMServer::getInstance(
 	// See if the authorizer allows reading of these instances and give it
 	// an opportunity to modify the property list
 	StringArray authorizedPropertyList;
-	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className, propertyList,
+	if (!m_authorizerMgr->allowReadInstance(m_env, ns, className.toString(), propertyList,
 		authorizedPropertyList, context))
 	{
 		OW_LOG_DEBUG(m_logger, Format("Authorizer did NOT authorize reading of %1"
@@ -1023,7 +1023,7 @@ CIMServer::getInstance(
 		for (size_t i = 0; i < secProvs.size(); ++i)
 		{
 			secProvs[i]->filterInstances(createProvEnvRef(context, m_env), ns,
-				className, cia, localOnly, E_DEEP, includeQualifiers,
+				className.toString(), cia, localOnly, E_DEEP, includeQualifiers,
 				includeClassOrigin, propertyList, cc, cc );
 		}
 		OW_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
@@ -1116,8 +1116,8 @@ CIMServer::createInstance(
 	OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
-	String className = ci.getClassName();
-	logOperation(m_logger, context, "CreateInstance", ns, className);
+	CIMName className = ci.getClassName();
+	logOperation(m_logger, context, "CreateInstance", ns, className.toString());
 
 	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0,
@@ -1463,11 +1463,11 @@ CIMServer::invokeMethod(
 	CIMParamValueArray inParams2(inParams);
 	for (size_t i = 0; i < methodInParams.size(); ++i)
 	{
-		String parameterName = methodInParams[i].getName();
+		CIMName parameterName = methodInParams[i].getName();
 		size_t paramIdx;
 		for (paramIdx = 0; paramIdx < inParams2.size(); ++paramIdx)
 		{
-			if (inParams2[paramIdx].getName().equalsIgnoreCase(parameterName))
+			if (inParams2[paramIdx].getName() == parameterName)
 			{
 				break;
 			}
@@ -1624,7 +1624,7 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_,
 }
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRefArray
-CIMServer::_getSecondaryInstanceProviders(const String& ns, const String& className, OperationContext& context)
+CIMServer::_getSecondaryInstanceProviders(const String& ns, const CIMName& className, OperationContext& context)
 {
 	SecondaryInstanceProviderIFCRefArray rval;
 	try
@@ -1671,9 +1671,9 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 #endif
 //////////////////////////////////////////////////////////////////////
 CIMClass
-CIMServer::_getNameSpaceClass(const String& className)
+CIMServer::_getNameSpaceClass(const CIMName& className)
 {
-	if (className.equalsIgnoreCase("__Namespace"))
+	if (className == "__Namespace")
 	{
 		MutexLock l(m_guard);
 		if (!m_nsClass_Namespace)
@@ -1934,7 +1934,7 @@ namespace
 	{
 	public:
 		assocClassSeparator(
-			StringArray* staticAssocs_,
+			CIMNameArray* staticAssocs_,
 			CIMClassArray& dynamicAssocs_,
 			CIMServer& server_,
 			OperationContext& context_,
@@ -1969,7 +1969,7 @@ namespace
 			}
 		}
 	private:
-		StringArray* staticAssocs;
+		CIMNameArray* staticAssocs;
 		CIMClassArray& dynamicAssocs;
 		CIMServer& server;
 		OperationContext& context;
@@ -1982,7 +1982,7 @@ void
 CIMServer::_commonReferences(
 	const String& ns,
 	const CIMObjectPath& path_,
-	const String& resultClass, const String& role,
+	const CIMName& resultClass, const CIMName& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult,
@@ -1996,8 +1996,8 @@ CIMServer::_commonReferences(
 	// If the result class was specified, only children of it will be
 	// returned.
 	CIMClassArray dynamicAssocs;
-	StringArray resultClassNames;
-	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, context, ns, m_logger);
+	CIMNameArray resultClassNames;
+	assocClassSeparator assocClassResult(!m_realRepository || resultClass == CIMName() ? 0 : &resultClassNames, dynamicAssocs, *this, context, ns, m_logger);
 	_getAssociationClasses(ns, resultClass, path.getClassName(), assocClassResult, role, context);
 	if (path.isClassPath())
 	{
@@ -2012,14 +2012,14 @@ CIMServer::_commonReferences(
 		// Process all of the association classes without providers
 		if (m_realRepository)
 		{
-			if (!resultClass.empty())
+			if (resultClass != CIMName())
 			{
 				// providers don't do classes, so we'll add the dynamic ones into the list
 				for (size_t i = 0; i < dynamicAssocs.size(); i++)
 				{
 					resultClassNames.append(dynamicAssocs[i].getName());
 				}
-				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+				SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 				m_realRepository->_staticReferencesClass(path, &resultClassNamesSet,
 					role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 			}
@@ -2033,11 +2033,11 @@ CIMServer::_commonReferences(
 		{
 			if (popresult != 0)
 			{
-				m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,context);
+				m_cimRepository->referenceNames(ns,path,*popresult,resultClass.toString(),role.toString(),context);
 			}
 			else if (pcresult != 0)
 			{
-				m_cimRepository->referencesClasses(ns,path,*pcresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,context);
+				m_cimRepository->referencesClasses(ns,path,*pcresult,resultClass.toString(),role.toString(),includeQualifiers,includeClassOrigin,propertyList,context);
 			}
 			else
 			{
@@ -2053,9 +2053,9 @@ CIMServer::_commonReferences(
 			// do instances
 			if (m_realRepository)
 			{
-				if (!resultClass.empty())
+				if (resultClass != CIMName())
 				{
-					SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 					m_realRepository->_staticReferences(path, &resultClassNamesSet, role,
 						includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 				}
@@ -2067,7 +2067,7 @@ CIMServer::_commonReferences(
 			}
 			else
 			{
-				m_cimRepository->references(ns,path,*piresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,context);
+				m_cimRepository->references(ns,path,*piresult,resultClass.toString(),role.toString(),includeQualifiers,includeClassOrigin,propertyList,context);
 			}
 		}
 		else if (popresult != 0)
@@ -2075,9 +2075,9 @@ CIMServer::_commonReferences(
 			// do names (object paths)
 			if (m_realRepository)
 			{
-				if (!resultClass.empty())
+				if (resultClass != CIMName())
 				{
-					SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 					m_realRepository->_staticReferenceNames(path,
 						&resultClassNamesSet, role,
 						*popresult);
@@ -2091,7 +2091,7 @@ CIMServer::_commonReferences(
 			}
 			else
 			{
-				m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,context);
+				m_cimRepository->referenceNames(ns,path,*popresult,resultClass.toString(),role.toString(),context);
 			}
 		}
 		else
@@ -2110,7 +2110,7 @@ CIMServer::_commonReferences(
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMServer::_dynamicReferences(const CIMObjectPath& path,
-	const CIMClassArray& assocClasses, const String& role,
+	const CIMClassArray& assocClasses, const CIMName& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult, OperationContext& context)
@@ -2128,21 +2128,21 @@ CIMServer::_dynamicReferences(const CIMObjectPath& path,
 		{
 			continue;
 		}
-		String resultClass(assocClasses[i].getName());
+		CIMName resultClass(assocClasses[i].getName());
 		// If the object path enumeration pointer is null, then assume we
 		// are doing references and not referenceNames
 		if (piresult != 0)
 		{
 			assocP->references(
 				createProvEnvRef(context, m_env), *piresult,
-				path.getNameSpace(), path, resultClass, role, includeQualifiers,
+				path.getNameSpace(), path, resultClass.toString(), role.toString(), includeQualifiers,
 				includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
 			assocP->referenceNames(
 				createProvEnvRef(context, m_env), *popresult,
-				path.getNameSpace(), path, resultClass, role);
+				path.getNameSpace(), path, resultClass.toString(), role.toString());
 		}
 		else
 		{
@@ -2155,7 +2155,7 @@ namespace
 	class classNamesBuilder : public StringResultHandlerIFC
 	{
 	public:
-		classNamesBuilder(StringArray& resultClassNames)
+		classNamesBuilder(CIMNameArray& resultClassNames)
 			: m_resultClassNames(resultClassNames)
 		{}
 		void doHandle(const String& op)
@@ -2163,7 +2163,7 @@ namespace
 			m_resultClassNames.push_back(op);
 		}
 	private:
-		StringArray& m_resultClassNames;
+		CIMNameArray& m_resultClassNames;
 	};
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
@@ -2171,8 +2171,8 @@ void
 CIMServer::_commonAssociators(
 	const String& ns,
 	const CIMObjectPath& path_,
-	const String& assocClassName, const String& resultClass,
-	const String& role, const String& resultRole,
+	const CIMName& assocClassName, const CIMName& resultClass,
+	const CIMName& role, const CIMName& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	CIMInstanceResultHandlerIFC* piresult,
@@ -2185,16 +2185,16 @@ CIMServer::_commonAssociators(
 	path.syncWithClass(getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context));
 	// Get association classes from the association repository
 	CIMClassArray dynamicAssocs;
-	StringArray assocClassNames;
-	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, context, ns, m_logger);
+	CIMNameArray assocClassNames;
+	assocClassSeparator assocClassResult(!m_realRepository || assocClassName == CIMName() ? 0 : &assocClassNames, dynamicAssocs, *this, context, ns, m_logger);
 	_getAssociationClasses(ns, assocClassName, path.getClassName(), assocClassResult, role, context);
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
-	StringArray resultClassNames;
-	if (m_realRepository && !resultClass.empty())
+	CIMNameArray resultClassNames;
+	if (m_realRepository && resultClass != CIMName())
 	{
 		classNamesBuilder resultClassNamesResult(resultClassNames);
-		m_cimRepository->enumClassNames(ns, resultClass, resultClassNamesResult, E_DEEP, context);
+		m_cimRepository->enumClassNames(ns, resultClass.toString(), resultClassNamesResult, E_DEEP, context);
 		resultClassNames.append(resultClass);
 	}
 	if (path.isClassPath())
@@ -2210,23 +2210,23 @@ CIMServer::_commonAssociators(
 		// Process all of the association classes without providers
 		if (m_realRepository)
 		{
-			SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
+			SortedVectorSet<CIMName> assocClassNamesSet(assocClassNames.begin(),
 					assocClassNames.end());
-			SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
+			SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(),
 					resultClassNames.end());
-			m_realRepository->_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-				resultClass.empty() ? 0 : &resultClassNamesSet,
+			m_realRepository->_staticAssociatorsClass(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+				resultClass == CIMName() ? 0 : &resultClassNamesSet,
 				role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 		}
 		else
 		{
 			if (popresult != 0)
 			{
-				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,context);
+				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName.toString(),resultClass.toString(),role.toString(),resultRole.toString(),context);
 			}
 			else if (pcresult != 0)
 			{
-				m_cimRepository->associatorsClasses(ns,path,*pcresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,context);
+				m_cimRepository->associatorsClasses(ns,path,*pcresult,assocClassName.toString(),resultClass.toString(),role.toString(),resultRole.toString(),includeQualifiers,includeClassOrigin,propertyList,context);
 			}
 			else
 			{
@@ -2242,17 +2242,17 @@ CIMServer::_commonAssociators(
 			// do instances
 			if (m_realRepository)
 			{
-				SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
+				SortedVectorSet<CIMName> assocClassNamesSet(assocClassNames.begin(),
 						assocClassNames.end());
-				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
+				SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(),
 						resultClassNames.end());
-				m_realRepository->_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+				m_realRepository->_staticAssociators(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+					resultClass == CIMName() ? 0 : &resultClassNamesSet, role, resultRole,
 					includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 			}
 			else
 			{
-				m_cimRepository->associators(ns,path,*piresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,context);
+				m_cimRepository->associators(ns,path,*piresult,assocClassName.toString(),resultClass.toString(),role.toString(),resultRole.toString(),includeQualifiers,includeClassOrigin,propertyList,context);
 			}
 		}
 		else if (popresult != 0)
@@ -2260,17 +2260,17 @@ CIMServer::_commonAssociators(
 			// do names (object paths)
 			if (m_realRepository)
 			{
-				SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
+				SortedVectorSet<CIMName> assocClassNamesSet(assocClassNames.begin(),
 						assocClassNames.end());
-				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
+				SortedVectorSet<CIMName> resultClassNamesSet(resultClassNames.begin(),
 						resultClassNames.end());
-				m_realRepository->_staticAssociatorNames(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
-					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+				m_realRepository->_staticAssociatorNames(path, assocClassName == CIMName() ? 0 : &assocClassNamesSet,
+					resultClass == CIMName() ? 0 : &resultClassNamesSet, role, resultRole,
 					*popresult);
 			}
 			else
 			{
-				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,context);
+				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName.toString(),resultClass.toString(),role.toString(),resultRole.toString(),context);
 			}
 		}
 		else
@@ -2289,8 +2289,8 @@ CIMServer::_commonAssociators(
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMServer::_dynamicAssociators(const CIMObjectPath& path,
-	const CIMClassArray& assocClasses, const String& resultClass,
-	const String& role, const String& resultRole,
+	const CIMClassArray& assocClasses, const CIMName& resultClass,
+	const CIMName& role, const CIMName& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult, OperationContext& context)
@@ -2309,19 +2309,19 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 			OW_LOG_ERROR(m_logger, "Failed to get associator provider for class: " + cc.getName());
 			continue;
 		}
-		String assocClass(assocClasses[i].getName());
+		CIMName assocClass(assocClasses[i].getName());
 		if (piresult != 0)
 		{
 			OW_LOG_DEBUG(m_logger, "Calling associators on associator provider for class: " + cc.getName());
 			assocP->associators(createProvEnvRef(context, m_env), *piresult, path.getNameSpace(),
-				path, assocClass, resultClass, role, resultRole,
+				path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString(),
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
 			OW_LOG_DEBUG(m_logger, "Calling associatorNames on associator provider for class: " + cc.getName());
 			assocP->associatorNames(createProvEnvRef(context, m_env), *popresult,
-				path.getNameSpace(), path, assocClass, resultClass, role, resultRole);
+				path.getNameSpace(), path, assocClass.toString(), resultClass.toString(), role.toString(), resultRole.toString());
 		}
 		else
 		{
@@ -2332,18 +2332,18 @@ CIMServer::_dynamicAssociators(const CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMServer::_getAssociationClasses(const String& ns,
-		const String& assocClassName, const String& className,
-		CIMClassResultHandlerIFC& result, const String& role, OperationContext& context)
+		const CIMName& assocClassName, const CIMName& className,
+		CIMClassResultHandlerIFC& result, const CIMName& role, OperationContext& context)
 {
-	if (!assocClassName.empty())
+	if (assocClassName != CIMName())
 	{
 		// they gave us a class name so we can use the class association index
 		// to only look at the ones that could provide associations
-		CIMClass cc = getClass(ns,assocClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+		CIMClass cc = getClass(ns,assocClassName.toString(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 		result.handle(cc);
 		// TODO: measure whether it would be faster to use
 		// enumClassNames + getClass() here.
-		enumClasses(ns,assocClassName,result,E_DEEP,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN, context);
+		enumClasses(ns,assocClassName.toString(),result,E_DEEP,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN, context);
 	}
 	else
 	{
@@ -2355,7 +2355,7 @@ CIMServer::_getAssociationClasses(const String& ns,
 		}
 		else
 		{
-			m_cimRepository->referencesClasses(ns,cop,result,assocClassName,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,context);
+			m_cimRepository->referencesClasses(ns,cop,result,assocClassName.toString(),role.toString(),E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,context);
 		}
 		// TODO: test if this is faster
 		//assocHelper helper(result, m_mStore, ns);

@@ -310,9 +310,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 		StringArray clsNames = pra[i]->getHandlerClassNames();
 		for (size_t j = 0; j < clsNames.size(); j++)
 		{
-			String lowerClsName = clsNames[j];
-			lowerClsName.toLowerCase();
-			m_providers[lowerClsName] = pra[i];
+			m_providers[clsNames[j]] = pra[i];
 			OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl: Handling"
 				" indication type %1", clsNames[j]));
 		}
@@ -557,15 +555,15 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 		instanceArg.setProperty("IndicationTime", CIMValue(cdt));
 	}
 
-	String curClassName = instanceArg.getClassName();
-	if (curClassName.empty())
+	CIMName curClassName = instanceArg.getClassName();
+	if (curClassName == CIMName())
 	{
 		OW_LOG_ERROR(m_logger, "Cannot process indication, because it has no "
 			"class name.");
 	}
-	while (!curClassName.empty())
+	while (curClassName != CIMName())
 	{
-		String key = curClassName;
+		String key = curClassName.toString();
 		key.toLowerCase();
 		{
 			MutexLock lock(m_subGuard);
@@ -609,12 +607,12 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 		try
 		{
 			OperationContext context;
-			cc = m_env->getRepositoryCIMOMHandle(context)->getClass(instNS, curClassName);
+			cc = m_env->getRepositoryCIMOMHandle(context)->getClass(instNS, curClassName.toString());
 			curClassName = cc.getSuperClass();
 		}
 		catch (const CIMException& e)
 		{
-			curClassName.erase();
+			curClassName = CIMName();
 		}
 	}
 }
@@ -705,13 +703,11 @@ IndicationServerImpl::addTrans(
 }
 //////////////////////////////////////////////////////////////////////////////
 IndicationExportProviderIFCRef
-IndicationServerImpl::getProvider(const String& className)
+IndicationServerImpl::getProvider(const CIMName& className)
 {
 	IndicationExportProviderIFCRef pref(0);
-	String lowerClassName(className);
-	lowerClassName.toLowerCase();
 	provider_map_t::iterator it =
-		m_providers.find(lowerClassName);
+		m_providers.find(className);
 	if (it != m_providers.end())
 	{
 		pref = it->second;
@@ -747,27 +743,26 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 						// the provider
 						for (size_t j = 0; j < sub.m_classes.size(); ++j)
 						{
-							String key = sub.m_classes[j];
-							key.toLowerCase();
+							CIMName key = sub.m_classes[j];
 							poller_map_t::iterator iter = m_pollers.find(key);
 							if (iter != m_pollers.end())
 							{
 								LifecycleIndicationPollerRef p = iter->second;
-								String subClsName = sub.m_selectStmt.getClassName();
+								CIMName subClsName = sub.m_selectStmt.getClassName();
 								bool removePoller = false;
-								if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
+								if (subClsName == "CIM_InstCreation")
 								{
 									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
 								}
-								else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
+								else if (subClsName == "CIM_InstModification")
 								{
 									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
 								}
-								else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
+								else if (subClsName == "CIM_InstDeletion")
 								{
 									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
 								}
-								else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+								else if (subClsName == "CIM_InstIndication" || subClsName == "CIM_Indication")
 								{
 									p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
 									p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
@@ -941,11 +936,11 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	WQLSelectStatement selectStmt(m_wqlRef->createSelectStatement(filterQuery));
 	WQLCompile compiledStmt(selectStmt);
 	const WQLCompile::Tableau& tableau(compiledStmt.getTableau());
-	String indicationClassName = selectStmt.getClassName();
+	CIMName indicationClassName = selectStmt.getClassName();
 	OW_LOG_DEBUG(m_logger, Format("query is for indication class: %1", indicationClassName));
 
 	// collect up all the class names
-	StringArray isaClassNames;
+	CIMNameArray isaClassNames;
 	for (size_t i = 0; i < tableau.size(); ++i)
 	{
 		for (size_t j = 0; j < tableau[i].size(); ++j)
@@ -982,12 +977,13 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	}
 
 	// look up all the subclasses of the classes in isaClassNames.
-	StringArray subClasses;
+	CIMNameArray subClasses;
 	for (size_t i = 0; i < isaClassNames.size(); ++i)
 	{
 		try
 		{
-			subClasses.appendArray(hdl->enumClassNamesA(filterSourceNameSpace, isaClassNames[i]));
+			StringArray tmp(hdl->enumClassNamesA(filterSourceNameSpace, isaClassNames[i].toString()));
+			subClasses.insert(subClasses.end(), tmp.begin(), tmp.end());
 		}
 		catch (CIMException& e)
 		{
@@ -1004,8 +1000,16 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
 
 	OStringStream ss;
-	std::copy(isaClassNames.begin(), isaClassNames.end(), std::ostream_iterator<String>(ss, ", "));
+	std::copy(isaClassNames.begin(), isaClassNames.end(), std::ostream_iterator<CIMName>(ss, ", "));
 	OW_LOG_DEBUG(m_logger, Format("isaClassNames = %1", ss.toString()));
+
+	// we need to make a copy of this to pass to indication provider.  Darn backward compatibility :(
+	StringArray strIsaClassNames;
+	strIsaClassNames.reserve(isaClassNames.size());
+	for (size_t i = 0; i < isaClassNames.size(); ++i)
+	{
+		strIsaClassNames.push_back(isaClassNames[i].toString());
+	}
 
 	// find providers that support this query. If none are found, throw an exception.
 	ProviderManagerRef pm (m_env->getProviderManager());
@@ -1019,7 +1023,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	else
 	{
 		providers = pm->getIndicationProviders(createProvEnvRef(m_env), ns,
-			indicationClassName, StringArray());
+			indicationClassName, CIMNameArray());
 	}
 	
 	OW_LOG_DEBUG(m_logger, Format("Found %1 providers for the subscription", providers.size()));
@@ -1030,7 +1034,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 
 	// verify that there is an indication export provider that can handle the handler for the subscription
 	CIMObjectPath handlerPath = subInst.getProperty("Handler").getValueT().toCIMObjectPath();
-	String handlerClass = handlerPath.getClassName();
+	CIMName handlerClass = handlerPath.getClassName();
 	if (!getProvider(handlerClass))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No indication export provider found for this subscription");
@@ -1040,7 +1044,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	{
 		OW_LOG_DEBUG(m_logger, Format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
-			selectStmt, indicationClassName, ns, isaClassNames, username);
+			selectStmt, indicationClassName.toString(), ns, strIsaClassNames, username);
 	}
 	// Call mustPoll on all the providers
 	Array<bool> isPolled(providers.size(), false);
@@ -1050,15 +1054,14 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		{
 			OW_LOG_DEBUG(m_logger, Format("Calling mustPoll for provider %1", i));
 			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
-				selectStmt, indicationClassName, ns, isaClassNames);
+				selectStmt, indicationClassName.toString(), ns, strIsaClassNames);
 			OW_LOG_DEBUG(m_logger, Format("got pollInterval %1", pollInterval));
 			if (pollInterval > 0)
 			{
 				isPolled[i] = true;
 				for (size_t j = 0; j < isaClassNames.size(); ++j)
 				{
-					String key = isaClassNames[j];
-					key.toLowerCase();
+					CIMName key = isaClassNames[j];
 					OW_LOG_DEBUG(m_logger, Format("searching on class key %1", isaClassNames[j]));
 					poller_map_t::iterator iter = m_pollers.find(key);
 					LifecycleIndicationPollerRef p;
@@ -1073,20 +1076,20 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
 							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(ns, key, pollInterval)));
 					}
-					String subClsName = selectStmt.getClassName();
-					if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
+					CIMName subClsName = selectStmt.getClassName();
+					if (subClsName == "CIM_InstCreation")
 					{
 						p->addPollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
 					}
-					else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
+					else if (subClsName == "CIM_InstModification")
 					{
 						p->addPollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
 					}
-					else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
+					else if (subClsName == "CIM_InstDeletion")
 					{
 						p->addPollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
 					}
-					else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+					else if (subClsName == "CIM_InstIndication" || subClsName == "CIM_Indication")
 					{
 						p->addPollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
 						p->addPollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
@@ -1129,7 +1132,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	sub.m_filter = filterInst;
 	sub.m_selectStmt = selectStmt;
 	sub.m_compiledStmt = compiledStmt;
-	sub.m_classes = isaClassNames;
+	sub.m_classes = strIsaClassNames;
 
 	// m_filterSourceNamespace is saved so _processIndication can do what the
 	// schema says:
@@ -1144,7 +1147,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		MutexLock l(m_subGuard);
 		if (isaClassNames.empty())
 		{
-			String subKey = indicationClassName;
+			String subKey = indicationClassName.toString();
 			subKey.toLowerCase();
 			m_subscriptions.insert(std::make_pair(subKey, sub));
 		}
@@ -1152,7 +1155,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		{
 			for (size_t i = 0; i < isaClassNames.size(); ++i)
 			{
-				String subKey = indicationClassName + ':' + isaClassNames[i];
+				String subKey = indicationClassName.toString() + ':' + isaClassNames[i].toString();
 				subKey.toLowerCase();
 				m_subscriptions.insert(std::make_pair(subKey, sub));
 			}
@@ -1168,7 +1171,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		try
 		{
 			providers[i]->activateFilter(createProvEnvRef(m_env),
-				selectStmt, indicationClassName, ns, isaClassNames);
+				selectStmt, indicationClassName.toString(), ns, strIsaClassNames);
 
 			++successfulActivations;
 		}
@@ -1192,7 +1195,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		MutexLock l(m_subGuard);
 		if (isaClassNames.empty())
 		{
-			String subKey = indicationClassName;
+			String subKey = indicationClassName.toString();
 			subKey.toLowerCase();
 			m_subscriptions.erase(subKey);
 		}
@@ -1200,7 +1203,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		{
 			for (size_t i = 0; i < isaClassNames.size(); ++i)
 			{
-				String subKey = indicationClassName + ':' + isaClassNames[i];
+				String subKey = indicationClassName.toString() + ':' + isaClassNames[i].toString();
 				subKey.toLowerCase();
 				m_subscriptions.erase(subKey);
 			}

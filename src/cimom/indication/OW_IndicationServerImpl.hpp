@@ -105,7 +105,7 @@ private:
 		String m_filterSourceNameSpace;
 		Array<bool> m_isPolled; // each bool corresponds to a provider
 	};
-	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
+	// They key is indicationname:sourceinstanceclassname. All lower case. SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
 	typedef HashMultiMap<String, Subscription> subscriptions_t;
 #if defined(OW_AIX)
 	typedef subscriptions_t subscriptions_copy_t;
@@ -123,7 +123,7 @@ private:
 		const CIMInstance& handler,
 		const CIMInstance& subscription,
 		IndicationExportProviderIFCRef provider);
-	IndicationExportProviderIFCRef getProvider(const String& className);
+	IndicationExportProviderIFCRef getProvider(const CIMName& className);
 	struct ProcIndicationTrans
 	{
 		ProcIndicationTrans(const CIMInstance& inst,
@@ -133,7 +133,7 @@ private:
 		CIMInstance instance;
 		String nameSpace;
 	};
-	typedef HashMap<String, IndicationExportProviderIFCRef> provider_map_t;
+	typedef SortedVectorMap<CIMName, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;
 	
 	// m_procTrans is where new indications to be delivered are put.
@@ -147,7 +147,7 @@ private:
 	subscriptions_t m_subscriptions;
 	Mutex m_subGuard;
 	typedef SharedLibraryReference< IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
-	typedef HashMap<String, LifecycleIndicationPollerRef > poller_map_t;
+	typedef Map<CIMName, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
 	ThreadPoolRef m_notifierThreadPool;
 	ThreadPoolRef m_subscriptionPool;

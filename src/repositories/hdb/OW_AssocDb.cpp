@@ -76,8 +76,8 @@ AssocDbEntry::AssocDbEntry(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 AssocDbEntry::AssocDbEntry(const CIMObjectPath& objectName,
-		const String& role,
-		const String& resultRole) :
+		const CIMName& role,
+		const CIMName& resultRole) :
 	m_objectName(objectName), m_role(role), m_resultRole(resultRole),
 	m_offset(-1L)
 {
@@ -120,16 +120,16 @@ AssocDbEntry::entry::readObject(istream& istrm)
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-AssocDbEntry::makeKey(const CIMObjectPath& objectName, const String& role,
-	const String& resultRole)
+AssocDbEntry::makeKey(const CIMObjectPath& objectName, const CIMName& role,
+	const CIMName& resultRole)
 {
 	// use # as the separator, because that's not a valid character in an
 	// object path or any CIM identifier
 	String lowerName = objectName.toString();
 	lowerName.toLowerCase();
-	String lowerRole = role;
+	String lowerRole = role.toString();
 	lowerRole.toLowerCase();
-	String lowerResultRole = resultRole;
+	String lowerResultRole = resultRole.toString();
 	lowerResultRole.toLowerCase();
 	return lowerName + "#" + lowerRole + "#" + lowerResultRole;
 }
@@ -196,8 +196,8 @@ AssocDbHandle::AssocDbHandleData::operator= (const AssocDbHandleData& arg)
 //////////////////////////////////////////////////////////////////////////////
 void
 AssocDbHandle::addEntry(const CIMObjectPath& objectName,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath)
 {
@@ -232,7 +232,7 @@ AssocDbHandle::deleteEntries(const String& ns, const CIMInstance& assocInstance)
 void
 AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add)
 {
-	String assocClass = assocInstance.getClassName();
+	CIMName assocClass = assocInstance.getClassName();
 	CIMObjectPath assocPath(assocClass, ns);
 	assocPath.setKeys(assocInstance);
 	// search for references
@@ -266,30 +266,30 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInst
 					{
 						objectName.setNameSpace(ns);
 					}
-					String resultClass = associatedObject.getClassName();
-					String role = propRa[i].getName();
-					String resultRole = propRa[j].getName();
+					CIMName resultClass = associatedObject.getClassName();
+					CIMName role = propRa[i].getName();
+					CIMName resultRole = propRa[j].getName();
 					if (add)
 					{
 						addEntry(objectName, assocClass, resultClass,
 							role, resultRole, associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							String(), resultRole, associatedObject, assocPath);
+							CIMName(), resultRole, associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							role, String(), associatedObject, assocPath);
+							role, CIMName(), associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							String(), String(), associatedObject, assocPath);
+							CIMName(), CIMName(), associatedObject, assocPath);
 					}
 					else
 					{
 						deleteEntry(objectName, assocClass, resultClass,
 							role, resultRole, associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							String(), resultRole, associatedObject, assocPath);
+							CIMName(), resultRole, associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							role, String(), associatedObject, assocPath);
+							role, CIMName(), associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							String(), String(), associatedObject, assocPath);
+							CIMName(), CIMName(), associatedObject, assocPath);
 					}
 				}
 			}
@@ -312,7 +312,7 @@ AssocDbHandle::deleteEntries(const String& ns, const CIMClass& assocClass)
 void
 AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add)
 {
-	String assocClassName = assocClass.getName();
+	CIMName assocClassName = assocClass.getName();
 	CIMObjectPath assocClassPath(assocClassName, ns);
 	// search for references
 	CIMPropertyArray propRa = assocClass.getAllProperties();
@@ -334,31 +334,31 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, 
 					// found another reference, now set up the vars we need
 					// and create index entries.
 					CIMObjectPath objectName(p1.getDataType().getRefClassName(), ns);
-					String resultClass = p2.getDataType().getRefClassName();
-					String role = p1.getName();
-					String resultRole = p2.getName();
+					CIMName resultClass = p2.getDataType().getRefClassName();
+					CIMName role = p1.getName();
+					CIMName resultRole = p2.getName();
 					CIMObjectPath associatedObject(resultClass, ns);
 					if (add)
 					{
 						addEntry(objectName, assocClassName, resultClass,
 							role, resultRole, associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							String(), resultRole, associatedObject, assocClassPath);
+							CIMName(), resultRole, associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							role, String(), associatedObject, assocClassPath);
+							role, CIMName(), associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							String(), String(), associatedObject, assocClassPath);
+							CIMName(), CIMName(), associatedObject, assocClassPath);
 					}
 					else
 					{
 						deleteEntry(objectName, assocClassName, resultClass,
 							role, resultRole, associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							String(), resultRole, associatedObject, assocClassPath);
+							CIMName(), resultRole, associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							role, String(), associatedObject, assocClassPath);
+							role, CIMName(), associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							String(), String(), associatedObject, assocClassPath);
+							CIMName(), CIMName(), associatedObject, assocClassPath);
 					}
 				}
 			}
@@ -368,8 +368,8 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, 
 //////////////////////////////////////////////////////////////////////////////
 void
 AssocDbHandle::deleteEntry(const CIMObjectPath& objectName,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath)
 {
@@ -382,10 +382,10 @@ AssocDbHandle::deleteEntry(const CIMObjectPath& objectName,
 //////////////////////////////////////////////////////////////////////////////
 void
 AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
-		const SortedVectorSet<String>* passocClasses,
-		const SortedVectorSet<String>* presultClasses,
-		const String& role,
-		const String& resultRole,
+		const SortedVectorSet<CIMName>* passocClasses,
+		const SortedVectorSet<CIMName>* presultClasses,
+		const CIMName& role,
+		const CIMName& resultRole,
 		AssocDbEntryResultHandlerIFC& result)
 {
 	if ((passocClasses && passocClasses->size() == 0)
@@ -589,8 +589,8 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 // PRIVATE - AssocDbHandle uses
 void
 AssocDb::deleteEntry(const CIMObjectPath& objectName,
-	const String& assocClassName, const String& resultClass,
-	const String& role, const String& resultRole,
+	const CIMName& assocClassName, const CIMName& resultClass,
+	const CIMName& role, const CIMName& resultRole,
 	const CIMObjectPath& associatedObject,
 	const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
@@ -688,8 +688,8 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 // PRIVATE - AssocDbHandle uses
 void
 AssocDb::addEntry(const CIMObjectPath& objectName,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
+		const CIMName& assocClassName, const CIMName& resultClass,
+		const CIMName& role, const CIMName& resultRole,
 		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
@@ -817,8 +817,8 @@ calcCheckSum(unsigned char* src, Int32 len)
 //////////////////////////////////////////////////////////////////////////////
 bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs)
 {
-	return lhs.m_assocClass.equalsIgnoreCase(rhs.m_assocClass) &&
-		lhs.m_resultClass.equalsIgnoreCase(rhs.m_resultClass) &&
+	return lhs.m_assocClass == rhs.m_assocClass &&
+		lhs.m_resultClass == rhs.m_resultClass &&
 		lhs.m_associatedObject.equals(rhs.m_associatedObject) &&
 		lhs.m_associationPath.equals(rhs.m_associationPath);
 }

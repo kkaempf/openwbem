@@ -69,7 +69,7 @@ public:
 	 * @exception IOException
 	 */
 	CIMQualifierType getQualifierType(const String& ns,
-		const String& qualName, HDBHandle* hdl=0);
+		const CIMName& qualName, HDBHandle* hdl=0);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Delete an existing qualifier from the repository
@@ -79,7 +79,7 @@ public:
 	 * the qualifier was not found.
 	 * @exception CIMException
 	 */
-	bool deleteQualifierType(const String& ns, const String& qualName);
+	bool deleteQualifierType(const String& ns, const CIMName& qualName);
 	/**
 	 * Update a qualifier type in the repository
 	 * @param ns	The namespace for the qualifier
@@ -105,8 +105,8 @@ public:
 	 * @exception HDBException An error occurred in the database.
 	 * @exception IOException Couldn't read class object from file.
 	 */
-	CIMException::ErrNoType getCIMClass(const String& ns, 
-		const String& className, WBEMFlags::ELocalOnlyFlag localOnly,
+	CIMException::ErrNoType getCIMClass(const String& ns,
+		const CIMName& className, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		CIMClass& cc);
@@ -118,7 +118,7 @@ public:
 	 * @return true if the class was deleted. false if class was not found.
 	 * @exception CIMException if class does not exist
 	 */
-	bool deleteClass(const String& ns, const String& className);
+	bool deleteClass(const String& ns, const CIMName& className);
 	/**
 	 * creates a class in the store
 	 *
@@ -157,7 +157,7 @@ public:
 	 *		cannot be found.
 	 */
 	void enumClass(const String& ns,
-		const String& className,
+		const CIMName& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin);
@@ -173,7 +173,7 @@ public:
 	 *		cannot be found.
 	 */
 	void enumClassNames(const String& ns,
-		const String& className,
+		const CIMName& className,
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -218,14 +218,14 @@ private:
 	 * @param qualName	The name of the qualifier
 	 * @return A string that can be used to locate the qualifier.
 	 */
-	String _makeQualPath(const String& ns, const String& qualName);
+	String _makeQualPath(const String& ns, const CIMName& qualName);
 	/**
 	 * Make a path to a CIM class.
 	 * @param ns			The namespace for the class.
 	 * @param className	The name of the class.
 	 * @return A string that can be used to locate the class.
 	 */
-	String _makeClassPath(const String& ns, const String& className);
+	String _makeClassPath(const String& ns, const CIMName& className);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Add a qualifier type to the repository
@@ -237,10 +237,10 @@ private:
 		HDBHandle* phdl=0);
 #endif
 	void _getClassNodes(const String& ns, CIMClassResultHandlerIFC& result, HDBNode node,
-		HDBHandle hdl, 
-		WBEMFlags::EDeepFlag deep, 
+		HDBHandle hdl,
+		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 	void _getClassNameNodes(StringResultHandlerIFC& result, HDBNode node,
 		HDBHandle hdl, WBEMFlags::EDeepFlag deep);
@@ -256,7 +256,7 @@ private:
 #endif
 	CIMClass _getClassFromNode(HDBNode& node, HDBHandle hdl,
 		const String& ns);
-	String _getClassNameFromNode(HDBNode& node);
+	CIMName _getClassNameFromNode(HDBNode& node);
 	//void _throwIfBadClass(const CIMClass& cc, const CIMClass& parentClass);
 
 #ifdef OW_WIN32

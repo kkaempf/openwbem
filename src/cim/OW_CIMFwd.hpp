@@ -90,6 +90,7 @@ typedef Array<CIMParameter> 		CIMParameterArray;
 typedef Array<CIMParamValue> 		CIMParamValueArray;
 typedef Array<CIMInstance> 		CIMInstanceArray;
 typedef Array<CIMValue> 			CIMValueArray;
+typedef Array<CIMName> 				CIMNameArray;
 typedef Array<String>				StringArray;
 typedef Array<Char16>				Char16Array;
 typedef Array<Bool>       			BoolArray;
