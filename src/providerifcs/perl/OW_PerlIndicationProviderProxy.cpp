@@ -51,15 +51,18 @@ PerlIndicationProviderProxy::deActivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("deactivateFilter");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-		WQLSelectStatement mutableFilter(filter);
-		CIMObjectPath mutablePath(classes[0], nameSpace);
-		SelectExp exp = {&mutableFilter};
-		::CIMObjectPath cop = {&mutablePath};
+		//WQLSelectStatement mutableFilter(filter);
+		//CIMObjectPath mutablePath(classes[0], nameSpace);
+		//SelectExp exp = {&mutableFilter};
+		//::CIMObjectPath cop = {&mutablePath};
+		SelectExp exp;
+		::CIMObjectPath cop;
 		m_ftable->fp_deActivateFilter( &_npiHandle, exp, eventType.c_str(), cop, lastActivation);
 		if (_npiHandle.errorOccurred)
 		{
@@ -82,14 +85,16 @@ PerlIndicationProviderProxy::activateFilter(
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
-			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-		WQLSelectStatement mutableFilter(filter);
-		CIMObjectPath mutablePath(classes[0], nameSpace);
-		SelectExp exp = {&mutableFilter};
-		::CIMObjectPath cop = {&mutablePath};
+		//WQLSelectStatement mutableFilter(filter);
+		//CIMObjectPath mutablePath(classes[0], nameSpace);
+		//SelectExp exp = {&mutableFilter};
+		//::CIMObjectPath cop = {&mutablePath};
+		SelectExp exp;
+		::CIMObjectPath cop;
 		m_ftable->fp_activateFilter( &_npiHandle, exp, eventType.c_str(), cop, firstActivation);
 		if (_npiHandle.errorOccurred)
 		{
@@ -109,17 +114,20 @@ PerlIndicationProviderProxy::authorizeFilter(
 	const String& owner)
 {
 	env->getLogger()->logDebug("authorizeFilter");
-	if (m_ftable->fp_deActivateFilter != NULL)
+	if (m_ftable->fp_authorizeFilter != NULL)
 	{
-			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("authorizeFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-		WQLSelectStatement mutableFilter(filter);
-		CIMObjectPath mutablePath(classes[0], nameSpace);
-		SelectExp exp = {&mutableFilter};
-		::CIMObjectPath cop = {&mutablePath};
+		//WQLSelectStatement mutableFilter(filter);
+		//CIMObjectPath mutablePath(classes[0], nameSpace);
+		//SelectExp exp = {&mutableFilter};
+		//::CIMObjectPath cop = {&mutablePath};
+		SelectExp exp;
+		::CIMObjectPath cop;
 		m_ftable->fp_authorizeFilter( &_npiHandle, exp, eventType.c_str(), cop, owner.c_str());
 		if (_npiHandle.errorOccurred)
 		{
@@ -140,15 +148,17 @@ PerlIndicationProviderProxy::mustPoll(
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("mustPoll2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-		WQLSelectStatement mutableFilter(filter);
-		CIMObjectPath mutablePath(classes[0], nameSpace);
-		SelectExp exp = {&mutableFilter};
-		::CIMObjectPath cop = {&mutablePath};
+		//WQLSelectStatement mutableFilter(filter);
+		//CIMObjectPath mutablePath(classes[0], nameSpace);
+		//SelectExp exp = {&mutableFilter};
+		//::CIMObjectPath cop = {&mutablePath};
+		SelectExp exp;
+		::CIMObjectPath cop;
 		int rval = m_ftable->fp_mustPoll( &_npiHandle, exp, eventType.c_str(), cop);
 		if (_npiHandle.errorOccurred)
 		{
