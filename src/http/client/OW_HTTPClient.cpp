@@ -91,6 +91,8 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 	setUrl();
 	addHeaderPersistent("Host", m_url.host);
 	addHeaderPersistent("User-Agent", OW_PACKAGE"/"OW_VERSION);
+
+	m_socket.setConnectTimeout(60);
 	//m_socket.setReceiveTimeout(300);
 	//m_socket.setSendTimeout(300);
 }
