@@ -81,32 +81,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 {
 	MutexLock lock(m_authGuard);
 	
-	// look for initial connection w/out creds
-	if (info.empty())
-	{
-		String hostname = pconn->getHostName();
-		pconn->setErrorDetails("You must authenticate to access this"
-			" resource");
-		String authChallenge;
-		switch (m_options.defaultAuthChallenge)
-		{
-#ifndef OW_DISABLE_DIGEST
-			case E_DIGEST:
-				authChallenge = m_digestAuthentication->getChallenge(hostname); 
-				break;
-#endif
-			case E_BASIC:
-				authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
-				break;
-
-			default:
-				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
-		}
-
-		pconn->addHeader("WWW-Authenticate", authChallenge); 
-		return false;
-	}
-	
+	getEnvironment()->getLogger()->logDebug(Format("HTTPServer::authenticate: processing: %1", info));
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
@@ -146,6 +121,30 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			return true;
 		}
 	}
+
+	// We don't handle whatever they sent, so send the default challenge
+	String hostname = pconn->getHostName();
+	pconn->setErrorDetails("You must authenticate to access this"
+		" resource");
+	String authChallenge;
+	switch (m_options.defaultAuthChallenge)
+	{
+#ifndef OW_DISABLE_DIGEST
+		case E_DIGEST:
+			authChallenge = m_digestAuthentication->getChallenge(hostname); 
+			break;
+#endif
+		case E_BASIC:
+			authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
+			break;
+
+		default:
+			OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
+	}
+	getEnvironment()->getLogger()->logDebug(Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+	pconn->addHeader("WWW-Authenticate", authChallenge); 
+	return false;
+	
 }
 //////////////////////////////////////////////////////////////////////////////
 void
