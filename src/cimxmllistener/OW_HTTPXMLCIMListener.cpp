@@ -37,8 +37,6 @@
 #include "OW_CIMListenerCallback.hpp"
 #include "OW_HTTPServer.hpp"
 #include "OW_XMLListener.hpp"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_Format.hpp"
 #include "OW_MutexLock.hpp"
@@ -56,6 +54,9 @@
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
+#include "OW_CIMProtocolIFC.hpp"
+
 #include <algorithm> // for std::remove
 
 namespace OpenWBEM
@@ -301,9 +302,9 @@ HTTPXMLCIMListener::registerForIndication(
 	// create an http client with the url from the object path
 	URL curl(url);
 	reg.cimomUrl = curl;
-	CIMProtocolIFCRef client(new HTTPClient(curl.toString()));
-	String ipAddress = client->getLocalAddress().getAddress();
-	CIMXMLCIMOMHandle hdl(client);
+	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url);
+	String ipAddress = hdl->getWBEMProtocolHandler()->getLocalAddress().getAddress();
+	
 	// If we are connecting to the CIMOM via HTTPS, then assume it will
 	// support HTTPS. We'll
 	// first try to get a class of CIM_IndicationHandlerXMLHTTPS
@@ -318,7 +319,7 @@ HTTPXMLCIMListener::registerForIndication(
 	{
 		try
 		{
-			delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
+			delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
 		}
 		catch (CIMException& e)
 		{
@@ -334,14 +335,14 @@ HTTPXMLCIMListener::registerForIndication(
 	{
 		try
 		{
-			delivery = hdl.getClass(ns, "CIM_IndicationHandlerCIMXML");
+			delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
 		}
 		catch (CIMException& e)
 		{
 			if (e.getErrNo() == CIMException::NOT_FOUND)
 			{
 				// the > 2.6 doesn't exist, try to get the 2.5 class
-				delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
+				delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTP");
 			}
 			else
 				throw;
@@ -368,7 +369,7 @@ HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("Owner", CIMValue("HTTPXMLCIMListener on " + ipAddress));
 	try
 	{
-		reg.handler = hdl.createInstance(ns, ci);
+		reg.handler = hdl->createInstance(ns, ci);
 	}
 	catch (CIMException& e)
 	{
@@ -383,7 +384,7 @@ HTTPXMLCIMListener::registerForIndication(
 		}
 	}
 	// get class of CIM_IndicationFilter and new instance of it
-	CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
+	CIMClass cimFilter = hdl->getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
 	ci = cimFilter.newInstance();
 	// set Query property to query that was passed into function
 	ci.setProperty("Query", CIMValue(filter));
@@ -398,11 +399,11 @@ HTTPXMLCIMListener::registerForIndication(
 		ci.setProperty("SourceNamespace", CIMValue(sourceNamespace));
 	}
 	// create instance of filter
-	reg.filter = hdl.createInstance(ns, ci);
+	reg.filter = hdl->createInstance(ns, ci);
 	// get class of CIM_IndicationSubscription and new instance of it.
 	// CIM_IndicationSubscription is an association class that connects
 	// the IndicationFilter to the IndicationHandler.
-	CIMClass cimClientFilterDelivery = hdl.getClass(ns,
+	CIMClass cimClientFilterDelivery = hdl->getClass(ns,
 			"CIM_IndicationSubscription", E_LOCAL_ONLY);
 	ci = cimClientFilterDelivery.newInstance();
 	// set the properties for the filter and the handler
@@ -410,7 +411,7 @@ HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("handler", CIMValue(reg.handler));
 	// creating the instance the CIM_IndicationSubscription creates
 	// the event subscription
-	reg.subscription = hdl.createInstance(ns, ci);
+	reg.subscription = hdl->createInstance(ns, ci);
 	//save info for deletion later and callback delivery
 	reg.callback = cb;
 	reg.ns = ns;
@@ -454,11 +455,10 @@ HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
 void
 HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 {
-	CIMProtocolIFCRef client(new HTTPClient(reg.cimomUrl.toString()));
-	CIMXMLCIMOMHandle hdl(client);
-	hdl.deleteInstance(reg.ns, reg.subscription);
-	hdl.deleteInstance(reg.ns, reg.filter);
-	hdl.deleteInstance(reg.ns, reg.handler);
+	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString());
+	hdl->deleteInstance(reg.ns, reg.subscription);
+	hdl->deleteInstance(reg.ns, reg.filter);
+	hdl->deleteInstance(reg.ns, reg.handler);
 }
 
 } // end namespace OpenWBEM
