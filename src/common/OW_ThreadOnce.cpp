@@ -49,8 +49,8 @@ void callOnce(OnceFlag& flag, void (*func)())
     if (InterlockedCompareExchange(&flag, 1, 1) == 0)
     {
 		wchar_t mutexName[MAX_PATH];
-		_snwprintf(mutexName, sizeof(mutexName), L"%X-%p-587ccea9-c95a-4e81-ac51-ab0ddc6cef63", GetCurrentProcessId(), &flag);
-		mutexName[sizeof(mutexName) - 1] = 0;
+		_snwprintf(mutexName, ARRAYSIZE(mutexName), L"%X-%p-587ccea9-c95a-4e81-ac51-ab0ddc6cef63", GetCurrentProcessId(), &flag);
+		mutexName[ARRAYSIZE(mutexName) - 1] = 0;
 
         HANDLE mutex = CreateMutexW(NULL, FALSE, mutexName);
         OW_ASSERT(mutex != NULL);
