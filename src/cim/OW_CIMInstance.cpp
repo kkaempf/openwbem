@@ -43,7 +43,7 @@ using std::istream;
 struct OW_CIMInstance::INSTData
 {
 	OW_String m_owningClassName;
-	OW_String m_name;
+	OW_String m_name; // TODO: Do we need a name and an aliasName?
 	OW_String m_aliasName;
 	OW_CIMPropertyArray m_keys;
 	OW_CIMPropertyArray m_properties;
