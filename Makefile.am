@@ -18,7 +18,7 @@ openwbem.spec \
 generic-company-openwbem.spec.in \
 openwbem-faq.html
 
-CLEANFILES = Doxyfile
+CLEANFILES = Doxyfile $(PACKAGE_PREFIX)-openwbem.spec
 
 
 SUFFIXES = .sh 
