@@ -202,6 +202,7 @@ Documentation:
       - Thread safety
       - Exception safety
     - Define/document invariants for classes (especially OW_CIM*)
+    - Stick the website into CVS.
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
