@@ -585,8 +585,7 @@ CIMServer::_getCIMInstances(
 		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
 		// don't pass along deep and localOnly flags, because the handler has
 		// to take care of it.  m_cimRepository can't do it right, because we
-		// can't pass in theTopClass.  We pass false for enumSubClasses, to
-		// only do one class.
+		// can't pass in theTopClass.
 		m_cimRepository->enumInstances(ns, className, handler, E_DEEP, E_NOT_LOCAL_ONLY,
 			includeQualifiers, includeClassOrigin, propertyList, E_DONT_ENUM_SUBCLASSES, context);
 	}
