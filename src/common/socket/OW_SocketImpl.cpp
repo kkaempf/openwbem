@@ -70,6 +70,8 @@ SocketImpl::getSelectObj() const
 	Select_t st;
 	st.event = m_event;
 	st.sockfd = m_sockfd;
+	st.networkevents = FD_READ | FD_WRITE;
+	st.doreset = true;
 	return st;
 #else
 	return m_sockfd;

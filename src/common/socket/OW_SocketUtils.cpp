@@ -172,6 +172,8 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 			Format("Resetting socket with WSAEventSelect failed: %1",
 			System::lastErrorMsg(true)).c_str());
 	}
+	u_long ioctlarg = 0;
+	::ioctlsocket(fd, FIONBIO, &ioctlarg);
 	return cc;
 }
 

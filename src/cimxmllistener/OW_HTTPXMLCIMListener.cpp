@@ -70,6 +70,8 @@ class EventSelectable : public SelectableIFC
 {
 public:
 	EventSelectable()
+		: SelectableIFC()
+		, m_event(NULL)
 	{
 		if(!(m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL)))
 		{

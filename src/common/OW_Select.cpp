@@ -68,7 +68,6 @@ namespace OpenWBEM
 namespace Select
 {
 #if defined(OW_WIN32)
-
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
@@ -78,6 +77,13 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 	for (size_t i = 0; i < hcount; i++)
 	{
+		if(selarray[i].sockfd != INVALID_SOCKET
+			&& selarray[i].networkevents)
+		{
+			::WSAEventSelect(selarray[i].sockfd, 
+				selarray[i].event, selarray[i].networkevents);
+		}
+				
 		hdls[i] = selarray[i].event;
 	}
 
@@ -96,12 +102,25 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			break;
 		default:
 			rc = cc - WAIT_OBJECT_0;
+			
 			// If this is a socket, set it back to 
 			// blocking mode
 			if(selarray[rc].sockfd != INVALID_SOCKET)
 			{
-				WSAEventSelect(selarray[rc].sockfd, 
-					selarray[rc].event, 0);
+				if(selarray[rc].networkevents
+					&& selarray[rc].doreset == false)
+				{
+					::WSAEventSelect(selarray[rc].sockfd, 
+						selarray[rc].event, selarray[rc].networkevents);
+				}
+				else
+				{
+					// Set socket back to blocking
+					::WSAEventSelect(selarray[rc].sockfd, 
+						selarray[rc].event, 0);
+					u_long ioctlarg = 0;
+					::ioctlsocket(selarray[rc].sockfd, FIONBIO, &ioctlarg);
+				}
 			}
 			break;
 	}

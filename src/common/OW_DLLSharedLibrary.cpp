@@ -41,8 +41,6 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
-#include "OW_Types.h"
-
 #include <iostream>
 
 namespace OpenWBEM

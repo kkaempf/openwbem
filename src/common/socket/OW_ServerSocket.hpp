@@ -100,6 +100,8 @@ public:
 	 */
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr=true); 
+#else
+	void shutDown();
 #endif
 	/**
 	 * Close the listen socket

@@ -98,17 +98,23 @@ struct Select_t
 	Select_t() 
 		: event(NULL)
 		, sockfd(INVALID_SOCKET)
+		, networkevents(0)
+		, doreset(false)
 	{
 	}
 
 	Select_t(const Select_t& arg)
 		: event(arg.event)
 		, sockfd(arg.sockfd)
+		, networkevents(arg.networkevents)
+		, doreset(arg.doreset)
 	{
 	}
 	
 	HANDLE event;
 	SOCKET sockfd;
+	long networkevents;
+	bool doreset;
 };
 
 //typedef HANDLE Select_t;

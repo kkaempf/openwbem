@@ -70,6 +70,7 @@ ServerSocketImpl::ServerSocketImpl(SSLServerCtxRef sslCtx)
 	, m_sslCtx(sslCtx)
 #if defined(OW_WIN32)
 	, m_event(NULL)
+	, m_shuttingDown(false)
 {
 	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 	OW_ASSERT(m_event != NULL);
@@ -88,6 +89,7 @@ ServerSocketImpl::ServerSocketImpl(SocketFlags::ESSLFlag isSSL)
 	, m_isSSL(isSSL)
 #if defined(OW_WIN32)
 	, m_event(NULL)
+	, m_shuttingDown(false)
 {
 	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 	OW_ASSERT(m_event != NULL);
@@ -113,20 +115,26 @@ ServerSocketImpl::~ServerSocketImpl()
 	::CloseHandle(m_event);
 #endif
 }
+
+//////////////////////////////////////////////////////////////////////////////
+#ifdef OW_WIN32
+void
+ServerSocketImpl::shutDown()
+{
+	m_shuttingDown = true;
+	::SetEvent(m_event);
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 Select_t
 ServerSocketImpl::getSelectObj() const
 {
 #if defined(OW_WIN32)
-	if(::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT) != 0)
-	{
-		OW_THROW(SocketException, 
-			Format("WSAEventSelect failed in getSelectObj: %1",
-			System::lastErrorMsg(true)).c_str());
-	}
 	Select_t st;
 	st.event = m_event;
 	st.sockfd = m_sockfd;
+	st.networkevents = FD_ACCEPT;
 	return st;
 #else
 	return m_sockfd;
@@ -200,6 +208,48 @@ ServerSocketImpl::doListen(UInt16 port,
 	fillAddrParms();
 	m_isActive = true;
 }
+
+namespace 
+{
+
+int
+waitForAcceptIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
+	long networkEvents)
+{
+	DWORD timeout = (timeOutSecs != -1)
+		? static_cast<DWORD>(timeOutSecs * 1000)
+		: INFINITE;
+
+	if (networkEvents != -1L)
+	{
+		if(::WSAEventSelect(fd, eventArg, networkEvents) != 0)
+		{
+			OW_THROW(SocketException, 
+				Format("WSAEventSelect failed in waitForAcceptIO: %1",
+				System::lastErrorMsg(true)).c_str());
+		}
+	}
+
+	int cc;
+	switch(::WaitForSingleObject(eventArg, timeout))
+	{
+		case WAIT_OBJECT_0:
+			::ResetEvent(eventArg);
+			cc = 0;
+			break;
+		case WAIT_TIMEOUT:
+			cc = ETIMEDOUT;
+			break;
+		default:
+			cc = -1;
+			break;
+	}
+
+	return cc;
+}
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 Socket
 ServerSocketImpl::accept(int timeoutSecs)
@@ -238,17 +288,17 @@ ServerSocketImpl::accept(int timeoutSecs)
 
 		if (::WSAGetLastError() != WSAEWOULDBLOCK)
 		{
-			if(::WSAEventSelect(m_sockfd, m_event, 0) != 0)
-			{
-				OW_THROW(SocketException, 
-					Format("Resetting socket with WSAEventSelect failed: %1",
-					System::lastErrorMsg(true)).c_str());
-			}
 			OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 				System::lastErrorMsg(true)).c_str());
 		}
 
-		cc = SocketUtils::waitForIO(m_sockfd, m_event, INFINITE, FD_ACCEPT);
+		//cc = SocketUtils::waitForIO(m_sockfd, m_event, INFINITE, FD_ACCEPT);
+		cc = waitForAcceptIO(m_sockfd, m_event, timeoutSecs, FD_ACCEPT);
+		if(m_shuttingDown)
+		{
+			cc = -2;
+		}
+
 		switch (cc)
 		{
 			case -1:
@@ -260,16 +310,11 @@ ServerSocketImpl::accept(int timeoutSecs)
 		}
 	}
 
-	if(::WSAEventSelect(m_sockfd, m_event, 0) != 0)
-	{
-		OW_THROW(SocketException, 
-			Format("Resetting socket with WSAEventSelect failed: %1",
-			System::lastErrorMsg(true)).c_str());
-	}
 	if (!m_sslCtx && m_isSSL == SocketFlags::E_SSL)
 	{
 		return Socket(clntfd, m_localAddress.getType(), m_isSSL);
 	}
+
 	return Socket(clntfd, m_localAddress.getType(), m_sslCtx);
 }
 #else

@@ -693,6 +693,12 @@ HTTPServer::shutdown()
 
 	// now stop all current connections
 #ifdef OW_WIN32
+	if(m_pHttpServerSocket)
+		m_pHttpServerSocket->shutDown();
+
+	if(m_pHttpsServerSocket)
+		m_pHttpsServerSocket->shutDown();
+
 	if (!::SetEvent(m_event))
 	{
 		OW_THROW(IOException, 

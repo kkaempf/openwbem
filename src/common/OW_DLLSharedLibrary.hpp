@@ -40,7 +40,7 @@
 #if defined(OW_USE_DLL)
 #include "OW_SharedLibrary.hpp"
 
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 namespace OpenWBEM
 {

@@ -79,6 +79,8 @@ public:
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);
 	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput) OW_DEPRECATED; // in 3.1.0
+#else
+	void shutDown();
 #endif
 
 	Select_t getSelectObj() const;
@@ -95,6 +97,7 @@ private:
 	SSLServerCtxRef m_sslCtx; 
 #if defined(OW_WIN32)
 	HANDLE m_event;
+	bool m_shuttingDown;
 #else
 	File m_udsFile;
 #endif

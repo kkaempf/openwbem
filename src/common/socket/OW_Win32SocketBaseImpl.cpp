@@ -293,6 +293,8 @@ SocketBaseImpl::getSelectObj() const
 	Select_t st;
 	st.event = m_event;
 	st.sockfd = m_sockfd;
+	st.networkevents = FD_READ | FD_WRITE;
+	st.doreset = true;
 	return st;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -405,8 +407,11 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			Format("Resetting socket with WSAEventSelect Failed: %1",
 			System::lastErrorMsg(true)).c_str());
 	}
+	u_long ioctlarg = 0;
+	::ioctlsocket(m_sockfd, FIONBIO, &ioctlarg);
 
 	m_isConnected = true;
+
 
 	OW_ASSERT(addr.getType() == SocketAddress::INET);
 
@@ -430,6 +435,7 @@ SocketBaseImpl::disconnect()
 		m_inout.clear(ios::eofbit);
 	}
 
+	::SetEvent(m_event);
 	_closeSocket(m_sockfd);
 	m_isConnected = false;
 }
