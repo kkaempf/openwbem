@@ -39,12 +39,14 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 
 #include "OW_ProviderAgentCIMOMHandle.hpp"
 
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppSecondaryInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_Mutex.hpp"
@@ -133,16 +135,42 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 			const StringArray *propertyList)
 {
 	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	if (!pInstProv)
+	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
+	CIMInstance rval(CIMNULL); 
 	{
 		PAReadLock rl(m_locker); 
-		return pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
-				includeQualifiers ,includeClassOrigin ,
-				propertyList , m_cimclass); 
+		if (pInstProv)
+		{
+			rval = pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
+					includeQualifiers ,includeClassOrigin ,
+					propertyList , m_cimclass); 
+		}
+		if (pSInstProv)
+		{
+			CIMInstanceArray ia; 
+			if (pInstProv)
+			{
+				ia.push_back(rval); 
+			}
+			else
+			{
+				CIMInstance newInst(instanceName.getClassName()); 
+				newInst.setKeys(instanceName.getKeys()); 
+				ia.push_back(newInst); 
+			}
+			pSInstProv->filterInstances(m_PAEnv,ns , instanceName.getClassName(), 
+                                        ia,localOnly , OpenWBEM::WBEMFlags::E_SHALLOW, 
+										includeQualifiers, includeClassOrigin, 
+										propertyList, m_cimclass, m_cimclass); 
+			OW_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong? 
+			rval = ia[1]; 
+		}
 	}
+	return rval; 
 }
 /**
  * Enumerates the qualifiers defined in a namespace.
@@ -267,13 +295,21 @@ void
 ProviderAgentCIMOMHandle::deleteInstance(const String &ns, const CIMObjectPath &path)
 {
 	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	if (!pInstProv)
+	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
 	{
 		PAWriteLock wl(m_locker); 
-		pInstProv->deleteInstance(m_PAEnv,ns , path); 
+		if (pInstProv)
+		{
+			pInstProv->deleteInstance(m_PAEnv,ns , path); 
+		}
+		if (pSInstProv)
+		{
+			pSInstProv->deleteInstance(m_PAEnv,ns , path); 
+		}
 	}
 }
 /**
@@ -308,16 +344,27 @@ ProviderAgentCIMOMHandle::modifyInstance(const String &ns,
 			const StringArray *propertyList)
 	{
 		CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-		if (!pInstProv)
+		CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+		if (!pInstProv && !pSInstProv)
 		{
 			OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 		}
 		{
 			PAWriteLock wl(m_locker); 
-			pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
-					CIMInstance(CIMNULL),	// previousInstance unavailable
-					includeQualifiers ,
-					propertyList , m_cimclass); 
+			if (pInstProv)
+			{
+				pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
+						CIMInstance(CIMNULL),	// previousInstance unavailable
+						includeQualifiers ,
+						propertyList , m_cimclass); 
+			}
+			if (pSInstProv)
+			{
+				pSInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
+										   CIMInstance(CIMNULL),
+										   includeQualifiers ,propertyList , 
+										   m_cimclass); 
+			}
 		}
 	}
 /**
@@ -332,14 +379,24 @@ CIMObjectPath
 ProviderAgentCIMOMHandle::createInstance(const String &ns, const CIMInstance &instance)
 {
 	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	if (!pInstProv)
+	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
+	CIMObjectPath rval(CIMNULL); 
 	{
 		PAWriteLock wl(m_locker); 
-		return pInstProv->createInstance(m_PAEnv,ns , instance); 
+		if (pInstProv)
+		{
+			rval = pInstProv->createInstance(m_PAEnv,ns , instance); 
+		}
+		if (pSInstProv)
+		{
+			pSInstProv->createInstance(m_PAEnv,ns , instance); 
+		}
 	}
+	return rval; 
 }
 /**
  * Get the specified CIM instance property.
