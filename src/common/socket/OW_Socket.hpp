@@ -56,7 +56,6 @@
 #ifndef OW_DOMAIN_SOCKET_NAME
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
 #endif
-//#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_UDS_FILENAME
 
 namespace OpenWBEM
 {
@@ -201,21 +200,21 @@ public:
 	 * @return a istream& which can be used for socket input
 	 * @throws SocketException
 	 */
-	std::istream& getInputStream()
+	std::istream& getInputStream() // TODO: OW_DEPRECATED in 3.2.0
 		{ return m_impl->getInputStream(); }
 	/**
 	 * Get an ostream to write to the socket
 	 * @return an ostream& which can be used for socket output
 	 * @throws SocketException
 	 */
-	std::ostream& getOutputStream()
+	std::ostream& getOutputStream() // TODO: OW_DEPRECATED in 3.2.0
 		{ return m_impl->getOutputStream(); }
 	/**
 	 * Get an iostream to read/write from/to the socket
 	 * @return an iostream& which can be used for socket input and output.
 	 * @throws SocketException
 	 */
-	std::iostream& getIOStream()
+	OW_DEPRECATED std::iostream& getIOStream() // in 3.2.0
 		{ return m_impl->getIOStream(); }
 	/**
 	 * @return The Select_t associated with this sockect.
