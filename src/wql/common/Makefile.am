@@ -7,7 +7,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = libowwqlcommon.so
+OW_SHARED_LIBS = libowwqlcommon.$(LIB_EXT)
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 thelibdir = $(libdir)
 

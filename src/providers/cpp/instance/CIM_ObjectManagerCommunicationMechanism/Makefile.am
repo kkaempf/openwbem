@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovinstCIM_ObjectManagerCommunicationMechanism.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovinstCIM_ObjectManagerCommunicationMechanism.so
+OW_SHARED_LIBS = libowprovinstCIM_ObjectManagerCommunicationMechanism.$(LIB_EXT)
 
 libowprovinstCIM_ObjectManagerCommunicationMechanism_a_SOURCES = \
 OW_provinstCIM_ObjectManagerCommunicationMechanism.cpp

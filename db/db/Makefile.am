@@ -8,7 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowdb.a 
-OW_SHARED_LIBS = libowdb.so
+OW_SHARED_LIBS = libowdb.$(LIB_EXT)
 
 
 thelibdir = $(libdir)

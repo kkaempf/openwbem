@@ -19,7 +19,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/db/db -lowdb \
 -Ldl 
 
-OW_SHARED_LIBS = libowindicationserver.so libowindicationreplayer.so
+OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT) libowindicationreplayer.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem
 
 libowindicationserver_a_SOURCES = \

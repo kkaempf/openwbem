@@ -12,11 +12,11 @@ libinfiniteip.a
 
 
 OW_SHARED_LIBS = \
-liblaptopbat.so \
-liblinuxprocess.so \
-librpmip.so \
-libtestinstance.so \
-libinfiniteip.so
+liblaptopbat.$(LIB_EXT) \
+liblinuxprocess.$(LIB_EXT) \
+librpmip.$(LIB_EXT) \
+libtestinstance.$(LIB_EXT) \
+libinfiniteip.$(LIB_EXT)
 
 libinfiniteip_a_SOURCES = \
 OW_Infinity.cpp

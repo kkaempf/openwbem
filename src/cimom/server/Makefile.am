@@ -12,7 +12,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider
 
-OW_SHARED_LIBS = libowserver.so
+OW_SHARED_LIBS = libowserver.$(LIB_EXT)
 thelibdir = $(libdir)
 
 INCLUDES = \

@@ -7,7 +7,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = libowrepositorytdbcr.so
+OW_SHARED_LIBS = libowrepositorytdbcr.$(LIB_EXT)
 
 noinst_LIBRARIES = \
 libowrepositorytdbcr.a

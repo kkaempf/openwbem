@@ -8,7 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowcppprovifc.a
-OW_SHARED_LIBS = libowcppprovifc.so
+OW_SHARED_LIBS = libowcppprovifc.$(LIB_EXT)
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -L$(top_builddir)/src/provider -lowprovider
 
 thelibdir = $(libdir)

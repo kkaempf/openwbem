@@ -18,7 +18,7 @@ owpamauthbindir = $(libexecdir)/openwbem
 OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
 OW_PAMAuth_LDADD = -lpam
 
-OW_SHARED_LIBS = libpamclauthentication.so
+OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
 SHAREDLIBADD = -lpam
 
 noinst_LIBRARIES = \

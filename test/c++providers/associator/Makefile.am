@@ -10,7 +10,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
 
-OW_SHARED_LIBS = libassociatortest.so
+OW_SHARED_LIBS = libassociatortest.$(LIB_EXT)
 
 libassociatortest_a_SOURCES = \
 OW_AssociatorTest.cpp

@@ -9,9 +9,9 @@ libsampleprovider.a
 #libindprovider.a
 
 OW_SHARED_LIBS = \
-libsampleprovider.so 
+libsampleprovider.$(LIB_EXT) 
 
-#libindprovider.so
+#libindprovider.$(LIB_EXT)
 
 #libindprovider_a_SOURCES = \
 #IndProvider.c

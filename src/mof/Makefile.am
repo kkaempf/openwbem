@@ -10,7 +10,7 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libowmofc.a 
 thelibdir = $(libdir)
 
-OW_SHARED_LIBS = libowmofc.so
+OW_SHARED_LIBS = libowmofc.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem
 

@@ -26,7 +26,7 @@ TMPLIBDIR = .$@.libs
 	chmod +x $(SOFILENAME)
 
 noinst_LIBRARIES = libperlProvider.a
-OW_SHARED_LIBS = libperlProvider.so
+OW_SHARED_LIBS = libperlProvider.$(LIB_EXT)
 SHAREDLIBADD = $(perl_embed_ldflags)
 
 thelibdir = $(pkglibdir)/perlproviders

@@ -5,7 +5,7 @@ clean-local : clean-ow-shared-libs
 
 noinst_LIBRARIES = libindicationtest1.a libindicationtest2.a libindicationtest3.a
 
-OW_SHARED_LIBS = libindicationtest1.so libindicationtest2.so libindicationtest3.so
+OW_SHARED_LIBS = libindicationtest1.$(LIB_EXT) libindicationtest2.$(LIB_EXT) libindicationtest3.$(LIB_EXT)
 
 libindicationtest1_a_SOURCES = \
 OW_IndicationProviderTest1.cpp

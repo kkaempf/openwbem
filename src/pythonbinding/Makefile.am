@@ -7,7 +7,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = owclient.so
+OW_SHARED_LIBS = owclient.$(LIB_EXT)
 SHAREDLIBADD = \
 $(LIBS) \
 -L../common -lopenwbem \

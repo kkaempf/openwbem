@@ -10,7 +10,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
 
-OW_SHARED_LIBS = libmethodtest.so
+OW_SHARED_LIBS = libmethodtest.$(LIB_EXT)
 
 libmethodtest_a_SOURCES = \
 OW_MethodProviderTest.cpp

@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovCIM_IndicationSubscription.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovCIM_IndicationSubscription.so
+OW_SHARED_LIBS = libowprovCIM_IndicationSubscription.$(LIB_EXT)
 
 libowprovCIM_IndicationSubscription_a_SOURCES = \
 OW_provCIM_IndicationSubscription.cpp

@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovinstCIM_NamespaceInManager.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovinstCIM_NamespaceInManager.so
+OW_SHARED_LIBS = libowprovinstCIM_NamespaceInManager.$(LIB_EXT)
 
 libowprovinstCIM_NamespaceInManager_a_SOURCES = \
 OW_provinstCIM_NamespaceInManager.cpp

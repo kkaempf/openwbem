@@ -28,7 +28,7 @@ INCLUDES = \
 
 
 
-OW_SHARED_LIBS = libowcimomcommon.so
+OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
 thelibdir = $(libdir)
 
 

@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovinstOpenWBEM_ObjectManager.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovinstOpenWBEM_ObjectManager.so
+OW_SHARED_LIBS = libowprovinstOpenWBEM_ObjectManager.$(LIB_EXT)
 
 libowprovinstOpenWBEM_ObjectManager_a_SOURCES = \
 OW_provinstOpenWBEM_ObjectManager.cpp

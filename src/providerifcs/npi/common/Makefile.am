@@ -8,7 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libnpisupport.a
-OW_SHARED_LIBS = libnpisupport.so
+OW_SHARED_LIBS = libnpisupport.$(LIB_EXT)
 SHAREDLIBADD =  \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \

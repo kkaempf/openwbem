@@ -7,7 +7,7 @@ noinst_LIBRARIES = \
 libcmpiTestProvider.a 
 
 OW_SHARED_LIBS = \
-libcmpiTestProvider.so 
+libcmpiTestProvider.$(LIB_EXT) 
 
 thelibdir = $(pkglibdir)/cmpiproviders
 

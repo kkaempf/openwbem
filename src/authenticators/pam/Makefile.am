@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = libpamauthentication.so
+OW_SHARED_LIBS = libpamauthentication.$(LIB_EXT)
 SHAREDLIBADD = -lpam
 
 noinst_LIBRARIES = \

@@ -9,7 +9,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libperlprovifc.a
-OW_SHARED_LIBS = libperlprovifc.so
+OW_SHARED_LIBS = libperlprovifc.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/providerifcs/npi/common -lnpisupport \
 -L$(top_builddir)/src/wql/common -lowwqlcommon 

@@ -138,6 +138,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-G'
 	PLAT_OPTFLAGS="-O0"
 	PIDFILEDIR="/var/opt/vintela/vmx"
+	LIB_EXT="so"
 	;;
 *-*-cygwin*)
 	;;
@@ -152,6 +153,7 @@ case "$host" in
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	CXX="c++"
+	LIB_EXT="dynlib"
 	;;
 *-*-dgux*)
 	;;
@@ -168,6 +170,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
+	LIB_EXT="sl"
 	;;
 *-*-irix5*)
 	;;
@@ -183,6 +186,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
+	LIB_EXT="so"
 	;;
 *-*-netbsd*)
 	;;
@@ -196,6 +200,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
+	LIB_EXT="so"
 	;;
 *-next-*)
 	;;
@@ -210,6 +215,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
+	LIB_EXT="so"
 	;;
 *-*-sunof4*)
 	;;
@@ -235,6 +241,7 @@ case "$host" in
 	LDFLAGS="$LDFLAGS"
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/etc"
+	LIB_EXT="so"
 	;;
 *-*-sysv*)
 	;;
@@ -254,6 +261,7 @@ case "$host" in
 	CXXLINK="g++"
 	PLAT_OPTFLAGS="-O0"
 	PIDFILEDIR="/etc"
+	LIB_EXT="so"
 	;;
 *-dec-osf*)
 	;;
@@ -269,6 +277,8 @@ fi
 if test -z "$CLINK" ; then
   CLINK="$CC"
 fi
+
+AC_SUBST(LIB_EXT)
 
 AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILEDIR}")
 
@@ -471,11 +481,11 @@ AC_ARG_ENABLE(debug-mode,
 OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 [
 	AC_DEFINE(DEBUG)
-	CFLAGS="-g -Werror -Wall -W -Wno-format"
-	CXXFLAGS="-g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
+	CFLAGS="$CFLAGS -g -Werror -Wall -W -Wno-format"
+	CXXFLAGS="$CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
 ],[
-	CFLAGS="-g -DNDEBUG $PLAT_OPTFLAGS"
-	CXXFLAGS="-g -DNDEBUG $PLAT_OPTFLAGS"
+	CFLAGS="$CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
+	CXXFLAGS="$CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
 ])
 
 AC_ARG_ENABLE(openslp,

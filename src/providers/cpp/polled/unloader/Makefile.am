@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovpollUnloader.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovpollUnloader.so
+OW_SHARED_LIBS = libowprovpollUnloader.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \

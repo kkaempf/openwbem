@@ -7,7 +7,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-OW_SHARED_LIBS = libowrepositoryhdb.so
+OW_SHARED_LIBS = libowrepositoryhdb.$(LIB_EXT)
 
 noinst_LIBRARIES = \
 libowrepositoryhdb.a

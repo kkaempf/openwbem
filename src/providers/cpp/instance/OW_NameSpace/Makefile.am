@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovinstOW_NameSpace.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovinstOW_NameSpace.so
+OW_SHARED_LIBS = libowprovinstOW_NameSpace.$(LIB_EXT)
 
 libowprovinstOW_NameSpace_a_SOURCES = \
 OW_NameSpaceProvider.hpp \

@@ -12,7 +12,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/common/ -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
-OW_SHARED_LIBS = libowhttpclient.so
+OW_SHARED_LIBS = libowhttpclient.$(LIB_EXT)
 thelibdir = $(libdir)
 
 libowhttpclient_a_SOURCES =	\

@@ -12,7 +12,7 @@ noinst_LIBRARIES = libowslpprovider.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowslpprovider.so
+OW_SHARED_LIBS = libowslpprovider.$(LIB_EXT)
 
 libowslpprovider_a_SOURCES = \
 OW_SLPProvider.cpp

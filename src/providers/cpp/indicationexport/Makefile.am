@@ -9,7 +9,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
-OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.so
+OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider \

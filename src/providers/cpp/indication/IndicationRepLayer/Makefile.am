@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovindIndicationRepLayer.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovindIndicationRepLayer.so
+OW_SHARED_LIBS = libowprovindIndicationRepLayer.$(LIB_EXT)
 
 libowprovindIndicationRepLayer_a_SOURCES = \
 OW_provindIndicationRepLayer.cpp

@@ -17,7 +17,7 @@ SHAREDLIBADD = \
 
 noinst_LIBRARIES = libowclient.a
 
-OW_SHARED_LIBS = libowclient.so
+OW_SHARED_LIBS = libowclient.$(LIB_EXT)
 
 thelibdir = $(libdir)
 

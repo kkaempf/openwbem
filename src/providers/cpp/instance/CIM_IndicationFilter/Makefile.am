@@ -11,7 +11,7 @@ noinst_LIBRARIES = libowprovinstCIM_IndicationFilter.a
 
 thelibdir = $(pkglibdir)/c++providers
 
-OW_SHARED_LIBS = libowprovinstCIM_IndicationFilter.so
+OW_SHARED_LIBS = libowprovinstCIM_IndicationFilter.$(LIB_EXT)
 
 libowprovinstCIM_IndicationFilter_a_SOURCES = \
 OW_provinstCIM_IndicationFilter.cpp
