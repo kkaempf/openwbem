@@ -62,6 +62,7 @@ public:
 	virtual ~PollingManager();
 	
 	virtual String getName() const;
+	virtual StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	virtual void started();

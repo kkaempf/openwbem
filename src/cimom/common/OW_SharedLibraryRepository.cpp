@@ -39,6 +39,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_String.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -51,7 +53,12 @@ SharedLibraryRepository::~SharedLibraryRepository()
 {}
 void SharedLibraryRepository::close() { m_ref->close(); }
 String SharedLibraryRepository::getName() const { return m_ref->getName(); }
+StringArray SharedLibraryRepository::getDependencies() const { return m_ref->getDependencies(); }
 void SharedLibraryRepository::init(const ServiceEnvironmentIFCRef& env) { m_ref->init(env); }
+void SharedLibraryRepository::initialized() { m_ref->initialized(); }
+void SharedLibraryRepository::start() { m_ref->start(); }
+void SharedLibraryRepository::started() { m_ref->started(); }
+void SharedLibraryRepository::shuttingDown() { m_ref->shuttingDown(); }
 void SharedLibraryRepository::shutdown() { m_ref->shutdown(); }
 void SharedLibraryRepository::open(const String &path) { m_ref->open(path); }
 ServiceEnvironmentIFCRef SharedLibraryRepository::getEnvironment() const

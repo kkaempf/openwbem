@@ -135,6 +135,16 @@ PollingManager::getName() const
 {
 	return ServiceIFCNames::PollingManager;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+StringArray
+PollingManager::getDependencies() const
+{
+	StringArray rv;
+	rv.push_back(ServiceIFCNames::CIMServer);
+	return rv;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 PollingManagerThread::init(const ServiceEnvironmentIFCRef& env)

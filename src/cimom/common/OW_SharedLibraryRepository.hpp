@@ -47,8 +47,13 @@ public:
 	~SharedLibraryRepository();
 	virtual void close();
 	virtual String getName() const;
+	virtual StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void initialized();
+	virtual void start();
+	virtual void started();
 	virtual void shutdown();
+	virtual void shuttingDown();
 	virtual void open(const String &path);
 	virtual ServiceEnvironmentIFCRef getEnvironment() const;
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)

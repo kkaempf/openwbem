@@ -34,6 +34,8 @@
 
 #include "OW_config.h"
 #include "OW_ServiceIFC.hpp"
+#include "OW_String.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -48,6 +50,13 @@ String
 ServiceIFC::getName() const
 {
 	return String();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+StringArray
+ServiceIFC::getDependencies() const
+{
+	return StringArray();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

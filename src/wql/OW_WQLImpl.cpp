@@ -56,7 +56,7 @@ WQLImpl::~WQLImpl()
 String
 WQLImpl::getName() const
 {
-	return ServiceIFCNames::WQLImpl;
+	return ServiceIFCNames::WQL;
 }
 
 void WQLImpl::evaluate(const String& nameSpace,

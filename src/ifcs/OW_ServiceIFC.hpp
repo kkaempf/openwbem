@@ -65,7 +65,7 @@ public:
 	 * shutdown after this service.  If a dependent service doesn't exist, then the cimom startup will fail.
 	 * The default is to have no dependencies.
 	 */
-	//virtual StringArray getDependencies() const = 0;
+	virtual StringArray getDependencies() const;
 
 	/**
 	 * init() will be called to give the derived class an opportunity to initialize itself.

@@ -95,7 +95,7 @@ namespace
 		
 	private:
 		uid_t m_resetUid;
-		bool m_uidsDiffer; 
+		bool m_uidsDiffer;
 	};
 
 	class RUIDManager
@@ -121,7 +121,7 @@ namespace
 		
 	private:
 		uid_t m_resetUid;
-		bool m_uidsDiffer; 
+		bool m_uidsDiffer;
 	};
 
 
@@ -452,9 +452,11 @@ namespace
 		}
 		virtual void init(const ServiceEnvironmentIFCRef& env)
 		{
+			m_prep->init(env);
 		}
 		virtual void shutdown()
 		{
+			m_prep->shutdown();
 		}
 		virtual ServiceEnvironmentIFCRef getEnvironment() const
 		{
@@ -477,7 +479,7 @@ namespace
 #endif
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-		virtual void enumQualifierTypes(const String &ns, 
+		virtual void enumQualifierTypes(const String &ns,
 			CIMQualifierTypeResultHandlerIFC &result, OperationContext &context)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
@@ -532,8 +534,8 @@ namespace
 #endif
 
 		virtual CIMClass getClass(const String &ns, const String &className,
-			ELocalOnlyFlag localOnly, 
-			EIncludeQualifiersFlag includeQualifiers, 
+			ELocalOnlyFlag localOnly,
+			EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
@@ -587,12 +589,12 @@ namespace
 			return m_prep->createInstance(ns, ci, context);
 		}
 		virtual CIMInstance modifyInstance(const String &ns,
-			const CIMInstance &modifiedInstance, 
+			const CIMInstance &modifiedInstance,
 			EIncludeQualifiersFlag includeQualifiers,
 			const StringArray *propertyList, OperationContext &context)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
-			return m_prep->modifyInstance(ns, modifiedInstance, 
+			return m_prep->modifyInstance(ns, modifiedInstance,
 				includeQualifiers, propertyList, context);
 		}
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -648,14 +650,14 @@ namespace
 		virtual void associatorsClasses(const String &ns,
 			const CIMObjectPath &path, CIMClassResultHandlerIFC &result,
 			const String &assocClass, const String &resultClass,
-			const String &role, const String &resultRole, 
-			EIncludeQualifiersFlag includeQualifiers, 
-			EIncludeClassOriginFlag includeClassOrigin, 
+			const String &role, const String &resultRole,
+			EIncludeQualifiersFlag includeQualifiers,
+			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->associatorsClasses(ns, path, result, assocClass,
-				resultClass, role, resultRole, includeQualifiers, 
+				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin,	propertyList, context);
 		}
 		virtual void referenceNames(const String &ns,
@@ -701,9 +703,9 @@ namespace
 		}
 		virtual void referencesClasses(const String &ns,
 			const CIMObjectPath &path, CIMClassResultHandlerIFC &result,
-			const String &resultClass, const String &role, 
-			EIncludeQualifiersFlag includeQualifiers, 
-			EIncludeClassOriginFlag includeClassOrigin, 
+			const String &resultClass, const String &role,
+			EIncludeQualifiersFlag includeQualifiers,
+			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
@@ -811,9 +813,9 @@ namespace
         if (!wk.empty())
         {
 			useruid = wk.toUInt32();
-			return; 
+			return;
 		}
-		String userName = env->getUserName(); 
+		String userName = env->getUserName();
 
 		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
 		char buf[pwnbufsize];
@@ -848,7 +850,7 @@ InstanceProviderProxy::InstanceProviderProxy(InstanceProviderIFCRef pProv,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 InstanceProviderProxy::enumInstanceNames(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
@@ -862,15 +864,15 @@ InstanceProviderProxy::enumInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 InstanceProviderProxy::enumInstances(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	ELocalOnlyFlag localOnly, 
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
@@ -883,15 +885,15 @@ InstanceProviderProxy::enumInstances(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMInstance 
+CIMInstance
 InstanceProviderProxy::getInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
+	const StringArray* propertyList,
 	const CIMClass& cimClass )
 {
 	UIDManager um(m_useruid, m_cimomuid);
@@ -903,7 +905,7 @@ InstanceProviderProxy::getInstance(
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath 
+CIMObjectPath
 InstanceProviderProxy::createInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
@@ -915,7 +917,7 @@ InstanceProviderProxy::createInstance(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 InstanceProviderProxy::modifyInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
@@ -932,7 +934,7 @@ InstanceProviderProxy::modifyInstance(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 InstanceProviderProxy::deleteInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
@@ -958,12 +960,12 @@ SecondaryInstanceProviderProxy::SecondaryInstanceProviderProxy(SecondaryInstance
 //////////////////////////////////////////////////////////////////////////////
 void
 SecondaryInstanceProviderProxy::filterInstances(
-	const ProviderEnvironmentIFCRef &env, const String &ns, 
-	const String &className, CIMInstanceArray &instances, 
-	ELocalOnlyFlag localOnly, EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
-	EIncludeClassOriginFlag includeClassOrigin, 
-	const StringArray *propertyList, const CIMClass &requestedClass, 
+	const ProviderEnvironmentIFCRef &env, const String &ns,
+	const String &className, CIMInstanceArray &instances,
+	ELocalOnlyFlag localOnly, EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray *propertyList, const CIMClass &requestedClass,
 	const CIMClass &cimClass)
 {
 	UIDManager um(m_useruid, m_cimomuid);
@@ -982,9 +984,9 @@ SecondaryInstanceProviderProxy::createInstance(const ProviderEnvironmentIFCRef &
 //////////////////////////////////////////////////////////////////////////////
 void
 SecondaryInstanceProviderProxy::modifyInstance(
-	const ProviderEnvironmentIFCRef &env, const String &ns, 
-	const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	const ProviderEnvironmentIFCRef &env, const String &ns,
+	const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
+	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray *propertyList, const CIMClass &theClass)
 {
 	UIDManager um(m_useruid, m_cimomuid);
@@ -1013,7 +1015,7 @@ MethodProviderProxy::MethodProviderProxy(MethodProviderIFCRef pProv,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMValue 
+CIMValue
 MethodProviderProxy::invokeMethod(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
@@ -1041,7 +1043,7 @@ AssociatorProviderProxy::AssociatorProviderProxy(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 AssociatorProviderProxy::associators(
 	const ProviderEnvironmentIFCRef& env,
 	CIMInstanceResultHandlerIFC& result,
@@ -1062,7 +1064,7 @@ AssociatorProviderProxy::associators(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 AssociatorProviderProxy::associatorNames(
 	const ProviderEnvironmentIFCRef& env,
 	CIMObjectPathResultHandlerIFC& result,
@@ -1079,7 +1081,7 @@ AssociatorProviderProxy::associatorNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 AssociatorProviderProxy::references(
 	const ProviderEnvironmentIFCRef& env,
 	CIMInstanceResultHandlerIFC& result,
@@ -1098,7 +1100,7 @@ AssociatorProviderProxy::references(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 AssociatorProviderProxy::referenceNames(
 	const ProviderEnvironmentIFCRef& env,
 	CIMObjectPathResultHandlerIFC& result,

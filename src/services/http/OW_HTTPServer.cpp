@@ -110,6 +110,16 @@ HTTPServer::getName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+StringArray
+HTTPServer::getDependencies() const
+{
+	StringArray rv;
+	rv.push_back(ServiceIFCNames::CIMServer);
+	rv.push_back(ServiceIFCNames::AuthManager);
+	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool HTTPServer::isAllowedUser(const String& user) const
 {
 	return m_allowedUsers.count(user) != 0 || m_allowAllUsers;

@@ -79,6 +79,8 @@ public:
 	 */
 	virtual void open(const String& path);
 	virtual String getName() const;
+	virtual StringArray getDependencies() const;
+
 	/**
 	 * Called after construction
 	 */

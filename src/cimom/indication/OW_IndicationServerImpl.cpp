@@ -98,6 +98,15 @@ IndicationServerImpl::getName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+StringArray
+IndicationServerImpl::getDependencies() const
+{
+	StringArray rv;
+	rv.push_back(ServiceIFCNames::CIMServer);
+	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 IndicationServerImpl::init(const ServiceEnvironmentIFCRef& env)
 {

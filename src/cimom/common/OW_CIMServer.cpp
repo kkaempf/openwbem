@@ -224,6 +224,17 @@ CIMServer::getName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+StringArray
+CIMServer::getDependencies() const
+{
+	StringArray rv;
+	rv.push_back(ServiceIFCNames::AuthorizerManager);
+	rv.push_back(ServiceIFCNames::CIMRepository);
+	rv.push_back(ServiceIFCNames::ProviderManager);
+	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 CIMServer::init(const ServiceEnvironmentIFCRef& env)
 {
