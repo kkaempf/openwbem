@@ -43,6 +43,7 @@ namespace OpenWBEM
 class CIMListenerCallback;
 typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 class HTTPXMLCIMListener;
+typedef IntrusiveReference<HTTPXMLCIMListener> HTTPXMLCIMListenerRef;
 class ListenerAuthenticator;
 class XMLListener;
 
