@@ -35,9 +35,7 @@
 #ifndef OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
 #define OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
 
-// Currently this shouldn't even get compiled unless we're on Linux				   
-#ifdef OW_GNU_LINUX
-#define OW_SETUID_PROVIDERS 1
+#ifdef OW_THREADS_RUN_AS_USER
 
 #include "OW_config.h"
 #include "OW_InstanceProviderIFC.hpp"
@@ -211,8 +209,6 @@ private:
 
 }	// namespace OpenWBEM
 
-#else	// OW_GNU_PROVIDERS
-#undef OW_SETUID_PROVIDERS
-#endif	// OW_GNU_LINUX
+#endif // OW_THREADS_RUN_AS_USER
 
 #endif

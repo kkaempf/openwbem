@@ -348,7 +348,7 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 namespace
 {
 
-#ifdef OW_SETUID_PROVIDERS
+#ifdef OW_THREADS_RUN_AS_USER
 
 inline InstanceProviderIFCRef
 wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)

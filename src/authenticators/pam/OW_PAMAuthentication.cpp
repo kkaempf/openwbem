@@ -176,7 +176,7 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 		details = "Invalid credentials";
 	}
 
-#ifdef OW_GNU_LINUX
+#ifdef OW_THREADS_RUN_AS_USER
 	if (retval)
 	{
 		uid_t cimomuid = ::getuid();	// Get CIMOM user id

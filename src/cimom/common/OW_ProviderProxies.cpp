@@ -33,9 +33,9 @@
  */
 
 #include "OW_config.h"
-#include "OW_ProviderProxies.hpp"
-#ifdef OW_SETUID_PROVIDERS
+#ifdef OW_THREADS_RUN_AS_USER
 
+#include "OW_ProviderProxies.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
@@ -1074,6 +1074,7 @@ AssociatorProviderProxy::referenceNames(
 
 }	// namepsace OpenWBEM
 
-#endif	// OW_SETUID_PROVIDERS
+#endif	// OW_THREADS_RUN_AS_USER
+
 
 
