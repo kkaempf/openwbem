@@ -92,18 +92,29 @@
 		// Platform specific thread type
 		typedef HANDLE Thread_t;
 		typedef HANDLE NativeMutex_t;
-		struct NonRecursiveMutex_t
-		{
-			HANDLE mutex;
-			DWORD thread_id;
-			bool valid_id;
-		};
-		struct Mutex_t
-		{
-			HANDLE mutex;
-		};
+		typedef HANDLE NonRecursiveMutex_t;
+		typedef LPCRITICAL_SECTION Mutex_t;
+
 		// Platform specific conditional variable type
-		typedef void* 			ConditionVar_t;
+		typedef struct
+		{
+			// Number of waiting threads
+			int waitersCount;
+			// Serialize access to waitersCount
+			CRITICAL_SECTION waitersCountLock;
+			// Semaphore used to queue up threads waiting for the condition to
+			// become signaled
+            HANDLE queue;
+			// An auto-reset event used during broadcasting to wait for all the 
+			// threads to wake up and be released from the queue
+			HANDLE waitersDone;
+			// Keeps track of whether we are broadcasting or signaling. This allows
+			// for optimization if just signaling.
+			bool wasBroadcast;
+		} ConditionInfo_t;
+
+		typedef ConditionInfo_t* ConditionVar_t;
+		//typedef void* 			ConditionVar_t;
 		struct NonRecursiveMutexLockState
 		{
 			DWORD thread_id;

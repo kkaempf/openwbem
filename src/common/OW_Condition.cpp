@@ -31,7 +31,6 @@
 /**
  * @author Dan Nuffer
  */
-
 #include "OW_config.h"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
@@ -104,48 +103,129 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 #elif defined (OW_USE_WIN32_THREADS)
 /////////////////////////////////////////////////////////////////////////////
 Condition::Condition()
+	: m_condition(new ConditionInfo_t)
 {
-	//if (res != 0)
-	{
-		OW_THROW(ConditionResourceException, "Failed initializing condition variable");
-	}
+	m_condition->waitersCount = 0;
+	m_condition->wasBroadcast = false;
+	m_condition->queue = ::CreateSemaphore(
+		NULL,		// No security
+		0,			// initially 0
+		0x7fffffff,	// max count
+		NULL);		// Unnamed
+	::InitializeCriticalSection(&m_condition->waitersCountLock);
+	m_condition->waitersDone = ::CreateEvent(
+		NULL,		// No security
+		false,		// auto-reset
+		false,		// non-signaled initially
+		NULL);		// Unnamed
 }
 /////////////////////////////////////////////////////////////////////////////
 Condition::~Condition()
 {
-	//assert(res == 0);
+	::CloseHandle(m_condition->queue);
+	::DeleteCriticalSection(&m_condition->waitersCountLock);
+	::CloseHandle(m_condition->waitersDone);
+	delete m_condition;
 }
 /////////////////////////////////////////////////////////////////////////////
 void 
 Condition::notifyOne()
 {
-//	assert(res == 0);
+	::EnterCriticalSection(&m_condition->waitersCountLock);
+	bool haveWaiters = m_condition->waitersCount > 0;
+	::LeaveCriticalSection(&m_condition->waitersCountLock);
+
+	// If no threads waiting, then this is a no-op
+	if(haveWaiters)
+	{
+		::ReleaseSemaphore(m_condition->queue, 1, 0);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 void 
 Condition::notifyAll()
 {
-//	assert(res == 0);
+	::EnterCriticalSection(&m_condition->waitersCountLock);
+	bool haveWaiters = false;
+	if(m_condition->waitersCount > 0)
+	{
+		// It's gonna be a broadcast, even if there's only one waiting thread.
+		haveWaiters = m_condition->wasBroadcast = true;
+	}
+
+	if(haveWaiters)
+	{
+		// Wake up all the waiting threads atomically
+		::ReleaseSemaphore(m_condition->queue, m_condition->waitersCount, 0);
+		::LeaveCriticalSection(&m_condition->waitersCountLock);
+
+		// Wait for all the threads to acquire the counting semaphore
+		::WaitForSingleObject(m_condition->waitersDone, INFINITE);
+		m_condition->wasBroadcast = false;
+	}
+	else
+	{
+		::LeaveCriticalSection(&m_condition->waitersCountLock);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 void 
 Condition::doWait(NonRecursiveMutex& mutex)
 {
-	int res;
-	NonRecursiveMutexLockState state;
-	mutex.conditionPreWait(state);
-	mutex.conditionPostWait(state);
-	assert(res == 0);
+	doTimedWait(mutex, INFINITE, 0);
 }
 /////////////////////////////////////////////////////////////////////////////
 bool 
 Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
+	bool cc = true;
 	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
-	bool ret = false;
+
+	::EnterCriticalSection(&m_condition->waitersCountLock);
+	m_condition->waitersCount++;
+	::LeaveCriticalSection(&m_condition->waitersCountLock);
+
+	// Calc timeout if specified
+	if(sTimeout != INFINITE)
+	{
+		sTimeout *= 1000;		// Convert to ms
+		sTimeout += usTimeout / 1000;		// Convert micro seconds to ms and add
+	}
+
+	// Atomically release the mutex and wait on the 
+	// queue until signal/broadcast.
+	if(::SignalObjectAndWait(mutex.m_mutex, m_condition->queue, sTimeout,
+		false) == WAIT_TIMEOUT)
+	{
+		cc = false;
+	}
+
+	::EnterCriticalSection(&m_condition->waitersCountLock);
+	m_condition->waitersCount--;
+
+	// Check to see if we're the last waiter after the broadcast
+	bool isLastWaiter = (m_condition->wasBroadcast && m_condition->waitersCount == 0
+		&& cc == true);
+
+	::LeaveCriticalSection(&m_condition->waitersCountLock);
+
+	// If this is the last thread waiting for this broadcast, then let all the
+	// other threads proceed.
+	if(isLastWaiter)
+	{
+		// Atomically signal the waitersDone event and wait to acquire
+		// the external mutex. Enusres fairness
+		::SignalObjectAndWait(m_condition->waitersDone, mutex.m_mutex,
+			INFINITE, false);
+	}
+	else
+	{
+		// Re-gain ownership of the external mutex
+		::WaitForSingleObject(mutex.m_mutex, INFINITE);
+	}
 	mutex.conditionPostWait(state);
-	return ret;
+	return cc;
 }
 #else
 #error "port me!"

@@ -83,8 +83,18 @@ createMutex(Mutex_t& handle)
 #endif
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
-	return ((handle.mutex = CreateMutex(NULL, false, NULL)) == NULL)
-		? -1 : 0;
+	int cc = 0;
+	__try
+	{
+		handle = new CRITICAL_SECTION;
+		assert(handle);
+		InitializeCriticalSection(handle);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		cc = -1;
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -119,7 +129,17 @@ destroyMutex(Mutex_t& handle)
 #endif
 	return res;
 #elif defined(OW_USE_WIN32_THREADS)
-	return (CloseHandle(handle.mutex) == 0) ? -1 : 0;
+	int cc = 0;
+	__try
+	{
+		DeleteCriticalSection(handle);
+		delete handle;
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		cc = -1;
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -161,8 +181,16 @@ acquireMutex(Mutex_t& handle)
 #endif
 	return res;
 #elif defined(OW_USE_WIN32_THREADS)
-	return (WaitForSingleObject(handle.mutex, INFINITE) == WAIT_FAILED)
-		? -1 : 0;
+	int cc = 0;
+	__try
+	{
+		EnterCriticalSection(handle);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		cc = -1;
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -208,7 +236,17 @@ releaseMutex(Mutex_t& handle)
 	return res;
 #endif
 #elif defined (OW_USE_WIN32_THREADS)
-	return (ReleaseMutex(handle.mutex) == 0) ? -1 : 0;
+	int cc = 0;
+	__try
+	{
+		LeaveCriticalSection(handle);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		cc = -1;
+	}
+
+	return cc;
 #else
 #error "port me!"
 #endif

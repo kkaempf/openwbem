@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;OW_WIN32;OW_USE_WIN32_THREADS"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"

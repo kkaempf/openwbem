@@ -531,7 +531,7 @@
 #endif
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
 
-#define OW_USE_OW_DEFAULT_ATOMIC_OPS 1
+#define _WIN32_WINNT 0x0400
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

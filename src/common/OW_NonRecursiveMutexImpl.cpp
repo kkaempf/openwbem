@@ -52,7 +52,7 @@ namespace NonRecursiveMutexImpl
 int
 createMutex(NonRecursiveMutex_t& handle)
 {
-#if defined OW_USE_PTHREAD
+#if defined(OW_USE_PTHREAD)
 	pthread_mutexattr_t attr;
 	int res = pthread_mutexattr_init(&attr);
 	assert(res == 0);
@@ -64,10 +64,19 @@ createMutex(NonRecursiveMutex_t& handle)
 		return -1;
  
 	return 0;
-#elif OW_USE_WIN32_THREADS
-	handle.thread_id = -1;
-	handle.valid_id = false;
-	return ((handle.mutex = CreateSemaphore(NULL, 1, 1, NULL)) == NULL) ? -1 : 0;
+#elif defined(OW_USE_WIN32_THREADS)
+	int cc = -1;
+	__try
+	{
+		if((handle = CreateMutex(NULL, FALSE, NULL)))
+		{
+			cc = 0;
+		}
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -97,10 +106,17 @@ destroyMutex(NonRecursiveMutex_t& handle)
 	}
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
-	ReleaseSemaphore(handle.mutex, 1, 0);
-	handle.thread_id = 0;
-	handle.valid_id = false;
-	return (CloseHandle(handle.mutex) == 0) ? -2 : 0;
+	int cc;
+	__try
+	{
+		ReleaseMutex(handle);
+		cc = (CloseHandle(handle) == 0) ? -2 : 0;
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		cc = -2;
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -121,13 +137,18 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	assert(res == 0);
 	return res;
 #elif defined (OW_USE_WIN32_THREADS)
-    if(WaitForSingleObject(handle.mutex, INFINITE) == WAIT_FAILED)
+	int cc = -1;
+	__try
 	{
-		return -1;
+		if(WaitForSingleObject(handle, INFINITE) != WAIT_FAILED)
+		{
+			cc = 0;
+		}
 	}
-	handle.thread_id = GetCurrentThreadId();
-	handle.valid_id = true;
-	return 0;
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
+	return cc;
 #else
 #error "port me!"
 #endif
@@ -147,28 +168,32 @@ releaseMutex(NonRecursiveMutex_t& handle)
 	return res;
  
 #elif defined (OW_USE_WIN32_THREADS)
-	if(handle.valid_id && handle.thread_id != GetCurrentThreadId())
+	int cc = -1;
+	__try
 	{
-		// Mutex not owned by current thread
-		return -1;
+		if(ReleaseMutex(handle))
+		{
+			cc = 0;
+		}
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
 	}
 
-	if(!ReleaseSemaphore(handle.mutex, 1, 0))
-	{
-		return -1;
-	}
-
-	handle.thread_id = 0;
-	handle.valid_id = false;
-	return 0;
+	return cc;
 #else
 #error "port me!"
 #endif
 }
+
 int
 conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
+#if defined (OW_USE_WIN32_THREADS)
+	state.pmutex = &handle;
+#else
 	state.pmutex = &handle.mutex;
+#endif
 	return 0;
 }
 int
