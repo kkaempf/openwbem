@@ -62,6 +62,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 #include <algorithm>
 
@@ -167,6 +168,12 @@ XMLExecute::XMLExecute()
 //////////////////////////////////////////////////////////////////////////////
 XMLExecute::~XMLExecute()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+XMLExecute::getName() const
+{
+	return ServiceIFCNames::XMLExecute;
 }
 //////////////////////////////////////////////////////////////////////////////
 // Private

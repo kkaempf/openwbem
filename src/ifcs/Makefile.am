@@ -39,6 +39,7 @@ OW_SelectableIFC.hpp \
 OW_SerializableIFC.hpp \
 OW_ServiceEnvironmentIFC.hpp \
 OW_ServiceIFC.hpp \
+OW_ServiceIFCNames.hpp \
 OW_WQLIFC.hpp
 
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,48 +32,39 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_SERVICEIFC_NAMES_HPP_INCLUDE_GUARD_
+#define OW_SERVICEIFC_NAMES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ServiceIFC.hpp"
+
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
 
 namespace OpenWBEM
 {
 
-///////////////////////////////////////////////////////////////////////////////
-ServiceIFC::~ServiceIFC()
+namespace ServiceIFCNames
 {
-}
 
-///////////////////////////////////////////////////////////////////////////////
-String
-ServiceIFC::getName() const
-{
-	return String();
-}
+static const char* const HTTPServer = "HTTPServer";
+static const char* const XMLListener = "XMLListener";
+static const char* const WQLImpl = "WQLImpl";
+static const char* const SimpleAuthorizer = "SimpleAuthorizer";
+static const char* const XMLExecute = "XMLExecute";
+static const char* const BinaryRequestHandler = "BinaryRequestHandler";
+static const char* const AuthorizerManager = "AuthorizerManager";
+static const char* const ProviderManager = "ProviderManager";
+static const char* const CIMRepository = "CIMRepository";
+static const char* const CIMServer = "CIMServer";
+static const char* const AuthManager = "AuthManager";
+static const char* const PollingManager = "PollingManager";
+static const char* const WQLFilterRep = "WQLFilterRep";
+static const char* const IndicationServer = "IndicationServer";
+static const char* const IndicationRepLayer = "IndicationRepLayer";
 
-///////////////////////////////////////////////////////////////////////////////
-void
-ServiceIFC::initialized()
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-ServiceIFC::start()
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-ServiceIFC::started()
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void
-ServiceIFC::shuttingDown()
-{
-}
-
+} // end namespace ServiceIFCNames
 
 } // end namespace OpenWBEM
+
+
+#endif
 

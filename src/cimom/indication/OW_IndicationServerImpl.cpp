@@ -57,6 +57,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_LifecycleIndicationPoller.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 #include <iterator>
 
@@ -87,6 +88,13 @@ IndicationServerImpl::IndicationServerImpl()
 //////////////////////////////////////////////////////////////////////////////
 IndicationServerImpl::~IndicationServerImpl()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+IndicationServerImpl::getName() const
+{
+	return ServiceIFCNames::IndicationServer;
 }
 
 //////////////////////////////////////////////////////////////////////////////

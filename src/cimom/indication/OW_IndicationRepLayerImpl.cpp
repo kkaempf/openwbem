@@ -49,6 +49,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Logger.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -66,6 +67,12 @@ IndicationRepLayer::~IndicationRepLayer()
 //////////////////////////////////////////////////////////////////////////////
 IndicationRepLayerImpl::~IndicationRepLayerImpl()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+IndicationRepLayerImpl::getName() const
+{
+	return ServiceIFCNames::IndicationRepLayer;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance

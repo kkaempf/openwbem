@@ -60,7 +60,8 @@ protected:
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		const String& msg, std::ostream& ostr);
-
+	
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 private:

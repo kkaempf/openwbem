@@ -61,6 +61,7 @@ public:
 	PollingManager(const ProviderManagerRef& providerManager);
 	virtual ~PollingManager();
 	
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	virtual void started();

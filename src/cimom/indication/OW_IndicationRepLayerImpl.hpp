@@ -48,6 +48,7 @@ public:
 	~IndicationRepLayerImpl();
 	virtual void open(const String&);
 	virtual void close();
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 	virtual ServiceEnvironmentIFCRef getEnvironment() const;

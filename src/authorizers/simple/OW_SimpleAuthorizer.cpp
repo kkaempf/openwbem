@@ -48,6 +48,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -373,6 +374,12 @@ SimpleAuthorizer::SimpleAuthorizer()
 //////////////////////////////////////////////////////////////////////////////
 SimpleAuthorizer::~SimpleAuthorizer()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+SimpleAuthorizer::getName() const
+{
+	return ServiceIFCNames::SimpleAuthorizer;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -46,6 +46,7 @@ class AuthManager : public ServiceIFC
 public:
 	AuthManager();
 	~AuthManager();
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 	bool authenticate(String& userName,

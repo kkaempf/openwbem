@@ -46,6 +46,7 @@ public:
 	SharedLibraryRepository(SharedLibraryRepositoryIFCRef ref);
 	~SharedLibraryRepository();
 	virtual void close();
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 	virtual void open(const String &path);

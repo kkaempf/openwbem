@@ -41,6 +41,7 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_AuthenticatorIFC.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -60,6 +61,12 @@ AuthManager::AuthManager()
 ///////////////////////////////////////////////////////////////////////////////
 AuthManager::~AuthManager()
 {
+}
+///////////////////////////////////////////////////////////////////////////////
+String
+AuthManager::getName() const
+{
+	return ServiceIFCNames::AuthManager;
 }
 ///////////////////////////////////////////////////////////////////////////////
 void

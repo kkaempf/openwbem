@@ -40,6 +40,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatementGen.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -50,6 +51,12 @@ stmt* WQLImpl::s_statement = 0;
 
 WQLImpl::~WQLImpl()
 {
+}
+
+String
+WQLImpl::getName() const
+{
+	return ServiceIFCNames::WQLImpl;
 }
 
 void WQLImpl::evaluate(const String& nameSpace,

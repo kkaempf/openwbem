@@ -63,8 +63,8 @@
 #include "OW_SSLException.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_AuthenticationException.hpp"
-
 #include "OW_OperationContext.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -101,6 +101,13 @@ HTTPServer::~HTTPServer()
 {
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+String
+HTTPServer::getName() const
+{
+	return ServiceIFCNames::HTTPServer;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 bool HTTPServer::isAllowedUser(const String& user) const

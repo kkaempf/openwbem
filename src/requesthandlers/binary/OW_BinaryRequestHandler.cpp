@@ -53,6 +53,7 @@
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_UserUtils.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 extern "C"
 {
@@ -82,6 +83,12 @@ RequestHandlerIFC*
 BinaryRequestHandler::clone() const
 {
 	return new BinaryRequestHandler(*this);
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+BinaryRequestHandler::getName() const
+{
+	return ServiceIFCNames::BinaryRequestHandler;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

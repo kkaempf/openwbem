@@ -54,6 +54,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -131,6 +132,13 @@ CIMRepository::close()
 	m_classAssocDb.close();
 	m_instAssocDb.close();
 #endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMRepository::getName() const
+{
+	return ServiceIFCNames::CIMRepository;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -58,6 +58,8 @@ class OW_HTTP_API HTTPServer : public ServiceIFC
 public:
 	HTTPServer();
 	virtual ~HTTPServer();
+	virtual String getName() const;
+
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	/**

@@ -57,6 +57,7 @@ public:
 	 */
 	virtual ~SimpleAuthorizer();
 
+	virtual String getName() const;
 	virtual void setSubRepositoryIFC(const RepositoryIFCRef& rep);
 	/**
 	 * Open this SimpleAuthorization.

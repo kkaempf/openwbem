@@ -41,6 +41,7 @@
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -53,6 +54,12 @@ WQLFilterRep::WQLFilterRep(const CIMInstance& inst,
 	, m_inst(inst)
 	, m_pCIMServer(cimServer)
 {
+}
+///////////////////////////////////////////////////////////////////////////////
+String
+WQLFilterRep::getName() const
+{
+	return ServiceIFCNames::WQLFilterRep;
 }
 ///////////////////////////////////////////////////////////////////////////////
 ServiceEnvironmentIFCRef

@@ -58,7 +58,7 @@ public:
 	 * all the services.
 	 * The default is to have no name, in that case, no other service can depend on it.
 	 */
-	//virtual String getName() const = 0;
+	virtual String getName() const;
 
 	/**
 	 * Get the list of services this service depends on.  Services names returned will be started before and

@@ -66,6 +66,7 @@ class IndicationServerImpl : public IndicationServer
 public:
 	IndicationServerImpl();
 	~IndicationServerImpl();
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
 	void shutdown();

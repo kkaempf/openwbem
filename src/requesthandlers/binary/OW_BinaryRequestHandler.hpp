@@ -56,6 +56,7 @@ public:
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
 
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 private:

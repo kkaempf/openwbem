@@ -52,6 +52,8 @@ public:
 	
 	~AuthorizerManager();
 
+	virtual String getName() const;
+
 	void setAuthorizer(const Authorizer2IFCRef& authorizerRef)
 	{
 		m_authorizer = authorizerRef;

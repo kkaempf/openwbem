@@ -8,6 +8,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Array.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -167,6 +168,13 @@ AuthorizerManager::AuthorizerManager(const Authorizer2IFCRef& authorizerRef)
 //////////////////////////////////////////////////////////////////////////////
 AuthorizerManager::~AuthorizerManager()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+AuthorizerManager::getName() const
+{
+	return ServiceIFCNames::AuthorizerManager;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -56,6 +56,7 @@ public:
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close() {}
+	virtual String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env) {}
 	virtual void shutdown() {}
 	/**

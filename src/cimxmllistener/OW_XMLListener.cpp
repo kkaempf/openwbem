@@ -46,6 +46,7 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
@@ -59,6 +60,12 @@ XMLListener::XMLListener(CIMListenerCallback* callback)
 //////////////////////////////////////////////////////////////////////////////
 XMLListener::~XMLListener()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+XMLListener::getName() const
+{
+	return ServiceIFCNames::XMLListener;
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC*

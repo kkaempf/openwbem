@@ -58,6 +58,7 @@
 #include "OW_AuthorizerManager.hpp"	
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ProviderManager.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 #include <iterator>
 
@@ -213,6 +214,13 @@ CIMServer::open(const String& path)
 void
 CIMServer::close()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMServer::getName() const
+{
+	return ServiceIFCNames::CIMServer;
 }
 
 //////////////////////////////////////////////////////////////////////////////

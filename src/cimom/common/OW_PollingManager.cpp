@@ -46,6 +46,7 @@
 #include "OW_TimeoutException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 #include <climits>
 
@@ -127,6 +128,12 @@ PollingManagerThread::PollingManagerThread(const ProviderManagerRef& providerMan
 //////////////////////////////////////////////////////////////////////////////
 PollingManagerThread::~PollingManagerThread()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+String
+PollingManager::getName() const
+{
+	return ServiceIFCNames::PollingManager;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

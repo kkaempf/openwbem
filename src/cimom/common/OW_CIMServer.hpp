@@ -78,6 +78,7 @@ public:
 	 * @exception IOException
 	 */
 	virtual void open(const String& path);
+	virtual String getName() const;
 	/**
 	 * Called after construction
 	 */

@@ -72,6 +72,7 @@ public:
 	 */
 	void load(const ProviderIFCLoaderRef& ifcLoader);
 
+	virtual String getName() const;
 	/**
 	 * Initialize the provider interfaces and providers.  This is called after
 	 * the CIM Server is up and running, so the providers can access the

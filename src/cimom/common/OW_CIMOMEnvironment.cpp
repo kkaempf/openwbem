@@ -293,7 +293,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		//OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
 		m_services[i]->init(this);
 	}
 	{
@@ -303,7 +303,7 @@ CIMOMEnvironment::startServices()
 	
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
 		m_services[i]->initialized();
 	}
 
@@ -318,7 +318,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		//OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
 		m_services[i]->start();
 	}
 	{
@@ -328,7 +328,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
+		OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
 		m_services[i]->started();
 	}
 
@@ -354,7 +354,7 @@ CIMOMEnvironment::shutdown()
 	{
 		try
 		{
-			//OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
+			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
 			m_services[i]->shuttingDown();
 		}
 		catch (...)
@@ -373,7 +373,7 @@ CIMOMEnvironment::shutdown()
 	{
 		try
 		{
-			//OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
+			OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
 			m_services[i]->shutdown();
 		}
 		catch (...)

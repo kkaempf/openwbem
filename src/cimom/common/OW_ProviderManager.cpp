@@ -49,12 +49,19 @@
 #include "OW_OperationContext.hpp"
 #include "OW_Platform.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_ServiceIFCNames.hpp"
 
 namespace OpenWBEM
 {
 
 String ProviderManager::COMPONENT_NAME("ow.owcimomd.ProviderManager");
 
+//////////////////////////////////////////////////////////////////////////////
+String
+ProviderManager::getName() const
+{
+	return ServiceIFCNames::ProviderManager;
+}
 //////////////////////////////////////////////////////////////////////////////
 void ProviderManager::load(const ProviderIFCLoaderRef& IFCLoader)
 {

@@ -51,6 +51,7 @@ class OW_WQL_API WQLImpl : public WQLIFC
 public:
 	virtual ~WQLImpl();
 	
+	String getName() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 
