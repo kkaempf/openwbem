@@ -38,7 +38,7 @@
 #include "OW_RWLockerTestCases.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_Thread.hpp"
-#include "OW_Semaphore.hpp"
+#include "OW_ThreadBarrier.hpp"
 #include "OW_TimeoutException.hpp"
 
 using namespace OpenWBEM;
@@ -83,10 +83,10 @@ void OW_RWLockerTestCases::testDeadlock()
 class testThread : public Thread
 {
 public:
-	testThread(RWLocker* locker, Semaphore* sem)
+	testThread(RWLocker* locker, const ThreadBarrier& bar)
 		: Thread()
 		, m_locker(locker)
-		, m_sem(sem)
+		, m_bar(bar)
 	{
 	}
 
@@ -94,28 +94,28 @@ protected:
 	virtual Int32 run() 
 	{
 		m_locker->getReadLock(0);
-		m_sem->signal();
-		Thread::sleep(10);
+		m_bar.wait();
+		m_bar.wait();
 		m_locker->releaseReadLock();
 
 		m_locker->getWriteLock(0);
-		m_sem->signal();
-		Thread::sleep(10);
+		m_bar.wait();
+		m_bar.wait();
 		m_locker->releaseWriteLock();
 		return 0;
 	}
 
 	RWLocker* m_locker;
-	Semaphore* m_sem;
+	ThreadBarrier m_bar;
 };
 
 void OW_RWLockerTestCases::testTimeout()
 {
 	RWLocker locker;
-	Semaphore sem;
-	testThread t1(&locker, &sem);
+	ThreadBarrier bar(2);
+	testThread t1(&locker, bar);
 	t1.start();
-	sem.wait(); // wait for the thread to start. It's already got the read lock, and will keep it for 10 ms.
+	bar.wait(); // wait for the thread to start. It's already got the read lock, and will keep it until the barrier is hit again.
 	
 	// now try to get a write lock.  But we'll use a short timeout to make sure an exception is thrown.
 	try
@@ -127,7 +127,8 @@ void OW_RWLockerTestCases::testTimeout()
 	{
 	}
 
-	sem.wait(); // wait for the thread to release the read lock and get a write lock.
+	bar.wait(); // signal the thread to release the read lock and get a write lock.
+	bar.wait(); // wait for the thread to release the read lock and get a write lock.
 
 	// now try to get a read lock.  But we'll use a short timeout to make sure an exception is thrown.
 	try
@@ -138,6 +139,8 @@ void OW_RWLockerTestCases::testTimeout()
 	catch (const TimeoutException& e)
 	{
 	}
+
+	bar.wait();
 
 	t1.join();
 }
