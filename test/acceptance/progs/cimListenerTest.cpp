@@ -278,7 +278,7 @@ int main(int argc, char* argv[])
 		if (argc < 2 || argc > 3)
 		{
 			cerr << "Usage: " << argv[0] << " <URL> [dump file prefix]" << endl;
-			exit(1);
+			return 1;
 		}
 
 		String url(argv[1]);

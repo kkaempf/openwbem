@@ -52,7 +52,7 @@ OW_DOUBLE_DELETE_NOFREE=5
 
 void Usage(const char* cmd)
 {
-	cerr << 
+	cerr <<
 		"Usage: " << cmd << " <mode>\n"
 		"	1 = under run\n"
 		"	2 = over run\n"
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	if (argc != 2)
 	{
 		Usage(argv[0]);
-		exit(9);
+		return 9;
 	}
 
 	int mode = atoi(argv[1]);
@@ -90,13 +90,13 @@ int main(int argc, char* argv[])
 			break;
 		case 4: // double delete
 			buf = new char[10];
-			delete[] buf; 
+			delete[] buf;
 			delete[] buf;
 			break;
 		case 3: // unknown address
 			buf = new char[10];
 			buf += 5;
-			delete[] buf; 
+			delete[] buf;
 			break;
 		case 7:
 			buf = new char[10];
@@ -105,11 +105,11 @@ int main(int argc, char* argv[])
 			break;
 		default:
 			Usage(argv[0]);
-			exit(9);
+			return 9;
 			break;
 	}
 
-	exit(0);
+	return 0;
 }
 
 

@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	{
 		cerr << "Usage: " << argv[0] << " <url> [input_file_name]" << endl;
 		cerr << "	If no input file is given, OPTIONS is assumed" << endl;
-		exit(2);
+		return 2;
 	}
 
 	String url(argv[1]);
@@ -78,16 +78,16 @@ int main(int argc, char* argv[])
 	try
 	{
 
-		SSLClientCtxRef sslctx; 
+		SSLClientCtxRef sslctx;
 #ifdef OW_HAVE_OPENSSL
 		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
-		char* sslcert = getenv("OW_SSL_CLIENT_CERT"); 
+		char* sslcert = getenv("OW_SSL_CLIENT_CERT");
 		if (sslcert)
 		{
 			cerr << "Initializing SSL in client mode with " << sslcert << endl;
-			SSLOpts opts; 
-			opts.keyfile = String(sslcert); 
-			sslctx = SSLClientCtxRef(new SSLClientCtx(opts)); 
+			SSLOpts opts;
+			opts.keyfile = String(sslcert);
+			sslctx = SSLClientCtxRef(new SSLClientCtx(opts));
 		}
 #endif
 
@@ -148,27 +148,27 @@ int main(int argc, char* argv[])
 		size_t idx = message.indexOf("Unauthorized");
 		if (idx != String::npos)
 		{
-			exit(1);
+			return 1;
 		}
 		else
 		{
-			exit(2); // probably "No login/password to send"
+			return 2; // probably "No login/password to send"
 		}
 	}
 	catch(AssertionException& a)
 	{
 		cerr << "Caught assertion in main(): " << a.getMessage() << endl;
-		exit(3);
+		return 3;
 	}
 	catch(Exception& e)
 	{
 		cerr << e << endl;
-		exit(4);
+		return 4;
 	}
 	catch(...)
 	{
 		cerr << "Caught Unknown exception in main()" << endl;
-		exit(5);
+		return 5;
 	}
 
 	return 0;

@@ -41,7 +41,7 @@
 
 extern "C"
 {
-#if defined OW_HAVE_PAM_PAM_APPL_H 
+#if defined OW_HAVE_PAM_PAM_APPL_H
 #include <pam/pam_appl.h>
 #elif defined OW_HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
@@ -223,12 +223,12 @@ authenticate(const char* userName,
 	{
 		pam_end(pamh, rval);
 		free(pUserName);
-		exit(1);
+		return false;
 	}
 	if (pam_end(pamh,rval) != PAM_SUCCESS)
 	{		// close Linux-PAM
 		pamh = NULL;
-		exit(1);
+		return false;
 	}
 	free(pUserName);
 	return( rval == PAM_SUCCESS ? true : false );		 /* indicate success */
