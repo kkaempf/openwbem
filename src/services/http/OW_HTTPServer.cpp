@@ -65,6 +65,7 @@
 #include "OW_AuthenticationException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_Thread.hpp" // for ThreadException
 
 namespace OpenWBEM
 {
@@ -461,10 +462,17 @@ public:
 			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"IO Exception in HTTPServer: %1", e));
 		}
+		catch (ThreadException& e)
+		{
+			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
+				"ThreadException in HTTPServer: %1", e));
+		}
 		catch (Exception& e)
 		{
 			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"Exception in HTTPServer: %1", e));
+			// since it's something we don't expect, it's probably a bad problem, and we'll
+			// just throw.
 			throw;
 		}
 		catch (ThreadCancelledException&)
