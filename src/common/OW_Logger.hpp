@@ -145,6 +145,7 @@ public:
 	 * @param message The message to log
 	 */
 	void logMessage(const String& category, const String& message) const;
+	
 	/**
 	 * Log a message using the default component and specified category.
 	 * The current log level is ignored.
@@ -154,6 +155,13 @@ public:
 	 * @param fileline The line number of the file where the log statement was written.
 	 */
 	void logMessage(const String& category, const String& message, const char* filename, int fileline) const;
+
+	/**
+	 * Log a message.
+	 * The current log level is ignored.
+	 * @param message The message to log
+	 */
+	void logMessage(const LogMessage& message) const;
 
 	/**
 	 * Sets the default component.

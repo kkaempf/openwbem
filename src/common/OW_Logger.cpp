@@ -183,6 +183,13 @@ Logger::logMessage(const String& category, const String& message, const char* fi
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+Logger::logMessage(const LogMessage& message) const
+{
+	processLogMessage(message);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 bool
 Logger::categoryIsEnabled(const String& category) const
 {
