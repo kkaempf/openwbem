@@ -41,12 +41,29 @@
 namespace OpenWBEM
 {
 
+std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
+{
+#define SIMPLE_NSOBJ_CASE(X) case X: o << ""#X
+  switch(code)
+  {
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); break;
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); break;
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageInappropriateFile); break;
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageArch); break;
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageFormat); break;
+    SIMPLE_NSOBJ_CASE(NSObjectFileImageAccess); break;
+  }
+#undef SIMPLE_NSOBJ_CASE
+  return o;
+}
+  
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	LoggerRef logger) const
 {
-    NSObjectFileImage image;
+  logger->logDebug(Format("Load request for %1 received.", filename));
+    NSObjectFileImage image = 0;
     NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
 	const char* err_msg = NULL;
 	void* libhandle = NULL;
@@ -68,7 +85,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
              dsoerr == NSObjectFileImageInappropriateFile) &&
              NSAddLibrary(filename.c_str()) == TRUE) 
 	{
-    logger->logError(Format("NSCreateObject: %1 failed with error %2",
+    logger->logError(Format("NSCreateObject: %1 failed with error \"%2\"",
           filename, dsoerr));
         // libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
     }
