@@ -170,7 +170,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
 		}
 
-		if ((tv.tv_sec > 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
+		if ((tv.tv_sec != 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
 		{
 			tv.tv_sec = 0;
 			tv.tv_usec = loopMicroSeconds;
