@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ulimit -c unlimited
+
 #OPENWBEMSRCDIR=/usr/local/code/openwbem20
 #STAGEDIR=$OPENWBEMSRCDIR/test/acceptance/stage
 STAGEDIR=`dirname $0`/stage
