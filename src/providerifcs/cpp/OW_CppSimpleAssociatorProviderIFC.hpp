@@ -32,6 +32,8 @@
 #define OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
 
 #include "OW_config.h"
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppAssociatorProviderIFC.hpp"
 
 
@@ -163,5 +165,7 @@ namespace OpenWBEM
                                     const String &role); 
     };
 } // end namespace OpenWBEM. 
+
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 #endif // #ifndef OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_

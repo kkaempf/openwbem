@@ -34,6 +34,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 namespace OpenWBEM
 {
 
@@ -255,5 +256,7 @@ typedef SharedLibraryReference< Reference<CppAssociatorProviderIFC> > CppAssocia
 } // end namespace OpenWBEM
 
 typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC;
+
+#endif //#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 #endif

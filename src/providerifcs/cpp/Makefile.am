@@ -13,8 +13,15 @@ SHAREDLIBADD =
 
 thelibdir = $(libdir)
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_S=
+else
+ASSOCIATION_S=\
+OW_CppSimpleAssociatorProviderIFC.cpp
+endif
 
 libowcppprovifc_a_SOURCES = \
+$(ASSOCIATION_S) \
 OW_CppProviderIFC.cpp \
 OW_CppProxyProvider.cpp \
 OW_CppProxyProvider.hpp \
@@ -22,13 +29,13 @@ OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \
-OW_CppSimpleAssociatorProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_H=
 else
 ASSOCIATION_H=\
+OW_CppSimpleAssociatorProviderIFC.hpp \
 OW_CppAssociatorProviderIFC.hpp
 endif
 
@@ -41,7 +48,6 @@ OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppIndicationProviderIFC.hpp \
 OW_CppSimpleInstanceProviderIFC.hpp \
-OW_CppSimpleAssociatorProviderIFC.hpp \
 OW_CppReadOnlyInstanceProviderIFC.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
