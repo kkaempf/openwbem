@@ -69,7 +69,7 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
    {
 	   ptv = &tv;
 	   tv.tv_sec = ms / 1000;
-	   tv.tv_usec = ms % 1000 * 1000000;
+	   tv.tv_usec = (ms % 1000) * 1000;
    }
 
 #ifdef OW_USE_GNU_PTH
