@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------
-Don't use bool (or OW_Bool) in parameter lists.  It makes calling code 
+Don't use bool (or OpenWBEM::Bool) in parameter lists.  It makes calling code 
 impossible to understand.  Use an enum instead.
 	e.g.:  f(true, false, true, true); // what the hell is this doing?
 		// I'll have to look up the function declaration to find out!
@@ -65,13 +65,13 @@ Only do that in destructors.  Never let an exception escape a destructor, if
 it does, it will probably abort the cimom.
 There may be other occasions where this is appropriate, such as in threads
 that need to keep running even though one iteration of it's work has failed.
-In this case, the OW_ThreadCancelledException should *never* be caught:
+In this case, the ThreadCancelledException should *never* be caught:
 
 try
 {
 	//...
 }
-catch (OW_ThreadCancelledException&)
+catch (ThreadCancelledException&)
 {
 	throw;
 }
@@ -101,14 +101,14 @@ abort() being called if an exception is thrown that doesn't match the
 specification.  Unfortunately gcc doesn't check, and so this can easily lead
 to problems.
 
-Derive all new exceptions from OW_Exception.  In most cases, you can simply
-use the DECLARE_EXCEPTION and DEFINE_EXCEPTION macros.
+Derive all new exceptions from OpenWBEM::Exception.  In most cases, you can simply
+use the OW_DECLARE_EXCEPTION and OW_DEFINE_EXCEPTION macros.
 
 Use the OW_THROW macro to throw an exception, this will automatically pass in
 the filename and line number, which is a great debugging help.
 
 Anytime you need to report a specific WBEM error (from CIM Operations over
-HTTP), throw an OW_CIMException.  Use the OW_THROWCIM and OW_THROWCIMMSG
+HTTP), throw an OpenWBEM::CIMException.  Use the OW_THROWCIM and OW_THROWCIMMSG
 macros to do this.
 -----------------------------------------------------------------------------
 The following CIM elements are case-insensitive: Classes, Instances, Methods,
@@ -122,11 +122,14 @@ file, especially at global scope.  Preferred practice is to either explicitly
 use the namespace: "std::cout << std::endl" or to name each item:
 using std::cout;
 using std::endl;
+A few exceptions to the rule are OpenWBEM namespaces such as WBEMFlags.
 
 Use unnamed namespaces instead of static function/data.  Try to put new code
 into a namespace, this is especially important for pluggable shared libaries
 like providers.
 Don't use a class with all static functions/data, instead use a namespace.
+
+Put all library & cimom code into namespace OpenWBEM.
 -----------------------------------------------------------------------------
 If at all possible avoid static objects that have a constructor.  These can
 lead to the dreaded "static initialization dependency order" problem.  You're
@@ -135,11 +138,24 @@ in a static object's constructor in another translation unit, or even possibly
 in the same translation unit, if the mutex is declared after the other static
 object.
 -----------------------------------------------------------------------------
-memory:
-You should always use a class with a destructor (such as OW_Reference<>) to 
-manage memory.  If you ever have to write "delete", then you're doing
+memory & low-level C-stlye code:
+The #1 rule in OpenWBEM is that you can't segfault or leak memory!  This is
+typically associated with low-level C-style code, so #2 rule is that you can't
+write code like that unless you have a really good reason (no, optimization
+isn't a good enough reason, unless you've profiled it and it's using up >30%
+of the execution time)
+You should always use a class with a destructor (such as Reference<>) to 
+manage memory.  If you ever have to write "delete foo", then you're doing
 something wrong.
-Use OW_String instead of char* and OW_Array<> instead of raw C arrays.
+Use String instead of char* and Array<> instead of raw C arrays.
+Use typed input/output by using Format and stream insertion operators.  Don't
+use printf/scanf and friends.
+Use std::copy instead of memcpy.
+Use std::fill (or fill_n) instead of memset.
+Use std::sort instead of qsort()
+See "Four First Steps to Modern C++ Programming" by Andrew Koenig and Barbara
+E. Moo in C/C++ User's Journal Aug. 2003 pp. 49-54 if you have any more
+questions or objections.
 -----------------------------------------------------------------------------
 All files must have a copyright notice.
 -----------------------------------------------------------------------------
@@ -160,7 +176,7 @@ Try to minimize header dependencies as much as possible.  Include the minimum
 possible in header files.  You'll need to include headers for base classes as
 well as any types used as member variables.  Everything else can be forward
 declared.  If you use the pimpl idiom, you can get away with only including
-OW_Reference (or OW_COWReference).  This helps to greatly reduce compilation
+Reference (or COWReference).  This helps to greatly reduce compilation
 time and also helps prevent bloat from inline functions.
 -----------------------------------------------------------------------------
 If a function has unused parameters, don't comment out or omit the parameter
