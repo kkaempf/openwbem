@@ -96,8 +96,8 @@ CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 		m_iMessageID = 1;
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.2\" DTDVERSION=\"2.1\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
 	ostr << "<SIMPLEREQ>";
 }
 //////////////////////////////////////////////////////////////////////////////
