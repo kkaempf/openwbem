@@ -82,6 +82,7 @@ doTests()
 	doACompileOnlyTest "--disable-schema-manipulation" || return 1
 	doACompileOnlyTest "--disable-instance-manipulation" || return 1
 	doACompileOnlyTest "--disable-association-traversal --disable-qualifier-declaration --disable-schema-manipulation --disable-instance-manipulation" || return 1
+	doATest "--enable-static-services" || return 1
 }
 
 ## MAIN ######################################################################
