@@ -69,12 +69,11 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
-		//m_ftable->broker.hdl =
-		//	new ProviderEnvironmentIFCRef(env);
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
@@ -84,7 +83,6 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
-		//delete ((ProviderEnvironmentIFCRef *)(m_ftable->broker.hdl));
 		if (rc.rc == CMPI_RC_OK)
 		{
 			return;
@@ -129,9 +127,10 @@ CMPIInstanceProviderProxy::enumInstances(
 		int pCount = 0;
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
@@ -198,9 +197,10 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		int pCount = 0;
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath copWithNS(instanceName);
 		copWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(copWithNS);
@@ -265,9 +265,10 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath copWithNS(cop);
 		copWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(copWithNS);
@@ -305,9 +306,10 @@ CIMObjectPath
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath cop(ns, cimInstance);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_InstanceOnStack eInst(cimInstance);
@@ -357,9 +359,10 @@ void
 		int pCount = 0;
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath instRef(ns, previousInstance);
 		CMPI_ObjectPathOnStack eRef(instRef);
 		CMPI_InstanceOnStack eInst(modifiedInstance);

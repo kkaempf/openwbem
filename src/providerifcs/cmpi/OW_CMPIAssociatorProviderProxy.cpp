@@ -65,9 +65,10 @@ void CMPIAssociatorProviderProxy::associatorNames(
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
@@ -131,9 +132,10 @@ void CMPIAssociatorProviderProxy::associators(
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
@@ -221,10 +223,11 @@ void CMPIAssociatorProviderProxy::references(
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
@@ -299,10 +302,11 @@ void CMPIAssociatorProviderProxy::referenceNames(
 		::CMPIOperationContext context;
 
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);

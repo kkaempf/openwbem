@@ -287,7 +287,7 @@ struct CMPI_OpEnumeration : CMPIEnumeration {
 typedef OpenWBEM::Cache<OpenWBEM::CIMClass> ClassCache;
 
 struct CMPI_Broker : CMPIBroker {
-   static  CMPIBroker *staticBroker;
+   //static  CMPIBroker *staticBroker;
 };
 
 

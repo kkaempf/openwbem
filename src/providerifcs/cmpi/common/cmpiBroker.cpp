@@ -722,4 +722,4 @@ static CMPIBrokerFT broker_FT={
 
 CMPIBrokerFT *CMPI_Broker_Ftab=& broker_FT;
 
-CMPIBroker *CMPI_Broker::staticBroker=NULL;
+//CMPIBroker *CMPI_Broker::staticBroker=NULL;

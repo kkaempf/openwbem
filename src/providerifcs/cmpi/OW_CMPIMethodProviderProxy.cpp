@@ -68,10 +68,11 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
-		m_ftable->broker.hdl = static_cast<void *>(&env2);
+		::CMPI_Broker localBroker(m_ftable->broker);
+		localBroker.hdl = static_cast<void *>(&env2);
 																				
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+		CMPI_ThreadContext thr(&localBroker, &eCtx);
 		CIMObjectPath objectReference = path;
 		objectReference.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectReference);
