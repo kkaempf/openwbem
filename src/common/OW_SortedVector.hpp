@@ -132,6 +132,16 @@ public:
 		return m_impl->end();
 	}
 
+	iterator begin() 
+	{
+		return m_impl->begin();
+	}
+
+	iterator end() 
+	{
+		return m_impl->end();
+	}
+
 	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
@@ -231,6 +241,11 @@ public:
 	}
 
 	const_iterator find(const key_type& x) const /*throw (std::exception)*/
+	{
+		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
+	}
+
+	iterator find(const key_type& x) /*throw (std::exception)*/
 	{
 		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}

@@ -64,7 +64,7 @@ public:
 		OW_SelectableCallbackIFCRef cb) = 0;
 
 	virtual OW_RequestHandlerIFCRef getRequestHandler(
-		const OW_String& id) const = 0;
+		const OW_String& id) = 0;
 
 	virtual OW_LoggerRef getLogger() const = 0;
 

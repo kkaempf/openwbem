@@ -1,5 +1,6 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -18,13 +19,13 @@ using std::cerr;
 
 int queryCount = 0;
 
-OW_CIMInstanceArray testQuery(OW_CIMXMLCIMOMHandle rch, const char* query, int expectedSize)
+OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << ": " << query << endl;
 	OW_CIMNameSpace path("/root");
 	OW_CIMInstanceArray cia;
-	cia = rch.execQuery(path, query, 2);
+	cia = rch->execQuery(path, query, "wql2");
 	cout << "Got back " << cia.size() << " instances.  Expected " <<
 		expectedSize << endl;
 	for (size_t i = 0; i < cia.size(); ++i)
@@ -52,7 +53,18 @@ int main(int argc, char* argv[])
 	{
 		OW_String url = argv[1];
 		OW_CIMProtocolIFCRef httpClient( new OW_HTTPClient(url) );
-		OW_CIMXMLCIMOMHandle rch(httpClient);
+
+		OW_URL owurl(url);
+		OW_CIMOMHandleIFCRef rch;
+
+		if (owurl.path.equalsIgnoreCase("/owbinary"))
+		{
+			rch = new OW_BinaryCIMOMHandle(httpClient);
+		}
+		else
+		{
+			rch = new OW_CIMXMLCIMOMHandle(httpClient);
+		}
 
 		OW_CIMInstanceArray cia;
 

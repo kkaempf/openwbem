@@ -1215,7 +1215,7 @@ main(int argc, char* argv[])
 		 **********************************************************************/
 
 		OW_CIMOMHandleIFCRef chRef;
-		if (owurl.protocol.equalsIgnoreCase("ipc"))
+		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		//cout << "owurl.path = " << owurl.path << endl;
 		//if (owurl.path.equalsIgnoreCase("/binary"))
 		{

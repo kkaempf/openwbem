@@ -49,7 +49,7 @@ class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications);
 		virtual OW_LoggerRef getLogger() const;
 		virtual OW_Bool authenticate(OW_String &userName, const OW_String &info, OW_String &details);
-		virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String& id) const;
+		virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String& id) ;
 		virtual void addSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
 		virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
 

@@ -49,7 +49,7 @@ public:
 	}
 	virtual void removeSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) {
 	}
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) const {
+	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) {
 		return OW_RequestHandlerIFCRef();
 	}
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, const OW_Bool) {

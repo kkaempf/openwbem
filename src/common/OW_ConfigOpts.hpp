@@ -128,6 +128,10 @@
 #define DEFAULT_CPPIFC_PROV_TTL "5"
 #endif
 
+#ifndef DEFAULT_REQ_HANDLER_TTL
+#define DEFAULT_REQ_HANDLER_TTL "5"
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -168,6 +172,7 @@ namespace OW_ConfigOpts
 	static const char* const MAX_CONNECTIONS_opt = "http_server.max_connections";
 	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
 	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
+	static const char* const REQ_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__

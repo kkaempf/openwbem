@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 		OW_CIMProtocolIFCRef client;
 		client = new OW_HTTPClient(argv[1]);
 		
-		if(url.protocol.equalsIgnoreCase("IPC"))
+		if(url.path.equalsIgnoreCase("/owbinary"))
 		{
 			handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
 		}

@@ -41,6 +41,7 @@
 #include "OW_Map.hpp"
 #include "OW_Array.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_DateTime.hpp"
 
 class OW_CIMServer;
 class OW_CIMOMHandleIFC;
@@ -103,7 +104,7 @@ public:
 	OW_WQLIFCRef getWQLRef();
 
 	virtual OW_RequestHandlerIFCRef getRequestHandler(
-		const OW_String &id) const;
+		const OW_String &id);
 
 	virtual OW_LoggerRef getLogger() const;
 
@@ -129,6 +130,7 @@ public:
 	void logError(const OW_String& s) const;
 	void exportIndication(const OW_CIMInstance& instance,
 		const OW_CIMNameSpace& instNS);
+	void unloadReqHandlers();
 
 private:
 
@@ -143,9 +145,17 @@ private:
 	void _clearSelectables();
 
 	// Types
+
+	struct ReqHandlerData
+	{
+		OW_DateTime dt;
+		OW_RequestHandlerIFCRef rqIFCRef;
+		OW_String filename;
+	};
+
 	typedef OW_Map<OW_String, OW_String> ConfigMap;
 	typedef OW_Reference<ConfigMap> ConfigMapRef;
-	typedef OW_SortedVector<OW_String, OW_RequestHandlerIFCRef> ReqHandlerMap;
+	typedef OW_SortedVector<OW_String, ReqHandlerData> ReqHandlerMap;
 
 	mutable OW_Mutex m_monitor;
 	OW_RepositoryIFCRef m_cimServer;
@@ -162,6 +172,7 @@ private:
 	OW_Array<OW_SelectableCallbackIFCRef> m_selectableCallbacks;
 	OW_Array<OW_ServiceIFCRef> m_services;
 	ReqHandlerMap m_reqHandlers;
+	mutable OW_Mutex m_reqHandlersLock;
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;

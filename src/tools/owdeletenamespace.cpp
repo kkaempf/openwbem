@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 		 **********************************************************************/
 
 		OW_CIMOMHandleIFCRef rch;
-		if (owurl.protocol.equalsIgnoreCase("ipc"))
+		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
 			rch = new OW_BinaryCIMOMHandle(client);
 		}

@@ -50,7 +50,7 @@
 #include "OW_Platform.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_SharedLibraryRepository.hpp"
-#include "OW_ProviderUnloader.hpp"
+#include "OW_UnloaderProvider.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -197,6 +197,9 @@ OW_CIMOMEnvironment::init()
 	setConfigItem(OW_ConfigOpts::WQL_LIB_opt,
 		DEFAULT_WQL_LIB, false);
 
+	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt, 
+		DEFAULT_REQ_HANDLER_TTL, false);
+
 	_createLogger();
 }
 
@@ -219,7 +222,7 @@ OW_CIMOMEnvironment::startServices()
 		eref));
 
 	m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
-		OW_SharedLibraryRef(), new OW_ProviderUnloader(this)));
+		OW_SharedLibraryRef(), new OW_UnloaderProvider(this)));
 
 	m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
 		m_providerManager));
@@ -428,10 +431,16 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 			OW_StringArray supportedContentTypes = rh->getSupportedContentTypes();
 			logCustInfo(format("CIMOM loaded request handler from file: %1",
 				libName));
+
 			for (OW_StringArray::const_iterator iter = supportedContentTypes.begin();
 				  iter != supportedContentTypes.end(); iter++)
 			{
-				m_reqHandlers[(*iter)] = rh;
+				ReqHandlerData rqData;
+				rqData.filename = libName;
+
+				OW_MutexLock ml(m_reqHandlersLock);
+				m_reqHandlers[(*iter)] = rqData;
+				ml.release();
 				logCustInfo(format(
 					"CIMOM associating Content-Type %1 with Request Handler %2", 
 					*iter, libName));
@@ -759,7 +768,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_RequestHandlerIFCRef
-OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) const
+OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) 
 {
 	OW_RequestHandlerIFCRef ref;
 	ref.setNull();
@@ -768,19 +777,66 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) const
 		return ref;
 	}
 
-	OW_MutexLock ml(m_monitor);
 
-	ReqHandlerMap::const_iterator iter = 
+	OW_MutexLock ml(m_reqHandlersLock);
+	ReqHandlerMap::iterator iter = 
 			m_reqHandlers.find(id);
 	if (iter != m_reqHandlers.end())
 	{
-		ref = OW_RequestHandlerIFCRef(iter->second.getLibRef(), 
-			iter->second->clone());
-		ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
-			const_cast<OW_CIMOMEnvironment*>(this), true));
+		if (iter->second.rqIFCRef.isNull())
+		{
+			iter->second.rqIFCRef =
+				OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreateObject(
+					iter->second.filename, "createRequestHandler", getLogger());
+		}
+		if (iter->second.rqIFCRef)
+		{
+			ref = OW_RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(), 
+				iter->second.rqIFCRef->clone());
+			iter->second.dt.setToCurrent();
+			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
+				const_cast<OW_CIMOMEnvironment*>(this), true));
+		}
+		else
+		{
+			logError(format(
+				"Error loading request handler library %1 for content type %2", 
+				iter->second.filename, id));
+		}
 	}
 
 	return ref;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMOMEnvironment::unloadReqHandlers()
+{
+	logDebug("Running unloadReqHandlers()");
+	OW_Int32 ttl = getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt).toInt32();
+	if (ttl < 0)
+	{
+		logDebug("Non-Positive TTL for Request Handlers: unloadReqHandlers() returning.");
+		return;
+	}
+	OW_DateTime dt;
+	dt.setToCurrent();
+	OW_MutexLock ml(m_reqHandlersLock);
+	for (ReqHandlerMap::iterator iter = m_reqHandlers.begin(); 
+		  iter != m_reqHandlers.end(); ++iter)
+	{
+		if (iter->second.rqIFCRef)
+		{
+			OW_DateTime rqDT = iter->second.dt;
+			rqDT.addMinutes(ttl);
+			if (rqDT < dt)
+			{
+				iter->second.rqIFCRef.setNull();
+				logDebug(format("Unloading request handler lib %1 for content type %2",
+					iter->second.filename, iter->first));
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -46,8 +46,8 @@ OW_NameSpaceProvider.hpp \
 OW_PollingManager.hpp \
 OW_ProviderIFCLoader.hpp \
 OW_ProviderManager.hpp \
-OW_ProviderUnloader.hpp \
-OW_ProviderUnloader.cpp \
+OW_UnloaderProvider.hpp \
+OW_UnloaderProvider.cpp \
 OW_RepositoryIFC.hpp \
 OW_SharedLibraryRepository.hpp \
 OW_RepositoryStreams.hpp \

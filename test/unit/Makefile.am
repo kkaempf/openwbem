@@ -38,7 +38,7 @@ $(top_builddir)/src/cimom/OW_ProviderManager.o \
 $(top_builddir)/src/cimom/OW_PollingManager.o \
 $(top_builddir)/src/cimom/OW_ProviderIFCLoader.o \
 $(top_builddir)/src/cimom/OW_CIMServer.o \
-$(top_builddir)/src/cimom/OW_ProviderUnloader.o \
+$(top_builddir)/src/cimom/OW_UnloaderProvider.o \
 $(top_builddir)/src/cimom/OW_MetaRepository.o \
 $(top_builddir)/src/cimom/OW_AssocDb.o \
 $(top_builddir)/src/cimom/OW_IndexImpl.o \

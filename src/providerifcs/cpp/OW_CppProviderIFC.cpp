@@ -465,9 +465,13 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 	}
 
 	OW_Int32 iTimeWindow = timeWindow.toInt32();
-	if (iTimeWindow < 1)
+	if (iTimeWindow == 0 && !timeWindow.equals("0"))
 	{
 		iTimeWindow = OW_String(DEFAULT_CPPIFC_PROV_TTL).toInt32();
+	}
+	if (iTimeWindow < 0)
+	{
+		return;
 	}
 
 	OW_DateTime dt;

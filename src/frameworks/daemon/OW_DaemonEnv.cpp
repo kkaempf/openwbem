@@ -367,7 +367,7 @@ OW_DaemonEnv::authenticate(OW_String &userName, const OW_String &info, OW_String
 
 //////////////////////////////////////////////////////////////////////////////
 OW_RequestHandlerIFCRef
-OW_DaemonEnv::getRequestHandler(const OW_String&) const
+OW_DaemonEnv::getRequestHandler(const OW_String&)
 {
 	return OW_RequestHandlerIFCRef(m_requestHandler.getLibRef(),
 		m_requestHandler->clone());

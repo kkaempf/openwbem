@@ -33,6 +33,7 @@
 #include "OW_CIMUrlTestCases.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_String.hpp"
+#include "OW_URL.hpp"
 
 void OW_CIMUrlTestCases::setUp()
 {
@@ -54,6 +55,15 @@ void OW_CIMUrlTestCases::testToString()
 	unitAssert( url.getSpec() == "" );
 	unitAssert( url.toString() == "http://test2:pass2@localhost:30926" );
 	*/
+	OW_String surl = "proto://user:pass@hostname.foo.com:1234/my/path";
+	OW_URL url(surl);
+	unitAssert(url.host.equals("hostname.foo.com"));
+	unitAssert(url.password.equals("pass"));
+	unitAssert(url.path.equals("/my/path"));
+	unitAssert(url.port == 1234);
+	unitAssert(url.protocol.equals("proto"));
+	unitAssert(url.username.equals("user"));
+	unitAssert(url.toString().equals(surl));
 }
 
 Test* OW_CIMUrlTestCases::suite()

@@ -121,7 +121,7 @@ public:
 
 	}
 	
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String&) const
+	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String&) 
 	{
 		return m_XMLListener;
 	}

@@ -30,7 +30,7 @@
 
 
 #include "OW_config.h"
-#include "OW_ProviderUnloader.hpp"
+#include "OW_UnloaderProvider.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Format.hpp"
 
@@ -46,10 +46,11 @@
 	 * returns 0 then the poll method will never be called again.
 	 */
 OW_Int32 
-OW_ProviderUnloader::poll(const OW_ProviderEnvironmentIFCRef &env)
+OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
 	env->getLogger()->logDebug( "Polling OW_ProviderUnloader");
 	m_pcenv->unloadProviders();
+	m_pcenv->unloadReqHandlers();
 	return -1;
 }
 
@@ -58,7 +59,7 @@ OW_ProviderUnloader::poll(const OW_ProviderEnvironmentIFCRef &env)
 	 * If this method returns zero, then the poll method is never called.
 	 */
 OW_Int32 
-OW_ProviderUnloader::getInitialPollingInterval(const 
+OW_UnloaderProvider::getInitialPollingInterval(const 
 		OW_ProviderEnvironmentIFCRef &env)
 {
 	env->getLogger()->logDebug(format(

@@ -32,6 +32,7 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
@@ -795,8 +796,23 @@ int main(int argc, char* argv[])
 
 		OW_String url(argv[1]);
 
-		OW_CIMProtocolIFCRef hc(new OW_HTTPClient(url));
-		OW_CIMXMLCIMOMHandle rch(hc);
+		OW_URL owurl(url);
+		OW_CIMOMHandleIFCRef rchRef;
+
+		OW_CIMProtocolIFCRef client;
+		client = new OW_HTTPClient(url);
+
+		if (owurl.path.equalsIgnoreCase("/owbinary"))
+		{
+			rchRef = new OW_BinaryCIMOMHandle(client);
+		}
+		else
+		{
+			rchRef = new OW_CIMXMLCIMOMHandle(client);
+		}
+
+		OW_CIMOMHandleIFC& rch = *rchRef;
+
 
 		createNameSpace(rch);
 		enumNameSpace(rch);

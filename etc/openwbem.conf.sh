@@ -124,6 +124,13 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.ACL_superuser =
 
 ################################################################################
+# owcimomd.request_handler_TTL specifies how many minutes the request 
+# handlers will stay loaded after they are accessed.  If the value of this
+# option is -1, the request handlers will never be unloaded.  The default
+# value is 5 minutes. 
+;owcimomd.request_handler_TTL = 5
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option
@@ -134,7 +141,8 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
 # will keep a provider in memory.  If a provider has not been accessed for 
 # longer than this value, it will be unloaded and the memory associated with
-# it will be freed.  The default value is 5 minutes. 
+# it will be freed.  If the value of this option is -1, the providers will 
+# never be unloaded.  The default value is 5 minutes. 
 ;cppprovifc.prov_TTL = 5
 
 ################################################################################
