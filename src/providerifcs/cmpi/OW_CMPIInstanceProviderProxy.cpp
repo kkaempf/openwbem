@@ -37,7 +37,10 @@
 #include "OW_Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "cmpisrv.h"
+#ifdef OW_HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
+#include <stdlib.h> // for alloca() on FreeBSD
 
 namespace OpenWBEM
 {
