@@ -406,8 +406,14 @@ CMPIProviderIFC::getProvider(
 			miVector.genericMode = 1;
 	}
 
-	//String creationFuncName = provId.substring(4) + "_Create_InstanceMI";
-	String creationFuncName = provId + "_Create_InstanceMI";
+	String creationFuncName;
+	if ( provId.startsWith("cmpi") ) 
+	{
+		creationFuncName = provId.substring(4) + "_Create_InstanceMI";
+	} else {
+		creationFuncName = provId + "_Create_InstanceMI";
+	}
+	
 	env->getLogger()->logError(
 		format("CMPI provider ifc: Library %1 should contain %2",
 			provId, creationFuncName));
@@ -428,8 +434,12 @@ CMPIProviderIFC::getProvider(
 			miVector.genericMode = 1;
 	}
 
-	//creationFuncName = provId.substring(4) + "_Create_AssociationMI";
-	creationFuncName = provId + "_Create_AssociationMI";
+	if ( provId.startsWith("cmpi") )  
+	{
+		creationFuncName = provId.substring(4) + "_Create_AssociationMI";
+	} else {
+		creationFuncName = provId + "_Create_AssociationMI";
+	}
 
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createAssocMI))
@@ -447,8 +457,13 @@ CMPIProviderIFC::getProvider(
 			miVector.genericMode = 1;
 	}
 
-	//creationFuncName = provId.substring(4) + "_Create_MethodMI";
-	creationFuncName = provId + "_Create_MethodMI";
+	if ( provId.startsWith("cmpi") )  
+	{
+		creationFuncName = provId.substring(4) + "_Create_MethodMI";
+	} else {
+		creationFuncName = provId + "_Create_MethodMI";
+	}
+
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createMethMI))
 	{
@@ -465,8 +480,13 @@ CMPIProviderIFC::getProvider(
 			miVector.genericMode = 1;
 	}
 
-	//creationFuncName = provId.substring(4) + "_Create_PropertyMI";
-	creationFuncName = provId + "_Create_PropertyMI";
+	if ( provId.startsWith("cmpi") )  
+	{
+		creationFuncName = provId.substring(4) + "_Create_PropertyMI";
+	} else {
+		creationFuncName = provId + "_Create_PropertyMI";
+	}
+
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createPropMI))
 	{
@@ -483,8 +503,13 @@ CMPIProviderIFC::getProvider(
 			miVector.genericMode = 1;
 	}
 
-	//creationFuncName = provId.substring(4) + "_Create_IndicationMI";
-	creationFuncName = provId + "_Create_IndicationMI";
+	if ( provId.startsWith("cmpi") )  
+	{
+		creationFuncName = provId.substring(4) + "_Create_IndicationMI";
+	} else {
+		creationFuncName = provId + "_Create_IndicationMI";
+	}
+
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createIndMI))
 	{
