@@ -16,12 +16,6 @@ Testing:
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
-    - Control template/inline code duplication bloat in shared libraries.
-      - Un-inline non-performance-critical functions.
-      - Separate templates into declaration and definition files.
-      - Explicitly instantiate common templates.
-      - Use -fno-implicit-templates, -fno-implicit-inline-templates, and
-        -fno-implement-inlines when compiling any shared libraries.
     - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
 
 New features:
@@ -118,6 +112,8 @@ New features:
      - Add rbac authentication
     - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Add config items and code to do ssl client authentication.
+    - Have the simple c++ provider interface associator providers only have to
+      implement references.  The provider interface can easily do the rest.
 
 Refactorings:
     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
@@ -180,3 +176,9 @@ Optimizations:
       algorithms that have to run up the chain by doing a repeated getClass.
     - OW_CIMXMLCimomHandle: Only send optional parameters if they aren't the
       default to save transmission bytes.
+    - Control template/inline code duplication bloat in shared libraries.
+      - Un-inline non-performance-critical functions.
+      - Separate templates into declaration and definition files.
+      - Explicitly instantiate common templates.
+      - Use -fno-implicit-templates, -fno-implicit-inline-templates, and
+        -fno-implement-inlines when compiling any shared libraries.
