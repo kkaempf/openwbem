@@ -29,4 +29,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/ifcs
 
+else
+clean-local:
+
 endif

@@ -46,7 +46,7 @@ public:
 	OW_Exception(const char* msg);
 	OW_Exception(const OW_Exception& e);
 	OW_Exception& operator= (const OW_Exception& rhs);
-	virtual ~OW_Exception();
+	virtual ~OW_Exception() throw();
 	virtual const char* type() const {  return "OW_Exception"; }
 	const char* getMessage() const;
 	const char* getFile() const;
@@ -78,7 +78,7 @@ public: \
 	OW_##NAME##Exception(const char* file, int line, const char* msg) \
 		: OW_Exception(file, line, msg) {} \
 	OW_##NAME##Exception(const char* msg) : OW_Exception(msg) {} \
-	virtual ~OW_##NAME##Exception() { } \
+	virtual ~OW_##NAME##Exception() throw() { } \
   \
 	virtual const char* type() const { return "OW_" #NAME "Exception"; } \
 };

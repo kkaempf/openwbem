@@ -15,6 +15,7 @@
  */
 
 
+#if defined(i386) && defined(__GNUC__)
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
@@ -24,9 +25,6 @@
 #include <dlfcn.h>
 #include "npicrash.h"
 
-#if !defined(i386) || !defined(__GNUC__)
-	#error "npicrash.c currently supports only the i386 architecture"
-#endif
 
 /* i386 stack frame -- can we have make this less architecture dependent? */
 struct stackframe
@@ -75,9 +73,11 @@ static void segv_handler(int signum, siginfo_t * info, void * obscure)
 		sfp=sfp->sf_previous;
 	}
 }  
+#endif // #if defined(i386) && defined(__GNUC__)
 
 void * setupCrashHandler()
 {
+#if defined(i386) && defined(__GNUC__)
 	/* set up signal handler and return the old handler info */
 	sigset_t sigset;
 	struct sigaction action, *oldaction;
@@ -98,10 +98,14 @@ void * setupCrashHandler()
 		oldaction->sa_sigaction,
 		oldaction->sa_flags);
 	return oldaction;
+#else
+	return 0;
+#endif // #if defined(i386) && defined(__GNUC__)
 }
 
 void  restoreCrashHandler(void *oldac)
 {
+#if defined(i386) && defined(__GNUC__)
 	/* restore the old signal handler */
 	struct sigaction * oldaction=oldac, origaction;
 	if (oldaction)
@@ -117,4 +121,8 @@ void  restoreCrashHandler(void *oldac)
 			oldaction->sa_flags);
 		free(oldaction);
 	}
+#else
+	(void)oldac;
+#endif // #if defined(i386) && defined(__GNUC__)
 }
+

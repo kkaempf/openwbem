@@ -168,7 +168,7 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 			|| addr.getType() == OW_SocketAddress::UDS);
 
 	if((m_sockfd = ::socket(addr.getType() == OW_SocketAddress::INET ?
-		AF_INET : AF_LOCAL, SOCK_STREAM, 0)) == -1)
+		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(OW_SocketException,
 			format("Failed to create a socket: %1", strerror(errno)).c_str());

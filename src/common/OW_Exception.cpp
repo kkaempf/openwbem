@@ -128,7 +128,7 @@ OW_Exception::OW_Exception( const OW_Exception& e )
 }
 
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::~OW_Exception()
+OW_Exception::~OW_Exception() throw()
 {
 	freeBuf(&m_file);
 	freeBuf(&m_msg);

@@ -56,7 +56,7 @@ OW_SocketAddress::getUDS(const OW_String& filename)
 	rval.m_type = UDS;
 	rval.m_name = filename;
 	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
-	rval.m_UDSNativeAddress.sun_family = AF_LOCAL;
+	rval.m_UDSNativeAddress.sun_family = AF_UNIX;
 	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(), 
 		sizeof(rval.m_UDSNativeAddress.sun_path) - 1);
 
@@ -262,7 +262,7 @@ OW_SocketAddress OW_SocketAddress::allocEmptyAddress(AddressType type)
 	{
 		sockaddr_un addr;
 		memset(&addr, 0, sizeof(addr));
-		addr.sun_family = AF_LOCAL;
+		addr.sun_family = AF_UNIX;
 		return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
 	}
 	else

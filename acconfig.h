@@ -77,7 +77,7 @@
 #undef u_int8_t
 #undef u_int16_t
 #undef u_int32_t
-//#undef socklen_t
+#undef socklen_t
 
 @BOTTOM@
 

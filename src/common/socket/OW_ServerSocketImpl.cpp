@@ -142,7 +142,7 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	m_localAddress = OW_SocketAddress::getUDS(filename);
 	close();
 
-	if((m_sockfd = ::socket(AF_LOCAL,SOCK_STREAM, 0)) == -1)
+	if((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
 			strerror(errno)).c_str());

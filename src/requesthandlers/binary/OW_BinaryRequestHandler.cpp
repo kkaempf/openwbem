@@ -302,7 +302,6 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		lgr->logError(format("File: %1", e.getFile()));
 		lgr->logError(format("Line: %1", e.getLine()));
 		lgr->logError(format("Msg: %1", e.getMessage()));
-		cerr << e.getStackTrace() << endl;
 		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e).c_str());
 		m_isError = true;
 		
