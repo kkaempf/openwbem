@@ -6,6 +6,8 @@ install-ow-shared-libs:
 				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT)* $(DESTDIR)$(thelibdir); \
 				rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+			elif [ "$(LIB_EXT)" = "nlm" ]; then \
+				$(INSTALL_PROGRAM)  $$i $(DESTDIR)$(thelibdir); \
 			else \
 				$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 				rm -f $(DESTDIR)$(thelibdir)/$$i; \
@@ -31,6 +33,8 @@ uninstall-ow-shared-libs:
 		if [ "$(LIB_EXT)" = "dylib" ]; then \
 			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
 			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+		elif ["$(LIB_EXT)" = "nlm" ]; then \
+			rm -f $(DESTDIR)$(thelibdir)/$$i; \
 		else \
 			rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
 			rm -f $(DESTDIR)$(thelibdir)/$$i; \
