@@ -40,7 +40,7 @@
 #include "OW_CMPIMethodProviderProxy.hpp"
 #include "OW_CMPIAssociatorProviderProxy.hpp"
 #include "OW_CMPIPolledProviderProxy.hpp"
-//#include "OW_CMPIIndicationProviderProxy.hpp"
+#include "OW_CMPIIndicationProviderProxy.hpp"
 
 //typedef OW_CMPIProviderBaseIFC* (*ProviderCreationFunc)();
 // the closest approximation of CMPIProviderBaseIFCRef is ::FTABLE

@@ -52,8 +52,7 @@ public:
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool lastActivation
+		const OW_StringArray& classes
 		);
 
 	virtual void activateFilter(
@@ -61,8 +60,7 @@ public:
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool firstActivation
+		const OW_StringArray& classes 
 		);
 
 	virtual void authorizeFilter(

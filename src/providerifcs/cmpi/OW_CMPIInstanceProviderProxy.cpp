@@ -29,9 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "CMPIProvider.hpp"
 #include "OW_CMPIInstanceProviderProxy.hpp"
-//#include "CMPIExternal.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"

@@ -30,11 +30,11 @@
 
 #include "OW_config.h"
 #include "OW_CMPIIndicationProviderProxy.hpp"
-#include "CMPIExternal.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "cmpisrv.h"
 
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -46,21 +46,34 @@ OW_CMPIIndicationProviderProxy::deActivateFilter(
 	bool lastActivation)
 {
 	env->getLogger()->logDebug("deactivateFilter");
-	if (m_ftable->fp_deActivateFilter != NULL)
+
+	if (m_ftable->indMI->ft->fp_deActivateFilter != NULL)
 	{
-		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
-		OW_CMPIHandleFreer nhf(_npiHandle);
+		CMPI_ThreadContext thr;
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-		env->getLogger()->logDebug("deactivateFilter");
+		::OperationContext context;
+		context.cimom = env;
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		env->getLogger()->logDebug("deactivateFilter 2");
+
+		CMPI_ContextOnStack eCtx(context);
+		CMPI_ObjectPathOnStack eRef(classPath);
+		CMPI_ResultOnStack eRes(result);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
-		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
+		//OW_CIMObjectPath mutablePath(classPath);
+		//SelectExp exp = {&mutableFilter};
+		//CIMObjectPath cop = {&mutablePath};
 
-		m_ftable->fp_deActivateFilter( &_npiHandle, exp, eventType.c_str(), cop, lastActivation);
+		CMPIFlags flgs = 0;
+
+		::CMPIIndicationMI * mi = m_ftable->indMI;
+
+		rc = m_ftable->indMI->ft->deActivateFilter(mi, &eCtx, &eRes,
+
+			exp, 
+		 , exp, eventType.c_str(), cop, lastActivation);
 
 		if (_npiHandle.errorOccurred)
 		{
