@@ -159,19 +159,16 @@ void OW_LoggerTestCases::verifyFileLog( const char* file, int line, const char* 
 
 void OW_LoggerTestCases::testFileLogging()
 {
-#ifdef OW_WIN32
 	String filename = "testFileLogging.log";
-	DeleteFile( filename.c_str() );
-#else
-	String filename = "/tmp/test";
-	remove( filename.c_str() );
-#endif
+	FileSystem::removeFile(filename);
 	
 	LoggerRef pLogger = createLogger(filename);
 	OW_LOG_FATAL_ERROR(pLogger, "fatalerror1");
 	OW_LOG_ERROR(pLogger, "error1" );
 	OW_LOG_INFO(pLogger, "custinfo1" );
 	OW_LOG_DEBUG(pLogger, "debug1" );
+	// we recreate the logger before every verify so that the previous one gets deleted and flushes the logs to the file.
+	pLogger = createLogger(filename);
 	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
 				   "fatalerror1\n"
 				   "error1\n" );
@@ -181,6 +178,7 @@ void OW_LoggerTestCases::testFileLogging()
 	OW_LOG_ERROR(pLogger, "error2" );
 	OW_LOG_INFO(pLogger, "custinfo2" );
 	OW_LOG_DEBUG(pLogger, "debug2" );
+	pLogger = createLogger(filename);
 	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
 				    "fatalerror1\n"
 				    "error1\n"
@@ -194,6 +192,7 @@ void OW_LoggerTestCases::testFileLogging()
 	OW_LOG_ERROR(pLogger, "error3" );
 	OW_LOG_INFO(pLogger, "custinfo3" );
 	OW_LOG_DEBUG(pLogger, "debug3" );
+	pLogger = createLogger(filename);
 	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
 					"fatalerror1\n"
 					"error1\n"
@@ -211,6 +210,7 @@ void OW_LoggerTestCases::testFileLogging()
 	OW_LOG_ERROR(pLogger, "error4" );
 	OW_LOG_INFO(pLogger, "custinfo4" );
 	OW_LOG_DEBUG(pLogger, "debug4" );
+	pLogger = createLogger(filename);
 	verifyFileLog( __FILE__, __LINE__, filename.c_str(),
 					"fatalerror1\n"
 					"error1\n"
@@ -223,11 +223,8 @@ void OW_LoggerTestCases::testFileLogging()
 					"debug3\n"
 				    "fatalerror4\n"
 					 );
-#ifdef OW_WIN32
-	DeleteFile(filename.c_str());
-#else
-	remove( filename.c_str() );
-#endif
+
+	FileSystem::removeFile(filename);
 }
 
 void OW_LoggerTestCases::testSyslogLogging()
