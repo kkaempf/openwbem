@@ -120,13 +120,13 @@ CIMName::operator!() const
 ///////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMName& x, const CIMName& y)
 {
-	return x.toString().compareToIgnoreCase(y.toString()) < 0;
+	return x.m_name.compareToIgnoreCase(y.m_name) < 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 bool operator==(const CIMName& x, const CIMName& y)
 {
-	return x.toString().equalsIgnoreCase(y.toString());
+	return x.m_name.equalsIgnoreCase(y.m_name);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -102,13 +102,14 @@ public:
 	operator safe_bool () const;
 	bool operator!() const;
 
+	friend OW_COMMON_API bool operator<(const CIMName& x, const CIMName& y);
+	friend OW_COMMON_API bool operator==(const CIMName& x, const CIMName& y);
+
 private:
 	String m_name;
 
 };
 
-OW_COMMON_API bool operator<(const CIMName& x, const CIMName& y);
-OW_COMMON_API bool operator==(const CIMName& x, const CIMName& y);
 OW_COMMON_API bool operator<=(const CIMName& x, const CIMName& y);
 OW_COMMON_API bool operator>(const CIMName& x, const CIMName& y);
 OW_COMMON_API bool operator>=(const CIMName& x, const CIMName& y);
