@@ -26,8 +26,6 @@ Testing:
       - Do all this while running under valgrind to detect memory leaks, etc.
 
 Fix problems:
-    - Have OW_HTTPClient report contents of CIMError header if present on an 
-      HTTP error.
     - Implement a "compatibility mode" in the client if the server doesn't 
       support the latest version(s) of the spec(s).
     - The new redhat pthread_cancel() throws an exception that seems to clobber 

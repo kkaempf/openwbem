@@ -389,8 +389,17 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 			m_sDigestCNonce + "< Method >" + m_requestMethod +
 			"< url >" + m_url.path + "<";
 		*/
-		OW_THROW(HTTPException, format("Unable to process request: %1",
-			statusLine).c_str());
+		String CIMError = getHeaderValue("CIMError");
+		if (CIMError.empty())
+		{
+			OW_THROW(HTTPException, format("Unable to process request: %1",
+				statusLine).c_str());
+		}
+		else
+		{
+			OW_THROW(HTTPException, format("Unable to process request: %1:%2",
+				statusLine, CIMError).c_str());
+		}
 	}
 	m_pIstrReturn = convertToFiniteStream();
 	OW_ASSERT(m_pIstrReturn);
