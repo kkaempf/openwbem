@@ -165,7 +165,7 @@ public:
 			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop) = 0;
 
-	virtual OW_Bool isInstanceProvider() { return true; }
+	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference<OW_CppInstanceProviderIFC> OW_CppInstanceProviderIFCRef;

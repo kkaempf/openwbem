@@ -99,6 +99,12 @@ public:
 		return rval;
 	}
 
+	template <class U>
+	void useRefCountOf(const OW_SharedLibraryReference<U>& arg)
+	{
+		m_obj.useRefCountOf(arg.m_obj);
+	}
+
 	OW_Bool isNull() const
 	{
 		return m_obj.isNull();

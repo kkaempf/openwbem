@@ -87,7 +87,7 @@ public:
 			OW_String propertyName,
 			OW_CIMValue val ) = 0;
 
-	virtual OW_Bool isPropertyProvider() { return true; }
+	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference< OW_CppPropertyProviderIFC > OW_CppPropertyProviderIFCRef;

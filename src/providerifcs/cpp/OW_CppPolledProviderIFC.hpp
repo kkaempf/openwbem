@@ -55,7 +55,7 @@ public:
 	 */
 	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env) = 0;
 
-	virtual OW_Bool isPolledProvider() { return true; }
+	virtual OW_CppPolledProviderIFC* getPolledProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference<OW_CppPolledProviderIFC> OW_CppPolledProviderIFCRef;

@@ -81,7 +81,7 @@ void OW_ProviderManager::init(const OW_ProviderIFCLoaderRef IFCLoader)
 void
 OW_ProviderManager::addCIMOMProvider(OW_CppProviderBaseIFCRef pProv)
 {
-	OW_ASSERT(pProv->isPolledProvider() || pProv->isIndicationExportProvider());
+	OW_ASSERT(pProv->getPolledProvider() || pProv->getIndicationExportProvider());
 
 	OW_MutexLock ml(m_guard);
 
@@ -123,7 +123,9 @@ OW_ProviderManager::doGetIndicationExportProviders(
 
 	for(size_t i = 0; i < m_noIdProviders.size(); i++)
 	{
-		if (m_noIdProviders[i].m_pProv->isIndicationExportProvider())
+		OW_CppIndicationExportProviderIFC* pIEP = 
+			m_noIdProviders[i].m_pProv->getIndicationExportProvider();
+		if (pIEP)
 		{
 			OW_CppProviderBaseIFCRef pProv =
 				m_noIdProviders[i].m_pProv;
@@ -134,8 +136,11 @@ OW_ProviderManager::doGetIndicationExportProviders(
 				m_noIdProviders[i].m_initDone = true;
 			}
 
+			OW_CppIndicationExportProviderIFCRef iepRef(pProv.getLibRef(), pIEP);
+			iepRef.useRefCountOf(pProv);
+
 			rv.append(OW_IndicationExportProviderIFCRef(new
-				OW_IndicationExportProviderProxy(pProv.cast_to<OW_CppIndicationExportProviderIFC>())));
+				OW_IndicationExportProviderProxy(iepRef)));
 		}
 	}
 
@@ -151,7 +156,9 @@ OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 
 	for(size_t i = 0; i < m_noIdProviders.size(); i++)
 	{
-		if(m_noIdProviders[i].m_pProv->isPolledProvider())
+		OW_CppPolledProviderIFC* pPP = 
+			m_noIdProviders[i].m_pProv->getPolledProvider();
+		if(pPP)
 		{
 			OW_CppProviderBaseIFCRef pProv = m_noIdProviders[i].m_pProv;
 			if(!m_noIdProviders[i].m_initDone)
@@ -159,9 +166,11 @@ OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 				pProv->initialize(env);
 				m_noIdProviders[i].m_initDone = true;
 			}
+			OW_CppPolledProviderIFCRef ppRef(pProv.getLibRef(), pPP);
+			ppRef.useRefCountOf(pProv);
 
 			rv.append(OW_PolledProviderIFCRef(new
-				OW_PolledProviderProxy(pProv.cast_to<OW_CppPolledProviderIFC>())));
+				OW_PolledProviderProxy(ppRef)));
 		}
 	}
 
@@ -354,12 +363,17 @@ OW_ProviderManager::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& en
 		return OW_InstanceProviderIFCRef(0);
 	}
 
-	if(!it->second.m_pProv->isInstanceProvider())
+	OW_CppInstanceProviderIFC* pIP = it->second.m_pProv->getInstanceProvider();
+
+	if(!pIP)
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not an instance provider: %1", provIdString));
 		return OW_InstanceProviderIFCRef(0);
 	}
+
+	OW_CppInstanceProviderIFCRef ipRef(it->second.m_pProv.getLibRef(), pIP);
+	ipRef.useRefCountOf(it->second.m_pProv);
 
 	if(!it->second.m_initDone)
 	{
@@ -367,8 +381,9 @@ OW_ProviderManager::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& en
 		it->second.m_initDone = true;
 	}
 
-	return OW_InstanceProviderIFCRef(new OW_InstanceProviderProxy(
-		it->second.m_pProv.cast_to<OW_CppInstanceProviderIFC>()));
+
+
+	return OW_InstanceProviderIFCRef(new OW_InstanceProviderProxy(ipRef));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -385,7 +400,9 @@ OW_ProviderManager::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		return OW_MethodProviderIFCRef(0);
 	}
 
-	if(!it->second.m_pProv->isMethodProvider())
+	OW_CppMethodProviderIFC* pMP = it->second.m_pProv->getMethodProvider();
+
+	if(!pMP)
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not a method provider: %1", provIdString));
@@ -398,8 +415,10 @@ OW_ProviderManager::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		it->second.m_initDone = true;
 	}
 
-	return OW_MethodProviderIFCRef(new OW_MethodProviderProxy(
-		it->second.m_pProv.cast_to<OW_CppMethodProviderIFC>()));
+	OW_CppMethodProviderIFCRef mpRef(it->second.m_pProv.getLibRef(), pMP);
+	mpRef.useRefCountOf(it->second.m_pProv);
+
+	return OW_MethodProviderIFCRef(new OW_MethodProviderProxy(mpRef));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -416,7 +435,8 @@ OW_ProviderManager::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 		return OW_PropertyProviderIFCRef(0);
 	}
 
-	if(!it->second.m_pProv->isPropertyProvider())
+	OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
+	if(!pPP)
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not a property provider: %1", provIdString));
@@ -429,8 +449,10 @@ OW_ProviderManager::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 		it->second.m_initDone = true;
 	}
 
-	return OW_PropertyProviderIFCRef(new OW_PropertyProviderProxy(
-		it->second.m_pProv.cast_to<OW_CppPropertyProviderIFC>()));
+	OW_CppPropertyProviderIFCRef ppRef(it->second.m_pProv.getLibRef(), pPP);
+	ppRef.useRefCountOf(it->second.m_pProv);
+
+	return OW_PropertyProviderIFCRef(new OW_PropertyProviderProxy(ppRef));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -447,7 +469,8 @@ OW_ProviderManager::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& 
 		return OW_AssociatorProviderIFCRef(0);
 	}
 
-	if(!it->second.m_pProv->isAssociatorProvider())
+	OW_CppAssociatorProviderIFC* pAP = it->second.m_pProv->getAssociatorProvider();
+	if(!pAP)
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not an associator provider: %1", provIdString));
@@ -461,8 +484,9 @@ OW_ProviderManager::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& 
 		it->second.m_initDone = true;
 	}
 
-	return OW_AssociatorProviderIFCRef(new OW_AssociatorProviderProxy(
-		it->second.m_pProv.cast_to<OW_CppAssociatorProviderIFC>()));
+	OW_CppAssociatorProviderIFCRef apRef(it->second.m_pProv.getLibRef(), pAP);
+
+	return OW_AssociatorProviderIFCRef(new OW_AssociatorProviderProxy(apRef));
 }
 
 const char* const OW_ProviderManager::CIMOM_PROVIDER_IFC = "cimom";

@@ -70,10 +70,10 @@ public:
 			const OW_CIMValueArray& in,
 			OW_CIMValueArray& out ) = 0;
 
-	virtual OW_Bool isMethodProvider() { return true; }
+	virtual OW_CppMethodProviderIFC* getMethodProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference< OW_CppMethodProviderIFC > OW_CppMethodProviderIFCRef;
 
 #endif
-
+								 

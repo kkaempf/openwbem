@@ -227,7 +227,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 				OW_CIMObjectPath objectName,
 				OW_String role ) = 0;
 
-		virtual OW_Bool isAssociatorProvider() { return true; }
+		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference< OW_CppAssociatorProviderIFC > OW_CppAssociatorProviderIFCRef;

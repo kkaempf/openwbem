@@ -79,6 +79,9 @@ class OW_Reference
 		template <class U>
 		OW_Reference<U> cast_to();
 
+		template <class U>
+		void useRefCountOf(const OW_Reference<U>&);
+
 	private:
 		T* volatile m_pObj;
 		OW_RefCount* volatile m_pRefCount;
@@ -308,6 +311,28 @@ OW_Reference<T>::cast_to()
 	return rval;
 }
 
+template <class T>
+template <class U>
+void 
+OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
+{
+	if(m_pRefCount)
+	{
+		OW_MutexLock l(m_pRefCount->m_mutex);
+		if(m_pRefCount->m_count == 1)
+		{
+			l.release();
+			delete m_pRefCount;
+			m_pRefCount = 0;
+		}
+		else
+		{
+			--(m_pRefCount->m_count);
+		}
+	}
+	m_pRefCount = arg.m_pRefCount;
+	incRef();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Comparisons

@@ -50,7 +50,7 @@ public:
 	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMInstance& indHandlerInst, OW_CIMInstance& indicationInst) = 0;
 
-	virtual OW_Bool isIndicationExportProvider() { return true; }
+	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return this; }
 };
 
 typedef OW_SharedLibraryReference<OW_CppIndicationExportProviderIFC>

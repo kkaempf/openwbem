@@ -36,6 +36,14 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
+
+class OW_CppInstanceProviderIFC;
+class OW_CppMethodProviderIFC;
+class OW_CppAssociatorProviderIFC;
+class OW_CppPropertyProviderIFC;
+class OW_CppIndicationExportProviderIFC;
+class OW_CppPolledProviderIFC;
+
 /**
  * This is the base class implemented by all providers that are loaded
  * by the C++ provider interface.
@@ -66,12 +74,12 @@ class OW_CppProviderBaseIFC
 		virtual void cleanup() {}
 
 
-		virtual OW_Bool isInstanceProvider() { return false; }
-		virtual OW_Bool isMethodProvider() { return false; }
-		virtual OW_Bool isAssociatorProvider() { return false; }
-		virtual OW_Bool isPropertyProvider() { return false; }
-		virtual OW_Bool isIndicationExportProvider() { return false; }
-		virtual OW_Bool isPolledProvider() { return false; }
+		virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
+		virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
+		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+		virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
+		virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
+		virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
 };
 
 typedef OW_SharedLibraryReference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;

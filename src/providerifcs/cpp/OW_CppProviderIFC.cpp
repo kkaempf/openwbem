@@ -84,13 +84,16 @@ OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
-		if(pProv->isInstanceProvider())
+		OW_CppInstanceProviderIFC* pIP = pProv->getInstanceProvider();
+		if(pIP)
 		{
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found instance"
 				" provider %1", provIdString));
 
-			return OW_InstanceProviderIFCRef(new OW_CppInstanceProviderProxy(
-				pProv.cast_to<OW_CppInstanceProviderIFC>()));
+			OW_CppInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
+			ipRef.useRefCountOf(pProv);
+
+			return OW_InstanceProviderIFCRef(new OW_CppInstanceProviderProxy(ipRef));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not an instance provider",
@@ -109,12 +112,15 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIF
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
-		if(pProv->isIndicationExportProvider())
+		OW_CppIndicationExportProviderIFC* pIEP = 
+			pProv->getIndicationExportProvider();
+		if(pIEP)
 		{
+			OW_CppIndicationExportProviderIFCRef iepRef(pProv.getLibRef(), pIEP);
+			iepRef.useRefCountOf(pProv);
 			rvra.append(
 				OW_IndicationExportProviderIFCRef(new
-					OW_CppIndicationExportProviderProxy(
-						pProv.cast_to<OW_CppIndicationExportProviderIFC>())));
+					OW_CppIndicationExportProviderProxy(iepRef)));
 		}
 	}
 
@@ -130,11 +136,14 @@ OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
-		if(pProv->isPolledProvider())
+		OW_CppPolledProviderIFC* pPP = pProv->getPolledProvider();
+		if(pPP)
 		{
+			OW_CppPolledProviderIFCRef ppRef(pProv.getLibRef(), pPP);
+			ppRef.useRefCountOf(pProv);
 			rvra.append(
 				OW_PolledProviderIFCRef(new
-					OW_CppPolledProviderProxy(pProv.cast_to<OW_CppPolledProviderIFC>())));
+					OW_CppPolledProviderProxy(ppRef)));
 		}
 	}
 
@@ -149,13 +158,17 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
-		if(pProv->isMethodProvider())
+		OW_CppMethodProviderIFC* pMP = pProv->getMethodProvider();
+		if(pMP)
 		{
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found method provider %1",
 				provIdString));
 
+			OW_CppMethodProviderIFCRef mpRef(pProv.getLibRef(), pMP);
+			mpRef.useRefCountOf(pProv);
+
 			return OW_MethodProviderIFCRef(
-				new OW_CppMethodProviderProxy(pProv.cast_to<OW_CppMethodProviderIFC>()));
+				new OW_CppMethodProviderProxy(mpRef));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not a method provider",
@@ -173,13 +186,16 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
-		if(pProv->isPropertyProvider())
+		OW_CppPropertyProviderIFC* pPP = pProv->getPropertyProvider();
+		if(pPP)
 		{
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found property provider %1",
 				provIdString));
+			OW_CppPropertyProviderIFCRef ppRef(pProv.getLibRef(), pPP);
+			ppRef.useRefCountOf(pProv);
 
-			return OW_PropertyProviderIFCRef(new OW_CppPropertyProviderProxy(
-				pProv.cast_to<OW_CppPropertyProviderIFC>()));
+
+			return OW_PropertyProviderIFCRef(new OW_CppPropertyProviderProxy(ppRef));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not a property provider",
@@ -197,13 +213,16 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
-		if(pProv->isAssociatorProvider())
+		OW_CppAssociatorProviderIFC* pAP = pProv->getAssociatorProvider();
+		if(pAP)
 		{
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found associator provider %1",
 				provIdString));
+			OW_CppAssociatorProviderIFCRef apRef(pProv.getLibRef(), pAP);
+			apRef.useRefCountOf(pProv);
 
 			return OW_AssociatorProviderIFCRef(new
-				OW_CppAssociatorProviderProxy(pProv.cast_to<OW_CppAssociatorProviderIFC>()));
+				OW_CppAssociatorProviderProxy(apRef));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not an associator provider",
@@ -306,15 +325,13 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 		}
 
 
-		OW_CppPolledProviderIFC* p_itp = (pProv->isPolledProvider())
-			? dynamic_cast<OW_CppPolledProviderIFC*>(pProv) : 0;
+		OW_CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 
 		OW_CppIndicationExportProviderIFC* p_iep = 0;
 
 		if (!p_itp)
 		{
-			p_iep = (pProv->isIndicationExportProvider())
-				? dynamic_cast<OW_CppIndicationExportProviderIFC*>(pProv) : 0;
+			p_iep = pProv->getIndicationExportProvider();
 		}
 
 		if (p_itp || p_iep)
