@@ -90,13 +90,13 @@ static char* setPath(NPIHandle *nh, char *path)
 
 static void initialize( NPIHandle *nh, CIMOMHandle ch)
 {
-    (void) ch;
     char *args[] = {"","","initialize"};
     int error;
     char *msg,script[256];
 
     PerlInterpreter * my_perl;
 
+    (void) ch;
     fprintf(stderr,"--- perlProvider(): initialize\n");
 
     if ((args[1]=setPath(nh,script))==NULL) return;
@@ -184,12 +184,12 @@ static void cleanup (NPIHandle *nh)
 static Vector enumInstanceNames(NPIHandle *nh,CIMObjectPath cop,
                                 int bool_deep,CIMClass cc)
 {
-    (void) bool_deep;
     char * args[] = {"",NULL,"enumInstanceNames"};
     char script[256];
     PerlInterpreter * my_perl;
 
     Vector vec = {NULL};
+    (void) bool_deep;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): enumInstanceNames\n");
@@ -527,13 +527,13 @@ static Vector associators(NPIHandle *nh, CIMObjectPath assoc,
                           int includeQualifiers, int includeClassOrigin,
                           const char * propertyList[], int plLen)
 {
-  (void) propertyList;
-  (void) plLen;
     char * args[] = {"",NULL,"associators"};
     char script[256];
     PerlInterpreter * my_perl;
  
     Vector vec = {NULL};
+  (void) propertyList;
+  (void) plLen;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): associators\n");
@@ -668,13 +668,13 @@ static Vector references ( NPIHandle * nh, CIMObjectPath assoc,
                            int includeQualifiers, int includeClassOrigin,
                            const char * propertyList[], int plLen)
 {
-  (void) propertyList;
-  (void) plLen;
     char * args[] = {"",NULL,"references"};
     char script[256];
     PerlInterpreter * my_perl;
  
     Vector vec = VectorNew(nh);
+  (void) propertyList;
+  (void) plLen;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): references\n");
@@ -788,13 +788,13 @@ static Vector referenceNames ( NPIHandle * nh, CIMObjectPath assoc,
 static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
                                const char * a, Vector av, Vector a2v)
 {
+    CIMValue cv = {NULL};
    (void) nh;
    (void) cop;
    (void) a;
    (void) av;
    (void) a2v;
 
-    CIMValue cv = {NULL};
     fprintf(stderr,"--- perlProvider(): invokeMethod\n");
 
     if (cv.ptr == NULL) raiseError(nh,"Could not invoke method"); 
