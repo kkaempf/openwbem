@@ -43,6 +43,7 @@
 #include "OW_Format.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_IOException.hpp"
+#include "OW_CIM.hpp"
 
 class UtilKeyArray
 {
@@ -170,6 +171,16 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(pra[0].getValue(),
 			kprops[0].getDataType());
 
+		if (cv.getType() == OW_CIMDataType::REFERENCE)
+		{
+			OW_CIMObjectPath cop(cv.toCIMObjectPath());
+			if (cop.getNameSpace() == CIM_DEFAULT_NS)
+			{
+				cop.setNameSpace(ns);
+				cv = OW_CIMValue(cop);
+			}
+		}
+
 		rv += cv.toString();
 		return rv;
 	}
@@ -185,6 +196,17 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 			{
 				OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(
 					pra[i].getValue(), kprops[j].getDataType());
+
+				if (cv.getType() == OW_CIMDataType::REFERENCE)
+				{
+					OW_CIMObjectPath cop(cv.toCIMObjectPath());
+					if (cop.getNameSpace() == CIM_DEFAULT_NS)
+					{
+						cop.setNameSpace(ns);
+						cv = OW_CIMValue(cop);
+					}
+				}
+
 
 				pra[i].setValue(cv);
 				break;
