@@ -511,7 +511,7 @@ safePopen(const Array<String>& command, const char* const envp[])
 	{
 		OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: fork() failed");
 	}
-	if (rv == 0)
+	if (forkrv == 0)
 	{
 		// child process
 		// Close stdin, stdout, and stderr.
