@@ -62,18 +62,19 @@ CIMDateTime::DateTimeData::compare(const CIMDateTime::DateTimeData& arg)
 	return ::memcmp(this, &arg, sizeof(*this));
 }
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const CIMDateTime::DateTimeData& x, const CIMDateTime::DateTimeData& y)
-{
-	return StrictWeakOrdering(
-		x.m_year, y.m_year,
-		x.m_month, y.m_month,
-		x.m_days, y.m_days,
-		x.m_hours, y.m_hours,
-		x.m_minutes, y.m_minutes,
-		x.m_seconds, y.m_seconds,
-		x.m_utc, y.m_utc,
-		x.m_isInterval, y.m_isInterval);
-}
+//bool operator<(const CIMDateTime::DateTimeData& x, const CIMDateTime::DateTimeData& y)
+//{
+// This is wrong, we have to adjust for m_utc!
+//	return StrictWeakOrdering(
+//		x.m_year, y.m_year,
+//		x.m_month, y.m_month,
+//		x.m_days, y.m_days,
+//		x.m_hours, y.m_hours,
+//		x.m_minutes, y.m_minutes,
+//		x.m_seconds, y.m_seconds,
+//		x.m_utc, y.m_utc,
+//		x.m_isInterval, y.m_isInterval);
+//}
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime()
 	: m_dptr(new DateTimeData)
@@ -379,7 +380,8 @@ getGMTOffset()
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 {
-	return *x.m_dptr < *y.m_dptr;
+	// this doesn't work right return *x.m_dptr < *y.m_dptr;
+	return x.toDateTime() < y.toDateTime();
 }
 
 } // end namespace OpenWBEM
