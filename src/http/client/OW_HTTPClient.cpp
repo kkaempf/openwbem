@@ -847,6 +847,7 @@ HTTPClient::processHeaders(String& reasonPhrase)
 					if (!m_authRequired)
 					{
 						m_authRequired = true;
+						m_retryCount = 0;
 						rt = RETRY;
 					}
 					else
