@@ -1,433 +1,501 @@
-<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 transitional//EN">
 <html>
-<head>
-  <meta http-equiv="Content-Type"
- content="text/html; charset=iso-8859-15">
-    <link rel="stylesheet" type="text/css" href="sinorca-screen.css" media="screen" title="Sinorca (screen)" />
-    <link rel="stylesheet alternative" type="text/css" href="sinorca-screen-alt.css" media="screen" title="Sinorca (alternative)" />
-    <link rel="stylesheet" type="text/css" href="sinorca-print.css" media="print" />
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+    <link rel="stylesheet" type="text/css" href="sinorca-screen.css"
+      media="screen" title="Sinorca (screen)" />
+    <link rel="stylesheet alternative" type="text/css"
+      href="sinorca-screen-alt.css" media="screen" title="Sinorca (alternative)" />
+    <link rel="stylesheet" type="text/css" href="sinorca-print.css"
+      media="print" />
+    
+    <title>OpenWBEM Home Page</title>
+  </head>
 
-  <title>OpenWBEM Home Page</title>
-</head>
-<body>
+
+  <body>
     <!-- For non-visual user agents: -->
-      <div id="top"><a href="#main-copy" class="doNotDisplay doNotPrint">Skip to main content.</a></div>
-      <div class="midHeader">
-        <h1 class="headerTitle">The OpenWBEM Project</h1>
-      </div>
+    
+    <div id="top">
+      <a href="#main-copy" class="doNotDisplay doNotPrint">Skip to main content.</a>
+    </div>
+    
+    <!-- ##### Header ##### -->
 
+    <div id="header">
+      <div class="superHeader">
+        <div class="left">
+          <span class="doNotDisplay">Related sites:</span>
+        </div>
+        <!-- <div class="right">
+        </div> -->
+      </div>
+    
+      <div class="midHeader">
+        <!--<h1 class="headerTitle">The OpenWBEM Project</h1> -->
+        <img alt="OpenWBEM" src="images/openwbem.png">
+      </div>
+    
+      <div class="subHeader">
+        <span class="doNotDisplay">Navigation:</span>
+      </div>
+    </div>
+    
     <div id="side-bar">
       <div>
         <p class="sideBarTitle">Navigate this page</p>
         <ul>
-          <li><a href="#Download">&rsaquo; Download</a></li>
-          <li><a href="#Development" title="Improved cross-browser compatibility">&rsaquo; Development</a></li>
-          <li><a href="#Documentation" title="Modified stylesheets">&rsaquo; Documentation</a></li>
-          <li><a href="#RelatedProjects" title="Related Projects">&rsaquo; RelatedProjects</a></li>
-          <li><a href="/openwbem-faq.html" title="FAQ">&rsaquo; FAQ</a></li>
+          <li><a href="#About" title="About">&rsaquo; About</a></li>
+          <li><a href="#News" title="News">&rsaquo; News</a></li>
+          <li><a href="#Products" title="Products">&rsaquo; Products</a></li>
+          <li><a href="#Features" title="Features">&rsaquo; Features</a></li>
+          <li><a href="#Download" title="Download">&rsaquo; Download</a></li>
+          <li><a href="#Documentation" title="Documentation">&rsaquo; Documentation</a></li>
+          <li><a href="#RelatedProjects" title="Related Projects">&rsaquo; Related Projects</a></li>
+          <li><a href="#Development" title="Development">&rsaquo; Development</a></li>
           <li><a href="#Credits" title="Credits">&rsaquo; Credits</a></li>
           <li><a href="#Contacts" title="Contacts">&rsaquo; Contacts</a></li>
         </ul>
       </div>
     </div>
-
+    
+    
+    <!-- ##### Main Copy ##### -->
+    
     <div id="main-copy">
-
-	<blockquote>
-	  <h1><a name="NEWS"></a>News</h1>
-	  <ul>
-	    <li>Mon May 31 2004: OpenWBEM 3.0.2 has been released.&nbsp; Here's
-	what has changed from 3.0.0:</li>
-	    <ul>
-	      <li>Now owcimomd will return non-zero if the daemon fails to
-	initialize -- like if the config file is bad.&nbsp; Before it always
-	returned zero even if the cimom did not start.</li>
-	      <li>Fixed some potential memory leaks.</li>
-	      <li>Added --enable-valgrind-support configure option to make it
-	easier to use valgrind.</li>
-	      <li>Fixed some bugs in the CMPI Provider Interface.</li>
-	      <li>Now support HP-UX with aCC.</li>
-	      <li>Support gcc 3.4.0.</li>
-	      <li>Support Apple OSX.</li>
-	      <li>Enhancements to the Exception class.</li>
-	      <li>Added --disable-property-operation configure option.</li>
-	      <li>Improved NPI and perlNPI error handling.</li>
-	      <li>Support FreeBSD.</li>
-	      <li>Fixed FILE leakage in MOFCompiler.</li>
-	      <li>Added --enable-static-services configure option which will
-	setup the build system to statically link everything into one
-	binary.&nbsp; This is necessary for AIX support and has also been
-	tested on Linux.</li>
-	      <li>Fixed interop providers to still work if
-	OpenWBEM_ObjectManager isn't available.</li>
-	      <li>Changed the Repository so that static associations can point
-	to dynamic instances.</li>
-	      <li>OpenWBEM_ObjectManager: Changed EnabledStatus to EnabledState
-	since it changed in the mof since the provider was written against a
-	preliminary version.</li>
-	      <li>Fixed HTTPClient to reconnect on a timeout.</li>
-	      <li>Cleaned up and organized the config file.</li>
-	      <li>Modified client namespace enumeration to understand the
-	response from OpenPegasus.</li>
-	      <li>Fixed some filesystem functions to be 64-bit correct.</li>
-	      <li>HTTPClient: Added the ability to specify the path to the UDS
-	in the port portion of the URL.<br>
-		<br>
-	      </li>
-	    </ul>
-	    <li>Mon Apr 26 2004: OpenWBEM 3.0.0 has been released.&nbsp;
-	There's too much good stuff to list here.&nbsp; Check out the <a
-	 href="http://sourceforge.net/project/shownotes.php?release_id=234133">release
-	notes</a> for details.<br>
-	      <br>
-	    </li>
-	    <li>Sun Feb 2 2004: We have moved CVS to a new dedicated server
-	(cvs.openwbem.org).&nbsp; Click <a href="http://cvs.openwbem.org/">here</a>
-	for more info.<br>
-	      <br>
-	    </li>
-	  </ul>
-	  <br>
-	  <h1><a name="About"></a>About</h1>
-	  The OpenWBEM project is an enterprise-grade open-source
-	implementation
-	of Web Based Enterprise Management suitable for commercial and
-	non-commercial
-	applications. <br>
-	  <br>
-	Some of the main features of OpenWBEM are:
-	  <ul>
-	    <li>CIM Server</li>
-	    <ul>
-	      <li>Fast and small. See <a href="CIMOMBenchMarks.pdf">this</a>.</li>
-	      <li>CIM Operations over HTTP 1.1 is fully supported, including
-	ExecQuery &amp; batch operations.</li>
-	      <li>CIM 2.2 is supported, including embedded instances, which are
-	necessary for proper indication support.</li>
-	      <li>HTTPS (Requires OpenSSL)</li>
-	      <li>Extensible Authentication through authentication plug-in
-	modules. Provided modules:</li>
-	      <ul>
-		<li>PAM (Uses the native system authentication)</li>
-		<li>Simple (Uses a password file. A good sample of how to write
-	an Authentication Module)</li>
-		<li>HTTP Digest (Useful because it doesn't send passwords in
-	clear text)</li>
-	      </ul>
-	      <li>Fast scalable hierarchical repository with indexing based on
-	Berkely DB library.</li>
-	      <li>Extensible Provider Interface through Provider Interface
-	plug-ins</li>
-	      <ul>
-		<li>C++</li>
-		<li><a href="http://wbemsource.org/">CMPI</a>. Thanks to Jon
-	Carey/Novell</li>
-		<li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a>
-	Provider
-	Interface.</li>
-		<li>Perl based on NPI.</li>
-		<li>Perl using SWIG, created by Jason Long.&nbsp; Located at (<a
-	 href="http://jason.long.name/owperl/">http://jason.long.name/owperl/</a>).<br>
-		</li>
-	      </ul>
-	      <li>CIM Providers Support:</li>
-	      <ul>
-		<li>Writing providers is easy. Base class adapters are provided
-	for the most common situations which reduces development time and
-	provider size. Helper functions are available that make it easy to
-	correctly write providers.</li>
-		<li>Providers run in a transactional environment, making it
-	much easier to write a robust provider free from deadlocks and race
-	conditions.</li>
-		<li>OpenWBEM C++ Providers are automatically detected, so there
-	is no need
-	to use the provider qualifier or registration schema.</li>
-		<li>Instance</li>
-		<li>Secondary Instance<br>
-		</li>
-		<li>Method</li>
-		<li>Associator</li>
-		<li>Indication</li>
-		<li>Indication Export</li>
-	      </ul>
-	      <li>Other types of dynamic pluggable providers:<br>
-	      </li>
-	      <ul>
-		<li>Polled<br>
-		</li>
-		<li>Authentication</li>
-		<li>Authorization</li>
-		<li>CIM Repository<br>
-		</li>
-		<li>WQL</li>
-	      </ul>
-	      <li>Indications and CIM Listener support.&nbsp; Both lifecycle
-	and alert indications are supported.<br>
-	      </li>
-	      <li>WQL Level 2 support for server and client</li>
-	      <li>Access Control Lists</li>
-	      <li>Discovery via SLP Integration on the CIMOM and client side
-	using any RFC 2614 compliant SLP implementation (e.g. OpenSLP)</li>
-	      <li>Support for a binary protocol that is much more efficient
-	than
-	CIM/XML</li>
-	      <li>http deflate compression with zlib. (Using the binary
-	protocol and compression
-	is very bandwidth
-	efficient.)</li>
-	      <li>http chunking &amp; trailers allows OpenWBEM to transfer
-	large transactions (e.g. enumClasses on the entire schema) with no
-	buffering. Memory usage stays constant. Even if the client doesn't
-	support chunking &amp; trailers, large requests are buffered on disk to
-	save memory.</li>
-	      <li>Communication over TCP/IP or Domain sockets.</li>
-	      <li>The MOF compiler &amp; cimom have full support for UTF-8, so
-	classes and instances can contain the full set of Unicode characters.</li>
-	      <li>The owcimomd daemon is heavily tested and we believe it to be
-	free from deadlocks &amp; crashes. It also has a restart feature to
-	recover from buggy providers.</li>
-	      <li>The code has been run through a memory debugger and there are
-	no known memory leaks or unconstrained growth.</li>
-	      <li>The build system automatically configures itself to the
-	platform and available headers &amp; libraries.</li>
-	      <li>The owcimomd daemon has been designed to be non-intrusive and
-	have a small footprint. Many features are loaded as shared libraries so
-	you can pick and choose what features you really need and not waste
-	memory with unused code. Optional features include: </li>
-	      <ul>
-		<li>Indication support</li>
-		<li>WQL library</li>
-		<li>Authentication modules</li>
-		<li>Authorization modules<br>
-		</li>
-		<li>Provider interfaces</li>
-		<li>Providers are unloaded from memory if they are not used for
-	a configurable amount of time</li>
-		<li>SLP support is implemented as a provider</li>
-		<li>Request handlers (CIM/XML or binary) can be loaded/unloaded
-	on demand with a configurable unload timeout</li>
-		<li>HTTP compression</li>
-		<li>HTTP digest authorization</li>
-		<li>HTTPS (SSL)</li>
-		<li>Functional Profiles (Association Traversal, Instance
-	Manipulation, etc.)</li>
-	      </ul>
-	      <li>Available Providers:</li>
-	      <ul>
-		<li>__Namespace - Allows manipulation of namespaces for legacy
-	CIM Clients using the deprecated __Namespace class.</li>
-		<li>CIM_Namespace - Allows manipulation of namespaces.</li>
-		<li>OpenWBEM_ObjectManager : CIM_ObjectManager - Represents
-	owcimomd.</li>
-		<li>CIM_NamespaceInManager - Association between CIM_Namespace
-	and CIM_ObjectManager.</li>
-		<li>CIM_ObjectManagerCommunicationMechanism</li>
-		<li>CIM_IndicationSubscription - For indication support.</li>
-		<li>CIM_IndicationFilter - For indication support.</li>
-		<li>SLP advertisement</li>
-		<li>IBM has a lot of system level providers available via the
-	SBLIM project. All these NPI &amp; CMPI providers work with OpenWBEM.</li>
-		<li>Test providers, used by the OpenWBEM acceptance test suite.</li>
-		<li>Example providers show how to implement providers. These
-	providers implement processes, RPMs, and laptop batteries. These make
-	for good demos as well.</li>
-	      </ul>
-	    </ul>
-	    <li> Additional Software</li>
-	    <ul>
-	      <li>C++ CIM model &amp; WBEM Client API library</li>
-	      <li>MOF Compiler w/embeddable library</li>
-	      <ul>
-		<li>Includes support for aliases.</li>
-		<li>Public API &amp; library can be utilized from any
-	application. This also has an API to convert mof text into a C++ CIM
-	class/instance without talking to a cimom.</li>
-	      </ul>
-	      <li>WQL command-line utility</li>
-	      <li>WQL client library. Use WQL with servers which don't support
-	it or don't support your particular queries.</li>
-	    </ul>
-	  </ul>
-	</blockquote>
-	<p>
-	</p>
-	<h1><a name="Download"></a><font face="Arial,Helvetica">Download</font></h1>
-	<blockquote>Please read the <b><a href="license.html">license</a> </b><i>before</i>
-	you download. The current release can be <a
-	 href="https://sourceforge.net/project/showfiles.php?group_id=16214">downloaded</a>
-	from SourceForge.<br>
-	  <br>
-	The most recent development code can be obtained from <a
-	 href="http://cvs.openwbem.org/">cvs.openwbem.org</a>.&nbsp; You can
-	obtain the code by using either cvs pserver or downloading a tarball
-	via viewcvs.<br>
-	  <div style="margin-left: 40px;">A note about the development code: We
-	strive to keep the code bug-free and stable.&nbsp; However, there may
-	be experimental features, unstable APIs, or even (heaven forbid!) code
-	that doesn't compile.&nbsp; So if you can't deal with these slight
-	annoyances (believe me, we don't break things on purpose :-), please
-	use the latest released version of OpenWBEM.<br>
-	  </div>
-	</blockquote>
-	<h1><a name="Documentation"></a><font face="Arial,Helvetica">Documentation</font></h1>
-	<blockquote> <a href="OpenWBEM-GettingStarted.html">Getting
-	Started with OpenWBEM</a>&nbsp;<a href="OpenWBEM-GettingStarted.pdf">pdf</a>&nbsp;<a
-	 href="OpenWBEM-GettingStarted.doc">doc</a> <br>
-	  <a href="openwbem-docs/html/index.html">Developer
-	Documentation</a> -
-	This contains the complete source and object hierarchy in a form that
-	can be
-	browsed. <br>
-	  <a href="openwbem-faq.html">FAQ</a> - This contains a list of
-	Frequently Asked Questions with answers. <br>
-	  <a href="pg/index.html">OpenWBEM
-	Programmer's Guide</a>&nbsp;<a href="pg.pdf">pdf</a> - A brief
-	introduction to programming with the OpenWBEM API
-	</blockquote>
-	<h1><a name="RelatedProjects"></a>Related Projects</h1>
-	<ul>
-	  <li><span style="font-weight: bold;">Owperlprovider</span> (<a
-	 href="http://jason.long.name/owperl/">http://jason.long.name/owperl/</a>)
-	- "a new Perl provider interface
-	for OpenWBEM.
-	This lets you write OpenWBEM providers in Perl."</li>
-	  <li><span style="font-weight: bold;">kim-browser</span> (<a
-	 href="http://sourceforge.net/projects/kde-cim">http://sourceforge.net/projects/kde-cim</a>)
-	- "The KDE CIM Browser is a KDE based frontend to management brokers
-	using
-	the CIM-XML protocol. The tool will be useful to view and modify CIM
-	class hierarchies as well as instance and association
-	structures."&nbsp; This project uses the OpenWBEM client API.&nbsp;
-	Check out the latest code from CVS for better
-	functionality.<br>
-	  </li>
-	  <li><span style="font-weight: bold;">CimNavigator</span> (<a
-	 href="http://cimnavigator.com/">http://cimnavigator.com/</a>)
-	- "a Java client application that can be used to graphically browse CIM
-	objects and their associations in various CIMOMs."</li>
-	  <li><span style="font-weight: bold;">SBLIM</span> (<a
-	 href="http://www-124.ibm.com/sblim/">http://www-124.ibm.com/sblim/</a>)
-	- A lot of their Linux providers work with OpenWBEM NPI &amp; CMPI
-	provider interfaces.&nbsp; "SBLIM (pronounced "sublime"),
-	the Standards Based Linux Instrumentation for Manageability is an IBM
-	Open Source project, intended to enhance the manageability of GNU/Linux
-	systems."</li>
-	  <li><span style="font-weight: bold;">WBEM Services</span> (<a
-	 href="http://wbemservices.sourceforge.net/">http://wbemservices.sourceforge.net/</a>)
-	- "The <span class="projectName">WBEM Services</span> project is
-	an effort to develop an open-source Java&#8482; implementation of Web
-	Based Enterprise Management (WBEM) suitable for commercial and
-	non-commercial application. This project consists of APIs, server and
-	client applications and tools."&nbsp; I find their browser to be useful.<br>
-	  </li>
-	  <li><span style="font-weight: bold;">OpenPegasus</span> (<a
-	 href="http://openpegasus.org/">http://openpegasus.org/</a>) - "Pegasus
-	is an open-source implementation of the DMTF CIM and WBEM
-	standards."&nbsp; They have a functional Java browser that used to be
-	known
-	as the SNIA CIM Browser.</li>
-	</ul>
-	<h1><a name="Development"></a><font face="Arial,Helvetica">Development</font></h1>
-	<blockquote>OpenWBEM is a complete implementation of WBEM maintained
-	by <a href="http://www.vintela.com/">Vintela</a>, <a
-	 href="http://www.novell.com/">Novell</a>, and other volunteers. The
-	current version is completely stable and usable. There are many
-	interesting features and optimizations that can
-	still be implemented.
-	OpenWBEM is an open-source project, and participation is open to anyone
-	willing to help out and contribute.
-	Any contribution is welcome, from bug reports, to patches, to new
-	features.&nbsp; If you want to join the project, post a note to the
-	openwbem-devel list.&nbsp; If you are interested in working on
-	OpenWBEM, follow the links below for more information.
-	  <ul>
-	    <li> <a
-	 href="http://cvs.openwbem.org/cgi-bin/viewcvs.cgi/openwbem20/TODO?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">Current
-	TODO list</a> </li>
-	    <li> <a href="ports.html">Ports</a></li>
-	    <li> <a href="http://cvs.openwbem.org">CVS
-	Access</a></li>
-	    <li> <a href="http://sourceforge.net/project/?group_id=16214">Group
-	page on SourceForge</a></li>
-	  </ul>
-	</blockquote>
-	<h1><a name="Credits"></a>Credits</h1>
-	<blockquote>&nbsp;
-	  <table border="1" nosave="">
-	    <tbody>
-	      <tr nosave="">
-		<td><img alt="OpenWBEM" src="images/OpenWBEM.jpg"
-	 style="width: 155px; height: 50px;"></td>
-		<td>
-		<blockquote>The sponsored and independent developers of the <a
-	 href="developers/index.html">OpenWBEM Project</a>. </blockquote>
-		</td>
-	      </tr>
-	      <tr nosave="">
-		<td><img src="http://www.vintela.com/images/logo.jpg"></td>
-		<td>
-		<blockquote><a href="http://www.vintela.com/">Vintela, Inc</a>
-	is the OpenWBEM project maintainer.</blockquote>
-		</td>
-	      </tr>
-	      <tr>
-		<td style="vertical-align: top;"><br>
-		<img src="images/Novell_logo.gif">
-		</td>
-		<td>
-		<blockquote><a href="http://www.novell.com/">Novell</a> is an
-	OpenWBEM project contributor.</blockquote>
-		</td>
-	      </tr>
-	      <tr>
-		<td><img
-	 src="http://www.opengroup.org/wbemsource/wbemsource.gif" height="40"
-	 width="200"></td>
-		<td>
-		<blockquote><a href="http://www.opengroup.org/wbemsource/">The
-	WBEMsource Initiative</a>
-	is a sponsor of the OpenWBEM project.</blockquote>
-		</td>
-	      </tr>
-	      <tr align="left" valign="CENTER" nosave="">
-		<td align="center" nosave=""> <a href="http://sourceforge.net"><img
-	 src="http://sourceforge.net/sflogo.php?group_id=16214" width="88"
-	 height="31" border="0" alt="SourceForge Logo"></a> </td>
-		<td nosave="">
-		<blockquote><a
-	 href="http://sourceforge.net/project/?group_id=16214">SourceForge</a>
-	hosts the OpenWBEM project.</blockquote>
-		</td>
-	      </tr>
-	    </tbody>
-	  </table>
-	</blockquote>
-	<h1><a name="Contacts"></a>Contacts</h1>
-	For support or discussion of OpenWBEM, you may subscribe to, post a
-	message to, or take a look at one of the following mailing lists:
-	<blockquote>&nbsp;
-	  <table nosave="">
-	    <tbody>
-	      <tr nosave="">
-		<td nosave=""><a
-	 href="http://lists.sourceforge.net/mailman/listinfo/openwbem-announce">openwbem-announce</a></td>
-		<td>General OpenWBEM announcements</td>
-	      </tr>
-	      <tr>
-		<td> <a
-	 href="http://lists.sourceforge.net/mailman/listinfo/openwbem-public">openwbem-public</a>
-		</td>
-		<td>For users of OpenWBEM </td>
-	      </tr>
-	    </tbody>
-	  </table>
-	</blockquote>
-	<br>
-	<span style="font-weight: bold; font-style: italic;">Before</span> you
-	ask for help, please read <a
-	 href="http://www.catb.org/%7Eesr/faqs/smart-questions.html">How To Ask
-	Questions The Smart Way</a>.<br>
-	<br>
+    
+      <!-- ##### About ##### -->
+      
+      <h1 id="About">Enterprise-grade, open-source implementation of 
+        <acronym title="Web Based Enterprise Management">WBEM</acronym></h1>
+      <p>OpenWBEM is an enterprise-grade open-source implementation
+        of Web Based Enterprise Management (WBEM), written in C++, suitable for commercial and
+        non-commercial applications. It provides a foundation for development of management
+        frameworks that overcome cross-platform barriers and empower true interoperability.
+        Developers can use OpenWBEM as a management agent and 
+        <acronym title="Web Based Enterprise Management">WBEM</acronym> framework to provide
+        applications for configuration and change management, system health monitoring,
+        and enterprise-wide management functionality.</p>
+      
+    
+      <!-- ##### News ##### -->
+      
+      <h1 id="News">News</h1>
+      <ul>
+        <li>Sat Sep 11 2004: The upcoming 3.1 release is getting close. New features will include
+          a remote provider interface, password-less local authentication and some speed and memory
+          optimizations.
+        </li>
+        <li>Sat Sep 11 2004: Dan and Bart will be manning the OpenWBEM booth at 
+          <a href="http://www.emwusa.com/">Enterprise Management World</a> on Sep. 13 &amp; 14.
+          Stop by and say hi if you can.
+        </li>
+        <li>Mon May 31 2004: OpenWBEM 3.0.2 has been released. 
+          <a href="http://sourceforge.net/project/shownotes.php?group_id=16214&amp;release_id=242230">Release 
+          notes.</a>
+        </li>
+        <li>Mon Apr 26 2004: OpenWBEM 3.0.0 has been released.
+          <a href="http://sourceforge.net/project/shownotes.php?release_id=234133">Release
+          notes.</a>
+        </li>
+        <li>Sun Feb 2 2004: We have moved CVS to a new dedicated server
+          (cvs.openwbem.org).&nbsp; <a href="http://cvs.openwbem.org/">More info
+          here.</a>
+        </li>
+      </ul>
+      
+    
+      <!-- ##### Products ##### -->
+      
+      <h1 id="Products">Commercial Products using OpenWBEM</h1>
+      <ul>
+        <li><a href="http://vintela.com/products/vmx">Vintela VMX</a></li>
+        <li><a href="http://www.suse.com/us/business/products/server/sles/index.html">Novell/SUSE 
+          <acronym title="SUSE Linux Enterprise Server">SLES</acronym> 9</a></li>
+        <li><a href="http://www.apple.com/remotedesktop/">Apple Remote Desktop 2</a></li>
+      </ul>
+      
+      
+      
+      <!-- ##### Features ##### -->
+      
+      <h1 id="Features">Features</h1>
+      <p>OpenWBEM enables application developers to architect management frameworks that 
+         provide cross-platform interoperability.  Some of the main features and 
+         capabilities of OpenWBEM include:</p>
+      
+      <ul>
+        <li>CIM Server</li>
+        <li><ul>
+          <li><a href="CIMOMBenchMarks.pdf">Fast and small.</a></li>
+          <li>CIM Operations over HTTP 1.1 is fully supported.</li>
+          <li>CIM 2.2 is supported, including embedded instances, which are
+            necessary for proper indication support.</li>
+          <li>HTTPS (Requires OpenSSL)</li>
+          <li>Extensible Authentication through authentication plug-in
+            modules. Provided modules:</li>
+          <ul>
+            <li>PAM (Uses the native system authentication)</li>
+            <li>Simple (Uses a password file. A good sample of how to write
+              an Authentication Module)</li>
+            <li>HTTP Digest (Useful because it doesn't send passwords in
+              clear text)</li>
+          </ul>
+          <li>Fast scalable CIM repository with indexing based on
+            Berkely DB library.</li>
+          <li>Extensible Provider Interface through Provider Interface
+            plug-ins</li>
+          <ul>
+            <li>C++</li>
+            <li><a href="http://wbemsource.org/">CMPI</a>. Thanks to Jon
+              Carey/Novell</li>
+            <li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a>
+              Provider Interface.</li>
+            <li>Perl based on NPI.</li>
+            <li><a href="http://jason.long.name/owperl/">Perl using SWIG</a>, created by
+              Jason Long.</li>
+          </ul>
+          <li>CIM Providers Support:</li>
+          <ul>
+            <li>Writing providers is easy. Base class adapters are provided
+              for the most common situations which reduces development time and
+              provider size. Helper functions are available that make it easy to
+              correctly write providers.</li>
+            <li>Providers run in a transactional environment, making it
+              much easier to write a robust provider free from deadlocks and race
+              conditions.</li>
+            <li>OpenWBEM C++ Providers are automatically detected, so there
+              is no need
+              to use the provider qualifier or registration schema.</li>
+            <li>Instance</li>
+            <li>Secondary Instance</li>
+            <li>Method</li>
+            <li>Associator</li>
+            <li>Indication</li>
+            <li>Indication Export</li>
+          </ul>
+          <li>Other types of dynamic pluggable providers:</li>
+          <ul>
+            <li>Polled</li>
+            <li>Authentication</li>
+            <li>Authorization</li>
+            <li>CIM Repository</li>
+            <li>WQL</li>
+          </ul>
+          <li>Indications and CIM Listener support.&nbsp; Both lifecycle
+            and alert indications are supported.</li>
+          <li>WQL Level 2 support for server and client</li>
+          <li>Access Control Lists</li>
+          <li>Discovery via SLP Integration on the CIMOM and client side
+            using any RFC 2614 compliant SLP implementation (e.g. OpenSLP)</li>
+          <li>Support for a binary protocol that is much more efficient
+            than CIM/XML</li>
+          <li>HTTP deflate compression with zlib. (Using the binary
+            protocol and compression is very bandwidth efficient.)</li>
+          <li>HTTP chunking &amp; trailers allows OpenWBEM to transfer
+            large transactions (e.g. enumClasses on the entire schema) with no
+            buffering. Memory usage stays constant. Even if the client doesn't
+            support chunking &amp; trailers, large requests are buffered on disk to
+            save memory.</li>
+          <li>Communication over TCP/IP or Domain sockets.</li>
+          <li>The MOF compiler &amp; cimom have full support for UTF-8, so
+            classes and instances can contain the full set of Unicode characters.</li>
+          <li>The owcimomd daemon is heavily tested and we believe it to be
+            free from deadlocks &amp; crashes. It also has a restart feature to
+            recover from buggy providers.</li>
+          <li>The code has been run through a memory debugger and there are
+            no known memory leaks or unconstrained growth.</li>
+          <li>The build system automatically configures itself to the
+            platform and available headers &amp; libraries.</li>
+          <li>The owcimomd daemon has been designed to be non-intrusive and
+            have a small footprint. Many features are loaded as shared libraries so
+            you can pick and choose what features you really need and not waste
+            memory with unused code. Optional features include: </li>
+          <ul>
+            <li>Indication support</li>
+            <li>WQL library</li>
+            <li>Authentication modules</li>
+            <li>Authorization modules<br>
+            </li>
+            <li>Provider interfaces</li>
+            <li>Providers are unloaded from memory if they are not used for
+              a configurable amount of time</li>
+            <li>SLP support is implemented as a provider</li>
+            <li>Request handlers (CIM/XML or binary) can be loaded/unloaded
+              on demand with a configurable unload timeout</li>
+            <li>HTTP compression</li>
+            <li>HTTP digest authorization</li>
+            <li>HTTPS (SSL)</li>
+            <li>Functional Profiles (Association Traversal, Instance
+              Manipulation, etc.)</li>
+          </ul>
+          <li>Available Providers:</li>
+          <ul>
+            <li>__Namespace - Allows manipulation of namespaces for legacy
+              CIM Clients using the deprecated __Namespace class.</li>
+            <li>CIM_Namespace - Allows manipulation of namespaces.</li>
+            <li>OpenWBEM_ObjectManager : CIM_ObjectManager - Represents
+              owcimomd.</li>
+            <li>CIM_NamespaceInManager - Association between CIM_Namespace
+              and CIM_ObjectManager.</li>
+            <li>CIM_ObjectManagerCommunicationMechanism</li>
+            <li>CIM_IndicationSubscription - For indication support.</li>
+            <li>CIM_IndicationFilter - For indication support.</li>
+            <li>SLP advertisement</li>
+            <li>IBM has a lot of system level providers available via the
+              SBLIM project. All these NPI &amp; CMPI providers work with OpenWBEM.</li>
+            <li>Test providers, used by the OpenWBEM acceptance test suite.</li>
+            <li>Example providers show how to implement providers. These
+              providers implement processes, RPMs, and laptop batteries. These make
+              for good demos as well.</li>
+          </ul>
+        </ul></li>
+        <li>Additional Software</li>
+        <ul>
+        <li>C++ CIM model &amp; WBEM Client API library</li>
+        <li>MOF Compiler w/embeddable library</li>
+        <ul>
+                <li>Includes support for aliases.</li>
+                <li>Public API &amp; library can be utilized from any
+        application. This also has an API to convert mof text into a C++ CIM
+        class/instance without talking to a cimom.</li>
+        </ul>
+        <li>WQL command-line utility</li>
+        <li>WQL client library. Use WQL with servers which don't support
+        it or don't support your particular queries.</li>
+        </ul>
+      </ul>
+      
+    
+      <!-- ##### Download ##### -->
+      
+        
+      <h1 id="Download">Download</h1>
+      <p>Please read the <b><a href="license.html">license</a></b> <i>before</i>
+        you download. All <a href="https://sourceforge.net/project/showfiles.php?group_id=16214">releases 
+        can be downloaded from SourceForge.</a></p>
+      
+      <p>The most recent development code can be obtained from <a
+        href="http://cvs.openwbem.org/">cvs.openwbem.org</a>.&nbsp; You can
+        obtain the code by using anonymous cvs pserver access.</p>
+        
+      <p><div style="margin-left: 40px;">A note about the development code: We
+        strive to keep the code bug-free and stable.&nbsp; However, there may
+        be experimental features, unstable APIs, or even (heaven forbid!) code
+        that doesn't compile.&nbsp; So if you can't deal with these slight
+        annoyances (believe me, we don't break things on purpose :-), please
+        use the latest released version of OpenWBEM.</div></p>
+        
+    
+      <!-- ##### Documentation ##### -->
+      
+      <h1 id="Documentation">Documentation</h1>
+      <dl>
+        <dt><a href="OpenWBEM-GettingStarted.html">Getting Started with OpenWBEM</a>
+          &nbsp;<a href="OpenWBEM-GettingStarted.pdf">pdf</a>
+          &nbsp;<a href="OpenWBEM-GettingStarted.doc">doc</a> </p>
+        <dt>
+        <dd>Instructions on building, installing and configuring OpenWBEM.</dd>
+        
+        <dt><a href="openwbem-docs/html/index.html">Developer Documentation</a></dt>
+        <dd>This contains the complete source and object hierarchy in a form that
+          can be browsed.</dd>
+          
+        <dt><a href="openwbem-faq.html">FAQ</a></dt>
+        <dd>A list of Frequently Asked Questions with answers.</dd>
+        
+        <dt><a href="pg/index.html">OpenWBEM Programmer's Guide</a>&nbsp;<a href="pg.pdf">pdf</a></dt>
+        <dd>A brief introduction to programming with the OpenWBEM API</dd>
+      </dl>
+        
+    
+      <!-- ##### Related Projects ##### -->
+      
+      <h1 id="RelatedProjects">Related Projects</h1>
+      <ul>
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://jason.long.name/owperl/">Owperlprovider</a>
+          </span>
+          <blockquote cite="http://jason.long.name/owperl/">
+            a new Perl provider interface
+            for OpenWBEM.
+            This lets you write OpenWBEM providers in Perl.
+          </blockquote>
+        </li>
+          
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://kde-cim.sourceforge.net/">kim-browser</a>
+          </span>
+          <blockquote cite="http://kde-cim.sourceforge.net/">
+            The KDE CIM Browser is a KDE based frontend to management brokers
+            using
+            the CIM-XML protocol. The tool will be useful to view and modify CIM
+            class hierarchies as well as instance and association
+            structures.
+          </blockquote>
+        </li>
+        
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://cimnavigator.com/">CimNavigator</a>
+          </span>
+          <blockquote cite="http://cimnavigator.com/">
+            a Java client application that can be used to graphically browse CIM
+            objects and their associations in various CIMOMs.
+          </blockquote>
+        </li>
+        
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://www-124.ibm.com/sblim/">SBLIM</a>
+          </span>
+          <blockquote cite="http://www-124.ibm.com/sblim/">
+            SBLIM (pronounced "sublime"), the Standards Based Linux Instrumentation for 
+            Manageability is an IBM Open Source project, intended to enhance the 
+            manageability of GNU/Linux systems.
+          </blockquote>
+          <p>A lot of the SBLIM Linux providers work with the OpenWBEM NPI &amp; CMPI
+            provider interfaces.</p>
+        </li>
+        
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://wbemservices.sourceforge.net/">WBEM Services</a>
+          </span>
+          <blockquote cite="http://wbemservices.sourceforge.net/">
+            The WBEM Services project is an effort to develop an open-source Java™ 
+            implementation of Web Based Enterprise Management (WBEM) suitable for 
+            commercial and non-commercial application. This project consists of APIs, 
+            server and client applications and tools.
+          </blockquote>
+        </li>
+        
+        <li>
+          <span style="font-weight: bold;">
+            <a href="http://openpegasus.org/">OpenPegasus</a>
+          </span>
+          <blockquote cite="http://openpegasus.org/">
+            Pegasus is an open-source implementation of the DMTF CIM and WBEM standards.
+          </blockquote>
+        </li>
+      </ul>
+        
+    
+      <!-- ##### Development ##### -->
+      
+      <h1 id="Development">Development</h1>
+      <p>OpenWBEM is a complete implementation of WBEM maintained
+        by <a href="http://www.vintela.com/">Vintela</a>, <a
+        href="http://www.novell.com/">Novell</a>, and other volunteers. The
+        current version is completely stable and usable. There are many
+        interesting features and optimizations that can
+        still be implemented.
+        OpenWBEM is an open-source project, and participation is open to anyone
+        willing to help out and contribute.
+        Any contribution is welcome, from bug reports, to patches, to new
+        features.&nbsp; If you want to join the project, post a note to the
+        openwbem-devel list.&nbsp; If you are interested in working on
+        OpenWBEM, follow the links below for more information.</p>
+        
+      <ul>
+        <li>
+          <a         href="http://cvs.openwbem.org/cgi-bin/viewcvs.cgi/openwbem20/TODO?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">
+            Current TODO list</a>
+        </li>
+        <li> <a href="ports.html">Ports</a> </li>
+        <li> <a href="http://cvs.openwbem.org">CVS Access</a> </li>
+        <li> <a href="http://sourceforge.net/project/?group_id=16214">Group page on SourceForge</a> </li>
+      </ul>
+      
+    
+      <!-- ##### Credits ##### -->
+      
+      <h1 id="Credits">Credits</h1>
+      <table border="1">
+        <tbody>
+          <tr>
+            <td align="center"><img alt="OpenWBEM" src="images/openwbem.png"
+              style="width: 279px; height: 60px;"></td>
+            <td>
+              The sponsored and independent developers of the <a href="developers/index.html">
+              OpenWBEM Project</a>.
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center"><img alt="Vintela" src="http://www.vintela.com/images/logo.jpg"></td>
+            <td><a href="http://www.vintela.com/">Vintela, Inc</a>
+              is the OpenWBEM project maintainer.
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center"><img alt="Novell" src="images/Novell_logo.gif"></td>
+            <td><a href="http://www.novell.com/">Novell</a> is an
+              OpenWBEM project contributor.
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center"><img alt="WBEMsource" src="http://www.opengroup.org/wbemsource/wbemsource.gif" 
+              style="width: 300px; height: 37px;"></td>
+            <td>
+              <a href="http://www.opengroup.org/wbemsource/">The
+              WBEMsource Initiative</a> is a sponsor of the OpenWBEM project.
+            </td>
+          </tr>
+          
+          <tr>
+            <td align="center"> <a href="http://sourceforge.net">
+              <img src="http://sourceforge.net/sflogo.php?group_id=16214"
+              border="0" alt="SourceForge Logo"></a> </td>
+            <td><a href="http://sourceforge.net/project/?group_id=16214">SourceForge</a>
+              hosts the OpenWBEM project.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+      
+      <!-- ##### Contacts ##### -->
+        
+      <h1 id="Contacts">Contacts</h1>
+      <p><span style="font-weight: bold; font-style: italic;">Before</span> you
+      ask for help, please read <a
+      href="http://www.catb.org/%7Eesr/faqs/smart-questions.html">How To Ask
+      Questions The Smart Way</a>.</p>
+      
+      <p>For support or discussion of OpenWBEM, you may subscribe to, post a
+        message to, or take a look at one of the following mailing lists:
+        <dl>
+          <dt>
+            <a href="http://lists.sourceforge.net/mailman/listinfo/openwbem-announce">
+            openwbem-announce</a>
+          </dt>
+          <dd>General OpenWBEM announcements</dd>
+          <dt>
+            <a href="http://lists.sourceforge.net/mailman/listinfo/openwbem-public">
+            openwbem-public</a>
+          </dt>
+          <dd>For users of OpenWBEM</dd>
+        </dl>
+      </p>
     </div>
+    
+    
+    <!-- ##### Footer ##### -->
+
+    <div id="footer">
+      <div class="left">
+      </div>
+
+      <br class="doNotDisplay doNotPrint" />
+
+      <div class="right">
+      </div>
+    </div>
+    
   </body>
 </html>
