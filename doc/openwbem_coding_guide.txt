@@ -169,3 +169,13 @@ name to avoid an unused parameter warning.  Cast it to void at the beginning
 of the function.  This makes it possible to search for specific parameters.
 It also avoids problems with nested C-style comments.
 -----------------------------------------------------------------------------
+Make simple things simple and complex things possible
+-----------------------------------------------------------------------------
+If a class has more than 7 data members or 7 member functions, then it's too
+big, and you should think really hard about why and try to refactor it.
+Remember separation of concerns.  Each class should do 1 thing.  Each function
+should do 1 thing.
+Define a class's invariant.  Only functions that maintain or check the
+invariant belong in a class.  Other functions belong outside the class as
+utility/helper functions.
+-----------------------------------------------------------------------------
