@@ -152,8 +152,11 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
 }
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
+} // end namespace SocketUtils
 extern Mutex gethostbynameMutex;  // defined in SocketAddress.cpp
+namespace SocketUtils {
 #endif
+
 String getFullyQualifiedHostName()
 {
 	char hostName [2048];
