@@ -130,6 +130,7 @@ public:
 private:
 	IntrusiveReference< TempFileEnumerationImpl<T> > m_impl;
 };
+
 template <class T>
 class Enumeration_input_iterator
 {
@@ -187,20 +188,23 @@ private:
 		}
 	}
 };
+
 template <class T>
 inline bool
-	operator==(const Enumeration_input_iterator<T>& x,
+operator==(const Enumeration_input_iterator<T>& x,
 	const Enumeration_input_iterator<T>& y)
 {
 	return x.m_equal(y);
 }
+
 template <class T>
 inline bool
-	operator!=(const Enumeration_input_iterator<T>& x,
+operator!=(const Enumeration_input_iterator<T>& x,
 	const Enumeration_input_iterator<T>& y)
 {
 	return !x.m_equal(y);
 }
+
 template <class T>
 class Enumeration_insert_iterator
 {
@@ -234,6 +238,7 @@ public:
 private:
 	enumeration_type* m_enumeration;
 };
+
 template <class Container>
 inline Enumeration_insert_iterator<Container> Enumeration_inserter(Enumeration<Container>& x)
 {
