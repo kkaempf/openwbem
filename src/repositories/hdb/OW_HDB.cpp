@@ -45,6 +45,11 @@
 #endif
 #include <cstring>
 
+extern "C"
+{
+#include <errno.h>
+}
+
 namespace OpenWBEM
 {
 
