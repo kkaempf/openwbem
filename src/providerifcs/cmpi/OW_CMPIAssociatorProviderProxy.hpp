@@ -58,6 +58,7 @@ public:
 		const String& resultClass,
 		const String& role,
 		const String& resultRole);
+
 	virtual void associators(
 		const ProviderEnvironmentIFCRef &env,
 		CIMInstanceResultHandlerIFC& result,
@@ -70,6 +71,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList);
+
 	virtual void references(
 		const ProviderEnvironmentIFCRef &env,
 		CIMInstanceResultHandlerIFC& result,
@@ -80,6 +82,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList);
+
 	virtual void referenceNames(
 		const ProviderEnvironmentIFCRef &env,
 		CIMObjectPathResultHandlerIFC& result,

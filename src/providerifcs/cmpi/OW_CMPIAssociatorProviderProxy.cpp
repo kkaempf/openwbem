@@ -44,8 +44,7 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 /////////////////////////////////////////////////////////////////////////////
-void
-CMPIAssociatorProviderProxy::associatorNames(
+void CMPIAssociatorProviderProxy::associatorNames(
 	const ProviderEnvironmentIFCRef &env,
 	CIMObjectPathResultHandlerIFC& result,
 	const String& ns,
@@ -57,68 +56,74 @@ CMPIAssociatorProviderProxy::associatorNames(
 {
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::associatorNames()");
-	if (m_ftable->miVector.assocMI->ft->associatorNames != NULL)
+
+	if(m_ftable->miVector.assocMI->ft->associatorNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-																				
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
 		char * aClass = assocClass.allocateCString();
+
 		CMPIFlags flgs = 0;
 		char * _resultClass = resultClass.empty() ? 0 :
-		resultClass.allocateCString();
+			resultClass.allocateCString();
+
 		char * _role = role.empty() ? 0 : role.allocateCString();
+
 		char * _resultRole = resultRole.empty() ? 0 :
-		resultRole.allocateCString();
+			resultRole.allocateCString();
+
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
-			 (CMPIValue *)&flgs, CMPI_uint32);
-		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
-		rc=m_ftable->miVector.assocMI->ft->associatorNames(
-			mi,&eCtx,&eRes,&eRef, aClass,
-			_resultClass, _role, _resultRole);
-		if (aClass) delete aClass;
-		if (_role) delete _role;
-		if (_resultClass) delete _resultClass;
-		if (_resultRole) delete _resultRole;
-			if (rc.rc != CMPI_RC_OK)
-			{
-					OW_THROWCIMMSG(CIMException::FAILED,
-					 String(rc.rc).c_str());
-			}
+			(CMPIValue *)&flgs, CMPI_uint32);
+
+		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
+
+		rc = m_ftable->miVector.assocMI->ft->associatorNames(mi, &eCtx, &eRes,
+			&eRef, aClass, _resultClass, _role, _resultRole);
+
+		delete aClass;
+		delete _role;
+		delete _resultClass;
+		delete _resultRole;
+
+		if(rc.rc != CMPI_RC_OK)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED,
+				String(rc.rc).c_str());
+		}
 	}
 	else
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
-			 "Provider does not support associatorNames");
+			"Provider does not support associatorNames");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-void
-CMPIAssociatorProviderProxy::associators(
-		const ProviderEnvironmentIFCRef &env,
-		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
-		const CIMObjectPath& objectName,
-		const String& assocClass,
-		const String& resultClass,
-		const String& role,
-		const String& resultRole,
-		EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList)
+void CMPIAssociatorProviderProxy::associators(
+	const ProviderEnvironmentIFCRef &env,
+	CIMInstanceResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray *propertyList)
 {
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::associators()");
-	if (m_ftable->miVector.assocMI->ft->associators != NULL)
+
+	if(m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		char **props = NULL;
@@ -126,7 +131,6 @@ CMPIAssociatorProviderProxy::associators(
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 		// initialize path
@@ -135,76 +139,101 @@ CMPIAssociatorProviderProxy::associators(
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
 		char * aClass = assocClass.allocateCString();
-		if (propertyList)
+
+		if(propertyList && propertyList->size() > 0)
 		{
-			if (propertyList->size()>0)
+			pCount = propertyList->size();
+			props = (char **)alloca(1+pCount*sizeof(char *));
+
+			for(int i = 0; i < pCount; i++)
 			{
-				pCount = propertyList->size();
-				props = (char **)
-					alloca(1+pCount*sizeof(char *));
-				for(int i=0;i<pCount;i++)
-					props[i]= (*propertyList)[i].
-							allocateCString();
-				props[pCount]=NULL;
+				props[i]= (*propertyList)[i].allocateCString();
 			}
+
+			props[pCount]=NULL;
 		}
+
 		CMPIFlags flgs = 0;
-		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
-		if (includeClassOrigin) flgs|=CMPI_FLAG_IncludeClassOrigin;
+
+		if(includeQualifiers)
+		{
+			flgs |= CMPI_FLAG_IncludeQualifiers;
+		}
+
+		if(includeClassOrigin)
+		{
+			flgs |= CMPI_FLAG_IncludeClassOrigin;
+		}
+
 		char * _resultClass = resultClass.empty() ? 0 :
-		resultClass.allocateCString();
+			resultClass.allocateCString();
+
 		char * _role = role.empty() ? 0 : role.allocateCString();
+
 		char * _resultRole = resultRole.empty() ? 0 :
-		resultRole.allocateCString();
+			resultRole.allocateCString();
+
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
-				 (CMPIValue *)&flgs, CMPI_uint32);
+			(CMPIValue *)&flgs, CMPI_uint32);
+
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
+
 		rc=m_ftable->miVector.assocMI->ft->associators(
 			mi,&eCtx,&eRes,&eRef, aClass,
 			_resultClass, _role, _resultRole, props);
-		if (aClass) delete aClass;
-		if (_role) delete _role;
-		if (_resultClass) delete _resultClass;
-		if (_resultRole) delete _resultRole;
-		if (props && pCount)
-			for (int i=0;i<pCount;i++) free((char *)props[i]);
-			if (rc.rc == CMPI_RC_OK) return;
+
+		delete aClass;
+		delete _role;
+		delete _resultClass;
+		delete _resultRole;
+
+		if(props && pCount)
+		{
+			for(int i=0;i<pCount;i++)
+				free((char *)props[i]);
+		}
+
+		if(rc.rc == CMPI_RC_OK)
+		{
+			return;
+		}
 		else
-			{
+		{
 			OW_THROWCIMMSG(CIMException::FAILED,
-					 String(rc.rc).c_str());
-			}
+				String(rc.rc).c_str());
+		}
 	}
 	else
 	{
-	OW_THROWCIMMSG(CIMException::FAILED,
-		"Provider does not support associators");
+		OW_THROWCIMMSG(CIMException::FAILED,
+			"Provider does not support associators");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-void
-CMPIAssociatorProviderProxy::references(
-		const ProviderEnvironmentIFCRef &env,
-		CIMInstanceResultHandlerIFC& result,
-		const String& ns,
-		const CIMObjectPath& objectName,
-		const String& resultClass,
-		const String& role,
-		EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList)
+void CMPIAssociatorProviderProxy::references(
+	const ProviderEnvironmentIFCRef &env,
+	CIMInstanceResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& resultClass,
+	const String& role,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray *propertyList)
 {
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::references()");
-	if (m_ftable->miVector.assocMI->ft->references != NULL)
+
+	if(m_ftable->miVector.assocMI->ft->references != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		char **props = NULL;
 		int pCount = 0;
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
+
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-																				
+
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 		// initialize path
@@ -213,92 +242,125 @@ CMPIAssociatorProviderProxy::references(
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
 		char * aClass = resultClass.allocateCString();
-		if (propertyList)
+
+		if(propertyList)
 		{
-			if (propertyList->size()>0)
+			if(propertyList->size() > 0)
 			{
 				pCount = propertyList->size();
-				props = (char **)
-					alloca(1+pCount*sizeof(char *));
-				for(int i=0;i<pCount;i++)
-					props[i]= (*propertyList)[i].
-						allocateCString();
-				props[pCount]=NULL;
+				props = (char **) alloca(1+pCount*sizeof(char *));
+
+				for(int i = 0; i < pCount; i++)
+				{
+					props[i] = (*propertyList)[i].allocateCString();
+				}
+
+				props[pCount] = NULL;
 			}
 		}
+
 		CMPIFlags flgs = 0;
-		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
-		if (includeClassOrigin) flgs|=CMPI_FLAG_IncludeClassOrigin;
+
+		if(includeQualifiers)
+		{
+			flgs |= CMPI_FLAG_IncludeQualifiers;
+		}
+
+		if(includeClassOrigin)
+		{
+			flgs |= CMPI_FLAG_IncludeClassOrigin;
+		}
+
 		char * _role = role.empty() ? 0 : role.allocateCString();
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
-			 (CMPIValue *)&flgs, CMPI_uint32);
+			(CMPIValue *)&flgs, CMPI_uint32);
+
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
 		rc=m_ftable->miVector.assocMI->ft->references(
 			mi,&eCtx,&eRes,&eRef, aClass, _role, props);
-		if (aClass) delete aClass;
-		if (_role) delete _role;
-		if (props && pCount)
-			for (int i=0;i<pCount;i++) free((char *)props[i]);
-			if (rc.rc == CMPI_RC_OK) return;
-		else
+
+		delete aClass;
+		delete _role;
+
+		if(props && pCount)
+		{
+			for(int i = 0; i < pCount; i++)
 			{
-			OW_THROWCIMMSG(CIMException::FAILED,
-					 String(rc.rc).c_str());
+				free((char *)props[i]);
 			}
+		}
+
+		if(rc.rc == CMPI_RC_OK)
+		{
+			return;
+		}
+		else
+		{
+			OW_THROWCIMMSG(CIMException::FAILED,
+				String(rc.rc).c_str());
+		}
 	}
 	else
 	{
-	OW_THROWCIMMSG(CIMException::FAILED,
-		"Provider does not support references");
+		OW_THROWCIMMSG(CIMException::FAILED,
+			"Provider does not support references");
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-void
-CMPIAssociatorProviderProxy::referenceNames(
-		const ProviderEnvironmentIFCRef &env,
-		CIMObjectPathResultHandlerIFC& result,
-		const String& ns,
-		const CIMObjectPath& objectName,
-		const String& resultClass,
-		const String& role)
+void CMPIAssociatorProviderProxy::referenceNames(
+	const ProviderEnvironmentIFCRef &env,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& ns,
+	const CIMObjectPath& objectName,
+	const String& resultClass,
+	const String& role)
 {
 	env->getLogger()->
 		logDebug("CMPIAssociatorProviderProxy::referenceNames()");
-	if (m_ftable->miVector.assocMI->ft->referenceNames != NULL)
+
+	if(m_ftable->miVector.assocMI->ft->referenceNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		::OperationContext context;
+
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-																				
+
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
+
 		CMPI_ObjectPathOnStack eRef(objectNameWithNS);
 		CMPI_ResultOnStack eRes(result);
 		char * aClass = resultClass.allocateCString();
 		CMPIFlags flgs = 0;
 		char * _role = role.empty() ? 0 : role.allocateCString();
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
-			 (CMPIValue *)&flgs, CMPI_uint32);
+			(CMPIValue *)&flgs, CMPI_uint32);
+
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
-		rc=m_ftable->miVector.assocMI->ft->referenceNames(
-			mi,&eCtx,&eRes,&eRef, aClass, _role);
-		if (aClass) delete aClass;
-		if (_role) delete _role;
-			if (rc.rc != CMPI_RC_OK) return;
+		rc = m_ftable->miVector.assocMI->ft->referenceNames(
+			mi, &eCtx, &eRes, &eRef, aClass, _role);
+
+		delete aClass;
+		delete _role;
+
+		if(rc.rc == CMPI_RC_OK)
+		{
+			return;
+		}
 		else
-			{
-			OW_THROWCIMMSG(CIMException::FAILED,
-					 String(rc.rc).c_str());
-			}
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, String(rc.rc).c_str());
+		}
 	}
 	else
 	{
-	OW_THROWCIMMSG(CIMException::FAILED,
-		"Provider does not support referenceNames");
+		OW_THROWCIMMSG(CIMException::FAILED,
+			"Provider does not support referenceNames");
 	}
 }
 
