@@ -230,6 +230,7 @@ private:
 			}
 		}
 
+		// TODO: If the provider rejects the subscription, we need to delete it!
 		is->createSubscription(ns, i, username);
 	}
 	OW_IndicationServerImpl* is;
@@ -303,6 +304,7 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	// Now initialize for all the subscriptions that exist in the repository.
 	// This calls createSubscription for every instance of 
 	// CIM_IndicationSubscription in all namespaces.
+	// TODO: If the provider rejects the subscription, we need to delete it!
 	namespaceEnumerator nsHandler(lch, this);
 	OW_CIMNameSpaceUtils::enum__Namespace(lch, "root", nsHandler);
 }
