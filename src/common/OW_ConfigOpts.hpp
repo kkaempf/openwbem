@@ -39,7 +39,9 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-
+#ifndef OW_DEFAULT_DEBUG
+#define OW_DEFAULT_DEBUG "false"
+#endif
 #ifndef OW_DEFAULT_HTTP_PORT
 #define OW_DEFAULT_HTTP_PORT "5988"
 #endif
