@@ -42,9 +42,73 @@
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/err.h>
 #include <OW_Format.hpp>
+#include <OW_SocketUtils.hpp>
 
 namespace OpenWBEM
 {
+
+namespace
+{
+
+void sslWaitForIO(SocketBaseImpl& s, int type)
+{
+	if(type == SSL_ERROR_WANT_READ)
+	{
+		s.waitForInput();
+	}
+	else
+	{
+		s.waitForOutput();
+	}
+}
+
+int shutdownSSL(SSL* ssl)
+{
+	int cc = SSL_shutdown(ssl);
+	int retries = 0;
+	while(cc == 0 && retries < OW_SSL_RETRY_LIMIT)
+	{	// 0=shutdown not complete, call again
+		retries++;
+		cc = SSL_shutdown(ssl);
+	}
+	return (cc == 1) ? 0 : -1;
+}
+
+int connectWithSSL(SSL* ssl, SocketBaseImpl& s)
+{
+	int retries = 0;
+	int cc = SSL_connect(ssl);
+	cc = SSL_get_error(ssl, cc);
+	while((cc == SSL_ERROR_WANT_READ 
+		|| cc == SSL_ERROR_WANT_WRITE)
+		&& retries < OW_SSL_RETRY_LIMIT)
+	{
+		sslWaitForIO(s, cc);
+		cc = SSL_connect(ssl);
+		cc = SSL_get_error(ssl, cc);
+		retries++;
+	}
+
+
+	return (cc == SSL_ERROR_NONE) ? 0 : -1;
+}
+
+int acceptSSL(SSL* ssl, SocketBaseImpl& s)
+{
+	int retries = 0;
+	int cc = SSL_ERROR_WANT_READ;
+	while((cc == SSL_ERROR_WANT_READ || cc == SSL_ERROR_WANT_WRITE)
+		&& retries < OW_SSL_RETRY_LIMIT)
+	{
+		sslWaitForIO(s, cc);
+		cc = SSL_accept(ssl);
+		cc = SSL_get_error(ssl, cc);
+		retries++;
+	}
+	return (cc == SSL_ERROR_NONE) ? 0 : -1;
+}
+
+}	// End of unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::SSLSocketImpl() 
@@ -72,16 +136,16 @@ SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd,
 	}
 		
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
-	if (SSL_accept(m_ssl) <= 0)
+	if(acceptSSL(m_ssl, *this))
 	{
-		SSL_shutdown(m_ssl);
+		shutdownSSL(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 		OW_THROW(SSLException, "SSL accept error");
 	}
 	if (!SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
 	{
-		SSL_shutdown(m_ssl);
+		shutdownSSL(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 		OW_THROW(SSLException, "SSL failed to authenticate client");
@@ -104,7 +168,7 @@ SSLSocketImpl::~SSLSocketImpl()
 	{
 		if (m_ssl)
 		{
-			SSL_shutdown(m_ssl);
+			shutdownSSL(m_ssl);
 			SSL_free(m_ssl);
 		}
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
@@ -147,19 +211,13 @@ SSLSocketImpl::connectSSL()
 		OW_THROW(SSLException, "BIO_new_socket failed");
 	}
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
-	int cc = SSL_ERROR_WANT_READ;
-	while(cc == SSL_ERROR_WANT_READ || cc == SSL_ERROR_WANT_WRITE)
+
+
+	if(connectWithSSL(m_ssl, *this))
 	{
-		cc = SSL_connect(m_ssl);
-		cc = SSL_get_error(m_ssl, cc);
+		OW_THROW(SSLException, "SSL connect error");
 	}
 
-	if(cc != SSL_ERROR_NONE)
-	{
-		OW_THROW(SSLException, 
-			format("SSL connect error: %1", cc).c_str());
-			
-	}
 	if (!SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
 	{
 		OW_THROW(SSLException, "Failed to validate peer certificate");
@@ -178,7 +236,7 @@ SSLSocketImpl::disconnect()
 	{
 		if (m_ssl)
 		{
-			SSL_shutdown(m_ssl);
+			shutdownSSL(m_ssl);
 			SSL_free(m_ssl);
 		}
 		ERR_remove_state(0); // cleanup memory SSL may have allocated

@@ -179,6 +179,7 @@ public:
 	 */
 	bool waitForOutput(int timeOutSecs=-1)
 		{ return m_impl->waitForOutput(timeOutSecs); }
+
 	/**
 	 * Get the local address associated with the socket connection
 	 * @return an SocketAddress representing the local machine

@@ -43,6 +43,7 @@
 #include <openssl/ssl.h>
 #include <openssl/bio.h>
 #define OW_SSLCTX_MAX_CN_LEN 256
+#define OW_SSL_RETRY_LIMIT 20
 
 namespace OpenWBEM
 {

@@ -331,9 +331,16 @@ SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 int
 SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len)
 {
-	int r;
-	r = SSL_read(ssl, buf, len);
-	switch (SSL_get_error(ssl, r))
+	int cc = SSL_ERROR_WANT_READ;
+	int r, retries = 0;
+	while(cc == SSL_ERROR_WANT_READ && retries < OW_SSL_RETRY_LIMIT)
+	{
+		r = SSL_read(ssl, buf, len);
+		cc = SSL_get_error(ssl, r);
+		retries++;
+	}
+	
+	switch (cc)
 	{
 		case SSL_ERROR_NONE:
 			return r;
@@ -350,13 +357,21 @@ SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len)
 int
 SSLCtxMgr::sslWrite(SSL* ssl, const char* buf, int len)
 {
-	int r;
+	int r, cc, retries;
 	int myLen = len;
 	int offset = 0;
 	while (myLen > 0)
 	{
-		r = SSL_write(ssl, buf + offset, myLen);
-		if (SSL_get_error(ssl, r) == SSL_ERROR_NONE)
+		cc = SSL_ERROR_WANT_WRITE;
+		retries = 0;
+		while(cc == SSL_ERROR_WANT_WRITE && retries < OW_SSL_RETRY_LIMIT)
+		{
+			r = SSL_write(ssl, buf + offset, myLen);
+			cc = SSL_get_error(ssl, r);
+			retries++;
+		}
+
+		if (cc == SSL_ERROR_NONE)
 		{
 			myLen -= r;
 			offset += r;

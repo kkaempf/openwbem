@@ -178,7 +178,7 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 #else
 //////////////////////////////////////////////////////////////////////////////
 int
-waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput)
+waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag waitFlag)
 {
 	if (fd == -1)
 	{
@@ -214,12 +214,17 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
 		FD_SET(pipefd, &readfds);
 		maxfd = MAX(fd, pipefd);
 	}
-	if (forInput == SocketFlags::E_WAIT_FOR_INPUT)
+	if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
 	{
 		FD_SET(fd, &readfds);
 	}
+	else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
+	{
+		FD_SET(fd, &writefds);
+	}
 	else
 	{
+		FD_SET(fd, &readfds);
 		FD_SET(fd, &writefds);
 	}
 	rc = ::select(maxfd + 1, &readfds, &writefds,
