@@ -106,7 +106,7 @@ public:
 	 * cancellation is Fedora Core 1. & RedHat Enterprise 3.0)
 	 * so it may cause memory leaks or inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
-	 * make itself non-cancellable, or it may not every call any cancellation
+	 * make itself non-cancellable, or it may not ever call any cancellation
 	 * points.
 	 * By default all Thread objects are asynchronously cancellable, and
 	 * so may be immediately cancelled.
@@ -144,7 +144,7 @@ public:
 	 * cancellation is Fedora Core 1.)
 	 * so it may cause memory leaks or inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
-	 * make itself non-cancellable, or it may not every call any cancellation
+	 * make itself non-cancellable, or it may not ever call any cancellation
 	 * points.
 	 * By default all Thread objects are asynchronously cancellable, and
 	 * so may be immediately cancelled.
