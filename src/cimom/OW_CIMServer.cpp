@@ -2110,6 +2110,7 @@ OW_CIMServer::invokeMethod(
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc)
 {
+	// TODO: Determine if we need to also check for providers for all base classes of cc
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_InstanceProviderIFCRef instancep;
