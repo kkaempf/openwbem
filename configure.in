@@ -478,10 +478,9 @@ OLD_LIBS=$LIBS
 LIBS="-pthread $LIBS"
 AC_MSG_CHECKING("pthread_mutexattr_settype")
 AC_TRY_RUN(
- [
+    [
 #include <pthread.h>
 #include <assert.h>
- 
 int main()
 {
     pthread_mutexattr_t attr;
@@ -494,16 +493,13 @@ int main()
     res = pthread_mutex_init(&mutex, &attr);
     assert(res == 0);
 }
- ],
- [
-    AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    AC_MSG_RESULT("yes")
- ],
- [
-    AC_MSG_RESULT("no")
- ],
-    AC_MSG_RESULT("no")
- ]
+    ],
+    [
+        AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+        AC_MSG_RESULT("yes")
+    ],
+    [ AC_MSG_RESULT("no") ],
+    [ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_spin_lock")
@@ -511,7 +507,6 @@ AC_TRY_RUN(
  [
 #include <pthread.h>
 #include <assert.h>
- 
 int main()
 {
 	pthread_spinlock_t spinlock;
@@ -527,11 +522,8 @@ int main()
     AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
     AC_MSG_RESULT("yes")
  ],
- [
-    AC_MSG_RESULT("no")
- ],
-    AC_MSG_RESULT("no")
- ]
+ [ AC_MSG_RESULT("no") ],
+ [ AC_MSG_RESULT("no") ]
 )
 LIBS=$OLD_LIBS
  
