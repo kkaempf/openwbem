@@ -47,7 +47,7 @@ extern "C"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#ifdef OW_HAVE_GETOPT_H
+#if defined(OW_HAVE_GETOPT_H) && !defined(OW_GETOPT_AND_UNISTD_CONFLICT)
 #include <getopt.h>
 #else
 #include <stdlib.h> // for getopt on Solaris
@@ -446,18 +446,6 @@ void removeFatalSignalHandlers()
 	handleSignalAux(SIGBUS, SIG_DFL);
 	handleSignalAux(SIGSEGV, SIG_DFL);
 	handleSignalAux(SIGFPE, SIG_DFL);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-String getCurrentUserName()
-{
-	uid_t uid = getuid();
-	struct passwd* p = getpwuid(uid);
-	if (p)
-	{
-		return p->pw_name;
-	}
-	return "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
