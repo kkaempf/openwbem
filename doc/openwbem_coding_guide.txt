@@ -9,7 +9,7 @@ function, and can also make it hard to catch errors such as swapping the order
 of parameters and such.
 -----------------------------------------------------------------------------
 Naming conventions:
-enums begin with E (or OW_E if not otherwise scoped), and if they're used as 
+enums begin with E, and if they're used as 
 a parameter to a function, they should end with Flag.  enum values should be
 all caps, with underscores between words, and begin with E_.  Avoid anonymous
 (aka unnamed) enums.  Don't use an int variable to store an enum value. i.e.:
@@ -37,19 +37,18 @@ meaning.  Having numerical values makes enums prone to error as well as makes
 them hard to maintain or refactor.  It sucks to have to renumber all the
 values just to insert a new item in the middle.
 
-All classes and public identifiers (anything in a header) must be prefixed
-with OW_.  (This may change in the future, if I ever make the jump to ditch
-OW_ and put everything in namespace OpenWBEM, but this probably won't happen
-in the interest of backward compatibility.)  Anything not prefixed by OW_,
-such as internal implementation details or variables local to a translation
-unit should either be prefixed by OW_ or put into an unnamed namespace to
-avoid possible duplicate symbol link-time errors.  This can be a worse issue
-than you might think because of providers, all the symbols are global and
-can possibly conflict with symbols from other providers or the cimom.
-Also use namespace conventions when naming files, and try never to create 2
+All classes and public identifiers (anything in a header) must be in namespace
+OpenWBEM.  If it's not meant for external use, such as internal implementation 
+details or variables local to a translation unit, then it should be put into 
+an unnamed namespace to avoid possible duplicate symbol link-time errors.  
+This can be a worse issue than you might think because of providers, all the 
+symbols are global and can possibly conflict with symbols from other providers 
+or the cimom.  All file names begin with OW_, and try never to create 2
 files with the same name, because of the way gcc implements unnamed namespaces,
 basically the namespace isn't really unnamed, it's named the same as the file,
 so two files with the same names can have conflicts in the unnamed namespace.
+Also, development headers all end up being installed into the same directory,
+so 2 files cannot have the same name.
 -----------------------------------------------------------------------------
 Exceptions.
 When to use catch(...).  e.g.:
@@ -178,4 +177,12 @@ should do 1 thing.
 Define a class's invariant.  Only functions that maintain or check the
 invariant belong in a class.  Other functions belong outside the class as
 utility/helper functions.
+-----------------------------------------------------------------------------
+Don't use spaces to indent the code.  This is so you can set your tab
+spacing to your own liking in your editor.  If it's all spaces, you're stuck
+with whatever the original author did.  Definitely don't mix tabs/spaces.
+Here's a little bash script that will convert all spaces into tabs, in order
+to maintain consistency.
+for x in `find . -name '*.?pp'`; do echo $x; unexpand -4 $x > tmp; mv tmp $x;
+done
 -----------------------------------------------------------------------------
