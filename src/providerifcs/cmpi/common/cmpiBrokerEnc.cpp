@@ -236,7 +236,7 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
       return new CMPI_OpEnumeration(new OW_Array<OW_CIMObjectPath>(en));
    }
    catch (OW_CIMException &e) {
-      cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<endl;
+	   std::cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<std::endl;
       if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
    }
    if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
@@ -371,7 +371,7 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 	   return new CMPI_InstEnumeration(new OW_CIMInstanceArray(en));
 	}
 	catch (OW_CIMException &e) {
-	   cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<endl;
+		std::cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<std::endl;
 	   if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
 	}
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
