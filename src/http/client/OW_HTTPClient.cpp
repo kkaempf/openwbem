@@ -49,6 +49,8 @@
 #include "OW_UserUtils.hpp"
 
 #include <fstream>
+#include <cerrno>
+
 
 namespace OpenWBEM
 {
