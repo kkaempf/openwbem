@@ -89,8 +89,8 @@ CmdLineParser::Option g_options[] =
 {
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
-	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the cimom callback url."},
 	{CONFIG_OPT, 'c', "config", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the config file.  Command line options take precedence over config file options."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the cimom callback url."},
 	{HTTP_PORT_OPT, '\0', "http-port", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the http port."},
 	{HTTPS_PORT_OPT, '\0', "https-port", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the https port."},
 	{UDS_FILENAME_OPT, '\0', "uds-filename", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the filename of the unix domain socket."},
@@ -187,19 +187,6 @@ int main(int argc, char* argv[])
 		sigPipe->setWriteTimeout(0);
 		signal(SIGINT, sig_handler);
 
-		ConfigFile::ConfigMap cmap; 
-
-		// set up some defaults
-		cmap[ConfigOpts::HTTP_PORT_opt] = String(-1);
-		cmap[ConfigOpts::HTTPS_PORT_opt] = String(-1);
-		cmap[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
-		cmap[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
-		cmap[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
-		cmap[ConfigOpts::USE_UDS_opt] = "true";
-		cmap[ProviderAgent::DynamicClassRetieval_opt] = "true";
-
-		String url;
-
 		if (parser.isSet(HELP_OPT))
 		{
 			Usage();
@@ -210,6 +197,29 @@ int main(int argc, char* argv[])
 			cout << "owprovideragent (OpenWBEM) " << OW_VERSION << '\n';
 			cout << "Written by Bart Whiteley and Dan Nuffer.\n";
 			return 0;
+		}
+
+		ConfigFile::ConfigMap cmap; 
+
+		String configFile = parser.getOptionValue(CONFIG_OPT);
+		if (!configFile.empty())
+		{
+			ConfigFile::loadConfigFile(configFile, cmap);
+		}
+
+		// set up some defaults if not in the config file
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTPS_PORT_opt, String(-1), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::MAX_CONNECTIONS_opt, String(10), ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::ENABLE_DEFLATE_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::HTTP_USE_DIGEST_opt, "false", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::USE_UDS_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
+		ConfigFile::setConfigItem(cmap, ConfigOpts::UDS_FILENAME_opt, String("/tmp/owprovideragent-") + String(UInt32(::getpid())), ConfigFile::E_PRESERVE_PREVIOUS);
+
+		String url = parser.getOptionValue(URL_OPT);
+		if (!url.empty())
+		{
+			ConfigFile::setConfigItem(cmap, ProviderAgent::DynamicClassRetieval_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
 		}
 
 		LoggerRef logger(new RPALogger);
