@@ -89,6 +89,7 @@ namespace OpenWBEM
 		static const int UUIDExceptionId = 43;
 		static const int UnnamedPipeExceptionId = 44;
 		static const int InvalidUTF8ExceptionId = 45;
+		static const int CmdLineParserExceptionId = 46;
 
 		// http
 		static const int Base64FormatExceptionId = 1001;

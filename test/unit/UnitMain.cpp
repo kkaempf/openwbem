@@ -40,6 +40,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "CmdLineParserTestCases.hpp"
 #include "CIMObjectPathTestCases.hpp"
 #include "URLTestCases.hpp"
 #include "OW_BinarySerializationTestCases.hpp"
@@ -97,6 +98,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "CmdLineParser", CmdLineParserTestCases::suite());
 	runner.addTest( "CIMObjectPath", CIMObjectPathTestCases::suite());
 	runner.addTest( "URL", URLTestCases::suite());
 	runner.addTest( "OW_BinarySerialization", OW_BinarySerializationTestCases::suite());
