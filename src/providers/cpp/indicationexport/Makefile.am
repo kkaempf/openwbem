@@ -3,6 +3,7 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
 OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.so
+SHAREDLIBADD = -L../../../http/common -lowhttpcommon -L../../../http/client -lowhttpclient
 
 thelibdir = $(pkglibdir)/c++providers
 all-local: $(OW_SHARED_LIBS)

@@ -59,53 +59,64 @@ long MofCompiler::compile( const OW_String& filename )
 
     try
     {
-        int i = filename.lastIndexOf('/');
-        if (i != -1)
+        try
         {
-            MofCompiler::basepath = filename.substring(0,i);
+            int i = filename.lastIndexOf('/');
+            if (i != -1)
+            {
+                MofCompiler::basepath = filename.substring(0,i);
+            }
+            else
+            {
+                MofCompiler::basepath = "";
+            }
+            yyin = fopen(filename.c_str(), "r");
+            if (!yyin)
+            {
+                MofCompiler::theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
+                return 1;
+            }
+
+            MofCompiler::theErrorHandler->progressMessage("Starting parsing",
+                    lineInfo(filename, 0));
+            #ifdef YYOW_DEBUG
+            yydebug = 1;
+            #endif
+
+            yyparse();
+
+            MofCompiler::theErrorHandler->progressMessage("Finished parsing",
+                    MofCompiler::theLineInfo);
+
+            OW_CIMNameSpace ns(true);
+            ns.setNameSpace(m_nameSpace);
+            CIMOMVisitor v(m_ch, ns);
+            MofCompiler::mofSpecification->Accept(&v);
         }
-        else
+        catch (const OW_MofParseFatalErrorException&)
         {
-            MofCompiler::basepath = "";
+            // error has already been reported.
         }
-        yyin = fopen(filename.c_str(), "r");
-        if (!yyin)
+        catch (OW_Assertion& e)
         {
-            MofCompiler::theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
-            return 1;
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
         }
-
-        MofCompiler::theErrorHandler->progressMessage("Starting parsing",
-                lineInfo(filename, 0));
-        #ifdef YYOW_DEBUG
-        yydebug = 1;
-        #endif
-
-        yyparse();
-
-        MofCompiler::theErrorHandler->progressMessage("Finished parsing",
-                MofCompiler::theLineInfo);
-
-        OW_CIMNameSpace ns(true);
-        ns.setNameSpace(m_nameSpace);
-        CIMOMVisitor v(m_ch, ns);
-        MofCompiler::mofSpecification->Accept(&v);
+        catch (OW_Exception& e)
+        {
+            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+        }
+        catch (std::exception& e)
+        {
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+        }
+        catch(...)
+        {
+            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
+        }
     }
     catch (const OW_MofParseFatalErrorException&)
     {
         // error has already been reported.
-    }
-    catch (OW_Exception& e)
-    {
-        theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
-    }
-    catch (std::exception& e)
-    {
-        theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
-    }
-    catch(...)
-    {
-        theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
     }
     return theErrorHandler->errorCount();
 }

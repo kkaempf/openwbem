@@ -1,6 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowrequesthandlercimxml.so
+SHAREDLIBADD = -L../../xml -lowxml
 
 noinst_LIBRARIES = \
 libowrequesthandlercimxml.a

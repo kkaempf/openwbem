@@ -5,7 +5,7 @@ cimombindir = $(sbindir)
  
 owcimomd_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owcimomd
+-rdynamic -o owcimomd
 
 owcimomd_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -41,8 +41,6 @@ OW_CIMOMEnvironment.hpp \
 OW_CIMServer.hpp \
 OW_GenericHDBRepository.hpp \
 OW_Index.hpp \
-OW_IndicationRepLayer.hpp \
-OW_IndicationServer.hpp \
 OW_InstanceRepository.hpp \
 OW_LocalCIMOMHandle.hpp \
 OW_MetaRepository.hpp \
@@ -63,6 +61,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/cimom/indication \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/server \
 -I$(top_srcdir)/src/providerifcs/cpp \

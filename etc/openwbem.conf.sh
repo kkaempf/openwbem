@@ -22,7 +22,7 @@ owcimomd.services_path = @libdir@/openwbem/services
 # 2.0
 # owcimomd.request_handler_path Specifies the location where all request
 # handlers will be loaded by the CIMOM
-owcimomd.request_handler_path = @libdir@/openwbem/reqhandlers
+owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
 ################################################################################
 # owcimomd.http_port option specifies the port number owcimomd will listen on

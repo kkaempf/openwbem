@@ -1,6 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowservicehttp.so
+SHAREDLIBADD = -L../../http/common -lowhttpcommon
 
 noinst_LIBRARIES = \
 libowservicehttp.a

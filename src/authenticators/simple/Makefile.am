@@ -5,7 +5,7 @@ OW_SHARED_LIBS = libsimpleauthentication.so
 noinst_LIBRARIES = \
 	libsimpleauthentication.a 
 
-thelibdir = $(pkglibdir)/auth_mods
+thelibdir = $(pkglibdir)/authentication
 all-local: $(OW_SHARED_LIBS)
 
 install-exec-local:

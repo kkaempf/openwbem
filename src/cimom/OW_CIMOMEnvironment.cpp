@@ -188,6 +188,9 @@ OW_CIMOMEnvironment::shutdown()
 {
 	OW_MutexLock ml(m_monitor);
 
+	// Unload the wql library if loaded
+    m_wqlLib = 0;
+
 	// Shutdown indication processing
 	m_indicationRepLayerLib = 0;
 	if(m_indicationServer)
@@ -206,9 +209,6 @@ OW_CIMOMEnvironment::shutdown()
 		m_pollingManager = 0;
 	}
 
-	// Clear selectable objects
-	_clearSelectables();
-
 	// Shutdown any loaded services
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
@@ -218,11 +218,11 @@ OW_CIMOMEnvironment::shutdown()
 	// Unload all services
 	m_services.clear();
 
+	// Clear selectable objects
+	_clearSelectables();
+
 	// Unload all request handlers
 	m_reqHandlers.clear();
-
-	// Unload the wql library if loaded
-    m_wqlLib = 0;
 
 	// Delete the authentication manager
 	m_authManager = 0;

@@ -62,17 +62,17 @@ Install()
 			-e 's!;owcimomd.https_port = \(.*\)!owcimomd.https_port = 30927!g' \
 			-e "s!;owcimomd.log_location = \(.*\)!owcimomd.log_location = $RESULTDIR/logfile!g" \
 			-e "s!;owcimomd.dump_socket_io = \(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
-			-e "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1digest\2!g" \
+			-e "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
 			-e "s!owcimomd.wql_lib = \(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.so!g" \
 			-e "s!;owcimomd.enable_deflate = .*!owcimomd.enable_deflate = false!g" \
 		openwbem.conf > openwbem.conf-t
 
 	cd $STAGEDIR
 	# create some users for digest authentication.
-	DIGPASSFILE=$STAGEDIR/$OWSYSCONFDIR/openwbem/digest_auth.passwd
-	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test1 -f $DIGPASSFILE -p pass1
-	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test2 -f $DIGPASSFILE -p pass2
-	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test3 -f $DIGPASSFILE -p pass3
+	#DIGPASSFILE=$STAGEDIR/$OWSYSCONFDIR/openwbem/digest_auth.passwd
+	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test1 -f $DIGPASSFILE -p pass1
+	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test2 -f $DIGPASSFILE -p pass2
+	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test3 -f $DIGPASSFILE -p pass3
 
 	# create a password file for simple authentication
 	echo "test:test" > $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
@@ -316,12 +316,12 @@ TestSuite()
 	fi
 
 	echo "Executing test suite, saving output in " $RESULTDIR/clientDriver.out
-	$BUILDDIR/test/clientDriver/owcimclientcl http://test1:pass1@localhost:30926 $RESULTDIR/testsuite \
+	$BUILDDIR/test/acceptance/progs/owcimclientcl http://test1:pass1@localhost:30926 $RESULTDIR/testsuite \
 		> $RESULTDIR/clientDriver.out 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
 
 	if [ "$NODIFF" = "0" ]; then
-		diff  $TOPSRCDIR/test/clientDriver/testfiles/clientDriver.out \
+		diff  $TOPSRCDIR/test/acceptance/testfiles/clientDriver.out \
 			 $RESULTDIR/clientDriver.out || \
 			 ExitWithFail "TestSuite: Diff test for owcimclientcl failed."
 	fi
@@ -352,12 +352,12 @@ TestSuiteIPC()
 	fi
 
 	echo "Executing IPC test suite, saving output in " $RESULTDIR/IPCClientTest.out
-	$BUILDDIR/test/clientDriver/IPCClientTest \
+	$BUILDDIR/test/acceptance/progs/IPCClientTest \
 		> $RESULTDIR/IPCClientTest.out 2>&1 || \
 		ExitWithFail "TestSuiteIPC: IPCClientTest failed with an error.  "
 
 	if [ "$NODIFF" = "0" ]; then
-		diff  $TOPSRCDIR/test/clientDriver/testfiles/IPCClientTest.out \
+		diff  $TOPSRCDIR/test/acceptance/testfiles/IPCClientTest.out \
 			 $RESULTDIR/IPCClientTest.out || \
 			 ExitWithFail "TestSuiteIPC: Diff test for IPCClientTest failed."
 	fi
@@ -446,14 +446,14 @@ TestMultiReq()
 	StopDaemon
 	StartDaemon
 
-	$BUILDDIR/test/clientDriver/fakeclient http://test1:pass1@localhost:30926 \
-		$TOPSRCDIR/test/clientDriver/testfiles/MultiReqInput.xml > \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
+		$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
 			$RESULTDIR/MultiReqOutput.xml || \
 			ExitWithFail "MultiReq test: fakeclient exited with error."
 
 	if [ "$NODIFF" = "0" ]; then
 		echo "Comparing output with expected response..."
-		diff $TOPSRCDIR/test/clientDriver/testfiles/MultiReqResp.xml \
+		diff $TOPSRCDIR/test/acceptance/testfiles/MultiReqResp.xml \
 			$RESULTDIR/MultiReqOutput.xml || \
 			ExitWithFail "MultiReq test: Diff failed."
 	fi
@@ -464,14 +464,14 @@ TestMultiReq()
 	if [ ! "$?" = "0" ]; then
 		echo "Testing HTTPS support..."
 
-		$BUILDDIR/test/clientDriver/fakeclient https://test1:pass1@localhost:30927 \
-			$TOPSRCDIR/test/clientDriver/testfiles/MultiReqInput.xml > \
+		$BUILDDIR/test/acceptance/progs/fakeclient https://test1:pass1@localhost:30927 \
+			$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
 				$RESULTDIR/MultiReqOutput.xml || \
 				ExitWithFail "HTTPS test: fakeclient exited with error."
 
 		if [ "$NODIFF" = "0" ]; then
 			echo "Comparing output with expected response..."
-			diff $TOPSRCDIR/test/clientDriver/testfiles/MultiReqResp.xml \
+			diff $TOPSRCDIR/test/acceptance/testfiles/MultiReqResp.xml \
 				$RESULTDIR/MultiReqOutput.xml || \
 				ExitWithFail "HTTPS test: Diff failed."
 		fi
@@ -502,17 +502,17 @@ TestAuth()
 
 	echo "Testing Simple Authentication Module and GetFeatures"
 	StartDaemon
-	$BUILDDIR/test/clientDriver/fakeclient http://localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "2" ] || \
 	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://bad:no_good@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 		 >> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "1" ] || \
 	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://test:test@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1 
 	RVAL=$?
 	cat $RESULTDIR/GetFeatures.out >> $RESULTDIR/AuthTest.out
@@ -520,7 +520,7 @@ TestAuth()
 	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
 	if [ "$NODIFF" = "0" ]; then
-		diff $TOPSRCDIR/test/clientDriver/testfiles/GetFeatures.out \
+		diff $TOPSRCDIR/test/acceptance/testfiles/GetFeatures.out \
 			$RESULTDIR/GetFeatures.out || \
 			ExitWithFail "Authentication test (simple): Diff failed."
 	fi
@@ -539,33 +539,33 @@ TestAuth()
 	echo "Testing Digest Authentication"
 	RestartDaemon
 	
-	$BUILDDIR/test/clientDriver/fakeclient http://localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "2" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://bad:no_good@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 		 >> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "1" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://test:test@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
 	[ "$?" = "1" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://test1:pass1@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
 	[ "$?" = "0" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
-	$BUILDDIR/test/clientDriver/fakeclient http://test2:pass2@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/fakeclient http://test2:pass2@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
 	[ "$?" = "0" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	if [ "$NODIFF" = "0" ]; then
-		diff $TOPSRCDIR/test/clientDriver/testfiles/GetFeatures.out \
+		diff $TOPSRCDIR/test/acceptance/testfiles/GetFeatures.out \
 			$RESULTDIR/GetFeatures.out || \
 			ExitWithFail "Authentication test (digest): Diff failed."
 	fi
@@ -771,7 +771,7 @@ Install
 cd $STAGEDIR
 
 # This only runs if OWTESTLIST contains "testIndividualHeaders"
-#TestInstalledHeadersOneByOne
+TestInstalledHeadersOneByOne
 
 TestAuth
 
@@ -779,17 +779,17 @@ TestACL
 
 TestMof
 
-#TestSuite
+TestSuite
 
 TestSuiteIPC
 
-#TestIndications
+TestIndications
 
 TestWQL
 
-#TestMultiReq
+TestMultiReq
 
-#TestInstalledHeaders
+TestInstalledHeaders
 
 CoreCheck
 

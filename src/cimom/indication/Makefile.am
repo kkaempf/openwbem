@@ -20,10 +20,12 @@ clean-local:
 	done
 
 libowindicationserver_a_SOURCES = \
+OW_IndicationServer.hpp \
 OW_IndicationServerImpl.hpp \
 OW_IndicationServerImpl.cpp
 
 libowindicationreplayer_a_SOURCES = \
+OW_IndicationRepLayer.hpp \
 OW_IndicationRepLayerImpl.hpp \
 OW_IndicationRepLayerImpl.cpp
 
