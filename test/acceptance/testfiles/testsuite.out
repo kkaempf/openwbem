@@ -1119,7 +1119,7 @@ string BrandNewProperty;
 *** Doing createInstance() ***
 *** Doing createInstance() ***
 *** Doing enumInstanceNames() ***
-/root:exp_bartcomputersystem.creationclassname="EXP_BartComputerSystem",name="test"
+/root/testsuite:exp_bartcomputersystem.creationclassname="EXP_BartComputerSystem",name="test"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1127,6 +1127,8 @@ string BrandNewProperty;
     </HOST>
     <LOCALNAMESPACEPATH>
       <NAMESPACE NAME="root">
+      </NAMESPACE>
+      <NAMESPACE NAME="testsuite">
       </NAMESPACE>
     </LOCALNAMESPACEPATH>
   </NAMESPACEPATH>
@@ -1143,7 +1145,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+/root/testsuite:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1151,6 +1153,8 @@ string BrandNewProperty;
     </HOST>
     <LOCALNAMESPACEPATH>
       <NAMESPACE NAME="root">
+      </NAMESPACE>
+      <NAMESPACE NAME="testsuite">
       </NAMESPACE>
     </LOCALNAMESPACEPATH>
   </NAMESPACEPATH>
@@ -1167,7 +1171,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SevenMillion"
+/root/testsuite:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SevenMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1175,6 +1179,8 @@ string BrandNewProperty;
     </HOST>
     <LOCALNAMESPACEPATH>
       <NAMESPACE NAME="root">
+      </NAMESPACE>
+      <NAMESPACE NAME="testsuite">
       </NAMESPACE>
     </LOCALNAMESPACEPATH>
   </NAMESPACEPATH>
@@ -1191,7 +1197,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+/root/testsuite:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1199,6 +1205,8 @@ string BrandNewProperty;
     </HOST>
     <LOCALNAMESPACEPATH>
       <NAMESPACE NAME="root">
+      </NAMESPACE>
+      <NAMESPACE NAME="testsuite">
       </NAMESPACE>
     </LOCALNAMESPACEPATH>
   </NAMESPACEPATH>
@@ -1215,7 +1223,7 @@ string BrandNewProperty;
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-/root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SevenMillion"
+/root/testsuite:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SevenMillion"
 <INSTANCEPATH>
   <NAMESPACEPATH>
     <HOST>
@@ -1223,6 +1231,8 @@ string BrandNewProperty;
     </HOST>
     <LOCALNAMESPACEPATH>
       <NAMESPACE NAME="root">
+      </NAMESPACE>
+      <NAMESPACE NAME="testsuite">
       </NAMESPACE>
     </LOCALNAMESPACEPATH>
   </NAMESPACEPATH>

@@ -34,6 +34,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_RepositoryStreams.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Format.hpp"
 
 #define HDL_NOTINUSE		-1
 #define HDL_NOTCACHED	-2
@@ -181,6 +182,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 
 	if(nameComps.size() == 0)
 	{
+		cout << "returning -1 from createNameSpace because nameComps.size() = 0"  << endl;
 		return -1;
 	}
 
@@ -199,6 +201,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 		{
 			if(nameComps.size() == 1)
 			{
+				cout << "returning -1 from createNameSpace because nameComps[0] = " << nameComps[0] << endl;
 				return -1;
 			}
 		}
@@ -258,6 +261,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 				"logic error. read namespace node that is not a namespace");
 		}
 
+		cout << "returning -1 from createNameSpace because namespace really exists"  << endl;
 		return -1;
 	}
 
@@ -279,6 +283,10 @@ OW_GenericHDBRepository::deleteNameSpace(const OW_String& key)
 	}
 
 	OW_String k(key.toString().toLowerCase());
+	while (k.length() > 0 && k[0] == '/')
+	{
+		k = k.substring(1);
+	}
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(k);
@@ -290,6 +298,10 @@ OW_GenericHDBRepository::deleteNameSpace(const OW_String& key)
 		}
 
 		hdl->removeNode(node);
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Unable to delete namespace %1", k).c_str());
 	}
 }
 

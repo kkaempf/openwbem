@@ -62,8 +62,8 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 		}
 		catch (OW_CIMException&)
 		{
-			getEnvironment()->logError("Unable to export indication for"
-				" createClass because CIM_ClassDeletion does not exist");
+			getEnvironment()->logDebug("Unable to export indication for"
+				" deleteClass because CIM_ClassDeletion does not exist");
 		}
 	}
 	return cc;
@@ -80,7 +80,7 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjec
 	try
 	{
 		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstDeletion", path.getNameSpace()), false, true, true, NULL,
+			OW_CIMObjectPath("CIM_InstDeletion", ns), false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
@@ -88,7 +88,7 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjec
 	}
 	catch (OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for createClass"
+		getEnvironment()->logDebug("Unable to export indication for deleteInstance"
 			" because CIM_InstDeletion does not exist");
 	}
 	return instOrig;
@@ -116,7 +116,7 @@ OW_IndicationRepLayerImpl::getInstance(const OW_CIMObjectPath& name,
 		}
 		catch (OW_CIMException&)
 		{
-			getEnvironment()->logError("Unable to export indication for createClass"
+			getEnvironment()->logDebug("Unable to export indication for getInstance"
 				" because CIM_InstRead does not exist");
 		}
 
@@ -175,8 +175,8 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 		}
 		catch (OW_CIMException&)
 		{
-			getEnvironment()->logError("Unable to export indication for"
-				" createClass because CIM_InstMethodCall does not exist");
+			getEnvironment()->logDebug("Unable to export indication for"
+				" invokeMethod because CIM_InstMethodCall does not exist");
 		}
 	}
 
@@ -204,7 +204,7 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 	}
 	catch (OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for modifyClass"
+		getEnvironment()->logDebug("Unable to export indication for modifyClass"
 			" because CIM_ClassModification does not exist");
 	}
 	return CCOrig;
@@ -230,7 +230,7 @@ OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
 	}
 	catch(OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for createClass"
+		getEnvironment()->logDebug("Unable to export indication for createClass"
 			" because CIM_ClassCreation does not exist");
 	}
 }
@@ -257,7 +257,7 @@ OW_IndicationRepLayerImpl::modifyInstance(const OW_CIMObjectPath& name,
 	}
 	catch (OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for createClass"
+		getEnvironment()->logDebug("Unable to export indication for modifyInstance"
 			" because CIM_InstModification does not exist");
 	}
 	return ciOrig;
@@ -288,7 +288,7 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 	}
 	catch(OW_CIMException&)
 	{
-		getEnvironment()->logError("Unable to export indication for createClass"
+		getEnvironment()->logDebug("Unable to export indication for createInstance"
 			" because CIM_InstCreation does not exist");
 	}
 	return rval;

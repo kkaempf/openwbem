@@ -140,7 +140,7 @@ OW_TriggerProviderTest1::poll(const OW_ProviderEnvironmentIFCRef& env)
 		env->getLogger()->logDebug("OW_TriggerProviderTest1: about to export indication");
 		try
 		{
-			lch->exportIndication(ci, OW_CIMNameSpace(true));
+			lch->exportIndication(ci, OW_CIMNameSpace("root/testsuite"));
 		}
 		catch (const OW_Exception& e)
 		{

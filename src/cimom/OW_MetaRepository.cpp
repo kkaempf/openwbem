@@ -188,6 +188,10 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 	const OW_String& className)
 {
 	OW_String cp(ns);
+	while (cp.length() > 0 && cp[0] == '/')
+	{
+		cp = cp.substring(1);
+	}
 	if(cp.length() > 0)
 	{
 		cp += "/";

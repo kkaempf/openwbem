@@ -213,6 +213,10 @@ OW_InstanceRepository::makeClassKey(const OW_String& ns,
 	const OW_String& className)
 {
 	OW_String rv(ns);
+	while (rv.length() > 0 && rv[0] == '/')
+	{
+		rv = rv.substring(1);
+	}
 	rv += "/";
 	rv += className;
 	return rv.toLowerCase();
@@ -329,7 +333,9 @@ OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPat
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
+		OW_CIMObjectPath cop2(cop);
+		cop2.setNameSpace(ns);
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop2.toString().c_str());
 	}
 
 	// Ensure the node belongs to an OW_CIMInstance before we delete it.

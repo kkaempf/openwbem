@@ -477,18 +477,23 @@ namespace
 	class enumInstanceNamesOp : public OW_ClientOperation
 	{
 	public:
-		enumInstanceNamesOp(OW_CIMObjectPathResultHandlerIFC& result_)
+		enumInstanceNamesOp(OW_CIMObjectPathResultHandlerIFC& result_,
+			const OW_String& ns_)
 			: result(result_)
+			, ns(ns_)
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
 			while (parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
 			{
-				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
+				OW_CIMObjectPath p = OW_XMLCIMFactory::createObjectPath(parser);
+				p.setNameSpace(ns);
+				result.handle(p);
 			}
 		}
 
 		OW_CIMObjectPathResultHandlerIFC& result;
+		OW_String ns;
 	};
 }
 
@@ -513,7 +518,7 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 							"EnumerateInstanceNames");
 	}
 
-	enumInstanceNamesOp op(result);
+	enumInstanceNamesOp op(result, path.getNameSpace());
 	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 }
 

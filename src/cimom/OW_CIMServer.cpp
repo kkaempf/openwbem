@@ -1326,9 +1326,11 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
+OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 	const OW_ACLInfo& aclInfo)
 {
+	OW_CIMObjectPath cop(cop_);
+	cop.setNameSpace(ns);
 	// Check to see if user has rights to delete the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::DELETEINSTANCE, ns, aclInfo);
 
@@ -1526,6 +1528,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 				}
 			}
 
+			m_env->logDebug(format("OW_CIMServer::createInstance.  cop = %1", cop.toString()));
 			m_iStore.createInstance(cop, theClass, ci);
 			_validatePropagatedKeys(cop, ci, theClass);
 		}
@@ -3305,7 +3308,7 @@ OW_CIMServer::checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const O
 			}
 		}
 
-		OW_THROWCIMMSG(rval, path.getObjectName().c_str());
+		OW_THROWCIMMSG(rval, path.toString().c_str());
 	}
 }
 
@@ -3327,7 +3330,7 @@ OW_CIMServer::checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, con
 			}
 		}
 
-		OW_THROWCIMMSG(rval, path.getObjectName().c_str());
+		OW_THROWCIMMSG(rval, path.toString().c_str());
 	}
 }
 
