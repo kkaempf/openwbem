@@ -4,9 +4,11 @@ install-ow-shared-libs:
 		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
 			if [ "$(LIB_EXT)" = "dylib" ]; then \
 				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir); \
+				rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 			else \
 				$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+				rm -f $(DESTDIR)$(thelibdir)/$$i; \
 				ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 			fi; \
 		else \
