@@ -202,6 +202,10 @@ public:
 	 */
 	~String();
 	/**
+	 * Swap this instance with another
+	 */
+	void swap(String& x);
+	/**
 	 * Create a null terminated string that contains the contents of this
 	 * String. The returned pointer MUST be deleted by the caller using free().
 	 * @return A pointer to the newly allocated buffer that contains the
