@@ -83,6 +83,11 @@ protected:
 
 	virtual COWIntrusiveCountableBase* clone() const = 0;
 
+	RefCount getRefCount() const
+	{
+		return m_usecount;
+	}
+
 public:
 	inline friend void COWIntrusiveReferenceAddRef(COWIntrusiveCountableBase * p)
 	{
@@ -105,7 +110,7 @@ public:
 	{
 		// this needs to happen first to avoid a race condition between 
 		// another thread deleting the object and this one making a copy.
-		T* tmp = p->clone();
+		T* tmp = dynamic_cast<T*>(p->clone());
 		if (p->m_usecount.decAndTest())
 		{
 			// only copy--don't need to clone, also not a race condition.
@@ -117,6 +122,8 @@ public:
 		else
 		{
 			// need to become unique
+			if (tmp) COWIntrusiveReferenceAddRef(tmp);
+
 			return tmp;
 		}
 	}
