@@ -32,8 +32,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OWBI1_OW_FWD_HPP_INCLUDE_GUARD_
-#define OWBI1_OW_FWD_HPP_INCLUDE_GUARD_
+#ifndef OWBI1_FWD_HPP_INCLUDE_GUARD_
+#define OWBI1_FWD_HPP_INCLUDE_GUARD_
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMFwd.hpp"
