@@ -1,27 +1,9 @@
-OpenWBEM Authors file
--------------------------------------------------------------------------------
-
-I would imagine that a typical AUTHORS file would just contain a list of the
-developers that pulled the whole thing together. I'm going to use it as a forum
-for expressing my appreciation for all the hard work and diligence that has
-been put in by the developers that put together the initial release of OpenWBEM.
-Thanks to these guys, the initial release only took us about 3 months to put
-together. I've been developing software now for about 15 years, and these 
-people are some of the finest developers I've ever had the privilege of working
-with.
-
-            Thanks Guys!
-               Jon Carey
-               
--------------------------------------------------------------------------------
-* ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * ! * !
--------------------------------------------------------------------------------
-Programmers Extraordinaire and Developers of the Initial OpenWBEM Release (in
-alphabetical order):
-
-   Bart Whiteley
-   Calvin Gaisford
-   Dan Nuffer
-   Shane Smit
-   Stan Covington
+Jon Carey
+Bart Whiteley
+Calvin Gaisford
+Dan Nuffer
+Shane Smit
+Stan Covington
+Markus Mueller
+Matthias Hoelzer-Kluepfel
    
