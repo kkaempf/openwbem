@@ -85,7 +85,7 @@ HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 		)
 		: 
 		(
-			SSLClientCtxRef()
+			SSLClientCtxRef(0)
 		)
 	)
 	, m_requestMethod("M-POST"), m_authRequired(false)
