@@ -198,7 +198,7 @@ fi
 %Files
 %defattr(-,root,root)
 %doc README TODO AUTHORS COPYING ChangeLog INSTALL LICENSE
-%doc doc/*
+%doc doc/{*.HOWTO,*.txt,*.html,HowToCreateAMinimalOpenWBEM,OpenWBEM-pg.sxw,PerlIFC.sxw,pg.tex}
 %dir %{prefix}/lib/openwbem
 %{prefix}/lib/openwbem/*
 %dir %{prefix}/libexec/openwbem
