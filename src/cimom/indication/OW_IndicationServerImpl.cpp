@@ -692,6 +692,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
         OW_String key = curClassName;
 
         key.toLowerCase();
+
         {
             OW_MutexLock lock(m_subGuard);
             m_env->logDebug(format("searching for key %1", key));
@@ -702,28 +703,27 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
         }
 
         OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
-        if (!prop)
-            return;
-        OW_CIMValue v = prop.getValue();
-        if (!v)
-            return;
-        if (v.getType() != OW_CIMDataType::EMBEDDEDINSTANCE)
-            return;
+        if (prop)
+		{
+			OW_CIMValue v = prop.getValue();
+			if (v && v.getType() == OW_CIMDataType::EMBEDDEDINSTANCE)
+			{
+				OW_CIMInstance embed;
+				v.get(embed);
+				key += ":";
+				key += embed.getClassName();
+				key.toLowerCase();
 
-        OW_CIMInstance embed;
-        v.get(embed);
-        key += ":";
-        key += embed.getClassName();
-        key.toLowerCase();
-
-        {
-            OW_MutexLock lock(m_subGuard);
-            m_env->logDebug(format("searching for key %1", key));
-            std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
-                m_subscriptions.equal_range(key);
-            m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
-            _processIndicationRange(instanceArg, instNS, range.first, range.second);
-        }
+				{
+					OW_MutexLock lock(m_subGuard);
+					m_env->logDebug(format("searching for key %1", key));
+					std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+						m_subscriptions.equal_range(key);
+					m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
+					_processIndicationRange(instanceArg, instNS, range.first, range.second);
+				}
+			}
+		}
 
         OW_CIMClass cc;
         try
