@@ -289,7 +289,7 @@ namespace ExceptionDetail
 #else
 	typedef int (*posix_fct)(int, char *, ::std::size_t);
 	typedef char * (*gnu_fct)(int, char *, ::std::size_t);
-	typedef char * (*aix_fct)(int, char *, int);
+	typedef int (*aix_fct)(int, char *, int);
 
 	struct dummy
 	{
