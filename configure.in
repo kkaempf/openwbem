@@ -607,12 +607,12 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 			# Try to use $ssldir/lib if it exists, otherwise
 			# $ssldir
 			if test -d "$ssldir/lib" ; then
-				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
+				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib $SSL_LIBS"
 				if test ! -z "$need_dash_r" ; then
 					LDFLAGS="$LDFLAGS -R$ssldir/lib"
 				fi
 			else
-				LDFLAGS="$saved_LDFLAGS -L$ssldir"
+				LDFLAGS="$saved_LDFLAGS -L$ssldir $SSL_LIBS"
 				if test ! -z "$need_dash_r" ; then
 					LDFLAGS="$LDFLAGS -R$ssldir"
 				fi
