@@ -357,9 +357,10 @@ namespace
 	class CIMObjectPathXMLOutputter : public CIMObjectPathResultHandlerIFC
 	{
 	public:
-		CIMObjectPathXMLOutputter(ostream& ostr_, const String& host)
+		CIMObjectPathXMLOutputter(ostream& ostr_, const String& host, const String& ns)
 		: ostr(ostr_)
 		, m_host(host)
+		, m_namespace(ns)
 		{}
 	protected:
 		virtual void doHandle(const CIMObjectPath &cop_)
@@ -383,6 +384,11 @@ namespace
 			}
 			else
 			{
+				// make sure the namespace is set
+				if (cop.getNameSpace().empty())
+				{
+					cop.setNameSpace(m_namespace);
+				}
 				CIMInstancePathtoXML(cop, ostr);
 			}
 			ostr << "</OBJECTPATH>";
@@ -391,6 +397,7 @@ namespace
 	private:
 		ostream& ostr;
 		String m_host;
+		String m_namespace;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -622,7 +629,7 @@ XMLExecute::associatorNames(ostream& ostr, CIMXMLParser& parser,
 		resultClass = params[2].val.toString();
 	}
 	ostr << "<IRETURNVALUE>";
-	CIMObjectPathXMLOutputter handler(ostr, getHost());
+	CIMObjectPathXMLOutputter handler(ostr, getHost(), ns);
 	hdl.associatorNames(ns, objectName, handler, assocClass, resultClass,
 		params[3].val.toString(), params[4].val.toString());
 	ostr << "</IRETURNVALUE>";
@@ -1223,7 +1230,7 @@ XMLExecute::referenceNames(ostream& ostr, CIMXMLParser& parser,
 		resultClass = params[1].val.toString();
 	}
 	ostr << "<IRETURNVALUE>";
-	CIMObjectPathXMLOutputter handler(ostr, getHost());
+	CIMObjectPathXMLOutputter handler(ostr, getHost(), ns);
 	hdl.referenceNames(ns, path, handler, resultClass, params[2].val.toString());
 	ostr << "</IRETURNVALUE>";
 }
