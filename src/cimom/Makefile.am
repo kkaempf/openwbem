@@ -11,12 +11,12 @@ $(CXXBINLINKFLAGS) \
 -o owcimomd
 
 owcimomd_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \
--L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/db/db -lowdb $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 owcimomd_SOURCES = \
@@ -29,6 +29,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/cimom/common
 
+if OW_STATIC_LINKING
 #use this rule to create the data dir
 install-exec-local: install-static-cimom-main
 	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
@@ -40,4 +41,10 @@ install-static-cimom-main : $(owcimomd_OBJECTS)
 		$(INSTALL_PROGRAM) libowcimomd_main.a $(DESTDIR)$(libdir); \
 	fi
 
-# FIXME! Add a clean rule to remove: libowcimomd_main.a
+clean-local:
+	rm -f libowcimomd_main.a
+else
+#use this rule to create the data dir
+install-exec-local:
+	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
+endif
