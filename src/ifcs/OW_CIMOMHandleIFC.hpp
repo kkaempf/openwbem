@@ -446,7 +446,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-		OW_StringArray* propertyList = 0) = 0;
+		const OW_StringArray* propertyList = 0) = 0;
 
 	/**
 	 * Add the specified CIM instance to the specified namespace.

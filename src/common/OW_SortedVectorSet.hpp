@@ -84,10 +84,10 @@ public:
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
 	}
 
-	iterator begin() const { return m_impl->begin(); }
-	iterator end() const { return m_impl->end(); }
-	reverse_iterator rbegin() const { return m_impl->rbegin(); }
-	reverse_iterator rend() const { return m_impl->rend(); }
+	const_iterator begin() const { return m_impl->begin(); }
+	const_iterator end() const { return m_impl->end(); }
+	const_reverse_iterator rbegin() const { return m_impl->rbegin(); }
+	const_reverse_iterator rend() const { return m_impl->rend(); }
 	bool empty() const { return m_impl->empty(); }
 	size_type size() const { return m_impl->size(); }
 	size_type max_size() const { return m_impl->max_size(); }
