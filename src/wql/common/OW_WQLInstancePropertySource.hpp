@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class WQLInstancePropertySource : public WQLPropertySource
+class OW_WQLCOMMON_API WQLInstancePropertySource : public WQLPropertySource
 {
 public:
 	WQLInstancePropertySource(const CIMInstance& ci_,

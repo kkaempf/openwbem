@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(TypeMismatch);
+OW_DECLARE_APIEXCEPTION(TypeMismatch, OW_WQLCOMMON_API)
 /** Tag used to force invocation of the integer value form of the WQLOperand
   Constructor.
  */
@@ -103,7 +103,7 @@ Operands are of one of the following types:
 <li>PROPERTY_NAME- the name of a property (e.g., count, size)</li>
 </ul>
 */
-class WQLOperand
+class OW_WQLCOMMON_API WQLOperand
 {
 public:
 	/** Defines allowed types of WQL operands (NULL_VALUE, INTEGER_VALUE,
@@ -254,7 +254,7 @@ private:
 	String _string;
 	Type _type;
 };
-bool operator==(const WQLOperand& x, const WQLOperand& y);
+OW_WQLCOMMON_API bool operator==(const WQLOperand& x, const WQLOperand& y);
 
 } // end namespace OpenWBEM
 

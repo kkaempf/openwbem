@@ -52,7 +52,7 @@
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"
 
-int owwqlerror( const char* s);
+void owwqlerror( const char* s);
 extern "C" int owwqllex();
 
 using namespace OpenWBEM;

@@ -37,7 +37,7 @@
 namespace OpenWBEM
 {
 
-class WQLCompile
+class OW_WQLCOMMON_API WQLCompile
 {
 public:
 	struct term_el
@@ -168,8 +168,8 @@ private:
 	Array<term_el> terminal_heap;
 	Array<eval_el> eval_heap;
 };
-bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
-bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
+OW_WQLCOMMON_API bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
+OW_WQLCOMMON_API bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 
 } // end namespace OpenWBEM
 

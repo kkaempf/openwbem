@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 class stmt;
-class WQLImpl : public WQLIFC
+class OW_WQL_API WQLImpl : public WQLIFC
 {
 public:
 	virtual ~WQLImpl();

@@ -241,7 +241,7 @@ class aExprConst_HEXCONST;
 class aExprConst_TRUEP;
 class aExprConst_FALSEP;
 class aExprConst_NULLP;
-class WQLVisitor
+class OW_WQL_API WQLVisitor
 {
 	public:
 		virtual ~WQLVisitor() {}

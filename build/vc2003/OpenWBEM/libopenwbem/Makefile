@@ -187,7 +187,8 @@ IFCOBJS = \
 	$(OBJDIR)\OW_SelectableIFC.obj \
 	$(OBJDIR)\OW_SerializableIFC.obj \
 	$(OBJDIR)\OW_ServiceEnvironmentIFC.obj \
-	$(OBJDIR)\OW_ServiceIFC.obj 
+	$(OBJDIR)\OW_ServiceIFC.obj \
+	$(OBJDIR)\OW_WQLIFC.obj
 
 $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATH) /DLL /DEBUG \
@@ -614,5 +615,8 @@ $(OBJDIR)\OW_ServiceEnvironmentIFC.obj: $(IFCSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(IFCSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_ServiceIFC.obj: $(IFCSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(IFCSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_WQLIFC.obj: $(IFCSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(IFCSRCDIR)\$(@B).cpp
 

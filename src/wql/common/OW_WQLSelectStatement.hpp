@@ -51,7 +51,7 @@ namespace OpenWBEM
 	implementation of evaluateWhereClause() for details.
 */
 class WQLCompile;
-class WQLSelectStatement
+class OW_WQLCOMMON_API WQLSelectStatement
 {
 public:
 	WQLSelectStatement();

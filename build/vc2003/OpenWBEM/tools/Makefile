@@ -84,6 +84,19 @@ $(EXECWQLEXE)
 ALL: $(EXES)
 
 #
+# owexecwql
+#
+$(EXECWQLEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
+	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib \
+	libeay32.lib ssleay32.lib 
+	
+$(OBJDIR)\$(EXECWQL).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
+
+#
 # owmofc
 #
 $(MOFCEXE): $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj $(TARGETDIR)

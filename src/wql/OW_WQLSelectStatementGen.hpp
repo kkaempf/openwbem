@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class WQLSelectStatementGen : public WQLVisitor
+class OW_WQL_API WQLSelectStatementGen : public WQLVisitor
 {
 public:
 	WQLSelectStatementGen();

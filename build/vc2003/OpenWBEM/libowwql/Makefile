@@ -89,9 +89,15 @@ $(OBJDIR)\OW_WQLParser.obj: $(@B).cpp
 OW_WQLParser.cpp: $(WQLSRCDIR)\OW_WQLParser.yy
 	-@del OW_WQLParser.cpp
 	-@del OW_WQLParser.h
+	-@echo #include "OW_config.h" 1 > OW_WQLParser.cpp
 	bison -y -d -powwql $(WQLSRCDIR)\OW_WQLParser.yy
-	rename y.tab.c OW_WQLParser.cpp
 	rename y.tab.h OW_WQLParser.h
+	sed "/\#line/d" y.tab.c >> OW_WQLParser.cpp
+	-@del y.tab.c
+
+#	sed "s/\\/\\\\/g" y.tab.c >> OW_WQLParser.cpp
+#	sed "/\#line/d" y.tab.c >> OW_WQLParser.cpp
+#	rename y.tab.c OW_WQLParser.cpp
 
 $(OBJDIR)\OW_WQLLexer.obj: $(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(@B).cpp

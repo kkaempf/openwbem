@@ -40,7 +40,7 @@ namespace OpenWBEM
 {
 
 class String;
-String WQLRemoveStringEscapes(const String& str);
+OW_WQL_API String WQLRemoveStringEscapes(const String& str);
 
 } // end namespace OpenWBEM
 

@@ -225,6 +225,18 @@
 #define HDB_API OW_IMPORT
 #endif
 
+#ifdef OW_WQL_BUILD
+#define WQL_API OW_EXPORT
+#else
+#define WQL_API OW_IMPORT
+#endif
+
+#ifdef OW_WQLCOMMON_BUILD
+#define WQLCOMMON_API OW_EXPORT
+#else
+#define WQLCOMMON_API OW_IMPORT
+#endif
+
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
 #endif

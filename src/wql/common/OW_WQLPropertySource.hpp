@@ -41,7 +41,7 @@ namespace OpenWBEM
 	this class to obtain real values for property names used in the where
 	clause.
 */
-class WQLPropertySource
+class OW_WQLCOMMON_API WQLPropertySource
 {
 public:
 	/** Virtual destructor.

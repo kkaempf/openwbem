@@ -49,7 +49,7 @@
 namespace OpenWBEM
 {
 
-class WQLProcessor : public WQLVisitor
+class OW_WQL_API WQLProcessor : public WQLVisitor
 {
 public:
 	WQLProcessor(const CIMOMHandleIFCRef& hdl, const String& ns);
@@ -756,7 +756,8 @@ private:
 	bool classIsDerivedFrom(const String& cls,
 		const String& className);
 };
-bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
+
+OW_WQL_API bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
 
 } // end namespace OpenWBEM
 
