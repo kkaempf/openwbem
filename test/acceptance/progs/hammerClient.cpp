@@ -255,6 +255,7 @@ public:
 		catch (...)
 		{
 			reportError(m_operation, m_param);
+			throw;
 		}
 	}
 
@@ -908,7 +909,7 @@ main(int argc, char* argv[])
 		else if (threadModeArg.startsWith("pool"))
 		{
 			OW_UInt32 poolSize = threadModeArg.substring(threadModeArg.indexOf('=') + 1).toUInt32();
-			pool = new OW_ThreadPool(poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
+			pool = new OW_ThreadPool(OW_ThreadPool::FIXED_SIZE, poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
 			threadMode = POOL;
 		}
 		else if (threadModeArg == "thread")
