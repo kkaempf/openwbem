@@ -269,7 +269,7 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 //
 //     for(size_t i = 0; i < dirEntries.size(); i++)
 //     {
-//         if(!dirEntries[i].endsWith(".so"))
+//         if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 //         {
 //             continue;
 //         }
@@ -393,7 +393,7 @@ OW_NPIProviderIFC::getProvider(
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
-	libName += ".so";
+	libName += OW_SHAREDLIB_EXTENSION;
 
 	env->getLogger()->logDebug(format("OW_NPIProviderIFC::getProvider loading library: %1",
 		libName));

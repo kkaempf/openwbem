@@ -209,7 +209,7 @@ OW_SimpleCppProviderIFC::getProvider(
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
-	libName += ".so";
+	libName += OW_SHAREDLIB_EXTENSION;
 
 	env->getLogger()->logDebug(format("OW_SimpleCppProviderIFC::getProvider loading library: %1",
 		libName));
