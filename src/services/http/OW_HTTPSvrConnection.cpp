@@ -334,7 +334,9 @@ OW_HTTPSvrConnection::beginPostResponse()
 		addHeader( "Transfer-Encoding", "chunked");
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
 		addHeader("Trailers", 
-			m_respHeaderPrefix + "CIMError, CIMErrorCode, CIMErrorDescription");
+			m_respHeaderPrefix + "CIMError, "
+			+ m_respHeaderPrefix + "CIMErrorCode, "
+			+ m_respHeaderPrefix + "CIMErrorDescription");
 		sendHeaders(m_resCode);
 	}
 }

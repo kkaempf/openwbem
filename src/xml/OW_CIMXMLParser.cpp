@@ -376,6 +376,13 @@ OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId) const
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_CIMXMLParser::mustGetNextTag()
+{
+	getNextTag(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_CIMXMLParser::mustGetNext()
 {
 	getNext(true);
@@ -386,6 +393,20 @@ void
 OW_CIMXMLParser::mustGetNext(OW_CIMXMLParser::tokenId beginTok)
 {
 	getNext(beginTok, true);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLParser::getNextTag(bool throwIfError)
+{
+	nextToken();
+	skipData();
+	if (!m_good && throwIfError)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			format("OW_CIMXMLParser::getNext() failed.  parser = %1",
+				*this).c_str());
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

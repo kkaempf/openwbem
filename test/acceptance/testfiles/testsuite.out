@@ -6346,6 +6346,127 @@ Qualifier borgishness : string = "", Scope(class,property), Flavor(DisableOverri
 *** Doing deleteClass() ***
 *** Doing deleteClass() ***
 *** Doing deleteQualifier() ***
+*** Doing testDynInstances() ***
+<CIM>
+  <INSTANCEPATH>
+    <NAMESPACEPATH>
+      <HOST>
+        127.0.0.1
+      </HOST>
+      <LOCALNAMESPACEPATH>
+        <NAMESPACE NAME="root">
+        </NAMESPACE>
+      </LOCALNAMESPACEPATH>
+    </NAMESPACEPATH>
+    <INSTANCENAME CLASSNAME="TestInstance">
+      <KEYBINDING NAME="Name">
+        <KEYVALUE VALUETYPE="string">
+          one
+        </KEYVALUE>
+      </KEYBINDING>
+    </INSTANCENAME>
+  </INSTANCEPATH>
+  <INSTANCE CLASSNAME="TestInstance">
+    <PROPERTY NAME="Name" TYPE="string">
+      <VALUE>
+        one
+      </VALUE>
+    </PROPERTY>
+    <PROPERTY.ARRAY NAME="Params" TYPE="string">
+      <VALUE.ARRAY>
+        <VALUE>
+          one
+        </VALUE>
+        <VALUE>
+          two
+        </VALUE>
+      </VALUE.ARRAY>
+    </PROPERTY.ARRAY>
+  </INSTANCE>
+  
+
+</CIM>
+<CIM>
+  <INSTANCEPATH>
+    <NAMESPACEPATH>
+      <HOST>
+        127.0.0.1
+      </HOST>
+      <LOCALNAMESPACEPATH>
+        <NAMESPACE NAME="root">
+        </NAMESPACE>
+      </LOCALNAMESPACEPATH>
+    </NAMESPACEPATH>
+    <INSTANCENAME CLASSNAME="TestInstance">
+      <KEYBINDING NAME="Name">
+        <KEYVALUE VALUETYPE="string">
+          two
+        </KEYVALUE>
+      </KEYBINDING>
+    </INSTANCENAME>
+  </INSTANCEPATH>
+  <INSTANCE CLASSNAME="TestInstance">
+    <PROPERTY NAME="Name" TYPE="string">
+      <VALUE>
+        two
+      </VALUE>
+    </PROPERTY>
+    <PROPERTY.ARRAY NAME="Params" TYPE="string">
+      <VALUE.ARRAY>
+        <VALUE>
+          A
+        </VALUE>
+        <VALUE>
+          B
+        </VALUE>
+        <VALUE>
+          C
+        </VALUE>
+      </VALUE.ARRAY>
+    </PROPERTY.ARRAY>
+  </INSTANCE>
+  
+
+</CIM>
+<CIM>
+  <INSTANCEPATH>
+    <NAMESPACEPATH>
+      <HOST>
+        127.0.0.1
+      </HOST>
+      <LOCALNAMESPACEPATH>
+        <NAMESPACE NAME="root">
+        </NAMESPACE>
+      </LOCALNAMESPACEPATH>
+    </NAMESPACEPATH>
+    <INSTANCENAME CLASSNAME="TestInstance">
+      <KEYBINDING NAME="Name">
+        <KEYVALUE VALUETYPE="string">
+          one
+        </KEYVALUE>
+      </KEYBINDING>
+    </INSTANCENAME>
+  </INSTANCEPATH>
+  <INSTANCE CLASSNAME="TestInstance">
+    <PROPERTY NAME="Name" TYPE="string">
+      <VALUE>
+        one
+      </VALUE>
+    </PROPERTY>
+    <PROPERTY.ARRAY NAME="Params" TYPE="string">
+      <VALUE.ARRAY>
+        <VALUE>
+          uno
+        </VALUE>
+        <VALUE>
+          dos
+        </VALUE>
+      </VALUE.ARRAY>
+    </PROPERTY.ARRAY>
+  </INSTANCE>
+  
+
+</CIM>
 *** Doing invokeMethod() ***
 invokeMethod: setstate("off")
 *** Doing invokeMethod() ***

@@ -89,6 +89,9 @@ Install()
 	# for client driver and acl test.
 	ln -sf $BUILDDIR/test/c++providers/method/libmethodtest.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
+
+	ln -sf $BUILDDIR/test/c++providers/instance/libtestinstance.so  \
+		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 		
 	
 	if [ "$OWSYMLINKS" = "1" ]; then
@@ -341,6 +344,9 @@ TestSuite()
 		echo "Importing mof files for test"
 		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
+			ExitWithFail "TestSuite: MOF compiler exited with error."
+		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
+			$TOPSRCDIR/test/c++providers/instance/testinstance.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \

@@ -117,7 +117,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TRANSLATE));
 	}
 
-	parser.getNext();
+	parser.getNextTag();
 	if(parser.tokenIs(OW_CIMXMLParser::E_SCOPE))
 	{
 		// process optional scope child
@@ -138,7 +138,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		{
 			cimQualifier.addScope(OW_CIMScope::ANY); // This will erase all the others.
 		}
-		parser.mustGetNext();
+		parser.mustGetNextTag();
 		parser.mustGetEndTag();
 	}
 
@@ -197,7 +197,7 @@ OW_XMLQualifier::getQualifierName(OW_CIMXMLParser& parser)
 				"Cannot find value for qualifier name");
 	}
 	OW_String name = parser.getData();
-	parser.mustGetNext();
+	parser.mustGetNextTag();
 	parser.mustGetEndTag();
 	return name;
 }

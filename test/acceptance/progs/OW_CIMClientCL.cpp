@@ -398,6 +398,94 @@ getClass(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
+testDynInstances(OW_CIMOMHandleIFC& hdl)
+{
+	testStart("testDynInstances");
+	try
+	{
+		OW_CIMClass cc = hdl.getClass("root/testsuite", "testinstance");
+		OW_CIMInstance ci = cc.newInstance();
+		ci.setProperty("name", OW_CIMValue(OW_String("one")));
+		OW_StringArray params;
+		params.push_back("one");
+		params.push_back("two");
+		ci.setProperty("params", OW_CIMValue(params));
+		hdl.createInstance("root/testsuite", ci);
+		OW_CIMObjectPath cop1(ci);
+		ci = hdl.getInstance("root/testsuite", cop1);
+		OW_TempFileStream tfs;
+		tfs << "<CIM>";
+		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
+			OW_CIMtoXMLFlags::localOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs << "</CIM>"; 
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
+
+		ci = cc.newInstance();
+		ci.setProperty("name", OW_CIMValue(OW_String("two")));
+		params.clear();
+		params.push_back("A");
+		params.push_back("B");
+		params.push_back("C");
+		ci.setProperty("params", OW_CIMValue(params));
+		hdl.createInstance("root/testsuite", ci);
+		OW_CIMObjectPath cop2(ci);
+		ci = hdl.getInstance("root/testsuite", cop2);
+		tfs.reset();
+		tfs << "<CIM>";
+		OW_CIMtoXML(ci, tfs, cop2, OW_CIMtoXMLFlags::isNotInstanceName,
+			OW_CIMtoXMLFlags::localOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs << "</CIM>"; 
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
+
+		params.clear();
+		params.push_back("uno");
+		params.push_back("dos");
+		ci = cc.newInstance();
+		ci.setProperty("name", OW_CIMValue(OW_String("one")));
+		ci.setProperty("params", OW_CIMValue(params));
+		hdl.modifyInstance("root/testsuite", ci);
+		ci = hdl.getInstance("root/testsuite", cop1);
+		tfs.reset();
+		tfs << "<CIM>";
+		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
+			OW_CIMtoXMLFlags::localOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs << "</CIM>"; 
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
+
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("root/testsuite",
+			"testinstance");
+		OW_ASSERT(enu.numberOfElements() == 2);
+
+		hdl.deleteInstance("root/testsuite", cop1);
+		enu = hdl.enumInstancesE("root/testsuite", "testinstance");
+		OW_ASSERT(enu.numberOfElements() == 1);
+
+		hdl.deleteInstance("root/testsuite", cop2);
+		enu = hdl.enumInstancesE("root/testsuite", "testinstance");
+		OW_ASSERT(enu.numberOfElements() == 0);
+		
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_String& newInstance)
 {
 	testStart("createInstance");
@@ -1700,6 +1788,8 @@ main(int argc, char* argv[])
 		deleteClass(rch, "EXP_BionicComputerSystem");
 		deleteClass(rch, "EXP_BionicComputerSystem2");
 		deleteQualifier(rch);
+
+		testDynInstances(rch);
 
 		invokeMethod(rch, 1);
 		invokeMethod(rch, 2);

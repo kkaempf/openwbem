@@ -2141,35 +2141,29 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 
 	while(!className.empty())
 	{
-		try
+		if(m_mStore.getCIMClass(ns, className, cc) != OW_CIMException::SUCCESS)
 		{
-			if(m_mStore.getCIMClass(ns, className, cc) != OW_CIMException::SUCCESS)
-			{
-				break;
-			}
-
-			OW_CIMQualifier cq = cc.getQualifier(
-				OW_CIMQualifier::CIM_QUAL_PROVIDER);
-
-			if(cq)
-			{
-				try
-				{
-					return m_provManager->getInstanceProvider(
-						createProvEnvRef(ch), cq);
-				}
-				catch(...)
-				{
-					// Ignore?
-				}
-			}
-
-			className = cc.getSuperClass();
+			break;
 		}
-		catch(...)
+
+		OW_CIMQualifier cq = cc.getQualifier(
+			OW_CIMQualifier::CIM_QUAL_PROVIDER);
+
+		if(cq)
 		{
-			className = OW_String();
+			OW_InstanceProviderIFCRef instancep;
+			instancep =  m_provManager->getInstanceProvider(
+				createProvEnvRef(ch), cq);
+			if(!instancep)
+			{
+				OW_String msg("Unknown provider: ");
+				msg += cq.getValue().toString();
+				OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+			}
+			return instancep;
 		}
+
+		className = cc.getSuperClass();
 	}
 
 	return OW_InstanceProviderIFCRef(NULL);

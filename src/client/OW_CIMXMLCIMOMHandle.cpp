@@ -174,7 +174,7 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		if (isIntrinsic)
 		{
-			parser.mustGetNext(); // pass over <IRETURNVALUE>
+			parser.mustGetNextTag(); // pass over <IRETURNVALUE>
 		}
 		op(parser);
 		if (isIntrinsic)
@@ -779,7 +779,7 @@ namespace
 				{
 					type = "string";
 				}
-				parser.getNext();
+				parser.getNextTag();
 				
 				if (outParams.size() <= outParamCount)
 				{

@@ -133,9 +133,11 @@ public:
 	void getChild();
 	void mustGetChild(tokenId tId);
 	void mustGetChild();
+	void getNextTag(bool throwIfError = false);
 	void getNext(tokenId beginTok, bool throwIfError = false);
 	void getNext(bool throwIfError = false);
 	void mustGetNext();
+	void mustGetNextTag();
 	void mustGetNext(tokenId beginTok);
 	void mustGetEndTag();
 

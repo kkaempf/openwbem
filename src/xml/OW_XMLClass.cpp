@@ -63,7 +63,7 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 		{
 			nameSpace += "/" + pname;
 		}
-		parser.mustGetNext();
+		parser.mustGetNextTag();
 		parser.mustGetEndTag();
 	}
 	return nameSpace;

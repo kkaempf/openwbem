@@ -152,7 +152,7 @@ OW_XMLExecute::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 			{
 				(*m_ostrEntity) << ostrEnt.rdbuf();
 			}
-			parser.getNext();
+			parser.getNextTag();
 			parser.mustGetEndTag();
 		} // while
 
@@ -276,7 +276,7 @@ OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
 			parameterType = "string";
 		}
 
-		parser.getNext();
+		parser.getNextTag();
 		int token = parser.getToken();
 		if (token != OW_CIMXMLParser::E_VALUE
 			&& token != OW_CIMXMLParser::E_VALUE_REFERENCE
@@ -386,7 +386,7 @@ namespace
 					format("Parameter %1 is not a valid parameter", name).c_str());
 			}
 			
-			parser.getNext();
+			parser.getNextTag();
 
 			if (parser.tokenIs(OW_CIMXMLParser::E_IPARAMVALUE))
 			{
@@ -448,8 +448,8 @@ namespace
 						if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 						{
 							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag.",
-									i->name).c_str());
+								format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag. %2",
+									i->name, parser).c_str());
 						}
 						i->isSet = true;
 						parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
