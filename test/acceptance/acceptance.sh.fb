@@ -178,7 +178,7 @@ WaitForLogResults()
   fi
   TEXT="$1"
   MAX_WAIT=$2
-  LINES_TO_SEARCH=20
+  LINES_TO_SEARCH=50
 
   if [ $# -gt 2 ]; then
     LINES_TO_SEARCH=$3
@@ -230,7 +230,7 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	WaitForLogResults 'CIMOM is now running' 60 20
+	WaitForLogResults 'CIMOM is now running' 60
 	if [ $WAIT_RESULTS -eq 0 ]
         then
           echo "The daemon should now be running."
@@ -269,7 +269,7 @@ RestartDaemon()
 		fi
 	fi
 	echo "Waiting for daemon to re-initialize"
-	WaitForLogResults 'CIMOM is now running' 60 20
+	WaitForLogResults 'CIMOM is now running' 60
 	if [ $WAIT_RESULTS -eq 0 ]
         then
           echo "The daemon should now be running."
