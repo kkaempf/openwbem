@@ -276,7 +276,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 		else if (FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
 		{
-			int error;
+			int error = 0;
 			socklen_t len = sizeof(error);
 			if (::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
 						&len) < 0)
