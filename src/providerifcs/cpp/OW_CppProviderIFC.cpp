@@ -43,6 +43,11 @@
 #include "OW_FileSystem.hpp"
 #include "OW_CppProxyProvider.hpp"
 #include "OW_NoSuchProviderException.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_Condition.hpp"
 
 namespace OpenWBEM
 {
@@ -55,6 +60,47 @@ namespace
 	const String COMPONENT_NAME("ow.provider.cpp.ifc");
 }
 const char* const CppProviderIFC::CREATIONFUNC = "createProvider";
+
+//////////////////////////////////////////////////////////////////////////////
+class CppProviderIFC::CppProviderInitializationHelper : public IntrusiveCountableBase
+{
+public:
+
+	explicit CppProviderInitializationHelper(const CppProviderBaseIFCRef& provider)
+		: m_initialized(false)
+		, m_provider(provider)
+	{
+
+	}
+
+	void waitUntilInitialized() const
+	{
+		NonRecursiveMutexLock l(m_initializedGuard);
+		while (!m_initialized)
+		{
+			m_initializedCond.wait(l);
+		}
+	}
+	
+	void initialize(const ProviderEnvironmentIFCRef& env)
+	{
+		m_provider->initialize(env);
+		NonRecursiveMutexLock l(m_initializedGuard);
+		m_initialized = true;
+		m_initializedCond.notifyAll();
+	}
+
+	CppProviderBaseIFCRef getProvider() const
+	{
+		return m_provider;
+	}
+private:
+	bool m_initialized;
+	mutable NonRecursiveMutex m_initializedGuard;
+	mutable Condition m_initializedCond;
+	CppProviderBaseIFCRef m_provider;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 CppProviderIFC::CppProviderIFC()
 	: ProviderIFCBaseIFC()
@@ -72,7 +118,7 @@ CppProviderIFC::~CppProviderIFC()
 		ProviderMap::iterator it = m_provs.begin();
 		while (it != m_provs.end())
 		{
-			it->second.setNull();
+			it->second = 0;
 			it++;
 		}
 	
@@ -407,11 +453,11 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 							" loaded polled provider from lib: %1 -"
 							" initializing", libName));
 					}
-
-					p->initialize(env);
+					CppProviderInitializationHelperRef p2(new CppProviderInitializationHelper(p));
+					p2->initialize(env);
 					p->setPersist(true);
 					m_noUnloadProviders.append(p);
-					m_provs[providerid] = p;
+					m_provs[providerid] = p2;
 				}
 
 				CppInstanceProviderIFC* p_ip = p->getInstanceProvider();
@@ -566,13 +612,21 @@ CppProviderIFC::getProvider(
 	const ProviderEnvironmentIFCRef& env, const char* provIdString,
 	StoreProviderFlag storeP, InitializeProviderFlag initP)
 {
+	OW_ASSERT((initP == initializeProvider && storeP == storeProvider) || (initP == dontInitializeProvider && storeP == dontStoreProvider));
+
 	MutexLock ml(m_guard);
 
 	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
 	if (it != m_provs.end())
 	{
-		return it->second;
+		// make a copy in case the map gets modified when we unlock m_guard
+		CppProviderInitializationHelperRef prov(it->second);
+		// do this to prevent a deadlock
+		ml.release();
+		// another thread may be initializing the provider, wait until it's done.
+		prov->waitUntilInitialized();
+		return prov->getProvider();
 	}
 
 	String libName;
@@ -616,15 +670,23 @@ CppProviderIFC::getProvider(
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc successfully loaded"
 		" library %1 for provider %2", libName, provId));
 
-	if (initP == initializeProvider)
+	if (initP == initializeProvider && storeP == storeProvider)
 	{
+		CppProviderInitializationHelperRef provInitHelper(new CppProviderInitializationHelper(rval));
+
+		m_provs[provId] = provInitHelper;
+		
+		// now it's in the map, we can unlock the mutex protecting the map
+		ml.release();
+
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc calling initialize"
 			" for provider %1", provId));
 
-		rval->initialize(env); // Let provider initialize itself
+		provInitHelper->initialize(env); // Let provider initialize itself
 
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: provider %1"
 			" loaded and initialized", provId));
+
 	}
 	else
 	{
@@ -632,10 +694,6 @@ CppProviderIFC::getProvider(
 			" loaded but not initialized", provId));
 	}
 
-	if (storeP == storeProvider)
-	{
-		m_provs[provId] = rval;
-	}
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -663,15 +721,15 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 		  iter != m_provs.end();)
 	{
 		// If this is not a persistent provider, see if we can unload it.
-		if (!iter->second->getPersist())
+		if (!iter->second->getProvider()->getPersist())
 		{
-			DateTime provDt = iter->second->getLastAccessTime();
+			DateTime provDt = iter->second->getProvider()->getLastAccessTime();
 			provDt.addMinutes(iTimeWindow);
-			if (provDt < dt && iter->second->canUnload())
+			if (provDt < dt && iter->second->getProvider()->canUnload())
 			{
 				OW_LOG_INFO(env->getLogger(COMPONENT_NAME), Format("Unloading Provider %1",
 					iter->first));
-				iter->second.setNull();
+				iter->second = 0;
 				m_provs.erase(iter);
 			}
 		}

@@ -100,7 +100,13 @@ protected:
 		);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 private:
-	typedef Map<String, CppProviderBaseIFCRef> ProviderMap;
+	// To prevent a potential deadlock situation, we can't call initialize() while m_guard is locked.
+	// However, that presents a race condition for initializing providers, so each CppProviderBaseIFCRef
+	// has an associated condition to address that. The details are handled by this class.
+	class CppProviderInitializationHelper;
+	typedef IntrusiveReference<CppProviderInitializationHelper> CppProviderInitializationHelperRef;
+
+	typedef Map<String, CppProviderInitializationHelperRef> ProviderMap;
 	typedef Map<String, IndicationProviderIFCRef> IndicationProviderMap;
 	typedef Array<CppProviderBaseIFCRef> LoadedProviderArray;
 	enum StoreProviderFlag
@@ -113,6 +119,8 @@ private:
 		dontInitializeProvider,
 		initializeProvider
 	};
+	// REQUIRE: (initP == initializeProvider && storeP == storeProvider) || (initP == dontInitializeProvider && storeP == dontStoreProvider)
+	// i.e. if you initialize a provider, you must also store it.  If you don't initialize it, you can't store it.
 	CppProviderBaseIFCRef getProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString, StoreProviderFlag = storeProvider,
 		InitializeProviderFlag = initializeProvider);
