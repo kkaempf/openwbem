@@ -35,12 +35,8 @@
 
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
-#include "OW_ThreadImpl.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
 #include "OW_MutexImpl.hpp"
-#include <cstring>
 
 namespace OpenWBEM
 {
