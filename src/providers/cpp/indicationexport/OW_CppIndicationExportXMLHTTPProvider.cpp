@@ -57,41 +57,29 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 	const CIMInstance &indHandlerInst,
 	const CIMInstance &indicationInst)
 {
-	env->getLogger()->logDebug(format("CppIndicationExportXMLHTTPProvider "
-		"exporting indication.  Handler = %1, Indication = %2",
-		indHandlerInst.toString(), indicationInst.toString()));
+	LoggerRef logger = env->getLogger();
+	if (logger->getLogLevel() == E_DEBUG_LEVEL)
+	{
+		logger->logDebug(format("CppIndicationExportXMLHTTPProvider "
+			"exporting indication.  Handler = %1, Indication = %2",
+			indHandlerInst.toString(), indicationInst.toString()));
+	}
+
+	String listenerUrl;
+	indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
 	if (indHandlerInst.getClassName().
-			equalsIgnoreCase("CIM_IndicationHandlerXMLHTTP")
-		 || indHandlerInst.getClassName().
-			equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS")
-		 || indHandlerInst.getClassName().
-			equalsIgnoreCase("CIM_IndicationHandlerCIM-XML")
-		 || indHandlerInst.getClassName().
-			equalsIgnoreCase("CIM_IndicationHandlerCIMXML"))
+		 equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
 	{
-		String listenerUrl;
-		indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
-		if (indHandlerInst.getClassName().
-			 equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
+		URL url(listenerUrl);
+		if (!url.protocol.equals("https"))
 		{
-			URL url(listenerUrl);
-			if (!url.protocol.equals("https"))
-			{
-				url.protocol = "https";
-				listenerUrl = url.toString();
-			}
+			url.protocol = "https";
+			listenerUrl = url.toString();
 		}
-		IndicationExporter exporter(CIMProtocolIFCRef(
-			new HTTPClient(listenerUrl)));
-		exporter.exportIndication(ns, indicationInst);
 	}
-	else
-	{
-		env->getLogger()->logError(
-			format("CppIndicationExportXMLHTTPProvider::exportIndication "
-				"called with wrong indication handler class: %1",
-				indHandlerInst.getClassName()));
-	}
+	IndicationExporter exporter(CIMProtocolIFCRef(
+		new HTTPClient(listenerUrl)));
+	exporter.exportIndication(ns, indicationInst);
 }
 ///////////////////////////////////////////////////////////////////////////////
 // @return The class names of all the CIM_IndicationHandler sub-classes
@@ -100,10 +88,13 @@ StringArray
 CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 {
 	StringArray rv;
-	rv.append("CIM_IndicationHandlerXMLHTTP");
-	rv.append("CIM_IndicationHandlerXMLHTTPS");
-	rv.append("CIM_IndicationHandlerCIM-XML"); // new name in the 2.6 schema
+	rv.append("CIM_IndicationHandlerXMLHTTP"); // name in the 2.5 schema
+	rv.append("CIM_IndicationHandlerXMLHTTPS"); // used by OW 2.0 for HTTPS indications
 	rv.append("CIM_IndicationHandlerCIMXML"); // new name in the 2.6 schema
+	// new in the 2.8 schema
+	rv.append("CIM_ListenerDestination");
+	rv.append("CIM_ListenerDestinationCIMXML"); 
+
 	return rv;
 }
 } // end anonymous namespace
