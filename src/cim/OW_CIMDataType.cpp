@@ -333,7 +333,7 @@ CIMDataType::strToSimpleType(const String& strType_)
 	}
 	OW_String strType(strType_);
 	strType.toLowerCase();
-	// TODO: This function is heavily used.  See if creating a sorted array w/binary search would be faster.
+	// TODO: This function is heavily used.  Use a FSM to speed it up.
 	if(strType == "uint8")
 		return UINT8;
 	else if(strType == "sint8")
