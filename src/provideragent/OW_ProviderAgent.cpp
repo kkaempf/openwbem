@@ -128,6 +128,7 @@ private:
 
 const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"; 
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
+const char* const ProviderAgent::DynamicClassRetieval_opt = "provider_agent.dynamic_class_retrieval"; 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap, 
 							 Array<CppProviderBaseIFCRef> providers, 
@@ -148,8 +149,8 @@ ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap,
 	m_httpServer->setServiceEnvironment(env);
 	m_httpServer->startService();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
-	// the selectabls defined above.  We'll give these to the select engine thread
-	// below which will use them to run the select engine.
+	// the selectabls defined above.  We'll give these to the select engine 
+	// thread below which will use them to run the select engine.
 	m_httpListenPort = m_httpServer->getLocalHTTPAddress().getPort();
 	cerr << "listening on: " << m_httpListenPort << endl;
 	m_httpsListenPort = m_httpServer->getLocalHTTPSAddress().getPort();

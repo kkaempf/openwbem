@@ -42,6 +42,7 @@
 
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_Map.hpp"
 
 namespace OpenWBEM
@@ -55,19 +56,14 @@ using namespace WBEMFlags;
 class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-	enum LockingType
-	{
-		NONE, 
-		SWMR, 
-		SINGLE_THREADED
-	}; 
 	ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIFCRef> assocProvs, 
 							 Map<String, CppProviderBaseIFCRef> instProvs, 
 							 Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
 							 Map<String, CppProviderBaseIFCRef> methodProvs, 
-							 Map<String, CIMClass> cimclasses,
+							 ProviderAgentEnvironment::ClassCache& cimClasses, 
 							 ProviderEnvironmentIFCRef env,
-							 LockingType lt, 
+							 ProviderAgentEnvironment::LockingType lt, 
+							 ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
 							 UInt32 lockingTimeout); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
@@ -695,14 +691,14 @@ private:
 	class PALocker : public IntrusiveCountableBase
 	{
 	public: 
-		PALocker(LockingType lt, UInt32 timeout); 
+		PALocker(ProviderAgentEnvironment::LockingType lt, UInt32 timeout); 
 		~PALocker(); 
 		void getReadLock(); 
 		void getWriteLock(); 
 		void releaseReadLock();
 		void releaseWriteLock();
 	private: 
-		LockingType m_lt; 
+		ProviderAgentEnvironment::LockingType m_lt; 
 		Mutex* m_mutex; 
 		RWLocker* m_rwlocker; 
 		UInt32 m_timeout; 
@@ -730,9 +726,10 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_instProvs; 
 	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
 	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
-	Map<String, CIMClass> m_cimClasses; 
+	ProviderAgentEnvironment::ClassCache& m_cimClasses; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
 	PALockerRef m_locker; 
+	ProviderAgentEnvironment::ClassRetrievalFlag m_classRetrieval; 
 
 	CppInstanceProviderIFC* getInstanceProvider(const String& ns, 
 												const String& className) const; 
@@ -745,7 +742,7 @@ private:
 	CppMethodProviderIFC* getMethodProvider(const String& ns, 
 											const String& className, 
 											const String& methodName) const; 
-	CIMClass helperGetClass(const String& className)const ; 
+	CIMClass helperGetClass(const String& ns, const String& className); 
 
 };
 

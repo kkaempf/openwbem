@@ -39,6 +39,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 
+
 namespace OpenWBEM
 {
 
@@ -46,12 +47,24 @@ namespace OpenWBEM
 ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(LoggerRef logger, 
 								 ConfigFile::ConfigMap configMap,
 								 OperationContext& operationContext, 
-								 const String& callbackURL)
+								 const String& callbackURL,
+								 ClientCIMOMHandleConnectionPool& pool)
 	: m_logger(logger)
 	, m_configMap(configMap)
 	, m_operationContext(operationContext)
 	, m_callbackURL(callbackURL)
+	, m_connectionPool(pool)
+	, m_CIMOMHandleRA()
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentProviderEnvironment::~ProviderAgentProviderEnvironment()
+{
+	for (Array<ClientCIMOMHandleRef>::const_iterator iter = m_CIMOMHandleRA.begin(); 
+		  iter < m_CIMOMHandleRA.end(); ++iter)
+	{
+		m_connectionPool.addConnectionToPool(*iter, m_callbackURL); 
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 	// This function returns a regular cimom handle that does access checking and may call providers.
@@ -62,8 +75,9 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 	{
 		return CIMOMHandleIFCRef(0); 
 	}
-	CIMOMHandleIFCRef rval = ClientCIMOMHandle::createFromURL(m_callbackURL); 
-	return rval; 
+	ClientCIMOMHandleRef client = m_connectionPool.getConnection(m_callbackURL); 
+	m_CIMOMHandleRA.push_back(client); 
+	return client; 
 }
 //////////////////////////////////////////////////////////////////////////////
 String 

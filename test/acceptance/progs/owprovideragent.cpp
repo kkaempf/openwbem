@@ -229,7 +229,8 @@ int main(int argc, char* argv[])
 		cmap[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
 		cmap[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
 		cmap[ConfigOpts::USE_UDS_opt] = "false";
-		cmap[OpenWBEM::ConfigOpts::DUMP_SOCKET_IO_opt] = "/tmp/"; 
+		cmap[ProviderAgent::DynamicClassRetieval_opt] = "true";
+		cmap[ConfigOpts::DUMP_SOCKET_IO_opt] = "/tmp/"; 
 
 		Reference<AuthenticatorIFC> authenticator(new NonAuthenticatingAuthenticator); 
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
@@ -257,76 +258,6 @@ int main(int argc, char* argv[])
 		}
 
 		CIMClassArray cra; 
-
-		for (Array<CppProviderBaseIFCRef>::const_iterator iter = pra.begin(); 
-			  iter < pra.end(); ++iter)
-		{
-			CppInstanceProviderIFC* instProv = (*iter)->getInstanceProvider(); 
-			CppSecondaryInstanceProviderIFC* secInstProv = (*iter)->getSecondaryInstanceProvider(); 
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			CppAssociatorProviderIFC* assocProv = (*iter)->getAssociatorProvider(); 
-#endif
-			// MethodProviders don't require the class
-			if (instProv)
-			{
-				InstanceProviderInfo info; 
-				instProv->getInstanceProviderInfo(info); 
-				InstanceProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
-				for (InstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
-					  citer < cia.end(); ++citer)
-				{
-					String className = citer->className; 
-					StringArray nss = citer->namespaces; 
-					String ns = "root/cimv2"; 
-					if (nss.size() > 0)
-					{
-						ns = nss[0]; 
-					}
-					CIMClass cc = rch.getClass(ns,className); 
-					cra.push_back(cc); 
-				}
-			}
-			if (secInstProv)
-			{
-				SecondaryInstanceProviderInfo info; 
-				secInstProv->getSecondaryInstanceProviderInfo(info); 
-				SecondaryInstanceProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
-				for (SecondaryInstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
-					  citer < cia.end(); ++citer)
-				{
-					String className = citer->className; 
-					StringArray nss = citer->namespaces; 
-					String ns = "root/cimv2"; 
-					if (nss.size() > 0)
-					{
-						ns = nss[0]; 
-					}
-					CIMClass cc = rch.getClass(ns,className); 
-					cra.push_back(cc); 
-				}
-			}
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			if (assocProv)
-			{
-				AssociatorProviderInfo info; 
-				assocProv->getAssociatorProviderInfo(info); 
-				AssociatorProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
-				for (AssociatorProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
-					  citer < cia.end(); ++citer)
-				{
-					String className = citer->className; 
-					StringArray nss = citer->namespaces; 
-					String ns = "root/cimv2"; 
-					if (nss.size() > 0)
-					{
-						ns = nss[0]; 
-					}
-					CIMClass cc = rch.getClass(ns,className); 
-					cra.push_back(cc); 
-				}
-			}
-#endif
-		}
 
 		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
 		// wait until we get a SIGINT

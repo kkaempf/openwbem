@@ -41,7 +41,8 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include "OW_ProviderAgentCIMOMHandle.hpp"
+#include "OW_Map.hpp"
+#include "OW_ClientCIMOMHandleConnectionPool.hpp"
 
 #include "OW_CppProviderBaseIFC.hpp"
 
@@ -53,6 +54,17 @@ typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
 class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
 public:
+	enum LockingType
+	{
+		NONE, 
+		SWMR, 
+		SINGLE_THREADED
+	}; 
+	enum ClassRetrievalFlag
+	{
+		DONT_RETRIEVE_CLASSES, 
+		RETRIEVE_CLASSES
+	}; 
 	ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
 		Array<CppProviderBaseIFCRef> providers, 
 		Array<CIMClass> cimClasses, 
@@ -90,6 +102,17 @@ public:
 		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/); 
 	virtual LoggerRef getLogger() const; 
+
+	class ClassCache
+	{
+	public: 
+		ClassCache(); 
+		CIMClass getClass(const String& key)const; 
+		void addClass(const String& key, const CIMClass& cc); 
+	private: 
+		mutable Mutex m_guard; 
+		Map<String, CIMClass> m_classes; 
+	};
 private:
 	ConfigFile::ConfigMap m_configItems;
 	Reference<AuthenticatorIFC> m_authenticator;
@@ -101,9 +124,14 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_instProvs; 
 	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
 	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
-	Map<String, CIMClass> m_cimClasses; 
-	ProviderAgentCIMOMHandle::LockingType m_lockingType; 
+	// TODO Refactor me.  ProviderAgentCIMOMHandles get a reference
+	// (&, not Reference) to m_cimClasses, and modify it. 
+	ClassCache m_cimClasses; 
+	LockingType m_lockingType; 
 	UInt32 m_lockingTimeout; 
+	ClassRetrievalFlag m_classRetrieval; 
+	ClientCIMOMHandleConnectionPool m_connectionPool; 
+
 	class DummyLogger : public Logger
 	{
 	protected:

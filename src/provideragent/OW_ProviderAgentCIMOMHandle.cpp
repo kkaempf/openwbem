@@ -65,9 +65,10 @@ ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIF
 												   Map<String, CppProviderBaseIFCRef> instProvs, 
 												   Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
 												   Map<String, CppProviderBaseIFCRef> methodProvs, 
-												   Map<String, CIMClass> cimClasses, 
+												   ProviderAgentEnvironment::ClassCache& cimClasses, 
 												   ProviderEnvironmentIFCRef env, 
-												   LockingType lt, 
+												   ProviderAgentEnvironment::LockingType lt, 
+												   ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
 												   UInt32 lockingTimeout)
 	: m_assocProvs(assocProvs)
 	, m_instProvs(instProvs)
@@ -76,6 +77,7 @@ ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIF
 	, m_cimClasses(cimClasses)
 	, m_PAEnv(env)
 	, m_locker(new PALocker(lt, lockingTimeout))
+	, m_classRetrieval(classRetrieval)
 {
 }
 
@@ -101,7 +103,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 		{
 			rval = pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
 					includeQualifiers ,includeClassOrigin ,
-					propertyList , helperGetClass(instanceName.getClassName())); 
+					propertyList , helperGetClass(ns, instanceName.getClassName())); 
 		}
 		if (pSInstProv)
 		{
@@ -117,7 +119,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 				newInst.setKeys(instanceName.getKeys()); 
 				ia.push_back(newInst); 
 			}
-			CIMClass cc = helperGetClass(instanceName.getClassName()); 
+			CIMClass cc = helperGetClass(ns, instanceName.getClassName()); 
 			pSInstProv->filterInstances(m_PAEnv,ns , instanceName.getClassName(), 
                                         ia,localOnly , OpenWBEM::WBEMFlags::E_SHALLOW, 
 										includeQualifiers, includeClassOrigin, 
@@ -250,7 +252,7 @@ ProviderAgentCIMOMHandle::modifyInstance(const String &ns,
 		}
 		{
 			PAWriteLock wl(m_locker); 
-			CIMClass cc = helperGetClass(modifiedInstance.getClassName()); 
+			CIMClass cc = helperGetClass(ns, modifiedInstance.getClassName()); 
 			if (pInstProv)
 			{
 				pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
@@ -474,7 +476,7 @@ ProviderAgentCIMOMHandle::enumInstances(const String &ns,
 	}
 	{
 		PAReadLock rl(m_locker); 
-		CIMClass cc = helperGetClass(className); 
+		CIMClass cc = helperGetClass(ns, className); 
 		pInstProv->enumInstances(m_PAEnv,ns ,className ,result ,localOnly ,
 				deep ,includeQualifiers ,includeClassOrigin,
 				propertyList, cc,cc); 
@@ -495,7 +497,7 @@ ProviderAgentCIMOMHandle::enumInstanceNames(const String &ns,
 	{
 		PAReadLock rl(m_locker); 
 		pInstProv->enumInstanceNames(m_PAEnv,ns ,className ,result , 
-									 helperGetClass(className)); 
+									 helperGetClass(ns, className)); 
 	}
 }
 
@@ -525,7 +527,7 @@ ProviderAgentCIMOMHandle::execQuery(const String &ns,
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentCIMOMHandle::LockingType lt, 
+ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentEnvironment::LockingType lt, 
 											 UInt32 timeout)
 	: m_lt(lt)
 	, m_mutex(0)
@@ -534,12 +536,12 @@ ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentCIMOMHandle::LockingTy
 {
 	switch (m_lt)
 	{
-	case NONE:
+	case ProviderAgentEnvironment::NONE:
 		break; 
-	case SWMR:
+	case ProviderAgentEnvironment::SWMR:
 		m_rwlocker = new RWLocker; 
 		break; 
-	case SINGLE_THREADED:
+	case ProviderAgentEnvironment::SINGLE_THREADED:
 		m_mutex = new Mutex; 
 		break; 
 	default: 
@@ -576,12 +578,12 @@ ProviderAgentCIMOMHandle::PALocker::releaseReadLock()
 {
 	switch (m_lt)
 	{
-	case NONE:
+	case ProviderAgentEnvironment::NONE:
 		break; 
-	case SWMR:
+	case ProviderAgentEnvironment::SWMR:
 		m_rwlocker->releaseReadLock(); 
 		break; 
-	case SINGLE_THREADED:
+	case ProviderAgentEnvironment::SINGLE_THREADED:
 		m_mutex->release(); 
 		break; 
 	default: 
@@ -594,12 +596,12 @@ ProviderAgentCIMOMHandle::PALocker::getReadLock()
 {
 	switch (m_lt)
 	{
-	case NONE:
+	case ProviderAgentEnvironment::NONE:
 		break; 
-	case SWMR:
+	case ProviderAgentEnvironment::SWMR:
 		m_rwlocker->getReadLock(m_timeout); 
 		break; 
-	case SINGLE_THREADED:
+	case ProviderAgentEnvironment::SINGLE_THREADED:
 		m_mutex->acquire(); 
 		break; 
 	default: 
@@ -612,12 +614,12 @@ ProviderAgentCIMOMHandle::PALocker::releaseWriteLock()
 {
 	switch (m_lt)
 	{
-	case NONE:
+	case ProviderAgentEnvironment::NONE:
 		break; 
-	case SWMR:
+	case ProviderAgentEnvironment::SWMR:
 		m_rwlocker->releaseWriteLock(); 
 		break; 
-	case SINGLE_THREADED:
+	case ProviderAgentEnvironment::SINGLE_THREADED:
 		m_mutex->release(); 
 		break; 
 	default: 
@@ -630,12 +632,12 @@ ProviderAgentCIMOMHandle::PALocker::getWriteLock()
 {
 	switch (m_lt)
 	{
-	case NONE:
+	case ProviderAgentEnvironment::NONE:
 		break; 
-	case SWMR:
+	case ProviderAgentEnvironment::SWMR:
 		m_rwlocker->getWriteLock(m_timeout); 
 		break; 
-	case SINGLE_THREADED:
+	case ProviderAgentEnvironment::SINGLE_THREADED:
 		m_mutex->acquire(); 
 		break; 
 	default: 
@@ -768,15 +770,36 @@ ProviderAgentCIMOMHandle::getMethodProvider(const String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
-ProviderAgentCIMOMHandle::helperGetClass(const String& className) const
+ProviderAgentCIMOMHandle::helperGetClass(const String& ns, 
+										 const String& className) 
 {
 	CIMClass rval(CIMNULL); 
 	String lcn = className; 
 	lcn.toLowerCase(); 
-	Map<String, CIMClass>::const_iterator iter = m_cimClasses.find(lcn); 
-	if (iter != m_cimClasses.end())
+	String lns = ns; 
+	lns.toLowerCase(); 
+	String key = lns + ":" + lcn; 
+	rval = m_cimClasses.getClass(key); 
+	if (rval)
 	{
-		rval = iter->second; 
+		return rval; 
+	}
+	rval = m_cimClasses.getClass(lcn); 
+	if (rval)
+	{
+		return rval; 
+	}
+	if (m_classRetrieval == ProviderAgentEnvironment::RETRIEVE_CLASSES)
+	{
+		CIMOMHandleIFCRef ch = m_PAEnv->getCIMOMHandle(); 
+		if (ch)
+		{
+			rval = ch->getClass(ns, className); 
+			if (rval)
+			{
+				m_cimClasses.addClass(key,rval); 
+			}
+		}
 	}
 	return rval; 
 }

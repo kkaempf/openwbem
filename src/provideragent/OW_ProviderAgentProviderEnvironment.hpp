@@ -39,6 +39,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ClientCIMOMHandleConnectionPool.hpp"
 #include "OW_ConfigFile.hpp"
 
 namespace OpenWBEM
@@ -50,7 +51,9 @@ public:
 	ProviderAgentProviderEnvironment(LoggerRef logger, 
 									 ConfigFile::ConfigMap configMap,
 									 OperationContext& operationContext, 
-									 const String& callbackURL); 
+									 const String& callbackURL, 
+									 ClientCIMOMHandleConnectionPool& pool); 
+	~ProviderAgentProviderEnvironment(); 
 		// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const; 
 	virtual String getConfigItem(const String &name, const String &defRetVal="") const; 
@@ -69,6 +72,8 @@ private:
 	ConfigFile::ConfigMap m_configMap; 
 	OperationContext& m_operationContext; 
 	String m_callbackURL; 
+	ClientCIMOMHandleConnectionPool& m_connectionPool; 
+	mutable Array<ClientCIMOMHandleRef>  m_CIMOMHandleRA; 
 };
 
 } // end namespace OpenWBEM

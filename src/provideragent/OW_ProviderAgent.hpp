@@ -60,6 +60,7 @@ class ProviderAgent
 public:
 	static const char* const LockingType_opt;  
 	static const char* const LockingTimeout_opt; 
+	static const char* const DynamicClassRetieval_opt; 
 
 	/**
 	 * Create a new provider agent, and start the HTTP server. 

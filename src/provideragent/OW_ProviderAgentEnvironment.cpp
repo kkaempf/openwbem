@@ -73,15 +73,17 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	, m_methodProvs()
 	, m_cimClasses()
 	, m_configItems(configMap)
-	, m_lockingType(ProviderAgentCIMOMHandle::NONE)
+	, m_lockingType(NONE)
 	, m_lockingTimeout(300)
+	, m_classRetrieval(DONT_RETRIEVE_CLASSES)
+	, m_connectionPool(5)
 {
 	for (Array<CIMClass>::const_iterator iter = cimClasses.begin(); 
 		  iter < cimClasses.end(); ++iter)
 	{
 		String key = iter->getName(); 
 		key.toLowerCase(); 
-		m_cimClasses[key] = *iter; 
+		m_cimClasses.addClass(key, *iter); 
 	}
 
 	for (Array<CppProviderBaseIFCRef>::const_iterator iter = providers.begin(); 
@@ -93,7 +95,8 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
 																		  m_configItems, 
 																		  oc, 
-																		  m_callbackURL)); 
+																		  m_callbackURL, 
+																		  m_connectionPool)); 
 		prov->initialize(pe); 
 		CppMethodProviderIFC* methodProv = prov->getMethodProvider(); 
 		if (methodProv)
@@ -208,15 +211,15 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	confItem.toLowerCase(); 
 	if (confItem == "none")
 	{
-		m_lockingType = ProviderAgentCIMOMHandle::NONE; 
+		m_lockingType = NONE; 
 	}
 	else if (confItem == "swmr")
 	{
-		m_lockingType = ProviderAgentCIMOMHandle::SWMR; 
+		m_lockingType = SWMR; 
 	}
 	else if (confItem == "single_threaded")
 	{
-		m_lockingType = ProviderAgentCIMOMHandle::SINGLE_THREADED;  
+		m_lockingType = SINGLE_THREADED;  
 	}
 	else
 	{
@@ -230,6 +233,12 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	catch (StringConversionException&)
 	{
 		OW_THROW(ConfigException, "invalid locking timeout"); 
+	}
+	confItem = getConfigItem(ProviderAgent::DynamicClassRetieval_opt, "false"); 
+	confItem.toLowerCase(); 
+	if (confItem == "true")
+	{
+		m_classRetrieval = RETRIEVE_CLASSES; 
 	}
 }
 
@@ -277,7 +286,8 @@ ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRet
 }
 //////////////////////////////////////////////////////////////////////////////
 void 
-ProviderAgentEnvironment::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
+ProviderAgentEnvironment::setConfigItem(const String& item, const String& value, 
+										EOverwritePreviousFlag overwritePrevious)
 {
 	if (overwritePrevious == E_OVERWRITE_PREVIOUS || getConfigItem(item) == "")
 		m_configItems[item] = value;
@@ -307,7 +317,8 @@ ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
 																	  m_configItems, 
 																	  context, 
-																	  m_callbackURL)); 
+																	  m_callbackURL, 
+																	  m_connectionPool)); 
 	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(m_assocProvs, 
 														  m_instProvs, 
 														  m_secondaryInstProvs, 
@@ -315,6 +326,7 @@ ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 														  m_cimClasses, 
 														  pe, 
 														  m_lockingType, 
+														  m_classRetrieval, 
 														  m_lockingTimeout)); 
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -338,6 +350,35 @@ ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
 	OW_ASSERT("not implemented" == 0); 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentEnvironment::ClassCache::ClassCache()
+	: m_guard()
+	, m_classes()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMClass
+ProviderAgentEnvironment::ClassCache::getClass(const String& key) const
+{
+	CIMClass rval(CIMNULL); 
+	{
+		MutexLock ml(m_guard); 
+		Map<String, CIMClass>::const_iterator iter = m_classes.find(key); 
+		if (iter != m_classes.end())
+		{
+			rval = iter->second; 
+		}
+	}
+	return rval; 
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+ProviderAgentEnvironment::ClassCache::addClass(const String& key, 
+											   const CIMClass& cc)
+{
+	MutexLock ml(m_guard); 
+	m_classes[key] = cc; 
+}
 //////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM
