@@ -677,6 +677,8 @@ OW_CIMServer::enumInstanceNames(
 	}
 	else
 	{
+		// TODO: measure whether it would be faster to use
+		// enumClassNames + getClass() here.
 		m_cimRepository->enumClasses(ns,className,ie,deep,false,true,true,intAclInfo);
 	}
 
@@ -841,6 +843,8 @@ OW_CIMServer::enumInstances(
 	}
 	else
 	{
+		// TODO: measure whether it would be faster to use
+		// enumClassNames + getClass() here.
 		// do subclasses
 		m_cimRepository->enumClasses(ns,className,ie,true,false,true,true,intAclInfo);
 	}
@@ -2277,6 +2281,8 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		// to only look at the ones that could provide associations
 		OW_CIMClass cc = getClass(ns,assocClassName,false,true,true,0,intAclInfo);
 		result.handle(cc);
+		// TODO: measure whether it would be faster to use
+		// enumClassNames + getClass() here.
 		enumClasses(ns,assocClassName,result,true,false,true,true, intAclInfo);
 	}
 	else
