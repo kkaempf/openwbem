@@ -328,6 +328,7 @@ OW_HTTPServer::startService()
 	OW_LoggerRef lgr = env->getLogger();
 	lgr->logDebug("HTTP Service is starting...");
 
+	bool gothttp = false, gothttps = false, gotuds = false;
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
 		OW_THROW(OW_SocketException, "No ports to listen on and use_UDS set to false");
@@ -349,6 +350,7 @@ OW_HTTPServer::startService()
 				false, this, true));
 
 			env->addSelectable(m_pUDSServerSocket, cb);
+			gotuds = true;
 		}
 		catch (OW_SocketException& e)
 		{
@@ -375,6 +377,7 @@ OW_HTTPServer::startService()
 				false, this, false));
 
 			env->addSelectable(m_pHttpServerSocket, cb);
+			gothttp = true;
 		}
 		catch (OW_SocketException& e)
 		{
@@ -420,6 +423,7 @@ OW_HTTPServer::startService()
 					true, this, false));
 
 				env->addSelectable(m_pHttpsServerSocket, cb);
+				gothttps = true;
 			}
 			catch (OW_SocketException& e)
 			{
@@ -441,6 +445,11 @@ OW_HTTPServer::startService()
 		}
 	} // if (m_httpsPort > 0)
 
+	if (!gotuds && !gothttp && !gothttps)
+	{
+		lgr->logError("HTTP Server failed to start any services");
+		OW_THROW(OW_SocketException, "HTTP Server failed to start any services");
+	}
 
 
 	lgr->logDebug("HTTP Service has started");
