@@ -39,6 +39,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_Format.hpp"
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_String
@@ -70,74 +71,76 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPath
-OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClassArray& cArray,
-	OW_CIMInstanceArray& iArray)
+OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClass& c,
+	OW_CIMInstance& i)
 {
 	OW_CIMXMLParser::tokenId token = parser.getToken();
 
-	parser.mustGetChild();
+	parser.mustGetChild(); // pass <VALUE.OBJECTWITHPATH> or <VALUE.OBJECTWITHLOCALPATH>
 	
 	if (token == OW_CIMXMLParser::E_VALUE_OBJECTWITHPATH)
 	{
-		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
-			
 		token = parser.getToken();
 		
+		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
+			
 		if (token == OW_CIMXMLParser::E_CLASSPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::E_CLASS);
-		    cArray.append(readClass(parser,tmpcop));
+			parser.mustTokenIs(OW_CIMXMLParser::E_CLASS);
+		    c = readClass(parser,tmpcop);
 		}
 		else if (token==OW_CIMXMLParser::E_INSTANCEPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::E_INSTANCE);
-		    iArray.append(readInstance(parser,tmpcop));
+			parser.mustTokenIs(OW_CIMXMLParser::E_INSTANCE);
+		    i = readInstance(parser,tmpcop);
 		}
 		else
 		{
-		    OW_THROWCIMMSG(OW_CIMException::FAILED, "Require instance or class in object with path declaration");
+		    OW_THROWCIMMSG(OW_CIMException::FAILED,
+				format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 		}
 		
+		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHPATH>
 		return tmpcop;
 	}
 	else if (token==OW_CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH)
 	{
+	    token = parser.getToken();
+
 	    OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
 			
-	    token = parser.getToken();
 	    if (token == OW_CIMXMLParser::E_LOCALCLASSPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::E_CLASS);
-		    cArray.append(readClass(parser, tmpcop));
+			parser.mustTokenIs(OW_CIMXMLParser::E_CLASS);
+		    c = readClass(parser, tmpcop);
 	    }
 		else if (token == OW_CIMXMLParser::E_LOCALINSTANCEPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::E_INSTANCE);
-		    iArray.append(readInstance(parser, tmpcop));
+			parser.mustTokenIs(OW_CIMXMLParser::E_INSTANCE);
+		    i = readInstance(parser, tmpcop);
 	    }
 		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"Require instance or class in object with path declaration");
 		}
+		
+		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHLOCALPATH>
 	    return tmpcop;
 	}
-	return OW_CIMObjectPath();
+	OW_THROWCIMMSG(OW_CIMException::FAILED,
+		format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMClass
 OW_XMLClass::readClass(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
-	if(childNode.getToken() == OW_CIMXMLParser::E_CLASS)
-	{
-		OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(childNode);
-	
-		path.setObjectName(cimClass.getName());
-	
-		return(cimClass);
-	}
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "Needed <CLASS>, found "+childNode.getToken());
+	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(childNode);
+
+	path.setObjectName(cimClass.getName());
+
+	return cimClass;
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -145,13 +148,8 @@ OW_CIMInstance
 OW_XMLClass::readInstance(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
 	(void)path;
-	if (childNode.getToken() == OW_CIMXMLParser::E_INSTANCE)
-	{
-		OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(childNode);
-	    return(cimInstance);
-	}
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "Needed <INSTANCE>, found "
-		+ childNode.getToken());
+	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(childNode);
+	return cimInstance;
 }
 
 

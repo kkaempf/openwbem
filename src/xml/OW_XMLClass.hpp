@@ -42,7 +42,7 @@ class OW_XMLClass : public OW_XMLOperationGeneric
 public:
 	static OW_String getNameSpace(OW_CIMXMLParser& parser);
 	static OW_CIMObjectPath getObjectWithPath(OW_CIMXMLParser& parser,
-			OW_CIMClassArray& cArray, OW_CIMInstanceArray& iArray);
+			OW_CIMClass& c, OW_CIMInstance& i);
 	static OW_CIMClass readClass(OW_CIMXMLParser& parser, OW_CIMObjectPath& path);
 	static OW_CIMInstance readInstance(OW_CIMXMLParser& parser,
 			OW_CIMObjectPath& path);

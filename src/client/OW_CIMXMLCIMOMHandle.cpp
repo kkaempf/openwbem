@@ -946,6 +946,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 	ostr << "<VALUE.NAMEDINSTANCE>";
 	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
 	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
+		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
@@ -1002,6 +1003,7 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
 	OW_StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewInstance\">";
 	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
+		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
@@ -1220,26 +1222,26 @@ namespace
 		{
 			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
-				OW_CIMInstanceArray cia;
-				OW_CIMClassArray cca;
-				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cca, cia);
+				OW_CIMInstance ci;
+				OW_CIMClass cc;
+				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cc, ci);
 				if (cop)
 				{
 					if (iresult)
 					{
-						if (cia.size() != 1)
+						if (!ci)
 						{
 							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
 						}
-						iresult->handle(cia[0]);
+						iresult->handle(ci);
 					}
 					if (cresult)
 					{
-						if (cca.size() != 1)
+						if (!cc)
 						{
 							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
 						}
-						cresult->handle(cca[0]);
+						cresult->handle(cc);
 					}
 				}
 			}

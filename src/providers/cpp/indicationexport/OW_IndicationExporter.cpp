@@ -60,6 +60,7 @@ OW_IndicationExporter::exportIndication( const OW_CIMInstance& ci )
 	*iostr << "<IPARAMVALUE NAME=\"NewIndication\">";
 //	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
 	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(),
+		OW_CIMtoXMLFlags::isNotInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,

@@ -54,6 +54,7 @@ OW_CIMXMLParser::prime()
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
 		}
+		skipData();
 	}
 	if (m_curTok.type == OW_XMLToken::DOCTYPE)
 	{
@@ -61,6 +62,7 @@ OW_CIMXMLParser::prime()
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
 		}
+		skipData();
 	}
 }
 
@@ -356,6 +358,20 @@ OW_CIMXMLParser::tokenIs(OW_CIMXMLParser::tokenId tId) const
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId) const
+{
+//	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
+	if (!tokenIs(g_elems[tId].name))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			format("OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
+				g_elems[tId].name, *this).c_str());
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_CIMXMLParser::mustGetNext()
 {
 	getNext(true);
@@ -385,7 +401,7 @@ OW_CIMXMLParser::getNext(bool throwIfError)
 void
 OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok, bool throwIfError)
 {
-	while(m_good )
+	while (m_good)
 	{
 		if (m_curTok.type == OW_XMLToken::START_TAG)
 		{
@@ -408,6 +424,7 @@ OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok, bool throwIfError)
 void
 OW_CIMXMLParser::mustGetEndTag()
 {
+	skipData();
 	if (m_curTok.type != OW_XMLToken::END_TAG)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -415,6 +432,7 @@ OW_CIMXMLParser::mustGetEndTag()
 				*this).c_str());
 	}
 	getNext();
+	skipData();
 }
 
 
@@ -457,7 +475,17 @@ OW_CIMXMLParser::nextToken()
 	do
 	{
 		m_good = m_parser.next(m_curTok);
-	} while (m_curTok.type == OW_XMLToken::COMMENT);
+	} while (m_curTok.type == OW_XMLToken::COMMENT && m_good);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLParser::skipData()
+{
+	while (isData() && m_good)
+	{
+		nextToken();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

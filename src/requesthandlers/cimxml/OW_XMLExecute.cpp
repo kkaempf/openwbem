@@ -662,7 +662,9 @@ namespace
 			OW_CIMObjectPath cop( ci.getClassName(), ci.getKeyValuePairs() );
 			cop.setNameSpace( path.getNameSpace() );
 
-			OW_CIMtoXML(ci, ostr, cop, OW_CIMtoXMLFlags::notLocalOnly,
+			OW_CIMtoXML(ci, ostr, cop,
+				OW_CIMtoXMLFlags::isNotInstanceName,
+				OW_CIMtoXMLFlags::notLocalOnly,
 				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 				propertyList, (isPropertyList && propertyList.size() == 0));
@@ -926,7 +928,6 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 
 	OW_String className = params[0].val.toString();
-	cout << "className = " << className << endl;
 	OW_Bool deepInheritance = params[1].val.toBool();
 
 	path.setObjectName(className);
@@ -1056,6 +1057,7 @@ namespace
 
 			ostr << "<VALUE.NAMEDINSTANCE>";
 			OW_CIMtoXML(cimInstance, ostr, cop,
+				OW_CIMtoXMLFlags::isInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,
 				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
@@ -1217,6 +1219,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		pPropList);
 
 	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(),
+		OW_CIMtoXMLFlags::isNotInstanceName,
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
 		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
@@ -1435,6 +1438,7 @@ namespace
 
 			ostr << "<VALUE.NAMEDINSTANCE>";
 			OW_CIMtoXML(i, ostr, cop,
+				OW_CIMtoXMLFlags::isInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,
 				OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,

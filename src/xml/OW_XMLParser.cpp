@@ -185,13 +185,14 @@ OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
 	else
 	{
 		entry.type = OW_XMLToken::CONTENT;
-		bool isSpaces;
-		_getContent(entry, isSpaces);
-		if (isSpaces)
-		{
+		//bool isSpaces;
+		//_getContent(entry, isSpaces);
+		_getContent(entry);
+		//if (isSpaces)
+		//{
 			// content is entirely white space, so just skip it.
-			return next(entry);
-		}
+		//	return next(entry);
+		//}
 
 		return true;
 	}
@@ -423,19 +424,20 @@ void OW_XMLParser::_getDocType()
 	_current++;
 }
 
-void OW_XMLParser::_getContent(OW_XMLToken& entry, bool& isWhiteSpace)
+//void OW_XMLParser::_getContent(OW_XMLToken& entry, bool& isWhiteSpace)
+void OW_XMLParser::_getContent(OW_XMLToken& entry)
 {
 	entry.text.reset();
-	isWhiteSpace = true;
+	//isWhiteSpace = true;
 	while (*_current && *_current != '<')
 	{
 		if (*_current == '\n')
 			++_line;
 		//isWhiteSpace &= isspace(*_current);
-		if (isWhiteSpace)
-		{
-			isWhiteSpace = isspace(*_current);
-		}
+		//if (isWhiteSpace)
+		//{
+		//	isWhiteSpace = isspace(*_current);
+		//}
 
 		entry.text += *_current++;
 	}

@@ -450,6 +450,7 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 //////////////////////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 	OW_CIMObjectPath const& cop,
+	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName,
 	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
 	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
 	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
@@ -458,7 +459,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 {
 	if(cop)
 	{
-		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMtoXML(cop, ostr, isInstanceName);
 	}
 
 	//
@@ -737,6 +738,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				{
 					OW_StringStream ss;
 					OW_CIMtoXML(ia[i],ss,OW_CIMObjectPath(),
+						OW_CIMtoXMLFlags::isNotInstanceName,
 						OW_CIMtoXMLFlags::notLocalOnly,
 						OW_CIMtoXMLFlags::includeQualifiers,
 						OW_CIMtoXMLFlags::includeClassOrigin,
@@ -898,6 +900,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				OW_String s;
 				OW_StringStream ss;
 				OW_CIMtoXML(i,ss,OW_CIMObjectPath(),
+					OW_CIMtoXMLFlags::isNotInstanceName,
 					OW_CIMtoXMLFlags::notLocalOnly,
 					OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,

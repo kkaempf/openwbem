@@ -196,7 +196,8 @@ class  OW_XMLParser
 
 		void _getDocType();
 
-		void _getContent(OW_XMLToken& entry, bool& isWhiteSpace);
+		void _getContent(OW_XMLToken& entry);
+		//void _getContent(OW_XMLToken& entry, bool& isWhiteSpace);
 
 		void _getElement(OW_XMLToken& entry);
 

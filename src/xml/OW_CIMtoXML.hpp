@@ -109,6 +109,7 @@ void OW_CIMtoXML(OW_CIMClass const& cc, std::ostream& ostr,
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMInstance const& ci, std::ostream& ostr,
 	OW_CIMObjectPath const& cop,
+	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName,
 	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
 	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
 	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,

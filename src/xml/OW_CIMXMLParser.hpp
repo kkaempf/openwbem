@@ -139,6 +139,7 @@ public:
 
 	bool tokenIs(const char* const arg) const;
 	bool tokenIs(tokenId tId) const;
+	void mustTokenIs(tokenId tId) const;
 
 	tokenId getToken() const;
 
@@ -166,6 +167,7 @@ private:
 	static ElemEntry* g_elemsEnd;
 
 	void nextToken();
+	void skipData();
 
 	// unimplemented
 	OW_CIMXMLParser(const OW_CIMXMLParser& x);
