@@ -56,18 +56,20 @@ OW_IndicationServer::~OW_IndicationServer()
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
 {
-	OW_NotifyTrans() : m_indication(OW_CIMNULL), m_handler(OW_CIMNULL), m_provider(0) {}
+//	OW_NotifyTrans() : m_indication(OW_CIMNULL), m_handler(OW_CIMNULL), m_provider(0) {}
 
 	OW_NotifyTrans(
 		const OW_String& ns,
 		const OW_CIMInstance& indication,
 		const OW_CIMInstance& handler,
+		const OW_CIMInstance& subscription,
 		const OW_IndicationExportProviderIFCRef provider) :
-			m_ns(ns), m_indication(indication), m_handler(handler), m_provider(provider) {}
+			m_ns(ns), m_indication(indication), m_handler(handler), m_subscription(subscription), m_provider(provider) {}
 
 	OW_String m_ns;
 	OW_CIMInstance m_indication;
 	OW_CIMInstance m_handler;
+	OW_CIMInstance m_subscription;
 	OW_IndicationExportProviderIFCRef m_provider;
 };
 
@@ -678,7 +680,7 @@ OW_IndicationServerImpl::_processIndicationRange(
 				continue;
 			}
 
-			addTrans(instNS, filteredInstance, handler, pref);
+			addTrans(instNS, filteredInstance, handler, sub.m_sub, pref);
 		}
 		catch(OW_Exception& e)
 		{
@@ -693,11 +695,13 @@ void
 OW_IndicationServerImpl::addTrans(
 	const OW_String& ns,
 	const OW_CIMInstance& indication,
-	const OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
+	const OW_CIMInstance& handler, 
+	const OW_CIMInstance& subscription, 
+	OW_IndicationExportProviderIFCRef provider)
 {
 	OW_MutexLock ml(m_transGuard);
 
-	OW_NotifyTrans trans(ns, indication, handler, provider);
+	OW_NotifyTrans trans(ns, indication, handler, subscription, provider);
 	if(m_threadCounter->getThreadCount() < MAX_NOTIFIERS)
 	{
 		// this may look like a memory leak, but the start method will end

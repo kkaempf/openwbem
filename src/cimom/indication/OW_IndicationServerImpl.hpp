@@ -120,6 +120,7 @@ private:
 
 	void addTrans(const OW_String& ns, const OW_CIMInstance& indication,
 		const OW_CIMInstance& handler,
+		const OW_CIMInstance& subscription,
 		OW_IndicationExportProviderIFCRef provider);
 
 	OW_IndicationExportProviderIFCRef getProvider(const OW_String& className);
