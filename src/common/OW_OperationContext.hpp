@@ -41,7 +41,7 @@ class UserInfo;
 class OperationContext
 {
 public:
-	OperationContext(const String& username);
+	explicit OperationContext(const String& username);
 	UserInfo getUserInfo() const;
 
 private:
