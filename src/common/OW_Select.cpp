@@ -39,6 +39,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_Thread.hpp" // for testCancel()
 
+#undef OW_HAVE_SYS_EPOLL_H // temporary until the code can handle the fact that the kernel may not support epoll* even though the header is installed.
+
 #if defined(OW_WIN32)
 #include <cassert>
 #endif
