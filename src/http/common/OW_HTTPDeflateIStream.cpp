@@ -126,7 +126,8 @@ HTTPDeflateIStream::HTTPDeflateIStream(
 	, m_istr(istr)
 {
 }
-#endif // #ifdef OW_HAVE_ZLIB_H
 
 } // end namespace OpenWBEM
+
+#endif // #ifdef OW_HAVE_ZLIB_H
 

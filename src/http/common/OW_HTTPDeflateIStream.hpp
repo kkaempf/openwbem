@@ -27,10 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifdef OW_HAVE_ZLIB_H
 #ifndef OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#ifdef OW_HAVE_ZLIB_H
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
@@ -87,8 +87,8 @@ private:
 	HTTPDeflateIStream(const HTTPDeflateIStream&);
 	HTTPDeflateIStream& operator=(HTTPDeflateIStream&);
 };
-#endif
 
 } // end namespace OpenWBEM
 
+#endif
 #endif // #ifdef OW_HAVE_ZLIB_H
