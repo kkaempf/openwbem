@@ -225,6 +225,7 @@ operator<<(std::ostream& os, const Exception& e)
 	{
 		os << e.getFile() << ": ";
 	}
+	
 	if (e.getLine() == 0)
 	{
 		os << "[no line] ";
@@ -233,7 +234,9 @@ operator<<(std::ostream& os, const Exception& e)
 	{
 		os << e.getLine() << ' ';
 	}
+	
 	os << e.type() << ": ";
+	
 	if (*e.getMessage() == '\0')
 	{
 		os << "[no message]";
@@ -241,6 +244,12 @@ operator<<(std::ostream& os, const Exception& e)
 	else
 	{
 		os << e.getMessage();
+	}
+
+	const Exception* subEx = e.getSubException();
+	if (subEx)
+	{
+		os << " <" << *subEx << '>';
 	}
 	return os;
 }
