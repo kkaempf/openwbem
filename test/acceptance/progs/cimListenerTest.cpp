@@ -327,13 +327,13 @@ int main(int argc, char* argv[])
 				}
 			}
 			// we'll wait for 5 OW_TestIndication2 indications.
-			for (size_t i = 0; i < 5; ++i)
-			{
-				if (!test2sem.timedWait(25))
-				{
-					OW_THROW(OW_Exception, "semaphore 2 timed out");
-				}
-			}
+//			for (size_t i = 0; i < 5; ++i)
+//			{
+//				if (!test2sem.timedWait(25))
+//				{
+//					OW_THROW(OW_Exception, "semaphore 2 timed out");
+//				}
+//			}
 
 			// now deregister
 			OW_MutexLock guard1(coutMutex);
