@@ -466,7 +466,7 @@ EOS
 					INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
 				fi
 
-				grep "author" $i > /dev/null
+				grep "[Aa]uthor" $i > /dev/null
 				if [ ! "$?" = "0" ]; then
 					echo " ##### Doesn't have an @author!"
 					INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
