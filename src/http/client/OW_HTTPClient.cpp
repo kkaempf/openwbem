@@ -841,6 +841,7 @@ HTTPClient::setHTTPPath(const String& newPath)
 void HTTPClient::assumeBasicAuth()
 {
 	m_needsConnect = true;
+	m_authRequired = true;
 	// This simulates that the server returned www-authenticate: Basic in 
 	// the previous request which will cause HTTPClient to respond with the
 	// credentials on the next request.
