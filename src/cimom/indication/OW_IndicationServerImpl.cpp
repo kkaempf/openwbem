@@ -954,8 +954,20 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 	}
 
-	// TODO: look up all the subclasses of the classes in isaClassNames.  This may also require a change to the providers so they only register for the class
-	// they care about, and not all the base classes.
+	// look up all the subclasses of the classes in isaClassNames.
+	StringArray subClasses;
+	for (size_t i = 0; i < isaClassNames.size(); ++i)
+	{
+		try
+		{
+			subClasses.appendArray(hdl->enumClassNamesA(ns, isaClassNames[i]));
+		}
+		catch (CIMException& e)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to get subclass names of %1 because: %2", isaClassNames[i], e).c_str());
+		}
+	}
+	isaClassNames.appendArray(subClasses);
 
 	// get rid of duplicates - unique() requires that the range be sorted
 	std::sort(isaClassNames.begin(), isaClassNames.end());
