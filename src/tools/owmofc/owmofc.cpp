@@ -312,7 +312,9 @@ class MOFCompEnvironment : public ServiceEnvironmentIFC
 public:
 	virtual LoggerRef getLogger() const
 	{
-		return LoggerRef(new CerrLogger);
+		LoggerRef rv(new CerrLogger);
+		rv->setLogLevel(E_ERROR_LEVEL);
+		return rv;
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
