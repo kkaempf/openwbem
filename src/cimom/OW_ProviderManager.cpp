@@ -517,13 +517,13 @@ OW_ProviderManager::getIndicationProviders(const OW_ProviderEnvironmentIFCRef& e
 		// specific namespace
 		OW_String nsAndClassName = ns + ':' + lowerName;
 		nsAndClassName.toLowerCase();
-		range = m_registeredAssocProvs.equal_range(nsAndClassName);
+		range = m_registeredIndProvs.equal_range(nsAndClassName);
 		lci = range.first;
 		uci = range.second;
 	}
 
 	OW_IndicationProviderIFCRefArray rval;
-	if (lci != m_registeredAssocProvs.end())
+	if (lci != m_registeredIndProvs.end())
 	{
 		// loop through the matching range and put them in rval
 		for (IndProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
