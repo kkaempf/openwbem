@@ -43,8 +43,6 @@
 
 #include <fstream>
 
-#include <iostream>
-
 namespace OpenWBEM
 {
 
