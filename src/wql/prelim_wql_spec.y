@@ -77,14 +77,14 @@ int yylex();
 %token TRUEP
 %token FALSEP
 %token NULLP
-%token QUOTE
 %token FCONST
 %token SIGN
 %token HEXCONST
 %token BITCONST
 %token DATETIMEVALUE
-/* This shouldn't be a token, I did it to try and resolve the conflicts */
+/* This shouldn't be a token, I did it to try and resolve the conflicts
 %token CLASSNAME
+*/
 
 
 /* unused
@@ -169,30 +169,45 @@ start:
 ;
 
 select_statement:
-      SELECT select_criteria FROM from_criteria 
-    | SELECT select_criteria FROM from_criteria calculation_clause
-    | SELECT select_criteria FROM from_criteria SORTEDBY sort_spec_list
-    | SELECT select_criteria FROM from_criteria SORTEDBY sort_spec_list calculation_clause
-    | SELECT select_criteria FROM from_criteria SETCONSTANT set_clause_list 
-    | SELECT select_criteria FROM from_criteria SETCONSTANT set_clause_list calculation_clause
-    | SELECT select_criteria FROM from_criteria SETCONSTANT set_clause_list SORTEDBY sort_spec_list
-    | SELECT select_criteria FROM from_criteria SETCONSTANT set_clause_list SORTEDBY sort_spec_list calculation_clause
-    | SELECT select_criteria FROM from_criteria WHERE search_condition 
-    | SELECT select_criteria FROM from_criteria WHERE search_condition calculation_clause
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SORTEDBY sort_spec_list
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SORTEDBY sort_spec_list calculation_clause
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SETCONSTANT set_clause_list 
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SETCONSTANT set_clause_list calculation_clause
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SETCONSTANT set_clause_list SORTEDBY sort_spec_list
-    | SELECT select_criteria FROM from_criteria WHERE search_condition SETCONSTANT set_clause_list SORTEDBY sort_spec_list calculation_clause
+      SELECT select_criteria FROM from_criteria opt_where_clause 
+        opt_setconstant_clause opt_sortedby_clause opt_calculation_clause
+;
+
+opt_where_clause:
+      /* empty */
+    | WHERE search_condition
+;
+
+opt_setconstant_clause:
+      /* empty */
+    | SETCONSTANT set_clause_list
+;
+
+opt_sortedby_clause:
+      /* empty */
+    | SORTEDBY sort_spec_list
+;
+
+opt_calculation_clause:
+      /* empty */
+    | calculation_clause
+;
 
 select_criteria:
       select_list
     | select_criteria COMMA select_list
 ;
 
+/* this is ambiguous
 select_list:
       property_list
+    | NULLP
+    | select_string_literal
+;
+*/
+
+select_list:
+      class_property_identifier
     | NULLP
     | select_string_literal
 ;
@@ -205,23 +220,40 @@ select_literal_identifier:
       IDENT
 ;
 
+/* not used anymore
 property_list:
       class_property_identifier
-/* this is ambiguous with select_criteria
     | property_list COMMA class_property_identifier
-*/
 ;
+*/
+
+/* this is ambiguous with embedded objects
+class_property_identifier:
+      class_name PERIOD property_identifier
+    | property_identifier
+;
+*/
 
 class_property_identifier:
-      CLASSNAME PERIOD property_identifier
+      IDENT PERIOD property_identifier /* this could be an embedded_object */
     | property_identifier
 ;
 
+/* embedded_object is ambiguous with class_property_identifier
 property_identifier:
       ASTERISK
     | property_name
     | array_property
     | embedded_object
+    | KEY
+    | CLASS
+;
+*/
+
+property_identifier:
+      ASTERISK
+    | property_name
+    | array_property
     | KEY
     | CLASS
 ;
@@ -245,14 +277,20 @@ array_index:
     | ICONST PERIODPERIOD ICONST
 ;
 
+/* property_identifier_list is ambiguous with select_criteria
 embedded_object:
-/* this is ambiguous
       property_name PERIOD property_identifier_list
-*/
       property_name PERIOD property_identifier
 ;
+*/
 
-/*
+/* this is ambiguous with class_property_identifier
+embedded_object:
+      IDENT PERIOD property_identifier
+;
+*/
+
+/* not used - see embedded_object
 property_identifier_list:
       property_identifier
     | property_identifier_list COMMA property_identifier
@@ -264,8 +302,8 @@ from_criteria:
 ;
 
 class_list:
-      CLASSNAME
-    | class_list COMMA CLASSNAME
+      class_name
+    | class_list COMMA class_name
 ;
 
 search_condition:
@@ -300,7 +338,7 @@ compareison_predicate:
 ;
 
 comp_op:
-      EQUALS /* EQUALSTO? */
+      EQUALS
     | NOTEQUALS
     | LESSTHAN
     | GREATERTHAN
@@ -314,8 +352,8 @@ null_predicate:
 ;
 
 association_predicate:
-      CLASSNAME REF reference_name ASSOCIATEDBY association_class_name
-    | CLASSNAME REF reference_name COMMA CLASSNAME REF reference_name ASSOCIATEDBY association_class_name
+      class_name REF reference_name ASSOCIATEDBY association_class_name
+    | class_name REF reference_name COMMA class_name REF reference_name ASSOCIATEDBY association_class_name
 ;
 
 time_predicate:
@@ -327,12 +365,15 @@ set_clause_list:
     | set_clause_list COMMA set_clause
 ;
 
+/* ambiguous, no way to differentiate class_property_identifier and select_literal_identifier
 set_clause:
       class_property_identifier EQUALS set_source
-/* This is a conflict with the rule above.  The grammar has no way of knowing
-a difference between a class property IDENT and a select literal IDENT.
     | select_literal_identifier EQUALS set_source
+;
 */
+
+set_clause:
+      class_property_identifier EQUALS set_source
 ;
 
 set_source:
@@ -366,14 +407,12 @@ property_name:
       IDENT
 ;
 
-/*
 class_name:
       IDENT
 ;
-*/
 
 association_class_name:
-      CLASSNAME
+      IDENT
 ;
 
 comparison_term:
