@@ -41,6 +41,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
+#include "OW_Enumeration.hpp"
 
 namespace OpenWBEM
 {

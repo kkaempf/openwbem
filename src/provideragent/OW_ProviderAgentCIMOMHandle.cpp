@@ -51,6 +51,7 @@
 #include "OW_ProviderAgent.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigException.hpp"
+#include "OW_Enumeration.hpp"
 
 namespace OpenWBEM
 {

@@ -42,6 +42,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_Enumeration.hpp"
 
 namespace OpenWBEM
 {

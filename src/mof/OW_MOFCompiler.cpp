@@ -44,6 +44,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Enumeration.hpp"
 
 #include <assert.h>
 #include <cctype>
