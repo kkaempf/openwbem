@@ -5,8 +5,6 @@ C provider interface.
 Webmin provider(s).
 Internationalization.
 Deal with locale on WBEM requests.
-Pass output stream to local cimom handle enumeration methods to eliminate
-	the need for in memory enumeration objects.
 
 x Test XML with IPC and Binary with HTTP
 x Change C++ Provider IFC to append provider name on factory fuction
@@ -38,3 +36,6 @@ x overhaul Provider interface with consistent const& params.
 - fix chuncked output with binary cimomhandle
 - XMLExecute has handling of flags like localonly, etc.  remove this
   and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
+- fix deleteClass
+- search for all reads and writes.  check return values and throw. 
+
