@@ -1271,8 +1271,11 @@ RunATest testLargeRequest "http://test1:pass1@localhost:30926"
 RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:owipc/"
 
 if [ "z$OWLONGTEST" = "z1" ]; then
-  TestHammer "http://test1:pass1@localhost:30926"
-  TestHammer "owbinary.wbem://test1:pass1@localhost:owipc/"
+	RunATest testClientTimeout "http://test1:pass1@localhost:30926"
+	RunATest testClientTimeout "owbinary.wbem://test1:pass1@localhost:owipc/"
+
+	TestHammer "http://test1:pass1@localhost:30926"
+	TestHammer "owbinary.wbem://test1:pass1@localhost:owipc/"
 fi
 
 StopDaemon

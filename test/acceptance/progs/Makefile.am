@@ -26,7 +26,8 @@ testNamespaces \
 testMisc \
 hammerClient \
 testSecondaryInstanceProviders \
-testLargeRequest
+testLargeRequest \
+testClientTimeout
 endif
 endif
 endif
@@ -327,6 +328,24 @@ $(CXXBINLINKFLAGS) \
 
 testLargeRequest_SOURCES = \
 testLargeRequest.cpp
+
+
+#testClientTimeout
+testClientTimeout_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+testClientTimeout_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testClientTimeout$(EXEEXT)
+
+testClientTimeout_SOURCES = \
+testClientTimeout.cpp
 
 
 INCLUDES = \
