@@ -720,6 +720,10 @@ AC_ARG_WITH(search-dir,
 	]
 )
 
+saved_LDFLAGS="$LDFLAGS"
+saved_CPPFLAGS="$CPPFLAGS"
+saved_LIBS="$LIBS"
+
 AC_ARG_ENABLE(ssl,
 OW_HELP_STRING(--disable-ssl,disable ssl integration))
 
@@ -735,9 +739,6 @@ AC_ARG_WITH(ssl-dir,
 ]
 )
 
-saved_LDFLAGS="$LDFLAGS"
-saved_CPPFLAGS="$CPPFLAGS"
-saved_LIBS="$LIBS"
 if test "x$prefix" != "xNONE" ; then
 	tryssldir="$tryssldir $prefix"
 fi
