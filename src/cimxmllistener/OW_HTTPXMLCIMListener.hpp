@@ -42,6 +42,7 @@
 #include "OW_Logger.hpp"
 #include "OW_Thread.hpp"
 #include "OW_UnnamedPipe.hpp"
+#include "OW_Mutex.hpp"
 
 class OW_HTTPServer;
 class OW_ListenerAuthenticator;

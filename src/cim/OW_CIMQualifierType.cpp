@@ -345,8 +345,8 @@ OW_CIMQualifierType::writeObject(ostream &ostrm) const
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
 
-	m_pdata->m_scope.writeObject(ostrm);
-	m_pdata->m_flavor.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_scope);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_flavor);
 
 	if(m_pdata->m_defaultValue)
 	{
@@ -372,8 +372,8 @@ OW_CIMQualifierType::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMQUALIFIERTYPESIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-	scope.readObject(istrm);
-	flavor.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, scope);
+	OW_BinIfcIO::readArray(istrm, flavor);
 
 	OW_Bool isValue;
 	isValue.readObject(istrm);

@@ -739,9 +739,9 @@ OW_CIMClass::readObject(istream &istrm)
 	pcName.readObject(istrm);
 	isAssocFlag.readObject(istrm);
 	isK.readObject(istrm);
-	qra.readObject(istrm);
-	pra.readObject(istrm);
-	mra.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, qra);
+	OW_BinIfcIO::readArray(istrm, pra);
+	OW_BinIfcIO::readArray(istrm, mra);
 
 	if(m_pdata.isNull())
 	{
@@ -766,9 +766,9 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	m_pdata->m_parentClassName.writeObject(ostrm);
 	m_pdata->m_associationFlag.writeObject(ostrm);
 	m_pdata->m_isKeyed.writeObject(ostrm);
-	m_pdata->m_qualifiers.writeObject(ostrm);
-	m_pdata->m_properties.writeObject(ostrm);
-	m_pdata->m_methods.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_properties);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_methods);
 }
 
 //////////////////////////////////////////////////////////////////////////////

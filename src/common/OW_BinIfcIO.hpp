@@ -111,70 +111,52 @@ const OW_UInt8 OW_END_INSTENUM =		152;
 const OW_UInt8 OW_END_QUALENUM =		153;
 
 
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Refactor this and put these in a more common place, since they're used in more than just the binary protocol
-class OW_BinIfcIO
+namespace OW_BinIfcIO
 {
-public:
 
-	static void write(std::ostream& ostrm, const void* dataOut,
-		int dataOutLen)
-	{
-		if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
-		{
-			OW_THROW(OW_IOException, "Failed writing data");
-		}
-	}
+	void write(std::ostream& ostrm, const void* dataOut,
+		int dataOutLen);
 
+	void verifySignature(std::istream& istrm, OW_UInt8 validSig);
 
-	static void verifySignature(std::istream& istrm, OW_UInt8 validSig)
-	{
-		OW_UInt8 val;
-		OW_BinIfcIO::read(istrm, val);
-	
-		if(val != validSig)
-		{
-			OW_THROW(OW_BadCIMSignatureException,
-				format("Received invalid signature. Got: %1 Expected: %2", OW_Int32(val),
-					OW_Int32(validSig)).c_str());
-		}
-	
-	}
-
-
-	static void write(std::ostream& ostrm, OW_Int32 val)
+	inline void write(std::ostream& ostrm, OW_Int32 val)
 	{
 		val = OW_hton32(val);
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
-	static void write(std::ostream& ostrm, OW_UInt32 val)
+	inline void write(std::ostream& ostrm, OW_UInt32 val)
 	{
 		val = OW_hton32(val);
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
-	static void writeLen(std::ostream& ostrm, OW_UInt32 len);
+	void writeLen(std::ostream& ostrm, OW_UInt32 len);
 
-	static void write(std::ostream& ostrm, OW_UInt8 val)
+	inline void write(std::ostream& ostrm, OW_UInt8 val)
 	{
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
-	static void write(std::ostream& ostrm, OW_UInt16 val)
+	inline void write(std::ostream& ostrm, OW_UInt16 val)
 	{
 		val = OW_hton16(val);
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
 
-	static void write(std::ostream& ostrm, const OW_String& str)
+	inline void write(std::ostream& ostrm, const OW_String& str)
 	{
 		str.writeObject(ostrm);
 	}
 
 
-	static void writeObject(std::ostream& ostrm, OW_UInt8 sig,
+	inline void writeObject(std::ostream& ostrm, OW_UInt8 sig,
 		const OW_CIMBase& obj)
 	{
 		OW_BinIfcIO::write(ostrm, sig);
@@ -182,21 +164,21 @@ public:
 	}
 
 
-	static void writeObjectPath(std::ostream& ostrm,
+	inline void writeObjectPath(std::ostream& ostrm,
 		const OW_CIMObjectPath& op)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_OP, op);
 	}
 
 
-	static void writeNameSpace(std::ostream& ostrm,
+	inline void writeNameSpace(std::ostream& ostrm,
 		const OW_CIMNameSpace& ns)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_NS, ns);
 	}
 
 
-	static void writeBool(std::ostream& ostrm,
+	inline void writeBool(std::ostream& ostrm,
 		OW_Bool arg)
 	{
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_BOOL);
@@ -204,98 +186,115 @@ public:
 	}
 
 
-	static void writeClass(std::ostream& ostrm, const OW_CIMClass& cc)
+	inline void writeClass(std::ostream& ostrm, const OW_CIMClass& cc)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_CLS, cc);
 	}
 
 
-	static void writeInstance(std::ostream& ostrm, const OW_CIMInstance& ci)
+	inline void writeInstance(std::ostream& ostrm, const OW_CIMInstance& ci)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_INST, ci);
 	}
 
 
-	static void writeQual(std::ostream& ostrm, const OW_CIMQualifierType& qt)
+	inline void writeQual(std::ostream& ostrm, const OW_CIMQualifierType& qt)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_QUAL, qt);
 	}
 
 
-	static void writeValue(std::ostream& ostrm, const OW_CIMValue& value)
+	inline void writeValue(std::ostream& ostrm, const OW_CIMValue& value)
 	{
 		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_VALUE, value);
 	}
 
 
-	static void writeString(std::ostream& ostrm, const OW_String& str)
+	inline void writeString(std::ostream& ostrm, const OW_String& str)
 	{
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_STR);
 		str.writeObject(ostrm);
 	}
 
 
-	static void writeStringArray(std::ostream& ostrm,
+	/////////////////////////////////////////////////////////////////////////////
+	template <typename T>
+	inline void
+	readArray(std::istream& istr, OW_Array<T>& a)
+	{
+		a.clear();
+		OW_UInt32 len;
+		OW_BinIfcIO::readLen(istr, len);
+		
+		a.reserve(len);
+		for(OW_UInt32 i = 0; i < len; i++)
+		{
+			T x;
+			x.readObject(istr);
+			a.push_back(x);
+		}
+	
+	}
+	
+	/////////////////////////////////////////////////////////////////////////////
+	template <typename T>
+	inline void
+	writeArray(std::ostream& ostrm, const T& a)
+	{
+		OW_UInt32 len = a.size();
+		OW_BinIfcIO::writeLen(ostrm, len);
+		for(OW_UInt32 i = 0; i < len; i++)
+		{
+			a.operator[](i).writeObject(ostrm);
+		}
+	}
+
+	inline void writeStringArray(std::ostream& ostrm,
 		const OW_StringArray& stra)
 	{
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_STRARRAY);
-		stra.writeObject(ostrm);
+		writeArray(ostrm, stra);
 	}
 
-	static void writeStringArray(std::ostream& ostrm,
-		const OW_StringArray* propertyList)
-	{
-		OW_Bool nullPropertyList = (propertyList == 0);
-		OW_BinIfcIO::writeBool(ostrm, nullPropertyList);
-		if(!nullPropertyList)
-		{
-			OW_BinIfcIO::writeStringArray(ostrm, *propertyList);
-		}
-	}
+	void writeStringArray(std::ostream& ostrm,
+		const OW_StringArray* propertyList);
 	
 	
-	static void read(std::istream& istrm, void* dataIn, int dataInLen)
-	{
-		if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
-		{
-			OW_THROW(OW_IOException, "Failed reading data");
-		}
-	}
+	void read(std::istream& istrm, void* dataIn, int dataInLen);
 
-
-	static void read(std::istream& istrm, OW_String& arg)
+	inline void read(std::istream& istrm, OW_String& arg)
 	{
 		arg.readObject(istrm);
 	}
 
 
-	static void read(std::istream& istrm, OW_Int32& val)
+	inline void read(std::istream& istrm, OW_Int32& val)
 	{
 		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 
-	static void read(std::istream& istrm, OW_UInt32& val)
+	inline void read(std::istream& istrm, OW_UInt32& val)
 	{
 		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 
-	static void readLen(std::istream& istrm, OW_UInt32& len);
+	void readLen(std::istream& istrm, OW_UInt32& len);
 
-	static void read(std::istream& istrm, OW_UInt16& val)
+	inline void read(std::istream& istrm, OW_UInt16& val)
 	{
 		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh16(val);
 	}
 
-	static void read(std::istream& istrm, OW_UInt8& val)
+	inline void read(std::istream& istrm, OW_UInt8& val)
 	{
 		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 	}
 
 
-	static void readObject(std::istream& istrm, OW_UInt8 validSig,
+	inline void readObject(std::istream& istrm, OW_UInt8 validSig,
 		OW_CIMBase& obj)
 	{
 		OW_BinIfcIO::verifySignature(istrm, validSig);
@@ -303,7 +302,7 @@ public:
 	}
 
 
-	static OW_CIMObjectPath readObjectPath(std::istream& istrm)
+	inline OW_CIMObjectPath readObjectPath(std::istream& istrm)
 	{
 		OW_CIMObjectPath op(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_OP, op);
@@ -311,7 +310,7 @@ public:
 	}
 
 
-	static OW_CIMInstance readInstance(std::istream& istrm)
+	inline OW_CIMInstance readInstance(std::istream& istrm)
 	{
 		OW_CIMInstance ci(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_INST, ci);
@@ -319,7 +318,7 @@ public:
 	}
 
 
-	static OW_Bool readBool(std::istream& istrm)
+	inline OW_Bool readBool(std::istream& istrm)
 	{
 		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_BOOL);
 		OW_Bool b;
@@ -328,7 +327,7 @@ public:
 	}
 
 
-	static OW_CIMNameSpace readNameSpace(std::istream& istrm)
+	inline OW_CIMNameSpace readNameSpace(std::istream& istrm)
 	{
 		OW_CIMNameSpace ns(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_NS, ns);
@@ -336,7 +335,7 @@ public:
 	}
 
 
-	static OW_CIMClass readClass(std::istream& istrm)
+	inline OW_CIMClass readClass(std::istream& istrm)
 	{
 		OW_CIMClass cc(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_CLS, cc);
@@ -344,7 +343,7 @@ public:
 	}
 
 
-	static OW_String readString(std::istream& istrm)
+	inline OW_String readString(std::istream& istrm)
 	{
 		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STR);
 		OW_String rv;
@@ -353,7 +352,7 @@ public:
 	}
 
 
-	static OW_CIMQualifierType readQual(std::istream& istrm)
+	inline OW_CIMQualifierType readQual(std::istream& istrm)
 	{
 		OW_CIMQualifierType qt(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_QUAL, qt);
@@ -361,7 +360,7 @@ public:
 	}
 
 
-	static OW_CIMValue readValue(std::istream& istrm)
+	inline OW_CIMValue readValue(std::istream& istrm)
 	{
 		OW_CIMValue value(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_VALUE, value);
@@ -369,25 +368,24 @@ public:
 	}
 
 
-	static OW_StringArray readStringArray(std::istream& istrm)
+	inline OW_StringArray readStringArray(std::istream& istrm)
 	{
 		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STRARRAY);
 		OW_StringArray stra;
-		stra.readObject(istrm);
+		readArray(istrm, stra);
 		return stra;
 	}
 
 
-	static void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
+	void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
 
-	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
+	void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
 
-	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
+	void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
 
-	static void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
+	void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
 
-
-};
+}
 
 
 #endif	// OW_BINIFCIO_HPP_

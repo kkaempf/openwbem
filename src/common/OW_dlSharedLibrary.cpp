@@ -31,9 +31,11 @@
 #include "OW_config.h"
 #include "OW_dlSharedLibrary.hpp"
 #include "OW_Format.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 #include <dlfcn.h>
 
-OW_Mutex OW_SharedLibrary::m_guard;
+OW_Mutex OW_dlSharedLibrary_guard;
 
 OW_dlSharedLibrary::~OW_dlSharedLibrary()
 {
@@ -43,6 +45,7 @@ OW_dlSharedLibrary::~OW_dlSharedLibrary()
 OW_Bool OW_dlSharedLibrary::doGetFunctionPointer(const OW_String& functionName,
 		void** fp) const
 {
+	OW_MutexLock l(OW_dlSharedLibrary_guard);
 	*fp = dlsym( m_libhandle, functionName.c_str() );
 	if (!*fp)
 	{

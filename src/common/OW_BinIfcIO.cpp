@@ -33,6 +33,9 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
 
+namespace OW_BinIfcIO
+{
+
 //////////////////////////////////////////////////////////////////////////////
 template <typename Handler, typename ReaderFunc>
 static inline void readEnum(std::istream& istrm, Handler& result,
@@ -58,7 +61,7 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
+readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
 {
 	readEnum(istrm, result, &OW_BinIfcIO::readObjectPath, OW_BINSIG_OPENUM, OW_END_OPENUM);
 }
@@ -67,7 +70,7 @@ OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandl
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
+readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 {
 	readEnum(istrm, result, &OW_BinIfcIO::readClass, OW_BINSIG_CLSENUM, OW_END_CLSENUM);
 }
@@ -75,7 +78,7 @@ OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& res
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
+readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
 {
 	readEnum(istrm, result, &OW_BinIfcIO::readInstance, OW_BINSIG_INSTENUM, OW_END_INSTENUM);
 }
@@ -83,7 +86,7 @@ OW_BinIfcIO::readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIF
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result)
+readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	readEnum(istrm, result, &OW_BinIfcIO::readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
 }
@@ -91,7 +94,7 @@ OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResul
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::writeLen(std::ostream& ostrm, OW_UInt32 len)
+writeLen(std::ostream& ostrm, OW_UInt32 len)
 {
 	// This is ASN.1 length encoding
 	/*
@@ -149,7 +152,7 @@ OW_BinIfcIO::writeLen(std::ostream& ostrm, OW_UInt32 len)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_BinIfcIO::readLen(std::istream& istrm, OW_UInt32& len)
+readLen(std::istream& istrm, OW_UInt32& len)
 {
 	// This is ASN.1 length encoding
 	OW_UInt8 lc;
@@ -179,4 +182,60 @@ OW_BinIfcIO::readLen(std::istream& istrm, OW_UInt32& len)
 
 
 
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+write(std::ostream& ostrm, const void* dataOut,
+	int dataOutLen)
+{
+	if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
+	{
+		OW_THROW(OW_IOException, "Failed writing data");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+verifySignature(std::istream& istrm, OW_UInt8 validSig)
+{
+	OW_UInt8 val;
+	OW_BinIfcIO::read(istrm, val);
+
+	if(val != validSig)
+	{
+		OW_THROW(OW_BadCIMSignatureException,
+			format("Received invalid signature. Got: %1 Expected: %2", OW_Int32(val),
+				OW_Int32(validSig)).c_str());
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+writeStringArray(std::ostream& ostrm,
+	const OW_StringArray* propertyList)
+{
+	OW_Bool nullPropertyList = (propertyList == 0);
+	OW_BinIfcIO::writeBool(ostrm, nullPropertyList);
+	if(!nullPropertyList)
+	{
+		OW_BinIfcIO::writeStringArray(ostrm, *propertyList);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+read(std::istream& istrm, void* dataIn, int dataInLen)
+{
+	if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
+	{
+		OW_THROW(OW_IOException, "Failed reading data");
+	}
+}
+
+}
 

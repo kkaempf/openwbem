@@ -43,6 +43,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <iostream> // for cout and cerr
 

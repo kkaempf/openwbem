@@ -432,7 +432,7 @@ OW_BinaryCIMOMHandle::invokeMethod(
 	OW_BinIfcIO::writeString(strm, methodName);
 
 	OW_BinIfcIO::write(strm, OW_BINSIG_PARAMVALUEARRAY);
-	inParams.writeObject(strm);
+	OW_BinIfcIO::writeArray(strm, inParams);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		methodName, ns);
@@ -448,7 +448,7 @@ OW_BinaryCIMOMHandle::invokeMethod(
 		}
 
 		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
-		outParams.readObject(*in);
+		OW_BinIfcIO::readArray(*in, outParams);
 	}
 	catch(OW_IOException& e)
 	{

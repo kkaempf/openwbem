@@ -48,6 +48,7 @@ OW_Exec.cpp \
 OW_Format.cpp \
 OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
+OW_Logger.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \

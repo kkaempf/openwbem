@@ -1559,4 +1559,4 @@ OW_String::strchr(const char* theStr, int c)
 }
 
 
-
+template class OW_Array<OW_String>;

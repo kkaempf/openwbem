@@ -320,7 +320,7 @@ OW_CIMQualifier::readObject(istream &istrm)
 
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
-	flavors.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, flavors);
 
 	if(m_pdata.isNull())
 	{
@@ -359,7 +359,7 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 
 	m_pdata->m_qualifierType.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
-	m_pdata->m_flavors.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_flavors);
 }
 
 //////////////////////////////////////////////////////////////////////////////

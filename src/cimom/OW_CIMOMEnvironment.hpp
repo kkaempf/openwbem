@@ -42,6 +42,7 @@
 #include "OW_Array.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_Mutex.hpp"
 
 class OW_CIMServer;
 class OW_CIMOMHandleIFC;

@@ -45,7 +45,6 @@ extern "C"
 
 typedef unsigned char      			OW_UInt8;
 typedef signed char        			OW_Int8;
-typedef unsigned char				OW_Byte;
 
 #if OW_SIZEOF_SHORT_INT == 2
 typedef unsigned short     			OW_UInt16;

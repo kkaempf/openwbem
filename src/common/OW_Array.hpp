@@ -35,21 +35,20 @@
 #include "OW_config.h"
 
 #include "OW_COWReference.hpp"
-
 #include "OW_Types.h"
-
-#include <iosfwd>
-
 #include "OW_Exception.hpp"
 DECLARE_EXCEPTION(OutOfBounds);
 
-// std::vector forward declaration.  Do this to avoid having to #include <vector> here.
-namespace std {
-template <class _Tp, class _Alloc>
-class vector;
-template <class T>
-class allocator;
-}
+#ifdef OW_NEW
+#undef new
+#endif
+
+#include <vector>
+
+#ifdef OW_NEW
+#define new OW_NEW
+#endif
+
 
 /**
  * The OW_Array class essentially takes the vector class of the stl and
@@ -120,8 +119,6 @@ public:
 	void resize(size_type new_size, const T& x);
 	void resize(size_type new_size);
 	void clear();
-	void readObject(std::istream& istr);
-	void writeObject(std::ostream& ostrm) const;
 	friend bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
 	friend bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);
 
@@ -132,7 +129,6 @@ private:
 };
 
 
-typedef OW_Array<OW_Byte>       OW_ByteArray;
 typedef OW_Array<OW_UInt8>      OW_UInt8Array;
 typedef OW_Array<OW_Int8>       OW_Int8Array;
 typedef OW_Array<OW_UInt16>     OW_UInt16Array;

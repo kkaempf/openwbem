@@ -41,4 +41,21 @@ OW_Logger::logMessage( const OW_LogLevel l, const OW_String& s ) const
 		doLogMessage( s, l );
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_Logger::setLogLevel( const OW_String& l )
+{
+	if (l.equalsIgnoreCase("custinfo"))
+	{
+		setLogLevel(CustInfoLevel);
+	}
+	else if (l.equalsIgnoreCase("debug"))
+	{
+		setLogLevel(DebugLevel);
+	}
+	else
+	{
+		setLogLevel(ErrorLevel);
+	}
+}
 

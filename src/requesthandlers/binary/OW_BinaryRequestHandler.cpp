@@ -752,7 +752,7 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 
 	// Get input params
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_PARAMVALUEARRAY);
-	inparms.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, inparms);
 
 	OW_CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
@@ -767,7 +767,7 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_PARAMVALUEARRAY);
-	outparms.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, outparms);
 }
 
 //////////////////////////////////////////////////////////////////////////////

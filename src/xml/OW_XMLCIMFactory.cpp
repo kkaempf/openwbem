@@ -393,7 +393,7 @@ OW_XMLCIMFactory::createInstance(OW_CIMXMLParser& parser)
 	return rval;
 }
 
-static inline void StringToType(const OW_String& s, OW_Byte& b)
+static inline void StringToType(const OW_String& s, OW_UInt8& b)
 {
 	b = s.toUInt8();
 }

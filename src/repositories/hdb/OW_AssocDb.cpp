@@ -76,7 +76,7 @@ OW_AssocDbEntry::writeObject(ostream& ostrm) const
 	m_objectName.writeObject(ostrm);
 	m_role.writeObject(ostrm);
 	m_resultRole.writeObject(ostrm);
-	m_entries.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_entries);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ OW_AssocDbEntry::readObject(istream& istrm)
 	m_objectName.readObject(istrm);
 	m_role.readObject(istrm);
 	m_resultRole.readObject(istrm);
-	m_entries.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, m_entries);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -182,7 +182,7 @@ OW_CIMParameter::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMETERSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
-	m_pdata->m_qualifiers.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ OW_CIMParameter::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-	qualifiers.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, qualifiers);
 
 	if(m_pdata.isNull())
 	{

@@ -88,17 +88,6 @@ public:
 		return m_locked;
 	}
 
-	/*
-	OW_MutexLock& operator= (const OW_MutexLock& arg)
-	{
-		release();
-		m_locked = arg.m_locked;
-		m_mutex = arg.m_mutex;
-		arg.m_locked = false;
-		return *this;
-	}
-	*/
-
 private:
 
 

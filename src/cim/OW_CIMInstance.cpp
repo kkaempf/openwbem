@@ -845,9 +845,9 @@ OW_CIMInstance::readObject(istream &istrm)
 	name.readObject(istrm);
 	owningClassName.readObject(istrm);
 	aliasName.readObject(istrm);
-	keys.readObject(istrm);
-	properties.readObject(istrm);
-	qualifiers.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, keys);
+	OW_BinIfcIO::readArray(istrm, properties);
+	OW_BinIfcIO::readArray(istrm, qualifiers);
 
 	if(m_pdata.isNull())
 	{
@@ -870,9 +870,9 @@ OW_CIMInstance::writeObject(std::ostream &ostrm) const
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	m_pdata->m_aliasName.writeObject(ostrm);
-	m_pdata->m_keys.writeObject(ostrm);
-    m_pdata->m_properties.writeObject(ostrm);
-	m_pdata->m_qualifiers.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_keys);
+    OW_BinIfcIO::writeArray(ostrm, m_pdata->m_properties);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
 }
 
 //////////////////////////////////////////////////////////////////////////////

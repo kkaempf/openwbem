@@ -2630,7 +2630,7 @@ template<class T>
 void
 readObjectArray(istream& istrm, T& ra)
 {
-	ra.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, ra);
 //	ra.clear();
 //	OW_Int32 sz;
 
@@ -2914,7 +2914,7 @@ template<class T>
 void
 writeObjectArray(ostream& ostrm, const T& ra)
 {
-	ra.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, ra);
 //	OW_Int32 sz = ra.size();
 //	writeValue(ostrm, sz, 2);
 

@@ -35,6 +35,7 @@
 #include "OW_String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
+#include "OW_Mutex.hpp"
 
 class OW_LifecycleIndicationPoller : public OW_CppPolledProviderIFC
 {

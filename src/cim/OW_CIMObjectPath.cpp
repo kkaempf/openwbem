@@ -431,7 +431,7 @@ OW_CIMObjectPath::readObject(istream& istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMOBJECTPATHSIG );
 	nameSpace.readObject(istrm);
 	objectName.readObject(istrm);
-	keys.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, keys);
 
 	if(m_pdata.isNull())
 	{
@@ -450,7 +450,7 @@ OW_CIMObjectPath::writeObject(ostream& ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMOBJECTPATHSIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);
 	m_pdata->m_objectName.writeObject(ostrm);
-	m_pdata->m_keys.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_keys);
 }
 
 //////////////////////////////////////////////////////////////////////////////

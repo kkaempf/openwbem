@@ -31,10 +31,7 @@
 #define OW_SHAREDLIBRARY_HPP_
 
 #include "OW_config.h"
-#include "OW_Exception.hpp"
 #include "OW_String.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_Mutex.hpp"
 #include "OW_Reference.hpp"
 
 /**
@@ -76,11 +73,9 @@ class OW_SharedLibrary
 		template< class fptype >
 			static OW_Bool getFunctionPointer( const OW_Reference<OW_SharedLibrary>& sl, const OW_String& functionName, fptype& retval )
 			{
-				OW_MutexLock l(m_guard);
 				return sl->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
 			}
 	protected:
-		static OW_Mutex m_guard;
 		/**
 		 * Derived classes have to override this function to implement
 		 * the symbol loading.  The symbol to be looked up is contained in

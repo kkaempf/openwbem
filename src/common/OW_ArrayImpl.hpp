@@ -31,24 +31,8 @@
 #ifndef OW_ARRAY_IMPL_HPP_INCLUDE_GUARD_
 #define OW_ARRAY_IMPL_HPP_INCLUDE_GUARD_
 
-
 #include "OW_config.h"
-
 #include "OW_Array.hpp"
-
-#ifdef OW_NEW
-#undef new
-#endif
-
-#include <vector>
-
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
-
-#include "OW_Types.h"
-
-class OW_BinIfcIO;
 
 #ifdef OW_DEBUG
 #include <cassert>
@@ -56,48 +40,48 @@ class OW_BinIfcIO;
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array() 
+inline OW_Array<T>::OW_Array() 
 : m_impl(new V) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::~OW_Array() 
+inline OW_Array<T>::~OW_Array() 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array(V* toWrap) 
+inline OW_Array<T>::OW_Array(V* toWrap) 
 : m_impl(toWrap) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array(size_type n, const T& value) 
+inline OW_Array<T>::OW_Array(size_type n, const T& value) 
 : m_impl(new V(n, value)) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array(int n, const T& value) 
+inline OW_Array<T>::OW_Array(int n, const T& value) 
 : m_impl(new V(n, value)) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array(long n, const T& value) 
+inline OW_Array<T>::OW_Array(long n, const T& value) 
 : m_impl(new V(n, value)) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>::OW_Array(size_type n) 
+inline OW_Array<T>::OW_Array(size_type n) 
 : m_impl(new V(n)) 
 {
 }
@@ -105,14 +89,14 @@ OW_Array<T>::OW_Array(size_type n)
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
 template<class InputIterator>
-OW_Array<T>::OW_Array(InputIterator first, InputIterator last) 
+inline OW_Array<T>::OW_Array(InputIterator first, InputIterator last) 
 : m_impl(new V(first, last)) 
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::iterator
+inline typename OW_Array<T>::iterator
 OW_Array<T>::begin()
 { 
 	return m_impl->begin(); 
@@ -120,7 +104,7 @@ OW_Array<T>::begin()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_iterator
+inline typename OW_Array<T>::const_iterator
 OW_Array<T>::begin() const 
 { 
 	return m_impl->begin(); 
@@ -128,7 +112,7 @@ OW_Array<T>::begin() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::iterator
+inline typename OW_Array<T>::iterator
 OW_Array<T>::end()
 { 
 	return m_impl->end(); 
@@ -136,7 +120,7 @@ OW_Array<T>::end()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_iterator
+inline typename OW_Array<T>::const_iterator
 OW_Array<T>::end() const 
 { 
 	return m_impl->end(); 
@@ -144,7 +128,7 @@ OW_Array<T>::end() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::reverse_iterator
+inline typename OW_Array<T>::reverse_iterator
 OW_Array<T>::rbegin()
 { 
 	return m_impl->rbegin(); 
@@ -152,7 +136,7 @@ OW_Array<T>::rbegin()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_reverse_iterator
+inline typename OW_Array<T>::const_reverse_iterator
 OW_Array<T>::rbegin() const 
 { 
 	return m_impl->rbegin(); 
@@ -160,7 +144,7 @@ OW_Array<T>::rbegin() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::reverse_iterator
+inline typename OW_Array<T>::reverse_iterator
 OW_Array<T>::rend()
 { 
 	return m_impl->rend(); 
@@ -168,7 +152,7 @@ OW_Array<T>::rend()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_reverse_iterator
+inline typename OW_Array<T>::const_reverse_iterator
 OW_Array<T>::rend() const 
 { 
 	return m_impl->rend(); 
@@ -176,7 +160,7 @@ OW_Array<T>::rend() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::size_type
+inline typename OW_Array<T>::size_type
 OW_Array<T>::size() const 
 { 
 	return m_impl->size(); 
@@ -184,7 +168,7 @@ OW_Array<T>::size() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::size_type
+inline typename OW_Array<T>::size_type
 OW_Array<T>::max_size() const 
 { 
 	return m_impl->max_size(); 
@@ -192,7 +176,7 @@ OW_Array<T>::max_size() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::size_type
+inline typename OW_Array<T>::size_type
 OW_Array<T>::capacity() const 
 { 
 	return m_impl->capacity(); 
@@ -200,7 +184,7 @@ OW_Array<T>::capacity() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-bool
+inline bool
 OW_Array<T>::empty() const 
 { 
 	return m_impl->empty(); 
@@ -208,7 +192,7 @@ OW_Array<T>::empty() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::reference
+inline typename OW_Array<T>::reference
 OW_Array<T>::operator[](size_type n)
 {
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -219,7 +203,7 @@ OW_Array<T>::operator[](size_type n)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_reference
+inline typename OW_Array<T>::const_reference
 OW_Array<T>::operator[](size_type n) const
 {
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -230,15 +214,16 @@ OW_Array<T>::operator[](size_type n) const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Array<T>&
+inline OW_Array<T>&
 OW_Array<T>::operator+= (const T& x)
 {
 	m_impl->push_back(x);
+	return *this;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::reserve(size_type n) 
 { 
 	m_impl->reserve(n); 
@@ -246,7 +231,7 @@ OW_Array<T>::reserve(size_type n)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::reference
+inline typename OW_Array<T>::reference
 OW_Array<T>::front() 
 { 
 	return m_impl->front(); 
@@ -254,7 +239,7 @@ OW_Array<T>::front()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_reference
+inline typename OW_Array<T>::const_reference
 OW_Array<T>::front() const 
 { 
 	return m_impl->front(); 
@@ -262,7 +247,7 @@ OW_Array<T>::front() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::reference
+inline typename OW_Array<T>::reference
 OW_Array<T>::back() 
 { 
 	return m_impl->back(); 
@@ -270,7 +255,7 @@ OW_Array<T>::back()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::const_reference
+inline typename OW_Array<T>::const_reference
 OW_Array<T>::back() const 
 { 
 	return m_impl->back(); 
@@ -278,7 +263,7 @@ OW_Array<T>::back() const
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::push_back(const T& x) 
 { 
 	m_impl->push_back(x); 
@@ -286,7 +271,7 @@ OW_Array<T>::push_back(const T& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::append(const T& x) 
 { 
 	push_back(x); 
@@ -294,7 +279,7 @@ OW_Array<T>::append(const T& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::swap(OW_Array<T>& x) 
 { 
 	m_impl.swap(x.m_impl); 
@@ -302,7 +287,7 @@ OW_Array<T>::swap(OW_Array<T>& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::iterator
+inline typename OW_Array<T>::iterator
 OW_Array<T>::insert(iterator position, const T& x)
 { 
 	return m_impl->insert(position, x); 
@@ -310,7 +295,7 @@ OW_Array<T>::insert(iterator position, const T& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::insert(size_type position, const T& x)
 { 
 	m_impl->insert(m_impl->begin() + position, x); 
@@ -318,7 +303,7 @@ OW_Array<T>::insert(size_type position, const T& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::remove(size_type index)
 {
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -329,7 +314,7 @@ OW_Array<T>::remove(size_type index)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::remove(size_type begin, size_type end)
 {
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -342,7 +327,7 @@ OW_Array<T>::remove(size_type begin, size_type end)
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
 template<class InputIterator>
-void
+inline void
 OW_Array<T>::insert(iterator position, InputIterator first, InputIterator last)
 {
 	m_impl->insert(position, first, last);
@@ -350,7 +335,7 @@ OW_Array<T>::insert(iterator position, InputIterator first, InputIterator last)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::appendArray(const OW_Array<T>& x)
 {
 	insert(end(), x.begin(), x.end());
@@ -358,7 +343,7 @@ OW_Array<T>::appendArray(const OW_Array<T>& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::pop_back() 
 { 
 	m_impl->pop_back(); 
@@ -366,7 +351,7 @@ OW_Array<T>::pop_back()
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::iterator
+inline typename OW_Array<T>::iterator
 OW_Array<T>::erase(iterator position) 
 { 
 	return m_impl->erase(position); 
@@ -374,7 +359,7 @@ OW_Array<T>::erase(iterator position)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-typename OW_Array<T>::iterator
+inline typename OW_Array<T>::iterator
 OW_Array<T>::erase(iterator first, iterator last) 
 { 
 	return m_impl->erase(first, last); 
@@ -382,7 +367,7 @@ OW_Array<T>::erase(iterator first, iterator last)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::resize(size_type new_size, const T& x) 
 { 
 	m_impl->resize(new_size, x); 
@@ -390,7 +375,7 @@ OW_Array<T>::resize(size_type new_size, const T& x)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::resize(size_type new_size) 
 { 
 	m_impl->resize(new_size); 
@@ -398,48 +383,16 @@ OW_Array<T>::resize(size_type new_size)
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::clear() 
 { 
 	m_impl->clear(); 
 }
 
-/////////////////////////////////////////////////////////////////////////////
-template <typename T>
-void
-OW_Array<T>::readObject(std::istream& istr)
-{
-	m_impl->clear();
-	OW_UInt32 len;
-	OW_BinIfcIO::readLen(istr, len);
-	
-	m_impl->reserve(len);
-	for(OW_UInt32 i = 0; i < len; i++)
-	{
-		T x;
-		x.readObject(istr);
-		m_impl->push_back(x);
-	}
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
-template <typename T>
-void
-OW_Array<T>::writeObject(std::ostream& ostrm) const
-{
-	OW_UInt32 len = m_impl->size();
-	OW_BinIfcIO::writeLen(ostrm, len);
-	for(OW_UInt32 i = 0; i < len; i++)
-	{
-		m_impl->operator[](i).writeObject(ostrm);
-	}
-}
-
 #ifdef OW_CHECK_ARRAY_INDEXING
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>
-void
+inline void
 OW_Array<T>::checkValidIndex(size_type index) const
 {
 	if (index >= size())
@@ -454,7 +407,7 @@ OW_Array<T>::checkValidIndex(size_type index) const
 #endif
 
 template <class T>
-std::vector<T>* OW_COWReferenceClone(std::vector<T>* obj)
+inline std::vector<T>* OW_COWReferenceClone(std::vector<T>* obj)
 {
     return new std::vector<T>(*obj);
 }

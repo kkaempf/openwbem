@@ -490,11 +490,11 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 
 	if(includeQualifiers)
 	{
-		m_pdata->m_qualifiers.writeObject(ostrm);
+		OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
 	}
 	else
 	{
-		OW_CIMQualifierArray().writeObject(ostrm);
+		OW_BinIfcIO::writeArray(ostrm, OW_CIMQualifierArray());
 	}
 
 	if(m_pdata->m_cimValue)
@@ -531,7 +531,7 @@ OW_CIMProperty::readObject(istream &istrm)
 
 	propagated.readObject(istrm);
 
-	qualifiers.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, qualifiers);
 	OW_Bool isValue;
 	isValue.readObject(istrm);
 

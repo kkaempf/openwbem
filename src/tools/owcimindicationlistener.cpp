@@ -37,6 +37,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Semaphore.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <iostream> // for cout and cerr
 

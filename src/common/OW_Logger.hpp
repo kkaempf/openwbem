@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_LOGGER_HPP_
-#define OW_LOGGER_HPP_
+#ifndef OW_LOGGER_HPP_INCLUDE_GUARD_
+#define OW_LOGGER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -67,21 +67,7 @@ class OW_Logger
 		 */
 		void setLogLevel( const OW_LogLevel l ) {  m_level = l; }
 
-		void setLogLevel( const OW_String& l )
-		{
-			if (l.equalsIgnoreCase("custinfo"))
-			{
-				setLogLevel(CustInfoLevel);
-			}
-			else if (l.equalsIgnoreCase("debug"))
-			{
-				setLogLevel(DebugLevel);
-			}
-			else
-			{
-				setLogLevel(ErrorLevel);
-			}
-		}
+		void setLogLevel( const OW_String& l );
 
 		/**
 		 * @return The current logging level

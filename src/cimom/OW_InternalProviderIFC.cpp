@@ -33,6 +33,7 @@
 #include "OW_ProxyProvider.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_MutexLock.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////////

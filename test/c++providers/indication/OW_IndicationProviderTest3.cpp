@@ -46,6 +46,7 @@
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_MutexLock.hpp"
 
 // TODO: Find a way to get rid of these
 #include "OW_PollingManager.hpp"

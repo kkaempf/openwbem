@@ -45,6 +45,7 @@
 #include "OW_CppProxyProvider.hpp"
 #include "OW_Platform.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_MutexLock.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans

@@ -35,6 +35,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_MutexLock.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(

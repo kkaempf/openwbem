@@ -345,8 +345,8 @@ OW_CIMMethod::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMMETHODSIG );
 	name.readObject(istrm);
 	returnDatatype.readObject(istrm);
-	qualifiers.readObject(istrm);
-	parameters.readObject(istrm);
+	OW_BinIfcIO::readArray(istrm, qualifiers);
+	OW_BinIfcIO::readArray(istrm, parameters);
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
@@ -372,8 +372,8 @@ OW_CIMMethod::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_returnDatatype.writeObject(ostrm);
-	m_pdata->m_qualifiers.writeObject(ostrm);
-	m_pdata->m_parameters.writeObject(ostrm);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
+	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_parameters);
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_override.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
