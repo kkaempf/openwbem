@@ -157,7 +157,7 @@ OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 	(void)env;
 	loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
-    /*
+
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		//OW_NPIProviderBaseIFCRef pProv = m_noidProviders[i];
@@ -171,7 +171,6 @@ OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 					OW_NPIPolledProviderProxy(pProv)));
 		}
 	}
-    */
 
 	return rvra;
 }
@@ -377,9 +376,9 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 	}
 
    env->getLogger()->logError("LoadNoIDproviders 5");
-	::FTABLE fTable = (*createProvider)();
+	::FTABLE fTable_ = (*createProvider)();
 
-	if(!fTable.fp_initialize)
+	if(!fTable_.fp_initialize)
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
@@ -390,7 +389,9 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 	// since NPI doesn't support indicationexport providers ....
 
    env->getLogger()->logError("LoadNoIDproviders 6");
-        if (!fTable.fp_activateFilter) continue;
+	if (!fTable_.fp_activateFilter) continue;
+
+	// 
 
         // else it must be a polled provider - initialize it 
 
@@ -401,15 +402,34 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 	// nothing the provider can do with it, so we'll just pass in 0
 
 	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
-	fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
+
+        // Garbage Collection support
+	::NPIFTABLE fTable;
+        memcpy(&fTable, &fTable_, sizeof(::FTABLE));
+
+        fTable.npicontext = new ::NPIContext;
+        fTable.npicontext->scriptName = NULL;
+
+	::NPIHandle _npiHandle = {0, 0, 0, 0, fTable.npicontext};
+
+	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
+
+	// take care of the errorOccurred field - buggy provider or perl script
+	if (_npiHandle.errorOccurred)
+	{
+		env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Initialize failed"
+		" for provider %2", libName, guessProvId));
+		delete ((::NPIContext *)fTable.npicontext);
+		continue;
+	}
 
 	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		guessProvId));
 
-	::NPIFTABLE * nf = new ::NPIFTABLE();
-	* nf = fTable;
-        //m_noidProviders.append(OW_FTABLERef(theLib, new ::FTABLE(fTable)));
-        m_noidProviders.append(OW_FTABLERef(theLib, nf));
+	//::NPIFTABLE * nf = new ::NPIFTABLE();
+	//* nf = fTable;
+        m_noidProviders.append(OW_FTABLERef(theLib, new ::NPIFTABLE(fTable)));
+        //m_noidProviders.append(OW_FTABLERef(theLib, nf));
     }
 }
 
