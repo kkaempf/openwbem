@@ -9,3 +9,18 @@ WriteMakefile(
     'DEFINE'		=> '-D_COMPILE_UNIX ', # e.g., '-DHAVE_SOMETHING'
     'INC'		=> '-I/usr/include -I/usr/include/g++ -I$(TOP_SRCDIR)/src/providerifcs/perl/ -I$(TOP_SRCDIR)/src/providerifcs/perl/perlProvider -I$(TOP_SRCDIR)/src/providerifcs/npi/common'
 );
+
+sub MY::postamble {
+   return << 'MAKE_FRAG';
+UNINSTALL = $(PERLRUN) "-MExtUtils::Install" \
+-e 'uninstall($$ARGV[0],1,0);'
+uninstall :: uninstall_from_$(INSTALLDIRS)dirs
+ 
+uninstall_from_perldirs ::
+        @$(UNINSTALL) $(PERL_ARCHLIB)/auto/$(FULLEXT)/.packlist
+ 
+uninstall_from_sitedirs ::
+        @$(UNINSTALL) $(SITEARCHEXP)/auto/$(FULLEXT)/.packlist
+
+MAKE_FRAG
+}
