@@ -1068,8 +1068,7 @@ createProperty(CIMXMLParser& parser)
 		{
 			// check for old ways to enable the embedded decoding
 			if ((rval.hasTrueQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
-				 rval.getDataType().getType() == CIMDataType::STRING &&
-				 rval.getValue()) ||
+				 rval.getDataType().getType() == CIMDataType::STRING) ||
 				isKnownEmbeddedObjectName(rval.getName())
 				)
 			{

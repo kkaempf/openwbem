@@ -173,7 +173,19 @@ CIMProperty::clone(EIncludeQualifiersFlag includeQualifiers,
 	cp.m_pdata->m_override = m_pdata->m_override;
 	if (m_pdata->m_cimValue && m_pdata->m_cimValue.getType() == CIMDataType::EMBEDDEDINSTANCE)
 	{
-		cp.m_pdata->m_cimValue = CIMValue(m_pdata->m_cimValue.toCIMInstance().clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin));
+		if (m_pdata->m_cimValue.getCIMDataType().isArrayType())
+		{
+			CIMInstanceArray array = m_pdata->m_cimValue.toCIMInstanceArray();
+			for(CIMInstanceArray::iterator i = array.begin(); i != array.end(); i++ )
+			{
+				*i = i->clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin);
+			}
+			cp.m_pdata->m_cimValue = CIMValue(array);
+		}
+		else
+		{
+			cp.m_pdata->m_cimValue = CIMValue(m_pdata->m_cimValue.toCIMInstance().clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin));
+		}
 	}
 	else
 	{

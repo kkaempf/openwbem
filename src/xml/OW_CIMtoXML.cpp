@@ -1032,7 +1032,8 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 		ostr << "PROPAGATED=\"true\" ";
 	}
 	
-	if (cp.getDataType().isEmbeddedObjectType())
+	CIMValue val = cp.getValue();
+	if (cp.getDataType().isEmbeddedObjectType() || (val && val.getCIMDataType().isEmbeddedObjectType()))
 	{
 		ostr << "EmbeddedObject=\"object\" ";
 	}
@@ -1042,7 +1043,7 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 	{
 		CIMtoXML(cp.getQualifiers()[i], ostr);
 	}
-	CIMValue val = cp.getValue();
+
 	if (val)
 	{
 		// if there isn't an EmbeddedObject qualifier on an embedded object, then output one.
@@ -1235,14 +1236,14 @@ CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr)
 		{
 			type = "reference";
 		}
-		ostr << " PARAMTYPE=\"" << type;
+		ostr << " PARAMTYPE=\"" << type << "\"";
 		
 		if (pv.getValue().getCIMDataType().isEmbeddedObjectType())
 		{
-			ostr << "EmbeddedObject=\"object\" ";
+			ostr << " EmbeddedObject=\"object\"";
 		}
 
-		ostr << "\">";
+		ostr << ">";
 		CIMtoXML(pv.getValue(), ostr);
 	}
 	else
