@@ -185,8 +185,8 @@ CppProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		CppInstanceProviderIFC* pIP = pProv->getInstanceProvider();
 		if (pIP)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CPPProviderIFC found instance"
-				" provider %1", provIdString));
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+				Format("CPPProviderIFC found instance provider %1", provIdString));
 			CppInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
 //			ipRef.useRefCountOf(pProv);
 			return InstanceProviderIFCRef(new CppInstanceProviderProxy(ipRef));
@@ -207,8 +207,8 @@ CppProviderIFC::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& 
 		CppSecondaryInstanceProviderIFC* pIP = pProv->getSecondaryInstanceProvider();
 		if (pIP)
 		{
-			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CPPProviderIFC found secondary instance"
-				" provider %1", provIdString));
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+				Format("CPPProviderIFC found secondary instance provider %1", provIdString));
 			CppSecondaryInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
 //			ipRef.useRefCountOf(pProv);
 			return SecondaryInstanceProviderIFCRef(new CppSecondaryInstanceProviderProxy(ipRef));
@@ -378,8 +378,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		StringArray dirEntries;
 		if (!FileSystem::getDirectoryContents(paths[i1], dirEntries))
 		{
-			String msg(Format("C++ provider ifc failed getting"
-				" contents of directory: %1", paths[i1]));
+			String msg(Format("C++ provider ifc failed getting contents of directory: %1", paths[i1]));
 			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 			OW_THROW(CppProviderIFCException, msg.c_str());
 		}
@@ -466,16 +465,14 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				{
 					if (p_indExpProv)
 					{
-						OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc"
-							" loaded indication export provider from lib: %1 -"
-							" initializing", libName));
+						OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+							Format("C++ provider ifc loaded indication export provider from lib: %1 - initializing", libName));
 					}
 
 					if (p_polledProv)
 					{
-						OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc"
-							" loaded polled provider from lib: %1 -"
-							" initializing", libName));
+						OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+							Format("C++ provider ifc loaded polled provider from lib: %1 - initializing", libName));
 					}
 					CppProviderInitializationHelperRef p2(new CppProviderInitializationHelper(p));
 					p2->initialize(env);
@@ -552,14 +549,13 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			{
 				if (p_iep)
 				{
-					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc loaded"
-						" indication export provider from lib: %1 -"
-						" initializing", libName));
+					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+						Format("C++ provider ifc loaded indication export provider from lib: %1 - initializing", libName));
 				}
 				if (p_itp)
 				{
-					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc loaded"
-						" polled provider from lib: %1 - initializing",
+					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+						Format("C++ provider ifc loaded  polled provider from lib: %1 - initializing",
 						libName));
 				}
 
@@ -587,15 +583,14 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 		return CppProviderBaseIFCRef();
 	}
 
-	OW_LOG_DEBUG(logger, Format("CppProviderIFC::getProvider loading library: %1", libName));
+	OW_LOG_DEBUG(logger, Format("CppProviderIFC::loadProvider loading library: %1", libName));
 
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, logger);
 
 	versionFunc_t versFunc;
 	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
 	{
-		OW_LOG_ERROR(logger, Format("C++ provider ifc failed getting"
-			" function pointer to \"getOWVersion\" from library %1.", libName));
+		OW_LOG_ERROR(logger, Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from library %1.", libName));
 		return CppProviderBaseIFCRef();
 	}
 	const char* strVer = (*versFunc)();
@@ -625,8 +620,7 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 
 	CppProviderBaseIFCRef rval(theLib, pProv);
 
-	OW_LOG_DEBUG(logger, Format("C++ provider ifc successfully loaded"
-		" library %1 for provider %2", libName, provId));
+	OW_LOG_DEBUG(logger, Format("C++ provider ifc successfully loaded library %1 for provider %2", libName, provId));
 
 	return rval;
 }
@@ -681,9 +675,6 @@ CppProviderIFC::getProvider(
 			continue;
 		}
 
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CppProviderIFC::getProvider loading"
-			" library: %1", libName));
-
 		rval = loadProvider(libName, env->getLogger(COMPONENT_NAME));
 
 		if (rval)
@@ -695,13 +686,10 @@ CppProviderIFC::getProvider(
 
 	if (!rval)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc failed to load"
-			" library: %1 for provider id %2. Skipping.", libName, provId));
+		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), 
+			Format("C++ provider ifc failed to load library: %1 for provider id %2. Skipping.", libName, provId));
 		return rval;
 	}
-
-	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc successfully loaded"
-		" library %1 for provider %2", libName, provId));
 
 	if (initP == initializeProvider && storeP == storeProvider)
 	{
@@ -712,8 +700,8 @@ CppProviderIFC::getProvider(
 		// now it's in the map, we can unlock the mutex protecting the map
 		ml.release();
 
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc calling initialize"
-			" for provider %1", provId));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+			Format("C++ provider ifc calling initialize for provider %1", provId));
 
 		try
 		{
@@ -727,14 +715,14 @@ CppProviderIFC::getProvider(
 			throw;
 		}
 
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: provider %1"
-			" loaded and initialized", provId));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+			Format("C++ provider ifc: provider %1 loaded and initialized", provId));
 
 	}
 	else
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: provider %1"
-			" loaded but not initialized", provId));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
+			Format("C++ provider ifc: provider %1 loaded but not initialized", provId));
 	}
 
 	return rval;
