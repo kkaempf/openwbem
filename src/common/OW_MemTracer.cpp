@@ -35,7 +35,6 @@
 
 #include "OW_MemTracer.hpp"
 #include "OW_Mutex.hpp"
-#include <iostream>
 #include <map>
 #include <cstdio>
 #include <cstdlib>
@@ -72,7 +71,7 @@ public:
 		char const* m_file;
 		int m_line;
 		size_t m_size;
-		bool m_isDeleted; 
+		bool m_isDeleted;
 	};
 private:
 
@@ -145,7 +144,7 @@ static bool owInternal = false;
 
 static bool initialized = false;
 
-void 
+void
 processEnv()
 {
 	if (!initialized)
@@ -203,7 +202,7 @@ void OW_DumpMemory()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_MemTracer::OW_MemTracer() : m_lockCount (0) 
+OW_MemTracer::OW_MemTracer() : m_lockCount (0)
 {
 }
 
@@ -273,7 +272,7 @@ checkAndSwitchSigs(void* p, size_t sz)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_MemTracer::checkMap()
 {
 	for (iterator it = m_map.begin(); it != m_map.end(); ++it)
@@ -287,7 +286,7 @@ OW_MemTracer::checkMap()
 
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_MemTracer::add(void* p, char const* file, int line, size_t sz)
 {
 	const char* pfile = noFile;
@@ -387,7 +386,7 @@ OW_MemTracer::getEntry(void* idx)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_MemTracer::dump()
 {
 	memguard->acquire();
@@ -470,7 +469,7 @@ doNew(size_t size, char const* file, int line)
 
 	void* p = malloc(size + 8);
 
-   if (!p) 
+   if (!p)
 	{
 		memguard->release();
 
@@ -492,14 +491,14 @@ doNew(size_t size, char const* file, int line)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void* 
+void*
 operator new[](size_t size, char const* file, int line)
 {
 	return doNew(size, file, line);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void* 
+void*
 operator new(size_t size, char const* file, int line)
 {
 	return doNew(size, file, line);
@@ -507,14 +506,14 @@ operator new(size_t size, char const* file, int line)
 
 
 //////////////////////////////////////////////////////////////////////////////
-void* 
+void*
 operator new[](size_t size)
 {
 	return doNew(size, NULL, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void* 
+void*
 operator new(size_t size)
 {
 	return doNew(size, NULL, 0);
@@ -522,7 +521,7 @@ operator new(size_t size)
 
 
 //////////////////////////////////////////////////////////////////////////////
-static void 
+static void
 doDelete(void* p)
 {
 	if(p)
@@ -579,13 +578,13 @@ doDelete(void* p)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 operator delete(void* p)
 {
 	doDelete(p);
 }
 
-void 
+void
 operator delete[](void* p)
 {
 	doDelete(p);

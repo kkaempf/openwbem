@@ -31,7 +31,14 @@
 #include "OW_config.h"
 #include "OW_ThreadImpl.hpp"
 #include "OW_Assertion.hpp"
+
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #include <cstring>
 
 extern "C"
@@ -60,7 +67,7 @@ static void* threadStarter(void* arg);
 #endif
 
 #ifdef OW_USE_GNU_PTH
-static pth_attr_t g_joinable_attr;                                            
+static pth_attr_t g_joinable_attr;
 static pth_attr_t g_nonjoinable_attr;
 bool g_initialized = false;
 
@@ -168,7 +175,7 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-void 
+void
 OW_ThreadImpl::destroyThread(OW_Thread_t& )
 {
 }

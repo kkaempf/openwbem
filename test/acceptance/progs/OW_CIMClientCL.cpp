@@ -400,7 +400,6 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumInstanceNames");
 
-	//cout << "deep = true" << endl;
 	try
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
@@ -415,24 +414,6 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	{
 		cerr << e << endl;
 	}
-
-	/*
-	cout << "deep = false" << endl;
-	try
-	{
-		OW_String ofClass = "CIM_ComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop, false);
-		while (enu.hasMoreElements())
-		{
-			cout << enu.nextElement().toString() << endl;
-		}
-	}
-	catch (OW_CIMException& e)
-	{
-		cerr << e << endl;
-	}
-	*/
 
 	testDone();
 }

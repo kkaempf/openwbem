@@ -30,12 +30,12 @@
 
 
 #include "OW_config.h"
+
+/*
 #include "OW_Assertion.hpp"
 #include <iostream>
 
-/*
-
-std::ostream& 
+std::ostream&
 operator<< (std::ostream& os, const OW_Assertion& a)
 {
 	if(*a.getFile() == '\0')

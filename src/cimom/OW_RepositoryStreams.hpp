@@ -35,7 +35,13 @@
 #include "OW_Types.h"
 #include "OW_AutoPtr.hpp"
 
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #if defined(OW_HAVE_STREAMBUF)
 #include <streambuf>
 #elif defined(OW_HAVE_STREAMBUF_H)

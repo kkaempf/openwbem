@@ -30,8 +30,9 @@
 
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
-#include <iostream>
-#include <string.h>
+
+#include <iostream> // for cerr
+#include <cstring> // for memcpy
 
 OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize,
 		const OW_String& direction)

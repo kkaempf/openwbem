@@ -32,7 +32,13 @@
 #include "OW_HDB.hpp"
 #include "OW_AutoPtr.hpp"
 
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #include <cstring>
 
 static OW_UInt32 calcCheckSum(unsigned char* src, OW_Int32 len);

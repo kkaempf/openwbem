@@ -35,7 +35,12 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 
+#if defined(OW_HAVE_OSTREAM)
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else

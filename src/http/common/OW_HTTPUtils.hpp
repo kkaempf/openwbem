@@ -36,7 +36,7 @@
 #include "OW_Map.hpp"
 #include "OW_String.hpp"
 #include "OW_Base64FormatException.hpp"
-#include <iostream>
+#include <iosfwd>
 
 
 #define HASHLEN 16
@@ -49,10 +49,10 @@ class OW_HTTPUtils
 public:
 
 	/**
-	 * Read from an input stream, and fill out a <OW_String, OW_String> map and 
+	 * Read from an input stream, and fill out a <OW_String, OW_String> map and
 	 * OW_String Array representing the status line.
 	 * @param map a <OW_String, OW_String> map to fill out
-	 * @param array A OW_String array to be filled out, representing the 
+	 * @param array A OW_String array to be filled out, representing the
 	 * 	status line
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
@@ -61,7 +61,7 @@ public:
 									std::istream& istr);
 
 	/**
-	 * Read from in input stream, parse HTTP headers into a <OW_String, 
+	 * Read from in input stream, parse HTTP headers into a <OW_String,
 	 * OW_String> map (this is called by parseHeader(map, array, istr))
 	 * @param map A <OW_String, OW_String> map to be filled out.
 	 * @param istr A istream& to read the headers from
@@ -155,10 +155,10 @@ public:
 
 	/**
 	 * Read from an input stream, until the end of the entity is reached.
-	 * This is usefull when using a OW_HTTPChunkedIStream or 
+	 * This is usefull when using a OW_HTTPChunkedIStream or
 	 * OW_HTTPLenLimitIStream, and the XML parser (for instance), may
 	 * not have read to the end of the entity.
-	 * @param istr A istream& containing the entity (presumably a 
+	 * @param istr A istream& containing the entity (presumably a
 	 * 	OW_HTTPChunkedIStream, OW_HTTPLenLimitIStream, or OW_TempFileStream)
 	 */
 	static void eatEntity(std::istream& istr);

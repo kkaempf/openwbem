@@ -34,7 +34,13 @@
 
 #include <cstring>
 #include <cstdlib>
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #include <algorithm> // for std::swap
 
 OW_Mutex OW_Exception::m_mutex;

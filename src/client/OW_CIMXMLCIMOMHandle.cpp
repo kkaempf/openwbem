@@ -52,7 +52,13 @@
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMUrl.hpp"
 
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 
 using std::ostream;
 using std::iostream;

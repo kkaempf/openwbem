@@ -32,7 +32,12 @@
 #define _OW_ISTREAMBUFITERATOR_HPP__
 #include "OW_config.h"
 #include "OW_Bool.hpp"
+#if defined(OW_HAVE_ISTREAM)
+#include <istream>
+#else
 #include <iostream>
+#endif
+
 
 class OW_IstreamBufIterator
 {

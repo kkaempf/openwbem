@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#include "OW_IndicationRepLayerImpl.hpp"
 #include "OW_CIMServer.hpp"
 #include "OW_Format.hpp"
 #include "OW_DateTime.hpp"
@@ -38,9 +39,6 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMMethod.hpp"
-#include "OW_IndicationRepLayerImpl.hpp"
-
-#include <iostream>
 
 											
 // TODO: inline some of these 1-line pass-thru functions.											

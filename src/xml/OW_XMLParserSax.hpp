@@ -43,7 +43,7 @@
 #endif
 
 #include <stack>
-#include <iostream>
+#include <iosfwd>
 
 #ifdef OW_NEW
 #define new OW_NEW
@@ -83,8 +83,8 @@ class OW_XMLParseException : public OW_Exception
 				Code code,
 				unsigned int lineNumber);
 
-		OW_XMLParseException::Code getCode() const 
-		{ 
+		OW_XMLParseException::Code getCode() const
+		{
 			return _code;
 		}
 
@@ -153,7 +153,7 @@ class  OW_XMLParserSax
 			setInput(input);
 		}
 
-		OW_XMLParserSax(): _line(1), _current(), _foundRoot(false) 
+		OW_XMLParserSax(): _line(1), _current(), _foundRoot(false)
 		{
 		}
 
@@ -168,9 +168,9 @@ class  OW_XMLParserSax
 
 		OW_Bool next(OW_XMLToken& entry);
 
-		unsigned int getLine() const 
-		{ 
-			return _line; 
+		unsigned int getLine() const
+		{
+			return _line;
 		}
 
 	private:

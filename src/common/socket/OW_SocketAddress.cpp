@@ -35,7 +35,6 @@
 #include "OW_Assertion.hpp"
 
 #include <netdb.h>
-#include <iostream>
 
 extern "C"
 {
@@ -48,8 +47,8 @@ extern "C"
 }
 
 
-//static 
-OW_SocketAddress 
+//static
+OW_SocketAddress
 OW_SocketAddress::getUDS(const OW_String& filename)
 {
 	OW_SocketAddress rval;
@@ -57,7 +56,7 @@ OW_SocketAddress::getUDS(const OW_String& filename)
 	rval.m_name = filename;
 	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
 	rval.m_UDSNativeAddress.sun_family = AF_UNIX;
-	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(), 
+	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(),
 		sizeof(rval.m_UDSNativeAddress.sun_path) - 1);
 
 
@@ -69,7 +68,7 @@ OW_SocketAddress::getUDS(const OW_String& filename)
 	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
 		offsetof(struct sockaddr_un, sun_path);
 #else
-	rval.m_nativeSize = sizeof(rval.m_UDSNativeAddress.sun_family) + 
+	rval.m_nativeSize = sizeof(rval.m_UDSNativeAddress.sun_family) +
 		 ::strlen(rval.m_UDSNativeAddress.sun_path);
 #endif
 	return rval;
@@ -83,8 +82,8 @@ OW_SocketAddress::OW_SocketAddress()
 
 static OW_Mutex gethostbynameMutex;
 
-//static 
-OW_SocketAddress 
+//static
+OW_SocketAddress
 OW_SocketAddress::getByName(
 		const OW_String& hostName, OW_UInt16 port)
 	/*throw (OW_UnknownHostException)*/
@@ -99,7 +98,7 @@ OW_SocketAddress::getByName(
                 &host, &h_err) == -1)
         host = NULL;
 #else
-	hostent* host = NULL; 
+	hostent* host = NULL;
 
     {
         OW_MutexLock mlock(gethostbynameMutex);
@@ -117,22 +116,22 @@ OW_SocketAddress::getByName(
 }
 
 //static
-OW_SocketAddress 
+OW_SocketAddress
 OW_SocketAddress::getFromNativeForm( const OW_InetSocketAddress_t& nativeForm)
 {
 	return OW_SocketAddress(nativeForm);
 }
 
 //static
-OW_SocketAddress 
+OW_SocketAddress
 OW_SocketAddress::getFromNativeForm( const OW_UnixSocketAddress_t& nativeForm)
 {
 	return OW_SocketAddress(nativeForm);
 }
 
 //static
-OW_SocketAddress 
-OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm, 
+OW_SocketAddress
+OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm,
 		OW_UInt16 nativePort, const OW_String& hostName)
 {
 	OW_InetSocketAddress_t addr;
@@ -161,7 +160,7 @@ const OW_SocketAddress_t* OW_SocketAddress::getNativeForm() const
 	else return 0;
 }
 
-OW_SocketAddress 
+OW_SocketAddress
 OW_SocketAddress::getAnyLocalHost(OW_UInt16 port)
 {
 	struct in_addr addr;

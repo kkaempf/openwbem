@@ -52,7 +52,13 @@
 #elif defined(OW_HAVE_STREAMBUF_H)
 #include <streambuf.h>
 #endif
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 
 class OW_TmpFile;
 

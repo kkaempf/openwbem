@@ -40,7 +40,7 @@
 #elif defined(OW_HAVE_ISTREAM_H)
 #include <istream.h>
 #else
-#include <iostream.h>
+#include <iostream>
 #endif
 
 class OW_CIMProtocolIStreamIFC;

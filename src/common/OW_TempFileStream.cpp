@@ -38,7 +38,7 @@
 #include "OW_TempFileStream.hpp"
 #include "OW_TmpFile.hpp"
 #include "OW_Assertion.hpp"
-#include <string.h>
+#include <cstring>
 
 using std::iostream;
 

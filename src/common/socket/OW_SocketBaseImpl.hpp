@@ -49,7 +49,13 @@
 #include "OW_Types.h"
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_IOIFC.hpp"
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 
 class OW_SocketBaseImpl;
 

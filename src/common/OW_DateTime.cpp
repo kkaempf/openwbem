@@ -35,7 +35,13 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_BinIfcIO.hpp"
 
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 
 using std::istream;
 using std::ostream;

@@ -44,7 +44,14 @@
 #include <cctype>
 #include <cstdarg>
 #include <cerrno>
+
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 #include <cmath> // for HUGE_VAL
 
 using std::istream;

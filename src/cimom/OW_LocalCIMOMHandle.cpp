@@ -30,18 +30,13 @@
 
 #include "OW_config.h"
 #include "OW_LocalCIMOMHandle.hpp"
-#include "OW_StringStream.hpp"
 #include "OW_CIMFeatures.hpp"
-#include "OW_Format.hpp"
-#include "OW_DateTime.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMObjectPath.hpp"
-
-#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env,

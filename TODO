@@ -43,6 +43,4 @@ x long and short versions of make check
   http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
 - Make socket write/read also select on shutdown pipe.
 
-Add deep flag to client version of enumInstanceNames
-Fix all #include <iostream>
 fix enumInstances to give back an object path AND an instance.

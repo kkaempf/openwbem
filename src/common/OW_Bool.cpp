@@ -32,7 +32,14 @@
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_BinIfcIO.hpp"
+
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
+
 
 using std::ostream;
 using std::istream;
