@@ -481,12 +481,12 @@ ZONE { RETURN_VAL(ZONE); }
 {identifier}			{
 					/*
 					 *  Convert the identifier to lower case
-					 */
 					for (int i = 0; yytext[i]; i++)
 					{
 						if (isupper((unsigned char) yytext[i]))
 							yytext[i] = tolower((unsigned char) yytext[i]);
 					}
+					 */
 					RETURN_STR(IDENT);
 				}
 
