@@ -114,7 +114,7 @@ public:
 		(void)env;
 		(void)ns;
 
-		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsize,pcpu";
+		OW_String cmd = "/bin/ps ax --no-heading -eo pid,vsize,pcpu,comm";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 		if (pos.getExitStatus() != 0)
 		{
@@ -138,11 +138,11 @@ public:
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
 			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
-			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
+			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[3]));
 			try
 			{
-				newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[2].toUInt32()));
-				newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[3].toReal32()));
+				newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[1].toUInt32()));
+				newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toReal32()));
 			}
 			catch (const OW_StringConversionException& e)
 			{
@@ -173,7 +173,7 @@ public:
 		inst.getProperty("Handle").getValue().get(pid);
 		OW_String cmd("/bin/ps p ");
 		cmd += pid;
-		cmd += " --no-headers -o comm,vsize,pcpu";
+		cmd += " --no-headers -o vsize,pcpu,comm";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 		if (pos.getExitStatus() != 0)
 		{
@@ -181,11 +181,11 @@ public:
 				"The Instance does not (any longer) exist");
 		}
 		OW_StringArray proc = pos.out()->readAll().tokenize();
-		inst.setProperty(OW_String("Name"), OW_CIMValue(proc[0]));
+		inst.setProperty(OW_String("Name"), OW_CIMValue(proc[2]));
 		try
 		{
-			inst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[1].toUInt32()));
-			inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toReal32()));
+			inst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[0].toUInt32()));
+			inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[1].toReal32()));
 		}
 		catch (const OW_StringConversionException& e)
 		{
