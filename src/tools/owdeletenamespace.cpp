@@ -33,11 +33,13 @@
  */
 
 #include "OW_config.h"
-#include "OW_ClientCIMOMHandle.hpp"
-#include "OW_Assertion.hpp"
+#include "OW_CIMClient.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMNameSpaceUtils.hpp"
-#include "OW_CIMUrl.hpp"
+#include "OW_CmdLineParser.hpp"
+#include "OW_URL.hpp"
+#include "OW_String.hpp"
+#include "OW_ClientAuthCBIFC.hpp"
+
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -60,23 +62,100 @@ class GetLoginInfo : public ClientAuthCBIFC
 			return true;
 		}
 };
+
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT,
+	NAMESPACE_OPT
+};
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The url identifying the cimom. Default is http://localhost/ if not specified."},
+	{NAMESPACE_OPT, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, "Set the namespace to delete."},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owdeletenamespace [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	if (argc != 3)
-	{
-		cout << "Usage: <URL> <namespace>" << endl;
-		return 1;
-	}
 	try
 	{
-		String url = argv[1];
-		String ns = argv[2];
+		String url;
+		String ns;
+
+		// handle backwards compatible options, which was <URL> <namespace>
+		// TODO: This is deprecated in 3.1.0, remove it post 3.1
+		if (argc == 3 && argv[1][0] != '-' && argv[2][0] != '-')
+		{
+			url = argv[1];
+			ns = argv[2];
+			cerr << "This cmd line usage is deprecated!\n";
+		}
+		else
+		{
+			CmdLineParser parser(argc, argv, g_options);
+	
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owdeletenamespace (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+	
+			url = parser.getOptionValue(URL_OPT);
+			if (url.empty())
+			{
+				url = "http://localhost/";
+			}
+	
+			ns = parser.getOptionValue(NAMESPACE_OPT);
+			if (ns.empty())
+			{
+				cerr << "namespace must be specified." << endl;
+				Usage();
+				return 1;
+			}
+
+		}
+		
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
+		CIMClient client(url, "root", getLoginInfo);
 		cout << "Deleting namespace (" << ns << ")" << endl;
-		CIMNameSpaceUtils::delete__Namespace(*rch, ns);
+		client.deleteNameSpace(ns);
 		return 0;
+	}
+	catch (CmdLineParserException& e)
+	{
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				cerr << "unknown option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				cerr << "missing argument for option: " << e.getMessage() << '\n';
+			break;
+			default:
+				cerr << "failed parsing command line options\n";
+			break;
+		}
+		Usage();
 	}
 	catch(const Exception& e)
 	{
