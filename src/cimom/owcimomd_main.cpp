@@ -88,6 +88,10 @@ int main(int argc, char* argv[])
 			{
 				case Platform::SHUTDOWN:
 					shuttingDown = true;
+
+					// need to remove them so we don't restart while shutting down.
+					Platform::removeFatalSignalHandlers(); 
+
 					env->logInfo("CIMOM received shutdown notification."
 						" Initiating shutdown");
 					env->shutdown();

@@ -382,6 +382,7 @@ setupSigHandler(bool dbgFlg)
 	//handleSignal(SIGSTKFLT);
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void installFatalSignalHandlers()
 {
 	handleSignalAux(SIGABRT, abortHandler);
@@ -391,6 +392,18 @@ void installFatalSignalHandlers()
 	handleSignalAux(SIGSEGV, fatalSigHandler);
 	handleSignalAux(SIGFPE, fatalSigHandler);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void removeFatalSignalHandlers()
+{
+	handleSignalAux(SIGABRT, SIG_DFL);
+
+	handleSignalAux(SIGILL, SIG_DFL);
+	handleSignalAux(SIGBUS, SIG_DFL);
+	handleSignalAux(SIGSEGV, SIG_DFL);
+	handleSignalAux(SIGFPE, SIG_DFL);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 String getCurrentUserName()
 {

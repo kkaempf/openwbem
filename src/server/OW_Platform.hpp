@@ -83,6 +83,7 @@ namespace Platform
 	 */
 	void restartDaemon();
 	void installFatalSignalHandlers();
+	void removeFatalSignalHandlers();
 };
 
 } // end namespace OpenWBEM
