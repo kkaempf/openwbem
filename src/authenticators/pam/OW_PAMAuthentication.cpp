@@ -165,7 +165,12 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 	}
 	free(pUserName);
 
-	bool retval = ( rval == PAM_SUCCESS ? true : false ); // indicate success 
+	bool retval = ( rval == PAM_SUCCESS ? true : false ); // indicate success
+
+	if (!retval)
+	{
+		details = "Invalid credentials";
+	}
 
 #ifdef OW_GNU_LINUX
 	if(retval)
