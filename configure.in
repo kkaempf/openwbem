@@ -844,7 +844,6 @@ src/providers/cpp/indication/Makefile
 src/providers/cpp/indication/IndicationRepLayer/Makefile
 src/repositories/Makefile
 src/repositories/hdb/Makefile
-src/repositories/tdbcr/Makefile
 src/requesthandlers/Makefile
 src/requesthandlers/binary/Makefile
 src/requesthandlers/cimxml/Makefile
