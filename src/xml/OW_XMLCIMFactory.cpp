@@ -148,7 +148,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 	CIMProperty cp(CIMNULL);
 	OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_INSTANCENAME));
 	String thisClassName = parser.getAttribute(CIMXMLParser::A_CLASSNAME);
-	cimPath.setObjectName(thisClassName);
+	cimPath.setClassName(thisClassName);
 	//parser.getChild();
 	parser.getNextTag();
 	if (parser.tokenIsId(CIMXMLParser::E_KEYBINDING))
@@ -227,7 +227,7 @@ createObjectPath(CIMXMLParser& parser)
 			parser.mustGetChildId(CIMXMLParser::E_LOCALNAMESPACEPATH);
 			getLocalNameSpacePathAndSet(rval, parser);
 			parser.mustGetNextId(CIMXMLParser::E_CLASSNAME);
-			rval.setObjectName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
+			rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 			parser.mustGetNextTag();
 			parser.mustGetEndTag(); // pass </CLASSNAME>
 			parser.mustGetEndTag(); // pass </LOCALCLASSPATH>
@@ -236,13 +236,13 @@ createObjectPath(CIMXMLParser& parser)
 			parser.mustGetChildId(CIMXMLParser::E_NAMESPACEPATH);
 			getNameSpacePathAndSet(rval, parser);
 			parser.mustGetNextId(CIMXMLParser::E_CLASSNAME);
-			rval.setObjectName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
+			rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 			parser.mustGetNextTag();
 			parser.mustGetEndTag(); // pass </CLASSNAME>
 			parser.mustGetEndTag(); // pass </LOCALCLASSPATH>
 			return rval;
 		case CIMXMLParser::E_CLASSNAME:
-			rval.setObjectName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
+			rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 			parser.mustGetNextTag();
 			parser.mustGetEndTag(); // pass </CLASSNAME>
 			return rval;

@@ -134,7 +134,7 @@ String date( void )
 {
 	DateTime DateTime;
 	DateTime.setToCurrent();
-	Array< String > DateTimeArray = DateTime.toStringGMT().tokenize();
+	Array< String > DateTimeArray = DateTime.toString(DateTime::E_UTC_TIME).tokenize();
 	if ( DateTimeArray.size() < 5 )
 	{
 		OW_THROW(HTTPException, "DateTimeArray has less than 5 elements.");

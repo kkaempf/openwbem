@@ -60,7 +60,7 @@ NPIIndicationProviderProxy::deActivateFilter(
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 		SelectExp exp = {&mutableFilter};
 		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_deActivateFilter( &_npiHandle, exp, eventType.c_str(), cop, lastActivation);
@@ -95,7 +95,7 @@ NPIIndicationProviderProxy::activateFilter(
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_activateFilter( &_npiHandle, exp, eventType.c_str(), cop, firstActivation);
 		if (_npiHandle.errorOccurred)
@@ -129,7 +129,7 @@ NPIIndicationProviderProxy::authorizeFilter(
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_authorizeFilter( &_npiHandle, exp, eventType.c_str(), cop, owner.c_str());
 		if (_npiHandle.errorOccurred)
@@ -162,7 +162,7 @@ NPIIndicationProviderProxy::mustPoll(
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 		::CIMObjectPath cop = {&mutablePath};
 		int rval = m_ftable->fp_mustPoll( &_npiHandle, exp, eventType.c_str(), cop);
 		if (_npiHandle.errorOccurred)

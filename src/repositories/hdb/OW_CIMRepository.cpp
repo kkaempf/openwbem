@@ -1548,7 +1548,7 @@ CIMRepository::_staticAssociatorsClass(
 		// get the current class so we can get the name of the superclass
 		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
 		curClsName = theClass.getSuperClass();
-		curPath.setObjectName(curClsName);
+		curPath.setClassName(curClsName);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1591,7 +1591,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 		// get the current class so we can get the name of the superclass
 		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
 		curClsName = theClass.getSuperClass();
-		curPath.setObjectName(curClsName);
+		curPath.setClassName(curClsName);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1791,7 +1791,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 		bool found = false;
 		for (size_t i = 0; i < classes.size(); ++i)
 		{
-			op.setObjectName(classes[i]);
+			op.setClassName(classes[i]);
 			try
 			{
 				CIMClass c = _instGetClass(ns,classes[i]);

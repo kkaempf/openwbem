@@ -75,7 +75,7 @@ static CMPIString* refGetNameSpace(CMPIObjectPath* eRef, CMPIStatus* rc)
 static CMPIStatus refSetClassName(CMPIObjectPath * eRef,char * cl)
 {
 	OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	ref->setObjectName(OpenWBEM::String(cl));
+	ref->setClassName(OpenWBEM::String(cl));
 	CMReturn(CMPI_RC_OK);
 }
 

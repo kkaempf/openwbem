@@ -140,7 +140,7 @@ CIMClass
 readClass(CIMXMLParser& childNode, CIMObjectPath& path)
 {
 	CIMClass cimClass = XMLCIMFactory::createClass(childNode);
-	path.setObjectName(cimClass.getName());
+	path.setClassName(cimClass.getName());
 	return cimClass;
 }
 //////////////////////////////////////////////////////////////////////////////		

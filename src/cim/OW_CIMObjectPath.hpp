@@ -128,13 +128,13 @@ public:
 	 * It's just still here for backward compatibility. It's deprecated and will
 	 * be removed in the future.
 	 */
-	CIMObjectPath& addKey(const String& keyname, const CIMValue& value);
+	CIMObjectPath& addKey(const String& keyname, const CIMValue& value) OW_DEPRECATED;
 	/**
 	 * This function is too error prone.  Use setKeyValue() instead.
 	 * It's just still here for backward compatibility. It's deprecated and will
 	 * be removed in the future.
 	 */
-	CIMObjectPath& addKey(const CIMProperty& key);
+	CIMObjectPath& addKey(const CIMProperty& key) OW_DEPRECATED;
 	/**
 	 * Get the keys for this object path
 	 * @return An CIMPropertyArray containing the keys for this object path.
@@ -235,7 +235,7 @@ public:
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setObjectName(const String& className);
+	CIMObjectPath& setObjectName(const String& className) OW_DEPRECATED;
 	/**
 	 * Assign a class name to this object path.
 	 * @param className	The name of the class to assign to this object path.

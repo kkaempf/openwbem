@@ -68,7 +68,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		mutablePath.setNameSpace(nameSpace);
 
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
@@ -115,7 +115,7 @@ CMPIIndicationProviderProxy::activateFilter(
 		mutablePath.setNameSpace(nameSpace);
 
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
@@ -163,7 +163,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 		mutablePath.setNameSpace(nameSpace);
 
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
@@ -208,7 +208,7 @@ CMPIIndicationProviderProxy::mustPoll(
 		CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
-			mutablePath.setObjectName(classes[0]);
+			mutablePath.setClassName(classes[0]);
 		CMPI_ObjectPathOnStack eRef(mutablePath);
 		CMPISelectExp exp; // = {&mutableFilter};
 		//CMPIFlags flgs = 0;

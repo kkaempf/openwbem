@@ -457,7 +457,7 @@ public:
 	 * This is the same as toString(E_UTC_TIME).  This function is 
 	 * deprecated and exists for backward compatibility purposes.
 	 */
-	String toStringGMT() const;
+	String toStringGMT() const OW_DEPRECATED;
 
 	/**
 	 * Returns the GMT Offset (number of hours) of the system's timezone.
