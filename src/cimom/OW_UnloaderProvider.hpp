@@ -28,18 +28,20 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_UNLOADERPROVIDER_HPP__
-#define _OW_UNLOADERPROVIDER_HPP__
+#ifndef OW_UNLOADERPROVIDER_HPP_
+#define OW_UNLOADERPROVIDER_HPP_
 
 #include "OW_config.h"
 #include "OW_CppPolledProviderIFC.hpp"
+#include "OW_Reference.hpp"
 
 class OW_CIMOMEnvironment;
+typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
 
 class OW_UnloaderProvider : public OW_CppPolledProviderIFC
 {
 public:
-	OW_UnloaderProvider(OW_CIMOMEnvironment* pcenv): m_pcenv(pcenv) {}
+	OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv): m_pcenv(pcenv) {}
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
 	 * opportunity to export indications if needed.
@@ -59,7 +61,7 @@ public:
 		OW_ProviderEnvironmentIFCRef &env); 
 
 private:
-	OW_CIMOMEnvironment* m_pcenv;
+	OW_CIMOMEnvironmentRef m_pcenv;
 };
 
 
