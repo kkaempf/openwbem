@@ -50,7 +50,7 @@ int main( int iArgC, char *asArgV[] )
 		if( sURL.startsWith( "https://" ) )
 			OW_SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
 	
-		OW_AutoPtr<OW_CIMXMLCIMOMHandle> pClient;
+		OW_AutoPtrNoVec<OW_CIMXMLCIMOMHandle> pClient;
 
 		pClient = new OW_CIMXMLCIMOMHandle( sURL );
 

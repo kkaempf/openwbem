@@ -36,6 +36,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_URL.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Assertion.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IPCClient::OW_IPCClient(const OW_String &url)
@@ -72,6 +73,8 @@ OW_IPCClient::beginRequest(const OW_String& methodName,
 	// create no-delete reference, since we can't copy the stream
 	OW_Reference<std::iostream> rval(&m_conn.getIOStream(), true);
 	OW_BinIfcIO::write(*rval, (OW_Int32)OW_IPC_FUNCTIONCALL, OW_Bool(true));
+	OW_ASSERT(m_contentType.length() > 0);
+	OW_BinIfcIO::write(*rval, m_contentType, OW_Bool(true));
 	return rval;
 }
 

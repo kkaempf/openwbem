@@ -244,7 +244,7 @@ OW_HDBNode::reload(OW_HDBHandle& hdl)
 		return false;
 	}
 
-	OW_AutoPtr<char> kbfr(new char[fblk.keyLength]);
+	OW_AutoPtrVec<char> kbfr(new char[fblk.keyLength]);
 	if(file.read(kbfr.get(), fblk.keyLength) != size_t(fblk.keyLength))
 	{
 		return false;
@@ -774,7 +774,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 void
 OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 {
-	OW_AutoPtr<unsigned char> 
+	OW_AutoPtrVec<unsigned char> 
 		pbfr(new unsigned char[LMAX(SZ(fblk), fblk.keyLength)]);
 
 	OW_File file = hdl.getFile();

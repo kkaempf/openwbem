@@ -288,11 +288,7 @@ OW_LocalCIMOMHandle::createInstance(const OW_CIMObjectPath& name,
 	OW_WriteLock wl = getWriteLock();
 
 	OW_CIMInstance lci(ci);
-	m_pServer->createInstance(name, lci, m_aclInfo);
-
-	OW_CIMObjectPath op(name);
-	op.setKeys(lci);
-	return op;
+	return m_pServer->createInstance(name, lci, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -513,7 +513,7 @@ OW_AssocDb::readEntry(long offset, OW_AssocDbHandle& hdl)
 
 	readRecHeader(rh, offset, hdl.getFile());
 
-	OW_AutoPtr<unsigned char> bfr(new unsigned char[rh.dataSize]);
+	OW_AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
 
 	if(hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
 	{

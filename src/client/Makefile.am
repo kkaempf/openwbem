@@ -28,7 +28,6 @@ libowclient_a_SOURCES =	\
 OW_CIMOMLocator.cpp \
 OW_CIMOMInfo.cpp	\
 OW_CIMOMLocatorSLP.cpp \
-OW_IPCCIMOMHandle.cpp \
 OW_IPCClient.cpp \
 OW_CIMXMLCIMOMHandle.cpp \
 OW_BinaryCIMOMHandle.cpp
@@ -40,7 +39,6 @@ OW_CIMOMLocatorSLP.hpp	\
 OW_CIMOMInfo.hpp	\
 OW_CIMXMLCIMOMHandle.hpp \
 OW_BinaryCIMOMHandle.hpp \
-OW_IPCCIMOMHandle.hpp \
 OW_IPCClient.hpp
 
 INCLUDES = \

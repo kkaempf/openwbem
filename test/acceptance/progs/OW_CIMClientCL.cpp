@@ -1213,8 +1213,7 @@ main(int argc, char* argv[])
 		 **********************************************************************/
 
 		OW_CIMOMHandleIFCRef chRef;
-		if (owurl.protocol.equalsIgnoreCase("ipc") ||
-			owurl.path.equalsIgnoreCase("owbinary"))
+		if (owurl.protocol.equalsIgnoreCase("ipc"))
 		{
 			chRef = new OW_BinaryCIMOMHandle(client);
 		}

@@ -76,6 +76,7 @@ int main(int argc, char* argv[])
 		if (argc == 3)
 		{
 			ifstream infile(argv[2]);
+			hc.setContentType("application/xml");
 			OW_Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
 			*tfsOut << infile.rdbuf();
 			istream& istr = hc.endRequest(tfsOut, "CIMBatch", "");

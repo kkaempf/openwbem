@@ -260,7 +260,7 @@ OW_WQLFilterRep::getCIMInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+OW_CIMObjectPath 
 OW_WQLFilterRep::createInstance(const OW_CIMObjectPath &/*cop*/,
 	OW_CIMInstance &/*ci*/, const OW_ACLInfo& /*aclInfo*/)
 {

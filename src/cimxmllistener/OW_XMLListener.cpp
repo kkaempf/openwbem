@@ -249,3 +249,22 @@ OW_XMLListener::setPath(const OW_String& id)
 {
 	m_path = id;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray 
+OW_XMLListener::getSupportedContentTypes() const
+{
+	OW_StringArray rval;
+	rval.push_back("text/xml");
+	rval.push_back("application/xml");
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_String 
+OW_XMLListener::getContentType() const
+{
+	return OW_String("application/xml");
+}
+
+//////////////////////////////////////////////////////////////////////////////

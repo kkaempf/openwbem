@@ -54,6 +54,10 @@ public:
 
 	virtual void setEnvironment(OW_ServiceEnvironmentIFCRef env);
 
+	virtual OW_StringArray getSupportedContentTypes() const;
+
+	virtual OW_String getContentType() const;
+
 private:
 
 	void createClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,

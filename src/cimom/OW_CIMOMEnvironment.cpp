@@ -370,7 +370,12 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		if(rh)
 		{
 			rh->setEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
-			m_reqHandlers.append(rh);
+			OW_StringArray supportedContentTypes = rh->getSupportedContentTypes();
+			for (OW_StringArray::const_iterator iter = supportedContentTypes.begin();
+				  iter != supportedContentTypes.end(); iter++)
+			{
+				m_reqHandlers[(*iter)] = rh;
+			}
 			logCustInfo(format("CIMOM loaded request handler from file: %1",
 				libName));
 		}
@@ -698,25 +703,23 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 OW_RequestHandlerIFCRef
 OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) const
 {
+	OW_RequestHandlerIFCRef ref;
+	ref.setNull();
 	if (m_shuttingDown)
 	{
-		return OW_RequestHandlerIFCRef();
+		return ref;
 	}
 
 	OW_MutexLock ml(m_monitor);
 
-	OW_RequestHandlerIFCRef ref;
-	for(size_t i = 0; i < m_reqHandlers.size(); i++)
+	ReqHandlerMap::const_iterator iter = 
+			m_reqHandlers.find(id);
+	if (iter != m_reqHandlers.end())
 	{
-		if(m_reqHandlers[i]->getId().equals(id))
-		{
-			ref = OW_RequestHandlerIFCRef(m_reqHandlers[i].getLibRef(),
-				m_reqHandlers[i]->clone());
-
-			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
-				const_cast<OW_CIMOMEnvironment*>(this), true));
-			break;
-		}
+		ref = OW_RequestHandlerIFCRef(iter->second.getLibRef(), 
+			iter->second->clone());
+		ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
+			const_cast<OW_CIMOMEnvironment*>(this), true));
 	}
 
 	return ref;

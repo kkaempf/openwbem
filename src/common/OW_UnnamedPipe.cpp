@@ -71,7 +71,7 @@ OW_UnnamedPipe::read(OW_String& strData)
 	int rc;
 	if((rc = this->read(&len)) != -1)
 	{
-		OW_AutoPtr<char> p(new char[len+1]);
+		OW_AutoPtrVec<char> p(new char[len+1]);
 		if((rc = this->read(p.get(), len)) != -1)
 		{	
 			strData = OW_String(p.get(), len);

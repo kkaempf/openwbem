@@ -294,7 +294,7 @@ OW_DomainSocketConnectionImpl::authenticate()
 			"Timed out waiting for the CIMOM respond on authenticate");
 	}
 
-	OW_AutoPtr<char> fname(new char[fnameLen]);
+	OW_AutoPtrVec<char> fname(new char[fnameLen]);
 	if(read(fname.get(), fnameLen) != fnameLen)
 	{
 		OW_THROW(OW_IPCConnectionException,

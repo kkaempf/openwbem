@@ -8,7 +8,7 @@ main()
 {
 
     SRCDIR=`dirname $0` 
-	PROG=./dbtest
+	PROG="./dbtest"
 	TMP1=t1
 	TMP2=t2
 	TMP3=t3

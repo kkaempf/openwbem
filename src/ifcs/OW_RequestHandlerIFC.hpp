@@ -100,6 +100,10 @@ public:
 
 	virtual void setEnvironment(OW_ServiceEnvironmentIFCRef env);
 
+	virtual OW_StringArray getSupportedContentTypes() const = 0;
+
+	virtual OW_String getContentType() const = 0;
+
 protected:
 	/**
 	 * The HTTP server calls this once all HTTP headers have been

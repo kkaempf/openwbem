@@ -49,6 +49,10 @@ public:
 	{
 	}
 
+	virtual OW_StringArray getSupportedContentTypes() const;
+
+	virtual OW_String getContentType() const;
+
 protected:
 	/**
 	 * Process the input stream and generate appropriate output.

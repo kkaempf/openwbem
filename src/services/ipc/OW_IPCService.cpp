@@ -255,21 +255,11 @@ OW_IPCConnectionHandler::run()
 
 	try
 	{
-		OW_RequestHandlerIFCRef handler = env->getRequestHandler(OW_BINARY_ID);
-
-		if(!handler)
-		{
-			lgr->logError(format("IPC Service is unable to process connection"
-				" for %1: No Request Handler Available", m_conn.getUserName()));
-			return;
-		}
 
 		std::istream& istrm = m_conn.getInputStream();
 		std::ostream& ostrm = m_conn.getOutputStream();
 		OW_String userName = m_conn.getUserName();
 		
-		handler->setEnvironment(OW_ServiceEnvironmentIFCRef(
-			new OW_IPCServiceEnvironment(env, userName)));
 
 		OW_SelectTypeArray selra;
 		selra.append(upipe->getSelectObj());
@@ -309,6 +299,27 @@ OW_IPCConnectionHandler::run()
 
 				case OW_IPC_FUNCTIONCALL:
 					{
+
+						OW_String contentType;
+						OW_BinIfcIO::read(istrm, contentType, OW_Bool(true));
+						if (contentType.length() < 1)
+						{
+							lgr->logError("IPC Service is unable to process connection: "
+								"Client failed to provide content type");
+							return;
+						}
+						OW_RequestHandlerIFCRef handler =
+							env->getRequestHandler(contentType);
+
+						if(!handler)
+						{
+							lgr->logError(format("IPC Service is unable to process connection"
+								" for %1: No Request Handler Available", m_conn.getUserName()));
+							return;
+						}
+						handler->setEnvironment(OW_ServiceEnvironmentIFCRef(
+							new OW_IPCServiceEnvironment(env, userName)));
+
 						OW_TempFileStream tfs;
 						handler->process(&istrm, &ostrm, &tfs, userName);
 						if(handler->hasError())

@@ -58,6 +58,10 @@ public:
 		return new OW_XMLListener(*this);
 	}
 
+	virtual OW_StringArray getSupportedContentTypes() const;
+
+	virtual OW_String getContentType() const;
+
 protected:
 
         /**

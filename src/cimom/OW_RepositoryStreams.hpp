@@ -68,7 +68,7 @@ public:
 		, m_strbuf(dynamic_cast<OW_RepositoryIStreamBuf*>(rdbuf())) {}
 
 private:
-		OW_AutoPtr<OW_RepositoryIStreamBuf> m_strbuf;
+		OW_AutoPtrNoVec<OW_RepositoryIStreamBuf> m_strbuf;
 };
 
 
@@ -108,7 +108,7 @@ public:
 	void clearData() { m_buf->clear(); }
 
 private:
-	OW_AutoPtr<OW_RepositoryOStreamBuf> m_buf;
+	OW_AutoPtrNoVec<OW_RepositoryOStreamBuf> m_buf;
 };
 
 #endif	// __OW_REPOSITORYSTREAMS_HPP__

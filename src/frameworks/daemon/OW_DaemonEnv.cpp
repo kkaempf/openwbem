@@ -39,8 +39,10 @@
 #include "OW_Thread.hpp"
 #include "OW_InetServerSocket.hpp"
 #include "OW_SelectEngine.hpp"
-#include "OW_IPCCIMOMHandle.hpp"
 #include "OW_SafeLibCreate.hpp"
+#include "OW_CIMProtocolIFC.hpp"
+#include "OW_IPCClient.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -126,7 +128,13 @@ OW_DaemonEnv::getCIMOMHandle(const OW_String& username, OW_Bool doIndications)
 	(void)username;
 	(void)doIndications;
 	// TODO: come up with a decent URL for the IPCCIMOMHandle
-	return OW_CIMOMHandleIFCRef(new OW_IPCCIMOMHandle("localhost"));
+	OW_CIMProtocolIFCRef client;
+	client = new OW_IPCClient("localhost");
+
+	OW_CIMOMHandleIFCRef chRef;
+	chRef = new OW_BinaryCIMOMHandle(client);
+
+	return chRef;
 }
 
 //////////////////////////////////////////////////////////////////////////////

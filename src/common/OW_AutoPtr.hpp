@@ -33,55 +33,122 @@
 
 #include "OW_config.h"
 
-template <class X> class OW_AutoPtr
+template <class X> class OW_AutoPtrNoVec
 {
 private:
-	X* ptr;
+	X* _ptr;
 
 public:
 	typedef X element_type;
-	explicit OW_AutoPtr(X* p = 0) : ptr(p) {}
 
-	OW_AutoPtr(OW_AutoPtr& a) : ptr(a.release()) {}
+	/**
+	 * Construct a new OW_AutoPtr. 
+	 * @param isArray true if memory is allocated with new[], false if 
+	 *        memory is allocated with new.
+	 * @param p pointer to the object 
+	 */
+	explicit OW_AutoPtrNoVec(X* p = 0) : _ptr(p) {}
 
-	OW_AutoPtr& operator= (X* p)
+	OW_AutoPtrNoVec(OW_AutoPtrNoVec& a) : _ptr(a.release()) {}
+
+	OW_AutoPtrNoVec& operator= (X* p)
 	{
-		if(p != ptr)
+		if(p != _ptr)
 		{
 			reset();
-			ptr = p;
+			_ptr = p;
 		}
 		return *this;
 	}
 
-	OW_AutoPtr& operator= (OW_AutoPtr& a)
+	OW_AutoPtrNoVec& operator= (OW_AutoPtrNoVec& a)
 	{
 		if(&a != this)
 		{
-			delete ptr;
-			ptr = a.release();
+			delete _ptr;
+			_ptr = a.release();
 		}
 		return *this;
 	}
 
-	~OW_AutoPtr()
+	~OW_AutoPtrNoVec()
 	{
-		delete ptr;
+		delete _ptr;
 	}
 
-	X& operator*() const {  return *ptr;}
-	X* operator->() const {  return ptr;}
-	X* get() const {  return ptr;}
+	X& operator*() const {  return *_ptr;}
+	X* operator->() const {  return _ptr;}
+	X* get() const {  return _ptr;}
 	X* release()
 	{
-		X* rval = ptr;
-		ptr = 0;
+		X* rval = _ptr;
+		_ptr = 0;
 		return rval;
 	}
 	void reset(X* p=0)
 	{
-		delete ptr;
-		ptr = p;
+		delete _ptr;
+		_ptr = p;
+	}
+};
+
+
+template <class X> class OW_AutoPtrVec
+{
+private:
+	X* _ptr;
+
+public:
+	typedef X element_type;
+
+	/**
+	 * Construct a new OW_AutoPtr. 
+	 * @param isArray true if memory is allocated with new[], false if 
+	 *        memory is allocated with new.
+	 * @param p pointer to the object 
+	 */
+	explicit OW_AutoPtrVec(X* p = 0) : _ptr(p) {}
+
+	OW_AutoPtrVec(OW_AutoPtrVec& a) : _ptr(a.release()) {}
+
+	OW_AutoPtrVec& operator= (X* p)
+	{
+		if(p != _ptr)
+		{
+			reset();
+			_ptr = p;
+		}
+		return *this;
+	}
+
+	OW_AutoPtrVec& operator= (OW_AutoPtrVec& a)
+	{
+		if(&a != this)
+		{
+			delete [] _ptr;
+			_ptr = a.release();
+		}
+		return *this;
+	}
+
+	~OW_AutoPtrVec()
+	{
+		delete [] _ptr;
+	}
+
+	X& operator*() const {  return *_ptr;}
+	X* operator->() const {  return _ptr;}
+	X* get() const {  return _ptr;}
+	X* release()
+	{
+		X* rval = _ptr;
+		_ptr = 0;
+		return rval;
+	}
+	void reset(X* p=0)
+	{
+		delete [] _ptr;
+		_ptr = p;
 	}
 };
 

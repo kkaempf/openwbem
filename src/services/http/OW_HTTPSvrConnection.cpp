@@ -775,12 +775,13 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Content-Type"))
 		{
 			OW_String ct = getHeaderValue("Content-Type");
-			if (ct.indexOf("text/xml") < 0 && ct.indexOf("application/xml") < 0)
+			m_requestHandler = m_options.env->getRequestHandler(ct);
+			if (m_requestHandler.isNull())
 			{
-				m_errDetails = "Only \"text/xml\" or \"application/xml\" are "
-					"acceptable for Content-Type.";
+				m_errDetails.format("Content-Type \"%1\" is not supported.", ct.c_str());
 				return SC_UNSUPPORTED_MEDIA_TYPE;
 			}
+
 		}
 		else
 		{
@@ -788,6 +789,24 @@ OW_HTTPSvrConnection::processHeaders()
 			return SC_NOT_ACCEPTABLE;
 		}
 	}
+
+	/*
+	// set the path for the handler
+	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
+	{
+		m_options.env->getLogger()->logDebug("Using binary request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
+	}
+	else
+	{
+		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
+		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
+	}
+	if (!m_requestHandler)
+	{
+		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
+	}
+	*/
 
 //
 // Check for "Man: " header and get ns value.
@@ -965,7 +984,6 @@ OW_HTTPSvrConnection::post(istream& istr)
 	initRespStream(ostrEntity);
 	OW_ASSERT(ostrEntity);
 
-	beginPostResponse();
 					
 /*
 	OW_TempFileStream ltfs;
@@ -976,21 +994,6 @@ OW_HTTPSvrConnection::post(istream& istr)
 	ltfs.rewind();
 */
 
-	// set the path for the handler
-	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
-	{
-		m_options.env->getLogger()->logDebug("Using binary request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
-	}
-	else
-	{
-		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
-	}
-	if (!m_requestHandler)
-	{
-		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
-	}
 
 	// create a wrapper environment that will report the path to the
 	// request handler
@@ -1000,6 +1003,8 @@ OW_HTTPSvrConnection::post(istream& istr)
 		OW_ConfigOpts::HTTP_PATH_opt, m_requestLine[1]);
 
 	m_requestHandler->setEnvironment(wrapperEnv);
+
+	beginPostResponse();
 
 	// process the request
 	m_requestHandler->process(&istr, ostrEntity, &ostrError, m_userName);
@@ -1029,20 +1034,10 @@ OW_HTTPSvrConnection::options(istream& istr)
 	OW_String hp = OW_HTTPUtils::getCounterStr();
 	OW_CIMFeatures cf;
 	
-	// set the path for the handler
-	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
-	{
-		m_options.env->getLogger()->logDebug("Using binary request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
-	}
-	else
-	{
-		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
-	}
+	m_requestHandler = m_options.env->getRequestHandler("application/xml");
 	if (!m_requestHandler)
 	{
-		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
+		OW_HTTP_THROW(OW_HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
 
 	// create a wrapper environment that will report the path to the

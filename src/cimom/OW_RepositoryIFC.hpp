@@ -353,7 +353,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual void createInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo) = 0;
 
 	/**

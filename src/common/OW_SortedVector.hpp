@@ -42,6 +42,7 @@
 #include <vector>
 #include <utility> // for std::pair
 #include <functional> // for std::less
+#include <algorithm>
 
 #ifdef OW_NEW
 #define new OW_NEW

@@ -56,6 +56,7 @@ using std::istream;
 OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
 : OW_CIMOMHandleIFC(), m_protocol(prot)
 {
+	m_protocol->setContentType("application/owbinary");
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -114,10 +114,10 @@ public:
 		return m_ref->deleteClass(path, aclInfo);
 	}
 
-	virtual void createInstance(const OW_CIMObjectPath &cop, OW_CIMInstance &ci,
+	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &cop, OW_CIMInstance &ci,
 		const OW_ACLInfo &aclInfo)
 	{
-		m_ref->createInstance(cop, ci, aclInfo);
+		return m_ref->createInstance(cop, ci, aclInfo);
 	}
 
 	virtual OW_CIMInstanceEnumeration getCIMInstances(

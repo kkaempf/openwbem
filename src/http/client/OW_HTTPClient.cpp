@@ -377,7 +377,8 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 
 	// add common headers
 	prepareHeaders();
-	addHeaderCommon("Content-Type", "text/xml");
+	OW_ASSERT(m_contentType.length() > 0);
+	addHeaderCommon("Content-Type", m_contentType);
 	addHeaderCommon("Content-Length", OW_String(len));
 
 	// TODO uncomment this when the dmtf accepts the CR for Trailers.

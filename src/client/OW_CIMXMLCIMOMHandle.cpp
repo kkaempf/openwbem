@@ -65,6 +65,7 @@ OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
 : OW_CIMOMHandleIFC(), m_protocol(prot)
 {
 	m_iMessageID = 0;
+	m_protocol->setContentType("application/xml");
 }
 
 //////////////////////////////////////////////////////////////////////////////

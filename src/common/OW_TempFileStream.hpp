@@ -116,7 +116,7 @@ public:
 	OW_Bool usingTempFile() const;
 
 private:
-	OW_AutoPtr<OW_TempFileBuffer> m_buffer;
+	OW_AutoPtrNoVec<OW_TempFileBuffer> m_buffer;
 
 	// disallow copying and assigning
 	OW_TempFileStream(const OW_TempFileStream&);

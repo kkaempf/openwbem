@@ -44,7 +44,8 @@ DEFINE_EXCEPTION(CIMProtocol);
 class OW_CIMProtocolIFC
 {
 public:
-	virtual ~OW_CIMProtocolIFC() {}
+	OW_CIMProtocolIFC() : m_loginCB(), m_contentType() {};
+	virtual ~OW_CIMProtocolIFC() {};
 
 	virtual OW_Reference<std::iostream> beginRequest(
 			const OW_String& methodName, const OW_String& nameSpace) = 0;
@@ -81,8 +82,12 @@ public:
 	void setLoginCallBack(OW_ClientAuthCBIFCRef loginCB)
 		{ m_loginCB = loginCB; }
 
+	void setContentType(const OW_String& ct)
+		{ m_contentType = ct; }
+
 protected:
 	OW_ClientAuthCBIFCRef m_loginCB;
+	OW_String m_contentType;
 
 };
 

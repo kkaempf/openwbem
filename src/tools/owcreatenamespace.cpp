@@ -31,7 +31,8 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_IPCCIMOMHandle.hpp"
+#include "OW_IPCClient.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -74,22 +75,52 @@ int main(int argc, char* argv[])
 	{
 		OW_String url = argv[1];
 		OW_String ns = argv[2];
+		
+		OW_URL owurl(url);
 
-		OW_CIMOMHandleIFCRef rch;
-
-		if(OW_URL(url).protocol.equalsIgnoreCase("IPC"))
+		OW_CIMProtocolIFCRef client;
+		if (owurl.protocol.equalsIgnoreCase("ipc"))
 		{
-			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(url);
-			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			rch = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
+			client = new OW_IPCClient(url);
 		}
 		else
 		{
-			OW_HTTPClient* pHttpClient = new OW_HTTPClient(url);
-			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_CIMProtocolIFCRef httpClient(pHttpClient);
-			rch = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(httpClient));
+			client = new OW_HTTPClient(url);
 		}
+
+
+		/**********************************************************************
+		 * Create an instance of our authentication callback class.
+		 **********************************************************************/
+		
+		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+
+		/**********************************************************************
+		 * Assign our callback to the HTTP Client.
+		 **********************************************************************/
+
+		client->setLoginCallBack(getLoginInfo);
+
+		/**********************************************************************
+		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
+		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
+		 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
+		 * we have to make a OW_Reference out of our HTTP Client first.
+		 * By doing this, we don't have to worry about deleting our
+		 * OW_HTTPClient.  OW_Reference will delete it for us when the
+		 * last copy goes out of scope (reference count goes to zero).
+		 **********************************************************************/
+
+		OW_CIMOMHandleIFCRef rch;
+		if (owurl.protocol.equalsIgnoreCase("ipc"))
+		{
+			rch = new OW_BinaryCIMOMHandle(client);
+		}
+		else
+		{
+			rch = new OW_CIMXMLCIMOMHandle(client);
+		}
+
 
 		OW_CIMUrl nsurl(url);
 		OW_CIMNameSpace toCreate(url, ns);

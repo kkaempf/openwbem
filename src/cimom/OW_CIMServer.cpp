@@ -1148,10 +1148,11 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath
 OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
+	OW_CIMObjectPath rval = cop;
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, cop, aclInfo);
 
@@ -1202,7 +1203,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 		if(instancep)
 		{
-			instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
+			rval = instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
 			created = true;
 		}
 	}
@@ -1279,6 +1280,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	}
 
 	_setProviderProperties(cop, ci, theClass, aclInfo);
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

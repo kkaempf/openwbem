@@ -98,3 +98,21 @@ OW_RequestHandlerIFCXML::makeXMLHeader(const OW_String& messageID, ostream& ostr
 		<< CIM_PROTOCOL_VERSION << "\">" << "\r\n";
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray 
+OW_RequestHandlerIFCXML::getSupportedContentTypes() const
+{
+	OW_StringArray rval;
+	rval.push_back("text/xml");
+	rval.push_back("application/xml");
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_String 
+OW_RequestHandlerIFCXML::getContentType() const
+{
+	return OW_String("application/xml");
+}
+
+//////////////////////////////////////////////////////////////////////////////

@@ -485,12 +485,12 @@ OW_IndicationRepLayerImpl::updateInstance(const OW_CIMObjectPath& name,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath
 OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 	OW_CIMInstance& ci, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMInstance lci(ci);
-	m_pServer->createInstance(name, lci, aclInfo);
+	OW_CIMObjectPath rval = m_pServer->createInstance(name, lci, aclInfo);
 
 	OW_CIMObjectPath op(name);
 	op.setKeys(ci.getKeyValuePairs());
@@ -520,6 +520,7 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 		getEnvironment()->logError("Unable to export indication for createClass"
 			" because CIM_InstCreation does not exist");
 	}
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

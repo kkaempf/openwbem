@@ -231,7 +231,7 @@ OW_BinIfcIO::read(std::istream& istrm, OW_String& arg, OW_Bool throwOnError)
 
 	if(rv)
 	{
-		OW_AutoPtr<char> bfr(new char[len+1]);
+		OW_AutoPtrVec<char> bfr(new char[len+1]);
 		rv = OW_BinIfcIO::read(istrm, (void*)bfr.get(), len, throwOnError);
 		if(rv)
 		{

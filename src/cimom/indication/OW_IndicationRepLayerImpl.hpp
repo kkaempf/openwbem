@@ -109,7 +109,7 @@ public:
 	virtual void updateQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
 
-	virtual void createInstance(const OW_CIMObjectPath &name,
+	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
 		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMClass updateClass(const OW_CIMObjectPath& name,

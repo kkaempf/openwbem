@@ -658,12 +658,10 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 
 	realPath.setKeys(keys);
 
-	hdl.createInstance(realPath, cimInstance);
-	OW_CIMObjectPath newPath = OW_CIMObjectPath(cimInstance.getClassName(),
-		cimInstance.getKeyValuePairs());
+	OW_CIMObjectPath newPath = hdl.createInstance(realPath, cimInstance);
+	// do we still need to do this below?
 	newPath.setNameSpace(path.getNameSpace());
 	OW_CIMtoXML(newPath, ostr, OW_CIMtoXMLFlags::isInstanceName);
-	//newPath.toXML(ostr, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////

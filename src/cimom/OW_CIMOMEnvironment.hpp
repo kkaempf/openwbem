@@ -37,6 +37,7 @@
 #include "OW_LogLevel.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibrary.hpp"
+#include "OW_SortedVector.hpp"
 #include "OW_Map.hpp"
 #include "OW_Array.hpp"
 #include "OW_SharedLibraryReference.hpp"
@@ -142,6 +143,7 @@ private:
 	// Types
 	typedef OW_Map<OW_String, OW_String> ConfigMap;
 	typedef OW_Reference<ConfigMap> ConfigMapRef;
+	typedef OW_SortedVector<OW_String, OW_RequestHandlerIFCRef> ReqHandlerMap;
 
 	mutable OW_Mutex m_monitor;
 	OW_RepositoryIFCRef m_cimServer;
@@ -157,7 +159,7 @@ private:
 	OW_Array<OW_SelectableIFCRef> m_selectables;
 	OW_Array<OW_SelectableCallbackIFCRef> m_selectableCallbacks;
 	OW_Array<OW_ServiceIFCRef> m_services;
-	OW_Array<OW_RequestHandlerIFCRef> m_reqHandlers;
+	ReqHandlerMap m_reqHandlers;
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;

@@ -63,7 +63,7 @@ OW_CIMInstanceArray OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace, const
 	}
 
 	OW_WQLProcessor p(hdl, nameSpace);
-	OW_AutoPtr<stmt> pAST(OW_WQLImpl::statement);
+	OW_AutoPtrNoVec<stmt> pAST(OW_WQLImpl::statement);
 	lock.release();
 
 	if (pAST.get())

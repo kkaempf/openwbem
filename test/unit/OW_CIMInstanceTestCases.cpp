@@ -51,7 +51,7 @@ void OW_CIMInstanceTestCases::testSomething()
 	prop.addQualifier(
 	cc.setP
 	*/
-	//unitAssert( something( ) );
+	unitAssert(true);
 }
 
 Test* OW_CIMInstanceTestCases::suite()
