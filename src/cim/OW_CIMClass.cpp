@@ -1011,6 +1011,9 @@ OW_CIMClass::toMOF() const
 
 		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
+			if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase("ASSOCIATION"))         {
+				continue;
+			}
 			if(i > 0)
 			{
 				rv += ',';

@@ -35,6 +35,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMValueCast.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -43,6 +44,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMDataType.hpp"
 #include "OW_Format.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
@@ -91,8 +93,11 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 	try
 	{
 		OW_CIMObjectPath parentPath(name);
-		OW_CIMQualifier cimQualifierKey("Key");
-		//cimQualifierKey.setValue(OW_CIMDataType::STRING);
+		OW_CIMObjectPath cqtPath("Key", "root");
+		OW_CIMQualifierType cqt = hdl.getQualifierType(cqtPath);
+		OW_CIMQualifier cimQualifierKey("Key", cqt);
+
+		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
 		OW_CIMClass cimClass(OW_Bool(true));
 		cimClass.setName(name);
 		cimClass.setSuperClass("CIM_ComputerSystem");
@@ -322,6 +327,41 @@ getClass(OW_CIMOMHandleIFC& hdl)
 
 	testDone();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+/*
+void
+foobar(OW_CIMOMHandleIFC& hdl)
+{
+	testStart("foobar");
+
+	cout << "localOnly = false" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("CIM_SoftwareFeatureServiceImplementation");
+		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		cout << cimClass.toMOF() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "localOnly = true" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClass cimClass = hdl.getClass(cop, true);
+		cout << cimClass.toMOF() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1054,6 +1094,8 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
 
 		OW_CIMValue v = hdl.getProperty(cop, "OptionalArg");
+		// with xml, this is a string.  we want a bool.
+		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;
 	}
 	catch (OW_CIMException& e)
@@ -1131,7 +1173,7 @@ main(int argc, char* argv[])
 		if (argc < 2)
 		{
 			usage(argv[0]);
-			exit(1);
+			return 1;
 		}
 
 		if (argc == 3)
@@ -1241,8 +1283,13 @@ main(int argc, char* argv[])
 		deleteNameSpace(rch);
 		createClass(rch, "EXP_BionicComputerSystem");
 		createClass(rch, "EXP_BionicComputerSystem2");
-		enumClassNames(rch);
-		//enumClasses(rch);
+
+		if (getenv("OWLONGTEST"))
+		{
+			enumClassNames(rch);
+			enumClasses(rch);
+		}
+
 		modifyClass(rch);
 		getClass(rch);
 		createInstance(rch, "EXP_BionicComputerSystem", "SixMillion");
@@ -1293,55 +1340,59 @@ main(int argc, char* argv[])
 		enumerateQualifiers(rch);
 		getQualifier(rch);
 
-		setupAssociations(rch);
+		if (getenv("OWLONGTEST"))
+		{
+			setupAssociations(rch);
 
-		associatorNames(rch, "", "", "", "");
-		associatorNames(rch, "CIM_SystemDevice", "", "", "");
-		associatorNames(rch, "", "CIM_ComputerSystem", "", "");
-		associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
-		associatorNames(rch, "", "", "GroupComponent", "");
-		associatorNames(rch, "", "", "PartComponent", "");
-		associatorNames(rch, "", "", "PartComponent", "PartComponent");
-		associatorNames(rch, "", "", "", "PartComponent");
-		associatorNames(rch, "", "", "", "GroupComponent");
+			associatorNames(rch, "", "", "", "");
+			associatorNames(rch, "CIM_SystemDevice", "", "", "");
+			associatorNames(rch, "", "CIM_ComputerSystem", "", "");
+			associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
+			associatorNames(rch, "", "", "GroupComponent", "");
+			associatorNames(rch, "", "", "PartComponent", "");
+			associatorNames(rch, "", "", "PartComponent", "PartComponent");
+			associatorNames(rch, "", "", "", "PartComponent");
+			associatorNames(rch, "", "", "", "GroupComponent");
 
-		associators(rch, "", "", "", "", false, false, 0);
-		associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-		associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-		associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-		associators(rch, "", "", "GroupComponent", "", false, false, 0);
-		associators(rch, "", "", "PartComponent", "", false, false, 0);
-		associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-		associators(rch, "", "", "", "PartComponent", false, false, 0);
-		associators(rch, "", "", "", "GroupComponent", false, false, 0);
-		associators(rch, "", "", "", "", true, false, 0);
-		associators(rch, "", "", "", "", false, true, 0);
-		sa.clear();
-		associators(rch, "", "", "", "", false, false, &sa);
-		sa.push_back(OW_String("BrandNewProperty"));
-		associators(rch, "", "", "", "", false, false, &sa);
+			associators(rch, "", "", "", "", false, false, 0);
+			associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
+			associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
+			associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+			associators(rch, "", "", "GroupComponent", "", false, false, 0);
+			associators(rch, "", "", "PartComponent", "", false, false, 0);
+			associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
+			associators(rch, "", "", "", "PartComponent", false, false, 0);
+			associators(rch, "", "", "", "GroupComponent", false, false, 0);
+			associators(rch, "", "", "", "", true, false, 0);
+			associators(rch, "", "", "", "", false, true, 0);
+			sa.clear();
+			associators(rch, "", "", "", "", false, false, &sa);
+			sa.push_back(OW_String("BrandNewProperty"));
+			associators(rch, "", "", "", "", false, false, &sa);
 
-		referenceNames(rch, "", "");
-		referenceNames(rch, "cim_systemdevice", "");
-		referenceNames(rch, "cim_component", "");
-		referenceNames(rch, "", "GroupComponent");
-		referenceNames(rch, "", "PartComponent");
+			referenceNames(rch, "", "");
+			referenceNames(rch, "cim_systemdevice", "");
+			referenceNames(rch, "cim_component", "");
+			referenceNames(rch, "", "GroupComponent");
+			referenceNames(rch, "", "PartComponent");
 
-		references(rch, "", "", false, false, 0);
-		references(rch, "cim_systemdevice", "", false, false, 0);
-		references(rch, "cim_component", "", false, false, 0);
-		references(rch, "", "GroupComponent", false, false, 0);
-		references(rch, "", "PartComponent", false, false, 0);
-		references(rch, "", "", true, false, 0);
-		references(rch, "", "", false, true, 0);
-		sa.clear();
-		references(rch, "", "", false, false, &sa);
-		sa.push_back(OW_String("GroupComponent"));
-		references(rch, "", "", false, false, &sa);
+			references(rch, "", "", false, false, 0);
+			references(rch, "cim_systemdevice", "", false, false, 0);
+			references(rch, "cim_component", "", false, false, 0);
+			references(rch, "", "GroupComponent", false, false, 0);
+			references(rch, "", "PartComponent", false, false, 0);
+			references(rch, "", "", true, false, 0);
+			references(rch, "", "", false, true, 0);
+			sa.clear();
+			references(rch, "", "", false, false, &sa);
+			sa.push_back(OW_String("GroupComponent"));
+			references(rch, "", "", false, false, &sa);
 
-		execQuery(rch);
+			execQuery(rch);
 
-		deleteAssociations(rch);
+			deleteAssociations(rch);
+		}
+
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SixMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SevenMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem2", "SixMillion");

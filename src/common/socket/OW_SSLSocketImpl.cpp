@@ -72,6 +72,12 @@ OW_SSLSocketImpl::OW_SSLSocketImpl(OW_SocketHandle_t fd,
 		SSL_free(m_ssl);
 		OW_THROW(OW_SSLException, "SSL accept error");
 	}
+	if (!OW_SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
+	{
+		SSL_shutdown(m_ssl);
+		SSL_free(m_ssl);
+		OW_THROW(OW_SSLException, "SSL failed to authenticate client");
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,7 +128,7 @@ OW_SSLSocketImpl::connectSSL()
     {
 		OW_THROW(OW_SSLException, "SSL connect error");
     }
-	if (!OW_SSLCtxMgr::checkCertChain(m_ssl, m_peerAddress.getName()))
+	if (!OW_SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
     {
 		OW_THROW(OW_SSLException, "Failed to validate peer certificate");
     }

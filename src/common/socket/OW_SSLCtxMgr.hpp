@@ -57,7 +57,7 @@
  * @return 1 if the certificate is good, 0 if the certificate is bad.
  * 	If 0 is returned, the SSL handshake will abort.
  */
-typedef int (*certVerifyFuncPtr_t)(X509* cert);
+typedef int (*certVerifyFuncPtr_t)(X509* cert, const OW_String& hostName);
 
 class OW_SSLCtxMgr
 {
@@ -68,10 +68,24 @@ public:
 	 */
 	static int pem_passwd_cb(char* buf, int size, int rwflag, void *userData);
 
-	/** 
-	 * This probably needs to be changed to do something usefull.
+
+	/**
+	 * Check a certificate based on the callback function for client cert
+	 * verification. 
+	 * @param ssl A pointer to the SSL context
+	 * @param hostname the hostname of the client machine
+	 * @return True if the certificate is good, false otherwise
 	 */
-	static OW_Bool checkCertChain(SSL* ssl, const OW_String& hostName);
+	static OW_Bool checkClientCert(SSL* ssl, const OW_String& hostName);
+
+	/**
+	 * Check a certificate based on the callback function for server cert
+	 * verification. 
+	 * @param ssl A pointer to the SSL context
+	 * @param hostname the hostname of the server machine
+	 * @return True if the certificate is good, false otherwise
+	 */
+	static OW_Bool checkServerCert(SSL* ssl, const OW_String& hostName);
 
 	/**
 	 * Initialize for a client
@@ -142,14 +156,23 @@ public:
 	 * @param cbfunc the callback function.  Signature:
 	 *		typedef void (*certVerifyFuncPtr_t)(X509* cert);
 	 */
-	static void setCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
-		{ m_certVerifyCB = cbfunc; }
+	static void setClientCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
+		{ m_clientCertVerifyCB = cbfunc; }
+
+	/**
+	 * Assign a callback function to be used to verify SSL certificates.
+	 * @param cbfunc the callback function.  Signature:
+	 *		typedef void (*certVerifyFuncPtr_t)(X509* cert);
+	 */
+	static void setServerCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
+		{ m_serverCertVerifyCB = cbfunc; }
 
 private:
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
 	static BIO* m_bio_err;
-	static certVerifyFuncPtr_t m_certVerifyCB;
+	static certVerifyFuncPtr_t m_clientCertVerifyCB;
+	static certVerifyFuncPtr_t m_serverCertVerifyCB;
 
 	static SSL_CTX* initCtx(const OW_String& keyfile) /*throw (OW_SSLException)*/;
 	static void loadDHParams(SSL_CTX* ctx, const OW_String& file);
@@ -161,6 +184,10 @@ private:
 
 	// don't allow instantiation
 	OW_SSLCtxMgr();
+	/** 
+	 * This probably needs to say something useful.
+	 */
+	static OW_Bool checkCert(SSL* ssl, const OW_String& hostName, certVerifyFuncPtr_t cbFunc);
 };
 
 #endif // ifdef OW_HAVE_OPENSSL

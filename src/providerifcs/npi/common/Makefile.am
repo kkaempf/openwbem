@@ -24,20 +24,18 @@ clean-local:
 libnpisupport_a_SOURCES = \
 NPIExternal.cpp \
 NPIExternal.hpp \
+npicrash.c \
+npicrash.h \
+provider.h \
 mlogsup.c \
-npicrash.c 
+mlogsup.h \
+npi.h \
+npi_import.h \
+os_compile.h
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM
 
-pkginclude_HEADERS = \
-provider.h \
-mlogsup.h \
-NPIExternal.hpp \
-npi.h \
-npicrash.h \
-npi_import.h \
-os_compile.h
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

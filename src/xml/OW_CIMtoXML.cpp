@@ -931,6 +931,7 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "qualifier must have a name");
 	}
 
+
 	//
 	// If only local definitions are required and this is a propagated
 	// qualifier then nothing to return

@@ -39,6 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMDateTime.hpp"
@@ -531,7 +532,7 @@ OW_XMLCIMFactory::createQualifier(OW_XMLNode const& node)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not qualifier XML");
 	}
 
-	rval.setName(qnode.getAttribute(OW_XMLParameters::paramName));
+	OW_String name = qnode.getAttribute(OW_XMLParameters::paramName);
 
 	OW_String cimType = qnode.getAttribute(OW_XMLParameters::paramTypeAssign);
 	OW_String propagate = qnode.getAttribute(OW_XMLParameters::paramPropagated);
@@ -557,9 +558,13 @@ OW_XMLCIMFactory::createQualifier(OW_XMLNode const& node)
 	if(!dt)
 	{
 		OW_String msg("Qualifier not assigned a data type: ");
-		msg += rval.getName();
+		msg += name;
 		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 	}
+
+	OW_CIMQualifierType cqt(OW_Bool(true));
+	cqt.setDataType(dt);
+	rval = OW_CIMQualifier(name, cqt);
 
 	if(overridable.equalsIgnoreCase("false"))
 	{

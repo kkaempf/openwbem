@@ -21,7 +21,7 @@ class OpenWBEM_ACL
     string capability = "r";
 };
 
-[Description("Namespace ACLs"), Abstract(false)]
+[Description("Namespace ACLs")]
 class OpenWBEM_NamespaceACL : OpenWBEM_ACL
 {
     [Description("Identifies the namespace that this ACL relates to."), Key]

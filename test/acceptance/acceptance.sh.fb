@@ -249,7 +249,7 @@ EOS
 #############################################################################
 TestInstalledHeadersOneByOne()
 {
-	if echo $OWTESTLIST | grep -v -i \
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
 		testIndividualHeaders >/dev/null 2>&1
 	then
 		return
@@ -306,6 +306,16 @@ EOS
         echo 'Header inclusion (one-by-one) passed!' 
 }
 
+Diff()
+{
+	DIFF_FILE1=$1
+	DIFF_FILE2=$2
+	if [ "$NODIFF" = "0" ]; then
+		diff  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
+			 $RESULTDIR/$DIFF_FILE2 || \
+			 ExitWithFail "$3"
+	fi
+}
 
 #############################################################################
 TestSuite()
@@ -320,6 +330,7 @@ TestSuite()
 
     URL=$1
     DIFF_FILE=$2
+    DIFF_FILE2=$3
 
 	if [ "$METHODTESTMOFDONE" = "0" ]; then
 		METHODTESTMOFDONE=1
@@ -334,11 +345,7 @@ TestSuite()
 		> $RESULTDIR/$DIFF_FILE 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
 
-	if [ "$NODIFF" = "0" ]; then
-		diff  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE \
-			 $RESULTDIR/$DIFF_FILE || \
-			 ExitWithFail "TestSuite: Diff test for owcimclientcl failed."
-	fi
+	Diff $DIFF_FILE2 $DIFF_FILE$OWDIFFSUFFIX "TestSuite: Diff test for owcimclientcl failed."
 
 	echo "Testsuite Passed"
 }
@@ -358,11 +365,7 @@ TestWQL()
 		> $RESULTDIR/wqlTest.out 2>&1 || \
 		ExitWithFail "WQL test exited with error"
 
-	if [ "$NODIFF" = "0" ]; then
-		diff $TOPSRCDIR/test/acceptance/testfiles/wqlTest.out \
-			 $RESULTDIR/wqlTest.out || \
-			 ExitWithFail "WQL test: Diff test for WQL failed."
-	fi
+	Diff wqlTest.out wqlTest.out "WQL test: Diff test for WQL failed."
 	echo "WQL Testsuite Passed"
 }
 
@@ -405,6 +408,8 @@ TestIndications()
 	#		$RESULTDIR/indicationTestMaster.out_sorted || \
 	#		ExitWithFail "Indication test: Diff failed"
 	#fi
+	# FIXME
+
 	echo "Indication Testsuite Passed"
 }
 
@@ -424,17 +429,14 @@ TestMultiReq()
 	StopDaemon
 	StartDaemon
 
+	DIFF_FILE="MultiReqResp.xml"
+
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
 		$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
-			$RESULTDIR/MultiReqOutput.xml || \
+			$RESULTDIR/$DIFF_FILE || \
 			ExitWithFail "MultiReq test: fakeclient exited with error."
 
-	if [ "$NODIFF" = "0" ]; then
-		echo "Comparing output with expected response..."
-		diff $TOPSRCDIR/test/acceptance/testfiles/MultiReqResp.xml \
-			$RESULTDIR/MultiReqOutput.xml || \
-			ExitWithFail "MultiReq test: Diff failed."
-	fi
+	Diff $DIFF_FILE $DIFF_FILE "MultiReq test: Diff failed."
 
 	echo "Multiple Operations Support Passed."
 
@@ -444,15 +446,11 @@ TestMultiReq()
 
 		$BUILDDIR/test/acceptance/progs/fakeclient https://test1:pass1@localhost:30927 \
 			$TOPSRCDIR/test/acceptance/testfiles/MultiReqInput.xml > \
-				$RESULTDIR/MultiReqOutput.xml || \
+				$RESULTDIR/$DIFF_FILE || \
 				ExitWithFail "HTTPS test: fakeclient exited with error."
 
-		if [ "$NODIFF" = "0" ]; then
-			echo "Comparing output with expected response..."
-			diff $TOPSRCDIR/test/acceptance/testfiles/MultiReqResp.xml \
-				$RESULTDIR/MultiReqOutput.xml || \
-				ExitWithFail "HTTPS test: Diff failed."
-		fi
+		echo "Comparing output with expected response..."
+		Diff $DIFF_FILE $DIFF_FILE "HTTPS test: Diff failed."
 	else
 		echo "** OpenWBEM was not built with HTTPS (SSL) support **"
 	fi
@@ -502,11 +500,7 @@ TestAuth()
 	[ "$RVAL" = "0" ] || \
 	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
-	if [ "$NODIFF" = "0" ]; then
-		diff $TOPSRCDIR/test/acceptance/testfiles/GetFeatures.out \
-			$RESULTDIR/GetFeatures.out || \
-			ExitWithFail "Authentication test (simple): Diff failed."
-	fi
+	Diff GetFeatures.out GetFeatures.out "Authentication test (simple): Diff failed."
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
@@ -539,11 +533,7 @@ TestAuth()
 	[ "$?" = "0" ] || \
 	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
-	if [ "$NODIFF" = "0" ]; then
-		diff $TOPSRCDIR/test/acceptance/testfiles/GetFeatures.out \
-			$RESULTDIR/GetFeatures.out || \
-			ExitWithFail "Authentication test (digest): Diff failed."
-	fi
+	Diff GetFeatures.out GetFeatures.out "Authentication test (digest): Diff failed."
 	echo "Digest Authentication passed"
 }
 
@@ -699,6 +689,10 @@ Exit()
 OW_MEM_DISABLE=1
 export OW_MEM_DISABLE
 
+if [ "$OWLONGTEST" = "1" ]; then
+	OWDIFFSUFFIX=".long"
+fi
+
 if [ "$OWNODIFF" = "1" ]; then
 	NODIFF=1
 else
@@ -730,19 +724,25 @@ Install
 
 cd $STAGEDIR
 
-# This only runs if OWTESTLIST contains "testIndividualHeaders"
-TestInstalledHeadersOneByOne
+if [ "$OWLONGTEST" = "1" ]; then
+  TestInstalledHeadersOneByOne
+fi
 
 TestAuth
 
-TestACL
+if [ "$OWLONGTEST" = "1" ]; then
+  TestACL
+fi
 
 TestMof
 
-TestSuite "http://test1:pass1@localhost:30926", "clientDriver.out"
-#TestSuite "ipc://test1:pass1@localhost/owbinary", "IPCClientTest.out"
-#TestSuite "ipc://test1:pass1@localhost/cimom", "clientDriver.out"
-#TestSuite "http://test1:pass1@localhost/owbinary", "IPCClientTest.out"
+TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuiteXML.out"
+
+if [ "$OWLONGTEST" = "1" ]; then
+  TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuiteBIN.out"
+  TestSuite "ipc://test1:pass1@localhost/cimom" "testsuiteUDSXML.out" "testsuiteXML.out"
+  TestSuite "http://test1:pass1@localhost:30926/owbinary" "testsuiteTCPBIN.out" "testsuiteBIN.out"
+fi
 
 TestIndications
 

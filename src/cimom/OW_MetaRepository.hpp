@@ -257,7 +257,7 @@ private:
 	void _resolveQualifiers(const OW_String& ns, OW_CIMQualifierArray& quals,
 		OW_HDBHandle hdl);
 
-	void _throwIfBadClass(const OW_CIMClass& cc);
+	void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 
 	//friend class OW_CIMServer;
 };

@@ -43,7 +43,8 @@
 BIO* OW_SSLCtxMgr::m_bio_err = 0;
 SSL_CTX* OW_SSLCtxMgr::m_ctxClient = 0;
 SSL_CTX* OW_SSLCtxMgr::m_ctxServer = 0;
-certVerifyFuncPtr_t OW_SSLCtxMgr::m_certVerifyCB = 0;
+certVerifyFuncPtr_t OW_SSLCtxMgr::m_clientCertVerifyCB = 0;
+certVerifyFuncPtr_t OW_SSLCtxMgr::m_serverCertVerifyCB = 0;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -213,6 +214,18 @@ OW_SSLCtxMgr::initServer(const OW_String& keyfile)
 		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length() * sizeof(char));
 	SSL_CTX_set_session_id_context(m_ctxServer,
 			reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen);
+	SSL_CTX_set_verify(m_ctxServer,
+		SSL_VERIFY_PEER /*| SSL_VERIFY_FAIL_IF_NO_PEER_CERT*/, NULL);
+
+	/*
+	// grabbed this from volutionlwc.  may need to use it. 
+	if (!SSL_CTX_load_verify_locations(ctx,VOL_CONFIG_DIR"/cacerts/volution-authority.cacert",NULL))
+	{
+		fprintf(stderr, "Couldn't set load_verify_location\n");
+		exit(1);
+	}
+	SSL_CTX_set_verify_depth(ctx,1);
+	*/
 }
 
 
@@ -240,9 +253,25 @@ OW_SSLCtxMgr::pem_passwd_cb(char* buf, int size, int /*rwflag*/,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_Bool
-OW_SSLCtxMgr::checkCertChain(SSL* ssl, const OW_String& hostName)
+OW_SSLCtxMgr::checkClientCert(SSL* ssl, const OW_String& hostName)
 {
-	(void)hostName; // need to use this?
+	return checkCert(ssl, hostName, m_clientCertVerifyCB);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+OW_Bool
+OW_SSLCtxMgr::checkServerCert(SSL* ssl, const OW_String& hostName)
+{
+	return checkCert(ssl, hostName, m_serverCertVerifyCB);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+OW_Bool
+OW_SSLCtxMgr::checkCert(SSL* ssl, const OW_String& hostName, 
+	certVerifyFuncPtr_t certVerifyCB)
+{
 	X509 *peer;
 
 	/* TODO this isn't working.
@@ -260,9 +289,9 @@ OW_SSLCtxMgr::checkCertChain(SSL* ssl, const OW_String& hostName)
 	/*Check the common name*/
 	peer=SSL_get_peer_certificate(ssl);
 
-	if (m_certVerifyCB)
+	if (certVerifyCB)
 	{
-		if (m_certVerifyCB(peer) == 0)
+		if (certVerifyCB(peer, hostName) == 0)
 		{
 			return false;
 		}

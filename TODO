@@ -8,15 +8,14 @@ Deal with locale on WBEM requests.
 Pass output stream to local cimom handle enumeration methods to eliminate
 	the need for in memory enumeration objects.
 
-o Test XML with IPC and Binary with HTTP
-o Change C++ Provider IFC to append provider name on factory fuction
-o Release Providers from memory if haven't been used for a while
-o Start HTTP server from inetd
-o Remove IPC service and have HTTP service handle UDS
-o PKI authentication
-o fix make install to symlink libowhttpservice.so to $PREFIX/lib
-o Add client SSL authentication
-o Unload request handlers if not used after X minutes.
+x Test XML with IPC and Binary with HTTP
+x Change C++ Provider IFC to append provider name on factory fuction
+x Release Providers from memory if haven't been used for a while
+x Remove IPC service and have HTTP service handle UDS
+x PKI authentication
+x fix make install to symlink libowhttpservice.so to $PREFIX/lib
+x Add client SSL authentication
+x Unload request handlers if not used after X minutes.
 - Binary Indications
 - clean up stale indication subscriptions
 - new scheme for mapping providers to schema
@@ -24,3 +23,4 @@ o Unload request handlers if not used after X minutes.
 - various make check components to have separate namespaces.
 - long and short versions of make check
 - CMPI (replace NPI)
+

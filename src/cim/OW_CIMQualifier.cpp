@@ -356,7 +356,7 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
 	m_pdata->m_name.writeObject(ostrm);
 
-	if(!m_pdata->m_qualifierValue)
+	if(!m_pdata->m_qualifierValue && m_pdata->m_qualifierType)
 	{
 		m_pdata->m_qualifierValue = m_pdata->m_qualifierType.getDefaultValue();
 	}
@@ -394,7 +394,6 @@ OW_CIMQualifier::toMOF() const
 {
 	OW_StringBuffer rv;
 
-	// TODO
 	rv += m_pdata->m_name;
 	if(m_pdata->m_qualifierValue)
 	{

@@ -77,7 +77,7 @@ public:
 		CHAR16			= 14,		// 16-bit UCS-2 character					(SUPPORTED)
 		REFERENCE		= 15,		// Reference type								(SUPPORTED)
 		EMBEDDEDCLASS	= 16,		// Embedded Class				(SUPPORTED)
-		EMBEDDEDINSTANCE	= 17,		// Embedded Class				(SUPPORTED)
+		EMBEDDEDINSTANCE	= 17,		// Embedded Instance				(SUPPORTED)
 		MAXDATATYPE		= 18,		// Marker for valid checks
 		INVALID			= 255		// Invalid type
 	};

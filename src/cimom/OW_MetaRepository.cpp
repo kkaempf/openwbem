@@ -36,6 +36,7 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CIMValue.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Array.hpp"
@@ -668,7 +669,6 @@ OW_MetaRepository::createClass(const OW_String& ns, OW_CIMClass& cimClass)
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, ckey.c_str());
 	}
 
-	_throwIfBadClass(cimClass);
 
 	unsigned int flags = (cimClass.isAssociation()) ? OW_HDBCLSASSOCNODE_FLAG
 		: 0;
@@ -755,6 +755,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			methArray[i].setOriginClass(childName);
 		}
 		childClass.setMethods(methArray);
+		_throwIfBadClass(childClass, parentClass);
 		return parentNode;
 	}
 
@@ -767,17 +768,37 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	{
 		OW_CIMQualifier qual = qualArray[i];
 		OW_CIMQualifier pqual = parentClass.getQualifier(qual.getName());
-		qual.setPropagated(parentClass.hasQualifier(qual));
-		newQuals.append(qual);
+		if (pqual)
+		{
+			if (pqual.getValue().equal(qual.getValue()))
+			{
+				if (pqual.hasFlavor(OW_CIMFlavor::RESTRICTED))
+				{
+					// NOT PROPAGATED.  qual.setPropagated(true);
+					newQuals.append(qual);
+				}
+			}
+			else
+			{
+				if (pqual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
+				{
+					OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+						format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
+							"Child cannot override it.", pqual.getName()).c_str());
+				}
+				newQuals.append(qual);
+			}
+		}
 	}
 	childClass.setQualifiers(newQuals);
 
 	OW_CIMPropertyArray propArray = childClass.getAllProperties();
 	for(size_t i = 0; i < propArray.size(); i++)
 	{
-		if(parentClass.getProperty(propArray[i].getName()))
+		OW_CIMProperty parentProp = parentClass.getProperty(propArray[i].getName());
+		if(parentProp)
 		{
-			propArray[i].setOriginClass(parentName);
+			propArray[i].setOriginClass(parentProp.getOriginClass());
 			propArray[i].setPropagated(true);
 		}
 		else
@@ -831,6 +852,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			  childClass.getName()).c_str());
   }
 
+  _throwIfBadClass(childClass, parentClass);
   return parentNode;
 }
 
@@ -854,8 +876,6 @@ OW_MetaRepository::updateClass(const OW_String& ns,
 	// the data belongs to an OW_CIMClass.
 	OW_CIMClass clsToUpdate;
 	nodeToCIMObject(clsToUpdate, node);
-
-	_throwIfBadClass(cimClass);
 
 	// At this point we know we are updating an OW_CIMClass
 	removeClassFromCache(ckey);
@@ -1064,11 +1084,19 @@ OW_MetaRepository::createNameSpace(const OW_StringArray& nameComps,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc)
+OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass)
 {
-	OW_Bool isIndication = false;
-	OW_Bool isAbstract = false;
 	OW_Bool isKeyed = cc.isKeyed();
+
+	enum QualState
+	{
+		UNSET,
+		TRUE,
+		FALSE
+	};
+
+	QualState isIndication = UNSET;
+	QualState isAbstract = UNSET;
 	
 	if(!isKeyed)
 	{
@@ -1078,32 +1106,66 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc)
 	}
 
 	OW_CIMQualifierArray qra = cc.getQualifiers();
+	if (parentClass)
+	{
+		OW_CIMQualifierArray pqra = parentClass.getQualifiers();
+		for (OW_CIMQualifierArray::const_iterator iter = pqra.begin();
+				iter != pqra.end(); ++iter)
+		{
+			qra.push_back(*iter);
+		}
+	}
+	/*
+	if (parentClass)
+	{
+		qra.appendArray(parentClass.getQualifiers());
+	}
+	*/
 	for(size_t i = 0; i < qra.size(); i++)
 	{
 		OW_String qname = qra[i].getName();
-		if(qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT))
+		OW_CIMValue cv = qra[i].getValue();
+		if(isAbstract == UNSET 
+			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT) 
+			&& cv)
 		{
-			isAbstract = true;
-			if(isIndication)
+			if (cv == OW_CIMValue(OW_Bool(true)))
+			{
+				isAbstract = TRUE;
+			}
+			else
+			{
+				isAbstract = FALSE;
+			}
+			if(isIndication != UNSET)
 			{
 				break;
 			}
 			continue;
 		}
 
-		if(qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_INDICATION))
+		if(isIndication == UNSET
+			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_INDICATION)
+			&& cv)
 		{
-			isIndication = true;
-			if(isAbstract)
+			if (cv == OW_CIMValue(OW_Bool(true)))
+			{
+				isIndication = TRUE;
+			}
+			else
+			{
+				isIndication = FALSE;
+			}
+			if(isAbstract != UNSET)
 			{
 				break;
 			}
 		}
 	}
 
-	if(!isIndication && !isAbstract && !isKeyed)
+	if(isIndication == FALSE && isAbstract == FALSE && !isKeyed)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Non-abstract class must have key properties: %1",
 				cc.getName()).c_str());
 	}
