@@ -39,10 +39,9 @@
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
-//#include <cstdlib>
-//#include <cstring>
+#include "OW_COWIntrusiveCountableBase.hpp"
+
 #include <cstdio>
-//#include <ctime>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -55,10 +54,36 @@ namespace OpenWBEM
 
 using std::ostream;
 using std::istream;
+
+//////////////////////////////////////////////////////////////////////////////
+struct CIMDateTime::DateTimeData : public COWIntrusiveCountableBase
+{
+	DateTimeData() :
+		m_year(0), m_month(0), m_days(0), m_hours(0),
+		m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
+		m_isInterval(1) {}
+
+	UInt16 m_year;
+	UInt8 m_month;
+	UInt32 m_days;
+	UInt8 m_hours;
+	UInt8 m_minutes;
+	UInt8 m_seconds;
+	UInt32 m_microSeconds;
+	Int16 m_utc;
+	UInt8 m_isInterval;
+	DateTimeData* clone() const { return new DateTimeData(*this); }
+};
+
+
 static void fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str);
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime()
 	: m_dptr(new DateTimeData)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMDateTime::~CIMDateTime()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -119,7 +144,7 @@ CIMDateTime::operator= (const CIMDateTime& arg)
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::operator CIMDateTime::safe_bool() const
 {
-	if(!m_dptr.isNull())
+	if(m_dptr)
 	{
 		return (m_dptr->m_days != 0
 			|| m_dptr->m_year != 0
@@ -136,7 +161,7 @@ CIMDateTime::operator CIMDateTime::safe_bool() const
 CIMDateTime::safe_bool
 CIMDateTime::operator !() const
 {
-	if(!m_dptr.isNull())
+	if(m_dptr)
 	{
 		return (m_dptr->m_days != 0
 			|| m_dptr->m_year != 0
@@ -244,7 +269,7 @@ CIMDateTime::readObject(istream &istrm)
 	BinarySerialization::read(istrm, dtdata.m_utc);
 	BinarySerialization::read(istrm, dtdata.m_isInterval);
 
-	if(m_dptr.isNull())
+	if(!m_dptr)
 	{
 		m_dptr = new DateTimeData;
 	}
@@ -356,6 +381,40 @@ bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 	// this doesn't work right return *x.m_dptr < *y.m_dptr;
 	return x.toDateTime() < y.toDateTime();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+UInt16
+CIMDateTime::getYear() const {  return m_dptr->m_year; }
+//////////////////////////////////////////////////////////////////////////////
+UInt8
+CIMDateTime::getMonth() const {  return m_dptr->m_month; }
+//////////////////////////////////////////////////////////////////////////////
+UInt32
+CIMDateTime::getDays() const {  return m_dptr->m_days; }
+//////////////////////////////////////////////////////////////////////////////
+UInt32
+CIMDateTime::getDay() const {  return m_dptr->m_days; }
+//////////////////////////////////////////////////////////////////////////////
+UInt8
+CIMDateTime::getHours() const {  return m_dptr->m_hours; }
+//////////////////////////////////////////////////////////////////////////////
+UInt8
+CIMDateTime::getMinutes() const {  return m_dptr->m_minutes; }
+//////////////////////////////////////////////////////////////////////////////
+UInt8
+CIMDateTime::getSeconds() const {  return m_dptr->m_seconds; }
+//////////////////////////////////////////////////////////////////////////////
+UInt32
+CIMDateTime::getMicroSeconds() const {  return m_dptr->m_microSeconds; }
+//////////////////////////////////////////////////////////////////////////////
+Int16
+CIMDateTime::getUtc() const {  return m_dptr->m_utc; }
+//////////////////////////////////////////////////////////////////////////////
+bool
+CIMDateTime::isInterval() const {  return bool(m_dptr->m_isInterval != 0);}
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMDateTime::setInterval(bool val) { m_dptr->m_isInterval = val; }
 
 } // end namespace OpenWBEM
 

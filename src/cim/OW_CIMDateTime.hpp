@@ -38,7 +38,7 @@
 #define OW_CIMDATETIME_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_String.hpp"
@@ -122,30 +122,13 @@ class DateTime;
 class CIMDateTime
 {
 public:
-	//////////////////////////////////////////////////////////////////////////////
-	struct DateTimeData
-	{
-		DateTimeData() :
-			m_year(0), m_month(0), m_days(0), m_hours(0),
-			m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
-			m_isInterval(1) {}
-	
-		UInt16 m_year;
-		UInt8 m_month;
-		UInt32 m_days;
-		UInt8 m_hours;
-		UInt8 m_minutes;
-		UInt8 m_seconds;
-		UInt32 m_microSeconds;
-		Int16 m_utc;
-		UInt8 m_isInterval;
-		DateTimeData* clone() const { return new DateTimeData(*this); }
-	};
+	struct DateTimeData;
 	
 	/**
 	 * Create a new interval type of CIMDateTime set to 0's
 	 */
 	CIMDateTime();
+	~CIMDateTime();
 	/**
 	 * Create a new interval type of CIMDateTime 
 	 * this object will have a null implementation.
@@ -189,50 +172,50 @@ public:
 	 * @return The year component of this CIMDateTime object as an UInt16.
 	 * Range (0-9999)
 	 */
-	UInt16 getYear() const {  return m_dptr->m_year; }
+	UInt16 getYear() const;
 	/**
 	 * @return The month component of this CIMDateTime object as an UInt8.
 	 * Range (1-12)
 	 */
-	UInt8 getMonth() const {  return m_dptr->m_month; }
+	UInt8 getMonth() const;
 	/**
 	 * @return The days component of this CIMDateTime object as an UInt32.
 	 * Range (1-31)
 	 */
-	UInt32 getDays() const {  return m_dptr->m_days; }
+	UInt32 getDays() const;
 	/**
 	 * @return The day component of this CIMDateTime object as an UInt32.
-	* Range (1-31)
+	 * Range (1-31)
 	 */
-	UInt32 getDay() const {  return m_dptr->m_days; }
+	UInt32 getDay() const;
 	/**
 	 * @return The hours component of this CIMDateTime object as an UInt8.
 	 * Range (0-23)
 	 */
-	UInt8 getHours() const {  return m_dptr->m_hours; }
+	UInt8 getHours() const;
 	/**
 	 * @return The minutes component of this CIMDateTime object as an
 	 * UInt8.
 	 * Range (0-59)
 	 */
-	UInt8 getMinutes() const {  return m_dptr->m_minutes; }
+	UInt8 getMinutes() const;
 	/**
 	 * @return The seconds component of this CIMDateTime object as an
 	 * UInt8.
 	 * Range (0-60) - 60 in the case of a leap second
 	 */
-	UInt8 getSeconds() const {  return m_dptr->m_seconds; }
+	UInt8 getSeconds() const;
 	/**
 	 * @return The microseconds component of this CIMDateTime object as an
 	 * UInt32.
 	 * Range (0-999999)
 	 */
-	UInt32 getMicroSeconds() const {  return m_dptr->m_microSeconds; }
+	UInt32 getMicroSeconds() const;
 	/**
 	 * @return The utc offset component of this CIMDateTime object as an
 	 * Int16
 	 */
-	Int16 getUtc() const {  return m_dptr->m_utc; }
+	Int16 getUtc() const;
 	/**
 	 * Check if another CIMDateTime object is equal to this one.
 	 * @param arg The CIMDateTime object to check for equality with this one.
@@ -306,11 +289,11 @@ public:
 	 * @return true if this CIMDateTime object represents an interval type
 	 * of CIM date time.
 	 */
-	bool isInterval() const {  return bool(m_dptr->m_isInterval != 0);}
+	bool isInterval() const;
 	/**
 	 * @param val bool indicating whether this is an interval
 	 */
-	void setInterval(bool val) { m_dptr->m_isInterval = val; }
+	void setInterval(bool val);
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
@@ -343,7 +326,7 @@ public:
 	operator safe_bool () const;
 	safe_bool operator!() const;
 private:
-	COWReference<DateTimeData> m_dptr;
+	COWIntrusiveReference<DateTimeData> m_dptr;
 	friend bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
 std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
