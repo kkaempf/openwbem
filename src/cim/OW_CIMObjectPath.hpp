@@ -270,4 +270,6 @@ private:
 	OW_Reference<OPData> m_pdata;
 };
 
+bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs);
+
 #endif

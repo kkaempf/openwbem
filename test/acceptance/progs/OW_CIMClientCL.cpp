@@ -49,6 +49,7 @@
 #include "OW_CIMtoXML.hpp"
 
 #include <iostream>
+#include <algorithm> // for sort
 
 
 using std::cerr;
@@ -716,9 +717,13 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
 					assocClass, resultClass, role, resultRole);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
-			cout << "Associated path: " << enu.nextElement().toString() << endl;
+			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
 	}
@@ -748,9 +753,13 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
 					assocClass, resultClass, role, resultRole);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
-			cout << "Associated path: " << enu.nextElement().toString() << endl;
+			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
 	}
@@ -789,20 +798,24 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMInstance> v = std::vector<OW_CIMInstance>(
+			OW_Enumeration_input_iterator<OW_CIMInstance>(enu),
+			OW_Enumeration_input_iterator<OW_CIMInstance>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
 			if (includeClassOrigin)
 			{
 				cout << "Association Instance: ";
-				OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+				OW_CIMtoXML(v[x], cout, OW_CIMObjectPath(),
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
 				cout << endl;
 			}
 			else
 			{
-				cout << "Association Instance: " << enu.nextElement().toMOF() << endl;
+				cout << "Association Instance: " << v[x].toMOF() << endl;
 			}
 		}
 	}
@@ -836,20 +849,24 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMClass> v = std::vector<OW_CIMClass>(
+			OW_Enumeration_input_iterator<OW_CIMClass>(enu),
+			OW_Enumeration_input_iterator<OW_CIMClass>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
 			if (includeClassOrigin)
 			{
 				cout << "Association Class: ";
-				OW_CIMtoXML(enu.nextElement(), cout,
+				OW_CIMtoXML(v[x], cout,
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
 				cout << endl;
 			}
 			else
 			{
-				cout << "Association Class: " << enu.nextElement().toMOF() << endl;
+				cout << "Association Class: " << v[x].toMOF() << endl;
 			}
 		}
 	}
@@ -881,9 +898,13 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
 				resultClass, role);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
-			cout << "Associated path: " << enu.nextElement().toString() << endl;
+			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
 	}
@@ -912,9 +933,13 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
 				resultClass, role);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
+			OW_Enumeration_input_iterator<OW_CIMObjectPath>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
-			cout << "Associated path: " << enu.nextElement().toString() << endl;
+			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
 	}
@@ -951,20 +976,24 @@ references(OW_CIMOMHandleIFC& hdl,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMInstance> v = std::vector<OW_CIMInstance>(
+			OW_Enumeration_input_iterator<OW_CIMInstance>(enu),
+			OW_Enumeration_input_iterator<OW_CIMInstance>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
 			if (includeClassOrigin)
 			{
 				cout << "Association Instance: ";
-			  	OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+			  	OW_CIMtoXML(v[x], cout, OW_CIMObjectPath(),
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
 			  	cout << endl;
 			}
 			else
 			{
-				cout << "Associated Instance: " << enu.nextElement().toMOF() << endl;
+				cout << "Associated Instance: " << v[x].toMOF() << endl;
 			}
 		}
 	}
@@ -998,20 +1027,24 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
-		while (enu.hasMoreElements())
+		std::vector<OW_CIMClass> v = std::vector<OW_CIMClass>(
+			OW_Enumeration_input_iterator<OW_CIMClass>(enu),
+			OW_Enumeration_input_iterator<OW_CIMClass>());
+		std::sort(v.begin(), v.end());
+		for (size_t x = 0; x < v.size(); ++x)
 		{
 			// XML is an easy way to easily see if the classorigin was sent.
 			if (includeClassOrigin)
 			{
 				cout << "Referencing Class: ";
-			  	OW_CIMtoXML(enu.nextElement(), cout,
+			  	OW_CIMtoXML(v[x], cout,
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
 			  	cout << endl;
 			}
 			else
 			{
-				OW_CIMClass cc = enu.nextElement();
+				OW_CIMClass cc = v[x];
 				cout << "Referencing Class: " << cc.toMOF() << endl;
 			}
 		}

@@ -381,7 +381,7 @@ OW_CIMObjectPath::toString() const
 OW_String
 OW_CIMObjectPath::toMOF() const
 {
-	return OW_String("*** UNIMPLEMENTED ***");
+	return escape(toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -710,5 +710,11 @@ OW_CIMObjectPath::unEscape(const OW_String& inString)
 
 	OW_String rstr = rv.toString();
 	return rstr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs)
+{
+	return lhs.toString() < rhs.toString();
 }
 
