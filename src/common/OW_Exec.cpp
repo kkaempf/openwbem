@@ -64,6 +64,10 @@ extern "C"
 #include <cerrno>
 #include <iostream>	// for cerr
 
+// NSIG may be defined by signal.h, otherwise 64 should be plenty.
+#ifndef NSIG
+#define NSIG 64
+#endif
 
 namespace OW_NAMESPACE
 {
@@ -405,6 +409,39 @@ safeSystem(const Array<String>& command)
 			close(i);
 			i--;
 		}
+
+		// according to susv3:
+		//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
+		//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
+		//        unchanged  across an exec. This is consistent with historical implemen-
+		//        tations, and it permits some useful functionality, such  as  the  nohup
+		//        command.  However,  it  should be noted that many existing applications
+		//        wrongly assume that they start with certain signals set to the  default
+		//        action  and/or  unblocked.  In  particular, applications written with a
+		//        simpler signal model that does not include blocking of signals, such as
+		//        the  one in the ISO C standard, may not behave properly if invoked with
+		//        some signals blocked. Therefore, it is best not to block or ignore sig-
+		//        nals  across execs without explicit reason to do so, and especially not
+		//        to block signals across execs of arbitrary (not  closely  co-operating)
+		//        programs.
+
+		// so we'll reset the signal mask and all SIG_IGN signal handlers to SIG_DFL
+		sigset_t emptymask;
+		sigemptyset(&emptymask);
+		::sigprocmask(SIG_SETMASK, &emptymask, 0);
+
+		for (size_t sig = 1; sig <= NSIG; ++sig)
+		{
+			struct sigaction temp;
+			sigaction(sig, 0, &temp);
+			if (temp.sa_handler == SIG_IGN)
+			{
+				temp.sa_handler = SIG_DFL;
+				sigaction(sig, &temp, NULL);
+			}
+		}
+
+
 		char** argv = new char*[command.size() + 1];
 		for (size_t i = 0; i < command.size(); i++)
 		{
@@ -533,10 +570,6 @@ safePopen(const Array<String>& command, const char* const envp[])
 		sigemptyset(&emptymask);
 		::sigprocmask(SIG_SETMASK, &emptymask, 0);
 
-// NSIG may be defined by signal.h, otherwise 64 should be plenty.
-#ifndef NSIG
-#define NSIG 64
-#endif
 		for (size_t sig = 1; sig <= NSIG; ++sig)
 		{
 			struct sigaction temp;
