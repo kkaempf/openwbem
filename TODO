@@ -22,6 +22,7 @@ Fix problems:
       - Explicitly instantiate common templates.
       - Use -fno-implicit-templates, -fno-implicit-inline-templates, and
         -fno-implement-inlines when compiling any shared libraries.
+    - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
 
 New features:
     - Modifying existing filters will affect the indication server, and
