@@ -36,6 +36,7 @@
 #include "OW_Reference.hpp"
 #include "OW_MOFGrammar.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Array.hpp"
 
 // these 2 need to be at global scope because flex also declares them.
 struct yy_buffer_state;
@@ -52,7 +53,54 @@ namespace MOF
 class Compiler
 {
 public:
-	Compiler( Reference<CIMOMHandleIFC> ch, const String& nameSpace, Reference<ParserErrorHandlerIFC> mpeh );
+	struct Options
+	{
+		Options() 
+			: m_useCimRepository(false)
+			, m_createNamespaces(false)
+			, m_checkSyntaxOnly(false)
+			, m_remove(false)
+			, m_preserve(false)
+			, m_upgrade(true)
+			, m_ignoreDoubleIncludes(false)
+		{}
+		Options(bool useCimRepository, const String& repositoryDir, 
+			const String& url, const String& namespace_, const String& encoding, 
+			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
+			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
+			bool ignoreDoubleIncludes)
+			: m_useCimRepository(useCimRepository)
+			, m_repositoryDir(repositoryDir)
+			, m_url(url)
+			, m_namespace(namespace_)
+			, m_encoding(encoding)
+			, m_createNamespaces(createNamespaces)
+			, m_checkSyntaxOnly(checkSyntaxOnly)
+			, m_dumpXmlFile(dumpXmlFile)
+			, m_remove(remove)
+			, m_preserve(preserve)
+			, m_upgrade(upgrade)
+			, m_includeDirs(includeDirs)
+			, m_ignoreDoubleIncludes(ignoreDoubleIncludes)
+		{
+		}
+
+		bool m_useCimRepository;
+		String m_repositoryDir;
+		String m_url;
+		String m_namespace;
+		String m_encoding;
+		bool m_createNamespaces;
+		bool m_checkSyntaxOnly;
+		String m_dumpXmlFile;
+		bool m_remove;
+		bool m_preserve;
+		bool m_upgrade;
+		StringArray m_includeDirs;
+		bool m_ignoreDoubleIncludes;
+	};
+
+	Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh );
 	~Compiler();
 
 	long compile( const String& filename );
@@ -85,7 +133,7 @@ public:
 
 private:
 	Reference<CIMOMHandleIFC> m_ch;
-	String m_nameSpace;
+	Options m_opts;
 };
 
 } // end namespace MOF

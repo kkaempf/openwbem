@@ -96,12 +96,15 @@ protected:
 		cout << "File: " << li.filename << " Line: " << li.lineNum << ": " << message << endl;
 	}
 };
-static bool use_cim_repository = false;
-static String repository_dir;
-static String url_arg = "http://localhost";
-static String namespace_arg = "root/cimv2";
-static String encoding_arg = "cimxml";
-StringArray filelist;
+
+static const char* const def_url_arg = "http://localhost";
+static const char* const def_namespace_arg = "root/cimv2";
+static const char* const def_encoding_arg = "cimxml";
+
+
+static Compiler::Options opts;
+static StringArray filelist;
+
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
 static struct option   long_options[] =
@@ -133,11 +136,17 @@ processCommandLineOptions(int argc, char** argv)
 	// TODO: This is deprecated, remove it post 3.0
 	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 	{
-		url_arg = argv[1];
-		namespace_arg = argv[2];
+		opts.m_url = argv[1];
+		opts.m_namespace = argv[2];
 		filelist.push_back(argv[3]);
 		return 0;
 	}
+
+	// Set defaults
+	opts.m_url = def_url_arg;
+	opts.m_namespace = def_namespace_arg;
+	opts.m_encoding = def_encoding_arg;
+
 #ifdef OW_HAVE_GETOPT_LONG
 	int optndx = 0;
 	optind = 1;
@@ -151,17 +160,20 @@ processCommandLineOptions(int argc, char** argv)
 		switch(c)
 		{
 			case 'd':
-				use_cim_repository = true;
-				repository_dir = optarg;
+				opts.m_useCimRepository = true;
+				opts.m_repositoryDir = optarg;
 				break;
 			case 'u':
-				url_arg = optarg;
+				opts.m_url = optarg;
 				break;
 			case 'n':
-				namespace_arg = optarg;
+				opts.m_namespace = optarg;
 				break;
 			case 'e':
-				encoding_arg = optarg;
+				opts.m_encoding = optarg;
+				break;
+			case 'c':
+				opts.m_createNamespaces = true;
 				break;
 			default:
 				return -1;
@@ -228,10 +240,10 @@ void usage()
 {
 	cout << "Usage: owmofc [OPTION] <FILE>...\n";
 	cout << "  -d,--direct <DIR>: create a repository in the specified directory without connecting to a cimom\n";
-	cout << "  -u,--url <URL>: the url of the cimom. Default is " << url_arg << " if not specified\n";
-	cout << "  -n,--namespace <NAMESPACE>: The initial namespace to use. Default is " << namespace_arg << " if not specified\n";
-	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it <UNIMPLEMENTED>\n";
-	cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. Default is " << encoding_arg << " if not specified\n";
+	cout << "  -u,--url <URL>: the url of the cimom. Default is " << def_url_arg << " if not specified\n";
+	cout << "  -n,--namespace <NAMESPACE>: The initial namespace to use. Default is " << def_namespace_arg << " if not specified\n";
+	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it\n";
+	cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. Default is " << def_encoding_arg << " if not specified\n";
 	cout << "  -s,--check-syntax: Only parse the mof, don't actually do anything <UNIMPLEMENTED>\n";
 	cout << "  -x,--dump-xml <FILE>: Write the xml to FILE <UNIMPLEMENTED>\n";
 	cout << "  -r,--remove: Instead of creating classes and instances, remove them <UNIMPLEMENTED>\n";
@@ -256,15 +268,15 @@ int main(int argc, char** argv)
 		}
 		Reference<ParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
 		Reference<CIMOMHandleIFC> handle;
-		if (use_cim_repository)
+		if (opts.m_useCimRepository)
 		{
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
-			cimRepository->open(repository_dir);
+			cimRepository->open(opts.m_repositoryDir);
 			try
 			{
 				OperationContext context("");
-				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(namespace_arg), context);
+				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(opts.m_namespace), context);
 			}
 			catch (const CIMException& e)
 			{
@@ -279,15 +291,15 @@ int main(int argc, char** argv)
 		}
 		else
 		{
-			URL url(url_arg);
+			URL url(opts.m_url);
 			CIMProtocolIFCRef client;
-			client = new HTTPClient(url_arg);
+			client = new HTTPClient(opts.m_url);
 			// TODO: The /owbinary path part is deprecated, remove it post 3.0
-			if(encoding_arg == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
+			if(opts.m_encoding == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
 			{
 				handle = CIMOMHandleIFCRef(new BinaryCIMOMHandle(client));
 			}
-			else if (encoding_arg == "cimxml")
+			else if (opts.m_encoding == "cimxml")
 			{
 				handle = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(client));
 			}
@@ -298,7 +310,7 @@ int main(int argc, char** argv)
 			}
 			client->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
 		}
-		Compiler theCompiler(handle, namespace_arg, theErrorHandler);
+		Compiler theCompiler(handle, opts, theErrorHandler);
 		if (filelist.empty())
 		{
 			// don't do this, it's too confusing

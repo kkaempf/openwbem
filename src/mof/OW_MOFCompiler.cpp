@@ -48,11 +48,11 @@ OW_DEFINE_EXCEPTION(MOFCompiler)
 namespace MOF
 {
 
-Compiler::Compiler( Reference<CIMOMHandleIFC> ch, const String& nameSpace, Reference<ParserErrorHandlerIFC> mpeh )
+Compiler::Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh )
 	: theErrorHandler(mpeh)
 	, include_stack_ptr(0)
 	, m_ch(ch)
-	, m_nameSpace(nameSpace)
+	, m_opts(opts)
 {
 }
 Compiler::~Compiler()
@@ -91,7 +91,7 @@ long Compiler::compile( const String& filename )
 			yyparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+			CIMOMVisitor v(m_ch, m_opts.m_namespace, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
@@ -152,7 +152,7 @@ long Compiler::compileString( const String& mof )
 			yyparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+			CIMOMVisitor v(m_ch, m_opts.m_namespace, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
