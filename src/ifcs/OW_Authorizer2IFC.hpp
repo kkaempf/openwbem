@@ -41,6 +41,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IfcsFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -53,7 +54,7 @@ public:
 
 	enum EAccessType { E_READ, E_WRITE, E_READWRITE };
 
-	enum EDynamicFlag { E_NOT_DYNAMIC, E_DYNAMIC }; 
+	enum EDynamicFlag { E_NOT_DYNAMIC, E_DYNAMIC };
 
 	virtual ~Authorizer2IFC();
 
@@ -105,8 +106,8 @@ public:
 	 */
 	virtual bool doAllowWriteInstance(
 		const ServiceEnvironmentIFCRef& env,
-		const String& ns, 
-		const CIMObjectPath& instanceName, 
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		EDynamicFlag dynamic,
 		EWriteFlag flag,
 		OperationContext& context) = 0;
@@ -191,26 +192,24 @@ public:
 		OperationContext& context) = 0;
 
 	/**
-	 * Determine if a method may be invoked. 
+	 * Determine if a method may be invoked.
 	 * @param env A reference to a provider environment.
-	 * @param ns The namespace containing the instance or class. 
+	 * @param ns The namespace containing the instance or class.
 	 * @param path The name of the instance or class containing
-	 * 		the method. 
-	 * @param methodName The name of the method. 
+	 * 		the method.
+	 * @param methodName The name of the method.
 	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowMethodInvocation(
-		const ServiceEnvironmentIFCRef& env, 
-		const String& ns, 
-		const CIMObjectPath& path, 
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
 		const String& methodName,
 		OperationContext& context) = 0;
 
 	virtual void init(ServiceEnvironmentIFCRef&);
 };
-
-typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
 
 }
 

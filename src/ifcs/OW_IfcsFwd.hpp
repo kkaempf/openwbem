@@ -45,21 +45,31 @@ namespace OpenWBEM
 
 class CIMOMHandleIFC;
 typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+
 class RequestHandlerIFC;
 typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
+
 class ServiceIFC;
 typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
+
 class WQLIFC;
 typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
+
 class SelectableIFC;
 typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
+
 class SelectableCallbackIFC;
 typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
+
 class RepositoryIFC;
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;
+
 class AuthorizerIFC;
 typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
+
+class Authorizer2IFC;
+typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
 
 class AuthenticatorIFC;
 typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
@@ -79,6 +89,9 @@ typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
 class CIMProtocolIStreamIFC;
 typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
+
+class ClientAuthCBIFC;
+typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 
 } // end namespace OpenWBEM

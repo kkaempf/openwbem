@@ -143,7 +143,6 @@ protected:
 
 	String m_contentType;
 };
-typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
 } // end namespace OpenWBEM
 

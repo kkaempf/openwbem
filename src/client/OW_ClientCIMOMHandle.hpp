@@ -40,6 +40,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_Map.hpp"
+#include "OW_ClientFwd.hpp"
 
 namespace OpenWBEM
 {

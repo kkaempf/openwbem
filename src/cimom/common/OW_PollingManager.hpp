@@ -49,6 +49,7 @@
 #include "OW_Condition.hpp"
 #include "OW_ThreadBarrier.hpp"
 #include "OW_ThreadPool.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -102,7 +103,6 @@ private:
 
 	virtual void doCooperativeCancel();
 };
-typedef IntrusiveReference<PollingManager> PollingManagerRef;
 
 } // end namespace OpenWBEM
 

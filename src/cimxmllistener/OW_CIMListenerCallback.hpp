@@ -38,6 +38,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMXMLListenerFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -73,7 +74,6 @@ protected:
 	virtual void doIndicationOccurred( CIMInstance& ci,
 		const String& listenerPath ) = 0;
 };
-typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 
 } // end namespace OpenWBEM
 

@@ -51,6 +51,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Logger.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -216,7 +217,6 @@ private:
 
 	LoggerRef m_logger;
 };
-typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
 
 } // end namespace OpenWBEM
 

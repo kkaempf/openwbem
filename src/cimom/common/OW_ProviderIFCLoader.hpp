@@ -43,6 +43,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -124,8 +125,6 @@ private:
 	const SharedLibraryLoaderRef m_sll;
 	ServiceEnvironmentIFCRef m_env;
 };
-
-typedef IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
 
 class ProviderIFCLoader : public ProviderIFCLoaderBase
 {

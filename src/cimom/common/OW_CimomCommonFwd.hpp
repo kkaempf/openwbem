@@ -54,6 +54,11 @@ class IndicationRepLayerMediator;
 typedef IntrusiveReference<IndicationRepLayerMediator> IndicationRepLayerMediatorRef;
 class CIMOMEnvironment;
 typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
+class LocalCIMOMHandle;
+typedef IntrusiveReference<LocalCIMOMHandle> LocalCIMOMHandleRef;
+class ProviderIFCLoaderBase;
+typedef IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
+
 
 
 

@@ -70,8 +70,6 @@ private:
 	ThreadCounter& operator=(ThreadCounter const&);
 };
 
-typedef IntrusiveReference<ThreadCounter> ThreadCounterRef;
-
 class OW_COMMON_API ThreadCountDecrementer : public ThreadDoneCallback
 {
 public:

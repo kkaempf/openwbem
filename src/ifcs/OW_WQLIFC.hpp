@@ -60,7 +60,6 @@ public:
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };
-typedef SharedLibraryReference< IntrusiveReference<WQLIFC> > WQLIFCRef;
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_WQLFACTORY(derived,wqlname) \

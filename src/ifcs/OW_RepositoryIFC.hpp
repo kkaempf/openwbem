@@ -44,6 +44,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -807,9 +808,6 @@ public:
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context) = 0;
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result) = 0;
 };
-typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
-typedef SharedLibraryReference<RepositoryIFCRef>
-	SharedLibraryRepositoryIFCRef;
 
 } // end namespace OpenWBEM
 

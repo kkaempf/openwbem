@@ -39,13 +39,6 @@
 #include "OW_Enumeration.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
-
-namespace OpenWBEM
-{
-
-typedef Enumeration<CIMQualifier> CIMQualifierEnumeration;
-typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
-
-} // end namespace OpenWBEM
+#include "OW_CommonFwd.hpp"
 
 #endif

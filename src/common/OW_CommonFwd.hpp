@@ -109,6 +109,21 @@ class ServerSocket;
 
 class TempFileStream;
 
+class RepositoryCIMOMHandle;
+typedef IntrusiveReference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
+
+class Runnable;
+typedef IntrusiveReference<Runnable> RunnableRef;
+
+class SessionLanguage;
+typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
+
+class ThreadCounter;
+typedef IntrusiveReference<ThreadCounter> ThreadCounterRef;
+
+class ThreadDoneCallback;
+typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
+
 
 } // end namespace OpenWBEM
 

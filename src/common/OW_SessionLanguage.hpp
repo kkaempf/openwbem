@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -145,8 +146,6 @@ private:
 	String m_contentLanguage;
 	String m_acceptLanguageString;
 };
-
-typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
 
 // Key to use when getting SessionLanguage from the OperationContext
 #define SESSION_LANGUAGE_KEY "_oWsEsSiOnLaNgUaGe_kEy_"

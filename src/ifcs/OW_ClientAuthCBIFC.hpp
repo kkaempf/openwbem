@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IfcsFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -60,17 +61,16 @@ public:
 	 * @param name A out param String&.  The function should assign a valid
 	 * 	user name here. "" is not a valid user name.
 	 * @param passwd Similar to "name". The callback assigns the password
-	 * 	here. 
+	 * 	here.
 	 * @return true means the http client should retry the request with
 	 *	the provided name/password.  false means a valid name/password
 	 *	were not obtained by the callback, and to http client has no
-	 *	reason to retry the request. 
+	 *	reason to retry the request.
 	 */
 	virtual bool getCredentials(const String& realm, String& name,
 			String& passwd, const String& details) = 0;
 	virtual ~ClientAuthCBIFC();
 };
-typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 } // end namespace OpenWBEM
 

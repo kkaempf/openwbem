@@ -39,6 +39,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_Thread.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -62,7 +63,6 @@ public:
 	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName) = 0;
 };
-typedef SharedLibraryReference< IntrusiveReference<IndicationServer> > IndicationServerRef;
 
 } // end namespace OpenWBEM
 

@@ -51,8 +51,6 @@ protected:
 	virtual void doNotifyThreadDone(Thread* t) = 0;
 };
 
-typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
-
 } // end namespace OpenWBEM
 
 #endif

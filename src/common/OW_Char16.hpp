@@ -39,6 +39,7 @@
 #include "OW_ArrayFwd.hpp"
 #include "OW_Types.hpp"
 #include "OW_Bool.hpp"
+#include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
@@ -326,7 +327,6 @@ inline Char16 operator/ (const Char16& arg1, const Char16& arg2)
 	return Char16(UInt16(arg1.getValue() / arg2.getValue()));
 }
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostrm, const Char16& arg);
-typedef Array<Char16> Char16Array;
 
 } // end namespace OpenWBEM
 

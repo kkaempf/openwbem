@@ -90,7 +90,6 @@ public:
 private:
 	CIMOMEnvironmentRef m_env;
 };
-typedef Reference<LocalCIMOMHandle> LocalCIMOMHandleRef;
 
 } // end namespace OpenWBEM
 

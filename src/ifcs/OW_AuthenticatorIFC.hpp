@@ -44,6 +44,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IfcsFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -60,7 +61,7 @@ public:
 	 * @param env A reference to an ServiceEnvironment for the
 	 *	authenticator to use.
 	 * @exception Any exception may be thrown because other classes which
-	 *	derive from this may need to throw exceptions in init() 
+	 *	derive from this may need to throw exceptions in init()
 	 */
 	void init(const ServiceEnvironmentIFCRef& env) { doInit(env); }
 	/**
@@ -114,9 +115,8 @@ protected:
 	virtual void doInit(ServiceEnvironmentIFCRef);
 	Mutex m_mutex;
 };
-typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
-#if !defined(OW_STATIC_SERVICES)  
+#if !defined(OW_STATIC_SERVICES)
 #define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \
 extern "C" OpenWBEM::AuthenticatorIFC* \
 createAuthenticator() \
