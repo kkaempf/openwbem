@@ -163,6 +163,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	//Environment::logInfo(msg);
 	initSig();
 	setupSigHandler(dbgFlg);
+	umask(0077); // ensure all files we create are only accessible by us.
 }
 //////////////////////////////////////////////////////////////////////////////
 int
