@@ -9,6 +9,7 @@ PORTING.txt \
 ProviderInterface.HOWTO \
 openwbem-faq.html \
 pg.tex \
-PerlIFC.sxw
+PerlIFC.sxw \
+remote_providers.txt
 
 

@@ -1,0 +1,153 @@
+Remote provider framework
+
+There are 2 components.  The first component is the remote provider 
+interface which enables the cimom to fulfill provider calls by calling
+an external WBEM Server.  The second component is a basic C++ class API which
+will make it easy for an application to embed a lightweight WBEM server and
+a single provider.  This is know as the 'Provider Agent API'
+
+1. Remote provider interface
+
+The code lives under src/providerifcs/remote.
+
+Overall functionality.  When a request is sent for a class that is registered 
+as being instrumented a remote provider, CIMServer will retrieve the appropriate
+provider instance.  This remote provider instance will then use the OW client 
+API to remotely call another WBEM server to fulfill the request. The
+WBEM Server may be on the same system, or on a separate system.
+
+The CIMException/CIMError mechanism is to be propogated across the 
+communication channel from ProxyProvider to ProviderAgent.  When 
+the CIMClient being used in the RemoteProxyProvider receives a 
+CIMError, it needs to raise the corresponding CIMException.
+
+Multiple requests may be made in parallel.
+
+For performance reasons, it's desirable to reuse a persistent connection to
+each remote WBEM Server.  However the HTTPClient class is not thread safe or
+re-entrant, so a separate instance will have to be used for each concurrent
+connection.
+
+Also another performance enhancement is to have a flag on the HTTPClient
+to cause it to avoid the authentication retry by initially sending credentials,
+if it knows it will need them. This will be done if the registration instance
+property AlwaysSendCredentials == true. Enabling this may be a security risk
+in an unsecure environment.
+
+Association of remote URLs to classes.  The remote provider interface will use
+instances of a class to determine which URL to use when handling a request.
+Here is the class:
+
+class OpenWBEM_RemoteProviderRegistration
+{
+	[key]
+	string InstanceID;
+
+	[Required]
+	string NamespaceName;
+	
+	[Required]
+	string ClassName;
+
+	[Description (
+		"ProviderTypes identifies the kind of provider."),
+		ValueMap {"1", "2", "3", "4", "5"},
+		Values {"Instance", "Secondary Instance", "Association", "Indication",
+		   "Method"},
+		ArrayType ("Indexed"),
+		Required ]
+	uint16 ProviderTypes[];
+
+	
+	[Required]
+	string Url;
+
+	[Required]
+	boolean AlwaysSendCredentials = false;
+
+	[Required]
+	boolean UseConnectionCredentials = false;
+};
+
+This class and instances of it will be stored in the interop namespace, which
+is identified in the config file.  When the RemoteProviderInterface initializes
+it will enumerate all the instances, and register appropriately. One current
+limitation is that dynamically changing the instances will have no effect, the
+cimom must be restarted for the changes to take effect.
+
+Classes:
+RemoteProviderInterface : public ProviderIFCBaseIFC
+
+RemoteProxyProvider : public InstanceProviderIFC, public AssociatorProviderIFC, 
+	public MethodProviderIFC, public SecondaryInstanceProviderIFC
+
+ClientConnectionPool - This class encapsulates the details of re-using
+persistent connections.
+
+HTTP Connections send credientials only when initially connected.  If the
+credentials change, the connection will need to be re-established.
+
+Authentication.  The RemoteProxyProvider will have the ability to optionally 
+re-use the credentials that were given to the cimom in the initial request if 
+they're available. It will attempt to do this if the registration instance
+property AlwaysSendCredentials == true. The username will be extracted from
+the OperationContext, and the password will be set to the string value of the
+context key "remote_provider.user_credentials". This is not saved normally
+by the cimom or authenticators, so to activate this, a custom authenticator
+should be used which inserts the data into the operation context.
+
+
+
+2. Provider Agent API.
+
+The ProviderAgent class can be used in another application to embed a simple
+WBEM Server which only communicates with a single provider.  A ProviderAgent
+instance can be configured with:
+- a reference to a provider
+- a ConfigMap which will contain values to control the HTTPServer.
+- a logger
+- a request handler
+- Threading model (either no locking, swmr locking or single threaded)
+- a/some CIMClass/es which could be passed to the providers. (optional)
+- an authenticator (optional).
+  
+ProviderAgent uses an instance of HTTPServer and one of the request 
+handlers, either XMLExecute or BinaryRequestHandler.  In order to tie together 
+the pieces, implementations of the following interfaces will be needed:
+ServiceEnvironmentIFC, CIMOMHandleIFC (so the request handler can call the
+provider), Thread, AuthenticatorIFC, and ProviderEnvironmentIFC.
+The ProviderAgentCIMOMHandle must have the ability to support different 
+threading models: a) your standard single-write, multiple-read, or b) 
+completely serialized single threaded.  This allows for providers to not be 
+threadsafe.
+
+The ProviderAgent will start a new thread (ProviderAgentThread) which will be
+responsible for running a SelectEngine which will respond to the incoming
+requests.  It will also provide a method to shutdown and terminate the
+thread.
+
+If the ProviderAgent is not provided with a cimom callback url,
+certain restrictions will be placed on the providers that are called in the
+ProviderAgent context:
+1. No ability to get a valid CIMOMHandleIFCRef to use to call into the cimom.
+2. The CIMClass which is normally passed to a provider will not be available
+from the cimom, so it could be CIMNULL, alternatively it could be a CIMClass
+instance provided to the ProviderAgent constructor.
+If a callback url is provided, then the ProviderAgent will fetch classes as
+needed from the cimom, and will also have the ability to supply a
+functional CIMOMHandleIFCRef to a provider.
+
+Classes:
+ProviderAgent
+
+ProviderAgentEnvironment : public ServiceEnvironmentIFC
+
+ProviderAgentCIMOMHandle : public CIMOMHandleIFC
+
+ProviderAgentProviderEnvironment : public ProviderEnvironmentIFC
+
+ProviderAgentThread : public Thread
+
+
+Indications are not supported at this time.
+
