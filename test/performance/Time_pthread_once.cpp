@@ -41,6 +41,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ThreadImpl.hpp"
+#include "OW_ThreadOnce.hpp"
 
 using namespace OpenWBEM;
 using namespace std;
@@ -139,6 +140,35 @@ private:
 DCLPFoo* volatile DCLPFoo::ptr = 0;
 Mutex DCLPFoo::s_guard;
 
+//////////////////////////////////////////////////
+class OWTOFoo
+{
+public:
+	OWTOFoo(int x) : m_x(x) {}
+
+	static OWTOFoo* instance()
+	{
+		callOnce(onceCtl, onceInit);
+		return ptr;
+	}
+
+private:
+	int m_x;
+
+	static OWTOFoo* volatile ptr;
+	static onceFlag onceCtl;
+
+	static void onceInit()
+	{
+		ptr = new OWTOFoo(1);
+	}
+	
+};
+
+OWTOFoo* volatile OWTOFoo::ptr = 0;
+onceFlag OWTOFoo::onceCtl = OW_ONCE_INIT;
+
+/////////////////////////////////////////////////////////////////////////////
 struct Nothing
 {
 	const char* name() const { return "Nothing"; }
@@ -176,6 +206,15 @@ struct getPtrDCLP
 	}
 };
 
+struct getPtrOWTO
+{
+	const char* name() const { return "getPtrOWTO"; }
+	void operator()() const
+	{
+		OWTOFoo* ptr = OWTOFoo::instance();
+	}
+};
+
 int main(int argc, const char** argv)
 {
 	static size_t reps = 100000000;
@@ -185,5 +224,6 @@ int main(int argc, const char** argv)
 	doTiming(getPtr(), reps);
 #endif
 	doTiming(getPtrDCLP(), reps);
+	doTiming(getPtrOWTO(), reps);
 }
 

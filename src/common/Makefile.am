@@ -112,6 +112,7 @@ OW_ThreadCounter.cpp \
 OW_Thread.cpp \
 OW_ThreadDoneCallback.cpp \
 OW_ThreadImpl.cpp \
+OW_ThreadOnce.cpp \
 OW_ThreadPool.cpp \
 OW_TimeoutException.cpp \
 OW_TmpFile.cpp \
@@ -239,6 +240,7 @@ OW_ThreadCounter.hpp \
 OW_ThreadDoneCallback.hpp \
 OW_Thread.hpp \
 OW_ThreadImpl.hpp \
+OW_ThreadOnce.hpp \
 OW_ThreadPool.hpp \
 OW_ThreadTypes.hpp \
 OW_TimeoutException.hpp \
