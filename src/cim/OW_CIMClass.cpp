@@ -323,10 +323,7 @@ OW_CIMClass::getProperties() const
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		OW_CIMProperty cp = m_pdata->m_properties[i];
-		// TODO: This is what it should be, but the association tests break.
-		// Find out what is relying on the incorrect behavior!
-		//if(cp.hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
-		if(cp.getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
+		if(!cp.hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			prop.append(cp);
 		}
@@ -443,14 +440,12 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 	//
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
-		OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
-		if(cq.equals(qual))
+		if(m_pdata->m_qualifiers[i].equals(qual))
 		{
 			m_pdata->m_qualifiers.remove(i);
 			break;
 		}
 	}
-
 	if(qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 	{
         OW_CIMValue v = qual.getValue();
