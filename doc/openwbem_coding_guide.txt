@@ -11,7 +11,7 @@ of parameters and such.
 Nameing conventions:
 enums begin with E (or OW_E if not otherwise scoped), and if they're used as 
 a parameter to a function, they should end with Flag.  enum values should be
-all caps, with underscores between works and begin with E_.  Avoid anonymous
+all caps, with underscores between words, and begin with E_.  Avoid anonymous
 (aka unnamed) enums.  Don't use an int variable to store an enum value. i.e.:
 
 // this is bad
@@ -92,4 +92,39 @@ The following CIM elements are case-insensitive: Classes, Instances, Methods,
 Properties, Qualifiers and Method Parameters.
 Namespaces in OpenWBEM are *NOT* case-insensitive.  i.e. root/CIMV2 is a
 different namespace than root/cimv2.
+-----------------------------------------------------------------------------
+If at all possible avoid static objects that have a constructor.  These can
+lead to the dreaded "static initialization dependency order" problem.  You're
+almost bound to run into it if you have a static mutex and you try and lock it
+in a static object's constructor in another translation unit, or even possibly
+in the same translation unit, if the mutex is declared after the other static
+object.
+-----------------------------------------------------------------------------
+memory:
+You should always use a class with a destructor (such as OW_Reference<>) to 
+manage memory.  If you ever have to write "delete", then you're doing
+something wrong.
+Use OW_String instead of char* and OW_Array<> instead of raw C arrays.
+-----------------------------------------------------------------------------
+All files must have a copyright notice.
+-----------------------------------------------------------------------------
+Header files must have a standard include guard, and it should be like this:
+#ifndef OW_FILE_NAME_HPP_INCLUDE_GUARD_
+#define OW_FILE_NAME_HPP_INCLUDE_GUARD_
+//...
+#endif
+Use all caps and put underscores between words in the filename (where it would
+be a new capital letter in the class name)  It's important to not get a
+collision with the same include guard of another file, that will cause
+unexplainable errors that lead to a lot of head-scratching and wasted time.
+-----------------------------------------------------------------------------
+All files must include "OW_config.h" as the first include file.
+cpp files must include it's corresponding header file as the 2nd include file.
+-----------------------------------------------------------------------------
+Try to minimize header dependencies as much as possible.  Include the minimum
+possible in header files.  You'll need to include headers for base classes as
+well as any types used as member variables.  Everything else can be forward
+declared.  If you use the pimpl idiom, you can get away with only including
+OW_Reference (or OW_COWReference).  This helps to greatly reduce compilation
+time and also helps prevent bloat from inline functions.
 -----------------------------------------------------------------------------

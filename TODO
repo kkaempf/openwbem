@@ -127,6 +127,7 @@ Post 3.0
 Refactorings:
     - Get rid of all the bool parameters and replace them with enums
       (esp. for cimom handle calls.)
+    - Fix ordering of deep and localOnly parameters.
     - Make OW_Exception constructor protected and fix appropriate code.
     - Remove *E functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
       that return OW_Enumeration<T> and OW_Array<T>.
