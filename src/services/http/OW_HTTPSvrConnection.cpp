@@ -525,11 +525,11 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
-			HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>
-				(ostrEntity);
+			OW_ASSERT(dynamic_cast<HTTPDeflateOStream*>(ostrEntity));
+			HTTPDeflateOStream* deflateostr = static_cast<HTTPDeflateOStream*>(ostrEntity);
 			deflateostr->termOutput();
-			ostrChunk = dynamic_cast<HTTPChunkedOStream*>
-				(&deflateostr->getOutputStreamOrig());
+			OW_ASSERT(dynamic_cast<HTTPChunkedOStream*>(&deflateostr->getOutputStreamOrig()));
+			ostrChunk = static_cast<HTTPChunkedOStream*>(&deflateostr->getOutputStreamOrig());
 #else
 			OW_THROW(HTTPException, "Attempting to deflate response "
 				" but we're not compiled with zlib!  (shouldn't happen)");
@@ -537,8 +537,8 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		}
 		else
 		{
-			ostrChunk = dynamic_cast<HTTPChunkedOStream*>
-				(ostrEntity);
+			OW_ASSERT(dynamic_cast<HTTPChunkedOStream*>(ostrEntity));
+			ostrChunk = static_cast<HTTPChunkedOStream*>(ostrEntity);
 		}
 		OW_ASSERT(ostrChunk);
 
