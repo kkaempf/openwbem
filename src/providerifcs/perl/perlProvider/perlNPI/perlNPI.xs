@@ -286,7 +286,7 @@ char *	CIMInstanceGetStringArrayPropertyValue(npiHandle, ci, key, pos)
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMInstance cci = {argsfromperl(ci)};
 	CODE:
-	RETVAL = CIMInstanceGetStringArrayPropertyValue(nh,cci,key, pos);
+	RETVAL = CIMInstanceGetStringArrayPropertyValue(nh, cci, key, pos);
 	OUTPUT:
 	RETVAL
 
@@ -581,13 +581,13 @@ void	CIMOMDeliverProcessEvent(npiHandle, ns , ind)
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMInstance cin = {argsfromperl(ind)};
 	CODE:
-	local_interpreter = (PerlInterpreter *)(
+	/* local_interpreter = (PerlInterpreter *)(
 		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
-	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL; */
 	CIMOMDeliverProcessEvent(nh, ns, cin);
-	PERL_SET_CONTEXT(local_interpreter);
+	/* PERL_SET_CONTEXT(local_interpreter);
 	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
-		(void *)local_interpreter;
+		(void *)local_interpreter; */
 
 void	CIMOMDeliverInstanceEvent(npiHandle, ns , ind, src, prev)
 	char * npiHandle
@@ -602,13 +602,13 @@ void	CIMOMDeliverInstanceEvent(npiHandle, ns , ind, src, prev)
 	CIMInstance cs = {argsfromperl(src)};
 	CIMInstance cp = {argsfromperl(prev)};
 	CODE:
-	local_interpreter = (PerlInterpreter *)(
+	/* local_interpreter = (PerlInterpreter *)(
 		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
-	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL; */
 	CIMOMDeliverInstanceEvent(nh, ns, cin, cs, cp);
-	PERL_SET_CONTEXT(local_interpreter);
+	/* PERL_SET_CONTEXT(local_interpreter);
 	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
-		(void *)local_interpreter;
+		(void *)local_interpreter; */
 
 char*	CIMOMPrepareAttach(npiHandle)
 	char * npiHandle
@@ -646,27 +646,31 @@ void	CIMOMAttachThread(npiHandle)
 	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
-	local_interpreter = (PerlInterpreter *)(
+	/* local_interpreter = (PerlInterpreter *)(
 		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
-	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL; */
 	CIMOMAttachThread(nh);
-	PERL_SET_CONTEXT(local_interpreter);
+	/* PERL_SET_CONTEXT(local_interpreter);
 	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
-		(void *)local_interpreter;
+		(void *)local_interpreter; */
 
-void	CIMOMDetachThread(npiHandle)
+void	CIMOMDetachThread(npiHandle, old_npiHandle)
 	char * npiHandle
+	char * old_npiHandle
 	PREINIT:
 	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
+	NPIHandle * old_nh = argsfromperl(old_npiHandle);
 	CODE:
-	local_interpreter = (PerlInterpreter *)(
+	/* local_interpreter = (PerlInterpreter *)(
 		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
-	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL; */
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)old_nh->context))->my_perl);
 	CIMOMDetachThread(nh);
 	PERL_SET_CONTEXT(local_interpreter);
-	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
-		(void *)local_interpreter;
+	/* ((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter; */
 
 int	errorCheck(npiHandle)
 	char * npiHandle
