@@ -172,6 +172,12 @@ public:
 	void setHost(const OW_String& host);
 
 	/**
+	 * Set the protocol
+	 * @param protocol The protocol component of the url for the name space
+	 */
+	void setProtocol(const OW_String& protocol);
+
+	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */

@@ -196,12 +196,6 @@ public:
 	virtual OW_String toMOF() const;
 	
 	/**
-	 * Write the XML representation of this qualifier type to an output stream.
-	 * @param ostr The output stream to write this object to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
 	 * @return The name of this qualifier type.
 	 */
 	virtual OW_String getName() const;

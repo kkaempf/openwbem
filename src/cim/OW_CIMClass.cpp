@@ -31,8 +31,6 @@
 #include "OW_config.h"
 #include "OW_CIMClass.hpp"
 #include "OW_StringBuffer.hpp"
-//#include "OW_XMLNode.hpp"
-//#include "OW_XMLParameters.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMQualifier.hpp"
@@ -575,11 +573,80 @@ OW_CIMClass::removeQualifier(const OW_CIMQualifier& qual)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_CIMClass::removeQualifier(const OW_String& name)
+{
+	OW_Bool cc = false;
+	OW_MutexLock l = m_pdata.getWriteLock();
+
+	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+	{
+		OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
+		if(cq.getName().equalsIgnoreCase(name))
+		{
+			m_pdata->m_qualifiers.remove(i);
+			cc = true;
+			break;
+		}
+	}
+
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_CIMClass::removeProperty(const OW_String& name)
+{
+	OW_Bool cc = false;
+	OW_MutexLock l = m_pdata.getWriteLock();
+
+	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
+	{
+		OW_CIMProperty prop = m_pdata->m_properties[i];
+		if(prop.getName().equalsIgnoreCase(name))
+		{
+			m_pdata->m_properties.remove(i);
+			cc = true;
+			break;
+		}
+	}
+
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMClass::setQualifiers(const OW_CIMQualifierArray& quals)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMClass::setQualifier(const OW_CIMQualifier& qual)
+{
+	if(qual)
+	{
+		OW_MutexLock l = m_pdata.getWriteLock();
+		OW_Bool found = false;
+
+		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		{
+			OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
+			if(cq.equals(qual))
+			{
+				m_pdata->m_qualifiers[i] = qual;
+				found = true;
+				break;
+			}
+		}
+
+		if(!found)
+		{
+			m_pdata->m_qualifiers.append(qual);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

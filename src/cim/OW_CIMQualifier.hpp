@@ -125,12 +125,6 @@ public:
 	OW_CIMQualifier(const OW_String& name, const OW_CIMQualifierType& qtype);
 
 	/**
-	 * Create an OW_CIMQualifier from an XML definition.
-	 * @param node	An OW_XMLNode that contains this qualifier's definition
-	 */
-	//OW_CIMQualifier(const OW_XMLNode& node);
-
-	/**
 	 * Copy constructor
 	 * @param arg The OW_CIMQualifier that this object will be a copy of.
 	 */
@@ -269,25 +263,6 @@ public:
 	 * @return The MOF representation of this qualifier as an OW_String.
 	 */
 	virtual OW_String toMOF() const;
-
-	/**
-	 * Write the XML representation of this qualifier to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	
-	//virtual void toXML(std::ostream& ostr) const
-	//{
-	//	toXML(ostr, false);
-	//}
-	
-
-	/**
-	 * Write the XML representation of this qualifier to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 * @param localOnly If true and this qualifier was inherited from a parent
-	 * 	class, the XML will not be written to the given output stream.
-	 */
-	//void toXML(std::ostream& ostr, OW_Bool localOnly) const;
 
 	/**
 	 * @return The string representation of this qualifier.

@@ -58,7 +58,7 @@ typedef signed short cpiSint16;
 typedef unsigned int cpiUint32;
 typedef signed int cpiSint32;
 typedef unsigned long long cpiUint64;
-typedef signed long long cpiUint64;
+typedef signed long long cpiSint64;
 typedef float cpiReal32;
 typedef double cpiReal64;
 typedef unsigned short cpiChar16;
@@ -197,7 +197,6 @@ enum
 #define CPI_QUAL_WRITE 			"write"
 #define CPI_QUAL_PROVIDER		"provider"
 
-
 /*
 	CIM Data types
 */
@@ -308,7 +307,7 @@ int cpiVectorFree(cpiVectHdl vect);
  * @param obj The item to append to the end of the given vector.
  * @return 0 on success. Otherwise an error code.
  */
-int cpiVectorAppend(cpiVectHdl vect, cpiObjHdl obj)
+int cpiVectorAppend(cpiVectHdl vect, cpiObjHdl obj);
 
 int cpiVectorAppendUint8(cpiVectHdl vect, cpiUint8 v);
 int cpiVectorAppendSint8(cpiVectHdl vect, cpiSint8 v);
@@ -336,7 +335,7 @@ int cpiVectorSetReal32(cpiVectHdl vect, cpiReal32 v, int ndx);
 int cpiVectorSetReal64(cpiVectHdl vect, cpiReal64 v, int ndx);
 int cpiVectorSetString(cpiVectHdl vect, const char* v, int ndx);
 int cpiVectorSetBool(cpiVectHdl vect, cpiBool v, int ndx);
-int cpiVectorSetChar16(cpiVectHdl vect cpiChar16 v, int ndx);
+int cpiVectorSetChar16(cpiVectHdl vect, cpiChar16 v, int ndx);
 
 int cpiVectorGetUint8(cpiVectHdl vect, cpiUint8* v, int ndx);
 int cpiVectorGetSint8(cpiVectHdl vect, cpiSint8* v, int ndx);
@@ -348,9 +347,9 @@ int cpiVectorGetUint64(cpiVectHdl vect, cpiUint64* v, int ndx);
 int cpiVectorGetSint64(cpiVectHdl vect, cpiSint64* v, int ndx);
 int cpiVectorGetReal32(cpiVectHdl vect, cpiReal32* v, int ndx);
 int cpiVectorGetReal64(cpiVectHdl vect, cpiReal64* v, int ndx);
-const char* cpiVectorGetString(cpiVectHdl vect, int ndx);
+const char* cpiVectorGetString(cpiVectHdl vect, int ndx, int* resCode);
 int cpiVectorGetBool(cpiVectHdl vect, cpiBool* v, int ndx);
-int cpiVectorGetChar16(cpiVectHdl vect cpiChar16* v, int ndx);
+int cpiVectorGetChar16(cpiVectHdl vect, cpiChar16* v, int ndx);
 
 /**
  * Remove an item from a vector. The cpiVectHdl must have been previously
@@ -407,26 +406,23 @@ int cpiVectClear(cpiVectHdl vect);
 int cpiClsAlloc(cpiClsHdl* pCls);
 int cpiClsFree(cpiClsHdl cls);
 int cpiClsNewInst(cpiClsHdl cls, cpiInstHdl* instance);
-const char* cpiClsGetName(cpiClsHdl cls);
+const char* cpiClsGetName(cpiClsHdl cls, int* result);
 int cpiClsSetName(cpiClsHdl cls, const char* name);
-const char* cpiClsToString(cpiClsHdl cls);
-const char* cpiClsGetSuperCls(cpiClsHdl cls);
+const char* cpiClsToString(cpiClsHdl cls, int* result);
+const char* cpiClsGetSuperCls(cpiClsHdl cls, int* result);
 int cpiClsSetSuperCls(cpiClsHdl cls, const char* superClassName);
-
 int cpiClsGetQual(cpiClsHdl cls, const char* qualName, cpiQualHdl* pQualifier);
 int cpiClsGetQuals(cpiClsHdl cls, cpiVectHdl* qualifiers);
 int cpiClsAddQual(cpiClsHdl cls, cpiQualHdl qualifier);
 int cpiClsSetQual(cpiClsHdl cls, cpiQualHdl qualifier);
 int cpiClsSetQuals(cpiClsHdl cls, cpiVectHdl qualifiers);
 int cpiClsRemoveQual(cpiClsHdl cls, const char* qualifierName);
-
 int cpiClsGetProps(cpiClsHdl cls, cpiVectHdl* properties);
 int cpiClsGetProp(cpiClsHdl cls, const char* propName, cpiPropHdl* pProperty);
 int cpiClsAddProp(cpiClsHdl cls, cpiPropHdl property);
 int cpiClsSetProp(cpiClsHdl cls, cpiPropHdl property);
 int cpiClsSetProps(cpiClsHdl cls, cpiVectHdl properties);
 int cpiClsRemoveProp(cpiClsHdl cls, const char* propertyName);
-
 int cpiClsGetMeth(cpiClsHdl cls, const char* methName, cpiMethHdl* pMethod);
 int cpiClsGetMeths(cpiClsHdl cls, cpiVectHdl* methods);
 int cpiClsAddMeth(cpiClsHdl cls, cpiMethHdl method);
@@ -438,16 +434,15 @@ int cpiClsSetMeths(cpiClsHdl cls, cpiVectHdl methods);
 -----------------------------------------------------------------------------*/
 int cpiInstAlloc(cpiInstHdl* pInst);
 int cpiInstFree(cpiInstHdl inst);
-const char* cpiInstGetClsName(cpiInstHdl inst);
+const char* cpiInstGetClsName(cpiInstHdl inst, int* result);
 int cpiInstSetClsName(cpiInstHdl inst, const char* name);
-const char* cpiInstToString(cpiInstHdl inst);
+const char* cpiInstToString(cpiInstHdl inst, int* result);
 int cpiInstGetKeys(cpiInstHdl inst, cpiVectHdl* keyProperties);
-const char* cpiInstGetAlias(cpiInstHdl inst);
+const char* cpiInstGetAlias(cpiInstHdl inst, int* result);
 int cpiInstSetAlias(cpiInstHdl inst, const char* aliasName);
 
 int cpiInstGetQual(cpiInstHdl inst, const char* qualName, cpiQualHdl* pQual);
 int cpiInstGetQuals(cpiInstHdl inst, cpiVectHdl* qualifiers);
-int cpiInstAddQual(cpiInstHdl inst, cpiQualHdl qualifier);
 int cpiInstSetQual(cpiInstHdl inst, cpiQualHdl qualifier);
 int cpiInstSetQuals(cpiInstHdl inst, cpiVectHdl qualifiers);
 int cpiInstRemoveQual(cpiInstHdl inst, const char* qualifierName);
@@ -464,67 +459,60 @@ int cpiInstRemoveProp(cpiInstHdl inst, const char* propertyName);
 -----------------------------------------------------------------------------*/
 int cpiMethAlloc(cpiMethHdl* pMeth);
 int cpiMethFree(cpiMethHdl meth);
-const char* cpiMethGetName(cpiMethHdl meth);
+const char* cpiMethGetName(cpiMethHdl meth, int* result);
 int cpiMethSetName(cpiMethHdl meth, const char* name);
-const char* cpiMethToString(cpiMethHdl meth);
-const char* cpiMethGetAlias(cpiMethHdl meth);
-int cpiMethSetAlias(cpiMethHdl meth, const char* aliasName);
-
+const char* cpiMethToString(cpiMethHdl meth, int* result);
 int cpiMethGetQual(cpiMethHdl meth, const char* qualName, cpiQualHdl* pQual);
 int cpiMethGetQuals(cpiMethHdl meth, cpiVectHdl* qualifiers);
 int cpiMethAddQual(cpiMethHdl meth, cpiQualHdl qualifier);
-int cpiMethSetQual(cpiMethHdl meth, cpiQualHdl qualifier);
 int cpiMethSetQuals(cpiMethHdl meth, cpiVectHdl qualifiers);
-int cpiMethRemoveQual(cpiMethHdl meth, const char* qualifierName);
-
-const char* cpiMethGetOriginCls(cpiMethHdl meth);
+const char* cpiMethGetOriginCls(cpiMethHdl meth, int *result);
 int cpiMethSetOriginCls(cpiMethHdl meth, const char* originClassName);
 int cpiMethAddParm(cpiMethHdl meth, cpiParmHdl parm);
-int cpiMethSetParm(cpiMethHdl meth, cpiParmHdl parm);
 int cpiMethGetParms(cpiMethHdl meth, cpiVectHdl* parms);
 int cpiMethSetReturnType(cpiMethHdl meth, int cimDataType);
 int cpiMethGetReturnType(cpiMethHdl meth);
 int cpiMethSetOverridingMeth(cpiMethHdl meth, const char* orMethName);
-const char* cpiMethGetOverridingMeth(cpiMethHdl meth);
+const char* cpiMethGetOverridingMeth(cpiMethHdl meth, int *result);
 int cpiMethSetPropagated(cpiMethHdl meth, cpiBool isPropagated);
-cpiBool cpiMethGetPropagated(cpiMethHdl meth);
+int cpiMethGetPropagated(cpiMethHdl meth, cpiBool* isPropagated);
 
 /*-----------------------------------------------------------------------------
 	Namespace related APIs
 -----------------------------------------------------------------------------*/
 int cpiNSAlloc(cpiNSHdl* pns);
 int cpiNSFree(cpiNSHdl ns);
-const char* cpiNSToString(cpiNSHdl ns);
-const char* cpiNSGetNameSpacePart(cpiNSHdl ns);
+const char* cpiNSToString(cpiNSHdl ns, int* result);
+const char* cpiNSGetNameSpacePart(cpiNSHdl ns, int* result);
 int cpiNSSetNameSpacePart(cpiNSHdl ns, const char* nsPart);
-const char* cpiNSGetHostPart(cpiNSHdl ns);
+const char* cpiNSGetHostPart(cpiNSHdl ns, int* result);
 int cpiNSSetHostPart(cpiNSHdl ns, const char* hostPart);
-const char* cpiNSGetProtocolPart(cpiNSHdl ns);
+const char* cpiNSGetProtocolPart(cpiNSHdl ns, int* result);
 int cpiNSSetProtocolPart(cpiNSHdl ns, const char* protocolPart);
 int cpiNSGetPort(cpiNSHdl ns);
-const char* cpiNSGetFileNamePart(cpiNSHdl ns);
+const char* cpiNSGetFileNamePart(cpiNSHdl ns, int* result);
 
 /*-----------------------------------------------------------------------------
 	Reference (Object Path)  related APIs
 -----------------------------------------------------------------------------*/
 int cpiRefAlloc(cpiRefHdl* pref);
 int cpiRefFree(cpiRefHdl ref);
-const char* cpiRefToString(cpiRefHdl ref);
-const char* cpiRefEscape(cpiRefHdl ref);
-const char* cpiRefUnEscape(cpiRefHdl ref);
+const char* cpiRefToString(cpiRefHdl ref, int* result);
+const char* cpiRefEscape(cpiRefHdl ref, int* result);
+const char* cpiRefUnEscape(cpiRefHdl ref, int* result);
 int cpiRefSetFromStr(cpiRefHdl ref, const char* refStr);
 int cpiRefSetNS(cpiRefHdl ref, const char* nsStr);
 int cpiRefAddKeyProp(cpiRefHdl ref, const char* propertyName, cpiValHdl propValue);
 int cpiRefGetKeys(cpiRefHdl ref, cpiVectHdl* keyProps);
 int cpiRefSetKeys(cpiRefHdl ref, cpiVectHdl newKeyProps);
-const char* cpiRefGetNS(cpiRefHdl ref);
+const char* cpiRefGetNS(cpiRefHdl ref, int* result);
 int cpiRefSetNS(cpiRefHdl ref, const char* nsStr);
-const char* cpiRefGetHost(cpiRefHdl ref);
+const char* cpiRefGetHost(cpiRefHdl ref, int* result);
 int cpiRefSetHost(cpiRefHdl ref, const char* hostStr);
-const char* cpiRefGetClsName(cpiRefHdl ref);
+const char* cpiRefGetClsName(cpiRefHdl ref, int* result);
 int cpiRefSetClsName(cpiRefHdl ref, const char* clsNamaeStr);
-int cpiRefIsEqual(cipRefHdl ref1, cpiRefHdl ref2, cpiBool* result);
-const char* cpiRefGetModelPath(cpiRefHdl ref);
+int cpiRefIsEqual(cpiRefHdl ref1, cpiRefHdl ref2, cpiBool* result);
+const char* cpiRefGetModelPath(cpiRefHdl ref, int* result);
 
 /*-----------------------------------------------------------------------------
 	Parameter related APIs
@@ -641,8 +629,8 @@ int cpiValSetSint64(cpiValHdl val, cpiSint64 v);
 int cpiValSetString(cpiValHdl val, const char* v);
 int cpiValSetBool(cpiValHdl val, cpiBool v);
 int cpiValSetReal32(cpiValHdl val, cpiReal32 v);
-int cpiValSetReal64(cpiValHdl val, cpiRead64 v);
-int cpiValSetDateTime(cpiValHdl val, cpiDateTime v);
+int cpiValSetReal64(cpiValHdl val, cpiReal64 v);
+int cpiValSetDateTime(cpiValHdl val, cpiDTHdl v);
 int cpiValSetChar16(cpiValHdl val, cpiChar16 v);
 int cpiValSetRef(cpiValHdl val, cpiRefHdl v);
 
@@ -673,8 +661,8 @@ int cpiValGetSint64(cpiValHdl val, cpiSint64* pv);
 const char* cpiValGetString(cpiValHdl val);
 int cpiValGetBool(cpiValHdl val, cpiBool* pv);
 int cpiValGetReal32(cpiValHdl val, cpiReal32* pv);
-int cpiValGetReal64(cpiValHdl val, cpiRead64* pv);
-int cpiValGetDateTime(cpiValHdl val, cpiDateTime* pv);
+int cpiValGetReal64(cpiValHdl val, cpiReal64* pv);
+int cpiValGetDateTime(cpiValHdl val, cpiDTHdl* pv);
 int cpiValGetChar16(cpiValHdl val, cpiChar16* pv);
 int cpiValGetRef(cpiValHdl val, cpiRefHdl* pv);
 
@@ -693,6 +681,29 @@ int cpiValGetReal64Array(cpiValHdl val, cpiVectHdl* ra);
 int cpiValGetChar16Array(cpiValHdl val, cpiVectHdl* ra);
 int cpiValGetDateTimeArray(cpiValHdl val, cpiVectHdl* ra);
 int cpiValGetRefArray(cpiValHdl val, cpiVectHdl* ra);
+
+// Error codes
+#define CPI_SUCCESS 0
+#define CPI_E_INVALID_OBJHANDLE -1
+#define CPI_E_INVALID_VECTHANDLE -2
+#define CPI_E_INCOMPAT_OBJHANDLE -3
+#define CPI_E_BAD_VECTOR_CONTENTS -4
+#define CPI_E_INVALID_DATATYPE -5
+#define CPI_E_NULL_VECTOR -6
+#define CPI_E_OUTOFBOUNDS -7
+#define CPI_E_BAD_INDEX -8
+#define CPI_E_INVALID_PARM -9
+#define CPI_E_NOTFOUND -10
+#define CPI_E_NOQUALS -11
+#define CPI_E_INVALID_QUALHANDLE -12
+#define CPI_E_INVALID_QUALVECTOR -13
+#define CPI_E_INVALID_PROPHANDLE -14
+#define CPI_E_INVALID_PROPVECTOR -15
+#define CPI_E_INVALID_METHVECTOR -16
+#define CPI_E_INVALID_METHHANDLE -17
+#define CPI_E_INVALID_PARMHANDLE -18
+#define CPI_E_INVALID_PARMVECTOR -19
+
 
 #ifdef __cplusplus
 }

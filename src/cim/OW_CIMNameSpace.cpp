@@ -30,7 +30,6 @@
 
 #include "OW_config.h"
 #include "OW_CIM.hpp"
-//#include "OW_XMLEscape.hpp"
 #include "OW_MutexLock.hpp"
 #include <cctype>
 
@@ -276,6 +275,14 @@ OW_CIMNameSpace::setHost(const OW_String& host)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_url.setHost(host);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+OW_CIMNameSpace::setProtocol(const OW_String& protocol)
+{
+	OW_MutexLock l = m_pdata.getWriteLock();
+	m_pdata->m_url.setProtocol(protocol);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -163,6 +163,13 @@ public:
 	OW_String getProtocol() const;
 
 	/**
+	 * Set the protocol component of the url
+	 * @param protocol The new protocol component for the url
+	 */
+	void setProtocol(const OW_String& protocol);
+
+
+	/**
 	 * @return The host component of the URL
 	 */
 	OW_String getHost() const;

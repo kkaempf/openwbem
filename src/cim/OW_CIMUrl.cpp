@@ -238,6 +238,15 @@ OW_CIMUrl::setHost(const OW_String& host)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMUrl::setProtocol(const OW_String& protocol)
+{
+	OW_MutexLock l = m_pdata.getWriteLock();
+	m_pdata->m_protocol = protocol;
+	buildSpec();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // PUBLIC
 OW_Bool
 OW_CIMUrl::equals(const OW_CIMUrl& arg) const

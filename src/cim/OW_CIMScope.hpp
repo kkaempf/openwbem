@@ -48,17 +48,17 @@ public:
 	{
 		BAD			= 0,	// Indicates unset or bad
 		SCHEMA		= 1,	// A CIM schema
-		CLASS			= 2,	// A CIM class
+		CLASS		= 2,	// A CIM class
 		ASSOCIATION	= 3,	// A CIM association
 		INDICATION	= 4,	// A CIM indication
-		PROPERTY		= 5,	// A CIM property
+		PROPERTY	= 5,	// A CIM property
 		REFERENCE	= 6,	// A CIM reference
 		METHOD		= 7,	// A CIM method
 		PARAMETER	= 8,	// A CIM parameter
-		QUALIFIER	= 9,  // A CIM qualifier
-		INSTANCE		= 10,	// An instance (NOT SUN)
+		QUALIFIER	= 9,  	// A CIM qualifier
+		INSTANCE	= 10,	// An instance (NOT SUN)
 		ANY			= 11,	// Any CIM element
-		MAXSCOPE		= 12
+		MAXSCOPE	= 12
 	};
 
 	/**

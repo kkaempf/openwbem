@@ -286,11 +286,32 @@ public:
 	OW_Bool removeQualifier(const OW_CIMQualifier& qual);
 
 	/**
+	 * Remove a qualifier from this class.
+	 * @param name The name of the qualifier to remove from this class.
+	 * @return true if the qualifier was removed. Otherwise false.
+	 */
+	OW_Bool removeQualifier(const OW_String& name);
+
+	/**
+	 * Remove a property from this class.
+	 * @param name The name of the property to remove from this class.
+	 * @return true if the property was removed. Otherwise false.
+	 */
+	OW_Bool removeProperty(const OW_String& name);
+
+	/**
 	 * Set the qualifiers for this class. The old qualifiers will be removed.
 	 * @param quals An OW_CIMQualifierArray that contains the new
 	 * 	qualifiers.
 	 */
 	void setQualifiers(const OW_CIMQualifierArray& quals);
+
+	/**
+	 * Set the given qualifier on this OW_CIMClass if it is present. If it
+	 * is not, then add it.
+	 * @param qual The qualifier to set or add to this OW_CIMClass.
+	 */
+	void setQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Add a method to this class

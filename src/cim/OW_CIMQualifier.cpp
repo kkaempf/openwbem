@@ -95,7 +95,6 @@ OW_CIMQualifier::OW_CIMQualifier(const OW_String& name,
 	m_pdata->m_qualifierType = cgt;
 }
 
-
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifier::OW_CIMQualifier(const OW_CIMQualifier& x) :
 	OW_CIMElement(), m_pdata(x.m_pdata)

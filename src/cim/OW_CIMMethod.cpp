@@ -581,15 +581,6 @@ OW_CIMMethod::toMOF() const
 	return rv.toString();
 }
 
-//////////////////////////////////////////////////////////////////////////////													
-/*
-void
-OW_CIMMethod::toXML(ostream& ostr) const
-{
-	toXML(ostr, false, true, true);
-}
-*/
-
 /////////////////////////////////////////////////////////////////////////////													
 OW_String
 OW_CIMMethod::toString() const
