@@ -127,15 +127,17 @@ void
 Socket::createShutDownMechanism()
 {
 	MutexLock mlock(shutdownMutex);
-	OW_ASSERT(s_shutDownMechanism == 0);
+	if (!s_shutDownMechanism)
+	{
 #if defined(OW_WIN32)
-	s_shutDownMechanism = ::CreateEvent(0, TRUE, FALSE, 0);
-	OW_ASSERT(s_shutDownMechanism != 0);
+		s_shutDownMechanism = ::CreateEvent(0, TRUE, FALSE, 0);
+		OW_ASSERT(s_shutDownMechanism != 0);
 #else
-	s_shutDownMechanism = UnnamedPipe::createUnnamedPipe();
-	s_shutDownMechanism->setBlocking(UnnamedPipe::E_NONBLOCKING);
+		s_shutDownMechanism = UnnamedPipe::createUnnamedPipe();
+		s_shutDownMechanism->setBlocking(UnnamedPipe::E_NONBLOCKING);
 #endif
-	b_gotShutDown = false;
+		b_gotShutDown = false;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -143,11 +145,13 @@ void
 Socket::deleteShutDownMechanism()
 {
 	MutexLock mlock(shutdownMutex);
-	OW_ASSERT(s_shutDownMechanism != 0);
+	if (s_shutDownMechanism)
+	{
 #if defined(OW_WIN32)
-	::CloseHandle(s_shutDownMechanism);
+		::CloseHandle(s_shutDownMechanism);
 #endif
-	s_shutDownMechanism = 0;
+		s_shutDownMechanism = 0;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
