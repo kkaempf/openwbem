@@ -63,6 +63,9 @@ Fix problems:
     - Doxygen appears to ignore global functions associated with a class in 
       the header file for that class -- for example, when you look up String, 
       it doesn't show you the associated relational operators ==, !=, <, etc.
+    - On FreeBSD, Berkely DB is part of libc, and our version of libdb 
+      overrides the symbols, but isn't binary compatible and causes problems.
+      We need to change all the symbol names to have the OW_ prefix.
 
 New features:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
