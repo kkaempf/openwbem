@@ -191,7 +191,7 @@ static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
 }
 #endif
 
-CMPIObjectPathFT objectPath_FT={
+static CMPIObjectPathFT objectPath_FT={
 	CMPICurrentVersion,
 	refRelease,
 	refClone,
@@ -217,7 +217,7 @@ CMPIObjectPathFT objectPath_FT={
 
 CMPIObjectPathFT *CMPI_ObjectPath_Ftab=&objectPath_FT;
 
-CMPIObjectPathFT objectPathOnStack_FT={
+static CMPIObjectPathFT objectPathOnStack_FT={
 	CMPICurrentVersion,
 	refReleaseNop,
 	refClone,

@@ -101,7 +101,8 @@ struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
 	return new CRYPTO_dynlock_value;
 }
 
-void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
+// these need to still be static, since they get exported because of extern "C"
+static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
 				  const char *, int)
 {
 	if (mode & CRYPTO_LOCK)
@@ -114,18 +115,18 @@ void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
 	}
 }
 
-void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
+static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 				 const char *, int)
 {
 	delete l;
 }
 
-unsigned long id_function()
+static unsigned long id_function()
 {
 	return (unsigned long)OpenWBEM::ThreadImpl::thread_t_ToUInt64(OpenWBEM::ThreadImpl::currentThread());
 }
 
-void locking_function(int mode, int n, const char*, int)
+static void locking_function(int mode, int n, const char*, int)
 {
 	if (mode & CRYPTO_LOCK)
 	{
@@ -265,7 +266,8 @@ int g_dataSize;
 
 extern "C"
 {
-void randomALRMHandler(int sig)
+// this needs to still be static, since it gets exported because of extern "C"
+static void randomALRMHandler(int sig)
 {
 	if (g_dataIdx < g_dataSize)
 	{
@@ -1006,7 +1008,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 extern "C"
 {
-int verify_callback(int ok, X509_STORE_CTX *store)
+static int verify_callback(int ok, X509_STORE_CTX *store)
 {
     char data[256];
     SSL* ssl =
