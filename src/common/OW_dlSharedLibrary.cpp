@@ -39,7 +39,7 @@ OW_Mutex OW_dlSharedLibrary_guard;
 
 OW_dlSharedLibrary::~OW_dlSharedLibrary()
 {
-	dlclose( m_libhandle );
+//	dlclose( m_libhandle );
 }
 
 bool OW_dlSharedLibrary::doGetFunctionPointer(const OW_String& functionName,

@@ -36,6 +36,7 @@
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_UserInfo.hpp"
 
 using namespace OW_WBEMFlags;
 ///////////////////////////////////////////////////////////////////////////////

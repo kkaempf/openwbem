@@ -31,6 +31,8 @@
 #include "OW_CppReadOnlyInstanceProviderIFC.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMClass.hpp"
 
 using namespace OW_WBEMFlags;
 

@@ -42,6 +42,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_NoSuchProviderException.hpp"
+#include "OW_CIMClass.hpp"
 
 static int testFunction( int i )
 {
