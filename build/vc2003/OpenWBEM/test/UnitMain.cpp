@@ -132,27 +132,27 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_CIMValue", OW_CIMValueTestCases::suite());
 	runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
 	runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
-	//-runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());
-	//-runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
-	//-runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
+	runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());
+	runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
+	runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
 	//runner.addTest( "OW_ListenerAuthenticator", OW_ListenerAuthenticatorTestCases::suite());
-	//-runner.addTest( "OW_SocketAddress", OW_InetAddressTestCases::suite());
-	//-runner.addTest( "OW_Base64", OW_Base64TestCases::suite());
-	//-runner.addTest( "OW_MD5", OW_MD5TestCases::suite());
-	//-runner.addTest( "OW_XMLEscape", OW_XMLEscapeTestCases::suite());
-	//-runner.addTest( "OW_XMLUnescape", OW_XMLUnescapeTestCases::suite());
-	//-runner.addTest( "OW_Enumeration", OW_EnumerationTestCases::suite());
-	//-runner.addTest( "OW_LinuxSharedLibraryLoader", OW_LinuxSharedLibraryLoaderTestCases::suite());
+	runner.addTest( "OW_SocketAddress", OW_InetAddressTestCases::suite());
+	runner.addTest( "OW_Base64", OW_Base64TestCases::suite());
+	runner.addTest( "OW_MD5", OW_MD5TestCases::suite());
+	runner.addTest( "OW_XMLEscape", OW_XMLEscapeTestCases::suite());
+	runner.addTest( "OW_XMLUnescape", OW_XMLUnescapeTestCases::suite());
+	runner.addTest( "OW_Enumeration", OW_EnumerationTestCases::suite());
+	//- *FAIL* runner.addTest( "OW_LinuxSharedLibraryLoader", OW_LinuxSharedLibraryLoaderTestCases::suite());
 
 	//runner.addTest( "OW_ProviderMux", OW_ProviderMuxTestCases::suite());
 	//runner.addTest( "OW_ProviderMuxLoader", OW_ProviderMuxLoaderTestCases::suite());
 	//runner.addTest( "OW_SharedLibraryLoader", OW_SharedLibraryLoaderTestCases::suite());
 	//runner.addTest( "OW_SharedLibrary", OW_SharedLibraryTestCases::suite());
 	//runner.addTest( "OW_ProviderManager", OW_ProviderManagerTestCases::suite());
-	//-runner.addTest( "OW_HTTPChunker", OW_HTTPChunkerTestCases::suite());
-	//-runner.addTest( "OW_Logger", OW_LoggerTestCases::suite());
-	//-runner.addTest( "OW_String", OW_StringTestCases::suite());
-	//-runner.addTest( "OW_Format", OW_FormatTestCases::suite());
+	runner.addTest( "OW_HTTPChunker", OW_HTTPChunkerTestCases::suite());
+	runner.addTest( "OW_Logger", OW_LoggerTestCases::suite());
+	runner.addTest( "OW_String", OW_StringTestCases::suite());
+	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
 
 	try
 	{

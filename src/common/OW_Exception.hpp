@@ -81,8 +81,16 @@ protected:
 	 *   calling otherException->clone(). otherException will not be saved.
 	 */
 	Exception(int subClassId, const char* file, int line, const char* msg, int errorCode, const Exception* otherException = 0);
+#ifdef OW_WIN32
+	// Can't seem to catch exceptions by reference if copy CTOR is
+	// protected on Windoz
+public:
+#endif
 	Exception(const Exception& e);
 	Exception& operator= (const Exception& rhs);
+#ifdef OW_WIN32
+protected:
+#endif
 	void swap(Exception& x);
 	virtual ~Exception() throw();
 	void setSubClassId(int subClassId);

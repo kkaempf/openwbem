@@ -31,8 +31,7 @@
 /**
  * @author Dan Nuffer
  */
-
-
+#include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_LoggerTestCases.hpp"
@@ -56,17 +55,30 @@ void OW_LoggerTestCases::tearDown()
 {
 }
 
+#ifdef OW_WIN32
+void OW_LoggerTestCases::testCreateFileLogger()
+{
+	String logname = "testCreateFileLogger.log";
+	{
+		LoggerRef pLogger = Logger::createLogger(logname, false);
+		unitAssert( pLogger );
+	}
+
+	unitAssert( DeleteFile(logname.c_str()) );
+	String badfilename = "some\\dir\\that\\doesn't\\exist";
+	unitAssertThrows(Logger::createLogger(badfilename, false));
+}
+#else
 void OW_LoggerTestCases::testCreateFileLogger()
 {
 	String logname = "/tmp/testlog";
 	LoggerRef pLogger = Logger::createLogger(logname, false);
-
 	unitAssert( pLogger );
 	unitAssert( remove(logname.c_str()) != -1 );
-
 	String badfilename = "some/dir/that/doesn't/exist";
 	unitAssertThrows(Logger::createLogger(badfilename, false));
 }
+#endif
 
 void OW_LoggerTestCases::testCreateSyslogLogger()
 {
@@ -84,8 +96,13 @@ void OW_LoggerTestCases::verifyFileLog( const char* file, int line, const char* 
 
 void OW_LoggerTestCases::testFileLogging()
 {
+#ifdef OW_WIN32
+	String filename = "testFileLogging.log";
+	DeleteFile( filename.c_str() );
+#else
 	String filename = "/tmp/test";
 	remove( filename.c_str() );
+#endif
 	
 	LoggerRef pLogger = Logger::createLogger(filename, false);
 	pLogger->logFatalError("fatalerror1");
@@ -143,7 +160,11 @@ void OW_LoggerTestCases::testFileLogging()
 					"debug3\n"
 				    "fatalerror4\n"
 					 );
+#ifdef OW_WIN32
+	DeleteFile(filename.c_str());
+#else
 	remove( filename.c_str() );
+#endif
 }
 
 void OW_LoggerTestCases::testSyslogLogging()
@@ -160,9 +181,11 @@ Test* OW_LoggerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Logger");
 
+
 	testSuite->addTest (new TestCaller <OW_LoggerTestCases>
 			("testCreateFileLogger",
 			&OW_LoggerTestCases::testCreateFileLogger));
+
 	testSuite->addTest (new TestCaller <OW_LoggerTestCases>
 			("testCreateSyslogLogger",
 			&OW_LoggerTestCases::testCreateSyslogLogger));

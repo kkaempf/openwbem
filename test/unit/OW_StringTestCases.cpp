@@ -90,9 +90,14 @@ void OW_StringTestCases::testNumbers()
 	unitAssert(ul == 5000000000000LL);
 	String uls2(ul);
 	unitAssert(uls.equals(uls2));
-	String rs("4.56e+80");
+
+	Real64 rv = 4.56e+80;
+	String rs(rv);
 	Real64 r = rs.toReal64();
+	unitAssert(r == rv);
 	String rs2(r);
+	
+	// This test depends entirely on what format
 	unitAssert(rs.equals(rs2));	
 }
 
