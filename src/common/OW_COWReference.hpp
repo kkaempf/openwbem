@@ -364,10 +364,13 @@ template <class U>
 inline OW_COWReference<U>
 OW_COWReference<T>::cast_to()
 {
-	incRef();
 	OW_COWReference<U> rval;
 	rval.m_pObj = dynamic_cast<U*>(m_pObj);
-	rval.m_pRefCount = m_pRefCount;
+	if (rval.m_pObj)
+	{
+		incRef();
+		rval.m_pRefCount = m_pRefCount;
+	}
 	return rval;
 }
 
