@@ -19,3 +19,8 @@ conftest*
 openwbem-*
 autom4te.cache
 stamp-h1
+missing
+mkinstalldirs
+config.guess
+config.sub
+depcomp
