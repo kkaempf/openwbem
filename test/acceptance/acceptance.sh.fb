@@ -1095,6 +1095,7 @@ if [ -z "$MAKE" ]; then
     MAKE=gmake
   else
     MAKE=make
+  fi
 fi
 
 Install
