@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -31,76 +31,46 @@
 #define OW_SHAREDLIBRARYREPOSITORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_CIMQualifierType.hpp"
-#include "OW_CIMObjectPath.hpp"
 
-// TODO: Uninline all these functions, since they can't be inlined by the
-// compiler (because they're virtual), they just cause bloat.
 class OW_SharedLibraryRepository : public OW_RepositoryIFC
 {
 public:
 
-	OW_SharedLibraryRepository(OW_SharedLibraryRepositoryIFCRef ref)
-		: OW_RepositoryIFC()
-		, m_ref(ref) {}
+	OW_SharedLibraryRepository(OW_SharedLibraryRepositoryIFCRef ref);
+	~OW_SharedLibraryRepository();
 
-	virtual void close() { m_ref->close(); }
+	virtual void close();
 
-	virtual void open(const OW_String &path) { m_ref->open(path); }
+	virtual void open(const OW_String &path);
 
-	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const
-	{
-		return m_ref->getEnvironment();
-	}
+	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const;
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void createNameSpace(const OW_String& ns,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->createNameSpace(ns, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual void deleteNameSpace(const OW_String& ns,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->deleteNameSpace(ns, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->enumNameSpace(result, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_String& ns,
-		const OW_String& qualifierName, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
-	}
+		const OW_String& qualifierName, const OW_UserInfo &aclInfo);
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->enumQualifierTypes(ns, result, aclInfo);
-	}
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo &aclInfo);
 
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->deleteQualifierType(ns, qualName, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType &qt, const OW_UserInfo &aclInfo)
-	{
-		m_ref->setQualifierType(ns, qt, aclInfo);
-	}
+		const OW_CIMQualifierType &qt, const OW_UserInfo &aclInfo);
 
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
@@ -109,44 +79,27 @@ public:
 		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->getClass(ns, className, localOnly, includeQualifiers,
-			includeClassOrigin, propertyList, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns, const OW_CIMInstance &ci,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->createInstance(ns, ci, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMInstance modifyInstance(
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
-			propertyList, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual void setProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->deleteInstance(ns, cop, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
@@ -157,80 +110,49 @@ public:
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, OW_Bool enumSubClasses, 
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
-			includeClassOrigin, propertyList, enumSubClasses, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	virtual void createClass(const OW_String& ns,
-		const OW_CIMClass &cimClass, const OW_UserInfo &aclInfo)
-	{
-		m_ref->createClass(ns, cimClass, aclInfo);
-	}
+		const OW_CIMClass &cimClass, const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass &cc, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->modifyClass(ns, cc, aclInfo);
-	}
+		const OW_CIMClass &cc, const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->deleteClass(ns, className, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 #endif
 
 	virtual void enumClasses(const OW_String& ns,
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
-			includeClassOrigin, aclInfo);
-	}
+		OW_Bool includeClassOrigin, const OW_UserInfo &aclInfo);
 
 	virtual void enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_UserInfo &aclInfo)
-	{
-		m_ref->enumClassNames(ns, className, result, deep, aclInfo);
-	}
+		OW_Bool deep, const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMValue invokeMethod(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
-		OW_CIMParamValueArray &outParams, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->invokeMethod(ns, path, methodName, inParams,
-			outParams, aclInfo);
-	}
+		OW_CIMParamValueArray &outParams, const OW_UserInfo &aclInfo);
 
 	virtual void enumInstanceNames(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
-	}
+		OW_Bool deep, const OW_UserInfo &aclInfo);
 
 	virtual OW_CIMInstance getInstance(
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->getInstance(ns, instanceName, localOnly, includeQualifiers,
-			includeClassOrigin, propertyList, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void references(
@@ -239,11 +161,7 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
-	{
-		m_ref->references(ns, path, result, resultClass, role, includeQualifiers,
-			includeClassOrigin, propertyList, aclInfo);
-	}
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo);
 
 	virtual void referencesClasses(
 		const OW_String& ns,
@@ -251,20 +169,13 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
-	{
-		m_ref->referencesClasses(ns, path, result, resultClass, role, includeQualifiers,
-			includeClassOrigin, propertyList, aclInfo);
-	}
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo);
 #endif
 
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,
 		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->getProperty(ns, name, propertyName, aclInfo);
-	}
+		const OW_String &propertyName, const OW_UserInfo &aclInfo);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
@@ -273,11 +184,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_UserInfo &aclInfo)
-	{
-		m_ref->associatorNames(ns, path, result, assocClass, resultClass, role,
-			resultRole, aclInfo);
-	}
+		const OW_String &resultRole, const OW_UserInfo &aclInfo);
 
 	virtual void associators(
 		const OW_String& ns,
@@ -286,12 +193,7 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
-	{
-		m_ref->associators(ns, path, result, assocClass, resultClass, role,
-			resultRole, includeQualifiers, includeClassOrigin, propertyList,
-			aclInfo);
-	}
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo);
 
 	virtual void associatorsClasses(
 		const OW_String& ns,
@@ -300,72 +202,37 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
-	{
-		m_ref->associatorsClasses(ns, path, result, assocClass, resultClass, role,
-			resultRole, includeQualifiers, includeClassOrigin, propertyList,
-			aclInfo);
-	}
+		const OW_StringArray *propertyList, const OW_UserInfo &aclInfo);
 
 	virtual void referenceNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
-		const OW_String &role, const OW_UserInfo &aclInfo)
-	{
-		m_ref->referenceNames(ns, path, result, resultClass, role, aclInfo);
-	}
+		const OW_String &role, const OW_UserInfo &aclInfo);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	virtual void execQuery(
 		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String &queryLanguage,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
-	}
+		const OW_UserInfo &aclInfo);
 
-	virtual void getSchemaReadLock()
-	{
-		m_ref->getSchemaReadLock();
-	}
+	virtual void getSchemaReadLock();
 
-	virtual void getSchemaWriteLock()
-	{
-		m_ref->getSchemaWriteLock();
-	}
+	virtual void getSchemaWriteLock();
 
-	virtual void releaseSchemaReadLock()
-	{
-		m_ref->releaseSchemaReadLock();
-	}
+	virtual void releaseSchemaReadLock();
 
-	virtual void releaseSchemaWriteLock()
-	{
-		m_ref->releaseSchemaWriteLock();
-	}
+	virtual void releaseSchemaWriteLock();
 
-	virtual void getInstanceReadLock()
-	{
-		m_ref->getInstanceReadLock();
-	}
+	virtual void getInstanceReadLock();
 
-	virtual void getInstanceWriteLock()
-	{
-		m_ref->getInstanceWriteLock();
-	}
+	virtual void getInstanceWriteLock();
 
-	virtual void releaseInstanceReadLock()
-	{
-		m_ref->releaseInstanceReadLock();
-	}
+	virtual void releaseInstanceReadLock();
 
-	virtual void releaseInstanceWriteLock()
-	{
-		m_ref->releaseInstanceWriteLock();
-	}
+	virtual void releaseInstanceWriteLock();
 
 private:
 
