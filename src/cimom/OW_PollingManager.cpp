@@ -256,7 +256,7 @@ OW_PollingManager::shutdown()
 			m_tevent.signal();
 			while(m_running)
 			{
-				OW_Thread::sleep(1);
+				OW_Thread::yield();
 			}
 		}
 	}

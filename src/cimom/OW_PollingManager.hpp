@@ -50,8 +50,6 @@ class OW_PollingManager : public OW_Thread
 public:
 	OW_PollingManager(OW_CIMOMEnvironmentRef env);
 	virtual ~OW_PollingManager();
-	void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
 
 	void shutdown();
 

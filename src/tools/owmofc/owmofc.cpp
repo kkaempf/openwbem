@@ -32,7 +32,8 @@
 #include "Grammar.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_HTTPUtils.hpp"
-#include "OW_IPCCIMOMHandle.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_IPCClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "CIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
@@ -105,16 +106,17 @@ int main(int argc, char** argv)
 		
 		if(url.protocol.equalsIgnoreCase("IPC"))
 		{
-			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(argv[1]);
+			OW_IPCClient *ipchdl = new OW_IPCClient(argv[1]);
 			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			handle = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
+			OW_Reference<OW_CIMProtocol> ipcClient(ipchdl);
+			handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(ipcClient));
 		}
 		else
 		{
 			OW_HTTPClient* pHttpClient = new OW_HTTPClient(argv[1]);
 			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
 			OW_Reference<OW_CIMProtocol> httpClient(pHttpClient);
-			handle = OW_Reference<OW_CIMOMHandleIFC>(new OW_CIMXMLCIMOMHandle(
+			handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(
 				httpClient));
 		}
 

@@ -189,8 +189,6 @@ OW_IndicationServerImpl::run()
 	m_shuttingDown = false;
 	m_running = true;
 	m_wakeEvent.reset();
-	OW_MutexLock ml(m_procTransGuard);
-	ml.release();
 
 	while(!m_shuttingDown)
 	{
@@ -199,14 +197,15 @@ OW_IndicationServerImpl::run()
 
 		try
 		{
-			while(m_procTrans.size() > 0)
+			OW_MutexLock ml(m_procTransGuard);
+			while(m_procTrans.size() > 0 && !m_shuttingDown)
 			{
-				ml.lock();
 				ProcIndicationTrans trans = m_procTrans[0];
 				m_procTrans.remove(0);
+				
 				ml.release();
-
 				_processIndication(trans.instance, trans.nameSpace);
+				ml.lock();
 			}
 		}
 		catch(...)
@@ -272,6 +271,10 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 
 	instance.setProperty("IndicationTime", OW_CIMValue(cdt));
 	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
+	if (!hdl)
+	{
+		return;
+	}
 
 	OW_CIMInstanceEnumeration subscriptions;
 	try
@@ -290,6 +293,13 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 
 	OW_CIMOMHandleIFCRef wqllch = m_env->getWQLFilterCIMOMHandle(instance,
 		aclInfo);
+	if (!wqllch)
+	{
+		m_env->logError("Cannot process indications, because there is no "
+			"WQL library.");
+		return;
+	}
+
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 
 	if (!wqlRef)

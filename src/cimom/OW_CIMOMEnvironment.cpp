@@ -100,6 +100,7 @@ OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	, m_indicationLock()
 	, m_indicationRepLayerDisabled(false)
 	, m_selectableLock()
+	, m_shuttingDown(false)
 {
 }
 
@@ -189,6 +190,8 @@ OW_CIMOMEnvironment::shutdown()
 {
 	logDebug("CIMOM Environment shutting down...");
 
+	m_shuttingDown = true;
+
 	OW_MutexLock ml(m_monitor);
 
 	// Shutdown the polling manager
@@ -244,12 +247,18 @@ OW_CIMOMEnvironment::shutdown()
 	// logged
 
 	logDebug("CIMOM Environment has shut down");
+
+	m_shuttingDown = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ProviderManagerRef
 OW_CIMOMEnvironment::getProviderManager()
 {
+	if (m_shuttingDown)
+	{
+		return OW_ProviderManagerRef();
+	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_providerManager);
 	return m_providerManager;
@@ -512,6 +521,10 @@ OW_Bool
 OW_CIMOMEnvironment::authenticate(OW_String &userName, const OW_String &info,
 	OW_String &details)
 {
+	if (m_shuttingDown)
+	{
+		return false;
+	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_authManager);
 	return m_authManager->authenticate(userName, info, details);
@@ -538,6 +551,10 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
         const OW_ACLInfo& aclInfo)
 {
+	if (m_shuttingDown)
+	{
+		return OW_CIMOMHandleIFCRef();
+	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	OW_CIMServer* psvr = (OW_CIMServer*)m_cimServer.getPtr();
@@ -551,6 +568,11 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_Bool doIndications)
 {
+	if (m_shuttingDown)
+	{
+		return OW_CIMOMHandleIFCRef();
+	}
+
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 
@@ -587,6 +609,11 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 OW_WQLIFCRef
 OW_CIMOMEnvironment::getWQLRef()
 {
+	if (m_shuttingDown)
+	{
+		return OW_WQLIFCRef();
+	}
+
 	OW_MutexLock ml(m_monitor);
 
     if (!m_wqlLib)
@@ -671,6 +698,11 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 OW_RequestHandlerIFCRef
 OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) const
 {
+	if (m_shuttingDown)
+	{
+		return OW_RequestHandlerIFCRef();
+	}
+
 	OW_MutexLock ml(m_monitor);
 
 	OW_RequestHandlerIFCRef ref;

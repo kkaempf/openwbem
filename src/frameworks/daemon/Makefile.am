@@ -1,11 +1,11 @@
-daemonbin_PROGRAMS = newdaemon
+daemonbin_PROGRAMS = owdaemon
 daemonbindir = $(sbindir)
  
-newdaemon_LDFLAGS = \
+owdaemon_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o newdaemon
+-o owdaemon
 
-newdaemon_LDADD = \
+owdaemon_LDADD = \
 -lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
@@ -19,8 +19,8 @@ newdaemon_LDADD = \
 # OpenServer may need this one day, but Linux doesn't like it
 #owcimomd_LDFLAGS = "-Wl,-Bexport"
 
-newdaemon_SOURCES = \
-main.cpp \
+owdaemon_SOURCES = \
+owdaemon_main.cpp \
 OW_DaemonEnv.cpp \
 OW_DaemonEnv.hpp
 

@@ -30,10 +30,12 @@
 
 #include "OW_config.h"
 
+#ifdef OW_USE_GNU_PTH
 extern "C"
 {
 #include <pth.h>
 }
+#endif
 
 #define OW_os_fork pth_fork
 #define OW_os_waitpid pth_waitpid

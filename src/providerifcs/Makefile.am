@@ -1,1 +1,1 @@
-SUBDIRS = cpp npi
+SUBDIRS = cpp

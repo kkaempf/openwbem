@@ -17,7 +17,7 @@ owcimomd_LDADD = \
 #owcimomd_LDFLAGS = "-Wl,-Bexport"
 
 owcimomd_SOURCES = \
-main.cpp \
+owcimomd_main.cpp \
 OW_CIMOMEnvironment.cpp \
 OW_CIMServer.cpp \
 OW_GenericHDBRepository.cpp \
@@ -34,9 +34,7 @@ OW_WQLFilterRep.cpp \
 OW_AssocDb.cpp \
 OW_HDB.cpp \
 OW_ProxyProvider.cpp \
-OW_HDBNode.cpp
-
-pkginclude_HEADERS = \
+OW_HDBNode.cpp \
 OW_ACLInfo.hpp \
 OW_CIMOMEnvironment.hpp \
 OW_CIMServer.hpp \
