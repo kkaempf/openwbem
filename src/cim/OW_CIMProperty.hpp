@@ -45,10 +45,8 @@
  */
 class OW_CIMProperty : public OW_CIMElement
 {
-private:
-	struct PROPData;
-
 public:
+	struct PROPData;
 
 	static const char* const NAME_PROPERTY;
 

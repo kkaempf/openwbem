@@ -59,10 +59,9 @@
  */
 class OW_CIMInstance : public OW_CIMElement
 {
-private:
-	struct INSTData;
-
 public:
+
+	struct INSTData;
 
 	/**
 	 * Default ctor
