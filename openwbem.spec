@@ -4,7 +4,7 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 2.0.4
+%define owversion 2.9.1
 
 Name        	: openwbem
 Version     	: %{owversion}
@@ -61,6 +61,7 @@ make
 #make docs
 
 %Install
+%{__rm} -rf $RPM_BUILD_ROOT
 %{__mkdir} -p $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 
@@ -75,9 +76,12 @@ install -d $RPM_BUILD_ROOT/%{prefix}/lib/openwbem/c++providers
 install -d $RPM_BUILD_ROOT/${localstatedir}/openwbem
 
 #fix /usr/lib/libowservicehttp.so since RPM can't.
-rm $RPM_BUILD_ROOT/%{prefix}/lib/libowservicehttp.so
+rm -f $RPM_BUILD_ROOT/%{prefix}/lib/libowservicehttp.so
 ln -s %{prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{prefix}/lib
 
+#move the man pages into the correct spot
+mkdir -p $RPM_BUILD_ROOT/%{_mandir}/
+mv $RPM_BUILD_ROOT/%{prefix}/man/* $RPM_BUILD_ROOT/%{_mandir}/
 
 
 %Clean
@@ -181,6 +185,8 @@ fi
 %{prefix}/sbin/*
 %{prefix}/libexec/openwbem/*
 %{prefix}/share/openwbem/*
+%{_mandir}/man1/*
+%{_mandir}/man8/*
 
 %Files devel
 %defattr(-,root,root)
