@@ -2,8 +2,12 @@ install-ow-shared-libs:
 	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
 	@for i in $(OW_SHARED_LIBS); do \
 		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
-			$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-			ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+			if [ "$(LIB_EXT)" = "dylib" ]; then \
+				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir); \
+				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+			else \
+				$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+			fi; \
 		else \
 			$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
 			if [ -e `echo $$i | cut -f1 -d'.'`.fsl ]; then \
@@ -21,7 +25,12 @@ install-ow-shared-libs:
 
 uninstall-ow-shared-libs:
 	for i in $(OW_SHARED_LIBS); do \
-		rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
-		rm -f $(DESTDIR)$(thelibdir)/$$i; \
+		if [ "$(LIB_EXT)" = "dylib" ]; then \
+			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
+			rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
+		else \
+			rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
+			rm -f $(DESTDIR)$(thelibdir)/$$i; \
+		fi; \
 	done
 
