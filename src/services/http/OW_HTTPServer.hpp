@@ -92,7 +92,8 @@ public:
 	enum EAuthenticationChallengeMethod
 	{
 		E_DIGEST,
-		E_BASIC
+		E_BASIC,
+		E_OWLOCAL
 	};
 	
 	struct Options

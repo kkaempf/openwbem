@@ -172,6 +172,10 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
 			break;
 
+		case E_OWLOCAL:
+			authChallenge = "OWLocal";
+			break;
+
 		default:
 			OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 	}
@@ -233,6 +237,7 @@ HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
 		else
 		{
 			// TODO: deprecate ConfigOpts::HTTP_USE_DIGEST_opt and create a new option for the default auth challenge
+			// If OWLocal is desired for the default, set defaultAuthChallenge to E_OWLOCAL
 			m_options.defaultAuthChallenge = E_BASIC;
 		}
 		// TODO: right now basic and digest are mutually exclusive because of the config file setup.  
