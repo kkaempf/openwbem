@@ -44,6 +44,11 @@ namespace OpenWBEM
  * user a user name and the m_internal flag is set, then access rights are
  * not checked on read/write operations. Only select components of the
  * CIMOM are allowed to construct this type of an UserInfo object.
+ * Invariants:
+ *  - (getInternal() == false && !getUserName().empty()) || (getInternal() == true && getUserName().empty())
+ * Thread safety: read
+ * Copy semantics: Value
+ * Exception safety: Strong
  */
 class UserInfo
 {
@@ -54,17 +59,7 @@ public:
 	 * 						read/write operations.
 	 */
 	UserInfo(const String& userName);
-	/**
-	 * Create a new UserInfo object that is a copy of another.
-	 * @param arg	The UserInfo object that this object will be a copy of.
-	 */
 	UserInfo(const UserInfo& arg);
-	/**
-	 * Assign another UserInfo object to this one.
-	 * @param arg	The UserInfo object to assign to this one.
-	 * @return A references to this UserInfo object after the assignment is
-	 * made.
-	 */
 	UserInfo& operator= (const UserInfo& arg);
 	/**
 	 * @return The user name that is associated with this UserInfo object.
