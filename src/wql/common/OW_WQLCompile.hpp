@@ -40,9 +40,8 @@ namespace OpenWBEM
 class WQLCompile
 {
 public:
-	class term_el
+	struct term_el
 	{
-	public:
 		term_el()
 		{}
 		term_el(bool mark_, WQLOperation op_, WQLOperand opn1_, WQLOperand opn2_)
@@ -79,9 +78,8 @@ public:
 	};
 	
 	
-	class eval_el
+	struct eval_el
 	{
-	public:
 		eval_el()
 		{}
 		eval_el(bool mark_, WQLOperation op_, int opn1_, el_type is_terminal1_, int opn2_, el_type is_terminal2_)
