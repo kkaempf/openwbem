@@ -51,7 +51,7 @@ class SocketImpl : public SocketBaseImpl
 public:
 	SocketImpl();
 	SocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType);
-	SocketImpl(const SocketAddress addr);
+	explicit SocketImpl(const SocketAddress& addr);
 	virtual ~SocketImpl();
 	Select_t getSelectObj() const;
 protected:

@@ -54,7 +54,7 @@ SocketImpl::SocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-SocketImpl::SocketImpl(const SocketAddress addr) 
+SocketImpl::SocketImpl(const SocketAddress& addr) 
 	: SocketBaseImpl(addr)
 {
 }
