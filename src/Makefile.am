@@ -162,6 +162,36 @@ install-ow-static-lib: $(OPENWBEM_STATIC_ALL)
 
 TEMPOBJDIR=.libOWall
 CIMOMD_MAIN=$(top_builddir)/src/cimom/libowcimomd_main.a
+if OW_NETWARE_INSTALL
+install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL) owcimomd.def
+	rm -rf $(TEMPOBJDIR); \
+	mkdir $(TEMPOBJDIR); \
+	cd $(TEMPOBJDIR) && ar x ../$(OPENWBEM_STATIC_ALL); \
+	cd ..; \
+	nm -Bpg $(TEMPOBJDIR)/*.o | \
+			$(AWK) '{ if((($$2 == "T") || \
+				   ($$2 == "D") || \
+				   ($$2 == "B")) && \
+				  (length($$3) < 255) && \
+				  (substr($$3,1,1) != ".")) \
+				{ print $$3 } }' | \
+			sort -u | $(SED) '$$!s/$$/,/' > owcimomd.exp; \
+	$(CXX) $(CXXBINLINKFLAGS) -o owcimomd.nlm -Wl,--def-file,owcimomd.def $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(EXTRA_SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
+	rm -rf $(TEMPOBJDIR); \
+	echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
+	$(INSTALL_PROGRAM) owcimomd.nlm $(DESTDIR)$(sbindir)/owcimomd.nlm;
+
+owcimomd.def:
+	echo 'description "OpenWBEM CIMOM Daemon"' >$@
+	echo 'copyright "(C) Copyright 1994-2004 Free Software Foundation, Inc."' >>$@
+	echo 'version $(OPENWBEM_MAJOR_VERSION),$(OPENWBEM_MINOR_VERSION),$(OPENWBEM_MICRO_VERSION)' >>$@
+	echo 'stacksize 1065536' >>$@
+	echo 'Flag_On 0x00400000' >>$@
+	echo 'export @owcimomd.exp' >> $@
+
+clean-local:
+	rm -f owcimomd.* $(OPENWBEM_STATIC_ALL)
+else
 install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 	rm -rf $(TEMPOBJDIR); \
 	mkdir $(TEMPOBJDIR); \
@@ -174,6 +204,7 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 
 clean-local:
 	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
+endif
 
 else
 
