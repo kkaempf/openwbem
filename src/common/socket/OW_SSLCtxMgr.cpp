@@ -534,6 +534,7 @@ static int verify_callback(int ok, X509_STORE_CTX *store)
 #ifdef OW_DEBUG
     if (!ok)
     {
+        char data[256];
         X509 *cert = X509_STORE_CTX_get_current_cert(store);
         int  depth = X509_STORE_CTX_get_error_depth(store);
         int  err = X509_STORE_CTX_get_error(store);
