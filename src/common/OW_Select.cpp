@@ -188,12 +188,13 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 		if (errno == EINTR)
 		{
 #ifdef OW_NETWARE
-			// Evidently EINTR on NetWare means the Socket is pretty
-			// much un-usable from this point on
-			return Select::SELECT_ERROR;
-#else
-			return Select::SELECT_INTERRUPTED;
+			// When the NetWare server is shutting down, select will
+			// set errno to EINTR on return. If this thread does not
+			// yield control (cooperative multitasking) then we end
+			// up in a very tight loop and get a CPUHog server abbend.
+			pthread_yield();
 #endif
+			return Select::SELECT_INTERRUPTED;
 		}
 		else
 		{
