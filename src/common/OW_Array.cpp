@@ -31,7 +31,7 @@
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
 #ifdef OW_DEBUG
-#include <cassert>
+#include <cstdlib> // for abort
 #endif
 
 namespace OpenWBEM
@@ -41,10 +41,10 @@ namespace OpenWBEM
 void throwArrayOutOfBoundsException(size_t size, size_t idx)
 {
 #ifdef OW_DEBUG
-		assert(0); // segfault so we can get a core
+	abort(); // segfault so we can get a core
 #endif
-		OW_THROW(OutOfBoundsException,
-			format("Array Index out of bounds. size = %1, index = %2", size, idx).c_str());
+	OW_THROW(OutOfBoundsException,
+		format("Array Index out of bounds. size = %1, index = %2", size, idx).c_str());
 }
 #endif
 
