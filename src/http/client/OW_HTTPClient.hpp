@@ -77,6 +77,8 @@ class HTTPClient : public CIMProtocolIFC
 		 *  value owipc which indicates the Unix Domain Socket for the system.
 		 * 
 		 * example: "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
+		 * 
+		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 		 */
 		HTTPClient(const String& url);
 		virtual ~HTTPClient();
@@ -147,7 +149,11 @@ class HTTPClient : public CIMProtocolIFC
 		virtual void close();
 
 	private:
+		/*
+		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
+		 */
 		void setUrl();
+
 		void cleanUpIStreams();
 		void receiveAuthentication();
 		void sendAuthorization();
