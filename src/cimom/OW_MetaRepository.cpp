@@ -789,6 +789,10 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 				newQuals.append(qual);
 			}
 		}
+		else
+		{
+			newQuals.push_back(qual);
+		}
 	}
 	childClass.setQualifiers(newQuals);
 
