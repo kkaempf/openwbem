@@ -501,7 +501,13 @@ OW_CMPIProviderIFC::getProvider(
 	{
 		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
-		return OW_CMPIFTABLERef();
+		creationFuncName = provId.substring(4) + "_Create_InstanceMI";
+		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIInstanceMI))
+		{
+			env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+				return OW_CMPIFTABLERef();
+		}
 	}
 
 	OperationContext opc;
