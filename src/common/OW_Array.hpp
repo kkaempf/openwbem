@@ -55,7 +55,10 @@ class OW_BinIfcIO;
 #include <cassert>
 #endif
 
+#ifdef OW_CHECK_ARRAY_INDEXING
+#include "OW_Exception.hpp"
 DEFINE_EXCEPTION(OutOfBounds);
+#endif
 
 /**
  * The OW_Array class is essentially takes the vector class of the stl and
