@@ -129,31 +129,12 @@ public:
 	{
 		return getTokenFromName(m_curTok.text.c_str());
 	}
-private:
-	static tokenId getTokenFromName(const char* name);
-	struct ElemEntry
-	{
-		const char* name;
-		tokenId id;
-	};
-	
-	static ElemEntry g_elems[];
-	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
-	static ElemEntry* g_elemsEnd;
-	// unimplemented
-	CIMXMLParser(const CIMXMLParser& x);
-	CIMXMLParser& operator=(const CIMXMLParser& x);
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef bool CIMXMLParser::*safe_bool;
 	operator safe_bool () const
-		{  return m_good ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return m_good ? 0: &dummy::nonnull; }
+		{  return m_good ? &CIMXMLParser::m_good : 0; }
+	bool operator!() const
+		{  return !m_good; }
 
 	// naming convention:
 	// A_ for attribute name
@@ -221,6 +202,22 @@ public:
 	static const char* const P_Query;
 	static const char* const P_QualifierName;
 	static const char* const P_QualifierDeclaration;
+
+private:
+	static tokenId getTokenFromName(const char* name);
+	struct ElemEntry
+	{
+		const char* name;
+		tokenId id;
+	};
+	
+	static ElemEntry g_elems[];
+	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
+	static ElemEntry* g_elemsEnd;
+	// unimplemented
+	CIMXMLParser(const CIMXMLParser& x);
+	CIMXMLParser& operator=(const CIMXMLParser& x);
+
 };
 
 } // end namespace OpenWBEM

@@ -172,18 +172,13 @@ public:
 	 * @return the class name for reference if this is a REFERENCE type.
 	 */
 	String getRefClassName() const;
+
+	typedef COWIntrusiveReference<DTData> CIMDataType::*safe_bool;
 	/**
 	 * @return true if this CIMDataType is a valid CIM data type
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const;
-	safe_bool operator!() const;
+	bool operator!() const;
 	/**
 	 * Create an CIMDataType object represented by a given string.
 	 * @param arg	An String that contains a valid name of a CIM data type.

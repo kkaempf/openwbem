@@ -238,17 +238,12 @@ public:
 	 * @return true if qualifier is propagated. Otherwise false.
 	 */
 	bool getPropagated() const;
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef COWIntrusiveReference<QUALData> CIMQualifier::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMQualifier::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 	/**
 	 * @return The name of this qualifier as an String.
 	 */

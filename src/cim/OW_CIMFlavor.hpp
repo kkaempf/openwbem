@@ -109,20 +109,15 @@ public:
 		CIMBase(), m_flavor(arg.m_flavor)
 	{
 	}
+
+	typedef Int32 CIMFlavor::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (validFlavor(m_flavor) == true) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (validFlavor(m_flavor) == true) ? 0: &dummy::nonnull; }
+		{  return (validFlavor(m_flavor) == true) ? &CIMFlavor::m_flavor : 0; }
+	bool operator!() const
+		{  return !validFlavor(m_flavor); }
 	/**
 	 * Set this to a null object.
 	 */

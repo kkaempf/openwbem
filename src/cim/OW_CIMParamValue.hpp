@@ -87,23 +87,18 @@ public:
 	CIMParamValue& setName(const String& name);
 	CIMValue getValue() const;
 	CIMParamValue& setValue(const CIMValue& val);
+
+	typedef COWIntrusiveReference<Data> CIMParamValue::*safe_bool;
 	/**
 	 * @return true if this CIMParamValue is a valid CIM data type
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
 	{
-		return (this->m_pdata) ? &dummy::nonnull : 0;
+		return m_pdata ? &CIMParamValue::m_pdata : 0;
 	}
-	safe_bool operator!() const
+	bool operator!() const
 	{
-		return (this->m_pdata) ? 0 : &dummy::nonnull;
+		return !this->m_pdata;
 	}
 	/**
 	 * Read this CIMParamValue from an inputstream.

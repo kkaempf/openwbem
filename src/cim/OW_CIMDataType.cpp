@@ -184,19 +184,18 @@ CIMDataType::operator CIMDataType::safe_bool () const
 	if(m_pdata)
 	{
 		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
-			? &dummy::nonnull : 0;
+			? &CIMDataType::m_pdata : 0;
 	}
 	return cc;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMDataType::safe_bool
+bool
 CIMDataType::operator!() const
 {
-	safe_bool cc = &dummy::nonnull;
+	bool cc = true;
 	if(m_pdata)
 	{
-		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
-			? 0: &dummy::nonnull;
+		cc = m_pdata->m_type == CIMNULL || m_pdata->m_type == INVALID;
 	}
 	return cc;
 }

@@ -313,18 +313,13 @@ public:
 	 * @return a DateTime object that corresponds to this CIMDateTime.
 	 */
 	DateTime toDateTime() const;
+
+	typedef COWIntrusiveReference<DateTimeData> CIMDateTime::*safe_bool;
 	/**
 	 * @return true If this CIMDateTime is not comprised of zero values.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const;
-	safe_bool operator!() const;
+	bool operator!() const;
 private:
 	COWIntrusiveReference<DateTimeData> m_dptr;
 	friend bool operator<(const CIMDateTime& x, const CIMDateTime& y);

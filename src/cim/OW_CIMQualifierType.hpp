@@ -200,17 +200,12 @@ public:
 	 * @param name The new name for this qualifier type.
 	 */
 	virtual void setName(const String& name);
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef COWIntrusiveReference<QUALTData> CIMQualifierType::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMQualifierType::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 	friend bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:
 	COWIntrusiveReference<QUALTData> m_pdata;

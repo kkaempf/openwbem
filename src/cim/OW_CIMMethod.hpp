@@ -255,17 +255,12 @@ public:
 	 * @return The string representation of this method as an String.
 	 */
 	virtual String toString() const;
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef COWIntrusiveReference<METHData> CIMMethod::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMMethod::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 protected:
 	COWIntrusiveReference<METHData> m_pdata;
 	friend bool operator<(const CIMMethod& x, const CIMMethod& y);

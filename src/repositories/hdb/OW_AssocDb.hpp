@@ -89,17 +89,11 @@ public:
 		const String& resultRole);
 	
 	String makeKey() const;
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+	typedef CIMObjectPath AssocDbEntry::*safe_bool;
 	operator safe_bool () const
-		{  return (m_objectName) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_objectName) ? 0: &dummy::nonnull; }
+		{  return m_objectName ? &AssocDbEntry::m_objectName : 0; }
+	bool operator!() const
+		{  return !m_objectName; }
 public:
 	CIMObjectPath m_objectName; // part 1 of key
 	String m_role; // part 2 of key
@@ -209,17 +203,12 @@ public:
 		const String& resultRole,
 		AssocDbEntryResultHandlerIFC& result);
 	File getFile() const { return m_pdata->m_file; }
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef AssocDbHandleDataRef AssocDbHandle::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &AssocDbHandle::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 private:
 	
 	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
@@ -278,20 +267,15 @@ public:
 	 * @exception HDBException if this HDB is not opened.
 	 */
 	AssocDbHandle getHandle();
+
+	typedef bool AssocDb::*safe_bool;
 	/**
 	 * @return true if this AssocDb is currently opened.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_opened) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_opened) ? 0: &dummy::nonnull; }
+		{  return m_opened ? &AssocDb::m_opened : 0; }
+	bool operator!() const
+		{  return !m_opened; }
 	/**
 	 * @return The number of outstanding handles on this AssocDb
 	 */

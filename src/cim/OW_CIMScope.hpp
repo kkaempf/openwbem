@@ -132,20 +132,15 @@ public:
 	{
 		return !equals(arg);
 	}
+
+	typedef Scope CIMScope::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (validScope(m_val) == true) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (validScope(m_val) == true) ? 0: &dummy::nonnull; }
+		{  return (validScope(m_val) == true) ? &CIMScope::m_val : 0; }
+	bool operator!() const
+		{  return !validScope(m_val); }
 	/**
 	 * @return The string representation of this scopy
 	 */

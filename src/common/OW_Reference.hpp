@@ -69,19 +69,11 @@ class Reference :
 		T& operator*() const;
 		T* getPtr() const;
 		bool isNull() const OW_DEPRECATED;
-	private:
-		struct dummy
-		{
-			void nonnull() {};
-		};
-	
-		typedef void (dummy::*safe_bool)();
-	
-	public:
+		typedef T* volatile Reference::*safe_bool;
 		operator safe_bool () const
-			{  return (m_pObj ? &dummy::nonnull : 0); }
-		safe_bool operator!() const
-			{  return (m_pObj ? 0: &dummy::nonnull); }
+			{  return (m_pObj ? &Reference::m_pObj : 0); }
+		bool operator!() const
+			{  return !m_pObj; }
 		template <class U>
 		Reference<U> cast_to() const;
 		template <class U>

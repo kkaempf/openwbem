@@ -153,26 +153,25 @@ CIMDateTime::operator CIMDateTime::safe_bool() const
 			|| m_dptr->m_minutes != 0
 			|| m_dptr->m_seconds != 0
 			|| m_dptr->m_microSeconds != 0) ?
-			&dummy::nonnull : 0;
+			&CIMDateTime::m_dptr : 0;
 	}
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMDateTime::safe_bool
+bool
 CIMDateTime::operator !() const
 {
 	if(m_dptr)
 	{
-		return (m_dptr->m_days != 0
-			|| m_dptr->m_year != 0
-			|| m_dptr->m_month != 0
-			|| m_dptr->m_hours != 0
-			|| m_dptr->m_minutes != 0
-			|| m_dptr->m_seconds != 0
-			|| m_dptr->m_microSeconds != 0) ?
-			0 : &dummy::nonnull;
+		return (m_dptr->m_days == 0
+			&& m_dptr->m_year == 0
+			&& m_dptr->m_month == 0
+			&& m_dptr->m_hours == 0
+			&& m_dptr->m_minutes == 0
+			&& m_dptr->m_seconds == 0
+			&& m_dptr->m_microSeconds == 0);
 	}
-	return &dummy::nonnull;
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime&

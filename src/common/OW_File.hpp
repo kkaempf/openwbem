@@ -186,20 +186,15 @@ public:
 	 * errno may be one of: EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK
 	 */
 	int unlock();
+
+	typedef FileHandle File::*safe_bool;
 	/**
 	 * @return true if this is a valid File object.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_hdl != -1) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_hdl != -1) ? 0: &dummy::nonnull; }
+		{  return (m_hdl != -1) ? &File::m_hdl : 0; }
+	bool operator!() const
+		{  return m_hdl == -1; }
 	/**
 	 * Equality operator.
 	 * @param rhs The File object to compare this object to.

@@ -242,17 +242,12 @@ public:
 		m_value /= arg.m_value;
 		return *this;
 	}
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+	
+	typedef UInt16 Char16::*safe_bool;
 	operator safe_bool () const
-		{  return (m_value) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_value) ? 0: &dummy::nonnull; }
+		{  return m_value ? &Char16::m_value : 0; }
+	bool operator!() const
+		{  return !m_value; }
 	/**
 	 * Convert this to UTF8
 	 */

@@ -444,17 +444,12 @@ public:
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef COWIntrusiveReference<CIMValueImpl> CIMValue::*safe_bool;
 	operator safe_bool () const
-		{  return (m_impl) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_impl) ? 0: &dummy::nonnull; }
+		{  return (m_impl) ? &CIMValue::m_impl : 0; }
+	bool operator!() const
+		{  return !m_impl; }
 	/**
 	 * Assign another CIMValue to this one.
 	 * @param x The CIMValue to assign to this one.

@@ -217,17 +217,12 @@ virtual void references(
 		const String& ns,
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage);
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef RepositoryIFCRef RepositoryCIMOMHandle::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pServer) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pServer) ? 0: &dummy::nonnull; }
+		{  return (m_pServer) ? &RepositoryCIMOMHandle::m_pServer : 0; }
+	bool operator!() const
+		{  return !m_pServer; }
 	void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 

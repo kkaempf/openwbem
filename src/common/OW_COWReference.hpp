@@ -65,19 +65,12 @@ class COWReference : private COWReferenceBase
 		const T& operator*() const;
 		const T* getPtr() const;
 		bool isNull() const OW_DEPRECATED;
-	private:
-		struct dummy
-		{
-			void nonnull() {};
-		};
-	
-		typedef void (dummy::*safe_bool)();
-	
-	public:
+
+		typedef T* volatile COWReference::*safe_bool;
 		operator safe_bool () const
-			{  return (m_pObj != 0) ? &dummy::nonnull : 0; }
-		safe_bool operator!() const
-			{  return (m_pObj != 0) ? 0: &dummy::nonnull; }
+			{  return m_pObj ? &COWReference::m_pObj : 0; }
+		bool operator!() const
+			{  return !m_pObj; }
 		
 		template <class U>
 		COWReference<U> cast_to() const;

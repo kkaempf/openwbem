@@ -110,17 +110,12 @@ public:
 	 * @return A reference to this CIMUrl object.
 	 */
 	CIMUrl& operator= (const CIMUrl& arg);
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+
+	typedef COWIntrusiveReference<URLData> CIMUrl::*safe_bool;
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMUrl::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 	/**
 	 * Check this CIMUrl object against another for equality.
 	 * @param arg The CIMUrl object to check for equality against.

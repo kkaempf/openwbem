@@ -390,23 +390,18 @@ public:
 	 * same results as toMOF.
 	 */
 	virtual String toString() const;
+
+	typedef COWIntrusiveReference<CLSData> CIMClass::*safe_bool;
 	/**
 	 * @return true if this CIMClass in not a NULL object.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
 	{
-		return (this->m_pdata) ? &dummy::nonnull : 0;
+		return m_pdata ? &CIMClass::m_pdata : 0;
 	}
-	safe_bool operator!() const
+	bool operator!() const
 	{
-		return (this->m_pdata) ? 0 : &dummy::nonnull;
+		return !this->m_pdata;
 	}
 private:
 	static String splitName1(const String& inName);

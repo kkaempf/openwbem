@@ -218,20 +218,15 @@ public:
 	 * @see setUserValue
 	 */
 	Int32 getUserValue() const { return m_pdata->m_userVal; }
+
+	typedef HDBHandleDataRef HDBHandle::*safe_bool;
 	/**
 	 * @return true if the is a valid HDBHandle. Otherwise false.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &HDBHandle::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 private:
 	HDBHandle(HDB* pdb, File file);
 	File getFile() { return m_pdata->m_file; }
@@ -278,20 +273,15 @@ public:
 	 * @exception HDBException if this HDB is not opened.
 	 */
 	HDBHandle getHandle();
+
+	typedef bool HDB::*safe_bool;
 	/**
 	 * @return true if this HDB is currently opened.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_opened) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_opened) ? 0: &dummy::nonnull; }
+		{  return m_opened ? &HDB::m_opened : 0; }
+	bool operator!() const
+		{  return !m_opened; }
 	/**
 	 * @return The number of outstanding handles on this HDB
 	 */

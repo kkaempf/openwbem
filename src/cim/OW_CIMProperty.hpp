@@ -105,20 +105,15 @@ public:
 	 * @return A reference to this object after the assignment is made.
 	 */
 	CIMProperty& operator= (const CIMProperty& arg);
+
+	typedef COWIntrusiveReference<PROPData> CIMProperty::*safe_bool;
 	/**
 	 * @return true If this CIMProperty has an implementation.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMProperty::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 	/**
 	 * @return A copy of this CIMProperty object.
 	 */

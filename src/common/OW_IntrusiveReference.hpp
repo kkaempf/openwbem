@@ -118,8 +118,8 @@ public:
 	{
 		return m_pObj;
 	}
-	typedef T * this_type::*unspecified_bool_type;
-	operator unspecified_bool_type () const
+	typedef T * this_type::*safe_bool;
+	operator safe_bool() const
 	{
 		return m_pObj == 0? 0: &this_type::m_pObj;
 	}

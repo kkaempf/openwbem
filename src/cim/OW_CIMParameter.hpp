@@ -89,20 +89,15 @@ public:
 	 * @return A reference to this object after the assignment has been made.
 	 */
 	CIMParameter& operator= (const CIMParameter& arg);
+
+	typedef COWIntrusiveReference<PARMData> CIMParameter::*safe_bool;
 	/**
 	 * @return true if this a valid CIMParameter object.
 	 */
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
 	operator safe_bool () const
-		{  return (m_pdata) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_pdata) ? 0: &dummy::nonnull; }
+		{  return m_pdata ? &CIMParameter::m_pdata : 0; }
+	bool operator!() const
+		{  return !m_pdata; }
 	/**
 	 * Set the qualifiers for this parameter
 	 * @param quals An CIMQualifierArray that contains the qualifiers for

@@ -93,17 +93,11 @@ public:
 		return &*m_obj;
 	}
 	
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-	typedef void (dummy::*safe_bool)();
-public:
+	typedef T SharedLibraryReference::*safe_bool;
 	operator safe_bool () const
-		{  return (m_obj) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_obj) ? 0: &dummy::nonnull; }
+		{  return (m_obj) ? &SharedLibraryReference::m_obj : 0; }
+	bool operator!() const
+		{  return !m_obj; }
 	void setNull()
 	{
 		m_obj = 0;

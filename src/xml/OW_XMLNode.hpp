@@ -393,19 +393,11 @@ public:
 	 */
 	String toString() const;
 
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-
-	typedef void (dummy::*safe_bool)();
-
-public:
+	typedef XMLNodeImplRef XMLNode::*safe_bool;
 	operator safe_bool () const
-		{  return (m_impl) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (m_impl) ? 0: &dummy::nonnull; }
+		{  return (m_impl) ? &XMLNode::m_impl : 0; }
+	bool operator!() const
+		{  return !m_impl; }
 
 
 private:
