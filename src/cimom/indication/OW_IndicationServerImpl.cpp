@@ -725,6 +725,11 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 
 
     OW_String curClassName = instanceArg.getClassName();
+	if (curClassName.empty())
+	{
+		m_env->logError("Cannot process indication, because it has no "
+			"class name.");
+	}
     while (!curClassName.empty())
     {
         OW_String key = curClassName;
@@ -870,6 +875,8 @@ OW_IndicationServerImpl::addTrans(
 	OW_NotifyTrans trans(ns, indication, handler, provider);
 	if(m_threadCounter->getThreadCount() < MAX_NOTIFIERS)
 	{
+		// this may look like a memory leak, but the start method will end
+		// up deleting the thread once it's done running.
 		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_UserInfo());
 		m_threadCounter->incThreadCount();
 		pnotifier->start();
