@@ -77,7 +77,6 @@ For 3.1.0
       - CIM_CommMechanismForManager
       - CIM_ObjectManagerAdapter
       - CIM_CommMechanismForObjectManagerAdapter
-      - OpenWBEM_ObjectManager (including indication for SELECT * FROM CIM_InstModification WHERE SourceInstance ISA CIM_ObjectManager AND SourceInstance.Started <> PreviousInstance.Started This would be used to indicate that the object manager has been stopped This indication is RECOMENDED.)
 
 Later:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
