@@ -56,7 +56,7 @@ public:
 
 	/**
 	 * This function should be called after the end of the stream has 
-	 * been reached.  It will check the trailers for an error, and through
+	 * been reached.  It will check the trailers for an error, and throw
 	 * an appropriate CIMException (constructed from the info from the 
 	 * trailers).
 	 */
