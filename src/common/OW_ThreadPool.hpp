@@ -65,6 +65,10 @@ public:
 		DYNAMIC_SIZE,
 		DYNAMIC_SIZE_NO_QUEUE
 	};
+	enum
+	{
+		UNLIMITED_QUEUE_SIZE = 0
+	};
 	/**
 	 * Constructor
 	 *
@@ -73,12 +77,20 @@ public:
 	 *  No threads are created or destroyed until the pool is shutdown.
 	 * DYNAMIC_SIZE - Threads will be created as work is added.  The number
 	 *  of threads will always be less than numThreads. Threads exit when no
-	 *  more work is available in the queue.
+	 *  more work is available in the queue for 1 second.
+	 * DYNAMIC_SIZE_NO_QUEUE - Threads will be created as work is added.  
+	 *  The number of threads will always be less than numThreads. Threads 
+	 *  exit when no more work is available in the queue for 1 second. A queue
+	 *  with numThreads size is used, however addWork() and tryAddWork() will
+	 *  not allow the number of threads plus the number of RunnableRefs in the
+	 *  queue to be greater than numThreads.
 	 *
 	 * @param numThreads The number of threads in the pool.
 	 *
-	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
-	 *  no limit. It is recommended that maxQueueSize is >= numThreads.
+	 * @param maxQueueSize The upper bound on the size of the queue.  
+	 *  UNLIMITED_QUEUE_SIZE (0) means no limit. It is recommended that 
+	 *  maxQueueSize is >= numThreads.
+	 *  This parameter is ignored if poolType == DYNAMIC_SIZE_NO_QUEUE.
 	 *
 	 * @param logger used to log messages if non-NULL.
 	 *
