@@ -112,7 +112,6 @@ namespace
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_USE_PROVIDERS,
 				ServiceEnvironmentIFC::E_NO_LOCKING);
 		}
@@ -120,7 +119,6 @@ namespace
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
 				ServiceEnvironmentIFC::E_NO_LOCKING);
 		}
@@ -1774,7 +1772,6 @@ CIMServer::execQuery(
 		logOperation(m_logger, context, "ExecQuery", ns, query);
 
 		CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context,
-				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_USE_PROVIDERS,
 				ServiceEnvironmentIFC::E_NO_LOCKING);
 		try

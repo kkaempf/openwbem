@@ -75,7 +75,6 @@ public:
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
 		ELockingFlag locking = E_LOCKING) const;
 

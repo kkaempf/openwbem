@@ -104,7 +104,6 @@ public:
 
 	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
-		ESendIndicationsFlag doIndications,
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking) const;
 	virtual LoggerRef getLogger() const;

@@ -89,7 +89,6 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	}
 
 	CIMOMHandleIFCRef lch = env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);

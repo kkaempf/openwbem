@@ -165,7 +165,7 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+			return m_env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 		}
 		virtual RepositoryIFCRef getRepository() const
 		{

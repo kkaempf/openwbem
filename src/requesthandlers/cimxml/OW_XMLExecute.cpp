@@ -1390,7 +1390,7 @@ void
 XMLExecute::doOptions(CIMFeatures& cf,
 	OperationContext& context)
 {
-	cf = this->getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS)->getServerFeatures();
+	cf = this->getEnvironment()->getCIMOMHandle(context)->getServerFeatures();
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC*

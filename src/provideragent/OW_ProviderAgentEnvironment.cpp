@@ -423,7 +423,6 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct) const
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag doIndications,
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking) const
 {

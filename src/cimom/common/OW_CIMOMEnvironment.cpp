@@ -816,17 +816,8 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context));
 }
 //////////////////////////////////////////////////////////////////////////////
-// CIMOMHandleIFCRef
-// CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-//     ESendIndicationsFlag doIndications,
-//     EBypassProvidersFlag bypassProviders)
-// {
-//     return getCIMOMHandle(context,doIndications,bypassProviders,E_LOCKING);
-// }
-//////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
-	ESendIndicationsFlag doIndications,
 	EBypassProvidersFlag bypassProviders,
 	ELockingFlag locking) const
 {
@@ -853,9 +844,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		rref = m_cimServer;
 	}
 
-	if (doIndications
-	   && m_indicationServer
-	   && !m_indicationsDisabled)
+	if (m_indicationServer && !m_indicationsDisabled)
 	{
 		SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer(rref);
 		if (irl)

@@ -57,12 +57,11 @@ public:
 	}
 
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &context,
-		ESendIndicationsFlag doIndications,
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking) const
 	{
 		// specifically ignore the locking flag, since we know we'll only be invoked in the context of an operation.
-		return m_env->getCIMOMHandle(m_context, doIndications, bypassProviders,
+		return m_env->getCIMOMHandle(m_context, bypassProviders,
 			ServiceEnvironmentIFC::E_NO_LOCKING);
 	}
 

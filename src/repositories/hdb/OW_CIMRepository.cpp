@@ -873,8 +873,8 @@ CIMRepository::createInstance(
 					CIMClass rcc(CIMNULL);
 					try
 					{
-						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
-							ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
+						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS,
+							ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
 					}
 					catch (CIMException& e)
 					{
@@ -1350,7 +1350,7 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, CIMName(), handler);
@@ -1449,7 +1449,7 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
 	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
+		ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -1819,7 +1819,7 @@ CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& 
 			OW_LOG_DEBUG(m_logger, Format("Trying getInstance of: %1", op.toString()));
 			try
 			{
-				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS,
+				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_USE_PROVIDERS,
 					ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
 				// if the previous line didn't throw, then we found it.
 				found = true;

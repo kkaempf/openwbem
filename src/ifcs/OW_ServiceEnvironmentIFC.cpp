@@ -63,7 +63,7 @@ ServiceEnvironmentIFC::getRepository() const
 CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 {
-	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
+	return getCIMOMHandle(context, E_BYPASS_PROVIDERS);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,7 +129,6 @@ ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String
 ///////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
-	ESendIndicationsFlag doIndications,
 	EBypassProvidersFlag bypassProviders,
 	ELockingFlag locking) const
 {

@@ -114,8 +114,7 @@ public:
 	
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
-			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	
 	virtual RepositoryIFCRef getRepository() const

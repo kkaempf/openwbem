@@ -212,7 +212,7 @@ public:
 		, m_repch()
 	{
 		m_ch = m_env->getCIMOMHandle(m_opctx);
-		m_repch = m_env->getCIMOMHandle(m_opctx, ServiceEnvironmentIFC::E_SEND_INDICATIONS, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+		m_repch = m_env->getCIMOMHandle(m_opctx, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
@@ -420,7 +420,7 @@ IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 	// This calls createSubscription for every instance of
 	// CIM_IndicationSubscription in all namespaces.
 	// TODO: If the provider rejects the subscription, we need to disable it!
-	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
+	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context);
 	namespaceEnumerator nsHandler(lch, this);
 	env->getRepository()->enumNameSpace(nsHandler, context);
 }
@@ -684,7 +684,7 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
 	
 	// If the provider didn't set the IndicationTime property, then we'll set it.
-	// DN 01/25/2005: removing this, since not all indications may have the IndicationTime property, and it's not required anyway. 
+	// DN 01/25/2005: removing this, since not all indications may have the IndicationTime property, and it's not required anyway.
 	// The indication producers should set it if necessary.
 	//CIMInstance instanceArg(instanceArg_);
 	//if (!instanceArg.getProperty("IndicationTime"))
@@ -764,7 +764,7 @@ IndicationServerImplThread::_processIndicationRange(
 	IndicationServerImplThread::subscriptions_iterator last)
 {
 	OperationContext context;
-	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
+	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context);
 	for ( ;first != last; ++first)
 	{
 		try

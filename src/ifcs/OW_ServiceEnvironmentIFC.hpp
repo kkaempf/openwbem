@@ -81,11 +81,6 @@ public:
 
 	virtual bool authenticate(String& userName, const String& info, String& details, OperationContext& context) const;
 
-	enum ESendIndicationsFlag
-	{
-		E_DONT_SEND_INDICATIONS,
-		E_SEND_INDICATIONS
-	};
 	enum EBypassProvidersFlag
 	{
 		E_USE_PROVIDERS,
@@ -100,7 +95,6 @@ public:
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
 		ELockingFlag locking = E_LOCKING) const;
 	
