@@ -33,6 +33,8 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_Types.hpp"
+
 #include <iosfwd>
 
 namespace OpenWBEM

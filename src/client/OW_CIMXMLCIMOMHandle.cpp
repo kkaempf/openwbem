@@ -40,6 +40,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMMethod.hpp"
+#include "OW_CIMException.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPUtils.hpp"

@@ -39,6 +39,7 @@ OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_Condition.cpp \
 OW_COWReferenceBase.cpp \
+OW_DataStreams.cpp \
 OW_DateTime.cpp \
 OW_EnumerationException.cpp \
 OW_Exception.cpp \
@@ -110,6 +111,7 @@ OW_Condition.hpp \
 OW_ConfigOpts.hpp \
 OW_COWReference.hpp \
 OW_COWReferenceBase.hpp \
+OW_DataStreams.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \

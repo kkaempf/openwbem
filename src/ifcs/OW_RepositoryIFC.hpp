@@ -260,12 +260,12 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, 
+		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const StringArray* propertyList,
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		const UserInfo& aclInfo) = 0;
 	/**
 	 * Retrieve an enumeration of instance object paths (CIMInstance)
@@ -461,14 +461,9 @@ public:
 		const UserInfo& aclInfo) = 0;
 	virtual void exportIndication(const CIMInstance&,
 		const String&);
-	virtual void getSchemaReadLock() = 0;
-	virtual void getSchemaWriteLock() = 0;
-	virtual void releaseSchemaReadLock() = 0;
-	virtual void releaseSchemaWriteLock() = 0;
-	virtual void getInstanceReadLock() = 0;
-	virtual void getInstanceWriteLock() = 0;
-	virtual void releaseInstanceReadLock() = 0;
-	virtual void releaseInstanceWriteLock() = 0;
+
+	virtual void beginOperation(WBEMFlags::EOperationFlag op) = 0;
+	virtual void endOperation(WBEMFlags::EOperationFlag op) = 0;
 };
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef>

@@ -30,10 +30,10 @@
 #ifndef OW_CIMURL_HPP_INCLUDE_GUARD_
 #define OW_CIMURL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CIMException.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_Types.hpp"
 
 namespace OpenWBEM
 {
@@ -48,8 +48,8 @@ class CIMUrl : public CIMBase
 {
 private:
 	struct URLData;
-	friend bool operator<(const CIMUrl::URLData& x, 
-			const CIMUrl::URLData& y); 
+	friend bool operator<(const CIMUrl::URLData& x,
+			const CIMUrl::URLData& y);
 public:
 	/**
 	 * Create a new CIMUrl object.

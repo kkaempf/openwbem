@@ -29,7 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_AssocDb.hpp"
-#include "OW_RepositoryStreams.hpp"
+#include "OW_DataStreams.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 #include "OW_AutoPtr.hpp"
@@ -54,7 +54,7 @@ static UInt32 calcCheckSum(unsigned char* src, Int32 len);
 static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
 static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
 //////////////////////////////////////////////////////////////////////////////
-AssocDbEntry::AssocDbEntry(istream& istrm) 
+AssocDbEntry::AssocDbEntry(istream& istrm)
 	: m_objectName(CIMNULL)
 	, m_offset(-1L)
 {
@@ -181,16 +181,16 @@ AssocDbHandle::AssocDbHandleData::operator= (const AssocDbHandleData& arg)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbHandle::addEntry(const CIMObjectPath& objectName, 
+AssocDbHandle::addEntry(const CIMObjectPath& objectName,
 		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+		const String& role, const String& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath)
 {
-	m_pdata->m_pdb->addEntry(objectName, 
+	m_pdata->m_pdb->addEntry(objectName,
 		assocClassName, resultClass,
-		role, resultRole, 
-		associatedObject, 
+		role, resultRole,
+		associatedObject,
 		assocClassPath, *this);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -353,16 +353,16 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, 
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-AssocDbHandle::deleteEntry(const CIMObjectPath& objectName, 
+AssocDbHandle::deleteEntry(const CIMObjectPath& objectName,
 		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+		const String& role, const String& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath)
 {
-	m_pdata->m_pdb->deleteEntry(objectName, 
+	m_pdata->m_pdb->deleteEntry(objectName,
 		assocClassName, resultClass,
-		role, resultRole, 
-		associatedObject, 
+		role, resultRole,
+		associatedObject,
 		assocClassPath, *this);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -566,7 +566,7 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 	{
 		OW_THROW(IOException, "Failed to read data for rec on assoc db");
 	}
-	RepositoryIStream istrm(rh.dataSize, bfr.get());
+	DataIStream istrm(rh.dataSize, bfr.get());
 	dbentry.readObject(istrm);
 	dbentry.setOffset(offset);
 	return dbentry;
@@ -574,10 +574,10 @@ AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE - AssocDbHandle uses
 void
-AssocDb::deleteEntry(const CIMObjectPath& objectName, 
+AssocDb::deleteEntry(const CIMObjectPath& objectName,
 	const String& assocClassName, const String& resultClass,
-	const String& role, const String& resultRole, 
-	const CIMObjectPath& associatedObject, 
+	const String& role, const String& resultRole,
+	const CIMObjectPath& associatedObject,
 	const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
 	String key = AssocDbEntry::makeKey(objectName, role, resultRole);
@@ -648,7 +648,7 @@ void
 AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 {
 	MutexLock l = getDbLock();
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	nentry.writeObject(ostrm);
 	UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
 	Int32 offset;
@@ -671,10 +671,10 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE - AssocDbHandle uses
 void
-AssocDb::addEntry(const CIMObjectPath& objectName, 
+AssocDb::addEntry(const CIMObjectPath& objectName,
 		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole, 
-		const CIMObjectPath& associatedObject, 
+		const String& role, const String& resultRole,
+		const CIMObjectPath& associatedObject,
 		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
 	String key = AssocDbEntry::makeKey(objectName, role, resultRole);

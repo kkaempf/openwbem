@@ -30,8 +30,7 @@
 #ifndef OW_CIMBASE_HPP_
 #define OW_CIMBASE_HPP_
 #include "OW_config.h"
-#include "OW_ByteSwap.hpp"
-#include "OW_Exception.hpp"
+#include "OW_SerializableIFC.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
@@ -43,7 +42,7 @@ class String;
  * (i.e. CIMClass, CIMInstance, etc...). It ensures that all derived
  * class will support the specified interface.
  */
-class CIMBase
+class CIMBase : public SerializableIFC
 {
 public:
 	/**
@@ -63,20 +62,6 @@ public:
 	 * @return The MOF representation of this object as an String.
 	 */
 	virtual String toMOF() const = 0;
-	/**
-	 * Read this object from an input stream. The object must have been
-	 * previously written through a call to writeObject.
-	 *
-	 * @param istrm The input stream to read this object from.
-	 */
-	virtual void readObject(std::istream& istrm) = 0;
-	/**
-	 * Write this object to an output stream. The intent is for the object to
-	 * be retrieved later through a call to readObject.
-	 *
-	 * @param ostrm	The output stream to write the object to.
-	 */
-	virtual void writeObject(std::ostream& ostrm) const = 0;
 	/**
 	 * Read the specified signature from the input stream. Each class derived
 	 * from CIMBase must have a unique signature associated with it. If the

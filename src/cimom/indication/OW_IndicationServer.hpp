@@ -52,9 +52,9 @@ public:
 		const String& instNS) = 0;
 	virtual void waitUntilReady() = 0;
 	// these functions are call by the CIM_IndicationSubscription pass-thru provider.
-	virtual void deleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
-	virtual void createSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
-	virtual void modifySubscription(const String& ns, const CIMInstance& subInst) = 0;
+	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
+	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
+	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst) = 0;
 protected:
 };

@@ -37,13 +37,10 @@
 #include "OW_CIMClass.hpp"
 #include "OW_SortedVectorSet.hpp" // fwd?
 #include "OW_CIMException.hpp"
-#include "OW_RWLocker.hpp"
 
 namespace OpenWBEM
 {
 
-// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
-const UInt32 LockTimeout = 100; // seconds
 #if !defined(OW_DISABLE_ACLS)
 class AccessMgr;
 #endif
@@ -321,12 +318,12 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, 
+		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const StringArray* propertyList,
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		const UserInfo& aclInfo);
 	/**
 	 * Retrieve an enumeration of instances object paths (CIMObjectPath)
@@ -559,14 +556,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage,
 		const UserInfo& aclInfo);
-	virtual void getSchemaReadLock() { m_rwSchemaLocker.getReadLock(LockTimeout); }
-	virtual void getSchemaWriteLock() { m_rwSchemaLocker.getWriteLock(LockTimeout); }
-	virtual void releaseSchemaReadLock() { m_rwSchemaLocker.releaseReadLock(); }
-	virtual void releaseSchemaWriteLock() { m_rwSchemaLocker.releaseWriteLock(); }
-	virtual void getInstanceReadLock() { m_rwInstanceLocker.getReadLock(LockTimeout); }
-	virtual void getInstanceWriteLock() { m_rwInstanceLocker.getWriteLock(LockTimeout); }
-	virtual void releaseInstanceReadLock() { m_rwInstanceLocker.releaseReadLock(); }
-	virtual void releaseInstanceWriteLock() { m_rwInstanceLocker.releaseWriteLock(); }
+
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 public:
 	void _getCIMInstanceNames(const String& ns, const String& className,
@@ -644,7 +634,7 @@ private:
 	AssociatorProviderIFCRef _getAssociatorProvider(const String& ns, const CIMClass& cls);
 #endif
 private:
-	CIMClass _getClass(const String& ns, const String& className, 
+	CIMClass _getClass(const String& ns, const String& className,
 		WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, const UserInfo& aclInfo);
@@ -653,13 +643,16 @@ private:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, const UserInfo& aclInfo);
 	ProviderManagerRef m_provManager;
-	mutable RWLocker m_rwSchemaLocker;
-	mutable RWLocker m_rwInstanceLocker;
+
+	virtual void beginOperation(WBEMFlags::EOperationFlag op);
+	virtual void endOperation(WBEMFlags::EOperationFlag op);
+
 #if !defined(OW_DISABLE_ACLS)
 	Reference<AccessMgr> m_accessMgr;
 #endif
+	
+	Mutex m_guard;
 	CIMClass m_nsClass_Namespace;
-	//CIMClass m_nsClassCIM_Namespace;
 	CIMOMEnvironmentRef m_env;
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;

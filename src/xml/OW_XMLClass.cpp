@@ -39,6 +39,7 @@
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMException.hpp"
 
 namespace OpenWBEM
 {

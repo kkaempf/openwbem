@@ -31,6 +31,7 @@
 #define OW_CIMFLAVOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
+#include "OW_Types.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM

@@ -73,7 +73,7 @@ public:
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->deleteInstance(ns, cop);
 		// tell the indication server it's being deleted.
-		indicationServer->deleteSubscription(ns, cop);
+		indicationServer->startDeleteSubscription(ns, cop);
 	}
 	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance_)
 	{
@@ -86,18 +86,10 @@ public:
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
-		// Tell the indication server about the new subscription.  This may throw if the subscription is not allowed.
-		indicationServer->createSubscription(ns, cimInstance, username);
-		// now create it in the repository.
-		try
-		{
-			return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
-		}
-		catch (...)
-		{
-			indicationServer->deleteSubscription(ns, CIMObjectPath(ns, cimInstance));
-			throw;
-		}
+		CIMObjectPath rv = env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
+		// Tell the indication server about the new subscription.
+		indicationServer->startCreateSubscription(ns, cimInstance, username);
+		return rv;
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
 		EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
@@ -109,17 +101,10 @@ public:
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
 		
-		// Tell the indication server about the modified subscription.  This may throw if the subscription is not allowed.
-		indicationServer->modifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		try
-		{
-			rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
-		}
-		catch (...)
-		{
-			indicationServer->modifySubscription(ns, previousInstance);
-		}
+		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
+		// Tell the indication server about the modified subscription.
+		indicationServer->startModifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,

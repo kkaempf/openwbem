@@ -68,9 +68,15 @@ public:
 	CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 	bool getNewTrans(NotifyTrans& outTrans);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
-	virtual void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
-	virtual void modifySubscription(const String& ns, const CIMInstance& subInst);
+	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);
+	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username);
+	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst);
+	
+	// these are called by the threads started by the previous functions
+	void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
+	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
+	void modifySubscription(const String& ns, const CIMInstance& subInst);
+	
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst);
 private:
 	struct Subscription
@@ -128,6 +134,7 @@ private:
 	typedef HashMap<String, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
 	ThreadPoolRef m_notifierThreadPool;
+	ThreadPoolRef m_subscriptionPool;
 };
 
 } // end namespace OpenWBEM

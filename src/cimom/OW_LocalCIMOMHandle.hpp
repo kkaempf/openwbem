@@ -103,7 +103,7 @@ public:
 		const String& ns,
 		const String& className,
 		CIMClassResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
@@ -178,7 +178,7 @@ public:
 	virtual CIMInstance getInstance(
 		const String& ns,
 		const CIMObjectPath& instanceName,
-		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY, 
+		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList=0);
@@ -212,9 +212,9 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList=0);
 	/**
@@ -609,14 +609,9 @@ public:
 	 */
 	LocalCIMOMHandle(CIMOMEnvironmentRef env, RepositoryIFCRef pRepos,
 		const UserInfo& aclInfo, ELockingFlag lock);
-	void getSchemaReadLock();
-	void getSchemaWriteLock();
-	void releaseSchemaReadLock();
-	void releaseSchemaWriteLock();
-	void getInstanceReadLock();
-	void getInstanceWriteLock();
-	void releaseInstanceReadLock();
-	void releaseInstanceWriteLock();
+	
+	void beginOperation(WBEMFlags::EOperationFlag op);
+	void endOperation(WBEMFlags::EOperationFlag op);
 private:
 	/**
 	 * A Reference to the Repository interface that this LocalCIMOMHandle

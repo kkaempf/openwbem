@@ -79,70 +79,26 @@ LocalCIMOMHandle::operator= (const LocalCIMOMHandle& arg)
 	m_lock = arg.m_lock;
 	return *this;
 }
+
 //////////////////////////////////////////////////////////////////////////////
-class CIMServerSchemaReadLocker
+class OperationScope
 {
 public:
-	CIMServerSchemaReadLocker(LocalCIMOMHandle* pHdl)
-	: m_pHdl(pHdl) 
+	OperationScope(LocalCIMOMHandle* pHdl, EOperationFlag op)
+	: m_pHdl(pHdl)
+	, m_op(op)
 	{
-		m_pHdl->getSchemaReadLock();
+		m_pHdl->beginOperation(m_op);
 	}
-	~CIMServerSchemaReadLocker()
+	~OperationScope()
 	{
-		m_pHdl->releaseSchemaReadLock();
+		m_pHdl->endOperation(m_op);
 	}
 private:
 	LocalCIMOMHandle* m_pHdl;
+	EOperationFlag m_op;
 };
-//////////////////////////////////////////////////////////////////////////////
-class CIMServerSchemaWriteLocker
-{
-public:
-	CIMServerSchemaWriteLocker(LocalCIMOMHandle* pHdl)
-	: m_pHdl(pHdl) 
-	{
-		m_pHdl->getSchemaWriteLock();
-	}
-	~CIMServerSchemaWriteLocker()
-	{
-		m_pHdl->releaseSchemaWriteLock();
-	}
-private:
-	LocalCIMOMHandle* m_pHdl;
-};
-//////////////////////////////////////////////////////////////////////////////
-class CIMServerInstanceReadLocker
-{
-public:
-	CIMServerInstanceReadLocker(LocalCIMOMHandle* pHdl)
-	: m_pHdl(pHdl) 
-	{
-		m_pHdl->getInstanceReadLock();
-	}
-	~CIMServerInstanceReadLocker()
-	{
-		m_pHdl->releaseInstanceReadLock();
-	}
-private:
-	LocalCIMOMHandle* m_pHdl;
-};
-//////////////////////////////////////////////////////////////////////////////
-class CIMServerInstanceWriteLocker
-{
-public:
-	CIMServerInstanceWriteLocker(LocalCIMOMHandle* pHdl)
-	: m_pHdl(pHdl) 
-	{
-		m_pHdl->getInstanceWriteLock();
-	}
-	~CIMServerInstanceWriteLocker()
-	{
-		m_pHdl->releaseInstanceWriteLock();
-	}
-private:
-	LocalCIMOMHandle* m_pHdl;
-};
+
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::close()
@@ -152,13 +108,13 @@ LocalCIMOMHandle::close()
 void
 LocalCIMOMHandle::enumClass(const String& ns,
 	const String& className,
-	CIMClassResultHandlerIFC& result, 
+	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep,
-	ELocalOnlyFlag localOnly, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
 {
-	CIMServerSchemaReadLocker rl(this);
+	OperationScope os(this, E_ENUM_CLASSES);
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, m_aclInfo);
 }
@@ -169,7 +125,7 @@ LocalCIMOMHandle::enumClassNames(const String& ns,
 		StringResultHandlerIFC& result,
 		EDeepFlag deep)
 {
-	CIMServerSchemaReadLocker rl(this);
+	OperationScope os(this, E_ENUM_CLASS_NAMES);
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -177,15 +133,14 @@ void
 LocalCIMOMHandle::enumInstances(
 	const String& ns,
 	const String& className,
-	CIMInstanceResultHandlerIFC& result, 
+	CIMInstanceResultHandlerIFC& result,
 	EDeepFlag deep,
-	ELocalOnlyFlag localOnly, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_ENUM_INSTANCES);
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, E_ENUM_SUBCLASSES, m_aclInfo);
 }
@@ -196,8 +151,7 @@ LocalCIMOMHandle::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_ENUM_INSTANCE_NAMES);
 	return m_pServer->enumInstanceNames(ns, className, result, E_DEEP, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -205,7 +159,7 @@ CIMQualifierType
 LocalCIMOMHandle::getQualifierType(const String& ns,
 		const String& qualifierName)
 {
-	CIMServerSchemaReadLocker rl(this);
+	OperationScope os(this, E_GET_QUALIFIER_TYPE);
 	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -213,7 +167,7 @@ LocalCIMOMHandle::getQualifierType(const String& ns,
 void
 LocalCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 {
-	CIMServerSchemaWriteLocker wl(this);
+	OperationScope os(this, E_DELETE_QUALIFIER_TYPE);
 	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -222,7 +176,7 @@ LocalCIMOMHandle::enumQualifierTypes(
 	const String& ns,
 	CIMQualifierTypeResultHandlerIFC& result)
 {
-	CIMServerSchemaReadLocker srl(this);
+	OperationScope os(this, E_ENUM_QUALIFIER_TYPES);
 	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -230,7 +184,7 @@ void
 LocalCIMOMHandle::setQualifierType(const String& ns,
 	const CIMQualifierType& qt)
 {
-	CIMServerSchemaWriteLocker wl(this);
+	OperationScope os(this, E_SET_QUALIFIER_TYPE);
 	m_pServer->setQualifierType(ns, qt, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -240,11 +194,11 @@ LocalCIMOMHandle::getClass(
 	const String& ns,
 	const String& className,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
+	OperationScope os(this, E_GET_CLASS);
 	CIMClass cls = m_pServer->getClass(ns, className, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 	return cls;
@@ -259,8 +213,7 @@ LocalCIMOMHandle::getInstance(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_GET_INSTANCE);
 	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -272,12 +225,7 @@ LocalCIMOMHandle::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-	// Don't know anything about locking for invokeMethod, so we have
-	// to assume the worst.  CIMServer will do a getClass and possibly
-	// getInstance, we we need at least read locks.  But who knows what
-	// the provider will do, so just get dual write locks.
-	CIMServerSchemaWriteLocker srl(this);
-	CIMServerInstanceWriteLocker irl(this);
+	OperationScope os(this, E_INVOKE_METHOD);
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
 }
@@ -288,9 +236,7 @@ LocalCIMOMHandle::modifyClass(
 	const String& ns,
 	const CIMClass& cc)
 {
-	// modify class will modify the class as well as any instances of that class
-	CIMServerSchemaWriteLocker swl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_MODIFY_CLASS);
 	m_pServer->modifyClass(ns, cc, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -298,15 +244,14 @@ void
 LocalCIMOMHandle::createClass(const String& ns,
 	const CIMClass& cc)
 {
-	CIMServerSchemaWriteLocker wl(this);
+	OperationScope os(this, E_CREATE_CLASS);
 	m_pServer->createClass(ns, cc, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::deleteClass(const String& ns, const String& className)
 {
-	CIMServerSchemaWriteLocker swl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_DELETE_CLASS);
 	m_pServer->deleteClass(ns, className, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -319,8 +264,7 @@ LocalCIMOMHandle::modifyInstance(
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_MODIFY_INSTANCE);
 	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
 		propertyList, m_aclInfo);
 }
@@ -329,16 +273,14 @@ CIMObjectPath
 LocalCIMOMHandle::createInstance(const String& ns,
 	const CIMInstance& ci)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_CREATE_INSTANCE);
 	return m_pServer->createInstance(ns, ci, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& path)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_DELETE_INSTANCE);
 	m_pServer->deleteInstance(ns, path, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -348,8 +290,7 @@ LocalCIMOMHandle::setProperty(
 	const CIMObjectPath& name,
 	const String& propertyName, const CIMValue& cv)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceWriteLocker iwl(this);
+	OperationScope os(this, E_SET_PROPERTY);
 	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -360,8 +301,7 @@ LocalCIMOMHandle::getProperty(
 	const CIMObjectPath& name,
 	const String& propertyName)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_GET_PROPERTY);
 	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -374,8 +314,7 @@ LocalCIMOMHandle::associatorNames(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_ASSOCIATOR_NAMES);
 	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
 		resultRole, m_aclInfo);
 }
@@ -387,12 +326,11 @@ LocalCIMOMHandle::associators(
 	CIMInstanceResultHandlerIFC& result,
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_ASSOCIATORS);
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
@@ -405,11 +343,11 @@ LocalCIMOMHandle::associatorsClasses(
 	CIMClassResultHandlerIFC& result,
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
+	OperationScope os(this, E_ASSOCIATORS_CLASSES);
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
@@ -422,8 +360,7 @@ LocalCIMOMHandle::referenceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const String& resultClass, const String& role)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_REFERENCE_NAMES);
 	m_pServer->referenceNames(ns, path, result, resultClass, role, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -433,12 +370,11 @@ LocalCIMOMHandle::references(
 	const CIMObjectPath& path,
 	CIMInstanceResultHandlerIFC& result,
 	const String& resultClass, const String& role,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
-	CIMServerInstanceReadLocker irl(this);
+	OperationScope os(this, E_REFERENCES);
 	m_pServer->references(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -449,11 +385,11 @@ LocalCIMOMHandle::referencesClasses(
 	const CIMObjectPath& path,
 	CIMClassResultHandlerIFC& result,
 	const String& resultClass, const String& role,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	CIMServerSchemaReadLocker srl(this);
+	OperationScope os(this, E_REFERENCES_CLASSES);
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
@@ -466,10 +402,7 @@ LocalCIMOMHandle::execQuery(
 	const String& query,
 	const String& queryLanguage)
 {
-	CIMServerSchemaReadLocker srl(this);
-	// TODO: figure out a way to examine the query so we can know whether
-	// to get a read or write lock here.
-	CIMServerInstanceWriteLocker irl(this);
+	OperationScope os(this, E_EXEC_QUERY);
 	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -505,76 +438,24 @@ LocalCIMOMHandle::exportIndication(const CIMInstance& instance,
 {
 	m_env->exportIndication(instance, instNS);
 }
+
 //////////////////////////////////////////////////////////////////////////////
 void
-LocalCIMOMHandle::getSchemaReadLock()
+LocalCIMOMHandle::beginOperation(WBEMFlags::EOperationFlag op)
 {
-	if(m_lock)
+	if (m_lock)
 	{
-		m_pServer->getSchemaReadLock();
+		m_pServer->beginOperation(op);
 	}
 }
+
 //////////////////////////////////////////////////////////////////////////////
 void
-LocalCIMOMHandle::getSchemaWriteLock()
+LocalCIMOMHandle::endOperation(WBEMFlags::EOperationFlag op)
 {
-	if(m_lock)
+	if (m_lock)
 	{
-		m_pServer->getSchemaWriteLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::releaseSchemaReadLock()
-{
-	if(m_lock)
-	{
-		m_pServer->releaseSchemaReadLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::releaseSchemaWriteLock()
-{
-	if(m_lock)
-	{
-		m_pServer->releaseSchemaWriteLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::getInstanceReadLock()
-{
-	if(m_lock)
-	{
-		m_pServer->getInstanceReadLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::getInstanceWriteLock()
-{
-	if(m_lock)
-	{
-		m_pServer->getInstanceWriteLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::releaseInstanceReadLock()
-{
-	if(m_lock)
-	{
-		m_pServer->releaseInstanceReadLock();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalCIMOMHandle::releaseInstanceWriteLock()
-{
-	if(m_lock)
-	{
-		m_pServer->releaseInstanceWriteLock();
+		m_pServer->endOperation(op);
 	}
 }
 

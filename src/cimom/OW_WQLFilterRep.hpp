@@ -286,8 +286,8 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const StringArray* propertyList,
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		const UserInfo& aclInfo);
 	/**
 	 * Retrieve an enumeration of instances (CIMInstance) for a particular
@@ -451,14 +451,9 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String &queryLanguage,
 		const UserInfo& aclInfo);
-	virtual void getSchemaReadLock();
-	virtual void getSchemaWriteLock();
-	virtual void releaseSchemaReadLock();
-	virtual void releaseSchemaWriteLock();
-	virtual void getInstanceReadLock();
-	virtual void getInstanceWriteLock();
-	virtual void releaseInstanceReadLock();
-	virtual void releaseInstanceWriteLock();
+	
+	virtual void beginOperation(WBEMFlags::EOperationFlag op);
+	virtual void endOperation(WBEMFlags::EOperationFlag op);
 private:
 	CIMInstance m_inst;
 	RepositoryIFCRef m_pCIMServer;

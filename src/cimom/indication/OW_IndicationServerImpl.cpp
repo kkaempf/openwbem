@@ -53,13 +53,12 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-IndicationServer::~IndicationServer() 
+IndicationServer::~IndicationServer()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 struct NotifyTrans
 {
-//	NotifyTrans() : m_indication(CIMNULL), m_handler(CIMNULL), m_provider(0) {}
 	NotifyTrans(
 		const String& ns,
 		const CIMInstance& indication,
@@ -243,8 +242,13 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	{
 			maxIndicationExportThreads = String(OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
 	}
-	m_notifierThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, 
-				maxIndicationExportThreads, maxIndicationExportThreads * 100, env->getLogger(), "Indication Server"));
+	m_notifierThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
+				maxIndicationExportThreads, maxIndicationExportThreads * 100, env->getLogger(), "Indication Server Notifiers"));
+	// pool to handle threads modifying subscriptions
+	m_subscriptionPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
+		1, // 1 thread because only 1 can run at a time because of mutex locking
+		0, // unlimited size queue
+		env->getLogger(), "Indication Server Subscriptions"));
 	//-----------------
 	// Load map with available indication export providers
 	//-----------------
@@ -267,7 +271,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 		}
 	}
 	// Now initialize for all the subscriptions that exist in the repository.
-	// This calls createSubscription for every instance of 
+	// This calls createSubscription for every instance of
 	// CIM_IndicationSubscription in all namespaces.
 	// TODO: If the provider rejects the subscription, we need to delete it!
 	namespaceEnumerator nsHandler(lch, this);
@@ -332,6 +336,7 @@ IndicationServerImpl::run()
 		}
 	}
 	m_env->logDebug("IndicationServerImpl::run shutting down");
+	m_subscriptionPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 5);
 	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 	return 0;
 }
@@ -360,7 +365,7 @@ IndicationServerImpl::processIndication(const CIMInstance& instanceArg,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-void splitUpProps(const StringArray& props, 
+void splitUpProps(const StringArray& props,
 	HashMap<String, StringArray>& map)
 {
 	// This function may appear a little complicated...
@@ -401,7 +406,7 @@ void splitUpProps(const StringArray& props,
 CIMInstance filterInstance(const CIMInstance& toFilter, const StringArray& props)
 {
 	CIMInstance rval(toFilter.clone(E_NOT_LOCAL_ONLY,
-		E_EXCLUDE_QUALIFIERS, 
+		E_EXCLUDE_QUALIFIERS,
 		E_EXCLUDE_CLASS_ORIGIN));
 	if (props.empty())
 	{
@@ -416,7 +421,7 @@ CIMInstance filterInstance(const CIMInstance& toFilter, const StringArray& props
 	lowerClassName.toLowerCase();
 	propsToKeepArray.appendArray(propMap[lowerClassName]);
 	// create a sorted set to get faster look-up time.
-	SortedVectorSet<String> propsToKeep(propsToKeepArray.begin(), 
+	SortedVectorSet<String> propsToKeep(propsToKeepArray.begin(),
 		propsToKeepArray.end());
 	CIMPropertyArray propArray = toFilter.getProperties();
 	CIMPropertyArray propArrayToKeep;
@@ -498,7 +503,7 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 		{
 			MutexLock lock(m_subGuard);
 			m_env->logDebug(format("searching for key %1", key));
-			std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+			std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range =
 				m_subscriptions.equal_range(key);
 			m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
 			
@@ -521,7 +526,7 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 				{
 					MutexLock lock(m_subGuard);
 					m_env->logDebug(format("searching for key %1", key));
-					std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+					std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range =
 						m_subscriptions.equal_range(key);
 					m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
 					
@@ -577,7 +582,7 @@ IndicationServerImpl::_processIndicationRange(
 			CIMInstance filteredInstance(filterInstance(instanceArg,
 				sub.m_selectStmt.getSelectPropertyNames()));
 			// Now get the export handler for this indication subscription
-			CIMObjectPath handlerCOP = 
+			CIMObjectPath handlerCOP =
 				sub.m_subPath.getKeyT("Handler").getValueT().toCIMObjectPath();
 			CIMInstance handler = hdl->getInstance(handlerCOP.getNameSpace(),
 				handlerCOP);
@@ -612,8 +617,8 @@ void
 IndicationServerImpl::addTrans(
 	const String& ns,
 	const CIMInstance& indication,
-	const CIMInstance& handler, 
-	const CIMInstance& subscription, 
+	const CIMInstance& handler,
+	const CIMInstance& subscription,
 	IndicationExportProviderIFCRef provider)
 {
 	NotifyTrans trans(ns, indication, handler, subscription, provider);
@@ -638,7 +643,7 @@ IndicationServerImpl::getProvider(const String& className)
 	return pref;
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& subPath)
 {
 	LoggerRef log = m_env->getLogger();
@@ -727,7 +732,7 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-namespace
+namespace // unnamed
 {
 String getSourceNameSpace(const CIMInstance& inst)
 {
@@ -744,7 +749,89 @@ String getSourceNameSpace(const CIMInstance& inst)
 		return "";
 	}
 }
+
+class createSubscriptionRunnable : public Runnable
+{
+	String ns;
+	CIMInstance subInst;
+	String username;
+	IndicationServerImpl* is;
+public:
+	createSubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, const String& username_, IndicationServerImpl* is_)
+	: ns(ns_)
+	, subInst(subInst_)
+	, username(username_)
+	, is(is_)
+	{}
+
+	virtual void run()
+	{
+		is->createSubscription(ns, subInst, username);
+	}
+}; // end class createSubscriptionRunnable
+
+class modifySubscriptionRunnable : public Runnable
+{
+	String ns;
+	CIMInstance subInst;
+	IndicationServerImpl* is;
+public:
+	modifySubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, IndicationServerImpl* is_)
+	: ns(ns_)
+	, subInst(subInst_)
+	, is(is_)
+	{}
+
+	virtual void run()
+	{
+		is->modifySubscription(ns, subInst);
+	}
+}; // end class modifySubscriptionRunnable
+
+class deleteSubscriptionRunnable : public Runnable
+{
+	String ns;
+	CIMObjectPath sub;
+	IndicationServerImpl* is;
+public:
+	deleteSubscriptionRunnable(const String& ns_, const CIMObjectPath& sub_, IndicationServerImpl* is_)
+	: ns(ns_)
+	, sub(sub_)
+	, is(is_)
+	{}
+
+	virtual void run()
+	{
+		is->deleteSubscription(ns, sub);
+	}
+}; // end class deleteSubscriptionRunnable
+
+} // end unnamed namespace
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
+{
+	RunnableRef rr(new createSubscriptionRunnable(ns, subInst, username, this));
+	m_subscriptionPool->addWork(rr);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstance& subInst)
+{
+	RunnableRef rr(new modifySubscriptionRunnable(ns, subInst, this));
+	m_subscriptionPool->addWork(rr);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectPath& sub)
+{
+	RunnableRef rr(new deleteSubscriptionRunnable(ns, sub, this));
+	m_subscriptionPool->addWork(rr);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& subInst, const String& username)
@@ -809,14 +896,14 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
 	// find providers that support this query. If none are found, throw an exception.
 	ProviderManagerRef pm (m_env->getProviderManager());
-	IndicationProviderIFCRefArray providers = 
-		pm->getIndicationProviders(createProvEnvRef(m_env), ns, 
+	IndicationProviderIFCRefArray providers =
+		pm->getIndicationProviders(createProvEnvRef(m_env), ns,
 			indicationClassName, "");
 	if (!isaClassNames.empty())
 	{
 		for (size_t i = 0; i < isaClassNames.size(); ++i)
 		{
-			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env), 
+			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env),
 				ns, indicationClassName, isaClassNames[i]));
 		}
 	}
@@ -870,7 +957,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 					else
 					{
 						log->logDebug(format("not found on class key %1", isaClassNames[j]));
-						p = LifecycleIndicationPollerRef(SharedLibraryRef(0), 
+						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
 							Reference<LifecycleIndicationPoller>(new LifecycleIndicationPoller(ns, key, pollInterval)));
 					}
 					String subClsName = selectStmt.getClassName();
@@ -904,7 +991,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 					}
 				}
 			}
-			
+
 		}
 		catch (CIMException& ce)
 		{
@@ -929,7 +1016,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	sub.m_selectStmt = selectStmt;
 	sub.m_compiledStmt = compiledStmt;
 	sub.m_classes = isaClassNames;
-	
+
 	// m_filterSourceNamespace is saved so _processIndication can do what the
 	// schema says:
 	//"The path to a local namespace where the Indications "
@@ -963,7 +1050,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	}
 	// call activateFilter on all the providers
 	// If activateFilter calls fail or throw, just ignore it and keep going.
-	// If none succeed, we need to remove it from m_subscriptions and throw 
+	// If none succeed, we need to remove it from m_subscriptions and throw
 	// to indicate that subscription creation failed.
 	int successfulActivations = 0;
 	for (size_t i = 0; i < providers.size(); ++i)
@@ -972,7 +1059,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		{
 			providers[i]->activateFilter(createProvEnvRef(m_env),
 				selectStmt, indicationClassName, ns, isaClassNames);
-			
+
 			++successfulActivations;
 		}
 		catch (CIMException& ce)
@@ -1021,7 +1108,7 @@ IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& su
 	CIMObjectPath cop(ns, subInst);
 	
 	MutexLock l(m_subGuard);
-	for (subscriptions_t::iterator iter = m_subscriptions.begin(); 
+	for (subscriptions_t::iterator iter = m_subscriptions.begin();
 		 iter != m_subscriptions.end(); ++iter)
 	{
 		if (cop.equals(iter->second.m_subPath))

@@ -37,6 +37,7 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssocDb.hpp"
 #endif
+#include "OW_RWLocker.hpp"
 
 namespace OpenWBEM
 {
@@ -304,8 +305,8 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const StringArray* propertyList,
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		const UserInfo& aclInfo);
 	/**
 	 * Retrieve an enumeration of instances object paths (CIMObjectPath)
@@ -537,15 +538,12 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage,
 		const UserInfo& aclInfo);
-	virtual void getSchemaReadLock() {}
-	virtual void getSchemaWriteLock() {}
-	virtual void releaseSchemaReadLock() {}
-	virtual void releaseSchemaWriteLock() {}
-	virtual void getInstanceReadLock() {}
-	virtual void getInstanceWriteLock() {}
-	virtual void releaseInstanceReadLock() {}
-	virtual void releaseInstanceWriteLock() {}
+	
+	virtual void beginOperation(WBEMFlags::EOperationFlag op);
+	virtual void endOperation(WBEMFlags::EOperationFlag op);
+
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
+
 //private:
 	CIMClass _getClass(const String& ns, const String& className);
 	CIMClass _instGetClass(const String& ns, const String& className);
@@ -559,7 +557,7 @@ public:
 		const CIMObjectPath& path_,
 		const String& assocClassName, const String& resultClass,
 		const String& role, const String& resultRole,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		CIMInstanceResultHandlerIFC* piresult,
@@ -629,6 +627,9 @@ public:
 #endif
 	ServiceEnvironmentIFCRef m_env;
 	bool m_checkReferentialIntegrity;
+	RWLocker m_schemaLock;
+	RWLocker m_instanceLock;
+
 	friend class CIMServer;
 };
 

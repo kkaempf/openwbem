@@ -42,6 +42,8 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_CIMException.hpp"
+
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -213,7 +215,7 @@ BinaryCIMOMHandle::enumClassNames(
 void
 BinaryCIMOMHandle::enumClass(const String& ns_,
 	const String& className,
-	CIMClassResultHandlerIFC& result, 
+	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
@@ -803,7 +805,7 @@ BinaryCIMOMHandle::execQuery(
 	const String& ns,
 	const String& query, int wqlLevel)
 {
-	return CIMOMHandleIFC::execQueryE(ns, query, 
+	return CIMOMHandleIFC::execQueryE(ns, query,
 		String("WQL") + String(wqlLevel));
 }
 //////////////////////////////////////////////////////////////////////////////

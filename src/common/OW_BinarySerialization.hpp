@@ -42,6 +42,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_ByteSwap.hpp"
+
 #if defined(OW_HAVE_OSTREAM) && defined(OW_HAVE_ISTREAM)
 #include <ostream>
 #include <istream>
@@ -58,7 +60,7 @@ namespace OpenWBEM
 // a revision on the end (to prevent problems during development)
 // So 3000003 originated from version 3.0.0 rev 4
 //
-// 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the 
+// 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the
 //   structure of CIMInstance.  The name and alias were removed.
 // 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
 //   instead of object paths.

@@ -31,7 +31,7 @@
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_RepositoryStreams.hpp"
+#include "OW_DataStreams.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 
@@ -248,7 +248,7 @@ GenericHDBRepository::nodeToCIMObject(CIMBase& cimObj,
 {
 	if(node)
 	{
-		RepositoryIStream istrm(node.getDataLen(), node.getData());
+		DataIStream istrm(node.getDataLen(), node.getData());
 		cimObj.readObject(istrm);
 	}
 	else
@@ -268,7 +268,7 @@ void
 GenericHDBRepository::updateCIMObject(const CIMBase& cimObj,
 	HDBNode& node, HDBHandle hdl)
 {
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	cimObj.writeObject(ostrm);
 	hdl.updateNode(node, ostrm.length(), ostrm.getData());
 }
@@ -278,7 +278,7 @@ GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
 	const String& key, HDBNode& parentNode, HDBHandle hdl,
 	UInt32 nodeFlags)
 {
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	cimObj.writeObject(ostrm);
 	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);
@@ -289,7 +289,7 @@ void
 GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
 	const String& key, HDBHandle hdl, UInt32 nodeFlags)
 {
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	cimObj.writeObject(ostrm);
 	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);

@@ -30,7 +30,6 @@
 #include "OW_config.h"
 #include "OW_CIMRepository.hpp"
 #include "OW_FileSystem.hpp"
-#include "OW_RepositoryStreams.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -1814,6 +1813,113 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 		++it;
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMRepository::beginOperation(WBEMFlags::EOperationFlag op)
+{
+// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
+const UInt32 LockTimeout = 300; // seconds - 5 mins.
+
+	switch (op)
+	{
+	case E_CREATE_NAME_SPACE:
+	case E_DELETE_NAME_SPACE:
+	case E_DELETE_INSTANCE:
+	case E_CREATE_INSTANCE:
+	case E_MODIFY_INSTANCE:
+	case E_SET_PROPERTY:
+	case E_INVOKE_METHOD:
+	case E_EXEC_QUERY:
+		m_schemaLock.getWriteLock(LockTimeout);
+		m_instanceLock.getWriteLock(LockTimeout);
+		break;
+	case E_ENUM_NAME_SPACE:
+	case E_GET_QUALIFIER_TYPE:
+	case E_ENUM_QUALIFIER_TYPES:
+	case E_GET_CLASS:
+	case E_ENUM_CLASSES:
+	case E_ENUM_CLASS_NAMES:
+	case E_ASSOCIATORS_CLASSES:
+	case E_REFERENCES_CLASSES:
+		m_schemaLock.getReadLock(LockTimeout);
+		break;
+	case E_DELETE_QUALIFIER_TYPE:
+	case E_SET_QUALIFIER_TYPE:
+	case E_DELETE_CLASS:
+	case E_CREATE_CLASS:
+	case E_MODIFY_CLASS:
+		m_schemaLock.getWriteLock(LockTimeout);
+		break;
+	case E_ENUM_INSTANCES:
+	case E_ENUM_INSTANCE_NAMES:
+	case E_GET_INSTANCE:
+	case E_GET_PROPERTY:
+	case E_ASSOCIATOR_NAMES:
+	case E_ASSOCIATORS:
+	case E_REFERENCE_NAMES:
+	case E_REFERENCES:
+		m_schemaLock.getReadLock(LockTimeout);
+		m_instanceLock.getReadLock(LockTimeout);
+		break;
+	case E_EXPORT_INDICATION:
+	default:
+		break;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMRepository::endOperation(WBEMFlags::EOperationFlag op)
+{
+	switch (op)
+	{
+	case E_CREATE_NAME_SPACE:
+	case E_DELETE_NAME_SPACE:
+	case E_DELETE_INSTANCE:
+	case E_CREATE_INSTANCE:
+	case E_MODIFY_INSTANCE:
+	case E_SET_PROPERTY:
+	case E_INVOKE_METHOD:
+	case E_EXEC_QUERY:
+		m_schemaLock.releaseWriteLock();
+		m_instanceLock.releaseWriteLock();
+		break;
+	case E_ENUM_NAME_SPACE:
+	case E_GET_QUALIFIER_TYPE:
+	case E_ENUM_QUALIFIER_TYPES:
+	case E_GET_CLASS:
+	case E_ENUM_CLASSES:
+	case E_ENUM_CLASS_NAMES:
+	case E_ASSOCIATORS_CLASSES:
+	case E_REFERENCES_CLASSES:
+		m_schemaLock.releaseReadLock();
+		break;
+	case E_DELETE_QUALIFIER_TYPE:
+	case E_SET_QUALIFIER_TYPE:
+	case E_DELETE_CLASS:
+	case E_CREATE_CLASS:
+	case E_MODIFY_CLASS:
+		m_schemaLock.releaseWriteLock();
+		break;
+	case E_ENUM_INSTANCES:
+	case E_ENUM_INSTANCE_NAMES:
+	case E_GET_INSTANCE:
+	case E_GET_PROPERTY:
+	case E_ASSOCIATOR_NAMES:
+	case E_ASSOCIATORS:
+	case E_REFERENCE_NAMES:
+	case E_REFERENCES:
+		m_schemaLock.releaseReadLock();
+		m_instanceLock.releaseReadLock();
+		break;
+	case E_EXPORT_INDICATION:
+	default:
+		break;
+	}
+}
+
+
 const char* const CIMRepository::INST_REPOS_NAME = "instances";
 const char* const CIMRepository::META_REPOS_NAME = "schema";
 const char* const CIMRepository::NS_REPOS_NAME = "namespaces";

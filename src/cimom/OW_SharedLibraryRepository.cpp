@@ -135,12 +135,12 @@ void SharedLibraryRepository::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	EDeepFlag deep, 
+	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray *propertyList, 
-	EEnumSubclassesFlag enumSubclasses, 
+	const StringArray *propertyList,
+	EEnumSubclassesFlag enumSubclasses,
 	const UserInfo &aclInfo)
 {
 	return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
@@ -294,37 +294,13 @@ void SharedLibraryRepository::execQuery(
 {
 	m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
 }
-void SharedLibraryRepository::getSchemaReadLock()
+void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op)
 {
-	m_ref->getSchemaReadLock();
+	m_ref->beginOperation(op);
 }
-void SharedLibraryRepository::getSchemaWriteLock()
+void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op)
 {
-	m_ref->getSchemaWriteLock();
-}
-void SharedLibraryRepository::releaseSchemaReadLock()
-{
-	m_ref->releaseSchemaReadLock();
-}
-void SharedLibraryRepository::releaseSchemaWriteLock()
-{
-	m_ref->releaseSchemaWriteLock();
-}
-void SharedLibraryRepository::getInstanceReadLock()
-{
-	m_ref->getInstanceReadLock();
-}
-void SharedLibraryRepository::getInstanceWriteLock()
-{
-	m_ref->getInstanceWriteLock();
-}
-void SharedLibraryRepository::releaseInstanceReadLock()
-{
-	m_ref->releaseInstanceReadLock();
-}
-void SharedLibraryRepository::releaseInstanceWriteLock()
-{
-	m_ref->releaseInstanceWriteLock();
+	m_ref->endOperation(op);
 }
 
 } // end namespace OpenWBEM

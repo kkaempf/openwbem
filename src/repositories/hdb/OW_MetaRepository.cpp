@@ -29,7 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_MetaRepository.hpp"
-#include "OW_RepositoryStreams.hpp"
+#include "OW_DataStreams.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMFlavor.hpp"
@@ -378,7 +378,7 @@ String
 MetaRepository::_getClassNameFromNode(HDBNode& node)
 {
 	String name;
-	RepositoryIStream istrm(node.getDataLen(), node.getData());
+	DataIStream istrm(node.getDataLen(), node.getData());
 	// Not going to do this, it's too slow! cimObj.readObject(istrm);
 	// This is breaking abstraction, and may bite us later if CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
 	CIMBase::readSig( istrm, OW_CIMCLASSSIG );
@@ -714,7 +714,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 				for (size_t j = 0; j < parentQuals.size(); ++j)
 				{
 					CIMQualifier& qual = parentQuals[j];
-					// If the qualifier has DisableOverride flavor, the 
+					// If the qualifier has DisableOverride flavor, the
 					// subclass can't change it.  (e.g. Key). It gets the
 					// parent qualifier.
 					if (qual.hasFlavor(CIMFlavor::DISABLEOVERRIDE))
@@ -728,7 +728,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 							logCustInfo(format("Error: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
-										childClass.getName(), propArray[i].getName(), 
+										childClass.getName(), propArray[i].getName(),
 										qual.getName()));
 							propArray[i].setQualifier(qual);
 						}

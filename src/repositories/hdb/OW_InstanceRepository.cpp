@@ -29,7 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_InstanceRepository.hpp"
-#include "OW_RepositoryStreams.hpp"
+#include "OW_DataStreams.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
@@ -368,7 +368,7 @@ InstanceRepository::createInstance(const String& ns,
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
 	_removeDuplicatedQualifiers(ci, theClass);
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	ci.writeObject(ostrm);
 	node = HDBNode(instanceKey, ostrm.length(), ostrm.getData());
 	hdl.getHandle().addChild(clsNode, node);
@@ -449,7 +449,7 @@ InstanceRepository::modifyInstance(const String& ns,
 		}
 	}
 	_removeDuplicatedQualifiers(ci, theClass);
-	RepositoryOStream ostrm;
+	DataOStream ostrm;
 	ci.writeObject(ostrm);
 	String instanceKey = makeInstanceKey(ns, cop, theClass);
 	HDBNode node = hdl->getNode(instanceKey);

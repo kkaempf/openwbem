@@ -333,8 +333,6 @@ CIMServer::CIMServer(CIMOMEnvironmentRef env,
 	const RepositoryIFCRef& cimRepository)
 	: RepositoryIFC()
 	, m_provManager(provManager)
-	, m_rwSchemaLocker()
-	, m_rwInstanceLocker()
 #if !defined(OW_DISABLE_ACLS)
 	, m_accessMgr(new AccessMgr(this, env))
 #endif
@@ -454,12 +452,12 @@ CIMServer::getClass(
 		m_accessMgr->checkAccess(AccessMgr::GETCLASS, ns, aclInfo);
 	}
 #endif
-	return _getClass(ns,className, localOnly, 
+	return _getClass(ns,className, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
-CIMServer::_getClass(const String& ns, const String& className, 
+CIMServer::_getClass(const String& ns, const String& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, const UserInfo& aclInfo)
@@ -648,17 +646,17 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_acl, 
-				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
-				ServiceEnvironmentIFC::E_USE_PROVIDERS, 
+			return m_env->getCIMOMHandle(m_acl,
+				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
+				ServiceEnvironmentIFC::E_USE_PROVIDERS,
 				CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_acl, 
-				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
-				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS, 
+			return m_env->getCIMOMHandle(m_acl,
+				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
+				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
 				CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
@@ -712,10 +710,10 @@ namespace
 			CIMInstanceResultHandlerIFC& result_,
 			const UserInfo& aclInfo_,
 			const CIMOMEnvironmentRef& env_,
-			CIMServer* server_, 
+			CIMServer* server_,
 			EDeepFlag deep_,
-			ELocalOnlyFlag localOnly_, 
-			EIncludeQualifiersFlag includeQualifiers_, 
+			ELocalOnlyFlag localOnly_,
+			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_,
 			const CIMClass& theTopClass_)
@@ -739,8 +737,8 @@ namespace
 				m_env->logDebug(format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
 					cc.getName()));
 			}
-			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc, 
-				result, localOnly, deep, includeQualifiers, 
+			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
+				result, localOnly, deep, includeQualifiers,
 				includeClassOrigin, propertyList, aclInfo);
 		}
 	private:
@@ -764,7 +762,7 @@ CIMServer::enumInstances(
 	const String& className,
 	CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, 
+	const StringArray* propertyList, EEnumSubclassesFlag enumSubclasses,
 	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -772,7 +770,7 @@ CIMServer::enumInstances(
 #endif
 	UserInfo intAclInfo;
 	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, intAclInfo);
-	InstEnumerator ie(ns, result, aclInfo, m_env, this, deep, localOnly, 
+	InstEnumerator ie(ns, result, aclInfo, m_env, this, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
 	ie.handle(theTopClass);
 	// If this is the namespace class then only do one class
@@ -890,7 +888,7 @@ CIMServer::_getCIMInstances(
 	const String& ns,
 	const String& className,
 	const CIMClass& theTopClass,
-	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result, 
+	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, const UserInfo& aclInfo)
 {
@@ -906,15 +904,15 @@ CIMServer::_getCIMInstances(
 		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
 		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(aclInfo, m_env), ns, className, result, localOnly, 
-			deep, includeQualifiers, includeClassOrigin, propertyList, 
+			createProvEnvRef(aclInfo, m_env), ns, className, result, localOnly,
+			deep, includeQualifiers, includeClassOrigin, propertyList,
 			theTopClass, theClass);
 	}
 	else
 	{
 		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
-		// don't pass along deep and localOnly flags, because the handler has 
-		// to take care of it.  m_cimRepository can't do it right, because we 
+		// don't pass along deep and localOnly flags, because the handler has
+		// to take care of it.  m_cimRepository can't do it right, because we
 		// can't pass in theTopClass.  We pass false for enumSubClasses, to
 		// only do one class.
 		m_cimRepository->enumInstances(ns, className, handler, E_DEEP, E_NOT_LOCAL_ONLY,
@@ -975,7 +973,7 @@ CIMServer::getInstance(
 	}
 	else
 	{
-		ci = m_cimRepository->getInstance(ns, instanceName, localOnly, 
+		ci = m_cimRepository->getInstance(ns, instanceName, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 	}
 	OW_ASSERT(ci);
@@ -1030,7 +1028,7 @@ CIMServer::createInstance(
 #endif
 	String className = ci.getClassName();
 	UserInfo intAclInfo;
-	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, 
+	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0,
 		intAclInfo);
 	CIMQualifier acq = theClass.getQualifier(
 			CIMQualifier::CIM_QUAL_ABSTRACT);
@@ -1082,13 +1080,13 @@ CIMServer::modifyInstance(
 #endif
 	CIMInstance oldInst(CIMNULL);
 	UserInfo intAclInfo;
-	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(), 
+	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(),
 		E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, intAclInfo);
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
 	if(!instancep)
 	{
 		// No instance provider qualifier found
-		oldInst = m_cimRepository->modifyInstance(ns, modifiedInstance, 
+		oldInst = m_cimRepository->modifyInstance(ns, modifiedInstance,
 			includeQualifiers, propertyList, aclInfo);
 	}
 	else
@@ -1242,26 +1240,13 @@ CIMServer::invokeMethod(
 	CIMValue cv(CIMNULL);
 	MethodProviderIFCRef methodp;
 	CIMClass cctemp(cc);
-	// we need to query for providers for this class and all base classes.
-	// One provider may instrument an entire hierarchy of classes.
-	// loop until we've got a provider or hit a root class
-	while (true)
+	try
 	{
-		try
-		{
-			methodp = m_provManager->getMethodProvider(
-				createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
-		}
-		catch (const NoSuchProviderException&)
-		{
-		}
-		String parentClassName = cctemp.getSuperClass();
-		if (parentClassName.empty() || methodp)
-		{
-			// loop until we've got a provider or hit a root class
-			break;
-		}
-		cctemp = _getClass(ns, parentClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+		methodp = m_provManager->getMethodProvider(
+			createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
+	}
+	catch (const NoSuchProviderException&)
+	{
 	}
 	if(!methodp)
 	{
@@ -1480,6 +1465,7 @@ CIMServer::_getNameSpaceClass(const String& className)
 {
 	if (className.equalsIgnoreCase("__Namespace"))
 	{
+		MutexLock l(m_guard);
 		if(!m_nsClass_Namespace)
 		{
 			m_nsClass_Namespace = CIMClass("__Namespace");
@@ -1870,8 +1856,8 @@ namespace
 	class classNamesBuilder : public StringResultHandlerIFC
 	{
 	public:
-		classNamesBuilder(StringArray& resultClassNames) 
-			: m_resultClassNames(resultClassNames) 
+		classNamesBuilder(StringArray& resultClassNames)
+			: m_resultClassNames(resultClassNames)
 		{}
 		void doHandle(const String& op)
 		{
@@ -2073,6 +2059,23 @@ CIMServer::_isDynamicAssoc(const String& ns, const CIMClass& cc)
 	return _getAssociatorProvider(ns, cc) ? true : false;
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMServer::beginOperation(WBEMFlags::EOperationFlag op)
+{
+	m_cimRepository->beginOperation(op);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMServer::endOperation(WBEMFlags::EOperationFlag op)
+{
+	m_cimRepository->endOperation(op);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 const char* const CIMServer::INST_REPOS_NAME = "instances";
 const char* const CIMServer::META_REPOS_NAME = "schema";
 const char* const CIMServer::NS_REPOS_NAME = "namespaces";
@@ -2080,6 +2083,8 @@ const char* const CIMServer::NS_REPOS_NAME = "namespaces";
 const char* const CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
 const char* const CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
 #endif
+
+
 
 } // end namespace OpenWBEM
 

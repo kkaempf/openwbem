@@ -314,12 +314,14 @@ int main(int argc, char* argv[])
 				"select * from CIM_Indication where SourceInstance ISA "
 				"OW_IndicationProviderTest1", "wql1", "root/testsuite", test1cb);
 			registrationHandles.append(handle);
+			sleep(1);
 
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from CIM_InstModification where SourceInstance ISA "
 				"\"OW_IndicationProviderTest2\" and SourceInstance.SystemName = \"localhost\"", "wql1",
 				"root/testsuite", test2cb);
 			registrationHandles.append(handle);
+			sleep(1);
 
 			// Now wait for our test trigger providers to send out their indications.
 			// we'll wait for 5 TestIndication1 indications.
@@ -376,30 +378,39 @@ int main(int argc, char* argv[])
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
+		sleep(1);
 
 
 		//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", "root/testsuite", mcb);
@@ -424,7 +435,7 @@ int main(int argc, char* argv[])
 		//invokeMethod(rch, 2); // TODO
 
 		//cout << "Now waiting for intrinsic method indications" << endl;
-		for (size_t i = 0; i < 21; ++i)
+		for (size_t i = 0; i < 19; ++i)
 		{
 			if (!sem.timedWait(25))
 			{

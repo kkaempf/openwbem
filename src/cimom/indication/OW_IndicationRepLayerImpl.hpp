@@ -65,12 +65,12 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, 
+		WBEMFlags::EDeepFlag deep,
 		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const StringArray* propertyList,
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
 		const UserInfo& aclInfo);
 	virtual void enumInstanceNames(
 		const String& ns,
@@ -186,14 +186,9 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void enumNameSpace(StringResultHandlerIFC& result,
 		const UserInfo& aclInfo);
-	virtual void getSchemaReadLock();
-	virtual void getSchemaWriteLock();
-	virtual void releaseSchemaReadLock();
-	virtual void releaseSchemaWriteLock();
-	virtual void getInstanceReadLock();
-	virtual void getInstanceWriteLock();
-	virtual void releaseInstanceReadLock();
-	virtual void releaseInstanceWriteLock();
+	
+	virtual void beginOperation(WBEMFlags::EOperationFlag op);
+	virtual void endOperation(WBEMFlags::EOperationFlag op);
 	virtual void setCIMServer(const RepositoryIFCRef& src);
 private:
 	void exportIndication(const CIMInstance& instance,

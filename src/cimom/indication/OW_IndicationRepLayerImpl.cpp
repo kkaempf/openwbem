@@ -51,7 +51,7 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-IndicationRepLayer::~IndicationRepLayer() 
+IndicationRepLayer::~IndicationRepLayer()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ IndicationRepLayerImpl::modifyInstance(
 		{
 			CIMInstance expInst("CIM_InstModification");
 			expInst.setProperty("PreviousInstance", CIMValue(ciOrig));
-			// Filtering the properties in ss is done per the CIM_Interop 
+			// Filtering the properties in ss is done per the CIM_Interop
 			// schema MOF by the indication server, we don't need to do it here.
 			expInst.setProperty("SourceInstance", CIMValue(modifiedInstance));
 			exportIndication(expInst, ns);
@@ -320,12 +320,12 @@ void IndicationRepLayerImpl::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	EDeepFlag deep, 
+	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
-	EEnumSubclassesFlag enumSubclasses, 
+	const StringArray* propertyList,
+	EEnumSubclassesFlag enumSubclasses,
 	const UserInfo& aclInfo)
 {
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
@@ -481,37 +481,13 @@ void IndicationRepLayerImpl::enumNameSpace(StringResultHandlerIFC& result,
 {
 	m_pServer->enumNameSpace(result, aclInfo);
 }
-void IndicationRepLayerImpl::getSchemaReadLock()
+void IndicationRepLayerImpl::beginOperation(WBEMFlags::EOperationFlag op)
 {
-	m_pServer->getSchemaReadLock();
+	m_pServer->beginOperation(op);
 }
-void IndicationRepLayerImpl::getSchemaWriteLock()
+void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op)
 {
-	m_pServer->getSchemaWriteLock();
-}
-void IndicationRepLayerImpl::releaseSchemaReadLock()
-{
-	m_pServer->releaseSchemaReadLock();
-}
-void IndicationRepLayerImpl::releaseSchemaWriteLock()
-{
-	m_pServer->releaseSchemaWriteLock();
-}
-void IndicationRepLayerImpl::getInstanceReadLock()
-{
-	m_pServer->getInstanceReadLock();
-}
-void IndicationRepLayerImpl::getInstanceWriteLock()
-{
-	m_pServer->getInstanceWriteLock();
-}
-void IndicationRepLayerImpl::releaseInstanceReadLock()
-{
-	m_pServer->releaseInstanceReadLock();
-}
-void IndicationRepLayerImpl::releaseInstanceWriteLock()
-{
-	m_pServer->releaseInstanceWriteLock();
+	m_pServer->endOperation(op);
 }
 void IndicationRepLayerImpl::setCIMServer(const RepositoryIFCRef& src)
 {

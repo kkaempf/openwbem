@@ -173,8 +173,8 @@ void
 WQLFilterRep::enumClasses(const String& ns,
 	const String& className,
 	CIMClassResultHandlerIFC& result,
-	EDeepFlag deep, 
-	ELocalOnlyFlag localOnly, 
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const UserInfo& aclInfo)
 {
@@ -394,51 +394,15 @@ WQLFilterRep::execQuery(const String& /*ns*/,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-WQLFilterRep::getSchemaReadLock()
+WQLFilterRep::beginOperation(WBEMFlags::EOperationFlag op)
 {
-	m_pCIMServer->getSchemaReadLock();
+	(void)op;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-WQLFilterRep::getSchemaWriteLock()
+WQLFilterRep::endOperation(WBEMFlags::EOperationFlag op)
 {
-	m_pCIMServer->getSchemaWriteLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::releaseSchemaReadLock()
-{
-	m_pCIMServer->releaseSchemaReadLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::releaseSchemaWriteLock()
-{
-	return m_pCIMServer->releaseSchemaWriteLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::getInstanceReadLock()
-{
-	m_pCIMServer->getInstanceReadLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::getInstanceWriteLock()
-{
-	m_pCIMServer->getInstanceWriteLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::releaseInstanceReadLock()
-{
-	m_pCIMServer->releaseInstanceReadLock();
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-WQLFilterRep::releaseInstanceWriteLock()
-{
-	return m_pCIMServer->releaseInstanceWriteLock();
+	(void)op;
 }
 
 } // end namespace OpenWBEM

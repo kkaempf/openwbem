@@ -12,6 +12,7 @@ OW_RepositoryIFC.cpp \
 OW_RequestHandlerIFC.cpp \
 OW_SelectableCallbackIFC.cpp \
 OW_SelectableIFC.cpp \
+OW_SerializableIFC.cpp \
 OW_ServiceIFC.cpp \
 OW_ServiceEnvironmentIFC.cpp \
 OW_CIMProtocolException.cpp
@@ -28,6 +29,7 @@ OW_RequestHandlerIFC.hpp \
 OW_ResultHandlerIFC.hpp \
 OW_SelectableCallbackIFC.hpp \
 OW_SelectableIFC.hpp \
+OW_SerializableIFC.hpp \
 OW_ServiceEnvironmentIFC.hpp \
 OW_ServiceIFC.hpp \
 OW_WQLIFC.hpp
