@@ -301,5 +301,5 @@ RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef
 
 } // end namespace OW_NAMESPACE
 
-OW_PROVIDERIFCFACTORY(OpenWBEM::RemoteProviderInterface, remote)
+OW_PROVIDERIFCFACTORY(OpenWBEM::RemoteProviderInterface, owremoteprovifc)
 
