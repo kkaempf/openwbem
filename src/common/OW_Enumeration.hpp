@@ -60,6 +60,11 @@ public:
 		// positioned correctly
 		OW_UInt32 tmpSig;
 		m_Data.read(reinterpret_cast<char*>(&tmpSig), sizeof(tmpSig));
+		if (!m_Data.good())
+		{
+			OW_THROW(OW_EnumerationException, "Failed to read signature from "
+				"enumeration tempfile.");
+		}
 	}
 
 	OW_TempFileEnumerationImpl(OW_String const& filename)
@@ -69,6 +74,11 @@ public:
 		// positioned correctly
 		OW_UInt32 tmpSig;
 		m_Data.read(reinterpret_cast<char*>(&tmpSig), sizeof(tmpSig));
+		if (!m_Data.good())
+		{
+			OW_THROW(OW_EnumerationException, "Failed to write signature to "
+				"enumeration tempfile.");
+		}
 	}
 
 	~OW_TempFileEnumerationImpl()
@@ -152,6 +162,10 @@ private:
 		size_t size;
 		// open the file and read the size that is written to the end of it.
 		OW_File f = OW_FileSystem::openFile(filename);
+		if (!f)
+		{
+			OW_THROW(OW_EnumerationException, "Failed to open file");
+		}
 		
 		// Check that the correct signature is on the file
 		OW_UInt32 fileSig;
@@ -168,13 +182,20 @@ private:
 		}
 		
 		
-		f.seek(-sizeof(size), SEEK_END);
+		if (f.seek(-sizeof(size), SEEK_END) == -1)
+		{
+			OW_THROW(OW_EnumerationException, "Failure to seek");
+		}
 		if(f.read(reinterpret_cast<char*>(&size), sizeof(size)) != sizeof(size))
 		{
 			OW_THROW(OW_EnumerationException, "Failure to read enumeration "
 				"size");
 		}
-		f.close();
+		if (f.close() == -1)
+		{
+			OW_THROW(OW_EnumerationException, "Failure to close enumeration "
+				"file");
+		}
 		return size;
 	}
 

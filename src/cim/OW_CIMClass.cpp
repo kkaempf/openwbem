@@ -40,7 +40,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_IOException.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -727,7 +727,6 @@ OW_CIMClass::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 void
 OW_CIMClass::readObject(istream &istrm)
 {
-	OW_Int32 len;
 	OW_String name;
 	OW_String pcName;
 	OW_CIMQualifierArray qra;
@@ -738,59 +737,13 @@ OW_CIMClass::readObject(istream &istrm)
 
 	OW_CIMBase::readSig( istrm, OW_CIMCLASSSIG );
 
-	// Read name of class
 	name.readObject(istrm);
-
-	// Read name of parent class
 	pcName.readObject(istrm);
-
-	// Read association flag
 	isAssocFlag.readObject(istrm);
-
-	// Read is key flag
 	isK.readObject(istrm);
-
-	// Read len of qualifier array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read size of qualifier array");
-
-	len = OW_ntoh32(len);
-
-	// Read qualifier array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMQualifier qual;
-		qual.readObject(istrm);
-		qra.append(qual);
-	}
-
-	// Read len of properties array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read size of properties array");
-
-	len = OW_ntoh32(len);
-
-	// Read properties array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMProperty prop;
-		prop.readObject(istrm);
-		pra.append(prop);
-	}
-
-	// Read len of method array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read size of method array");
-
-	len = OW_ntoh32(len);
-
-	// Read properties array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMMethod meth;
-		meth.readObject(istrm);
-		mra.append(meth);
-	}
+	qra.readObject(istrm);
+	pra.readObject(istrm);
+	mra.readObject(istrm);
 
 	if(m_pdata.isNull())
 	{
@@ -816,48 +769,9 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	m_pdata->m_parentClassName.writeObject(ostrm);
 	m_pdata->m_associationFlag.writeObject(ostrm);
 	m_pdata->m_isKeyed.writeObject(ostrm);
-
-	// Write len of quailifer array
-	OW_Int32 len = m_pdata->m_qualifiers.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Failed to write size of qualifier array");
-	}
-
-	// Write qualifier array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_qualifiers[i].writeObject(ostrm);
-	}
-
-	// Write len of properties array
-	len = m_pdata->m_properties.size();
-	nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Failed to write size of properties array");
-	}
-
-	// Write properties array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_properties[i].writeObject(ostrm);
-	}
-
-	// Write len of method array
-	len = m_pdata->m_methods.size();
-	nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Failed to write size of methods array");
-	}
-
-	// Write method array
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_methods[i].writeObject(ostrm);
-	}
+	m_pdata->m_qualifiers.writeObject(ostrm);
+	m_pdata->m_properties.writeObject(ostrm);
+	m_pdata->m_methods.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////

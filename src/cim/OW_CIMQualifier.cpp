@@ -33,6 +33,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::istream;
 using std::ostream;
@@ -320,20 +321,7 @@ OW_CIMQualifier::readObject(istream &istrm)
 
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
-
-	size_t len;
-	if(!istrm.read((char*)&len, sizeof(len)))
-	{
-		OW_THROW(OW_IOException, "failed to read size of flavor array");
-	}
-	len = OW_ntoh32(len);
-
-	for(size_t i = 0; i < len; i++)
-	{
-		OW_CIMFlavor f;
-		f.readObject(istrm);
-		flavors.append(f);
-	}
+	flavors.readObject(istrm);
 
 	if(m_pdata.isNull())
 	{
@@ -372,19 +360,7 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 
 	m_pdata->m_qualifierType.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
-
-	size_t len = m_pdata->m_flavors.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "failed to write size of flavor array");
-	}
-
-	for(size_t i = 0; i < len; i++)
-	{
-		OW_CIMFlavor f = m_pdata->m_flavors[i];
-		f.writeObject(ostrm);
-	}
+	m_pdata->m_flavors.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////

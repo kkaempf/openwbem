@@ -42,6 +42,7 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_IOException.hpp"
 
 class UtilKeyArray
 {

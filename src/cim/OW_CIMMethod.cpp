@@ -36,7 +36,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_Array.hpp"
-#include "OW_IOException.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::ostream;
 using std::istream;
@@ -315,34 +315,8 @@ OW_CIMMethod::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMMETHODSIG );
 	name.readObject(istrm);
 	returnDatatype.readObject(istrm);
-
-	// Read qualifiers
-	OW_Int32 len;
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read len of qualifiers");
-
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMQualifier cq;
-		cq.readObject(istrm);
-		qualifiers.append(cq);
-	}
-
-	// Read parameters
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read len of parameters");
-
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMParameter cp;
-		cp.readObject(istrm);
-		parameters.append(cp);
-	}
-
+	qualifiers.readObject(istrm);
+	parameters.readObject(istrm);
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
@@ -369,29 +343,8 @@ OW_CIMMethod::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_returnDatatype.writeObject(ostrm);
-
-	// Write qualifiers
-	OW_Int32 len = m_pdata->m_qualifiers.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "Failed to write len of qualifiers");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_qualifiers[i].writeObject(ostrm);
-	}
-
-	// Write parameters
-	len = m_pdata->m_parameters.size();
-	nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "Failed to write len of parameters");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_parameters[i].writeObject(ostrm);
-	}
-
+	m_pdata->m_qualifiers.writeObject(ostrm);
+	m_pdata->m_parameters.writeObject(ostrm);
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_override.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);

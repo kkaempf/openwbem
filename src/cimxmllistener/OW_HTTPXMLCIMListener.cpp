@@ -48,6 +48,7 @@
 #include "OW_ServerSocket.hpp"
 #include "OW_SelectEngine.hpp"
 #include "OW_SelectableIFC.hpp"
+#include "OW_IOException.hpp"
 
 #include <algorithm> // for std::remove
 
@@ -121,7 +122,7 @@ public:
 
 	}
 	
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String&) 
+	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String&)
 	{
 		return m_XMLListener;
 	}
@@ -257,7 +258,10 @@ OW_HTTPXMLCIMListener::shutdownHttpServer()
 	{
 		// write something into the stop pipe to stop the select engine so the
 		// thread will exit
-		m_stopHttpPipe->write(0);
+		if (m_stopHttpPipe->write(0) == -1)
+		{
+			OW_THROW(OW_IOException, "Writing to the termination pipe failed");
+		}
 		m_stopHttpPipe = 0;
 	}
 

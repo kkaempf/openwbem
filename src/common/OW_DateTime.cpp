@@ -31,9 +31,10 @@
 #include "OW_config.h"
 
 #include "OW_DateTime.hpp"
-#include "OW_IOException.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_BinIfcIO.hpp"
+
 #include <iostream>
 
 using std::istream;
@@ -279,16 +280,14 @@ void
 OW_DateTime::writeObject(ostream &ostrm) const /*throw (OW_IOException)*/
 {
 	OW_Int32 v = OW_hton32(m_time);
-	if(!ostrm.write((const char*)&v, sizeof(v)))
-		OW_THROW(OW_IOException, "OW_DateTime failed to write data");
+	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_DateTime::readObject(istream &istrm) /*throw (OW_IOException)*/
 {
-	if(!istrm.read((char*)&m_time, sizeof(m_time)))
-		OW_THROW(OW_IOException, "OW_DateTime failed to read data");
+	OW_BinIfcIO::read(istrm, &m_time, sizeof(m_time));
 	m_time = OW_ntoh32(m_time);
 }
 

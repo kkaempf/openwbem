@@ -29,7 +29,9 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMScope.hpp"
+#include "OW_String.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::istream;
 using std::ostream;
@@ -69,10 +71,7 @@ void
 OW_CIMScope::readObject(istream &istrm)
 {
 	OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
-	if(!istrm.read((char*)&m_val, sizeof(m_val)))
-	{
-		OW_THROW(OW_IOException, "failed to read scope value");
-	}
+	OW_BinIfcIO::read(istrm, &m_val, sizeof(m_val));
 	m_val = OW_ntoh32(m_val);
 }
 
@@ -82,9 +81,6 @@ OW_CIMScope::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
 	OW_Int32 nv = OW_hton32(m_val);
-	if(!ostrm.write((const char*)&nv, sizeof(nv)))
-	{
-		OW_THROW(OW_IOException, "failed to write scope value");
-	}
+	OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
 }
 

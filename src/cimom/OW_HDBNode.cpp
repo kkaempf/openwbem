@@ -161,10 +161,7 @@ OW_HDBNode::read(OW_Int32 offset, OW_HDBHandle& hdl)
 	// Dereference existing data
 	setNull();
 	
-	if(OW_HDB::readBlock(fblk, file, offset) != SZ(fblk))
-	{
-		OW_THROW(OW_HDBException, "Failed to read node header");
-	}
+	OW_HDB::readBlock(fblk, file, offset);
 
 	// If previously deleted, don't do anything
 	if(fblk.isFree)
@@ -231,7 +228,11 @@ OW_HDBNode::reload(OW_HDBHandle& hdl)
 	OW_HDBBlock fblk;
 	OW_Int32 offset = m_pdata->m_offset;
 
-	if(OW_HDB::readBlock(fblk, file, offset) != SZ(fblk))
+	try
+	{
+		OW_HDB::readBlock(fblk, file, offset);
+	}
+	catch (const OW_HDBException&)
 	{
 		setNull();
 		return false;
@@ -411,11 +412,7 @@ OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
 		}
 		else
 		{
-			if(OW_HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset)
-				!= SZ(m_pdata->m_blk))
-			{
-				OW_THROW(OW_HDBException, "Failed to write node header");
-			}
+			OW_HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset);
 		}
 
 		// Add this entry to the index
@@ -436,11 +433,7 @@ OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
 			updateOffsets(hdl, phdb->findBlock(file, totalSize));
 		}
 
-		if(OW_HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset)
-			!= SZ(m_pdata->m_blk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write node header");
-		}
+		OW_HDB::writeBlock(m_pdata->m_blk, file, m_pdata->m_offset);
 	}
 
 	if(onlyHeader == false || newRecord == true)
@@ -477,36 +470,21 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset)
 	OW_HDBBlock fblk;
 	if(m_pdata->m_blk.prevSib > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block for offset update");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib);
 		fblk.nextSib = offset;
-		if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write block for offset update");
-		}
+		OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib);
 	}
 
 	if(m_pdata->m_blk.nextSib > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block for offset update");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib);
 		fblk.prevSib = offset;
-		if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write block for offset update");
-		}
+		OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib);
 	}
 
 	if(m_pdata->m_blk.parent > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block for offset update");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 
 		OW_Bool doUpdate = false;
 		if(fblk.firstChild == m_pdata->m_offset)
@@ -523,11 +501,7 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset)
 
 		if(doUpdate)
 		{
-			if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.parent) != SZ(fblk))
-			{
-				OW_THROW(OW_HDBException,
-					"Failed to write block for offset update");
-			}
+			OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.parent);
 		}
 	}
 	else	// No parent. Must be a root node
@@ -546,16 +520,10 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset)
 	OW_Int32 coffset = m_pdata->m_blk.firstChild;
 	while(coffset > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, coffset) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block for offset update");
-		}
+		OW_HDB::readBlock(fblk, file, coffset);
 		fblk.parent = offset;
 
-		if(OW_HDB::writeBlock(fblk, file, coffset) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write block for offset update");
-		}
+		OW_HDB::writeBlock(fblk, file, coffset);
 		coffset = fblk.nextSib;
 	}
 
@@ -611,19 +579,13 @@ OW_HDBNode::addChild(OW_HDBHandle& hdl, OW_HDBNode& arg)
 	if(m_pdata->m_blk.lastChild > 0)
 	{
 		OW_HDBBlock node;
-		if(OW_HDB::readBlock(node, file, m_pdata->m_blk.lastChild) != SZ(node))
-		{
-			OW_THROW(OW_HDBException, "Failed to read prev sibling from file");
-		}
+		OW_HDB::readBlock(node, file, m_pdata->m_blk.lastChild);
 
 		// Update next sibling pointer on node
 		node.nextSib = newNodeOffset;	
 
 		// Write prev sibling node
-		if(OW_HDB::writeBlock(node, file, m_pdata->m_blk.lastChild) != SZ(node))
-		{
-			OW_THROW(OW_HDBException, "Failed to write node header");
-		}
+		OW_HDB::writeBlock(node, file, m_pdata->m_blk.lastChild);
 	}
 
 	m_pdata->m_blk.lastChild = arg.m_pdata->m_offset;
@@ -654,10 +616,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 	OW_Int32 toffset;
 	while(coffset > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, coffset) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read child block for removal");
-		}
+		OW_HDB::readBlock(fblk, file, coffset);
 
 		toffset = coffset;			// Save offset for deletion class
 		coffset = fblk.prevSib;		// Save offset for next read
@@ -669,41 +628,26 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 	// Set pointer on next sibling if it exists
 	if(m_pdata->m_blk.nextSib > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read sibling to remove node");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.nextSib);
 
 		fblk.prevSib = m_pdata->m_blk.prevSib;
-		if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write sibling to remove node");
-		}
+		OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.nextSib);
 	}
 
 	// Set pointer on prev sibling if it exists
 	if(m_pdata->m_blk.prevSib > 0)
 	{
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read sibling to remove node");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.prevSib);
 
 		fblk.nextSib = m_pdata->m_blk.nextSib;
-		if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write sibling to remove node");
-		}
+		OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.prevSib);
 	}
 
 	// If it has a parent, insure parent doesn't contain it's offset
 	if(m_pdata->m_blk.parent > 0)
 	{
 		// Read parent block
-		if(OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent) != SZ(fblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read parent to remove node");
-		}
+		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 
 		OW_Bool changed = false;
 
@@ -726,10 +670,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 		// If any offsets changed in the parent block, then update the parent
 		if(changed)
 		{
-			if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.parent) != SZ(fblk))
-			{
-				OW_THROW(OW_HDBException, "Failed to write parent to remove node");
-			}
+			OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.parent);
 		}
 	}
 	else
@@ -783,11 +724,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset)
 	{
 		while(coffset > 0)
 		{
-			if(OW_HDB::readBlock(*((OW_HDBBlock*)pbfr.get()), file, coffset)
-				!= SZ(fblk))
-			{
-				OW_THROW(OW_HDBException, "Failed to read block for removal");
-			}
+			OW_HDB::readBlock(*((OW_HDBBlock*)pbfr.get()), file, coffset);
 
 			// Save current offset for call to removeBlock
 			OW_Int32 toffset = coffset;

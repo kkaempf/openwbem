@@ -89,10 +89,30 @@ OW_BaseStreamBuffer::sync()
 int
 OW_BaseStreamBuffer::buffer_out()
 {
-	int cnt = pptr() - pbase();
-	int retval = buffer_to_device(m_outputBuffer, cnt);
-	pbump(-cnt);
-	return retval;
+	// NOTE: If an exception escapes this function, __terminate will be called
+	// for gcc 2.95.2
+	try
+	{
+		int cnt = pptr() - pbase();
+		int retval = buffer_to_device(m_outputBuffer, cnt);
+		pbump(-cnt);
+		return retval;
+	}
+	catch (const OW_Exception& e)
+	{
+		std::cerr << "Caught OW_Exception in OW_BaseStreamBuffer::buffer_out(): " << e << std::endl;
+		return EOF;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Caught exception in OW_BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
+		return EOF;
+	}
+	catch (...)
+	{
+		std::cerr << "Caught unknown exception in OW_BaseStreamBuffer::buffer_out()" << std::endl;
+		return EOF;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -141,13 +161,33 @@ OW_BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
 int
 OW_BaseStreamBuffer::underflow()
 {
-	if (gptr() < egptr())
-		return static_cast<unsigned char>(*gptr());
+	// NOTE: If an exception escapes this function, __terminate will be called
+	// for gcc 2.95.2
+	try
+	{
+		if (gptr() < egptr())
+			return static_cast<unsigned char>(*gptr());
 
-	if (buffer_in() < 0)
+		if (buffer_in() < 0)
+			return EOF;
+		else
+			return static_cast<unsigned char>(*gptr());
+	}
+	catch (const OW_Exception& e)
+	{
+		std::cerr << "Caught OW_Exception in OW_BaseStreamBuffer::underflow(): " << e << std::endl;
 		return EOF;
-	else
-		return static_cast<unsigned char>(*gptr());
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Caught exception in OW_BaseStreamBuffer::underflow(): " << e.what() << std::endl;
+		return EOF;
+	}
+	catch (...)
+	{
+		std::cerr << "Caught unknown exception in OW_BaseStreamBuffer::underflow()" << std::endl;
+		return EOF;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -31,7 +31,6 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
-#include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"

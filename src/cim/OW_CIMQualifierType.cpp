@@ -33,6 +33,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::istream;
 using std::ostream;
@@ -339,29 +340,8 @@ OW_CIMQualifierType::writeObject(ostream &ostrm) const
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
 
-	size_t len = m_pdata->m_scope.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "failed to write len of scope array");
-	}
-
-	for(size_t i = 0; i < len; i++)
-	{
-		m_pdata->m_scope[i].writeObject(ostrm);
-	}
-
-	len = m_pdata->m_flavor.size();
-	nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "failed to write len of flavor array");
-	}
-
-	for(size_t i = 0; i < len; i++)
-	{
-		m_pdata->m_flavor[i].writeObject(ostrm);
-	}
+	m_pdata->m_scope.writeObject(ostrm);
+	m_pdata->m_flavor.writeObject(ostrm);
 
 	if(m_pdata->m_defaultValue)
 	{
@@ -383,37 +363,12 @@ OW_CIMQualifierType::readObject(istream &istrm)
 	OW_CIMScopeArray scope;
 	OW_CIMFlavorArray flavor;
 	OW_CIMValue defaultValue;
-	size_t len;
 
 	OW_CIMBase::readSig( istrm, OW_CIMQUALIFIERTYPESIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-
-	if(!istrm.read((char*)&len, sizeof(len)))
-	{
-		OW_THROW(OW_IOException, "failed to read len of scope array");
-	}
-	len = OW_ntoh32(len);
-
-	for(size_t i = 0; i < len; i++)
-	{
-		OW_CIMScope s;
-		s.readObject(istrm);
-		scope.append(s);
-	}
-
-	if(!istrm.read((char*)&len, sizeof(len)))
-	{
-		OW_THROW(OW_IOException, "failed to read len of flavor array");
-	}
-	len = OW_ntoh32(len);
-
-	for(size_t i = 0; i < len; i++)
-	{
-		OW_CIMFlavor f;
-		f.readObject(istrm);
-		flavor.append(f);
-	}
+	scope.readObject(istrm);
+	flavor.readObject(istrm);
 
 	OW_Bool isValue;
 	isValue.readObject(istrm);

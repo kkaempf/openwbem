@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_BINIFCIO_HPP__
-#define __OW_BINIFCIO_HPP__
+#ifndef OW_BINIFCIO_HPP_
+#define OW_BINIFCIO_HPP_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -40,19 +40,16 @@
 class OW_BinIfcIO
 {
 public:
-	static OW_Bool write(std::ostream& ostrm, const void* dataOut,
-		int dataOutLen, OW_Bool errorAsException=false);
+	static void write(std::ostream& ostrm, const void* dataOut,
+		int dataOutLen);
 
 	static void verifySignature(std::istream& istrm, OW_Int32 validSig);
 
-	static OW_Bool write(std::ostream& ostrm, OW_Int32 val,
-		OW_Bool throwOnError=false);
+	static void write(std::ostream& ostrm, OW_Int32 val);
 
-	static OW_Bool write(std::ostream& ostrm, const char* str,
-		OW_Bool throwOnError=false);
+	static void write(std::ostream& ostrm, const char* str);
 
-	static OW_Bool write(std::ostream& ostrm, const OW_String& str,
-		OW_Bool throwOnError=false);
+	static void write(std::ostream& ostrm, const OW_String& str);
 
 	static void writeObject(std::ostream& ostrm, OW_Int32 sig,
 		const OW_CIMBase& obj);
@@ -79,14 +76,11 @@ public:
 	static void writeStringArray(std::ostream& ostrm,
 		const OW_StringArray& stra);
 
-	static OW_Bool read(std::istream& istrm, void* dataIn, int dataInLen,
-		OW_Bool errorAsException=false);
+	static void read(std::istream& istrm, void* dataIn, int dataInLen);
 
-	static OW_Bool read(std::istream& istrm, OW_String& arg,
-		OW_Bool throwOnError=false);
+	static void read(std::istream& istrm, OW_String& arg);
 
-	static OW_Bool read(std::istream& istrm, OW_Int32& val,
-		OW_Bool throwOnError=false);
+	static void read(std::istream& istrm, OW_Int32& val);
 
 	static void readObject(std::istream& istrm, OW_Int32 validSig,
 		OW_CIMBase& obj);
@@ -122,55 +116,55 @@ public:
 
 // Values for local API calls
 
-#define OW_IPC_AUTHENTICATE			3000	// Authenticate
-#define OW_IPC_FUNCTIONCALL			4000	// Regular function call
-#define OW_IPC_CLOSECONN			9999	// Close connection
+const OW_Int32 OW_IPC_AUTHENTICATE =	3000;	// Authenticate
+const OW_Int32 OW_IPC_FUNCTIONCALL =	4000;	// Regular function call
+const OW_Int32 OW_IPC_CLOSECONN =		9999;	// Close connection
 
-#define OW_BIN_DELETECLS			40		// Delete class
-#define OW_BIN_DELETEINST			50		// Delete instance
-#define OW_BIN_DELETEQUAL			60		// Delete qualifier type
-#define OW_BIN_ENUMCLSS				70		// Enum class
-#define OW_BIN_ENUMCLSNAMES			80		// Enum class names
-#define OW_BIN_ENUMINSTS			90		// Enum instances
-#define OW_BIN_ENUMINSTNAMES		100		// Enum instance names
-#define OW_BIN_ENUMQUALS			110		// Enum qualifiers types
-#define OW_BIN_GETCLS				120		// Get class
-#define OW_BIN_GETINST				130		// Get instance
-#define OW_BIN_INVMETH				140		// Invoke method
-#define OW_BIN_GETQUAL				150		// Get qualifier type
-#define OW_BIN_SETQUAL				160		// Set qualifier type
-#define OW_BIN_MODIFYCLS			170		// Modify class
-#define OW_BIN_CREATECLS			180		// Create class
-#define OW_BIN_MODIFYINST			190		// Modify instances
-#define OW_BIN_CREATEINST			200		// Create instance
-#define OW_BIN_GETPROP				210		// Get property
-#define OW_BIN_SETPROP				220		// Set property
-#define OW_BIN_ASSOCNAMES			230		// Associator names
-#define OW_BIN_ASSOCIATORS			240		// Associators
-#define OW_BIN_REFNAMES				250		// Reference names
-#define OW_BIN_REFERENCES			260		// References
-#define OW_BIN_EXECQUERY			270		// Execute query
-#define OW_BIN_GETSVRFEATURES		280		// Get Server Features
+const OW_Int32 OW_BIN_DELETECLS =		40;		// Delete class
+const OW_Int32 OW_BIN_DELETEINST =		50;		// Delete instance
+const OW_Int32 OW_BIN_DELETEQUAL =		60;		// Delete qualifier type
+const OW_Int32 OW_BIN_ENUMCLSS =		70;		// Enum class
+const OW_Int32 OW_BIN_ENUMCLSNAMES =	80;		// Enum class names
+const OW_Int32 OW_BIN_ENUMINSTS =		90;		// Enum instances
+const OW_Int32 OW_BIN_ENUMINSTNAMES =	100;		// Enum instance names
+const OW_Int32 OW_BIN_ENUMQUALS =		110;		// Enum qualifiers types
+const OW_Int32 OW_BIN_GETCLS =			120;		// Get class
+const OW_Int32 OW_BIN_GETINST =			130;		// Get instance
+const OW_Int32 OW_BIN_INVMETH =			140;		// Invoke method
+const OW_Int32 OW_BIN_GETQUAL =			150;		// Get qualifier type
+const OW_Int32 OW_BIN_SETQUAL =			160;		// Set qualifier type
+const OW_Int32 OW_BIN_MODIFYCLS =		170;		// Modify class
+const OW_Int32 OW_BIN_CREATECLS =		180;		// Create class
+const OW_Int32 OW_BIN_MODIFYINST =		190;		// Modify instances
+const OW_Int32 OW_BIN_CREATEINST =		200;		// Create instance
+const OW_Int32 OW_BIN_GETPROP =			210;		// Get property
+const OW_Int32 OW_BIN_SETPROP =			220;		// Set property
+const OW_Int32 OW_BIN_ASSOCNAMES =		230;		// Associator names
+const OW_Int32 OW_BIN_ASSOCIATORS =		240;		// Associators
+const OW_Int32 OW_BIN_REFNAMES =		250;		// Reference names
+const OW_Int32 OW_BIN_REFERENCES =		260;		// References
+const OW_Int32 OW_BIN_EXECQUERY =		270;		// Execute query
+const OW_Int32 OW_BIN_GETSVRFEATURES =	280;		// Get Server Features
 
-#define OW_BIN_OK					0		// Success returned from server
-#define OW_BIN_ERROR				-1		// Error returned from server
-#define OW_BIN_EXCEPTION			-2		// CIM Exception returned from server
+const OW_Int32 OW_BIN_OK =				0;		// Success returned from server
+const OW_Int32 OW_BIN_ERROR =			-1;		// Error returned from server
+const OW_Int32 OW_BIN_EXCEPTION =		-2;		// CIM Exception returned from server
 
-#define OW_BINSIG_NS				0xa0000001
-#define OW_BINSIG_OP				0xa0000002
-#define OW_BINSIG_CLS				0xa0000003
-#define OW_BINSIG_INST				0xa0000004
-#define OW_BINSIG_BOOL				0xa0000005
-#define OW_BINSIG_CLSENUM			0xa0000006
-#define OW_BINSIG_STR				0xa0000007
-#define OW_BINSIG_STRARRAY			0xa0000008
-#define OW_BINSIG_QUAL				0xa0000009
-#define OW_BINSIG_VALUE				0xa000000a
-#define OW_BINSIG_OPENUM			0xa000000b
-#define OW_BINSIG_INSTENUM			0xa000000c
-#define OW_BINSIG_QUALENUM			0xa000000d
-#define OW_BINSIG_VALUEARRAY		0xa000000e
-#define OW_BINSIG_INSTARRAY			0xa000000f
+const OW_Int32 OW_BINSIG_NS	=			0xa0000001;
+const OW_Int32 OW_BINSIG_OP =			0xa0000002;
+const OW_Int32 OW_BINSIG_CLS =			0xa0000003;
+const OW_Int32 OW_BINSIG_INST =			0xa0000004;
+const OW_Int32 OW_BINSIG_BOOL =			0xa0000005;
+const OW_Int32 OW_BINSIG_CLSENUM =		0xa0000006;
+const OW_Int32 OW_BINSIG_STR =			0xa0000007;
+const OW_Int32 OW_BINSIG_STRARRAY =		0xa0000008;
+const OW_Int32 OW_BINSIG_QUAL =			0xa0000009;
+const OW_Int32 OW_BINSIG_VALUE =		0xa000000a;
+const OW_Int32 OW_BINSIG_OPENUM =		0xa000000b;
+const OW_Int32 OW_BINSIG_INSTENUM =		0xa000000c;
+const OW_Int32 OW_BINSIG_QUALENUM =		0xa000000d;
+const OW_Int32 OW_BINSIG_VALUEARRAY =	0xa000000e;
+const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
 
-#endif	// __OW_BINIFCIO_HPP__
+#endif	// OW_BINIFCIO_HPP_
 

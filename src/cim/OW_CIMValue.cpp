@@ -34,6 +34,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <new>
 
@@ -2524,12 +2525,9 @@ OW_CIMValue::OW_CIMValueImpl::toMOF() const
 //					3 = 64 bit
 template<class T>
 void
-readValue(istream& istrm, T& val, int line, int convType)
+readValue(istream& istrm, T& val, int convType)
 {
-	if(!istrm.read((char*)&val, sizeof(T)))
-	{
-		OW_THROWL(OW_IOException, line, "failed to read value");
-	}
+	OW_BinIfcIO::read(istrm, &val, sizeof(val));
 
 	switch(convType)
 	{
@@ -2555,18 +2553,17 @@ readRealValue(istream& istrm)
 //					3 = 64 bit
 template<class T>
 void
-readArray(istream& istrm, T& ra, int line, int convType)
+readArray(istream& istrm, T& ra, int convType)
 {
 	ra.clear();
 	OW_Int32 sz;
 
-	readValue(istrm, sz, line, 2);
+	readValue(istrm, sz, 2);
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 
-		if(!istrm.read((char*)&v, sizeof(v)))
-			OW_THROWL(OW_IOException, line, "failed to read value for array");
+		OW_BinIfcIO::read(istrm, &v, sizeof(v));
 
 		switch(convType)
 		{
@@ -2585,7 +2582,7 @@ readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 	ra.clear();
 	OW_Int32 sz;
 
-	readValue(istrm, sz, 0, 2);
+	readValue(istrm, sz, 2);
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		OW_Real32 v = (OW_Real32) readRealValue(istrm);
@@ -2599,7 +2596,7 @@ readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 	ra.clear();
 	OW_Int32 sz;
 
-	readValue(istrm, sz, 0, 2);
+	readValue(istrm, sz, 2);
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		OW_Real64 v = readRealValue(istrm);
@@ -2610,12 +2607,12 @@ readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 void
-readObjectArray(istream& istrm, T& ra, int line)
+readObjectArray(istream& istrm, T& ra)
 {
 	ra.clear();
 	OW_Int32 sz;
 
-	readValue(istrm, sz, line, 2);
+	readValue(istrm, sz, 2);
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
@@ -2631,7 +2628,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMVALUESIG );
 	destroyObject();
 	m_objDestroyed = false;
-	readValue(istrm, m_type, __LINE__, 2);
+	readValue(istrm, m_type, 2);
 	m_isArray.readObject(istrm);
 
 	if(m_isArray)
@@ -2640,52 +2637,52 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 		{
 			case OW_CIMDataType::BOOLEAN:
 				new(&m_obj) OW_BoolArray;
-				readArray(istrm, *((OW_BoolArray*)&m_obj), __LINE__, 0);
+				readArray(istrm, *((OW_BoolArray*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
 				new(&m_obj) OW_UInt8Array;
-				readArray(istrm, *((OW_UInt8Array*)&m_obj), __LINE__, 0);
+				readArray(istrm, *((OW_UInt8Array*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
 				new(&m_obj) OW_Int8Array;
-				readArray(istrm, *((OW_Int8Array*)&m_obj), __LINE__, 0);
+				readArray(istrm, *((OW_Int8Array*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::CHAR16:
 				new(&m_obj) OW_Char16Array;
-				readObjectArray(istrm, *((OW_Char16Array*)&m_obj), __LINE__);
+				readObjectArray(istrm, *((OW_Char16Array*)&m_obj));
 				break;
 
 			case OW_CIMDataType::UINT16:
 				new(&m_obj) OW_UInt16Array;
-				readArray(istrm, *((OW_UInt16Array*)&m_obj), __LINE__, 1);
+				readArray(istrm, *((OW_UInt16Array*)&m_obj), 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
 				new(&m_obj) OW_Int16Array;
-				readArray(istrm, *((OW_Int16Array*)&m_obj), __LINE__, 1);
+				readArray(istrm, *((OW_Int16Array*)&m_obj), 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
 				new(&m_obj) OW_UInt32Array;
-				readArray(istrm, *((OW_UInt32Array*)&m_obj), __LINE__, 2);
+				readArray(istrm, *((OW_UInt32Array*)&m_obj), 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
 				new(&m_obj) OW_Int32Array;
-				readArray(istrm, *((OW_Int32Array*)&m_obj), __LINE__, 2);
+				readArray(istrm, *((OW_Int32Array*)&m_obj), 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
 				new(&m_obj) OW_UInt64Array;
-				readArray(istrm, *((OW_UInt64Array*)&m_obj), __LINE__, 3);
+				readArray(istrm, *((OW_UInt64Array*)&m_obj), 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
 				new(&m_obj) OW_Int64Array;
-				readArray(istrm, *((OW_Int64Array*)&m_obj), __LINE__, 3);
+				readArray(istrm, *((OW_Int64Array*)&m_obj), 3);
 				break;
 
 			case OW_CIMDataType::REAL32:
@@ -2700,31 +2697,27 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 
 			case OW_CIMDataType::STRING:
 				new(&m_obj) OW_StringArray;
-				readObjectArray(istrm, *((OW_StringArray*)&m_obj), __LINE__);
+				readObjectArray(istrm, *((OW_StringArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::DATETIME:
 				new(&m_obj) OW_CIMDateTimeArray;
-				readObjectArray(istrm, *((OW_CIMDateTimeArray*)&m_obj),
-					__LINE__);
+				readObjectArray(istrm, *((OW_CIMDateTimeArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::REFERENCE:
 				new(&m_obj) OW_CIMObjectPathArray;
-				readObjectArray(istrm, *((OW_CIMObjectPathArray*)&m_obj),
-					__LINE__);
+				readObjectArray(istrm, *((OW_CIMObjectPathArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
 				new(&m_obj) OW_CIMClassArray;
-				readObjectArray(istrm, *((OW_CIMClassArray*)&m_obj),
-					__LINE__);
+				readObjectArray(istrm, *((OW_CIMClassArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				new(&m_obj) OW_CIMInstanceArray;
-				readObjectArray(istrm, *((OW_CIMInstanceArray*)&m_obj),
-					__LINE__);
+				readObjectArray(istrm, *((OW_CIMInstanceArray*)&m_obj));
 				break;
 			default:
 				OW_ASSERT(0);
@@ -2735,39 +2728,39 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				readValue(istrm, m_obj.m_booleanValue, __LINE__, 0);
+				readValue(istrm, m_obj.m_booleanValue, 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
-				readValue(istrm, m_obj.m_uint8Value, __LINE__, 0);
+				readValue(istrm, m_obj.m_uint8Value, 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
-				readValue(istrm, m_obj.m_sint8Value, __LINE__, 0);
+				readValue(istrm, m_obj.m_sint8Value, 0);
 				break;
 
 			case OW_CIMDataType::UINT16:
-				readValue(istrm, m_obj.m_uint16Value, __LINE__, 1);
+				readValue(istrm, m_obj.m_uint16Value, 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
-				readValue(istrm, m_obj.m_sint16Value, __LINE__, 1);
+				readValue(istrm, m_obj.m_sint16Value, 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
-				readValue(istrm, m_obj.m_uint32Value, __LINE__, 2);
+				readValue(istrm, m_obj.m_uint32Value, 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
-				readValue(istrm, m_obj.m_sint32Value, __LINE__, 2);
+				readValue(istrm, m_obj.m_sint32Value, 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
-				readValue(istrm, m_obj.m_uint64Value, __LINE__, 3);
+				readValue(istrm, m_obj.m_uint64Value, 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
-				readValue(istrm, m_obj.m_sint64Value, __LINE__, 3);
+				readValue(istrm, m_obj.m_sint64Value, 3);
 				break;
 
 			case OW_CIMDataType::REAL32:
@@ -2820,7 +2813,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 //					3 = 64 bit
 template<class T>
 void
-writeValue(ostream& ostrm, T val, int line, int convType)
+writeValue(ostream& ostrm, T val, int convType)
 {
 	T v;
 	switch(convType)
@@ -2831,8 +2824,7 @@ writeValue(ostream& ostrm, T val, int line, int convType)
 		default: v = val; break;
 	}
 
-	if(!ostrm.write((const char*)&v, sizeof(v)))
-		OW_THROWL(OW_IOException, line, "failed to write value");
+	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 }
 
 static void
@@ -2849,10 +2841,10 @@ writeRealValue(ostream& ostrm, OW_Real64 rv)
 //					3 = 64 bit
 template<class T>
 void
-writeArray(ostream& ostrm, const T& ra, int line, int convType)
+writeArray(ostream& ostrm, const T& ra, int convType)
 {
 	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, line, 2);
+	writeValue(ostrm, sz, 2);
 
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
@@ -2865,16 +2857,15 @@ writeArray(ostream& ostrm, const T& ra, int line, int convType)
 			default: v = ra[i]; break;
 		}
 
-		if(!ostrm.write((const char*)&v, sizeof(v)))
-			OW_THROWL(OW_IOException, line, "failed to write value from array");
+		OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 	}
 }
 
 static void
-writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra, int line)
+writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra)
 {
 	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, line, 2);
+	writeValue(ostrm, sz, 2);
 
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
@@ -2883,10 +2874,10 @@ writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra, int line)
 }
 
 static void
-writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra, int line)
+writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra)
 {
 	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, line, 2);
+	writeValue(ostrm, sz, 2);
 
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
@@ -2897,10 +2888,10 @@ writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra, int line)
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 void
-writeObjectArray(ostream& ostrm, const T& ra, int line)
+writeObjectArray(ostream& ostrm, const T& ra)
 {
 	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, line, 2);
+	writeValue(ostrm, sz, 2);
 
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
@@ -2913,7 +2904,7 @@ void
 OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig(ostrm, OW_CIMVALUESIG);
-	writeValue(ostrm, m_type, __LINE__, 2);
+	writeValue(ostrm, m_type, 2);
 	m_isArray.writeObject(ostrm);
 
 	if(m_isArray)
@@ -2921,76 +2912,71 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				writeArray(ostrm, *((OW_BoolArray*)&m_obj), __LINE__, 0);
+				writeArray(ostrm, *((OW_BoolArray*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
-				writeArray(ostrm, *((OW_UInt8Array*)&m_obj), __LINE__, 0);
+				writeArray(ostrm, *((OW_UInt8Array*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
-				writeArray(ostrm, *((OW_Int8Array*)&m_obj), __LINE__, 0);
+				writeArray(ostrm, *((OW_Int8Array*)&m_obj), 0);
 				break;
 
 			case OW_CIMDataType::UINT16:
-				writeArray(ostrm, *((OW_UInt16Array*)&m_obj), __LINE__, 1);
+				writeArray(ostrm, *((OW_UInt16Array*)&m_obj), 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
-				writeArray(ostrm, *((OW_Int16Array*)&m_obj), __LINE__, 1);
+				writeArray(ostrm, *((OW_Int16Array*)&m_obj), 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
-				writeArray(ostrm, *((OW_UInt32Array*)&m_obj), __LINE__, 2);
+				writeArray(ostrm, *((OW_UInt32Array*)&m_obj), 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
-				writeArray(ostrm, *((OW_Int32Array*)&m_obj), __LINE__, 2);
+				writeArray(ostrm, *((OW_Int32Array*)&m_obj), 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
-				writeArray(ostrm, *((OW_UInt64Array*)&m_obj), __LINE__, 3);
+				writeArray(ostrm, *((OW_UInt64Array*)&m_obj), 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
-				writeArray(ostrm, *((OW_Int64Array*)&m_obj), __LINE__, 3);
+				writeArray(ostrm, *((OW_Int64Array*)&m_obj), 3);
 				break;
 
 			case OW_CIMDataType::REAL32:
-				writeArray(ostrm, *((OW_Real32Array*)&m_obj), __LINE__);
+				writeArray(ostrm, *((OW_Real32Array*)&m_obj));
 				break;
 
 			case OW_CIMDataType::REAL64:
-				writeArray(ostrm, *((OW_Real64Array*)&m_obj), __LINE__);
+				writeArray(ostrm, *((OW_Real64Array*)&m_obj));
 				break;
 
 			case OW_CIMDataType::CHAR16:
-				writeObjectArray(ostrm, *((OW_Char16Array*)&m_obj), __LINE__);
+				writeObjectArray(ostrm, *((OW_Char16Array*)&m_obj));
 				break;
 
 			case OW_CIMDataType::STRING:
-				writeObjectArray(ostrm, *((OW_StringArray*)&m_obj),
-					__LINE__);
+				writeObjectArray(ostrm, *((OW_StringArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				writeObjectArray(ostrm, *((OW_CIMDateTimeArray*)&m_obj),
-					__LINE__);
+				writeObjectArray(ostrm, *((OW_CIMDateTimeArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::REFERENCE:
-				writeObjectArray(ostrm, *((OW_CIMObjectPathArray*)&m_obj),
-					__LINE__);
+				writeObjectArray(ostrm, *((OW_CIMObjectPathArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				writeObjectArray(ostrm, *((OW_CIMClassArray*)&m_obj),
-					__LINE__);
+				writeObjectArray(ostrm, *((OW_CIMClassArray*)&m_obj));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				writeObjectArray(ostrm, *((OW_CIMInstanceArray*)&m_obj),
-					__LINE__);
+				writeObjectArray(ostrm, *((OW_CIMInstanceArray*)&m_obj));
 				break;
 			default:
 				OW_ASSERT(0);
@@ -3001,40 +2987,40 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				writeValue(ostrm, m_obj.m_booleanValue, __LINE__, 0);
+				writeValue(ostrm, m_obj.m_booleanValue, 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
-				writeValue(ostrm, m_obj.m_uint8Value, __LINE__, 0);
+				writeValue(ostrm, m_obj.m_uint8Value, 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
-				writeValue(ostrm, m_obj.m_sint8Value, __LINE__, 0);
+				writeValue(ostrm, m_obj.m_sint8Value, 0);
 				break;
 
 
 			case OW_CIMDataType::UINT16:
-				writeValue(ostrm, m_obj.m_uint16Value, __LINE__, 1);
+				writeValue(ostrm, m_obj.m_uint16Value, 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
-				writeValue(ostrm, m_obj.m_sint16Value, __LINE__, 1);
+				writeValue(ostrm, m_obj.m_sint16Value, 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
-				writeValue(ostrm, m_obj.m_uint32Value, __LINE__, 2);
+				writeValue(ostrm, m_obj.m_uint32Value, 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
-				writeValue(ostrm, m_obj.m_sint32Value, __LINE__, 2);
+				writeValue(ostrm, m_obj.m_sint32Value, 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
-				writeValue(ostrm, m_obj.m_uint64Value, __LINE__, 3);
+				writeValue(ostrm, m_obj.m_uint64Value, 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
-				writeValue(ostrm, m_obj.m_sint64Value, __LINE__, 3);
+				writeValue(ostrm, m_obj.m_sint64Value, 3);
 				break;
 
 			case OW_CIMDataType::REAL32:

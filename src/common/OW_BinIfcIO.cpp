@@ -44,21 +44,14 @@
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+void
 OW_BinIfcIO::write(std::ostream& ostrm, const void* dataOut,
-	int dataOutLen, OW_Bool errorAsException)
+	int dataOutLen)
 {
-	OW_Bool rv = true;
 	if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
 	{
-		if(errorAsException)
-		{
-			OW_THROW(OW_IOException, "Failed writing data to IPC connection");
-		}
-		rv = false;
+		OW_THROW(OW_IOException, "Failed writing data to IPC connection");
 	}
-
-	return rv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -67,7 +60,7 @@ void
 OW_BinIfcIO::verifySignature(std::istream& istrm, OW_Int32 validSig)
 {
 	OW_Int32 val;
-	OW_BinIfcIO::read(istrm, val, true);
+	OW_BinIfcIO::read(istrm, val);
 
 	if(val != validSig)
 	{
@@ -80,36 +73,29 @@ OW_BinIfcIO::verifySignature(std::istream& istrm, OW_Int32 validSig)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::write(std::ostream& ostrm, OW_Int32 val, OW_Bool throwOnError)
+void
+OW_BinIfcIO::write(std::ostream& ostrm, OW_Int32 val)
 {
 	val = OW_hton32(val);
-	return OW_BinIfcIO::write(ostrm, (const void*)&val, sizeof(val),
-		throwOnError);
+	OW_BinIfcIO::write(ostrm, (const void*)&val, sizeof(val));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::write(std::ostream& ostrm, const char* str, OW_Bool throwOnError)
+void
+OW_BinIfcIO::write(std::ostream& ostrm, const char* str)
 {
 	OW_Int32 len = ::strlen(str);
-	OW_Bool cc = OW_BinIfcIO::write(ostrm, len, throwOnError);
-	if(cc)
-	{
-		cc = OW_BinIfcIO::write(ostrm, (const void*)str, len, throwOnError);
-	}
-
-	return cc;
+	OW_BinIfcIO::write(ostrm, len);
+	OW_BinIfcIO::write(ostrm, (const void*)str, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::write(std::ostream& ostrm, const OW_String& str,
-	OW_Bool throwOnError)
+void
+OW_BinIfcIO::write(std::ostream& ostrm, const OW_String& str)
 {
-	return OW_BinIfcIO::write(ostrm, str.c_str(), throwOnError);
+	OW_BinIfcIO::write(ostrm, str.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -118,7 +104,7 @@ void
 OW_BinIfcIO::writeObject(std::ostream& ostrm, OW_Int32 sig,
 	const OW_CIMBase& obj)
 {
-	OW_BinIfcIO::write(ostrm, sig, true);
+	OW_BinIfcIO::write(ostrm, sig);
 	obj.writeObject(ostrm);
 }
 
@@ -143,7 +129,7 @@ OW_BinIfcIO::writeNameSpace(std::ostream& ostrm, const OW_CIMNameSpace& ns)
 void
 OW_BinIfcIO::writeBool(std::ostream& ostrm, OW_Bool arg)
 {
-	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BINSIG_BOOL, true);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_BOOL);
 	arg.writeObject(ostrm);
 }
 
@@ -184,7 +170,7 @@ OW_BinIfcIO::writeValue(std::ostream& ostrm, const OW_CIMValue& value)
 void
 OW_BinIfcIO::writeString(std::ostream& ostrm, const OW_String& str)
 {
-	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BINSIG_STR, true);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_STR);
 	str.writeObject(ostrm);
 }
 
@@ -193,8 +179,8 @@ OW_BinIfcIO::writeString(std::ostream& ostrm, const OW_String& str)
 void
 OW_BinIfcIO::writeStringArray(std::ostream& ostrm, const OW_StringArray& stra)
 {
-	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BINSIG_STRARRAY, true);
-	OW_BinIfcIO::write(ostrm, OW_Int32(stra.size()), true);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_STRARRAY);
+	OW_BinIfcIO::write(ostrm, OW_Int32(stra.size()));
 	for(size_t i = 0; i < stra.size(); i++)
 	{
 		OW_BinIfcIO::writeString(ostrm, stra[i]);
@@ -203,60 +189,36 @@ OW_BinIfcIO::writeStringArray(std::ostream& ostrm, const OW_StringArray& stra)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::read(std::istream& istrm, void* dataIn, int dataInLen,
-	OW_Bool errorAsException)
+void
+OW_BinIfcIO::read(std::istream& istrm, void* dataIn, int dataInLen)
 {
-	OW_Bool rv = true;
 	if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
 	{
-		if(errorAsException)
-		{
-			OW_THROW(OW_IOException, "Failed reading data from IPC connection");
-		}
-
-		rv = false;
+		OW_THROW(OW_IOException, "Failed reading data from IPC connection");
 	}
-
-	return rv;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::read(std::istream& istrm, OW_String& arg, OW_Bool throwOnError)
+void
+OW_BinIfcIO::read(std::istream& istrm, OW_String& arg)
 {
 	OW_Int32 len;
-	OW_Bool rv = OW_BinIfcIO::read(istrm, len, throwOnError);
+	OW_BinIfcIO::read(istrm, len);
 
-	if(rv)
-	{
-		OW_AutoPtrVec<char> bfr(new char[len+1]);
-		rv = OW_BinIfcIO::read(istrm, (void*)bfr.get(), len, throwOnError);
-		if(rv)
-		{
-			bfr.get()[len] = 0;
-			arg = OW_String(OW_Bool(true), bfr.release());
-		}
-	}
-
-	return rv;
+	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	OW_BinIfcIO::read(istrm, (void*)bfr.get(), len);
+	bfr.get()[len] = 0;
+	arg = OW_String(OW_Bool(true), bfr.release());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_BinIfcIO::read(std::istream& istrm, OW_Int32& val, OW_Bool throwOnError)
+void
+OW_BinIfcIO::read(std::istream& istrm, OW_Int32& val)
 {
-	OW_Bool cc = OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val),
-		throwOnError);
-
-	if(cc)
-	{
-		val = OW_ntoh32(val);
-	}
-
-	return cc;
+	OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val));
+	val = OW_ntoh32(val);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -357,7 +319,7 @@ OW_BinIfcIO::readStringArray(std::istream& istrm)
 {
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STRARRAY);
 	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size, true);
+	OW_BinIfcIO::read(istrm, size);
 
 	OW_StringArray stra;
 	while(size)
@@ -377,7 +339,7 @@ OW_BinIfcIO::readObjectPathEnum(std::istream& istrm)
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_OPENUM);
 	OW_CIMObjectPathEnumeration en;
 	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size, OW_Bool(true));
+	OW_BinIfcIO::read(istrm, size);
 
 	if(size == -1)
 	{
@@ -404,7 +366,7 @@ OW_BinIfcIO::readClassEnum(std::istream& istrm)
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_CLSENUM);
 	OW_CIMClassEnumeration en;
 	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size, OW_Bool(true));
+	OW_BinIfcIO::read(istrm, size);
 	if(size == -1)
 	{
 		OW_String fname = OW_BinIfcIO::readString(istrm);
@@ -430,7 +392,7 @@ OW_BinIfcIO::readInstanceEnum(std::istream& istrm)
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_INSTENUM);
 	OW_CIMInstanceEnumeration en;
 	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size, OW_Bool(true));
+	OW_BinIfcIO::read(istrm, size);
 	if(size == -1)
 	{
 		OW_String fname = OW_BinIfcIO::readString(istrm);
@@ -456,7 +418,7 @@ OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm)
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_QUALENUM);
 	OW_CIMQualifierTypeEnumeration en;
 	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size, OW_Bool(true));
+	OW_BinIfcIO::read(istrm, size);
 	if(size == -1)
 	{
 		OW_String fname = OW_BinIfcIO::readString(istrm);

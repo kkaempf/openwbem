@@ -31,8 +31,8 @@
 #include "OW_config.h"
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
-#include "OW_IOException.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -77,17 +77,14 @@ void
 OW_Char16::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
 	OW_UInt16 v = OW_hton16(m_value);
-	if(!ostrm.write((const char*)&v, sizeof(v)))
-		OW_THROW(OW_IOException, "failed to write char16 value");
+	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_Char16::readObject(istream& istrm) /*throw (OW_IOException)*/
 {
-	if(!istrm.read((char*)&m_value, sizeof(m_value)))
-		OW_THROW(OW_IOException, "failed to read char16 value");
-
+	OW_BinIfcIO::read(istrm, &m_value, sizeof(m_value));
 	m_value = OW_ntoh16(m_value);
 }
 

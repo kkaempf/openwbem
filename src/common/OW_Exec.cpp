@@ -34,6 +34,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Array.hpp"
+#include "OW_IOException.hpp"
 
 extern "C"
 {
@@ -225,7 +226,10 @@ OW_Exec::safePopen(const OW_Array<OW_String>& command,
 
 	if (initialInput != "")
 	{
-		retval.in()->write(initialInput.c_str(), initialInput.length());
+		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
+		{
+			OW_THROW(OW_IOException, "Failed writing input to process");
+		}
 	}
 
 	if (command.size() == 0)

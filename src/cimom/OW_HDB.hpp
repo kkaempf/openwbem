@@ -321,7 +321,7 @@ public:
 	 * @param offset	The offset to write the block to.
 	 * @return The number of bytes written on success. Otherwise -1
 	 */
-	static int writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
+	static void writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
 
 	/**
 	 * Read the given OW_HDBBlock.
@@ -331,7 +331,7 @@ public:
 	 * @return The number of bytes read on success. Otherwise -1
 	 * @exception OW_HDBException
 	 */
-	static int readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
+	static void readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
 
 private:
 

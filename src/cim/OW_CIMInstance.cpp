@@ -35,6 +35,7 @@
 #include "OW_String.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::ostream;
 using std::istream;
@@ -717,52 +718,15 @@ OW_CIMInstance::readObject(istream &istrm)
 	OW_String aliasName;
 	OW_CIMPropertyArray properties;
 	OW_CIMPropertyArray keys;
+	OW_CIMQualifierArray qualifiers;
 
 	OW_CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
 	name.readObject(istrm);
 	owningClassName.readObject(istrm);
 	aliasName.readObject(istrm);
-	OW_Int32 len;
-
-	// Read the keys array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read len of key array");
-
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMProperty cp;
-		cp.readObject(istrm);
-		keys.append(cp);
-	}
-
-	// Read The properties array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read len of property array");
-
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMProperty cp;
-		cp.readObject(istrm);
-		properties.append(cp);
-	}
-
-	OW_CIMQualifierArray qualifiers;
-	
-	// Read qualifiers array
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read len of qualifier array");
-	
-	len = OW_ntoh32(len);
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMQualifier cq;
-		cq.readObject(istrm);
-		qualifiers.append(cq);
-	}
+	keys.readObject(istrm);
+	properties.readObject(istrm);
+	qualifiers.readObject(istrm);
 
 	if(m_pdata.isNull())
 	{
@@ -783,53 +747,22 @@ void
 OW_CIMInstance::writeObject(std::ostream &ostrm,
 	OW_Bool includeQualifiers) const
 {
-	OW_Int32 len;
-
 	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	m_pdata->m_aliasName.writeObject(ostrm);
-
-	// Write the keys array
-	len = m_pdata->m_keys.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "Failed to write len of keys array");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_keys[i].writeObject(ostrm, true);
-	}
-
-	// Write The property array
-	len = m_pdata->m_properties.size();
-	nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "Failed to write len of property array");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_properties[i].writeObject(ostrm, includeQualifiers);
-	}
+	m_pdata->m_keys.writeObject(ostrm);
+    m_pdata->m_properties.writeObject(ostrm);
 
 	if(includeQualifiers)
 	{
 		// Write The qualifier array
-		len = m_pdata->m_qualifiers.size();
-		nl = OW_hton32(len);
-		if(!ostrm.write((const char*)&nl, sizeof(nl)))
-			OW_THROW(OW_IOException, "Failed to write len of qualifier array");
-
-		for(OW_Int32 i = 0; i < len; i++)
-		{
-			m_pdata->m_qualifiers[i].writeObject(ostrm);
-		}
+		m_pdata->m_qualifiers.writeObject(ostrm);
 	}
 	else
 	{
-		nl = 0;
-		if(!ostrm.write((const char*)&nl, sizeof(nl)))
-			OW_THROW(OW_IOException, "Failed to write len of qualifier array");
+		OW_UInt32 nl = 0;
+		OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 	}
 }
 

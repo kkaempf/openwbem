@@ -431,7 +431,10 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			if (clen > 0)
 			{
 				// c_str() may contain NULL bytes which we DO want to write
-				m_ostr.write(ss->data(), clen);
+				if (!m_ostr.write(ss->data(), clen))
+				{
+					OW_THROW(OW_IOException, "Failed writing");
+				}
 			}
 		}
 		m_ostr.flush();

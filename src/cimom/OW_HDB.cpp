@@ -253,10 +253,7 @@ OW_HDB::findBlock(OW_File file, OW_Int32 size)
 		OW_Int32 coffset = m_hdrBlock.firstFree;
 		while(true)
 		{
-			if(readBlock(fblk, file, coffset) != sizeof(fblk))
-			{
-				OW_THROW(OW_HDBException, "Failed to read free block");
-			}
+			readBlock(fblk, file, coffset);
 
 			// If the current block size is greater than or equal to the
 			// size being requested, then we found a block in the file
@@ -310,32 +307,20 @@ OW_HDB::removeBlockFromFreeList(OW_File file, OW_HDBBlock& fblk)
 	// to the given blocks previous pointer
 	if(fblk.nextSib != -1)
 	{
-		if(readBlock(cblk, file, fblk.nextSib) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block from free list");
-		}
+		readBlock(cblk, file, fblk.nextSib);
 
 		cblk.prevSib = fblk.prevSib;
-		if(writeBlock(cblk, file, fblk.nextSib) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write free block in list");
-		}
+		writeBlock(cblk, file, fblk.nextSib);
 	}
 
 	// If block has a previous sibling, then set it's next sibling pointer
 	// to the given blocks next pointer
 	if(fblk.prevSib != -1)
 	{
-		if(readBlock(cblk, file, fblk.prevSib) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read free block in list");
-		}
+		readBlock(cblk, file, fblk.prevSib);
 
 		cblk.nextSib = fblk.nextSib;
-		if(writeBlock(cblk, file, fblk.prevSib) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to write block in free list");
-		}
+		writeBlock(cblk, file, fblk.prevSib);
 	}
 	else		// Block must be the 1st one in the free list
 	{
@@ -364,11 +349,7 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 		fblk.nextSib = -1;
 		fblk.prevSib = -1;
 
-		if(writeBlock(fblk, file, offset) != sizeof(fblk))
-		{
-			OW_THROW(OW_HDBException,
-				"Unable to write initial block to free list");
-		}
+		writeBlock(fblk, file, offset);
 
 		setFirstFreeOffSet(file, offset);
 		return;
@@ -383,10 +364,7 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 	while(coffset != -1)
 	{
 		loffset = coffset;
-		if(readBlock(cblk, file, coffset) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read block from free list");
-		}
+		readBlock(cblk, file, coffset);
 
 		if(fblk.size <= cblk.size)
 		{
@@ -400,18 +378,12 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 	{
 		cblk.nextSib = offset;
 
-		if(writeBlock(cblk, file, loffset) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Unable to write block to free list");
-		}
+		writeBlock(cblk, file, loffset);
 
 		fblk.prevSib = loffset;
 		fblk.nextSib = -1;
 
-		if(writeBlock(fblk, file, offset) != sizeof(fblk))
-		{
-			OW_THROW(OW_HDBException, "Unable to write block to free list");
-		}
+		writeBlock(fblk, file, offset);
 	}
 	else						// Insert before last node read
 	{
@@ -424,31 +396,19 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 			// Read the previous node from last read to set it's next
 			// sibling pointer
 			OW_HDBBlock tblk;
-			if(readBlock(tblk, file, cblk.prevSib) != sizeof(tblk))
-			{
-				OW_THROW(OW_HDBException, "Failed to read free block");
-			}
+			readBlock(tblk, file, cblk.prevSib);
 
 			tblk.nextSib = offset;
-			if(writeBlock(tblk, file, cblk.prevSib) != sizeof(tblk))
-			{
-				OW_THROW(OW_HDBException, "Failed to write free block");
-			}
+			writeBlock(tblk, file, cblk.prevSib);
 		}
 
 		fblk.nextSib = coffset;
 		fblk.prevSib = cblk.prevSib;
-		if(writeBlock(fblk, file, offset) != sizeof(fblk))
-		{
-			OW_THROW(OW_HDBException, "Unable to write block to free list");
-		}
+		writeBlock(fblk, file, offset);
 
 		// Set the prev sib pointer in last read to the node being added.
 		cblk.prevSib = offset;
-		if(writeBlock(cblk, file, coffset) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Unable to write block to free list");
-		}
+		writeBlock(cblk, file, coffset);
 	}
 }
 
@@ -473,29 +433,20 @@ OW_HDB::addRootNode(OW_File file, OW_HDBBlock& fblk, OW_Int32 offset)
 		fblk.prevSib = m_hdrBlock.lastRoot;
 
 		OW_HDBBlock cblk;
-		if(readBlock(cblk, file, m_hdrBlock.lastRoot) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to read a root node for update");
-		}
+		readBlock(cblk, file, m_hdrBlock.lastRoot);
 
 		cblk.nextSib = offset;
-		if(writeBlock(cblk, file, m_hdrBlock.lastRoot) != sizeof(cblk))
-		{
-			OW_THROW(OW_HDBException, "Failed to update a root node");
-		}
+		writeBlock(cblk, file, m_hdrBlock.lastRoot);
 
 		setLastRootOffset(file, offset);
 	}
 
-	if(writeBlock(fblk, file, offset) != sizeof(fblk))
-	{
-		OW_THROW(OW_HDBException, "Failed to write a root node for addition");
-	}
+	writeBlock(fblk, file, offset);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-int
+void
 OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 {
 	fblk.chkSum = 0;
@@ -505,21 +456,19 @@ OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 	int cc = file.write(&fblk, sizeof(fblk), offset);
 	if(cc != sizeof(fblk))
 	{
-		return -1;
+		OW_THROW(OW_HDBException, "Failed to write block");
 	}
-
-	return cc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC	
-int
+void
 OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 {
 	int cc = file.read(&fblk, sizeof(fblk), offset);
 	if(cc != sizeof(fblk))
 	{
-		return -1;
+		OW_THROW(OW_HDBException, "Failed to read block");
 	}
 
 	OW_UInt32 chkSum = fblk.chkSum;
@@ -529,8 +478,6 @@ OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 	{
 		OW_THROW(OW_HDBException, "CORRUPT DATA? Invalid check sum in node");
 	}
-
-	return cc;
 }
 
 //////////////////////////////////////////////////////////////////////////////

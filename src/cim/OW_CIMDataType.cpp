@@ -32,9 +32,9 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_CIM.hpp"
-#include "OW_IOException.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_BinIfcIO.hpp"
 #include <iostream>
 
 using std::istream;
@@ -281,22 +281,9 @@ OW_CIMDataType::readObject(istream &istrm)
 
 	OW_CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
 
-	if(!istrm.read((char*)&type, sizeof(type)))
-	{
-		OW_THROW(OW_IOException, "Unable to read type for OW_CIMDataType");
-	}
-
-	if(!istrm.read((char*)&numberOfElements, sizeof(numberOfElements)))
-	{
-		OW_THROW(OW_IOException, "Unable to read numberOfElements for "
-			"OW_CIMDataType");
-	}
-
-	if(!istrm.read((char*)&sizeRange, sizeof(sizeRange)))
-	{
-		OW_THROW(OW_IOException, "Unable to read size range for "
-			"OW_CIMDataType");
-	}
+	OW_BinIfcIO::read(istrm, &type, sizeof(type));
+	OW_BinIfcIO::read(istrm, &numberOfElements, sizeof(numberOfElements));
+	OW_BinIfcIO::read(istrm, &sizeRange, sizeof(sizeRange));
 
 	ref.readObject(istrm);
 
@@ -319,23 +306,11 @@ OW_CIMDataType::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
 
 	OW_UInt32 nl = OW_hton32(m_pdata->m_type);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Unable to write type for OW_CIMDataType");
-	}
-
+	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 	nl = OW_hton32(m_pdata->m_numberOfElements);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Unable to write numberOfElements for "
-			"OW_CIMDataType");
-	}
-
+	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 	nl = OW_hton32(m_pdata->m_sizeRange);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-	{
-		OW_THROW(OW_IOException, "Unable to write sizeRange for OW_CIMDataType");
-	}
+	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 
 	m_pdata->m_reference.writeObject(ostrm);
 }

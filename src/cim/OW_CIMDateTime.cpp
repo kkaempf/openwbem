@@ -34,9 +34,9 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
-#include "OW_IOException.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -222,10 +222,7 @@ void
 OW_CIMDateTime::readObject(istream &istrm)
 {
 	OW_DateTimeData dtdata;
-	if(!istrm.read((char*)&dtdata, sizeof(dtdata)))
-	{
-		OW_THROW(OW_IOException, "Failed to read data for date time");
-	}
+	OW_BinIfcIO::read(istrm, &dtdata, sizeof(dtdata));
 
 	dtdata.m_year = OW_ntoh16(dtdata.m_year);
 	dtdata.m_days = OW_ntoh32(dtdata.m_days);
@@ -253,10 +250,7 @@ OW_CIMDateTime::writeObject(ostream &ostrm) const
 	dtdata.m_microSeconds = OW_hton32(dtdata.m_microSeconds);
 	dtdata.m_utc = OW_hton16(dtdata.m_utc);
 
-	if(!ostrm.write((const char*)&dtdata, sizeof(dtdata)))
-	{
-		OW_THROW(OW_IOException, "Failed to write data for date time");
-	}
+	OW_BinIfcIO::write(ostrm, &dtdata, sizeof(dtdata));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -345,7 +339,7 @@ operator<< (ostream& ostr, const OW_CIMDateTime& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static OW_Int16 
+static OW_Int16
 getGMTOffset()
 {
 	static OW_Int16 gmtOffset = 0;

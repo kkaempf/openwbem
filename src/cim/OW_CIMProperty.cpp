@@ -33,6 +33,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::istream;
 using std::ostream;
@@ -485,36 +486,17 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 	m_pdata->m_propertyDataType.writeObject(ostrm);
 
 	OW_Int32 nv = OW_hton32(m_pdata->m_sizeDataType);
-	if(!ostrm.write((const char*)&nv, sizeof(nv)))
-	{
-		OW_THROW(OW_IOException, "failed to write data type size");
-	}
-
+	OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
 	m_pdata->m_propagated.writeObject(ostrm);
 
-	size_t len;
 	if(includeQualifiers)
 	{
-		len = m_pdata->m_qualifiers.size();
-		nv = OW_hton32(len);
-		if(!ostrm.write((const char*)&nv, sizeof(nv)))
-		{
-			OW_THROW(OW_IOException, "failed to write len of qualifier array");
-		}
-
-		for(size_t i = 0; i < len; i++)
-		{
-			OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
-			cq.writeObject(ostrm);
-		}
+		m_pdata->m_qualifiers.writeObject(ostrm);
 	}
 	else
 	{
-		nv = 0;
-		if(!ostrm.write((const char*)&nv, sizeof(nv)))
-		{
-			OW_THROW(OW_IOException, "failed to write len of qualifier array");
-		}
+		OW_UInt32 nv = 0;
+		OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
 	}
 
 	if(m_pdata->m_cimValue)
@@ -547,28 +529,12 @@ OW_CIMProperty::readObject(istream &istrm)
 	originClass.readObject(istrm);
 	propertyDataType.readObject(istrm);
 
-	if(!istrm.read((char*)&sizeDataType, sizeof(sizeDataType)))
-	{
-		OW_THROW(OW_IOException, "failed to read data type size");
-	}
+	OW_BinIfcIO::read(istrm, &sizeDataType, sizeof(sizeDataType));
 	sizeDataType = OW_ntoh32(sizeDataType);
 
 	propagated.readObject(istrm);
 
-	size_t len;
-	if(!istrm.read((char*)&len, sizeof(len)))
-	{
-		OW_THROW(OW_IOException, "failed to read len of qualifier array");
-	}
-	len = OW_ntoh32(len);
-
-	for(size_t i = 0; i < len; i++)
-	{
-		OW_CIMQualifier cq;
-		cq.readObject(istrm);
-		qualifiers.append(cq);
-	}
-
+	qualifiers.readObject(istrm);
 	OW_Bool isValue;
 	isValue.readObject(istrm);
 

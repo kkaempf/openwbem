@@ -35,6 +35,7 @@
 #include "OW_String.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
+#include "OW_IOException.hpp"
 
 DEFINE_EXCEPTION(Daemon);
 
@@ -71,7 +72,11 @@ public:
 	static void daemonize(const OW_Bool& dbgFlg, const OW_String& daemonName);
 	static int daemonShutdown(const OW_String& daemonName);
 	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
-	static void pushSig(int sig) { plat_upipe->write(sig); }
+	static void pushSig(int sig)
+	{
+		if (plat_upipe->write(sig) == -1)
+			OW_THROW(OW_IOException, "Failed writing signal to pipe");
+	}
 	static int popSig()
 	{
 		int tmp = -2;

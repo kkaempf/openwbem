@@ -39,8 +39,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_Array.hpp"
-#include "OW_IOException.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -395,18 +395,7 @@ OW_CIMObjectPath::readObject(istream& istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMOBJECTPATHSIG );
 	nameSpace.readObject(istrm);
 	objectName.readObject(istrm);
-
-	OW_Int32 len;
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "Failed to read length of key array");
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMProperty cp;
-		cp.readObject(istrm);
-		keys.append(cp);
-	}
+	keys.readObject(istrm);
 
 	if(m_pdata.isNull())
 	{
@@ -426,15 +415,7 @@ OW_CIMObjectPath::writeObject(ostream& ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMOBJECTPATHSIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);
 	m_pdata->m_objectName.writeObject(ostrm);
-	OW_Int32 len = m_pdata->m_keys.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "Failed to write length of key array");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_keys[i].writeObject(ostrm);
-	}
+	m_pdata->m_keys.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////

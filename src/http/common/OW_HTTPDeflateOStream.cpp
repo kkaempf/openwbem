@@ -115,6 +115,10 @@ OW_HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
 			{
 				rv = deflate(&m_zstr, flush);
 				int bytesToWrite = writeToStream();
+				if (bytesToWrite == -1)
+				{
+					return -1;
+				}
 				rval += bytesToWrite;
 			} while(rv == Z_OK);
 			break;
@@ -126,6 +130,10 @@ OW_HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
 			else if (m_zstr.avail_out < m_outBufSize)
 			{
 				int bytesToWrite = writeToStream();
+				if (bytesToWrite == -1)
+				{
+					return -1;
+				}
 				if (!m_ostr)
 				{
 					rval = -1;
@@ -146,7 +154,10 @@ int
 OW_HTTPDeflateOStreamBuffer::writeToStream()
 {
 	int bytesToWrite = m_outBufSize - m_zstr.avail_out;
-	m_ostr.write(reinterpret_cast<char*>(m_outBuf), bytesToWrite);
+	if (!m_ostr.write(reinterpret_cast<char*>(m_outBuf), bytesToWrite))
+	{
+		return -1;
+	}
 	m_zstr.next_out = m_outBuf;
 	m_zstr.avail_out = m_outBufSize;
 	return bytesToWrite;

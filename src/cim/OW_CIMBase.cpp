@@ -34,6 +34,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_IOException.hpp"
+#include "OW_BinIfcIO.hpp"
+
 #include <iostream>
 using std::istream;
 using std::ostream;
@@ -57,10 +59,7 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 
 	memcpy(expected.chars, sig, sizeof(expected.chars));
 
-	if(!istr.read(read.chars, sizeof(read.val)))
-	{
-		OW_THROW(OW_IOException, "failed to read signature");
-	}
+	OW_BinIfcIO::read(istr, read.chars, sizeof(read.val));
 
 	if(expected.val != read.val)
 	{
@@ -81,12 +80,7 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 void OW_CIMBase::writeSig( ostream& ostr, const char* const sig )
 {
 	OW_ASSERT(strlen(sig) == 4);
-
-	if(!ostr.write(sig, 4))
-	{
-		OW_THROW(OW_IOException,
-				format( "failed to write signature: %1", sig).c_str() );
-	}
+	OW_BinIfcIO::write(ostr, sig, 4);
 }
 
 

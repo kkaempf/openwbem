@@ -33,6 +33,7 @@
 #include "OW_SocketUtils.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_IOException.hpp"
 
 extern "C"
 {
@@ -86,7 +87,7 @@ OW_SocketBaseImpl::OW_SocketBaseImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd, 
+OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
 		OW_SocketAddress::AddressType addrType)
 	: OW_SelectableIFC()
 	, OW_IOIFC()
@@ -164,7 +165,7 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	m_out.clear();
 	m_inout.clear();
 
-	OW_ASSERT(addr.getType() == OW_SocketAddress::INET 
+	OW_ASSERT(addr.getType() == OW_SocketAddress::INET
 			|| addr.getType() == OW_SocketAddress::UDS);
 
 	if((m_sockfd = ::socket(addr.getType() == OW_SocketAddress::INET ?
@@ -299,33 +300,6 @@ OW_SocketBaseImpl::disconnect()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-#if 0
-/*
-void
-OW_SocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
-{
-	socklen_t len;
-	struct sockaddr_in addr;
-
-	len = sizeof(addr);
-	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
-		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillAddrParms: getsockname");
-
-	m_localAddress = addr.sin_addr.s_addr;
-	m_localPort = addr.sin_port;
-
-	len = sizeof(addr);
-	if(getpeername(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
-		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillAddrParms: getpeername");
-
-	m_peerAddress = addr.sin_addr.s_addr;
-	m_peerPort = addr.sin_port;
-}
-*/
-#endif
-//////////////////////////////////////////////////////////////////////////////
 // JBW this needs reworked.
 void
 OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
@@ -370,6 +344,8 @@ OW_SocketBaseImpl::fillUnixAddrParms() /*throw (OW_SocketException)*/
 	m_peerAddress.assignFromNativeForm(&addr, len);
 }
 
+static OW_Mutex guard;
+
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsException)
@@ -389,10 +365,18 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsExc
 		else
 		{
 			rc = writeAux(dataOut, dataOutLen);
-			if(m_traceFileOut.length() > 0)
+			if(m_traceFileOut.length() > 0 && rc > 0)
 			{
+				OW_MutexLock ml(guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
-				traceFile.write((const char*)dataOut, rc);
+				if (!traceFile)
+				{
+					OW_THROW(OW_IOException, "Failed opening socket dump file");
+				}
+				if (!traceFile.write((const char*)dataOut, rc))
+				{
+					OW_THROW(OW_IOException, "Failed writing to socket dump");
+				}
 			}
 		}
 	}
@@ -433,10 +417,18 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException)
 		else
 		{
 			rc = readAux(dataIn, dataInLen);
-			if(m_traceFileIn.length() > 0)
+			if(m_traceFileIn.length() > 0 && rc > 0)
 			{
+				OW_MutexLock ml(guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
-				traceFile.write((const char*)dataIn, rc);
+				if (!traceFile)
+				{
+					OW_THROW(OW_IOException, "Failed opening tracefile");
+				}
+				if (!traceFile.write((const char*)dataIn, rc))
+				{
+					OW_THROW(OW_IOException, "Failed writing to socket dump");
+				}
 			}
 		}
 	}

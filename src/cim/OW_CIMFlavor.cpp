@@ -29,7 +29,9 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMFlavor.hpp"
+#include "OW_BinIfcIO.hpp"
+#include "OW_String.hpp"
 
 #include <iostream>
 
@@ -69,10 +71,7 @@ OW_CIMFlavor::readObject(istream &istrm)
 {
 	OW_CIMBase::readSig( istrm, OW_CIMFLAVORSIG );
 
-	if(!istrm.read((char*)&m_flavor, sizeof(m_flavor)))
-	{
-		OW_THROW(OW_IOException, "Failed to read a flavor value");
-	}
+	OW_BinIfcIO::read(istrm, &m_flavor, sizeof(m_flavor));
 
 	m_flavor = OW_ntoh32(m_flavor);
 }
@@ -84,10 +83,7 @@ OW_CIMFlavor::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
 
 	OW_Int32 nflavor = OW_hton32(m_flavor);
-	if(!ostrm.write((const char*)&nflavor, sizeof(nflavor)))
-	{
-		OW_THROW(OW_IOException, "Failed to write a flavor value");
-	}
+	OW_BinIfcIO::write(ostrm, &nflavor, sizeof(nflavor));
 }
 
 

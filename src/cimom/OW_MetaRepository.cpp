@@ -270,7 +270,7 @@ OW_MetaRepository::enumQualifierTypes(const OW_String& ns)
 
 	if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
 	{
-		OW_THROW(OW_IOException, "Expected namespace node");
+		OW_THROW(OW_HDBException, "Expected namespace node");
 	}
 
 	node = hdl->getFirstChild(node);

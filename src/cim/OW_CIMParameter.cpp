@@ -31,9 +31,8 @@
 #include "OW_config.h"
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
-//#include "OW_XMLNode.hpp"
-//#include "OW_XMLParameters.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_BinIfcIO.hpp"
 
 using std::istream;
 using std::ostream;
@@ -181,22 +180,13 @@ OW_CIMParameter::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMETERSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
-	OW_Int32 len = m_pdata->m_qualifiers.size();
-	OW_Int32 nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "failed to write length of qualifier array");
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		m_pdata->m_qualifiers[i].writeObject(ostrm);
-	}
+	m_pdata->m_qualifiers.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMParameter::readObject(istream &istrm)
 {
-	OW_Int32 len;
 	OW_String name;
 	OW_CIMDataType dataType;
 	OW_CIMQualifierArray qualifiers;
@@ -204,18 +194,7 @@ OW_CIMParameter::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "failed to read length of qualifier array");
-
-	len = OW_ntoh32(len);
-
-	for(OW_Int32 i = 0; i < len; i++)
-	{
-		OW_CIMQualifier cq;
-		cq.readObject(istrm);
-		qualifiers.append(cq);
-	}
+	qualifiers.readObject(istrm);
 
 	if(m_pdata.isNull())
 	{

@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
-#include "OW_IOException.hpp"
+#include "OW_BinIfcIO.hpp"
 #include <iostream>
 
 using std::ostream;
@@ -42,10 +42,7 @@ void
 OW_Bool::writeObject(ostream& ostrm) const
 {
 	unsigned char v = (unsigned char)m_val;
-	if(!ostrm.write((const char*)&v, sizeof(v)))
-	{
-		OW_THROW(OW_IOException, "OW_Bool failed to write value");
-	}
+	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -53,11 +50,7 @@ void
 OW_Bool::readObject(istream& istrm)
 {
 	unsigned char v;
-	if(!istrm.read((char*)&v, sizeof(v)))
-	{
-		OW_THROW(OW_IOException, "OW_Bool failed to read value");
-	}
-
+	OW_BinIfcIO::read(istrm, &v, sizeof(v));
 	m_val = bool(v);
 }
 

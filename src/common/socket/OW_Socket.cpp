@@ -41,6 +41,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_SSLException.hpp"
 #include "OW_Exception.hpp"
+#include "OW_IOException.hpp"
 
 OW_UnnamedPipeRef OW_Socket::m_pUpipe;
 
@@ -61,7 +62,7 @@ OW_Socket::OW_Socket(OW_Bool isSSL)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Socket::OW_Socket(OW_SocketHandle_t fd, 
+OW_Socket::OW_Socket(OW_SocketHandle_t fd,
 	OW_SocketAddress::AddressType addrType, OW_Bool isSSL)
 		/*throw (OW_SocketException)*/
 {
@@ -106,7 +107,10 @@ OW_Socket::shutdownAllSockets()
 	OW_MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
 	b_gotShutDown = true;
-	m_pUpipe->write("die!");
+	if (m_pUpipe->write("die!") == -1)
+	{
+		OW_THROW(OW_IOException, "Failed writing to socket shutdown pipe");
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

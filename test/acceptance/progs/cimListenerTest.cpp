@@ -341,15 +341,13 @@ int main(int argc, char* argv[])
 
 		OW_String url(argv[1]);
 
-		#ifdef OW_DEBUG
-		OW_SocketBaseImpl::setDumpFiles("/tmp/indicationSocketIn", "/tmp/indicationSocketOut");
-		#endif
 		if (argc == 3)
 		{
 			OW_String sockDumpOut = argv[2];
 			OW_String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
+			cerr << "argc = " << argc << " sockDumpOut = " << sockDumpOut << endl;
 			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}

@@ -33,6 +33,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_RepositoryStreams.hpp"
+#include "OW_IOException.hpp"
 
 #define HDL_NOTINUSE		-1
 #define HDL_NOTCACHED	-2

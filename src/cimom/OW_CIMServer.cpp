@@ -40,6 +40,7 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_IOException.hpp"
 
 class OW_AccessMgr
 {

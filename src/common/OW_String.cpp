@@ -34,9 +34,9 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Array.hpp"
-#include "OW_IOException.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
+#include "OW_BinIfcIO.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -856,14 +856,12 @@ OW_String::toUpperCase()
 void
 OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 {
-	int len;
-	if(!istrm.read((char*)&len, sizeof(len)))
-		OW_THROW(OW_IOException, "OW_String failed to read len");
+	OW_UInt32 len;
+	OW_BinIfcIO::read(istrm, &len, sizeof(len));
 
 	len = OW_ntoh32(len);
 	char* bfr = new char[len];
-	if(!istrm.read(bfr, len))
-		OW_THROW(OW_IOException, "OW_String failed to read string");
+	OW_BinIfcIO::read(istrm, bfr, len);
 
 	m_buf = new ByteBuf(bfr, len-1);
 }
@@ -872,18 +870,16 @@ OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 void
 OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
-	int len = length()+1;
-	int nl = OW_hton32(len);
-	if(!ostrm.write((const char*)&nl, sizeof(nl)))
-		OW_THROW(OW_IOException, "OW_String failed to write len");
+	OW_UInt32 len = length()+1;
+	OW_UInt32 nl = OW_hton32(len);
+	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 
 	const char* p = "";
 	if (m_buf.getPtr())
 	{
 		p = m_buf->data();
 	}
-	if(!ostrm.write(p, len))
-		OW_THROW(OW_IOException, "OW_String failed to write string");
+	OW_BinIfcIO::write(ostrm, p, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -37,7 +37,6 @@
 #include "OW_Array.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMBase.hpp"
-#include "OW_IOException.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 
 #define OW_ROOT_CONTAINER "root"
@@ -160,7 +159,7 @@ protected:
 	void throwIfNotOpen()
 	{
 		if(!isOpen())
-			OW_THROW(OW_IOException, "Database is not open");
+			OW_THROW(OW_HDBException, "Database is not open");
 	}
 
 	OW_HDB m_hdb;

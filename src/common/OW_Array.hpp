@@ -49,6 +49,10 @@
 
 #include "OW_Types.h"
 
+class OW_BinIfcIO;
+
+#include <iosfwd>
+
 DEFINE_EXCEPTION(OutOfBounds);
 
 /**
@@ -180,6 +184,34 @@ public:
 	void resize(size_type new_size, const T& x) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->resize(new_size, x); }
 	void resize(size_type new_size) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->resize(new_size); }
 	void clear() { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->clear(); }
+
+	void readObject(std::istream& istr)
+	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
+		m_impl->clear();
+		OW_UInt32 len;
+		OW_BinIfcIO::read(istr, &len, sizeof(len));
+		len = OW_ntoh32(len);
+		
+		for(OW_UInt32 i = 0; i < len; i++)
+		{
+			T x;
+			x.readObject(istr);
+			m_impl->push_back(x);
+		}
+
+	}
+
+	void writeObject(std::ostream& ostrm) const
+	{
+		OW_UInt32 len = m_impl->size();
+		OW_UInt32 nl = OW_hton32(len);
+		OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
+		for(OW_UInt32 i = 0; i < len; i++)
+		{
+			m_impl->operator[](i).writeObject(ostrm);
+		}
+	}
 
 	friend OW_Bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
 	friend OW_Bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);

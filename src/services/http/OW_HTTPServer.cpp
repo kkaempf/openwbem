@@ -190,9 +190,13 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 				new OW_DigestAuthentication(passwdFile));
 		}
 
-		OW_SocketBaseImpl::setDumpFiles(
-			env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpIn",
-			env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpOut");
+		OW_String dumpPrefix = env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt);
+		if (dumpPrefix.length() > 0)
+		{
+			OW_SocketBaseImpl::setDumpFiles(
+				dumpPrefix + "/owHTTPSockDumpIn",
+				dumpPrefix + "/owHTTPSockDumpOut");
+		}
 	}
 	catch (const OW_StringConversionException& e)
 	{
@@ -466,7 +470,10 @@ OW_HTTPServer::shutdown()
 
 
 	OW_Socket::shutdownAllSockets();
-	m_upipe->write("shutdown");
+	if (m_upipe->write("shutdown") == -1)
+	{
+		OW_THROW(OW_IOException, "Failed writing to OW_HTTPServer shutdown pipe");
+	}
 	while (m_threadCountSemaphore->getCount() < m_options.maxConnections)
 	{
 		OW_Thread::yield();

@@ -40,7 +40,6 @@
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
-#include "OW_IOException.hpp"
 #include "OW_CIMException.hpp"
 
 #include "OW_CIMFwd.hpp"

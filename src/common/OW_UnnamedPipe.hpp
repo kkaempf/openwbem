@@ -46,6 +46,7 @@ DEFINE_EXCEPTION(UnnamedPipe);
 class OW_UnnamedPipe;
 typedef OW_Reference<OW_UnnamedPipe> OW_UnnamedPipeRef;
 
+// TODO: Make this class derive from OW_IOIFC
 class OW_UnnamedPipe : public OW_SelectableIFC
 {
 public:
@@ -57,9 +58,9 @@ public:
 	int read(OW_String& strData);
 	OW_String readAll();
 
-	std::istream& getInputStream() { return m_in; }
-	std::ostream& getOutputStream() { return m_out; }
-	std::iostream& getIOStream() { return m_inout; }
+//     std::istream& getInputStream() { return m_in; }
+//     std::ostream& getOutputStream() { return m_out; }
+//     std::iostream& getIOStream() { return m_inout; }
 
 	virtual int write(const void* data, int dataLen) = 0;
 	virtual int read(void* buffer, int bufferLen) = 0;
@@ -73,54 +74,55 @@ public:
 protected:
 	OW_UnnamedPipe()
 		: OW_SelectableIFC()
-		, m_strbuf(this)
-		, m_in(&m_strbuf)
-		, m_out(&m_strbuf)
-		, m_inout(&m_strbuf) {}
+//         , m_strbuf(this)
+//         , m_in(&m_strbuf)
+//         , m_out(&m_strbuf)
+//         , m_inout(&m_strbuf)
+	{}
 
 
 private:
-	class UnnamedPipeBuffer : public OW_BaseStreamBuffer
-	{
-	public:
-		UnnamedPipeBuffer(OW_UnnamedPipe* upipe) : m_upipe(upipe) {}
-
-	protected:
-		/**
-		 * Writes the buffer to the "device"
-		 * @param c A pointer to the start of the buffer
-		 * @param n the number of bytes to write
-		 *
-		 * @return -1 if error, number of bytes written otherwise.
-		 */
-		virtual int buffer_to_device(const char *c, int n)
-		{
-			if (m_upipe->write(c, n) != n)
-				return -1;
-			else
-				return 0;
-		}
-		/**
-		 * Fill the buffer from the "device"
-		 * @param c A pointer to the beginning of the buffer
-		 * @param n The number of bytes to be read into the buffer.
-		 *
-		 * @return -1 if no bytes are able to be read from the "device"
-		 *             (for instance, end of input stream).  Otherwise,
-		 *             return the number of bytes read into the buffer.
-		 */
-		virtual int buffer_from_device(char *c, int n)
-		{
-			return m_upipe->read(c, n);
-		}
-
-	private: OW_UnnamedPipe* m_upipe;
-	};
-
-	UnnamedPipeBuffer m_strbuf;
-	std::istream m_in;
-	std::ostream m_out;
-	std::iostream m_inout;
+//     class UnnamedPipeBuffer : public OW_BaseStreamBuffer
+//     {
+//     public:
+//         UnnamedPipeBuffer(OW_UnnamedPipe* upipe) : m_upipe(upipe) {}
+//
+//     protected:
+//         /**
+//          * Writes the buffer to the "device"
+//          * @param c A pointer to the start of the buffer
+//          * @param n the number of bytes to write
+//          *
+//          * @return -1 if error, number of bytes written otherwise.
+//          */
+//         virtual int buffer_to_device(const char *c, int n)
+//         {
+//             if (m_upipe->write(c, n) != n)
+//                 return -1;
+//             else
+//                 return 0;
+//         }
+//         /**
+//          * Fill the buffer from the "device"
+//          * @param c A pointer to the beginning of the buffer
+//          * @param n The number of bytes to be read into the buffer.
+//          *
+//          * @return -1 if no bytes are able to be read from the "device"
+//          *             (for instance, end of input stream).  Otherwise,
+//          *             return the number of bytes read into the buffer.
+//          */
+//         virtual int buffer_from_device(char *c, int n)
+//         {
+//             return m_upipe->read(c, n);
+//         }
+//
+//     private: OW_UnnamedPipe* m_upipe;
+//     };
+//
+//     UnnamedPipeBuffer m_strbuf;
+//     std::istream m_in;
+//     std::ostream m_out;
+//     std::iostream m_inout;
 
 };
 
