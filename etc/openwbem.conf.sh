@@ -230,8 +230,8 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 # http_server.SSL_cert specifies the location of the file that contains the
 # host's private key and certificate that will be used by Open SSL for HTTPS
 # communications. The default for this option is
-# /etc/ssl/private/hostkey+cert.pem
-http_server.SSL_cert = /etc/ssl/private/hostkey+cert.pem
+# @sysconfdir@/openwbem/hostkey+cert.pem
+http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
 
 ################################################################################
 # Tell the http server to use digest authorization
