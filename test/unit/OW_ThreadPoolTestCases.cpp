@@ -164,8 +164,9 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 	// let something happen...
 	Thread::yield();
 
-	// false doesn't means to ditch the work still in the queue and shutdown asap.
-	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 0);
+	// shutdown asap. But use 1 as the timeout so we don't need to definitively 
+	// cancel any threads (which can cause problems)
+	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
