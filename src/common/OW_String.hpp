@@ -220,17 +220,27 @@ public:
 		E_DISCARD_TOKENS,
 		E_RETURN_TOKENS
 	};
+	enum EEmptyTokenReturnFlag
+	{
+		E_SKIP_EMPTY_TOKENS,
+		E_RETURN_EMPTY_TOKENS
+	};
 	/**
 	 * Tokenize this String object using the given delimeters.
 	 * @param delims	A pointer to a char array of delimeters that separate
 	 * 	the tokens in this String object.
-	 * @param returnTokens If this flag is true, then the delimiter characters
-	 * 	are also returned as tokens.
+	 * @param returnTokens If this flag is E_RETURN_TOKENS, then the
+	 * 	delimiter characters are also returned as tokens, otherwise the
+	 * 	delimiters are removed.
+	 * @param returnEmptyTokens If this flag is E_RETURN_EMPTY_TOKENS, then
+	 * 	two sequential delimiters will result in an empty token being
+	 * 	returned.
 	 * @return An StringArray that contains the tokens from this String
 	 * object. If there are no tokens the StringArray will be empty.
 	 */
 	StringArray tokenize(const char* delims = " \n\r\t\v",
-		EReturnTokensFlag returnTokens = E_DISCARD_TOKENS) const;
+		EReturnTokensFlag returnTokens = E_DISCARD_TOKENS,
+		EEmptyTokenReturnFlag returnEmptyTokens = E_SKIP_EMPTY_TOKENS ) const;
 	/**
 	 * @return The c string representation of this String object. This
 	 * will be a null terminated character array.

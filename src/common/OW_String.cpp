@@ -1071,7 +1071,7 @@ String::toDateTime() const
 }
 //////////////////////////////////////////////////////////////////////////////
 StringArray
-String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
+String::tokenize(const char* delims, EReturnTokensFlag returnTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
 {
 	StringArray ra;
 	if(length() == 0 || delims == 0)
@@ -1089,6 +1089,7 @@ String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 	AutoPtrVec<char> data(new char[m_buf->length()+1]);
 	data[0] = 0;
 	int i = 0;
+  	bool last_was_delim = false;
 	while(*pstr)
 	{
 		if(String::strchr(delims, *pstr))
@@ -1098,14 +1099,20 @@ String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 				ra.append(String(data.get()));
 				data[0] = 0;
 			}
-			if(returnTokens)
+			if( (returnEmptyTokens == E_RETURN_EMPTY_TOKENS) && last_was_delim )
+			{
+				ra.append(String());
+			}
+			if( returnTokens == E_RETURN_TOKENS )
 			{
 				ra.append(String(*pstr));
-			}
+			}			
 			i = 0;
+			last_was_delim = true;
 		}
 		else
 		{
+			last_was_delim = false;  
 			data[i++] = *pstr;
 			data[i] = 0;
 		}
