@@ -380,7 +380,10 @@ setupSigHandler(bool dbgFlg)
 
 	//handleSignal(SIGALRM);
 	//handleSignal(SIGSTKFLT);
+}
 
+void installFatalSignalHandlers()
+{
 	// only do this in production mode. During development we want it to crash!
 #ifdef OW_DEBUG
 	handleSignalAux(SIGABRT, abortHandler);

@@ -82,6 +82,7 @@ namespace Platform
 	 * @throws DaemonException in the case execv() fails.
 	 */
 	void restartDaemon();
+	void installFatalSignalHandlers();
 };
 
 } // end namespace OpenWBEM
