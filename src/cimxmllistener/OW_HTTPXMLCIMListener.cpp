@@ -344,7 +344,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		}
 		catch (OW_CIMException& e)
 		{
-			if (e.getErrNo() == OW_CIMException::INVALID_CLASS)
+			if (e.getErrNo() == OW_CIMException::NOT_FOUND)
 			{
 				// the > 2.6 doesn't exist, try to get the 2.5 class
 				delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
