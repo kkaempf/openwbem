@@ -37,12 +37,15 @@
 #include "OW_String.hpp"
 
 #include <iostream>
+#include <iomanip>
+
 #include <sys/time.h>
 
 using namespace OpenWBEM;
 
 struct Nothing
 {
+	const char* name() const { return "Nothing"; }
 	void operator()() const
 	{
 	}
@@ -50,6 +53,7 @@ struct Nothing
 
 struct CreationDeletion
 {
+	const char* name() const { return "CreationDeletion"; }
 	void operator()() const
 	{
 		String foo;
@@ -58,6 +62,7 @@ struct CreationDeletion
 
 struct CharCreationDeletion
 {
+	const char* name() const { return "CharCreationDeletion"; }
 	void operator()() const
 	{
 		String foo("foo");
@@ -68,6 +73,7 @@ String s;
 
 struct CopyCreationDeletion
 {
+	const char* name() const { return "CopyCreationDeletion"; }
 	void operator()() const
 	{
 		String foo(s);
@@ -75,11 +81,11 @@ struct CopyCreationDeletion
 };
 
 template <typename FunctorT>
-void doTiming(const FunctorT& f)
+void doTiming(const FunctorT& f, size_t reps)
 {
 	struct timeval begin;
 	gettimeofday(&begin, NULL);
-	for (size_t i = 0; i < 100000; ++i)
+	for (size_t i = 0; i < reps; ++i)
 	{
 		f();
 	}
@@ -100,14 +106,16 @@ void doTiming(const FunctorT& f)
 		length.tv_sec = end.tv_sec - begin.tv_sec;
 		length.tv_usec = end.tv_usec - begin.tv_usec;
 	}
-	std::cout << length.tv_sec << ':' << length.tv_usec << std::endl;
+	std::cout << f.name() << " x " << reps << '\n';
+	std::cout << std::setw(8) << std::setfill(' ') << length.tv_sec << '.' << std::setw(6) << std::setfill('0') << length.tv_usec << std::endl;
 }
 
 int main(int argc, const char** argv)
 {
-	doTiming(Nothing());
-	doTiming(CreationDeletion());
-	doTiming(CharCreationDeletion());
-	doTiming(CopyCreationDeletion());
+	static size_t reps = 100000;
+	doTiming(Nothing(), reps);
+	doTiming(CreationDeletion(), reps);
+	doTiming(CharCreationDeletion(), reps);
+	doTiming(CopyCreationDeletion(), reps);
 }
 
