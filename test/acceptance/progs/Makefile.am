@@ -1,6 +1,7 @@
 noinst_PROGRAMS = \
 cimlistener \
 wqlTest1 \
+wqlTest2 \
 aclTest \
 CIMOMLocator \
 owcimclientcl \
@@ -59,6 +60,19 @@ $(CXXBINLINKFLAGS) \
 
 wqlTest1_SOURCES = \
 wqlTest1.cpp
+
+#wqlTest2
+wqlTest2_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/wql/common -lowwqlcommon \
+-L$(top_builddir)/src/wql -lowwql
+
+wqlTest2_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o wqlTest2
+
+wqlTest2_SOURCES = \
+wqlTest2.cpp
 
 #aclTest
 aclTest_LDADD = \
@@ -162,6 +176,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/cimxmllistener \
--I$(top_srcdir)/src/wql
+-I$(top_srcdir)/src/wql \
+-I$(top_srcdir)/src/wql/common
 
 AM_CXXFLAGS=-ftemplate-depth-25

@@ -1227,51 +1227,52 @@ void OW_WQLSelectStatementGen::visit_attr(
 	const attr* pattr
 	)
 {
-	/* TODO: This handles embedded properties
-	m_exprValue = DataType(*pattr->m_pstrRelationName1, DataType::ColumnNameType);
+	// This handles embedded properties or ClassName.PropertyName
+	m_attrName = *pattr->m_pstrRelationName1;
+	
+	// This call may append onto m_attrName
 	pattr->m_pattrs3->accept(this);
 
-	// TODO: What does indirection mean?
+	if (m_isPropertyList)
+	{
+		m_stmt.appendSelectPropertyName(m_attrName);
+	}
+	else
+	{
+		m_stmt.appendOperand(OW_WQLOperand(m_attrName, WQL_PROPERTY_NAME_TAG));
+		m_stmt.appendWherePropertyName(m_attrName);
+	}
+
+		
+	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
 		pattr->m_poptIndirection4->accept(this);
-		*/
-	OW_THROWCIM(OW_CIMException::INVALID_QUERY);
-	(void)pattr;
 }
 
 void OW_WQLSelectStatementGen::visit_attrs_strAttrName(
 	const attrs_strAttrName* pattrs_strAttrName
 	)
 {
-	/* TODO: This handles embedded properties
-	m_exprValue = DataType(m_exprValue.str + "." + *pattrs_strAttrName->m_pstrAttrName1, DataType::ColumnNameType);
-		*/
-	OW_THROWCIM(OW_CIMException::INVALID_QUERY);
-	(void)pattrs_strAttrName;
+	m_attrName = m_attrName + "." + *pattrs_strAttrName->m_pstrAttrName1;
 }
 
 void OW_WQLSelectStatementGen::visit_attrs_attrs_PERIOD_strAttrName(
 	const attrs_attrs_PERIOD_strAttrName* pattrs_attrs_PERIOD_strAttrName
 	)
 {
-	/* TODO: This handles embedded properties
+	// This handles embedded properties or ClassName.PropertyName
 	pattrs_attrs_PERIOD_strAttrName->m_pattrs1->accept(this);
-	m_exprValue = DataType(m_exprValue.str + "." + *pattrs_attrs_PERIOD_strAttrName->m_pstrAttrName3, DataType::ColumnNameType);
-		*/
-	OW_THROWCIM(OW_CIMException::INVALID_QUERY);
-	(void)pattrs_attrs_PERIOD_strAttrName;
+	m_attrName = m_attrName + "." + *pattrs_attrs_PERIOD_strAttrName->m_pstrAttrName3;
+
 }
 
 void OW_WQLSelectStatementGen::visit_attrs_attrs_PERIOD_ASTERISK(
 	const attrs_attrs_PERIOD_ASTERISK* pattrs_attrs_PERIOD_ASTERISK
 	)
 {
-	/* TODO: This handles embedded properties
+	// This handles embedded properties or ClassName.PropertyName
 	pattrs_attrs_PERIOD_ASTERISK->m_pattrs1->accept(this);
-	m_exprValue = DataType(m_exprValue.str + ".*", DataType::ColumnNameType);
-		*/
-	OW_THROWCIM(OW_CIMException::INVALID_QUERY);
-	(void)pattrs_attrs_PERIOD_ASTERISK;
+	m_attrName = m_attrName + ".*";
 }
 
 void OW_WQLSelectStatementGen::visit_targetEl_aExpr_AS_strColLabel(
@@ -1392,12 +1393,10 @@ void OW_WQLSelectStatementGen::visit_aExprConst_FALSEP(
 }
 
 void OW_WQLSelectStatementGen::visit_aExprConst_NULLP(
-	const aExprConst_NULLP* paExprConst_NULLP
+	const aExprConst_NULLP*
 	)
 {
-	// TODO: why can't we do NULL?
-	OW_THROWCIM(OW_CIMException::INVALID_QUERY);
-	(void)paExprConst_NULLP;
+	m_stmt.appendOperand(OW_WQLOperand());  // OW_WQLOperand defaults to NULL
 }
 
 

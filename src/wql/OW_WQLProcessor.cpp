@@ -1665,7 +1665,7 @@ void OW_WQLProcessor::visit_cExpr_strColId_optIndirection(
 {
 	m_exprValue = DataType(*pcExpr_strColId_optIndirection->m_pstrColId1, DataType::ColumnNameType);
 
-	// TODO: What does indirection do?
+	// TODO: What does indirection do? Array index
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
 		pcExpr_strColId_optIndirection->m_poptIndirection2->accept(this);
 }
@@ -1998,7 +1998,7 @@ void OW_WQLProcessor::visit_attr(
 	m_exprValue = DataType(*pattr->m_pstrRelationName1, DataType::ColumnNameType);
 	pattr->m_pattrs3->accept(this);
 
-	// TODO: What does indirection mean?
+	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
 		pattr->m_poptIndirection4->accept(this);
 }

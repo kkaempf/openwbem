@@ -752,6 +752,7 @@ public:
 private:
 	OW_WQLSelectStatement m_stmt;
 	bool m_isPropertyList;
+	OW_String m_attrName;
 };
 
 #endif
