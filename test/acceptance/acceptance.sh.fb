@@ -66,6 +66,7 @@ Install()
 	
 	PROVIDERS="\
 $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@ \
+$BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@ \
 $BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@ \
 $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.@lib_ext@ \
 $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.@lib_ext@ \
@@ -373,6 +374,7 @@ InstallProvider()
 		PROVIDER_DIR_NAME=`dirname $PROVIDER`
 		PROVIDER_BASE_NAME=`basename $PROVIDER .@lib_ext@`
 		cp $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl $STAGEDIR/$OWPKGLIBDIR/c++providers/$PROVIDER_BASE_NAME.@lib_ext@
+		rm $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl
 	else
 		ln -sf $PROVIDER $STAGEDIR/$OWPKGLIBDIR/c++providers/
 	fi
@@ -610,13 +612,9 @@ TestIndications()
 	fi
 
 	#create links to the test indication providers so they will be loaded
-
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
+	InstallProvider $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@
+	InstallProvider $BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@
+	InstallProvider $BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@
 
 	# turn on indications
 	EditConfig "s!owcimomd.disable_indications = .*!owcimomd.disable_indications = false!g"
