@@ -227,7 +227,7 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reu
         {
             OW_THROW(OW_SocketException,
                 format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
-                    filename, strerror(errno)).c_str());
+                    filename, errno, strerror(errno)).c_str());
         }
     }
 		
