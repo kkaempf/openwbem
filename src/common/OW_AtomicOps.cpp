@@ -39,12 +39,12 @@ namespace OpenWBEM
 Atomic_t::Atomic_t()
 	: val(0)
 {
-	pthread_spin_init(&spinlock);
+	pthread_spin_init(&spinlock, 0);
 }
 Atomic_t::Atomic_t(int i)
 	: val(i)
 {
-	pthread_spin_init(&spinlock);
+	pthread_spin_init(&spinlock, 0);
 }
 void AtomicInc(Atomic_t &v)
 {
