@@ -58,7 +58,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @param hdl The OW_CIMOMHandleIFC object that should be used to
 		 *		perform CIM operations during the associators call.
 		 *
-		 * @param assocName Defines the association that the objectName
+		 * @param assocClass Defines the association that the objectName
 		 * 	object should be associated to. The provider uses this
 		 * 	information to identify which association must be
 		 * 	traversed in case it supports more than one
@@ -137,10 +137,10 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual void associators(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMInstanceResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& assocClass,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole,
@@ -158,7 +158,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @param hdl The OW_CIMOMHandleIFC object that should be used for
 		 *		CIMOM access during the associatorNames call.
 		 *
-		 * @param assocName see associator parameter assocName
+		 * @param assocClass see associator parameter assocClass
 		 *
 		 * @param objectName see associator parameter objectName
 		 *
@@ -175,10 +175,10 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual void associatorNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMObjectPathResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& assocClass,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole ) = 0;
@@ -192,7 +192,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
 		 *		to references.
 		 *
-		 * @param assocName Defines the association that the objectName object
+		 * @param resultClass Defines the association that the objectName object
 		 * 	should be associated to.  The provider uses this information to
 		 * 	identify which association must be traversed in case it supports
 		 * 	more than one association.
@@ -220,10 +220,10 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual void references(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMInstanceResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_Bool& includeQualifiers,
 				const OW_Bool& includeClassOrigin,
@@ -238,7 +238,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
 		 *		to referencenames.
 		 *
-		 * @param assocName see the reference method.
+		 * @param resultClass see the reference method.
 		 *
 		 * @param objectName see the reference method.
 		 *
@@ -250,10 +250,10 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual void referenceNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMObjectPathResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
 				const OW_String& role ) = 0;
 };
 

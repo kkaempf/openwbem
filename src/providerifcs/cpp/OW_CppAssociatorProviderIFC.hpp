@@ -73,7 +73,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * This operation is used to enumerate CIM
 		 * Instances that are associated to a particular source CIM Object.
 		 *
-		 * @param assocName Defines the association that the objectName
+		 * @param assocClass Defines the association that the objectName
 		 * 	object should be associated to. The provider uses this
 		 * 	information to identify which association must be
 		 * 	traversed in case it supports more than one
@@ -152,10 +152,10 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 */
 		virtual void associators(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMInstanceResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& assocClass,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole,
@@ -170,7 +170,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * Instances that are associated to a particular source CIM
 		 * Instance.
 		 *
-		 * @param assocName see associator parameter assocName
+		 * @param assocClass see associator parameter assocClass
 		 * @param objectName see associator parameter objectName
 		 * @param resultClass see associator parameter resultClass
 		 * @param role see associator parameter role
@@ -181,10 +181,10 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 */
 		virtual void associatorNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMObjectPathResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& assocClass,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole ) = 0;
@@ -195,7 +195,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param assocName Defines the association that the objectName object
+		 * @param resultClass Defines the association that the objectName object
 		 * 	should be associated to.  The provider uses this information to
 		 * 	identify which association must be traversed in case it supports
 		 * 	more than one association.
@@ -221,10 +221,10 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 */
 		virtual void references(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMInstanceResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_Bool& includeQualifiers,
 				const OW_Bool& includeClassOrigin,
@@ -236,7 +236,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param assocName see the reference method.
+		 * @param resultClass see the reference method.
 		 * @param objectName see the reference method.
 		 * @param role see the reference method
 		 *
@@ -246,10 +246,10 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 */
 		virtual void referenceNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				const OW_String& ns,
-				const OW_CIMObjectPath& assocName,
-				const OW_CIMObjectPath& objectName,
 				OW_CIMObjectPathResultHandlerIFC& result,
+				const OW_String& ns,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
 				const OW_String& role ) = 0;
 
 		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return this; }

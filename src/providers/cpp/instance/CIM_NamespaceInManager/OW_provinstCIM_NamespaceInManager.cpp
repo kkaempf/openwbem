@@ -265,10 +265,10 @@ public:
 
 	virtual void associatorNames(
 		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &assocName, 
-		const OW_CIMObjectPath &objectName, 
 		OW_CIMObjectPathResultHandlerIFC &result, 
+		const OW_String &ns, 
+		const OW_CIMObjectPath &objectName, 
+		const OW_String &assocClass,
 		const OW_String &resultClass, 
 		const OW_String &role, 
 		const OW_String &resultRole) 
@@ -277,28 +277,28 @@ public:
 
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocName.getObjectName().equalsIgnoreCase("CIM_NamespaceInManager"));
+		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		InstanceToObjectPathHandler handler(result, ns);
-		associators(env, ns, assocName, objectName, handler, resultClass, role, resultRole, false, false, 0);
+		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, false, false, 0);
 	}
 
 	virtual void referenceNames(
 		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &assocName, 
-		const OW_CIMObjectPath &objectName, 
 		OW_CIMObjectPathResultHandlerIFC &result, 
+		const OW_String &ns, 
+		const OW_CIMObjectPath &objectName, 
+		const OW_String &resultClass,
 		const OW_String &role) 
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::referenceNames");
 		
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocName.getObjectName().equalsIgnoreCase("CIM_NamespaceInManager"));
+		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		InstanceToObjectPathHandler handler(result, ns);
-		references(env, ns, assocName, objectName, handler, role, false, false, 0);
+		references(env, handler, ns, objectName, resultClass, role, false, false, 0);
 	}
 
 	class AssociatorFilter : public OW_CIMInstanceResultHandlerIFC
@@ -352,10 +352,10 @@ public:
 
 	virtual void associators(
 		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &assocName, 
-		const OW_CIMObjectPath &objectName, 
 		OW_CIMInstanceResultHandlerIFC &result, 
+		const OW_String &ns, 
+		const OW_CIMObjectPath &objectName, 
+		const OW_String &assocClass,
 		const OW_String &resultClass, 
 		const OW_String &role, 
 		const OW_String &resultRole, 
@@ -368,7 +368,7 @@ public:
 
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocName.getObjectName().equalsIgnoreCase("CIM_NamespaceInManager"));
+		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		if (objectName.getObjectName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
 		{
@@ -429,10 +429,10 @@ public:
 
 	virtual void references(
 		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &assocName, 
-		const OW_CIMObjectPath &objectName, 
 		OW_CIMInstanceResultHandlerIFC &result, 
+		const OW_String &ns, 
+		const OW_CIMObjectPath &objectName, 
+		const OW_String &resultClass,
 		const OW_String &role, 
 		const OW_Bool &includeQualifiers, 
 		const OW_Bool &includeClassOrigin, 
@@ -441,7 +441,7 @@ public:
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::references");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
-		OW_ASSERT(assocName.getObjectName().equalsIgnoreCase("CIM_NamespaceInManager"));
+		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		if (objectName.getObjectName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
 		{

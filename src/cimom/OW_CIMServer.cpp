@@ -2077,23 +2077,22 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 			continue;
 		}
 
-		OW_CIMObjectPath assocClassPath(assocClasses[i].getName(),
-			path.getNameSpace());
+		OW_String resultClass(assocClasses[i].getName());
 
 		// If the object path enumeration pointer is null, then assume we
 		// are doing references and not referenceNames
 		if(piresult != 0)
 		{
 			assocP->references(
-				createProvEnvRef(aclInfo, m_env),
-				path.getNameSpace(), assocClassPath, path, *piresult, role, includeQualifiers,
+				createProvEnvRef(aclInfo, m_env), *piresult,
+				path.getNameSpace(), path, resultClass, role, includeQualifiers,
 				includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
 			assocP->referenceNames(
-				createProvEnvRef(aclInfo, m_env),
-				path.getNameSpace(), assocClassPath, path, *popresult, role);
+				createProvEnvRef(aclInfo, m_env), *popresult,
+				path.getNameSpace(), path, resultClass, role);
 		}
 		else
 		{
@@ -2262,22 +2261,20 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 			continue;
 		}
 
-		OW_CIMObjectPath assocClassPath(assocClasses[i].getName(),
-			path.getNameSpace());
+		OW_String assocClass(assocClasses[i].getName());
 
 		if(piresult != 0)
 		{
 			m_env->getLogger()->logDebug("Calling associators on associator provider for class: " + cc.getName());
-			assocP->associators(createProvEnvRef(aclInfo, m_env), path.getNameSpace(),
-				assocClassPath, path, *piresult, resultClass, role, resultRole,
+			assocP->associators(createProvEnvRef(aclInfo, m_env), *piresult, path.getNameSpace(),
+				path, assocClass, resultClass, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
 			m_env->getLogger()->logDebug("Calling associatorNames on associator provider for class: " + cc.getName());
-			assocP->associatorNames(createProvEnvRef(aclInfo, m_env),
-				path.getNameSpace(),
-				assocClassPath, path, *popresult, resultClass, role, resultRole);
+			assocP->associatorNames(createProvEnvRef(aclInfo, m_env), *popresult,
+				path.getNameSpace(), path, assocClass, resultClass, role, resultRole);
 		}
 		else
 		{

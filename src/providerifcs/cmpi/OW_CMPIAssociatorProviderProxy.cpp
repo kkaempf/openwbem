@@ -42,10 +42,10 @@
 void
 OW_CMPIAssociatorProviderProxy::associatorNames(
 	const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& assocName,
-	const OW_CIMObjectPath& objectName,
 	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& ns,
+	const OW_CIMObjectPath& objectName,
+	const OW_String& assocClass,
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole)
@@ -70,7 +70,7 @@ OW_CMPIAssociatorProviderProxy::associatorNames(
 
 	CMPI_ResultOnStack eRes(result);
 
-	char * aClass = assocName.getObjectName().allocateCString();
+	char * aClass = assocClass.allocateCString();
 	CMPIFlags flgs = 0;
 
 	char * _resultClass = resultClass.empty() ? 0 :
@@ -111,10 +111,10 @@ OW_CMPIAssociatorProviderProxy::associatorNames(
 void
 OW_CMPIAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
@@ -144,7 +144,7 @@ OW_CMPIAssociatorProviderProxy::associators(
 
 	CMPI_ResultOnStack eRes(result);
 
-	char * aClass = assocName.getObjectName().allocateCString();
+	char * aClass = assocClass.allocateCString();
 
 	if (propertyList)
 	{
@@ -204,10 +204,10 @@ OW_CMPIAssociatorProviderProxy::associators(
 void
 OW_CMPIAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_Bool& includeQualifiers,
 		const OW_Bool& includeClassOrigin,
@@ -235,7 +235,7 @@ OW_CMPIAssociatorProviderProxy::references(
 
 	CMPI_ResultOnStack eRes(result);
 
-	char * aClass = assocName.getObjectName().allocateCString();
+	char * aClass = resultClass.allocateCString();
 
 	if (propertyList)
 	{
@@ -288,10 +288,10 @@ OW_CMPIAssociatorProviderProxy::references(
 void
 OW_CMPIAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role)
 {
     env->getLogger()->
@@ -314,7 +314,7 @@ OW_CMPIAssociatorProviderProxy::referenceNames(
 
 	CMPI_ResultOnStack eRes(result);
 
-	char * aClass = assocName.getObjectName().allocateCString();
+	char * aClass = resultClass.allocateCString();
 	CMPIFlags flgs = 0;
 
 	char * _role = role.empty() ? 0 : role.allocateCString();

@@ -39,10 +39,10 @@
 void
 OW_PerlAssociatorProviderProxy::associatorNames(
 	const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& assocName,
-	const OW_CIMObjectPath& objectName,
 	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& ns,
+	const OW_CIMObjectPath& objectName,
+	const OW_String& assocClass,
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole)
@@ -61,7 +61,7 @@ OW_PerlAssociatorProviderProxy::associatorNames(
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+		OW_CIMObjectPath assocName2(assocClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -100,10 +100,10 @@ OW_PerlAssociatorProviderProxy::associatorNames(
 void
 OW_PerlAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
@@ -126,7 +126,7 @@ OW_PerlAssociatorProviderProxy::associators(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -189,10 +189,10 @@ OW_PerlAssociatorProviderProxy::associators(
 void
 OW_PerlAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_Bool& includeQualifiers,
 		const OW_Bool& includeClassOrigin,
@@ -212,7 +212,7 @@ OW_PerlAssociatorProviderProxy::references(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(resultClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -273,10 +273,10 @@ OW_PerlAssociatorProviderProxy::references(
 void
 OW_PerlAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role)
 {
     env->getLogger()->
@@ -294,7 +294,7 @@ OW_PerlAssociatorProviderProxy::referenceNames(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(resultClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path

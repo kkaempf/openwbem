@@ -74,10 +74,10 @@ namespace
 
 		virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& assocName,
-			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
+			const OW_String& ns,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& assocClass,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole,
@@ -86,10 +86,10 @@ namespace
 			const OW_StringArray* propertyList)
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associators called "
-				"ns = %1, assocName = %2, objectName = %3, resultClass = %4, "
+				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %5, resultRole = %6, includeQualifiers = %7, "
 				"includeClassOrigin = %8, propertyList = %9",
-				ns, assocName.toString(), objectName.toString(),
+				ns, objectName.toString(), assocClass,
 				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin, propertyList));
 
@@ -117,18 +117,18 @@ namespace
 
 		virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& assocName,
-			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
+			const OW_String& ns,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& assocClass,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associatorNames called "
-				"ns = %1, assocName = %2, objectName = %3, resultClass = %4, "
+				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %4, resultRole = %6",
-				ns, assocName.toString(), objectName.toString(), resultClass,
+				ns, objectName.toString(), assocClass, resultClass,
 				role, resultRole));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
@@ -156,20 +156,20 @@ namespace
 
 		virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& assocName,
-			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
+			const OW_String& ns,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_Bool& includeQualifiers,
 			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest references called "
-				"ns = %1, assocName = %2, objectName = %3, role = %4, "
+				"ns = %1, objectName = %2, resultClass = %3, role = %4, "
 				"includeQualifiers = %5, includeClassOrigin = %6, "
 				"propertyList = %7",
-				ns, assocName.toString(), objectName.toString(), role,
+				ns, objectName.toString(), resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
@@ -188,7 +188,7 @@ namespace
 			while (e1.hasMoreElements())
 			{
 				OW_CIMClass cc = hdl->getClass(ns,
-					assocName.getObjectName(), false);
+					resultClass, false);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci);
@@ -206,15 +206,15 @@ namespace
 
 		virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& assocName,
-			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
+			const OW_String& ns,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& resultClass,
 			const OW_String& role )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest referenceNames called "
-				"ns = %1, assocName = %2, objectName = %3, role = %4",
-				ns, assocName.toString(), objectName.toString(), role));
+				"ns = %1, objectName = %2, resultClass = %3, role = %4",
+				ns, objectName.toString(), resultClass, role));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(ns,
@@ -231,7 +231,7 @@ namespace
 			while (e1.hasMoreElements())
 			{
 				OW_CIMClass cc = hdl->getClass(ns,
-					assocName.getObjectName(), false);
+					resultClass, false);
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();

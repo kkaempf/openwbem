@@ -123,16 +123,50 @@ public:
 class TestAssociatorProvider : public OW_AssociatorProviderIFC
 {
 public:
-	virtual void associatorNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &)
+	virtual void associatorNames(
+		const OW_ProviderEnvironmentIFCRef &,
+		OW_CIMObjectPathResultHandlerIFC &,
+		const OW_String &,
+		const OW_CIMObjectPath &,
+		const OW_String &,
+		const OW_String &,
+		const OW_String &,
+		const OW_String &)
 	{
 	}
-	virtual void references(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *)
+	virtual void references(
+		const OW_ProviderEnvironmentIFCRef &,
+		OW_CIMInstanceResultHandlerIFC &,
+		const OW_String &,
+		const OW_CIMObjectPath &,
+		const OW_String &,
+		const OW_String &,
+		const OW_Bool &,
+		const OW_Bool &,
+		const OW_StringArray *)
 	{
 	}
-	virtual void referenceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &)
+	virtual void referenceNames(
+		const OW_ProviderEnvironmentIFCRef &,
+		OW_CIMObjectPathResultHandlerIFC &,
+		const OW_String &,
+		const OW_CIMObjectPath &,
+		const OW_String &,
+		const OW_String &)
 	{
 	}
-	virtual void associators(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *)
+	virtual void associators(
+		const OW_ProviderEnvironmentIFCRef &,
+		OW_CIMInstanceResultHandlerIFC &,
+		const OW_String &,
+		const OW_CIMObjectPath &,
+		const OW_String &,
+		const OW_String &,
+		const OW_String &,
+		const OW_String &,
+		const OW_Bool &,
+		const OW_Bool &,
+		const OW_StringArray *)
 	{
 	}
 };

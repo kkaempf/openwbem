@@ -40,10 +40,10 @@
 void
 OW_NPIAssociatorProviderProxy::associatorNames(
 	const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& assocName,
-	const OW_CIMObjectPath& objectName,
 	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& ns,
+	const OW_CIMObjectPath& objectName,
+	const OW_String& assocClass,
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole)
@@ -62,7 +62,7 @@ OW_NPIAssociatorProviderProxy::associatorNames(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -101,10 +101,10 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 void
 OW_NPIAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
@@ -127,7 +127,7 @@ OW_NPIAssociatorProviderProxy::associators(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -190,10 +190,10 @@ OW_NPIAssociatorProviderProxy::associators(
 void
 OW_NPIAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_Bool& includeQualifiers,
 		const OW_Bool& includeClassOrigin,
@@ -213,7 +213,7 @@ OW_NPIAssociatorProviderProxy::references(
         //  to avoid locking problems
 
         // initialize association class
-	OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(resultClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
@@ -274,10 +274,10 @@ OW_NPIAssociatorProviderProxy::references(
 void
 OW_NPIAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role)
 {
     env->getLogger()->
@@ -295,7 +295,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+		OW_CIMObjectPath assocName2(resultClass);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path

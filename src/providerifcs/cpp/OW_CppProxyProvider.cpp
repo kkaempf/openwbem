@@ -47,10 +47,10 @@ OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
 void
 OW_CppAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
@@ -59,7 +59,7 @@ OW_CppAssociatorProviderProxy::associators(
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->associators(env, ns, assocName, objectName, result, resultClass, role,
+	m_pProv->associators(env, result, ns, objectName, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -67,16 +67,16 @@ OW_CppAssociatorProviderProxy::associators(
 void
 OW_CppAssociatorProviderProxy::associatorNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->associatorNames(env, ns, assocName, objectName, result, resultClass,
+	m_pProv->associatorNames(env, result, ns, objectName, assocClass, resultClass,
 			role, resultRole);
 }
 
@@ -84,17 +84,17 @@ OW_CppAssociatorProviderProxy::associatorNames(
 void
 OW_CppAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_Bool& includeQualifiers,
 		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->references(env, ns, assocName, objectName, result, role,
+	m_pProv->references(env, result, ns, objectName, resultClass, role,
 			includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -102,14 +102,14 @@ OW_CppAssociatorProviderProxy::references(
 void
 OW_CppAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& assocName,
-		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
 		const OW_String& role)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->referenceNames(env, ns, assocName, objectName, result, role);
+	m_pProv->referenceNames(env, result, ns, objectName, resultClass, role);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
