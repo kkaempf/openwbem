@@ -1036,26 +1036,83 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// GetQualifier
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		hdl->getQualifierType(OW_CIMObjectPath("badQualifierType", "root"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
 
 
 	// SetQualifier
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMQualifierType cqt("fooqt");
+		cqt.setDataType(OW_CIMDataType::BOOLEAN);
+		cqt.addScope(OW_CIMScope::ANY);
+		hdl->setQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"), cqt);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 
 
 	// DeleteQualifier
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->deleteQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		hdl->deleteQualifierType(OW_CIMObjectPath("badQualifierType", "root"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
 
 
 	// EnumerateQualifiers
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->enumQualifierTypes(OW_CIMObjectPath("foo", "badNamespace"));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 
 

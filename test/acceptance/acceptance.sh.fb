@@ -25,6 +25,7 @@
 #        indications
 #        wql
 #        multiReq
+#        cimexceptions
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -348,6 +349,28 @@ TestSuite()
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
 
 	Diff $DIFF_FILE2$OWDIFFSUFFIX $DIFF_FILE "TestSuite: Diff test for owcimclientcl failed."
+
+	echo "Testsuite Passed"
+}
+
+#############################################################################
+TestCIMExceptions()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		cimexceptions >/dev/null 2>&1
+	then
+		return
+	fi
+
+	RestartDaemon
+
+    URL=$1
+    OUT_FILE=testCIMExceptions.out
+
+	echo "Executing test suite, saving output in " $RESULTDIR/$OUT_FILE
+	$BUILDDIR/test/acceptance/progs/testCIMExceptions $URL $RESULTDIR/testCIMExceptions \
+		> $RESULTDIR/$OUT_FILE 2>&1 || \
+		ExitWithFail "TestCIMExceptions: testCIMExceptions failed with an error.  "
 
 	echo "Testsuite Passed"
 }
@@ -740,6 +763,14 @@ if [ "$OWLONGTEST" = "1" ]; then
   TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuite.out"
   TestSuite "ipc://test1:pass1@localhost/cimom" "testsuiteUDSXML.out" "testsuite.out"
   TestSuite "http://test1:pass1@localhost:30926/owbinary" "testsuiteTCPBIN.out" "testsuite.out"
+fi
+
+TestCIMExceptions "http://test1:pass1@localhost:30926"
+
+if [ "$OWLONGTEST" = "1" ]; then
+  TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
+  TestCIMExceptions "ipc://test1:pass1@localhost/cimom"
+  TestCIMExceptions "http://test1:pass1@localhost:30926/owbinary"
 fi
 
 TestIndications

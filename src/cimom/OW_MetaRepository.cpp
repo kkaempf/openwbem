@@ -316,9 +316,17 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 
 	if (!qualType)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("CIM QualifierType \"%1\" not found in namespace: %2",
-				qualName, ns).c_str());
+		if (nameSpaceExists(ns))
+		{
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+				format("CIM QualifierType \"%1\" not found in namespace: %2",
+					qualName, ns).c_str());
+		}
+		else
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+				ns.c_str());
+		}
 	}
 	return qualType;
 }

@@ -553,7 +553,16 @@ OW_CIMServer::deleteQualifierType(const OW_CIMObjectPath& objPath,
 	if(!m_mStore.deleteQualifierType(objPath.getNameSpace(),
 		objPath.getObjectName()))
 	{
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
+		if (m_mStore.nameSpaceExists(objPath.getNameSpace()))
+		{
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+				objPath.getObjectName().c_str());
+		}
+		else
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+				objPath.getNameSpace().c_str());
+		}
 	}
 }
 
