@@ -128,7 +128,6 @@ $(top_builddir)/src/providers/cpp/instance/CIM_Namespace/libowprovinstCIM_Namesp
 $(top_builddir)/src/providers/cpp/instance/CIM_IndicationFilter/libowprovinstCIM_IndicationFilter.a \
 $(top_builddir)/src/providers/cpp/instance/CIM_IndicationSubscription/libowprovCIM_IndicationSubscription.a \
 $(top_builddir)/src/providers/cpp/instance/CIM_NamespaceInManager/libowprovinstCIM_NamespaceInManager.a \
-$(top_builddir)/src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/libowprovinstCIM_ObjectManagerCommunicationMechanism.a \
 $(top_builddir)/src/providers/cpp/instance/OW_NameSpace/libowprovinstOW_NameSpace.a \
 $(top_builddir)/src/providers/cpp/instance/OpenWBEM_ObjectManager/libowprovinstOpenWBEM_ObjectManager.a \
 $(top_builddir)/src/providers/cpp/polled/unloader/libowprovpollUnloader.a 
