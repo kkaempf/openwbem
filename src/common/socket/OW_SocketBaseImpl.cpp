@@ -78,6 +78,7 @@ using std::fstream;
 using std::ios;
 String SocketBaseImpl::m_traceFileOut;
 String SocketBaseImpl::m_traceFileIn;
+
 //////////////////////////////////////////////////////////////////////////////
 SocketBaseImpl::SocketBaseImpl()
 	: SelectableIFC()
@@ -91,9 +92,9 @@ SocketBaseImpl::SocketBaseImpl()
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(-1)
-	, m_sendTimeout(-1)
-	, m_connectTimeout(0)
+	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
+	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
+	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -112,9 +113,9 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(-1)
-	, m_sendTimeout(-1)
-	, m_connectTimeout(0)
+	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
+	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
+	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -144,9 +145,9 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_in(&m_streamBuf)
 	, m_out(&m_streamBuf)
 	, m_inout(&m_streamBuf)
-	, m_recvTimeout(-1)
-	, m_sendTimeout(-1)
-	, m_connectTimeout(-1)
+	, m_recvTimeout(Socket::INFINITE_TIMEOUT)
+	, m_sendTimeout(Socket::INFINITE_TIMEOUT)
+	, m_connectTimeout(Socket::INFINITE_TIMEOUT)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -226,7 +227,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}
 		fd_set rset, wset;
 		// here we spin checking for thread cancellation every so often.
-		UInt32 remainingMsWait = m_connectTimeout != -1 ? m_connectTimeout * 1000 : ~0U;
+		UInt32 remainingMsWait = m_connectTimeout != Socket::INFINITE_TIMEOUT ? m_connectTimeout * 1000 : ~0U;
 		do
 		{
 			FD_ZERO(&rset);
@@ -247,7 +248,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			Thread::testCancel();
 			n = ::select(maxfd+1, &rset, &wset, NULL, &tv);
 
-			if (m_connectTimeout != -1)
+			if (m_connectTimeout != Socket::INFINITE_TIMEOUT)
 			{
 				remainingMsWait -= std::min(waitMs, remainingMsWait);
 			}

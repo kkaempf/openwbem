@@ -106,6 +106,8 @@ public:
 	 * Disconnect the (presumably) open connection
 	 */
 	void disconnect() { m_impl->disconnect(); }
+
+	static const int INFINITE_TIMEOUT = -1;
 	/**
 	 * Set the receive timeout on the socket
 	 * @param seconds the number of seconds for the receive timeout

@@ -199,7 +199,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		pipefd = lUPipe->getInputHandle();
 	}
 	// here we spin checking for thread cancellation every so often.
-	UInt32 remainingMsWait = timeOutSecs != -1 ? timeOutSecs * 1000 : ~0U;
+	UInt32 remainingMsWait = timeOutSecs != Socket::INFINITE_TIMEOUT ? timeOutSecs * 1000 : ~0U;
 	do
 	{
 		FD_ZERO(&readfds);
@@ -230,7 +230,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingMsWait);
 		Thread::testCancel();
 		rc = ::select(maxfd+1, &readfds, &writefds, NULL, &tv);
-		if (timeOutSecs != -1)
+		if (timeOutSecs != Socket::INFINITE_TIMEOUT)
 		{
 			remainingMsWait -= std::min(waitMs, remainingMsWait);
 		}
