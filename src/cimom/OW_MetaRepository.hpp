@@ -35,9 +35,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-
-#include "OW_HashMap.hpp"
-#include <list>
+#include "OW_Cache.hpp"
 
 
 class OW_MetaRepository : public OW_GenericHDBRepository
@@ -262,26 +260,8 @@ private:
 
 	//void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 
-	// a list of classes that are cached.  The list is sorted by lru.  The least
-	// recently acessed class will be at begin(), and the most recenly acessed
-	// class will be at end()--;  The second part of the pair is the key that
-	// will be used in the index.
-	typedef std::list<std::pair<OW_CIMClass, OW_String> > class_cache_t;
-	// the index into the cache.  Speeds up finding a class when we need to.
-	typedef OW_HashMap<OW_String, class_cache_t::iterator> cache_index_t;
-
-	class_cache_t theCache;
-	cache_index_t theCacheIndex;
-	OW_Mutex cacheGuard;
-	OW_UInt32 maxCacheSize;
-
-	void addClassToCache(const OW_CIMClass& cc, const OW_String& key);
-
-	OW_CIMClass getClassFromCache(const OW_String& key);
-
-	void removeClassFromCache(const OW_String& key);
-
-	void clearClassCache();
+    OW_Cache<OW_CIMClass> m_classCache;
+    OW_Cache<OW_CIMQualifierType> m_qualCache;
 };
 
 #endif

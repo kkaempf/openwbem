@@ -677,9 +677,6 @@ private:
 		const OW_CIMClass& cls);
 	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cls);
 
-	void _validatePropagatedKeys(const OW_String& ns,
-		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
-
 private:
 	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className, 
 		OW_Bool localOnly,

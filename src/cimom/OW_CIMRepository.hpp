@@ -661,12 +661,17 @@ private:
 		OW_CIMClassResultHandlerIFC* pcresult,
 		const OW_ACLInfo& aclInfo);
 
+	void _validatePropagatedKeys(const OW_String& ns,
+		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
+
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;
 	OW_MetaRepository m_mStore;
 	OW_AssocDb m_classAssocDb;
 	OW_AssocDb m_instAssocDb;
 	OW_CIMOMEnvironmentRef m_env;
+
+    bool m_checkReferentialIntegrity;
 
 	friend class OW_CIMServer;
 };

@@ -46,74 +46,6 @@
 #define QUAL_CONTAINER "openwbemqualifiers"
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_MetaRepository::addClassToCache(const OW_CIMClass& cc, const OW_String& key)
-{
-	OW_MutexLock l(cacheGuard);
-
-	if(theCacheIndex.size() >= maxCacheSize)
-	{
-		if (!theCache.empty())
-		{
-			OW_String key = theCache.begin()->second;
-			theCache.pop_front();
-			theCacheIndex.erase(key);
-		}
-	}
-
-	class_cache_t::iterator i = theCache.insert(theCache.end(),
-		class_cache_t::value_type(cc, key));
-	theCacheIndex.insert(cache_index_t::value_type(key, i));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_MetaRepository::getClassFromCache(const OW_String& key)
-{
-	OW_MutexLock l(cacheGuard);
-	OW_CIMClass cc(OW_CIMNULL);
-	// look up key in the index
-	cache_index_t::iterator ii = theCacheIndex.find(key);
-	if (ii != theCacheIndex.end())
-	{
-		// we've got it, now get the iterator
-		class_cache_t::iterator i = ii->second;
-		// get the class
-		cc = i->first;
-		// now move the class to the end of the list
-		theCache.splice(theCache.end(),theCache,i);
-		// because splice doesn't actually move the elements, we don't have to
-		// update the iterator in theCacheIndex
-
-	}
-
-	return cc;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_MetaRepository::removeClassFromCache(const OW_String& key)
-{
-	OW_MutexLock l(cacheGuard);
-	cache_index_t::iterator i = theCacheIndex.find(key);
-	if (i != theCacheIndex.end())
-	{
-		class_cache_t::iterator ci = i->second;
-		theCacheIndex.erase(i);
-		theCache.erase(ci);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_MetaRepository::clearClassCache()
-{
-	OW_MutexLock l(cacheGuard);
-	theCache.clear();
-	theCacheIndex.clear();
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::~OW_MetaRepository()
 {
 }
@@ -253,10 +185,15 @@ OW_CIMQualifierType
 OW_MetaRepository::getQualifierType(const OW_String& ns,
 	const OW_String& qualName, OW_HDBHandle* phdl)
 {
-	// TODO: Use a cache here!
-
 	throwIfNotOpen();
 	OW_String qkey = _makeQualPath(ns, qualName);
+
+	OW_CIMQualifierType qualType = m_qualCache.getFromCache(qkey);
+
+    if (qualType)
+    {
+        return qualType;
+    }
 
 	OW_GenericHDBRepository* prep;
 	OW_HDBHandle lhdl;
@@ -272,7 +209,6 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 		lhdl = getHandle();
 	}
 
-	OW_CIMQualifierType qualType(OW_CIMNULL);
 	OW_HDBHandleLock hdl(prep, lhdl);
 	getCIMObject(qualType, qkey, hdl.getHandle());
 
@@ -290,6 +226,9 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 				ns.c_str());
 		}
 	}
+
+    m_qualCache.addToCache(qualType, qkey);
+
 	return qualType;
 }
 
@@ -317,6 +256,9 @@ OW_MetaRepository::deleteQualifierType(const OW_String& ns,
 	// If we've hit this point, we know this is a qualifier
 
 	hdl->removeNode(node);
+
+    m_qualCache.removeFromCache(qkey);
+
 	return true;
 }
 
@@ -367,6 +309,8 @@ OW_MetaRepository::_addQualifierType(const OW_String& ns,
 	}
 
 	addCIMObject(qt, qkey, pnode, hdl.getHandle());
+
+    m_qualCache.addToCache(qt, qkey);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -393,6 +337,8 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 		// If we made it to this point, we know we have a qualifier type
 		// So go ahead and update it.
 		updateCIMObject(qt, node, hdl.getHandle());
+        m_qualCache.removeFromCache(qkey);
+        m_qualCache.addToCache(qt, qkey);
 	}
 }
 
@@ -406,7 +352,7 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 {
 	throwIfNotOpen();
 	OW_String ckey = _makeClassPath(ns, className);
-	cc = getClassFromCache(ckey);
+	cc = m_classCache.getFromCache(ckey);
 	if(!cc)
 	{
 		OW_HDBHandleLock hdl(this, getHandle());
@@ -419,7 +365,7 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 			{
 				return OW_CIMException::FAILED;
 			}
-			addClassToCache(cc, ckey);
+			m_classCache.addToCache(cc, ckey);
 		}
 		else
 		{
@@ -509,7 +455,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 	}
 
 	OW_String pkey = _makeClassPath(ns, superID);
-	parentClass = getClassFromCache(pkey);
+	parentClass = m_classCache.getFromCache(pkey);
 	if(!parentClass)
 	{
 		// If there is no node or the parent node is a namespace
@@ -522,7 +468,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 
 		nodeToCIMObject(parentClass, pnode);
 		_resolveClass(parentClass, pnode, hdl, ns);
-		addClassToCache(parentClass, pkey);
+		m_classCache.addToCache(parentClass, pkey);
 	}
 
 	//if(parentClass.isAssociation())
@@ -643,7 +589,7 @@ OW_MetaRepository::deleteClass(const OW_String& ns, const OW_String& className)
 	OW_CIMClass theClassToDelete(OW_CIMNULL);
 	nodeToCIMObject(theClassToDelete, node);
 
-	removeClassFromCache(ckey);		// Ensure class is not in the cache
+	m_classCache.removeFromCache(ckey);		// Ensure class is not in the cache
 	return hdl->removeNode(node);
 }
 
@@ -722,25 +668,30 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	OW_String childName = childClass.getName();
 	OW_String parentName = childClass.getSuperClass();
 	OW_CIMClass parentClass(OW_CIMNULL);
-	OW_HDBNode parentNode;
+    OW_HDBNode parentNode;
 
 	if(!parentName.empty())
 	{
 		// Get the parent class
 		OW_String superID = _makeClassPath(ns, parentName);
-		parentNode = hdl.getNode(superID);
-		if(!parentNode)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-				superID.c_str());
-		}
+        //parentClass = m_classCache.getFromCache(superID);
 
-		parentClass = _getClassFromNode(parentNode, hdl, ns);
-		if(!parentClass)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-				superID.c_str());
-		}
+        if (!parentClass)
+        {
+            parentNode = hdl.getNode(superID);
+            if(!parentNode)
+            {
+                OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
+                    superID.c_str());
+            }
+
+            parentClass = _getClassFromNode(parentNode, hdl, ns);
+            if(!parentClass)
+            {
+                OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
+                    superID.c_str());
+            }
+        }
 	}
 
 	if(!parentClass)
@@ -950,7 +901,7 @@ OW_MetaRepository::modifyClass(const OW_String& ns,
 	nodeToCIMObject(clsToUpdate, node);
 
 	// At this point we know we are updating an OW_CIMClass
-	removeClassFromCache(ckey);
+	m_classCache.removeFromCache(ckey);
 	updateCIMObject(cimClass, node, hdl.getHandle());
 }
 
@@ -1133,7 +1084,7 @@ OW_MetaRepository::deleteNameSpace(const OW_String& nsName)
 		hdl->removeNode(node);
 	}
 
-	clearClassCache();
+	m_classCache.clearCache();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1267,11 +1218,11 @@ OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
 	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);
 	try
 	{
-		maxCacheSize = maxCacheSizeOpt.toUInt32();
+		m_classCache.setMaxCacheSize(maxCacheSizeOpt.toUInt32());
 	}
 	catch (const OW_StringConversionException&)
 	{
-		maxCacheSize = DEFAULT_MAX_CLASS_CACHE_SIZE;
+		m_classCache.setMaxCacheSize(DEFAULT_MAX_CLASS_CACHE_SIZE);
 	}
 }
 

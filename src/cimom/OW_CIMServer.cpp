@@ -1133,7 +1133,6 @@ OW_CIMServer::createInstance(
 	}
 	else
 	{
-		_validatePropagatedKeys(ns, lci, theClass); // TODO: Should we do this for providers too?
 		rval = m_cimRepository->createInstance(ns, lci, aclInfo);
 	}
 
@@ -2273,108 +2272,6 @@ OW_Bool
 OW_CIMServer::_isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc)
 {
 	return _getAssociatorProvider(ns, cc) ? true : false;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
-	const OW_CIMInstance& ci, const OW_CIMClass& theClass)
-{
-	OW_CIMObjectPathArray rv;
-	OW_CIMPropertyArray kprops = theClass.getKeys();
-	if(kprops.size() == 0)
-	{
-		return;
-	}
-
-	OW_Map<OW_String, OW_CIMPropertyArray> theMap;
-	OW_Bool hasPropagatedKeys = false;
-
-	// Look at all propagated key properties
-	for(size_t i = 0; i < kprops.size(); i++)
-	{
-		OW_CIMQualifier cq = kprops[i].getQualifier(
-			OW_CIMQualifier::CIM_QUAL_PROPAGATED);
-		if(!cq)
-		{
-			continue;
-		}
-
-		hasPropagatedKeys = true;
-		OW_CIMValue cv = cq.getValue();
-		if(!cv)
-		{
-			continue;
-		}
-
-		OW_String cls;
-		cv.get(cls);
-		if(cls.empty())
-		{
-			continue;
-		}
-		int idx = cls.indexOf('.');
-		OW_String ppropName;
-		if (idx != -1)
-		{
-			ppropName = cls.substring(idx+1);
-			cls = cls.substring(0,idx);
-		}
-
-		OW_CIMProperty cp = ci.getProperty(kprops[i].getName());
-		if(!cp || !cp.getValue())
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Cannot create instance. Propagated key field missing:"
-					" %1", kprops[i].getName()).c_str());
-		}
-		if (!ppropName.empty())
-		{
-			// We need to use the propagated property name, not the property
-			// name on ci.  e.g. Given
-			// [Propagated("fooClass.fooPropName")] string myPropName;
-			// we need to check for fooPropName as the key to the propagated
-			// instance, not myPropName.
-			cp.setName(ppropName);
-		}
-
-		theMap[cls].append(cp);
-	}
-
-	if(!hasPropagatedKeys)
-	{
-		return;
-	}
-
-	if(theMap.size() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"Cannot create instance. Propagated key properties missing");
-	}
-
-	OW_CIMObjectPath op(ci);
-	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
-	while(it != theMap.end())
-	{
-		OW_String clsname = it->first;
-		
-		op.setObjectName(clsname);
-		op.setKeys(it->second);
-
-		try
-		{
-			OW_ACLInfo intAclInfo;
-			getInstance(ns,op,false,true,true,0,0,intAclInfo);
-		}
-		catch (const OW_CIMException&)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Propagated keys refer to non-existent object: %1",
-					op.toString()).c_str());
-		}
-
-		it++;
-	}
 }
 
 
