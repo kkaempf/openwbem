@@ -64,10 +64,7 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getProviderInfo(OW_IndicationProviderInfo& info)
-	{
-		(void)info;
-	}
+	virtual void getProviderInfo(OW_IndicationProviderInfo& info);
 	
 	virtual void activateFilter(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -76,7 +73,7 @@ public:
 		const OW_String& nameSpace,
 		const OW_StringArray& classes, 
 		bool firstActivation
-		) = 0;
+		);
 
 	virtual void authorizeFilter(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -85,7 +82,7 @@ public:
 		const OW_String& nameSpace,
 		const OW_StringArray& classes, 
 		const OW_String& owner
-		) = 0;
+		);
 
 	virtual void deActivateFilter(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -94,7 +91,7 @@ public:
 		const OW_String& nameSpace,
 		const OW_StringArray& classes, 
 		bool lastActivation
-		) = 0;
+		);
 
 	virtual int mustPoll(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -102,9 +99,9 @@ public:
 		const OW_String& eventType, 
 		const OW_String& nameSpace,
 		const OW_StringArray& classes
-		) = 0;
+		);
 
-	virtual OW_CppIndicationProviderIFC* getIndicationProvider() { return this; }
+	virtual OW_CppIndicationProviderIFC* getIndicationProvider();
 };
 
 typedef OW_SharedLibraryReference< OW_CppIndicationProviderIFC > OW_CppIndicationProviderIFCRef;
