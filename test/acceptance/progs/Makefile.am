@@ -49,12 +49,11 @@ owprovideragent_LDADD = \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/authenticators/nonauthenticating -lnonauthenticatingauthentication \
--L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
