@@ -4,10 +4,10 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 3.0.3
+%define owversion 3.1.0
 
 Name        	: openwbem
-Version     	: %{owversion}
+Version     	: %{owversion}.pre1
 Release     	: 1
 Group       	: Administration/System
 
@@ -222,6 +222,7 @@ fi
 %defattr(-,root,root)
 %dir %{prefix}/include/openwbem
 %{prefix}/include/openwbem/*
+%{prefix}/share/aclocal/openwbem.m4
 
 #%Files doc
 #%defattr(-,root,root)
