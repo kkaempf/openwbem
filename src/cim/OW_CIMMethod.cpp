@@ -219,7 +219,7 @@ OW_CIMMethod::getReturnType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-int
+OW_Int32
 OW_CIMMethod::getReturnDataSize() const
 {
 	return m_pdata->m_returnDatatype.getSize();
@@ -317,13 +317,13 @@ OW_CIMMethod::readObject(istream &istrm)
 	returnDatatype.readObject(istrm);
 
 	// Read qualifiers
-	int len;
+	OW_Int32 len;
 	if(!istrm.read((char*)&len, sizeof(len)))
 		OW_THROW(OW_IOException, "Failed to read len of qualifiers");
 
 	len = OW_ntoh32(len);
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMQualifier cq;
 		cq.readObject(istrm);
@@ -336,7 +336,7 @@ OW_CIMMethod::readObject(istream &istrm)
 
 	len = OW_ntoh32(len);
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMParameter cp;
 		cp.readObject(istrm);
@@ -371,12 +371,12 @@ OW_CIMMethod::writeObject(ostream &ostrm) const
 	m_pdata->m_returnDatatype.writeObject(ostrm);
 
 	// Write qualifiers
-	int len = m_pdata->m_qualifiers.size();
-	int nl = OW_hton32(len);
+	OW_Int32 len = m_pdata->m_qualifiers.size();
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 		OW_THROW(OW_IOException, "Failed to write len of qualifiers");
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_qualifiers[i].writeObject(ostrm);
 	}
@@ -387,7 +387,7 @@ OW_CIMMethod::writeObject(ostream &ostrm) const
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 		OW_THROW(OW_IOException, "Failed to write len of parameters");
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_parameters[i].writeObject(ostrm);
 	}

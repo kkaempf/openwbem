@@ -135,7 +135,7 @@ OW_CIMQualifierType::getDataType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMQualifierType::getDataSize() const
 {
 	return m_pdata->m_dataType.getSize();
@@ -247,7 +247,7 @@ OW_CIMQualifierType::hasFlavor(const OW_CIMFlavor& flavorArg) const
 void
 OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 {
-	int flavor = newFlavor.getFlavor();
+	OW_Int32 flavor = newFlavor.getFlavor();
 	if(newFlavor)
 	{
 		if(!hasFlavor(newFlavor))
@@ -278,7 +278,7 @@ OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifierType::removeFlavor(const int flavor)
+OW_CIMQualifierType::removeFlavor(const OW_Int32 flavor)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	for(size_t i = 0; i < m_pdata->m_flavor.size(); i++)
@@ -340,7 +340,7 @@ OW_CIMQualifierType::writeObject(ostream &ostrm) const
 	m_pdata->m_dataType.writeObject(ostrm);
 
 	size_t len = m_pdata->m_scope.size();
-	int nl = OW_hton32(len);
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 	{
 		OW_THROW(OW_IOException, "failed to write len of scope array");

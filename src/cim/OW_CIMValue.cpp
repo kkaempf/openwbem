@@ -121,7 +121,7 @@ public:
 	void get(OW_CIMClassArray& arg) const;
 	void get(OW_CIMInstanceArray& arg) const;
 
-	int getArraySize() const;
+	OW_Int32 getArraySize() const;
 
 	operator void*() const;
 
@@ -414,7 +414,7 @@ OW_CIMValue::OW_CIMValue(const OW_CIMInstanceArray& x)
 	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)) {}
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMValue::getArraySize() const
 {
 	return m_impl->getArraySize();
@@ -1158,7 +1158,7 @@ OW_CIMValue::OW_CIMValueImpl::~OW_CIMValueImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 {
 	if(m_type == OW_CIMDataType::CIMNULL)
@@ -1171,7 +1171,7 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 		return 1;
 	}
 
-	int sz = 0;
+	OW_Int32 sz = 0;
 	switch(m_type)
 	{
 		case OW_CIMDataType::UINT8:
@@ -2558,10 +2558,10 @@ void
 readArray(istream& istrm, T& ra, int line, int convType)
 {
 	ra.clear();
-	int sz;
+	OW_Int32 sz;
 
 	readValue(istrm, sz, line, 2);
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 
@@ -2583,10 +2583,10 @@ static void
 readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 {
 	ra.clear();
-	int sz;
+	OW_Int32 sz;
 
 	readValue(istrm, sz, 0, 2);
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		OW_Real32 v = (OW_Real32) readRealValue(istrm);
 		ra.push_back(v);
@@ -2597,10 +2597,10 @@ static void
 readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 {
 	ra.clear();
-	int sz;
+	OW_Int32 sz;
 
 	readValue(istrm, sz, 0, 2);
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		OW_Real64 v = readRealValue(istrm);
 		ra.push_back(v);
@@ -2613,10 +2613,10 @@ void
 readObjectArray(istream& istrm, T& ra, int line)
 {
 	ra.clear();
-	int sz;
+	OW_Int32 sz;
 
 	readValue(istrm, sz, line, 2);
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 		v.readObject(istrm);
@@ -2851,10 +2851,10 @@ template<class T>
 void
 writeArray(ostream& ostrm, const T& ra, int line, int convType)
 {
-	int sz = ra.size();
+	OW_Int32 sz = ra.size();
 	writeValue(ostrm, sz, line, 2);
 
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 		switch(convType)
@@ -2873,10 +2873,10 @@ writeArray(ostream& ostrm, const T& ra, int line, int convType)
 static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra, int line)
 {
-	int sz = ra.size();
+	OW_Int32 sz = ra.size();
 	writeValue(ostrm, sz, line, 2);
 
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, (OW_Real64)ra[i]);
 	}
@@ -2885,10 +2885,10 @@ writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra, int line)
 static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra, int line)
 {
-	int sz = ra.size();
+	OW_Int32 sz = ra.size();
 	writeValue(ostrm, sz, line, 2);
 
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, ra[i]);
 	}
@@ -2899,10 +2899,10 @@ template<class T>
 void
 writeObjectArray(ostream& ostrm, const T& ra, int line)
 {
-	int sz = ra.size();
+	OW_Int32 sz = ra.size();
 	writeValue(ostrm, sz, line, 2);
 
-	for(int i = 0; i < sz; i++)
+	for(OW_Int32 i = 0; i < sz; i++)
 	{
 		ra[i].writeObject(ostrm);
 	}

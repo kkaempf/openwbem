@@ -58,7 +58,7 @@ struct OW_CIMProperty::PROPData
 	// For an array type property this states how large it
 	// was declared as
 	//
-	int m_sizeDataType;
+	OW_Int32 m_sizeDataType;
 	OW_String m_override;
 	OW_String m_originClass;
 	OW_CIMValue m_cimValue;
@@ -266,7 +266,7 @@ OW_CIMProperty::getDataType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMProperty::getSize() const
 {
 	return m_pdata->m_sizeDataType;
@@ -274,7 +274,7 @@ OW_CIMProperty::getSize() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMProperty::setDataSize(int size)
+OW_CIMProperty::setDataSize(OW_Int32 size)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_sizeDataType = size;
@@ -484,7 +484,7 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_propertyDataType.writeObject(ostrm);
 
-	int nv = OW_hton32(m_pdata->m_sizeDataType);
+	OW_Int32 nv = OW_hton32(m_pdata->m_sizeDataType);
 	if(!ostrm.write((const char*)&nv, sizeof(nv)))
 	{
 		OW_THROW(OW_IOException, "failed to write data type size");
@@ -537,7 +537,7 @@ OW_CIMProperty::readObject(istream &istrm)
 	OW_String originClass;
 	OW_CIMValue cimValue;
 	OW_CIMDataType propertyDataType;
-	int sizeDataType;
+	OW_Int32 sizeDataType;
 	OW_Bool propagated;
 	OW_CIMQualifierArray qualifiers;
 

@@ -117,10 +117,10 @@ public:
 		OW_HDBHandle hdl);
 
 	void addCIMObject(const OW_CIMBase& cimObj, const OW_String& key,
-		OW_HDBNode& parentNode, OW_HDBHandle hdl, unsigned int nodeFlags=0);
+		OW_HDBNode& parentNode, OW_HDBHandle hdl, OW_UInt32 nodeFlags=0);
 
 	void addCIMObject(const OW_CIMBase& cimObj, const OW_String& key,
-		OW_HDBHandle hdl, unsigned int nodeFlags=0);
+		OW_HDBHandle hdl, OW_UInt32 nodeFlags=0);
 
 	/**
 	 * @return An OW_HDBHandle object from the underlying OW_HDB object.

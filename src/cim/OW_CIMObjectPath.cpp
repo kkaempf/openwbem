@@ -396,12 +396,12 @@ OW_CIMObjectPath::readObject(istream& istrm)
 	nameSpace.readObject(istrm);
 	objectName.readObject(istrm);
 
-	int len;
+	OW_Int32 len;
 	if(!istrm.read((char*)&len, sizeof(len)))
 		OW_THROW(OW_IOException, "Failed to read length of key array");
 	len = OW_ntoh32(len);
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMProperty cp;
 		cp.readObject(istrm);
@@ -426,12 +426,12 @@ OW_CIMObjectPath::writeObject(ostream& ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMOBJECTPATHSIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);
 	m_pdata->m_objectName.writeObject(ostrm);
-	int len = m_pdata->m_keys.size();
-	int nl = OW_hton32(len);
+	OW_Int32 len = m_pdata->m_keys.size();
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 		OW_THROW(OW_IOException, "Failed to write length of key array");
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_keys[i].writeObject(ostrm);
 	}
@@ -450,7 +450,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 
 	OW_String protocol = "HTTP";
 	OW_String host = "localhost";
-	int port = 5988;
+	OW_Int32 port = 5988;
 
 	int ndx = instanceName.indexOf("://");
 	if(ndx != -1)

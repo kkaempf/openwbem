@@ -184,13 +184,13 @@ public:
 	/**
 	 * @return The size of the data associated with this property
 	 */
-	int getSize() const;
+	OW_Int32 getSize() const;
 
 	/**
 	 * Set the size of the data for this property.
 	 * @param size	The size of the data associated with property.
 	 */
-	void setDataSize(int size);
+	void setDataSize(OW_Int32 size);
 
 	/**
 	 * Set the overriding property name.

@@ -173,7 +173,7 @@ public:
 	 * that have a data type specified by the valueDataType parameter.
 	 */
 	OW_CIMPropertyArray getProperties(
-		int valueDataType = OW_CIMDataType::INVALID) const;
+		OW_Int32 valueDataType = OW_CIMDataType::INVALID) const;
 
 	/**
 	 * Set the properties associated with this instance.

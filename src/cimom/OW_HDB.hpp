@@ -205,21 +205,21 @@ public:
 	 * @return true if the update was successful. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool updateNode(OW_HDBNode& node, int dataLen, unsigned char* data);
+	OW_Bool updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data);
 
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param node		The node to turn the flags on in
 	 * @param flags	The flags to turn on in this node.
 	 */
-	void turnFlagsOn(OW_HDBNode& node, unsigned int flags);
+	void turnFlagsOn(OW_HDBNode& node, OW_UInt32 flags);
 
 	/**
 	 * Turn the user defined flags off in this node.
 	 * @param node		The node to turn the flags off in
 	 * @param flags	The flags to turn off in this node.
 	 */
-	void turnFlagsOff(OW_HDBNode& node, unsigned int flags);
+	void turnFlagsOff(OW_HDBNode& node, OW_UInt32 flags);
 
 	/**
 	 * Set the user value for this handle. The user value is not used by the

@@ -83,7 +83,7 @@ OW_CIMFlavor::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
 
-	int nflavor = OW_hton32(m_flavor);
+	OW_Int32 nflavor = OW_hton32(m_flavor);
 	if(!ostrm.write((const char*)&nflavor, sizeof(nflavor)))
 	{
 		OW_THROW(OW_IOException, "Failed to write a flavor value");

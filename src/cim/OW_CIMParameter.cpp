@@ -81,82 +81,6 @@ OW_CIMParameter::OW_CIMParameter(const OW_String& name) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-OW_CIMParameter::OW_CIMParameter(const OW_XMLNode& pnode)
-	:
-	OW_CIMElement(), m_pdata(new PARMData)
-{
-	OW_XMLNode qnode = pnode;
-	int paramToken = qnode.getToken();
-
-	if(paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not parameter XML");
-	}
-
-	//
-	// Fetch name
-	//
-	m_pdata->m_name = qnode.getAttribute(OW_XMLParameters::paramName);
-
-	//
-	// Get parameter type
-	//
-	switch(paramToken)
-	{
-		case OW_XMLNode::XML_ELEMENT_PARAMETER:
-			m_pdata->m_dataType = OW_CIMDataType::getDataType(
-				qnode.getAttribute(OW_XMLParameters::paramTypeAssign));
-			break;
-
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE:
-			m_pdata->m_dataType = OW_CIMDataType(
-				qnode.getAttribute(OW_XMLParameters::paramRefClass));
-			break;
-
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY:
-			m_pdata->m_dataType = OW_CIMDataType::getDataType(
-				qnode.getAttribute(OW_XMLParameters::paramTypeAssign));
-
-			if(!m_pdata->m_dataType)
-			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					"invalid parameter data type");
-			}
-
-			m_pdata->m_dataType.setToArrayType(
-				qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
-			break;
-
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY:
-			m_pdata->m_dataType = OW_CIMDataType(
-				qnode.getAttribute(OW_XMLParameters::paramRefClass));
-
-			m_pdata->m_dataType.setToArrayType(
-				qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
-			break;
-
-		default:
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"could not decode parameter XML");
-	}
-
-	//
-	// See if there are qualifiers
-	//
-	for(qnode = qnode.getChild();
-		 qnode && qnode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 qnode = qnode.getNext())
-	{
-		m_pdata->m_qualifiers.append(OW_CIMQualifier(qnode));
-	}
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMParameter::OW_CIMParameter(const OW_CIMParameter& x) :
 	OW_CIMElement(), m_pdata(x.m_pdata)
 {
@@ -213,7 +137,7 @@ OW_CIMParameter::getType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMParameter::getDataSize() const
 {
 	return m_pdata->m_dataType.getSize();
@@ -257,12 +181,12 @@ OW_CIMParameter::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMETERSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
-	int len = m_pdata->m_qualifiers.size();
-	int nl = OW_hton32(len);
+	OW_Int32 len = m_pdata->m_qualifiers.size();
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 		OW_THROW(OW_IOException, "failed to write length of qualifier array");
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_qualifiers[i].writeObject(ostrm);
 	}
@@ -272,7 +196,7 @@ OW_CIMParameter::writeObject(ostream &ostrm) const
 void
 OW_CIMParameter::readObject(istream &istrm)
 {
-	int len;
+	OW_Int32 len;
 	OW_String name;
 	OW_CIMDataType dataType;
 	OW_CIMQualifierArray qualifiers;
@@ -286,7 +210,7 @@ OW_CIMParameter::readObject(istream &istrm)
 
 	len = OW_ntoh32(len);
 
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMQualifier cq;
 		cq.readObject(istrm);

@@ -61,10 +61,10 @@ public:
 struct OW_HDBHeaderBlock
 {
 	char signature[OW_HDBSIGLEN];
-	unsigned int major;
-	long firstRoot;
-	long lastRoot;
-	long firstFree;
+	OW_UInt32 major;
+	OW_Int32 firstRoot;
+	OW_Int32 lastRoot;
+	OW_Int32 firstFree;
 };
 
 /**
@@ -74,15 +74,15 @@ struct OW_HDBBlock
 {
 	OW_HDBBlock() { memset(this, 0, sizeof(OW_HDBBlock)); }
 
-	unsigned int chkSum;		// The check sum of all following fields
+	OW_UInt32 chkSum;		// The check sum of all following fields
 	unsigned char isFree;	// Node is free block
 	size_t size;				// The size of this block (used in free list)
-	unsigned int flags;		// User defined flags
-	long nextSib;				// offset of next sibling node in the file
-	long prevSib;				// offset of prev sibling node in the file
-	long parent;				// offset of the parent node in the file
-	long firstChild;			// offset of the first child node for this node
-	long lastChild;			// offset of the last child node for this node
+	OW_UInt32 flags;		// User defined flags
+	OW_Int32 nextSib;				// offset of next sibling node in the file
+	OW_Int32 prevSib;				// offset of prev sibling node in the file
+	OW_Int32 parent;				// offset of the parent node in the file
+	OW_Int32 firstChild;			// offset of the first child node for this node
+	OW_Int32 lastChild;			// offset of the last child node for this node
 	size_t keyLength;			// length of the key component of the data
 	size_t dataLength;		// length of data not including key
 	// Data follows

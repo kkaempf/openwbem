@@ -104,7 +104,7 @@ public:
 	/**
 	 * @return The size of the data for OW_CIMQualifierType object.
 	 */
-	int getDataSize() const;
+	OW_Int32 getDataSize() const;
 
 	/**
 	 * @return The default value for this OW_CIMQualifierType object.
@@ -161,7 +161,7 @@ public:
 	 * Remove a flavor from this OW_CIMQualifierType.
 	 * @param flavor The integral value of the flavor to remove.
 	 */
-	void removeFlavor(const int flavor);
+	void removeFlavor(const OW_Int32 flavor);
 
 	/**
 	 * @return The flavors for this OW_CIMQualifierType object.

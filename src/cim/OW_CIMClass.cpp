@@ -727,7 +727,7 @@ OW_CIMClass::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 void
 OW_CIMClass::readObject(istream &istrm)
 {
-	int len;
+	OW_Int32 len;
 	OW_String name;
 	OW_String pcName;
 	OW_CIMQualifierArray qra;
@@ -757,7 +757,7 @@ OW_CIMClass::readObject(istream &istrm)
 	len = OW_ntoh32(len);
 
 	// Read qualifier array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMQualifier qual;
 		qual.readObject(istrm);
@@ -771,7 +771,7 @@ OW_CIMClass::readObject(istream &istrm)
 	len = OW_ntoh32(len);
 
 	// Read properties array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMProperty prop;
 		prop.readObject(istrm);
@@ -785,7 +785,7 @@ OW_CIMClass::readObject(istream &istrm)
 	len = OW_ntoh32(len);
 
 	// Read properties array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		OW_CIMMethod meth;
 		meth.readObject(istrm);
@@ -818,15 +818,15 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	m_pdata->m_isKeyed.writeObject(ostrm);
 
 	// Write len of quailifer array
-	int len = m_pdata->m_qualifiers.size();
-	int nl = OW_hton32(len);
+	OW_Int32 len = m_pdata->m_qualifiers.size();
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 	{
 		OW_THROW(OW_IOException, "Failed to write size of qualifier array");
 	}
 
 	// Write qualifier array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_qualifiers[i].writeObject(ostrm);
 	}
@@ -840,7 +840,7 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	}
 
 	// Write properties array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_properties[i].writeObject(ostrm);
 	}
@@ -854,7 +854,7 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	}
 
 	// Write method array
-	for(int i = 0; i < len; i++)
+	for(OW_Int32 i = 0; i < len; i++)
 	{
 		m_pdata->m_methods[i].writeObject(ostrm);
 	}

@@ -77,7 +77,7 @@ public:
 	 * @return true if the given integral value is a valid flavor. Otherwise
 	 * false.
 	 */
-	static OW_Bool validFlavor(int iflavor)
+	static OW_Bool validFlavor(OW_Int32 iflavor)
 	{
 		return(iflavor > INVALID && iflavor < LASTVALUE);
 	}
@@ -93,7 +93,7 @@ public:
 	 * 	OW_CIMFlavor::TRANSLATE			= qualifier can be specified in multiple
 	 *												  locales
 	 */
-	OW_CIMFlavor(int iflavor) :
+	OW_CIMFlavor(OW_Int32 iflavor) :
 		OW_CIMBase(), m_flavor(iflavor)
 	{
 		if(!validFlavor(iflavor))
@@ -206,11 +206,11 @@ public:
 	/**
 	 * @return the integral value of this OW_CIMFlavor object.
 	 */
-	int getFlavor() const {  return m_flavor; }
+	OW_Int32 getFlavor() const {  return m_flavor; }
 
 private:
 
-	static OW_Bool validScope(int iflavor)
+	static OW_Bool validScope(OW_Int32 iflavor)
 	{
 		//
 		// NOTE: has implicit knowledge of flavor values!
@@ -219,7 +219,7 @@ private:
 	}
 
 	/** The integral representation of this flavor */
-	int m_flavor;
+	OW_Int32 m_flavor;
 };
 
 #endif	// __OW_CIMFLAVOR_HPP__

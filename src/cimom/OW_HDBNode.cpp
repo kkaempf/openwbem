@@ -63,7 +63,7 @@ OW_HDBNode::HDBNodeData::~HDBNodeData()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_HDBNode::HDBNodeData& 
+OW_HDBNode::HDBNodeData&
 OW_HDBNode::HDBNodeData::operator= (const OW_HDBNode::HDBNodeData& x)
 {
 	m_blk = x.m_blk;
@@ -110,7 +110,7 @@ OW_HDBNode::OW_HDBNode(long offset, OW_HDBHandle& hdl) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_HDBNode::OW_HDBNode(const OW_String& key, int dataLen, 
+OW_HDBNode::OW_HDBNode(const OW_String& key, int dataLen,
 	const unsigned char* data) :
 	m_pdata(NULL)
 {
@@ -147,7 +147,7 @@ OW_HDBNode::OW_HDBNode(const OW_String& key, int dataLen,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_HDBNode::read(long offset, OW_HDBHandle& hdl)
 {
 	if(offset <= 0 || !hdl)
@@ -290,8 +290,8 @@ OW_HDBNode::reload(OW_HDBHandle& hdl)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool 
-OW_HDBNode::turnFlagsOn(OW_HDBHandle& hdl, unsigned int flags)
+OW_Bool
+OW_HDBNode::turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags)
 {
 	if(m_pdata.isNull())
 		return false;
@@ -312,8 +312,8 @@ OW_HDBNode::turnFlagsOn(OW_HDBHandle& hdl, unsigned int flags)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool 
-OW_HDBNode::turnFlagsOff(OW_HDBHandle& hdl, unsigned int flags)
+OW_Bool
+OW_HDBNode::turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags)
 {
 	if(m_pdata.isNull())
 		return false;
@@ -334,7 +334,7 @@ OW_HDBNode::turnFlagsOff(OW_HDBHandle& hdl, unsigned int flags)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool 
+OW_Bool
 OW_HDBNode::updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data)
 {
 	OW_Bool cc = false;
@@ -452,7 +452,7 @@ OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
 			OW_THROW(OW_HDBException, "Failed to write node key");
 		}
 
-		if(file.write(m_pdata->m_bfr, m_pdata->m_bfrLen) 
+		if(file.write(m_pdata->m_bfr, m_pdata->m_bfrLen)
 			!= size_t(m_pdata->m_bfrLen))
 		{
 			OW_THROW(OW_HDBException, "Failed to write node data");
@@ -525,7 +525,7 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, long offset)
 		{
 			if(OW_HDB::writeBlock(fblk, file, m_pdata->m_blk.parent) != SZ(fblk))
 			{
-				OW_THROW(OW_HDBException, 
+				OW_THROW(OW_HDBException,
 					"Failed to write block for offset update");
 			}
 		}
@@ -566,7 +566,7 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, long offset)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_HDBNode::addChild(OW_HDBHandle& hdl, OW_HDBNode& arg)
 {
 	if(!arg)
@@ -707,7 +707,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 
 		OW_Bool changed = false;
 
-		// If this was the first child in the list, then update the 
+		// If this was the first child in the list, then update the
 		// first child pointer in the parent block
 		if(fblk.firstChild == m_pdata->m_offset)
 		{
@@ -715,7 +715,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 			fblk.firstChild = m_pdata->m_blk.nextSib;
 		}
 
-		// If this was the last child in the list, then update the 
+		// If this was the last child in the list, then update the
 		// last child pointer in the parent block
 		if(fblk.lastChild == m_pdata->m_offset)
 		{
@@ -767,14 +767,14 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // removeBlock is used to add a OW_HDBBlock and all of it's children to the
 // DB's deletion list. The next sibling and previous sibling fields are
-// ignored. The intention is for this method to be called from the 
+// ignored. The intention is for this method to be called from the
 // OW_HFileNodeImpl remove method only! This method is recursive, so all stack
 // optimizations are welcome.
 #define LMAX(a, b)	((int(a) > int(b)) ? (a) : (b))
 void
 OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 {
-	OW_AutoPtrVec<unsigned char> 
+	OW_AutoPtrVec<unsigned char>
 		pbfr(new unsigned char[LMAX(SZ(fblk), fblk.keyLength)]);
 
 	OW_File file = hdl.getFile();
@@ -783,7 +783,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 	{
 		while(coffset > 0)
 		{
-			if(OW_HDB::readBlock(*((OW_HDBBlock*)pbfr.get()), file, coffset) 
+			if(OW_HDB::readBlock(*((OW_HDBBlock*)pbfr.get()), file, coffset)
 				!= SZ(fblk))
 			{
 				OW_THROW(OW_HDBException, "Failed to read block for removal");
@@ -792,7 +792,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 			// Save current offset for call to removeBlock
 			long toffset = coffset;
 
-			// Get pointer to previous sibling 
+			// Get pointer to previous sibling
 			coffset = ((OW_HDBBlock*)pbfr.get())->prevSib;
 
 			// Recursive call to removeBlock. *pblk.get() will be modified.
@@ -801,7 +801,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 	}
 
 	// Need to read the key for this block to update the index
-	if(file.read(pbfr.get(), fblk.keyLength, offset + SZ(fblk)) 
+	if(file.read(pbfr.get(), fblk.keyLength, offset + SZ(fblk))
 		!= size_t(fblk.keyLength))
 	{
 		OW_THROW(OW_HDBException, "Failed to read node's key for removal");

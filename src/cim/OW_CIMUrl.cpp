@@ -92,7 +92,7 @@ OW_CIMUrl::OW_CIMUrl(const OW_String& spec) :
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
 OW_CIMUrl::OW_CIMUrl(const OW_String& protocol, const OW_String& host,
-	const OW_String& file, int port) :
+	const OW_String& file, OW_Int32 port) :
 	OW_CIMBase(), m_pdata(new URLData)
 {
 	m_pdata->m_protocol = protocol;
@@ -165,7 +165,7 @@ OW_String
 OW_CIMUrl::getHost() const {  return m_pdata->m_host; }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMUrl::getPort() const {  return m_pdata->m_port; }
 
 //////////////////////////////////////////////////////////////////////////////

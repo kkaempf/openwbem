@@ -39,7 +39,7 @@
 class OW_HDBHandle;
 class OW_HDB;
 
-//////////////////////////////////////////////////////////////////////////////				 
+//////////////////////////////////////////////////////////////////////////////				
 class OW_HDBNode
 {
 private:
@@ -53,10 +53,10 @@ private:
 	
 		OW_HDBBlock m_blk;
 		OW_String m_key;
-		int m_bfrLen;
+		OW_Int32 m_bfrLen;
 		unsigned char* m_bfr;
-		long m_offset;
-		long m_version;
+		OW_Int32 m_offset;
+		OW_Int32 m_version;
 	};
 
 public:
@@ -86,7 +86,7 @@ public:
 	 * @param x		The OW_HDBNode to assign to this one.
 	 * @return A reference to this OW_HDBNode.
 	 */
-	OW_HDBNode& operator= (const OW_HDBNode& x) 
+	OW_HDBNode& operator= (const OW_HDBNode& x)
 	{
 		m_pdata = x.m_pdata;
 		return *this;
@@ -95,7 +95,7 @@ public:
 	/**
 	 * @return The value of the flags field on this OW_HDBNode object.
 	 */
-	int getFlags()
+	OW_UInt32 getFlags()
 	{
 		return m_pdata->m_blk.flags;
 	}
@@ -105,7 +105,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if all flags are on in this node. Othewise false.
 	 */
-	OW_Bool areAllFlagsOn(unsigned int flags) const
+	OW_Bool areAllFlagsOn(OW_UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) == flags);
 	}
@@ -115,7 +115,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if some flags are on in this node. Othewise false.
 	 */
-	OW_Bool areSomeFlagsOn(unsigned int flags) const
+	OW_Bool areSomeFlagsOn(OW_UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) != 0);
 	}
@@ -127,7 +127,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	OW_Bool turnFlagsOn(OW_HDBHandle& hdl, unsigned int flags);
+	OW_Bool turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags);
 
 	/**
 	 * Turn the user defined flags off in this node.
@@ -136,7 +136,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	OW_Bool turnFlagsOff(OW_HDBHandle& hdl, unsigned int flags);
+	OW_Bool turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags);
 
 	/**
 	 * @return The key associated with this OW_HDBNode.
@@ -146,7 +146,7 @@ public:
 	/**
 	 * @return The length of the data associated with this OW_HDBNode.
 	 */
-	int getDataLen() const { return m_pdata->m_bfrLen; }
+	OW_Int32 getDataLen() const { return m_pdata->m_bfrLen; }
 
 	/**
 	 * @return A pointer to the data associated with this OW_HDBNode.
@@ -186,9 +186,9 @@ public:
 	/**
 	 * @return true if this OW_HDBNode has any siblings.
 	 */
-	OW_Bool isSibling() const 
-	{ 
-		return (hasNextSibling() > 0 || hasPreviousSibling() > 0); 
+	OW_Bool isSibling() const
+	{
+		return (hasNextSibling() > 0 || hasPreviousSibling() > 0);
 	}
 
 	/**

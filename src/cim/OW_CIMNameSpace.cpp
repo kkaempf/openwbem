@@ -158,7 +158,7 @@ OW_CIMNameSpace::getHostUrl() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMNameSpace::getPortNumber() const
 {
 	return m_pdata->m_url.getPort();

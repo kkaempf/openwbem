@@ -199,7 +199,7 @@ public:
 	 * @param flavor The integral value of the flavor to remove from this
 	 * 	qualifier.
 	 */
-	void removeFlavor(int flavor);
+	void removeFlavor(OW_Int32 flavor);
 
 	/**
 	 * @return true if this qualifier has a value. Otherwise false.

@@ -696,7 +696,7 @@ OW_MetaRepository::createClass(const OW_String& ns, OW_CIMClass& cimClass)
 	}
 
 
-	unsigned int flags = (cimClass.isAssociation()) ? OW_HDBCLSASSOCNODE_FLAG
+	OW_UInt32 flags = (cimClass.isAssociation()) ? OW_HDBCLSASSOCNODE_FLAG
 		: 0;
 
 	addCIMObject(cimClass, ckey, pnode, hdl.getHandle(), flags);

@@ -35,7 +35,7 @@
 #include <iostream>
 #include <cstring>
 
-static unsigned int calcCheckSum(unsigned char* src, int len);
+static OW_UInt32 calcCheckSum(unsigned char* src, OW_Int32 len);
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HDB::OW_HDB() :
@@ -240,7 +240,7 @@ OW_HDB::setFirstFreeOffSet(OW_File file, long offset)
 // size. If no block in the free list is large enough or the free list
 // is empty, then the offset to the end of the file is returned
 long
-OW_HDB::findBlock(OW_File file, int size)
+OW_HDB::findBlock(OW_File file, OW_Int32 size)
 {
 	OW_MutexLock l(m_guard);
 	long offset = -1;
@@ -261,7 +261,7 @@ OW_HDB::findBlock(OW_File file, int size)
 			// If the current block size is greater than or equal to the
 			// size being requested, then we found a block in the file
 			// we can use.
-			if(fblk.size >= (unsigned int)size)
+			if(fblk.size >= (OW_UInt32)size)
 			{
 				offset = coffset;
 				break;
@@ -499,7 +499,7 @@ int
 OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, long offset)
 {
 	fblk.chkSum = 0;
-	unsigned int chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
+	OW_UInt32 chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
 	fblk.chkSum = chkSum;
 
 	int cc = file.write(&fblk, sizeof(fblk), offset);
@@ -522,7 +522,7 @@ OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, long offset)
 		return -1;
 	}
 
-	unsigned int chkSum = fblk.chkSum;
+	OW_UInt32 chkSum = fblk.chkSum;
 	fblk.chkSum = 0;
 	fblk.chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
 	if(chkSum != fblk.chkSum)
@@ -633,15 +633,15 @@ OW_HDB::flushIndex()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static unsigned int
-calcCheckSum(unsigned char* src, int len)
+static OW_UInt32
+calcCheckSum(unsigned char* src, OW_Int32 len)
 {
-	unsigned int cksum = 0;
-	int i;
+	OW_UInt32 cksum = 0;
+	OW_Int32 i;
 
 	for(i = 0; i < len; i++)
 	{
-		cksum += (unsigned int) src[i];
+		cksum += (OW_UInt32) src[i];
 	}
 
 	return cksum;
@@ -906,7 +906,7 @@ OW_HDBHandle::removeNode(const OW_String& key)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_HDBHandle::updateNode(OW_HDBNode& node, int dataLen, unsigned char* data)
+OW_HDBHandle::updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data)
 {
 	OW_Bool cc = false;
 	if(node)
@@ -932,7 +932,7 @@ OW_HDBHandle::updateNode(OW_HDBNode& node, int dataLen, unsigned char* data)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDBHandle::turnFlagsOn(OW_HDBNode& node, unsigned int flags)
+OW_HDBHandle::turnFlagsOn(OW_HDBNode& node, OW_UInt32 flags)
 {
 	if(node)
 	{
@@ -952,7 +952,7 @@ OW_HDBHandle::turnFlagsOn(OW_HDBNode& node, unsigned int flags)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDBHandle::turnFlagsOff(OW_HDBNode& node, unsigned int flags)
+OW_HDBHandle::turnFlagsOff(OW_HDBNode& node, OW_UInt32 flags)
 {
 	if(node)
 	{

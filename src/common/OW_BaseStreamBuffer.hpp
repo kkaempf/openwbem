@@ -117,31 +117,4 @@ private:
 
 };
 
-
-class OW_BaseStreamBufferNonBuffered : public std::streambuf
-{
-public: 
-	OW_BaseStreamBufferNonBuffered();
-
-protected:
-	int overflow(int c = EOF);
-	int uflow();
-	int underflow();
-	std::streamsize xsputn(const char* s, std::streamsize n);
-	std::streamsize xsgetn(char* s, std::streamsize n);
-	virtual int buffer_to_device(const char *c, int n) = 0;
-	virtual int buffer_from_device(char *c, int n) = 0;
-
-private:
-	char m_charBuf;
-	bool m_takeFromBuf;
-
-	// prohibit copying and assigning
-	OW_BaseStreamBufferNonBuffered(const OW_BaseStreamBufferNonBuffered&);
-
-	OW_BaseStreamBufferNonBuffered& operator=(
-		const OW_BaseStreamBufferNonBuffered&);
-};
-
-
 #endif

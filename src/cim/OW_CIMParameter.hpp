@@ -130,7 +130,7 @@ public:
 	/**
 	 * @return The size of the data for this parameter.
 	 */
-	int getDataSize() const;
+	OW_Int32 getDataSize() const;
 
 	/**
 	 * Get a qualifier by name for this parameter.

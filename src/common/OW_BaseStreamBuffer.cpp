@@ -33,7 +33,7 @@
 #include <iostream>
 #include <string.h>
 
-OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize, 
+OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize,
 		const OW_String& direction)
 	: m_bufSize(bufSize), m_inputBuffer(NULL), m_outputBuffer(NULL)
 {
@@ -50,7 +50,7 @@ OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_BaseStreamBuffer::initBuffers()
 {
 	initPutBuffer();
@@ -58,14 +58,14 @@ OW_BaseStreamBuffer::initBuffers()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_BaseStreamBuffer::initPutBuffer()
 {
 	setp(m_outputBuffer, m_outputBuffer + m_bufSize);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_BaseStreamBuffer::initGetBuffer()
 {
 	setg(m_inputBuffer, m_inputBuffer, m_inputBuffer);
@@ -138,7 +138,7 @@ OW_BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
 
 
 //////////////////////////////////////////////////////////////////////////////
-int 
+int
 OW_BaseStreamBuffer::underflow()
 {
 	if (gptr() < egptr())
@@ -169,132 +169,4 @@ OW_BaseStreamBuffer::buffer_in()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-int
-OW_BaseStreamBufferNonBuffered::overflow(int c)
-{
-	if (c != EOF)
-	{
-		char ch = (char)c;
-		if (buffer_to_device(&ch, 1) < 0)
-		{
-			return EOF;
-		}
-		else
-		{
-			return c;
-		}
-	}
-	return 0; // will this work? instead of traits_type::not_eof(c)
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int
-OW_BaseStreamBufferNonBuffered::underflow()
-{
-	if (m_takeFromBuf)
-	{
-		return (unsigned char)m_charBuf;
-	}
-	else
-	{
-		char c;
-		if (buffer_from_device(&c, 1) < 0)
-		{
-			return EOF;
-		}
-		else
-		{
-			m_takeFromBuf = true;
-			m_charBuf = c;
-			return (unsigned char)c;
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-int
-OW_BaseStreamBufferNonBuffered::uflow()
-{
-	if (m_takeFromBuf)
-	{
-		m_takeFromBuf = false;
-		return (unsigned char)m_charBuf;
-	}
-	else
-	{
-		char c;
-		if (buffer_from_device(&c, 1) < 0)
-		{
-			return EOF;
-		}
-		else
-		{
-			m_charBuf = c;
-			return (unsigned char)c;
-		}
-	}
-}
-
-std::streamsize 
-OW_BaseStreamBufferNonBuffered::xsputn(const char* s, std::streamsize n)
-{
-	if (buffer_to_device(s, n) < 0)
-	{
-		return EOF;
-	}
-	else
-	{
-		return n;
-	}
-}
-
-
-std::streamsize 
-OW_BaseStreamBufferNonBuffered::xsgetn(char* s, std::streamsize n)
-{
-	if (n == 0)
-	{
-		return 0;
-	}
-
-	if (n == 1)
-	{
-		int ufl = uflow();
-		if (ufl != EOF)
-		{
-			*s = (char)ufl;
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	char* bufToWrite = s;
-	std::streamsize numToRead = n;
-	int numToAdd = 0; // number to adjust rval
-	if (m_takeFromBuf)
-	{
-		m_takeFromBuf = false;
-		*bufToWrite = m_charBuf;
-		++bufToWrite;
-		numToRead = n - 1;
-		numToAdd = 1;
-	}
-
-	std::streamsize rval = buffer_from_device(bufToWrite, numToRead);
-	if (rval < 0)
-	{
-		return EOF;
-	}
-	else return (rval + numToAdd);
-}
-
-
-OW_BaseStreamBufferNonBuffered::OW_BaseStreamBufferNonBuffered()
-	: std::streambuf(), m_charBuf(0), m_takeFromBuf(false)
-{
-	setg(0,0,0);
-}
 

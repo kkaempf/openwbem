@@ -70,7 +70,7 @@ public:
 	 * Create a scope with a specified scoping value.
 	 * @param scopeVal The scoping value.
 	 */
-	OW_CIMScope(int scopeVal) : OW_CIMBase(), m_val(scopeVal)
+	OW_CIMScope(OW_Int32 scopeVal) : OW_CIMBase(), m_val(scopeVal)
 	{
 		if(!validScope(scopeVal))
 			m_val = BAD;
@@ -102,7 +102,7 @@ public:
 	/**
 	 * @return The scoping value of this scope.
 	 */
-	int getScope() const {  return m_val; }
+	OW_Int32 getScope() const {  return m_val; }
 
 	/**
 	 * Determine if another scope is equal to this one.
@@ -164,12 +164,12 @@ public:
 
 private:
 
-	static OW_Bool validScope(int val)
+	static OW_Bool validScope(OW_Int32 val)
 	{
 		return (val > BAD && val < MAXSCOPE);
 	}
 
-	int m_val;
+	OW_Int32 m_val;
 };
 
 #endif

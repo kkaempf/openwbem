@@ -74,7 +74,7 @@ public:
 	 * @param port The port component of the URL
 	 */
 	OW_CIMUrl(const OW_String& protocol, const OW_String& host,
-		const OW_String& file, int port=0);
+		const OW_String& file, OW_Int32 port=0);
 
 	/**
 	 * Copy constructor
@@ -172,7 +172,7 @@ public:
 	/**
 	 * @return The port component of the URL
 	 */
-	int getPort() const;
+	OW_Int32 getPort() const;
 
 	/**
 	 * @return The file component of the URL

@@ -59,8 +59,8 @@ struct OW_CIMDataType::DTData
 	}
 
 	OW_CIMDataType::Type m_type;
-	int m_numberOfElements;
-	int m_sizeRange;
+	OW_Int32 m_numberOfElements;
+	OW_Int32 m_sizeRange;
 	OW_String m_reference;
 };
 
@@ -88,7 +88,7 @@ OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type, int size) :
+OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type, OW_Int32 size) :
 	OW_CIMBase(), m_pdata(NULL)
 {
 	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
@@ -178,7 +178,7 @@ OW_CIMDataType::getType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_Int32
 OW_CIMDataType::getSize() const
 {
 	return m_pdata->m_numberOfElements;
@@ -194,7 +194,7 @@ OW_CIMDataType::getRefClassName() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_CIMDataType::setToArrayType(int size)
+OW_CIMDataType::setToArrayType(OW_Int32 size)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
@@ -274,9 +274,9 @@ OW_CIMDataType::equals(const OW_CIMDataType& arg) const
 void
 OW_CIMDataType::readObject(istream &istrm)
 {
-	int type;
-	int numberOfElements;
-	int sizeRange;
+	OW_Int32 type;
+	OW_Int32 numberOfElements;
+	OW_Int32 sizeRange;
 	OW_String ref;
 
 	OW_CIMBase::readSig( istrm, OW_CIMDATATYPESIG );

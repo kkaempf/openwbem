@@ -134,7 +134,7 @@ public:
 	/**
 	 * @return The port number from the URL component of this OW_CIMNameSpace.
 	 */
-	int getPortNumber() const;
+	OW_Int32 getPortNumber() const;
 
 	/**
 	 * @return The protocol from the URL component of this OW_CIMNameSpace.

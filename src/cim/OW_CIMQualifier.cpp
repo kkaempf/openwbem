@@ -190,7 +190,7 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 {
 	if(flavor)
 	{
-		int flavorValue = flavor.getFlavor();
+		OW_Int32 flavorValue = flavor.getFlavor();
 
 		//
 		// Don't add it if its already present
@@ -229,7 +229,7 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifier::removeFlavor(int flavor)
+OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
 	for(size_t i = 0; i < m_pdata->m_flavors.size(); i++)
@@ -374,7 +374,7 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 	m_pdata->m_propagated.writeObject(ostrm);
 
 	size_t len = m_pdata->m_flavors.size();
-	int nl = OW_hton32(len);
+	OW_Int32 nl = OW_hton32(len);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 	{
 		OW_THROW(OW_IOException, "failed to write size of flavor array");

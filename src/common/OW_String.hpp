@@ -57,9 +57,8 @@ DEFINE_EXCEPTION(StringConversion);
  */
 class OW_String
 {
-	class ByteBuf;
-
 public:
+	class ByteBuf;
 
 	/**
 	 * Create a new OW_String object with a length of 0.

@@ -44,7 +44,7 @@ using std::endl;
 
 //////////////////////////////////////////////////////////////////////////////
 // Local functions
-static unsigned int calcCheckSum(unsigned char* src, int len);
+static OW_UInt32 calcCheckSum(unsigned char* src, OW_Int32 len);
 static void writeRecHeader(AssocDbRecHeader& rh, long offset, OW_File file);
 static void readRecHeader(AssocDbRecHeader& rh, long offset, OW_File file);
 
@@ -506,7 +506,7 @@ OW_AssocDb::nextEntry(OW_AssocDbHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 OW_AssocDbEntry
-OW_AssocDb::readEntry(long offset, OW_AssocDbHandle& hdl)
+OW_AssocDb::readEntry(OW_Int32 offset, OW_AssocDbHandle& hdl)
 {
 	OW_AssocDbEntry dbentry;
 	AssocDbRecHeader rh;
@@ -563,8 +563,8 @@ OW_AssocDb::addEntry(const OW_AssocDbEntry& nentry, OW_AssocDbHandle& hdl)
 	OW_MutexLock l = getDbLock();
 	OW_RepositoryOStream ostrm;
 	nentry.writeObject(ostrm);
-	unsigned int blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
-	long offset;
+	OW_UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
+	OW_Int32 offset;
 	AssocDbRecHeader rh = getNewBlock(offset, blkSize, hdl);
 	rh.dataSize = ostrm.length();
 	writeRecHeader(rh, offset, hdl.getFile());
@@ -585,7 +585,7 @@ OW_AssocDb::addEntry(const OW_AssocDbEntry& nentry, OW_AssocDbHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_AssocDb::addToFreeList(long offset, OW_AssocDbHandle& hdl)
+OW_AssocDb::addToFreeList(OW_Int32 offset, OW_AssocDbHandle& hdl)
 {
 	AssocDbRecHeader rh;
 
@@ -604,14 +604,14 @@ OW_AssocDb::addToFreeList(long offset, OW_AssocDbHandle& hdl)
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 AssocDbRecHeader
-OW_AssocDb::getNewBlock(long& offset, unsigned int blkSize,
+OW_AssocDb::getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 	OW_AssocDbHandle& hdl)
 {
 	AssocDbRecHeader rh;
 	AssocDbRecHeader lh;
-	long lastOffset = -1L;
+	OW_Int32 lastOffset = -1L;
 
-	long coffset = m_hdrBlock.firstFree;
+	OW_Int32 coffset = m_hdrBlock.firstFree;
 	while(coffset != -1)
 	{
 		readRecHeader(rh, coffset, hdl.getFile());
@@ -675,7 +675,7 @@ readRecHeader(AssocDbRecHeader& rh, long offset, OW_File file)
 		OW_THROW(OW_IOException, "Failed to read record from assoc db");
 	}
 
-	unsigned int chkSum = calcCheckSum((unsigned char*)&rh.nextFree,
+	OW_UInt32 chkSum = calcCheckSum((unsigned char*)&rh.nextFree,
 		 sizeof(rh) - sizeof(rh.chkSum));
 
 	if(chkSum != rh.chkSum)
@@ -685,15 +685,15 @@ readRecHeader(AssocDbRecHeader& rh, long offset, OW_File file)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static unsigned int
-calcCheckSum(unsigned char* src, int len)
+static OW_UInt32
+calcCheckSum(unsigned char* src, OW_Int32 len)
 {
-	register unsigned int cksum = 0;
-	register int i;
+	register OW_UInt32 cksum = 0;
+	register OW_Int32 i;
 
 	for(i = 0; i < len; i++)
 	{
-		cksum += (unsigned int) src[i];
+		cksum += (OW_UInt32) src[i];
 	}
 
 	return cksum;

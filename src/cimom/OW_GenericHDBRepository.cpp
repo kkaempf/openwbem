@@ -352,7 +352,7 @@ OW_GenericHDBRepository::updateCIMObject(const OW_CIMBase& cimObj,
 void
 OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
 	const OW_String& key, OW_HDBNode& parentNode, OW_HDBHandle hdl,
-	unsigned int nodeFlags)
+	OW_UInt32 nodeFlags)
 {
 	OW_RepositoryOStream ostrm;
 	cimObj.writeObject(ostrm);
@@ -364,7 +364,7 @@ OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
-	const OW_String& key, OW_HDBHandle hdl, unsigned int nodeFlags)
+	const OW_String& key, OW_HDBHandle hdl, OW_UInt32 nodeFlags)
 {
 	OW_RepositoryOStream ostrm;
 	cimObj.writeObject(ostrm);

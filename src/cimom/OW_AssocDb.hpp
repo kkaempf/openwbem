@@ -245,10 +245,10 @@ struct AssocDbRecHeader
 {
 	AssocDbRecHeader() { memset(this, 0, sizeof(*this)); }
 
-	unsigned int chkSum;
-	long nextFree;
-	unsigned int blkSize;
-	unsigned int flags;
+	OW_UInt32 chkSum;
+	OW_Int32 nextFree;
+	OW_UInt32 blkSize;
+	OW_UInt32 flags;
 	size_t dataSize;
 };
 
@@ -322,9 +322,9 @@ private:
 	void decHandleCount();
 	OW_MutexLock getDbLock() { return OW_MutexLock(m_guard); }
 
-	OW_AssocDbEntry readEntry(long offset, OW_AssocDbHandle& hdl);
-	void addToFreeList(long offset, OW_AssocDbHandle& hdl);
-	AssocDbRecHeader getNewBlock(long& offset, unsigned int blkSize,
+	OW_AssocDbEntry readEntry(OW_Int32 offset, OW_AssocDbHandle& hdl);
+	void addToFreeList(OW_Int32 offset, OW_AssocDbHandle& hdl);
+	AssocDbRecHeader getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 		OW_AssocDbHandle& hdl);
 
 	OW_Bool createFile();

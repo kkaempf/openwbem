@@ -186,7 +186,7 @@ public:
 	/**
 	 * @return The size of the return data type.
 	 */
-	int getReturnDataSize() const;
+	OW_Int32 getReturnDataSize() const;
 
 	/**
 	 * Set name of overriding method.

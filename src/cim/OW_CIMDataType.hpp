@@ -102,7 +102,7 @@ public:
 	 * @param size		The size of the type if it is an array type.
 	 * @exception OW_CIMException if the type is invalid for this method.
 	 */
-	OW_CIMDataType(Type type, int size);
+	OW_CIMDataType(Type type, OW_Int32 size);
 
 	/**
 	 * Create a new OW_CIMDataType object that represents a REFERENCE data type.
@@ -148,7 +148,7 @@ public:
 	 *		Otherwise the size is set at the given size.
 	 * @return true on success. Otherwise false.
 	 */
-	OW_Bool setToArrayType(int size);
+	OW_Bool setToArrayType(OW_Int32 size);
 
 	/**
 	 * @return true if this data type represents an array type.
@@ -174,7 +174,7 @@ public:
 	/**
 	 * @return the number of elements for this OW_CIMDataType
 	 */
-	int getSize() const;
+	OW_Int32 getSize() const;
 
 	/**
 	 * @return the class name for reference if this is a REFERENCE type.

@@ -303,7 +303,7 @@ public:
 	 * @return The size of the array this OW_CIMValue contains if it contains
 	 * an array.
 	 */
-	int getArraySize() const;
+	OW_Int32 getArraySize() const;
 
 	/**
 	 * Get a boolean value from this OW_CIMValue.

@@ -81,7 +81,7 @@ void
 OW_CIMScope::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
-	int nv = OW_hton32(m_val);
+	OW_Int32 nv = OW_hton32(m_val);
 	if(!ostrm.write((const char*)&nv, sizeof(nv)))
 	{
 		OW_THROW(OW_IOException, "failed to write scope value");
