@@ -1,5 +1,5 @@
 
-class EXP_BartComputerSystem : CIM_ComputerSystem
+class EXP_BartComputerSystem : CIM_System
 {
   [ provider("c++::methodtest") ]
    string GetState(
@@ -9,7 +9,7 @@ class EXP_BartComputerSystem : CIM_ComputerSystem
 		[in(false), out] real64 r64,
 		[in, out] sint16 io16,
 		[in(false), out] string msg,
-		[in, out] CIM_ComputerSystem REF paths[],
+		[in, out] CIM_System REF paths[],
 		[in, out] datetime nullParam);
 
   [ provider("c++::methodtest") ]

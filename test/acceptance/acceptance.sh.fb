@@ -519,28 +519,17 @@ TestIndications()
 
 	# import the mof
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
+		$TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
+		ExitWithFail "indication test: owmofc exited with error."
+
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
-		ExitWithFail "MOF compiler test: owmofc exited with error."
+		ExitWithFail "indication test: owmofc exited with error."
 
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
 	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 \
 		2>&1 > $RESULTDIR/indicationTest.out || \
 		ExitWithFail "Indication test: cimlistener exited with error"
-# tee if we use tee, failure is not detected
-#		2>&1 | tee $RESULTDIR/indicationTest.out || \
-	
-	sed '/cimListener/d' < $RESULTDIR/indicationTest.out | \
-		sort > $RESULTDIR/indicationTest.out_sorted
-	sed '/cimListener/d' < $TOPSRCDIR/test/acceptance/testfiles/indicationTest.out \
-		| sort > $RESULTDIR/indicationTestMaster.out_sorted
-
-	#if [ "$NODIFF" = "0" ]; then
-	#	echo "Comparing output with expected response..."
-	#	diff $RESULTDIR/indicationTest.out_sorted \
-	#		$RESULTDIR/indicationTestMaster.out_sorted || \
-	#		ExitWithFail "Indication test: Diff failed"
-	#fi
-	# FIXME
 
 	echo "Indication Testsuite Passed"
 
@@ -829,7 +818,7 @@ TestMof()
 
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
-			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
+			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
@@ -846,13 +835,13 @@ SetupInteropSchema()
 	fi
 
 	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -e owbinary -n root \
-			$TOPSRCDIR/schemas/cim27/CIM_Core27.mof || \
+			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -n root \
-			$TOPSRCDIR/schemas/cim27/CIM_Event27.mof || \
+			$TOPSRCDIR/schemas/cim28/CIM_Event28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n root \
-			$TOPSRCDIR/schemas/cim27/CIM_Interop27.mof || \
+			$TOPSRCDIR/schemas/cim28/CIM_Interop28.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -n root \
 			$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
@@ -987,8 +976,8 @@ fi
 SetupInteropSchema
 TestMof
 
-TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite.out"
-TestSuite "ipc://test1:pass1@localhost/ -e owbinary " "testsuiteUDSBIN.out" "testsuite.out"
+TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
+TestSuite "ipc://test1:pass1@localhost/ -e owbinary " "testsuiteUDSBIN.out" "testsuite28.out"
 
 TestCIMExceptions "http://test1:pass1@localhost:30926"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"

@@ -1,1 +1,1 @@
-SUBDIRS = cim25 cim27
+SUBDIRS = cim28

@@ -854,8 +854,7 @@ etc/sysconfig/Makefile
 etc/sysconfig/daemons/Makefile
 mof/Makefile
 schemas/Makefile
-schemas/cim25/Makefile
-schemas/cim27/Makefile
+schemas/cim28/Makefile
 src/Makefile
 src/authenticators/Makefile
 src/authenticators/simple/Makefile

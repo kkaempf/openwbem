@@ -151,7 +151,7 @@ MethodProviderTest::invokeMethod(
 		//		[out] real64 r64,
 		//		[in, out] sint16 io16,
 		//		[out] string msg,
-		//		[in, out] CIM_ComputerSystem REF paths[],
+		//		[in, out] CIM_System REF paths[],
 		//		[in, out] datetime nullParam);
 
 		OW_ASSERT(in.size() == 5);

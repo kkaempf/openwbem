@@ -121,7 +121,7 @@ createClass(CIMClient& hdl, const String& name)
 		cimQualifierKey.setValue(CIMValue(Bool(true)));
 		CIMClass cimClass;
 		cimClass.setName(name);
-		cimClass.setSuperClass("CIM_ComputerSystem");
+		cimClass.setSuperClass("CIM_System");
 
 		Array<String> zargs;
 		zargs.push_back("CreationClassName");
@@ -594,7 +594,7 @@ enumerateInstanceNames(CIMClient& hdl)
 
 	try
 	{
-		String ofClass = "CIM_ComputerSystem";
+		String ofClass = "CIM_System";
 		CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE( ofClass);
 		while (enu.hasMoreElements())
 		{
@@ -1343,7 +1343,7 @@ prepareGetStateParams(CIMParamValueArray& in, const CIMObjectPath& cop)
 	//		[out] real64 r64,
 	//		[in, out] sint16 io16,
 	//		[out] string msg,
-	//		[in, out] CIM_ComputerSystem REF paths[],
+	//		[in, out] CIM_System REF paths[],
 	//		[in, out] datetime nullParam);
 
 	// These are out of order on purpose, to test that the CIMOM will order them correctly.
@@ -1782,21 +1782,21 @@ main(int argc, char* argv[])
 		createInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
 		enumerateInstanceNames(rch);
 		// non-deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", E_SHALLOW, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);	
+		enumerateInstances(rch, "CIM_System", E_SHALLOW, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);	
 		// deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, no qualifiers, classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, no qualifiers, no classOrigin, no props
 		StringArray sa;
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 		// deep, non-localOnly, no qualifiers, no classOrigin, one prop
 		sa.push_back(String("BrandNewProperty"));
-		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
+		enumerateInstances(rch, "CIM_System", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
 		enumerateInstances(rch, "Example_C1", E_DEEP,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
 		enumerateInstances(rch, "Example_C1", E_DEEP,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
@@ -1868,22 +1868,30 @@ main(int argc, char* argv[])
 		enumerateQualifiers(rch);
 		getQualifier(rch);
 
+		setupAssociations(rch);
+
+		associatorNames(rch, "", "", "", "");
+		associatorNamesClass(rch, "", "", "", "");
+		associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		referenceNames(rch, "", "");
+		referenceNamesClass(rch, "", "");
+		references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+		referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+
 		if (getenv("OWLONGTEST"))
 		{
-			setupAssociations(rch);
-
-			associatorNames(rch, "", "", "", "");
+			// try all the variations
 			associatorNames(rch, "CIM_SystemDevice", "", "", "");
-			associatorNames(rch, "", "CIM_ComputerSystem", "", "");
+			associatorNames(rch, "", "CIM_System", "", "");
 			associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
 			associatorNames(rch, "", "", "GroupComponent", "");
 			associatorNames(rch, "", "", "PartComponent", "");
 			associatorNames(rch, "", "", "PartComponent", "PartComponent");
 			associatorNames(rch, "", "", "", "PartComponent");
 			associatorNames(rch, "", "", "", "GroupComponent");
-			associatorNamesClass(rch, "", "", "", "");
 			associatorNamesClass(rch, "CIM_SystemDevice", "", "", "");
-			associatorNamesClass(rch, "", "CIM_ComputerSystem", "", "");
+			associatorNamesClass(rch, "", "CIM_System", "", "");
 			associatorNamesClass(rch, "", "EXP_BionicComputerSystem", "", "");
 			associatorNamesClass(rch, "", "", "GroupComponent", "");
 			associatorNamesClass(rch, "", "", "PartComponent", "");
@@ -1891,9 +1899,8 @@ main(int argc, char* argv[])
 			associatorNamesClass(rch, "", "", "", "PartComponent");
 			associatorNamesClass(rch, "", "", "", "GroupComponent");
 
-			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associators(rch, "CIM_SystemDevice", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
-			associators(rch, "", "CIM_ComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "CIM_System", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associators(rch, "", "EXP_BionicComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associators(rch, "", "", "GroupComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associators(rch, "", "", "PartComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
@@ -1907,9 +1914,8 @@ main(int argc, char* argv[])
 			sa.push_back(String("BrandNewProperty"));
 			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associatorsClasses(rch, "CIM_SystemDevice", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
-			associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "CIM_System", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associatorsClasses(rch, "", "", "GroupComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			associatorsClasses(rch, "", "", "PartComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
@@ -1923,19 +1929,16 @@ main(int argc, char* argv[])
 			sa.push_back(String("BrandNewProperty"));
 			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			referenceNames(rch, "", "");
 			referenceNames(rch, "cim_systemdevice", "");
 			referenceNames(rch, "cim_component", "");
 			referenceNames(rch, "", "GroupComponent");
 			referenceNames(rch, "", "PartComponent");
 
-			referenceNamesClass(rch, "", "");
 			referenceNamesClass(rch, "cim_systemdevice", "");
 			referenceNamesClass(rch, "cim_component", "");
 			referenceNamesClass(rch, "", "GroupComponent");
 			referenceNamesClass(rch, "", "PartComponent");
 
-			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			references(rch, "cim_systemdevice", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			references(rch, "cim_component", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			references(rch, "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
@@ -1947,7 +1950,6 @@ main(int argc, char* argv[])
 			sa.push_back(String("GroupComponent"));
 			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			referencesClasses(rch, "cim_systemdevice", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			referencesClasses(rch, "cim_component", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 			referencesClasses(rch, "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
@@ -1959,10 +1961,11 @@ main(int argc, char* argv[])
 			sa.push_back(String("GroupComponent"));
 			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			execQuery(rch);
-			deleteAssociations(rch);
 		}
 
+		execQuery(rch);
+
+		deleteAssociations(rch);
 
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SixMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SevenMillion");

@@ -126,7 +126,7 @@ void createClass(CIMOMHandleIFC& hdl)
 
 	CIMClass cimClass;
 	cimClass.setName("EXP_IndicationTestComputerSystem");
-	cimClass.setSuperClass("CIM_ComputerSystem");
+	cimClass.setSuperClass("CIM_System");
 
 	Array<String> zargs;
 	zargs.push_back("CreationClassName");
