@@ -41,12 +41,12 @@ wqlTest2 \
 CIMOMLocator \
 fakeclient \
 infiniteClient \
-owprovideragent
+testProviderAgent
 
-owprovideragent_SOURCES = \
-owprovideragent.cpp
+testProviderAgent_SOURCES = \
+testProviderAgent.cpp
 
-owprovideragent_LDADD = \
+testProviderAgent_LDADD = \
 -L$(top_builddir)/src/provideragent -lowprovideragent \
 -L$(top_builddir)/src/requesthandlers/cimxml -lowrequesthandlercimxml \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
@@ -60,9 +60,9 @@ owprovideragent_LDADD = \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
-owprovideragent_LDFLAGS = \
+testProviderAgent_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owprovideragent$(EXEEXT)
+-o testProviderAgent$(EXEEXT)
 
 
 

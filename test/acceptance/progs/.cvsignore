@@ -20,7 +20,7 @@ testMisc
 hammerClient
 testSecondaryInstanceProviders
 testLargeRequest
-owprovideragent
+testProviderAgent
 *.imp
 *.exp
 *.nlm
