@@ -56,6 +56,12 @@ public:
 	int writeString(const OW_String& strData);
 	int readInt(int* value);
 	int readString(OW_String& strData);
+
+	/**
+	 * Read from the pipe and collect into a string, until the other end of the
+	 * pipe is closed.
+	 * @throws OW_IOException on error
+	 */
 	OW_String readAll();
 
 	virtual void open() = 0;

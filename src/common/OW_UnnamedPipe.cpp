@@ -97,7 +97,7 @@ OW_UnnamedPipe::readAll()
 	OW_String retval;
 	do
 	{
-		readbytes = this->read(buf, sizeof(buf)-1);
+		readbytes = this->read(buf, sizeof(buf)-1, true); // throws on error
 		buf[readbytes] = 0; // null-terminate the buffer
 		retval += buf;
 	} while (readbytes > 0); // keep going until we don't fill up the buffer.
