@@ -1,6 +1,6 @@
 AC_PREREQ([2.57])
 AC_INIT(OpenWBEM, 3.0.3, openwbem-public@lists.sourceforge.net)
-AM_INIT_AUTOMAKE(openwbem, $PACKAGE_VERSION)
+AM_INIT_AUTOMAKE(tar-ustar)
 AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
