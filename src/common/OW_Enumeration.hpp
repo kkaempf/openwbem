@@ -180,12 +180,12 @@ private:
 				"signature");
 		}
 		
-		
-		if (f.seek(-sizeof(size), SEEK_END) == -1)
+		UInt32 whence=0;
+		if ((whence = f.seek(-sizeof(size), SEEK_END)) == -1)
 		{
 			OW_THROW(EnumerationException, "Failure to seek");
 		}
-		if(f.read(reinterpret_cast<char*>(&size), sizeof(size)) != sizeof(size))
+		if(f.read(reinterpret_cast<char*>(&size), sizeof(size), (long)whence) != sizeof(size))
 		{
 			OW_THROW(EnumerationException, "Failure to read enumeration "
 				"size");
