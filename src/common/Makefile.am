@@ -67,6 +67,7 @@ OW_PosixUnnamedPipe.cpp \
 OW_RWLocker.cpp \
 OW_RandomNumber.cpp \
 OW_ReferenceBase.cpp \
+OW_RepositoryCIMOMHandle.cpp \
 OW_Runnable.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
@@ -152,6 +153,7 @@ OW_RandomNumber.hpp \
 OW_RefCount.hpp \
 OW_Reference.hpp \
 OW_ReferenceBase.hpp \
+OW_RepositoryCIMOMHandle.hpp \
 OW_Runnable.hpp \
 OW_Select.hpp \
 OW_SelectEngine.hpp \
