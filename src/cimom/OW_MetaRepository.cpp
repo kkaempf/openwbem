@@ -647,12 +647,11 @@ OW_MetaRepository::deleteClass(const OW_String& ns, const OW_String& className)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass_)
+OW_MetaRepository::createClass(const OW_String& ns, OW_CIMClass& cimClass)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
-	OW_CIMClass cimClass(cimClass_);
 	OW_CIMQualifierArray qra = cimClass.getQualifiers();
 	_resolveQualifiers(ns, qra, hdl.getHandle());
 	cimClass.setQualifiers(qra);

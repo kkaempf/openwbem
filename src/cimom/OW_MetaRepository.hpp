@@ -123,7 +123,7 @@ public:
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't write class object to file.
 	 */
-	void createClass(const OW_String& ns, const OW_CIMClass& cimClass);
+	void createClass(const OW_String& ns, OW_CIMClass& cimClass);
 
 	/**
 	 * set a class in the store - note children are not affected
