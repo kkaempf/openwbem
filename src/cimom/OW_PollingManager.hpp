@@ -43,7 +43,6 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Condition.hpp"
 #include "OW_ThreadBarrier.hpp"
-#include "OW_UserInfo.hpp"
 #include "OW_ThreadPool.hpp"
 
 namespace OpenWBEM
@@ -66,7 +65,7 @@ private:
 	class TriggerRunner : public Runnable
 	{
 	public:
-		TriggerRunner(PollingManager* svr, UserInfo acl,
+		TriggerRunner(PollingManager* svr,
 			CIMOMEnvironmentRef env);
 		virtual void run();
 		PolledProviderIFCRef m_itp;
@@ -74,7 +73,6 @@ private:
 		bool m_isRunning;
 		Int32 m_pollInterval;
 		PollingManager* m_pollMan;
-		UserInfo m_acl;
 		CIMOMEnvironmentRef m_env;
 	};
 	typedef Reference<TriggerRunner> TriggerRunnerRef;

@@ -35,7 +35,6 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_UserInfo.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_SortedVectorSet.hpp"
@@ -81,13 +80,12 @@ namespace
 class Notifier : public Runnable
 {
 public:
-	Notifier(IndicationServerImpl* pmgr, NotifyTrans& ntrans, UserInfo const& aclInfo) :
-		m_pmgr(pmgr), m_trans(ntrans), m_aclInfo(aclInfo) {}
+	Notifier(IndicationServerImpl* pmgr, NotifyTrans& ntrans) :
+		m_pmgr(pmgr), m_trans(ntrans) {}
 	virtual void run();
 private:
 	IndicationServerImpl* m_pmgr;
 	NotifyTrans m_trans;
-	UserInfo m_aclInfo;
 };
 class IndicationServerProviderEnvironment : public ProviderEnvironmentIFC
 {
@@ -239,7 +237,6 @@ void
 IndicationServerImpl::init(CIMOMEnvironmentRef env)
 {
 	m_env = env;
-	UserInfo aclInfo;
 	// set up the thread pool
 	Int32 maxIndicationExportThreads;
 	try
@@ -633,7 +630,7 @@ IndicationServerImpl::addTrans(
 	IndicationExportProviderIFCRef provider)
 {
 	NotifyTrans trans(ns, indication, handler, subscription, provider);
-	if (!m_notifierThreadPool->tryAddWork(RunnableRef(new Notifier(this, trans, UserInfo()))))
+	if (!m_notifierThreadPool->tryAddWork(RunnableRef(new Notifier(this, trans))))
 	{
 		m_env->logError(format("Indication export notifier pool overloaded.  Dropping indication: %1", indication.toMOF()));
 	}

@@ -36,7 +36,6 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_ProviderManager.hpp"
-#include "OW_UserInfo.hpp"
 #include "OW_Platform.hpp"
 #include "OW_TimeoutException.hpp"
 #include "OW_OperationContext.hpp"
@@ -112,8 +111,7 @@ namespace
 		mutable OperationContext m_context;
 		CIMOMEnvironmentRef m_env;
 	};
-	ProviderEnvironmentIFCRef createProvEnvRef(const UserInfo& acl,
-		CIMOMEnvironmentRef env)
+	ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 	{
 		return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(env));
 	}
@@ -130,7 +128,7 @@ PollingManager::run()
 	ProviderManagerRef pm = m_env->getProviderManager();
 	
 	PolledProviderIFCRefArray itpra =
-			pm->getPolledProviders(createProvEnvRef(UserInfo(), m_env));
+			pm->getPolledProviders(createProvEnvRef(m_env));
 	m_env->logDebug(format("PollingManager found %1 polled providers",
 		itpra.size()));
 	{
@@ -138,9 +136,9 @@ PollingManager::run()
 		NonRecursiveMutexLock ml(m_triggerGuard);
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			TriggerRunnerRef tr(new TriggerRunner(this, UserInfo(), m_env));
+			TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(
-				createProvEnvRef(UserInfo(), m_env));
+				createProvEnvRef(m_env));
 			m_env->logDebug(format("PollingManager poll interval for provider"
 				" %1: %2", i, tr->m_pollInterval));
 			if(!tr->m_pollInterval)
@@ -265,9 +263,9 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 	NonRecursiveMutexLock l(m_triggerGuard);
 	if (m_shuttingDown)
 		return;
-	TriggerRunnerRef tr(new TriggerRunner(this, UserInfo(), m_env));
+	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 	tr->m_pollInterval = p->getInitialPollingInterval(
-		createProvEnvRef(UserInfo(), m_env));
+		createProvEnvRef(m_env));
 	m_env->logDebug(format("PollingManager poll interval for provider"
 		" %1", tr->m_pollInterval));
 	if(!tr->m_pollInterval)
@@ -284,14 +282,13 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 }
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,
-	UserInfo acl, CIMOMEnvironmentRef env)
+	CIMOMEnvironmentRef env)
 	: Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)
 	, m_isRunning(false)
 	, m_pollInterval(0)
 	, m_pollMan(svr)
-	, m_acl(acl)
 	, m_env(env)
 {
 }
@@ -302,7 +299,7 @@ PollingManager::TriggerRunner::run()
 	Int32 nextInterval = 0;
 	try
 	{
-		nextInterval = m_itp->poll(createProvEnvRef(m_acl, m_env));
+		nextInterval = m_itp->poll(createProvEnvRef(m_env));
 	}
 	catch(std::exception& e)
 	{
