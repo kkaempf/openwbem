@@ -1,0 +1,159 @@
+// ===================================================================
+// Title:       Solaris Network Schema mof specification 1.0
+// Filename:    Solaris_Network1.0.mof
+// Version:     1.0
+// Author:      Sun Microsystems, Inc.
+// Description: Solaris Network schema.
+// ===================================================================
+
+// ==================================================================
+// Pragmas
+// ==================================================================
+#pragma Locale ("en-US")
+
+
+
+// ===================================================================
+// Title:       Solaris Administration Domain Class
+// Version:     1.0
+// Date:        12/27/1999
+// Description: Specifies a Solaris management domain
+// ===================================================================
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Abstract, Description(
+	"This class represents a scoping of management information to "
+	"a Solaris name service domain.  Concrete subclasses of this "
+	"class represent a specific domain; where the CreationClassName "
+	"property from the CIM_System superclass is set to the concrete "
+	"subclass name and thus represents the name service type, and the "
+	"CIM_System superclass Name property is set to the name service "
+	"domain name.  The local Solaris server system's /etc files are "
+	"included as a management domain as well.  A weak association "
+	"is declared between this class and those Solaris schema classes "
+	"that represent name service information; e.g., the Solaris_UserAccount "
+	"class.  Thus, the CreationClassName and Name properties from the "
+	"Solaris_AdminDomain subclass will form keys in these associated "
+	"classes which specify the name service domain. By convention, the "
+	"associated classes should declare their management domain keys as "
+	"the domainClassType property (propagated from CreationClassName) and "
+	"the domainName property (propagated from Name).")]
+
+class Solaris_AdminDomain : CIM_AdminDomain
+{
+
+};
+
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Description(
+	"This class represents a scoping of management information to "
+	"a Solaris server domain; that is, the management information "
+	"contained within the Solaris server's /etc files which apply "
+	"only to that local server.  Since it is a concrete subclass of "
+	"Solaris_AdminDomain, its class name will be one value that can "
+	"appear in the CIM_System CreationClassName property, thus typing "
+	"all weakly associated instances to the local server domain.")]
+
+class Solaris_SystemAdminDomain : Solaris_AdminDomain
+{
+
+	[Override ("CreationClassName"), Description (
+	"The creation class name from the CIM_System superclass should "
+	"be set to this subclass name to indicate a local server "
+	"system scoping.")]
+	string CreationClassName = "Solaris_SystemAdminDomain";
+
+};
+
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Description(
+	"This class represents a scoping of management information to "
+	"a Solaris NIS name service domain; that is, the management information "
+	"contained within NIS name service tables for a specified NIS domain. "
+	"Since it is a concrete subclass of Solaris_AdminDomain, its class "
+	"name will be one value that can appear in the CIM_System "
+	"CreationClassName property, thus typing all weakly associated "
+	"instances to the NIS name service domain specified in the CIM_System "
+	"Name property.")]
+
+class Solaris_NisAdminDomain : Solaris_AdminDomain
+{
+
+	[Override ("CreationClassName"), Description (
+	"The creation class name from the CIM_System superclass should "
+	"be set to this subclass name to indicate a local server "
+	"system scoping.")]
+	string CreationClassName = "Solaris_NisAdminDomain";
+
+};
+
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Description(
+	"This class represents a scoping of management information to "
+	"a Solaris NIS+ name service domain; that is, the management information "
+	"contained within NIS+ name service tables for a specified NIS+ domain. "
+	"Since it is a concrete subclass of Solaris_AdminDomain, its class "
+	"name will be one value that can appear in the CIM_System "
+	"CreationClassName property, thus typing all weakly associated "
+	"instances to the NIS+ name service domain specified in the CIM_System "
+	"Name property.")]
+
+class Solaris_NisplusAdminDomain : Solaris_AdminDomain
+{
+
+	[Override ("CreationClassName"), Description (
+	"The creation class name from the CIM_System superclass should "
+	"be set to this subclass name to indicate a local server "
+	"system scoping.")]
+	string CreationClassName = "Solaris_NisplusAdminDomain";
+
+};
+
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Description(
+	"This class represents a scoping of management information to "
+	"a Solaris LDAP name service domain; that is, the management information "
+	"contained within LDAP objects for a specified LDAP domain representing "
+	"Solaris name service tables.  Since it is a concrete subclass "
+	"of Solaris_AdminDomain, its class name will be one value that "
+	"can appear in the CIM_System CreationClassName property, thus "
+	"typing all weakly associated instances to the LDAP domain specified "
+	"in the CIM_System Name property.")]
+
+class Solaris_LdapAdminDomain : Solaris_AdminDomain
+{
+
+	[Override ("CreationClassName"), Description (
+	"The creation class name from the CIM_System superclass should "
+	"be set to this subclass name to indicate a local server "
+	"system scoping.")]
+	string CreationClassName = "Solaris_LdapAdminDomain";
+
+};
+
+[Provider ("com.sun.wbem.solarisprovider.admindomain.Solaris_AdminDomain"),
+
+ Description(
+	"This class represents a scoping of management information to "
+	"a Solaris DNS name service domain; that is, the management information "
+	"contained within DNS name service tables for a specified DNS domain."
+	"Since it is a concrete subclass of Solaris_AdminDomain, its class "
+	"name will be one value that can appear in the CIM_System "
+	"CreationClassName property, thus typing all weakly associated "
+	"instances to the DNS name service domain specified in the CIM_System "
+	"Name property.")]
+
+class Solaris_DnsAdminDomain : Solaris_AdminDomain
+{
+
+	[Override ("CreationClassName"), Description (
+	"The creation class name from the CIM_System superclass should "
+	"be set to this subclass name to indicate a local server "
+	"system scoping.")]
+	string CreationClassName = "Solaris_DnsAdminDomain";
+
+};

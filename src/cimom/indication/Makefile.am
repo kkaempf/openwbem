@@ -1,0 +1,46 @@
+include $(top_srcdir)/Makefile-shared-lib.inc
+
+noinst_LIBRARIES = libowindicationserver.a libowindicationreplayer.a
+
+OW_SHARED_LIBS = libowindicationserver.so libowindicationreplayer.so
+thelibdir = $(libdir)/openwbem
+
+all-local: $(OW_SHARED_LIBS)
+
+install-exec-local:
+	@INSTALL@ -d $(DESTDIR)$(thelibdir)
+	for i in $(OW_SHARED_LIBS); do \
+		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+	done
+	
+clean-local:
+	for i in $(OW_SHARED_LIBS); do \
+		rm -rf $$i* .$$i.libs; \
+	done
+
+libowindicationserver_a_SOURCES = \
+OW_IndicationServerImpl.hpp \
+OW_IndicationServerImpl.cpp
+
+libowindicationreplayer_a_SOURCES = \
+OW_IndicationRepLayerImpl.hpp \
+OW_IndicationRepLayerImpl.cpp
+
+INCLUDES = \
+-I$(top_srcdir)/src/provider \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/thread \
+-I$(top_srcdir)/src/http \
+-I$(top_srcdir)/src/http/server \
+-I$(top_srcdir)/src/http/client \
+-I$(top_srcdir)/src/net/socket \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/client \
+-I$(top_srcdir)/src/newcimom \
+-I$(top_srcdir)/src/server
+
+
+

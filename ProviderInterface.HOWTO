@@ -1,0 +1,188 @@
+OpenWBEM Provider Interface HOWTO
+-------------------------------------------------------------------------------
+
+Just a little information on how to create a new provider interface for the
+OpenWBEM CIMOM. I know there's not much information, but hopefully it will be
+somewhat helpful in getting you started. We plan on providing much more detailed
+documentation in the future.
+
+CONTENTS
+
+   1.0 - Provider Interface Multiplexor
+   2.0 - Writing a Provider Interface
+   3.0 - Provider Interfaces Already Provided.
+      3.1 - C++ Provider Interface
+      3.2 - CIMOM Provider Interface
+
+-------------------------------------------------------------------------------
+1.0 Extensible Provider Interface
+
+   Providers are an extension mechanism for all CIMOMs.  When a CIMOM services
+   a client request for some type of instance data, that data can come from the 
+   CIMOM's internal instance repository (static data) or from one of the
+   providers the CIMOM knows about (dynamic data). Providers give a CIMOM the
+   capability to serve up just about any kind of data. This capability is pretty
+   much standard across the various CIMOM implementations. What is not standard,
+   is the interface that providers have with the CIMOM. Providers generally
+   provide some set of known entry points for the CIMOM to call into when the
+   provider's services are needed. This layer between the CIMOM and the provider
+   is what we call the provider interface. Our CIMOM has what we call a provider
+   interface multi-plexor. It is capable of supporting any number of provider
+   interfaces at the same time. A new provider interface can be added to the
+   CIMOM by simply creating a shared library that can create an OW_ProviderIFC
+   object and placing it in the directory the CIMOM loads it's provider 
+   interfaces from (this is specified in the CIMOM's configuration file). The
+   format of the provider qualifier that the CIMOM understands is 
+   "[interface id]::[interface specific text]". The "interface id" is used by
+   the provider interface multi-plexor to identify the provider interface that
+   can supply the provider.  The "interface specific text" is given to the
+   provider interface once it is found, so it can use it to find the appropriate
+   provider. This makes our CIMOM very flexible 
+   when it comes to providers. You could conceivably write a provider interface 
+   that would provide an interface for Java, Python or Perl providers.
+   
+   The only component within the CIMOM that deals directly with provider
+   interfaces is the provider manager (OW_ProviderManager). The provider
+   manager is the provider interface multiplexor. When the CIMOM is first
+   started, an instance of an OW_ProviderManager is created. When the
+   OW_ProviderManager is created it will load all of the shared libraries in the
+   designated provider interface directory (specified in the configuration file
+   with the owcimomd.provider_ifc_libs option). OW_ProviderManager expects every
+   library it loads to have a createProviderIFC function. The prototype for this
+   function is as follows:
+   
+      extern "C" OW_ProviderIFC* createProviderIFC();
+      
+   The createProviderIFC function is responsible for creating an instance
+   of some sub-class of OW_ProviderIFC and returning to the provider manager.
+   The OW_ProviderIFC instance will be owned by the OW_ProviderManager from
+   that point. It will be deleted when it is no longer needed.
+      
+   If the OW_Provider does not find createProviderIFC function, the shared
+   library will be ignored.
+   
+-------------------------------------------------------------------------------
+2.0 Writing a Provider Interface
+
+   Writing a provider interface is actually a relatively simple thing to do.
+   There is a base class called OW_ProviderIFC found in OW_ProviderIFC.hpp.
+   You will have to create a class that sub-classes OW_ProviderIFC:
+   
+      #include <OW_ProviderIFC.hpp>
+      
+      class MyProviderIFC : public OW_ProviderIFC
+      {
+      protected:
+         virtual const char* getName() const;
+         
+         virtual OW_InstanceProviderRef doGetInstanceProvider(
+            OW_LocalCIMOMHandle &ch, const char *provIdString);
+
+	      virtual OW_MethodProviderRef doGetMethodProvider(
+            OW_LocalCIMOMHandle &ch, const char *provIdString);
+
+         virtual OW_PropertyProviderRef doGetPropertyProvider(
+            OW_LocalCIMOMHandle &ch,const char *provIdString);
+
+	      virtual OW_AssociatorProviderRef doGetAssociatorProvider(
+            OW_LocalCIMOMHandle &ch, const char *provIdString);
+				
+			virtual OW_IndicationExportProviderRefArray
+				doGetIndicationExportProviders(OW_LocalCIMOMHandle& ch);
+
+			virtual OW_IndicationTriggerProviderRefArray
+				doGetIndicationTriggerProviders(OW_LocalCIMOMHandle& ch);
+      };
+
+      
+   getName - This method must return a null terminated string
+   that will be used to uniquely identify this provider interface.
+   
+   doGetInstanceProvider - This method will be called by the cimom when a
+   request has been made for an InstanceProvider that your provider interface
+   is responsible for. It returns an OW_InstanceProviderRef (see
+   OW_InstanceProvider.hpp). This provider must be an instance of a sub-class of
+   OW_InstanceProvider. The virtual methods of OW_InstanceProvider that must be
+   implemented are documented in OW_InstanceProvider.hpp.
+   
+   doGetMethodProvider - This method will be called by the cimom when a
+   request has been made for a MethodProvider that your provider interface
+   is responsible for. It returns an OW_MethodProviderRef (see
+   OW_MethodProvider.hpp). This provider must be an instance of a sub-class of
+   OW_MethodProvider. The virtual methods of OW_MethodProvider that must be
+   implemented are documented in OW_MethodProvider.hpp.
+   
+   doGetPropertyProvider - This method will be called by the cimom when a
+   request has been made for a PropertyProvider that your provider interface
+   is responsible for. It returns an OW_PropertyProviderRef (see
+   OW_PropertyProvider.hpp). This provider must be an instance of a sub-class of
+   OW_PropertyProvider. The virtual methods of OW_PropertyProvider that must be
+   implemented are documented in OW_PropertyProvider.hpp.
+   
+   doGetAssociatorProvider - This method will be called by the cimom when a
+   request has been made for an AssociatorProvider that your provider interface
+   is responsible for. It returns an OW_AssociatorProviderRef (see
+   OW_AssociatorProvider.hpp). This provider must be an instance of a sub-class
+   of OW_AssociatorProvider. The virtual methods of OW_AssociatorProvider that
+   must be implemented are documented in OW_AssociatorProvider.hpp.
+
+	doGetIndicationExportProviders - This method will be called by the cimom
+	while it is initializing. It returns an array of references to instances of
+	some sub-class of OW_IndicationExportProvider (see
+	OW_IndicationExportProvider.hpp). 
+	
+	doGetIndicationTriggerProviders - This method will be called by the cimom
+	while it is initializing. It returns an array of references to instances of
+	some sub-class of OW_IndicationTriggerProvider (see
+	OW_IndicationTriggerProvider.hpp). 
+   
+   All providers are ultimately derived from the OW_Provider class.
+	OW_Provider doesn't contain any methods or data members. It is used
+	primarily for all other provider classes to be derived from.
+
+   The provider interface must be placed in a shared library that provides
+   a createProviderIFC() function. This function is described in section
+   1.0 Extensible Provider Interface.
+   
+-------------------------------------------------------------------------------
+3.0 Provider Interfaces Already Provided.
+
+      3.1 C++ Provider Interface
+         This is probably the best source of information at this point on
+         implementing a provider interface. This is a relatively simple
+         interface that is similar to the provider interface found on Sun's and
+         SNIA's Java CIMOM implementation. No mapping of the CIM objects is
+         required. The format of the provider qualifier would be
+         "c++::provider id". The C++ provider interface would use the provider
+         id string to identify the provider if it was previously loaded. If it
+         wasn't previously loaded it would prepend the string "lib" to the front
+         of the provider id string and append ".so" to the end of it, and then
+         use the resulting string to identify the shared library that contained
+         the provider being requested. The source code for this provider
+         interface is contained in the following files:
+            ./src/ifcs/cpp/OW_CppProviderIFC.hpp
+            ./src/ifcs/cpp/OW_CppProviderIFC.cpp
+
+      3.2 CIMOM Provider Interface
+         This provider interface is compiled into the CIMOM. It allows
+         The CIMOM to be identified by the provider interface multi-plexor
+         as a provider interface. The CIMOM actually has a compiled in
+         provider that deals with namespace operations. The provider
+         interface multi-plexor doesn't know the difference between this
+         provider and one that was loaded from a shared library. The format
+         of the provider qualifier for the compiled in interface would be
+         "cimom::provider id". The provider id string would have to 
+         identify a provider that is compiled into the cimom. For example,
+         the compiled in namespace provider is identified by the provider
+         qualifier "cimom::namespace". The source code for this provider
+         interface is actually in our provider manager:
+            ./src/server/OW_ProviderManager.hpp
+            ./src/server/OW_ProviderManager.cpp
+            
+         Using the OW_ProviderManager class as an example might not be the best
+			choice though, since this class is really much more that just a
+			provider interface. It was just a convenient place to put the in memory
+			provider interface. The C++ provider interface (OW_CppProviderIFC)
+			would probably be easier to understand and most likely more applicable
+			to a typical provider interface.
+			

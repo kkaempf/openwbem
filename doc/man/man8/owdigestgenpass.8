@@ -1,0 +1,50 @@
+.Id $Id: owdigestgenpass.8,v 1.1.1.1 2002-03-01 16:58:14 nuffer Exp $
+.TH owdigestgenpass 8 "September 2001" owdigestgenpass "OpenWBEM Framework"
+.SH NAME
+owdigestgenpass \- Add a user name and password to a password file for HTTP 
+digest authentication
+.SH SYNOPSIS
+.B owdigestgenpass
+.RB  \-l 
+.IR LOGIN_NAME
+.RB  \-f 
+.IR PASSWORD_FILE
+.RB [ \-h 
+.IR HOSTNAME ]
+.RB [ \-p 
+.IR PASSWORD ]
+.SH DESCRIPTION
+.B owdigestgenpass
+is used to add a user and password to a digest password file suitable for
+use with the owcimomd digest authentication module.  If the file does not
+exist, it is created with a single entry.  If the file already exists, 
+the new authentication credentials are appended to the file.
+.PP
+.SH OPTIONS
+.TP 8
+.BI \-l " LOGIN_NAME"
+The name of the user.
+.TP 8
+.BI \-f " PASSWORD_FILE"
+The path to the filename that is to be created or appended to.
+.TP 8
+.BI \-h " HOSTNAME"
+The hostname of the computer that this password file will be used on.  If
+this parameter is omitted, 
+.B owdigestgenpass 
+will use the hostname of the computer it is executed on.  (It's safer to omit
+this parameter, so that the hostname that is used will match the one that 
+the digest authentication module will use.)
+.TP 8
+.BI \-p " PASSWORD"
+The password for the new user.  If this parameter is omitted, you will 
+be prompted for the password (echo off).
+.SH FILES
+.I openwbem.conf
+The configuration file specifies if the digest authentication module is
+to be used.  It also specifies the path to the digest password file.
+.PP
+.SH "SEE ALSO"
+owcimomd(8)
+.SH BUGS
+None known at this time.

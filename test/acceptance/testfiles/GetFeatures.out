@@ -1,0 +1,8 @@
+CIMProtocolVersion = 1.0
+CIMProduct = CIMServer
+CIMSupportedGroups = basic-read, basic-write, schema-manipulation, instance-manipulation, qualifier-declaration, association-traversal
+Supports Batch = true
+CIMValidation = 
+CIMSupportedQueryLanguages = 
+CIMOM path = /cimom
+HTTP Ext URL = http://www.dmtf.org/cim/mapping/http/v1.0

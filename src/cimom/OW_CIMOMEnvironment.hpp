@@ -1,0 +1,221 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+#ifndef __OW_CIMOMENVIRONMENT_HPP__
+#define __OW_CIMOMENVIRONMENT_HPP__
+
+#define OW_DAEMON_NAME "owcimomd"
+
+#include "OW_config.h"
+#include "OW_Types.h"
+#include "OW_LogLevel.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_SharedLibrary.hpp"
+#include "OW_Map.hpp"
+#include "OW_Array.hpp"
+
+//#include "OW_ServiceIFC.hpp"
+//#include "OW_RequestHandlerIFC.hpp"
+
+//#include "OW_CIMFwd.hpp"
+//#include "OW_RepositoryIFC.hpp"
+//#include "OW_AuthManager.hpp"
+//#include "OW_ProviderManager.hpp"
+//#include "OW_PollingManager.hpp"
+//#include "OW_IndicationServer.hpp"
+//#include "OW_RequestHandlerIFC.hpp"
+
+class OW_CIMServer;
+class OW_CIMOMHandle;
+class OW_RequestHandlerIFC;
+class OW_ServiceIFC;
+class OW_CIMInstance;
+class OW_ProviderManager;
+class OW_WQLIFC;
+class OW_ACLInfo;
+class OW_CIMNameSpace;
+class OW_HTTPServer;
+class OW_AuthManager;
+class OW_Authenticator;
+class OW_Logger;
+class OW_SelectableIFC;
+class OW_SelectableCallbackIFC;
+class OW_WQLIFC;
+class OW_ProviderManager;
+class OW_IndicationRepLayer;
+class OW_RepositoryIFC;
+class OW_PollingManager;
+class OW_IndicationServer;
+
+typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
+typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
+typedef OW_Reference<OW_Logger> OW_LoggerRef;
+typedef OW_Reference<OW_CIMOMHandle> OW_CIMOMHandleRef;
+typedef OW_Reference<OW_WQLIFC> OW_WQLIFCRef;
+typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;
+typedef OW_Reference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
+typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
+typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
+typedef OW_Reference<OW_PollingManager> OW_PollingManagerRef;
+typedef OW_Reference<OW_IndicationServer> OW_IndicationServerRef;
+typedef OW_Reference<OW_ServiceIFC> OW_ServiceIFCRef;
+typedef OW_Reference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
+
+template<class T> class OW_LibEntry
+{
+public:
+
+	OW_LibEntry() : m_obj(0), m_lib(0) {}
+	OW_LibEntry(const OW_LibEntry<T>& x) : m_obj(x.m_obj), m_lib(x.m_lib) {}
+	OW_LibEntry(OW_Reference<T> xobj, OW_SharedLibraryRef lib)
+		: m_obj(xobj)
+		, m_lib(lib) {}
+
+	~OW_LibEntry()
+	{
+		m_obj = 0;
+		m_lib = 0;
+	}
+
+	OW_LibEntry<T>& operator= (const OW_LibEntry<T>& arg)
+	{
+		m_obj = arg.m_obj;
+		m_lib = arg.m_lib;
+		return *this;
+	}
+
+	OW_Reference<T> m_obj;
+	OW_SharedLibraryRef m_lib;
+};
+				  
+class OW_CIMOMEnvironment : public OW_ServiceEnvironmentIFC
+{
+public:
+	OW_CIMOMEnvironment();
+	~OW_CIMOMEnvironment();
+	void init();
+
+	virtual OW_Bool authenticate(OW_String &userName, const OW_String &info,
+		OW_String &details);
+
+	virtual OW_String getConfigItem(const OW_String &name) const;
+
+	virtual OW_CIMOMHandleRef getCIMOMHandle(const OW_String &username,
+		const OW_Bool doIndications=false);
+
+	OW_CIMOMHandleRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
+		OW_Bool doIndications=false);
+
+	OW_CIMOMHandleRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
+		const OW_ACLInfo& aclInfo);
+
+	OW_WQLIFCRef getWQLRef();
+
+	virtual OW_RequestHandlerIFCRef getRequestHandler(
+		const OW_String &id) const;
+
+	virtual OW_LoggerRef getLogger() const;
+
+	void clearConfigItems();
+
+	virtual void setConfigItem(const OW_String &item, const OW_String &value,
+		OW_Bool overwritePrevious=true);
+
+	virtual void addSelectable(OW_SelectableIFCRef obj,
+		OW_SelectableCallbackIFCRef cb);
+
+	virtual void removeSelectable(OW_SelectableIFCRef obj,
+		OW_SelectableCallbackIFCRef cb);
+
+	void startServices();
+	void shutdown();
+	OW_ProviderManagerRef getProviderManager();
+	void runSelectEngine();
+
+	void logCustInfo(const OW_String& s) const
+	{
+		m_Logger->logCustInfo(s);
+	}
+
+	void logDebug(const OW_String& s) const
+	{
+		m_Logger->logDebug(s);
+	}
+
+	void logError(const OW_String& s) const
+	{
+		m_Logger->logError(s);
+	}
+
+	void exportIndication(const OW_CIMInstance& instance,
+		const OW_CIMNameSpace& instNS);
+
+private:
+
+	void _createLogger();
+	void _loadConfigItemsFromFile(const OW_String& filename);
+	void _loadRequestHandlers();
+	void _loadServices();
+	void _createAuthManager();
+	void _createPollingManager();
+	void _createIndicationServer();
+	OW_IndicationRepLayerRef _getIndicationRepLayer();
+	void _clearSelectables();
+
+	// Types
+	typedef OW_Map<OW_String, OW_String> ConfigMap;
+	typedef OW_Reference<ConfigMap> ConfigMapRef;
+	typedef OW_LibEntry<OW_ServiceIFC> ServiceEntry;
+	typedef OW_LibEntry<OW_RequestHandlerIFC> ReqHandlerEntry;
+
+	mutable OW_Mutex m_monitor;
+	OW_RepositoryIFCRef m_cimServer;
+	OW_AuthManagerRef m_authManager;
+	OW_LoggerRef m_Logger;
+	ConfigMapRef m_configItems;
+	OW_ProviderManagerRef m_providerManager;
+	OW_SharedLibraryRef m_wqlLib;
+	OW_SharedLibraryRef m_indicationServerLib;
+	OW_SharedLibraryRef m_indicationRepLayerLib;
+	OW_PollingManagerRef m_pollingManager;
+	OW_IndicationServerRef m_indicationServer;
+	OW_Bool m_indicationsDisabled;
+	OW_Array<OW_SelectableIFCRef> m_selectables;
+	OW_Array<OW_SelectableCallbackIFCRef> m_selectableCallbacks;
+	OW_Array<ServiceEntry> m_services;
+	OW_Array<ReqHandlerEntry> m_reqHandlers;
+	mutable OW_Mutex m_indicationLock;
+	OW_Bool m_indicationRepLayerDisabled;
+	mutable OW_Mutex m_selectableLock;
+};
+
+typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
+
+#endif	// __OW_CIMOMENVIRONMENT_HPP__
+

@@ -1,0 +1,3 @@
+IDENT=owcimomd
+DESCRIPTIVE="OpenWBEM CIMOM Daemon"
+ONBOOT="yes"

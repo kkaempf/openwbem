@@ -1,0 +1,126 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+#include "OW_config.h"
+
+#ifdef OW_DEBUG_MEMORY
+#include "OW_MemTracerTestCases.hpp"
+#endif
+
+// test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_CIMClassTestCases.hpp"
+#include "OW_ExceptionTestCases.hpp"
+#include "OW_StringStreamTestCases.hpp"
+#include "OW_MutexTestCases.hpp"
+#include "OW_CIMUrlTestCases.hpp"
+#include "OW_EventManagerTestCases.hpp"
+#include "OW_ListenerAuthenticatorTestCases.hpp"
+#include "OW_InetAddressTestCases.hpp"
+#include "OW_Base64TestCases.hpp"
+#include "OW_MD5TestCases.hpp"
+#include "OW_XMLEscapeTestCases.hpp"
+#include "OW_XMLUnescapeTestCases.hpp"
+#include "OW_EnumerationTestCases.hpp"
+#include "OW_StackTraceTestCases.hpp"
+#include "OW_ExecTestCases.hpp"
+#include "OW_LinuxSharedLibraryLoaderTestCases.hpp"
+#include "OW_ProviderMuxTestCases.hpp"
+#include "OW_ProviderMuxLoaderTestCases.hpp"
+#include "OW_SharedLibraryLoaderTestCases.hpp"
+#include "OW_SharedLibraryTestCases.hpp"
+#include "OW_ProviderManagerTestCases.hpp"
+#include "OW_HTTPChunkerTestCases.hpp"
+#include "OW_LoggerTestCases.hpp"
+#include "OW_StringTestCases.hpp"
+#include "OW_FormatTestCases.hpp"
+#include "OW_ConfigOpts.hpp"
+
+// includes for this file
+#include "TestRunner.hpp"
+#include "OW_String.hpp"
+//#include "OW_Environment.hpp"
+
+int main( int argc, char *argv[])
+{
+	//OW_Environment::setConfigItem("owcimomd.config_file",
+	//	"../../etc/openwbem.conf");
+	//OW_Environment::setConfigItem(OW_ConfigOpts::OW_DEBUG_opt,
+	//	"true");
+	//OW_Environment::setConfigItem(OW_ConfigOpts::LOG_LEVEL_opt,
+	//		"debug");
+	//OW_Environment::init(); // needed by some of the test cases.
+
+	TestRunner runner;
+	
+	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
+	runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
+	runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());
+#ifdef OW_DEBUG_MEMORY
+	runner.addTest( "OW_MemTracer", OW_MemTracerTestCases::suite());
+#endif
+	runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
+	runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
+	runner.addTest( "OW_EventManager", OW_EventManagerTestCases::suite());
+	runner.addTest( "OW_ListenerAuthenticator", OW_ListenerAuthenticatorTestCases::suite());
+	runner.addTest( "OW_InetAddress", OW_InetAddressTestCases::suite());
+	runner.addTest( "OW_Base64", OW_Base64TestCases::suite());
+	runner.addTest( "OW_MD5", OW_MD5TestCases::suite());
+	runner.addTest( "OW_XMLEscape", OW_XMLEscapeTestCases::suite());
+	runner.addTest( "OW_XMLUnescape", OW_XMLUnescapeTestCases::suite());
+	runner.addTest( "OW_Enumeration", OW_EnumerationTestCases::suite());
+#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+	runner.addTest( "OW_StackTrace", OW_StackTraceTestCases::suite());
+#endif
+	runner.addTest( "OW_Exec", OW_ExecTestCases::suite());
+	runner.addTest( "OW_LinuxSharedLibraryLoader", OW_LinuxSharedLibraryLoaderTestCases::suite());
+	runner.addTest( "OW_ProviderMux", OW_ProviderMuxTestCases::suite());
+	runner.addTest( "OW_ProviderMuxLoader", OW_ProviderMuxLoaderTestCases::suite());
+	runner.addTest( "OW_SharedLibraryLoader", OW_SharedLibraryLoaderTestCases::suite());
+	runner.addTest( "OW_SharedLibrary", OW_SharedLibraryTestCases::suite());
+	runner.addTest( "OW_ProviderManager", OW_ProviderManagerTestCases::suite());
+	runner.addTest( "OW_HTTPChunker", OW_HTTPChunkerTestCases::suite());
+	runner.addTest( "OW_Logger", OW_LoggerTestCases::suite());
+	runner.addTest( "OW_String", OW_StringTestCases::suite());
+	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
+
+	if ( argc < 2 || ( argc == 2 && OW_String("all") == argv[1] ) )
+	{
+		runner.runAll();
+	}
+	else
+	{
+		runner.run( argv[1] );
+	}
+	//exit(0);
+	return 0;
+}
+
+

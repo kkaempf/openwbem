@@ -1,0 +1,1257 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+#include "OW_config.h"
+#include "OW_IPCCIMOMHandle.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMScope.hpp"
+#include "OW_CIMFlavor.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMQualifier.hpp"
+#include "OW_CIMClassEnumeration.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMtoXML.hpp"
+
+#include <iostream>
+
+using std::cerr;
+using std::cout;
+using std::cin;
+using std::endl;
+
+//////////////////////////////////////////////////////////////////////////////
+void
+testStart(const char* funcName, const char* parm=NULL)
+{
+	cout << "*** Doing " << funcName << '(';
+	if(parm)
+	{
+		cout << parm;
+	}
+	cout << ") ***" << endl;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+inline void
+testDone()
+{
+	//cout << "done" << endl;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+usage(const char* name)
+{
+	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+createClass(OW_CIMOMHandle& hdl, const OW_String& name)
+{
+	testStart("createClass");
+
+	try
+	{
+		OW_CIMObjectPath parentPath(name);
+		OW_CIMQualifier cimQualifierKey("Key");
+		//cimQualifierKey.setValue(OW_CIMDataType::STRING);
+		OW_CIMClass cimClass(OW_Bool(true));
+		cimClass.setName(name);
+		cimClass.setSuperClass("CIM_ComputerSystem");
+
+		OW_Array<OW_String> zargs;
+		zargs.push_back("CreationClassName");
+		zargs.push_back("string");
+		zargs.push_back("true");
+		zargs.push_back("Name");
+		zargs.push_back("string");
+		zargs.push_back("true");
+		zargs.push_back("OptionalArg");
+		zargs.push_back("boolean");
+		zargs.push_back("false");
+
+		OW_String name;
+		OW_String type;
+		OW_String isKey;
+
+		for (size_t i = 0; i < zargs.size(); i += 3)
+		{
+			name = zargs[i];
+			type = zargs[i + 1];
+			isKey = zargs[i + 2];
+			OW_CIMProperty cimProp(OW_Bool(true));
+			if (type.equals("string"))
+			{
+				cimProp.setDataType(OW_CIMDataType::STRING);
+			}
+			else if (type.equals("uint16"))
+			{
+				cimProp.setDataType(OW_CIMDataType::UINT16);
+			}
+			else if (type.equals("boolean"))
+			{
+				cimProp.setDataType(OW_CIMDataType::BOOLEAN);
+			}
+			else if (type.equals("datatime"))
+			{
+				cimProp.setDataType(OW_CIMDataType::DATETIME);
+			}
+			else cimProp.setDataType(OW_CIMDataType::STRING);
+
+			cimProp.setName(name);
+			if (isKey.equals("true"))
+			{
+				cimProp.addQualifier(cimQualifierKey);
+			}
+			cimClass.addProperty(cimProp);
+		}
+
+		hdl.createClass(parentPath, cimClass);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumClassNames(OW_CIMOMHandle& hdl)
+{
+	testStart("enumClassNames");
+
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNames(cop, true);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "Testing non-deep" << endl;
+
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNames(cop, false);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumClasses(OW_CIMOMHandle& hdl)
+{
+	testStart("enumClasses");
+
+	cout << "deep = true, localOnly = false" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMClassEnumeration enu = hdl.enumClass(cop, true,
+																 false);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "deep = false, localOnly = false" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMClassEnumeration enu = hdl.enumClass(cop, false,
+																 false);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "deep = false, localOnly = true" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMClassEnumeration enu = hdl.enumClass(cop, false,
+																 true);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "deep = true, localOnly = true" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMClassEnumeration enu = hdl.enumClass(cop, true,
+																 true);
+		while (enu.hasMoreElements())
+		{
+			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+modifyClass(OW_CIMOMHandle& hdl)
+{
+	testStart("modifyClass");
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		OW_CIMProperty cimProp(OW_Bool(true));
+		cimProp.setDataType(OW_CIMDataType::STRING);
+		cimProp.setName("BrandNewProperty");
+		cimClass.addProperty(cimProp);
+		hdl.setClass(cop, cimClass);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+getClass(OW_CIMOMHandle& hdl)
+{
+	testStart("getClass");
+
+	cout << "localOnly = false" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		cout << cimClass.toMOF() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "localOnly = true" << endl;
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMClass cimClass = hdl.getClass(cop, true);
+		cout << cimClass.toMOF() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+createInstance(OW_CIMOMHandle& hdl, const OW_String& fromClass,
+	const OW_String& newInstance)
+{
+	testStart("createInstance");
+
+	try
+	{
+		OW_CIMObjectPath cop(fromClass, "root");
+		OW_CIMClass cimClass = hdl.getClass(cop, false);
+
+		OW_CIMInstance newInst = cimClass.newInstance();
+
+		newInst.setName(newInstance);
+		newInst.setProperty(OW_CIMProperty::NAME_PROPERTY,
+								  OW_CIMValue(newInstance));
+		newInst.setProperty("CreationClassName",
+								  OW_CIMValue(fromClass));
+
+		cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
+
+		hdl.createInstance(cop, newInst);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << "\n" << e.getStackTrace() << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumerateInstanceNames(OW_CIMOMHandle& hdl)
+{
+	testStart("enumInstanceNames");
+
+	cout << "deep = true" << endl;
+	try
+	{
+		OW_String ofClass = "CIM_ComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(cop, true);
+		while (enu.hasMoreElements())
+		{
+			cout << enu.nextElement().toString() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	cout << "deep = false" << endl;
+	try
+	{
+		OW_String ofClass = "CIM_ComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(cop, false);
+		while (enu.hasMoreElements())
+		{
+			cout << enu.nextElement().toString() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumerateInstances(OW_CIMOMHandle& hdl, OW_Bool deep, OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_String pstr;
+	pstr = format("deep = %1, localOnly = %2, includeQualifiers=%3, "
+			"includeClassOrigin = %4, propertyList? %5",
+			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
+		
+	testStart("enumInstances", pstr.c_str());
+
+	try
+	{
+		OW_String ofClass = "CIM_ComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		OW_CIMInstanceEnumeration enu = hdl.enumInstances(cop, deep, localOnly,
+				includeQualifiers, includeClassOrigin, propertyList);
+
+		while (enu.hasMoreElements())
+		{
+			//enu.nextElement().toXML(cout);
+			OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+		   cout << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+getInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance,
+		OW_Bool localOnly=false,
+		OW_Bool includeQualifiers=false,
+		OW_Bool includeClassOrigin=false,
+		const OW_StringArray* propertyList=0)
+{
+	OW_String pstr;
+	pstr = format("localOnly = %1, includeQualifiers=%2, "
+			"includeClassOrigin = %3, propertyList? %4",
+			localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
+	testStart("getInstance", pstr.c_str());
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
+		cop.addKey("Name", OW_CIMValue(theInstance));
+
+		OW_CIMInstance in = hdl.getInstance(cop, localOnly, includeQualifiers,
+				includeClassOrigin, propertyList);
+		//in.toXML(cout);
+		OW_CIMtoXML(in,cout, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+		cout << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+modifyInstance(OW_CIMOMHandle& hdl, const OW_String& theInstance)
+{
+	testStart("modifyInstance");
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
+		cop.addKey("Name", OW_CIMValue(theInstance));
+
+		OW_CIMInstance in = hdl.getInstance(cop, false);
+
+		in.setProperty(OW_CIMProperty("BrandNewProperty",
+												OW_CIMValue(OW_String("true"))));
+
+		cop = OW_CIMObjectPath(ofClass, in.getKeyValuePairs());
+		hdl.setInstance(cop, in);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+deleteInstance(OW_CIMOMHandle& hdl, const OW_String& ofClass,
+	const OW_String& theInstance)
+{
+	testStart("deleteInstance");
+
+	try
+	{
+		OW_CIMObjectPath cop(ofClass);
+		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
+		cop.addKey("Name", OW_CIMValue(theInstance));
+		hdl.deleteInstance(cop);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+deleteAssociations(OW_CIMOMHandle& hdl)
+{
+	testStart("deleteAssociations");
+
+	try
+	{
+		OW_CIMNameSpace path("/root");
+		OW_CIMInstanceArray cia = hdl.execQuery(path,
+			"delete from CIM_SystemComponent", "wql1");
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+setQualifier(OW_CIMOMHandle& hdl)
+{
+	testStart("setQualifier");
+
+	try
+	{
+		OW_String qualName = "borgishness";
+
+		OW_CIMObjectPath cop(qualName);
+		OW_CIMQualifierType qt(qualName);
+
+		qt.setDataType(OW_CIMDataType::STRING);
+		qt.setDefaultValue(OW_CIMValue(OW_String()));
+
+		qt.addScope(OW_CIMScope::CLASS);
+		qt.addScope(OW_CIMScope::PROPERTY);
+
+		qt.addFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
+
+
+		hdl.setQualifierType(cop, qt);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumerateQualifiers(OW_CIMOMHandle& hdl)
+{
+	testStart("enumerateQualifiers");
+
+	try
+	{
+		OW_CIMObjectPath cop("", "root");
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypes(cop);
+		while (enu.hasMoreElements())
+		{
+			OW_CIMQualifierType cqt = enu.nextElement();
+			cout << "Found Qualifier Definition: " << cqt.getName() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+getQualifier(OW_CIMOMHandle& hdl)
+{
+	testStart("getQualifier");
+
+	try
+	{
+		OW_String qualType = "borgishness";
+		OW_CIMObjectPath cop(qualType);
+		OW_CIMQualifierType qt = hdl.getQualifierType(cop);
+		cout << "Got Qualifier: " << qt.getName() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void createAssociation(OW_CIMOMHandle& hdl, const OW_String& assocName,
+		const OW_String& propName1, const OW_CIMObjectPath& cop1,
+		const OW_String& propName2, const OW_CIMObjectPath& cop2)
+{
+
+		OW_CIMClass cc = hdl.getClass(OW_CIMObjectPath(assocName));
+		OW_CIMInstance inst = cc.newInstance();
+			
+		inst.setProperty(propName1, OW_CIMValue(cop1));
+
+		inst.setProperty(propName2, OW_CIMValue(cop2));
+
+		OW_CIMObjectPath cop(inst.getClassName(), inst.getKeyValuePairs());
+
+		hdl.createInstance(cop, inst);
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+setupAssociations(OW_CIMOMHandle& hdl)
+{
+	testStart("setupAssociations");
+
+	try
+	{
+		OW_CIMObjectPath cop1("EXP_BionicComputerSystem");
+		cop1.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+		cop1.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMObjectPath cop2("EXP_BionicComputerSystem2");
+		cop2.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem2")));
+		cop2.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+
+		OW_CIMObjectPath cop3("EXP_BionicComputerSystem2");
+		cop3.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem2")));
+		cop3.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMObjectPath cop4("EXP_BionicComputerSystem");
+		cop4.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+		cop4.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+
+		createAssociation(hdl, "CIM_SystemComponent", "GroupComponent", cop1,
+				"PartComponent", cop2);
+		createAssociation(hdl, "CIM_SystemDevice", "GroupComponent", cop2,
+				"PartComponent", cop1);
+		createAssociation(hdl, "CIM_SystemDevice", "GroupComponent", cop2,
+				"PartComponent", cop3);
+		createAssociation(hdl, "CIM_SystemDevice", "GroupComponent", cop1,
+				"PartComponent", cop4);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+associatorNames(OW_CIMOMHandle& hdl, const OW_String& assocClass,
+		const OW_String& resultClass, const OW_String& role,
+		const OW_String& resultRole)
+{
+	OW_String pstr;
+	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
+			assocClass, resultClass, role, resultRole);
+	testStart("associatorNames", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		cop.addKey("CreationClassName",
+					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNames(cop,
+					assocClass, resultClass, role, resultRole);
+
+		while (enu.hasMoreElements())
+		{
+			cout << "Associated path: " << enu.nextElement().toString() << endl;
+		}
+
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+associators(OW_CIMOMHandle& hdl, const OW_String& assocClass,
+		const OW_String& resultClass, const OW_String& role,
+		const OW_String& resultRole, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
+{
+	OW_String pstr;
+	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
+			"%4, includeQualifiers = %5, includeClassOrigin = %6, propertyList? "
+			"%7",
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, propertyList != 0);
+	testStart("associators", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		cop.addKey("CreationClassName",
+					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+
+		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMInstanceEnumeration enu = hdl.associators(cop,
+			assocClass, resultClass, role, resultRole, includeQualifiers,
+			includeClassOrigin, propertyList);
+
+		while (enu.hasMoreElements())
+		{
+			// XML is an easy way to easily see if the classorigin was sent.
+			if (includeClassOrigin)
+			{
+				cout << "Association Instance: ";
+			  	//enu.nextElement().toXML(cout);
+				OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			  	cout << endl;
+			}
+			else
+			{
+				cout << "Association Instance: " << enu.nextElement().toMOF() << endl;
+			}
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+referenceNames(OW_CIMOMHandle& hdl,
+		const OW_String& resultClass, const OW_String& role)
+{
+	OW_String pstr;
+	pstr = format("resultClass = %1, role = %2", resultClass, role);
+	testStart("referenceNames", pstr.c_str());
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass);
+		cop.addKey("CreationClassName",
+					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNames(cop,
+				resultClass, role);
+
+		while (enu.hasMoreElements())
+		{
+			cout << "Associated path: " << enu.nextElement().toString() << endl;
+		}
+
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+references(OW_CIMOMHandle& hdl,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_String pstr;
+	pstr = format("resultClass = %1, role = %2, includeQualifiers = %3, "
+			"includeClassOrigin = %4, propertyList? %5",
+			resultClass, role, includeQualifiers, includeClassOrigin,
+			propertyList != 0);
+	testStart("references", pstr.c_str());
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		cop.addKey("CreationClassName",
+					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+
+		OW_CIMInstanceEnumeration enu = hdl.references(cop,
+				resultClass, role, includeQualifiers, includeClassOrigin,
+				propertyList);
+
+		while (enu.hasMoreElements())
+		{
+			// XML is an easy way to easily see if the classorigin was sent.
+			if (includeClassOrigin)
+			{
+				cout << "Association Instance: ";
+			  	//enu.nextElement().toXML(cout);
+				OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
+					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			  	cout << endl;
+			}
+			else
+			{
+				cout << "Associated Instance: " << enu.nextElement().toMOF() << endl;
+			}
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+execQuery(OW_CIMOMHandle& hdl)
+{
+	testStart("execQuery");
+
+	try
+	{
+		OW_CIMNameSpace path("/root");
+		OW_CIMInstanceArray cia = hdl.execQuery(path,
+			"select * from EXP_BionicComputerSystem", "wql1");
+		for (size_t i = 0; i < cia.size(); ++i)
+		{
+			cout << "Instance from Query: " << cia[i].toMOF() << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+deleteQualifier(OW_CIMOMHandle& hdl)
+{
+	testStart("deleteQualifier");
+
+	try
+	{
+		OW_String qualType = "borgishness";
+		OW_CIMObjectPath cop(qualType);
+		hdl.deleteQualifierType(cop);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+deleteClass(OW_CIMOMHandle& hdl, const OW_String& delClass)
+{
+	testStart("deleteClass");
+
+	try
+	{
+		OW_CIMObjectPath pa(delClass);
+
+		hdl.deleteClass(pa);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+invokeMethod(OW_CIMOMHandle& hdl, int num)
+{
+	testStart("invokeMethod");
+
+	try
+	{
+		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root");
+
+		OW_String rval;
+		OW_CIMValueArray in, out;
+		OW_CIMValue cv;
+		switch (num)
+		{
+			case 1:
+				in.push_back(OW_CIMValue(OW_String("off")));
+				hdl.invokeMethod(cop, "setstate", in, out);
+				cout << "invokeMethod: setstate(\"off\")" << endl;
+				break;
+			case 2:
+				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv.get(rval);
+				cout << "invokeMethod: getstate(): " << rval << endl;
+				break;
+			case 3:
+				hdl.invokeMethod(cop, "togglestate", in, out);
+				cout << "invokeMethod: togglestate()" << endl;
+				break;
+			case 4:
+				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv.get(rval);
+				cout << "invokeMethod: getstate(): " << rval << endl;
+				break;
+			case 5:
+				in.push_back(OW_CIMValue(OW_String("off")));
+				hdl.invokeMethod(cop, "setstate", in, out);
+				cout << "invokeMethod: setstate(\"off\")" << endl;
+				break;
+			case 6:
+				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv.get(rval);
+				cout << "invokeMethod: getstate(): " << rval << endl;
+				break;
+			default:
+				break;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << "\n" << e.getStackTrace() << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+createNameSpace(OW_CIMOMHandle& hdl)
+{
+	testStart("createNameSpace");
+
+	try
+	{
+		OW_CIMNameSpace ns(true);
+		ns.setNameSpace("/root/Caldera");
+		hdl.createNameSpace(ns);
+
+		ns.setNameSpace("/root/Caldera/test");
+		hdl.createNameSpace(ns);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+enumNameSpace(OW_CIMOMHandle& hdl)
+{
+	testStart("enumNamespace");
+
+	try
+	{
+		OW_CIMNameSpace path("/root");
+		cout << "deep = false" << endl;
+		OW_StringArray rval = hdl.enumNameSpace(path, OW_Bool(false));
+
+		for (size_t i = 0; i < rval.size(); i++)
+		{
+			cout << "Namespace: " << rval[i] << endl;
+		}
+
+		cout << "deep = true" << endl;
+		rval = hdl.enumNameSpace(path, OW_Bool(true));
+
+		for (size_t i = 0; i < rval.size(); i++)
+		{
+			cout << "Namespace: " << rval[i] << endl;
+		}
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+deleteNameSpace(OW_CIMOMHandle& hdl)
+{
+	testStart("deleteNameSpace");
+
+	try
+	{
+		OW_CIMNameSpace ns(true);
+		ns.setNameSpace("/root/Caldera");
+		hdl.deleteNameSpace(ns);
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+getProperty(OW_CIMOMHandle& hdl, const OW_String& instName)
+{
+	testStart("getProperty");
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass, "/root");
+		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
+		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
+
+		OW_CIMValue v = hdl.getProperty(cop, "OptionalArg");
+		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+setProperty(OW_CIMOMHandle& hdl, const OW_String& instName)
+{
+	testStart("setProperty");
+
+	try
+	{
+		OW_String ofClass = "EXP_BionicComputerSystem";
+		OW_CIMObjectPath cop(ofClass, "/root");
+		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
+		cop.addKey("Name", OW_CIMValue(instName));
+
+		hdl.setProperty(cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+main(int argc, char** argv)
+{
+	(void)argc;
+	(void)argv;
+
+	try
+	{
+		OW_StringArray sa;
+		OW_IPCCIMOMHandle chdl("ipc://test1:pass1@localhost");
+
+		createNameSpace(chdl);
+		enumNameSpace(chdl);
+		deleteNameSpace(chdl);
+		createClass(chdl, "EXP_BionicComputerSystem");
+		createClass(chdl, "EXP_BionicComputerSystem2");
+		enumClassNames(chdl);
+		//enumClasses(chdl);
+		modifyClass(chdl);
+		getClass(chdl);
+		createInstance(chdl, "EXP_BionicComputerSystem", "SixMillion");
+		createInstance(chdl, "EXP_BionicComputerSystem", "SevenMillion");
+		createInstance(chdl, "EXP_BionicComputerSystem2", "SixMillion");
+		createInstance(chdl, "EXP_BionicComputerSystem2", "SevenMillion");
+		enumerateInstanceNames(chdl);
+
+		// non-deep, non-localOnly, no qualifiers, no classOrigin, all props
+		enumerateInstances(chdl, false, false, false, false, 0);	
+
+		// deep, non-localOnly, no qualifiers, no classOrigin, all props
+		enumerateInstances(chdl, true, false, false, false, 0);
+
+		// deep, localOnly, no qualifiers, no classOrigin, all props
+		enumerateInstances(chdl, true, true, false, false, 0);
+
+		// deep, non-localOnly, qualifiers, no classOrigin, all props
+		enumerateInstances(chdl, true, false, true, false, 0);
+
+		// deep, non-localOnly, no qualifiers, classOrigin, all props
+		enumerateInstances(chdl, true, false, false, true, 0);
+
+		// deep, non-localOnly, no qualifiers, no classOrigin, no props
+		enumerateInstances(chdl, true, false, false, false, &sa);
+
+		// deep, non-localOnly, no qualifiers, no classOrigin, one prop
+		sa.push_back(OW_String("BrandNewProperty"));
+		enumerateInstances(chdl, true, false, false, false, &sa);
+
+		getInstance(chdl, "SixMillion");
+		getInstance(chdl, "SevenMillion");
+
+		// localOnly = true
+		getInstance(chdl, "SevenMillion", true, false, false, 0);
+
+		// includeQualifiers = true
+		getInstance(chdl, "SevenMillion", false, true, false, 0);
+
+		// includeClassOrigin = true
+		getInstance(chdl, "SevenMillion", false, false, true, 0);
+
+		// propertyList = non-null
+		sa.clear();
+		getInstance(chdl, "SevenMillion", false, false, false, &sa);
+
+		// propertyList = non-null, with element
+		sa.push_back(OW_String("BrandNewProperty"));
+		getInstance(chdl, "SevenMillion", false, false, false, &sa);
+
+		modifyInstance(chdl, "SixMillion");
+		getInstance(chdl, "SixMillion");
+		modifyInstance(chdl, "SevenMillion");
+		getInstance(chdl, "SevenMillion");
+		setProperty(chdl, "SixMillion");
+		getProperty(chdl, "SixMillion");
+		getInstance(chdl, "SixMillion");
+		setQualifier(chdl);
+		enumerateQualifiers(chdl);
+		getQualifier(chdl);
+
+		setupAssociations(chdl);
+
+		associatorNames(chdl, "", "", "", "");
+		associatorNames(chdl, "CIM_SystemDevice", "", "", "");
+		associatorNames(chdl, "", "CIM_ComputerSystem", "", "");
+		associatorNames(chdl, "", "EXP_BionicComputerSystem", "", "");
+		associatorNames(chdl, "", "", "GroupComponent", "");
+		associatorNames(chdl, "", "", "PartComponent", "");
+		associatorNames(chdl, "", "", "PartComponent", "PartComponent");
+		associatorNames(chdl, "", "", "", "PartComponent");
+		associatorNames(chdl, "", "", "", "GroupComponent");
+
+		associators(chdl, "", "", "", "", false, false, 0);
+		associators(chdl, "CIM_SystemDevice", "", "", "", false, false, 0);
+		associators(chdl, "", "CIM_ComputerSystem", "", "", false, false, 0);
+		associators(chdl, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+		associators(chdl, "", "", "GroupComponent", "", false, false, 0);
+		associators(chdl, "", "", "PartComponent", "", false, false, 0);
+		associators(chdl, "", "", "PartComponent", "PartComponent", false, false, 0);
+		associators(chdl, "", "", "", "PartComponent", false, false, 0);
+		associators(chdl, "", "", "", "GroupComponent", false, false, 0);
+		associators(chdl, "", "", "", "", true, false, 0);
+		associators(chdl, "", "", "", "", false, true, 0);
+		sa.clear();
+		associators(chdl, "", "", "", "", false, false, &sa);
+		sa.push_back(OW_String("BrandNewProperty"));
+		associators(chdl, "", "", "", "", false, false, &sa);
+
+		referenceNames(chdl, "", "");
+		referenceNames(chdl, "cim_systemdevice", "");
+		referenceNames(chdl, "cim_component", "");
+		referenceNames(chdl, "", "GroupComponent");
+		referenceNames(chdl, "", "PartComponent");
+
+		references(chdl, "", "", false, false, 0);
+		references(chdl, "cim_systemdevice", "", false, false, 0);
+		references(chdl, "cim_component", "", false, false, 0);
+		references(chdl, "", "GroupComponent", false, false, 0);
+		references(chdl, "", "PartComponent", false, false, 0);
+		references(chdl, "", "", true, false, 0);
+		references(chdl, "", "", false, true, 0);
+		sa.clear();
+		references(chdl, "", "", false, false, &sa);
+		sa.push_back(OW_String("GroupComponent"));
+		references(chdl, "", "", false, false, &sa);
+
+		execQuery(chdl);
+
+		deleteAssociations(chdl);
+		deleteInstance(chdl, "EXP_BionicComputerSystem", "SixMillion");
+		deleteInstance(chdl, "EXP_BionicComputerSystem", "SevenMillion");
+		deleteInstance(chdl, "EXP_BionicComputerSystem2", "SixMillion");
+		deleteInstance(chdl, "EXP_BionicComputerSystem2", "SevenMillion");
+		deleteClass(chdl, "EXP_BionicComputerSystem");
+		deleteClass(chdl, "EXP_BionicComputerSystem2");
+		deleteQualifier(chdl);
+
+		invokeMethod(chdl, 1);
+		invokeMethod(chdl, 2);
+		invokeMethod(chdl, 3);
+		invokeMethod(chdl, 4);
+		invokeMethod(chdl, 5);
+		invokeMethod(chdl, 6);
+
+		return 0;
+
+	}
+	catch (OW_Assertion& a)
+	{
+		cerr << "Caught Assertion: " << a << endl;
+	}
+	catch (OW_Exception& e)
+	{
+		cerr << e << endl;
+		cerr << e.getStackTrace() << endl;
+	}
+	catch(...)
+	{
+		cerr << "IPCClientTest caught unknown exception in main" << endl;
+	}
+
+	return 1;
+}
+
+
+

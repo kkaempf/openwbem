@@ -1,0 +1,138 @@
+OpenWBEM Installation Instructions
+   Hopefully there is enough information in this file to get you going.
+   There should be more/better documentation comming soon ;-)
+-------------------------------------------------------------------------------
+
+CONTENTS
+
+   1.0 - Requirements
+
+   2.0 - Installing from a distribution.
+   
+   3.0 - Installing from CVS check-out
+ 
+-------------------------------------------------------------------------------
+1.0 Requirements
+
+   In order to build OpenWBEM you will need the following components installed
+   on your system:
+   
+      gcc - (required)
+         Version 2.91 or higher
+			(see http://www.gnu.org).
+
+      stl - (required)
+         The C++ standard template library (comes with gcc).
+
+		Bison - (required)
+			General purpose parser generator.
+         (see http://www.gnu.org).
+
+		Flex - (required)
+			Fast lexical analyser.
+         (see http://www.gnu.org).
+
+      OpenSSL library - (optional)
+         If you want the CIMOM to provide HTTPS access
+         (see http://www.openssl.org).
+
+      GNU Pth - (Optional on Linux. Required on Caldera OpenServer)
+         The GNU portable threads library (libpth) if you are building
+         on Caldera International OpenServer or you wish to use cooperative
+         threads on Linux (see http://www.gnu.org).
+
+      zlib - (optional)
+         If you want to enable compression on the CIMOM's HTTP connections
+         (see http://www.gzip.org).
+
+-------------------------------------------------------------------------------
+2.0 - Installing from a distribution.
+
+   If you acquired the OpenWBEM software as a distribution, you have a file
+   that should look like the following:
+   
+      openwbem-[Major Version].[Minor Version].[Revision].tar.gz
+      
+   For the sake of discussion, let's say we have a distribution with the file
+   name openwbem-1.0.1.tar.gz that currently resides in the ~/downloads 
+   directory. This file contains OpenWBEM version 1.0.1.
+   
+   The first thing you want to do, is extract the contents of this file into
+   any directory you desire. We'll assume for now that is /usr/local. The
+   following commands should get the distribution properly extracted into
+   the /usr/local directory:
+   
+      cd /usr/local
+      tar zxvf ~/downloads/openwbem-1.0.1.tar.gz
+      
+   After this is done, you should have a /usr/local/openwbem-1.0.1 directory.
+   Now type in the following commands:
+   
+      cd /usr/local/openwbem-1.0.1
+      ./configure
+      make
+      su root
+      make install
+      
+
+   That's it! You should now have OpenWBEM installed on your system.
+   
+   Note:
+      The configure command automatically detects various aspects of your
+      system and builds OpenWBEM accordingly. If you don't like the
+      default options that configure chooses on it's own, type
+      configure --help at the shell prompt to see the plethora of options
+      available to you.
+
+		Following is a list of some of the non-standard configure options
+		supported in the OpenWBEM build process:
+
+			--enable-gnu-pth
+				Use this option if you are building on Linux and wish to use
+				the GNU Pth cooperative thread library.
+
+			--with-search-dir=<path to additional include files>
+				Use this option if you have some header files that reside in
+				a location that cannot be found by the standard OpenWBEM build
+				process.
+
+			--with-ssl-dir=<path to OpenSSL header files>
+				Use this option if the header files for OpenSSL are located
+				in a location that cannot be found by the standard OpenWBEM
+				build process.
+      
+-------------------------------------------------------------------------------
+3.0 Installing from CVS check-out
+
+   If you acquired OpenWBEM from the CVS repository at our web site, there
+   should be a shell script in the root directory of the source tree called
+   cvsbootstrap.sh. The easiest way to get the build process going is to
+   do the following:
+   
+      cd /[root directory of the OpenWBEM source tree]
+      ./cvsbootstrap.sh
+      ./configure
+      make
+      make install
+
+   Note:
+      If you have any compile or link problems during the make process, try
+      doing a "make clean" after the ./configure command.
+      
+   I prefer to do the above process slightly differently:
+   
+      cd /[root directory of the OpenWBEM source tree]
+      mkdir build
+      ./cvsbootstrap.sh
+      cd build
+      ../configure
+      make
+      make install
+      
+   This will actually place all of the output from the make process in
+   directories relative to the build directory as opposed to putting all of
+   the object files and libraries in the same directories as the source files.
+   
+   As a developer, I seldom do a "make install". I usually just execute the
+   binaries in the directories off of the build directory.
+   

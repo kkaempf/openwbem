@@ -1,0 +1,105 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+#ifndef OW_TYPES_H_
+#define OW_TYPES_H_
+
+#include "OW_config.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <sys/types.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+typedef unsigned char      			OW_UInt8;
+typedef signed char        			OW_Int8;
+typedef unsigned char				OW_Byte;
+
+#if OW_SIZEOF_SHORT_INT == 2
+typedef unsigned short     			OW_UInt16;
+typedef short       				OW_Int16;
+#elif OW_SIZEOF_INT == 2
+typedef unsigned int     			OW_UInt16;
+typedef int       					OW_Int16;
+#endif
+
+#if OW_SIZEOF_INT == 4
+typedef unsigned int       			OW_UInt32;
+typedef int         				OW_Int32;
+#elif OW_SIZEOF_LONG_INT == 4
+typedef unsigned long       		OW_UInt32;
+typedef long         				OW_Int32;
+#endif
+
+#if OW_SIZEOF_LONG_INT == 8
+typedef unsigned long   OW_UInt64;
+typedef long    OW_Int64;
+#elif OW_SIZEOF_LONG_LONG_INT == 8
+typedef unsigned long long 			OW_UInt64;
+typedef long long   				OW_Int64;
+#else
+#error "Compiler must support 64 bit long"
+#endif
+
+#if OW_SIZEOF_DOUBLE == 8
+typedef double						OW_Real64;
+#elif OW_SIZEOF_LONG_DOUBLE == 8
+typedef long double					OW_Real64;
+#endif
+
+#if OW_SIZEOF_FLOAT == 4
+typedef float						OW_Real32;
+#elif OW_SIZEOF_DOUBLE == 4
+typedef double						OW_Real32;
+#endif
+
+typedef off_t	OW_off_t;
+
+// OW_Select_t is the type of object that can be used in
+// synchronous I/O multiplexing (i.e. select). There is a
+// possibility this can be something other than an int on
+// a platform we don't yet support.
+typedef int 						OW_Select_t;
+
+#define OW_SHAREDLIB_EXTENSION ".so"
+#define OW_FILENAME_SEPARATOR "/"
+#define OW_PATHNAME_SEPARATOR ":"
+
+typedef int		OW_FileHandle;
+
+typedef uid_t OW_UserId;
+
+#endif	/* __OW_OS_TYPES_H__ */
+

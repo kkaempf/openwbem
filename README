@@ -1,0 +1,178 @@
+OpenWBEM README
+
+CONTENTS
+
+   1.0 - What is OpenWBEM
+
+   2.0 - OpenWBEM CIMOM
+      2.1 - CIM Operations over HTTP
+      2.2 - CIM Operations over HTTPS (Requires OpenSSL)
+      2.3 - Extensible Authentication through authentication plug-in modules.
+         2.3.1 - PAM Authentication Module
+         2.3.2 - SIMPLE Authentication Module
+         2.3.3 - Digest Authentication Module
+      2.4 - Extensible Provider Interface through Provider Interface plug-in
+         2.4.1 - C++ Provider Interface
+         2.4.2 - CIMOM Provider Interface
+      2.5 - Indications and CIM Listener support
+      2.6 - WQL Level 2 support
+      2.7 - Access Control Lists for tiered management
+      
+   3.0 - Additional Software
+      3.1 - C++ Client API library
+      3.2 - MOF Compiler
+
+-------------------------------------------------------------------------------
+1.0 What is OpenWBEM
+
+OpenWBEM is a set of software components that help facilitate the
+deployment of the DMTF's (Distributed Management Task Force) CIM/WBEM
+technologies. If you are not familiar with the DMTF and it's technologies,
+you might want to visit their web site at http://www.dmtf.org.
+This software was initially developed by Caldera International and released
+to the opensource community under a BSD style license for further maturation
+and additional platform support. On initial release, all of the software
+components were written in C++. We expect this to change as the project evolves
+and developers add more components to the suite.
+
+-------------------------------------------------------------------------------
+2.0 OpenWBEM CIMOM
+
+   The OpenWBEM CIMOM is currently designed to be a daemon that is always
+   running on a computer. The daemon should be pretty system friendly when
+   it comes to memory and cpu overhead.
+
+   Following is a high level summary of the features of the OpenWBEM CIMOM.
+
+   2.1   CIM Operations over HTTP
+
+   2.2   CIM Operations over HTTPS (Requires Open SSL)
+
+   2.3   Extensible Authentication through authentication plug-in modules.
+         An authentication plug-in module is a shared library that supports
+         a specific interface. The authentication can be changed for the CIMOM
+         simply by writing a new authentication shared library and making the
+         CIMOM aware of it by changing it's configuration file.
+         2 authentication modules are already provided:
+
+         2.3.1 PAM Authentication Module
+               This authentication module uses the standard Pluggable
+               Authentication Module that is available on most POSIX
+               systems. This module adds an incredible amount of extensibility
+               all by itself. Check out the documentation for PAM and see what
+               we mean.
+
+         2.3.2 SIMPLE Authentication Module
+               This authentication module simply uses a text file that
+               contains the usernames and passwords of all authorized users
+               If PAM is not available on your system and you don't want
+               to write a custom authentication module, this is a quick way
+               to get up and running.
+
+         2.3.3 Digest Authentication Module
+               This authentication module implements a digest authentication
+               scheme (see RFC 2617).  A tool (owdigestgenpass) is provided
+					to create a MD5 password file for use with the digest 
+					authentication module.  The location of the password file
+					is specified in openwbem.conf. 
+
+   2.4   Extensible Provider Interface through Provider Interface plug-in
+         modules. Providers are an extension mechanism for all CIMOMs. When a
+         CIMOM services a client request for some type of instance data, that
+         data can come from the CIMOM's internal instance repository
+         (static data) or from one of the providers the CIMOM knows about
+         (dynamic data). Providers give a CIMOM the capability to serve up just
+         about any kind of data. This capability is pretty much standard across
+         the various CIMOM implementations. What is not standard, is the
+         interface that providers have with the CIMOM. Providers generally
+         provide some set of known entry points for the CIMOM to call into
+         when the provider's services are needed. This layer between the CIMOM
+         and the provider is what we call the provider interface. Our CIMOM has
+         what we call a provider interface multiplexor. It is capable of
+         supporting any number of provider interfaces at the same time. A new
+         provider interface can be added to the CIMOM by simply creating a
+         shared library that can create an OW_ProviderIFC object and placing it
+         in the directory the CIMOM loads it's provider interfaces from (this
+         is specified in the CIMOM's configuration file). The format of the
+         provider qualifier that the CIMOM understands is 
+         "[interface id]::[interface specific text]". The "interface id" is
+         used  by the provider interface multiplexor to identify the provider
+         interface that can supply the provider. The "interface specific text"
+         is given to the provider interface once it is found, so it can use it
+         to find the appropriate provider. This makes our CIMOM very flexible
+         when it comes to providers. You could conceivably write a provider
+         interface that would provide an interface for Java, Python or Perl
+         providers. 2 provider interfaces are already provided:
+
+         2.4.1 C++ Provider Interface
+            This is a relatively simple interface that is similar to the
+            provider interface found on Sun's and SNIA's Java CIMOM 
+            implementation. No mapping of the CIM objects is required.
+            The format of the provider qualifier would be "c++::provider id".
+            The C++ provider interface would use the provider id string to
+            identify the provider if it was previously loaded. If it wasn't
+            previously loaded it would prepend the string "lib" to the front
+            of the provider id string and append ".so" to the end of it, and
+            then use the resulting string to identify the shared library that
+            contained the provider being requested.
+
+         2.4.2 CIMOM Provider Interface
+            This provider interface is compiled into the CIMOM. It allows
+            The CIMOM to be identified by the provider interface multiplexor
+            as a provider interface. The CIMOM actually has a compiled in
+            provider that deals with namespace operations. The provider
+            interface multiplexor doesn't know the difference between this
+            provider and one that was loaded from a shared library. The format
+            of the provider qualifier for the compiled in interface would be
+            "cimom::provider id". The provider id string would have to 
+            identifying a provider that is compiled into the cimom. For example,
+            the compiled in namespace provider is identified by the provider
+            qualifier "cimom::namespace".
+				
+	2.5 - Indications and CIM Listener support
+            OpenWBEM has full support for Indications as specified by the
+            WBEM Interoperability group from the DMTF. This also includes
+            CIM Listener support in the OpenWBEM client API. The CIMOM has support
+            for indication trigger providers and indication export providers.
+	
+	2.6 - WQL Level 2 support
+      OpenWBEM has full support WQL level 2 as specified by the WBEM
+            Interoperability group from the DMTF. The WQL support is provided through
+            a shared library that can be used on the client or the server side.
+            By default WQL queries are executed on the server side. The WQL library
+            could be used on the client side to execute WQL queries against a CIMOM
+            that does not provide WQL support.
+
+        2.7 - Access Control Lists
+            OpenWBEM has ACLs implemented at namespace granularity.  Read
+            the file ACL.HOWTO for more information about this feature.
+
+                  
+-------------------------------------------------------------------------------
+3.0 Additional Software
+
+   3.1 C++ Client API library
+      Our client API should be similar to the Java WBEM client api provided
+      by Sun or SNIA. Of course ours is implemented in C++ and all of our class
+      names and APIs are prefaced with "OW_". Our client API only does CIM
+      operations over HTTP/HTTPS (Sorry, no RMI). If anyone out there knows
+      how to do RMI in C++, we would love to take advantage of your services.
+
+   3.2 MOF Compiler
+      A stand-alone MOF compiler is also provided. The MOF compiler uses a
+      MOF compiler C++ class that can easily be embedded in applications.
+      The MOF compiler (owmofc) is installed into /usr/bin by default.  owmofc
+      takes 3 command line arguments: URL namespace file.  Here is an example
+      of how to import the CIM schema into a CIMOM running on the local
+      computer:
+        $ owmofc http://username:password@localhost:5988 /root CIM_Schema23.mof
+
+      If you wish to use https for better security, begin the url with https://
+      If the CIMOM is set up to allow anonymous access, you can omit the
+      username and password when specifying the url such as:
+      http://localhost:5988
+ 
+      
+
+
+

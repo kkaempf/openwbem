@@ -1,0 +1,1024 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+#include "OW_config.h"
+#include "OW_HDB.hpp"
+#include "OW_AutoPtr.hpp"
+
+#include <iostream>
+#include <cstring>
+
+static unsigned int calcCheckSum(unsigned char* src, int len);
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDB::OW_HDB() :
+	m_hdrBlock(), m_fileName(), m_version(0), m_hdlCount(0),
+	m_opened(false), m_pindex(NULL), m_indexGuard(), m_guard()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDB::~OW_HDB()
+{
+	if(m_hdlCount > 0)
+	{
+		cerr << "*** OW_HDB::~OW_HDB - STILL OUTSTANDING HANDLES ***" << endl;
+	}
+	close();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::close()
+{
+	if(m_opened)
+	{
+		m_pindex->close();
+		m_pindex = 0;
+		m_opened = false;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::open(const char* fileName)
+{
+	OW_MutexLock l(m_guard);
+	if(m_opened)
+	{
+		return;
+	}
+
+	m_hdlCount = 0;
+	m_version = 0;
+	m_fileName = fileName;
+
+	OW_String fname = m_fileName + ".dat";
+
+	if(!OW_FileSystem::canWrite(fname.c_str()))
+	{
+		if(!createFile())
+		{
+			OW_String msg("Failed to create file: ");
+			msg += fname;
+			OW_THROW(OW_HDBException, msg.c_str());
+		}
+	}
+	else
+	{
+		if(!checkFile())
+		{
+			OW_String msg("Failed to open file: ");
+			msg += fname;
+			OW_THROW(OW_HDBException, msg.c_str());
+		}
+	}
+	m_fileName = fname;
+	m_opened = true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDB::createFile()
+{
+	OW_HDBHeaderBlock b = { OW_HDBSIGNATURE, OW_HDBMAJOR, -1L, -1L, -1L };
+	m_hdrBlock = b;
+
+	OW_File f = OW_FileSystem::createFile(m_fileName + ".dat");
+	if(!f)
+	{
+		return false;
+	}
+
+	if(f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	{
+		f.close();
+		OW_THROW(OW_HDBException, "Failed to write header of HDB");
+	}
+
+	f.close();
+	m_pindex = OW_Index::createIndexObject();
+	m_pindex->open(m_fileName.c_str());
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDB::checkFile()
+{
+	OW_File f = OW_FileSystem::openFile(m_fileName + ".dat");
+	if(!f)
+	{
+		OW_String msg("Failed to open file: ");
+		msg += m_fileName;
+		OW_THROW(OW_HDBException, msg.c_str());
+	}
+
+	if(f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	{
+		f.close();
+		OW_String msg("Failed to read HDB header from file: ");
+		msg += m_fileName;
+		OW_THROW(OW_HDBException, msg.c_str());
+	}
+	f.close();
+
+	if(::strncmp(m_hdrBlock.signature, OW_HDBSIGNATURE, OW_HDBSIGLEN))
+	{
+		OW_String msg("Invalid format for HDB file: ");
+		msg += m_fileName;
+		OW_THROW(OW_HDBException, msg.c_str());
+	}
+
+	m_pindex = OW_Index::createIndexObject();
+	m_pindex->open(m_fileName.c_str());
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+long
+OW_HDB::incVersion()
+{
+	OW_MutexLock l(m_guard);
+	m_version++;
+	return m_version;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBHandle
+OW_HDB::getHandle()
+{
+	OW_MutexLock l(m_guard);
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "Can't get handle from closed OW_HDB");
+	}
+
+	OW_File file = OW_FileSystem::openFile(m_fileName);
+	if(!file)
+	{
+		return OW_HDBHandle();
+	}
+
+	m_hdlCount++;
+	return OW_HDBHandle(this, file);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::decHandleCount()
+{
+	OW_MutexLock l(m_guard);
+	m_hdlCount--;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::setOffsets(OW_File file, long firstRootOffset, long lastRootOffset,
+	long firstFreeOffset)
+{
+	OW_MutexLock l(m_guard);
+	m_hdrBlock.firstRoot = firstRootOffset;
+	m_hdrBlock.lastRoot = lastRootOffset;
+	m_hdrBlock.firstFree = firstFreeOffset;
+	if(file.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
+	{
+		OW_THROW(OW_HDBException, "Failed to update offset on HDB");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::setFirstRootOffSet(OW_File file, long offset)
+{
+	setOffsets(file, offset, m_hdrBlock.lastRoot, m_hdrBlock.firstFree);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::setLastRootOffset(OW_File file, long offset)
+{
+	setOffsets(file, m_hdrBlock.firstRoot, offset, m_hdrBlock.firstFree);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::setFirstFreeOffSet(OW_File file, long offset)
+{
+	setOffsets(file, m_hdrBlock.firstRoot, m_hdrBlock.lastRoot, offset);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Find a block in the free list that is large enough to hold the given
+// size. If no block in the free list is large enough or the free list
+// is empty, then the offset to the end of the file is returned
+long
+OW_HDB::findBlock(OW_File file, int size)
+{
+	OW_MutexLock l(m_guard);
+	long offset = -1;
+	OW_HDBBlock fblk;
+
+	// If the free list is not empty, then search it for a block
+	// big enough to hold the given size
+	if(m_hdrBlock.firstFree != -1)
+	{
+		long coffset = m_hdrBlock.firstFree;
+		while(true)
+		{
+			if(readBlock(fblk, file, coffset) != sizeof(fblk))
+			{
+				OW_THROW(OW_HDBException, "Failed to read free block");
+			}
+
+			// If the current block size is greater than or equal to the
+			// size being requested, then we found a block in the file
+			// we can use.
+			if(fblk.size >= (unsigned int)size)
+			{
+				offset = coffset;
+				break;
+			}
+
+			if((coffset = fblk.nextSib) == -1L)
+			{
+				break;
+			}
+		}
+	}
+
+	// If offset is no longer -1, then we must have found a block
+	// of adequate size.
+	if(offset != -1)
+	{
+		// Remove the block from the free list
+		removeBlockFromFreeList(file, fblk);
+	}
+	else
+	{
+		// We didn't find a block that was big enough, so let's just allocate
+		// a chunk at the end of the file.
+		if(file.seek(0L, SEEK_END) == -1L)
+		{
+			OW_THROW(OW_HDBException, "Failed to seek to end of file");
+		}
+
+		if((offset = file.tell()) == -1L)
+		{
+			OW_THROW(OW_HDBException, "Failed to get offset in file");
+		}
+	}
+
+	return offset;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::removeBlockFromFreeList(OW_File file, OW_HDBBlock& fblk)
+{
+	OW_MutexLock l(m_guard);
+	OW_HDBBlock cblk;
+
+	// If block has a next sibling, then set it's previous sibling pointer
+	// to the given blocks previous pointer
+	if(fblk.nextSib != -1)
+	{
+		if(readBlock(cblk, file, fblk.nextSib) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to read block from free list");
+		}
+
+		cblk.prevSib = fblk.prevSib;
+		if(writeBlock(cblk, file, fblk.nextSib) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to write free block in list");
+		}
+	}
+
+	// If block has a previous sibling, then set it's next sibling pointer
+	// to the given blocks next pointer
+	if(fblk.prevSib != -1)
+	{
+		if(readBlock(cblk, file, fblk.prevSib) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to read free block in list");
+		}
+
+		cblk.nextSib = fblk.nextSib;
+		if(writeBlock(cblk, file, fblk.prevSib) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to write block in free list");
+		}
+	}
+	else		// Block must be the 1st one in the free list
+	{
+		// If no previous sibling, assume this was the 1st in the
+		// free list, so set the head pointer
+		if(m_hdrBlock.firstFree != -1)
+		{
+			setFirstFreeOffSet(file, fblk.nextSib);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// Add a block to the free list.
+void
+OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
+	long offset)
+{
+	OW_MutexLock l(m_guard);
+	OW_HDBBlock fblk = parmblk;
+	fblk.isFree = true;
+
+	// If the free list is empty, set the free list head pointer only
+	if(m_hdrBlock.firstFree == -1)
+	{
+		fblk.nextSib = -1;
+		fblk.prevSib = -1;
+
+		if(writeBlock(fblk, file, offset) != sizeof(fblk))
+		{
+			OW_THROW(OW_HDBException,
+				"Unable to write initial block to free list");
+		}
+
+		setFirstFreeOffSet(file, offset);
+		return;
+	}
+
+	OW_HDBBlock cblk;
+	cblk.size = 0;
+	long coffset = m_hdrBlock.firstFree;
+	long loffset = 0;
+
+	// Find insertion point in free list
+	while(coffset != -1)
+	{
+		loffset = coffset;
+		if(readBlock(cblk, file, coffset) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to read block from free list");
+		}
+
+		if(fblk.size <= cblk.size)
+		{
+			break;
+		}
+
+		coffset = cblk.nextSib;
+	}
+
+	if(coffset == -1)		// Append to end of free list?
+	{
+		cblk.nextSib = offset;
+
+		if(writeBlock(cblk, file, loffset) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Unable to write block to free list");
+		}
+
+		fblk.prevSib = loffset;
+		fblk.nextSib = -1;
+
+		if(writeBlock(fblk, file, offset) != sizeof(fblk))
+		{
+			OW_THROW(OW_HDBException, "Unable to write block to free list");
+		}
+	}
+	else						// Insert before last node read
+	{
+		if(cblk.prevSib == -1)			// If this Was the 1st on the list
+		{											// Set the free list head pointer
+			setFirstFreeOffSet(file, offset);		
+		}
+		else
+		{
+			// Read the previous node from last read to set it's next
+			// sibling pointer
+			OW_HDBBlock tblk;
+			if(readBlock(tblk, file, cblk.prevSib) != sizeof(tblk))
+			{
+				OW_THROW(OW_HDBException, "Failed to read free block");
+			}
+
+			tblk.nextSib = offset;
+			if(writeBlock(tblk, file, cblk.prevSib) != sizeof(tblk))
+			{
+				OW_THROW(OW_HDBException, "Failed to write free block");
+			}
+		}
+
+		fblk.nextSib = coffset;
+		fblk.prevSib = cblk.prevSib;
+		if(writeBlock(fblk, file, offset) != sizeof(fblk))
+		{
+			OW_THROW(OW_HDBException, "Unable to write block to free list");
+		}
+
+		// Set the prev sib pointer in last read to the node being added.
+		cblk.prevSib = offset;
+		if(writeBlock(cblk, file, coffset) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Unable to write block to free list");
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// addRootNode will insert the given node into the files root node list.
+// Upon return the file pointer should be positioned immediately after
+// the given node in the file.
+void
+OW_HDB::addRootNode(OW_File file, OW_HDBBlock& fblk, long offset)
+{
+	OW_MutexLock l(m_guard);
+	fblk.parent = -1;
+	fblk.nextSib = -1;
+
+	if(m_hdrBlock.firstRoot == -1)
+	{
+		setOffsets(file, offset, offset, m_hdrBlock.firstFree);
+		fblk.prevSib = -1;
+	}
+	else
+	{
+		fblk.prevSib = m_hdrBlock.lastRoot;
+
+		OW_HDBBlock cblk;
+		if(readBlock(cblk, file, m_hdrBlock.lastRoot) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to read a root node for update");
+		}
+
+		cblk.nextSib = offset;
+		if(writeBlock(cblk, file, m_hdrBlock.lastRoot) != sizeof(cblk))
+		{
+			OW_THROW(OW_HDBException, "Failed to update a root node");
+		}
+
+		setLastRootOffset(file, offset);
+	}
+
+	if(writeBlock(fblk, file, offset) != sizeof(fblk))
+	{
+		OW_THROW(OW_HDBException, "Failed to write a root node for addition");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+int
+OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, long offset)
+{
+	fblk.chkSum = 0;
+	unsigned int chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
+	fblk.chkSum = chkSum;
+
+	int cc = file.write(&fblk, sizeof(fblk), offset);
+	if(cc != sizeof(fblk))
+	{
+		return -1;
+	}
+
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC	
+int
+OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, long offset)
+{
+	int cc = file.read(&fblk, sizeof(fblk), offset);
+	if(cc != sizeof(fblk))
+	{
+		return -1;
+	}
+
+	unsigned int chkSum = fblk.chkSum;
+	fblk.chkSum = 0;
+	fblk.chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
+	if(chkSum != fblk.chkSum)
+	{
+		OW_THROW(OW_HDBException, "CORRUPT DATA? Invalid check sum in node");
+	}
+
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDB::findFirstIndexEntry(const char* key)
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->findFirst(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDB::findNextIndexEntry()
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->findNext();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDB::findPrevIndexEntry()
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->findPrev();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDB::findIndexEntry(const char* key)
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->find(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDB::addIndexEntry(const char* key, long offset)
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->add(key, offset);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDB::removeIndexEntry(const char* key)
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->remove(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDB::updateIndexEntry(const char* key, long newOffset)
+{
+	if(!m_opened)
+	{
+		OW_THROW(OW_HDBException, "HDB is not opened");
+	}
+	OW_MutexLock il(m_indexGuard);
+	return m_pindex->update(key, newOffset);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDB::flushIndex()
+{
+	if(m_opened)
+	{
+		OW_MutexLock il(m_indexGuard);
+		m_pindex->flush();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static unsigned int
+calcCheckSum(unsigned char* src, int len)
+{
+	unsigned int cksum = 0;
+	int i;
+
+	for(i = 0; i < len; i++)
+	{
+		cksum += (unsigned int) src[i];
+	}
+
+	return cksum;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// ROUTINES FOR OW_HDBHandle class
+OW_HDBHandle::OW_HDBHandleData::~OW_HDBHandleData()
+{
+	m_file.close();
+	m_pdb->decHandleCount();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBHandle::OW_HDBHandle() :
+	m_pdata(NULL)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBHandle::OW_HDBHandle(OW_HDB* pdb, OW_File file) :
+	m_pdata(new OW_HDBHandleData(pdb, file))
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+long
+OW_HDBHandle::registerWrite()
+{
+	m_pdata->m_writeDone = true;
+	return m_pdata->m_pdb->incVersion();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDBHandle::flush()
+{
+	if(m_pdata->m_writeDone)
+	{
+		m_pdata->m_pdb->flushIndex();
+		m_pdata->m_file.flush();
+		m_pdata->m_writeDone = false;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getFirstRoot()
+{
+	if(m_pdata->m_pdb->getFirstRootOffSet() > 0)
+	{
+		return OW_HDBNode(m_pdata->m_pdb->getFirstRootOffSet(), *this);
+	}
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getNode(const OW_String& key)
+{
+	if(key.length() > 0)
+	{
+		return OW_HDBNode(key.c_str(), *this);
+	}
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getParent(OW_HDBNode& node)
+{
+	if(node)
+	{
+		if(node.reload(*this))
+		{
+			if(node.getParentOffset() > 0)
+			{
+				return OW_HDBNode(node.getParentOffset(), *this);
+			}
+		}
+	}
+
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getFirstChild(OW_HDBNode& node)
+{
+	if(node)
+	{
+		if(node.reload(*this))
+		{
+			if(node.getFirstChildOffset() > 0)
+			{
+				return OW_HDBNode(node.getFirstChildOffset(), *this);
+			}
+		}
+	}
+
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getLastChild(OW_HDBNode& node)
+{
+	if(node)
+	{
+		if(node.reload(*this))
+		{
+			if(node.getLastChildOffset() > 0)
+			{
+				return OW_HDBNode(node.getLastChildOffset(), *this);
+			}
+		}
+	}
+
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getNextSibling(OW_HDBNode& node)
+{
+	if(node)
+	{
+		if(node.reload(*this))
+		{
+			if(node.getNextSiblingOffset() > 0)
+			{
+				return OW_HDBNode(node.getNextSiblingOffset(), *this);
+			}
+		}
+	}
+
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_HDBNode
+OW_HDBHandle::getPrevSibling(OW_HDBNode& node)
+{
+	if(node)
+	{
+		if(node.reload(*this))
+		{
+			if(node.getPrevSiblingOffset() > 0)
+			{
+				return OW_HDBNode(node.getPrevSiblingOffset(), *this);
+			}
+		}
+	}
+
+	return OW_HDBNode();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::addRootNode(OW_HDBNode& node)
+{
+	OW_Bool cc = false;
+	if(node)
+	{
+		if(node.getOffset() > 0)
+		{
+			OW_THROW(OW_HDBException, "node is already on file");
+		}
+
+		if(m_pdata->m_pdb->findIndexEntry(node.getKey().c_str()))
+		{
+			OW_THROW(OW_HDBException, "key for node is already in index");
+		}
+
+		node.write(*this);
+		cc = true;
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode)
+{
+	OW_Bool cc = false;
+	if(parentNode && childNode)
+	{
+		if(childNode.getOffset() > 0)
+		{
+			OW_THROW(OW_HDBException, "child node already has a parent");
+		}
+
+		if(parentNode.getOffset() <= 0)
+		{
+			OW_THROW(OW_HDBException, "parent node is not on file");
+		}
+
+		if(m_pdata->m_pdb->findIndexEntry(childNode.getKey().c_str()))
+		{
+			OW_THROW(OW_HDBException, "key for node is already in index");
+		}
+
+		if(parentNode.reload(*this))
+		{
+			parentNode.addChild(*this, childNode);
+			cc = true;
+		}
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::addChild(const OW_String& parentKey, OW_HDBNode& childNode)
+{
+	if(parentKey.length() == 0)
+	{
+		return false;
+	}
+
+	OW_HDBNode pnode = OW_HDBNode(parentKey.c_str(), *this);
+	if(pnode)
+	{
+		return addChild(pnode, childNode);
+	}
+
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::removeNode(OW_HDBNode& node)
+{
+	OW_Bool cc = false;
+	if(node && node.getOffset() > 0)
+	{
+		if(node.reload(*this))
+		{
+			node.remove(*this);
+			cc = true;
+		}
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::removeNode(const OW_String& key)
+{
+	OW_Bool cc = false;
+	if(key.length() > 0)
+	{
+		OW_HDBNode node(key.c_str(), *this);
+		if(node)
+		{
+			node.remove(*this);
+		}
+		cc = true;
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::updateNode(OW_HDBNode& node, int dataLen, unsigned char* data)
+{
+	OW_Bool cc = false;
+	if(node)
+	{
+		// If node is already on file, then get a writelock on db
+		if(node.getOffset() > 0)
+		{
+			if(node.reload(*this))
+			{
+				node.updateData(*this, dataLen, data);
+				cc = true;
+			}
+		}
+		else
+		{
+			// Node isn't yet on file. No need for a write lock
+			node.updateData(*this, dataLen, data);
+			cc = true;
+		}
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDBHandle::turnFlagsOn(OW_HDBNode& node, unsigned int flags)
+{
+	if(node)
+	{
+		if(node.getOffset() > 0)
+		{
+			if(node.reload(*this))
+			{
+            node.turnFlagsOn(*this, flags);
+			}
+		}
+		else
+		{
+			node.turnFlagsOn(*this, flags);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_HDBHandle::turnFlagsOff(OW_HDBNode& node, unsigned int flags)
+{
+	if(node)
+	{
+		if(node.getOffset() > 0)
+		{
+			if(node.reload(*this))
+			{
+				node.turnFlagsOff(*this, flags);
+			}
+		}
+		else
+		{
+			node.turnFlagsOff(*this, flags);
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDBHandle::findFirstIndexEntry(const char* key)
+{
+	return m_pdata->m_pdb->findFirstIndexEntry(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDBHandle::findNextIndexEntry()
+{
+	return m_pdata->m_pdb->findNextIndexEntry();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDBHandle::findPrevIndexEntry()
+{
+	return m_pdata->m_pdb->findPrevIndexEntry();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndexEntry
+OW_HDBHandle::findIndexEntry(const char* key)
+{
+	return m_pdata->m_pdb->findIndexEntry(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::addIndexEntry(const char* key, long offset)
+{
+	return m_pdata->m_pdb->addIndexEntry(key, offset);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::removeIndexEntry(const char* key)
+{
+	return m_pdata->m_pdb->removeIndexEntry(key);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
+OW_HDBHandle::updateIndexEntry(const char* key, long newOffset)
+{
+	return m_pdata->m_pdb->updateIndexEntry(key, newOffset);
+}
+
+
+
+

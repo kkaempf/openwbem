@@ -1,0 +1,22 @@
+// ===================================================================
+// Title:       Solaris Master MOF 1.0
+// Filename:    Solaris_Schema1.0.mof
+// Version:     1.0
+// Author:      Sun Microsystems, Inc.
+// Date:        02/01/1999
+// Description:
+// ===================================================================
+// ===================================================================
+// Includes
+// ===================================================================
+#pragma Include ("Solaris_Core1.0.mof")
+#pragma Include ("Solaris_Application1.0.mof")
+#pragma Include ("Solaris_System1.0.mof")
+#pragma Include ("Solaris_Device1.0.mof")
+#pragma Include ("Solaris_Network1.0.mof")
+#pragma Include ("Solaris_Users1.0.mof")
+//#pragma Include ("/opt/SUNWconn/wbem/schema/Solaris_Physical1.0.mof")
+#pragma Include ("Solaris_CIMOM1.0.mof")
+// This must be the last include since it changes the CIM namespace
+#pragma Include ("Solaris_Acl1.0.mof")
+

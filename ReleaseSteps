@@ -1,0 +1,30 @@
+
+start: Make sure all important changes are committed.
+
+update changelog & TODO
+get a new cvs checkout.
+run make check
+test installed headers one-by-one. (cd test/acceptance; OWTESTLIST='testIndividualHeaders' ./acceptance.sh)
+run make distcheck.  
+	If passes:
+		configure; make; make check on all supported platforms. (with dist
+			tarball) if possible, run a multi-threaded stress test.
+		if errors occur, goto start.
+		build RPM without docs.
+		test rpms.
+		freeze code.
+		update version to even in configure.in and openwbem.spec.
+		commit
+		tag cvs
+		make dist.
+		update version to odd
+		commit
+		build RPMS with docs on OL
+        make a doc tarball called openwbem-doc-<version>.tar.gz
+		build RH RPMS.
+		release on sourceforge.
+		update docs on openwbem website
+		release on freshmeat.
+		send email to openwbem_public and others.
+
+

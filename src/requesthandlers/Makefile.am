@@ -1,0 +1,2 @@
+SUBDIRS = cimxml binary
+

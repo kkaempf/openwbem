@@ -1,0 +1,83 @@
+Notes on OpenWBEM ACLs (Access Control Lists).
+==============================================
+
+OpenWBEM utilizes ACLs in a manner similar to Sun's CIMOM.
+ACLs are implemented with namespace granularity.  In order
+to activate the ACLs, import the file mof/OpenWBEM_Acl1.0.mof
+into the /root/security namespace.  This will make two concrete
+classes available: OpenWBEM_NamespaceACL and OpenWBEM_UserACL.
+Each of these classes contain the string datatypes of "capability"
+and "nspace".  The OpenWBEM_UserACL class also has a string datatype
+"username".  If these classes are found, ACLs are enabled.  If they
+are not present, anyone who can authenticate to the CIMOM has full 
+access.  
+
+Once enabled, ACLs can be bypassed by logging in as superuser.  This
+user is specified in the configuration file (openwbem.conf).  
+
+When ACLs are enabled, each access to the CIMOM is checked to see 
+if the user is capable of performing the operation on the particular
+namespace.  First, the CIMOM tries to obtain an instance of 
+OpenWBEM_UserACL using "nspace" and "username" as keys.  If an instance
+exists, the value of "capability" is checked to see if the user is able
+to perform the operation.  "capability" can currently be "r", "w", "rw",
+or "" (no capabilities).
+
+If no instance of OpenWBEM_UserACL is found, the CIMOM looks for an instance
+of OpenWBEM_NamespaceACL using "nspace" as the key.  If an instance is
+found, the user is granted access based on the value of the "capability" 
+property.
+
+If no ACLs are found on a namespace, that namespace inherits the ACLs
+of the parent namespace.  
+
+Examples:
+Suppose the following namespaces exist: /root/foo, /root/bar, /root/foo/baz.
+The following instances exist in /root/security:
+
+	instance of OpenWBEM_UserACL
+	{
+		 nspace = "root/foo";
+		 username = "fflintstone";
+		 capability = "rw";
+	};
+	 
+	instance of OpenWBEM_UserACL
+	{
+		 nspace = "root/bar";
+		 username = "fflintstone";
+		 capability = "w";
+	};
+
+	instance of OpenWBEM_NamespaceACL
+	{
+		 nspace = "root";
+		 capability = "r";
+	};
+
+With these ACLs in place, fflintstone has read-write access to 
+/root/foo, write access to /root/bar, read access to /root, and
+read-write access to /root/foo/baz (since no ACLs exist for 
+/root/foo/baz, the parent -- /root/foo -- is checked).
+
+If we add these instances: 
+
+	instance of OpenWBEM_UserACL
+	{
+		 nspace = "root";
+		 username = "brubble";
+		 capability = "";
+	};
+
+	instance of OpenWBEM_UserACL
+	{
+		 nspace = "root/foo/baz";
+		 username = "brubble";
+		 capability = "rw";
+	};
+
+The user brubble has no access to any namespace except for /root/foo/baz,
+where he has read-write access.  The user wflintstone (not covered by
+any OpenWBEM_UserACL instance), would have read-only access to all namespaces
+based on the OpenWBEM_NamespaceACL instance for the /root namespace.  
+

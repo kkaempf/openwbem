@@ -1,0 +1,25 @@
+class Acme_LogicalDisk: CIM_DiskPartition
+{
+	[key]
+	string DriveLetter;
+
+	[Units("kilobytes")]
+	sint32 RawCapacity = 128000;
+
+	[write]
+	string VolumeLabel;
+
+	[Units("kilobytes")]
+	sint32 FreeSpace;
+};
+
+instance of Acme_LogicalDisk
+{
+	DriveLetter = "C";
+	VolumeLabel = "myvol";
+	SystemCreationClassName="test";
+	SystemName="testSystem";
+	CreationClassName="testCreation";
+	DeviceID=1;
+};
+

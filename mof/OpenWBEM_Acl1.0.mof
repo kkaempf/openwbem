@@ -1,0 +1,54 @@
+#pragma namespace("root/security")
+
+Qualifier Abstract : boolean = false, Scope(class, association, 
+        indication), Flavor(DisableOverride, Restricted);
+Qualifier Association : boolean = false, Scope(class, association), 
+        Flavor(DisableOverride);
+Qualifier Key : boolean = false, Scope(property, reference), 
+        Flavor(DisableOverride);
+Qualifier Override : string = null, Scope(property, method, 
+        reference);
+Qualifier Description : string = null, Scope(any), 
+        Flavor(Translatable);
+Qualifier Expensive : boolean = false, 
+        Scope(property, reference, method, class, association);
+Qualifier In : boolean = true, Scope(parameter);
+
+[Description("Base class for Access Control Lists (ACLs)"), Abstract] 
+class OpenWBEM_ACL
+{
+    [Description("Indicates what capabilities are allowed by this ACL")]
+    string capability = "r";
+};
+
+[Description("Namespace ACLs"), Abstract(false)]
+class OpenWBEM_NamespaceACL : OpenWBEM_ACL
+{
+    [Description("Identifies the namespace that this ACL relates to."), Key]
+    string nspace;
+};
+
+[Description("User ACLs")]
+class OpenWBEM_UserACL : OpenWBEM_ACL
+{
+    [Description("Identifies the namespace that this ACL relates to."), Key]
+    string nspace;
+    [Description("Identifies the user that this ACL relates to."), Key]
+    string username;
+};
+
+/*
+instance of OpenWBEM_UserACL
+{
+    nspace = "root/foo";
+    username = "fflintstone";
+    capability = "rw";
+};
+
+instance of OpenWBEM_UserACL
+{
+    nspace = "root/bar";
+    username = "fflintstone";
+    capability = "w";
+};
+*/

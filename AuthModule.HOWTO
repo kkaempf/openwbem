@@ -1,0 +1,120 @@
+Instructions For Writing an Authentication Module for the OpenWBEM CIMOM
+
+CONTENTS
+
+    1.0 - Introduction
+    2.0 - Specifying Authentication Modules in the Configuration File
+    3.0 - Writing a new authentication module
+      3.1 - Deriving from the Base Class OW_Authorizer
+      3.2 - Creating a shared library
+    4.0 - An Example: SimpleAuthentication
+    
+
+--------------------------------------------------------------------------------
+1.0 Introduction
+  
+The OpenWBEM CIMOM has the ability to load authentication modules at
+run-time.  An authentication module can be specified in the configuration 
+file.  Modules can be developed and loaded by owcimomd so that new 
+authentication schemes can be used.
+
+--------------------------------------------------------------------------------
+2.0 Specifying an Authentication Module in the Configuration File
+  
+The option 'owcimomd.authentication_module' is used in the configuration 
+file to specify the authentication module to use.  For example: 
+
+  owcimomd.authentication_module = /usr/lib/openwbem/libpamauthorization.so
+
+would be used to specify the Linux PAM authorization module.  Specific 
+modules may use other configuration items as well.  For instance, the 
+pam.allowed_users option is used so specify which system users are allowed
+access to the CIMOM when PAM authentication is used.  For example
+
+  pam.allowed_users = bill alice
+
+would allow users Bill and Alice to access the CIMOM.  
+
+--------------------------------------------------------------------------------
+3.0 Writing a new Authentication Module
+
+To create a new authentication module, a new class must be derived from the 
+base class OW_Authorizer.  This class must be contained within a library
+which will be dynamically loaded by OW_AuthManager when OW_HTTPServer is 
+initialized.  
+
+--------------------------------------------------------------------------------
+3.1 Deriving From the Base Class OW_Authorizer
+
+Authentication modules must derive from the base class OW_Authorizer.
+OW_Authorizer has the following public methods:
+
+    init()
+    authenticate(const OW_String& info, OW_HTTPSvrConnection& htcon)
+
+OW_HTTPServer calls init() after the module is loaded during CIMOM start-up.
+OW_HTTPSvrConnection calls authenticate() when HTTP authentication is to be
+performed.  These public methods have virtual, protected counterparts which
+need to be implemented in derived classes.  These methods are:
+
+    doInit()
+    doAuthenticate(const OW_String& info, OW_HTTPSvrConnection& htcon)
+
+When the HTTPSvrConnection encounters the "Authorization: " header in a request,
+if passes the value of this header (the portion of the header following the      
+':') as the info parameter to authenticate().  HTTPSvrConnection also passes a
+reference to itself to authenticate.  This is done because the authorization 
+module may need to access information about the HTTP transaction.  For example,
+Digest authentication required the authentication module to know the HTTP Method 
+and the URL.  The Digest authentication module can get this information from the 
+public methods on OW_HTTPSvrConnection.  Also, authentication modules will most
+likely need to add headers to the response (such as the "WWW-Authenticate") 
+header.  This can be done by calling the htcon.addHeader() function. 
+
+--------------------------------------------------------------------------------
+3.2 Creating a shared library.  
+
+Two functions are needed outside of the derived class for the authentication     
+module shared library to load. For the OW_SimpleAuthorization module, these 
+functions look like this:
+
+    extern "C" OW_Authorizer*
+    createAuthorizer()
+    {
+        return new OW_SimpleAuthorization();
+    }
+
+and 
+
+    extern "C" OW_UInt32
+    getLibrarySignature()
+    {
+        return 0xCA1DE8A1; 
+    }
+
+The createAuthorizer function simply allocates an instance of the Authorization
+class.  The getLibrarySignature() funtion returns an integer to the 
+OW_AuthManager when the library is loaded.  This is to ensure that the library 
+truly contains a valid authentication module.  The value 0xCA1DE8A1 should 
+always be returned.
+
+--------------------------------------------------------------------------------
+4.0 An Example: SimpleAuthentication
+
+A good example of writing an authentication module can be found in the 
+SimpleAuthentication class (found in 
+src/http/server/OW_SimpleAuthentication.{c,h}pp).  This module simply uses
+a text file with name/password pairs.  The entries in the password file should
+be one per line, and should be in the form "name:password".  To use 
+the SimpleAuthentication module, specify
+
+  owcimomd.authentication_module = <path_to_library>/libsimpleauthentication.so
+
+in the configuration file.  Also, use the "simple_auth.password_file" 
+configuration file item to specify the path to the password file.  For 
+instance, if the password file is /etc/openwbem/simple_auth.passwd, add
+
+  simple_auth.password_file = /etc/openwbem/simple_auth.passwd
+
+to the configuration file. 
+  

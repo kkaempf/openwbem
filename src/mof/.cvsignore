@@ -1,0 +1,13 @@
+Makefile.in
+Makefile
+.deps
+.*.libs
+*.lo
+*.la
+lib*so*
+mofparser.ypp.output
+moflexer.cpp
+owmofc
+mofparser.cpp
+mofparser.tab.h
+mofparser.ypp.tab.h

@@ -1,0 +1,2203 @@
+IPCClientTest authenticating as test1
+IPCClientTest authenticated as test1
+*** Doing createNameSpace() ***
+*** Doing enumNamespace() ***
+deep = false
+Namespace: root
+Namespace: root/security
+Namespace: root/acltest
+Namespace: root/caldera
+deep = true
+Namespace: root
+Namespace: root/security
+Namespace: root/acltest
+Namespace: root/caldera
+Namespace: root/caldera/test
+*** Doing deleteNameSpace() ***
+*** Doing createClass() ***
+*** Doing createClass() ***
+*** Doing enumClassNames() ***
+CIMClass: CIM_ManagedElement
+CIMClass: CIM_ManagedSystemElement
+CIMClass: CIM_PhysicalElement
+CIMClass: CIM_PhysicalPackage
+CIMClass: CIM_PhysicalFrame
+CIMClass: CIM_Rack
+CIMClass: CIM_Chassis
+CIMClass: CIM_Card
+CIMClass: CIM_SystemBusCard
+CIMClass: CIM_StorageMediaLocation
+CIMClass: CIM_Magazine
+CIMClass: CIM_PhysicalComponent
+CIMClass: CIM_Chip
+CIMClass: CIM_PhysicalMemory
+CIMClass: CIM_PhysicalMedia
+CIMClass: CIM_PhysicalTape
+CIMClass: CIM_PhysicalLink
+CIMClass: CIM_PhysicalConnector
+CIMClass: CIM_Slot
+CIMClass: CIM_LogicalElement
+CIMClass: CIM_System
+CIMClass: CIM_ComputerSystem
+CIMClass: CIM_UnitaryComputerSystem
+CIMClass: CIM_VirtualComputerSystem
+CIMClass: CIM_Cluster
+CIMClass: EXP_BartComputerSystem
+CIMClass: EXP_BionicComputerSystem
+CIMClass: EXP_BionicComputerSystem2
+CIMClass: CIM_AdminDomain
+CIMClass: CIM_PolicyRepository
+CIMClass: CIM_AutonomousSystem
+CIMClass: CIM_ApplicationSystem
+CIMClass: CIM_StorageLibrary
+CIMClass: CIM_LogicalDevice
+CIMClass: CIM_LogicalPort
+CIMClass: CIM_FibrePort
+CIMClass: CIM_USBPort
+CIMClass: CIM_Printer
+CIMClass: CIM_Sensor
+CIMClass: CIM_BinarySensor
+CIMClass: CIM_MultiStateSensor
+CIMClass: CIM_DiscreteSensor
+CIMClass: CIM_NumericSensor
+CIMClass: CIM_TemperatureSensor
+CIMClass: CIM_CurrentSensor
+CIMClass: CIM_VoltageSensor
+CIMClass: CIM_Tachometer
+CIMClass: CIM_Watchdog
+CIMClass: CIM_CoolingDevice
+CIMClass: CIM_Refrigeration
+CIMClass: CIM_HeatPipe
+CIMClass: CIM_Fan
+CIMClass: CIM_UserDevice
+CIMClass: CIM_PointingDevice
+CIMClass: CIM_Keyboard
+CIMClass: CIM_Display
+CIMClass: CIM_DesktopMonitor
+CIMClass: CIM_FlatPanel
+CIMClass: CIM_Scanner
+CIMClass: CIM_Modem
+CIMClass: CIM_ConnectionBasedModem
+CIMClass: CIM_DSLModem
+CIMClass: CIM_VDSLModem
+CIMClass: CIM_HDSLModem
+CIMClass: CIM_SDSLModem
+CIMClass: CIM_ADSLModem
+CIMClass: CIM_CableModem
+CIMClass: CIM_CallBasedModem
+CIMClass: CIM_ISDNModem
+CIMClass: CIM_POTSModem
+CIMClass: CIM_Unimodem
+CIMClass: CIM_Battery
+CIMClass: CIM_PowerSupply
+CIMClass: CIM_UninterruptiblePowerSupply
+CIMClass: CIM_NetworkAdapter
+CIMClass: CIM_EthernetAdapter
+CIMClass: CIM_TokenRingAdapter
+CIMClass: CIM_FibreChannelAdapter
+CIMClass: CIM_Controller
+CIMClass: CIM_SSAController
+CIMClass: CIM_ParallelController
+CIMClass: CIM_SerialController
+CIMClass: CIM_SCSIController
+CIMClass: CIM_VideoController
+CIMClass: CIM_PCVideoController
+CIMClass: CIM_AGPVideoController
+CIMClass: CIM_PCIController
+CIMClass: CIM_PCIDevice
+CIMClass: CIM_PCIBridge
+CIMClass: CIM_USBController
+CIMClass: CIM_ManagementController
+CIMClass: CIM_IDEController
+CIMClass: CIM_PCMCIAController
+CIMClass: CIM_InfraredController
+CIMClass: CIM_ESCONController
+CIMClass: CIM_USBDevice
+CIMClass: CIM_USBHub
+CIMClass: CIM_MediaAccessDevice
+CIMClass: CIM_DiskDrive
+CIMClass: CIM_DisketteDrive
+CIMClass: CIM_CDROMDrive
+CIMClass: CIM_WORMDrive
+CIMClass: CIM_MagnetoOpticalDrive
+CIMClass: CIM_TapeDrive
+CIMClass: CIM_DVDDrive
+CIMClass: CIM_Processor
+CIMClass: CIM_StorageExtent
+CIMClass: CIM_PhysicalExtent
+CIMClass: CIM_ProtectedSpaceExtent
+CIMClass: CIM_StorageVolume
+CIMClass: CIM_VolumeSet
+CIMClass: CIM_MediaPartition
+CIMClass: CIM_DiskPartition
+CIMClass: CIM_TapePartition
+CIMClass: CIM_LogicalDisk
+CIMClass: CIM_AggregatePExtent
+CIMClass: CIM_AggregatePSExtent
+CIMClass: CIM_Snapshot
+CIMClass: CIM_Memory
+CIMClass: CIM_NonVolatileStorage
+CIMClass: CIM_VolatileStorage
+CIMClass: CIM_CacheMemory
+CIMClass: CIM_AlarmDevice
+CIMClass: CIM_Door
+CIMClass: CIM_MediaTransferDevice
+CIMClass: CIM_PickerElement
+CIMClass: CIM_ChangerDevice
+CIMClass: CIM_LimitedAccessPort
+CIMClass: CIM_InterLibraryPort
+CIMClass: CIM_LabelReader
+CIMClass: CIM_Service
+CIMClass: CIM_SecurityService
+CIMClass: CIM_AccountManagementService
+CIMClass: CIM_AuthenticationService
+CIMClass: CIM_VerificationService
+CIMClass: CIM_CredentialManagementService
+CIMClass: CIM_CertificateAuthority
+CIMClass: CIM_KerberosKeyDistributionCenter
+CIMClass: CIM_Notary
+CIMClass: CIM_LocalCredentialManagementService
+CIMClass: CIM_SharedSecretService
+CIMClass: CIM_PublicKeyManagementService
+CIMClass: CIM_AuthorizationService
+CIMClass: CIM_ClusteringService
+CIMClass: CIM_BootService
+CIMClass: CIM_DiagnosticTest
+CIMClass: CIM_PrintService
+CIMClass: CIM_OOBAlertService
+CIMClass: CIM_WakeUpService
+CIMClass: CIM_FibreProtocolService
+CIMClass: CIM_NetworkService
+CIMClass: CIM_ForwardingService
+CIMClass: CIM_SwitchService
+CIMClass: CIM_ConditioningService
+CIMClass: CIM_ClassifierService
+CIMClass: CIM_MeterService
+CIMClass: CIM_AverageRateMeterService
+CIMClass: CIM_EWMAMeterService
+CIMClass: CIM_TokenBucketMeterService
+CIMClass: CIM_MarkerService
+CIMClass: CIM_DropperService
+CIMClass: CIM_REDDropperService
+CIMClass: CIM_WeightedREDDropperService
+CIMClass: CIM_QueuingService
+CIMClass: CIM_PacketSchedulingService
+CIMClass: CIM_PrioritySchedulingService
+CIMClass: CIM_PriorityBndwidthSchedulingService
+CIMClass: CIM_BandwidthSchedulingService
+CIMClass: CIM_RoundRobinPacketSchedulingService
+CIMClass: CIM_WeightedRoundRobinPacketSchedulingService
+CIMClass: CIM_RouteCalculationService
+CIMClass: CIM_BGPService
+CIMClass: CIM_QoSService
+CIMClass: CIM_DiffServService
+CIMClass: CIM_AFService
+CIMClass: CIM_EFService
+CIMClass: CIM_8021PService
+CIMClass: CIM_PrecedenceService
+CIMClass: CIM_IKEService
+CIMClass: CIM_TransparentBridgingService
+CIMClass: CIM_SpanningTreeService
+CIMClass: CIM_SourceRoutingService
+CIMClass: CIM_VLANService
+CIMClass: CIM_802dot1QVLANService
+CIMClass: PRS_SISService
+CIMClass: CIM_ServiceAccessPoint
+CIMClass: CIM_CredentialManagementSAP
+CIMClass: CIM_ClusteringSAP
+CIMClass: CIM_BootSAP
+CIMClass: CIM_PrintSAP
+CIMClass: CIM_ProtocolEndpoint
+CIMClass: CIM_LANEndpoint
+CIMClass: CIM_IPProtocolEndpoint
+CIMClass: CIM_BGPProtocolEndpoint
+CIMClass: CIM_IPXProtocolEndpoint
+CIMClass: CIM_SwitchPort
+CIMClass: CIM_SecurityAssociation
+CIMClass: CIM_IKESecurityAssociation
+CIMClass: CIM_IPsecSecurityAssociation
+CIMClass: CIM_DiscardSecurityAssociation
+CIMClass: CIM_BypassSecurityAssociation
+CIMClass: CIM_VLAN
+CIMClass: CIM_Account
+CIMClass: CIM_AuthenticationRequirement
+CIMClass: CIM_AccessControlInformation
+CIMClass: CIM_SoftwareElement
+CIMClass: CIM_BIOSElement
+CIMClass: CIM_VideoBIOSElement
+CIMClass: CIM_SoftwareFeature
+CIMClass: CIM_BIOSFeature
+CIMClass: CIM_VideoBIOSFeature
+CIMClass: CIM_AGPSoftwareFeature
+CIMClass: CIM_OperatingSystem
+CIMClass: CIM_FileSystem
+CIMClass: CIM_LocalFileSystem
+CIMClass: CIM_RemoteFileSystem
+CIMClass: CIM_NFS
+CIMClass: CIM_LogicalFile
+CIMClass: CIM_DataFile
+CIMClass: CIM_Directory
+CIMClass: CIM_DeviceFile
+CIMClass: CIM_Process
+CIMClass: CIM_Thread
+CIMClass: CIM_Job
+CIMClass: CIM_PrintJob
+CIMClass: CIM_JobDestination
+CIMClass: CIM_PrintQueue
+CIMClass: CIM_SystemResource
+CIMClass: CIM_IRQ
+CIMClass: CIM_MemoryMappedIO
+CIMClass: CIM_MemoryResource
+CIMClass: CIM_PortResource
+CIMClass: CIM_DMA
+CIMClass: CIM_RedundancyGroup
+CIMClass: CIM_SpareGroup
+CIMClass: CIM_StorageRedundancyGroup
+CIMClass: CIM_ExtraCapacityGroup
+CIMClass: CIM_MessageLog
+CIMClass: CIM_NextHopRouting
+CIMClass: CIM_IPRoute
+CIMClass: CIM_BGPIPRoute
+CIMClass: CIM_FilterEntryBase
+CIMClass: CIM_FilterEntry
+CIMClass: CIM_CredentialFilterEntry
+CIMClass: CIM_IPSOFilterEntry
+CIMClass: CIM_PeerIDPayloadFilterEntry
+CIMClass: CIM_FilterList
+CIMClass: CIM_RoutingPolicy
+CIMClass: CIM_AdministrativeDistance
+CIMClass: CIM_BGPRouteMap
+CIMClass: CIM_BGPAttributes
+CIMClass: CIM_BGPPathAttributes
+CIMClass: CIM_DynamicForwardingEntry
+CIMClass: CIM_StaticForwardingEntry
+CIMClass: CIM_PeerGateway
+CIMClass: CIM_PeerIdentityEntry
+CIMClass: CIM_UnitOfWorkDefinition
+CIMClass: CIM_Collection
+CIMClass: CIM_CollectionOfMSEs
+CIMClass: CIM_DiskGroup
+CIMClass: CIM_LogicalNetwork
+CIMClass: CIM_IPSubnet
+CIMClass: CIM_LANSegment
+CIMClass: CIM_IPXNetwork
+CIMClass: CIM_IPAddressRange
+CIMClass: CIM_BGPCluster
+CIMClass: CIM_BGPPeerGroup
+CIMClass: CIM_BufferPool
+CIMClass: CIM_Group
+CIMClass: CIM_Role
+CIMClass: CIM_InstalledProduct
+CIMClass: CIM_PeerIdentityTable
+CIMClass: CIM_IPsecProtectionSuite
+CIMClass: CIM_Configuration
+CIMClass: CIM_Setting
+CIMClass: CIM_SystemSetting
+CIMClass: CIM_AutostartIKESetting
+CIMClass: CIM_DiagnosticSetting
+CIMClass: CIM_MonitorResolution
+CIMClass: CIM_VideoControllerResolution
+CIMClass: CIM_Product
+CIMClass: CIM_SupportAccess
+CIMClass: CIM_FRU
+CIMClass: CIM_StatisticalInformation
+CIMClass: CIM_SystemStatisticalInformation
+CIMClass: CIM_ServiceStatisticalInformation
+CIMClass: CIM_TransparentBridgingStatistics
+CIMClass: CIM_SpanningTreeStatistics
+CIMClass: CIM_BGPStatistics
+CIMClass: CIM_SAPStatisticalInformation
+CIMClass: CIM_SwitchPortStatistics
+CIMClass: CIM_SwitchPortTransparentBridgingStatistics
+CIMClass: CIM_SwitchPortSpanningTreeStatistics
+CIMClass: CIM_SwitchPortSourceRoutingStatistics
+CIMClass: CIM_DeviceStatisticalInformation
+CIMClass: CIM_FCAdapterEventCounters
+CIMClass: CIM_FibrePortEventCounters
+CIMClass: CIM_LabelReaderStatInfo
+CIMClass: CIM_MediaAccessStatInfo
+CIMClass: CIM_PickerStatInfo
+CIMClass: CIM_PhysicalStatisticalInformation
+CIMClass: CIM_MediaPhysicalStatInfo
+CIMClass: CIM_DeviceErrorCounts
+CIMClass: CIM_MethodParameters
+CIMClass: CIM_SystemConfiguration
+CIMClass: CIM_AutostartIKEConfiguration
+CIMClass: CIM_IndicationFilter
+CIMClass: CIM_IndicationHandler
+CIMClass: CIM_IndicationHandlerXMLHTTP
+CIMClass: CIM_OtherGroupInformation
+CIMClass: CIM_OtherRoleInformation
+CIMClass: CIM_OrganizationalEntity
+CIMClass: CIM_Organization
+CIMClass: CIM_OrgUnit
+CIMClass: CIM_UserEntity
+CIMClass: CIM_Person
+CIMClass: CIM_OtherPersonInformation
+CIMClass: CIM_UsersAccess
+CIMClass: CIM_IKEIdentity
+CIMClass: CIM_OtherOrganizationInformation
+CIMClass: CIM_OtherOrgUnitInformation
+CIMClass: CIM_Credential
+CIMClass: CIM_PublicKeyCertificate
+CIMClass: CIM_UnsignedPublicKey
+CIMClass: CIM_KerberosTicket
+CIMClass: CIM_SharedSecret
+CIMClass: CIM_NamedSharedIKESecret
+CIMClass: CIM_Policy
+CIMClass: CIM_PolicyGroup
+CIMClass: CIM_IPsecPolicyGroup
+CIMClass: CIM_PolicyRule
+CIMClass: CIM_SARule
+CIMClass: CIM_IKERule
+CIMClass: CIM_IPsecRule
+CIMClass: CIM_PolicyCondition
+CIMClass: CIM_PolicyTimePeriodCondition
+CIMClass: CIM_VendorPolicyCondition
+CIMClass: CIM_SACondition
+CIMClass: CIM_PolicyAction
+CIMClass: CIM_VendorPolicyAction
+CIMClass: CIM_SAAction
+CIMClass: CIM_SAStaticAction
+CIMClass: CIM_PreconfiguredSAAction
+CIMClass: CIM_PreconfiguredTransportAction
+CIMClass: CIM_PreconfiguredTunnelAction
+CIMClass: CIM_IPsecBypassAction
+CIMClass: CIM_IPsecDiscardAction
+CIMClass: CIM_IKERejectAction
+CIMClass: CIM_SANegotiationAction
+CIMClass: CIM_IKEAction
+CIMClass: CIM_IPsecAction
+CIMClass: CIM_IPsecTransportAction
+CIMClass: CIM_IPsecTunnelAction
+CIMClass: CIM_SATransform
+CIMClass: CIM_AHTransform
+CIMClass: CIM_ESPTransform
+CIMClass: CIM_IPCOMPTransform
+CIMClass: CIM_SAProposal
+CIMClass: CIM_IKEProposal
+CIMClass: CIM_IPsecProposal
+CIMClass: CIM_Check
+CIMClass: CIM_DirectorySpecification
+CIMClass: CIM_ArchitectureCheck
+CIMClass: CIM_MemoryCheck
+CIMClass: CIM_DiskSpaceCheck
+CIMClass: CIM_SwapSpaceCheck
+CIMClass: CIM_OSVersionCheck
+CIMClass: CIM_SoftwareElementVersionCheck
+CIMClass: CIM_FileSpecification
+CIMClass: CIM_VersionCompatibilityCheck
+CIMClass: CIM_SettingCheck
+CIMClass: CIM_Action
+CIMClass: CIM_DirectoryAction
+CIMClass: CIM_CreateDirectoryAction
+CIMClass: CIM_RemoveDirectoryAction
+CIMClass: CIM_FileAction
+CIMClass: CIM_CopyFileAction
+CIMClass: CIM_RemoveFileAction
+CIMClass: CIM_RebootAction
+CIMClass: CIM_ExecuteProgram
+CIMClass: CIM_ModifySettingAction
+CIMClass: CIM_StorageError
+CIMClass: CIM_LogRecord
+CIMClass: CIM_Location
+CIMClass: CIM_PhysicalCapacity
+CIMClass: CIM_MemoryCapacity
+CIMClass: CIM_ConfigurationCapacity
+CIMClass: CIM_ReplacementSet
+CIMClass: CIM_MetricDefinition
+CIMClass: CIM_UnitOfWork
+CIMClass: PRS_ExchangeElement
+CIMClass: PRS_Solution
+CIMClass: PRS_SolutionElement
+CIMClass: PRS_Reference
+CIMClass: PRS_Problem
+CIMClass: PRS_Resolution
+CIMClass: PRS_Category
+CIMClass: PRS_ExpressionElement
+CIMClass: PRS_Expression
+CIMClass: PRS_Product
+CIMClass: PRS_Statement
+CIMClass: PRS_Feature
+CIMClass: PRS_Resource
+CIMClass: PRS_Administrative
+CIMClass: PRS_Revision
+CIMClass: PRS_Contact
+CIMClass: PRS_ContactItem
+CIMClass: PRS_Organization
+CIMClass: PRS_Person
+CIMClass: PRS_Address
+CIMClass: PRS_Location
+CIMClass: PRS_Attachment
+CIMClass: PRS_ServiceIncident
+CIMClass: PRS_Agreement
+CIMClass: PRS_Activity
+CIMClass: PRS_Transaction
+CIMClass: CIM_CollectedCollections
+CIMClass: CIM_GroupInDiskGroup
+CIMClass: CIM_LogicalIdentity
+CIMClass: CIM_DeviceIdentity
+CIMClass: CIM_NetworkVirtualAdapter
+CIMClass: CIM_EndpointIdentity
+CIMClass: CIM_ConfigurationComponent
+CIMClass: CIM_ElementConfiguration
+CIMClass: CIM_CollectionConfiguration
+CIMClass: CIM_ElementSetting
+CIMClass: CIM_DefaultSetting
+CIMClass: CIM_DiagnosticSettingForTest
+CIMClass: CIM_MonitorSetting
+CIMClass: CIM_VideoSetting
+CIMClass: CIM_IKEAutostartSetting
+CIMClass: CIM_SettingContext
+CIMClass: CIM_CollectionSetting
+CIMClass: CIM_Dependency
+CIMClass: CIM_ServiceAccessBySAP
+CIMClass: CIM_ClusterServiceAccessBySAP
+CIMClass: CIM_BootServiceAccessBySAP
+CIMClass: CIM_ProvidesEndpoint
+CIMClass: CIM_ProvidesSA
+CIMClass: CIM_HostedService
+CIMClass: CIM_HostedClusterService
+CIMClass: CIM_HostedBootService
+CIMClass: CIM_NetworkServicesInAdminDomain
+CIMClass: CIM_HostedRoutingServices
+CIMClass: CIM_HostedForwardingServices
+CIMClass: CIM_HostedAccessPoint
+CIMClass: CIM_HostedClusterSAP
+CIMClass: CIM_HostedBootSAP
+CIMClass: CIM_ProvidesServiceToElement
+CIMClass: CIM_ServiceServiceDependency
+CIMClass: CIM_ServiceUsesSecurityService
+CIMClass: CIM_EGPRouteCalcDependency
+CIMClass: CIM_RelatedSpanningTree
+CIMClass: CIM_QueueHierarchy
+CIMClass: CIM_SchedulerUsed
+CIMClass: CIM_SecurityServiceForSystem
+CIMClass: CIM_ManagesAccountOnSystem
+CIMClass: CIM_DiagnosticTestForMSE
+CIMClass: CIM_ServiceSAPDependency
+CIMClass: CIM_ForwardsAmong
+CIMClass: CIM_SwitchesAmong
+CIMClass: CIM_ConditioningServiceOnEndpoint
+CIMClass: CIM_CalculatesAmong
+CIMClass: CIM_SwitchPortSpanningTree
+CIMClass: CIM_SwitchPortSourceRouting
+CIMClass: CIM_RelatedTransparentBridgingService
+CIMClass: CIM_VLANFor
+CIMClass: CIM_SAPSAPDependency
+CIMClass: CIM_ActiveConnection
+CIMClass: CIM_BindsTo
+CIMClass: CIM_BindsToLANEndpoint
+CIMClass: CIM_Switchable
+CIMClass: CIM_SecurityAssociationBindsTo
+CIMClass: CIM_SwitchPortPair
+CIMClass: CIM_InboundVLAN
+CIMClass: CIM_OutboundVLAN
+CIMClass: CIM_Realizes
+CIMClass: CIM_RealizesExtent
+CIMClass: CIM_RealizesPExtent
+CIMClass: CIM_RealizesDiskPartition
+CIMClass: CIM_RealizesAggregatePExtent
+CIMClass: CIM_RealizesTapePartition
+CIMClass: CIM_RealizedOnSide
+CIMClass: CIM_SettingForSystem
+CIMClass: CIM_ConfigurationForSystem
+CIMClass: CIM_ElementAsUser
+CIMClass: CIM_EndpointHasLocalIKEIdentity
+CIMClass: CIM_CollectionHasLocalIKEIdentity
+CIMClass: CIM_MoreOrganizationInfo
+CIMClass: CIM_MoreOrgUnitInfo
+CIMClass: CIM_MoreGroupInfo
+CIMClass: CIM_MoreRoleInfo
+CIMClass: CIM_MorePersonInfo
+CIMClass: CIM_SystemAdministrator
+CIMClass: CIM_SystemAdministratorGroup
+CIMClass: CIM_SystemAdministratorRole
+CIMClass: CIM_UsersAccount
+CIMClass: CIM_AccountMapsToAccount
+CIMClass: CIM_SecurityServiceUsesAccount
+CIMClass: CIM_ManagesAccount
+CIMClass: CIM_TrustHierarchy
+CIMClass: CIM_UsersCredential
+CIMClass: CIM_PublicPrivateKeyPair
+CIMClass: CIM_IKEIdentitysCredential
+CIMClass: CIM_CAHasPublicCertificate
+CIMClass: CIM_ManagedCredential
+CIMClass: CIM_CASignsPublicKeyCertificate
+CIMClass: CIM_LocallyManagedPublicKey
+CIMClass: CIM_SharedSecretIsShared
+CIMClass: CIM_IKESecretIsNamed
+CIMClass: CIM_KDCIssuesKerberosTicket
+CIMClass: CIM_NotaryVerifiesBiometric
+CIMClass: CIM_HostedAuthenticationRequirement
+CIMClass: CIM_AuthenticateForUse
+CIMClass: CIM_RequireCredentialsFrom
+CIMClass: CIM_AuthenticationTarget
+CIMClass: CIM_HostedACI
+CIMClass: CIM_AuthorizedUse
+CIMClass: CIM_AuthorizationSubject
+CIMClass: CIM_AuthorizationTarget
+CIMClass: CIM_PolicyInSystem
+CIMClass: CIM_PolicyGroupInSystem
+CIMClass: CIM_PolicyRuleInSystem
+CIMClass: CIM_PolicyConditionInPolicyRepository
+CIMClass: CIM_PolicyActionInPolicyRepository
+CIMClass: CIM_SAProposalInPolicyRepository
+CIMClass: CIM_SATransformInPolicyRepository
+CIMClass: CIM_SoftwareFeatureServiceImplementation
+CIMClass: CIM_SoftwareFeatureSAPImplementation
+CIMClass: CIM_SoftwareElementServiceImplementation
+CIMClass: CIM_SoftwareElementSAPImplementation
+CIMClass: CIM_HostingCS
+CIMClass: CIM_ParticipatingCS
+CIMClass: CIM_RunningOS
+CIMClass: CIM_DeviceAccessedByFile
+CIMClass: CIM_Mount
+CIMClass: CIM_BootOSFromFS
+CIMClass: CIM_ProcessExecutable
+CIMClass: CIM_HostedJobDestination
+CIMClass: CIM_JobDestinationJobs
+CIMClass: CIM_OwningPrintQueue
+CIMClass: CIM_DiagnosticTestSoftware
+CIMClass: CIM_DeviceConnection
+CIMClass: CIM_ControlledBy
+CIMClass: CIM_SerialInterface
+CIMClass: CIM_SCSIInterface
+CIMClass: CIM_USBControllerHasHub
+CIMClass: CIM_USBConnection
+CIMClass: CIM_AllocatedResource
+CIMClass: CIM_AllocatedDMA
+CIMClass: CIM_DeviceServiceImplementation
+CIMClass: CIM_OOBAlertServiceOnModem
+CIMClass: CIM_WakeUpServiceOnModem
+CIMClass: CIM_OOBAlertServiceOnNetworkAdapter
+CIMClass: CIM_WakeUpServiceOnNetworkAdapter
+CIMClass: CIM_DeviceSAPImplementation
+CIMClass: CIM_PortImplementsEndpoint
+CIMClass: CIM_DeviceSoftware
+CIMClass: CIM_PortOnDevice
+CIMClass: CIM_FibrePortOnFCAdapter
+CIMClass: CIM_USBPortOnHub
+CIMClass: CIM_PrinterServicingQueue
+CIMClass: CIM_PrinterServicingJob
+CIMClass: CIM_QueueForPrintService
+CIMClass: CIM_QueueForwardsToPrintSAP
+CIMClass: CIM_AssociatedSensor
+CIMClass: CIM_AssociatedSupplyVoltageSensor
+CIMClass: CIM_AssociatedSupplyCurrentSensor
+CIMClass: CIM_AssociatedCooling
+CIMClass: CIM_SuppliesPower
+CIMClass: CIM_AssociatedBattery
+CIMClass: CIM_ResidesOnExtent
+CIMClass: CIM_BasedOn
+CIMClass: CIM_PSExtentBasedOnPExtent
+CIMClass: CIM_VolumeSetBasedOnPSExtent
+CIMClass: CIM_DiskPartitionBasedOnVolume
+CIMClass: CIM_TapePartitionOnSurface
+CIMClass: CIM_LogicalDiskBasedOnExtent
+CIMClass: CIM_LogicalDiskBasedOnVolume
+CIMClass: CIM_LogicalDiskBasedOnVolumeSet
+CIMClass: CIM_LogicalDiskBasedOnPartition
+CIMClass: CIM_AggregatePSExtentBasedOnPExtent
+CIMClass: CIM_AggregatePSExtentBasedOnAggregatePExtent
+CIMClass: CIM_MediaPresent
+CIMClass: CIM_SnapshotOfExtent
+CIMClass: CIM_AssociatedMemory
+CIMClass: CIM_AssociatedProcessorMemory
+CIMClass: CIM_BIOSLoadedInNV
+CIMClass: CIM_AssociatedAlarm
+CIMClass: CIM_DoorAccessToPhysicalElement
+CIMClass: CIM_DoorAccessToDevice
+CIMClass: CIM_PickerForChanger
+CIMClass: CIM_LibraryExchange
+CIMClass: CIM_AssociatedLabelReader
+CIMClass: CIM_PickerLabelReader
+CIMClass: CIM_AccessLabelReader
+CIMClass: CIM_LogInDeviceFile
+CIMClass: CIM_LogInDataFile
+CIMClass: CIM_LogInStorage
+CIMClass: CIM_UseOfMessageLog
+CIMClass: CIM_Docked
+CIMClass: CIM_DeviceServicesLocation
+CIMClass: CIM_MemoryWithMedia
+CIMClass: CIM_PhysicalMediaInLocation
+CIMClass: CIM_ElementsLinked
+CIMClass: CIM_ConnectedTo
+CIMClass: CIM_SlotInSlot
+CIMClass: CIM_PackageInConnector
+CIMClass: CIM_PackageInSlot
+CIMClass: CIM_CardInSlot
+CIMClass: CIM_AdapterActiveConnection
+CIMClass: CIM_ComputerSystemPackage
+CIMClass: CIM_LibraryPackage
+CIMClass: CIM_PackageCooling
+CIMClass: CIM_PackageTempSensor
+CIMClass: CIM_PackageAlarm
+CIMClass: CIM_HomeForMedia
+CIMClass: CIM_RouteForwardedByService
+CIMClass: CIM_ForwardedRoutes
+CIMClass: CIM_RoutesBGP
+CIMClass: CIM_CalculatedRoutes
+CIMClass: CIM_ReflectorService
+CIMClass: CIM_ReflectorClientService
+CIMClass: CIM_ReflectorNonClientService
+CIMClass: CIM_BGPRoutingPolicy
+CIMClass: CIM_BGPPeerGroupService
+CIMClass: CIM_BGPAdminDistance
+CIMClass: CIM_FilterListsInBGPRouteMap
+CIMClass: CIM_BGPAttributesForRoute
+CIMClass: CIM_TransparentBridgingDynamicForwarding
+CIMClass: CIM_SwitchPortDynamicForwarding
+CIMClass: CIM_TransparentBridgingStaticForwarding
+CIMClass: CIM_SwitchPortStaticForwarding
+CIMClass: CIM_ClassifierFilterSet
+CIMClass: CIM_QueueAllocation
+CIMClass: CIM_FilterOfSACondition
+CIMClass: CIM_AcceptCredentialsFrom
+CIMClass: CIM_IPsecPolicyForSystem
+CIMClass: CIM_IPsecPolicyForEndpoint
+CIMClass: CIM_FilterOfSecurityAssociation
+CIMClass: CIM_IKEUsesCredentialManagementService
+CIMClass: CIM_TransformOfPreconfiguredAction
+CIMClass: CIM_HostedPeerIdentityTable
+CIMClass: CIM_RuleThatGeneratedSA
+CIMClass: CIM_TransformOfSecurityAssociation
+CIMClass: CIM_PeerGatewayOfSecurityAssociation
+CIMClass: CIM_IKEServicePeerGateway
+CIMClass: CIM_IKEServiceForEndpoint
+CIMClass: CIM_IKEServicePeerIdentityTable
+CIMClass: CIM_IKESAUsedForPhase2
+CIMClass: CIM_PeerCredential
+CIMClass: CIM_IPProtocolEndpointsProtectionSuite
+CIMClass: CIM_PeerGatewayForTunnel
+CIMClass: CIM_HostedPeerGatewayInformation
+CIMClass: CIM_IKEAutostartConfiguration
+CIMClass: CIM_UoWMetricDefinition
+CIMClass: CIM_UoWMetric
+CIMClass: CIM_StartedUoW
+CIMClass: CIM_LogicalElementUnitOfWorkDef
+CIMClass: CIM_SubUoWDef
+CIMClass: CIM_LogicalElementPerformsUoW
+CIMClass: CIM_SubUoW
+CIMClass: PRS_SolutionHasElement
+CIMClass: PRS_SolutionReference
+CIMClass: PRS_SolutionProblem
+CIMClass: PRS_SolutionResolution
+CIMClass: PRS_SolutionCategory
+CIMClass: PRS_Categorization
+CIMClass: PRS_CategoryParentChild
+CIMClass: PRS_ExpressionLink
+CIMClass: PRS_ProductParentChild
+CIMClass: PRS_ProductComponent
+CIMClass: PRS_ProductAsset
+CIMClass: PRS_StatementFeature
+CIMClass: PRS_FeatureResource
+CIMClass: PRS_ResolutionResource
+CIMClass: PRS_SolutionExpression
+CIMClass: PRS_AdminAssociation
+CIMClass: PRS_AdministrativeRevision
+CIMClass: PRS_AdministrativeContact
+CIMClass: PRS_RevisionContact
+CIMClass: PRS_ContactContactItem
+CIMClass: PRS_ContactOrganization
+CIMClass: PRS_ContactPerson
+CIMClass: PRS_ContactItemAddress
+CIMClass: PRS_AddressLocation
+CIMClass: PRS_Attached
+CIMClass: PRS_ServiceRequester
+CIMClass: PRS_ServiceProvider
+CIMClass: PRS_ServiceProblem
+CIMClass: PRS_ServiceResolutionSolution
+CIMClass: PRS_ServiceAgreement
+CIMClass: PRS_ServiceActivity
+CIMClass: PRS_ActivityContact
+CIMClass: PRS_ActivityResource
+CIMClass: PRS_ActivityTransaction
+CIMClass: CIM_MemberOfCollection
+CIMClass: CIM_CollectedMSEs
+CIMClass: CIM_DriveInDiskGroup
+CIMClass: CIM_ExtentInDiskGroup
+CIMClass: CIM_InLogicalNetwork
+CIMClass: CIM_InSegment
+CIMClass: CIM_RoutersInBGPCluster
+CIMClass: CIM_BGPPeerUsesRouteMap
+CIMClass: CIM_InBGPPeerGroup
+CIMClass: CIM_MemberPrincipal
+CIMClass: CIM_CollectedSoftwareElements
+CIMClass: CIM_CollectedSoftwareFeatures
+CIMClass: CIM_CollectedBufferPool
+CIMClass: CIM_ContainedSA
+CIMClass: CIM_PeerIdentityMember
+CIMClass: CIM_DependencyContext
+CIMClass: CIM_Component
+CIMClass: CIM_SystemComponent
+CIMClass: CIM_SystemDevice
+CIMClass: CIM_ComputerSystemProcessor
+CIMClass: CIM_ComputerSystemMemory
+CIMClass: CIM_AccountOnSystem
+CIMClass: CIM_PolicyRepositoryInPolicyRepository
+CIMClass: CIM_ApplicationSystemSoftwareFeature
+CIMClass: CIM_ComponentCS
+CIMClass: CIM_SystemPartition
+CIMClass: CIM_InstalledOS
+CIMClass: CIM_HostedFileSystem
+CIMClass: CIM_SystemBIOS
+CIMClass: CIM_ComputerSystemResource
+CIMClass: CIM_ComputerSystemIRQ
+CIMClass: CIM_ComputerSystemMappedIO
+CIMClass: CIM_ComputerSystemDMA
+CIMClass: CIM_RoutersInAS
+CIMClass: CIM_ASBGPEndpoints
+CIMClass: CIM_Confederation
+CIMClass: CIM_FilterEntryInSystem
+CIMClass: CIM_FilterListInSystem
+CIMClass: CIM_ServiceComponent
+CIMClass: CIM_SwitchServiceTransparentBridging
+CIMClass: CIM_SwitchServiceSpanningTree
+CIMClass: CIM_SwitchServiceSourceRouting
+CIMClass: CIM_SwitchServiceVLAN
+CIMClass: CIM_QoSSubService
+CIMClass: CIM_QoSConditioningSubService
+CIMClass: CIM_SoftwareFeatureSoftwareElements
+CIMClass: CIM_BIOSFeatureBIOSElements
+CIMClass: CIM_VideoBIOSFeatureVideoBIOSElements
+CIMClass: CIM_SoftwareFeatureComponent
+CIMClass: CIM_OperatingSystemSoftwareFeature
+CIMClass: CIM_DirectoryContainsFile
+CIMClass: CIM_FileStorage
+CIMClass: CIM_OSProcess
+CIMClass: CIM_ProcessThread
+CIMClass: CIM_DiagnosticTestInPackage
+CIMClass: CIM_RedundancyComponent
+CIMClass: CIM_NetworkAdapterRedundancyComponent
+CIMClass: CIM_ExtentRedundancyComponent
+CIMClass: CIM_PExtentRedundancyComponent
+CIMClass: CIM_AggregateRedundancyComponent
+CIMClass: CIM_PrintJobFile
+CIMClass: CIM_CollectionOfSensors
+CIMClass: CIM_Container
+CIMClass: CIM_ChassisInRack
+CIMClass: CIM_PackageInChassis
+CIMClass: CIM_CardOnCard
+CIMClass: CIM_PackagedComponent
+CIMClass: CIM_MemoryOnCard
+CIMClass: CIM_ConnectorOnPackage
+CIMClass: CIM_LinkHasConnector
+CIMClass: CIM_EntriesInFilterList
+CIMClass: CIM_ListsInRoutingPolicy
+CIMClass: CIM_BGPRouteMapsInRoutingPolicy
+CIMClass: CIM_FilteredBGPAttributes
+CIMClass: CIM_BGPServiceAttributes
+CIMClass: CIM_ProductParentChild
+CIMClass: CIM_CompatibleProduct
+CIMClass: CIM_ProductProductDependency
+CIMClass: CIM_ProductSupport
+CIMClass: CIM_ProductFRU
+CIMClass: CIM_ProductPhysicalElements
+CIMClass: CIM_FRUPhysicalElements
+CIMClass: CIM_FRUIncludesProduct
+CIMClass: CIM_Statistics
+CIMClass: CIM_SystemStatistics
+CIMClass: CIM_ServiceStatistics
+CIMClass: CIM_BGPServiceStatistics
+CIMClass: CIM_SAPStatistics
+CIMClass: CIM_DeviceStatistics
+CIMClass: CIM_PhysicalStatistics
+CIMClass: CIM_ErrorCountersForDevice
+CIMClass: CIM_RelatedStatistics
+CIMClass: CIM_Synchronized
+CIMClass: CIM_ParameterValueSources
+CIMClass: CIM_ParametersForMethod
+CIMClass: CIM_SystemSettingContext
+CIMClass: CIM_AutostartIKESettingContext
+CIMClass: CIM_Indication
+CIMClass: CIM_ClassIndication
+CIMClass: CIM_ClassCreation
+CIMClass: CIM_ClassDeletion
+CIMClass: CIM_ClassModification
+CIMClass: CIM_InstIndication
+CIMClass: CIM_InstCreation
+CIMClass: CIM_InstDeletion
+CIMClass: CIM_InstModification
+CIMClass: CIM_InstMethodCall
+CIMClass: CIM_InstRead
+CIMClass: CIM_ProcessIndication
+CIMClass: CIM_SNMPTrapIndication
+CIMClass: CIM_AlertIndication
+CIMClass: CIM_ThresholdIndication
+CIMClass: CIM_AlertInstIndication
+CIMClass: OW_TestIndication1
+CIMClass: OW_TestIndication2
+CIMClass: CIM_IndicationSubscription
+CIMClass: CIM_OrgStructure
+CIMClass: CIM_CollectionInOrganization
+CIMClass: CIM_CollectionInSystem
+CIMClass: CIM_PolicyComponent
+CIMClass: CIM_PolicyGroupInPolicyGroup
+CIMClass: CIM_IPsecPolicyGroupInPolicyGroup
+CIMClass: CIM_PolicyRuleInPolicyGroup
+CIMClass: CIM_RuleForIPsecNegotiation
+CIMClass: CIM_RuleForIKENegotiation
+CIMClass: CIM_PolicyConditionInPolicyRule
+CIMClass: CIM_SAConditionInRule
+CIMClass: CIM_PolicyRuleValidityPeriod
+CIMClass: CIM_PolicyActionInPolicyRule
+CIMClass: CIM_SAActionInRule
+CIMClass: CIM_ContainedProposal
+CIMClass: CIM_IPsecContainedTransform
+CIMClass: CIM_SoftwareElementChecks
+CIMClass: CIM_DirectorySpecificationFile
+CIMClass: CIM_ActionSequence
+CIMClass: CIM_SoftwareElementActions
+CIMClass: CIM_ProductSoftwareFeatures
+CIMClass: CIM_ToDirectorySpecification
+CIMClass: CIM_FromDirectorySpecification
+CIMClass: CIM_ToDirectoryAction
+CIMClass: CIM_FromDirectoryAction
+CIMClass: CIM_InstalledSoftwareElement
+CIMClass: CIM_FRUIncludesSoftwareFeature
+CIMClass: CIM_InstalledProductImage
+CIMClass: CIM_Export
+CIMClass: CIM_DiagnosticResult
+CIMClass: CIM_DiagnosticResultForMSE
+CIMClass: CIM_DiagnosticResultForTest
+CIMClass: CIM_DiagnosticResultInPackage
+CIMClass: CIM_ServiceProcess
+CIMClass: CIM_ActsAsSpare
+CIMClass: CIM_FibrePortActiveLogin
+CIMClass: CIM_StorageDefect
+CIMClass: CIM_RecordInLog
+CIMClass: CIM_PhysicalElementLocation
+CIMClass: CIM_ElementCapacity
+CIMClass: CIM_ParticipatesInSet
+CIMClass: CIM_AdjacentSlots
+CIMClass: CIM_LogicalNetworkService
+CIMClass: CIM_NetworksInAdminDomain
+CIMClass: CIM_BGPClustersInAS
+CIMClass: CIM_AFRelatedServices
+CIMClass: CIM_NextService
+CIMClass: CIM_NextServiceAfterMeter
+CIMClass: wqlTestClass
+Testing non-deep
+CIMClass: CIM_ManagedElement
+CIMClass: CIM_CollectedCollections
+CIMClass: CIM_LogicalIdentity
+CIMClass: CIM_ConfigurationComponent
+CIMClass: CIM_ElementConfiguration
+CIMClass: CIM_CollectionConfiguration
+CIMClass: CIM_ElementSetting
+CIMClass: CIM_SettingContext
+CIMClass: CIM_CollectionSetting
+CIMClass: CIM_Dependency
+CIMClass: CIM_MemberOfCollection
+CIMClass: CIM_DependencyContext
+CIMClass: CIM_Component
+CIMClass: CIM_ProductParentChild
+CIMClass: CIM_CompatibleProduct
+CIMClass: CIM_ProductProductDependency
+CIMClass: CIM_ProductSupport
+CIMClass: CIM_ProductFRU
+CIMClass: CIM_ProductPhysicalElements
+CIMClass: CIM_FRUPhysicalElements
+CIMClass: CIM_FRUIncludesProduct
+CIMClass: CIM_Statistics
+CIMClass: CIM_RelatedStatistics
+CIMClass: CIM_Synchronized
+CIMClass: CIM_ParameterValueSources
+CIMClass: CIM_ParametersForMethod
+CIMClass: CIM_SystemSettingContext
+CIMClass: CIM_Indication
+CIMClass: CIM_IndicationSubscription
+CIMClass: CIM_OrgStructure
+CIMClass: CIM_CollectionInOrganization
+CIMClass: CIM_CollectionInSystem
+CIMClass: CIM_PolicyComponent
+CIMClass: CIM_SoftwareElementChecks
+CIMClass: CIM_DirectorySpecificationFile
+CIMClass: CIM_ActionSequence
+CIMClass: CIM_SoftwareElementActions
+CIMClass: CIM_ProductSoftwareFeatures
+CIMClass: CIM_ToDirectorySpecification
+CIMClass: CIM_FromDirectorySpecification
+CIMClass: CIM_ToDirectoryAction
+CIMClass: CIM_FromDirectoryAction
+CIMClass: CIM_InstalledSoftwareElement
+CIMClass: CIM_FRUIncludesSoftwareFeature
+CIMClass: CIM_InstalledProductImage
+CIMClass: CIM_Export
+CIMClass: CIM_DiagnosticResult
+CIMClass: CIM_DiagnosticResultForMSE
+CIMClass: CIM_DiagnosticResultForTest
+CIMClass: CIM_DiagnosticResultInPackage
+CIMClass: CIM_ServiceProcess
+CIMClass: CIM_ActsAsSpare
+CIMClass: CIM_FibrePortActiveLogin
+CIMClass: CIM_StorageDefect
+CIMClass: CIM_RecordInLog
+CIMClass: CIM_PhysicalElementLocation
+CIMClass: CIM_ElementCapacity
+CIMClass: CIM_ParticipatesInSet
+CIMClass: CIM_AdjacentSlots
+CIMClass: CIM_LogicalNetworkService
+CIMClass: CIM_NetworksInAdminDomain
+CIMClass: CIM_BGPClustersInAS
+CIMClass: CIM_AFRelatedServices
+CIMClass: CIM_NextService
+CIMClass: wqlTestClass
+*** Doing modifyClass() ***
+*** Doing getClass() ***
+localOnly = false
+[
+Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
+class EXP_BionicComputerSystem:CIM_ComputerSystem
+{
+[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName;
+[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name;
+boolean OptionalArg;
+[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]string NameFormat;
+[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
+[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
+[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
+[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
+[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
+[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
+[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
+[MaxLen(10),Description("A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
+[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
+[Description("The Description property provides a textual description of the object.")]string Description;
+string BrandNewProperty;
+};
+
+localOnly = true
+class EXP_BionicComputerSystem:CIM_ComputerSystem
+{
+boolean OptionalArg;
+string BrandNewProperty;
+};
+
+*** Doing createInstance() ***
+*** Doing createInstance() ***
+*** Doing createInstance() ***
+*** Doing createInstance() ***
+*** Doing enumInstanceNames() ***
+deep = true
+/root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+/root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SevenMillion"
+/root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+/root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SevenMillion"
+deep = false
+*** Doing enumInstances(deep = false, localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing enumInstances(deep = true, localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY></INSTANCE>
+*** Doing enumInstances(deep = true, localOnly = true, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY></INSTANCE>
+*** Doing enumInstances(deep = true, localOnly = false, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.</VALUE>
+</QUALIFIER><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Override" TYPE="string" PROPAGATED="true" ><VALUE>Name</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>The inherited Name serves as key of a System instance in an enterprise environment.</VALUE>
+</QUALIFIER><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Override" TYPE="string" ><VALUE>NameFormat</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.&#10;&#10;The NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.&#10;&#10;Note that the ComputerSystem Name calculated using the heuristic is the System&apos;s key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Other</VALUE>
+<VALUE>IP</VALUE>
+<VALUE>Dial</VALUE>
+<VALUE>HID</VALUE>
+<VALUE>NWA</VALUE>
+<VALUE>HWA</VALUE>
+<VALUE>X25</VALUE>
+<VALUE>ISDN</VALUE>
+<VALUE>IPX</VALUE>
+<VALUE>DCC</VALUE>
+<VALUE>ICD</VALUE>
+<VALUE>E.164</VALUE>
+<VALUE>SNA</VALUE>
+<VALUE>OID/OSI</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>64</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.IdentifyingDescriptions</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.OtherIdentifyingInfo</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being &apos;general purpose&apos;. For example, one could specify that the System is dedicated to &quot;Print&quot; (value=11) or acts as a &quot;Hub&quot; (value=8).</VALUE>
+</QUALIFIER><QUALIFIER NAME="Values" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Not Dedicated</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Other</VALUE>
+<VALUE>Storage</VALUE>
+<VALUE>Router</VALUE>
+<VALUE>Switch</VALUE>
+<VALUE>Layer 3 Switch</VALUE>
+<VALUE>Central Office Switch</VALUE>
+<VALUE>Hub</VALUE>
+<VALUE>Access Server</VALUE>
+<VALUE>Firewall</VALUE>
+<VALUE>Print</VALUE>
+<VALUE>I/O</VALUE>
+<VALUE>Web Caching</VALUE>
+<VALUE>Management</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...).</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.3</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The name of the primary system owner.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.4</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, &apos;Switch&apos; or &apos;Bridge&apos;.</VALUE>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|ComponentID|001.5</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>10</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are &quot;OK&quot;, &quot;Degraded&quot;, &quot;Stressed&quot; and &quot;Pred Fail&quot;. &quot;Stressed&quot; indicates that the Element is functioning, but needs attention. Examples of &quot;Stressed&quot; states are overload, overheated, etc. The condition &quot;Pred Fail&quot; (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. &#10;  Non-operational statuses can also be specified. These are &quot;Error&quot;, &quot;NonRecover&quot;, &quot;Starting&quot;, &quot;Stopping&quot;,  &quot;Stopped&quot;, &quot;Service&quot;, &quot;No Contact&quot; and &quot;Lost Comm&quot;. &quot;NonRecover&quot; indicates that a non-recoverable error has occurred. &quot;Service&quot; describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither &quot;OK&quot; nor in one of the other states. &quot;No Contact&quot; indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. &quot;Lost Comm&quot; indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.&quot;Stopped&quot; indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been &quot;OK&quot;, the Element may have initiated its own stop, or a management system may have initiated the stop.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>OK</VALUE>
+<VALUE>Error</VALUE>
+<VALUE>Degraded</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Pred Fail</VALUE>
+<VALUE>Starting</VALUE>
+<VALUE>Stopping</VALUE>
+<VALUE>Service</VALUE>
+<VALUE>Stressed</VALUE>
+<VALUE>NonRecover</VALUE>
+<VALUE>No Contact</VALUE>
+<VALUE>Lost Comm</VALUE>
+<VALUE>Stopped</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Caption property is a short textual description (one-line string) of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Description property provides a textual description of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.</VALUE>
+</QUALIFIER><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Override" TYPE="string" PROPAGATED="true" ><VALUE>Name</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>The inherited Name serves as key of a System instance in an enterprise environment.</VALUE>
+</QUALIFIER><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Override" TYPE="string" ><VALUE>NameFormat</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.&#10;&#10;The NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.&#10;&#10;Note that the ComputerSystem Name calculated using the heuristic is the System&apos;s key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Other</VALUE>
+<VALUE>IP</VALUE>
+<VALUE>Dial</VALUE>
+<VALUE>HID</VALUE>
+<VALUE>NWA</VALUE>
+<VALUE>HWA</VALUE>
+<VALUE>X25</VALUE>
+<VALUE>ISDN</VALUE>
+<VALUE>IPX</VALUE>
+<VALUE>DCC</VALUE>
+<VALUE>ICD</VALUE>
+<VALUE>E.164</VALUE>
+<VALUE>SNA</VALUE>
+<VALUE>OID/OSI</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>64</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.IdentifyingDescriptions</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.OtherIdentifyingInfo</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being &apos;general purpose&apos;. For example, one could specify that the System is dedicated to &quot;Print&quot; (value=11) or acts as a &quot;Hub&quot; (value=8).</VALUE>
+</QUALIFIER><QUALIFIER NAME="Values" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Not Dedicated</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Other</VALUE>
+<VALUE>Storage</VALUE>
+<VALUE>Router</VALUE>
+<VALUE>Switch</VALUE>
+<VALUE>Layer 3 Switch</VALUE>
+<VALUE>Central Office Switch</VALUE>
+<VALUE>Hub</VALUE>
+<VALUE>Access Server</VALUE>
+<VALUE>Firewall</VALUE>
+<VALUE>Print</VALUE>
+<VALUE>I/O</VALUE>
+<VALUE>Web Caching</VALUE>
+<VALUE>Management</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...).</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.3</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The name of the primary system owner.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.4</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, &apos;Switch&apos; or &apos;Bridge&apos;.</VALUE>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|ComponentID|001.5</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>10</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are &quot;OK&quot;, &quot;Degraded&quot;, &quot;Stressed&quot; and &quot;Pred Fail&quot;. &quot;Stressed&quot; indicates that the Element is functioning, but needs attention. Examples of &quot;Stressed&quot; states are overload, overheated, etc. The condition &quot;Pred Fail&quot; (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. &#10;  Non-operational statuses can also be specified. These are &quot;Error&quot;, &quot;NonRecover&quot;, &quot;Starting&quot;, &quot;Stopping&quot;,  &quot;Stopped&quot;, &quot;Service&quot;, &quot;No Contact&quot; and &quot;Lost Comm&quot;. &quot;NonRecover&quot; indicates that a non-recoverable error has occurred. &quot;Service&quot; describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither &quot;OK&quot; nor in one of the other states. &quot;No Contact&quot; indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. &quot;Lost Comm&quot; indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.&quot;Stopped&quot; indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been &quot;OK&quot;, the Element may have initiated its own stop, or a management system may have initiated the stop.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>OK</VALUE>
+<VALUE>Error</VALUE>
+<VALUE>Degraded</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Pred Fail</VALUE>
+<VALUE>Starting</VALUE>
+<VALUE>Stopping</VALUE>
+<VALUE>Service</VALUE>
+<VALUE>Stressed</VALUE>
+<VALUE>NonRecover</VALUE>
+<VALUE>No Contact</VALUE>
+<VALUE>Lost Comm</VALUE>
+<VALUE>Stopped</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Caption property is a short textual description (one-line string) of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Description property provides a textual description of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.</VALUE>
+</QUALIFIER><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Override" TYPE="string" PROPAGATED="true" ><VALUE>Name</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>The inherited Name serves as key of a System instance in an enterprise environment.</VALUE>
+</QUALIFIER><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Override" TYPE="string" ><VALUE>NameFormat</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.&#10;&#10;The NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.&#10;&#10;Note that the ComputerSystem Name calculated using the heuristic is the System&apos;s key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Other</VALUE>
+<VALUE>IP</VALUE>
+<VALUE>Dial</VALUE>
+<VALUE>HID</VALUE>
+<VALUE>NWA</VALUE>
+<VALUE>HWA</VALUE>
+<VALUE>X25</VALUE>
+<VALUE>ISDN</VALUE>
+<VALUE>IPX</VALUE>
+<VALUE>DCC</VALUE>
+<VALUE>ICD</VALUE>
+<VALUE>E.164</VALUE>
+<VALUE>SNA</VALUE>
+<VALUE>OID/OSI</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>64</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.IdentifyingDescriptions</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.OtherIdentifyingInfo</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being &apos;general purpose&apos;. For example, one could specify that the System is dedicated to &quot;Print&quot; (value=11) or acts as a &quot;Hub&quot; (value=8).</VALUE>
+</QUALIFIER><QUALIFIER NAME="Values" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Not Dedicated</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Other</VALUE>
+<VALUE>Storage</VALUE>
+<VALUE>Router</VALUE>
+<VALUE>Switch</VALUE>
+<VALUE>Layer 3 Switch</VALUE>
+<VALUE>Central Office Switch</VALUE>
+<VALUE>Hub</VALUE>
+<VALUE>Access Server</VALUE>
+<VALUE>Firewall</VALUE>
+<VALUE>Print</VALUE>
+<VALUE>I/O</VALUE>
+<VALUE>Web Caching</VALUE>
+<VALUE>Management</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...).</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.3</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The name of the primary system owner.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.4</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, &apos;Switch&apos; or &apos;Bridge&apos;.</VALUE>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|ComponentID|001.5</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>10</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are &quot;OK&quot;, &quot;Degraded&quot;, &quot;Stressed&quot; and &quot;Pred Fail&quot;. &quot;Stressed&quot; indicates that the Element is functioning, but needs attention. Examples of &quot;Stressed&quot; states are overload, overheated, etc. The condition &quot;Pred Fail&quot; (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. &#10;  Non-operational statuses can also be specified. These are &quot;Error&quot;, &quot;NonRecover&quot;, &quot;Starting&quot;, &quot;Stopping&quot;,  &quot;Stopped&quot;, &quot;Service&quot;, &quot;No Contact&quot; and &quot;Lost Comm&quot;. &quot;NonRecover&quot; indicates that a non-recoverable error has occurred. &quot;Service&quot; describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither &quot;OK&quot; nor in one of the other states. &quot;No Contact&quot; indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. &quot;Lost Comm&quot; indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.&quot;Stopped&quot; indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been &quot;OK&quot;, the Element may have initiated its own stop, or a management system may have initiated the stop.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>OK</VALUE>
+<VALUE>Error</VALUE>
+<VALUE>Degraded</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Pred Fail</VALUE>
+<VALUE>Starting</VALUE>
+<VALUE>Stopping</VALUE>
+<VALUE>Service</VALUE>
+<VALUE>Stressed</VALUE>
+<VALUE>NonRecover</VALUE>
+<VALUE>No Contact</VALUE>
+<VALUE>Lost Comm</VALUE>
+<VALUE>Stopped</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Caption property is a short textual description (one-line string) of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Description property provides a textual description of the object.</VALUE>
+</QUALIFIER></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.</VALUE>
+</QUALIFIER><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Override" TYPE="string" PROPAGATED="true" ><VALUE>Name</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>The inherited Name serves as key of a System instance in an enterprise environment.</VALUE>
+</QUALIFIER><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Override" TYPE="string" ><VALUE>NameFormat</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.&#10;&#10;The NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.&#10;&#10;Note that the ComputerSystem Name calculated using the heuristic is the System&apos;s key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Other</VALUE>
+<VALUE>IP</VALUE>
+<VALUE>Dial</VALUE>
+<VALUE>HID</VALUE>
+<VALUE>NWA</VALUE>
+<VALUE>HWA</VALUE>
+<VALUE>X25</VALUE>
+<VALUE>ISDN</VALUE>
+<VALUE>IPX</VALUE>
+<VALUE>DCC</VALUE>
+<VALUE>ICD</VALUE>
+<VALUE>E.164</VALUE>
+<VALUE>SNA</VALUE>
+<VALUE>OID/OSI</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>64</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.IdentifyingDescriptions</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.OtherIdentifyingInfo</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being &apos;general purpose&apos;. For example, one could specify that the System is dedicated to &quot;Print&quot; (value=11) or acts as a &quot;Hub&quot; (value=8).</VALUE>
+</QUALIFIER><QUALIFIER NAME="Values" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Not Dedicated</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Other</VALUE>
+<VALUE>Storage</VALUE>
+<VALUE>Router</VALUE>
+<VALUE>Switch</VALUE>
+<VALUE>Layer 3 Switch</VALUE>
+<VALUE>Central Office Switch</VALUE>
+<VALUE>Hub</VALUE>
+<VALUE>Access Server</VALUE>
+<VALUE>Firewall</VALUE>
+<VALUE>Print</VALUE>
+<VALUE>I/O</VALUE>
+<VALUE>Web Caching</VALUE>
+<VALUE>Management</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...).</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.3</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The name of the primary system owner.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.4</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, &apos;Switch&apos; or &apos;Bridge&apos;.</VALUE>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|ComponentID|001.5</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>10</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are &quot;OK&quot;, &quot;Degraded&quot;, &quot;Stressed&quot; and &quot;Pred Fail&quot;. &quot;Stressed&quot; indicates that the Element is functioning, but needs attention. Examples of &quot;Stressed&quot; states are overload, overheated, etc. The condition &quot;Pred Fail&quot; (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. &#10;  Non-operational statuses can also be specified. These are &quot;Error&quot;, &quot;NonRecover&quot;, &quot;Starting&quot;, &quot;Stopping&quot;,  &quot;Stopped&quot;, &quot;Service&quot;, &quot;No Contact&quot; and &quot;Lost Comm&quot;. &quot;NonRecover&quot; indicates that a non-recoverable error has occurred. &quot;Service&quot; describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither &quot;OK&quot; nor in one of the other states. &quot;No Contact&quot; indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. &quot;Lost Comm&quot; indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.&quot;Stopped&quot; indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been &quot;OK&quot;, the Element may have initiated its own stop, or a management system may have initiated the stop.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>OK</VALUE>
+<VALUE>Error</VALUE>
+<VALUE>Degraded</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Pred Fail</VALUE>
+<VALUE>Starting</VALUE>
+<VALUE>Stopping</VALUE>
+<VALUE>Service</VALUE>
+<VALUE>Stressed</VALUE>
+<VALUE>NonRecover</VALUE>
+<VALUE>No Contact</VALUE>
+<VALUE>Lost Comm</VALUE>
+<VALUE>Stopped</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Caption property is a short textual description (one-line string) of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Description property provides a textual description of the object.</VALUE>
+</QUALIFIER></PROPERTY></INSTANCE>
+*** Doing enumInstances(deep = true, localOnly = false, includeQualifiers=false, includeClassOrigin = true, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem2" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem2" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY></INSTANCE>
+*** Doing enumInstances(deep = true, localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"></INSTANCE>
+*** Doing enumInstances(deep = true, localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"></INSTANCE>
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2"></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+*** Doing getInstance(localOnly = true, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.</VALUE>
+</QUALIFIER><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Override" TYPE="string" PROPAGATED="true" ><VALUE>Name</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" PROPAGATED="true" ><VALUE>The inherited Name serves as key of a System instance in an enterprise environment.</VALUE>
+</QUALIFIER><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Override" TYPE="string" ><VALUE>NameFormat</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.&#10;&#10;The NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.&#10;&#10;Note that the ComputerSystem Name calculated using the heuristic is the System&apos;s key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Other</VALUE>
+<VALUE>IP</VALUE>
+<VALUE>Dial</VALUE>
+<VALUE>HID</VALUE>
+<VALUE>NWA</VALUE>
+<VALUE>HWA</VALUE>
+<VALUE>X25</VALUE>
+<VALUE>ISDN</VALUE>
+<VALUE>IPX</VALUE>
+<VALUE>DCC</VALUE>
+<VALUE>ICD</VALUE>
+<VALUE>E.164</VALUE>
+<VALUE>SNA</VALUE>
+<VALUE>OID/OSI</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER><QUALIFIER NAME="MaxLen" TYPE="uint32" PROPAGATED="true" ><VALUE>64</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.IdentifyingDescriptions</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="ArrayType" TYPE="string" ><VALUE>Indexed</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ModelCorrespondence" TYPE="string" ><VALUE.ARRAY>
+<VALUE>CIM_ComputerSystem.OtherIdentifyingInfo</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being &apos;general purpose&apos;. For example, one could specify that the System is dedicated to &quot;Print&quot; (value=11) or acts as a &quot;Hub&quot; (value=8).</VALUE>
+</QUALIFIER><QUALIFIER NAME="Values" TYPE="string" ><VALUE.ARRAY>
+<VALUE>Not Dedicated</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Other</VALUE>
+<VALUE>Storage</VALUE>
+<VALUE>Router</VALUE>
+<VALUE>Switch</VALUE>
+<VALUE>Layer 3 Switch</VALUE>
+<VALUE>Central Office Switch</VALUE>
+<VALUE>Hub</VALUE>
+<VALUE>Access Server</VALUE>
+<VALUE>Firewall</VALUE>
+<VALUE>Print</VALUE>
+<VALUE>I/O</VALUE>
+<VALUE>Web Caching</VALUE>
+<VALUE>Management</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>256</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...).</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.3</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The name of the primary system owner.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|General Information|001.4</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, &apos;Switch&apos; or &apos;Bridge&apos;.</VALUE>
+</QUALIFIER></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed.</VALUE>
+</QUALIFIER><QUALIFIER NAME="MappingStrings" TYPE="string" ><VALUE.ARRAY>
+<VALUE>MIF.DMTF|ComponentID|001.5</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>10</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are &quot;OK&quot;, &quot;Degraded&quot;, &quot;Stressed&quot; and &quot;Pred Fail&quot;. &quot;Stressed&quot; indicates that the Element is functioning, but needs attention. Examples of &quot;Stressed&quot; states are overload, overheated, etc. The condition &quot;Pred Fail&quot; (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. &#10;  Non-operational statuses can also be specified. These are &quot;Error&quot;, &quot;NonRecover&quot;, &quot;Starting&quot;, &quot;Stopping&quot;,  &quot;Stopped&quot;, &quot;Service&quot;, &quot;No Contact&quot; and &quot;Lost Comm&quot;. &quot;NonRecover&quot; indicates that a non-recoverable error has occurred. &quot;Service&quot; describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither &quot;OK&quot; nor in one of the other states. &quot;No Contact&quot; indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. &quot;Lost Comm&quot; indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.&quot;Stopped&quot; indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been &quot;OK&quot;, the Element may have initiated its own stop, or a management system may have initiated the stop.</VALUE>
+</QUALIFIER><QUALIFIER NAME="ValueMap" TYPE="string" ><VALUE.ARRAY>
+<VALUE>OK</VALUE>
+<VALUE>Error</VALUE>
+<VALUE>Degraded</VALUE>
+<VALUE>Unknown</VALUE>
+<VALUE>Pred Fail</VALUE>
+<VALUE>Starting</VALUE>
+<VALUE>Stopping</VALUE>
+<VALUE>Service</VALUE>
+<VALUE>Stressed</VALUE>
+<VALUE>NonRecover</VALUE>
+<VALUE>No Contact</VALUE>
+<VALUE>Lost Comm</VALUE>
+<VALUE>Stopped</VALUE>
+</VALUE.ARRAY>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="MaxLen" TYPE="uint32" ><VALUE>64</VALUE>
+</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Caption property is a short textual description (one-line string) of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Description property provides a textual description of the object.</VALUE>
+</QUALIFIER></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = true, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" CLASSORIGIN="EXP_BionicComputerSystem" ></PROPERTY></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"></INSTANCE>
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="BrandNewProperty" TYPE="string" ></PROPERTY></INSTANCE>
+*** Doing modifyInstance() ***
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ><VALUE>true</VALUE>
+</PROPERTY></INSTANCE>
+*** Doing modifyInstance() ***
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SevenMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ><VALUE>true</VALUE>
+</PROPERTY></INSTANCE>
+*** Doing setProperty() ***
+*** Doing getProperty() ***
+** getProperty returned. CIMValue: true
+*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" ><VALUE>true</VALUE>
+</PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" ><VALUE>true</VALUE>
+</PROPERTY></INSTANCE>
+*** Doing setQualifier() ***
+*** Doing enumerateQualifiers() ***
+Found Qualifier Definition: Abstract
+Found Qualifier Definition: Aggregate
+Found Qualifier Definition: Aggregation
+Found Qualifier Definition: Alias
+Found Qualifier Definition: ArrayType
+Found Qualifier Definition: Association
+Found Qualifier Definition: BitMap
+Found Qualifier Definition: BitValues
+Found Qualifier Definition: Counter
+Found Qualifier Definition: Delete
+Found Qualifier Definition: Deprecated
+Found Qualifier Definition: Description
+Found Qualifier Definition: DisplayName
+Found Qualifier Definition: DN
+Found Qualifier Definition: EmbeddedObject
+Found Qualifier Definition: Expensive
+Found Qualifier Definition: Experimental
+Found Qualifier Definition: Gauge
+Found Qualifier Definition: Ifdeleted
+Found Qualifier Definition: In
+Found Qualifier Definition: Indication
+Found Qualifier Definition: Invisible
+Found Qualifier Definition: Key
+Found Qualifier Definition: Large
+Found Qualifier Definition: MappingStrings
+Found Qualifier Definition: Max
+Found Qualifier Definition: MaxLen
+Found Qualifier Definition: MaxValue
+Found Qualifier Definition: Min
+Found Qualifier Definition: MinValue
+Found Qualifier Definition: ModelCorrespondence
+Found Qualifier Definition: Nonlocal
+Found Qualifier Definition: NonlocalType
+Found Qualifier Definition: NullValue
+Found Qualifier Definition: Octetstring
+Found Qualifier Definition: Out
+Found Qualifier Definition: Override
+Found Qualifier Definition: Propagated
+Found Qualifier Definition: PropertyUsage
+Found Qualifier Definition: Provider
+Found Qualifier Definition: Read
+Found Qualifier Definition: Required
+Found Qualifier Definition: Revision
+Found Qualifier Definition: Schema
+Found Qualifier Definition: Source
+Found Qualifier Definition: SourceType
+Found Qualifier Definition: Static
+Found Qualifier Definition: Syntax
+Found Qualifier Definition: SyntaxType
+Found Qualifier Definition: Terminal
+Found Qualifier Definition: TriggerType
+Found Qualifier Definition: Units
+Found Qualifier Definition: UnknownValues
+Found Qualifier Definition: UnsupportedValues
+Found Qualifier Definition: ValueMap
+Found Qualifier Definition: Values
+Found Qualifier Definition: Version
+Found Qualifier Definition: Weak
+Found Qualifier Definition: Write
+Found Qualifier Definition: borgishness
+*** Doing getQualifier() ***
+Got Qualifier: borgishness
+*** Doing setupAssociations() ***
+*** Doing associatorNames(assocClass = , resultClass = , role = , resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = CIM_SystemDevice, resultClass = , role = , resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = CIM_ComputerSystem, role = , resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = EXP_BionicComputerSystem, role = , resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = , role = GroupComponent, resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = , role = PartComponent, resultRole = ) ***
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = , role = PartComponent, resultRole = PartComponent) ***
+*** Doing associatorNames(assocClass = , resultClass = , role = , resultRole = PartComponent) ***
+Associated path: /root:exp_bioniccomputersystem.creationclassname="EXP_BionicComputerSystem",name="SixMillion"
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associatorNames(assocClass = , resultClass = , role = , resultRole = GroupComponent) ***
+Associated path: /root:exp_bioniccomputersystem2.creationclassname="EXP_BionicComputerSystem2",name="SixMillion"
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = CIM_SystemDevice, resultClass = , role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = CIM_ComputerSystem, role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = EXP_BionicComputerSystem, role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+*** Doing associators(assocClass = , resultClass = , role = GroupComponent, resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = , role = PartComponent, resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = , role = PartComponent, resultRole = PartComponent, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = PartComponent, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = GroupComponent, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+string CreationClassName="EXP_BionicComputerSystem2";
+string Name="SixMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = , includeQualifiers = true, includeClassOrigin = false, propertyList? 0) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem";
+[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SixMillion";
+boolean OptionalArg=true;
+[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]string NameFormat;
+[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
+[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
+[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
+[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
+[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
+[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
+[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
+[MaxLen(10),Description("A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
+[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
+[Description("The Description property provides a textual description of the object.")]string Description;
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem2";
+[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SixMillion";
+boolean OptionalArg;
+[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]string NameFormat;
+[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
+[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
+[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
+[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
+[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
+[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
+[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
+[MaxLen(10),Description("A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
+[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
+[Description("The Description property provides a textual description of the object.")]string Description;
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem2";
+[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SixMillion";
+boolean OptionalArg;
+[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]string NameFormat;
+[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
+[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
+[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
+[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
+[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
+[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
+[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
+[MaxLen(10),Description("A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
+[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
+[Description("The Description property provides a textual description of the object.")]string Description;
+};
+
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = , includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+Association Instance: <INSTANCE CLASSNAME="EXP_BionicComputerSystem"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem" ><VALUE>true</VALUE>
+</PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="BrandNewProperty" TYPE="string" CLASSORIGIN="EXP_BionicComputerSystem" ><VALUE>true</VALUE>
+</PROPERTY></INSTANCE>
+Association Instance: <INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem2" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY></INSTANCE>
+Association Instance: <INSTANCE CLASSNAME="EXP_BionicComputerSystem2"><PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>EXP_BionicComputerSystem2</VALUE>
+</PROPERTY><PROPERTY NAME="Name" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ><VALUE>SixMillion</VALUE>
+</PROPERTY><PROPERTY NAME="OptionalArg" TYPE="boolean" CLASSORIGIN="EXP_BionicComputerSystem2" ></PROPERTY><PROPERTY NAME="NameFormat" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="PrimaryOwnerContact" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="PrimaryOwnerName" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY><PROPERTY.ARRAY NAME="Roles" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true" ></PROPERTY.ARRAY><PROPERTY NAME="InstallDate" TYPE="datetime" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Status" TYPE="string" CLASSORIGIN="CIM_ManagedSystemElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Caption" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY><PROPERTY NAME="Description" TYPE="string" CLASSORIGIN="CIM_ManagedElement" PROPAGATED="true" ></PROPERTY></INSTANCE>
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+};
+
+*** Doing associators(assocClass = , resultClass = , role = , resultRole = , includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+Association Instance: INSTANCE OF EXP_BionicComputerSystem
+{
+string BrandNewProperty="true";
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+};
+
+Association Instance: INSTANCE OF EXP_BionicComputerSystem2
+{
+};
+
+*** Doing referenceNames(resultClass = , role = ) ***
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\""
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\""
+Associated path: /root:cim_systemcomponent.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\""
+*** Doing referenceNames(resultClass = cim_systemdevice, role = ) ***
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\""
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\""
+*** Doing referenceNames(resultClass = cim_component, role = ) ***
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\""
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\""
+Associated path: /root:cim_systemcomponent.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\""
+*** Doing referenceNames(resultClass = , role = GroupComponent) ***
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\""
+Associated path: /root:cim_systemcomponent.groupcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\"",partcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\""
+*** Doing referenceNames(resultClass = , role = PartComponent) ***
+Associated path: /root:cim_systemdevice.groupcomponent="/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\"",partcomponent="/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\""
+*** Doing references(resultClass = , role = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+};
+
+*** Doing references(resultClass = cim_systemdevice, role = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+*** Doing references(resultClass = cim_component, role = , includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+};
+
+*** Doing references(resultClass = , role = GroupComponent, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+};
+
+*** Doing references(resultClass = , role = PartComponent, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+*** Doing references(resultClass = , role = , includeQualifiers = true, includeClassOrigin = false, propertyList? 0) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+[Override("GroupComponent"),Aggregate(true),Max(1),Min(1),Description("The parent system in the Association."),Key(true)]REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+[Override("PartComponent"),Weak(true),Description("The LogicalDevice that is a component of a System."),Key(true)]REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+[Override("GroupComponent"),Aggregate(true),Max(1),Min(1),Description("The parent system in the Association."),Key(true)]REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+[Override("PartComponent"),Weak(true),Description("The LogicalDevice that is a component of a System."),Key(true)]REF PartComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+[Override("GroupComponent"),Aggregate(true),Description("The parent System in the Association."),Key(true)]REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+[Override("PartComponent"),Description("The child element that is a component of a System."),Key(true)]REF PartComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+};
+
+*** Doing references(resultClass = , role = , includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice"><PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System" CLASSORIGIN="CIM_SystemComponent" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SevenMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice" CLASSORIGIN="CIM_SystemComponent" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SixMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE></INSTANCE>
+Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice"><PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System" CLASSORIGIN="CIM_SystemComponent" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem2</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SixMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice" CLASSORIGIN="CIM_SystemComponent" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SevenMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE></INSTANCE>
+Association Instance: <INSTANCE CLASSNAME="CIM_SystemComponent"><PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System" CLASSORIGIN="CIM_Component" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SevenMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_ManagedSystemElement" CLASSORIGIN="CIM_Component" PROPAGATED="true" ><VALUE.REFERENCE><INSTANCEPATH><NAMESPACEPATH><HOST>127.0.0.1</HOST><LOCALNAMESPACEPATH><NAMESPACE NAME="root"></NAMESPACE></LOCALNAMESPACEPATH></NAMESPACEPATH><INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2"><KEYBINDING NAME="CreationClassName"><KEYVALUE VALUETYPE="string">EXP_BionicComputerSystem2</KEYVALUE></KEYBINDING><KEYBINDING NAME="Name"><KEYVALUE VALUETYPE="string">SixMillion</KEYVALUE></KEYBINDING></INSTANCENAME></INSTANCEPATH></VALUE.REFERENCE></PROPERTY.REFERENCE></INSTANCE>
+*** Doing references(resultClass = , role = , includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+};
+
+*** Doing references(resultClass = , role = , includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemDevice
+{
+REF GroupComponent=/root:exp_bioniccomputersystem2.creationclassname=\"EXP_BionicComputerSystem2\",name=\"SixMillion\";
+};
+
+Associated Instance: INSTANCE OF CIM_SystemComponent
+{
+REF GroupComponent=/root:exp_bioniccomputersystem.creationclassname=\"EXP_BionicComputerSystem\",name=\"SevenMillion\";
+};
+
+*** Doing execQuery() ***
+Instance from Query: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SixMillion";
+boolean OptionalArg=true;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+Instance from Query: INSTANCE OF EXP_BionicComputerSystem
+{
+string CreationClassName="EXP_BionicComputerSystem";
+string Name="SevenMillion";
+boolean OptionalArg;
+string NameFormat;
+string OtherIdentifyingInfo;
+string IdentifyingDescriptions;
+uint16 Dedicated;
+string PrimaryOwnerContact;
+string PrimaryOwnerName;
+string Roles;
+datetime InstallDate;
+string Status;
+string Caption;
+string Description;
+string BrandNewProperty="true";
+};
+
+*** Doing deleteAssociations() ***
+*** Doing deleteInstance() ***
+*** Doing deleteInstance() ***
+*** Doing deleteInstance() ***
+*** Doing deleteInstance() ***
+*** Doing deleteClass() ***
+*** Doing deleteClass() ***
+*** Doing deleteQualifier() ***
+*** Doing invokeMethod() ***
+invokeMethod: setstate("off")
+*** Doing invokeMethod() ***
+invokeMethod: getstate(): off
+*** Doing invokeMethod() ***
+invokeMethod: togglestate()
+*** Doing invokeMethod() ***
+invokeMethod: getstate(): on
+*** Doing invokeMethod() ***
+invokeMethod: setstate("off")
+*** Doing invokeMethod() ***
+invokeMethod: getstate(): off

@@ -1,0 +1,31 @@
+.Id $Id: owmofc.1,v 1.1.1.1 2002-03-01 16:58:14 nuffer Exp $
+.TH owmofc 1 "September 2001" owmofc "OpenWBEM Framework"
+.SH NAME
+owmofc \- Compile and import a MOF.
+.SH SYNOPSIS
+.B owmofc
+.IR URL
+.IR NAMESPACE
+.IR FILE
+.SH DESCRIPTION
+.B owmofc
+is a command-line tool used to compile a MOF and import it into a CIMOM.
+.PP
+.SH OPTIONS
+.TP 8
+.IR URL
+The URL to the CIMOM.  This has the form 
+http[s]://[<name>:<password>@]<hostname>[:<port>][/<path>]
+If no name and password are provided in the URL, and the CIMOM requires
+authentication, you will be prompted for a name and password.
+.TP 8
+.IR NAMESPACE
+The namespace in which to import the MOF
+.TP 8
+.IR FILE
+The path to the file to compile and import.
+.PP
+.SH "SEE ALSO"
+owcimomd(8)
+.SH BUGS
+None known at this time.

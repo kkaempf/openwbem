@@ -1,0 +1,766 @@
+// ===================================================================
+// Title:       Solaris User Schema mof specification 1.0
+// Filename:    Solaris_Users1.0.mof
+// Version:     1.0
+// Author:      Sun Microsystems, Inc.
+// Description: Solaris User schema.
+// ===================================================================
+
+// ==================================================================
+// Pragmas
+// ==================================================================
+#pragma Locale ("en-US")
+
+
+
+// ===================================================================
+// Title:       Solaris RBAC Authorization Management Class
+// Version:     1.0
+// Date:        12/29/1999
+// Description: RBAC authorization right definition
+// ===================================================================
+[Provider ("com.sun.wbem.solarisprovider.usermgr.auths.Solaris_AuthorizationAttribute")]
+class Solaris_AuthorizationAttribute
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[read, key, Description(
+		"The authorization hierarchical name.")]
+	string authName;
+
+	[read, Description(
+		"The authorization short description.")]
+	string shortDesc;
+
+	[read, Description(
+		"The authorization long description.")]
+	string longDesc;
+
+	[read, Description(
+		"The RBAC security data in key/value format.")]
+	string SolarisAttrKeyValue;
+
+	[Description(
+		"Method to return list of authorizations granted to a user.")]
+	sint32 getUserAuths([IN] string userName, [OUT] string authNames[]);
+
+};
+
+// ===================================================================
+// Title:       Solaris RBAC Exec_Attr Management Class
+// Version:     1.0
+// Date:        11/08/1999
+// Description: Execution profile Class definition.
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.execs.Solaris_ExecutionProfile")]
+class Solaris_ExecutionProfile
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[key, Description(
+		"The Profile name.")]
+	string ProfileName;
+
+	[key, Description(
+		"Policy associated with profile.")]
+	string PolicyName = "";
+
+	[key, Description(
+		"The type of exec attribute.")]
+	string Type = "";
+
+	[key, Description(
+		"The Id of exec attribute.")]
+	string ExecID = "";
+
+	[read, write, Description(
+		"The RBAC security data in key/value format.")]
+	string SolarisAttrKeyValue = "";
+
+};
+
+// ===================================================================
+// Title:       Solaris Group Management Class
+// Version:     1.0
+// Date:        11/08/1999
+// Description: Group Class definition.
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.groups.Solaris_UserGroup")]
+
+class Solaris_UserGroup
+{
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[key, Description(
+		"The Group name.")]
+	string GroupName;
+
+	[key, Description(
+		"The Group Id.")]
+	string GroupID = "";
+
+	[Description(
+		"Operating System Type.")]
+	string OSType = "";
+
+	[Description(
+		"Group Password.")]
+	string Password = "";
+
+	[Description(
+		"The Id of exec attribute.")]
+	string GroupMembers[] ;
+
+	[Description(
+		"Method to return bulk group data.")]
+	sint32 bulkData([IN] string filter, [OUT] string data[]);
+
+	[Description(
+		"Method to return next available GID.")]
+	sint32 getNextAvailableGID([OUT] string groupID);
+};
+
+// ===================================================================
+// Title:       Solaris RBAC Prof_Attr Class
+// Version:     1.0
+// Date:        11/08/1999
+// Description: Profile Class definition.
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.profs.Solaris_ProfileAttribute")]
+class Solaris_ProfileAttribute
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[key, Description(
+		"The Profile name.")]
+	string ProfileName;
+
+	[Description(
+		"The Profile long description.")]
+	string LongDescription = "Unknown";
+
+	[read, write, Description(
+		"The RBAC security data in key/value format.")]
+	string SolarisAttrKeyValue = "";
+
+    [Description(
+		"Method to return list of profiles granted to a user.")]
+	sint32 getUserProfs([IN] string userName, [IN] Boolean deep, [OUT] string profNames[]);
+
+    [Description(
+		"Method to return list of executables in a directory.")]
+	sint32 getExecutables([IN] string dirPath, [OUT] string executables[]);
+};
+
+// ===================================================================
+// Title:       Solaris_UMgrAliases Class.
+// Version:     1.0
+// Date:        10/06/1999
+// Description: Email aliases class definition.
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.aliases.Solaris_EmailAlias")]
+class Solaris_EmailAlias
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[read, key, Description("The alias that is being acted on.")]
+	string aliasName;
+
+	[read, write, Description("The list of aliases.")]
+	string aliasMembers;
+
+	[Description(
+		"Method to return bulk email alias data.")]
+	sint32 bulkData([IN] string filter, [OUT] string data[]);
+
+};
+
+// ===================================================================
+// Title:       Solaris HomeDirectory class
+// Version:     1.0
+// Date:        10/21/1999
+// Description:	This is a user's home directory.  There are no key values
+// because they are inherited from the superclass.
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.homedir.Solaris_UserHomeDirectory")]
+class Solaris_UserHomeDirectory : CIM_Directory
+{
+
+	[read, write, Description(
+		"The users name to use as the home directory path.")]
+	string userName;
+
+	[read, write, Description(
+		"The primary group.")]
+	string primaryGroup;
+
+	[read, write, Description(
+		"The users id to use in creating the home directory path.")]
+	string uid;
+
+	[read, write, Description(
+		"Whether to copy init files over or not - not in use.")]
+	boolean initFiles;
+
+	[read, write, Description(
+		"The path to the files to copy to the user's home directory.")]
+	string initFilePath;
+
+	[read, write, Description(
+		"Whether to automount the Home Directory.")]
+	boolean autoMountHomeDir;
+
+	[read, write, Description(
+		"Whether or not to use the username in the home directory path.")]
+	boolean useUserNameInPath;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean homeDirForceModify;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean homeDirAllowModifyServer;
+
+	[read, write, Description(
+		"The Home directory owner permissions for creating files.")]
+	string ownerPerms;
+
+	[read, write, Description(
+		"The Home directory group permissions for creating files.")]
+	string groupPerms;
+
+	[read, write, Description(
+		"The Home directory world permissions for creating files.")]
+	string worldPerms;
+
+	[read, write, Description(
+		"Use this property to change the pathname of "
+		"an existing file "
+		"during a setInstance call.")]
+	string newPathName;
+
+	[read, write, Description(
+		"Script to run before adding the user's home directory.")]
+	string scriptBefore;
+
+	[read, write, Description(
+		"Script to run after adding the user's home directory.")]
+	string scriptAfter;
+
+};
+
+// ===================================================================
+// Title:       Solaris Account Summary
+// Version:     1.0
+// Date:        10/14/1999
+// Description:
+// ===================================================================
+
+	[Abstract]
+class Solaris_AccountSummary
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+	[read, key, Description(
+		"The Account Name.")]
+	string userName;
+
+	[read, write, Description(
+		"The Account UID.")]
+	string userUID;
+
+	[read, write, Description(
+		"The Account full name.")]
+	string fullName;
+
+	[read, write, Description(
+		"The Account description.")]
+	string userDescr;
+
+	[read, write, Description(
+		"The Account type.")]
+	string userType;
+
+};
+
+// ===================================================================
+// Title:       Solaris User Summary - Light User Class
+// Version:     1.0
+// Date:        10/14/1999
+// Description:
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.users.Solaris_UserSummary")]
+class Solaris_UserSummary:Solaris_AccountSummary
+{
+};
+
+// ===================================================================
+// Title:       Solaris Role Summary - Light Account Roles
+// Version:     1.0
+// Date:        10/14/1999
+// Description:
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.users.Solaris_UserSummary")]
+class Solaris_RoleSummary:Solaris_AccountSummary
+{
+};
+
+// ===================================================================
+// Title:       Solaris User - Detailed user class 
+// Version:     1.0
+// Date:        10/21/1999
+// Description:
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.users.Solaris_UserAccount")]
+class Solaris_UserAccount 
+{
+
+	[propagated("CIM_System.CreationClassName"), key, Description(
+		"The scoping domain type from the weak assoication to an "
+		"instance of a Solaris_AdminDomain subclass, represented "
+		"as the subclass creation class name.")]
+	string domainClassType;
+
+	[propagated("CIM_System.Name"), key, Description(
+		"The scoping domain name from the weak association to an "
+		"instance of a Solaris_AdminDomain subclass.")]
+	string domainName;
+
+
+	[read, key, Description(
+		"The User id.")]
+	string Userid;
+
+	[read, write, Description(
+		"Descriptions - Not currently supported.")]
+	string Descriptions[];
+
+	[read, write, Description(
+		"The Distinguished Name - Not currently supported.")]
+	string DN;
+
+	[read, write, Description(
+		"The Host - Not currently supported.")]
+	string  Host[];
+
+	[read, write, Description(
+		"The Locality name - Not currently supported.")]
+	string LocalityName[];
+
+	[read, write, Description(
+		"Organizational name. - Not currently supported")]
+	string  OrganizationalName[];
+
+	[read, write, Description(
+		"The Organizational unit - Not currently supported.")]
+	string  OU[];
+
+	[read, write, Description(
+		"See also - Not currently supported.")]
+	string SeeAlso[];
+
+	[read, write, Description(
+		"User certificate - Not currently supported.")]
+	string UserCertificate;
+
+	[read, write, Description(
+		"User password.")]
+	string UserPassword;
+
+	[read, write, Description(
+		"The User's UID.")]
+	string userUID;
+
+	[read, write, Description(
+		"The User's full name.")]
+	string fullName;
+
+	[read, write, Description(
+		"The User's description.")]
+	string userDescr;
+
+	[read, write, Description(
+		"The User's Type.  This may be a Role or a User type.")]
+	string userType;
+
+	[read, write, Description(
+		"The User's Primary Group.")]
+	string primaryGroup;
+
+	[read, write, Description(
+		"The User's secondary group membership(s).")]
+	string secondaryGroups[];
+
+	[read, write, Description(
+		"The User Account Expiration Date.")]
+	string accountExpireDate;
+
+	[read, write, Description(
+		"Whether the User account is locked.")]
+	boolean isAccountLocked;
+
+	[read, write, Description(
+		"The User's old password.")]
+	string oldPassword;
+
+	[read, write, Description(
+		"The User's new password.")]
+	string newPassword;
+
+	[read, write, Description(
+		"The number of days the user has until they must change their password.")]
+	string mustChangePasswdInDays;
+
+	[read, write, Description(
+		"The number of days a user can not re-use a password.")]
+	string doNotReusePwdForDays;
+
+	[read, write, Description(
+		"The number of days before a user's password expires that they will start to receive warnings.")]
+	string warnBeforePwdExpiresDays;
+	
+	[read, write, Description(
+		"The number days a password can be inactive before it is automatically expired.")]
+	string pwdInactiveDays;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean changePasswd;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean hasPasswd;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean pwdForceModify;
+
+	[read, write, Description(
+		"The Name of the Home Directory server.")]
+	string homeDirServer;
+
+	[read, write, Description(
+		"The Home Directory path name.")]
+	string homeDirPathName;
+
+	[read, write, Description(
+		"Whether to automount the Home Directory.")]
+	boolean autoMountHomeDir;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean homeDirForceModify;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean homeDirAllowModifyServer;
+
+	[read, write, Description(
+		"The Home directory owner permissions for creating files.")]
+	string ownerPerms;
+
+	[read, write, Description(
+		"The Home directory group permissions for creating files.")]
+	string groupPerms;
+
+	[read, write, Description(
+		"The Home directory world permissions for creating files.")]
+	string worldPerms;
+
+	[read, write, Description(
+		"The path to the files to copy to the user's home directory.")]
+	string initFilePath;
+
+	[read, write, Description(
+		"The User's Mail Server.")]
+	string mailServer;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean mailBoxAllowModifyServer;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean mailBoxForceModify;
+
+	[read, write, Description(
+		"The User's initial shell.")]
+	string initialShell;
+
+	[read, write, Description(
+		"The Template that will be used when creating a user.")]
+	string templateName;
+
+	[read, write, Description(
+		"The RBAC security data in key/value format.")]
+	string SolarisAttrKeyValue;
+
+	[Description(
+		"Method to return next available user UID.")]
+	sint32 getNextUID([IN] string seed, [OUT] string uid);
+
+	[Description(
+		"Method to return a list of roles a user may assume.")]
+	sint32 getUserRoles([IN] string userName, [OUT] string roleNames[]);
+
+	[Description(
+		"Method to return bulk user summary data.")]
+	sint32 bulkData([IN] string type, [IN] string filter,
+		[OUT] string data[]);
+
+	[read, write, Description(
+		"Used during modify to rename an existing user.")]
+	string newName;
+    
+
+};
+
+// ===================================================================
+// Title:       Solaris Templates - for Creating Users
+// Version:     1.0
+// Date:        10/14/1999
+// Description:
+// ===================================================================
+[Provider ("com.sun.wbem.solarisprovider.usermgr.template.Solaris_Template")]
+class Solaris_UserTemplate 
+{
+
+	[read, key, Description (
+		"A user defined template name which is a Record identifier.")]
+	string tName;
+
+	[read, write, Description(
+		"Name of the user that last modified the instance.")]
+	string tUserName;
+
+	[read, write, Description(
+		"Last date and time of modification")]
+	datetime modDateTime;
+
+	[read, write, Description(
+		"Describes a particuliar template.")]
+	string tDescription;
+
+	[read, write, Description(
+		"The Home directory server.")]
+	string homeDirServer;
+
+	[read, write, Description(
+		"The path for the Home Directory.")]
+	string homeDirPath;
+
+	[read, write, Description(
+		"Whether or not to use the username in the home directory path.")]
+	boolean useUserNameInPath;
+
+	[read, write, Description(
+		"Mail server.")]
+	string mailServer;
+
+	[read, write, Description(
+		"The user's Mailbox.")]
+	string mailbox;
+
+	[read, write, Description(
+		"Directory to copy files from when creating the user account.")]
+	string dirToCopyFilesFrom;
+
+	[read, write, Description(
+		"Primary Group for the user.")]
+	string primaryGroup;
+
+	[read, write, Description(
+		"List of Secondary Groups to add the user to.")]
+	string secondaryGroups[];
+
+	[read, write, Description(
+		"Script to run before adding the user's home directory.")]
+	string scriptBefore;
+
+	[read, write, Description(
+		"Script to run after adding the user's home directory.")]
+	string scriptAfter;
+
+	[read, write, Description(
+		"Whether to Automount the Home Directory.")]
+	boolean autoMountHomeDir;
+
+	[read, write, Description(
+		"Initial shell.")]
+	string initialShell;
+
+	[read, write, Description(
+		"The Home directory permissions.")]
+	string homeDirPerms;
+
+	[read, write, Description(
+		"User must change password at first login.")]
+	boolean changePwdAtLogin;
+
+	[read, write, Description(
+		"Change Password every N days.")]
+	string changePwdInterval;
+
+	[read, write, Description(
+		"The password is valid for N days.")]
+	string pwdValidTime;
+
+	[read, write, Description(
+		"When user will start to receive warnings that password is going to expire.")]
+	string warnPwdExpire;
+
+	[read, write, Description(
+		"The User Account Expiration Date.")]
+	string accountExpireDate;
+
+	[read, write, Description(
+		"User can not re-use paswsword for N-days.")]
+	string doNotReUsePwdFor;
+
+};
+
+// ===================================================================
+// Title:       Solaris MailBox class
+// Version:     1.0
+// Date:        12/06/1999
+// Description:
+// ===================================================================
+
+[Provider ("com.sun.wbem.solarisprovider.usermgr.mbox.Solaris_MailBox")]
+class Solaris_MailBox
+{
+	[read, key, Description("The user that owns the mail box.")]
+	string userName;
+
+	[read, write, Description("The user's UID.")]
+	string userUID;
+
+	[read, write, Description(
+		"The User's Mail Server.")]
+	string mailServer;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean mailBoxAllowModifyServer;
+
+	[read, write, Description(
+		"Used Internally.")]
+	boolean mailBoxForceModify;
+
+	[read, write, Description(
+		"Use this value to rename an existing Mailbox during "
+		"a setInstance call.")]
+	string newUserName;
+
+};
+
+/*********************************************************************/
+
+
+// NOTE:  This PDC mof class is going into the next release but NOT this
+//        current one so we want to comment it out for now.  -pmh 1/5/00
+
+
+// ===================================================================
+// Title:       Solaris PDC class
+// Version:     1.0
+// Date:        10/06/1999
+// Description:
+// ===================================================================
+//[Provider ("com.sun.wbem.solarisprovider.usermgr.pdc.AdminSuite_UMgrPDC")]
+//class Solaris_PDCUser
+//{
+//	[read, key, Description("The user account that is being acted on.")]
+//	string userName;
+//
+//	[read, write, Description("Description of the account.")]
+//	string userDescr;
+//
+//	[read, write, Description("O/S that user account exists within.")]
+//	string userType;
+//
+//	[read, write, Description("Fullname of the user account.")]
+//	string fullName;
+//
+//	[read, write, Description("The password for the user account.")]
+//	string password;
+//
+//	[read, write, Description(
+//		"This boolean indicates if a password is required.")]
+//	boolean pwdRequired;
+//
+//	[read, write, Description("The global groups that the user is a member of.")]
+//	string globalGroups[];
+//
+//	[read, write, Description("The local groups that the user is a member of.")]
+//	string localGroups[];
+//};
+

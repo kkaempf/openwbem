@@ -1,0 +1,8 @@
+Makefile.in
+Makefile
+.deps
+.libs
+*.lo
+*.la
+OW_XMLUnescape.cc
+OW_XMLEscape.cc

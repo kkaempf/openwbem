@@ -1,0 +1,10 @@
+Centralize code for enforcing localOnly, includeClassOrigin,
+	includeQualifiers, etc...
+Provider interface in a different process.
+C provider interface.
+Webmin provider(s).
+Internationalization.
+Deal with locale on WBEM requests.
+Pass output stream to local cimom handle enumeration methods to eliminate
+	the need for in memory enumeration objects.
+

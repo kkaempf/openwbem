@@ -1,0 +1,256 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+#ifndef __OW_INETSOCKET_HPP__
+#define __OW_INETSOCKET_HPP__
+
+#include "OW_config.h"
+#include "OW_SelectableIFC.hpp"
+#include "OW_InetSocketImpl.hpp"
+#include "OW_InetSSLSocketImpl.hpp"
+#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_Reference.hpp"
+#include "OW_String.hpp"
+#include "OW_Types.h"
+#include "OW_UnnamedPipe.hpp"
+
+DEFINE_EXCEPTION(TimeOut)
+
+class OW_InetSocket : public OW_SelectableIFC, public OW_IOIFC
+{
+public:
+
+	/* Create a net OW_InetSocket object. THIS CONSTRUCTOR ASSUMES THE peerPort
+	 * PARAMETER IS ALREADY IN NETWORK BYTE ORDER.
+	 */
+//	OW_InetSocket(unsigned long peerAddress, unsigned short peerPort);
+
+	/** Allocate a new Inet Socket
+	 * @param isSSL is it an ssl socket?
+	 */
+	OW_InetSocket(OW_Bool isSSL = false);
+
+	/**
+	 * Allocate a new Inet Socket based on an existing handle.
+	 * This is used by OW_InetServerSocket::accept()
+	 * @param fd a handle to the existing socket
+	 * @param isSSL is it an SSL socket?
+	 */
+	OW_InetSocket(OW_SocketHandle_t fd, OW_Bool isSSL= false);
+//	OW_InetSocket(const OW_String& hostName, unsigned short port) /*throw (OW_SocketException)*/;
+
+	/**
+	 * Allocate a new OW_InetSocket and connect it to a peer machine
+	 * @param addr the address of the peer machine
+	 * @isSSL is it an SSL socket?
+	 * @exception OW_SocketException
+	 */
+	OW_InetSocket(const OW_InetAddress& addr, OW_Bool isSSL = false);
+
+	/**
+	 * Copy ctor
+	 */
+	OW_InetSocket(const OW_InetSocket& arg)
+		: OW_SelectableIFC()
+		, OW_IOIFC()
+		, m_impl(arg.m_impl) {}
+
+
+	OW_InetSocket& operator=(const OW_InetSocket& arg)
+		{ m_impl = arg.m_impl; return *this; }
+
+	/**
+	 * Connect to a peer node
+	 * @param addr The address of the machine to connect to.
+	 * @exception OW_SocketException
+	 */
+	void connect(const OW_InetAddress& addr)
+		{ m_impl->connect(addr); }
+
+	/**
+	 * Disconnect the (presumably) open connection
+	 */
+	void disconnect() { m_impl->disconnect(); }
+
+	/**
+	 * Set the receive timeout on the socket
+	 * @param seconds the number of seconds for the receive timeout
+	 */
+	void setReceiveTimeout(int seconds) { m_impl->setReceiveTimeout(seconds);}
+
+	/**
+	 * Get the receive timeout
+	 * @return The number of seconds of the receive timeout
+	 */
+	int getReceiveTimeout() { return m_impl->getReceiveTimeout(); }
+
+	/**
+	 * Set the send timeout on the socket
+	 * @param seconds the number of seconds for the send timeout
+	 */
+	void setSendTimeout(int seconds) { m_impl->setSendTimeout(seconds); }
+
+	/**
+	 * Get the send timeout
+	 * @return The number of seconds of the send timeout
+	 */
+	int getSendTimeout() { return m_impl->getSendTimeout(); }
+
+	/**
+	 * Set the connect timeout on the socket
+	 * @param seconds the number of seconds for the connect timeout
+	 */
+	void setConnectTimeout(int seconds) { m_impl->setConnectTimeout(seconds); }
+
+	/**
+	 * Get the connect timeout
+	 * @return The number of seconds of the connect timeout
+	 */
+	int getConnectTimeout() { return m_impl->getConnectTimeout(); }
+
+	/**
+	 * Set all timeouts (send, receive, connect)
+	 * @param seconds the number of seconds for the timeouts
+	 */
+	void setTimeouts(int seconds) { m_impl->setTimeouts(seconds); }
+
+	/**
+	 * Has the receive timeout expired?
+	 * @return true if the receive timeout has expired.
+	 */
+	OW_Bool receiveTimeOutExpired() { return m_impl->receiveTimeOutExpired(); }
+
+	/**
+	 * Write some data to the socket.
+	 * @param dataOut a pointer to the memory to be written to the socket.
+	 * @param dataOutLen the length of the data to be written
+	 * @param errorAsException true if errors should throw exceptions.
+	 * @return the number of bytes written.
+	 */
+	int write(const void* dataOut, int dataOutLen, OW_Bool errorAsException=false) /*throw (OW_SocketException)*/
+		{ return m_impl->write(dataOut, dataOutLen, errorAsException); }
+
+	/**
+	 * Read from the socket
+	 * @param dataIn a pointer to a buffer where data should be copied to
+	 * @param dataInLen the number of bytes to read.
+	 * @param errorAsException true if errors should throw exceptions.
+	 * @return the number of bytes read.
+	 */
+	int read(void* dataIn, int dataInLen, OW_Bool errorAsException=false) /*throw (OW_SocketException)*/
+		{ return m_impl->read(dataIn, dataInLen, errorAsException); }
+
+	/**
+	 * Wait for input on the socket for a specified length of time.
+	 * @param timeOutSecs the number of seconds to wait.
+	 * 	-1 means infinite
+	 * @return true if the timeout expired
+	 */
+	OW_Bool waitForInput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+		{ return m_impl->waitForInput(timeOutSecs); }
+
+	/**
+	 * Wait for output on the socket for a specified length of time.
+	 * @param timeOutSecs the number of seconds to wait.
+	 * 	-1 means infinite
+	 * @return true if the timeout expired
+	 */
+	OW_Bool waitForOutput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+		{ return m_impl->waitForOutput(timeOutSecs); }
+
+	/**
+	 * Get the local address associated with the socket connection
+	 * @return an OW_InetAddress representing the local machine
+	 */
+	OW_InetAddress getLocalAddress() const { return m_impl->getLocalAddress(); }
+
+	/**
+	 * Get the peer address associated with the socket connection
+	 * @return an OW_InetAddress representing the peer machine
+	 */
+	OW_InetAddress getPeerAddress() const { return m_impl->getPeerAddress(); }
+
+	/**
+	 * Get an istream to read from the socket
+	 * @return a istream& which can be used for socket input
+	 */
+	std::istream& getInputStream() /*throw (OW_SocketException)*/
+		{ return m_impl->getInputStream(); }
+
+	/**
+	 * Get an ostream to write to the socket
+	 * @return an ostream& which can be used for socket output
+	 */
+	std::ostream& getOutputStream() /*throw (OW_SocketException)*/
+		{ return m_impl->getOutputStream(); }
+
+	/**
+	 * Get an iostream to read/write from/to the socket
+	 * @return an iostream& which can be used for socket input and output.
+	 */
+	std::iostream& getIOStream() /*throw (OW_SocketException)*/ 	
+		{ return m_impl->getIOStream(); }
+
+
+	/**
+	 * @return The OW_Select_t associated with this sockect.
+	 */
+	OW_Select_t getSelectObj() const { return m_impl->getSelectObj(); }
+
+	/**
+	 * Get the socket handle for the socket
+	 * @return the socket handle
+	 */
+	OW_SocketHandle_t getfd() { return m_impl->getfd(); }
+
+	static OW_UnnamedPipeRef m_pUpipe;
+
+	static void createShutDownMechanism();
+
+	/**
+	 * Call this to shutdown all sockets.  This is usefull when the CIMOM
+	 * is shutting down.  We want any outstanding connections to close
+	 * immediately.
+	 */
+	static void shutdownAllSockets();
+
+	/**
+	 * Have the sockets been shutdown?
+	 * @return true if the sockets have been shutdown
+	 */
+	static OW_Bool gotShutDown();
+	static void deleteShutDownMechanism();
+
+private:
+	OW_InetSocketBaseImplRef m_impl;
+};
+
+#endif	//  __INETSOCKET_HPP__
+

@@ -1,0 +1,31 @@
+.Id $Id: owexecwql.1,v 1.1.1.1 2002-03-01 16:58:14 nuffer Exp $
+.TH owexecwql 1 "September 2001" owexecwql "OpenWBEM Framework"
+.SH NAME
+owexecwql \- Execute a WQL statement on a CIMOM
+.SH SYNOPSIS
+.B owexecwql
+.IR URL
+.IR NAMESPACE
+.IR STATEMENT
+.SH DESCRIPTION
+.B owexecwql
+is a command-line tool used to execute WQL statements on a CIMOM.  
+.PP
+.SH OPTIONS
+.TP 8
+.IR URL
+The URL to the CIMOM.  This has the form 
+http[s]://[<name>:<password>@]<hostname>[:<port>][/<path>]
+If no name and password are provided in the URL, and the CIMOM requires
+authentication, you will be prompted for a name and password.
+.TP 8
+.IR NAMESPACE
+The namespace on which to execute the WQL statement.
+.TP 8
+.IR STATEMENT
+The WQL statement to execute.
+.PP
+.SH "SEE ALSO"
+owmofc(1), owcimomd(8)
+.SH BUGS
+None known at this time.

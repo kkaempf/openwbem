@@ -1,0 +1,23 @@
+
+[Indication,
+    Description (
+     "OW_TestIndication1 is used for testing OpenWBEM") ]
+class OW_TestIndication1 : CIM_Indication
+{
+    [Required,
+     Description (
+      "The number of the indication") ]
+    UInt32 indicationNumber;
+};
+
+[Indication,
+    Description (
+     "OW_TestIndication2 is used for testing OpenWBEM") ]
+class OW_TestIndication2 : CIM_Indication
+{
+    [Required,
+     Description (
+      "The number of the indication") ]
+    UInt32 indicationNumber;
+};
+

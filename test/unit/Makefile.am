@@ -1,0 +1,52 @@
+noinst_PROGRAMS = MemTracerTest
+
+
+MemTracerTest_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem
+
+MemTracerTest_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o MemTracerTest
+
+MemTracerTest_SOURCES = \
+MemTracerTest.cpp
+
+check_PROGRAMS = unitMain
+# Note: Do not break up the following line, the newtest.sh script
+# expects all the files to be on one line.
+unitMain_SOURCES = UnitMain.cpp OW_FormatTestCases.cpp OW_StringTestCases.cpp OW_LoggerTestCases.cpp OW_HTTPChunkerTestCases.cpp OW_ProviderManagerTestCases.cpp OW_SharedLibraryTestCases.cpp OW_SharedLibraryLoaderTestCases.cpp OW_ProviderMuxLoaderTestCases.cpp OW_ProviderMuxTestCases.cpp OW_LinuxSharedLibraryLoaderTestCases.cpp OW_FormatTestCases.hpp OW_HTTPChunkerTestCases.hpp OW_LinuxSharedLibraryLoaderTestCases.hpp OW_LoggerTestCases.hpp OW_ProviderManagerTestCases.hpp OW_ProviderMuxLoaderTestCases.hpp OW_ProviderMuxTestCases.hpp OW_SharedLibraryLoaderTestCases.hpp OW_SharedLibraryTestCases.hpp OW_StringTestCases.hpp testSharedLibraryLoader.hpp OW_ExecTestCases.cpp OW_ExecTestCases.hpp OW_StackTraceTestCases.cpp OW_StackTraceTestCases.hpp OW_EnumerationTestCases.cpp OW_EnumerationTestCases.hpp OW_XMLUnescapeTestCases.cpp OW_XMLUnescapeTestCases.hpp OW_XMLEscapeTestCases.cpp OW_XMLEscapeTestCases.hpp OW_MD5TestCases.cpp OW_MD5TestCases.hpp OW_Base64TestCases.cpp OW_Base64TestCases.hpp OW_InetAddressTestCases.cpp OW_InetAddressTestCases.hpp OW_ListenerAuthenticatorTestCases.cpp OW_ListenerAuthenticatorTestCases.hpp OW_EventManagerTestCases.cpp OW_EventManagerTestCases.hpp OW_CIMUrlTestCases.cpp OW_CIMUrlTestCases.hpp OW_MutexTestCases.cpp OW_MutexTestCases.hpp OW_MemTracerTestCases.cpp OW_MemTracerTestCases.hpp OW_StringStreamTestCases.cpp OW_StringStreamTestCases.hpp OW_ExceptionTestCases.cpp OW_ExceptionTestCases.hpp OW_CIMClassTestCases.cpp OW_CIMClassTestCases.hpp
+
+INCLUDES = \
+-I$(top_srcdir)/src \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/test/CppUnit \
+-I$(top_srcdir)/src/thread \
+-I$(top_srcdir)/src/http \
+-I$(top_srcdir)/src/http/server \
+-I$(top_srcdir)/src/net/socket \
+-I$(top_srcdir)/src/provider \
+-I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/listener \
+-I$(top_srcdir)/src/client
+
+unitMain_LDADD = \
+$(top_builddir)/test/CppUnit/libCppUnit.a \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/server -lowserver \
+-L$(top_builddir)/src/listener -lowhttpxmllistener \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/db/db -lowdb -ldl
+
+unitMain_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o unitMain
+
+check_SCRIPTS = run_make_check.sh
+EXTRA_DIST = $(check_SCRIPTS)
+
+TESTS = run_make_check.sh
+

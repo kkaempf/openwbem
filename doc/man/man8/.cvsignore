@@ -1,0 +1,7 @@
+Makefile.in
+Makefile
+owcimomd.8
+.deps
+.libs
+*.lo
+*.la

@@ -1,0 +1,32 @@
+/* This MOF contains all those system properties which the CIMOM uses. */
+
+#pragma namespace ("root/system")
+
+Qualifier Abstract : boolean = false, Scope(class, association,
+        indication), Flavor(DisableOverride, Restricted);
+Qualifier Association : boolean = false, Scope(class, association),
+        Flavor(DisableOverride);
+Qualifier Key : boolean = false, Scope(property, reference),
+        Flavor(DisableOverride);
+Qualifier Override : string = null, Scope(property, method,
+        reference);
+Qualifier Description : string = null, Scope(any),
+        Flavor(Translatable);
+Qualifier Expensive : boolean = false,
+        Scope(property, reference, method, class, association);
+Qualifier In : boolean = true, Scope(parameter);
+Qualifier Provider : string = null, Scope(any);
+
+
+[Provider("internal"), Description("Each instance becomes part of the classpath")]
+class Solaris_ProviderPath {
+    [key] string pathurl;
+};
+
+[Provider("internal"), Description("This class represents the CIMOM")]
+class Solaris_CIMOM {
+    [key] string name;
+    [Description("Shuts down the CIMOM")]
+    sint8 shutdown();
+};
+

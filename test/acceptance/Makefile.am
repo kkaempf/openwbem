@@ -1,0 +1,42 @@
+SUBDIRS = testfiles progs
+
+check_SCRIPTS = acceptance.sh
+
+EXTRA_DIST = acceptance.sh.fb
+
+clean-local: 
+	rm -rf stage
+
+CLEANFILES = acceptance.sh
+SUFFIXES = .fb
+
+.fb:
+	@RM@ -f $@ $@-t
+	@SED@ \
+		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
+		-e 's!@''top_srcdir''@!$(top_srcdir)!g' \
+		-e 's!@''sbindir''@!$(sbindir)!g' \
+		-e 's!@''bindir''@!$(bindir)!g' \
+		-e 's!@''libdir''@!$(libdir)!g' \
+		-e 's!@''includedir''@!$(includedir)!g' \
+		-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
+	$< > $@-t
+	@MV@	$@-t $@
+	chmod +x $@
+
+INCLUDES = \
+-I$(top_srcdir)/src \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/test/CppUnit \
+-I$(top_srcdir)/src/thread \
+-I$(top_srcdir)/src/http \
+-I$(top_srcdir)/src/net/socket \
+-I$(top_srcdir)/src/provider \
+-I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/client
+
+TESTS = acceptance.sh

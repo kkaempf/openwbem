@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Content-type: application/xml; charset="utf-8"
+Content-length:
+Ext:
+Cache-Control: no-cache
+Opt: http://www.dmtf.org/cim/mapping/http/v1.0;ns=01
+01-CIMOperation: MethodResponse
+01-CIMProtocolVersion: 1.0
+01-CIMValidation: loosely-validating
+01-CIMSupportedFunctionalGroups: basic-read, basic-write, schema-manipulation, instance-manipulation, qualifier-declaration, association-traversal 
+
+

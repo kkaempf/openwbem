@@ -1,0 +1,14 @@
+
+class EXP_BartComputerSystem : CIM_ComputerSystem
+{
+  [ provider("c++::methodtest") ]
+   string GetState();
+
+  [ provider("c++::methodtest") ]
+   string ToggleState();
+
+  [ provider("c++::methodtest") ]
+   string SetState(
+	[IN] string newState);
+};
+

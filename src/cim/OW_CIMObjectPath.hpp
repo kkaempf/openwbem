@@ -1,0 +1,300 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+#ifndef __CIMOBJECTPATH_HPP__
+#define __CIMOBJECTPATH_HPP__
+
+
+#include "OW_config.h"
+#include "OW_Reference.hpp"
+#include "OW_CIMBase.hpp"
+#include "OW_CIMFwd.hpp"
+
+/**
+ * The OW_CIMOMObjectPath class represents the location of CIM classes and
+ * instances. OW_CIMObjectPath is a ref counted, copy on write object. It is
+ * possible to have a NULL OW_CIMObjectPath.
+ */							
+class OW_CIMObjectPath : public OW_CIMBase
+{
+private:
+	struct OPData;
+
+public:
+
+	/**
+	 * Escapes quotes and '/'
+	 * @param inString The string to escape
+	 * @return The escaped string
+	 */
+	static OW_String escape(const OW_String& inString);
+
+	/**
+	 * Unescapes quotes and '/'
+	 * @param inString The string in an escaped form
+	 * @return The string with escape sequences removed
+	 */
+	static OW_String unEscape(const OW_String& inString);
+
+	/**
+	 * Create a new OW_CIMObjectPath object.
+	 * @param notNull If false, this object will not have any implementation or
+	 *		data associated with it (NULL Object).
+	 */
+	explicit OW_CIMObjectPath(OW_Bool notNull=OW_Bool(false));
+
+	/**
+	 * Create an OW_CIMObjectPath to access the specified object
+	 * @param className The name of the CIM class this object path is for.
+	 */
+	explicit OW_CIMObjectPath(const OW_String& className);
+
+	/**
+	 * Create an OW_CIMObjectPath to access the specified object
+	 * @param className The name of the CIM class this object path is for as a
+	 * 	NULL terminated string.
+	 */
+	explicit OW_CIMObjectPath(const char* className);
+
+	/**
+	 * Create an OW_CIMObjectPath to access the specified object (a qualifier
+	 * or a class) in a particular namespace.
+	 * @param className The name of the CIM class this object refers to.
+	 * @param nspace The string representation of the name space
+	 *		(e.g. "root/cimv2")
+	 */
+	OW_CIMObjectPath(const OW_String& className, const OW_String& nspace);
+
+	/**
+	 * Create an OW_CIMObjectPath for an instance.
+	 * @param className	The name of the class for the instance
+	 * @param keys			An OW_CIMPropertyArray that contains the keys for
+	 *							the instance.
+	 */
+	OW_CIMObjectPath(const OW_String& className,
+		const OW_CIMPropertyArray& keys);
+
+	/**
+	 * Create an OW_CIMObjectPath from an XML definition
+	 * @param node	The OW_XMLNode containing the definition or an
+	 *		OW_CIMObjectPath
+	 *
+	 * Note: Does not accept XML_ELEMENT_OBJECTPATH - caller must jump
+	 * over such an element
+	 */
+	//explicit OW_CIMObjectPath(const OW_XMLNode& node);
+
+	/**
+	 * Create a new OW_CIMObject path from another.
+	 * @param arg The OW_CIMObjectPath this object will be a copy of.
+	 */
+	OW_CIMObjectPath(const OW_CIMObjectPath& arg);
+
+	/**
+	 * Destroy this OW_CIMObjectPath object.
+	 */
+	~OW_CIMObjectPath();
+
+	/**
+	 * Set this to a null object.
+	 */
+	virtual void setNull();
+
+	/**
+	 * Assignment operator
+	 * @param arg The OW_CIMObjectPath to assign to this one.
+	 * @return A reference to this object after the assignment has been made.
+	 */
+	OW_CIMObjectPath& operator= (const OW_CIMObjectPath& arg);
+
+	/**
+	 * Add another key to this object path (for instance paths).
+	 * @param keyname The name of the key property
+	 * @param value The value for the key property
+	 */
+	void addKey(const OW_String& keyname, const OW_CIMValue& value);
+
+	/**
+	 * Get the keys for this object path
+	 * @return An OW_CIMPropertyArray containing the keys for this object path.
+	 */
+	OW_CIMPropertyArray getKeys() const;
+
+	/**
+	 * Set the keys of this object path
+	 * @param newKeys	An OW_CIMPropertyArray that contains the keys for this
+	 * 	object path.
+	 */
+	void setKeys(const OW_CIMPropertyArray& newKeys);
+
+
+	/**
+	 * Set the keys of this object path from the key properties of an instance.
+	 * @param instance The CIM instance to get the key properties from.
+	 */
+	void setKeys(const OW_CIMInstance& instance);
+
+	/**
+	 * @return The namespace component of the OW_CIMNameSpace for this object path
+	 */
+	OW_String getNameSpace() const;
+
+	/**
+	 * @return The URL component of the OW_CIMNameSpace for this object path
+	 */
+	OW_CIMUrl getNameSpaceUrl() const;
+
+	/**
+	 * @return The host name from the name space for this object path.
+	 */
+	OW_String getHost() const;
+
+	/**
+	 * @return The object name for this object path
+	 */
+	OW_String getObjectName() const;
+
+	/**
+	 * Convert a string representation of an object path to an OW_CIMObjectPath.
+	 * @param instanceName	The object path to convert. Assumed to be an instance
+	 *		path.
+	 * @return An OW_CIMObjectPath object on success.
+	 */
+	static OW_CIMObjectPath parse(const OW_String& instanceName);
+
+	/**
+	 * Set the host name on the name space for this object path.
+	 * @param host	The new name of the host to set on the underlying name space.
+	 */
+	void setHost(const OW_String& host);
+
+	/**
+	 * Set the namespace for this object path.
+	 * @param ns	The string representation of the namespace.
+	 */
+	void setNameSpace(const OW_String& ns);
+
+	/**
+	 * Assign an object name to this object path.
+	 * @param objectName	The name of the object to assign to this object path.
+	 */
+	void setObjectName(const OW_String& objectName);
+
+	/**
+	 * Compare this object path with another.
+	 * @param op The object path to compare to this one.
+	 * @param ignoreClasOrigins If true class origins are ignored
+	 * @return true if the object paths are equal. Otherwise false.
+	 *
+	 * unclear why classorigins would ever be checked!
+	 */
+	OW_Bool equals(const OW_CIMObjectPath& op,
+		OW_Bool ignoreClassOrigins=true) const;
+
+	/**
+	 * @return true if this is not a null object.
+	 */
+	operator void*() const {  return (void*)(!m_pdata.isNull()); }
+
+	/**
+	 * Equality operator
+	 * @param op The object path to compare to this one.
+	 * @return true if the object paths are equal. Otherwise false.
+	 */
+	OW_Bool operator== (const OW_CIMObjectPath& op) const
+	{
+		return equals(op, true);
+	}
+
+	/**
+	 * @return The full namespace for this object path
+	 */
+	OW_CIMNameSpace getFullNameSpace() const;
+
+	/**
+	 * @return The string representation of this OW_CIMObjectPath.
+	 */
+	virtual OW_String toString() const;
+
+	/**
+	 * @return The model path component of this OW_CIMObjectPath as an
+	 * OW_String
+	 */
+	virtual OW_String modelPath() const;
+
+	/**
+	 * @return The MOF representation of this OW_CIMObjectPath as an
+	 * OW_String
+	 */
+	virtual OW_String toMOF() const;
+
+	/**
+	 * Write the XML representation of this OW_CIMObjectPath to an output stream
+	 * @param ostr The output stream to write the XML to.  The XML will be an
+	 * INSTANCEPATH instead of an INSTANCENAME
+	 */
+	//virtual void toXML(std::ostream& ostr) const;
+
+	/**
+	 * Write the XML representation of this OW_CIMObjectPath to an output stream
+	 * @param ostr The output stream to write the XML to.
+	 * @param isInstanceName Specifies whether to output the INSTANCEPATH tags.
+	 */
+	//virtual void toXML(std::ostream& ostr, OW_Bool isInstanceName) const;
+
+	/**
+	 * Read this object from an input stream.
+	 * @param istrm The input stream to read this object from.
+	 */
+	virtual void readObject(std::istream& istrm);
+
+	/**
+	 * Write this object to an output stream.
+	 * @param ostrm The output stream to write this object to.
+	 */
+	virtual void writeObject(std::ostream& ostrm) const;
+
+private:
+
+	/**
+	 * Build the XML for a key property and write it to the given output
+	 * stream.
+	 * @param ostr	The output stream to write to.
+	 * @param prop	The property to build the xml for (must be a key)
+	 */
+	//static void outputKEYVALUE(std::ostream& ostr, const OW_CIMProperty& prop);
+
+	//void getNameSpacePathAndSet(const OW_XMLNode& node);
+	//void getLocalNameSpacePathAndSet(const OW_XMLNode& node);
+
+	OW_Reference<OPData> m_pdata;
+};
+
+#endif
