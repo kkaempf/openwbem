@@ -158,12 +158,12 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool /*localOnly*/, 
-		OW_Bool /*deep*/, 
-		OW_Bool /*includeQualifiers*/, 
-		OW_Bool /*includeClassOrigin*/,
-		const OW_StringArray* /*propertyList*/,
-		const OW_CIMClass& /*requestedClass*/,
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
 	{
 		OW_String cmd = "/usr/bin/apt-cache search .*";
@@ -192,7 +192,7 @@ public:
 		processPkgs(insts);
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
-			result.handle(insts[i]);
+			result.handle(insts[i].clone(localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass));
 		}
 	}
 
