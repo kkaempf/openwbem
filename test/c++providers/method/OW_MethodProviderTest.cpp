@@ -174,7 +174,7 @@ MethodProviderTest::invokeMethod(
 		out[1].setValue(CIMValue(Real64(9.87654e32l)));
 		out[2].setValue(CIMValue(Int16(555)));
 		out[3].setValue(CIMValue(String(
-			format("MethodProviderTest::invokeMethod.  in[0] = %1, "
+			Format("MethodProviderTest::invokeMethod.  in[0] = %1, "
 				"in[1] = %2, in[2] = %3, in[3] = %4, in[4] = %5, out[0] = %6, out[1] = %7, "
 				"out[2] = %8, out[4] = %9",
 				in[0].toString(), in[1].toString(), in[2].toString(), in[3].toString(), in[4].toString(),
@@ -197,7 +197,7 @@ MethodProviderTest::invokeMethod(
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, format("Cannot find "
+		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, Format("Cannot find "
 			"method: %1", methodName).c_str());
 	}
 	(void)out;

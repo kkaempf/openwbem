@@ -991,7 +991,7 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 		// TODO: log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
 	}
-	(*provenv)->getLogger()->logDebug(format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
+	(*provenv)->getLogger()->logDebug(Format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" NPIHandle *

@@ -116,13 +116,13 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		return rv.releaseString();
 		// don't do this to allow for singleton classes without keys.
 		//OW_THROWCIMMSG(CIMException::INVALID_CLASS,
-		//	format("No key properties for class: %1", theClass.getName()).c_str());
+		//	Format("No key properties for class: %1", theClass.getName()).c_str());
 	}
 	String oclass = kprops[0].getOriginClass().toLowerCase();
 	if(oclass.empty())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("No orgin class for key property on class: %1",
+			Format("No orgin class for key property on class: %1",
 				theClass.getName()).c_str());
 	}
 	rv += oclass;
@@ -145,7 +145,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	if(pra.size() < kprops.size())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("Model path is missing keys: %1", cop.toString()).c_str());
+			Format("Model path is missing keys: %1", cop.toString()).c_str());
 	}
 	// TODO: Is this necessary?
 	if(pra.size() == 1)
@@ -156,7 +156,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		if(!pname.empty() && !pname.equalsIgnoreCase(kprops[0].getName()))
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				format("Property in model path is not a key: %1", pname).c_str());
+				Format("Property in model path is not a key: %1", pname).c_str());
 		}
 		rv += '.';
 		rv += pname;
@@ -203,7 +203,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		if(j == kprops.size())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				format("Property in model path is not a key: %1", pname).c_str());
+				Format("Property in model path is not a key: %1", pname).c_str());
 		}
 	}
 	UtilKeyArray kra;

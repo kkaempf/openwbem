@@ -289,7 +289,7 @@ public:
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, format("Provider does not support "
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Provider does not support "
 				"method: %1", methodName).c_str());
 		}
 		return CIMValue(String("Fail"));

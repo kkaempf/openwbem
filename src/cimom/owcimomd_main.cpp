@@ -122,17 +122,17 @@ int main(int argc, char* argv[])
 	{
 		env->logFatalError("**************************************************");
 		env->logFatalError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logFatalError(format("* Type: %1", e.type()));
-		env->logFatalError(format("* Msg: %1", e.getMessage()));
-		env->logFatalError(format("* File: %1", e.getFile()));
-		env->logFatalError(format("* Line: %1", e.getLine()));
+		env->logFatalError(Format("* Type: %1", e.type()));
+		env->logFatalError(Format("* Msg: %1", e.getMessage()));
+		env->logFatalError(Format("* File: %1", e.getFile()));
+		env->logFatalError(Format("* Line: %1", e.getLine()));
 		env->logFatalError("**************************************************");
 	}
 	catch (std::exception& se)
 	{
 		env->logFatalError("**************************************************");
 		env->logFatalError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logFatalError(format("* Type: %1", se.what()));
+		env->logFatalError(Format("* Type: %1", se.what()));
 		env->logFatalError("**************************************************");
 	}
 	catch(...)

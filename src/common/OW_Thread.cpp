@@ -135,7 +135,7 @@ Thread::join()
 	if(ThreadImpl::joinThread(m_id, rval) != 0)
 	{
 		OW_THROW(ThreadException,
-			format("Thread::join - ThreadImpl::joinThread: %1(%2)", 
+			Format("Thread::join - ThreadImpl::joinThread: %1(%2)", 
 				   errno, strerror(errno)).c_str());
 	}
 	// need to set this to false, since the thread may have been cancelled, in which case the m_isRunning flag will be wrong.

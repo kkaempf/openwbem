@@ -176,13 +176,13 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(SocketException,
-			format("Failed to create a socket: %1", strerror(errno)).c_str());
+			Format("Failed to create a socket: %1", strerror(errno)).c_str());
 	}
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		::close(m_sockfd);
-		OW_THROW(SocketException, format("SocketBaseImpl::connect() failed to set "
+		OW_THROW(SocketException, Format("SocketBaseImpl::connect() failed to set "
 			"close-on-exec flag on socket: %1",
 			strerror(errno)).c_str());
 	}
@@ -196,7 +196,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException,
-				format("Failed to connect to: %1: %2(%3)", addr.getAddress(), errno, strerror(errno)).c_str());
+				Format("Failed to connect to: %1: %2(%3)", addr.getAddress(), errno, strerror(errno)).c_str());
 		}
 	}
 	if(n == -1) 
@@ -242,7 +242,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			{
 				Thread::testCancel();
 			}
-			OW_THROW(SocketException, format("SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
+			OW_THROW(SocketException, Format("SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
 		}
 		if(pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
@@ -258,13 +258,13 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			{
 				::close(m_sockfd);
 				OW_THROW(SocketException,
-						format("SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
+						Format("SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
 			}
 			if (error != 0)
 			{
 				::close(m_sockfd);
 				OW_THROW(SocketException,
-						format("SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
+						Format("SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
 			}
 		}
 		else
@@ -324,7 +324,7 @@ SocketBaseImpl::fillInetAddrParms()
 	{
 // Don't error out here, we can still operate without working DNS.
 //		OW_THROW(SocketException,
-//				format("SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
+//				Format("SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
 	}
 	else
 	{
@@ -335,7 +335,7 @@ SocketBaseImpl::fillInetAddrParms()
 	{
 // Don't error out here, we can still operate without working DNS.
 //		OW_THROW(SocketException,
-//				format("SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
+//				Format("SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
 	}
 	else
 	{

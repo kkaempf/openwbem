@@ -147,7 +147,7 @@ inline unsigned char fromHexStr(char c1, char c2, const String& uuidStr)
 {
 	if (!isxdigit(c1) || !isxdigit(c2))
 	{
-		OW_THROW(UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
+		OW_THROW(UUIDException, Format("Invalid UUID: %1", uuidStr).c_str());
 	}
 	return (decodeHex(c1) << 4) | decodeHex(c2);
 }
@@ -217,7 +217,7 @@ UUID::UUID(const String& uuidStr)
 	const char* s = uuidStr.c_str();
 	if (uuidStr.length() != 36 || s[8] != '-' || s[13] != '-' || s[18] != '-' || s[23] != '-')
 	{
-		OW_THROW(UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
+		OW_THROW(UUIDException, Format("Invalid UUID: %1", uuidStr).c_str());
 	}
 	m_uuid[0] = fromHexStr(s[0], s[1], uuidStr);
 	m_uuid[1] = fromHexStr(s[2], s[3], uuidStr);

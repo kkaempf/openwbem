@@ -54,7 +54,7 @@ class FileLogger : public Logger
 			log( filename, std::ios::out|std::ios::app )
 		{
 			if (!log)
-				OW_THROW(LoggerException, format("FileLogger: Unable to open file: %1", filename).toString().c_str() );
+				OW_THROW(LoggerException, Format("FileLogger: Unable to open file: %1", filename).toString().c_str() );
 		}
 		virtual ~FileLogger() {}
 	protected:

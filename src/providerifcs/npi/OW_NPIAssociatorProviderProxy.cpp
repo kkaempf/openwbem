@@ -149,7 +149,7 @@ NPIAssociatorProviderProxy::associators(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(format("NPIAssociatorProviderProxy::"
+		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		for (int i=0; i < n; i++)
@@ -218,7 +218,7 @@ NPIAssociatorProviderProxy::references(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(format("NPIAssociatorProviderProxy::"
+		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		for (int i=0; i < n; i++)

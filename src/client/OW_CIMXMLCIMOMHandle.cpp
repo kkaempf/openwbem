@@ -290,7 +290,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 		}
 		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, format("Invalid xml.  %1",
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Invalid xml.  %1",
 				e.getMessage()).c_str());
 		}
 		OW_THROWCIMMSG(CIMException::ErrNoType(errCode.toInt32()), description.c_str());

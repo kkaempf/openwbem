@@ -278,7 +278,7 @@ HTTPSvrConnection::run()
 	}
 	catch (Exception& e)
 	{
-		OW_LOGERROR(format("%1", e));
+		OW_LOGERROR(Format("%1", e));
 		m_errDetails = e.getMessage();
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -293,7 +293,7 @@ HTTPSvrConnection::run()
 #endif
 	catch (std::exception& e)
 	{
-		m_errDetails = format("Caught std::exception (%1) in HTTPSvrConnection::run()", e.what());
+		m_errDetails = Format("Caught std::exception (%1) in HTTPSvrConnection::run()", e.what());
 		OW_LOGERROR(m_errDetails);
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -833,7 +833,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			m_requestHandler = m_options.env->getRequestHandler(ct);
 			if (m_requestHandler.isNull())
 			{
-				m_errDetails = format("Content-Type \"%1\" is not supported.", ct);
+				m_errDetails = Format("Content-Type \"%1\" is not supported.", ct);
 				return SC_UNSUPPORTED_MEDIA_TYPE;
 			}
 		}

@@ -149,7 +149,7 @@ SimpleAuthenticator::loadPasswordFile(ServiceEnvironmentIFCRef env)
 		}
 		else
 		{
-			OW_THROW(AuthenticationException, format("Invalid syntax in "
+			OW_THROW(AuthenticationException, Format("Invalid syntax in "
 				"%1 at line %2", passwdFile, lineCount).c_str());
 		}
 		m_passwords[name] = passwd;

@@ -94,7 +94,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	{
 		if(getuid() != 0)
 		{
-			OW_THROW(DaemonException, format("%1 must run as root. aborting...", daemonName).c_str());
+			OW_THROW(DaemonException, Format("%1 must run as root. aborting...", daemonName).c_str());
 		}
 	}
 	String pidFile(OW_PIDFILE_DIR);
@@ -107,7 +107,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	if(pid != -1)
 	{
 		OW_THROW(DaemonException,
-			format("Another instance of %1 is already running [%2]",
+			Format("Another instance of %1 is already running [%2]",
 				daemonName, pid).c_str());
 	}
 	if(!dbgFlg)
@@ -119,7 +119,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 				break;
 			case -1:
 				OW_THROW(DaemonException,
-					format("FAILED TO DETACH FROM THE TERMINAL - First fork : %1",
+					Format("FAILED TO DETACH FROM THE TERMINAL - First fork : %1",
 						strerror(errno)).c_str());
 			default:
 				_exit(0);			 // exit the original process
@@ -136,7 +136,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 				break;
 			case -1:
 				OW_THROW(DaemonException,
-					format("FAILED TO DETACH FROM THE TERMINAL - Second fork : %1",
+					Format("FAILED TO DETACH FROM THE TERMINAL - Second fork : %1",
 						strerror(errno)).c_str());
 				exit(0);
 			default:
@@ -157,7 +157,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	}
 	PidFile::writePid(pidFile.c_str());
 	//String msg;
-	//msg.format(DAEMON_NAME " is now running [PID=%d]", getpid());
+	//msg.Format(DAEMON_NAME " is now running [PID=%d]", getpid());
 	//Environment::logInfo(msg);
 	initSig();
 	setupSigHandler(dbgFlg);
@@ -246,7 +246,7 @@ void restartDaemon()
 	::execv(g_argv[0], g_argv);
 
 	// If we get here we're pretty much hosed.
-	OW_THROW(DaemonException, format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
+	OW_THROW(DaemonException, Format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////

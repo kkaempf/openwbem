@@ -439,7 +439,7 @@ HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
 		if (i == m_callbacks.end())
 		{
 			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-				format("No listener for path: %1", listenerPath).c_str());
+				Format("No listener for path: %1", listenerPath).c_str());
 		}
 		cb = i->second.callback;
 	}

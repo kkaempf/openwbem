@@ -190,7 +190,7 @@ verifySignature(std::istream& istrm, UInt8 validSig)
 	if(val != validSig)
 	{
 		OW_THROW(BadCIMSignatureException,
-			format("Received invalid signature. Got: %1 Expected: %2", Int32(val),
+			Format("Received invalid signature. Got: %1 Expected: %2", Int32(val),
 				Int32(validSig)).c_str());
 	}
 }

@@ -117,7 +117,7 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 			DB_BTREE, &dbinfo);
 		if(m_pDB == NULL)
 		{
-			OW_THROW(IndexException, format("Failed to open index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
+			OW_THROW(IndexException, Format("Failed to open index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
 	}
 	else
@@ -126,7 +126,7 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 			S_IRUSR | S_IWUSR,  DB_BTREE, &dbinfo);
 		if(m_pDB == NULL)
 		{
-			OW_THROW(IndexException, format("Failed to create index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
+			OW_THROW(IndexException, Format("Failed to create index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
 	}
 }

@@ -51,65 +51,65 @@ public:
 		FuncNamePrinter(const char* funcName, const A& a) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1)", a).c_str());
+				Format("(%1)", a).c_str());
 		}
 	template<typename A, typename B>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2)", a, b).c_str());
+				Format("(%1, %2)", a, b).c_str());
 		}
 	template<typename A, typename B, typename C>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3)", a, b, c).c_str());
+				Format("(%1, %2, %3)", a, b, c).c_str());
 		}
 	template<typename A, typename B, typename C, typename D>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4)", a, b, c, d).c_str());
+				Format("(%1, %2, %3, %4)", a, b, c, d).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5)", a, b, c, d, e).c_str());
+				Format("(%1, %2, %3, %4, %5)", a, b, c, d, e).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5, %6)", a, b, c, d, e, f).c_str());
+				Format("(%1, %2, %3, %4, %5, %6)", a, b, c, d, e, f).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5, %6, %7)", a, b, c, d, e, f, g).c_str());
+				Format("(%1, %2, %3, %4, %5, %6, %7)", a, b, c, d, e, f, g).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5, %6, %7, %8)", a, b, c, d, e, f, g, h).c_str());
+				Format("(%1, %2, %3, %4, %5, %6, %7, %8)", a, b, c, d, e, f, g, h).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H, typename I>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, i).c_str());
+				Format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, i).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H, typename I, typename J>
 		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i, const J& j) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
-				format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, format("%1, %2", i, j)).c_str());
+				Format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, Format("%1, %2", i, j)).c_str());
 		}
 	~FuncNamePrinter()
 		{ fprintf(stderr, "%d Leaving:  %s\n", getpid(), m_funcName); }

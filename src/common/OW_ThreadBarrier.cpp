@@ -57,7 +57,7 @@ public:
 		int res = pthread_barrier_init(&barrier, NULL, threshold);
 		if (res != 0)
 		{
-			OW_THROW(ThreadBarrierException, format("pthread_barrier_init failed: %1(%2)", res, strerror(res)).c_str());
+			OW_THROW(ThreadBarrierException, Format("pthread_barrier_init failed: %1(%2)", res, strerror(res)).c_str());
 		}
 	}
 	~ThreadBarrierImpl()
@@ -74,7 +74,7 @@ public:
 		int res = pthread_barrier_wait(&barrier);
 		if (res != 0 && res != PTHREAD_BARRIER_SERIAL_THREAD)
 		{
-			OW_THROW(ThreadBarrierException, format("pthread_barrier_wait failed: %1(%2)", res, strerror(res)).c_str());
+			OW_THROW(ThreadBarrierException, Format("pthread_barrier_wait failed: %1(%2)", res, strerror(res)).c_str());
 		}
 	}
 private:	

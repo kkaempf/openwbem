@@ -141,13 +141,13 @@ HDB::checkFile()
 	f.close();
 	if(::strncmp(m_hdrBlock.signature, OW_HDBSIGNATURE, HDBSIGLEN))
 	{
-		String msg("Invalid format for HDB file: ");
+		String msg("Invalid Format for HDB file: ");
 		msg += m_fileName;
 		OW_THROW(HDBException, msg.c_str());
 	}
 	if (m_hdrBlock.version != HDBVERSION)
 	{
-		OW_THROW(HDBException, format("Invalid version (%1) for file (%2). Expected (%3)", m_hdrBlock.version, m_fileName, HDBVERSION).c_str());
+		OW_THROW(HDBException, Format("Invalid version (%1) for file (%2). Expected (%3)", m_hdrBlock.version, m_fileName, HDBVERSION).c_str());
 	}
 	m_pindex = Index::createIndexObject();
 	m_pindex->open(m_fileName.c_str());

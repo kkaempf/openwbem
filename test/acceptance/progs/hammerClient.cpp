@@ -147,25 +147,25 @@ void handleErrorMessage(const String& errorMsg)
 
 void reportError(const String& operation, const String& param="")
 {
-	String errorMsg = format("%1(%2)", operation, param);
+	String errorMsg = Format("%1(%2)", operation, param);
 	handleErrorMessage(errorMsg);
 }
 
 void reportError(const Exception& e, const String& operation, const String& param="")
 {
-	String errorMsg = format("%1(%2): %3", operation, param, e);
+	String errorMsg = Format("%1(%2): %3", operation, param, e);
 	handleErrorMessage(errorMsg);
 }
 
 void reportError(const std::exception& e, const String& operation, const String& param="")
 {
-	String errorMsg = format("%1(%2): std::exception(%3):%4", operation, param, typeid(e).name(), e.what());
+	String errorMsg = Format("%1(%2): std::exception(%3):%4", operation, param, typeid(e).name(), e.what());
 	handleErrorMessage(errorMsg);
 }
 
 void reportError(const Exception& e)
 {
-	String errorMsg = format("%1", e);
+	String errorMsg = Format("%1", e);
 	handleErrorMessage(errorMsg);
 }
 

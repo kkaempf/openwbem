@@ -184,7 +184,7 @@ GenericHDBRepository::createNameSpace(String ns)
 			reinterpret_cast<const unsigned char*>(ns.c_str()));
 		hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
-		logDebug(format("created namespace %1", ns));
+		logDebug(Format("created namespace %1", ns));
 	}
 	else
 	{
@@ -220,7 +220,7 @@ GenericHDBRepository::deleteNameSpace(String key)
 	}
 	else
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, format("Unable to delete namespace %1", key).c_str());
+		OW_THROWCIMMSG(CIMException::FAILED, Format("Unable to delete namespace %1", key).c_str());
 	}
 }
 #endif

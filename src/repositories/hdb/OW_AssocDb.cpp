@@ -442,7 +442,7 @@ AssocDb::open(const String& fileName)
 	if(!checkFile())
 	{
 		OW_THROW(IOException,
-			format("Failed to open file: %1", fname).c_str());
+			Format("Failed to open file: %1", fname).c_str());
 	}
 	m_opened = true;
 }
@@ -475,20 +475,20 @@ AssocDb::checkFile()
 	if(!f)
 	{
 		OW_THROW(IOException,
-			format("Failed to open file: %1", m_fileName).c_str());
+			Format("Failed to open file: %1", m_fileName).c_str());
 	}
 	size_t sizeRead = f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0);
 	f.close();
 	if(sizeRead != sizeof(m_hdrBlock))
 	{
 		OW_THROW(IOException,
-			format("Failed to read Assoc DB header from file: %1",
+			Format("Failed to read Assoc DB header from file: %1",
 				m_fileName).c_str());
 	}
 	if(::strncmp(m_hdrBlock.signature, OW_ASSOCSIGNATURE, OW_ASSOCSIGLEN))
 	{
 		OW_THROW(IOException,
-			format("Invalid format for Assoc db file: %1", m_fileName).c_str());
+			Format("Invalid Format for Assoc db file: %1", m_fileName).c_str());
 	}
 	m_pIndex = Index::createIndexObject();
 	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
@@ -515,7 +515,7 @@ AssocDb::getHandle()
 	if(!file)
 	{
 		OW_THROW(IOException,
-			format("Failed to open file while creating handle: %1",
+			Format("Failed to open file while creating handle: %1",
 				m_fileName).c_str());
 	}
 	m_hdlCount++;
@@ -667,7 +667,7 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	
 	if(!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
-		m_env->getLogger()->logError(format("AssocDb::addEntry failed to add entry to"
+		m_env->getLogger()->logError(Format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
 		OW_THROW(IOException, "Failed to add entry to association index");
 	}

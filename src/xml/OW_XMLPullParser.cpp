@@ -106,7 +106,7 @@ XMLPullParser::getAttribute(const char* const attrId, bool throwIfError)
 	if (throwIfError)
 	{
 		OW_THROWXML(XMLParseException::BAD_ATTRIBUTE_NAME,
-					format("Failed to find "
+					Format("Failed to find "
 						"attribute: %1 in node: %2", attrId, m_curTok.text).c_str() );
 	}
 	return String();
@@ -119,7 +119,7 @@ XMLPullParser::mustGetChild()
 	{
 		m_good = false;
 		OW_THROWXML(XMLParseException::SEMANTIC_ERROR,
-			format("XMLPullParser::mustGetChild() failed.  parser = %1",
+			Format("XMLPullParser::mustGetChild() failed.  parser = %1",
 				*this).c_str());
 	}
 	getChild();
@@ -127,7 +127,7 @@ XMLPullParser::mustGetChild()
 	{
 		m_good = false;
 		OW_THROWXML(XMLParseException::SEMANTIC_ERROR,
-			format("XMLPullParser::mustGetChild() failed.  parser = %1",
+			Format("XMLPullParser::mustGetChild() failed.  parser = %1",
 				*this).c_str());
 	}
 }
@@ -166,7 +166,7 @@ XMLPullParser::getNextTag(bool throwIfError)
 	if (!m_good && throwIfError)
 	{
 		OW_THROWXML(XMLParseException::SEMANTIC_ERROR,
-			format("XMLPullParser::getNext() failed.  parser = %1",
+			Format("XMLPullParser::getNext() failed.  parser = %1",
 				*this).c_str());
 	}
 }
@@ -178,7 +178,7 @@ XMLPullParser::getNext(bool throwIfError)
 	if (!m_good && throwIfError)
 	{
 		OW_THROWXML(XMLParseException::SEMANTIC_ERROR,
-			format("XMLPullParser::getNext() failed.  parser = %1",
+			Format("XMLPullParser::getNext() failed.  parser = %1",
 				*this).c_str());
 	}
 }
@@ -190,7 +190,7 @@ XMLPullParser::mustGetEndTag()
 	if (m_curTok.type != XMLToken::END_TAG)
 	{
 		OW_THROWXML(XMLParseException::SEMANTIC_ERROR,
-			format("XMLPullParser::mustGetEndTag() failed.  parser = %1",
+			Format("XMLPullParser::mustGetEndTag() failed.  parser = %1",
 				*this).c_str());
 	}
 	getNext();

@@ -129,7 +129,7 @@ PollingManager::run()
 	
 	PolledProviderIFCRefArray itpra =
 			pm->getPolledProviders(createProvEnvRef(m_env));
-	m_env->logDebug(format("PollingManager found %1 polled providers",
+	m_env->logDebug(Format("PollingManager found %1 polled providers",
 		itpra.size()));
 	{
 		// Get initial polling interval from all polled providers
@@ -139,7 +139,7 @@ PollingManager::run()
 			TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(
 				createProvEnvRef(m_env));
-			m_env->logDebug(format("PollingManager poll interval for provider"
+			m_env->logDebug(Format("PollingManager poll interval for provider"
 				" %1: %2", i, tr->m_pollInterval));
 			if(!tr->m_pollInterval)
 			{
@@ -266,7 +266,7 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
 	tr->m_pollInterval = p->getInitialPollingInterval(
 		createProvEnvRef(m_env));
-	m_env->logDebug(format("PollingManager poll interval for provider"
+	m_env->logDebug(Format("PollingManager poll interval for provider"
 		" %1", tr->m_pollInterval));
 	if(!tr->m_pollInterval)
 	{

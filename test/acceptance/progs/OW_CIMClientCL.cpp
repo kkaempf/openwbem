@@ -619,7 +619,7 @@ enumerateInstances(CIMClient& hdl, String ofClass, EDeepFlag deep, ELocalOnlyFla
 		const StringArray* propertyList)
 {
 	String pstr;
-	pstr = format("ofClass = %1, deep = %2, localOnly = %3, includeQualifiers = %4, "
+	pstr = Format("ofClass = %1, deep = %2, localOnly = %3, includeQualifiers = %4, "
 			"includeClassOrigin = %5, propertyList? %6",
 			ofClass, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
 		
@@ -658,7 +658,7 @@ getInstance(CIMClient& hdl, const String& theInstance,
 		const StringArray* propertyList = 0)
 {
 	String pstr;
-	pstr = format("localOnly = %1, includeQualifiers=%2, "
+	pstr = Format("localOnly = %1, includeQualifiers=%2, "
 			"includeClassOrigin = %3, propertyList? %4",
 			localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
 	testStart("getInstance", pstr.c_str());
@@ -692,7 +692,7 @@ modifyInstance(CIMClient& hdl, const String& theInstance,
 	EIncludeQualifiersFlag includeQualifiers, StringArray* propList,
 	bool addProperty, bool addQualifier)
 {
-	String pstr = format("includeQualifiers=%1, "
+	String pstr = Format("includeQualifiers=%1, "
 			"propertyList? %2, addProperty = %3, addQualifier = %4",
 			includeQualifiers, propList != 0, addProperty, addQualifier);
 	testStart("modifyInstance", pstr.c_str());
@@ -925,7 +925,7 @@ associatorNames(CIMClient& hdl, const String& assocClass,
 		const String& resultRole)
 {
 	String pstr;
-	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
+	pstr = Format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
 			assocClass, resultClass, role, resultRole);
 	testStart("associatorNames", pstr.c_str());
 
@@ -965,7 +965,7 @@ associatorNamesClass(CIMClient& hdl, const String& assocClass,
 		const String& resultRole)
 {
 	String pstr;
-	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
+	pstr = Format("assocClass = %1, resultClass = %2, role = %3, resultRole = %4",
 			assocClass, resultClass, role, resultRole);
 	testStart("associatorNamesClass", pstr.c_str());
 
@@ -1003,7 +1003,7 @@ associators(CIMClient& hdl, const String& assocClass,
 		EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList)
 {
 	String pstr;
-	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
+	pstr = Format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
 			"%4, includeQualifiers = %5, includeClassOrigin = %6, propertyList? "
 			"%7",
 			assocClass, resultClass, role, resultRole, includeQualifiers,
@@ -1054,7 +1054,7 @@ associatorsClasses(CIMClient& hdl, const String& assocClass,
 		EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList)
 {
 	String pstr;
-	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
+	pstr = Format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
 			"%4, includeQualifiers = %5, includeClassOrigin = %6, propertyList? "
 			"%7",
 			assocClass, resultClass, role, resultRole, includeQualifiers,
@@ -1098,7 +1098,7 @@ referenceNames(CIMClient& hdl,
 		const String& resultClass, const String& role)
 {
 	String pstr;
-	pstr = format("resultClass = %1, role = %2", resultClass, role);
+	pstr = Format("resultClass = %1, role = %2", resultClass, role);
 	testStart("referenceNames", pstr.c_str());
 
 	try
@@ -1137,7 +1137,7 @@ referenceNamesClass(CIMClient& hdl,
 		const String& resultClass, const String& role)
 {
 	String pstr;
-	pstr = format("resultClass = %1, role = %2", resultClass, role);
+	pstr = Format("resultClass = %1, role = %2", resultClass, role);
 	testStart("referenceNamesClass", pstr.c_str());
 
 	try
@@ -1175,7 +1175,7 @@ references(CIMClient& hdl,
 		const StringArray* propertyList)
 {
 	String pstr;
-	pstr = format("resultClass = %1, role = %2, includeQualifiers = %3, "
+	pstr = Format("resultClass = %1, role = %2, includeQualifiers = %3, "
 			"includeClassOrigin = %4, propertyList? %5",
 			resultClass, role, includeQualifiers, includeClassOrigin,
 			propertyList != 0);
@@ -1224,7 +1224,7 @@ referencesClasses(CIMClient& hdl,
 		const StringArray* propertyList)
 {
 	String pstr;
-	pstr = format("resultClass = %1, role = %2, includeQualifiers = %3, "
+	pstr = Format("resultClass = %1, role = %2, includeQualifiers = %3, "
 			"includeClassOrigin = %4, propertyList? %5",
 			resultClass, role, includeQualifiers, includeClassOrigin,
 			propertyList != 0);

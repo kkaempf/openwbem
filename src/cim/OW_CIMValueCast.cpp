@@ -75,7 +75,7 @@ castValueToDataType(const CIMValue& value,
 		if(!isCompatible(value.getType(), dataType.getType()))
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
-				format("Failed to convert \"%1\" to %2", value.toString(),
+				Format("Failed to convert \"%1\" to %2", value.toString(),
 					dataType.toString()).c_str());
 		}
 		// If value is an array, then do special array processing
@@ -216,7 +216,7 @@ makeValueArray(CIMValue& theValue)
 			break;
 		}
 		default:
-			OW_THROW(ValueCastException, format("Invalid data type: %1",
+			OW_THROW(ValueCastException, Format("Invalid data type: %1",
 				theValue.getType()).c_str());
 	}
 }
@@ -258,7 +258,7 @@ isCompatible(CIMDataType::Type from, CIMDataType::Type to)
 		}
 		return false;
 	}
-	OW_THROW(ValueCastException, format("Invalid to datatype: %1", to).c_str());
+	OW_THROW(ValueCastException, Format("Invalid to datatype: %1", to).c_str());
 	return false;
 }
 //////////////////////////////////////////////////////////////////////////////

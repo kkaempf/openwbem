@@ -45,25 +45,25 @@ void OW_FormatTestCases::tearDown()
 
 void OW_FormatTestCases::testFormat()
 {
-	unitAssert( format("%1 != %2", 1, 2) == "1 != 2" );
-	unitAssert( format("%1 != %2", 1, 2).toString() == "1 != 2" );
-	unitAssert( format("%1,%2,%3,%4,%5,%6,%7,%8,%9", 
+	unitAssert( Format("%1 != %2", 1, 2) == "1 != 2" );
+	unitAssert( Format("%1 != %2", 1, 2).toString() == "1 != 2" );
+	unitAssert( Format("%1,%2,%3,%4,%5,%6,%7,%8,%9", 
 				1,2,3,4,5,6,7,8,9).toString() == "1,2,3,4,5,6,7,8,9" );
-	unitAssert( String(format("%1 != %2", 1, 2).c_str()) == "1 != 2" );
+	unitAssert( String(Format("%1 != %2", 1, 2).c_str()) == "1 != 2" );
 }
 
 void OW_FormatTestCases::testPercent()
 {
-	unitAssert( format("%1%%%2", "abc", "def").toString() == "abc%def" );
-	unitAssert( format("%2%%%1%3%2", "one", "two", '%').toString() == 
+	unitAssert( Format("%1%%%2", "abc", "def").toString() == "abc%def" );
+	unitAssert( Format("%2%%%1%3%2", "one", "two", '%').toString() == 
 			"two%one%two" );
 }
 
 void OW_FormatTestCases::testError()
 {
-	unitAssert( format("%1,%2xx", 1).toString() == "1,\n*** Parameter specifier too large.\n*** Error in format string at \"2xx\".\n" );
-	unitAssert( format("%xABC", 'e').toString() == "\n*** Error in format string at \"xABC\".\n" );
-	unitAssert( format("%0ABC", 'e').toString() == "\n*** Error in format string at \"0ABC\".\n" );
+	unitAssert( Format("%1,%2xx", 1).toString() == "1,\n*** Parameter specifier too large.\n*** Error in Format string at \"2xx\".\n" );
+	unitAssert( Format("%xABC", 'e').toString() == "\n*** Error in Format string at \"xABC\".\n" );
+	unitAssert( Format("%0ABC", 'e').toString() == "\n*** Error in Format string at \"0ABC\".\n" );
 }
 
 Test* OW_FormatTestCases::suite()

@@ -480,7 +480,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 		if(ndx == String::npos)
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				format("Invalid instance name: ", instanceNameArg).c_str());
+				Format("Invalid instance name: ", instanceNameArg).c_str());
 		}
 		host = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
@@ -518,7 +518,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	if(ndx == String::npos)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("class name not found in instance name:: ",
+			Format("class name not found in instance name:: ",
 				instanceNameArg).c_str());
 	}
 	className = instanceName.substring(0, ndx);
@@ -532,7 +532,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	if(valuesLen == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("No key values found in instance name: ",
+			Format("No key values found in instance name: ",
 				instanceNameArg).c_str());
 	}
 	// set singleKey to TRUE if it is intended that a property value can be
@@ -601,7 +601,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 			if(equalspos == 0)
 			{
 				OW_THROWCIMMSG(CIMException::NOT_FOUND,
-					format("Bad key in string (%1)", instanceName).c_str());
+					Format("Bad key in string (%1)", instanceName).c_str());
 			}
 			String keyprop = String(&values[keystart], equalspos-keystart-1);
 			//

@@ -227,7 +227,7 @@ CIMXMLParser::mustGetChildId(CIMXMLParser::tokenId tId)
 	{
 		m_good = false;
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
+			Format("CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
 				g_elems[tId].name, *this).c_str());
 	}
 }
@@ -238,7 +238,7 @@ CIMXMLParser::mustTokenIsId(CIMXMLParser::tokenId tId) const
 	if (!tokenIs(g_elems[tId].name))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
+			Format("CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
 				g_elems[tId].name, *this).c_str());
 	}
 }
@@ -260,7 +260,7 @@ CIMXMLParser::getNextId(CIMXMLParser::tokenId beginTok, bool throwIfError)
 	if (!m_good && throwIfError)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok=%1) failed.  parser = %2",
+			Format("CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok=%1) failed.  parser = %2",
 				g_elems[beginTok].name, *this).c_str());
 	}
 }

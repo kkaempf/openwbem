@@ -50,7 +50,7 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
-		logger->logError(format("dlSharedLibraryLoader::loadSharedLibrary "
+		logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary "
 			"dlopen returned NULL.  Error is: %1", dlerror()));
 		return SharedLibraryRef( 0 );
 	}

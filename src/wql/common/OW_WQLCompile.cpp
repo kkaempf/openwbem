@@ -267,7 +267,7 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 				rhs = tr[j].opn2;
 				WQLCompile::_ResolveProperty(rhs,source);
 				if (rhs.getType() != lhs.getType())
-					OW_THROW(TypeMismatchException, format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
+					OW_THROW(TypeMismatchException, Format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
 				if (!_Evaluate(lhs, rhs, tr[j].op))
 				{
 					b = false;

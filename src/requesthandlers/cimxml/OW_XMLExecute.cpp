@@ -209,7 +209,7 @@ XMLExecute::executeIntrinsic(ostream& ostr,
 {
 	String functionNameLC = m_functionName;
 	functionNameLC.toLowerCase();
-	OW_LOGDEBUG(format("Got function name. calling function %1",
+	OW_LOGDEBUG(Format("Got function name. calling function %1",
 		functionNameLC));
 	FuncEntry fe = { 0, 0 };
 	fe.name = functionNameLC.c_str();
@@ -407,7 +407,7 @@ namespace
 			if (i == params.end())
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("Parameter %1 is not a valid parameter", name).c_str());
+					Format("Parameter %1 is not a valid parameter", name).c_str());
 			}
 			
 			parser.getNextTag();
@@ -426,7 +426,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_CLASSNAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <CLASSNAME> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <CLASSNAME> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -436,7 +436,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -446,7 +446,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE.ARRAY> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <VALUE.ARRAY> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -456,7 +456,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -467,7 +467,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag. %2",
+								Format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag. %2",
 									i->name, parser).c_str());
 						}
 						i->isSet = true;
@@ -483,7 +483,7 @@ namespace
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -494,7 +494,7 @@ namespace
 							&& !parser.tokenIsId(CIMXMLParser::E_CLASSNAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> or <CLASSNAME> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> or <CLASSNAME> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -506,7 +506,7 @@ namespace
 							&& !parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-								format("Parameter %1 is the wrong type.  Expected <VALUE> or <VALUE.ARRAY> or <VALUE.REFERENCE> tag.",
+								Format("Parameter %1 is the wrong type.  Expected <VALUE> or <VALUE.ARRAY> or <VALUE.REFERENCE> tag.",
 									i->name).c_str());
 						}
 						i->isSet = true;
@@ -526,7 +526,7 @@ namespace
 			if (params[i].optional == false && params[i].isSet == false)
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("Non-optional parameter %1 was not given",
+					Format("Non-optional parameter %1 was not given",
 						params[i].name).c_str());
 			}
 			if (params[i].isSet == false)
@@ -715,7 +715,7 @@ XMLExecute::modifyClass(ostream&	/*ostr*/, CIMXMLParser& parser,
 	String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	if (!name.equalsIgnoreCase(CIMXMLParser::P_ModifiedClass))
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("Parameter name was %1", name).c_str());
+			Format("Parameter name was %1", name).c_str());
 	parser.mustGetChild();
 	//
 	// Process <CLASS> element
@@ -1318,7 +1318,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 	}
 	catch (CIMException& ce)
 	{
-		OW_LOGDEBUG(format("XMLExecute::processSimpleReq caught CIM "
+		OW_LOGDEBUG(Format("XMLExecute::processSimpleReq caught CIM "
 			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);

@@ -155,7 +155,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	else
 	{
 		theErrorHandler->recoverableError(
-			format("Ignoring unknown pragma: %1",
+			Format("Ignoring unknown pragma: %1",
 				*pCompilerDirective->pPragmaName->pPragmaName).c_str(),
 			pCompilerDirective->theLineInfo);
 	}
@@ -300,7 +300,7 @@ void CIMOMVisitor::VisitAliasIdentifier( const AliasIdentifier *pAliasIdentifier
 	String alias = m_aliasMap[*pAliasIdentifier->pAliasIdentifier];
 	if (alias.empty())
 	{
-		theErrorHandler->recoverableError(format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
+		theErrorHandler->recoverableError(Format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
 			pAliasIdentifier->theLineInfo);
 	}
 	m_curValue = CIMValue(alias);
@@ -387,7 +387,7 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 			else
 			{
 				theErrorHandler->fatalError(
-					format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
+					Format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
 					(*i)->theLineInfo);
 			}
 		}
@@ -454,7 +454,7 @@ void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropert
 				if ( m_curValue.getArraySize() != arraySize )
 				{
 					theErrorHandler->recoverableError(
-						format("Array size (%1) doesn't match number of elements (%2)", arraySize, m_curValue.getArraySize()).c_str(),
+						Format("Array size (%1) doesn't match number of elements (%2)", arraySize, m_curValue.getArraySize()).c_str(),
 						pPropertyDeclaration->theLineInfo);
 				}
 			}
@@ -825,7 +825,7 @@ void CIMOMVisitor::VisitScope( const Scope *pScope )
 		else
 		{
 			theErrorHandler->recoverableError(
-				format("Invalid scope: %1", *(*i)->pMetaElement).c_str(),
+				Format("Invalid scope: %1", *(*i)->pMetaElement).c_str(),
 				(*i)->theLineInfo );
 		}
 		
@@ -865,7 +865,7 @@ void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 		else
 		{
 			theErrorHandler->fatalError(
-				format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
+				Format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
 				(*i)->theLineInfo);
 		}
 	}
@@ -914,7 +914,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 					catch (ValueCastException&)
 					{
 						theErrorHandler->recoverableError(
-								format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
+								Format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
 					}
 					if (castValue && castValue.getType() == CIMDataType::REFERENCE)
 					{
@@ -1059,7 +1059,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Processing class: %1", m_curClass.getName()).c_str(), li);
 		try
 		{
 			m_hdl->createClass(m_namespace, m_curClass);
@@ -1076,7 +1076,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 				throw;
 			}
 		}
-		theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Created class: %1", m_curClass.getName()).c_str(), li);
 		// Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
 		// in the case that there are lots of instances, each class will only have to be fetched once.
 	}
@@ -1087,16 +1087,16 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 			try
 			{
 				m_hdl->modifyClass(m_namespace, m_curClass);
-				theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
+				theErrorHandler->progressMessage(Format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const CIMException& ce)
 			{
-				theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->recoverableError(Format("Error: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1104,7 +1104,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
 		try
 		{
 			m_hdl->setQualifierType(m_namespace, m_curQualifierType);
@@ -1129,13 +1129,13 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 }
 void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
 	CIMObjectPath cop(m_namespace, m_curInstance);
-	theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
+	theErrorHandler->progressMessage(Format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try
 	{
 		try
@@ -1154,7 +1154,7 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 				throw;
 			}
 		}
-		theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Created Instance: %1", cop.toString()).c_str(), li);
 	}
 	catch (const CIMException& ce)
 	{
@@ -1163,16 +1163,16 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 			try
 			{
 				m_hdl->modifyInstance(m_namespace, m_curInstance);
-				theErrorHandler->progressMessage(format("Updated Instance: %1", cop.toString()).c_str(), li);
+				theErrorHandler->progressMessage(Format("Updated Instance: %1", cop.toString()).c_str(), li);
 			}
 			catch (const CIMException& ce)
 			{
-				theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1199,7 +1199,7 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 	return CIMQualifierType();
 }
@@ -1226,7 +1226,7 @@ CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const lineInfo& li
 	}
 	catch (const CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 	return CIMClass();
 }
@@ -1236,7 +1236,7 @@ void CIMOMVisitor::CIMOMcreateNamespace(const lineInfo& li)
 	// don't bother catching exceptions here.  This function is only called if
 	// the namespace needs to exist.  If we can't create the namespace, that's
 	// a fatal error.
-	theErrorHandler->progressMessage(format("Creating namespace: %1", m_namespace).c_str(), li);
+	theErrorHandler->progressMessage(Format("Creating namespace: %1", m_namespace).c_str(), li);
 	if (m_rephdl)
 	{
 		m_rephdl->createNameSpace(m_namespace);
@@ -1254,7 +1254,7 @@ void CIMOMVisitor::CIMOMcreateNamespace(const lineInfo& li)
 		}
 
 	}
-	theErrorHandler->progressMessage(format("Created namespace: %1", m_namespace).c_str(), li);
+	theErrorHandler->progressMessage(Format("Created namespace: %1", m_namespace).c_str(), li);
 }
 
 } // end namespace MOF

@@ -254,7 +254,7 @@ void lexIncludeFile( void* context, const String& filename )
 	{
 		// REPORT AN ERROR
 		MOF_COMPILER->theErrorHandler->fatalError(
-			format("Includes nested too deep (Max of %1 levels)", (int)Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
+			Format("Includes nested too deep (Max of %1 levels)", (int)Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
 			MOF_COMPILER->theLineInfo);
 		return;
 	}
@@ -270,7 +270,7 @@ void lexIncludeFile( void* context, const String& filename )
 		if ( !newfile )
 		{
 			MOF_COMPILER->theErrorHandler->fatalError(
-				format("Could not open include file %1", filename).c_str(), MOF_COMPILER->theLineInfo);
+				Format("Could not open include file %1", filename).c_str(), MOF_COMPILER->theLineInfo);
 			return;
 		}
 		filenameWithPath = filename;

@@ -102,7 +102,7 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		else
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
-				format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
+				Format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 		}
 		
 		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHPATH>
@@ -133,7 +133,7 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		return tmpcop;
 	}
 	OW_THROWCIMMSG(CIMException::FAILED,
-		format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
+		Format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 }
 //////////////////////////////////////////////////////////////////////////////		
 CIMClass

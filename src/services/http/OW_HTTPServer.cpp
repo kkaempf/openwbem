@@ -180,7 +180,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 	}
 	catch (const StringConversionException& e)
 	{
-		OW_THROW(HTTPServerException, format("Unable to initialize HTTP Server because"
+		OW_THROW(HTTPServerException, Format("Unable to initialize HTTP Server because"
 			" of invalid config item. %1", e.getMessage()).c_str());
 	}
 }
@@ -218,7 +218,7 @@ public:
 			Socket socket = pServerSocket->accept(2);
 			LoggerRef logger = m_HTTPServer->m_options.env->getLogger();
 			logger->logInfo(
-				 format("Received connection on %1 from %2",
+				 Format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
 			HTTPServer::Options newOpts = m_HTTPServer->m_options;
@@ -243,22 +243,22 @@ public:
 		}
 		catch (SocketTimeoutException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logInfo(format(
+			m_HTTPServer->m_options.env->getLogger()->logInfo(Format(
 				"Socket TimeOut in HTTPServer: %1", e));
 		}
 		catch (SocketException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logInfo(format(
+			m_HTTPServer->m_options.env->getLogger()->logInfo(Format(
 				"Socket Exception in HTTPServer: %1", e));
 		}
 		catch (IOException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logError(format(
+			m_HTTPServer->m_options.env->getLogger()->logError(Format(
 				"IO Exception in HTTPServer: %1", e));
 		}
 		catch (Exception& e)
 		{
-			m_HTTPServer->m_options.env->getLogger()->logError(format(
+			m_HTTPServer->m_options.env->getLogger()->logError(Format(
 				"Exception in HTTPServer: %1", e));
 			throw;
 		}
@@ -306,7 +306,7 @@ HTTPServer::startService()
 		}
 		catch (SocketException& e)
 		{
-			lgr->logError(format("HTTP Server failed to listen on UDS: %1", e));
+			lgr->logError(Format("HTTP Server failed to listen on UDS: %1", e));
 			throw;
 		}
 	}
@@ -330,7 +330,7 @@ HTTPServer::startService()
 					curAddress,
 					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
-				lgr->logInfo(format("HTTP server listening on: %1:%2",
+				lgr->logInfo(Format("HTTP server listening on: %1:%2",
 				   curAddress, m_options.httpPort));
 				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
 					+ ":" + String(m_options.httpPort) + "/cimom";
@@ -342,7 +342,7 @@ HTTPServer::startService()
 			}
 			catch (SocketException& e)
 			{
-				lgr->logError(format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+				lgr->logError(Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
 				throw;
 			}
 		}
@@ -370,7 +370,7 @@ HTTPServer::startService()
 			}
 			catch (SSLException& e)
 			{
-				lgr->logError(format("HTTP Service: Error initializing SSL: %1",
+				lgr->logError(Format("HTTP Service: Error initializing SSL: %1",
 					e.getMessage()));
 				throw;
 			}
@@ -387,7 +387,7 @@ HTTPServer::startService()
 						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 					m_options.httpsPort =
 					   m_pHttpsServerSocket->getLocalAddress().getPort();
-					lgr->logInfo(format("HTTPS server listening on: %1:%2",
+					lgr->logInfo(Format("HTTPS server listening on: %1:%2",
 					   curAddress, m_options.httpsPort));
 					String theURL = "https://" +
 						SocketAddress::getAnyLocalHost().getName() + ":" +
@@ -399,7 +399,7 @@ HTTPServer::startService()
 				}
 				catch (SocketException& e)
 				{
-					lgr->logError(format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+					lgr->logError(Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
 					throw;
 				}
 			}

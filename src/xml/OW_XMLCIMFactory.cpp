@@ -259,7 +259,7 @@ createObjectPath(CIMXMLParser& parser)
 			break;
 		default:
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("Invalid XML for Object path construction.  Node "
+					Format("Invalid XML for Object path construction.  Node "
 						"name = %1", parser.getName()).c_str());
 				break;
 	}
@@ -699,7 +699,7 @@ createQualifier(CIMXMLParser& parser)
 	if(!dt)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("Qualifier not assigned a data type: %1", name).c_str());
+			Format("Qualifier not assigned a data type: %1", name).c_str());
 	}
 	CIMQualifierType cqt;
 	cqt.setDataType(dt);
@@ -919,7 +919,7 @@ createProperty(CIMXMLParser& parser)
 			}
 			catch (const StringConversionException&)
 			{
-				OW_THROWCIMMSG(CIMException::FAILED, format("Array size: \"%1\" is invalid", arraySize).c_str());
+				OW_THROWCIMMSG(CIMException::FAILED, Format("Array size: \"%1\" is invalid", arraySize).c_str());
 			}
 			dt.setToArrayType(aSize);
 		}

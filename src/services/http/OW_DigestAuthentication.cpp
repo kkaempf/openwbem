@@ -61,7 +61,7 @@ DigestAuthentication::DigestAuthentication(const String& passwdFile)
 	ifstream infile(passwdFile.c_str());
 	if(!infile)
 	{
-		OW_THROW(AuthenticationException, format("Unable to open password file %1",
+		OW_THROW(AuthenticationException, Format("Unable to open password file %1",
 			passwdFile).c_str());
 	}
 	while(infile)

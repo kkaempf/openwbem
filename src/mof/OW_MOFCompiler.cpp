@@ -106,15 +106,15 @@ long Compiler::compile( const String& filename )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), theLineInfo);
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -167,15 +167,15 @@ long Compiler::compileString( const String& mof )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
 		}
 		catch (ThreadCancelledException&)
 		{

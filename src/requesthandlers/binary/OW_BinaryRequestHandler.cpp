@@ -278,7 +278,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					getServerFeatures(chdl, *ostrm, *istrm);
 					break;
 				default:
-					lgr->logDebug(format("BinaryRequestHandler: Received"
+					lgr->logDebug(Format("BinaryRequestHandler: Received"
 						" invalid function number: %1", funcNo));
 					writeError(*ostrError, "Invalid function number");
 					break;
@@ -286,7 +286,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		}
 		catch(CIMException& e)
 		{
-			lgr->logDebug(format("CIM Exception caught in"
+			lgr->logDebug(Format("CIM Exception caught in"
 				" BinaryRequestHandler: %1", e));
 			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
@@ -297,19 +297,19 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	catch(Exception& e)
 	{
 		lgr->logError("Exception caught in BinaryRequestHandler");
-		lgr->logError(format("Type: %1", e.type()));
-		lgr->logError(format("File: %1", e.getFile()));
-		lgr->logError(format("Line: %1", e.getLine()));
-		lgr->logError(format("Msg: %1", e.getMessage()));
-		writeError(*ostrError, format("BinaryRequestHandler caught exception: %1", e).c_str());
+		lgr->logError(Format("Type: %1", e.type()));
+		lgr->logError(Format("File: %1", e.getFile()));
+		lgr->logError(Format("Line: %1", e.getLine()));
+		lgr->logError(Format("Msg: %1", e.getMessage()));
+		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e).c_str());
 		setError(CIMException::FAILED, e.getMessage());
 		
 	}
 	catch(std::exception& e)
 	{
-		lgr->logError(format("Caught %1 exception in BinaryRequestHandler",
+		lgr->logError(Format("Caught %1 exception in BinaryRequestHandler",
 			e.what()));
-		writeError(*ostrError, format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
+		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		setError(CIMException::FAILED, e.what());
 	}
 	catch (ThreadCancelledException&)
@@ -600,7 +600,7 @@ BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
 		if (!key.getValue())
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
-				format("Key must be provided!  Property \"%1\" does not have a "
+				Format("Key must be provided!  Property \"%1\" does not have a "
 					"valid value.", key.getName()).c_str());
 		}
 	}
@@ -934,7 +934,7 @@ BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	{
 		if(FileSystem::changeFileOwner(fname, m_userId) != 0)
 		{
-			lgr->logError(format("Binary request handler failed changing"
+			lgr->logError(Format("Binary request handler failed changing"
 				" ownership on file %1", fname));
 			return false;
 		}

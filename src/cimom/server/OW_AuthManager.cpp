@@ -55,7 +55,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 	m_authenticator.setNull();
 	String authLib = env->getConfigItem(
 		ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
-	env->getLogger()->logInfo(format("Authentication Manager: Loading"
+	env->getLogger()->logInfo(Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 	m_authenticator =
 		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib,
@@ -65,13 +65,13 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 		try
 		{
 			m_authenticator->init(env);
-			env->getLogger()->logInfo(format("Authentication module %1"
+			env->getLogger()->logInfo(Format("Authentication module %1"
 				" is now being used for authentication to the CIMOM",
 				authLib));
 		}
 		catch(Exception& e)
 		{
-			env->getLogger()->logFatalError(format("Authentication Module %1 failed"
+			env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
 				" to initialize: %2 - %3"
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
@@ -83,7 +83,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 		}
 		catch(...)
 		{
-			env->getLogger()->logFatalError(format("Authentication Module %1 failed"
+			env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
 			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
@@ -91,7 +91,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 	}
 	else
 	{
-		env->getLogger()->logFatalError(format("Authentication Module %1 failed"
+		env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
 		OW_THROW(AuthManagerException, "No Authentication Mechanism Available");

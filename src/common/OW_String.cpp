@@ -889,13 +889,13 @@ String::toString() const
 static inline void
 throwStringConversion(const COWReference<String::ByteBuf>& m_buf, const char* type)
 {
-	OW_THROW(StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
+	OW_THROW(StringConversionException, Format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
 }
 //////////////////////////////////////////////////////////////////////////////
 static inline void
 throwStringConversion(const char* str, const char* type)
 {
-	OW_THROW(StringConversionException, format("Unable to convert \"%1\" into %2", str, type).c_str());
+	OW_THROW(StringConversionException, Format("Unable to convert \"%1\" into %2", str, type).c_str());
 }
 //////////////////////////////////////////////////////////////////////////////
 Char16

@@ -200,7 +200,7 @@ int PopenStreamsImpl::getExitStatus()
 					{
 						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						OW_THROW(ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 					}
 					// give the kernel 1 sec to clean it up, otherwise we bail.
 					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
@@ -211,7 +211,7 @@ int PopenStreamsImpl::getExitStatus()
 					}
 					if (waitpidrv == 0)
 					{
-						OW_THROW(ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
 					}
 				}
 				else if (waitpidrv > 0)
@@ -220,14 +220,14 @@ int PopenStreamsImpl::getExitStatus()
 				}
 				else
 				{
-					OW_THROW(ExecErrorException, format("PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+					OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 				}
 			}
 			else
 			{
 				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				OW_THROW(ExecErrorException, format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, Format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 			}
 		}
 		else if (waitpidrv > 0)
@@ -236,7 +236,7 @@ int PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
-			OW_THROW(ExecErrorException, format("PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+			OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 		}
 	}
 	return m_processstatus;
@@ -367,7 +367,7 @@ safeSystem(const Array<String>& command)
 		}
 		argv[command.size()] = 0;
 		int rval = execv(argv[0], argv);
-		cerr << format( "Platform::safeSystem: execv failed for program "
+		cerr << Format( "Platform::safeSystem: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(1);
 	}
@@ -462,7 +462,7 @@ safePopen(const Array<String>& command,
 		}
 		argv[command.size()] = 0;
 		int rval = execv(argv[0], argv);
-		cerr << format( "Platform::safePopen: execv failed for program "
+		cerr << Format( "Platform::safePopen: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(1);
 	}
@@ -524,7 +524,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 			waitpidrv = waitpidNoINTR(streams.pid(), &processstatus, WNOHANG);
 			if (waitpidrv == -1)
 			{
-				OW_THROW(ExecErrorException, format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
 			}
 			else if (waitpidrv != 0)
 			{
@@ -542,7 +542,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 				break;
 			case Select::SELECT_ERROR:
 			{
-				OW_THROW(ExecErrorException, format("error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, Format("error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
 			}
 			break;
 			case Select::SELECT_TIMEOUT:
@@ -590,7 +590,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					}
 					else if (readrc == -1)
 					{
-						OW_THROW(ExecErrorException, format("Error reading stdout from lwcclient: %1(%2)", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("Error reading stdout from lwcclient: %1(%2)", errno, strerror(errno)).c_str());
 					}
 					else
 					{

@@ -44,7 +44,7 @@ ProviderIFCBaseIFCRef
 ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const String& libname) const
 {
-	m_env->getLogger()->logDebug(format(
+	m_env->getLogger()->logDebug(Format(
 		"ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
@@ -57,7 +57,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(
 	}
 	else
 	{
-		m_env->getLogger()->logDebug(format("ProviderIFCBaseIFCLoaderBase::"
+		m_env->getLogger()->logDebug(Format("ProviderIFCBaseIFCLoaderBase::"
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
 	ProviderIFCBaseIFCRef retval(sl, ptr);
@@ -69,7 +69,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	ServiceEnvironmentIFCRef env = getEnvironment();
 	String libdir = env->getConfigItem(
 		ConfigOpts::PROVIDER_IFC_LIBS_opt);
-	env->getLogger()->logDebug(format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
+	env->getLogger()->logDebug(Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
 		" interfaces from: %1", libdir));
 	StringArray libs;
 	FileSystem::getDirectoryContents(libdir, libs);
@@ -98,16 +98,16 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			}
 			else
 			{
-				env->getLogger()->logError(format("Unable to load ProviderIFC library %1",
+				env->getLogger()->logError(Format("Unable to load ProviderIFC library %1",
 					libs[i]));
 			}
 		}
 		catch (const Exception& e)
 		{
-			env->getLogger()->logError(format("Caught exception: \"%1\" while loading library: %2", e, libs[i])); 
+			env->getLogger()->logError(Format("Caught exception: \"%1\" while loading library: %2", e, libs[i])); 
 		}
 	}
-	env->getLogger()->logDebug(format("Number of provider interfaces loaded: %1",
+	env->getLogger()->logDebug(Format("Number of provider interfaces loaded: %1",
 		ifcCount));
 }
 //////////////////////////////////////////////////////////////////////////////

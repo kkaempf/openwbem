@@ -88,7 +88,7 @@ CIMOMLocatorSLP::CIMOMLocatorSLP()
 	{
 		SLPClose(m_hslp);
 		OW_THROW(CIMOMLocatorException, 
-			format("Error opening SLP handle: %1", err).c_str());
+			Format("Error opening SLP handle: %1", err).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ CIMOMLocatorSLP::findCIMOMs()
 	if((err != SLP_OK) || (data.errcode != SLP_OK)) 
 	{ 
 		OW_THROW(CIMOMLocatorException, 
-			format("Error finding service: %1.  SLP Error code: %2",
+			Format("Error finding service: %1.  SLP Error code: %2",
 				OW_CIMOM_SLP_SERVICE_TYPE, err).c_str());
 	} 
 	for (size_t i = 0; i < data.urls.size(); ++i)
@@ -137,7 +137,7 @@ CIMOMLocatorSLP::findCIMOMs()
 		if (err != SLP_OK)
 		{
 			OW_THROW(CIMOMLocatorException, 
-				format("Error retrieving attributes for %1",
+				Format("Error retrieving attributes for %1",
 					data.urls[i]).c_str());
 		}
 		processAttributes(attrList, info);
@@ -152,7 +152,7 @@ CIMOMLocatorSLP::findCIMOMs()
 				SLPFree(cpUrl);
 			}
 			OW_THROW(CIMOMLocatorException, 
-				format("Error unescaping URL: %1", err).c_str());
+				Format("Error unescaping URL: %1", err).c_str());
 		}
 		url = cpUrl;
 		SLPFree(cpUrl);

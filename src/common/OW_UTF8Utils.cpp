@@ -234,7 +234,7 @@ Array<UInt16> StringToUCS2(const String& input)
 			{
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0')
-					OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				rval.push_back(((c0 & 0x1fu) << 6) | (c1 & 0x3fu));
 				p += 2;
@@ -244,7 +244,7 @@ Array<UInt16> StringToUCS2(const String& input)
 			{
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0' || p[2] == '\0')
-					OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				const UInt32 c2 = static_cast<UInt8>(p[2]);
 				rval.push_back(((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu));
@@ -254,7 +254,7 @@ Array<UInt16> StringToUCS2(const String& input)
 			case 4:
 			{
 				// UCS2 can't hold a value this big
-				OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
 
 				// check for short (invalid) utf8 sequence
 //                     if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
@@ -269,7 +269,7 @@ Array<UInt16> StringToUCS2(const String& input)
 			break;
 			default:
 			{
-				OW_THROW(InvalidUTF8Exception, format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
 			}
 		}
 	}

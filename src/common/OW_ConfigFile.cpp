@@ -80,7 +80,7 @@ void loadConfigFile(const String& filename, ConfigMap& rval)
 			}
 			else
 			{
-				OW_THROW(ConfigException, format("Error in config file:"
+				OW_THROW(ConfigException, Format("Error in config file:"
 					" %1 at line %2.\n  Line is %3", filename, lineNum,
 					line).c_str());
 			}

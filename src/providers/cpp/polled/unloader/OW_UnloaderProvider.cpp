@@ -68,7 +68,7 @@ Int32
 UnloaderProvider::getInitialPollingInterval(const
 		ProviderEnvironmentIFCRef &env)
 {
-	env->getLogger()->logDebug(format(
+	env->getLogger()->logDebug(Format(
 		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
 		OW_POLLING_INTERVAL));
 	return OW_POLLING_INTERVAL;

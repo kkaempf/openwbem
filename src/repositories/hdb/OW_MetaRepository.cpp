@@ -71,7 +71,7 @@ void
 MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
-	logInfo(format("Using MetaRepository: %1", path));
+	logInfo(Format("Using MetaRepository: %1", path));
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
 	String qcontk(QUAL_CONTAINER);
@@ -167,7 +167,7 @@ MetaRepository::getQualifierType(const String& ns,
 		if (nameSpaceExists(QUAL_CONTAINER + "/" + ns))
 		{
 			OW_THROWCIMMSG(CIMException::NOT_FOUND,
-					format("CIM QualifierType \"%1\" not found in namespace: %2",
+					Format("CIM QualifierType \"%1\" not found in namespace: %2",
 						qualName, ns).c_str());
 		}
 		else
@@ -680,7 +680,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 				if (pqual.hasFlavor(CIMFlavor::DISABLEOVERRIDE))
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
+							Format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
 								"Child cannot override it.", pqual.getName()).c_str());
 				}
 				newQuals.append(qual);
@@ -725,7 +725,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						}
 						else
 						{
-							logInfo(format("Error: %1.%2: qualifier %3 was "
+							logInfo(Format("Error: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),
@@ -762,7 +762,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 				if(parentClass.isKeyed())
 				{
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-							format("Parent class has keys. Child cannot have additional"
+							Format("Parent class has keys. Child cannot have additional"
 								" key properties: %1", childClass.getName()).c_str());
 				}
 			}
@@ -797,7 +797,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 	if(childClass.isAssociation() && !parentClass.isAssociation())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				format("Association class is derived from non-association class: %1",
+				Format("Association class is derived from non-association class: %1",
 					childClass.getName()).c_str());
 	}
 	//_throwIfBadClass(childClass, parentClass);
@@ -821,10 +821,10 @@ MetaRepository::_resolveQualifiers(const String& ns,
 		}
 		else
 		{
-			logError(format("Unable to find qualifier: %1",
+			logError(Format("Unable to find qualifier: %1",
 				quals[i].getName()));
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				format("Unable to find qualifier: %1",
+				Format("Unable to find qualifier: %1",
 				quals[i].getName()).c_str());
 		}
 	}

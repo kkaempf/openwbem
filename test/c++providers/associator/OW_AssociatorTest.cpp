@@ -89,7 +89,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			env->getLogger()->logDebug(format("AssociatorTest associators called "
+			env->getLogger()->logDebug(Format("AssociatorTest associators called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %5, resultRole = %6, includeQualifiers = %7, "
 				"includeClassOrigin = %8, propertyList = %9",
@@ -113,7 +113,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				ci.setProperty("producedByAssocTest", CIMValue(true));
-				env->getLogger()->logDebug(format("AssociatorTest producing: %1", ci));
+				env->getLogger()->logDebug(Format("AssociatorTest producing: %1", ci));
 				result.handle(ci.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 
@@ -129,7 +129,7 @@ namespace
 			const String& role,
 			const String& resultRole )
 		{
-			env->getLogger()->logDebug(format("AssociatorTest associatorNames called "
+			env->getLogger()->logDebug(Format("AssociatorTest associatorNames called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %4, resultRole = %6",
 				ns, objectName.toString(), assocClass, resultClass,
@@ -152,7 +152,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				CIMObjectPath cop(ns, ci);
-				env->getLogger()->logDebug(format("AssociatorTest producing: %1", cop));
+				env->getLogger()->logDebug(Format("AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
 		}
@@ -168,7 +168,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList )
 		{
-			env->getLogger()->logDebug(format("AssociatorTest references called "
+			env->getLogger()->logDebug(Format("AssociatorTest references called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4, "
 				"includeQualifiers = %5, includeClassOrigin = %6, "
 				"propertyList = %7",
@@ -201,7 +201,7 @@ namespace
 				newInstance.setProperty("PartComponent", CIMValue(path));
 				newInstance.setProperty("producedByAssocTest", CIMValue(true));
 
-				env->getLogger()->logDebug(format("AssociatorTest producing: %1", newInstance));
+				env->getLogger()->logDebug(Format("AssociatorTest producing: %1", newInstance));
 				result.handle(newInstance.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 		}
@@ -214,7 +214,7 @@ namespace
 			const String& resultClass,
 			const String& role )
 		{
-			env->getLogger()->logDebug(format("AssociatorTest referenceNames called "
+			env->getLogger()->logDebug(Format("AssociatorTest referenceNames called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4",
 				ns, objectName.toString(), resultClass, role));
 
@@ -244,7 +244,7 @@ namespace
 
 				CIMObjectPath newPath(ns, newInstance);
 
-				env->getLogger()->logDebug(format("AssociatorTest producing: %1", newPath));
+				env->getLogger()->logDebug(Format("AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}
 		}
@@ -287,7 +287,7 @@ namespace
 						newInstance.setProperty("GroupComponent", CIMValue(CIMObjectPath(ns, insts1[i])));
 
 						newInstance.setProperty("PartComponent", CIMValue(CIMObjectPath(ns, insts2[j])));
-						env->getLogger()->logDebug(format("AssociatorTest producing: %1", newInstance.toMOF()));
+						env->getLogger()->logDebug(Format("AssociatorTest producing: %1", newInstance.toMOF()));
 						result.handle(newInstance);
 					}
 				}

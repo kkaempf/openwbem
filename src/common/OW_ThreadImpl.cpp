@@ -299,7 +299,7 @@ void saveThreadInTLS(void* pTheThread)
 	int rc;
 	if ((rc = pthread_setspecific(theKey, pTheThread)) != 0)
 	{
-		OW_THROW(ThreadException, format("pthread_setspecific failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+		OW_THROW(ThreadException, Format("pthread_setspecific failed.  error = %1(%2)", rc, strerror(rc)).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ void sendSignalToThread(Thread_t threadID, int signo)
 	int rc;
 	if ((rc = pthread_kill(threadID, signo)) != 0)
 	{
-		OW_THROW(ThreadException, format("pthread_kill failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+		OW_THROW(ThreadException, Format("pthread_kill failed.  error = %1(%2)", rc, strerror(rc)).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ void cancel(Thread_t threadID)
 	int rc;
 	if ((rc = pthread_cancel(threadID)) != 0)
 	{
-		OW_THROW(ThreadException, format("pthread_cancel failed.  error = %1(%2)", rc, strerror(rc)).c_str());
+		OW_THROW(ThreadException, Format("pthread_cancel failed.  error = %1(%2)", rc, strerror(rc)).c_str());
 	}
 }
 #endif // #ifdef OW_USE_PTHREAD

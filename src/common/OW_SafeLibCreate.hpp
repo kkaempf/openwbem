@@ -67,7 +67,7 @@ public:
 		}
 		else
 		{
-			logger->logDebug(format("safeLibCreate::loadAndCreate"
+			logger->logDebug(Format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
 		return std::make_pair(Reference<T>(ptr),sl);
@@ -86,7 +86,7 @@ public:
 		}
 		else
 		{
-			logger->logDebug(format("safeLibCreate::loadAndCreate"
+			logger->logDebug(Format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
 		return return_obj(sl, ptr);
@@ -95,7 +95,7 @@ public:
 	create(SharedLibraryRef sl, String const& createFuncName,
 		const LoggerRef& logger)
 	{
-		logger->logDebug(format("safeLibCreate::create called.  createFuncName = %1",
+		logger->logDebug(Format("safeLibCreate::create called.  createFuncName = %1",
 			createFuncName).c_str());
 		
 		try
@@ -131,7 +131,7 @@ public:
 					if (!sl->getFunctionPointer( createFuncName
 						, createFunc ))
 					{
-						logger->logError(format("safeLibCreate::create failed"
+						logger->logError(Format("safeLibCreate::create failed"
 							" getting function pointer to \"%1\" from"
 							" library", createFuncName));
 	
@@ -154,9 +154,9 @@ public:
 		catch(Exception& e)
 		{
 			logger->logError("safeLibCreate::create");
-			logger->logError(format("File: %1", e.getFile()));
-			logger->logError(format("Line: %1", e.getLine()));
-			logger->logError(format("Msg: %1", e.getMessage()));
+			logger->logError(Format("File: %1", e.getFile()));
+			logger->logError(Format("Line: %1", e.getLine()));
+			logger->logError(Format("Msg: %1", e.getMessage()));
 		}
 		catch (...)
 		{

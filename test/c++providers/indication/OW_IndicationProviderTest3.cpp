@@ -289,7 +289,7 @@ public:
 		MutexLock l(m_guard);
 		if (id < 0 || UInt32(id) >= m_insts.size())
 		{
-			OW_THROWCIMMSG(CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
+			OW_THROWCIMMSG(CIMException::NOT_FOUND, Format("Invalid DeviceID property: %1", id).c_str());
 		}
 		return m_insts[id].clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}

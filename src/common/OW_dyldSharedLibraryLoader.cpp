@@ -86,7 +86,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
-		logger->logError(format("dyldSharedLibraryLoader::loadSharedLibrary:"
+		logger->logError(Format("dyldSharedLibraryLoader::loadSharedLibrary:"
 			" %1", err_msg));
 		return SharedLibraryRef( 0 );
 	}

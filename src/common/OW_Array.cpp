@@ -44,7 +44,7 @@ void throwArrayOutOfBoundsException(size_t size, size_t idx)
 	abort(); // segfault so we can get a core
 #endif
 	OW_THROW(OutOfBoundsException,
-		format("Array Index out of bounds. size = %1, index = %2", size, idx).c_str());
+		Format("Array Index out of bounds. size = %1, index = %2", size, idx).c_str());
 }
 #endif
 

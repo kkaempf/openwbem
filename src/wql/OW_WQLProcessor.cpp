@@ -174,7 +174,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	}
 	
 	// create the instance
-	//LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+	//LOGDEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
@@ -220,7 +220,7 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 		CIMProperty cp = ci.getProperty(*column);
 		if (!cp)
 		{
-			OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Property %1 does not exist on class", *column).c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Property %1 does not exist on class", *column).c_str());
 		}
 		CIMValue newVal(CIMNULL);
 		switch (m_exprValue.type)
@@ -255,7 +255,7 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 		ci.setProperty(cp);
 	}
 	// create the instance
-	//LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+	//LOGDEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
@@ -278,7 +278,7 @@ void WQLProcessor::visit_deleteStmt(
 		 ++i)
 	{
 		CIMObjectPath cop(m_ns, *i);
-		//LOGDEBUG(format("Deleting instance:\n%1", cop.toString()));
+		//LOGDEBUG(Format("Deleting instance:\n%1", cop.toString()));
 		m_hdl->deleteInstance(m_ns, cop);
 	}
 #else
@@ -319,7 +319,7 @@ void WQLProcessor::visit_updateStmt(
 			CIMProperty cp = ci.getProperty(*curProperty);
 			if (!cp)
 			{
-				OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Property %1 does not exist on class", *curProperty).c_str());
+				OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Property %1 does not exist on class", *curProperty).c_str());
 			}
 			CIMValue newVal(CIMNULL);
 			switch (curValue->type)
@@ -359,7 +359,7 @@ void WQLProcessor::visit_updateStmt(
 			ci.setProperty(cp);
 		}
 		// update the instance
-		//LOGDEBUG(format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+		//LOGDEBUG(Format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 		m_hdl->modifyInstance(m_ns, ci);
 	}
 #else
@@ -721,7 +721,7 @@ void WQLProcessor::visit_relationExpr_strRelationName(
 	)
 {
 	m_tableRef = *prelationExpr_strRelationName->m_pstrRelationName1;
-	//LOGDEBUG(format("Setting m_tableRef to: %1", m_tableRef.toString()));
+	//LOGDEBUG(Format("Setting m_tableRef to: %1", m_tableRef.toString()));
 }
 void WQLProcessor::visit_relationExpr_strRelationName_ASTERISK(
 	const relationExpr_strRelationName_ASTERISK* prelationExpr_strRelationName_ASTERISK
@@ -976,7 +976,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				break;
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -994,7 +994,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -1012,7 +1012,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -1030,7 +1030,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -1049,7 +1049,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -1068,7 +1068,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 				
 				default:
 				{
-					OW_THROWCIMMSG(CIMException::INVALID_QUERY, format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("Unsupported comparison. lhs.type = %1, rhs.type = %2", typeStrings[lhs.type], typeStrings[rhs.type]).c_str());
 				}
 				break;
 			}
@@ -1117,10 +1117,10 @@ void WQLProcessor::visit_aExpr_aExpr_AND_aExpr(
 	std::sort(rhs.cia.begin(), rhs.cia.end(), CIMInstanceSortCriterion);
 	// take the union of the two and assign it to the return value.
 	//LOGDEBUG("Calling set_intersection");
-	//LOGDEBUG(format("lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
+	//LOGDEBUG(Format("lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
 	CIMInstanceArray rVal;
 	std::set_intersection(lhs.cia.begin(), lhs.cia.end(), rhs.cia.begin(), rhs.cia.end(), std::back_inserter(rVal), CIMInstanceSortCriterion);
-	//LOGDEBUG(format("set_intersection finished.  rVal.size() = %1", rVal.size()));
+	//LOGDEBUG(Format("set_intersection finished.  rVal.size() = %1", rVal.size()));
 	m_exprValue = DataType(rVal);
 }
 void WQLProcessor::visit_aExpr_aExpr_OR_aExpr(
@@ -1144,15 +1144,15 @@ void WQLProcessor::visit_aExpr_aExpr_OR_aExpr(
 	std::sort(lhs.cia.begin(), lhs.cia.end(), CIMInstanceSortCriterion);
 	std::sort(rhs.cia.begin(), rhs.cia.end(), CIMInstanceSortCriterion);
 	// take the union of the two and assign it to the return value.
-	//LOGDEBUG(format("About to call set_union. lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
+	//LOGDEBUG(Format("About to call set_union. lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
 	CIMInstanceArray unionArray;
 	std::set_union(lhs.cia.begin(), lhs.cia.end(), rhs.cia.begin(), rhs.cia.end(), std::back_inserter(unionArray), CIMInstanceSortCriterion);
-	//LOGDEBUG(format("set_union finished.  unionArray.size() = %1", unionArray.size()));
+	//LOGDEBUG(Format("set_union finished.  unionArray.size() = %1", unionArray.size()));
 	m_exprValue = DataType(unionArray);
 }
 bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs)
 {
-	//LOGDEBUG(format("in CIMInstanceSortCriterion.  Comparing:\n%1\n%2\n%3", lhs.toString(), rhs.toString(), lhs.toString() < rhs.toString()));
+	//LOGDEBUG(Format("in CIMInstanceSortCriterion.  Comparing:\n%1\n%2\n%3", lhs.toString(), rhs.toString(), lhs.toString() < rhs.toString()));
 	return lhs.toString() < rhs.toString();
 }
 void WQLProcessor::visit_aExpr_NOT_aExpr(
@@ -1934,7 +1934,7 @@ void WQLProcessor::visit_aExprConst_BITCONST(
 	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 2);
 	if (*endptr != '\0' || errno == ERANGE)
-		OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad bitstring integer input '%1'",
+		OW_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
 	
 	m_exprValue = DataType(val);
@@ -1948,7 +1948,7 @@ void WQLProcessor::visit_aExprConst_HEXCONST(
 	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 16);
 	if (*endptr != '\0' || errno == ERANGE)
-		OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad bitstring integer input '%1'",
+		OW_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
 	
 	m_exprValue = DataType(val);
@@ -1977,7 +1977,7 @@ void WQLProcessor::visit_aExprConst_NULLP(
 CIMInstanceArray
 WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare)
 {
-	//LOGDEBUG(format("WQLProcessor::filterInstancesOnPropertyValue\n"
+	//LOGDEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
 	//	"\tFiltering instances on property: %1 %2 %3", propName, compare.c_str(), val ? val.toString() : "NULL" ));
 	CIMInstanceArray rval;
 	for (size_t i = 0; i < instances.size(); ++i)
@@ -2070,7 +2070,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 			}
 		}
 	}
-	//LOGDEBUG(format("WQLProcessor::filterInstancesOnPropertyValue\n"
+	//LOGDEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
 	//	"\treturning %1 instances", rval.size()));
 	return rval;
 }

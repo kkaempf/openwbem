@@ -296,7 +296,7 @@ CIMObjectPath
 {
 	CIMObjectPath rval;
 	env->getLogger()->
-		logDebug(format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+		logDebug(Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};

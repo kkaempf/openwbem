@@ -161,7 +161,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		m_initializedInstances = true;
 		return 1; // have poll called again in 1 second.
 	}
-	env->getLogger()->logDebug(format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+	env->getLogger()->logDebug(Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
@@ -178,7 +178,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	}
 	catch (const CIMException& e)
 	{
-		env->getLogger()->logError(format("LifecycleIndicationPoller::poll caught exception: %1", e));
+		env->getLogger()->logError(Format("LifecycleIndicationPoller::poll caught exception: %1", e));
 		return 0;
 	}
 	env->getLogger()->logDebug(Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));

@@ -330,7 +330,7 @@ NameSpaceProvider::createInstance(
 	String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
-	env->getLogger()->logDebug(format("NameSpaceProvider::createInstance calling"
+	env->getLogger()->logDebug(Format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 	env->getRepository()->createNameSpace(newNameSpace, env->getOperationContext());
 	return CIMObjectPath(ns, cimInstance);

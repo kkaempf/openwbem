@@ -205,7 +205,7 @@ CIMServer::createClass(const String& ns, const CIMClass& cimClass,
 	if(cimClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
 		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS,
-			format("Creation of class %1 is not allowed",
+			Format("Creation of class %1 is not allowed",
 				cimClass.getName()).c_str());
 	}
 	m_cimRepository->createClass(ns,cimClass,context);
@@ -264,7 +264,7 @@ namespace
 		{
 			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 			{
-				m_env->logDebug(format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+				m_env->logDebug(Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 					cc.getName()));
 			}
 			server->_getCIMInstanceNames(ns, cc.getName(), cc, result, context);
@@ -411,7 +411,7 @@ namespace
 		{
 			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 			{
-				m_env->logDebug(format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
+				m_env->logDebug(Format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
 					cc.getName()));
 			}
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc,
@@ -652,7 +652,7 @@ CIMServer::_getCIMInstances(
 	{
 		if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->logDebug(format("CIMServer calling provider to enumerate instances: %1:%2", ns,
+			m_env->logDebug(Format("CIMServer calling provider to enumerate instances: %1:%2", ns,
 				className));
 		}
 		// not going to use these, the provider ifc/providers are now responsible for it.
@@ -762,7 +762,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	cop.setNameSpace(ns);
 	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->logDebug(format("CIMServer::deleteInstance.  cop = %1",
+		m_env->logDebug(Format("CIMServer::deleteInstance.  cop = %1",
 			cop.toString()));
 	}
 	CIMClass theClass(CIMNULL);
@@ -808,7 +808,7 @@ CIMServer::createInstance(
 		if (acq.getValue() == CIMValue(true))
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("Unable to create instance because class (%1)"
+					Format("Unable to create instance because class (%1)"
 						" is abstract", theClass.getName()).c_str());
 		}
 	}
@@ -817,7 +817,7 @@ CIMServer::createInstance(
 	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->logDebug(format("CIMServer::createInstance.  ns = %1, "
+		m_env->logDebug(Format("CIMServer::createInstance.  ns = %1, "
 			"instance = %2", ns, lci.toMOF()));
 	}
 	CIMObjectPath rval(CIMNULL);
@@ -1003,7 +1003,7 @@ CIMServer::invokeMethod(
 		if(!_instanceExists(ns, path, context))
 		{
 			OW_THROWCIMMSG(CIMException::NOT_FOUND,
-				format("Instance not found: %1", path.toString()).c_str());
+				Format("Instance not found: %1", path.toString()).c_str());
 		}
 	}
 	// Get the method from the class definition
@@ -1025,7 +1025,7 @@ CIMServer::invokeMethod(
 	}
 	if(!methodp)
 	{
-		OW_THROWCIMMSG(CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, Format("No provider for method %1", methodName).c_str());
 	}
 	CIMParameterArray methodInParams = method.getINParameters();
 	CIMParameterArray methodOutParams = method.getOUTParameters();
@@ -1056,7 +1056,7 @@ CIMServer::invokeMethod(
 			// qualifier
 			if (methodInParams[i].hasTrueQualifier(CIMQualifier::CIM_QUAL_REQUIRED))
 			{
-				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, format(
+				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, Format(
 					"Parameter %1 was not specified.", parameterName).c_str());
 			}
 			else
@@ -1110,7 +1110,7 @@ CIMServer::invokeMethod(
 	// some left, it means we have an unknown/invalid parameter.
 	if (inParams2.size() > 0)
 	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, format(
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, Format(
 			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 	}
 	StringBuffer methodStr;
@@ -1194,7 +1194,7 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_, Operation
 	{
 		// This will only happen if the provider qualifier is incorrect
 		OW_THROWCIMMSG(CIMException::FAILED,
-			format("Invalid provider: %1", e.getMessage()).c_str());
+			Format("Invalid provider: %1", e.getMessage()).c_str());
 	}
 	return instancep;
 }
@@ -1211,7 +1211,7 @@ CIMServer::_getSecondaryInstanceProviders(const String& ns, const String& classN
 	{
 		// This will only happen if the provider qualifier is incorrect
 		OW_THROWCIMMSG(CIMException::FAILED,
-			format("Invalid provider: %1", e.getMessage()).c_str());
+			Format("Invalid provider: %1", e.getMessage()).c_str());
 	}
 	return rval;
 }
@@ -1239,7 +1239,7 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 		{
 			// This will only happen if the provider qualifier is incorrect
 			OW_THROWCIMMSG(CIMException::FAILED,
-				format("Invalid provider: %1", e.getMessage()).c_str());
+				Format("Invalid provider: %1", e.getMessage()).c_str());
 		}
 	}
 	return ap;
@@ -1431,7 +1431,7 @@ namespace
 			if (!cc.isAssociation())
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("class %1 is not an association", cc.getName()).c_str());
+					Format("class %1 is not an association", cc.getName()).c_str());
 			}
 			// Now separate the association classes that have associator provider from
 			// the ones that don't

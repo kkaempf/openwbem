@@ -71,7 +71,7 @@ NonRecursiveMutex::release()
 	int rc = NonRecursiveMutexImpl::releaseMutex(m_mutex);
 	if (rc != 0)
 	{
-		OW_THROW(Assertion, format("NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
+		OW_THROW(Assertion, Format("NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
 	}
 	return true;
 }

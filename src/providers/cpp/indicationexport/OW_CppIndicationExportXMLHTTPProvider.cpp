@@ -56,7 +56,7 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 	LoggerRef logger = env->getLogger();
 	if (logger->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		logger->logDebug(format("CppIndicationExportXMLHTTPProvider "
+		logger->logDebug(Format("CppIndicationExportXMLHTTPProvider "
 			"exporting indication.  Handler = %1, Indication = %2",
 			indHandlerInst.toString(), indicationInst.toString()));
 	}

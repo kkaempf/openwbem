@@ -53,7 +53,7 @@ CIMBase::readSig( istream& istr, const char* const sig )
 	if(expected != read)
 	{
 		OW_THROW(BadCIMSignatureException,
-			format("Signature does not match. In CIMBase::readSig. "
+			Format("Signature does not match. In CIMBase::readSig. "
 				"signature read: %1, expected: %2",
 				read, sig).c_str() );
 	}

@@ -116,7 +116,7 @@ SSLCtxMgr::initCtx(const String& keyfile)
 	{
 		if (!(SSL_CTX_use_certificate_chain_file(ctx, keyfile.c_str())))
 		{
-			OW_THROW(SSLException, format("Couldn't read certificate file: %1",
+			OW_THROW(SSLException, Format("Couldn't read certificate file: %1",
 				keyfile).c_str());
 		}
 		if (!(SSL_CTX_use_PrivateKey_file(ctx, keyfile.c_str(), SSL_FILETYPE_PEM)))

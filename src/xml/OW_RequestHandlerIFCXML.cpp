@@ -83,14 +83,14 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (CIMException& ce)
 		{
-			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught CIM "
+			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught CIM "
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
 		}
 		catch (CIMErrorException& cee)
 		{
-			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught CIMError "
+			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught CIMError "
 				"exception:File: %1\n Line: %2\nMessage: %3",
 				cee.getFile(), cee.getLine(), cee.getMessage()));
 			m_cimError = cee.getMessage();
@@ -98,14 +98,14 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (Exception& e)
 		{
-			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught "
+			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught "
 				"Exception:%1",	e));
 			m_cimError = e.getMessage();
 			outputError(CIMException::FAILED, e.getMessage(), *ostrError);
 		}
 		catch (std::exception& e)
 		{
-			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught std exception: %1"
+			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
 			outputError(CIMException::FAILED, e.what(), *ostrError);
 		}

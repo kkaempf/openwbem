@@ -69,7 +69,7 @@ TmpFileImpl::TmpFileImpl(String const& filename)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(IOException, format("Error opening file %1: %2", filename,
+		OW_THROW(IOException, Format("Error opening file %1: %2", filename,
 			strerror(errno)).c_str());
 	}
 }
@@ -113,7 +113,7 @@ TmpFileImpl::open()
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(IOException, format("Error opening file from mkstemp: %1", 
+		OW_THROW(IOException, Format("Error opening file from mkstemp: %1", 
 			strerror(errno)).c_str());
 	}
 }

@@ -174,7 +174,7 @@ void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
-			m_line, format("Expected alpha or _; got %1", *m_current).c_str());
+			m_line, Format("Expected alpha or _; got %1", *m_current).c_str());
 	att.name.reset();
 	while (isalnum(*m_current) || *m_current == '_' || *m_current == '-' ||
 			 *m_current == ':' || *m_current == '.')
@@ -184,7 +184,7 @@ void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 	skipWhitespace();
 	if (*m_current != '=')
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
-			m_line, format("Expected =; got %1", *m_current).c_str());
+			m_line, Format("Expected =; got %1", *m_current).c_str());
 	m_current++;
 	skipWhitespace();
 }
@@ -193,7 +193,7 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 	// ATTN-B: handle values contained in semiquotes:
 	if (*m_current != '"' && *m_current != '\'')
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
-			m_line, format("Expecting \" or '; got %1", *m_current).c_str());
+			m_line, Format("Expecting \" or '; got %1", *m_current).c_str());
 	char startChar = *m_current++;
 	att.value.reset();
 	while (*m_current && *m_current != startChar)
@@ -203,7 +203,7 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 		
 	if (*m_current != startChar)
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
-			m_line, format("Expecting %1; Got %2", startChar, static_cast<int>(*m_current)).c_str());
+			m_line, Format("Expecting %1; Got %2", startChar, static_cast<int>(*m_current)).c_str());
 	++m_current;
 }
 void XMLParserCore::getComment()
@@ -399,7 +399,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 				{
 					OW_THROWXMLLINEMSG(
 						XMLParseException::BAD_ATTRIBUTE_VALUE, m_line,
-						format("Expecting >; Got %1", *m_current).c_str());
+						Format("Expecting >; Got %1", *m_current).c_str());
 				}
 			}
 		}
@@ -416,7 +416,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 			else
 			{
 				OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
-					m_line, format("Expecting >; Got %1", *m_current).c_str());
+					m_line, Format("Expecting >; Got %1", *m_current).c_str());
 			}
 		}
 		else if (*m_current == '>')

@@ -403,7 +403,7 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 	{
 		/*
 		String sNonceCount;
-		sNonceCount.format( "%08x", m_iDigestNonceCount );
+		sNonceCount.Format( "%08x", m_iDigestNonceCount );
 		String errDetails = "Bailing out of sendRequest: ";
 		errDetails += "sHA1: >" + m_sDigestSessionKey + "< sNonce: >" +
 			m_sDigestNonce + "< Nonce Count >" + sNonceCount + "< sCNonce: >" +
@@ -413,12 +413,12 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
 		{
-			OW_THROW(HTTPException, format("Unable to process request: %1",
+			OW_THROW(HTTPException, Format("Unable to process request: %1",
 				statusLine).c_str());
 		}
 		else
 		{
-			OW_THROW(HTTPException, format("Unable to process request: %1:%2",
+			OW_THROW(HTTPException, Format("Unable to process request: %1:%2",
 				statusLine, CIMError).c_str());
 		}
 	}
@@ -447,7 +447,7 @@ HTTPClient::getFeatures()
 	m_requestMethod = methodOrig;
 	if (rt == FATAL)
 	{
-		OW_THROW(HTTPException, format("Unable to process request: %1",
+		OW_THROW(HTTPException, Format("Unable to process request: %1",
 			statusLine).c_str());
 	}
 	if (getHeaderValue("allow").indexOf("M-POST") == String::npos)

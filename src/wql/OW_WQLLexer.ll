@@ -72,7 +72,7 @@ static int myinput(char* buf, int max);
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, \
-			format("Fatal Parser Error: %1", msg).c_str())
+			Format("Fatal Parser Error: %1", msg).c_str())
 
 #define YY_DECL extern "C" int yylex(void)        /* return the next token */ 
 #else /* !FLEX_SCANNER */
@@ -302,7 +302,7 @@ other			.
 					BEGIN(INITIAL);
 					const char* buf = strbuffer.c_str();
 					if (buf[strspn(buf, "01") + 1] != '\0')
-						OW_THROWCIMMSG(CIMException::INVALID_QUERY, format( "invalid bit string input: '%1'",
+						OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format( "invalid bit string input: '%1'",
 							 buf).c_str());
 					RETURN_BUFF_VAL(BITCONST);
 				}
@@ -331,7 +331,7 @@ other			.
 					errno = 0;
 					val = strtol(literalbuf, &endptr, 16);
 					if (*endptr != '\0' || errno == ERANGE)
-						OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad hexadecimal integer input '%1'",
+						OW_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad hexadecimal integer input '%1'",
 							 literalbuf).c_str() );
 					RETURN_BUFF_VAL( HEXCONST );
 				}

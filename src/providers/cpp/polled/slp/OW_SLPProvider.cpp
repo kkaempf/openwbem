@@ -75,7 +75,7 @@ slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 	if(errArg < SLP_OK)
 	{
 		LoggerRef* pLogger = (LoggerRef*)cookie;
-		(*pLogger)->logError(format("cimom received error durring SLP registration: %1",
+		(*pLogger)->logError(Format("cimom received error durring SLP registration: %1",
 			(int)errArg));
 	}
 }
@@ -95,7 +95,7 @@ public:
 			return 0;
 		}
 		Int32 rval = INITIAL_POLLING_INTERVAL;
-		env->getLogger()->logDebug(format(
+		env->getLogger()->logDebug(Format(
 			"SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
 		m_httpsPort = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
@@ -180,7 +180,7 @@ private:
 		SLPHandle slpHandle;
 		if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
-			env->getLogger()->logError(format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+			env->getLogger()->logError(Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
 			return;
 		}
@@ -327,12 +327,12 @@ private:
 				&lgr);						// Give cimom handle to callback
 			if(err != SLP_OK)
 			{
-				env->getLogger()->logError(format("cimom failed to register url with SLP: %1",
+				env->getLogger()->logError(Format("cimom failed to register url with SLP: %1",
 					urlString).c_str());
 			}
 			else
 			{
-				env->getLogger()->logDebug(format("cimom registered service url with SLP: %1",
+				env->getLogger()->logDebug(Format("cimom registered service url with SLP: %1",
 					urlString).c_str());
 			}
 		}
