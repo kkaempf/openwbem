@@ -3,7 +3,7 @@
  *
  * CmpiString.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -26,16 +26,18 @@
 #include "cmpift.h"
 #include <string.h>
 
-class CmpiString;
-class CmpiObject;
+#ifndef CmpiBoolean
+#define CmpiBoolean CMPIBoolean
+#define CmpiRc      CMPIrc
+#endif
 
-#include "CmpiObject.h"
+//#include "CmpiObject.h"
 #include "CmpiStatus.h"
 
 /** This class wraps a CIMOM specific string representation.
 */
 
-class CmpiString : public CmpiObject {
+class CmpiString { //: public CmpiObject {
    friend class CmpiBroker;
    friend class CmpiData;
    friend class CmpiObjectPath;
@@ -45,11 +47,12 @@ class CmpiString : public CmpiObject {
    friend class CmpiArrayIdx;
   private:
   protected:
-
+   void *enc;
    /** Constructor - Internal use only
    */
-   inline CmpiString(CMPIString* c)
-      : CmpiObject((void*)c) {}
+   inline CmpiString(CMPIString* c) {
+      enc=c;
+   }
 
    /** Gets the encapsulated CMPIString.
    */

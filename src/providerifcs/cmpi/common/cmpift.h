@@ -3,7 +3,7 @@
  *
  * cmpift.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -178,6 +178,19 @@ extern "C" {
      */
      CMPIString* (*getType)
                  (CMPIBroker* mb, void* object, CMPIStatus* rc);
+
+     /** Retrieves translated message.
+         @param mb Broker this pointer
+	 @param msgId The message identifier.
+	 @param defMsg The default message.
+	 @param rc Output: Service return status (suppressed when NULL).
+	 @param count The number of message substitution values.
+         @return the trabslated message.
+     */
+     #if defined(CMPI_VER_85)
+     CMPIString* (*getMessage)
+                 (CMPIBroker* mb, char *msgId, char *defMsg, CMPIStatus* rc, unsigned int count, ...);
+     #endif // CMPI_VER_85	 
    };
 
 
@@ -817,6 +830,18 @@ extern "C" {
       */
      CMPIObjectPath* (*getObjectPath)
               (CMPIInstance* inst, CMPIStatus* rc);
+
+      /** Directs CMPI to ignore any setProperty operations for this
+	  instance for any properties not in this list.
+	 @param inst Instance this pointer.
+	 @param propertyList If not NULL, the members of the array define one
+	     or more Property names to be accepted by setProperty operations.
+	 @param keys Array of key property names of this instance. This array
+	     must be specified.
+	 @return Service return status.
+      */
+     CMPIStatus (*setPropertyFilter)
+              (CMPIInstance* inst, char **propertyList, char **keys);
    };
 
 

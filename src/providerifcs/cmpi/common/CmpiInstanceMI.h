@@ -3,7 +3,7 @@
  *
  * CmpiInstanceMI.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -36,8 +36,6 @@
 #include "CmpiInstance.h"
 #include "CmpiResult.h"
 #include "CmpiContext.h"
-#include "CmpiBroker.h"
-
 
 class CmpiInstanceMI : public CmpiBaseMI {
   protected:
@@ -45,25 +43,49 @@ class CmpiInstanceMI : public CmpiBaseMI {
    virtual ~CmpiInstanceMI() {}
    CmpiInstanceMI(CMPIBroker *mbp, const CmpiContext& ctx)
       : CmpiBaseMI(mbp,ctx) {}
+
+   static CMPIStatus driveEnumInstanceNames
+      (CMPIInstanceMI* mi,CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop);
+   static CMPIStatus driveEnumInstances
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop, char* *properties);
+   static CMPIStatus driveGetInstance
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop, char* *properties);
+   static CMPIStatus driveCreateInstance
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop, CMPIInstance* eInst);
+   static CMPIStatus driveSetInstance
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop, CMPIInstance* eInst, char* *properties);
+   static CMPIStatus driveDeleteInstance
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop);
+   static CMPIStatus driveExecQuery
+      (CMPIInstanceMI* mi, CMPIContext* eCtx, CMPIResult* eRslt,
+       CMPIObjectPath* eCop, char* language ,char* query);
+
+
    virtual CmpiStatus enumInstanceNames
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop);
    virtual CmpiStatus enumInstances
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop,
-	       char* *properties);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop,
+	       const char* *properties);
    virtual CmpiStatus getInstance
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop,
-	       char* *properties);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop,
+	       const char* *properties);
    virtual CmpiStatus createInstance
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop,
-               CmpiInstance& inst);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop,
+               const CmpiInstance& inst);
    virtual CmpiStatus setInstance
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop,
-               CmpiInstance& inst, char* *properties);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop,
+               const CmpiInstance& inst, const char* *properties);
    virtual CmpiStatus deleteInstance
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop);
    virtual CmpiStatus execQuery
-              (CmpiContext& ctx, CmpiResult& rslt, CmpiObjectPath& cop,
-               char* language, char* query);
+              (const CmpiContext& ctx, CmpiResult& rslt, const CmpiObjectPath& cop,
+               const char* language, const char* query);
 };
 
 #endif

@@ -102,10 +102,15 @@ extern CMPIStringFT *CMPI_String_Ftab;
 extern CMPIBrokerFT *CMPI_Broker_Ftab;
 extern CMPIBrokerEncFT *CMPI_BrokerEnc_Ftab;
 
+extern CMPIEnumerationFT *CMPI_ObjEnumeration_Ftab;
+extern CMPIEnumerationFT *CMPI_InstEnumeration_Ftab;
+extern CMPIEnumerationFT *CMPI_OpEnumeration_Ftab;
+
 struct CMPI_Object {
    void *hdl;
    void *ftab;
    CMPI_Object *next,*prev;
+   void *priv;    // CMPI type specific usage
    CMPI_Object(OW_CIMInstance*);
    CMPI_Object(OW_CIMObjectPath*);
    CMPI_Object(OW_CIMDateTime*);
@@ -183,6 +188,7 @@ struct CMPI_ResultOnStack : CMPIResult {
 
 struct CMPI_InstanceOnStack : CMPIInstance {
    CMPI_Object *next,*prev;
+   void *priv;    // CMPI type specific usage
    CMPI_InstanceOnStack(const OW_CIMInstance& ci);
 };
 
@@ -205,6 +211,25 @@ struct CMPI_String : CMPIString {
 struct CMPI_DateTime : CMPIDateTime {
    CMPI_Object *next,*prev;
 };
+
+struct CMPI_ObjEnumeration : CMPIEnumeration {
+   CMPI_Object *next,*prev;
+   int max,cursor;
+   CMPI_ObjEnumeration(OW_Array<OW_CIMInstance>* ia);
+};
+
+struct CMPI_InstEnumeration : CMPIEnumeration {
+   CMPI_Object *next,*prev;
+   int max,cursor;
+   CMPI_InstEnumeration(OW_Array<OW_CIMInstance>* ia);
+};
+
+struct CMPI_OpEnumeration : CMPIEnumeration {
+   CMPI_Object *next,*prev;
+   int max,cursor;
+   CMPI_OpEnumeration(OW_Array<OW_CIMObjectPath>* opa);
+};
+
 
 #include "cmpiThreadContext.h"
 

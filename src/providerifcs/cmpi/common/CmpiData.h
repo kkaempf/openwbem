@@ -3,7 +3,7 @@
  *
  * CmpiData.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -49,11 +49,17 @@ class CmpiData {
    friend class CmpiResult;
    friend class CmpiArgs;
    friend class CmpiContext;
+   friend class CmpiPropertyMI;
   protected:
 
    /** CmpiData actually is a CMPIData struct.
    */
    CMPIData data;
+
+   /** Constructor - Empty constructor.
+   */
+   CmpiData(CMPIData& data)
+      { this->data=data; }
 
   public:
 
@@ -116,7 +122,7 @@ class CmpiData {
 
    /** Extracting String.
    */
-   inline void operator>>(CmpiString& v)
+   inline void operator>>(CmpiString& v) const
       { if (data.type!=CMPI_string) throw CMPI_RC_ERR_TYPE_MISMATCH;
         else v=CmpiString(data.value.string);
       }

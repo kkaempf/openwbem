@@ -201,16 +201,49 @@ OW_CIMOMHandleIFCRef CM_CIMOM(CMPIContext * ctx)
 #define CM_LocalOnly(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_LocalOnly)!=0)
 #define CM_ClassOrigin(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)
 #define CM_IncludeQualifiers(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_IncludeQualifiers)!=0)
+#define CM_DeepInheritance(flgs) (((flgs) & CMPI_FLAG_DeepInheritance)!=0)
 
 // Broker function section
 
+class OW_ArrayBuilder : public OW_CIMObjectPathResultHandlerIFC
+{
+public:
+	OW_ArrayBuilder(OW_CIMObjectPathArray& a_)
+	: a(a_)
+	{
+	}
+private:
+	void doHandle(const OW_CIMObjectPath& x)
+	{
+		a.push_back(x);
+	}
+	OW_CIMObjectPathArray a;
+};
+
 static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
+                 CMPIObjectPath *cop, CMPIStatus *rc) 
+{
+	(void)mb;
+   try {
+      OW_Array<OW_CIMObjectPath> en;
+	  OW_ArrayBuilder ab(en);
+	  CM_CIMOM(ctx)->enumInstanceNames(
+          CM_ObjectPath(cop)->getNameSpace(),
+          CM_ObjectPath(cop)->getObjectName(),
+		  ab
+		  );
+      if (rc) CMSetStatus(rc,CMPI_RC_OK);
+      return new CMPI_OpEnumeration(new OW_Array<OW_CIMObjectPath>(en));
+   }
+   catch (OW_CIMException &e) {
+      cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<endl;
+      if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
+   }
+   if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
    return NULL;
+
+
+
 }
 
 #if 0
@@ -300,14 +333,51 @@ static CMPIEnumeration* mbExecQuery(CMPIBroker *mb, CMPIContext *ctx,
    return NULL;
 }
 
+class OW_CIMInstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
+{
+public:
+	OW_CIMInstanceArrayBuilder(OW_CIMInstanceArray& a_)
+	: a(a_)
+	{
+	}
+private:
+	void doHandle(const OW_CIMInstance& x)
+	{
+		a.push_back(x);
+	}
+	OW_CIMInstanceArray a;
+};
+
 static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char **properties, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) properties;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
+                 CMPIObjectPath *cop, char **properties, CMPIStatus *rc) 
+{
+	(void)mb;
+	CMPIFlags flgs=ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
+	OW_StringArray *props=getList(properties);
+	try {
+	   OW_CIMInstanceArray en;
+	   OW_CIMInstanceArrayBuilder iab(en);
+	   CM_CIMOM(ctx)->enumInstances(
+		   CM_ObjectPath(cop)->getNameSpace(),
+		   CM_ObjectPath(cop)->getObjectName(),
+		   iab,
+		   CM_DeepInheritance(flgs),
+		   CM_LocalOnly(flgs),
+		   CM_IncludeQualifiers(flgs),
+		   CM_ClassOrigin(flgs),
+		   props);
+	   if (rc) CMSetStatus(rc,CMPI_RC_ERROR);
+	   delete props;
+	   return new CMPI_InstEnumeration(new OW_CIMInstanceArray(en));
+	}
+	catch (OW_CIMException &e) {
+	   cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<endl;
+	   if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
+	}
+	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+	delete props;
+	return NULL;
+
 }
 
 static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,

@@ -3,7 +3,7 @@
  *
  * cmpimacs.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -71,7 +71,7 @@
 #else
 #define CMReturnWithChars(b,rc,chars) \
       { CMPIStatus stat={(rc),NULL}; \
-         stat.msg=(b)->eft->newString((b),(chars),NULL)) \
+         stat.msg=(b)->eft->newString((b),(chars),NULL); \
          return stat; }
 #endif
 
@@ -175,8 +175,8 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
 
   #define CMClone(o,rc)                        ((o)->ft->clone((o),(rc)))
   #define CMRelease(o)                            ((o)->ft->release((o)))
-  #define CMGetCharPtr(s)                                 ((char*)s->hdl)
-
+  #define CMGetCharPtr(s)   ((s)!=NULL?((char*)(s)->hdl):(char*)"(NULL)")
+ 
     // CMPIBroker factory macros
 
 #ifdef CMPI_INLINE
@@ -291,7 +291,7 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
 	{ return ((mb)->eft->newDateTimeFromChars((mb),(utcTime),(rc))); }
 #else
   #define CMNewDateTimeFromChars(b,d,rc) \
-                           ((b->eft->newDateTimeFromChars((b),(d),(rc))))
+                           ((b)->eft->newDateTimeFromChars((b),(d),(rc)))
 #endif
 
 #ifdef CMPI_INLINE
@@ -372,13 +372,52 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
 	 @param rc Output: Service return status (suppressed when NULL).
          @return CMPI object type.
      */
-  inline static   CMPIString* CDgetType
+  inline static   CMPIString* CDGetType
                  (CMPIBroker* mb, void* object, CMPIStatus* rc)
 	 { return ((mb)->eft->getType((mb),(object),(rc))); }
 #else
-  #define CDgetType(b,o,rc)      ((b)->eft->getType((b),(void*)(o),(rc)))
+  #define CDGetType(b,o,rc)      ((b)->eft->getType((b),(void*)(o),(rc)))
 #endif
 
+#if defined(CMPI_VER_85)
+#ifdef DOC_ONLY
+     /** Retrieves translated message. Only available as macro.
+         Use CMFmtArgsX macros for specifying variable parameter list.
+         @param mb Broker this pointer
+	 @param msgId The message identifier.
+	 @param defMsg The default message.
+	 @param rc Output: Service return status (suppressed when NULL).
+	 @param count The number of message substitution values.
+         @return the trabslated message.
+     */
+  inline static   CMPIString* CMgetMessage
+                 (CMPIBroker* mb, char *msgId, char *defMsg, CMPIStatus* rc, unsigned int, ...);
+#endif
+
+  #define CMFmtArgs0() 0
+  #define CMFmtArgs1(v1,t1) \
+     1,v1,t1
+  #define CMFmtArgs2(v1,t1,v2,t2) \
+     2,v1,t1,v2,t2
+  #define CMFmtArgs3(v1,t1,v2,t2,v3,t3) \
+     3,v1,t1,v2,t2,v3,t3
+  #define CMFmtArgs4(v1,t1,v2,t2,v3,t3,v4,t4) \
+     4,v1,t1,v2,t2,v3,t3,v4,t4
+  #define CMFmtArgs5(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5) \
+     5,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5
+  #define CMFmtArgs6(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6) \
+     6,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,
+  #define CMFmtArgs7(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7) \
+     7,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7
+  #define CMFmtArgs8(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8) \
+     8,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,
+  #define CMFmtArgs9(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+     9,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9
+  #define CMFmtArgs10(v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t19) \
+     10,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t10
+  
+  #define CMGetMessage(b,id,def,rc,parms)      ((b)->eft->getMessage((b),(id),(def),(rc),parms))
+#endif //CMPI_VER_85
 
     // CMPIInstance macros
 
@@ -458,7 +497,24 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
   #define CMGetObjectPath(i,rc)        ((i)->ft->getObjectPath((i),(rc)))
 #endif
 
-   
+#ifdef CMPI_INLINE
+      /** Directs CMPI to ignore any setProperty operations for this
+	  instance for any properties not in this list.
+	 @param inst Instance this pointer.
+	 @param propertyList If not NULL, the members of the array define one
+	     or more Property names to be accepted by setProperty operations.
+	 @param keys array of key properties. This array must be specified.
+	 @return Service return status.
+      */
+     inline static   CMPIStatus CMSetPropertyFilter
+              (CMPIInstance* inst, char** propertyList, char **keys)
+	{ return ((inst)->ft->setPropertyFilter((inst),(propertyList),(keys))); }
+#else
+  #define CMSetPropertyFilter(i,pl,k) ((i)->ft->setPropertyFilter((i),(pl),(k)))
+#endif
+
+
+
    // CMPIObjectPath macros
 
 
@@ -584,7 +640,7 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
 	       CMPIStatus* rc)
 	{ return ((op)->ft->getKeyAt((op),(index),(name),(rc))); }
 #else
-  #define CMGetKeyAt(p,i,n,rc)          ((p)->ft->getKey((p),(i),(n),(rc)))
+  #define CMGetKeyAt(p,i,n,rc)          ((p)->ft->getKeyAt((p),(i),(n),(rc)))
 #endif
 
 
@@ -626,7 +682,7 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
                CMPIObjectPath* src)
 	{ return ((op)->ft->setHostAndNameSpaceFromObjectPath((op),(src))); }
 #else
-  #define CMSetHostAndNameSpaceFromObjectPath(p,s)) \
+  #define CMSetHostAndNameSpaceFromObjectPath(p,s) \
                      ((p)->ft->setHostAndNameSpaceFromObjectPath((p),(s)))
 #endif
 
@@ -772,7 +828,7 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
              (CMPIString* st, CMPIStatus* rc)
 	{ return  ((st)->ft->getCharPtr((st),(rc))); }
 #else
-  #define CMGetCharsPtr(st,rs)              ((st)->ft->getCharPtr((st),(rc)))
+  #define CMGetCharsPtr(st,rc)              ((st)->ft->getCharPtr((st),(rc)))
 #endif
 
 
@@ -953,7 +1009,7 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
 	       CMPIStatus* rc)
 	{ return ((ctx)->ft->getEntryAt((ctx),(index),(name),(rc))); }
 #else
-  #define CMGetContextEntryAt(e,p,n,d,rc) \
+  #define CMGetContextEntryAt(c,p,n,rc) \
                          ((c)->ft->getEntryAt((c),(p),(n),(rc)))
 #endif
 
@@ -1614,8 +1670,9 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
   #define CMNoHook if (brkr)
 #endif
 
-
-
+/*
+	-----------------  C provider factories ---------------------
+*/
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
@@ -1843,15 +1900,16 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
  }
 #endif
 
-
-
+/*
+	-----------------  C++ provider factories ---------------------
+*/
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
-           for an indication provider. The initialization routine <pn>Create_IndicationMI
+           for an instance provider. The initialization routine <pn>Create_IndicationMI
 	   is called when this provider module is loaded by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
-	 @param cn The class name of this indication provider
+	 @param cn The C++ class name of this instance provider
 	        (a subclass of CmpiInstanceMI).
 	        This is a character string without quotes.
 	 @param pn The provider name under which this provider is registered.
@@ -1863,52 +1921,196 @@ inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc
  #define CMInstanceMIFactory(cn,pn) \
  extern "C" \
  CMPIInstanceMI* pn##_Create_InstanceMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+   static CMPIInstanceMIFT instMIFT={ \
+    CMPICurrentVersion, \
+    CMPICurrentVersion, \
+    "instance" #pn, \
+    (CMPIStatus(*)(CMPIInstanceMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    CmpiInstanceMI::driveEnumInstanceNames, \
+    CmpiInstanceMI::driveEnumInstances, \
+    CmpiInstanceMI::driveGetInstance, \
+    CmpiInstanceMI::driveCreateInstance, \
+    CmpiInstanceMI::driveSetInstance, \
+    CmpiInstanceMI::driveDeleteInstance, \
+    CmpiInstanceMI::driveExecQuery, \
+   }; \
    static CMPIInstanceMI mi; \
-   static CMPIInstanceMIFT instMIFT; \
-   static char name[]={"instance" #pn}; \
    fprintf(stderr,"--- _Create_InstanceMI() broker: %p\n",broker); \
-   instMIFT=CMPICppInstMIFT; \
-   instMIFT.miName=name; \
    CmpiContext ctx(ctxp); \
    mi.ft=&instMIFT; \
-   cn *provider=new cn(broker,ctx); \
+   CmpiInstanceMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   provider->initialize(ctx); \
-   return &mi; \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
+    return &mi; \
  }
 #endif
 
 #ifdef DOC_ONLY
        /** This macro generates the function table and initialization stub
            for an association provider. The initialization routine
-	   <pn>Create_AssociationMI is called when this provider module is loaded
+	   <pn>Create_AssociationMI
+	   is called when this provider module is loaded by the broker.
+	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
+	 @param cn The C++ class name of this instance provider
+	        (a subclass of CmpiInstanceMI).
+	        This is a character string without quotes.
+	 @param pn The provider name under which this provider is registered.
+	        This is a character string without quotes.
+	 @return The function table of this instance provider.
+      */
+   CMPIAssociationMI* CMAssociationMIFactory(chars cn, chars pn);
+#else
+ #define CMAssociationMIFactory(cn,pn) \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_AssociationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+   static CMPIAssociationMIFT assocMIFT={ \
+    CMPICurrentVersion, \
+    CMPICurrentVersion, \
+    "association" #pn, \
+    (CMPIStatus(*)(CMPIAssociationMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    CmpiAssociationMI::driveAssociators, \
+    CmpiAssociationMI::driveAssociatorNames, \
+    CmpiAssociationMI::driveReferences, \
+    CmpiAssociationMI::driveReferenceNames, \
+  }; \
+   static CMPIAssociationMI mi; \
+   fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
+   CmpiContext ctx(ctxp); \
+   mi.ft=&assocMIFT; \
+   CmpiAssociationMI *provider=new cn(broker,ctx); \
+   mi.hdl=provider; \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
+    return &mi; \
+ }
+#endif
+
+#ifdef DOC_ONLY
+       /** This macro generates the function table and initialization stub
+           for an method provider. The initialization routine
+	   <pn>Create_MethodMI is called when this provider module is loaded
 	   by the broker.
 	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
-	 @param cn The class name of this indication provider
-	        (a subclass of CmpiAssociationMI).
+	 @param cn The C++ class name of this method provider
+	        (a subclass of CmpiMethodMI).
 	        This is a character string without quotes.
 	 @param pn The provider name under which this provider is registered.
 	        This is a character string without quotes.
 	 @return The function table of this association provider.
       */
-   CMPIAssociationMI* CMAssociationMIFactory(chars cn, chars pn);
+   CMPIMethodMI* CMMethodMIFactory(chars cn, chars pn);
 #else
  #define CMMethodMIFactory(cn,pn) \
  extern "C" \
  CMPIMethodMI* pn##_Create_MethodMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+   static CMPIMethodMIFT methMIFT={ \
+    CMPICurrentVersion, \
+    CMPICurrentVersion, \
+    "method" #pn, \
+    (CMPIStatus(*)(CMPIMethodMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    CmpiMethodMI::driveInvokeMethod, \
+   }; \
    static CMPIMethodMI mi; \
-   static CMPIMethodMIFT methMIFT; \
-   static char name[]={"method" #pn}; \
    fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
-   methMIFT=CMPICppMethMIFT; \
-   methMIFT.miName=name; \
    CmpiContext ctx(ctxp); \
    mi.ft=&methMIFT; \
-   cn *provider=new cn(broker,ctx); \
+   CmpiMethodMI *provider=new cn(broker,ctx); \
    mi.hdl=provider; \
-   provider->initialize(ctx); \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
+    return &mi; \
+ }
+#endif
+
+#ifdef DOC_ONLY
+       /** This macro generates the function table and initialization stub
+           for a property provider. The initialization routine <pn>Create_PropertyMI
+	   is called when this provider module is loaded by the broker.
+	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
+	 @param cn The C++ class name of this method provider
+	        (a subclass of CmpiMethodMI).
+	        This is a character string without quotes.
+	 @param pn The provider name under which this provider is registered.
+	        This is a character string without quotes.
+	 @return The function table of this association provider.
+      */
+   CMPIPropertyMI* CMPropertyMIFactory(chars cn, chars pn):
+#else
+ #define CMPropertyMIFactory(cn,pn) \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_PropertyMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+   static CMPIPropertyMIFT propMIFT={ \
+    CMPICurrentVersion, \
+    CMPICurrentVersion, \
+    "property" #pn, \
+    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    CmpiPropertyMI::driveSetProperty, \
+    CmpiPropertyMI::driveGetProperty, \
+   }; \
+   static CMPIPropertyMI mi; \
+   fprintf(stderr,"--- _Create_MethodMI() broker: %p\n",broker); \
+   CmpiContext ctx(ctxp); \
+   mi.ft=&propMIFT; \
+   CmpiPropertyMI *provider=new cn(broker,ctx); \
+   mi.hdl=provider; \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
    return &mi; \
  }
 #endif
+
+#ifdef DOC_ONLY
+       /** This macro generates the function table and initialization stub
+           for an indication provider. The initialization routine <pn>Create_IndicationMI
+	   is called when this provider module is loaded by the broker.
+	   This macro is for CMPI providers written in C++ using the Cmpi* classes.
+	 @param cn The C++ class name of this method provider
+	        (a subclass of CmpiMethodMI).
+	        This is a character string without quotes.
+	 @param pn The provider name under which this provider is registered.
+	        This is a character string without quotes.
+	 @return The function table of this association provider.
+      */
+   CMPIIndicationMI* CMIndicationMIFactor(chars cn, chars pn);
+#else
+ #define CMIndicationMIFactory(cn,pn) \
+ extern "C" \
+ CMPIMethodMI* pn##_Create_IndicationMI(CMPIBroker* broker, CMPIContext *ctxp) { \
+   static CMPIIndicationMIFT indMIFT={ \
+    CMPICurrentVersion, \
+    CMPICurrentVersion, \
+    "indication" #pn, \
+    (CMPIStatus(*)(CMPIPropertyMI*,CMPIContext*))CmpiBaseMI::driveBaseCleanup, \
+    Indication::driveAuthorizeFilter, \
+    Indication::driveMustPoll, \
+    Indication::driveActivateFilter, \
+    Indication::driveDeActivateFilter, \
+   }; \
+   static CMPIPropertyMI mi; \
+   fprintf(stderr,"--- _Create_IndicationMI() broker: %p\n",broker); \
+   CmpiContext ctx(ctxp); \
+   mi.ft=&indMIFT; \
+   CmpiIndicationMI *provider=new cn(broker,ctx); \
+   mi.hdl=provider; \
+   if (CmpiProviderBase::testAndSetOneTime(2)) { \
+       provider->initialize(ctx); \
+       CmpiProviderBase::setBroker(broker); \
+    } \
+  return &mi; \
+ }
+#endif
+
+#define CMProviderBase(b) \
+   CmpiProviderBase* CmpiProviderBase::base=NULL; \
+   CmpiProviderBase b();
 
 #endif // _CMPIMACS_H_

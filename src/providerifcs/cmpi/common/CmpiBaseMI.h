@@ -2,7 +2,7 @@
  *
  * CmpiBaseMI.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -27,28 +27,36 @@
 
 #include "cmpidt.h"
 #include "cmpift.h"
+#include "cmpimacs.h"
 
-#include "CmpiStatus.h"
-#include "CmpiBroker.h"
-
-class CmpiContext;
+#include "CmpiProviderBase.h"
 
 extern "C" CMPIInstanceMIFT CMPICppInstMIFT;
 extern "C" CMPIMethodMIFT CMPICppMethMIFT;
+class CmpiContext;
+class CmpiBroker;
+class CmpiStatus;
 
 class CmpiBaseMI {
   protected:
-   static CMPIBroker *broker;
+   CMPIBroker *broker;
   public:
-   static inline CMPIBroker *getBroker()
-      { return broker; }
    virtual ~CmpiBaseMI() {}
-   CmpiBaseMI(CMPIBroker *mbp, const CmpiContext& ctx)
-      { broker=mbp; }
-   virtual CmpiStatus initialize(const CmpiContext& ctx)
-      { return CmpiStatus(CMPI_RC_OK); }
-   virtual CmpiStatus cleanup(CmpiContext& ctx)
-      { return CmpiStatus(CMPI_RC_OK); }
+   inline CmpiBaseMI(CMPIBroker *mbp, const CmpiContext& ctx) {
+      broker=mbp;
+   }
+
+  static CMPIStatus doDriveBaseCleanup
+      (void* mi, CMPIContext* eCtx);
+  inline static CMPIStatus driveBaseCleanup
+      (CMPIInstanceMI* mi, CMPIContext* eCtx) {
+         if (CmpiProviderBase::testAndSetOneTime(1))
+	    return doDriveBaseCleanup(mi,eCtx);
+	 CMReturn(CMPI_RC_OK);
+   }
+
+   virtual CmpiStatus initialize(const CmpiContext& ctx);
+   virtual CmpiStatus cleanup(CmpiContext& ctx);
 };
 
 #endif

@@ -18,6 +18,7 @@ cmpiArray.cpp \
 cmpiBrokerEnc.cpp \
 cmpiContextArgs.cpp \
 cmpiDateTime.cpp \
+cmpiEnumeration.cpp \
 cmpiInstance.cpp \
 cmpiObject.cpp \
 cmpiObjectPath.cpp \
@@ -50,7 +51,12 @@ CmpiObject.h \
 CmpiObjectPath.h \
 CmpiResult.h \
 CmpiStatus.h \
-CmpiString.h 
+CmpiString.h \
+CmpiAssociationMI.h \
+CmpiIndicationMI.h \
+CmpiPropertyMI.h \
+CmpiProviderBase.h \
+CmpiSelectExp.h
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -3,7 +3,7 @@
  *
  * CmpiInstance.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -36,8 +36,6 @@
 
 class CmpiObjectPath;
 
-extern CMPIBroker* CmpiBaseMIBroker;
-
 /** This class represents the instance of a CIM class. It is used manipulate
     instances and their parts.
 */
@@ -45,8 +43,8 @@ extern CMPIBroker* CmpiBaseMIBroker;
 class CmpiInstance : public CmpiObject {
    friend class CmpiBroker;
    friend class CmpiResult;
-   friend class CmpiInstanceMIDriver;
-   friend class CmpiMethodMIDriver;
+   friend class CmpiInstanceMI;
+   friend class CmpiMethodMI;
    friend class CmpiData;
   protected:
 
@@ -64,19 +62,29 @@ class CmpiInstance : public CmpiObject {
    /** Constructor - Should not be called
    */
    CmpiInstance() {}
+
+   /** Internal make function
+   */
+   void *CmpiInstance::makeInstance(CMPIBroker *mb, const CmpiObjectPath& cop);
+   CmpiBoolean doInstanceIsA(CMPIBroker *mb, const char *className);
+
   public:
     /**	Constructor - Creates an Instance object with the classname
 	from the input parameter.
 	@param op defining classname and namespace
 	@return The new Instance object
     */
-   CmpiInstance(const CmpiObjectPath& op);
+   inline CmpiInstance(const CmpiObjectPath& op) {
+      enc=makeInstance(CmpiProviderBase::getBroker(),op);
+   }
 
     /**	instanceIsA - Tests whether this CIM Instance is of type <className>.
 	@param className CIM classname to be tested for.
 	@return True or False
     */
-   CmpiBoolean instanceIsA(const char *className);
+   inline CmpiBoolean instanceIsA(const char *className) {
+      return doInstanceIsA(CmpiProviderBase::getBroker(),className);
+   }
 
     /**	getPropertyCount - Gets the number of Properties
 	defined for this Instance.

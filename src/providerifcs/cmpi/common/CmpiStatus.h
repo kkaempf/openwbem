@@ -2,7 +2,7 @@
  *
  * CmpiStatus.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -25,14 +25,18 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-extern CMPIBroker* CmpiBaseMIBroker;
+#include "CmpiBaseMI.h"
 
 /** This class represents the status of a provider function invocation.
 */
 
 class CmpiStatus {
-   friend class CmpiInstanceMIDriver;
-   friend class CmpiMethodMIDriver;
+   friend class CmpiInstanceMI;
+   friend class CmpiMethodMI;
+   friend class CmpiBaseMI;
+   friend class CmpiAssociationMI;
+   friend class CmpiPropertyMI;
+   friend class CmpiIndicationMI;
   protected:
 
    /** CmpiStatus actually is a CMPIStatus struct.
@@ -59,8 +63,11 @@ class CmpiStatus {
        @param rc The return code.
        @param msg Descriptive message.
    */
-   CmpiStatus(const CMPIrc rc, const char *msg);
-
+   inline CmpiStatus(const CMPIrc rcp, const char *msg) {
+     st.rc=rcp;
+     st.msg=CMNewString(CmpiProviderBase::getBroker(),(char*)msg,NULL);
+   }
+//   CmpiStatus(const CMPIrc rc, const char *msg);
    /** rc - get the rc value.
    */
    inline CMPIrc rc() const

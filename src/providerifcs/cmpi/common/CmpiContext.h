@@ -3,7 +3,7 @@
  *
  * CmpiContext.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  * 
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -35,8 +35,11 @@
 
 class CmpiContext : public CmpiObject {
    friend class CmpiBroker;
-   friend class CmpiInstanceMIDriver;
-   friend class CmpiMethodMIDriver;
+   friend class CmpiInstanceMI;
+   friend class CmpiMethodMI;
+   friend class CmpiAssociationMI;
+   friend class CmpiPropertyMI;
+   friend class CmpiIndicationMI;
   private:
   protected:
 

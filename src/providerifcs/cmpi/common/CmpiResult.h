@@ -3,7 +3,7 @@
  *
  * CmpiResult.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  * 
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -37,9 +37,12 @@
 */
 
 class CmpiResult : public CmpiObject{
-   friend class CmpiInstanceMIDriver;
-   friend class CmpiMethodMIDriver;
-  private:
+   friend class CmpiInstanceMI;
+   friend class CmpiAssociationMI;
+   friend class CmpiMethodMI;
+   friend class CmpiPropertyMI;
+   friend class CmpiIndicationMI;
+ private:
 
    /** Constructor - Should not be called
    */
@@ -63,11 +66,11 @@ class CmpiResult : public CmpiObject{
 
    /** returnData - Return a CmpiInstance object.
    */
-   void returnData(CmpiInstance& d);
+   void returnData(const CmpiInstance& d);
 
    /** returnData - Return a CmpiObjectPath object.
    */
-   void returnData(CmpiObjectPath& d);
+   void returnData(const CmpiObjectPath& d);
  
    /** returnDone - Indicate all data returned.
    */

@@ -39,6 +39,12 @@
 #include "OW_CIMParamValue.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
+OW_CMPIMethodProviderProxy::OW_CMPIMethodProviderProxy(const OW_CMPIFTABLERef& f)
+	: m_ftable(f)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
 OW_CMPIMethodProviderProxy::~OW_CMPIMethodProviderProxy() 
 {
 }
@@ -49,60 +55,43 @@ OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 	const OW_String& ns,
 	const OW_CIMObjectPath& path,
 	const OW_String &methodName,
-    const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
+	const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
 {
-        OW_CIMValue rval(OW_CIMNULL);
 
-        env->getLogger()->
-            logDebug("OW_CMPIInstanceProviderProxy::invokeMethod()");
+	env->getLogger()->
+		logDebug("OW_CMPIInstanceProviderProxy::invokeMethod()");
 
-        if (m_ftable->fp_invokeMethod != NULL)
-        {
-            ::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			OW_CMPIHandleFreer nhf(_npiHandle);
+	if (m_ftable->methMI->ft->invokeMethod != NULL)
+	{
+		CMPIStatus rc;
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		::OperationContext context;
+		context.cimom = env;
 
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr;
+		OW_CIMObjectPath objectReference = path;
+		objectReference.setNameSpace(ns);
+		CMPI_ObjectPathOnStack eRef(objectReference);
+		CMPI_ArgsOnStack eArgsIn(in);
+		CMPI_ArgsOnStack eArgsOut(out);
+		CMPIValueValueResultHandler handler;
+		CMPI_ResultOnStack eRes(handler);
+		char* mName=methodName.allocateCString();
 
-            OW_CIMObjectPath owcop = path;
-			owcop.setNameSpace(ns);
-            CIMObjectPath _cop= {static_cast<void *> (&owcop)};
+		CMPIFlags flgs=0;
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,(CMPIValue*)&flgs,CMPI_uint32);
 
-            Vector parm_in = VectorNew(&_npiHandle);
-            Vector parm_out = VectorNew(&_npiHandle);
+		rc=m_ftable->methMI->ft->invokeMethod(
+			m_ftable->methMI,&eCtx,&eRes,&eRef,mName,&eArgsIn,&eArgsOut);
 
-            for (int i = 0, n = in.size(); i < n; i++)
-            {
-                OW_CIMParamValue * owpv = new OW_CIMParamValue(in[i]);
-                _VectorAddTo(
-                    &_npiHandle, parm_in, static_cast<void *> (owpv) );
-            }
+		if (rc.rc == CMPI_RC_OK)
+			return handler.getValue();
+		else
+			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
+	}
 
-            OW_CMPIVectorFreer vf1(parm_in);
-            OW_CMPIVectorFreer vf2(parm_out);
-
-            CIMValue cv = m_ftable->fp_invokeMethod(
-                &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
-
-			if (_npiHandle.errorOccurred)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					_npiHandle.providerError);
-			}
-
-            rval = * static_cast<OW_CIMValue *> (cv.ptr);
-
-            for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
-            {
-                OW_CIMParamValue owpv = * static_cast<OW_CIMParamValue *>
-                    (_VectorGet(&_npiHandle, parm_out, i));
-                out.append(owpv);
-            }
-        }
-
-        return rval;
+	return OW_CIMValue(OW_CIMNULL);
 }
 
 

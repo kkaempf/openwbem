@@ -3,7 +3,7 @@
  *
  * CmpiObject.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -26,11 +26,16 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-class CmpiBroker;
-class CmpiString;
-
+#ifndef CmpiBoolean
 #define CmpiBoolean CMPIBoolean
 #define CmpiRc      CMPIrc
+#endif
+
+#include "CmpiBaseMI.h"
+#include "CmpiString.h"
+
+class CmpiBroker;
+//class CmpiString;
 
 /** Abstract base class for all Cmpi classes.
 */
@@ -46,25 +51,28 @@ class CmpiObject {
    /** Constructor - Do nothing
    */
    CmpiObject() {}
-   /** Destructor - Causes class to be abstract
-   */
-   virtual ~CmpiObject()=0;
    /** Constructor - Normal base class constructor
    */
    inline CmpiObject(const void* enc)
       { this->enc=(void*)enc; }
+   CmpiString doToString(CMPIBroker *mb);
+   CmpiBoolean doIsA(CMPIBroker *mb, const char *typeName);
   private:
   public:
    /** isNull - Test for valid encapsualtion pointer
    */
    inline CmpiBoolean isNull() const
       { return (enc==NULL); }
-   /** toString - Produces CIMOM specific string representation of object
+   /** toString - Produc;s CIMOM specific string representation of object
    */
-   CmpiString toString();
-   /** isA - checks this objects type
+   inline CmpiString toString() {
+      return doToString(CmpiProviderBase::getBroker());
+   }
+   /** isA - checks this objects type   ;
    */
-   CmpiBoolean isA(const char *typeName);
+   inline CmpiBoolean isA(const char *typeName) {
+      return doIsA(CmpiProviderBase::getBroker(),typeName);
+   }
 };
 
 #endif

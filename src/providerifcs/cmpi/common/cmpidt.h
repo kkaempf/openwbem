@@ -3,8 +3,8 @@
  *
  * cmpidt.h
  *
- * Copyright (c) 2003, International Business Machines
- * 
+ * (C) Copyright IBM Corp. 2003
+ *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
@@ -30,10 +30,29 @@
 extern "C" {
 #endif
 
+// defintion of version numbers to be used by providers using CMBrokerVersion()
+// They indicate what CMPI version is supported by both the broker and its adapter
+
    #define CMPIVersion051 51     //  0.51
    #define CMPIVersion060 60     //  0.60
    #define CMPIVersion070 70     //  0.70
-   #define CMPICurrentVersion CMPIVersion070
+   #define CMPIVersion080 80     //  0.80
+   #define CMPIVersion085 85     //  0.85
+   
+// Version compile switches to control inclusion of new CMPI support
+// Version definitions are cummulative
+// A new version definition must #define all previous definitions
+   
+#if   defined (CMPI_VER_85) || defined(CMPI_VER_ALL)
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion085
+#elif defined (CMPI_VER_80) || defined(CMPI_VER_ALL)
+  #define CMPICurrentVersion CMPIVersion080
+#else  // default version
+  #define CMPI_VER_80
+  #define CMPICurrentVersion CMPIVersion080
+#endif     
+   
 
    struct _CMPIBroker;
    struct _CMPIInstance;
@@ -154,6 +173,8 @@ extern "C" {
 
    typedef unsigned short CMPIType;
 
+        #define CMPI_null         0
+
         #define CMPI_SIMPLE       (2)
         #define CMPI_boolean      (2+0)
         #define CMPI_char16       (2+1)
@@ -266,7 +287,7 @@ extern "C" {
    #define CMPI_FLAG_DeepInheritance    2
    #define CMPI_FLAG_IncludeQualifiers  4
    #define CMPI_FLAG_IncludeClassOrigin 8
-   
+
    #define CMPIInvocationFlags "CMPIInvocationFlags"
 
    typedef enum _CMPIrc {
@@ -289,7 +310,7 @@ extern "C" {
      CMPI_RC_ERR_METHOD_NOT_AVAILABLE         =16,
      CMPI_RC_ERR_METHOD_NOT_FOUND             =17,
      CMPI_RC_ERROR_SYSTEM                     =100,
-     CMPI_RC_ERROR                            =200,
+     CMPI_RC_ERROR                            =200
    } CMPIrc;
 
    typedef struct _CMPIStatus {
@@ -323,7 +344,7 @@ extern "C" {
       CMPI_PredOp_Isa                 =7,
       CMPI_PredOp_NotIsa              =8,
       CMPI_PredOp_Like                =9,
-      CMPI_PredOp_NotLike             =10,
+      CMPI_PredOp_NotLike             =10
    } CMPIPredOp;
 
 #ifdef __cplusplus

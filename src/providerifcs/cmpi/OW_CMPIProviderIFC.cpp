@@ -191,9 +191,6 @@ OW_MethodProviderIFCRef
 OW_CMPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	(void) env;
-	(void) provIdString;
-#if 0
 	OW_CMPIFTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
@@ -211,7 +208,6 @@ OW_CMPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		env->getLogger()->logError(format("Provider %1 is not a method provider",
 			provIdString));
 	}
-#endif
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
@@ -222,9 +218,6 @@ OW_AssociatorProviderIFCRef
 OW_CMPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	(void) env;
-	(void) provIdString;
-#if 0
 	OW_CMPIFTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
@@ -242,7 +235,6 @@ OW_CMPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& 
 		env->getLogger()->logError(format("Provider %1 is not an associator provider",
 			provIdString));
 	}
-#endif
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
@@ -461,6 +453,7 @@ OW_CMPIProviderIFC::getProvider(
 	broker.eft=CMPI_BrokerEnc_Ftab;
 
 	::CMPIInstanceMI * (*createCMPIInstanceMI) (void *, void *) = 0;
+
 	OW_String creationFuncName = provId + "_Create_InstanceMI";
 
 	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIInstanceMI))
@@ -472,20 +465,73 @@ OW_CMPIProviderIFC::getProvider(
 		{
 			env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
 				" %2 function", libName, creationFuncName));
-				return OW_CMPIFTABLERef();
 		}
+	}
+
+	::CMPIAssociationMI * (*createCMPIAssociationMI) (void *, void *) = 0;
+
+	creationFuncName = provId + "_Create_AssociationMI";
+
+	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIAssociationMI))
+	{
+		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
+			" %2 function", libName, creationFuncName));
+		creationFuncName = provId.substring(4) + "_Create_AssociationMI";
+		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIAssociationMI))
+		{
+			env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+		}
+	}
+
+	::CMPIMethodMI * (*createCMPIMethodMI) (void *, void *) = 0;
+
+	creationFuncName = provId + "_Create_MethodMI";
+
+	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIMethodMI))
+	{
+		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
+			" %2 function", libName, creationFuncName));
+		creationFuncName = provId.substring(4) + "_Create_MethodMI";
+		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIMethodMI))
+		{
+			env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
+				" %2 function", libName, creationFuncName));
+		}
+	}
+
+	if (!createCMPIMethodMI && !createCMPIAssociationMI && !createCMPIInstanceMI)
+	{
+		return OW_CMPIFTABLERef();
 	}
 
 	OperationContext opc;
 	CMPI_ThreadContext thr;
 	CMPI_ContextOnStack eCtx(opc);
 
-	::CMPIInstanceMI * cProvInst = createCMPIInstanceMI(&broker, &eCtx);
+	::CMPIInstanceMI * cProvInst = 0;
+	if (createCMPIInstanceMI)
+	{
+		cProvInst = createCMPIInstanceMI(&broker, &eCtx);
+	}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-//	::CMPIAssociationMI * cProvAssoc =
-//		 createCMPIAssociationMI(&broker, &eCtx);
+	::CMPIAssociationMI * cProvAssoc = 0;
+	if (createCMPIAssociationMI)
+	{
+		cProvAssoc = createCMPIAssociationMI(&broker, &eCtx);
+	}
 #endif
-//	::CMPIIndicationMI * cProvInd = createCMPIIndicationMI(&broker, &eCtx);
+	::CMPIMethodMI * cProvMeth = 0;
+	if (createCMPIMethodMI)
+	{
+		cProvMeth = createCMPIMethodMI(&broker, &eCtx);
+	}
+
+	//::CMPIIndicationMI * cProvInd = 0;
+	//if (createCMPIIndicationMI)
+	//{
+	//	cProvInd = createCMPIIndicationMI(&broker, &eCtx);
+	//}
 
 
 	env->getLogger()->logDebug(format("CMPI provider ifc: provider %1 loaded and initialized",
@@ -493,6 +539,8 @@ OW_CMPIProviderIFC::getProvider(
 
 	OW_CompleteMI * cmi = new OW_CompleteMI();
 	cmi->instMI = cProvInst;
+	cmi->assocMI = cProvAssoc;
+	cmi->methMI = cProvMeth;
 	//m_provs[provId] = OW_CMPIFTABLERef(theLib, new ::CMPIInstanceMI(cProv));
 	m_provs[provId] = OW_CMPIFTABLERef(theLib, cmi);
 

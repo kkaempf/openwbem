@@ -3,7 +3,7 @@
  *
  * CmpiArray.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -25,6 +25,11 @@
 #include "OW_config.h"
 #include "cmpidt.h"
 #include "CmpiString.h"
+#include "CmpiObjectPath.h"
+#include "CmpiInstance.h"
+#include "CmpiBaseMI.h"
+#include "CmpiData.h"
+
 
 class CmpiArrayIdx {
   friend class CmpiArray;
@@ -64,7 +69,7 @@ class CmpiArrayIdx {
 };
 
 
-/** This class wraps a CMPIData value array. 
+/** This class wraps a CMPIData value array.
       Index operations use the [] operator.
       Data extraction uses the >> operator.
       Extraction operations can be appended to an array indexing operation
@@ -77,9 +82,9 @@ class CmpiArrayIdx {
         ci.getProperty("States")>>states;
 
 	states[3]>>state;
-	
+
 	Assignment statements use array indexing operations as well:
-	
+
 	states[5]="offline";
 
        Type mismatches will be signalled by exceptions.
@@ -92,8 +97,11 @@ class CmpiArray : public CmpiObject {
    */
    inline CMPIArray *getEnc() const
       { return (CMPIArray*)enc; }
+   void *makeArray(CMPIBroker *mb,CMPICount max, CMPIType type);
   public:
-   CmpiArray(CMPICount max, CMPIType type);
+   inline CmpiArray(CMPICount max, CMPIType type) {
+      enc=makeArray(CmpiProviderBase::getBroker(),max,type);
+   }
    CmpiArray() {}
    CMPICount size();
    inline CmpiArrayIdx operator[](int idx) {

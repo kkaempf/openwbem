@@ -38,10 +38,7 @@
 class OW_CMPIMethodProviderProxy : public OW_MethodProviderIFC
 {
 public:
-	OW_CMPIMethodProviderProxy(const OW_CMPIFTABLERef& f)
-		: m_ftable(f)
-	{
-	}
+	OW_CMPIMethodProviderProxy(const OW_CMPIFTABLERef& f);
 
 	virtual ~OW_CMPIMethodProviderProxy();
 

@@ -3,7 +3,7 @@
  *
  * CmpiInstance.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -26,12 +26,12 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
+#include "CmpiBaseMI.h"
 #include "CmpiObject.h"
 #include "CmpiStatus.h"
 #include "CmpiObjectPath.h"
 #include "CmpiBroker.h"
-
-extern CMPIBroker* CmpiBaseMIBroker;
+#include "CmpiBaseMI.h"
 
 /** This class wraps a CIMOM specific input and output arguments
     passed to methodInvocation functions.
@@ -39,7 +39,7 @@ extern CMPIBroker* CmpiBaseMIBroker;
 
 class CmpiArgs : public CmpiObject {
    friend class CmpiBroker;
-   friend class CmpiMethodMIDriver;
+   friend class CmpiMethodMI;
   protected:
 
    /** Protected constructor used by MIDrivers to encapsulate CMPIArgs.
@@ -51,12 +51,15 @@ class CmpiArgs : public CmpiObject {
    */
    inline CMPIArgs *getEnc() const
       { return (CMPIArgs*)enc; }
+   void *makeArgs(CMPIBroker* mb);
   private:
   public:
 
    /** Constructor - Empty argument container.
    */
-   CmpiArgs();
+   inline CmpiArgs() {
+      enc=makeArgs(CmpiProviderBase::getBroker());
+   }
 
     /**	getArgCount - Gets the number of arguments
 	defined for this argument container.

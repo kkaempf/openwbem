@@ -3,7 +3,7 @@
  *
  * CmpiObjectPath.h
  *
- * Copyright (c) 2003, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -30,10 +30,11 @@
 #include "CmpiBroker.h"
 #include "CmpiStatus.h"
 #include "CmpiData.h"
+#include "CmpiBaseMI.h"
 
 
 /** The ObjectPath class represents the value of a Instance reference. It constains
-    the namespace, classname and key properties. ObjectPath can also be used to 
+    the namespace, classname and key properties. ObjectPath can also be used to
     represent a class reference. In that case key properties will be ignored.
 */
 
@@ -41,8 +42,11 @@ class CmpiObjectPath : public CmpiObject {
    friend class CmpiBroker;
    friend class CmpiResult;
    friend class CmpiInstance;
-   friend class CmpiInstanceMIDriver;
-   friend class CmpiMethodMIDriver;
+   friend class CmpiInstanceMI;
+   friend class CmpiMethodMI;
+   friend class CmpiAssociationMI;
+   friend class CmpiPropertyMI;
+   friend class CmpiIndicationMI;
    friend class CmpiData;
   protected:
 
@@ -60,6 +64,9 @@ class CmpiObjectPath : public CmpiObject {
    /** Constructor - Should not be called
    */
    CmpiObjectPath() {}
+   void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const char *ns, const char *cls);
+   void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const CmpiString& ns, const char *cls);
+   CmpiBoolean CmpiObjectPath::doClassPathIsA(CMPIBroker *mb, const char *className);
   public:
 
     /**	Constructor - Creates an ObjectPath object with the classname
@@ -68,15 +75,21 @@ class CmpiObjectPath : public CmpiObject {
 	@param cls defining classname or NULL
 	@return The new ObjectPath object
     */
-   CmpiObjectPath(const char *ns, const char *cls);
-   CmpiObjectPath(const CmpiString &ns, const char *cls);
+   inline CmpiObjectPath(const char *ns, const char *cls) {
+      enc=makeObjectPath(CmpiProviderBase::getBroker(),ns,cls);
+   }
+   CmpiObjectPath(const CmpiString &ns, const char *cls) {
+      enc=makeObjectPath(CmpiProviderBase::getBroker(),ns,cls);
+   }
 
     /**	classPathIsA - Tests whether this CIM ObjectPath is a reference
         to a CIM class is of type <className>.
 	@param className CIM classname to be tested for.
 	@return True or False
     */
-   CmpiBoolean classPathIsA(const char *className);
+   inline CmpiBoolean classPathIsA(const char *className) {
+      return doClassPathIsA(CmpiProviderBase::getBroker(),className);
+   }
 
     /** getHostname - returns the hostname component of the
         ObjectPath
@@ -128,7 +141,7 @@ class CmpiObjectPath : public CmpiObject {
 	@param name key name.
 	@return CmpiData value object associated with the key.
     */
-   CmpiData getKey(const char* name);
+   CmpiData getKey(const char* name) const;
 
     /**	getKey - Gets the CmpiData object defined
 	by the input index parameter.
