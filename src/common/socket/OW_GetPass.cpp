@@ -42,10 +42,6 @@ extern "C"
 #include <unistd.h>
 #endif
 
-#ifdef OW_NETWARE
-#include <screen.h>
-#endif
-
 #if defined(OW_WIN32)
 #include <conio.h>
 #include <stdio.h>
@@ -77,18 +73,6 @@ GetPass::getPass(const String& prompt)
 		}
 	} while(ch != '\r');
 	printf("\n");
-	return String(bfr);
-}
-#elif defined(OW_NETWARE)
-#define MAXPASSWORD 128
-String
-GetPass::getPass(const String& prompt)
-{
-	int ch, len = 0;
-	char bfr[MAXPASSWORD+1];
-
-	bfr[0] = 0;
-	getpassword(prompt.c_str(), bfr, MAXPASSWORD);
 	return String(bfr);
 }
 #else
