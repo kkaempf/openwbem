@@ -120,7 +120,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 	OW_CIMQualifier cimQualifierKey(cqt);
 	cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
 
-	OW_CIMClass cimClass(OW_Bool(true));
+	OW_CIMClass cimClass;
 	cimClass.setName("EXP_IndicationTestComputerSystem");
 	cimClass.setSuperClass("CIM_ComputerSystem");
 

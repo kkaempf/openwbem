@@ -70,7 +70,8 @@ class OW_IndicationProviderTest3 : public OW_CppIndicationProviderIFC, public OW
 public:
 	
 	OW_IndicationProviderTest3()
-		: m_creationFilterCount(0)
+		: m_theClass(OW_CIMNULL)
+		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
 	{

@@ -48,6 +48,8 @@ extern "C"
 
 #ifdef OW_HAVE_OPENSSL
 
+#include <openssl/err.h>
+
 //////////////////////////////////////////////////////////////////////////////
 OW_SSLSocketImpl::OW_SSLSocketImpl() 
 	: OW_SocketBaseImpl()
@@ -70,12 +72,14 @@ OW_SSLSocketImpl::OW_SSLSocketImpl(OW_SocketHandle_t fd,
 	{
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
+        ERR_remove_state(0); // cleanup memory SSL may have allocated
 		OW_THROW(OW_SSLException, "SSL accept error");
 	}
 	if (!OW_SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
 	{
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
+        ERR_remove_state(0); // cleanup memory SSL may have allocated
 		OW_THROW(OW_SSLException, "SSL failed to authenticate client");
 	}
 }
@@ -93,6 +97,7 @@ OW_SSLSocketImpl::~OW_SSLSocketImpl()
 	{
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
+        ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
 }
 
@@ -148,6 +153,7 @@ OW_SSLSocketImpl::disconnect()
 	{
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
+        ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
 	OW_SocketBaseImpl::disconnect();
 }

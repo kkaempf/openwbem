@@ -42,7 +42,7 @@
 #include "OW_Format.hpp"
 
 
-static OW_CIMClass nsClass;
+static OW_CIMClass nsClass(OW_CIMNULL);
 //////////////////////////////////////////////////////////////////////////////
 void
 	OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)

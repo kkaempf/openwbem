@@ -310,7 +310,7 @@ OW_CIMRepository::getClass(
 {
 	try
 	{
-		OW_CIMClass theClass;
+		OW_CIMClass theClass(OW_CIMNULL);
 		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, 
 			localOnly, includeQualifiers, includeClassOrigin, propertyList, 
 			theClass);
@@ -338,7 +338,7 @@ OW_CIMRepository::getClass(
 OW_CIMClass
 OW_CIMRepository::_getClass(const OW_String& ns, const OW_String& className)
 {
-	OW_CIMClass theClass;
+	OW_CIMClass theClass(OW_CIMNULL);
 	OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, false, true, true, 0, theClass);
 	checkGetClassRvalAndThrow(rval, ns, className);
 
@@ -349,7 +349,7 @@ OW_CIMRepository::_getClass(const OW_String& ns, const OW_String& className)
 OW_CIMClass
 OW_CIMRepository::_instGetClass(const OW_String& ns, const OW_String& className)
 {
-	OW_CIMClass theClass;
+	OW_CIMClass theClass(OW_CIMNULL);
 	OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, false, true, true, 0, theClass);
 	checkGetClassRvalAndThrowInst(rval, ns, className);
 
@@ -737,10 +737,9 @@ OW_CIMRepository::getInstance(
 		lpropList = *propertyList;
 	}
 
-	OW_CIMClass cc;
 	OW_CIMInstance ci;
 
-	cc = _instGetClass(ns, instanceName.getObjectName());
+	OW_CIMClass cc(_instGetClass(ns, instanceName.getObjectName()));
 
 	try
 	{
@@ -777,7 +776,7 @@ OW_CIMRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& co
 
 	try
 	{
-		OW_CIMClass theClass;
+		OW_CIMClass theClass(OW_CIMNULL);
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
 
@@ -838,6 +837,7 @@ OW_CIMRepository::createInstance(
 
 		OW_CIMClass theClass = _instGetClass(ns, ci.getClassName());
 
+		//_checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
 
 		if(theClass.isAssociation())
@@ -870,10 +870,12 @@ OW_CIMRepository::modifyInstance(
 {
 	try
 	{
-		OW_CIMClass theClass;
+		OW_CIMClass theClass(OW_CIMNULL);
 		OW_CIMObjectPath cop(modifiedInstance);
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
+
+		//_checkRequiredProperties(theClass, modifiedInstance);
 
 		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst, includeQualifiers, propertyList);
 
@@ -1136,7 +1138,6 @@ OW_CIMRepository::_commonReferences(
 	OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass assocClass;
 	OW_CIMObjectPath path(path_);
 	path.setNameSpace(ns);
 	if (!m_nStore.nameSpaceExists(ns))
@@ -1668,7 +1669,7 @@ OW_CIMRepository::_getAssociationClasses(const OW_String& ns,
 		// they gave us a class name so we can use the class association index
 		// to only look at the ones that could provide associations
 		m_mStore.enumClass(ns, assocClassName, result, true, false, true, true);
-		OW_CIMClass cc;
+		OW_CIMClass cc(OW_CIMNULL);
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, assocClassName, false, true, true, 0, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{

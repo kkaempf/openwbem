@@ -92,7 +92,7 @@ public:
 
 	OW_DateTime getLastAccessTime() const  { return m_dt; }
 
-	void updateAccessTime() { m_dt.setToCurrent(); }
+	void updateAccessTime();
 protected:
 
 private:

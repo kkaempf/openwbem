@@ -117,7 +117,7 @@ createClass(OW_CIMClient& hdl, const OW_String& name)
 		OW_CIMQualifier cimQualifierKey(cqt);
 
 		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
-		OW_CIMClass cimClass(OW_Bool(true));
+		OW_CIMClass cimClass;
 		cimClass.setName(name);
 		cimClass.setSuperClass("CIM_ComputerSystem");
 

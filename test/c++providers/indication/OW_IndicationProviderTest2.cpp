@@ -46,6 +46,7 @@
 #include "OW_WQLCompile.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 // anonymous namespace to prevent library symbol conflicts
 namespace
@@ -146,6 +147,11 @@ protected:
 class OW_IndicationProviderTest2 : public OW_CppIndicationProviderIFC, public OW_CppInstanceProviderIFC
 {
 public:
+	OW_IndicationProviderTest2()
+		: m_theClass(OW_CIMNULL)
+	{
+	}
+
 	// Indication provider methods
 	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&) 
 	{

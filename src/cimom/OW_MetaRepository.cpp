@@ -71,7 +71,7 @@ OW_CIMClass
 OW_MetaRepository::getClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
-	OW_CIMClass cc;
+	OW_CIMClass cc(OW_CIMNULL);
 	// look up key in the index
 	cache_index_t::iterator ii = theCacheIndex.find(key);
 	if (ii != theCacheIndex.end())
@@ -457,7 +457,7 @@ OW_CIMClass
 OW_MetaRepository::_getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
 	const OW_String& ns)
 {
-	OW_CIMClass theClass;
+	OW_CIMClass theClass(OW_CIMNULL);
 	nodeToCIMObject(theClass, node);
 	if (!theClass)
 	{
@@ -496,7 +496,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 	}
 
 	OW_HDBNode pnode;
-	OW_CIMClass parentClass;
+	OW_CIMClass parentClass(OW_CIMNULL);
 	OW_String superID = child.getSuperClass();
 
 	// If class doesn't have a super class - don't propagate anything
@@ -638,7 +638,7 @@ OW_MetaRepository::deleteClass(const OW_String& ns, const OW_String& className)
 	// Just to be safe, we will attempt to create an OW_CIMClass object
 	// from the node. If the node is not for an OW_CIMClass, an exception
 	// will be thrown.
-	OW_CIMClass theClassToDelete;
+	OW_CIMClass theClassToDelete(OW_CIMNULL);
 	nodeToCIMObject(theClassToDelete, node);
 
 	removeClassFromCache(ckey);		// Ensure class is not in the cache
@@ -720,7 +720,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 {
 	OW_String childName = childClass.getName();
 	OW_String parentName = childClass.getSuperClass();
-	OW_CIMClass parentClass;
+	OW_CIMClass parentClass(OW_CIMNULL);
 	OW_HDBNode parentNode;
 
 	if(!parentName.empty())
@@ -909,7 +909,7 @@ OW_MetaRepository::modifyClass(const OW_String& ns,
 
 	// Create an OW_CIMClass object out of the node we just read to ensure
 	// the data belongs to an OW_CIMClass.
-	OW_CIMClass clsToUpdate;
+	OW_CIMClass clsToUpdate(OW_CIMNULL);
 	nodeToCIMObject(clsToUpdate, node);
 
 	// At this point we know we are updating an OW_CIMClass
@@ -935,7 +935,7 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG)
 			&& node.areAllFlagsOn(OW_HDBCLSASSOCNODE_FLAG))
 		{
-			OW_CIMClass cc;
+			OW_CIMClass cc(OW_CIMNULL);
 			nodeToCIMObject(cc, node);
 
 			OW_ASSERT(cc.isAssociation());
@@ -996,7 +996,7 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	{
 		// Create a parent class from the node just to ensure we have the node
 		// to an OW_CIMClass. If we don't, an exception will be thrown.
-		OW_CIMClass parentClass;
+		OW_CIMClass parentClass(OW_CIMNULL);
 		nodeToCIMObject(parentClass, pnode);
 	}
 	// */
@@ -1049,7 +1049,7 @@ OW_MetaRepository::getClassChildren(const OW_String& ns,
 	if(node)
 	{
 		// Ensure node belongs to an OW_CIMClass
-		OW_CIMClass verifyClass;
+		OW_CIMClass verifyClass(OW_CIMNULL);
 		nodeToCIMObject(verifyClass, node);
 
 		node = hdl->getFirstChild(node);
@@ -1068,7 +1068,7 @@ void
 OW_MetaRepository::_getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
 	OW_HDBHandle hdl)
 {
-	OW_CIMClass cimCls;
+	OW_CIMClass cimCls(OW_CIMNULL);
 	nodeToCIMObject(cimCls, node);
 	ra.append(cimCls.getName());
 

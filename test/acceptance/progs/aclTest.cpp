@@ -64,7 +64,7 @@ void usage(const char* name)
 }
 
 OW_String mode;
-OW_CIMClass bionicClass;
+OW_CIMClass bionicClass(OW_CIMNULL);
 OW_CIMInstance bionicInstance;
 
 void createClass(OW_CIMOMHandleIFC& hdl)
@@ -80,7 +80,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 
 		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
 
-		OW_CIMClass cimClass(OW_Bool(true));
+		OW_CIMClass cimClass;
 		cimClass.setName("EXP_BionicComputerSystem2");
 		cimClass.setSuperClass("CIM_ComputerSystem");
 

@@ -291,7 +291,7 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 OW_CIMClass
 OW_XMLCIMFactory::createClass(OW_CIMXMLParser& parser)
 {
-	OW_CIMClass rval(true);
+	OW_CIMClass rval;
 	OW_String superClassName;
 	
 	if (!parser.tokenIs(OW_CIMXMLParser::E_CLASS))
@@ -1041,7 +1041,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 					OW_CIMClassArray classes;
 					for (size_t i = 0; i < values.size(); ++i)
 					{
-						OW_CIMClass c;
+						OW_CIMClass c(OW_CIMNULL);
 						values[i].get(c);
 						classes.push_back(c);
 					}

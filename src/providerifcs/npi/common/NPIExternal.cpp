@@ -38,7 +38,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	OW_ProviderEnvironmentIFCRef * provenv =
 		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
-	OW_CIMClass cc;
+	OW_CIMClass cc(OW_CIMNULL);
 	try
 	{
 		cc = (*provenv)->getCIMOMHandle()->getClass(

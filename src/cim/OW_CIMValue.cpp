@@ -2822,7 +2822,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				new(&m_obj) OW_CIMClass;
+				new(&m_obj) OW_CIMClass(OW_CIMNULL);
 				((OW_CIMClass*)&m_obj)->readObject(istrm);
 				break;
 

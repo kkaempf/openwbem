@@ -66,7 +66,7 @@ $(top_builddir)/test/CppUnit/libCppUnit.a \
 
 unitMain_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o unitMain
+-rdynamic -o unitMain
 
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = $(check_SCRIPTS)

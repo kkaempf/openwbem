@@ -17,11 +17,13 @@ Testing:
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
-    - Fix memory leak in openssl (when restarting) & in npi.
-    - Add a page to the website similar to http://cygwin.com/bugs.html
-    - Add a segfault handler on linux that will create a stack trace using
-      the glibc functions. (replace slow & somewhat broken gdb stack trace)
+    - Make it harder to create NULL CIM objects.  Remove the bool constructor
+      and add a explicit void* constructor.  (e.g. OW_CIMClass c; wouldn't
+      be NULL.  To create a NULL OW_CIMClass, you'd have to say 
+      OW_CIMClass c(NULL);)
+    - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Man pages aren't getting included in the rpm.
+    - Fix memory leak in npi.
     - Create a non-recursive mutex, and use it with condition variables,
       since using a recursive mutex with condition variables can deadlock
       "because  the  implicit  unlock  performed for a 
@@ -29,11 +31,6 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
-    - Make it harder to create NULL CIM objects.  Remove the bool constructor
-      and add a explicit void* constructor.  (e.g. OW_CIMClass c; wouldn't
-      be NULL.  To create a NULL OW_CIMClass, you'd have to say 
-      OW_CIMClass c(NULL);)
-    - Validate the "Required" qualifier on properties during create & modifyInstance.
 
 New features:
     - Create intrinsic providers for
@@ -90,7 +87,8 @@ New features:
     - clean up stale indication subscriptions (write provider for this)
     - CMPI
     - Implement the CIM_Interop27 build-in providers.
-        - add handling for new namespace model
+        - add handling for new namespace model.  Make namespaces flat instead
+		    of hierarchial.
         - New model for provider registration.
         - Do the rest of them.
     - Fix the lexer of the MOF compiler to parse unicode MOF files.  
@@ -147,8 +145,14 @@ New features:
       reason why not)
     - Overriding a method cannot add a required parameter.
     - Deprecate TOINSTANCE (don't send as XML, & ignore on incoming XML)
+    - Use libcwd to improve the new segfault handler on linux.  De-mangle names
+	   and print filename/line numbers.
+    - Add a page to the website similar to http://cygwin.com/bugs.html
+	 - Add rbac authentication
 
 Refactorings:
+	 - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
+	   move OW_Cpp*ProviderIFC classes into the cimom.
     - Create a base class for all the common code in the provider interfaces.
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.

@@ -37,6 +37,7 @@ OW_CIMInstance.hpp \
 OW_CIMInstanceEnumeration.hpp \
 OW_CIMMethod.hpp \
 OW_CIMNameSpace.hpp \
+OW_CIMNULL.hpp \
 OW_CIMObjectPath.hpp \
 OW_CIMObjectPathEnumeration.hpp \
 OW_CIMParameter.hpp \

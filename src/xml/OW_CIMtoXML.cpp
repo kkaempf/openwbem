@@ -928,7 +928,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			
 			case OW_CIMDataType::EMBEDDEDCLASS:
 			{
-				OW_CIMClass cc;
+				OW_CIMClass cc(OW_CIMNULL);
 				cv.get(cc);
 				OW_String s;
 				OW_StringStream ss;

@@ -1454,7 +1454,7 @@ void OW_WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 					}
 					else if (valType == OW_CIMDataType::EMBEDDEDCLASS)
 					{
-						OW_CIMClass embeddedcls;
+						OW_CIMClass embeddedcls(OW_CIMNULL);
 						cv.get(embeddedcls);
 						if (classIsDerivedFrom(embeddedcls.getName(), className))
 						{

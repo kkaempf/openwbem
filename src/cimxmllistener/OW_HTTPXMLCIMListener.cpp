@@ -315,7 +315,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// If we can't get HTTPS then try for HTTP
 	// This will be used as the indication handler for all
 	// events subscribed to.
-	OW_CIMClass delivery;
+	OW_CIMClass delivery(OW_CIMNULL);
 	OW_String urlPrefix = "https://";
 	OW_UInt16 listenerPort = m_httpsListenPort;
 	bool useHttps = reg.cimomUrl.protocol.equalsIgnoreCase("https");

@@ -340,8 +340,8 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 	, m_rwSchemaLocker()
 	, m_rwInstanceLocker()
 	, m_accessMgr(new OW_AccessMgr(this, env))
-	, m_nsClass_Namespace()
-	, m_nsClassCIM_Namespace()
+	, m_nsClass_Namespace(OW_CIMNULL)
+	//, m_nsClassCIM_Namespace(OW_CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
 	, m_realRepository(m_cimRepository.cast_to<OW_CIMRepository>())
@@ -1017,7 +1017,7 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 	}
 
 	OW_ACLInfo intAclInfo;
-	OW_CIMClass theClass;
+	OW_CIMClass theClass(OW_CIMNULL);
 	OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 		&theClass, intAclInfo);
 
@@ -1103,7 +1103,7 @@ OW_CIMServer::createInstance(
 					"Association has a NULL reference");
 			}
 
-			OW_CIMClass rcc;
+			OW_CIMClass rcc(OW_CIMNULL);
 			OW_ACLInfo intAclInfo;
 			try
 			{
@@ -1671,7 +1671,7 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 	*/
 	else
 	{
-		return OW_CIMClass();
+		return OW_CIMClass(OW_CIMNULL);
 	}
 }
 
@@ -1886,7 +1886,6 @@ OW_CIMServer::_commonReferences(
 	OW_CIMClassResultHandlerIFC* pcresult,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass assocClass;
 	OW_CIMObjectPath path(path_);
 	path.setNameSpace(ns);
 
@@ -2348,7 +2347,6 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
 	while(it != theMap.end())
 	{
-		OW_CIMClass cc;
 		OW_String clsname = it->first;
 		
 		op.setObjectName(clsname);

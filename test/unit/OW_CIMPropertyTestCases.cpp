@@ -54,14 +54,14 @@ void OW_CIMPropertyTestCases::tearDown()
 
 void OW_CIMPropertyTestCases::testEmbeddedClass()
 {
-	OW_CIMClass c1(true);
+	OW_CIMClass c1;
 	c1.setName("test");
 	OW_CIMQualifierType cqt("Description");
 	cqt.setDataType(OW_CIMDataType::STRING);
 	c1.addQualifier(OW_CIMQualifier(cqt));
 
 	OW_CIMProperty p1("testprop", OW_CIMValue(c1));
-	OW_CIMClass c2;
+	OW_CIMClass c2(OW_CIMNULL);
 	p1.getValue().get(c2);
 	unitAssert( c1 == c2 );
 
@@ -81,7 +81,7 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 
 void OW_CIMPropertyTestCases::testEmbeddedInstance()
 {
-	OW_CIMClass c1(true);
+	OW_CIMClass c1;
 	c1.setName("test");
 	OW_CIMQualifierType cqt("Description");
 	cqt.setDataType(OW_CIMDataType::STRING);

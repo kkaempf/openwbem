@@ -37,6 +37,10 @@
 #include <fstream>
 #include <iostream>
 
+#if defined(OW_HAVE_BACKTRACE)
+#include <execinfo.h>
+#endif
+
 extern "C"
 {
 #include <unistd.h> // for getpid()
@@ -56,6 +60,31 @@ void OW_StackTrace::getStackTrace()
 	OW_StackTrace* retval = 0;
 	if (getenv("OW_STACKTRACE"))
 	{
+		// if we have the GNU backtrace functions we use them.  They don't give
+		// as good information as gdb does, but they are orders of magnitude
+		// faster!
+#ifdef OW_HAVE_BACKTRACE
+		void *array[200];
+		size_t size;
+		char **strings;
+		size_t i;
+		
+		size = backtrace (array, 200);
+		strings = backtrace_symbols (array, size);
+		
+		OW_String bt;
+		
+		for (i = 0; i < size; i++)
+		{
+			bt += strings[i];
+			bt += "\n";
+		}
+		
+		free (strings);
+		
+		retval = new OW_StackTrace(bt);
+
+#else
 		ifstream file(DEFAULT_GDB_PATH);
 		if (file)
 		{
@@ -98,6 +127,7 @@ void OW_StackTrace::getStackTrace()
 
 			retval = new OW_StackTrace(output);
 		}
+#endif
 	}
 	if (retval)
 	{

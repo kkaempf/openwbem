@@ -46,10 +46,7 @@ class OW_CIMRepository;
 
 // This class is responsible for:
 // 1. calling either providers/or the CIM Repository
-// 2. interpreting the parameters to the intrinsic CIM methods (such as
-//    localOnly, deep, etc.) from providers.  Otherwise, the repository
-//    is responsible for handling these flags.
-// 3. Access control
+// 2. Access control
 class OW_CIMServer : public OW_RepositoryIFC
 {
 public:
@@ -698,7 +695,7 @@ private:
 	mutable OW_RWLocker m_rwInstanceLocker;
 	OW_Reference<OW_AccessMgr> m_accessMgr;
 	OW_CIMClass m_nsClass_Namespace;
-	OW_CIMClass m_nsClassCIM_Namespace;
+	//OW_CIMClass m_nsClassCIM_Namespace;
 	OW_CIMOMEnvironmentRef m_env;
 	OW_RepositoryIFCRef m_cimRepository;
 	OW_Reference<OW_CIMRepository> m_realRepository;

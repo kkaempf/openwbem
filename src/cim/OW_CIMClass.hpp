@@ -38,6 +38,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMClass encapsulates all information that pertains to a CIM class
@@ -56,13 +57,14 @@ public:
 
 	/**
 	 * Create a new OW_CIMClass object.
-	 *
-	 * @param notNull	If false this OW_CIMClass object will not contain any
-	 *		underlying data, which will cause all subsequent operations to fail.
-	 *		If true, there will be data associated with this OW_CIMClass object,
-	 *		but it will be set to default values.
 	 */
-	explicit OW_CIMClass(OW_Bool notNull=false);
+	OW_CIMClass();
+
+	/**
+	 * Create a new NULL OW_CIMClass object.  Do not call any methods on it or
+	 * your app may crash.
+	 */
+	explicit OW_CIMClass(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMClass object with the given name.

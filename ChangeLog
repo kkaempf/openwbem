@@ -1,3 +1,6 @@
+Thu Feb  6 10:40:34 MST 2003
+- Fixed memory leak in openssl (when restarting).
+
 Tue Jan 21 21:13:49 MST 2003
 - Method parameters are optional unless there is a "Required" qualifier.
 

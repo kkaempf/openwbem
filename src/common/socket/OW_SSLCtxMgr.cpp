@@ -38,6 +38,7 @@
 #ifdef OW_HAVE_OPENSSL
 
 #include <openssl/rand.h>
+#include <openssl/err.h>
 #include <string.h>
 
 BIO* OW_SSLCtxMgr::m_bio_err = 0;
@@ -359,6 +360,14 @@ OW_SSLCtxMgr::uninit()
 	{
 		free(m_bio_err);
 		m_bio_err = NULL;
+		
+		// free up memory allocated in SSL_library_init()
+		EVP_cleanup();
+
+		// free up memory allocated in SSL_load_error_strings()
+		ERR_free_strings();
+
+
 	}
 }
 

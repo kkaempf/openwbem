@@ -304,7 +304,7 @@ public:
 
 	static OW_CIMClass readClass(std::istream& istrm)
 	{
-		OW_CIMClass cc;
+		OW_CIMClass cc(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_CLS, cc);
 		return cc;
 	}

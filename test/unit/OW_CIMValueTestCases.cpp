@@ -47,9 +47,9 @@ void OW_CIMValueTestCases::tearDown()
 void OW_CIMValueTestCases::testGetArraySize()
 {
     OW_CIMClassArray ca;
-    ca.push_back(OW_CIMClass());
-    ca.push_back(OW_CIMClass());
-    ca.push_back(OW_CIMClass());
+    ca.push_back(OW_CIMClass(OW_CIMNULL));
+    ca.push_back(OW_CIMClass(OW_CIMNULL));
+    ca.push_back(OW_CIMClass(OW_CIMNULL));
     OW_CIMValue v1(ca);
 	unitAssert( v1.getArraySize() == 3 );
 

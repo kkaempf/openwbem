@@ -95,8 +95,14 @@ bool operator<(const OW_CIMClass::CLSData& x, const OW_CIMClass::CLSData& y)
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass::OW_CIMClass(OW_Bool notNull) :
-	m_pdata((notNull) ? new CLSData : NULL)
+OW_CIMClass::OW_CIMClass() :
+	m_pdata(new CLSData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClass::OW_CIMClass(OW_CIMNULL_t) :
+	m_pdata(0)
 {
 }
 
@@ -638,10 +644,10 @@ OW_CIMClass::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 {
 	if(m_pdata.isNull())
 	{
-		return OW_CIMClass();
+		return OW_CIMClass(OW_CIMNULL);
 	}
 
-	OW_CIMClass theClass(true);
+	OW_CIMClass theClass;
 	theClass.m_pdata->m_name = m_pdata->m_name;
 	theClass.m_pdata->m_parentClassName = m_pdata->m_parentClassName;
 	theClass.m_pdata->m_associationFlag = m_pdata->m_associationFlag;

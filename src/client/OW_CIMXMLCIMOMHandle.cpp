@@ -681,7 +681,7 @@ OW_CIMXMLCIMOMHandle::getClass(
 	OW_StringStream extra;
 	generatePropertyListXML(extra,propertyList);
 
-	OW_CIMClass rval;
+	OW_CIMClass rval(OW_CIMNULL);
 	getClassOp op(rval);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 	return rval;
@@ -1251,7 +1251,7 @@ namespace
 			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
 				OW_CIMInstance ci;
-				OW_CIMClass cc;
+				OW_CIMClass cc(OW_CIMNULL);
 				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cc, ci);
 				if (cop)
 				{
