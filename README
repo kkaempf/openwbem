@@ -72,9 +72,9 @@ and developers add more components to the suite.
          2.3.3 Digest Authentication Module
                This authentication module implements a digest authentication
                scheme (see RFC 2617).  A tool (owdigestgenpass) is provided
-					to create a MD5 password file for use with the digest 
-					authentication module.  The location of the password file
-					is specified in openwbem.conf. 
+               to create a MD5 password file for use with the digest 
+               authentication module.  The location of the password file
+               is specified in openwbem.conf. 
 
    2.4   Extensible Provider Interface through Provider Interface plug-in
          modules. Providers are an extension mechanism for all CIMOMs. When a
@@ -128,24 +128,24 @@ and developers add more components to the suite.
             identifying a provider that is compiled into the cimom. For example,
             the compiled in namespace provider is identified by the provider
             qualifier "cimom::namespace".
-				
-	2.5 - Indications and CIM Listener support
+
+    2.5 - Indications and CIM Listener support
             OpenWBEM has full support for Indications as specified by the
             WBEM Interoperability group from the DMTF. This also includes
             CIM Listener support in the OpenWBEM client API. The CIMOM has support
             for indication trigger providers and indication export providers.
-	
-	2.6 - WQL Level 2 support
-      OpenWBEM has full support WQL level 2 as specified by the WBEM
-            Interoperability group from the DMTF. The WQL support is provided through
-            a shared library that can be used on the client or the server side.
-            By default WQL queries are executed on the server side. The WQL library
-            could be used on the client side to execute WQL queries against a CIMOM
-            that does not provide WQL support.
 
-        2.7 - Access Control Lists
-            OpenWBEM has ACLs implemented at namespace granularity.  Read
-            the file ACL.HOWTO for more information about this feature.
+    2.6 - WQL Level 2 support
+      OpenWBEM has full support WQL level 2 as specified by the WBEM
+      Interoperability group from the DMTF. The WQL support is provided through
+      a shared library that can be used on the client or the server side.
+      By default WQL queries are executed on the server side. The WQL library
+      could be used on the client side to execute WQL queries against a CIMOM
+      that does not provide WQL support.
+
+    2.7 - Access Control Lists
+      OpenWBEM has ACLs implemented at namespace granularity.  Read
+      the file ACL.HOWTO for more information about this feature.
 
                   
 -------------------------------------------------------------------------------
