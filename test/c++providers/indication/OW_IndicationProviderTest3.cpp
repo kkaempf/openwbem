@@ -32,6 +32,7 @@
 
 #include "OW_CppIndicationProviderIFC.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -44,52 +45,374 @@
 #include "OW_Mutex.hpp"
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
+#include "OW_Assertion.hpp"
+
+// TODO: Find a way to get rid of these
+#include "OW_PollingManager.hpp"
+#include "OW_CppProxyProvider.hpp"
 
 // anonymous namespace to prevent library symbol conflicts
 namespace
 {
 
-// This is an example/test of a simple instance/indication provider.  It 
+// This is an example/test of a simple instance/indication/polled provider.  It 
 // returns zero from mustPoll.  The CIMOM will call the *Filter methods.
-// We'll start up a separate thread to "watch" the instances we are 
+// We'll start up a the polled provider to "watch" the objects we are 
 // instrumenting.  Really, we'll just change them once a second, so this
-// provider has something to do.  A real indication provider should only
-// use this model if it can block and wait for some sort of notification
-// that something has happened.  There is no need to create a new thread
-// if polling is needed, just create a combination indication/polled provider
-// see (OW_IndicationProviderTest3).  An indication provider with a separate
-// thread is useful for waiting for external events which will notify the
-// thread that something has happened.  How this notification happens is up
-// to the provider.
+// provider has something to do.
 
 // This example is bordering on the edge of complexity where it should be
 // split up into a couple of source and header files...
 
-class OW_IndicationProviderTest2;
 
-class OW_TestProviderThread : public OW_Thread
+class OW_IndicationProviderTest3 : public OW_CppIndicationProviderIFC, public OW_CppInstanceProviderIFC, public OW_CppPolledProviderIFC
 {
 public:
-	// joinable, so we can wait for it to stop before the library gets 
-	// unloaded.  NEVER start a detached thread from a provider.  As soon as
-	// the provider library is unloaded, the CIMOM will crash if the thread
-	// is still running.
-	OW_TestProviderThread(const OW_CIMOMHandleIFCRef& hdl)
-		: OW_Thread(true) // true means joinable.
-		, m_shuttingDown(false)
-		, m_creationFilterCount(0)
+	
+	OW_IndicationProviderTest3()
+		: m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
-		, m_hdl(hdl)
 	{
 	}
 
-	void shutdown()
+	// Indication provider methods
+	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &) 
+	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::mustPoll");
+		// if this were a real provider, we should check that we can really understand the select statement.  If our thread can't generate the correct indications, then we
+		// should return 1 here.
+		return 0; // means don't poll enumInstances.
+	}
+
+	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
+	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::authorizeFilter");
+		// This is called when someone creates a subscription for an indication we generate.
+		// If we wanted to deny access and cause the subscription creation to fail, we would throw an OW_CIMException::ACCESS_DENIED exception here.  
+	}
+	
+	virtual void activateFilter(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_CIMObjectPath& classPath, 
+		bool firstActivation)
+	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::activateFilter");
+		
+		// eventType contains the name of the indication the listener subscribed to.
+		// this will be one of the class names we indicated in getProviderInfo(OW_IndicationProviderInfo& info)
+		// so for this provider (and most other life cycle indication providers), it's got to be one of:
+		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
+		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
+		{
+			addCreationFilter();
+		}
+		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
+		{
+			addModificationFilter();
+		}
+		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
+		{
+			addDeletionFilter();
+		}
+		else
+		{
+			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
+		}
+		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest3 classname
+		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest3)
+		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest3"))
+		{
+			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
+		}
+
+		OW_WQLCompile comp(filter);
+		// do something with comp
+		(void)comp;
+
+		if (firstActivation)
+		{
+			// TODO: Make a better way to do this that doesn't bypass the provider manager or use a no-delete reference or use g_cimomEnvironment.
+			OW_PollingManagerRef pm = OW_CIMOMEnvironment::g_cimomEnvironment->getPollingManager();
+			pm->addPolledProvider(OW_PolledProviderIFCRef(new OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef(OW_SharedLibraryRef(), OW_Reference<OW_CppPolledProviderIFC>(this, true)))));
+		}
+	}
+	
+	virtual void deActivateFilter(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_CIMObjectPath& classPath, 
+		bool lastActivation)
+	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::deActivateFilter");
+		
+		// eventType contains the name of the indication the listener subscribed to.
+		// this will be one of the class names we indicated in getProviderInfo(OW_IndicationProviderInfo& info)
+		// so for this provider (and most other life cycle indication providers), it's got to be one of:
+		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
+		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
+		{
+			removeCreationFilter();
+		}
+		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
+		{
+			removeModificationFilter();
+		}
+		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
+		{
+			removeDeletionFilter();
+		}
+		else
+		{
+			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
+		}
+		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest3 classname
+		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest3)
+		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest3"))
+		{
+			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
+		}
+
+		OW_WQLCompile comp(filter);
+		// do something with comp
+		(void)comp;
+		
+		if (lastActivation)
+		{
+			OW_MutexLock l(m_guard);
+            OW_ASSERT(m_creationFilterCount == 0);
+			OW_ASSERT(m_modificationFilterCount == 0);
+			OW_ASSERT(m_deletionFilterCount == 0);
+		}
+	}
+
+	/**
+	 * A provider should override this method to report which classes in
+	 * which namespaces it instruments.
+	 * It should insert an entry for each class it is responsible for.
+	 *  The entry consists of the class name and an optional list of namespaces.
+	 *  If the namespace list is empty, all namespaces are implied.
+	 * If the method does nothing, then the provider's class must have a
+	 * provider qualifier that identifies the provider.  This old behavior is
+	 * deprecated and will be removed sometime in the future.  This method
+	 * has a default implementation that does nothing, to allow old providers
+	 * to be migrated forward with little or no change, but once the old
+	 * provider location method is removed, this member function will be pure
+	 * virtual.
+	 */
+	virtual void getProviderInfo(OW_IndicationProviderInfo& info) 
+	{
+		// all the life-cycle indications that may be generated by this provider
+		info.addInstrumentedClass("CIM_InstCreation");
+		info.addInstrumentedClass("CIM_InstModification");
+		info.addInstrumentedClass("CIM_InstDeletion");
+	}
+
+	// These are the indication provider methods.
+	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
+	{
+		// The class we are instrumenting
+		info.addInstrumentedClass("OW_IndicationProviderTest3");
+	}
+
+	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Delete not supported");
+	}
+
+	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &) 
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Create not supported");
+	}
+	
+	virtual OW_CIMInstance getInstance(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_String &ns, 
+		const OW_CIMObjectPath &instanceName, 
+		OW_Bool localOnly, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin, 
+		const OW_StringArray *propertyList, 
+		const OW_CIMClass &cimClass) 
+	{
+		(void)ns; (void)cimClass;
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::getInstance");
+		OW_Int32 id = 0;
+		try
+		{
+			id = instanceName.getKeyT("DeviceID").getValueT().toString().toInt32();
+		}
+		catch (OW_Exception& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Invalid DeviceID property");
+		}
+
+		// m_insts could be accessed from multiple threads
+		OW_MutexLock l(m_guard);
+		if (id < 0 || OW_UInt32(id) >= m_insts.size())
+		{
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
+		}
+		return m_insts[id].clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
+	}
+
+	virtual void enumInstances(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_String &ns, 
+		const OW_String &className, 
+		OW_CIMInstanceResultHandlerIFC &result, 
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin, 
+		const OW_StringArray *propertyList, 
+		const OW_CIMClass &requestedClass, 
+		const OW_CIMClass &cimClass) 
+	{
+		(void)ns; (void)className;
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::enumInstances");
+		// m_insts could be accessed from multiple threads
+		OW_MutexLock l(m_guard);
+		for (size_t i = 0; i < m_insts.size(); ++i)
+		{
+			result.handle(m_insts[i].clone(localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass));
+		}
+	}
+	
+	virtual void enumInstanceNames(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_String &ns, 
+		const OW_String &className, 
+		OW_CIMObjectPathResultHandlerIFC &result, 
+		const OW_CIMClass &cimClass) 
+	{
+		(void)ns; (void)className; (void)cimClass;
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::enumInstanceNames");
+		// m_insts could be accessed from multiple threads
+		OW_MutexLock l(m_guard);
+		for (size_t i = 0; i < m_insts.size(); ++i)
+		{
+			result.handle(OW_CIMObjectPath(m_insts[i]));
+		}
+	}
+	
+	virtual void modifyInstance(
+		const OW_ProviderEnvironmentIFCRef &, 
+		const OW_String &, 
+		const OW_CIMInstance &, 
+		const OW_CIMInstance &, 
+		OW_Bool , 
+		const OW_StringArray *, 
+		const OW_CIMClass &) 
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Modify not supported");
+	}
+
+	// Polled provider methods
+	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		OW_MutexLock l(m_guard);
-		m_shuttingDown = true;
-		m_cond.notifyAll(); // wake up run() so it will exit.
+		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
+		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)
+		{
+			updateInstancesAndSendIndications(env);
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
+
+	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		env->getLogger()->logDebug("OW_IndicationProviderTest3::getInitialPollingInterval");
+		OW_MutexLock l(m_guard);
+		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
+		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)
+		{
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+private:
+	void updateInstancesAndSendIndications(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+
+		// m_insts could be accessed from multiple threads
+		OW_MutexLock l(m_guard);
+		if (m_insts.size() == 5)
+		{
+			if (m_deletionFilterCount > 0)
+			{
+				// send out CIM_InstDeletion indications
+				for (size_t i = 0; i < m_insts.size(); ++i)
+				{
+					OW_CIMInstance expInst(true);
+					expInst.setClassName("CIM_InstDeletion");
+					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
+					hdl->exportIndication(expInst, "");
+				}
+			}
+			m_insts.clear();
+		}
+		else
+		{
+			// add an instance
+			OW_CIMInstance iToAdd(m_theClass.newInstance());
+			iToAdd.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
+			iToAdd.setProperty("SystemName", OW_CIMValue("localhost"));
+			iToAdd.setProperty("CreationClassName", OW_CIMValue("OW_IndicationProviderTest3"));
+			iToAdd.setProperty("DeviceID", OW_CIMValue(OW_String(m_insts.size())));
+			// PowerOnHours is our property that will be modified
+			iToAdd.setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(m_insts.size())));
+			if (m_creationFilterCount > 0)
+			{
+				// send out CIM_InstCreation indications
+				OW_CIMInstance expInst(true);
+				expInst.setClassName("CIM_InstCreation");
+				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
+				hdl->exportIndication(expInst, "");
+			}
+			m_insts.push_back(iToAdd);
+
+			// now modify the first instance's PowerOnHours property
+			OW_CIMInstance prevInst = m_insts[0];
+			OW_UInt64 oldPowerOnHours = prevInst.getPropertyT("PowerOnHours").getValueT().toUInt64();
+			m_insts[0].setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(oldPowerOnHours + 1)));
+
+			if (m_modificationFilterCount > 0)
+			{
+				// send out CIM_InstModification indications
+				OW_CIMInstance expInst(true);
+				expInst.setClassName("CIM_InstModification");
+				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
+				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));
+				hdl->exportIndication(expInst, "");
+			}
+		}
+	}
+
+	OW_CIMInstanceArray m_insts;
+
+	OW_Mutex m_guard;
+	OW_CIMClass m_theClass;
+
+	int m_creationFilterCount;
+	int m_modificationFilterCount;
+	int m_deletionFilterCount;
 
 	void addCreationFilter()
 	{
@@ -126,357 +449,12 @@ public:
 		OW_MutexLock l(m_guard);
 		--m_deletionFilterCount;
 	}
-
-protected:
-	virtual void run();
-
-	OW_Mutex m_guard;
-	OW_Condition m_cond;
-	bool m_shuttingDown;
-	int m_creationFilterCount;
-	int m_modificationFilterCount;
-	int m_deletionFilterCount;
-	OW_CIMOMHandleIFCRef m_hdl;
-	OW_IndicationProviderTest2* m_pProv;
 };
-	
-class OW_IndicationProviderTest2 : public OW_CppIndicationProviderIFC, public OW_CppInstanceProviderIFC
-{
-public:
-	// Indication provider methods
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &) 
-	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::mustPoll");
-		// if this were a real provider, we should check that we can really understand the select statement.  If our thread can't generate the correct indications, then we
-		// should return 1 here.
-		return 0; // means don't poll enumInstances.
-	}
-
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_CIMObjectPath &, const OW_String &) 
-	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::authorizeFilter");
-		// This is called when someone creates a subscription for an indication we generate.
-		// If we wanted to deny access and cause the subscription creation to fail, we would throw an OW_CIMException::ACCESS_DENIED exception here.  
-	}
-	
-	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
-		bool firstActivation)
-	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::activateFilter");
-		
-		// eventType contains the name of the indication the listener subscribed to.
-		// this will be one of the class names we indicated in getProviderInfo(OW_IndicationProviderInfo& info)
-		// so for this provider (and most other life cycle indication providers), it's got to be one of:
-		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
-		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
-		{
-			m_thread->addCreationFilter();
-		}
-		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
-		{
-			m_thread->addModificationFilter();
-		}
-		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
-		{
-			m_thread->addDeletionFilter();
-		}
-		else
-		{
-			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
-		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest2)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest2"))
-		{
-			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
-		}
-
-		OW_WQLCompile comp(filter);
-		// do something with comp
-		(void)comp;
-
-		// start the thread now that someone is listening for our events.
-		if (firstActivation)
-		{
-			m_thread->start();
-		}
-	}
-	
-	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath, 
-		bool lastActivation)
-	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter");
-		
-		// eventType contains the name of the indication the listener subscribed to.
-		// this will be one of the class names we indicated in getProviderInfo(OW_IndicationProviderInfo& info)
-		// so for this provider (and most other life cycle indication providers), it's got to be one of:
-		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
-		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
-		{
-			m_thread->removeCreationFilter();
-		}
-		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
-		{
-			m_thread->removeModificationFilter();
-		}
-		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
-		{
-			m_thread->removeDeletionFilter();
-		}
-		else
-		{
-			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
-		}
-		// class path should either be a namespace w/out a classname (meaning the filter didn't contain an ISA clause), or have a namespace and OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains SourceInstance ISA OW_IndicationProviderTest2)
-		if (!classPath.getObjectName().empty() && !classPath.getObjectName().equalsIgnoreCase("OW_IndicationProviderTest2"))
-		{
-			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
-		}
-
-		OW_WQLCompile comp(filter);
-		// do something with comp
-		(void)comp;
-		
-		// terminate the thread if no one is listening for our events.
-		if (lastActivation)
-		{
-			m_thread->shutdown();
-			m_thread->join();
-		}
-	}
-
-	/**
-	 * A provider should override this method to report which classes in
-	 * which namespaces it instruments.
-	 * It should insert an entry for each class it is responsible for.
-	 *  The entry consists of the class name and an optional list of namespaces.
-	 *  If the namespace list is empty, all namespaces are implied.
-	 * If the method does nothing, then the provider's class must have a
-	 * provider qualifier that identifies the provider.  This old behavior is
-	 * deprecated and will be removed sometime in the future.  This method
-	 * has a default implementation that does nothing, to allow old providers
-	 * to be migrated forward with little or no change, but once the old
-	 * provider location method is removed, this member function will be pure
-	 * virtual.
-	 */
-	virtual void getProviderInfo(OW_IndicationProviderInfo& info) 
-	{
-		// all the life-cycle indications that may be generated by this provider
-		info.addInstrumentedClass("CIM_InstCreation");
-		info.addInstrumentedClass("CIM_InstModification");
-		info.addInstrumentedClass("CIM_InstDeletion");
-	}
-
-	// These are the indication provider methods.
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
-	{
-		// The class we are instrumenting
-		info.addInstrumentedClass("OW_IndicationProviderTest2");
-	}
-
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Delete not supported");
-	}
-
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &) 
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Create not supported");
-	}
-	
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &instanceName, 
-		OW_Bool localOnly, 
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &cimClass) 
-	{
-		(void)ns; (void)cimClass;
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::getInstance");
-		OW_Int32 id = 0;
-		try
-		{
-			id = instanceName.getKeyT("DeviceID").getValueT().toString().toInt32();
-		}
-		catch (OW_Exception& e)
-		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Invalid DeviceID property");
-		}
-
-		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
-		if (id < 0 || OW_UInt32(id) >= m_insts.size())
-		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
-		}
-		return m_insts[id].clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
-	}
-
-	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMInstanceResultHandlerIFC &result, 
-		OW_Bool localOnly, 
-		OW_Bool deep, 
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &requestedClass, 
-		const OW_CIMClass &cimClass) 
-	{
-		(void)ns; (void)className;
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::enumInstances");
-		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
-		for (size_t i = 0; i < m_insts.size(); ++i)
-		{
-			result.handle(m_insts[i].clone(localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass));
-		}
-	}
-	
-	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_CIMClass &cimClass) 
-	{
-		(void)ns; (void)className; (void)cimClass;
-		env->getLogger()->logDebug("OW_IndicationProviderTest2::enumInstanceNames");
-		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
-		for (size_t i = 0; i < m_insts.size(); ++i)
-		{
-			result.handle(OW_CIMObjectPath(m_insts[i]));
-		}
-	}
-	
-	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef &, 
-		const OW_String &, 
-		const OW_CIMInstance &, 
-		const OW_CIMInstance &, 
-		OW_Bool , 
-		const OW_StringArray *, 
-		const OW_CIMClass &) 
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Modify not supported");
-	}
-
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
-	{
-		m_thread = new OW_TestProviderThread(env->getCIMOMHandle());
-	}
-
-	virtual void cleanup() 
-	{
-		// we've got to stop the thread we started
-		if (m_thread->isRunning())
-		{
-			m_thread->shutdown();
-			m_thread->join();
-		}
-	}
-
-	void updateInstancesAndSendIndications(const OW_CIMOMHandleIFCRef& hdl, int creat, int mod, int del)
-	{
-		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
-		if (m_insts.size() == 5)
-		{
-			if (del > 0)
-			{
-				// send out CIM_InstDeletion indications
-				for (size_t i = 0; i < m_insts.size(); ++i)
-				{
-					OW_CIMInstance expInst(true);
-					expInst.setClassName("CIM_InstDeletion");
-					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
-					hdl->exportIndication(expInst, "");
-				}
-			}
-			m_insts.clear();
-		}
-		else
-		{
-			// add an instance
-			OW_CIMInstance iToAdd(m_theClass.newInstance());
-			iToAdd.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
-			iToAdd.setProperty("SystemName", OW_CIMValue("localhost"));
-			iToAdd.setProperty("CreationClassName", OW_CIMValue("OW_IndicationProviderTest2"));
-			iToAdd.setProperty("DeviceID", OW_CIMValue(OW_String(m_insts.size())));
-			// PowerOnHours is our property that will be modified
-			iToAdd.setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(m_insts.size())));
-			if (creat > 0)
-			{
-				// send out CIM_InstCreation indications
-				OW_CIMInstance expInst(true);
-				expInst.setClassName("CIM_InstCreation");
-				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
-				hdl->exportIndication(expInst, "");
-			}
-			m_insts.push_back(iToAdd);
-
-			// now modify the first instance's PowerOnHours property
-			OW_CIMInstance prevInst = m_insts[0];
-			OW_UInt64 oldPowerOnHours = prevInst.getPropertyT("PowerOnHours").getValueT().toUInt64();
-			m_insts[0].setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(oldPowerOnHours + 1)));
-
-			if (mod > 0)
-			{
-				// send out CIM_InstModification indications
-				OW_CIMInstance expInst(true);
-				expInst.setClassName("CIM_InstModification");
-				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
-				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));
-				hdl->exportIndication(expInst, "");
-			}
-		}
-	}
-
-private:
-	OW_CIMInstanceArray m_insts;
-
-	// this is a reference so we can pass in a cimom handle to it's constructor.  We can't get a cimom handle in our constructor, so we have to wait until initialize is called.
-	OW_Reference<OW_TestProviderThread> m_thread;
-	OW_Mutex m_guard;
-	OW_CIMClass m_theClass;
-};
-
-
-void OW_TestProviderThread::run()
-{
-	OW_MutexLock l(m_guard);
-	while (!m_shuttingDown)
-	{
-		m_pProv->updateInstancesAndSendIndications(m_hdl, m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
-		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
-		// to be able to stop the thread when the cimom shuts down or restarts.
-		m_cond.timedWait(l, 1);
-	}
-}
 
 
 } // end anonymous namespace
 
 
-OW_PROVIDERFACTORY(OW_IndicationProviderTest2, owproviderindicationtest1)
+OW_PROVIDERFACTORY(OW_IndicationProviderTest3, owproviderindicationtest1)
 
 
