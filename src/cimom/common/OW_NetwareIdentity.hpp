@@ -50,8 +50,9 @@ class NetwareIdentity : public OperationContext::Data
 {
 public:
 	NetwareIdentity();
-	NetwareIdentity(int identity, NXPathCtx_t pathContext,
-		const String& userName, const String& userDN);
+	NetwareIdentity(int* identity, NXPathCtx_t pathContext,
+		const String& userName, const String& userDN, 
+		bool isAdmin);
 	~NetwareIdentity();
 
 	/**
@@ -70,7 +71,7 @@ public:
 
 private:
 
-	int m_identity;
+	int* m_identity;
 	NXPathCtx_t m_pathContext;
 	String m_userName;
 	String m_userDN;

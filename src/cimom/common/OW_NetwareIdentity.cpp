@@ -51,7 +51,7 @@ namespace
 {
 
 int
-doSetcwd(NXPathctx_t pathCtx)
+doSetcwd(NXPathCtx_t pathCtx)
 {
 	int cc = setcwd2(pathCtx);
 	if (cc != 0)
@@ -120,7 +120,7 @@ NetwareIdentity::NetwareIdentity()
 
 //////////////////////////////////////////////////////////////////////////////
 NetwareIdentity::NetwareIdentity(int* identity, NXPathCtx_t pathContext,
-	const String& userName, const String& userDN, m_isAdmin)
+	const String& userName, const String& userDN, bool m_isAdmin)
 	: OperationContext::Data()
 	, m_identity(identity)
 	, m_pathContext(pathContext)
@@ -130,7 +130,7 @@ NetwareIdentity::NetwareIdentity(int* identity, NXPathCtx_t pathContext,
 	, m_isAdmin(false)
 {
 	int error;
-	if (!is_valid_identity(m_identity, &error))
+	if (!is_valid_identity(*m_identity, &error))
 	{
 		m_valid = false;
 		cerr << "** Invalid identity passed to NetwareIdentity CTOR: ";
@@ -138,7 +138,7 @@ NetwareIdentity::NetwareIdentity(int* identity, NXPathCtx_t pathContext,
 		{
 			case 22:
 				cerr << "Bad identity. Could not be found" << endl;
-				brea;
+				break;
 			case 105:
 				cerr << "Thread has no context" << endl;
 			default:
@@ -168,7 +168,7 @@ NetwareIdentity::~NetwareIdentity()
 			}
 		}
 
-		delete_identity(m_identity);
+		delete_identity(*m_identity);
 	}
 }
 
