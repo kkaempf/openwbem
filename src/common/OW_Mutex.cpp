@@ -80,4 +80,21 @@ OW_Mutex::release()
 	return true;
 }
 
+void 
+OW_Mutex::conditionPreWait(OW_MutexLockState& state)
+{
+	if (OW_MutexImpl::conditionPreWait(m_mutex, state) != 0)
+	{
+		OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
+	}
+}
+
+void
+OW_Mutex::conditionPostWait(OW_MutexLockState& state)
+{
+	if (OW_MutexImpl::conditionPostWait(m_mutex, state) != 0)
+	{
+		OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
+	}
+}
 

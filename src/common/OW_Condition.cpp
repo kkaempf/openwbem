@@ -98,11 +98,14 @@ void
 OW_Condition::doWait(OW_Mutex& mutex)
 {
 	int res;
+	OW_MutexLockState state;
+	mutex.conditionPreWait(state);
 	#ifdef OW_USE_GNU_PTH
-	res = pth_cond_wait(&m_condition, &mutex.m_mutex);
+	res = pth_cond_wait(&m_condition, state.pmutex);
 	#else
-	res = pthread_cond_wait(&m_condition, &mutex.m_mutex.mutex);
+	res = pthread_cond_wait(&m_condition, state.pmutex);
 	#endif
+	mutex.conditionPostWait(state);
 	assert(res == 0);
 }
 

@@ -80,6 +80,9 @@ public:
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
 	static int releaseMutex(OW_Mutex_t& handle);
+	
+	static int conditionPreWait(OW_Mutex_t& handle, OW_MutexLockState& state);
+	static int conditionPostWait(OW_Mutex_t& handle, OW_MutexLockState& state);
 };
 
 #endif

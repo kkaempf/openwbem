@@ -45,6 +45,7 @@ typedef pth_t			OW_Thread_t;
 
 // Platform specific mutex type
 typedef pth_mutex_t	OW_Mutex_t;
+typedef pth_mutex_t OW_NativeMutex_t;
 
 // Platform specific event type
 typedef void*			OW_ThreadEvent_t;
@@ -64,17 +65,25 @@ extern "C"
 // Platform specific thread type
 typedef pthread_t					OW_Thread_t;
 
+typedef pthread_mutex_t OW_NativeMutex_t;
+
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 // Platform specific mutex type
+
+// we have native recursive mutexes.
 struct OW_Mutex_t
 {
 	pthread_mutex_t mutex;
 };
-//typedef pthread_mutex_t 		OW_Mutex_t;
 #else
+// we have to emulate recursive mutexes.
 struct OW_Mutex_t
 {
 	pthread_mutex_t mutex;
+	pthread_cond_t unlocked;
+	bool valid_id;
+	unsigned count;
+	pthread_t thread_id;
 };
 #endif
 
@@ -88,6 +97,11 @@ typedef pthread_cond_t 			OW_ConditionVar_t;
 
 #endif	// #ifdef OW_USE_GNU_PTH
 
+struct OW_MutexLockState
+{
+	long count;
+	OW_NativeMutex_t* pmutex;
+};
 				
 #endif	// #ifndef OW_THREAD_TYPES_HPP_
 				

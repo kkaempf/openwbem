@@ -68,15 +68,17 @@ public:
 	 */
 	bool release();
 
-protected:
-
+private:
 	OW_Mutex_t m_mutex;
 
-private:
+	// noncopyable
 	OW_Mutex(const OW_Mutex&);
 	OW_Mutex operator = (const OW_Mutex&);
 
 	friend class OW_Condition;
+
+	void conditionPreWait(OW_MutexLockState& state);
+	void conditionPostWait(OW_MutexLockState& state);
 };
 
 

@@ -57,10 +57,14 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
     pthread_mutexattr_t attr;
     int res = pthread_mutexattr_init(&attr);
     assert(res == 0);
+    if (res != 0)
+        return -1;
  
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
     res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     assert(res == 0);
+    if (res != 0)
+        return -1;
 #endif
  
     res = pthread_mutex_init(&handle.mutex, &attr);
@@ -74,7 +78,11 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
         pthread_mutex_destroy(&handle.mutex);
         return -1;
     }
+	
+	handle.valid_id = false;
+	handle.count = 0;
 #endif
+
 	return 0;
 #endif
 }
@@ -114,10 +122,10 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 	}
 
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_destroy(&handle.unlocked);
+    int res = pthread_cond_destroy(&handle.unlocked);
     assert(res == 0);
 #endif
-	return 0;
+	return res;
 #endif
 }
 
@@ -141,7 +149,6 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
 
     int res = pthread_mutex_lock(&handle.mutex);
     assert(res == 0);
-	return res;
  
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
     pthread_t tid = pthread_self();
@@ -213,7 +220,73 @@ OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
  
     res = pthread_mutex_unlock(&handle.mutex);
     assert(res == 0);
+	return res;
 #endif
+#endif
+}
+
+
+// static
+int
+OW_MutexImpl::conditionPreWait(OW_Mutex_t& handle, OW_MutexLockState& state)
+{
+#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    int res = pthread_mutex_lock(&handle.mutex);
+    assert(res == 0);
+	if (res != 0)
+	{
+		return -1;
+	}
+ 
+    assert(handle.valid_id);
+	if (!handle.valid_id)
+	{
+		return -1;
+	}
+    handle.valid_id = false;
+ 
+    res = pthread_cond_signal(&handle.unlocked);
+    assert(res == 0);
+	if (res != 0)
+	{
+		return -1;
+	}
+
+    state.count = handle.count;
+#endif
+ 
+    state.pmutex = &handle.mutex;
+	return 0;
+}
+
+// static
+int
+OW_MutexImpl::conditionPostWait(OW_Mutex_t& handle, OW_MutexLockState& state)
+{
+#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    (void)handle;
+	(void)state;
+	return 0;
+#else
+    int res = 0;
+ 
+    while (handle.valid_id)
+    {
+        res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
+        assert(res == 0);
+		if (res != 0)
+		{
+			return -1;
+		}
+    }
+ 
+    handle.thread_id = pthread_self();
+    handle.valid_id = true;
+    handle.count = state.count;
+ 
+    res = pthread_mutex_unlock(&handle.mutex);
+    assert(res == 0);
+	return res;
 #endif
 }
 
