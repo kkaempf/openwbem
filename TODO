@@ -10,6 +10,7 @@ Testing:
       - wbem services (get cimworkshop talking to owcimomd)
       - pegasus
       - openwbem 1.3.2 1.2.x (make sure binary fails)
+      - wbemcli (http://www-124.ibm.com/sblim/sblimrm.html)
     - various make check components to have separate namespaces.
     - review CIM operations over HTTP v1.1 and see where we deviate.
       specifically, the indication delivery is known to be different. 
