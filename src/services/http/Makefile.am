@@ -10,6 +10,13 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 # for listeners to use as well as the services dir for the cimom to use.
 install-exec-local : install-ow-shared-libs
 	ln -sf $(DESTDIR)$(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
+	if [ "$(LIB_EXT)" = "dylib" ]; then \
+		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
+			mv $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).dso; \
+			cp $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
+			ln -sf $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/$(OW_SHARED_LIBS); \
+			fi; \
+	fi;
 
 uninstall-local : uninstall-ow-shared-libs
 

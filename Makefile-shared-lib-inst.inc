@@ -3,7 +3,7 @@ install-ow-shared-libs:
 	@for i in $(OW_SHARED_LIBS); do \
 		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
 			if [ "$(LIB_EXT)" = "dylib" ]; then \
-				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir); \
+				$(INSTALL_PROGRAM) `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT)* $(DESTDIR)$(thelibdir); \
 				rm -f $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 			else \
