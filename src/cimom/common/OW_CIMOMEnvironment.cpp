@@ -1442,7 +1442,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			StringArray deps(m_services[i]->getDependencies());
 			for (size_t j = 0; j < deps.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1:%2", name, deps[j]));
+				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", name, deps[j]));
 				if (!depGraph.addDependency(name, deps[j]))
 				{
 					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", name, deps[j]).c_str());
@@ -1453,7 +1453,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			StringArray dependentServices(m_services[i]->getDependentServices());
 			for (size_t j = 0; j < dependentServices.size(); ++j)
 			{
-				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1:%2", dependentServices[j], name));
+				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1->%2", dependentServices[j], name));
 				if (!depGraph.addDependency(dependentServices[j], name))
 				{
 					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", dependentServices[j], name).c_str());
