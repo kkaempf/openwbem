@@ -53,6 +53,7 @@ OW_CIMScope::toMOF() const
 		case CLASS: return "class"; break;
 		case ASSOCIATION: return "association"; break;
 		case INDICATION: return "indication"; break;
+		case QUALIFIER: return "qualifier"; break;
 		case PROPERTY: return "property"; break;
 		case REFERENCE: return "reference"; break;
 		case METHOD: return "method"; break;
@@ -68,7 +69,7 @@ OW_CIMScope::readObject(istream &istrm)
 {
 	OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
 	OW_BinIfcIO::read(istrm, &m_val, sizeof(m_val));
-	m_val = OW_ntoh32(m_val);
+	m_val = Scope(OW_ntoh32(m_val));
 }
 
 //////////////////////////////////////////////////////////////////////////////					

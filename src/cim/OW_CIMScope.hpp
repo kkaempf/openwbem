@@ -44,7 +44,7 @@ class OW_CIMScope : public OW_CIMBase
 public:
 
 	// An enumeration of the scope values that this class understands
-	enum
+	enum Scope
 	{
 		BAD			= 0,	// Indicates unset or bad
 		SCHEMA		= 1,	// A CIM schema
@@ -56,7 +56,6 @@ public:
 		METHOD		= 7,	// A CIM method
 		PARAMETER	= 8,	// A CIM parameter
 		QUALIFIER	= 9,  	// A CIM qualifier
-		INSTANCE	= 10,	// An instance (NOT SUN)
 		ANY			= 11,	// Any CIM element
 		MAXSCOPE	= 12
 	};
@@ -70,7 +69,7 @@ public:
 	 * Create a scope with a specified scoping value.
 	 * @param scopeVal The scoping value.
 	 */
-	OW_CIMScope(OW_Int32 scopeVal) : OW_CIMBase(), m_val(scopeVal)
+	OW_CIMScope(Scope scopeVal) : OW_CIMBase(), m_val(scopeVal)
 	{
 		if(!validScope(scopeVal))
 			m_val = BAD;
@@ -102,7 +101,7 @@ public:
 	/**
 	 * @return The scoping value of this scope.
 	 */
-	OW_Int32 getScope() const {  return m_val; }
+	Scope getScope() const {  return m_val; }
 
 	/**
 	 * Determine if another scope is equal to this one.
@@ -175,12 +174,17 @@ public:
 
 private:
 
-	static OW_Bool validScope(OW_Int32 val)
+	static OW_Bool validScope(Scope val)
 	{
 		return (val > BAD && val < MAXSCOPE);
 	}
 
-	OW_Int32 m_val;
+	Scope m_val;
+
+	friend bool operator<(const OW_CIMScope& x, const OW_CIMScope& y)
+	{
+		return x.m_val < y.m_val;
+	}
 };
 
 #endif

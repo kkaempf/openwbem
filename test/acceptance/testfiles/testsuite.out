@@ -5230,7 +5230,7 @@ Qualifier Aggregation : boolean = false, Scope(association), Flavor(DisableOverr
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Alias
-Qualifier Alias : string, Scope(reference,property,method), Flavor(Translatable);
+Qualifier Alias : string, Scope(property,reference,method), Flavor(Translatable);
 
 <QUALIFIER.DECLARATION NAME="Alias" TYPE="string" ISARRAY="false" TRANSLATABLE="true">
   <SCOPE REFERENCE="true" PROPERTY="true" METHOD="true">
@@ -5298,17 +5298,17 @@ Qualifier Deprecated : string[], Scope(class,association,property,method);
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Description
-Qualifier Description : string, Scope(class,BAD SCOPE,association,reference,property,method,parameter,indication), Flavor(Translatable);
+Qualifier Description : string, Scope(any), Flavor(Translatable);
 
 <QUALIFIER.DECLARATION NAME="Description" TYPE="string" ISARRAY="false" TRANSLATABLE="true">
-  <SCOPE CLASS="true" INSTANCE="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
+  <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: DisplayName
-Qualifier DisplayName : string, Scope(class,BAD SCOPE,association,reference,property,method,parameter,indication), Flavor(Translatable);
+Qualifier DisplayName : string, Scope(any), Flavor(Translatable);
 
 <QUALIFIER.DECLARATION NAME="DisplayName" TYPE="string" ISARRAY="false" TRANSLATABLE="true">
-  <SCOPE CLASS="true" INSTANCE="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
+  <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: DN
@@ -5332,7 +5332,7 @@ Qualifier EmbeddedObject : boolean = false, Scope(property);
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Expensive
-Qualifier Expensive : boolean = false, Scope(class,association,reference,property,method);
+Qualifier Expensive : boolean = false, Scope(class,association,property,reference,method);
 
 <QUALIFIER.DECLARATION NAME="Expensive" TYPE="boolean" ISARRAY="false">
   <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true">
@@ -5342,10 +5342,10 @@ Qualifier Expensive : boolean = false, Scope(class,association,reference,propert
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Experimental
-Qualifier Experimental : boolean = false, Scope(class,BAD SCOPE,association,reference,property,method,parameter,indication), Flavor(DisableOverride);
+Qualifier Experimental : boolean = false, Scope(any), Flavor(DisableOverride);
 
 <QUALIFIER.DECLARATION NAME="Experimental" TYPE="boolean" ISARRAY="false" OVERRIDABLE="false">
-  <SCOPE CLASS="true" INSTANCE="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
+  <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
   </SCOPE>
   <VALUE>
     false
@@ -5392,7 +5392,7 @@ Qualifier Indication : boolean = false, Scope(class,indication), Flavor(DisableO
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Invisible
-Qualifier Invisible : boolean = false, Scope(class,association,reference,property,method);
+Qualifier Invisible : boolean = false, Scope(class,association,property,reference,method);
 
 <QUALIFIER.DECLARATION NAME="Invisible" TYPE="boolean" ISARRAY="false">
   <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true">
@@ -5402,7 +5402,7 @@ Qualifier Invisible : boolean = false, Scope(class,association,reference,propert
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Key
-Qualifier Key : boolean = false, Scope(reference,property), Flavor(DisableOverride);
+Qualifier Key : boolean = false, Scope(property,reference), Flavor(DisableOverride);
 
 <QUALIFIER.DECLARATION NAME="Key" TYPE="boolean" ISARRAY="false" OVERRIDABLE="false">
   <SCOPE REFERENCE="true" PROPERTY="true">
@@ -5422,7 +5422,7 @@ Qualifier Large : boolean = false, Scope(class,property);
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: MappingStrings
-Qualifier MappingStrings : string[], Scope(class,association,reference,property,indication);
+Qualifier MappingStrings : string[], Scope(class,association,indication,property,reference);
 
 <QUALIFIER.DECLARATION NAME="MappingStrings" TYPE="string" ISARRAY="true">
   <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" INDICATION="true">
@@ -5515,7 +5515,7 @@ Qualifier Out : boolean = false, Scope(parameter), Flavor(DisableOverride);
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Override
-Qualifier Override : string, Scope(reference,property,method), Flavor(DisableOverride);
+Qualifier Override : string, Scope(property,reference,method), Flavor(DisableOverride);
 
 <QUALIFIER.DECLARATION NAME="Override" TYPE="string" ISARRAY="false" OVERRIDABLE="false">
   <SCOPE REFERENCE="true" PROPERTY="true" METHOD="true">
@@ -5539,10 +5539,10 @@ Qualifier PropertyUsage : string = "CurrentContext", Scope(property);
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Provider
-Qualifier Provider : string, Scope(class,BAD SCOPE,association,reference,property,method,parameter,indication);
+Qualifier Provider : string, Scope(any);
 
 <QUALIFIER.DECLARATION NAME="Provider" TYPE="string" ISARRAY="false">
-  <SCOPE CLASS="true" INSTANCE="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
+  <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true" INDICATION="true">
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Read
@@ -5590,7 +5590,7 @@ Qualifier Source : string, Scope(class,association,indication);
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: SourceType
-Qualifier SourceType : string, Scope(class,association,reference,indication);
+Qualifier SourceType : string, Scope(class,association,indication,reference);
 
 <QUALIFIER.DECLARATION NAME="SourceType" TYPE="string" ISARRAY="false">
   <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" INDICATION="true">
@@ -5607,14 +5607,14 @@ Qualifier Static : boolean = false, Scope(property,method), Flavor(DisableOverri
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: Syntax
-Qualifier Syntax : string, Scope(reference,property,method,parameter);
+Qualifier Syntax : string, Scope(property,reference,method,parameter);
 
 <QUALIFIER.DECLARATION NAME="Syntax" TYPE="string" ISARRAY="false">
   <SCOPE REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true">
   </SCOPE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: SyntaxType
-Qualifier SyntaxType : string, Scope(reference,property,method,parameter);
+Qualifier SyntaxType : string, Scope(property,reference,method,parameter);
 
 <QUALIFIER.DECLARATION NAME="SyntaxType" TYPE="string" ISARRAY="false">
   <SCOPE REFERENCE="true" PROPERTY="true" METHOD="true" PARAMETER="true">
@@ -5631,7 +5631,7 @@ Qualifier Terminal : boolean = false, Scope(class);
   </VALUE>
 </QUALIFIER.DECLARATION>
 Found Qualifier Definition: TriggerType
-Qualifier TriggerType : string, Scope(class,association,reference,property,method,indication);
+Qualifier TriggerType : string, Scope(class,association,indication,property,reference,method);
 
 <QUALIFIER.DECLARATION NAME="TriggerType" TYPE="string" ISARRAY="false">
   <SCOPE CLASS="true" ASSOCIATION="true" REFERENCE="true" PROPERTY="true" METHOD="true" INDICATION="true">

@@ -38,6 +38,7 @@
 
 #include "OW_config.h"
 #include "OW_XMLClass.hpp"
+#include "OW_CIMScope.hpp"
 
 class OW_CIMXMLParser;
 
@@ -64,7 +65,7 @@ private:
 
 	static void processScope(OW_CIMXMLParser& parser,
 		OW_CIMQualifierType& cqt, const char* attrName,
-		int scopeValue)
+		OW_CIMScope::Scope scopeValue)
 		/*throw (OW_CIMException)*/;
 
 };

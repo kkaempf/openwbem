@@ -122,13 +122,22 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	{
 		// process optional scope child
 		processScope(parser,cimQualifier,"CLASS",OW_CIMScope::CLASS);
-		processScope(parser,cimQualifier,"INSTANCE",OW_CIMScope::INSTANCE);
 		processScope(parser,cimQualifier,"ASSOCIATION",OW_CIMScope::ASSOCIATION);
 		processScope(parser,cimQualifier,"REFERENCE",OW_CIMScope::REFERENCE);
 		processScope(parser,cimQualifier,"PROPERTY",OW_CIMScope::PROPERTY);
 		processScope(parser,cimQualifier,"METHOD",OW_CIMScope::METHOD);
 		processScope(parser,cimQualifier,"PARAMETER",OW_CIMScope::PARAMETER);
 		processScope(parser,cimQualifier,"INDICATION",OW_CIMScope::INDICATION);
+		if (cimQualifier.hasScope(OW_CIMScope::CLASS) &&
+			cimQualifier.hasScope(OW_CIMScope::ASSOCIATION) &&
+			cimQualifier.hasScope(OW_CIMScope::REFERENCE) &&
+			cimQualifier.hasScope(OW_CIMScope::PROPERTY) &&
+			cimQualifier.hasScope(OW_CIMScope::METHOD) &&
+			cimQualifier.hasScope(OW_CIMScope::PARAMETER) &&
+			cimQualifier.hasScope(OW_CIMScope::INDICATION))
+		{
+			cimQualifier.addScope(OW_CIMScope::ANY); // This will erase all the others.
+		}
 		parser.mustGetNext();
 		parser.mustGetEndTag();
 	}
@@ -147,7 +156,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 void
 OW_XMLQualifier::processScope(OW_CIMXMLParser& parser,
 		OW_CIMQualifierType& cqt, const char* attrName,
-		int scopeValue)
+		OW_CIMScope::Scope scopeValue)
 {
 	OW_String scope = parser.getAttribute(attrName);
 	if(scope.length() == 0)

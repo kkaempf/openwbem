@@ -35,6 +35,8 @@
 #include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
+#include <algorithm> // for std::sort
+
 using std::istream;
 using std::ostream;
 
@@ -184,6 +186,10 @@ OW_CIMQualifierType::addScope(const OW_CIMScope& newScope)
 		OW_MutexLock l = m_pdata.getWriteLock();
 		if(!hasScope(newScope))
 		{
+			if (newScope == OW_CIMScope::ANY)
+			{
+				m_pdata->m_scope.clear();
+			}
 			m_pdata->m_scope.append(newScope);
 		}
 	}
@@ -407,7 +413,7 @@ OW_CIMQualifierType::toMOF() const
 	if(m_pdata->m_scope.size() > 0)
 	{
 		rv += ", Scope(";
-
+		std::sort(m_pdata->m_scope.begin(), m_pdata->m_scope.end());
 		for(i = 0; i < m_pdata->m_scope.size(); i++)
 		{
 			if(i > 0)

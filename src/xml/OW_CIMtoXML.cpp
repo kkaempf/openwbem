@@ -197,11 +197,6 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 		ostr << "CLASS=\"true\" ";
 		scopeWritten = true;
 	}
-	if(any || cqt.hasScope(OW_CIMScope(OW_CIMScope::INSTANCE)))
-	{
-		ostr << "INSTANCE=\"true\" ";
-		scopeWritten = true;
-	}
 	if(any || cqt.hasScope(OW_CIMScope(OW_CIMScope::ASSOCIATION)))
 	{
 		ostr << "ASSOCIATION=\"true\" ";
