@@ -43,6 +43,7 @@
 #include "OW_MOFLineInfo.hpp"
 #include "OW_MOFGrammar.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_Logger.hpp"
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -143,13 +144,13 @@ private:
 	// unimplemented
 	Compiler(const Compiler& x);
 	Compiler& operator=(const Compiler& x);
-	
+
 };
 
 
-OW_MOF_API CIMInstance compileInstanceFromMOF(const String& instMOF);
-OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF);
-OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns);
+OW_MOF_API CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef());
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef());
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger = LoggerRef());
 
 
 } // end namespace MOF

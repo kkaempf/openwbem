@@ -47,6 +47,7 @@
 #include "OW_Enumeration.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_Logger.hpp"
 
 #include <assert.h>
 #include <cctype>
@@ -308,7 +309,7 @@ String Compiler::fixParsedString(const String& s)
 			unescaped += retval[i];
 		}
 	}
-	
+
 	return unescaped.releaseString();
 }
 
@@ -324,10 +325,10 @@ public:
 		m_instances.push_back(instance);
 		return CIMObjectPath(ns, instance);
 	}
-	virtual CIMClass getClass(const String &ns, const String &className, 
-		WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
-		WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, 
-		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN, 
+	virtual CIMClass getClass(const String &ns, const String &className,
+		WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY,
+		WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS,
+		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN,
 		const StringArray *propertyList=0)
 	{
 		if (m_realhdl)
@@ -359,130 +360,149 @@ private:
 	CIMInstanceArray m_instances;
 	CIMOMHandleIFCRef m_realhdl;
 
-
+#define THROW_ERROR_NOT_IMPLEMENTED(name) OW_THROWCIMMSG(CIMException::FAILED, Format("Not implemented: %1", (name)).c_str())
+#define THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME() THROW_ERROR_NOT_IMPLEMENTED(OW_LOGGER_PRETTY_FUNCTION)
 	// all these throw FAILED
 	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED(Format("Create qualifier: %1:%2", ns, qualifierType.getName()));
 	}
 	virtual void createClass(const String &ns, const CIMClass &cimClass)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED(Format("Create class: %1:%2", ns, cimClass.getName()));
 	}
 	virtual void enumClassNames(const String &ns, const String &className, StringResultHandlerIFC &result, WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void close()
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void enumClass(const String &ns, const String &className, CIMClassResultHandlerIFC &result, WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_SHALLOW, WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void enumInstanceNames(const String &ns, const String &className, CIMObjectPathResultHandlerIFC &result)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void enumInstances(const String &ns, const String &className, CIMInstanceResultHandlerIFC &result, WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP, WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual CIMValue invokeMethod(const String &ns, const CIMObjectPath &path, const String &methodName, const CIMParamValueArray &inParams, CIMParamValueArray &outParams)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual CIMInstance getInstance(const String &ns, const CIMObjectPath &instanceName, WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void enumQualifierTypes(const String &ns, CIMQualifierTypeResultHandlerIFC &result)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void deleteQualifierType(const String &ns, const String &qualName)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void deleteClass(const String &ns, const String &className)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void modifyInstance(const String &ns, const CIMInstance &modifiedInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void modifyClass(const String &ns, const CIMClass &cimClass)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void setProperty(const String &ns, const CIMObjectPath &instanceName, const String &propertyName, const CIMValue &newValue)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual CIMValue getProperty(const String &ns, const CIMObjectPath &instanceName, const String &propertyName)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void deleteInstance(const String &ns, const CIMObjectPath &path)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void associators(const String &ns, const CIMObjectPath &path, CIMInstanceResultHandlerIFC &result, const String &assocClass=String(), const String &resultClass=String(), const String &role=String(), const String &resultRole=String(), WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void associatorNames(const String &ns, const CIMObjectPath &objectName, CIMObjectPathResultHandlerIFC &result, const String &assocClass=String(), const String &resultClass=String(), const String &role=String(), const String &resultRole=String())
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void associatorsClasses(const String &ns, const CIMObjectPath &path, CIMClassResultHandlerIFC &result, const String &assocClass=String(), const String &resultClass=String(), const String &role=String(), const String &resultRole=String(), WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void referenceNames(const String &ns, const CIMObjectPath &path, CIMObjectPathResultHandlerIFC &result, const String &resultClass=String(), const String &role=String())
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void references(const String &ns, const CIMObjectPath &path, CIMInstanceResultHandlerIFC &result, const String &resultClass=String(), const String &role=String(), WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void referencesClasses(const String &ns, const CIMObjectPath &path, CIMClassResultHandlerIFC &result, const String &resultClass=String(), const String &role=String(), WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_EXCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_EXCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 	virtual void execQuery(const String &ns, CIMInstanceResultHandlerIFC &result, const String &query, const String &queryLanguage)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
 	}
 };
 
-class NULLErrHandler : public ParserErrorHandlerIFC
+class LoggerErrHandler : public ParserErrorHandlerIFC
 {
 protected:
 	virtual void doProgressMessage(const char *message, const LineInfo &li)
 	{
+		if( logger )
+		{
+			OW_LOG_DEBUG(logger, Format("MOF compilation progress: %1: line %2: %3", li.filename, li.lineNum, message));
+		}
 		warnings.push_back(message);
 	}
 	virtual void doFatalError(const char *error, const LineInfo &li)
 	{
+		if( logger )
+		{
+			OW_LOG_ERROR(logger, Format("Fatal MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
+		}
 		errors.push_back(error);
 	}
 	virtual EParserAction doRecoverableError(const char *error, const LineInfo &li)
 	{
+		if( logger )
+		{
+			OW_LOG_ERROR(logger, Format("MOF compilation error: %1: line %2: %3", li.filename, li.lineNum, error));
+		}
 		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT_ACTION;
 	}
+	LoggerRef logger;
+
 public:
+	LoggerErrHandler(const LoggerRef& l):
+		logger(l)
+	{
+	}
 	StringArray errors;
 	StringArray warnings;
 };
 
-CIMInstance compileInstanceFromMOF(const String& instMOF)
+CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger)
 {
-	CIMInstanceArray cia = compileInstancesFromMOF(instMOF);
+	CIMInstanceArray cia = compileInstancesFromMOF(instMOF, logger);
 	if (cia.size() == 1)
 	{
 		return cia[0];
@@ -490,17 +510,17 @@ CIMInstance compileInstanceFromMOF(const String& instMOF)
 	OW_THROW(MOFCompilerException, "MOF did not contain one instance");
 }
 
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF)
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger)
 {
-	return compileInstancesFromMOF(instMOF, CIMOMHandleIFCRef(), "");
+	return compileInstancesFromMOF(instMOF, CIMOMHandleIFCRef(), "", logger);
 }
 
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns)
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger)
 {
 	IntrusiveReference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle(realhdl));
 	MOF::Compiler::Options opts;
 	opts.m_namespace = ns;
-	IntrusiveReference<NULLErrHandler> errHandler(new NULLErrHandler);
+	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler(logger));
 	MOF::Compiler comp(hdl, opts, errHandler);
 	long errors = comp.compileString(instMOF);
 	if (errors > 0)
