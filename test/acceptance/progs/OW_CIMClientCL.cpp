@@ -1528,6 +1528,7 @@ deleteNameSpace(OW_CIMClient& hdl)
 
 	try
 	{
+		hdl.deleteNameSpace("root/testsuite/Caldera/test");
 		hdl.deleteNameSpace("root/testsuite/Caldera");
 	}
 	catch (OW_CIMException& e)
