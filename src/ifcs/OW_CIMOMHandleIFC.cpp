@@ -134,12 +134,13 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
-OW_CIMOMHandleIFC::enumClassE(const OW_CIMObjectPath& path, OW_Bool deep,
+OW_CIMOMHandleIFC::enumClassE(const OW_String& ns,
+	const OW_String& className, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
-	enumClass(path, handler, deep, localOnly, includeQualifiers,
+	enumClass(ns, className, handler, deep, localOnly, includeQualifiers,
 		includeClassOrigin);
 	return rval;
 }

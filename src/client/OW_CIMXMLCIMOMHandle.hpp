@@ -100,7 +100,8 @@ public:
 	 *		be found
 	 */
 	virtual void enumClass(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep,
 		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,

@@ -175,7 +175,8 @@ OW_WQLFilterRep::deleteInstance(const OW_String& /*ns*/, const OW_CIMObjectPath 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::enumClasses(const OW_CIMObjectPath&,
+OW_WQLFilterRep::enumClasses(const OW_String&,
+	const OW_String&,
 	OW_CIMClassResultHandlerIFC&,
 	OW_Bool, OW_Bool, OW_Bool,
 	OW_Bool, const OW_ACLInfo&)

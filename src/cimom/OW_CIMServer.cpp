@@ -694,7 +694,7 @@ OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
 		// delete the class and any subclasses
 		OW_ACLInfo intAcl;
 		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_assocDb);
-		this->enumClasses(OW_CIMObjectPath(className, ns), ccd,
+		this->enumClasses(ns, className, ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
@@ -793,16 +793,17 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
+OW_CIMServer::enumClasses(const OW_String& ns,
+		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate classes
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, ns, aclInfo);
 	try
 	{
-		m_mStore.enumClass(path.getNameSpace(), path.getObjectName(),
+		m_mStore.enumClass(ns, className,
 			result, deep,
 			localOnly, includeQualifiers, includeClassOrigin);
 	}

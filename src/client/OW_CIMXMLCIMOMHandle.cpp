@@ -446,14 +446,14 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::enumClass(const OW_String& ns,
+	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	static const char* const commandName = "EnumerateClasses";
 
 	OW_Array<OW_Param> params;
-	OW_String className = path.getObjectName();
 
 	if (className.length() > 0)
 	{
@@ -466,7 +466,7 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	enumClassOp op(result);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params);
+	intrinsicMethod(ns, commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////

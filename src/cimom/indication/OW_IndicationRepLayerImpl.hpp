@@ -62,12 +62,13 @@ public:
 	}
 
 
-	virtual void enumClasses(const OW_CIMObjectPath& path,
+	virtual void enumClasses(const OW_String& ns,
+		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->enumClasses(path, result, deep, localOnly, includeQualifiers,
+		m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 			includeClassOrigin, aclInfo);
 	}
 

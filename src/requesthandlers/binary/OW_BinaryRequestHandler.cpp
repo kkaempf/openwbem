@@ -457,7 +457,8 @@ void
 OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String className(OW_BinIfcIO::readString(istrm));
 	OW_Bool deep(OW_BinIfcIO::readBool(istrm));
 	OW_Bool localOnly(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
@@ -467,7 +468,7 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
 
 	BinaryCIMClassWriter handler(ostrm);
-	chdl->enumClass(op, handler, deep, localOnly,
+	chdl->enumClass(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin);
 	
 	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);

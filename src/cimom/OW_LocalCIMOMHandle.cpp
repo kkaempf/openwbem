@@ -137,12 +137,13 @@ OW_LocalCIMOMHandle::enumNameSpace(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
+	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->enumClasses(path, result, deep, localOnly, includeQualifiers,
+	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, m_aclInfo);
 }
 

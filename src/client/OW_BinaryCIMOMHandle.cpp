@@ -252,22 +252,24 @@ OW_BinaryCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::enumClass(const OW_String& ns,
+	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"EnumerateClasses", path.getNameSpace());
+		"EnumerateClasses", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSS);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
 	OW_BinIfcIO::writeBool(strm, deep);
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
 
 	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateClasses", path.getNameSpace());
+		"EnumerateClasses", ns);
 
 	readAndDeliver(in, result);
 }

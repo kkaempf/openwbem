@@ -221,8 +221,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = true, localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", true, false);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -244,9 +243,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
-																 false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", false, false);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -268,9 +265,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
-																 true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", false, true);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -292,9 +287,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = true, localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
-																 true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", true, true);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();

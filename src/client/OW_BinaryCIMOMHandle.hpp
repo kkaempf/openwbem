@@ -90,8 +90,8 @@ public:
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	virtual void enumClass(
-		const OW_CIMObjectPath& path,
+	virtual void enumClass(const OW_String& ns,
+		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep,
 		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,

@@ -901,14 +901,15 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
+	OW_String className;
 	if (params[0].isSet)
 	{
-		path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+		className = params[0].val.toCIMObjectPath().getObjectName();
 	}
 
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
 		params[4].val.toBool());
-	hdl.enumClass(path, handler, params[1].val.toBool(), false);
+	hdl.enumClass(path.getNameSpace(), className, handler, params[1].val.toBool(), false);
 
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
 	//hdl.enumClass(path, deep, localOnly,

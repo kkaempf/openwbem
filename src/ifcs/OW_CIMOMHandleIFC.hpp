@@ -172,7 +172,8 @@ public:
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
-	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
+	 * @param ns The namespace.
+	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
@@ -187,14 +188,15 @@ public:
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	virtual void enumClass(const OW_CIMObjectPath& path,
+	virtual void enumClass(const OW_String& ns,
+		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep=SHALLOW, OW_Bool localOnly=NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers=INCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=INCLUDE_CLASS_ORIGIN) = 0;
 
-	virtual OW_CIMClassEnumeration enumClassE(
-		const OW_CIMObjectPath& path,
+	virtual OW_CIMClassEnumeration enumClassE(const OW_String& ns,
+		const OW_String& className,
 		OW_Bool deep=SHALLOW,
 		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
