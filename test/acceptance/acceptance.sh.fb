@@ -170,11 +170,9 @@ SwitchToLinks()
 #############################################################################
 CreateNameSpace() 
 {
-	#WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
 	CREATENS=$STAGEDIR/$OWBINDIR/owcreatenamespace
-	OWURL="owbinary.wbem://test1:pass1@localhost:owipc/"
-	#$WQLEXEC $OWURL /root 'insert into __Namespace values ("'"$1"'")'
-	$CREATENS $OWURL /root/$1
+	OWURL="owbinary.wbem://test1:pass1@localhost:owipc/root"
+	$CREATENS -u $OWURL -n root/$1
 }
 
 ###########################################################################
