@@ -501,6 +501,9 @@ StringArray getFileLines(const String& filename)
 //////////////////////////////////////////////////////////////////////////////
 String readSymbolicLink(const String& path)
 {
+#ifdef OW_WIN32
+	return realPath(path);
+#else
 	std::vector<char> buf(MAXPATHLEN);
 	int rc;
 	do
@@ -515,6 +518,7 @@ String readSymbolicLink(const String& path)
 		buf.resize(buf.size() * 2);
 	} while (rc < 0 && errno == ENAMETOOLONG);
 	OW_THROW_ERRNO(FileSystemException);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -524,8 +528,26 @@ namespace Path
 //////////////////////////////////////////////////////////////////////////////
 String realPath(const String& path)
 {
-#if defined(OW_WIN32)
-#error "TODO: port realPath"
+#ifdef OW_WIN32
+	char c, *bfr, *pname;
+	DWORD cc;
+	String rstr;
+
+	cc = GetFullPathName(path.c_str(), 1, &c &pname);
+	if(!cc)
+	{
+		OW_THROW(FileSystemException);
+	}
+	bfr = new char[cc];
+	cc = GetFullPathName(path.c_str(), cc, bfr &pname);
+	if(!cc)
+	{
+		delete [] bfr;
+		OW_THROW(FileSystemException);
+	}
+	String rstr(bfr);
+	delete [] bfr;
+	return rstr;
 #else
 	String workingPath(path);
 	String resolvedPath;
@@ -639,34 +661,32 @@ String realPath(const String& path)
 //////////////////////////////////////////////////////////////////////////////
 String dirname(const String& filename)
 {
-#ifdef OW_WIN32
-#error "TODO: port dirname"
-#else
 	// skip over trailing slashes
 	size_t lastSlash = filename.length() - 1;
-	while (lastSlash > 0 && filename[lastSlash] == '/')
+	while (lastSlash > 0 
+		&& filename[lastSlash] == OW_FILENAME_SEPARATOR_C)
 	{
 		--lastSlash;
 	}
 	
-	lastSlash = filename.lastIndexOf('/', lastSlash);
+	lastSlash = filename.lastIndexOf(OW_FILENAME_SEPARATOR_C, lastSlash);
 
 	if (lastSlash == String::npos)
 	{
 		return ".";
 	}
 
-	while (lastSlash > 0 && filename[lastSlash - 1] == '/')
+	while (lastSlash > 0 && filename[lastSlash - 1] == OW_FILENAME_SEPARATOR_C)
 	{
 		--lastSlash;
 	}
 
 	if (lastSlash == 0)
 	{
-		return "/";
+		return OW_FILENAME_SEPARATOR;
 	}
+
 	return filename.substring(0, lastSlash);
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////

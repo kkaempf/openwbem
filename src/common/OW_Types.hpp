@@ -100,6 +100,7 @@ typedef off_t	off_t;
 
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
+#define OW_FILENAME_SEPARATOR_C '\\'
 #define OW_PATHNAME_SEPARATOR ";"
 // OW_Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select).
@@ -145,6 +146,7 @@ typedef int Select_t;
 #define OW_SHAREDLIB_EXTENSION ".so"
 #endif
 #define OW_FILENAME_SEPARATOR "/"
+#define OW_FILENAME_SEPARATOR_C '/'
 #define OW_PATHNAME_SEPARATOR ":"
 #endif
 
