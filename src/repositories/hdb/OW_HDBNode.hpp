@@ -47,7 +47,7 @@ namespace OpenWBEM
 class HDBHandle;
 class HDB;
 //////////////////////////////////////////////////////////////////////////////				
-class HDBNode
+class OW_HDB_API HDBNode
 {
 private:
 	struct HDBNodeData : public IntrusiveCountableBase

@@ -42,7 +42,9 @@
 
 extern "C"
 {
+#ifndef OW_WIN32
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -121,8 +123,13 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 	if (FileSystem::canRead(m_dbFileName)
 		&& FileSystem::canWrite(m_dbFileName))
 	{
+#ifdef OW_WIN32
+		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, _S_IREAD | _S_IWRITE,
+			DB_BTREE, &dbinfo);
+#else
 		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 			DB_BTREE, &dbinfo);
+#endif
 		if (m_pDB == NULL)
 		{
 			OW_THROW(IndexException, Format("Failed to open index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
@@ -130,8 +137,13 @@ IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 	}
 	else
 	{
+#ifdef OW_WIN32
+		m_pDB = dbopen(m_dbFileName.c_str(), O_TRUNC | O_RDWR | O_CREAT,
+			_S_IREAD | _S_IWRITE,  DB_BTREE, &dbinfo);
+#else
 		m_pDB = dbopen(m_dbFileName.c_str(), O_TRUNC | O_RDWR | O_CREAT,
 			S_IRUSR | S_IWUSR,  DB_BTREE, &dbinfo);
+#endif
 		if (m_pDB == NULL)
 		{
 			OW_THROW(IndexException, Format("Failed to create index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
@@ -146,8 +158,13 @@ IndexImpl::reopen()
 	close();
 	::memset(&dbinfo, 0, sizeof(dbinfo));
 	dbinfo.compare = recCompare;
+#ifdef OW_WIN32
+	m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, _S_IREAD | _S_IWRITE,
+		DB_BTREE, &dbinfo);
+#else
 	m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 		DB_BTREE, &dbinfo);
+#endif
 	if (m_pDB == NULL)
 	{
 		String msg = "Failed to re-open index file: ";
@@ -164,8 +181,13 @@ IndexImpl::openIfClosed()
 		BTREEINFO dbinfo;
 		::memset(&dbinfo, 0, sizeof(dbinfo));
 		dbinfo.compare = recCompare;
+#ifdef OW_WIN32
+		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, _S_IREAD | _S_IWRITE,
+			DB_BTREE, &dbinfo);
+#else
 		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 			DB_BTREE, &dbinfo);
+#endif
 		if (m_pDB == NULL)
 		{
 			String msg = "Failed to re-open index file: ";

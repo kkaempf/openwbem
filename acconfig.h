@@ -219,6 +219,12 @@
 #define DB_API OW_IMPORT
 #endif
 
+#ifdef OW_REPHDB_BUILD
+#define HDB_API OW_EXPORT
+#else
+#define HDB_API OW_IMPORT
+#endif
+
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
 #endif

@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class InstanceRepository : public GenericHDBRepository
+class OW_HDB_API InstanceRepository : public GenericHDBRepository
 {
 public:
 	/**

@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(HDB);
+OW_DECLARE_APIEXCEPTION(HDB, OW_HDB_API)
 
 #define OW_HDBSIGNATURE "OWHIERARCHICADB"
 const int HDBSIGLEN = 16;
@@ -72,7 +72,7 @@ const UInt32 MinHDBVERSION = 3000006;
  * The HDBHeaderBlock structure represent the header information for
  * the database.
  */
-struct HDBHeaderBlock
+struct OW_HDB_API HDBHeaderBlock
 {
 	char signature[HDBSIGLEN];
 	UInt32 version;
@@ -83,7 +83,7 @@ struct HDBHeaderBlock
 /**
  * The HDBBlock structure represents nodes within the database.
  */
-struct HDBBlock
+struct OW_HDB_API HDBBlock
 {
 	HDBBlock() { memset(this, 0, sizeof(HDBBlock)); }
 	UInt32 chkSum;		// The check sum of all following fields

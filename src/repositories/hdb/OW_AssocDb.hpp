@@ -56,7 +56,7 @@ namespace OpenWBEM
 /**
  * The AssocDbEntry represents an entry in the association database.
  */
-struct AssocDbEntry
+struct OW_HDB_API AssocDbEntry
 {
 	AssocDbEntry(std::istream& istrm);
 	AssocDbEntry() 
@@ -106,14 +106,14 @@ struct AssocDbEntry
 	Array<entry> m_entries;
 	Int32 m_offset;
 };
-std::ostream& operator << (std::ostream& ostrm, const AssocDbEntry& arg);
+OW_HDB_API std::ostream& operator << (std::ostream& ostrm, const AssocDbEntry& arg);
 typedef Array<AssocDbEntry> AssocDbEntryArray;
-bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs);
+OW_HDB_API bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs);
 //////////////////////////////////////////////////////////////////////////////
 class AssocDb;
 //////////////////////////////////////////////////////////////////////////////
 typedef ResultHandlerIFC<AssocDbEntry::entry> AssocDbEntryResultHandlerIFC;
-class AssocDbHandle
+class OW_HDB_API AssocDbHandle
 {
 private:
 	struct AssocDbHandleData : public IntrusiveCountableBase
@@ -226,7 +226,7 @@ private:
 // The following structure represents the format of header that
 // preceeds all records in the associations db
 // TODO: Fix all the code that uses this thing that assumes it's all packed data.
-struct AssocDbRecHeader
+struct OW_HDB_API AssocDbRecHeader
 {
 	AssocDbRecHeader() { memset(this, 0, sizeof(*this)); }
 	UInt32 chkSum;
@@ -239,12 +239,12 @@ struct AssocDbRecHeader
 #define OW_ASSOCSIGLEN 17
 // The following structure represents the file header for the
 // associations database
-struct AssocDbHeader
+struct OW_HDB_API AssocDbHeader
 {
 	char signature[OW_ASSOCSIGLEN];
 	Int32 firstFree;
 };
-class AssocDb
+class OW_HDB_API AssocDb
 {
 public:
 	/**

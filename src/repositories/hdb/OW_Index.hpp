@@ -58,7 +58,7 @@ typedef IntrusiveReference<Index> IndexRef;
  * The intention is  for the implementor to create a sub-class of Index and
  * have createIndexObject be the factory for those object.
  */
-class Index : public IntrusiveCountableBase
+class OW_HDB_API Index : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -164,7 +164,7 @@ public:
 	static IndexRef createIndexObject();
 };
 //////////////////////////////////////////////////////////////////////////////
-struct IndexEntry
+struct OW_HDB_API IndexEntry
 {
 	/**
 	 * Create a null IndexEntry

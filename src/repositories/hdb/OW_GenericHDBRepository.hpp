@@ -48,7 +48,7 @@ namespace OpenWBEM
 {
 
 class HDBHandleLock;
-class GenericHDBRepository
+class OW_HDB_API GenericHDBRepository
 {
 public:
 	/**
@@ -164,7 +164,7 @@ protected:
  * of this class are essentially smart pointers for HDBHandle instances
  * returned from GenericHDBRepository::getHandle.
  */
-class HDBHandleLock
+class OW_HDB_API HDBHandleLock
 {
 public:
 	HDBHandleLock(GenericHDBRepository* pr, const HDBHandle& hdl) :

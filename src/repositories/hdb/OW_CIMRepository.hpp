@@ -54,7 +54,7 @@ namespace CIMRepositoryImpl
 }
 
 // This class is responsible for storing/retrieving the static CIM data.
-class CIMRepository : public RepositoryIFC
+class OW_HDB_API CIMRepository : public RepositoryIFC
 {
 public:
 	static const char* const INST_REPOS_NAME;
