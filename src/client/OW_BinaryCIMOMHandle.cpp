@@ -433,7 +433,6 @@ OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 			cv = OW_BinIfcIO::readValue(*in);
 		}
 
-		outParams.clear();
 		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
 		outParams.readObject(strm);
 	}
