@@ -45,6 +45,14 @@ typedef OW_AssertionException OW_Assertion;
 #define OW_ASSERT(CON)
 #endif
 
+#ifdef OW_DEBUG
+// MSG should be a string
+#define OW_ASSERTMSG(CON, MSG) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, \
+		#CON ":" MSG)
+#else
+#define OW_ASSERTMSG(CON, MSG)
+#endif
+
 #endif
 
 
