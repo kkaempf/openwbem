@@ -755,13 +755,10 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 #include <openssl/rand.h>
 		],
 		[
-int main(void)
-{
 	char a[2048];
 	memset(a, 0, sizeof(a));
 	RAND_add(a, sizeof(a), sizeof(a));
 	return(RAND_status() <= 0);
-}
 		],
 		[
 			found_crypto=1
@@ -882,8 +879,6 @@ AC_TRY_COMPILE(
 #include <assert.h>
 	],
 	[
-int main()
-{
 	pthread_mutexattr_t attr;
 	pthread_mutex_t mutex;
 	int res = 0;
@@ -894,7 +889,6 @@ int main()
 	res = pthread_mutex_init(&mutex, &attr);
 	assert(res == 0);
 	return 0;
-}
 	],
 	[
 		AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
@@ -910,9 +904,6 @@ AC_TRY_COMPILE(
 #include <assert.h>
 	],
 	[
-int main()
-{
-
 	pthread_spinlock_t spinlock;
 	if (pthread_spin_init(&spinlock, 0) != 0)
 		return 1;
@@ -921,7 +912,6 @@ int main()
 	if (pthread_spin_unlock(&spinlock) != 0)
 		return 1;
 	return 0;
-}
 	],
 	[
 		AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
@@ -937,14 +927,11 @@ AC_TRY_COMPILE(
 #include <assert.h>
 	],
 	[
-int main()
-{
 	pthread_barrier_t barrier;
 	assert(pthread_barrier_init(&barrier, NULL, 1) == 0);
 	assert(pthread_barrier_wait(&barrier) == PTHREAD_BARRIER_SERIAL_THREAD);
 	assert(pthread_barrier_destroy(&barrier) == 0);
 	return 0;
-}
 	],
 	[
 		AC_DEFINE(HAVE_PTHREAD_BARRIER)
@@ -960,11 +947,8 @@ AC_TRY_COMPILE(
 #include <assert.h>
 	],
 	[
-int main()
-{
 	pthread_kill_other_threads_np();
 	return 0;
-}
 	],
 	[
 		AC_DEFINE(HAVE_PTHREAD_KILL_OTHER_THREADS_NP)
