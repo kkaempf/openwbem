@@ -18,7 +18,7 @@
 # If owcimomd.allow_anonymous is set to true, anonymous logins are allowed by
 # owcimomd, authentication is disabled, and no user name or password is required.
 # The default is false
-;owcimomd.allow_anonymous = false
+owcimomd.allow_anonymous = false
 
 ################################################################################
 # log.main.type specifies the type of the main log used by owcimomd. If this
@@ -29,7 +29,7 @@
 # "file"   - log messages will be written to the file identified by the
 #            log.main.location config item.
 # The default is "syslog"
-;log.main.type = syslog
+log.main.type = syslog
 
 ################################################################################
 # log.main.location specifies the location of the log file
@@ -63,7 +63,7 @@
 # Providers may use their own components.
 # "*" means all components.
 # The default is "*"
-;log.main.components = *
+log.main.components = *
 
 ################################################################################
 # A space delimited list of the categories the log will output.
@@ -89,7 +89,7 @@
 # If set, the log will output all predefined categories at and above the
 # specified level.
 # The default is "ERROR"
-;log.main.level = ERROR
+log.main.level = ERROR
 
 ################################################################################
 # Specifies the format of the log messages. Text mixed with printf() style
@@ -151,7 +151,7 @@
 #    </log4j:event>"
 #
 # The default is "[%t]%m"
-;log.main.format = [%t]%m
+log.main.format = [%t]%m
 
 
 ################################################################################
@@ -230,7 +230,7 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 ################################################################################
 # The maximum number of classes that will be cached by the cimom.
 # The default is 128
-;owcimomd.max_class_cache_size = 128
+owcimomd.max_class_cache_size = 128
 
 ################################################################################
 # A space delimited list of system users who are allowed to acces the CIMOM
@@ -250,7 +250,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # When this variable is set to true, the cimom will not attempt to
 # deliver indications.
 # The default is false
-;owcimomd.disable_indications = false
+owcimomd.disable_indications = false
 
 ################################################################################
 # owcimomd.ACL_superuser specifies the user name of the user that has access to
@@ -265,7 +265,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # handlers will stay loaded after they are accessed.  If the value of this
 # option is -1, the request handlers will never be unloaded.
 # The default is 5
-;owcimomd.request_handler_TTL = 5
+owcimomd.request_handler_TTL = 5
 
 ################################################################################
 # owcimomd.check_referential_integrity specifies whether the CIM Repository
@@ -274,14 +274,14 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # it is recommended to enable this option during development and debugging
 # and disable it in production if the overhead is too expensive.
 # The default is false
-;owcimomd.check_referential_integrity = false
+owcimomd.check_referential_integrity = false
 
 ################################################################################
 # owcimomd.polling_manager_max_threads specifies the maximum number of
 # concurrent threads that will be allowed to run by the polling manager.
 # This should only be a concern if the cimom has a lot of polled providers.
 # The default is 256
-;owcimomd.polling_manager_max_threads = 256
+owcimomd.polling_manager_max_threads = 256
 
 ################################################################################
 # owcimomd.max_indication_export_threads specifies the maximum number of
@@ -289,7 +289,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # indication server.
 # This may need to be increased if a lot of indications are being exported.
 # The default is 30
-;owcimomd.max_indication_export_threads = 30
+owcimomd.max_indication_export_threads = 30
 
 ################################################################################
 # owcimomd.restart_on_error controls the use of the fatal signal handler.
@@ -300,7 +300,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # This feature helps to keep the cimom running in the case a buggy provider
 # (or the cimom itself) causes a fatal signal.
 # The default is true
-;owcimomd.restart_on_error = true
+owcimomd.restart_on_error = true
 
 ################################################################################
 # owcimomd.authorization_lib specifies the location the authorization
@@ -322,13 +322,13 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
 # CIM Interop schema.
 # The default is root
-;owcimomd.interop_schema_namespace = root
+owcimomd.interop_schema_namespace = root
 
 ################################################################################
 # If owcimomd.drop_root_privileges != "false", then owcimomd will run as the
 # user "owcimomd" instead of root.
 # The default is false
-;owcimomd.drop_root_privileges = false
+owcimomd.drop_root_privileges = false
 
 ################################################################################
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
@@ -337,7 +337,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # it will be freed.  If the value of this option is -1, the providers will
 # never be unloaded.
 # The default is 5
-;cppprovifc.prov_TTL = 5
+cppprovifc.prov_TTL = 5
 
 ################################################################################
 # The remote provider interface uses a connection pool to re-use remote
@@ -345,7 +345,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # number of connections per url that will be pooled.  The value must be a
 # non-negative integer.
 # The default is 5
-;remoteprovifc.max_connections_per_url = 5
+remoteprovifc.max_connections_per_url = 5
 
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
@@ -360,7 +360,7 @@ http_server.enable_deflate = false
 # on.  The option is a space delimited list.  Each item is either a hostname
 # or an IP address.  The value 0.0.0.0 means to listen on all local addresses.
 # The default is 0.0.0.0
-;http_server.listen_addresses = 0.0.0.0
+http_server.listen_addresses = 0.0.0.0
 
 ################################################################################
 # http_server.http_port option specifies the port number owcimomd will listen
@@ -369,7 +369,7 @@ http_server.enable_deflate = false
 # instance, you only want to support HTTPS connections).  If a value of 0
 # is given, a port will be dynamically assigned at run-time.
 # The default is 5988
-;http_server.http_port = 5988
+http_server.http_port = 5988
 
 ################################################################################
 # http_server.https_port specifies the port number owcimomd will listen on
@@ -377,13 +377,13 @@ http_server.enable_deflate = false
 # Set this to -1 if you do not want to support HTTPS connections.
 # If a value of 0 is given, a port will be dynamically assigned at run-time.
 # The default is 5989
-;http_server.https_port = 5989
+http_server.https_port = 5989
 
 ################################################################################
 # http_server.max_connections specifies the maximum number of concurrent
 # connections owcimomd will handle.
 # The default is 30
-;http_server.max_connections = 30
+http_server.max_connections = 30
 
 ################################################################################
 # http_server.SSL_cert specifies the location of the file that contains the
@@ -414,7 +414,7 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # supplying a password, instead relying on filesystem permissions.  This can
 # be enabled in conjunction with either http Basic or Digest.
 # The default is false
-;http_server.allow_local_authentication = false
+http_server.allow_local_authentication = false
 
 ################################################################################
 # Determines if the server should attempt to authenticate clients
@@ -430,12 +430,12 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # required: A trusted cert is required for the the SSL handshake to
 #   succeed.
 # The default is disabled
-;http_server.ssl_client_verification = disabled
+http_server.ssl_client_verification = disabled
 
 ################################################################################
 # Specify the directory containing the OpenSSL trust store.
 # The default is "@sysconfdir@/openwbem/truststore"
-;http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
+http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
 
 ################################################################################
 # http_server.single_thread specifies whether or not owcimomd process connection
@@ -443,13 +443,13 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # really only for debug purposes and should not be of any use to the
 # typical user.
 # The default is false
-;http_server.single_thread = false
+http_server.single_thread = false
 
 ################################################################################
 # http_server.use_UDS specifies whether the http server will listen on a
 # Unix Domain Socket.
 # The default is true
-;http_server.use_UDS = true
+http_server.use_UDS = true
 
 ################################################################################
 # http_server.reuse_addr specifies whether the http server will set the
@@ -465,25 +465,25 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # http_server.listen_addresses option, then there is no security problem with
 # enabling this option.
 # The default is true
-;http_server.reuse_addr = true
+http_server.reuse_addr = true
 
 ################################################################################
 # http_server.timeout specifies the number of seconds that the server will use
 # as a timeout when communicting with clients. The value must be > 0.
 # The default is 300 (5 minutes).
-;http_server.timeout = 300;
+http_server.timeout = 300;
 
 ################################################################################
 # http.default_content_language specified the default content-laguage that
 # will be returned to an HTTP client when the accept-language header was used
 # on the request and a provider has not explicity set the content-language.
 # The default is en
-;http_server.default_content_language = en
+http_server.default_content_language = en
 
 ################################################################################
 # slp.enable_advertisement controls whether the slp provider advertises with SLP
 # The default is true
-;slp.enable_advertisement = true
+slp.enable_advertisement = true
 
 ################################################################################
 # The following options will probably not need to be modified.
@@ -560,14 +560,14 @@ owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
 # it will be freed.  If the value of this option is -1, the providers will
 # never be unloaded.
 # The default is 5
-;owbi1provifc.prov_TTL = 5
+owbi1provifc.prov_TTL = 5
 
 ################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # You probably don't need to modify this option.
 # The default is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
-;http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
+http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
@@ -590,7 +590,7 @@ cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 # it will be freed.  If the value of this option is -1, the providers will
 # never be unloaded.
 # The default is -1
-;cmpiprovifc.prov_TTL = -1
+cmpiprovifc.prov_TTL = -1
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the perl provider
@@ -603,12 +603,12 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 # The default built in provider interface is loaded and initialized by default.
 # Set this option to true to disable it.
 # The default is "false"
-;owcimomd.disable_cpp_provider_interface = false
+owcimomd.disable_cpp_provider_interface = false
 
 ################################################################################
 # Specify the location of the owcimomd pidfile
 # The default is "@PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid"
-;owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
+owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
 
 ################################################################################
 # The following options are deprecated
