@@ -34,8 +34,16 @@
 #include <string.h>
 extern "C"
 {
+#if defined OW_HAVE_PAM_PAM_APPL_H 
+#include <pam/pam_appl.h>
+#elif defined OW_HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
+#endif
+#if defined OW_HAVE_PAM_PAM_MISC_H
+#include <pam/pam_misc.h>
+#elif defined OW_HAVE_SECURITY_PAM_MISC_H
 #include <security/pam_misc.h>
+#endif
 }
 
 namespace OpenWBEM
