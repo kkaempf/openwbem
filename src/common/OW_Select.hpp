@@ -49,32 +49,36 @@ namespace OpenWBEM
 typedef Array<Select_t> SelectTypeArray;
 namespace Select
 {
-   /**
-	* The value returned from select when the timeout value has expired
-	*/
-   const int SELECT_TIMEOUT = -2;
-   /**
-	* The value returned from select when any error occurs other than timeout.
-	*/
-   const int SELECT_ERROR = -1;
-   /**
-	* The value returned from select when select is interrupted by a signal.
-	*/
-   const int SELECT_INTERRUPTED = -3;
-   /**
-	* Select returns as soon as input is available on any of Select_t
-	* objects that are in given array.
-	*
-	* @param selarray An array of Select_t objects that will be used while
-	*	waiting for input to become available.
-	*
-	* @param ms The timeout value specified in millseconds
-	*
-	* @return On success, the index in the selarray of the first Select_t
-	* object that input has become available on. SELECT_ERROR on error.
-	* SELECT_TIMEOUT if the given timeout value has expired.
-	*/
-   OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
+	/**
+	 * The value returned from select when the timeout value has expired
+	 */
+	const int SELECT_TIMEOUT = -2;
+	/**
+	 * The value returned from select when any error occurs other than timeout.
+	 */
+	const int SELECT_ERROR = -1;
+	/**
+	 * The value returned from select when select is interrupted by a signal.
+	 */
+	const int SELECT_INTERRUPTED = -3;
+	/**
+	 * Value that means infinite timeout
+	 */
+	const UInt32 INFINITE_TIMEOUT = ~0U;
+	/**
+	 * Select returns as soon as input is available on any of Select_t
+	 * objects that are in given array.
+	 *
+	 * @param selarray An array of Select_t objects that will be used while
+	 *	waiting for input to become available.
+	 *
+	 * @param ms The timeout value specified in millseconds
+	 *
+	 * @return On success, the index in the selarray of the first Select_t
+	 * object that input has become available on. SELECT_ERROR on error.
+	 * SELECT_TIMEOUT if the given timeout value has expired.
+	 */
+	OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
 } // end namespace Select
 
 } // end namespace OpenWBEM
