@@ -14,7 +14,7 @@ set -u
 # echo is to get rid of extra spaces
 NUM_PROCS=`echo \`cat /proc/cpuinfo | grep processor | wc -l\``
 if [ -n "$NUM_PROCS" ] && [ "x$NUM_PROCS" != "x1" ]; then
-	let NUM_PROCS_PLUS_1=$NUM_PROCS + 1
+	let NUM_PROCS_PLUS_1=$NUM_PROCS+1
 	MAKE_PARALLEL="-j$NUM_PROCS_PLUS_1"
 else
 	MAKE_PARALLEL=""
