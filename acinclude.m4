@@ -3,7 +3,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: acinclude.m4,v 1.9 2004-01-20 13:56:36 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -123,7 +123,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: acinclude.m4,v 1.9 2004-01-20 13:56:36 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -196,7 +196,7 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: acinclude.m4,v 1.9 2004-01-20 13:56:36 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.10 2004-01-24 23:06:22 nuffer Exp $
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([TYPE_SOCKLEN_T],
@@ -262,10 +262,11 @@ perl_embed_ccflags=`$PERL -MExtUtils::Embed -e ccopts`
 AC_SUBST(perl_embed_ccflags)dnl
 AC_MSG_RESULT([$perl_embed_ccflags])])
 
-dnl APACHE_HELP_STRING(LHS, RHS)
+dnl OW_HELP_STRING(LHS, RHS)
+dnl This is a replace for AC_HELP_STRING, which doesn't exist in 2.13
 dnl Autoconf 2.50 can not handle substr correctly.  It does have 
 dnl AC_HELP_STRING, so let's try to call it if we can.
 dnl Note: this define must be on one line so that it can be properly returned
 dnl as the help string.
-AC_DEFUN(OW_HELP_STRING,[ifelse(regexp(AC_ACVERSION, 2\.1), -1, AC_HELP_STRING($1,$2),[  ]$1 substr([                       ],len($1))$2)])dnl
+AC_DEFUN([OW_HELP_STRING],[ifelse(regexp(AC_ACVERSION, 2\.1), -1, AC_HELP_STRING($1,$2),[  ]$1 substr([                       ],len($1))$2)])dnl
 
