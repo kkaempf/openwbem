@@ -52,6 +52,7 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_UserUtils.hpp"
 
 extern "C"
 {
@@ -98,22 +99,6 @@ BinaryRequestHandler::doOptions(CIMFeatures& cf,
 	cf.supportsBatch = false;
 	cf.validation.erase();
 }
-static Mutex g_pwdLock;
-//////////////////////////////////////////////////////////////////////////////
-static bool
-getUserId(const String& userName, UserId& userId)
-{
-	MutexLock ml(g_pwdLock);
-	bool rv = false;
-	struct passwd* pwd;
-	pwd = ::getpwnam(userName.c_str());
-	if (pwd)
-	{
-		userId = pwd->pw_uid;
-		rv = true;
-	}
-	return rv;
-}
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
@@ -123,7 +108,9 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	String userName = context.getStringDataWithDefault(OperationContext::USER_NAME);
 	if (!userName.empty())
 	{
-		if (!getUserId(userName, m_userId))
+		bool validUserName = false;
+		m_userId = UserUtils::getUserId(userName, validUserName);
+		if (!validUserName)
 		{
 			m_userId = UserId(-1);
 		}

@@ -52,77 +52,128 @@
 namespace OpenWBEM
 {
 
-	namespace UserUtils
-	{
+namespace UserUtils
+{
 
-		/////////////////////////////////////////////////////////////////////////////
-		String getEffectiveUserId()
-		{
+/////////////////////////////////////////////////////////////////////////////
+String getEffectiveUserId()
+{
 #ifdef OW_WIN32
 #pragma message(Reminder "TODO: Implement getEffectiveUserID using SID method!")
-			// TODO
-			// The user ID is represented by a SID on Win32. Going to return 0 for
-			// root user until I get through the Win32 CIMOM. Eventually OW will
-			// deal with userid on Win32 the proper way.
-			return String("0");
+	// TODO
+	// The user ID is represented by a SID on Win32. Going to return 0 for
+	// root user until I get through the Win32 CIMOM. Eventually OW will
+	// deal with userid on Win32 the proper way.
+	return String("0");
 #else
-			return String(Int64(::geteuid()));
+	return String(Int64(::geteuid()));
 #endif
-		}
-		
-		//////////////////////////////////////////////////////////////////////////////
-		String getCurrentUserName()
-		{
-			bool ok;
-#ifdef OW_WIN32
-			return getUserName(0, ok);
-#else
-			return getUserName(getuid(),ok);
-#endif
-		}
+}
 
-		//////////////////////////////////////////////////////////////////////////////
-		String getUserName(uid_t uid,bool& ok)
-		{
+//////////////////////////////////////////////////////////////////////////////
+String getCurrentUserName()
+{
+	bool ok;
+#ifdef OW_WIN32
+	return getUserName(0, ok);
+#else
+	return getUserName(getuid(),ok);
+#endif
+}
+
+namespace
+{
+Mutex g_getpwMutex;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String getUserName(uid_t uid,bool& ok)
+{
 #ifdef OW_WIN32
 #pragma message(Reminder "TODO: HONOR uid parm in getUserName!")
-			// TODO
-			// Ignore uid for right now. Just return the current User (WRONG!)
-			// Need to come back to this later when the uid_t stuff is worked out.
-			char name[256];
-			unsigned long size = sizeof(name);
-			size = sizeof(name);
-			if (!::GetUserName(name, &size))
-			{
-				return String();
-			}
+	// TODO
+	// Ignore uid for right now. Just return the current User (WRONG!)
+	// Need to come back to this later when the uid_t stuff is worked out.
+	char name[256];
+	unsigned long size = sizeof(name);
+	size = sizeof(name);
+	if (!::GetUserName(name, &size))
+	{
+		return String();
+	}
 
-			return String(name);
+	return String(name);
 #else
 
 #ifdef HAVE_GETPWUID_R
-			passwd pw;
-			//I can't imagine an easy way to calculate the size of the additional buffer
-			//  ahead of time. 
-			size_t const additional_size= 256;
-			std::vector<char> additional(additional_size);
-			passwd* result;
-			::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
+	passwd pw;
+	//I can't imagine an easy way to calculate the size of the additional buffer
+	//  ahead of time. 
+	size_t const additional_size =
+#ifdef _SC_GETPW_R_SIZE_MAX
+		sysconf (_SC_GETPW_R_SIZE_MAX);
 #else
-			static Mutex getpwuid_mutex;
-			MutexLock lock(getpwuid_mutex);
-			passwd* result = ::getpwuid(uid);
-#endif  
-			if (result)
-			{
-				ok = true;
-				return result->pw_name;
-			}
-			ok = false;
-			return "";
+		1024;
 #endif
-		}
-	} // end namespace UserUtils
+	std::vector<char> additional(additional_size);
+	passwd* result;
+	::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
+#else
+	MutexLock lock(g_getpwMutex);
+	passwd* result = ::getpwuid(uid);
+#endif  
+	if (result)
+	{
+		ok = true;
+		return result->pw_name;
+	}
+	ok = false;
+	return "";
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+UserID
+getUserId(const String& userName, bool& validUserName)
+{
+	validUserName = false;
+
+#ifdef OW_WIN32
+#pragma message(Reminder "TODO: Write getUserId!")
+	return 0;
+#else
+
+
+#ifdef HAVE_GETPWNAM_R
+	size_t bufsize =
+#ifdef _SC_GETPW_R_SIZE_MAX
+		sysconf (_SC_GETPW_R_SIZE_MAX);
+#else
+		1024;
+#endif
+	std::vector<char> buf(bufsize);
+	struct passwd pwd;
+	passwd* result = 0;
+	int rv = getpwnam_r(userName.c_str(), &pwd, &buf[0], bufsize, &result);
+	if ((rv != 0) || (p != &pwd))
+	{
+		return INVALID_USERID;
+	}
+
+#else
+	MutexLock ml(g_getpwMutex);
+	struct passwd* result;
+	result = ::getpwnam(userName.c_str());
+#endif
+	if (result)
+	{
+		validUserName = true;
+		return result->pw_uid;
+	}
+	return INVALID_USERID;
+#endif
+}
+} // end namespace UserUtils
 } // end namespace OpenWBEM
 
 
