@@ -35,25 +35,33 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
-void
-OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
+template <typename Handler, typename ReaderFunc>
+static inline void readEnum(std::istream& istrm, Handler& result,
+	const ReaderFunc& read, const OW_Int32 beginsig, const OW_Int32 endsig)
 {
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_OPENUM);
+	OW_BinIfcIO::verifySignature(istrm, beginsig);
 	bool done = false;
 	while (!done)
 	{
 		try
 		{
-			result.handleObjectPath(OW_BinIfcIO::readObjectPath(istrm));
+			result.handle(read(istrm));
 		}
 		catch (const OW_BadCIMSignatureException& e)
 		{
-			// OW_CIMObjectPath::readObject threw because we've read all the classes
-			OW_BinIfcIO::verifySignature(istrm, OW_END_OPENUM);
+			// read threw because we've read all the objects
+			OW_BinIfcIO::verifySignature(istrm, endsig);
 			done = true;
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
+{
+	readEnum(istrm, result, &OW_BinIfcIO::readObjectPath, OW_BINSIG_OPENUM, OW_END_OPENUM);
 }
 
 
@@ -62,21 +70,7 @@ OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandl
 void
 OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 {
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_CLSENUM);
-	bool done = false;
-	while (!done)
-	{
-		try
-		{
-			result.handleClass(OW_BinIfcIO::readClass(istrm));
-		}
-		catch (const OW_BadCIMSignatureException& e)
-		{
-			// CIMClass.readObject threw because we've read all the classes
-			OW_BinIfcIO::verifySignature(istrm, OW_END_CLSENUM);
-			done = true;
-		}
-	}
+	readEnum(istrm, result, &OW_BinIfcIO::readClass, OW_BINSIG_CLSENUM, OW_END_CLSENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -84,21 +78,7 @@ OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& res
 void
 OW_BinIfcIO::readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
 {
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_INSTENUM);
-	bool done = false;
-	while (!done)
-	{
-		try
-		{
-			result.handleInstance(OW_BinIfcIO::readInstance(istrm));
-		}
-		catch (const OW_BadCIMSignatureException& e)
-		{
-			// OW_CIMInstance::readObject threw because we've read all the instances
-			OW_BinIfcIO::verifySignature(istrm, OW_END_INSTENUM);
-			done = true;
-		}
-	}
+	readEnum(istrm, result, &OW_BinIfcIO::readInstance, OW_BINSIG_INSTENUM, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,21 +86,7 @@ OW_BinIfcIO::readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIF
 void
 OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result)
 {
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_QUALENUM);
-	bool done = false;
-	while (!done)
-	{
-		try
-		{
-			result.handleQualifierType(OW_BinIfcIO::readQual(istrm));
-		}
-		catch (const OW_BadCIMSignatureException& e)
-		{
-			// OW_CIMInstance::readObject threw because we've read all the instances
-			OW_BinIfcIO::verifySignature(istrm, OW_END_QUALENUM);
-			done = true;
-		}
-	}
+	readEnum(istrm, result, &OW_BinIfcIO::readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
 }
 
 

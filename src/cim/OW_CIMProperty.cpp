@@ -41,8 +41,6 @@ using std::ostream;
 struct OW_CIMProperty::PROPData
 {
 	PROPData();
-	PROPData(const PROPData& x);
-	PROPData& operator= (const PROPData& x);
 
 	OW_String m_name;
 	OW_CIMQualifierArray m_qualifiers;
@@ -69,33 +67,42 @@ struct OW_CIMProperty::PROPData
 };
 
 OW_CIMProperty::PROPData::PROPData() :
-	m_name(), m_qualifiers(), m_propertyDataType(true), m_sizeDataType(-1),
-	m_override(), m_originClass(), m_cimValue(), m_propagated(false)
+	m_propertyDataType(true), m_sizeDataType(-1), m_propagated(false)
 {
 }
 
-OW_CIMProperty::PROPData::PROPData(const PROPData& x) :
-	m_name(x.m_name), m_qualifiers(x.m_qualifiers),
-	m_propertyDataType(x.m_propertyDataType), m_sizeDataType(x.m_sizeDataType),
-	m_override(x.m_override), m_originClass(x.m_originClass),
-	m_cimValue(x.m_cimValue), m_propagated(x.m_propagated)
+bool operator<(const OW_CIMProperty::PROPData& x, const OW_CIMProperty::PROPData& y)
 {
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_qualifiers == y.m_qualifiers)
+		{
+			if (x.m_propertyDataType == y.m_propertyDataType)
+			{
+				if (x.m_sizeDataType == y.m_sizeDataType)
+				{
+					if (x.m_override == y.m_override)
+					{
+						if (x.m_originClass == y.m_originClass)
+						{
+							if (x.m_cimValue == y.m_cimValue)
+							{
+								return x.m_propagated < y.m_propagated;
+							}
+							return x.m_cimValue < y.m_cimValue;
+						}
+						return x.m_originClass < y.m_originClass;
+					}
+					return x.m_override < y.m_override;
+				}
+				return x.m_sizeDataType < y.m_sizeDataType;
+			}
+			return x.m_propertyDataType < y.m_propertyDataType;
+		}
+		return x.m_qualifiers < y.m_qualifiers;
+	}
+	return x.m_name < y.m_name;
 }
-	
-OW_CIMProperty::PROPData&
-OW_CIMProperty::PROPData::operator= (const PROPData& x)
-{
-	m_name = x.m_name;
-	m_qualifiers = x.m_qualifiers;
-	m_propertyDataType = x.m_propertyDataType;
-	m_sizeDataType = x.m_sizeDataType;
-	m_override = x.m_override;
-	m_originClass = x.m_originClass;
-	m_cimValue = x.m_cimValue;
-	m_propagated = x.m_propagated;
-	return *this;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMProperty::OW_CIMProperty(OW_Bool notNull) :
 	OW_CIMElement(), m_pdata((notNull) ? new PROPData : NULL)
@@ -613,3 +620,8 @@ OW_CIMProperty::toMOF() const
 }
 
 const char* const OW_CIMProperty::NAME_PROPERTY = "Name";
+
+bool operator<(const OW_CIMProperty& x, const OW_CIMProperty& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}

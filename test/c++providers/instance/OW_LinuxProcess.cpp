@@ -63,7 +63,7 @@ public:
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
 			newCop.addKey(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
-			result.handleObjectPath(newCop);
+			result.handle(newCop);
 		}
 	}
 
@@ -115,7 +115,7 @@ public:
 			{
 				OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output from ps");
 			}
-			result.handleInstance(newInst);
+			result.handle(newInst);
 		}
 	}
 

@@ -410,7 +410,7 @@ namespace
 		: ostr(ostr_)
 		{}
 	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
 		}
@@ -487,7 +487,7 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &ci)
+		virtual void doHandle(const OW_CIMInstance &ci)
 		{
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
@@ -526,7 +526,7 @@ namespace
 		, ns(ns_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &cc)
+		virtual void doHandle(const OW_CIMClass &cc)
 		{
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
@@ -753,7 +753,7 @@ namespace
 	public:
 		ClassNameXMLWriter(std::ostream& ostr_) : ostr(ostr_) {}
 	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() <<
 				"\"/>";
@@ -794,7 +794,7 @@ namespace
 		, includeClassOrigin(includeClassOrigin_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			OW_CIMtoXML(c, ostr,
 				localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
@@ -850,7 +850,7 @@ namespace
 		: ostr(ostr_)
 		{}
 	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
 		}
@@ -899,7 +899,7 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			const OW_CIMInstance& cimInstance = i;
 			OW_CIMObjectPath cop(cimInstance.getClassName(),
@@ -970,7 +970,7 @@ namespace
 		: ostr(ostr_)
 		{}
 	protected:
-		virtual void doHandleQualifierType(const OW_CIMQualifierType &i)
+		virtual void doHandle(const OW_CIMQualifierType &i)
 		{
 			OW_CIMtoXML(i, ostr);
 		}
@@ -1346,7 +1346,7 @@ namespace
 		, ns(ns_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			OW_CIMObjectPath cop(i.getClassName(),
 				i.getKeyValuePairs() );

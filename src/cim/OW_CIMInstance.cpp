@@ -51,6 +51,31 @@ struct OW_CIMInstance::INSTData
 	OW_CIMQualifierArray m_qualifiers;
 };
 
+bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData& y)
+{
+	if (x.m_owningClassName == y.m_owningClassName)
+	{
+		if (x.m_name == y.m_name)
+		{
+			if (x.m_aliasName == y.m_aliasName)
+			{
+				if (x.m_keys == y.m_keys)
+				{
+					if (x.m_properties == y.m_properties)
+					{
+						return x.m_qualifiers < y.m_qualifiers;
+					}
+					return x.m_properties < y.m_properties;
+				}
+				return x.m_keys < y.m_keys;
+			}
+			return x.m_aliasName < y.m_aliasName;
+		}
+		return x.m_name < y.m_name;
+	}
+	return x.m_owningClassName < y.m_owningClassName;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance::OW_CIMInstance(OW_Bool notNull) :
 	OW_CIMElement(), m_pdata((notNull) ? new INSTData : NULL)
@@ -823,3 +848,7 @@ OW_CIMInstance::toString() const
 	return temp.toString();
 }
 
+bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}

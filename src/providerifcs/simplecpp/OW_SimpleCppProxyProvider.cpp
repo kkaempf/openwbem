@@ -63,10 +63,10 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			// TODO: check resultClass, role and resultRole
-			result.handleInstance(i.clone(false, includeQualifiers,
+			result.handle(i.clone(false, includeQualifiers,
 				includeClassOrigin,*propertyList,propertyList == 0));
 		}
 	private:
@@ -195,9 +195,9 @@ namespace
 		, localOnly(localOnly_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
-			result.handleInstance(i.clone(localOnly, true, true));
+			result.handle(i.clone(localOnly, true, true));
 		}
 	private:
 		OW_CIMInstanceResultHandlerIFC& result;

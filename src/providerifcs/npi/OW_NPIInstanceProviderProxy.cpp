@@ -87,7 +87,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 
 // FIXME
                 ow_cop.setObjectName(cimClass.getName());
-				result.handleObjectPath(ow_cop);
+				result.handle(ow_cop);
             }
 
         }
@@ -149,7 +149,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 // FIXME
 				 ow_inst.setClassName(cimClass.getName());
 
-				 result.handleInstance(ow_inst);
+				 result.handle(ow_inst);
 			}
 }
 	

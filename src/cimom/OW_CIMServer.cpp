@@ -517,7 +517,7 @@ OW_CIMServer::enumNameSpace(const OW_CIMNameSpace& ns,
 	{
 		if(!deep)
 		{
-			result.handleString(nsNode.getKey());
+			result.handle(nsNode.getKey());
 		}
 		else
 		{
@@ -533,7 +533,7 @@ void
 OW_CIMServer::_getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 	OW_HDBNode node)
 {
-	result.handleString(node.getKey());
+	result.handle(node.getKey());
 	node = hdl.getFirstChild(node);
 	while(node)
 	{
@@ -641,7 +641,7 @@ namespace
 		, m_assocDb(m_assocDb_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			OW_String cname = c.getName();
 			if(!m_mStore.deleteClass(ns, cname))
@@ -697,7 +697,7 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
             intAcl);
-		ccd.handleClass(cc);
+		ccd.handle(cc);
 
 		return cc;
 	}
@@ -825,10 +825,10 @@ namespace
 		, lcop(lcop_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			lcop.setObjectName(c.getName());
-			oph.handleObjectPath(lcop);
+			oph.handle(lcop);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& oph;
@@ -843,7 +843,7 @@ namespace
 		{}
 
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			enu.addElement(c);
 		}
@@ -1088,7 +1088,7 @@ namespace
 		, result(result_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &c)
+		virtual void doHandle(const OW_CIMInstance &c)
 		{
 			OW_CIMInstance ci(c);
 			OW_CIMObjectPath lcop(cop);
@@ -1096,7 +1096,7 @@ namespace
 			lcop.setKeys(ci.getKeyValuePairs());
 
 			server._getProviderProperties(lcop, ci, theClass, aclInfo);
-			result.handleInstance(ci.clone(false, includeQualifiers,
+			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, lpropList));
 		}
 	private:
@@ -1123,11 +1123,11 @@ namespace
 		, deep(deep_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &inst)
+		virtual void doHandle(const OW_CIMInstance &inst)
 		{
 			if (deep == true && localOnly == false) // don't filter anything
 			{
-				result.handleInstance(inst);
+				result.handle(inst);
 				return;
 			}
 
@@ -1170,7 +1170,7 @@ namespace
 			}
 			newInst.setProperties(newprops);
 			newInst.setKeys(inst.getKeyValuePairs());
-			result.handleInstance(newInst);
+			result.handle(newInst);
 		}
 	private:
 		OW_CIMInstanceResultHandlerIFC& result;
@@ -2193,7 +2193,7 @@ namespace
 		, aclInfo(aclInfo_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &cc)
+		virtual void doHandle(const OW_CIMClass &cc)
 		{
 			if (!cc.isAssociation())
 			{
@@ -2362,9 +2362,9 @@ namespace
 		: result(result_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
-			result.handleObjectPath(e.getAssociationPath());
+			result.handle(e.getAssociationPath());
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
@@ -2391,7 +2391,7 @@ namespace
 		, aclInfo(aclInfo_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociationPath();
 			if (cop.getNameSpace().length() == 0)
@@ -2399,7 +2399,7 @@ namespace
 				cop.setNameSpace(ns);
 			}
 			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
-			result.handleClass(cc);
+			result.handle(cc);
 		}
 	private:
 		OW_CIMClassResultHandlerIFC& result;
@@ -2427,14 +2427,14 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath op = e.getAssociatedObject();
 			OW_CIMClass cc;
 			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
 				&cc, intAclInfo);
 
-			result.handleInstance(ci.clone(false, includeQualifiers,
+			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, propertyList));
 		}
 	private:
@@ -2462,14 +2462,14 @@ namespace
 		, propertyList(propertyList_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath op = e.getAssociationPath();
 			OW_CIMClass cc;
 			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
 				&cc, intAclInfo);
 
-			result.handleInstance(ci.clone(false, includeQualifiers,
+			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, propertyList));
 		}
 	private:
@@ -2682,9 +2682,9 @@ namespace
 		: result(result_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
-			result.handleObjectPath(e.getAssociatedObject());
+			result.handle(e.getAssociatedObject());
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
@@ -2711,7 +2711,7 @@ namespace
 		, aclInfo(aclInfo_)
 		{}
 	protected:
-		virtual void doHandleEntry(const OW_AssocDbEntry &e)
+		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociatedObject();
 			if (cop.getNameSpace().length() == 0)
@@ -2719,7 +2719,7 @@ namespace
 				cop.setNameSpace(ns);
 			}
 			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
-			result.handleClass(cc);
+			result.handle(cc);
 		}
 	private:
 		OW_CIMClassResultHandlerIFC& result;
@@ -2862,9 +2862,9 @@ namespace
 		, ns(ns_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &cc)
+		virtual void doHandle(const OW_CIMClass &cc)
 		{
-			handler.handleClass(cc);
+			handler.handle(cc);
 			m_mStore.enumClass(ns, cc.getName(), handler, true, false, true, true);
 		}
 	private:
@@ -2889,7 +2889,7 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		{
 			OW_THROWCIM(OW_CIMException::FAILED);
 		}
-		result.handleClass(cc);
+		result.handle(cc);
 	}
 	else
 	{

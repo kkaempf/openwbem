@@ -78,7 +78,7 @@ void OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace,
 	}
 	for (size_t i = 0; i < p.instances.size(); ++i)
 	{
-		result.handleInstance(p.instances[i]);
+		result.handle(p.instances[i]);
 	}
 }
 

@@ -391,7 +391,7 @@ OW_AssocDbHandle::getAllEntries(const OW_CIMObjectPath& objectName,
 		if(((passocClasses == 0) || (passocClasses->count(dbentry.getAssocClass()) > 0))
 		   && ((presultClasses == 0) || (presultClasses->count(dbentry.getResultClass()) > 0)))
 		{
-			result.handleEntry(dbentry);
+			result.handle(dbentry);
 		}
 
 		dbentry = m_pdata->m_pdb->nextEntry(*this);

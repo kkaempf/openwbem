@@ -246,7 +246,7 @@ OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 		nodeToCIMObject(ci, node);
 		OW_CIMObjectPath op(ci.getClassName(), cop.getNameSpace());
 		op.setKeys(ci.getKeyValuePairs());
-		result.handleObjectPath(op);
+		result.handle(op);
 		node = hdl->getNextSibling(node);
 	}
 }
@@ -292,7 +292,7 @@ OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 			pServer->_getProviderProperties(lcop, ci, theClass, *pACLInfo);
 		}
 
-		result.handleInstance(ci.clone(false, includeQualifiers,
+		result.handle(ci.clone(false, includeQualifiers,
 			includeClassOrigin, propertyList));
 		node = hdl->getNextSibling(node);
 	}

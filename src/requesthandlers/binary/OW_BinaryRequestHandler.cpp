@@ -397,7 +397,7 @@ namespace
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			OW_BinIfcIO::writeClass(ostrm, c);
 		}
@@ -412,7 +412,7 @@ namespace
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			OW_BinIfcIO::writeObjectPath(ostrm, cop);
 		}
@@ -427,7 +427,7 @@ namespace
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &cop)
+		virtual void doHandle(const OW_CIMInstance &cop)
 		{
 			OW_BinIfcIO::writeInstance(ostrm, cop);
 		}
@@ -442,7 +442,7 @@ namespace
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandleQualifierType(const OW_CIMQualifierType &cqt)
+		virtual void doHandle(const OW_CIMQualifierType &cqt)
 		{
 			OW_BinIfcIO::writeQual(ostrm, cqt);
 		}

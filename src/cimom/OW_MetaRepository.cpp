@@ -224,7 +224,7 @@ OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
 		{
 			OW_CIMQualifierType qual;
 			nodeToCIMObject(qual, node);
-			result.handleQualifierType(qual);
+			result.handle(qual);
 		}
 		node = hdl->getNextSibling(node);
 	}
@@ -899,7 +899,7 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 
 			OW_ASSERT(cc.isAssociation());
 
-			result.handleClass(cc);
+			result.handle(cc);
 		}
 		node = hdl->getNextSibling(node);
 	}
@@ -975,7 +975,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
-	result.handleClass(cimCls.clone(localOnly, includeQualifiers,
+	result.handle(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
 
 	if(deep)

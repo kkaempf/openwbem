@@ -42,6 +42,7 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 /**
  * The OW_AssocDbEntry represents an entry in the association database.
@@ -140,7 +141,9 @@ typedef OW_Array<OW_AssocDbEntry> OW_AssocDbEntryArray;
 
 class OW_AssocDb;
 
-class OW_AssocDbEntryResultHandlerIFC;
+//////////////////////////////////////////////////////////////////////////////
+typedef OW_ResultHandlerIFC<OW_AssocDbEntry> OW_AssocDbEntryResultHandlerIFC;
+
 
 class OW_AssocDbHandle
 {
@@ -255,18 +258,6 @@ private:
 	friend class OW_AssocDb;
 };
 
-
-//////////////////////////////////////////////////////////////////////////////
-class OW_AssocDbEntryResultHandlerIFC
-{
-public:
-	void handleEntry(const OW_AssocDbEntry& e)
-	{
-		doHandleEntry(e);
-	}
-protected:
-	virtual void doHandleEntry(const OW_AssocDbEntry& e) = 0;
-};
 
 // The following structure represents the format of header that
 // preceeds all records in the associations db

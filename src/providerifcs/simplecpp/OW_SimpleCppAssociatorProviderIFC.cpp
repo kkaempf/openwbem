@@ -58,11 +58,11 @@ namespace
 		{}
 
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			OW_CIMObjectPath cop(i.getClassName(), ns);
 			cop.setKeys(i);
-			result.handleObjectPath(cop);
+			result.handle(cop);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;

@@ -128,7 +128,7 @@ public:
 		{
 			OW_CIMObjectPath newCop = cop;
 			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
-			result.handleObjectPath(newCop);
+			result.handle(newCop);
 		}
 	}
 
@@ -173,7 +173,7 @@ public:
 			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
-			result.handleInstance(newInst);
+			result.handle(newInst);
 		}
 	}
 

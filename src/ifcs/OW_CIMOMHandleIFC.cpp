@@ -70,7 +70,7 @@ namespace
 	public:
 		CIMClassEnumBuilder(OW_CIMClassEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
+		virtual void doHandle(const OW_CIMClass &c)
 		{
 			m_e.addElement(c);
 		}
@@ -83,7 +83,7 @@ namespace
 	public:
 		StringArrayBuilder(OW_StringArray& a) : m_a(a) {}
 	protected:
-		virtual void doHandleString(const OW_String &s)
+		virtual void doHandle(const OW_String &s)
 		{
 			m_a.push_back(s);
 		}
@@ -96,7 +96,7 @@ namespace
 	public:
 		CIMObjectPathEnumBuilder(OW_CIMObjectPathEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			m_e.addElement(cop);
 		}
@@ -109,7 +109,7 @@ namespace
 	public:
 		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			m_e.addElement(i);
 		}
@@ -122,7 +122,7 @@ namespace
 	public:
 		CIMQualifierTypeEnumBuilder(OW_CIMQualifierTypeEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandleQualifierType(const OW_CIMQualifierType &qt)
+		virtual void doHandle(const OW_CIMQualifierType &qt)
 		{
 			m_e.addElement(qt);
 		}

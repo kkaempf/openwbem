@@ -80,7 +80,7 @@ public:
 		{
 			OW_CIMObjectPath instCop = cop;
 			instCop.addKey("Name", OW_CIMValue(iter->name));
-			result.handleObjectPath(instCop);
+			result.handle(instCop);
 		}
 	}
 
@@ -104,7 +104,7 @@ public:
 			OW_CIMInstance inst = cimClass.newInstance();
 			inst.setProperty("Name", OW_CIMValue(iter->name));
 			inst.setProperty("Params", OW_CIMValue(iter->params));
-			result.handleInstance(inst);
+			result.handle(inst);
 		}
 	}
 

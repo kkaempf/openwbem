@@ -82,7 +82,7 @@ OW_NPIAssociatorProviderProxy::associatorNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath *>(cop.ptr) );
 
-			result.handleObjectPath(ow_cop);
+			result.handle(ow_cop);
         }
     }
     else
@@ -165,7 +165,7 @@ OW_NPIAssociatorProviderProxy::associators(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-			result.handleInstance(ow_inst);
+			result.handle(ow_inst);
         }
     }
     else
@@ -244,7 +244,7 @@ OW_NPIAssociatorProviderProxy::references(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-			result.handleInstance(ow_inst);
+			result.handle(ow_inst);
         }
     }
     else
@@ -300,7 +300,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath*>(my_cop.ptr) );
 
-			result.handleObjectPath(ow_cop);
+			result.handle(ow_cop);
         }
     }
     else

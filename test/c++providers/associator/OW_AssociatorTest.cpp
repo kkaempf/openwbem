@@ -143,7 +143,7 @@ namespace
 			{
 				OW_CIMInstance ci = instances.nextElement();
 				OW_CIMObjectPath cop(ci.getClassName(), ci.getKeyValuePairs());
-				result.handleObjectPath(cop);
+				result.handle(cop);
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace
 
 				newInstance.setProperty("secondRef", OW_CIMValue(path));
 
-				result.handleInstance(newInstance);
+				result.handle(newInstance);
 			}
 		}
 
@@ -236,7 +236,7 @@ namespace
 					newInstance.getKeyValuePairs());
 
 				newPath.setNameSpace(assocName.getNameSpace());
-				result.handleObjectPath(newPath);
+				result.handle(newPath);
 			}
 		}
 

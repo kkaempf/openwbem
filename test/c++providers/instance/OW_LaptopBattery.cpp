@@ -90,7 +90,7 @@ namespace
 			instCop.addKey("SystemName", OW_CIMValue(hostname));
 			instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
 			instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
-			result.handleObjectPath(instCop);
+			result.handle(instCop);
 		}
 
 		/////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ namespace
 			(void)localOnly;
 			(void)deep;
 			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
-			result.handleInstance(inst);
+			result.handle(inst);
 		}
 
 		/////////////////////////////////////////////////////////////////////////

@@ -95,9 +95,9 @@ namespace
 		CIMInstanceToObjectPath(OW_CIMObjectPathResultHandlerIFC& h,
 			OW_String& className_) : m_h(h), className(className_) {}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &ci)
+		virtual void doHandle(const OW_CIMInstance &ci)
 		{
-			m_h.handleObjectPath(OW_CIMObjectPath(className, ci.getKeyValuePairs()));
+			m_h.handle(OW_CIMObjectPath(className, ci.getKeyValuePairs()));
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& m_h;
@@ -132,7 +132,7 @@ namespace
 		, cimClass(cimClass_)
 		{}
 	protected:
-		virtual void doHandleString(const OW_String &s)
+		virtual void doHandle(const OW_String &s)
 		{
 			OW_String nameSpaceName = s;
 			int ndx = nameSpaceName.lastIndexOf('/');
@@ -143,7 +143,7 @@ namespace
 
 			OW_CIMInstance ci = cimClass.newInstance();
 			ci.setProperty("Name", OW_CIMValue(nameSpaceName));
-			handler.handleInstance(ci);
+			handler.handle(ci);
 		}
 	private:
 		OW_CIMInstanceResultHandlerIFC& handler;
@@ -155,7 +155,7 @@ namespace
 	public:
 		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &ci)
+		virtual void doHandle(const OW_CIMInstance &ci)
 		{
 			m_e.addElement(ci);
 		}

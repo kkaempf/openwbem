@@ -315,6 +315,9 @@ public:
 private:
 
 	OW_Reference<PROPData> m_pdata;
+
+	friend bool operator<(const OW_CIMProperty& x, const OW_CIMProperty& y);
 };
+
 
 #endif	// __OW_CIMPROPERTY_HPP__

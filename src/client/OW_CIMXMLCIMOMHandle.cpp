@@ -414,7 +414,7 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 	while (node)
 	{
 		OW_CIMObjectPath cop = OW_XMLCIMFactory::createObjectPath(node);
-		result.handleObjectPath(cop);
+		result.handle(cop);
 		node = node.getNext();
 	}
 }
@@ -448,7 +448,7 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 	node = node.getChild();
 	while (node)
 	{
-		result.handleClass(OW_XMLCIMFactory::createClass(node));
+		result.handle(OW_XMLCIMFactory::createClass(node));
 		node = node.getNext();
 	}
 }
@@ -483,7 +483,7 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 	while (node)
 	{
 		OW_CIMObjectPath cop = OW_XMLCIMFactory::createObjectPath(node);
-		result.handleObjectPath(cop);
+		result.handle(cop);
 		node = node.getNext();
 	}
 }
@@ -544,7 +544,7 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 		{
 			OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
 			ci.setKeys(iop.getKeys());
-			result.handleInstance(ci);
+			result.handle(ci);
 			node = node.getNext();
 		}
 	}
@@ -569,7 +569,7 @@ OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
 		}
 		OW_CIMQualifierType cqt(OW_Bool(true));
 		node = processQualifierDecl(node, cqt);
-		result.handleQualifierType(cqt);
+		result.handle(cqt);
 	}
 }
 
@@ -1009,7 +1009,7 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 			default:
 				break;
 		} // switch
-		result.handleObjectPath(cop);
+		result.handle(cop);
 	}
 }
 
@@ -1133,7 +1133,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 				{
 					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
 				}
-				iresult->handleInstance(cia[0]);
+				iresult->handle(cia[0]);
 			}
 			if (cresult)
 			{
@@ -1141,7 +1141,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 				{
 					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
 				}
-				cresult->handleClass(cca[0]);
+				cresult->handle(cca[0]);
 			}
 		}
 	}
@@ -1202,7 +1202,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 			default:
 				break;
 		} // switch
-		result.handleObjectPath(cop);
+		result.handle(cop);
 	}
 }
 
@@ -1316,7 +1316,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 				{
 					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
 				}
-				iresult->handleInstance(cia[0]);
+				iresult->handle(cia[0]);
 			}
 			if (cresult)
 			{
@@ -1324,7 +1324,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 				{
 					OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
 				}
-				cresult->handleClass(cca[0]);
+				cresult->handle(cca[0]);
 			}
 		}
 	}
@@ -1367,7 +1367,7 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 		{
 			OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
 			ci.setKeys(iop.getKeys());
-			result.handleInstance(ci);
+			result.handle(ci);
 			node = node.getNext();
 		}
 	}

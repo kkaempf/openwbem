@@ -2402,7 +2402,7 @@ namespace
 		: cia(cia_)
 		{}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			cia.push_back(i);
 		}

@@ -140,7 +140,7 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl, const OW_CIMObjectPath& path,
 
 		OW_String tmp;
 		nameProp.getValue().get(tmp);
-		result.handleString(path.getNameSpace() + "/" + tmp);
+		result.handle(path.getNameSpace() + "/" + tmp);
 		if(deep)
 		{
 			OW_CIMObjectPath newObjPath(OW_CIMClass::NAMESPACECLASS,
@@ -156,7 +156,7 @@ OW_ClientCIMOMHandle::enumNameSpace(const OW_CIMNameSpace &ns,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
 	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns.getNameSpace());
-	result.handleString(ns.getNameSpace());
+	result.handle(ns.getNameSpace());
 	enumNameSpaceAux(this, cop, result, deep);
 }
 				

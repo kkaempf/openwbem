@@ -34,80 +34,25 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 
-class OW_CIMClassResultHandlerIFC
+template <typename T>
+class OW_ResultHandlerIFC
 {
 public:
-	void handleClass(const OW_CIMClass& c)
+	void handle(const T& x)
 	{
-		doHandleClass(c);
+		doHandle(x);
 	}
-
-	virtual ~OW_CIMClassResultHandlerIFC() {}
+	virtual ~OW_ResultHandlerIFC() {}
 
 protected:
-	virtual void doHandleClass(const OW_CIMClass& c) = 0;
-
+	virtual void doHandle(const T& x) = 0;
 };
 
-class OW_CIMInstanceResultHandlerIFC
-{
-public:
-	void handleInstance(const OW_CIMInstance& i)
-	{
-		doHandleInstance(i);
-	}
-
-	virtual ~OW_CIMInstanceResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleInstance(const OW_CIMInstance& i) = 0;
-
-};
-
-class OW_CIMObjectPathResultHandlerIFC
-{
-public:
-	void handleObjectPath(const OW_CIMObjectPath& cop)
-	{
-		doHandleObjectPath(cop);
-	}
-
-	virtual ~OW_CIMObjectPathResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleObjectPath(const OW_CIMObjectPath& cop) = 0;
-
-};
-
-class OW_StringResultHandlerIFC
-{
-public:
-	void handleString(const OW_String& s)
-	{
-		doHandleString(s);
-	}
-
-	virtual ~OW_StringResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleString(const OW_String& s) = 0;
-
-};
-
-class OW_CIMQualifierTypeResultHandlerIFC
-{
-public:
-	void handleQualifierType(const OW_CIMQualifierType& s)
-	{
-		doHandleQualifierType(s);
-	}
-
-	virtual ~OW_CIMQualifierTypeResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleQualifierType(const OW_CIMQualifierType& qt) = 0;
-
-};
+typedef OW_ResultHandlerIFC<OW_CIMClass> OW_CIMClassResultHandlerIFC;
+typedef OW_ResultHandlerIFC<OW_CIMInstance> OW_CIMInstanceResultHandlerIFC;
+typedef OW_ResultHandlerIFC<OW_CIMObjectPath> OW_CIMObjectPathResultHandlerIFC;
+typedef OW_ResultHandlerIFC<OW_String> OW_StringResultHandlerIFC;
+typedef OW_ResultHandlerIFC<OW_CIMQualifierType> OW_CIMQualifierTypeResultHandlerIFC;
 
 #endif
 

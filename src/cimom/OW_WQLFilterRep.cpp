@@ -214,7 +214,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 			(void)deep; (void)localOnly; (void)includeQualifiers;
 			(void)includeClassOrigin; (void)propertyList;
 			// This is more efficient
-			result.handleInstance(m_inst);
+			result.handle(m_inst);
 			break;
 		}
 		

@@ -383,6 +383,9 @@ protected:
 	void _buildKeys();
 
 	OW_Reference<INSTData> m_pdata;
+	
+	friend bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y);
 };
+
 
 #endif	// __OW_CIMINSTANCE_HPP__
