@@ -287,7 +287,7 @@ SimpleAuthorizer::doAllowReadSchema(
 {
 	return checkAccess(ACCESS_READ, ns, env, context);
 }
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowWriteSchema(

@@ -122,7 +122,7 @@ public:
 		const String& ns,
 		OperationContext& context);
 
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
 	/**
 	 * Determine if a write of a schema element is allowed.
 	 * @param env A reference to a provider environment

@@ -278,7 +278,7 @@ AuthorizerManager::allowReadSchema(
 	return m_authorizer->doAllowReadSchema(
 		createAuthEnvRef(context, env), ns, context);
 }
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowWriteSchema(
