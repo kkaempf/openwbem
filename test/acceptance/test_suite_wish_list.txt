@@ -1,0 +1,22 @@
+use latest code from cvs.
+re-run whenever a change is checked in.
+have ability to detect which change (in CVS) broke either the build or testsuite.
+different build configurations:
+	debug/optimized
+	disable optional features (profiles, digest, ssl, etc.)
+different test configurations:
+	compression
+	binary/cimxml
+	mof compiler local/wire
+interoperability
+	snia client/server
+	wbemservices client/server
+	pegasus client/server
+	sblim client
+code coverage
+valgrind
+benchmarks (w/comparisons from last run to detect regressions or improvements)
+stress tests
+build & run on different os's
+build on one os and run tests on all "compatible" os's.
+
