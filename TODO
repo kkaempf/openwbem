@@ -106,7 +106,6 @@ New features:
     - Use Boost.Python to create a python binding to the client library, to
       allow for easy scripting or dynamic CIMOM interaction.
     - Write a command line utility to register for and print indications.
-    - Add -I flag for mof include search path.
     - Write a config file provider so the CIMOM config can be programatically
       changed from remote.
     - Make the OW_*Repository classes into a shared library, and have a config
@@ -128,8 +127,18 @@ New features:
       them disabled by default.  Maybe remove the code in 2.2 (3.0?)
     - Make OW_Cpp*ProviderIFC method virtual (non-pure), so providers don't
       have to override non-implemented methods.
+    - Remove instance qualifiers?
     - Create an indication export provider to the logger (cimom logger,
       syslog, etc.)
+    - Add some mof compiler options:
+      - perform a syntax check (don't really import)
+      - delete object(s) from repository
+      - Preserve objects (don't overwrite if they already exist)
+      - Suppress warnings
+      - Suppress all messages.
+      - Add -I flag for mof include search path.
+      - Specify a file containing a list of MOFs to compile
+      - output XML only to stdout.
 
 Refactorings:
     - Create a base class for all the common code in the provider interfaces.
