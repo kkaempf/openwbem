@@ -69,12 +69,13 @@ typedef enum {
 } NPIGarbageType;
 
 
-typedef struct {
+class NPIContext {
+public:
         char * scriptName;
         void * my_perl;
 	OW_Array<void *> garbage;
 	OW_Array<NPIGarbageType> garbageType;
-} NPIContext;
+};
 
 class NPIFTABLE {
 

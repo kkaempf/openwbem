@@ -5,12 +5,15 @@
 #include "OW_Format.hpp"
 
 #include "OW_FTABLERef.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
 
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
+
+#include "OW_WQLSelectStatement.hpp"
 
 
 // Garbage Collection helper functions
@@ -951,7 +954,9 @@ SelectExpGetSelectString(NPIHandle* npiHandle, SelectExp sxp)
 {
 	(void)npiHandle;
 
-	char * query = static_cast<char *>(sxp.ptr);
+	OW_WQLSelectStatement * wf =
+		 static_cast<OW_WQLSelectStatement *>(sxp.ptr);
+	char * query = wf->toString().allocateCString();
 	return query;
 }
 
@@ -1116,6 +1121,15 @@ CIMOMPrepareAttach(NPIHandle* npiHandle)
     OW_ProviderEnvironmentIFCRef * provenv =
         static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
     nh->thisObject = new OW_ProviderEnvironmentIFCRef(*provenv);
+
+    // copy NPIContext
+    nh->context = new ::NPIContext;
+    ((NPIContext *)(nh->context))->scriptName =
+           ((NPIContext *)(npiHandle->context))->scriptName;
+    // CHECK: do I have to allocate a new perl context here ?
+    ((NPIContext *)(nh->context))->my_perl =
+           ((NPIContext *)(npiHandle->context))->my_perl;
+
     // need to worry about errorOccurred and providerError???   
     return nh;
 }
@@ -1128,6 +1142,9 @@ CIMOMCancelAttach(NPIHandle* npiHandle)
     delete static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
     if (npiHandle->providerError != NULL)
         free((void *)(npiHandle->providerError));
+
+    // TODO delete NPIContext
+
     free(npiHandle);
 }
 
@@ -1137,6 +1154,8 @@ CIMOMAttachThread(NPIHandle* npiHandle)
 {
 	if (npiHandle == NULL) return;
 	npiHandle->errorOccurred = 0;
+    ((NPIContext *)(npiHandle->context))->garbage = OW_Array<void *>();
+    ((NPIContext *)(npiHandle->context))->garbageType = OW_Array<NPIGarbageType>();
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -1144,6 +1163,10 @@ CIMOMDetachThread(NPIHandle* npiHandle)
 {
 	if (npiHandle == NULL) return;
 	npiHandle->errorOccurred = 0;
+
+	// Free the copied npiHandle and NPIContext
+	OW_NPIHandleFreer nf(* npiHandle);
+
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libnpisupport.a
 OW_SHARED_LIBS = libnpisupport.so
-SHAREDLIBADD =
+SHAREDLIBADD = 
 
 thelibdir = $(libdir)
 
@@ -44,5 +44,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/npi \
--I$(top_srcdir)/src/server 
+-I$(top_srcdir)/src/server  \
+-I$(top_srcdir)/src/wql/common 
 
