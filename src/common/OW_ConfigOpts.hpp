@@ -217,6 +217,9 @@
 #ifndef OW_DEFAULT_PIDFILE
 #define OW_DEFAULT_PIDFILE OW_PIDFILE_DIR "/" OW_PACKAGE_PREFIX "owcimomd.pid"
 #endif
+#ifndef OW_DEFAULT_DROP_ROOT_PRIVILEGES
+#define OW_DEFAULT_DROP_ROOT_PRIVILEGES "false"
+#endif
 
 
 namespace OW_NAMESPACE
@@ -302,6 +305,7 @@ namespace ConfigOpts
 	static const char* const LOG_1_FLUSH_opt = "log.%1.flush";
 
 	static const char* const PIDFILE_opt = "owcimomd.pidfile";
+	static const char* const DROP_ROOT_PRIVILEGES_opt = "owcimomd.drop_root_privileges";
 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

@@ -325,6 +325,12 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.interop_schema_namespace = root
 
 ################################################################################
+# If owcimomd.drop_root_privileges != "false", then owcimomd will run as the
+# user "owcimomd" instead of root.
+# The default is false
+;owcimomd.drop_root_privileges = false
+
+################################################################################
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
 # will keep a provider in memory.  If a provider has not been accessed for
 # longer than this value, it will be unloaded and the memory associated with
