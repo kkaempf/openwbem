@@ -181,8 +181,8 @@ private:
 				"signature");
 		}
 		
-		off_t whence=0;
-		if ((whence = f.seek(-sizeof(size), SEEK_END)) == -1)
+		off_t whence = f.seek(-sizeof(size), SEEK_END);
+		if (whence == -1)
 		{
 			OW_THROW(EnumerationException, "Failure to seek");
 		}
