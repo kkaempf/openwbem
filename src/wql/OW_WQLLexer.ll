@@ -74,6 +74,7 @@ static int myinput(char* buf, int max);
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, \
 			format("Fatal Parser Error: %1", msg).c_str())
 
+#define YY_DECL extern "C" int yylex(void)        /* return the next token */ 
 #else /* !FLEX_SCANNER */
 
 #undef input

@@ -86,19 +86,32 @@ SocketAddress
 SocketAddress::getByName(
 		const String& hostName, UInt16 port)
 {
-#ifdef OW_HAVE_GETHOSTBYNAME_R
+#if defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS)
 	hostent hostbuf;
 	hostent* host = &hostbuf;
+#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)
 	char buf[2048];
 	int h_err = 0;
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, buf, sizeof(buf),
 				&host, &h_err) == -1)
+	{
 		host = NULL;
+	}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
+	hostent_data hostdata;
+	if (gethostbyname_r(hostName.c_str(), &hostbuf, &hostdata) != 0)
+	{
+	  host = NULL;
+	}
+	
+#else
+#error Not yet supported: gethostbyname_r() with other argument counts.
+#endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
 #else
 	hostent* host = NULL;
 	MutexLock mlock(gethostbynameMutex);
 	host = gethostbyname(hostName.c_str());
-#endif
+#endif /* defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS) */
 	if (!host) {
 		OW_THROW(UnknownHostException, hostName.c_str());
 	}
@@ -156,15 +169,28 @@ SocketAddress::getAnyLocalHost(UInt16 port)
 	String hname(buf);
 	if (hname.indexOf('.') == String::npos)
 	{
-#ifdef OW_HAVE_GETHOSTBYNAME_R
-		hostent hostbuf;
-		hostent* hent = &hostbuf;
-		char buf[2048];
-		int h_err = 0;
-		if (gethostbyname_r(hname.c_str(), &hostbuf, buf, sizeof(buf),
-					&hent, &h_err) == -1)
-			hent = NULL;
+#if defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS)
+	hostent hostbuf;
+	hostent* hent = &hostbuf;
+#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)
+	char local_buf[2048];
+	int h_err = 0;
+	if (gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf),
+				&hent, &h_err) == -1)
+	{
+		hent = NULL;
+	}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
+	hostent_data hostdata;
+	if (gethostbyname_r(buf, &hostbuf, &hostdata) != 0)
+	{
+	  hent = NULL;
+	}
+	
 #else
+#error Not yet supported: gethostbyname_r() with other argument counts.
+#endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
+#else	  
 		hostent* hent = 0;
 		{
 			MutexLock mlock(gethostbynameMutex);

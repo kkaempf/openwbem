@@ -37,6 +37,10 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 
+#if defined(GOOD)
+#undef GOOD
+#endif
+
 namespace OpenWBEM
 {
 

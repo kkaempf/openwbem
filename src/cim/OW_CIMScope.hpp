@@ -32,6 +32,10 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 
+#if defined(BAD)
+#undef BAD
+#endif
+
 namespace OpenWBEM
 {
 

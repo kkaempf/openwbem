@@ -9,7 +9,11 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-SHAREDLIBADD =
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common/ -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
 
 noinst_LIBRARIES = libowclient.a
 

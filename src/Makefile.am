@@ -23,25 +23,26 @@ cim \
 ifcs \
 common \
  \
+http \
+ \
+xml \
+ \
 client \
  \
+services \
 $(CIMXMLLISTENERDIR) \
  \
-http \
  \
 provider \
 server \
  \
-xml \
- \
 wql \
 authenticators \
-services \
 requesthandlers \
 providerifcs \
-providers \
 repositories \
 cimom \
+providers \
  \
 $(MOFDIR) \
 tools

@@ -11,6 +11,8 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libnpiprovifc.a
 OW_SHARED_LIBS = libnpiprovifc.so
 SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/npi/common -lnpisupport \
 -L$(top_builddir)/src/wql/common -lowwqlcommon 
 

@@ -8,7 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowrequesthandlerbinary.so
-SHAREDLIBADD =
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 
 noinst_LIBRARIES = \
 libowrequesthandlerbinary.a

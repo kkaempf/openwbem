@@ -1,1 +1,1 @@
-SUBDIRS = client common test
+SUBDIRS = common client test

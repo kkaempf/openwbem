@@ -10,8 +10,13 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
 OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.so
-SHAREDLIBADD = $(top_builddir)/src/http/common/libowhttpcommon.a $(top_builddir)/src/http/client/libowhttpclient.a $(top_builddir)/src/xml/libowxml.a
-#SHAREDLIBADD = -L$(top_builddir)/src/http/common -lowhttpcommon -L$(top_builddir)/src/http/client -lowhttpclient -L$(top_builddir)/src/xml -lowxml
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/xml -lowxml 
 
 thelibdir = $(pkglibdir)/c++providers
 

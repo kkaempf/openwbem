@@ -8,7 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 noinst_LIBRARIES = libowxml.a
-SHAREDLIBADD =
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 
 OW_SHARED_LIBS = libowxml.so
 thelibdir = $(libdir)

@@ -176,20 +176,41 @@ String getFullyQualifiedHostName()
 #else
 		hostent hostbuf;
 		hostent* host = &hostbuf;
+#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)
 		char buf[2048];
 		int h_err = 0;
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
+		hostent_data hostdata;
+		int h_err = 0;		
+#else
+#error Not yet supported: gethostbyname_r() with other argument counts.
+#endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
 		// gethostbyname_r will randomly fail on some platforms/networks
 		// maybe the DNS server is overloaded or something.  So we'll
 		// give it a few tries to see if it can get it right.
 		bool worked = false;
 		for (int i = 0; i < 10 && (!worked || host == 0); ++i)
 		{
+#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)		  
 			if (gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf),
 						&host, &h_err) != -1)
 			{
 				worked = true;
 				break;
 			}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
+			if (gethostbyname_r(hostName, &hostbuf, &hostdata) == 0)
+			{
+				worked = true;
+				break;
+			}
+			else
+			{
+			  h_err = h_errno;
+			}
+#else
+#error Not yet supported: gethostbyname_r() with other argument counts.
+#endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
 		}
 		if (worked && host != 0)
 		{

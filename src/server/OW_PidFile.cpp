@@ -34,7 +34,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/file.h>
-#include <sys/fcntl.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <errno.h>
 #include <sys/types.h>

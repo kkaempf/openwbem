@@ -43,7 +43,9 @@
 
 #if defined(OW_HAVE_SYS_CDEFS_H)
 # include <sys/cdefs.h>
-#else
+#endif
+
+#if !defined(__BEGIN_DECLS) || !defined(__END_DECLS)
 # ifdef __cplusplus
 #  define __BEGIN_DECLS extern "C" {
 #  define __END_DECLS }

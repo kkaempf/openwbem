@@ -10,7 +10,10 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowwql.so
-SHAREDLIBADD = -L$(top_builddir)/src/wql/common -lowwqlcommon
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/wql/common -lowwqlcommon
+
 thelibdir = $(libdir)
 
 noinst_LIBRARIES = libowwql.a
@@ -31,6 +34,7 @@ OW_WQLVisitor.hpp
 libowwql_a_SOURCES = \
 OW_WQLParser.yy \
 OW_WQLLexer.ll \
+OW_WQLAst.cpp \
 OW_WQLScanUtils.cpp \
 OW_WQLProcessor.hpp \
 OW_WQLProcessor.cpp \

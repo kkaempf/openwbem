@@ -48,7 +48,7 @@
 #include "OW_WQLImpl.hpp"
 
 int owwqlerror( const char* s);
-int owwqllex();
+extern "C" int owwqllex();
 
 using namespace OpenWBEM;
 

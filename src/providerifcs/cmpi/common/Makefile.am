@@ -9,7 +9,8 @@ uninstall-local : uninstall-ow-shared-libs
 
 noinst_LIBRARIES = libcmpisupport.a
 OW_SHARED_LIBS = libcmpisupport.so
-SHAREDLIBADD =
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem
 
 thelibdir = $(libdir)
 

@@ -12,6 +12,10 @@ noinst_LIBRARIES = libowprovpollUnloader.a
 thelibdir = $(pkglibdir)/c++providers
 
 OW_SHARED_LIBS = libowprovpollUnloader.so
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc 
 
 libowprovpollUnloader_a_SOURCES = \
 OW_UnloaderProvider.hpp \

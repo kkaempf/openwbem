@@ -43,6 +43,10 @@
 namespace OpenWBEM
 {
 
+// This signature was removed from the templated class to please broken linkers
+// (and/or compilers).
+const UInt32 OW_TEMPFILE_ENUMERATION_SIG = 0x4f57454e; // "OWEN"  
+  
 OW_DECLARE_EXCEPTION(Enumeration);
 template <class T>
 class TempFileEnumerationImpl
@@ -51,7 +55,7 @@ public:
 	TempFileEnumerationImpl()
 	: m_size(0), m_Data()
 	{
-		m_Data.write(reinterpret_cast<const char*>(&enumSig), sizeof(enumSig));
+		m_Data.write(reinterpret_cast<const char*>(&OW_TEMPFILE_ENUMERATION_SIG), sizeof(OW_TEMPFILE_ENUMERATION_SIG));
 		if (!m_Data.good())
 		{
 			OW_THROW(EnumerationException, "Failed to write signature to "
@@ -164,7 +168,7 @@ private:
 			OW_THROW(EnumerationException, "Failure to read enumeration "
 				"signature");
 		}
-		if (fileSig != enumSig)
+		if (fileSig != OW_TEMPFILE_ENUMERATION_SIG)
 		{
 			OW_THROW(EnumerationException, "Attempted to construct an "
 				"enumeration from a file that does not have the correct "
@@ -191,10 +195,8 @@ private:
 private:
 	size_t m_size;
 	TempFileStream m_Data;
-	static const UInt32 enumSig;
 };
-template <class T>
-const UInt32 TempFileEnumerationImpl<T>::enumSig = 0x4f57454e; // "OWEN"
+
 template <class T>
 class Enumeration
 {

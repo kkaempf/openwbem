@@ -77,7 +77,6 @@ class SyslogLogger : public Logger
 	public:
 		SyslogLogger()
 		{
-			static bool calledOpenLog = false;
 			if (!calledOpenLog)
 			{
 				openlog( OW_PACKAGE_PREFIX"openwbem", LOG_CONS, LOG_DAEMON );
@@ -109,7 +108,10 @@ class SyslogLogger : public Logger
 			for (size_t i = 0; i < a.size(); ++i)
 				syslog( syslogPriority, "%s", a[i].c_str() );
 		}
+		static bool calledOpenLog;
 };
+bool SyslogLogger::calledOpenLog = false;
+
 class TeeLogger : public Logger
 {
 	public:

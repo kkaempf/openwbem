@@ -52,6 +52,10 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_OperationContext.hpp"
 
+#if defined(BAD)
+#undef BAD
+#endif
+
 namespace OpenWBEM
 {
 

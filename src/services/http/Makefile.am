@@ -8,8 +8,9 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowservicehttp.so
-#SHAREDLIBADD = $(top_builddir)/src/http/common/libowhttpcommon.a
-SHAREDLIBADD = -L$(top_builddir)/src/http/common -lowhttpcommon
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
 noinst_LIBRARIES = \
 libowservicehttp.a

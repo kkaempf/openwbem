@@ -60,7 +60,7 @@ public:
 } // end namespace OpenWBEM
 
 extern int owwqldebug;
-extern int owwqlparse(void);
+extern "C" int owwqlparse(void);
 extern FILE* owwqlin;
 extern void WQLscanner_init(void);
 

@@ -8,8 +8,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowrequesthandlercimxml.so
-#SHAREDLIBADD = $(top_builddir)/src/xml/libowxml.a
-SHAREDLIBADD = -L$(top_builddir)/src/xml -lowxml
+SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -L$(top_builddir)/src/xml -lowxml 
 
 noinst_LIBRARIES = \
 libowrequesthandlercimxml.a

@@ -11,6 +11,8 @@ uninstall-local : uninstall-ow-shared-libs
 noinst_LIBRARIES = libcmpiprovifc.a
 OW_SHARED_LIBS = libcmpiprovifc.so
 SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cmpi/common -lcmpisupport \
 -L$(top_builddir)/src/wql/common -lowwqlcommon 
 

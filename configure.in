@@ -132,9 +132,89 @@ ostream.h istream istream.h hash_map ext/hash_map cxxabi.h)
 
 AC_LANG_C
 
-AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace nanosleep \
+AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \
 mkstemp snprintf random srandom asctime_r gmtime_r localtime_r gettimeofday \
 timegm)
+
+dnl This horrible mess is here because there are variations in the number of
+dnl parameters that gethostbyname_r takes on various platforms.  The general
+dnl idea for this came from the python configure script.
+AC_CHECK_FUNC(gethostbyname_r, 
+[
+  dnl the 6 arg version is the way Linux does it.
+  AC_MSG_CHECKING(if gethostbyname_r takes 6 args)
+  AC_TRY_COMPILE(
+  [
+#include <netdb.h>
+  ],
+  [ 
+    const char* hostname = "IGNOREME";
+    struct hostent hostbuf;
+    struct hostent* host = &hostbuf;
+    char buf[2048];
+    int localh_errno = 0;
+
+    (void) gethostbyname_r(hostname, &hostbuf, buf, sizeof(buf), &host, &localh_errno);
+  ],
+  dnl Yes, it takes 6 args
+  [
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_GETHOSTBYNAME_R, 1, Have gethostbyname_r())
+    AC_DEFINE(GETHOSTBYNAME_R_ARGUMENTS, 6, Number of args to gethostbyname_r())
+  ],
+  dnl else (not 6 args)
+  [
+    AC_MSG_RESULT(no)
+    dnl The 3 arg version is the way AIX does it.
+    AC_MSG_CHECKING(if gethostbyname_r takes 3 args)
+    AC_TRY_COMPILE(
+    [
+#include <netdb.h>
+    ],
+    [
+      const char* hostname = "IGNOREME";
+      struct hostent hostbuf;
+      struct hostent_data hostdata;
+      
+      (void) gethostbyname_r(hostname, &hostbuf, &hostdata);
+    ],
+    dnl Yes, it takes 3 args
+    [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_GETHOSTBYNAME_R, 1, Have gethostbyname_r())
+      AC_DEFINE(GETHOSTBYNAME_R_ARGUMENTS, 3, Number of args to gethostbyname_r())
+    ],
+    dnl else (not 3 arg)
+    [
+      AC_MSG_RESULT(no)
+      dnl This was taken from the python source, as I don't know what platforms
+      dnl it is correct on.
+      AC_MSG_CHECKING(if gethostbyname_r takes 5 args)
+      AC_TRY_COMPILE(
+      [
+#include <netdb.h>
+      ],
+      [
+        const char* name = "IGNOREME";
+	struct hostent *he;
+	char buffer[2048];
+	int localh_errno = 0;
+	(void) gethostbyname_r(name, he, buffer, sizeof(buffer), &localh_errno);
+      ],
+      dnl Yes, it takes 5 args
+      [
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(HAVE_GETHOSTBYNAME_R, 1, Have gethostbyname_r())
+        AC_DEFINE(GETHOSTBYNAME_R_ARGUMENTS, 5, Number of args to gethostbyname_r())
+      ],
+      dnl else (Who knows?)
+      [
+        AC_MSG_RESULT(no)
+      ] )
+    ] )
+  ] )
+] )
+dnl end of gethostbyname_r checks.
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -205,6 +285,16 @@ AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 #Figure out which platform dir to compile
 case "$host" in
 *-*-aix*)
+	PLATFORMDIR="posix"
+	AC_DEFINE(AIX, 1, Target OS is AIX)
+	LIBS="$LIBS -lxnet"
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
+	CXXCOMMONLINKFLAGS=""
+	CXXBINLINKFLAGS="$LDFLAGS -Wl,-brtl -Wl,-E"
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -pthread -Wl,-G -Wl,-E'
+	PLAT_OPTFLAGS="-O0"
+#	PIDFILEDIR="/var/run"
 	;;
 *-*-cygwin*)
 	;;

@@ -8,7 +8,13 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libowhttpxmllistener.so
-SHAREDLIBADD = 
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/services/http -lowservicehttp
 
 noinst_LIBRARIES = \
 libowhttpxmllistener.a
