@@ -35,7 +35,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
-#include "OW_HTTPClient.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -54,31 +53,6 @@ using namespace WBEMFlags;
 CIMClient::CIMClient(const String& url, const String& ns,
 	const ClientAuthCBIFCRef& authCB)
 {
-	//URL owurl(url);
-	//CIMProtocolIFCRef client(new HTTPClient(url));
-	/**********************************************************************
-	 * Assign our callback to the HTTP Client.
-	 **********************************************************************/
-	//client->setLoginCallBack(authCB);
-	/**********************************************************************
-	 * Here we create a CIMXMLCIMOMHandle and have it use the
-	 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
-	 * a Reference<CIMProtocol> it it's constructor, so
-	 * we have to make a Reference out of our HTTP Client first.
-	 * By doing this, we don't have to worry about deleting our
-	 * HTTPClient.  Reference will delete it for us when the
-	 * last copy goes out of scope (reference count goes to zero).
-	 **********************************************************************/
-	//if (owurl.scheme.startsWith(URL::OWBINARY) 
-	//	|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
-	//{
-	//	m_ch = new BinaryCIMOMHandle(client);
-	//}
-	//else
-	//{
-	//	m_ch = new CIMXMLCIMOMHandle(client);
-	//}
-	
 	m_ch = ClientCIMOMHandle::createFromURL(url);
 	m_ch->getWBEMProtocolHandler()->setLoginCallBack(authCB);
 
