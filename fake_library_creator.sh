@@ -94,9 +94,25 @@ create_fake_library()
       fi
     fi
 
+    if [ "x$BASE_LIBNAME" == "x" ]
+    then
+	MINUS_NLM=`basename $FILENAME .nlm`
+	if [ "x$MINUS_NLM" != "x$FILENAME" ]
+	then
+	  LIB_EXT=.nlm
+	  BASE_LIBNAME=$MINUS_NLM
+	fi
+    fi
+
     if [ "x$BASE_LIBNAME" != "x" ]
     then
-      extract_creation_name_from_lib "$DIRECTORY/$FILENAME"
+      if [ "x$LIB_EXT" == "x.nlm" ]
+      then
+        IMPORT_FILE=$BASE_LIBNAME".imp"
+        CREATION_FUNCTION_NAME=`grep "$EXPORT_PREFIX" $IMPORT_FILE | sort -u`
+      else
+        extract_creation_name_from_lib "$DIRECTORY/$FILENAME"
+      fi
       
       if [ "x$CREATION_FUNCTION_NAME" != "x" ]
       then
