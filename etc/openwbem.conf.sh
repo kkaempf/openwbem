@@ -140,7 +140,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.restart_on_error = true
 
 ################################################################################
-# owcimomd.authorization_lib specifies the location of the authorization
+# owcimomd.authorization_lib specifies the location the authorization
 # library will be loaded from.
 # If this option is empty or commented out, no authorization module will be
 # used.
@@ -221,16 +221,28 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
 
 ################################################################################
-# Tell the http server to use digest authorization
-# digest will bypass the normal authentication mechanism.  You must set up
-# the digest password file using owdigestgenpass to use digest.
-# The default for this option is true
+# Tell the http server to use Digest authentication
+# Digest will bypass the Basic authentication mechanism.  
+# You must set up the digest password file using owdigestgenpass to use digest.
+# Digest doesn't use the authentication module specified by the 
+# owcimomd.authentication_module config item.
+# If this option is true, then Basic will not be used.
+# If this option is false, then Basic will be used.
+# The default for this option is true.
 http_server.use_digest = false
 
 ################################################################################
-# If the digest authentication module is used, this needs to be the path to
-# the password file
+# If the Digest authentication option is enabled, this needs to be the path to
+# the password file.
 http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
+
+################################################################################
+# Tell the http server to allow local authentication
+# local authentication allows a local system user to authenticate without
+# supplying a password, instead relying on filesystem permissions.  This can
+# be enabled in conjunction with either http Basic or Digest.
+# The default for this option is false.
+;http_server.allow_local_authentication = false
 
 ################################################################################
 # http_server.single_thread specifies whether or not owcimomd process connection
