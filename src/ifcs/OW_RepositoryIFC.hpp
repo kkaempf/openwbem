@@ -45,6 +45,8 @@ class OperationContext;
 class RepositoryIFC : public IntrusiveCountableBase
 {
 public:
+	RepositoryIFC();
+	RepositoryIFC(const RepositoryIFC& x);
 	virtual ~RepositoryIFC();
 	/**
 	 * Open this RepositoryIFC.

@@ -37,6 +37,7 @@ provider \
  \
 wql \
 authenticators \
+authorizers \
 requesthandlers \
 repositories \
 providerifcs \

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,29 +28,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_RepositoryIFC.hpp"
+#include "OW_AuthorizerIFC.hpp"
 
 namespace OpenWBEM
 {
 
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::RepositoryIFC()
-{
-}
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::RepositoryIFC(const RepositoryIFC& x)
-	: IntrusiveCountableBase() // don't make a copy, we have a new ref-count
-{
-}
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::~RepositoryIFC()
-{
-}
-///////////////////////////////////////////////////////////////////////////////
-void
-RepositoryIFC::exportIndication(const CIMInstance&, const String&) 
+AuthorizerIFC::~AuthorizerIFC()
 {
 }
 
-} // end namespace OpenWBEM
+}
+
 

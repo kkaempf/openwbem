@@ -501,13 +501,6 @@ if test "$enable_openslp" != no; then
 fi
 AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
 
-AC_ARG_ENABLE(acls,
-OW_HELP_STRING(--disable-acls,disable acls))
-
-if test "$enable_acls" = no; then
-	AC_DEFINE(DISABLE_ACLS)
-fi
-
 AC_ARG_ENABLE(memory-debug-mode,
 OW_HELP_STRING(--enable-memory-debug-mode,enable memory debug mode),
 [
@@ -999,6 +992,8 @@ src/authenticators/Makefile
 src/authenticators/simple/Makefile
 src/authenticators/pam/Makefile
 src/authenticators/pamcl/Makefile
+src/authorizers/Makefile
+src/authorizers/simple/Makefile
 src/cim/Makefile
 src/cimom/Makefile
 src/cimom/common/Makefile

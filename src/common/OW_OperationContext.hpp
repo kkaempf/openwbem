@@ -58,15 +58,22 @@ public:
 
 	// caller creats a subclass of Data and passes it in.
 	void setData(const String& key, const DataRef& data);
+
+	/**
+	 * Remove the data identified by key.  It is not an error if key has not
+	 * already been added to the context with setData().
+	 * @param key Identifies the data to remove.
+	 */
+	void removeData(const String& key);
 	
 	// caller uses Reference::cast_to<>() on the return value to attempt to
 	// recover the original type passed into storeData.
 	DataRef getData(const String& key) const;
 	
-	// These are be for convenience, and are implemented in terms of
+	// These are for convenience, and are implemented in terms of
 	// the first 2 functions.
 	void setStringData(const String& key, const String& str);
-	// @throws ContextDataNotFound if key is not found
+	// @throws ContextDataNotFoundException if key is not found
 	String getStringData(const String& key) const;
 	
 	// Keys values we use.

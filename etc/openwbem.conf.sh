@@ -178,6 +178,13 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.restart_on_error = true
 
 ################################################################################
+# owcimomd.authorization_lib specifies the location of the authorization
+# library will be loaded from.
+# If this option is empty or commented out, no authorization module will be
+# used.
+owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.so
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option

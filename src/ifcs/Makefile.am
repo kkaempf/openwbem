@@ -3,6 +3,7 @@ noinst_LIBRARIES = libOW_ifcs.a
 libOW_ifcs_a_SOURCES = \
 OW_AuthenticationException.cpp \
 OW_AuthenticatorIFC.cpp \
+OW_AuthorizerIFC.cpp \
 OW_CIMOMHandleIFC.cpp \
 OW_CIMProtocolIFC.cpp \
 OW_CIMProtocolIStreamIFC.cpp \
@@ -19,6 +20,7 @@ OW_CIMProtocolException.cpp
 
 pkginclude_HEADERS = \
 OW_AuthenticatorIFC.hpp \
+OW_AuthorizerIFC.hpp \
 OW_CIMOMHandleIFC.hpp \
 OW_CIMProtocolIFC.hpp \
 OW_CIMProtocolIStreamIFC.hpp \

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,30 +27,27 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+#ifndef OW_AUTHORIZER_IFC_HPP_INCLUDE_GUARD_
+#define OW_AUTHORIZER_IFC_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
 
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::RepositoryIFC()
+class AuthorizerIFC : public RepositoryIFC
 {
-}
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::RepositoryIFC(const RepositoryIFC& x)
-	: IntrusiveCountableBase() // don't make a copy, we have a new ref-count
-{
-}
-///////////////////////////////////////////////////////////////////////////////
-RepositoryIFC::~RepositoryIFC()
-{
-}
-///////////////////////////////////////////////////////////////////////////////
-void
-RepositoryIFC::exportIndication(const CIMInstance&, const String&) 
-{
+public:
+	virtual ~AuthorizerIFC();
+
+	virtual AuthorizerIFC* clone() const = 0;
+	virtual void setSubRepositoryIFC(const RepositoryIFCRef& rep) = 0;
+
+};
+
 }
 
-} // end namespace OpenWBEM
+#endif
+
 

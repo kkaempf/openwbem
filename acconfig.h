@@ -108,7 +108,6 @@
 /* Define if a system has dyld.h (Mac OS X) */
 #undef USE_DYLD
 
-#undef DISABLE_ACLS
 #undef DISABLE_DIGEST
 #undef DISABLE_ASSOCIATION_TRAVERSAL
 #undef DISABLE_QUALIFIER_DECLARATION

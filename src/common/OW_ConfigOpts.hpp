@@ -188,6 +188,7 @@ namespace ConfigOpts
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
 	static const char* const RESTART_ON_ERROR_opt = "owcimomd.restart_on_error";
+	static const char* const AUTHORIZATION_LIB_opt = "owcimomd.authorization_lib";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM

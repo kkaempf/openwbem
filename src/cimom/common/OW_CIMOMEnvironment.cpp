@@ -53,6 +53,7 @@
 #include "OW_SharedLibraryRepository.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_AuthorizerIFC.hpp"
 
 #include <iostream>
 
@@ -264,6 +265,7 @@ CIMOMEnvironment::startServices()
 		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
 			m_providerManager, m_cimRepository));
+		_loadAuthorizer();
 		_createAuthManager();
 		_loadRequestHandlers();
 		_loadServices();
@@ -434,7 +436,7 @@ CIMOMEnvironment::_createIndicationServer()
 				indicationLib, "createIndicationServer", getLogger());
 		if (!m_indicationServer)
 		{
-			logError(format("CIMOM Failed to load indication server"
+			logError(Format("CIMOM Failed to load indication server"
 				" from library %1. Indication are currently DISABLED!",
 				indicationLib));
 			m_indicationsDisabled = true;
@@ -453,12 +455,12 @@ CIMOMEnvironment::_loadRequestHandlers()
 	{
 		libPath += "/";
 	}
-	logInfo(format("CIMOM loading request handlers from"
+	logInfo(Format("CIMOM loading request handlers from"
 		" directory %1", libPath));
 	StringArray dirEntries;
 	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		logFatalError(format("CIMOM failed geeting the contents of the"
+		logFatalError(Format("CIMOM failed geeting the contents of the"
 			" request handler directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
 	}
@@ -479,7 +481,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 			++reqHandlerCount;
 			rh->setEnvironment(g_cimomEnvironment);
 			StringArray supportedContentTypes = rh->getSupportedContentTypes();
-			logInfo(format("CIMOM loaded request handler from file: %1",
+			logInfo(Format("CIMOM loaded request handler from file: %1",
 				libName));
 			for (StringArray::const_iterator iter = supportedContentTypes.begin();
 				  iter != supportedContentTypes.end(); iter++)
@@ -489,18 +491,18 @@ CIMOMEnvironment::_loadRequestHandlers()
 				MutexLock ml(m_reqHandlersLock);
 				m_reqHandlers[(*iter)] = rqData;
 				ml.release();
-				logInfo(format(
+				logInfo(Format(
 					"CIMOM associating Content-Type %1 with Request Handler %2",
 					*iter, libName));
 			}
 		}
 		else
 		{
-			logError(format("CIMOM failed to load request handler from file:"
+			logError(Format("CIMOM failed to load request handler from file:"
 				" %1", libName));
 		}
 	}
-	logInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
+	logInfo(Format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
 		m_reqHandlers.size(), reqHandlerCount));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -514,12 +516,12 @@ CIMOMEnvironment::_loadServices()
 	{
 		libPath += "/";
 	}
-	logInfo(format("CIMOM loading services from directory %1",
+	logInfo(Format("CIMOM loading services from directory %1",
 		libPath));
 	StringArray dirEntries;
 	if(!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		logFatalError(format("CIMOM failed geeting the contents of the"
+		logFatalError(Format("CIMOM failed geeting the contents of the"
 			" services directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No Services");
 	}
@@ -540,15 +542,15 @@ CIMOMEnvironment::_loadServices()
 			// unloaded until later.
 			m_services.append(srv);
 			srv->setServiceEnvironment(g_cimomEnvironment);
-			logInfo(format("CIMOM loaded service from file: %1", libName));
+			logInfo(Format("CIMOM loaded service from file: %1", libName));
 		}
 		else
 		{
-			logError(format("CIMOM failed to load service from library: %1",
+			logError(Format("CIMOM failed to load service from library: %1",
 				libName));
 		}
 	}
-	logInfo(format("CIMOM: Number of services loaded: %1",
+	logInfo(Format("CIMOM: Number of services loaded: %1",
 		m_services.size()));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -641,8 +643,12 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	}
 	MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
+
+	// Here we construct a pipeline.  Currently it looks like:
+	// LocalCIMOMHandle -> [ Authorizer -> ] [Indication Rep Layer -> ] [ CIM Server -> ] CIM Repository
+
 	RepositoryIFCRef rref;
-	if (bypassProviders)
+	if (bypassProviders == E_BYPASS_PROVIDERS)
 	{
 		rref = m_cimRepository;
 	}
@@ -650,6 +656,7 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 	{
 		rref = m_cimServer;
 	}
+
 	if(doIndications
 	   && m_indicationServer
 	   && !m_indicationsDisabled)
@@ -657,11 +664,17 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer(rref);
 		if(irl)
 		{
-			RepositoryIFCRef rref2(new SharedLibraryRepository(irl));
-			return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref2,
-				context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
+			rref = RepositoryIFCRef(new SharedLibraryRepository(irl));
 		}
 	}
+
+	if (m_authorizer)
+	{
+		AuthorizerIFC* p = m_authorizer->clone();
+		p->setSubRepositoryIFC(rref);
+		rref = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), RepositoryIFCRef(p))));
+	}
+
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref,
 		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 }
@@ -686,13 +699,13 @@ CIMOMEnvironment::getWQLRef()
 	if (!m_wqlLib)
 	{
 		String libname = getConfigItem(ConfigOpts::WQL_LIB_opt);
-		logDebug(format("CIMOM loading wql library %1", libname));
+		logDebug(Format("CIMOM loading wql library %1", libname));
 		SharedLibraryLoaderRef sll =
 			SharedLibraryLoader::createSharedLibraryLoader();
 		m_wqlLib = sll->loadSharedLibrary(libname, m_Logger);
 		if(!m_wqlLib)
 		{
-			logError(format("CIMOM Failed to load WQL Libary: %1", libname));
+			logError(Format("CIMOM Failed to load WQL Libary: %1", libname));
 			return WQLIFCRef();
 		}
 	}
@@ -711,14 +724,14 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 		{
 			String libname = getConfigItem(ConfigOpts::OWLIB_DIR_opt);
 			libname += "/libowindicationreplayer"OW_SHAREDLIB_EXTENSION;
-			logDebug(format("CIMOM loading indication libary %1",
+			logDebug(Format("CIMOM loading indication libary %1",
 				libname));
 			SharedLibraryLoaderRef sll =
 				SharedLibraryLoader::createSharedLibraryLoader();
 			if(!sll)
 			{
 				m_indicationRepLayerDisabled = true;
-				logFatalError(format("CIMOM failed to create SharedLibraryLoader"
+				logFatalError(Format("CIMOM failed to create SharedLibraryLoader"
 					" library %1", libname));
 				return retref;
 			}
@@ -726,7 +739,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 			if(!m_indicationRepLayerLib)
 			{
 				m_indicationRepLayerDisabled = true;
-				logFatalError(format("CIMOM failed to load indication rep layer"
+				logFatalError(Format("CIMOM failed to load indication rep layer"
 					" library %1", libname));
 				return retref;
 			}
@@ -736,9 +749,9 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
 		if(pirep)
 		{
-			pirep->setCIMServer(rref);
 			retref = SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
 				RepositoryIFCRef(pirep));
+			pirep->setCIMServer(rref);
 		}
 		else
 		{
@@ -747,6 +760,52 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 		}
 	}
 	return retref;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMOMEnvironment::_loadAuthorizer()
+{
+	OW_ASSERT(!m_authorizer);
+	String libname = getConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt);
+
+	// no authorization requested
+	if (libname.empty())
+	{
+		return;
+	}
+
+	logDebug(Format("CIMOM loading authorization libary %1",
+		libname));
+	SharedLibraryLoaderRef sll =
+		SharedLibraryLoader::createSharedLibraryLoader();
+	if(!sll)
+	{
+		String msg = Format("CIMOM failed to create SharedLibraryLoader."
+			" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
+	if(!authorizerLib)
+	{
+		String msg = Format("CIMOM failed to load authorization"
+			" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	AuthorizerIFC* p =
+		SafeLibCreate<AuthorizerIFC>::create(
+			authorizerLib, "createAuthorizer", m_Logger);
+	if(!p)
+	{
+		String msg = Format("CIMOM failed to load authorization"
+			" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	m_authorizer = AuthorizerIFCRef(authorizerLib,
+		Reference<AuthorizerIFC>(p));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
@@ -777,12 +836,12 @@ CIMOMEnvironment::getRequestHandler(const String &id)
 				iter->second.rqIFCRef->clone());
 			iter->second.dt.setToCurrent();
 			ref->setEnvironment(g_cimomEnvironment);
-			logDebug(format("Request Handler %1 handling request for content type %2",
+			logDebug(Format("Request Handler %1 handling request for content type %2",
 				iter->second.filename, id));
 		}
 		else
 		{
-			logError(format(
+			logError(Format(
 				"Error loading request handler library %1 for content type %2",
 				iter->second.filename, id));
 		}
@@ -801,7 +860,7 @@ CIMOMEnvironment::unloadReqHandlers()
 	}
 	catch (const StringConversionException&)
 	{
-		logError(format("Invalid value (%1) for %2 config item.  Using default.",
+		logError(Format("Invalid value (%1) for %2 config item.  Using default.",
 			getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt),
 			ConfigOpts::REQ_HANDLER_TTL_opt));
 		ttl = String(OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
@@ -824,7 +883,7 @@ CIMOMEnvironment::unloadReqHandlers()
 			if (rqDT < dt)
 			{
 				iter->second.rqIFCRef.setNull();
-				logDebug(format("Unloaded request handler lib %1 for content type %2",
+				logDebug(Format("Unloaded request handler lib %1 for content type %2",
 					iter->second.filename, iter->first));
 			}
 		}

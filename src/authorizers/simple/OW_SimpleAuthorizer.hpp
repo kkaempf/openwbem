@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-4 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,46 +27,32 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CIMSERVER_HPP_INCLUDE_GUARD_
-#define OW_CIMSERVER_HPP_INCLUDE_GUARD_
+#ifndef OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
+#define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_RepositoryIFC.hpp"
-#include "OW_ProviderManager.hpp"
-#include "OW_Map.hpp"
-#include "OW_CIMOMEnvironment.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_SortedVectorSet.hpp" // fwd?
-#include "OW_CIMException.hpp"
+#include "OW_AuthorizerIFC.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMRepository;
+class AccessMgr;
 
-// This class is responsible for:
-// 1. calling either providers/or the CIM Repository
-class CIMServer : public RepositoryIFC
+// This class is responsible for Access control.
+class SimpleAuthorizer : public AuthorizerIFC
 {
 public:
-	static const char* const INST_REPOS_NAME;
-	static const char* const META_REPOS_NAME;
-	static const char* const NS_REPOS_NAME;
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	static const char* const CLASS_ASSOC_REPOS_NAME;
-	static const char* const INST_ASSOC_REPOS_NAME;
-#endif
 	/**
-	 * Create a new CIMServer object.
+	 * Create a new SimpleAuthorization object.
 	 */
-	CIMServer(CIMOMEnvironmentRef env,
-		const ProviderManagerRef& providerManager,
-		const RepositoryIFCRef& repository);
+	SimpleAuthorizer();
 	/**
-	 * Destroy this CIMServer object.
+	 * Destroy this SimpleAuthorization object.
 	 */
-	virtual ~CIMServer();
+	virtual ~SimpleAuthorizer();
+
+	virtual void setSubRepositoryIFC(const RepositoryIFCRef& rep);
 	/**
-	 * Open this CIMServer.
+	 * Open this SimpleAuthorization.
 	 * @exception IOException
 	 */
 	virtual void open(const String& path);
@@ -74,6 +60,9 @@ public:
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close();
+	virtual ServiceEnvironmentIFCRef getEnvironment() const;
+	AuthorizerIFC* clone() const;
+
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
@@ -376,12 +365,6 @@ public:
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 		OperationContext& context);
-	virtual CIMInstance getInstance(
-		const String& ns,
-		const CIMObjectPath& instanceName,
-		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-		CIMClass* pOutClass, OperationContext& context);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
@@ -554,98 +537,14 @@ public:
 		const String &query, const String& queryLanguage,
 		OperationContext& context);
 
-	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
-public:
-	void _getCIMInstanceNames(const String& ns, const String& className,
-		const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result,
-		OperationContext& context);
-	void _getCIMInstances(
-		const String& ns,
-		const String& className,
-		const CIMClass& theTopClass,
-		const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-		OperationContext& context);
 private:
-	/**
-	 * Determines if an instance already exists
-	 *
-	 * @param cop	The CIMObectPath that specifies the instance
-	 * @exception HDBException
-	 * @exception CIMException
-	 * @exception IOException
-	 */
-	bool _instanceExists(const String& ns, const CIMObjectPath& cop,
-		OperationContext& context);
-public:
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	bool _isDynamicAssoc(const String& ns, const CIMClass& cc, OperationContext& context);
-#endif
-private:
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	void _commonAssociators(
-		const String& ns,
-		const CIMObjectPath& path,
-		const String& assocClassName, const String& resultClass,
-		const String& role, const String& resultRole,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
-		CIMObjectPathResultHandlerIFC* popresult,
-		CIMClassResultHandlerIFC* pcresult,
-		OperationContext& context);
-	void _dynamicAssociators(const CIMObjectPath& path,
-		const CIMClassArray& assocClasses, const String& resultClass,
-		const String& role, const String& resultRole,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
-		CIMObjectPathResultHandlerIFC* popresult, OperationContext& context);
-	void _commonReferences(
-		const String& ns,
-		const CIMObjectPath& path,
-		const String& resultClass, const String& role,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
-		CIMObjectPathResultHandlerIFC* popresult,
-		CIMClassResultHandlerIFC* pcresult,
-		OperationContext& context);
-	void _dynamicReferences(const CIMObjectPath& path,
-		const CIMClassArray& dynamicAssocs, const String& role,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
-		CIMObjectPathResultHandlerIFC* popresult, OperationContext& context);
-	void _getAssociationClasses(const String& ns,
-		const String& assocClassName, const String& className,
-		CIMClassResultHandlerIFC& result, const String& role, OperationContext& context);
-#endif
-	/**
-	 * Get the special __Namespace class
-	 * @param className	The name of the class to check __Namespace for.
-	 * @return If className is __Namespace a valid CIMClass. Otherwise a
-	 * null CIMClass.
-	 */
-	CIMClass _getNameSpaceClass(const String& className);
-	InstanceProviderIFCRef _getInstanceProvider(const String& ns,
-		const CIMClass& cls, OperationContext& context);
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	AssociatorProviderIFCRef _getAssociatorProvider(const String& ns, const CIMClass& cls, OperationContext& context);
-#endif
-private:
-	CIMClass _instGetClass(const String& ns, const String& className,
-		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, OperationContext& context);
-
-	ProviderManagerRef m_provManager;
 
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
-	Mutex m_guard;
-	CIMClass m_nsClass_Namespace;
-	CIMOMEnvironmentRef m_env;
+	Reference<AccessMgr> m_accessMgr;
+	
 	RepositoryIFCRef m_cimRepository;
-	IntrusiveReference<CIMRepository> m_realRepository;
 };
 
 } // end namespace OpenWBEM

@@ -94,16 +94,8 @@ private:
 	// Friend classes that are allowed to construct UserInfo objects that
 	// access rights are not checked on.
 	//--------------------------------------------------------------------------
-//	friend class CIMServer;
-#if !defined(OW_DISABLE_ACLS)
-	friend class AccessMgr;
-#endif
-//	friend class IndicationRepLayerImpl;
-//	friend class PollingManager;
-//	friend class IndicationServerImpl;
-//	friend class CIMOMEnvironment;
-//	friend class CIMRepository;
 	friend class OperationContext;
+	friend class AccessMgr;
 };
 
 } // end namespace OpenWBEM

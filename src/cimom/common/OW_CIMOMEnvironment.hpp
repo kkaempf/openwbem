@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-4 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -59,32 +59,44 @@ class CIMNameSpace;
 class HTTPServer;
 class AuthManager;
 class Authenticator;
-class Logger;
+
 class SelectableIFC;
-class SelectableCallbackIFC;
-class WQLIFC;
-class ProviderManager;
-class IndicationRepLayer;
-class RepositoryIFC;
-class PollingManager;
-class IndicationServer;
-class IndicationRepLayerMediator;
 typedef Reference<SelectableIFC> SelectableIFCRef;
+class SelectableCallbackIFC;
 typedef Reference<SelectableCallbackIFC> SelectableCallbackIFCRef;
+
+class Logger;
 typedef Reference<Logger> LoggerRef;
 typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+
+class WQLIFC;
 typedef SharedLibraryReference<Reference<WQLIFC> > WQLIFCRef;
+
+class ProviderManager;
 typedef Reference<ProviderManager> ProviderManagerRef;
+
+class RepositoryIFC;
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef Reference<AuthManager> AuthManagerRef;
+
+class PollingManager;
 typedef Reference<PollingManager> PollingManagerRef;
+
+class IndicationRepLayer;
+class IndicationServer;
 typedef SharedLibraryReference<Reference<IndicationServer> > IndicationServerRef;
+
 typedef SharedLibraryReference<Reference<ServiceIFC> > ServiceIFCRef;
 typedef SharedLibraryReference<Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
+
+class IndicationRepLayerMediator;
 typedef Reference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
+
+class AuthorizerIFC;
+typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef;
 
 class CIMOMEnvironment;
 typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
@@ -155,6 +167,8 @@ private:
 	void _createIndicationServer();
 	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref);
 	void _clearSelectables();
+	void _loadAuthorizer();
+
 	// Types
 	struct ReqHandlerData
 	{
@@ -168,6 +182,7 @@ private:
 	mutable Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
+	AuthorizerIFCRef m_authorizer;
 	AuthManagerRef m_authManager;
 	LoggerRef m_Logger;
 	ConfigMapRef m_configItems;

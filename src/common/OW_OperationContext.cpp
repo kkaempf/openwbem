@@ -71,6 +71,13 @@ OperationContext::setData(const String& key, const DataRef& data)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+void
+OperationContext::removeData(const String& key)
+{
+	m_data.erase(key);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 OperationContext::DataRef  
 OperationContext::getData(const String& key) const
 {
