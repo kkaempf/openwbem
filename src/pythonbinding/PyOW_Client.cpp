@@ -32,13 +32,13 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt64_overloads, OW_String::t
 OW_String OW_String_getslice(const OW_String& s, int i, int j)
 {
     int len = s.length();
-    while (i < 0)
+    if (i < 0)
     {
-        i += len;
+        i = 0;
     }
-    while (j < 0)
+    if (j < 0)
     {
-        j += len;
+        j = 0;
     }
     if (i > j)
         return "";
