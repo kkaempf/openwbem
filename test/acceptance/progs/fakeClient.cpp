@@ -81,6 +81,7 @@ int main(int argc, char* argv[])
 			*tfsOut << infile.rdbuf();
 			OW_CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "");
 			cout << istr->rdbuf() << endl;
+			istr->checkForError();
 		}
 		else
 		{
