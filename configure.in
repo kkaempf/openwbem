@@ -462,13 +462,18 @@ AC_ARG_WITH(package-prefix,
 	AC_HELP_STRING([--with-package-prefix=PREFIX],[Specify an optional prefix for 
 		use when building a commercial version of OpenWBEM.  This allows separate 
 		versions to simultaneously coexist.]),
-	[PACKAGE_PREFIX=${with_package_prefix}
-	 PACKAGE_PREFIX_D=${with_package_prefix}-],
-	[PACKAGE_PREFIX=
-	 PACKAGE_PREFIX_D=]
+	[
+		PACKAGE_PREFIX=${with_package_prefix}
+		PACKAGE_PREFIX_D=${with_package_prefix}-
+	],
+	[
+		PACKAGE_PREFIX=
+		PACKAGE_PREFIX_D=
+	]
 )
 AC_SUBST(PACKAGE_PREFIX)
 AC_SUBST(PACKAGE_PREFIX_D)
+AC_DEFINE_UNQUOTED(PACKAGE_PREFIX, "$PACKAGE_PREFIX")
 
 
 dnl This doesn't work, so I'll comment it out for now.

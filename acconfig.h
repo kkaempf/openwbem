@@ -40,15 +40,24 @@
 /* The system doesn't have OpenSSL */
 #undef NO_SSL
 
+/* Dirs from configure */
 #undef DEFAULT_SYSCONF_DIR
 #undef DEFAULT_STATE_DIR
 #undef DEFAULT_LIB_DIR
 #undef DEFAULT_LIBEXEC_DIR
 #undef PIDFILE_DIR
-#undef ENABLE_STACK_TRACE_ON_EXCEPTIONS
-#undef DEBUG
-#undef PROFILE
 
+/* Either "" or the argument to --with-package-prefix */
+#undef PACKAGE_PREFIX
+
+/* Defined if --enable-stack-trace was passed to configure */
+#undef ENABLE_STACK_TRACE_ON_EXCEPTIONS
+
+/* Defined if --enable-debug was passed to configure */
+#undef DEBUG
+
+/* Defined if --enable-profile was passed to configure */
+#undef PROFILE
 
 /* Defined if we are building gnu pth version */
 #undef USE_GNU_PTH
