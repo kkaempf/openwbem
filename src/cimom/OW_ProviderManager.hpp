@@ -172,6 +172,12 @@ public:
 	OW_PolledProviderIFCRefArray
 		getPolledProviders(const OW_ProviderEnvironmentIFCRef& env);
 
+	/** 
+	 * Call into each ProviderIFC to unload providers which haven't been 
+	 * used for a while
+	 */
+	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env);
+
 protected:
 
 	virtual const char* getName() const { return CIMOM_PROVIDER_IFC; }
@@ -198,6 +204,12 @@ protected:
 		doGetPolledProviders(
 		const OW_ProviderEnvironmentIFCRef& env
 		);
+
+	void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		(void)env;
+		// empty
+	}
 
 private:
 

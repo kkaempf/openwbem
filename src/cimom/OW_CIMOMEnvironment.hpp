@@ -118,6 +118,8 @@ public:
 	virtual void removeSelectable(OW_SelectableIFCRef obj,
 		OW_SelectableCallbackIFCRef cb);
 
+	void unloadProviders();
+
 	void startServices();
 	void shutdown();
 	OW_ProviderManagerRef getProviderManager();

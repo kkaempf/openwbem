@@ -453,5 +453,41 @@ OW_CppProviderIFC::getProvider(
 	return m_provs[provId];
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+{
+	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt);
+	if (timeWindow.length() == 0)
+	{
+		timeWindow = DEFAULT_CPPIFC_PROV_TTL;
+	}
+
+	OW_Int32 iTimeWindow = timeWindow.toInt32();
+	if (iTimeWindow < 1)
+	{
+		iTimeWindow = OW_String(DEFAULT_CPPIFC_PROV_TTL).toInt32();
+	}
+
+	OW_DateTime dt;
+	dt.setToCurrent();
+	for (ProviderMap::iterator iter = m_provs.begin();
+		  iter != m_provs.end();)
+	{
+		OW_DateTime provDt = iter->second->getLastAccessTime();
+		provDt.addMinutes(iTimeWindow);
+		if (provDt < dt)
+		{
+			env->getLogger()->logCustInfo(format("Unloading Provider %1", iter->first));
+			m_provs.erase(iter++);
+		}
+		else
+		{
+			++iter;
+		}
+	}
+}
+
 OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
 

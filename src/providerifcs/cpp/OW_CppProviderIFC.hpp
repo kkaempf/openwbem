@@ -82,6 +82,8 @@ protected:
 		const OW_ProviderEnvironmentIFCRef& env
 		);
 
+	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env);
+
 private:
 
 	typedef OW_Map<OW_String, OW_CppProviderBaseIFCRef> ProviderMap;

@@ -50,6 +50,7 @@
 #include "OW_Platform.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_SharedLibraryRepository.hpp"
+#include "OW_ProviderUnloader.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -78,6 +79,39 @@ protected:
 private:
 	OW_SelectEngine& m_engine;
 };
+
+
+	class CIMOMProviderEnvironment : public OW_ProviderEnvironmentIFC
+	{
+	public:
+
+		CIMOMProviderEnvironment(const OW_CIMOMEnvironment* pCenv)
+			: m_pCenv(pCenv)
+		{}
+
+		virtual OW_String getConfigItem(const OW_String &name) const
+		{
+			return m_pCenv->getConfigItem(name);
+		}
+
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
+		{
+			return OW_CIMOMHandleIFCRef();
+		}
+		
+		virtual OW_LoggerRef getLogger() const
+		{
+			return m_pCenv->getLogger();
+		}
+
+	private:
+		const OW_CIMOMEnvironment* m_pCenv;
+	};
+
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_CIMOMEnvironment* pcenv)
+	{
+		return OW_ProviderEnvironmentIFCRef(new CIMOMProviderEnvironment(pcenv));
+	}
 } // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,6 +193,13 @@ OW_CIMOMEnvironment::init()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void 
+OW_CIMOMEnvironment::unloadProviders()
+{
+	m_providerManager->unloadProviders(createProvEnvRef(this));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::startServices()
 {
@@ -168,6 +209,9 @@ OW_CIMOMEnvironment::startServices()
 	m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
 	m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
 		eref));
+
+	m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
+		OW_SharedLibraryRef(), new OW_ProviderUnloader(this)));
 
 	m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
 		m_providerManager));
@@ -392,8 +436,8 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		}
 	}
 
-	m_Logger->logCustInfo(format("CIMOM: Number of request handlers loaded: %1",
-		reqHandlerCount);
+	m_Logger->logCustInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
+		m_reqHandlers.size(), reqHandlerCount));
 }
 
 //////////////////////////////////////////////////////////////////////////////

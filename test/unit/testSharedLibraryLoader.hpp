@@ -108,6 +108,10 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			return OW_IndicationExportProviderIFCRefArray();
 		}
 
+		virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef&)
+		{
+		}
+
 private:
 	OW_String m_name;
 

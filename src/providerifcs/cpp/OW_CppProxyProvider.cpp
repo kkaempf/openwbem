@@ -53,6 +53,7 @@ OW_CppAssociatorProviderProxy::associators(
 		OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->associators(env, assocName, objectName, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
@@ -67,6 +68,7 @@ OW_CppAssociatorProviderProxy::associatorNames(
 		OW_String role,
 		OW_String resultRole)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->associatorNames(env, assocName, objectName, resultClass,
 			role, resultRole);
 }
@@ -82,6 +84,7 @@ OW_CppAssociatorProviderProxy::references(
 		OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->references(env, assocName, objectName, role,
 			includeQualifiers, includeClassOrigin, propertyList);
 }
@@ -94,6 +97,7 @@ OW_CppAssociatorProviderProxy::referenceNames(
 		OW_CIMObjectPath objectName,
 		OW_String role)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->referenceNames(env, assocName, objectName, role);
 }
 
@@ -110,6 +114,7 @@ OW_CppInstanceProviderProxy::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop)
 {
+	m_pProv->updateAccessTime();
 	m_pProv->deleteInstance(env, cop);
 }
 
@@ -121,6 +126,7 @@ OW_CppInstanceProviderProxy::enumInstances(
 		OW_Bool deep,
 		OW_CIMClass cimClass)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
 }
 
@@ -133,6 +139,7 @@ OW_CppInstanceProviderProxy::enumInstances(
 		OW_CIMClass cimClass,
 		OW_Bool localOnly)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->enumInstances(env, cop, deep, cimClass, localOnly);
 }
 
@@ -144,6 +151,7 @@ OW_CppInstanceProviderProxy::getInstance(
 		OW_CIMClass cimClass,
 		OW_Bool localOnly)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->getInstance(env, cop, cimClass, localOnly);
 }
 
@@ -154,6 +162,7 @@ OW_CppInstanceProviderProxy::createInstance(
 		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->createInstance(env, cop, cimInstance);
 }
 
@@ -164,6 +173,7 @@ OW_CppInstanceProviderProxy::setInstance(
 		OW_CIMObjectPath cop,
 		OW_CIMInstance cimInstance)
 {
+	m_pProv->updateAccessTime();
 	m_pProv->setInstance(env, cop, cimInstance);
 }
 
@@ -182,6 +192,7 @@ OW_CppMethodProviderProxy::invokeMethod(
 		const OW_CIMValueArray& in,
 		OW_CIMValueArray& out)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->invokeMethod(env, cop, methodName, in, out);
 }
 
@@ -200,6 +211,7 @@ OW_CppPropertyProviderProxy::getPropertyValue(
 		OW_String originClass,
 		OW_String propertyName)
 {
+	m_pProv->updateAccessTime();
 	return m_pProv->getPropertyValue(env, cop, originClass, propertyName);
 
 }
@@ -213,6 +225,7 @@ OW_CppPropertyProviderProxy::setPropertyValue(
 		OW_String propertyName,
 		OW_CIMValue val)
 {
+	m_pProv->updateAccessTime();
 	m_pProv->setPropertyValue(env, cop, originClass, propertyName, val);
 }
 

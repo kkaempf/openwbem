@@ -35,6 +35,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_DateTime.hpp"
 
 
 class OW_CppInstanceProviderIFC;
@@ -54,38 +55,47 @@ class OW_CppPolledProviderIFC;
  */
 class OW_CppProviderBaseIFC
 {
-	public:
-		virtual ~OW_CppProviderBaseIFC() {}
+public:
+	virtual ~OW_CppProviderBaseIFC() {}
 
-		/**
-		 * Called by the CIMOM when the provider is initialized
-		 * @param hdl The handle to the cimom
-		 * @throws OW_CIMException
-		 */
-		virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
+	/**
+	 * Called by the CIMOM when the provider is initialized
+	 * @param hdl The handle to the cimom
+	 * @throws OW_CIMException
+	 */
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
-		/**
-		 * Called by the CIMOM when the provider is removed.
-		 * This method will be called when the CIMOM is exiting.  The CIM server
-		 * will have already been destroyed, so providers should not try to
-		 * perform any CIM operations.
-		 * @throws OW_CIMException
-		 */
-		virtual void cleanup() {}
+	/**
+	 * Called by the CIMOM when the provider is removed.
+	 * This method will be called when the CIMOM is exiting.  The CIM server
+	 * will have already been destroyed, so providers should not try to
+	 * perform any CIM operations.
+	 * @throws OW_CIMException
+	 */
+	virtual void cleanup() {}
 
-		/**
-		 * We do the following because gcc seems to have a problem with
-		 * dynamic_cast.  If often fails, especially when compiling with
-		 * optimizations.  It will return a (supposedly) valid pointer, 
-		 * when it should return NULL.
-		 */
+	/**
+	 * We do the following because gcc seems to have a problem with
+	 * dynamic_cast.  If often fails, especially when compiling with
+	 * optimizations.  It will return a (supposedly) valid pointer, 
+	 * when it should return NULL.
+	 */
 
-		virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
-		virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
-		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
-		virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
-		virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
-		virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
+	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
+	virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
+	virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
+	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
+	virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
+
+	OW_DateTime getLastAccessTime() const  { return m_dt; }
+
+	void updateAccessTime() { m_dt.setToCurrent(); }
+protected:
+
+private:
+	OW_DateTime m_dt;
+
 };
 
 typedef OW_SharedLibraryReference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;

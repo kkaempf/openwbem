@@ -124,6 +124,10 @@
 #define DEFAULT_USE_UDS "true"
 #endif
 
+#ifndef DEFAULT_CPPIFC_PROV_TTL
+#define DEFAULT_CPPIFC_PROV_TTL "5"
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -163,6 +167,7 @@ namespace OW_ConfigOpts
 	static const char* const DIGEST_AUTH_FILE_opt = "http_server.digest_password_file";
 	static const char* const MAX_CONNECTIONS_opt = "http_server.max_connections";
 	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
+	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__

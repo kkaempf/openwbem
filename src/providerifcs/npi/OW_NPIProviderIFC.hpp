@@ -77,6 +77,12 @@ protected:
 		const OW_ProviderEnvironmentIFCRef& env
 		);
 
+	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		(void)env;
+		// TODO
+	}
+
 private:
 
 	typedef OW_Map<OW_String, OW_FTABLERef> ProviderMap;

@@ -279,6 +279,16 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void 
+OW_ProviderManager::unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+{
+	for(size_t i = 0; i < m_IFCArray.size(); i++)
+	{
+		m_IFCArray[i]->unloadProviders(env);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_ProviderIFCBaseIFCRef
 OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual,

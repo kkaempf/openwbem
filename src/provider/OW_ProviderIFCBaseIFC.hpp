@@ -169,6 +169,14 @@ public:
 		return doGetPolledProviders(env);
 	}
 
+	/**
+	 * Unload providers in memory that haven't been used for a while
+	 */
+	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		doUnloadProviders(env);
+	}
+
 protected:
 	/**
 	 * The derived classes must override these functions to implement the
@@ -194,6 +202,8 @@ protected:
 	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
 		const OW_ProviderEnvironmentIFCRef& env
 		) = 0;
+
+	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env) = 0;
 };
 
 typedef OW_SharedLibraryReference<OW_ProviderIFCBaseIFC> OW_ProviderIFCBaseIFCRef;

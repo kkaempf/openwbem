@@ -73,20 +73,6 @@ owcimomd.datadir = @localstatedir@/openwbem/
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 
 ################################################################################
-# One of the provider interfaces provided with owcimomd is the C++ provider
-# interface. The cppprovifc.prov_location option specifies where the C++
-# provider interface will load it's providers from. The default for this option
-# is "/usr/local/lib/openwbem/c++providers"
-cppprovifc.prov_location = @libdir@/openwbem/c++providers
-
-################################################################################
-# One of the provider interfaces provided with owcimomd is the NPI provider
-# interface. The npiprovifc.prov_location option specifies where the NPI
-# provider interface will load it's providers from. The default for this option
-# is "/usr/local/lib/openwbem/npiproviders"
-npiprovifc.prov_location = @libdir@/openwbem/npiproviders
-
-################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
 # The default for this option is "/usr/local/lib/libowwql.so"
@@ -136,6 +122,27 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # are stored. ACL processing is not enabled until the OpenWBEM_Acl1.0.mof file
 # has been imported.
 ;owcimomd.ACL_superuser =
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the C++ provider
+# interface. The cppprovifc.prov_location option specifies where the C++
+# provider interface will load it's providers from. The default for this option
+# is "/usr/local/lib/openwbem/c++providers"
+cppprovifc.prov_location = @libdir@/openwbem/c++providers
+
+################################################################################
+# cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
+# will keep a provider in memory.  If a provider has not been accessed for 
+# longer than this value, it will be unloaded and the memory associated with
+# it will be freed.  The default value is 5 minutes. 
+;cppprovifc.prov_TTL = 5
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the NPI provider
+# interface. The npiprovifc.prov_location option specifies where the NPI
+# provider interface will load it's providers from. The default for this option
+# is "/usr/local/lib/openwbem/npiproviders"
+npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
