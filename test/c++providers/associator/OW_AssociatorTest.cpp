@@ -251,7 +251,6 @@ namespace
 		}
 
 		virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
-		virtual void cleanup();
 
 	};
 
@@ -268,14 +267,6 @@ namespace
 	{
 		env->getLogger()->logDebug("OW_AssociatorTest initialize called");
 	}
-
-//////////////////////////////////////////////////////////////////////////////
-	void
-		OW_AssociatorTest::cleanup()
-	{
-	}
-
-
 
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////

@@ -68,7 +68,6 @@ public:
 			const OW_CIMValue& val );
 
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
-	virtual void cleanup();
 
 private:
 };
@@ -123,12 +122,6 @@ void
 OW_OpenLinuxVersion::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_OpenLinuxVersion initialize called");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_OpenLinuxVersion::cleanup()
-{
 }
 
 } // end anonymous namespace

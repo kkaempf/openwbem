@@ -63,7 +63,6 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 		ProviderMap::iterator it = m_provs.begin();
 		while(it != m_provs.end())
 		{
-			it->second->cleanup();
 			it->second.setNull();
 			it++;
 		}
@@ -72,7 +71,6 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 	
 		for(size_t i = 0; i < m_noidProviders.size(); i++)
 		{
-			m_noidProviders[i]->cleanup();
 			m_noidProviders[i].setNull();
 		}
 	
@@ -592,8 +590,6 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 		if (provDt < dt && iter->second->canUnload())
 		{
 			env->getLogger()->logCustInfo(format("Unloading Provider %1", iter->first));
-			// TODO: we can't call cleanup here since the provider may be in use.  Figure this out.
-			//iter->second->cleanup();
 			iter->second.setNull();
 			m_provs.erase(iter++);
 		}

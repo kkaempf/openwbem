@@ -376,10 +376,3 @@ OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
 	env->getLogger()->logDebug("OW_NameSpaceProvider initialize called");
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_NameSpaceProvider::cleanup()
-{
-}
-
-

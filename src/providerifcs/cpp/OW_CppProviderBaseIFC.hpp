@@ -69,15 +69,6 @@ public:
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
 	/**
-	 * Called by the CIMOM when the provider is removed.
-	 * This method will be called when the CIMOM is exiting.  The CIM server
-	 * will have already been destroyed, so providers should not try to
-	 * perform any CIM operations.
-	 * @throws OW_CIMException
-	 */
-	virtual void cleanup() {}
-
-	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with
 	 * optimizations.  It will return a (supposedly) valid pointer, 

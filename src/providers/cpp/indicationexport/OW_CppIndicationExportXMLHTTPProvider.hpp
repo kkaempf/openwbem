@@ -61,13 +61,6 @@ public:
 	 */
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
-	/**
-	 * Called by the CIMOM when the provider is removed.
-	 *
-	 * @throws OW_CIMException
-	 */
-	virtual void cleanup() {}
-
 };
 
 #endif

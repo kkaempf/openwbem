@@ -83,7 +83,6 @@ public:
 
 	~OW_IndicationProviderTest3()
 	{
-		cleanup();
 	}
 
 	virtual void activateFilter(

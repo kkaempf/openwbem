@@ -39,10 +39,6 @@ void
 OW_SimpleCppProviderBaseIFC::initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
-OW_SimpleCppProviderBaseIFC::cleanup() {}
-
-///////////////////////////////////////////////////////////////////////////////
 OW_SimpleCppInstanceProviderIFC* 
 OW_SimpleCppProviderBaseIFC::getInstanceProvider() { return 0; }
 

@@ -427,14 +427,14 @@ public:
 		using std::cout;
 		using std::endl;
 		// we've got to stop the thread we started
-		cout << "OW_IndicationProviderTest2::cleanup" << endl;
+		cout << "OW_IndicationProviderTest2::do_cleanup" << endl;
 		if (m_thread->isRunning())
 		{
-			cout << "OW_IndicationProviderTest2::cleanup - stopping thread" << endl;
+			cout << "OW_IndicationProviderTest2::do_cleanup - stopping thread" << endl;
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
-			cout << "OW_IndicationProviderTest2::cleanup - thread stopped" << endl;
+			cout << "OW_IndicationProviderTest2::do_cleanup - thread stopped" << endl;
 		}
 	}
 

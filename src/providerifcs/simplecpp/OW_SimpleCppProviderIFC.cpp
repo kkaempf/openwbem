@@ -57,7 +57,6 @@ OW_SimpleCppProviderIFC::~OW_SimpleCppProviderIFC()
 		ProviderMap::iterator it = m_provs.begin();
 		while(it != m_provs.end())
 		{
-			it->second->cleanup();
 			it->second.setNull();
 			it++;
 		}

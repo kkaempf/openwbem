@@ -67,7 +67,6 @@ public:
 	 * @throws OW_CIMException
 	 */
 	void initialize(const OW_ProviderEnvironmentIFCRef& env);
-	void cleanup();
 	virtual ~OW_MethodProviderTest()
 	{
 	}
@@ -85,12 +84,6 @@ void
 OW_MethodProviderTest::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_MethodProviderTest initialize called");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_MethodProviderTest::cleanup()
-{
 }
 
 

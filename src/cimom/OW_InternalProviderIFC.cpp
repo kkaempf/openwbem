@@ -45,7 +45,6 @@ OW_InternalProviderIFC::~OW_InternalProviderIFC()
 		ProviderMap::iterator it = m_cimomProviders.begin();
 		while(it != m_cimomProviders.end())
 		{
-			it->second.m_pProv->cleanup();
 			it->second.m_pProv.setNull();
 			it++;
 		}
@@ -55,7 +54,6 @@ OW_InternalProviderIFC::~OW_InternalProviderIFC()
 		// Clean up providers with no identification
 		for(size_t i = 0; i < m_noIdProviders.size(); i++)
 		{
-			m_noIdProviders[i].m_pProv->cleanup();
 			m_noIdProviders[i].m_pProv.setNull();
 		}
 	

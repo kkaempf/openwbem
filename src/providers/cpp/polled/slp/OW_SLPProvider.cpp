@@ -145,17 +145,6 @@ public:
 		return POLLING_INTERVAL;
 	}
 
-	/**
-	 * Called by the CIMOM when the provider is removed.
-	 * This method will be called when the CIMOM is exiting.  The CIM server
-	 * will have already been destroyed, so providers should not try to
-	 * perform any CIM operations.
-	 * @throws OW_CIMException
-	 */
-	virtual void cleanup()
-	{
-	}
-
 private:
 
 	OW_String m_httpsPort;
