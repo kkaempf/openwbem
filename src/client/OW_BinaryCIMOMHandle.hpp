@@ -68,7 +68,7 @@ public:
 	 * @param path	The OW_CIMObjectPath identifying the class to delete.
 	 * @exception OW_CIMException If the object does not exist
 	 */
-	virtual void deleteClass(const OW_CIMObjectPath &path);
+	virtual void deleteClass(const OW_String& ns, const OW_String& className);
 
 	/**
 	 * Deletes the CIM qualfier for the object specified by the CIM object path.

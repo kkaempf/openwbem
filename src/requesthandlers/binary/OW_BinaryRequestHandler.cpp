@@ -481,8 +481,9 @@ void
 OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	chdl->deleteClass(op);
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String className(OW_BinIfcIO::readString(istrm));
+	chdl->deleteClass(ns, className);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

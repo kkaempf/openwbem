@@ -42,10 +42,10 @@
 											
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
+OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& className,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass cc = m_pServer->deleteClass(path, aclInfo);
+	OW_CIMClass cc = m_pServer->deleteClass(ns, className, aclInfo);
 
 	if (cc)
 	{
@@ -58,7 +58,7 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
 				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
-			exportIndication(expInst, path.getFullNameSpace());
+			exportIndication(expInst, OW_CIMNameSpace(ns));
 		}
 		catch (OW_CIMException&)
 		{

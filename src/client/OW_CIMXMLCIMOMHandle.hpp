@@ -77,7 +77,7 @@ public:
 	 * @param path	The OW_CIMObjectPath identifying the class to delete.
 	 * @exception OW_CIMException If the object does not exist
 	 */
-	virtual void deleteClass(const OW_CIMObjectPath &path);
+	virtual void deleteClass(const OW_String& ns, const OW_String& className);
 
 	/**
 	 * Deletes the CIM qualfier for the object specified by the CIM object path.
@@ -614,13 +614,16 @@ public:
 	virtual OW_CIMFeatures getServerFeatures();
 
 private:
-	void sendXMLHeader( const OW_String &, const OW_CIMObjectPath &,
-		std::ostream& ostr, bool intrinsic = true);
+	void sendIntrinsicXMLHeader(const OW_String &, const OW_String& ns,
+		std::ostream& ostr);
+	void sendExtrinsicXMLHeader(const OW_String &, const OW_String& ns,
+		const OW_CIMObjectPath& path,
+		std::ostream& ostr);
 
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
 
 	void doSendRequest(OW_Reference<std::iostream> ostr,
-		const OW_String& methodName, const OW_CIMObjectPath& path,
+		const OW_String& methodName, const OW_String& ns,
 		bool isIntrinsic,
 		OW_ClientOperation& op);
 
@@ -628,7 +631,7 @@ private:
 		const OW_String& operation, bool isIntrinsic); // throws a CIMException
 
 	void intrinsicMethod(
-		const OW_CIMObjectPath& path, const OW_String& operation,
+		const OW_String& ns, const OW_String& operation,
 		OW_ClientOperation& op,
 		const OW_Array<OW_Param>& params = OW_Array<OW_Param>(),
 		const OW_String& extra = OW_String());

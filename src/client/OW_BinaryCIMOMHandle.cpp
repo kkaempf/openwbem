@@ -217,15 +217,16 @@ OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteClass(const OW_CIMObjectPath& path)
+OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteClass", path.getNameSpace());
+		"DeleteClass", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_DELETECLS);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
 	
-	checkError(m_protocol->endRequest(strmRef, "DeleteClass", path.getNameSpace()));
+	checkError(m_protocol->endRequest(strmRef, "DeleteClass", ns));
 }
 
 

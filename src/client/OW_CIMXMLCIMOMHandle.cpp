@@ -77,9 +77,9 @@ OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
-												 const OW_CIMObjectPath& path,
-												 ostream& ostr, bool intrinsic)
+OW_CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const OW_String &sMethod,
+	const OW_String& ns,
+	ostream& ostr)
 {
 	if (++m_iMessageID > 65535)
 	{
@@ -89,28 +89,41 @@ OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
 	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
 	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
 	ostr << "<SIMPLEREQ>";
-	if (intrinsic)
+	OW_CIMNameSpace nameSpace(ns);
+	ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
+	OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const OW_String &sMethod,
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	ostream& ostr)
+{
+	if (++m_iMessageID > 65535)
 	{
-		ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
-		OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal );
+		m_iMessageID = 1;
 	}
-	else
+	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
+	ostr << "<SIMPLEREQ>";
+	OW_CIMNameSpace nameSpace(ns);
+	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
+	if (path.getKeys().size() > 0) // it's an instance
 	{
-		ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
-		if (path.getKeys().size() > 0) // it's an instance
-		{
-			ostr << "<LOCALINSTANCEPATH>";
-			OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal);
-			OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
-			ostr << "</LOCALINSTANCEPATH>";
-		}
-		else // it's a class
-		{
-			ostr << "<LOCALCLASSPATH>";
-			OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal);
-			ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
-			ostr << "</LOCALCLASSPATH>";
-		}
+		ostr << "<LOCALINSTANCEPATH>";
+		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
+		OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
+		ostr << "</LOCALINSTANCEPATH>";
+	}
+	else // it's a class
+	{
+		ostr << "<LOCALCLASSPATH>";
+		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
+		ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
+		ostr << "</LOCALCLASSPATH>";
 	}
 }
 
@@ -137,12 +150,12 @@ void
 OW_CIMXMLCIMOMHandle::doSendRequest(
 	OW_Reference<std::iostream> ostrRef,
 	const OW_String& methodName,
-	const OW_CIMObjectPath& path,
+	const OW_String& ns,
 	bool isIntrinsic,
 	OW_ClientOperation& op)
 {
 	OW_Reference<OW_CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
-		ostrRef, methodName, path.getNameSpace());
+		ostrRef, methodName, ns);
 	// Debug stuff
 	/*
 	OW_TempFileStream buf;
@@ -314,13 +327,11 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteClass(const OW_CIMObjectPath& path)
+OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& className)
 {
 
 	static const char* const commandName = "DeleteClass";
 
-	OW_String nameSpace=path.getNameSpace();
-	OW_String className=path.getObjectName();
 	OW_Array<OW_Param> params;
 
 	if (className.length() > 0)
@@ -335,7 +346,7 @@ OW_CIMXMLCIMOMHandle::deleteClass(const OW_CIMObjectPath& path)
 	}
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(nameSpace, commandName, op, params);
 }
 
 
@@ -362,7 +373,7 @@ OW_CIMXMLCIMOMHandle::deleteInstance(const OW_CIMObjectPath& path)
 	OW_Array<OW_Param> params;
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, params,
+	intrinsicMethod(path.getNameSpace(), commandName, op, params,
 						 instanceNameToKey(path, "InstanceName"));
 }
 
@@ -378,7 +389,7 @@ OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
 	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -420,7 +431,7 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_DEEP,deep));
 
 	enumClassNamesOp op(result);
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -466,7 +477,7 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	enumClassOp op(result);
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -512,7 +523,7 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 	}
 
 	enumInstanceNamesOp op(result);
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -580,7 +591,7 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 	}
 
 	enumInstancesOp op(result);
-	intrinsicMethod(path, commandName, op, params, extra.toString());
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -615,7 +626,7 @@ OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
 	OW_String qualName = path.getObjectName();
 
 	enumQualifierTypesOp op(result);
-	intrinsicMethod(path, commandName, op);
+	intrinsicMethod(path.getNameSpace(), commandName, op);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -678,7 +689,7 @@ OW_CIMXMLCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 
 	OW_CIMClass rval;
 	getClassOp op(rval);
-	intrinsicMethod(path, commandName, op, params, extraStr);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extraStr);
 	return rval;
 }
 
@@ -729,7 +740,7 @@ OW_CIMXMLCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 
 	OW_CIMInstance rval;
 	getInstanceOp op(rval);
-	intrinsicMethod(path, commandName, op, params, extra.toString());
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
 	return rval;
 }
 
@@ -822,7 +833,7 @@ OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 		m_protocol->beginRequest(methodName, name.getNameSpace());
 	std::iostream& tfs = *iostrRef;
 
-	sendXMLHeader(methodName, name, tfs, false);
+	sendExtrinsicXMLHeader(methodName, name.getNameSpace(), name, tfs);
 
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
@@ -850,7 +861,7 @@ OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 
 	OW_CIMValue rval;
 	invokeMethodOp op(rval, outParams);
-	doSendRequest(iostrRef, methodName, name, false, op);
+	doSendRequest(iostrRef, methodName, name.getNameSpace(), false, op);
 	return rval;
 }
 
@@ -885,7 +896,7 @@ OW_CIMXMLCIMOMHandle::getQualifierType(const OW_CIMObjectPath& path)
 
 	OW_CIMQualifierType rval(OW_Bool(true));
 	getQualifierTypeOp op(rval);
-	intrinsicMethod(path, commandName, op, params);
+	intrinsicMethod(path.getNameSpace(), commandName, op, params);
 	return rval;
 }
 
@@ -901,7 +912,7 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 	extra << "</IPARAMVALUE>";
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
 						 extra.toString());
 }
 
@@ -920,7 +931,7 @@ OW_CIMXMLCIMOMHandle::modifyClass(const OW_CIMObjectPath& path,
 		OW_StringArray(), false);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
 		extra.toString());
 }
 
@@ -939,7 +950,7 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 	ostr << "</IPARAMVALUE>";
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
 		ostr.toString());
 }
 
@@ -964,7 +975,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 		OW_StringArray());
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
 		ostr.toString());
 }
 
@@ -1024,7 +1035,7 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
 
 	OW_CIMObjectPath rval;
 	createInstanceOp op(rval);
-	intrinsicMethod(path, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
 												 ostr.toString());
 	rval.setNameSpace(path.getNameSpace());
 	return rval;
@@ -1065,7 +1076,7 @@ OW_CIMXMLCIMOMHandle::getProperty(const OW_CIMObjectPath& path,
 
 	OW_CIMValue rval;
 	getPropertyOp op(rval);
-	intrinsicMethod(path, commandName, op, params,
+	intrinsicMethod(path.getNameSpace(), commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
 }
@@ -1084,7 +1095,7 @@ OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
 
 	voidRetValOp op;
-	intrinsicMethod(path, commandName, op, params,
+	intrinsicMethod(path.getNameSpace(), commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 }
 
@@ -1173,7 +1184,7 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 	}
 
 	objectPathOp op(result, path.getNameSpace());
-	intrinsicMethod(path, commandName, op, params,
+	intrinsicMethod(path.getNameSpace(), commandName, op, params,
 		extra.toString());
 }
 
@@ -1329,8 +1340,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 	}
 
 	objectWithPathOp op(iresult,cresult,path.getNameSpace());
-	intrinsicMethod(path, commandName, op, params,
-												 extra.toString());
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
 
 }
 
@@ -1370,8 +1380,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	}
 
 	objectPathOp op(result, path.getNameSpace());
-	intrinsicMethod(path, commandName, op, params,
-												 extra.toString());
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1465,7 +1474,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 	}
 
 	objectWithPathOp op(iresult,cresult,path.getNameSpace());
-	intrinsicMethod(path, commandName, op, params, extra.toString());
+	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1491,7 +1500,7 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 
 	OW_CIMObjectPath cop("", path.getNameSpace());
 	objectWithPathOp op(&result, 0, path.getNameSpace());
-	intrinsicMethod(cop, commandName, op, params);
+	intrinsicMethod(cop.getNameSpace(), commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1504,14 +1513,14 @@ OW_CIMXMLCIMOMHandle::getServerFeatures()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::intrinsicMethod(
-	const OW_CIMObjectPath& path, const OW_String& operation,
+	const OW_String& ns, const OW_String& operation,
 	OW_ClientOperation& op,
 	const OW_Array<OW_Param>& params, const OW_String& extra)
 {
-	OW_Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, path.getNameSpace());
+	OW_Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, ns);
 	std::iostream& iostr = *iostrRef;
 
-	sendXMLHeader( operation, path, iostr);
+	sendIntrinsicXMLHeader(operation, ns, iostr);
 	for (size_t i = 0; i < params.size(); i++)
 	{
 		iostr << "<IPARAMVALUE NAME=\"" << params[i].getArgName()
@@ -1522,7 +1531,7 @@ OW_CIMXMLCIMOMHandle::intrinsicMethod(
 		iostr << extra;
 	}
 	sendXMLTrailer(iostr);
-	doSendRequest(iostrRef, operation, path, true, op);
+	doSendRequest(iostrRef, operation, ns, true, op);
 }
 
 

@@ -113,6 +113,7 @@ OW_AccessMgr::OW_AccessMgr(OW_CIMServer* pServer,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// TODO: Remove this function
 void
 OW_AccessMgr::checkAccess(int op, const OW_CIMObjectPath& cop,
 	const OW_ACLInfo& aclInfo)
@@ -637,7 +638,7 @@ namespace
 	class CIMClassDeleter : public OW_CIMClassResultHandlerIFC
 	{
 	public:
-		CIMClassDeleter(OW_MetaRepository& mr, OW_String& ns_,
+		CIMClassDeleter(OW_MetaRepository& mr, const OW_String& ns_,
 			OW_InstanceRepository& mi, OW_AssocDb& m_assocDb_)
 		: m_mStore(mr)
 		, ns(ns_)
@@ -666,27 +667,25 @@ namespace
 		}
 	private:
 		OW_MetaRepository& m_mStore;
-		OW_String& ns;
+		const OW_String& ns;
 		OW_InstanceRepository& m_iStore;
 		OW_AssocDb& m_assocDb;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
+OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to delete the class
 	try
 	{
-		m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, path, aclInfo);
+		m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, ns, aclInfo);
 
 		OW_CIMClass cc;
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(path, cc);
-		checkGetClassRvalAndThrow(rc, path);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
+		checkGetClassRvalAndThrow(rc, OW_CIMObjectPath(className, ns));
 		OW_ASSERT(cc);
-
-		OW_String ns = path.getNameSpace();
 
 		// TODO: this doesn't work quite right.  what about associations to
 		// the instances we delete?
@@ -696,7 +695,7 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		// delete the class and any subclasses
 		OW_ACLInfo intAcl;
 		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_assocDb);
-		this->enumClasses(path, ccd,
+		this->enumClasses(OW_CIMObjectPath(className, ns), ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,

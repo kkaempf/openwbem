@@ -90,7 +90,7 @@ public:
 	 * structure that contains CIM classes, instances, and qualifier types.
 	 * @param path	The OW_CIMObjectPath identifying the class to delete.
 	 */
-	virtual void deleteClass(const OW_CIMObjectPath &path);
+	virtual void deleteClass(const OW_String& ns, const OW_String& className);
 
 	/**
 	 * Close the connetion to the CIMOM. Currently this does nothing on the

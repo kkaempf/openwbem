@@ -148,7 +148,7 @@ OW_WQLFilterRep::getClass(const OW_CIMObjectPath& path, OW_Bool b1, OW_Bool b2,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_WQLFilterRep::deleteClass(const OW_CIMObjectPath &/*path*/,
+OW_WQLFilterRep::deleteClass(const OW_String& /*ns*/, const OW_String& /*className*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

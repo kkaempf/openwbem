@@ -103,50 +103,6 @@ OW_XMLExecute::funcEntryCompare(const OW_XMLExecute::FuncEntry& f1,
 	return (strcmp(f1.name, f2.name) < 0);
 }
 
-/*
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::init()
-{
-	g_funcMap.clear();
-	g_funcMap["associatornames"] = &OW_XMLExecute::associatorNames;
-	g_funcMap["associators"] = &OW_XMLExecute::associators;
-	g_funcMap["createclass"] = &OW_XMLExecute::createClass;
-	g_funcMap["createinstance"] = &OW_XMLExecute::createInstance;
-	g_funcMap["deleteclass"] = &OW_XMLExecute::deleteClass;
-	g_funcMap["deleteinstance"] = &OW_XMLExecute::deleteInstance;
-	g_funcMap["deletequalifier"] = &OW_XMLExecute::deleteQualifier;
-	g_funcMap["enumerateclasses"] = &OW_XMLExecute::enumerateClasses;
-	g_funcMap["enumerateinstances"] = &OW_XMLExecute::enumerateInstances;
-	g_funcMap["enumerateclassnames"] = &OW_XMLExecute::enumerateClassNames;
-	g_funcMap["enumerateinstancenames"] = &OW_XMLExecute::enumerateInstanceNames;
-	g_funcMap["enumeratequalifiers"] = &OW_XMLExecute::enumerateQualifiers;
-	g_funcMap["getclass"] = &OW_XMLExecute::getClass;
-	g_funcMap["getinstance"] = &OW_XMLExecute::getInstance;
-	g_funcMap["getproperty"] = &OW_XMLExecute::getProperty;
-	g_funcMap["getqualifier"] = &OW_XMLExecute::getQualifier;
-	g_funcMap["modifyclass"] = &OW_XMLExecute::modifyClass;
-	g_funcMap["modifyinstance"] = &OW_XMLExecute::modifyInstance;
-	g_funcMap["referencenames"] = &OW_XMLExecute::referenceNames;
-	g_funcMap["references"] = &OW_XMLExecute::references;
-	g_funcMap["setqualifier"] = &OW_XMLExecute::setQualifier;
-	g_funcMap["setproperty"] = &OW_XMLExecute::setProperty;
-	g_funcMap["execquery"] = &OW_XMLExecute::execQuery;
-}
-
-class OW_XMLFuncLoader
-{
-public:
-	OW_XMLFuncLoader()
-	{
-		OW_XMLExecute::init();
-	}
-};
-
-OW_XMLFuncLoader g_funcLoader;
-*/
-
-
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLExecute::OW_XMLExecute()
 	: OW_RequestHandlerIFCXML(),
@@ -827,7 +783,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	OW_CIMObjectPath& ns, OW_CIMOMHandleIFC& hdl)
 {
 	OW_Array<param> params;
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
@@ -836,8 +792,7 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 
 	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
 
-	path.setObjectName( className );
-	hdl.deleteClass( path );
+	hdl.deleteClass(ns.getNameSpace(), className);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -104,10 +104,10 @@ OW_LocalCIMOMHandle::deleteNameSpace(const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteClass(const OW_CIMObjectPath& path)
+OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->deleteClass(path, m_aclInfo);
+	m_pServer->deleteClass(ns, className, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

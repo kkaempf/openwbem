@@ -274,9 +274,7 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_String delClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath pa(delClass);
-
-	hdl.deleteClass(pa);
+	hdl.deleteClass("root", delClass);
 }
 
 class ListenerLogger : public OW_Logger

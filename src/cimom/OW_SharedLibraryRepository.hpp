@@ -104,10 +104,10 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath &path,
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->deleteClass(path, aclInfo);
+		return m_ref->deleteClass(ns, className, aclInfo);
 	}
 
 	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &cop, OW_CIMInstance &ci,

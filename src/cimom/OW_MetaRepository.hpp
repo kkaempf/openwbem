@@ -135,6 +135,7 @@ public:
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
+	// TODO: Remove this function
 	OW_CIMException::ErrNoType getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc);
 
 	/**

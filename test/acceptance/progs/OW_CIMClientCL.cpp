@@ -1167,9 +1167,7 @@ deleteClass(OW_CIMOMHandleIFC& hdl, const OW_String& delClass)
 
 	try
 	{
-		OW_CIMObjectPath pa(delClass);
-
-		hdl.deleteClass(pa);
+		hdl.deleteClass("root", delClass);
 	}
 	catch (OW_CIMException& e)
 	{

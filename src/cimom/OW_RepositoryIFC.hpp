@@ -174,7 +174,7 @@ public:
 	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
 	 * @exception CIMException if class does not exist
 	 */
-	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
 		const OW_ACLInfo& aclInfo) = 0;
 
 	/**

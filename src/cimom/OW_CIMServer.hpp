@@ -203,7 +203,7 @@ public:
 	 *		CIM_ERR_INVALID_PARAMETER
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
 		const OW_ACLInfo& aclInfo);
 
 	/**

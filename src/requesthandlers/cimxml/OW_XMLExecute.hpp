@@ -87,6 +87,7 @@ private:
 	static void getParameters(OW_CIMXMLParser& parser,
 		OW_CIMParamValueArray& params);
 
+	// TODO: Switch these to have an OW_String instead of an OW_CIMObjectPath
 	void associatorNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void associators(std::ostream& ostr, OW_CIMXMLParser& parser,
@@ -96,7 +97,7 @@ private:
 	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void deleteClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
-		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
+		OW_CIMObjectPath& ns, OW_CIMOMHandleIFC& hdl);
 	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,

@@ -43,7 +43,7 @@ class OW_IndicationRepLayerImpl : public OW_IndicationRepLayer
 public:
 	OW_IndicationRepLayerImpl() : OW_IndicationRepLayer(), m_pServer(0) {}
 
-	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath &path,
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
 		const OW_ACLInfo& aclInfo);
 
 	virtual void open(const OW_String&) {}

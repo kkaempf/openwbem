@@ -617,9 +617,7 @@ void deleteClass(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String delClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath pa(delClass, "/root/acltest");
-
-		hdl.deleteClass(pa);
+		hdl.deleteClass("/root/acltest", delClass);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}
