@@ -408,18 +408,18 @@ public:
 
 		m_queue.push_back(work);
 		
-		// go clean up dead threads (before we add the new one, so we don't need to check it)
+		// clean up dead threads (before we add the new one, so we don't need to check it)
 		for (size_t i = 0; i < m_threads.size(); ++i)
 		{
 			if (!m_threads[i]->isRunning())
 			{
 				m_threads[i]->join();
-				m_threads.remove(i);
+				m_threads.remove(i--);
 			}
 		}
 
-		// if the queue was empty, we may need to start a thread 
-		if (m_queue.size() == 1 && m_threads.size() < m_maxThreads)
+		// Start up a new thread to handle the work in the queue.
+		if (m_threads.size() < m_maxThreads)
 		{
 			OW_ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
 			m_threads.push_back(theThread);
