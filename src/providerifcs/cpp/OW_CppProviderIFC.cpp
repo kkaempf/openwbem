@@ -327,12 +327,9 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 		OW_CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 
-		OW_CppIndicationExportProviderIFC* p_iep = 0;
+		OW_CppIndicationExportProviderIFC* p_iep = 
+			pProv->getIndicationExportProvider();
 
-		if (!p_itp)
-		{
-			p_iep = pProv->getIndicationExportProvider();
-		}
 
 		if (p_itp || p_iep)
 		{
@@ -341,7 +338,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 				env->getLogger()->logDebug(format("C++ provider ifc loaded indication export"
 					" provider from lib: %1 - initializing", libName));
 			}
-			else
+			if(p_itp)
 			{
 				env->getLogger()->logDebug(format("C++ provider ifc loaded polled provider from "
 					"lib: %1 - initializing", libName));
