@@ -43,6 +43,12 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#if defined(OW_HAVE_SYS_TIME_H)
+#include <sys/time.h>
+#endif
+#if defined(OW_HAVE_SYS_RESOURCE_H)
+#include <sys/resource.h>
+#endif
 
 #include <cstring>
 #include <cstdio>
@@ -84,6 +90,7 @@ const int NOT_SETUID_ROOT = 3;
 const int INVALID_INPUT = 4;
 const int REMOVE_FAILED = 5;
 const int UNEXPECTED_EXCEPTION = 6;
+const int SETRLIMIT_FAILED = 7;
 
 bool checkRealUser()
 {
@@ -266,6 +273,17 @@ int main(int argc, char* argv[])
 
 		// I want full control over file permissions
 		::umask(0);
+
+#ifdef OW_HAVE_SETRLIMIT
+		// Be careful to not drop core.
+		struct rlimit rlim;
+		rlim.rlim_cur = rlim.rlim_max = 0;
+		if (setrlimit(RLIMIT_CORE, &rlim) < 0)
+		{
+			perror("owlocalhelper::setrlimit failed");
+			return SETRLIMIT_FAILED;
+		}
+#endif
 	
 		// only owcimomd user can run me
 		if (!checkRealUser())
