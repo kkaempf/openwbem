@@ -32,13 +32,13 @@ OBJDIR = $(BUILDTYPE)
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 
 #CIMLISTENEREXE = $(TARGETDIR)\owcimindicationlistener.exe
-CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
-DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
-ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
-ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
-ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
-ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
-EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
+#CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
+#DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
+#ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
+#ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
+#ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
+#ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
+#EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
 #REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
 INCS = \
@@ -60,6 +60,8 @@ LIBPATH = \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
 
+CIMLISTENER = owcimindicationlistener
+CIMLISTENEREXE = $(TARGETDIR)\$(CIMLISTENER).exe
 CREATENS = owcreatenamespace
 CREATENSEXE = $(TARGETDIR)\$(CREATENS).exe
 DELETENS = owdeletenamespace
