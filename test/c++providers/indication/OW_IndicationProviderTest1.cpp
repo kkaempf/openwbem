@@ -89,8 +89,8 @@ public:
 	 */
 	virtual void getIndicationProviderInfo(IndicationProviderInfo& info) 
 	{
-		// Add the class and all the base classes in as well.
-		const char* theClassAndBaseClassNames[] = 
+		// Add the class(es) we are monitoring for lifecycle indications.
+		const char* theMonitoredClasses[] = 
 			{
 				"OW_IndicationProviderTest1",
 				0
@@ -113,7 +113,7 @@ public:
 		{
 			const char* indicationClassName = *pIndicationClassName;
 			IndicationProviderInfoEntry e(indicationClassName);
-			for (const char** pClassName = theClassAndBaseClassNames;
+			for (const char** pClassName = theMonitoredClasses;
 				  *pClassName != 0;
 				  ++pClassName)
 			{
