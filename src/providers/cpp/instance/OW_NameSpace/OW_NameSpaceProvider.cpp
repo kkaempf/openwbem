@@ -40,7 +40,6 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {

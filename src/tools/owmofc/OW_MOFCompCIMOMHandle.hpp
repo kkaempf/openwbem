@@ -32,7 +32,6 @@
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {

@@ -36,7 +36,6 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
-#include "OW_UserInfo.hpp"
 #include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
