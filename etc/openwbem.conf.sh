@@ -157,13 +157,15 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ################################################################################
 # owcimomd.authorization_lib specifies the location the authorization
 # library will be loaded from.
-# This is DEPRICATED.  Use owcimomd.authorization2_lib instead.  This 
-# remains for backwards compatibility. 
+# There are 2 authorization interfaces, either one can work.
+# If this option is empty or commented out, no authorization module will be
+# used.
 ;owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@lib_ext@
 
 ################################################################################
 # owcimomd.authorization2_lib specifies the location the authorization
 # library will be loaded from.
+# There are 2 authorization interfaces, either one can work.
 # If this option is empty or commented out, no authorization module will be
 # used.
 ;owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
