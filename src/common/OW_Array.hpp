@@ -127,6 +127,7 @@ public:
 	OW_Array<T>& operator+= (const T& x)
 	{
 		m_impl->push_back(x);
+		return *this;
 	}
 
 	const_reference operator[](size_type n) const
