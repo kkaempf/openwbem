@@ -598,6 +598,10 @@ typedef long off_t;
 // Including winsock2.h should also bring in windows.h
 #include <winsock2.h>
 
+#ifdef max
+#undef max
+#endif
+
 #ifdef OW_STATIC_BUILD
 #define OW_EXPORT
 #define OW_IMPORT

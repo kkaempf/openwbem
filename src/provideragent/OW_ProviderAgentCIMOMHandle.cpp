@@ -52,6 +52,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_ConfigException.hpp"
 #include "OW_Enumeration.hpp"
+#include "OW_HTTPServer.hpp"
+#include "OW_Thread.hpp"
 
 namespace OW_NAMESPACE
 {

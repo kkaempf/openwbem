@@ -153,6 +153,9 @@
 				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentEnvironment.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentLifecycleCallbackIFC.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentLockerIFC.cpp">
 			</File>
 			<File
@@ -171,6 +174,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentEnvironment.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentLifecycleCallbackIFC.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\provideragent\OW_ProviderAgentLockerIFC.hpp">

@@ -349,6 +349,9 @@
 				RelativePath="..\..\..\..\src\common\OW_shlSharedLibraryLoader.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SSLException.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_StackTrace.cpp">
 			</File>
 			<File

@@ -73,7 +73,126 @@ namespace Select
 int
 selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
 {
-#error "write me!"
+	int rc;
+	size_t hcount = static_cast<DWORD>(input.size() + output.size());
+	AutoPtrVec<HANDLE> hdls(new HANDLE[hcount]);
+
+	size_t handleidx = 0;
+	for (size_t i = 0; i < input.size(); i++, handleidx++)
+	{
+		if(input[i].s.sockfd != INVALID_SOCKET
+			&& input[i].s.networkevents)
+		{
+			::WSAEventSelect(input[i].s.sockfd, 
+				input[i].s.event, input[i].s.networkevents);
+		}
+				
+		hdls[handleidx] = input[i].s.event;
+	}
+	for (size_t i = 0; i < output.size(); i++, handleidx++)
+	{
+		if(output[i].s.sockfd != INVALID_SOCKET
+			&& output[i].s.networkevents)
+		{
+			::WSAEventSelect(output[i].s.sockfd, 
+				output[i].s.event, output[i].s.networkevents);
+		}
+				
+		hdls[handleidx] = output[i].s.event;
+	}
+
+	DWORD timeout = (ms != ~0U) ? ms : INFINITE;
+	DWORD cc = ::WaitForMultipleObjects(hcount, hdls.get(), FALSE, timeout);
+
+	assert(cc != WAIT_ABANDONED);
+
+	switch (cc)
+	{
+		case WAIT_FAILED:
+			rc = Select::SELECT_ERROR;
+			break;
+		case WAIT_TIMEOUT:
+			rc = Select::SELECT_TIMEOUT;
+			break;
+		default:
+			rc = cc - WAIT_OBJECT_0;
+			
+			// If this is a socket, set it back to 
+			// blocking mode
+			if( rc < input.size() )
+			{
+				if(input[rc].s.sockfd != INVALID_SOCKET)
+				{
+					if(input[rc].s.networkevents
+						&& input[rc].s.doreset == false)
+					{
+						::WSAEventSelect(input[rc].s.sockfd, 
+							input[rc].s.event, input[rc].s.networkevents);
+					}
+					else
+					{
+						// Set socket back to blocking
+						::WSAEventSelect(input[rc].s.sockfd, 
+							input[rc].s.event, 0);
+						u_long ioctlarg = 0;
+						::ioctlsocket(input[rc].s.sockfd, FIONBIO, &ioctlarg);
+					}
+				}
+			}
+			else
+			{
+				rc -= input.size();
+				if(output[rc].s.sockfd != INVALID_SOCKET)
+				{
+					if(output[rc].s.networkevents
+						&& output[rc].s.doreset == false)
+					{
+						::WSAEventSelect(output[rc].s.sockfd, 
+							output[rc].s.event, output[rc].s.networkevents);
+					}
+					else
+					{
+						// Set socket back to blocking
+						::WSAEventSelect(output[rc].s.sockfd, 
+							output[rc].s.event, 0);
+						u_long ioctlarg = 0;
+						::ioctlsocket(output[rc].s.sockfd, FIONBIO, &ioctlarg);
+					}
+				}
+				rc += input.size();
+			}
+			break;
+	}
+
+	if( rc < 0 )
+		return rc;
+
+	int availableCount = 0;
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		if( WaitForSingleObject(input[i].s.event, 0) == WAIT_OBJECT_0 )
+		{
+			input[i].available = true;
+			++availableCount;
+		}
+		else
+		{
+			input[i].available = false;
+		}
+	}
+	for (size_t i = 0; i < output.size(); i++)
+	{
+		if( WaitForSingleObject(output[i].s.event, 0) == WAIT_OBJECT_0 )
+		{
+			output[i].available = true;
+			++availableCount;
+		}
+		else
+		{
+			output[i].available = false;
+		}
+	}
+	return availableCount;
 }
 
 int
@@ -133,7 +252,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			break;
 	}
 
-	return cc;
+	return rc;
 }
 
 #else
