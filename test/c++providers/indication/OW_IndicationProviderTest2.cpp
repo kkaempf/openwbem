@@ -62,6 +62,10 @@ namespace
 // thread that something has happened.  How this notification happens is up
 // to the provider.
 
+// This example is bordering on the edge of complexity where it should be
+// split up into a couple of source and header files...
+
+class OW_IndicationProviderTest2;
 
 class OW_TestProviderThread : public OW_Thread
 {
@@ -70,9 +74,13 @@ public:
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
-	OW_TestProviderThread()
+	OW_TestProviderThread(const OW_CIMOMHandleIFCRef& hdl)
 		: OW_Thread(true) // true means joinable.
 		, m_shuttingDown(false)
+		, m_creationFilterCount(0)
+		, m_modificationFilterCount(0)
+		, m_deletionFilterCount(0)
+		, m_hdl(hdl)
 	{
 	}
 
@@ -85,36 +93,51 @@ public:
 
 	void addCreationFilter()
 	{
+		OW_MutexLock l(m_guard);
+		++m_creationFilterCount;
 	}
 
 	void addModificationFilter()
 	{
+		OW_MutexLock l(m_guard);
+		++m_modificationFilterCount;
 	}
 
 	void addDeletionFilter()
 	{
+		OW_MutexLock l(m_guard);
+		++m_deletionFilterCount;
 	}
 
 	void removeCreationFilter()
 	{
+		OW_MutexLock l(m_guard);
+		--m_creationFilterCount;
 	}
 
 	void removeModificationFilter()
 	{
+		OW_MutexLock l(m_guard);
+		--m_modificationFilterCount;
 	}
 
 	void removeDeletionFilter()
 	{
+		OW_MutexLock l(m_guard);
+		--m_deletionFilterCount;
 	}
 
 protected:
-	virtual void run()
-	{
-	}
+	virtual void run();
 
 	OW_Mutex m_guard;
 	OW_Condition m_cond;
 	bool m_shuttingDown;
+	int m_creationFilterCount;
+	int m_modificationFilterCount;
+	int m_deletionFilterCount;
+	OW_CIMOMHandleIFCRef m_hdl;
+	OW_IndicationProviderTest2* m_pProv;
 };
 	
 class OW_IndicationProviderTest2 : public OW_CppIndicationProviderIFC, public OW_CppInstanceProviderIFC
@@ -151,15 +174,15 @@ public:
 		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
 		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
 		{
-			m_thread.addCreationFilter();
+			m_thread->addCreationFilter();
 		}
 		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
 		{
-			m_thread.addModificationFilter();
+			m_thread->addModificationFilter();
 		}
 		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
 		{
-			m_thread.addDeletionFilter();
+			m_thread->addDeletionFilter();
 		}
 		else
 		{
@@ -181,7 +204,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (firstActivation)
 		{
-			m_thread.start();
+			m_thread->start();
 		}
 	}
 	
@@ -200,15 +223,15 @@ public:
 		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
 		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
 		{
-			m_thread.removeCreationFilter();
+			m_thread->removeCreationFilter();
 		}
 		else if (eventType.equalsIgnoreCase("CIM_InstModification"))
 		{
-			m_thread.removeModificationFilter();
+			m_thread->removeModificationFilter();
 		}
 		else if (eventType.equalsIgnoreCase("CIM_InstDeletion"))
 		{
-			m_thread.removeDeletionFilter();
+			m_thread->removeDeletionFilter();
 		}
 		else
 		{
@@ -230,8 +253,8 @@ public:
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation)
 		{
-			m_thread.shutdown();
-			m_thread.join();
+			m_thread->shutdown();
+			m_thread->join();
 		}
 	}
 
@@ -357,48 +380,98 @@ public:
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Modify not supported");
 	}
 
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
+	{
+		m_thread = new OW_TestProviderThread(env->getCIMOMHandle());
+	}
+
 	virtual void cleanup() 
 	{
 		// we've got to stop the thread we started
-		if (m_thread.isRunning())
+		if (m_thread->isRunning())
 		{
-			m_thread.shutdown();
-			m_thread.join();
+			m_thread->shutdown();
+			m_thread->join();
 		}
 	}
 
-private:
-	OW_CIMInstanceArray m_insts;
-
-	void updateInstances(const OW_CIMClass &cimClass)
+	void updateInstancesAndSendIndications(const OW_CIMOMHandleIFCRef& hdl, int creat, int mod, int del)
 	{
 		// m_insts could be accessed from multiple threads
 		OW_MutexLock l(m_guard);
 		if (m_insts.size() == 5)
 		{
+			if (del > 0)
+			{
+				// send out CIM_InstDeletion indications
+				for (size_t i = 0; i < m_insts.size(); ++i)
+				{
+					OW_CIMInstance expInst(true);
+					expInst.setClassName("CIM_InstDeletion");
+					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
+					hdl->exportIndication(expInst, "");
+				}
+			}
 			m_insts.clear();
 		}
 		else
 		{
 			// add an instance
-			OW_CIMInstance iToAdd(cimClass.newInstance());
+			OW_CIMInstance iToAdd(m_theClass.newInstance());
 			iToAdd.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
 			iToAdd.setProperty("SystemName", OW_CIMValue("localhost"));
 			iToAdd.setProperty("CreationClassName", OW_CIMValue("OW_IndicationProviderTest2"));
 			iToAdd.setProperty("DeviceID", OW_CIMValue(OW_String(m_insts.size())));
 			// PowerOnHours is our property that will be modified
 			iToAdd.setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(m_insts.size())));
+			if (creat > 0)
+			{
+				// send out CIM_InstCreation indications
+				OW_CIMInstance expInst(true);
+				expInst.setClassName("CIM_InstCreation");
+				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
+				hdl->exportIndication(expInst, "");
+			}
 			m_insts.push_back(iToAdd);
 
 			// now modify the first instance's PowerOnHours property
-			OW_UInt64 oldPowerOnHours = m_insts[0].getPropertyT("PowerOnHours").getValueT().toUInt64();
+			OW_CIMInstance prevInst = m_insts[0];
+			OW_UInt64 oldPowerOnHours = prevInst.getPropertyT("PowerOnHours").getValueT().toUInt64();
 			m_insts[0].setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(oldPowerOnHours + 1)));
+
+			if (mod > 0)
+			{
+				// send out CIM_InstModification indications
+				OW_CIMInstance expInst(true);
+				expInst.setClassName("CIM_InstModification");
+				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
+				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));
+				hdl->exportIndication(expInst, "");
+			}
 		}
 	}
 
-	OW_TestProviderThread m_thread;
+private:
+	OW_CIMInstanceArray m_insts;
+
+	// this is a reference so we can pass in a cimom handle to it's constructor.  We can't get a cimom handle in our constructor, so we have to wait until initialize is called.
+	OW_Reference<OW_TestProviderThread> m_thread;
 	OW_Mutex m_guard;
+	OW_CIMClass m_theClass;
 };
+
+
+void OW_TestProviderThread::run()
+{
+	OW_MutexLock l(m_guard);
+	while (!m_shuttingDown)
+	{
+		m_pProv->updateInstancesAndSendIndications(m_hdl, m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
+		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
+		// to be able to stop the thread when the cimom shuts down or restarts.
+		m_cond.timedWait(l, 1);
+	}
+}
 
 
 } // end anonymous namespace
