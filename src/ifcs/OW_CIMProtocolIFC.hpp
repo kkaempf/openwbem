@@ -90,7 +90,7 @@ public:
 	 *
 	 */
 	virtual CIMProtocolIStreamIFCRef endRequest(
-			Reference<std::iostream> request,
+			const Reference<std::iostream>& request,
 			const String& methodName, const String& cimObject, ERequestType requestType) = 0;
 	/**
 	 * Get the supported features of a CIMOM
@@ -103,7 +103,7 @@ public:
 	 * @param loginCB A Reference to a ClientAuthCB object containing the
 	 *	callback method. 
 	 */
-	void setLoginCallBack(ClientAuthCBIFCRef loginCB)
+	void setLoginCallBack(const ClientAuthCBIFCRef& loginCB)
 		{ m_loginCB = loginCB; }
 	void setContentType(const String& ct)
 		{ m_contentType = ct; }

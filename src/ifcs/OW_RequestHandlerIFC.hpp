@@ -92,7 +92,7 @@ public:
 		{  doOptions(cf, context); }
 	virtual RequestHandlerIFC* clone() const = 0;
 	ServiceEnvironmentIFCRef getEnvironment() const;
-	virtual void setEnvironment(ServiceEnvironmentIFCRef env);
+	virtual void setEnvironment(const ServiceEnvironmentIFCRef& env);
 	virtual StringArray getSupportedContentTypes() const = 0;
 	virtual String getContentType() const = 0;
 	String getCIMError() const { return m_cimError; }

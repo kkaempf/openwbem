@@ -62,7 +62,7 @@ class Reference :
 		template <class U>
 		Reference(const Reference<U>& arg);
 		~Reference();
-		Reference<T>& operator= (Reference<T> arg);
+		Reference<T>& operator= (const Reference<T>& arg);
 		Reference<T>& operator= (T* newObj);
 		void swap(Reference<T>& arg);
 		T* operator->() const;
@@ -132,9 +132,9 @@ inline void Reference<T>::decRef()
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline Reference<T>& Reference<T>::operator= (Reference<T> arg)
+inline Reference<T>& Reference<T>::operator= (const Reference<T>& arg)
 {
-	arg.swap(*this);
+	Reference<T>(arg).swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////

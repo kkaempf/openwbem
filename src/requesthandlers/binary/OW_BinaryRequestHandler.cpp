@@ -79,7 +79,7 @@ BinaryRequestHandler::clone() const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::setEnvironment(ServiceEnvironmentIFCRef env)
+BinaryRequestHandler::setEnvironment(const ServiceEnvironmentIFCRef& env)
 {
 	RequestHandlerIFC::setEnvironment(env);
 }

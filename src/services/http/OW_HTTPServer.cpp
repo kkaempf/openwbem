@@ -181,7 +181,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
+HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
 {
 	try
 	{

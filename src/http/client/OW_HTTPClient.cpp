@@ -474,7 +474,7 @@ HTTPClient::beginRequest(const String& methodName,
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProtocolIStreamIFCRef
-HTTPClient::endRequest(Reference<std::iostream> request, const String& methodName,
+HTTPClient::endRequest(const Reference<std::iostream>& request, const String& methodName,
 			const String& cimObject, ERequestType requestType)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();

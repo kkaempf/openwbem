@@ -66,7 +66,7 @@ class HTTPServer : public ServiceIFC
 public:
 	HTTPServer();
 	virtual ~HTTPServer();
-	virtual void setServiceEnvironment(ServiceEnvironmentIFCRef env);
+	virtual void setServiceEnvironment(const ServiceEnvironmentIFCRef& env);
 	virtual void startService();
 	/**
 	 * Shutdown the http server.  This function does not return

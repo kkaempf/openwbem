@@ -107,7 +107,7 @@ class HTTPClient : public CIMProtocolIFC
 		 *
 		 */
 		virtual CIMProtocolIStreamIFCRef
-			endRequest(Reference<std::iostream> request,
+			endRequest(const Reference<std::iostream>& request,
 				const String& methodName, const String& cimObject, ERequestType requestType);
 		/**
 		 * Sends an OPTIONS request to the HTTP server, and reports the

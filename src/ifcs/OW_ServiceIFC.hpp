@@ -49,7 +49,7 @@ class ServiceIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();
-	virtual void setServiceEnvironment(ServiceEnvironmentIFCRef env) = 0;
+	virtual void setServiceEnvironment(const ServiceEnvironmentIFCRef& env) = 0;
 	virtual void startService() = 0;
 	virtual void shutdown() = 0;
 };

@@ -80,7 +80,7 @@ RequestHandlerIFC::getEnvironment() const
 }
 ///////////////////////////////////////////////////////////////////////////////
 void
-RequestHandlerIFC::setEnvironment(ServiceEnvironmentIFCRef env)
+RequestHandlerIFC::setEnvironment(const ServiceEnvironmentIFCRef& env)
 {
 	m_env = env;
 }
