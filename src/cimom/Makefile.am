@@ -35,8 +35,6 @@ OW_ProviderIFCLoader.cpp \
 OW_ProviderIFCLoader.hpp \
 OW_ProviderManager.cpp \
 OW_ProviderManager.hpp \
-OW_ProxyProvider.cpp \
-OW_ProxyProvider.hpp \
 OW_SharedLibraryRepository.hpp \
 OW_WQLFilterRep.cpp \
 OW_WQLFilterRep.hpp
