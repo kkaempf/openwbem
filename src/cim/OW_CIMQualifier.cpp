@@ -424,7 +424,7 @@ OW_CIMQualifier::createKeyQualifier()
 
 
 // Meta qualifiers
-const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "association";
+const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "ASSOCIATION";
 const char* const OW_CIMQualifier::CIM_QUAL_INDICATION		= "indication";
 
 // Standard qualifiers

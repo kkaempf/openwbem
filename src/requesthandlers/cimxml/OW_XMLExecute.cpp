@@ -923,6 +923,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 			OW_String("Path=" + path.toString()).c_str());
 	}
 
+
 	OW_CIMtoXML(cimClass, ostr,
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
 		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,

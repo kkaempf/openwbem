@@ -34,12 +34,15 @@
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
+#include "OW_CIMValue.hpp"
 #include "OW_IOException.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 using std::ostream;
@@ -1004,22 +1007,53 @@ OW_CIMClass::toMOF() const
 	if(m_pdata->m_qualifiers.size() != 0)
 	{
 		rv += "[\n";
-		if(m_pdata->m_associationFlag)
+
+		OW_CIMQualifierArray qra = m_pdata->m_qualifiers;
+
+		/*
+		 * The association needs to be at the beginning according to 
+		 * the MOF grammar.
+		 */
+
+		OW_CIMQualifierArray::iterator iter = std::find(
+			qra.begin(), qra.end(), 
+			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
+		if (iter != qra.end())
 		{
-			rv += "ASSOCIATION,";
+			if (iter != qra.begin())
+			{
+				OW_CIMQualifier tmp = *iter;
+				qra.erase(iter);
+				qra.insert(qra.begin(), tmp);
+			}
+		}
+		else
+		{
+			if(m_pdata->m_associationFlag)
+			{
+				OW_CIMQualifierType cqt(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+				cqt.setDataType(OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+				OW_CIMQualifier cq(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, cqt);
+				cq.setValue(OW_CIMValue(OW_Bool(true)));
+				qra.insert(qra.begin(), cq);
+			}
 		}
 
-		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		iter = std::find( qra.begin(), qra.end(), 
+			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_INDICATION));
+		if (iter != qra.end())
 		{
-			if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase("ASSOCIATION"))         {
-				continue;
-			}
+			std::swap(*iter, *qra.begin());
+		}
+
+		for(i = 0; i < qra.size(); i++)
+		{
 			if(i > 0)
 			{
 				rv += ',';
 			}
 
-			rv += m_pdata->m_qualifiers[i].toMOF();
+			rv += qra[i].toMOF();
 		}
 
 		rv += "]\n";

@@ -3,8 +3,7 @@
 <MESSAGE ID="722" PROTOCOLVERSION="1.0">
 <MULTIRSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_ProductParentChild"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Aggregation" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
+<CLASS NAME="CIM_ProductParentChild"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Aggregation" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>The CIM_ProductParentChild association defines a parent child hierarchy among Products.  For example, a Product may come bundled with other Products. </VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="Parent" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductParentChild" ><QUALIFIER NAME="Aggregate" TYPE="boolean" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
@@ -14,8 +13,7 @@
 </QUALIFIER></PROPERTY.REFERENCE></CLASS></IRETURNVALUE></IMETHODRESPONSE>
 </SIMPLERSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_CompatibleProduct"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_CompatibleProduct is an association between Products that can indicate a wide variety of information. For example, it can indicate that the two referenced Products interoperate, that they can be installed together, that one can be the physical container for the other, etc. The string property, CompatibilityDescription, defines how the Products interoperate or are compatible, any limitations regarding interoperability or installation, ...</VALUE>
+<CLASS NAME="CIM_CompatibleProduct"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_CompatibleProduct is an association between Products that can indicate a wide variety of information. For example, it can indicate that the two referenced Products interoperate, that they can be installed together, that one can be the physical container for the other, etc. The string property, CompatibilityDescription, defines how the Products interoperate or are compatible, any limitations regarding interoperability or installation, ...</VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="Product" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_CompatibleProduct" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Product for which compatible offerings are defined.</VALUE>
 </QUALIFIER></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="CompatibleProduct" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_CompatibleProduct" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
@@ -24,8 +22,7 @@
 </QUALIFIER></PROPERTY></CLASS></IRETURNVALUE></IMETHODRESPONSE>
 </SIMPLERSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_ProductProductDependency"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductProductDependency is an association between two Products, indicating that one must be installed, or must be absent, for the other to function. This is conceptually equivalent to the ServiceServiceDependency association.</VALUE>
+<CLASS NAME="CIM_ProductProductDependency"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductProductDependency is an association between two Products, indicating that one must be installed, or must be absent, for the other to function. This is conceptually equivalent to the ServiceServiceDependency association.</VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="RequiredProduct" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductProductDependency" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The required Product.</VALUE>
 </QUALIFIER></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="DependentProduct" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductProductDependency" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
@@ -40,8 +37,7 @@
 </QUALIFIER></PROPERTY></CLASS></IRETURNVALUE></IMETHODRESPONSE>
 </SIMPLERSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_ProductSupport"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductSupport is an association between Product and SupportAccess that conveys how support is obtained for the Product.  This is a many-to-many relationship, implying that various types of Support are available for a Product, and that the same Support object can provide assistance for multiple Products.</VALUE>
+<CLASS NAME="CIM_ProductSupport"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductSupport is an association between Product and SupportAccess that conveys how support is obtained for the Product.  This is a many-to-many relationship, implying that various types of Support are available for a Product, and that the same Support object can provide assistance for multiple Products.</VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="Product" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductSupport" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Product.</VALUE>
 </QUALIFIER></PROPERTY.REFERENCE><PROPERTY.REFERENCE NAME="Support" REFERENCECLASS="CIM_SupportAccess" CLASSORIGIN="CIM_ProductSupport" ><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
@@ -49,8 +45,7 @@
 </QUALIFIER></PROPERTY.REFERENCE></CLASS></IRETURNVALUE></IMETHODRESPONSE>
 </SIMPLERSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_ProductFRU"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductFRU is an association between Product and FRU that provides information regarding what Product components have been or are being replaced.  The association is one to many, conveying that a Product can have many FRUs, and that a particular instance of a FRU is only applied to one (instance of a) Product.</VALUE>
+<CLASS NAME="CIM_ProductFRU"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>CIM_ProductFRU is an association between Product and FRU that provides information regarding what Product components have been or are being replaced.  The association is one to many, conveying that a Product can have many FRUs, and that a particular instance of a FRU is only applied to one (instance of a) Product.</VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="Product" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductFRU" ><QUALIFIER NAME="Max" TYPE="uint32" ><VALUE>1</VALUE>
 </QUALIFIER><QUALIFIER NAME="Key" TYPE="boolean" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" ><VALUE>The Product to which the FRU is applied.</VALUE>
@@ -59,8 +54,7 @@
 </QUALIFIER></PROPERTY.REFERENCE></CLASS></IRETURNVALUE></IMETHODRESPONSE>
 </SIMPLERSP>
 <SIMPLERSP><IMETHODRESPONSE NAME="GetClass"><IRETURNVALUE>
-<CLASS NAME="CIM_ProductPhysicalElements"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
-</QUALIFIER><QUALIFIER NAME="Aggregation" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
+<CLASS NAME="CIM_ProductPhysicalElements"><QUALIFIER NAME="ASSOCIATION" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE> </QUALIFIER><QUALIFIER NAME="Aggregation" TYPE="boolean" OVERRIDABLE="false" ><VALUE>true</VALUE>
 </QUALIFIER><QUALIFIER NAME="Description" TYPE="string" TRANSLATABLE="true" ><VALUE>Indicates the PhysicalElements that make up a Product.</VALUE>
 </QUALIFIER><PROPERTY.REFERENCE NAME="Product" REFERENCECLASS="CIM_Product" CLASSORIGIN="CIM_ProductPhysicalElements" ><QUALIFIER NAME="Max" TYPE="uint32" ><VALUE>1</VALUE>
 </QUALIFIER><QUALIFIER NAME="Aggregate" TYPE="boolean" ><VALUE>true</VALUE>

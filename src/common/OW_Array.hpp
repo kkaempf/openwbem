@@ -91,13 +91,17 @@ public:
 	template<class InputIterator>
 	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
 
-	iterator begin() { return m_impl->begin(); }
+	iterator begin() 
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->begin(); }
 	const_iterator begin() const { return m_impl->begin(); }
-	iterator end() { return m_impl->end(); }
+	iterator end() 
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->end(); }
 	const_iterator end() const { return m_impl->end(); }
-	reverse_iterator rbegin() { return m_impl->rbegin(); }
+	reverse_iterator rbegin() 
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rbegin(); }
 	const_reverse_iterator rbegin() const { return m_impl->rbegin(); }
-	reverse_iterator rend() { return m_impl->rend(); }
+	reverse_iterator rend() 
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rend(); }
 	const_reverse_iterator rend() const { return m_impl->rend(); }
 	size_type size() const { return m_impl->size(); }
 	size_type max_size() const { return m_impl->max_size(); }
@@ -134,7 +138,7 @@ public:
 	void append(const T& x) { push_back(x); }
 	void swap(OW_Array<T>& x) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->swap(*x.m_impl); }
 	iterator insert(iterator position, const T& x)
-		{ OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->insert(position, x); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->insert(position, x); }
 
 	void insert(size_t position, const T& x)
 		{ OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->insert(m_impl->begin() + position, x); }

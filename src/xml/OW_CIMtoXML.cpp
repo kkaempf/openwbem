@@ -38,6 +38,7 @@
 #include "OW_StringStream.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 using std::ostream;
 
@@ -396,10 +397,31 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	//
 	// Process qualifiers
 	//
+	/*
+	 * If it is an association, we ignore the localOnly flag
+	 * we probably should do the same with indications, but currently
+	 * have no isIndication() flag!  TODO
+	 */
+	if (cc.isAssociation())
+	{
+		ostr << "<QUALIFIER NAME=\"ASSOCIATION\" TYPE=\"boolean\" ";
+		OW_CIMQualifierArray::const_iterator iter = std::find(
+			cc.getQualifiers().begin(), cc.getQualifiers().end(), 
+			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
+		if (iter == cc.getQualifiers().end() && !localOnly)
+		{
+			ostr << "PROPAGATED=\"true\" ";
+		}
+		ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE> </QUALIFIER>";
+	}
 	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
 	{
 		for(size_t i = 0; i < cc.getQualifiers().size(); i++)
 		{
+			if (cc.getQualifiers()[i].getName().equalsIgnoreCase("ASSOCIATION"))
+			{
+				continue;
+			}
 			//m_pdata->m_qualifiers[i].toXML(ostr, localOnly);
 			OW_CIMtoXML(cc.getQualifiers()[i], ostr, localOnly);
 		}

@@ -338,7 +338,7 @@ foobar(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("CIM_SoftwareFeatureServiceImplementation");
+		OW_CIMObjectPath cop("CIM_Docked");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
 		cout << cimClass.toMOF() << endl;
 	}
@@ -350,7 +350,7 @@ foobar(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("CIM_Docked");
 		OW_CIMClass cimClass = hdl.getClass(cop, true);
 		cout << cimClass.toMOF() << endl;
 	}
@@ -359,6 +359,7 @@ foobar(OW_CIMOMHandleIFC& hdl)
 		cerr << e << endl;
 	}
 
+	exit(0);
 	testDone();
 }
 */
@@ -1277,6 +1278,8 @@ main(int argc, char* argv[])
 		 * will take care of the particulars of the HTTP protocol, including
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
+
+		//foobar(rch);
 
 		createNameSpace(rch);
 		enumNameSpace(rch);
