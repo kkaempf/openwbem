@@ -371,6 +371,16 @@ IndicationServerImpl::shutdown()
 	}
 	// wait until the main thread exits.
 	this->join();
+	
+	// clear out variables to avoid circular reference counts.
+	m_providers.clear();
+	m_procTrans.clear();
+	m_env = 0;
+	m_subscriptions.clear();
+	m_pollers.clear();
+	m_notifierThreadPool = 0;
+	m_subscriptionPool = 0;
+	m_wqlRef.setNull();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -742,6 +752,7 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 				}
 				catch (const Exception& e)
 				{
+					m_env->getLogger()->logError(Format("Caught exception while calling deActivateFilter for provider: %1", e));
 				}
 				catch(ThreadCancelledException&)
 				{
@@ -749,6 +760,7 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 				}
 				catch (...)
 				{
+					m_env->getLogger()->logError("Caught unknown exception while calling deActivateFilter for provider");
 				}
 			}
 			m_subscriptions.erase(iter++);
