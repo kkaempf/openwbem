@@ -1,0 +1,651 @@
+Fri Jul 25 11:13:21 MDT 2003
+- Fixed 127.0.0.1 in xml of association traversal operations.
+
+Wed Jul 23 12:35:20 MDT 2003
+- Added an option to the mof compiler to go directly to the repository.
+- Add configure options to disable usage of zlib, pam, ssl, slp, and most
+  functional profiles.
+
+Mon Jul 14 15:14:13 MDT 2003
+- Wrote a function to read the output of a popened process, and get the
+  return code, with a time limit and output limit.
+
+Thu Jun  5 17:24:10 MDT 2003
+- Reduced the size binary serlizations.
+
+Wed Jun  4 09:23:06 MDT 2003
+- Add binary interface versioning.
+- Worked on reducing the size of binary serializations of cim objects.
+
+Fri May 30 09:51:10 MDT 2003
+- Added repository versioning.
+
+Wed Apr 30 12:28:32 MDT 2003
+- Generalize the class cache in OW_MetaRepository.cpp
+- Have the mof compiler use the cache.
+- Add handling for new namespace model.  Make namespaces flat instead
+    of hierarchial.
+- Write a command line utility to register for and print indications.
+- Make event system more scalable.
+- Implement authorizeFilter, activateFilter, deactivateFilter on providers
+- Only parse queries once when they're created.
+- Add an option to {dis,en}able the IndicationRepLayer (sending intrinsic
+indications.)
+
+Fri Mar 28 12:36:02 MST 2003
+- Created a mechanism in the read-write locker to detect simple deadlock,
+  the case where one thread acquired a write lock and then later tried
+  to acquire a read lock, which would block.
+
+Thu Mar 27 21:28:31 MST 2003
+- Created a non-recursive mutex, and use it with condition variables,
+- Fixed a bug with the association index.
+- Fixed some problems when converting certain object paths to XML.
+
+Mon Feb 10 17:00:23 MST 2003    
+- Made it harder to create NULL CIM objects.  Removed the bool constructor
+  and add a explicit OW_CIMNULL_t constructor.  (e.g. OW_CIMClass c; won't
+  be NULL.  To create a NULL OW_CIMClass, you have to say 
+  OW_CIMClass c(OW_CIMNULL);)
+
+Thu Feb  6 10:40:34 MST 2003
+- Fixed memory leak in openssl (when restarting).
+
+Tue Jan 21 21:13:49 MST 2003
+- Method parameters are optional unless there is a "Required" qualifier.
+
+Tue Jan 21 12:00:35 MST 2003
+- Added an option for user to control SO_REUSEADDR
+
+Sun Dec 29 19:27:54 MST 2002
+- Wrap OW_*Repository into one class that implements OW_RepositoryIFC.
+  Have a way for providers to access it, so they can basically be
+  "pass-thru" providers.  They store their instances in the repository,
+  but perform operations as the instances are accessed.  The
+  CIM_Indication* providers will need this functionality.
+  This is also a replacement for property providers.  Instead of property
+  providers, an instance provider can be created, which will store parts
+  of its instances in the repository and will dynamically add other
+  properties.
+  - Move handling of flags as low as possible-into {Meta,Inst}Repository
+	and providersifc/providers
+  - Fix association/reference processing so OW_CIMServer uses
+	OW_CIMRepository private _static* methods, to avoid unnecessary
+	work.  Maybe create a public interface for this? OW_StaticCIMRepository
+
+Wed Dec 25 11:40:26 MST 2002
+- Done: SelectExp classes that event providers can use to easily
+  examine queries, and so pre-parsed queries can be stored by
+  OW_IndicationServerImpl.
+- Write an event Provider interface.  
+ 
+Sun Dec 15 21:10:19 MST 2002
+- Added wqlTest2 to the acceptance test suite.
+
+Sat Dec 14 23:17:17 MST 2002
+- Changed the WQL lexer to not make all identifiers lower case.
+- Made lots of progress and got the new WQL classes working.
+
+Fri Dec 13 23:05:03 MST 2002
+- Got the WQL SelectStatement to successfully compile all the test queries.
+- Fixed the MOF & WQL lexer to only allocate strings when needed instead of 
+  for all tokens.
+
+Wed Dec 11 21:22:12 MST 2002
+- Added a warning to the configure.in script that will tell the user that
+  they have to edit the config file to not use the PAM authentication
+  module if no PAM headers are found.
+- Changed wqlTest1.cpp to run queries locally and remotely.
+
+Wed Dec 11 08:29:05 MST 2002
+- Created OW_WQLSelectStatementGen which ties into the WQL parser to create
+  an OW_WQLSelectStatement.
+
+Tue Dec 10 21:26:33 MST 2002
+- Added some WQL classes so indication providers can be effectively 
+  implemented. Thanks to Markus Mueller for the code.
+- Fixed OW_CIMServer to look for providers for base classes so the new
+  provider registration allows a provider to handle all sub-classes.
+- Changed the AC_CREATE_PREFIX_CONFIG_H macro to only replace OW_config.h
+  if it actually changed.
+
+Wed Dec  4 07:34:42 MST 2002
+- Made the locking more granular by creating a rw lock for the schema and
+  one for instance data, instead of just one big rw lock.
+- Split the association db into a two, one to store class info and one to store
+  instance info.  This was to accomodate the finer grained locking.
+
+Tue Dec  3 11:25:46 MST 2002
+- Fixed mof compiler wrt default qualifiers (see cim spec 4.7).  Now the CIM
+  2.7 schema imports without errors.
+- Made string constructors of OW_CIMProperty explicit.
+- Finished property provider self-registration.
+
+Sun Dec  1 22:05:05 MST 2002
+- Got provider self-registration working for associator and method providers.
+- Fleshed out the unit tests for provider self-registration.
+
+Sat Nov 30 11:09:58 MST 2002
+- Moved the hash map stuff from OW_MetaRepository.hpp into OW_HashMap.hpp and
+  changed OW_ProviderManager to use it.
+- Fixed up OW_IndicationServerImpl::_processIndication to be more tolerant of
+  non-existent properties or values.
+
+Fri Nov 29 06:53:48 MST 2002
+- Fixed the pam module.  Added some code to the acceptance test to make sure
+  the daemon will start with the pam module authentication.
+- Fixed a bug in OW_COWReference which wasted some memory and caused a crash
+  if cast_to was used.
+- Reworked the provider manager and interfaces to support provider
+  self-registration.  This will facilitate built-in providers and negates the
+  need to use the provider qualifier in the schema.
+- Split the provider manager initialization into load and init steps.  Now
+  it's possible for providers to access the repository during initialization.
+
+Thu Nov 28 11:41:42 MST 2002
+- Got rid of OW_ThreadEvent because it is subject to race conditions.
+  Replaced it with a condition variable class.
+- Create OW_ThreadCounter and use it in OW_HTTPServer, OW_PollingManager and
+  OW_IndicationServerImpl.
+- Fixed all known startup/shutdown/restart race conditions.
+
+Wed Nov 27 07:13:44 MST 2002
+- Redid OW_IndicationServerImpl to use Condition Variables.
+- Make OW_AuthManager::init() throw if it can't load an authentication module.
+
+Sun Nov 24 13:50:27 MST 2002
+- Run fcntl(fd, F_SETFD, FD_CLOEXEC) on sockets.
+- Fixed: Daemon doesn't withstand repeated HUP signals.
+
+Sat Nov 23 10:38:08 MST 2002
+- Fixed: On startup of UDS if the UDS already exists, SocketImpl need to figure 
+  out if someone else is listening. If so, then fail, otherwise delete it.
+  Uses a lock file for coordination with other OpenWBEM cimoms or listeners.
+- Fixed: OW_File needs to be more C++ish with a destructor, reasonable copy
+  semantics, etc.
+- Fixed a race condition in OW_FileSystem::createFile()
+- Added OW_FileSystem::openOrCreateFile()
+- Fixed a race condition in OW_AssocDb constructor.
+- Fixed a race condition in OW_HDB constructor.
+- Fixed a race condition in OW_CIMServer::open when creating repository dir.
+- Reduced dependencies in some header files.
+
+Fri Nov 22 20:07:54 MST 2002
+- Added system file locking support to OW_File.
+- Moved OW_File into it's own hpp/cpp files.
+
+Fri Nov 15 08:05:33 MST 2002
+- Fixed bugs with NPI errors.
+
+Wed Nov 13 14:25:35 MST 2002
+- Fixed a bug in _validatePropagatedKeys when the name of the key that the
+  Propagated qualifier refered to was different than the name of the
+  qualifier's property.
+
+Mon Nov 11 07:39:29 MST 2002
+- Fixed registerForIndication to set the key properties correctly on
+  CIM_IndicationFilter and CIM_IndicationHandler* instances.
+
+Sat Nov  9 22:10:51 MST 2002
+- Added a test for more than 1 propagated key.  
+- Fixed a bug in _validatePropagatedKeys when there was more than 1.  
+- Fixed instanceExists to catch exceptions thrown from makeInstanceKey.
+
+Mon Nov  4 10:44:51 MST 2002
+- Fixed OW_CIMClientCL.cpp to work property in non-debug mode.
+- Refactored OW_Reference and OW_COWReference to help minimize code bloat
+- Fixed up a few spots that were calling OW_*Reference::getPtr() that didn't
+  need to.
+- Changed a few places that were using a raw OW_CIMServer pointer to use a
+  OW_RepositoryIFCRef instead.
+- Fixed compile problem on systems w/out OpenSSL
+- Enhancements to the acceptance test suite
+- Refactored OW_Reference to use more efficient assembly code instead of
+  mutexes for reference counting.
+- Created OW_COWReference so there is no need for code to explicitly manage
+  COW semantics.
+- Refactored OW_Reference and OW_COWReference to have a non-template base
+  class to reduce code bloat.
+- Changed owmofc to not create XML dump files in /tmp
+- Fixed enumInstances in OW_RPM provider.
+- Worked on making the mof compiler re-entrant.
+- Fixed a bug in the NPI interface.  Thanks to Viktor Mihajlovski.
+- Added a test for associator providers.
+- Fixed a bug where an associator provider wasn't being called in
+  certain situations.
+- Some cleanup and optimizations with operator= on some classes.
+
+Fri Nov  1 11:36:06 MST 2002
+- A lot of this was done pre-2.0.0 but it just got moved into the ChangeLog
+- Test XML with IPC and Binary with HTTP
+- Change C++ Provider IFC to append provider name on factory fuction
+- Release Providers from memory if haven't been used for a while
+- Remove IPC service and have HTTP service handle UDS
+- PKI authentication
+- fix make install to symlink libowhttpservice.so to $PREFIX/lib
+- Add client SSL authentication
+- Unload request handlers if not used after X minutes.
+- fix OW_CIMServer to throw right exceptions.  OW_CIMServer public
+- funcs shouldn't ever return null objects. 
+- overhaul Provider interface with consistent const& params. 
+- handle enumerations differently.
+- fix chuncked output with binary cimomhandle
+- fix deleteClass
+- search for all reads and writes.  check return values and throw. 
+- Create a common base class for client CIMOM handles (OW_CIMXMLCIMOMHandle 
+  and OW_BinaryCIMOMHandle) and put common code there (namespace funcs in 
+  particular).
+- simple C++ provider interface. 
+- configurable Class cache in meta repository. 
+- long and short versions of make check
+- add a test for the matrix on the bottom of
+  http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
+- change XML parser to be lazy. 
+- fix execQuery XML
+- pretty-print the XML in the test suites.
+- add a test for extrinsic methods with OUT and IN/OUT parameters
+- Add executeMethod fail tests to testCIMExceptions
+- Add empty() call to OW_String and change all length() == 0 to empty()
+- split out namespace parameters to cimom handle calls.
+- Intrinsic indications are fetched from root namespace.  Less than optimal.
+- Remove any bad NOT_SUPPORTED exceptions.
+- Split out the internal provider ifc from the Provider Manager.  
+- Fix CIM Server so that an instance provider can provide associations.
+- Trailers need to strip newlines from error description.
+- Use <asm/atomic.h> operations for reference counting (and reduce header 
+  dependencies).
+
+Fri Jan 18 08:00:41 MDT 2002
+- Changed the way read/write locks were being handled by the CIMOM. Now only
+  one lock is acquired per operation (meaning the provider operates under
+  the same lock). Operation should be "completely" atomic now.
+ 
+Wed Jan 16 11:49:00 MDT 2002
+- Changed the link line for the executibles on the Linux platforms.
+  libpthread is now the first library that links. This fixed a problem with
+  threading anomalies on linux.
+
+Mon Jan 14 15:41:00 MDT 2002
+- Changed the OW_CIMServer class to contain an OW_CIMClass that 
+  represents the namespace class. This class used to be constructed on
+  all operations. Now is is only contructed once.
+
+Wed Jan  9 16:25:00 MDT 2002
+- Changed the thread yield on the linux pthread implementation. Now it
+  calls sched_yield instead of sleep. This makes thing run a bit faster.
+
+Sat Jan  5 14:13:00 MDT 2002
+- Made hostname detection more robust
+
+Fri Dec 21 08:17:47 MDT 2001
+- Created a new CIMOM handle class call OW_IPCCIMOMHandle. This CIMOM
+  handle is designed to be used when connecting to an OpenWBEM CIMOM
+  on the local machine. It communicates with the CIMOM over a domain
+  socket and doesn't use any XML. All data in the protocol is in its
+  binary native format.
+
+Mon Dec 10 10:00:00 MDT 2001
+- Fixed problem where domain client connection would through exceptions
+  on later versions of the linux kernel. The second parm of the accept
+  call was not being set before the call.
+
+Fri Nov  2 15:28:00 MDT 2001
+- Rewrote OW_CIMValueCast. Is _MUCH_ smaller now and has the same
+  functionality.
+
+Mon Oct 22 17:04:00 MDT 2001
+- Fixed problem where invoke method on an invalid CIM class would 
+  seg-fault the CIMOM.
+
+Mon Oct 22 08:47:00 MDT 2001
+- Fixed getProviderProperties/setProviderProperties. It was only looking at
+  the overriden properties (oops). changed to call getAllProperties.
+  This was found and fixed by Arvind Jain. Thanks Arvind.
+ 
+Mon Oct 15 13:47:00 MDT 2001
+- Changed the select mechanism for file/socket handles. Introduced the
+  OW_Selectable class. Now things are more generic as far as select is
+  concerned.
+
+Thu Oct 11 13:00:00 MDT 2001
+- Fixed problem where the localOnly flag was not being passed to the
+  instance providers.
+
+Thu Oct 11 12:07:00 MDT 2001
+- Changed getInstanceNames to call the instance provider's enumerateInstances
+  that returns an OW_CIMObjectPathArray.
+
+Wed Oct  3 15:01:00 MDT 2001
+- Added a constructor to OW_CIMDateTime that takes an OW_UInt64 parm that
+  will create an interval type of CIM Date time.
+- Changed the methods initialize and cleanup on OW_CppProvider to not be
+  pure virtual anymore. The implementation of these methods is now
+  optional.
+
+Fri Sep 14 13:14:49 MDT 2001
+- Expanded the clientDriver to exercise all parameters of the client API.
+- Fixed lots of bugs that were discovered by the new tests.
+
+Tue Sep 11 16:10:44 MDT 2001
+- Added a callback to verify peer X509 certificates.
+
+Tue Sep 11 09:04:52 MDT 2001
+- (yesterday)
+  added doxygen comments to src/listener and src/client directories
+  Removed OW_CIMClient.{c,h}pp.
+- Wrote man pages for owcimomd, owexecwql, owmofc, owdigestgenpass
+
+Mon Sep 10 15:48:39 MDT 2001
+- added SLP discovery (last week).  This is composed of a polled provider
+  and the Client APIs associated with OW_CIMOMLocator and OW_CIMOMInfo.
+- (last week)
+  Changed provider interface so all methods get a Local CIMOM handle
+  passed in.  This allows us to do ACL checking at the provider level,
+  as well as on intrinsic methods.
+- added a bunch of javadoc style comments to src/net/socket/* and 
+  src/http/*
+
+Tue Sep  4 10:40:46 MDT 2001
+- changed login/password callback in HTTPClient to be a class, instead
+  of a function pointer.
+
+Fri Aug 31 17:37:13 MDT 2001
+-  Added owcimomd.enable_deflate option to config file.  (usefull
+   to disable it so socket dumps are more meaningfull.  :)
+
+Fri Aug 31 14:55:47 MDT 2001
+-  Made the acceptance test script more verbose, especially with 
+   failures.
+-  Acceptance script looks at OWTESTLIST env. variable to see 
+   what tests to perform.
+-  Fixed OW_SharedLibrary and OW_SharedLibraryLoader to always
+   log to LOG_ERROR dlerror() (if error occurred.)
+-  Fixed enumerateQualifiers on RemoteCIMOMHandle. 
+-  Enabled SwitchToSymlinks in acceptance tests, so all libs and 
+   binaries point to build dir.
+-  Added chmod +x to .so build rule in Makefiles.
+-  Fixed handling of qualifiers on CIM Instances. 
+
+Wed Aug 29 11:07:30 MDT 2001
+-  Moved all of OW_Vector to OW_Array and removed OW_Vector
+-  Changed acceptance script to put results in $STAGEDIR/results
+   and to make a tarball of the results.
+-  No longer run HTTPS test if not built with SSL
+
+Tue Aug 28 15:57:41 MDT 2001
+-  Added acinclude.m4 with AC_CREATE_PREFIX_CONFIG_H, TYPE_SOCKLEN_T,
+   and others.  (http://www.gnu.org/software/ac-archive/)
+-  Prefixed all upper-case #defines in OW_config.h with OW_ so we
+   won't conflict with other automake/autoconf projects.
+-  Changed OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(fd) to 
+   throw exceptions again (but to free up memory first).
+
+Fri Aug 24 15:05:03 MDT 2001
+-  Fixed deflate compression when used without chunking/trailers support.
+
+Thu Aug 23 16:54:52 MDT 2001
+-  Fixed configure.in to define HAVE_ZLIB_H 
+-  Fixed HTTPDeflateOStream to properly terminate output stream
+   (now our deflate work with SNIA)
+
+Thu Aug 23 12:25:08 MDT 2001 -- Release of 1.2.0
+-  Fixed pidfile location to be platform specific
+-  Fixed a problem where bad strings were being sent to syslog.
+-  Fixed RPM spec file to work on SuSE systems.
+-  Fixed password prompt on mof compiler and owexecwql to only
+   ask for password once.  
+-  switched /etc/pam.d/openwbem to use pam_unix instead of pam_pwdb
+   (SuSE doesn't have pam_pwdb, but OL and RH have pam_unix.
+
+Wed Aug 22 15:13:20 MDT 2001
+-  Fixed OW_InetSSLSocketImpl.cpp to not throw exceptions in it's
+   ctor.  (gcc is buggy and doesn't delete it like it should)
+-  Fixed HTTP Server to always eat entity, even if sending a 4XX
+   response.  See rfc 2616 Section 10.4
+-  Made the HTTPClient retry only three times, not forever. 
+-  Changed acceptence script to not do diffs it env OWNODIFF=1
+-  Added some yields to shutdown code to help osvr/pth
+
+Mon Aug 20 11:41:04 MDT 2001
+-  Added a callback on http client to retrieve user name and password.
+-  owmofc and owexecwql give http client a call back function for login
+   and password.
+-  Moved OW_String getLine(istream&) from OW_HTTPUtils to OW_String.
+-  Removed IOS_BASE from acconfig.h and replaced instances with std::ios
+-  Changed owdigestgenpass to use getopt so that the hostname and password
+   arguments could both be optional.
+-  Fixed WQL wrt setting a string data type to "" or null.
+
+
+Fri Aug 17 11:42:58 MDT 2001
+-  Discovered the -fno_default_inline compiler option.  We now work
+   with -O3 -fno_default_inline.
+-  Changed RestartDaemon in acceptance.sh back to do a HUP.
+-  Changed OW_SSLCtxMgr to check for file size, not just existance
+   of $RANDFILE.
+
+Thu Aug 16 17:14:56 MDT 2001
+-  fixed compiler warnings.
+-  changed hostname stuff in acceptance.sh
+-  changed RestartDaemon in acceptance.sh to do a StopDaemon; StartDaemon.
+-  slight change in OW_CIMServer::execQuery in an attempt to fix with -O3
+   (didn't work)
+
+Thu Aug 16 12:00:55 MDT 2001
+-  Changed OW_CIMServer so that providers always get a CIMOMHandle 
+   with an "internal" ACLInfo.
+-  Changed Instance repository to use the namespace as part of the db
+   key.  NOTE: previous repositories are now incompatible.
+-  enabled ACL test in acceptance.sh.
+-  Added get/set property test to clientdriver.  (they work).
+
+Wed Aug 15 17:52:58 MDT 2001
+-  Added ACL test suite.
+-  Changed behavior of ACLs WRT namespaces.  Subnamespaces now inherit
+   the ACLs of their parents if no user or namespace ACLs are found. 
+-  Made OW_CIMObjectPath and OW_CIMValue ctors explicit.
+-  Fixed lots of bugs flushed out by the above change.
+-  Fixed setProperty in OW_CIMServer. (I think getProperty is still broken)
+-  Changed enumNameSpace on OW_RemoteCIMOMHandle to use enumInstanceNames.
+-  Fixed a bug where the check for __Namespace was case sensitive.
+-  Fixed indications to be able to handle instances from namespaces 
+   other than /root.
+-  Got ACLs mostly working.  Currently commented out of acceptance.sh.
+-  Other misc changes I don't remember. 
+
+Tue Aug 14 14:19:01 MDT 2001
+-  Renamed OW_Authorizer to OW_Authenticator.
+-  Renamed concrete authentication modules to reflect the above change.
+-  Changed the doAuthenticate() function on OW_Authenticator (and 
+   concreate classes) to take a third argument: OW_String& username.
+   Modules should assign the username to this variable so that it 
+   can be made known to ACLMgr.
+
+
+Mon Aug 13 13:47:40 MDT 2001  Release of 1.1.2
+
+-  Removed libtool from the build process. 
+-  Fixed a problem with array properties.
+-  Ported to Solaris 2.8.
+-  Created linux version of OpenWBEM that uses the gnu pth
+   cooperative thread library. The gnu pth library can be
+   used instead of pthreads with a command line option to
+   configure.
+-  Ported to OpenServer (OSR5). This port uses the gnu pth
+   cooperative thread library.
+-  Ported to UnixWare 7 and OpenUnix 8.
+-  Added configure option --with-search-dir=<path> to add -I<path>/include
+   and -L<path>/lib to compile/link flags.
+-  Various refinements to acceptence script (to make it work with Bourne shell)
+-  Fixed problem where associator providers were not being called.
+-  Fixed problem where associator providers were being called with duplicated
+   classes.
+-  Added owexecwql tool to execute WQL statements on the command line.
+-  Added a char* getOWVersion() function to authentication module 
+   interface.  This replaces the getSignature() function in previous versions.
+
+Fri July 20 2001	Realease of 1.1.0
+
+Many great changes and fixes in this release. Memory leaks seem to be
+non-existent ;-). Many seg-faults and threading problems have been fixed.
+Great wql and indication support. Associations work great now....
+
+-  Fixed a problem in the Digest Authentication module with reguard to 
+   the nonce count being used in the hash computation.
+-  Fixed a threading issue where the CIMProduct IFC (used by http server)
+   wasn't being cloned for each connection. 
+-  Fixed a buffer overrun in OW_HTTPLenLimitIStream.
+-  Added deflate compression support to HTTP Server/Client.
+-  Changed repository interface to support getInstanceNames and enumClassnames.
+   Implemented these methods in OW_CIMServer.
+-  Many bug fixes done in association handling. Association handling seems to
+   be working across the board.
+-  Changed OW_MutexLock so it does not depend on OW_Reference and is no longer
+   ref counted. Eleminated need for dynamic allocation.
+-  WQL Level 2 implemented as a loadable shared library that can be used by
+   either the client or server.  
+-  WQL test suite implemented.
+-  Indication support implemented.
+-  Created Trigger providers, that can trigger indications.
+-  Created Indication delivery providers that will be called by the cimom to
+   deliver indications.
+-  Rewrote OW_Reference use less memory and be more efficient.
+-  Moved copy constructor of OW_XMLNode into the cpp file.
+-  Made the unitTest run from a script so that the LD_LIBRARY_PATH could
+   be set, and the test would run even if the system didn't have all the
+   openwbem libraries in the /etc/ld.so.conf.
+-  Removed code from OW_NwIface.cpp that figures out the MAC address of a nic
+   card, because we never use it and it very hard to port.
+-  Started porting to solaris 2.8, but not finished yet.  Initial code is in
+   the CVS repository, it compiles, but doesn't work yet.
+-  Started porting to UnixWare (OpenUnix).  Not yet complete.
+-  Moved gdbindexer.cpp to OW_IndexImpl.cpp, since it doesn't have to be
+   under the OS abstraction layer anymore.
+-  Integrated libdb into the distribution, since the exact version we want is
+   probably not on many platforms, except linux, and even then different
+   distributions have different names for the header files and libraries.
+-  Changed constructor of OW_RandomNumber to only seed the rng once.
+-  Fixed a few bugs in the indexer to work with our custom libdb.
+-  Fixed a problem in OW_HDBNode::add where it didn't check the return value of
+   adding an index entry.
+-  Some adjustments to the unit test suite to compile correctly when memory
+   checking was enabled.
+-  Several improvements to OW_MemTracer.  Environment variables 
+   OW_MEM_NOFREE and OW_MEM_AGGRESSIVE can be set to customize the 
+   degree of memory debugging.  OW_MemTracer now does bounds checking
+   (for overruns and underruns).
+-  Fixed threading problems in OW_MemTracer.
+-  Fixed a memory leak in OW_HTTPChunkerTestCases.cpp.
+-  Fixed a bunch of memory leaks in mofparser.ypp.
+-  Added a mutex guard in OW_Environment::getWQLRef.
+-  Fixed a race condition when shutting down in cimListenerTest.cpp.
+-  Added a shutdownHttpServer method to OW_HTTPXMLCIMListener.
+-  Removed OW_config.h from the CVS repository. Made it so that config.h no 
+   longer exists, it gets copied to OW_config.h, and OW_config.h no longer
+   #include's config.h.  This way our config.h won't conflict with another
+   project's config.h, if our headers are installed on the system and it uses
+   openwbem's headers.
+-  Tweaks to the code to get it to compile w/out warnings on egcs 2.91
+-  Define _REENTRANT in OW_config.h
+-  Created 2 test trigger providers that are used by the indication test suite.
+-  Improved some error messages in OW_XMLExecute.cpp
+-  Added default constructor for OW_URL
+-  Split up OW_Types.h into OW_NetworkTypes.hpp, OW_ThreadTypes.hpp and 
+   OW_ByteSwap.hpp.  This significantly reduced header dependencies and thus
+   reduced compile time by quite a bit.
+-  Added configure script checks for byte order, and native type size.
+-  Added an stl friendly interface to OW_Enumeration and OW_Array.
+-  Reduced header dependencies in OW_CIM*.hpp files.  Now you can simply
+   include the appropriate CIM header instaead of having to get them all by
+   include OW_CIM.hpp.
+-  Fixed a bug in OW_HTTPSvrConnection where the cimom segfaulted when the
+   client was killed in the middle of doing something.
+-  Fixed a segfault in OW_CIMServer that was caused when deleteInstance was
+   called with a CIMObjectPath without a classname in it.
+-  Added a log message to OW_MetaRepository to indicate which repository was
+   opened.
+-  Changed constructors of OW_Format to pass parameters by reference instead of
+   by value.
+-  Fixed spelling problems with throw messages in OW_Array.
+-  Added comparison operators on OW_CIMValue.
+-  Added an operator< for OW_Array so it could be used by OW_CIMValue.
+-  Added explicit to the OW_Reference constructor so it wouldn't accidentally
+   take ownership of a pointer.
+-  Fixed a problem in the mof compiler when checking array sizes.
+-  Fixed a bug in OW_String::isSpaces.
+-  Optimized OW_String::erase.
+-  Started working on making things more compliant with the c++ standard, so
+   it would compile on gcc 3.0.
+-  Switched OW_String to use a NULL m_buf instead of g_emptyBuf, because of
+   undefined c++ static initialization order.
+-  Changed some of the static variables in OW_Environment to be pointers that
+   get initialized when init() is called, so that there would be less problems
+   with static initialization order.
+-  Fix to mof compiler: 64-bit integers are now fully supported.
+-  Code has been added to OW_MetaRepository to not allow a class to declare
+   key properties that are not contained in it's parent class.
+-  Code has been added to OW_MetaRepository to not allow an association class
+   to be derived from a non-association class.
+-  No longer allow a class to be created that is not an indication or
+   an abstract class without key properties.
+-  Added rudimentary lru cache to class OW_MetaRepository.
+-  New associations and references code.
+   Checking referential integrity on propagated keys in OW_CIMServer.
+
+
+Thurs June 14 13:20:00 MDT 2001
+
+-  Changed read/write locking algorithm to be more thread safe.
+-  Changed our reference counting mechanism to return OW_MutexLocks when
+   acquiring write locks for copy on write objects.
+-  Added temporary implementation of WQL level 2 to support the current
+   development on indications. This will be replaced by a better WQL
+   implementation in a couple of weeks.
+-  The execQuery api is implemented on the client and server side. The
+   query is executed on the server side.
+-  Fixed digest authentication in HTTP client and made improvements to digest
+   authentication module.
+-  Added the CIM product: CIM Listener. This is available in the client
+   library (beware. WQL implementation is a little flaky right now).
+-  Changed the generic provider interface that is used by OW_CIMServer. It no
+   longer has the methods for init and cleanup. These are appropriately handled
+   by the individual provider interfaces. Consequently the C++ provider
+   interface was changed to include these methods on it's generic provider
+   interface.
+-  Added support for indications (this is currently disabled until the next
+   release).
+-  Added index file support for associations (this is currently disabled until
+   the next release).
+-  Fixed various bugs in the MOF compiler.
+-  Fixed various bugs in OW_InetAddress.
+-  Changed OW_Index back to use libdb. The old indexing didn't support
+   unlimited key lengths.
+-  Fixed various segfault problems in OW_XMLNode.
+-  Fixed	various segfault problems in the OW_CIM classes.
+-  Fixed problems with OW_CIMValue when it contained a REFERENCE datatype.
+-  Fixed OW_CIMObjectPath::toString and parse. The parse method was not
+   working at all before.
+-  Fixed various segfault problems in OW_CIM classes.
+-  Created test programs for WQL.
+-  Create test programs for indications and CIMListener.
+-  Fixed various bugs in the code since the last release that we can't remember
+   right now (sorry. We'll do better next time :-( ).
+
+
+Fri May 18 15:02:09 MDT 2001
+
+- Changed provider interface and c++provider shared library interface 
+  to return version of CIMOM they were compiled with to detect 
+  incompatibilities.
+- Changed OW_Index to use I/O framework from libopenwbem.
+- Fixed digest authentication on HTTP Server (client still broken)
+  and added a tool (owdigestgenpass) to create a MD5 password file.
+- Added an acceptance test script to make check.
+- Added support for Multiple Operations (MULTIREQ and MULTIRSP) to owcimomd.
+- Fixed filename generation problem in OW_HDB and OW_Index.
+- Fixed bug in mof compiler when user specifies an invalid filename. 
+- Updated mof compiler to comply with CIM Specification addendum #2.
+- Fixed a problem in the authentication modules when empty base64 
+  credentials are given. 
+- Other bug fixes...
+
