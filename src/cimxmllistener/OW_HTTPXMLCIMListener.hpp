@@ -45,6 +45,7 @@
 #include "OW_Logger.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_ClientAuthCBIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -52,8 +53,6 @@ namespace OpenWBEM
 class HTTPServer;
 class ListenerAuthenticator;
 class Thread;
-class ClientAuthCBIFC;
-typedef Reference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 class HTTPXMLCIMListener : public CIMListenerCallback
 {
