@@ -885,10 +885,10 @@ DateTime::DateTime(const String& str)
 
 					// Check again.
 					validateRanges(year_number, month_number, day_number, hour,
-					minute, second, microseconds, str);
+						minute, second, microseconds, str);
 
 					set(year_number, month_number, day_number, hour,
-					minute, second, microseconds, E_UTC_TIME);      
+						minute, second, microseconds, E_UTC_TIME);      
 				}
 			}
 			catch (const StringConversionException&)
@@ -975,7 +975,8 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 #endif
 #endif
 	}
-	if (m_time == static_cast<time_t>(-1))
+	// apparently some implementations of timegm return something other than -1 on error, but still < 0...
+	if (m_time < 0)
 	{
 #ifdef OW_HAVE_ASCTIME_R
 		char buff[30];
