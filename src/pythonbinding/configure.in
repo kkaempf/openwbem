@@ -1,0 +1,24 @@
+AC_INIT(Makefile.am)
+AM_INIT_AUTOMAKE(owpythonbinding, "0.0.1")
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CXXCPP
+AC_LANG_CPLUSPLUS
+
+AC_MSG_CHECKING([whether we have g++ 2.x])
+AC_EGREP_CPP([gcc 2],
+[#ifdef __GNUG__
+    gcc __GNUG__
+#endif
+],
+[CXXFLAGS="$CXXFLAGS -ftemplate-depth-50"
+AC_MSG_RESULT(yes)
+], AC_MSG_RESULT(no))
+
+AC_PATH_BOOST([1.28.0],
+  CXXFLAGS="$CXXFLAGS $BOOST_CXXFLAGS", )
+
+AC_PATH_PYTHON([2.0.0],
+  CXXFLAGS="$CXXFLAGS $PYTHON_CXXFLAGS", )
+
+AC_OUTPUT(Makefile)
