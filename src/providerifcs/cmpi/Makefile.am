@@ -26,7 +26,7 @@ clean-local:
 #OW_CMPIAssociatorProviderProxy.cpp \
 #OW_CMPIPolledProviderProxy.cpp  \
 #OW_CMPIIndicationProviderProxy.cpp \
-#OW_CMPIMethodProviderProxy.cpp  \
+#OW_CMPIMethodProviderProxy.cpp  
 
 libcmpiprovifc_a_SOURCES = \
 CMPIProvider.hpp \
