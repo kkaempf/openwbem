@@ -39,6 +39,7 @@ Fix problems:
       support the latest version(s) of the spec(s).
     - The new redhat pthread_cancel() throws an exception that seems to clobber 
       owcimomd.  Need to figure out how to prevent this from happening.
+    - Domain socket is only openable by root.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -68,6 +69,8 @@ New features:
     - Add log messages to the thread pool class so we can output
       information about threads starting and exiting.
     - create static CIMQualifiers for standard qualifiers.
+    - Create a repository debugger so you can easily inspect what's in a repository.
+    - Pass language down to providers
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.
@@ -137,7 +140,12 @@ Post 3.0
     - Add config items and code to do ssl client authentication.
     - Config item for slp renewal time.
     - Create a config item so people can use a custom repository.
-    - Change ACL checking to use the new CIM access schema
+    - Change ACL checking to use the new CIM access schema (if appropriate)
+      - Needed features: granularity down to the property level (currently
+         it's namespace level)
+      - Granularity to control each operation (currently it's just rw-overall).
+         Maybe also be for convenience, allow rw-schema, rw-instance, rw-overall
+      - Handle groups/roles (RBAC) as well as users.
 
 Refactorings:
     - Get rid of all the bool parameters and replace them with enums
