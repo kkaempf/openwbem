@@ -419,6 +419,6 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMInstance OW_CIMInstance;
+typedef OpenWBEM::CIMInstance OW_CIMInstance OW_DEPRECATED;
 
 #endif

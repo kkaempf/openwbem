@@ -158,8 +158,8 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::UnknownHostException OW_UnknownHostException;
-typedef OpenWBEM::SocketAddressException OW_SocketAddressException;
-typedef OpenWBEM::SocketAddress OW_SocketAddress;
+typedef OpenWBEM::UnknownHostException OW_UnknownHostException OW_DEPRECATED;
+typedef OpenWBEM::SocketAddressException OW_SocketAddressException OW_DEPRECATED;
+typedef OpenWBEM::SocketAddress OW_SocketAddress OW_DEPRECATED;
 
 #endif

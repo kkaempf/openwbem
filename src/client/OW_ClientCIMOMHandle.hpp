@@ -53,7 +53,7 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle;
+typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle OW_DEPRECATED;
 
 #endif
 	

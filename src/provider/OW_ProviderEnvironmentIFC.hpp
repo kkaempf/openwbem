@@ -62,6 +62,6 @@ typedef Reference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ProviderEnvironmentIFC OW_ProviderEnvironmentIFC;
+typedef OpenWBEM::ProviderEnvironmentIFC OW_ProviderEnvironmentIFC OW_DEPRECATED;
 
 #endif									

@@ -325,6 +325,6 @@ typedef Array<Char16> Char16Array;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Char16 OW_Char16;
+typedef OpenWBEM::Char16 OW_Char16 OW_DEPRECATED;
 
 #endif

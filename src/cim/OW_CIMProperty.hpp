@@ -317,6 +317,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMProperty OW_CIMProperty;
+typedef OpenWBEM::CIMProperty OW_CIMProperty OW_DEPRECATED;
 
 #endif

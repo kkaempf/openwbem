@@ -212,6 +212,6 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::File OW_File;
+typedef OpenWBEM::File OW_File OW_DEPRECATED;
 
 #endif

@@ -172,6 +172,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMScope OW_CIMScope;
+typedef OpenWBEM::CIMScope OW_CIMScope OW_DEPRECATED;
 
 #endif

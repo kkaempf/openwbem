@@ -870,7 +870,7 @@ typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMOMHandleIFC OW_CIMOMHandleIFC;
-typedef OpenWBEM::CIMOMHandleIFCRef OW_CIMOMHandleIFCRef;
+typedef OpenWBEM::CIMOMHandleIFC OW_CIMOMHandleIFC OW_DEPRECATED;
+typedef OpenWBEM::CIMOMHandleIFCRef OW_CIMOMHandleIFCRef OW_DEPRECATED;
 
 #endif

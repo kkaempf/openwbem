@@ -192,6 +192,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMNameSpace OW_CIMNameSpace;
+typedef OpenWBEM::CIMNameSpace OW_CIMNameSpace OW_DEPRECATED;
 
 #endif

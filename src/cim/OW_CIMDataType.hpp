@@ -238,6 +238,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMDataType OW_CIMDataType;
+typedef OpenWBEM::CIMDataType OW_CIMDataType OW_DEPRECATED;
 
 #endif

@@ -84,8 +84,8 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::UnnamedPipeException OW_UnnamedPipeException;
-typedef OpenWBEM::UnnamedPipeRef OW_UnnamedPipeRef;
-typedef OpenWBEM::UnnamedPipe OW_UnnamedPipe;
+typedef OpenWBEM::UnnamedPipeException OW_UnnamedPipeException OW_DEPRECATED;
+typedef OpenWBEM::UnnamedPipeRef OW_UnnamedPipeRef OW_DEPRECATED;
+typedef OpenWBEM::UnnamedPipe OW_UnnamedPipe OW_DEPRECATED;
 
 #endif	// OW_UNNAMEDPIPE_HPP_

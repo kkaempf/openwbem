@@ -91,6 +91,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::MutexLock OW_MutexLock;
+typedef OpenWBEM::MutexLock OW_MutexLock OW_DEPRECATED;
 
 #endif

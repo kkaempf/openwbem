@@ -411,6 +411,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMClass OW_CIMClass;
+typedef OpenWBEM::CIMClass OW_CIMClass OW_DEPRECATED;
 
 #endif

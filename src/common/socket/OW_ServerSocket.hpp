@@ -115,6 +115,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ServerSocket OW_ServerSocket;
+typedef OpenWBEM::ServerSocket OW_ServerSocket OW_DEPRECATED;
 
 #endif

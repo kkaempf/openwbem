@@ -85,6 +85,6 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; } \
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Exception OW_Exception;
+typedef OpenWBEM::Exception OW_Exception OW_DEPRECATED;
 
 #endif

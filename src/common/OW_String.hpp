@@ -787,8 +787,8 @@ operator >= (const char* p, const String& s)
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::StringArray OW_StringArray;
-typedef OpenWBEM::StringConversionException OW_StringConversionException;
-typedef OpenWBEM::String OW_String;
+typedef OpenWBEM::StringArray OW_StringArray OW_DEPRECATED;
+typedef OpenWBEM::StringConversionException OW_StringConversionException OW_DEPRECATED;
+typedef OpenWBEM::String OW_String OW_DEPRECATED;
 
 #endif

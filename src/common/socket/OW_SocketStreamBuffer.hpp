@@ -50,6 +50,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SocketStreamBuffer OW_SocketStreamBuffer;
+typedef OpenWBEM::SocketStreamBuffer OW_SocketStreamBuffer OW_DEPRECATED;
 
 #endif 

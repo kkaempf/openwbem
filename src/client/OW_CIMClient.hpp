@@ -720,6 +720,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMClient OW_CIMClient;
+typedef OpenWBEM::CIMClient OW_CIMClient OW_DEPRECATED;
 
 #endif

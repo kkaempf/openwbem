@@ -77,7 +77,7 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SharedLibraryLoaderRef OW_SharedLibraryLoaderRef;
-typedef OpenWBEM::SharedLibraryLoader OW_SharedLibraryLoader;
+typedef OpenWBEM::SharedLibraryLoaderRef OW_SharedLibraryLoaderRef OW_DEPRECATED;
+typedef OpenWBEM::SharedLibraryLoader OW_SharedLibraryLoader OW_DEPRECATED;
 
 #endif

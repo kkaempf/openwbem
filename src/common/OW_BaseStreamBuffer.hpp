@@ -98,6 +98,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::BaseStreamBuffer OW_BaseStreamBuffer;
+typedef OpenWBEM::BaseStreamBuffer OW_BaseStreamBuffer OW_DEPRECATED;
 
 #endif

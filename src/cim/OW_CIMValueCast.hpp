@@ -55,7 +55,7 @@ namespace CIMValueCast
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ValueCastException OW_ValueCastException;
+typedef OpenWBEM::ValueCastException OW_ValueCastException OW_DEPRECATED;
 namespace OW_CIMValueCast = OpenWBEM::CIMValueCast;
 
 #endif

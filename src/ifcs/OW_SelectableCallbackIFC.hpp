@@ -51,7 +51,7 @@ typedef Reference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SelectableCallbackIFC OW_SelectableCallbackIFC;
-typedef OpenWBEM::SelectableCallbackIFCRef OW_SelectableCallbackIFCRef;
+typedef OpenWBEM::SelectableCallbackIFC OW_SelectableCallbackIFC OW_DEPRECATED;
+typedef OpenWBEM::SelectableCallbackIFCRef OW_SelectableCallbackIFCRef OW_DEPRECATED;
 
 #endif

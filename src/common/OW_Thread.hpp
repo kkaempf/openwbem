@@ -280,7 +280,7 @@ typedef Reference<Thread> ThreadRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Thread OW_Thread;
-typedef OpenWBEM::ThreadException OW_ThreadException;
+typedef OpenWBEM::Thread OW_Thread OW_DEPRECATED;
+typedef OpenWBEM::ThreadException OW_ThreadException OW_DEPRECATED;
 
 #endif

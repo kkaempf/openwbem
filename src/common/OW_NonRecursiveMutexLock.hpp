@@ -101,6 +101,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::NonRecursiveMutexLock OW_NonRecursiveMutexLock;
+typedef OpenWBEM::NonRecursiveMutexLock OW_NonRecursiveMutexLock OW_DEPRECATED;
 
 #endif

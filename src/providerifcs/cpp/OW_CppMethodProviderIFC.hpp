@@ -95,7 +95,7 @@ typedef SharedLibraryReference< Reference<CppMethodProviderIFC> > CppMethodProvi
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppMethodProviderIFC OW_CppMethodProviderIFC;
+typedef OpenWBEM::CppMethodProviderIFC OW_CppMethodProviderIFC OW_DEPRECATED;
 
 #endif
 								

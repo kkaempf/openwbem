@@ -78,6 +78,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::NwIface OW_NwIface;
+typedef OpenWBEM::NwIface OW_NwIface OW_DEPRECATED;
 
 #endif

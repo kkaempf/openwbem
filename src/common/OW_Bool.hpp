@@ -147,6 +147,6 @@ std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Bool OW_Bool;
+typedef OpenWBEM::Bool OW_Bool OW_DEPRECATED;
 
 #endif

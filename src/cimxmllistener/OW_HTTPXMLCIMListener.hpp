@@ -123,6 +123,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::HTTPXMLCIMListener OW_HTTPXMLCIMListener;
+typedef OpenWBEM::HTTPXMLCIMListener OW_HTTPXMLCIMListener OW_DEPRECATED;
 
 #endif

@@ -663,6 +663,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMXMLCIMOMHandle OW_CIMXMLCIMOMHandle;
+typedef OpenWBEM::CIMXMLCIMOMHandle OW_CIMXMLCIMOMHandle OW_DEPRECATED;
 
 #endif

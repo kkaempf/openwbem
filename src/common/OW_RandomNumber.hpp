@@ -50,6 +50,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::RandomNumber OW_RandomNumber;
+typedef OpenWBEM::RandomNumber OW_RandomNumber OW_DEPRECATED;
 
 #endif

@@ -174,8 +174,8 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SSLCtxMgr OW_SSLCtxMgr;
-typedef OpenWBEM::certVerifyFuncPtr_t OW_certVerifyFuncPtr_t;
+typedef OpenWBEM::SSLCtxMgr OW_SSLCtxMgr OW_DEPRECATED;
+typedef OpenWBEM::certVerifyFuncPtr_t OW_certVerifyFuncPtr_t OW_DEPRECATED;
 
 #endif // ifdef OW_HAVE_OPENSSL
 

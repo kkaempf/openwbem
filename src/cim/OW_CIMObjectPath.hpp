@@ -324,6 +324,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath;
+typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath OW_DEPRECATED;
 
 #endif

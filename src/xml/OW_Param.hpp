@@ -63,7 +63,7 @@ typedef Array<Param> ParamArray;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Param OW_Param;
-typedef OpenWBEM::ParamArray OW_ParamArray;
+typedef OpenWBEM::Param OW_Param OW_DEPRECATED;
+typedef OpenWBEM::ParamArray OW_ParamArray OW_DEPRECATED;
 
 #endif

@@ -108,6 +108,6 @@ std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMBase OW_CIMBase;
+typedef OpenWBEM::CIMBase OW_CIMBase OW_DEPRECATED;
 
 #endif	// OW_CIMBASE_HPP_

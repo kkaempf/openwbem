@@ -61,6 +61,6 @@ typedef SharedLibraryReference< Reference<CppPolledProviderIFC> > CppPolledProvi
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppPolledProviderIFC OW_CppPolledProviderIFC;
+typedef OpenWBEM::CppPolledProviderIFC OW_CppPolledProviderIFC OW_DEPRECATED;
 
 #endif

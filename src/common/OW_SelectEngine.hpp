@@ -71,8 +71,8 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SelectException OW_SelectException;
-typedef OpenWBEM::SelectEngine OW_SelectEngine;
-typedef OpenWBEM::SelectEngineStopper OW_SelectEngineStopper;
+typedef OpenWBEM::SelectException OW_SelectException OW_DEPRECATED;
+typedef OpenWBEM::SelectEngine OW_SelectEngine OW_DEPRECATED;
+typedef OpenWBEM::SelectEngineStopper OW_SelectEngineStopper OW_DEPRECATED;
 
 #endif

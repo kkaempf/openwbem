@@ -71,6 +71,6 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::IOIFC OW_IOIFC;
+typedef OpenWBEM::IOIFC OW_IOIFC OW_DEPRECATED;
 
 #endif

@@ -72,6 +72,6 @@ typedef Reference<CIMListenerCallback> CIMListenerCallbackRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMListenerCallback OW_CIMListenerCallback;
+typedef OpenWBEM::CIMListenerCallback OW_CIMListenerCallback OW_DEPRECATED;
 
 #endif

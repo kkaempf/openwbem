@@ -255,7 +255,7 @@ typedef SharedLibraryReference< Reference<CppAssociatorProviderIFC> > CppAssocia
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC;
+typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC OW_DEPRECATED;
 
 #endif //#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

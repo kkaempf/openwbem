@@ -126,6 +126,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMParamValue OW_CIMParamValue;
+typedef OpenWBEM::CIMParamValue OW_CIMParamValue OW_DEPRECATED;
 
 #endif

@@ -80,7 +80,7 @@ typedef Reference<SharedLibrary> SharedLibraryRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SharedLibrary OW_SharedLibrary;
-typedef OpenWBEM::SharedLibraryRef OW_SharedLibraryRef;
+typedef OpenWBEM::SharedLibrary OW_SharedLibrary OW_DEPRECATED;
+typedef OpenWBEM::SharedLibraryRef OW_SharedLibraryRef OW_DEPRECATED;
 
 #endif

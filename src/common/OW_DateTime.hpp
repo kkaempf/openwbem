@@ -473,6 +473,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::DateTime OW_DateTime;
+typedef OpenWBEM::DateTime OW_DateTime OW_DEPRECATED;
 
 #endif

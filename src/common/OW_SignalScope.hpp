@@ -65,6 +65,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SignalScope OW_SignalScope;
+typedef OpenWBEM::SignalScope OW_SignalScope OW_DEPRECATED;
 
 #endif
