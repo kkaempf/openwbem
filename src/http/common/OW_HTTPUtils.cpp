@@ -253,7 +253,8 @@ static const char Pad64 = '=';
 //////////////////////////////////////////////////////////////////////////////
 String base64Decode(const String& arg)
 {
-	return base64Decode(arg.c_str());
+	// only up to the first '\0' will be returned.
+	return String(&base64Decode(arg.c_str())[0]);
 }
 static int char2val(char c)
 {
@@ -327,7 +328,7 @@ static int char2val(char c)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-String base64Decode(const char* src)
+Array<char> base64Decode(const char* src)
 {
 	int szdest = strlen(src) * 2;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
@@ -434,7 +435,7 @@ String base64Decode(const char* src)
 			OW_THROW(Base64FormatException, "non-base64 char");
 	}
 	//return (destidx);
-	String rval(dest);
+	Array<char> rval(dest, dest+destidx+1);
 	delete [] dest;
 	return rval;
 }

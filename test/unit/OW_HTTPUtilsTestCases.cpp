@@ -79,12 +79,12 @@ void OW_HTTPUtilsTestCases::testbase64Encode()
 
 void OW_HTTPUtilsTestCases::testbase64Decode()
 {
-	unitAssert( HTTPUtils::base64Decode("d3d3LnB5dGhvbi5vcmc=") == "www.python.org");
-	unitAssert( HTTPUtils::base64Decode("YQ==") == "a");
-	unitAssert( HTTPUtils::base64Decode("YWI=") == "ab");
-	unitAssert( HTTPUtils::base64Decode("YWJj") == "abc");
+	unitAssert( HTTPUtils::base64Decode(String("d3d3LnB5dGhvbi5vcmc=")) == "www.python.org");
+	unitAssert( HTTPUtils::base64Decode(String("YQ==")) == "a");
+	unitAssert( HTTPUtils::base64Decode(String("YWI=")) == "ab");
+	unitAssert( HTTPUtils::base64Decode(String("YWJj")) == "abc");
 	unitAssert( HTTPUtils::base64Decode(
-		"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==") ==
+		String("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==")) ==
 		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#0^&*();:<>,. []{}");
 
 }

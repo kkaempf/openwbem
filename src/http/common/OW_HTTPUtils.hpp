@@ -86,7 +86,7 @@ namespace HTTPUtils
 	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
-	String base64Decode(const char* src);
+	Array<char> base64Decode(const char* src);
 	/**
 	 * Encode src in Base64 into dest, returns the number of data bytes
 	 *		stored in dest, or -1 on error
