@@ -26,7 +26,6 @@ Testing:
       - Do all this while running under valgrind to detect memory leaks, etc.
 
 Fix problems:
-    - Fix problems with OW_CIMDateTime
     - Have OW_HTTPClient report contents of CIMError header if present on an 
       HTTP error.
     - Implement a "compatibility mode" in the client if the server doesn't 

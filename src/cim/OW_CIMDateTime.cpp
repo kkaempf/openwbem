@@ -36,6 +36,7 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_ThreadImpl.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
@@ -105,8 +106,8 @@ CIMDateTime::CIMDateTime(const DateTime& arg) :
 	m_dptr->m_minutes = arg.getMinute();
 	m_dptr->m_seconds = arg.getSecond();
 	m_dptr->m_isInterval = 0;
-	m_dptr->m_microSeconds = 0;
-	m_dptr->m_utc = getGMTOffset();
+	m_dptr->m_microSeconds = arg.getMicrosecond();
+	m_dptr->m_utc = getGMTOffset() * 60;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime(UInt64 microSeconds) :
@@ -286,6 +287,12 @@ CIMDateTime::toString() const
 	return String(bfr);
 }
 //////////////////////////////////////////////////////////////////////////////
+DateTime
+CIMDateTime::toDateTime() const
+{
+	return DateTime(toString());
+}
+//////////////////////////////////////////////////////////////////////////////
 static void
 fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 {
@@ -342,21 +349,30 @@ operator<< (ostream& ostr, const CIMDateTime& arg)
 	ostr << arg.toString();
 	return ostr;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+namespace {
+Int16 gmtOffset = 0;
+bool offsetComputed = false;
+Mutex tzmutex;
+} // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 static Int16
 getGMTOffset()
 {
-	static Int16 gmtOffset = 0;
-	static bool offsetComputed = false;
-	static Mutex tzmutex;
-	MutexLock ml(tzmutex);
+	ThreadImpl::memoryBarrier();
 	if(!offsetComputed)
 	{
-		time_t tm = time(NULL);
-		time_t gmt = mktime(gmtime(&tm));
-		time_t lctm = mktime(localtime(&tm));
-		gmtOffset = ((lctm - gmt) / 60) / 60;
-		offsetComputed = true;
+		// double-checked locking
+		MutexLock ml(tzmutex);
+		if (!offsetComputed)
+		{
+			time_t tm = time(NULL);
+			time_t gmt = mktime(gmtime(&tm));
+			time_t lctm = mktime(localtime(&tm));
+			gmtOffset = ((lctm - gmt) / 60) / 60;
+			offsetComputed = true;
+		}
 	}
 	return gmtOffset;
 }
