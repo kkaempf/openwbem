@@ -52,11 +52,13 @@ FileAppender::FileAppender(const StringArray& components,
 	const char* filename,
 	const String& pattern,
 	UInt64 maxFileSize,
-	unsigned int maxBackupIndex)
+	unsigned int maxBackupIndex,
+	bool flushLog)
 	: LogAppender(components, categories, pattern)
 	, m_filename(filename)
 	, m_maxFileSize(maxFileSize)
 	, m_maxBackupIndex(maxBackupIndex)
+	, m_flushLog(flushLog)
 {
 	m_log.open(m_filename.c_str(), std::ios::out | std::ios::app);
 	if (!m_log)
@@ -95,6 +97,11 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 
 	m_log.write(formattedMessage.c_str(), formattedMessage.length());
 	m_log << '\n';
+
+	if (m_flushLog)
+	{
+		m_log.flush();
+	}
 
 	// handle log rotation
 	if (m_maxFileSize != NO_MAX_LOG_SIZE && m_log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))

@@ -88,7 +88,7 @@ namespace
 		StringArray categories; categories.push_back("*");
 		String messageFormat("%r [%t] %p %c - %m");
 		appenders.push_back(LogAppenderRef(
-			new FileAppender(components, categories, (String("results/") + components[0]).c_str(), messageFormat, 0, 0)));
+			new FileAppender(components, categories, (String("results/") + components[0]).c_str(), messageFormat, 0, 0, true)));
 
 		return LoggerRef(new AppenderLogger(components[0], appenders));
 	}

@@ -194,8 +194,10 @@ LogAppender::createLogAppender(
 				Format("%1: Invalid config value: %2", ConfigOpts::LOG_1_MAX_BACKUP_INDEX_opt, e.getMessage()).c_str(), 
 				Logger::E_INVALID_MAX_BACKUP_INDEX, e);
 		}
+
+		bool flushLog = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_FLUSH_opt, name), OW_DEFAULT_LOG_1_FLUSH).equalsIgnoreCase("true");
 		
-		appender = new FileAppender(components, categories, filename.c_str(), messageFormat, maxFileSize, maxBackupIndex);
+		appender = new FileAppender(components, categories, filename.c_str(), messageFormat, maxFileSize, maxBackupIndex, flushLog);
 	}
 	else
 	{

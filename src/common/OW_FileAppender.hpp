@@ -57,7 +57,8 @@ public:
 		const char* filename,
 		const String& pattern,
 		UInt64 maxFileSize,
-		unsigned int maxBackupIndex);
+		unsigned int maxBackupIndex,
+		bool flushLog=true);
 	virtual ~FileAppender();
 
 	static const String STR_DEFAULT_MESSAGE_PATTERN;
@@ -69,6 +70,7 @@ private:
 	UInt64 m_maxFileSize;
 	unsigned int m_maxBackupIndex;
 	mutable std::ofstream m_log;
+	bool m_flushLog;
 };
 
 } // end namespace OW_NAMESPACE
