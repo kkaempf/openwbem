@@ -185,8 +185,6 @@ public:
 		const CIMObjectPath path, 
 		const String& MethodName);
 
-	virtual bool init(ProviderEnvironmentIFCRef&);
-
 private:
 
 	bool checkAccess(const String& opType, const String& ns,

@@ -185,7 +185,7 @@ public:
 		const CIMObjectPath path, 
 		const String& methodName) = 0;
 
-	virtual bool init(ProviderEnvironmentIFCRef&) {}
+	virtual void init(ProviderEnvironmentIFCRef&) {}
 };
 
 typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef;

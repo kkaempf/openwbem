@@ -242,11 +242,6 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::init(ProviderEnvironmentIFCRef&)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-bool 
 SimpleAuthorizer::doAllowReadInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns,
