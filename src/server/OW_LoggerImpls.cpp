@@ -52,6 +52,7 @@ extern "C"
 using std::ofstream;
 using std::endl;
 
+
 class OW_FileLogger : public OW_Logger
 {
 	public:
