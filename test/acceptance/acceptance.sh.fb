@@ -123,9 +123,11 @@ SwitchToLinks()
 #############################################################################
 CreateNameSpace() 
 {
-	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	OWURL="ipc://test1:pass1@localhost:30926"
-	$WQLEXEC $OWURL /root 'insert into __Namespace values ("'"$1"'")'
+	#WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
+    CREATENS=$STAGEDIR/$OWBINDIR/owcreatenamespace
+	OWURL="ipc://test1:pass1@localhost/owbinary"
+	#$WQLEXEC $OWURL /root 'insert into __Namespace values ("'"$1"'")'
+    $CREATENS $OWURL /root/$1
 }
 
 
@@ -316,60 +318,29 @@ TestSuite()
 
 	RestartDaemon
 
+    URL=$1
+    DIFF_FILE=$2
 
 	if [ "$METHODTESTMOFDONE" = "0" ]; then
 		METHODTESTMOFDONE=1
 		echo "Importing mof file for method provider test"
-		$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
+		$STAGEDIR/$OWBINDIR/owmofc $URL /root \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 	fi
 
-	echo "Executing test suite, saving output in " $RESULTDIR/clientDriver.out
-	$BUILDDIR/test/acceptance/progs/owcimclientcl http://test1:pass1@localhost:30926 $RESULTDIR/testsuite \
-		> $RESULTDIR/clientDriver.out 2>&1 || \
+	echo "Executing test suite, saving output in " $RESULTDIR/$DIFF_FILE
+	$BUILDDIR/test/acceptance/progs/owcimclientcl $URL $RESULTDIR/testsuite \
+		> $RESULTDIR/$DIFF_FILE 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
 
 	if [ "$NODIFF" = "0" ]; then
-		diff  $TOPSRCDIR/test/acceptance/testfiles/clientDriver.out \
-			 $RESULTDIR/clientDriver.out || \
+		diff  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE \
+			 $RESULTDIR/$DIFF_FILE || \
 			 ExitWithFail "TestSuite: Diff test for owcimclientcl failed."
 	fi
 
 	echo "Testsuite Passed"
-}
-
-#############################################################################
-TestSuiteIPC()
-{
-	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
-		testipcsuite >/dev/null 2>&1
-	then
-		return
-	fi
-
-	RestartDaemon
-	
-	if [ "$METHODTESTMOFDONE" = "0" ]; then
-		METHODTESTMOFDONE=1
-		echo "Importing mof file for method provider test"
-		$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
-			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
-			ExitWithFail "TestSuiteIPC: MOF compiler exited with error."
-	fi
-
-	echo "Executing IPC test suite, saving output in " $RESULTDIR/IPCClientTest.out
-	$BUILDDIR/test/acceptance/progs/owcimclientcl ipc://test1:pass1@localhost:30926/owbinary \
-		> $RESULTDIR/IPCClientTest.out 2>&1 || \
-		ExitWithFail "TestSuiteIPC: IPCClientTest failed with an error.  "
-
-	if [ "$NODIFF" = "0" ]; then
-		diff  $TOPSRCDIR/test/acceptance/testfiles/IPCClientTest.out \
-			 $RESULTDIR/IPCClientTest.out || \
-			 ExitWithFail "TestSuiteIPC: Diff test for IPCClientTest failed."
-	fi
-
-	echo "TestSuiteIPC Passed"
 }
 
 #############################################################################
@@ -383,7 +354,7 @@ TestWQL()
 
 	RestartDaemon
 	echo "Executing wql test suite, saving output in " $RESULTDIR/wqlTest.out
-	$BUILDDIR/test/acceptance/progs/wqlTest1 ipc://test1:pass1@localhost:30926 \
+	$BUILDDIR/test/acceptance/progs/wqlTest1 ipc://test1:pass1@localhost/owbinary \
 		> $RESULTDIR/wqlTest.out 2>&1 || \
 		ExitWithFail "WQL test exited with error"
 
@@ -590,7 +561,7 @@ TestACL()
 
 	ACLPROG=$BUILDDIR/test/acceptance/progs/aclTest
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	SUACLURL="ipc://test1:pass1@localhost:30926"
+	SUACLURL="ipc://test1:pass1@localhost/owbinary"
 	RestartDaemon
 	echo "Importing MOF to enable ACLs..."
 	CreateNameSpace "security"
@@ -680,13 +651,13 @@ TestMof()
 	fi
 
 	RestartDaemon
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
 			$TOPSRCDIR/src/mof/testfiles/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926 /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost:30926 /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 }
@@ -768,9 +739,10 @@ TestACL
 
 TestMof
 
-TestSuite
-
-TestSuiteIPC
+TestSuite "http://test1:pass1@localhost:30926", "clientDriver.out"
+#TestSuite "ipc://test1:pass1@localhost/owbinary", "IPCClientTest.out"
+#TestSuite "ipc://test1:pass1@localhost/cimom", "clientDriver.out"
+#TestSuite "http://test1:pass1@localhost/owbinary", "IPCClientTest.out"
 
 TestIndications
 
