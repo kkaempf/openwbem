@@ -1541,9 +1541,9 @@ OW_CIMServer::invokeMethod(
 		{
 			methodStr.reset();
 			methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
-			methodStr += ns;
-			methodStr += ':';
-			methodStr += path.toString();
+			OW_CIMObjectPath path2(path);
+			path2.setNameSpace(ns);
+			methodStr += path2.toString();
 			methodStr += '.';
 			methodStr += methodName;
 			methodStr += " OUT Params(";
