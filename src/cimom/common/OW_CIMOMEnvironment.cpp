@@ -64,6 +64,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_AuthorizerManager.hpp"
 #include "OW_AuthorizerIFC.hpp"
+#include "OW_Socket.hpp"
 
 #include <iostream>
 
@@ -276,6 +277,9 @@ CIMOMEnvironment::startServices()
 		MutexLock ml(m_monitor);
 		_createLogger();
 
+		// This is a global thing, so handle it here.
+		Socket::createShutDownMechanism();
+
 		// Create NOP authorizer manager so CIMServer can use it if it needs to.
 		// This will have an authorizer loaded into it later
 		m_authorizerManager = AuthorizerManagerRef(new AuthorizerManager);
@@ -339,6 +343,17 @@ CIMOMEnvironment::shutdown()
 		m_running = false;
 	}
 	MutexLock ml(m_monitor);
+
+	// this is a global thing, so do it here
+	try
+	{
+		Socket::shutdownAllSockets();
+	}
+	catch (AssertionException&)
+	{
+		// shutdownAllSockets() will throw if it's already deleted, we just want to ignore that.
+	}
+
 	// Shutdown the polling manager
 	if (m_pollingManager)
 	{
@@ -421,6 +436,16 @@ CIMOMEnvironment::shutdown()
 		m_providerManager->shutdown();
 		m_providerManager = 0;
 	}
+
+	try
+	{
+		Socket::deleteShutDownMechanism();
+	}
+	catch (AssertionException&)
+	{
+		// deleteShutDownMechanism() will throw if it's already deleted, we just want to ignore that.
+	}
+
 	logDebug("CIMOM Environment has shut down");
 }
 //////////////////////////////////////////////////////////////////////////////
