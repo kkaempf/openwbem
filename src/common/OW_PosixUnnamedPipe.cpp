@@ -67,6 +67,139 @@ extern "C"
 namespace OpenWBEM
 {
 
+#ifdef OW_NETWARE
+namespace
+{
+class AcceptThread
+{
+public:
+	AcceptThread(int serversock)
+		: m_serversock(serversock)
+		, m_serverconn(-1)
+	{
+	}
+
+	void acceptConnection();
+	int getConnectFD() { return m_serverconn; }
+private:
+	int m_serversock;
+	int m_serverconn;
+};
+
+void
+AcceptThread::acceptConnection()
+{
+    struct sockaddr_in sin;
+	size_t val;
+    int tmp = 1;
+
+	tmp = 1;
+	::setsockopt(m_serversock, IPPROTO_TCP, 1,		// #define TCP_NODELAY 1
+		(char*) &tmp, sizeof(int));
+	
+	val = sizeof(struct sockaddr_in);
+	if((m_serverconn = ::accept(m_serversock, (struct sockaddr*)&sin, &val))
+	   == -1)
+	{
+		return;
+	}
+	tmp = 1;
+	::setsockopt(m_serverconn, IPPROTO_TCP, 1, // #define TCP_NODELAY 1
+		(char *) &tmp, sizeof(int));
+	tmp = 0;
+	::setsockopt(m_serverconn, SOL_SOCKET, SO_KEEPALIVE,
+				 (char*) &tmp, sizeof(int));
+}
+
+void*
+runConnClass(void* arg)
+{
+	AcceptThread* acceptThread = (AcceptThread*)(arg);
+	acceptThread->acceptConnection();
+	::pthread_exit(NULL);
+	return 0;
+}
+
+int
+_pipe(int *fds)
+{
+	int svrfd, lerrno, connectfd;
+	size_t val;
+    struct sockaddr_in sin;
+
+	svrfd = socket( AF_INET, SOCK_STREAM, 0 );
+	sin.sin_family = AF_INET;
+	sin.sin_addr.s_addr = htonl( 0x7f000001 ); // loopback
+	sin.sin_port = 0;
+	memset(sin.sin_zero, 0, 8 );
+	if (bind(svrfd, (struct sockaddr * )&sin, sizeof( struct sockaddr_in ) ) == -1) 
+	{
+		int lerrno = errno;
+		::close(svrfd);
+		fprintf(stderr, "CreateSocket(): Failed to bind on socket" );
+		return -1;
+	}
+	if(listen(svrfd, 1) == -1) 
+	{
+		int lerrno = errno;
+		::close(svrfd);
+		return -1;
+	}
+  	val = sizeof(struct sockaddr_in);
+	if (getsockname(svrfd, ( struct sockaddr * )&sin, &val ) == -1) 
+	{
+		int lerrno = errno;
+		fprintf(stderr, "CreateSocket(): Failed to obtain socket name" );
+		::close(svrfd);
+		return -1;
+	}
+
+	AcceptThread* pat = new AcceptThread(svrfd);
+	pthread_t athread;
+	// Start thread that will accept connection on svrfd.
+	// Once a connection is made the thread will exit.
+	pthread_create(&athread, NULL, runConnClass, pat);
+
+	int clientfd = socket(AF_INET, SOCK_STREAM, 0);
+	if(clientfd == -1)
+	{
+		delete pat;
+		return -1;
+	}
+
+	// Connect to server 
+	struct sockaddr_in csin;
+	csin.sin_family = AF_INET;
+	csin.sin_addr.s_addr = htonl(0x7f000001); // loopback
+	csin.sin_port = sin.sin_port;
+	if(::connect(clientfd, (struct sockaddr*)&csin, sizeof(csin)) == -1)
+	{
+		delete pat;
+		return -1;
+	}
+
+#define TCP_NODELAY 1
+	int tmp = 1;
+	//
+	// Set for Non-blocking writes and disable keepalive
+	//
+	::setsockopt(clientfd, IPPROTO_TCP, TCP_NODELAY, (char*)&tmp, sizeof(int));
+	tmp = 0;
+	::setsockopt(clientfd, SOL_SOCKET, SO_KEEPALIVE, (char*)&tmp, sizeof(int));
+
+	void* threadResult;
+	// Wait for accept thread to terminate
+	::pthread_join(athread, &threadResult);
+
+	::close(svrfd);
+	fds[0] = pat->getConnectFD();
+	fds[1] = clientfd;
+	delete pat;
+	return 0;
+}
+}
+#endif // OW_NETWARE
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 UnnamedPipeRef
@@ -177,8 +310,10 @@ PosixUnnamedPipe::open()
 	{
 		close();
 	}
-#ifdef OW_WIN32
+#if defined(OW_WIN32)
 	if(::_pipe(m_fds, 2560, _O_BINARY) == -1)
+#elif defined(OW_NETWARE)
+	if(_pipe(m_fds) == -1)
 #else
 	if(::pipe(m_fds) == -1)
 #endif
