@@ -244,32 +244,22 @@ namespace
 		while (en.hasMoreElements())
 		{
 			CIMInstance i = en.nextElement();
-			CIMProperty nameProp;
-			CIMPropertyArray keys = i.getKeyValuePairs();
-			if (keys.size() == 1)
+			CIMValue nameVal = i.getPropertyValue("Name"); 
+			if (!nameVal || nameVal.getType() != CIMDataType::STRING 
+			    || nameVal.isArray())
 			{
-				nameProp = keys[0];
+			    OW_THROWCIMMSG(CIMException::FAILED,
+				    "Name of namespace not found");
 			}
-			else
-			{
-				for (size_t i = 0; i < keys.size(); i++)
-				{
-					if (keys[i].getName().equalsIgnoreCase("Name"))
-					{
-						nameProp = keys[i];
-						break;
-					}
-				}
-				OW_THROWCIMMSG(CIMException::FAILED,
-					"Name of namespace not found");
-			}
-			String tmp;
-			nameProp.getValue().get(tmp);
-			result.handle(ns + "/" + tmp);
+			String name; 
+			nameVal.get(name); 
+
+			result.handle(ns + "/" + name);
 			if (deep)
 			{
-				enumNameSpaceAux(hdl, ns + "/" + tmp, result, deep);
+				enumNameSpaceAux(hdl, ns + "/" + name, result, deep);
 			}
+
 		}
 	}
 }
