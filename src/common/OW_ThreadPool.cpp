@@ -185,14 +185,19 @@ protected:
 			}
 			else
 			{
-				logDebug("No work, and I'm not waiting for any");
-				return RunnableRef();
+				// wait 1 sec for work, to more efficiently handle a stream
+				// of single requests.
+				if (!m_queueNotEmpty.timedWait(l,1))
+				{
+					logDebug("No work after 1 sec. I'm not waiting any longer");
+					return RunnableRef();
+				}
 			}
 		}
 		// check to see if a shutdown started while the thread was sleeping
 		if (m_shutdown)
 		{
-			logDebug("shutdown, not getting any more work");
+			logDebug("The pool is shutdown, not getting any more work");
 			return RunnableRef();
 		}
 
@@ -208,7 +213,7 @@ protected:
 		{
 			m_queueEmpty.notifyAll();
 		}
-		logDebug("got some work to do");
+		logDebug("A thread got some work to do");
 		return work;
 	}
 
@@ -420,6 +425,12 @@ public:
 		
 		logDebug("Work has been added to the queue");
 
+		// release the lock and wake up a thread waiting for work in the queue
+		l.release();
+		m_queueNotEmpty.notifyOne();
+		Thread::yield(); // give the thread a chance to run
+		l.lock();
+
 		// clean up dead threads (before we add the new one, so we don't need to check it)
 		for (size_t i = 0; i < m_threads.size(); ++i)
 		{
@@ -431,7 +442,7 @@ public:
 			}
 		}
 		// Start up a new thread to handle the work in the queue.
-		if (m_threads.size() < m_maxThreads)
+		if (!m_queue.empty() && m_threads.size() < m_maxThreads)
 		{
 			ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
 			m_threads.push_back(theThread);
