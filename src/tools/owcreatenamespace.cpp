@@ -76,7 +76,7 @@ CmdLineParser::Option g_options[] =
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
 	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
-		"The url identifying the cimom and interop namespace. Default is http://localhost/root if not specified."},
+		"The url identifying the cimom. Default is http://localhost/ if not specified."},
 	{NAMESPACE_OPT, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, "Set the namespace to create."},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
@@ -92,44 +92,51 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		CmdLineParser parser(argc, argv, g_options);
+		String url;
+		String ns;
 
-		if (parser.isSet(HELP_OPT))
+		// handle backwards compatible options, which was <URL> <namespace>
+		// TODO: This is deprecated in 3.1.0, remove it post 3.1
+		if (argc == 3 && argv[1][0] != '-' && argv[2][0] != '-')
 		{
-			Usage();
-			return 0;
+			url = argv[1];
+			ns = argv[2];
+			cerr << "This cmd line usage is deprecated!\n";
 		}
-		else if (parser.isSet(VERSION_OPT))
+		else
 		{
-			cout << "owcreatenamespace (OpenWBEM) " << OW_VERSION << '\n';
-			cout << "Written by Dan Nuffer.\n";
-			return 0;
-		}
+			CmdLineParser parser(argc, argv, g_options);
+	
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owcreatenamespace (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+	
+			url = parser.getOptionValue(URL_OPT);
+			if (url.empty())
+			{
+				url = "http://localhost/";
+			}
+	
+			ns = parser.getOptionValue(NAMESPACE_OPT);
+			if (ns.empty())
+			{
+				cerr << "namespace must be specified." << endl;
+				Usage();
+				return 1;
+			}
 
-		String url = parser.getOptionValue(URL_OPT);
-		if (url.empty())
-		{
-			url = "http://localhost/root";
-		}
-
-		String interopNS = URL(url).namespaceName;
-		if (interopNS.empty())
-		{
-			cerr << "interop namespace must be specified as part of the url." << endl;
-			Usage();
-			return 1;
-		}
-
-		String ns = parser.getOptionValue(NAMESPACE_OPT);
-		if (ns.empty())
-		{
-			cerr << "namespace must be specified." << endl;
-			Usage();
-			return 1;
 		}
 		
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-		CIMClient client(url, interopNS, getLoginInfo);
+		CIMClient client(url, "root", getLoginInfo);
 		cout << "Creating namespace (" << ns << ")" << endl;
 		client.createNameSpace(ns);
 		return 0;
