@@ -1,6 +1,6 @@
 When all these options are used, and unneeded libraries are removed, the cimom has been reduced to only 3920K of disk space.  That was with the openwbem binary protocol handler.  If CIM/XML is used instead, the size was 4522K.
 
-Run "strip --strip-unneeded" on all the binaryies and libraries to get rid of excess debug information.
+Run "strip --strip-unneeded" on all the binaries and libraries to get rid of excess debug information.
 
 Options that you can pass to the configure script:
 

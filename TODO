@@ -47,7 +47,6 @@ New features:
     - Update SLP provider to use the new standard template.
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
-    - local mof compiler
 
 Post 3.0
     - Add a virtual log message to the thread counter class so we can output
@@ -74,9 +73,6 @@ Post 3.0
     - Write a config file provider so the CIMOM config can be programatically
       changed from remote.
     - Write an SQL repository.
-    - Add configure options to disable usage of zlib, pam, ssl, slp
-    - Make null reference and array indexing default to on unless 
-      specifically disabled.
     - Merge the PollingManager and the SelectEngine to remove a thread.
     - Create a mechanism to share schemas between namespaces.
     - Create a CIM class & provider to control the provider manager (re-scan
@@ -88,7 +84,6 @@ Post 3.0
     - Remove instance qualifiers?
     - Create an indication export provider to the logger (cimom logger,
       syslog, etc.)
-    - Option to have the mof compiler use a local repository.
     - Add some mof compiler options:
       - perform a syntax check (don't really import)
       - delete object(s) from repository
@@ -99,7 +94,6 @@ Post 3.0
       - Specify a file containing a list of MOFs to compile
       - output XML only to stdout.
       - Ignore double #includes so that you don't have to be so careful.
-      - If the class already exists, don't do anything, just continue on.
     - Add an option for user to specify which interfaces to listen on.
     - ModifyInstance (deprecate empty PropertyList and ignore includeQualifiers)
     - New advanced errors.

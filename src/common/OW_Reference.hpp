@@ -364,11 +364,16 @@ inline bool operator!=(const OW_Reference<T>& a, const OW_Reference<U>& b)
 	return a.getPtr() != b.getPtr();
 }
 
+#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
+
+// Resolve the ambiguity between our op!= and the one in rel_ops
 template <class T>
 inline bool operator!=(const OW_Reference<T>& a, const OW_Reference<T>& b)
 {
 	return a.getPtr() != b.getPtr();
 }
+
+#endif
 
 template <class T, class U>
 inline bool operator<(const OW_Reference<T>& a, const OW_Reference<U>& b)

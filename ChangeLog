@@ -1,3 +1,8 @@
+Wed Jul 23 12:35:20 MDT 2003
+- Added an option to the mof compiler to go directly to the repository.
+- Add configure options to disable usage of zlib, pam, ssl, slp, and most
+  functional profiles.
+
 Mon Jul 14 15:14:13 MDT 2003
 - Wrote a function to read the output of a popened process, and get the
   return code, with a time limit and output limit.
