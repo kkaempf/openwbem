@@ -113,7 +113,7 @@ public:
 			try
 			{
 				newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[2].toUInt32()));
-				newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[3].toUInt32()));
+				newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[3].toReal32()));
 			}
 			catch (const OW_StringConversionException& e)
 			{
@@ -156,7 +156,7 @@ public:
 		try
 		{
 			inst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[1].toUInt32()));
-			inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toUInt32()));
+			inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toReal32()));
 		}
 		catch (const OW_StringConversionException& e)
 		{
