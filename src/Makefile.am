@@ -21,7 +21,6 @@ requesthandlers \
 providerifcs \
 providers \
 cimom \
-frameworks \
  \
 mof \
 tools

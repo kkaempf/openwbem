@@ -646,8 +646,6 @@ AC_OUTPUT(./Makefile
 ./src/common/Makefile
 ./src/common/socket/Makefile
 ./src/common/socket/test/Makefile
-./src/frameworks/Makefile
-./src/frameworks/daemon/Makefile
 ./src/http/Makefile
 ./src/http/client/Makefile
 ./src/http/common/Makefile
