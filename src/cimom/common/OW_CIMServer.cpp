@@ -106,7 +106,7 @@ namespace
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_context,
-				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
+				ServiceEnvironmentIFC::E_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_USE_PROVIDERS,
 				CIMOMEnvironment::E_NO_LOCKING);
 		}
