@@ -267,20 +267,16 @@ CIMOMEnvironment::startServices()
 		{
 			// Start up the polling manager
 			logDebug("CIMOM starting Polling Manager");
-			Semaphore sem;
-			m_pollingManager->setStartedSemaphore(&sem);
 			m_pollingManager->start();
-			sem.wait();
+			m_pollingManager->waitUntilReady();
 		}
 		if (m_indicationServer)
 		{
 			// Start up the indication server
 			logDebug("CIMOM starting IndicationServer");
-			Semaphore sem;
 			m_indicationServer->init(g_cimomEnvironment);
-			m_indicationServer->setStartedSemaphore(&sem);
 			m_indicationServer->start();
-			sem.wait();
+			m_indicationServer->waitUntilReady();
 		}
 	}
 }

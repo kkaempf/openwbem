@@ -168,6 +168,7 @@ Notifier::run()
 IndicationServerImpl::IndicationServerImpl()
 	: IndicationServer()
 	, m_shuttingDown(false)
+	, m_startedBarrier(2)
 {
 }
 namespace
@@ -276,9 +277,9 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::setStartedSemaphore(Semaphore* sem)
+IndicationServerImpl::waitUntilReady()
 {
-	m_startedSem = sem;
+	m_startedBarrier.wait();
 }
 //////////////////////////////////////////////////////////////////////////////
 IndicationServerImpl::~IndicationServerImpl()
@@ -297,7 +298,7 @@ Int32
 IndicationServerImpl::run()
 {
 	// let CIMOMEnvironment know we're running and ready to go.
-	m_startedSem->signal();
+	m_startedBarrier.wait();
 	{
 		NonRecursiveMutexLock l(m_mainLoopGuard);
 		while(!m_shuttingDown)

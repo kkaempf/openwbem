@@ -34,7 +34,6 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_Thread.hpp"
 #include "OW_CIMOMEnvironment.hpp"
-#include "OW_Semaphore.hpp"
 
 namespace OpenWBEM
 {
@@ -51,7 +50,7 @@ public:
 	virtual void shutdown() = 0;
 	virtual void processIndication(const CIMInstance& instance,
 		const String& instNS) = 0;
-	virtual void setStartedSemaphore(Semaphore* sem) = 0;
+	virtual void waitUntilReady() = 0;
 	// these functions are call by the CIM_IndicationSubscription pass-thru provider.
 	virtual void deleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
 	virtual void createSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;

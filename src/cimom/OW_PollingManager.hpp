@@ -42,7 +42,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Condition.hpp"
-#include "OW_Semaphore.hpp"
+#include "OW_ThreadBarrier.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_ThreadPool.hpp"
 
@@ -55,9 +55,9 @@ public:
 	PollingManager(CIMOMEnvironmentRef env);
 	virtual ~PollingManager();
 	void shutdown();
-	void setStartedSemaphore(Semaphore* sem)
+	void waitUntilReady()
 	{
-		m_startedSem = sem;
+		m_startedBarrier.wait();
 	}
 	void addPolledProvider(const PolledProviderIFCRef& p);
 protected:
@@ -83,7 +83,7 @@ private:
 	NonRecursiveMutex m_triggerGuard;
 	Condition m_triggerCondition;
 	CIMOMEnvironmentRef m_env;
-	Semaphore* m_startedSem;
+	ThreadBarrier m_startedBarrier;
 	ThreadPoolRef m_triggerRunnerThreadPool;
 	// m_triggerGuard must be locked before calling this function.
 	UInt32 calcSleepTime(bool& rightNow, bool doInit);

@@ -47,6 +47,7 @@
 #include "OW_WQLCompile.hpp"
 #include "OW_LifecycleIndicationPoller.hpp"
 #include "OW_ThreadPool.hpp"
+#include "OW_ThreadBarrier.hpp"
 
 namespace OpenWBEM
 {
@@ -59,7 +60,7 @@ public:
 	IndicationServerImpl();
 	~IndicationServerImpl();
 	virtual void init(CIMOMEnvironmentRef env);
-	virtual void setStartedSemaphore(Semaphore* sem);
+	virtual void waitUntilReady();
 	virtual Int32 run();
 	void shutdown();
 	void processIndication(const CIMInstance& instance,
@@ -120,7 +121,7 @@ private:
 	NonRecursiveMutex m_mainLoopGuard;
 	Condition m_mainLoopCondition;
 	CIMOMEnvironmentRef m_env;
-	Semaphore* m_startedSem;
+	ThreadBarrier m_startedBarrier;
 	subscriptions_t m_subscriptions;
 	Mutex m_subGuard;
 	typedef SharedLibraryReference< Reference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;

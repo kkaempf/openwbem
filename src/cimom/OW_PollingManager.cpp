@@ -49,6 +49,7 @@ PollingManager::PollingManager(CIMOMEnvironmentRef env)
 	: Thread()
 	, m_shuttingDown(false)
 	, m_env(env)
+	, m_startedBarrier(2)
 {
 	Int32 maxThreads;
 	try
@@ -118,7 +119,8 @@ Int32
 PollingManager::run()
 {
 	// let CIMOMEnvironment know we're running and ready to go.
-	m_startedSem->signal();
+	m_startedBarrier.wait();
+
 	bool doInit = true;
 	// Get all of the indication trigger providers
 	ProviderManagerRef pm = m_env->getProviderManager();
