@@ -9,3 +9,4 @@ Makefile
 *.nlm
 *.nlm.*
 owprovideragent
+lib*sl*

@@ -10,3 +10,4 @@ lib*dylib*
 *.imp
 *.exp
 *.nlm.*
+lib*sl*

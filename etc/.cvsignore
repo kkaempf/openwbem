@@ -6,3 +6,4 @@ Makefile
 *.la
 openwbem.conf
 owgencert
+lib*sl*

@@ -9,3 +9,4 @@ owcimomd.8
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

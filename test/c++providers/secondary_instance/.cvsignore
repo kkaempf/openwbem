@@ -11,3 +11,4 @@ Makefile
 lib*so*
 lib*dylib*
 lib*dylib*
+lib*sl*

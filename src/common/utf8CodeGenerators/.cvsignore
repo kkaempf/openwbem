@@ -6,3 +6,4 @@ OW_GenCaseFoldingCompareTests
 *.nlm.*
 OW_GenCaseMappings
 OW_to_UTF8
+lib*sl*

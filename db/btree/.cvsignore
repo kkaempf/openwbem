@@ -9,3 +9,4 @@ Makefile
 *.nlm
 *.nlm.*
 OW_config.h
+lib*sl*

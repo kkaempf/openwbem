@@ -26,3 +26,4 @@ testProviderAgent
 *.nlm
 *.nlm.*
 testClientTimeout
+lib*sl*

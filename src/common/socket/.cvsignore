@@ -8,3 +8,4 @@ Makefile
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

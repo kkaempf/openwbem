@@ -10,3 +10,4 @@ Makefile
 *.nlm.*
 OW_config.h
 dbtest
+lib*sl*

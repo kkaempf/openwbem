@@ -11,3 +11,4 @@ lib*dylib*
 *.nlm
 *.nlm.*
 
+lib*sl*

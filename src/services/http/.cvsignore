@@ -12,3 +12,4 @@ lib*dylib*
 *.nlm
 *.nlm.*
 owlocalhelper
+lib*sl*

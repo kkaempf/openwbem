@@ -11,3 +11,4 @@ ow_methodProviderTestFile.txt
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

@@ -11,3 +11,4 @@ lib*dylib*
 *.nlm
 *.nlm.*
 OWBI1_AuxConfig.h
+lib*sl*

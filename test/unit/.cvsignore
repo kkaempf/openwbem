@@ -11,3 +11,4 @@ MemTracerTest
 *.nlm
 *.nlm.*
 exitWithSignal
+lib*sl*

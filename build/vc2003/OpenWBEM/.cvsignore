@@ -5,3 +5,4 @@ Release
 *.obj
 *.dll
 *.lib
+lib*sl*

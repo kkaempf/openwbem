@@ -25,3 +25,4 @@ openwbem-*
 .*.libs
 lib*so*
 owclient.a owclient.so owclient.so.0.0.1
+lib*sl*

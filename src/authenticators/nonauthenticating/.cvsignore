@@ -12,3 +12,4 @@ lib*dylib*
 *.imp
 *.exp
 
+lib*sl*

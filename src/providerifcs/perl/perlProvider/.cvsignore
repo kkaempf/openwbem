@@ -11,3 +11,4 @@ perlxsi.c
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

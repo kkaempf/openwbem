@@ -9,3 +9,4 @@ owmofc
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

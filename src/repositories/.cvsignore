@@ -10,3 +10,4 @@ OW_config.h
 *.exp
 *.nlm
 *.nlm.*
+lib*sl*

@@ -33,3 +33,4 @@ autom4te-2.53.cache
 *.imp
 *.exp
 *.def
+lib*sl*
