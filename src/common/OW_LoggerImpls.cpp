@@ -41,11 +41,11 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_ThreadImpl.hpp"
 
 #include <fstream>
 #include <iostream> // for cerr
 #include <syslog.h>
-#include <unistd.h> // for getpid
 
 namespace OpenWBEM
 {
@@ -68,8 +68,10 @@ class FileLogger : public Logger
 		{
 			DateTime DateTime;
 			DateTime.setToCurrent();
-			// FIXME: Need to remove newline after DateTime.
-			log << DateTime.toString() << s << endl;
+			// Need to remove newline after DateTime.
+			String tmp = DateTime.toString();
+			tmp.erase(tmp.length() - 1);
+			log << tmp << " [" << int(ThreadImpl::currentThread()) << "]: " << s << endl;
 		}
 	private:
 		mutable ofstream log;
@@ -108,7 +110,13 @@ class SyslogLogger : public Logger
 			}
 			StringArray a = s.tokenize("\n");
 			for (size_t i = 0; i < a.size(); ++i)
-				syslog( syslogPriority, "%s", a[i].c_str() );
+			{
+				StringBuffer msg("[");
+				msg += int(ThreadImpl::currentThread());
+				msg += "]";
+				msg += a[i];
+				syslog( syslogPriority, "%s", msg.c_str() );
+			}
 		}
 		static bool calledOpenLog;
 };
@@ -164,7 +172,7 @@ class CerrLogger : public Logger
 		virtual void doLogMessage( const String& s,
 			const ELogLevel /*level*/ ) const
 		{
-			std::cerr << '[' << getpid() << "] " << s << std::endl;
+			std::cerr << '[' << int(ThreadImpl::currentThread()) << "] " << s << std::endl;
 		}
 };
 class NullLogger : public Logger
@@ -181,11 +189,22 @@ LoggerRef Logger::createLogger( const String& type, bool debug )
 {
 	LoggerRef retval;
 	if (type.empty() || type.equalsIgnoreCase("null"))
+	{
 		retval = new NullLogger;
+	}
 	else if ( type == "syslog" )
+	{
 		retval = new SyslogLogger;
+	}
+	else if (type == "stderr")
+	{
+		retval = new CerrLogger;
+	}
 	else
+	{
 		retval = new FileLogger( type.c_str() );
+	}
+
 	if ( debug )
 	{
 		retval = new TeeLogger( retval, LoggerRef(new CerrLogger) );

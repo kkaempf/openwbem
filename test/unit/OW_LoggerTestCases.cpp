@@ -35,18 +35,15 @@
 
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include <string>
 #include "OW_LoggerTestCases.hpp"
 #include "OW_Logger.hpp"
-#include <stdio.h> // for remove
-#include <fstream>
-/*
-#include <iostream>
+#include "OW_String.hpp"
+#include "OW_Array.hpp"
+#include "OW_FileSystem.hpp"
 
-using std::cout;
-using std::endl;
-*/
-using std::ifstream;
+#include <string>
+#include <cstdio> // for remove
+
 using std::string;
 
 using namespace OpenWBEM;
@@ -79,21 +76,17 @@ void OW_LoggerTestCases::testCreateSyslogLogger()
 
 void OW_LoggerTestCases::verifyFileLog( const char* file, int line, const char* filename, const char* test )
 {
-	ifstream in(filename);
-	std::string contents, temp;
-	while (getline(in, temp))
-	{
-		getline(in, temp);
-		contents += temp;
-		contents += '\n';
-		temp.erase();
-	}
-	this->assertImplementation( contents == test, "verifyFileLog", line, file );
+	StringArray expectedLines = String(test).tokenize("\n");
+	StringArray actualLines = FileSystem::getFileLines(filename);
+	
+	this->assertImplementation( expectedLines.size() == actualLines.size(), "verifyFileLog", line, file );
 }
 
 void OW_LoggerTestCases::testFileLogging()
 {
 	String filename = "/tmp/test";
+	remove( filename.c_str() );
+	
 	LoggerRef pLogger = Logger::createLogger(filename, false);
 	pLogger->logFatalError("fatalerror1");
 	pLogger->logError( "error1" );
