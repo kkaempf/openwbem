@@ -297,24 +297,73 @@ CIMDataType::toString() const
 {
 	switch(m_pdata->m_type)
 	{
-		case UINT8: return "uint8"; break;
-		case SINT8: return "sint8"; break;
-		case UINT16: return "uint16"; break;
-		case SINT16: return "sint16"; break;
-		case UINT32: return "uint32"; break;
-		case SINT32: return "sint32"; break;
-		case UINT64: return "uint64"; break;
-		case SINT64: return "sint64"; break;
-		case REAL64: return "real64"; break;
-		case REAL32: return "real32"; break;
-		case CHAR16: return "char16"; break;
-		case STRING: return "string"; break;
-		case BOOLEAN: return "boolean"; break;
-		case DATETIME: return "datetime"; break;
-		case REFERENCE: return "REF"; break;
-		case EMBEDDEDCLASS: case EMBEDDEDINSTANCE: return "string"; break;
+		case UINT8: 
+		return "uint8"; 
+		break;
+		
+		case SINT8: 
+		return "sint8"; 
+		break;
+		
+		case UINT16: 
+		return "uint16"; 
+		break;
+		
+		case SINT16: 
+		return "sint16"; 
+		break;
+		
+		case UINT32: 
+		return "uint32"; 
+		break;
+		
+		case SINT32: 
+		return "sint32"; 
+		break;
+		
+		case UINT64: 
+		return "uint64"; 
+		break;
+		
+		case SINT64: 
+		return "sint64"; 
+		break;
+		
+		case REAL64: 
+		return "real64"; 
+		break;
+		
+		case REAL32: 
+		return "real32"; 
+		break;
+		
+		case CHAR16: 
+		return "char16"; 
+		break;
+		
+		case STRING: 
+		return "string"; 
+		break;
+		
+		case BOOLEAN: 
+		return "boolean"; 
+		break;
+		
+		case DATETIME: 
+		return "datetime"; 
+		break;
+		
+		case REFERENCE: 
+		return "REF"; 
+		break;
+		
+		case EMBEDDEDCLASS: 
+		case EMBEDDEDINSTANCE: 
+		return "string"; 
+		break;
+		
 		default:
-			return "** INVALID DATA TYPE IN CIMDATATYPE - toString **";
+		return "** INVALID DATA TYPE IN CIMDATATYPE - toString **";
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -469,7 +518,7 @@ start:
 #endif
 
 	const char* begin = strType.c_str();
-	const char* q;
+	const char* q(begin);
 
 	#define YYCTYPE char
 	#define YYCURSOR		begin
