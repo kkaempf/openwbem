@@ -61,6 +61,10 @@ using std::cerr;
 using std::endl;
 using std::ifstream;
 
+// static global
+OW_CIMOMEnvironmentRef OW_CIMOMEnvironment::g_cimomEnvironment;
+
+
 namespace
 {
 class OW_EnvSelectable : public OW_SelectableCallbackIFC
@@ -267,24 +271,23 @@ OW_CIMOMEnvironment::startServices()
 
 		_createLogger();
 
-		OW_CIMOMEnvironmentRef eref(this, true);
 		m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
 		m_providerManager->load(OW_ProviderIFCLoader::createProviderIFCLoader(
-			eref));
+			g_cimomEnvironment));
 
 		// Add the unloader provider to the provider manager
 		m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
-			OW_SharedLibraryRef(), new OW_UnloaderProvider(this)));
+			OW_SharedLibraryRef(), new OW_UnloaderProvider(g_cimomEnvironment)));
 
 		// Add the name space provider to the provider manager
 		m_providerManager->addCIMOMProvider(OW_CIMServer::NAMESPACE_PROVIDER,
 			OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(),
 			new OW_NameSpaceProvider));
 
-		m_cimRepository = OW_RepositoryIFCRef(new OW_CIMRepository(eref));
+		m_cimRepository = OW_RepositoryIFCRef(new OW_CIMRepository(g_cimomEnvironment));
 		m_cimRepository->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));
 
-		m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
+		m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(g_cimomEnvironment,
 			m_providerManager, m_cimRepository));
 
 		_createAuthManager();
@@ -325,7 +328,7 @@ OW_CIMOMEnvironment::startServices()
 			// Start up the indication server
 			logDebug("CIMOM starting IndicationServer");
 			OW_Semaphore sem;
-			m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+			m_indicationServer->init(g_cimomEnvironment);
 			m_indicationServer->setStartedSemaphore(&sem);
 			m_indicationServer->start();
 			sem.wait();
@@ -454,9 +457,9 @@ OW_CIMOMEnvironment::getProviderManager()
 void
 OW_CIMOMEnvironment::_createAuthManager()
 {
-	OW_ServiceEnvironmentIFCRef env(this, true); // no-delete reference
+	//OW_ServiceEnvironmentIFCRef env(this, true); // no-delete reference
 	m_authManager = OW_AuthManagerRef(new OW_AuthManager);
-	m_authManager->init(env);
+	m_authManager->init(g_cimomEnvironment);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -464,7 +467,7 @@ void
 OW_CIMOMEnvironment::_createPollingManager()
 {
 	m_pollingManager = OW_PollingManagerRef(new OW_PollingManager(
-		OW_CIMOMEnvironmentRef(this, true)));
+		g_cimomEnvironment));
 
 }
 
@@ -550,7 +553,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		if(rh)
 		{
 			++reqHandlerCount;
-			rh->setEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
+			rh->setEnvironment(g_cimomEnvironment);
 			OW_StringArray supportedContentTypes = rh->getSupportedContentTypes();
 			logCustInfo(format("CIMOM loaded request handler from file: %1",
 				libName));
@@ -628,7 +631,7 @@ OW_CIMOMEnvironment::_loadServices()
 			// save it first so if setServiceEnvironment throws it won't get
 			// unloaded until later.
 			m_services.append(srv);
-			srv->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
+			srv->setServiceEnvironment(g_cimomEnvironment);
 			logCustInfo(format("CIMOM loaded service from file: %1", libName));
 		}
 		else
@@ -759,7 +762,7 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(
-		OW_CIMOMEnvironmentRef(this, true),
+		g_cimomEnvironment,
 		OW_RepositoryIFCRef(new OW_WQLFilterRep(inst, m_cimServer)), aclInfo));
 }
 
@@ -780,7 +783,6 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_ASSERT(m_cimServer);
 
 
-	OW_CIMOMEnvironmentRef eref(this, true);
 	OW_RepositoryIFCRef rref;
 	if (bypassProviders)
 	{
@@ -800,12 +802,12 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 		if(irl)
 		{
 			OW_RepositoryIFCRef rref2(new OW_SharedLibraryRepository(irl));
-			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref2,
+			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(g_cimomEnvironment, rref2,
 				aclInfo, noLocking));
 		}
 	}
 
-	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
+	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(g_cimomEnvironment, rref,
 		aclInfo, noLocking));
 }
 
@@ -953,8 +955,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 			ref = OW_RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(),
 				iter->second.rqIFCRef->clone());
 			iter->second.dt.setToCurrent();
-			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
-				this, true));
+			ref->setEnvironment(g_cimomEnvironment);
 			logDebug(format("Request Handler %1 handling request for content type %2",
                 iter->second.filename, id));
 		}
@@ -1017,6 +1018,13 @@ OW_CIMOMEnvironment::getLogger() const
 {
 	OW_ASSERT(m_Logger);
 	return m_Logger;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationServerRef
+OW_CIMOMEnvironment::getIndicationServer() const
+{
+	return m_indicationServer;
 }
 
 //////////////////////////////////////////////////////////////////////////////

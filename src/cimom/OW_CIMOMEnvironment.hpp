@@ -80,6 +80,9 @@ typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 typedef OW_SharedLibraryReference<OW_RepositoryIFC>
 	OW_SharedLibraryRepositoryIFCRef;
 
+class OW_CIMOMEnvironment;
+typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
+
 class OW_CIMOMEnvironment : public OW_ServiceEnvironmentIFC
 {
 public:
@@ -113,6 +116,8 @@ public:
 
 	virtual OW_LoggerRef getLogger() const;
 
+	OW_IndicationServerRef getIndicationServer() const;
+
 	void clearConfigItems();
 
 	virtual void setConfigItem(const OW_String &item, const OW_String &value,
@@ -137,6 +142,8 @@ public:
 		const OW_String& instNS);
 	void unloadReqHandlers();
 
+	// do not use this variable unless absolutely necessary!
+	static OW_CIMOMEnvironmentRef g_cimomEnvironment;
 private:
 
 	void _createLogger();
@@ -186,8 +193,6 @@ private:
 	bool m_running;
 	OW_Mutex m_runningGuard;
 };
-
-typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
 
 #endif	// __OW_CIMOMENVIRONMENT_HPP__
 
