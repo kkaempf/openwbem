@@ -60,7 +60,7 @@ protected:
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
 	virtual void doLogDebug(const String& message);
 	virtual void doLogError(const String& message);
-	virtual void doLogCustInfo(const String& message);
+	virtual void doLogInfo(const String& message);
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		String msg, std::ostream& ostr);
 private:

@@ -47,10 +47,7 @@ namespace OpenWBEM
 const char *const CIM_PROTOCOL_VERSION = "1.0";
 const char *const XML_CIM_HEADER1 = "<?xml version=\"1.0\" ?>";
 const char *const XML_CIM_HEADER2 = "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
-#define OW_LOGCUSTINFO(msg) this->getEnvironment()->getLogger()->logInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
-#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger()->logFatalError(msg)
+
 class RequestHandlerIFCXML : public RequestHandlerIFC
 {
 public:

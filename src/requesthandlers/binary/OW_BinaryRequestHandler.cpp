@@ -296,7 +296,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		}
 		catch(CIMException& e)
 		{
-			lgr->logDebug(Format("CIM Exception caught in"
+			lgr->logInfo(Format("CIM Exception caught in"
 				" BinaryRequestHandler: %1", e));
 			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));

@@ -46,6 +46,11 @@
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
 
+#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
+#define OW_LOGINFO(msg) this->getEnvironment()->getLogger()->logInfo(msg)
+#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
+#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger()->logFatalError(msg)
+
 namespace OpenWBEM
 {
 
@@ -89,14 +94,14 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (CIMException& ce)
 		{
-			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught CIM "
+			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught CIM "
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
 		}
 		catch (CIMErrorException& cee)
 		{
-			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught CIMError "
+			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught CIMError "
 				"exception:File: %1\n Line: %2\nMessage: %3",
 				cee.getFile(), cee.getLine(), cee.getMessage()));
 			m_cimError = cee.getMessage();
@@ -104,14 +109,14 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (Exception& e)
 		{
-			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught "
+			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught "
 				"Exception:%1",	e));
 			m_cimError = e.getMessage();
 			outputError(CIMException::FAILED, e.getMessage(), *ostrError);
 		}
 		catch (std::exception& e)
 		{
-			OW_LOGDEBUG(Format("RequestHandlerIFCXML::doProcess caught std exception: %1"
+			OW_LOGERROR(Format("RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
 			outputError(CIMException::FAILED, e.what(), *ostrError);
 		}
@@ -123,7 +128,7 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		}
 		catch (...)
 		{
-			OW_LOGDEBUG("RequestHandlerIFCXML::doProcess caught unknown exception");
+			OW_LOGERROR("RequestHandlerIFCXML::doProcess caught unknown exception");
 			outputError(CIMException::FAILED, "Unknown Exception", *ostrError);
 		}
 		if (hasError())

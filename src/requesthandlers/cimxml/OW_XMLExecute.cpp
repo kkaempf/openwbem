@@ -64,6 +64,11 @@
 
 #include <algorithm>
 
+#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
+#define OW_LOGINFO(msg) this->getEnvironment()->getLogger()->logInfo(msg)
+#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
+#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger()->logFatalError(msg)
+
 namespace OpenWBEM
 {
 
@@ -1349,9 +1354,9 @@ XMLExecute::doLogDebug(const String& message)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLExecute::doLogCustInfo(const String& message)
+XMLExecute::doLogInfo(const String& message)
 {
-	OW_LOGCUSTINFO(message);
+	OW_LOGINFO(message);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
