@@ -191,22 +191,6 @@ OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& className)
-{
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteClass", ns);
-	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETECLS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
-	
-	checkError(m_protocol->endRequest(strmRef, "DeleteClass", ns));
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -501,6 +485,7 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String&
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns_,
@@ -538,6 +523,23 @@ OW_BinaryCIMOMHandle::createClass(const OW_String& ns_,
 		"CreateClass", ns);
 	checkError(in);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& className)
+{
+    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"DeleteClass", ns);
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
+	OW_BinIfcIO::write(strm, OW_BIN_DELETECLS);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
+	
+	checkError(m_protocol->endRequest(strmRef, "DeleteClass", ns));
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -69,13 +69,6 @@ public:
 	virtual void close() {}
 
 	/**
-	 * @param ns The namespace containing the class to delete.
-	 * @param className The class to delete
-	 * @exception OW_CIMException If the object does not exist
-	 */
-	virtual void deleteClass(const OW_String& ns, const OW_String& className);
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
@@ -265,6 +258,7 @@ public:
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Adds the CIM class to the specified namespace.
 	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be added.
@@ -274,6 +268,23 @@ public:
 	 */
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc);
+
+	/**
+	 * Updates the CIM class associated with the specified namespace.
+	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be
+	 *					updated.
+	 * @param cc	The OW_CIMClass to be updated
+	 * @exception OW_CIMException If the class does not exists
+	 */
+	virtual void modifyClass(const OW_String &ns, const OW_CIMClass &cc);
+
+	/**
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
+	 * @exception OW_CIMException If the object does not exist
+	 */
+	virtual void deleteClass(const OW_String& ns, const OW_String& className);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
@@ -318,15 +329,6 @@ public:
 	 */
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci);
-
-	/**
-	 * Updates the CIM class associated with the specified namespace.
-	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be
-	 *					updated.
-	 * @param cc	The OW_CIMClass to be updated
-	 * @exception OW_CIMException If the class does not exists
-	 */
-	virtual void modifyClass(const OW_String &ns, const OW_CIMClass &cc);
 
 	/**
 	 * Get the specified CIM instance property.

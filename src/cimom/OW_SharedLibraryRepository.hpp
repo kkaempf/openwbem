@@ -113,12 +113,6 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->deleteClass(ns, className, aclInfo);
-	}
-
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns, const OW_CIMInstance &ci,
 		const OW_UserInfo &aclInfo)
 	{
@@ -138,6 +132,7 @@ public:
 			includeClassOrigin, propertyList, enumSubClasses, aclInfo);
 	}
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cimClass, const OW_UserInfo &aclInfo)
 	{
@@ -149,6 +144,13 @@ public:
 	{
 		return m_ref->modifyClass(ns, cc, aclInfo);
 	}
+
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
+		const OW_UserInfo &aclInfo)
+	{
+		return m_ref->deleteClass(ns, className, aclInfo);
+	}
+#endif
 
 	virtual void enumClasses(const OW_String& ns,
 		const OW_String& className,

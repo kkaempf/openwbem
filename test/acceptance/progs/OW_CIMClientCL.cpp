@@ -104,6 +104,7 @@ struct sorter
 	}
 };
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 createClass(OW_CIMClient& hdl, const OW_String& name)
@@ -177,6 +178,7 @@ createClass(OW_CIMClient& hdl, const OW_String& name)
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -312,6 +314,7 @@ enumClasses(OW_CIMClient& hdl)
 	testDone();
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 modifyClass(OW_CIMClient& hdl)
@@ -354,6 +357,7 @@ modifyClass(OW_CIMClient& hdl)
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -492,6 +496,7 @@ testDynInstances(OW_CIMClient& hdl)
 	testDone();
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 testModifyProviderQualifier(OW_CIMClient& hdl)
@@ -583,6 +588,7 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 	}
 	testDone();
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1356,6 +1362,7 @@ deleteQualifier(OW_CIMClient& hdl)
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 deleteClass(OW_CIMClient& hdl, const OW_String& delClass)
@@ -1373,6 +1380,7 @@ deleteClass(OW_CIMClient& hdl, const OW_String& delClass)
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 void
 prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
@@ -1601,6 +1609,7 @@ setProperty(OW_CIMClient& hdl, const OW_String& instName)
 	testDone();
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 testSingleton(OW_CIMClient& hdl)
@@ -1687,7 +1696,7 @@ testSingleton(OW_CIMClient& hdl)
 
 	testDone();
 }
-
+#endif
 
 
 /****************************************************************************
@@ -1798,13 +1807,17 @@ main(int argc, char* argv[])
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		testSingleton(rch);
+#endif
 
 		createNameSpace(rch);
 		enumNameSpace(rch);
 		deleteNameSpace(rch);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		createClass(rch, "EXP_BionicComputerSystem");
 		createClass(rch, "EXP_BionicComputerSystem2");
+#endif
 
 		if (getenv("OWLONGTEST"))
 		{
@@ -1812,7 +1825,9 @@ main(int argc, char* argv[])
 			enumClasses(rch);
 		}
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		modifyClass(rch);
+#endif
 		getClass(rch);
 		createInstance(rch, "EXP_BionicComputerSystem", "SixMillion");
 		createInstance(rch, "EXP_BionicComputerSystem", "SevenMillion");
@@ -2010,14 +2025,18 @@ main(int argc, char* argv[])
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SevenMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem2", "SixMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		deleteClass(rch, "EXP_BionicComputerSystem");
 		deleteClass(rch, "EXP_BionicComputerSystem2");
+#endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		deleteQualifier(rch);
 #endif
 
 		testDynInstances(rch);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
         testModifyProviderQualifier(rch);
+#endif
 
 		invokeMethod(rch, 1);
 		invokeMethod(rch, 2);

@@ -52,7 +52,7 @@ public:
 	virtual ~OW_SimpleAuthenticator() { };
 
    /**
-    * Called when authorizer is loaded
+    * Called when authenticator is loaded
     *
     */
 protected:

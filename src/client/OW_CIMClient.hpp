@@ -99,13 +99,6 @@ public:
 		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
 
 	/**
-	 * Deletes the CIM class specified by className in namespace ns.
-	 * @param className The class to delete
-	 * @exception OW_CIMException If the object does not exist
-	 */
-	void deleteClass(const OW_String& className);
-
-	/**
 	 * Deletes the CIM instance specified by the CIM object path.
 	 * A CIM object path consists of two  parts: namespace + model path. The
 	 * model path is created by concatenating the properties of a class that are
@@ -331,6 +324,7 @@ public:
 	OW_CIMQualifierTypeEnumeration enumQualifierTypesE();
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Updates the CIM class associated with the specified namespace.
 	 * @param cimClass The OW_CIMClass to be updated
@@ -345,6 +339,14 @@ public:
 	 *		namespace.
 	 */
 	void createClass(const OW_CIMClass& cimClass) ;
+
+	/**
+	 * Deletes the CIM class specified by className in namespace ns.
+	 * @param className The class to delete
+	 * @exception OW_CIMException If the object does not exist
+	 */
+	void deleteClass(const OW_String& className);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
 	 * Update the specified CIM instance associated with the specified

@@ -92,11 +92,15 @@ private:
 	void associators(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 #endif
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	void createClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
+	void modifyClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void deleteClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+#endif
+	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
@@ -115,8 +119,6 @@ private:
 	void getProperty(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void getQualifier(std::ostream& ostr, OW_CIMXMLParser& parser,
-		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void modifyClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void modifyInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);

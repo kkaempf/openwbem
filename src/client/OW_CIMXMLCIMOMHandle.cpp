@@ -320,30 +320,6 @@ namespace
 		}
 	};
 }
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& className)
-{
-
-	static const char* const commandName = "DeleteClass";
-
-	OW_Array<OW_Param> params;
-
-	if (!className.empty())
-	{
-		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
-										  "<CLASSNAME NAME=\""+className+"\"/>"));
-	}
-	else
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, "No ClassName passed"
-							" to deleteClass()");
-	}
-
-	voidRetValOp op;
-	intrinsicMethod(nameSpace, commandName, op, params);
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 static OW_String
@@ -913,6 +889,7 @@ OW_CIMXMLCIMOMHandle::enumQualifierTypes(
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::modifyClass(const OW_String &ns,
@@ -949,6 +926,31 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_String& ns,
 	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
 		ostr.toString());
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& className)
+{
+
+	static const char* const commandName = "DeleteClass";
+
+	OW_Array<OW_Param> params;
+
+	if (!className.empty())
+	{
+		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
+										  "<CLASSNAME NAME=\""+className+"\"/>"));
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, "No ClassName passed"
+							" to deleteClass()");
+	}
+
+	voidRetValOp op;
+	intrinsicMethod(nameSpace, commandName, op, params);
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

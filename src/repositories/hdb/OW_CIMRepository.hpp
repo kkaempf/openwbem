@@ -173,6 +173,7 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Delete an existing class from the store
 	 *
@@ -235,6 +236,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMClass& cc,
 		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

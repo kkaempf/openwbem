@@ -135,6 +135,7 @@ public:
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * creates a class in the store
 	 *
@@ -164,6 +165,20 @@ public:
 		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
 
 	/**
+	 * Delete an existing class from the store
+	 *
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
+	 * @param aclInfo ACL object describing user making request.
+	 * @return A OW_CIMClass representing the class which was deleted.
+	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
+	 * @exception CIMException if class does not exist
+	 */
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
+		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
+	/**
 	 * Gets an existing class from a store
 	 * @param path The path for the class to retrieve
 	 * @param localOnly If true, then only CIM elements (properties, methods,
@@ -188,19 +203,6 @@ public:
 		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_UserInfo& aclInfo);
-
-	/**
-	 * Delete an existing class from the store
-	 *
-	 * @param ns The namespace containing the class to delete.
-	 * @param className The class to delete
-	 * @param aclInfo ACL object describing user making request.
-	 * @return A OW_CIMClass representing the class which was deleted.
-	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
-	 * @exception CIMException if class does not exist
-	 */
-	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
 		const OW_UserInfo& aclInfo);
 
 	/**

@@ -146,16 +146,17 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					break;
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
-				case OW_BIN_CREATECLS:
-					lgr->logDebug("OW_BinaryRequestHandler create class"
-						" request");
-					createClass(chdl, *ostrm, *istrm);
-					break;
-
 				case OW_BIN_GETCLS:
 					lgr->logDebug("OW_BinaryRequestHandler get class"
 						" request");
 					getClass(chdl, *ostrm, *istrm);
+					break;
+
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+				case OW_BIN_CREATECLS:
+					lgr->logDebug("OW_BinaryRequestHandler create class"
+						" request");
+					createClass(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_MODIFYCLS:
@@ -169,6 +170,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 						" request");
 					deleteClass(chdl, *ostrm, *istrm);
 					break;
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 				case OW_BIN_ENUMCLSS:
 					lgr->logDebug("OW_BinaryRequestHandler enum classes"
@@ -317,6 +319,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	}
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::createClass(OW_CIMOMHandleIFCRef chdl,
@@ -327,6 +330,29 @@ OW_BinaryRequestHandler::createClass(OW_CIMOMHandleIFCRef chdl,
 	chdl->createClass(ns, cc);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::modifyClass(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_CIMClass cc(OW_BinIfcIO::readClass(istrm));
+	chdl->modifyClass(ns, cc);
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String className(OW_BinIfcIO::readString(istrm));
+	chdl->deleteClass(ns, className);
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -479,18 +505,6 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
-void
-OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-	OW_String className(OW_BinIfcIO::readString(istrm));
-	chdl->deleteClass(ns, className);
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
@@ -605,17 +619,6 @@ OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::writeQual(ostrm, qt);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::modifyClass(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-	OW_CIMClass cc(OW_BinIfcIO::readClass(istrm));
-	chdl->modifyClass(ns, cc);
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 
 //////////////////////////////////////////////////////////////////////////////

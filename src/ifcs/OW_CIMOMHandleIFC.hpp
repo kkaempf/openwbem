@@ -106,14 +106,6 @@ public:
 	virtual void close() = 0;
 
 	/**
-	 * Deletes the CIM class specified by className in namespace ns.
-	 * @param ns The namespace containing the class to delete.
-	 * @param className The class to delete
-	 * @exception OW_CIMException If the object does not exist
-	 */
-	virtual void deleteClass(const OW_String& ns, const OW_String& className) = 0;
-
-	/**
 	 * Deletes the CIM instance specified by path in namespace ns.
 	 * @param ns The namespace containing the instance
 	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
@@ -391,6 +383,7 @@ public:
 		const OW_String& ns);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Updates the CIM class associated with the specified namespace.
 	 * @param ns The namespace
@@ -411,6 +404,15 @@ public:
 	virtual void createClass(
 		const OW_String& ns,
 		const OW_CIMClass& cimClass) = 0;
+
+	/**
+	 * Deletes the CIM class specified by className in namespace ns.
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
+	 * @exception OW_CIMException If the object does not exist
+	 */
+	virtual void deleteClass(const OW_String& ns, const OW_String& className) = 0;
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
 	 * Update the specified CIM instance associated with the specified

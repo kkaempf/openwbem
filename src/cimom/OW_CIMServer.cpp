@@ -533,6 +533,7 @@ OW_CIMServer::_instGetClass(const OW_String& ns, const OW_String& className,
 	return theClass;
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
@@ -577,6 +578,7 @@ OW_CIMServer::modifyClass(
 
 	return m_cimRepository->modifyClass(ns,cc,aclInfo);
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -156,15 +156,6 @@ OW_LocalCIMOMHandle::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
-{
-	OW_CIMServerSchemaWriteLocker swl(this);
-	OW_CIMServerInstanceWriteLocker iwl(this);
-	m_pServer->deleteClass(ns, className, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -309,6 +300,7 @@ OW_LocalCIMOMHandle::invokeMethod(
 		m_aclInfo);
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::modifyClass(
@@ -329,6 +321,16 @@ OW_LocalCIMOMHandle::createClass(const OW_String& ns,
 	OW_CIMServerSchemaWriteLocker wl(this);
 	m_pServer->createClass(ns, cc, m_aclInfo);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
+{
+	OW_CIMServerSchemaWriteLocker swl(this);
+	OW_CIMServerInstanceWriteLocker iwl(this);
+	m_pServer->deleteClass(ns, className, m_aclInfo);
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -498,7 +500,9 @@ OW_LocalCIMOMHandle::getServerFeatures()
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
 	cf.supportedGroups.push_back("basic-read");
 	cf.supportedGroups.push_back("basic-write");
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	cf.supportedGroups.push_back("schema-manipulation");
+#endif
 	cf.supportedGroups.push_back("instance-manipulation");
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	cf.supportedGroups.push_back("qualifier-declaration");

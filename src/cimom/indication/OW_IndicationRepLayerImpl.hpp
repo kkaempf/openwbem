@@ -45,9 +45,6 @@ class OW_IndicationRepLayerImpl : public OW_IndicationRepLayer
 public:
 	OW_IndicationRepLayerImpl() : OW_IndicationRepLayer(), m_pServer(0) {}
 
-	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_UserInfo& aclInfo);
-
 	virtual void open(const OW_String&) {}
 
 	virtual void close() {}
@@ -140,8 +137,16 @@ public:
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
+
+	virtual OW_CIMClass modifyClass(const OW_String &ns,
+		const OW_CIMClass& cc, const OW_UserInfo& aclInfo);
+
+	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
+		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	virtual void enumQualifierTypes(
@@ -168,9 +173,6 @@ public:
 
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci, const OW_UserInfo& aclInfo);
-
-	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass& cc, const OW_UserInfo& aclInfo);
 
 	virtual void setProperty(
 		const OW_String& ns,

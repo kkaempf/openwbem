@@ -430,6 +430,17 @@ fi
 AM_CONDITIONAL(DISABLE_QUALIFIER_DECLARATION, test x$OW_DISABLE_QUALIFIER_DECLARATION = x1)
 
 
+AC_ARG_ENABLE(schema-manipulation,
+[  --disable-schema-manipulation     disable schema_manipulation])
+
+OW_DISABLE_SCHEMA_MANIPULATION=0
+if test "$enable_schema_manipulation" = no; then
+	AC_DEFINE(DISABLE_SCHEMA_MANIPULATION)
+	OW_DISABLE_SCHEMA_MANIPULATION=1
+fi
+AM_CONDITIONAL(DISABLE_SCHEMA_MANIPULATION, test x$OW_DISABLE_SCHEMA_MANIPULATION = x1)
+
+
 AC_ARG_ENABLE(gnu-pth,
 [  --enable-gnu-pth   use pth library],
   [

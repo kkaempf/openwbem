@@ -68,6 +68,7 @@ OW_String mode;
 OW_CIMClass bionicClass(OW_CIMNULL);
 OW_CIMInstance bionicInstance(OW_CIMNULL);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void createClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing createClass() *******\n" << endl;
@@ -145,6 +146,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 void enumClassNames(OW_CIMOMHandleIFC& hdl)
 {
@@ -182,6 +184,7 @@ void enumClasses(OW_CIMOMHandleIFC& hdl)
 	}
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing modifyClass() *******\n" << endl;
@@ -205,6 +208,8 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
 
 void getClass(OW_CIMOMHandleIFC& hdl)
 {
@@ -594,6 +599,7 @@ void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteClass() *******\n" << endl;
@@ -612,6 +618,7 @@ void deleteClass(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif
 
 void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 {
@@ -802,10 +809,14 @@ int main(int argc, char* argv[])
 		createNameSpace(rch);
 		enumNameSpace(rch);
 		deleteNameSpace(rch);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		createClass(rch);
+#endif
 		enumClassNames(rch);
 		enumClasses(rch);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		modifyClass(rch);
+#endif
 		getClass(rch);
 		createInstance(rch, "SixMillion");
 		enumerateInstanceNames(rch);
@@ -830,7 +841,9 @@ int main(int argc, char* argv[])
 		execWriteQuery(rch);
 
 		deleteInstance(rch, "SixMillion");
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		deleteClass(rch);
+#endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		deleteQualifier(rch);
 #endif

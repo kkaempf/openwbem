@@ -575,6 +575,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 	}
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
 OW_MetaRepository::deleteClass(const OW_String& ns, const OW_String& className)
@@ -638,31 +639,29 @@ OW_MetaRepository::createClass(const OW_String& ns, OW_CIMClass& cimClass)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::_resolveQualifiers(const OW_String& ns,
-	OW_CIMQualifierArray& quals, OW_HDBHandle hdl)
-
+OW_MetaRepository::modifyClass(const OW_String& ns,
+	const OW_CIMClass& cimClass_)
 {
-	for(size_t i = 0; i < quals.size(); i++)
-	{
-		OW_CIMQualifierType qt = getQualifierType(ns, quals[i].getName(), &hdl);
-		if(qt)
-		{
-			OW_CIMFlavorArray fra = qt.getFlavors();
-			for(size_t j = 0; j < fra.size(); j++)
-			{
-				quals[i].addFlavor(fra[j]);
-			}
-		}
-		else
-		{
-			logError(format("Unable to find qualifier: %1",
-				quals[i].getName()));
+	throwIfNotOpen();
+	OW_HDBHandleLock hdl(this, getHandle());
+	OW_CIMClass cimClass(cimClass_);
+	adjustClass(ns, cimClass, hdl.getHandle());
 
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Unable to find qualifier: %1",
-				quals[i].getName()).c_str());
-		}
+	OW_String ckey = _makeClassPath(ns, cimClass.getName());
+	OW_HDBNode node = hdl->getNode(ckey);
+	if(!node)
+	{
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, ckey.c_str());
 	}
+
+	// Create an OW_CIMClass object out of the node we just read to ensure
+	// the data belongs to an OW_CIMClass.
+	OW_CIMClass clsToUpdate(OW_CIMNULL);
+	nodeToCIMObject(clsToUpdate, node);
+
+	// At this point we know we are updating an OW_CIMClass
+	m_classCache.removeFromCache(ckey);
+	updateCIMObject(cimClass, node, hdl.getHandle());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -885,30 +884,34 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::modifyClass(const OW_String& ns,
-	const OW_CIMClass& cimClass_)
+OW_MetaRepository::_resolveQualifiers(const OW_String& ns,
+	OW_CIMQualifierArray& quals, OW_HDBHandle hdl)
+
 {
-	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_CIMClass cimClass(cimClass_);
-	adjustClass(ns, cimClass, hdl.getHandle());
-
-	OW_String ckey = _makeClassPath(ns, cimClass.getName());
-	OW_HDBNode node = hdl->getNode(ckey);
-	if(!node)
+	for(size_t i = 0; i < quals.size(); i++)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, ckey.c_str());
+		OW_CIMQualifierType qt = getQualifierType(ns, quals[i].getName(), &hdl);
+		if(qt)
+		{
+			OW_CIMFlavorArray fra = qt.getFlavors();
+			for(size_t j = 0; j < fra.size(); j++)
+			{
+				quals[i].addFlavor(fra[j]);
+			}
+		}
+		else
+		{
+			logError(format("Unable to find qualifier: %1",
+				quals[i].getName()));
+
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				format("Unable to find qualifier: %1",
+				quals[i].getName()).c_str());
+		}
 	}
-
-	// Create an OW_CIMClass object out of the node we just read to ensure
-	// the data belongs to an OW_CIMClass.
-	OW_CIMClass clsToUpdate(OW_CIMNULL);
-	nodeToCIMObject(clsToUpdate, node);
-
-	// At this point we know we are updating an OW_CIMClass
-	m_classCache.removeFromCache(ckey);
-	updateCIMObject(cimClass, node, hdl.getHandle());
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

@@ -566,6 +566,7 @@ OW_InstanceRepository::createNameSpace(OW_String ns)
 	return OW_GenericHDBRepository::createNameSpace(ns);
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::createClass(const OW_String& ns,
@@ -612,6 +613,7 @@ OW_InstanceRepository::deleteClass(const OW_String& ns,
 
 	hdl->removeNode(ckey);
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -83,12 +83,6 @@ public:
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
 	/**
-	* @param ns The namespace containing the class to delete.
-	* @param className The class to delete
-	 */
-	virtual void deleteClass(const OW_String& ns, const OW_String& className);
-
-	/**
 	 * Close the connetion to the CIMOM. Currently this does nothing on the
 	 * local cimom handle.
 	 */
@@ -305,6 +299,7 @@ public:
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Adds the CIM class to the specified namespace.
 	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be added.
@@ -312,6 +307,21 @@ public:
 	 */
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc);
+
+	/**
+	 * Updates the CIM class associated with the specified namespace.
+	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be
+	 *					updated.
+	 * @param cc	The OW_CIMClass to be updated
+	 */
+	virtual void modifyClass(const OW_String &ns, const OW_CIMClass &cc);
+
+	/**
+	* @param ns The namespace containing the class to delete.
+	* @param className The class to delete
+	 */
+	virtual void deleteClass(const OW_String& ns, const OW_String& className);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
 	 * Add the specified CIM instance to the specified namespace.
@@ -322,14 +332,6 @@ public:
 	 */
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci);
-
-	/**
-	 * Updates the CIM class associated with the specified namespace.
-	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be
-	 *					updated.
-	 * @param cc	The OW_CIMClass to be updated
-	 */
-	virtual void modifyClass(const OW_String &ns, const OW_CIMClass &cc);
 
 	/**
 	 * Set the specified CIM instance property.

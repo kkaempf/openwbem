@@ -229,6 +229,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	// DeleteClass
 	
 	// CIM_ERR_INVALID_NAMESPACE
@@ -260,7 +261,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_CLASS_HAS_CHILDREN - Impossible to produce with OpenWBEM
 
 	// CIM_ERR_CLASS_HAS_INSTANCES - Impossible to produce with OpenWBEM
-
+#endif
 
 	// DeleteInstance
 
@@ -320,6 +321,16 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	cc.addProperty(theKeyProp);
 
+	// create a base class that has the associator qualifier, which can't be overridden
+	OW_CIMClass baseClass("invalidTestBase");
+	OW_CIMQualifierType assocQualType = hdl->getQualifierType("root/testsuite",
+		OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+	OW_CIMQualifier assocQual(assocQualType);
+	assocQual.setValue(OW_CIMValue(true));
+	baseClass.addProperty(theKeyProp);
+	baseClass.addQualifier(assocQual);
+
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
@@ -336,15 +347,6 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// There are different ways to get this error.  Let's try all of them.
 	// 1. A subclass overrides a qualifier that has the DISABLEOVERRIDE flavor
 	// on the base class
-	
-	// create a base class that has the associator qualifier, which can't be overridden
-	OW_CIMClass baseClass("invalidTestBase");
-	OW_CIMQualifierType assocQualType = hdl->getQualifierType("root/testsuite",
-		OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
-	OW_CIMQualifier assocQual(assocQualType);
-	assocQual.setValue(OW_CIMValue(true));
-	baseClass.addProperty(theKeyProp);
-	baseClass.addQualifier(assocQual);
 
 	try
 	{
@@ -435,6 +437,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
 	}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 
 	// CreateInstance
@@ -482,6 +485,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	// ModifyClass
 
 	// CIM_ERR_INVALID_NAMESPACE
@@ -568,7 +572,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	// CIM_ERR_CLASS_HAS_CHILDREN - Can't get OpenWBEM to produce this as of July 30, 2002
 	// CIM_ERR_CLASS_HAS_INSTANCES - Can't get OpenWBEM to produce this as of July 30, 2002
-
+#endif
 
 	// ModifyInstance
 	OW_CIMInstance ci = baseClass.newInstance();
@@ -1202,7 +1206,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	// cleanup
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	hdl->deleteClass("root/testsuite", baseClass.getName());
+#endif
 
 
 }

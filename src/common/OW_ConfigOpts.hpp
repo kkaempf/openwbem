@@ -84,10 +84,6 @@
 #define OW_DEFAULT_AUTH_MOD OW_DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
 #endif
 									
-#ifndef OW_DEFAULT_AUTHORIZER_LIBS_LOCATION
-#define OW_DEFAULT_AUTHORIZER_LIBS_LOCATION OW_DEFAULT_OWLIB_DIR"/auth_mods"
-#endif
-
 #ifndef OW_DEFAULT_CONFIG_FILE
 #define OW_DEFAULT_CONFIG_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf"
 #endif

@@ -75,9 +75,13 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 	{ "associatornames", &OW_XMLExecute::associatorNames },
 	{ "associators", &OW_XMLExecute::associators },
 #endif
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "createclass", &OW_XMLExecute::createClass },
+#endif
 	{ "createinstance", &OW_XMLExecute::createInstance },
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "deleteclass", &OW_XMLExecute::deleteClass },
+#endif
 	{ "deleteinstance", &OW_XMLExecute::deleteInstance },
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "deletequalifier", &OW_XMLExecute::deleteQualifier },
@@ -94,7 +98,9 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 	{ "getinstance", &OW_XMLExecute::getInstance },
 	{ "getproperty", &OW_XMLExecute::getProperty },
 	{ "getqualifier", &OW_XMLExecute::getQualifier },
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "modifyclass", &OW_XMLExecute::modifyClass },
+#endif
 	{ "modifyinstance", &OW_XMLExecute::modifyInstance },
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	{ "referencenames", &OW_XMLExecute::referenceNames },
@@ -753,6 +759,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
@@ -760,6 +767,41 @@ void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	parser.mustGetChild();
 	hdl.createClass( ns, OW_XMLCIMFactory::createClass(parser) );
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	OW_String name = parser.mustGetAttribute(paramName);
+	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			format("Parameter name was %1", name).c_str());
+
+	parser.mustGetChild();
+
+	//
+	// Process <CLASS> element
+	//
+	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(parser);
+
+	hdl.modifyClass(ns, cimClass);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
+
+	getParameterValues(parser, params);
+
+	OW_String className = params[0].val.toString();
+
+	hdl.deleteClass(ns, className);
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
@@ -800,20 +842,6 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath newPath = hdl.createInstance(ns, cimInstance);
 	OW_CIMInstanceNametoXML(newPath, ostr);
 	ostr << "</IRETURNVALUE>";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	OW_Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
-
-	getParameterValues(parser, params);
-
-	OW_String className = params[0].val.toString();
-
-	hdl.deleteClass(ns, className);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1239,26 +1267,6 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMQualifierType qual = hdl.getQualifierType(ns, qualifierName);
 	OW_CIMtoXML(qual, ostr);
 	ostr << "</IRETURNVALUE>";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	OW_String name = parser.mustGetAttribute(paramName);
-	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("Parameter name was %1", name).c_str());
-
-	parser.mustGetChild();
-
-	//
-	// Process <CLASS> element
-	//
-	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(parser);
-
-	hdl.modifyClass(ns, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////

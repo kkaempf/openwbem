@@ -63,6 +63,7 @@ usage(const char* name)
 	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 // The point of this test is to verify that we can set a qualifier value on
 // an instance that is specific to the instance, or different than what is
@@ -104,6 +105,7 @@ void testInstanceLevelQualifier(OW_CIMOMHandleIFCRef& chRef)
 
 
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 int

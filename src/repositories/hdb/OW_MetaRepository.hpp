@@ -112,6 +112,7 @@ public:
 		const OW_StringArray* propertyList,
 		OW_CIMClass& cc);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Delete an existing class from the store
 	 * @param ns			The namespace for the class
@@ -141,6 +142,7 @@ public:
 	 * @exception CIMException if the class already exists
 	 */
 	void modifyClass(const OW_String& ns, const OW_CIMClass& cimClass);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -253,14 +255,16 @@ private:
 	void _resolveClass(OW_CIMClass& cls, OW_HDBNode& node, OW_HDBHandle& hdl,
 		const OW_String& ns);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	OW_HDBNode adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 		OW_HDBHandle hdl);
 
-	OW_CIMClass _getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
-		const OW_String& ns=OW_String());
-
 	void _resolveQualifiers(const OW_String& ns, OW_CIMQualifierArray& quals,
 		OW_HDBHandle hdl);
+#endif
+
+	OW_CIMClass _getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
+		const OW_String& ns=OW_String());
 
 	//void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 

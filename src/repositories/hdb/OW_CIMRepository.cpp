@@ -335,6 +335,7 @@ OW_CIMRepository::_instGetClass(const OW_String& ns, const OW_String& className)
 	return theClass;
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -519,6 +520,7 @@ OW_CIMRepository::modifyClass(
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 }
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

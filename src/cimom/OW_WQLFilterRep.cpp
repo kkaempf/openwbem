@@ -121,6 +121,7 @@ OW_WQLFilterRep::deleteQualifierType(const OW_String& /*ns*/, const OW_String& /
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::createClass(const OW_String &/*path*/,
@@ -141,6 +142,16 @@ OW_WQLFilterRep::modifyClass(const OW_String &/*name*/,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
+OW_WQLFilterRep::deleteClass(const OW_String& /*ns*/, const OW_String& /*className*/,
+	const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClass
 OW_WQLFilterRep::getClass(
 	const OW_String& ns,
 	const OW_String& className,
@@ -149,15 +160,6 @@ OW_WQLFilterRep::getClass(
 {
 	return m_pCIMServer->getClass(ns, className, b1, b2, b3, sap,
 		ai);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_WQLFilterRep::deleteClass(const OW_String& /*ns*/, const OW_String& /*className*/,
-	const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -56,8 +56,16 @@ public:
 
 private:
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	void createClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+
+	void modifyClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+		std::istream& istrm);
+
+	void deleteClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+		std::istream& istrm);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	void createInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
@@ -65,13 +73,7 @@ private:
 	void enumClasses(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void deleteClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-		std::istream& istrm);
-
 	void deleteInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-		std::istream& istrm);
-
-	void deleteQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
 	void getClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
@@ -79,15 +81,20 @@ private:
 
 	void getInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
+	
 	void getQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	void setQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void modifyClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumQualifiers(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+
+	void deleteQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+		std::istream& istrm);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	void modifyInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
@@ -106,9 +113,6 @@ private:
 
 	void enumInstanceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
             std::istream& istrm);
-
-	void enumQualifiers(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-		std::istream& istrm);
 
 	void invokeMethod(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);

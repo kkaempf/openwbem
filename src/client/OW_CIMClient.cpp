@@ -125,13 +125,6 @@ OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result,
 
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::deleteClass(const OW_String& className)
-{
-	m_ch->deleteClass(m_namespace, className);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void 
 	OW_CIMClient::deleteInstance(const OW_CIMObjectPath& path)
 {
 	m_ch->deleteInstance(m_namespace, path);
@@ -301,6 +294,7 @@ OW_CIMClient::enumQualifierTypesE()
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
 	OW_CIMClient::modifyClass(const OW_CIMClass& cimClass) 
@@ -314,6 +308,14 @@ void
 {
 	m_ch->createClass(m_namespace, cimClass);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+	OW_CIMClient::deleteClass(const OW_String& className)
+{
+	m_ch->deleteClass(m_namespace, className);
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 ///////////////////////////////////////////////////////////////////////////////
 void 

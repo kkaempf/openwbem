@@ -56,36 +56,6 @@ OW_IndicationRepLayer::~OW_IndicationRepLayer()
 //   in the operation's namespace.  Is this desireable?
 											
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& className,
-	const OW_UserInfo& aclInfo)
-{
-	OW_CIMClass cc = m_pServer->deleteClass(ns, className, aclInfo);
-
-	if (m_pEnv->getIndicationRepLayerMediator()->getClassDeletionSubscriptionCount() > 0)
-	{
-		OW_UserInfo intAclInfo;
-
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_ClassDeletion",
-				false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
-			exportIndication(expInst, ns);
-		}
-		catch (OW_CIMException&)
-		{
-			m_pEnv->logDebug("Unable to export indication for"
-				" deleteClass because CIM_ClassDeletion does not exist");
-		}
-	}
-	
-	return cc;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path,
 	const OW_UserInfo& aclInfo)
@@ -212,6 +182,7 @@ OW_IndicationRepLayerImpl::invokeMethod(
 	return rval;
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
@@ -269,6 +240,37 @@ OW_IndicationRepLayerImpl::createClass(const OW_String& ns,
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClass
+OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& className,
+	const OW_UserInfo& aclInfo)
+{
+	OW_CIMClass cc = m_pServer->deleteClass(ns, className, aclInfo);
+
+	if (m_pEnv->getIndicationRepLayerMediator()->getClassDeletionSubscriptionCount() > 0)
+	{
+		OW_UserInfo intAclInfo;
+
+		try
+		{
+			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_ClassDeletion",
+				false, true, true, NULL,
+				intAclInfo);
+			OW_CIMInstance expInst = expCC.newInstance();
+			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
+			exportIndication(expInst, ns);
+		}
+		catch (OW_CIMException&)
+		{
+			m_pEnv->logDebug("Unable to export indication for"
+				" deleteClass because CIM_ClassDeletion does not exist");
+		}
+	}
+	
+	return cc;
+}
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance

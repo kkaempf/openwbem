@@ -151,6 +151,7 @@ public:
 	 */
 	virtual int createNameSpace(OW_String ns);
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Ensure there is a container for a given class in the instance
 	 * repository.
@@ -165,6 +166,8 @@ public:
 	 * @param className	The name of the class container to remove.
 	 */
 	void deleteClass(const OW_String& ns, const OW_String& className);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+
 
 private:
 
