@@ -59,6 +59,7 @@ class HTTPClient : public CIMProtocolIFC
 		virtual ~HTTPClient();
 		virtual Reference<std::iostream> beginRequest(
 				const String& methodName, const String& cimObject);
+
 		/**
 		 * Establishes a connection (if not already connected) to the
 		 * CIMOM and sends a request.  An istream& is returned containing
@@ -70,6 +71,8 @@ class HTTPClient : public CIMProtocolIFC
 		 *  If this is an intrinsic method, it must be a namespace.
 		 *  If an extrinsic method is being invoked, it must be a class
 		 *  or instance path in ObjectPath format.
+		 * @param requestType The type of request, currently must be one of
+		 *  E_CIM_OPERATION_REQUEST, E_CIM_EXPORT_REQUEST
 		 * @return an istream& containing the response from the server
 		 * @exception HTTPException
 		 * @exception SocketException
@@ -77,7 +80,7 @@ class HTTPClient : public CIMProtocolIFC
 		 */
 		virtual Reference<CIMProtocolIStreamIFC> 
 			endRequest(Reference<std::iostream> request,
-				const String& methodName, const String& cimObject);
+				const String& methodName, const String& cimObject, ERequestType requestType);
 		/**
 		 * Sends an OPTIONS request to the HTTP server, and reports the
 		 * results.
@@ -157,7 +160,7 @@ class HTTPClient : public CIMProtocolIFC
 		void checkConnection();
 		String checkResponse(Resp_t& rt);
 		void prepareHeaders();
-		void sendDataToServer( Reference<TempFileStream> tfs, const String& methodName, const String& cimObject );
+		void sendDataToServer( Reference<TempFileStream> tfs, const String& methodName, const String& cimObject, ERequestType requestType );
 		HTTPClient(const HTTPClient&);
 		HTTPClient& operator=(const HTTPClient&);
 };

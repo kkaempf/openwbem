@@ -48,6 +48,17 @@ public:
 	virtual ~CIMProtocolIFC();
 	virtual Reference<std::iostream> beginRequest(
 			const String& methodName, const String& nameSpace) = 0;
+
+	// these correspond to the various types of operations identified in the CIM Operations Over HTTP 1.1 Sec. 3
+	enum ERequestType
+	{
+		E_CIM_OPERATION_REQUEST,
+		E_CIM_EXPORT_REQUEST,
+		E_CIM_BATCH_OPERATION_REQUEST,
+		E_CIM_BATCH_EXPORT_REQUEST,
+		E_CIM_OPERATION_RESPONSE,
+		E_CIM_EXPORT_RESPONSE
+	};
 	/**
 	 * Establishes a connection (if not already connected) to the
 	 * CIMOM and sends a request.  An istream& is returned containing
@@ -55,7 +66,12 @@ public:
 	 * @param request An istream& containing the request to be send to
 	 * 	the CIMOM.
 	 * @param methodName The CIM method that corresponds to the request.
-	 * @nameSpace the namespace the request applies to.
+	 * @cimObject the CIM object the request applies to.
+	 *  If this is an intrinsic method, it must be a namespace.
+	 *  If an extrinsic method is being invoked, it must be a class
+	 *  or instance path in ObjectPath format.
+	 * @param requestType The type of request, currently must be one of
+	 *  E_CIM_OPERATION_REQUEST, E_CIM_EXPORT_REQUEST
 	 * @return an istream& containing the response from the server
 	 * @exception HTTPException
 	 * @exception SocketException
@@ -63,7 +79,7 @@ public:
 	 */
 	virtual Reference<CIMProtocolIStreamIFC> endRequest(
 		Reference<std::iostream> request,
-			const String& methodName, const String& nameSpace) = 0;
+			const String& methodName, const String& cimObject, ERequestType requestType) = 0;
 	/**
 	 * Get the supported features of a CIMOM
 	 * @return a CIMFeatures object listing the features of the CIMOM.

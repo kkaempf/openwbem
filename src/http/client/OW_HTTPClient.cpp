@@ -281,7 +281,7 @@ void HTTPClient::sendAuthorization()
 }
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
-	const String& methodName, const String& cimObject )
+	const String& methodName, const String& cimObject, ERequestType requestType )
 {
 	// Make sure our connection is good
 	checkConnection();
@@ -297,16 +297,36 @@ void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
 	{
 		hp.erase();
 	}
-	addHeaderNew(hp + "CIMOperation", "MethodCall");
-	if (methodName.equals("CIMBatch"))
+
+	if (requestType == E_CIM_OPERATION_REQUEST || requestType == E_CIM_BATCH_OPERATION_REQUEST)
 	{
-		addHeaderNew(hp + "CIMBatch", "");
+		addHeaderNew(hp + "CIMOperation", "MethodCall");
+
+		if (requestType == E_CIM_BATCH_OPERATION_REQUEST || methodName.equals("CIMBatch"))
+		{
+			addHeaderNew(hp + "CIMBatch", "");
+		}
+		else // normal operations
+		{
+			addHeaderNew(hp + "CIMMethod", HTTPUtils::escapeForURL(methodName));
+			addHeaderNew(hp + "CIMObject", HTTPUtils::escapeForURL(cimObject));
+		}
 	}
-	else
+
+	if (requestType == E_CIM_EXPORT_REQUEST || requestType == E_CIM_BATCH_EXPORT_REQUEST)
 	{
-		addHeaderNew(hp + "CIMMethod", HTTPUtils::escapeForURL(methodName));
-		addHeaderNew(hp + "CIMObject", HTTPUtils::escapeForURL(cimObject));
+		addHeaderNew(hp + "CIMExport", "MethodRequest");
+
+		if (requestType == E_CIM_BATCH_EXPORT_REQUEST || methodName.equals("CIMBatch"))
+		{
+			addHeaderNew(hp + "CIMExportBatch", "");
+		}
+		else // normal operations
+		{
+			addHeaderNew(hp + "CIMExportMethod", HTTPUtils::escapeForURL(methodName));
+		}
 	}
+
 	if (m_doDeflateOut)
 	{
 		// deflate test items
@@ -351,7 +371,7 @@ HTTPClient::beginRequest(const String& methodName,
 //////////////////////////////////////////////////////////////////////////////
 Reference<CIMProtocolIStreamIFC>
 HTTPClient::endRequest(Reference<std::iostream> request, const String& methodName,
-			const String& cimObject)
+			const String& cimObject, ERequestType requestType)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
 	OW_ASSERT(tfs);
@@ -375,7 +395,7 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 	Resp_t rt = RETRY;
 	do
 	{
-		sendDataToServer(tfs, methodName, cimObject);
+		sendDataToServer(tfs, methodName, cimObject, requestType);
 		statusLine = checkResponse(rt);
 	} while(rt == RETRY);
 	if (rt == FATAL)

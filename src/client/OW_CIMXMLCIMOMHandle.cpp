@@ -158,7 +158,7 @@ CIMXMLCIMOMHandle::doSendRequest(
 	ClientOperation& op)
 {
 	Reference<CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
-		ostrRef, methodName, cimObject);
+		ostrRef, methodName, cimObject, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
 	// Debug stuff
 	/*
 	TempFileStream buf;

@@ -94,7 +94,7 @@ IndicationExporter::doSendRequest(Reference<iostream> ostr, const String& method
 		const String& ns)
 {
 	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
-		ns);
+		ns, CIMProtocolIFC::E_CIM_EXPORT_REQUEST);
 	// Debug stuff
 	/*
 	TempFileStream buf;
