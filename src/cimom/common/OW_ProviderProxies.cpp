@@ -680,6 +680,7 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			return m_prep->getQualifierType(ns, qualifierName, context);
 		}
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		virtual CIMClass deleteClass(const String &ns, const String &className,
 			OperationContext &context)
 		{
@@ -692,6 +693,13 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->createClass(ns, cimClass, context);
 		}
+		virtual CIMClass modifyClass(const String &ns, const CIMClass &cc,
+			OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			return m_prep->modifyClass(ns, cc, context);
+		}
+#endif
 
 		virtual CIMClass getClass(const String &ns, const String &className,
 			ELocalOnlyFlag localOnly, 
@@ -723,12 +731,6 @@ namespace
 			m_prep->enumInstances(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList,
 				enumSubclasses, context);
-		}
-		virtual CIMClass modifyClass(const String &ns, const CIMClass &cc,
-			OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_prep->modifyClass(ns, cc, context);
 		}
 		virtual void enumClasses(const String &ns, const String &className,
 			CIMClassResultHandlerIFC &result, EDeepFlag deep,
