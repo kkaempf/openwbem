@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_BinarySerializationTestCases.hpp"
 #include "OperationContextTestCases.hpp"
 #include "MOFCompilerTestCases.hpp"
 #include "OW_HTTPUtilsTestCases.hpp"
@@ -89,6 +90,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_BinarySerialization", OW_BinarySerializationTestCases::suite());
 	runner.addTest( "OperationContext", OperationContextTestCases::suite());
 	runner.addTest( "MOFCompiler", MOFCompilerTestCases::suite());
 	runner.addTest( "OW_HTTPUtils", OW_HTTPUtilsTestCases::suite());
