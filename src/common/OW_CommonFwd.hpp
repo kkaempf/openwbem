@@ -90,6 +90,7 @@ typedef Array<Bool>       			BoolArray;
 struct CIMFeatures;
 class NonRecursiveMutexLock;
 class NonRecursiveMutex;
+class Mutex;
 
 class UnnamedPipe;
 typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
