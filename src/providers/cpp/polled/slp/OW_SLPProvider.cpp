@@ -47,7 +47,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMValue.hpp"
 
-
+// TODO: Replace this with a string from uname
 #ifdef OW_GNU_LINUX
 #define OW_STRPLATFORM "Linux"
 #endif
