@@ -46,8 +46,8 @@ class CmpiObjectPath : public CmpiObject {
    friend class CmpiPropertyMI;
    friend class CmpiIndicationMI;
    friend class CmpiData;
-  protected:
-
+//  protected:
+  public:
    /** Protected constructor used by MIDrivers to encapsulate CMPIObjectPathes.
    */
    inline CmpiObjectPath(CMPIObjectPath* c)
@@ -57,7 +57,7 @@ class CmpiObjectPath : public CmpiObject {
    */
    inline CMPIObjectPath *getEnc() const
       { return (CMPIObjectPath*)enc; }
-  private:
+//  private:
 
    /** Constructor - Should not be called
    */
@@ -65,7 +65,7 @@ class CmpiObjectPath : public CmpiObject {
    void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const char *ns, const char *cls);
    void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const CmpiString& ns, const char *cls);
    CmpiBoolean CmpiObjectPath::doClassPathIsA(CMPIBroker *mb, const char *className);
-  public:
+//  public:
 
     /**	Constructor - Creates an ObjectPath object with the classname
 	from the input parameter.
@@ -147,7 +147,7 @@ class CmpiObjectPath : public CmpiObject {
 	@param name Optional output parameter returning the key name.
 	@return CmpiData value object corresponding to the index.
     */
-   CmpiData getKey(const int index, CmpiString *name=NULL);
+   CmpiData getKey(const int index, CmpiString *name=NULL) const;
 
     /**	setKey - adds/replaces a key value defined by the input
 	parameter to the ObjectPath

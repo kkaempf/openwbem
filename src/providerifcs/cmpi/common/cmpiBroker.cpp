@@ -58,9 +58,9 @@ OpenWBEM::StringArray* getList(char** l, OpenWBEM::StringArray& sra)
 {
 	OpenWBEM::StringArray *pRa = NULL;
 	sra.clear();
-	if (l)
+	if(l)
 	{
-		for (int i = 0; l[i]; i++)
+		for(int i = 0; l[i]; i++)
 		{
 			sra.append(l[i]);
 		}
@@ -153,6 +153,8 @@ static CMPIInstance* mbGetInstance(CMPIBroker *, CMPIContext *ctx,
 static CMPIObjectPath* mbCreateInstance(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, CMPIInstance *ci, CMPIStatus *rc)
 {
+	(void) ctx;
+
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
 	CM_LOGGER()->logDebug("CMPIBroker: mbCreateInstance()");
 
@@ -227,6 +229,8 @@ static CMPIStatus mbSetInstance(CMPIBroker *, CMPIContext *ctx,
 static CMPIStatus mbDeleteInstance (CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop)
 {
+	(void) ctx;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbDeleteInstance()");
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -262,6 +266,7 @@ static CMPIStatus mbDeleteInstance (CMPIBroker *, CMPIContext *ctx,
 static CMPIEnumeration* mbExecQuery(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char *query, char *lang, CMPIStatus *rc)
 {
+	(void) ctx;
 	CM_LOGGER()->logDebug("CMPIBroker: mbExecQuery()");
 
 	try
@@ -300,8 +305,7 @@ static CMPIEnumeration* mbExecQuery(CMPIBroker *, CMPIContext *ctx,
 static CMPIEnumeration* mbEnumInstances(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char **properties, CMPIStatus *rc)
 {
-	CM_LOGGER()->logDebug("CMPIBroker: mbEnumInstances()");
-
+   CM_LOGGER()->logDebug("CMPIBroker: mbEnumInstances()");
 	CMPIFlags flgs = ctx->ft->getEntry(
 		ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 
@@ -323,7 +327,6 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *, CMPIContext *ctx,
 			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pProps
 			);
-
 		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_InstEnumeration( new OpenWBEM::CIMInstanceArray(cia));
 	}
@@ -350,6 +353,8 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *, CMPIContext *ctx,
 static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, CMPIStatus *rc)
 {
+	(void) ctx;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbEnumInstanceNames()");
 
 	OpenWBEM::CIMObjectPathArray cia;
@@ -444,6 +449,7 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char *assocClass, char *resultClass,
 	char *role, char *resultRole, CMPIStatus *rc)
 {
+	(void) ctx;
 	CM_LOGGER()->logDebug("CMPIBroker: mbAssociatorNames()");
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -547,6 +553,8 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char *resultClass, char *role,
 	CMPIStatus *rc)
 {
+	(void) ctx;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbReferenceNames()");
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -591,6 +599,12 @@ static CMPIData mbInvokeMethod(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char *method, CMPIArgs *in, CMPIArgs *out,
 	CMPIStatus *rc)
 {
+	(void) ctx;
+	(void) cop;
+	(void) method;
+	(void) in;
+	(void) out;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbInvokeMethod()");
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
@@ -601,6 +615,8 @@ static CMPIStatus mbSetProperty(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop, char *name, CMPIValue *val,
 	CMPIType type)
 {
+	(void) ctx;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbSetProperty()");
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -639,6 +655,8 @@ static CMPIStatus mbSetProperty(CMPIBroker *, CMPIContext *ctx,
 static CMPIData mbGetProperty(CMPIBroker *, CMPIContext *ctx,
 	CMPIObjectPath *cop,char *name, CMPIStatus *rc)
 {
+	(void) ctx;
+
 	CM_LOGGER()->logDebug("CMPIBroker: mbGetProperty()");
 
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };

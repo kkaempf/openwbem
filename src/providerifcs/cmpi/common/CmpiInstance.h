@@ -45,7 +45,8 @@ class CmpiInstance : public CmpiObject {
    friend class CmpiInstanceMI;
    friend class CmpiMethodMI;
    friend class CmpiData;
-  protected:
+
+  public:
 
    /** Protected constructor used by MIDrivers to encapsulate CMPIInstance.
    */
@@ -56,7 +57,7 @@ class CmpiInstance : public CmpiObject {
    */
    inline CMPIInstance *getEnc() const
       { return (CMPIInstance*)enc; }
-   private:
+//   private:
 
    /** Constructor - Should not be called
    */
@@ -67,7 +68,7 @@ class CmpiInstance : public CmpiObject {
    void *CmpiInstance::makeInstance(CMPIBroker *mb, const CmpiObjectPath& cop);
    CmpiBoolean doInstanceIsA(CMPIBroker *mb, const char *className);
 
-  public:
+//  public:
     /**	Constructor - Creates an Instance object with the classname
 	from the input parameter.
 	@param op defining classname and namespace

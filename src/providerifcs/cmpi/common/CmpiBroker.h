@@ -49,9 +49,10 @@ class CmpiBroker : public CmpiObject {
 
    /** Protected constructor used by MIDrivers to encapsulate CMPIBroker.
    */
+   /*
    inline CmpiBroker(CMPIBroker* b)
       : CmpiObject((void*)b) {}
-
+   */
    /** getEnc - Gets the encapsulated CMPIBroker.
    */
    inline CMPIBroker *getEnc() const
@@ -63,6 +64,8 @@ class CmpiBroker : public CmpiObject {
    CmpiBroker() {}
   public:
 
+   CmpiBroker(CMPIBroker* b)
+      : CmpiObject((void*)b) {}
      /** This function prepares the CMPI run time system to accept
          a thread that will be using CMPI services. The returned
 	 CMPIContext object must be used by the subsequent attachThread()

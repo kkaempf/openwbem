@@ -65,6 +65,9 @@ class CmpiEnumeration : public CmpiObject {
    /** toArray - Convert an Enumeration to an Array
     */
    CmpiData toArray();
+   /** toFirst - Goto to begin of list
+    */
+   void toFirst();
 };
 
 #endif

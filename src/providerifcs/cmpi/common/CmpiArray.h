@@ -33,9 +33,9 @@ class CmpiArrayIdx {
   friend class CmpiArray;
    CmpiArray &ar;
    CMPICount idx;
+  public:
    CmpiArrayIdx(CmpiArray &a, CMPICount i)
      : ar(a), idx(i) {}
-  public:
    void operator=(const CmpiString);
    void operator=(const char*);
 
@@ -89,14 +89,14 @@ class CmpiArrayIdx {
 */
 class CmpiArray : public CmpiObject {
   friend class CmpiArrayIdx;
+  public:
    void operator=(int x) {}
-
    /** Gets the encapsulated CMPIArray.
    */
    inline CMPIArray *getEnc() const
       { return (CMPIArray*)enc; }
    void *makeArray(CMPIBroker *mb,CMPICount max, CMPIType type);
-  public:
+
    inline CmpiArray(CMPICount max, CMPIType type) {
       enc=makeArray(CmpiProviderBase::getBroker(),max,type);
    }

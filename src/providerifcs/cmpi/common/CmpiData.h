@@ -24,6 +24,8 @@
 #include "OW_config.h"
 
 #include "cmpidt.h"
+//#include "CmpiString.h"
+#include "CmpiInstance.h"
 #include "CmpiString.h"
 
 class CmpiArray;
@@ -49,16 +51,17 @@ class CmpiData {
    friend class CmpiPropertyMI;
   protected:
 
-   /** CmpiData actually is a CMPIData struct.
-   */
    CMPIData data;
 
+  public:
    /** Constructor - Empty constructor.
    */
    CmpiData(CMPIData& data)
       { this->data=data; }
 
-  public:
+   /** CmpiData actually is a CMPIData struct.
+   */
+//  public:
 
    /** Constructor - Empty constructor.
    */
@@ -97,8 +100,8 @@ class CmpiData {
 
    /** Constructor - unsinged 8 bit as input.
    */
-   inline CmpiData(CMPIUint8 d)
-      { data.value.sint8=d;  data.type=CMPI_uint8; }
+   inline CmpiData(CMPIBoolean d)
+      { data.value.boolean=d;  data.type=CMPI_boolean;}
    /** Constructor - unsinged 16 bit as input.
    */
    inline CmpiData(CMPIUint16 d)
@@ -115,6 +118,21 @@ class CmpiData {
    */
    inline CmpiData(CMPIUint64 d)
       { data.value.sint64=d; data.type=CMPI_uint64;}
+      
+   /** Constructor - CmpiInstance as input.
+   */
+   inline CmpiData(CMPIInstance* d)
+      { data.value.inst = d; data.type=CMPI_instance;}
+      
+   /** Constructor - CmpiObjectPath as input.
+   */
+   inline CmpiData(CMPIObjectPath* d)
+      { data.value.ref = d; data.type=CMPI_ref;}
+      
+  /** Constructor - CmpiArray as input.
+   */
+   inline CmpiData(CMPIArray* d)
+      { data.value.array = d; data.type=CMPI_ARRAY;}
 
 
    /** Extracting String.
@@ -197,6 +215,11 @@ class CmpiData {
    /** Extracting ObjectPath.
    */
    void operator>>(CmpiObjectPath& v);
+
+   bool operator==(const CmpiData& d);
+
+   // check null value
+   bool isNull() {return data.state == CMPI_nullValue;}  
 };
 
 #endif

@@ -29,10 +29,10 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
 {
 	CMPIrc rc;
 	OpenWBEM::CIMValue v=value2CIMValue(data,type,&rc);
-	if (eRes->ft==CMPI_ResultMethOnStack_Ftab)
+	if(eRes->ft==CMPI_ResultMethOnStack_Ftab)
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if (((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}
@@ -41,7 +41,7 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data,
 	else
 	{
 		CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
-		if (((CMPI_Result*)eRes)->flags & RESULT_set==0)
+		if(((CMPI_Result*)eRes)->flags & RESULT_set==0)
 		{
 			((CMPI_Result*)eRes)->flags|=RESULT_set;
 		}
@@ -54,13 +54,20 @@ static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
 {
 	OpenWBEM::CIMInstanceResultHandlerIFC * res =
 		static_cast<OpenWBEM::CIMInstanceResultHandlerIFC *> (eRes->hdl);
-	const OpenWBEM::CIMInstance& inst =
-		* (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
+//	const OpenWBEM::CIMInstance& inst =
+//		* (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
 	try
-	{
-		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
-		res->handle(inst);
-	}
+   {
+      CMPIStatus rc;
+      CMPIContext *ctx=CMPI_ThreadContext::getContext();
+      CMPIFlags flgs = ctx->ft->getEntry(ctx,const_cast<char*>(CMPIInvocationFlags),&rc).value.uint32;
+      OpenWBEM::CIMInstance* in = (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
+      OpenWBEM::CIMInstance ci(
+         in->clone((flgs & CMPI_FLAG_LocalOnly         )? OpenWBEM::WBEMFlags::E_LOCAL_ONLY          : OpenWBEM::WBEMFlags::E_NOT_LOCAL_ONLY,
+                   (flgs & CMPI_FLAG_IncludeQualifiers )? OpenWBEM::WBEMFlags::E_INCLUDE_QUALIFIERS  : OpenWBEM::WBEMFlags::E_EXCLUDE_QUALIFIERS,
+                   (flgs & CMPI_FLAG_IncludeClassOrigin)? OpenWBEM::WBEMFlags::E_INCLUDE_CLASS_ORIGIN: OpenWBEM::WBEMFlags::E_EXCLUDE_CLASS_ORIGIN));
+      res->handle(ci);
+   }
 	catch(const OpenWBEM::CIMException& e)
 	{
 		//CMReturnWithChars(CmpiProviderBase::getBroker(),
@@ -127,25 +134,30 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
 
 static CMPIStatus resultReturnInstDone(CMPIResult* eRes) 
 {
+	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnRefDone(CMPIResult* eRes)
 {
+	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnDataDone(CMPIResult* eRes)
 {
+	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnMethDone(CMPIResult* eRes)
 {
+	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
 {
+	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -153,18 +165,25 @@ static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
 static CMPIStatus resultBadReturnData(CMPIResult* eRes,
 	CMPIValue* data, CMPIType type)
 {
+	(void) eRes;
+	(void) data;
+	(void) type;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
 static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
 	CMPIInstance* eInst)
 {
+	(void) eRes;
+	(void) eInst;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
 static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
 	CMPIObjectPath* eRef)
 {
+	(void) eRes;
+	(void) eRef;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
