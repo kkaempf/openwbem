@@ -148,7 +148,14 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(const OW_SocketAddress& addr)
 //////////////////////////////////////////////////////////////////////////////
 OW_SocketBaseImpl::~OW_SocketBaseImpl()
 {
-	disconnect();
+	try
+	{
+		disconnect();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -79,7 +79,17 @@ private:
 	{
 	public:
 		Lock(OW_MemTracer & tracer) : m_tracer(tracer) { m_tracer.lock (); }
-		~Lock() { m_tracer.unlock (); }
+		~Lock()
+		{
+			try
+			{
+				m_tracer.unlock ();
+			}
+			catch (...)
+			{
+				// don't let exceptions escape
+			}
+		}
 
 	private:
 		OW_MemTracer& m_tracer;
@@ -209,7 +219,14 @@ OW_MemTracer::OW_MemTracer() : m_lockCount (0)
 //////////////////////////////////////////////////////////////////////////////
 OW_MemTracer::~OW_MemTracer()
 {
-	dump();
+	try
+	{
+		dump();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //static int delCount = 0;

@@ -94,10 +94,17 @@ OW_Thread::~OW_Thread()
 	//	OW_Thread::sleep(1);
 	//}
 
-	OW_ASSERT(m_isRunning == false);
-	if(!sameId(m_id, NULLTHREAD))
+	try
 	{
-		OW_ThreadImpl::destroyThread(m_id);
+		OW_ASSERT(m_isRunning == false);
+		if(!sameId(m_id, NULLTHREAD))
+		{
+			OW_ThreadImpl::destroyThread(m_id);
+		}
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
 	}
 }
 

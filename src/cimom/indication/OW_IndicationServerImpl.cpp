@@ -196,8 +196,15 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServerImpl::~OW_IndicationServerImpl()
 {
-	m_trans.clear();
-	m_providers.clear();
+	try
+	{
+		m_trans.clear();
+		m_providers.clear();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

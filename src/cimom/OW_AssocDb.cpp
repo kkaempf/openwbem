@@ -173,10 +173,17 @@ OW_AssocDbHandle::AssocDbHandleData::AssocDbHandleData(OW_AssocDb* pdb,
 //////////////////////////////////////////////////////////////////////////////
 OW_AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
 {
-	if(m_pdb)
+	try
 	{
-		m_pdb->decHandleCount();
-		m_file.close();
+		if(m_pdb)
+		{
+			m_pdb->decHandleCount();
+			m_file.close();
+		}
+	}
+	catch (...)
+	{
+        // if decHandleCount throws, just ignore it.
 	}
 }
 
@@ -416,12 +423,19 @@ OW_AssocDb::OW_AssocDb(OW_CIMOMEnvironmentRef env)
 //////////////////////////////////////////////////////////////////////////////
 OW_AssocDb::~OW_AssocDb()
 {
-	if(m_hdlCount > 0)
+	try
 	{
-		m_env->logDebug("*** OW_AssocDb::~OW_AssocDb - STILL OUTSTANDING"
-			" HANDLES ***");
+		if(m_hdlCount > 0)
+		{
+			m_env->logDebug("*** OW_AssocDb::~OW_AssocDb - STILL OUTSTANDING"
+				" HANDLES ***");
+		}
+		close();
 	}
-	close();
+	catch (...)
+	{
+		// logDebug or close could throw.
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

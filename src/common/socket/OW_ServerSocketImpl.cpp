@@ -65,7 +65,14 @@ OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL)
 //////////////////////////////////////////////////////////////////////////////
 OW_ServerSocketImpl::~OW_ServerSocketImpl()
 {
-	close();
+	try
+	{
+		close();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -175,16 +182,17 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 //#endif
 
-// This seems to cause problems, so just leave the file sitting there.
-//    if (OW_FileSystem::exists(filename))
-//    {
-//        if (::unlink(filename.c_str()) != 0)
-//        {
-//            OW_THROW(OW_SocketException,
-//                format("Unable to unlink Unix Domain Socket: %1, errno: %2",
-//                    filename, errno).c_str());
-//        }
-//    }
+// This seems to cause problems sometimes.  We need to figure out a good way
+// to lock the file or see if someone else is using it.
+    if (OW_FileSystem::exists(filename))
+    {
+        if (::unlink(filename.c_str()) != 0)
+        {
+            OW_THROW(OW_SocketException,
+                format("Unable to unlink Unix Domain Socket: %1, errno: %2",
+                    filename, errno).c_str());
+        }
+    }
 		
 	if(bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)

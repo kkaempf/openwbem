@@ -1395,7 +1395,7 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				((OW_CIMInstanceArray*)&m_obj)->~OW_CIMInstanceArray(); break;
 			default:
-				OW_ASSERT(0);
+				assert(0); // don't want to throw from a destructor, just segfault
 		}
 	}
 	else
@@ -1433,7 +1433,7 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 				((OW_CIMInstance*)&m_obj)->~OW_CIMInstance();
 				break;
 			default:
-				OW_ASSERT(0);
+				assert(0); // don't want to throw from a destructor, just segfault
 		}
 	}
 

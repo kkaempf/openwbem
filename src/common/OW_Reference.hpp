@@ -171,7 +171,14 @@ inline OW_Reference<T>::OW_Reference(const OW_Reference<U>& arg)
 template<class T>
 inline OW_Reference<T>::~OW_Reference()
 {
-	decRef();
+	try
+	{
+		decRef();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

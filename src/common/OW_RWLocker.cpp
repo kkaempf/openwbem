@@ -39,7 +39,7 @@ int OW_RWLocker::m_writeLockCount = 0;
 OW_Mutex OW_RWLocker::m_countGuard;
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::incReadLockCount()
 {
 	OW_MutexLock ml(m_countGuard);
@@ -48,7 +48,7 @@ OW_RWLocker::incReadLockCount()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::decReadLockCount()
 {
 	OW_MutexLock ml(m_countGuard);
@@ -56,7 +56,7 @@ OW_RWLocker::decReadLockCount()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::incWriteLockCount()
 {
 	OW_MutexLock ml(m_countGuard);
@@ -65,7 +65,7 @@ OW_RWLocker::incWriteLockCount()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::decWriteLockCount()
 {
 	OW_MutexLock ml(m_countGuard);
@@ -73,18 +73,25 @@ OW_RWLocker::decWriteLockCount()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_RWLocker::OW_RWLocker() : m_guard(), m_queue(), m_state(0) 
+OW_RWLocker::OW_RWLocker() : m_guard(), m_queue(), m_state(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_RWLocker::~OW_RWLocker()
 {
-	OW_RWQEntryVect::iterator it = m_queue.begin();
-	while(it != m_queue.end())
+	try
 	{
-		it->m_event.signal();
-		it++;
+		OW_RWQEntryVect::iterator it = m_queue.begin();
+		while(it != m_queue.end())
+		{
+			it->m_event.signal();
+			it++;
+		}
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
 	}
 }
 
@@ -162,7 +169,7 @@ OW_RWLocker::getWriteLock()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::releaseReadLock()
 {
 	OW_MutexLock lock(m_guard);
@@ -177,7 +184,7 @@ OW_RWLocker::releaseReadLock()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_RWLocker::releaseWriteLock()
 {
 	OW_MutexLock lock(m_guard);
@@ -219,11 +226,18 @@ OW_ReadLock::release()
 
 OW_ReadLock::RLData::~RLData()
 {
-	if(!m_released)
-		m_locker->releaseReadLock();
+	try
+	{
+		if(!m_released)
+			m_locker->releaseReadLock();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
-OW_ReadLock::RLData& 
+OW_ReadLock::RLData&
 OW_ReadLock::RLData::operator= (const OW_ReadLock::RLData& x)
 {
 	m_locker = x.m_locker;
@@ -247,11 +261,18 @@ OW_WriteLock::release()
 
 OW_WriteLock::WLData::~WLData()
 {
-	if(!m_released)
-		m_locker->releaseWriteLock();
+	try
+	{
+		if(!m_released)
+			m_locker->releaseWriteLock();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
-OW_WriteLock::WLData& 
+OW_WriteLock::WLData&
 OW_WriteLock::WLData::operator= (const OW_WriteLock::WLData& x)
 {
 	m_locker = x.m_locker;

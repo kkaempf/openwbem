@@ -53,11 +53,18 @@ OW_HDB::OW_HDB() :
 //////////////////////////////////////////////////////////////////////////////
 OW_HDB::~OW_HDB()
 {
-	if(m_hdlCount > 0)
+	try
 	{
-		// cerr << "*** OW_HDB::~OW_HDB - STILL OUTSTANDING HANDLES ***" << endl;
+		if(m_hdlCount > 0)
+		{
+			// cerr << "*** OW_HDB::~OW_HDB - STILL OUTSTANDING HANDLES ***" << endl;
+		}
+		close();
 	}
-	close();
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -604,8 +611,15 @@ calcCheckSum(unsigned char* src, OW_Int32 len)
 // ROUTINES FOR OW_HDBHandle class
 OW_HDBHandle::OW_HDBHandleData::~OW_HDBHandleData()
 {
-	m_file.close();
-	m_pdb->decHandleCount();
+	try
+	{
+		m_file.close();
+		m_pdb->decHandleCount();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

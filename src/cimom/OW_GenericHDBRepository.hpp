@@ -187,7 +187,17 @@ public:
 	OW_HDBHandleLock(OW_GenericHDBRepository* pr, const OW_HDBHandle& hdl) :
 		m_pr(pr), m_hdl(hdl) {}
 
-	~OW_HDBHandleLock() { if(m_pr) m_pr->freeHandle(m_hdl); }
+	~OW_HDBHandleLock()
+	{
+		try
+		{
+			if(m_pr) m_pr->freeHandle(m_hdl);
+		}
+		catch (...)
+		{
+			// don't let exceptions escape
+		}
+	}
 	OW_HDBHandle* operator->() { return &m_hdl; }
 	OW_HDBHandle& operator*() { return m_hdl; }
 	OW_HDBHandle getHandle() { return m_hdl; }

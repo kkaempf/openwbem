@@ -52,7 +52,14 @@ OW_GenericHDBRepository::OW_GenericHDBRepository(OW_CIMOMEnvironmentRef env)
 //////////////////////////////////////////////////////////////////////////////
 OW_GenericHDBRepository::~OW_GenericHDBRepository()
 {
-	close();
+	try
+	{
+		close();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

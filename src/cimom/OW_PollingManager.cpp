@@ -59,7 +59,14 @@ OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::~OW_PollingManager()
 {
-	shutdown();
+	try
+	{
+		shutdown();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 

@@ -223,33 +223,40 @@ OW_HTTPXMLCIMListener::OW_HTTPXMLCIMListener(OW_LoggerRef logger)
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPXMLCIMListener::~OW_HTTPXMLCIMListener()
 {
-	shutdownHttpServer();
-	// unregister all the callbacks from the CIMOMs
-	OW_MutexLock lock(m_mutex);
-	for (callbackMap_t::iterator i = m_callbacks.begin();
-		i != m_callbacks.end(); ++i)
+	try
 	{
-		registrationInfo reg = i->second;
-
-		try
+		shutdownHttpServer();
+		// unregister all the callbacks from the CIMOMs
+		OW_MutexLock lock(m_mutex);
+		for (callbackMap_t::iterator i = m_callbacks.begin();
+			i != m_callbacks.end(); ++i)
 		{
-			deleteRegistrationObjects(reg);
+			registrationInfo reg = i->second;
+	
+			try
+			{
+				deleteRegistrationObjects(reg);
+			}
+			catch (OW_CIMException& ce)
+			{
+				// if an error occured, then just ignore it.  We don't have any way
+				// of logging it!
+			}
+			catch (OW_HTTPException& e)
+			{
+				// a network error occured, we can't do anything about it.
+			}
+			catch (...)
+			{
+				// who knows what happened, but we need to continue deregistering...
+			}
 		}
-		catch (OW_CIMException& ce)
-		{
-			// if an error occured, then just ignore it.  We don't have any way
-			// of logging it!
-		}
-		catch (OW_HTTPException& e)
-		{
-			// a network error occured, we can't do anything about it.
-		}
-		catch (...)
-		{
-			// who knows what happened, but we need to continue deregistering...
-		}
+		m_pLAuthenticator = 0;
 	}
-	m_pLAuthenticator = 0;
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 void

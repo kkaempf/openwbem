@@ -145,13 +145,20 @@ OW_CIMOMEnvironment::~OW_CIMOMEnvironment()
 {
 	try
 	{
-		shutdown();
+		try
+		{
+			shutdown();
+		}
+		catch(OW_Exception& e)
+		{
+			cerr << e << endl;
+		}
+		m_configItems = 0;
 	}
-	catch(OW_Exception& e)
+	catch (...)
 	{
-		cerr << e << endl;
+		// don't let exceptions escape!
 	}
-	m_configItems = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

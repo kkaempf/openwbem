@@ -121,9 +121,16 @@ OW_Exception::OW_Exception( const OW_Exception& e )
 //////////////////////////////////////////////////////////////////////////////					
 OW_Exception::~OW_Exception() throw()
 {
-	freeBuf(&m_file);
-	freeBuf(&m_msg);
-	m_mutex->release();
+	try
+	{
+		freeBuf(&m_file);
+		freeBuf(&m_msg);
+		m_mutex->release();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////					

@@ -65,8 +65,15 @@ public:
 
 	~OW_SharedLibraryReference()
 	{
-		m_obj = 0;
-		m_sharedLib = 0;
+		try
+		{
+			m_obj = 0;
+			m_sharedLib = 0;
+		}
+		catch (...)
+		{
+			// don't let exceptions escape
+		}
 	}
 
 	OW_SharedLibraryRef getLibRef() const

@@ -50,9 +50,16 @@ public:
 
 	~OW_MutexLock()
 	{
-		if (m_locked)
+		try
 		{
-			release();
+			if (m_locked)
+			{
+				release();
+			}
+		}
+		catch (...)
+		{
+			// don't let exceptions escape
 		}
 	}
 

@@ -32,6 +32,7 @@
 #include "OW_ThreadImpl.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_Assertion.hpp"
+#include <cassert>
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -353,8 +354,8 @@ OW_ThreadEventImpl::destroyThreadEvent(OW_ThreadEvent_t& handle)
 {
 	OW_PlatformThreadEvent* pev = (OW_PlatformThreadEvent*) handle;
 
-	OW_ASSERT(pev != NULL);
-	OW_ASSERT(pev->sig == EVENTSIG);
+	assert(pev != NULL);
+	assert(pev->sig == EVENTSIG);
 
 #ifndef OW_USE_GNU_PTH
 	pthread_cond_destroy(&pev->cond);
