@@ -1079,6 +1079,9 @@ OW_HTTPSvrConnection::options()
 {
 
 	addHeader("Allow","POST, M-POST, OPTIONS, TRACE");
+#ifdef OW_HAVE_ZLIB_H
+	addHeaderCommon("Accept-Encoding", "deflate");
+#endif
 	OW_String hp = OW_HTTPUtils::getCounterStr();
 	OW_CIMFeatures cf;
 	
