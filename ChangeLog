@@ -1,3 +1,7 @@
+Fri Nov 29 06:53:48 MST 2002
+- Fixed the pam module.  Added some code to the acceptance test to make sure
+  the daemon will start with the pam module authentication.
+
 Thu Nov 28 11:41:42 MST 2002
 - Got rid of OW_ThreadEvent because it is subject to race conditions.
   Replaced it with a condition variable class.
