@@ -42,7 +42,7 @@ namespace OpenWBEM
 
 /////////////////////////////////////////////////////////////////////////////
 NullLogger::NullLogger()
-	: Logger("null", E_ALL_LEVEL)
+	: Logger("null", E_NONE_LEVEL)
 {
 }
 
