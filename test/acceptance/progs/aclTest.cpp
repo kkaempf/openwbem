@@ -166,7 +166,7 @@ void enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "/root/acltest");
-		OW_CIMClassEnumeration enu = hdl.enumClass(cop, true,
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
 																 false);
 		if (mode != "r" && mode != "rw")
 			assert(0);

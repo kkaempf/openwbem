@@ -36,6 +36,7 @@
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 class OW_MetaRepository : public OW_GenericHDBRepository
 {
@@ -158,10 +159,11 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	OW_CIMClassEnumeration enumClass(const OW_String& ns,
-		const OW_String& className, OW_Bool deep, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		OW_CIMClassEnumeration* penum=NULL);
+	void enumClass(const OW_String& ns,
+		const OW_String& className,
+		OW_CIMClassResultHandlerIFC& result,
+		OW_Bool deep, OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin);
 
 	/**
 	 * Enumerator the qualifiers in a given namespace
@@ -241,7 +243,7 @@ private:
 	void _addQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt,
 		OW_HDBHandle* phdl=0);
 
-	void _getClassNodes(OW_CIMClassEnumeration& en, OW_HDBNode node,
+	void _getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true);
 

@@ -172,8 +172,10 @@ OW_WQLFilterRep::deleteInstance(const OW_CIMObjectPath &/*cop*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_WQLFilterRep::enumClasses(const OW_CIMObjectPath&, OW_Bool, OW_Bool, OW_Bool,
+void
+OW_WQLFilterRep::enumClasses(const OW_CIMObjectPath&,
+	OW_CIMClassResultHandlerIFC&,
+	OW_Bool, OW_Bool, OW_Bool,
 	OW_Bool, const OW_ACLInfo&)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

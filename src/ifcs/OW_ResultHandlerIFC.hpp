@@ -28,64 +28,50 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_RESULTHANDLERIFC_HPP_
+#define OW_RESULTHANDLERIFC_HPP_
+
 #include "OW_config.h"
-#include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMFeatures.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_CIMNameSpace.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_CIMClassEnumeration.hpp"
+#include "OW_CIMFwd.hpp"
 
-const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
-const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);
-const OW_Bool OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS(true);
-const OW_Bool OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS(false);
-const OW_Bool OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN(true);
-const OW_Bool OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN(false);
-const OW_Bool OW_CIMOMHandleIFC::LOCAL_ONLY(true);
-const OW_Bool OW_CIMOMHandleIFC::NOT_LOCAL_ONLY(false);
-
-OW_CIMFeatures
-OW_CIMOMHandleIFC::getServerFeatures()
+class OW_CIMClassResultHandlerIFC
 {
-	return OW_CIMFeatures();
-}
-
-void
-OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS)
-{
-	OW_THROWCIM(OW_CIMException::FAILED);
-	(void)instance;
-	(void)instNS;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class CIMClassEnumBuilder : public OW_CIMClassResultHandlerIFC
+public:
+	void handleClass(const OW_CIMClass& c)
 	{
-	public:
-		CIMClassEnumBuilder(OW_CIMClassEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandleClass(const OW_CIMClass &c)
-		{
-			m_e.addElement(c);
-		}
-	private:
-		OW_CIMClassEnumeration& m_e;
-	};
-}
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMOMHandleIFC::enumClassE(const OW_CIMObjectPath& path, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
-{
-	OW_CIMClassEnumeration rval;
-	CIMClassEnumBuilder handler(rval);
-	enumClass(path, handler, deep, localOnly, includeQualifiers,
-		includeClassOrigin);
-	return rval;
-}
+		doHandleClass(c);
+	}
 
+protected:
+	virtual void doHandleClass(const OW_CIMClass& c) = 0;
+
+};
+
+class OW_CIMInstanceResultHandlerIFC
+{
+public:
+	void handleInstance(const OW_CIMInstance& i)
+	{
+		doHandleInstance(i);
+	}
+
+protected:
+	virtual void doHandleInstance(const OW_CIMInstance& i) = 0;
+
+};
+
+class OW_CIMObjectPathResultHandlerIFC
+{
+public:
+	void handleObjectPath(const OW_CIMObjectPath& cop)
+	{
+		doHandleObjectPath(cop);
+	}
+
+protected:
+	virtual void doHandleObjectPath(const OW_CIMObjectPath& cop) = 0;
+
+};
+
+#endif
 

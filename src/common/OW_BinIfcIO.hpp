@@ -34,6 +34,7 @@
 #include "OW_Types.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 #include <iosfwd>
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,7 @@ public:
 
 	static OW_CIMObjectPathEnumeration readObjectPathEnum(std::istream& istrm);
 
-	static OW_CIMClassEnumeration readClassEnum(std::istream& istrm);
+	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
 
 	static OW_CIMInstanceEnumeration readInstanceEnum(std::istream& istrm);
 
@@ -165,6 +166,8 @@ const OW_Int32 OW_BINSIG_INSTENUM =		0xa000000c;
 const OW_Int32 OW_BINSIG_QUALENUM =		0xa000000d;
 const OW_Int32 OW_BINSIG_VALUEARRAY =	0xa000000e;
 const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
+
+const OW_Int32 OW_END_CLSENUM =			0x00001001;
 
 #endif	// OW_BINIFCIO_HPP_
 

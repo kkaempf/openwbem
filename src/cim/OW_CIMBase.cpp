@@ -63,7 +63,7 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 
 	if(expected.val != read.val)
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(OW_BadCIMSignatureException,
 			format("Signature does not match. In OW_CIMBase::readSig. "
 				"signature read: %1, expected: %2",
 				// use the special OW_String constructor because the chars

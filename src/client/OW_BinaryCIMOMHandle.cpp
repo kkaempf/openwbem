@@ -126,11 +126,6 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& en
 	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
 }
 static void
-readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassEnumeration& enu)
-{
-	enu = OW_BinIfcIO::readClassEnum(*istr);
-}
-static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readInstanceEnum(*istr);
@@ -173,6 +168,31 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 		checkError(error);
 	}
 	return rval;
+}
+
+void readAndDeliverCIMClasses(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassResultHandlerIFC& result)
+{
+	try
+	{
+		checkError(istr);
+		OW_BinIfcIO::readClassEnum(*istr, result);
+	}
+	catch (OW_IOException& e)
+	{
+		while(*istr) istr->get();
+		if (istr->getError().length() == 0)
+		{
+			throw e;
+		}
+	}
+	while(*istr) istr->get();
+	OW_String errorStr = istr->getError();
+	if (istr->getError().length() > 0)
+	{
+		OW_TempFileStream error(500);
+		istr->getError(error);
+		checkError(error);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -354,8 +374,9 @@ OW_BinaryCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
@@ -371,7 +392,7 @@ OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
 	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClasses", path.getNameSpace());
 
-	return readCIMObject<OW_CIMClassEnumeration>(in);
+	return readAndDeliverCIMClasses(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

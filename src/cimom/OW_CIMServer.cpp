@@ -636,6 +636,36 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMClassDeleter : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		CIMClassDeleter(OW_MetaRepository& mr, OW_String& ns_, OW_InstanceRepository& mi)
+		: m_mStore(mr)
+		, ns(ns_)
+		, m_iStore(mi)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &c)
+		{
+			OW_String cname = c.getName();
+			if(!m_mStore.deleteClass(ns, cname))
+			{
+				OW_THROWCIM(OW_CIMException::NOT_FOUND);
+			}
+
+			// delete any instances of the class
+			m_iStore.deleteClass(ns, cname);
+
+		}
+	private:
+		OW_MetaRepository& m_mStore;
+		OW_String& ns;
+		OW_InstanceRepository& m_iStore;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
@@ -648,9 +678,9 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		OW_CIMClass cc;
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(path, cc);
 		checkGetClassRvalAndThrow(rc, path);
+		OW_ASSERT(cc);
 
 		OW_String ns = path.getNameSpace();
-		OW_String cname = path.getObjectName();
 
 		// TODO: this doesn't work quite right.  what about associations to
 		// the instances we delete?
@@ -659,29 +689,30 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 
 		// delete the class and any subclasses
 		OW_ACLInfo intAcl;
-		OW_CIMClassEnumeration children = this->enumClasses(path,
+		CIMClassDeleter ccd(m_mStore, ns, m_iStore);
+		this->enumClasses(path, ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
             intAcl);
-		children.addElement(cc);
-		while (children.hasMoreElements())
-		{
-			OW_CIMClass toDelete;
-			children.nextElement(toDelete);
+		ccd.handleClass(cc);
+//         children.addElement(cc);
+//         while (children.hasMoreElements())
+//         {
+//             OW_CIMClass toDelete;
+//             children.nextElement(toDelete);
+//
+//             cname = toDelete.getName();
+//             if(!m_mStore.deleteClass(ns, cname))
+//             {
+//                 OW_THROWCIM(OW_CIMException::NOT_FOUND);
+//             }
+//
+//             // delete any instances of the class
+//             m_iStore.deleteClass(ns, cname);
+//
+//         }
 
-			cname = toDelete.getName();
-			if(!m_mStore.deleteClass(ns, cname))
-			{
-				OW_THROWCIM(OW_CIMException::NOT_FOUND);
-			}
-
-			// delete any instances of the class
-			m_iStore.deleteClass(ns, cname);
-
-		}
-
-		OW_ASSERT(cc);
 		return cc;
 	}
 	catch(OW_IOException&)
@@ -767,8 +798,9 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
+void
 OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
 {
@@ -776,7 +808,8 @@ OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, path, aclInfo);
 	try
 	{
-		return m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), deep,
+		m_mStore.enumClass(path.getNameSpace(), path.getObjectName(),
+			result, deep,
 			localOnly, includeQualifiers, includeClassOrigin);
 	}
 	catch (OW_HDBException&)
@@ -790,6 +823,61 @@ OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMClassToCIMObjectPathHandler : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		CIMClassToCIMObjectPathHandler(OW_CIMObjectPathResultHandlerIFC& oph_,
+			OW_CIMObjectPath& lcop_)
+		: oph(oph_)
+		, lcop(lcop_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &c)
+		{
+			lcop.setObjectName(c.getName());
+			oph.handleObjectPath(lcop);
+		}
+	private:
+		OW_CIMObjectPathResultHandlerIFC& oph;
+		OW_CIMObjectPath& lcop;
+	};
+
+	class CIMObjectPathEnumerationBuilder : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		CIMObjectPathEnumerationBuilder(OW_CIMObjectPathEnumeration& enu_)
+		: enu(enu_)
+		{}
+
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			enu.addElement(cop);
+		}
+	private:
+		OW_CIMObjectPathEnumeration& enu;
+	};
+	
+	class CIMClassEnumerationBuilder : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		CIMClassEnumerationBuilder(OW_CIMClassEnumeration& enu_)
+		: enu(enu_)
+		{}
+
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &c)
+		{
+			enu.addElement(c);
+		}
+	private:
+		OW_CIMClassEnumeration& enu;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
@@ -799,19 +887,22 @@ OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path, OW_Bool deep,
 
 	try
 	{
-		OW_CIMClassEnumeration cenum = m_mStore.enumClass(path.getNameSpace(),
-			  path.getObjectName(), deep, false, true, true);
+		OW_CIMObjectPathEnumeration openum;
+		CIMObjectPathEnumerationBuilder enumHandler(openum);
 
 		OW_CIMObjectPath lcop(path);
 		lcop.setKeys(OW_CIMPropertyArray());
+		CIMClassToCIMObjectPathHandler handler(enumHandler,lcop);
+		m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), handler,
+			deep, false, true, true);
 
-		OW_CIMObjectPathEnumeration openum;
-		while(cenum.hasMoreElements())
-		{
-			OW_CIMClass cc = cenum.nextElement();
-			lcop.setObjectName(cc.getName());
-			openum.addElement(lcop);
-		}
+
+//         while(cenum.hasMoreElements())
+//         {
+//             OW_CIMClass cc = cenum.nextElement();
+//             lcop.setObjectName(cc.getName());
+//             openum.addElement(lcop);
+//         }
 
 		return openum;
 	}
@@ -1325,6 +1416,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			}
 		}
 
+		// TODO: Use _getInstanceProvider
 		OW_CIMQualifier cq = theClass.getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROVIDER);
 
@@ -1808,8 +1900,6 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 // Get the instance provider information - we locate the provider by traversing
 // up the class hierarchy to find the provider closest to the class that is
 // identified by the instance
-//
-// Assumes a read or write lock has been acquired on the repository
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_CIMObjectPath cop,
 	const OW_ACLInfo& aclInfo)
@@ -1819,7 +1909,6 @@ OW_CIMServer::_getInstanceProvider(const OW_CIMObjectPath cop,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Assumes a read or write lock has been acquired on the repository
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 	const OW_String& classNameArg, const OW_ACLInfo& /*aclInfo*/)
@@ -1848,10 +1937,11 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 				break;
 			}
 
-			if(cc.isAssociation())
-			{
-				break;
-			}																	
+			// TODO: Why should we do this?
+			//if(cc.isAssociation())
+			//{
+			//	break;
+			//}																	
 
 			OW_CIMQualifier cq = cc.getQualifier(
 				OW_CIMQualifier::CIM_QUAL_PROVIDER);
@@ -2450,10 +2540,12 @@ OW_CIMClassEnumeration
 OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	const OW_String& className)
 {
+	// TODO: Optimize this, it's rather inefficient
 	OW_CIMClassEnumeration renum;
 	if(className.length() > 0)
 	{
-		renum = m_mStore.enumClass(ns, className, true, false, true, true);
+		CIMClassEnumerationBuilder handler(renum);
+		m_mStore.enumClass(ns, className, handler, true, false, true, true);
 		OW_CIMClass cc;
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
 		if (rc != OW_CIMException::SUCCESS)
@@ -2470,8 +2562,8 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		{
 			OW_CIMClass cc = topAssocs.nextElement();
 			renum.addElement(cc);
-			m_mStore.enumClass(ns, cc.getName(), true, false, true, true,
-				&renum);
+			CIMClassEnumerationBuilder handler(renum);
+			m_mStore.enumClass(ns, cc.getName(), handler, true, false, true, true);
 		}
 	}
 

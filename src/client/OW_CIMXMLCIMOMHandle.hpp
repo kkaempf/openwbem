@@ -130,13 +130,14 @@ public:
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	virtual OW_CIMClassEnumeration enumClass(
+	virtual void enumClass(
 		const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep,
 		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
-
+	
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param path		The OW_CIMObjectPath identifying the class to be

@@ -527,8 +527,9 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	static const char* const commandName = "EnumerateClasses";
@@ -552,15 +553,11 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 	node = node.getChild();
-	OW_CIMClassEnumeration retval;
 	while (node)
 	{
-		//OW_CIMClass cls(node);
-		OW_CIMClass cls = OW_XMLCIMFactory::createClass(node);
-		retval.addElement(cls);
+		result.handleClass(OW_XMLCIMFactory::createClass(node));
 		node = node.getNext();
 	}
-	return retval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -64,7 +64,7 @@ OW_BinIfcIO::verifySignature(std::istream& istrm, OW_Int32 validSig)
 
 	if(val != validSig)
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(OW_BadCIMSignatureException,
 			format("Received invalid signature. Got: %1  Expected: %2", val,
 				validSig).c_str());
 	}
@@ -360,28 +360,41 @@ OW_BinIfcIO::readObjectPathEnum(std::istream& istrm)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_CIMClassEnumeration
-OW_BinIfcIO::readClassEnum(std::istream& istrm)
+void
+OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 {
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_CLSENUM);
-	OW_CIMClassEnumeration en;
-	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size);
-	if(size == -1)
+//	OW_Int32 size;
+//	OW_BinIfcIO::read(istrm, size);
+//	if(size == -1)
+//	{
+//		OW_String fname = OW_BinIfcIO::readString(istrm);
+//		en = OW_CIMClassEnumeration(fname);
+//	}
+//	else
+//	{
+//		while(size)
+//		{
+//			en.addElement(OW_BinIfcIO::readClass(istrm));
+//			size--;
+//		}
+//	}
+
+//	return en;
+	bool done = false;
+	while (!done)
 	{
-		OW_String fname = OW_BinIfcIO::readString(istrm);
-		en = OW_CIMClassEnumeration(fname);
-	}
-	else
-	{
-		while(size)
+		try
 		{
-			en.addElement(OW_BinIfcIO::readClass(istrm));
-			size--;
+			result.handleClass(OW_BinIfcIO::readClass(istrm));
+		}
+		catch (const OW_BadCIMSignatureException& e)
+		{
+			// CIMClass.readObject threw because we've read all the classes
+			OW_BinIfcIO::verifySignature(istrm, OW_END_CLSENUM);
+			done = true;
 		}
 	}
-
-	return en;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -207,7 +207,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMClassEnumeration enu = hdl.enumClass(cop, true,
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
 																 false);
 		while (enu.hasMoreElements())
 		{
@@ -223,7 +223,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMClassEnumeration enu = hdl.enumClass(cop, false,
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
 																 false);
 		while (enu.hasMoreElements())
 		{
@@ -239,7 +239,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMClassEnumeration enu = hdl.enumClass(cop, false,
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
 																 true);
 		while (enu.hasMoreElements())
 		{
@@ -255,7 +255,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMClassEnumeration enu = hdl.enumClass(cop, true,
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
 																 true);
 		while (enu.hasMoreElements())
 		{

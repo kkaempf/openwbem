@@ -38,6 +38,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 class OW_RepositoryIFC
 {
@@ -221,7 +222,8 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
+	virtual void enumClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo) = 0;
 

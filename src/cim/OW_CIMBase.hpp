@@ -33,10 +33,13 @@
 
 #include "OW_config.h"
 #include "OW_ByteSwap.hpp"
+#include "OW_Exception.hpp"
 
 #include <iosfwd>
 
 class OW_String;
+
+DEFINE_EXCEPTION(BadCIMSignature);
 
 /**
  * The OW_CIMBase class is used as the base class for all CIM related classes.

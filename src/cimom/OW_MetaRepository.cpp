@@ -950,20 +950,15 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
+void
 OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
+	OW_CIMClassResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, OW_CIMClassEnumeration* penum)
+	OW_Bool includeClassOrigin)
 {
 	throwIfNotOpen();
-	OW_CIMClassEnumeration en;
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode pnode;
-
-	if(!penum)
-	{
-		penum = &en;
-	}
 
 	if(className.length() > 0)
 	{
@@ -1009,24 +1004,22 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	{
 		if(!pnode.areAllFlagsOn(OW_HDBNSNODE_FLAG))
 		{
-			_getClassNodes(*penum, pnode, hdl.getHandle(), deep, localOnly,
+			_getClassNodes(result, pnode, hdl.getHandle(), deep, localOnly,
 				includeQualifiers, includeClassOrigin);
 		}
 
 		pnode = hdl->getNextSibling(pnode);
 	}
-
-	return *penum;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::_getClassNodes(OW_CIMClassEnumeration& en, OW_HDBNode node,
+OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
 	OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
-	en.addElement(cimCls.clone(localOnly, includeQualifiers,
+	result.handleClass(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
 
 	if(deep)
@@ -1034,7 +1027,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassEnumeration& en, OW_HDBNode node,
 		node = hdl.getFirstChild(node);
 		while(node)
 		{
-			_getClassNodes(en, node, hdl, deep, localOnly, includeQualifiers,
+			_getClassNodes(result, node, hdl, deep, localOnly, includeQualifiers,
 				includeClassOrigin);
 			node = hdl.getNextSibling(node);
 		}

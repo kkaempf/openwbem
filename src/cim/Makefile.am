@@ -50,5 +50,6 @@ OW_CIMValueCast.hpp
 
 
 INCLUDES = \
--I$(top_srcdir)/src/common
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/ifcs
 

@@ -158,12 +158,13 @@ OW_IndicationRepLayerImpl::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_IndicationRepLayerImpl::enumClasses(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_IndicationRepLayerImpl::enumClasses(const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumClasses(path, deep, localOnly, includeQualifiers,
+	m_pServer->enumClasses(path, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, aclInfo);
 }
 

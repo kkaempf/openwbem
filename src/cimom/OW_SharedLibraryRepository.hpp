@@ -135,11 +135,12 @@ public:
 		return m_ref->modifyClass(name, cc, aclInfo);
 	}
 
-	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath &path,
+	virtual void enumClasses(const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumClasses(path, deep, localOnly, includeQualifiers,
+		return m_ref->enumClasses(path, result, deep, localOnly, includeQualifiers,
 			includeClassOrigin, aclInfo);
 	}
 
@@ -221,7 +222,7 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->associators(path, assocClass, resultClass, role, 
+		return m_ref->associators(path, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
 			aclInfo);
 	}

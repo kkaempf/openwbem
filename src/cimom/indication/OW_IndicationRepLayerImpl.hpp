@@ -62,7 +62,8 @@ public:
 	virtual void deleteQualifierType(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
+	virtual void enumClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
 

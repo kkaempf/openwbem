@@ -388,6 +388,24 @@ OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class BinaryCIMClassWriter : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		BinaryCIMClassWriter(std::ostream& ostrm_)
+		: ostrm(ostrm_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &c)
+		{
+			OW_BinIfcIO::writeClass(ostrm, c);
+		}
+	private:
+		std::ostream& ostrm;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
@@ -398,31 +416,35 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeClassOrigin(OW_BinIfcIO::readBool(istrm));
 
-	OW_CIMClassEnumeration ccenum = chdl->enumClass(op, deep, localOnly,
-		includeQualifiers, includeClassOrigin);
-
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
 
-	OW_Bool enumWritten = false;
-	if(ccenum.usingTempFile() && m_userId != OW_UserId(-1))
-	{
-		OW_String tfileName = ccenum.releaseFile();
-		if(!(enumWritten = writeFileName(ostrm, tfileName)))
-		{
-			ccenum = OW_CIMClassEnumeration(tfileName);
-		}
-	}
+	BinaryCIMClassWriter handler(ostrm);
+	chdl->enumClass(op, handler, deep, localOnly,
+		includeQualifiers, includeClassOrigin);
+	
+	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 
-	if(!enumWritten)
-	{
-		OW_BinIfcIO::write(ostrm, OW_Int32(ccenum.numberOfElements()));
-
-		while(ccenum.hasMoreElements())
-		{
-			OW_BinIfcIO::writeClass(ostrm, ccenum.nextElement());
-		}
-	}
+//     OW_Bool enumWritten = false;
+//     if(ccenum.usingTempFile() && m_userId != OW_UserId(-1))
+//     {
+//         OW_String tfileName = ccenum.releaseFile();
+//         if(!(enumWritten = writeFileName(ostrm, tfileName)))
+//         {
+//             ccenum = OW_CIMClassEnumeration(tfileName);
+//         }
+//     }
+//
+//     if(!enumWritten)
+//     {
+//         OW_BinIfcIO::write(ostrm, OW_Int32(ccenum.numberOfElements()));
+//
+//         while(ccenum.hasMoreElements())
+//         {
+//             OW_BinIfcIO::writeClass(ostrm, ccenum.nextElement());
+//         }
+//     }
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -716,6 +716,33 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMClassXMLOutputter : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		CIMClassXMLOutputter(ostream& ostr_, bool localOnly_,
+			bool includeQualifiers_, bool includeClassOrigin_)
+		: ostr(ostr_)
+		, localOnly(localOnly_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &c)
+		{
+			OW_CIMtoXML(c, ostr,
+				localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
+				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
+				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
+				OW_StringArray());
+		}
+	private:
+		ostream& ostr;
+		bool localOnly, includeQualifiers, includeClassOrigin;
+	};
+}
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -739,15 +766,15 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 
 	path.setObjectName(className);
 
-	//
-	// Build result
-	//
-	OW_CIMClassEnumeration enu = hdl.enumClass(path, deep, false);
+	CIMClassXMLOutputter handler(ostr, localOnly, includeQualifiers,
+		includeClassOrigin);
+	hdl.enumClass(path, handler, deep, false);
+
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
 	//hdl.enumClass(path, deep, localOnly,
 		//includeQualifiers, includeClassOrigin);
 
-
+	/*
 	while (enu.hasMoreElements())
 	{
 		OW_CIMClass cimClass = enu.nextElement();
@@ -757,6 +784,7 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 			OW_StringArray());
 	}
+	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////

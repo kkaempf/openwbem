@@ -35,6 +35,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
 #include "OW_Reference.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 /**
  * The OW_CIMOMHandleIFC class is an abstract class used as an interface
@@ -184,10 +185,18 @@ public:
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	virtual OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath& path,
+	virtual void enumClass(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep=SHALLOW, OW_Bool localOnly=NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers=INCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=INCLUDE_CLASS_ORIGIN) = 0;
+
+	virtual OW_CIMClassEnumeration enumClassE(
+		const OW_CIMObjectPath& path,
+		OW_Bool deep=SHALLOW,
+		OW_Bool localOnly = OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

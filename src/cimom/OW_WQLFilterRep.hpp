@@ -86,7 +86,7 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns, 
+	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -117,7 +117,7 @@ public:
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	virtual void setQualifierType(const OW_CIMObjectPath &name, 
+	virtual void setQualifierType(const OW_CIMObjectPath &name,
 		const OW_CIMQualifierType &qt, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -260,7 +260,8 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
+	virtual void enumClasses(const OW_CIMObjectPath& path,
+		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
 
@@ -358,13 +359,13 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop, 
+	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
 		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path, 
-		const OW_String &assocClass, const OW_String &resultClass, 
-		const OW_String &role, const OW_String &resultRole, 
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin, 
+	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,
+		const OW_String &assocClass, const OW_String &resultClass,
+		const OW_String &role, const OW_String &resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -375,12 +376,12 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception OW_CIMException
 	 */
-	virtual void setProperty(const OW_CIMObjectPath &name, 
+	virtual void setProperty(const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMObjectPathEnumeration referenceNames(
-		const OW_CIMObjectPath &path, const OW_String &resultClass, 
+		const OW_CIMObjectPath &path, const OW_String &resultClass,
 		const OW_String &role, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -392,7 +393,7 @@ public:
 	 * @return The OW_CIMvalue for property identified by propertyName.
 	 * @exception OW_CIMException
 	 */
-	virtual OW_CIMValue getProperty(const OW_CIMObjectPath &name, 
+	virtual OW_CIMValue getProperty(const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -408,21 +409,21 @@ public:
 	 * @return The return from the extrinsic method as a OW_CIMValue.
 	 * @exception OW_CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name, 
-		const OW_String &methodName, const OW_CIMValueArray &inParams, 
+	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
+		const OW_String &methodName, const OW_CIMValueArray &inParams,
 		OW_CIMValueArray &outParams, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMObjectPathEnumeration associatorNames(
-		const OW_CIMObjectPath &path, const OW_String &assocClass, 
-		const OW_String &resultClass, const OW_String &role, 
+		const OW_CIMObjectPath &path, const OW_String &assocClass,
+		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path, 
-		const OW_String &resultClass, const OW_String &role, 
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin, 
+	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path,
+		const OW_String &resultClass, const OW_String &role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace& ns, 
+	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace& ns,
 		const OW_String &query, const OW_String &queryLanguage,
 		const OW_ACLInfo& aclInfo);
 
