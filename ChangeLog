@@ -1,7 +1,31 @@
-2003-11-03 10:43  nuffer
+2003-11-04 23:50  nuffer
 
-	* src/requesthandlers/cimxml/OW_XMLExecute.cpp: Fixed a bug where a
-	  CLASSNAME arg is NULL.
+	* test/acceptance/progs/aclTest.cpp: Replaced assert with
+	  TEST_ASSERT so it will not disappear if NDEBUG is #defined.
+
+2003-11-04 23:49  nuffer
+
+	* openwbem.spec: Fixed to build on fedora core 1
+
+2003-11-04 21:41  nuffer
+
+	* src/providerifcs/cpp/OW_CppProviderIFC.cpp: lock m_guard in
+	  doUnloadProviders to protect m_provs
+
+2003-11-04 21:39  nuffer
+
+	* src/common/OW_Array.hpp: Fixed operator+= to return *this
+
+2003-11-04 10:58  nuffer
+
+	* src/: requesthandlers/cimxml/OW_XMLExecute.cpp,
+	  xml/OW_XMLCIMFactory.cpp: Fixed an issue with the server
+	  generating non-compliant xml when doing an AssociatorNames
+	  operation on classes.
+
+2003-11-04 09:02  nuffer
+
+	* configure.in, openwbem.spec: Changed version to 2.0.11
 
 2003-10-29 15:53  nuffer
 
