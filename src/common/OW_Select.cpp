@@ -46,6 +46,9 @@
 extern "C"
 {
 
+// something goofy with epoll at the moment. 
+#undef OW_HAVE_SYS_EPOLL_H
+
 #ifndef OW_WIN32
  #ifdef OW_HAVE_SYS_EPOLL_H
   #include <sys/epoll.h>
