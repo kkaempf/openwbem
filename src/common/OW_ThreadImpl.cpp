@@ -155,6 +155,16 @@ threadStarter(void* arg)
 	// killed if need be.
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+
+	// block all signals except SIGUSR1, which is used to signal termination
+	sigset_t signalSet;
+	int rv = sigfillset(&signalSet);
+	OW_ASSERT(rv == 0);
+	rv = sigdelset(&signalSet, SIGUSR1);
+	OW_ASSERT(rv == 0);
+	rv = pthread_sigmask(SIG_SETMASK, &signalSet, 0);
+	OW_ASSERT(rv == 0);
+
 	LocalThreadParm* parg = static_cast<LocalThreadParm*>(arg);
 	ThreadFunction func = parg->m_func;
 	void* funcParm = parg->m_funcParm;
