@@ -439,6 +439,9 @@ namespace
 		{ 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
 	};
 
+	// This doesn't return the exact number of seconds, since it assumes all previous years are 366 days long,
+	// In essense we're introducing some empty space in the range of this function, but that's good enough to
+	// use in comparing dates.
 	Int64 secondsFromEpoch(const CIMDateTime& dt)
 	{
 		OW_ASSERT(!dt.isInterval());
@@ -451,17 +454,11 @@ namespace
 
 		const int EPOCH_YEAR = 1970;
 
-		int yday = monthYearDay[isLeap(dt.getYear())][dt.getMonth() - 1] + dt.getDay() - 1;
-		Int64 iday = 365 * (dt.getYear() - EPOCH_YEAR) + yday;
-		// adjust for leap years
-		iday += (dt.getYear() - 1 - (EPOCH_YEAR - 2)) / 4; // to include 1972 as a leap year, we start at 1968.
-		iday -= (dt.getYear() - 1 - 2000) / 100;
-		iday += (dt.getYear() - 1 - 2000) / 400;
-
-		// because iday is an Int64, it will propagate through this operation and not cause an overflow
+		int dayOfYear = monthYearDay[isLeap(dt.getYear())][dt.getMonth() - 1] + dt.getDay() - 1;
+		int daysFromEpoch = 366 * (dt.getYear() - EPOCH_YEAR) + dayOfYear; // leap years are accounted for by 366 instead of 365.
 		return dt.getSeconds()
 			+ 60 * (dt.getMinutes() + dt.getUtc())
-			+ 3600 * (dt.getHours() + 24 * iday);
+			+ 3600 * static_cast<Int64>(dt.getHours() + 24 * daysFromEpoch);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
