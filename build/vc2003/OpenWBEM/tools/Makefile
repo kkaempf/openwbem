@@ -17,8 +17,8 @@ TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 LINKDBG = /DEBUG
 CPPDEFS = /D"WIN32" /D"_DEBUG" /D"_CONSOLE" /D"OW_WIN32" /D"_MBCS"
 #CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-#CPPFLAGS = /GF /GX /RTC1 /Zi /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MDd /c /Fo"$@"
-CPPFLAGS = /Od /Gm /RTC1 /MDd /Zc:forScope /GR /Fo"$@" /Fd"$(TARGETDIR)\$(@B).pdb" /W2 /Zi /Wp64 /TP /c /GX
+#CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MDd /c /Fo"$@"
+CPPFLAGS = /Od /RTC1 /MDd /Zc:forScope /GR /Fo"$@" /Fd"$(TARGETDIR)\$(@B).pdb" /W2 /Z7 /Wp64 /TP /c /GX
 !ELSE
 BUILDTYPE = Release
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)

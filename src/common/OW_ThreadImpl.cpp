@@ -512,11 +512,11 @@ exitThread(Thread_t&, Int32 rval)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-unsigned long thread_t_ToUInt64(Thread_t thr)
+UInt64 thread_t_ToUInt64(Thread_t thr)
 {
 	//  This should really be a compile time assert.
 	OW_ASSERTMSG(sizeof(unsigned long) >= sizeof(Thread_t),"  Thread_t truncated!");
-	return static_cast<unsigned long>(thr);
+	return static_cast<UInt64>(thr);
 }
 
 //////////////////////////////////////////////////////////////////////////////

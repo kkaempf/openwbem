@@ -112,7 +112,7 @@ File
 openFile(const String& path)
 {
 #ifdef OW_WIN32
-	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -127,7 +127,7 @@ File
 createFile(const String& path)
 {
 #ifdef OW_WIN32
-	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
@@ -147,7 +147,7 @@ File
 openOrCreateFile(const String& path)
 {
 #ifdef OW_WIN32
-	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
@@ -313,17 +313,21 @@ read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
 #ifdef OW_WIN32
+	OVERLAPPED ov = { 0, 0, 0, 0, NULL };
+	OVERLAPPED *pov = NULL;
 	if(offset != -1L)
 	{
-		SetFilePointer(hdl, (LONG)offset, NULL, FILE_BEGIN);
+		ov.Offset = (DWORD) offset;
+		pov = &ov;
 	}
 
 	DWORD bytesRead;
 	size_t cc = (size_t)-1;
-	if(ReadFile(hdl, bfr, (DWORD)numberOfBytes, &bytesRead, NULL))
+	if(::ReadFile(hdl, bfr, (DWORD)numberOfBytes, &bytesRead, pov))
 	{
 		cc = (size_t)bytesRead;
 	}
+		
 	return cc;
 #else
 	if (offset != -1L)
@@ -339,14 +343,17 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
 #ifdef OW_WIN32
+	OVERLAPPED ov = { 0, 0, 0, 0, NULL };
+	OVERLAPPED *pov = NULL;
 	if(offset != -1L)
 	{
-		SetFilePointer(hdl, (LONG)offset, NULL, FILE_BEGIN);
+		ov.Offset = (DWORD) offset;
+		pov = &ov;
 	}
 
 	DWORD bytesWritten;
 	size_t cc = (size_t)-1;
-	if(WriteFile(hdl, bfr, (DWORD)numberOfBytes, &bytesWritten, NULL))
+	if(::WriteFile(hdl, bfr, (DWORD)numberOfBytes, &bytesWritten, pov))
 	{
 		cc = (size_t)bytesWritten;
 	}
@@ -372,7 +379,7 @@ seek(const FileHandle& hdl, off_t offset, int whence)
 		case SEEK_CUR: moveMethod = FILE_CURRENT; break;
 		default: moveMethod = FILE_BEGIN; break;
 	}
-	return (off_t) SetFilePointer(hdl, (LONG)offset, NULL, moveMethod);
+	return (off_t) ::SetFilePointer(hdl, (LONG)offset, NULL, moveMethod);
 #else
 	return ::lseek(hdl, offset, whence);
 #endif
@@ -382,7 +389,7 @@ off_t
 tell(const FileHandle& hdl)
 {
 #ifdef OW_WIN32
-	return (off_t) SetFilePointer(hdl, 0L, NULL, FILE_CURRENT);
+	return (off_t) ::SetFilePointer(hdl, 0L, NULL, FILE_CURRENT);
 #else
 	return ::lseek(hdl, 0, SEEK_CUR);
 #endif
@@ -392,7 +399,7 @@ void
 rewind(const FileHandle& hdl)
 {
 #ifdef OW_WIN32
-	SetFilePointer(hdl, 0L, NULL, FILE_BEGIN);
+	::SetFilePointer(hdl, 0L, NULL, FILE_BEGIN);
 #else
 	::lseek(hdl, 0, SEEK_SET);
 #endif
@@ -402,7 +409,7 @@ int
 close(const FileHandle& hdl)
 {
 #ifdef OW_WIN32
-	return (CloseHandle(hdl)) ? 0 : -1;
+	return (::CloseHandle(hdl)) ? 0 : -1;
 #else
 	return ::close(hdl);
 #endif
@@ -412,7 +419,7 @@ int
 flush(FileHandle& hdl)
 {
 #ifdef OW_WIN32
-	return (FlushFileBuffers(hdl)) ? 0 : -1;
+	return (::FlushFileBuffers(hdl)) ? 0 : -1;
 #else
 	#ifdef OW_DARWIN
 		return ::fsync(hdl);
@@ -432,7 +439,7 @@ initRandomFile(const String& filename)
 	{
 		bfr[i] = (char)rnum.getNextNumber();
 	}
-	HANDLE fh = CreateFile(filename.c_str(), GENERIC_WRITE,
+	HANDLE fh = ::CreateFile(filename.c_str(), GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if(fh == INVALID_HANDLE_VALUE)
@@ -443,8 +450,8 @@ initRandomFile(const String& filename)
 	}
 	DWORD bytesWritten;
 	size_t cc = (size_t)-1;
-	bool success = (WriteFile(fh, bfr, (DWORD)1024, &bytesWritten, NULL) != 0);
-	CloseHandle(fh);
+	bool success = (::WriteFile(fh, bfr, (DWORD)1024, &bytesWritten, NULL) != 0);
+	::CloseHandle(fh);
 	if(!success || bytesWritten < 1024)
 	{
 		OW_THROW(FileSystemException, 
