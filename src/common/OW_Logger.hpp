@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_Reference.hpp"
 
@@ -117,17 +116,10 @@ class OW_Logger
 			const OW_LogLevel level) const = 0;
 
 	private:
-		void logMessage( const OW_LogLevel l, const OW_String& s ) const
-		{
-			OW_MutexLock mtxlck( classMtx );
-			if ( l <= m_level )
-				doLogMessage( s, l );
-		}
+		void logMessage( const OW_LogLevel l, const OW_String& s ) const;
 
 	private: // data
 		OW_LogLevel m_level;
-
-		mutable OW_Mutex classMtx;
 };
 
 typedef OW_Reference<OW_Logger> OW_LoggerRef;
