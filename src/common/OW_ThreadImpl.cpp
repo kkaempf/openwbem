@@ -235,9 +235,6 @@ int
 createThread(Thread_t& handle, ThreadFunction func,
 	void* funcParm, UInt32 threadFlags)
 {
-	// set up our TLS which will be used to store the Thread* in.
-	pthread_once(&once_control, &initializeTheKey);
-	
 	int cc = 0;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -335,6 +332,7 @@ joinThread(Thread_t& handle, Int32& rval)
 void
 testCancel()
 {
+	// set up our TLS which will be used to store the Thread* in.
 	pthread_once(&once_control, &initializeTheKey);
 	Thread* theThread = reinterpret_cast<Thread*>(pthread_getspecific(theKey));
 	if (theThread == 0)
@@ -355,6 +353,7 @@ testCancel()
 //////////////////////////////////////////////////////////////////////
 void saveThreadInTLS(void* pTheThread)
 {
+	// set up our TLS which will be used to store the Thread* in.
 	pthread_once(&once_control, &initializeTheKey);
 	int rc;
 	if ((rc = pthread_setspecific(theKey, pTheThread)) != 0)
