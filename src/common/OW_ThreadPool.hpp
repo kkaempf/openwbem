@@ -78,7 +78,7 @@ public:
 	 * @param numThreads The number of threads in the pool.
 	 *
 	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
-	 *  no limit.
+	 *  no limit. It is recommended that maxQueueSize is >= numThreads.
 	 *
 	 * @param logger used to log messages if non-NULL.
 	 *
