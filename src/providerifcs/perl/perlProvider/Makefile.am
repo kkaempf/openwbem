@@ -89,11 +89,10 @@ INCLUDES = -I$(top_srcdir)/src/providerifcs/perl \
 -I$(top_srcdir)/src/providerifcs/npi \
 -I$(perl_embed_ccflags)
 
-else
+endif
 
 EXTRA_DIST = \
 perlProvider.c \
 perlProvider.h \
 perlargs.h
 
-endif
