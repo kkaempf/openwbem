@@ -11,7 +11,7 @@ indicationTest.out \
 stringArray.mof \
 wqlTest.mof \
 wqlTest.out \
-testsuite.out \
+testsuite28.out \
 testsuite.mof \
 wqlTest2.out
 
