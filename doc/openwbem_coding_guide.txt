@@ -164,3 +164,8 @@ declared.  If you use the pimpl idiom, you can get away with only including
 OW_Reference (or OW_COWReference).  This helps to greatly reduce compilation
 time and also helps prevent bloat from inline functions.
 -----------------------------------------------------------------------------
+If a function has unused parameters, don't comment out or omit the parameter
+name to avoid an unused parameter warning.  Cast it to void at the beginning
+of the function.  This makes it possible to search for specific parameters.
+It also avoids problems with nested C-style comments.
+-----------------------------------------------------------------------------
