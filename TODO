@@ -17,6 +17,7 @@ Testing:
 Fix problems:
     - Man pages aren't getting included in the rpm.
     - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
+    - Add binary interface versioning.
 
 New features:
     - Modifying existing filters will affect the indication server, and
@@ -33,6 +34,7 @@ New features:
         - New model for provider registration.
         - Do the rest of them.
     - Update SLP provider to use the new standard template.
+    - Don't load the authentication provider if allow_anonymous is turned on.
 
 Post 3.0
     - Add a virtual log message to the thread counter class so we can output
