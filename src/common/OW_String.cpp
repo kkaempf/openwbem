@@ -1026,9 +1026,9 @@ T convertToRealType(const String::buf_t& m_buf, const char* type, FP fp)
 Real32
 String::toReal32() const
 {
-#if defined(OW_REAL32_IS_FLOAT)
+#if defined(OW_REAL32_IS_FLOAT) && defined(OW_HAVE_STRTOF)
 	return convertToRealType<Real32>(m_buf, "Real32", &strtof);
-#elif defined(OW_REAL32_IS_DOUBLE)
+#elif defined(OW_REAL32_IS_DOUBLE) || (defined(OW_REAL32_IS_FLOAT) && !defined(OW_HAVE_STRTOF))
 	return convertToRealType<Real32>(m_buf, "Real32", &strtod);
 #endif
 }
