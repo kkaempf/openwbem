@@ -15,9 +15,6 @@ Testing:
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
-    - Have a mechanism in the read-write locker to detect simple deadlock,
-      the case where one thread acquired a write lock and then later tried
-      to acquire a read lock, which would block.
     - Man pages aren't getting included in the rpm.
 
 New features:
