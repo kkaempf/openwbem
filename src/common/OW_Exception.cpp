@@ -344,23 +344,14 @@ namespace ExceptionDetail
 	FormatMsg::FormatMsg(char const * msg, int errnum)
 		: pImpl(new FormatMsgImpl)
 	{
-		try
-		{
-			char arr[BUFSZ];
-			portable_strerror_r(errnum, arr, BUFSZ);
-			char const * sarr = static_cast<char const *>(arr);
-			pImpl->fm = Format("%1: %2(%3)", msg, errnum, sarr).toString();
-		}
-		catch (...)
-		{
-			delete pImpl;
-			throw;
-		}
+		char arr[BUFSZ];
+		portable_strerror_r(errnum, arr, BUFSZ);
+		char const * sarr = static_cast<char const *>(arr);
+		pImpl->fm = Format("%1: %2(%3)", msg, errnum, sarr).toString();
 	}
 
 	FormatMsg::~FormatMsg()
 	{
-		delete pImpl;
 	}
 
 	char const * FormatMsg::get() const

@@ -36,6 +36,7 @@
 #ifndef OW_EXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_EXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_AutoPtr.hpp"
 #include <iosfwd>
 #include <exception>
 #include <new>
@@ -171,8 +172,7 @@ namespace ExceptionDetail
 
 	class FormatMsg
 	{
-		// note: This used to be an AutoPtr, but the dumb HPUX aCC compiler instantiates it's destructor and won't compile it.
-		FormatMsgImpl* pImpl;
+		AutoPtr<FormatMsgImpl> pImpl;
 	public:
 		FormatMsg(char const * msg, int errnum);
 		~FormatMsg();
