@@ -86,9 +86,14 @@ do
 		mkdir $ar_dir
 		cd $ar_dir
 		$AR x $full_archive_path
-		for j in *.o; do
-			mv $j ${name}_$j
-		done
+
+		# If the OW_NO_OBJECT_LIBRARY_PREFIX variable not set to true,
+		# prefix them, otherwise leave it alone. 
+		if [ -z "$OW_NO_OBJECT_LIBRARY_PREFIX" -o "x$OW_NO_OBJECT_LIBRARY_PREFIX" != "xtrue" ]; then
+			for j in *.o; do
+				mv $j ${name}_$j
+			done
+		fi
 		cd ..
 		NEWOBJS="$NEWOBJS $ar_dir/*.o"
 	else
