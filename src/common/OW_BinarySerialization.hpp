@@ -64,7 +64,9 @@ namespace OpenWBEM
 //   structure of CIMInstance.  The name and alias were removed.
 // 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
 //   instead of object paths.
-const UInt32 BinaryProtocolVersion = 3000005;
+// 2/6/2004 - 3000006. Changed CIMDateTime::{read,write}Object to write each
+//   item individually so struct packing doesn't cause incompatibilities.
+const UInt32 BinaryProtocolVersion = 3000006;
 // These values are all used by the binary protocol
 const UInt8 BIN_OK =				0;		// Success returned from server
 const UInt8 BIN_ERROR =			1;		// Error returned from server
@@ -142,6 +144,11 @@ namespace BinarySerialization
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 	inline void write(std::ostream& ostrm, UInt16 val)
+	{
+		val = hton16(val);
+		BinarySerialization::write(ostrm, &val, sizeof(val));
+	}
+	inline void write(std::ostream& ostrm, Int16 val)
 	{
 		val = hton16(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
@@ -251,6 +258,11 @@ namespace BinarySerialization
 	}
 	void readLen(std::istream& istrm, UInt32& len);
 	inline void read(std::istream& istrm, UInt16& val)
+	{
+		BinarySerialization::read(istrm, &val, sizeof(val));
+		val = ntoh16(val);
+	}
+	inline void read(std::istream& istrm, Int16& val)
 	{
 		BinarySerialization::read(istrm, &val, sizeof(val));
 		val = ntoh16(val);

@@ -56,26 +56,6 @@ using std::istream;
 static void fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str);
 static Int16 getGMTOffset();
 //////////////////////////////////////////////////////////////////////////////
-int
-CIMDateTime::DateTimeData::compare(const CIMDateTime::DateTimeData& arg)
-{
-	return ::memcmp(this, &arg, sizeof(*this));
-}
-//////////////////////////////////////////////////////////////////////////////
-//bool operator<(const CIMDateTime::DateTimeData& x, const CIMDateTime::DateTimeData& y)
-//{
-// This is wrong, we have to adjust for m_utc!
-//	return StrictWeakOrdering(
-//		x.m_year, y.m_year,
-//		x.m_month, y.m_month,
-//		x.m_days, y.m_days,
-//		x.m_hours, y.m_hours,
-//		x.m_minutes, y.m_minutes,
-//		x.m_seconds, y.m_seconds,
-//		x.m_utc, y.m_utc,
-//		x.m_isInterval, y.m_isInterval);
-//}
-//////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime()
 	: m_dptr(new DateTimeData)
 {
@@ -252,11 +232,17 @@ void
 CIMDateTime::readObject(istream &istrm)
 {
 	DateTimeData dtdata;
-	BinarySerialization::read(istrm, &dtdata, sizeof(dtdata));
-	dtdata.m_year = ntoh16(dtdata.m_year);
-	dtdata.m_days = ntoh32(dtdata.m_days);
-	dtdata.m_microSeconds = ntoh32(dtdata.m_microSeconds);
-	dtdata.m_utc = ntoh16(dtdata.m_utc);
+
+	BinarySerialization::read(istrm, dtdata.m_year);
+	BinarySerialization::read(istrm, dtdata.m_month);
+	BinarySerialization::read(istrm, dtdata.m_days);
+	BinarySerialization::read(istrm, dtdata.m_hours);
+	BinarySerialization::read(istrm, dtdata.m_minutes);
+	BinarySerialization::read(istrm, dtdata.m_seconds);
+	BinarySerialization::read(istrm, dtdata.m_microSeconds);
+	BinarySerialization::read(istrm, dtdata.m_utc);
+	BinarySerialization::read(istrm, dtdata.m_isInterval);
+
 	if(m_dptr.isNull())
 	{
 		m_dptr = new DateTimeData;
@@ -267,13 +253,16 @@ CIMDateTime::readObject(istream &istrm)
 void
 CIMDateTime::writeObject(ostream &ostrm) const
 {
-	DateTimeData dtdata;
-	memmove(&dtdata, m_dptr.getPtr(), sizeof(dtdata));
-	dtdata.m_year = hton16(dtdata.m_year);
-	dtdata.m_days = hton32(dtdata.m_days);
-	dtdata.m_microSeconds = hton32(dtdata.m_microSeconds);
-	dtdata.m_utc = hton16(dtdata.m_utc);
-	BinarySerialization::write(ostrm, &dtdata, sizeof(dtdata));
+	BinarySerialization::write(ostrm, m_dptr->m_year);
+	BinarySerialization::write(ostrm, m_dptr->m_month);
+	BinarySerialization::write(ostrm, m_dptr->m_days);
+	BinarySerialization::write(ostrm, m_dptr->m_hours);
+	BinarySerialization::write(ostrm, m_dptr->m_minutes);
+	BinarySerialization::write(ostrm, m_dptr->m_seconds);
+	BinarySerialization::write(ostrm, m_dptr->m_microSeconds);
+	BinarySerialization::write(ostrm, m_dptr->m_utc);
+	BinarySerialization::write(ostrm, m_dptr->m_isInterval);
+
 }
 //////////////////////////////////////////////////////////////////////////////
 String

@@ -63,15 +63,13 @@ Char16::toUTF8() const
 void
 Char16::writeObject(ostream& ostrm) const
 {
-	UInt16 v = hton16(m_value);
-	BinarySerialization::write(ostrm, &v, sizeof(v));
+	BinarySerialization::write(ostrm, m_value);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 Char16::readObject(istream& istrm)
 {
-	BinarySerialization::read(istrm, &m_value, sizeof(m_value));
-	m_value = ntoh16(m_value);
+	BinarySerialization::read(istrm, m_value);
 }
 //////////////////////////////////////////////////////////////////////////////
 std::ostream&

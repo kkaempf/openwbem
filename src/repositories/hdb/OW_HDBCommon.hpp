@@ -57,7 +57,9 @@ const int HDBSIGLEN = 16;
 //   aligned easier (and slightly smaller).
 // 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
 //   instead of object paths.
-const UInt32 HDBVERSION = 3000005;
+// 2/6/2004 - 3000006. Changed CIMDateTime::{read,write}Object to write each
+//   item individually so struct packing doesn't cause incompatibilities.
+const UInt32 HDBVERSION = 3000006;
 /**
  * The HDBHeaderBlock structure represent the header information for
  * the database.

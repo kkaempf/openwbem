@@ -121,8 +121,6 @@ public:
 			m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
 			m_isInterval(1) {}
 	
-		int compare(const DateTimeData& arg);
-	
 		UInt16 m_year;
 		UInt8 m_month;
 		UInt32 m_days;
