@@ -170,13 +170,13 @@ RestartDaemon()
 	fi
 	# the nightly cronjob on solaris doesn't seem to deliver the HUP, so do it
 	# the hard way.
-	if [ "x$HOSTTYPE" = "xsparc" ]; then
-		StopDaemon
-		StartDaemon
-	else
+#	if [ "x$HOSTTYPE" = "xsparc" ]; then
+#		StopDaemon
+#		StartDaemon
+#	else
 		PID=`cat $PIDFILE`
-		kill -HUP $PID
-	fi
+		kill -1 $PID # HUP
+#	fi
 	echo "Waiting for daemon to re-initialize"
 	sleep 4
 }
@@ -197,10 +197,10 @@ StopDaemon()
 	  rm -f $PIDFILE
 	  Exit 1
 	fi
-	kill -TERM $PID
+	kill -15 $PID # TERM
 	sleep 1
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
-	  kill -KILL $PID
+	  kill -9 $PID # KILL
 	  echo "** Daemon failed to terminate!!!  Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
 	  echo "** for clues."
