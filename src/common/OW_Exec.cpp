@@ -100,7 +100,7 @@ private:
 };
 //////////////////////////////////////////////////////////////////////////////
 PopenStreamsImpl::PopenStreamsImpl()
-	: m_pid(0)
+	: m_pid(-1)
 	, m_processstatus(-1)
 {
 }
@@ -187,9 +187,16 @@ int PopenStreamsImpl::getExitStatus()
 	// Close the streams. If the child process is blocked waiting to output,
 	// then this will cause it to get a SIGPIPE, and it may be able to clean
 	// up after itself.
-	in()->close();
-	out()->close();
-	err()->close();
+	UnnamedPipeRef upr;
+	if (upr = in()) {
+		upr->close();
+	}
+	if (upr = out()) {
+		upr->close();
+	}
+	if (upr = err()) {
+		upr->close();
+	}
 	// Now make sure the process has exited. We do everything possible to make
 	// sure the sub-process dies.
 	if (m_pid != -1) // it's set to -1 if we already sucessfully waited for it.
