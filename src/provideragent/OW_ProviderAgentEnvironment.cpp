@@ -79,6 +79,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	, m_classRetrieval(DONT_RETRIEVE_CLASSES)
 	, m_connectionPool(5)
 {
+	m_cimClasses.setMaxCacheSize(cimClasses.size() + 100); // 100 extra just in case.
 	for (Array<CIMClass>::const_iterator iter = cimClasses.begin(); 
 		  iter < cimClasses.end(); ++iter)
 	{
@@ -239,7 +240,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	{
 		OW_THROW(ConfigException, "invalid locking timeout"); 
 	}
-	confItem = getConfigItem(ProviderAgent::DynamicClassRetieval_opt, "false"); 
+	confItem = getConfigItem(ProviderAgent::DynamicClassRetrieval_opt, "false"); 
 	confItem.toLowerCase(); 
 	if (confItem == "true")
 	{

@@ -105,7 +105,7 @@ private:
 
 const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"; 
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
-const char* const ProviderAgent::DynamicClassRetieval_opt = "provider_agent.dynamic_class_retrieval"; 
+const char* const ProviderAgent::DynamicClassRetrieval_opt = "provider_agent.dynamic_class_retrieval"; 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap, 
 							 Array<CppProviderBaseIFCRef> providers, 

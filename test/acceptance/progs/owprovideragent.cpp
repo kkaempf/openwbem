@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
 		String url = parser.getOptionValue(URL_OPT);
 		if (!url.empty())
 		{
-			ConfigFile::setConfigItem(cmap, ProviderAgent::DynamicClassRetieval_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
+			ConfigFile::setConfigItem(cmap, ProviderAgent::DynamicClassRetrieval_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
 		}
 
 		bool debugMode = false;
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
 		LoggerRef logger = Logger::createLogger(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION), debugMode);
 		logger->setLogLevel(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
 
-
+		// TODO: set the http server timeout
 
 		Reference<AuthenticatorIFC> authenticator; 
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 

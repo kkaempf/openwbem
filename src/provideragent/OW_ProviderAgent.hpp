@@ -56,13 +56,30 @@ class ProviderAgent
 public:
 	static const char* const LockingType_opt;  
 	static const char* const LockingTimeout_opt; 
-	static const char* const DynamicClassRetieval_opt; 
+	static const char* const DynamicClassRetrieval_opt; 
 
 	/**
 	 * Create a new provider agent, and start the HTTP server. 
 	 * The ProviderAgent can be used as a stand alone process by 
 	 * creating a ProviderAgent within a fairly simple main(), or 
-	 * it can be embedded within an existing daemon or service. 
+	 * it can be embedded within an existing daemon or service.
+	 * 
+	 * A note about the CIMClasses.
+	 * The ProviderAgent can work in a variety of situations:
+	 * 
+	 * 1. No classes are available. PA ctor params: classes.empty() && 
+	 * (callbackURL.empty() || configMap[DynamicClassRetrieval_opt] != "true").
+	 * A CIMNULL CIMClass will be passed to the providers.
+	 *
+	 * 2. All classes are provided initially. PA ctor params: classes 
+	 * contains all the CIM classes which may be needed by the providers. 
+	 * The appropriate class will be passed to the provider as necessary.
+	 *
+	 * 3. Classes are retrieved as needed. PA ctor params: 
+	 * !callbackURL.empty() && configMap[DynamicClassRetrieval_opt] == "true". 
+	 * When a request comes in, if the appropriate class cannot be found in 
+	 * the cache, then it will be retrieved from the WBEM server identified
+	 * by callbackURL.
 	 * 
 	 * @param configMap The configuration parameters for the ProviderAgent
 	 *        and its embedded HTTP server.  This could possibly come from
