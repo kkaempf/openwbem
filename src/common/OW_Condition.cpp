@@ -38,6 +38,9 @@
 
 #include <cassert>
 #include <cerrno>
+#ifdef OW_HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
 
 namespace OpenWBEM
 {
@@ -94,8 +97,10 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 	mutex.conditionPreWait(state);
 	bool ret = false;
 	timespec ts;
-	ts.tv_sec = time(NULL) + sTimeout;
-	ts.tv_nsec = usTimeout * 1000;
+	struct timeval now;
+	::gettimeofday(&now, NULL);
+	ts.tv_sec = now.tv_sec + sTimeout;
+	ts.tv_nsec = (now.tv_usec + usTimeout) * 1000;
 	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
 	mutex.conditionPostWait(state);
 	assert(res == 0 || res == ETIMEDOUT);
