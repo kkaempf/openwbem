@@ -35,129 +35,122 @@
 namespace OpenWBEM
 {
 
-
+/////////////////////////////////////////////////////////////////////////////
 class CIMClassEnumBuilder : public CIMClassResultHandlerIFC
 {
 public:
 	CIMClassEnumBuilder(CIMClassEnumeration& e) : m_e(e) {}
+	virtual ~CIMClassEnumBuilder();
 protected:
-	virtual void doHandle(const CIMClass &c)
-	{
-		m_e.addElement(c);
-	}
+	virtual void doHandle(const CIMClass &c);
 private:
 	CIMClassEnumeration& m_e;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 class CIMClassArrayBuilder : public CIMClassResultHandlerIFC
 {
 public:
 	CIMClassArrayBuilder(CIMClassArray& a) : m_a(a) {}
+	virtual ~CIMClassArrayBuilder();
 protected:
-	virtual void doHandle(const CIMClass &c)
-	{
-		m_a.push_back(c);
-	}
+	virtual void doHandle(const CIMClass &c);
 private:
 	CIMClassArray& m_a;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 class StringArrayBuilder : public StringResultHandlerIFC
 {
 public:
 	StringArrayBuilder(StringArray& a) : m_a(a) {}
+	virtual ~StringArrayBuilder();
 protected:
-	virtual void doHandle(const String &s)
-	{
-		m_a.push_back(s);
-	}
+	virtual void doHandle(const String &s);
 private:
 	StringArray& m_a;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 class StringEnumBuilder : public StringResultHandlerIFC
 {
 public:
 	StringEnumBuilder(StringEnumeration& e) : m_e(e) {}
+	virtual ~StringEnumBuilder();
 protected:
-	virtual void doHandle(const String &s)
-	{
-		m_e.addElement(s);
-	}
+	virtual void doHandle(const String &s);
 private:
 	StringEnumeration& m_e;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 class CIMObjectPathEnumBuilder : public CIMObjectPathResultHandlerIFC
 {
 public:
 	CIMObjectPathEnumBuilder(CIMObjectPathEnumeration& e) : m_e(e) {}
+	virtual ~CIMObjectPathEnumBuilder();
 protected:
-	virtual void doHandle(const CIMObjectPath &cop)
-	{
-		m_e.addElement(cop);
-	}
+	virtual void doHandle(const CIMObjectPath &cop);
 private:
 	CIMObjectPathEnumeration& m_e;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 class CIMObjectPathArrayBuilder : public CIMObjectPathResultHandlerIFC
 {
 public:
 	CIMObjectPathArrayBuilder(CIMObjectPathArray& a) : m_a(a) {}
+	virtual ~CIMObjectPathArrayBuilder();
 protected:
-	virtual void doHandle(const CIMObjectPath &cop)
-	{
-		m_a.push_back(cop);
-	}
+	virtual void doHandle(const CIMObjectPath &cop);
 private:
 	CIMObjectPathArray& m_a;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
 	CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
+	virtual ~CIMInstanceEnumBuilder();
 protected:
-	virtual void doHandle(const CIMInstance &i)
-	{
-		m_e.addElement(i);
-	}
+	virtual void doHandle(const CIMInstance &i);
 private:
 	CIMInstanceEnumeration& m_e;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 class CIMInstanceArrayBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
 	CIMInstanceArrayBuilder(CIMInstanceArray& a) : m_a(a) {}
+	virtual ~CIMInstanceArrayBuilder();
 protected:
-	virtual void doHandle(const CIMInstance &i)
-	{
-		m_a.push_back(i);
-	}
+	virtual void doHandle(const CIMInstance &i);
 private:
 	CIMInstanceArray& m_a;
 };
 
+/////////////////////////////////////////////////////////////////////////////
 class CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
 {
 public:
 	CIMQualifierTypeEnumBuilder(CIMQualifierTypeEnumeration& e) : m_e(e) {}
+	virtual ~CIMQualifierTypeEnumBuilder();
 protected:
-	virtual void doHandle(const CIMQualifierType &qt)
-	{
-		m_e.addElement(qt);
-	}
+	virtual void doHandle(const CIMQualifierType &qt);
 private:
 	CIMQualifierTypeEnumeration& m_e;
 };
+
+/////////////////////////////////////////////////////////////////////////////
 class CIMQualifierTypeArrayBuilder : public CIMQualifierTypeResultHandlerIFC
 {
 public:
 	CIMQualifierTypeArrayBuilder(CIMQualifierTypeArray& a) : m_a(a) {}
+	virtual ~CIMQualifierTypeArrayBuilder();
 protected:
-	virtual void doHandle(const CIMQualifierType &qt)
-	{
-		m_a.push_back(qt);
-	}
+	virtual void doHandle(const CIMQualifierType &qt);
 private:
 	CIMQualifierTypeArray& m_a;
 };

@@ -71,6 +71,7 @@ OW_RWLocker.cpp \
 OW_RandomNumber.cpp \
 OW_ReferenceBase.cpp \
 OW_RepositoryCIMOMHandle.cpp \
+OW_ResultHandlers.cpp \
 OW_Runnable.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
