@@ -89,6 +89,7 @@ public:
 	SocketAddress getPeerAddress() const { return m_peerAddress; }
 	SocketHandle_t getfd() { return m_sockfd; }
 	Select_t getSelectObj() const;
+	bool isConnected() const { return m_isConnected; }
 	static void setDumpFiles(const String& in, const String& out);
 protected:
 	virtual int readAux(void* dataIn, int dataInLen) = 0;

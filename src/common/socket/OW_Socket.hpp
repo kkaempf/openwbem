@@ -37,13 +37,13 @@
 #define OW_SOCKET_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
-#include "OW_SocketImpl.hpp"
-#include "OW_SSLSocketImpl.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_String.hpp"
 #include "OW_Types.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SocketFlags.hpp"
+#include "OW_NetworkTypes.hpp"
+#include "OW_SocketAddress.hpp"
 
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
@@ -52,6 +52,10 @@
 
 namespace OpenWBEM
 {
+
+class SocketBaseImpl;
+typedef Reference<SocketBaseImpl> SocketBaseImplRef;
+
 
 OW_DECLARE_EXCEPTION(SocketTimeout)
 class Socket : public SelectableIFC, public IOIFC
@@ -214,6 +218,11 @@ public:
 	 * @return the socket handle
 	 */
 	SocketHandle_t getfd() { return m_impl->getfd(); }
+
+	/**
+	 * Get connected state
+	 */
+	bool isConnected() const { return m_impl->isConnected(); }
 
 #if defined(OW_WIN32)
 	static HANDLE m_SocketsEvent;
