@@ -36,6 +36,9 @@
 
 namespace OW_NAMESPACE
 {
+	IndicationServer::IndicationServer()
+	{
+	}
 	IndicationServer::~IndicationServer()
 	{
 	}

@@ -47,7 +47,7 @@ namespace OW_NAMESPACE
 class OW_CIMOMCOMMON_API IndicationServer : public ServiceIFC
 {
 public:
-	IndicationServer() {}
+	IndicationServer();
 	virtual ~IndicationServer();
 
 	virtual void processIndication(const CIMInstance& instance,
