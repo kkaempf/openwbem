@@ -338,7 +338,20 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	if (!useHttps)
 	{
-		delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
+		try
+		{
+			delivery = hdl.getClass(ns, "CIM_IndicationHandlerCIMXML");
+		}
+		catch (OW_CIMException& e)
+		{
+			if (e.getErrNo() == OW_CIMException::INVALID_CLASS)
+			{
+				// the > 2.6 doesn't exist, try to get the 2.5 class
+				delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
+			}
+			else
+				throw;
+        }
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
 	}
