@@ -234,11 +234,16 @@ CIMQualifier::addFlavor(const CIMFlavor& flavor)
 CIMQualifier&
 CIMQualifier::removeFlavor(Int32 flavor)
 {
-	for(size_t i = 0; i < m_pdata->m_flavors.size(); i++)
+	size_t i = 0;
+	while (i < m_pdata->m_flavors.size())
 	{
 		if(m_pdata->m_flavors[i].getFlavor() == flavor)
 		{
-			m_pdata->m_flavors.remove(i--);
+			m_pdata->m_flavors.remove(i);
+		}
+		else
+		{
+			++i;
 		}
 	}
 	return *this;
