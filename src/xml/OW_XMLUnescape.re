@@ -38,10 +38,12 @@
 #include <limits.h> // for CHAR_MAX
 #include <stdlib.h> // for strtol
 
-
-OW_String OW_XMLUnescape(const OW_String& escapedText)
+namespace OpenWBEM
 {
-	OW_StringBuffer rval(escapedText.length());
+
+String XMLUnescape(const String& escapedText)
+{
+	StringBuffer rval(escapedText.length());
 
 	const char* begin = escapedText.c_str();
 	const char* end = escapedText.c_str() + escapedText.length();
@@ -70,7 +72,7 @@ start:
 		long lval = strtol( thisTokStart + 3, NULL, 16 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(XMLException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
@@ -81,7 +83,7 @@ start:
 		long lval = strtol( thisTokStart + 2, NULL, 10 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
@@ -93,3 +95,5 @@ start:
 
 	return rval.toString();
 }
+
+} // end namespace OpenWBEM

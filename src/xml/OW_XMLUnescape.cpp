@@ -43,14 +43,13 @@ namespace OpenWBEM
 
 String XMLUnescape(const char* escapedText, unsigned len)
 {
-	StringBuffer rval(len * 2);
+	StringBuffer rval(len);
 	const char* begin = escapedText;
-	const char* end = escapedText + len;
 	const char* q;
 	const char* thisTokStart = 0;
 	#define YYCTYPE char
 	#define YYCURSOR        begin
-	#define YYLIMIT         end
+	#define YYLIMIT         begin
 	#define YYMARKER        q
 	#define YYFILL(n)
 start:
