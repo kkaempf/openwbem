@@ -354,7 +354,7 @@ TestSuite()
 		return
 	fi
 
-	RestartDaemon
+	#RestartDaemon
 
 	URL=$1
 	DIFF_FILE=$2
@@ -396,7 +396,7 @@ TestCIMExceptions()
 		return
 	fi
 
-	RestartDaemon
+	#RestartDaemon
 
 	URL=$1
 	OUT_FILE=testCIMExceptions.out
@@ -418,7 +418,7 @@ TestWQL()
 		return
 	fi
 
-	RestartDaemon
+	#RestartDaemon
 	echo "Executing wql test suite, saving output in " $RESULTDIR/wqlTest.out
 	$BUILDDIR/test/acceptance/progs/wqlTest1 ipc://test1:pass1@localhost/owbinary \
 		> $RESULTDIR/wqlTest.out 2>&1 || \
@@ -547,7 +547,7 @@ TestAuth()
 	EditConfig "s!;owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = true!g" 
 	
 	echo "1. Testing Allow Anonymous"
-	StartDaemon
+	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "0" ] || ExitWithFail "1. Allow Anonymous Failed"
@@ -736,7 +736,7 @@ TestMof()
 		return
 	fi
 
-	RestartDaemon
+	#RestartDaemon
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
@@ -787,7 +787,7 @@ Exit()
 OW_MEM_DISABLE=1
 export OW_MEM_DISABLE
 
-if [ "$OWLONGTEST" = "1" ]; then
+if [ "z$OWLONGTEST" = "z1" ]; then
 	OWDIFFSUFFIX=".long"
 fi
 
@@ -822,9 +822,10 @@ Install
 
 cd $STAGEDIR
 
-TestAuth
+StartDaemon
 
-if [ "$OWLONGTEST" = "1" ]; then
+if [ "z$OWLONGTEST" = "z1" ]; then
+  TestAuth
   TestACL
 fi
 
@@ -845,7 +846,7 @@ TestMultiReq
 StopDaemon
 
 
-if [ "$OWLONGTEST" = "1" ]; then
+if [ "z$OWLONGTEST" = "z1" ]; then
   TestInstalledHeaders
   TestInstalledHeadersOneByOne
 fi
