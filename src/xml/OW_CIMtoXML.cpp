@@ -853,12 +853,20 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 void
 CIMtoXML(CIMDataType const& cdt, ostream& ostr)
 {
-	if (cdt.getType() == CIMDataType::INVALID)
+	switch (cdt.getType())
 	{
-		OW_THROWCIMMSG(CIMException::FAILED,
-			"Invalid data type for toXML operation");
+		case CIMDataType::INVALID:
+			OW_THROWCIMMSG(CIMException::FAILED,
+				"Invalid data type for toXML operation");
+			break;
+		// special case for this since CIMDataType::toString() returns REF (appropriate for MOF)
+		case CIMDataType::REFERENCE:
+			ostr << "reference";
+			break;
+		default:
+			ostr << cdt.toString();
+			break;
 	}
-	ostr << cdt.toString();
 }
 /////////////////////////////////////////////////////////////
 void
