@@ -59,8 +59,6 @@
 #include "OW_SessionLanguage.hpp"
 #include "OW_AuthenticationException.hpp"
 
-#include <ios> // for std::ios::badbit
-
 #if defined(BAD)
 #undef BAD
 #endif
