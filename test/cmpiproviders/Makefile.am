@@ -25,9 +25,9 @@ libcmpiTestProvider_a_SOURCES = \
 cmpiTestProvider.c
 
 EXTRA_DIST = \
+cmpiProviderTest.mof
 #IndicationTest.mof \
 #testind.mof \
-cmpiProviderTest.mof
 
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cmpi/common 
