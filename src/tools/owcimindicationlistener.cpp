@@ -141,6 +141,7 @@ int main(int argc, char* argv[])
 		String query(argv[3]);
 		CIMListenerCallbackRef mcb(new myCallBack);
 		LoggerRef logger(new CerrLogger);
+		logger->setLogLevel(E_FATAL_ERROR_LEVEL);
 		HTTPXMLCIMListener hxcl(logger);
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb, getLoginInfo);
