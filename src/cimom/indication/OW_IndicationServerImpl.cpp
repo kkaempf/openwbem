@@ -561,6 +561,7 @@ IndicationServerImpl::_processIndicationRange(
 			String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
 			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
 			{
+				m_env->logDebug("skipping sub because namespace doesn't match");
 				continue;
 			}
 			//-----------------------------------------------------------------
@@ -570,6 +571,7 @@ IndicationServerImpl::_processIndicationRange(
 			WQLInstancePropertySource propSource(instanceArg, hdl, instNS);
 			if (!sub.m_compiledStmt.evaluate(propSource))
 			{
+				m_env->logDebug("skipping sub because wql.evaluate doesn't match");
 				continue;
 			}
 			CIMInstance filteredInstance(filterInstance(instanceArg,
