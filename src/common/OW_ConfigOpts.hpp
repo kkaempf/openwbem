@@ -202,6 +202,9 @@
 #ifndef OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX
 #define OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX "1"
 #endif
+#ifndef OW_DEFAULT_LOG_1_FLUSH
+#define OW_DEFAULT_LOG_1_FLUSH "true"
+#endif
 #ifndef OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE
 #define OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE "false"
 #endif
@@ -210,6 +213,9 @@
 #endif
 #ifndef OW_DEFAULT_REUSE_ADDR
 #define OW_DEFAULT_REUSE_ADDR "true" 
+#endif
+#ifndef OW_DEFAULT_PIDFILE
+#define OW_DEFAULT_PIDFILE OW_PIDFILEDIR "/" OW_PACKAGE_PREFIX "owcimomd.pid"
 #endif
 
 
@@ -293,6 +299,9 @@ namespace ConfigOpts
 	static const char* const LOG_1_LOCATION_opt = "log.%1.location";
 	static const char* const LOG_1_MAX_FILE_SIZE_opt = "log.%1.max_file_size";
 	static const char* const LOG_1_MAX_BACKUP_INDEX_opt = "log.%1.max_backup_index";
+	static const char* const LOG_1_FLUSH_opt = "log.%1.flush";
+
+	static const char* const PIDFILE_opt = "owcimomd.pidfile";
 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
@@ -302,8 +311,8 @@ namespace ConfigOpts
 		const char* name; 
 		const char* defaultValue; 
 	}; 
-	extern NameAndDefault g_defaults[];
-	extern NameAndDefault* g_defaultsEnd;
+	extern const NameAndDefault g_defaults[];
+	extern const NameAndDefault* const g_defaultsEnd;
 
 } // end namespace ConfigOpts
 } // end namespace OW_NAMESPACE

@@ -41,7 +41,7 @@ namespace OW_NAMESPACE
 namespace ConfigOpts
 {
 
-NameAndDefault g_defaults[] = 
+const NameAndDefault g_defaults[] = 
 {
 	{ ACL_SUPERUSER_opt ,  "" },
 	{ ADDITIONAL_LOGS_opt ,  "" },
@@ -98,6 +98,7 @@ NameAndDefault g_defaults[] =
 	{ OWLIB_DIR_opt ,  OW_DEFAULT_OWLIB_DIR },
 	{ PAM_ALLOWED_USERS_opt ,  "" },
 	{ PERLIFC_PROV_LOC_opt ,  "" },
+	{ PIDFILE_opt, OW_DEFAULT_PIDFILE },
 	{ POLLING_MANAGER_MAX_THREADS_opt ,  OW_DEFAULT_POLLING_MANAGER_MAX_THREADS },
 	{ PROVIDER_IFC_LIBS_opt ,  "" },
 	{ REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt ,  OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL },
@@ -114,8 +115,8 @@ NameAndDefault g_defaults[] =
 	{ "zz_end" , "garbage" }
 }; 
 
-	NameAndDefault* g_defaultsEnd = &g_defaults[0] + 
-		(sizeof(g_defaults)/sizeof(*g_defaults)) - 1; 
+const NameAndDefault* const g_defaultsEnd = &g_defaults[0] + 
+	(sizeof(g_defaults)/sizeof(*g_defaults)) - 1; 
 
 
 
