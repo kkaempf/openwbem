@@ -98,8 +98,7 @@ CFLAGS="-I/opt/@GENERIC@/include" \
 	./configure --with-search-dir=/usr/kerberos \
 	--prefix=%{@GENERIC@prefix} \
 	--sysconfdir=%{@GENERIC@sysconfdir} \
-	--localstatedir=%{@GENERIC@localstatedir} \
-	--disable-perl-providerifc
+	--localstatedir=%{@GENERIC@localstatedir} 
 
 
 make -j2
