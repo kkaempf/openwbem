@@ -72,7 +72,7 @@ namespace COWIntrusiveReferenceHelpers
  *  A smart pointer that uses intrusive reference counting.
  *
  *  Relies on unqualified calls to
- *  
+ *
  *      void COWIntrusiveReferenceAddRef(T* p);
  *      void COWIntrusiveReferenceRelease(T* p);
  *      bool COWIntrusiveReferenceUnique(T* p);
@@ -82,7 +82,7 @@ namespace COWIntrusiveReferenceHelpers
  *
  *  The object is responsible for destroying itself.
  *
- * If you want your class to be managed by COWIntrusiveReference, you can 
+ * If you want your class to be managed by COWIntrusiveReference, you can
  * derive it from COWIntrusiveCountableBase, or write your own set of
  * functions.
  */
@@ -244,18 +244,6 @@ template<class T> void swap(COWIntrusiveReference<T> & lhs, COWIntrusiveReferenc
 {
 	lhs.swap(rhs);
 }
-// template<class T, class U> COWIntrusiveReference<T> static_pointer_cast(COWIntrusiveReference<U> const & p)
-// {
-//     return static_cast<T *>(p.getPtr());
-// }
-// template<class T, class U> COWIntrusiveReference<T> const_pointer_cast(COWIntrusiveReference<U> const & p)
-// {
-//     return const_cast<T *>(p.getPtr());
-// }
-// template<class T, class U> COWIntrusiveReference<T> dynamic_pointer_cast(COWIntrusiveReference<U> const & p)
-// {
-//     return dynamic_cast<T *>(p.getPtr());
-// }
 
 } // end namespace OpenWBEM
 
