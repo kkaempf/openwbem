@@ -29,6 +29,8 @@ Fix problems:
     - Put everything into namespace OpenWBEM and remove OW_
     - Make a new header OW_PPconfig.h that is like OW_config.h now.  Make
       OW_config.h to not use PP symbols, use consts derived from the pp symbols.
+	- Get rid of all the bool parameters and replace them with enums
+	  (esp. for cimom handle calls.)
 
 New features:
     - Create intrinsic providers for
@@ -63,9 +65,9 @@ New features:
         X indication (mustPoll = false) w/ extra thread
         X indication/polled (mustPoll = false) and no extra thread.
         X Remove OW_TriggerProviderTest*.
-      - Fix cimListener.cpp to use the new indication providers.
       - OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
+      - Fix cimListener.cpp to use the new indication providers.
 		- Modifying existing filters will affect the indication server, and
 		  may mean that indication providers need to be notified, etc. So:
 		  Create an CIM_IndicationFilter pass-thru provider so we can either:
@@ -208,3 +210,5 @@ Optimizations:
       a provider.  Let the provider ifc/provider do all the work.
     - Do explicit template instantiation to help speed up compiles.  OW_Array
       would be a good candidate for this.
+	- Have OW_CIMClass store a list of base classes.  Then remove some of the
+	  algorithms that have to run up the chain by doing a repeated getClass.

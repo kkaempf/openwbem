@@ -41,6 +41,8 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_NULLValueException.hpp"
+#include "OW_PollingManager.hpp"
+#include "OW_CppProxyProvider.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -218,7 +220,14 @@ private:
 	void doHandle(const OW_String& ns)
 	{
 		instanceEnumerator ie(is, ns);
-		ch->enumInstances(ns,"CIM_IndicationSubscription", ie);
+		try
+		{
+			ch->enumInstances(ns,"CIM_IndicationSubscription", ie);
+		}
+		catch (const OW_CIMException& ce)
+		{
+			// do nothing, class probably doesn't exist in the namespace
+		}
 	}
 
 	OW_CIMOMHandleIFCRef ch;
@@ -585,7 +594,7 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 	{
 		OW_String lowerPropName(propArray[i].getName());
 		lowerPropName.toLowerCase();
-		if (propsToKeep.count(lowerPropName) > 0)
+		if (propsToKeep.count(lowerPropName) > 0 || propsToKeep.count("*") > 0)
 		{
 			OW_CIMProperty thePropToKeep(propArray[i]);
 			// if it's an embedded instance, we need to recurse on it.
@@ -620,7 +629,6 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 {
 	m_env->logDebug(format("OW_IndicationServerImpl::_processIndication "
 		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
-	OW_ACLInfo aclInfo;
 
 	// TODO: Figure out if we should really set the IndicationTime property
 	// of if it's the provider's responsibility.
@@ -629,8 +637,6 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	//dtm.setToCurrent();
 	//OW_CIMDateTime cdt(dtm);
 	//instance.setProperty("IndicationTime", OW_CIMValue(cdt));
-
-	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
 
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 
@@ -642,27 +648,40 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	}
 
 	OW_String key = instanceArg.getClassName();
-    OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
-	if (prop)
-	{
-		OW_CIMValue v = prop.getValue();
-		if (v)
-		{
-			if (v.getType() == OW_CIMDataType::EMBEDDEDINSTANCE)
-			{
-				OW_CIMInstance embed;
-				v.get(embed);
-				key += ":";
-				key += embed.getClassName();
-			}
-		}
-	}
+	key.toLowerCase();
 
 	OW_MutexLock lock(m_subGuard);
 	std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
 		m_subscriptions.equal_range(key);
-	subscriptions_t::iterator first = range.first;
-	subscriptions_t::iterator last = range.second;
+	_processIndicationRange(instanceArg, instNS, range.first, range.second);
+
+    OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
+	if (!prop)
+		return;
+	OW_CIMValue v = prop.getValue();
+	if (!v)
+		return;
+	if (v.getType() != OW_CIMDataType::EMBEDDEDINSTANCE)
+		return;
+
+	OW_CIMInstance embed;
+	v.get(embed);
+	key += ":";
+	key += embed.getClassName();
+	key.toLowerCase();
+
+	range = m_subscriptions.equal_range(key);
+	_processIndicationRange(instanceArg, instNS, range.first, range.second);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationServerImpl::_processIndicationRange(
+	const OW_CIMInstance& instanceArg, const OW_String instNS,
+	subscriptions_t::iterator first, subscriptions_t::iterator last)
+{
+	OW_ACLInfo aclInfo;
+	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
 
 	for( ;first != last; ++first)
 	{
@@ -671,7 +690,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			Subscription& sub = first->second;
 			OW_CIMInstance filterInst = sub.m_filter;
 
-			OW_String queryLanguage = sub.m_filter.getPropertyT("Filter").getValueT().toString();
+			OW_String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
 
 			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
 			{
@@ -772,7 +791,7 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 	OW_IndicationExportProviderIFCRef pref(0);
 	OW_String lowerClassName(className);
 	lowerClassName.toLowerCase();
-	OW_Map<OW_String, OW_IndicationExportProviderIFCRef>::iterator it =
+	provider_map_t::iterator it =
 		m_providers.find(lowerClassName);
 
 	if(it != m_providers.end())
@@ -801,9 +820,42 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 			{
 				try
 				{
-					OW_IndicationProviderIFCRef p = sub.m_providers[i];
-					bool lastActivation = false; // TODO: Figure this out
-					p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes, lastActivation);
+					if (sub.m_isPolled[i])
+					{
+						// loop through all the classes in the subscription.
+						// TODO: This is slightly less than optimal, since
+						// m_classes may contain a class that isn't handled by
+						// the provider
+						for (size_t j = 0; j < sub.m_classes.size(); ++j)
+						{
+							OW_String key = sub.m_classes[i];
+							key.toLowerCase();
+							poller_map_t::iterator iter = m_pollers.find(key);
+							if (iter != m_pollers.end())
+							{
+								OW_LifecycleIndicationPollerRef p = iter->second;
+								if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
+								{
+									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+								}
+								else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
+								{
+									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+								}
+								else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
+								{
+									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+								}
+							}
+						}
+					}
+					else
+					{
+						OW_IndicationProviderIFCRef p = sub.m_providers[i];
+						bool lastActivation = false; // TODO: Figure this out
+						p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes, lastActivation);
+					}
+					
 				}
 				catch (const OW_Exception& e)
 				{
@@ -915,13 +967,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 
 	// find providers that support this query. If none are found, throw an exception.
 	OW_ProviderManagerRef pm (m_env->getProviderManager());
-	OW_IndicationProviderIFCRefArray providers;
-	if (isaClassNames.empty())
-	{
-		providers = pm->getIndicationProviders(createProvEnvRef(m_env), ns, 
+	OW_IndicationProviderIFCRefArray providers = 
+		pm->getIndicationProviders(createProvEnvRef(m_env), ns, 
 			indicationClassName, "");
-	}
-	else
+	if (!isaClassNames.empty())
 	{
 		for (size_t i = 0; i < isaClassNames.size(); ++i)
 		{
@@ -956,6 +1005,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	sub.m_subPath = OW_CIMObjectPath(subInst);
 	sub.m_sub = subInst;
 	sub.m_providers = providers;
+	sub.m_isPolled.resize(providers.size(), false);
 	sub.m_filter = filterInst;
 	sub.m_selectStmt = selectStmt;
 	sub.m_compiledStmt = compiledStmt;
@@ -994,6 +1044,78 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		}
 	}
 
+	// Call mustPoll on all the providers
+	for (size_t i = 0; i < providers.size(); ++i)
+	{
+		try
+		{
+			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
+				selectStmt, indicationClassName, ns, isaClassNames);
+			if (pollInterval > 0)
+			{
+				sub.m_isPolled[i] = true; // TODO: This isn't modifying the real thing!
+				for (size_t j = 0; j < sub.m_classes.size(); ++j)
+				{
+					OW_String key = sub.m_classes[i];
+					key.toLowerCase();
+					poller_map_t::iterator iter = m_pollers.find(key);
+					if (iter != m_pollers.end())
+					{
+						OW_LifecycleIndicationPollerRef p = iter->second;
+						if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+						}
+						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+						}
+						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+						}
+						p->addPollInterval(pollInterval);
+					}
+					else
+					{
+						OW_LifecycleIndicationPollerRef p(OW_SharedLibraryRef(0), 
+							OW_Reference<OW_LifecycleIndicationPoller>(new OW_LifecycleIndicationPoller(ns, key, pollInterval)));
+
+						if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+						}
+						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+						}
+						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
+						{
+							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+						}
+						p->addPollInterval(pollInterval);
+
+						m_pollers.insert(std::make_pair(key, p));
+						m_env->getPollingManager()->addPolledProvider(
+							OW_PolledProviderIFCRef(
+								new OW_CppPolledProviderProxy(
+									OW_CppPolledProviderIFCRef(p))));
+					}
+
+				}
+			}
+			
+		}
+		catch (OW_CIMException& ce)
+		{
+			m_env->getLogger()->logError(format("Caught exception while calling mustPoll for provider: %1", ce));
+		}
+		catch (...)
+		{
+			m_env->getLogger()->logError("Caught unknown exception while calling mustPoll for provider");
+		}
+	}
+
 	// call activateFilter on all the providers
 	// If activateFilter calls fail or throw, just ignore it and keep going.
 	// If none succeed, we need to remove it from m_subscriptions and throw 
@@ -1019,6 +1141,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		}
 	}
 
+	if (successfulActivations == 0)
+	{
+		// TODO: Remove it and throw
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

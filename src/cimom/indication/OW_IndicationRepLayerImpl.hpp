@@ -53,7 +53,7 @@ public:
 
 	virtual OW_CIMOMEnvironmentRef getEnvironment() const
 	{
-		return m_pServer->getEnvironment();
+		return m_pEnv;
 	}
 
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
@@ -385,6 +385,7 @@ public:
 	virtual void setCIMServer(const OW_RepositoryIFCRef& src)
 	{
 		m_pServer = src;
+		m_pEnv = m_pServer->getEnvironment();
 	}
 
 
@@ -394,11 +395,12 @@ private:
 	void exportIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS)
 	{
-		getEnvironment()->exportIndication(instance, instNS);
+		m_pEnv->exportIndication(instance, instNS);
 	}
 
 
 	OW_RepositoryIFCRef m_pServer;
+	OW_CIMOMEnvironmentRef m_pEnv;
 };
 
 #endif

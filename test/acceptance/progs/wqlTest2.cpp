@@ -323,6 +323,10 @@ int main(int , char**)
 		testQuery("SELECT * FROM ClassName WHERE v IS NULL");
 		testQuery("SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = \"BLAH\")) AND NOT ((x<10) OR (y>4.0))");
 		testQuery("SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = \"BLAH\")) AND NOT NOT ((x<10) OR (y>4.0)))");
+
+		// more tests
+		testQuery("select * from wqlTestClass", inst);
+
 		return 0;
 	}
 	catch(OW_Exception& e)

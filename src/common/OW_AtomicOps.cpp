@@ -68,6 +68,13 @@ int OW_AtomicGet(OW_Atomic_t const &v)
 	return v.val;
 }
 
+void OW_AtomicDec(OW_Atomic_t &v)
+{
+	pthread_spin_lock(&v.spinlock);
+	--v.val;
+	pthread_spin_unlock(&v.spinlock);
+}
+
 #else
 
 #if defined(OW_USE_DEFAULT_ATOMIC_OPS)
@@ -94,6 +101,12 @@ int OW_AtomicGet(OW_Atomic_t const &v)
 {
     OW_MutexLock lock(guard);
 	return v.val;
+}
+
+void OW_AtomicDec(OW_Atomic_t &v)
+{
+    OW_MutexLock lock(guard);
+    --v.val;
 }
 
 #endif

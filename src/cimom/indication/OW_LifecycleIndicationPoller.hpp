@@ -40,26 +40,29 @@ class OW_LifecycleIndicationPoller : public OW_CppPolledProviderIFC
 {
 public:
 	OW_LifecycleIndicationPoller(const OW_String& ns, const OW_String& className,
-		OW_UInt32 pollInterval, OW_UInt32 pollOps);
+		OW_UInt32 pollInterval);
 
 	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef &env);
 	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
 
 	// used to determine what types of indications to create
-	enum
+	enum PollOp
 	{
-		POLL_FOR_INSTANCE_CREATION = 1,
-		POLL_FOR_INSTANCE_MODIFICATION = 2,
-		POLL_FOR_INSTANCE_DELETION = 4
+		POLL_FOR_INSTANCE_CREATION,
+		POLL_FOR_INSTANCE_MODIFICATION,
+		POLL_FOR_INSTANCE_DELETION
 	};
 
-	// takes a POLL_FOR_INSTANCE* flag and adds it to the current set
-	// returns the current flags
-	OW_UInt32 addPollOp(OW_UInt32 op);
+	// takes a POLL_FOR_INSTANCE* flag and indicates a provider has requested
+	// we poll for it.
+	void addPollOp(PollOp op);
 
-	// takes a POLL_FOR_INSTANCE* flag and removes it from the current set
-	// returns the current flags
-	OW_UInt32 removePollOp(OW_UInt32 op);
+	// takes a POLL_FOR_INSTANCE* flag and indicates a provider has requested
+	// we poll for it, and the subscription was removed.
+	void removePollOp(PollOp op);
+
+	// returns true if the there are any poll operations to do
+	bool willPoll() const;
 
 	// a new poll interval will be considered.  The new interval will be the
 	// min of newPollInterval and the current poll interval.  The new interval
@@ -67,13 +70,14 @@ public:
 	OW_UInt32 addPollInterval(OW_UInt32 newPollInterval);
 
 private:
-	OW_UInt32 getPollOps() const;
 	OW_UInt32 getPollInterval() const;
 
 	OW_String m_ns;
 	OW_String m_classname;
 	OW_UInt32 m_pollInterval;
-	OW_UInt32 m_pollOps;
+	OW_UInt32 m_pollCreation;
+	OW_UInt32 m_pollModification;
+	OW_UInt32 m_pollDeletion;
 	mutable OW_Mutex m_guard;
 	OW_CIMInstanceArray m_prevInsts;
 };

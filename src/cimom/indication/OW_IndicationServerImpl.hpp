@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_Map.hpp"
+#include "OW_HashMap.hpp"
 #include "OW_List.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
@@ -49,6 +49,7 @@
 #include "OW_HashMultiMap.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_WQLCompile.hpp"
+#include "OW_LifecycleIndicationPoller.hpp"
 
 
 class OW_NotifyTrans;
@@ -87,9 +88,35 @@ public:
 	virtual void modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst);
 private:
 
+	struct Subscription
+	{
+		Subscription()
+			: m_subPath(OW_CIMNULL)
+			, m_sub(OW_CIMNULL)
+			, m_filter(OW_CIMNULL)
+		{}
+
+		OW_CIMObjectPath m_subPath;
+		OW_CIMInstance m_sub;
+		OW_IndicationProviderIFCRefArray m_providers;
+		OW_CIMInstance m_filter;
+		OW_WQLSelectStatement m_selectStmt;
+		OW_WQLCompile m_compiledStmt;
+		OW_StringArray m_classes;
+		OW_String m_filterSourceNameSpace;
+		OW_Array<bool> m_isPolled; // each bool corresponds to a provider
+	};
+
+	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
+	typedef OW_HashMultiMap<OW_String, Subscription> subscriptions_t;
+
+
 	void _processIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS);
 
+	void _processIndicationRange(
+		const OW_CIMInstance& instanceArg, const OW_String instNS,
+		subscriptions_t::iterator first, subscriptions_t::iterator last);
 
 	void addTrans(const OW_String& ns, const OW_CIMInstance& indication,
 		const OW_CIMInstance& handler,
@@ -108,7 +135,8 @@ private:
 		OW_String nameSpace;
 	};
 
-	OW_Map<OW_String, OW_IndicationExportProviderIFCRef> m_providers;
+	typedef OW_HashMap<OW_String, OW_IndicationExportProviderIFCRef> provider_map_t;
+	provider_map_t m_providers;
 	
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
@@ -125,27 +153,13 @@ private:
 	OW_CIMOMEnvironmentRef m_env;
 	OW_Semaphore* m_startedSem;
 
-	struct Subscription
-	{
-		Subscription()
-			: m_subPath(OW_CIMNULL)
-		{}
-
-		OW_CIMObjectPath m_subPath;
-		OW_CIMInstance m_sub;
-		OW_IndicationProviderIFCRefArray m_providers;
-		OW_CIMInstance m_filter;
-		OW_WQLSelectStatement m_selectStmt;
-		OW_WQLCompile m_compiledStmt;
-		OW_StringArray m_classes;
-		OW_String m_filterSourceNameSpace;
-	};
-
-	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
-	typedef OW_HashMultiMap<OW_String, Subscription> subscriptions_t;
 	subscriptions_t m_subscriptions;
 	OW_Mutex m_subGuard;
 
+	typedef OW_SharedLibraryReference<OW_LifecycleIndicationPoller> OW_LifecycleIndicationPollerRef;
+
+	typedef OW_HashMap<OW_String, OW_LifecycleIndicationPollerRef > poller_map_t;
+	poller_map_t m_pollers;
 };
 
 #endif

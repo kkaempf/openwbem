@@ -2211,3 +2211,13 @@ Tableau 3
 PROPERTY_NAME: x < INTEGER_VALUE: 5
 PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
 PROPERTY_NAME: z = STRING_VALUE: BLAH
+
+Executing query 131 local: select * from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+}
+stmt.evaluateWhereClause(&source): passed
+comp.evaluate(&source): passed

@@ -52,6 +52,14 @@ public:
 	{
 	}
 
+	/* construct out of a reference to a derived type.  U should be
+	derived from T */
+	template <class U>
+	OW_SharedLibraryReference(const OW_SharedLibraryReference<U>& arg)
+	: m_sharedLib(arg.m_sharedLib), m_obj(arg.m_obj)
+	{
+	}
+
 	OW_SharedLibraryReference()
 	: m_sharedLib(), m_obj()
 	{}
@@ -107,7 +115,7 @@ public:
 	}
 	
 	template <class U>
-	OW_SharedLibraryReference<U> cast_to()
+	OW_SharedLibraryReference<U> cast_to() const
 	{
 		OW_SharedLibraryReference<U> rval;
 		rval.m_obj = m_obj.cast_to<U>();

@@ -172,7 +172,7 @@ class OW_Reference : private OW_ReferenceBase
 			{  return (!isNull()) ? 0: &dummy::nonnull; }
 
 		template <class U>
-		OW_Reference<U> cast_to();
+		OW_Reference<U> cast_to() const;
 
 		template <class U>
 		void useRefCountOf(const OW_Reference<U>&);
@@ -330,14 +330,14 @@ inline void OW_Reference<T>::checkNull() const
 template <class T>
 template <class U>
 inline OW_Reference<U>
-OW_Reference<T>::cast_to()
+OW_Reference<T>::cast_to() const
 {
 	OW_Reference<U> rval;
 	rval.m_pObj = dynamic_cast<U*>(m_pObj);
 	if (rval.m_pObj)
 	{
-		incRef();
 		rval.m_pRefCount = m_pRefCount;
+		rval.incRef();
 	}
 	return rval;
 }

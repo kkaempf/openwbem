@@ -64,6 +64,7 @@ class OW_IndicationRepLayer;
 class OW_RepositoryIFC;
 class OW_PollingManager;
 class OW_IndicationServer;
+class OW_IndicationRepLayerMediator;
 
 typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
 typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
@@ -79,6 +80,8 @@ typedef OW_SharedLibraryReference<OW_ServiceIFC> OW_ServiceIFCRef;
 typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 typedef OW_SharedLibraryReference<OW_RepositoryIFC>
 	OW_SharedLibraryRepositoryIFCRef;
+typedef OW_Reference<OW_IndicationRepLayerMediator> 
+	OW_IndicationRepLayerMediatorRef;
 
 class OW_CIMOMEnvironment;
 typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
@@ -143,6 +146,7 @@ public:
 	void exportIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS);
 	void unloadReqHandlers();
+	OW_IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 
 	// do not use this variable unless absolutely necessary!
 	static OW_CIMOMEnvironmentRef g_cimomEnvironment;
@@ -194,6 +198,7 @@ private:
 	
 	bool m_running;
 	OW_Mutex m_runningGuard;
+	OW_IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
 };
 
 #endif

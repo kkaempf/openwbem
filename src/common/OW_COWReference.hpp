@@ -156,7 +156,7 @@ class OW_COWReference : private OW_COWReferenceBase
 			{  return (!isNull()) ? 0: &dummy::nonnull; }
 
 		template <class U>
-		OW_COWReference<U> cast_to();
+		OW_COWReference<U> cast_to() const;
 
 	private:
 		T* volatile m_pObj;
@@ -362,14 +362,14 @@ inline void OW_COWReference<T>::checkNull() const
 template <class T>
 template <class U>
 inline OW_COWReference<U>
-OW_COWReference<T>::cast_to()
+OW_COWReference<T>::cast_to() const
 {
 	OW_COWReference<U> rval;
 	rval.m_pObj = dynamic_cast<U*>(m_pObj);
 	if (rval.m_pObj)
 	{
-		incRef();
 		rval.m_pRefCount = m_pRefCount;
+		rval.incRef();
 	}
 	return rval;
 }

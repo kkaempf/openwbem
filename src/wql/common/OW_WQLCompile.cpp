@@ -268,7 +268,13 @@ bool OW_WQLCompile::evaluate(const OW_WQLPropertySource& source) const
 	bool b = false;
 	OW_WQLOperand lhs, rhs;
 
-	for (OW_UInt32 i=0,n = _tableau.size(); i < n; i++)
+	OW_UInt32 tableauSize = _tableau.size();
+	if (tableauSize == 0)
+	{
+		return true;
+	}
+
+	for (OW_UInt32 i = 0; i < tableauSize; i++)
 	{
 		TableauRow tr = _tableau[i];
 		for (OW_UInt32 j=0,m = tr.size(); j < m; j++)

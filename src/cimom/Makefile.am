@@ -23,6 +23,7 @@ OW_CIMOMEnvironment.cpp \
 OW_CIMServer.cpp \
 OW_GenericHDBRepository.cpp \
 OW_IndexImpl.cpp \
+OW_IndicationRepLayerMediator.cpp \
 OW_InstanceRepository.cpp \
 OW_LocalCIMOMHandle.cpp \
 OW_MetaRepository.cpp \
@@ -41,6 +42,7 @@ OW_CIMOMEnvironment.hpp \
 OW_CIMServer.hpp \
 OW_GenericHDBRepository.hpp \
 OW_Index.hpp \
+OW_IndicationRepLayerMediator.hpp \
 OW_InstanceRepository.hpp \
 OW_LocalCIMOMHandle.hpp \
 OW_MetaRepository.hpp \

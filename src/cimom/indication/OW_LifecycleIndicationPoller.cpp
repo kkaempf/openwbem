@@ -39,42 +39,61 @@
 //////////////////////////////////////////////////////////////////////////////
 OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(
 	const OW_String& ns, const OW_String& className,
-	OW_UInt32 pollInterval, OW_UInt32 pollOps)
+	OW_UInt32 pollInterval)
 	: m_ns(ns)
 	, m_classname(className)
 	, m_pollInterval(pollInterval)
-	, m_pollOps(pollOps)
+	, m_pollCreation(0)
+	, m_pollModification(0)
+	, m_pollDeletion(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// returns the current bitmaks of flags.
-OW_UInt32 
-OW_LifecycleIndicationPoller::addPollOp(OW_UInt32 op)
+void
+OW_LifecycleIndicationPoller::addPollOp(PollOp op)
 {
 	OW_MutexLock l(m_guard);
-	m_pollOps |= op;
-	return m_pollOps;
+	switch (op)
+	{
+		case POLL_FOR_INSTANCE_CREATION:
+			++m_pollCreation;
+			break;
+		case POLL_FOR_INSTANCE_MODIFICATION:
+			++m_pollModification;
+			break;
+		case POLL_FOR_INSTANCE_DELETION:
+			++m_pollDeletion;
+			break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// takes a bitwise or of POLL_FOR_INSTANCE* flags
-OW_UInt32
-OW_LifecycleIndicationPoller::removePollOp(OW_UInt32 op)
+// takes a POLL_FOR_INSTANCE* flag
+void
+OW_LifecycleIndicationPoller::removePollOp(PollOp op)
 {
 	OW_MutexLock l(m_guard);
-	m_pollOps -= op;
-	return m_pollOps;
+	switch (op)
+	{
+		case POLL_FOR_INSTANCE_CREATION:
+			--m_pollCreation;
+			break;
+		case POLL_FOR_INSTANCE_MODIFICATION:
+			--m_pollModification;
+			break;
+		case POLL_FOR_INSTANCE_DELETION:
+			--m_pollDeletion;
+			break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_LifecycleIndicationPoller::getPollOps() const
+bool
+OW_LifecycleIndicationPoller::willPoll() const
 {
-	OW_MutexLock l(m_guard);
-	return m_pollOps;
+	return m_pollCreation > 0 || m_pollModification > 0 || m_pollDeletion > 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt32
 OW_LifecycleIndicationPoller::addPollInterval(OW_UInt32 newPollInterval)
@@ -138,8 +157,7 @@ namespace
 OW_Int32
 OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
-	OW_UInt32 ops = getPollOps();
-	if (ops == 0)
+	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
 		return 0;
@@ -173,7 +191,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 		if (sortByInstancePath()(*pi, *ci))
 		{
 			// *pi has been deleted
-			if (ops & POLL_FOR_INSTANCE_DELETION)
+			if (m_pollDeletion)
 			{
 				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstDeletion");
@@ -185,7 +203,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 		else if (sortByInstancePath()(*ci, *pi))
 		{
 			// *ci is new
-			if (ops & POLL_FOR_INSTANCE_CREATION)
+			if (m_pollCreation)
 			{
 				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
@@ -196,7 +214,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 		}
 		else // *pi == *ci
 		{
-			if (ops & POLL_FOR_INSTANCE_MODIFICATION)
+			if (m_pollModification)
 			{
 				if (!pi->propertiesAreEqualTo(*ci))
 				{

@@ -50,8 +50,12 @@ public:
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
 	 * It should insert an entry for each class it is responsible for.
-	 *  The entry consists of the class name and an optional list of namespaces.
-	 *  If the namespace list is empty, all namespaces are implied.
+	 * It should also insert one entry for each base class of the classes 
+	 * of indications the provider may generate.  Note that this base class
+	 * requirement is unique to indication providers and doesn't apply to
+	 * other types of providers.
+	 * The entry consists of the class name and an optional list of namespaces.
+	 * If the namespace list is empty, all namespaces are implied.
 	 * If the method does nothing, then the provider's class must have a
 	 * provider qualifier that identifies the provider.  This old behavior is
 	 * deprecated and will be removed sometime in the future.  This method

@@ -94,6 +94,8 @@ int main(int argc, char* argv[])
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
+					env = OW_CIMOMEnvironment::g_cimomEnvironment = 0;
+					env = OW_CIMOMEnvironment::g_cimomEnvironment = new OW_CIMOMEnvironment;
 					processCommandLine(argc, argv, env);
 					env->init();
 					env->startServices();

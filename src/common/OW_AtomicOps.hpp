@@ -65,6 +65,14 @@ inline int OW_AtomicGet(OW_Atomic_t const &v)
 	return v.val;
 }
 
+inline void OW_AtomicDec(OW_Atomic_t &v)
+{
+	__asm__ __volatile__(
+		"lock ; " "decl %0"
+		:"=m" (v.val)
+		:"m" (v.val));
+}
+
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
 
 #include <pthread.h>
@@ -79,6 +87,7 @@ struct OW_Atomic_t
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);
 int OW_AtomicGet(OW_Atomic_t const &v);
+void OW_AtomicDec(OW_Atomic_t &v);
 
 
 #else
@@ -96,6 +105,7 @@ struct OW_Atomic_t
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);
 int OW_AtomicGet(OW_Atomic_t const &v);
+void OW_AtomicDec(OW_Atomic_t &v);
 
 #endif
 

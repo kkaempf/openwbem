@@ -53,6 +53,7 @@
 #include "OW_SharedLibraryRepository.hpp"
 #include "OW_UnloaderProvider.hpp"
 #include "OW_NameSpaceProvider.hpp"
+#include "OW_IndicationRepLayerMediator.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -148,6 +149,7 @@ OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	, m_indicationRepLayerDisabled(false)
 	, m_selectableLock()
 	, m_running(false)
+	, m_indicationRepLayerMediatorRef(new OW_IndicationRepLayerMediator)
 {
 }
 
@@ -1167,6 +1169,12 @@ OW_CIMOMEnvironment::logError(const OW_String& s) const
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationRepLayerMediatorRef
+OW_CIMOMEnvironment::getIndicationRepLayerMediator() const
+{
+	return m_indicationRepLayerMediatorRef;
+}
 
 
 

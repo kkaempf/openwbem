@@ -102,7 +102,7 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_String& /*nameSpace*/,
+		const OW_String& nameSpace,
 		const OW_StringArray& classes, 
 		bool firstActivation)
 	{
@@ -135,6 +135,11 @@ public:
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
+		}
+
+		if (!m_theClass)
+		{
+			m_theClass = env->getCIMOMHandle()->getClass(nameSpace, "OW_IndicationProviderTest3");
 		}
 
 		OW_WQLCompile comp(filter);
