@@ -224,6 +224,10 @@ processCommandLineOptions(int argc, char** argv)
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+#ifdef OW_FREEBSD
+typedef void (*sighandler_t)(int);
+#endif
+
 static void
 handleSignalAux(int sig, sighandler_t handler)
 {
@@ -332,7 +336,9 @@ setupSigHandler(bool dbgFlg)
 	ignoreSignal(SIGXFSZ);
 	ignoreSignal(SIGVTALRM);
 	ignoreSignal(SIGPROF);
+#ifdef SIGPWR // FreeBSD doesn't have SIGPWR
 	ignoreSignal(SIGPWR);
+#endif
 	// ?
 	//handleSignal(SIGALRM);
 	//handleSignal(SIGABRT);
