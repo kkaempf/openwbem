@@ -137,7 +137,13 @@ static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ihm";
 static int
 processCommandLineOptions(int argc, char** argv)
 {
+	// Set defaults
+	g_url = def_url_arg;
+	g_opts.m_namespace = def_namespace_arg;
+	g_encoding = def_encoding_arg;
+
 	// handle backwards compatible options, which was <URL> <namespace> <file>
+	// This has to be done after setting the defaults.
 	// TODO: This is deprecated, remove it post 3.0
 	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 	{
@@ -147,11 +153,6 @@ processCommandLineOptions(int argc, char** argv)
 		cerr << "This cmd line usage is deprecated!\n";
 		return 0;
 	}
-
-	// Set defaults
-	g_url = def_url_arg;
-	g_opts.m_namespace = def_namespace_arg;
-	g_encoding = def_encoding_arg;
 
 #ifdef OW_HAVE_GETOPT_LONG
 	int optndx = 0;
