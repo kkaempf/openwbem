@@ -79,7 +79,7 @@ OW_CMPIInstanceProviderProxy::enumInstanceNames(
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
 		}
         }
         else
@@ -158,7 +158,7 @@ OW_CMPIInstanceProviderProxy::enumInstances(
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
 		}
         }
         else
@@ -203,7 +203,7 @@ OW_CMPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef 
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
 		}
         }
         else
@@ -281,7 +281,7 @@ OW_CMPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &en
 		}
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg)); 
 		}
         }
 	else
@@ -335,7 +335,7 @@ OW_CMPIInstanceProviderProxy::createInstance(
 		}
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
 		}
         }
         else
@@ -398,7 +398,7 @@ OW_CMPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, OW_String(rc.rc).c_str());
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
 		}
         }
 	else
