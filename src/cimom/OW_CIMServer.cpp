@@ -2248,8 +2248,14 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	{
 		// need to get all the assoc classes with dynamic providers
 		OW_CIMObjectPath cop(className, ns);
-		// this was faster: _staticReferencesClass(cop,0,role,true,false,0,0,&result);
-		m_cimRepository->referencesClasses(ns,cop,result,assocClassName,role,true,false,0,intAclInfo);
+		if (m_realRepository)
+		{
+			m_realRepository->_staticReferencesClass(cop,0,role,true,false,0,0,&result,intAclInfo);
+		}
+		else
+		{
+			m_cimRepository->referencesClasses(ns,cop,result,assocClassName,role,true,false,0,intAclInfo);
+		}
 
 		// TODO: test if this is faster
 		//assocHelper helper(result, m_mStore, ns);
