@@ -30,128 +30,60 @@
 
 /**
  * @author Bart Whiteley
- */ 
+ * @author Dan Nuffer
+ */
 
-#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMProperty.hpp"
+#include "OW_CppProviderIncludes.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_String.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_WBEMFlags.hpp"
-#include "OW_CIMDateTime.hpp"
-#include "OW_Bool.hpp"
-#include "OW_ResultHandlerIFC.hpp"
 
-
-namespace OpenWBEM 
+namespace OpenWBEM
 {
 
 	using namespace WBEMFlags;
-	using namespace std; 
+	using namespace std;
 
 	namespace
 	{
 		const String COMPONENT_NAME("ow.provider.OpenWBEM_UnitaryComputerSystem");
 	}
 
-	class OpenWBEM_UnitaryComputerSystem : public CppReadOnlyInstanceProviderIFC
+	class OpenWBEM_UnitaryComputerSystem : public CppReadOnlyInstanceProviderIFC, public CppSimpleInstanceProviderIFC
 	{
 	public:
-		virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, 
-									const String &ns, 
-									const CIMInstance &modifiedInstance, 
-									const CIMInstance &previousInstance, 
-									WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-									const StringArray *propertyList, 
-									const CIMClass &theClass)
-		{
-		}
 
-		virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &env, 
-									   const String &ns, 
-									   const String &className, 
-									   CIMObjectPathResultHandlerIFC &result, 
-									   const CIMClass &cimClass)
-		{
-			(void)env;
-			(void)className;
-			CIMObjectPath cop(cimClass.getName(), ns);
-			cop.setKeyValue("CreationClassName", CIMValue(cimClass.getName()));
-			cop.setKeyValue("Name", CIMValue(SocketAddress::getAnyLocalHost().getName())); 
-			result.handle(cop); 
-		}
-
-		CIMInstance makeInstance(const CIMClass& cimClass)
+		void doSimpleEnumInstances(
+			const ProviderEnvironmentIFCRef &env,
+			const String &ns,
+			const CIMClass &cimClass,
+			CIMInstanceResultHandlerIFC &result,
+			EPropertiesFlag propertiesFlag)
 		{
 			CIMInstance newInst = cimClass.newInstance();
 
 			newInst.setProperty("CreationClassName", CIMValue(cimClass.getName()));
-			newInst.setProperty("Name", CIMValue(SocketAddress::getAnyLocalHost().getName())); 
-			newInst.setProperty("NameFormat", CIMValue(String("IP")));
-			UInt16Array dedicated;
-			dedicated.append(1);	// Unknown
-			newInst.setProperty("Dedicated", CIMValue(dedicated));
-
-			// Unknown
-			newInst.setProperty("ResetCapability", CIMValue(UInt16(2)));
-
-			return newInst;
-		}
-
-
-		virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, 
-										const String &ns, 
-										const CIMObjectPath &instanceName, 
-										WBEMFlags:: ELocalOnlyFlag localOnly, 
-										WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-										WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-										const StringArray *propertyList, 
-										const CIMClass &cimClass)
-		{
-			(void) env;
-			(void) ns;
-			(void) localOnly;
-			(void) includeQualifiers;
-			(void) includeClassOrigin;
-			(void) propertyList;
-
-			String argHostname;
-			String csname = SocketAddress::getAnyLocalHost().getName();
-			CIMProperty prop = instanceName.getKey("Name");
-			if (prop)
+			newInst.setProperty("Name", CIMValue(SocketAddress::getAnyLocalHost().getName()));
+			if (propertiesFlag == E_ALL_PROPERTIES)
 			{
-				CIMValue cv = prop.getValue();
-				if (cv)
-				{
-					cv.get(argHostname);
-				}
+				newInst.setProperty("NameFormat", CIMValue(String("IP")));
+				UInt16Array dedicated;
+				dedicated.append(1);	// Unknown
+				newInst.setProperty("Dedicated", CIMValue(dedicated));
+
+				// Unknown
+				newInst.setProperty("ResetCapability", CIMValue(UInt16(2)));
 			}
 
-			if (!csname.equalsIgnoreCase(argHostname))
-			{
-				OW_THROWCIM(CIMException::NOT_FOUND); 
-			}
-
-			CIMInstance rval = makeInstance(cimClass);
-			return rval; 
+			result.handle(newInst);
 		}
-
 
 		virtual void getInstanceProviderInfo(InstanceProviderInfo &info)
 		{
-			info.addInstrumentedClass("OpenWBEM_UnitaryComputerSystem"); 
+			info.addInstrumentedClass("OpenWBEM_UnitaryComputerSystem");
 		}
 
-		virtual void initialize(const ProviderEnvironmentIFCRef &)
-		{
-		}
 	};
 
-} // end OpenWBEM namespace. 
+} // end OpenWBEM namespace.
 
 OW_PROVIDERFACTORY(OpenWBEM::OpenWBEM_UnitaryComputerSystem, owprovinstOpenWBEM_UnitaryComputerSystem)
 
