@@ -126,7 +126,7 @@ ok:
 
 static CMPIObjectPath* instGetObjectPath(CMPIInstance* eInst, CMPIStatus* rc) {
    OW_CIMInstance* inst=(OW_CIMInstance*)eInst->hdl;
-   OW_CIMObjectPath ref(*inst);
+   OW_CIMObjectPath ref("", *inst);
    CMPIObjectPath *cop=(CMPIObjectPath*)new CMPI_Object(new OW_CIMObjectPath(ref));
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return cop;

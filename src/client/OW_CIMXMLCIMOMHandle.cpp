@@ -960,8 +960,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	OW_StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	OW_CIMObjectPath path(modifiedInstance);
-	path.setNameSpace(ns);
+	OW_CIMObjectPath path(ns, modifiedInstance);
 	OW_CIMInstanceNametoXML(path, ostr);
 	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
 		OW_CIMtoXMLFlags::isInstanceName,

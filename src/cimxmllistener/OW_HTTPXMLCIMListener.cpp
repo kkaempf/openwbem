@@ -393,7 +393,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		}
 		else
 		{
-			reg.handler = OW_CIMObjectPath(ci);
+			reg.handler = OW_CIMObjectPath(ns, ci);
 		}
 	}
 	

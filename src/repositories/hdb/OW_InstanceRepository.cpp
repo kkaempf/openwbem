@@ -401,7 +401,7 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 	}
 
 	// Create object path with keys from new instance
-	OW_CIMObjectPath icop(ci);
+	OW_CIMObjectPath icop(ns, ci);
 	OW_String instanceKey = makeInstanceKey(ns, icop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)

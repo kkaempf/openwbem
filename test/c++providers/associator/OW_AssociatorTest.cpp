@@ -147,8 +147,7 @@ namespace
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
-				OW_CIMObjectPath cop(ci);
-				cop.setNameSpace(ns);
+				OW_CIMObjectPath cop(ns, ci);
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
@@ -191,8 +190,7 @@ namespace
 					resultClass, false);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ci);
-				path.setNameSpace(ns);
+				OW_CIMObjectPath path(ns, ci);
 
 				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
 
@@ -235,16 +233,14 @@ namespace
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ci);
-				path.setNameSpace(ns);
+				OW_CIMObjectPath path(ns, ci);
 
 				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
 
 				newInstance.setProperty("PartComponent", OW_CIMValue(path));
 
-				OW_CIMObjectPath newPath(newInstance);
+				OW_CIMObjectPath newPath(ns, newInstance);
 
-				newPath.setNameSpace(ns);
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}

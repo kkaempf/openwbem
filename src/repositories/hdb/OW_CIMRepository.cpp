@@ -902,7 +902,7 @@ OW_CIMRepository::createInstance(
 	const OW_CIMInstance& ci,
 	const OW_UserInfo&)
 {
-	OW_CIMObjectPath rval(ci);
+	OW_CIMObjectPath rval(ns, ci);
 
 	try
 	{
@@ -995,7 +995,7 @@ OW_CIMRepository::modifyInstance(
 	try
 	{
 		OW_CIMClass theClass(OW_CIMNULL);
-		OW_CIMObjectPath cop(modifiedInstance);
+		OW_CIMObjectPath cop(ns, modifiedInstance);
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
 
@@ -1952,7 +1952,7 @@ OW_CIMRepository::_validatePropagatedKeys(const OW_String& ns,
 			"Cannot create instance. Propagated key properties missing");
 	}
 
-	OW_CIMObjectPath op(ci);
+	OW_CIMObjectPath op(ns, ci);
 	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
 	while(it != theMap.end())
 	{

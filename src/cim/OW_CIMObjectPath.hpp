@@ -117,12 +117,6 @@ public:
 		const OW_CIMInstance& inst);
 
 	/**
-	 * Create an OW_CIMObjectPath for an instance.
-	 * @param inst An instance.
-	 */
-	explicit OW_CIMObjectPath(const OW_CIMInstance& inst);
-
-	/**
 	 * Create a new OW_CIMObject path from another.
 	 * @param arg The OW_CIMObjectPath this object will be a copy of.
 	 */

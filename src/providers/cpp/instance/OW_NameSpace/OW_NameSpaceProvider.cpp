@@ -46,45 +46,45 @@
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-    class namespaceFilterer : public OW_StringResultHandlerIFC
-    {
-    public:
-        namespaceFilterer(const OW_String& ns_, bool deep_, OW_StringResultHandlerIFC& result_)
-            : ns(ns_.tokenize("/"))
-            , deep(deep_)
-            , result(result_)
-        {}
+	class namespaceFilterer : public OW_StringResultHandlerIFC
+	{
+	public:
+		namespaceFilterer(const OW_String& ns_, bool deep_, OW_StringResultHandlerIFC& result_)
+			: ns(ns_.tokenize("/"))
+			, deep(deep_)
+			, result(result_)
+		{}
 
-        void doHandle(const OW_String& s)
-        {
-            OW_StringArray split(s.tokenize("/"));
-            if (split.size() <= ns.size())
-            {
-                // it's a parent or the same namespace, so ignore it.
-                return;
-            }
-            if (!deep && split.size() > ns.size() + 1)
-            {
-                // it's more than one deep, so ignore it.
-                return;
-            }
-            for (size_t i = 0; i < ns.size(); ++i)
-            {
-                if (ns[i] != split[i])
-                {
-                    // it's not under the requested namespace so return.
-                    return;
-                }
-            }
-            // match, pass it on.
-            result.handle(s);
-        }
+		void doHandle(const OW_String& s)
+		{
+			OW_StringArray split(s.tokenize("/"));
+			if (split.size() <= ns.size())
+			{
+				// it's a parent or the same namespace, so ignore it.
+				return;
+			}
+			if (!deep && split.size() > ns.size() + 1)
+			{
+				// it's more than one deep, so ignore it.
+				return;
+			}
+			for (size_t i = 0; i < ns.size(); ++i)
+			{
+				if (ns[i] != split[i])
+				{
+					// it's not under the requested namespace so return.
+					return;
+				}
+			}
+			// match, pass it on.
+			result.handle(s);
+		}
 
-    private:
-        OW_StringArray ns;
-        bool deep;
-        OW_StringResultHandlerIFC& result;
-    };
+	private:
+		OW_StringArray ns;
+		bool deep;
+		OW_StringResultHandlerIFC& result;
+	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -164,15 +164,14 @@ OW_NameSpaceProvider::deleteInstance(
 	}
 
 	OW_String newns = ns + "/" + nsName;
-	newns.toLowerCase();
 
-    // now deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
-    OW_StringArray nstodel = enumNameSpaceE(env, newns);
+	// deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
+	OW_StringArray nstodel = enumNameSpaceE(env, newns);
 	OW_UserInfo acl(env->getUserName());
-    for (size_t i = 0; i < nstodel.size(); ++i)
-    {
+	for (size_t i = 0; i < nstodel.size(); ++i)
+	{
 		env->getRepository()->deleteNameSpace(nstodel[i], acl);
-    }
+	}
 
 	env->getRepository()->deleteNameSpace(newns, acl);
 }
@@ -315,7 +314,7 @@ OW_NameSpaceProvider::getInstance(
 						v.get(vval);
 						OW_String nsValStr;
 						nsVal.get(nsValStr);
-						if (vval.equalsIgnoreCase(nsValStr))
+						if (vval == nsValStr)
 						{
 							return ci;
 						}

@@ -1157,7 +1157,7 @@ OW_CIMServer::createInstance(
 	// Prevent lazy providers from causing a problem.
 	if (!rval)
 	{
-		rval = OW_CIMObjectPath(lci);
+		rval = OW_CIMObjectPath(ns, lci);
 	}
 
 	return rval;
@@ -1192,7 +1192,7 @@ OW_CIMServer::modifyInstance(
 	else
 	{
 		// Look for dynamic instances
-		OW_CIMObjectPath cop(modifiedInstance);
+		OW_CIMObjectPath cop(ns, modifiedInstance);
 		oldInst = getInstance(ns, cop, false, true, true, NULL,
 			intAclInfo);
 

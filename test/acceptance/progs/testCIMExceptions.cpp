@@ -575,7 +575,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		try
 		{
-			OW_CIMObjectPath cop(ci);
+			OW_CIMObjectPath cop("root/testsuite", ci);
 			hdl->deleteInstance("root/testsuite", cop);
 		}
 		catch (const OW_CIMException& e)

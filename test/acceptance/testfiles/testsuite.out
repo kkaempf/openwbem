@@ -3,11 +3,13 @@
 *** Doing enumNamespace() ***
 deep = false
 Namespace: root/testsuite
-Namespace: root/testsuite/caldera
+Namespace: root/testsuite/Vintela
+Namespace: root/testsuite/vintela
 deep = true
 Namespace: root/testsuite
-Namespace: root/testsuite/caldera
-Namespace: root/testsuite/caldera/test
+Namespace: root/testsuite/Vintela
+Namespace: root/testsuite/Vintela/test
+Namespace: root/testsuite/vintela
 *** Doing deleteNameSpace() ***
 *** Doing createClass() ***
 *** Doing createClass() ***

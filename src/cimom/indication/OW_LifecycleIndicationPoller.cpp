@@ -152,7 +152,7 @@ namespace
 	{
 		bool operator()(const OW_CIMInstance& x, const OW_CIMInstance& y) const
 		{
-			return OW_CIMObjectPath(x) < OW_CIMObjectPath(y);
+			return OW_CIMObjectPath("", x) < OW_CIMObjectPath("", y);
 		}
 	};
 } // end anonymous namespace

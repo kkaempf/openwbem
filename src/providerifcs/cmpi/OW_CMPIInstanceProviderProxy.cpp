@@ -340,8 +340,7 @@ OW_CIMObjectPath
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 
-		OW_CIMObjectPath cop(cimInstance);
-		cop.setNameSpace(ns);
+		OW_CIMObjectPath cop(ns, cimInstance);
 
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_InstanceOnStack eInst(cimInstance);
@@ -405,8 +404,7 @@ void
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 
-		OW_CIMObjectPath instRef(previousInstance);
-		instRef.setNameSpace(ns);
+		OW_CIMObjectPath instRef(ns, previousInstance);
 
 		CMPI_ObjectPathOnStack eRef(instRef);
 		CMPI_InstanceOnStack eInst(modifiedInstance);

@@ -398,13 +398,13 @@ public:
 		OW_CIMObjectPathResultHandlerIFC &result, 
 		const OW_CIMClass &cimClass) 
 	{
-		(void)ns; (void)className; (void)cimClass;
+		(void)className; (void)cimClass;
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		OW_NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
-			result.handle(OW_CIMObjectPath(m_insts[i]));
+			result.handle(OW_CIMObjectPath(ns, m_insts[i]));
 		}
 	}
 	

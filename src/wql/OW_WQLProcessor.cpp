@@ -295,7 +295,7 @@ void OW_WQLProcessor::visit_deleteStmt(
 		 i != instances.end();
 		 ++i)
 	{
-		OW_CIMObjectPath cop(*i);
+		OW_CIMObjectPath cop(m_ns, *i);
 		//OW_LOGDEBUG(format("Deleting instance:\n%1", cop.toString()));
 		m_hdl->deleteInstance(m_ns, cop);
 	}
@@ -2215,9 +2215,7 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 						OW_CIMObjectPath::unEscape(val.toString()));
 					valCop.setNameSpace(m_ns);
 
-					OW_CIMObjectPath instCop(ci);
-
-					instCop.setNameSpace(m_ns);
+					OW_CIMObjectPath instCop(m_ns, ci);
 
 					if (compare(OW_CIMValue(instCop.toString()),
 						OW_CIMValue(valCop.toString())))

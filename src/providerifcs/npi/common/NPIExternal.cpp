@@ -681,7 +681,7 @@ CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, CIMInstance ci)
 
 	OW_String host;
 
-	OW_CIMObjectPath * ref = new OW_CIMObjectPath(*owci);
+	OW_CIMObjectPath * ref = new OW_CIMObjectPath("", *owci);
 
 	CIMObjectPath cop = { static_cast<void *>(ref)};
 

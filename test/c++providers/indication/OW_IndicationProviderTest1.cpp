@@ -180,14 +180,14 @@ public:
 		OW_CIMObjectPathResultHandlerIFC &result, 
 		const OW_CIMClass &cimClass) 
 	{
-		(void)ns; (void)className;
+		(void)className;
 		env->getLogger()->logDebug("OW_IndicationProviderTest1::enumInstanceNames");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
 		updateInstances(cimClass);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
-			result.handle(OW_CIMObjectPath(m_insts[i]));
+			result.handle(OW_CIMObjectPath(ns, m_insts[i]));
 		}
 	}
 	

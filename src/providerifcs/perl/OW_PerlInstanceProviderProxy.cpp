@@ -261,8 +261,7 @@ OW_PerlInstanceProviderProxy::createInstance(
 			OW_CIMInstance cimInstance2(cimInstance);
             CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
 
-			OW_CIMObjectPath cop(cimInstance);
-			cop.setNameSpace(ns);
+			OW_CIMObjectPath cop(ns, cimInstance);
             CIMObjectPath _cop = { static_cast<void *> (const_cast<OW_CIMObjectPath*>(&cop))};
 
             CIMObjectPath _rcop =
@@ -312,8 +311,7 @@ OW_PerlInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 
 		CIMInstance _ci = { static_cast<void *> (&newInst)};
 
-		OW_CIMObjectPath cop(modifiedInstance);
-		cop.setNameSpace(ns);
+		OW_CIMObjectPath cop(ns, modifiedInstance);
 		CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
 		m_ftable->fp_setInstance(&_npiHandle, _cop, _ci);

@@ -103,7 +103,7 @@ public:
 		}
 		catch (...)
 		{
-			indicationServer->deleteSubscription(ns, OW_CIMObjectPath(cimInstance));
+			indicationServer->deleteSubscription(ns, OW_CIMObjectPath(ns, cimInstance));
 			throw;
 		}
 	}

@@ -417,8 +417,7 @@ testDynInstances(OW_CIMClient& hdl)
 		params.push_back("two");
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
-		OW_CIMObjectPath cop1(ci);
-		cop1.setNameSpace("root/testsuite");
+		OW_CIMObjectPath cop1("root/testsuite", ci);
 		ci = hdl.getInstance( cop1);
 		OW_TempFileStream tfs;
 		tfs << "<CIM>";
@@ -439,8 +438,7 @@ testDynInstances(OW_CIMClient& hdl)
 		params.push_back("C");
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
-		OW_CIMObjectPath cop2(ci);
-		cop2.setNameSpace("root/testsuite");
+		OW_CIMObjectPath cop2("root/testsuite", ci);
 		ci = hdl.getInstance( cop2);
 		tfs.reset();
 		tfs << "<CIM>";
@@ -507,20 +505,20 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		params.push_back("two");
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
-		OW_CIMObjectPath cop1(ci);
+		OW_CIMObjectPath cop1("root/testsuite", ci);
 		ci = hdl.getInstance( cop1);
 
-        OW_CIMQualifier provQual = cc.getQualifier("provider");
+		OW_CIMQualifier provQual = cc.getQualifier("provider");
 		TEST_ASSERT(!provQual); // shouldn't be there since the provider registers itself.
 		provQual = OW_CIMQualifier("provider");
 		provQual.setValue(OW_CIMValue("somejunk")); // the provider qualifier should be ignored.
-        cc.addQualifier(provQual);
-        hdl.modifyClass(cc);
+		cc.addQualifier(provQual);
+		hdl.modifyClass(cc);
 
-        ci = hdl.getInstance(cop1);
+		ci = hdl.getInstance(cop1);
 
-        cc.removeQualifier(provQual);
-        hdl.modifyClass(cc); // change it back
+		cc.removeQualifier(provQual);
+		hdl.modifyClass(cc); // change it back
 
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
@@ -546,12 +544,12 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		params.push_back("two");
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
-		cop1 = OW_CIMObjectPath(ci);
+		cop1 = OW_CIMObjectPath("root/testsuite", ci);
 		ci = hdl.getInstance( cop1);
 
-        provQual = cc.getQualifier("provider");
-        cc.removeQualifier(provQual);
-        hdl.modifyClass(cc);
+		provQual = cc.getQualifier("provider");
+		cc.removeQualifier(provQual);
+		hdl.modifyClass(cc);
 
 		try
 		{
@@ -565,8 +563,8 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 			TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 		}
 
-        cc.addQualifier(provQual);
-        hdl.modifyClass(cc); // change it back
+		cc.addQualifier(provQual);
+		hdl.modifyClass(cc); // change it back
 
 		enu = hdl.enumInstancesE("testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 1);
@@ -1373,7 +1371,7 @@ void
 prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
 {
 	// MOF of this method:
-	//    string GetState(
+	//	string GetState(
 	//		[in] string s,
 	//		[in] uint8 uint8array[],
 	//		[out] boolean b,
@@ -1421,9 +1419,9 @@ invokeMethod(OW_CIMClient& hdl, int num)
 		switch (num)
 		{
 			case 1:
-                cop.addKey("CreationClassName",
-                      OW_CIMValue(OW_String("EXP_BartComputerSystem")));
-                cop.addKey("Name", OW_CIMValue(OW_String("test")));
+				cop.addKey("CreationClassName",
+					  OW_CIMValue(OW_String("EXP_BartComputerSystem")));
+				cop.addKey("Name", OW_CIMValue(OW_String("test")));
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
 				hdl.invokeMethod( cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
@@ -1483,8 +1481,12 @@ createNameSpace(OW_CIMClient& hdl)
 
 	try
 	{
-		hdl.createNameSpace("root/testsuite/Caldera");
-		hdl.createNameSpace("root/testsuite/Caldera/test");
+		hdl.createNameSpace("root/testsuite/Vintela");
+		hdl.createNameSpace("root/testsuite/Vintela/test");
+		// test case sensitivity.  Namespaces (unlike other CIM names)
+		// are *NOT* case sensitive, and so we should be able to create
+		// both vintela and Vintela
+		hdl.createNameSpace("root/testsuite/vintela");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1532,8 +1534,9 @@ deleteNameSpace(OW_CIMClient& hdl)
 
 	try
 	{
-		hdl.deleteNameSpace("root/testsuite/Caldera/test");
-		hdl.deleteNameSpace("root/testsuite/Caldera");
+		hdl.deleteNameSpace("root/testsuite/Vintela/test");
+		hdl.deleteNameSpace("root/testsuite/Vintela");
+		hdl.deleteNameSpace("root/testsuite/vintela");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1644,7 +1647,7 @@ testSingleton(OW_CIMClient& hdl)
 
 		hdl.createInstance(newInst);
 
-		OW_CIMInstance got = hdl.getInstance(OW_CIMObjectPath(newInst));
+		OW_CIMInstance got = hdl.getInstance(OW_CIMObjectPath("root/testsuite", newInst));
 
 		TEST_ASSERT(got.getPropertyT("Name").getValueT() == OW_CIMValue("singleton"));
 		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == OW_CIMValue(true));
@@ -1654,7 +1657,7 @@ testSingleton(OW_CIMClient& hdl)
 
 		hdl.modifyInstance(newInst);
 		
-		got = hdl.getInstance(OW_CIMObjectPath(newInst));
+		got = hdl.getInstance(OW_CIMObjectPath("root/testsuite", newInst));
 
 		TEST_ASSERT(got.getPropertyT("Name").getValueT() == OW_CIMValue("singleton2"));
 		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == OW_CIMValue(false));
@@ -1904,68 +1907,68 @@ main(int argc, char* argv[])
 		{
 			setupAssociations(rch);
 
-            associatorNames(rch, "", "", "", "");
-            associatorNames(rch, "CIM_SystemDevice", "", "", "");
-            associatorNames(rch, "", "CIM_ComputerSystem", "", "");
-            associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
-            associatorNames(rch, "", "", "GroupComponent", "");
-            associatorNames(rch, "", "", "PartComponent", "");
-            associatorNames(rch, "", "", "PartComponent", "PartComponent");
-            associatorNames(rch, "", "", "", "PartComponent");
-            associatorNames(rch, "", "", "", "GroupComponent");
-            associatorNamesClass(rch, "", "", "", "");
-            associatorNamesClass(rch, "CIM_SystemDevice", "", "", "");
-            associatorNamesClass(rch, "", "CIM_ComputerSystem", "", "");
-            associatorNamesClass(rch, "", "EXP_BionicComputerSystem", "", "");
-            associatorNamesClass(rch, "", "", "GroupComponent", "");
-            associatorNamesClass(rch, "", "", "PartComponent", "");
-            associatorNamesClass(rch, "", "", "PartComponent", "PartComponent");
-            associatorNamesClass(rch, "", "", "", "PartComponent");
-            associatorNamesClass(rch, "", "", "", "GroupComponent");
+			associatorNames(rch, "", "", "", "");
+			associatorNames(rch, "CIM_SystemDevice", "", "", "");
+			associatorNames(rch, "", "CIM_ComputerSystem", "", "");
+			associatorNames(rch, "", "EXP_BionicComputerSystem", "", "");
+			associatorNames(rch, "", "", "GroupComponent", "");
+			associatorNames(rch, "", "", "PartComponent", "");
+			associatorNames(rch, "", "", "PartComponent", "PartComponent");
+			associatorNames(rch, "", "", "", "PartComponent");
+			associatorNames(rch, "", "", "", "GroupComponent");
+			associatorNamesClass(rch, "", "", "", "");
+			associatorNamesClass(rch, "CIM_SystemDevice", "", "", "");
+			associatorNamesClass(rch, "", "CIM_ComputerSystem", "", "");
+			associatorNamesClass(rch, "", "EXP_BionicComputerSystem", "", "");
+			associatorNamesClass(rch, "", "", "GroupComponent", "");
+			associatorNamesClass(rch, "", "", "PartComponent", "");
+			associatorNamesClass(rch, "", "", "PartComponent", "PartComponent");
+			associatorNamesClass(rch, "", "", "", "PartComponent");
+			associatorNamesClass(rch, "", "", "", "GroupComponent");
 
-            associators(rch, "", "", "", "", false, false, 0);
-            associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-            associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-            associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-            associators(rch, "", "", "GroupComponent", "", false, false, 0);
-            associators(rch, "", "", "PartComponent", "", false, false, 0);
-            associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-            associators(rch, "", "", "", "PartComponent", false, false, 0);
-            associators(rch, "", "", "", "GroupComponent", false, false, 0);
-            associators(rch, "", "", "", "", true, false, 0);
-            associators(rch, "", "", "", "", false, true, 0);
-            sa.clear();
-            associators(rch, "", "", "", "", false, false, &sa);
-            sa.push_back(OW_String("BrandNewProperty"));
-            associators(rch, "", "", "", "", false, false, &sa);
+			associators(rch, "", "", "", "", false, false, 0);
+			associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
+			associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
+			associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+			associators(rch, "", "", "GroupComponent", "", false, false, 0);
+			associators(rch, "", "", "PartComponent", "", false, false, 0);
+			associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
+			associators(rch, "", "", "", "PartComponent", false, false, 0);
+			associators(rch, "", "", "", "GroupComponent", false, false, 0);
+			associators(rch, "", "", "", "", true, false, 0);
+			associators(rch, "", "", "", "", false, true, 0);
+			sa.clear();
+			associators(rch, "", "", "", "", false, false, &sa);
+			sa.push_back(OW_String("BrandNewProperty"));
+			associators(rch, "", "", "", "", false, false, &sa);
 
-            associatorsClasses(rch, "", "", "", "", false, false, 0);
-            associatorsClasses(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-            associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-            associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-            associatorsClasses(rch, "", "", "GroupComponent", "", false, false, 0);
-            associatorsClasses(rch, "", "", "PartComponent", "", false, false, 0);
-            associatorsClasses(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-            associatorsClasses(rch, "", "", "", "PartComponent", false, false, 0);
-            associatorsClasses(rch, "", "", "", "GroupComponent", false, false, 0);
-            associatorsClasses(rch, "", "", "", "", true, false, 0);
-            associatorsClasses(rch, "", "", "", "", false, true, 0);
-            sa.clear();
-            associatorsClasses(rch, "", "", "", "", false, false, &sa);
-            sa.push_back(OW_String("BrandNewProperty"));
-            associatorsClasses(rch, "", "", "", "", false, false, &sa);
+			associatorsClasses(rch, "", "", "", "", false, false, 0);
+			associatorsClasses(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
+			associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
+			associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
+			associatorsClasses(rch, "", "", "GroupComponent", "", false, false, 0);
+			associatorsClasses(rch, "", "", "PartComponent", "", false, false, 0);
+			associatorsClasses(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
+			associatorsClasses(rch, "", "", "", "PartComponent", false, false, 0);
+			associatorsClasses(rch, "", "", "", "GroupComponent", false, false, 0);
+			associatorsClasses(rch, "", "", "", "", true, false, 0);
+			associatorsClasses(rch, "", "", "", "", false, true, 0);
+			sa.clear();
+			associatorsClasses(rch, "", "", "", "", false, false, &sa);
+			sa.push_back(OW_String("BrandNewProperty"));
+			associatorsClasses(rch, "", "", "", "", false, false, &sa);
 
-            referenceNames(rch, "", "");
-            referenceNames(rch, "cim_systemdevice", "");
-            referenceNames(rch, "cim_component", "");
-            referenceNames(rch, "", "GroupComponent");
-            referenceNames(rch, "", "PartComponent");
+			referenceNames(rch, "", "");
+			referenceNames(rch, "cim_systemdevice", "");
+			referenceNames(rch, "cim_component", "");
+			referenceNames(rch, "", "GroupComponent");
+			referenceNames(rch, "", "PartComponent");
 
-            referenceNamesClass(rch, "", "");
-            referenceNamesClass(rch, "cim_systemdevice", "");
-            referenceNamesClass(rch, "cim_component", "");
-            referenceNamesClass(rch, "", "GroupComponent");
-            referenceNamesClass(rch, "", "PartComponent");
+			referenceNamesClass(rch, "", "");
+			referenceNamesClass(rch, "cim_systemdevice", "");
+			referenceNamesClass(rch, "cim_component", "");
+			referenceNamesClass(rch, "", "GroupComponent");
+			referenceNamesClass(rch, "", "PartComponent");
 
 			references(rch, "", "", false, false, 0);
 			references(rch, "cim_systemdevice", "", false, false, 0);
@@ -2005,7 +2008,7 @@ main(int argc, char* argv[])
 		deleteQualifier(rch);
 
 		testDynInstances(rch);
-        testModifyProviderQualifier(rch);
+		testModifyProviderQualifier(rch);
 
 		invokeMethod(rch, 1);
 		invokeMethod(rch, 2);
@@ -2032,68 +2035,68 @@ main(int argc, char* argv[])
 #ifdef OW_HAVE_OPENSSL
 void display_name(const char* prefix, X509_NAME* name)
 {
-    char buf[256];
+	char buf[256];
 
-    X509_NAME_get_text_by_NID(name,
-                              NID_organizationName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_organizationalUnitName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_commonName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_pkcs9_emailAddress,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_organizationName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_organizationalUnitName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_commonName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_pkcs9_emailAddress,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void display_cert(X509* cert)
 {
-    X509_NAME*      name;
-    int             unsigned i = 16;
-    unsigned char   digest[16];
+	X509_NAME*	  name;
+	int			 unsigned i = 16;
+	unsigned char   digest[16];
 
-    cout << endl;
+	cout << endl;
 
-    /* print the issuer */
-    printf("   issuer:\n");
-    name = X509_get_issuer_name(cert);
-    display_name("      ",name);
+	/* print the issuer */
+	printf("   issuer:\n");
+	name = X509_get_issuer_name(cert);
+	display_name("	  ",name);
 
-    /* print the subject */
-    name = X509_get_subject_name(cert);
-    printf("   subject:\n");
-    display_name("      ",name);
+	/* print the subject */
+	name = X509_get_subject_name(cert);
+	printf("   subject:\n");
+	display_name("	  ",name);
 
-    /* print the fingerprint */
-    X509_digest(cert,EVP_md5(),digest,&i);
-    printf("   fingerprint:\n");
-    printf("      ");
-    for(i=0;i<16;i++)
-    {
-        printf("%02X",digest[i]);
-        if(i != 15)
-        {
-            printf(":");
-        }
-    }
-    printf("\n");
+	/* print the fingerprint */
+	X509_digest(cert,EVP_md5(),digest,&i);
+	printf("   fingerprint:\n");
+	printf("	  ");
+	for(i=0;i<16;i++)
+	{
+		printf("%02X",digest[i]);
+		if(i != 15)
+		{
+			printf(":");
+		}
+	}
+	printf("\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 int ssl_verifycert_callback(X509* cert)
 {
-	static bool     bPrompted = false;
+	static bool	 bPrompted = false;
 
 	if(!bPrompted)
 	{

@@ -1128,8 +1128,7 @@ OW_IndicationServerImpl::modifySubscription(const OW_String& ns, const OW_CIMIns
 	// the filter and the handler, if a subscription was modified, it will
 	// have only really changed the non-key, non-ref properties, so we can just
 	// find it in the subscriptions map and update it.
-	OW_CIMObjectPath cop(subInst);
-	cop.setNameSpace(ns);
+	OW_CIMObjectPath cop(ns, subInst);
 	
 	OW_MutexLock l(m_subGuard);
 	for (subscriptions_t::iterator iter = m_subscriptions.begin(); 

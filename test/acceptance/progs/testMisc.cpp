@@ -92,7 +92,7 @@ void testInstanceLevelQualifier(OW_CIMOMHandleIFCRef& chRef)
 	p.setQualifier(max);
 	i.setProperty(p);
 	chRef->createInstance(ns,i);
-	i = chRef->getInstance(ns, OW_CIMObjectPath(i), 
+	i = chRef->getInstance(ns, OW_CIMObjectPath(ns, i), 
 		OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS);
 

@@ -200,10 +200,9 @@ public:
 		const OW_CIMInstance& cimInstance )
 	{
 		(void)env;
-		(void)ns;
 		(void)cimInstance;
-        // just ignore createInstance.
-		return OW_CIMObjectPath(cimInstance);
+		// just ignore createInstance.
+		return OW_CIMObjectPath(ns, cimInstance);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -223,7 +222,7 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-        // just ignore, since there nothing they can modify.
+		// just ignore, since there nothing they can modify.
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -235,7 +234,7 @@ public:
 		(void)env;
 		(void)ns;
 		(void)cop;
-        // just ignore deleteInstance.
+		// just ignore deleteInstance.
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 

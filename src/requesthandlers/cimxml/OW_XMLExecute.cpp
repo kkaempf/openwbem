@@ -664,8 +664,7 @@ namespace
 		{
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
-			OW_CIMObjectPath cop( ci );
-			cop.setNameSpace( ns );
+			OW_CIMObjectPath cop( ns, ci );
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
 			try
 			{
@@ -1174,9 +1173,7 @@ namespace
 		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			const OW_CIMInstance& cimInstance = i;
-			OW_CIMObjectPath cop(cimInstance);
-
-			cop.setNameSpace(ns);
+			OW_CIMObjectPath cop(ns, cimInstance);
 
 			ostr << "<VALUE.NAMEDINSTANCE>";
 			OW_CIMtoXML(cimInstance, ostr, cop,
@@ -1459,9 +1456,7 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMInstance &i)
 		{
-			OW_CIMObjectPath cop(i);
-
-			cop.setNameSpace(ns);
+			OW_CIMObjectPath cop(ns, i);
 
 			ostr << "<VALUE.OBJECTWITHPATH>";
 			OW_CIMtoXML(i, ostr, cop,

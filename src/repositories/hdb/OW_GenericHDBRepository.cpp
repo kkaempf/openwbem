@@ -115,7 +115,7 @@ OW_GenericHDBRepository::open(const OW_String& path)
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	// Create root namespace
-    createNameSpace("root");
+	createNameSpace("root");
 #endif
 	//OW_HDBHandleLock hdl(this, getHandle());
 	//OW_String contk("root");
@@ -165,12 +165,8 @@ OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
 	{
 		return OW_HDBNode();
 	}
-	//while (!ck.empty() && ck[0] == '/')
-	//{
-	//	ck = ck.substring(1);
-	//}
 
-	OW_HDBNode node = hdl->getNode(ck.toLowerCase());
+	OW_HDBNode node = hdl->getNode(ck);
 	if(node)
 	{
 		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
@@ -196,26 +192,26 @@ OW_GenericHDBRepository::createNameSpace(OW_String ns)
 		return -1;
 	}
 
-    node = hdl->getNode(ns.toLowerCase());
-    if(!node)
-    {
-        // create the namespace
-        node = OW_HDBNode(ns, ns.length()+1,
-            reinterpret_cast<const unsigned char*>(ns.c_str()));
-        hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
-        hdl->addRootNode(node);
-        logDebug(format("created namespace %1", ns));
-    }
-    else
-    {
-        // it already exists, return -1.
-        if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
-        {
-            OW_THROW(OW_IOException,
-                "logic error. read namespace node that is not a namespace");
-        }
-        return -1;
-    }
+	node = hdl->getNode(ns);
+	if(!node)
+	{
+		// create the namespace
+		node = OW_HDBNode(ns, ns.length()+1,
+			reinterpret_cast<const unsigned char*>(ns.c_str()));
+		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
+		hdl->addRootNode(node);
+		logDebug(format("created namespace %1", ns));
+	}
+	else
+	{
+		// it already exists, return -1.
+		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		{
+			OW_THROW(OW_IOException,
+				"logic error. read namespace node that is not a namespace");
+		}
+		return -1;
+	}
 
 	return 0;
 }
@@ -225,17 +221,11 @@ void
 OW_GenericHDBRepository::deleteNameSpace(OW_String key)
 {
 	throwIfNotOpen();
-    key.toLowerCase();
 	if(key.equals("root"))
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED,
 			"cannot delete root namespace");
 	}
-
-	//while (k.length() > 0 && k[0] == '/')
-	//{
-	//	k = k.substring(1);
-	//}
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(key);
@@ -260,12 +250,6 @@ bool
 OW_GenericHDBRepository::nameSpaceExists(OW_String key)
 {
 	throwIfNotOpen();
-
-    key.toLowerCase();
-	//while (k.length() > 0 && k[0] == '/')
-	//{
-	//	k = k.substring(1);
-	//}
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(key);
