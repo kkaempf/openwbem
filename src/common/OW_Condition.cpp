@@ -134,7 +134,7 @@ OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UI
 	bool ret = false;
 	timespec ts;
 	ts.tv_sec = time(NULL) + sTimeout;
-	ts.tv_nsec = usTimeout;
+	ts.tv_nsec = usTimeout * 1000;
 	#ifdef OW_USE_GNU_PTH
 	res = pth_cond_timedwait(&m_condition, state.pmutex);
 	#else
