@@ -56,7 +56,7 @@ Install()
 
 	cd ../../
 
-	make DESTDIR=$STAGEDIR install
+	make DESTDIR=$STAGEDIR install || ExitWithFail "make install didn't work"
 
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
 
@@ -131,7 +131,7 @@ SwitchToLinks()
 		FNAME=`find $TOPSRCDIR -name $BASENAME -perm -0111 ! -type d ! -type l`
 		FNAME=$STAGEDIR/$FNAME
 		echo "Creating symbolic link: $i -> $FNAME"
-		ln -sf $FNAME $i
+		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed 'make distcheck'"
 	done
 }
 
