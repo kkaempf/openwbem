@@ -36,6 +36,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Array.hpp"
 
 DECLARE_EXCEPTION(RWLocker);
 
@@ -69,6 +70,8 @@ private:
 	// > 0 means readers have the lock.
 	int m_state;
 
+	OW_Array<OW_Thread_t> m_readers;
+	OW_Thread_t m_writer;
 };
 
 //////////////////////////////////////////////////////////////////////////////

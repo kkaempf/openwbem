@@ -31,6 +31,7 @@
 #include "OW_config.h"
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ThreadImpl.hpp"
 
 DEFINE_EXCEPTION(RWLocker);
 
@@ -70,6 +71,18 @@ OW_RWLocker::getReadLock()
     //
     // Note:  Scheduling priorities are enforced in the unlock()
     //   call.  unlock will wake the proper thread.
+
+	// if we will lock, then make sure we won't deadlock
+	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	if (m_state < 0)
+	{
+		// see if we already have the write lock
+		if (OW_ThreadImpl::sameThreads(m_writer, tid))
+		{
+			OW_THROW(OW_DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
+		}
+	}
+
     while(m_state < 0)
     {
         ++m_num_waiting_readers;
@@ -79,6 +92,8 @@ OW_RWLocker::getReadLock()
     
     // Increase the reader count
     m_state++;
+
+	m_readers.push_back(tid);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -91,6 +106,21 @@ OW_RWLocker::getWriteLock()
     //
     // Note:  Scheduling priorities are enforced in the unlock()
     //   call.  unlock will wake the proper thread.
+
+	// if we will lock, then make sure we won't deadlock
+	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	if (m_state != 0)
+	{
+		// see if we already have a read lock
+		for (size_t i = 0; i < m_readers.size(); ++i)
+		{
+			if (OW_ThreadImpl::sameThreads(m_readers[i], tid))
+			{
+				OW_THROW(OW_DeadlockException, "A thread that has a read lock is trying to acquire a write lock.");
+			}
+		}
+	}
+
     while(m_state != 0)
     {
         ++m_num_waiting_writers;
@@ -98,6 +128,8 @@ OW_RWLocker::getWriteLock()
         --m_num_waiting_writers;
     }
     m_state = -1;
+
+	m_writer = tid;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -115,6 +147,15 @@ OW_RWLocker::releaseReadLock()
         doWakeups();
     }
 
+	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	for (size_t i = 0; i < m_readers.size(); ++i)
+	{
+		if (OW_ThreadImpl::sameThreads(m_readers[i], tid))
+		{
+			m_readers.remove(i);
+			i--;
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
