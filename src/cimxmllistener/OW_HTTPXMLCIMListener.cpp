@@ -204,14 +204,6 @@ public:
 		ref->setEnvironment(ServiceEnvironmentIFCRef(const_cast<HTTPXMLCIMListenerServiceEnvironment*>(this)));
 		return ref;
 	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
-		ESendIndicationsFlag doIndications,
-		EBypassProvidersFlag bypassProviders,
-		ELockingFlag locking) const
-	{
-		OW_ASSERTMSG(0, "Not implemented");
-		return CIMOMHandleIFCRef();
-	}
 	virtual LoggerRef getLogger() const
 	{
 		return getLogger(COMPONENT_NAME);
@@ -221,13 +213,6 @@ public:
 		LoggerRef rv(m_logger->clone());
 		rv->setDefaultComponent(componentName);
 		return rv;
-	}
-	virtual CIMInstanceArray getInteropInstances(const String& className) const
-	{
-		return CIMInstanceArray();
-	}
-	virtual void setInteropInstance(const CIMInstance& inst)
-	{
 	}
 private:
 	Map<String, String> m_configItems;

@@ -57,37 +57,10 @@ namespace {
 	class testEnv : public ServiceEnvironmentIFC
 	{
 	public:
-		virtual String getConfigItem(const String &name, const String &defRetVal="") const
-		{
-			return defRetVal;
-		}
-		virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious=E_OVERWRITE_PREVIOUS)
-		{
-		}
-		virtual RequestHandlerIFCRef getRequestHandler(const String &id)
-		{
-			return RequestHandlerIFCRef();
-		}
 		virtual LoggerRef getLogger() const
 		{
 			return Logger::createLogger("", true);
 		}
-		virtual bool authenticate(String &userName, const String &info, String &details, OperationContext&)
-		{
-			return true;
-		}
-		virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &context, ESendIndicationsFlag doIndications=E_SEND_INDICATIONS, EBypassProvidersFlag bypassProviders=E_USE_PROVIDERS)
-		{
-			return CIMOMHandleIFCRef();
-		}
-		virtual CIMInstanceArray getInteropInstances(const String& className) const
-		{
-			return CIMInstanceArray();
-		}
-		virtual void setInteropInstance(const CIMInstance& inst)
-		{
-		}
-
 	};
 }
 

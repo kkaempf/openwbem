@@ -449,21 +449,5 @@ ProviderAgentEnvironment::getLogger(const String& componentName) const
 	return rv;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray
-ProviderAgentEnvironment::getInteropInstances(const String& className)const
-{
-	OW_ASSERT("not implemented" == 0);
-	return CIMInstanceArray();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
-{
-	OW_ASSERT("not implemented" == 0);
-}
-
-
 } // end namespace OpenWBEM
 

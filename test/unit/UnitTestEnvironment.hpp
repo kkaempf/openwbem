@@ -72,24 +72,6 @@ public:
 			config[item] = value;
 		}
 	}
-	virtual bool authenticate(String &, const String &, String &, OperationContext&) const {
-		return true;
-	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &) const {
-		return RequestHandlerIFCRef();
-	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &, ESendIndicationsFlag, EBypassProvidersFlag, ELockingFlag) const {
-		OW_ASSERT("Cannot call TestEnvironment::getCIMOMHandle()" == 0);
-		return CIMOMHandleIFCRef();
-	}
-
-	virtual CIMInstanceArray getInteropInstances(const String& className) const
-	{
-		return CIMInstanceArray();
-	}
-	virtual void setInteropInstance(const CIMInstance& inst)
-	{
-	}
 
 	Map<String, String> config;
 };

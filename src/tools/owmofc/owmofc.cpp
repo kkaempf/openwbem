@@ -320,34 +320,6 @@ public:
 	{
 		return getLogger();
 	}
-	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
-	{
-	}
-	virtual bool authenticate(String &, const String &, String &, OperationContext& context) const
-	{
-		return true;
-	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &) const
-	{
-		OW_ASSERT("Unsupported" == 0);
-		return RequestHandlerIFCRef();
-	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&, ESendIndicationsFlag, EBypassProvidersFlag, ELockingFlag) const
-	{
-		OW_ASSERT("Unsupported" == 0);
-		return CIMOMHandleIFCRef();
-	}
-	virtual String getConfigItem(const String &, const String &defRetVal) const
-	{
-		return defRetVal;
-	}
-	virtual CIMInstanceArray getInteropInstances(const String& className) const
-	{
-		return CIMInstanceArray();
-	}
-	virtual void setInteropInstance(const CIMInstance& inst)
-	{
-	}
 };
 
 } // end unnamed namespace

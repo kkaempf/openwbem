@@ -37,6 +37,8 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -54,6 +56,7 @@ ServiceEnvironmentIFC::getRepository() const
 	return RepositoryIFCRef();
 }
 
+///////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 {
 	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
@@ -72,6 +75,74 @@ ServiceEnvironmentIFC::removeSelectable(const SelectableIFCRef& obj)
 {
 	OW_ASSERTMSG(0, "Not Implemented");
 }
+
+///////////////////////////////////////////////////////////////////////////////
+String
+ServiceEnvironmentIFC::getConfigItem(const String& name, const String& defRetVal) const
+{
+	return defRetVal;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+ServiceEnvironmentIFC::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+RequestHandlerIFCRef
+ServiceEnvironmentIFC::getRequestHandler(const String& id) const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ServiceEnvironmentIFC::getLogger() const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ServiceEnvironmentIFC::getLogger(const String& componentName) const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+bool
+ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String& details, OperationContext& context) const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CIMOMHandleIFCRef
+ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
+	ESendIndicationsFlag doIndications,
+	EBypassProvidersFlag bypassProviders,
+	ELockingFlag locking) const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+CIMInstanceArray
+ServiceEnvironmentIFC::getInteropInstances(const String& className) const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+ServiceEnvironmentIFC::setInteropInstance(const CIMInstance& inst)
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+}
+
 
 } // end namespace OpenWBEM
 

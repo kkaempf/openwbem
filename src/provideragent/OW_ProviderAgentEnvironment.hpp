@@ -102,9 +102,6 @@ public:
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious);
 
-	virtual CIMInstanceArray getInteropInstances(const String& className)const ;
-	virtual void setInteropInstance(const CIMInstance& inst);
-	
 	virtual RequestHandlerIFCRef getRequestHandler(const String& ct) const;
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
 		ESendIndicationsFlag doIndications,

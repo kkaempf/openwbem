@@ -60,7 +60,7 @@ class OW_COMMON_API ServiceEnvironmentIFC : public IntrusiveCountableBase
 public:
 	virtual ~ServiceEnvironmentIFC();
 
-	virtual String getConfigItem(const String& name, const String& defRetVal="") const = 0;
+	virtual String getConfigItem(const String& name, const String& defRetVal="") const;
 	
 	enum EOverwritePreviousFlag
 	{
@@ -68,18 +68,18 @@ public:
 		E_OVERWRITE_PREVIOUS
 	};
 	
-	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) = 0;
+	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 
 	virtual void addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb);
 	virtual void removeSelectable(const SelectableIFCRef& obj);
 
-	virtual RequestHandlerIFCRef getRequestHandler(const String& id) const = 0;
+	virtual RequestHandlerIFCRef getRequestHandler(const String& id) const;
 
-	virtual LoggerRef getLogger() const OW_DEPRECATED = 0; // in 3.1.0
+	virtual LoggerRef getLogger() const OW_DEPRECATED; // in 3.1.0
 
-	virtual LoggerRef getLogger(const String& componentName) const = 0;
+	virtual LoggerRef getLogger(const String& componentName) const;
 
-	virtual bool authenticate(String& userName, const String& info, String& details, OperationContext& context) const = 0;
+	virtual bool authenticate(String& userName, const String& info, String& details, OperationContext& context) const;
 
 	enum ESendIndicationsFlag
 	{
@@ -102,16 +102,16 @@ public:
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING) const = 0;
+		ELockingFlag locking = E_LOCKING) const;
 	
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context) const;
 	
 	
 	virtual RepositoryIFCRef getRepository() const;
 
-	virtual CIMInstanceArray getInteropInstances(const String& className) const = 0;
+	virtual CIMInstanceArray getInteropInstances(const String& className) const;
 	// TODO: Fix this to be a callback registration
-	virtual void setInteropInstance(const CIMInstance& inst) = 0;
+	virtual void setInteropInstance(const CIMInstance& inst);
 };
 
 } // end namespace OpenWBEM
