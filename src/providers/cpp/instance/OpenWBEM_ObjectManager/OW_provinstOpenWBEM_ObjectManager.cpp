@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
@@ -36,19 +36,22 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_UUID.hpp"
 
 namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
-class OpenWBEM_ObjectManagerInstProv : public CppInstanceProviderIFC
+class OpenWBEM_ObjectManagerInstProv : public CppReadOnlyInstanceProviderIFC
 {
 private:
 	CIMInstance m_inst;
+	String m_uuid;
 public:
 	////////////////////////////////////////////////////////////////////////////
 	OpenWBEM_ObjectManagerInstProv()
 		: m_inst(CIMNULL)
+		, m_uuid(UUID().toString()) // TODO: Fix this to be permanent!!!!
 	{
 	}
 	////////////////////////////////////////////////////////////////////////////
@@ -91,36 +94,21 @@ public:
 		// This property is a KEY, it must be filled out
 		newInst.setProperty("CreationClassName", CIMValue("OpenWBEM_ObjectManager"));
 		// This property is a KEY, it must be filled out
-		newInst.setProperty("Name", CIMValue("owcimomd"));
+		String Name = OW_PACKAGE_PREFIX ":";
+		if (Name == ":")
+		{
+			// OW_PACKAGE_PREFIX is empty
+			Name = "OpenWBEM:";
+		}
+		
+		Name += m_uuid; 
+
+		newInst.setProperty("Name", CIMValue(Name));
 		newInst.setProperty("Started", CIMValue(true));
 		newInst.setProperty("EnabledStatus", CIMValue(UInt16(2))); // 2 = Enabled
 		newInst.setProperty("Caption", CIMValue("owcimomd"));
 		newInst.setProperty("Description", CIMValue("owcimomd"));
 		return newInst;
-	}
-	////////////////////////////////////////////////////////////////////////////
-	virtual void enumInstances(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
-		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
-		const CIMClass& requestedClass,
-		const CIMClass& cimClass )
-	{
-		(void)ns;
-		(void)className;
-		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstances");
-		if (!m_inst)
-		{
-			m_inst = createTheInst(cimClass);
-		}
-		result.handle(m_inst.clone(localOnly,deep,includeQualifiers,
-			includeClassOrigin,propertyList,requestedClass,cimClass));
 	}
 	////////////////////////////////////////////////////////////////////////////
 	virtual CIMInstance getInstance(
@@ -136,56 +124,16 @@ public:
 		(void)ns;
 		(void)instanceName;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
-		// TODO: Check that instanceName is good.
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
 		}
+		if (instanceName != CIMObjectPath(instanceName.getNameSpace(), m_inst))
+		{
+			OW_THROWCIMMSG(CIMException::NOT_FOUND, instanceName.toString().c_str());
+		}
 		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	////////////////////////////////////////////////////////////////////////////
-	virtual CIMObjectPath createInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMInstance& cimInstance )
-	{
-		(void)env;
-		(void)ns;
-		(void)cimInstance;
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
-	}
-	////////////////////////////////////////////////////////////////////////////
-	virtual void modifyInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMInstance& modifiedInstance,
-		const CIMInstance& previousInstance,
-		EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
-		const CIMClass& theClass)
-	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
-	}
-	////////////////////////////////////////////////////////////////////////////
-	virtual void deleteInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMObjectPath& cop)
-	{
-		(void)env;
-		(void)ns;
-		(void)cop;
-		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
-	}
-#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
 
 } // end namespace OpenWBEM
