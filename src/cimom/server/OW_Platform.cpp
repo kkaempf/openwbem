@@ -575,15 +575,21 @@ void initSig()
 //////////////////////////////////////////////////////////////////////////////
 void pushSig(int sig)
 {
-	plat_upipe->writeInt(sig);
+	if (plat_upipe)
+	{
+		plat_upipe->writeInt(sig);
+	}
 	// don't throw from this function, it may cause a segfault or deadlock.
 }
 //////////////////////////////////////////////////////////////////////////////
 int popSig()
 {
 	int tmp = -2;
-	if (plat_upipe->readInt(&tmp) < 0)
-		return -1;
+	if (plat_upipe)
+	{
+		if (plat_upipe->readInt(&tmp) < 0)
+			return -1;
+	}
 	return tmp;
 }
 //////////////////////////////////////////////////////////////////////////////
