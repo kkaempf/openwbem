@@ -1,3 +1,180 @@
+2003-10-09 12:25  nuffer
+
+	* src/cimom/OW_IndexImpl.cpp: Improved the error message when the
+	  index fails to open.
+
+2003-10-09 09:04  nuffer
+
+	* configure.in: Fixed pam detection.
+
+2003-10-09 08:53  nuffer
+
+	* Makefile-shared-lib-inst.inc, Makefile-shared-lib.inc,
+	  Makefile.am, db/db/Makefile.am,
+	  src/authenticators/pam/Makefile.am,
+	  src/authenticators/pamcl/Makefile.am,
+	  src/authenticators/simple/Makefile.am,
+	  src/cimom/indication/Makefile.am, src/cimxmllistener/Makefile.am,
+	  src/client/Makefile.am, src/common/Makefile.am,
+	  src/http/client/Makefile.am, src/http/common/Makefile.am,
+	  src/mof/Makefile.am, src/providerifcs/cpp/Makefile.am,
+	  src/providerifcs/npi/Makefile.am,
+	  src/providerifcs/npi/common/Makefile.am,
+	  src/providerifcs/simplecpp/Makefile.am,
+	  src/providers/cpp/indicationexport/Makefile.am,
+	  src/providers/cpp/polled/slp/Makefile.am,
+	  src/requesthandlers/binary/Makefile.am,
+	  src/requesthandlers/cimxml/Makefile.am, src/server/Makefile.am,
+	  src/services/http/Makefile.am, src/wql/Makefile.am,
+	  src/xml/Makefile.am: Backported some of the makefile changes from
+	  HEAD so uninstall will work and we can create a distribution on
+	  rh9.
+
+2003-10-08 22:55  nuffer
+
+	* doc/man/man1/Makefile.am, doc/man/man8/Makefile.am,
+	  src/cimxmllistener/Makefile.am, test/npiproviders/Makefile.am:
+	  Changes to work with automake 1.6.3
+
+2003-10-08 22:48  nuffer
+
+	* src/server/OW_AuthManager.cpp: Fixed a bug that could cause a
+	  segfault if an auth module threw an exception where the code for
+	  the exception is in the auth module itself.
+
+2003-10-07 23:13  nuffer
+
+	* configure.in: Added -lpthread to the shared library link flags
+	  for rh9.
+
+2003-07-14 11:14  bnesse
+
+	* test/c++providers/instance/OW_LinuxProcess.cpp: Moved process
+	  name to end of list so names with spaces do not cause the
+	  provider to fail.
+
+2003-07-10 16:05  bnesse
+
+	* src/common/OW_AtomicOps.hpp: Fixed ppc assembly so it compiles.
+
+2003-07-09 16:49  nuffer
+
+	* src/common/OW_AtomicOps.hpp: Added inline assembly for ppc.
+
+2003-07-08 16:59  bnesse
+
+	* test/unit/OW_LinuxSharedLibraryLoaderTestCases.cpp: Replaced hard
+	  coded .so references with OW_SHAREDLIB_EXTENSION define.
+
+2003-07-08 16:57  bnesse
+
+	* test/acceptance/progs/aclTest.cpp: Added include of assert.h for
+	  Darwin build.
+
+2003-07-08 16:56  bnesse
+
+	* src/server/OW_Platform.cpp: #ifdefed out undefined sig on Darwin.
+
+2003-07-08 16:54  bnesse
+
+	* src/server/OW_PidFile.cpp: Added file lock/unlock ifdefs for
+	  Darwin.
+
+2003-07-08 15:27  bnesse
+
+	* src/providerifcs/simplecpp/OW_SimpleCppProviderIFC.cpp: Replaced
+	  hard coded .so references with OW_SHAREDLIB_EXTENSION define.
+
+2003-07-08 15:26  bnesse
+
+	* src/providerifcs/npi/common/Makefile.am: Removed unsued files
+	  from build.
+
+2003-07-08 15:24  bnesse
+
+	* src/providerifcs/npi/NPIProvider.hpp: Removed include of dlfcn.h.
+
+2003-07-08 15:23  bnesse
+
+	* src/providerifcs/: cpp/OW_CppProviderIFC.cpp,
+	  npi/OW_NPIProviderIFC.cpp: Replaced hard coded .so references
+	  with OW_SHAREDLIB_EXTENSION define.
+
+2003-07-08 15:21  bnesse
+
+	* src/common/socket/OW_ServerSocketImpl.cpp: Fixed error comparsion
+	  check for Darwin.
+
+2003-07-08 15:20  bnesse
+
+	* src/common/socket/OW_NwIface.cpp: Added include section for
+	  Darwin build.
+
+2003-07-08 15:18  bnesse
+
+	* src/common/OW_Types.h: Changed definition of
+	  OW_SHAREDLIB_EXTENSION to .dylib for Darwin build.
+
+2003-07-08 15:16  bnesse
+
+	* src/common/OW_NetworkTypes.hpp: Removed #if check which checked
+	  for all known builds.
+
+2003-07-08 15:14  bnesse
+
+	* src/: cimom/OW_CIMOMEnvironment.cpp, common/OW_ConfigOpts.hpp:
+	  Replaced hard coded .so references with OW_SHAREDLIB_EXTENSION
+	  define.
+
+2003-07-08 15:11  bnesse
+
+	* src/authenticators/: pam/OW_LinuxPAMAuthentication.cpp,
+	  pamcl/OW_PAMAuthSA.cpp: Added checks around header include
+	  statements.
+
+2003-07-08 15:06  bnesse
+
+	* configure.in: Changed PAM check to look in the pam/ directory
+	  also (Darwin).
+
+2003-07-01 14:40  nuffer
+
+	* src/cimom/OW_InstanceRepository.cpp: Fixed a bug with getInstance
+	  on an associatotion class without namespaces specified on the
+	  reference properties.
+
+2003-07-01 14:38  nuffer
+
+	* src/providers/cpp/polled/slp/OW_SLPProvider.cpp: Fixed to
+	  register when the ports are not specified in the config file.
+
+2003-05-20 17:32  nuffer
+
+	* ChangeLog, src/xml/OW_XMLClass.cpp: Fixed to work with clients
+	  who send invalid xml as the namespace.
+
+2003-05-19 16:20  nuffer
+
+	* ChangeLog: Updated.
+
+2003-05-19 16:19  nuffer
+
+	* src/services/http/OW_HTTPSvrConnection.cpp: Fix deflate
+	  compression.
+
+2003-05-19 16:18  nuffer
+
+	* src/mof/MofCompiler.cpp: Fixed to report the current line number
+	  when an exception is caught.
+
+2003-05-19 14:29  nuffer
+
+	* doc/Makefile.am: Added the docs to the dist.
+
+2003-05-19 10:58  nuffer
+
+	* configure.in, openwbem.spec: Version to 2.0.7
+
 Tue May 20 17:27:24 MDT 2003
 - Fixed to work with clients who send invalid xml as the namespace.
 
