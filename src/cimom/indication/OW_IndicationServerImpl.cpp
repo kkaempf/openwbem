@@ -77,11 +77,6 @@ String COMPONENT_NAME("ow.owcimomd.indication.Server");
 }
 
 //////////////////////////////////////////////////////////////////////////////
-IndicationServer::~IndicationServer()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
 IndicationServerImpl::IndicationServerImpl()
 	: m_indicationServerThread(new IndicationServerImplThread)
 {

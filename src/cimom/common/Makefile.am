@@ -53,6 +53,7 @@ OW_WQLFilterRep.hpp \
 OW_IndicationRepLayer.hpp \
 OW_IndicationRepLayerMediator.cpp \
 OW_IndicationRepLayerMediator.hpp \
+OW_IndicationServer.cpp \
 OW_IndicationServer.hpp \
 OW_AuthorizerManager.cpp \
 OW_AuthorizerManager.hpp \
