@@ -320,7 +320,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 		//char * classList = (* (fTable.fp_initialize))(
 		//	&_npiHandle, ch);
-		StringArray classList = OW_String((* (fTable.fp_initialize))(
+		StringArray classList = String((* (fTable.fp_initialize))(
 		  	&_npiHandle, ch)).tokenize(",");
 
 		// now register the perl script for every type
