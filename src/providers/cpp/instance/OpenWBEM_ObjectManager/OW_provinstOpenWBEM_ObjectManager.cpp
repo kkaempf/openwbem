@@ -100,7 +100,7 @@ public:
 		// Add the class(es) we are monitoring for lifecycle indications.
 		const char* theMonitoredClasses[] =
 			{
-				"CIM_ObjectManager",
+				"OpenWBEM_ObjectManager",
 				0
 			};
 
