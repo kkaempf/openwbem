@@ -71,10 +71,7 @@ private:
 	virtual OW_Bool doAuthenticate(OW_String &userName, const OW_String &info,
 		OW_String &details);
 	
-	virtual void doInit(OW_ServiceEnvironmentIFCRef env)
-	{
-		m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
-	}
+	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
 
 	OW_String m_allowedUsers;
 };
@@ -280,7 +277,13 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 	} // else
 	return PAM_SUCCESS;
 }
-	
+
+
+void OW_LinuxPAMAuthentication::doInit(OW_ServiceEnvironmentIFCRef env)
+{
+	m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
+}
+
 OW_AUTHENTICATOR_FACTORY(OW_LinuxPAMAuthentication);
 
 

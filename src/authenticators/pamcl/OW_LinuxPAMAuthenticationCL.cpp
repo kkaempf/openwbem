@@ -53,11 +53,7 @@ class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC
 private:
 	virtual OW_Bool doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details);
 	
-	virtual void doInit(OW_ServiceEnvironmentIFCRef env)
-	{
-		m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
-		m_libexecdir = env->getConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt);
-	}
+	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
 
 	OW_String m_allowedUsers;
 	OW_String m_libexecdir;
@@ -110,6 +106,12 @@ OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 	return OW_Bool(rval);
 }
 
+void
+OW_LinuxPAMAuthenticationCL::doInit(OW_ServiceEnvironmentIFCRef env)
+{
+	m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_libexecdir = env->getConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AUTHENTICATOR_FACTORY(OW_LinuxPAMAuthenticationCL);
