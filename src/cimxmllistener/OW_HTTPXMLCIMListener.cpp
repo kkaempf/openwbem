@@ -338,7 +338,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			}
 			else
 				throw;
-	}
+		}
 	}
 
 	if (!useHttps)
@@ -356,7 +356,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			}
 			else
 				throw;
-	}
+		}
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
 	}
@@ -375,7 +375,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	reg.httpCredentials = m_pLAuthenticator->getNewCredentials();
 	ci.setProperty("Destination", OW_CIMValue(urlPrefix + reg.httpCredentials + "@" +
-		ipAddress + ":" + OW_String(OW_UInt32(listenerPort)) + httpPath));
+				ipAddress + ":" + OW_String(OW_UInt32(listenerPort)) + httpPath));
 
 	ci.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
 	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
@@ -399,7 +399,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			reg.handler = OW_CIMObjectPath(ns, ci);
 		}
 	}
-	
+
 	// get class of CIM_IndicationFilter and new instance of it
 	OW_CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
 	ci = cimFilter.newInstance();
@@ -427,7 +427,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// CIM_IndicationSubscription is an association class that connects
 	// the IndicationFilter to the IndicationHandler.
 	OW_CIMClass cimClientFilterDelivery = hdl.getClass(ns,
-		"CIM_IndicationSubscription", E_LOCAL_ONLY);
+			"CIM_IndicationSubscription", E_LOCAL_ONLY);
 	ci = cimClientFilterDelivery.newInstance();
 
 	// set the properties for the filter and the handler
