@@ -130,6 +130,8 @@ install -d $RPM_BUILD_ROOT/%{@GENERIC@localstatedir}/openwbem
 #rm $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/libowservicehttp.so
 #ln -s %{@GENERIC@prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib
 
+rm -f $RPM_BUILD_ROOT/%{@GENERIC@prefix}/libexec/openwbem/OW_PAMAuth
+
 # Load the schema. 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib \
     $RPM_BUILD_ROOT/%{@GENERIC@prefix}/bin/owmofc -c -n root/cimv2 \
@@ -167,6 +169,27 @@ do
 done
 fi
 
+# create self-signed cert.
+umask 077
+
+if [ ! -f %{@GENERIC}sysconfdir}/openwbem/hostkey+cert.pem ] ; then
+FQDN=`hostname --fqdn`
+if [ "x${FQDN}" = "x" ]; then
+   FQDN=localhost.localdomain
+fi
+
+cat << EOF | sh %{@GENERIC@sysconfdir}/openwbem/owgencert > /dev/null 2>&1
+--
+SomeState
+SomeCity
+SomeOrganization
+SomeOrganizationalUnit
+${FQDN}
+root@${FQDN}
+EOF
+fi
+
+
 
 %PreUn
 # if -e operation, not -U 
@@ -202,7 +225,7 @@ ldconfig
 %{@GENERIC@prefix}/lib/openwbem/*
 %dir %{@GENERIC@prefix}/share/openwbem
 %dir %{@GENERIC@localstatedir}/openwbem
-%config %{@GENERIC@sysconfdir}/*
+%config(noreplace) %{@GENERIC@sysconfdir}/openwbem/*
 #%config /etc/sysconfig/daemons/%{daemonname}
 %config /etc/pam.d/@GENERIC@openwbem
 %attr(0755,root,root) /etc/init.d/%{initname}
@@ -211,7 +234,7 @@ ldconfig
 %{@GENERIC@prefix}/sbin/*
 %{@GENERIC@prefix}/man/*/*
 %{@GENERIC@prefix}/share/openwbem/*
-%{@GENERIC@localstatedir}/openwbem/*
+%config(noreplace) %{@GENERIC@localstatedir}/openwbem/*
 
 # Files for sub-packages. 
 %Files devel
