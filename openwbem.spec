@@ -4,7 +4,7 @@
 %define startnum 36
 %define killnum 64
 %define daemonname owcimomd
-%define owversion 2.0.2
+%define owversion 2.0.4
 
 Name        	: openwbem
 Version     	: %{owversion}
@@ -65,8 +65,12 @@ install etc/init/owcimomd $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install etc/pam.d/openwbem $RPM_BUILD_ROOT/etc/pam.d
 
-install -d $RPM_BUILD_ROOT/usr/lib/openwbem/c++providers
-install -d $RPM_BUILD_ROOT/var/lib/openwbem
+install -d $RPM_BUILD_ROOT/%{prefix}/lib/openwbem/c++providers
+install -d $RPM_BUILD_ROOT/${localstatedir}/openwbem
+
+#fix /usr/lib/libowservicehttp.so since RPM can't.
+rm $RPM_BUILD_ROOT/%{prefix}/lib/libowservicehttp.so
+ln -s %{prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{prefix}/lib
 
 
 
@@ -113,7 +117,6 @@ if [ "$1" = "0" ]
 then
   # Stop the daemon
   /etc/rc.d/init.d/%{daemonname} stop
-  rm -Rf /var/lib/openwbem/*
   if [ -x /sbin/chkconfig ]; then
     /sbin/chkconfig --del %{daemonname}
   elif [ -x /usr/lib/LSB/init-remove ]; then
@@ -158,11 +161,9 @@ fi
 %doc *.HOWTO AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS
 %doc openwbem-faq.html
 %dir %{prefix}/lib/openwbem
+%{prefix}/lib/openwbem/*
 %dir %{prefix}/libexec/openwbem
 %dir %{prefix}/share/openwbem
-%dir %{prefix}/lib/openwbem/provifcs
-%dir %{prefix}/lib/openwbem/authentication
-%dir %{prefix}/lib/openwbem/c++providers
 %dir %{localstatedir}/openwbem
 %dir /etc/openwbem
 %config /etc/openwbem/*
@@ -172,8 +173,6 @@ fi
 %{prefix}/lib/lib*
 %{prefix}/bin/*
 %{prefix}/sbin/*
-%{prefix}/lib/openwbem/provifcs/*
-%{prefix}/lib/openwbem/authentication/*
 %{prefix}/libexec/openwbem/*
 %{prefix}/share/openwbem/*
 
