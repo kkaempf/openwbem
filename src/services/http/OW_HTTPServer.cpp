@@ -57,6 +57,7 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_LocalAuthentication.hpp"
 
 namespace OpenWBEM
 {
@@ -80,19 +81,20 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 {
 	MutexLock lock(m_authGuard);
 	
+	// look for initial connection w/out creds
 	if (info.empty())
 	{
 		String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
                 String authChallenge; 
-#ifndef OW_DISABLE_DIGEST
                 if (m_options.useDigest)
                 {
-                    authChallenge = m_digestAuth->getChallenge(hostname); 
+#ifndef OW_DISABLE_DIGEST
+                    authChallenge = m_digestAuthentication->getChallenge(hostname); 
+#endif			
                 }
                 else
-#endif			
                 {
                     authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
                 }
@@ -101,15 +103,20 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		return false;
 	}
 	
-#ifndef OW_DISABLE_DIGEST
-	if (m_options.useDigest)
+	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
+	if (info.startsWith("OWLocal"))
 	{
-		return m_digestAuth->authorize(userName, info, pconn);
+		return m_localAuthentication->authorize(userName, info, pconn);
 	}
-	else
+	else if (m_options.useDigest)
 	{
+#ifndef OW_DISABLE_DIGEST
+		return m_digestAuthentication->authorize(userName, info, pconn);
 #endif
-                String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
+	}
+	else // doing basic
+	{
+		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
 		try
@@ -134,9 +141,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			return true;
 		}
-#ifndef OW_DISABLE_DIGEST
 	}
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -146,33 +151,53 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 	{
 		String item = env->getConfigItem(ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
 		m_options.httpPort = item.toInt32();
+		
 		item = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
 		m_options.httpsPort = item.toInt32();
+		
 		m_options.UDSFilename = env->getConfigItem(ConfigOpts::UDS_FILENAME_opt, OW_DEFAULT_UDS_FILENAME);
+		
 		item = env->getConfigItem(ConfigOpts::USE_UDS_opt, OW_DEFAULT_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
+		
 		item = env->getConfigItem(ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32() + 1;
 		// TODO: Make the type of pool and the size of the queue be separate config options.
 		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, env->getLogger(), "HTTPServer"));
+		
 		item = env->getConfigItem(ConfigOpts::SINGLE_THREAD_opt, OW_DEFAULT_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
+		
 		item = env->getConfigItem(ConfigOpts::ENABLE_DEFLATE_opt, OW_DEFAULT_ENABLE_DEFLATE);
 		m_options.enableDeflate = !item.equalsIgnoreCase("false");
-		item = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt, OW_DEFAULT_USE_DIGEST);
-		m_options.useDigest = !item.equalsIgnoreCase("false");
+		
 		item = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS);
 		m_options.allowAnonymous = item.equalsIgnoreCase("true");
 		m_options.env = env;
-#ifndef OW_DISABLE_DIGEST
+		
+		item = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt, OW_DEFAULT_USE_DIGEST);
+		m_options.useDigest = !item.equalsIgnoreCase("false");
 		if (m_options.useDigest)
 		{
+#ifndef OW_DISABLE_DIGEST
 			String passwdFile = env->getConfigItem(
 				ConfigOpts::DIGEST_AUTH_FILE_opt, OW_DEFAULT_DIGEST_PASSWD_FILE);
-			m_digestAuth = Reference<DigestAuthentication>(
+			m_digestAuthentication = Reference<DigestAuthentication>(
 				new DigestAuthentication(passwdFile));
-		}
+#else
+			OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
+				" digest is enabled in the config file, but the digest code has been disabled");
 #endif
+		}
+		
+		item = env->getConfigItem(ConfigOpts::HTTP_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION);
+		m_options.useLocalAuthentication = !item.equalsIgnoreCase("false");
+		if (m_options.useLocalAuthentication)
+		{
+			m_localAuthentication = Reference<LocalAuthentication>(
+				new LocalAuthentication());
+		}
+
 		String dumpPrefix = env->getConfigItem(ConfigOpts::DUMP_SOCKET_IO_opt);
 		if (!dumpPrefix.empty())
 		{
@@ -180,6 +205,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 				dumpPrefix + "/owHTTPSockDumpIn",
 				dumpPrefix + "/owHTTPSockDumpOut");
 		}
+		
 		item = env->getConfigItem(ConfigOpts::REUSE_ADDR_opt);
 		m_options.reuseAddr = !item.equalsIgnoreCase("false");
 		

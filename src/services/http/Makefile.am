@@ -39,6 +39,8 @@ OW_HTTPServer.cpp \
 OW_HTTPSvrConnection.cpp \
 OW_HTTPServer.hpp \
 OW_HTTPSvrConnection.hpp \
+OW_LocalAuthentication.cpp \
+OW_LocalAuthentication.hpp \
 $(DIGEST_SOURCE_FILES)
 
 INCLUDES = \

@@ -55,6 +55,7 @@ class DigestAuthentication;
 #endif
 class HTTPServer;
 class UnnamedPipe;
+class LocalAuthentication;
 
 OW_DECLARE_EXCEPTION(HTTPServer)
 
@@ -101,6 +102,7 @@ public:
 		bool reuseAddr;
 		ServiceEnvironmentIFCRef env;
 		Int32 timeout;
+		bool useLocalAuthentication;
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,
@@ -113,8 +115,9 @@ private:
 	Reference<ServerSocket> m_pHttpsServerSocket;
 	Reference<ServerSocket> m_pUDSServerSocket;
 #ifndef OW_DISABLE_DIGEST
-	Reference<DigestAuthentication> m_digestAuth;
+	Reference<DigestAuthentication> m_digestAuthentication;
 #endif
+	Reference<LocalAuthentication> m_localAuthentication;
 	Mutex m_authGuard;
 	ThreadPoolRef m_threadPool;
 	friend class HTTPSvrConnection;
