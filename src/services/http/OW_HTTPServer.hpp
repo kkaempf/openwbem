@@ -91,6 +91,7 @@ public:
 	{
 		Int32 httpPort;
 		Int32 httpsPort;
+		String UDSFilename;
 		Int32 maxConnections;
 		bool isSepThread;
 		bool enableDeflate;

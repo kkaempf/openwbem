@@ -44,7 +44,11 @@
 #include "OW_Types.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SocketFlags.hpp"
+
+
+// TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
+//#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_UDS_FILENAME
 
 namespace OpenWBEM
 {
