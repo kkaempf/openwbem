@@ -195,6 +195,7 @@ public:
 				RAND_write_file(randFile);
 			}
 		}
+		OW_SSLCtxMgr::uninit();
 	}
 };
 // This is kind of a hack to get the random file to be written at
@@ -434,6 +435,8 @@ OW_SSLCtxMgr::uninit()
 
 
 	}
+	delete[] mutex_buf;
+	mutex_buf = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -160,6 +160,9 @@ public:
 	static void setServerCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
 		{ m_serverCertVerifyCB = cbfunc; }
 
+	// set type to NOT_INIT and free memory.
+	static void uninit(); 
+
 private:
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
@@ -171,7 +174,6 @@ private:
 	static void loadDHParams(SSL_CTX* ctx, const OW_String& file);
 	/*throw (OW_SSLException)*/
 	static void generateEphRSAKey(SSL_CTX* ctx); /*throw (OW_SSLException)*/
-	static void uninit(); // set type to NOT_INIT and free memory.
 	static void uninitServer();
 	static void uninitClient();
 
