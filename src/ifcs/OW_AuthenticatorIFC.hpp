@@ -48,7 +48,7 @@
 namespace OpenWBEM
 {
 
-class AuthenticatorIFC : public IntrusiveCountableBase
+class OW_COMMON_API AuthenticatorIFC : public IntrusiveCountableBase
 {
 public:
 	AuthenticatorIFC()

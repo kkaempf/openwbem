@@ -61,7 +61,7 @@ class OperationContext;
  */
 class RequestHandlerIFC;
 typedef SharedLibraryReference< IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
-class RequestHandlerIFC : public IntrusiveCountableBase
+class OW_COMMON_API RequestHandlerIFC : public IntrusiveCountableBase
 {
 public:
 	RequestHandlerIFC();

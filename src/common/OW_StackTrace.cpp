@@ -32,9 +32,22 @@
  * @author Bart Whiteley
  * @author Dan Nuffer
  */
-
 #include "OW_config.h"
 #include "OW_StackTrace.hpp"
+
+#ifdef OW_WIN32
+#include <iostream>	// for cerr
+namespace OpenWBEM
+{
+using std::cerr;
+using std::endl;
+void StackTrace::printStackTrace()
+{
+	cerr << "StackTrace::printStackTrace not implemented yet" << endl;
+}
+}
+#else
+
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Format.hpp"
@@ -110,7 +123,6 @@ void StackTrace::printStackTrace()
 		free (strings);
 		
 		std::cerr << bt << std::endl;
-#elif defined(OW_WIN32)
 #else
 		ifstream file(OW_DEFAULT_GDB_PATH);
 		if (file)
@@ -154,3 +166,4 @@ void StackTrace::printStackTrace()
 
 } // end namespace OpenWBEM
 
+#endif	// ifdef OW_WIN32

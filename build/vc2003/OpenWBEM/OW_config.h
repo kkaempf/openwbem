@@ -559,6 +559,31 @@
 
 #define OW_EXPORT __declspec(dllexport)
 #define OW_IMPORT __declspec(dllimport)
+
+#ifdef OW_COMMON_BUILD
+#define OW_COMMON_API OW_EXPORT
+#else
+#define OW_COMMON_API OW_IMPORT
+#endif
+
+#ifdef OW_XML_BUILD
+#define OW_XML_API OW_EXPORT
+#else
+#define OW_XML_API OW_IMPORT
+#endif
+
+#ifdef OW_MOF_BUILD
+#define OW_MOF_API OW_EXPORT
+#else
+#define OW_MOF_API OW_IMPORT
+#endif
+
+#ifdef OW_HTTP_BUILD
+#define OW_HTTP_API OW_EXPORT
+#else
+#define OW_HTTP_API OW_IMPORT
+#endif
+
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

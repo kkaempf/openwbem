@@ -50,6 +50,8 @@
 namespace OpenWBEM
 {
 
+OW_DEFINE_EXCEPTION(ThreadPool);
+
 /////////////////////////////////////////////////////////////////////////////
 class ThreadPoolImpl : public IntrusiveCountableBase
 {

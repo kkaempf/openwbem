@@ -41,7 +41,7 @@ namespace OpenWBEM
 {
 
 class String;
-class SerializableIFC
+class OW_COMMON_API SerializableIFC
 {
 public:
 	virtual ~SerializableIFC();

@@ -62,7 +62,7 @@ typedef Array<CIMInstance> CIMInstanceArray;
 /**
  * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"
  */
-class ServiceEnvironmentIFC : public IntrusiveCountableBase
+class OW_COMMON_API ServiceEnvironmentIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceEnvironmentIFC();

@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class AuthorizerIFC : public RepositoryIFC
+class OW_COMMON_API AuthorizerIFC : public RepositoryIFC
 {
 public:
 	virtual ~AuthorizerIFC();

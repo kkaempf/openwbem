@@ -15,12 +15,12 @@ INCS = /I".." /I$(SRCDIR)\common /I$(SRCDIR)\cim /I$(SRCDIR)\ifcs /I$(SRCDIR)\co
 
 !IFDEF DEBUG
 BUILDTYPE = Debug
-CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
+CPPDEFS = /D"OW_XML_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
 CPPFLAGS = /GF /EHsc /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
 BUILDTYPE = Release
-CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
+CPPDEFS = /D"OW_XML_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
 CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
 LINKDBG = 
 !ENDIF
@@ -79,11 +79,12 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) $(MAP2DEF)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libowxml.lib" $(OBJS) $(LIBS)
-	$(MAP2DEF) $(TARGETDIR)\libowxml.map $(TARGETDIR)\libowxml.def
-	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
-		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-		/IMPLIB:"$(TARGETDIR)\libowxml.lib" /DEF:"$(TARGETDIR)\libowxml.def" \
-		$(OBJS) $(LIBS)
+
+#	$(MAP2DEF) $(TARGETDIR)\libowxml.map $(TARGETDIR)\libowxml.def
+#	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
+#		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
+#		/IMPLIB:"$(TARGETDIR)\libowxml.lib" /DEF:"$(TARGETDIR)\libowxml.def" \
+#		$(OBJS) $(LIBS)
 
 clean:
 	-@del $(OBJDIR)\*.obj

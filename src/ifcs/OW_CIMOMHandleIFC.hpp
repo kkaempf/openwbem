@@ -51,7 +51,7 @@ namespace OpenWBEM
  * The CIMOMHandleIFC class is an abstract class used as an interface
  * definition for classes that provide access to a CIMOM.
  */
-class CIMOMHandleIFC : public IntrusiveCountableBase
+class OW_COMMON_API CIMOMHandleIFC : public IntrusiveCountableBase
 {
 public:
 	/**

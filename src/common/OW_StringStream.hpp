@@ -54,7 +54,7 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-class OW_COMMON_API IStringStreamBuf : public std::streambuf
+class IStringStreamBuf : public std::streambuf
 {
 public:
 	IStringStreamBuf(const String& s)
@@ -75,14 +75,15 @@ private:
 	friend class OStringStream;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class OW_COMMON_API IStringStreamBase
+class IStringStreamBase
 {
 public:
 	IStringStreamBase(const String& s) : m_buf(s) {}
 	mutable IStringStreamBuf m_buf;
 };
+
 ///////////////////////////////////////////////////////////////////////////////
-class OW_COMMON_API IStringStream : private IStringStreamBase, public std::istream
+class IStringStream : private IStringStreamBase, public std::istream
 {
 public:
 	IStringStream(const String& s);

@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 // This class is a base interface for any services for Openwbem.
-class ServiceIFC : public IntrusiveCountableBase
+class OW_COMMON_API ServiceIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();

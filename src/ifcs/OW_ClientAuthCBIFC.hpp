@@ -49,7 +49,7 @@ namespace OpenWBEM
  * URL, and the cimom returns a Unauthorized, this will be called
  * so the client can repeat the request with authentication credentials.
  */
-class ClientAuthCBIFC : public IntrusiveCountableBase
+class OW_COMMON_API ClientAuthCBIFC : public IntrusiveCountableBase
 {
 public:
 	/**

@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class SelectableCallbackIFC : public IntrusiveCountableBase
+class OW_COMMON_API SelectableCallbackIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~SelectableCallbackIFC();

@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Authentication);
+OW_DECLARE_APIEXCEPTION(Authentication, OW_COMMON_API)
 
 } // end namespace OpenWBEM
 

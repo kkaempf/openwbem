@@ -53,7 +53,7 @@ namespace OpenWBEM
 
 class CIMProtocolIStreamIFC;
 typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
-class CIMProtocolIStreamIFC : public IntrusiveCountableBase, public std::istream
+class OW_COMMON_API CIMProtocolIStreamIFC : public IntrusiveCountableBase, public std::istream
 {
 public:
 	CIMProtocolIStreamIFC(std::streambuf* strbuf);

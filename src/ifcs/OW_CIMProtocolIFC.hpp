@@ -49,8 +49,8 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(CIMProtocol);
-class CIMProtocolIFC : public IntrusiveCountableBase
+OW_DECLARE_APIEXCEPTION(CIMProtocol, OW_COMMON_API);
+class OW_COMMON_API CIMProtocolIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMProtocolIFC();

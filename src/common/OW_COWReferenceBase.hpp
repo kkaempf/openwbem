@@ -55,7 +55,7 @@ inline void COWRefSwap(T& x, T&y)
 //////////////////////////////////////////////////////////////////////////////
 // This class contains the non-templated code for COWReference, to help 
 // minimize code bloat.
-class COWReferenceBase
+class OW_COMMON_API COWReferenceBase
 {
 protected:
 	COWReferenceBase()

@@ -46,7 +46,7 @@ namespace OpenWBEM
 
 // this class is part of the wqlcommon library, which is not in libopenwbem
 class WQLSelectStatement;
-class WQLIFC : public IntrusiveCountableBase
+class OW_COMMON_API WQLIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~WQLIFC();

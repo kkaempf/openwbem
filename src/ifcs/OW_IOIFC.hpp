@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-class IOIFC
+class OW_COMMON_API IOIFC
 {
 public:
 	virtual ~IOIFC();

@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 //  Format class declaration  -----------------------------------------------//
-class Format
+class OW_COMMON_API Format
 {
 public:
 	

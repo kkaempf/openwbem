@@ -49,7 +49,7 @@ namespace OpenWBEM
 
 class OperationContext;
 
-class RepositoryIFC : public IntrusiveCountableBase
+class OW_COMMON_API RepositoryIFC : public IntrusiveCountableBase
 {
 public:
 	RepositoryIFC();

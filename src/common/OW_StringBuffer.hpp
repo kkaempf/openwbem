@@ -155,7 +155,7 @@ public:
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
-	friend std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b);
+	friend OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b);
 private:
 	void checkAvail(size_t len=1)
 	{

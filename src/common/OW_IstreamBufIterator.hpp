@@ -50,7 +50,7 @@ namespace OpenWBEM
 /**
  * This class differs from a std::istreambuf_iterator in that dereferncing an eof iterator returns 0
  */
-class OW_COMMON_API IstreamBufIterator
+class IstreamBufIterator
 {
 public:
 	class proxy
