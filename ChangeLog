@@ -1,3 +1,9 @@
+Wed Dec 11 21:22:12 MST 2002
+- Added a warning to the configure.in script that will tell the user that
+  they have to edit the config file to not use the PAM authentication
+  module if no PAM headers are found.
+- Changed wqlTest1.cpp to run queries locally and remotely.
+
 Wed Dec 11 08:29:05 MST 2002
 - Created OW_WQLSelectStatementGen which ties into the WQL parser to create
   an OW_WQLSelectStatement.

@@ -49,7 +49,9 @@ wqlTest1_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/wql/common -lowwqlcommon \
+-L$(top_builddir)/src/wql -lowwql
 
 wqlTest1_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -159,6 +161,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/client \
--I$(top_srcdir)/src/cimxmllistener
+-I$(top_srcdir)/src/cimxmllistener \
+-I$(top_srcdir)/src/wql
 
 AM_CXXFLAGS=-ftemplate-depth-25

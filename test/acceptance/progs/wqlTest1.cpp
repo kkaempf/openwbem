@@ -7,6 +7,7 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_WQLImpl.hpp"
 
 #include <iostream>
 #include <assert.h>
@@ -15,15 +16,28 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
+namespace
+{
+class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+{
+public:
+	CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+protected:
+	virtual void doHandle(const OW_CIMInstance &i)
+	{
+		m_e.addElement(i);
+	}
+private:
+	OW_CIMInstanceEnumeration& m_e;
+};
 
 
 
 int queryCount = 0;
 
-OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+OW_CIMInstanceArray testQueryRemote(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
-	++queryCount;
-	cout << "\nExecuting query " << queryCount << ": " << query << endl;
+	cout << "\nExecuting query " << queryCount << " remote: " << query << endl;
 	OW_CIMInstanceEnumeration cie = rch->execQueryE("/root/testsuite", query, "wql2");
 	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
@@ -40,6 +54,38 @@ OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int 
 	}
 	return cia;
 }
+
+OW_CIMInstanceArray testQueryLocal(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+{
+	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
+	OW_Reference<OW_WQLIFC> wql(new OW_WQLImpl);
+	OW_CIMInstanceEnumeration cie;
+	CIMInstanceEnumBuilder builder(cie);
+	wql->evaluate("/root/testsuite", builder, query, "wql2", rch);
+	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
+		expectedSize << endl;
+	OW_CIMInstanceArray cia;
+	while (cie.hasMoreElements())
+	{
+		OW_CIMInstance i = cie.nextElement();
+		cia.push_back(i);
+        cout << i.toMOF() << endl;
+	}
+	if (expectedSize >= 0)
+	{
+		assert(cia.size() == (size_t)expectedSize);
+	}
+	return cia;
+}
+
+OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+{
+	++queryCount;
+	testQueryLocal(rch,query,expectedSize);
+	return testQueryRemote(rch,query,expectedSize);
+}
+
+} // end anonymous namespace
 
 int main(int argc, char* argv[])
 {
@@ -205,7 +251,7 @@ int main(int argc, char* argv[])
 		// test a simple insert
 		try
 		{
-			testQuery(rch, "INSERT INTO wqlTestClass (name, booleanData, stringData) VALUES (\"test11\", true, \"test11String\")", 1);
+			testQueryRemote(rch, "INSERT INTO wqlTestClass (name, booleanData, stringData) VALUES (\"test11\", true, \"test11String\")", 1);
 		}
 		catch (OW_CIMException& e)
 		{
@@ -220,7 +266,7 @@ int main(int argc, char* argv[])
 		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(
 			OW_String("test11"))) );
 
-		testQuery(rch, "INSERT INTO wqlTestClass VALUES (\"test12\", 32, true, 64, \"test12String\", 50.0)", 1);
+		testQueryLocal(rch, "INSERT INTO wqlTestClass VALUES (\"test12\", 32, true, 64, \"test12String\", 50.0)", 1);
 		
 
 		// test a simple update
@@ -246,9 +292,9 @@ int main(int argc, char* argv[])
 		assert( !cia[0].getProperty("stringData").getValue());
 
 		// test a simple delete
-		testQuery(rch, "DELETE FROM wqlTestClass WHERE name=\"test11\"", 1);
+		testQueryRemote(rch, "DELETE FROM wqlTestClass WHERE name=\"test11\"", 1);
 		testQuery(rch, "select * from wqlTestClass where name = \"test11\"", 0);
-		testQuery(rch, "DELETE FROM wqlTestClass WHERE name=\"test12\"", 1);
+		testQueryLocal(rch, "DELETE FROM wqlTestClass WHERE name=\"test12\"", 1);
 		testQuery(rch, "select * from wqlTestClass where name = \"test12\"", 0);
 
 		return 0;
