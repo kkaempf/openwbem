@@ -34,20 +34,20 @@
 
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
-#include "OW_GetPass.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_URL.hpp"
 #include "OW_String.hpp"
-#include "OW_ClientAuthCBIFC.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
+#include "OW_ToolsCommon.hpp"
 
 #include <iterator>
 #include <algorithm>
 #include <iostream>
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 using namespace WBEMFlags;
 
 using std::cout;
@@ -57,21 +57,6 @@ using std::cerr;
 
 namespace
 {
-
-class GetLoginInfo : public ClientAuthCBIFC
-{
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-				name + ": ");
-			return true;
-		}
-};
 
 class NamespacePrinter : public StringResultHandlerIFC
 {
@@ -139,12 +124,7 @@ int main(int argc, char* argv[])
 				return 0;
 			}
 	
-			url = parser.getOptionValue(URL_OPT);
-			if (url.empty())
-			{
-				url = "http://localhost/";
-			}
-	
+			url = parser.getOptionValue(URL_OPT, "http://localhost/");
 		}
 		
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
@@ -166,21 +146,7 @@ int main(int argc, char* argv[])
 	}
 	catch (CmdLineParserException& e)
 	{
-		switch (e.getErrorCode())
-		{
-			case CmdLineParser::E_INVALID_OPTION:
-				cerr << "unknown option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_MISSING_ARGUMENT:
-				cerr << "missing argument for option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
-				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
-			break;
-			default:
-				cerr << "failed parsing command line options: " << e << "\n";
-			break;
-		}
+		printCmdLineParserExceptionMessage(e);
 		Usage();
 	}
 	catch(const Exception& e)

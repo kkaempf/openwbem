@@ -39,12 +39,17 @@
 #include "OW_GetPass.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_CmdLineParser.hpp"
+#include "OW_ToolsCommon.hpp"
 
 #include <iostream>
 #include <fstream>
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 using namespace std;
+
+namespace
+{
 
 enum
 {
@@ -75,6 +80,7 @@ void Usage()
 	cerr << CmdLineParser::getUsage(g_options) << endl;
 }
 
+} // end unnamed namespace
 
 int main(int argc, char* argv[])
 {
@@ -94,16 +100,11 @@ int main(int argc, char* argv[])
 			return 0;
 		}
 	
-		String name = parser.getOptionValue(LOGIN_NAME_OPT);
+		String name = parser.mustGetOptionValue(LOGIN_NAME_OPT, "-l, --login_name");
 		String hostname = parser.getOptionValue(HOSTNAME_OPT);
-		String filename = parser.getOptionValue(PASSWORD_FILE_OPT);
+		String filename = parser.mustGetOptionValue(PASSWORD_FILE_OPT, "-f, --password_file");
 		String passwd = parser.getOptionValue(PASSWORD_OPT);
 	
-		if (filename.empty() || name.empty() )
-		{
-			Usage();
-			return 1;
-		}
 		if (hostname.empty())
 		{
 			SocketAddress iaddr = SocketAddress::getAnyLocalHost();
@@ -151,21 +152,7 @@ int main(int argc, char* argv[])
 	}
 	catch (CmdLineParserException& e)
 	{
-		switch (e.getErrorCode())
-		{
-			case CmdLineParser::E_INVALID_OPTION:
-				cerr << "unknown option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_MISSING_ARGUMENT:
-				cerr << "missing argument for option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
-				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
-			break;
-			default:
-				cerr << "failed parsing command line options: " << e << "\n";
-			break;
-		}
+		printCmdLineParserExceptionMessage(e);
 		Usage();
 	}
 	return 1;

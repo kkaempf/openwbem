@@ -44,6 +44,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CerrLogger.hpp"
+#include "OW_ToolsCommon.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -54,6 +55,7 @@ using std::cerr;
 using std::endl;
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 using namespace WBEMFlags;
 
 namespace
@@ -140,25 +142,14 @@ int main(int argc, char** argv)
 			return 0;
 		}
 	
-		String repositoryDir;
-		if (parser.isSet(REPOSITORY_DIR_OPT))
-		{
-			repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT);
-		}
-		else
-		{
-			repositoryDir = OW_DEFAULT_DATA_DIR;
-		}
+		String repositoryDir = parser.getOptionValue(REPOSITORY_DIR_OPT, OW_DEFAULT_DATA_DIR);
 	
 		std::filebuf* fb = 0;
 		FbCleanuper fbCleanuper(fb);
-		String output = parser.getOptionValue(OUTPUT_OPT);
-		if (output.empty())
+		// g_output is default initialized to use cout
+		if (parser.isSet(OUTPUT_OPT))
 		{
-			// g_output is default initialized to use cout
-		}
-		else
-		{
+			String output = parser.getOptionValue(OUTPUT_OPT);
 			fb = new std::filebuf;
 			if (!fb->open(output.c_str(), std::ios_base::out|std::ios_base::trunc))
 			{
@@ -178,21 +169,7 @@ int main(int argc, char** argv)
 	}
 	catch (CmdLineParserException& e)
 	{
-		switch (e.getErrorCode())
-		{
-			case CmdLineParser::E_INVALID_OPTION:
-				cerr << "unknown option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_MISSING_ARGUMENT:
-				cerr << "missing argument for option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
-				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
-			break;
-			default:
-				cerr << "failed parsing command line options: " << e << "\n";
-			break;
-		}
+		printCmdLineParserExceptionMessage(e);
 		usage();
 	}
 	catch (Exception& e)

@@ -240,7 +240,7 @@ processCommandLineOptions(int argc, char** argv)
 		}
 		if (parser.isSet(E_OPTurl))
 		{
-			g_url = parser.getOptionValue(E_OPTurl);
+			g_url = parser.getOptionValue(E_OPTurl, def_url_arg);
 		}
 		if (parser.isSet(E_OPTnamespace))
 		{
@@ -282,6 +282,9 @@ processCommandLineOptions(int argc, char** argv)
 			break;
 			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
 				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_OPTION:
+				cerr << "missing required option: " << e.getMessage() << '\n';
 			break;
 			default:
 				cerr << "failed parsing command line options: " << e << "\n";

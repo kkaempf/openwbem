@@ -40,12 +40,14 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_URL.hpp"
+#include "OW_ToolsCommon.hpp"
 
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 
 using namespace OpenWBEM;
+using namespace OpenWBEM::Tools;
 
 using std::cout;
 using std::cin;
@@ -55,21 +57,6 @@ using namespace WBEMFlags;
 
 namespace
 {
-// TODO: put this in a common spot.
-class GetLoginInfo : public ClientAuthCBIFC
-{
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-					name + ": ");
-			return true;
-		}
-};
 
 class classPrinter : public CIMClassResultHandlerIFC
 {
@@ -138,11 +125,7 @@ int main(int argc, char* argv[])
 				return 0;
 			}
 	
-			url = parser.getOptionValue(URL_OPT);
-			if (url.empty())
-			{
-				url = "http://localhost/root/cimv2";
-			}
+			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
 			ns = URL(url).namespaceName;
 			if (ns.empty())
 			{
@@ -161,21 +144,7 @@ int main(int argc, char* argv[])
 	}
 	catch (CmdLineParserException& e)
 	{
-		switch (e.getErrorCode())
-		{
-			case CmdLineParser::E_INVALID_OPTION:
-				cerr << "unknown option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_MISSING_ARGUMENT:
-				cerr << "missing argument for option: " << e.getMessage() << '\n';
-			break;
-			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
-				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
-			break;
-			default:
-				cerr << "failed parsing command line options: " << e << "\n";
-			break;
-		}
+		printCmdLineParserExceptionMessage(e);
 		Usage();
 	}
 	catch(const Exception& e)

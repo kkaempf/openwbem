@@ -241,6 +241,9 @@ int main(int argc, char* argv[])
 			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
 				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
 			break;
+			case CmdLineParser::E_MISSING_OPTION:
+				cerr << "missing required option: " << e.getMessage() << '\n';
+			break;
 			default:
 				cerr << "failed parsing command line options: " << e << "\n";
 			break;

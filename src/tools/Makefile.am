@@ -51,7 +51,10 @@ noinst_PROGRAMS = \
 owrepositorydump
 
 ### owdigestgenpass
-owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
+owdigestgenpass_SOURCES = \
+OW_DigestPasswdGen.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owdigestgenpass_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -80,7 +83,10 @@ $(CXXBINLINKFLAGS) \
 -o owexecwql$(EXEEXT)
 
 ### owcreatenamespace
-owcreatenamespace_SOURCES = owcreatenamespace.cpp
+owcreatenamespace_SOURCES = \
+owcreatenamespace.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owcreatenamespace_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -96,7 +102,10 @@ $(CXXBINLINKFLAGS) \
 -o owcreatenamespace$(EXEEXT)
 
 ### owdeletenamespace
-owdeletenamespace_SOURCES = owdeletenamespace.cpp
+owdeletenamespace_SOURCES = \
+owdeletenamespace.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owdeletenamespace_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -112,7 +121,10 @@ $(CXXBINLINKFLAGS) \
 -o owdeletenamespace$(EXEEXT)
 
 ### owenumnamespace
-owenumnamespace_SOURCES = owenumnamespace.cpp
+owenumnamespace_SOURCES = \
+owenumnamespace.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owenumnamespace_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -160,7 +172,10 @@ $(CXXBINLINKFLAGS) \
 -o owenumclassnames$(EXEEXT)
 
 ### owenumclasses
-owenumclasses_SOURCES = owenumclasses.cpp
+owenumclasses_SOURCES = \
+owenumclasses.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owenumclasses_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -176,7 +191,10 @@ $(CXXBINLINKFLAGS) \
 -o owenumclasses$(EXEEXT)
 
 ### owcimindicationlistener
-owcimindicationlistener_SOURCES = owcimindicationlistener.cpp
+owcimindicationlistener_SOURCES = \
+owcimindicationlistener.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owcimindicationlistener_LDADD = \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
@@ -194,7 +212,10 @@ $(CXXBINLINKFLAGS) \
 -o owcimindicationlistener$(EXEEXT)
 
 ### owrepositorydump
-owrepositorydump_SOURCES = owrepositorydump.cpp
+owrepositorydump_SOURCES = \
+owrepositorydump.cpp \
+OW_ToolsCommon.cpp \
+OW_ToolsCommon.hpp
 
 owrepositorydump_LDADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
