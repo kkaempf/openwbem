@@ -245,6 +245,11 @@ true					{RETURN_STR(TRUE_TOK);}
 	else
 	{
 		owmof_delete_buffer( YY_CURRENT_BUFFER );
+		/* flex doesn't ever close the file handles.  If we don't free them up, on HPUX where we're limited to 60 files, you can't import the CIM schema! */
+		if (owmofin != NULL && owmofin != stdin)
+		{
+			fclose(owmofin);
+		}
 		MOF_COMPILER->theErrorHandler->progressMessage("Finished parsing.", MOF_COMPILER->theLineInfo);
 		MOF_COMPILER->theLineInfo = MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo;
 		owmof_switch_to_buffer(
