@@ -42,11 +42,11 @@ public:
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
 			{
-				newCop.addKey("SystemCreationClassName", CIMValue("OpenWBEM_ObjectManager"));
+				newCop.setKeyValue("SystemCreationClassName", CIMValue("OpenWBEM_ObjectManager"));
 				SocketAddress addr = SocketAddress::getAnyLocalHost();
-				newCop.addKey("SystemName", CIMValue(addr.getName()));
-				newCop.addKey("CreationClassName", CIMValue(className));
-				newCop.addKey("Name", CIMValue(insts[i].getPropertyT("Name").getValue()));
+				newCop.setKeyValue("SystemName", CIMValue(addr.getName()));
+				newCop.setKeyValue("CreationClassName", CIMValue(className));
+				newCop.setKeyValue("Name", CIMValue(insts[i].getPropertyT("Name").getValue()));
 				result.handle(newCop);
 			}
 		}

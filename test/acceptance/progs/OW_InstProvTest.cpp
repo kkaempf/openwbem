@@ -225,7 +225,7 @@ main(int argc, char* argv[])
 #endif
 		CIMObjectPath ccop("TestInstance", "root");
 		CIMObjectPath icop = ccop;
-		icop.addKey("Name", CIMValue(String("One")));
+		icop.setKeyValue("Name", CIMValue(String("One")));
 		rch.createInstance("root", inst);
 
 		cout << "** Enumerating instances (1 instance)" << endl;

@@ -304,8 +304,8 @@ void getInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(theInstance));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(theInstance));
 
 		CIMInstance in = hdl.getInstance("/root/acltest", cop);
 		if (mode != "r" && mode != "rw")
@@ -349,8 +349,8 @@ void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 	{
 		String ofClass = "EXP_BionicComputerSystem2";
 		CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(theInstance));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(theInstance));
 		hdl.deleteInstance("/root/acltest", cop);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
@@ -437,9 +437,9 @@ void associatorNames(CIMOMHandleIFC& hdl)
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMObjectPathEnumeration enu = hdl.associatorNamesE(
 			"/root/acltest", cop, "CIM_Component", "", "", "");
@@ -462,10 +462,10 @@ void associators(CIMOMHandleIFC& hdl)
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
 
-		cop.addKey("Name", CIMValue(String("SixMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		CIMInstanceEnumeration enu = hdl.associatorsE("/root/acltest", cop,
 									"CIM_Component", "", "", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
@@ -489,9 +489,9 @@ void referenceNames(CIMOMHandleIFC& hdl)
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SixMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		CIMObjectPathEnumeration enu = hdl.referenceNamesE("/root/acltest", cop,
 			"CIM_Component", "");
@@ -514,9 +514,9 @@ void references(CIMOMHandleIFC& hdl)
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMInstanceEnumeration enu = hdl.referencesE("/root/acltest", cop,
 									"CIM_Component", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
@@ -701,8 +701,8 @@ void getProperty(CIMOMHandleIFC& hdl)
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(String("SixMillion")));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		CIMValue v = hdl.getProperty("/root/acltest", cop, "OptionalArg");
 		if (mode != "r" && mode != "rw")
@@ -724,8 +724,8 @@ void setProperty(CIMOMHandleIFC& hdl)
 	{
 		String ofClass = "EXP_BionicComputerSystem2";
 		CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(String("SixMillion")));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		hdl.setProperty("/root/acltest", cop, "OptionalArg", CIMValue(Bool(true)));
 		if (mode != "w" && mode != "rw")

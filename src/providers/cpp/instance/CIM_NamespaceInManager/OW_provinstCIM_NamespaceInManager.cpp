@@ -87,9 +87,8 @@ public:
 		while (namespaces.hasMoreElements())
 		{
 			CIMObjectPath nsPath = namespaces.nextElement();
-			newCop.setKeys(CIMPropertyArray());
-			newCop.addKey("Antecedent", CIMValue(omPath));
-			newCop.addKey("Dependent", CIMValue(nsPath));
+			newCop.setKeyValue("Antecedent", CIMValue(omPath));
+			newCop.setKeyValue("Dependent", CIMValue(nsPath));
 			result.handle(newCop);
 		}
 	}

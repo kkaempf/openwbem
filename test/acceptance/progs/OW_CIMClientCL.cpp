@@ -669,8 +669,8 @@ getInstance(CIMClient& hdl, const String& theInstance,
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass);
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(theInstance));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(theInstance));
 
 		CIMInstance in = hdl.getInstance( cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
@@ -703,8 +703,8 @@ modifyInstance(CIMClient& hdl, const String& theInstance,
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass);
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(theInstance));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(theInstance));
 
 		CIMInstance in = hdl.getInstance(cop);
 
@@ -751,8 +751,8 @@ deleteInstance(CIMClient& hdl, const String& ofClass, const String& theInstance)
 	try
 	{
 		CIMObjectPath cop(ofClass );
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(theInstance));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(theInstance));
 		hdl.deleteInstance( cop);
 	}
 	catch (CIMException& e)
@@ -888,20 +888,20 @@ setupAssociations(CIMClient& hdl)
 	try
 	{
 		CIMObjectPath cop1("EXP_BionicComputerSystem", "root/testsuite");
-		cop1.addKey("CreationClassName", CIMValue(String("EXP_BionicComputerSystem")));
-		cop1.addKey("Name", CIMValue(String("SevenMillion")));
+		cop1.setKeyValue("CreationClassName", CIMValue(String("EXP_BionicComputerSystem")));
+		cop1.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMObjectPath cop2("EXP_BionicComputerSystem2", "root/testsuite");
-		cop2.addKey("CreationClassName", CIMValue(String("EXP_BionicComputerSystem2")));
-		cop2.addKey("Name", CIMValue(String("SixMillion")));
+		cop2.setKeyValue("CreationClassName", CIMValue(String("EXP_BionicComputerSystem2")));
+		cop2.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		CIMObjectPath cop3("EXP_BionicComputerSystem2", "root/testsuite");
-		cop3.addKey("CreationClassName", CIMValue(String("EXP_BionicComputerSystem2")));
-		cop3.addKey("Name", CIMValue(String("SevenMillion")));
+		cop3.setKeyValue("CreationClassName", CIMValue(String("EXP_BionicComputerSystem2")));
+		cop3.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMObjectPath cop4("EXP_BionicComputerSystem", "root/testsuite");
-		cop4.addKey("CreationClassName", CIMValue(String("EXP_BionicComputerSystem")));
-		cop4.addKey("Name", CIMValue(String("SixMillion")));
+		cop4.setKeyValue("CreationClassName", CIMValue(String("EXP_BionicComputerSystem")));
+		cop4.setKeyValue("Name", CIMValue(String("SixMillion")));
 
 		createAssociation(hdl, "CIM_SystemComponent", "GroupComponent", cop1,
 				"PartComponent", cop2);
@@ -934,9 +934,9 @@ associatorNames(CIMClient& hdl, const String& assocClass,
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMObjectPathEnumeration enu = hdl.associatorNamesE(
 			cop, assocClass, resultClass, role, resultRole);
@@ -1015,10 +1015,10 @@ associators(CIMClient& hdl, const String& assocClass,
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
 
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMInstanceEnumeration enu = hdl.associatorsE( cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
@@ -1107,9 +1107,9 @@ referenceNames(CIMClient& hdl,
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass);
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMObjectPathEnumeration enu = hdl.referenceNamesE( cop,
 				resultClass, role);
@@ -1186,9 +1186,9 @@ references(CIMClient& hdl,
 	try
 	{
 		CIMObjectPath cop("EXP_BionicComputerSystem");
-		cop.addKey("CreationClassName",
+		cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", CIMValue(String("SevenMillion")));
+		cop.setKeyValue("Name", CIMValue(String("SevenMillion")));
 
 		CIMInstanceEnumeration enu = hdl.referencesE( cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
@@ -1362,7 +1362,7 @@ prepareGetStateParams(CIMParamValueArray& in, const CIMObjectPath& cop)
 	copWithNS.setNameSpace("root/testsuite");
 	paths.push_back(copWithNS);
 	CIMObjectPath cop2(copWithNS);
-	cop2.addKey("name", CIMValue("foo"));
+	cop2.setKeyValue("name", CIMValue("foo"));
 	paths.push_back(cop2);
 	in.push_back(CIMParamValue("paths", CIMValue(paths)));
 
@@ -1384,9 +1384,9 @@ invokeMethod(CIMClient& hdl, int num)
 		switch (num)
 		{
 			case 1:
-				cop.addKey("CreationClassName",
+				cop.setKeyValue("CreationClassName",
 					  CIMValue(String("EXP_BartComputerSystem")));
-				cop.addKey("Name", CIMValue(String("test")));
+				cop.setKeyValue("Name", CIMValue(String("test")));
 				in.push_back(CIMParamValue("newState", CIMValue(String("off"))));
 				hdl.invokeMethod( cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
@@ -1521,8 +1521,8 @@ getProperty(CIMClient& hdl, const String& instName)
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass);
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(String(instName)));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(String(instName)));
 
 		CIMValue v = hdl.getProperty( cop, "OptionalArg");
 		// with xml, this is a string.  we want a bool.
@@ -1551,8 +1551,8 @@ setProperty(CIMClient& hdl, const String& instName)
 	{
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPath cop(ofClass);
-		cop.addKey("CreationClassName", CIMValue(ofClass));
-		cop.addKey("Name", CIMValue(instName));
+		cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+		cop.setKeyValue("Name", CIMValue(instName));
 
 		hdl.setProperty( cop, "OptionalArg", CIMValue(Bool(true)));
 	}

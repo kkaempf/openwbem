@@ -124,16 +124,15 @@ public:
 	 */
 	CIMObjectPath& operator= (const CIMObjectPath& arg);
 	/**
-	 * Add another key to this object path (for instance paths).
-	 * @param keyname The name of the key property
-	 * @param value The value for the key property.  Cannot be null.
-	 * @return a reference to *this
+	 * This function is too error prone.  Use setKeyValue() instead.
+	 * It's just still here for backward compatibility. It's deprecated and will
+	 * be removed in the future.
 	 */
 	CIMObjectPath& addKey(const String& keyname, const CIMValue& value);
 	/**
-	 * Add another key to this object path (for instance paths).
-	 * @param key The key property.  Cannot be null.  Cannot have a null value.
-	 * @return a reference to *this
+	 * This function is too error prone.  Use setKeyValue() instead.
+	 * It's just still here for backward compatibility. It's deprecated and will
+	 * be removed in the future.
 	 */
 	CIMObjectPath& addKey(const CIMProperty& key);
 	/**

@@ -83,7 +83,7 @@ public:
 			iter != g_saa.end(); iter++)
 		{
 			CIMObjectPath instCop(className, ns);
-			instCop.addKey("Name", CIMValue(iter->name));
+			instCop.setKeyValue("Name", CIMValue(iter->name));
 			result.handle(instCop);
 		}
 	}

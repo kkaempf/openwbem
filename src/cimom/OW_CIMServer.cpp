@@ -195,8 +195,8 @@ AccessMgr::checkAccess(int op, const String& ns,
 			}
 			
 			CIMObjectPath cop("OpenWBEM_UserACL");
-			cop.addKey("username", CIMValue(userInfo.getUserName()));
-			cop.addKey("nspace", CIMValue(lns));
+			cop.setKeyValue("username", CIMValue(userInfo.getUserName()));
+			cop.setKeyValue("nspace", CIMValue(lns));
 			CIMInstance ci(CIMNULL);
 			try
 			{
@@ -261,7 +261,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			return;
 		}
 		CIMObjectPath cop("OpenWBEM_NamespaceACL");
-		cop.addKey("nspace", CIMValue(lns));
+		cop.setKeyValue("nspace", CIMValue(lns));
 		CIMInstance ci(CIMNULL);
 		try
 		{

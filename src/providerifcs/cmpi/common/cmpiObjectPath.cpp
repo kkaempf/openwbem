@@ -118,7 +118,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
 	}
 
 	OpenWBEM::CIMValue val = value2CIMValue(data,type,&rc);
-	ref->addKey(key, val);
+	ref->setKeyValue(key, val);
 	CMReturn(CMPI_RC_OK);
 }
 

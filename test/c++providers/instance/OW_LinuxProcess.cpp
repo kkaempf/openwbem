@@ -87,15 +87,15 @@ public:
 		{
 			StringArray proc = iter->tokenize();
 			CIMObjectPath newCop(className, ns);
-			newCop.addKey(String("Handle"), CIMValue(proc[0]));
-			newCop.addKey(String("CreationClassName"),
+			newCop.setKeyValue(String("Handle"), CIMValue(proc[0]));
+			newCop.setKeyValue(String("CreationClassName"),
 				CIMValue(className));
-			newCop.addKey(String("OSName"), CIMValue(String("Linux")));
-			newCop.addKey(String("OSCreationClassName"),
+			newCop.setKeyValue(String("OSName"), CIMValue(String("Linux")));
+			newCop.setKeyValue(String("OSCreationClassName"),
 				CIMValue(String("CIM_OperatingSystem")));
-			newCop.addKey(String("CSName"),
+			newCop.setKeyValue(String("CSName"),
 				CIMValue(SocketAddress::getAnyLocalHost().getName()));
-			newCop.addKey(String("CSCreationClassName"),
+			newCop.setKeyValue(String("CSCreationClassName"),
 				CIMValue(String("CIM_ComputerSystem")));
 			result.handle(newCop);
 		}

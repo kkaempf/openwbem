@@ -83,11 +83,11 @@ namespace
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
 			String hostname(hostbuf);
-			instCop.addKey("SystemCreationClassName",
+			instCop.setKeyValue("SystemCreationClassName",
 				CIMValue(String("CIM_System")));
-			instCop.addKey("SystemName", CIMValue(hostname));
-			instCop.addKey("CreationClassName", CIMValue(className));
-			instCop.addKey("DeviceID", CIMValue(String("bat01")));
+			instCop.setKeyValue("SystemName", CIMValue(hostname));
+			instCop.setKeyValue("CreationClassName", CIMValue(className));
+			instCop.setKeyValue("DeviceID", CIMValue(String("bat01")));
 			result.handle(instCop);
 		}
 

@@ -257,6 +257,32 @@ CIMInstance::getPropertyT(const String& propertyName) const
 	return p;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMValue
+CIMInstance::getPropertyValue(const String& name) const
+{
+	CIMProperty p = this->getProperty(name);
+	if (p)
+	{
+		return p.getValue();
+	}
+	return CIMValue(CIMNULL);
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
+CIMInstance::propertyHasValue(const String& name) const
+{
+	CIMProperty p = this->getProperty(name);
+	if (p)
+	{
+		CIMValue v = p.getValue();
+		if (v)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+//////////////////////////////////////////////////////////////////////////////
 // PRIVATE.
 void
 CIMInstance::_buildKeys()

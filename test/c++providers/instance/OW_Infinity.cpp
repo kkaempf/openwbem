@@ -76,7 +76,7 @@ public:
 		for (;;++count)
 		{
 			CIMObjectPath newCop(className, ns);
-			newCop.addKey(String("InstanceNumber"), CIMValue(count));
+			newCop.setKeyValue(String("InstanceNumber"), CIMValue(count));
 			result.handle(newCop);
 		}
 	}

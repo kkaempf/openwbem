@@ -139,15 +139,21 @@ deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns_, const String& intero
 	}
 	CIMObjectPath theObjectManager = e.nextElement();
 	CIMObjectPath nsPath("CIM_Namespace", interopNs);
-	nsPath.addKey(theObjectManager.getKeyT("SystemCreationClassName"));
-	nsPath.addKey(theObjectManager.getKeyT("SystemName"));
-	nsPath.addKey("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue());
-	nsPath.addKey("ObjectManagerName", theObjectManager.getKeyT("Name").getValue());
-	nsPath.addKey("CreationClassName", CIMValue("CIM_Namespace"));
-	nsPath.addKey("Name", CIMValue(ns));
+	CIMPropertyArray keys;
+	keys.push_back(theObjectManager.getKeyT("SystemCreationClassName"));
+	keys.push_back(theObjectManager.getKeyT("SystemName"));
+	keys.push_back(CIMProperty("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue()));
+	keys.push_back(CIMProperty("ObjectManagerName", theObjectManager.getKeyT("Name").getValue()));
+	keys.push_back(CIMProperty("CreationClassName", CIMValue("CIM_Namespace")));
+	keys.push_back(CIMProperty("Name", CIMValue(ns)));
+	nsPath.setKeys(keys);
+
 	CIMObjectPath theAssoc("CIM_NamespaceInManager", interopNs);
-	theAssoc.addKey("Antecedent", CIMValue(theObjectManager));
-	theAssoc.addKey("Dependent", CIMValue(nsPath));
+	keys.clear();
+	keys.push_back(CIMProperty("Antecedent", CIMValue(theObjectManager)));
+	keys.push_back(CIMProperty("Dependent", CIMValue(nsPath)));
+	theAssoc.setKeys(keys);
+
 	hdl.deleteInstance(interopNs, theAssoc);
 	hdl.deleteInstance(interopNs, nsPath);
 }

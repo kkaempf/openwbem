@@ -141,22 +141,22 @@ CIMObjectPath::operator= (const CIMObjectPath& x)
 CIMObjectPath&
 CIMObjectPath::addKey(const String& keyname, const CIMValue& value)
 {
-	if(value)
-	{
-		CIMProperty cp(keyname, value);
-		cp.setDataType(value.getCIMDataType());
-		m_pdata->m_keys.append(cp);
-	}
-	return *this;
+    if(value)
+    {
+        CIMProperty cp(keyname, value);
+        cp.setDataType(value.getCIMDataType());
+        m_pdata->m_keys.append(cp);
+    }
+    return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
 CIMObjectPath::addKey(const CIMProperty& key)
 {
-	OW_ASSERT(key);
-	OW_ASSERT(key.getValue());
-	m_pdata->m_keys.append(key);
-	return *this;
+    OW_ASSERT(key);
+    OW_ASSERT(key.getValue());
+    m_pdata->m_keys.append(key);
+    return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMPropertyArray
@@ -199,6 +199,7 @@ CIMObjectPath::setKeys(const CIMPropertyArray& newKeys)
 CIMObjectPath&
 CIMObjectPath::setKeys(const CIMInstance& instance)
 {
+	OW_ASSERT(instance);
 	m_pdata->m_keys = instance.getKeyValuePairs();
 	return *this;
 }
@@ -206,6 +207,7 @@ CIMObjectPath::setKeys(const CIMInstance& instance)
 CIMObjectPath& 
 CIMObjectPath::setKeyValue(const String& name, const CIMValue& value)
 {
+	OW_ASSERT(value);
 	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
 	{
 		if (m_pdata->m_keys[i].getName().equalsIgnoreCase(name))
@@ -215,7 +217,7 @@ CIMObjectPath::setKeyValue(const String& name, const CIMValue& value)
 		}
 	}
 	// didn't find it
-	addKey(name, value);
+    m_pdata->m_keys.append(CIMProperty(name, value));
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////

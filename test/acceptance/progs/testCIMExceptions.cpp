@@ -191,7 +191,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("fooKey", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("fooKey", CIMValue(String("fooKeyValue")));
 		hdl->getInstance("badNamespace", cop);
 		TEST_ASSERT(0);
 	}
@@ -206,7 +206,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("fooXXX");
-		cop.addKey("fooKey", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("fooKey", CIMValue(String("fooKeyValue")));
 		hdl->getInstance("root/testsuite", cop);
 		TEST_ASSERT(0);
 	}
@@ -219,8 +219,8 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("CIM_PhysicalElement");
-		cop.addKey("CreationClassName", CIMValue(String("fooKeyValue")));
-		cop.addKey("Tag", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("CreationClassName", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("Tag", CIMValue(String("fooKeyValue")));
 		hdl->getInstance("root/testsuite", cop);
 		TEST_ASSERT(0);
 	}
@@ -268,7 +268,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("fooKey", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("fooKey", CIMValue(String("fooKeyValue")));
 		hdl->deleteInstance("badNamespace", cop);
 		TEST_ASSERT(0);
 	}
@@ -283,7 +283,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("fooXXX");
-		cop.addKey("fooKey", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("fooKey", CIMValue(String("fooKeyValue")));
 		hdl->deleteInstance("root/testsuite", cop);
 		TEST_ASSERT(0);
 	}
@@ -296,8 +296,8 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("CIM_PhysicalElement");
-		cop.addKey("CreationClassName", CIMValue(String("fooKeyValue")));
-		cop.addKey("Tag", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("CreationClassName", CIMValue(String("fooKeyValue")));
+		cop.setKeyValue("Tag", CIMValue(String("fooKeyValue")));
 		hdl->deleteInstance("root/testsuite", cop);
 		TEST_ASSERT(0);
 	}
@@ -790,7 +790,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->associatorsE("badNamespace", cop,"","","","");
 		TEST_ASSERT(0);
 	}
@@ -808,7 +808,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->associatorNamesE("badNamespace", cop, "", "", "", "");
 		TEST_ASSERT(0);
 	}
@@ -825,7 +825,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->referencesE("badNamespace", cop,"","");
 		TEST_ASSERT(0);
 	}
@@ -842,7 +842,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->referenceNamesE("badNamespace", cop,"","");
 		TEST_ASSERT(0);
 	}
@@ -858,7 +858,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->getProperty("badNamespace", cop, "theKeyProp");
 		TEST_ASSERT(0);
 	}
@@ -872,7 +872,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("badClass");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->getProperty("root/testsuite", cop, "theKeyProp");
 		TEST_ASSERT(0);
 	}
@@ -885,7 +885,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop(baseClass.getName());
-		cop.addKey("theKeyProp", CIMValue(false));
+		cop.setKeyValue("theKeyProp", CIMValue(false));
 		hdl->getProperty("root/testsuite", cop, "theKeyProp");
 		TEST_ASSERT(0);
 	}
@@ -898,7 +898,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop(baseClass.getName());
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->getProperty("root/testsuite", cop, "badProp");
 		TEST_ASSERT(0);
 	}
@@ -915,7 +915,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("foo");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->setProperty("badNamespace", cop, "theKeyProp", CIMValue(true));
 		TEST_ASSERT(0);
 	}
@@ -929,7 +929,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop("badClass");
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", CIMValue(true));
 		TEST_ASSERT(0);
 	}
@@ -942,7 +942,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop(baseClass.getName());
-		cop.addKey("theKeyProp", CIMValue(false));
+		cop.setKeyValue("theKeyProp", CIMValue(false));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", CIMValue(false));
 		TEST_ASSERT(0);
 	}
@@ -955,7 +955,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop(baseClass.getName());
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "badProp", CIMValue(true));
 		TEST_ASSERT(0);
 	}
@@ -968,7 +968,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	try
 	{
 		CIMObjectPath cop(baseClass.getName());
-		cop.addKey("theKeyProp", CIMValue(true));
+		cop.setKeyValue("theKeyProp", CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", CIMValue(String("x")));
 		TEST_ASSERT(0);
 	}
@@ -1171,8 +1171,8 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	{
 		CIMParamValueArray in, out;
 		CIMObjectPath cop("EXP_BartComputerSystem");
-		cop.addKey("Name", CIMValue("badKey"));
-		cop.addKey("CreationClassName", CIMValue("badKey"));
+		cop.setKeyValue("Name", CIMValue("badKey"));
+		cop.setKeyValue("CreationClassName", CIMValue("badKey"));
 		hdl->invokeMethod("root/testsuite", cop, "getstate", in, out);
 		TEST_ASSERT(0);
 	}

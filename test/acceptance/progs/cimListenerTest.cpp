@@ -212,8 +212,8 @@ void getInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
 	String ofClass = "EXP_IndicationTestComputerSystem";
 	CIMObjectPath cop(ofClass);
-	cop.addKey("CreationClassName", CIMValue(ofClass));
-	cop.addKey("Name", CIMValue(theInstance));
+	cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+	cop.setKeyValue("Name", CIMValue(theInstance));
 
 	CIMInstance in = hdl.getInstance("root/testsuite", cop);
 	//cout << in.toMOF();
@@ -223,8 +223,8 @@ void modifyInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
 	String ofClass = "EXP_IndicationTestComputerSystem";
 	CIMObjectPath cop(ofClass);
-	cop.addKey("CreationClassName", CIMValue(ofClass));
-	cop.addKey("Name", CIMValue(theInstance));
+	cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+	cop.setKeyValue("Name", CIMValue(theInstance));
 
 	CIMInstance in = hdl.getInstance("root/testsuite", cop);
 
@@ -242,8 +242,8 @@ void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
 	String ofClass = "EXP_IndicationTestComputerSystem";
 	CIMObjectPath cop(ofClass, "root/testsuite");
-	cop.addKey("CreationClassName", CIMValue(ofClass));
-	cop.addKey("Name", CIMValue(theInstance));
+	cop.setKeyValue("CreationClassName", CIMValue(ofClass));
+	cop.setKeyValue("Name", CIMValue(theInstance));
 	hdl.deleteInstance("root/testsuite", cop);
 }
 

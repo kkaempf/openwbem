@@ -191,6 +191,19 @@ public:
 	 */
 	CIMProperty getPropertyT(const String& name) const;
 	/**
+	 * Gets a property's value.
+	 * @param name The name of the property value to retrieve.
+	 * @return The CIMValue of the specified property.  It will be NULL if the
+	 * property doesn't exist or the property's value is NULL.
+	 */
+	CIMValue getPropertyValue(const String& name) const;
+	/**
+	 * Test whether a property exists and has a non-NULL value.
+	 * @param name The name of the property to test.
+	 * @return bool true if the property exists and has a non-NULL value.
+	 */
+	bool propertyHasValue(const String& name) const;
+	/**
 	 * @return An CIMPropertyArray that contains all of the keys for this
 	 * instance.
 	 */
