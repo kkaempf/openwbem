@@ -81,6 +81,12 @@ catch (...)
 }
 
 Also, main() should catch(...) and gracefully exit.
+
+Never use exception specifications (except for no throw "throw()", and then
+only if you are 100% sure it can't throw), because it can easily lead to
+abort() being called if an exception is thrown that doesn't match the
+specification.  Unfortunately gcc doesn't check, and so this can easily lead
+to problems.
 -----------------------------------------------------------------------------
 The following CIM elements are case-insensitive: Classes, Instances, Methods,
 Properties, Qualifiers and Method Parameters.
