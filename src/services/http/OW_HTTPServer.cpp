@@ -218,7 +218,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 #ifndef OW_DISABLE_DIGEST
 			String passwdFile = env->getConfigItem(
 				ConfigOpts::DIGEST_AUTH_FILE_opt, OW_DEFAULT_DIGEST_PASSWD_FILE);
-			m_digestAuthentication = Reference<DigestAuthentication>(
+			m_digestAuthentication = IntrusiveReference<DigestAuthentication>(
 				new DigestAuthentication(passwdFile));
 			m_options.defaultAuthChallenge = E_DIGEST;
 #else
@@ -239,7 +239,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 		m_options.allowLocalAuthentication = !item.equalsIgnoreCase("false");
 		if (m_options.allowLocalAuthentication)
 		{
-			m_localAuthentication = Reference<LocalAuthentication>(
+			m_localAuthentication = IntrusiveReference<LocalAuthentication>(
 				new LocalAuthentication());
 		}
 
@@ -293,7 +293,7 @@ public:
 		try
 		{
 			(void)selectedObject;
-			Reference<ServerSocket> pServerSocket;
+			IntrusiveReference<ServerSocket> pServerSocket;
 			if (m_isIPC)
 			{
 				pServerSocket = m_HTTPServer->m_pUDSServerSocket;

@@ -248,7 +248,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    String libPath = env->getConfigItem(ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
-   if(ldr.isNull())
+   if(!ldr)
    {
 	  env->getLogger()->logError("NPI provider ifc failed to get shared lib loader");
 	  return;
@@ -278,7 +278,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 	  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
-	  if(theLib.isNull())
+	  if(!theLib)
 	  {
 		 env->getLogger()->logError(Format("NPI provider %1 ifc failed to load"
 				   " library: %2", guessProvId, libName));
@@ -348,7 +348,7 @@ NPIProviderIFC::getProvider(
 		ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
+	if(!ldr)
 	{
 		env->getLogger()->logError("NPI: provider ifc failed to get shared lib loader");
 		return FTABLERef();
@@ -362,7 +362,7 @@ NPIProviderIFC::getProvider(
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 		env->getLogger());
-	if(theLib.isNull())
+	if(!theLib)
 	{
 		env->getLogger()->logError(Format("NPI provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));

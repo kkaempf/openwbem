@@ -47,13 +47,14 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
 
-class AccessMgr
+class AccessMgr : public IntrusiveCountableBase
 {
 public:
 	enum
@@ -374,7 +375,7 @@ SimpleAuthorizer::setSubRepositoryIFC(const RepositoryIFCRef& src)
 {
 	m_cimRepository = src;
 	ServiceEnvironmentIFCRef env = m_cimRepository->getEnvironment();
-	m_accessMgr = Reference<AccessMgr>(new AccessMgr(src));
+	m_accessMgr = IntrusiveReference<AccessMgr>(new AccessMgr(src));
 	m_accessMgr->setEnv(env);
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,8 @@
 #define OW_THREAD_POOL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Runnable.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Logger.hpp"
@@ -55,7 +56,7 @@ OW_DECLARE_EXCEPTION(ThreadPool);
  * This class is freely copyable.  All copies reference the same underlying implementation.
  * This class is thread safe.
  */
-class ThreadPool
+class ThreadPool : public IntrusiveCountableBase
 {
 public:
 	enum PoolType
@@ -130,9 +131,9 @@ public:
 	ThreadPool(const ThreadPool& x);
 	ThreadPool& operator=(const ThreadPool& x);
 private:
-	Reference<ThreadPoolImpl> m_impl;
+	IntrusiveReference<ThreadPoolImpl> m_impl;
 };
-typedef Reference<ThreadPool> ThreadPoolRef;
+typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
 } // end namespace OpenWBEM
 

@@ -842,7 +842,7 @@ CIMOMEnvironment::_loadAuthorizer()
 		OW_THROW(CIMOMEnvironmentException, msg.c_str());
 	}
 	m_authorizer = AuthorizerIFCRef(authorizerLib,
-									Reference<AuthorizerIFC>(p));
+									AuthorizerIFCRef::element_type(p));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -890,7 +890,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 	}
 
 	m_authorizerManager->setAuthorizer(
-		Authorizer2IFCRef(authorizerLib,Reference<Authorizer2IFC>(p)));
+		Authorizer2IFCRef(authorizerLib,Authorizer2IFCRef::element_type(p)));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
@@ -909,7 +909,7 @@ CIMOMEnvironment::getRequestHandler(const String &id)
 			m_reqHandlers.find(id);
 	if (iter != m_reqHandlers.end())
 	{
-		if (iter->second.rqIFCRef.isNull())
+		if (!iter->second.rqIFCRef)
 		{
 			iter->second.rqIFCRef =
 				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(

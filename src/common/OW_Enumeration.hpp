@@ -32,11 +32,12 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_ENUMERATION_HPP_
-#define OW_ENUMERATION_HPP_
+#ifndef OW_ENUMERATION_HPP_INCLUDE_GUARD_
+#define OW_ENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Exception.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_File.hpp"
 #include "OW_FileSystem.hpp"
@@ -54,7 +55,7 @@ const UInt32 OW_TEMPFILE_ENUMERATION_SIG = 0x4f57454e; // "OWEN"
   
 OW_DECLARE_EXCEPTION(Enumeration);
 template <class T>
-class TempFileEnumerationImpl
+class TempFileEnumerationImpl : public IntrusiveCountableBase
 {
 public:
 	TempFileEnumerationImpl()
@@ -261,7 +262,7 @@ public:
 	{
 	}
 private:
-	Reference< TempFileEnumerationImpl<T> > m_impl;
+	IntrusiveReference< TempFileEnumerationImpl<T> > m_impl;
 };
 template <class T>
 class Enumeration_input_iterator

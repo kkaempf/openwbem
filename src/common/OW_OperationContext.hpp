@@ -36,7 +36,8 @@
 #define OW_OPERATION_CONTEXT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_Exception.hpp"
 
@@ -55,12 +56,13 @@ class OperationContext
 {
 public:
 	
-	class Data {
+	class Data : public IntrusiveCountableBase
+	{
 	public:
 		virtual ~Data(); // subclasses can clean-up & free memory
 	};
 
-	typedef Reference<Data> DataRef;
+	typedef IntrusiveReference<Data> DataRef;
 	
 	OperationContext();
 
@@ -77,7 +79,7 @@ public:
 	void removeData(const String& key);
 	
 	/**
-	 * caller uses Reference::cast_to<>() on the return value to attempt to
+	 * caller uses IntrusiveReference::cast_to<>() on the return value to attempt to
 	 * recover the original type passed into storeData.
 	 */
 	DataRef getData(const String& key) const;

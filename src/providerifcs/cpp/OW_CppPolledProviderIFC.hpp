@@ -62,7 +62,7 @@ public:
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
 	virtual CppPolledProviderIFC* getPolledProvider() { return this; }
 };
-typedef SharedLibraryReference< Reference<CppPolledProviderIFC> > CppPolledProviderIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppPolledProviderIFC> > CppPolledProviderIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -36,7 +36,7 @@
 #define OW_POLLEDPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_Array.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
@@ -64,7 +64,7 @@ public:
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
 };
 
-typedef Reference<PolledProviderIFC> PolledProviderIFCRef;
+typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;
 typedef Array<PolledProviderIFCRef>  PolledProviderIFCRefArray;
 
 } // end namespace OpenWBEM

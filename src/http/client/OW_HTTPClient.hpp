@@ -106,7 +106,7 @@ class HTTPClient : public CIMProtocolIFC
 		 * @exception SocketException
 		 *
 		 */
-		virtual Reference<CIMProtocolIStreamIFC> 
+		virtual CIMProtocolIStreamIFCRef
 			endRequest(Reference<std::iostream> request,
 				const String& methodName, const String& cimObject, ERequestType requestType);
 		/**
@@ -200,7 +200,7 @@ class HTTPClient : public CIMProtocolIFC
 		// New headers are replaced each time the client repeats 
 		// a request (with new auth credentials, for instance). 
 		Array<String> m_requestHeadersNew;
-		Reference<CIMProtocolIStreamIFC> m_pIstrReturn;
+		CIMProtocolIStreamIFCRef m_pIstrReturn;
 		mutable Socket m_socket;
 		String m_requestMethod;
 		bool m_authRequired;
@@ -236,7 +236,7 @@ class HTTPClient : public CIMProtocolIFC
 		void sendHeaders(const String& method,
 			const String& prot);
 		Resp_t processHeaders(String& statusLine);
-		Reference<CIMProtocolIStreamIFC> convertToFiniteStream();
+		CIMProtocolIStreamIFCRef convertToFiniteStream();
 		void prepareForRetry();
 		void handleAuth(); // process authorization
 		void checkConnection();

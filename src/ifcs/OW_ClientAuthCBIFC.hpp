@@ -37,7 +37,8 @@
 #define OW_CLIENTAUTHCBIFC_HPP_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -48,7 +49,7 @@ namespace OpenWBEM
  * URL, and the cimom returns a Unauthorized, this will be called
  * so the client can repeat the request with authentication credentials.
  */
-class ClientAuthCBIFC
+class ClientAuthCBIFC : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -69,7 +70,7 @@ public:
 			String& passwd, const String& details) = 0;
 	virtual ~ClientAuthCBIFC();
 };
-typedef Reference<ClientAuthCBIFC> ClientAuthCBIFCRef;
+typedef IntrusiveReference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 } // end namespace OpenWBEM
 

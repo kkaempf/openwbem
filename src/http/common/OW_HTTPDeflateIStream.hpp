@@ -81,15 +81,15 @@ public:
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	HTTPDeflateIStream(Reference<CIMProtocolIStreamIFC> istr);
+	HTTPDeflateIStream(CIMProtocolIStreamIFCRef istr);
 	/**
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	Reference<CIMProtocolIStreamIFC> getInputStreamOrig() { return m_istr; };
+	CIMProtocolIStreamIFCRef getInputStreamOrig() { return m_istr; };
 	virtual void checkForError() const { m_istr->checkForError(); }
 private:
-	Reference<CIMProtocolIStreamIFC> m_istr;
+	CIMProtocolIStreamIFCRef m_istr;
 	// don't allow copying and assigning
 	HTTPDeflateIStream(const HTTPDeflateIStream&);
 	HTTPDeflateIStream& operator=(HTTPDeflateIStream&);

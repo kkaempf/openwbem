@@ -36,7 +36,7 @@
 #define OW_SECONDARY_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
@@ -141,7 +141,7 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
 
-typedef Reference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
+typedef IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
 typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
 
 } // end namespace OpenWBEM

@@ -37,6 +37,8 @@
 #include "OW_config.h"
 #include "OW_MOFLineInfo.hpp"
 #include "OW_Exception.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -46,7 +48,7 @@ namespace MOF
 
 OW_DECLARE_EXCEPTION(ParseFatalError);
 // this is an abstract base class for create concrete error handlers for the mof parser
-class ParserErrorHandlerIFC
+class ParserErrorHandlerIFC : public IntrusiveCountableBase
 {
 public:
 	ParserErrorHandlerIFC();
@@ -67,6 +69,8 @@ protected:
 private:
 	long m_errorCount;
 };
+
+typedef IntrusiveReference<ParserErrorHandlerIFC> ParserErrorHandlerIFCRef;
 
 } // end namespace MOF
 } // end namespace OpenWBEM

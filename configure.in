@@ -1255,6 +1255,8 @@ test/c++providers/method/Makefile
 test/c++providers/instance/Makefile
 test/c++providers/indication/Makefile
 test/c++providers/secondary_instance/Makefile
-test/unit/Makefile)
+test/unit/Makefile
+test/performance/Makefile
+)
 
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])

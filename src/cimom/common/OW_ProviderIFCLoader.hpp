@@ -41,6 +41,8 @@
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -52,7 +54,7 @@ namespace OpenWBEM
  * overridden, and then the createProviderIFCFromLib function can be used to
  * actually load the shared library.
  */
-class ProviderIFCLoaderBase
+class ProviderIFCLoaderBase : public IntrusiveCountableBase
 {
 public:
 	ProviderIFCLoaderBase(SharedLibraryLoaderRef sll,
@@ -123,7 +125,7 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 };
 
-typedef Reference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
+typedef IntrusiveReference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
 
 class ProviderIFCLoader : public ProviderIFCLoaderBase
 {

@@ -36,7 +36,8 @@
 #define OW_SHAREDLIBRARY_HPP_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -45,7 +46,7 @@ namespace OpenWBEM
  * SharedLibrary is a base class for platform classes that implement the
  * functionality of loading and querying shared libraries.
  */
-class SharedLibrary
+class SharedLibrary : public IntrusiveCountableBase
 {
 public:
 	virtual ~SharedLibrary();
@@ -81,7 +82,7 @@ protected:
 	virtual bool doGetFunctionPointer( const String& functionName,
 			void** fp ) const = 0;
 };
-typedef Reference<SharedLibrary> SharedLibraryRef;
+typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
 
 } // end namespace OpenWBEM
 

@@ -1009,7 +1009,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 					{
 						log->logDebug(Format("not found on class key %1", isaClassNames[j]));
 						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
-							Reference<LifecycleIndicationPoller>(new LifecycleIndicationPoller(ns, key, pollInterval)));
+							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(ns, key, pollInterval)));
 					}
 					String subClsName = selectStmt.getClassName();
 					if (subClsName.equalsIgnoreCase("CIM_InstCreation"))

@@ -73,7 +73,7 @@ class HTTPXMLCIMListenerServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	HTTPXMLCIMListenerServiceEnvironment(
-		Reference<ListenerAuthenticator> authenticator,
+		IntrusiveReference<ListenerAuthenticator> authenticator,
 		RequestHandlerIFCRef listener,
 		LoggerRef logger,
 		Reference<Array<SelectablePair_t> > selectables)
@@ -161,7 +161,7 @@ public:
 	}
 private:
 	Map<String, String> m_configItems;
-	Reference<ListenerAuthenticator> m_pLAuthenticator;
+	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
 	RequestHandlerIFCRef m_XMLListener;
 	LoggerRef m_logger;
 	Reference<Array<SelectablePair_t> > m_selectables;
@@ -217,13 +217,11 @@ private:
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 HTTPXMLCIMListener::HTTPXMLCIMListener(LoggerRef logger)
-	: m_callbacks()
-	, m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
+	: m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
 	, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
-	, m_mutex()
 {
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);

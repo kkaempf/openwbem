@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,40 +32,17 @@
  * @author Dan Nuffer
  */
 
+#include "OW_config.h"
+#include "OW_IntrusiveCountableBase.hpp"
 
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "OW_SharedLibraryLoaderTestCases.hpp"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
-#include "testSharedLibraryLoader.hpp"
+namespace OpenWBEM
+{
 
-using namespace OpenWBEM;
-
-void OW_SharedLibraryLoaderTestCases::setUp()
+IntrusiveCountableBase::~IntrusiveCountableBase()
 {
 }
 
-void OW_SharedLibraryLoaderTestCases::tearDown()
-{
-}
+} // end namespace OpenWBEM
 
-	
-void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
-{
-	testSharedLibraryLoader sll;
-	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
-	unitAssert( slp );
-}
 
-Test* OW_SharedLibraryLoaderTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("OW_SharedLibraryLoader");
-
-	testSuite->addTest (new TestCaller <OW_SharedLibraryLoaderTestCases>
-			("testLoadSharedLibrary",
-			&OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary));
-
-	return testSuite;
-}
 

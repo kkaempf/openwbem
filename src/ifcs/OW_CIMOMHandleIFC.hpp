@@ -37,7 +37,8 @@
 #define OW_CIMOMHANDLE_HPP_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_StringEnumeration.hpp"
@@ -50,7 +51,7 @@ namespace OpenWBEM
  * The CIMOMHandleIFC class is an abstract class used as an interface
  * definition for classes that provide access to a CIMOM.
  */
-class CIMOMHandleIFC
+class CIMOMHandleIFC : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -1241,7 +1242,8 @@ public:
 	virtual void exportIndication(const CIMInstance& instance,
 		const String& instNS);
 };
-typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+
+typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 } // end namespace OpenWBEM
 

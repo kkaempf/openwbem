@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,40 +32,67 @@
  * @author Dan Nuffer
  */
 
+//
+//  Copyright (c) 2001, 2002 Peter Dimov
+//
+//  Permission to copy, use, modify, sell and distribute this software
+//  is granted provided this copyright notice appears in all copies.
+//  This software is provided "as is" without express or implied
+//  warranty, and with no claim as to its suitability for any purpose.
+//
 
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "OW_SharedLibraryLoaderTestCases.hpp"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibrary.hpp"
-#include "testSharedLibraryLoader.hpp"
+#ifndef OW_INTRUSIVE_COUNTABLE_BASE_HPP_INCLUDE_GUARD_
+#define OW_INTRUSIVE_COUNTABLE_BASE_HPP_INCLUDE_GUARD_
 
-using namespace OpenWBEM;
+#include "OW_config.h"
+#include "OW_RefCount.hpp"
 
-void OW_SharedLibraryLoaderTestCases::setUp()
+namespace OpenWBEM
 {
-}
 
-void OW_SharedLibraryLoaderTestCases::tearDown()
+/**
+ * If you want your class to be managed by IntrusiveReference, then derive
+ * from this class.  Note that if multiple inheritance is used, you must derive
+ * "virtual"ly.
+ */
+class IntrusiveCountableBase
 {
-}
+private:
+	RefCount m_useCount;
 
+protected:
+	IntrusiveCountableBase()
+		: m_useCount(0)
+	{
+	}
 	
-void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
-{
-	testSharedLibraryLoader sll;
-	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
-	unitAssert( slp );
-}
+	IntrusiveCountableBase(const IntrusiveCountableBase&)
+		: m_useCount(0)
+	{
+	}
+	
+	IntrusiveCountableBase& operator=(const IntrusiveCountableBase&)
+	{
+		// don't change m_useCount
+		return *this;
+	}
 
-Test* OW_SharedLibraryLoaderTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("OW_SharedLibraryLoader");
+	virtual ~IntrusiveCountableBase();
 
-	testSuite->addTest (new TestCaller <OW_SharedLibraryLoaderTestCases>
-			("testLoadSharedLibrary",
-			&OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary));
+public:
+	inline friend void IntrusiveReferenceAddRef(IntrusiveCountableBase * p)
+	{
+		p->m_useCount.inc();
+	}
 
-	return testSuite;
-}
+	inline friend void IntrusiveReferenceRelease(IntrusiveCountableBase * p)
+	{
+		if(p->m_useCount.decAndTest())
+			delete p;
+	}
+};
+
+} // end namespace OpenWBEM
+
+#endif
 

@@ -36,6 +36,7 @@
 #define OW_MOFCOMPCIMOMHANDLE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_RepositoryCIMOMHandle.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
@@ -60,7 +61,7 @@ public:
 		OperationContext& context);
 };
 
-typedef Reference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
+typedef IntrusiveReference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
 
 } // end namespace OpenWBEM
 

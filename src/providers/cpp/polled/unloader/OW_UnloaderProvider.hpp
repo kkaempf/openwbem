@@ -36,13 +36,10 @@
 #define OW_UNLOADERPROVIDER_HPP_
 #include "OW_config.h"
 #include "OW_CppPolledProviderIFC.hpp"
-#include "OW_Reference.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMOMEnvironment;
-typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
 class UnloaderProvider : public CppPolledProviderIFC
 {
 public:

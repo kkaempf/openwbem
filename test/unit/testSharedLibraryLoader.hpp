@@ -38,7 +38,6 @@
 
 #include "OW_SharedLibrary.hpp"
 #include "OW_SharedLibraryLoader.hpp"
-#include "OW_Reference.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
@@ -606,19 +605,19 @@ class testMuxLoader: public ProviderIFCLoaderBase
 		{
 			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "lib1" );
-			if ( !rval.isNull()  )
+			if ( rval  )
 			{
 				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "lib2" );
-			if ( !rval.isNull() )
+			if ( rval )
 			{
 				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "lib3" );
-			if ( !rval.isNull() )
+			if ( rval )
 			{
 				out.push_back( rval );
 			}
@@ -638,19 +637,19 @@ class testMuxLoaderBad: public ProviderIFCLoaderBase
 		{
 			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.isNull() )
+			if ( rval )
 			{
 				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.isNull() )
+			if ( rval )
 			{
 				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.isNull() )
+			if ( rval )
 			{
 				out.push_back( rval );
 			}

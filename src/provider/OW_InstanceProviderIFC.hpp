@@ -36,7 +36,7 @@
 #define OW_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
@@ -174,7 +174,7 @@ public:
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
-typedef Reference<InstanceProviderIFC> InstanceProviderIFCRef;
+typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
 
 } // end namespace OpenWBEM
 

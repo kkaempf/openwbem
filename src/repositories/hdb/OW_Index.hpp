@@ -37,12 +37,16 @@
 #define OW_INDEX_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 class IndexEntry;
+class Index;
+typedef IntrusiveReference<Index> IndexRef;
+
 /**
  * The Index class is simply an interface class that helps facilitate a
  * pluggable architecture for an indexing scheme on file. All Index
@@ -54,7 +58,7 @@ class IndexEntry;
  * The intention is  for the implementor to create a sub-class of Index and
  * have createIndexObject be the factory for those object.
  */
-class Index
+class Index : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -157,9 +161,8 @@ public:
 	 * Indexer sub-class.
 	 * @return An instance of a sub-class of Indexer.
 	 */
-	static Reference<Index> createIndexObject();
+	static IndexRef createIndexObject();
 };
-typedef Reference<Index> IndexRef;
 //////////////////////////////////////////////////////////////////////////////
 class IndexEntry
 {

@@ -48,6 +48,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_Reference.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_HashMap.hpp"
@@ -69,48 +70,48 @@ class AuthManager;
 class Authenticator;
 
 class SelectableIFC;
-typedef Reference<SelectableIFC> SelectableIFCRef;
+typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
 class SelectableCallbackIFC;
-typedef Reference<SelectableCallbackIFC> SelectableCallbackIFCRef;
+typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 
 class Logger;
-typedef Reference<Logger> LoggerRef;
-typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+typedef IntrusiveReference<Logger> LoggerRef;
+typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 class WQLIFC;
-typedef SharedLibraryReference<Reference<WQLIFC> > WQLIFCRef;
+typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
 
 class ProviderManager;
-typedef Reference<ProviderManager> ProviderManagerRef;
+typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
 
 class RepositoryIFC;
 typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
-typedef Reference<AuthManager> AuthManagerRef;
+typedef IntrusiveReference<AuthManager> AuthManagerRef;
 
 class PollingManager;
-typedef Reference<PollingManager> PollingManagerRef;
+typedef IntrusiveReference<PollingManager> PollingManagerRef;
 
 class IndicationRepLayer;
 class IndicationServer;
-typedef SharedLibraryReference<Reference<IndicationServer> > IndicationServerRef;
+typedef SharedLibraryReference<IntrusiveReference<IndicationServer> > IndicationServerRef;
 
-typedef SharedLibraryReference<Reference<ServiceIFC> > ServiceIFCRef;
-typedef SharedLibraryReference<Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
+typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
+typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 
 class AuthorizerIFC; 
-typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef; 
+typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef; 
 
 class AuthorizerManager;
-typedef Reference<AuthorizerManager> AuthorizerManagerRef;
+typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 
 class IndicationRepLayerMediator;
-typedef Reference<IndicationRepLayerMediator>
+typedef IntrusiveReference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
 
 class CIMOMEnvironment;
-typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
+typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 
 class CIMOMEnvironment : public ServiceEnvironmentIFC
 {

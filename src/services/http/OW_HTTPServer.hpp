@@ -120,17 +120,17 @@ private:
 
 	Mutex m_guard;
 	Options m_options;
-	Reference<UnnamedPipe> m_upipe;
+	IntrusiveReference<UnnamedPipe> m_upipe;
 	Array<URL> m_urls;
-	Reference<ServerSocket> m_pHttpServerSocket;
-	Reference<ServerSocket> m_pHttpsServerSocket;
-	Reference<ServerSocket> m_pUDSServerSocket;
+	IntrusiveReference<ServerSocket> m_pHttpServerSocket;
+	IntrusiveReference<ServerSocket> m_pHttpsServerSocket;
+	IntrusiveReference<ServerSocket> m_pUDSServerSocket;
 #ifndef OW_DISABLE_DIGEST
-	Reference<DigestAuthentication> m_digestAuthentication;
+	IntrusiveReference<DigestAuthentication> m_digestAuthentication;
 #endif
-	Reference<LocalAuthentication> m_localAuthentication;
+	IntrusiveReference<LocalAuthentication> m_localAuthentication;
 	Mutex m_authGuard;
-	ThreadPoolRef m_threadPool;
+	IntrusiveReference<ThreadPool> m_threadPool;
 	SortedVectorSet<String> m_allowedUsers;
 	bool m_allowAllUsers;
 

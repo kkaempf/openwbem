@@ -45,6 +45,7 @@
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
 #include "OW_Cache.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
+#include "OW_Reference.hpp"
 
 namespace OpenWBEM
 {
@@ -68,7 +69,7 @@ public:
 	ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
 		Array<CppProviderBaseIFCRef> providers, 
 		Array<CIMClass> cimClasses, 
-		Reference<AuthenticatorIFC> authenticator,
+		AuthenticatorIFCRef authenticator,
 		Array<RequestHandlerIFCRef> requestHandlers, 
 		LoggerRef logger,
         const String& callbackURL, 
@@ -105,7 +106,7 @@ public:
 
 private:
 	ConfigFile::ConfigMap m_configItems;
-	Reference<AuthenticatorIFC> m_authenticator;
+	AuthenticatorIFCRef m_authenticator;
 	LoggerRef m_logger;
 	String m_callbackURL; 
 	Array<RequestHandlerIFCRef> m_requestHandlers; 

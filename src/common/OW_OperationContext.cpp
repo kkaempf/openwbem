@@ -116,7 +116,7 @@ String
 OperationContext::getStringData(const String& key) const
 {
 	DataRef foo = getData(key);
-	Reference<StringData> strData = foo.cast_to<StringData>();
+	IntrusiveReference<StringData> strData = foo.cast_to<StringData>();
 	if (!strData)
 	{
 		OW_THROW(ContextDataNotFoundException, key.c_str());
@@ -129,7 +129,7 @@ String
 OperationContext::getStringDataWithDefault(const String& key, const String& def) const
 {
 	DataRef foo = getData(key);
-	Reference<StringData> strData = foo.cast_to<StringData>();
+	IntrusiveReference<StringData> strData = foo.cast_to<StringData>();
 	if (!strData)
 	{
 		return def;

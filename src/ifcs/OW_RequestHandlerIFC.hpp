@@ -40,6 +40,9 @@
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SortedVectorMap.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+
 #include <iosfwd>
 
 namespace OpenWBEM
@@ -47,7 +50,7 @@ namespace OpenWBEM
 
 class CIMFeatures;
 class ServiceEnvironmentIFC;
-typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 class OperationContext;
 
 /**
@@ -57,8 +60,8 @@ class OperationContext;
  * options() functions for this class are called, respectively.
  */
 class RequestHandlerIFC;
-typedef SharedLibraryReference< Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
-class RequestHandlerIFC
+typedef SharedLibraryReference< IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
+class RequestHandlerIFC : public IntrusiveCountableBase
 {
 public:
 	RequestHandlerIFC();

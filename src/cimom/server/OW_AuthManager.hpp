@@ -35,13 +35,15 @@
 #include "OW_Array.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Exception.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(AuthManager)
 
-class AuthManager
+class AuthManager : public IntrusiveCountableBase
 {
 public:
 	AuthManager();
@@ -52,7 +54,7 @@ public:
 private:
 	AuthenticatorIFCRef m_authenticator;
 };
-typedef Reference<AuthManager> AuthManagerRef;
+typedef IntrusiveReference<AuthManager> AuthManagerRef;
 
 } // end namespace OpenWBEM
 

@@ -152,7 +152,7 @@ public:
 
 };
 
-typedef SharedLibraryReference< Reference<CppSecondaryInstanceProviderIFC> > CppSecondaryInstanceProviderIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppSecondaryInstanceProviderIFC> > CppSecondaryInstanceProviderIFCRef;
 typedef Array<CppSecondaryInstanceProviderIFCRef> CppSeconaryInstanceProviderIFCRefArray;
 
 } // end namespace OpenWBEM

@@ -49,7 +49,7 @@ stmt* WQLImpl::statement;
 void WQLImpl::evaluate(const String& nameSpace,
 	CIMInstanceResultHandlerIFC& result,
 	const String& query, const String& queryLanguage,
-	Reference<CIMOMHandleIFC> hdl)
+	CIMOMHandleIFCRef hdl)
 {
 	(void)queryLanguage;
 	MutexLock lock(classLock);

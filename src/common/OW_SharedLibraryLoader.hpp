@@ -37,19 +37,20 @@
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {
 
 class SharedLibraryLoader;
-typedef Reference<SharedLibraryLoader> SharedLibraryLoaderRef;
+typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
 /**
  * SharedLibraryLoader is the base class for a platform class for loading
  * shared libraries.
  */
-class SharedLibraryLoader
+class SharedLibraryLoader : public IntrusiveCountableBase
 {
 public:
 	virtual ~SharedLibraryLoader()

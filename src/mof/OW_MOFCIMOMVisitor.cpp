@@ -54,7 +54,7 @@ namespace MOF
 using namespace WBEMFlags;
 CIMOMVisitor::CIMOMVisitor(const CIMOMHandleIFCRef& handle, 
 	const Compiler::Options& opts,
-	const Reference<ParserErrorHandlerIFC>& _theErrorHandler)
+	const ParserErrorHandlerIFCRef& _theErrorHandler)
 : m_curValue(CIMNULL)
 , m_hdl(handle)
 , m_rephdl(handle.cast_to<RepositoryCIMOMHandle>())

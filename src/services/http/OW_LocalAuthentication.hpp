@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 #include <vector>
 
@@ -46,7 +47,7 @@ namespace OpenWBEM
 
 class HTTPSvrConnection;
 
-class LocalAuthentication
+class LocalAuthentication : public IntrusiveCountableBase
 {
 public:
 	LocalAuthentication() {}

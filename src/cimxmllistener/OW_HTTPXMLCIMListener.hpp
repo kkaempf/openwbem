@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_CIMListenerCallback.hpp"
 #include "OW_URL.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -126,13 +126,13 @@ private:
 	typedef Map< String, registrationInfo > callbackMap_t;
 	callbackMap_t m_callbacks;
 	RequestHandlerIFCRef m_XMLListener;
-	Reference<ListenerAuthenticator> m_pLAuthenticator;
-	Reference<HTTPServer> m_httpServer;
+	IntrusiveReference<ListenerAuthenticator> m_pLAuthenticator;
+	IntrusiveReference<HTTPServer> m_httpServer;
 	UInt16 m_httpListenPort;
 	UInt16 m_httpsListenPort;
 	void deleteRegistrationObjects( const registrationInfo& reg );
 	Mutex m_mutex;
-	Reference<Thread> m_httpThread;
+	IntrusiveReference<Thread> m_httpThread;
 	UnnamedPipeRef m_stopHttpPipe;
 };
 

@@ -39,6 +39,8 @@
 #include "OW_Mutex.hpp"
 #include "OW_String.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 #include <map>
 
@@ -46,7 +48,7 @@ namespace OpenWBEM
 {
 
 class ClientCIMOMHandleConnectionPool;
-typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
 
 /**
  * This class is responsible for pooling ClientCIMOMHandleRef instances.
@@ -59,7 +61,7 @@ typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPo
  * Copy semantics: Non-copyable
  * Exception safety: Strong
  */
-class ClientCIMOMHandleConnectionPool
+class ClientCIMOMHandleConnectionPool : public IntrusiveCountableBase
 {
 public:
 	/**

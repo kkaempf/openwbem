@@ -46,6 +46,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_Reference.hpp"
 #include "cmpift.h"
 #include "cmpisrv.h"
 

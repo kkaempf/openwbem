@@ -40,7 +40,7 @@
 #define OW_SOCKETBASEIMPL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_SocketException.hpp"
 #include "OW_String.hpp"
 #include "OW_SocketAddress.hpp"
@@ -58,7 +58,7 @@ namespace OpenWBEM
 {
 
 class SocketBaseImpl;
-typedef Reference<SocketBaseImpl> SocketBaseImplRef;
+typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
 class SocketBaseImpl : public SelectableIFC, public IOIFC
 {
 public:

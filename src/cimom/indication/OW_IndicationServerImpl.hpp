@@ -142,7 +142,7 @@ private:
 	ThreadBarrier m_startedBarrier;
 	subscriptions_t m_subscriptions;
 	Mutex m_subGuard;
-	typedef SharedLibraryReference< Reference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
+	typedef SharedLibraryReference< IntrusiveReference<LifecycleIndicationPoller> > LifecycleIndicationPollerRef;
 	typedef HashMap<String, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
 	ThreadPoolRef m_notifierThreadPool;

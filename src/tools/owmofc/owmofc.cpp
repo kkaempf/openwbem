@@ -46,6 +46,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_URL.hpp"
+#include "OW_Reference.hpp"
 
 #include <iostream>
 #ifdef OW_HAVE_GETOPT_H
@@ -305,9 +306,9 @@ int main(int argc, char** argv)
 			usage();
 			return 1;
 		}
-		Reference<ParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
+		ParserErrorHandlerIFCRef theErrorHandler(new TheErrorHandler);
 		Reference<OperationContext> context;
-		Reference<CIMOMHandleIFC> handle;
+		CIMOMHandleIFCRef handle;
 		if (g_useCimRepository)
 		{
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());

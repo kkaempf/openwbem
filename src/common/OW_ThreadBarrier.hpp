@@ -36,7 +36,7 @@
 #define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_Exception.hpp"
 
 namespace OpenWBEM
@@ -66,7 +66,7 @@ public:
 	ThreadBarrier(const ThreadBarrier& x);
 	ThreadBarrier& operator=(const ThreadBarrier& x);
 private:
-	Reference<ThreadBarrierImpl> m_impl;
+	IntrusiveReference<ThreadBarrierImpl> m_impl;
 };
 
 } // end namespace OpenWBEM

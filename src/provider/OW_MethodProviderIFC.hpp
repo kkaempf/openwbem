@@ -36,7 +36,7 @@
 #define OW_METHODPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
@@ -76,7 +76,7 @@ public:
 			CIMParamValueArray& out ) = 0;
 };
 
-typedef Reference< MethodProviderIFC > MethodProviderIFCRef;
+typedef IntrusiveReference< MethodProviderIFC > MethodProviderIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -64,7 +64,7 @@ class CIMOMVisitor : public Visitor
 {
 public:
 	CIMOMVisitor(const CIMOMHandleIFCRef& hdl, const Compiler::Options& opts,
-		const Reference<ParserErrorHandlerIFC>& _theErrorHandler);
+		const ParserErrorHandlerIFCRef& _theErrorHandler);
 	~CIMOMVisitor();
 	void VisitMOFSpecification( const MOFSpecification * );
 	
@@ -154,7 +154,7 @@ private:
 	// connection to the rest of the world
 	CIMOMHandleIFCRef m_hdl;
 	RepositoryCIMOMHandleRef m_rephdl;
-	Reference<ParserErrorHandlerIFC> theErrorHandler;
+	ParserErrorHandlerIFCRef theErrorHandler;
 
 	// instance aliases
 	Map<String, String> m_aliasMap;

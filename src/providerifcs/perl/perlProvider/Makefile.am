@@ -83,8 +83,8 @@ perlProvider.c \
 perlProvider.h \
 perlargs.h
 
-nodist_libperlProvider_a_SOURCES = \
-perlxsi.c
+#nodist_libperlProvider_a_SOURCES = \
+#perlxsi.c
 
 CLEANFILES = \
 perlxsi.c

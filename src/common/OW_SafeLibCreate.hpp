@@ -42,6 +42,8 @@
 #include "OW_Format.hpp"
 #include "OW_SignalScope.hpp"
 #include "OW_Exception.hpp"
+#include "OW_IntrusiveReference.hpp"
+
 #include <utility> // for std::pair
 #include <setjmp.h> // for setjmp, longjmp and jmp_buf
 
@@ -58,8 +60,8 @@ class SafeLibCreate
 	typedef T* (*createFunc_t)();
 	typedef const char* (*versionFunc_t)();
 public:
-	typedef std::pair<Reference<T>, SharedLibraryRef> return_type;
-	typedef SharedLibraryReference<Reference<T> > return_obj;
+	typedef std::pair<IntrusiveReference<T>, SharedLibraryRef> return_type;
+	typedef SharedLibraryReference<IntrusiveReference<T> > return_obj;
 	
 	static return_type
 	loadAndCreate(String const& libname, String const& createFuncName,
@@ -78,7 +80,7 @@ public:
 			logger->logDebug(Format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
-		return std::make_pair(Reference<T>(ptr),sl);
+		return std::make_pair(IntrusiveReference<T>(ptr),sl);
 	}
 	static return_obj
 	loadAndCreateObject(String const& libname,
@@ -88,7 +90,7 @@ public:
 			SharedLibraryLoader::createSharedLibraryLoader();
 		SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
 		T* ptr = 0;
-		if ( !sl.isNull() )
+		if ( sl )
 		{
 			ptr = create(sl, createFuncName, logger);
 		}

@@ -37,11 +37,13 @@
 
 #include "OW_config.h"
 #include "OW_Authorizer2IFC.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
-class AuthorizerManager
+class AuthorizerManager : public IntrusiveCountableBase
 {
 public:
 
@@ -210,7 +212,7 @@ private:
 	bool m_initialized;
 };
 
-typedef Reference<AuthorizerManager> AuthorizerManagerRef;
+typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 
 }
 

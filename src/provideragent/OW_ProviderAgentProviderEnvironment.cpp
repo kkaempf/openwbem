@@ -81,7 +81,7 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 	CIMProtocolIFCRef tmp = client->getWBEMProtocolHandler();
 	if (tmp)
 	{
-		Reference<HTTPClient> httpClient = tmp.cast_to<HTTPClient>();
+		IntrusiveReference<HTTPClient> httpClient = tmp.cast_to<HTTPClient>();
 		if (httpClient)
 		{
 			httpClient->addCustomHeader(HTTPUtils::Header_BypassLocker,

@@ -39,6 +39,8 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_DateTime.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -60,14 +62,14 @@ class CppIndicationProviderIFC;
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class CppProviderBaseIFC
+class CppProviderBaseIFC : public virtual IntrusiveCountableBase
 {
 public:
 
 	CppProviderBaseIFC() : m_dt(0), m_persist(false) {}
 
 	CppProviderBaseIFC(const CppProviderBaseIFC& arg)
-		: m_dt(arg.m_dt), m_persist(arg.m_persist) {}
+		: IntrusiveCountableBase(arg), m_dt(arg.m_dt), m_persist(arg.m_persist) {}
 
 	virtual ~CppProviderBaseIFC();
 	/**
@@ -105,7 +107,7 @@ private:
 	bool m_persist;
 };
 
-typedef SharedLibraryReference< Reference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
 
 } // end namespace OpenWBEM
 

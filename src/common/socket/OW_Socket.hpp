@@ -44,6 +44,7 @@
 #include "OW_SocketFlags.hpp"
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
@@ -54,7 +55,7 @@ namespace OpenWBEM
 {
 
 class SocketBaseImpl;
-typedef Reference<SocketBaseImpl> SocketBaseImplRef;
+typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
 
 
 OW_DECLARE_EXCEPTION(SocketTimeout)

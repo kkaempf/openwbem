@@ -35,13 +35,15 @@
 #ifndef OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #define OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 class Thread;
-class ThreadDoneCallback
+
+class ThreadDoneCallback : public IntrusiveCountableBase
 {
 public:
 	virtual ~ThreadDoneCallback();
@@ -49,7 +51,8 @@ public:
 protected:
 	virtual void doNotifyThreadDone(Thread* t) = 0;
 };
-typedef Reference<ThreadDoneCallback> ThreadDoneCallbackRef;
+
+typedef IntrusiveReference<ThreadDoneCallback> ThreadDoneCallbackRef;
 
 } // end namespace OpenWBEM
 

@@ -39,7 +39,8 @@
 #include "OW_Exception.hpp"
 #include "OW_String.hpp"
 #include "OW_ThreadImpl.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutex.hpp"
@@ -53,7 +54,7 @@ namespace OpenWBEM
 OW_DECLARE_EXCEPTION(CancellationDenied);
 OW_DECLARE_EXCEPTION(Thread);
 //////////////////////////////////////////////////////////////////////////////
-class Thread
+class Thread : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -282,7 +283,7 @@ private:
 	Thread& operator=(const Thread&);
 	
 };
-typedef Reference<Thread> ThreadRef;
+typedef IntrusiveReference<Thread> ThreadRef;
 
 } // end namespace OpenWBEM
 

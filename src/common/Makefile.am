@@ -52,6 +52,7 @@ OW_EnumerationException.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
 OW_Format.cpp \
+OW_IntrusiveCountableBase.cpp \
 OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
 OW_Logger.cpp \
@@ -145,6 +146,7 @@ OW_Format.hpp \
 OW_FuncNamePrinter.hpp \
 OW_HashMap.hpp \
 OW_HashMultiMap.hpp \
+OW_IntrusiveCountableBase.hpp \
 OW_IntrusiveReference.hpp \
 OW_IOException.hpp \
 OW_IOIFCStreamBuffer.hpp \

@@ -38,18 +38,19 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
-class SelectableIFC
+class SelectableIFC : public IntrusiveCountableBase
 {
 public:
    virtual ~SelectableIFC();
    virtual Select_t getSelectObj() const = 0;
 };
-typedef Reference<SelectableIFC> SelectableIFCRef;
+typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
 
 } // end namespace OpenWBEM
 

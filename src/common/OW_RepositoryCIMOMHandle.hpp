@@ -39,6 +39,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_RWLocker.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
@@ -243,7 +244,7 @@ private:
 	ELockingFlag m_lock;
 	OperationContext& m_context;
 };
-typedef Reference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
+typedef IntrusiveReference<RepositoryCIMOMHandle> RepositoryCIMOMHandleRef;
 
 } // end namespace OpenWBEM
 

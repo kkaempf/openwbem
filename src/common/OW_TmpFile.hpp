@@ -36,7 +36,8 @@
 #ifndef OW_TMPFILE_HPP_INCLUDE_GUARD_
 #define OW_TMPFILE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_String.hpp"
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
@@ -48,7 +49,7 @@
 namespace OpenWBEM
 {
 
-class TmpFileImpl
+class TmpFileImpl : public IntrusiveCountableBase
 {
 public:
 	TmpFileImpl();
@@ -112,7 +113,7 @@ public:
 	long getSize() { return m_impl->getSize(); }
 	String releaseFile() { return m_impl->releaseFile(); }
 private:
-	Reference<TmpFileImpl> m_impl;
+	IntrusiveReference<TmpFileImpl> m_impl;
 };
 
 } // end namespace OpenWBEM

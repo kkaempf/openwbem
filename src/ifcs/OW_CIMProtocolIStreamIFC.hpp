@@ -37,7 +37,9 @@
 #define OW_CIMPROTOCOLISTREAMIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+
 #if defined(OW_HAVE_ISTREAM)
 #include <istream>
 #elif defined(OW_HAVE_ISTREAM_H)
@@ -50,8 +52,8 @@ namespace OpenWBEM
 {
 
 class CIMProtocolIStreamIFC;
-typedef Reference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
-class CIMProtocolIStreamIFC : public std::istream
+typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
+class CIMProtocolIStreamIFC : public IntrusiveCountableBase, public std::istream
 {
 public:
 	CIMProtocolIStreamIFC(std::streambuf* strbuf);

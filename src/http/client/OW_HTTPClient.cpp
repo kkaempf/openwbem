@@ -460,7 +460,7 @@ HTTPClient::beginRequest(const String& methodName,
 	return Reference<std::iostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////
-Reference<CIMProtocolIStreamIFC>
+CIMProtocolIStreamIFCRef
 HTTPClient::endRequest(Reference<std::iostream> request, const String& methodName,
 			const String& cimObject, ERequestType requestType)
 {
@@ -613,7 +613,7 @@ HTTPClient::getFeatures()
 void
 HTTPClient::prepareForRetry()
 {
-	Reference<CIMProtocolIStreamIFC> tmpIstr = convertToFiniteStream();
+	CIMProtocolIStreamIFCRef tmpIstr = convertToFiniteStream();
 	if (tmpIstr)
 	{
 		HTTPUtils::eatEntity(*tmpIstr);
@@ -772,10 +772,10 @@ HTTPClient::processHeaders(String& statusLine)
 	return rt;
 }
 /////////////////////////////////////////////////////////////////////////////
-Reference<CIMProtocolIStreamIFC>
+CIMProtocolIStreamIFCRef
 HTTPClient::convertToFiniteStream()
 {
-	Reference<CIMProtocolIStreamIFC> rval(0);
+	CIMProtocolIStreamIFCRef rval(0);
 	if (getHeaderValue("Transfer-Encoding").equalsIgnoreCase("chunked"))
 	{
 		rval = new HTTPChunkedIStream(m_istr);

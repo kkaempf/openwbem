@@ -50,7 +50,7 @@ HDBNode::HDBNodeData::HDBNodeData() :
 }
 //////////////////////////////////////////////////////////////////////////////
 HDBNode::HDBNodeData::HDBNodeData(const HDBNodeData& x) :
-	m_blk(x.m_blk), m_key(x.m_key), m_bfrLen(x.m_bfrLen), m_bfr(NULL),
+	IntrusiveCountableBase(x), m_blk(x.m_blk), m_key(x.m_key), m_bfrLen(x.m_bfrLen), m_bfr(NULL),
 	m_offset(x.m_offset), m_version(0)
 {
 	if(m_bfrLen > 0)
@@ -190,7 +190,7 @@ bool
 HDBNode::reload(HDBHandle& hdl)
 {
 	// If this is a null node, don't attempt to re-load
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		return false;
 	}
@@ -267,7 +267,7 @@ HDBNode::reload(HDBHandle& hdl)
 bool
 HDBNode::turnFlagsOn(HDBHandle& hdl, UInt32 flags)
 {
-	if(m_pdata.isNull())
+	if(!m_pdata)
 		return false;
 	bool cc = false;
 	flags |= m_pdata->m_blk.flags;
@@ -286,7 +286,7 @@ HDBNode::turnFlagsOn(HDBHandle& hdl, UInt32 flags)
 bool
 HDBNode::turnFlagsOff(HDBHandle& hdl, UInt32 flags)
 {
-	if(m_pdata.isNull())
+	if(!m_pdata)
 		return false;
 	bool cc = false;
 	flags = m_pdata->m_blk.flags & (~flags);
@@ -306,7 +306,7 @@ bool
 HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 {
 	bool cc = false;
-	if(!m_pdata.isNull())
+	if(m_pdata)
 	{
 		// If this node was read from file, make sure we are dealing with
 		// an up to date version.
@@ -347,7 +347,7 @@ HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 Int32
 HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 {
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		OW_THROW(HDBException, "Cannot write null node");
 	}
@@ -411,7 +411,7 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 void
 HDBNode::updateOffsets(HDBHandle& hdl, Int32 offset)
 {
-	if(offset <= 0L || m_pdata.isNull() || !hdl)
+	if(offset <= 0L || !m_pdata || !hdl)
 	{
 		return;
 	}

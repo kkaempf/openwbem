@@ -60,7 +60,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
 namespace MOF
 {
 
-Compiler::Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh )
+Compiler::Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh )
 	: theErrorHandler(mpeh)
 	, include_stack_ptr(0)
 	, m_ch(ch)
@@ -479,28 +479,14 @@ CIMInstance compileInstanceFromMOF(const String& instMOF)
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF)
 {
 	return compileInstancesFromMOF(instMOF, CIMOMHandleIFCRef(), "");
-	/*
-	Reference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle);
-	MOF::Compiler::Options opts;
-	Reference<NULLErrHandler> errHandler(new NULLErrHandler);
-	MOF::Compiler comp(hdl, opts, errHandler);
-	long errors = comp.compileString(instMOF);
-	if (errors > 0)
-	{
-		// just report the first message, since anything else is too complicated :-{
-		OW_THROW(MOFCompilerException, errHandler->errors.size() > 0 ? errHandler->errors[0].c_str() : "");
-	}
-	CIMInstanceArray cia = hdl->getInstances();
-	return cia;
-	*/
 }
 
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns)
 {
-	Reference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle(realhdl));
+	IntrusiveReference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle(realhdl));
 	MOF::Compiler::Options opts;
 	opts.m_namespace = ns;
-	Reference<NULLErrHandler> errHandler(new NULLErrHandler);
+	IntrusiveReference<NULLErrHandler> errHandler(new NULLErrHandler);
 	MOF::Compiler comp(hdl, opts, errHandler);
 	long errors = comp.compileString(instMOF);
 	if (errors > 0)

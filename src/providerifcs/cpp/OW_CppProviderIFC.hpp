@@ -127,7 +127,7 @@ private:
 	LoadedProviderArray m_noUnloadProviders;
 	bool m_loadDone;
 };
-typedef SharedLibraryReference< Reference<CppProviderIFC> > CppProviderIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppProviderIFC> > CppProviderIFCRef;
 
 } // end namespace OpenWBEM
 

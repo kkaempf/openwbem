@@ -36,7 +36,8 @@
 #ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
@@ -46,14 +47,14 @@ namespace OpenWBEM
 {
 
 class CIMOMHandleIFC;
-typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 class ServiceEnvironmentIFC;
-typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 class RequestHandlerIFC;
-typedef SharedLibraryReference< Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
 class OperationContext;
 class Logger;
-typedef Reference<Logger> LoggerRef;
+typedef IntrusiveReference<Logger> LoggerRef;
 class String;
 class CIMInstance;
 typedef Array<CIMInstance> CIMInstanceArray;
@@ -61,7 +62,7 @@ typedef Array<CIMInstance> CIMInstanceArray;
 /**
  * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"
  */
-class ServiceEnvironmentIFC
+class ServiceEnvironmentIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceEnvironmentIFC();

@@ -45,6 +45,7 @@
 #include "OW_Types.hpp"
 #include "OW_File.hpp"
 #include "OW_SocketFlags.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {

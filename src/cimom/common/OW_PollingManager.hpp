@@ -80,7 +80,7 @@ private:
 		PollingManager* m_pollMan;
 		CIMOMEnvironmentRef m_env;
 	};
-	typedef Reference<TriggerRunner> TriggerRunnerRef;
+	typedef IntrusiveReference<TriggerRunner> TriggerRunnerRef;
 	Array<TriggerRunnerRef> m_triggerRunners;
 	bool m_shuttingDown;
 	NonRecursiveMutex m_triggerGuard;
@@ -94,7 +94,7 @@ private:
 	void processTriggers();
 	friend class TriggerRunner;
 };
-typedef Reference<PollingManager> PollingManagerRef;
+typedef IntrusiveReference<PollingManager> PollingManagerRef;
 
 } // end namespace OpenWBEM
 

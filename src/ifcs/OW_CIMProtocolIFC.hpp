@@ -38,17 +38,19 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_CIMFeatures.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
+#include "OW_Reference.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(CIMProtocol);
-class CIMProtocolIFC
+class CIMProtocolIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMProtocolIFC();
@@ -87,7 +89,7 @@ public:
 	 * @exception SocketException
 	 *
 	 */
-	virtual Reference<CIMProtocolIStreamIFC> endRequest(
+	virtual CIMProtocolIStreamIFCRef endRequest(
 			Reference<std::iostream> request,
 			const String& methodName, const String& cimObject, ERequestType requestType) = 0;
 	/**
@@ -126,7 +128,7 @@ protected:
 	ClientAuthCBIFCRef m_loginCB;
 	String m_contentType;
 };
-typedef Reference<CIMProtocolIFC> CIMProtocolIFCRef;
+typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -44,6 +44,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_Reference.hpp"
 #include "npi.h"
 
 namespace OpenWBEM

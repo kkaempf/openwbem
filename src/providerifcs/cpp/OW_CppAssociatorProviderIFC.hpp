@@ -256,7 +256,7 @@ class CppAssociatorProviderIFC: public virtual CppInstanceProviderIFC
 				const String& role ) = 0;
 		virtual CppAssociatorProviderIFC* getAssociatorProvider() { return this; }
 };
-typedef SharedLibraryReference< Reference<CppAssociatorProviderIFC> > CppAssociatorProviderIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppAssociatorProviderIFC> > CppAssociatorProviderIFCRef;
 
 } // end namespace OpenWBEM
 

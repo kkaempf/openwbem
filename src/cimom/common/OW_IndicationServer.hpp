@@ -63,7 +63,7 @@ public:
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst) = 0;
 protected:
 };
-typedef SharedLibraryReference< Reference<IndicationServer> > IndicationServerRef;
+typedef SharedLibraryReference< IntrusiveReference<IndicationServer> > IndicationServerRef;
 
 } // end namespace OpenWBEM
 

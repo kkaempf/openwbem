@@ -42,6 +42,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_WBEMFlags.hpp"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {

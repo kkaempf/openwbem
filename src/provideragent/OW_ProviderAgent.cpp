@@ -111,7 +111,7 @@ ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap,
 							 Array<CppProviderBaseIFCRef> providers, 
 							 Array<CIMClass> cimClasses, 
 							 Array<RequestHandlerIFCRef> requestHandlers, 
-							 Reference<AuthenticatorIFC> authenticator,
+							 AuthenticatorIFCRef authenticator,
 							 LoggerRef logger, 
 							 const String& callbackURL)
 	: m_httpServer(new HTTPServer)

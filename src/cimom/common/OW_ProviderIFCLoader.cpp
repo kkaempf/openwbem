@@ -55,7 +55,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
 		m_env->getLogger());
 	ProviderIFCBaseIFC* ptr = 0;
-	if ( !sl.isNull() )
+	if ( sl )
 	{
 		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl,
 				"createProviderIFC", m_env->getLogger());

@@ -36,7 +36,7 @@
 #define OW_POSIX_UNNAMED_PIPE_HPP_
 #include "OW_config.h"
 #include "OW_UnnamedPipe.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -64,7 +64,7 @@ private:
 	int m_fds[2];
 	EBlockingMode m_blocking;
 };
-typedef Reference<PosixUnnamedPipe> PosixUnnamedPipeRef;
+typedef IntrusiveReference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 
 } // end namespace OpenWBEM
 

@@ -64,7 +64,7 @@ const char * typeStrings[] =
 	"Invalid"
 };
 WQLProcessor::WQLProcessor(
-	const Reference<CIMOMHandleIFC>& hdl,
+	const CIMOMHandleIFCRef& hdl,
 	const String& ns)
 	: m_hdl(hdl)
 	, m_ns(ns)

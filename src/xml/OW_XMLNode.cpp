@@ -139,7 +139,7 @@ XMLNodeImpl::findElement(const char* elementName, bool throwException) const
 {
 	XMLNodeImplRef tmpRef(new XMLNodeImpl(*this));
 
-	for ( ;!tmpRef.isNull(); tmpRef = tmpRef->m_nextNode)
+	for ( ;tmpRef; tmpRef = tmpRef->m_nextNode)
 	{
 		if (tmpRef->getName() == elementName)
 		{
@@ -159,7 +159,7 @@ XMLNodeImpl::findElement(const char* elementName, bool throwException) const
 XMLNodeImplRef
 XMLNodeImpl::nextElement(const char* elementName, bool throwException) const
 {
-	if (m_nextNode.isNull())
+	if (!m_nextNode)
 	{
 		if (throwException)
 		{
@@ -202,7 +202,7 @@ XMLNodeImpl::mustElementChild(const char* elementName)	const
 {
 	mustElement(elementName);
 
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustElementChild found a NULL child. "
@@ -217,7 +217,7 @@ XMLNodeImpl::mustElementChild(const char* elementName)	const
 XMLNodeImplRef
 XMLNodeImpl::mustChildElement(const char* elementName)	const
 {
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustChildElement found a NULL child. "
@@ -240,7 +240,7 @@ XMLNodeImpl::mustChildElement(const char* elementName)	const
 XMLNodeImplRef
 XMLNodeImpl::mustChildElementChild(const char* elementName) const
 {
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustChildElementChild found a NULL child. "
@@ -257,7 +257,7 @@ XMLNodeImpl::mustChildElementChild(const char* elementName) const
 				elementName, m_childNode->getName() ).c_str() );
 	}
 
-	if (m_childNode->m_childNode.isNull())
+	if (!m_childNode->m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustChildElementChild found a NULL child "
@@ -273,7 +273,7 @@ XMLNodeImpl::mustChildElementChild(const char* elementName) const
 XMLNodeImplRef
 XMLNodeImpl::mustChildFindElement(const char* elementName) const
 {
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustChildElementChild found a NULL child. "
@@ -290,7 +290,7 @@ XMLNodeImpl::findElementChild(const char* elementName, bool throwException)	cons
 {
 	XMLNodeImplRef tmpRef = findElement(elementName, throwException);
 
-	if (tmpRef.isNull())
+	if (!tmpRef)
 		return tmpRef;
 	else
 		return tmpRef->m_childNode;
@@ -321,7 +321,7 @@ XMLNodeImpl::getNext() const
 void
 XMLNodeImpl::addChild(const XMLNodeImplRef& node)
 {
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		m_childNode=node;
 		m_lastChildNode=node;
@@ -337,7 +337,7 @@ XMLNodeImpl::addChild(const XMLNodeImplRef& node)
 XMLNodeImplRef
 XMLNodeImpl::mustGetChild() const
 {
-	if (m_childNode.isNull())
+	if (!m_childNode)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				"XMLNodeImpl::mustGetChild found a NULL child");
@@ -358,14 +358,14 @@ XMLNodeArray
 XMLNodeImpl::getChildren() const
 {
 	XMLNodeArray ar;
-	if( m_childNode.isNull() )
+	if( !m_childNode )
 		return ar;
 	XMLNodeImplRef r = m_childNode;
 	do
 	{
 		ar.push_back(r);
 		r = r->m_nextNode;
-	} while( !r.isNull() );
+	} while( r );
 
 	return ar;
 }

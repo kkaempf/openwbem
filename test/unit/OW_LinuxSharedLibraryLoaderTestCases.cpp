@@ -55,7 +55,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::testLoadLibrary()
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
 			"../../src/common/libopenwbem"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
-	unitAssert( !lib.isNull() );
+	unitAssert( lib );
 }
 
 void OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer()
@@ -63,7 +63,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer()
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
 			"../../src/cimom/server/libowserver"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
-	unitAssert( !lib.isNull() );
+	unitAssert( lib );
 /*
 	SharedLibraryLoaderRef (*createFunc)();
 	unitAssert( SharedLibrary::getFunctionPointer( lib, "createSharedLibraryLoader__22SharedLibraryLoader", createFunc ) );

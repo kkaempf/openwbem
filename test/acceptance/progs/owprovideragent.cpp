@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
 
 		// TODO: set the http server timeout
 
-		Reference<AuthenticatorIFC> authenticator; 
+		AuthenticatorIFCRef authenticator; 
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
 		Array<RequestHandlerIFCRef> rha; 
 		rha.push_back(rh); 

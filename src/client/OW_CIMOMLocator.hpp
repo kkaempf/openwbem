@@ -37,7 +37,8 @@
 #define OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMInfo.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include <utility>
@@ -49,8 +50,8 @@ OW_DECLARE_EXCEPTION(CIMOMLocator);
 typedef std::pair<String, String> CIMOMAttribute;
 typedef Array<CIMOMAttribute> CIMOMAttributeArray;
 class CIMOMLocator;
-typedef Reference<CIMOMLocator> CIMOMLocatorRef;
-class CIMOMLocator
+typedef IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
+class CIMOMLocator : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMOMLocator();

@@ -39,7 +39,8 @@
 #include "OW_HDBCommon.hpp"
 #include "OW_String.hpp"
 #include "OW_Index.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_File.hpp"
 #include "OW_HDBNode.hpp"
 #include "OW_RWLocker.hpp"
@@ -54,7 +55,7 @@ class HDB;
 class HDBHandle
 {
 private:
-	class HDBHandleData
+	class HDBHandleData : public IntrusiveCountableBase
 	{
 	public:
 		HDBHandleData(HDB* pdb, File file) :
@@ -70,6 +71,7 @@ private:
 		bool m_writeDone;
 		Int32 m_userVal;	// Handle user can store any long data here
 	};
+	typedef IntrusiveReference<HDBHandleData> HDBHandleDataRef;
 public:
 	/**
 	 * Create a new HDBHandle object from another (copy ctor).
@@ -227,9 +229,9 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 private:
 	HDBHandle(HDB* pdb, File file);
 	File getFile() { return m_pdata->m_file; }
@@ -244,7 +246,7 @@ private:
 	bool updateIndexEntry(const char* key, Int32 newOffset);
 	friend class HDB;
 	friend class HDBNode;
-	Reference<HDBHandleData> m_pdata;
+	HDBHandleDataRef m_pdata;
 };
 //////////////////////////////////////////////////////////////////////////////
 class HDB

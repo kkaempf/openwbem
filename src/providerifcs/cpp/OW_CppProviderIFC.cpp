@@ -119,7 +119,7 @@ CppProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 			env->getLogger()->logDebug(Format("CPPProviderIFC found instance"
 				" provider %1", provIdString));
 			CppInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
-			ipRef.useRefCountOf(pProv);
+//			ipRef.useRefCountOf(pProv);
 			return InstanceProviderIFCRef(new CppInstanceProviderProxy(ipRef));
 		}
 		env->getLogger()->logError(Format("Provider %1 is not an instance provider",
@@ -141,7 +141,7 @@ CppProviderIFC::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& 
 			env->getLogger()->logDebug(Format("CPPProviderIFC found secondary instance"
 				" provider %1", provIdString));
 			CppSecondaryInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
-			ipRef.useRefCountOf(pProv);
+//			ipRef.useRefCountOf(pProv);
 			return SecondaryInstanceProviderIFCRef(new CppSecondaryInstanceProviderProxy(ipRef));
 		}
 		env->getLogger()->logError(Format("Provider %1 is not a secondary instance provider",
@@ -162,7 +162,7 @@ CppProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&)
 		if(pIEP)
 		{
 			CppIndicationExportProviderIFCRef iepRef(pProv.getLibRef(), pIEP);
-			iepRef.useRefCountOf(pProv);
+//			iepRef.useRefCountOf(pProv);
 			rvra.append(
 				IndicationExportProviderIFCRef(new
 					CppIndicationExportProviderProxy(iepRef)));
@@ -182,7 +182,7 @@ CppProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef&)
 		if(pPP)
 		{
 			CppPolledProviderIFCRef ppRef(pProv.getLibRef(), pPP);
-			ppRef.useRefCountOf(pProv);
+//			ppRef.useRefCountOf(pProv);
 			rvra.append(
 				PolledProviderIFCRef(new
 					CppPolledProviderProxy(ppRef)));
@@ -204,7 +204,7 @@ CppProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 			env->getLogger()->logDebug(Format("CPPProviderIFC found method provider %1",
 				provIdString));
 			CppMethodProviderIFCRef mpRef(pProv.getLibRef(), pMP);
-			mpRef.useRefCountOf(pProv);
+//			mpRef.useRefCountOf(pProv);
 			return MethodProviderIFCRef(
 				new CppMethodProviderProxy(mpRef));
 		}
@@ -228,7 +228,7 @@ CppProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 			env->getLogger()->logDebug(Format("CPPProviderIFC found associator provider %1",
 				provIdString));
 			CppAssociatorProviderIFCRef apRef(pProv.getLibRef(), pAP);
-			apRef.useRefCountOf(pProv);
+//			apRef.useRefCountOf(pProv);
 			return AssociatorProviderIFCRef(new
 				CppAssociatorProviderProxy(apRef));
 		}
@@ -259,7 +259,7 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 			}
 
 			CppIndicationProviderIFCRef apRef(pProv.getLibRef(), pAP);
-			apRef.useRefCountOf(pProv);
+//			apRef.useRefCountOf(pProv);
 			IndicationProviderIFCRef rv(new
 				CppIndicationProviderProxy(apRef));
 			
@@ -294,7 +294,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
+	if(!ldr)
 	{
 		env->getLogger()->logError("C++ provider ifc failed to get shared lib"
 			" loader");
@@ -332,7 +332,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	
 			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 				env->getLogger());
-			if(theLib.isNull())
+			if(!theLib)
 			{
 				env->getLogger()->logError("****************************************");
 				env->getLogger()->logError(Format("C++ provider ifc failed to load library: %1", libName));

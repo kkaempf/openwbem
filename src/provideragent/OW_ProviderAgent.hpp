@@ -38,7 +38,7 @@
 #define OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigFile.hpp"
@@ -50,7 +50,10 @@ namespace OpenWBEM
 {
 
 class HTTPServer;
+typedef IntrusiveReference<HTTPServer> HTTPServerRef;
 class Thread;
+typedef IntrusiveReference<Thread> ThreadRef;
+
 class ProviderAgent
 {
 public:
@@ -115,7 +118,7 @@ public:
 				  Array<CppProviderBaseIFCRef> providers, 
 				  Array<CIMClass> classes, 
 				  Array<RequestHandlerIFCRef> requestHandlers, 
-				  Reference<AuthenticatorIFC> authenticator,
+				  AuthenticatorIFCRef authenticator,
 				  LoggerRef logger = LoggerRef(0), 
 				  const String& callbackURL = String("")); 
 	~ProviderAgent();
@@ -126,8 +129,8 @@ public:
 	 */
 	void shutdownHttpServer();
 private:
-	Reference<HTTPServer> m_httpServer;
-	Reference<Thread> m_httpThread;
+	HTTPServerRef m_httpServer;
+	ThreadRef m_httpThread;
 	UnnamedPipeRef m_stopHttpPipe;
 };
 

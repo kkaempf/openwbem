@@ -59,7 +59,7 @@ public:
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
 	virtual CppIndicationExportProviderIFC* getIndicationExportProvider() { return this; }
 };
-typedef SharedLibraryReference<Reference<CppIndicationExportProviderIFC> >
+typedef SharedLibraryReference<IntrusiveReference<CppIndicationExportProviderIFC> >
 	CppIndicationExportProviderIFCRef;
 
 } // end namespace OpenWBEM

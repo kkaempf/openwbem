@@ -36,17 +36,17 @@
 #define OW_CLIENTCIMOMHANDLE_HPP_
 #include "OW_config.h"										
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 
 namespace OpenWBEM
 {
 
 class CIMProtocolIFC;
-typedef Reference<CIMProtocolIFC> CIMProtocolIFCRef;
+typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;
 
 class ClientCIMOMHandle;
-typedef Reference<ClientCIMOMHandle> ClientCIMOMHandleRef;
+typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 
 // This class is meant to hold common functionality in the client-side CIMOM
 // handles	

@@ -38,7 +38,6 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
-#include "OW_Reference.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Array.hpp"
 #include "OW_MOFLineInfo.hpp"
@@ -101,13 +100,13 @@ public:
 		bool m_removeDescriptions;
 	};
 
-	Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh );
+	Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh );
 	~Compiler();
 	long compile( const String& filename );
 	long compileString( const String& mof );
 	static String fixParsedString(const String& s);
 
-	Reference<ParserErrorHandlerIFC> theErrorHandler;
+	ParserErrorHandlerIFCRef theErrorHandler;
 	AutoPtr<MOFSpecification> mofSpecification;
 	String basepath;
 
@@ -132,7 +131,7 @@ public:
 	int include_stack_ptr;
 
 private:
-	Reference<CIMOMHandleIFC> m_ch;
+	CIMOMHandleIFCRef m_ch;
 	Options m_opts;
 	// unimplemented
 	Compiler(const Compiler& x);

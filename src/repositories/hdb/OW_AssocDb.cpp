@@ -155,7 +155,7 @@ AssocDbHandle::AssocDbHandleData::AssocDbHandleData() :
 //////////////////////////////////////////////////////////////////////////////
 AssocDbHandle::AssocDbHandleData::AssocDbHandleData(
 	const AssocDbHandleData& arg) :
-	m_pdb(arg.m_pdb), m_file(arg.m_file)
+	IntrusiveCountableBase(arg), m_pdb(arg.m_pdb), m_file(arg.m_file)
 {
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,7 @@ namespace OpenWBEM
 {
 
 class CIMOMEnvironment;
-typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
+typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 class IndicationRepLayerImpl : public IndicationRepLayer
 {
 public:

@@ -93,7 +93,7 @@ CIMInstanceArray testQueryRemote(CIMOMHandleIFCRef& rch, const char* query, int 
 CIMInstanceArray testQueryLocal(CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	Reference<WQLIFC> wql(new WQLImpl);
+	WQLIFCRef::element_type wql(new WQLImpl);
 	CIMInstanceEnumeration cie;
 	CIMInstanceEnumBuilder builder(cie);
 	wql->evaluate("/root/testsuite", builder, query, "wql2", rch);

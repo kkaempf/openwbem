@@ -68,7 +68,7 @@ class Reference :
 		T* operator->() const;
 		T& operator*() const;
 		T* getPtr() const;
-		bool isNull() const;
+		bool isNull() const OW_DEPRECATED;
 	private:
 		struct dummy
 		{
@@ -79,9 +79,9 @@ class Reference :
 	
 	public:
 		operator safe_bool () const
-			{  return (!isNull()) ? &dummy::nonnull : 0; }
+			{  return (m_pObj ? &dummy::nonnull : 0); }
 		safe_bool operator!() const
-			{  return (!isNull()) ? 0: &dummy::nonnull; }
+			{  return (m_pObj ? 0: &dummy::nonnull); }
 		template <class U>
 		Reference<U> cast_to() const;
 		template <class U>

@@ -33,17 +33,19 @@
  * @author Bart Whiteley
  */
 
-#ifndef __OW_AUTHORIZER2IFC_HPP__
-#define __OW_AUTHORIZER2IFC_HPP__
+#ifndef OW_AUTHORIZER2IFC_HPP_INCLUDE_GUARD_
+#define OW_AUTHORIZER2IFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
-class Authorizer2IFC
+class Authorizer2IFC : public IntrusiveCountableBase
 {
 public:
 
@@ -208,7 +210,7 @@ public:
 	virtual void init(ServiceEnvironmentIFCRef&) {}
 };
 
-typedef SharedLibraryReference<Reference<Authorizer2IFC> > Authorizer2IFCRef;
+typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
 
 }
 

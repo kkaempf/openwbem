@@ -35,7 +35,8 @@
 #ifndef OW_CIM_LISTENER_CALLBACK_HPP_
 #define OW_CIM_LISTENER_CALLBACK_HPP_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -45,7 +46,7 @@ class String;
 /**
  * An abstract base class for CIM Listener callbacks.
  */
-class CIMListenerCallback
+class CIMListenerCallback : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMListenerCallback();
@@ -73,7 +74,7 @@ protected:
 	virtual void doIndicationOccurred( CIMInstance& ci,
 		const String& listenerPath ) = 0;
 };
-typedef Reference<CIMListenerCallback> CIMListenerCallbackRef;
+typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 
 } // end namespace OpenWBEM
 

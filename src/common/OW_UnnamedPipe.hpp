@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_IOIFC.hpp"
 
 namespace OpenWBEM
@@ -47,7 +47,7 @@ namespace OpenWBEM
 class String;
 
 class UnnamedPipe;
-typedef Reference<UnnamedPipe> UnnamedPipeRef;
+typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 
 OW_DECLARE_EXCEPTION(UnnamedPipe);
 

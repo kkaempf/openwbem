@@ -38,13 +38,14 @@
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
-class ProviderEnvironmentIFC
+class ProviderEnvironmentIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ProviderEnvironmentIFC();
@@ -62,7 +63,7 @@ public:
 	virtual String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;
 };
-typedef Reference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
+typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 									
 
 } // end namespace OpenWBEM

@@ -54,6 +54,8 @@
 #endif
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -75,7 +77,7 @@ namespace OpenWBEM
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class ProviderIFCBaseIFC
+class ProviderIFCBaseIFC : public IntrusiveCountableBase
 {
 public:
 	ProviderIFCBaseIFC();
@@ -217,7 +219,7 @@ protected:
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 };
 
-typedef SharedLibraryReference< Reference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
 
 } // end namespace OpenWBEM
 

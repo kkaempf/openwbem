@@ -48,6 +48,8 @@
 #include "OW_Mutex.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_HashMultiMap.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -57,7 +59,7 @@ namespace OpenWBEM
  * It will keep the list of provider interfaces and query them when searching
  * for providers.
  */
-class ProviderManager
+class ProviderManager : public IntrusiveCountableBase
 {
 public:
 	/**
@@ -206,7 +208,7 @@ private:
 	// or namespace:classname for a specific namespace.
 	MultiProvRegMap_t m_registeredIndProvs;
 };
-typedef Reference<ProviderManager> ProviderManagerRef;
+typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
 
 } // end namespace OpenWBEM
 

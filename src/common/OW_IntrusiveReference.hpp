@@ -28,10 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Dan Nuffer
- */
-
 //
 //  Copyright (c) 2001, 2002 Peter Dimov
 //
@@ -41,12 +37,16 @@
 //  warranty, and with no claim as to its suitability for any purpose.
 //
 
+/**
+ * @author Peter Dimov
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 #define OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_RefCount.hpp"
-#include <functional>           // for std::less
 
 namespace OpenWBEM
 {
@@ -58,8 +58,8 @@ namespace OpenWBEM
 //
 //  Relies on unqualified calls to
 //  
-//      void IntrusiveReference_add_ref(T * p);
-//      void IntrusiveReference_release(T * p);
+//      void IntrusiveReferenceAddRef(T * p);
+//      void IntrusiveReferenceRelease(T * p);
 //
 //          (p != 0)
 //
@@ -72,24 +72,24 @@ private:
 public:
 	typedef T element_type;
 
-	IntrusiveReference(): p_(0)
+	IntrusiveReference(): m_pObj(0)
 	{
 	}
-	IntrusiveReference(T * p, bool add_ref = true): p_(p)
+	IntrusiveReference(T * p, bool add_ref = true): m_pObj(p)
 	{
-		if(p_ != 0 && add_ref) IntrusiveReference_add_ref(p_);
+		if(m_pObj != 0 && add_ref) IntrusiveReferenceAddRef(m_pObj);
 	}
-	template<class U> IntrusiveReference(IntrusiveReference<U> const & rhs): p_(rhs.get())
+	template<class U> IntrusiveReference(IntrusiveReference<U> const & rhs): m_pObj(rhs.getPtr())
 	{
-		if(p_ != 0) IntrusiveReference_add_ref(p_);
+		if(m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
 	}
-	IntrusiveReference(IntrusiveReference const & rhs): p_(rhs.p_)
+	IntrusiveReference(IntrusiveReference const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(p_ != 0) IntrusiveReference_add_ref(p_);
+		if(m_pObj != 0) IntrusiveReferenceAddRef(m_pObj);
 	}
 	~IntrusiveReference()
 	{
-		if(p_ != 0) IntrusiveReference_release(p_);
+		if(m_pObj != 0) IntrusiveReferenceRelease(m_pObj);
 	}
 	template<class U> IntrusiveReference & operator=(IntrusiveReference<U> const & rhs)
 	{
@@ -106,70 +106,82 @@ public:
 		this_type(rhs).swap(*this);
 		return *this;
 	}
-	T * get() const
+	T * getPtr() const
 	{
-		return p_;
+		return m_pObj;
 	}
 	T & operator*() const
 	{
-		return *p_;
+		return *m_pObj;
 	}
 	T * operator->() const
 	{
-		return p_;
+		return m_pObj;
 	}
 	typedef T * this_type::*unspecified_bool_type;
 	operator unspecified_bool_type () const
 	{
-		return p_ == 0? 0: &this_type::p_;
+		return m_pObj == 0? 0: &this_type::m_pObj;
 	}
 	bool operator! () const
 	{
-		return p_ == 0;
+		return m_pObj == 0;
 	}
+	OW_DEPRECATED bool isNull() const
+	{
+	    return m_pObj == 0;
+	}
+
 	void swap(IntrusiveReference & rhs)
 	{
-		T * tmp = p_;
-		p_ = rhs.p_;
-		rhs.p_ = tmp;
+		T * tmp = m_pObj;
+		m_pObj = rhs.m_pObj;
+		rhs.m_pObj = tmp;
 	}
+
+	template <class U>
+	IntrusiveReference<U> cast_to() const
+	{
+		return IntrusiveReference<U>(dynamic_cast<U*>(m_pObj));
+	}
+
 private:
-	T * p_;
+	T * m_pObj;
 };
 template<class T, class U> inline bool operator==(IntrusiveReference<T> const & a, IntrusiveReference<U> const & b)
 {
-	return a.get() == b.get();
+	return a.getPtr() == b.getPtr();
 }
 template<class T, class U> inline bool operator!=(IntrusiveReference<T> const & a, IntrusiveReference<U> const & b)
 {
-	return a.get() != b.get();
+	return a.getPtr() != b.getPtr();
 }
 template<class T> inline bool operator==(IntrusiveReference<T> const & a, T * b)
 {
-	return a.get() == b;
+	return a.getPtr() == b;
 }
 template<class T> inline bool operator!=(IntrusiveReference<T> const & a, T * b)
 {
-	return a.get() != b;
+	return a.getPtr() != b;
 }
 template<class T> inline bool operator==(T * a, IntrusiveReference<T> const & b)
 {
-	return a == b.get();
+	return a == b.getPtr();
 }
 template<class T> inline bool operator!=(T * a, IntrusiveReference<T> const & b)
 {
-	return a != b.get();
+	return a != b.getPtr();
 }
 #if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 // Resolve the ambiguity between our op!= and the one in rel_ops
 template<class T> inline bool operator!=(IntrusiveReference<T> const & a, IntrusiveReference<T> const & b)
 {
-	return a.get() != b.get();
+	return a.getPtr() != b.getPtr();
 }
 #endif
 template<class T> inline bool operator<(IntrusiveReference<T> const & a, IntrusiveReference<T> const & b)
 {
-	return std::less<T *>()(a.get(), b.get());
+	return a.getPtr() < b.getPtr();
 }
 template<class T> void swap(IntrusiveReference<T> & lhs, IntrusiveReference<T> & rhs)
 {
@@ -177,46 +189,16 @@ template<class T> void swap(IntrusiveReference<T> & lhs, IntrusiveReference<T> &
 }
 template<class T, class U> IntrusiveReference<T> static_pointer_cast(IntrusiveReference<U> const & p)
 {
-	return static_cast<T *>(p.get());
+	return static_cast<T *>(p.getPtr());
 }
 template<class T, class U> IntrusiveReference<T> const_pointer_cast(IntrusiveReference<U> const & p)
 {
-	return const_cast<T *>(p.get());
+	return const_cast<T *>(p.getPtr());
 }
 template<class T, class U> IntrusiveReference<T> dynamic_pointer_cast(IntrusiveReference<U> const & p)
 {
-	return dynamic_cast<T *>(p.get());
+	return dynamic_cast<T *>(p.getPtr());
 }
-
-/**
- * If you want your class to be managed by IntrusiveReference, then derive
- * from this class.  Note that if multiple inheritance is used, you must derive
- * "virtual"ly.
- */
-class IntrusiveCountableBase
-{
-private:
-	RefCount use_count_;
-	IntrusiveCountableBase(IntrusiveCountableBase const &);
-	IntrusiveCountableBase & operator=(IntrusiveCountableBase const &);
-protected:
-	IntrusiveCountableBase(): use_count_(0)
-	{
-	}
-	virtual ~IntrusiveCountableBase()
-	{
-	}
-public:
-	inline friend void IntrusiveReference_add_ref(IntrusiveCountableBase * p)
-	{
-		p->use_count_.inc();
-	}
-	inline friend void IntrusiveReference_release(IntrusiveCountableBase * p)
-	{
-		if(p->use_count_.decAndTest())
-			delete p;
-	}
-};
 
 } // end namespace OpenWBEM
 

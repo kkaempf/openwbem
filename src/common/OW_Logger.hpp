@@ -37,7 +37,8 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_LogLevel.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_Exception.hpp"
 
 namespace OpenWBEM
@@ -45,10 +46,12 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(Logger)
 
+class Logger;
+typedef IntrusiveReference<Logger> LoggerRef;
 /**
  * Logging interface.
  */
-class Logger
+class Logger : public IntrusiveCountableBase
 {
 	public:
 		/**
@@ -97,7 +100,7 @@ class Logger
 		 *   			all messages to stdout)
 		 * @return a class that implements the Logger interface.
 		 */
-		static Reference<Logger> createLogger( const String& type,
+		static LoggerRef createLogger( const String& type,
 			bool debug );
 		virtual ~Logger();
 	protected:
@@ -114,7 +117,6 @@ class Logger
 	private: // data
 		ELogLevel m_level;
 };
-typedef Reference<Logger> LoggerRef;
 
 } // end namespace OpenWBEM
 

@@ -59,7 +59,7 @@ void testQuery(const char* query)
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	Reference<WQLIFC> wql(new WQLImpl);
+	WQLIFCRef::element_type wql(new WQLImpl);
 
 	WQLSelectStatement stmt = wql->createSelectStatement(query);
 	stmt.print(cout);
@@ -164,7 +164,7 @@ void testQuery(const char* query, const CIMInstance& passingInstance)
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	Reference<WQLIFC> wql(new WQLImpl);
+	WQLIFCRef::element_type wql(new WQLImpl);
 
 	WQLSelectStatement stmt = wql->createSelectStatement(query);
 	stmt.print(cout);

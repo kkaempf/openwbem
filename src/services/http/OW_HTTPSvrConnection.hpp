@@ -67,7 +67,7 @@ public:
 	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
 	HTTPSvrConnection(Socket socket, HTTPServer* htin,
-		Reference<UnnamedPipe>& upipe,
+		IntrusiveReference<UnnamedPipe>& upipe,
 		const HTTPServer::Options& opts);
 	~HTTPSvrConnection();
 	/**
@@ -162,7 +162,7 @@ private:
 	String m_reqHeaderPrefix;
 	String m_respHeaderPrefix;
 	bool m_isAuthenticated;
-	Reference<UnnamedPipe> m_upipe;
+	IntrusiveReference<UnnamedPipe> m_upipe;
 	bool m_chunkedOut;
 	String m_userName;
 	bool m_clientIsOpenWBEM2;
@@ -181,8 +181,8 @@ private:
 		TempFileStream& ostrError);
 	int performAuthentication(const String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(Reference<CIMProtocolIStreamIFC> istrm);
-	Reference<CIMProtocolIStreamIFC> convertToFiniteStream(
+	void cleanUpIStreams(CIMProtocolIStreamIFCRef istrm);
+	CIMProtocolIStreamIFCRef convertToFiniteStream(
 			std::istream& istr);
 };
 

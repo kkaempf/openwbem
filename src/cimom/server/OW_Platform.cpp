@@ -85,9 +85,9 @@ static Options processCommandLineOptions(int argc, char** argv);
 static void handleSignal(int sig);
 static void setupSigHandler(bool dbgFlg);
 
-static Reference<UnnamedPipe> plat_upipe;
+static UnnamedPipeRef plat_upipe;
 
-static Reference<UnnamedPipe> daemonize_upipe; 
+static UnnamedPipeRef daemonize_upipe; 
 
 static char** g_argv = 0;
 

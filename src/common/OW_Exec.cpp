@@ -42,6 +42,7 @@
 #include "OW_Thread.hpp"
 #include "OW_Select.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 extern "C"
 {
@@ -65,7 +66,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(ExecTimeout);
 OW_DEFINE_EXCEPTION_WITH_ID(ExecBufferFull);
 OW_DEFINE_EXCEPTION_WITH_ID(ExecError);
 
-class PopenStreamsImpl
+class PopenStreamsImpl : public IntrusiveCountableBase
 {
 public:
 	PopenStreamsImpl();
@@ -271,7 +272,7 @@ PopenStreams::~PopenStreams()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
-Reference<UnnamedPipe> PopenStreams::in() const
+UnnamedPipeRef PopenStreams::in() const
 {
 	return m_impl->in();
 }

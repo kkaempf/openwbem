@@ -47,6 +47,8 @@
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -115,7 +117,7 @@ typedef ResultHandlerIFC<AssocDbEntry::entry> AssocDbEntryResultHandlerIFC;
 class AssocDbHandle
 {
 private:
-	struct AssocDbHandleData
+	struct AssocDbHandleData : public IntrusiveCountableBase
 	{
 		AssocDbHandleData();
 		AssocDbHandleData(const AssocDbHandleData& arg);
@@ -125,6 +127,8 @@ private:
 		AssocDb* m_pdb;
 		File m_file;
 	};
+	typedef IntrusiveReference<AssocDbHandleData> AssocDbHandleDataRef;
+
 public:
 	AssocDbHandle() : m_pdata(NULL) {}
 	AssocDbHandle(const AssocDbHandle& arg) : m_pdata(arg.m_pdata) {}
@@ -213,16 +217,16 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 private:
 	
 	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
 	void addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add);
 	AssocDbHandle(AssocDb* pdb, File file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
-	Reference<AssocDbHandleData> m_pdata;
+	AssocDbHandleDataRef m_pdata;
 	friend class AssocDb;
 };
 // The following structure represents the format of header that

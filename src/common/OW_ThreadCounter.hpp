@@ -38,7 +38,8 @@
 #include "OW_Types.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
 namespace OpenWBEM
@@ -47,7 +48,7 @@ namespace OpenWBEM
 // Note: Do not inline any functions in these classes, the code must
 // be contained in the main library, if a loadable library contains any,
 // it will cause a race-condition that may segfault the cimom.
-class ThreadCounter
+class ThreadCounter : public IntrusiveCountableBase
 {
 public:
 	ThreadCounter(Int32 maxThreads);
@@ -68,7 +69,9 @@ private:
 	ThreadCounter(ThreadCounter const&);
 	ThreadCounter& operator=(ThreadCounter const&);
 };
-typedef Reference<ThreadCounter> ThreadCounterRef;
+
+typedef IntrusiveReference<ThreadCounter> ThreadCounterRef;
+
 class ThreadCountDecrementer : public ThreadDoneCallback
 {
 public:

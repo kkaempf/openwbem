@@ -33,8 +33,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_AUTHENTICATORIFC_HPP_
-#define OW_AUTHENTICATORIFC_HPP_
+#ifndef OW_AUTHENTICATORIFC_HPP_INCLUDE_GUARD_
+#define OW_AUTHENTICATORIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
@@ -42,12 +42,14 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(Authentication);
-class AuthenticatorIFC
+class AuthenticatorIFC : public IntrusiveCountableBase
 {
 public:
 	AuthenticatorIFC()
@@ -113,7 +115,7 @@ protected:
 	virtual void doInit(ServiceEnvironmentIFCRef) {}
 	Mutex m_mutex;
 };
-typedef SharedLibraryReference<Reference<AuthenticatorIFC> > AuthenticatorIFCRef;
+typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
 #if !defined(OW_STATIC_SERVICES)  
 #define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \

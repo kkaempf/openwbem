@@ -317,7 +317,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    SharedLibraryLoaderRef ldr =
        SharedLibraryLoader::createSharedLibraryLoader();
 
-   if(ldr.isNull())
+   if(!ldr)
    {
 	  env->getLogger()->logError("CMPI provider ifc failed to get shared lib loader");
 	  return;
@@ -350,7 +350,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 			env->getLogger());
 		String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
 		
-		if(theLib.isNull())
+		if(!theLib)
 		{
 			 env->getLogger()->logError(Format("CMPI provider %1 ifc failed to load"
 					   " library: %2", guessProvId, libName));
@@ -378,7 +378,7 @@ CMPIProviderIFC::getProvider(
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
 
-	if(ldr.isNull())
+	if(!ldr)
 	{
 		env->getLogger()->logError("CMPI: provider ifc failed to get shared lib loader");
 		return CMPIFTABLERef();
@@ -394,7 +394,7 @@ CMPIProviderIFC::getProvider(
 
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, env->getLogger());
 
-	if(theLib.isNull())
+	if(!theLib)
 	{
 		env->getLogger()->logError(Format("CMPI provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));

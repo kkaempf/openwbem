@@ -36,7 +36,7 @@
 #define OW_EXEC_HPP_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_String.hpp"
 #include "OW_ArrayFwd.hpp"
 
@@ -47,7 +47,7 @@ OW_DECLARE_EXCEPTION(ExecTimeout);
 OW_DECLARE_EXCEPTION(ExecBufferFull);
 OW_DECLARE_EXCEPTION(ExecError);
 class UnnamedPipe;
-typedef Reference<UnnamedPipe> UnnamedPipeRef;
+typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 class PopenStreamsImpl;
 /**
  * This class represents a connection to a process.
@@ -118,7 +118,7 @@ public:
 	 */
 	void setProcessStatus(int ps);
 private:
-	Reference<PopenStreamsImpl> m_impl;
+	IntrusiveReference<PopenStreamsImpl> m_impl;
 };
 
 /////////////////////////////////////////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_AtomicOps.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -45,7 +46,7 @@ namespace OpenWBEM
  * The purpose of this class is to serve as an always present bridge between
  * IndicationRepLayerImpl and provIndicationRepLayer
  */
-class IndicationRepLayerMediator
+class IndicationRepLayerMediator : public IntrusiveCountableBase
 {
 public:
 	UInt32 getClassCreationSubscriptionCount();

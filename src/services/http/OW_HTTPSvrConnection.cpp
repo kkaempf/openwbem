@@ -83,7 +83,7 @@ using std::flush;
 //////////////////////////////////////////////////////////////////////////////
 HTTPSvrConnection::HTTPSvrConnection(Socket socket,
 	HTTPServer* htin,
-	Reference<UnnamedPipe>& upipe,
+	IntrusiveReference<UnnamedPipe>& upipe,
 	const HTTPServer::Options& opts)
 	: Runnable()
 	, m_requestLine(), m_requestHeaders(), m_pHTTPServer(htin)
@@ -125,7 +125,7 @@ HTTPSvrConnection::~HTTPSvrConnection()
 void
 HTTPSvrConnection::run()
 {
-	Reference<CIMProtocolIStreamIFC> istrToReadFrom(0);
+	CIMProtocolIStreamIFCRef istrToReadFrom(0);
 	SelectTypeArray selArray;
 	selArray.push_back(m_upipe->getSelectObj());
 	selArray.push_back(m_socket.getSelectObj());
@@ -234,7 +234,7 @@ HTTPSvrConnection::run()
 					break;
 				case M_POST:
 				case POST:
-					if (istrToReadFrom.isNull())
+					if (!istrToReadFrom)
 					{
 						OW_THROW(HTTPException,
 							"POST, but no content-length or chunking");
@@ -321,9 +321,9 @@ HTTPSvrConnection::run()
 	//m_socket.disconnect();
 }
 void
-HTTPSvrConnection::cleanUpIStreams(Reference<CIMProtocolIStreamIFC> istr)
+HTTPSvrConnection::cleanUpIStreams(CIMProtocolIStreamIFCRef istr)
 {
-	if (!istr.isNull())
+	if (istr)
 	{
 		HTTPUtils::eatEntity(*istr);
 	}
@@ -848,7 +848,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			
 			// TODO: parse and handle the parameters we may possibly care about.
 			m_requestHandler = m_options.env->getRequestHandler(ct);
-			if (m_requestHandler.isNull())
+			if (!m_requestHandler)
 			{
 				m_errDetails = Format("Content-Type \"%1\" is not supported.", ct);
 				return SC_UNSUPPORTED_MEDIA_TYPE;
@@ -1141,10 +1141,10 @@ HTTPSvrConnection::getHostName()
 	return SocketAddress::getAnyLocalHost().getName();
 }
 //////////////////////////////////////////////////////////////////////////////
-Reference<CIMProtocolIStreamIFC>
+CIMProtocolIStreamIFCRef
 HTTPSvrConnection::convertToFiniteStream(istream& istr)
 {
-	Reference<CIMProtocolIStreamIFC> rval(0);
+	CIMProtocolIStreamIFCRef rval(0);
 	if (m_chunkedIn)
 	{
 		rval = new HTTPChunkedIStream(istr);

@@ -51,7 +51,7 @@ namespace OpenWBEM
 {
 
 /////////////////////////////////////////////////////////////////////////////
-class ThreadPoolImpl
+class ThreadPoolImpl : public IntrusiveCountableBase
 {
 public:
 	// returns true if work is placed in the queue to be run and false if not.
@@ -561,7 +561,8 @@ ThreadPool::~ThreadPool()
 }
 /////////////////////////////////////////////////////////////////////////////
 ThreadPool::ThreadPool(const ThreadPool& x)
-	: m_impl(x.m_impl)
+	: IntrusiveCountableBase(x)
+	, m_impl(x.m_impl)
 {
 }
 /////////////////////////////////////////////////////////////////////////////

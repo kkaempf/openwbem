@@ -39,11 +39,12 @@
 #include "OW_Array.hpp"
 #include "OW_Map.hpp"
 #include "OW_HTTPSvrConnection.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
-class DigestAuthentication
+class DigestAuthentication : public IntrusiveCountableBase
 {
 public:
 	DigestAuthentication(const String& passwdFile);

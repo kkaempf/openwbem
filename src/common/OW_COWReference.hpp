@@ -64,7 +64,7 @@ class COWReference : private COWReferenceBase
 		const T* operator->() const;
 		const T& operator*() const;
 		const T* getPtr() const;
-		bool isNull() const;
+		bool isNull() const OW_DEPRECATED;
 	private:
 		struct dummy
 		{
@@ -75,9 +75,9 @@ class COWReference : private COWReferenceBase
 	
 	public:
 		operator safe_bool () const
-			{  return (!isNull()) ? &dummy::nonnull : 0; }
+			{  return (m_pObj != 0) ? &dummy::nonnull : 0; }
 		safe_bool operator!() const
-			{  return (!isNull()) ? 0: &dummy::nonnull; }
+			{  return (m_pObj != 0) ? 0: &dummy::nonnull; }
 		
 		template <class U>
 		COWReference<U> cast_to() const;

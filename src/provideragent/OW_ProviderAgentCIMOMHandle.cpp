@@ -563,7 +563,7 @@ ProviderAgentCIMOMHandle::PALocker::~PALocker()
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(PALockerRef locker)
-	: m_locker(locker.get())
+	: m_locker(locker.getPtr())
 {
 	m_locker->getReadLock(); 
 }
@@ -646,7 +646,7 @@ ProviderAgentCIMOMHandle::PALocker::getWriteLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(PALockerRef locker)
-	: m_locker(locker.get())
+	: m_locker(locker.getPtr())
 {
 	m_locker->getWriteLock(); 
 }

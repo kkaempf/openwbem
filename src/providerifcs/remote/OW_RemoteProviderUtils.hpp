@@ -35,18 +35,18 @@
 #ifndef OW_REMOTE_PROVIDER_UTILS_HPP_INCLUDE_GUARD_
 #define OW_REMOTE_PROVIDER_UTILS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
 
 class String;
 class ProviderEnvironmentIFC;
-typedef Reference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
+typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 class ClientCIMOMHandleConnectionPool;
-typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
 class ClientCIMOMHandle;
-typedef Reference<ClientCIMOMHandle> ClientCIMOMHandleRef;
+typedef IntrusiveReference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 
 namespace RemoteProviderUtils
 {

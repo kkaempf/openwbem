@@ -38,7 +38,8 @@
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -49,7 +50,7 @@ class HDB;
 class HDBNode
 {
 private:
-	struct HDBNodeData
+	struct HDBNodeData : public IntrusiveCountableBase
 	{
 		HDBNodeData();
 		HDBNodeData(const HDBNodeData& x);
@@ -63,6 +64,8 @@ private:
 		Int32 m_offset;
 		Int32 m_version;
 	};
+	typedef IntrusiveReference<HDBNodeData> HDBNodeDataRef;
+
 public:
 	/**
 	 * Create a null HDBNode object.
@@ -186,9 +189,9 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 private:
 	HDBNode(const char* key, HDBHandle& hdl);
 	HDBNode(Int32 offset, HDBHandle& hdl);
@@ -212,7 +215,7 @@ private:
 	void addChild(HDBHandle& hdl, HDBNode& arg);
 	bool updateData(HDBHandle& hdl, int dataLen, const unsigned char* data);
 	void setNull() { m_pdata = 0; }
-	Reference<HDBNodeData> m_pdata;
+	HDBNodeDataRef m_pdata;
 	friend class HDBHandle;
 };
 

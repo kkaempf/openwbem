@@ -36,6 +36,7 @@
 #define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_AuthorizerIFC.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
@@ -552,7 +553,7 @@ private:
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
-	Reference<AccessMgr> m_accessMgr;
+	IntrusiveReference<AccessMgr> m_accessMgr;
 	
 	RepositoryIFCRef m_cimRepository;
 };

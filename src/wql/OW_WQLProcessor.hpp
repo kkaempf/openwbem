@@ -37,7 +37,8 @@
 #include "OW_config.h"
 #include "OW_WQLVisitor.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMInstance.hpp"
@@ -51,7 +52,7 @@ namespace OpenWBEM
 class WQLProcessor : public WQLVisitor
 {
 public:
-	WQLProcessor(const Reference<CIMOMHandleIFC>& hdl, const String& ns);
+	WQLProcessor(const CIMOMHandleIFCRef& hdl, const String& ns);
 	virtual ~WQLProcessor()
 	{
 	}
@@ -628,12 +629,14 @@ public:
 		Real64 r;
 		Bool b;
 	};
-	struct CompareImpl
+	struct CompareImpl : public IntrusiveCountableBase
 	{
 		virtual bool operator()(const CIMValue& lhs, const CIMValue& rhs) const = 0;
 		virtual const char* c_str() const = 0;
 		virtual CompareImpl* reverseOrder() const = 0;
 	};
+	typedef IntrusiveReference<CompareImpl> CompareImplRef;
+
 	struct Equals : public CompareImpl
 	{
 		virtual bool operator()(const CIMValue& lhs, const CIMValue& rhs) const;
@@ -690,22 +693,22 @@ public:
 			switch(type)
 			{
 				case EqualsType:
-					m_ref = Reference<CompareImpl>(new Equals);
+					m_ref = CompareImplRef(new Equals);
 					break;
 				case NotEqualsType:
-					m_ref = Reference<CompareImpl>(new NotEquals);
+					m_ref = CompareImplRef(new NotEquals);
 					break;
 				case GreaterThanOrEqualsType:
-					m_ref = Reference<CompareImpl>(new GreaterThanOrEquals);
+					m_ref = CompareImplRef(new GreaterThanOrEquals);
 					break;
 				case LessThanOrEqualsType:
-					m_ref = Reference<CompareImpl>(new LessThanOrEquals);
+					m_ref = CompareImplRef(new LessThanOrEquals);
 					break;
 				case GreaterThanType:
-					m_ref = Reference<CompareImpl>(new GreaterThan);
+					m_ref = CompareImplRef(new GreaterThan);
 					break;
 				case LessThanType:
-					m_ref = Reference<CompareImpl>(new LessThan);
+					m_ref = CompareImplRef(new LessThan);
 					break;
 			}
 		}
@@ -727,7 +730,7 @@ public:
 		}
 		
 	private:
-		Reference<CompareImpl> m_ref;
+		CompareImplRef m_ref;
 	};
 public:
 	CIMInstanceArray instances; // return value after processing is done.
@@ -735,7 +738,7 @@ public:
 private:
 	DataType m_exprValue;
 	Array<DataType> m_valueArray;
-	Reference<CIMOMHandleIFC> m_hdl;
+	CIMOMHandleIFCRef m_hdl;
 	String m_ns;
 	String m_tableRef;
 	bool m_doingSelect;

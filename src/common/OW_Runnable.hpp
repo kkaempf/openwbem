@@ -36,14 +36,15 @@
 #ifndef OW_RUNNABLE_HPP_INCLUDE_GUARD_
 #define OW_RUNNABLE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
 namespace OpenWBEM
 {
 
 class Runnable;
-typedef Reference<Runnable> RunnableRef;
+typedef IntrusiveReference<Runnable> RunnableRef;
 /**
  * There are two methods for creating a thread of execution in the OW systems.
  * One is to derive from Thread and implement the run method and call start
@@ -51,7 +52,7 @@ typedef Reference<Runnable> RunnableRef;
  * The other method is to derive from Runnable and pass references of the
  * derived class to ThreadPool::addWork()
  */
-class Runnable
+class Runnable : public IntrusiveCountableBase
 {
 public:
 	virtual ~Runnable();

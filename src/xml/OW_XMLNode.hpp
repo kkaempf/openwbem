@@ -39,7 +39,8 @@
 #define OW_XMLNODE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_XMLAttribute.hpp"
 
 #include <iosfwd>
@@ -50,7 +51,7 @@ namespace OpenWBEM
 class XMLNodeImpl;
 class XMLNode;
 
-typedef Reference<XMLNodeImpl> XMLNodeImplRef;
+typedef IntrusiveReference<XMLNodeImpl> XMLNodeImplRef;
 typedef Array<XMLNode> XMLNodeArray;
 
 /**
@@ -402,9 +403,9 @@ private:
 
 public:
 	operator safe_bool () const
-		{  return (!m_impl.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_impl) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_impl.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_impl) ? 0: &dummy::nonnull; }
 
 
 private:
@@ -417,7 +418,7 @@ private:
 
 std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
 
-class XMLNodeImpl
+class XMLNodeImpl : public IntrusiveCountableBase
 {
 public:
 	XMLNodeImpl(const String& name, const XMLAttributeArray& attrArray);

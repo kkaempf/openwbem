@@ -56,7 +56,7 @@ void ProviderManager::load(const ProviderIFCLoaderRef& IFCLoader)
 	IFCLoader->loadIFCs(m_IFCArray);
 	// now the CPP provider is linked to the cimom, not loaded dynamically, So
 	// we have to create it here.
-	Reference<ProviderIFCBaseIFC> cpppi(new CppProviderIFC);
+	ProviderIFCBaseIFCRef::element_type cpppi(new CppProviderIFC);
 	// 0 because there is no shared library.
 	m_IFCArray.push_back(ProviderIFCBaseIFCRef(SharedLibraryRef(0), cpppi));
 }
@@ -766,7 +766,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 			break;
 		}
 	}
-	if(rref.isNull())
+	if(!rref)
 	{
 		env->getLogger()->logError(Format(
 			"Provider Manager - Invalid provider interface identifier: %1",

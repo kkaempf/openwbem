@@ -38,13 +38,15 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 // this class is part of the wqlcommon library, which is not in libopenwbem
 class WQLSelectStatement;
-class WQLIFC
+class WQLIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~WQLIFC()
@@ -53,11 +55,11 @@ public:
 	virtual void evaluate(const String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,
-				Reference<CIMOMHandleIFC> hdl) = 0;
+				CIMOMHandleIFCRef hdl) = 0;
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };
-typedef SharedLibraryReference< Reference<WQLIFC> > WQLIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<WQLIFC> > WQLIFCRef;
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_WQLFACTORY(derived,wqlname) \

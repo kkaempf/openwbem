@@ -38,12 +38,14 @@
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
 
 // This class is a base interface for any services for Openwbem.
-class ServiceIFC
+class ServiceIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();
@@ -51,7 +53,7 @@ public:
 	virtual void startService() = 0;
 	virtual void shutdown() = 0;
 };
-typedef SharedLibraryReference< Reference<ServiceIFC> > ServiceIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<ServiceIFC> > ServiceIFCRef;
 
 } // end namespace OpenWBEM
 

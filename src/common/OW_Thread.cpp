@@ -57,13 +57,13 @@ OW_DEFINE_EXCEPTION_WITH_ID(CancellationDenied);
 // this is what's really passed to threadRunner
 struct ThreadParam
 {
-	ThreadParam(Thread* t, const Reference<ThreadDoneCallback>& c, const ThreadBarrier& b)
+	ThreadParam(Thread* t, const ThreadDoneCallbackRef& c, const ThreadBarrier& b)
 		: thread(t)
 		, cb(c)
 		, thread_barrier(b)
 	{}
 	Thread* thread;
-	Reference<ThreadDoneCallback> cb;
+	ThreadDoneCallbackRef cb;
 	ThreadBarrier thread_barrier;
 };
 static Thread_t zeroThread();
@@ -109,7 +109,7 @@ Thread::~Thread()
 //////////////////////////////////////////////////////////////////////////////
 // Start the thread
 void
-Thread::start(Reference<ThreadDoneCallback> cb)
+Thread::start(ThreadDoneCallbackRef cb)
 {
 	if(isRunning())
 	{
@@ -167,7 +167,7 @@ Thread::threadRunner(void* paramPtr)
 		Thread* pTheThread = pParam->thread;
 		ThreadImpl::saveThreadInTLS(pTheThread);
 		theThreadID = pTheThread->m_id;
-		Reference<ThreadDoneCallback> cb = pParam->cb;
+		ThreadDoneCallbackRef cb = pParam->cb;
 		ThreadBarrier thread_barrier = pParam->thread_barrier;
 		delete pParam;
 		pTheThread->m_isRunning = true;

@@ -197,7 +197,7 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CppInstanceProviderIFC* getInstanceProvider() { return this; }
 };
-typedef SharedLibraryReference< Reference<CppInstanceProviderIFC> > CppInstanceProviderIFCRef;
+typedef SharedLibraryReference< IntrusiveReference<CppInstanceProviderIFC> > CppInstanceProviderIFCRef;
 
 } // end namespace OpenWBEM
 

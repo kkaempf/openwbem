@@ -39,7 +39,7 @@
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_ServerSocketImpl.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_Types.hpp"
 #include "OW_SocketFlags.hpp"
 
@@ -117,7 +117,7 @@ public:
 	SocketHandle_t getfd() const { return m_impl->getfd(); }
 	Select_t getSelectObj() const { return m_impl->getSelectObj(); }
 private:
-	Reference<ServerSocketImpl> m_impl;
+	IntrusiveReference<ServerSocketImpl> m_impl;
 };
 
 } // end namespace OpenWBEM

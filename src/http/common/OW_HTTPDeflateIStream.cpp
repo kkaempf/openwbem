@@ -37,7 +37,6 @@
 #ifdef OW_HAVE_ZLIB_H
 #include "OW_HTTPDeflateIStream.hpp"
 #include "OW_HTTPException.hpp"
-#include "OW_Reference.hpp"
 
 namespace OpenWBEM
 {
@@ -127,7 +126,7 @@ HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 HTTPDeflateIStream::HTTPDeflateIStream(
-			Reference<CIMProtocolIStreamIFC> istr)
+			CIMProtocolIStreamIFCRef istr)
 	: HTTPDeflateIStreamBase(*istr)
 	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
