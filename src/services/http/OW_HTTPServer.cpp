@@ -84,13 +84,31 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing OWLocal");
-		return m_localAuthentication->authenticate(userName, info, pconn);
+		bool rv = m_localAuthentication->authenticate(userName, info, pconn);
+		if (rv)
+		{
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+		}
+		else
+		{
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+		}
+		return rv;
 	}
 	else if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing Digest");
-		return m_digestAuthentication->authenticate(userName, info, pconn);
+		bool rv = m_digestAuthentication->authenticate(userName, info, pconn);
+		if (rv)
+		{
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+		}
+		else
+		{
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+		}
+		return rv;
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
@@ -108,6 +126,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			// decoding failed
 			pconn->setErrorDetails("Problem decoding credentials");
 			pconn->addHeader("WWW-Authenticate", authChallenge); 
+			getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: Problem decoding credentials");
 			return false;
 		}
 		String details;
@@ -115,10 +134,12 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", authChallenge); 
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: failed: %1", details));
 			return false;
 		}
 		else
 		{
+			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
 			return true;
 		}
 	}
