@@ -101,6 +101,11 @@ private:
 			OW_THROW(OW_Exception, "Cannot call CIMOMProviderEnvironment::getCIMOMHandle()");
 		}
 		
+		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			OW_THROW(OW_Exception, "Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()");
+		}
+		
 		virtual OW_LoggerRef getLogger() const
 		{
 			return m_pCenv->getLogger();
@@ -230,6 +235,11 @@ public:
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const 
 	{
 		return env->getCIMOMHandle();
+	}
+	
+	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const 
+	{
+		return env->getRepositoryCIMOMHandle();
 	}
 	
 	virtual OW_LoggerRef getLogger() const 
@@ -756,7 +766,7 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
-	OW_Bool doIndications, const OW_Bool bypassProviders)
+	const OW_Bool doIndications, const OW_Bool bypassProviders, const OW_Bool noLocking)
 {
 	{
 		OW_MutexLock l(m_runningGuard);
@@ -791,12 +801,12 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 		{
 			OW_RepositoryIFCRef rref2(new OW_SharedLibraryRepository(irl));
 			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref2,
-				aclInfo));
+				aclInfo, noLocking));
 		}
 	}
 
 	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
-		aclInfo));
+		aclInfo, noLocking));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -812,6 +822,13 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle()
 {
 	return getCIMOMHandle(OW_ACLInfo(), false, false);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMOMHandleIFCRef
+OW_CIMOMEnvironment::getRepositoryCIMOMHandle()
+{
+	return getCIMOMHandle(OW_ACLInfo(), false, true);
 }
 
 //////////////////////////////////////////////////////////////////////////////

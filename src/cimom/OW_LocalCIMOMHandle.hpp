@@ -642,8 +642,6 @@ public:
 	safe_bool operator!() const
 		{  return (m_pServer) ? 0: &dummy::nonnull; }
 
-private:
-
 	/**
 	 * Create a new OW_LocalCIMOMHandle with a given repository interface
 	 * and user access contol information.
@@ -668,6 +666,8 @@ private:
 	void releaseInstanceReadLock();
 	void releaseInstanceWriteLock();
 
+private:
+
 	/**
 	 * A Reference to the OW_Repository interface that this OW_LocalCIMOMHandle
 	 * will use.
@@ -688,11 +688,6 @@ private:
 
 	OW_CIMOMEnvironmentRef m_env;
 
-	friend class OW_CIMServer;
-	friend class OW_CIMServerSchemaWriteLocker;
-	friend class OW_CIMServerSchemaReadLocker;
-	friend class OW_CIMServerInstanceWriteLocker;
-	friend class OW_CIMServerInstanceReadLocker;
 };
 
 typedef OW_Reference<OW_LocalCIMOMHandle> OW_LocalCIMOMHandleRef;

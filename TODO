@@ -33,20 +33,6 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
-    - Wrap OW_*Repository into one class that implements OW_RepositoryIFC.
-      Have a way for providers to access it, so they can basically be
-      "pass-thru" providers.  They store their instances in the repository,
-      but perform operations as the instances are accessed.  The
-      CIM_Indication* providers will need this functionality.
-      This is also a replacement for property providers.  Instead of property
-      providers, an instance provider can be created, which will store parts
-      of its instances in the repository and will dynamically add other
-      properties.
-      - Move handling of flags as low as possible-into {Meta,Inst}Repository
-        and providersifc/providers
-      - Fix association/reference processing so OW_CIMServer uses
-        OW_CIMRepository private _static* methods, to avoid unnecessary
-        work.  Maybe create a public interface for this? OW_StaticCIMRepository
 
 New features:
     - Create intrinsic providers for

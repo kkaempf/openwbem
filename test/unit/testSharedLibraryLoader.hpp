@@ -501,6 +501,11 @@ namespace
 			return m_ch;
 		}
 		
+		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			return m_ch;
+		}
+		
 		virtual OW_LoggerRef getLogger() const
 		{
 			return m_logger;

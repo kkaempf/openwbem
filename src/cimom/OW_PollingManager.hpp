@@ -45,6 +45,7 @@
 #include "OW_Condition.hpp"
 #include "OW_Semaphore.hpp"
 #include "OW_ThreadCounter.hpp"
+#include "OW_ACLInfo.hpp"
 
 class OW_PollingManager : public OW_Thread
 {
@@ -67,7 +68,7 @@ private:
 	class TriggerRunner : public OW_Runnable
 	{
 	public:
-		TriggerRunner(OW_PollingManager* svr, OW_CIMOMHandleIFCRef lch,
+		TriggerRunner(OW_PollingManager* svr, OW_ACLInfo acl,
 			OW_CIMOMEnvironmentRef env);
 		void start();
 		virtual void run();
@@ -77,7 +78,7 @@ private:
 		OW_Bool m_isRunning;
 		OW_Int32 m_pollInterval;
 		OW_PollingManager* m_pollMan;
-		OW_CIMOMHandleIFCRef m_lch;
+		OW_ACLInfo m_acl;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 

@@ -646,32 +646,40 @@ namespace
 	{
 	public:
 
-		CIMServerProviderEnvironment(const OW_LocalCIMOMHandle& ch)
-			: m_ch(new OW_LocalCIMOMHandle(ch))
+		CIMServerProviderEnvironment(const OW_ACLInfo& acl,
+			const OW_CIMOMEnvironmentRef& env)
+			: m_acl(acl)
+			, m_env(env)
 		{}
 
 		virtual OW_String getConfigItem(const OW_String &name) const
 		{
-			return m_ch->getEnvironment()->getConfigItem(name);
+			return m_env->getConfigItem(name);
 		}
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return m_ch;
+			return m_env->getCIMOMHandle(m_acl, false, false, true);
+		}
+		
+		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			return m_env->getCIMOMHandle(m_acl, false, true, true);
 		}
 		
 		virtual OW_LoggerRef getLogger() const
 		{
-			return m_ch->getEnvironment()->getLogger();
+			return m_env->getLogger();
 		}
 
 	private:
-		mutable OW_Reference<OW_LocalCIMOMHandle> m_ch;
+		OW_ACLInfo m_acl;
+		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
+	inline OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_ACLInfo& acl, const OW_CIMOMEnvironmentRef& env)
 	{
-		return OW_ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(ch));
+		return OW_ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(acl, env));
 	}
 }
 
@@ -682,16 +690,10 @@ OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& classNa
 	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		OW_ACLInfo(), true);
-
-	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
-		true);
-
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
-		instancep->enumInstanceNames(createProvEnvRef(real_ch),
+		instancep->enumInstanceNames(createProvEnvRef(aclInfo, m_env),
 			ns, className, result, theClass);
 	}
 	else
@@ -909,13 +911,11 @@ OW_CIMServer::_getCIMInstances(
 				className));
 		}
 
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo, true);
-
 		// not going to use these, the provider ifc/providers are now responsible for it.
 		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
 		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), ns, className, result, localOnly, 
+			createProvEnvRef(aclInfo, m_env), ns, className, result, localOnly, 
 			deep, includeQualifiers, includeClassOrigin, propertyList, 
 			theTopClass, theClass);
 	}
@@ -972,11 +972,8 @@ OW_CIMServer::getInstance(
 	OW_CIMInstance ci;
 	if(instancep)
 	{
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
-			true);
-
 		ci = instancep->getInstance(
-			createProvEnvRef(real_ch),
+			createProvEnvRef(aclInfo, m_env),
 				ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList, cc);
 		if (!ci)
 		{
@@ -1028,11 +1025,8 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 
 	if(instancep)	// If there is an instance provider, let it do the delete.
 	{
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
-			true);
-
 		instancep->deleteInstance(
-			createProvEnvRef(real_ch), ns, cop);
+			createProvEnvRef(aclInfo, m_env), ns, cop);
 	}
 	else
 	{
@@ -1055,9 +1049,6 @@ OW_CIMServer::createInstance(
 
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
-
-	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-		aclInfo, true);
 
 	OW_String className = ci.getClassName();
 
@@ -1133,7 +1124,7 @@ OW_CIMServer::createInstance(
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
-		rval = instancep->createInstance(createProvEnvRef(real_ch), ns, lci);
+		rval = instancep->createInstance(createProvEnvRef(aclInfo, m_env), ns, lci);
 	}
 	else
 	{
@@ -1176,9 +1167,7 @@ OW_CIMServer::modifyInstance(
 		oldInst = getInstance(ns, cop, false, true, true, NULL,
 			intAclInfo);
 
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-			aclInfo, true);
-		instancep->modifyInstance(createProvEnvRef(real_ch), ns,
+		instancep->modifyInstance(createProvEnvRef(aclInfo, m_env), ns,
 			modifiedInstance, oldInst, includeQualifiers, propertyList, theClass);
 	}
 
@@ -1343,11 +1332,6 @@ OW_CIMServer::invokeMethod(
 
 	try
 	{
-		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			intAclInfo, true);
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-			aclInfo, true);
-		
 		OW_CIMClass cctemp(cc);
 
 		// we need to query for providers for this class and all base classes.
@@ -1358,7 +1342,7 @@ OW_CIMServer::invokeMethod(
 			try
 			{
 				methodp = m_provManager->getMethodProvider(
-					createProvEnvRef(internal_ch), ns, cctemp, method);
+					createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
 			}
 			catch (const OW_NoSuchProviderException&)
 			{
@@ -1491,7 +1475,7 @@ OW_CIMServer::invokeMethod(
 		}
 
 		cv = methodp->invokeMethod(
-			createProvEnvRef(real_ch),
+			createProvEnvRef(aclInfo, m_env),
 				ns, path, methodName, orderedParams, outParams);
 		
 		// make sure the type is right on the outParams
@@ -1557,8 +1541,6 @@ OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 {
 	OW_ACLInfo intAclInfo;
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		intAclInfo, true);
 	OW_InstanceProviderIFCRef instancep;
 	OW_CIMClass cc(cc_);
 
@@ -1570,7 +1552,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 		try
 		{
 			instancep =
-				m_provManager->getInstanceProvider(createProvEnvRef(internal_ch), ns, cc);
+				m_provManager->getInstanceProvider(createProvEnvRef(intAclInfo, m_env), ns, cc);
 		}
 		catch (const OW_NoSuchProviderException&)
 		{
@@ -1578,7 +1560,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 			try
 			{
 				m_provManager->getAssociatorProvider(
-					createProvEnvRef(internal_ch), ns, cc);
+					createProvEnvRef(intAclInfo, m_env), ns, cc);
 			}
 			catch (const OW_NoSuchProviderException& e)
 			{
@@ -1603,8 +1585,6 @@ OW_AssociatorProviderIFCRef
 OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_)
 {
 	OW_ACLInfo intAclInfo;
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		intAclInfo, true);
 	OW_AssociatorProviderIFCRef ap;
 	OW_CIMClass cc(cc_);
 
@@ -1616,7 +1596,7 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_
 		try
 		{
 			ap =  m_provManager->getAssociatorProvider(
-				createProvEnvRef(internal_ch), ns, cc);
+				createProvEnvRef(intAclInfo, m_env), ns, cc);
 		}
 		catch (const OW_NoSuchProviderException&)
 		{
@@ -1624,7 +1604,7 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_
 			try
 			{
 				m_provManager->getInstanceProvider(
-					createProvEnvRef(internal_ch), ns, cc);
+					createProvEnvRef(intAclInfo, m_env), ns, cc);
 			}
 			catch (const OW_NoSuchProviderException& e)
 			{
@@ -2016,11 +1996,6 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		OW_ACLInfo(), true);
-	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-		aclInfo, true);
-
 	// assocClasses should always have something in it
 	if(assocClasses.size() == 0)
 	{
@@ -2045,14 +2020,14 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 		if(piresult != 0)
 		{
 			assocP->references(
-				createProvEnvRef(real_ch),
+				createProvEnvRef(aclInfo, m_env),
 				path.getNameSpace(), assocClassPath, path, *piresult, role, includeQualifiers,
 				includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
 			assocP->referenceNames(
-				createProvEnvRef(real_ch),
+				createProvEnvRef(aclInfo, m_env),
 				path.getNameSpace(), assocClassPath, path, *popresult, role);
 		}
 		else
@@ -2211,11 +2186,6 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 		return;
 	}
 
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		OW_ACLInfo(), true);
-	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
-		true);
-
 	for(size_t i = 0; i < assocClasses.size(); i++)
 	{
 		OW_CIMClass cc = assocClasses[i];
@@ -2231,13 +2201,13 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 
 		if(piresult != 0)
 		{
-			assocP->associators(createProvEnvRef(real_ch), path.getNameSpace(),
+			assocP->associators(createProvEnvRef(aclInfo, m_env), path.getNameSpace(),
 				assocClassPath, path, *piresult, resultClass, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 		else if (popresult != 0)
 		{
-			assocP->associatorNames(createProvEnvRef(real_ch),
+			assocP->associatorNames(createProvEnvRef(aclInfo, m_env),
 				path.getNameSpace(),
 				assocClassPath, path, *popresult, resultClass, role, resultRole);
 		}

@@ -63,15 +63,20 @@ namespace
 	{
 	public:
 
-		PollingManagerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
+		PollingManagerProviderEnvironment(const OW_ACLInfo& acl,
 			OW_CIMOMEnvironmentRef env)
-			: m_ch(ch)
+			: m_acl(acl)
 			, m_env(env)
 		{}
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return m_ch;
+			return m_env->getCIMOMHandle(m_acl);
+		}
+
+		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			return m_env->getRepositoryCIMOMHandle();
 		}
 
 		virtual OW_String getConfigItem(const OW_String& name) const
@@ -85,15 +90,15 @@ namespace
 		}
 
 	private:
-		OW_CIMOMHandleIFCRef m_ch;
+		OW_ACLInfo m_acl;
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_CIMOMHandleIFCRef& ch,
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_ACLInfo& acl,
 		OW_CIMOMEnvironmentRef env)
 	{
 		return OW_ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
-			ch, env));
+			acl, env));
 	}
 }
 
@@ -106,13 +111,11 @@ OW_PollingManager::run()
 
 	OW_Bool doInit = true;
 
-	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(OW_ACLInfo());
-
 	// Get all of the indication trigger providers
 	OW_ProviderManagerRef pm = m_env->getProviderManager();
 	
 	OW_PolledProviderIFCRefArray itpra =
-			pm->getPolledProviders(createProvEnvRef(lch, m_env));
+			pm->getPolledProviders(createProvEnvRef(OW_ACLInfo(), m_env));
 
 	m_env->logDebug(format("OW_PollingManager found %1 polled providers",
 		itpra.size()));
@@ -123,10 +126,10 @@ OW_PollingManager::run()
 
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			TriggerRunner tr(this, lch, m_env);
+			TriggerRunner tr(this, OW_ACLInfo(), m_env);
 
 			tr.m_pollInterval = itpra[i]->getInitialPollingInterval(
-				createProvEnvRef(lch, m_env));
+				createProvEnvRef(OW_ACLInfo(), m_env));
 
 			m_env->logDebug(format("OW_PollingManager poll interval for provider"
 				" %1: %2", i, tr.m_pollInterval));
@@ -253,14 +256,14 @@ OW_PollingManager::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
-	OW_CIMOMHandleIFCRef lch, OW_CIMOMEnvironmentRef env)
+	OW_ACLInfo acl, OW_CIMOMEnvironmentRef env)
 	: OW_Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)
 	, m_isRunning(false)
 	, m_pollInterval(0)
 	, m_pollMan(svr)
-	, m_lch(lch)
+	, m_acl(acl)
 	, m_env(env)
 {
 }
@@ -283,7 +286,7 @@ OW_PollingManager::TriggerRunner::run()
 	OW_Int32 nextInterval = 0;
 	try
 	{
-		nextInterval = m_itp->poll(createProvEnvRef(m_lch, m_env));
+		nextInterval = m_itp->poll(createProvEnvRef(m_acl, m_env));
 	}
 	catch(std::exception& e)
 	{

@@ -82,15 +82,22 @@ class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
 public:
 
 	IndicationServerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
-		OW_CIMOMEnvironmentRef env)
+		OW_CIMOMEnvironmentRef env,
+		const OW_CIMOMHandleIFCRef& repch)
 		: OW_ProviderEnvironmentIFC()
 		, m_ch(ch)
 		, m_env(env)
+		, m_repch(repch)
 	{}
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 	{
 		return m_ch;
+	}
+	
+	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+	{
+		return m_repch;
 	}
 
 	virtual OW_String getConfigItem(const OW_String& name) const
@@ -106,13 +113,14 @@ public:
 private:
 	OW_CIMOMHandleIFCRef m_ch;
 	OW_CIMOMEnvironmentRef m_env;
+	OW_CIMOMHandleIFCRef m_repch;
 };
 
 OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
-	const OW_CIMOMHandleIFCRef& ch)
+	const OW_CIMOMHandleIFCRef& ch, const OW_CIMOMHandleIFCRef& repch)
 {
 	return OW_ProviderEnvironmentIFCRef(
-		new IndicationServerProviderEnvironment(ch, env));
+		new IndicationServerProviderEnvironment(ch, env, repch));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,13 +143,14 @@ OW_Notifier::run()
 {
 	OW_CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle(m_aclInfo, false);
+	OW_CIMOMHandleIFCRef repch = env->getCIMOMHandle(m_aclInfo, false, true);
 
 	while (true)
 	{
 		try
 		{
 			m_trans.m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment(), lch), m_trans.m_ns, m_trans.m_handler,
+				m_pmgr->getEnvironment(), lch, repch), m_trans.m_ns, m_trans.m_handler,
 				m_trans.m_indication);
 		}
 		catch(OW_Exception& e)
@@ -185,9 +194,10 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	OW_ProviderManagerRef pProvMgr = m_env->getProviderManager();
 
 	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef repch = env->getCIMOMHandle(aclInfo, false, true);
 
 	OW_IndicationExportProviderIFCRefArray pra =
-		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env, lch));
+		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env, lch, repch));
 
 	m_env->logDebug(format("OW_IndicationServerImpl: %1 export providers found",
 		pra.size()));

@@ -96,9 +96,12 @@ public:
 		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
-		OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
+		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false,
+		const OW_Bool noLocking = false);
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle();
+
+	OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle();
 
 	OW_CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 		const OW_ACLInfo& aclInfo);
