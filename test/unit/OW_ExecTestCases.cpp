@@ -100,34 +100,38 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
-	// do a timeout
-	processstatus = 0;
-	output.erase();
-	try
+	// only do timeout tests if we're doing the long test, since it's slowwww
+	if (getenv("OWLONGTEST"))
 	{
-		StringArray cmd;
-		cmd.push_back("/bin/sh");
-		cmd.push_back("-c");
-		
-		// We want a delay in this test before any output occurs.  This is
-		// important because on some platforms (like Linux), the output could be
-		// received even if the timeout was set as 0.  With a sleep at the
-		// beginning of the test, this should hopefully avoid any scheduling
-		// issues with a child process going too fast on an unloaded machine.
+		// do a timeout
+		processstatus = 0;
+		output.erase();
+		try
+		{
+			StringArray cmd;
+			cmd.push_back("/bin/sh");
+			cmd.push_back("-c");
 
-		// The sequence should go like this:
-		// 1. sleep 1 - test blocks
-		// 2. echo before - test gets it then resets timeout to 2 seconds.
-		// 3. sleep 4 starts
-		// 4. test times out after 2 seconds and throws.
-		cmd.push_back("sleep 1; echo before; sleep 4; echo after");
-		Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 2);
-		unitAssert(0);
+			// We want a delay in this test before any output occurs.  This is
+			// important because on some platforms (like Linux), the output could be
+			// received even if the timeout was set as 0.  With a sleep at the
+			// beginning of the test, this should hopefully avoid any scheduling
+			// issues with a child process going too fast on an unloaded machine.
+
+			// The sequence should go like this:
+			// 1. sleep 1 - test blocks
+			// 2. echo before - test gets it then resets timeout to 2 seconds.
+			// 3. sleep 4 starts
+			// 4. test times out after 2 seconds and throws.
+			cmd.push_back("sleep 1; echo before; sleep 4; echo after");
+			Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 2);
+			unitAssert(0);
+		}
+		catch (const ExecTimeoutException& e)
+		{
+		}
+		unitAssert(output == "before\n");
 	}
-	catch (const ExecTimeoutException& e)
-	{
-	}
-	unitAssert(output == "before\n");
 
 	// test output limit
 	processstatus = 0;
@@ -156,9 +160,10 @@ public:
 	{
 	}
 private:
-	virtual void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex)
+	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
 	{
 		assert(m_outputs[streamIndex].first == theStream); // too bad we can't do unitAssert...
+		assert(outputSource == Exec::E_STDOUT);
 		m_outputs[streamIndex].second += String(data, dataLen);
 	}
 
@@ -195,6 +200,8 @@ void OW_ExecTestCases::testgatherOutput()
 		}
 	}
 
+	// only do timeout tests if we're doing the long test, since it's slowwww
+	if (getenv("OWLONGTEST"))
 	{
 		Array<PopenStreams> streams;
 		Array<pair<PopenStreams, String> > outputs;
@@ -257,9 +264,9 @@ Test* OW_ExecTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Exec");
 
+	ADD_TEST_TO_SUITE(OW_ExecTestCases, testSafePopen);
+	ADD_TEST_TO_SUITE(OW_ExecTestCases, testExecuteProcessAndGatherOutput);
 	ADD_TEST_TO_SUITE(OW_ExecTestCases, testgatherOutput);
-//	ADD_TEST_TO_SUITE(OW_ExecTestCases, testSafePopen);
-//	ADD_TEST_TO_SUITE(OW_ExecTestCases, testExecuteProcessAndGatherOutput);
 
 	return testSuite;
 }
