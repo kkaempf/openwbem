@@ -598,8 +598,8 @@ TestIndications()
 
 	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-#	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@  \
-#		$STAGEDIR/$OWPKGLIBDIR/c++providers/
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.@lib_ext@  \
+		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 
