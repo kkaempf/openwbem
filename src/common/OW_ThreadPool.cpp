@@ -143,6 +143,8 @@ public:
 		m_queueNotEmpty.notifyAll();
 		m_queueNotFull.notifyAll();
 
+		// TODO: Set cooperative thread cancellation flag (once it's implemented)
+
 		// Wait for workers to exit
 		for (OW_UInt32 i = 0; i < m_threads.size(); ++i)
 		{
@@ -157,6 +159,19 @@ public:
 		while (m_queue.size() != 0)
 		{
 			m_queueEmpty.wait(l);
+		}
+	}
+
+	~OW_ThreadPoolImpl()
+	{
+		// can't let exception escape the destructor
+		try
+		{
+			// Make sure the pool is shutdown.
+			shutdown(false);
+		}
+		catch (...)
+		{
 		}
 	}
 

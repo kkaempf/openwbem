@@ -90,6 +90,10 @@ public:
 	 */
 	void waitForEmptyQueue();
 
+	/**
+	 * Destructor.  This will call shutdown(false) when the last copy is
+	 * destroyed
+	 */
 	~OW_ThreadPool();
 	OW_ThreadPool(const OW_ThreadPool& x);
 	OW_ThreadPool& operator=(const OW_ThreadPool& x);
