@@ -1,5 +1,3 @@
-SUBDIRS = owlocalhelper
-
 MAKEDYLIB=1
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
@@ -59,6 +57,24 @@ $(DIGEST_SOURCE_FILES)
 
 pkginclude_HEADERS = \
 OW_ServicesHttpFwd.hpp
+
+
+# owlocalhelper rules
+owlocalhelperbin_PROGRAMS = owlocalhelper
+owlocalhelperbindir = $(libexecdir)/openwbem
+
+owlocalhelper_SOURCES = \
+owlocalhelper_main.cpp
+
+owlocalhelper_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owlocalhelper$(EXEEXT) 
+
+# Do things a bit differently and statically link to libopenwbem to avoid restrictions with LD_LIBRARY_PATH and setuid binaries.
+owlocalhelper_LDADD = \
+$(top_builddir)/src/common/libopenwbem.a \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 
 INCLUDES = \

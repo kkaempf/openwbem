@@ -1412,7 +1412,6 @@ src/requesthandlers/cimxml/Makefile
 src/provideragent/Makefile
 src/services/Makefile
 src/services/http/Makefile
-src/services/http/owlocalhelper/Makefile
 src/tools/Makefile
 src/tools/owmofc/Makefile
 src/wql/Makefile
