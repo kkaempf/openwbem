@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 		env->logInfo("CIMOM is now running!");
 
 		// only do this in production mode. During development we want it to crash!
-#ifdef OW_DEBUG
+#ifndef OW_DEBUG
 		// Do this after initialization to prevent an infinite loop.
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
