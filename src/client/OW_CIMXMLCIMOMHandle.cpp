@@ -461,8 +461,8 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 	}
 	params.push_back(OW_Param(XMLP_LOCAL,localOnly));
 	params.push_back(OW_Param(XMLP_DEEP,deep));
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	enumClassOp op(result);
 	intrinsicMethod(path, commandName, op, params);
@@ -569,8 +569,8 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 
 	params.push_back(OW_Param(XMLP_DEEP, deep));
 	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	if(propertyList)
 	{
@@ -665,8 +665,8 @@ OW_CIMXMLCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 	}
 
 	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	OW_String extraStr;
 	if(propertyList)
@@ -719,8 +719,8 @@ OW_CIMXMLCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 	OW_Array<OW_Param> params;
 
 	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	extra << instanceNameToKey(path, "InstanceName");
 
@@ -1278,8 +1278,8 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 	{
 		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
 	}
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	if (propertyList)
 	{
@@ -1420,8 +1420,8 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 	{
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
-	params.push_back(OW_Param(XMLP_QUAL, includeQualifiers));
-	params.push_back(OW_Param(XMLP_ORIGIN, includeClassOrigin));
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
 	if (propertyList)
 	{

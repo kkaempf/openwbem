@@ -53,20 +53,75 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 	OW_ASSERT(ostrEntity);
 	OW_ASSERT(ostrError);
 
-	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i 
+	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i
 		= handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
 	if (i != handlerVars.end())
 	{
 		setPath((*i).second);
 	}
-	OW_XMLNode node;
 	try
 	{
-		OW_XMLParser parser(istr);
-		node = parser.parse();
-		if (!node)
+		OW_CIMXMLParser parser(*istr);
+		if (!parser)
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
+		}
+		OW_XMLOperationGeneric::XMLGetCIMElement(parser);
+		if (!parser)
+		{
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		}
+
+		if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_MESSAGE))
+		{
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		}
+
+		OW_String userName;
+		i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+		if (i != handlerVars.end())
+		{
+			userName = (*i).second;
+		}
+
+		try
+		{
+			executeXML(parser, ostrEntity, ostrError, userName);
+		}
+		catch (OW_CIMException& ce)
+		{
+			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIM "
+				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
+				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
+
+			m_hasError = true;
+			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
+		}
+		catch (OW_CIMErrorException& cee)
+		{
+			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIMError "
+				"exception:File: %1\n Line: %2\nMessage: %3",
+				cee.getFile(), cee.getLine(), cee.getMessage()));
+			m_cimError = cee.getMessage();
+			m_hasError = true;
+			outputError(OW_CIMException::FAILED, cee.getMessage(), *ostrError);
+		}
+		catch (std::exception& e)
+		{
+			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught std exception: %1"
+				, e.what()));
+			m_hasError = true;
+			outputError(OW_CIMException::FAILED, e.what(), *ostrError);
+		}
+		catch (...)
+		{
+			OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught unknown exception");
+			m_hasError = true;
+			outputError(OW_CIMException::FAILED, "Unknown Exception", *ostrError);
+		}
+		if (m_hasError)
+		{
+			(*ostrError) << "</MESSAGE></CIM>\r\n";
 		}
 	}
 	catch (OW_XMLException& e)
@@ -74,64 +129,6 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 	}
 
-	node = OW_XMLOperationGeneric::XMLGetCIMElement(node);
-	if (!node)
-	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-	}
-
-	node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
-	if (!node)
-	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-	}
-
-	OW_String userName;
-	i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
-	if (i != handlerVars.end())
-	{
-		userName = (*i).second;
-	}
-
-	try
-	{
-		executeXML(node, ostrEntity, ostrError, userName);
-	}
-	catch (OW_CIMException& ce)
-	{
-		OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIM "
-			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
-			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
-
-		m_hasError = true;
-		outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
-	}
-	catch (OW_CIMErrorException& cee)
-	{
-		OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIMError "
-			"exception:File: %1\n Line: %2\nMessage: %3",
-			cee.getFile(), cee.getLine(), cee.getMessage()));
-		m_cimError = cee.getMessage();
-		m_hasError = true;
-		outputError(OW_CIMException::FAILED, cee.getMessage(), *ostrError);
-	}
-	catch (std::exception& e)
-	{
-		OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught std exception: %1"
-			, e.what()));
-		m_hasError = true;
-		outputError(OW_CIMException::FAILED, e.what(), *ostrError);
-	}
-	catch (...)
-	{
-		OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught unknown exception");
-		m_hasError = true;
-		outputError(OW_CIMException::FAILED, "Unknown Exception", *ostrError);
-	}
-	if (m_hasError)
-	{
-		(*ostrError) << "</MESSAGE></CIM>\r\n";
-	}
 }
 
 

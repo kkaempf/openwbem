@@ -35,7 +35,7 @@
 
 class OW_CIMXMLParser;
 
-namespace OW_XMLCIMFactory
+struct OW_XMLCIMFactory
 {
 	static OW_CIMObjectPath createObjectPath(OW_CIMXMLParser& node);
 	static OW_CIMClass createClass(OW_CIMXMLParser& node);

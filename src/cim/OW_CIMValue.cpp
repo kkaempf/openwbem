@@ -624,6 +624,30 @@ void OW_CIMValue::get(OW_CIMInstanceArray& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath OW_CIMValue::toCIMObjectPath() const
+{
+	OW_CIMObjectPath rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray OW_CIMValue::toStringArray() const
+{
+	OW_StringArray rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool OW_CIMValue::toBool() const
+{
+	OW_Bool rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void OW_CIMValue::setNull()
 {
 	m_impl = NULL;

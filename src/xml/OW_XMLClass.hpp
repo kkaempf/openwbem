@@ -46,8 +46,6 @@ public:
 	static OW_CIMClass readClass(OW_CIMXMLParser& parser, OW_CIMObjectPath& path);
 	static OW_CIMInstance readInstance(OW_CIMXMLParser& parser,
 			OW_CIMObjectPath& path);
-	static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath);
-
 };
 
 

@@ -152,38 +152,33 @@ OW_XMLExecute::OW_XMLExecute()
 //////////////////////////////////////////////////////////////////////////////
 // Private
 int
-OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
+OW_XMLExecute::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const OW_String& userName)
 {
 	m_hasError = false;
 	m_ostrEntity = ostrEntity;
 	m_ostrError = ostrError;
 	m_isIntrinsic = false;
-	OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	OW_String messageId = parser.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
 
-	node = node.getChild();
+	parser.getChild();
 
-	if (!node)
+	if (!parser)
 	{
 		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
 	makeXMLHeader(messageId, *m_ostrEntity);
 
-	if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIREQ)
+	if (parser.getToken() == OW_CIMXMLParser::XML_ELEMENT_MULTIREQ)
 	{
 		(*m_ostrEntity) << "<MULTIRSP>";
-		node = node.getChild();
+		parser.getChild();
 
-		while (node)
+		while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SIMPLEREQ))
 		{
-			if (node.getToken() != OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
-			{
-				OW_THROW(OW_XMLException, format("Expected <SIMPLEREQ>, "
-					"got %1", node.getNodeName()).c_str());
-			}
 			OW_TempFileStream ostrEnt, ostrErr(500);
-			processSimpleReq(node, ostrEnt, ostrErr, userName);
+			processSimpleReq(parser, ostrEnt, ostrErr, userName);
 			if (m_hasError)
 			{
 				(*m_ostrEntity) << ostrErr.rdbuf();
@@ -193,15 +188,16 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 			{
 				(*m_ostrEntity) << ostrEnt.rdbuf();
 			}
-			node = node.getNext();
+			parser.getNext();
+			parser.mustGetEndTag();
 		} // while
 
 		(*m_ostrEntity) << "</MULTIRSP>";
 	} // if MULTIRSP
-	else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
+	else if (parser.getToken() == OW_CIMXMLParser::XML_ELEMENT_SIMPLEREQ)
 	{
 		makeXMLHeader(messageId, *m_ostrError);
-		processSimpleReq(node, *m_ostrEntity, *m_ostrError, userName);
+		processSimpleReq(parser, *m_ostrEntity, *m_ostrError, userName);
 	}
 	else
 	{
@@ -218,7 +214,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::executeIntrinsic(ostream& ostr,
-	OW_XMLNode node, OW_CIMOMHandleIFC& hdl,
+	OW_CIMXMLParser parser, OW_CIMOMHandleIFC& hdl,
 	OW_CIMObjectPath& path)
 {
 
@@ -243,33 +239,33 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 			"\"><IRETURNVALUE>";
 
 		// call the member function that was found
-		(this->*((*i).func))(ostr, node, path, hdl);
+		(this->*((*i).func))(ostr, parser, path, hdl);
 		ostr << "</IRETURNVALUE></IMETHODRESPONSE>";
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_XMLNode node,
+OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_CIMXMLParser parser,
 	OW_CIMOMHandleIFC& lch)
 {
 	ostr << "<METHODRESPONSE NAME=\"" << m_functionName <<
 		"\"><RETURNVALUE>";
 
-	doInvokeMethod(ostr, node, m_functionName, lch);
+	doInvokeMethod(ostr, parser, m_functionName, lch);
 
 	ostr << "</RETURNVALUE></METHODRESPONSE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_CIMXMLParser& parser,
 	const OW_String& methodName, OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMValueArray inParams;
 	OW_CIMValueArray outParams;
 
-	OW_CIMObjectPath instancePath = OW_XMLCIMFactory::createObjectPath(node);
+	OW_CIMObjectPath instancePath = OW_XMLCIMFactory::createObjectPath(parser);
 	OW_CIMClass cc = hdl.getClass(instancePath, false);
 
 	if(!cc)
@@ -287,7 +283,7 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
 
 	OW_CIMParameterArray parameters = method.getParameters();
 
-	node = getParameters(node, parameters, inParams);
+	getParameters(parser, parameters, inParams);
 
 	OW_CIMValue cv = hdl.invokeMethod(instancePath, methodName, inParams,
 		outParams);
@@ -327,31 +323,25 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
 // paramlist is a vector of CIMParameter
 // params is a vector of CIMValues
 //
-OW_XMLNode
-OW_XMLExecute::getParameters(OW_XMLNode& node,
+void
+OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
 	const OW_Array<OW_CIMParameter>& paramlist, OW_Array<OW_CIMValue>& params)
 {
 	//
 	// Process parameters
 	//
 	size_t paramIdx = 0;
-	for (; node; node = node.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMVALUE))
 	{
-		//
-		// Only process PARAMVALUE tags
-		//
-		if (node.getToken() != OW_XMLNode::XML_ELEMENT_PARAMVALUE)
-			continue;
+		OW_String parameterName = parser.mustGetAttribute(paramName);
 
-		OW_String parameterName = node.getAttribute(paramName);
-		if (parameterName.length() == 0)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				format("can't find parameterName(%1) Name", paramName).c_str());
-		}
-
-		OW_XMLNode childNode=node.getChild();
-		if (!childNode)
+		parser.getNext();
+		int token = parser.getToken();
+		if (token != OW_CIMXMLParser::XML_ELEMENT_VALUE
+			&& token != OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE
+			&& token != OW_CIMXMLParser::XML_ELEMENT_VALUE_ARRAY
+			&& token != OW_CIMXMLParser::XML_ELEMENT_VALUE_REFARRAY
+			)
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
 				"Parameter %1, has no value", paramName).c_str());
@@ -379,11 +369,11 @@ OW_XMLExecute::getParameters(OW_XMLNode& node,
 				"Parameter %1 is not an \"IN\" parameter.", parameterName).c_str());
 		}
 
-		params.push_back(OW_XMLCIMFactory::createValue(childNode,
+		params.push_back(OW_XMLCIMFactory::createValue(parser,
 			paramlist[paramIdx].getType().toString()));
 		++paramIdx;
 
-	} // for (; node; node = node.getNext()
+	} // for (; parser; parser = parser.getNext()
 	for (; paramIdx < paramlist.size(); ++paramIdx)
 	{
 		if (paramlist[paramIdx].getQualifier("IN"))
@@ -396,7 +386,6 @@ OW_XMLExecute::getParameters(OW_XMLNode& node,
 			params.push_back(OW_CIMValue());	// fill in remainder of inParams.
 		}
 	}
-	return node;
 }
 
 
@@ -420,52 +409,86 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	struct param
+	{
+		OW_String name;
+		bool optional;
+		OW_CIMDataType type;
+		OW_CIMValue defaultVal;
+		bool isSet;
+		OW_CIMValue val;
+
+		param(const OW_String& name_,
+			bool optional_ = true,
+			OW_CIMDataType type_ = OW_CIMDataType(OW_CIMDataType::STRING),
+			OW_CIMValue defaultVal_ = OW_CIMValue())
+			: name(name_)
+			, optional(optional_)
+			, type(type_)
+			, defaultVal(defaultVal_)
+			, isSet(false)
+			, val()
+		{}
+
+		param(const OW_String& name_,
+			bool optional_,
+			OW_CIMDataType::Type type_,
+			OW_CIMValue defaultVal_ = OW_CIMValue())
+			: name(name_)
+			, optional(optional_)
+			, type(type_)
+			, defaultVal(defaultVal_)
+			, isSet(false)
+			, val()
+		{}
+	};
+
+	//////////////////////////////////////////////////////////////////////////////
+	void getParameterValues(OW_CIMXMLParser& parser,
+		OW_Array<param>& params)
+	{
+		(void)parser;
+		(void)params;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String className;
+	OW_Array<param> params;
+	params.push_back(param(XMLP_OBJECTNAME, false, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_ASSOCCLASS, true, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_RESULTCLASS, true, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_ROLE, true, OW_CIMDataType::STRING, OW_CIMValue("")));
+	params.push_back(param(XMLP_RESULTROLE, true, OW_CIMDataType::STRING, OW_CIMValue("")));
 
-	OW_String role = node.extractParameterValue(XMLP_ROLE, OW_String());
-	OW_String resultRole = node.extractParameterValue(XMLP_RESULTROLE,
-		OW_String());
+	getParameterValues(parser, params);
 
 	OW_String ns = path.getNameSpace();
 
-	// Look for ObjectName
-	OW_XMLNode tmpNode = node;
-	for ( ;tmpNode; tmpNode = tmpNode.getNext() )
+	path = params[0].val.toCIMObjectPath();
+	path.setNameSpace(ns);
+
+	OW_String assocClass;
+	if (params[1].isSet)
 	{
-		if ( tmpNode.getToken() != OW_XMLNode::XML_ELEMENT_IPARAMVALUE )
-			continue;
-
-		OW_String attr = tmpNode.getAttribute( paramName );
-		if ( attr == "" || !attr.equalsIgnoreCase(XMLP_OBJECTNAME) )
-			continue;
-
-		tmpNode = tmpNode.getChild();
-		if ( !tmpNode )
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Needed a child for <IPARAMVALUE> when handling AssociatorNames");
-		}
-
-		path = OW_XMLCIMFactory::createObjectPath(tmpNode);
-		path.setNameSpace(ns);
-		break;
+		assocClass = params[1].val.toCIMObjectPath().getObjectName();
 	}
 
-	OW_String resultClass = node.extractParameterValueAttr(
-		XMLP_RESULTCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME,
-		paramName);
-
-	OW_String assocClass = node.extractParameterValueAttr(
-		XMLP_ASSOCCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME,
-		paramName);
+	OW_String resultClass;
+	if (params[2].isSet)
+	{
+		resultClass = params[2].val.toCIMObjectPath().getObjectName();
+	}
 
 	CIMObjectPathXMLOutputter handler(ostr);
-	hdl.associatorNames(path, handler, assocClass, resultClass, role,
-		resultRole);
+	hdl.associatorNames(path, handler, assocClass, resultClass,
+		params[3].val.toString(), params[4].val.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -551,56 +574,53 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::associators(ostream& ostr,
-	OW_XMLNode& node, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
+	OW_CIMXMLParser& parser, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	// Look for ObjectName
-	OW_XMLNode tmpNode = node;
+	OW_Array<param> params;
+	params.push_back(param(XMLP_OBJECTNAME, false, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_ASSOCCLASS, true, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_RESULTCLASS, true, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_ROLE, true, OW_CIMDataType::STRING, OW_CIMValue("")));
+	params.push_back(param(XMLP_RESULTROLE, true, OW_CIMDataType::STRING, OW_CIMValue("")));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	OW_CIMDataType dt(OW_CIMDataType::STRING, 0);
+	params.push_back(param(XMLP_PROPERTYLIST, true, dt, OW_CIMValue()));
+
+	getParameterValues(parser, params);
+
 	OW_String ns = path.getNameSpace();
-	for ( ;tmpNode; tmpNode = tmpNode.getNext() )
+
+	path = params[0].val.toCIMObjectPath();
+	path.setNameSpace(ns);
+
+	OW_String assocClass;
+	if (params[1].isSet)
 	{
-		if(tmpNode.getToken() != OW_XMLNode::XML_ELEMENT_IPARAMVALUE)
-			continue;
-
-		OW_String attr = tmpNode.getAttribute(paramName);
-		if ( attr == "" || !attr.equalsIgnoreCase(XMLP_OBJECTNAME) )
-			continue;
-
-		tmpNode = tmpNode.getChild();
-		if ( !tmpNode )
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Needed a child for <IPARAMVALUE> when handling AssociatorNames");
-		}
-		path = OW_XMLCIMFactory::createObjectPath(tmpNode);
-		path.setNameSpace(ns);
-		break;
+		assocClass = params[1].val.toCIMObjectPath().getObjectName();
 	}
 
-	OW_Bool isPropertyList;
-	OW_String role = OW_String(node.extractParameterValue(XMLP_ROLE,
-		OW_String()));
+	OW_String resultClass;
+	if (params[2].isSet)
+	{
+		resultClass = params[2].val.toCIMObjectPath().getObjectName();
+	}
 
-	OW_String resultRole = OW_String(node.extractParameterValue(XMLP_RESULTROLE,
-		OW_String()));
 
-	OW_StringArray propertyList = node.extractParameterStringArray(
-		XMLP_PROPERTYLIST, isPropertyList);
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[7].isSet)
+	{
+		propertyList = params[7].val.toStringArray();
+		pPropList = &propertyList;
+	}
+	
 
-	OW_Bool includeQualifiers = node.extractParameterValue(XMLP_QUAL,
-		OW_Bool(false));
-
-	OW_Bool includeClassOrigin  = node.extractParameterValue(XMLP_ORIGIN,
-		OW_Bool(false));
-
-	OW_String resultClass = node.extractParameterValueAttr(
-		XMLP_RESULTCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME,
-		paramName );
-
-	OW_String assocClass = node.extractParameterValueAttr(
-		XMLP_ASSOCCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME,
-		paramName );
-
-	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
+	bool includeQualifiers = params[5].val.toBool();
+	bool includeClassOrigin = params[6].val.toBool();
+	bool isPropertyList = params[7].isSet;
+	OW_String role = params[3].val.toString();
+	OW_String resultRole = params[4].val.toString();
 
 	if (path.getKeys().size() == 0)
 	{
@@ -625,30 +645,20 @@ void OW_XMLExecute::associators(ostream& ostr,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_XMLNode& node,
+void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	node = node.getChild();
-	if (!node)
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"Could not find child on <IPARAMVALUE> element");
-
-	hdl.createClass( path, OW_XMLCIMFactory::createClass(node) );
+	parser.mustGetChild();
+	hdl.createClass( path, OW_XMLCIMFactory::createClass(parser) );
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
+void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	node = node.getChild();		// Point node to <INSTANCE> tag
+	parser.mustGetChild();		// Point parser to <INSTANCE> tag
 
-	if (!node)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"Could not find child on <IPARAMVALUE> element");
-	}
-
-	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(node);
+	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(parser);
 	OW_String className = cimInstance.getClassName();
 	OW_CIMObjectPath realPath = OW_CIMObjectPath(className, path.getNameSpace());
 
@@ -679,7 +689,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
 	if(keys.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,"Instance doesn't have keys");
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,"Instance doesn't have keys");
 	}
 
 	for (size_t i = 0; i < keys.size(); ++i)
@@ -687,7 +697,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 		OW_CIMProperty key = keys[i];
 		if (!key.getValue())
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Key must be provided!  Property \"%1\" does not have a "
 					"valid value.", key.getName()).c_str());
 		}
@@ -702,14 +712,15 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
+void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String className = node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName );
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, false, OW_CIMDataType::REFERENCE));
 
-	if ( className == "" )
-		OW_THROWCIM( OW_CIMException::INVALID_CLASS );
+	getParameterValues(parser, params);
+
+	OW_String className = params[0].val.toString();
 
 	path.setObjectName( className );
 	hdl.deleteClass( path );
@@ -717,30 +728,27 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_XMLNode& node,
+OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String name = node.getAttribute( paramName );
+	OW_String name = parser.getAttribute( paramName );
 	if ( !name.equalsIgnoreCase( "InstanceName" ) )
 		OW_THROWCIMMSG( OW_CIMException::INVALID_PARAMETER,
 			OW_String( "Parameter name was " + name ).c_str() );
 
-	node = node.getChild();
-	if ( !node )
-		OW_THROWCIMMSG( OW_CIMException::INVALID_PARAMETER,
-			"No element within <IPARAMVALUE>" );
+	parser.mustGetChild();
 
-	OW_CIMObjectPath completePath = OW_XMLCIMFactory::createObjectPath(node);
+	OW_CIMObjectPath completePath = OW_XMLCIMFactory::createObjectPath(parser);
 	completePath.setNameSpace(path.getNameSpace());
 	hdl.deleteInstance( completePath );
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
+OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& qualparser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String qname = getQualifierName(qualNode);
+	OW_String qname = getQualifierName(qualparser);
 	path.setObjectName(qname);
 	hdl.deleteQualifierType(path);
 }
@@ -764,15 +772,17 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String className;
-	OW_Bool deepInheritance;
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, true, OW_CIMDataType::REFERENCE, OW_CIMValue("")));
+	params.push_back(param(XMLP_DEEP, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
 
-	className=node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
-	deepInheritance=node.extractParameterValue(XMLP_DEEP,OW_Bool(false));
+	getParameterValues(parser, params);
+
+	OW_String className = params[0].val.toString();
+	OW_Bool deepInheritance = params[1].val.toBool();
 
 	path.setObjectName(className);
 
@@ -810,29 +820,26 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String className;
-	OW_Bool localOnly;
-	OW_Bool deep;
-	OW_Bool includeQualifiers;
-	OW_Bool includeClassOrigin;
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, true, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_DEEP, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	params.push_back(param(XMLP_LOCAL, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
 
-	className = node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME,
-		paramName);
+	getParameterValues(parser, params);
 
-	localOnly = node.extractParameterValue(XMLP_LOCAL,OW_Bool(true));
-	deep = node.extractParameterValue(XMLP_DEEP, OW_Bool(false));
-	includeQualifiers = node.extractParameterValue(XMLP_QUAL,OW_Bool(true));
-	includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN,OW_Bool(false));
+	if (params[0].isSet)
+	{
+		path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+	}
 
-	path.setObjectName(className);
-
-	CIMClassXMLOutputter handler(ostr, localOnly, includeQualifiers,
-		includeClassOrigin);
-	hdl.enumClass(path, handler, deep, false);
+	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
+		params[4].val.toBool());
+	hdl.enumClass(path, handler, params[1].val.toBool(), false);
 
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
 	//hdl.enumClass(path, deep, localOnly,
@@ -861,21 +868,16 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String className = node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, false, OW_CIMDataType::REFERENCE));
 
-	if (className.length() == 0)
-	{
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
-	}
-
-	path.setObjectName(className);
+	getParameterValues(parser, params);
+	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
 	
 	CIMInstanceNameXMLOutputter handler(ostr);
-	// Note that while the API allows deep the XML encodings don't.
 	hdl.enumInstanceNames(path, handler);
 }
 
@@ -923,38 +925,39 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_Bool isPropertyList(false);
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, false, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_LOCAL, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_DEEP, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	OW_CIMDataType dt(OW_CIMDataType::STRING, 0);
+	params.push_back(param(XMLP_PROPERTYLIST, true, dt, OW_CIMValue()));
 
-	OW_String className = node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
+	getParameterValues(parser, params);
 
-	if (className.length() == 0)
+	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[5].isSet)
 	{
-		OW_THROWCIMMSG( OW_CIMException::NOT_FOUND, "Class was null" );
+		propertyList = params[5].val.toStringArray();
+		pPropList = &propertyList;
 	}
 
-	OW_StringArray propertyList = node.extractParameterStringArray(
-		XMLP_PROPERTYLIST, isPropertyList);
 
-	OW_Bool localOnly = node.extractParameterValue(XMLP_LOCAL, OW_Bool(true));
+	bool localOnly = params[1].val.toBool();
+	bool deep = params[2].val.toBool();
+	bool includeQualifiers = params[3].val.toBool();
+	bool includeClassOrigin = params[4].val.toBool();
 
-	OW_Bool deep = node.extractParameterValue(XMLP_DEEP, OW_Bool(true));
-
-	OW_Bool includeQualifiers = node.extractParameterValue(XMLP_QUAL,
-		OW_Bool(false));
-
-	OW_Bool includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN,
-		OW_Bool(false));
-
-	path.setObjectName(className);
-
-	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
-
+	// TODO: remove as many of these flags from handler as possible
 	CIMInstanceXMLOutputter handler(ostr, path, localOnly, includeQualifiers,
-		includeClassOrigin, isPropertyList, propertyList);
+		includeClassOrigin, params[5].isSet, propertyList);
 	hdl.enumInstances(path, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
 }
@@ -980,7 +983,7 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
+OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	CIMQualifierTypeXMLOutputter handler(ostr);
@@ -990,99 +993,80 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	if (!node)
+	OW_Array<param> params;
+	params.push_back(param(XMLP_CLASSNAME, false, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_LOCAL, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	OW_CIMDataType dt(OW_CIMDataType::STRING, 0);
+	params.push_back(param(XMLP_PROPERTYLIST, true, dt, OW_CIMValue()));
+
+	getParameterValues(parser, params);
+
+	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[4].isSet)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"No parameters specified for GetClass method call. "
-			"ClassName must be given.");
+		propertyList = params[4].val.toStringArray();
+		pPropList = &propertyList;
 	}
 
-	OW_Bool isPropertyList;
-	OW_String className;
-	OW_Array<OW_String> propertyList;
-	OW_Bool localOnly;
-	OW_Bool includeQualifiers;
-	OW_Bool includeClassOrigin;
-	OW_CIMClass cimClass;
 
-	className = node.extractParameterValueAttr(XMLP_CLASSNAME,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
+	bool localOnly = params[1].val.toBool();
+	bool includeQualifiers = params[2].val.toBool();
+	bool includeClassOrigin = params[3].val.toBool();
 
-	if (className.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Invalid ClassName");
-	}
 
-	propertyList = node.extractParameterStringArray(XMLP_PROPERTYLIST,
-		isPropertyList);
+	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
 
-	localOnly = node.extractParameterValue(XMLP_LOCAL, OW_Bool(true));
-	includeQualifiers = node.extractParameterValue(XMLP_QUAL, OW_Bool(true));
-	includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN, OW_Bool(false));
-
-	path.setObjectName(className);
-
-	cimClass = hdl.getClass(path, localOnly, includeQualifiers,
+	OW_CIMClass cimClass = hdl.getClass(path, localOnly, includeQualifiers,
 		includeClassOrigin,
-		isPropertyList ? &propertyList : 0);
+		pPropList);
 	
 	OW_CIMtoXML(cimClass, ostr,
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
 		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 		propertyList,
-		(isPropertyList && propertyList.size() == 0));
+		(params[4].isSet && propertyList.size() == 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_Bool isPropertyList;
-	OW_Array<OW_String> propertyList;
-	OW_Bool localOnly;
-	OW_Bool includeQualifiers;
-	OW_Bool includeClassOrigin;
+	OW_Array<param> params;
+	params.push_back(param(XMLP_INSTANCENAME, false, OW_CIMDataType::REFERENCE));
+	params.push_back(param(XMLP_LOCAL, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, OW_CIMDataType::BOOLEAN, OW_CIMValue(false)));
+	OW_CIMDataType dt(OW_CIMDataType::STRING, 0);
+	params.push_back(param(XMLP_PROPERTYLIST, true, dt, OW_CIMValue()));
 
-	propertyList = node.extractParameterStringArray(XMLP_PROPERTYLIST,
-		isPropertyList);
-	localOnly = node.extractParameterValue(XMLP_LOCAL, OW_Bool(true));
-	includeQualifiers = node.extractParameterValue(XMLP_QUAL, OW_Bool(false));
-	includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN, OW_Bool(false));
+	getParameterValues(parser, params);
 
-	for (;;)
+	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[4].isSet)
 	{
-		if (!node)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Could not find a parameter named %1",
-				XMLP_INSTANCENAME).c_str() );
-		}
-
-		node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
-		OW_String name = node.getAttribute(paramName);
-		if(name.equalsIgnoreCase(XMLP_INSTANCENAME))
-		{
-			break;
-		}
-
-		node = node.getNext();
+		propertyList = params[4].val.toStringArray();
+		pPropList = &propertyList;
 	}
 
-	node = node.getChild();
-	if(!node)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"Could not find an element with <IPARAMVALUE>");
-	}
+
+	bool localOnly = params[1].val.toBool();
+	bool includeQualifiers = params[2].val.toBool();
+	bool includeClassOrigin = params[3].val.toBool();
 
 	OW_String ns = path.getNameSpace();
-	path = OW_XMLCIMFactory::createObjectPath(node);
-	path.setNameSpace(ns);
 
 	OW_CIMInstance cimInstance = hdl.getInstance(path, localOnly,
 		includeQualifiers, includeClassOrigin,
@@ -1098,20 +1082,20 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
+OW_XMLExecute::getProperty(ostream& ostr, OW_CIMXMLParser& propparser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String propertyName=propNode.mustExtractParameterValue(XMLP_PROPERTYNAME);
+	OW_String propertyName=propparser.mustExtractParameterValue(XMLP_PROPERTYNAME);
 
-	propNode=propNode.findElementAndParameter("InstanceName");
-	if (!propNode)
+	propparser=propparser.findElementAndParameter("InstanceName");
+	if (!propparser)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"Could not find a <IPARAMVALUE> with an InstanceName argument");
 	}
 
 	OW_String ns = path.getNameSpace();
-	path = OW_XMLCIMFactory::createObjectPath(propNode);
+	path = OW_XMLCIMFactory::createObjectPath(propparser);
 	path.setNameSpace(ns);
 
 	OW_CIMValue cv = hdl.getProperty(path,propertyName);
@@ -1122,11 +1106,11 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 
-	path.setObjectName(getQualifierName(node));
+	path.setObjectName(getQualifierName(parser));
 
 	OW_CIMQualifierType qual = hdl.getQualifierType(path);
 	if (qual)
@@ -1137,23 +1121,23 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
+OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String name=node.mustGetAttribute(paramName);
+	OW_String name=parser.mustGetAttribute(paramName);
 	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Parameter name was %1", name).c_str());
 
-	node=node.getChild();
-	if (!node)
+	parser=parser.getChild();
+	if (!parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"No element within <IPARAMVALUE>");
 
 	//
 	// Process <CLASS> element
 	//
-	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(node);
+	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(parser);
 	path.setObjectName(cimClass.getName());
 
 	hdl.modifyClass(path,cimClass);
@@ -1161,65 +1145,65 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
+OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	//
 	// Check parameter name is "ModifiedInstance"
 	//
-	OW_String name=node.getAttribute(paramName);
+	OW_String name=parser.getAttribute(paramName);
 	if (!name.equalsIgnoreCase("modifiedinstance"))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Parameter name was %1", name).c_str() );
 	}
 
-	node=node.mustChildElementChild(OW_XMLNode::XML_ELEMENT_VALUE_NAMEDINSTANCE);
+	parser=parser.mustChildElementChild(OW_CIMXMLParser::XML_ELEMENT_VALUE_NAMEDINSTANCE);
 	//
 	// Fetch <INSTANCENAME> element
 	//
 	OW_String ns = path.getNameSpace();
-	path = OW_XMLCIMFactory::createObjectPath(node);
+	path = OW_XMLCIMFactory::createObjectPath(parser);
 	path.setNameSpace(ns);
-	node=node.getNext();
+	parser=parser.getNext();
 
-	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(node);
+	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(parser);
 	hdl.modifyInstance(path,cimInstance);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
 
-	OW_String role = node.extractParameterValue(XMLP_ROLE, OW_String());
+	OW_String role = parser.extractParameterValue(XMLP_ROLE, OW_String());
 	OW_String ns = path.getNameSpace();
 	//
 	// Look for ObjectName
 	//
-	OW_XMLNode tmpNode=node;
-	for (;tmpNode; tmpNode=node.getNext())
+	OW_CIMXMLParser tmpparser=parser;
+	for (;tmpparser; tmpparser=parser.getNext())
 	{
-		if (tmpNode.getToken()!=OW_XMLNode::XML_ELEMENT_IPARAMVALUE)
+		if (tmpparser.getToken()!=OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE)
 			continue;
-		OW_String attr = tmpNode.getAttribute(paramName);
+		OW_String attr = tmpparser.getAttribute(paramName);
 		if (!attr.equalsIgnoreCase(XMLP_OBJECTNAME))
 			continue;
-		tmpNode=tmpNode.getChild();
-		if (!tmpNode)
+		tmpparser=tmpparser.getChild();
+		if (!tmpparser)
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"Needed a child for <IPARAMVALUE> when handling "
 				"AssociatorNames");
 
-		path = OW_XMLCIMFactory::createObjectPath(tmpNode);
+		path = OW_XMLCIMFactory::createObjectPath(tmpparser);
 		path.setNameSpace(ns);
 		break;
 	}
-	OW_String resultClass = node.extractParameterValueAttr(XMLP_RESULTCLASS,
-		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
+	OW_String resultClass = parser.extractParameterValueAttr(XMLP_RESULTCLASS,
+		OW_CIMXMLParser::XML_ELEMENT_CLASSNAME, paramName);
 
 	CIMObjectPathXMLOutputter handler(ostr);
 	hdl.referenceNames(path, handler, resultClass, role);
@@ -1227,7 +1211,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
@@ -1236,42 +1220,42 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 	OW_Bool includeQualifiers;
 	OW_Bool includeClassOrigin;
 
-	OW_String role = OW_String(node.extractParameterValue(
+	OW_String role = OW_String(parser.extractParameterValue(
 		OW_String(XMLP_ROLE), OW_String()));
 
-	propertyList = node.extractParameterStringArray(XMLP_PROPERTYLIST,
+	propertyList = parser.extractParameterStringArray(XMLP_PROPERTYLIST,
 		isPropertyList);
 
-	includeQualifiers = node.extractParameterValue(XMLP_QUAL, OW_Bool(false));
-	includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN, OW_Bool(false));
+	includeQualifiers = parser.extractParameterValue(XMLP_QUAL, OW_Bool(false));
+	includeClassOrigin = parser.extractParameterValue(XMLP_ORIGIN, OW_Bool(false));
 
 	OW_String ns = path.getNameSpace();
 
-	OW_XMLNode tmpNode = node;
-	for (; tmpNode; tmpNode = tmpNode.getNext())
+	OW_CIMXMLParser tmpparser = parser;
+	for (; tmpparser; tmpparser = tmpparser.getNext())
 	{
-		if (tmpNode.getToken() != OW_XMLNode::XML_ELEMENT_IPARAMVALUE)
+		if (tmpparser.getToken() != OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE)
 		{
 			continue;
 		}
-		OW_String attr = tmpNode.getAttribute(paramName);
+		OW_String attr = tmpparser.getAttribute(paramName);
 		if (!attr.equalsIgnoreCase(XMLP_OBJECTNAME))
 		{
 			continue;
 		}
-		tmpNode = tmpNode.getChild();
-		if (!tmpNode)
+		tmpparser = tmpparser.getChild();
+		if (!tmpparser)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"Needed a child for <IPARAMVALUE> when handling associatorNames");
 		}
-		path = OW_XMLCIMFactory::createObjectPath(tmpNode);
+		path = OW_XMLCIMFactory::createObjectPath(tmpparser);
 		path.setNameSpace(ns);
 		break;
 	}
 
-	OW_String resultClass = node.extractParameterValueAttr(
-		XMLP_RESULTCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
+	OW_String resultClass = parser.extractParameterValueAttr(
+		XMLP_RESULTCLASS, OW_CIMXMLParser::XML_ELEMENT_CLASSNAME, paramName);
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 	
@@ -1296,13 +1280,13 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
+OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& propparser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String instanceName;
 	OW_CIMInstance cimInstance;
 
-	OW_String propertyName = propNode.extractParameterValue(XMLP_PROPERTYNAME,
+	OW_String propertyName = propparser.extractParameterValue(XMLP_PROPERTYNAME,
 		OW_String());
 	if (propertyName.length() == 0)
 	{
@@ -1311,26 +1295,26 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 	}
 
 	/* IPARAMVALUE cannot have a type, so assume the default is a string
-	 * OW_String valueType = propNode.mustGetAttribute(OW_XMLAttribute::TYPE);
+	 * OW_String valueType = propparser.mustGetAttribute(OW_XMLAttribute::TYPE);
 	 */
 	OW_String valueType = "string";
 
 	OW_CIMValue propValue;
-	OW_XMLNode valueNode = propNode.findElementAndParameter(XMLP_NewValue);
-	if(valueNode)
+	OW_CIMXMLParser valueparser = propparser.findElementAndParameter(XMLP_NewValue);
+	if(valueparser)
 	{
-		propValue = OW_XMLCIMFactory::createValue(valueNode, valueType);
+		propValue = OW_XMLCIMFactory::createValue(valueparser, valueType);
 	}
 
-	propNode = propNode.findElementAndParameter("InstanceName");
-	if(!propNode)
+	propparser = propparser.findElementAndParameter("InstanceName");
+	if(!propparser)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"Instance name not specified");
 	}
 
 	OW_String ns = path.getNameSpace();
-	path = OW_XMLCIMFactory::createObjectPath(propNode);
+	path = OW_XMLCIMFactory::createObjectPath(propparser);
 	path.setNameSpace(ns);
 	hdl.setProperty(path, propertyName, propValue);
 }
@@ -1366,12 +1350,12 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
+OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String queryLanguage =
-		node.extractParameterValue(XMLP_QUERYLANGUAGE, OW_String());
-	OW_String query = node.extractParameterValue(XMLP_QUERY, OW_String());
+		parser.extractParameterValue(XMLP_QUERYLANGUAGE, OW_String());
+	OW_String query = parser.extractParameterValue(XMLP_QUERY, OW_String());
 
 	if (queryLanguage.length() == 0 || query.length() == 0)
 	{
@@ -1385,10 +1369,10 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
+OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& qualparser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String argName = qualNode.mustGetAttribute(paramName);
+	OW_String argName = qualparser.mustGetAttribute(paramName);
 
 	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
 	{
@@ -1396,17 +1380,17 @@ OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 			"invalid qualifier xml");
 	}
 
-	qualNode = qualNode.mustChildFindElement(
-		OW_XMLNode::XML_ELEMENT_QUALIFIER_DECLARATION);
+	qualparser = qualparser.mustChildFindElement(
+		OW_CIMXMLParser::XML_ELEMENT_QUALIFIER_DECLARATION);
 
-	if (!qualNode)
+	if (!qualparser)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"Cannot find qualifier declaration argument");
 	}
 
 	OW_CIMQualifierType cimQualifier(OW_Bool(true));
-	OW_XMLQualifier::processQualifierDecl(qualNode, cimQualifier);
+	OW_XMLQualifier::processQualifierDecl(qualparser, cimQualifier);
 
 	path.setObjectName(cimQualifier.getName());
 	hdl.setQualifierType(path, cimQualifier);
@@ -1414,24 +1398,24 @@ OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
+OW_XMLExecute::processSimpleReq(OW_CIMXMLParser& parser, ostream& ostrEntity,
 	ostream& ostrError, const OW_String& userName)
 {
 	try
 	{
 		ostrEntity << "<SIMPLERSP>";
-		OW_XMLNode newnode = node.getChild();
-		if (!newnode)
+		OW_CIMXMLParser newparser = parser.getChild();
+		if (!newparser)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"No <METHODCALL> or <IMETHODCALL> element");
 		}
 
-		if (newnode.getToken() == OW_XMLNode::XML_ELEMENT_METHODCALL)
+		if (newparser.getToken() == OW_CIMXMLParser::XML_ELEMENT_METHODCALL)
 		{
 			m_isIntrinsic = false;
 		}
-		else if (newnode.getToken() == OW_XMLNode::XML_ELEMENT_IMETHODCALL)
+		else if (newparser.getToken() == OW_CIMXMLParser::XML_ELEMENT_IMETHODCALL)
 		{
 			m_isIntrinsic = true;
 		}
@@ -1441,39 +1425,39 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 				"No <METHODCALL> or <IMETHODCALL> element");
 		}
 
-		m_functionName = newnode.mustGetAttribute(OW_XMLAttribute::NAME);
+		m_functionName = newparser.mustGetAttribute(OW_XMLAttribute::NAME);
 
-		newnode = newnode.getChild();
+		newparser = newparser.getChild();
 
 		OW_CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName, true);
 
 		if (m_isIntrinsic)
 		{
-			if (!newnode)
+			if (!newparser)
 			{
 				OW_THROWCIMMSG(OW_CIMException::FAILED,
 					"Missing <LOCALNAMESPACEPATH> in <IMETHODCALL>");
 			}
 
-			OW_String nameSpace = OW_XMLClass::getNameSpace(newnode.mustElementChild(
-				OW_XMLNode::XML_ELEMENT_LOCALNAMESPACEPATH));
+			OW_String nameSpace = OW_XMLClass::getNameSpace(newparser.mustElementChild(
+				OW_CIMXMLParser::XML_ELEMENT_LOCALNAMESPACEPATH));
 
 			OW_CIMNameSpace ns(OW_Bool(true));
 			ns.setNameSpace(nameSpace);
 			OW_CIMObjectPath path = OW_CIMObjectPath(OW_String(), nameSpace);
 
-			newnode = newnode.getNext();
-			executeIntrinsic(ostrEntity, newnode, *hdl, path);
+			newparser = newparser.getNext();
+			executeIntrinsic(ostrEntity, newparser, *hdl, path);
 		}
 		else
 		{
-			if (!newnode)
+			if (!newparser)
 			{
 				OW_THROWCIMMSG(OW_CIMException::FAILED,
 					"Missing <LOCALINSTANCEPATH> or <LOCALCLASSPATH> in <METHODCALL>");
 			}
 
-			executeExtrinsic(ostrEntity, newnode, *hdl);
+			executeExtrinsic(ostrEntity, newparser, *hdl);
 		}
 		ostrEntity << "</SIMPLERSP>";
 	}

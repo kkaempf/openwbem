@@ -117,7 +117,7 @@ struct OW_XMLToken
 		INVALID,
 		XML_DECLARATION,
 		START_TAG,
-		EMPTY_TAG,
+		//EMPTY_TAG,
 		END_TAG,
 		COMMENT,
 		CDATA,
@@ -201,7 +201,8 @@ class  OW_XMLParser
 
 		// used to verify elements' begin and end tags match.
 		std::stack<OW_String> _stack;
-		OW_Bool _foundRoot;
+		bool _foundRoot;
+		bool _tagIsEmpty;
 };
 
 

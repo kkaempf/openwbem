@@ -97,6 +97,7 @@ public:
 	 * Create a new OW_CIMDataType object representing the given type.
 	 * @param type		An integer specifying the data type of this object.
 	 * @param size		The size of the type if it is an array type.
+	 *	Pass 0 if the size is unlimited.
 	 * @exception OW_CIMException if the type is invalid for this method.
 	 */
 	OW_CIMDataType(Type type, OW_Int32 size);

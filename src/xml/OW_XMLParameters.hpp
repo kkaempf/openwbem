@@ -61,8 +61,8 @@ public:
 	static const char* const XMLP_PROPERTYLIST  ;
 	static const char* const XMLP_DEEP       	;
 	static const char* const XMLP_LOCAL         ;
-	static const char* const XMLP_QUAL       	;
-	static const char* const XMLP_ORIGIN     	;
+	static const char* const XMLP_INCLUDEQUALIFIERS       	;
+	static const char* const XMLP_INCLUDECLASSORIGIN     	;
 	static const char* const XMLP_MODIFIED_CLASS;
 	static const char* const XMLP_INSTANCENAME;
 	static const char* const XMLP_PROPERTYNAME;

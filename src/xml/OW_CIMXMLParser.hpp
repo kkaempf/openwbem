@@ -120,6 +120,7 @@ public:
 
 	OW_CIMXMLParser(const OW_String& str);
 	OW_CIMXMLParser(std::istream& sb);
+	OW_CIMXMLParser();
 
 
 
@@ -159,6 +160,10 @@ private:
 	static ElemEntry g_elems[];
 	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
 	static ElemEntry* g_elemsEnd;
+
+	// unimplemented
+	OW_CIMXMLParser(const OW_CIMXMLParser& x);
+	OW_CIMXMLParser& operator=(const OW_CIMXMLParser& x);
 
 private:
 	struct dummy

@@ -40,37 +40,27 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_XMLCIMFactory.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMXMLParser.hpp"
 
 // Static
 void
 OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	OW_CIMQualifierType& cimQualifier)
-/*throw (OW_CIMException)*/
 {
 	OW_String superClassName;
 	OW_String inClassName;
-	OW_XMLNode next;
 
-	OW_String qualName = result.getAttribute(paramName);
-	if(qualName.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"No qualifier name");
-	}
+	OW_String qualName = parser.mustGetAttribute(paramName);
 	cimQualifier.setName(qualName);
 
-	OW_String qualType = result.getAttribute(paramTypeAssign);
-	if(qualType.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"No type for qualifier");
-	}
+	OW_String qualType = parser.mustGetAttribute(paramTypeAssign);
 	OW_CIMDataType dt = OW_CIMDataType::getDataType(qualType);
 
-	OW_String qualISARRAY = result.getAttribute(paramISARRAY);
+	OW_String qualISARRAY = parser.getAttribute(paramISARRAY);
 	if(qualISARRAY.equalsIgnoreCase("true"))
 	{
-		OW_String qualArraySize = result.getAttribute(paramArraySize);
+		OW_String qualArraySize = parser.getAttribute(paramArraySize);
 		if(qualArraySize.length() > 0)
 		{
 			try
@@ -90,7 +80,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	}
 	cimQualifier.setDataType(dt);
 
-	OW_String qualFlavor = result.getAttribute("OVERRIDABLE");
+	OW_String qualFlavor = parser.getAttribute("OVERRIDABLE");
 	if(qualFlavor.equalsIgnoreCase("false"))
 	{
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::DISABLEOVERRIDE));
@@ -100,7 +90,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::ENABLEOVERRIDE));
 	}
 
-	qualFlavor = result.getAttribute("TOSUBCLASS");
+	qualFlavor = parser.getAttribute("TOSUBCLASS");
 	if(qualFlavor.equalsIgnoreCase("false"))
 	{
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::RESTRICTED));
@@ -110,59 +100,50 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOSUBCLASS));
 	}
 
-	qualFlavor = result.getAttribute("TOINSTANCE");
+	qualFlavor = parser.getAttribute("TOINSTANCE");
 	if(qualFlavor.equalsIgnoreCase("true"))
 	{
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE));
 	}
 
-	qualFlavor = result.getAttribute("TRANSLATABLE");
+	qualFlavor = parser.getAttribute("TRANSLATABLE");
 	if(qualFlavor.equalsIgnoreCase("true"))
 	{
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TRANSLATE));
 	}
 
-	OW_XMLNode child = result.getChild();
-	if(child)
+	parser.getNext();
+	if(parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SCOPE))
 	{
-		OW_XMLNode scopeNode = child.findElement(OW_XMLNode::XML_ELEMENT_SCOPE);
-
-		if(scopeNode)
-		{
-			processScope(child,cimQualifier,"CLASS",OW_CIMScope::CLASS);
-			processScope(child,cimQualifier,"INSTANCE",OW_CIMScope::INSTANCE);
-			processScope(child,cimQualifier,"ASSOCIATION",OW_CIMScope::ASSOCIATION);
-			processScope(child,cimQualifier,"REFERENCE",OW_CIMScope::REFERENCE);
-			processScope(child,cimQualifier,"PROPERTY",OW_CIMScope::PROPERTY);
-			processScope(child,cimQualifier,"METHOD",OW_CIMScope::METHOD);
-			processScope(child,cimQualifier,"PARAMETER",OW_CIMScope::PARAMETER);
-			processScope(child,cimQualifier,"INDICATION",OW_CIMScope::INDICATION);
-		}
-
-		OW_XMLNode valueNode = child.findElement(OW_XMLNode::XML_ELEMENT_VALUE);
-		if(!valueNode)
-		{
-			valueNode = child.findElement(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY);
-		}
-
-		if(valueNode)
-		{
-			OW_CIMValue val = OW_XMLCIMFactory::createValue(valueNode,qualType);
-			cimQualifier.setDefaultValue(val);
-		}
+		// process optional scope child
+		processScope(parser,cimQualifier,"CLASS",OW_CIMScope::CLASS);
+		processScope(parser,cimQualifier,"INSTANCE",OW_CIMScope::INSTANCE);
+		processScope(parser,cimQualifier,"ASSOCIATION",OW_CIMScope::ASSOCIATION);
+		processScope(parser,cimQualifier,"REFERENCE",OW_CIMScope::REFERENCE);
+		processScope(parser,cimQualifier,"PROPERTY",OW_CIMScope::PROPERTY);
+		processScope(parser,cimQualifier,"METHOD",OW_CIMScope::METHOD);
+		processScope(parser,cimQualifier,"PARAMETER",OW_CIMScope::PARAMETER);
+		processScope(parser,cimQualifier,"INDICATION",OW_CIMScope::INDICATION);
+		parser.mustGetNext();
+		parser.mustGetEndTag();
 	}
 
-
-	return result.getNext();
+	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE) ||
+		parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_ARRAY))
+	{
+		// process optional value or value.array child
+		OW_CIMValue val = OW_XMLCIMFactory::createValue(parser,qualType);
+		cimQualifier.setDefaultValue(val);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLQualifier::processScope(const OW_XMLNode& result,
-		OW_CIMQualifierType& cqt, const OW_String& attrName,
+OW_XMLQualifier::processScope(OW_CIMXMLParser& parser,
+		OW_CIMQualifierType& cqt, const char* attrName,
 		int scopeValue)
 {
-	OW_String scope = result.getAttribute(attrName);
+	OW_String scope = parser.getAttribute(attrName);
 	if(scope.length() == 0)
 	{
 		return;
@@ -177,30 +158,24 @@ OW_XMLQualifier::processScope(const OW_XMLNode& result,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_XMLQualifier::getQualifierName(const OW_XMLNode& node_arg)
+OW_XMLQualifier::getQualifierName(OW_CIMXMLParser& parser)
 {
-	OW_XMLNode node = node_arg;
-	OW_String qualifierName;
-	if(node.getToken() != OW_XMLNode::XML_ELEMENT_IPARAMVALUE)
+	if(!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"Expected IPARAMVALUE to lead into QualifierName");
 	}
-	OW_String propertyName = node.getAttribute(paramName);
-	if(propertyName.length() == 0)
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Cannot find property Name");
+	OW_String propertyName = parser.mustGetAttribute(paramName);
 
 	if(!propertyName.equalsIgnoreCase(XMLP_QUALIFIERNAME))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				"Cannot find qualifier name");
 
-	node = node.getChild();
-	node = node.findElement(OW_XMLNode::XML_ELEMENT_VALUE);
-	if(!node)
+	parser.getChild();
+	if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				"Cannot find value for property name");
-	return node.getText();
+	return parser.getText();
 }
 
 const char* const OW_XMLQualifier::XMLP_QUALIFIERNAME = "QualifierName";

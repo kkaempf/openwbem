@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMXMLParser.hpp"
+#include "OW_CIMException.hpp"
 #include <iosfwd>
 
 const char *const CIM_PROTOCOL_VERSION = "1.0";
@@ -96,7 +97,7 @@ protected:
 	void makeXMLHeader(const OW_String& messageId, std::ostream& ostr);
 
 	void setPath(const OW_String& id);
-	virtual void outputError(OW_CIMException::ErrNoType errorCode, 
+	virtual void outputError(OW_CIMException::ErrNoType errorCode,
 		OW_String, std::ostream& ostr) = 0;
 
 	OW_Bool m_hasError;

@@ -129,6 +129,17 @@ OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
 		return false;
 	}
 
+	// if the last tag was a <.../> then set the next token to END_TAG so that
+	// the caller doesn't need to worry about <.../>, it will look like
+	// <...></...>
+	if (_tagIsEmpty)
+	{
+		_tagIsEmpty = false;
+		entry.type = OW_XMLToken::END_TAG;
+		entry.attributeCount = 0;
+		entry.text.reset();
+	}
+
 	// Either a "<...>" or content begins next:
 
 	if (*_current == '<')
@@ -492,7 +503,10 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 		if (_getOpenElementName(entry, openCloseElement))
 		{
 			if (openCloseElement)
-				entry.type = OW_XMLToken::EMPTY_TAG;
+			{
+				entry.type = OW_XMLToken::START_TAG;
+				_tagIsEmpty = true;
+			}
 			return;
 		}
 	}
@@ -529,7 +543,8 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 			++_current;
 			if (*_current =='>')
 			{
-				entry.type = OW_XMLToken::EMPTY_TAG;
+				entry.type = OW_XMLToken::START_TAG;
+				_tagIsEmpty = true;
 				++_current;
 				return;
 			}

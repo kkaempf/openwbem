@@ -475,6 +475,10 @@ public:
 	 */
 	void get(OW_CIMInstanceArray& x) const;
 
+	OW_CIMObjectPath toCIMObjectPath() const;
+	OW_StringArray toStringArray() const;
+	OW_Bool toBool() const;
+	
 	/**
 	 * Set this to a null object.
 	 */

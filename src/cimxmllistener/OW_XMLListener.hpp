@@ -84,12 +84,12 @@ protected:
 	 */
 	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 
-	virtual void outputError(OW_CIMException::ErrNoType errorCode, 
+	virtual void outputError(OW_CIMException::ErrNoType errorCode,
 		OW_String msg, std::ostream& ostr);
 private:
 	OW_CIMListenerCallback* m_callback;
 
-	void processSimpleExpReq(const OW_CIMXMLParser& parser, std::ostream& ostrEntity,
+	void processSimpleExpReq(OW_CIMXMLParser& parser, std::ostream& ostrEntity,
 		std::ostream& ostrError, const OW_String& messageId);
 };
 

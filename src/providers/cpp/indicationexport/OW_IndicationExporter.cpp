@@ -110,7 +110,7 @@ OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_Strin
 	*/
 	// end debug stuff
 
-	OW_XMLParser parser(istr.getPtr());
+	OW_CIMXMLParser parser(istr.getPtr());
 
 	OW_XMLNode retval = parser.parse();
 	if (!retval)

@@ -57,24 +57,13 @@ class OW_XMLOperationGeneric : public OW_XMLParameters
 		static const char* const DTDVERSION_VALUE;
 		static const char* const PROTOCOLVERSION_VALUE;
 
-		static void extrinsicMethod(std::ostream& ostr,
-				OW_CIMXMLParser& parser,
-				OW_String& method,
-				OW_CIMOMHandleIFC& hdl) /*throw (OW_CIMException, OW_CIMMalformedUrlException)*/;
-
-		//static OW_XMLNode XMLGetCIMElement(OW_XMLNode& node) /*throw (OW_CIMException)*/;
+		static void XMLGetCIMElement(OW_CIMXMLParser& node) /*throw (OW_CIMException)*/;
 
 
 	private:
 		static const char* const paramErrorCode;
 		static const char* const paramErrorDescription;
 
-	protected:
-
-//         static OW_XMLNode processReturnStream(  OW_XMLNode reply,
-//                 OW_Bool extrinsic,
-//                 const OW_String& operation,
-//                 const OW_String& origMsgID) /*throw (OW_CIMException)*/;
 };
 
 #endif

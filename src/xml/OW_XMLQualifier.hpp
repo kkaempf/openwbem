@@ -62,8 +62,8 @@ protected:
 
 private:
 
-	static void processScope(OW_CIMXMLParser& result,
-		OW_CIMQualifierType& cqt, const OW_String& attrName,
+	static void processScope(OW_CIMXMLParser& parser,
+		OW_CIMQualifierType& cqt, const char* attrName,
 		int scopeValue)
 		/*throw (OW_CIMException)*/;
 

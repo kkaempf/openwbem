@@ -278,10 +278,6 @@ public:
 	 *
 	 * @param path The OW_CIMObjectPath identifying the class whose	instances
 	 *		are to be enumerated.
-	 * @param deep If set to DEEP, the enumeration returned will contain
-	 *		instances of the specified class and all classes derived from it.
-	 *		If set to SHALLOW, only instances belonging to the specified class
-	 *		are returned.
 	 * @return An Enumeration of OW_CIMObjectPaths (OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */

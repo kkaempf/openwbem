@@ -76,6 +76,15 @@ OW_CIMXMLParser::OW_CIMXMLParser(std::istream& istr)
 	prime();
 }
 
+///////////////////////////////////////////////////////////////////////////////
+OW_CIMXMLParser::OW_CIMXMLParser()
+	: m_ptfs()
+	, m_parser()
+	, m_curTok()
+	, m_good(false)
+{
+}
+
 
 // It would appear that this needs to be sorted alphabetically,
 // although dan didn't put any such comment here.  :)
@@ -312,7 +321,6 @@ OW_CIMXMLParser::mustGetNext(OW_CIMXMLParser::tokenId beginTok)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
 void
 OW_CIMXMLParser::getNext(bool throwIfError)
 {
@@ -349,7 +357,8 @@ OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok, bool throwIfError)
 void
 OW_CIMXMLParser::mustGetEndTag()
 {
-	if (m_curTok.type != OW_XMLToken::END_TAG)
+	if (m_curTok.type != OW_XMLToken::END_TAG
+		&& m_curTok.type != OW_XMLToken::EMPTY_TAG)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER);
 	}
@@ -371,3 +380,12 @@ OW_CIMXMLParser::getText() const
 {
 	return m_curTok.text.toString();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+OW_CIMXMLParser::isEmptyTag() const
+{
+	return m_curTok.type == OW_XMLToken::EMPTY_TAG;
+}
+
+

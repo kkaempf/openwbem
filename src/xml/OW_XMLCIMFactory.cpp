@@ -47,11 +47,13 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_XMLException.hpp"
 #include "OW_TempFileStream.hpp"
+#include "OW_CIMXMLParser.hpp"
+#include "OW_XMLAttribute.hpp"
 
 #include <algorithm> // for find_if
 
 static void
-getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, const OW_CIMXMLParser& parser)
+getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 {
 	parser.getNext();
 
@@ -85,14 +87,104 @@ static void
 getNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 {
 	parser.getNext();
-	OW_XMLNode lnode = node.mustChildElement(
-		OW_XMLNode::XML_ELEMENT_NAMESPACEPATH);
+	parser.mustGetChild(
+		OW_CIMXMLParser::XML_ELEMENT_NAMESPACEPATH);
 
-	OW_XMLNode cnode = lnode.mustChildElement(OW_XMLNode::XML_ELEMENT_HOST);
-	cop.setHost(cnode.getText());
-	getLocalNameSpacePathAndSet(cop, lnode);
+	parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_HOST);
+	cop.setHost(parser.getText());
+	getLocalNameSpacePathAndSet(cop, parser);
 }
 
+static void getKeyValue(OW_CIMXMLParser& parser, OW_CIMValue& value)
+{
+	parser.getNext();
+	value = OW_CIMValue(parser.getText());
+	OW_String valuetype = parser.mustGetAttribute(OW_XMLAttribute::VALUE_TYPE);
+	if (valuetype == "boolean")
+	{
+		value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+	}
+	else if (valuetype == "numeric")
+	{
+		try
+		{
+			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::SINT64));
+		}
+		catch (const OW_CIMException& e)
+		{
+			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::REAL64));
+		}
+	}
+	parser.getNext();
+	parser.mustGetEndTag();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
+{
+	OW_CIMPropertyArray propertyArray;
+	OW_CIMProperty cp;
+	//parser.mustFindElement(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
+
+	OW_String thisClassName = parser.getAttribute(OW_XMLAttribute::CLASS_NAME);
+	cimPath.setObjectName(thisClassName);
+
+	parser.getChild();
+	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_KEYBINDING))
+	{
+		do
+		{
+			OW_CIMValue value;
+			OW_String name;
+			OW_CIMXMLParser keyval;
+
+			name = parser.mustGetAttribute(OW_XMLAttribute::NAME);
+
+			parser.mustGetChild();
+
+			switch(parser.getToken())
+			{
+				case OW_CIMXMLParser::XML_ELEMENT_KEYVALUE:
+					getKeyValue(parser,value);
+					break;
+				case OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE:
+					value = OW_XMLCIMFactory::createValue(parser, "REF");
+					break;
+				default:
+					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+						"Not a valid instance declaration");
+			}
+
+			cp = OW_CIMProperty(name, value);
+			propertyArray.push_back(cp);
+		} while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_KEYBINDING));
+	}
+
+	else if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_KEYVALUE))
+	{
+		OW_CIMValue value;
+		cp = OW_CIMProperty(OW_Bool(true));
+		getKeyValue(parser,value);
+		cp.setDataType(value.getCIMDataType());
+		cp.setValue(value);
+		propertyArray.push_back(cp);
+	}
+	else if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE))
+	{
+		OW_CIMValue value = OW_XMLCIMFactory::createValue(parser, "REF");
+		cp = OW_CIMProperty(OW_Bool(true));
+		cp.setDataType(OW_CIMDataType(OW_CIMDataType::REFERENCE));
+		cp.setValue(value);
+		propertyArray.push_back(cp);
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"not a valid instance declaration");
+	}
+
+	cimPath.setKeys(propertyArray);
+}
 
 ///////////////////////////////////
 OW_CIMObjectPath
@@ -105,52 +197,52 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 	switch(token)
 	{
 		case OW_CIMXMLParser::XML_ELEMENT_LOCALCLASSPATH:
-			parser.next();
+			parser.getNext();
 			getLocalNameSpacePathAndSet(rval, parser);
-			parser.next();
+			parser.getNext();
 			rval.setObjectName(parser.mustGetAttribute(OW_XMLAttribute::NAME));
 			return rval;
 		case OW_CIMXMLParser::XML_ELEMENT_CLASSPATH:
-			parser.next();
+			parser.getNext();
 			getNameSpacePathAndSet(rval, parser); return rval;
 		case OW_CIMXMLParser::XML_ELEMENT_CLASSNAME:
-			rval.setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME)); return rval;
+			rval.setObjectName(parser.mustGetAttribute(OW_XMLAttribute::NAME)); return rval;
 		case OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME:
-			OW_XMLClass::getInstanceName(node, rval); return rval;
+			getInstanceName(parser, rval); return rval;
 		case OW_CIMXMLParser::XML_ELEMENT_LOCALINSTANCEPATH:
-			getLocalNameSpacePathAndSet(rval, node); break;
+			getLocalNameSpacePathAndSet(rval, parser); break;
 		case OW_CIMXMLParser::XML_ELEMENT_INSTANCEPATH:
-				getNameSpacePathAndSet(rval, node); break;
+				getNameSpacePathAndSet(rval, parser); break;
 		default:
 				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 					format("Invalid XMLNode for Object path construction.  Node "
-						"name = %1", node.getNodeName()).c_str());
+						"name = %1", parser.getText()).c_str());
 				break;
 	}
 
-	node = node.mustChildFindElement(OW_XMLNode::XML_ELEMENT_INSTANCENAME);
+	parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
 
-	OW_XMLClass::getInstanceName(node, rval);
+	getInstanceName(parser, rval);
 
 	return rval;
 }
 
 ///////////////////////////////////
 OW_CIMClass
-OW_XMLCIMFactory::createClass(OW_XMLNode const& node)
+OW_XMLCIMFactory::createClass(OW_CIMXMLParser& parser)
 {
 	OW_CIMClass rval(true);
-	OW_ASSERT(node);
 	OW_String superClassName;
-	OW_String inClassName;
-
-	OW_XMLNode valueNode =
-		node.mustFindElement(OW_XMLNode::XML_ELEMENT_CLASS);
-
-	inClassName = valueNode.mustGetAttribute(OW_XMLParameters::paramName);
+	
+	if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_CLASS))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not class XML");
+	}
+	
+	OW_String inClassName = parser.mustGetAttribute(OW_XMLParameters::paramName);
 	rval.setName(inClassName);
 
-	superClassName = valueNode.getAttribute(OW_XMLParameters::paramSuperName);
+	superClassName = parser.getAttribute(OW_XMLParameters::paramSuperName);
 	if(superClassName.length() > 0)
 	{
 		rval.setSuperClass(superClassName);
@@ -159,12 +251,10 @@ OW_XMLCIMFactory::createClass(OW_XMLNode const& node)
 	//
 	// Find qualifier information
 	//
-	for(valueNode = valueNode.getChild();
-		 valueNode != 0
-		 && valueNode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 valueNode = valueNode.getNext())
+	parser.mustGetNext();
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
 	{
-		OW_CIMQualifier cq = createQualifier(valueNode);
+		OW_CIMQualifier cq = createQualifier(parser);
 		if(cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 		{
 			if (!cq.getValue()
@@ -180,31 +270,22 @@ OW_XMLCIMFactory::createClass(OW_XMLNode const& node)
 	//
 	// Load properties
 	//
-	for(;valueNode != 0; valueNode = valueNode.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY)
+		   || parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY_ARRAY)
+		   || parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY_REF))
 	{
-		int token = valueNode.getToken();
-
-		if(token == OW_XMLNode::XML_ELEMENT_PROPERTY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
-		{
-			rval.addProperty(createProperty(valueNode));
-		}
-		else
-		{
-			break;
-		}
+		rval.addProperty(createProperty(parser));
 	}
 
 	//
 	// Load methods
 	//
-	for(;valueNode && valueNode.getToken() == OW_XMLNode::XML_ELEMENT_METHOD;
-		 valueNode = valueNode.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_METHOD))
 	{
-		rval.addMethod(createMethod(valueNode));
+		rval.addMethod(createMethod(parser));
 	}
 
+	parser.mustGetEndTag();
 	return rval;
 }
 
@@ -225,8 +306,7 @@ OW_XMLCIMFactory::createInstance(OW_CIMXMLParser& parser)
 	//
 	OW_CIMQualifierArray quals;
 	parser.getChild();
-	OW_XMLNode valueNode = node.getChild();
-	for(; parser && parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER);)
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
 	{
 		quals.append(createQualifier(parser));
 	}
@@ -236,21 +316,15 @@ OW_XMLCIMFactory::createInstance(OW_CIMXMLParser& parser)
 	// Load properties
 	//
 	OW_CIMPropertyArray props;
-	for(;valueNode; valueNode = valueNode.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY)
+		   || parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY_ARRAY)
+		   || parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PROPERTY_REF))
 	{
-		int token = valueNode.getToken();
-
-		if(token != OW_XMLNode::XML_ELEMENT_PROPERTY
-			&& token != OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY
-			&& token != OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
-		{
-			break;
-		}
-
-		props.append(createProperty(valueNode));
+		props.append(createProperty(parser));
 	}
 
 	rval.setProperties(props);
+	parser.mustGetEndTag();
 	return rval;
 }
 
@@ -495,7 +569,8 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 					while(parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE))
 					{
 						OW_CIMObjectPath cop(OW_Bool(true));
-						cop = createValue(parser, valueType);
+						OW_CIMValue v = createValue(parser, valueType);
+						v.get(cop);
 	
 						opArray.append(cop);
 					}
@@ -511,17 +586,17 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 					token = parser.getToken();
 					switch(token)
 					{
-						case OW_XMLNode::XML_ELEMENT_CLASSPATH:
-						case OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH:
-						case OW_XMLNode::XML_ELEMENT_INSTANCEPATH:
-						case OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH:
+						case OW_CIMXMLParser::XML_ELEMENT_CLASSPATH:
+						case OW_CIMXMLParser::XML_ELEMENT_LOCALCLASSPATH:
+						case OW_CIMXMLParser::XML_ELEMENT_INSTANCEPATH:
+						case OW_CIMXMLParser::XML_ELEMENT_LOCALINSTANCEPATH:
 							cop = createObjectPath(parser);
 							break;
-						case OW_XMLNode::XML_ELEMENT_CLASSNAME:
+						case OW_CIMXMLParser::XML_ELEMENT_CLASSNAME:
 							cop.setObjectName(parser.mustGetAttribute(OW_XMLAttribute::NAME));
 							break;
-						case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
-							OW_XMLClass::getInstanceName(parser, cop);
+						case OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME:
+							getInstanceName(parser, cop);
 							break;
 						default:
 							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -552,7 +627,6 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 {
 	OW_CIMQualifier rval(true);
 
-	OW_XMLNode qnode = node;
 	OW_CIMDataType dt;
 
 	if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
@@ -560,7 +634,7 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not qualifier XML");
 	}
 
-	OW_String name = parser.getAttribute(OW_XMLParameters::paramName);
+	OW_String name = parser.mustGetAttribute(OW_XMLParameters::paramName);
 
 	OW_String cimType = parser.getAttribute(OW_XMLParameters::paramTypeAssign);
 	OW_String propagate = parser.getAttribute(OW_XMLParameters::paramPropagated);
@@ -626,9 +700,8 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 
 	parser.mustGetNext();
 
-	OW_XMLNode valueNode;
-	if(parser.tokenIs(OW_XMLNode::XML_ELEMENT_VALUE_ARRAY)
-		|| parser.tokenIs(OW_XMLNode::XML_ELEMENT_VALUE))
+	if(parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_ARRAY)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE))
 	{
 		rval.setValue(createValue(parser, cimType));
 	}
@@ -639,24 +712,22 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 
 ///////////////////////////////////
 OW_CIMMethod
-OW_XMLCIMFactory::createMethod(OW_XMLNode const& node)
+OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 {
 	OW_CIMMethod rval(true);
 
-	if(!node || node.getToken() != OW_XMLNode::XML_ELEMENT_METHOD)
+	if(!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_METHOD))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not method XML");
 	}
 
-	OW_XMLNode nextchild;
+	OW_String methodName = parser.mustGetAttribute(OW_XMLParameters::paramName);
+	OW_String cimType = parser.getAttribute(OW_XMLParameters::paramTypeAssign);
 
-	OW_String methodName = node.getAttribute(OW_XMLParameters::paramName);
-	OW_String cimType = node.getAttribute(OW_XMLParameters::paramTypeAssign);
-
-	OW_String classOrigin = node.getAttribute(
+	OW_String classOrigin = parser.getAttribute(
 		OW_XMLParameters::paramClassOrigin);
 
-	OW_String propagate = node.getAttribute(OW_XMLParameters::paramPropagated);
+	OW_String propagate = parser.getAttribute(OW_XMLParameters::paramPropagated);
 
 	//
 	// A method name must be given
@@ -684,36 +755,26 @@ OW_XMLCIMFactory::createMethod(OW_XMLNode const& node)
 
 	rval.setPropagated(propagate.equalsIgnoreCase("true"));
 
+	parser.mustGetNext();
 	//
 	// See if there are qualifiers
 	//
-	for(nextchild = node.getChild();
-		 nextchild && nextchild.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 nextchild = nextchild.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
 	{
-		rval.addQualifier(createQualifier(nextchild));
+		rval.addQualifier(createQualifier(parser));
 	}
 
 	//
 	// Handle parameters
-	//OW_XMLCreateClass::execute
-	for(;nextchild; nextchild = nextchild.getNext())
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMETER)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFERENCE)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMETER_ARRAY)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFARRAY))
 	{
-		int paramToken = nextchild.getToken();
-
-		if(paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY)
-		{
-			rval.addParameter(createParameter(nextchild));
-		}
-		else
-		{
-			break;
-		}
+		rval.addParameter(createParameter(parser));
 	}
 
+	parser.mustGetEndTag();
 	return rval;
 }
 
@@ -725,37 +786,34 @@ convertXMLtoEmbeddedObject(const OW_String& str)
 	OW_TempFileStream ostr;
 	ostr << str;
 	ostr.rewind();
-	OW_XMLParser parser(&ostr);
+	OW_CIMXMLParser parser(ostr);
 
-	OW_XMLNode node;
 	try
 	{
-		node = parser.parse();
-	}
-	catch (OW_XMLException& xmlE)
-	{
-		// XML is no good, leave node null
-	}
-	if (node)
-	{
-		try
+		if (parser)
 		{
-			OW_CIMClass cc = OW_XMLCIMFactory::createClass(node);
-			rval = OW_CIMValue(cc);
-		}
-		catch (const OW_CIMException&)
-		{
-			// XML wasn't a class, so try an instance
 			try
 			{
-				OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
-				rval = OW_CIMValue(ci);
+				OW_CIMClass cc = OW_XMLCIMFactory::createClass(parser);
+				rval = OW_CIMValue(cc);
 			}
 			catch (const OW_CIMException&)
 			{
-				// XML isn't a class or an instance, so just leave it alone
+				// XML wasn't a class, so try an instance
+				try
+				{
+					OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(parser);
+					rval = OW_CIMValue(ci);
+				}
+				catch (const OW_CIMException&)
+				{
+					// XML isn't a class or an instance, so just leave it alone
+				}
 			}
 		}
+	}
+	catch (OW_XMLException& xmlE)
+	{
 	}
 	return rval;
 }
@@ -782,42 +840,36 @@ struct valueIsEmbeddedClass
 
 ///////////////////////////////////
 OW_CIMProperty
-OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
+OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 {
 	OW_CIMProperty rval(true);
 
 	OW_String superClassName;
 	OW_String inClassName;
-	OW_XMLNode qnode = node;
 
-	int token = qnode.getToken();
+	int token = parser.getToken();
 
-	if(token != OW_XMLNode::XML_ELEMENT_PROPERTY
-		&& token != OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY
-		&& token != OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
+	if(token != OW_CIMXMLParser::XML_ELEMENT_PROPERTY
+		&& token != OW_CIMXMLParser::XML_ELEMENT_PROPERTY_ARRAY
+		&& token != OW_CIMXMLParser::XML_ELEMENT_PROPERTY_REF)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "not property XML");
 	}
 
-	OW_String propName = qnode.getAttribute(OW_XMLParameters::paramName);
-	OW_String cimType = qnode.getAttribute(OW_XMLParameters::paramTypeAssign);
-	OW_String classOrigin = qnode.getAttribute(
+	OW_String propName = parser.mustGetAttribute(OW_XMLParameters::paramName);
+	OW_String cimType = parser.mustGetAttribute(OW_XMLParameters::paramTypeAssign);
+	OW_String classOrigin = parser.getAttribute(
 		OW_XMLParameters::paramClassOrigin);
-	OW_String propagate = qnode.getAttribute(OW_XMLParameters::paramPropagated);
-
-	if(propName.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "no property name");
-	}
+	OW_String propagate = parser.getAttribute(OW_XMLParameters::paramPropagated);
 
 	rval.setName(propName);
 
 	//
 	// If no return data type, then property isn't properly defined
 	//
-	if(token == OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
+	if(token == OW_CIMXMLParser::XML_ELEMENT_PROPERTY_REF)
 	{
-		rval.setDataType(OW_CIMDataType(qnode.getAttribute(
+		rval.setDataType(OW_CIMDataType(parser.getAttribute(
 			OW_XMLParameters::paramReferenceClass)));
 	}
 	else if(cimType.length() != 0)
@@ -833,9 +885,9 @@ OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
 	//
 	// Array type property
 	//
-	if(token == OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY)
+	if(token == OW_CIMXMLParser::XML_ELEMENT_PROPERTY_ARRAY)
 	{
-		OW_String arraySize = qnode.getAttribute(
+		OW_String arraySize = parser.getAttribute(
 			OW_XMLParameters::paramArraySize);
 
 		OW_CIMDataType dt = rval.getDataType();
@@ -866,24 +918,27 @@ OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
 	//
 	// See if there are qualifiers
 	//
-	for(qnode = qnode.getChild();
-		 qnode && qnode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 qnode = qnode.getNext())
+	parser.mustGetNext();
+
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
 	{
-		rval.addQualifier(createQualifier(qnode));
+		rval.addQualifier(createQualifier(parser));
 	}
 
-	if(qnode)
+	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_ARRAY)
+		|| parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_REFERENCE))
 	{
-		rval.setValue(createValue(qnode,cimType));
+		rval.setValue(createValue(parser,cimType));
 		
-		if(rval.getDataType().getType() != rval.getValue().getType()
-			|| rval.getDataType().isArrayType() !=
-			rval.getValue().isArray())
-		{
-			rval.setValue(OW_CIMValueCast::castValueToDataType(
-				rval.getValue(), rval.getDataType()));
-		}
+// Shouldn't need to cast this.
+//         if(rval.getDataType().getType() != rval.getValue().getType()
+//             || rval.getDataType().isArrayType() !=
+//             rval.getValue().isArray())
+//         {
+//             rval.setValue(OW_CIMValueCast::castValueToDataType(
+//                 rval.getValue(), rval.getDataType()));
+//         }
 	}
 
 	// handle embedded class or instance
@@ -953,23 +1008,23 @@ OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
 		}
 	}
 
+	parser.mustGetEndTag();
 	return rval;
 }
 
 
 ///////////////////////////////////
 OW_CIMParameter
-OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
+OW_XMLCIMFactory::createParameter(OW_CIMXMLParser& parser)
 {
 	OW_CIMParameter rval(true);
 
-	OW_XMLNode qnode = node;
-	int paramToken = qnode.getToken();
+	int paramToken = parser.getToken();
 	
-	if(paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY
-		&& paramToken != OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY)
+	if(paramToken != OW_CIMXMLParser::XML_ELEMENT_PARAMETER
+		&& paramToken != OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFERENCE
+		&& paramToken != OW_CIMXMLParser::XML_ELEMENT_PARAMETER_ARRAY
+		&& paramToken != OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFARRAY)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not parameter XML");
 	}
@@ -977,31 +1032,31 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 	//
 	// Fetch name
 	//
-	rval.setName(qnode.getAttribute(OW_XMLParameters::paramName));
+	rval.setName(parser.mustGetAttribute(OW_XMLParameters::paramName));
 	
 	//
 	// Get parameter type
 	//
 	switch(paramToken)
 	{
-		case OW_XMLNode::XML_ELEMENT_PARAMETER:
+		case OW_CIMXMLParser::XML_ELEMENT_PARAMETER:
 		{
 			rval.setDataType(OW_CIMDataType::getDataType(
-				qnode.getAttribute(OW_XMLParameters::paramTypeAssign)));
+				parser.mustGetAttribute(OW_XMLParameters::paramTypeAssign)));
 			break;
 		}
 	
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE:
+		case OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFERENCE:
 		{
 			rval.setDataType(OW_CIMDataType(
-				qnode.getAttribute(OW_XMLParameters::paramRefClass)));
+				parser.getAttribute(OW_XMLParameters::paramRefClass)));
 			break;
 		}
 	
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY:
+		case OW_CIMXMLParser::XML_ELEMENT_PARAMETER_ARRAY:
 		{
 			OW_CIMDataType dt = OW_CIMDataType::getDataType(
-				qnode.getAttribute(OW_XMLParameters::paramTypeAssign));
+				parser.mustGetAttribute(OW_XMLParameters::paramTypeAssign));
 	
 			if(!dt)
 			{
@@ -1012,7 +1067,7 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 			try
 			{
 				dt.setToArrayType(
-					qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+					parser.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
 			}
 			catch (const OW_StringConversionException&)
 			{
@@ -1022,15 +1077,15 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 			break;
 		}
 	
-		case OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY:
+		case OW_CIMXMLParser::XML_ELEMENT_PARAMETER_REFARRAY:
 		{
 			OW_CIMDataType dt = OW_CIMDataType(
-				qnode.getAttribute(OW_XMLParameters::paramRefClass));
+				parser.getAttribute(OW_XMLParameters::paramRefClass));
 	
 			try
 			{
 				dt.setToArrayType(
-					qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+					parser.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
 			}
 			catch (const OW_StringConversionException&)
 			{
@@ -1049,14 +1104,14 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 	// See if there are qualifiers
 	//
 	OW_CIMQualifierArray qualArray;
-	for(qnode = qnode.getChild();
-		 qnode && qnode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 qnode = qnode.getNext())
+	parser.mustGetNext();
+	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER))
 	{
-		qualArray.append(createQualifier(qnode));
+		qualArray.append(createQualifier(parser));
 	}
 	rval.setQualifiers(qualArray);
 
+	parser.mustGetEndTag();
 	return rval;
 }
 

@@ -71,7 +71,7 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	makeXMLHeader(messageId, *ostrEntity);
 
 	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_MULTIEXPREQ))
-	//if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIEXPREQ)
+	//if (node.getToken() == OW_CIMXMLParser::XML_ELEMENT_MULTIEXPREQ)
 	{
 		parser.getChild();
 		if (!parser)
@@ -95,7 +95,7 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 			parser.getNext(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ);
 		}
 	}
-	else if (parser.tokenIs(OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ))
+	else if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ))
 	{
 		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
 	}
@@ -133,14 +133,14 @@ OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 {
 	try
 	{
-		if (!parser.tokenIs(OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ))
+		if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ))
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_EXPMETHODCALL);
-//		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPPARAMVALUE);
-		parser.mustGetChild(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
-		parser.mustGetChild(OW_XMLNode::XML_ELEMENT_INSTANCE);
+//		node = node.mustChildElement(OW_CIMXMLParser::XML_ELEMENT_EXPPARAMVALUE);
+		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE);
+		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
 		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
 		m_callback->indicationOccurred(inst, m_path);
 		ostrEntity << "<SIMPLEEXPRSP>";
@@ -160,7 +160,7 @@ OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode, 
+OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode,
 	OW_String msg, ostream& ostr)
 {
 
@@ -169,7 +169,7 @@ OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode,
 
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
-		OW_XMLEscape(msg) << 
+		OW_XMLEscape(msg) <<
 		"\"></ERROR>";
 
 	ostr << "</EXPMETHODRESPONSE>";
