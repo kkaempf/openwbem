@@ -56,6 +56,34 @@ struct OW_CIMQualifierType::QUALTData
 };
 
 //////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMQualifierType::QUALTData& x, const OW_CIMQualifierType::QUALTData& y)
+{
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_dataType == y.m_dataType)
+		{
+			if (x.m_scope == y.m_scope)
+			{
+				if (x.m_flavor == y.m_flavor)
+				{
+					return x.m_defaultValue < y.m_defaultValue;
+				}
+				return x.m_flavor < y.m_flavor;
+			}
+			return x.m_scope < y.m_scope;
+		}
+		return x.m_dataType < y.m_dataType;
+	}
+	return x.m_name < y.m_name;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMQualifierType& x, const OW_CIMQualifierType& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType::OW_CIMQualifierType(OW_Bool notNull) :
 	OW_CIMElement(), m_pdata((notNull) ? new QUALTData : NULL)
 {

@@ -43,10 +43,8 @@
  */
 class OW_CIMQualifierType : public OW_CIMElement
 {
-private:
-	struct QUALTData;
-
 public:
+	struct QUALTData;
 
 	/**
 	 * Create a new OW_CIMQualifierType object.
@@ -226,6 +224,8 @@ public:
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+
+	friend bool operator<(const OW_CIMQualifierType& x, const OW_CIMQualifierType& y);
 
 private:
 

@@ -66,6 +66,21 @@ private:
 
 };
 
+inline bool operator<(const OW_CIMOMInfo& x, const OW_CIMOMInfo& y)
+{
+    return x.getURL() < y.getURL();
+}
+
+inline bool operator==(const OW_CIMOMInfo& x, const OW_CIMOMInfo& y)
+{
+    return x.getURL() == y.getURL();
+}
+
+inline bool operator!=(const OW_CIMOMInfo& x, const OW_CIMOMInfo& y)
+{
+    return !(x == y);
+}
+
 typedef OW_Array<OW_CIMOMInfo> OW_CIMOMInfoArray;
 
 #endif
