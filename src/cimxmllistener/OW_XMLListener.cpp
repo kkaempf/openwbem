@@ -42,7 +42,6 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_XMLParser.hpp"
 #include "OW_XMLException.hpp"
 
 using std::ostream;
@@ -55,33 +54,34 @@ OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
+OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const OW_String& /*userName*/)
 {
 	m_hasError = false;
 
-	OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	OW_String messageId = parser.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
 
-	node = node.getChild();
+	parser.getChild();
 
-	if (!node)
+	if (!parser)
 	{
 		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
 	makeXMLHeader(messageId, *ostrEntity);
 
-	if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIEXPREQ)
+	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_MULTIEXPREQ))
+	//if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIEXPREQ)
 	{
-		node = node.getChild();
-		if (!node)
+		parser.getChild();
+		if (!parser)
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
-		while(node)
+		while(parser)
 		{
 			OW_TempFileStream ostrEnt, ostrErr;
-			processSimpleExpReq(node, ostrEnt, ostrErr, messageId);
+			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId);
 			if (m_hasError)
 			{
 				(*ostrEntity) << ostrErr.rdbuf();
@@ -92,12 +92,12 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 				(*ostrEntity) << ostrEnt.rdbuf();
 			}
 
-			node = node.getNext();
+			parser.getNext(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ);
 		}
 	}
-	else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ)
+	else if (parser.tokenIs(OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ))
 	{
-		processSimpleExpReq(node, *ostrEntity, *ostrError, messageId);
+		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
 	}
 	else
 	{
@@ -128,21 +128,20 @@ OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
+OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 	ostream& ostrEntity, ostream& ostrError, const OW_String& messageId)
 {
 	try
 	{
-		OW_XMLNode node = startNode;
-		if (node.getToken() != OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ)
+		if (!parser.tokenIs(OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ))
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
-		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPMETHODCALL);
+		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_EXPMETHODCALL);
 //		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPPARAMVALUE);
-		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
-		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
-		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(node);
+		parser.mustGetChild(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
+		parser.mustGetChild(OW_XMLNode::XML_ELEMENT_INSTANCE);
+		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
 		m_callback->indicationOccurred(inst, m_path);
 		ostrEntity << "<SIMPLEEXPRSP>";
 		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";

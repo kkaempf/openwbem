@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_XMLNode.hpp"
+#include "OW_CIMXMLParser.hpp"
 #include <iosfwd>
 
 const char *const CIM_PROTOCOL_VERSION = "1.0";
@@ -85,7 +85,7 @@ protected:
 	 * @param userName the user performing the action
 	 * @return a HTTP status code, I think.
 	 */
-	virtual int executeXML(OW_XMLNode& node, std::ostream* ostrEntity,
+	virtual int executeXML(OW_CIMXMLParser& parser, std::ostream* ostrEntity,
 		std::ostream* ostrError, const OW_String& userName) = 0;
 
 	/**

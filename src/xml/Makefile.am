@@ -31,7 +31,6 @@ OW_XMLOperationGeneric.cpp \
 OW_Param.cpp \
 OW_XMLClass.cpp \
 OW_XMLQualifier.cpp \
-OW_XMLParserSax.cpp \
 OW_XMLParameters.cpp \
 OW_XMLEscape.cpp \
 OW_XMLUnescape.cpp \
@@ -41,7 +40,6 @@ OW_CIMtoXML.cpp
 pkginclude_HEADERS = \
 OW_RequestHandlerIFCXML.hpp \
 OW_Param.hpp         \
-OW_XML.hpp            \
 OW_XMLAttribute.hpp  \
 OW_XMLNode.hpp \
 OW_XMLClass.hpp \
@@ -50,7 +48,6 @@ OW_XMLParameters.hpp \
 OW_XMLParser.hpp \
 OW_XMLQualifier.hpp \
 OW_XMLException.hpp \
-OW_XMLParserSax.hpp \
 OW_XMLEscape.hpp \
 OW_XMLUnescape.hpp \
 OW_XMLCIMFactory.hpp \

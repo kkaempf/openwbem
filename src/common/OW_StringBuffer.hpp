@@ -135,6 +135,7 @@ public:
 	void clear(int newSize=0);
 	void reset();
 	const char* c_str() const {  return m_bfr; }
+	bool equals(const char* arg) const;
 
 private:
 	void checkAvail(int len=1);

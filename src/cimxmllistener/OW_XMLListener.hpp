@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_XMLNode.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_RequestHandlerIFCXML.hpp"
 #include <iosfwd>
@@ -74,7 +73,7 @@ protected:
 	 * @param userName the user performing the action
 	 * @return a HTTP status code, I think.
 	 */
-	virtual int executeXML(OW_XMLNode &node, std::ostream *ostrEntity,
+	virtual int executeXML(OW_CIMXMLParser &parser, std::ostream *ostrEntity,
 		std::ostream *ostrError, const OW_String& userName);
 
 
@@ -90,7 +89,7 @@ protected:
 private:
 	OW_CIMListenerCallback* m_callback;
 
-	void processSimpleExpReq(const OW_XMLNode& startNode, std::ostream& ostrEntity,
+	void processSimpleExpReq(const OW_CIMXMLParser& parser, std::ostream& ostrEntity,
 		std::ostream& ostrError, const OW_String& messageId);
 };
 

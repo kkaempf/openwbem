@@ -28,121 +28,182 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-//
-// OW_XMLParser.hpp
-//
-//
-//
+#ifndef OW_XMLPARSER_HPP_
+#define OW_XMLPARSER_HPP_
 
-#ifndef __OW_XMLPARSER_HPP__
-#define __OW_XMLPARSER_HPP__
+#include "OW_config.h"
+#include "OW_Exception.hpp"
+#include "OW_String.hpp"
+#include "OW_StringBuffer.hpp"
+#include "OW_IstreamBufIterator.hpp"
 
-#include	"OW_config.h"
-#include	"OW_String.hpp"
-#include	"OW_Array.hpp"
-#include	"OW_XMLNode.hpp"
-#include "OW_XMLParserSax.hpp"
-#if defined(OW_HAVE_ISTREAM)
-#include <istream>
-#elif defined(OW_HAVE_ISTREAM_H)
-#include	<istream.h>
+
+#ifdef OW_NEW
+#undef new
 #endif
 
+#include <stack>
+#include <iosfwd>
 
-/**
- * OW_XMLParser
- * Class used to parse XML Documents from iostreams, buffers,
- * or files.  Initial implementation based on snia XMLParse
- * class in Java adapted to use a c++ sax parser.
- *
- * @author Calvin R. Gaisford
- * @version 1.0
- * @since 1-24-2001
- */
-class OW_XMLParser /*: public HandlerBase*/
+#ifdef OW_NEW
+#define new OW_NEW
+#endif
+
+class OW_XMLParseException : public OW_Exception
 {
-public:
-	/**
-	 * Constructs an OW_XMLParser object setup to parse "fileName"
-	 *
-	 * @param fileName Full path of XML file to parse
-	 */
-	OW_XMLParser(const OW_String& fileName);
-	
-	/**
-	 * Constructs an OW_XMLParser object initialized to parse from the
-	 * data std::istream
-	 *
-	 * @param data   std::istream containing XML document to be parsed
-	 */
-	OW_XMLParser(std::istream *data);
-	
-	/**
-	 * Constructs an empty OW_XMLParser object
-	 */
-	OW_XMLParser();
+	public:
 
-	/**
-	 * Destructor
-	 */
-	~OW_XMLParser();
+		enum Code
+		{
+			BAD_START_TAG = 1,
+			BAD_END_TAG,
+			BAD_ATTRIBUTE_NAME,
+			EXPECTED_EQUAL_SIGN,
+			BAD_ATTRIBUTE_VALUE,
+			MINUS_MINUS_IN_COMMENT,
+			UNTERMINATED_COMMENT,
+			UNTERMINATED_CDATA,
+			UNTERMINATED_DOCTYPE,
+			TOO_MANY_ATTRIBUTES,
+			MALFORMED_REFERENCE,
+			EXPECTED_COMMENT_OR_CDATA,
+			START_END_MISMATCH,
+			UNCLOSED_TAGS,
+			MULTIPLE_ROOTS,
+			VALIDATION_ERROR,
+			SEMANTIC_ERROR
+		};
 
-	/**
-	 * Parse the XML document contained in the file named fileName
-	 *
-	 * @param fileName The name of the file containing the XML document to parse
-	 * @return OW_XMLNode which is the root of the XML document parsed
-	 */
-	OW_XMLNode parse(const OW_String& fileName);
-	
-	/**
-	 * Parse the XML document to be read from the std::istream data
-	 *
-	 * @param data   std::istream to read the XML document to be parsed
-	 * @return OW_XMLNode which is the root of the XML document parsed
-	 */
-	OW_XMLNode parse(std::istream *data);
-	
-	/**
-	 * Parse the XML document from the source that was specified
-	 * in the constructor of the XMLParser
-	 *
-	 * @return OW_XMLNode which is the root of the XML document parsed
-	 */
-	OW_XMLNode parse();
-	
-	// -----------------------------------------------------------------------
-	//  Implementations of the SAX DocumentHandler interface
-	// -----------------------------------------------------------------------
-	void endDocument();
-	void endElement(const OW_StringBuffer& name);
-	void characters(const OW_StringBuffer& chars);
-	void startDocument();
-	void startElement(const OW_XMLToken& entry);
+		OW_XMLParseException(
+				Code code,
+				unsigned int lineNumber,
+				const char* message);
 
-	// -----------------------------------------------------------------------
-	//  Implementations of the SAX ErrorHandler interface
-	// -----------------------------------------------------------------------
-	void warning(const OW_XMLParseException& exception);
-	void error(const OW_XMLParseException& exception);
-	void fatalError(const OW_XMLParseException& exception);
+		OW_XMLParseException(
+				Code code,
+				unsigned int lineNumber);
 
-private :
-	
-	OW_XMLNode			m_currentNode;
-	OW_XMLNode			m_topNode;
-	OW_XMLNodeArray		m_nodeArray;
-	OW_XMLParserSax			m_SAXParser;
-	std::istream				*m_pIStream;
-	OW_String			m_fileName;
-	OW_Bool				m_isFile;
+		OW_XMLParseException::Code getCode() const
+		{
+			return _code;
+		}
 
-	void doParse(std::istream& istr);
+	private:
 
-	OW_XMLParser(const OW_XMLParser& arg);	// Shouldn't happen
-	OW_XMLParser& operator= (const OW_XMLParser& arg); // shouldn't happen
+		Code _code;
+};
+
+class OW_XMLParseValidationError : public OW_XMLParseException
+{
+	public:
+
+		OW_XMLParseValidationError(unsigned int lineNumber, const char* message);
+};
+
+class OW_XMLParseSemanticError : public OW_XMLParseException
+{
+	public:
+
+		OW_XMLParseSemanticError(unsigned int lineNumber, const char* message);
+};
+
+struct OW_XMLToken
+{
+	OW_XMLToken() : type(INVALID), text(8096), attributeCount(0)
+	{}
+
+	enum XMLType
+	{
+		INVALID,
+		XML_DECLARATION,
+		START_TAG,
+		EMPTY_TAG,
+		END_TAG,
+		COMMENT,
+		CDATA,
+		DOCTYPE,
+		CONTENT
+	};
+
+	struct Attribute
+	{
+		Attribute(): name(64), value(512)
+		{
+		}
+
+		OW_StringBuffer name;
+		OW_StringBuffer value;
+	};
+
+	enum { MAX_ATTRIBUTES = 10 };
+
+	XMLType type;
+	OW_StringBuffer text;
+	Attribute attributes[MAX_ATTRIBUTES];
+	unsigned int attributeCount;
+
+};
+
+class  OW_XMLParser
+{
+	public:
+
+		OW_XMLParser(std::istream& input) : _line(1), _current(), _foundRoot(false)
+		{
+			setInput(input);
+		}
+
+		OW_XMLParser(): _line(1), _current(), _foundRoot(false)
+		{
+		}
+
+		~OW_XMLParser()
+		{
+		}
+
+		void setInput(std::istream& input)
+		{
+			_current = OW_IstreamBufIterator(input);
+		}
+
+		OW_Bool next(OW_XMLToken& entry);
+
+		unsigned int getLine() const
+		{
+			return _line;
+		}
+
+	private:
+
+		void _skipWhitespace();
+
+		OW_Bool _getElementName(OW_XMLToken& entry);
+
+		OW_Bool _getOpenElementName(OW_XMLToken& entry, OW_Bool& openCloseElement);
+
+		void _getAttributeNameAndEqual(OW_XMLToken::Attribute& att);
+
+		void _getAttributeValue(OW_XMLToken::Attribute& att);
+
+		void _getComment();
+
+		void _getCData(OW_XMLToken& entry);
+
+		void _getDocType();
+
+		void _getContent(OW_XMLToken& entry);
+
+		void _getElement(OW_XMLToken& entry);
+
+		unsigned int _line;
+		OW_IstreamBufIterator _current;
+		char _restoreChar;
+
+		// used to verify elements' begin and end tags match.
+		std::stack<OW_String> _stack;
+		OW_Bool _foundRoot;
 };
 
 
-#endif // __OW_XMLPARSER_HPP__
+#endif
 

@@ -39,7 +39,7 @@ struct OW_XMLCIMFactory
 {
 	static OW_CIMObjectPath createObjectPath(OW_XMLNode const& node);
 	static OW_CIMClass createClass(OW_XMLNode const& node);
-	static OW_CIMInstance createInstance(OW_XMLNode const& node);
+	static OW_CIMInstance createInstance(OW_CIMXMLParser& node);
 	static OW_CIMValue createValue(OW_XMLNode const& node, OW_String const& type);
 	static OW_CIMQualifier createQualifier(OW_XMLNode const& node);
 	static OW_CIMMethod createMethod(OW_XMLNode const& node);

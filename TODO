@@ -41,4 +41,5 @@ x add a test for the matrix on the bottom of
   and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 
 - change XML parser to be lazy. 
-- Make socket write/read also select on shutdown pipe.
+- Fix? socket write/read also select on shutdown pipe.
+

@@ -321,3 +321,10 @@ OW_StringBuffer::checkAvail(int len)
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+bool 
+OW_StringBuffer::equals(const char* arg) const
+{
+	return strcmp(arg, m_bfr) == 0;
+}
+
