@@ -201,14 +201,7 @@ String::String(Real64 val) :
 String::String(const char* str) :
 	m_buf(NULL)
 {
-	if(NULL == str)
-	{
-		m_buf = 0;
-	}
-	else
-	{
-		m_buf = new ByteBuf(str);
-	}
+	m_buf = (NULL == str) ? 0 : new ByteBuf(str);
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
@@ -305,14 +298,7 @@ String::allocateCString() const
 size_t
 String::length() const
 {
-	if (m_buf)
-	{
-		return m_buf->length();
-	}
-	else
-	{
-		return 0;
-	}
+	return (m_buf) ? m_buf->length() : 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
@@ -393,26 +379,31 @@ String::compareToIgnoreCase(const String& arg) const
 {
 	return compareToIgnoreCase(arg.c_str());
 }
+
+//////////////////////////////////////////////////////////////////////////////
+String&
+String::concat(const char* arg)
+{
+	if(arg && *arg)
+	{
+		size_t len = length() + ::strlen(arg);
+		AutoPtrVec<char> bfr(new char[len+1]);
+		bfr[0] = 0;
+		if(m_buf)
+		{
+			::strcpy(bfr.get(), m_buf->data());
+		}
+		::strcat(bfr.get(), arg);
+		m_buf = new ByteBuf(bfr, len);
+	}
+	return *this;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 String&
 String::concat(const String& arg)
 {
-	if(!arg.empty())
-	{
-		size_t len = length() + arg.length();
-		AutoPtrVec<char> bfr(new char[len+1]);
-		bfr[0] = 0;
-		if (m_buf)
-		{
-			::strcpy(bfr.get(), m_buf->data());
-		}
-		if (arg.m_buf)
-		{
-			::strcat(bfr.get(), arg.m_buf->data());
-		}
-		m_buf = new ByteBuf(bfr, len);
-	}
-	return *this;
+	return concat(arg.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -431,14 +422,6 @@ String::concat(char arg)
 	m_buf = new ByteBuf(bfr, newlen);
 	return *this;
 }
-/*
-//////////////////////////////////////////////////////////////////////////////
-String&
-String::concat(char arg)
-{
-	return concat(String(arg));
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 bool 
@@ -451,38 +434,27 @@ String::endsWith(char arg) const
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-String::endsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
+String::endsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 {
-	if(arg.empty())
+	if(!arg || !*arg)
 	{
-		return (arg.length() == length());
+		return (length() == 0);
 	}
-	int ndx = static_cast<int>(length() - arg.length());
+
+	if(!m_buf)
+	{
+		return false;
+	}
+
+	int ndx = static_cast<int>(length() - ::strlen(arg));
 	if(ndx < 0)
 	{
 		return false;
 	}
-	bool cc;
-	
-	const char* lhs = "";
-	const char* rhs = "";
-	if (m_buf)
-	{
-		lhs = m_buf->data()+ndx;
-	}
-	if (arg.m_buf)
-	{
-		rhs = arg.m_buf->data();
-	}
-	if(ignoreCase)
-	{
-		cc = (UTF8Utils::compareToIgnoreCase(lhs, rhs) == 0);
-	}
-	else
-	{
-		cc = (::strcmp(lhs, rhs) == 0);
-	}
-	return cc;
+
+	return (ignoreCase)
+		? (UTF8Utils::compareToIgnoreCase(m_buf->data()+ndx, arg) == 0)
+		: (::strcmp(m_buf->data()+ndx, arg) == 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -552,26 +524,23 @@ String::indexOf(char ch, size_t fromIndex) const
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-String::indexOf(const String& arg, size_t fromIndex) const
+String::indexOf(const char* arg, size_t fromIndex) const
 {
-	//if(fromIndex < 0)
-	//{
-	//	fromIndex = 0;
-	//}
 	int cc = npos;
 	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
 		char* p;
-		if (arg.m_buf)
+		if (arg && *arg)
 		{
-			p = ::strstr(m_buf->data()+fromIndex, arg.m_buf->data());
+			p = ::strstr(m_buf->data()+fromIndex, arg);
 		}
 		else
 		{
 			p = m_buf->data()+fromIndex;
 		}
+
 		if(p != NULL)
 		{
 			cc = static_cast<int>(p - m_buf->data());
@@ -606,18 +575,20 @@ String::lastIndexOf(char ch, size_t fromIndex) const
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-String::lastIndexOf(const String& arg, size_t fromIndex) const
+String::lastIndexOf(const char* arg, size_t fromIndex) const
 {
 	if(fromIndex == npos || fromIndex >= length())
 	{
 		if(static_cast<int>(fromIndex = length()-1) < 0)
 			return npos;
 	}
-	if(static_cast<int>(fromIndex -= arg.length() - 1) < 0)
+
+	int arglen = (arg) ? ::strlen(arg) : 0;
+	if(static_cast<int>(fromIndex -= arglen - 1) < 0)
 	{
 		return npos;
 	}
-	if (!arg.m_buf)
+	if (!arg)
 	{
 		return length() - 1;
 	}
@@ -625,8 +596,7 @@ String::lastIndexOf(const String& arg, size_t fromIndex) const
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		if(::strncmp(m_buf->data()+fromIndex, arg.m_buf->data(),
-			arg.length()) == 0)
+		if(::strncmp(m_buf->data()+fromIndex, arg, arglen) == 0)
 		{
 			break;
 		}
@@ -634,7 +604,6 @@ String::lastIndexOf(const String& arg, size_t fromIndex) const
 	}
 	return fromIndex;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool 
 String::startsWith(char arg) const
@@ -646,24 +615,30 @@ String::startsWith(char arg) const
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-String::startsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
+String::startsWith(const char* arg, EIgnoreCaseFlag ignoreCase) const
 {
 	bool cc = false;
-	if(arg.empty())
+	if(!arg && !m_buf)
 	{
-		return (arg.length() == length());
+		return true;
 	}
-	if(arg.length() <= length())
+	if(!*arg)
+	{
+		return (length() == 0);
+	}
+
+	size_t arglen = ::strlen(arg);
+	if(arglen <= length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
 		if(ignoreCase)
 		{
-			cc = (strncmpi(m_buf->data(), arg.m_buf->data(), arg.length()) == 0);
+			cc = (strncmpi(m_buf->data(), arg, arglen) == 0);
 		}
 		else
 		{
-			cc = (::strncmp(m_buf->data(), arg.m_buf->data(), arg.length()) == 0);
+			cc = (::strncmp(m_buf->data(), arg, arglen) == 0);
 		}
 	}
 	return cc;

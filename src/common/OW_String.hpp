@@ -280,6 +280,13 @@ public:
 	 */
 	String& concat(const String& arg);
 	/**
+	 * Append a C string to this String object.
+	 * @param arg	The C string to append to this String object.
+	 * @return A reference to this String object.
+	 */
+	String& concat(const char* arg);
+
+	/**
 	 * Append a char to this String object.
 	 * @param arg	The char to append to this String object.
 	 * @return A reference to this String object.
@@ -291,6 +298,16 @@ public:
 		E_CASE_INSENSITIVE
 	};
 	/**
+	 * Determine if this String object ends with given C string.
+	 * @param arg	The C string object to search the end of this String
+	 * 	object for.
+	 * @param ignoreCase If true, character case will be ignored.
+	 * @return true if this String ends with the given String. Otherwise
+	 * return false.
+	 */
+	bool endsWith(const char* arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
+
+	/**
 	 * Determine if this String object ends with the same string
 	 * represented by another String object.
 	 * @param arg	The String object to search the end of this String
@@ -299,7 +316,10 @@ public:
 	 * @return true if this String ends with the given String. Otherwise
 	 * return false.
 	 */
-	bool endsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
+	bool endsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const
+	{
+		return endsWith(arg.c_str(), ignoreCase);
+	}
 
 	/**
 	 * Determine if this String object ends with a given character.
@@ -357,13 +377,25 @@ public:
 	 */
 	size_t indexOf(char ch, size_t fromIndex=0) const;
 	/**
+	 * Find the first occurence of a C string in this String object.
+	 * @param arg			The C string to search for.
+	 * @param fromIndex	The index to start the search from.
+	 * @return The index of the given string in the underlying array if it
+	 * was found. npos if the string was not found at or after the fromIndex.
+	 */
+	size_t indexOf(const char* arg, size_t fromIndex=0) const;
+	/**
 	 * Find the first occurence of a string in this String object.
 	 * @param arg			The string to search for.
 	 * @param fromIndex	The index to start the search from.
 	 * @return The index of the given string in the underlying array if it
 	 * was found. npos if the string was not found at or after the fromIndex.
 	 */
-	size_t indexOf(const String& arg, size_t fromIndex=0) const;
+	size_t indexOf(const String& arg, size_t fromIndex=0) const
+	{
+		return indexOf(arg.c_str(), fromIndex);
+	}
+
 	/**
 	 * Find the last occurence of a character in this String object.
 	 * @param ch			The character to search for.
@@ -374,6 +406,15 @@ public:
 	 */
 	size_t lastIndexOf(char ch, size_t fromIndex=npos) const;
 	/**
+	 * Find the last occurence of a C string in this String object.
+	 * @param arg			The C string to search for.
+	 * @param fromIndex	The index to start the search from.
+	 * @return The index of the last occurence of the string in the underlying
+	 * array if it was found. npos if the this String does not contain the
+	 * given substring before the fromIndex.
+	 */
+	size_t lastIndexOf(const char* arg, size_t fromIndex=npos) const;
+	/**
 	 * Find the last occurence of a string in this String object.
 	 * @param arg			The string to search for.
 	 * @param fromIndex	The index to start the search from.
@@ -381,7 +422,11 @@ public:
 	 * array if it was found. npos if the this String does not contain the
 	 * given substring before the fromIndex.
 	 */
-	size_t lastIndexOf(const String& arg, size_t fromIndex=npos) const;
+	size_t lastIndexOf(const String& arg, size_t fromIndex=npos) const
+	{
+		return lastIndexOf(arg.c_str(), fromIndex);
+	}
+
 	/**
 	 * Determine if this String object starts with a given substring.
 	 * @param arg The String object to search the beginning of this String
@@ -390,8 +435,19 @@ public:
 	 * @return true if this String object starts with the given string.
 	 * Otherwise false.
 	 */
-	bool startsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
-
+	bool startsWith(const char* arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
+	/**
+	 * Determine if this String object starts with a given substring.
+	 * @param arg The String object to search the beginning of this String
+	 * object for.
+	 * @param ignoreCase	If true, case of the characters will be ignored.
+	 * @return true if this String object starts with the given string.
+	 * Otherwise false.
+	 */
+	bool startsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const
+	{
+		return startsWith(arg.c_str(), ignoreCase);
+	}
 	/**
 	 * Determine if this String object starts with a given character.
 	 * @param arg The character to test for.
@@ -482,7 +538,13 @@ public:
 	 * taken place.
 	 */
 	String& operator+= (const String& arg) { return concat(arg); }
-
+	/**
+	 * Concatination operator.
+	 * @param arg	The C string to append to the end of this String.
+	 * @return A reference to this String object after the concatination has
+	 * taken place.
+	 */
+	String& operator+= (const char* arg) { return concat(arg); }
 	/**
 	 * Character concatination operator.
 	 * @param arg	The character to append to the end of this String.
@@ -490,7 +552,6 @@ public:
 	 * taken place.
 	 */
 	String& operator+= (char arg) { return concat(arg); }
-
 	/**
 	 * Read this String object from the given istream. An String must have
 	 * been previously written to this location of the stream.
