@@ -92,6 +92,12 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
@@ -103,7 +109,7 @@ public:
 			OW_CIMInstance inst = cimClass.newInstance();
 			inst.setProperty("Name", OW_CIMValue(iter->name));
 			inst.setProperty("Params", OW_CIMValue(iter->params));
-			result.handle(inst);
+			result.handle(inst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 	}
 

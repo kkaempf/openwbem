@@ -313,6 +313,32 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList) const;
 
 	/**
+	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
+	 * criteria.  This is useful for implementing enumInstances correctly
+	 * for the localOnly and deep parameters.
+	 * @param localOnly If true, all inherited properties and qualifiers will be
+	 *		omitted.
+	 * @param deep If false, all derived properties and qualifiers will be omitted.
+	 * @param includeQualifiers If true, all quailifiers will be omitted.
+	 * @param includeClassOrigin If true, all element names will include the
+	 *		class origin.
+	 * @param propertyList A pointer to an array of property names that
+	 *		specifies the only properties to be included in the returned
+	 *		instance. If NULL, all properties are included. If not NULL and
+	 *		the array is empty, no properties are included. If not NULL and
+	 *		the array is not empty, only those properties will be included.
+	 * @param requestedClass The class that was requested in the enumInstances
+	 * 		call.  This is used in filtering the properties.
+	 * @param cimClass The class of this instance. This is used in filtering
+	 *		the properties.
+	 * @return An OW_CIMInstance object based on this one, filtered according
+	 *		to the specified criteria.
+	 */
+	OW_CIMInstance clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const;
+
+	/**
 	 * Synchronize this instance with the given class. This will ensure that
 	 * all properties found on the class exist on thist instance. It will also
 	 * optionally move all qualifiers from the class to the instance.

@@ -100,64 +100,66 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIInstanceProviderProxy::enumInstances(
-        const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool localOnly, 
-		OW_Bool deep, 
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-        const OW_CIMClass& cimClass )
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_String& ns,
+	const OW_String& className,
+	OW_CIMInstanceResultHandlerIFC& result,
+	OW_Bool localOnly, 
+	OW_Bool deep, 
+	OW_Bool includeQualifiers, 
+	OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList,
+	const OW_CIMClass& requestedClass,
+	const OW_CIMClass& cimClass )
 {
-        env->getLogger()->
-            logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
+	// TODO: Use these parameters to filter the properties on the returned instance.
+	(void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
+	env->getLogger()->
+	logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
 
-        if (m_ftable->fp_enumInstances == NULL)
-		  {
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
-		  }
-	
-            		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			OW_NPIHandleFreer nhf(_npiHandle);
+	if (m_ftable->fp_enumInstances == NULL)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
+	}
 
-			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-			//  may the arguments must be copied verbatim
-			//  to avoid locking problems
+	_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
-			CIMClass _cc = { (void*)static_cast<const void *> (&cimClass) };
+	//  may the arguments must be copied verbatim
+	//  to avoid locking problems
 
-			OW_CIMObjectPath cop(className, ns);
-			CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop) };
+	CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
 
-			int de = deep;
-			int lo = localOnly;
-			::Vector v =
-				 m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
+	OW_CIMObjectPath cop(className, ns);
+	CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
-			OW_NPIVectorFreer vf1(v);
+	int de = deep;
+	int lo = localOnly;
+	::Vector v =
+	m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
 
-			if (_npiHandle.errorOccurred)
-			{
-				 OW_THROWCIMMSG(OW_CIMException::FAILED,
-					  _npiHandle.providerError);
-			}
+	OW_NPIVectorFreer vf1(v);
 
-			CIMInstance my_inst;
-			for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
-			{
-				 my_inst.ptr = _VectorGet(&_npiHandle,v,i);
-				 OW_CIMInstance ow_inst(*
-					  static_cast<OW_CIMInstance *>(my_inst.ptr) );
+	if (_npiHandle.errorOccurred)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		_npiHandle.providerError);
+	}
+
+	CIMInstance my_inst;
+	for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
+	{
+		my_inst.ptr = _VectorGet(&_npiHandle,v,i);
+		OW_CIMInstance ow_inst(*
+		static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
 // FIXME
-				 ow_inst.setClassName(cimClass.getName());
+		ow_inst.setClassName(cimClass.getName());
 
-				 result.handle(ow_inst);
-			}
+		result.handle(ow_inst);
+	}
 }
 	
 /////////////////////////////////////////////////////////////////////////////

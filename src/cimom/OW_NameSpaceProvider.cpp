@@ -118,7 +118,7 @@ OW_NameSpaceProvider::enumInstanceNames(
 		const OW_CIMClass& cimClass)
 {
 	CIMInstanceToObjectPath handler(result, ns, className);
-	enumInstances(env, ns, className, handler, cimClass);
+	enumInstances(env, ns, className, handler, false, false, false, false, 0, cimClass, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -171,6 +171,12 @@ OW_NameSpaceProvider::enumInstances(
 		const OW_String& ns,
 		const OW_String& /*className*/,
 		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool /*localOnly*/, 
+		OW_Bool /*deep*/, 
+		OW_Bool /*includeQualifiers*/, 
+		OW_Bool /*includeClassOrigin*/,
+		const OW_StringArray* /*propertyList*/,
+		const OW_CIMClass& /*requestedClass*/,
 		const OW_CIMClass& cimClass)
 {
 	NameSpaceEnumBuilder handler(result, cimClass);
@@ -198,6 +204,7 @@ OW_NameSpaceProvider::getInstance(
 		OW_CIMInstanceEnumeration cie;
 		CIMInstanceEnumBuilder handler(cie);
 		enumInstances(env, ns, instanceName.getObjectName(), handler,
+			false, false, false, false, 0, cimClass,
 			cimClass);
 		
 		while (cie.hasMoreElements())

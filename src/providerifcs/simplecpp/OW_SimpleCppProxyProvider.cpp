@@ -198,10 +198,18 @@ OW_SimpleCppInstanceProviderProxy::enumInstances(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	(void)ns;
+	// TODO: Write a handler that will filter the properties on the instances based on the parameters.
+	(void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
 	m_pProv->enumInstances(env, className, result, cimClass);
 }
 

@@ -86,6 +86,12 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool localOnly, 
+		OW_Bool deep, 
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
 	{
 		(void)env;
@@ -97,7 +103,7 @@ public:
 		for (;;++count)
 		{
 			newInst.setProperty(OW_String("InstanceNumber"), OW_CIMValue(count));
-			result.handle(newInst);
+			result.handle(newInst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 
 	}

@@ -262,6 +262,7 @@ void
 OW_InstanceRepository::getCIMInstances(
 	const OW_String& ns,
 	const OW_String& className,
+	const OW_CIMClass& requestedClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
@@ -286,58 +287,7 @@ OW_InstanceRepository::getCIMInstances(
 	{
 		OW_CIMInstance ci;
 		nodeToCIMObject(ci, node);
-cout << "ci Before filtering: " << ci.toMOF() << endl;
-		ci.syncWithClass(theClass, true);
-
-		ci = ci.clone(false, includeQualifiers,
-			includeClassOrigin, propertyList);
-
-		// do processing of deep & localOnly
-		// don't filter anything if (deep == true && localOnly == false) 
-		if (deep != true || localOnly != false)
-		{
-			OW_CIMPropertyArray props = ci.getProperties();
-			OW_CIMPropertyArray newprops;
-			OW_CIMInstance newInst(ci);
-			OW_String requestedClassName = theClass.getName();
-			for (size_t i = 0; i < props.size(); ++i)
-			{
-				OW_CIMProperty p = props[i];
-				OW_CIMProperty clsp = theClass.getProperty(p.getName());
-				if (clsp)
-				{
-					if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
-					{
-						newprops.push_back(p);
-						continue;
-					}
-				}
-				if (deep == true)
-				{
-					if (!clsp
-						|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
-					{
-						// the property is from a derived class
-						newprops.push_back(p);
-						continue;
-					}
-				}
-				if (localOnly == false)
-				{
-					if (clsp)
-					{
-						// the property has to be from a superclass
-						newprops.push_back(p);
-						continue;
-					}
-				}
-
-			}
-			newInst.setProperties(newprops);
-			newInst.setKeys(ci.getKeyValuePairs());
-			ci = newInst;
-		}
-cout << "ci After filtering: " << ci.toMOF() << endl;
+		ci = ci.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,theClass);
 
 		result.handle(ci);
 		node = hdl->getNextSibling(node);

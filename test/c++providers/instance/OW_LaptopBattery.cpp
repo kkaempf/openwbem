@@ -99,13 +99,20 @@ namespace
 			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
+			OW_Bool localOnly, 
+			OW_Bool deep, 
+			OW_Bool includeQualifiers, 
+			OW_Bool includeClassOrigin,
+			const OW_StringArray* propertyList,
+			const OW_CIMClass& requestedClass,
 			const OW_CIMClass& cimClass )
 		{
 			(void)ns;
 			(void)className;
 			(void)env;
 			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
-			result.handle(inst);
+			result.handle(inst.clone(localOnly, deep, includeQualifiers, 
+				includeClassOrigin, propertyList, requestedClass, cimClass));
 		}
 
 		/////////////////////////////////////////////////////////////////////////

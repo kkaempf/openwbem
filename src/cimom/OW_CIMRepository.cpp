@@ -669,7 +669,7 @@ OW_CIMRepository::enumInstances(
 	{
 		OW_CIMClass theTopClass = _instGetClass(ns, className);
 
-		m_iStore.getCIMInstances(ns, className, theTopClass, result,
+		m_iStore.getCIMInstances(ns, className, theTopClass, theTopClass, result,
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 		
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
@@ -688,7 +688,7 @@ OW_CIMRepository::enumInstances(
 			{
 				OW_CIMClass theClass = _instGetClass(ns, classNames[i]);
 
-				m_iStore.getCIMInstances(ns, classNames[i], theClass, result,
+				m_iStore.getCIMInstances(ns, classNames[i], theTopClass, theClass, result,
 					deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 				if (m_env->getLogger()->getLogLevel() == DebugLevel)
 				{

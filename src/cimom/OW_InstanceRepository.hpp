@@ -48,7 +48,9 @@ public:
 
 	void getCIMInstances(
 		const OW_String& ns,
-		const OW_String& className, const OW_CIMClass& theClass,
+		const OW_String& className, 
+		const OW_CIMClass& requestedClass,
+		const OW_CIMClass& theClass,
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList=NULL);
