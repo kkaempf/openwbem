@@ -49,6 +49,13 @@
 ;log.main.max_backup_index = 1
 
 ################################################################################
+# Determines whether each log messages is flushed to the log when it happens.
+# Set this option to false if you wish to increase logging performance.
+# This optional is only applicable to logs of type "file".
+# Default is "true"
+;log.main.flush = true
+
+################################################################################
 # A space delimited list of the components the log will output.
 # Components used in owcimomd:
 #   owcimomd
@@ -186,6 +193,7 @@ log.debug.format = [%t] %m
 # log.<log name>.location
 # log.<log name>.max_file_size
 # log.<log name>.max_backup_index
+# log.<log name>.flush
 #
 ;owcimomd.additional_logs =
 
@@ -570,6 +578,11 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 # Set this option to true to disable it.
 # The default is "false"
 ;owcimomd.disable_cpp_provider_interface = false
+
+################################################################################
+# Specify the location of the owcimomd pidfile
+# The default is "@PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid"
+;owcimomd.pidfile = @PIDFILE_DIR@/@PACKAGE_PREFIX@owcimomd.pid
 
 ################################################################################
 # The following options are deprecated
