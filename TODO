@@ -29,7 +29,6 @@ Fix problems:
     - To avoid permanent deadlocks, change most locks to use a timeout.
       - If a timeout happens, certain places can retry the operation.
     - use DIST_SUBDIRS
-    - Add an option to run as a different user and drop privelidges on startup.
     - Fix problems with OW_DateTime and OW_CIMDateTime
     - Have OW_HTTPClient report contents of CIMError header if present on an 
       HTTP error.
@@ -37,6 +36,12 @@ Fix problems:
       support the latest version(s) of the spec(s).
     - The new redhat pthread_cancel() throws an exception that seems to clobber 
       owcimomd.  Need to figure out how to prevent this from happening.
+      The error printed is: "FATAL: exception not rethrown".
+      Having looked at it, I don't think there is a good way around it since
+      the stack-unwinding is half-baked and can't handle a catch(...) that
+      doesn't re-throw the exception.  A way to avoid the behavior altogether
+      is to set the env var LD_ASSUME_KERNEL=2.4.19 which will use the old
+      LinuxThreads library.
     - Domain socket is only openable by root.
     - Add tests in configure.in for -W flags supported.
 
@@ -73,6 +78,11 @@ New features:
     - Add an option to the CIM Listener to run in single threaded mode.
 
 Post 3.0
+    - rewrite the repository with libdb 3 or 4 with support for transactions
+      and recovery.
+    - Add an option to run as a different user and drop privelidges on startup.
+      This will be dependent on the new repository.  With the current
+      repository it's necessary to open/close it for each operation.
     - associators and references can't return an objectpath, only an instance.
       This won't support cross-cimom associations. Extend the interface to
       handle this. Maybe add the extra information to OW_CIMInstance, or create
