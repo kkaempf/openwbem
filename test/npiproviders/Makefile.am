@@ -1,4 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 
 noinst_LIBRARIES = \
 libsampleprovider.a 
@@ -9,14 +12,6 @@ OW_SHARED_LIBS = \
 libsampleprovider.so 
 
 #libindprovider.so
-
-all-local: $(OW_SHARED_LIBS)
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
 
 #libindprovider_a_SOURCES = \
 #IndProvider.c

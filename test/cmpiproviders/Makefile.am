@@ -1,4 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 
 noinst_LIBRARIES = \
 libcmpiTestProvider.a 
@@ -7,14 +10,6 @@ OW_SHARED_LIBS = \
 libcmpiTestProvider.so 
 
 thelibdir = $(pkglibdir)/cmpiproviders
-
-all-local: $(OW_SHARED_LIBS)
-
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
 
 libcmpiTestProvider_a_SOURCES = \
 cmpiTestProvider.c

@@ -1,18 +1,13 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 
 noinst_LIBRARIES = libindicationtest1.a libindicationtest2.a libindicationtest3.a
 SHAREDLIBADD =
 
 
 OW_SHARED_LIBS = libindicationtest1.so libindicationtest2.so libindicationtest3.so
-
-all-local: $(OW_SHARED_LIBS)
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
 
 libindicationtest1_a_SOURCES = \
 OW_IndicationProviderTest1.cpp
