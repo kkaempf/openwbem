@@ -49,6 +49,18 @@ basically the namespace isn't really unnamed, it's named the same as the file,
 so two files with the same names can have conflicts in the unnamed namespace.
 Also, development headers all end up being installed into the same directory,
 so 2 files cannot have the same name.
+
+Capitalize type and namespace names, but not other names.
+
+All macros must begin with OW_.  Macros should be #undef'd if they are not
+meant to be re-used.
+
+Please be aware of and follow the standard c++ naming rules about identifiers
+that are reserved for implementation purposes.  If you break these rules, you
+run the risk of breaking when compiling on a different compiler or version.
+The rules are:
+Names containing "__" (double underscore) or beginning with "_" are entirely
+forbidden.  This applies to both macros and normal identifiers.
 -----------------------------------------------------------------------------
 Exceptions.
 When to use catch(...).  e.g.:
@@ -123,6 +135,10 @@ use the namespace: "std::cout << std::endl" or to name each item:
 using std::cout;
 using std::endl;
 A few exceptions to the rule are OpenWBEM namespaces such as WBEMFlags.
+This is because we can control what are in them and won't (shouldn't) break
+things by introducing conflicting names.  For other namespaces that are beyond 
+our control we should avoid importing wholesale, because it may introduce
+identifier conflicts when porting or switching to another standard library.
 
 Use unnamed namespaces instead of static function/data.  Try to put new code
 into a namespace, this is especially important for pluggable shared libaries
@@ -153,6 +169,8 @@ use printf/scanf and friends.
 Use std::copy instead of memcpy.
 Use std::fill (or fill_n) instead of memset.
 Use std::sort instead of qsort()
+Use c++ casts (dynamic_cast, static_cast, reinterpret_cast, const_cast)
+instead of old c-style casts.
 See "Four First Steps to Modern C++ Programming" by Andrew Koenig and Barbara
 E. Moo in C/C++ User's Journal Aug. 2003 pp. 49-54 if you have any more
 questions or objections.
@@ -202,3 +220,48 @@ to maintain consistency.
 for x in `find . -name '*.?pp'`; do echo $x; unexpand -4 $x > tmp; mv tmp $x;
 done
 -----------------------------------------------------------------------------
+casts:
+Don't use c-style casts.  If you need to cast something, you should evaluate
+if it's really necessary and why.  Here's some situations where it may be
+necessary to use each:
+
+static_cast - you are converting a number that has an acceptable loss of
+precision or range. You need to help the compiler pick which conversion is
+acceptable.
+
+reinterpret_cast - you are reading or writing data into a generic piece of
+memory to be stored to disk or sent over the network.  Make sure the data is
+in the correct endianness and avoid just writing whole structs as padding
+issues may cause portability and/or interoperability problems.
+
+dynamic_cast - This should generally be avoided in favor of virtual functions,
+so you don't end up with the classic textbook type switch statement.
+Sometimes, however, it does make sense if you need to call a certain function
+on one type which doesn't exist as a virtual function on the base class.  If
+you find this to be the case, evaluate whether it makes sense to move the
+function to the base class.  If it does apply to the hierarchy, then move it,
+otherwise, leave it there and do the dynamic_cast.
+
+const_cast - The only situation I can think where this should be used is when
+interfacing to broken C-apis that should be marked as having const parameters,
+but they don't.  Be careful that the const variable doesn't get modified.
+It's const for a reason!  Sometime you may be tempted to use this in a class
+in a const function to modify a member variable.  If that's the case, then you
+should examine if the function is really a const function, or if the member
+variable should be made mutable.
+-----------------------------------------------------------------------------
+Avoid implicit conversions.  When creating classes all constructors that take
+only 1 argument should usually be marked explicit (the exception is the copy
+constructor, which shouldn't ever be explicit).  Don't write conversion
+operators:
+class myClass {
+public:
+  operator int(); // usually a bad thing to do
+};
+Instead write converter functions:
+class myClass {
+public:
+  int toInt();
+};
+-----------------------------------------------------------------------------
+
