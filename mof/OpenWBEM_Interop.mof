@@ -32,10 +32,29 @@ class OpenWBEM_BinaryCommunicationMechanism : CIM_ObjectManagerCommunicationMech
 	uint16 BinaryProtocolVersion;
 };
 
-class OpenWBEM_CommMechanismForManager : CIM_CommMechanismForManager
-{
-};
 */
+
+// ==================================================================
+// CommMechanismForManager
+// ==================================================================
+   [Association, Description (
+       "OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager is an association between an "
+       "OpenWBEM_ObjectManager and an CIM_CIMXMLCommunicationMechanism "
+       "class. The latter describes a possible encoding/protocol/ set "
+       "of operations for accessing the referenced ObjectManager.")]
+class OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager : CIM_CommMechanismForManager {
+
+      [Override ( "Antecedent" ), Min ( 1 ), Max ( 1 ), Description (
+          "The specific ObjectManager whose communication mechanism is "
+          "described.")]
+   OpenWBEM_ObjectManager REF Antecedent;
+
+      [Override ( "Dependent" ), Min ( 1 ), Description (
+          "The encoding/protocol/set of operations that may be used to "
+          "communicate with the referenced ObjectManager.")]
+   CIM_CIMXMLCommunicationMechanism REF Dependent;
+};
+
 
 class OpenWBEM_UnitaryComputerSystem : CIM_UnitaryComputerSystem
 {

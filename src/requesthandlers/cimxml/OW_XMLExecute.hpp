@@ -163,6 +163,8 @@ private:
 	CIMObjectPath m_commMechPath;
 	// this is the path to the interop instance of CIM_HostedAccessPoint this class manages.
 	CIMObjectPath m_hostedAccessPointPath;
+	// this is the path to the interop instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager this class manages.
+	CIMObjectPath m_commMechForManager;
 };
 
 } // end namespace OpenWBEM

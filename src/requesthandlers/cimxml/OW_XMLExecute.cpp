@@ -165,7 +165,8 @@ XMLExecute::XMLExecute()
 	m_isIntrinsic(false),
 	m_functionName(),
 	m_commMechPath(CIMNULL),
-	m_hostedAccessPointPath(CIMNULL)
+	m_hostedAccessPointPath(CIMNULL),
+	m_commMechForManager(CIMNULL)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1447,7 +1448,6 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
 		
 		CIMClass CIM_CIMXMLCommunicationMechanism(hdl->getClass(interopNS, "CIM_CIMXMLCommunicationMechanism"));
-		CIMClass CIM_HostedAccessPoint(hdl->getClass(interopNS, "CIM_HostedAccessPoint"));
 
 		CIMInstance commMech(CIM_CIMXMLCommunicationMechanism.newInstance());
 
@@ -1551,7 +1551,9 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		m_commMechPath.setNameSpace(interopNS);
 		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of CIM_CIMXMLCommunicationMechanism. Saving path: %1", m_commMechPath.toString()));
 
+		
 		// now create the instance of HostedAccessPoint that associates the commMech with the system
+		CIMClass CIM_HostedAccessPoint(hdl->getClass(interopNS, "CIM_HostedAccessPoint"));
 		CIMInstance hostedAccessPoint(CIM_HostedAccessPoint.newInstance());
 		hostedAccessPoint.updatePropertyValue("Dependent", CIMValue(m_commMechPath));
 
@@ -1562,9 +1564,41 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 
 		hostedAccessPoint.updatePropertyValue("Antecedent", CIMValue(systemPath));
 
+		// create it and save the path so we can delete it at shutdown time.
+		try
+		{
+			// if one was hanging around from before, get rid of it.
+			hdl->deleteInstance(interopNS, CIMObjectPath(interopNS, hostedAccessPoint));
+		}
+		catch (CIMException&)
+		{
+			// just ignore this.
+		}
 		m_hostedAccessPointPath = hdl->createInstance(interopNS, hostedAccessPoint);
 		m_hostedAccessPointPath.setNameSpace(interopNS);
 		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of CIM_HostedAccessPoint. Saving path: %1", m_hostedAccessPointPath.toString()));
+	
+		
+		// now create the instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager that associates the commMech with the OpenWBEM_ObjectManager
+		CIMClass OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager(hdl->getClass(interopNS, "OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager"));
+		CIMInstance commMechForManager(OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager.newInstance());
+		commMechForManager.updatePropertyValue("Dependent", CIMValue(m_commMechPath));
+		commMechForManager.updatePropertyValue("Antecedent", CIMValue(objectManager));
+
+		// create it and save the path so we can delete it at shutdown time.
+		try
+		{
+			// if one was hanging around from before, get rid of it.
+			hdl->deleteInstance(interopNS, CIMObjectPath(interopNS, commMechForManager));
+		}
+		catch (CIMException&)
+		{
+			// just ignore this.
+		}
+		m_commMechForManager = hdl->createInstance(interopNS, commMechForManager);
+		m_commMechForManager.setNameSpace(interopNS);
+		OW_LOG_DEBUG(logger, Format("Sucessfully created instance of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager. Saving path: %1",
+			m_commMechForManager.toString()));
 	}
 	catch (CIMException& e)
 	{
@@ -1576,6 +1610,33 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+void cleanupInteropInstance(const CIMObjectPath& path, const LoggerRef& logger, const ServiceEnvironmentIFCRef& env)
+{
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	if (path)
+	{
+		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
+
+		try
+		{
+			String interopNS(path.getNameSpace());
+			OperationContext context;
+			CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
+			hdl->deleteInstance(interopNS, path);
+		}
+		catch (CIMException& e)
+		{
+			// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
+			OW_LOG_DEBUG(logger, Format("Failed deleting: %1", e));
+		}
+	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+}
+} // end unnamed namespace
+
+//////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::shutdown()
 {
@@ -1585,43 +1646,9 @@ XMLExecute::shutdown()
 	LoggerRef logger(env->getLogger(COMPONENT_NAME));
 	OW_ASSERT(logger);
 
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	if (m_commMechPath)
-	{
-		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_CIMXMLCommunicationMechanism instance");
-
-		try
-		{
-			String interopNS(m_commMechPath.getNameSpace());
-			OperationContext context;
-			CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
-			hdl->deleteInstance(interopNS, m_commMechPath);
-		}
-		catch (CIMException& e)
-		{
-			// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
-			OW_LOG_DEBUG(logger, Format("Failed deleting CIM_CIMXMLCommunicationMechanism: %1", e));
-		}
-	}
-
-	if (m_hostedAccessPointPath)
-	{
-		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_HostedAccessPoint instance");
-
-		try
-		{
-			String interopNS(m_hostedAccessPointPath.getNameSpace());
-			OperationContext context;
-			CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
-			hdl->deleteInstance(interopNS, m_hostedAccessPointPath);
-		}
-		catch (CIMException& e)
-		{
-			// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
-			OW_LOG_DEBUG(logger, Format("Failed deleting CIM_HostedAccessPoint: %1", e));
-		}
-	}
-#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	cleanupInteropInstance(m_commMechPath, logger, env);
+	cleanupInteropInstance(m_hostedAccessPointPath, logger, env);
+	cleanupInteropInstance(m_commMechForManager, logger, env);
 
 	// clear the reference to the environment
 	setEnvironment(ServiceEnvironmentIFCRef());
