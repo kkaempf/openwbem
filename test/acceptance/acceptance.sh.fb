@@ -230,6 +230,7 @@ TestInstalledHeaders()
 	  echo '#include "'"$i"'"' >> $OUTFILE
 	done
 	cat <<EOS >> $OUTFILE
+#include <iostream>
 int main()
 {
 	OW_String toPrint = "Executing Installed Headers Test main()";
