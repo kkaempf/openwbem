@@ -47,6 +47,7 @@
 #include "OW_Socket.hpp"
 #include "OW_Thread.hpp"
 #include "OW_DateTime.hpp"
+
 extern "C"
 {
 #ifdef OW_HAVE_SYS_SELECT_H
@@ -58,14 +59,15 @@ extern "C"
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <netdb.h>
-#include <stdio.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <netinet/in.h>
 }
+
 #include <fstream>
+#include <cerrno>
+#include <cstdio>
 
 namespace OpenWBEM
 {
@@ -189,16 +191,14 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	if ((m_sockfd = ::socket(addr.getType() == SocketAddress::INET ?
 		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(SocketException,
-			Format("Failed to create a socket: %1", strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException,
+			"Failed to create a socket");
 	}
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		::close(m_sockfd);
-		OW_THROW(SocketException, Format("SocketBaseImpl::connect() failed to set "
-			"close-on-exec flag on socket: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::connect() failed to set close-on-exec flag on socket");
 	}
 	int n;
 	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
@@ -209,8 +209,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		if (errno != EINPROGRESS)
 		{
 			::close(m_sockfd);
-			OW_THROW(SocketException,
-				Format("Failed to connect to: %1: %2(%3)", addr.toString(), errno, strerror(errno)).c_str());
+			OW_THROW_ERRNO_MSG(SocketException,
+				Format("Failed to connect to: %1", addr.toString()).c_str());
 		}
 	}
 	if (n == -1)
@@ -267,7 +267,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			{
 				Thread::testCancel();
 			}
-			OW_THROW(SocketException, Format("SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
+			OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::connect() select failed");
 		}
 		if (pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
@@ -282,14 +282,14 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 						&len) < 0)
 			{
 				::close(m_sockfd);
-				OW_THROW(SocketException,
-						Format("SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(SocketException,
+						"SocketBaseImpl::connect() getsockopt() failed");
 			}
 			if (error != 0)
 			{
 				::close(m_sockfd);
-				OW_THROW(SocketException,
-						Format("SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
+				OW_THROW_ERRNO_MSG(SocketException,
+						"SocketBaseImpl::connect() failed");
 			}
 		}
 		else
@@ -348,8 +348,8 @@ SocketBaseImpl::fillInetAddrParms()
 	if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
-//		OW_THROW(SocketException,
-//				Format("SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
+//		OW_THROW_ERRNO_MSG(SocketException,
+//				"SocketBaseImpl::fillInetAddrParms: getsockname");
 	}
 	else
 	{
@@ -359,8 +359,8 @@ SocketBaseImpl::fillInetAddrParms()
 	if (getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
-//		OW_THROW(SocketException,
-//				Format("SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
+//		OW_THROW_ERRNO_MSG(SocketException,
+//				"SocketBaseImpl::fillInetAddrParms: getpeername");
 	}
 	else
 	{
@@ -377,8 +377,7 @@ SocketBaseImpl::fillUnixAddrParms()
 	len = sizeof(addr);
 	if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
-		OW_THROW(SocketException,
-				"SocketBaseImpl::fillUnixAddrParms: getsockname");
+		OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::fillUnixAddrParms: getsockname");
 	}
 	m_localAddress.assignFromNativeForm(&addr, len);
 	m_peerAddress.assignFromNativeForm(&addr, len);
@@ -406,17 +405,17 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
 				}
 				if (!traceFile.write(static_cast<const char*>(dataOut), rc))
 				{
-					OW_THROW(IOException, "Failed writing to socket dump");
+					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 
 				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
 				if (!comboTraceFile)
 				{
-					OW_THROW(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();
@@ -424,7 +423,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(static_cast<const char*>(dataOut), rc))
 				{
-					OW_THROW(IOException, "Failed writing to socket dump");
+					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 			}
 		}
@@ -435,7 +434,7 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 	}
 	if (rc < 0 && errorAsException)
 	{
-		OW_THROW(SocketException, "SocketBaseImpl::write");
+		OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::write");
 	}
 	return rc;
 }
@@ -461,17 +460,17 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW(IOException, "Failed opening tracefile");
+					OW_THROW_ERRNO_MSG(IOException, "Failed opening tracefile");
 				}
 				if (!traceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
-					OW_THROW(IOException, "Failed writing to socket dump");
+					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 
 				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
 				if (!comboTraceFile)
 				{
-					OW_THROW(IOException, "Failed opening socket dump file");
+					OW_THROW_ERRNO_MSG(IOException, "Failed opening socket dump file");
 				}
 				DateTime curDateTime;
 				curDateTime.setToCurrent();
@@ -479,7 +478,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 					'.' << curDateTime.getMicrosecond() << "<---\n";
 				if (!comboTraceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
-					OW_THROW(IOException, "Failed writing to socket dump");
+					OW_THROW_ERRNO_MSG(IOException, "Failed writing to socket dump");
 				}
 			}
 		}
@@ -492,7 +491,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	{
 		if (errorAsException)
 		{
-			OW_THROW(SocketException, "SocketBaseImpl::read");
+			OW_THROW_ERRNO_MSG(SocketException, "SocketBaseImpl::read");
 		}
 	}
 	return rc;
