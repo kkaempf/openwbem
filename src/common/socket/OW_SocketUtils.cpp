@@ -374,27 +374,19 @@ String getFullyQualifiedHostName()
 	}
 	else
 	{
-		strcpy(ipaddrstr, 
-			inet_ntoa(*(struct in_addr*) (hostentp->h_addr_list[0])));
-		iaHost.s_addr = inet_addr(ipaddrstr);
-		if(iaHost.s_addr == INADDR_NONE)
-		{
-			// Use the IP addr as the DNS name
-			rv = ipaddrstr;
-		}
-		else
+		rv = inet_ntoa(*(struct in_addr*) (hostentp->h_addr_list[0]));
+		iaHost.s_addr = inet_addr(rv.c_str());
+		if(iaHost.s_addr != INADDR_NONE)
 		{
 			hostentp = gethostbyaddr((const char*)&iaHost,
 				sizeof(struct in_addr), AF_INET);
-			if(!hostentp)
+			if(hostentp)
 			{
-				// Use the IP addr as the DNS name
-				rv = ipaddrstr;
-			}
-			else
-			{
-				// GOT IT
-				rv = hostentp->h_name;
+				if(strchr(hostentp->h_name, '.'))
+				{
+					// GOT IT
+					rv = hostentp->h_name;
+				}
 			}
 		}
 	}

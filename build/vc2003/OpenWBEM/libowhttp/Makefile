@@ -77,7 +77,7 @@ COMMONOBJS = \
 CLIENTOBJS = \
 	$(OBJDIR)\OW_HTTPClient.obj
 
-$(TARGETDIR)\$(TARGET): $(TARGETDIR) $(COMMONOBJS) $(CLIENTOBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CLIENTOBJS) $(MAP2DEF)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(COMMONOBJS) $(CLIENTOBJS) $(LIBS)
@@ -88,13 +88,16 @@ $(TARGETDIR)\$(TARGET): $(TARGETDIR) $(COMMONOBJS) $(CLIENTOBJS) $(MAP2DEF)
 		$(COMMONOBJS) $(CLIENTOBJS) $(LIBS)
 
 clean:
-	del $(OBJDIR)\*.obj
-	del $(OBJDIR)\*.map
-	del $(OBJDIR)\*.def
-	del $(OBJDIR)\*.dll
+	-@del $(OBJDIR)\*.obj
+	-@del $(OBJDIR)\*.map
+	-@del $(OBJDIR)\*.def
+	-@del $(OBJDIR)\*.dll
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
+
+$(OBJDIR):
+	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
 
 $(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
 	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib

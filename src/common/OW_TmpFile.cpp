@@ -60,45 +60,83 @@ namespace OpenWBEM
 
 namespace {
 
+#ifndef OW_WIN32
 inline int
 closeFile(int fd)
 {
-#if defined(OW_WIN32)
-	return ::_close(fd);
-#else
 	return ::close(fd);
-#endif
 }
+
+inline String
+getLastErrorMsg()
+{
+	return String(::strerror(errno));
+}
+
+#else
+inline int
+closeFile(HANDLE fh)
+{
+	return CloseHandle(fh) ? 0 : -1;
+}
+
+String
+getLastErrorMsg()
+{
+	LPVOID lpMsgBuf;
+	if (!::FormatMessage( 
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				FORMAT_MESSAGE_FROM_SYSTEM | 
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				::GetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+				(LPTSTR) &lpMsgBuf,
+				0,
+				NULL ))
+	{
+		return OpenWBEM::String();
+	}
+
+	OpenWBEM::String rmsg((const char*)lpMsgBuf);
+
+	// Free the buffer.
+	::LocalFree(lpMsgBuf);
+	return rmsg;
+}
+#endif
 
 }	// end of unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 TmpFileImpl::TmpFileImpl()
 	: m_filename(NULL)
-	, m_hdl(-1)
+	, m_hdl(OW_INVALID_FILEHANDLE)
 {
 	open();
 }
 //////////////////////////////////////////////////////////////////////////////
 TmpFileImpl::TmpFileImpl(String const& filename)
 	: m_filename(NULL)
-	, m_hdl(-1)
+	, m_hdl(OW_INVALID_FILEHANDLE)
 {
 	size_t len = filename.length();
 	m_filename = new char[len + 1];
 	::strncpy(m_filename, filename.c_str(), len);
 	m_filename[len] = '\0';
 #if defined(OW_WIN32)
-	m_hdl = ::_open(m_filename, _O_RDWR);
+	m_hdl = CreateFile(filename.c_str(), GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, NULL);
 #else
 	m_hdl = ::open(m_filename, O_RDWR);
 #endif
-	if (m_hdl == -1)
+	if (m_hdl == OW_INVALID_FILEHANDLE)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
 		OW_THROW(IOException, Format("Error opening file %1: %2", filename,
-			::strerror(errno)).c_str());
+			getLastErrorMsg()).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -106,15 +144,61 @@ TmpFileImpl::~TmpFileImpl()
 {
 	close();
 }
+
+#ifdef OW_WIN32
+//////////////////////////////////////////////////////////////////////////////
+int 
+TmpFileImpl::seek(long offset, int whence)
+{ 
+	DWORD moveMethod;
+	switch(whence)
+	{
+		case SEEK_END: moveMethod = FILE_END; break;
+		case SEEK_CUR: moveMethod = FILE_CURRENT; break;
+		default: moveMethod = FILE_BEGIN; break;
+	}
+	return (int) SetFilePointer(m_hdl, (LONG)offset, NULL, moveMethod);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+long 
+TmpFileImpl::tell()
+{ 
+	return (long) SetFilePointer(m_hdl, 0L, NULL, FILE_CURRENT);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+TmpFileImpl::rewind()
+{ 
+	SetFilePointer(m_hdl, 0L, NULL, FILE_BEGIN);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int 
+TmpFileImpl::flush()
+{
+	if(m_hdl != OW_INVALID_FILEHANDLE)
+	{
+		FlushFileBuffers(m_hdl);
+	}
+	return 0;
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 long
 TmpFileImpl::getSize()
 {
+#ifdef OW_WIN32
+	return (long) GetFileSize(m_hdl, NULL);
+#else
 	long cv = tell();
 	seek(0L, SEEK_END);
 	long rv = tell();
 	seek(cv, SEEK_SET);
 	return rv;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 #if defined(OW_WIN32)
@@ -122,26 +206,31 @@ void
 TmpFileImpl::open()
 {
 	close();
-	char* p = ::_tempnam(NULL, "owtempfile");
-	if (p == NULL)
+	
+	char bfr[MAX_PATH];
+	if(!GetTempFileName(".", "owtempfile", 0, bfr))
 	{
-		OW_THROW(IOException, "Error generating file with _tempnam");
+		OW_THROW(IOException,
+			Format("Error generating temp file name: %1",
+				getLastErrorMsg()).c_str());
 	}
 
-	size_t len = ::strlen(p);
+	size_t len = ::strlen(bfr);
 	m_filename = new char[len + 1];
-	::strncpy(m_filename, p, len);
+	::strncpy(m_filename, bfr, len);
 	m_filename[len] = '\0';
-	::free(p);					// Free memory allocated by _tempnam
+	
 	static Mutex tmpfileMutex;
 	MutexLock tmpfileML(tmpfileMutex);
-	m_hdl = ::_open(m_filename, _O_WRONLY | _O_CREAT, _S_IREAD | _S_IWRITE );
-	if (m_hdl == -1)
+	m_hdl = CreateFile(m_filename, GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	if (m_hdl == INVALID_HANDLE_VALUE)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(IOException, Format("Error opening file from _tempnam: %1", 
-			::strerror(errno)).c_str());
+		OW_THROW(IOException, Format("Error opening temp file %1: %2", 
+			bfr, getLastErrorMsg()).c_str());
 	}
 }
 #else
@@ -160,11 +249,7 @@ TmpFileImpl::open()
 	m_filename[len] = '\0';
 	static Mutex tmpfileMutex;
 	MutexLock tmpfileML(tmpfileMutex);
-#ifdef OW_WIN32
-	m_hdl = -1;
-#else
 	m_hdl = mkstemp(m_filename);
-#endif
 	if (m_hdl == -1)
 	{
 		delete[] m_filename;
@@ -180,17 +265,17 @@ int
 TmpFileImpl::close()
 {
 	int rv = -1;
-	if (m_hdl != -1)
+	if (m_hdl != OW_INVALID_FILEHANDLE)
 	{
 		rv = closeFile(m_hdl);
 #if defined(OW_WIN32)
-		_unlink(m_filename);
+		DeleteFile(m_filename);
 #else
 		remove(m_filename);
 #endif
 		delete [] m_filename;
 		m_filename = NULL;
-		m_hdl = -1;
+		m_hdl = OW_INVALID_FILEHANDLE;
 	}
 	return rv;
 }
@@ -207,7 +292,13 @@ TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 		seek(offset, SEEK_SET);
 	}
 #if defined(OW_WIN32)
-	return ::_read(m_hdl, bfr, numberOfBytes);
+	DWORD bytesRead;
+	size_t cc = (size_t)-1;
+	if(ReadFile(m_hdl, bfr, (DWORD)numberOfBytes, &bytesRead, NULL))
+	{
+		cc = (size_t)bytesRead;
+	}
+	return cc;
 #else
 	return ::read(m_hdl, bfr, numberOfBytes);
 #endif
@@ -225,22 +316,28 @@ TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 		seek(offset, SEEK_SET);
 	}
 #if defined(OW_WIN32)
-	int rv = ::_write(m_hdl, bfr, numberOfBytes);
+	DWORD bytesWritten;
+	int rv = -1;
+	if(WriteFile(m_hdl, bfr, (DWORD)numberOfBytes, &bytesWritten, NULL))
+	{
+		rv = (int)bytesWritten;
+	}
+	return rv;
 #else
 	int rv = ::write(m_hdl, bfr, numberOfBytes);
-#endif
 	if (rv == -1)
 	{
 		perror("TmpFile::write()");
 	}
 	return rv;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 TmpFileImpl::releaseFile()
 {
 	String rval(m_filename);
-	if (m_hdl != -1)
+	if (m_hdl != OW_INVALID_FILEHANDLE) 
 	{
 		if (closeFile(m_hdl) == -1)
 		{
@@ -250,7 +347,7 @@ TmpFileImpl::releaseFile()
 		// caller
 		delete [] m_filename;
 		m_filename = NULL;
-		m_hdl = -1;
+		m_hdl = OW_INVALID_FILEHANDLE;
 	}
 	return rval;
 }

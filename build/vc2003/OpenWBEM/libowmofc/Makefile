@@ -57,7 +57,7 @@ OBJS = \
 	$(OBJDIR)\OW_MOFParser.obj \
 	$(OBJDIR)\OW_MOFLexer.obj
 
-$(TARGETDIR)\$(TARGET): $(TARGETDIR) $(OBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) $(MAP2DEF)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
@@ -78,6 +78,9 @@ clean:
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
+
+$(OBJDIR):
+	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
 
 $(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
 	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib

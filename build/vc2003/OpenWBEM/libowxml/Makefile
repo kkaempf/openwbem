@@ -75,7 +75,7 @@ OBJS = \
 	$(OBJDIR)\OW_XMLQualifier.obj \
 	$(OBJDIR)\OW_XMLUnescape.obj
 
-$(TARGETDIR)\$(TARGET): $(TARGETDIR) $(OBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) $(MAP2DEF)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libowxml.lib" $(OBJS) $(LIBS)
@@ -86,13 +86,17 @@ $(TARGETDIR)\$(TARGET): $(TARGETDIR) $(OBJS) $(MAP2DEF)
 		$(OBJS) $(LIBS)
 
 clean:
-	del $(OBJDIR)\*.obj
-	del $(OBJDIR)\*.map
-	del $(OBJDIR)\*.def
-	del $(OBJDIR)\*.dll
+	-@del $(OBJDIR)\*.obj
+	-@del $(OBJDIR)\*.map
+	-@del $(OBJDIR)\*.def
+	-@del $(OBJDIR)\*.dll
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
+
+
+$(OBJDIR):
+	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
 
 $(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
 	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib

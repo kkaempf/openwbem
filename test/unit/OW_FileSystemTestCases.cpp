@@ -66,10 +66,10 @@ void OW_FileSystemTestCases::testgetLock()
 
 void OW_FileSystemTestCases::testtryLock()
 {
-#ifndef OW_WIN32	// no fork :(
 	File f = FileSystem::openFile("Makefile");
 	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
+#ifndef OW_WIN32	// no fork :(
 	// the lock is recursive, meaning to get a block, we've got to try to
 	// acquire it from another process.  So fork()
 	int rval = 0;
@@ -103,11 +103,11 @@ void OW_FileSystemTestCases::testtryLock()
 
 void OW_FileSystemTestCases::testunlock()
 {
-#ifndef OW_WIN32	// no fork :(
 	File f = FileSystem::openFile("Makefile");
 	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
 	unitAssert( f.unlock() == 0 );
+#ifndef OW_WIN32	// no fork :(
 	// the lock is recursive, meaning to get a block, we've got to try to
 	// acquire it from another process.  So fork()
 	int rval = 0;

@@ -57,18 +57,20 @@ public:
 	~TmpFileImpl();
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L);
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L);
+
 #ifdef OW_WIN32
-	int seek(long offset, int whence=SEEK_SET)
-		{ return ::_lseek(m_hdl, offset, whence); }
-	long tell() { return ::_lseek(m_hdl, 0, SEEK_CUR); }
-	void rewind() { ::_lseek(m_hdl, 0, SEEK_SET); }
+	int seek(long offset, int whence=SEEK_SET);
+	long tell();
+	void rewind();
+	int flush();
 #else
 	int seek(long offset, int whence=SEEK_SET)
 		{ return ::lseek(m_hdl, offset, whence); }
 	long tell() { return ::lseek(m_hdl, 0, SEEK_CUR); }
 	void rewind() { ::lseek(m_hdl, 0, SEEK_SET); }
-#endif
 	int flush() { return 0; }
+#endif
+
 	void newFile() { open(); }
 	long getSize();
 	String releaseFile();
@@ -78,8 +80,13 @@ private:
 	TmpFileImpl(const TmpFileImpl& arg);	// Not implemented
 	TmpFileImpl& operator= (const TmpFileImpl& arg);	// Not implemented
 	char* m_filename;
+#ifndef OW_WIN32
 	int m_hdl;
+#else
+	HANDLE m_hdl;
+#endif
 };
+
 class TmpFile
 {
 public:
