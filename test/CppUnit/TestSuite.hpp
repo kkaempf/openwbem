@@ -36,15 +36,7 @@
 
 #include "Test.hpp"
 
-#ifdef OW_NEW
-#undef new
-#endif
-
 #include <vector>
-
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 
 class TestResult;
 

@@ -31,14 +31,8 @@
 #define OW_MAP_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
-#ifdef OW_NEW
-#undef new
-#endif
 #include <map>
 #include <functional>
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 
 namespace OpenWBEM
 {

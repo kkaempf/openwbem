@@ -208,7 +208,7 @@ checkSigs(void* p, size_t sz)
 	assert(sz);
 	assert(p);
 	unsigned long* plong = (unsigned long*)((char*)p - 4);
-	if(*plong != MEM_SIG)
+	if(*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "UNDERRUN: Beginning boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -216,7 +216,7 @@ checkSigs(void* p, size_t sz)
 		assert(0);
 	}
 	plong = (unsigned long*)((char*)p + sz);
-	if(*plong != MEM_SIG)
+	if(*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "OVERRUN: Ending boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
@@ -233,21 +233,21 @@ checkAndSwitchSigs(void* p, size_t sz)
 	assert(sz);
 	assert(p);
 	unsigned long* plong = (unsigned long*)((char*)p - 4);
-	if(*plong != MEM_SIG)
+	if(*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "UNDERRUN: Beginning boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
 		assert(0);
 	}
-	*plong = FREE_MEM_SIG;
+	*plong = OW_FREE_MEM_SIG;
 	plong = (unsigned long*)((char*)p + sz);
-	if(*plong != MEM_SIG)
+	if(*plong != OW_MEM_SIG)
 	{
 		fprintf(stderr, "OVERRUN: Ending boundary problem.  "
 			"Sig is %x\n", (unsigned int)*plong);
 		assert(0);
 	}
-	*plong = FREE_MEM_SIG;
+	*plong = OW_FREE_MEM_SIG;
 	return (void*)((char*)p - 4);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -310,12 +310,12 @@ MemTracer::remove(void* p)
 	{
 		fprintf(stderr, "Trying to check beginning signature...\n");
 		unsigned long* plong = (unsigned long*)((char*)p - 4);
-		if(*plong == MEM_SIG)
+		if(*plong == OW_MEM_SIG)
 		{
 			fprintf(stderr, "MemTracer is broken\n");
 			assert(0);
 		}
-		if(*plong == FREE_MEM_SIG)
+		if(*plong == OW_FREE_MEM_SIG)
 		{
 			fprintf(stderr, "DOUBLE DELETE: This memory was previously freed by MemTracer, "
 				"probably double delete\n");
@@ -380,9 +380,9 @@ static void
 writeSigs(void *& p, size_t size)
 {
 	unsigned long* plong = (unsigned long*)p;
-	*plong = MEM_SIG;
+	*plong = OW_MEM_SIG;
 	plong = (unsigned long*)((char*)p + size + 4);
-	*plong = MEM_SIG;
+	*plong = OW_MEM_SIG;
 	p = (void*)((char*)p + 4);
 }
 static int internalNewCount = 0;

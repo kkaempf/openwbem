@@ -30,6 +30,7 @@
 #ifndef OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else

@@ -33,14 +33,8 @@
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_IstreamBufIterator.hpp"
-#ifdef OW_NEW
-#undef new
-#endif
 #include <stack>
 #include <iosfwd>
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 
 namespace OpenWBEM
 {

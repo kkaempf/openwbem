@@ -34,13 +34,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
-#ifdef OW_NEW
-#undef new
-#endif
 #include <vector>
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 
 namespace OpenWBEM
 {

@@ -242,9 +242,6 @@ CIMValue::readObject(istream &istrm)
 	}
 	m_impl->readObject(istrm);
 }
-#ifdef OW_NEW
-#undef new
-#endif
 //////////////////////////////////////////////////////////////////////////////
 CIMValue::CIMValue(CIMNULL_t)
 	: CIMBase(), m_impl(0) { }

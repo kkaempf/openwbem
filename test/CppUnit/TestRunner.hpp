@@ -33,17 +33,9 @@
 
 #include "Test.hpp"
 
-#ifdef OW_NEW
-#undef new
-#endif 
-
 #include <vector>  // for vector
 #include <string>  // for string
 #include <utility> // for pair
-
-#ifdef OW_NEW
-#define new OW_NEW
-#endif 
 
 
 typedef std::pair<std::string, Test *>           mapping;

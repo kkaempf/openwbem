@@ -31,15 +31,19 @@
 #define OW_MEMTRACER_HPP_INCLUDE_GUARD_
 #ifdef __cplusplus
 #ifdef OW_DEBUG_MEMORY
-void* operator new(unsigned int size);
-void* operator new[](unsigned int size);
-void* operator new(unsigned int size, char const* file, int line);
-void* operator new[](unsigned int size, char const* file, int line);
+
+#include <new> // for std::bad_alloc
+
+void* operator new(unsigned int size) throw (std::bad_alloc);
+void* operator new[](unsigned int size) throw (std::bad_alloc);
+void* operator new(unsigned int size, char const* file, int line) throw (std::bad_alloc);
+void* operator new[](unsigned int size, char const* file, int line) throw (std::bad_alloc);
 void operator delete(void* p);
 void operator delete[](void* p);
 #ifndef OW_MEMTRACER_CPP_INCLUDE_GUARD_
-#define OW_NEW new(__FILE__, __LINE__)
-#define new OW_NEW
+// This is too problematic.
+//#define OW_NEW new(__FILE__, __LINE__)
+//#define new OW_NEW
 #endif
 #endif	// OW_DEBUG_MEMORY
 #endif // __cplusplus

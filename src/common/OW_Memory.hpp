@@ -76,9 +76,6 @@ inline void destroy(UInt64* /*items*/, UInt32 /*size*/) {  }
 inline void destroy(Int64* /*items*/, UInt32 /*size*/) {  }
 inline void destroy(Real32* /*items*/, UInt32 /*size*/) {  }
 inline void destroy(Real64* /*items*/, UInt32 /*size*/) {  }
-#ifdef OW_NEW
-#undef new
-#endif
 template<class T, class U>
 inline void copyToRaw(T* to, const U* from, UInt32 size)
 {
@@ -95,9 +92,6 @@ inline void initializeRaw(T* items, UInt32 size)
 		new(items++) T();
 	}
 }
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 inline void copyToRaw(bool* to, const bool* from, UInt32 size)
 {
 	::memcpy(to, from, sizeof(bool) * size);

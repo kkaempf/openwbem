@@ -31,13 +31,7 @@
 #define OW_LIST_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
-#ifdef OW_NEW
-#undef new
-#endif
 #include <list>
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
 
 namespace OpenWBEM
 {
