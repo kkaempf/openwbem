@@ -61,13 +61,13 @@ class DateTime;
  *
  *	Where
  *
- *	    yyyy = year (00000-9999)
+ *	    yyyy = year (0000-9999)
  *	    mm = month (01-12)
  *	    dd = day (01-31)
  *	    hh = hour (00-23)
  *	    mm = minute (00-59)
  *	    ss = second (00-60) normally 59, but a leap second may be present
- *	    mmmmmm = microseconds.
+ *	    mmmmmm = microseconds (0-999999).
  *	    s = '+' or '-' to represent the UTC sign.
  *	    utc = UTC offset (same as GMT offset).  
  *                utc is the offset from UTC in minutes. It's worth noting that
@@ -180,37 +180,45 @@ public:
 	CIMDateTime& operator= (const CIMDateTime& arg);
 	/**
 	 * @return The year component of this CIMDateTime object as an UInt16.
+	 * Range (0-9999)
 	 */
 	UInt16 getYear() const {  return m_dptr->m_year; }
 	/**
-	 * @return The monthr component of this CIMDateTime object as an UInt8.
+	 * @return The month component of this CIMDateTime object as an UInt8.
+	 * Range (1-12)
 	 */
 	UInt8 getMonth() const {  return m_dptr->m_month; }
 	/**
 	 * @return The days component of this CIMDateTime object as an UInt32.
+	 * Range (1-31)
 	 */
 	UInt32 getDays() const {  return m_dptr->m_days; }
 	/**
 	 * @return The day component of this CIMDateTime object as an UInt32.
+	* Range (1-31)
 	 */
 	UInt32 getDay() const {  return m_dptr->m_days; }
 	/**
 	 * @return The hours component of this CIMDateTime object as an UInt8.
+	 * Range (0-23)
 	 */
 	UInt8 getHours() const {  return m_dptr->m_hours; }
 	/**
 	 * @return The minutes component of this CIMDateTime object as an
 	 * UInt8.
+	 * Range (0-59)
 	 */
 	UInt8 getMinutes() const {  return m_dptr->m_minutes; }
 	/**
 	 * @return The seconds component of this CIMDateTime object as an
 	 * UInt8.
+	 * Range (0-60) - 60 in the case of a leap second
 	 */
 	UInt8 getSeconds() const {  return m_dptr->m_seconds; }
 	/**
 	 * @return The microseconds component of this CIMDateTime object as an
 	 * UInt32.
+	 * Range (0-999999)
 	 */
 	UInt32 getMicroSeconds() const {  return m_dptr->m_microSeconds; }
 	/**
@@ -235,49 +243,49 @@ public:
 			{  return equal(arg); }
 	/**
 	 * Set the year component of the CIMDateTime object.
-	 * @param arg The new year for this object.
+	 * @param arg The new year for this object. Valid values are 0-9999
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setYear(UInt16 arg);
 	/**
 	 * Set the month component of the CIMDateTime object.
-	 * @param arg The new month for this object.
+	 * @param arg The new month for this object. Valid values are 1-12
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setMonth(UInt8 arg);
 	/**
 	 * Set the days component of the CIMDateTime object.
-	 * @param arg The new days value for this object.
+	 * @param arg The new days value for this object. Valid values are 1-31
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setDays(UInt32 arg);
 	/**
 	 * Set the day component of the CIMDateTime object.
-	 * @param arg The new day for this object.
+	 * @param arg The new day for this object. Valid values are 1-31
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setDay(UInt32 arg);
 	/**
 	 * Set the hours component of the CIMDateTime object.
-	 * @param arg The new hours value for this object.
+	 * @param arg The new hours value for this object. Valid values are 0-23
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setHours(UInt8 arg);
 	/**
 	 * Set the minutes component of the CIMDateTime object.
-	 * @param arg The new minutes value for this object.
+	 * @param arg The new minutes value for this object. Valid values are 0-59
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setMinutes(UInt8 arg);
 	/**
 	 * Set the seconds component of the CIMDateTime object.
-	 * @param arg The new seconds value for this object.
+	 * @param arg The new seconds value for this object. Valid values are 0-60 (60 only for minutes that have leap seconds)
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setSeconds(UInt8 arg);
 	/**
 	 * Set the microseconds component of the CIMDateTime object.
-	 * @param arg The new microseconds value for this object.
+	 * @param arg The new microseconds value for this object. Valid values are 0-999999
 	 * @return a reference to *this
 	 */
 	CIMDateTime& setMicroSeconds(UInt32 arg);
@@ -292,6 +300,10 @@ public:
 	 * of CIM date time.
 	 */
 	bool isInterval() const {  return bool(m_dptr->m_isInterval != 0);}
+	/**
+	 * @param val bool indicating whether this is an interval
+	 */
+	void setInterval(bool val) { m_dptr->m_isInterval = val; }
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
