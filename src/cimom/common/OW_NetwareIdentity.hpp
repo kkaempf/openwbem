@@ -31,11 +31,10 @@
 #ifndef __OW_NETWAREIDENTITY_HPP__
 #define __OW_NETWAREIDENTITY_HPP__
 
-#ifdef OW_NETWARE
-
-#define NOVELL_IDENTITY_KEY "NoVeLlIdEnTiTyKeY"
-
 #include "OW_config.h"
+
+#ifdef OW_NETWARE
+#define NOVELL_IDENTITY_KEY "NoVeLlIdEnTiTyKeY"
 #include "OW_OperationContext.hpp"
 #include "OW_String.hpp"
 

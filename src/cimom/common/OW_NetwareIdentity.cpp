@@ -27,9 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifdef OW_NETWARE
 
 #include "OW_config.h"
+
+#ifdef OW_NETWARE
+
 #include "OW_NetwareIdentity.hpp"
 
 #include <iostream>

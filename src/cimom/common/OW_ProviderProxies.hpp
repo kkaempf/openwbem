@@ -42,6 +42,9 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_SecondaryInstanceProviderIFC.hpp"
+#ifdef OW_NETWARE
+#include "OW_NetwareIdentity.hpp"
+#endif
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -109,8 +112,12 @@ public:
 	
 private:
 	InstanceProviderIFCRef m_pProv;
+#if defined(OW_GNU_LINUX)
 	uid_t m_cimomuid;
 	uid_t m_useruid;
+#elif defined(OW_NETWARE)
+	NetwareIdentityRef m_nwi; 
+#endif
 };
 
 class SecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
@@ -127,8 +134,12 @@ public:
 
 private:
 	SecondaryInstanceProviderIFCRef m_pProv;
+#if defined(OW_GNU_LINUX)
 	uid_t m_cimomuid;
 	uid_t m_useruid;
+#elif defined(OW_NETWARE)
+	NetwareIdentityRef m_nwi; 
+#endif
 };
 
 class MethodProviderProxy : public MethodProviderIFC
@@ -147,8 +158,12 @@ public:
 
 private:
 	MethodProviderIFCRef m_pProv;
+#if defined(OW_GNU_LINUX)
 	uid_t m_cimomuid;
 	uid_t m_useruid;
+#elif defined(OW_NETWARE)
+	NetwareIdentityRef m_nwi; 
+#endif
 };
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -202,8 +217,12 @@ public:
 private:
 
 	AssociatorProviderIFCRef m_pProv;
+#if defined(OW_GNU_LINUX)
 	uid_t m_cimomuid;
 	uid_t m_useruid;
+#elif defined(OW_NETWARE)
+	NetwareIdentityRef m_nwi; 
+#endif
 };
 #endif	// OW_DISABLE_ASSOCIATION_TRAVERSAL
 

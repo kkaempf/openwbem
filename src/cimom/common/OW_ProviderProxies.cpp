@@ -70,8 +70,19 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
+#if defined(OW_GNU_LINUX)
+#define RUID_MANAGER_FACTORY RUIDManager um(m_cimomuid, m_useruid)
+#define UID_MANAGER_FACTORY  UIDManager um(m_useruid, m_cimomuid)
+#define PROXY_ENV_FACTORY    proxyEnv(env, m_cimomuid, m_useruid)
+#elif defined(OW_NETWARE)
+#define RUID_MANAGER_FACTORY RUIDManager um(m_nwi)
+#define UID_MANAGER_FACTORY  UIDManager um(m_nwi)
+#define PROXY_ENV_FACTORY    proxyEnv(env, m_nwi)
+#endif
+
 namespace
 {
+#if defined (OW_GNU_LINUX)
 	class UIDManager
 	{
 	public:
@@ -79,22 +90,18 @@ namespace
 			: m_resetUid(resetUid)
 			, m_uidsDiffer(tempUid != resetUid)
 		{
-#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::seteuid(tempUid);
 			}
-#endif
 		}
 
 		~UIDManager()
 		{
-#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::setuid(m_resetUid);
 			}
-#endif
 		}
 		
 	private:
@@ -109,45 +116,85 @@ namespace
 			: m_resetUid(resetUid)
 			, m_uidsDiffer(tempUid != resetUid)
 		{
-#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::setuid(tempUid);
 			}
-#endif
 		}
 
 		~RUIDManager()
 		{
-#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::seteuid(m_resetUid);
 			}
-#endif
 		}
 		
 	private:
 		uid_t m_resetUid;
 		bool m_uidsDiffer;
 	};
+#elif defined (OW_NETWARE)
+	class UIDManager
+	{
+	public:
+		UIDManager(NetwareIdentityRef nwi)
+			: m_nwi(nwi)
+		{
+			m_nwi->setContextToUser(); 
+		}
+
+		~UIDManager()
+		{
+			m_nwi->setContextToAdmin(); 
+		}
+		
+	private:
+		NetwareIdentityRef m_nwi; 
+	};
+
+	class RUIDManager
+	{
+	public:
+		RUIDManager(NetwareIdentityRef nwi)
+			: m_nwi(nwi)
+		{
+			m_nwi->setContextToAdmin(); 
+		}
+
+		~RUIDManager()
+		{
+			m_nwi->setContextToUser(); 
+		}
+		
+	private:
+		NetwareIdentityRef m_nwi; 
+	};
+#endif
 
 
 	class ProxyCIMOMHandle : public CIMOMHandleIFC
 	{
 	public:
 
+#if defined(OW_GNU_LINUX)
 		ProxyCIMOMHandle(CIMOMHandleIFCRef ch, uid_t cimomuid, uid_t useruid)
 			: CIMOMHandleIFC()
 			, m_ch(ch)
 			, m_cimomuid(cimomuid)
 			, m_useruid(useruid)
+#elif defined (OW_NETWARE)
+		ProxyCIMOMHandle(CIMOMHandleIFCRef ch, NetwareIdentityRef nwi)
+			: CIMOMHandleIFC()
+			, m_ch(ch)
+			, m_nwi(nwi)
+#endif
 		{
 		}
 
 		virtual void close()
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->close();
 		}
 
@@ -156,7 +203,7 @@ namespace
 			ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->enumClass(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin);
 		}
@@ -164,7 +211,7 @@ namespace
 		virtual void enumClassNames(const String& ns, const String& className,
 			StringResultHandlerIFC& result, EDeepFlag deep)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->enumClassNames(ns, className, result, deep);
 		}
 
@@ -175,7 +222,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->enumInstances(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -183,7 +230,7 @@ namespace
 		virtual void enumInstanceNames(const String& ns,
 			const String& className, CIMObjectPathResultHandlerIFC& result)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->enumInstanceNames(ns, className, result);
 		}
 
@@ -192,7 +239,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->getClass(ns, className, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -203,7 +250,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->getInstance(ns, instanceName, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -212,7 +259,7 @@ namespace
 			const CIMObjectPath& path, const String& methodName,
 			const CIMParamValueArray& inParams, CIMParamValueArray& outParams)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->invokeMethod(ns, path, methodName, inParams,
 				outParams);
 		}
@@ -220,7 +267,7 @@ namespace
 		virtual CIMQualifierType getQualifierType(const String& ns,
 			const String& qualifierName)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->getQualifierType(ns, qualifierName);
 		}
 
@@ -229,34 +276,34 @@ namespace
 		virtual void setQualifierType(const String& ns,
 			const CIMQualifierType& qualifierType)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->setQualifierType(ns, qualifierType);
 		}
 
 		virtual void deleteQualifierType(const String& ns,
 			const String& qualName)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->deleteQualifierType(ns, qualName);
 		}
 
 		virtual void enumQualifierTypes(const String& ns,
 			CIMQualifierTypeResultHandlerIFC& result)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->enumQualifierTypes(ns, result);
 		}
 
 		virtual CIMQualifierTypeEnumeration enumQualifierTypesE(
 			const String& ns)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->enumQualifierTypesE(ns);
 		}
 
 		virtual CIMQualifierTypeArray enumQualifierTypesA(const String& ns)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->enumQualifierTypesA(ns);
 		}
 
@@ -266,19 +313,19 @@ namespace
 
 		virtual void modifyClass(const String& ns, const CIMClass& cimClass)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->modifyClass(ns, cimClass);
 		}
 
 		virtual void createClass(const String& ns, const CIMClass& cimClass)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->createClass(ns, cimClass);
 		}
 
 		virtual void deleteClass(const String& ns, const String& className)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->deleteClass(ns, className);
 		}
 
@@ -291,7 +338,7 @@ namespace
 			EIncludeQualifiersFlag includeQualifiers,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->modifyInstance(ns, modifiedInstance, includeQualifiers,
 				propertyList);
 		}
@@ -299,14 +346,14 @@ namespace
 		virtual CIMObjectPath createInstance(const String& ns,
 			const CIMInstance& instance)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->createInstance(ns, instance);
 		}
 
 		virtual void deleteInstance(const String& ns,
 			const CIMObjectPath& path)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->deleteInstance(ns, path);
 		}
 
@@ -315,7 +362,7 @@ namespace
 			const CIMObjectPath& instanceName, const String& propertyName,
 			const CIMValue& newValue)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->setProperty(ns, instanceName, propertyName, newValue);
 		}
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -327,7 +374,7 @@ namespace
 		virtual CIMValue getProperty(const String& ns,
 			const CIMObjectPath& instanceName, const String& propertyName)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->getProperty(ns, instanceName, propertyName);
 		}
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -340,7 +387,7 @@ namespace
 			const String& resultClass, const String& role,
 			const String& resultRole)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->associatorNames(ns, objectName, result, assocClass,
 				resultClass, role, resultRole);
 		}
@@ -355,7 +402,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->associators(ns, path, result, assocClass, resultClass,
 				role, resultRole, includeQualifiers, includeClassOrigin,
 				propertyList);
@@ -369,7 +416,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->associatorsClasses(ns, path, result, assocClass, resultClass,
 				role, resultRole, includeQualifiers, includeClassOrigin,
 				propertyList);
@@ -379,7 +426,7 @@ namespace
 			CIMObjectPathResultHandlerIFC& result, const String& resultClass,
 			const String& role)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->referenceNames(ns, path, result, resultClass, role);
 		}
 
@@ -389,7 +436,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->references(ns, path, result, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -401,7 +448,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->referencesClasses(ns, path, result, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -412,50 +459,61 @@ namespace
 			CIMInstanceResultHandlerIFC& result, const String& query,
 			const String& queryLanguage)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->execQuery(ns, result, query, queryLanguage);
 		}
 
 		virtual CIMFeatures getServerFeatures()
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_ch->getServerFeatures();
 		}
 
 		virtual void exportIndication(const CIMInstance& instance,
 			const String& instNS)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_ch->exportIndication(instance, instNS);
 		}
 
 	private:
 
 		CIMOMHandleIFCRef m_ch;
+#if defined (OW_GNU_LINUX)
 		uid_t m_cimomuid;
 		uid_t m_useruid;
+#elif defined (OW_NETWARE)
+		NetwareIdentityRef m_nwi; 
+#endif
 	};
 
 
 	class ProxyRepository : public RepositoryIFC
 	{
 	public:
+#if defined (OW_GNU_LINUX)
 		ProxyRepository(RepositoryIFCRef prep, uid_t cimomuid, uid_t useruid)
 			: RepositoryIFC()
 			, m_prep(prep)
 			, m_cimomuid(cimomuid)
 			, m_useruid(useruid)
+#elif defined (OW_NETWARE)
+		ProxyRepository(RepositoryIFCRef prep, NetwareIdentityRef nwi)
+			: RepositoryIFC()
+			, m_prep(prep)
+			, m_nwi(nwi)
+#endif
 		{
 		}
 
 		virtual void open(const String &path)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->open(path);
 		}
 		virtual void close()
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->close();
 		}
 		virtual void init(const ServiceEnvironmentIFCRef& env)
@@ -475,13 +533,13 @@ namespace
 		virtual void createNameSpace(const String &ns,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->createNameSpace(ns, context);
 		}
 		virtual void deleteNameSpace(const String &ns,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->deleteNameSpace(ns, context);
 		}
 #endif
@@ -490,19 +548,19 @@ namespace
 		virtual void enumQualifierTypes(const String &ns,
 			CIMQualifierTypeResultHandlerIFC &result, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumQualifierTypes(ns, result, context);
 		}
 		virtual void deleteQualifierType(const String &ns,
 			const String &qualName, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->deleteQualifierType(ns, qualName, context);
 		}
 		virtual void setQualifierType(const String &ns,
 			const CIMQualifierType &qt, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->setQualifierType(ns, qt, context);
 		}
 #endif
@@ -510,33 +568,33 @@ namespace
 		virtual void enumNameSpace(StringResultHandlerIFC &result,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumNameSpace(result, context);
 
 		}
 		virtual CIMQualifierType getQualifierType(const String &ns,
 			const String &qualifierName, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->getQualifierType(ns, qualifierName, context);
 		}
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		virtual CIMClass deleteClass(const String &ns, const String &className,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->deleteClass(ns, className, context);
 		}
 		virtual void createClass(const String &ns, const CIMClass &cimClass,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->createClass(ns, cimClass, context);
 		}
 		virtual CIMClass modifyClass(const String &ns, const CIMClass &cc,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->modifyClass(ns, cc, context);
 		}
 #endif
@@ -547,7 +605,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->getClass(ns, className, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
@@ -555,7 +613,7 @@ namespace
 			StringResultHandlerIFC &result, EDeepFlag deep,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumClassNames(ns, className, result, deep, context);
 		}
 		virtual void enumInstances(const String &ns, const String &className,
@@ -567,7 +625,7 @@ namespace
 			EEnumSubclassesFlag enumSubclasses,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumInstances(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList,
 				enumSubclasses, context);
@@ -579,7 +637,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumClasses(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, context);
 		}
@@ -587,13 +645,13 @@ namespace
 		virtual CIMInstance deleteInstance(const String &ns,
 			const CIMObjectPath &cop, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->deleteInstance(ns, cop, context);
 		}
 		virtual CIMObjectPath createInstance(const String &ns,
 			const CIMInstance &ci, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->createInstance(ns, ci, context);
 		}
 		virtual CIMInstance modifyInstance(const String &ns,
@@ -601,7 +659,7 @@ namespace
 			EIncludeQualifiersFlag includeQualifiers,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->modifyInstance(ns, modifiedInstance,
 				includeQualifiers, propertyList, context);
 		}
@@ -610,7 +668,7 @@ namespace
 			const String &propertyName, const CIMValue &cv,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->setProperty(ns, name, propertyName, cv, context);
 		}
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -620,7 +678,7 @@ namespace
 			const String &className, CIMObjectPathResultHandlerIFC &result,
 			EDeepFlag deep, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->enumInstanceNames(ns, className, result, deep, context);
 		}
 
@@ -630,7 +688,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->getInstance(ns, instanceName, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
@@ -639,7 +697,7 @@ namespace
 			const CIMObjectPath &name, const String &propertyName,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->getProperty(ns, name, propertyName, context);
 		}
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -649,7 +707,7 @@ namespace
 			const CIMParamValueArray &inParams, CIMParamValueArray &outParams,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			return m_prep->invokeMethod(ns, path, methodName, inParams,
 				outParams, context);
 		}
@@ -663,7 +721,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->associatorsClasses(ns, path, result, assocClass,
 				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin,	propertyList, context);
@@ -673,7 +731,7 @@ namespace
 			const String &resultClass, const String &role,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->referenceNames(ns, path, result, resultClass, role,
 				context);
 		}
@@ -683,7 +741,7 @@ namespace
 			const String &role, const String &resultRole,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->associatorNames(ns, path, result, assocClass, resultClass,
 				role, resultRole, context);
 		}
@@ -694,7 +752,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->associators(ns, path, result, assocClass, resultClass,
 				role, resultRole, includeQualifiers, includeClassOrigin,
 				propertyList, context);
@@ -705,7 +763,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->references(ns, path, result, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
@@ -716,7 +774,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->referencesClasses(ns, path, result, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
@@ -725,38 +783,48 @@ namespace
 			CIMInstanceResultHandlerIFC &result, const String &query,
 			const String &queryLanguage, OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->execQuery(ns, result, query, queryLanguage, context);
 		}
 		virtual void beginOperation(EOperationFlag op,
 			OperationContext &context)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->beginOperation(op, context);
 		}
 		virtual void endOperation(EOperationFlag op, OperationContext &context,
 			EOperationResultFlag result)
 		{
-			RUIDManager um(m_cimomuid, m_useruid);
+			RUID_MANAGER_FACTORY; 
 			m_prep->endOperation(op, context, result);
 		}
 
 	private:
 
 		RepositoryIFCRef m_prep;
+#if defined(OW_GNU_LINUX)
 		uid_t m_cimomuid;
 		uid_t m_useruid;
+#elif defined(OW_NETWARE)
+		NetwareIdentityRef m_nwi; 
+#endif
 	};
 
 	class ProxyEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
+#if defined(OW_GNU_LINUX)
 		ProxyEnvironment(const ProviderEnvironmentIFCRef& env, uid_t cimomuid,
 			uid_t useruid)
 			: ProviderEnvironmentIFC()
-			, m_env(env)
 			, m_cimomuid(cimomuid)
 			, m_useruid(useruid)
+#elif defined(OW_NETWARE)
+		ProxyEnvironment(const ProviderEnvironmentIFCRef& env, NetwareIdentityRef nwi)
+			: ProviderEnvironmentIFC()
+			, m_nwi(nwi)
+#endif
+			, m_env(env)
 		{}
 
 		virtual String getConfigItem(const String &name,
@@ -767,20 +835,35 @@ namespace
 
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
+#if defined(OW_GNU_LINUX)
 			return CIMOMHandleIFCRef(new ProxyCIMOMHandle(
 				m_env->getCIMOMHandle(), m_cimomuid, m_useruid));
+#elif defined(OW_NETWARE)
+			return CIMOMHandleIFCRef(new ProxyCIMOMHandle(
+				m_env->getCIMOMHandle(), m_nwi)); 
+#endif
 		}
 		
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
+#if defined(OW_GNU_LINUX)
 			return CIMOMHandleIFCRef(new ProxyCIMOMHandle(
 				m_env->getRepositoryCIMOMHandle(), m_cimomuid, m_useruid));
+#elif defined(OW_NETWARE)
+			return CIMOMHandleIFCRef(new ProxyCIMOMHandle(
+				m_env->getRepositoryCIMOMHandle(), m_nwi)); 
+#endif
 		}
 		
 		virtual RepositoryIFCRef getRepository() const
 		{
+#if defined(OW_GNU_LINUX)
 			return RepositoryIFCRef(new ProxyRepository(
 				m_env->getRepository(), m_cimomuid, m_useruid));
+#elif defined(OW_NETWARE)
+			return RepositoryIFCRef(new ProxyRepository(
+				m_env->getRepository(), m_nwi)); 
+#endif
 		}
 
 		virtual LoggerRef getLogger() const
@@ -805,15 +888,19 @@ namespace
 
 	private:
 
-		ProviderEnvironmentIFCRef m_env;
+#if defined(OW_GNU_LINUX)
 		uid_t m_cimomuid;
 		uid_t m_useruid;
+#elif defined(OW_NETWARE)
+		NetwareIdentityRef m_nwi; 
+#endif
+		ProviderEnvironmentIFCRef m_env;
 	};
 
+#if defined (OW_GNU_LINUX)
 	void getUIDS(const ProviderEnvironmentIFCRef& env,
 		uid_t& cimomuid, uid_t& useruid)
 	{
-#ifndef OW_NETWARE
 		cimomuid = ::getuid();	// Get CIMOM user id
 		useruid = cimomuid;
 
@@ -835,10 +922,6 @@ namespace
 		{
 			useruid = pw.pw_uid;
 		}
-#else
-		// Temp
-		cimomuid = useruid = 0;
-#endif
 	}
 
 	inline ProviderEnvironmentIFCRef
@@ -849,6 +932,26 @@ namespace
 			useruid));
 	}
 
+#elif defined(OW_NETWARE)
+	NetwareIdentityRef getNWI(const ProviderEnvironmentIFCRef& env)
+	{
+		OperationContext::DataRef data = env->getOperationContext().getData(NOVELL_IDENTITY_KEY); 
+		if (data)
+		{
+			NetwareIdentityRef nwi = data.cast_to<NetwareIdentity>(); 
+			return nwi; 
+		}
+		return NetwareIdentityRef(0); 
+	}
+
+	inline ProviderEnvironmentIFCRef
+	proxyEnv(const ProviderEnvironmentIFCRef& env, NetwareIdentityRef nwi)
+	{
+		return ProviderEnvironmentIFCRef(new ProxyEnvironment(env, nwi)); 
+	}
+
+#endif
+
 }	// namespace
 
 //////////////////////////////////////////////////////////////////////////////
@@ -856,10 +959,16 @@ InstanceProviderProxy::InstanceProviderProxy(InstanceProviderIFCRef pProv,
 	const ProviderEnvironmentIFCRef& env)
 	: InstanceProviderIFC()
 	, m_pProv(pProv)
+#if defined(OW_GNU_LINUX)
 	, m_cimomuid(0)
 	, m_useruid(0)
 {
 	getUIDS(env, m_cimomuid, m_useruid);
+#elif defined(OW_NETWARE)
+	, m_nwi(0)
+{
+	m_nwi = getNWI(env); 
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -871,8 +980,8 @@ InstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->enumInstanceNames(proxyEnv(env, m_cimomuid, m_useruid), ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->enumInstanceNames(PROXY_ENV_FACTORY, ns,
 		className, result, cimClass);
 }
 
@@ -891,8 +1000,8 @@ InstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->enumInstances(proxyEnv(env, m_cimomuid, m_useruid), ns, className,
+	UID_MANAGER_FACTORY; 
+	m_pProv->enumInstances(PROXY_ENV_FACTORY, ns, className,
 		result, localOnly, deep, includeQualifiers, includeClassOrigin,
 		propertyList, requestedClass, cimClass);
 }
@@ -909,8 +1018,8 @@ InstanceProviderProxy::getInstance(
 	const StringArray* propertyList,
 	const CIMClass& cimClass )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	return m_pProv->getInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
+	UID_MANAGER_FACTORY; 
+	return m_pProv->getInstance(PROXY_ENV_FACTORY, ns,
 		instanceName, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, cimClass);
 }
@@ -924,8 +1033,8 @@ InstanceProviderProxy::createInstance(
 	const String& ns,
 	const CIMInstance& cimInstance )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	return m_pProv->createInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
+	UID_MANAGER_FACTORY; 
+	return m_pProv->createInstance(PROXY_ENV_FACTORY, ns,
 		cimInstance);
 }
 
@@ -940,8 +1049,8 @@ InstanceProviderProxy::modifyInstance(
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->modifyInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->modifyInstance(PROXY_ENV_FACTORY, ns,
 		modifiedInstance, previousInstance, includeQualifiers, propertyList,
 		theClass);
 }
@@ -953,8 +1062,8 @@ InstanceProviderProxy::deleteInstance(
 	const String& ns,
 	const CIMObjectPath& cop)
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->deleteInstance(proxyEnv(env, m_cimomuid, m_useruid), ns, cop);
+	UID_MANAGER_FACTORY; 
+	m_pProv->deleteInstance(PROXY_ENV_FACTORY, ns, cop);
 }
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -964,10 +1073,16 @@ SecondaryInstanceProviderProxy::SecondaryInstanceProviderProxy(SecondaryInstance
 	const ProviderEnvironmentIFCRef& env)
 	: SecondaryInstanceProviderIFC()
 	, m_pProv(pProv)
+#if defined(OW_GNU_LINUX)
 	, m_cimomuid(0)
 	, m_useruid(0)
 {
-	getUIDS(env, m_cimomuid, m_useruid);
+	getUIDS(PROXY_ENV_FACTORY, m_cimomuid, m_useruid);
+#elif defined(OW_NETWARE)
+	, m_nwi(0)
+{
+	m_nwi = getNWI(PROXY_ENV_FACTORY); 
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -981,7 +1096,7 @@ SecondaryInstanceProviderProxy::filterInstances(
 	const StringArray *propertyList, const CIMClass &requestedClass,
 	const CIMClass &cimClass)
 {
-	UIDManager um(m_useruid, m_cimomuid);
+	UID_MANAGER_FACTORY; 
 	m_pProv->filterInstances(env, ns, className, instances, localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass);
 }
 
@@ -990,7 +1105,7 @@ SecondaryInstanceProviderProxy::filterInstances(
 void
 SecondaryInstanceProviderProxy::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 {
-	UIDManager um(m_useruid, m_cimomuid);
+	UID_MANAGER_FACTORY; 
 	m_pProv->createInstance(env, ns, cimInstance);
 }
 
@@ -1002,7 +1117,7 @@ SecondaryInstanceProviderProxy::modifyInstance(
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray *propertyList, const CIMClass &theClass)
 {
-	UIDManager um(m_useruid, m_cimomuid);
+	UID_MANAGER_FACTORY; 
 	m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
 }
 
@@ -1010,7 +1125,7 @@ SecondaryInstanceProviderProxy::modifyInstance(
 void
 SecondaryInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 {
-	UIDManager um(m_useruid, m_cimomuid);
+	UID_MANAGER_FACTORY; 
 	m_pProv->deleteInstance(env, ns, cop);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -1021,10 +1136,16 @@ MethodProviderProxy::MethodProviderProxy(MethodProviderIFCRef pProv,
 	const ProviderEnvironmentIFCRef& env)
 	: MethodProviderIFC()
 	, m_pProv(pProv)
+#if defined(OW_GNU_LINUX)
 	, m_cimomuid(0)
 	, m_useruid(0)
 {
-	getUIDS(proxyEnv(env, m_cimomuid, m_useruid), m_cimomuid, m_useruid);
+	getUIDS(PROXY_ENV_FACTORY, m_cimomuid, m_useruid);
+#elif defined(OW_NETWARE)
+	, m_nwi(0)
+{
+	m_nwi = getNWI(PROXY_ENV_FACTORY); 
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1037,8 +1158,8 @@ MethodProviderProxy::invokeMethod(
 	const CIMParamValueArray& in,
 	CIMParamValueArray& out )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	return m_pProv->invokeMethod(proxyEnv(env, m_cimomuid, m_useruid), ns,
+	UID_MANAGER_FACTORY; 
+	return m_pProv->invokeMethod(PROXY_ENV_FACTORY, ns,
 		path, methodName, in, out);
 }
 
@@ -1049,10 +1170,16 @@ AssociatorProviderProxy::AssociatorProviderProxy(
 	AssociatorProviderIFCRef pProv, const ProviderEnvironmentIFCRef& env)
 	: AssociatorProviderIFC()
 	, m_pProv(pProv)
+#if defined(OW_GNU_LINUX)
 	, m_cimomuid(0)
 	, m_useruid(0)
 {
-	getUIDS(proxyEnv(env, m_cimomuid, m_useruid), m_cimomuid, m_useruid);
+	getUIDS(PROXY_ENV_FACTORY, m_cimomuid, m_useruid);
+#elif defined(OW_NETWARE)
+	, m_nwi(0)
+{
+	m_nwi = getNWI(PROXY_ENV_FACTORY); 
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1070,8 +1197,8 @@ AssociatorProviderProxy::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->associators(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->associators(PROXY_ENV_FACTORY, result, ns,
 		objectName, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
@@ -1088,8 +1215,8 @@ AssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->associatorNames(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->associatorNames(PROXY_ENV_FACTORY, result, ns,
 		objectName, assocClass, resultClass, role, resultRole);
 }
 
@@ -1106,8 +1233,8 @@ AssociatorProviderProxy::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->references(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->references(PROXY_ENV_FACTORY, result, ns,
 		objectName, resultClass, role, includeQualifiers, includeClassOrigin,
 		propertyList);
 }
@@ -1122,8 +1249,8 @@ AssociatorProviderProxy::referenceNames(
 	const String& resultClass,
 	const String& role )
 {
-	UIDManager um(m_useruid, m_cimomuid);
-	m_pProv->referenceNames(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
+	UID_MANAGER_FACTORY; 
+	m_pProv->referenceNames(PROXY_ENV_FACTORY, result, ns,
 		objectName, resultClass, role);
 }
 
