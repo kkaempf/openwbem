@@ -36,7 +36,11 @@ namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(Assertion);
-typedef AssertionException Assertion;
+
+// for backward compatibility?
+typedef AssertionException Assertion OW_DEPRECATED;
+
+
 #ifdef OW_DEBUG
 #define OW_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \
 		#CON)

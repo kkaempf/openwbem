@@ -265,7 +265,7 @@ main(int argc, char* argv[])
 
 		return 0;
 	}
-	catch (Assertion& a)
+	catch (AssertionException& a)
 	{
 		cerr << "Caught Assertion: " << a << endl;
 	}

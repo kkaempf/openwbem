@@ -103,7 +103,7 @@ long Compiler::compile( const String& filename )
 		{
 			// error has already been reported.
 		}
-		catch (Assertion& e)
+		catch (AssertionException& e)
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
 		}
@@ -164,7 +164,7 @@ long Compiler::compileString( const String& mof )
 		{
 			// error has already been reported.
 		}
-		catch (Assertion& e)
+		catch (AssertionException& e)
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
 		}

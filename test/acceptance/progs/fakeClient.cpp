@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
 			exit(2);
 		}
 	}
-	catch(Assertion& a)
+	catch(AssertionException& a)
 	{
 		cerr << "Caught assertion in main(): " << a.getMessage() << endl;
 		exit(2);

@@ -118,15 +118,6 @@ int main(int argc, char* argv[])
 		// Call platform specific shutdown routine
 		Platform::daemonShutdown(OW_DAEMON_NAME);
 	}
-	catch (Assertion& e)
-	{
-		env->logFatalError("**************************************************");
-		env->logFatalError("* OW_ASSERTION CAUGHT IN CIMOM MAIN!");
-		env->logFatalError(format("* Condition: %1", e.getMessage()));
-		env->logFatalError(format("* File: %1", e.getFile()));
-		env->logFatalError(format("* Line: %1", e.getLine()));
-		env->logFatalError("**************************************************");
-	}
 	catch (Exception& e)
 	{
 		env->logFatalError("**************************************************");

@@ -276,14 +276,6 @@ HTTPSvrConnection::run()
 			sendError(SC_BAD_REQUEST);
 		}
 	}
-	catch (Assertion& a)
-	{
-		OW_LOGERROR(Format("Caught OW_ASSERTION in HTTPSvrConnection::run: %1",
-			a));
-		m_errDetails = a.getMessage();
-		cleanUpIStreams(istrToReadFrom);
-		sendError(SC_INTERNAL_SERVER_ERROR);
-	}
 	catch (Exception& e)
 	{
 		OW_LOGERROR(format("%1", e));
