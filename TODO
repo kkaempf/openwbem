@@ -22,10 +22,7 @@ Fix problems:
     - To avoid permanent deadlocks, change most locks to use a timeout.
       - If a timeout happens, certain places can retry the operation.
     - use DIST_SUBDIRS
-    - enumClassNames is way too slow.
-    - Fix assocName parameter in associator providers.  Change to OW_String and put it in the same order as in the spec.
     - Write a cooperative thread cancellation mechanism.
-    - Verify that classes maintain their invariant.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -130,7 +127,7 @@ Refactorings:
       that return OW_Enumeration<T> and OW_Array<T>.
     - Rename OW_Types.h to OW_Types.hpp
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
-    - Rename mof compiler files/classes to have OW_ prefix.
+    - Rename mof compiler files/classes to have OW_MOF prefix.
 
       Post 3.0
     - Create a base class for all the common code in the provider interfaces.
@@ -152,6 +149,7 @@ Refactorings:
     - rename cimom to wbem server
     - Rename OW_NonRecursiveMutex -> OW_Mutex and OW_Mutex -> OW_RecursiveMutex
     - Templatetize/inline the mutex lock classes.
+    - Verify that classes maintain their invariant.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
