@@ -1118,6 +1118,18 @@ String::toInt64(int base) const
 	return convertToInt64Type<Int64>(m_buf, "Int64", base);
 }
 //////////////////////////////////////////////////////////////////////////////
+unsigned int
+String::toUnsignedInt(int base) const
+{
+	return convertToUIntType<unsigned int>(m_buf, "unsigned int", base);
+}
+//////////////////////////////////////////////////////////////////////////////
+int
+String::toInt(int base) const
+{
+	return convertToIntType<int>(m_buf, "int", base);
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMDateTime
 String::toDateTime() const
 {

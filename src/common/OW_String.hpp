@@ -675,6 +675,16 @@ public:
 	 */
 	Int64 toInt64(int base=10) const;
 	/**
+	 * @return The unsigned int value of this String object.
+	 * @throws StringConversionException if the conversion is impossible.
+	 */
+	unsigned int toUnsignedInt(int base=10) const;
+	/**
+	 * @return The int value of this String object.
+	 * @throws StringConversionException if the conversion is impossible.
+	 */
+	int toInt(int base=10) const;
+	/**
 	 * DEPRECATED in favor of CIMDateTime::CIMDateTime(const String&) in 3.1.0.
 	 * @return The CIMDateTime value of this String object.
 	 * @throws CIMDateTimeException if the string is not a valid CIMDateTime.
