@@ -71,7 +71,7 @@ OW_CIMException::OW_CIMException(const char* file, int line, OW_CIMException::Er
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::~OW_CIMException()
+OW_CIMException::~OW_CIMException() throw()
 {
 	if (m_longmsg)
 	{

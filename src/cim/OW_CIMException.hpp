@@ -111,7 +111,7 @@ public:
 	OW_CIMException(ErrNoType errval);
 	OW_CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);
-	~OW_CIMException();
+	~OW_CIMException() throw();
 
 	void swap(OW_CIMException& x);
 
