@@ -118,8 +118,7 @@ Mutex gethostbynameMutex;
 //////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
-SocketAddress::getByName(
-		const String& hostName, UInt16 port)
+SocketAddress::getByName(const String& hostName, UInt16 port)
 {
 #if defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS)
 	hostent hostbuf;
@@ -128,12 +127,12 @@ SocketAddress::getByName(
 	char buf[2048];
 	int h_err = 0;
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, buf, sizeof(buf),
-				&host, &h_err) == -1)
+						&host, &h_err) == -1)
 	{
 		host = NULL;
 	}
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
- 
+
 	char buf[2048];
 	int h_err(0);
 	// returns NULL if not successful
@@ -143,16 +142,15 @@ SocketAddress::getByName(
 	hostent_data hostdata;
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, &hostdata) != 0)
 	{
-	  host = NULL;
+		host = NULL;
 	}
-	
+
 #else
 #error Not yet supported: gethostbyname_r() with other argument counts.
 #endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
 #else
-	hostent* host = NULL;
 	MutexLock mlock(gethostbynameMutex);
-	host = gethostbyname(hostName.c_str());
+	hostent* host = gethostbyname(hostName.c_str());
 #endif /* defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS) */
 
 	if (!host)
@@ -245,41 +243,38 @@ SocketAddress::getAnyLocalHost(UInt16 port)
 	if (hname.indexOf('.') == String::npos)
 	{
 #if defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS)
-	hostent hostbuf;
-	hostent* hent = &hostbuf;
+		hostent hostbuf;
+		hostent* hent = &hostbuf;
 #if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)
-	char local_buf[2048];
-	int h_err = 0;
-	if (gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf),
-				&hent, &h_err) == -1)
-	{
-		hent = NULL;
-	}
+		char local_buf[2048];
+		int h_err = 0;
+		if (gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf),
+							&hent, &h_err) == -1)
+		{
+			hent = NULL;
+		}
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
- 
-	char local_buf[2048];
-	int h_err(0);
-	// returns NULL if not successful
-	hent = gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf), &h_err);
+
+		char local_buf[2048];
+		int h_err(0);
+		// returns NULL if not successful
+		hent = gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf), &h_err);
 
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
-	hostent_data hostdata;
-	if (gethostbyname_r(buf, &hostbuf, &hostdata) != 0)
-	{
-	  hent = NULL;
-	}
-	
+		hostent_data hostdata;
+		if (gethostbyname_r(buf, &hostbuf, &hostdata) != 0)
+		{
+			hent = NULL;
+		}
+
 #else
 #error Not yet supported: gethostbyname_r() with other argument counts.
 #endif /* OW_GETHOSTBYNAME_R_ARGUMENTS */
-#else	  
-		hostent* hent = 0;
-		{
-			MutexLock mlock(gethostbynameMutex);
-			hent = gethostbyname(buf);
-		}
+#else	
+		MutexLock mlock(gethostbynameMutex);
+		hostent* hent = gethostbyname(buf);
 #endif
-		if (hent)
+		if (hent && hent->h_name && (strlen(hent->h_name) > 0))
 		{
 			hname = String(hent->h_name);
 		}
