@@ -93,7 +93,8 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 		return;
 	}
 
-	m_log << formattedMessage << '\n';
+	m_log.write(formattedMessage.c_str(), formattedMessage.length());
+	m_log << '\n';
 
 	// handle log rotation
 	if (m_maxFileSize != NO_MAX_LOG_SIZE && m_log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))
