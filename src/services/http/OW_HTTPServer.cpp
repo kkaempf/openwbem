@@ -299,7 +299,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		m_options.useUDS = item.equalsIgnoreCase("true");
 		
 		item = env->getConfigItem(ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
-		m_options.maxConnections = item.toInt32() + 1;
+		m_options.maxConnections = item.toInt32();
 		// TODO: Make the type of pool and the size of the queue be separate config options.
 		m_threadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100, env->getLogger(COMPONENT_NAME), "HTTPServer"));
 		
@@ -430,9 +430,14 @@ public:
 #endif
 			if (!m_HTTPServer->m_threadPool->tryAddWork(rref))
 			{
-				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
-				// main thread can't block.
 				OW_LOG_INFO(logger, "Server too busy, closing connection");
+				// main thread can't block, set the socket timeout to 0
+				socket.setTimeouts(0);
+				std::ostream& socketOstr(socket.getOutputStream());
+				socketOstr << "HTTP/1.1 503 Service unavailable: connection queue full\r\n";
+				socketOstr << "Connection: close\r\n";
+				socketOstr << "Content-Length: 0\r\n\r\n";
+				socketOstr.flush();
 				socket.disconnect();
 			}
 		}
