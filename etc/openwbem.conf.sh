@@ -104,8 +104,8 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 ################################################################################
 # 2.0
 # the maximum number of classes that will be cached by the cimom.
-# The default is 8
-;owcimomd.max_class_cache_size = 8
+# The default is 128
+;owcimomd.max_class_cache_size = 128
 
 ################################################################################
 # a space delimited list of system users who are allowed to acces the CIMOM

@@ -137,7 +137,7 @@
 #endif
 
 #ifndef DEFAULT_MAX_CLASS_CACHE_SIZE
-#define DEFAULT_MAX_CLASS_CACHE_SIZE 8
+#define DEFAULT_MAX_CLASS_CACHE_SIZE 128
 #endif
 
 namespace OW_ConfigOpts

@@ -37,7 +37,26 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+
+#ifdef OW_HAVE_HASH_MAP
+#include <hash_map> // hash_map is better for the cache than OW_SortedVectorMap
+#else
 #include "OW_SortedVectorMap.hpp"
+#endif
+#include <list>
+
+#ifdef OW_HAVE_HASH_MAP
+// need to specialize hash
+template<> struct hash<OW_String>
+{
+	size_t operator()(const OW_String& s) const
+	{
+		return hash<const char*>()(s.c_str());
+	}
+};
+#endif
+
+
 
 class OW_MetaRepository : public OW_GenericHDBRepository
 {
@@ -270,14 +289,23 @@ private:
 
 	void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 
-	struct ClassCacheRec;
-	struct lruCompare;
+	// a list of classes that are cached.  The list is sorted by lru.  The least
+	// recently acessed class will be at begin(), and the most recenly acessed
+	// class will be at end()--;  The second part of the pair is the key that
+	// will be used in the index.
+	typedef std::list<std::pair<OW_CIMClass, OW_String> > class_cache_t;
+	// the index into the cache.  Speeds up finding a class when we need to.
+#ifdef OW_HAVE_HASH_MAP
+	typedef std::hash_map<OW_String, class_cache_t::iterator> cache_index_t;
+#else
+	typedef OW_SortedVectorMap<OW_String, class_cache_t::iterator> cache_index_t;
+#endif
 
-	typedef OW_SortedVectorMap<OW_String, ClassCacheRec> cache_t;
-	cache_t theCache;
+	class_cache_t theCache;
+	cache_index_t theCacheIndex;
 	OW_Mutex cacheGuard;
 	OW_UInt32 maxCacheSize;
-	OW_UInt32 m_cacheAccessCount;
+
 	void addClassToCache(const OW_CIMClass& cc, const OW_String& key);
 
 	OW_CIMClass getClassFromCache(const OW_String& key);

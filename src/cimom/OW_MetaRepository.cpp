@@ -41,37 +41,7 @@
 #include "OW_Array.hpp"
 #include "OW_ConfigOpts.hpp"
 
-#include <iostream>
-#if defined(OW_HAVE_STREAMBUF)
-#include <streambuf>
-#elif defined(OW_HAVE_STREAMBUF_H)
-#include <streambuf.h>
-#endif
-#include <ctime>
-#include <climits>
-
 #define QUAL_CONTAINER "openwbemqualifiers"
-
-//////////////////////////////////////////////////////////////////////////////
-struct OW_MetaRepository::ClassCacheRec
-{
-	ClassCacheRec() :
-		lastAccess(0) {}
-
-	OW_CIMClass cc;
-	OW_UInt32 lastAccess;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-struct OW_MetaRepository::lruCompare :
-	public std::binary_function<OW_MetaRepository::cache_t::value_type,
-		OW_MetaRepository::cache_t::value_type, bool>
-{
-	bool operator()(const OW_MetaRepository::cache_t::value_type& x, const OW_MetaRepository::cache_t::value_type& y) const
-	{
-		return x.second.lastAccess < y.second.lastAccess;
-	}
-};
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -79,20 +49,19 @@ OW_MetaRepository::addClassToCache(const OW_CIMClass& cc, const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
 
-	ClassCacheRec cr;
-	cr.cc = cc;
-	cr.lastAccess = m_cacheAccessCount++;
-	if(theCache.size() >= maxCacheSize)
+	if(theCacheIndex.size() >= maxCacheSize)
 	{
-		cache_t::iterator toRem =
-			std::min_element(theCache.begin(), theCache.end(), lruCompare());
-		if (toRem != theCache.end())
+		if (!theCache.empty())
 		{
-			theCache.erase(toRem);
+			OW_String key = theCache.begin()->second;
+			theCache.pop_front();
+			theCacheIndex.erase(key);
 		}
 	}
 
-	theCache.insert(cache_t::value_type(key, cr));
+	class_cache_t::iterator i = theCache.insert(theCache.end(),
+		class_cache_t::value_type(cc, key));
+	theCacheIndex.insert(cache_index_t::value_type(key, i));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,11 +70,19 @@ OW_MetaRepository::getClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
 	OW_CIMClass cc;
-	cache_t::iterator i = theCache.find(key);
-	if (i != theCache.end())
+	// look up key in the index
+	cache_index_t::iterator ii = theCacheIndex.find(key);
+	if (ii != theCacheIndex.end())
 	{
-		cc = i->second.cc;
-		i->second.lastAccess = m_cacheAccessCount++;
+		// we've got it, now get the iterator
+		class_cache_t::iterator i = ii->second;
+		// get the class
+		cc = i->first;
+		// now move the class to the end of the list
+		theCache.splice(theCache.end(),theCache,i);
+		// because splice doesn't actually move the elements, we don't have to
+		// update the iterator in theCacheIndex
+
 	}
 
 	return cc;
@@ -116,7 +93,13 @@ void
 OW_MetaRepository::removeClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
-	theCache.erase(key);
+	cache_index_t::iterator i = theCacheIndex.find(key);
+	if (i != theCacheIndex.end())
+	{
+		class_cache_t::iterator ci = i->second;
+		theCacheIndex.erase(i);
+		theCache.erase(ci);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -125,6 +108,7 @@ OW_MetaRepository::clearClassCache()
 {
 	OW_MutexLock l(cacheGuard);
 	theCache.clear();
+	theCacheIndex.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1176,7 +1160,6 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
 	: OW_GenericHDBRepository(env)
-	, m_cacheAccessCount(1)
 {
 	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);
 	try
