@@ -564,17 +564,17 @@ optWhereClause:
 
 strDatetime:
 	YEARP
-	  { $$ = $1; }
+	  { $$ = new OW_String("YEAR"); }
 	| MONTHP
-	  { $$ = $1; }
+	  { $$ = new OW_String("MONTH"); }
 	| DAYP
-	  { $$ = $1; }
+	  { $$ = new OW_String("DAY"); }
 	| HOURP
-	  { $$ = $1; }
+	  { $$ = new OW_String("HOUR"); }
 	| MINUTEP
-	  { $$ = $1; }
+	  { $$ = new OW_String("MINUTE"); }
 	| SECONDP
-	  { $$ = $1; }
+	  { $$ = new OW_String("SECOND"); }
 	;
 
 
@@ -834,9 +834,9 @@ strExtractArg:
 	| IDENT
 	  { $$ = $1; }
 	| TIMEZONEHOUR
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIMEZONE_HOUR"); }
 	| TIMEZONEMINUTE
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIMEZONE_MINUTE"); }
 	;
 
 
@@ -942,15 +942,15 @@ strFuncName:
 	strColId
 	  { $$ = $1; }
 	| IN
-	  { $$ = $1; }
+	  { $$ = new OW_String("IN"); }
 	| IS
-	  { $$ = $1; }
+	  { $$ = new OW_String("IS"); }
 	| ISNULL
-	  { $$ = $1; }
+	  { $$ = new OW_String("ISNULL"); }
 	| LIKE
-	  { $$ = $1; }
+	  { $$ = new OW_String("LIKE"); }
 	| NOTNULL
-	  { $$ = $1; }
+	  { $$ = new OW_String("NOTNULL"); }
 	;
 
 
@@ -966,11 +966,11 @@ aExprConst:
 	| HEXCONST
 	  { $$ = new aExprConst_HEXCONST($1); }
 	| TRUEP
-	  { $$ = new aExprConst_TRUEP($1); }
+	  { $$ = new aExprConst_TRUEP(new OW_String("TRUE")); }
 	| FALSEP
-	  { $$ = new aExprConst_FALSEP($1); }
+	  { $$ = new aExprConst_FALSEP(new OW_String("FALSE")); }
 	| NULLP
-	  { $$ = new aExprConst_NULLP($1); }
+	  { $$ = new aExprConst_NULLP(new OW_String("NULL")); }
 	;
 
 
@@ -980,35 +980,35 @@ strColId:
 	| strDatetime
 	  { $$ = $1; }
 	| AT
-	  { $$ = $1; }
+	  { $$ = new OW_String("AT"); }
 	| BY
-	  { $$ = $1; }
+	  { $$ = new OW_String("BY"); }
 	| DELETE
-	  { $$ = $1; }
+	  { $$ = new OW_String("DELETE"); }
 	| ESCAPE
-	  { $$ = $1; }
+	  { $$ = new OW_String("ESCAPE"); }
 	| INSERT
-	  { $$ = $1; }
+	  { $$ = new OW_String("INSERT"); }
 	| SET
-	  { $$ = $1; }
+	  { $$ = new OW_String("SET"); }
 	| TIMEZONEHOUR
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIMEZONE_HOUR"); }
 	| TIMEZONEMINUTE
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIMEZONE_MINUTE"); }
 	| UPDATE
-	  { $$ = $1; }
+	  { $$ = new OW_String("UPDATE"); }
 	| VALUES
-	  { $$ = $1; }
+	  { $$ = new OW_String("VALUES"); }
 	| ZONE
-	  { $$ = $1; }
+	  { $$ = new OW_String("ZONE"); }
 	| INTERVAL
-	  { $$ = $1; }
+	  { $$ = new OW_String("INTERVAL"); }
 	| NATIONAL
-	  { $$ = $1; }
+	  { $$ = new OW_String("NATIONAL"); }
 	| TIME
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIME"); }
 	| TIMESTAMP
-	  { $$ = $1; }
+	  { $$ = new OW_String("TIMESTAMP"); }
 	;
 
 
@@ -1016,103 +1016,103 @@ strColLabel:
 	strColId
 	  { $$ = $1; }
 	| ALL
-	  { $$ = $1; }
+	  { $$ = new OW_String("ALL"); }
 	| AND
-	  { $$ = $1; }
+	  { $$ = new OW_String("AND"); }
 	| ASC
-	  { $$ = $1; }
+	  { $$ = new OW_String("ASC"); }
 	| CROSS
-	  { $$ = $1; }
+	  { $$ = new OW_String("CROSS"); }
 	| CURRENTDATE
-	  { $$ = $1; }
+	  { $$ = new OW_String("CURRENT_DATE"); }
 	| CURRENTTIME
-	  { $$ = $1; }
+	  { $$ = new OW_String("CURRENT_TIME"); }
 	| CURRENTTIMESTAMP
-	  { $$ = $1; }
+	  { $$ = new OW_String("CURRENT_TIMESTAMP"); }
 	| CURRENTUSER
-	  { $$ = $1; }
+	  { $$ = new OW_String("CURRENT_USER"); }
 	| DEFAULT
-	  { $$ = $1; }
+	  { $$ = new OW_String("DEFAULT"); }
 	| DESC
-	  { $$ = $1; }
+	  { $$ = new OW_String("DESC"); }
 	| DISTINCT
-	  { $$ = $1; }
+	  { $$ = new OW_String("DISTINCT"); }
 	| EXTRACT
-	  { $$ = $1; }
+	  { $$ = new OW_String("EXTRACT"); }
 	| FALSEP
-	  { $$ = $1; }
+	  { $$ = new OW_String("FALSE"); }
 	| FOR
-	  { $$ = $1; }
+	  { $$ = new OW_String("FOR"); }
 	| FROM
-	  { $$ = $1; }
+	  { $$ = new OW_String("FROM"); }
 	| FULL
-	  { $$ = $1; }
+	  { $$ = new OW_String("FULL"); }
 	| GROUP
-	  { $$ = $1; }
+	  { $$ = new OW_String("GROUP"); }
 	| HAVING
-	  { $$ = $1; }
+	  { $$ = new OW_String("HAVING"); }
 	| IN
-	  { $$ = $1; }
+	  { $$ = new OW_String("IN"); }
 	| INNERP
-	  { $$ = $1; }
+	  { $$ = new OW_String("INNER"); }
 	| INTO
-	  { $$ = $1; }
+	  { $$ = new OW_String("INTO"); }
 	| IS
-	  { $$ = $1; }
+	  { $$ = new OW_String("IS"); }
 	| ISA
-	  { $$ = $1; }
+	  { $$ = new OW_String("ISA"); }
 	| ISNULL
-	  { $$ = $1; }
+	  { $$ = new OW_String("ISNULL"); }
 	| JOIN
-	  { $$ = $1; }
+	  { $$ = new OW_String("JOIN"); }
 	| LEADING
-	  { $$ = $1; }
+	  { $$ = new OW_String("LEADING"); }
 	| LEFT
-	  { $$ = $1; }
+	  { $$ = new OW_String("LEFT"); }
 	| LIKE
-	  { $$ = $1; }
+	  { $$ = new OW_String("LIKE"); }
 	| NATURAL
-	  { $$ = $1; }
+	  { $$ = new OW_String("NATURAL"); }
 	| NOT
-	  { $$ = $1; }
+	  { $$ = new OW_String("NOT"); }
 	| NOTNULL
-	  { $$ = $1; }
+	  { $$ = new OW_String("NOTNULL"); }
 	| NULLP
-	  { $$ = $1; }
+	  { $$ = new OW_String("NULL"); }
 	| ON
-	  { $$ = $1; }
+	  { $$ = new OW_String("ON"); }
 	| ONLY
-	  { $$ = $1; }
+	  { $$ = new OW_String("ONLY"); }
 	| OR
-	  { $$ = $1; }
+	  { $$ = new OW_String("OR"); }
 	| ORDER
-	  { $$ = $1; }
+	  { $$ = new OW_String("ORDER"); }
 	| OUTERP
-	  { $$ = $1; }
+	  { $$ = new OW_String("OUTER"); }
 	| POSITION
-	  { $$ = $1; }
+	  { $$ = new OW_String("POSITION"); }
 	| RIGHT
-	  { $$ = $1; }
+	  { $$ = new OW_String("RIGHT"); }
 	| SELECT
-	  { $$ = $1; }
+	  { $$ = new OW_String("SELECT"); }
 	| SESSIONUSER
-	  { $$ = $1; }
+	  { $$ = new OW_String("SESSION_USER"); }
 	| SUBSTRING
-	  { $$ = $1; }
+	  { $$ = new OW_String("SUBSTRING"); }
 	| TRAILING
-	  { $$ = $1; }
+	  { $$ = new OW_String("TRAILING"); }
 	| TRIM
-	  { $$ = $1; }
+	  { $$ = new OW_String("TRIM"); }
 	| TRUEP
-	  { $$ = $1; }
+	  { $$ = new OW_String("TRUE"); }
 	| UNION
-	  { $$ = $1; }
+	  { $$ = new OW_String("UNION"); }
 	| USER
-	  { $$ = $1; }
+	  { $$ = new OW_String("USER"); }
 	| USING
-	  { $$ = $1; }
+	  { $$ = new OW_String("USING"); }
 	| WHERE
-	  { $$ = $1; }
+	  { $$ = new OW_String("WHERE"); }
 	;
 
 %%
