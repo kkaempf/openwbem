@@ -162,7 +162,14 @@ LocalAuthentication::authorize(String& userName,
 			htcon->setErrorDetails("Invalid uid");
 			return false;
 		}
-		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+		long pwnbufsize = -1;
+#ifdef _SC_GETPW_R_SIZE_MAX
+		pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+#endif
+		if (pwnbufsize == -1)
+		{
+			pwnbufsize = 10000; // just a guess
+		}
 		char buf[pwnbufsize];
 		struct passwd pw;
 		struct passwd* ppw = 0;
