@@ -72,13 +72,13 @@ public:
 	virtual void connect(const SocketAddress& addr);
 	virtual void disconnect();
 	void setReceiveTimeout(int seconds) { m_recvTimeout = seconds; }
-	int getReceiveTimeout() { return m_recvTimeout; }
+	int getReceiveTimeout() const { return m_recvTimeout; }
 	void setSendTimeout(int seconds) { m_sendTimeout = seconds; }
-	int getSendTimeout() { return m_sendTimeout; }
+	int getSendTimeout() const { return m_sendTimeout; }
 	void setConnectTimeout(int seconds) { m_connectTimeout = seconds; }
-	int getConnectTimeout() { return m_connectTimeout; }
+	int getConnectTimeout() const { return m_connectTimeout; }
 	void setTimeouts(int seconds) { m_recvTimeout = m_sendTimeout = m_connectTimeout = seconds; }
-	bool receiveTimeOutExpired() { return m_recvTimeoutExprd; }
+	bool receiveTimeOutExpired() const { return m_recvTimeoutExprd; }
 	int write(const void* dataOut, int dataOutLen,
 			bool errorAsException=false);
 	int read(void* dataIn, int dataInLen,
@@ -90,7 +90,7 @@ public:
 	std::iostream& getIOStream();
 	SocketAddress getLocalAddress() const { return m_localAddress; }
 	SocketAddress getPeerAddress() const { return m_peerAddress; }
-	SocketHandle_t getfd() { return m_sockfd; }
+	SocketHandle_t getfd() const { return m_sockfd; }
 	Select_t getSelectObj() const;
 	bool isConnected() const { return m_isConnected; }
 	static void setDumpFiles(const String& in, const String& out);

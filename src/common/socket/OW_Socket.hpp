@@ -116,7 +116,7 @@ public:
 	 * Get the receive timeout
 	 * @return The number of seconds of the receive timeout
 	 */
-	int getReceiveTimeout() { return m_impl->getReceiveTimeout(); }
+	int getReceiveTimeout() const { return m_impl->getReceiveTimeout(); }
 	/**
 	 * Set the send timeout on the socket
 	 * @param seconds the number of seconds for the send timeout
@@ -126,7 +126,7 @@ public:
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	int getSendTimeout() { return m_impl->getSendTimeout(); }
+	int getSendTimeout() const { return m_impl->getSendTimeout(); }
 	/**
 	 * Set the connect timeout on the socket
 	 * @param seconds the number of seconds for the connect timeout
@@ -136,7 +136,7 @@ public:
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	int getConnectTimeout() { return m_impl->getConnectTimeout(); }
+	int getConnectTimeout() const { return m_impl->getConnectTimeout(); }
 	/**
 	 * Set all timeouts (send, receive, connect)
 	 * @param seconds the number of seconds for the timeouts
@@ -146,7 +146,7 @@ public:
 	 * Has the receive timeout expired?
 	 * @return true if the receive timeout has expired.
 	 */
-	bool receiveTimeOutExpired() { return m_impl->receiveTimeOutExpired(); }
+	bool receiveTimeOutExpired() const { return m_impl->receiveTimeOutExpired(); }
 	/**
 	 * Write some data to the socket.
 	 * @param dataOut a pointer to the memory to be written to the socket.
