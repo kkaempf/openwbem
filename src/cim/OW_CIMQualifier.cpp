@@ -34,6 +34,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_NULLValueException.hpp"
 
 using std::istream;
 using std::ostream;
@@ -146,6 +147,17 @@ OW_CIMQualifier::isAssociationQualifier() const
 OW_CIMValue
 OW_CIMQualifier::getValue() const
 {
+	return m_pdata->m_qualifierValue;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_CIMQualifier::getValueT() const
+{
+	if (!m_pdata->m_qualifierValue)
+	{
+		OW_THROW(OW_NULLValueException, "");
+	}
 	return m_pdata->m_qualifierValue;
 }
 

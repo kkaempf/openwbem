@@ -165,6 +165,12 @@ public:
 	OW_CIMValue getValue() const;
 
 	/**
+	 * @return The OW_CIMValue for this qualifier.
+	 * @throws OW_NULLValueException if the value is NULL.
+	 */
+	OW_CIMValue getValueT() const;
+
+	/**
 	 * Set the value for this qualifier
 	 * @param value The OW_CIMValue for this qualifier.
 	 * @return a reference to *this
