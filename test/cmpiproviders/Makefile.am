@@ -30,5 +30,6 @@ EXTRA_DIST = \
 cmpiProviderTest.mof
 
 INCLUDES = \
--I$(top_srcdir)/src/providerifcs/cmpi/common 
+-I$(top_srcdir)/src/providerifcs/cmpi/common \
+-I$(top_srcdir)/src/common 
 
