@@ -3402,4 +3402,4 @@ const char* const OW_CIMServer::INST_REPOS_NAME = "instances";
 const char* const OW_CIMServer::META_REPOS_NAME = "schema";
 const char* const OW_CIMServer::NS_REPOS_NAME = "namespaces";
 const char* const OW_CIMServer::ASSOC_REPOS_NAME = "association";
-const char* const OW_CIMServer::NAMESPACE_PROVIDER = "cimom::namespace";
+const char* const OW_CIMServer::NAMESPACE_PROVIDER = "owcimomd::namespace";

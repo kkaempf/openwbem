@@ -43,30 +43,17 @@
 #include "OW_CppPropertyProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
-#include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_Map.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_InternalProviderIFC.hpp"
 
 /**
  * This class will be used by the CIMOM as a way of finding providers.
  * It will keep the list of provider interfaces and query them when searching
  * for providers.
  */
-class OW_ProviderManager : public OW_ProviderIFCBaseIFC
+class OW_ProviderManager
 {
 public:
-
-	static const char* const CIMOM_PROVIDER_IFC;
-
-	/**
-	 * Constructor
-	 */
-	OW_ProviderManager();
-
-	/**
-	 * Destructor
-	 */
-	~OW_ProviderManager();
 
 	/**
 	 * Load and instantiate the OW_ProviderIFCBaseIFC classes using the
@@ -75,7 +62,7 @@ public:
 	 * @param ifcLoader the class that will actually load and instantiate the
 	 * 	OW_ProviderIFCBaseIFC classes.
 	 */
-	void init(const OW_ProviderIFCLoaderRef ifcLoader);
+	void init(const OW_ProviderIFCLoaderRef& ifcLoader);
 
 	/**
 	 * Make a cimom provider available to the provider manager.
@@ -86,9 +73,9 @@ public:
 	 * provider will be deleted by the provider manager when it is no longer
 	 * needed.
 	 */
-	void addCIMOMProvider(const OW_String& providerName, OW_CppProviderBaseIFCRef pProv);
+	void addCIMOMProvider(const OW_String& providerName, const OW_CppProviderBaseIFCRef& pProv);
 
-	void addCIMOMProvider(OW_CppProviderBaseIFCRef pProv);
+	void addCIMOMProvider(const OW_CppProviderBaseIFCRef& pProv);
 
 	/**
 	 * Locate an Instance provider.
@@ -172,64 +159,26 @@ public:
 	OW_PolledProviderIFCRefArray
 		getPolledProviders(const OW_ProviderEnvironmentIFCRef& env);
 
-	/** 
-	 * Call into each ProviderIFC to unload providers which haven't been 
+	/**
+	 * Call into each ProviderIFC to unload providers which haven't been
 	 * used for a while
 	 */
 	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env);
 
-protected:
-
-	virtual const char* getName() const { return CIMOM_PROVIDER_IFC; }
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char *provIdString);
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char *provIdString);
-
-	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char *provIdString);
-
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const char *provIdString);
-
-	virtual OW_IndicationExportProviderIFCRefArray
-		doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
-		);
-
-	virtual OW_PolledProviderIFCRefArray
-		doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
-		);
-
-	void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
-	{
-		(void)env;
-		// empty
-	}
-
 private:
 
-	struct CimProv
-	{
-		CimProv() : m_initDone(false), m_pProv() {}
-		OW_Bool m_initDone;
-		OW_CppProviderBaseIFCRef m_pProv;
-	};
-
-	typedef OW_Map<OW_String, CimProv> ProviderMap;
 
 	OW_ProviderIFCBaseIFCRef getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMQualifier& qual,
 		OW_String& provStr) const;
 
 	OW_Array<OW_ProviderIFCBaseIFCRef> m_IFCArray;
-	ProviderMap m_cimomProviders;
+
+	// also stored in m_IFCArray.  We keep this here so we can call
+	// addCIMOMProvider()
+	OW_InternalProviderIFCRef m_internalIFC;
+
 	OW_Mutex m_guard;
-	OW_Array<CimProv> m_noIdProviders;
 };
 
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;

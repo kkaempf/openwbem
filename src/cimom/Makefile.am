@@ -2,7 +2,7 @@ SUBDIRS = indication
 
 cimombin_PROGRAMS = owcimomd
 cimombindir = $(sbindir)
- 
+
 owcimomd_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -rdynamic -o owcimomd
@@ -56,7 +56,9 @@ OW_AssocDb.hpp \
 OW_ProxyProvider.hpp \
 OW_HDB.hpp \
 OW_HDBCommon.hpp \
-OW_HDBNode.hpp
+OW_HDBNode.hpp \
+OW_InternalProviderIFC.cpp \
+OW_InternalProviderIFC.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/provider \
