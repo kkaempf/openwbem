@@ -86,6 +86,7 @@ doTests()
 	doATest "--disable-ssl" || return 1
 	doATest "--with-package-prefix=foo" || return 1
 	doACompileOnlyTest "--enable-perl-providerifc" || return 1
+	doACompileOnlyTest "--enable-debug-mode --enable-perl-providerifc" || return 1
 	doACompileOnlyTest "--disable-association-traversal" || return 1
 	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
 	doACompileOnlyTest "--disable-schema-manipulation" || return 1
