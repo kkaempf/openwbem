@@ -33,6 +33,8 @@
  */
 
 #include "OW_config.h"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_UserUtils.hpp"
 
 #ifdef OW_HAVE_UNISTD_H
@@ -43,23 +45,58 @@
 #include <sys/types.h>
 #endif
 
+#ifdef OW_HAVE_PWD_H
+#include <pwd.h>
+#endif
+
 namespace OpenWBEM
 {
 
-namespace UserUtils
-{
+	namespace UserUtils
+	{
 
-/////////////////////////////////////////////////////////////////////////////
-String getEffectiveUserId()
-{
-#ifdef OW_WIN32
-#error "port me!"
+		/////////////////////////////////////////////////////////////////////////////
+		String getEffectiveUserId()
+		{
+		#ifdef OW_WIN32
+		#error "port me!"
+		#else
+			return String(Int64(::geteuid()));
+		#endif
+		}
+		
+		//////////////////////////////////////////////////////////////////////////////
+		String getCurrentUserName()
+		{
+			bool ok;
+			return getUserName(getuid(),ok);
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+		String getUserName(uid_t uid,bool& ok)
+		{
+#ifdef HAVE_GETPWUID_R
+			passwd pw;
+			//I can't imagine an easy way to calculate the size of the additional buffer
+			//  ahead of time. 
+			size_t const additional_size= 256;
+			std::vector<char> additional(additional_size);
+			passwd* result;
+			::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
 #else
-	return String(Int64(::geteuid()));
-#endif
-}
-
-} // end namespace UserUtils
+			static Mutex getpwuid_mutex;
+			MutexLock lock(getpwuid_mutex);
+			passwd* result = ::getpwuid(uid);
+#endif  
+			if(result)
+			{
+				ok = true;
+				return result->pw_name;
+			}
+			ok = false;
+			return "";
+		}
+	} // end namespace UserUtils
 } // end namespace OpenWBEM
 
 
