@@ -18,3 +18,4 @@ wqlTest2
 testNamespaces
 testMisc
 hammerClient
+testSecondaryInstanceProviders

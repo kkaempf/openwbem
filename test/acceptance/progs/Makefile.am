@@ -18,7 +18,8 @@ aclTest \
 cimlistener \
 testNamespaces \
 testMisc \
-hammerClient
+hammerClient \
+testSecondaryInstanceProviders
 endif
 endif
 endif
@@ -231,6 +232,22 @@ $(CXXBINLINKFLAGS) \
 
 hammerClient_SOURCES = \
 hammerClient.cpp
+
+#testSecondaryInstanceProviders
+testSecondaryInstanceProviders_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+testSecondaryInstanceProviders_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testSecondaryInstanceProviders
+
+testSecondaryInstanceProviders_SOURCES = \
+testSecondaryInstanceProviders.cpp
+
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \

@@ -1,4 +1,4 @@
-#pragma namespace("root/secondaryinstancetest")
+#pragma namespace("root/secondaryinstanceprovidertest")
 
 Qualifier Key : boolean = false, 
     Scope(property, reference), 
@@ -10,5 +10,17 @@ class SecondaryInstanceTest
 	String prop2;
 	String prop3;
 	String prop4;
+};
+
+instance of SecondaryInstanceTest
+{
+	key = "1";
+	prop2 = "p2";
+};
+
+instance of SecondaryInstanceTest
+{
+	key = "2";
+	prop2 = "p2";
 };
 

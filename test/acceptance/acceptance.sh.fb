@@ -46,6 +46,7 @@ DIFF="diff -u"
 #############################################################################
 Install()
 {
+	echo "Install"
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
 		install >/dev/null 2>&1
 	then
@@ -311,6 +312,48 @@ ExitWithFail()
 }
 
 #############################################################################
+ImportMOF()
+{
+	echo "ImportMOF $*"
+
+	MOFFILE=$1
+	OUT_FILE=$RESULTDIR/`basename $MOFFILE`.owmofc_output
+
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -c \
+			$MOFFILE > $OUT_FILE 2>&1 || \
+			ExitWithFail "owmofc exited with error. Check $OUT_FILE."
+}
+
+#############################################################################
+RunATest()
+{
+	TEST=$1
+	URL=$2
+	OUT_FILE=$RESULTDIR/$1.out
+	ARGS=$3
+
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		$TEST >/dev/null 2>&1
+	then
+		return
+	fi
+
+	echo "Executing $TEST $URL $ARGS, saving output in " $OUT_FILE
+	$BUILDDIR/test/acceptance/progs/$TEST $URL $RESULTDIR/$TEST $ARGS \
+		> $OUT_FILE 2>&1 || \
+		ExitWithFail "$TEST failed with an error.  "
+
+	echo "$TEST Passed"
+}
+
+#############################################################################
+InstallProvider()
+{
+	PROVIDER=$1
+	ln -sf $PROVIDER $STAGEDIR/$OWPKGLIBDIR/c++providers/
+}
+
+#############################################################################
 TestInstalledHeaders()
 {
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
@@ -407,6 +450,7 @@ EOS
 		echo 'Header inclusion (one-by-one) passed!' 
 }
 
+#############################################################################
 Diff()
 {
 	DIFF_FILE1=$1
@@ -428,8 +472,6 @@ TestSuite()
 	then
 		return
 	fi
-
-	#RestartDaemon
 
 	URL=$1
 	DIFF_FILE=$2
@@ -639,6 +681,8 @@ TestAuth()
 		return
 	fi
 
+	echo "TestAuth"
+
 	# enable allow_anonymous
 	EditConfig "s!;owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = true!g" 
 	
@@ -755,6 +799,8 @@ TestACL()
 		return
 	fi
 
+	echo "TestACL"
+
 	grep "define OW_DISABLE_ACLS" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1
 	if [ "$?" = "0" ]; then
 		echo "** OpenWBEM was not built with ACL support **"
@@ -855,6 +901,8 @@ TestMof()
 		return
 	fi
 
+	echo "TestMof"
+
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
@@ -872,6 +920,8 @@ SetupInteropSchema()
 	then
 		return
 	fi
+
+	echo "SetupInteropSchema"
 
 	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -e owbinary -n root \
 			$TOPSRCDIR/schemas/cim28/CIM_Core28.mof || \
@@ -930,6 +980,16 @@ TestHammer()
 		ExitWithFail "TestHammer: hammerClient failed with an error.  "
 
 	echo "Testsuite Passed"
+}
+
+#############################################################################
+TestSecondaryInstanceProvider()
+{
+	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.so
+	InstallProvider $BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.so
+	RestartDaemon
+	ImportMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
+	RunATest testSecondaryInstanceProviders "http://test1:pass1@localhost:30926"
 }
 
 #############################################################################
@@ -1002,74 +1062,53 @@ export LD_LIBRARY_PATH LIBPATH
 RANDFILE=$STAGEDIR/ssl_randfile
 export RANDFILE
 
-echo "Install"
 Install
 
 cd $STAGEDIR
 
-echo "Daemon Start"
 StartDaemon
 
 if [ "z$OWLONGTEST" = "z1" ]; then
-  echo "TestAuth"
   TestAuth
-  echo "TestACL"
   TestACL
 fi
 
-echo "SetupInteropSchema"
 SetupInteropSchema
-echo "TestMof"
 TestMof
 
-echo "testsuiteTCPXML"
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
-echo "testsuiteUDSBIN"
 TestSuite "ipc://test1:pass1@localhost/ -e owbinary " "testsuiteUDSBIN.out" "testsuite28.out"
 
-echo "TestCIMExceptions 1"
 TestCIMExceptions "http://test1:pass1@localhost:30926"
-echo "TestCIMExceptions 2"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
 
-echo "TestNamespaces 1"
 TestNamespaces "http://test1:pass1@localhost:30926"
-echo "TestNamespaces 2"
 TestNamespaces "ipc://test1:pass1@localhost/owbinary"
 
-echo "TestMisc 1"
 TestMisc "http://test1:pass1@localhost:30926"
-echo "TestMisc 2"
 TestMisc "ipc://test1:pass1@localhost/owbinary"
 
-echo "TestIndications"
 TestIndications
 
-echo "TestWQL"
 TestWQL
 
-echo "TestMultiReq"
 TestMultiReq
 
+TestSecondaryInstanceProvider
+
 if [ "z$OWLONGTEST" = "z1" ]; then
-  echo "TestHammer 1"
   TestHammer "http://test1:pass1@localhost:30926"
-  echo "TestHammer 1"
   TestHammer "ipc://test1:pass1@localhost/owbinary"
 fi
 
-echo "StopDaemon"
 StopDaemon
 
 
 if [ "z$OWLONGTEST" = "z1" ]; then
-  echo "TestInstalledHeaders"
   TestInstalledHeaders
-  echo "TestInstalledHeadersOneByOne"
   TestInstalledHeadersOneByOne
 fi
 
-echo "CoreCheck"
 CoreCheck
 
 Exit 0
