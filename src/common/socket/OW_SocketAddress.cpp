@@ -72,7 +72,7 @@ SocketAddress::getUDS(const String& filename)
 	SocketAddress rval;
 	rval.m_type = UDS;
 	rval.m_name = filename;
-	rval.m_address = "127.0.0.1";
+	rval.m_address = "localhost";
 	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
 	rval.m_UDSNativeAddress.sun_family = AF_UNIX;
 	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(),
@@ -301,7 +301,8 @@ void SocketAddress::assignFromNativeForm(
 {
 	m_type = UDS;
 	memcpy(&m_UDSNativeAddress, address, sizeof(m_UDSNativeAddress));
-	m_address = m_name = m_UDSNativeAddress.sun_path;
+	m_address = "localhost";
+	m_name = m_UDSNativeAddress.sun_path;
 	m_nativeSize = sizeof(m_UDSNativeAddress);
 }
 #endif	// !defined(OW_WIN32)
