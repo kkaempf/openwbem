@@ -62,6 +62,7 @@
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_AuthorizerManager.hpp"
 
 #include <iostream>
 
@@ -267,6 +268,11 @@ CIMOMEnvironment::startServices()
 	{
 		MutexLock ml(m_monitor);
 		_createLogger();
+
+		// Create NOP authorizer manager so CIMServer can use it if it needs to.
+		// This will have an authorizer loaded into it later
+		m_authorizerManager = AuthorizerManagerRef(new AuthorizerManager);
+
 		m_providerManager = ProviderManagerRef(new ProviderManager);
 		m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
 			g_cimomEnvironment));
@@ -274,7 +280,7 @@ CIMOMEnvironment::startServices()
 		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
 			m_providerManager, m_cimRepository));
-		_loadAuthorizer();
+		_createAuthorizerManager();
 		_createAuthManager();
 		_loadRequestHandlers();
 		_loadServices();
@@ -285,8 +291,13 @@ CIMOMEnvironment::startServices()
 		MutexLock l(m_runningGuard);
 		m_running = true;
 	}
-	m_providerManager->init(ProviderEnvironmentIFCRef(
-		new ProviderEnvironmentServiceEnvironmentWrapper(this)));
+
+	ProviderEnvironmentIFCRef penvRef = ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(this));
+
+	m_authorizerManager->init(penvRef);
+
+	m_providerManager->init(penvRef);
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
 		m_services[i]->startService();
@@ -394,6 +405,8 @@ CIMOMEnvironment::shutdown()
 		m_cimRepository->shutdown();
 		m_cimRepository = 0;
 	}
+	// Delete the authorization managerw
+	m_authorizerManager = 0;
 	// Delete the provider manager
 	if (m_providerManager)
 	{
@@ -697,13 +710,6 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 		}
 	}
 
-	if (m_authorizer)
-	{
-		AuthorizerIFC* p = m_authorizer->clone();
-		p->setSubRepositoryIFC(rref);
-		rref = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), RepositoryIFCRef(p))));
-	}
-
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref,
 		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 }
@@ -795,9 +801,11 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMOMEnvironment::_loadAuthorizer()
+CIMOMEnvironment::_createAuthorizerManager()
 {
-	OW_ASSERT(!m_authorizer);
+	// m_authorizerManager should actually be a valid AuthorizerManager
+	// already, but it doesn't have a authorizer loaded yet.
+
 	String libname = getConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt);
 
 	// no authorization requested
@@ -806,8 +814,8 @@ CIMOMEnvironment::_loadAuthorizer()
 		return;
 	}
 
-	logDebug(Format("CIMOM loading authorization libary %1",
-		libname));
+	logDebug(Format("CIMOM loading authorization libary %1", libname));
+
 	SharedLibraryLoaderRef sll =
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if(!sll)
@@ -835,8 +843,9 @@ CIMOMEnvironment::_loadAuthorizer()
 		logFatalError(msg);
 		OW_THROW(CIMOMEnvironmentException, msg.c_str());
 	}
-	m_authorizer = AuthorizerIFCRef(authorizerLib,
-		Reference<AuthorizerIFC>(p));
+
+	m_authorizerManager->setAuthorizer(
+		AuthorizerIFCRef(authorizerLib,Reference<AuthorizerIFC>(p)));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
@@ -1082,7 +1091,12 @@ CIMOMEnvironment::getRepository() const
 {
 	return m_cimRepository;
 }
-
+//////////////////////////////////////////////////////////////////////////////
+AuthorizerManagerRef 
+CIMOMEnvironment::getAuthorizerManager() const
+{
+	return m_authorizerManager;
+}
 //////////////////////////////////////////////////////////////////////////////
 CIMInstanceArray CIMOMEnvironment::getInteropInstances(const String& className) const
 {

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Novell, Inc. All rights reserved.
+* Copyright (C) 2003-2004 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,26 +32,29 @@
  * @author Jon Carey
  */
 
-#ifndef OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
-#define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
+#ifndef __OW_AUTHORIZERMANAGER_HPP__
+#define __OW_AUTHORIZERMANAGER_HPP__
+
 #include "OW_config.h"
+#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_AuthorizerIFC.hpp"
 
 namespace OpenWBEM
 {
 
-// This class is responsible for Access control.
-class SimpleAuthorizer : public AuthorizerIFC
+class AuthorizerManager
 {
 public:
-	/**
-	 * Create a new SimpleAuthorization object.
-	 */
-	SimpleAuthorizer();
-	/**
-	 * Destroy this SimpleAuthorization object.
-	 */
-	virtual ~SimpleAuthorizer();
+
+	AuthorizerManager();
+	AuthorizerManager(AuthorizerIFCRef authorizerRef);
+	
+	~AuthorizerManager();
+
+	void setAuthorizer(AuthorizerIFCRef authorizerRef)
+	{
+		m_authorizer = authorizerRef;
+	}
 
 	/**
 	 * Determine if a read of the given instance is allowed. The given
@@ -76,7 +79,7 @@ public:
 	 * 		then the client will not get any properties.
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowReadInstance(
+	bool allowReadInstance(
 		const ProviderEnvironmentIFCRef& env,
         const String& ns,
 		const String& className,
@@ -88,46 +91,43 @@ public:
 	 * Determine if a write of the given instance is allowed.
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace the instance will be written to.
-	 * @param instanceName The name of the instance that will be
-	 * 		created/modified/deleted.
+	 * @param op The object path of the instance that will be written.
 	 * @param dynamic If E_DYNAMIC, then this instance is being written.
 	 * 		through a provider. Otherwise it is being written to the
 	 * 		static repository.
 	 * @param flag Indicates create/modify/delete operation.
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowWriteInstance(
+	bool allowWriteInstance(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns, 
-		const CIMObjectPath& instanceName, 
-		EDynamicFlag dynamic,
-		EWriteFlag flag);
+		const String& ns,
+		const CIMObjectPath& op,
+		AuthorizerIFC::EDynamicFlag dynamic,
+		AuthorizerIFC::EWriteFlag flag);
 #endif
 
 	/**
-	 * Determine if a read of the schema is allowed in the given namespace.
+	 * Determine if a read of the schema is allow for the given namespace.
 	 * @param env A reference to a provider environment
 	 * @param ns The namespace the schema will be read from.
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowReadSchema(
+	bool allowReadSchema(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns);
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 	/**
-	 * Determine if a write of the schema in the given namespace is allowed.
+	 * Determine if a write of a schema element is allowed.
 	 * @param env A reference to a provider environment
-	 * @param ns The namespace the schema write will take place in.
+	 * @param ns The namespace the schema write will take place.
 	 * @param flag Indicates create/modify/delete operation
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowWriteSchema(
+	bool allowWriteSchema(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		EWriteFlag flag);
-
+		const String& ns, 
+		AuthorizerIFC::EWriteFlag flag);
 #endif
 
 	/**
@@ -136,7 +136,7 @@ public:
 	 * @param ns The namespace that will be accessed.
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowAccessToNameSpace(
+	bool allowAccessToNameSpace(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns);
 
@@ -147,17 +147,17 @@ public:
 	 * @param ns The namespace that will be created.
 	 * @return true if the creation is authorized. Otherwise false.
 	 */
-	virtual bool doAllowCreateNameSpace(
+	bool allowCreateNameSpace(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns);
 
 	/**
-	 * Determine if the user is allow to delete the given namespace.
+	 * Determine if the user is allowed to delete the given namespace.
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace that will be deleted.
 	 * @return true if the deletion is authorized. Otherwise false.
 	 */
-	virtual bool doAllowDeleteNameSpace(
+	bool allowDeleteNameSpace(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns);
 #endif
@@ -167,7 +167,7 @@ public:
 	 * @param env A reference to a provider environment
 	 * @return true if the enumerate is allowed. Otherwise false.
 	 */
-	virtual bool doAllowEnumNameSpace(
+	bool allowEnumNameSpace(
 		const ProviderEnvironmentIFCRef& env);
 
 	/**
@@ -176,24 +176,33 @@ public:
 	 * @param ns The namespace containing the instance or class. 
 	 * @param path The name of the instance or class containing
 	 * 		the method. 
-	 * @param MethodName The name of the method. 
+	 * @param methodName The name of the method. 
 	 * @return true if access is allowed. Otherwise false.
 	 */
-	virtual bool doAllowMethodInvocation(
+	bool allowMethodInvocation(
 		const ProviderEnvironmentIFCRef& env, 
 		const String& ns, 
-		const CIMObjectPath path, 
-		const String& MethodName);
+		const CIMObjectPath& path, 
+		const String& methodName); 
 
-	virtual bool init(ProviderEnvironmentIFCRef&);
+	/**
+	 * Called by the CIMOMEnvironment after the CIMServer has be loaded and
+	 * initialized.
+	 */
+	void init(ProviderEnvironmentIFCRef& env);
+
 
 private:
 
-	bool checkAccess(const String& opType, const String& ns,
-		const ProviderEnvironmentIFCRef& env);
-
+	AuthorizerIFCRef m_authorizer;
+	bool m_initialized;
 };
 
-} // end namespace OpenWBEM
+typedef Reference<AuthorizerManager> AuthorizerManagerRef;
 
-#endif
+}
+
+
+#endif	//  __OW_AUTHORIZERMANAGER_HPP__
+
+

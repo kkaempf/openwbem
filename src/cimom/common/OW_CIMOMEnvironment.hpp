@@ -52,6 +52,7 @@
 #include "OW_ConfigFile.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_SortedVectorSet.hpp"
+#include "OW_AuthorizerManager.hpp"
 
 namespace OpenWBEM
 {
@@ -102,9 +103,6 @@ typedef SharedLibraryReference<RepositoryIFCRef>
 class IndicationRepLayerMediator;
 typedef Reference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
-
-class AuthorizerIFC;
-typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef;
 
 class CIMOMEnvironment;
 typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
@@ -161,6 +159,7 @@ public:
 	void unloadReqHandlers();
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
+	AuthorizerManagerRef getAuthorizerManager() const;
 	virtual CIMInstanceArray getInteropInstances(const String& className) const;
 	virtual void setInteropInstance(const CIMInstance& inst);
 
@@ -177,7 +176,7 @@ private:
 	void _createIndicationServer();
 	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref);
 	void _clearSelectables();
-	void _loadAuthorizer();
+	void _createAuthorizerManager();
 
 	// Types
 	struct ReqHandlerData
@@ -192,7 +191,10 @@ private:
 	mutable Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
-	AuthorizerIFCRef m_authorizer;
+
+	AuthorizerManagerRef m_authorizerManager;
+	//AuthorizerIFCRef m_authorizer;
+
 	AuthManagerRef m_authManager;
 	LoggerRef m_Logger;
 	ConfigMapRef m_configItems;

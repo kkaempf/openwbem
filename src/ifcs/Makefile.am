@@ -39,6 +39,7 @@ OW_WQLIFC.hpp
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/cim
 
 

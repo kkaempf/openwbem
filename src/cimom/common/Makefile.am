@@ -28,10 +28,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cpp
 
 
-
 OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
 thelibdir = $(libdir)
-
 
 
 libowcimomcommon_a_SOURCES =	\
@@ -51,6 +49,8 @@ OW_WQLFilterRep.cpp \
 OW_WQLFilterRep.hpp \
 OW_IndicationRepLayerMediator.cpp \
 OW_IndicationRepLayerMediator.hpp \
+OW_AuthorizerManager.cpp \
+OW_AuthorizerManager.hpp \
 OW_ProviderManager.cpp \
 OW_ProviderManager.hpp \
 OW_ProviderProxies.cpp \

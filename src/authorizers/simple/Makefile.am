@@ -21,6 +21,7 @@ noinst_LIBRARIES = libowsimpleauthorizer.a
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/cim
 
 libowsimpleauthorizer_a_SOURCES = \

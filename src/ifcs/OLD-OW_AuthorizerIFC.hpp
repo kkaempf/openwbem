@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,16 +27,51 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
+#ifndef OW_AUTHORIZER_IFC_HPP_INCLUDE_GUARD_
+#define OW_AUTHORIZER_IFC_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
-#include "OW_AuthorizerIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
 
-///////////////////////////////////////////////////////////////////////////////
-AuthorizerIFC::~AuthorizerIFC()
+class AuthorizerIFC : public RepositoryIFC
 {
+public:
+	virtual ~AuthorizerIFC();
+
+	virtual AuthorizerIFC* clone() const = 0;
+	virtual void setSubRepositoryIFC(const RepositoryIFCRef& rep) = 0;
+
+};
+
 }
 
-} // end namespace OpenWBEM
+#if !defined(OW_STATIC_SERVICES)
+#define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
+extern "C" OpenWBEM::AuthorizerIFC* \
+createAuthorizer() \
+{ \
+	return new derived; \
+} \
+extern "C" const char* \
+getOWVersion() \
+{ \
+	return OW_VERSION; \
+}
+#else
+#define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
+extern "C" OpenWBEM::AuthorizerIFC* \
+createAuthorizer_##authorizerName() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
+#endif

@@ -71,6 +71,11 @@ public:
 	 * @return The user name that is associated with this UserInfo object.
 	 */
 	String getUserName() const;
+	/**
+	 * @return true if access rights are not to be checked on this UserInfo
+	 * object. Otherwise false.
+	 */
+	bool getInternal() const;
 private:
 	/**
 	 * Create a new UserInfo object that access rights will not be checked on.
@@ -78,11 +83,6 @@ private:
 	 * type of UserInfo object.
 	 */
 	UserInfo();
-	/**
-	 * @return true if access rights are not to be checked on this UserInfo
-	 * object. Otherwise false.
-	 */
-	bool getInternal() const;
 	/**
 	 * Set this UserInfo object to internal
 	 */
