@@ -136,27 +136,24 @@ public:
 				strVer = (*versFunc)();
 				if (!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
 				{
-					OW_LOG_ERROR(logger, "safeLibCreate::create -"
-						" Invalid version returned from \"getOWVersion\"");
+					OW_LOG_INFO(logger, Format("safeLibCreate::create - Warning: version returned from \"getOWVersion\""
+						" (%1) does not match (%2)", strVer ? strVer : "", OW_VERSION));
+				}
+
+				createFunc_t createFunc;
+				if (!sl->getFunctionPointer( createFuncName
+					, createFunc ))
+				{
+					OW_LOG_ERROR(logger, Format("safeLibCreate::create failed"
+						" getting function pointer to \"%1\" from"
+						" library", createFuncName));
+
 					return 0;
 				}
-				else
-				{
-					createFunc_t createFunc;
-					if (!sl->getFunctionPointer( createFuncName
-						, createFunc ))
-					{
-						OW_LOG_ERROR(logger, Format("safeLibCreate::create failed"
-							" getting function pointer to \"%1\" from"
-							" library", createFuncName));
 
-						return 0;
-					}
+				T* ptr = (*createFunc)();
 
-					T* ptr = (*createFunc)();
-
-					return ptr;
-				}
+				return ptr;
 			}
 			else
 			{
