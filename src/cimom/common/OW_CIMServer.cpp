@@ -756,7 +756,7 @@ CIMServer::createInstance(
 	}
 	// Make sure instance jives with class definition
 	CIMInstance lci(ci);
-	lci.syncWithClass(theClass);
+	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		m_env->logDebug(format("CIMServer::createInstance.  ns = %1, "
@@ -803,7 +803,7 @@ CIMServer::modifyInstance(
 
 	// Make sure instance jives with class definition
 	CIMInstance lci(modifiedInstance);
-	lci.syncWithClass(theClass);
+	lci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 
 	if(!instancep)
 	{

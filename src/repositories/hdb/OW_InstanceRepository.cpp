@@ -250,7 +250,7 @@ InstanceRepository::getInstanceNames(const String& ns,
 	{
 		CIMInstance ci(CIMNULL);
 		nodeToCIMObject(ci, node);
-		ci.syncWithClass(theClass); // need to do this to set up the keys
+		ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS); // need to do this to set up the keys
 		CIMObjectPath op(ci.getClassName(), ns);
 		op.setKeys(ci.getKeyValuePairs());
 		result.handle(op);
@@ -409,7 +409,7 @@ InstanceRepository::modifyInstance(const String& ns,
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be
 	// there.
-	ci.syncWithClass(theClass, E_EXCLUDE_QUALIFIERS);
+	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	// Ensure key values haven't changed
 	CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();
 	for(size_t i = 0; i < oldKeys.size(); i++)
