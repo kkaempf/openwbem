@@ -79,18 +79,22 @@ namespace
 			: m_resetUid(resetUid)
 			, m_uidsDiffer(tempUid != resetUid)
 		{
+#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::seteuid(tempUid);
 			}
+#endif
 		}
 
 		~UIDManager()
 		{
+#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::setuid(m_resetUid);
 			}
+#endif
 		}
 		
 	private:
@@ -105,18 +109,22 @@ namespace
 			: m_resetUid(resetUid)
 			, m_uidsDiffer(tempUid != resetUid)
 		{
+#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::setuid(tempUid);
 			}
+#endif
 		}
 
 		~RUIDManager()
 		{
+#ifndef OW_NETWARE
 			if (m_uidsDiffer)
 			{
 				::seteuid(m_resetUid);
 			}
+#endif
 		}
 		
 	private:
@@ -805,6 +813,7 @@ namespace
 	void getUIDS(const ProviderEnvironmentIFCRef& env,
 		uid_t& cimomuid, uid_t& useruid)
 	{
+#ifndef OW_NETWARE
 		cimomuid = ::getuid();	// Get CIMOM user id
 		useruid = cimomuid;
 
@@ -826,6 +835,10 @@ namespace
 		{
 			useruid = pw.pw_uid;
 		}
+#else
+		// Temp
+		cimomuid = useruid = 0;
+#endif
 	}
 
 	inline ProviderEnvironmentIFCRef
