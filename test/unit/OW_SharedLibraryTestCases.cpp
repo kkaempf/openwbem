@@ -57,7 +57,7 @@ void OW_SharedLibraryTestCases::testGetFunctionPointer()
 	fptype fp;
 	sl->getFunctionPointer( "testFunction", fp );
 	unitAssert( fp );
-	unitAssert( fp(3) == 4 );
+	unitAssert( fp(3) == 3 + 0xABCDEF01 );
 }
 
 Test* OW_SharedLibraryTestCases::suite()

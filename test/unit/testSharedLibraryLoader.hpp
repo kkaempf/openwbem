@@ -54,7 +54,7 @@ using namespace OpenWBEM;
 
 static int testFunction( int i )
 {
-	return i + 1;
+	return i + 0xABCDEF01;
 }
 
 static const char* versionFunction()
