@@ -25,8 +25,6 @@ Testing:
       - Random syscall failure.  Send SIGUSR1 to owciomd at random intervals
         while hammerClient is running.
       - Do all this while running under valgrind to detect memory leaks, etc.
-    - Migrate the test schema to cim 2.8 (once it's final). Put 2.8 in the
-      distribution as well.
 
 Fix problems:
     - Add tests in configure.in for -W flags supported.
@@ -60,7 +58,7 @@ New features:
       This will also allow for exporting a batch of indications.  If there are
       already > 1 indication in the queue for delivery after the connection is
       made, then batch export can be used for greater efficiency.
-    - Implement the CIM_Interop27 build-in providers.
+    - Implement the CIM_Interop build-in providers.
       - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
       - CIM_CommMechanismForManager
@@ -84,8 +82,6 @@ New features:
       - Template method base class for weak to ComputerSystem(anything?) providers (almost all hardware)
       - Use ideas from SBLIM: http://oss.software.ibm.com/developerworks/oss/sblim/doc/ProviderArchitecture.pdf
       - Review all providers and simplify & re-use & move any ideas into common functionality.
-    - Add log messages to the thread pool class so we can output
-      information about threads starting and exiting.
     - create static CIMQualifiers for standard qualifiers.
     - Create a repository debugger so you can easily inspect what's in a repository.
     - Pass language down to providers
@@ -190,12 +186,8 @@ Refactorings:
       that return OW_Enumeration<T> and OW_Array<T>.
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
     - XML Things:
-      - Split OW_CIMXMLParser into OW_XMLPullParser (generic) and OW_CIMXMLParser (CIM/XML specific)
-      - Resurrect the old OW_XMLParser and create OW_XMLSaxParser and OW_XMLDOMParser
       - Move some of the XML code around.  Get rid of param* strings.  Move 
         XMLQualifier::* to XMLCIMFactory.
-      - XMLExecute has handling of flags like localonly, etc.  remove this
-        and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
       - Fix most of the CIMtoXML object path stuff to closely mirror the dtd.
 
     Post 3.0
