@@ -11,8 +11,6 @@ indicationTest.out \
 stringArray.mof \
 wqlTest.mof \
 wqlTest.out \
-testsuiteBIN.out \
-testsuiteBIN.out.long \
-testsuiteXML.out \
-testsuiteXML.out.long
+testsuite.out \
+testsuite.out.long 
 
