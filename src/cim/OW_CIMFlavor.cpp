@@ -61,18 +61,26 @@ CIMFlavor::toString() const
 String
 CIMFlavor::toMOF() const
 {
-	const char* strf;
 	switch(m_flavor)
 	{
-		case ENABLEOVERRIDE: strf = "EnableOverride"; break;
-		case DISABLEOVERRIDE: strf = "DisableOverride"; break;
-		case RESTRICTED: strf = "Restricted"; break;
-		case TOSUBCLASS: strf = "ToSubclass"; break;
-		case TRANSLATE: strf = "Translatable"; break;
-		default: strf = "BAD FLAVOR"; break;
+		case ENABLEOVERRIDE: 
+		return "EnableOverride"; 
+
+		case DISABLEOVERRIDE: 
+		return "DisableOverride";
+
+		case RESTRICTED: 
+		return "Restricted";
+
+		case TOSUBCLASS: 
+		return "ToSubclass";
+
+		case TRANSLATE: 
+		return "Translatable";
+
+		default: 
+		return "BAD FLAVOR";
 	}
-	
-	return String(strf);
 }
 //////////////////////////////////////////////////////////////////////////////		
 void
