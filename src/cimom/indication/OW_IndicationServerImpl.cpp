@@ -103,6 +103,7 @@ IndicationServerImpl::getDependencies() const
 {
 	StringArray rv;
 	rv.push_back(ServiceIFCNames::CIMServer);
+	rv.push_back(ServiceIFCNames::ProviderManager);
 	return rv;
 }
 
