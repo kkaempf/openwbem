@@ -791,6 +791,14 @@ namespace
 	{
 		cimomuid = ::getuid();	// Get CIMOM user id
 		useruid = cimomuid;
+
+		String wk = env->getOperationContext().getStringDataWithDefault(
+			OperationContext::CURUSER_UIDKEY);
+        if (!wk.empty())
+        {
+			useruid = wk.toUInt32();
+			return; 
+		}
 		String userName = env->getUserName(); 
 
 		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
