@@ -528,6 +528,7 @@ namespace
 						params[i].val = OW_CIMValue(false);
 						break;
 
+					case param::CLASSNAME:
 					case param::STRING:
 						params[i].val = OW_CIMValue("");
 						break;
