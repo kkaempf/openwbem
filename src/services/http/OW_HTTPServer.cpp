@@ -483,6 +483,9 @@ HTTPServer::shutdown()
 	m_pHttpsServerSocket = 0;
 	m_pUDSServerSocket = 0;
 	m_options.env->getLogger()->logDebug("HTTP Service has shut down");
+
+	// clear out variables to avoid circular reference counts.
+	m_options.env = 0;
 }
 
 } // end namespace OpenWBEM

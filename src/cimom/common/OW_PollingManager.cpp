@@ -255,6 +255,12 @@ PollingManager::shutdown()
 	}
 	// wait until the main thread exits.
 	this->join();
+
+	// clear out variables to avoid circular reference counts.
+	m_triggerRunners.clear();
+	m_env = 0;
+	m_triggerRunnerThreadPool = 0;
+
 }
 //////////////////////////////////////////////////////////////////////////////
 void
