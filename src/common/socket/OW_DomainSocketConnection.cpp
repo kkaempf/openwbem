@@ -382,6 +382,7 @@ OW_DomainSocketConnectionImpl::authenticate()
 void
 OW_DomainSocketConnectionImpl::disconnect()
 {
+	cerr << "*** DomainSocketConnectionImpl::disconnect() called" << endl;
 	if(m_fd != -1)
 	{
 		delete m_in;

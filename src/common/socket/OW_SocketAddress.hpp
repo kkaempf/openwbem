@@ -42,6 +42,7 @@
 #include "OW_Exception.hpp"
 
 DEFINE_EXCEPTION(UnknownHost);
+DEFINE_EXCEPTION(SocketAddress);
 
 class OW_SocketAddress 
 {
@@ -93,7 +94,7 @@ public:
 	 * Allocate an empty SocketAddress.
 	 * @return an empty address
 	 */
-	static OW_SocketAddress allocEmptyAddress();
+	static OW_SocketAddress allocEmptyAddress(AddressType type);
 
 	/**
 	 * Get the port associated with the address
@@ -130,10 +131,7 @@ public:
 	 *
 	 * @return The IP and port seperated by a colon.
 	 */
-	const OW_String toString() const
-	{
-		return getAddress() + ":" + OW_String(OW_UInt32(getPort()));
-	}
+	const OW_String toString() const;
 
 	//operator void*() const { return (void*)m_impl; }
 
@@ -164,6 +162,7 @@ public:
 
 private:
 	OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm);
+	OW_SocketAddress(const OW_UnixSocketAddress_t& nativeForm);
 
 	OW_String m_name;
 	OW_String m_address;
@@ -179,6 +178,8 @@ private:
 			OW_UInt16 nativePort, const OW_String& hostname );
 	static OW_SocketAddress getFromNativeForm(
 		const OW_InetSocketAddress_t& nativeForm);
+	static OW_SocketAddress getFromNativeForm(
+		const OW_UnixSocketAddress_t& nativeForm);
 
 };
 

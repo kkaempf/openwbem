@@ -125,6 +125,13 @@ OW_SocketAddress::getFromNativeForm( const OW_InetSocketAddress_t& nativeForm)
 
 //static
 OW_SocketAddress 
+OW_SocketAddress::getFromNativeForm( const OW_UnixSocketAddress_t& nativeForm)
+{
+	return OW_SocketAddress(nativeForm);
+}
+
+//static
+OW_SocketAddress 
 OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm, 
 		OW_UInt16 nativePort, const OW_String& hostName)
 {
@@ -214,6 +221,11 @@ OW_UInt16 OW_SocketAddress::getPort() const
 	return OW_ntoh16(m_inetNativeAddress.sin_port);
 }
 
+OW_SocketAddress::OW_SocketAddress(const OW_UnixSocketAddress_t& nativeForm)
+	: m_nativeSize(0), m_type(UDS)
+{
+	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
+}
 
 OW_SocketAddress::OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm)
 	: m_nativeSize(0), m_type(INET)
@@ -237,11 +249,41 @@ size_t OW_SocketAddress::getNativeFormSize() const
 }
 
 
-OW_SocketAddress OW_SocketAddress::allocEmptyAddress()
+OW_SocketAddress OW_SocketAddress::allocEmptyAddress(AddressType type)
 {
-	sockaddr_in addr;
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
+	if (type == INET)
+	{
+		sockaddr_in addr;
+		memset(&addr, 0, sizeof(addr));
+		addr.sin_family = AF_INET;
+		return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
+	}
+	else if (type == UDS)
+	{
+		sockaddr_un addr;
+		memset(&addr, 0, sizeof(addr));
+		addr.sun_family = AF_LOCAL;
+		return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
+	}
+	else
+	{
+		OW_THROW(OW_SocketAddressException, "Bad Address Type");
+	}
+}
+
+const OW_String
+OW_SocketAddress::toString() const
+{
+	OW_ASSERT(m_type != UNSET);
+	OW_String rval;
+	if (m_type == INET)
+	{
+		rval = getAddress() + ":" + OW_String(OW_UInt32(getPort()));
+	}
+	else
+	{
+		rval = this->m_name;
+	}
+	return rval;
 }
 

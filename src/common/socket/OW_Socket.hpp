@@ -41,6 +41,8 @@
 #include "OW_Types.h"
 #include "OW_UnnamedPipe.hpp"
 
+#define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"
+
 DEFINE_EXCEPTION(TimeOut)
 
 class OW_Socket : public OW_SelectableIFC, public OW_IOIFC

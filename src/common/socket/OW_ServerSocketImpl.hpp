@@ -50,8 +50,6 @@ class OW_ServerSocketImpl : public OW_SelectableIFC
 {
 public:
 	OW_ServerSocketImpl(OW_Bool isSSL);
-	OW_ServerSocketImpl(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-		OW_Bool allInterfaces=false);
 	~OW_ServerSocketImpl();
 	OW_String addrString();
 	OW_Socket accept(int timeoutSecs=-1);
@@ -64,6 +62,7 @@ public:
 	OW_SocketHandle_t getfd() const { return m_sockfd; }
 	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
 		OW_Bool allInterfaces=false);
+	void doListen(const OW_String& filename, int queueSize=10);
 	OW_Bool waitForIO(int fd, int timeOutSecs, OW_Bool forInput);
 	OW_Select_t getSelectObj() const;
 

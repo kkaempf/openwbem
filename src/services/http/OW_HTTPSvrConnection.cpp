@@ -1204,7 +1204,8 @@ OW_HTTPSvrConnection::sendHeaders(int sc, int len)
 OW_String
 OW_HTTPSvrConnection::getHostName()
 {
-	return m_socket.getLocalAddress().getName();
+	//return m_socket.getLocalAddress().getName();
+	return OW_SocketAddress::getAnyLocalHost().getName();
 }
 
 //////////////////////////////////////////////////////////////////////////////

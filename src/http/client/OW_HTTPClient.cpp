@@ -135,8 +135,15 @@ void OW_HTTPClient::setUrl()
 #endif // #ifndef OW_NO_SSL
 	}
 
-	m_serverAddress = OW_SocketAddress::getByName(m_url.host,
-		m_url.port);
+	if (m_url.protocol.equalsIgnoreCase("ipc"))
+	{
+		m_serverAddress = OW_SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
+	}
+	else
+	{
+		m_serverAddress = OW_SocketAddress::getByName(m_url.host,
+			m_url.port);
+	}
 
 	if( m_url.path.length() == 0)
 	{

@@ -120,37 +120,30 @@
 #define DEFAULT_ENABLE_DEFLATE "true"
 #endif
 
+#ifndef DEFAULT_USE_UDS
+#define DEFAULT_USE_UDS "true"
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
-	static const char* const SINGLE_THREAD_opt = "http_server.single_thread";
 	static const char* const CONFIG_FILE_opt = "owcimomd.config_file";
-	static const char* const HTTP_PORT_opt = "http_server.http_port";
-	static const char* const HTTPS_PORT_opt = "http_server.https_port";
 	static const char* const LOG_LOCATION_opt = "owcimomd.log_location";
 	static const char* const LOG_LEVEL_opt = "owcimomd.log_level";
 	static const char* const PROVIDER_IFC_LIBS_opt = "owcimomd.provider_ifc_libs";
-	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
 	static const char* const ONLY_HELP_opt = "owcimomd.onlyhelp";
 	static const char* const LIBEXEC_DIR_opt = "owcimomd.libexecdir";
 	static const char* const OWLIB_DIR_opt = "owcimomd.owlibdir";
 	static const char* const DATA_DIR_opt = "owcimomd.datadir";
 	static const char* const ALLOW_ANONYMOUS_opt = "owcimomd.allow_anonymous";
-	static const char* const MAX_CONNECTIONS_opt = "http_server.max_connections";
 	static const char* const PAM_ALLOWED_USERS_opt = "pam.allowed_users";
 	static const char* const SIMPLE_AUTH_FILE_opt = "simple_auth.password_file";
-	static const char* const DIGEST_AUTH_FILE_opt = "http_server.digest_password_file";
 	static const char* const AUTH_MOD_opt = "owcimomd.authentication_module";
 	static const char* const DUMP_SOCKET_IO_opt = "owcimomd.dump_socket_io";
 	static const char* const CPPIFC_PROV_LOC_opt = "cppprovifc.prov_location";
-	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
 	static const char* const DISABLE_INDICATIONS_opt = "owcimomd.disable_indications";
 	static const char* const WQL_LIB_opt = "owcimomd.wql_lib";
 	static const char* const ACL_SUPERUSER_opt = "owcimomd.ACL_superuser";
-	static const char* const ENABLE_DEFLATE_opt = "http_server.enable_deflate";
-	static const char* const HTTP_USE_DIGEST_opt = "http_server.use_digest";
-	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
-	static const char* const REQUEST_HANDLER_LIB_PATH_opt = "daemon.request_handler_lib_path";
 
 	// 2.0 additions
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
@@ -158,6 +151,18 @@ namespace OW_ConfigOpts
 	static const char* const HTTP_SLP_DISABLED_opt = "http_server.disable.slp";
 	static const char* const HTTP_PATH_opt = "internal.http.Path";
 	static const char* const USER_NAME_opt = "internal.user.Name";
+	static const char* const USE_UDS_opt = "http_server.use_UDS";
+	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
+	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
+	static const char* const REQUEST_HANDLER_LIB_PATH_opt = "daemon.request_handler_lib_path";
+	static const char* const SINGLE_THREAD_opt = "http_server.single_thread";
+	static const char* const HTTP_PORT_opt = "http_server.http_port";
+	static const char* const HTTPS_PORT_opt = "http_server.https_port";
+	static const char* const ENABLE_DEFLATE_opt = "http_server.enable_deflate";
+	static const char* const HTTP_USE_DIGEST_opt = "http_server.use_digest";
+	static const char* const DIGEST_AUTH_FILE_opt = "http_server.digest_password_file";
+	static const char* const MAX_CONNECTIONS_opt = "http_server.max_connections";
+	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__

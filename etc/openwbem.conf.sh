@@ -195,3 +195,8 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # typical user. The default for this option is false.
 ;http_server.single_thread = false
 
+################################################################################
+# http_server.use_UDS specifies whether the http server will listen on a 
+# Unix Domain Socket.  The default value is true.
+;http_server.use_UDS = true
+

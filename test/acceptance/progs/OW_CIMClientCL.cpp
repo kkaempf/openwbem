@@ -1180,15 +1180,17 @@ main(int argc, char* argv[])
 		 * be provided to retrieve authentication credentials.
 		 **********************************************************************/
 
-		OW_CIMProtocolIFCRef client;
+		/*
 		if (owurl.protocol.equalsIgnoreCase("ipc"))
 		{
 			client = new OW_IPCClient(url);
 		}
 		else
 		{
-			client = new OW_HTTPClient(url);
-		}
+		*/
+		OW_CIMProtocolIFCRef client;
+		client = new OW_HTTPClient(url);
+		//}
 
 
 		/**********************************************************************

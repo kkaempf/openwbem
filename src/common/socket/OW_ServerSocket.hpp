@@ -57,20 +57,6 @@ public:
 		: OW_SelectableIFC()
 		, m_impl(arg.m_impl) {}
 
-	/** Allocate a new Inet Server Socket, and start listening on a port.
-	 * @param port The port to listen on
-	 * @param isSSL is the Server Socket an SSL socket?
-	 * @param queueSize the size of the listen queue
-	 * @param allInterfaces do we listen on all interfaces?
-	 *
-	 */
-	OW_ServerSocket(OW_UInt16 port, OW_Bool isSSL = false, int queueSize=10, 
-			OW_Bool allInterfaces=false)
-		: OW_SelectableIFC()
-		, m_impl(new OW_ServerSocketImpl(port, isSSL,
-			queueSize, allInterfaces))
-	{
-	}
 
 	/**
 	 * Accept a connection to the server socket
@@ -96,6 +82,18 @@ public:
 		/*throw (OW_SocketException)*/
 	{
 		m_impl->doListen(port, isSSL, queueSize, allInterfaces);
+	}
+
+	/**
+	 * Start listening on a Unix Domain Socket
+	 *
+	 * @param filename The filename for the unix domain socket
+	 * @param queueSize the size of the listen queue
+	 */
+	void doListen(const OW_String& filename, int queueSize=10)
+		/*throw (OW_SocketException)*/
+	{
+		m_impl->doListen(filename, queueSize);
 	}
 
 //	OW_String addrString() { return m_impl->addrString(); }

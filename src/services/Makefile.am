@@ -1,2 +1,2 @@
-SUBDIRS = http ipc
+SUBDIRS = http 
 

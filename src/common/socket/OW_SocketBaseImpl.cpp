@@ -93,7 +93,7 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
 	, m_isConnected(true)
 	, m_sockfd(fd)
 	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
-	, m_peerAddress(OW_SocketAddress::allocEmptyAddress())
+	, m_peerAddress(OW_SocketAddress::allocEmptyAddress(addrType))
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)

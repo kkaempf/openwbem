@@ -99,14 +99,7 @@ int main(int argc, char* argv[])
 		OW_URL owurl(url);
 
 		OW_CIMProtocolIFCRef client;
-		if (owurl.protocol.equalsIgnoreCase("ipc"))
-		{
-			client = new OW_IPCClient(url);
-		}
-		else
-		{
-			client = new OW_HTTPClient(url);
-		}
+		client = new OW_HTTPClient(url);
 
 
 		/**********************************************************************

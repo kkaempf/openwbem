@@ -134,6 +134,7 @@ public:
 		bool enableDeflate;
 		bool useDigest;
 		bool allowAnonymous;
+		bool useUDS;
 		OW_ServiceEnvironmentIFCRef env;
 	};
 
@@ -160,6 +161,7 @@ private:
 
 	OW_Reference<OW_ServerSocket> m_pHttpServerSocket;
 	OW_Reference<OW_ServerSocket> m_pHttpsServerSocket;
+	OW_Reference<OW_ServerSocket> m_pUDSServerSocket;
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
 	OW_Mutex m_authGuard;
 	HTTPSlpRegistrator m_slpRegistrator;

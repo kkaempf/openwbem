@@ -105,24 +105,15 @@ int main(int argc, char** argv)
 		OW_Reference<OW_CIMOMHandleIFC> handle;
 		OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
 		OW_CIMProtocolIFCRef client;
+		client = new OW_HTTPClient(argv[1]);
 		
 		if(url.protocol.equalsIgnoreCase("IPC"))
 		{
-			client = new OW_IPCClient(argv[1]);
 			handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
 		}
 		else
 		{
-			client = new OW_HTTPClient(argv[1]);
-			if (url.path.equalsIgnoreCase("/owbinary"))
-			{
-				handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
-			}
-			else
-			{
-				handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(
-					client));
-			}
+			handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(client));
 		}
 		client->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
 

@@ -52,20 +52,14 @@ extern "C"
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL) :
-	m_sockfd(-1), m_localAddress(OW_SocketAddress::allocEmptyAddress()),
-	m_isActive(false), m_isSSL(isSSL)
+OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL) 
+	: m_sockfd(-1)
+	, m_localAddress(OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET))
+	, m_isActive(false)
+	, m_isSSL(isSSL)
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::OW_ServerSocketImpl(OW_UInt16 port,
-	OW_Bool isSSL, int queueSize, OW_Bool allInterfaces) :
-	m_sockfd(-1), m_localAddress(OW_SocketAddress::allocEmptyAddress()),
-	m_isActive(false), m_isSSL(isSSL)
-{
-	doListen(port, queueSize, allInterfaces);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ServerSocketImpl::~OW_ServerSocketImpl()
@@ -85,12 +79,11 @@ void
 OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	int queueSize, OW_Bool allInterfaces)
 {
+	m_localAddress = OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
 	m_isSSL = isSSL;
 	close();
 
-	if((m_sockfd = ::socket(
-		getLocalAddress().getType() == OW_SocketAddress::INET? AF_INET: AF_LOCAL, 
-		SOCK_STREAM, 0)) == -1)
+	if((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
 			strerror(errno)).c_str());
@@ -108,34 +101,72 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 //#endif
 
 		
-	struct sockaddr* pSA = 0;
 	OW_InetSocketAddress_t inetAddr;
-	OW_UnixSocketAddress_t unixAddr;
-	socklen_t size_sa = 0;
-	if (m_localAddress.getType() == OW_SocketAddress::INET)
-	{
-		pSA = (sockaddr*)&inetAddr;
-		inetAddr.sin_family = AF_INET;
+	inetAddr.sin_family = AF_INET;
 
-		if(allInterfaces)
-		{
-			inetAddr.sin_addr.s_addr = OW_hton32(INADDR_ANY);
-		}
-		else
-		{
-			OW_NwIface ifc;
-			inetAddr.sin_addr.s_addr = ifc.getIPAddress();
-		}
-
-		inetAddr.sin_port = OW_hton16(port);
-		size_sa = sizeof(inetAddr);
-	}
-	else if (m_localAddress.getType() == OW_SocketAddress::UDS)
+	if(allInterfaces)
 	{
-		pSA = (sockaddr*)&unixAddr;
-		size_sa = sizeof(unixAddr);
+		inetAddr.sin_addr.s_addr = OW_hton32(INADDR_ANY);
 	}
-	if(bind(m_sockfd, pSA, size_sa) == -1)
+	else
+	{
+		OW_NwIface ifc;
+		inetAddr.sin_addr.s_addr = ifc.getIPAddress();
+	}
+
+	inetAddr.sin_port = OW_hton16(port);
+	if(bind(m_sockfd, (sockaddr*)&inetAddr, sizeof(inetAddr)) == -1)
+	{
+		close();
+		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+				strerror(errno)).c_str());
+	}
+
+
+	if(listen(m_sockfd, queueSize) == -1)
+	{
+		close();
+		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+			strerror(errno)).c_str());
+	}
+
+	fillAddrParms();
+	m_isActive = true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
+{
+	m_localAddress = OW_SocketAddress::getUDS(filename);
+	close();
+
+	if((m_sockfd = ::socket(AF_LOCAL,SOCK_STREAM, 0)) == -1)
+	{
+		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+			strerror(errno)).c_str());
+	}
+
+	// set listen socket to nonblocking; see Unix Network Programming,
+	// pages 422-424.
+	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
+	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
+
+//#ifdef OW_DEBUG // TODO is this safe?
+	// Let the kernel reuse the port without waiting for it to time out.
+	int reuse = 1;
+	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+//#endif
+
+	if (::unlink(filename.c_str()) != 0)
+	{
+		OW_THROW(OW_SocketException, 
+			format("Unable to unlink Unix Domain Socket: %1, errno: %2", 
+				filename, errno).c_str());
+	}
+		
+	if(bind(m_sockfd, m_localAddress.getNativeForm(), 
+		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",

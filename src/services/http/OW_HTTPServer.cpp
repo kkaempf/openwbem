@@ -166,6 +166,13 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	}
 	m_options.httpsPort = item.toInt32();
 
+	item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt);
+	if (item.length() == 0)
+	{
+		item = DEFAULT_USE_UDS;
+	}
+	m_options.useUDS = item.equalsIgnoreCase("true");
+
 	item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
 	if (item.length() == 0)
 	{
@@ -236,7 +243,11 @@ public:
 			(void)selectedObject;
 
 			OW_Reference<OW_ServerSocket> pServerSocket;
-			if(m_isHTTPS)
+			if (m_isIPC)
+			{
+				pServerSocket = m_HTTPServer->m_pUDSServerSocket;
+			}
+			else if(m_isHTTPS)
 			{
 				pServerSocket = m_HTTPServer->m_pHttpsServerSocket;
 			}
@@ -248,7 +259,7 @@ public:
 			OW_Socket socket = pServerSocket->accept(2);
 
 			m_HTTPServer->m_options.env->getLogger()->logCustInfo(
-				 format("Received connection on port %1 from %2",
+				 format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
 
@@ -312,11 +323,26 @@ OW_HTTPServer::startService()
 	OW_LoggerRef lgr = env->getLogger();
 	lgr->logDebug("HTTP Service is starting...");
 
-	if (m_options.httpPort < 0 && m_options.httpsPort < 0)
+	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
-		OW_THROW(OW_SocketException, "No ports to listen on");
+		OW_THROW(OW_SocketException, "No ports to listen on and use_UDS set to false");
 	}
 
+	if (m_options.useUDS)
+	{
+		m_pUDSServerSocket = new OW_ServerSocket;
+		m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000);
+
+		lgr->logCustInfo("HTTP server listening on Unix Domain Socket");
+
+		OW_String URL = "ipc://localhost/cimom";
+		addURL(OW_URL(URL));
+		
+		OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
+			false, this, true));
+
+		env->addSelectable(m_pUDSServerSocket, cb);
+	}
 	if (m_options.httpPort >= 0)
 	{
 		OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
@@ -377,7 +403,7 @@ OW_HTTPServer::startService()
 		else
 #endif // #ifndef OW_NO_SSL
 		{
-			if (m_options.httpPort < 0)
+			if (m_options.httpPort < 0 && !m_options.useUDS)
 			{
 				OW_THROW(OW_SocketException, "No ports to listen on.  "
 					"SSL unavailable (SSL not initialized in server mode) "
@@ -446,7 +472,7 @@ OW_HTTPServer::getLocalHTTPAddress()
 	}
 	else
 	{
-		return OW_SocketAddress::allocEmptyAddress();
+		return OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
 	}
 }
 
@@ -460,7 +486,7 @@ OW_HTTPServer::getLocalHTTPSAddress()
 	}
 	else
 	{
-		return OW_SocketAddress::allocEmptyAddress();
+		return OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
 	}
 }
 

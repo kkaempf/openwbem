@@ -295,5 +295,6 @@ OW_BaseStreamBufferNonBuffered::xsgetn(char* s, std::streamsize n)
 OW_BaseStreamBufferNonBuffered::OW_BaseStreamBufferNonBuffered()
 	: std::streambuf(), m_charBuf(0), m_takeFromBuf(false)
 {
+	setg(0,0,0);
 }
 
