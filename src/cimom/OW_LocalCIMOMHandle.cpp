@@ -176,11 +176,10 @@ OW_LocalCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep)
+	OW_CIMObjectPathResultHandlerIFC& result)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->enumInstanceNames(path, result, deep, m_aclInfo);
+	return m_pServer->enumInstanceNames(path, result, true, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

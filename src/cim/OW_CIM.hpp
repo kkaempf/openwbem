@@ -33,8 +33,6 @@
 
 #define CIM_DEFAULT_NS	"root"
 
-#include <iostream>
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Char16.hpp"

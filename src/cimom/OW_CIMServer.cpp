@@ -593,13 +593,6 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 			checkGetClassRvalAndThrow(rval, path);
 		}
 
-		if (!theClass)
-		{
-			// safety measure.  m_mStore should have thrown for a more
-			// specific reason, but we nab it here if not.
-			OW_THROWCIM(OW_CIMException::FAILED);
-		}
-
 		OW_StringArray lpropList;
 		OW_Bool noProps = false;
 		if(propertyList)
@@ -1034,50 +1027,34 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path,
 	{
 		OW_ACLInfo intAclInfo;
 		OW_CIMObjectPath lcop(path);
-		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
-		if(!theClass)
+		OW_CIMClass theTopClass = _getNameSpaceClass(path.getObjectName());
+		if(!theTopClass)
 		{
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop,
+				theTopClass);
 			checkGetClassRvalAndThrowInst(rval, lcop);
 		}
 
-		OW_Bool deepHonored = _getCIMInstances(lcop, theClass, result, deep, localOnly,
+		_getCIMInstances(lcop, theTopClass, theTopClass, result, deep, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 		
-		// DEBUG
-		//OW_ASSERT(en.numberOfElements() == 1);
-		//OW_CIMInstance debugInst = en.nextElement();
-		//en.addElement(debugInst);
-		//OW_CIMPropertyArray debugProps = debugInst.getKeyValuePairs();
-		//cerr << "*** number of properties: " << debugProps.size() << endl;
-		//OW_CIMProperty debugProp = debugProps[0];
-		//cerr << "*** property name: " << debugProp.getName() << " value: " << debugProp.getValue() << endl;
-		// end of DEBUG
-
-		// If this is the namespace class or we're not going deep or the deep flag
-		// was already honored, then we're done
-		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
-			|| !deep
-			|| deepHonored)
+		// If this is the namespace class then we're done.
+		if(theTopClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
 		{
 			return;
 		}
 
-		// Now set the deep flag to false, because we are going to enumerate all
-		// the child class instances explicitly. We don't want the instance
-		// providers to go deep now.
-		deep = false;
-
 		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
-			theClass.getName());
+			theTopClass.getName());
 
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
 			lcop.setObjectName(classNames[i]);
+			OW_CIMClass theClass;
 			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(lcop, theClass);
 			checkGetClassRvalAndThrowInst(rc, lcop);
 
-			_getCIMInstances(lcop, theClass, result, deep, localOnly,
+			_getCIMInstances(lcop, theTopClass, theClass, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 		}
 	}
@@ -1098,12 +1075,13 @@ namespace
 	public:
 		HandleProviderInstance(const OW_CIMClass& theClass_,
 			const OW_ACLInfo& aclInfo_,
-			bool localOnly_, bool includeQualifiers_, bool includeClassOrigin_,
+			bool localOnly_, bool deep_, bool includeQualifiers_, bool includeClassOrigin_,
 			OW_StringArray& lpropList_, const OW_CIMObjectPath& cop_,
 			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
 		: theClass(theClass_)
 		, aclInfo(aclInfo_)
 		, localOnly(localOnly_)
+		, deep(deep_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, lpropList(lpropList_)
@@ -1120,24 +1098,95 @@ namespace
 			lcop.setKeys(ci.getKeyValuePairs());
 
 			server._getProviderProperties(lcop, ci, theClass, aclInfo);
+			// TODO: Filter out localonly and deep properties
 			result.handleInstance(ci.clone(localOnly, includeQualifiers,
 				includeClassOrigin, lpropList));
 		}
 	private:
 		const OW_CIMClass& theClass;
 		const OW_ACLInfo& aclInfo;
-		bool localOnly, includeQualifiers, includeClassOrigin;
+		bool localOnly, deep, includeQualifiers, includeClassOrigin;
 		OW_StringArray& lpropList;
 		const OW_CIMObjectPath& cop;
 		OW_CIMServer& server;
 		OW_CIMInstanceResultHandlerIFC& result;
 	};
+
+	class HandleLocalOnlyAndDeep : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		HandleLocalOnlyAndDeep(
+			OW_CIMInstanceResultHandlerIFC& result_,
+			const OW_CIMClass& requestedClass_,
+			bool localOnly_,
+			bool deep_)
+		: result(result_)
+		, requestedClass(requestedClass_)
+		, localOnly(localOnly_)
+		, deep(deep_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &inst)
+		{
+			if (deep == true && localOnly == false) // don't filter anything
+			{
+				result.handleInstance(inst);
+				return;
+			}
+
+			OW_CIMPropertyArray props = inst.getProperties();
+			OW_CIMPropertyArray newprops;
+			OW_CIMInstance newInst(inst);
+			OW_String requestedClassName = requestedClass.getName();
+			for (size_t i = 0; i < props.size(); ++i)
+			{
+				OW_CIMProperty p = props[i];
+				OW_CIMProperty clsp = requestedClass.getProperty(p.getName());
+				if (clsp)
+				{
+					if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
+					{
+						newprops.push_back(p);
+						continue;
+					}
+				}
+				if (deep == true)
+				{
+					if (!clsp
+						|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
+					{
+						// the property is from a derived class
+						newprops.push_back(p);
+						continue;
+					}
+				}
+				if (localOnly == false)
+				{
+					if (clsp)
+					{
+						// the property has to be from a superclass
+						newprops.push_back(p);
+						continue;
+					}
+				}
+
+			}
+			newInst.setProperties(newprops);
+			result.handleInstance(newInst);
+		}
+	private:
+		OW_CIMInstanceResultHandlerIFC& result;
+		const OW_CIMClass& requestedClass;
+		bool localOnly;
+		bool deep;
+	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
-OW_Bool
+void
 OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
+	const OW_CIMClass& theTopClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
@@ -1148,17 +1197,13 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 		lpropList = *propertyList;
 	}
 
-	OW_Bool deepHonored = false;
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo, true);
 
 	OW_CIMQualifier cq;
 
-	if(!theClass.isAssociation())
-	{
-		cq = theClass.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	}
+	cq = theClass.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 
 	if(cq)
 	{
@@ -1173,21 +1218,18 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
-		HandleProviderInstance handler(theClass,aclInfo,localOnly,
+		HandleProviderInstance handler(theClass,aclInfo,localOnly,deep,
 			includeQualifiers,includeClassOrigin,lpropList, cop, *this, result);
 		instancep->enumInstances(
 			createProvEnvRef(real_ch), cop, handler, deep, theClass, localOnly);
-		deepHonored = true;
-
 	}
 	else
 	{
-		m_iStore.getCIMInstances(cop, theClass, result, localOnly,
+		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
+		m_iStore.getCIMInstances(cop, theClass, handler,
 			includeQualifiers, includeClassOrigin, propertyList, this,
 			&aclInfo);
 	}
-
-	return deepHonored;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1926,7 +1968,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 	{
 		try
 		{
-			if(m_mStore.getCIMClass(ns, className, cc) != OW_CIMException::SUCCESS);
+			if(m_mStore.getCIMClass(ns, className, cc) != OW_CIMException::SUCCESS)
 			{
 				break;
 			}
@@ -2980,15 +3022,23 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
 	while(it != theMap.end())
 	{
-		op.setObjectName(it->first);
+		OW_CIMClass cc;
+		OW_String clsname = it->first;
+		int idx = clsname.indexOf('.');
+		if (idx != -1)
+		{
+			clsname = clsname.substring(0,idx);
+		}
+		
+		op.setObjectName(clsname);
 		op.setKeys(it->second);
 
-		OW_CIMClass cc;
-		if(m_mStore.getCIMClass(ns, it->first, cc) != OW_CIMException::SUCCESS);
+		OW_CIMException::ErrNoType err = m_mStore.getCIMClass(ns, clsname, cc);
+		if(err != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Failed to get class for propagated key: %1",
-					it->first).c_str());
+				format("Failed to get class %1 for propagated key: %2 err = %3",
+					ns + "/" + clsname, it->first, err).c_str());
 		}
 
 		if(!m_iStore.instanceExists(op, cc))

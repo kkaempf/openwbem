@@ -231,19 +231,13 @@ public:
 	 *
 	 * @param path			The OW_CIMObjectPath identifying the class whose
 	 *							instances are to be enumerated.
-	 * @param deep			If set to OW_CIMClient::DEEP, the enumeration returned
-	 *							will contain instances of the specified class and all
-	 *							classes derived from it. If set to
-	 *							OW_CIMClient::SHALLOW only instances belonging
-	 *							to the specified class are returned.
 	 * @return An Enumeration of OW_CIMObjectPaths
 	 * 		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	virtual void enumInstanceNames(
 		const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep=true);
+		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**
 	 * Gets the CIM class for the specified CIM object path.

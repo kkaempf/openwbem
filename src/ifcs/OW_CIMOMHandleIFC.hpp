@@ -230,19 +230,16 @@ public:
 	 * instances of all the classes in the specified class' hierarchy.
 	 *
 	 * @param path The OW_CIMObjectPath identifying the class whose instances
-	 * 		are to be enumerated.
+	 * 	are to be enumerated.
 	 *
-	 * @param deep If set to DEEP, the enumeration returned will
-	 * contain instances of the specified class and all classes derived from it.
-	 * If set to SHALLOW only instances belonging to the specified
-	 * class are returned.
+	 * @param deep Return properties defined on subclasses of the class in path
 	 *
 	 * @param localOnly If set to LOCAL_ONLY, only the non-inherited properties
-	 *		are returned on each instance, otherwise all properties are
-	 *		returned.
+	 *	are returned on each instance, otherwise all inherited properties are
+	 *	returned.
 	 *
 	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all of the
-	 *		qualifiers from the class will be returned with the each instance.
+	 *	qualifiers from the class will be returned with the each instance.
 	 *
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 * be returned on all appropriate elements.
@@ -290,11 +287,10 @@ public:
 	 */
 	virtual void enumInstanceNames(
 		const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep=DEEP) = 0;
+		OW_CIMObjectPathResultHandlerIFC& result) = 0;
 
 	virtual OW_CIMObjectPathEnumeration enumInstanceNamesE(
-		const OW_CIMObjectPath& path, OW_Bool deep=DEEP);
+		const OW_CIMObjectPath& path);
 
 	/**
 	 * Enumerates the qualifiers defined in a namespace.

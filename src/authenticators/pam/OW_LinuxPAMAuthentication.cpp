@@ -32,7 +32,6 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include <iostream>
 #include <string.h>
 
 extern "C"

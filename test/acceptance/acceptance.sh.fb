@@ -35,7 +35,7 @@ OWSBINDIR=@sbindir@
 OWINCLUDEDIR=@includedir@
 OWPKGLIBDIR=@pkglibdir@
 TOPSRCDIR=../@top_srcdir@
-METHODTESTMOFDONE=0
+TESTMOFDONE=0
 
 
 #############################################################################
@@ -335,11 +335,14 @@ TestSuite()
     DIFF_FILE=$2
     DIFF_FILE2=$3
 
-	if [ "$METHODTESTMOFDONE" = "0" ]; then
-		METHODTESTMOFDONE=1
-		echo "Importing mof file for method provider test"
+	if [ "$TESTMOFDONE" = "0" ]; then
+		TESTMOFDONE=1
+		echo "Importing mof files for test"
 		$STAGEDIR/$OWBINDIR/owmofc $URL /root \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
+			ExitWithFail "TestSuite: MOF compiler exited with error."
+		$STAGEDIR/$OWBINDIR/owmofc $URL /root \
+			$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 	fi
 

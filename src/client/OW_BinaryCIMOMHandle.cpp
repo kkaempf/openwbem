@@ -290,15 +290,13 @@ OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep)
+	OW_CIMObjectPathResultHandlerIFC& result)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", path.getNameSpace());;
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTNAMES);
 	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeBool(strm, deep);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateInstanceNames", path.getNameSpace());
 	readAndDeliver(in, result);

@@ -202,44 +202,25 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	if (path.getObjectName().equalsIgnoreCase(m_inst.getClassName()))
-	{
-		result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
-			includeClassOrigin, propertyList));
-	}
-	else if (deep)
-	{
-		OW_String superClassName = m_inst.getClassName();
-		OW_CIMClass cc = m_pCIMServer->getClass(OW_CIMObjectPath(
-            superClassName, path.getNameSpace()), false, true, true, NULL,
-			aclInfo);
+	OW_String superClassName = m_inst.getClassName();
 
-		if (cc)
+	while (superClassName.length() > 0)
+	{
+		if (superClassName.equalsIgnoreCase(path.getObjectName()))
 		{
-			superClassName = cc.getSuperClass();
-			while (superClassName.length() > 0)
-			{
-				if (superClassName.equalsIgnoreCase(path.getObjectName()))
-				{
-					result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
-						includeClassOrigin, propertyList));
-					break;
-				}
-				
-				cc = m_pCIMServer->getClass(OW_CIMObjectPath(
-					superClassName, path.getNameSpace()), false, true, true,
-					NULL, aclInfo);
-
-				if (cc)
-				{
-					superClassName = cc.getSuperClass();
-				}
-				else
-				{
-					break;
-				}
-			}
+			// TODO: Do correct localOnly & deep processing?
+			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
+			//	includeClassOrigin, propertyList));
+			(void)deep; (void)localOnly; (void)includeQualifiers;
+			(void)includeClassOrigin; (void)propertyList;
+			// This is more efficient
+			result.handleInstance(m_inst);
+			break;
 		}
+		
+		superClassName = m_pCIMServer->getClass(OW_CIMObjectPath(
+			superClassName, path.getNameSpace()), false, true, true,
+			NULL, aclInfo).getSuperClass();
 	}
 }
 

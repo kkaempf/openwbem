@@ -43,10 +43,6 @@
 #include "OW_BinIfcIO.hpp"
 
 #include <algorithm>
-#include <iostream>
-
-using std::ostream;
-using std::istream;
 
 struct OW_CIMClass::CLSData
 {

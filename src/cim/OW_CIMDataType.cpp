@@ -35,10 +35,6 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
-#include <iostream>
-
-using std::istream;
-using std::ostream;
 
 struct OW_CIMDataType::DTData
 {

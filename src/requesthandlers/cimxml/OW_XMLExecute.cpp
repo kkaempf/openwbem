@@ -908,7 +908,7 @@ namespace
 			cop.setNameSpace(path.getNameSpace());
 
 			OW_CIMtoXML(cimInstance, ostr, cop,
-				localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::notLocalOnly,
 				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 				propertyList,
@@ -1532,7 +1532,7 @@ OW_XMLExecute::clone() const
 //////////////////////////////////////////////////////////////////////////////
 // Protected
 void
-OW_XMLExecute::outputError(OW_CIMException::ErrNoType errorCode, 
+OW_XMLExecute::outputError(OW_CIMException::ErrNoType errorCode,
 	OW_String msg, ostream& ostr)
 {
 	ostr << "<SIMPLERSP>\r\n";
@@ -1542,7 +1542,7 @@ OW_XMLExecute::outputError(OW_CIMException::ErrNoType errorCode,
 		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
-		OW_XMLEscape(msg) << 
+		OW_XMLEscape(msg) <<
 		"\"></ERROR>\r\n";
 
 	if (m_isIntrinsic)

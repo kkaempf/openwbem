@@ -319,6 +319,16 @@ OW_ServerSocketImpl::close() /*throw (OW_SocketException)*/
 	if(m_isActive)
 	{
 		::close(m_sockfd);
+		if (m_localAddress.getType() == OW_SocketAddress::UDS)
+		{
+			OW_String filename = m_localAddress.toString();
+			if (::unlink(filename.c_str()) != 0)
+			{
+				OW_THROW(OW_SocketException,
+					format("Unable to unlink Unix Domain Socket: %1, errno: %2",
+						filename, errno).c_str());
+			}
+		}
 		m_isActive = false;
 	}
 }

@@ -49,11 +49,6 @@ class OW_Socket : public OW_SelectableIFC, public OW_IOIFC
 {
 public:
 
-	/* Create a net OW_Socket object. THIS CONSTRUCTOR ASSUMES THE peerPort
-	 * PARAMETER IS ALREADY IN NETWORK BYTE ORDER.
-	 */
-//	OW_Socket(unsigned long peerAddress, unsigned short peerPort);
-
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
@@ -65,9 +60,8 @@ public:
 	 * @param fd a handle to the existing socket
 	 * @param isSSL is it an SSL socket?
 	 */
-	OW_Socket(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType, 
+	OW_Socket(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType,
 		OW_Bool isSSL= false);
-//	OW_Socket(const OW_String& hostName, unsigned short port) /*throw (OW_SocketException)*/;
 
 	/**
 	 * Allocate a new OW_Socket and connect it to a peer machine

@@ -66,7 +66,7 @@ namespace
 		virtual void doHandleInstance(const OW_CIMInstance &i)
 		{
 			// TODO: check resultClass, role and resultRole
-			result.handleInstance(i.clone(false,includeQualifiers,
+			result.handleInstance(i.clone(false, includeQualifiers,
 				includeClassOrigin,*propertyList,propertyList == 0));
 		}
 	private:
@@ -197,7 +197,7 @@ namespace
 	protected:
 		virtual void doHandleInstance(const OW_CIMInstance &i)
 		{
-			result.handleInstance(i.clone(localOnly,true,true));
+			result.handleInstance(i.clone(localOnly, true, true));
 		}
 	private:
 		OW_CIMInstanceResultHandlerIFC& result;

@@ -526,7 +526,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 			parentProp.setPropagated(true);
 			child.addProperty(parentProp);
 		}
-		else
+		else if (!childProp.getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			//
 			// Propagate any qualifiers that have not been
@@ -561,7 +561,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 			cm.setPropagated(true);
 			child.addMethod(cm);
 		}
-		else
+		else if (!childMethod.getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			//
 			// Propagate any qualifiers that have not been
@@ -774,8 +774,23 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 		OW_CIMProperty parentProp = parentClass.getProperty(propArray[i].getName());
 		if(parentProp)
 		{
-			propArray[i].setOriginClass(parentProp.getOriginClass());
-			propArray[i].setPropagated(true);
+			if (propArray[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
+			{
+				if (propArray[i].getOriginClass().length() == 0)
+				{
+					propArray[i].setOriginClass(childName);
+					propArray[i].setPropagated(false);
+				}
+				else
+				{
+					propArray[i].setPropagated(true);
+				}
+			}
+			else
+			{
+				propArray[i].setOriginClass(parentProp.getOriginClass());
+				propArray[i].setPropagated(true);
+			}
 		}
 		else
 		{
@@ -802,7 +817,8 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	OW_CIMMethodArray methArray = childClass.getAllMethods();
 	for(size_t i = 0; i < methArray.size(); i++)
 	{
-		if(parentClass.getMethod(methArray[i].getName()))
+		if(parentClass.getMethod(methArray[i].getName()) &&
+		   !methArray[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			methArray[i].setOriginClass(parentName);
 			methArray[i].setPropagated(true);

@@ -33,7 +33,6 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
-#include <iostream>
 #include <string.h>
 
 class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC

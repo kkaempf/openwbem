@@ -203,10 +203,7 @@ public:
 	 * @param path The OW_CIMObjectPath identifying the class whose instances are
 	 * to be enumerated.
 	 *
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
-	 * contain instances of the specified class and all classes derived from it.
-	 * If set to OW_CIMClient::SHALLOW only instances belonging to the specified
-	 * class are returned.
+	 * @param deep Return properties defined on subclasses of the class in path
 	 *
 	 * @param localOnly if true, only the non-inherited properties are returned
 	 * on each instance, otherwise all properties are returned.
@@ -250,8 +247,7 @@ public:
 	 */
 	virtual void enumInstanceNames(
 		const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep=true);
+		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.

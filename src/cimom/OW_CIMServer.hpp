@@ -309,10 +309,7 @@ public:
 	 *
 	 * @param path The OW_CIMObjectPath identifying the class whose	instances
 	 *		are to be enumerated.
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *		contain the names of all instances of the specified class and all
-	 *		classes derived from it. If set to OW_CIMClient::SHALLOW only names
-	 *		of instances belonging to the specified class are returned.
+	 * @param deep Return properties defined on subclasses of the class in path
 	 * @param localOnly	If true only non-inherited properties/qualifiers are
 	 *							included in the instances.
 	 * @param includeQualifiers If true, then all qualifiers for the instance
@@ -670,11 +667,8 @@ private:
 	 */
 	OW_CIMClass _getNameSpaceClass(const OW_String& className);
 
-	/**
-	 * @return true if the deep flag was already honored through a call to an
-	 * instance provider.
-	 */
-	OW_Bool _getCIMInstances(const OW_CIMObjectPath& cop,
+	void _getCIMInstances(const OW_CIMObjectPath& cop,
+		const OW_CIMClass& theTopClass,
 		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,

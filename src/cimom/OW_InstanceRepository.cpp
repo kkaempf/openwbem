@@ -255,7 +255,7 @@ OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 void
 OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool localOnly, OW_Bool includeQualifiers,
+	OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 	OW_CIMServer* pServer, const OW_ACLInfo* pACLInfo)
 {
@@ -292,7 +292,7 @@ OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 			pServer->_getProviderProperties(lcop, ci, theClass, *pACLInfo);
 		}
 
-		result.handleInstance(ci.clone(localOnly, includeQualifiers,
+		result.handleInstance(ci.clone(false, includeQualifiers,
 			includeClassOrigin, propertyList));
 		node = hdl->getNextSibling(node);
 	}

@@ -400,12 +400,12 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 {
 	testStart("enumInstanceNames");
 
-	cout << "deep = true" << endl;
+	//cout << "deep = true" << endl;
 	try
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop, true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop);
 		while (enu.hasMoreElements())
 		{
 			cout << enu.nextElement().toString() << endl;
@@ -416,6 +416,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 		cerr << e << endl;
 	}
 
+	/*
 	cout << "deep = false" << endl;
 	try
 	{
@@ -431,33 +432,35 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	{
 		cerr << e << endl;
 	}
+	*/
 
 	testDone();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_Bool deep, OW_Bool localOnly,
+enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
-	pstr = format("deep = %1, localOnly = %2, includeQualifiers=%3, "
-			"includeClassOrigin = %4, propertyList? %5",
-			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
+	pstr = format("ofClass = %1, deep = %2, localOnly = %3, includeQualifiers = %4, "
+			"includeClassOrigin = %5, propertyList? %6",
+			ofClass, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList != 0);
 		
 	testStart("enumInstances", pstr.c_str());
 
 	try
 	{
-		OW_String ofClass = "CIM_ComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(cop, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 
 		while (enu.hasMoreElements())
 		{
-			OW_CIMtoXML(enu.nextElement(),cout, OW_CIMObjectPath(),
+			OW_CIMInstance i = enu.nextElement();
+			cout << i.toMOF() << endl;
+			OW_CIMtoXML(i,cout, OW_CIMObjectPath(),
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
 		   cout << endl;
@@ -1444,21 +1447,34 @@ main(int argc, char* argv[])
 		createInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
 		enumerateInstanceNames(rch);
 		// non-deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, false, false, false, false, 0);	
+		enumerateInstances(rch, "CIM_ComputerSystem", false, false, false, false, 0);	
 		// deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, true, false, false, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, 0);
 		// deep, localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, true, true, false, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, true, false, false, 0);
 		// deep, non-localOnly, qualifiers, no classOrigin, all props
-		enumerateInstances(rch, true, false, true, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, false, true, false, 0);
 		// deep, non-localOnly, no qualifiers, classOrigin, all props
-		enumerateInstances(rch, true, false, false, true, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, true, 0);
 		// deep, non-localOnly, no qualifiers, no classOrigin, no props
 		OW_StringArray sa;
-		enumerateInstances(rch, true, false, false, false, &sa);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, &sa);
 		// deep, non-localOnly, no qualifiers, no classOrigin, one prop
 		sa.push_back(OW_String("BrandNewProperty"));
-		enumerateInstances(rch, true, false, false, false, &sa);
+		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, &sa);
+
+		enumerateInstances(rch, "Example_C1", true,true,false,true,0);
+		enumerateInstances(rch, "Example_C1", true,false,false,true,0);
+		enumerateInstances(rch, "Example_C1", false,true,false,true,0);
+		enumerateInstances(rch, "Example_C1", false,false,false,true,0);
+		enumerateInstances(rch, "Example_C2", true,true,false,true,0);
+		enumerateInstances(rch, "Example_C2", true,false,false,true,0);
+		enumerateInstances(rch, "Example_C2", false,true,false,true,0);
+		enumerateInstances(rch, "Example_C2", false,false,false,true,0);
+		enumerateInstances(rch, "Example_C3", true,true,false,true,0);
+		enumerateInstances(rch, "Example_C3", true,false,false,true,0);
+		enumerateInstances(rch, "Example_C3", false,true,false,true,0);
+		enumerateInstances(rch, "Example_C3", false,false,false,true,0);
 
 		getInstance(rch, "SixMillion");
 		getInstance(rch, "SevenMillion");

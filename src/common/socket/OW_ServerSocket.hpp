@@ -44,7 +44,7 @@ public:
 	/** Allocate a new Inet Server Socket.
 	 * @param isSSL is the Server Socket an SSL socket?
 	 */
-	OW_ServerSocket(OW_Bool isSSL = false) 
+	OW_ServerSocket(OW_Bool isSSL = false)
 	  : OW_SelectableIFC()
 	  , m_impl(new OW_ServerSocketImpl(isSSL))
    {
@@ -63,8 +63,7 @@ public:
 	 * @param timeoutSecs the timeout
 	 * @return an OW_Socket for the connection just accepted.
 	 */
-	OW_Socket accept(int timeoutSecs=-1) 
-	//throw(OW_SocketException, OW_TimeOutException)
+	OW_Socket accept(int timeoutSecs=-1)
 	{
 		return m_impl->accept(timeoutSecs);
 	}
@@ -77,8 +76,8 @@ public:
 	 * @param queueSize the size of the listen queue
 	 * @param allInterfaces do we listen on all interfaces?
 	 */
-	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-			OW_Bool allInterfaces=false) 
+	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10,
+			OW_Bool allInterfaces=false)
 		/*throw (OW_SocketException)*/
 	{
 		m_impl->doListen(port, isSSL, queueSize, allInterfaces);
@@ -96,15 +95,11 @@ public:
 		m_impl->doListen(filename, queueSize);
 	}
 
-//	OW_String addrString() { return m_impl->addrString(); }
-//
 	/**
 	 * Close the listen socket
 	 */
 	void close() /*throw (OW_SocketException)*/ { m_impl->close();}
-//	unsigned long getLocalAddressRaw() { return m_impl->getLocalAddressRaw(); }
-//	unsigned short getLocalPortRaw() { return m_impl->getLocalPortRaw(); }
-//
+	
 	/**
 	 * Return the address of the local host
 	 * @return an OW_SocketAddress representing the local node

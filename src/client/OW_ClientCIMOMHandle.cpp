@@ -112,7 +112,7 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl, const OW_CIMObjectPath& path,
 	// can't use the callback version of enumInstances, because the recursion
 	// throws a wrench in the works.  Each CIM Method call has to finish
 	// before another one can begin.
-	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(path, deep);
+	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(path, false, true);
 	while (en.hasMoreElements())
 	{
 		OW_CIMInstance i = en.nextElement();

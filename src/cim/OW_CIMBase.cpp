@@ -36,10 +36,6 @@
 #include "OW_IOException.hpp"
 #include "OW_BinIfcIO.hpp"
 
-#include <iostream>
-using std::istream;
-using std::ostream;
-
 #include <cstring>
 
 //////////////////////////////////////////////////////////////////////////////		
