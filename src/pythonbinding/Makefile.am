@@ -67,5 +67,9 @@ PyOW_Int32Array.cpp \
 PyOW_UInt64Array.cpp \
 PyOW_Int64Array.cpp \
 PyOW_Real32Array.cpp \
-PyOW_Real64Array.cpp
+PyOW_Real64Array.cpp \
+PyOW_CIMOMInfoArray.cpp \
+PyOW_CIMOMLocator.cpp \
+PyOW_ClientAuthCBIFC.cpp
+
 

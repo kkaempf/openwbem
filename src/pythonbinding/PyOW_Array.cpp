@@ -27,6 +27,7 @@ void registerOW_ArrayImpl_OW_UInt64(const char*);
 void registerOW_ArrayImpl_OW_Int64(const char*);
 void registerOW_ArrayImpl_OW_Real32(const char*);
 void registerOW_ArrayImpl_OW_Real64(const char*);
+void registerOW_ArrayImpl_OW_CIMOMInfo(const char*);
 
 void registerOW_Array()
 {
@@ -57,9 +58,6 @@ void registerOW_Array()
     registerOW_ArrayImpl_OW_Int64("OW_Int64Array");
     registerOW_ArrayImpl_OW_Real32("OW_Real32Array");
     registerOW_ArrayImpl_OW_Real64("OW_Real64Array");
-
-
-    //    OW_Array template instantiated for:
-    //      OW_CIMOMLocator
+    registerOW_ArrayImpl_OW_CIMOMInfo("OW_CIMOMInfoArray");
 }
 

@@ -7,6 +7,8 @@ void registerOW_String();
 void registerOW_CIMClient();
 void registerOW_CIMOMInfo();
 void registerOW_Array();
+void registerOW_CIMOMLocator();
+void registerOW_ClientAuthCBIFC();
 
 BOOST_PYTHON_MODULE(owclient)
 {
@@ -14,8 +16,8 @@ BOOST_PYTHON_MODULE(owclient)
     registerOW_CIMClient();
     registerOW_CIMOMInfo();
     registerOW_Array();
-    //
-    //    OW_CIMOMLocator
+    registerOW_CIMOMLocator();
+    registerOW_ClientAuthCBIFC();
     //
     //    OW_ClientAuthCBIFC ?
     //    OW_ClientAuthCBIFCRef

@@ -30,6 +30,9 @@ void registerOW_CIMOMInfo()
         .def("getURL", &OW_CIMOMInfo::getURL)
         .def("__getitem__", &OW_CIMOMInfo__getitem__)
         .def("__setitem__", &OW_CIMOMInfo__setitem__)
+        .def(self < self)
+        .def(self == self)
+        .def(self != self)
     ;
 }
 
