@@ -164,9 +164,8 @@ public:
 	static IndexRef createIndexObject();
 };
 //////////////////////////////////////////////////////////////////////////////
-class IndexEntry
+struct IndexEntry
 {
-public:
 	/**
 	 * Create a null IndexEntry
 	 */
@@ -178,27 +177,13 @@ public:
 	 */
 	IndexEntry(const String& k, Int32 o) :
 		key(k), offset(o) {}
-	/**
-	 * Copy constructor.
-	 * @param x	The IndexEntry object to copy
-	 */
-	IndexEntry(const IndexEntry& x) :
-		key(x.key), offset(x.offset) {}
+
+	typedef Int32 IndexEntry::*safe_bool;
 	/**
 	 * @return true if this IndexEntry contains a value.
 	 */
-	operator bool() const { return (offset != -1 && !key.empty()); }
-	/**
-	 * Assignment operator.
-	 * @param x	The IndexEntry to assign to this one.
-	 * @return A reference to this IndexEntry object.
-	 */
-	IndexEntry& operator= (const IndexEntry& x)
-	{
-		key = x.key;
-		offset = x.offset;
-		return *this;
-	}
+	operator safe_bool() const { return (offset != -1 && !key.empty()) ? &IndexEntry::offset : 0; }
+	bool operator!() const { return !(offset != -1 && !key.empty()); }
 	/**
 	 * The key associated with this index entry. If it has a zero length, this
 	 * should be considered an invalid IndexEntry.

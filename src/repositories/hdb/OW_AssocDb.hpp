@@ -56,17 +56,18 @@ namespace OpenWBEM
 /**
  * The AssocDbEntry represents an entry in the association database.
  */
-class AssocDbEntry
+struct AssocDbEntry
 {
-public:
 	AssocDbEntry(std::istream& istrm);
 	AssocDbEntry() 
 		: m_objectName(CIMNULL)
 		, m_offset(-1L)
 	{}
+
 	AssocDbEntry(const CIMObjectPath& objectName,
 		const String& role,
 		const String& resultRole);
+
 	struct entry
 	{
 		entry ()
@@ -81,20 +82,24 @@ public:
 		void writeObject(std::ostream& ostrm) const;
 		void readObject(std::istream& istrm);
 	};
+
 	void writeObject(std::ostream& ostrm) const;
 	void readObject(std::istream& istrm);
 	Int32 getOffset() const { return m_offset; }
 	void setOffset(Int32 offset) { m_offset = offset; }
+
 	static String makeKey(const CIMObjectPath& objectName, const String& role,
 		const String& resultRole);
 	
 	String makeKey() const;
+
 	typedef CIMObjectPath AssocDbEntry::*safe_bool;
 	operator safe_bool () const
 		{  return m_objectName ? &AssocDbEntry::m_objectName : 0; }
 	bool operator!() const
 		{  return !m_objectName; }
-public:
+
+
 	CIMObjectPath m_objectName; // part 1 of key
 	String m_role; // part 2 of key
 	String m_resultRole; // part 3 of key
