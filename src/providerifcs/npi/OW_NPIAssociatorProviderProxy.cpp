@@ -152,12 +152,20 @@ NPIAssociatorProviderProxy::associators(
 		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
+		//we need  a localOnly flag here
+		ELocalOnlyFlag localOnly = E_LOCAL_ONLY;
+		
 		for (int i=0; i < n; i++)
 		{
 			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
 			CIMInstance ow_inst(*
 				static_cast<CIMInstance *>(my_inst.ptr) );
-			result.handle(ow_inst);
+			// result.handle(ow_inst);
+			//
+			// we clone our instance to set the property list & includequalifier stuff
+			// 
+			result.handle( ow_inst.clone(localOnly,includeQualifiers,
+				includeClassOrigin,propertyList) );
 		}
 	}
 	else
@@ -221,12 +229,20 @@ NPIAssociatorProviderProxy::references(
 		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
+		//we need  a localOnly flag here
+		ELocalOnlyFlag localOnly = E_LOCAL_ONLY;
+		
 		for (int i=0; i < n; i++)
 		{
 			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
 			CIMInstance ow_inst(*
 				static_cast<CIMInstance *>(my_inst.ptr) );
-			result.handle(ow_inst);
+			// result.handle(ow_inst);
+			//
+			// we clone our instance to set the property list & includequalifier stuff
+			// 
+			result.handle( ow_inst.clone(localOnly,includeQualifiers,
+				includeClassOrigin,propertyList) );
 		}
 	}
 	else
