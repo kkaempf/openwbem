@@ -11,3 +11,4 @@ CIMOMLocator
 owcimclientcl
 fakeclient
 IPCClientTest
+testCIMExceptions
