@@ -47,6 +47,8 @@ private:
 	// test methods
 	void testescapeCharForURL();
 	void testescapeForURL();
+	void testbase64Encode();
+	void testbase64Decode();
 };
 
 #endif

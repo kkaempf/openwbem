@@ -78,12 +78,12 @@ namespace HTTPUtils
 	 */
 	String getCounterStr();
 	/**
-	 * Decode Base64 encoded src into dest, returns the number of data bytes
-	 *		stored in dest, or -1 on error
+	 * Decode Base64 encoded arg
 	 * @throws (Base64FormatException)
 	 */
 	String base64Decode(const String& arg);
 	/**
+	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
 	String base64Decode(const char* src);
@@ -94,9 +94,17 @@ namespace HTTPUtils
 	 */
 	String base64Encode(const String& arg);
 	/**
+	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
 	String base64Encode(const char* src);
+	/**
+	 * @param src pointer to data to be encoded.  The data may contain any
+	 * value, including 0.
+	 * @param len The length of the data to be encoded.
+	 * @throws (Base64FormatException)
+	 */
+	String base64Encode(const UInt8* src, size_t len);
 #ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */
 	void DigestCalcHA1(

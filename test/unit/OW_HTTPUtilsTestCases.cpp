@@ -57,6 +57,37 @@ void OW_HTTPUtilsTestCases::testescapeForURL()
 	unitAssert( HTTPUtils::escapeForURL("$-_.+!*\'(),;/?:@&=") == "$-_.+!*\'(),;/?:@&=" );
 	unitAssert( HTTPUtils::escapeForURL("\x1\x4\x10\x20\xFF%") == "%01%04%10%20%FF%25" );
 }
+#include <iostream>
+void OW_HTTPUtilsTestCases::testbase64Encode()
+{
+	// These values taken from /usr/lib/python2.2/test/test_base64.py
+	unitAssert( HTTPUtils::base64Encode("www.python.org") == "d3d3LnB5dGhvbi5vcmc=");
+	unitAssert( HTTPUtils::base64Encode("a") == "YQ==");
+	unitAssert( HTTPUtils::base64Encode("ab") == "YWI=");
+	unitAssert( HTTPUtils::base64Encode("abc") == "YWJj");
+	unitAssert( HTTPUtils::base64Encode("") == "");
+	unitAssert( HTTPUtils::base64Encode("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#0^&*();:<>,. []{}") ==
+		"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==");
+
+	// test version with length
+	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("a"), 1) == "YQ==");
+	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("ab"), 2) == "YWI=");
+	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("abc"), 2) == "YWI=");
+	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("a\0"), 2) == "YQA=");
+	unitAssert( HTTPUtils::base64Encode(reinterpret_cast<const UInt8*>("a\0\0"), 3) == "YQAA");
+}
+
+void OW_HTTPUtilsTestCases::testbase64Decode()
+{
+	unitAssert( HTTPUtils::base64Decode("d3d3LnB5dGhvbi5vcmc=") == "www.python.org");
+	unitAssert( HTTPUtils::base64Decode("YQ==") == "a");
+	unitAssert( HTTPUtils::base64Decode("YWI=") == "ab");
+	unitAssert( HTTPUtils::base64Decode("YWJj") == "abc");
+	unitAssert( HTTPUtils::base64Decode(
+		"YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXpBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWjAxMjM0NTY3ODkhQCMwXiYqKCk7Ojw+LC4gW117fQ==") ==
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#0^&*();:<>,. []{}");
+
+}
 
 Test* OW_HTTPUtilsTestCases::suite()
 {
@@ -64,6 +95,8 @@ Test* OW_HTTPUtilsTestCases::suite()
 
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testescapeCharForURL);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testescapeForURL);
+	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Encode);
+	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Decode);
 
 	return testSuite;
 }

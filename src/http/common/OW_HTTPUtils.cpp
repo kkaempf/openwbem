@@ -253,11 +253,7 @@ static const char Pad64 = '=';
 //////////////////////////////////////////////////////////////////////////////
 String base64Decode(const String& arg)
 {
-	char* buf = new char[arg.length() + 1];
-	strcpy(buf, arg.c_str());
-	String rval = base64Decode(buf);
-	delete [] buf;
-	return rval;
+	return base64Decode(arg.c_str());
 }
 static int char2val(char c)
 {
@@ -445,24 +441,27 @@ String base64Decode(const char* src)
 //////////////////////////////////////////////////////////////////////////////
 String base64Encode(const String& arg)
 {
-	char* buf = new char[arg.length() + 1];
-	strcpy(buf, arg.c_str());
-	String rval = base64Encode(buf);
-	delete [] buf;
-	return rval;
+	return base64Encode(reinterpret_cast<const UInt8*>(arg.c_str()), arg.length());
 }
 //////////////////////////////////////////////////////////////////////////////
 String base64Encode(const char* src)
 {
-	int szdest = strlen(src) * 3 + 4;
+	return base64Encode(reinterpret_cast<const UInt8*>(src), ::strlen(src));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String base64Encode(const UInt8* src, size_t len)
+{
+	int szdest = len * 3 + 4;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
 	char* dest = new char[szdest];
+	dest[0] = '\0'; // null terminate in case input is empty
 	char a, b, c, d, *dst;
-	const char* cp;
+	const UInt8* cp;
 	int i, srclen, enclen, remlen;
 	cp = src;
 	dst = dest;
-	srclen = strlen(cp);			// length of source
+	srclen = len;			// length of source
 	enclen = srclen / 3;			  // number of 4 byte encodings (source DIV 3)
 	remlen = srclen - 3 * enclen;	// remainder if srclen not divisible by 3 (source MOD 3)
 	for ( i = 0; i < enclen; i++ )
@@ -504,8 +503,8 @@ String base64Encode(const char* src)
 		dst+=4;
 	}
 	//return dst - dest + 1;
-	String rval(dest);
-	delete [] dest;
+	String rval(String::E_TAKE_OWNERSHIP, dest, dst-dest);
+	//delete [] dest;
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
