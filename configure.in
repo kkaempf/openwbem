@@ -125,23 +125,95 @@ OW_HELP_STRING(--enable-perl-providerifc,enable the perl provider interface),
 ])
 AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 
+echo "Setting host specific flags..."
 #Figure out which platform dir to compile
 case "$host" in
 *-*-aix*)
+	echo "WARNING: AIX support at this currently experimental."
 	PLATFORMDIR="posix"
 	AIX=1
 	AC_DEFINE(AIX, $AIX, Target OS is AIX)
 	AC_SUBST(AIX)
 	LIBS="$LIBS -lxnet"
-	PLAT_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
-	PLAT_CXXFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1 -qrtti=all"
-	CXXCOMMONLINKFLAGS=
-	CXXBINLINKFLAGS="-brtl -bdynamic"
-	# This is a bad hack, as it includes an export using GNU make (others?)
-	# substitutions. 
-	CXXSHAREDLIBLINKFLAGS='-G -qmkshrobj -bnoentry -bexport:$(@:%.so=%.exp)'
-	PLAT_OPTFLAGS=""
-	PIDFILEDIR="/var/opt/vintela/vmx"
+	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
+	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
+
+	# This figures out which compiler is invoked, and sets the default flags based on that.
+	AIX_COMPILER=`basename $CXX`
+	case $AIX_COMPILER in 
+	xlC) 
+		echo "###########################################################################"
+		echo "xlC will fail.  xlC_r should be used instead."
+		echo "###########################################################################"
+		exit 1
+		;;
+	xlC_r) 
+		echo "###########################################################################"
+		echo "WARNING: Although it currently compiles, the C++ library has thread issues."
+		echo "Make sure the tests run correctly."
+		echo "###########################################################################"
+		PLAT_CFLAGS="$AIX_COMMON_CFLAGS"
+		PLAT_CXXFLAGS="$AIX_COMMON_CFLAGS -qrtti=all"
+		CBINLINKFLAGS="-brtl -bdynamic -Wl,-bh:5"
+		CXXCOMMONLINKFLAGS="-brtl"
+		CXXBINLINKFLAGS="-bdynamic -Wl,-bh:5"
+		# This is a bad hack, as it includes an export using GNU make (others?)
+		# substitutions. 
+		CXXSHAREDLIBLINKFLAGS='-G -qmkshrobj -bnoentry -bexport:$(@:%.so=%.exp)'
+		DO_NOT_USE_DASH_PTHREAD=1
+		;;
+	g++*)
+		# Some versions of gcc will work.  Others will fail.  Make sure it works.
+		AIX_COMPILER_VERSION=`$CXX --version | head -n1 | cut -f3 -d' '`
+		case $AIX_COMPILER_VERSION in
+		1.* | 2.* | 3.[012]*)
+			echo "###########################################################################"
+			echo "This gcc compiler version ($AIX_COMPILER_VERSION) will fail.  Aborting now."
+			echo "###########################################################################"
+			exit 1;
+			;;
+		3.3*)
+			echo "###########################################################################"
+			echo "Your compiler should have been patched, and the C++ standard library checked,"
+			echo "or problems with exception handling will cause OpenWBEM to fail."
+			echo "###########################################################################"
+			;;
+		3.4*)
+			# No issues known (at the present)
+			;;
+		*)   
+			# Let it pass.  It must be a newer (and hopefully functional) version of gcc.
+			;;
+		esac
+		
+		PLAT_CFLAGS="$AIX_COMMON_CFLAGS -pthread -W -Wall"
+		PLAT_CXXFLAGS="$AIX_COMMON_CFLAGS -pthread -W -Wall"
+		CBINLINKFLAGS="-Wl,-bdynamic -Wl,-brtl"
+		CXXCOMMONLINKFLAGS="$AIX_COMMON_LFLAGS -pthread -Wl,-brtl -Wl,-bdynamic"
+		CXXBINLINKFLAGS="-Wl,-brtl -Wl,-bdynamic"
+		# This is a bad hack, as it includes an export using GNU make (others?)
+		# substitutions. 
+		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
+		;;
+	*)
+		echo "###########################################################################"
+		echo "WARNING: Your C++ compiler ($AIX_COMPILER) has not been tested."
+		echo "Using GCC defaults."
+		echo "###########################################################################"
+
+		PLAT_CFLAGS="$AIX_COMMON_CFLAGS -pthread -W -Wall"
+		PLAT_CXXFLAGS="$AIX_COMMON_CFLAGS -pthread -W -Wall"
+		CBINLINKFLAGS="-Wl,-brtl -Wl,-bdynamic"
+		CXXCOMMONLINKFLAGS="$AIX_COMMON_LFLAGS -pthread -Wl,-brtl -Wl,-bdynamic"
+		CXXBINLINKFLAGS=""
+		# This is a bad hack, as it includes an export using GNU make (others?)
+		# substitutions. 
+		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
+		;;
+	esac
+
+	PLAT_OPTFLAGS="-O0"
+	PIDFILEDIR="/var/locks"
 	LIB_EXT="so"
 	;;
 *-*-cygwin*)
@@ -741,7 +813,10 @@ dnl End of the ssl check
 
 dnl Now check for threading stuff
 OLD_LIBS=$LIBS
-LIBS="-pthread $LIBS"
+if [[ "x$DO_NOT_USE_DASH_PTHREAD" = "x" ]]
+then
+  LIBS="-pthread $LIBS"
+fi
 AC_MSG_CHECKING("pthread_mutexattr_settype")
 AC_TRY_RUN(
 	[
@@ -896,6 +971,7 @@ CXXBINLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXBINLINKFLAGS $LDFLAGS"
 
 AC_SUBST(CXXSHAREDLIBLINKFLAGS)
 AC_SUBST(CXXBINLINKFLAGS)
+AC_SUBST(CBINLINKFLAGS)
 AC_SUBST(CXXLINK)
 AC_SUBST(CLINK)
 
