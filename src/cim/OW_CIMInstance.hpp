@@ -331,15 +331,13 @@ public:
 	 * all properties found on the class exist on thist instance. It will also
 	 * optionally move all qualifiers from the class to the instance.
 	 * @param cc	The class to synchronize this instance with.
-	 * @param includeQualifiers If false, the instance will not contain any
+	 * @param includeQualifiers If E_EXCLUDE_QUALIFIERS, the instance will not contain any
 	 *		qualifiers (except key designators) after the operation. If true, all
 	 *		relevant qualifiers are copied from the class to the instance.
-	 * @param localOnly If true, only non-propagated properties,qualifier are
-	 *		kept in the instance.
 	 * @return a reference to *this
 	 */
 	CIMInstance& syncWithClass(const CIMClass& cc, 
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS);
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS);
 	/**
 	 * Create an instance with the set of changes that will occur for a 
 	 * modifyInstance call.  This instance is the new instance.  The
