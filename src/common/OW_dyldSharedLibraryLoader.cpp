@@ -44,57 +44,56 @@ namespace OpenWBEM
 std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 {
 #define SIMPLE_NSOBJ_CASE(X) case X: o << ""#X
-  switch(code)
-  {
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); break;
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); break;
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageInappropriateFile); break;
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageArch); break;
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageFormat); break;
-    SIMPLE_NSOBJ_CASE(NSObjectFileImageAccess); break;
-  }
+	switch(code)
+	{
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageFailure); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageSuccess); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageInappropriateFile); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageArch); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageFormat); break;
+		SIMPLE_NSOBJ_CASE(NSObjectFileImageAccess); break;
+	}
 #undef SIMPLE_NSOBJ_CASE
-  return o;
+	return o;
 }
   
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	LoggerRef logger) const
+																					 LoggerRef logger) const
 {
-  logger->logDebug(Format("Load request for %1 received.", filename));
-    NSObjectFileImage image = 0;
-    NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
+	logger->logDebug(Format("Load request for %1 received.", filename));
+	NSObjectFileImage image = 0;
+	NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
 	const char* err_msg = NULL;
-	void* libhandle = NULL;
+	NSModule libhandle = NULL;	
 
-
-    if (dsoerr == NSObjectFileImageSuccess) 
+	if (dsoerr == NSObjectFileImageSuccess) 
 	{
-        libhandle = NSLinkModule(image, filename.c_str(), NSLINKMODULE_OPTION_RETURN_ON_ERROR);
-        if (!libhandle) 
+		libhandle = NSLinkModule(image, filename.c_str(), NSLINKMODULE_OPTION_RETURN_ON_ERROR | NSLINKMODULE_OPTION_PRIVATE);		
+		if (!libhandle) 
 		{
-            NSLinkEditErrors errors;
-            int errorNumber;
-            const char *fileName;
-            NSLinkEditError(&errors, &errorNumber, &fileName, &err_msg);
-        }
-        NSDestroyObjectFileImage(image);
-    }
-    else if ((dsoerr == NSObjectFileImageFormat ||
-             dsoerr == NSObjectFileImageInappropriateFile) &&
-             NSAddLibrary(filename.c_str()) == TRUE) 
+			NSLinkEditErrors errors;
+			int errorNumber;
+			const char *fileName;
+			NSLinkEditError(&errors, &errorNumber, &fileName, &err_msg);
+		}
+		NSDestroyObjectFileImage(image);
+	}
+	else if ((dsoerr == NSObjectFileImageFormat ||
+					dsoerr == NSObjectFileImageInappropriateFile) &&
+					NSAddLibrary(filename.c_str()) == TRUE) 
 	{
-    logger->logError(Format("NSCreateObject: %1 failed with error \"%2\"",
-          filename, dsoerr));
-        // libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
-    }
-    else 
+		logger->logError(Format("NSCreateObject: %1 failed with error \"%2\"",
+														filename, dsoerr));
+		// libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
+	}
+	else 
 	{
 		err_msg = "cannot create object file image or add library";
-    logger->logError(Format("NSCreateObject: %1 failed with error %2",
-          filename, dsoerr));
-    }
+		logger->logError(Format("NSCreateObject: %1 failed with error %2",
+														filename, dsoerr));
+	}
 
 
 
@@ -103,7 +102,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 		try
 		{
 			return SharedLibraryRef( new dyldSharedLibrary(libhandle,
-				filename));
+																										 filename));
 		}
 		catch (...)
 		{
@@ -114,7 +113,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	else
 	{
 		logger->logError(Format("dyldSharedLibraryLoader::loadSharedLibrary:"
-			" %1", err_msg));
+														" %1", err_msg));
 		return SharedLibraryRef( 0 );
 	}
 }
