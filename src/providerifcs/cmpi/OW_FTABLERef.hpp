@@ -32,9 +32,24 @@
 #define OW_FTABLE_REF_HPP_
 
 #include "OW_config.h"
+#include "OW_Bool.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_String.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMParameter.hpp"
+#include "OW_Array.hpp"
+#include "OW_CIMBase.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
+//#include <stdlib.h>
+//#include <dlfcn.h>
+#include "cmpisrv.h"
 
 #include "OW_SharedLibraryReference.hpp"
-//#include "npi.h"
 #include "cmpift.h"
 
 typedef struct {
