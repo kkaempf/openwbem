@@ -38,6 +38,9 @@
 #include "OW_GetPass.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_CmdLineParser.hpp"
+#include "OW_URL.hpp"
+
 #include <iostream>
 #include <algorithm>
 #include <iterator>
@@ -49,6 +52,9 @@ using std::cin;
 using std::endl;
 using std::cerr;
 using namespace WBEMFlags;
+
+namespace
+{
 // TODO: put this in a common spot.
 class GetLoginInfo : public ClientAuthCBIFC
 {
@@ -64,6 +70,7 @@ class GetLoginInfo : public ClientAuthCBIFC
 			return true;
 		}
 };
+
 class classPrinter : public CIMClassResultHandlerIFC
 {
 	public:
@@ -72,24 +79,104 @@ class classPrinter : public CIMClassResultHandlerIFC
 			cout << t.toMOF() << '\n';
 		}
 };	
+
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT,
+	CLASSNAME_OPT
+};
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
+	{CLASSNAME_OPT, 'c', "classname", CmdLineParser::E_REQUIRED_ARG, 0, "If specified, only subclasses will be printed"},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owenumclasses [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	if (argc != 4)
-	{
-		cout << "Usage: <URL> <namespace> <classname>" << endl;
-		return 1;
-	}
 	try
 	{
-		String url = argv[1];
-		String ns = argv[2];
-		String classname = argv[3];
+		String url;
+		String ns;
+		String classname;
+		// handle backwards compatible options, which was <URL> <namespace> <classname>
+		// TODO: This is deprecated in 3.1.0, remove it post 3.1
+		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
+		{
+			url = argv[1];
+			ns = argv[2];
+			classname = argv[3];
+			cerr << "This cmd line usage is deprecated!\n";
+		}
+		else
+		{
+			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+	
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owenumclasses (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+	
+			url = parser.getOptionValue(URL_OPT);
+			if (url.empty())
+			{
+				url = "http://localhost/root/cimv2";
+			}
+			ns = URL(url).namespaceName;
+			if (ns.empty())
+			{
+				cerr << "No namespace given as part of the url." << endl;
+				Usage();
+				return 1;
+			}
+			classname = parser.getOptionValue(CLASSNAME_OPT);
+		}
+
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 		classPrinter handler;
 		rch->enumClass(ns, classname, handler, E_DEEP);
 		return 0;
+	}
+	catch (CmdLineParserException& e)
+	{
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				cerr << "unknown option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				cerr << "missing argument for option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
+				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
+			break;
+			default:
+				cerr << "failed parsing command line options: " << e << "\n";
+			break;
+		}
+		Usage();
 	}
 	catch(const Exception& e)
 	{
