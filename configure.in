@@ -246,7 +246,7 @@ case "$host" in
 	STATIC_LINK_FLAGS="-Wl,-Bstatic"
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
 	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
-	RPATH_LINK_FLAG="-Wl,-rpath "
+	RPATH_LINK_FLAG="-Wl,-rpath="
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
@@ -279,7 +279,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
-	RPATH_LINK_FLAG="-R "
+	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"
 	;;
 esac
@@ -331,9 +331,8 @@ OW_HELP_STRING(--enable-rpath-link,enable the encoding of the destination librar
 		dnl failing until it can be evaluated properly while running make).
 	else
 		AC_MSG_WARN(***************************************************************************)
-		AC_MSG_WARN(rpath link cannot be enabled on this platform (the proper flag is unknown))
+		AC_MSG_WARN(rpath link cannot be enabled on this platform (the proper flag is unknown) -- ignored.)
 		AC_MSG_WARN(***************************************************************************)
-		exit 1
 	fi
 ],[
 	# This was already set, but it should be set again.
@@ -346,17 +345,18 @@ OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specifie
 	if test "x$RPATH_LINK_FLAG" != "x"; then
 		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
 			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG${with_runtime_link_path}"
-		elif test "x${with_runtime_link_path}" != "xno"; then
+		elif test "x${with_runtime_link_path}" = "xyes"; then
 			AC_MSG_WARN(***************************************************************************)
 			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
 			AC_MSG_WARN(***************************************************************************)
 			exit 1
 		fi
 	else
-		AC_MSG_WARN(***************************************************************************)
-		AC_MSG_WARN(The runtime link path flag is unknown on this platform.                    )
-		AC_MSG_WARN(***************************************************************************)
-		exit 1
+		if test "x${with_runtime_link_path}" = "xyes"; then
+			AC_MSG_WARN(***************************************************************************)
+			AC_MSG_WARN(The runtime link path flag is unknown on this platform -- ignored.         )
+			AC_MSG_WARN(***************************************************************************)
+		fi
 	fi
 ])
 
