@@ -35,8 +35,6 @@
 #include "OW_Reference.hpp"
 #include "OW_SharedLibrary.hpp"
 
-extern int indent;
-
 template <class T>
 class OW_SharedLibraryReference
 {
@@ -49,37 +47,26 @@ public:
 	: m_sharedLib(lib), m_obj(OW_Reference<T>(obj))
 	{}
 
+	OW_SharedLibraryReference(const OW_SharedLibraryReference<T>& arg)
+	: m_sharedLib(arg.m_sharedLib), m_obj(arg.m_obj)
+	{
+	}
+
 	OW_SharedLibraryReference()
 	: m_sharedLib(), m_obj()
 	{}
 
+	OW_SharedLibraryReference<T>& operator=(const OW_SharedLibraryReference<T>& arg)
+	{
+		m_obj = arg.m_obj;
+		m_sharedLib = arg.m_sharedLib;
+		return *this;
+	}
+
 	~OW_SharedLibraryReference()
 	{
-for (int i = 0; i < indent; ++i)
-{
-	cout << " ";
-}
-cout << __PRETTY_FUNCTION__ << " about to set obj to 0 this = " << this << endl;
-++indent;
-
 		m_obj = 0;
-
---indent;
-for (int i = 0; i < indent; ++i)
-{
-	cout << " ";
-}
-cout << __PRETTY_FUNCTION__ << " about to set lib to 0 this = " << this << endl;
-++indent;
-
 		m_sharedLib = 0;
-
---indent;
-for (int i = 0; i < indent; ++i)
-{
-	cout << " ";
-}
-cout << __PRETTY_FUNCTION__ << " about to set lib == 0 this = " << this << endl;
 	}
 
 	OW_SharedLibraryRef getLibRef() const

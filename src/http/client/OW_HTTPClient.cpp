@@ -702,19 +702,14 @@ OW_HTTPClient::handleAuth()
 void
 OW_HTTPClient::checkConnection()
 {
-	cout << "in OW_HTTPClient::checkConnection m_needsConnect = " << m_needsConnect << endl;
 	if (!m_istr || !m_ostr)
 	{
 		m_needsConnect = true;
 	}
 	if (m_needsConnect)
 	{
-cout << "in OW_HTTPClient::checkConnection this = " << this << " disconnecting" << endl;
 		m_socket.disconnect();
-cout << "in OW_HTTPClient::checkConnection this = " << this << " connecting" << endl;
 		m_socket.connect(m_serverAddress);
-
-		
 		m_needsConnect = false;
 	}
 

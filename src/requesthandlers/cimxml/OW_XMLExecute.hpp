@@ -45,7 +45,7 @@ class OW_CIMOMHandleIFC;
 class OW_XMLExecute : public OW_RequestHandlerIFCXML, OW_XMLQualifier
 {
 public:
-	static void init();
+	//static void init();
 
 	OW_XMLExecute();
 	virtual ~OW_XMLExecute() {}
@@ -139,6 +139,18 @@ private:
 	void execQuery(std::ostream& ostr, OW_XMLNode& qualNode,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
+	typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
+		OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
+
+	struct FuncEntry
+	{
+		const char* name;
+		execFuncPtr_t func;
+	};
+	
+	static FuncEntry g_funcs[];
+	static bool funcEntryCompare(const FuncEntry& f1, const FuncEntry& f2);
+	static FuncEntry* g_end;
 };
 
 

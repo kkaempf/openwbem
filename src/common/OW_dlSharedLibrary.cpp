@@ -40,8 +40,8 @@ OW_dlSharedLibrary::~OW_dlSharedLibrary()
 	dlclose( m_libhandle );
 }
 
-OW_Bool OW_dlSharedLibrary::doGetFunctionPointer( const OW_String& functionName,
-		void** fp ) const
+OW_Bool OW_dlSharedLibrary::doGetFunctionPointer(const OW_String& functionName,
+		void** fp) const
 {
 	*fp = dlsym( m_libhandle, functionName.c_str() );
 	if (!*fp)

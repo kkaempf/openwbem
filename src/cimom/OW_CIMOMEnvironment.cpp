@@ -187,8 +187,6 @@ OW_CIMOMEnvironment::startServices()
 void
 OW_CIMOMEnvironment::shutdown()
 {
-
-cout << "Starting OW_CIMOMEnvironment::shutdown()" << endl;
 	OW_MutexLock ml(m_monitor);
 
 	// Shutdown the polling manager
@@ -202,14 +200,14 @@ cout << "Starting OW_CIMOMEnvironment::shutdown()" << endl;
 	// Clear selectable objects
 	_clearSelectables();
 
-
 	// Shutdown any loaded services
-	for(size_t i = 0; i < m_services.size(); i++)
+	// For now. We need to unload these in the opposite order that
+	// they were loaded.
+	for(int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		m_services[i]->shutdown();
+		m_services[i].setNull();
 	}
-
-	// Unload all services
 	m_services.clear();
 
 	// Unload all request handlers
@@ -242,8 +240,6 @@ cout << "Starting OW_CIMOMEnvironment::shutdown()" << endl;
 
 	// Delete the loger
 	m_Logger = 0;
-cout << "Ending OW_CIMOMEnvironment::shutdown()" << endl;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -423,7 +419,6 @@ OW_CIMOMEnvironment::_loadServices()
 		{
 			srv->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
 			m_services.append(srv);
-
 			logCustInfo(format("CIMOM loaded service from file: %1", libName));
 		}
 		else
@@ -566,7 +561,6 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 
 		if(irl)
 		{
-cout << "**********!OW_CIMOMEnvironment::getCIMOMHandle doing indications!" << endl;
 			OW_RepositoryIFCRef rref(new OW_SharedLibraryRepository(irl));
 			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
 				aclInfo));

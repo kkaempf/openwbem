@@ -53,9 +53,16 @@
 
 #define OW_LOGCUSTINFO(x) m_options.env->getLogger()->logCustInfo(x)
 
+//////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
-	: m_threadCountSemaphore(0)
+	: m_options()
+	, m_threadCountSemaphore(0)
 	, m_upipe(OW_UnnamedPipe::createUnnamedPipe())
+	, m_urls()
+	, m_pHttpServerSocket(0)
+	, m_pHttpsServerSocket(0)
+	, m_digestAuth(0)
+	, m_authGuard()
 {
 }
 
@@ -69,7 +76,7 @@ OW_Bool
 OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 	OW_String& userName, const OW_String& info)
 {
-	OW_MutexLock lock(m_guard);
+	OW_MutexLock lock(m_authGuard);
 	
 	if (info.length() < 1)
 	{
@@ -397,6 +404,8 @@ OW_HTTPServer::getLocalHTTPSAddress()
 void
 OW_HTTPServer::shutdown()
 {
+	m_options.env->getLogger()->logDebug("OW_HTTPServer is shutting down");
+
 	OW_InetSocket::shutdownAllSockets();
 	m_upipe->write("shutdown");
 	while (m_threadCountSemaphore->getCount() < m_options.maxConnections)

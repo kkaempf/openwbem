@@ -39,7 +39,7 @@
 #include "OW_ServiceIFC.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_IPCService : public OW_ServiceIFC, public OW_SelectableCallbackIFC
+class OW_IPCService : public OW_ServiceIFC
 {
 public:
 	OW_IPCService();

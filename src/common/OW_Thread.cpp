@@ -36,10 +36,6 @@
 #include <cstring>
 #include <cstdio>
 
-// for debugging
-int indent =0;
-
-
 //////////////////////////////////////////////////////////////////////////////
 class OW_RunnableThread : public OW_Thread
 {

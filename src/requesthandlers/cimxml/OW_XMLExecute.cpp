@@ -51,6 +51,8 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMtoXML.hpp"
 
+#include <algorithm>
+
 using std::ostream;
 
 
@@ -58,13 +60,60 @@ using std::ostream;
 #define OW_LOGCUSTINFO(msg) this->getEnvironment()->getLogger()->logCustInfo(msg)
 #define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
 
-typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
-	OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
+//typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
+//	OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
-typedef  OW_Map<OW_String, execFuncPtr_t> funcMap_t;
+//typedef  OW_Map<OW_String, execFuncPtr_t> funcMap_t;
 
-static funcMap_t g_funcMap;
+//static funcMap_t g_funcMap;
 
+/*
+struct FuncEntry
+{
+	const char* name;
+	execFuncPtr_t func;
+};
+*/
+
+OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
+{
+	{ "associatornames", &OW_XMLExecute::associatorNames },
+	{ "associators", &OW_XMLExecute::associators },
+	{ "createclass", &OW_XMLExecute::createClass },
+	{ "createinstance", &OW_XMLExecute::createInstance },
+	{ "deleteclass", &OW_XMLExecute::deleteClass },
+	{ "deleteinstance", &OW_XMLExecute::deleteInstance },
+	{ "deletequalifier", &OW_XMLExecute::deleteQualifier },
+	{ "enumerateclasses", &OW_XMLExecute::enumerateClasses },
+	{ "enumerateclassnames", &OW_XMLExecute::enumerateClassNames },
+	{ "enumerateinstancenames", &OW_XMLExecute::enumerateInstanceNames },
+	{ "enumerateinstances", &OW_XMLExecute::enumerateInstances },
+	{ "enumeratequalifiers", &OW_XMLExecute::enumerateQualifiers },
+	{ "execquery", &OW_XMLExecute::execQuery },
+	{ "getclass", &OW_XMLExecute::getClass },
+	{ "getinstance", &OW_XMLExecute::getInstance },
+	{ "getproperty", &OW_XMLExecute::getProperty },
+	{ "getqualifier", &OW_XMLExecute::getQualifier },
+	{ "modifyclass", &OW_XMLExecute::modifyClass },
+	{ "modifyinstance", &OW_XMLExecute::modifyInstance },
+	{ "referencenames", &OW_XMLExecute::referenceNames },
+	{ "references", &OW_XMLExecute::references },
+	{ "setproperty", &OW_XMLExecute::setProperty },
+	{ "setqualifier", &OW_XMLExecute::setQualifier },
+	{ "garbage", 0 }
+};
+
+OW_XMLExecute::FuncEntry* OW_XMLExecute::g_end = &OW_XMLExecute::g_funcs[23];
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+OW_XMLExecute::funcEntryCompare(const OW_XMLExecute::FuncEntry& f1,
+	const OW_XMLExecute::FuncEntry& f2)
+{
+	return (strcmp(f1.name, f2.name) < 0);
+}
+
+/*
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::init()
@@ -105,6 +154,7 @@ public:
 };
 
 OW_XMLFuncLoader g_funcLoader;
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -200,7 +250,6 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 	}
 
 	return 0; // TODO should we keep previous value instead?
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -213,12 +262,17 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	OW_String functionNameLC = m_functionName;
 	functionNameLC.toLowerCase();
 
-	funcMap_t::const_iterator i = g_funcMap.find(functionNameLC);
-
 	OW_LOGDEBUG(format("Got function name. calling function %1",
 		functionNameLC));
 
-	if (i == g_funcMap.end())
+	//funcMap_t::const_iterator i = g_funcMap.find(functionNameLC);
+
+	FuncEntry fe = { 0, 0 };
+	fe.name = functionNameLC.c_str();
+	FuncEntry* i = std::lower_bound(g_funcs, g_end, fe, funcEntryCompare);
+
+	if(i == g_end)
+	//if (i == g_funcMap.end())
 	{
 		OW_THROW (OW_CIMException, "CIMException.CIM_ERR_NOT_FOUND");
 	}
@@ -228,8 +282,7 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 			"\"><IRETURNVALUE>\r\n";
 
 		// call the member function that was found
-		(this->*((*i).second))(ostr, node, path, hdl);
-
+		(this->*((*i).func))(ostr, node, path, hdl);
 		ostr << "</IRETURNVALUE></IMETHODRESPONSE>\r\n";
 	}
 }
@@ -415,7 +468,6 @@ OW_XMLExecute::outputError(const OW_CIMException& ce, ostream& ostr)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -480,7 +532,6 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void OW_XMLExecute::associators(ostream& ostr,
 	OW_XMLNode& node, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
@@ -556,7 +607,6 @@ void OW_XMLExecute::associators(ostream& ostr,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
@@ -636,7 +686,6 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
@@ -651,7 +700,6 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -672,7 +720,6 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -683,7 +730,6 @@ OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -711,7 +757,6 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -752,7 +797,6 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -780,7 +824,6 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -849,7 +892,6 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -867,7 +909,6 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -921,7 +962,6 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -990,7 +1030,6 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1016,7 +1055,6 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1033,7 +1071,6 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1058,7 +1095,6 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1091,7 +1127,6 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl)
@@ -1140,7 +1175,6 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1214,7 +1248,6 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1256,7 +1289,6 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1293,10 +1325,7 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 	}
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)

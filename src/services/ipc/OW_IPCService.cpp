@@ -97,10 +97,21 @@ private:
 	OW_String m_userName;
 };
 
+
+class IPCSelectableCallback : public OW_SelectableCallbackIFC
+{
+public:
+	IPCSelectableCallback(OW_IPCService* pservice) 
+		: OW_SelectableCallbackIFC(), m_pservice(pservice) {}
+
+protected:
+	virtual void doSelected() { m_pservice->doSelected(); }
+	OW_IPCService* m_pservice;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 OW_IPCService::OW_IPCService()
 	: OW_ServiceIFC()
-	, OW_SelectableCallbackIFC()
 	, m_server(true)
 	, m_env()
 {
@@ -109,19 +120,14 @@ OW_IPCService::OW_IPCService()
 //////////////////////////////////////////////////////////////////////////////
 OW_IPCService::~OW_IPCService()
 {
-	m_server.cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IPCService::shutdown()
 {
-	if(m_env.getPtr())
-	{
-		OW_SelectableIFCRef sref(&m_server, true);
-		OW_SelectableCallbackIFCRef cref(this, true);
-		m_env->removeSelectable(sref, cref);
-	}
+	m_env->getLogger()->logDebug("OW_IPCService is shutting down");
+	m_server.cleanup();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -132,8 +138,8 @@ OW_IPCService::startService()
 	if(m_env.getPtr())
 	{
 		OW_SelectableIFCRef sref(&m_server, true);
-		OW_SelectableCallbackIFCRef cref(this, true);
-		m_env->addSelectable(sref, cref);
+		m_env->addSelectable(sref, OW_SelectableCallbackIFCRef(
+			new IPCSelectableCallback(this)));
 	}
 }
 

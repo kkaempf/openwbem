@@ -41,7 +41,8 @@ OW_dlSharedLibraryLoader::loadSharedLibrary(const OW_String& filename,
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
 	if (libhandle)
 	{
-		return OW_SharedLibraryRef( new OW_dlSharedLibrary( libhandle ) );
+		return OW_SharedLibraryRef( new OW_dlSharedLibrary(libhandle,
+			filename));
 	}
 	else
 	{

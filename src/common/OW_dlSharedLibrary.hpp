@@ -41,8 +41,11 @@
 class OW_dlSharedLibrary : public OW_SharedLibrary
 {
 	public:
-		OW_dlSharedLibrary( void * libhandle )
-			: OW_SharedLibrary(), m_libhandle( libhandle ) {}
+		OW_dlSharedLibrary(void * libhandle, const OW_String& libName)
+			: OW_SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+		{
+		}
+
 		virtual ~OW_dlSharedLibrary();
 
 
@@ -62,7 +65,7 @@ class OW_dlSharedLibrary : public OW_SharedLibrary
 
 	private:
 		void* m_libhandle;
-
+		OW_String m_libName;
 };
 
 #endif

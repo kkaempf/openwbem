@@ -115,6 +115,7 @@ private:
 	OW_Reference<OW_InetServerSocket> m_pHttpServerSocket;
 	OW_Reference<OW_InetServerSocket> m_pHttpsServerSocket;
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
+	OW_Mutex m_authGuard;
 
 	friend class OW_HTTPSvrConnection;
 	friend class OW_HTTPListener;
