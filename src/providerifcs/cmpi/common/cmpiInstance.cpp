@@ -98,12 +98,15 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 	if(p)
 	{
 		const OpenWBEM::CIMValue& v=p.getValue();
-		OpenWBEM::CIMDataType pType=v.getType();
-		CMPIType t=type2CMPIType(pType,v.isArray());
+		if(v)
+		{
+			OpenWBEM::CIMDataType pType=v.getType();
+			CMPIType t=type2CMPIType(pType,v.isArray());
 
-		CMPIrc rrc=value2CMPIData(v,t,&data);
-		CMSetStatus(rc,rrc);
-		return data;
+			CMPIrc rrc=value2CMPIData(v,t,&data);
+			CMSetStatus(rc,rrc);
+			return data;
+		}
 	}
 	CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 	return data;
