@@ -797,7 +797,7 @@ namespace
 			OperationContext& context_,
 			const CIMOMEnvironmentRef& env_,
 			const String& ns_,
-			const String& className_,
+			const CIMName& className_,
 			ELocalOnlyFlag localOnly_,
 			EDeepFlag deep_,
 			EIncludeQualifiersFlag includeQualifiers_,
@@ -895,7 +895,7 @@ CIMServer::_getCIMInstances(
 		_getSecondaryInstanceProviders(ns, className, context);
 
 	SecondaryInstanceProviderHandler secondaryHandler(context, m_env, ns,
-		className.toString(), localOnly, deep, includeQualifiers, includeClassOrigin,
+		className, localOnly, deep, includeQualifiers, includeClassOrigin,
 		propertyList, theTopClass, theClass, secProvs, result);
 
 	CIMInstanceResultHandlerIFC* presult = &result;
