@@ -1,0 +1,37 @@
+Types of providers:
+ - instance
+ - secondary instance
+ - method
+ - associator
+ - indication
+ - indication export
+ - polled
+
+Instance
+
+	Instance providers are responsible for implementing the basic WBEM operations that affect instances.
+
+Secondary Instance
+
+	Secondary instance providers are an evolution of the property provider idea.  They don't generate or are responsible to maintaing instances.  They are responsible for filtering the instances for a class.  They can add, remove, and/or change properties.  They also get notified of any instance lifecycle (create, modify, delete) operations.  Any number of secondary providers can be associated with a class that is either static or dynamic.
+
+Method
+
+	Method providers are implement methods in a CIM class.  The OpenWBEM cimom ensures that all REQUIRED(true) parameters have been specified by the client before calling the provider.  Also all the IN(true) parameters are filled with the value the client supplied or else a CIMValue(CIMNULL) if the client omitted an optional (non-required) parameter.  Also the type of all the parameters are synchronized with the method's MOF declaration.
+
+Associator
+
+	Associator providers are responsible for implementing the association WBEM operations (Associators, AssociatorNames, References & ReferenceNames).  Associator providers must also implement the instance provider interface (or have a corresponding instance provider), since associations are also instances and can be enumerated, created, deleted, etc.
+
+Indication
+
+	Indication providers are responsible for generating indications.  There are various types of indication providers.
+
+Indication Export
+
+	Indication export providers are responsible for sending indications to a listener.  Each one can be associated to multiple CIM_IndicationHandler subclasses, but each class can be associated to only one indication export provider.
+
+Polled
+
+	A polled provider has nothing to do with CIM, it's simply a method to put arbitrary code into OpenWBEM.  A polled provider will be called when the cimom starts up and then polled at the interval it requests.  There are no restrictions on what a polled provider can and cannot do.
+
