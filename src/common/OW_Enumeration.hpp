@@ -38,6 +38,8 @@
 #include "OW_TempFileEnumerationImplBase.hpp"
 #include "OW_IntrusiveReference.hpp"
 
+#include <iterator> // for the iterator tags
+
 namespace OpenWBEM
 {
 
