@@ -801,9 +801,9 @@ TestMultiReq
 
 StopDaemon
 
-TestInstalledHeaders
 
 if [ "$OWLONGTEST" = "1" ]; then
+  TestInstalledHeaders
   TestInstalledHeadersOneByOne
 fi
 
