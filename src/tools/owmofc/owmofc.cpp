@@ -47,13 +47,17 @@
 #include "OW_OperationContext.hpp"
 #include "OW_URL.hpp"
 #include "OW_Reference.hpp"
+#include "OW_CmdLineParser.hpp"
 
 #include <iostream>
+
 #if defined(OW_HAVE_GETOPT_H) && !defined(OW_GETOPT_AND_UNISTD_CONFLICT)
 #include <getopt.h>
 #else
 #include <stdlib.h> // for getopt on Solaris
+#ifndef OW_WIN32
 #include <unistd.h> // for getopt on Linux
+#endif
 #endif
 
 using namespace OpenWBEM;
@@ -111,6 +115,136 @@ static String g_url;
 static String g_encoding;
 static StringArray g_filelist;
 
+#ifdef OW_WIN32
+enum 
+{
+	E_OPTdirect,
+	E_OPTurl,
+	E_OPTnamespace,
+	E_OPTcreate_namespaces,
+	E_OPTencoding,
+	E_OPTcheck_syntax,
+	E_OPTdump_xml,
+	E_OPTremove,
+	E_OPTpreserve,
+	E_OPTupgrade,
+	E_OPTsuppress_warnings,
+	E_OPTquiet,
+	E_OPTinclude,
+	E_OPTignore_double_includes,
+	E_OPThelp,
+	E_OPTremove_descriptions,
+	E_OPTinvalid
+};
+
+
+static int
+processCommandLineOptions(int argc, char** argv)
+{
+	CmdLineParser::Option options[] = 
+	{
+		{ E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0, 0 },
+		{ E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, 0 },
+		{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, 0 }, 
+		{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0, 0 },
+		{ E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTdump_xml, 'x', "dump-xml", CmdLineParser::E_REQUIRED_ARG, 0, 0 },
+		{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTpreserve, 'p', "preserve", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTupgrade, 'g', "upgrade", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTsuppress_warnings, 'w', "suppress-warnings", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTquiet, 'q', "quiet", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTinclude, 'I', "include", CmdLineParser::E_REQUIRED_ARG, 0, 0 },
+		{ E_OPTignore_double_includes, 'i', "ignore-double-includes", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPThelp, 'h', "help", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0, 0 },
+		{ 0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0 }
+	};
+
+	// Set defaults
+	g_url = def_url_arg;
+	g_encoding = def_encoding_arg;
+
+	// handle backwards compatible options, which was <URL> <namespace> <file>
+	// This has to be done after setting the defaults.
+	// TODO: This is deprecated in 3.0.0, remove it post 3.1
+	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
+	{
+		g_url = argv[1];
+		g_opts.m_namespace = argv[2];
+		g_filelist.push_back(argv[3]);
+		cerr << "This cmd line usage is deprecated!\n";
+		return 0;
+	}
+
+	try
+	{
+		CmdLineParser parser(argc, argv, options);
+		if(parser.isSet(E_OPThelp))
+		{
+			return -1;	// If help specified, for usage display
+		}
+		String wk = parser.getOptionValue(E_OPTdirect);
+		if(wk.length())
+		{
+			g_useCimRepository = true;
+			g_repositoryDir = wk;
+		}
+		wk = parser.getOptionValue(E_OPTurl);
+		if(wk.length())
+		{
+			g_url = wk;
+		}
+		wk = parser.getOptionValue(E_OPTnamespace);
+		if(wk.length())
+		{
+			g_opts.m_namespace = wk;
+		}
+		wk = parser.getOptionValue(E_OPTencoding);
+		if(wk.length())
+		{
+			g_encoding = wk;
+		}
+		if(parser.isSet(E_OPTcreate_namespaces))
+		{
+			g_opts.m_createNamespaces = true;
+		}
+			//{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0, 0 },
+		if(parser.isSet(E_OPTremove_descriptions))
+		{
+			g_opts.m_removeDescriptions = true;
+		}
+		
+		size_t nonopt_count = parser.getNonOptionCount();
+		for(size_t oi = 0; oi < nonopt_count; oi++)
+		{
+			g_filelist.push_back(parser.getNonOptionArg(oi));
+		}
+	}
+	catch(CmdLineParserException&)
+	{
+		return -1;
+	}
+
+	// Set default namespace, this is a bit strange to maintain backward compat.
+	if (g_opts.m_namespace.empty())
+	{
+		URL url(g_url);
+		if (url.namespaceName.empty())
+		{
+			g_opts.m_namespace = def_namespace_arg;
+		}
+		else
+		{
+			g_opts.m_namespace = url.namespaceName;
+		}
+	}
+
+	return 0;
+}
+
+#else	// not OW_WIN32
 
 // TODO: switch all this junk to use the new CmdLineParser class.
 #ifdef OW_HAVE_GETOPT_LONG
@@ -135,6 +269,8 @@ static struct option   long_options[] =
 	{ "remove-descriptions", 0, NULL, 'm' },
 	{ 0, 0, 0, 0 }
 };
+
+
 #endif
 static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ihm";
 //////////////////////////////////////////////////////////////////////////////
@@ -219,6 +355,8 @@ processCommandLineOptions(int argc, char** argv)
 
 	return 0;
 }
+#endif	// OW_WIN32
+
 class coutLogger : public Logger
 {
 	virtual void doLogMessage(const String &message, const ELogLevel) const

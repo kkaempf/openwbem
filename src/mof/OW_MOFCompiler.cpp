@@ -77,7 +77,7 @@ long Compiler::compile( const String& filename )
 	{
 		try
 		{
-			size_t i = filename.lastIndexOf('/');
+			size_t i = filename.lastIndexOf(OW_FILENAME_SEPARATOR);
 			if (i != String::npos)
 			{
 				basepath = filename.substring(0,i);

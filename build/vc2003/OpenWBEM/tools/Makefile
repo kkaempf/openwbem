@@ -1,5 +1,5 @@
 DEBUG = 1
-WARNLEVEL = /W0
+WARNLEVEL = 0
 OPENSSLBASE = c:\openssl
 ZLIBBASE = c:\zlib
 
@@ -13,23 +13,23 @@ TOOLSRCDIR = $(SRCDIR)\tools
 
 !IFDEF DEBUG
 BUILDTYPE = Debug
+TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 LINKDBG = /DEBUG
 CPPDEFS = /D"WIN32" /D"_DEBUG" /D"_CONSOLE" /D"OW_WIN32" /D"_MBCS"
 #CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-#CPPFLAGS = /GF /GX /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /MDd /c /Fo"$@"
+#CPPFLAGS = /GF /GX /RTC1 /Zi /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MDd /c /Fo"$@"
 CPPFLAGS = /Od /Gm /RTC1 /MDd /Zc:forScope /GR /Fo"$@" /Fd"$(TARGETDIR)\$(@B).pdb" /W2 /Zi /Wp64 /TP /c /GX
 !ELSE
 BUILDTYPE = Release
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 CPPDEFS = /D"WIN32" /D"_CONSOLE" /D"OW_WIN32" /D"_MBCS"
 #CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-#CPPFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
-CPPFLAGS = /MD /Zc:forScope /GR /Fo"$@" /W2 /Wp64 /TP /c /GX
+#CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
+CPPFLAGS = /MD /Zc:forScope /GR /Fo"$@" /W$(WARNLEVEL) /Wp64 /TP /c /GX
 LINKDBG = 
 !ENDIF
 
 OBJDIR = $(BUILDTYPE)
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 
 
 INCS = \
@@ -59,23 +59,26 @@ LIBPATH = \
 #EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
 #REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
-MOFC = owmofc
-MOFCEXE = $(TARGETTDIR)\$(MOFC).exe
 CIMLISTENER = owcimindicationlistener
 CIMLISTENEREXE = $(TARGETDIR)\$(CIMLISTENER).exe
 CREATENS = owcreatenamespace
 CREATENSEXE = $(TARGETDIR)\$(CREATENS).exe
 DELETENS = owdeletenamespace
 DELETENSEXE = $(TARGETDIR)\$(DELETENS).exe
+
 ENUMCLS = owenumclasses
 ENUMCLSEXE = $(TARGETDIR)\$(ENUMCLS).exe
+
+MOFC = owmofc
+MOFCEXE = $(TARGETDIR)\$(MOFC).exe
 
 
 EXES = \
 $(CREATENSEXE) \
 $(DELETENSEXE) \
 $(ENUMCLSEXE) \
-$(CIMLISTENEREXE)
+$(CIMLISTENEREXE) \
+$(MOFCEXE)
 
 ALL: $(EXES)
 
@@ -87,14 +90,14 @@ $(MOFCEXE): $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj $(TARGETDIR)
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
 	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj \
 	libowmofc.lib libowclient.lib libowxml.lib libowhttp.lib \
-	libowrepositoryhdb.lib libowdb.lib libopenwbem.lib \
+	librepositoryhdb.lib libowdb.lib libopenwbem.lib \
 	zdll.lib libeay32.lib ssleay32.lib
 	
 $(OBJDIR)\$(MOFC).obj: $(TOOLSRCDIR)\owmofc\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\$(@B).cpp
 
-$(OBJDIR)\OW_MOFCompCIMOMHandle.obj: $(TOOLSRCDIR)\owmofc\OW_MOFCompCIMOMHandle.cpp $(OBJDIR)
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\OW_MOFCompCIMOMHandle.cpp
+$(OBJDIR)\OW_MOFCompCIMOMHandle.obj: $(TOOLSRCDIR)\owmofc\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\$(@B).cpp
 
 #
 # owcimindicationlistener

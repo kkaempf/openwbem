@@ -53,12 +53,12 @@ libowxml.lib
 
 !IFDEF DEBUG
 CPPDEFS = /D"OW_LISTENER_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
+CPPFLAGS = /GF /GX /RTC1 /Zi /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 OBJDIR = Debug
 LINKDBG = /DEBUG
 !ELSE
 CPPDEFS = /D"OW_LISTENER_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
+CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 OBJDIR = Release
 LINKDBG = 
 !ENDIF
@@ -90,15 +90,15 @@ $(OBJDIR):
 
 LIBSRCDIR = $(SRCDIR)\cimxmllistener
 
-$(OBJDIR)\OW_CIMListenerCallback.obj: $(LIBSRCDIR)\OW_CIMListenerCallback.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\OW_CIMListenerCallback.cpp
+$(OBJDIR)\OW_CIMListenerCallback.obj: $(LIBSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLListener.obj: $(LIBSRCDIR)\OW_XMLListener.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\OW_XMLListener.cpp
+$(OBJDIR)\OW_XMLListener.obj: $(LIBSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_ListenerAuthenticator.obj: $(LIBSRCDIR)\OW_ListenerAuthenticator.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\OW_ListenerAuthenticator.cpp
+$(OBJDIR)\OW_ListenerAuthenticator.obj: $(LIBSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPXMLCIMListener.obj: $(LIBSRCDIR)\OW_HTTPXMLCIMListener.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\OW_HTTPXMLCIMListener.cpp
+$(OBJDIR)\OW_HTTPXMLCIMListener.obj: $(LIBSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(LIBSRCDIR)\$(@B).cpp
 

@@ -101,39 +101,39 @@ CLIENTSRCDIR = $(SRCDIR)\http\client
 SERVICESRCDIR = $(SRCDIR)\services\http
 
 
-$(OBJDIR)\OW_HTTPChunkedIStream.obj: $(COMMONSRCDIR)\OW_HTTPChunkedIStream.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPChunkedIStream.cpp
+$(OBJDIR)\OW_HTTPChunkedIStream.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPChunkedOStream.obj: $(COMMONSRCDIR)\OW_HTTPChunkedOStream.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPChunkedOStream.cpp
+$(OBJDIR)\OW_HTTPChunkedOStream.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPChunkException.obj: $(COMMONSRCDIR)\OW_HTTPChunkException.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPChunkException.cpp
+$(OBJDIR)\OW_HTTPChunkException.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPCounter.obj: $(COMMONSRCDIR)\OW_HTTPCounter.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPCounter.cpp
+$(OBJDIR)\OW_HTTPCounter.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPDeflateIStream.obj: $(COMMONSRCDIR)\OW_HTTPDeflateIStream.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPDeflateIStream.cpp
+$(OBJDIR)\OW_HTTPDeflateIStream.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPDeflateOStream.obj: $(COMMONSRCDIR)\OW_HTTPDeflateOStream.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPDeflateOStream.cpp
+$(OBJDIR)\OW_HTTPDeflateOStream.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPException.obj: $(COMMONSRCDIR)\OW_HTTPException.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPException.cpp
+$(OBJDIR)\OW_HTTPException.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPLenLimitIStream.obj: $(COMMONSRCDIR)\OW_HTTPLenLimitIStream.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPLenLimitIStream.cpp
+$(OBJDIR)\OW_HTTPLenLimitIStream.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPUtils.obj: $(COMMONSRCDIR)\OW_HTTPUtils.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPUtils.cpp
+$(OBJDIR)\OW_HTTPUtils.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPClient.obj: $(CLIENTSRCDIR)\OW_HTTPClient.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CLIENTSRCDIR)\OW_HTTPClient.cpp
+$(OBJDIR)\OW_HTTPClient.obj: $(CLIENTSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CLIENTSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPServer.obj: $(SERVICESRCDIR)\OW_HTTPServer.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SERVICESRCDIR)\OW_HTTPServer.cpp
+$(OBJDIR)\OW_HTTPServer.obj: $(SERVICESRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SERVICESRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_HTTPSvrConnection.obj: $(SERVICESRCDIR)\OW_HTTPSvrConnection.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SERVICESRCDIR)\OW_HTTPSvrConnection.cpp
+$(OBJDIR)\OW_HTTPSvrConnection.obj: $(SERVICESRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SERVICESRCDIR)\$(@B).cpp
 

@@ -77,26 +77,26 @@ $(OBJDIR):
 
 ###############################################################################
 
-$(OBJDIR)\OW_MOFCIMOMVisitor.obj: $(MOFSRCDIR)\OW_MOFCIMOMVisitor.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\OW_MOFCIMOMVisitor.cpp
+$(OBJDIR)\OW_MOFCIMOMVisitor.obj: $(MOFSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_MOFCompiler.obj: $(MOFSRCDIR)\OW_MOFCompiler.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\OW_MOFCompiler.cpp
+$(OBJDIR)\OW_MOFCompiler.obj: $(MOFSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_MOFParseFatalErrorException.obj: $(MOFSRCDIR)\OW_MOFParseFatalErrorException.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\OW_MOFParseFatalErrorException.cpp
+$(OBJDIR)\OW_MOFParseFatalErrorException.obj: $(MOFSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_MOFParserErrorHandlerIFC.obj: $(MOFSRCDIR)\OW_MOFParserErrorHandlerIFC.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\OW_MOFParserErrorHandlerIFC.cpp
+$(OBJDIR)\OW_MOFParserErrorHandlerIFC.obj: $(MOFSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_MOFVisitor.obj: $(MOFSRCDIR)\OW_MOFVisitor.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\OW_MOFVisitor.cpp
+$(OBJDIR)\OW_MOFVisitor.obj: $(MOFSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_MOFParser.obj: OW_MOFParser.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) OW_MOFParser.cpp
+$(OBJDIR)\OW_MOFParser.obj: $(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(@B).cpp
 
-$(OBJDIR)\OW_MOFLexer.obj: OW_MOFLexer.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) OW_MOFLexer.cpp
+$(OBJDIR)\OW_MOFLexer.obj: $(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(@B).cpp
 
 OW_MOFParser.cpp: $(MOFSRCDIR)\OW_MOFParser.yy
 	-@del OW_MOFParser.cpp

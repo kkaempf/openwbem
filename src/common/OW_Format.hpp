@@ -90,7 +90,7 @@ private:
 	void put (long long t);
 	void put (unsigned long long t);
 public:
-	friend std::ostream& operator<<(std::ostream& os, const Format& f);
+	friend OW_COMMON_API std::ostream& operator<<(std::ostream& os, const Format& f);
 }; // class Format
 
 template<typename T>

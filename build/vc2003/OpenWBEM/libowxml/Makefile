@@ -7,9 +7,6 @@ CPP = cl
 LINK = link
 
 SRCDIR = ..\..\..\..\src
-TOOLSDIR = ..\tools
-
-INCS = /I".." /I$(SRCDIR)\common /I$(SRCDIR)\cim /I$(SRCDIR)\ifcs /I$(SRCDIR)\common\socket /I"C:\OpenSSL\include" /I$(SRCDIR)\client
 
 !IFDEF DEBUG
 BUILDTYPE = Debug
@@ -95,58 +92,58 @@ $(OBJDIR):
 
 XMLSRCDIR = $(SRCDIR)\xml
 
-$(OBJDIR)\OW_CIMtoXML.obj: $(XMLSRCDIR)\OW_CIMtoXML.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_CIMtoXML.cpp
+$(OBJDIR)\OW_CIMtoXML.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_CIMXMLParser.obj: $(XMLSRCDIR)\OW_CIMXMLParser.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_CIMXMLParser.cpp
+$(OBJDIR)\OW_CIMXMLParser.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_Param.obj: $(XMLSRCDIR)\OW_Param.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_Param.cpp
+$(OBJDIR)\OW_Param.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_RequestHandlerIFCXML.obj: $(XMLSRCDIR)\OW_RequestHandlerIFCXML.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_RequestHandlerIFCXML.cpp
+$(OBJDIR)\OW_RequestHandlerIFCXML.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLAttribute.obj: $(XMLSRCDIR)\OW_XMLAttribute.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLAttribute.cpp
+$(OBJDIR)\OW_XMLAttribute.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLCIMFactory.obj: $(XMLSRCDIR)\OW_XMLCIMFactory.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLCIMFactory.cpp
+$(OBJDIR)\OW_XMLCIMFactory.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLClass.obj: $(XMLSRCDIR)\OW_XMLClass.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLClass.cpp
+$(OBJDIR)\OW_XMLClass.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLEscape.obj: $(XMLSRCDIR)\OW_XMLEscape.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLEscape.cpp
+$(OBJDIR)\OW_XMLEscape.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLNode.obj: $(XMLSRCDIR)\OW_XMLNode.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLNode.cpp
+$(OBJDIR)\OW_XMLNode.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLOperationGeneric.obj: $(XMLSRCDIR)\OW_XMLOperationGeneric.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLOperationGeneric.cpp
+$(OBJDIR)\OW_XMLOperationGeneric.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLParseException.obj: $(XMLSRCDIR)\OW_XMLParseException.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLParseException.cpp
+$(OBJDIR)\OW_XMLParseException.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLParserCore.obj: $(XMLSRCDIR)\OW_XMLParserCore.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLParserCore.cpp
+$(OBJDIR)\OW_XMLParserCore.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLParserDOM.obj: $(XMLSRCDIR)\OW_XMLParserDOM.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLParserDOM.cpp
+$(OBJDIR)\OW_XMLParserDOM.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLParserSAX.obj: $(XMLSRCDIR)\OW_XMLParserSAX.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLParserSAX.cpp
+$(OBJDIR)\OW_XMLParserSAX.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLPrettyPrint.obj: $(XMLSRCDIR)\OW_XMLPrettyPrint.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLPrettyPrint.cpp
+$(OBJDIR)\OW_XMLPrettyPrint.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLPullParser.obj: $(XMLSRCDIR)\OW_XMLPullParser.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLPullParser.cpp
+$(OBJDIR)\OW_XMLPullParser.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLQualifier.obj: $(XMLSRCDIR)\OW_XMLQualifier.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLQualifier.cpp
+$(OBJDIR)\OW_XMLQualifier.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
-$(OBJDIR)\OW_XMLUnescape.obj: $(XMLSRCDIR)\OW_XMLUnescape.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\OW_XMLUnescape.cpp
+$(OBJDIR)\OW_XMLUnescape.obj: $(XMLSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(XMLSRCDIR)\$(@B).cpp
 
 
