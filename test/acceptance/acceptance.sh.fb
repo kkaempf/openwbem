@@ -1091,7 +1091,10 @@ RANDFILE=$STAGEDIR/ssl_randfile
 export RANDFILE
 
 if [ -z "$MAKE" ]; then
-  MAKE=gmake
+  if gmake -v; then
+    MAKE=gmake
+  else
+    MAKE=make
 fi
 
 Install
