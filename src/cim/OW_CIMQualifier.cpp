@@ -87,11 +87,10 @@ OW_CIMQualifier::OW_CIMQualifier(const char* name) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(const OW_String& name,
-	const OW_CIMQualifierType& cgt) :
+OW_CIMQualifier::OW_CIMQualifier(const OW_CIMQualifierType& cgt) :
 	OW_CIMElement(), m_pdata(new QUALData)
 {
-	m_pdata->m_name = name;
+	m_pdata->m_name = cgt.getName();
 	m_pdata->m_qualifierType = cgt;
 }
 

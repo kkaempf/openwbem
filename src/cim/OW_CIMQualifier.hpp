@@ -123,7 +123,7 @@ public:
 	 * @param name The name for this OW_CIMQualifier
 	 * @param qtype The qualifier type that this qualifier is based upon.
 	 */
-	OW_CIMQualifier(const OW_String& name, const OW_CIMQualifierType& qtype);
+	OW_CIMQualifier(const OW_CIMQualifierType& qtype);
 
 	/**
 	 * Copy constructor

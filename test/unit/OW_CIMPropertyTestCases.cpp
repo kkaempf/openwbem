@@ -59,7 +59,7 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 	c1.setName("test");
 	OW_CIMQualifierType cqt("Description");
 	cqt.setDataType(OW_CIMDataType::STRING);
-	c1.addQualifier(OW_CIMQualifier("Description", cqt));
+	c1.addQualifier(OW_CIMQualifier(cqt));
 
 	OW_CIMProperty p1("testprop", OW_CIMValue(c1));
 	OW_CIMClass c2;
@@ -87,7 +87,7 @@ void OW_CIMPropertyTestCases::testEmbeddedInstance()
 	c1.setName("test");
 	OW_CIMQualifierType cqt("Description");
 	cqt.setDataType(OW_CIMDataType::STRING);
-	c1.addQualifier(OW_CIMQualifier("Description", cqt));
+	c1.addQualifier(OW_CIMQualifier(cqt));
 
 	OW_CIMInstance i1 = c1.newInstance();
 

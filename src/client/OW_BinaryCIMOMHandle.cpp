@@ -96,7 +96,7 @@ checkError(OW_CIMProtocolIStreamIFCRef istr)
 		}
 		else
 		{
-			OW_TempFileStream error(500); 
+			OW_TempFileStream error(500);
 			istr->getError(error);
 			checkError(error);
 		}
@@ -115,38 +115,38 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstance& ci)
 {
 	ci = OW_BinIfcIO::readInstance(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 {
 	cop = OW_BinIfcIO::readObjectPath(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& enu)
 {
 	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassEnumeration& enu)
 {
 	enu = OW_BinIfcIO::readClassEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readInstanceEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierType& arg)
 {
 	arg = OW_BinIfcIO::readQual(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readQualifierTypeEnum(*istr);
 }
 
-template<class T> 
+template<class T>
 static T
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 {
@@ -158,14 +158,13 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 	}
 	catch (OW_IOException& e)
 	{
-		cerr << "**** inside catch for IOException" << endl;
-		while(*istr) istr->get(); 
+		while(*istr) istr->get();
 		if (istr->getError().length() == 0)
 		{
 			throw e;
 		}
 	}
-	while(*istr) istr->get(); 
+	while(*istr) istr->get();
 	OW_String errorStr = istr->getError();
 	if (istr->getError().length() > 0)
 	{
@@ -369,7 +368,7 @@ OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
 
-	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef, 
+	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClasses", path.getNameSpace());
 
 	//return OW_BinIfcIO::readClassEnum(*in);

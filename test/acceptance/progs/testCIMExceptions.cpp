@@ -320,6 +320,14 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 	// CIM_ERR_INVALID_PARAMETER - thrown from OW_MetaRepository::_throwIfBadClass() and OW_MetaRepository::adjustClass()
+
+	// There are different ways to get this error.  Let's try all of them.
+	// 1. A subclass overrides a qualifier that has the DISABLEOVERRIDE flavor
+	// on the base class
+	OW_CIMClass baseClass("invalidTestBase");
+	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root"));
+	OW_CIMQualifier assocQual(assocQualType);
+	baseClass.addQualifier(assocQual);
 	try
 	{
 		OW_CIMClass cc2(cc);

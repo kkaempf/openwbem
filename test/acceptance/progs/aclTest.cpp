@@ -72,7 +72,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		OW_CIMQualifierType cqt("Key");
 		cqt.setDataType(OW_CIMDataType::BOOLEAN);
 		cqt.setDefaultValue(OW_CIMValue(OW_Bool(false)));
-		OW_CIMQualifier cimQualifierKey("Key", cqt);
+		OW_CIMQualifier cimQualifierKey(cqt);
 
 		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
 

@@ -225,8 +225,8 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 {
 	m_curClass = OW_CIMClass(*pAssocDeclaration->pClassName->pClassName);
 
-	OW_CIMQualifierType qt = getQualifierType("ASSOCIATION", pAssocDeclaration->theLineInfo);
-	OW_CIMQualifier q("ASSOCIATION", qt);
+	OW_CIMQualifierType qt = getQualifierType(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, pAssocDeclaration->theLineInfo);
+	OW_CIMQualifier q(qt);
 	q.setValue(OW_CIMValue(OW_Bool(true)));
 
 	m_curClass.addQualifier(q);
@@ -268,8 +268,8 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 {
 	m_curClass = OW_CIMClass(*pIndicDeclaration->pClassName->pClassName);
 	
-	OW_CIMQualifierType qt = getQualifierType("INDICATION", pIndicDeclaration->theLineInfo);
-	OW_CIMQualifier q("INDICATION", qt);
+	OW_CIMQualifierType qt = getQualifierType(OW_CIMQualifier::CIM_QUAL_INDICATION, pIndicDeclaration->theLineInfo);
+	OW_CIMQualifier q(qt);
 	q.setValue(OW_CIMValue(OW_Bool(true)));
 	m_curClass.addQualifier(q);
 	if ( pIndicDeclaration->pQualifier.get() != 0 )

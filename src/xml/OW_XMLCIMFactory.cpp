@@ -563,7 +563,8 @@ OW_XMLCIMFactory::createQualifier(OW_XMLNode const& node)
 
 	OW_CIMQualifierType cqt(OW_Bool(true));
 	cqt.setDataType(dt);
-	rval = OW_CIMQualifier(name, cqt);
+	cqt.setName(name);
+	rval = OW_CIMQualifier(cqt);
 
 	if(overridable.equalsIgnoreCase("false"))
 	{

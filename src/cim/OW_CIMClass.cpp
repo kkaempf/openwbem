@@ -1011,12 +1011,12 @@ OW_CIMClass::toMOF() const
 		OW_CIMQualifierArray qra = m_pdata->m_qualifiers;
 
 		/*
-		 * The association needs to be at the beginning according to 
+		 * The association needs to be at the beginning according to
 		 * the MOF grammar.
 		 */
 
 		OW_CIMQualifierArray::iterator iter = std::find(
-			qra.begin(), qra.end(), 
+			qra.begin(), qra.end(),
 			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
 		if (iter != qra.end())
 		{
@@ -1033,13 +1033,13 @@ OW_CIMClass::toMOF() const
 			{
 				OW_CIMQualifierType cqt(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
 				cqt.setDataType(OW_CIMDataType(OW_CIMDataType::BOOLEAN));
-				OW_CIMQualifier cq(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, cqt);
+				OW_CIMQualifier cq(cqt);
 				cq.setValue(OW_CIMValue(OW_Bool(true)));
 				qra.insert(qra.begin(), cq);
 			}
 		}
 
-		iter = std::find( qra.begin(), qra.end(), 
+		iter = std::find( qra.begin(), qra.end(),
 			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_INDICATION));
 		if (iter != qra.end())
 		{
