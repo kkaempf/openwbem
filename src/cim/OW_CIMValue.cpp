@@ -2210,12 +2210,25 @@ CIMValue::CIMValueImpl::get(CIMObjectPathArray& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMClassArray& arg) const
 {
-	if (m_type != CIMDataType::EMBEDDEDCLASS || !isArray())
-	{
-		OW_THROW(ValueCastException,
-			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDCLASS ARRAY");
+	if (isArray()) {
+		if (m_type == CIMDataType::EMBEDDEDCLASS)
+		{
+			arg = *reinterpret_cast<CIMClassArray const *>(&m_obj);
+			return;
+		}
+		else if (m_type == CIMDataType::EMBEDDEDINSTANCE &&
+			reinterpret_cast<CIMInstanceArray const *>(&m_obj)->empty())
+		{
+			// When reading MOF, we cannot distinguish an empty array of
+			// embedded instances from an empty array of embedded classes, so
+			// we arbitrarily assign a type of EMBEDDEDINSTANCE.  This code is
+			// here in case we guessed wrong.
+			arg = CIMClassArray();
+			return;
+		}
 	}
-	arg = *(reinterpret_cast<const CIMClassArray*>(&m_obj));
+	OW_THROW(ValueCastException,
+		"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDCLASS ARRAY");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -921,86 +921,102 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 							m_curProperty.getValue(),
 							CIMDataType(tempProp.getDataType()));
 
-						try
+						CIMInstanceArray instances;
+						CIMClassArray classes;
+						CIMQualifierTypeArray qualifiertypes;
+
+						if( tempProp.getQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) )
 						{
-							CIMInstanceArray instances;
-							CIMClassArray classes;
-							CIMQualifierTypeArray qualifiertypes;
-
-							if( tempProp.getQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) )
+							CIMDataType type = tempProp.getDataType();
+							if( type.getType() != CIMDataType::STRING )
 							{
-								CIMDataType type = tempProp.getDataType();
-								if( type.getType() != CIMDataType::STRING )
+								castValue = CIMValue(CIMNULL);
+								theErrorHandler->recoverableError(
+									Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(), 
+										CIMDataType(CIMDataType::STRING).toString()).c_str(), pInstanceDeclaration->theLineInfo);
+							}
+							else
+							{
+								try
 								{
-									castValue = CIMValue(CIMNULL);
-									theErrorHandler->recoverableError(
-										Format("Value is not the correct type: %1  The type for an EmbeddedObject should be: %2", m_curProperty.getValue().toString(), 
-											CIMDataType(CIMDataType::STRING).toString()).c_str(), pInstanceDeclaration->theLineInfo);
-								}
-								else
-								{
-									try
+									// Ok the base type is correct (string) and we're converting to an
+									// embedded object
+									if( type.isArrayType() )
 									{
-										// Ok the base type is correct (string) and we're converting to an
-										// embedded object
-										if( type.isArrayType() )
+										StringArray arr = castValue.toStringArray();
+										for( StringArray::iterator j = arr.begin(); j != arr.end(); ++j )
 										{
-											for( StringArray::iterator j = castValue.toStringArray().begin(); j != castValue.toStringArray().end(); j++ )
-											{
-												compileMOF(*j, m_hdl, m_namespace, instances, classes, qualifiertypes);
-											}
+											compileMOF(*j, m_hdl, m_namespace, instances, classes, qualifiertypes);
 										}
-										else
-											compileMOF(castValue.toString(), m_hdl, m_namespace, instances, classes, qualifiertypes);
 									}
-									catch(...)
-									{
-									}
+									else
+									compileMOF(castValue.toString(), m_hdl, m_namespace, instances, classes, qualifiertypes);
 								}
-
-								int bHaveInstances = instances.size() > 0?1:0;
-								int bHaveClasses = classes.size() > 0?1:0;
-
-								// If we don't have any or don't have both...
-								// BTW, is there a good reason why C++ doesn't have
-								// an XOR LOGICAL operator???
-								if( !( bHaveInstances ^ bHaveClasses) )
+								catch(MOFCompilerException & e)
 								{
 									// We've got some kind of parsing error
 									castValue = CIMValue(CIMNULL);
 									theErrorHandler->recoverableError(
-										Format("Instantiation error: %1.  Either an error occurred converting to an EmbeddedObject or there were mixed EmbeddedObject types", m_curProperty.getValue().toString()).c_str(), pInstanceDeclaration->theLineInfo);
-								}
-								else
-								{
-									if( bHaveInstances )
-									{
-										if( type.isArrayType() )
-										{
-											castValue = CIMValue(instances);
-										}
-										else
-										{
-											castValue = CIMValue(instances[0]);
-										}
-									}
-									else if( bHaveClasses )
-									{
-										if( type.isArrayType() )
-										{
-											castValue = CIMValue(classes);
-										}
-										else
-										{
-											castValue = CIMValue(classes[0]);
-										}
-									}
-									tempProp.setDataType(castValue.getCIMDataType());
+										Format(
+											"Instantiation error: %1.  "
+											"An error occurred converting to an EmbeddedObject: %2",
+											m_curProperty.getValue().toString(),
+											e
+										).c_str(),
+										pInstanceDeclaration->theLineInfo
+									);
 								}
 							}
-						}
-						catch (...)
-						{
+							
+							bool bHaveInstances = instances.size() > 0;
+							bool bHaveClasses = classes.size() > 0;
+							
+							if( bHaveInstances && bHaveClasses )
+							{
+								castValue = CIMValue(CIMNULL);
+								theErrorHandler->recoverableError(
+									Format(
+										"Instantiation error: %1.  "
+										"There were mixed EmbeddedObject types",
+										m_curProperty.getValue().toString()
+									).c_str(),
+									pInstanceDeclaration->theLineInfo
+								);
+							}
+							else if ( type.isArrayType() )
+							{
+								castValue = bHaveClasses ? CIMValue(classes) : CIMValue(instances);
+							}
+							else if( bHaveInstances )
+							{
+								castValue = CIMValue(instances[0]);
+								if (instances.size() > 1)
+								{
+									theErrorHandler->recoverableError(
+										"Instantiation error: multiple instances specified for embedded object",
+										pInstanceDeclaration->theLineInfo
+									);
+								}
+							}
+							else if( bHaveClasses )
+							{
+								castValue = CIMValue(classes[0]);
+								if (classes.size() > 1)
+								{
+									theErrorHandler->recoverableError(
+										"Instantiation error: multiple class defs given for embedded object",
+										pInstanceDeclaration->theLineInfo
+									);
+								}
+							}
+							else
+							{
+								castValue = CIMValue(CIMNULL);
+								theErrorHandler->recoverableError(
+									"Instantiation error: no instance or classes specified for embedded object",
+									pInstanceDeclaration->theLineInfo
+								);
+							}
 						}
 					}
 					catch (ValueCastException&)
