@@ -42,24 +42,47 @@ class OW_ThreadPoolImpl;
 DECLARE_EXCEPTION(ThreadPool);
 
 /**
- * The OW_ThreadPool class is used to coordinate a group of threads.
+ * The OW_ThreadPool class is used to coordinate a group of threads.  There is
+ * a queue maintained of work to do.  As each thread in the group is available
+ * it will get it's next task from the head of the queue.  The queue can have
+ * a maximum size limit or can be of unlimited size.
+ *
  * This class is freely copyable.  All copies reference the same underlying implementation.
+ * This class is thread safe.
  */
 class OW_ThreadPool
 {
 public:
 	/**
 	 * Constructor
+	 * @param numThreads The number of threads in the pool.
+	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
+	 *  no limit.
 	 * @throw OW_ThreadPoolException if the underlying implementation fails.
 	 */
 	OW_ThreadPool(OW_UInt32 numThreads, OW_UInt32 maxQueueSize);
 
-	// will block if queue is full.  return true if added to the queue, false if not, which will only happen if the pool is shutting down.
+	/**
+	 * Add an OW_RunnableRef for the pool to execute.
+	 * If the queue is full, this call will block until there is space in the queue.
+	 * @return true if added to the queue, false if not, which will only happen if the pool is shutting down.
+	 */
 	bool addWork(const OW_RunnableRef& work);
 
-	// will not block if queue is full.  return true if added to the queue, false if not.
+	/**
+	 * Add an OW_RunnableRef for the pool to execute.
+	 * If the queue is full, this call will *not* block.
+	 * @return true if added to the queue, false if not.
+	 */
 	bool tryAddWork(const OW_RunnableRef& work);
 
+	/**
+	 * Instruct all threads to exit and stop working.  After shutdown() is
+	 * called, addWork() and tryAddWork() will return false.
+	 * @param finishWorkInQueue If true, threads will continue to process the
+	 *  current work in the queue, before shutting down.  If false, the work in
+	 *  the queue will be discarded.
+	 */
 	void shutdown(bool finishWorkInQueue=true);
 
 	~OW_ThreadPool();
