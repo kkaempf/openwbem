@@ -37,6 +37,7 @@ public:
 	virtual bool update(const char* key, OW_Int32 newOffset);
 	virtual void flush();
 	void reopen();
+	void openIfClosed();
 
 private:
 
@@ -131,6 +132,28 @@ OW_IndexImpl::reopen()
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_IndexImpl::openIfClosed()
+{
+	if (!m_pDB)
+	{
+		BTREEINFO dbinfo;
+
+		::memset(&dbinfo, 0, sizeof(dbinfo));
+		dbinfo.compare = recCompare;
+		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
+			DB_BTREE, &dbinfo);
+
+		if(m_pDB == NULL)
+		{
+			OW_String msg = "Failed to re-open index file: ";
+			msg += m_dbFileName;
+			OW_THROW(OW_IndexException, msg.c_str());
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_IndexImpl::close()
 {
 	if(m_pDB != NULL)
@@ -151,11 +174,32 @@ OW_IndexImpl::flush()
 	}
 }
 
+namespace
+{
+
+class OpenCloser
+{
+public:
+	OpenCloser(OW_IndexImpl* pIndex) : m_pIndex(pIndex) 
+	{
+		m_pIndex->openIfClosed();
+	}
+	~OpenCloser()
+	{
+		m_pIndex->close();
+	}
+
+private:
+	OW_IndexImpl* m_pIndex;
+};
+
+}
 //////////////////////////////////////////////////////////////////////////////	
 // Find exact
 OW_IndexEntry
 OW_IndexImpl::find(const char* key)
 {
+	openIfClosed();
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -183,6 +227,7 @@ OW_IndexImpl::find(const char* key)
 bool
 OW_IndexImpl::add(const char* key, OW_Int32 offset)
 {
+	OpenCloser oc(this);
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -200,6 +245,7 @@ OW_IndexImpl::add(const char* key, OW_Int32 offset)
 bool
 OW_IndexImpl::remove(const char* key, OW_Int32 offset)
 {
+	OpenCloser oc(this);
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -232,6 +278,7 @@ OW_IndexImpl::remove(const char* key, OW_Int32 offset)
 bool
 OW_IndexImpl::update(const char* key, OW_Int32 newOffset) /*throw (OW_IndexImplException)*/
 {
+	OpenCloser oc(this);
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -254,6 +301,7 @@ OW_IndexImpl::update(const char* key, OW_Int32 newOffset) /*throw (OW_IndexImplE
 OW_IndexEntry
 OW_IndexImpl::findFirst(const char* key)
 {
+	openIfClosed();
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -287,6 +335,7 @@ OW_IndexImpl::findFirst(const char* key)
 OW_IndexEntry
 OW_IndexImpl::findNext()
 {
+	openIfClosed();
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
@@ -307,6 +356,7 @@ OW_IndexImpl::findNext()
 OW_IndexEntry
 OW_IndexImpl::findPrev()
 {
+	openIfClosed();
 	if(m_pDB == NULL)
 	{
 		OW_THROW(OW_IndexException, "Index file hasn't been opened");
