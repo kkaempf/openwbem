@@ -953,6 +953,10 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 			}
 		}
 	}
+
+	// TODO: look up all the subclasses of the classes in isaClassNames.  This may also require a change to the providers so they only register for the class
+	// they care about, and not all the base classes.
+
 	// get rid of duplicates - unique() requires that the range be sorted
 	std::sort(isaClassNames.begin(), isaClassNames.end());
 	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
