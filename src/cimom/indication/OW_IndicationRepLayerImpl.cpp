@@ -123,24 +123,21 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMInstance instOrig = m_pServer->deleteInstance(path, aclInfo);
-	if (instOrig)
-	{
-		OW_ACLInfo intAclInfo;
+	OW_ACLInfo intAclInfo;
 
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(
-				OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
-			exportIndication(expInst, path.getFullNameSpace());
-		}
-		catch (OW_CIMException&)
-		{
-			getEnvironment()->logError("Unable to export indication for createClass"
-				" because CIM_InstDeletion does not exist");
-		}
+	try
+	{
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
+			intAclInfo);
+		OW_CIMInstance expInst = expCC.newInstance();
+		expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
+		exportIndication(expInst, path.getFullNameSpace());
+	}
+	catch (OW_CIMException&)
+	{
+		getEnvironment()->logError("Unable to export indication for createClass"
+			" because CIM_InstDeletion does not exist");
 	}
 	return instOrig;
 }
@@ -444,28 +441,25 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 	OW_CIMInstance lci(ci);
 	OW_CIMObjectPath rval = m_pServer->createInstance(name, lci, aclInfo);
 
-	if (rval)
+	OW_CIMObjectPath op(name);
+	op.setKeys(ci.getKeyValuePairs());
+
+	OW_ACLInfo intAclInfo;
+
+	try
 	{
-		OW_CIMObjectPath op(name);
-		op.setKeys(ci.getKeyValuePairs());
-
-		OW_ACLInfo intAclInfo;
-
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(
-				OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			// TODO refer to MOF.  What about filtering the properties in ss?
-			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
-			exportIndication(expInst, name.getFullNameSpace());
-		}
-		catch(OW_CIMException&)
-		{
-			getEnvironment()->logError("Unable to export indication for createClass"
-				" because CIM_InstCreation does not exist");
-		}
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
+			intAclInfo);
+		OW_CIMInstance expInst = expCC.newInstance();
+		// TODO refer to MOF.  What about filtering the properties in ss?
+		expInst.setProperty("SourceInstance", OW_CIMValue(lci));
+		exportIndication(expInst, name.getFullNameSpace());
+	}
+	catch(OW_CIMException&)
+	{
+		getEnvironment()->logError("Unable to export indication for createClass"
+			" because CIM_InstCreation does not exist");
 	}
 	return rval;
 }

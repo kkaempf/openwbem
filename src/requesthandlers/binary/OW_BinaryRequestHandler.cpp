@@ -385,10 +385,7 @@ OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	realPath.setKeys(keys);
-	chdl->createInstance(realPath, cimInstance);
-	OW_CIMObjectPath newPath(cimInstance.getClassName(),
-		cimInstance.getKeyValuePairs());
-	newPath.setNameSpace(path.getNameSpace());
+	OW_CIMObjectPath newPath = chdl->createInstance(realPath, cimInstance);
 
 	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BIN_OK, OW_Bool(true));
 	OW_BinIfcIO::writeObjectPath(ostrm, newPath);
@@ -434,6 +431,7 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+
 void
 OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
@@ -485,12 +483,6 @@ OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
 	OW_CIMClass cc = chdl->getClass(op, localOnly, includeQualifiers,
 		includeClassOrigin, propListPtr);
 
-	if(!cc)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Path=%1", op.toString()).c_str());
-	}
-
 	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BIN_OK, OW_Bool(true));
 	OW_BinIfcIO::writeClass(ostrm, cc);
 }
@@ -516,12 +508,6 @@ OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 
 	OW_CIMInstance cimInstance = chdl->getInstance(op, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
-
-	if(!cimInstance)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Path=%1", op.toString()).c_str());
-	}
 
 	OW_BinIfcIO::write(ostrm, (OW_Int32)OW_BIN_OK, OW_Bool(true));
 	OW_BinIfcIO::writeInstance(ostrm, cimInstance);

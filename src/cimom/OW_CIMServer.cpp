@@ -635,29 +635,41 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to delete the class
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, path, aclInfo);
-
-	OW_CIMClass cc;
-	int rc = m_mStore.getCIMClass(path, cc);
-	if (rc != 0)
+	try
 	{
-		OW_THROWCIM(rc);
-	}
-		
-	//if(m_iStore.classHasInstances(path))
-	//{
-	//	OW_THROWCIM(OW_CIMException::CLASS_HAS_INSTANCES);
-	//}
+		m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, path, aclInfo);
 
-	OW_String ns = path.getNameSpace();
-	OW_String cname = path.getObjectName();
-	if(!m_mStore.deleteClass(ns, cname))
+		OW_CIMClass cc;
+		int rc = m_mStore.getCIMClass(path, cc);
+		if (rc != 0)
+		{
+			OW_THROWCIM(rc);
+		}
+
+		//if(m_iStore.classHasInstances(path))
+		//{
+		//	OW_THROWCIM(OW_CIMException::CLASS_HAS_INSTANCES);
+		//}
+
+		OW_String ns = path.getNameSpace();
+		OW_String cname = path.getObjectName();
+		if(!m_mStore.deleteClass(ns, cname))
+		{
+			OW_THROWCIM(OW_CIMException::NOT_FOUND);
+		}
+
+		m_iStore.deleteClass(ns, cname);
+		OW_ASSERT(cc);
+		return cc;
+	}
+	catch(OW_IOException&)
 	{
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
+		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-
-	m_iStore.deleteClass(ns, cname);
-	return cc;
+	catch(OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -675,9 +687,20 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 				cimClass.getName()).c_str());
 	}
 
-	OW_String ns = path.getNameSpace();
-	m_mStore.createClass(ns, cimClass);
-	m_iStore.createClass(ns, cimClass);
+	try
+	{
+		OW_String ns = path.getNameSpace();
+		m_mStore.createClass(ns, cimClass);
+		m_iStore.createClass(ns, cimClass);
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1045,8 +1068,15 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
 		true);
 
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, cc,
-		aclInfo);
+	cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS, 
+		OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
+		0, aclInfo);
+
+
+	OW_ASSERT(cc);
+	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, aclInfo);
+	OW_ASSERT(cc);
 
 	if(instancep)
 	{
@@ -1056,28 +1086,26 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	}
 	else
 	{
-		int rc = m_mStore.getCIMClass(cop, cc);
-
-		if (rc != 0)
+		try
 		{
-			OW_THROWCIMMSG(rc, format("%1", cop.getObjectName()).c_str());
+			ci = m_iStore.getCIMInstance(cop, cc);
 		}
-
-		ci = m_iStore.getCIMInstance(cop, cc);
+		catch (OW_IOException&)
+		{
+			OW_THROWCIM(OW_CIMException::FAILED);
+		}
 	}
 
-	if(ci)
+	OW_ASSERT(ci);
+	if(pOutClass)
 	{
-		if(pOutClass)
-		{
-			*pOutClass = cc;
-		}
-
-		ci.syncWithClass(cc, true);
-		_getProviderProperties(cop, ci, cc, aclInfo);
-		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
-			propertyList);
+		*pOutClass = cc;
 	}
+
+	ci.syncWithClass(cc, true);
+	_getProviderProperties(cop, ci, cc, aclInfo);
+	ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
+		propertyList);
 
 	return ci;
 }
@@ -1101,66 +1129,72 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
 		true);
 
-	OW_CIMClass theClass;
-	OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
-		&theClass, intAclInfo);
-
-	if (!oldInst)
+	try
 	{
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
-	}
+		OW_CIMClass theClass;
+		OW_CIMInstance oldInst;
+		oldInst = getInstance(cop, false, true, true, NULL,
+			&theClass, intAclInfo);
 
-	OW_AssocDbHandle hdl = m_assocDb.getHandle();
+		OW_AssocDbHandle hdl = m_assocDb.getHandle();
 
-	// Ensure no associations exist for this instance
-	OW_String instStr = cop.toString();
-	if(hdl.isEntries(instStr))
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
-			format("Instance has associations: %1", instStr).c_str());
-	}
-
-	// If we're deleting an association instance, then remove all
-	// traces of it in the association database.
-	if(theClass.isAssociation())
-	{
-		m_env->logDebug("OW_CIMServer::deleteInstance."
-			" theClass.isAssociation() == true");
-
-		OW_AssociatorProviderIFCRef assocP(0);
-		OW_CIMQualifier cq = theClass.getQualifier(
-			OW_CIMQualifier::CIM_QUAL_PROVIDER);
-
-		if(cq)
+		// Ensure no associations exist for this instance
+		OW_String instStr = cop.toString();
+		if(hdl.isEntries(instStr))
 		{
-			assocP = m_provManager->getAssociatorProvider(
-				createProvEnvRef(internal_ch), cq);
+			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
+				format("Instance has associations: %1", instStr).c_str());
 		}
 
-		// If there is no associator provider for this instance, then go ahead
-		// delete the entries from the database for this association.
-		if(!assocP)
+		// If we're deleting an association instance, then remove all
+		// traces of it in the association database.
+		if(theClass.isAssociation())
 		{
-			hdl.deleteEntries(cop, oldInst);
+			m_env->logDebug("OW_CIMServer::deleteInstance."
+				" theClass.isAssociation() == true");
+
+			OW_AssociatorProviderIFCRef assocP(0);
+			OW_CIMQualifier cq = theClass.getQualifier(
+				OW_CIMQualifier::CIM_QUAL_PROVIDER);
+
+			if(cq)
+			{
+				assocP = m_provManager->getAssociatorProvider(
+					createProvEnvRef(internal_ch), cq);
+			}
+
+			// If there is no associator provider for this instance, then go ahead
+			// delete the entries from the database for this association.
+			if(!assocP)
+			{
+				hdl.deleteEntries(cop, oldInst);
+			}
 		}
+
+		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, aclInfo);
+
+		if(instancep)	// If there is an instance provider, let it do the delete.
+		{
+			instancep->deleteInstance(
+				createProvEnvRef(real_ch), cop);
+		}
+		else
+		{
+			// Delete the instance from the instance repository
+			m_iStore.deleteInstance(cop, theClass);
+		}
+
+		OW_ASSERT(oldInst);
+		return oldInst;
 	}
-
-	OW_CIMClass tc;
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, tc,
-		aclInfo);
-
-	if(instancep)	// If there is an instance provider, let it do the delete.
+	catch(OW_IOException&)
 	{
-		instancep->deleteInstance(
-			createProvEnvRef(real_ch), cop);
+		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-	else
+	catch(OW_HDBException&)
 	{
-		// Delete the instance from the instance repository
-		m_iStore.deleteInstance(cop, theClass);
+		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-
-	return oldInst;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1177,126 +1211,138 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 		aclInfo, true);
 
-	OW_CIMClass theClass = _getNameSpaceClass(cop.getObjectName());
-	if(!theClass)
+	try
 	{
-		int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
-
-		if(rc != 0)
+		OW_CIMClass theClass = _getNameSpaceClass(cop.getObjectName());
+		if(!theClass)
 		{
-			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
-		}
-	}
+			int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
 
-	OW_CIMQualifier acq = theClass.getQualifier(
-			OW_CIMQualifier::CIM_QUAL_ABSTRACT);
-	if(acq)
-	{
-		OW_CIMValue v = acq.getValue();
-		if (v)
-		{
-			OW_Bool b;
-			v.get(b);
-			if (b)
+			if(rc != 0)
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
-						format("Unable to create instance because class (%1)"
-							" is abstract", theClass.getName()).c_str());
-			}
-		}
-	}
-
-	OW_CIMQualifier cq = theClass.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-
-	OW_Bool created = false;
-	if(cq)
-	{
-		OW_InstanceProviderIFCRef instancep =
-			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch),
-				cq);
-
-		if(instancep)
-		{
-			rval = instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
-			created = true;
-		}
-	}
-
-	if(!created)
-	{
-		if(theClass.isAssociation())
-		{
-			OW_ACLInfo intAclInfo;
-			OW_CIMPropertyArray pra = ci.getProperties(
-				OW_CIMDataType::REFERENCE);
-
-			for(size_t j = 0; j < pra.size(); j++)
-			{
-				OW_CIMValue cv = pra[j].getValue();
-				if(!cv)
-				{
-					continue;
-				}
-
-				OW_CIMObjectPath op;
-				cv.get(op);
-
-				if(!op)
-				{
-					continue;
-				}
-
-				OW_CIMClass rcc; 
-				int rc = m_mStore.getCIMClass(op, rcc);
-
-				if(rc == 0)
-				{
-					OW_CIMInstance rci = m_iStore.getCIMInstance(op, rcc);
-
-					if(!rci)
-					{
-						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							format("Association references an invalid instance:"
-								" %1", op.toString()).c_str());
-					}
-				}
-				else
-				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-						format("Reference property has an invalid class: %1 in "
-							"namespace: %2", op.getObjectName(),
-							op.getNameSpace()).c_str());
-				}
-
+				OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
 			}
 		}
 
-		m_iStore.createInstance(cop, theClass, ci);
-		_validatePropagatedKeys(cop, ci, theClass);
-	}
+		OW_CIMQualifier acq = theClass.getQualifier(
+				OW_CIMQualifier::CIM_QUAL_ABSTRACT);
+		if(acq)
+		{
+			OW_CIMValue v = acq.getValue();
+			if (v)
+			{
+				OW_Bool b;
+				v.get(b);
+				if (b)
+				{
+					OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+							format("Unable to create instance because class (%1)"
+								" is abstract", theClass.getName()).c_str());
+				}
+			}
+		}
 
-	if(theClass.isAssociation())
-	{
-		OW_AssociatorProviderIFCRef assocP(0);
+		OW_CIMQualifier cq = theClass.getQualifier(
+			OW_CIMQualifier::CIM_QUAL_PROVIDER);
 
+		OW_Bool created = false;
 		if(cq)
 		{
-			assocP = m_provManager->getAssociatorProvider(
-				createProvEnvRef(internal_ch), cq);
+			OW_InstanceProviderIFCRef instancep =
+				m_provManager->getInstanceProvider(createProvEnvRef(internal_ch),
+					cq);
+
+			if(instancep)
+			{
+				rval = instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
+				created = true;
+			}
 		}
 
-		if(!assocP)
+		if(!created)
 		{
-			OW_AssocDbHandle hdl = m_assocDb.getHandle();
-			OW_CIMObjectPath icop(cop);
-			icop.setKeys(ci.getKeyValuePairs());
-			hdl.addEntries(icop, ci);
-		}
-	}
+			if(theClass.isAssociation())
+			{
+				OW_ACLInfo intAclInfo;
+				OW_CIMPropertyArray pra = ci.getProperties(
+					OW_CIMDataType::REFERENCE);
 
-	_setProviderProperties(cop, ci, theClass, aclInfo);
-	return rval;
+				for(size_t j = 0; j < pra.size(); j++)
+				{
+					OW_CIMValue cv = pra[j].getValue();
+					if(!cv)
+					{
+						continue;
+					}
+
+					OW_CIMObjectPath op;
+					cv.get(op);
+
+					if(!op)
+					{
+						continue;
+					}
+
+					OW_CIMClass rcc; 
+					int rc = m_mStore.getCIMClass(op, rcc);
+
+					if(rc == 0)
+					{
+						OW_CIMInstance rci = m_iStore.getCIMInstance(op, rcc);
+
+						if(!rci)
+						{
+							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								format("Association references an invalid instance:"
+									" %1", op.toString()).c_str());
+						}
+					}
+					else
+					{
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+							format("Reference property has an invalid class: %1 in "
+								"namespace: %2", op.getObjectName(),
+								op.getNameSpace()).c_str());
+					}
+
+				}
+			}
+
+			m_iStore.createInstance(cop, theClass, ci);
+			_validatePropagatedKeys(cop, ci, theClass);
+		}
+
+		if(theClass.isAssociation())
+		{
+			OW_AssociatorProviderIFCRef assocP(0);
+
+			if(cq)
+			{
+				assocP = m_provManager->getAssociatorProvider(
+					createProvEnvRef(internal_ch), cq);
+			}
+
+			if(!assocP)
+			{
+				OW_AssocDbHandle hdl = m_assocDb.getHandle();
+				OW_CIMObjectPath icop(cop);
+				icop.setKeys(ci.getKeyValuePairs());
+				hdl.addEntries(icop, ci);
+			}
+		}
+
+		_setProviderProperties(cop, ci, theClass, aclInfo);
+		OW_ASSERT(rval);
+		return rval;
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1330,8 +1376,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	OW_InstanceProviderIFCRef instancep(0);
 	if(cq)
 	{
-		OW_CIMClass tc;
-		instancep = _getInstanceProvider(cop, tc, aclInfo);
+		instancep = _getInstanceProvider(cop, aclInfo);
 	}
 
 	if(!instancep)
@@ -1376,9 +1421,21 @@ OW_Bool
 OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass cc;
-	OW_InstanceProviderIFCRef ip = _getInstanceProvider(icop, cc, aclInfo);
+	OW_InstanceProviderIFCRef ip = _getInstanceProvider(icop, aclInfo);
 	OW_String classname = icop.getObjectName();
+
+	OW_CIMClass cc;
+	try
+	{
+		cc = getClass(icop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS, 
+			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
+			0, aclInfo);
+	}
+	catch(OW_CIMException&)
+	{
+		return false;
+	}
 
 	if(ip)
 	{
@@ -1662,18 +1719,17 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 // Assumes a read or write lock has been acquired on the repository
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_CIMObjectPath cop,
-	OW_CIMClass& outClass, const OW_ACLInfo& aclInfo)
+	const OW_ACLInfo& aclInfo)
 {
 	return _getInstanceProvider(cop.getNameSpace(), cop.getObjectName(),
-		outClass, aclInfo);
+		aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // Assumes a read or write lock has been acquired on the repository
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_String& ns,
-	const OW_String& classNameArg, OW_CIMClass& outClass,
-	const OW_ACLInfo& /*aclInfo*/)
+	const OW_String& classNameArg, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true), OW_ACLInfo(),
 		true);
@@ -1683,7 +1739,6 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 
 	if(cc)
 	{
-		outClass = cc;
 		OW_CIMQualifier cq = cc.getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROVIDER);
 
@@ -1691,7 +1746,6 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 			createProvEnvRef(ch), cq);
 	}
 
-	outClass.setNull();
 	while(className.length() > 0)
 	{
 		try
@@ -1699,11 +1753,6 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 			if(m_mStore.getCIMClass(ns, className, cc) != 0);
 			{
 				break;
-			}
-
-			if(!outClass)
-			{
-				outClass = cc;
 			}
 
 			if(cc.isAssociation())

@@ -180,8 +180,6 @@ public:
 	 *		CIM_ERR_NOT_FOUND
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
-	 * @exception OW_HDBException An error occurred in the database.
-	 * @exception OW_IOException Couldn't read class object from file.
 	 */
 	virtual OW_CIMClass getClass(const OW_CIMObjectPath& path,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -194,7 +192,15 @@ public:
 	 * @param path The path for the class to delete
 	 * @param aclInfo ACL object describing user making request.
 	 * @return an OW_CIMClass representing the class which was deleted.
-	 * @exception CIMException if class does not exist
+	 * @exception CIMException 
+	 *		CIM_ERR_CLASS_HAS_CHILDREN
+	 *		CIM_ERR_CLASS_HAS_INSTANCES
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_FOUND
+  	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMClass deleteClass(const OW_CIMObjectPath& path,
 		const OW_ACLInfo& aclInfo);
@@ -205,10 +211,14 @@ public:
 	 * @param path The path for the class to create
 	 * @param cimClass The class to create
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception 	CIMException if the class already exists, or parent class
-	 *					is not yet on file.
-	 * @exception OW_HDBException An error occurred in the database.
-	 * @exception OW_IOException Couldn't write class object to file.
+	 * @exception 	CIMException 
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_ALREADY_EXISTS
+	 *		CIM_ERR_INVALID_SUPERCLASS
+	 *		CIM_ERR_FAILED
 	 */
 	void createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 		const OW_ACLInfo& aclInfo);
@@ -222,7 +232,14 @@ public:
 	 * @return an OW_CIMClass representing the state of the class prior to
 	 * 	the update.  This is likely usefull only for creating
 	 *		CIM_ClassModification indications.
-	 * @exception CIMException if the class already exists
+	 * @exception CIMException 
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_ALREADY_EXISTS
+	 *		CIM_ERR_INVALID_SUPERCLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMClass modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 		const OW_ACLInfo& aclInfo);
@@ -335,9 +352,13 @@ public:
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An OW_CIMInstance object
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 *		CIM_ERR_FAILED
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_FOUND
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_INVALID_PARAMETER
 	 */
 	OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -354,9 +375,14 @@ public:
 	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_FOUND
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMInstance deleteInstance(const OW_CIMObjectPath& cop,
 		const OW_ACLInfo& aclInfo);
@@ -367,9 +393,14 @@ public:
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param ci The instance that is to be stored with that object path
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_ALREADY_EXISTS
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMObjectPath createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		const OW_ACLInfo& aclInfo);
@@ -547,11 +578,10 @@ private:
 	void _getChildKeys(OW_HDBHandle hdl, OW_StringArray& ra, OW_HDBNode node);
 
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_CIMObjectPath cop,
-		OW_CIMClass& outClass, const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo);
 
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
-		const OW_String& className, OW_CIMClass& outClass,
-		const OW_ACLInfo& aclInfo);
+		const OW_String& className, const OW_ACLInfo& aclInfo);
 
 	void _validatePropagatedKeys(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass);

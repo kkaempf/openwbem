@@ -25,4 +25,9 @@ x Unload request handlers if not used after X minutes.
 - CMPI (replace NPI)
 
 - add handling for new namespace model
+- fix OW_CIMServer to throw right exceptions.  OW_CIMServer public
+  funcs shouldn't ever return null objects. 
+- overhaul Provider interface with consistent const& params. 
+- createInstance on InstanceProvider should have a Class passed in.
+- remove __Namespace specific stuff from request handlers.
 
