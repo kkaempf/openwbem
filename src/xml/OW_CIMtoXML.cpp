@@ -1031,6 +1031,12 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 	{
 		ostr << "PROPAGATED=\"true\" ";
 	}
+	
+	if (cp.getDataType().isEmbeddedObjectType())
+	{
+		ostr << "EmbeddedObject=\"object\" ";
+	}
+
 	ostr << '>';
 	for (size_t i = 0; i < cp.getQualifiers().size(); i++)
 	{
@@ -1229,7 +1235,14 @@ CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr)
 		{
 			type = "reference";
 		}
-		ostr << " PARAMTYPE=\"" << type << "\">";
+		ostr << " PARAMTYPE=\"" << type;
+		
+		if (pv.getValue().getCIMDataType().isEmbeddedObjectType())
+		{
+			ostr << "EmbeddedObject=\"object\" ";
+		}
+
+		ostr << "\">";
 		CIMtoXML(pv.getValue(), ostr);
 	}
 	else
