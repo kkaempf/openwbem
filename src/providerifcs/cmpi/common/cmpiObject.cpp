@@ -23,56 +23,67 @@
 #include "cmpisrv.h"
 #include <string.h>
 
-CMPI_Object::CMPI_Object(CMPI_Object *obj) {
-   hdl=obj->hdl;
-   ftab=obj->ftab;
+CMPI_Object::CMPI_Object(CMPI_Object *obj)
+	: hdl(obj->hdl)
+	, ftab(obj->ftab)
+	, priv(0)
+{
 }
 
-CMPI_Object::CMPI_Object(void* obj, void *fTab) {
+CMPI_Object::CMPI_Object(void* obj, void *fTab) 
+{
    hdl=obj;
    ftab=fTab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(OW_CIMInstance* ci) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)ci;
    ftab=CMPI_Instance_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(OW_CIMObjectPath* cop) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)cop;
    ftab=CMPI_ObjectPath_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(OW_CIMDateTime* cdt) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)cdt;
    ftab=CMPI_DateTime_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(const OW_String& str) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)strdup(str.c_str());
    ftab=CMPI_String_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(char *str) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)strdup((const char*)str);
    ftab=CMPI_String_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(OW_CIMParamValueArray *args) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)args;
    ftab=CMPI_Args_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::CMPI_Object(CMPIData *dta) {
    CMPI_ThreadContext::addObject(this);
    hdl=(void*)dta;
    ftab=CMPI_Array_Ftab;
+   priv = 0;
 }
 
 CMPI_Object::~CMPI_Object() {
