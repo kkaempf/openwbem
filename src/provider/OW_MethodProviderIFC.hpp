@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * This is the interface implemented by method providers.  These providers are
@@ -65,7 +65,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& methodName,
 			const OW_CIMValueArray& in,

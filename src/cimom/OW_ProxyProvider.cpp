@@ -43,7 +43,7 @@ OW_AssociatorProviderProxy::OW_AssociatorProviderProxy(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMInstanceEnumeration
 OW_AssociatorProviderProxy::associators(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String resultClass,
@@ -60,7 +60,7 @@ OW_AssociatorProviderProxy::associators(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPathEnumeration
 OW_AssociatorProviderProxy::associatorNames(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String resultClass,
@@ -74,7 +74,7 @@ OW_AssociatorProviderProxy::associatorNames(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMInstanceEnumeration
 OW_AssociatorProviderProxy::references(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String role,
@@ -89,7 +89,7 @@ OW_AssociatorProviderProxy::references(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPathEnumeration
 OW_AssociatorProviderProxy::referenceNames(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String role)
@@ -107,7 +107,7 @@ OW_InstanceProviderProxy::OW_InstanceProviderProxy(
 //////////////////////////////////////////////////////////////////////////////		
 void
 OW_InstanceProviderProxy::deleteInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop)
 {
 	m_pProv->deleteInstance(env, cop);
@@ -116,7 +116,7 @@ OW_InstanceProviderProxy::deleteInstance(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPathEnumeration
 OW_InstanceProviderProxy::enumInstances(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_Bool deep,
 		OW_CIMClass cimClass)
@@ -127,7 +127,7 @@ OW_InstanceProviderProxy::enumInstances(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMInstanceEnumeration
 OW_InstanceProviderProxy::enumInstances(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_Bool deep,
 		OW_CIMClass cimClass,
@@ -139,7 +139,7 @@ OW_InstanceProviderProxy::enumInstances(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMInstance
 OW_InstanceProviderProxy::getInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_CIMClass cimClass,
 		OW_Bool localOnly)
@@ -150,7 +150,7 @@ OW_InstanceProviderProxy::getInstance(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPath
 OW_InstanceProviderProxy::createInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_CIMInstance cimInstance)
 {
@@ -160,7 +160,7 @@ OW_InstanceProviderProxy::createInstance(
 //////////////////////////////////////////////////////////////////////////////		
 void
 OW_InstanceProviderProxy::setInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_CIMInstance cimInstance)
 {
@@ -176,7 +176,7 @@ OW_MethodProviderProxy::OW_MethodProviderProxy(OW_CppMethodProviderIFCRef pProv)
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMValue
 OW_MethodProviderProxy::invokeMethod(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_String& methodName,
 		const OW_CIMValueArray& in,
@@ -195,7 +195,7 @@ OW_PropertyProviderProxy::OW_PropertyProviderProxy(
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMValue
 OW_PropertyProviderProxy::getPropertyValue(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_String originClass,
 		OW_String propertyName)
@@ -207,7 +207,7 @@ OW_PropertyProviderProxy::getPropertyValue(
 //////////////////////////////////////////////////////////////////////////////		
 void
 OW_PropertyProviderProxy::setPropertyValue(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_String originClass,
 		OW_String propertyName,

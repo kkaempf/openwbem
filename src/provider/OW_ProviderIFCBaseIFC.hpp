@@ -40,7 +40,7 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the
@@ -94,7 +94,7 @@ public:
 	 * @returns A ref counted OW_InstanceProvider. If the provider is not found,
 	 * then null is returned.
 	 */
-	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentRef& env,
+	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
 		return doGetInstanceProvider(env, provIdString);
@@ -110,7 +110,7 @@ public:
 	 * @returns A ref counted OW_MethodProvider. If the provider is not found,
 	 * then null is returned.
 	 */
-	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentRef& env,
+	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
 		return doGetMethodProvider(env, provIdString);
@@ -126,7 +126,7 @@ public:
 	 * @returns A ref counted OW_PropertyProvider. If the provider is not found,
 	 * then null is returned.
 	 */
-	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentRef& env,
+	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
 		return doGetPropertyProvider(env, provIdString);
@@ -142,7 +142,7 @@ public:
 	 * @returns A ref counted OW_AssociatorProvider. If the provider is not
 	 * found, then null is returned.
 	 */
-	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentRef& env,
+	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
 		return doGetAssociatorProvider(env, provIdString);
@@ -153,7 +153,7 @@ public:
 	 * provider interfaces.
 	 */
 	OW_IndicationExportProviderIFCRefArray getIndicationExportProviders(
-		const OW_ProviderEnvironmentRef& env
+		const OW_ProviderEnvironmentIFCRef& env
 		)
 	{
 		return doGetIndicationExportProviders(env);
@@ -163,7 +163,7 @@ public:
 	 * @return all available indication trigger providers from the available
 	 * provider interfaces.
 	 */
-	OW_PolledProviderIFCRefArray getPolledProviders(const OW_ProviderEnvironmentRef& env
+	OW_PolledProviderIFCRefArray getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 		)
 	{
 		return doGetPolledProviders(env);
@@ -174,25 +174,25 @@ protected:
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentRef& env,
+	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentRef& env,
+	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 
-	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentRef& env,
+	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 
 	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentRef& env
+		const OW_ProviderEnvironmentIFCRef& env
 		) = 0;
 
 	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentRef& env
+		const OW_ProviderEnvironmentIFCRef& env
 		) = 0;
 };
 

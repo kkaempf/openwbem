@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * This is the interface implemented by property providers.  Property providers
@@ -63,7 +63,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual OW_CIMValue getPropertyValue(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_String originClass,
 			OW_String propertyName) = 0;
@@ -82,7 +82,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void setPropertyValue(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_String originClass,
 			OW_String propertyName,

@@ -59,7 +59,7 @@ public:
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentRef& env);
+	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProvider to
@@ -70,7 +70,7 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual long poll(const OW_ProviderEnvironmentRef& env);
+	virtual long poll(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Called by the CIMOM when the provider is initialized
@@ -79,7 +79,7 @@ public:
 	 *
 	 * @throws OW_CIMException
 	 */
-	virtual void initialize(const OW_ProviderEnvironmentRef& env);
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Called by the CIMOM when the provider is removed.
@@ -96,7 +96,7 @@ OW_TriggerProviderTest1::~OW_TriggerProviderTest1()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TriggerProviderTest1::initialize(const OW_ProviderEnvironmentRef& env)
+OW_TriggerProviderTest1::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_TriggerProviderTest1::initialize called");
 }
@@ -109,7 +109,7 @@ OW_TriggerProviderTest1::cleanup()
 
 //////////////////////////////////////////////////////////////////////////////
 long
-OW_TriggerProviderTest1::getInitialPollingInterval(const OW_ProviderEnvironmentRef& env)
+OW_TriggerProviderTest1::getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug(
 		format("OW_TriggerProviderTest1::getInitialPollingInterval() called."
@@ -120,7 +120,7 @@ OW_TriggerProviderTest1::getInitialPollingInterval(const OW_ProviderEnvironmentR
 
 //////////////////////////////////////////////////////////////////////////////
 long
-OW_TriggerProviderTest1::poll(const OW_ProviderEnvironmentRef& env)
+OW_TriggerProviderTest1::poll(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug(
 		format("OW_TriggerProviderTest1::poll() called."

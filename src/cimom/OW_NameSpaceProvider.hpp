@@ -42,39 +42,39 @@ public:
 	~OW_NameSpaceProvider();
 
 	virtual void deleteInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop);
 
 	virtual OW_CIMObjectPathEnumeration enumInstances(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,
 			OW_CIMClass cimClass);
 
 	virtual OW_CIMInstanceEnumeration enumInstances(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,
 			OW_CIMClass cimClass,
 			OW_Bool localOnly);
 
 	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMClass cimClass,
 			OW_Bool localOnly);
 
 	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance);
 
 	virtual void setInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance);
 
-	virtual void initialize(const OW_ProviderEnvironmentRef& env
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
 			);
 	virtual void cleanup();
 

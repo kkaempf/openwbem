@@ -1,23 +1,22 @@
 noinst_LIBRARIES = libplatformserver.a
 
-INCLUDES = -I$(top_srcdir)/src \
--I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src/http \
--I$(top_srcdir)/src/xml \
--I$(top_srcdir)/src/net/socket \
--I$(top_srcdir)/src/client \
--I$(top_srcdir)/src/cim	\
--I$(top_srcdir)/src/cimom \
--I$(top_srcdir)/src/server \
--I$(top_srcdir)/src/platform/@PLATFORMDIR@/client \
--I$(top_srcdir)/src/platform/@PLATFORMDIR@/common
+INCLUDES = \
+-I$(top_srcdir)/src/common
 
 libplatformserver_a_SOURCES =	\
+OW_AuthManager.cpp \
+OW_AuthManager.hpp \
+OW_ConfigException.hpp \
 OW_Logger.cpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \
 OW_Platform.cpp \
+OW_Platform.hpp \
+OW_SafeLibCreate.hpp \
+OW_SharedLibrary.hpp \
+OW_SharedLibraryException.hpp \
+OW_SharedLibraryLoader.hpp \
+OW_SignalScope.hpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.cpp \

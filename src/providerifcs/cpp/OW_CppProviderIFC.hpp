@@ -59,27 +59,27 @@ protected:
 	 * desired functionality.
 	 */
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
 	virtual OW_MethodProviderIFCRef doGetMethodProvider(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
 	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
 	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentRef& env
+		const OW_ProviderEnvironmentIFCRef& env
 		);
 
 	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentRef& env
+		const OW_ProviderEnvironmentIFCRef& env
 		);
 
 private:
@@ -93,9 +93,9 @@ private:
 	typedef OW_Map<OW_String, LoadedProvider> ProviderMap;
 	typedef OW_Array<LoadedProvider> LoadedProviderArray;
 
-	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentRef& env,
+	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-	void loadNoIdProviders(const OW_ProviderEnvironmentRef& env);
+	void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
 
 
 	ProviderMap m_provs;

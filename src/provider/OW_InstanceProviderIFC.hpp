@@ -36,7 +36,7 @@
 #include "OW_Reference.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * Classes wishing to implement an instance provider must derive from this
@@ -63,7 +63,7 @@ public:
 	 * 	or does not exist.
 	 */
 	virtual OW_CIMObjectPathEnumeration enumInstances(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,
 			OW_CIMClass cimClass ) = 0;
@@ -90,7 +90,7 @@ public:
 	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
 	 */
 	virtual OW_CIMInstanceEnumeration enumInstances(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,
 			OW_CIMClass cimClass,
@@ -114,7 +114,7 @@ public:
 	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist
 	 */
 	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMClass cimClass,
 			OW_Bool localOnly ) = 0;
@@ -134,7 +134,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance ) = 0;
 
@@ -151,7 +151,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void setInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance) = 0;
 
@@ -163,7 +163,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void deleteInstance(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop) = 0;
 
 };

@@ -1,45 +1,17 @@
 EXTRA_DIST = \
-CIM_Application22.mof \
-CIM_Application23.mof \
 CIM_Application25.mof \
-CIM_Core22.mof \
-CIM_Core23.mof \
 CIM_Core25.mof \
 CIM_Core25_Add.mof \
-CIM_DAP22.mof \
-CIM_Dap23.mof \
-CIM_Device22.mof \
-CIM_Device221.mof \
-CIM_Device23.mof \
 CIM_Device25.mof \
 CIM_Events25.mof \
 CIM_Metrics25.mof \
-CIM_Network22.mof \
-CIM_Network23.mof \
 CIM_Network25.mof \
 CIM_Network25_Add.mof \
-CIM_Physical22.mof \
-CIM_Physical23.mof \
 CIM_Physical25.mof \
 CIM_Policy25.mof \
-CIM_Schema22.mof \
-CIM_Schema23.mof \
 CIM_Schema25.mof \
-CIM_Support23.mof \
 CIM_Support25.mof \
-CIM_System22.mof \
-CIM_System23.mof \
 CIM_System25.mof \
-CIM_User23.mof \
 CIM_User25.mof \
-Solaris_Acl1.0.mof \
-Solaris_Application1.0.mof \
-Solaris_CIMOM1.0.mof \
-Solaris_Core1.0.mof \
-Solaris_Device1.0.mof \
-Solaris_Network1.0.mof \
-Solaris_Schema1.0.mof \
-Solaris_System1.0.mof \
-Solaris_Users1.0.mof \
 testInstance.mof
 

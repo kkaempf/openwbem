@@ -62,13 +62,13 @@ public:
 	 *
 	 * @throws OW_CIMException
 	 */
-	void initialize(const OW_ProviderEnvironmentRef& env);
+	void initialize(const OW_ProviderEnvironmentIFCRef& env);
 	void cleanup();
 	virtual ~OW_MethodProviderTest()
 	{
 	}
 	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath &cop,
 			const OW_String &methodName,
 			const OW_CIMValueArray &in,
@@ -77,7 +77,7 @@ private:
 };
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MethodProviderTest::initialize(const OW_ProviderEnvironmentRef& env)
+OW_MethodProviderTest::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_MethodProviderTest initialize called");
 }
@@ -133,7 +133,7 @@ void toggleState()
 
 OW_CIMValue
 OW_MethodProviderTest::invokeMethod(
-		const OW_ProviderEnvironmentRef&,
+		const OW_ProviderEnvironmentIFCRef&,
 		const OW_CIMObjectPath &cop,
 		const OW_String &methodName,
 		const OW_CIMValueArray &in,

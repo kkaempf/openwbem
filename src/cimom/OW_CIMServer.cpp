@@ -778,7 +778,7 @@ OW_CIMServer::getCIMInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 
 namespace
 {
-	class CIMServerProviderEnvironment : public OW_ProviderEnvironment
+	class CIMServerProviderEnvironment : public OW_ProviderEnvironmentIFC
 	{
 	public:
 
@@ -807,9 +807,9 @@ namespace
 		OW_CIMOMHandleIFCRef m_ch;
 	};
 
-	OW_ProviderEnvironmentRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
 	{
-		return OW_ProviderEnvironmentRef(new CIMServerProviderEnvironment(ch));
+		return OW_ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(ch));
 	}
 }
 

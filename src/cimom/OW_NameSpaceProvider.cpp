@@ -47,7 +47,7 @@ OW_NameSpaceProvider::~OW_NameSpaceProvider()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_NameSpaceProvider::deleteInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop)
 {
 	OW_CIMPropertyArray pra = cop.getKeys();
@@ -90,7 +90,7 @@ OW_NameSpaceProvider::deleteInstance(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_NameSpaceProvider::enumInstances(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_Bool deep,
 		OW_CIMClass cimClass)
@@ -111,7 +111,7 @@ OW_NameSpaceProvider::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_NameSpaceProvider::enumInstances(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_Bool /*deep*/,
 		OW_CIMClass cimClass,
@@ -141,7 +141,7 @@ OW_NameSpaceProvider::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_NameSpaceProvider::getInstance(
-		const OW_ProviderEnvironmentRef& /*env*/,
+		const OW_ProviderEnvironmentIFCRef& /*env*/,
 		OW_CIMObjectPath cop,
 		OW_CIMClass cimClass,
 		OW_Bool /*localOnly*/)
@@ -154,7 +154,7 @@ OW_NameSpaceProvider::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_NameSpaceProvider::createInstance(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_CIMInstance cimInstance)
 {
@@ -185,7 +185,7 @@ OW_NameSpaceProvider::createInstance(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_NameSpaceProvider::setInstance(
-		const OW_ProviderEnvironmentRef& /*env*/,
+		const OW_ProviderEnvironmentIFCRef& /*env*/,
 		OW_CIMObjectPath /*cop*/,
 		OW_CIMInstance /*cimInstance*/)
 {
@@ -194,7 +194,7 @@ OW_NameSpaceProvider::setInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentRef& env)
+OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_NameSpaceProvider initialize called");
 }

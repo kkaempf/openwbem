@@ -1,3 +1,5 @@
+SUBDIRS = indication
+
 cimombin_PROGRAMS = owcimomd
 cimombindir = $(sbindir)
  
@@ -61,9 +63,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src \
--I$(top_srcdir)/src/wql \
 -I$(top_srcdir)/src/server \
 -I$(top_srcdir)/db/include
 

@@ -1,3 +1,5 @@
+SUBDIRS = test
+
 noinst_LIBRARIES = libOW_Client.a
 
 
@@ -20,13 +22,14 @@ OW_IPCCIMOMHandle.hpp \
 OW_IPCClient.hpp \
 OW_CIMProtocol.hpp
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/cim -I$(top_srcdir)/src/xml \
--I$(top_srcdir)/src/server -I$(top_srcdir)/src/http \
+INCLUDES = \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/http \
 -I$(top_srcdir)/src/thread \
 -I$(top_srcdir)/src/http/client \
--I$(top_srcdir)/src/net/socket \
--I$(top_srcdir)/src/hdb \
--I$(top_srcdir)/src/provider
+-I$(top_srcdir)/src/common/socket
 
 

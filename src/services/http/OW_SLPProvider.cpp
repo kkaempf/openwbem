@@ -75,9 +75,9 @@ public:
 	OW_SLPProvider();
 	~OW_SLPProvider();
 
-	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentRef& env);
-	virtual long poll(const OW_ProviderEnvironmentRef& env);
-	virtual void initialize(const OW_ProviderEnvironmentRef& env);
+	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
+	virtual long poll(const OW_ProviderEnvironmentIFCRef& env);
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 	virtual void cleanup();
 
 	void doSlpRegister(const OW_LoggerRef& logger);
@@ -99,7 +99,7 @@ OW_SLPProvider::~OW_SLPProvider()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SLPProvider::initialize(const OW_ProviderEnvironmentRef& env)
+OW_SLPProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_SLPProvider::initialize called");
 }
@@ -112,7 +112,7 @@ OW_SLPProvider::cleanup()
 
 //////////////////////////////////////////////////////////////////////////////
 long
-OW_SLPProvider::getInitialPollingInterval(const OW_ProviderEnvironmentRef& env)
+OW_SLPProvider::getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug(format("OW_SLPProvider::getInitialPollingInterval returning "
 		"%1", INITIAL_POLLING_INTERVAL).c_str());
@@ -122,7 +122,7 @@ OW_SLPProvider::getInitialPollingInterval(const OW_ProviderEnvironmentRef& env)
 
 //////////////////////////////////////////////////////////////////////////////
 long
-OW_SLPProvider::poll(const OW_ProviderEnvironmentRef& env)
+OW_SLPProvider::poll(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_SLPProvider::poll called. Registering CIMOM with SLP");
 

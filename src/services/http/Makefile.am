@@ -30,8 +30,7 @@ OW_HTTPSvrConnection.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src/net/socket \
+-I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/http
+-I$(top_srcdir)/src/http/common
 

@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * This is the base class implemented by all providers that are loaded
@@ -53,7 +53,7 @@ class OW_CppProviderBaseIFC
 		 * @param hdl The handle to the cimom
 		 * @throws OW_CIMException
 		 */
-		virtual void initialize(const OW_ProviderEnvironmentRef&) {}
+		virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
 		/**
 		 * Called by the CIMOM when the provider is removed.

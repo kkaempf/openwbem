@@ -54,7 +54,7 @@ public:
 	~OW_AssociatorTest();
 
 	virtual OW_CIMInstanceEnumeration associators(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath assocName,
 			OW_CIMObjectPath objectName,
 			OW_String resultClass,
@@ -65,7 +65,7 @@ public:
 			const OW_StringArray* propertyList);
 
 	virtual OW_CIMObjectPathEnumeration associatorNames(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath assocName,
 			OW_CIMObjectPath objectName,
 			OW_String resultClass,
@@ -73,7 +73,7 @@ public:
 			OW_String resultRole );
 
 	virtual OW_CIMInstanceEnumeration references(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath assocName,
 			OW_CIMObjectPath objectName,
 			OW_String role,
@@ -82,12 +82,12 @@ public:
 			const OW_StringArray* propertyList );
 
 	virtual OW_CIMObjectPathEnumeration referenceNames(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath assocName,
 			OW_CIMObjectPath objectName,
 			OW_String role );
 
-	virtual void initialize(const OW_ProviderEnvironmentRef& env);
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 	virtual void cleanup();
 
 };
@@ -116,7 +116,7 @@ static OW_String getDestClass(const OW_CIMInstance& ci)
 }
 
 OW_CIMInstanceEnumeration OW_AssociatorTest::associators(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String resultClass,
@@ -152,7 +152,7 @@ OW_CIMInstanceEnumeration OW_AssociatorTest::associators(
 }
 
 OW_CIMObjectPathEnumeration OW_AssociatorTest::associatorNames(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String resultClass,
@@ -193,7 +193,7 @@ OW_CIMObjectPathEnumeration OW_AssociatorTest::associatorNames(
 }
 
 OW_CIMInstanceEnumeration OW_AssociatorTest::references(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String role,
@@ -242,7 +242,7 @@ OW_CIMInstanceEnumeration OW_AssociatorTest::references(
 }
 
 OW_CIMObjectPathEnumeration OW_AssociatorTest::referenceNames(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath assocName,
 		OW_CIMObjectPath objectName,
 		OW_String role )
@@ -291,7 +291,7 @@ OW_CIMObjectPathEnumeration OW_AssociatorTest::referenceNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssociatorTest::initialize(const OW_ProviderEnvironmentRef& env)
+OW_AssociatorTest::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_AssociatorTest initialize called");
 }

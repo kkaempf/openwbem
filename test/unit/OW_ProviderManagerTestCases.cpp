@@ -53,7 +53,7 @@ void OW_ProviderManagerTestCases::testInit()
 
 namespace
 {
-	class testProviderEnvironment : public OW_ProviderEnvironment
+	class testProviderEnvironment : public OW_ProviderEnvironmentIFC
 	{
 	public:
 
@@ -84,9 +84,9 @@ namespace
 		}
 	};
 
-	OW_ProviderEnvironmentRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
 	{
-		return OW_ProviderEnvironmentRef(new testProviderEnvironment(ch,
+		return OW_ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
 			OW_LoggerRef(new DummyLogger)));
 	}
 }

@@ -47,7 +47,7 @@ public:
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentRef& env,
+	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMInstance& indHandlerInst, OW_CIMInstance& indicationInst) = 0;
 
 	virtual OW_Bool isIndicationExportProvider() { return true; }

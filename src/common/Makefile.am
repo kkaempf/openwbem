@@ -1,3 +1,5 @@
+SUBDIRS = socket
+
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libopenwbem.so
@@ -23,100 +25,101 @@ clean-local:
 
 
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/thread	\
--I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/net/socket
+# Shouldn't depend on anything else. INCLUDES =
 
 
 libopenwbem_a_SOURCES =	\
+OW_Assertion.cpp \
+OW_BaseStreamBuffer.cpp \
+OW_BinIfcIO.cpp \
+OW_Bool.cpp \
 OW_Char16.cpp \
-OW_CIMErrorException.cpp \
 OW_DateTime.cpp \
 OW_Exception.cpp \
-OW_Assertion.cpp \
+OW_Exec.cpp \
 OW_Format.cpp \
-OW_String.cpp \
-OW_UnnamedPipe.cpp \
-OW_TempFileStream.cpp \
-OW_Bool.cpp \
+OW_IOIFCStreamBuffer.cpp \
 OW_MemTracer.cpp \
-OW_BaseStreamBuffer.cpp	\
+OW_Mutex.cpp \
+OW_PosixFileSystem.cpp \
+OW_PosixOS.cpp \
+OW_PosixUnnamedPipe.cpp \
+OW_RWLocker.cpp \
+OW_RandomNumber.cpp \
+OW_Select.cpp \
 OW_SelectEngine.cpp \
+OW_StackTrace.cpp \
+OW_String.cpp \
 OW_StringBuffer.cpp \
-OW_RequestHandlerIFC.cpp \
-OW_CIMOMHandle.cpp			\
-OW_BinIfcIO.cpp \
+OW_TempFileStream.cpp \
+OW_Thread.cpp \
+OW_ThreadEvent.cpp \
+OW_ThreadImpl.cpp \
+OW_TmpFile.cpp \
 OW_URL.cpp \
-OW_IOIFCStreamBuffer.cpp 
+OW_UnnamedPipe.cpp
 
 pkginclude_HEADERS =	\
-OW_OS.hpp \
-OW_Bool.hpp \
 OW_Array.hpp \
-OW_Stack.hpp \
 OW_ArrayFwd.hpp \
 OW_Assertion.hpp \
 OW_AutoPtr.hpp \
-OW_Base64FormatException.hpp \
+OW_BaseStreamBuffer.hpp \
+OW_BinIfcIO.hpp \
+OW_Bool.hpp \
+OW_ByteSwap.hpp \
 OW_Char16.hpp \
+OW_ConfigOpts.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \
 OW_Exec.hpp \
-OW_Format.hpp \
-OW_IOException.hpp \
-OW_CIMErrorException.hpp \
-OW_List.hpp \
 OW_FileSystem.hpp \
+OW_Format.hpp \
+OW_FuncNamePrinter.hpp \
+OW_IOException.hpp \
+OW_IOIFCStreamBuffer.hpp \
+OW_IstreamBufIterator.hpp \
+OW_List.hpp \
+OW_LogLevel.hpp \
+OW_Logger.hpp \
 OW_Map.hpp \
+OW_MemTracer.hpp \
 OW_Memory.hpp \
+OW_Mutex.hpp \
+OW_MutexLock.hpp \
+OW_NetworkTypes.hpp \
+OW_OS.hpp \
+OW_PosixUnnamedPipe.hpp \
+OW_PthDefines.hpp \
+OW_RWLocker.hpp \
+OW_RandomNumber.hpp \
+OW_Reference.hpp \
+OW_Select.hpp \
+OW_SelectEngine.hpp \
+OW_Semaphore.hpp \
+OW_SortedVector.hpp \
+OW_Stack.hpp \
 OW_StackTrace.hpp \
 OW_String.hpp \
-OW_BaseStreamBuffer.hpp  \
 OW_StringBuffer.hpp \
 OW_StringEnumeration.hpp \
 OW_StringStream.hpp \
-OW_TimeOutException.hpp \
-OW_Types.h \
-OW_UnnamedPipe.hpp \
-OW_TmpFile.hpp \
 OW_TempFileStream.hpp \
-OW_LogLevel.hpp \
-OW_Logger.hpp \
-OW_IstreamBufIterator.hpp \
-OW_MemTracer.hpp \
-OW_FuncNamePrinter.hpp \
-OW_RandomNumber.hpp \
+OW_Thread.hpp \
+OW_ThreadEvent.hpp \
+OW_ThreadImpl.hpp \
 OW_ThreadTypes.hpp \
-OW_NetworkTypes.hpp \
-OW_ByteSwap.hpp \
-OW_Select.hpp \
-OW_SelectableIFC.hpp \
-OW_SelectableCallbackIFC.hpp \
-OW_ServiceEnvironmentIFC.hpp \
-OW_WQLIFC.hpp \
-OW_ConfigOpts.hpp \
-OW_SelectEngine.hpp \
-OW_RequestHandlerIFC.hpp \
-OW_IOIFCStreamBuffer.hpp \
-OW_IOIFC.hpp \
-OW_AuthenticatorIFC.hpp \
-OW_CIMOMHandle.hpp \
-OW_CIMFeatures.hpp \
-OW_ServiceIFC.hpp \
-OW_BinIfcIO.hpp \
+OW_TmpFile.hpp \
+OW_Types.h \
 OW_URL.hpp \
+OW_UnnamedPipe.hpp \
 OW_config.h
 
-libopenwbem_a_LIBADD =					\
-../cim/libOW_cim.a					\
-../net/socket/libOW_Socket.a				\
-../platform/@PLATFORMDIR@/libplatformcommon.a	\
-../http/libOW_Http.a					\
-../http/client/libOW_HttpClient.a			\
-../thread/libOW_Thread.a				\
-../xml/libOW_Xml.a \
-../client/libOW_Client.a
+libopenwbem_a_LIBADD = \
+../cim/libOW_cim.a \
+../common/socket/libOW_Socket.a \
+../ifcs/libOW_ifcs.a
 
 #libopenwbem_a_LDFLAGS = -release $(OPENWBEM_RELEASE)	\
 #-version-info $(OPENWBEM_CURRENT):$(OPENWBEM_REVISION):$(OPENWBEM_AGE)

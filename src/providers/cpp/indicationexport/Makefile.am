@@ -1,10 +1,10 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
-noinst_LIBRARIES = libcppprovifc.a
-OW_SHARED_LIBS = libcppprovifc.so
+noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
-thelibdir = $(pkglibdir)/provifcs
+OW_SHARED_LIBS = libcppindicationexportxmlhttpprovider.so
 
+thelibdir = $(pkglibdir)/c++providers
 all-local: $(OW_SHARED_LIBS)
 
 install-exec-local:
@@ -20,17 +20,17 @@ clean-local:
 	done
 
 
+libcppindicationexportxmlhttpprovider_a_SOURCES = \
+OW_CppIndicationExportXMLHTTPProvider.cpp \
+OW_IndicationExporter.hpp \
+OW_IndicationExporter.cpp
 
-
-libcppprovifc_a_SOURCES = \
-OW_CppProviderIFC.cpp \
-OW_CppProviderIFC.hpp
-
-#libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
-#libOW_CppIFC_a_LIBADD = -lOpenWBEM
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/provider
+-I$(top_srcdir)/src/http/common \
+-I$(top_srcdir)/src/http/client \
+-I$(top_srcdir)/src/xml
 

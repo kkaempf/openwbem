@@ -36,7 +36,7 @@
 #include "OW_Reference.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
  * This interface is implemented by providers of dynamic association
@@ -138,7 +138,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * 	CIM_ERR_FAILED (some other unspecifed error occurred)
 		 */
 		virtual OW_CIMInstanceEnumeration associators(
-				const OW_ProviderEnvironmentRef& env,
+				const OW_ProviderEnvironmentIFCRef& env,
 				OW_CIMObjectPath assocName,
 				OW_CIMObjectPath objectName,
 				OW_String resultClass,
@@ -174,7 +174,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @throws OW_CIMException - as defined in the associator method
 		 */
 		virtual OW_CIMObjectPathEnumeration associatorNames(
-				const OW_ProviderEnvironmentRef& env,
+				const OW_ProviderEnvironmentIFCRef& env,
 				OW_CIMObjectPath assocName,
 				OW_CIMObjectPath objectName,
 				OW_String resultClass,
@@ -217,7 +217,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @throws OW_CIMException - as defined for the associators method.
 		 */
 		virtual OW_CIMInstanceEnumeration references(
-				const OW_ProviderEnvironmentRef& env,
+				const OW_ProviderEnvironmentIFCRef& env,
 				OW_CIMObjectPath assocName,
 				OW_CIMObjectPath objectName,
 				OW_String role,
@@ -245,7 +245,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @throws OW_CIMException - as defined for associators method.
 		 */
 		virtual OW_CIMObjectPathEnumeration referenceNames(
-				const OW_ProviderEnvironmentRef& env,
+				const OW_ProviderEnvironmentIFCRef& env,
 				OW_CIMObjectPath assocName,
 				OW_CIMObjectPath objectName,
 				OW_String role ) = 0;

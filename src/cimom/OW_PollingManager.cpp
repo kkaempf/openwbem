@@ -65,7 +65,7 @@ OW_PollingManager::~OW_PollingManager()
 
 namespace
 {
-	class PollingManagerProviderEnvironment : public OW_ProviderEnvironment
+	class PollingManagerProviderEnvironment : public OW_ProviderEnvironmentIFC
 	{
 	public:
 
@@ -95,10 +95,10 @@ namespace
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentRef createProvEnvRef(const OW_CIMOMHandleIFCRef& ch,
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_CIMOMHandleIFCRef& ch,
 		OW_CIMOMEnvironmentRef env)
 	{
-		return OW_ProviderEnvironmentRef(new PollingManagerProviderEnvironment(
+		return OW_ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
 			ch, env));
 	}
 }

@@ -43,7 +43,7 @@ public:
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentRef& env,
+	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMInstance &indHandlerInst, OW_CIMInstance &indicationInst);
 
 	/**
@@ -59,7 +59,7 @@ public:
 	 *
 	 * @throws OW_CIMException
 	 */
-	virtual void initialize(const OW_ProviderEnvironmentRef&) {}
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
 
 	/**
 	 * Called by the CIMOM when the provider is removed.

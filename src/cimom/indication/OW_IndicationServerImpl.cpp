@@ -52,13 +52,13 @@ OW_Notifier::start()
 
 namespace
 {
-	class IndicationServerProviderEnvironment : public OW_ProviderEnvironment
+	class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
 	{
 	public:
 
 		IndicationServerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
 			OW_CIMOMEnvironmentRef env)
-			: OW_ProviderEnvironment()
+			: OW_ProviderEnvironmentIFC()
 			, m_ch(ch)
 			, m_env(env)
 		{}
@@ -83,10 +83,10 @@ namespace
 		OW_CIMOMEnvironmentRef m_env;
 	};
 
-	OW_ProviderEnvironmentRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
 		const OW_CIMOMHandleIFCRef& ch)
 	{
-		return OW_ProviderEnvironmentRef(
+		return OW_ProviderEnvironmentIFCRef(
 			new IndicationServerProviderEnvironment(ch, env));
 	}
 }

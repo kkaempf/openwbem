@@ -47,13 +47,13 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual long poll(const OW_ProviderEnvironmentRef& env) = 0;
+	virtual long poll(const OW_ProviderEnvironmentIFCRef& env) = 0;
 
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentRef& env) = 0;
+	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env) = 0;
 
 	virtual OW_Bool isPolledProvider() { return true; }
 };

@@ -35,16 +35,16 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Reference.hpp"
 
-class OW_ProviderEnvironment
+class OW_ProviderEnvironmentIFC
 {
 public:
-	virtual ~OW_ProviderEnvironment(){}
+	virtual ~OW_ProviderEnvironmentIFC(){}
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 	virtual OW_LoggerRef getLogger() const = 0;
 	virtual OW_String getConfigItem(const OW_String &name) const = 0;
 };
 
-typedef OW_Reference<OW_ProviderEnvironment> OW_ProviderEnvironmentRef;
+typedef OW_Reference<OW_ProviderEnvironmentIFC> OW_ProviderEnvironmentIFCRef;
 									
 #endif									

@@ -53,19 +53,19 @@ public:
 
 
 	virtual OW_CIMValue getPropertyValue(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_String originClass,
 			OW_String propertyName);
 
 	virtual void setPropertyValue(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_String originClass,
 			OW_String propertyName,
 			OW_CIMValue val );
 
-	virtual void initialize(const OW_ProviderEnvironmentRef& env);
+	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 	virtual void cleanup();
 
 private:
@@ -79,7 +79,7 @@ OW_OpenLinuxVersion::~OW_OpenLinuxVersion()
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_OpenLinuxVersion::getPropertyValue(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_String originClass,
 		OW_String propertyName)
@@ -100,7 +100,7 @@ OW_OpenLinuxVersion::getPropertyValue(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_OpenLinuxVersion::setPropertyValue(
-		const OW_ProviderEnvironmentRef& env,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_String originClass,
 		OW_String propertyName,
@@ -116,7 +116,7 @@ OW_OpenLinuxVersion::setPropertyValue(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_OpenLinuxVersion::initialize(const OW_ProviderEnvironmentRef& env)
+OW_OpenLinuxVersion::initialize(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug("OW_OpenLinuxVersion initialize called");
 }

@@ -64,7 +64,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentRef& env,
+			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& methodName,
 			const OW_CIMValueArray& in,

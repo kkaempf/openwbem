@@ -78,7 +78,7 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
-OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentRef& env,
+OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
@@ -102,7 +102,7 @@ OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
-OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentRef& env)
+OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	loadNoIdProviders(env);
 	OW_IndicationExportProviderIFCRefArray rvra;
@@ -123,7 +123,7 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentRe
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PolledProviderIFCRefArray
-OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentRef& env)
+OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
@@ -143,7 +143,7 @@ OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentRef& env)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MethodProviderIFCRef
-OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentRef& env,
+OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
@@ -167,7 +167,7 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
-OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentRef& env,
+OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
@@ -191,7 +191,7 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
-OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentRef& env,
+OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
@@ -215,7 +215,7 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentRef& env)
+OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -348,7 +348,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentRef& env)
 //////////////////////////////////////////////////////////////////////////////
 OW_CppProviderBaseIFCRef
 OW_CppProviderIFC::getProvider(
-	const OW_ProviderEnvironmentRef& env, const char* provIdString)
+	const OW_ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
 	OW_MutexLock ml(m_guard);
 

@@ -69,25 +69,25 @@ class testProviderMux: public OW_ProviderIFC
 			: OW_ProviderIFC(), m_name(name) {}
 		virtual ~testProviderMux() {}
 		virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-			const OW_ProviderEnvironmentRef&, const char*)
+			const OW_ProviderEnvironmentIFCRef&, const char*)
 		{
 			return OW_InstanceProviderIFCRef(0);
 		}
 
 		virtual OW_MethodProviderIFCRef doGetMethodProvider(
-			const OW_ProviderEnvironmentRef&, const char*)
+			const OW_ProviderEnvironmentIFCRef&, const char*)
 		{
 			return OW_MethodProviderIFCRef(0);
 		}
 
 		virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
-			const OW_ProviderEnvironmentRef&, const char*)
+			const OW_ProviderEnvironmentIFCRef&, const char*)
 		{
 			return OW_PropertyProviderIFCRef(0);
 		}
 
 		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-			const OW_ProviderEnvironmentRef&, const char*)
+			const OW_ProviderEnvironmentIFCRef&, const char*)
 		{
 			return OW_AssociatorProviderIFCRef(0);
 		}
@@ -95,13 +95,13 @@ class testProviderMux: public OW_ProviderIFC
 		virtual const char* getName() const { return m_name.c_str(); }
 
 		virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-			const OW_ProviderEnvironmentRef&)
+			const OW_ProviderEnvironmentIFCRef&)
 		{
 			return OW_PolledProviderIFCRefArray();
 		}
 
 		virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-			const OW_ProviderEnvironmentRef&)
+			const OW_ProviderEnvironmentIFCRef&)
 		{
 			return OW_IndicationExportProviderIFCRefArray();
 		}

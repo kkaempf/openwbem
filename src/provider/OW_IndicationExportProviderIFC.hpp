@@ -34,7 +34,7 @@
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ProviderEnvironment.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 class OW_IndicationExportProviderIFC : public OW_ProviderBaseIFC
 {
@@ -49,7 +49,7 @@ public:
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentRef& env,
+	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMInstance& indHandlerInst, OW_CIMInstance& indicationInst) = 0;
 };
 

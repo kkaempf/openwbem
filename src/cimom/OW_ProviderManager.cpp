@@ -119,7 +119,7 @@ OW_ProviderManager::addCIMOMProvider(const OW_String& providerNameArg,
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
 OW_ProviderManager::doGetIndicationExportProviders(
-	const OW_ProviderEnvironmentRef& env)
+	const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_MutexLock ml(m_guard);
 	OW_IndicationExportProviderIFCRefArray rv;
@@ -147,7 +147,7 @@ OW_ProviderManager::doGetIndicationExportProviders(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PolledProviderIFCRefArray
-OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentRef& env)
+OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_MutexLock ml(m_guard);
 	OW_PolledProviderIFCRefArray rv;
@@ -173,7 +173,7 @@ OW_ProviderManager::doGetPolledProviders(const OW_ProviderEnvironmentRef& env)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
-OW_ProviderManager::getInstanceProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
@@ -188,7 +188,7 @@ OW_ProviderManager::getInstanceProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MethodProviderIFCRef
-OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
@@ -203,7 +203,7 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
-OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
@@ -218,7 +218,7 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
-OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
@@ -233,7 +233,7 @@ OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
-OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentRef& env
+OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env
 	)
 {
 	OW_IndicationExportProviderIFCRefArray rv;
@@ -253,7 +253,7 @@ OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentRef
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PolledProviderIFCRefArray
-OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentRef& env
+OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 	)
 {
 	OW_PolledProviderIFCRefArray rv;
@@ -274,7 +274,7 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentRef& env
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ProviderIFCBaseIFCRef
-OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual,
 	OW_String& provStr) const
 {
@@ -343,7 +343,7 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
-OW_ProviderManager::doGetInstanceProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char *provIdString)
 {
 	OW_MutexLock ml(m_guard);
@@ -374,7 +374,7 @@ OW_ProviderManager::doGetInstanceProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MethodProviderIFCRef
-OW_ProviderManager::doGetMethodProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char *provIdString)
 {
 	OW_MutexLock ml(m_guard);
@@ -405,7 +405,7 @@ OW_ProviderManager::doGetMethodProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
-OW_ProviderManager::doGetPropertyProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char *provIdString)
 {
 	OW_MutexLock ml(m_guard);
@@ -436,7 +436,7 @@ OW_ProviderManager::doGetPropertyProvider(const OW_ProviderEnvironmentRef& env,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
-OW_ProviderManager::doGetAssociatorProvider(const OW_ProviderEnvironmentRef& env,
+OW_ProviderManager::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char *provIdString)
 {
 	OW_MutexLock ml(m_guard);
