@@ -133,7 +133,7 @@ threadStarter(void* arg)
 	void* funcParm = parg->m_funcParm;
 	delete parg;
 	Int32 rval = (*func)(funcParm);
-	void* prval = reinterpret_cast<void*>(rval);
+	void* prval = reinterpret_cast<void*>(static_cast<ptrdiff_t>(rval));
 	pthread_exit(prval);
 	return prval;
 }
@@ -231,7 +231,7 @@ createThread(Thread_t& handle, ThreadFunction func,
 void
 exitThread(Thread_t&, Int32 rval)
 {
-	void* prval = reinterpret_cast<void*>(rval);
+	void* prval = reinterpret_cast<void*>(static_cast<ptrdiff_t>(rval));
 	pthread_exit(prval);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -263,7 +263,7 @@ joinThread(Thread_t& handle, Int32& rval)
 	void* prval;
 	if ((errno = pthread_join(handle, &prval)) == 0)
 	{
-		rval = reinterpret_cast<Int32>(prval);
+		rval = static_cast<Int32>(reinterpret_cast<ptrdiff_t>(prval));
 		return 0;
 	}
 	else
