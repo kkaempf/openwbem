@@ -335,7 +335,7 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 {
 	// Add the name space provider to the provider manager
 	m_provManager->addCIMOMProvider(OW_String(NAMESPACE_PROVIDER),
-		OW_CppProviderBaseIFCRef(new OW_NameSpaceProvider));
+		OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(), new OW_NameSpaceProvider));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -835,7 +835,7 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 
 	if(cq)
 	{
-		OW_InstanceProviderIFCRef instancep = 
+		OW_InstanceProviderIFCRef instancep =
 			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch),
 				cq);
 
@@ -950,7 +950,7 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 
 	if(cq)
 	{
-		OW_InstanceProviderIFCRef instancep = 
+		OW_InstanceProviderIFCRef instancep =
 			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch),
 				cq);
 
@@ -1186,7 +1186,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	OW_Bool created = false;
 	if(cq)
 	{
-		OW_InstanceProviderIFCRef instancep = 
+		OW_InstanceProviderIFCRef instancep =
 			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch),
 				cq);
 
@@ -1900,7 +1900,7 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 			continue;
 		}
 
-		OW_AssociatorProviderIFCRef assocP = 
+		OW_AssociatorProviderIFCRef assocP =
 			m_provManager->getAssociatorProvider(createProvEnvRef(internal_ch),
 				cq);
 
@@ -2082,7 +2082,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 			continue;
 		}
 
-		OW_AssociatorProviderIFCRef assocP = 
+		OW_AssociatorProviderIFCRef assocP =
 			m_provManager->getAssociatorProvider(createProvEnvRef(internal_ch),
 				cq);
 
@@ -2294,7 +2294,7 @@ OW_CIMServer::_isDynamicAssoc(const OW_CIMClass& cc,
 	{
 		OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true),
 			OW_ACLInfo(), true);
-		OW_AssociatorProviderIFCRef assocP = 
+		OW_AssociatorProviderIFCRef assocP =
 			m_provManager->getAssociatorProvider(createProvEnvRef(ch), cq);
 
 		if(assocP)
@@ -2436,7 +2436,7 @@ OW_CIMServer::_setProviderProperties(const OW_CIMObjectPath& cop,
 			if(cp)
 			{
 				// Get the provider for the property
-				OW_PropertyProviderIFCRef propp = 
+				OW_PropertyProviderIFCRef propp =
 					m_provManager->getPropertyProvider(createProvEnvRef(
 						internal_ch), cq);
 

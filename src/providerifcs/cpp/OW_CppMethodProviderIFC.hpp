@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 /**
  * This is the interface implemented by method providers.  These providers are
@@ -73,7 +73,7 @@ public:
 	virtual OW_Bool isMethodProvider() { return true; }
 };
 
-typedef OW_Reference< OW_CppMethodProviderIFC > OW_CppMethodProviderIFCRef;
+typedef OW_SharedLibraryReference< OW_CppMethodProviderIFC > OW_CppMethodProviderIFCRef;
 
 #endif
 

@@ -35,29 +35,15 @@
 #include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
-#include <setjmp.h>
-#include <cassert>
+#include "OW_SafeLibCreate.hpp"
 
-
-static jmp_buf ifcLoaderBuf;
-
-extern "C"
-{
-static void providerIFCLoaderSignalHandler(int sig)
-{
-	longjmp(ifcLoaderBuf, sig);
-}
-
-} // extern "C"
-
-typedef OW_ProviderIFCBaseIFC* (*createFunc_t)();
-typedef const char* (*versionFunc_t)();
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCLoaderBase::ifc_lib_pair
+OW_ProviderIFCBaseIFCRef
 OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const OW_String& libname) const
 {
+	/*
 	m_env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 
@@ -79,9 +65,12 @@ OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	retval.first = ptr;
 	retval.second = sl;
 	return retval;
+	*/
+	return OW_SafeLibCreate<OW_ProviderIFCBaseIFC>::loadAndCreateObject(libname,"createProviderIFC", m_env->getLogger());
 }
 
 //////////////////////////////////////////////////////////////////////////////
+/*
 OW_ProviderIFCBaseIFC*
 OW_ProviderIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 {
@@ -163,12 +152,12 @@ OW_ProviderIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 
 	return 0;
 }
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
-	OW_Array<OW_SharedLibraryRef>& shlibs ) const
+OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const
 {
 	OW_ServiceEnvironmentIFCRef env = getEnvironment();
 	OW_String libdir = env->getConfigItem(
@@ -195,14 +184,13 @@ OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 			continue;
 		}
 
-		ifc_lib_pair rval;
+		OW_ProviderIFCBaseIFCRef rval;
 		OW_ProviderIFCBaseIFCRef pmr;
 		rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
-		if(!rval.first.isNull() && !rval.second.isNull())
+		if(rval)
 		{
 			ifcCount++;
-			ifcs.push_back(rval.first);
-			shlibs.push_back(rval.second);
+			ifcs.push_back(rval);
 		}
 		else
 		{

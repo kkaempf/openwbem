@@ -32,7 +32,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 class OW_CppPolledProviderIFC : public OW_CppProviderBaseIFC
 {
@@ -58,7 +58,7 @@ public:
 	virtual OW_Bool isPolledProvider() { return true; }
 };
 
-typedef OW_Reference<OW_CppPolledProviderIFC> OW_CppPolledProviderIFCRef;
+typedef OW_SharedLibraryReference<OW_CppPolledProviderIFC> OW_CppPolledProviderIFCRef;
 
 #endif
 

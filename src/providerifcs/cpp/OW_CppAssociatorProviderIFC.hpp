@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 
@@ -230,7 +230,7 @@ class OW_CppAssociatorProviderIFC: public OW_CppProviderBaseIFC
 		virtual OW_Bool isAssociatorProvider() { return true; }
 };
 
-typedef OW_Reference< OW_CppAssociatorProviderIFC > OW_CppAssociatorProviderIFCRef;
+typedef OW_SharedLibraryReference< OW_CppAssociatorProviderIFC > OW_CppAssociatorProviderIFCRef;
 
 #endif
 

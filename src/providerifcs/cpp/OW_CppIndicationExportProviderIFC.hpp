@@ -32,7 +32,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 class OW_CppIndicationExportProviderIFC : public OW_CppProviderBaseIFC
 {
@@ -53,7 +53,7 @@ public:
 	virtual OW_Bool isIndicationExportProvider() { return true; }
 };
 
-typedef OW_Reference<OW_CppIndicationExportProviderIFC>
+typedef OW_SharedLibraryReference<OW_CppIndicationExportProviderIFC>
 	OW_CppIndicationExportProviderIFCRef;
 
 #endif

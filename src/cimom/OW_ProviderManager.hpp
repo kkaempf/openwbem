@@ -203,7 +203,7 @@ private:
 
 	struct CimProv
 	{
-		CimProv() : m_initDone(false), m_pProv(NULL) {}
+		CimProv() : m_initDone(false), m_pProv() {}
 		OW_Bool m_initDone;
 		OW_CppProviderBaseIFCRef m_pProv;
 	};
@@ -215,7 +215,6 @@ private:
 		OW_String& provStr) const;
 
 	OW_Array<OW_ProviderIFCBaseIFCRef> m_IFCArray;
-	OW_Array<OW_SharedLibraryRef> m_shlibArray;
 	ProviderMap m_cimomProviders;
 	OW_Mutex m_guard;
 	OW_Array<CimProv> m_noIdProviders;

@@ -84,14 +84,8 @@ protected:
 
 private:
 
-	struct LoadedProvider
-	{
-		LoadedProvider() : m_lib(0), m_pProv(NULL) {}
-		OW_SharedLibraryRef m_lib;
-		OW_CppProviderBaseIFCRef m_pProv;
-	};
-	typedef OW_Map<OW_String, LoadedProvider> ProviderMap;
-	typedef OW_Array<LoadedProvider> LoadedProviderArray;
+	typedef OW_Map<OW_String, OW_CppProviderBaseIFCRef> ProviderMap;
+	typedef OW_Array<OW_CppProviderBaseIFCRef> LoadedProviderArray;
 
 	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
@@ -104,6 +98,6 @@ private:
 	OW_Bool m_loadDone;
 };
 
-typedef OW_Reference<OW_CppProviderIFC> OW_CppProviderIFCRef;
+typedef OW_SharedLibraryReference<OW_CppProviderIFC> OW_CppProviderIFCRef;
 #endif
 

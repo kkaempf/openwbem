@@ -40,7 +40,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ProviderManager::OW_ProviderManager() :
-	OW_ProviderIFCBaseIFC(), m_IFCArray(), m_shlibArray(), m_cimomProviders(),
+	OW_ProviderIFCBaseIFC(), m_IFCArray(), m_cimomProviders(),
 	m_guard(), m_noIdProviders()
 {
 }
@@ -53,7 +53,7 @@ OW_ProviderManager::~OW_ProviderManager()
 	while(it != m_cimomProviders.end())
 	{
 		it->second.m_pProv->cleanup();
-		it->second.m_pProv = 0;
+		it->second.m_pProv.setNull();
 		it++;
 	}
 
@@ -63,21 +63,18 @@ OW_ProviderManager::~OW_ProviderManager()
 	for(size_t i = 0; i < m_noIdProviders.size(); i++)
 	{
 		m_noIdProviders[i].m_pProv->cleanup();
-		m_noIdProviders[i].m_pProv = 0;
+		m_noIdProviders[i].m_pProv.setNull();
 	}
 
 	m_noIdProviders.clear();
 
-	// make sure the muxes are destroyed before the corresponding shared
-	// libraries are, otherwise we'll segfault.
 	m_IFCArray.clear();
-	m_shlibArray.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_ProviderManager::init(const OW_ProviderIFCLoaderRef IFCLoader)
 {
-	IFCLoader->loadIFCs(m_IFCArray, m_shlibArray);
+	IFCLoader->loadIFCs(m_IFCArray);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -278,7 +275,7 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 	const OW_CIMQualifier& qual,
 	OW_String& provStr) const
 {
-	OW_ProviderIFCBaseIFCRef rref(0);
+	OW_ProviderIFCBaseIFCRef rref;
 
 	provStr = "";
 	if(!qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_PROVIDER))
@@ -319,7 +316,9 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 
 	if(ifcStr.equalsIgnoreCase(OW_String(CIMOM_PROVIDER_IFC)))
 	{
-		return OW_ProviderIFCBaseIFCRef((OW_ProviderIFCBaseIFC*)this, true);
+		return OW_ProviderIFCBaseIFCRef(OW_SharedLibraryRef(),
+			OW_Reference<OW_ProviderIFCBaseIFC>(
+				const_cast<OW_ProviderManager*>(this), true));
 	}
 
 	for (size_t i = 0; i < m_IFCArray.size(); i++)

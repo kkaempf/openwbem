@@ -60,8 +60,8 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 	ProviderMap::iterator it = m_provs.begin();
 	while(it != m_provs.end())
 	{
-		it->second.m_pProv->cleanup();
-		it->second.m_pProv = 0;
+		it->second->cleanup();
+		it->second.setNull();
 		it++;
 	}
 
@@ -69,8 +69,8 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
-		m_noidProviders[i].m_pProv->cleanup();
-		m_noidProviders[i].m_pProv = 0;
+		m_noidProviders[i]->cleanup();
+		m_noidProviders[i].setNull();
 	}
 
 	m_noidProviders.clear();
@@ -108,7 +108,7 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIF
 	OW_IndicationExportProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
-		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i].m_pProv;
+		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
 		if(pProv->isIndicationExportProvider())
 		{
 			rvra.append(
@@ -129,7 +129,7 @@ OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 	OW_PolledProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
-		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i].m_pProv;
+		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
 		if(pProv->isPolledProvider())
 		{
 			rvra.append(
@@ -332,11 +332,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 			pProv->initialize(env);
 
-			LoadedProvider lp;
-			lp.m_lib = theLib;
-			lp.m_pProv = pProv;
-
-			m_noidProviders.append(lp);
+			m_noidProviders.append(OW_CppProviderBaseIFCRef(theLib, pProv));
 		}
 		else
 		{
@@ -356,7 +352,7 @@ OW_CppProviderIFC::getProvider(
 	ProviderMap::iterator it = m_provs.find(provId);
 	if(it != m_provs.end())
 	{
-		return it->second.m_pProv;
+		return it->second;
 	}
 
 	OW_String libPath = env->getConfigItem(
@@ -373,7 +369,7 @@ OW_CppProviderIFC::getProvider(
 	if(ldr.isNull())
 	{
 		env->getLogger()->logError("C++ provider ifc failed to get shared lib loader");
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	OW_String libName(libPath);
@@ -392,7 +388,7 @@ OW_CppProviderIFC::getProvider(
 	{
 		env->getLogger()->logError(format("C++ provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	versionFunc_t versFunc;
@@ -401,7 +397,7 @@ OW_CppProviderIFC::getProvider(
 		env->getLogger()->logError("C++ provider ifc failed getting"
 			" function pointer to \"getOWVersion\" from library");
 
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	const char* strVer = (*versFunc)();
@@ -409,7 +405,7 @@ OW_CppProviderIFC::getProvider(
 	{
 		env->getLogger()->logError(format("C++ provider ifc got invalid version from provider:"
 			" %1", libName));
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	ProviderCreationFunc createProvider;
@@ -417,7 +413,7 @@ OW_CppProviderIFC::getProvider(
 	{
 		env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
 			" %2 function", libName, CREATIONFUNC));
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	OW_CppProviderBaseIFC* pProv = (*createProvider)();
@@ -425,7 +421,7 @@ OW_CppProviderIFC::getProvider(
 	{
 		env->getLogger()->logError(format("C++ provider ifc: Libary %1 - %2 returned null"
 			" provider", libName, CREATIONFUNC));
-		return OW_CppProviderBaseIFCRef(0);
+		return OW_CppProviderBaseIFCRef();
 	}
 
 	env->getLogger()->logDebug(format("C++ provider ifc loaded library %1. Calling initialize"
@@ -436,13 +432,9 @@ OW_CppProviderIFC::getProvider(
 	env->getLogger()->logDebug(format("C++ provider ifc: provider %1 loaded and initialized",
 		provId));
 
-	LoadedProvider lp;
-	lp.m_lib = theLib;
-	lp.m_pProv = pProv;
+	m_provs[provId] = OW_CppProviderBaseIFCRef(theLib, pProv);
 
-	m_provs[provId] = lp;
-
-	return lp.m_pProv; //OW_CppProviderBaseIFCRef(pProv);
+	return m_provs[provId];
 }
 
 OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)

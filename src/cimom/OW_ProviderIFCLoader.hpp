@@ -51,7 +51,7 @@
 class OW_ProviderIFCLoaderBase
 {
 public:
-	typedef std::pair<OW_ProviderIFCBaseIFCRef, OW_SharedLibraryRef> ifc_lib_pair;
+	//typedef std::pair<OW_ProviderIFCBaseIFCRef, OW_SharedLibraryRef> ifc_lib_pair;
 
 
 	OW_ProviderIFCLoaderBase(OW_SharedLibraryLoaderRef sll,
@@ -99,8 +99,7 @@ public:
 	 *
 	 */
 	virtual void loadIFCs(
-			OW_Array<OW_ProviderIFCBaseIFCRef>& interfaces,
-			OW_Array<OW_SharedLibraryRef>& shlibs) const = 0;
+		OW_Array<OW_ProviderIFCBaseIFCRef>& interfaces) const = 0;
 
 protected:
 	/**
@@ -114,7 +113,7 @@ protected:
 	 * 	OW_SharedLibrary.  If loading the library fails, null is returned.
 	 * 	e.g. retval.first.isNull() == true and retval.second.isNull() == true.
 	 */
-	ifc_lib_pair createProviderIFCFromLib(const OW_String& libname) const;
+	OW_ProviderIFCBaseIFCRef createProviderIFCFromLib(const OW_String& libname) const;
 
 	OW_ServiceEnvironmentIFCRef getEnvironment() const
 	{
@@ -123,7 +122,7 @@ protected:
 
 private:
 
-	OW_ProviderIFCBaseIFC* safeCreateIFC(OW_SharedLibraryRef sl) const;
+	//OW_ProviderIFCBaseIFC* safeCreateIFC(OW_SharedLibraryRef sl) const;
 	
 	const OW_SharedLibraryLoaderRef m_sll;
 	OW_ServiceEnvironmentIFCRef m_env;
@@ -140,8 +139,7 @@ public:
 
 	virtual ~OW_ProviderIFCLoader(){}
 
-	virtual void loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
-		OW_Array<OW_SharedLibraryRef>& shlibs) const;
+	virtual void loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const;
 
 	static OW_ProviderIFCLoaderRef createProviderIFCLoader(
 		OW_ServiceEnvironmentIFCRef env);

@@ -32,7 +32,7 @@
 #define OW_PROVIDERIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_String.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_PropertyProviderIFC.hpp"
@@ -196,7 +196,7 @@ protected:
 		) = 0;
 };
 
-typedef OW_Reference<OW_ProviderIFCBaseIFC> OW_ProviderIFCBaseIFCRef;
+typedef OW_SharedLibraryReference<OW_ProviderIFCBaseIFC> OW_ProviderIFCBaseIFCRef;
 
 #define OW_PROVIDERIFCFACTORY(prov) \
 extern "C" OW_ProviderIFCBaseIFC* \

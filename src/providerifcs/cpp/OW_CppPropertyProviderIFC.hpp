@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 /**
  * This is the interface implemented by property providers.  Property providers
@@ -90,7 +90,7 @@ public:
 	virtual OW_Bool isPropertyProvider() { return true; }
 };
 
-typedef OW_Reference< OW_CppPropertyProviderIFC > OW_CppPropertyProviderIFCRef;
+typedef OW_SharedLibraryReference< OW_CppPropertyProviderIFC > OW_CppPropertyProviderIFCRef;
 
 #endif
 

@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 /**
  * This is the base class implemented by all providers that are loaded
@@ -73,7 +74,7 @@ class OW_CppProviderBaseIFC
 		virtual OW_Bool isPolledProvider() { return false; }
 };
 
-typedef OW_Reference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;
+typedef OW_SharedLibraryReference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;
 
 #define OW_PROVIDERFACTORY(prov) \
 extern "C" const char* \

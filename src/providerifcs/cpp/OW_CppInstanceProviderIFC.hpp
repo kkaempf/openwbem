@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 
@@ -168,7 +168,7 @@ public:
 	virtual OW_Bool isInstanceProvider() { return true; }
 };
 
-typedef OW_Reference<OW_CppInstanceProviderIFC> OW_CppInstanceProviderIFCRef;
+typedef OW_SharedLibraryReference<OW_CppInstanceProviderIFC> OW_CppInstanceProviderIFCRef;
 
 #endif
 
