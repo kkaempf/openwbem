@@ -66,7 +66,11 @@ time_t calcTimeT(int year, int month, int day, int hour, int minute, int second)
 #ifdef OW_HAVE_TIMEGM
 	time_t rv = timegm(&t);
 #else
+#ifdef OW_NETWARE
+	time_t rv = mktime(&t) - _timezone;
+#else
 	time_t rv = mktime(&t) - timezone;
+#endif
 #endif
 	return rv;
 }

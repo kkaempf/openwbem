@@ -968,7 +968,11 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 		// timezone is a global that is set by mktime() which is "the 
 		// difference, in seconds, between Coordinated Universal Time 
 		// (UTC) and local standard time."
+#ifdef OW_NETWARE
+		m_time = ::mktime(&tmarg) - _timezone;
+#else
 		m_time = ::mktime(&tmarg) - ::timezone;
+#endif
 #endif
 	}
 }
