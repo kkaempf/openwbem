@@ -17,8 +17,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
--L$(top_builddir)/db/db -lowdb \
--Ldl 
+-L$(top_builddir)/db/db -lowdb -ldl 
 
 OW_SHARED_LIBS = libowindicationserver.$(LIB_EXT) libowindicationreplayer.$(LIB_EXT)
 thelibdir = $(libdir)/openwbem
