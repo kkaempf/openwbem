@@ -243,7 +243,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			const UInt32 waitMs = 100; // 1/10 of a second
 			struct timeval tv;
 			tv.tv_sec = 0;
-			tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingMsWait);
+			tv.tv_usec = std::min((waitMs % 1000), remainingMsWait) * 1000;
 
 			Thread::testCancel();
 			n = ::select(maxfd+1, &rset, &wset, NULL, &tv);

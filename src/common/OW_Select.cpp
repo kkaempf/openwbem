@@ -154,7 +154,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 		const UInt32 waitMs = 100; // 1/10 of a second
 		struct timeval tv;
 		tv.tv_sec = 0;
-		tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingWait);
+		tv.tv_usec = std::min((waitMs % 1000), remainingWait) * 1000;
 
 		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
 
