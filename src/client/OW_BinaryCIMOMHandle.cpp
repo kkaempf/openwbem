@@ -316,12 +316,7 @@ OW_BinaryCIMOMHandle::enumInstances(
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropList);
-	if(!nullPropList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateInstances", ns);
@@ -364,12 +359,7 @@ OW_BinaryCIMOMHandle::getClass(
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetClass", ns);
@@ -394,12 +384,7 @@ OW_BinaryCIMOMHandle::getInstance(
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetInstance", ns);
@@ -523,18 +508,23 @@ OW_BinaryCIMOMHandle::createClass(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
-											 const OW_CIMInstance& ci)
+OW_BinaryCIMOMHandle::modifyInstance(
+	const OW_String& ns,
+	const OW_CIMInstance& modifiedInstance,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ModifyInstance", path.getNameSpace());;
+		"ModifyInstance", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_MODIFYINST);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeInstance(strm, ci);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeInstance(strm, modifiedInstance);
+	OW_BinIfcIO::writeBool(strm, includeQualifiers);
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		"ModifyInstance", path.getNameSpace());
+		"ModifyInstance", ns);
 	checkError(in);
 }
 
@@ -660,12 +650,7 @@ OW_BinaryCIMOMHandle::associators(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeString(strm, resultRole);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "Associators", path.getNameSpace());
 
@@ -697,12 +682,7 @@ OW_BinaryCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeString(strm, resultRole);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "Associators", path.getNameSpace());
 
@@ -752,12 +732,7 @@ OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeString(strm, role);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
 	
@@ -786,12 +761,7 @@ OW_BinaryCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeString(strm, role);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(strm, nullPropertyList);
-	if(!nullPropertyList)
-	{
-		OW_BinIfcIO::writeStringArray(strm, *propertyList);
-	}
+	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
 	

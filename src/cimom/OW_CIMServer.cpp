@@ -1422,6 +1422,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMObjectPath rval = cop;
+	OW_String ns = cop.getNameSpace();
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, cop.getNameSpace(), aclInfo);
 
@@ -1548,7 +1549,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			}
 		}
 
-		_setProviderProperties(cop, ci, theClass, aclInfo);
+		_setProviderProperties(ns, cop, ci, theClass, aclInfo);
 		OW_ASSERT(rval);
 		return rval;
 	}
@@ -1564,23 +1565,31 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
+OW_CIMServer::modifyInstance(
+	const OW_String& ns,
+	const OW_CIMInstance& modifiedInstance,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_String ns = cop.getNameSpace();
 	// Check to see if user has rights to modify the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, ns, aclInfo);
 
+	// TODO: Fix this function, we don't honor includeQualifiers and propertyList
+	(void)includeQualifiers;
+	(void)propertyList;
 	try
 	{
 		OW_ACLInfo intAclInfo;
+		OW_CIMObjectPath cop(modifiedInstance.getClassName(),
+			modifiedInstance.getKeyValuePairs());
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			NULL, intAclInfo);
 
 		// TODO: Fix this.  This is the third time we get the class!
 		OW_CIMClass theClass;
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, ci.getClassName(),
-			theClass);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns,
+			modifiedInstance.getClassName(), theClass);
 
 		checkGetClassRvalAndThrowInst(rc, ns, cop.getObjectName());
 
@@ -1596,14 +1605,15 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		if(!instancep)
 		{
 			// No instance provider qualifier found
-			m_iStore.modifyInstance(cop, theClass, ci);
+			m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance);
 		}
 		else
 		{
 			// Look for dynamic instances
 			OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 				aclInfo, true);
-			instancep->modifyInstance(createProvEnvRef(real_ch), cop, ci);
+			instancep->modifyInstance(createProvEnvRef(real_ch), ns,
+				modifiedInstance, includeQualifiers, propertyList);
 		}
 
 		if(theClass.isAssociation())
@@ -1622,11 +1632,11 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			{
 				OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
 				adbHdl.deleteEntries(ns, oldInst);
-				adbHdl.addEntries(ns, ci);
+				adbHdl.addEntries(ns, modifiedInstance);
 			}
 		}
 
-		_setProviderProperties(cop, ci, theClass, aclInfo);
+		_setProviderProperties(ns, cop, modifiedInstance, theClass, aclInfo);
 		OW_ASSERT(oldInst);
 		return oldInst;
 	}
@@ -1803,7 +1813,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 		cp.setValue(cv);
 		ci.setProperty(cp);
-		modifyInstance(name, ci, intAclInfo);
+		modifyInstance(name.getNameSpace(), ci, true, 0, intAclInfo);
 	}
 	else
 	{
@@ -3218,8 +3228,9 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_setProviderProperties(const OW_CIMObjectPath& cop,
-	OW_CIMInstance& ci, const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo)
+OW_CIMServer::_setProviderProperties(const OW_String& ns,
+	const OW_CIMObjectPath& cop, const OW_CIMInstance& ci,
+	const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo)
 {
 	OW_ACLInfo intAclInfo;
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
@@ -3255,8 +3266,10 @@ OW_CIMServer::_setProviderProperties(const OW_CIMObjectPath& cop,
 				if(propp)
 				{
 					OW_CIMValue cv = cp.getValue();
+					OW_CIMObjectPath cop2(cop);
+					cop2.setNameSpace(ns);
 					propp->setPropertyValue(createProvEnvRef(real_ch),
-						cop, cp.getOriginClass(),
+						/*ns, cop,*/ cop2, cp.getOriginClass(),
 						cp.getName(), cv);
 				}
 			}

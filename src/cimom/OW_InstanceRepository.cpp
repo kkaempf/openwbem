@@ -404,14 +404,15 @@ OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass, OW_CIMInstance& ci)
+OW_InstanceRepository::modifyInstance(const OW_String& ns,
+	const OW_CIMObjectPath& cop,
+	const OW_CIMClass& theClass, const OW_CIMInstance& ci_)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
 	// Get old instance
-	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
+	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
@@ -425,6 +426,7 @@ OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 	// Now move properties from the old instance that are missing in the
 	// new instance
 	OW_CIMPropertyArray pra = oldInst.getProperties();
+	OW_CIMInstance ci(ci_);
 	OW_CIMPropertyArray npra = ci.getProperties();
 	for(size_t i = 0; i < pra.size(); i++)
 	{

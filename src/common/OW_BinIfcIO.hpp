@@ -222,6 +222,18 @@ public:
 		stra.writeObject(ostrm);
 	}
 
+	static void writeStringArray(std::ostream& ostrm,
+		const OW_StringArray* propertyList)
+	{
+		OW_Bool nullPropertyList = (propertyList == 0);
+		OW_BinIfcIO::writeBool(ostrm, nullPropertyList);
+		if(!nullPropertyList)
+		{
+			OW_BinIfcIO::writeStringArray(ostrm, *propertyList);
+		}
+	}
+	
+	
 	static void read(std::istream& istrm, void* dataIn, int dataInLen)
 	{
 		if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))

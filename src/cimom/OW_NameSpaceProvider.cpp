@@ -264,8 +264,10 @@ OW_NameSpaceProvider::createInstance(
 void
 OW_NameSpaceProvider::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& /*env*/,
-		const OW_CIMObjectPath& /*cop*/,
-		const OW_CIMInstance& /*cimInstance*/)
+		const OW_String&,
+		const OW_CIMInstance&,
+		OW_Bool,
+		OW_StringArray*)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 }

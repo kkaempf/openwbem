@@ -377,8 +377,12 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
-		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo) = 0;
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Set a property value on an OW_CIMInstance.

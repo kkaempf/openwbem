@@ -46,6 +46,7 @@ Fix problems:
     - Fix CIM Server so that an instance provider can provide associations.
     - Intrinsic indications are fetched from root namespace.  Less than optimal.
     - Remove any bad NOT_SUPPORTED exceptions.
+    - Trailers need to strip newlines from error description.
 
 
 New features:

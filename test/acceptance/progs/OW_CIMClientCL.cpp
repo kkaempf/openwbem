@@ -542,7 +542,7 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -551,7 +551,11 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		in.setProperty(OW_CIMProperty("BrandNewProperty",
 			OW_CIMValue(OW_String("true"))));
 
-		hdl.modifyInstance(cop, in);
+		// getInstance with includeQualifiers = false doesn't have any keys, so
+		// we'll have to set them so modifyInstance will work.
+		in.setKeys(cop.getKeys());
+
+		hdl.modifyInstance("root/testsuite", in);
 	}
 	catch (OW_CIMException& e)
 	{

@@ -251,7 +251,7 @@ main(int argc, char* argv[])
 		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
 #endif
 
-		rch.modifyInstance(icop, inst);
+		rch.modifyInstance("root", inst);
 
 		cout << "** Getting new instance" << endl;
 		inst = rch.getInstance(icop.getNameSpace(), icop);

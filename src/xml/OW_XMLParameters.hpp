@@ -64,6 +64,7 @@ public:
 	static const char* const XMLP_INCLUDEQUALIFIERS       	;
 	static const char* const XMLP_INCLUDECLASSORIGIN     	;
 	static const char* const XMLP_MODIFIED_CLASS;
+	static const char* const XMLP_MODIFIED_INSTANCE;
 	static const char* const XMLP_INSTANCENAME;
 	static const char* const XMLP_PROPERTYNAME;
 	static const char* const XMLP_NEWVALUE		;

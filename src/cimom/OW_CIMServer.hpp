@@ -461,8 +461,12 @@ public:
 	 *		CIM_ERR_NOT_FOUND
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
-		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo);
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Set a property value on an OW_CIMInstance.
@@ -700,8 +704,9 @@ private:
 	void _validatePropagatedKeys(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass);
 
-	void _setProviderProperties(const OW_CIMObjectPath& cop,
-		OW_CIMInstance& ci, const OW_CIMClass& theClass,
+	void _setProviderProperties(const OW_String& ns,
+		const OW_CIMObjectPath& cop,
+		const OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
 
 public:

@@ -176,15 +176,20 @@ public:
 	void
 		modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
-		const OW_CIMInstance& cimInstance)
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList)
 	{
 		(void)env;
-		(void)cop;
+		(void)ns;
+		(void)modifiedInstance;
+		(void)includeQualifiers;
+		(void)propertyList;
 		OW_String name;
 		OW_StringArray params;
-		cimInstance.getProperty("Name").getValue().get(name);
-		cimInstance.getProperty("Params").getValue().get(params);
+		modifiedInstance.getProperty("Name").getValue().get(name);
+		modifiedInstance.getProperty("Params").getValue().get(params);
 
 		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)

@@ -275,12 +275,15 @@ OW_LocalCIMOMHandle::createClass(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::modifyInstance(const OW_CIMObjectPath& name,
-	const OW_CIMInstance& ci)
+OW_LocalCIMOMHandle::modifyInstance(
+	const OW_String& ns,
+	const OW_CIMInstance& modifiedInstance,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList)
 {
 	OW_WriteLock wl = getWriteLock();
-	OW_CIMInstance lci(ci);
-	m_pServer->modifyInstance(name, lci, m_aclInfo);
+	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
+		propertyList, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -1194,7 +1194,7 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 		{
 			try
 			{
-				m_hdl->modifyInstance(cop, m_curInstance);
+				m_hdl->modifyInstance(m_namespace, m_curInstance);
 				MofCompiler::theErrorHandler->progressMessage(format("Updated Instance: %1", cop.modelPath()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)

@@ -542,14 +542,13 @@ void
 OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-
 	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_Bool localOnly(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeClassOrigin(OW_BinIfcIO::readBool(istrm));
+	OW_StringArray propList;
+	OW_StringArray* propListPtr = 0;
 	OW_Bool nullPropertyList(OW_BinIfcIO::readBool(istrm));
 	if(!nullPropertyList)
 	{
@@ -604,9 +603,19 @@ void
 OW_BinaryRequestHandler::modifyInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMInstance ci(OW_BinIfcIO::readInstance(istrm));
-	chdl->modifyInstance(op, ci);
+	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
+	OW_StringArray propList;
+	OW_StringArray* propListPtr = 0;
+	OW_Bool nullPropertyList(OW_BinIfcIO::readBool(istrm));
+	if(!nullPropertyList)
+	{
+		propList = OW_BinIfcIO::readStringArray(istrm);
+		propListPtr = &propList;
+	}
+
+	chdl->modifyInstance(ns, ci, includeQualifiers, propListPtr);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

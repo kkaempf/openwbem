@@ -171,10 +171,13 @@ public:
 
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance)
+			const OW_String& ns,
+			const OW_CIMInstance& modifiedInstance,
+			OW_Bool includeQualifiers,
+			OW_StringArray* propertyList)
 	{
-		m_pProv->modifyInstance(env,cop,cimInstance);
+		m_pProv->modifyInstance(env, ns, modifiedInstance, includeQualifiers,
+			propertyList);
 	}
 
 private:

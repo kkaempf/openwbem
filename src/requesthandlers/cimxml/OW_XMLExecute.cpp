@@ -330,6 +330,7 @@ namespace
 			BOOLEAN,
 			STRINGARRAY,
 			INSTANCENAME,
+			NAMEDINSTANCE,
 			STRING,
 			OBJECTNAME,
 			PROPERTYVALUE
@@ -441,6 +442,24 @@ namespace
 						i->isSet = true;
 						i->val = OW_CIMValue(OW_XMLCIMFactory::createObjectPath(parser));
 						break;
+
+					case param::NAMEDINSTANCE:
+					{
+						if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE))
+						{
+							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag.",
+									i->name).c_str());
+						}
+						i->isSet = true;
+						parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
+						OW_CIMObjectPath ipath(OW_XMLCIMFactory::createObjectPath(parser));
+						OW_CIMInstance inst(OW_XMLCIMFactory::createInstance(parser));
+						parser.mustGetEndTag(); // pass </VALUE.NAMEDINSTANCE>
+						inst.setKeys(ipath.getKeys());
+						i->val = OW_CIMValue(inst);
+						break;
+					}
 
 					case param::STRING:
 						if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE))
@@ -1217,27 +1236,29 @@ void
 OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	//
-	// Check parameter name is "ModifiedInstance"
-	//
-	OW_String name=parser.getAttribute(paramName);
-	if (!name.equalsIgnoreCase("ModifiedInstance"))
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("Parameter name was %1", name).c_str() );
-	}
-
-	parser.mustGetChild(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE);
-	//
-	// Fetch <INSTANCENAME> element
-	//
 	OW_String ns = path.getNameSpace();
-	parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
-	path = OW_XMLCIMFactory::createObjectPath(parser);
-	path.setNameSpace(ns);
 
-	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(parser);
-	hdl.modifyInstance(path,cimInstance);
+	OW_Array<param> params;
+	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	
+	getParameterValues(parser, params);
+	
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[2].isSet)
+	{
+		propertyList = params[2].val.toStringArray();
+		pPropList = &propertyList;
+	}
+	
+	bool includeQualifiers = params[1].val.toBool();
+
+	OW_CIMInstance modifiedInstance;
+	params[0].val.get(modifiedInstance);
+
+	hdl.modifyInstance(ns, modifiedInstance, includeQualifiers, pPropList);
 }
 
 

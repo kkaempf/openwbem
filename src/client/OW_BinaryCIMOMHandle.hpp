@@ -343,8 +343,11 @@ public:
 	 * @param ci	The OW_CIMInstance to be updated.
 	 * @exception OW_CIMException
 	 */
-	virtual void modifyInstance(const OW_CIMObjectPath &name,
-		const OW_CIMInstance &ci);
+	virtual void modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList);
 
 	/**
 	 * This operation is used to enumerate CIMInstances

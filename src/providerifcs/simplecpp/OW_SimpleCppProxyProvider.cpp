@@ -253,11 +253,16 @@ OW_SimpleCppInstanceProviderProxy::createInstance(
 void
 OW_SimpleCppInstanceProviderProxy::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
-		const OW_CIMInstance& cimInstance)
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->modifyInstance(env, cop, cimInstance);
+	// TODO: just ignore includeQualifiers and propertyList?
+	(void)includeQualifiers;
+	(void)propertyList;
+	m_pProv->modifyInstance(env, ns, modifiedInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

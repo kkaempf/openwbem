@@ -110,7 +110,7 @@ OW_SimpleCppInstanceProviderIFC::createInstance(
 void
 OW_SimpleCppInstanceProviderIFC::modifyInstance(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_CIMObjectPath&,
+	const OW_String&,
 	const OW_CIMInstance&)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);

@@ -424,8 +424,7 @@ public:
 
 	/**
 	 * Adds the CIM class to the specified namespace.
-	 * @param className An OW_CIMObjectPath that identifies the CIM class to be
-	 *		added.
+	 * @param ns The namespace
 	 * @param cimClass The OW_CIMClass to be added
 	 * @exception OW_CIMException If the CIM class already exists in the
 	 *		namespace.
@@ -437,14 +436,17 @@ public:
 	/**
 	 * Update the specified CIM instance associated with the specified
 	 * namespace.
-	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance
-	 *		to be updated.
-	 * @param instance The OW_CIMInstance to be updated.
+	 * @param ns The namespace
+	 * @param modifiedInstance The OW_CIMInstance to be updated.
+	 * @param includeQualifiers Modify the qualifiers
+	 * @param propertyList The properties to modify.  0 means all properties.
 	 * @exception OW_CIMException
 	 */
 	virtual void modifyInstance(
-		const OW_CIMObjectPath& name,
-		const OW_CIMInstance& instance) = 0;
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers = true,
+		OW_StringArray* propertyList = 0) = 0;
 
 	/**
 	 * Add the specified CIM instance to the specified namespace.

@@ -292,37 +292,45 @@ OW_NPIInstanceProviderProxy::createInstance(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
-    const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance)
+	const OW_String& ns,
+	const OW_CIMInstance& modifiedInstance,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList)
 {
-        env->getLogger()->
-            logDebug("OW_NPIInstanceProviderProxy::modifyInstance()");
+	(void)includeQualifiers;
+	(void)propertyList;
 
-        if (m_ftable->fp_setInstance != NULL)
-        {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+	env->getLogger()->
+		logDebug("OW_NPIInstanceProviderProxy::modifyInstance()");
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+	if (m_ftable->fp_setInstance != NULL)
+	{
+		::NPIHandle _npiHandle = { 0,0,0,0};
 
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
-            CIMInstance _ci = { (void*)static_cast<const void *> (&cimInstance)};
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
 
-            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+		CIMInstance _ci = { (void*)static_cast<const void *> (&modifiedInstance)};
 
-            m_ftable->fp_setInstance(&_npiHandle, _cop, _ci);
+		OW_CIMObjectPath cop(modifiedInstance.getClassName(), modifiedInstance.getKeyValuePairs());
+		cop.setNameSpace(ns);
+		CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(OW_CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
+		m_ftable->fp_setInstance(&_npiHandle, _cop, _ci);
 
-        }
-        else
-        {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
-        }
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				_npiHandle.providerError);
+		}
+
+	}
+	else
+	{
+		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	}
 }
 
 

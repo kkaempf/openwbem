@@ -318,24 +318,16 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	}
 }
 
-void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void modifyInstance(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing modifyInstance() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-		cop.addKey("Name", OW_CIMValue(theInstance));
-
 		OW_CIMInstance in = bionicInstance;
-
 		in.setProperty(OW_CIMProperty("BrandNewProperty",
-												OW_CIMValue(OW_Bool(true))));
+			OW_CIMValue(OW_Bool(true))));
 
-		cop = OW_CIMObjectPath(ofClass, in.getKeyValuePairs());
-		cop.setNameSpace("/root/acltest");
-		hdl.modifyInstance(cop, in);
+		hdl.modifyInstance("/root/acltest", in);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}
@@ -814,7 +806,7 @@ int main(int argc, char* argv[])
 		enumerateInstanceNames(rch);
 		enumerateInstances(rch);
 		getInstance(rch, "SixMillion");
-		modifyInstance(rch, "SixMillion");
+		modifyInstance(rch);
 		setProperty(rch);
 		getProperty(rch);
 		setQualifier(rch);

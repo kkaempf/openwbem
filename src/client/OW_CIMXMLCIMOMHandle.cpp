@@ -523,6 +523,22 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+static inline void generatePropertyListXML(std::ostream& ostr,
+	const OW_StringArray* propertyList)
+{
+	if (propertyList)
+	{
+		ostr << "<IPARAMVALUE NAME=\"" << OW_XMLParameters::XMLP_PROPERTYLIST <<
+		"\"><VALUE.ARRAY>";
+		for (size_t i = 0;i < propertyList->size(); i++)
+		{
+			ostr << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
+		}
+		ostr << "</VALUE.ARRAY></IPARAMVALUE>";
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class enumInstancesOp : public OW_ClientOperation
@@ -576,16 +592,7 @@ OW_CIMXMLCIMOMHandle::enumInstances(
 	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
-	if(propertyList)
-	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_PROPERTYLIST <<
-		"\"><VALUE.ARRAY>";
-		for (size_t i = 0;i < propertyList->size(); i++)
-		{
-			extra << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
-		}
-		extra << "</VALUE.ARRAY></IPARAMVALUE>";
-	}
+	generatePropertyListXML(extra,propertyList);
 
 	enumInstancesOp op(result);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
@@ -671,24 +678,12 @@ OW_CIMXMLCIMOMHandle::getClass(
 	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
-	OW_String extraStr;
-	if(propertyList)
-	{
-		OW_StringStream extra(1000);
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_PROPERTYLIST <<
-		"\"><VALUE.ARRAY>";
-		for (size_t i = 0;i < propertyList->size(); i++)
-		{
-			extra << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
-		}
-		extra << "</VALUE.ARRAY></IPARAMVALUE>";
-
-		extraStr = extra.toString();
-	}
+	OW_StringStream extra;
+	generatePropertyListXML(extra,propertyList);
 
 	OW_CIMClass rval;
 	getClassOp op(rval);
-	intrinsicMethod(ns, commandName, op, params, extraStr);
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 	return rval;
 }
 
@@ -730,16 +725,7 @@ OW_CIMXMLCIMOMHandle::getInstance(
 	path.setNameSpace(ns);
 	extra << instanceNameToKey(path, "InstanceName");
 
-	if (propertyList)
-	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_PROPERTYLIST <<
-		"\"><VALUE.ARRAY>";
-		for (size_t i = 0;i < propertyList->size(); i++)
-		{
-			extra << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
-		}
-		extra << "</VALUE.ARRAY></IPARAMVALUE>";
-	}
+	generatePropertyListXML(extra,propertyList);
 
 	OW_CIMInstance rval;
 	getInstanceOp op(rval);
@@ -960,26 +946,40 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
-											 const OW_CIMInstance& ci)
+OW_CIMXMLCIMOMHandle::modifyInstance(
+	const OW_String& ns,
+	const OW_CIMInstance& modifiedInstance,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList)
 {
 	static const char* const commandName = "ModifyInstance";
-	OW_String nameSpace = path.getNameSpace();
-	OW_String className = path.getObjectName();
+
+	if (modifiedInstance.getKeyValuePairs().empty())
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Instance must have keys");
+	}
 
 	OW_StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
+	OW_CIMObjectPath path(modifiedInstance.getClassName(), modifiedInstance.getKeyValuePairs());
+	path.setNameSpace(ns);
 	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
-	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
+	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
+	
+	OW_Array<OW_Param> params;
+	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	
+	generatePropertyListXML(ostr, propertyList);
+	
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, params,
 		ostr.toString());
 }
 
@@ -1305,16 +1305,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
-	if (propertyList)
-	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_PROPERTYLIST <<
-		"\"><VALUE.ARRAY>";
-		for (size_t i = 0;i < propertyList->size(); i++)
-		{
-			extra << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
-		}
-		extra << "</VALUE.ARRAY></IPARAMVALUE>";
-	}
+	generatePropertyListXML(extra,propertyList);
 
 	if (path.getKeys().size() > 0)
 	{
@@ -1445,17 +1436,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
-	if (propertyList)
-	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_PROPERTYLIST <<
-		"\"><VALUE.ARRAY>";
-		for (size_t i = 0; i < propertyList->size(); i++)
-		{
-			extra << "<VALUE>" << (*propertyList)[i] << "</VALUE>";
-		}
-		extra << "</VALUE.ARRAY></IPARAMVALUE>";
-
-	}
+	generatePropertyListXML(extra,propertyList);
 
 	if (path.getKeys().size() > 0)
 	{

@@ -54,6 +54,7 @@ const char* const OW_XMLParameters::XMLP_LOCAL         	= "LocalOnly";
 const char* const OW_XMLParameters::XMLP_INCLUDEQUALIFIERS       		= "IncludeQualifiers";
 const char* const OW_XMLParameters::XMLP_INCLUDECLASSORIGIN     		= "IncludeClassOrigin";
 const char* const OW_XMLParameters::XMLP_MODIFIED_CLASS	= "ModifiedClass";
+const char* const OW_XMLParameters::XMLP_MODIFIED_INSTANCE	= "ModifiedInstance";
 const char* const OW_XMLParameters::XMLP_INSTANCENAME	= "InstanceName";
 const char* const OW_XMLParameters::XMLP_PROPERTYNAME	= "PropertyName";
 const char* const OW_XMLParameters::XMLP_NEWVALUE			= "NewValue";

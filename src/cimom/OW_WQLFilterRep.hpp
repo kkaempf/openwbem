@@ -375,8 +375,12 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
-		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo);
 
 	virtual void associators(const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,

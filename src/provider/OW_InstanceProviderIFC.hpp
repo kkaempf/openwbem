@@ -157,8 +157,10 @@ public:
 	 */
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance) = 0;
+			const OW_String& ns,
+			const OW_CIMInstance& modifiedInstance,
+			OW_Bool includeQualifiers,
+			OW_StringArray* propertyList) = 0;
 
 	/**
 	 * This method deletes the instance specified in the object path

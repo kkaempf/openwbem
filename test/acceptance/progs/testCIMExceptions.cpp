@@ -626,9 +626,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
-		cop.setKeys(ci);
-		hdl->modifyInstance(cop, ci);
+		hdl->modifyInstance("badNamespace", ci);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -642,9 +640,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci2(ci);
 		ci2.setClassName("fooBad");
-		OW_CIMObjectPath cop("fooBad", "root/testsuite");
-		cop.setKeys(ci2);
-		hdl->modifyInstance(cop, ci2);
+		hdl->modifyInstance("root/testsuite", ci2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -657,9 +653,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci2(ci);
 		ci2.setProperty("theKeyProp", OW_CIMValue(false));
-		OW_CIMObjectPath cop(ci2.getClassName(), "root/testsuite");
-		cop.setKeys(ci2);
-		hdl->modifyInstance(cop, ci2);
+		hdl->modifyInstance("root/testsuite", ci2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

@@ -218,10 +218,15 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
-		OW_CIMInstance &ci, const OW_ACLInfo &aclInfo)
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList,
+		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->modifyInstance(cop, ci, aclInfo);
+		return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
+			propertyList, aclInfo);
 	}
 
 	virtual void setProperty(const OW_CIMObjectPath &name,

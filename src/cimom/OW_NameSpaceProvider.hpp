@@ -77,8 +77,10 @@ public:
 
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance);
+			const OW_String& ns,
+			const OW_CIMInstance& modifiedInstance,
+			OW_Bool includeQualifiers,
+			OW_StringArray* propertyList);
 
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
 			);

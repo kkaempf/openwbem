@@ -354,8 +354,11 @@ public:
 	 *		updated.
 	 * @param ci The OW_CIMInstance to be updated.
 	 */
-	virtual void modifyInstance(const OW_CIMObjectPath &name,
-		const OW_CIMInstance &ci);
+	virtual void modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList);
 
 	/**
 	 * Get the specified CIM instance property.

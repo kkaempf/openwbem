@@ -370,10 +370,8 @@ void OW_WQLProcessor::visit_updateStmt(
 			ci.setProperty(cp);
 		}
 		// update the instance
-		OW_CIMObjectPath cop(ci.getClassName(), m_ns);
-		cop.setKeys(ci.getKeyValuePairs());
 		//OW_LOGDEBUG(format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
-		m_hdl->modifyInstance(cop, ci);
+		m_hdl->modifyInstance(m_ns, ci);
 	}
 	
 }

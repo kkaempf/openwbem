@@ -152,7 +152,10 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance);
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList);
 
 private:
 	OW_FTABLERef m_ftable;
