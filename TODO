@@ -26,6 +26,7 @@ Fix problems:
       - If a timeout happens, certain places can retry the operation.
     - use DIST_SUBDIRS
     - Add an option to run as a different user and drop privelidges on startup.
+    - Fix problems with OW_DateTime and OW_CIMDateTime
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
