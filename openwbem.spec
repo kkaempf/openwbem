@@ -214,6 +214,7 @@ fi
 %{prefix}/sbin/*
 %{prefix}/libexec/openwbem/*
 %{prefix}/share/openwbem/*
+%config(noreplace) %{localstatedir}/openwbem/*
 %{_mandir}/man1/*
 %{_mandir}/man8/*
 
