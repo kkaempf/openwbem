@@ -179,8 +179,6 @@ int main(int argc, char* argv[])
 					break;
 			}
 		}
-		// Call platform specific shutdown routine
-		Platform::daemonShutdown(OW_DAEMON_NAME);
 	}
 	catch (Exception& e)
 	{
@@ -212,6 +210,10 @@ int main(int argc, char* argv[])
 		rval = 1;
 	}
 	CIMOMEnvironment::instance() = 0;
+	
+	// Call platform specific shutdown routine
+	Platform::daemonShutdown(OW_DAEMON_NAME);
+
 	OW_LOG_INFO(logger, "CIMOM has shutdown");
 	return rval;
 }
