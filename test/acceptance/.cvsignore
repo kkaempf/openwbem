@@ -6,3 +6,4 @@ Makefile
 *.la
 acceptance.sh
 stage
+ow_methodProviderTestFile.txt
