@@ -299,11 +299,7 @@ StopDaemon()
 	  Exit 1
 	fi
 	kill -15 $PID # TERM
-	if [ "$OWVALGRIND" = "1" ]; then
-		sleep 10
-	else
-		sleep 1
-	fi
+	WaitForLogResults 'CIMOM has shutdown' 60 5
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
 	  kill -9 $PID # KILL
 	  echo "** Daemon failed to terminate!!!  Check"
