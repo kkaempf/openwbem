@@ -39,8 +39,10 @@ namespace OpenWBEM
 {
 
 class XMLNodeImpl;
+class XMLNode;
 
 typedef Reference<XMLNodeImpl> XMLNodeImplRef;
+typedef Array<XMLNode> XMLNodeArray;
 
 /**
  * Base class used to represent an XML tag such as <name> and
@@ -356,6 +358,13 @@ public:
 	 *                   Thrown if the child of the current node is NULL.
 	 */
 	XMLNode mustGetChild() const /*throw (CIMException)*/;
+
+	/**
+	 * Gets the current node's children.
+	 * 
+	 * @return XMLNodeArray containing child nodes
+	 */
+	XMLNodeArray getChildren() const;
 	
 private:
 	struct dummy
@@ -380,7 +389,6 @@ private:
 	friend class XMLNodeImpl;
 };
 
-typedef Array<XMLNode> XMLNodeArray;
 
 class XMLNodeImpl
 {
@@ -413,6 +421,7 @@ public:
 
 	XMLNodeImplRef mustGetChild() /*throw (CIMException)*/;
 	XMLNodeImplRef getChild();
+	XMLNodeArray getChildren();
 
 protected:
 	XMLNodeImplRef m_nextNode;

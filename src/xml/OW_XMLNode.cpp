@@ -339,6 +339,23 @@ XMLNodeImpl::getChild()
 	return m_childNode;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+XMLNodeArray
+XMLNodeImpl::getChildren()
+{
+	XMLNodeArray ar;
+	if( m_childNode.isNull() )
+		return ar;
+	XMLNodeImplRef r = m_childNode;
+	do
+	{
+		ar.push_back(r);
+		r = r->m_nextNode;
+	} while( !r.isNull() );
+
+	return ar;
+}
+
 //*************************************************************************
 // XMLNode Implementation
 //*************************************************************************
@@ -559,6 +576,13 @@ XMLNode
 XMLNode::getChild() const
 {
 	return XMLNode(m_impl->getChild());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+XMLNodeArray
+XMLNode::getChildren() const
+{
+	return m_impl->getChildren();
 }
 
 } // end namespace OpenWBEM
