@@ -520,7 +520,21 @@ and Char16.
 
 Pass native types by value instead of by reference, unless it's an out parameter.
 -----------------------------------------------------------------------------
-Don't use the old deprecated way of including C library headers 
-(#include <stdlib.h>), the correct way to do it is to put a c infront of the 
-name and remove the .h (#include <cstdlib>).
+Don't use deprecated C++ features.  These include:
+  Including C library headers with the C name (#include <stdlib.h>), the 
+  correct way to do it is to put a c infront of the name and remove the .h 
+  (#include <cstdlib>).
+
+  The use of the static keyword when declaring object in namespace scope.
+  Use an unnamed namespace instead.
+
+  Assigning string literals to a char* variable (char* s = "foo").
+  String literals are const (const char* s = "foo").
+
+  <strstream> header.  However the replacement (<sstream>) can't be used
+  either (until we drop support for gcc 2.95.x) because it doesn't exist on
+  gcc 2.95.2.  Use OW_StringStream.hpp, and if you need a iostream you'll have
+  to write one.
+
+
 
