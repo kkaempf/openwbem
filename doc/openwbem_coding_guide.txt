@@ -8,7 +8,7 @@ Using bools makes it difficult (sometimes impossible) to overload the
 function, and can also make it hard to catch errors such as swapping the order
 of parameters and such.
 -----------------------------------------------------------------------------
-Nameing conventions:
+Naming conventions:
 enums begin with E (or OW_E if not otherwise scoped), and if they're used as 
 a parameter to a function, they should end with Flag.  enum values should be
 all caps, with underscores between words, and begin with E_.  Avoid anonymous
@@ -36,6 +36,20 @@ Don't assign numerical values to enum items unless they have some external
 meaning.  Having numerical values makes enums prone to error as well as makes
 them hard to maintain or refactor.  It sucks to have to renumber all the
 values just to insert a new item in the middle.
+
+All classes and public identifiers (anything in a header) must be prefixed
+with OW_.  (This may change in the future, if I ever make the jump to ditch
+OW_ and put everything in namespace OpenWBEM, but this probably won't happen
+in the interest of backward compatibility.)  Anything not prefixed by OW_,
+such as internal implementation details or variables local to a translation
+unit should either be prefixed by OW_ or put into an unnamed namespace to
+avoid possible duplicate symbol link-time errors.  This can be a worse issue
+than you might think because of providers, all the symbols are global and
+can possibly conflict with symbols from other providers or the cimom.
+Also use namespace conventions when naming files, and try never to create 2
+files with the same name, because of the way gcc implements unnamed namespaces,
+basically the namespace isn't really unnamed, it's named the same as the file,
+so two files with the same names can have conflicts in the unnamed namespace.
 -----------------------------------------------------------------------------
 Exceptions.
 When to use catch(...).  e.g.:
@@ -87,11 +101,33 @@ only if you are 100% sure it can't throw), because it can easily lead to
 abort() being called if an exception is thrown that doesn't match the
 specification.  Unfortunately gcc doesn't check, and so this can easily lead
 to problems.
+
+Derive all new exceptions from OW_Exception.  In most cases, you can simply
+use the DECLARE_EXCEPTION and DEFINE_EXCEPTION macros.
+
+Use the OW_THROW macro to throw an exception, this will automatically pass in
+the filename and line number, which is a great debugging help.
+
+Anytime you need to report a specific WBEM error (from CIM Operations over
+HTTP), throw an OW_CIMException.  Use the OW_THROWCIM and OW_THROWCIMMSG
+macros to do this.
 -----------------------------------------------------------------------------
 The following CIM elements are case-insensitive: Classes, Instances, Methods,
 Properties, Qualifiers and Method Parameters.
 Namespaces in OpenWBEM are *NOT* case-insensitive.  i.e. root/CIMV2 is a
 different namespace than root/cimv2.
+-----------------------------------------------------------------------------
+c++ namespaces.
+NEVER put "using namespace <x>;" in a header file.  Avoid putting it in a cpp
+file, especially at global scope.  Preferred practice is to either explicitly
+use the namespace: "std::cout << std::endl" or to name each item:
+using std::cout;
+using std::endl;
+
+Use unnamed namespaces instead of static function/data.  Try to put new code
+into a namespace, this is especially important for pluggable shared libaries
+like providers.
+Don't use a class with all static functions/data, instead use a namespace.
 -----------------------------------------------------------------------------
 If at all possible avoid static objects that have a constructor.  These can
 lead to the dreaded "static initialization dependency order" problem.  You're
