@@ -25,6 +25,7 @@ Testing:
       - Random syscall failure.  Send SIGUSR1 to owciomd at random intervals
         while hammerClient is running.
       - Do all this while running under valgrind to detect memory leaks, etc.
+    - Test suite doesn't error on timeout while waiting for log output
 
 Fix problems:
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
