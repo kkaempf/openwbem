@@ -1,8 +1,5 @@
-all : OW_GenCaseFoldingCompare OW_GenCaseFoldingCompareTests
+all : OW_GenCaseFoldingCompare OW_GenCaseFoldingCompareTests OW_GenCaseMappings OW_to_UTF8
 
-OW_GenCaseFoldingCompare : OW_GenCaseFoldingCompare.cpp
-	g++ -o OW_GenCaseFoldingCompare -g -I.. -L.. -lopenwbem -lssl -lcrypto OW_GenCaseFoldingCompare.cpp
-
-OW_GenCaseFoldingCompareTests : OW_GenCaseFoldingCompareTests.cpp
-	g++ -o OW_GenCaseFoldingCompareTests -g -I.. -L.. -lopenwbem -lssl -lcrypto OW_GenCaseFoldingCompareTests.cpp
+% : %.cpp
+	g++ -o $@ -g -I.. -I../../cim -I../../ifcs -L.. -lopenwbem -lssl -lcrypto $<
 

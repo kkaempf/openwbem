@@ -136,6 +136,34 @@ OW_COMMON_API String UCS2ToString(const Array<char>& input);
  */
 OW_COMMON_API String UCS2ToString(const void* input, size_t inputLength);
 
+/**
+ * Convert the UTF-8 string to upper case. The string is modified in place.
+ * If a character is encountered whose replacement occupies a different number
+ * of bytes than the original, processing will cease and false will be returned.
+ * @return true if successful. false if the upper-cased replacement would be 
+ * larger than the original.
+ */
+OW_COMMON_API bool toUpperCaseInPlace(char* input);
+
+/**
+ * Convert the UTF-8 string to upper case and return the result.
+ */
+OW_COMMON_API String toUpperCase(const char* input);
+
+/**
+ * Convert the UTF-8 string to lower case. The string is modified in place.
+ * If a character is encountered whose replacement occupies a different number
+ * of bytes than the original, processing will cease and false will be returned.
+ * @return true if successful. false if the lower-cased replacement would be 
+ * larger than the original.
+ */
+OW_COMMON_API bool toLowerCaseInPlace(char* input);
+
+/**
+ * Convert the UTF-8 string to lower case and return the result.
+ */
+OW_COMMON_API String toLowerCase(const char* input);
+
 } // end namespace UTF8Utils
 
 } // end namespace OW_NAMESPACE

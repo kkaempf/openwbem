@@ -2346,6 +2346,111 @@ void OW_UTF8UtilsTestCases::testcompareToIgnoreCase()
 #endif
 }
 
+void OW_UTF8UtilsTestCases::testToLowerCaseInPlace()
+{
+	char buf[1024];
+	strcpy(buf, "ab");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "ab");
+	strcpy(buf, "AbC");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "abc");
+
+	// invalid utf8 chars
+	strcpy(buf, "\xFF AbC\xFE\xFD D \xFC");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "\xFF abc\xFE\xFD d \xFC");
+
+	// differing length	- these should all work.  With Unicode 4.0.1, there
+	// are *no* utf8 sequences that get longer with lower-casing.
+	strcpy(buf, "\xc4\xb0");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "\x69");
+	
+	strcpy(buf, "\xe2\x84\xa6");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "\xcf\x89");
+
+	strcpy(buf, "\xe2\x84\xaa");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "\x6b");
+
+	// 2, 3, 4 char lengths
+	strcpy(buf, "\xc3\x80 A \xc4\x80 b C\xe1\xb8\x80 \xf0\x90\x90\x94");
+	unitAssert(UTF8Utils::toLowerCaseInPlace(buf));
+	unitAssert(String(buf) == "\xc3\xa0 a \xc4\x81 b c\xe1\xb8\x81 \xf0\x90\x90\xbc");
+
+}
+
+void OW_UTF8UtilsTestCases::testToUpperCaseInPlace()
+{
+	char buf[1024];
+	strcpy(buf, "AB");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "AB");
+	strcpy(buf, "AbC");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "ABC");
+
+	// invalid utf8 chars
+	strcpy(buf, "\xFF AbC\xFE\xFD d \xFC");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "\xFF ABC\xFE\xFD D \xFC");
+
+	// differing length	- these should all work.  With Unicode 4.0.1, there
+	// are *no* utf8 sequences that get longer with upper-casing.
+	strcpy(buf, "\xc4\xb1");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "\x49");
+	
+	strcpy(buf, "\xe1\xbe\xbe");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "\xce\x99");
+
+	// 2, 3, 4 char lengths
+	strcpy(buf, "\xd4\x81 a \xc4\x81 b c\xe1\xb8\x81 \xf0\x90\x90\xbc");
+	unitAssert(UTF8Utils::toUpperCaseInPlace(buf));
+	unitAssert(String(buf) == "\xd4\x80 A \xc4\x80 B C\xe1\xb8\x80 \xf0\x90\x90\x94");
+}
+
+void OW_UTF8UtilsTestCases::testToLowerCase()
+{
+	unitAssert(UTF8Utils::toLowerCase("ab") == "ab");
+	unitAssert(UTF8Utils::toLowerCase("AbC") == "abc");
+
+	// invalid utf8 chars
+	unitAssert(UTF8Utils::toLowerCase("\xFF AbC\xFE\xFD D \xFC") == "\xFF abc\xFE\xFD d \xFC");
+
+	// differing length	- these should all work.  With Unicode 4.0.1, there
+	// are *no* utf8 sequences that get longer with lower-casing.
+	unitAssert(UTF8Utils::toLowerCase("\xc4\xb0") == "\x69");
+	
+	unitAssert(UTF8Utils::toLowerCase("\xe2\x84\xa6") == "\xcf\x89");
+
+	unitAssert(UTF8Utils::toLowerCase("\xe2\x84\xaa") == "\x6b");
+
+	// 2, 3, 4 char lengths
+	unitAssert(UTF8Utils::toLowerCase("\xc3\x80 A \xc4\x80 b C\xe1\xb8\x80 \xf0\x90\x90\x94") == "\xc3\xa0 a \xc4\x81 b c\xe1\xb8\x81 \xf0\x90\x90\xbc");
+}
+
+void OW_UTF8UtilsTestCases::testToUpperCase()
+{
+	unitAssert(UTF8Utils::toUpperCase("AB") == "AB");
+	unitAssert(UTF8Utils::toUpperCase("AbC") == "ABC");
+
+	// invalid utf8 chars
+	unitAssert(UTF8Utils::toUpperCase("\xFF AbC\xFE\xFD d \xFC") == "\xFF ABC\xFE\xFD D \xFC");
+
+	// differing length	- these should all work.  With Unicode 4.0.1, there
+	// are *no* utf8 sequences that get longer with upper-casing.
+	unitAssert(UTF8Utils::toUpperCase("\xc4\xb1") == "\x49");
+	
+	unitAssert(UTF8Utils::toUpperCase("\xe1\xbe\xbe") == "\xce\x99");
+
+	// 2, 3, 4 char lengths
+	unitAssert(UTF8Utils::toUpperCase("\xd4\x81 a \xc4\x81 b c\xe1\xb8\x81 \xf0\x90\x90\xbc") == "\xd4\x80 A \xc4\x80 B C\xe1\xb8\x80 \xf0\x90\x90\x94");
+}
+
 Test* OW_UTF8UtilsTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_UTF8Utils");
@@ -2356,6 +2461,10 @@ Test* OW_UTF8UtilsTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUTF8toUCS4);
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUCS4toUTF8);
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testcompareToIgnoreCase);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testToLowerCaseInPlace);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testToUpperCaseInPlace);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testToLowerCase);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testToUpperCase);
 
 	return testSuite;
 }

@@ -4,3 +4,5 @@ OW_GenCaseFoldingCompareTests
 *.exp
 *.nlm
 *.nlm.*
+OW_GenCaseMappings
+OW_to_UTF8

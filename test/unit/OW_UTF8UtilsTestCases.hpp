@@ -56,6 +56,11 @@ private:
 	void testUTF8toUCS4();
 	void testUCS4toUTF8();
 	void testcompareToIgnoreCase();
+	void testToLowerCaseInPlace();
+	void testToUpperCaseInPlace();
+	void testToLowerCase();
+	void testToUpperCase();
+
 };
 
 #endif
