@@ -79,12 +79,13 @@ public:
 	{
 	}
 	virtual void run() = 0;
-	virtual void postRun()
-	{
-	}
 };
 
 typedef OW_Reference<OW_Runnable> OW_RunnableRef;
+
+
+class OW_ThreadDoneCallback;
+typedef OW_Reference<OW_ThreadDoneCallback> OW_ThreadDoneCallbackRef;
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_Thread
@@ -110,7 +111,7 @@ public:
 	 * Start this OW_Thread's execution.
 	 * @exception OW_ThreadException
 	 */
-	virtual void start() /*throw (OW_ThreadException)*/;
+	virtual void start(OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
 
 	/**
 	 * Cancel this OW_Threads execution.
@@ -146,12 +147,6 @@ public:
 		return OW_Bool(m_isRunning == true);
 	}
 
-
-	/**
-	 * The method that will be run when the start method is called on this
-	 * OW_Thread object.
-	 */
-	virtual void run() = 0;
 
 	/**
 	 * Join with this OW_Thread's execution. The thread must be a joinable
@@ -206,28 +201,16 @@ public:
 	 * @param theRunnable	A reference to an OW_Runnable object as an
 	 *								OW_RunnableRef to run.
 	 */
-	static void run(OW_RunnableRef theRunnable, OW_Bool separateThread=true);
-
-	// blockSignal & unBlockSignal should be called within the run method
-	// of the thread that wants to block the signal.
-	//void blockSignal(int sigNum);
-	//void unBlockSignal(int sigNum);
+	static void run(OW_RunnableRef theRunnable, OW_Bool separateThread = true,
+		OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
 
 protected:
 
 	/**
-	 * This method will get called after the run method returns. If it returns
-	 * true then this OW_Thread object will be deleted (assumes it was
-	 * dynamically allocated) even if the self delete flag is false. This method
-	 * is here to allow more flexability for sub-classes of OW_Thread.
-	 * @return true If this thread should be deleted when this method returns.
-	 * Otherwise return false. If the self delete flag is true, the thread still
-	 * gets deleted.
+	 * The method that will be run when the start method is called on this
+	 * OW_Thread object.
 	 */
-	virtual OW_Bool postRunDeleteCheck()
-	{
-		return false;
-	}
+	virtual void run() = 0;
 
 	OW_Thread_t m_id;
 	OW_Bool m_isJoinable;
@@ -237,8 +220,30 @@ protected:
 
 private:
 
+	// this is what's really passed to threadRunner
+	struct OW_ThreadParam
+	{
+		OW_Thread* thread;
+		OW_Reference<OW_ThreadDoneCallback> cb;
+	};
+
 	static void* threadRunner(void* paramPtr);
 };
+
+
+class OW_ThreadDoneCallback
+{
+public:
+	virtual ~OW_ThreadDoneCallback() {}
+
+	void notifyThreadDone(OW_Thread* t)
+	{
+		doNotifyThreadDone(t);
+	}
+protected:
+	virtual void doNotifyThreadDone(OW_Thread* t) = 0;
+};
+
 
 
 #endif // OW_THREAD_H

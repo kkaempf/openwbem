@@ -89,8 +89,8 @@ Test* OW_ExceptionTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Exception");
 
-	testSuite->addTest (new TestCaller <OW_ExceptionTestCases> 
-			("testSomething", 
+	testSuite->addTest (new TestCaller <OW_ExceptionTestCases>
+			("testSomething",
 			&OW_ExceptionTestCases::testSomething));
 
 	return testSuite;

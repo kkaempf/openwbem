@@ -206,6 +206,25 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class threadCountDecrementer : public OW_ThreadDoneCallback
+	{
+	public:
+		threadCountDecrementer(OW_HTTPServer* httpServer)
+		: m_HTTPServer(httpServer)
+		{}
+	protected:
+		virtual void doNotifyThreadDone(OW_Thread *)
+		{
+			m_HTTPServer->decThreadCount();
+		}
+	private:
+		OW_HTTPServer* m_HTTPServer;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
 class OW_HTTPServerSelectableCallback : public OW_SelectableCallbackIFC
 {
 public:
@@ -213,7 +232,7 @@ public:
 		OW_HTTPServer* httpServer, bool isIPC)
 		: OW_SelectableCallbackIFC()
 		, m_isHTTPS(isHTTPS)
-      , m_HTTPServer(httpServer)
+		, m_HTTPServer(httpServer)
 		, m_isIPC(isIPC)
 	{
 	}
@@ -257,7 +276,8 @@ public:
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 
-			OW_Thread::run(rref, m_HTTPServer->m_options.isSepThread);
+			OW_Thread::run(rref, m_HTTPServer->m_options. isSepThread,
+				OW_ThreadDoneCallbackRef(new threadCountDecrementer(m_HTTPServer)));
 		}
 		catch (OW_SSLException& se)
 		{

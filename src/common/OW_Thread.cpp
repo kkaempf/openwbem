@@ -40,8 +40,8 @@
 class OW_RunnableThread : public OW_Thread
 {
 public:
-	OW_RunnableThread(OW_RunnableRef theRunnable, OW_Bool isjoinable=false) :
-		OW_Thread(isjoinable), m_runnable(theRunnable)
+	OW_RunnableThread(OW_RunnableRef theRunnable) :
+		OW_Thread(false), m_runnable(theRunnable)
 	{
 		setSelfDelete(true);
 	}
@@ -57,14 +57,6 @@ public:
 			// Ignore?
 		}
 
-		try
-		{
-			m_runnable->postRun();
-		}
-		catch(...)
-		{
-			// Ignore?
-		}
 	}
 
 private:
@@ -111,7 +103,7 @@ OW_Thread::~OW_Thread()
 //////////////////////////////////////////////////////////////////////////////
 // Start the thread
 void
-OW_Thread::start() /*throw (OW_ThreadException)*/
+OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadException)*/
 {
 	if(isRunning())
 	{
@@ -129,7 +121,11 @@ OW_Thread::start() /*throw (OW_ThreadException)*/
 
 	OW_UInt32 flgs = (m_isJoinable == true) ? OW_THREAD_FLG_JOINABLE : 0;
 
-	if(OW_ThreadImpl::createThread(m_id, threadRunner, this, flgs) != 0)
+	// p will be delted by threadRunner
+	OW_ThreadParam* p = new OW_ThreadParam;
+	p->thread = this;
+	p->cb = cb;
+	if(OW_ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
@@ -171,27 +167,18 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_Thread::run(OW_RunnableRef theRunnable, OW_Bool separateThread)
+OW_Thread::run(OW_RunnableRef theRunnable, OW_Bool separateThread, OW_Reference<OW_ThreadDoneCallback> cb)
 {
 	if(separateThread)
 	{
 		OW_RunnableThread* prt = new OW_RunnableThread(theRunnable);
-		prt->start();
+		prt->start(cb);
 	}
 	else
 	{
 		try
 		{
 			theRunnable->run();
-		}
-		catch(...)
-		{
-			// Ignore?
-		}
-
-		try
-		{
-			theRunnable->postRun();
 		}
 		catch(...)
 		{
@@ -208,9 +195,11 @@ OW_Thread::threadRunner(void* paramPtr)
 {
 	OW_ASSERT(paramPtr != NULL);
 
-	OW_Thread* pTheThread = (OW_Thread*) paramPtr;
+	OW_ThreadParam* pParam = (OW_ThreadParam*)paramPtr;
+	OW_Thread* pTheThread = pParam->thread;
 	OW_Thread_t theThreadID = pTheThread->m_id;
 	pTheThread->m_isRunning = true;
+	OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
 
 	while(pTheThread->m_isStarting)
 	{
@@ -241,11 +230,7 @@ OW_Thread::threadRunner(void* paramPtr)
 	{
 		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
-		if(pTheThread->postRunDeleteCheck() == true)
-		{
-			delete pTheThread;
-		}
-		else if(pTheThread->getSelfDelete() == true)
+		if(pTheThread->getSelfDelete() == true)
 		{
 			delete pTheThread;
 		}
@@ -266,7 +251,15 @@ OW_Thread::threadRunner(void* paramPtr)
 			"thread\n");
 		*/
 	}
+	
+	delete pParam;
 
+	if (cb)
+	{
+		cb->notifyThreadDone(pTheThread);
+	}
+
+	// end the thread.  exitThread never returns.
 	OW_ThreadImpl::exitThread(theThreadID);
 	return NULL;
 }

@@ -108,7 +108,6 @@ OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
 OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 {
 	m_socket.disconnect();
-	m_pHTTPServer->decThreadCount();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -396,7 +395,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		}
 		if (m_requestHandler->getCIMError().length() > 0)
 		{
-			addHeader(m_respHeaderPrefix + "CIMError", 
+			addHeader(m_respHeaderPrefix + "CIMError",
 				m_requestHandler->getCIMError());
 		}
 		else
@@ -501,7 +500,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer", escapedError.toString());
 			if (m_requestHandler->getCIMError().length() > 0)
 			{
-				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError", 
+				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",
 					m_requestHandler->getCIMError());
 			}
 		}

@@ -104,14 +104,14 @@ public:
 	};
 
 
+	void decThreadCount();
+	void incThreadCount();
+
 private:
 
 	OW_Bool authenticate(OW_HTTPSvrConnection* pconn,
 		OW_String& userName, const OW_String& info);
 	OW_Mutex m_guard;
-
-	void decThreadCount();
-	void incThreadCount();
 
 	Options m_options;
 

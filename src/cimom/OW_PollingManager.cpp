@@ -167,6 +167,7 @@ OW_PollingManager::run()
 		processTriggers();
 	}
 
+	// wait until all the threads exit
 	while(m_runCount.getCount() > 0)
 	{
 		OW_Thread::yield();
@@ -239,6 +240,7 @@ OW_PollingManager::processTriggers()
 
 		if (tm >= m_triggerRunners[i].m_nextPoll)
 		{
+			m_runCount.signal();
 			m_triggerRunners[i].start();
 		}
 	}
@@ -270,25 +272,30 @@ OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
 	, m_nextPoll(0)
 	, m_isRunning(false)
 	, m_pollInterval(0)
-	, m_indServer(svr)
+	, m_pollMan(svr)
 	, m_lch(lch)
 	, m_env(env)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PollingManager::TriggerRunner::TriggerRunner(const TriggerRunner& arg)
-	: OW_Runnable()
-	, m_itp(arg.m_itp)
-	, m_nextPoll(arg.m_nextPoll)
-	, m_isRunning(arg.m_isRunning)
-	, m_pollInterval(arg.m_pollInterval)
-	, m_indServer(arg.m_indServer)
-	, m_lch(arg.m_lch)
-	, m_env(arg.m_env)
+namespace
 {
+	class runCountDecrementer : public OW_ThreadDoneCallback
+	{
+	public:
+		runCountDecrementer(OW_PollingManager* p_)
+		: p(p_)
+		{}
+	protected:
+		virtual void doNotifyThreadDone(OW_Thread *)
+		{
+			p->signalThreadDone();
+		}
+	private:
+		OW_PollingManager* p;
+	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_PollingManager::TriggerRunner::start()
@@ -297,15 +304,13 @@ OW_PollingManager::TriggerRunner::start()
 	OW_RunnableRef rref(this, true);
 	OW_Bool isSepThread = !m_env->getConfigItem(
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	OW_Thread::run(rref, isSepThread);
+	OW_Thread::run(rref, isSepThread, OW_ThreadDoneCallbackRef(new runCountDecrementer(m_pollMan)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_PollingManager::TriggerRunner::run()
 {
-	m_indServer->m_runCount.signal();
-
 	OW_Int32 nextInterval = 0;
 	try
 	{
@@ -313,7 +318,7 @@ OW_PollingManager::TriggerRunner::run()
 	}
 	catch(std::exception& e)
 	{
-		m_env->logError(OW_Format("Caught Exception while running poll: %1", 
+		m_env->logError(OW_Format("Caught Exception while running poll: %1",
 			e.what()));
 	}
 	catch(...)
@@ -339,8 +344,7 @@ OW_PollingManager::TriggerRunner::run()
 	}
 
 	m_isRunning = false;
-	m_indServer->m_runCount.wait();
-	m_indServer->m_tevent.signal();
+	m_pollMan->m_tevent.signal();
 }
 
 

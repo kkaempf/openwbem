@@ -39,17 +39,6 @@
 #include "OW_ACLInfo.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_Notifier::start()
-{
-	OW_CIMOMEnvironmentRef eref = m_pmgr->getEnvironment();
-
-	OW_Bool singleThread = eref->getConfigItem(
-		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-
-	OW_Thread::run(OW_RunnableRef(this), !singleThread);
-}
-
 namespace
 {
 	class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
@@ -89,6 +78,34 @@ namespace
 		return OW_ProviderEnvironmentIFCRef(
 			new IndicationServerProviderEnvironment(ch, env));
 	}
+
+	class runCountDecrementer : public OW_ThreadDoneCallback
+	{
+	public:
+		runCountDecrementer(OW_IndicationServerImpl* i_)
+		: i(i_)
+		{}
+	protected:
+		virtual void doNotifyThreadDone(OW_Thread *)
+		{
+			i->decRunCount();
+		}
+	private:
+		OW_IndicationServerImpl* i;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_Notifier::start()
+{
+	OW_CIMOMEnvironmentRef eref = m_pmgr->getEnvironment();
+
+	OW_Bool singleThread = eref->getConfigItem(
+		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
+
+	OW_Thread::run(OW_RunnableRef(this), !singleThread,
+		OW_ThreadDoneCallbackRef(new runCountDecrementer(m_pmgr)));
 }
 
 
@@ -137,15 +154,8 @@ OW_Notifier::run()
 OW_IndicationServerImpl::OW_IndicationServerImpl()
 	: OW_IndicationServer()
 	, m_runCount(0)
-	, m_providers()
-	, m_trans()
-	, m_guard()
 	, m_shuttingDown(false)
-	, m_wakeEvent()
-	, m_procTransGuard()
-	, m_procTrans()
 	, m_running(false)
-	, m_env()
 {
 }
 
@@ -443,13 +453,12 @@ OW_IndicationServerImpl::addTrans(const OW_CIMInstance& indication,
 	OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
 {
 	OW_MutexLock ml(m_guard);
-	OW_MutexLock ml2(m_runCountGuard);
 
 	OW_NotifyTrans trans(indication, handler, provider);
-	if(m_runCount < MAX_NOTIFIERS)
+	if(getRunCount() < MAX_NOTIFIERS)
 	{
 		OW_Notifier* pnotifier = new OW_Notifier(this, trans);
-		m_runCount++;
+		incRunCount();
 		pnotifier->start();
 	}
 	else
@@ -463,15 +472,12 @@ OW_Bool
 OW_IndicationServerImpl::notifyDone(OW_NotifyTrans*& outTrans)
 {
 	OW_MutexLock ml(m_guard);
-	OW_MutexLock ml2(m_runCountGuard);
 
 	OW_Bool rv = false;
-	m_runCount--;
-	if(m_runCount < MAX_NOTIFIERS && m_trans.size() > 0)
+	if(m_trans.size() > 0)
 	{
 		outTrans = new OW_NotifyTrans(m_trans[0]);
 		m_trans.remove(0);
-		m_runCount++;
 		rv = true;
 	}
 

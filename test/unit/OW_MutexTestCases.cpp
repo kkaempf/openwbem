@@ -134,8 +134,8 @@ Test* OW_MutexTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Mutex");
 
-	testSuite->addTest (new TestCaller <OW_MutexTestCases> 
-			("testAcquireRelease", 
+	testSuite->addTest (new TestCaller <OW_MutexTestCases>
+			("testAcquireRelease",
 			&OW_MutexTestCases::testAcquireRelease));
 
 	return testSuite;

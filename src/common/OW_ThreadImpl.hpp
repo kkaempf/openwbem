@@ -88,6 +88,7 @@ public:
 	/**
 	 * Exit thread method. This method is called everytime a thread exits.
 	 * When the POSIX threads are being used, pthread_exit is called.
+	 * This function does not return.
 	 * @param handle The thread handle of the calling thread.
 	 */
 	static void exitThread(OW_Thread_t& handle);

@@ -53,6 +53,10 @@ public:
 
 	void shutdown();
 
+	void signalThreadDone()
+	{
+		m_runCount.wait();
+	}
 protected:
 	virtual void run();
 
@@ -63,7 +67,6 @@ private:
 	public:
 		TriggerRunner(OW_PollingManager* svr, OW_CIMOMHandleIFCRef lch,
 			OW_CIMOMEnvironmentRef env);
-		TriggerRunner(const TriggerRunner& arg);
 		void start();
 		virtual void run();
 
@@ -71,7 +74,7 @@ private:
 		time_t m_nextPoll;
 		OW_Bool m_isRunning;
 		OW_Int32 m_pollInterval;
-		OW_PollingManager* m_indServer;
+		OW_PollingManager* m_pollMan;
 		OW_CIMOMHandleIFCRef m_lch;
 		OW_CIMOMEnvironmentRef m_env;
 	};

@@ -113,6 +113,8 @@ public:
 		const OW_CIMNameSpace& instNS);
 
 	int getRunCount() { OW_MutexLock ml(m_runCountGuard); return m_runCount; }
+	void incRunCount() { OW_MutexLock ml(m_runCountGuard); ++m_runCount; }
+	void decRunCount() { OW_MutexLock ml(m_runCountGuard); --m_runCount; }
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
