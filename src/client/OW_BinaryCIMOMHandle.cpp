@@ -199,6 +199,14 @@ BinaryCIMOMHandle::BinaryCIMOMHandle(CIMProtocolIFCRef prot)
 {
 	m_protocol->setContentType("application/x-owbinary");
 }
+
+//////////////////////////////////////////////////////////////////////////////
+CIMProtocolIFCRef
+BinaryCIMOMHandle::getWBEMProtocolHandler() const
+{
+	return m_protocol;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryCIMOMHandle::enumClassNames(

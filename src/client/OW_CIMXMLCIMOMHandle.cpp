@@ -88,6 +88,13 @@ CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(CIMProtocolIFCRef prot)
 	m_protocol->setContentType("application/xml");
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMProtocolIFCRef
+CIMXMLCIMOMHandle::getWBEMProtocolHandler() const
+{
+	return m_protocol;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 {

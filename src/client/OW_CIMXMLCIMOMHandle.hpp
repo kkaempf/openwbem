@@ -71,6 +71,12 @@ public:
 	 * 	// the remote CIMOM handle can be used.
 	 */
 	CIMXMLCIMOMHandle( CIMProtocolIFCRef prot );
+	
+	/**
+	 * Get a Reference to the WBEM protocol handler (HTTPClient)
+	 */
+	virtual CIMProtocolIFCRef getWBEMProtocolHandler() const;
+
 	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session.
