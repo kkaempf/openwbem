@@ -196,6 +196,7 @@ inline void OW_Reference<T>::incRef()
 template<class T>
 inline void OW_Reference<T>::decRef()
 {
+	typedef char type_must_be_complete[sizeof(T)];
 	if(m_pRefCount)
 	{
 		OW_MutexLock l(m_pRefCount->m_mutex);

@@ -73,6 +73,7 @@ public:
 
 	~OW_AutoPtr()
 	{
+		typedef char type_must_be_complete[sizeof(X)];
 		delete _ptr;
 	}
 
@@ -133,6 +134,7 @@ public:
 
 	~OW_AutoPtrVec()
 	{
+		typedef char type_must_be_complete[sizeof(X)];
 		delete [] _ptr;
 	}
 
