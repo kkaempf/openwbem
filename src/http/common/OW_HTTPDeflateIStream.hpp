@@ -49,11 +49,8 @@ protected:
 private:
 	std::istream& m_istr;
 	z_stream m_zstr;
-#if defined(OW_AIX)
-  	static const UInt32 m_inBufSize;
-#else  
-	static const UInt32 m_inBufSize = HTTP_BUF_SIZE;
-#endif // OW_AIX  
+	enum { m_inBufSize = HTTP_BUF_SIZE };
+
 	Bytef m_inBuf[m_inBufSize];
 	// don't allow copying and assigning
 	HTTPDeflateIStreamBuffer(const HTTPDeflateIStreamBuffer&);

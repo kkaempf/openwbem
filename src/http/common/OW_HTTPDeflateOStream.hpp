@@ -60,11 +60,7 @@ protected:
 private:
 	std::ostream& m_ostr;
 	z_stream m_zstr;
-#if defined(OW_AIX)
-  	static const UInt32 m_outBufSize;
-#else  
-	static const UInt32 m_outBufSize = HTTP_BUF_SIZE;
-#endif // OW_AIX    
+	enum { m_outBufSize = HTTP_BUF_SIZE };
 	Bytef m_outBuf[m_outBufSize];
 	int flushOutBuf(int flush = 0);
 	int writeToStream();

@@ -31,13 +31,10 @@
 #ifdef OW_HAVE_ZLIB_H
 #include "OW_HTTPDeflateIStream.hpp"
 #include "OW_HTTPException.hpp"
+#include "OW_Reference.hpp"
 
 namespace OpenWBEM
 {
-
-#if defined(OW_AIX)
-const UInt32 HTTPDeflateIStreamBuffer::m_inBufSize = HTTP_BUF_SIZE;
-#endif // OW_AIX
   
 using std::istream;
 HTTPDeflateIStreamBuffer::HTTPDeflateIStreamBuffer(istream& istr)
