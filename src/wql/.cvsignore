@@ -9,3 +9,7 @@ OW_WQLParser.h
 OW_WQLLexer.cc
 OW_WQLParser.cc
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

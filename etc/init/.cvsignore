@@ -5,3 +5,7 @@ owcimomd
 .libs
 *.lo
 *.la
+*.imp
+*.exp
+*.nlm
+*.nlm.*

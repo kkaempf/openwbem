@@ -4,3 +4,9 @@ Makefile
 .*.libs
 *.lo
 *.la
+*.nlm
+*.nlm.*
+*.exp
+*.imp
+*.def
+

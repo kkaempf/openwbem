@@ -6,3 +6,7 @@ Makefile
 *.la
 lib*so*
 OW_config.h
+*.imp
+*.exp
+*.nlm
+*.nlm.*

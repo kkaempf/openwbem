@@ -7,3 +7,7 @@ Makefile
 lib*so*
 lib*dylib*
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

@@ -6,3 +6,7 @@ Makefile
 *.la
 *.swp
 owcimomd
+*.exp
+*.imp
+*.nlm
+*.nlm.*

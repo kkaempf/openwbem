@@ -7,3 +7,7 @@ Makefile
 lib*so*
 OW_config.h
 lib*dylib*
+*.nlm
+*.nlm.*
+*.imp
+*.exp

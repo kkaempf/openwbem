@@ -13,3 +13,7 @@ OW_MOFParser.output
 OW_MOFParser.tab.cpp
 OW_MOFParser.tab.hpp
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

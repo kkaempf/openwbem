@@ -9,3 +9,7 @@ OW_XMLEscape.cc
 lib*so*
 .libowxml.so.libs
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

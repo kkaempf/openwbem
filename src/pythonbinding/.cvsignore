@@ -4,6 +4,10 @@ Makefile
 .libs
 *.lo
 *.la
+*.imp
+*.exp
+*.nlm
+*.nlm.*
 aclocal.m4
 libtool
 configure

@@ -7,3 +7,7 @@ Makefile
 acceptance.sh
 stage
 ow_methodProviderTestFile.txt
+*.imp
+*.exp
+*.nlm
+*.nlm.*

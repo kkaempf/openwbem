@@ -1,2 +1,6 @@
 OW_GenCaseFoldingCompare
 OW_GenCaseFoldingCompareTests
+*.imp
+*.exp
+*.nlm
+*.nlm.*

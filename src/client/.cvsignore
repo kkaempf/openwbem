@@ -7,3 +7,7 @@ Makefile
 lib*so*
 .libowclient.so.libs
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

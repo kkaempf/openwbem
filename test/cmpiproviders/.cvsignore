@@ -5,3 +5,7 @@ Makefile
 *.so*
 *.la
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

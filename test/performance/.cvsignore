@@ -6,3 +6,7 @@ Makefile
 *.la
 TimeString
 TimeFile
+*.imp
+*.exp
+*.nlm
+*.nlm.*

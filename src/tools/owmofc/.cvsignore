@@ -5,3 +5,7 @@ Makefile
 *.lo
 *.la
 owmofc
+*.imp
+*.exp
+*.nlm
+*.nlm.*

@@ -4,4 +4,8 @@ Makefile
 .libs
 *.lo
 *.la
+*.imp
+*.exp
+*.nlm
+*.nlm.*
 OW_config.h

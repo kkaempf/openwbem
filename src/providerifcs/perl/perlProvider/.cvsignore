@@ -7,3 +7,7 @@ Makefile
 lib*so*
 perlNPI.marker
 perlxsi.c
+*.imp
+*.exp
+*.nlm
+*.nlm.*

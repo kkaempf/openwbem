@@ -21,3 +21,7 @@ hammerClient
 testSecondaryInstanceProviders
 testLargeRequest
 owprovideragent
+*.imp
+*.exp
+*.nlm
+*.nlm.*

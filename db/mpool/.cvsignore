@@ -5,3 +5,7 @@ Makefile
 *.lo
 *.la
 OW_config.h
+*.imp
+*.exp
+*.nlm
+*.nlm.*

@@ -8,3 +8,7 @@ lib*so*
 OW_config.h
 OW_PAMAuth
 lib*dylib*
+*.imp
+*.exp
+*.nlm
+*.nlm.*

@@ -27,3 +27,9 @@ config.sub
 depcomp
 autom4te-2.53.cache
 *openwbem.spec
+*.NLM
+*.nlm
+*.nlm.*
+*.imp
+*.exp
+*.def

@@ -3,4 +3,8 @@ blib
 perlNPI.bs
 perlNPI.c
 pm_to_blib
+*.imp
+*.exp
+*.nlm
+*.nlm.*
 

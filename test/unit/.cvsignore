@@ -6,3 +6,7 @@ Makefile
 *.la
 unitMain
 MemTracerTest
+*.imp
+*.exp
+*.nlm
+*.nlm.*
