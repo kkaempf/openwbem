@@ -50,19 +50,26 @@ class OW_Thread;
 class OW_HTTPXMLCIMListener : public OW_CIMListenerCallback
 {
 public:
-	// If a logger specified then it will receive log messages, otherwise
-	// all log messages will be discarded.
+	/**
+	 * @param logger If a logger specified then it will receive log messages, otherwise
+	 *  all log messages will be discarded.
+	 */
 	OW_HTTPXMLCIMListener(OW_LoggerRef logger = OW_LoggerRef(0));
 
 	~OW_HTTPXMLCIMListener();
 
 
 	/**
-	 * Register for an indication.
-	 * @param op The namespace where the
-	 *            indication subscription and related objects will be created.
+	 * Register for an indication.  The destructor will attempt to deregister
+	 * any subscriptions which are still outstanding at the time.
+	 * @param url The url identifying the cimom
+	 * @param ns The namespace where the
+	 *  indication subscription and related objects will be created.
 	 * @param filter The filter for the indication subscription
 	 * @param querylanguage The language of the filter (typically wql1)
+	 * @param sourceNamespace The path to a local namespace where the Indications
+	 *  originate. If empty, the namespace of the Filter registration
+	 *  is assumed.
 	 * @param cb An object derived from OW_CIMListenerCallback.  When an
 	 *		indication is received, the doIndicationOccured member function will be called
 	 *
@@ -72,8 +79,8 @@ public:
 	OW_String registerForIndication(const OW_String& url,
 		const OW_String& ns, const OW_String& filter,
 		const OW_String& querylanguage, 
-        const OW_String& sourceNamespace,
-        OW_CIMListenerCallbackRef cb);
+		const OW_String& sourceNamespace,
+		OW_CIMListenerCallbackRef cb);
 
 	/**
 	 * De-register for an indication
