@@ -43,38 +43,39 @@
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Assertion.hpp"
 
 extern "C"
 {
 #ifdef OW_WIN32
 
-#include <direct.h>
-#include <io.h>
-#include <share.h>
-
-#define _ACCESS ::_access
-#define R_OK 4
-#define F_OK 0
-#define W_OK 2
-#define _CHDIR _chdir
-#define _MKDIR(a,b)	_mkdir((a))
-#define _RMDIR _rmdir
-#define _UNLINK _unlink
+	#include <direct.h>
+	#include <io.h>
+	#include <share.h>
+	
+	#define _ACCESS ::_access
+	#define R_OK 4
+	#define F_OK 0
+	#define W_OK 2
+	#define _CHDIR _chdir
+	#define _MKDIR(a,b)	_mkdir((a))
+	#define _RMDIR _rmdir
+	#define _UNLINK _unlink
 
 #else
 
-#ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef OW_HAVE_DIRENT_H
-#include <dirent.h>
-#endif
-
-#define _ACCESS ::access
-#define _CHDIR chdir
-#define _MKDIR(a,b) mkdir((a),(b))
-#define _RMDIR rmdir
-#define _UNLINK unlink
+	#ifdef OW_HAVE_UNISTD_H
+	#include <unistd.h>
+	#endif
+	#ifdef OW_HAVE_DIRENT_H
+	#include <dirent.h>
+	#endif
+	
+	#define _ACCESS ::access
+	#define _CHDIR chdir
+	#define _MKDIR(a,b) mkdir((a),(b))
+	#define _RMDIR rmdir
+	#define _UNLINK unlink
 
 #endif
 
@@ -181,7 +182,7 @@ isLink(const String& path)
 {
 #ifdef OW_WIN32
 	return false;
-/* This stuff does not compile (_S_IFLNK?) 
+/* This stuff does not compile (_S_IFLNK?)
 	struct _stat st;
 	if (_stat(path.c_str(), &st) !=0)
 	{
@@ -444,7 +445,7 @@ initRandomFile(const String& filename)
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if(fh == INVALID_HANDLE_VALUE)
 	{
-		OW_THROW(FileSystemException, 
+		OW_THROW(FileSystemException,
 			Format("Can't open random file %1 for writing",
 			filename).c_str());
 	}
@@ -454,7 +455,7 @@ initRandomFile(const String& filename)
 	::CloseHandle(fh);
 	if(!success || bytesWritten < 1024)
 	{
-		OW_THROW(FileSystemException, 
+		OW_THROW(FileSystemException,
 			Format("Failed writing data to random file %1", filename).c_str());
 	}
 #else
@@ -493,6 +494,25 @@ StringArray getFileLines(const String& filename)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+String readSymbolicLink(const String& path)
+{
+	std::vector<char> buf(MAXPATHLEN);
+	int rc;
+	do
+	{
+		rc = ::readlink(path.c_str(), &buf[0], buf.size());
+		if (rc >= 0)
+		{
+			buf.resize(rc);
+			buf.push_back('\0');
+			return String(&buf[0]);
+		}
+		buf.resize(buf.size() * 2);
+	} while (rc < 0 && errno == ENAMETOOLONG);
+	OW_THROW_ERRNO(FileSystemException);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 namespace Path
 {
 
@@ -502,8 +522,18 @@ String realPath(const String& path)
 #ifdef OW_WIN32
 #error "TODO: port realPath"
 #else
+	String workingPath(path);
 	String resolvedPath;
-	const char* pathCompBegin(path.c_str());
+	int numLinks = 0;
+
+	// handle relative paths.
+	if (workingPath.length() > 0 && workingPath[0] != '/')
+	{
+		// result of getCurrentWorkingDirectory is already resolved.
+		resolvedPath = getCurrentWorkingDirectory();
+	}
+
+	const char* pathCompBegin(workingPath.c_str());
 	const char* pathCompEnd(pathCompBegin);
 	while (*pathCompBegin != '\0')
 	{
@@ -513,7 +543,7 @@ String realPath(const String& path)
 			++pathCompBegin;
 		}
 
-		// find end of the path
+		// find end of the path component
 		pathCompEnd = pathCompBegin;
 		while (*pathCompEnd != '\0' && *pathCompEnd != '/')
 		{
@@ -541,6 +571,45 @@ String realPath(const String& path)
 		{
 			resolvedPath += '/';
 			resolvedPath += String(pathCompBegin, pathCompEnd - pathCompBegin);
+
+			// now check the path actually exists
+			struct stat pathStats;
+			if (::lstat(resolvedPath.c_str(), &pathStats) < 0)
+			{
+				OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
+			}
+
+			if (S_ISLNK(pathStats.st_mode))
+			{
+				++numLinks;
+				if (numLinks > MAXSYMLINKS)
+				{
+					errno = ELOOP;
+					OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
+				}
+				String linkTarget(readSymbolicLink(resolvedPath));
+
+				if (linkTarget.length() > 0 && linkTarget[0] != '/')
+				{
+					// relative link. Remove the link from the resolvedPath and add the linkTarget
+					OW_ASSERT(resolvedPath.lastIndexOf('/') != String::npos); // should always happen, we just added a / to the string
+					resolvedPath.erase(resolvedPath.lastIndexOf('/'));
+
+					resolvedPath += '/';
+					resolvedPath += linkTarget;
+				}
+				else
+				{
+					// absolute link
+					resolvedPath = linkTarget;
+				}
+
+				// now reset and start over on the new path
+				resolvedPath += pathCompEnd;
+				workingPath = resolvedPath;
+				pathCompBegin = pathCompEnd = workingPath.c_str();
+				resolvedPath.erase();
+			}
 		}
 
 		// keep the loop flowing
@@ -587,6 +656,24 @@ String dirname(const String& filename)
 	}
 	return filename.substring(0, lastSlash);
 #endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String getCurrentWorkingDirectory()
+{
+	std::vector<char> buf(MAXPATHLEN);
+	char* p;
+	do
+	{
+		p = ::getcwd(&buf[0], buf.size());
+		if (p != 0)
+		{
+			return p;
+		}
+		buf.resize(buf.size() * 2);
+	} while (p == 0 && errno == ERANGE);
+
+	OW_THROW_ERRNO(FileSystemException);
 }
 
 } // end namespace Path

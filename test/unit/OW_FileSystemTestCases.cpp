@@ -217,41 +217,116 @@ void OW_FileSystemTestCases::testrealPath()
 	unitAssert(realPath("/////////////////////////////////") == "/");
 	unitAssert(realPath("/.././.././.././..///") ==  "/");
 	unitAssert(realPath("/etc") == "/etc");
-	cout << '"' << realPath("/etc/../etc") << '"' << endl;
 	unitAssert(realPath("/etc/../etc") == "/etc");
-	//unitAssertThrows(realPath("/doesNotExist/../etc"));
-	//unitAssert(realPath("././././.") == getCWD());
+	try
+	{
+		realPath("/doesNotExist/../etc");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	unitAssert(realPath("././././.") == getCurrentWorkingDirectory());
 	unitAssert(realPath("/././././.") == "/");
 	unitAssert(realPath("/etc/./././.") == "/etc");
-// {"/etc/.//doesNotExist",              0, "/etc/doesNotExist", ENOENT},
-// {"./doesExist",                       "./doesExist"},
-// {"./doesExist/",                      "./doesExist"},
-// /* 10 */
-// {"./doesExist/../doesExist",          "./doesExist"},
-// {"foobar",                            0, "./foobar", ENOENT},
-// {".",                                 "."},
-// {"./foobar",                          0, "./foobar", ENOENT},
-// {"SYMLINK_LOOP",                      0, "./SYMLINK_LOOP", ELOOP},
-// /* 15 */
-// {"./SYMLINK_LOOP",                    0, "./SYMLINK_LOOP", ELOOP},
-// {"SYMLINK_1",                         "."},
-// {"SYMLINK_1/foobar",                  0, "./foobar", ENOENT},
-// {"SYMLINK_2",                         "/etc"},
-// {"SYMLINK_3",                         "."},
-// /* 20 */
-// {"SYMLINK_4",                         "/etc"},
-// {"../stdlib/SYMLINK_1",               "."},
-// {"../stdlib/SYMLINK_2",               "/etc"},
-// {"../stdlib/SYMLINK_3",               "."},
-// {"../stdlib/SYMLINK_4",               "/etc"},
-// /* 25 */
-// {"./SYMLINK_5",                       0, "./doesNotExist", ENOENT},
-// {"SYMLINK_5",                         0, "./doesNotExist", ENOENT},
-// {"SYMLINK_5/foobar",                  0, "./doesNotExist", ENOENT},
-// {"doesExist/../../stdlib/doesExist",  "./doesExist"},
-// {"doesExist/.././../stdlib/.",        "."}
-
-
+	try
+	{
+        realPath("/etc/.//doesNotExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+    unitAssert(realPath("./doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+    unitAssert(realPath("./doesExist/") == getCurrentWorkingDirectory() + "/doesExist");
+    unitAssert(realPath("./doesExist/../doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	try
+	{
+//		cout << '"' << realPath("doesNotExist") << '"' << endl;
+        realPath("doesNotExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+    unitAssert(realPath(".") == getCurrentWorkingDirectory());
+	try
+	{
+//		cout << '"' << realPath("doesNotExist") << '"' << endl;
+        realPath("./doesNotExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	try
+	{
+        realPath("SYMLINK_LOOP");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ELOOP);
+	}
+	try
+	{
+        realPath("./SYMLINK_LOOP");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ELOOP);
+	}
+	unitAssert(realPath("SYMLINK_1") == getCurrentWorkingDirectory());
+	try
+	{
+        realPath("SYMLINK_1/doesNotExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	unitAssert(realPath("SYMLINK_2") == "/etc");
+	unitAssert(realPath("SYMLINK_3") == getCurrentWorkingDirectory());
+	unitAssert(realPath("SYMLINK_4") == "/etc");
+	unitAssert(realPath("../unit/SYMLINK_1") == getCurrentWorkingDirectory());
+	unitAssert(realPath("../unit/SYMLINK_2") == "/etc");
+	unitAssert(realPath("../unit/SYMLINK_3") == getCurrentWorkingDirectory());
+	unitAssert(realPath("../unit/SYMLINK_4") == "/etc");
+	try
+	{
+        realPath("./SYMLINK_5");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	try
+	{
+        realPath("SYMLINK_5");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	try
+	{
+        realPath("SYMLINK_5/doesNotExist");
+		unitAssert(0);
+	}
+	catch (FileSystemException& e)
+	{
+		unitAssert(e.getErrorCode() == ENOENT);
+	}
+	unitAssert(realPath("doesExist/../../unit/doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("doesExist/../../unit/.") == getCurrentWorkingDirectory());
 
 	FileSystem::removeFile("doesExist");
 	FileSystem::removeFile("SYMLINK_LOOP");

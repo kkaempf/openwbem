@@ -45,7 +45,11 @@
 #include <sys/param.h>
 #endif
 #ifndef MAXPATHLEN
+#ifdef PATH_MAX
+#define MAXPATHLEN PATH_MAX
+#else
 #define MAXPATHLEN 1024
+#endif
 #endif
 
 namespace OpenWBEM
@@ -229,6 +233,7 @@ namespace FileSystem
 	 * for any reason.
 	 */
 	OW_COMMON_API String getFileContents(const String& filename);
+	
 	/**
 	 * Read and return the lines of a test file. If the file contains a null
 	 * character ('\0') then only previous data will be returned.
@@ -238,31 +243,48 @@ namespace FileSystem
 	 */
 	OW_COMMON_API StringArray getFileLines(const String& filename);
 
+	/**
+	 * Read the value of a symbolic link
+	 * @param path Path to the symbolic link
+	 * @return The target of the symbolic link
+	 * @exception FileSystemException: ENOTDIR, ENOENT, EACCES, ELOOP, EINVAL, EIO, EFAULT, ENOMEM
+	 */
+	OW_COMMON_API String readSymbolicLink(const String& path);
+
 	namespace Path
 	{
 		/**
 		 * Convert path to the canonicalized absolute pathname by expanding all
-		 * symbolic links and resolving references to /./, /../ and extra / 
+		 * symbolic links and resolving references to /./, /../ and extra /
 		 * characters. If path is relative, it will be interpreted as relative to
 		 * the current working directory. This function is similar to the SuSv3
 		 * function, however it's easier to use and thread safe.
 		 * @param path The path to canonicalize.
 		 * @return The canonicalized version of path.
-		 * @throws FileSystemException E_ACCESS, E_IO, E_LOOP, E_NOENT, E_NOTDIR
+		 * @throws FileSystemException EACCESS, EIO, ELOOP, ENOENT, ENOTDIR
 		 */
 		OW_COMMON_API String realPath(const String& path);
 
 		/**
-		 * Take a string that contains a pathname, and return a string that is 
-		 * a pathname of the parent directory of that file. Trailing '/' 
+		 * Take a string that contains a pathname, and return a string that is
+		 * a pathname of the parent directory of that file. Trailing '/'
 		 * characters in the path are not counted as part of the path.
-		 * If path does not contain a '/', then dirname() shall return the 
-		 * string ".". If path an empty string, dirname() shall return the 
+		 * If path does not contain a '/', then dirname() shall return the
+		 * string ".". If path an empty string, dirname() shall return the
 		 * string ".".
 		 * @param filename The file pathname
 		 * @return The pathname of the parent directory of filename.
 		 */
 		OW_COMMON_API String dirname(const String& filename);
+
+		/**
+		 * Get the process's current working directory.
+		 * Calls to chdir() or fchdir() will modify this. Multi-threaded applications must
+		 * exercise caution changing the current working directory.
+		 * @throws FileSystemException: ENOENT-The current working directory has been unlinked.
+		 */
+		OW_COMMON_API String getCurrentWorkingDirectory();
+
 
 	} // end namespace Path
 
