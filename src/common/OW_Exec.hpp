@@ -108,7 +108,7 @@ public:
 	 *    child to get a SIGPIPE which may terminate it.
 	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
 	 *    is sent.
-	 * 3. If the child still hasn't terminated after 3 seconds, a SIGKILL
+	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
 	 *    is sent.
 	 * After calling this function, the pipes to will be closed, and this object
 	 * is basically useless.
@@ -228,7 +228,7 @@ public:
 	 *    child to get a SIGPIPE which may terminate it.
 	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
 	 *    is sent.
-	 * 3. If the child still hasn't terminated after 3 seconds, a SIGKILL
+	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
 	 *    is sent.
 	 *
 	 * @param command

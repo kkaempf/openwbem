@@ -261,33 +261,25 @@ int OW_PopenStreamsImpl::getExitStatus()
 	if (m_pid != -1) // it's set to -1 if we already sucessfully waited for it.
 	{
 		pid_t waitpidrv;
-		waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 		
-		// give it 10 seconds to quit
-		if (waitpidrv == 0)
+		// give it up to 10 seconds to quit
+		for (int i = 0; i < 100 && waitpidrv == 0; ++i)
 		{
-			for (int i = 0; i < 100 && waitpidrv == 0; ++i)
-			{
-				milliSleep(100); // 1/10 of a second
-				waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-			}
+			waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+			milliSleep(100); // 1/10 of a second
 		}
 
 		if (waitpidrv == 0)
 		{
 			if (kill(m_pid, SIGTERM) != -1)
 			{
-				milliSleep(10);
-	
-				waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				
-				if (waitpidrv == 0)
+				// give it up to 10 seconds to quit
+				for (int i = 0; i < 100 && waitpidrv == 0; ++i)
 				{
-					secSleep(3);
-
 					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+					milliSleep(100); // 1/10 of a second
 				}
-
+	
 				if (waitpidrv == 0)
 				{
 					/* process still didn't terminate after a SIGTERM, so we'll
@@ -299,9 +291,13 @@ int OW_PopenStreamsImpl::getExitStatus()
 						OW_THROW(OW_ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 					}
 
-					milliSleep(50);
+					// give the kernel 1 sec to clean it up, otherwise we bail.
+					for (int i = 0; i < 100 && waitpidrv == 0; ++i)
+					{
+						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+						milliSleep(10); // 1/100 of a second
+					}
 
-					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					if (waitpidrv == 0)
 					{
 						OW_THROW(OW_ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
@@ -442,70 +438,84 @@ OW_Exec::safePopen(const OW_Array<OW_String>& command,
 	return retval;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_PopenStreams::OW_PopenStreams()
 	: m_impl(new OW_PopenStreamsImpl)
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_PopenStreams::~OW_PopenStreams()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_Reference<OW_UnnamedPipe> OW_PopenStreams::in() const
 {
 	return m_impl->in();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void OW_PopenStreams::in(OW_UnnamedPipeRef pipe)
 {
 	m_impl->in(pipe);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_UnnamedPipeRef OW_PopenStreams::out() const
 {
 	return m_impl->out();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void OW_PopenStreams::out(OW_UnnamedPipeRef pipe)
 {
 	m_impl->out(pipe);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_UnnamedPipeRef OW_PopenStreams::err() const
 {
 	return m_impl->err();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void OW_PopenStreams::err(OW_UnnamedPipeRef pipe)
 {
 	m_impl->err(pipe);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 pid_t OW_PopenStreams::pid() const
 {
 	return m_impl->pid();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void OW_PopenStreams::pid(pid_t newPid)
 {
 	m_impl->pid(newPid);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 int OW_PopenStreams::getExitStatus()
 {
 	return m_impl->getExitStatus();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 void OW_PopenStreams::setProcessStatus(int ps)
 {
 	m_impl->setProcessStatus(ps);
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_PopenStreams::OW_PopenStreams(const OW_PopenStreams& src)
 	: m_impl(src.m_impl)
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_PopenStreams& OW_PopenStreams::operator=(const OW_PopenStreams& src)
 {
 	m_impl = src.m_impl;
@@ -513,6 +523,7 @@ OW_PopenStreams& OW_PopenStreams::operator=(const OW_PopenStreams& src)
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
 void 
 OW_Exec::executeProcessAndGatherOutput(const OW_Array<OW_String>& command,
 	OW_String& output, int& processstatus,
@@ -530,11 +541,7 @@ OW_Exec::executeProcessAndGatherOutput(const OW_Array<OW_String>& command,
 	}
 }
 
-
-// if timeoutsecs < 0, no timeout will be used
-// if outputlimit < 0, no limit will be set for the bytes to read.
-// the processes status will be stored in processstatus.  That should be evaluated using the WIFEXITED() and WEXITSTATUS() macros.
-// returns ERROR or SUCCESS, TIMEOUT, BUFFERFULL
+/////////////////////////////////////////////////////////////////////////////
 void 
 OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
 {
