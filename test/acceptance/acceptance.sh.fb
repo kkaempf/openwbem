@@ -28,6 +28,7 @@
 #		cimexceptions
 #		namespaces
 #		interop
+#		misc
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -803,6 +804,28 @@ SetupInteropSchema()
 }
 
 #############################################################################
+TestMisc()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		misc >/dev/null 2>&1
+	then
+		return
+	fi
+
+	#RestartDaemon
+
+	URL=$1
+	OUT_FILE=testMisc.out
+
+	echo "Executing misc test suite, saving output in " $RESULTDIR/$OUT_FILE
+	$BUILDDIR/test/acceptance/progs/testMisc $URL $RESULTDIR/testMisc \
+		> $RESULTDIR/$OUT_FILE 2>&1 || \
+		ExitWithFail "TestMisc: testMisc failed with an error.  "
+
+	echo "Testsuite Passed"
+}
+
+#############################################################################
 CoreCheck()
 {
 	CORES=`ls $STAGEDIR/core* 2> /dev/null`
@@ -893,6 +916,9 @@ TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
 
 TestNamespaces "http://test1:pass1@localhost:30926"
 TestNamespaces "ipc://test1:pass1@localhost/owbinary"
+
+TestMisc "http://test1:pass1@localhost:30926"
+TestMisc "ipc://test1:pass1@localhost/owbinary"
 
 TestIndications
 

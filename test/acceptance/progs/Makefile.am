@@ -9,7 +9,8 @@ fakeclient \
 testinstprov \
 testCIMExceptions \
 infiniteClient \
-testNamespaces
+testNamespaces \
+testMisc
 
 
 
@@ -180,6 +181,21 @@ $(CXXBINLINKFLAGS) \
 
 testNamespaces_SOURCES = \
 testNamespaces.cpp
+
+#testMisc
+testMisc_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+testMisc_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testMisc
+
+testMisc_SOURCES = \
+testMisc.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
