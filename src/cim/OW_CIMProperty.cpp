@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2001-3 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_NULLValueException.hpp"
 
 using std::istream;
 using std::ostream;
@@ -236,6 +237,17 @@ OW_CIMProperty::setValue(const OW_CIMValue& val)
 OW_CIMValue
 OW_CIMProperty::getValue() const
 {
+	return m_pdata->m_cimValue;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_CIMProperty::getValueT() const
+{
+	if (!m_pdata->m_cimValue)
+	{
+		OW_THROW(OW_NULLValueException, m_pdata->m_name.c_str());
+	}
 	return m_pdata->m_cimValue;
 }
 

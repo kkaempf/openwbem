@@ -170,9 +170,15 @@ public:
 	void setValue(const OW_CIMValue& val);
 
 	/**
-	 * @return The OW_CIMValue object for this property.
+	 * @return The OW_CIMValue object for this property.  The value may be NULL.
 	 */
 	OW_CIMValue getValue() const;
+
+	/**
+	 * @return The OW_CIMValue object for this property.
+	 * @throws OW_NULLValueException if the value is NULL.
+	 */
+	OW_CIMValue getValueT() const;
 
 	/**
 	 * Set the data type for this property.
