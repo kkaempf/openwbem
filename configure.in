@@ -261,23 +261,21 @@ AC_SUBST(PLATFORMDIR)
 AC_ARG_ENABLE(debug-mode,
 [  --enable-debug-mode     enable debugging mode],
   [
-    AC_DEFINE(DEBUG)
-    AC_DEFINE(CHECK_NULL_REFERENCES)
-    AC_DEFINE(CHECK_ARRAY_INDEXING)
-	 CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W"
-	 CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual"
+	AC_DEFINE(DEBUG)
+	CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W"
+	CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual"
   ],[
     CFLAGS="$PLAT_CFLAGS -DNDEBUG $PLAT_OPTFLAGS"
     CXXFLAGS="$PLAT_CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
   ])
 
 AC_ARG_ENABLE(openslp,
-[  --disable-openslp     disable openslp integration],
-  [
-  ],[
-	 AC_CHECK_HEADERS(slp.h, LIBS="$LIBS -lslp"; OW_HAVE_SLP=1)
-	 AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
-  ])
+[  --disable-openslp     disable openslp integration])
+
+if test "$enable_openslp" != no; then
+	AC_CHECK_HEADERS(slp.h, LIBS="$LIBS -lslp"; OW_HAVE_SLP=1)
+	AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
+fi
 
 AC_ARG_ENABLE(profile-mode,
 [  --enable-profile-mode     enable profiling mode],
@@ -308,16 +306,18 @@ AC_ARG_ENABLE(stack-trace,
   ])
 
 AC_ARG_ENABLE(check-null-references,
-[  --enable-check-null-references     enable checking for NULL references],
-  [
+[  --disable-check-null-references     disable checking for NULL references])
+
+if test "$enable_check_null_references" != no; then
     AC_DEFINE(CHECK_NULL_REFERENCES)
-  ])
+fi
 
 AC_ARG_ENABLE(check-array-indexing,
-[  --enable-check-array-indexing     enable checking valid array indexes],
-  [
+[  --disable-check-array-indexing     disable checking valid array indexes])
+
+if test "$enable_check_array_indexing" != no; then
     AC_DEFINE(CHECK_ARRAY_INDEXING)
-  ])
+fi
 
 AC_ARG_ENABLE(gnu-pth,
 [  --enable-gnu-pth   use pth library],
