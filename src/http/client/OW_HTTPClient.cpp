@@ -556,7 +556,6 @@ void
 OW_HTTPClient::sendHeaders(const OW_String& method,
 	const OW_String& prot)
 {
-	m_ostr << "\r\n";
 	m_ostr << method << " " << m_url.path << " " << prot << "\r\n";
 	for (size_t i = 0; i < m_requestHeadersCommon.size(); i++)
 	{
