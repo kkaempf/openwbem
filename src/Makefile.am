@@ -109,11 +109,16 @@ $(top_builddir)/src/requesthandlers/cimxml/libowrequesthandlercimxml.a \
 \
 $(top_builddir)/src/requesthandlers/binary/libowrequesthandlerbinary.a 
 
+if ENABLE_CMPI
 STATIC_IFC_FILES= \
 $(top_builddir)/src/providerifcs/cpp/libowcppprovifc.a \
 $(top_builddir)/src/providerifcs/cmpi/common/libcmpisupport.a \
 $(top_builddir)/src/providerifcs/cmpi/libcmpiprovifc.a \
 $(top_builddir)/src/providerifcs/npi/common/libnpisupport.a
+else
+STATIC_IFC_FILES= \
+$(top_builddir)/src/providerifcs/cpp/libowcppprovifc.a
+endif
 
 
 STATIC_PROVIDER_FILES= \
