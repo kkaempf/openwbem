@@ -52,7 +52,7 @@ NonRecursiveMutex::NonRecursiveMutex()
 {
 	if (NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
 	{
-		OW_THROW(Assertion, "NonRecursiveMutexImpl::createMutex failed");
+		OW_THROW(AssertionException, "NonRecursiveMutexImpl::createMutex failed");
 	}
 }
 NonRecursiveMutex::~NonRecursiveMutex()
@@ -69,7 +69,7 @@ NonRecursiveMutex::acquire()
 	int rv = NonRecursiveMutexImpl::acquireMutex(m_mutex);
 	if (rv != 0)
 	{
-		OW_THROW(Assertion,
+		OW_THROW(AssertionException,
 			"NonRecursiveMutexImpl::acquireMutex returned with error");
 	}
 }
@@ -79,7 +79,7 @@ NonRecursiveMutex::release()
 	int rc = NonRecursiveMutexImpl::releaseMutex(m_mutex);
 	if (rc != 0)
 	{
-		OW_THROW(Assertion, Format("NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
+		OW_THROW(AssertionException, Format("NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
 	}
 	return true;
 }
@@ -88,7 +88,7 @@ NonRecursiveMutex::conditionPreWait(NonRecursiveMutexLockState& state)
 {
 	if (NonRecursiveMutexImpl::conditionPreWait(m_mutex, state) != 0)
 	{
-		OW_THROW(Assertion, "NonRecursiveMutexImpl::releaseMutex returned with error");
+		OW_THROW(AssertionException, "NonRecursiveMutexImpl::releaseMutex returned with error");
 	}
 }
 void
@@ -96,7 +96,7 @@ NonRecursiveMutex::conditionPostWait(NonRecursiveMutexLockState& state)
 {
 	if (NonRecursiveMutexImpl::conditionPostWait(m_mutex, state) != 0)
 	{
-		OW_THROW(Assertion, "NonRecursiveMutexImpl::releaseMutex returned with error");
+		OW_THROW(AssertionException, "NonRecursiveMutexImpl::releaseMutex returned with error");
 	}
 }
 

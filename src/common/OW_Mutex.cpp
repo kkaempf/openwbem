@@ -45,7 +45,7 @@ Mutex::Mutex()
 {
 	if (MutexImpl::createMutex(m_mutex) != 0)
 	{
-		OW_THROW(Assertion, "MutexImpl::createMutex failed");
+		OW_THROW(AssertionException, "MutexImpl::createMutex failed");
 	}
 }
 Mutex::~Mutex()
@@ -62,7 +62,7 @@ Mutex::acquire()
 	int rv = MutexImpl::acquireMutex(m_mutex);
 	if (rv != 0)
 	{
-		OW_THROW(Assertion,
+		OW_THROW(AssertionException,
 			"MutexImpl::acquireMutex returned with error");
 	}
 }
@@ -71,7 +71,7 @@ Mutex::release()
 {
 	if (MutexImpl::releaseMutex(m_mutex) != 0)
 	{
-		OW_THROW(Assertion, "MutexImpl::releaseMutex returned with error");
+		OW_THROW(AssertionException, "MutexImpl::releaseMutex returned with error");
 	}
 	return true;
 }

@@ -150,7 +150,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			return static_cast<int>(i);
 		}
 	}
-	OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
+	OW_THROW(AssertionException, "Logic error in Select. Didn't find file handle");
 	return Select::SELECT_ERROR;
 }
 #endif	// #else OW_WIN32

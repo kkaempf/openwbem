@@ -129,7 +129,7 @@ Thread::start(const ThreadDoneCallbackRef& cb)
 	ThreadParam* p = new ThreadParam(this, cb, thread_barrier);
 	if (ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
-		OW_THROW(Assertion, "ThreadImpl::createThread failed");
+		OW_THROW(ThreadException, "ThreadImpl::createThread failed");
 	}
 	m_isStarting = false;
 	thread_barrier.wait();
