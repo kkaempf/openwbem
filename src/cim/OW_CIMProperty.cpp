@@ -639,8 +639,18 @@ OW_CIMProperty::hasTrueQualifier(const OW_String& name) const
 	{
 		return false;
 	}
-	// it's okay to compare NULL OW_CIMValues.
-	return q.getValue() == OW_CIMValue(true);
+	OW_CIMValue v = q.getValue();
+	if (!v)
+	{
+		return false;
+	}
+	if (v.getType() != OW_CIMDataType::BOOLEAN)
+	{
+		return false;
+	}
+	OW_Bool b;
+	v.get(b);
+	return b;
 }
 
 
