@@ -4,5 +4,7 @@ else
 PERLDIR=
 endif
 
-SUBDIRS = cpp remote npi ${PERLDIR} cmpi owbi1
+SUBDIRS = cpp remote npi ${PERLDIR} cmpi 
+
+#owbi1
 
