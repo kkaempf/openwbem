@@ -361,7 +361,7 @@ OW_LocalCIMOMHandle::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
 	OW_Bool includeQualifiers,
-	OW_StringArray* propertyList)
+	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
 	OW_CIMServerInstanceWriteLocker iwl(this);

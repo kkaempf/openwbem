@@ -417,7 +417,7 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
 	const OW_CIMInstance& oldInst,
 	OW_Bool includeQualifiers,
-	OW_StringArray* propertyList)
+	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());

@@ -42,6 +42,9 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+
+// TODO: Should we really do a getClass for all the intrinsic indication classes?
+// or should we just create an instance and set the class name?
 											
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
@@ -243,7 +246,7 @@ OW_IndicationRepLayerImpl::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
 	OW_Bool includeQualifiers,
-	OW_StringArray* propertyList,
+	const OW_StringArray* propertyList,
 	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMInstance ciOrig = m_pServer->modifyInstance(ns, modifiedInstance,

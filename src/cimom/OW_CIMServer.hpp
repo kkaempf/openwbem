@@ -468,7 +468,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
-		OW_StringArray* propertyList,
+		const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
 	/**

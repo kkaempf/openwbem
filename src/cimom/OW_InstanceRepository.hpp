@@ -115,7 +115,7 @@ public:
 		const OW_CIMClass& theClass, const OW_CIMInstance& ci,
 		const OW_CIMInstance& oldInst,
 		OW_Bool includeQualifiers,
-		OW_StringArray* propertyList);
+		const OW_StringArray* propertyList);
 
 	/**
 	 * Determines if an instance already exists

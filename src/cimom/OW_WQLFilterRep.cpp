@@ -257,7 +257,7 @@ OW_WQLFilterRep::createInstance(const OW_String&,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_WQLFilterRep::modifyInstance(const OW_String&, const OW_CIMInstance&,
-	OW_Bool, OW_StringArray*, const OW_ACLInfo& /*aclInfo*/)
+	OW_Bool, const OW_StringArray*, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

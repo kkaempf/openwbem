@@ -511,7 +511,7 @@ OW_BinaryCIMOMHandle::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
 	OW_Bool includeQualifiers,
-	OW_StringArray* propertyList)
+	const OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
