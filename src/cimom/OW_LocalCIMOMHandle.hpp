@@ -497,13 +497,17 @@ public:
 	 * @return If successful, the method returns zero or more CIM Classes or
 	 * Instances meeting the requested criteria.
 	 */
-	virtual void references(const OW_CIMObjectPath &path,
+	virtual void references(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
 
-	virtual void referencesClasses(const OW_CIMObjectPath &path,
+	virtual void referencesClasses(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -566,6 +570,7 @@ public:
 	 * criteria.
 	 */
 	virtual void referenceNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
@@ -585,7 +590,8 @@ public:
 	 * specified class and all classes derived from the specified class, that
 	 * match the query string.
 	 */
-	virtual void execQuery(const OW_CIMNameSpace &ns,
+	virtual void execQuery(
+		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String& queryLanguage);
 

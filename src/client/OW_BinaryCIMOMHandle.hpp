@@ -489,13 +489,17 @@ public:
 	 *
 	 * @exception OW_CIMException - as defined for associators method.
 	 */
-	virtual void references(const OW_CIMObjectPath &path,
+	virtual void references(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
 
-	virtual void referencesClasses(const OW_CIMObjectPath &path,
+	virtual void referencesClasses(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -572,7 +576,8 @@ public:
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
-	OW_CIMInstanceEnumeration execQuery(const OW_CIMNameSpace &path,
+	OW_CIMInstanceEnumeration execQuery(
+		const OW_String& ns,
 		const OW_String &query, int wqlLevel);
 
 	/**
@@ -595,7 +600,8 @@ public:
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
-	virtual void execQuery(const OW_CIMNameSpace& ns,
+	virtual void execQuery(
+		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage);
 
@@ -613,6 +619,7 @@ public:
 	 * @exception OW_CIMException As defined for associators method.
 	 */
 	virtual void referenceNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,

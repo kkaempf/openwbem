@@ -292,13 +292,12 @@ int main(int argc, char* argv[])
 
 		OW_HTTPXMLCIMListener hxcl(logger);
 
-		OW_CIMNameSpace path("/root/testsuite");
 		OW_String ns("/root/testsuite");
 
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);
 
-		rch.execQueryE(path, "delete from CIM_IndicationSubscription", "wql2");
+		rch.execQueryE("/root/testsuite", "delete from CIM_IndicationSubscription", "wql2");
 
 
 		OW_Array<OW_String> registrationHandles;

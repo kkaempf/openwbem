@@ -183,14 +183,15 @@ OW_NPIAssociatorProviderProxy::associators(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIAssociatorProviderProxy::references(
-   const OW_ProviderEnvironmentIFCRef &env,
-	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& role,
-	const OW_Bool& includeQualifiers,
-   const OW_Bool& includeClassOrigin,
-	const OW_StringArray *propertyList)
+		const OW_ProviderEnvironmentIFCRef &env,
+		const OW_String& ns,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& role,
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin,
+		const OW_StringArray *propertyList)
 {
     env->getLogger()->logDebug("OW_NPIAssociatorProviderProxy::references()");
 
@@ -207,7 +208,9 @@ OW_NPIAssociatorProviderProxy::references(
         CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
+		OW_CIMObjectPath objectNameWithNS(objectName);
+		objectNameWithNS.setNameSpace(ns);
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
 
         int _plLen = 0;
 
@@ -262,11 +265,12 @@ OW_NPIAssociatorProviderProxy::references(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIAssociatorProviderProxy::referenceNames(
-   const OW_ProviderEnvironmentIFCRef &env,
-	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& role)
+		const OW_ProviderEnvironmentIFCRef &env,
+		const OW_String& ns,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& role)
 {
     env->getLogger()->
         logDebug("OW_NPIAssociatorProviderProxy::referenceNames()");
@@ -284,7 +288,9 @@ OW_NPIAssociatorProviderProxy::referenceNames(
         CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
+		OW_CIMObjectPath objectNameWithNS(objectName);
+		objectNameWithNS.setNameSpace(ns);
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
 
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,

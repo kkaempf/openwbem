@@ -146,6 +146,7 @@ namespace
 
 		virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
@@ -155,10 +156,10 @@ namespace
 			const OW_StringArray* propertyList )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest references called "
-				"assocName = %1, objectName = %2, role = %3, "
-				"includeQualifiers = %4, includeClassOrigin = %5, "
-				"propertyList = %6",
-				assocName.toString(), objectName.toString(), role,
+				"ns = %1, assocName = %2, objectName = %3, role = %4, "
+				"includeQualifiers = %5, includeClassOrigin = %6, "
+				"propertyList = %7",
+				ns, assocName.toString(), objectName.toString(), role,
 				includeQualifiers, includeClassOrigin, propertyList));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
@@ -192,14 +193,15 @@ namespace
 
 		virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& role )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest referenceNames called "
-				"assocName = %1, objectName = %2, role = %3",
-				assocName.toString(), objectName.toString(), role));
+				"ns = %1, assocName = %2, objectName = %3, role = %4",
+				ns, assocName.toString(), objectName.toString(), role));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),

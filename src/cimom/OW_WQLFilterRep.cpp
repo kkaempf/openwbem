@@ -309,6 +309,7 @@ OW_WQLFilterRep::setProperty(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::referenceNames(
+	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMObjectPathResultHandlerIFC&,
 	const OW_String &/*resultClass*/,
@@ -356,6 +357,7 @@ OW_WQLFilterRep::associatorNames(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::references(
+	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_String &/*resultClass*/,
@@ -370,6 +372,7 @@ OW_WQLFilterRep::references(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::referencesClasses(
+	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMClassResultHandlerIFC&,
 	const OW_String &/*resultClass*/,
@@ -383,7 +386,7 @@ OW_WQLFilterRep::referencesClasses(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::execQuery(const OW_CIMNameSpace& /*ns*/,
+OW_WQLFilterRep::execQuery(const OW_String& /*ns*/,
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_String &/*query*/, const OW_String &/*queryLanguage*/,
 	const OW_ACLInfo& /*aclInfo*/)

@@ -591,8 +591,7 @@ deleteAssociations(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("root/testsuite");
-		hdl.execQueryE(path,
+		hdl.execQueryE("root/testsuite",
 			"delete from CIM_SystemComponent", "wql1");
 	}
 	catch (OW_CIMException& e)
@@ -929,12 +928,12 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("root/testsuite", cop,
 				resultClass, role);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
@@ -967,9 +966,9 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("root/testsuite", cop,
 				resultClass, role);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
@@ -1006,12 +1005,12 @@ references(OW_CIMOMHandleIFC& hdl,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.referencesE(cop,
+		OW_CIMInstanceEnumeration enu = hdl.referencesE("root/testsuite", cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
@@ -1057,9 +1056,9 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 
-		OW_CIMClassEnumeration enu = hdl.referencesClassesE(cop,
+		OW_CIMClassEnumeration enu = hdl.referencesClassesE("root/testsuite", cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
@@ -1097,8 +1096,7 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("root/testsuite");
-		OW_CIMInstanceEnumeration cie = hdl.execQueryE(path,
+		OW_CIMInstanceEnumeration cie = hdl.execQueryE("root/testsuite",
 			"select * from EXP_BionicComputerSystem", "wql1");
 		while (cie.hasMoreElements())
 		{

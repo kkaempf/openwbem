@@ -81,6 +81,7 @@ OW_CppAssociatorProviderProxy::associatorNames(
 void
 OW_CppAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
@@ -90,7 +91,7 @@ OW_CppAssociatorProviderProxy::references(
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->references(env, assocName, objectName, result, role,
+	m_pProv->references(env, ns, assocName, objectName, result, role,
 			includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -98,13 +99,14 @@ OW_CppAssociatorProviderProxy::references(
 void
 OW_CppAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& role)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->referenceNames(env, assocName, objectName, result, role);
+	m_pProv->referenceNames(env, ns, assocName, objectName, result, role);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

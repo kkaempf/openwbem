@@ -416,6 +416,7 @@ public:
 		const OW_ACLInfo& aclInfo);
 
 	virtual void referenceNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
@@ -462,19 +463,24 @@ public:
 		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole, const OW_ACLInfo& aclInfo);
 
-	virtual void references(const OW_CIMObjectPath &path,
+	virtual void references(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
 
-	virtual void referencesClasses(const OW_CIMObjectPath &path,
+	virtual void referencesClasses(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);
 
-	virtual void execQuery(const OW_CIMNameSpace& ns,
+	virtual void execQuery(
+		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String &queryLanguage,
 		const OW_ACLInfo& aclInfo);

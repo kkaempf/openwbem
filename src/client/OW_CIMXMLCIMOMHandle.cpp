@@ -1345,10 +1345,12 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& resultClass,
-		const OW_String& role)
+OW_CIMXMLCIMOMHandle::referenceNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& resultClass,
+	const OW_String& role)
 {
 	static const char* const commandName = "ReferenceNames";
 	OW_Array<OW_Param> params;
@@ -1378,17 +1380,19 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 
-	objectPathOp op(result, path.getNameSpace());
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
+	objectPathOp op(result, ns);
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList)
+OW_CIMXMLCIMOMHandle::references(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	if (path.getKeys().size() == 0)
 	{
@@ -1396,17 +1400,19 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 			"references requires an instance path not a class path");
 	}
 
-	referencesCommon(path, &result, 0, resultClass, role, includeQualifiers,
+	referencesCommon(ns, path, &result, 0, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList)
+OW_CIMXMLCIMOMHandle::referencesClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	if (path.getKeys().size() > 0)
 	{
@@ -1414,19 +1420,21 @@ OW_CIMXMLCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
 			"referencesClasses requires a class path not an instance path");
 	}
 
-	referencesCommon(path, 0, &result, resultClass, role, includeQualifiers,
+	referencesCommon(ns, path, 0, &result, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
-		OW_CIMInstanceResultHandlerIFC* iresult,
-		OW_CIMClassResultHandlerIFC* cresult,
-		const OW_String& resultClass,
-		const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList)
+OW_CIMXMLCIMOMHandle::referencesCommon(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC* iresult,
+	OW_CIMClassResultHandlerIFC* cresult,
+	const OW_String& resultClass,
+	const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "References";
 
@@ -1462,21 +1470,23 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 
-	objectWithPathOp op(iresult,cresult,path.getNameSpace());
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
+	objectWithPathOp op(iresult,cresult,ns);
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
-OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+OW_CIMXMLCIMOMHandle::execQuery(
+	const OW_String& ns,
 	const OW_String& query, int wqlLevel)
 {
-	return execQueryE(path, query, OW_String("WQL") + OW_String(wqlLevel));
+	return execQueryE(ns, query, OW_String("WQL") + OW_String(wqlLevel));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+OW_CIMXMLCIMOMHandle::execQuery(
+	const OW_String& ns,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage)
 {
@@ -1487,9 +1497,8 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	params.push_back(OW_Param(XMLP_QUERYLANGUAGE, OW_XMLEscape(queryLanguage)));
 	params.push_back(OW_Param(XMLP_QUERY, OW_XMLEscape(query)));
 
-	OW_CIMObjectPath cop("", path.getNameSpace());
-	objectWithPathOp op(&result, 0, path.getNameSpace());
-	intrinsicMethod(cop.getNameSpace(), commandName, op, params);
+	objectWithPathOp op(&result, 0, ns);
+	intrinsicMethod(ns, commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////

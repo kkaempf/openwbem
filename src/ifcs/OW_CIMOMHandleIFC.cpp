@@ -271,19 +271,21 @@ OW_CIMOMHandleIFC::associatorsClassesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::referenceNamesE(
+	const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass,
 		const OW_String& role)
 {
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
-	referenceNames(path,handler,resultClass,role);
+	referenceNames(ns,path,handler,resultClass,role);
 	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_CIMOMHandleIFC::referencesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass,
 		const OW_String& role,
@@ -293,7 +295,7 @@ OW_CIMOMHandleIFC::referencesE(
 {
 	OW_CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
-	references(path, handler, resultClass, role,
+	references(ns, path, handler, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
@@ -301,6 +303,7 @@ OW_CIMOMHandleIFC::referencesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
 OW_CIMOMHandleIFC::referencesClassesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass,
 		const OW_String& role,
@@ -310,7 +313,7 @@ OW_CIMOMHandleIFC::referencesClassesE(
 {
 	OW_CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
-	referencesClasses(path, handler, resultClass, role,
+	referencesClasses(ns, path, handler, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
@@ -318,7 +321,7 @@ OW_CIMOMHandleIFC::referencesClassesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_CIMOMHandleIFC::execQueryE(
-	const OW_CIMNameSpace& ns,
+	const OW_String& ns,
 	const OW_String& query,
 	const OW_String& queryLanguage)
 {

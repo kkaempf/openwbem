@@ -766,7 +766,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("badNameSpace"), "select * from junk", "wql1");
+		hdl->execQueryE("badNameSpace", "select * from junk", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -778,7 +778,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "select * from junk", "badql");
+		hdl->execQueryE("root/testsuite", "select * from junk", "badql");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -789,7 +789,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_QUERY
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "xxx", "wql1");
+		hdl->execQueryE("root/testsuite", "xxx", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -799,7 +799,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "select * from junk", "wql1");
+		hdl->execQueryE("root/testsuite", "select * from junk", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -848,9 +848,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
+		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->referencesE(cop,"","");
+		hdl->referencesE("badNamespace", cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -865,9 +865,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
+		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->referenceNamesE(cop,"","");
+		hdl->referenceNamesE("badNamespace", cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

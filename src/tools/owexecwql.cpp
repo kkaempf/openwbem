@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 		// end of stuff cut'n'pasted from client driver.
 
 		cout << "Executing query (" << query << ") on server" << endl;
-		OW_CIMInstanceEnumeration cie = rch->execQueryE(OW_CIMNameSpace(ns), query, "wql2");
+		OW_CIMInstanceEnumeration cie = rch->execQueryE(ns, query, "wql2");
 
 		cout << "Got response: " << cie.numberOfElements() << " CIMInstances\n";
 		for (size_t i = 0; cie.hasMoreElements(); ++i)

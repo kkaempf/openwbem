@@ -749,12 +749,14 @@ public:
 	 * @exception OW_CIMException As defined for associators method.
 	 */
 	virtual void referenceNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String()) = 0;
 
 	virtual OW_CIMObjectPathEnumeration referenceNamesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String());
@@ -790,6 +792,7 @@ public:
 	 * @exception OW_CIMException - as defined for associators method.
 	 */
 	virtual void references(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass=OW_String(),
@@ -799,6 +802,7 @@ public:
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMInstanceEnumeration referencesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
@@ -807,6 +811,7 @@ public:
 		const OW_StringArray* propertyList=0);
 
 	virtual void referencesClasses(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& resultClass=OW_String(),
@@ -816,6 +821,7 @@ public:
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMClassEnumeration referencesClassesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
@@ -844,13 +850,13 @@ public:
 	 *		The query specifies a class that does not exist.
 	 */
 	virtual void execQuery(
-		const OW_CIMNameSpace& ns,
+		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query,
 		const OW_String& queryLanguage) = 0;
 
 	virtual OW_CIMInstanceEnumeration execQueryE(
-		const OW_CIMNameSpace& ns,
+		const OW_String& ns,
 		const OW_String& query,
 		const OW_String& queryLanguage);
 	

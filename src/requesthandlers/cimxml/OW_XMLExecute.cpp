@@ -1255,7 +1255,6 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 
 	OW_CIMObjectPath path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
 
 	OW_String resultClass;
 	if (params[1].isSet)
@@ -1264,7 +1263,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	CIMObjectPathXMLOutputter handler(ostr);
-	hdl.referenceNames(path, handler, resultClass, params[2].val.toString());
+	hdl.referenceNames(ns, path, handler, resultClass, params[2].val.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1283,7 +1282,6 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 
 	OW_CIMObjectPath path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
 
 	OW_String resultClass;
 	if (params[1].isSet)
@@ -1311,7 +1309,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
-		hdl.referencesClasses(path, handler, resultClass,
+		hdl.referencesClasses(ns, path, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, pPropList);
 	}
 	else
@@ -1319,7 +1317,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList);
 
-		hdl.references(path, handler, resultClass,
+		hdl.references(ns, path, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, pPropList);
 	}
 }
@@ -1385,7 +1383,7 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 
 	execQueryXMLOutputter handler(ostr, ns);
-	hdl.execQuery(OW_CIMNameSpace(ns), handler, params[1].val.toString(), params[0].val.toString());
+	hdl.execQuery(ns, handler, params[1].val.toString(), params[0].val.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -713,31 +713,37 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::referenceNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass,
 	const OW_String& role)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ReferenceNames", path.getNameSpace());;
+		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_REFNAMES);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, resultClass);
 	OW_BinIfcIO::writeString(strm, role);
 	
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"ReferenceNames", ns);
 
 	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList)
+OW_BinaryCIMOMHandle::references(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	if (path.getKeys().size() == 0)
 	{
@@ -746,9 +752,10 @@ OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
 	}
 
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ReferenceNames", path.getNameSpace());;
+		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, resultClass);
 	OW_BinIfcIO::writeString(strm, role);
@@ -756,18 +763,21 @@ OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
 	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"ReferenceNames", ns);
 	
 	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList)
+OW_BinaryCIMOMHandle::referencesClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMClassResultHandlerIFC& result,
+	const OW_String& resultClass, const OW_String& role,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	if (path.getKeys().size() > 0)
 	{
@@ -775,9 +785,10 @@ OW_BinaryCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
 			"referencesClasses requires a class path not an instance path");
 	}
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ReferenceNames", path.getNameSpace());;
+		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, resultClass);
 	OW_BinIfcIO::writeString(strm, role);
@@ -785,34 +796,38 @@ OW_BinaryCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
 	OW_BinIfcIO::writeStringArray(strm, propertyList);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"ReferenceNames", ns);
 	
 	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
-OW_BinaryCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+OW_BinaryCIMOMHandle::execQuery(
+	const OW_String& ns,
 	const OW_String& query, int wqlLevel)
 {
-	return execQueryE(path, query, OW_String("WQL") + OW_String(wqlLevel));
+	return execQueryE(ns, query, OW_String("WQL") + OW_String(wqlLevel));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+OW_BinaryCIMOMHandle::execQuery(
+	const OW_String& ns,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ExecQuery", path.getNameSpace());
+		"ExecQuery", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_EXECQUERY);
-	OW_BinIfcIO::writeNameSpace(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, query);
 	OW_BinIfcIO::writeString(strm, queryLanguage);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ExecQuery", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"ExecQuery", ns);
 
 	readAndDeliver(in, result);
 }

@@ -124,6 +124,7 @@ OW_SimpleCppAssociatorProviderProxy::associatorNames(
 void
 OW_SimpleCppAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
@@ -132,7 +133,7 @@ OW_SimpleCppAssociatorProviderProxy::references(
 		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
-	(void)assocName;
+	(void)assocName; (void)ns;
 	m_pProv->updateAccessTime();
 	associatorResultFilter proxyresult(result, OW_String(), role, OW_String(),
 		includeQualifiers, includeClassOrigin, propertyList);
@@ -143,6 +144,7 @@ OW_SimpleCppAssociatorProviderProxy::references(
 void
 OW_SimpleCppAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
@@ -150,7 +152,7 @@ OW_SimpleCppAssociatorProviderProxy::referenceNames(
 {
 	m_pProv->updateAccessTime();
 	// TODO: Create a handler to do something with assocName, role
-	(void)assocName; (void)role;
+	(void)assocName; (void)role; (void)ns;
 	m_pProv->referenceNames(env, objectName, result);
 }
 

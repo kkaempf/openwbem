@@ -483,12 +483,12 @@ void referenceNames(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("/root/acltest", cop,
 			"CIM_Component", "");
 
 		if (mode != "r" && mode != "rw")
@@ -508,12 +508,12 @@ void references(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing references() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.referencesE(cop,
+		OW_CIMInstanceEnumeration enu = hdl.referencesE("/root/acltest", cop,
 									"CIM_Component", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")
@@ -533,8 +533,7 @@ void execReadQuery(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing execQuery() (read) ****** " << endl;
 	try
 	{
-		OW_CIMNameSpace path("/root/acltest");
-		hdl.execQueryE(path,
+		hdl.execQueryE("/root/acltest",
 			"select * from EXP_BionicComputerSystem", "wql1");
 		if (mode != "r" && mode != "rw")
 			assert(0);
@@ -553,8 +552,7 @@ void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing execQuery() (write) ****** " << endl;
 	try
 	{
-		OW_CIMNameSpace path("/root/acltest");
-		hdl.execQueryE(path,
+		hdl.execQueryE("/root/acltest",
 			"UPDATE EXP_BionicComputerSystem2 SET OptionalArg=false", "wql2");
 		if (mode != "rw")
 			assert(0);

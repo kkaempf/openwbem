@@ -780,14 +780,14 @@ void
 OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMNameSpace path(OW_BinIfcIO::readNameSpace(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_String query(OW_BinIfcIO::readString(istrm));
 	OW_String queryLang(OW_BinIfcIO::readString(istrm));
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
 	BinaryCIMInstanceWriter handler(ostrm);
-	chdl->execQuery(path, handler, query, queryLang);
+	chdl->execQuery(ns, handler, query, queryLang);
 
 	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
@@ -869,6 +869,7 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String resultClass(OW_BinIfcIO::readString(istrm));
 	OW_String role(OW_BinIfcIO::readString(istrm));
@@ -887,7 +888,7 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 		// class path
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
-		chdl->referencesClasses(op, handler, resultClass,
+		chdl->referencesClasses(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
 		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
@@ -897,7 +898,7 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 		// instance path
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm);
-		chdl->references(op, handler, resultClass,
+		chdl->references(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
 		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
@@ -909,6 +910,7 @@ void
 OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String resultClass(OW_BinIfcIO::readString(istrm));
 	OW_String role(OW_BinIfcIO::readString(istrm));
@@ -916,7 +918,7 @@ OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm);
-	chdl->referenceNames(op, handler, resultClass, role);
+	chdl->referenceNames(ns, op, handler, resultClass, role);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 }

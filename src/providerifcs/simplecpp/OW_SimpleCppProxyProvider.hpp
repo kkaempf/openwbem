@@ -70,6 +70,7 @@ public:
 
 	virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
@@ -80,6 +81,7 @@ public:
 
 	virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,

@@ -367,43 +367,50 @@ OW_LocalCIMOMHandle::associatorsClasses(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::referenceNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->referenceNames(path, result, resultClass, role, m_aclInfo);
+	m_pServer->referenceNames(ns, path, result, resultClass, role, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::references(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::references(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->references(path, result, resultClass, role,
+	m_pServer->references(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::referencesClasses(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::referencesClasses(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->referencesClasses(path, result, resultClass, role,
+	m_pServer->referencesClasses(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::execQuery(const OW_CIMNameSpace& ns,
+OW_LocalCIMOMHandle::execQuery(
+	const OW_String& ns,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query,
 	const OW_String& queryLanguage)

@@ -544,12 +544,14 @@ public:
 		const OW_ACLInfo& aclInfo);
 
 	virtual void referenceNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role, const OW_ACLInfo& aclInfo);
 
 	virtual void references(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass,
@@ -558,6 +560,7 @@ public:
 		const OW_ACLInfo& aclInfo);
 	
 	virtual void referencesClasses(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& resultClass,
@@ -577,7 +580,8 @@ public:
 	 *		CIM_ERR_FAILED
 	 *
 	 */
-	virtual void execQuery(const OW_CIMNameSpace& ns,
+	virtual void execQuery(
+		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_ACLInfo& aclInfo);
@@ -650,7 +654,9 @@ private:
 		OW_CIMObjectPathResultHandlerIFC* popresult,
 		OW_CIMClassResultHandlerIFC* pcresult);
 
-	void _commonReferences(const OW_CIMObjectPath& path,
+	void _commonReferences(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& resultClass, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,

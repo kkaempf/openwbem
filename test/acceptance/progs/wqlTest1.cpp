@@ -24,8 +24,7 @@ OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int 
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << ": " << query << endl;
-	OW_CIMNameSpace path("/root/testsuite");
-	OW_CIMInstanceEnumeration cie = rch->execQueryE(path, query, "wql2");
+	OW_CIMInstanceEnumeration cie = rch->execQueryE("/root/testsuite", query, "wql2");
 	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
 	OW_CIMInstanceArray cia;
