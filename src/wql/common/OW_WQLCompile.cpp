@@ -247,7 +247,6 @@ void WQLCompile::compile(const WQLSelectStatement * wqs)
 }
 bool WQLCompile::evaluate(const WQLPropertySource& source) const
 {
-	bool b = false;
 	WQLOperand lhs, rhs;
 	UInt32 tableauSize = _tableau.size();
 	if (tableauSize == 0)
@@ -257,7 +256,8 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 	for (UInt32 i = 0; i < tableauSize; i++)
 	{
 		TableauRow tr = _tableau[i];
-		for (UInt32 j=0,m = tr.size(); j < m; j++)
+		bool b = true;
+		for (UInt32 j=0,m = tr.size(); b && j < m; j++)
 		{
 			if (tr[j].op == WQL_ISA)
 			{
@@ -283,19 +283,11 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 				{
 					OW_THROW(TypeMismatchException, Format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
 				}
-				if (!_Evaluate(lhs, rhs, tr[j].op))
-				{
-					b = false;
-					break;
-				}
-				else
-				{
-					b = true;
-				}
+				b = _Evaluate(lhs, rhs, tr[j].op);
 			}
 		}
 
-		if (b) 
+		if (b)
 		{
 			return true;
 		}
