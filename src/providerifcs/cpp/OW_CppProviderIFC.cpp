@@ -632,7 +632,7 @@ CppProviderIFC::getProvider(
 	if (initP == initializeProvider)
 	{
 		env->getLogger()->logDebug(Format("C++ provider ifc calling initialize"
-			" for provider %2", provId));
+			" for provider %1", provId));
 
 		pProv->initialize(env);	// Let provider initialize itself
 
