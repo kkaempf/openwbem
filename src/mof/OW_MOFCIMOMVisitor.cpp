@@ -1033,11 +1033,11 @@ void CIMOMVisitor::VisitConstantValueNullValue( const ConstantValueNullValue * )
 {
 	m_curValue.setNull();
 }
-CIMDataType CIMOMVisitor::getQualifierDataType(const String& qualName, const lineInfo& li)
+CIMDataType CIMOMVisitor::getQualifierDataType(const String& qualName, const LineInfo& li)
 {
 	return getQualifierType(qualName, li).getDataType();
 }
-CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const lineInfo& li)
+CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const LineInfo& li)
 {
 	String lcqualName = qualName;
 	lcqualName.toLowerCase();
@@ -1051,7 +1051,7 @@ CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const li
 	}
 	return qt;
 }
-CIMClass CIMOMVisitor::getClass(const String& className, const lineInfo& li)
+CIMClass CIMOMVisitor::getClass(const String& className, const LineInfo& li)
 {
 	String lcclassName = className;
 	lcclassName.toLowerCase();
@@ -1065,7 +1065,7 @@ CIMClass CIMOMVisitor::getClass(const String& className, const lineInfo& li)
 	}
 	return c;
 }
-void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
+void CIMOMVisitor::CIMOMcreateClass(const LineInfo& li)
 {
 	try
 	{
@@ -1110,7 +1110,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		}
 	}
 }
-void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
+void CIMOMVisitor::CIMOMsetQualifierType(const LineInfo& li)
 {
 	try
 	{
@@ -1142,7 +1142,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 }
-void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
+void CIMOMVisitor::CIMOMcreateInstance(const LineInfo& li)
 {
 	CIMObjectPath cop(m_namespace, m_curInstance);
 	theErrorHandler->progressMessage(Format("Processing Instance: %1", cop.toString()).c_str(), li);
@@ -1186,7 +1186,7 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 		}
 	}
 }
-CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, const lineInfo& li)
+CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, const LineInfo& li)
 {
 	try
 	{
@@ -1213,7 +1213,7 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 	}
 	return CIMQualifierType();
 }
-CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const lineInfo& li)
+CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const LineInfo& li)
 {
 	try
 	{
@@ -1241,7 +1241,7 @@ CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const lineInfo& li
 	return CIMClass();
 }
 
-void CIMOMVisitor::CIMOMcreateNamespace(const lineInfo& li)
+void CIMOMVisitor::CIMOMcreateNamespace(const LineInfo& li)
 {
 	// don't bother catching exceptions here.  This function is only called if
 	// the namespace needs to exist.  If we can't create the namespace, that's

@@ -46,6 +46,9 @@
 #pragma warning (disable: 4251)
 #endif
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 
@@ -61,7 +64,7 @@ public:
 class OW_MOF_API Flavor
 {
 public:
-	Flavor( const String *pNewFlavor, const lineInfo& li )
+	Flavor( const String *pNewFlavor, const LineInfo& li )
 	: pFlavor(pNewFlavor)
 	, theLineInfo(li)
 	{}
@@ -70,7 +73,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitFlavor( this ); }
 
 	AutoPtr< const String > pFlavor;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API QualifierParameter
 {
@@ -106,7 +109,7 @@ class OW_MOF_API QualifierParameterArrayInitializer : public QualifierParameter
 public:
 	QualifierParameterArrayInitializer(
 		const ArrayInitializer* pNewArrayInitializer,
-		const lineInfo& li )
+		const LineInfo& li )
 		: pArrayInitializer(pNewArrayInitializer)
 		, theLineInfo(li)
 	{}
@@ -117,13 +120,13 @@ public:
 	}
 	
 	AutoPtr< const ArrayInitializer > pArrayInitializer;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API QualifierParameterConstantValue : public QualifierParameter
 {
 public:
 	QualifierParameterConstantValue( const ConstantValue* pNewConstantValue,
-		const lineInfo& li )
+		const LineInfo& li )
 		: pConstantValue(pNewConstantValue)
 		, theLineInfo(li)
 	{}
@@ -134,7 +137,7 @@ public:
 	}
 	
 	AutoPtr< const ConstantValue > pConstantValue;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API QualifierName
 {
@@ -152,7 +155,7 @@ public:
 	Qualifier( const QualifierName* pNewQualifierName,
 		const QualifierParameter* pNewQualifierParameter,
 		List< Flavor * >* pNewFlavor,
-		const lineInfo& li )
+		const LineInfo& li )
 		: pQualifierName(pNewQualifierName)
 		, pQualifierParameter(pNewQualifierParameter)
 		, pFlavor(pNewFlavor)
@@ -171,7 +174,7 @@ public:
 	AutoPtr< const QualifierName > pQualifierName;
 	AutoPtr< const QualifierParameter > pQualifierParameter;
 	AutoPtr< List< Flavor * > > pFlavor;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API DefaultValue
 {
@@ -229,14 +232,14 @@ public:
 class OW_MOF_API AliasIdentifier
 {
 public:
-	AliasIdentifier( const String* pNewAliasIdentifier, lineInfo li )
+	AliasIdentifier( const String* pNewAliasIdentifier, LineInfo li )
 		: pAliasIdentifier(pNewAliasIdentifier)
 		, theLineInfo(li)
 	{}
 	virtual ~AliasIdentifier(){}
 	void Accept( Visitor *pV ) const { pV->VisitAliasIdentifier( this ); }
 	AutoPtr< const String > pAliasIdentifier;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API Alias
 {
@@ -256,7 +259,7 @@ public:
 		const ClassName* pNewClassName,
 		const Alias* pNewAlias,
 		List< ValueInitializer * >* pNewValueInitializer,
-		const lineInfo& li)
+		const LineInfo& li)
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
 		, pAlias(pNewAlias)
@@ -282,7 +285,7 @@ public:
 	AutoPtr< const ClassName > pClassName;
 	AutoPtr< const Alias > pAlias;
 	AutoPtr< List< ValueInitializer * > > pValueInitializer;
-	 lineInfo theLineInfo;
+	 LineInfo theLineInfo;
 };
 class OW_MOF_API DefaultFlavor
 {
@@ -305,14 +308,14 @@ public:
 class OW_MOF_API MetaElement
 {
 public:
-	MetaElement( const String* pNewMetaElement, const lineInfo& li )
+	MetaElement( const String* pNewMetaElement, const LineInfo& li )
 		: pMetaElement(pNewMetaElement)
 		, theLineInfo(li)
 	{}
 	virtual ~MetaElement(){}
 	void Accept( Visitor *pV ) const { pV->VisitMetaElement( this ); }
 	AutoPtr< const String > pMetaElement;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API Scope
 {
@@ -384,7 +387,7 @@ public:
 		const QualifierType* pNewQualifierType,
 		const Scope* pNewScope,
 		const DefaultFlavor* pNewDefaultFlavor,
-		const lineInfo& li)
+		const LineInfo& li)
 		: pQualifierName(pNewQualifierName)
 		, pQualifierType(pNewQualifierType)
 		, pScope(pNewScope)
@@ -397,7 +400,7 @@ public:
 	AutoPtr< const QualifierType > pQualifierType;
 	AutoPtr< const Scope > pScope;
 	AutoPtr< const DefaultFlavor > pDefaultFlavor;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API ReferenceName
 {
@@ -783,7 +786,7 @@ public:
 		const PropertyName* pNewPropertyName,
 		const Array* pNewArray,
 		const DefaultValue* pNewDefaultValue,
-		const lineInfo& li)
+		const LineInfo& li)
 		: pQualifier(pNewQualifier)
 		, pDataType(pNewDataType)
 		, pPropertyName(pNewPropertyName)
@@ -805,7 +808,7 @@ public:
 	AutoPtr< const PropertyName > pPropertyName;
 	AutoPtr< const Array > pArray;
 	AutoPtr< const DefaultValue > pDefaultValue;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API AssociationFeature
 {
@@ -900,7 +903,7 @@ public:
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
 		List< ClassFeature * >* pNewClassFeature,
-		const lineInfo& li)
+		const LineInfo& li)
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
 		, pAlias(pNewAlias)
@@ -928,7 +931,7 @@ public:
 	AutoPtr< const Alias > pAlias;
 	AutoPtr< const SuperClass > pSuperClass;
 	AutoPtr< List< ClassFeature * > > pClassFeature;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API AssocDeclaration
 {
@@ -939,7 +942,7 @@ public:
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
 		List< AssociationFeature * >* pNewAssociationFeature,
-		const lineInfo& li )
+		const LineInfo& li )
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
 		, pAlias(pNewAlias)
@@ -967,7 +970,7 @@ public:
 	AutoPtr< const Alias > pAlias;
 	AutoPtr< const SuperClass > pSuperClass;
 	AutoPtr< List< AssociationFeature * > > pAssociationFeature;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API ClassDeclaration
 {
@@ -978,7 +981,7 @@ public:
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
 		List< ClassFeature * >* pNewClassFeature,
-		const lineInfo& li )
+		const LineInfo& li )
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
 		, pAlias(pNewAlias)
@@ -1006,7 +1009,7 @@ public:
 	AutoPtr< const Alias > pAlias;
 	AutoPtr< const SuperClass > pSuperClass;
 	AutoPtr< List< ClassFeature * > > pClassFeature;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API PragmaParameter
 {
@@ -1034,7 +1037,7 @@ public:
 	CompilerDirective(
 		const PragmaName* pNewPragmaName,
 		const PragmaParameter* pNewPragmaParameter,
-		const lineInfo& li)
+		const LineInfo& li)
 		: pPragmaName(pNewPragmaName)
 		, pPragmaParameter(pNewPragmaParameter)
 		, theLineInfo(li)
@@ -1044,7 +1047,7 @@ public:
 	
 	AutoPtr< const PragmaName > pPragmaName;
 	AutoPtr< const PragmaParameter > pPragmaParameter;
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 };
 class OW_MOF_API MOFProduction {
 public:

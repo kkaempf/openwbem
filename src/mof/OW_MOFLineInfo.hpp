@@ -43,15 +43,17 @@ namespace OpenWBEM
 namespace MOF
 {
 
-struct OW_MOF_API lineInfo
+struct OW_MOF_API LineInfo
 {
-	lineInfo()
+	LineInfo()
 		: filename(), lineNum(1) {}
-	lineInfo( const String& _filename, const long _linenum )
+	LineInfo( const String& _filename, const long _linenum )
 		: filename(_filename), lineNum(_linenum) {}
 	String filename;
 	long lineNum;
 };
+
+typedef LineInfo lineInfo OW_DEPRECATED;
 
 } // end namespace MOF
 } // end namespace OpenWBEM

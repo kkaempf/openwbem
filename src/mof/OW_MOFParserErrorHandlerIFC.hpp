@@ -54,7 +54,7 @@ public:
 
 	ParserErrorHandlerIFC();
 	virtual ~ParserErrorHandlerIFC();
-	void fatalError( const char* error, const lineInfo& li );
+	void fatalError( const char* error, const LineInfo& li );
 
 	enum EParserAction
 	{
@@ -62,13 +62,13 @@ public:
 		E_IGNORE_ACTION
 	};
 
-	void recoverableError( const char* error, const lineInfo& li );
-	void progressMessage( const char* message, const lineInfo& li );
+	void recoverableError( const char* error, const LineInfo& li );
+	void progressMessage( const char* message, const LineInfo& li );
 	long errorCount();
 protected:
-	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
-	virtual EParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
-	virtual void doProgressMessage( const char* message, const lineInfo& li ) = 0;
+	virtual void doFatalError( const char* error, const LineInfo& li ) = 0;
+	virtual EParserAction doRecoverableError( const char* error, const LineInfo & li ) = 0;
+	virtual void doProgressMessage( const char* message, const LineInfo& li ) = 0;
 private:
 	long m_errorCount;
 };

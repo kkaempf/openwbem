@@ -95,16 +95,16 @@ public:
 	TheErrorHandler() : ParserErrorHandlerIFC() {}
 	virtual ~TheErrorHandler(){}
 protected:
-	virtual void doFatalError(const char *error, const lineInfo& li )
+	virtual void doFatalError(const char *error, const LineInfo& li )
 	{
 		cerr << "Fatal error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
 	}
-	virtual EParserAction doRecoverableError(const char *error, const lineInfo& li )
+	virtual EParserAction doRecoverableError(const char *error, const LineInfo& li )
 	{
 		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
 		return E_IGNORE_ACTION;
 	}
-	virtual void doProgressMessage( const char* message, const lineInfo& li )
+	virtual void doProgressMessage( const char* message, const LineInfo& li )
 	{
 		cout << "File: " << li.filename << " Line: " << li.lineNum << ": " << message << endl;
 	}

@@ -72,7 +72,7 @@ Compiler::~Compiler()
 }
 long Compiler::compile( const String& filename )
 {
-	theLineInfo = lineInfo(filename,1);
+	theLineInfo = LineInfo(filename,1);
 	try
 	{
 		try
@@ -91,12 +91,12 @@ long Compiler::compile( const String& filename )
 				owmofin = fopen(filename.c_str(), "r");
 				if (!owmofin)
 				{
-					theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
+					theErrorHandler->fatalError("Unable to open file", LineInfo(filename, 0));
 					return 1;
 				}
 			}
 			theErrorHandler->progressMessage("Starting parsing",
-					lineInfo(filename, 0));
+					LineInfo(filename, 0));
 			#ifdef YYOW_DEBUG
 			owmofdebug = 1;
 			#endif
@@ -149,7 +149,7 @@ namespace {
 long Compiler::compileString( const String& mof )
 {
 	String filename = "string";
-	theLineInfo = lineInfo(filename,1);
+	theLineInfo = LineInfo(filename,1);
 	try
 	{
 		try
@@ -157,7 +157,7 @@ long Compiler::compileString( const String& mof )
 			YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
 			owmofBufferDeleter deleter(buf);
 			theErrorHandler->progressMessage("Starting parsing",
-					lineInfo(filename, 0));
+					LineInfo(filename, 0));
 			#ifdef YYOW_DEBUG
 			owmofdebug = 1;
 			#endif
@@ -173,15 +173,15 @@ long Compiler::compileString( const String& mof )
 		}
 		catch (AssertionException& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e).c_str(), LineInfo("(none)", 0));
 		}
 		catch (Exception& e)
 		{
-			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "ERROR: %1", e).c_str(), LineInfo("(none)", 0));
 		}
 		catch (std::exception& e)
 		{
-			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+			theErrorHandler->fatalError(Format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), LineInfo("(none)", 0));
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -190,7 +190,7 @@ long Compiler::compileString( const String& mof )
 		}
 		catch(...)
 		{
-			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", LineInfo("(none)", 0));
 		}
 	}
 	catch (const ParseFatalErrorException&)
@@ -448,15 +448,15 @@ private:
 class NULLErrHandler : public ParserErrorHandlerIFC
 {
 protected:
-	virtual void doProgressMessage(const char *message, const lineInfo &li)
+	virtual void doProgressMessage(const char *message, const LineInfo &li)
 	{
 		warnings.push_back(message);
 	}
-	virtual void doFatalError(const char *error, const lineInfo &li)
+	virtual void doFatalError(const char *error, const LineInfo &li)
 	{
 		errors.push_back(error);
 	}
-	virtual EParserAction doRecoverableError(const char *error, const lineInfo &li)
+	virtual EParserAction doRecoverableError(const char *error, const LineInfo &li)
 	{
 		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT_ACTION;

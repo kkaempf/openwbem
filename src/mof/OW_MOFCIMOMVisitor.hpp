@@ -53,13 +53,16 @@
 #include "OW_RepositoryCIMOMHandle.hpp"
 #include "OW_MOFCompiler.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 
 namespace MOF
 {
 
-struct lineInfo;
+struct LineInfo;
 class OW_MOF_API CIMOMVisitor : public Visitor
 {
 public:
@@ -177,8 +180,8 @@ private:
 	String m_sourceType;
 	
 	Cache<CIMQualifierType> m_dataTypeCache;
-	CIMDataType getQualifierDataType(const String& qualName, const lineInfo& li);
-	CIMQualifierType getQualifierType(const String& qualName, const lineInfo& li);
+	CIMDataType getQualifierDataType(const String& qualName, const LineInfo& li);
+	CIMQualifierType getQualifierType(const String& qualName, const LineInfo& li);
 
 	Cache<CIMClass> m_classCache;
 
@@ -186,17 +189,17 @@ private:
 #pragma warning (pop)
 #endif
 
-	CIMClass getClass(const String& className, const lineInfo& li);
+	CIMClass getClass(const String& className, const LineInfo& li);
 	
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 	
 	// Functions that call into the remote cimom handle
-	CIMClass CIMOMgetClass(const String& className, const lineInfo& li);
-	void CIMOMcreateClass(const lineInfo& li);
-	void CIMOMsetQualifierType(const lineInfo& li);
-	void CIMOMcreateInstance(const lineInfo& li);
-	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const lineInfo& li);
-	void CIMOMcreateNamespace(const lineInfo& li);
+	CIMClass CIMOMgetClass(const String& className, const LineInfo& li);
+	void CIMOMcreateClass(const LineInfo& li);
+	void CIMOMsetQualifierType(const LineInfo& li);
+	void CIMOMcreateInstance(const LineInfo& li);
+	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const LineInfo& li);
+	void CIMOMcreateNamespace(const LineInfo& li);
 	
 };
 

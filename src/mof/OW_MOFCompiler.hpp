@@ -118,7 +118,7 @@ public:
 	// This variable is only for convenience for the lexer and parser.
 	// After parsing is complete, it should not be used.  The filename and
 	// line numbers are stored in the AST.
-	lineInfo theLineInfo;
+	LineInfo theLineInfo;
 
 	// Needed by the code to implement includes
 	enum
@@ -129,7 +129,7 @@ public:
 	struct include_t
 	{
 		YY_BUFFER_STATE owmofBufferState;
-		lineInfo theLineInfo;
+		LineInfo theLineInfo;
 	};
 
 	include_t include_stack[E_MAX_INCLUDE_DEPTH];

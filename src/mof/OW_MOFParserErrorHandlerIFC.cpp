@@ -57,21 +57,21 @@ ParserErrorHandlerIFC::errorCount()
 	return m_errorCount; 
 }
 /////////////////////////////////////////////////////////////////////////////// 
-void ParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
+void ParserErrorHandlerIFC::fatalError( const char* error, const LineInfo& li )
 {
 	++m_errorCount;
 	doFatalError(error,li);
 	OW_THROW(ParseFatalErrorException, "");
 }
 /////////////////////////////////////////////////////////////////////////////// 
-void ParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
+void ParserErrorHandlerIFC::recoverableError( const char* error, const LineInfo& li )
 {
 	++m_errorCount;
 	if ( doRecoverableError(error,li) == E_ABORT_ACTION )
 		OW_THROW(ParseFatalErrorException, "");
 }
 /////////////////////////////////////////////////////////////////////////////// 
-void ParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
+void ParserErrorHandlerIFC::progressMessage( const char* message, const LineInfo& li )
 {
 	doProgressMessage( message, li );
 }

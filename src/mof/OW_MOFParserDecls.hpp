@@ -38,6 +38,9 @@
 #include "OW_Exception.hpp"
 #include <stdio.h>
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 extern int owmofdebug;
 extern int owmofparse(void *context);
 extern FILE* owmofin;
