@@ -319,13 +319,15 @@ OW_LocalCIMOMHandle::setProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::associatorNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->associatorNames(path, result, assocClass, resultClass, role,
+	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
 		resultRole, m_aclInfo);
 }
 

@@ -338,6 +338,7 @@ OW_WQLFilterRep::invokeMethod(const OW_String&, const OW_CIMObjectPath &/*name*/
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::associatorNames(
+	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMObjectPathResultHandlerIFC&,
 	const OW_String &/*assocClass*/,

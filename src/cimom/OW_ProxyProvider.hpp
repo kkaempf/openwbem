@@ -72,6 +72,7 @@ public:
 
 	virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
@@ -79,7 +80,7 @@ public:
 			const OW_String& role,
 			const OW_String& resultRole)
 	{
-		m_pProv->associatorNames(env,assocName,objectName,result,resultClass,
+		m_pProv->associatorNames(env,ns,assocName,objectName,result,resultClass,
 			role,resultRole);
 	}
 

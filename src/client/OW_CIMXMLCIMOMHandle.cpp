@@ -1138,10 +1138,12 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& assocClass, const OW_String& resultClass,
-				const OW_String& role, const OW_String& resultRole)
+OW_CIMXMLCIMOMHandle::associatorNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole)
 {
 	static const char* const commandName = "AssociatorNames";
 
@@ -1183,8 +1185,8 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 		"\"/></IPARAMVALUE>";
 	}
 
-	objectPathOp op(result, path.getNameSpace());
-	intrinsicMethod(path.getNameSpace(), commandName, op, params,
+	objectPathOp op(result, ns);
+	intrinsicMethod(ns, commandName, op, params,
 		extra.toString());
 }
 

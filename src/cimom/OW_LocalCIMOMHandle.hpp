@@ -544,6 +544,7 @@ public:
 	 *				criteria.
 	 */
 	virtual void associatorNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,

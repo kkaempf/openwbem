@@ -614,22 +614,26 @@ OW_BinaryCIMOMHandle::setProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& assocClass, const OW_String& resultClass,
-				const OW_String& role, const OW_String& resultRole)
+OW_BinaryCIMOMHandle::associatorNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"AssociatorNames", path.getNameSpace());;
+		"AssociatorNames", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ASSOCNAMES);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, assocClass);
 	OW_BinIfcIO::writeString(strm, resultClass);
 	OW_BinIfcIO::writeString(strm, role);
 	OW_BinIfcIO::writeString(strm, resultRole);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "AssociatorNames", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"AssociatorNames", ns);
 
 	readAndDeliver(in, result);
 }

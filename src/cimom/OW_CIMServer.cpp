@@ -2295,7 +2295,9 @@ OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
+OW_CIMServer::associatorNames(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -2304,7 +2306,9 @@ OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path.getNameSpace(), aclInfo);
 
-	_commonAssociators(path, assocClass, resultClass, role, resultRole,
+	OW_CIMObjectPath pathWithNS(path);
+	pathWithNS.setNameSpace(ns);
+	_commonAssociators(pathWithNS, assocClass, resultClass, role, resultRole,
 		false, false, 0, 0, &result, 0, aclInfo);
 }
 
@@ -2702,7 +2706,8 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
+OW_CIMServer::_commonAssociators(
+	const OW_CIMObjectPath& path,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -2832,6 +2837,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 		else if (popresult != 0)
 		{
 			assocP->associatorNames(createProvEnvRef(real_ch),
+				path.getNameSpace(),
 				assocClassPath, path, *popresult, resultClass, role, resultRole);
 		}
 		else
@@ -2945,7 +2951,8 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_staticAssociatorsClass(const OW_CIMObjectPath& path,
+OW_CIMServer::_staticAssociatorsClass(
+	const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* assocClassNames,
 	const OW_SortedVectorSet<OW_String>* resultClasses,
 	const OW_String& role, const OW_String& resultRole,
