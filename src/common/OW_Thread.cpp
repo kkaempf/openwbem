@@ -46,7 +46,7 @@ DEFINE_EXCEPTION(Thread);
 class OW_RunnableThread : public OW_Thread
 {
 public:
-	OW_RunnableThread(OW_RunnableRef theRunnable) :
+	OW_RunnableThread(const OW_RunnableRef& theRunnable) :
 		OW_Thread(false), m_runnable(theRunnable)
 	{
 		setSelfDelete(true);
@@ -144,12 +144,12 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
 
-	// wait until the thread moves out of the Starting state
-	OW_NonRecursiveMutexLock l(m_stateMtx);
-	while(m_state == Starting)
-	{
-		m_stateCond.wait(l);
-	}
+	// can't do this because the thread may already be deleted. wait until the thread moves out of the Starting state
+	//OW_NonRecursiveMutexLock l(m_stateMtx);
+	//while(m_state == Starting)
+	//{
+	//	m_stateCond.wait(l);
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -283,5 +283,10 @@ OW_Bool OW_Thread::isRunning()
 {
 	OW_NonRecursiveMutexLock l(m_stateMtx);
 	return m_state == Running;
+}
+
+//////////////////////////////////////////////////////////////////////
+OW_Runnable::~OW_Runnable()
+{
 }
 

@@ -77,9 +77,7 @@ DECLARE_EXCEPTION(Thread);
 class OW_Runnable
 {
 public:
-	virtual ~OW_Runnable()
-	{
-	}
+	virtual ~OW_Runnable();
 	virtual void run() = 0;
 };
 
