@@ -33,6 +33,7 @@
 #include "OW_XMLParserCore.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_TempFileStream.hpp"
+#include "OW_XMLUnescape.hpp"
 
 #ifdef OW_HAVE_ISTREAM
 #include <istream>
@@ -75,20 +76,24 @@ void parse(istream& istr, SAXDocumentHandler& docHandler, SAXErrorHandler& errHa
 				case XMLToken::XML_DECLARATION:
 					break;
 				case XMLToken::START_TAG:
+					for (size_t i = 0; i < entry.attributeCount; ++i)
+					{						  
+						entry.attributes[i].value = XMLUnescape(entry.attributes[i].value.c_str(), entry.attributes[i].value.length());
+					}
 					docHandler.startElement(entry);
 					break;
 				case XMLToken::END_TAG:
-					docHandler.endElement(entry.text);
+					docHandler.endElement(XMLUnescape(entry.text.c_str(), entry.text.length()));
 					break;
 				case XMLToken::COMMENT:
 					break;
 				case XMLToken::CDATA:
-					docHandler.characters(entry.text);
+					docHandler.characters(entry.text); // cdata isn't escaped
 					break;
 				case XMLToken::DOCTYPE:
 					break;
 				case XMLToken::CONTENT:
-					docHandler.characters(entry.text);
+					docHandler.characters(XMLUnescape(entry.text.c_str(), entry.text.length()));
 					break;
 				default:
 					break;

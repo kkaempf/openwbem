@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_XMLParserDOM.hpp"
 #include "OW_XMLParserSAX.hpp"
-#include "OW_XMLUnescape.hpp"
 #include "OW_XMLNode.hpp"
 #include "OW_XMLParserCore.hpp" // for XMLToken
 #include "OW_XMLParseException.hpp"
@@ -60,7 +59,7 @@ public:
 		for (unsigned int index = 0; index < len; index++)
 		{
 			String nodeName = entry.attributes[index].name.toString();
-			String nodeValue = XMLUnescape(entry.attributes[index].value.c_str(), entry.attributes[index].value.length());
+			String nodeValue = entry.attributes[index].value.toString();
 	
 			XMLAttribute newAttribute(nodeName, nodeValue);
 			newAttrArray.append(newAttribute);
@@ -102,7 +101,7 @@ public:
 			XMLNode curNode = m_nodeArray[m_nodeArray.size() - 1];
 			if(curNode != 0)
 			{
-				String utxt = XMLUnescape(chars.c_str(), chars.length());
+				String utxt = chars.toString();
 				curNode.appendText(utxt);
 			}
 		}
