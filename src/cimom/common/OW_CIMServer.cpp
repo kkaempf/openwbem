@@ -1675,8 +1675,8 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_,
 	catch (const NoSuchProviderException& e)
 	{
 		// This will only happen if the provider qualifier is incorrect
-		OW_THROWCIMMSG(CIMException::FAILED,
-			Format("Invalid provider: %1", e.getMessage()).c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED,
+			Format("Invalid provider: %1", e.getMessage()).c_str(), e);
 	}
 	return instancep;
 }
@@ -1692,8 +1692,8 @@ CIMServer::_getSecondaryInstanceProviders(const String& ns, const CIMName& class
 	catch (const NoSuchProviderException& e)
 	{
 		// This will only happen if the provider qualifier is incorrect
-		OW_THROWCIMMSG(CIMException::FAILED,
-			Format("Invalid provider: %1", e.getMessage()).c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED,
+			Format("Invalid provider: %1", e.getMessage()).c_str(), e);
 	}
 	return rval;
 }
@@ -1720,8 +1720,8 @@ CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_, Operati
 		catch (const NoSuchProviderException& e)
 		{
 			// This will only happen if the provider qualifier is incorrect
-			OW_THROWCIMMSG(CIMException::FAILED,
-				Format("Invalid provider: %1", e.getMessage()).c_str());
+			OW_THROWCIMMSG_SUBEX(CIMException::FAILED,
+				Format("Invalid provider: %1", e.getMessage()).c_str(), e);
 		}
 	}
 	return ap;

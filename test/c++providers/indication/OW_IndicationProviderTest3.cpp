@@ -289,7 +289,7 @@ public:
 		}
 		catch (Exception& e)
 		{
-			OW_THROWCIMMSG(CIMException::NOT_FOUND, "Invalid DeviceID property");
+			OW_THROWCIMMSG_SUBEX(CIMException::NOT_FOUND, "Invalid DeviceID property", e);
 		}
 
 		// m_insts could be accessed from multiple threads

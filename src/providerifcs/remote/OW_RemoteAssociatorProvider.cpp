@@ -110,7 +110,7 @@ RemoteAssociatorProvider::references(
 	{
 		String msg = Format("RemoteAssociatorProvider::references failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 
 }
@@ -151,7 +151,7 @@ RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMI
 	{
 		String msg = Format("RemoteAssociatorProvider::associators failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 
@@ -189,7 +189,7 @@ RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, 
 	{
 		String msg = Format("RemoteAssociatorProvider::associatorNames failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 
@@ -226,7 +226,7 @@ RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, C
 	{
 		String msg = Format("RemoteAssociatorProvider::referenceNames failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 
 }

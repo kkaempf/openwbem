@@ -169,7 +169,7 @@ public:
 		}
 		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, e.getMessage());
+			OW_THROWCIM_SUBEX(CIMException::INVALID_PARAMETER, e);
 		}
 #else
 		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");
@@ -213,7 +213,7 @@ public:
 		}
 		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
+			OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 		}
 #else
 		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");

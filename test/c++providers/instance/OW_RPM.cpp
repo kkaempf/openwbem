@@ -389,7 +389,7 @@ public:
 				}
 				catch (const StringConversionException& e)
 				{
-					OW_THROWCIMMSG(CIMException::FAILED, "Provider failed parsing output");
+					OW_THROWCIMMSG_SUBEX(CIMException::FAILED, "Provider failed parsing output", e);
 				}
 			}
 

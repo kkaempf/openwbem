@@ -102,7 +102,7 @@ RemoteInstanceProvider::enumInstanceNames(
 	{
 		String msg = Format("RemoteInstanceProvider::enumInstanceNames failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 
@@ -148,7 +148,7 @@ RemoteInstanceProvider::enumInstances(
 	{
 		String msg = Format("RemoteInstanceProvider::enumInstances failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 
@@ -192,7 +192,7 @@ RemoteInstanceProvider::getInstance(
 	{
 		String msg = Format("RemoteInstanceProvider::getInstance failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 	return rval;
 }
@@ -233,7 +233,7 @@ RemoteInstanceProvider::createInstance(
 	{
 		String msg = Format("RemoteInstanceProvider::createInstance failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 	return rval;
 }
@@ -276,7 +276,7 @@ RemoteInstanceProvider::modifyInstance(
 	{
 		String msg = Format("RemoteInstanceProvider::modifyInstance failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 
@@ -314,7 +314,7 @@ RemoteInstanceProvider::deleteInstance(
 	{
 		String msg = Format("RemoteInstanceProvider::deleteInstance failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 }
 

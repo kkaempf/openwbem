@@ -1086,7 +1086,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		{
 			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e);
 			OW_LOG_ERROR(m_logger, msg);
-			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}
 	}
 	
@@ -1363,11 +1363,11 @@ IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& fi
 	}
 	catch (CIMException& e)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, Format("modifying the filter failed: %1", e).c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, "modifying the filter failed", e);
 	}
 
 #else
-	OW_THROWCIMMSG(CIMException::FAILED, "Modifying the filter no allowed because association traversal is disabled");
+	OW_THROWCIMMSG(CIMException::FAILED, "Modifying the filter not allowed because association traversal is disabled");
 #endif
 }
 

@@ -187,7 +187,7 @@ public:
 		}
 		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(CIMException::NOT_FOUND, e.getMessage());
+			OW_THROWCIM_SUBEX(CIMException::NOT_FOUND, e);
 		}
 		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}

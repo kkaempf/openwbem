@@ -102,7 +102,7 @@ castValueToDataType(const CIMValue& value,
 	}
 	catch (const StringConversionException& e)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 } // end namespace CIMValueCast

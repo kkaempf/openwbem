@@ -327,11 +327,11 @@ CIMRepository::getClass(
 	}
 	catch(HDBException& e)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 	catch(IOException& e)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -440,13 +440,13 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 		}
 		return cc;
 	}
-	catch(IOException&)
+	catch(IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch(HDBException&)
+	catch(HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -506,11 +506,11 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 	}
 	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 	catch (IOException& e)
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, Format("%1", e).c_str());
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -539,13 +539,13 @@ CIMRepository::modifyClass(
 		}
 		return origClass;
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -568,13 +568,13 @@ CIMRepository::enumClasses(const String& ns,
 				className));
 		}
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -594,13 +594,13 @@ CIMRepository::enumClassNames(
 				className));
 		}
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -670,13 +670,13 @@ CIMRepository::enumInstanceNames(
 		}
 		*/
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -758,13 +758,13 @@ CIMRepository::enumInstances(
 			m_mStore.enumClassNames(ns, className, ie, E_DEEP);
 		}
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -802,9 +802,9 @@ CIMRepository::getInstance(
 		ci = m_iStore.getCIMInstance(ns, instanceName, cc, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 	OW_ASSERT(ci);
 	if (pOutClass)
@@ -858,13 +858,13 @@ CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		OW_ASSERT(oldInst);
 		return oldInst;
 	}
-	catch(IOException&)
+	catch(IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch(HDBException&)
+	catch(HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -910,11 +910,11 @@ CIMRepository::createInstance(
 						rcc = _instGetClass(ns,op.getClassName());
 						m_iStore.getCIMInstance(ns, op,rcc,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
 					}
-					catch (CIMException&)
+					catch (CIMException& e)
 					{
-						OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+						OW_THROWCIMMSG_SUBEX(CIMException::INVALID_PARAMETER,
 							Format("Association references an invalid instance:"
-								" %1", op.toString()).c_str());
+								" %1", op.toString()).c_str(), e);
 					}
 				}
 			}
@@ -932,13 +932,13 @@ CIMRepository::createInstance(
 		OW_ASSERT(rval);
 		return rval;
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -971,13 +971,13 @@ CIMRepository::modifyInstance(
 		OW_ASSERT(oldInst);
 		return oldInst;
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIM_SUBEX(CIMException::FAILED, e);
 	}
 }
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)

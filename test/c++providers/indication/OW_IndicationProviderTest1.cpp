@@ -154,7 +154,7 @@ public:
 		}
 		catch (Exception& e)
 		{
-			OW_THROWCIMMSG(CIMException::NOT_FOUND, "Invalid DeviceID property");
+			OW_THROWCIMMSG_SUBEX(CIMException::NOT_FOUND, "Invalid DeviceID property", e);
 		}
 
 		if (id < 0 || UInt32(id) >= m_insts.size())

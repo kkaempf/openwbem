@@ -142,7 +142,7 @@ public:
 			}
 			catch (const StringConversionException& e)
 			{
-				OW_THROWCIMMSG(CIMException::FAILED, "Provider failed parsing output from ps");
+				OW_THROWCIMMSG_SUBEX(CIMException::FAILED, "Provider failed parsing output from ps", e);
 			}
 			result.handle(newInst.clone(localOnly,deep,includeQualifiers,
 				includeClassOrigin,propertyList,requestedClass,cimClass));
@@ -182,7 +182,7 @@ public:
 		}
 		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Provider failed parsing output from ps");
+			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, "Provider failed parsing output from ps", e);
 		}
 		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}

@@ -204,7 +204,7 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 			String msg = Format("RemoteSecondaryInstanceProvider::filterInstances failed calling remote WBEM server: %1", e);
 			OW_LOG_ERROR(lgr, msg);
 			// we do want to throw here if something went wrong
-			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}
 	}
 }

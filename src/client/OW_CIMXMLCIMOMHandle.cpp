@@ -84,7 +84,7 @@ CIMXMLCIMOMHandle::ClientOperation::~ClientOperation()
 CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(const CIMProtocolIFCRef& prot)
 	: ClientCIMOMHandle()
 	, m_protocol(prot)
-	, m_performStrictChecks(false) // TODO: Make a way to set this to true.
+	, m_performStrictChecks(true) // TODO: Make a way to set this to false.
 {
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
@@ -311,7 +311,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 		}
 		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Invalid xml.  %1",
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Invalid xml. Error code \"%1\" is not an integer",
 				e.getMessage()).c_str());
 		}
 		OW_THROWCIMMSG(CIMException::ErrNoType(errCode.toInt32()), description.c_str());

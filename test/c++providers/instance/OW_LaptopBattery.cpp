@@ -205,7 +205,7 @@ namespace
 		}
 		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Failed parsing /proc/apm");
+			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, "Failed parsing /proc/apm", e);
 		}
 		UInt16 status = STAT_Unknown;
 		Bool charging = false;

@@ -103,7 +103,7 @@ CIMValue RemoteMethodProvider::invokeMethod(
 	{
 		String msg = Format("RemoteMethodProvider::invokeMethod failed calling remote WBEM server: %1", e);
 		OW_LOG_ERROR(lgr, msg);
-		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 	}
 	return rval;
 }
