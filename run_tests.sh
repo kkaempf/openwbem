@@ -11,9 +11,14 @@ set -a
 set -x
 set -u
 
-doMakeDistCheck()
+killowcimomd()
 {
 	kill $(ps -C owcimomd -o pid=)
+}
+
+doMakeDistCheck()
+{
+	killowcimomd
 	make -j3 distcheck
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
@@ -25,8 +30,10 @@ doMakeDistCheck()
 doATest()
 {
 	CONFIGOPTS=$1
+	make distclean
+	./cvsbootstrap.sh
 	./configure $CONFIGOPTS
-	kill $(ps -C owcimomd -o pid=)
+	killowcimomd
 	make -j3 \
 		&& make -j3 check \
 		&& OWLONGTEST=1 make -j3 check \
