@@ -22,6 +22,7 @@ clean-local:
 
 libcppindicationexportxmlhttpprovider_a_SOURCES = \
 OW_CppIndicationExportXMLHTTPProvider.cpp \
+OW_CppIndicationExportXMLHTTPProvider.hpp \
 OW_IndicationExporter.hpp \
 OW_IndicationExporter.cpp
 

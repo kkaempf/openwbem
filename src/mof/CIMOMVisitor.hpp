@@ -44,13 +44,14 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 struct lineInfo;
 
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( OW_Reference<OW_CIMOMHandleIFC> hdl, OW_CIMNameSpace& ns );
+	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_CIMNameSpace& ns );
 	~CIMOMVisitor();
 
 	void VisitMOFSpecification( const MOFSpecification * );

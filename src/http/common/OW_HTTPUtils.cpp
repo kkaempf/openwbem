@@ -35,7 +35,7 @@
 #include "OW_config.h"
 #include "OW_HTTPUtils.hpp"
 #include "OW_DateTime.hpp"
-#include "OW_HTTPStatusCodes.h"
+#include "OW_HTTPStatusCodes.hpp"
 #include "OW_HTTPCounter.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_StringBuffer.hpp"

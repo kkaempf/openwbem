@@ -5,7 +5,7 @@ OW_SHARED_LIBS = libowserviceipc.so
 noinst_LIBRARIES = \
 libowserviceipc.a
 
-thelibdir = $(pkglibdir)/service
+thelibdir = $(pkglibdir)/services
 all-local: $(OW_SHARED_LIBS)
 
 install-exec-local:

@@ -5,7 +5,7 @@ cimombindir = $(sbindir)
  
 owcimomd_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--rdynamic -o owcimomd
+-o owcimomd
 
 owcimomd_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \

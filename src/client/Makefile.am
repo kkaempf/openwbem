@@ -33,6 +33,7 @@ OW_CIMXMLCIMOMHandle.cpp \
 OW_BinaryCIMOMHandle.cpp
 
 pkginclude_HEADERS =		\
+OW_ClientAuthCBIFC.hpp \
 OW_CIMOMLocator.hpp	\
 OW_CIMOMLocatorSLP.hpp	\
 OW_CIMOMInfo.hpp	\

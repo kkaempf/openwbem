@@ -1,3 +1,5 @@
+SUBDIRS = owmofc
+
 sbin_PROGRAMS = owdigestgenpass 
 bin_PROGRAMS = \
 owexecwql \

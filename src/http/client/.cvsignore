@@ -5,3 +5,4 @@ Makefile
 *.lo
 *.la
 lib*so*
+.libowhttpclient.so.libs

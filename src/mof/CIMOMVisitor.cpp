@@ -36,6 +36,8 @@
 #include "MofCompiler.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMScope.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMException.hpp"
 
 #include <assert.h>
 

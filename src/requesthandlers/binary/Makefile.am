@@ -5,7 +5,7 @@ OW_SHARED_LIBS = libowrequesthandlerbinary.so
 noinst_LIBRARIES = \
 libowrequesthandlerbinary.a
 
-thelibdir = $(pkglibdir)/service
+thelibdir = $(pkglibdir)/requesthandlers
 all-local: $(OW_SHARED_LIBS)
 
 install-exec-local:

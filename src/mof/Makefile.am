@@ -33,12 +33,14 @@ mofparser.cpp \
 moflexer.cpp \
 mofparser.ypp \
 moflexer.lpp \
+CIMOMVisitor.cpp \
 MofCompiler.cpp
 
 pkginclude_HEADERS = \
 Grammar.h \
 Visitor.h \
 OW_MofParserErrorHandlerIFC.hpp \
+CIMOMVisitor.hpp \
 MofCompiler.hpp \
 MofParserDecls.hpp \
 LineInfo.hpp

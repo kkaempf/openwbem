@@ -36,7 +36,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_HTTPServer.hpp"
-#include "OW_HTTPStatusCodes.h"
+#include "OW_HTTPStatusCodes.hpp"
 #include "OW_InetSocket.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_HTTPUtils.hpp"

@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 
-#include "OW_HTTPStatusCodes.h"
+#include "OW_HTTPStatusCodes.hpp"
 #include "OW_Exception.hpp"
 
 #define HTTP_ERR_NEEDCONTENTLEN "HTTP_ERR_NEEDCONTENTLEN"

@@ -33,6 +33,7 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_IPCCIMOMHandle.hpp"
+#include "OW_CIMXMLCIMOMHandle.hpp"
 #include "CIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MofParserErrorHandlerIFC.hpp"

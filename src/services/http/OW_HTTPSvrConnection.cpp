@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_IOException.hpp"
-#include "OW_HTTPStatusCodes.h"
+#include "OW_HTTPStatusCodes.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"

@@ -41,6 +41,7 @@ OW_HTTPDeflateIStream.hpp \
 OW_HTTPDeflateOStream.hpp \
 OW_HTTPException.hpp \
 OW_HTTPLenLimitIStream.hpp \
+OW_HTTPStatusCodes.hpp \
 OW_HTTPUtils.hpp \
 OW_MD5.hpp
 

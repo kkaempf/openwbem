@@ -7,3 +7,4 @@ Makefile
 OW_XMLUnescape.cc
 OW_XMLEscape.cc
 lib*so*
+.libowxml.so.libs
