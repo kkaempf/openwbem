@@ -65,12 +65,15 @@ long MofCompiler::compile( const OW_String& filename )
             {
                 basepath = OW_String();
             }
-            yyin = fopen(filename.c_str(), "r");
-            if (!yyin)
-            {
-                theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
-                return 1;
-            }
+			if (filename != "-")
+			{
+				yyin = fopen(filename.c_str(), "r");
+				if (!yyin)
+				{
+					theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
+					return 1;
+				}
+			}
 
             theErrorHandler->progressMessage("Starting parsing",
                     lineInfo(filename, 0));
