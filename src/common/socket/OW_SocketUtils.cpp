@@ -162,6 +162,8 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 }
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 extern OW_Mutex OW_gethostbynameMutex;  // defined in OW_SocketAddress.cpp
 #endif
 
