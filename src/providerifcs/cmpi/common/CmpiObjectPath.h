@@ -62,9 +62,9 @@ class CmpiObjectPath : public CmpiObject {
    /** Constructor - Should not be called
    */
    CmpiObjectPath() {}
-   void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const char *ns, const char *cls);
-   void *CmpiObjectPath::makeObjectPath(CMPIBroker *mb, const CmpiString& ns, const char *cls);
-   CmpiBoolean CmpiObjectPath::doClassPathIsA(CMPIBroker *mb, const char *className);
+   void *makeObjectPath(CMPIBroker *mb, const char *ns, const char *cls);
+   void *makeObjectPath(CMPIBroker *mb, const CmpiString& ns, const char *cls);
+   CmpiBoolean doClassPathIsA(CMPIBroker *mb, const char *className);
 //  public:
 
     /**	Constructor - Creates an ObjectPath object with the classname

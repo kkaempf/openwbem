@@ -898,7 +898,7 @@ void CmpiObjectPath::setKey(const char* name, CmpiData data) {
 void CmpiResult::returnData(const CmpiData& d)
 {
    CMPIStatus rc=getEnc()->ft->returnData(getEnc(),
-      &((CmpiData)d).data.value,d.data.type);
+      &(const_cast<CmpiData&>(d).data.value),d.data.type);
       if (rc.rc!=CMPI_RC_OK) throw rc.rc;
 }
 

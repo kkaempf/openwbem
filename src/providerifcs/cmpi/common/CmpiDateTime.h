@@ -44,9 +44,9 @@ class CmpiDateTime : public CmpiObject {
    */
    inline CMPIDateTime *getEnc() const
       { return (CMPIDateTime*)enc; }
-   void *CmpiDateTime::makeDateTime(CMPIBroker *mb);
-   void *CmpiDateTime::makeDateTime(CMPIBroker *mb, const char* utcTime);
-   void *CmpiDateTime::makeDateTime(CMPIBroker *mb, const CMPIUint64 binTime,
+   void *makeDateTime(CMPIBroker *mb);
+   void *makeDateTime(CMPIBroker *mb, const char* utcTime);
+   void *makeDateTime(CMPIBroker *mb, const CMPIUint64 binTime,
                                  const CmpiBoolean interval);
   private:
   public:
