@@ -386,6 +386,22 @@ public:
 		m_time += minutes * 60;
 	}
 	/**
+	* Add microseconds to the date represented by this object.
+	* @param microseconds The number of microseconds to add to this object.+        */
+	void addMicroseconds(long microseconds)
+	{
+		m_microseconds += microseconds;
+		m_time += m_microseconds / 1000000;
+		m_microseconds %= 1000000;
+	}
+	/**
+	* Add milliseconds to the date represented by this object.
+	* @param milliseconds The number of milliseconds to add to this object.+        */
+	void addMilliseconds(long milliseconds)
+	{
+		this->addMicroseconds(milliseconds * 1000);
+	}
+	/**
 	 * Add hours to the date represented by this object.
 	 * @param hours The number of hours to add to this object.
 	 */
