@@ -38,7 +38,7 @@
 #include "OWBI1_config.h"
 #include "OWBI1_AutoPtr.hpp"
 #if defined(OWBI1_NON_THREAD_SAFE_EXCEPTION_HANDLING)
-#include "OWBI1_CommonFwd.hpp" // for Mutex
+#include "OWBI1_OW_Fwd.hpp" // for Mutex
 #endif
 #include <iosfwd>
 #include <exception>
@@ -161,7 +161,7 @@ private:
 	int m_errorCode;
 
 #if defined(OWBI1_NON_THREAD_SAFE_EXCEPTION_HANDLING)
-	static Mutex* m_mutex;
+	static ::OpenWBEM::Mutex* m_mutex;
 #endif
 
 };

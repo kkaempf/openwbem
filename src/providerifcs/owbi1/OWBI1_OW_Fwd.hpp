@@ -55,6 +55,7 @@ namespace OpenWBEM = OW_NAMESPACE;
 namespace OW_NAMESPACE
 {
 	class TempFileStream;
+	class Mutex;
 }
 
 // If we defined some macros, undef them.
