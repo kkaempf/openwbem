@@ -290,7 +290,7 @@ public:
 	XMLNode findElementChild(const char* elementName) const;
 	
 	/**
-	 * Same as mustFindElementChild but it throws an exception if
+	 * Same as findElementChild but it throws an exception if
 	 * anything goes wrong
 	 *
 	 * @param elementToken
