@@ -39,6 +39,7 @@
 #define INSTANCE_PROVIDER
 #define ASSOCIATOR_PROVIDER
 #define METHOD_PROVIDER
+#define EVENT_PROVIDER
 #include <provider.h>
 #include <npi_import.h>
 
@@ -798,5 +799,132 @@ static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
 
     if (cv.ptr == NULL) raiseError(nh,"Could not invoke method"); 
     return cv;
+}
+
+static void authorizeFilter( NPIHandle * nh, SelectExp exp,
+                 const char * eventType, CIMObjectPath cop, const char * owner)
+{
+    (void) nh;
+    (void) exp;
+    (void) eventType;
+    (void) cop;
+    (void) owner;
+
+    fprintf(stderr,"--- perlProvider(): authorizeFilter\n");
+    return;
+}
+
+static int mustPoll( NPIHandle * nh, SelectExp exp,
+                 const char * eventType, CIMObjectPath cop)
+{
+    (void) nh;
+    (void) exp;
+    (void) eventType;
+    (void) cop;
+    fprintf(stderr,"--- perlProvider(): mustPoll\n");
+    return 0;
+}
+
+
+static void activateFilter( NPIHandle * nh, SelectExp exp,
+                const char * eventType, CIMObjectPath cop, int firstActivation)
+{
+    char * args[] = {"",NULL,"activateFilter"};
+    char script[256];
+    PerlInterpreter * my_perl;
+ 
+    fprintf(stderr,"--- perlProvider(): activateFilter\n");
+
+    /* get name of perl executable */
+    args[1]=setPath(nh,script);
+    my_perl = (PerlInterpreter *) (((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+    PERL_SET_CONTEXT(my_perl);
+
+    {
+        dSP;
+        int count;
+        SV * sva;
+
+        ENTER;
+        SAVETMPS;
+
+        sva = sv_2mortal(newSVpv((char *)argsforperl(nh),10));
+
+        PUSHMARK(SP);
+        XPUSHs(sva);
+        XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(exp.ptr),10)));
+	if (eventType)
+           XPUSHs(sv_2mortal(newSVpv(eventType,perl_strlen(eventType))));
+	else
+	   XPUSHs(sv_2mortal(newSVpv("",0)));
+        XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(cop.ptr),10)));
+        XPUSHs(sv_2mortal(newSViv(firstActivation)));
+        PUTBACK;
+
+        count = call_pv("activateFilter", G_EVAL|G_DISCARD);
+
+        /* Retrieve second argument which should be the vector; */
+        //ccc = SvPV_nolen(svb);
+        //vec.ptr = argsfromperl(ccc);
+
+        SPAGAIN;
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+    }
+    //if (vec.ptr == NULL) raiseError(nh,"No ReferenceNames found"); 
+    return;
+}
+
+static void deActivateFilter( NPIHandle * nh, SelectExp exp,
+                 const char * eventType, CIMObjectPath cop, int lastActivation)
+{
+    char * args[] = {"",NULL,"deactivateFilter"};
+    char script[256];
+    PerlInterpreter * my_perl;
+ 
+    fprintf(stderr,"--- perlProvider(): deactivateFilter\n");
+
+    /* get name of perl executable */
+    args[1]=setPath(nh,script);
+    my_perl = (PerlInterpreter *) (((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+    PERL_SET_CONTEXT(my_perl);
+
+    {
+        dSP;
+        int count;
+        SV * sva;
+
+        ENTER;
+        SAVETMPS;
+
+        sva = sv_2mortal(newSVpv((char *)argsforperl(nh),10));
+
+        PUSHMARK(SP);
+        XPUSHs(sva);
+        XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(exp.ptr),10)));
+	if (eventType)
+           XPUSHs(sv_2mortal(newSVpv(eventType,perl_strlen(eventType))));
+	else
+	   XPUSHs(sv_2mortal(newSVpv("",0)));
+        XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(cop.ptr),10)));
+        XPUSHs(sv_2mortal(newSViv(lastActivation)));
+        PUTBACK;
+
+        count = call_pv("deactivateFilter", G_EVAL|G_DISCARD);
+
+        /* Retrieve second argument which should be the vector; */
+        //ccc = SvPV_nolen(svb);
+        //vec.ptr = argsfromperl(ccc);
+
+        SPAGAIN;
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+    }
+    //if (vec.ptr == NULL) raiseError(nh,"No ReferenceNames found"); 
+    return;
 }
 //#endif
