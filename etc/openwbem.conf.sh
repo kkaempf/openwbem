@@ -170,13 +170,6 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 ;cppprovifc.prov_TTL = 5
 
 ################################################################################
-# One of the provider interfaces provided with owcimomd is the simple C++ provider
-# interface. The simplecppprovifc.prov_location option specifies where the C++
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/simplec++providers"
-simplecppprovifc.prov_location = @libdir@/openwbem/simplec++providers
-
-################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
 # provider interface will load it's providers from. The default for this option

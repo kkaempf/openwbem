@@ -4,5 +4,5 @@ else
 PERLDIR=
 endif
 
-SUBDIRS = cpp npi simplecpp ${PERLDIR} cmpi
+SUBDIRS = cpp npi ${PERLDIR} cmpi
 
