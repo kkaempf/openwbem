@@ -329,6 +329,28 @@ private:
 };
 std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
 
+inline bool operator!=(const CIMDateTime& x, const CIMDateTime& y)
+{
+	return !(x == y);
+}
+
+inline bool operator>(const CIMDateTime& x, const CIMDateTime& y)
+{
+	return y < x;
+}
+
+inline bool operator<=(const CIMDateTime& x, const CIMDateTime& y)
+{
+	return !(y < x);
+}
+
+inline bool operator>=(const CIMDateTime& x, const CIMDateTime& y)
+{
+	return !(x < y);
+}
+
+
+
 } // end namespace OpenWBEM
 
 typedef OpenWBEM::CIMDateTimeException OW_CIMDateTimeException;
