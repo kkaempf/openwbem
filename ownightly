@@ -6,16 +6,13 @@
 
 unset OWLONGTEST
 
-DESTDIR=$HOME/public_html/owNightlyTest/$OSTYPE
-ADIR="$HOME/scripts"
-if [ "$HOSTNAME" = "sparcwbem.calderalabs.com" ]; then
-	TESTDIR=/export/home/bart/owNightlyTest
-else
-	TESTDIR=/tmp/owNightlyTest
-fi
+set -a
+set -x
+set -u
+
+TESTDIR=/usr/local/build/owtemp
 LOGFILE=$TESTDIR/log.txt
-MAILTO="bart@ns.calderalabs.com, dnuffer@ns.calderalabs.com"
-THIS="$ADIR/ownightly"
+MAILTO="dnuffer@vintela.com"
 
 ##############################################################################
 doTest()
@@ -57,15 +54,7 @@ doTest()
 		BUILDRESULT="Success"
 	else
 		BUILDRESULT="Fail"
-		if [ "$OSTYPE" = "linux-gnu" ]; then
-			cp -a $TESTDIR $DESTDIR
-		else
-			cp -p -R $TESTDIR $DESTDIR
-		fi
 		echo "" >> $LOGFILE
-		echo "Go to http://intranet.calderalabs.com/~bart/owNightlyTest/ to see the build" >> $LOGFILE
-
-
 	fi
 
 
@@ -78,15 +67,10 @@ doTest()
 ## MAIN ######################################################################
 
 rm -rf $TESTDIR
-rm -rf $DESTDIR
 mkdir $TESTDIR
 cd $TESTDIR
-cvs -z3 -d :ext:bartw@cvs.openwbem.sourceforge.net:/cvsroot/openwbem co openwbem20
+cvs -z3 -d :ext:nuffer@cvs.openwbem.sourceforge.net:/cvsroot/openwbem co openwbem20
 
 
 doTest
-
-
-# set the next reminder
-at -f $THIS -m 10pm tomorrow 
 
