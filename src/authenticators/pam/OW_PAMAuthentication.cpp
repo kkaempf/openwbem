@@ -41,8 +41,17 @@
 #include <string.h>
 
 #ifdef OW_GNU_LINUX
-#include <pwd.h>
+	#ifdef OW_HAVE_PWD_H
+	#include <pwd.h>
+	#endif
+	#ifdef OW_HAVE_UNISTD_H
+	#include <unistd.h>
+	#endif
+	#ifdef OW_HAVE_SYS_TYPES_H
+	#include <sys/types.h>
+	#endif
 #endif
+
 
 extern "C"
 {
