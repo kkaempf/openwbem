@@ -63,7 +63,7 @@ extern "C"
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/socket.h>
-#if !defined(OW_NETWARE) // Is this include used anymore???
+#ifdef OW_HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 #include <netdb.h>
