@@ -586,7 +586,7 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 			reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen);
 
 
-	if (!opts.trustStore.empty())
+	if (opts.verifyMode != SSLOpts::MODE_DISABLED && !opts.trustStore.empty())
 	{
 		if (!OpenWBEM::FileSystem::exists(opts.trustStore) )
 		{

@@ -545,7 +545,6 @@ HTTPServer::startService()
 				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
 				m_sslopts.trustStore = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_TRUST_STORE, 
 													   OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE); 
-				m_trustStore = SSLTrustStoreRef(new SSLTrustStore(m_sslopts.trustStore)); 
 				String verifyMode = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt, 
 													   OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION); 
 				verifyMode.toLowerCase();
@@ -573,6 +572,10 @@ HTTPServer::startService()
 				}
 				//SSLCtxMgr::initServer(keyfile);
 				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts)); 
+				if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
+				{
+					m_trustStore = SSLTrustStoreRef(new SSLTrustStore(m_sslopts.trustStore)); 
+				}
 			}
 			catch (SSLException& e)
 			{

@@ -66,7 +66,7 @@ public:
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	Socket(SSLClientCtxRef); 
+	Socket(SSLClientCtxRef sslCtx); 
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
