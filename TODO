@@ -14,6 +14,7 @@ Testing:
     - review CIM operations over HTTP v1.1 and see where we deviate.
       specifically, the indication delivery is known to be different. 
     - Test case insensitivity (eg. try to add a disk and DISK class)
+    - Test storing 1 million instances.
 
 Fix problems:
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
