@@ -1823,8 +1823,8 @@ const UInt32 LockTimeout = 300; // seconds - 5 mins.
 
 	switch (op)
 	{
-	case E_CREATE_NAME_SPACE:
-	case E_DELETE_NAME_SPACE:
+	case E_CREATE_NAMESPACE:
+	case E_DELETE_NAMESPACE:
 	case E_DELETE_INSTANCE:
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
@@ -1834,7 +1834,7 @@ const UInt32 LockTimeout = 300; // seconds - 5 mins.
 		m_schemaLock.getWriteLock(LockTimeout);
 		m_instanceLock.getWriteLock(LockTimeout);
 		break;
-	case E_ENUM_NAME_SPACE:
+	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
 	case E_ENUM_QUALIFIER_TYPES:
 	case E_GET_CLASS:
@@ -1874,8 +1874,8 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 {
 	switch (op)
 	{
-	case E_CREATE_NAME_SPACE:
-	case E_DELETE_NAME_SPACE:
+	case E_CREATE_NAMESPACE:
+	case E_DELETE_NAMESPACE:
 	case E_DELETE_INSTANCE:
 	case E_CREATE_INSTANCE:
 	case E_MODIFY_INSTANCE:
@@ -1885,7 +1885,7 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 		m_schemaLock.releaseWriteLock();
 		m_instanceLock.releaseWriteLock();
 		break;
-	case E_ENUM_NAME_SPACE:
+	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
 	case E_ENUM_QUALIFIER_TYPES:
 	case E_GET_CLASS:

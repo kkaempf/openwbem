@@ -44,7 +44,9 @@ namespace OpenWBEM
 #if !defined(OW_DISABLE_ACLS)
 class AccessMgr;
 #endif
-class CIMRepository2;
+
+class CIMRepository;
+
 // This class is responsible for:
 // 1. calling either providers/or the CIM Repository
 // 2. Access control
@@ -664,7 +666,7 @@ private:
 	CIMClass m_nsClass_Namespace;
 	CIMOMEnvironmentRef m_env;
 	RepositoryIFCRef m_cimRepository;
-	IntrusiveReference<CIMRepository2> m_realRepository;
+	IntrusiveReference<CIMRepository> m_realRepository;
 };
 
 } // end namespace OpenWBEM
