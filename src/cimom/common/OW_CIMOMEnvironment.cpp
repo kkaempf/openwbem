@@ -72,6 +72,8 @@
 #include "OW_ProviderManager.hpp"
 
 #include <iostream>
+#include <map>
+#include <set>
 
 namespace OpenWBEM
 {
@@ -281,6 +283,8 @@ CIMOMEnvironment::startServices()
 	}
 
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment finished loading services");
+
+	_sortServicesForDependencies();
 
 	// init
 
@@ -1278,6 +1282,197 @@ void
 CIMOMEnvironment::unloadProviders()
 {
 	m_providerManager->unloadProviders(createProvEnvRef(this));
+}
+
+namespace
+{
+
+//////////////////////////////////////////////////////////////////////////////
+struct Node
+{
+	Node(const String& name_, size_t index_ = ~0)
+		: name(name_)
+		, index(index_)
+	{}
+
+	String name;
+	size_t index;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const Node& x, const Node& y)
+{
+	return x.name != y.name;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const Node& x, const Node& y)
+{
+	return x.name < y.name;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Node INVALID_NODE("", ~0);
+
+//////////////////////////////////////////////////////////////////////////////
+class ServiceDependencyGraph
+{
+public:
+	// returns false if serviceName has already been inserted, true otherwise
+	bool addNode(const String& serviceName, size_t index);
+	// returns false if serviceName already has a dependency on dependentServiceName, true otherwise
+	// precondition: a node for serviceName has already been added via addNode()
+	bool addDependency(const String& serviceName, const String& dependentServiceName);
+	Node findIndependentNode() const;
+	void removeNode(const String& serviceName);
+	bool empty() const;
+	Array<Node> getNodes() const;
+
+private:
+	typedef std::map<Node, std::set<String> > deps_t;
+	deps_t m_deps;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+ServiceDependencyGraph::addNode(const String& serviceName, size_t index)
+{
+	return m_deps.insert(std::make_pair(Node(serviceName, index), deps_t::mapped_type())).second;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+ServiceDependencyGraph::addDependency(const String& serviceName, const String& dependentServiceName)
+{
+	return m_deps.find(serviceName)->second.insert(dependentServiceName).second;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Node
+ServiceDependencyGraph::findIndependentNode() const
+{
+	for (deps_t::const_iterator nodeiter(m_deps.begin()); nodeiter != m_deps.end(); ++nodeiter)
+	{
+		if (nodeiter->second.empty())
+		{
+			return nodeiter->first;
+		}
+	}
+	
+	// didn't find any :-(
+	return INVALID_NODE;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+ServiceDependencyGraph::removeNode(const String& serviceName)
+{
+	// remove it from all dependency lists
+	for (deps_t::iterator nodeiter(m_deps.begin()); nodeiter != m_deps.end(); ++nodeiter)
+	{
+		nodeiter->second.erase(serviceName);
+	}
+	m_deps.erase(serviceName);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+ServiceDependencyGraph::empty() const
+{
+	return m_deps.empty();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Array<Node>
+ServiceDependencyGraph::getNodes() const
+{
+	Array<Node> rv;
+	rv.reserve(m_deps.size());
+	for (deps_t::const_iterator nodeiter(m_deps.begin()); nodeiter != m_deps.end(); ++nodeiter)
+	{
+		rv.push_back(nodeiter->first);
+	}
+	return rv;
+}
+
+} // end anonymous namespace
+
+//////////////////////////////////////////////////////////////////////////////
+void
+CIMOMEnvironment::_sortServicesForDependencies()
+{
+	// All services can specify a name and dependencies. If a service has an empty name, it can't be specified
+	// as a dependency, and our algorithm requires that each service has a name, so if any have an empty name,
+	// they'll just be put at the beginning of the list.
+
+	// We need to make sure that a service is initialized before any other services which depend on it.
+	// The depedencies reported by the services make a graph.  If it's not a DAG (i.e. contains cycles), we
+	// can't turn it into a list of what to do, and we'll detect that and throw an exception. Doing a topological
+	// sort on the graph will yield the order we need.
+	//
+	// The process is quite simple conceptually:
+	// while (the graph has a node with no antecedents)
+	//    remove one such node from the graph and add it to the list
+	//
+	// if (the graph is not empty)
+	//    the graph contains a cycle
+	// else
+	//    success
+	
+	Array<ServiceIFCRef> sortedServices;
+
+	// first build the graph
+	ServiceDependencyGraph depGraph;
+	for (size_t i = 0; i < m_services.size(); ++i)
+	{
+		String name = m_services[i]->getName();
+		if (name == "")
+		{
+			// no name == no depedency tracking, just do it at the beginning.
+			sortedServices.push_back(m_services[i]);
+			OW_LOG_DEBUG(m_Logger, "Found service with no name, adding to sortedServices");
+		}
+		else
+		{
+			OW_LOG_DEBUG(m_Logger, Format("Adding node for service %1", name));
+			if (!depGraph.addNode(name, i))
+			{
+				OW_THROW(CIMOMEnvironmentException, Format("Invalid: 2 services with the same name: %1", name).c_str());
+			}
+			StringArray deps(m_services[i]->getDependencies());
+			for (size_t j = 0; j < deps.size(); ++j)
+			{
+				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1:%2", name, deps[j]));
+				if (!depGraph.addDependency(name, deps[j]))
+				{
+					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", name, deps[j]).c_str());
+				}
+			}
+		}
+	}
+
+	// now do the topological sort
+	Node curNode = depGraph.findIndependentNode();
+	while (curNode != INVALID_NODE)
+	{
+		OW_LOG_DEBUG(m_Logger, Format("Found service with satisfied dependencies: %1", curNode.name));
+		sortedServices.push_back(m_services[curNode.index]);
+		depGraph.removeNode(curNode.name);
+		curNode = depGraph.findIndependentNode();
+	}
+
+	if (!depGraph.empty())
+	{
+		OW_LOG_FATAL_ERROR(m_Logger, "Service dependency graph contains a cycle:");
+		Array<Node> nodes(depGraph.getNodes());
+		for (size_t i = 0; i < nodes.size(); ++i)
+		{
+			OW_LOG_FATAL_ERROR(m_Logger, Format("Service: %1", nodes[i].name));
+		}
+		OW_THROW(CIMOMEnvironmentException, "Service dependency graph contains a cycle");
+	}
+
+	m_services = sortedServices;
 }
 
 } // end namespace OpenWBEM

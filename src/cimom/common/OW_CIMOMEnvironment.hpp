@@ -132,6 +132,7 @@ private:
 	void _clearSelectables();
 	void _loadAuthorizer();
 	void _createAuthorizerManager();
+	void _sortServicesForDependencies();
 
 	// Types
 	struct ReqHandlerData
