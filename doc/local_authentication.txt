@@ -45,7 +45,7 @@ Overall Operation
    provides a nonce value and a cookie file name. A valid response 
    contains the nonce value and the cookie contained in the cookie file.
    The file is created in a manner that only the user identified by the
-   initial userid can read the contents.
+   initial user id can read the contents.
 
 Specification of OWLocal Headers
 
@@ -72,7 +72,7 @@ For OWLocal, the HTTP authentication framework is utilized as follows:
 
   auth-info         = nonce cookie
   cookie            = "cookie" "=" cookie-value
-  cookie-value      = quote-string
+  cookie-value      = quoted-string
 
 The meanings of the values of the directives used above are as
 follows:
@@ -110,10 +110,9 @@ follows:
      address spoofing is not that hard.)
 
      An implementation might choose not to accept a previously used
-     nonce or a previously used digest, in order to protect against a
-     replay attack. Or, an implementation might choose to use one-time
-     nonces or digests for POST or PUT requests and a time-stamp for GET
-     requests.
+     nonce, in order to protect against a replay attack. Or, an 
+     implementation might choose to use one-time nonces for POST or 
+     PUT requests and a time-stamp for GET requests.
 
      The nonce is opaque to the client.
 
@@ -122,7 +121,7 @@ follows:
      uniquely generated each time a 401 request is made. The file contains
      the cookie the client will supply to the server for authentication.
      The permissions on the file will be set such that only the user
-     identified by the initial uid provided by the client can read the 
+     identified by the initial user id provided by the client can read the 
      contents of the file.
 
    cookie
