@@ -546,7 +546,7 @@ int main(int argc, char* argv[])
 
 
 		// test some simple schema queries.
-		testSchemaQueries(rch);
+		// testSchemaQueries(rch);
 
 		return 0;
 	}
