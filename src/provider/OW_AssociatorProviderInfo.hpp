@@ -1,6 +1,5 @@
-
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2003 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -35,13 +34,12 @@
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-// may need to make this a separate class
-class OW_AssociatorProviderInfo : public OW_ProviderInfoBase
+class OW_AssociatorProviderInfo : public OW_ProviderInfoBase<OW_InstClassInfo>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase::ClassInfo;
-	using OW_ProviderInfoBase::ClassInfoArray;
+	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfo;
+	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfoArray;
 
 };
 

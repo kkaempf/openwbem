@@ -224,7 +224,7 @@ private:
 			m_insts.push_back(iToAdd);
 
 			// now modify the first instance's PowerOnHours property
-			OW_UInt64 oldPowerOnHours = m_insts[0].getProperty("PowerOnHours").getValueT().toUInt64();
+			OW_UInt64 oldPowerOnHours = m_insts[0].getPropertyT("PowerOnHours").getValueT().toUInt64();
 			m_insts[0].setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(oldPowerOnHours + 1)));
 		}
 	}

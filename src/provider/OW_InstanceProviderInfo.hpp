@@ -36,12 +36,12 @@
 #include "OW_Array.hpp"
 #include "OW_ProviderInfoBase.hpp"
 
-class OW_InstanceProviderInfo : public OW_ProviderInfoBase
+class OW_InstanceProviderInfo : public OW_ProviderInfoBase<OW_InstClassInfo>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase::ClassInfo;
-	using OW_ProviderInfoBase::ClassInfoArray;
+	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfo;
+	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfoArray;
 
 };
 

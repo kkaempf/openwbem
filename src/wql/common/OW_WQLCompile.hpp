@@ -33,10 +33,7 @@
 #include "OW_WQLOperation.hpp"
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLSelectStatement.hpp"
-
-#include "OW_Exception.hpp"
-
-DEFINE_EXCEPTION(NoSuchProperty);
+#include "OW_NoSuchPropertyException.hpp"
 
 
 class OW_WQLCompile

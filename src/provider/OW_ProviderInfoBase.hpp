@@ -35,23 +35,26 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
+struct OW_InstClassInfo
+{
+	explicit OW_InstClassInfo(OW_String const& className_)
+		: className(className_)
+	{}
+	OW_InstClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
+		: className(className_)
+		, namespaces(namespaces_)
+	{}
+	OW_String className;
+	OW_StringArray namespaces;
+};
+
+template <class ClassInfoT>
 class OW_ProviderInfoBase
 {
 public:
-	struct ClassInfo
-	{
-		explicit ClassInfo(OW_String const& className_)
-			: className(className_)
-		{}
-		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
-			: className(className_)
-			, namespaces(namespaces_)
-		{}
-		OW_String className;
-		OW_StringArray namespaces;
-	};
 
-	typedef OW_Array<ClassInfo> ClassInfoArray;
+	typedef ClassInfoT ClassInfo;
+	typedef OW_Array<ClassInfoT> ClassInfoArray;
 
 	virtual ~OW_ProviderInfoBase() {}
 
@@ -63,9 +66,9 @@ public:
 	 */
 	void addInstrumentedClass(OW_String const& className)
 	{
-		m_instrumentedClasses.push_back(ClassInfo(className));
+		m_instrumentedClasses.push_back(ClassInfoT(className));
 	}
-	void addInstrumentedClass(ClassInfo const& classInfo)
+	void addInstrumentedClass(ClassInfoT const& classInfo)
 	{
 		m_instrumentedClasses.push_back(classInfo);
 	}
@@ -90,6 +93,8 @@ private:
 	OW_String m_name;
 
 };
+
+
 
 #endif
 

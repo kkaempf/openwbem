@@ -1,6 +1,5 @@
-
 /*******************************************************************************
-* Copyright (C) 2002 Caldera International, Inc All rights reserved.
+* Copyright (C) 2003 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -35,13 +34,28 @@
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-// may need to make this a separate class
-class OW_IndicationProviderInfo : public OW_ProviderInfoBase
+struct OW_IndicationProviderInfoEntry
+{
+	explicit OW_IndicationProviderInfoEntry(OW_String const& indicationName_)
+		: indicationName(indicationName_)
+	{}
+	OW_IndicationProviderInfoEntry(OW_String const& indicationName_, OW_StringArray const& namespaces_, OW_StringArray const& classes_ = OW_StringArray())
+		: indicationName(indicationName_)
+		, namespaces(namespaces_)
+		, classes(classes_)
+	{}
+	OW_String indicationName;
+	OW_StringArray namespaces;
+	OW_StringArray classes;
+};
+
+
+class OW_IndicationProviderInfo : public OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase::ClassInfo;
-	using OW_ProviderInfoBase::ClassInfoArray;
+	using OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>::ClassInfo;
+	using OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>::ClassInfoArray;
 
 };
 

@@ -100,47 +100,85 @@ void registerProviderInfo(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void processProviderClassMethodInfo(
+// This handles method & property names
+void processProviderClassExtraInfo(
 	const OW_ProviderEnvironmentIFCRef& env,
 	const OW_String& name,
-	const OW_StringArray& methods,
+	const OW_StringArray& extra,
 	const OW_ProviderIFCBaseIFCRef& ifc,
 	const OW_String& providerName,
 	OW_ProviderManager::ProvRegMap_t& regMap)
 {
-	if (methods.empty())
+	if (extra.empty())
 	{
 		registerProviderInfo(env, name, ifc, providerName, regMap);
 	}
 	else
 	{
-		for (size_t i = 0; i < methods.size(); ++i)
+		for (size_t i = 0; i < extra.size(); ++i)
 		{
-			OW_String methName = methods[i];
-			if (methName.empty())
+			OW_String extraName = extra[i];
+			if (extraName.empty())
 			{
-				env->getLogger()->logError(format("Provider method name is "
+				env->getLogger()->logError(format("Provider sub-name is "
 					"empty for %1 by provider %2::%3",
 					name, ifc->getName(), providerName));
 				continue;
 			}
-			registerProviderInfo(env, name + ":" + methName, ifc, providerName, regMap);
+			registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename RegMapT>
+// This handles indication class names
+void processProviderClassExtraInfo(
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_String& name,
+	const OW_StringArray& extra,
+	const OW_ProviderIFCBaseIFCRef& ifc,
+	const OW_String& providerName,
+	OW_ProviderManager::IndProvRegMap_t& regMap)
+{
+	registerProviderInfo(env, name, ifc, providerName, regMap);
+	for (size_t i = 0; i < extra.size(); ++i)
+	{
+		OW_String extraName = extra[i];
+		if (extraName.empty())
+		{
+			env->getLogger()->logError(format("Provider sub-name is "
+				"empty for %1 by provider %2::%3",
+				name, ifc->getName(), providerName));
+			continue;
+		}
+		registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template <typename ClassInfoT>
+inline OW_String getClassName(const ClassInfoT& classInfo)
+{
+	return classInfo.className;
+}
+
+inline OW_String getClassName(const OW_IndicationProviderInfoEntry& classInfo)
+{
+	return classInfo.indicationName;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template <typename RegMapT, typename ClassInfoT>
 void processProviderClassInfo(
 	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_InstanceProviderInfo::ClassInfo& classInfo,
+	const ClassInfoT& classInfo,
 	const OW_ProviderIFCBaseIFCRef& ifc,
 	const OW_String& providerName,
 	RegMapT& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
-		registerProviderInfo(env, classInfo.className, ifc, providerName, regMap);
+		registerProviderInfo(env, getClassName(classInfo), ifc, providerName, regMap);
 	}
 	else
 	{
@@ -151,10 +189,10 @@ void processProviderClassInfo(
 			{
 				env->getLogger()->logError(format("Provider namespace is "
 					"empty for class %1 by provider %2::%3",
-					classInfo.className, ifc->getName(), providerName));
+					getClassName(classInfo), ifc->getName(), providerName));
 				continue;
 			}
-			OW_String name = ns + ":" + classInfo.className;
+			OW_String name = ns + ":" + getClassName(classInfo);
 			registerProviderInfo(env, name, ifc, providerName, regMap);
 		}
 	}
@@ -170,7 +208,7 @@ void processProviderClassInfo(
 {
 	if (classInfo.namespaces.empty())
 	{
-		processProviderClassMethodInfo(env, classInfo.className, classInfo.methods, ifc, providerName, regMap);
+		processProviderClassExtraInfo(env, classInfo.className, classInfo.methods, ifc, providerName, regMap);
 	}
 	else
 	{
@@ -185,7 +223,38 @@ void processProviderClassInfo(
 				continue;
 			}
 			OW_String name = ns + ":" + classInfo.className;
-			processProviderClassMethodInfo(env, name, classInfo.methods, ifc, providerName, regMap);
+			processProviderClassExtraInfo(env, name, classInfo.methods, ifc, providerName, regMap);
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void processProviderClassInfo(
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_IndicationProviderInfo::ClassInfo& classInfo,
+	const OW_ProviderIFCBaseIFCRef& ifc,
+	const OW_String& providerName,
+	OW_ProviderManager::IndProvRegMap_t& regMap)
+{
+	if (classInfo.namespaces.empty())
+	{
+		processProviderClassExtraInfo(env, classInfo.indicationName, classInfo.classes, ifc, providerName, regMap);
+	}
+	else
+	{
+		for (size_t l = 0; l < classInfo.namespaces.size(); ++l)
+		{
+			OW_String ns = classInfo.namespaces[l];
+			if (ns.empty())
+			{
+				env->getLogger()->logError(format("Provider namespace is "
+					"empty for class %1 by provider %2::%3",
+					classInfo.indicationName, ifc->getName(), providerName));
+				continue;
+			}
+			OW_String name = ns + ":" + classInfo.indicationName;
+			processProviderClassExtraInfo(env, name, classInfo.classes, ifc, providerName, regMap);
 		}
 	}
 }
@@ -316,9 +385,9 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		return ci->second.ifc->getMethodProvider(env, ci->second.provName.c_str());
 	}
 
-	// next lookup classname:methodname to see if we've got one for the
+	// next lookup classname/methodname to see if we've got one for the
 	// specific class/method for any namespace
-	OW_String classAndMethodName = cc.getName() + ':' + methodName;
+	OW_String classAndMethodName = cc.getName() + '/' + methodName;
 	classAndMethodName.toLowerCase();
 	ci = m_registeredMethProvs.find(classAndMethodName);
 	if (ci != m_registeredMethProvs.end())
@@ -336,9 +405,9 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		return ci->second.ifc->getMethodProvider(env, ci->second.provName.c_str());
 	}
 
-	// next lookup namespace:classname:methodname to see if we've got one for the
+	// next lookup namespace:classname/methodname to see if we've got one for the
 	// specific namespace/class/method
-	OW_String name = ns + ':' + cc.getName() + ':' + methodName;
+	OW_String name = ns + ':' + cc.getName() + '/' + methodName;
 	name.toLowerCase();
 	ci = m_registeredMethProvs.find(name);
 	if (ci != m_registeredMethProvs.end())
@@ -383,9 +452,9 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 {
 	OW_String propertyName = property.getName();
 
-	// next lookup classname:propertyname to see if we've got one for the
+	// next lookup classname/propertyname to see if we've got one for the
 	// specific class/property for any namespace
-	OW_String classAndPropertyName = cc.getName() + ':' + propertyName;
+	OW_String classAndPropertyName = cc.getName() + '/' + propertyName;
 	classAndPropertyName.toLowerCase();
 	ProvRegMap_t::const_iterator ci = m_registeredPropProvs.find(classAndPropertyName);
 	if (ci != m_registeredPropProvs.end())
@@ -393,9 +462,9 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		return ci->second.ifc->getPropertyProvider(env, ci->second.provName.c_str());
 	}
 
-	// next lookup namespace:classname:propertyname to see if we've got one for the
+	// next lookup namespace:classname/propertyname to see if we've got one for the
 	// specific namespace/class/property
-	OW_String name = ns + ':' + cc.getName() + ':' + propertyName;
+	OW_String name = ns + ':' + cc.getName() + '/' + propertyName;
 	name.toLowerCase();
 	ci = m_registeredPropProvs.find(name);
 	if (ci != m_registeredPropProvs.end())
@@ -500,26 +569,55 @@ OW_ProviderManager::getPolledProviders(
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRefArray
 OW_ProviderManager::getIndicationProviders(const OW_ProviderEnvironmentIFCRef& env, 
-	const OW_String& ns, const OW_String& indicationClassName) const
+	const OW_String& ns, const OW_String& indicationClassName, 
+	const OW_String& monitoredClassName) const
 {
-	// lookup just the class name to see if a provider registered for the
-	// class in all namespaces.
 	OW_String lowerName = indicationClassName;
 	lowerName.toLowerCase();
-	std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
-		range = m_registeredIndProvs.equal_range(lowerName);
-	IndProvRegMap_t::const_iterator lci = range.first;
-	IndProvRegMap_t::const_iterator uci = range.second;
-	if (lci == m_registeredIndProvs.end())
+	IndProvRegMap_t::const_iterator lci;
+	IndProvRegMap_t::const_iterator uci;
+	if (monitoredClassName.empty())
 	{
-		// didn't find any, so
-		// next lookup namespace:classname to see if we've got one for the
-		// specific namespace
-		OW_String nsAndClassName = ns + ':' + lowerName;
-		nsAndClassName.toLowerCase();
-		range = m_registeredIndProvs.equal_range(nsAndClassName);
+		// lookup just the class name to see if a provider registered for the
+		// class in all namespaces.
+		std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
+			range = m_registeredIndProvs.equal_range(lowerName);
 		lci = range.first;
 		uci = range.second;
+		if (lci == m_registeredIndProvs.end())
+		{
+			// didn't find any, so
+			// next lookup namespace:classname to see if we've got one for the
+			// specific namespace
+			OW_String nsAndClassName = ns + ':' + lowerName;
+			nsAndClassName.toLowerCase();
+			range = m_registeredIndProvs.equal_range(nsAndClassName);
+			lci = range.first;
+			uci = range.second;
+		}
+
+	}
+	else
+	{
+		// lookup indicationClassName/monitoredClassName
+		OW_String nsAndClassName = lowerName + '/' + monitoredClassName;
+		nsAndClassName.toLowerCase();
+		std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
+			range = m_registeredIndProvs.equal_range(nsAndClassName);
+		lci = range.first;
+		uci = range.second;
+
+		if (lci == m_registeredIndProvs.end())
+		{
+			// didn't find any, so
+			// next lookup namespace:indicationClassName/monitoredClassName to see if we've got one for the
+			// specific namespace
+			OW_String nsAndClassName = ns + ':' + lowerName + '/' + monitoredClassName;
+			nsAndClassName.toLowerCase();
+			range = m_registeredIndProvs.equal_range(nsAndClassName);
+			lci = range.first;
+			uci = range.second;
+		}
 	}
 
 	OW_IndicationProviderIFCRefArray rval;

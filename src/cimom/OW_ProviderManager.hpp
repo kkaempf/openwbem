@@ -177,7 +177,8 @@ public:
 	 */
 	OW_IndicationProviderIFCRefArray
 		getIndicationProviders(const OW_ProviderEnvironmentIFCRef& env, 
-			const OW_String& ns, const OW_String& indicationClassName) const;
+			const OW_String& ns, const OW_String& indicationClassName,
+			const OW_String& monitoredClassName) const;
 
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been

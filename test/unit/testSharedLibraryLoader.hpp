@@ -326,6 +326,37 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					indi.addInstrumentedClass("SelfReg2");
 					inda.push_back(indi);
 				}
+				{
+					// life-cycle type indication
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider");
+					OW_StringArray namespaces;
+					OW_StringArray classes;
+					classes.push_back("TestClass1");
+					OW_IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
+					indi.addInstrumentedClass(ci1);
+					OW_IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
+					indi.addInstrumentedClass(ci2);
+					OW_IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
+					indi.addInstrumentedClass(ci3);
+					inda.push_back(indi);
+				}
+				{
+					// life-cycle type indication
+					OW_IndicationProviderInfo indi;
+					indi.setProviderName("TestIndicationProvider2");
+					OW_StringArray namespaces;
+					OW_StringArray classes;
+					classes.push_back("TestClass2");
+					classes.push_back("TestClass3");
+					OW_IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
+					indi.addInstrumentedClass(ci1);
+					OW_IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
+					indi.addInstrumentedClass(ci2);
+					OW_IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
+					indi.addInstrumentedClass(ci3);
+					inda.push_back(indi);
+				}
 
 			}
 		}

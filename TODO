@@ -33,6 +33,10 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
+    - Make it harder to create NULL CIM objects.  Remove the bool constructor
+      and add a explicit void* constructor.  (e.g. OW_CIMClass c; wouldn't
+      be NULL.  To create a NULL OW_CIMClass, you'd have to say 
+      OW_CIMClass c(NULL);)
 
 New features:
     - Create intrinsic providers for

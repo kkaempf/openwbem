@@ -395,44 +395,58 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 
 	// self-registering provider all namespaces
 	OW_IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg");
+		createProvEnvRef(hdl), "root", "SelfReg", "");
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg");
+		createProvEnvRef(hdl), "root/foo", "SelfReg", "");
 	unitAssert(provRefs.size() == 1);
 	
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg2");
+		createProvEnvRef(hdl), "root", "SelfReg2", "");
 	unitAssert(provRefs.size() == 2);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg2");
+		createProvEnvRef(hdl), "root/foo", "SelfReg2", "");
 	unitAssert(provRefs.size() == 2);
 	
 	// self-registering provider two namespaces
 	OW_String c4("SelfRegTwoNamespaces");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c4);
+		createProvEnvRef(hdl), "root", c4, "");
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", c4);
+		createProvEnvRef(hdl), "root/foo", c4, "");
 	unitAssert(provRefs.size() == 0);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/good", c4);
+		createProvEnvRef(hdl), "root/good", c4, "");
 	unitAssert(provRefs.size() == 1);
 	
 	// nothing
 	OW_String c5("Nothing");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c5);
+		createProvEnvRef(hdl), "root", c5, "");
 	unitAssert(provRefs.size() == 0);
 
 	// self-registering provider all namespaces - case insensitivity
 	OW_String c6("selFreG");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "Root", c6);
+		createProvEnvRef(hdl), "Root", c6, "");
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "rooT/fOo", c6);
+		createProvEnvRef(hdl), "rooT/fOo", c6, "");
+	unitAssert(provRefs.size() == 1);
+
+	// lifecycle providers
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", "");
+	unitAssert(provRefs.size() == 2);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", "TestClass1");
+	unitAssert(provRefs.size() == 1);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstModification", "TestClass2");
+	unitAssert(provRefs.size() == 1);
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", "TestClass3");
 	unitAssert(provRefs.size() == 1);
 }
 
