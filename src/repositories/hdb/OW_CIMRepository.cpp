@@ -1269,14 +1269,14 @@ namespace
 	{
 	public:
 		staticAssociatorsInstResultHandler(
-			OperationContext& intAclInfo_,
-			CIMRepository& server_,
+			OperationContext& context_,
+			const CIMOMHandleIFCRef& hdl_,
 			CIMInstanceResultHandlerIFC& result_,
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_)
-		: intAclInfo(intAclInfo_)
-		, server(server_)
+		: context(context_)
+		, hdl(hdl_)
 		, result(result_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
@@ -1286,13 +1286,12 @@ namespace
 		virtual void doHandle(const AssocDbEntry::entry &e)
 		{
 			CIMObjectPath op = e.m_associatedObject;
-			CIMInstance ci = server.getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY,
-				includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
+			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
 			result.handle(ci);
 		}
 	private:
-		OperationContext& intAclInfo;
-		CIMRepository& server;
+		OperationContext& context;
+		CIMOMHandleIFCRef hdl;
 		CIMInstanceResultHandlerIFC& result;
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
@@ -1304,13 +1303,13 @@ namespace
 	{
 	public:
 		staticReferencesInstResultHandler(OperationContext& intAclInfo_,
-			CIMRepository& server_,
+			const CIMOMHandleIFCRef& hdl_,
 			CIMInstanceResultHandlerIFC& result_,
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_)
 		: intAclInfo(intAclInfo_)
-		, server(server_)
+		, hdl(hdl_)
 		, result(result_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
@@ -1320,13 +1319,12 @@ namespace
 		virtual void doHandle(const AssocDbEntry::entry &e)
 		{
 			CIMObjectPath op = e.m_associationPath;
-			CIMInstance ci = server.getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY,
-				includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
+			CIMInstance ci = hdl->getInstance(op.getNameSpace(), op, E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
 			result.handle(ci);
 		}
 	private:
 		OperationContext& intAclInfo;
-		CIMRepository& server;
+		CIMOMHandleIFCRef hdl;
 		CIMInstanceResultHandlerIFC& result;
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
@@ -1342,7 +1340,7 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticReferencesInstResultHandler handler(context, *this, result,
+	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, String(), handler);
@@ -1440,7 +1438,7 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticAssociatorsInstResultHandler handler(context, *this, result,
+	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
