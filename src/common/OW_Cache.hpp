@@ -77,6 +77,10 @@ private:
     // recently acessed item will be at begin(), and the most recenly acessed
     // class will be at end()--;  The second part of the pair is the key that
     // will be used in the index.
+    // This is a list because we can quickly O(1) move items from the middle
+    // to the end of the list when they're accessed. Also we need iterators
+    // into the list to be stable.  We can re-arrange items in the list
+    // without having to update the HashMap index.
     typedef std::list<std::pair<T, OW_String> > class_cache_t;
     // the index into the cache.  Speeds up finding an item when we need to.
     typedef OW_HashMap<OW_String, typename class_cache_t::iterator> cache_index_t;
