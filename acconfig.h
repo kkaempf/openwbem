@@ -283,6 +283,12 @@
 #define PROVIDERAGENT_API OW_IMPORT
 #endif
 
+#ifdef OW_WIN32
+#define EXPORT_TEMPLATE(API, TMPL, X) template class API TMPL< X >
+#else
+#define EXPORT_TEMPLATE(API, TMPL, X)
+#endif
+
 /* C++ specific stuff here */
 #ifdef __cplusplus
 
