@@ -489,6 +489,11 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
 	OW_ASSERT(tfs);
+	if (!tfs->good())
+	{
+		OW_THROW(HTTPException, "HTTPClient: TempFileStream is bad. Temp file creation failed.");
+	}
+
 	int len = tfs->getSize();
 	// add common headers
 	prepareHeaders();
