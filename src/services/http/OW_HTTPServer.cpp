@@ -49,11 +49,8 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 #include "OW_Runnable.hpp"
-#include "OW_TimeoutException.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ThreadPool.hpp"
-
-#include <iostream> // for debugging.
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
@@ -230,7 +227,8 @@ public:
 
 			OW_Socket socket = pServerSocket->accept(2);
 
-			m_HTTPServer->m_options.env->getLogger()->logCustInfo(
+			OW_LoggerRef logger = m_HTTPServer->m_options.env->getLogger();
+			logger->logCustInfo(
 				 format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
@@ -247,6 +245,8 @@ public:
 			{
 				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
 				// main thread can't block.
+				logger->logError("Server too busy, closing connection");
+				socket.disconnect();
 			}
 		}
 		catch (OW_SSLException& se)
@@ -268,11 +268,6 @@ public:
 		{
 			m_HTTPServer->m_options.env->getLogger()->logError(format(
 				"IO Exception in HTTPServer: %1", e));
-		}
-		catch (OW_TimeoutException& e)
-		{
-			m_HTTPServer->m_options.env->getLogger()->logError(format(
-				"Reached maximum server threads. Timeout Exception in HTTPServer: %1", e));
 		}
 		catch (OW_Exception& e)
 		{
