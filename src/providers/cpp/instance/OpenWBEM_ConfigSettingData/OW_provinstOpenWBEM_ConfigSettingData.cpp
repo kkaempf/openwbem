@@ -56,8 +56,10 @@
 namespace OpenWBEM
 {
 
-class OpenWBEM_ConfigSettingDataInstProv : public virtual CppInstanceProviderIFC,
-	public virtual CppSimpleAssociatorProviderIFC
+class OpenWBEM_ConfigSettingDataInstProv : public virtual CppInstanceProviderIFC
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	, public virtual CppSimpleAssociatorProviderIFC
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 {
 public:
 
@@ -338,6 +340,7 @@ public:
 		info.addInstrumentedClass("OpenWBEM_ConfigSettingData");
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	////////////////////////////////////////////////////////////////////////////
     virtual void doReferences(const ProviderEnvironmentIFCRef &env, 
                                   CIMInstanceResultHandlerIFC &result, 
@@ -406,6 +409,7 @@ public:
 		{
 			info.addInstrumentedClass("OpenWBEM_ObjectManagerConfigSettingData");
 		}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 private: 
 	struct ConfigData
