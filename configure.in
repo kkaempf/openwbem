@@ -368,13 +368,13 @@ CXXFLAGS="$PLAT_CXXFLAGS"
 
 OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,
 [
-  # aCC passes the OW_CHECK_COMPILER_FLAG test for
-  # -fno-enforce-eh-specs, because it will build and link if the flag
-  # is givien, but it emits an anoying and useless warning. This
-  # kludge eliminates that warning.
-  if  test $CC!="aCC"  ; then 
-    CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"
-  fi
+	# aCC passes the OW_CHECK_COMPILER_FLAG test for
+	# -fno-enforce-eh-specs, because it will build and link if the flag
+	# is givien, but it emits an anoying and useless warning. This
+	# kludge eliminates that warning.
+	if  test $CC!="aCC"  ; then 
+		CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"
+	fi
 ])
 
 # Set up the linker
@@ -619,6 +619,22 @@ AC_LANG_C
 AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \
 mkstemp snprintf random srandom asctime_r gmtime_r localtime_r gettimeofday \
 timegm getpwnam_r getpwuid_r strtof setrlimit)
+
+dnl Test for pthread_atfork(), since some versions of glibc are broken and have a prototype but no function.
+if test ".${ac_cv_header_pthread_h}" = ".yes"; then
+	AC_MSG_CHECKING([for pthread_atfork])
+	AC_TRY_LINK([
+		#include "confdefs.h"
+		#include <pthread.h>],
+		[pthread_atfork(NULL, NULL, NULL);],
+		AC_DEFINE_UNQUOTED(HAVE_PTHREAD_ATFORK, 1, [pthread_atfork() exists])
+		AC_MSG_RESULT(yes)
+		ac_has_pthread_atfork=yes,
+		AC_MSG_RESULT(no)
+		ac_has_pthread_atfork=no)
+else
+	ac_has_pthread_atfork=no
+fi
 
 dnl This horrible mess is here because there are variations in the number of
 dnl parameters that gethostbyname_r takes on various platforms.  The general
