@@ -1,6 +1,7 @@
 noinst_PROGRAMS = \
 TimeString \
-TimeFile
+TimeFile \
+Time_pthread_once
 
 # TimeString
 TimeString_LDFLAGS = \
@@ -28,6 +29,20 @@ $(BINLINKAPPENDFLAGS)
 
 TimeFile_SOURCES = \
 TimeFile.cpp
+
+
+# Time_pthread_once
+Time_pthread_once_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o Time_pthread_once$(EXEEXT)
+
+Time_pthread_once_LDADD = \
+$(top_builddir)/src/common/libopenwbem.a \
+$(Z_LIBS) $(SSL_LIBS)\
+$(BINLINKAPPENDFLAGS)
+
+Time_pthread_once_SOURCES = \
+Time_pthread_once.cpp
 
 
 INCLUDES = \

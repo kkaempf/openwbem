@@ -10,3 +10,4 @@ TimeFile
 *.exp
 *.nlm
 *.nlm.*
+Time_pthread_once
