@@ -278,9 +278,11 @@ AC_ARG_ENABLE(debug-mode,
 	AC_DEFINE(DEBUG)
 	CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W"
 	CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual"
+	#CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
   ],[
     CFLAGS="$PLAT_CFLAGS -DNDEBUG $PLAT_OPTFLAGS"
     CXXFLAGS="$PLAT_CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
+    #CXXFLAGS="$PLAT_CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
   ])
 
 AC_ARG_ENABLE(openslp,
