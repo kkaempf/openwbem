@@ -171,7 +171,7 @@ namespace HTTPUtils
 	 * @param c The char to escape
 	 * @return The escaped char
 	 */
-	String escapeCharForUrl(char c);
+	String escapeCharForURL(char c);
 	/**
 	 * Apply the standard URI [16, section 2] escaping mechanism to 
 	 * the string input, using the ""%" HEX HEX" convention)

@@ -677,13 +677,13 @@ decodeBasicCreds(const String& info, String& name,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-String escapeCharForUrl(char c)
+String escapeCharForURL(char c)
 {
 	char rval[4];
 	rval[0] = '%';
-	char hi = c >> 4;
+	UInt8 hi = UInt8(c) >> 4;
 	rval[1] = hi >= 10 ? hi - 10 + 'A' : hi + '0';
-	char low = c & 0xF;
+	UInt8 low = UInt8(c) & 0xF;
 	rval[2] = low >= 10 ? low - 10 + 'A' : low + '0';
 	rval[3] = '\0';
 	return String(rval);
@@ -712,7 +712,7 @@ String escapeForURL(const String& input)
 			rval += input[i];
 			break;
 		default:
-			rval += escapeCharForUrl(input[i]);
+			rval += escapeCharForURL(input[i]);
 			break;
 		}
 	}
