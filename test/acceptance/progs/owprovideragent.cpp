@@ -51,8 +51,16 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_NonAuthenticatingAuthenticator.hpp"
+#include "OW_SharedLibraryLoader.hpp"
+#include "OW_SharedLibraryReference.hpp"
+#include "OW_SharedLibrary.hpp"
+#include "OW_SafeLibCreate.hpp"
+#include "OW_CppProviderIFC.hpp"
 #include <signal.h>
 #include <iostream> // for cout and cerr
+
+
+
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
@@ -298,16 +306,89 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+// TODO stole this stuff from OW_CppProviderIFC.cpp. 
+// need to stick them in a common header. 
+typedef CppProviderBaseIFC* (*ProviderCreationFunc)();
+typedef const char* (*versionFunc_t)();
+
+CppProviderBaseIFCRef
+//getProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString,
+getProvider(const String& libName, LoggerRef logger)
+{
+	String provId = libName.substring(libName.lastIndexOf(OW_FILENAME_SEPARATOR)+1); 
+	// chop of lib and .so
+	provId = provId.substring(3,
+			  provId.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
+
+	SharedLibraryLoaderRef ldr =
+		SharedLibraryLoader::createSharedLibraryLoader();
+	if(ldr.isNull())
+	{
+		logger->logError("C++ provider ifc failed to get shared lib loader");
+		return CppProviderBaseIFCRef();
+	}
+	logger->logDebug(Format("CppProviderIFC::getProvider loading library: %1",
+		libName));
+	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, logger); 
+	if(theLib.isNull())
+	{
+		logger->logError(Format("C++ provider ifc failed to load library: %1 "
+			"for provider id %2", libName, provId));
+		return CppProviderBaseIFCRef();
+	}
+	versionFunc_t versFunc;
+	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
+	{
+		logger->logError("C++ provider ifc failed getting"
+			" function pointer to \"getOWVersion\" from library");
+		return CppProviderBaseIFCRef();
+	}
+	const char* strVer = (*versFunc)();
+	if(strcmp(strVer, OW_VERSION))
+	{
+		logger->logError(Format("C++ provider ifc got invalid version from provider:"
+			" %1", libName));
+		return CppProviderBaseIFCRef();
+	}
+	ProviderCreationFunc createProvider;
+	String creationFuncName = String(CppProviderIFC::CREATIONFUNC) + provId;
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+	{
+		logger->logError(Format("C++ provider ifc: Libary %1 does not contain"
+			" %2 function", libName, creationFuncName));
+		return CppProviderBaseIFCRef();
+	}
+	CppProviderBaseIFC* pProv = (*createProvider)();
+	if(!pProv)
+	{
+		logger->logError(Format("C++ provider ifc: Libary %1 - %2 returned null"
+			" provider", libName, creationFuncName));
+		return CppProviderBaseIFCRef();
+	}
+	/*
+	logger->logDebug(Format("C++ provider ifc loaded library %1. Calling initialize"
+		" for provider %2", libName, provId));
+	pProv->initialize(env);	// Let provider initialize itself
+	*/
+	logger->logDebug(Format("C++ provider ifc: provider %1 loaded and initialized",
+		provId));
+	CppProviderBaseIFCRef rval(theLib, pProv);
+	return rval;
+}
 
 int main(int argc, char* argv[])
 {
+	if (argc != 2)
+	{
+		cerr << "Usage: " << argv[0] << " <provider_lib>" << endl;
+		return 1;
+	}
 	try
 	{
 		signal(SIGINT, sig_handler);
-		String url(argv[1]);
-		String ns(argv[2]);
-		String query(argv[3]);
+		String libName(argv[1]);
 		LoggerRef logger(new RPALogger);
+
 
 		ConfigFile::ConfigMap cmap; 
 		cmap[ConfigOpts::HTTP_PORT_opt] = String(0);
@@ -323,7 +404,18 @@ int main(int argc, char* argv[])
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
 		Array<RequestHandlerIFCRef> rha; 
 		rha.push_back(rh); 
-		Reference<CppProviderBaseIFC> provider(new TestInstance); 
+		//CppProviderBaseIFCRef provider(new TestInstance); 
+		CppProviderBaseIFCRef provider = getProvider(libName, logger); 
+
+		if (!provider->getInstanceProvider() 
+			&& !provider->getSecondaryInstanceProvider()
+			&& !provider->getAssociatorProvider()
+			&& !provider->getMethodProvider())
+		{
+			cerr << "Error: Provider " << libName << " is not a supported type" << endl;
+			return 1; 
+		}
+
 		ProviderAgent pa(cmap, provider, rha, authenticator, logger);
 		// wait until we get a SIGINT
 		shutdownSem.wait();

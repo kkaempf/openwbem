@@ -48,7 +48,7 @@ namespace OpenWBEM
 
 
 ProviderAgentEnvironment::ProviderAgentEnvironment(Map<String,String> configMap,
-		Reference<CppProviderBaseIFC> provider, 
+		CppProviderBaseIFCRef provider, 
 		Reference<AuthenticatorIFC> authenticator,
 		Array<RequestHandlerIFCRef> requestHandlers, 
 		LoggerRef logger,

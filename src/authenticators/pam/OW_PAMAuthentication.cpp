@@ -133,6 +133,10 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 		details = "You must authenticate to access this resource";
 		return false;
 	}
+	// we free the username
+	// pam module is responsible to free the password
+	// http://archives.neohapsis.com/archives/pam-list/2001-04/0002.html
+	// https://listman.redhat.com/archives/pam-list/2001-April/msg00003.html
 	char* pPasswd = strdup(info.c_str());
 	char* pUserName = strdup(userName.c_str());
 	struct pam_conv conv = {

@@ -53,7 +53,7 @@ class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
-		Reference<CppProviderBaseIFC> provider, 
+		CppProviderBaseIFCRef provider, 
 		Reference<AuthenticatorIFC> authenticator,
 		Array<RequestHandlerIFCRef> requestHandlers, 
 		LoggerRef logger,
@@ -93,7 +93,7 @@ private:
 	LoggerRef m_logger;
 	Array<RequestHandlerIFCRef> m_requestHandlers; 
 	Reference<Array<SelectablePair_t> > m_selectables;
-	Reference<CppProviderBaseIFC> m_prov; 
+	CppProviderBaseIFCRef m_prov; 
 	class DummyLogger : public Logger
 	{
 	protected:

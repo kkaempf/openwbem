@@ -65,7 +65,7 @@ public:
 	 *  all log messages will be discarded.
 	 */
 	ProviderAgent(ConfigFile::ConfigMap configMap, 
-				  Reference<CppProviderBaseIFC> provider, 
+				  CppProviderBaseIFCRef provider, 
 				  Array<RequestHandlerIFCRef> requestHandlers, 
 				  Reference<AuthenticatorIFC> authenticator,
 				  LoggerRef logger = LoggerRef(0)); 

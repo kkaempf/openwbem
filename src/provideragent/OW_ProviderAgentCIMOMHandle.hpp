@@ -60,7 +60,7 @@ public:
 		SWMR, 
 		SINGLE_THREADED
 	}; 
-	ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
+	ProviderAgentCIMOMHandle(CppProviderBaseIFCRef provider, 
 							 ProviderEnvironmentIFCRef env); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
@@ -715,7 +715,7 @@ private:
 	private: 
 		PALocker* m_locker; 
 	}; 
-	Reference<CppProviderBaseIFC> m_prov; 
+	CppProviderBaseIFCRef m_prov; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
 	CIMClass m_cimclass;  // TODO assign. 
 	PALockerRef m_locker; 
