@@ -1,17 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<html>
-<head>
-	
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
-  <title></title>
-	 	
-  <meta name="GENERATOR" content="OpenOffice.org 1.0.1  (Linux)">
-	
-  <meta name="CREATED" content="20030409;16104600">
-	
-  <meta name="CHANGED" content="20030519;9302700">
-	
-  <style>
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.0.2  (Linux)">
+	<META NAME="CREATED" CONTENT="20030409;16104600">
+	<META NAME="CHANGED" CONTENT="20040426;16073400">
+	<STYLE>
 	<!--
 		@page { size: 21.59cm 27.94cm; margin-left: 3.18cm; margin-right: 3.18cm; margin-top: 2.54cm; margin-bottom: 2.54cm }
 		P { margin-bottom: 0.21cm }
@@ -26,522 +21,476 @@
 		H3 { margin-bottom: 0.21cm }
 		H3.western { font-family: "Luxi Sans", sans-serif }
 	-->
-	</style>
-</head>
-<body lang="en-US">
-<div id="Table of Contents1"> 	
-<div id="Table of Contents1_Head"> 		
-<p style="margin-top: 0.42cm; page-break-after: avoid;"><font
- face="Luxi Sans, sans-serif"><font size="4" style="font-size: 16pt;"><b>Table
-		of Contents</b></font></font></p>
-	</div>
-</div>
-<ol id="mozToc">
-<!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6--><li><a href="#mozTocId510800">OpenWBEM
-Overview &amp; Concepts</a>
-    <ol>
-      <li><a href="#mozTocId875992">Genesis</a></li>
-      <li><a href="#mozTocId391021">Overview</a></li>
-      <li><a href="#mozTocId162959">Features</a></li>
-    </ol>
-  </li>
-  <li><a href="#mozTocId179045">Compilation &amp; Installation</a>
-    <ol>
-      <li><a href="#mozTocId320481">Pre-Requisites</a></li>
-      <li><a href="#mozTocId445863">Optional Feature Pre-Requisites</a></li>
-      <li><a href="#mozTocId584319">The Installation</a></li>
-    </ol>
-  </li>
-  <li><a href="#mozTocId343655">Configuration</a>
-    <ol>
-      <li><a href="#mozTocId164565">Configuring authentication</a>
-        <ol>
-          <li><a href="#mozTocId768401">PAM</a></li>
-          <li><a href="#mozTocId544938">Simple</a></li>
-          <li><a href="#mozTocId851550">Digest</a></li>
-          <li><a href="#mozTocId466151">SSL</a></li>
-        </ol>
-      </li>
-    </ol>
-  </li>
-  <li><a href="#mozTocId967489">Execution</a>
-    <ol>
-      <li><a href="#mozTocId715200">Create Namespace(s)</a></li>
-      <li><a href="#mozTocId518227">Import Schema(s)</a></li>
-      <li><a href="#mozTocId906201">Install Providers</a>
-        <ol>
-          <li><a href="#mozTocId623210">Provider Qualifier</a></li>
-          <li><a href="#mozTocId673293">Using CIM Clients</a></li>
-        </ol>
-      </li>
-    </ol>
-  </li>
-  <li><a href="#mozTocId966336">Client API</a>
-    <ol>
-      <li><a href="#mozTocId513453">Overview</a></li>
-      <li><a href="#mozTocId102943">Building/Compiling/Linking</a></li>
-    </ol>
-  </li>
-  <li><a href="#mozTocId655901">Building Providers</a>
-    <ol>
-      <li><a href="#mozTocId628869">Overview</a>
-        <ol>
-          <li><a href="#mozTocId112670">Instance</a></li>
-          <li><a href="#mozTocId586930">Associator</a></li>
-          <li><a href="#mozTocId627207">Method</a></li>
-          <li><a href="#mozTocId111464">Provider Development Process</a></li>
-          <li><a href="#mozTocId808344">Extend Schema</a></li>
-          <li><a href="#mozTocId570581">Use CodeGen</a></li>
-          <li><a href="#mozTocId867330">Finish writing provider</a></li>
-        </ol>
-      </li>
-    </ol>
-  </li>
-</ol>
-<h1 class="western"><a name="mozTocId686613" class="mozTocH1"></a><br>
-<br>
-</h1>
-<h1 class="western"><a name="mozTocId510800" class="mozTocH1"></a>1.
-OpenWBEM Overview &amp; Concepts</h1>
-<h2 class="western"><a name="mozTocId875992" class="mozTocH2"></a>Genesis</h2>
-<p>OpenWBEM was started at Caldera in early 2001. It was intended to
-become part of the Volution Manager product.  It was open sourced in the
-desire to help increase the compatiblity of management products,
-especially for Linux.  The Volution Manager technology and staff were
-transferred to Center 7, Inc. in November of 2002.  Center 7 provides
-commercial support, training, and consulting for OpenWBEM.</p>
-<h2 class="western"><a name="mozTocId391021" class="mozTocH2"></a>Overview</h2>
-<p>OpenWBEM is a software suite that is a mature implementation of the
-DMTF CIM and WBEM standards. Components include a CIM Object Manager
-(CIMOM), a CIM Client API, a CIM Listener API, a WBEM Query Language
-(WQL) engine.</p>
-<p>This document assumes that you have a working knowledge of CIM and
-WBEM.</p>
-<h2 class="western"><a name="mozTocId162959" class="mozTocH2"></a>Features</h2>
-<p>See openwbem.org for a nice list.</p>
-<h1 class="western"><a name="mozTocId179045" class="mozTocH1"></a>2.
-Compilation &amp; Installation</h1>
-<h2 class="western"><a name="mozTocId320481" class="mozTocH2"></a>Pre-Requisites</h2>
-<ul>
-	<li>
-    <p>OpenWBEM is written in c++, and has been developed on gcc. 	It
-may work with other compilers, but this hasn't been attempted.</p>
-	</li>
-  <li>
-    <p>pthreads.  pth can also be used on Linux, and is required for
-	OpenServer, because it doesn't have a functional pthreads library.</p>
-  </li>
-</ul>
-<h2 class="western"><a name="mozTocId445863" class="mozTocH2"></a>Optional
-Feature Pre-Requisites</h2>
-<ul>
-	<li>
-    <p>flex – If you need to modify the mof or wql lexers.</p>
-	</li>
-  <li>
-    <p>bison – If you need to modify the mof or wql parsers.</p>
-	</li>
-  <li>
-    <p>perl with embedding headers and libraries – If you want to 	use
-the perl provider interface.</p>
-	</li>
-  <li>
-    <p>PAM libraries – If you want to use the PAM authentication
-	module. PAM development headers – If you want to build the PAM
-	authentication module.</p>
-	</li>
-  <li>
-    <p>zlib – If you want to enable &amp; use http compression.</p>
-	</li>
-  <li>
-    <p>slp (e.g. OpenSLP for Linux) – If you want to use the slp
-	provider to advertise or the client api to discover slp cimom
-	advertisements.</p>
-	</li>
-  <li>
-    <p>openssl – If you want to use https.</p>
-  </li>
-</ul>
-<h2 class="western"><a name="mozTocId584319" class="mozTocH2"></a>The
-Installation</h2>
-<p>First download and extract the OpenWBEM source code.  Then run the
-configure script: <font face="Courier, monospace">./configure</font>
-There are quite a few options you can pass to the configure script that
-are used to enable/disable certain optional features, or to tell it
-where to find headers and libraries if they aren't in the standard
-locations. Use the --<font face="Courier, monospace">help</font> flag to
-get a list of the options.  After configure is finished, you can run <font
- face="Courier, monospace">make</font> to build.  If you wish to verify
-that everything is working, you can run <font face="Courier, monospace">make
-check</font>.  Run <font face="Courier, monospace">make install</font>
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US">
+<DIV ID="Table of Contents1">
+	<DIV ID="Table of Contents1_Head">
+		<P STYLE="margin-top: 0.42cm; page-break-after: avoid"><FONT FACE="Luxi Sans, sans-serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Table
+		of Contents</B></FONT></FONT></P>
+	</DIV>
+	<P STYLE="margin-bottom: 0cm">1. OpenWBEM Overview &amp; Concepts	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Genesis	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Overview	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Features	2</P>
+	<P STYLE="margin-bottom: 0cm">2. Installation	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Pre-Requisites	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Optional Feature
+	Pre-Requisites	2</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">The Installation	3</P>
+	<P STYLE="margin-bottom: 0cm">3. Configuration	3</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Configuring
+	authentication	4</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">PAM	4</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Simple	4</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Digest	5</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Custom	5</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">SSL	5</P>
+	<P STYLE="margin-bottom: 0cm">4. Execution	6</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Create
+	Namespace(s)	6</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Import Schema(s)	6</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Install
+	Providers	7</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Automatic Provider
+	Registration	7</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Provider Qualifier	7</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Using CIM Clients	8</P>
+	<P STYLE="margin-bottom: 0cm">5. Client API	8</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Overview	8</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Building/Compiling/Linking	8</P>
+	<P STYLE="margin-bottom: 0cm">6. Building Providers	9</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Overview	9</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Instance	9</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Secondary Instance	9</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Associator	9</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Method	9</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Indication	10</P>
+	<P STYLE="margin-left: 0.5cm; margin-bottom: 0cm">Provider
+	Development Process	10</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Extend Schema	10</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Use CodeGen	10</P>
+	<P STYLE="margin-left: 1cm; margin-bottom: 0cm">Finish writing
+	provider	10</P>
+</DIV>
+<H1 CLASS="western"><BR><BR>
+</H1>
+<H1 CLASS="western">1. OpenWBEM Overview &amp; Concepts</H1>
+<H2 CLASS="western">Genesis</H2>
+<P>OpenWBEM was started at Caldera in early 2001. It was intended to
+become part of the Volution Manager product.  It was open sourced in
+the desire to help increase the compatiblity of management products,
+especially for Linux. It is now maintained by a variety of various
+companies and individuals.  Dan Nuffer is the project lead.</P>
+<H2 CLASS="western">Overview</H2>
+<P>OpenWBEM is a software suite that is a mature implementation of
+the DMTF CIM and WBEM standards. Components include a CIM Object
+Manager (CIMOM), a CIM Client API, a CIM Listener API, a WBEM Query
+Language (WQL) engine.</P>
+<H2 CLASS="western">Features</H2>
+<P>See openwbem.org for a nice list.</P>
+<H1 CLASS="western">2. Installation</H1>
+<H2 CLASS="western">Pre-Requisites</H2>
+<UL>
+	<LI><P>OpenWBEM is written in C++, and has been developed on gcc. 
+	It also can be compiled by most current C++ compilers, include
+	Microsoft Visual C++ 7.1, IBM's VisualAge for C++, and HP's aC++</P>
+	<LI><P>pthreads.</P>
+</UL>
+<H2 CLASS="western">Optional Feature Pre-Requisites</H2>
+<UL>
+	<LI><P>flex – Only if you obtained the source from CVS, or if you
+	need to modify the mof or wql lexers.</P>
+	<LI><P>bison – Only if you obtained the source from CVS, or if you
+	need to modify the mof or wql parsers.</P>
+	<LI><P>perl with embedding headers and libraries – If you want to
+	use the perl provider interface.</P>
+	<LI><P>PAM libraries – If you want to use the PAM authentication
+	module.  These are part of glibc on Linux.  
+	</P>
+	<LI><P>PAM development headers – If you want to build the PAM
+	authentication module.</P>
+	<LI><P>zlib – If you want to enable &amp; use http compression.</P>
+	<LI><P>slp (e.g. OpenSLP) – If you want to use the slp provider to
+	advertise or the client api to discover slp cimom advertisements.</P>
+	<LI><P>openssl – If you want to use https.</P>
+</UL>
+<H2 CLASS="western">The Installation</H2>
+<P>First download and extract the OpenWBEM source code.  Then run the
+configure script: <FONT FACE="Courier, monospace">./configure</FONT> 
+There are quite a few options you can pass to the configure script
+that are used to enable/disable certain optional features, or to tell
+it where to find headers and libraries if they aren't in the standard
+locations.  Use the --<FONT FACE="Courier, monospace">help</FONT>
+flag to get a list of the options.  If you are building a copy to do
+development work, it is highly recommended you use the
+<FONT FACE="Courier, monospace">–enable-debug-mode</FONT> option. 
+After configure is finished, you can run <FONT FACE="Courier, monospace">make</FONT>
+to build.  Verify that everything is working, and run <FONT FACE="Courier, monospace">make
+check</FONT>.  Run <FONT FACE="Courier, monospace">make install</FONT>
 to install OpenWBEM on your system.  Having it installed is not
 required, but will make it easier to use since the binaries and
-libraries will be in the <font face="Courier, monospace">PATH</font>.</p>
-<p><br>
-<br>
-</p>
-<p>There is also an RPM spec file available.  You can build OpenWBEM by
-executing: <font face="Courier, monospace">rpm -ba openwbem.spec</font>.
-This will generate an openwbem and openwbem-devel rpm. You can then
-install them by running <font face="Courier, monospace">rpm -i &lt;rpm
-filename&gt;</font>.</p>
-<h1 class="western"><a name="mozTocId343655" class="mozTocH1"></a>3.
-Configuration</h1>
-<p>The OpenWBEM cimom (owcimomd) can be passed 3 different command line
-arguments.</p>
-<ul>
-	<li>
-    <p>-h prints the help. 	</p>
-	</li>
-  <li>
-    <p>-d tells owcimomd to run in debug mode.  This causes it to 	<b>not</b>
-fork into the background and detach from the terminal 	(daemonizing). 
-It will also print all log messages in addition to 	whatever logger is
-configured.</p>
-	</li>
-  <li>
-    <p>-c &lt;config filename&gt; specifies which config file to 	use. 
-By default owcimomd will use the config file in 	<font
- face="Courier, monospace">${sysconfdir}/openwbem/openwbem.conf</font>
-	. <font face="Courier, monospace">${sysconfdir}</font> defaults to 	<font
- face="Courier, monospace">/usr/local/etc</font>, but can be 	changed
-by telling the configure script to use a different prefix or
-	sysconfdir (e.g. <font face="Courier, monospace">--sysconfdir=/etc</font>).
+libraries will be in the <FONT FACE="Courier, monospace">PATH</FONT>.</P>
+<P><BR><BR>
+</P>
+<P>There is also an RPM spec file available.  You can build OpenWBEM
+by executing: <FONT FACE="Courier, monospace">rpmbuild -ta
+openwbem-&lt;version&gt;.tar.gz</FONT>.  This will generate an
+openwbem and openwbem-devel rpm. You can then install them by running
+<FONT FACE="Courier, monospace">rpm -i &lt;rpm filename&gt;</FONT>. 
+The RPM provides some additional files that aren't installed
+otherwise on Linux.  These include the init script
+(<FONT FACE="Courier, monospace">/etc/init.d/owcimomd</FONT>), the
+PAM configuration file (<FONT FACE="Courier, monospace">/etc/pam.d/openwbem</FONT>),
+and some miscellaneous documentation.</P>
+<H1 CLASS="western">3. Configuration</H1>
+<P>The OpenWBEM cimom (owcimomd) can be passed 3 different command
+line arguments.</P>
+<UL>
+	<LI><P>-h prints the help.  
+	</P>
+	<LI><P>-d tells owcimomd to run in debug mode.  This causes it to
+	<B>not</B> fork into the background and detach from the terminal
+	(daemonizing).  It will also print all log messages in addition to
+	whatever logger is configured.</P>
+	<LI><P>-c &lt;config filename&gt; specifies which config file to
+	use.  By default owcimomd will use the config file in
+	<FONT FACE="Courier, monospace">${sysconfdir}/openwbem/openwbem.conf</FONT>
+	. <FONT FACE="Courier, monospace">${sysconfdir}</FONT> defaults to
+	<FONT FACE="Courier, monospace">/usr/local/etc</FONT>, but can be
+	changed by telling the configure script to use a different prefix or
+	sysconfdir (e.g. <FONT FACE="Courier, monospace">--sysconfdir=/etc</FONT>).
 	This option allows the user to override the default and manually
-	specify the config file to use.</p>
-  </li>
-</ul>
-<p>The owcimomd config file contains many options which can be used to
-modify it's behavior.  Most are set to reasonable defaults.  You
+	specify the config file to use.</P>
+</UL>
+<P>The owcimomd config file contains many options which can be used
+to modify it's behavior.  Most are set to reasonable defaults.  You
 probably won't need to change any of the options that refer to
-directories. Some you may wish to configure are those related to
-authorization, logging, or optional features.  The config file contains
-explanations for all available options.</p>
-<h2 class="western"><a name="mozTocId164565" class="mozTocH2"></a>Configuring
-authentication</h2>
-<p>Currently there are 3 authentication methods.  PAM, Simple, and
-Digest. OpenWBEM also supports custom authentication modules.</p>
-<h3 class="western"><a name="mozTocId768401" class="mozTocH3"></a>PAM</h3>
-<p>This method uses the PAM (Pluggable Authentication Modules) system
-api. This means that the cimom will use the system's authentication. 
-The client will have to use the same username and password they would
-use to log in.  To use this:</p>
-<ul>
-	<li>
-    <p>Set the <font face="Courier, monospace">owcimomd.authentication_module</font>
-	config item to point to the <font face="Courier, monospace">libpamauthentication.so</font>
-	library file. 	</p>
-	</li>
-  <li>
-    <p>Set the <font face="Courier, monospace">pam.allowed_users</font>
-	config item to a space delimited list of the users who are allowed 	to
-access the cimom. 	</p>
-	</li>
-  <li>
-    <p>Install the openwbem PAM config file.  This isn't necessary 	if
-you installed the RPM. Copy <font face="Courier, monospace">etc/pam.d/openwbem</font>
-	to <font face="Courier, monospace">/etc/pam.d/</font></p>
-  </li>
-</ul>
-<p>To build the PAM authentication module, you must have the PAM
+directories.  Some you may wish to configure are those related to
+authorization, logging, or optional features.  The config file
+contains explanations for all available options.</P>
+<H2 CLASS="western">Configuring authentication</H2>
+<P>Currently there are 3 authentication methods.  PAM, Simple, and
+Digest.  OpenWBEM also supports custom authentication modules.</P>
+<H3 CLASS="western">PAM</H3>
+<P>This method uses the PAM (Pluggable Authentication Modules) system
+api.  This means that the cimom will use the system's authentication.
+ The client will have to use the same username and password they
+would use to log in.  To use this:</P>
+<UL>
+	<LI><P>Set the <FONT FACE="Courier, monospace">owcimomd.authentication_module</FONT>
+	config item to point to the <FONT FACE="Courier, monospace">libpamauthentication.so</FONT>
+	library file.  
+	</P>
+	<LI><P>Set the <FONT FACE="Courier, monospace">pam.allowed_users</FONT>
+	config item to a space delimited list of the users who are allowed
+	to access the cimom. To allow all users, put in <FONT FACE="Courier, monospace">*</FONT>.</P>
+	<LI><P>Install the openwbem PAM config file.  Copy
+	<FONT FACE="Courier, monospace">etc/pam.d/openwbem</FONT> to
+	<FONT FACE="Courier, monospace">/etc/pam.d/</FONT></P>
+</UL>
+<P>To build the PAM authentication module, you must have the PAM
 development headers installed.  They are not installed by default in
-many versions of Linux.  If you find that the <font
- face="Courier, monospace">libpamauthentication.so</font> file was not
-built, this is because the OpenWBEM configure script will automatically
-detect if they are there or not, and only build the PAM authentication
-module if they are installed.</p>
-<p>When using PAM, the http simple authentication headers are used,
-meaning the password is sent in an insecure fashion over the wire. To
-prevent sniffers on the Internet from obtaining your credentials you
-must use SSL together with the PAM authentication module.  This may not
-be a concern in a trusted environment.  The RPM configuration defaults
-to using PAM.</p>
-<h3 class="western"><a name="mozTocId544938" class="mozTocH3"></a>Simple</h3>
-<p>The simple authentication module is backed by a file where each line
-contains a user name and password separated by a colon. <br>
-<br>
-An example file is like this:</p>
-<p> <br>
-<font face="Courier, monospace">username1:password1 <br>
-username2:password2</font></p>
-<p><br>
-<br>
-</p>
-<p>To use this, set the <font face="Courier, monospace">owcimomd.authentication_module</font>
-config item to point to the <font face="Courier, monospace">libsimpleauthentication.so</font>
-library file.  Set the <font face="Courier, monospace">simple_auth.password_file</font>
-config item to point to the password file you have created.</p>
-<p>When using the simple authentication method, the http simple
+many versions of Linux.  If you find that the <FONT FACE="Courier, monospace">libpamauthentication.so</FONT>
+file was not built, this is because the OpenWBEM configure script
+will automatically detect if the PAM headers are there or not, and
+only build the PAM authentication module if they are installed.  If
+you find this happened to you, and you want to remedy the situation,
+install the headers (commonly in an RPM called pam-devel), then
+remove the <FONT FACE="Courier, monospace">config.cache</FONT> file
+generated by the configure script, and then re-run configure and
+rebuild.</P>
+<P>When using PAM, the http simple authentication headers are used,
+meaning the password is sent in an insecure fashion over the wire. 
+To prevent sniffers on the Internet from obtaining your credentials
+you must use SSL together with the PAM authentication module.  This
+may not be a concern in a trusted environment.</P>
+<H3 CLASS="western">Simple</H3>
+<P>The simple authentication module is backed by a file where each
+line contains a user name and password separated by a colon. <BR><BR>An
+example file is like this:</P>
+<P> <BR><FONT FACE="Courier, monospace">username1:password1
+<BR>username2:password2</FONT></P>
+<P><BR><BR>
+</P>
+<P>To use this, set the <FONT FACE="Courier, monospace">owcimomd.authentication_module</FONT>
+config item to point to the <FONT FACE="Courier, monospace">libsimpleauthentication.so</FONT>
+library file.  Set the <FONT FACE="Courier, monospace">simple_auth.password_file</FONT>
+config item to point to the password file you have created.</P>
+<P>When using the simple authentication method, the http simple
 authentication headers are used, meaning the password is sent in an
 insecure fashion over the wire.  To prevent sniffers on the Internet
 from obtaining your credentials you must use SSL together with the
 simple authentication module.  This may not be a concern in a trusted
-environment.</p>
-<h3 class="western"><a name="mozTocId851550" class="mozTocH3"></a>Digest</h3>
-<p>The digest authentication mechanism is built into the http server,
+environment.</P>
+<H3 CLASS="western">Digest</H3>
+<P>The digest authentication mechanism is built into the http server,
 and bypasses the normal openwbem authentication module.  To turn on
-digest authentication, set the <font face="Courier, monospace">http_server.use_digest</font>
+digest authentication, set the <FONT FACE="Courier, monospace">http_server.use_digest</FONT>
 config item to true.  Digest uses cryptographic hashing and other
 mechanisms to prevent discovery of passwords.  Because of this, it
-cannot integrate with system passwords, the digest authentication module
-requires you create a password file using the <font
- face="Courier, monospace">owdigestgenpass</font> utility.  Here is an
-example of how to use it:</p>
-<p><font face="Courier, monospace">owdigestgenpass -l user1 -f
-/the/password/file</font></p>
-<p>Enter the password when prompted.  If you aren't running it on the
-same computer as the cimom, you can also use the -h flag to specify the
-cimom computer's hostname. To inform openwbem of the digest password
-file, set the <font face="Courier, monospace">http_server.digest_password_file</font>
-config item.</p>
-<p>Digest authentication is safe to use over an unencrypted (non-SSL)
-connection. Attackers will be unable to obtain the password or do a
-replay attack.</p>
-<h3 class="western"><a name="mozTocId466151" class="mozTocH3"></a>SSL</h3>
-<p>OpenWBEM will build in SSL client and server support if the
-configure scripts finds the openssl development headers and libraries. 
-The <font face="Courier, monospace">http_server.https_port</font>
+cannot integrate with system passwords. The digest authentication
+module requires you create a password file using the <FONT FACE="Courier, monospace">owdigestgenpass</FONT>
+utility.  Here is an example of how to use it:</P>
+<P><FONT FACE="Courier, monospace">owdigestgenpass -l user1 -f
+/the/password/file</FONT></P>
+<P>Enter the password when prompted.  If you aren't running it on the
+same computer as the cimom, you can also use the -h flag to specify
+the cimom computer's hostname. To inform openwbem of the digest
+password file, set the <FONT FACE="Courier, monospace">http_server.digest_password_file</FONT>
+config item.</P>
+<P>Digest authentication is safe to use over an unencrypted (non-SSL)
+connection.  Attackers will be unable to obtain the password or do a
+replay attack.</P>
+<H3 CLASS="western">Custom</H3>
+<P>Create a class that implements the AuthenticatorIFC interface and
+compile it into a shared library.  Point the config file at it and
+you're done.</P>
+<H3 CLASS="western">SSL</H3>
+<P>OpenWBEM will build in SSL client and server support if the
+configure scripts finds the openssl development headers and
+libraries.  The <FONT FACE="Courier, monospace">http_server.https_port</FONT>
 config item specifies which port the https server will listen on.  If
 set to -1, https will be disabled.  If not specified, the default is
-port 5989 which is the IANA assigned port for CIM-XML over https.</p>
-<p>To use SSL you need to setup a SSL host key and certificate. If you
-are just testing, or doing development, you can use the test file the
-comes with OpenWBEM: <font face="Courier, monospace">test/acceptance/testfiles/hostkey+cert.pem</font> <br>
-<br>
-Otherwise you can generate your own using a SSL key and certificate
-tool such as openssl, or even get one signed by a recognized
-certificate authority (e.g. Verisign).  The file has to contain both
-the server key and certificate in pem format. <br>
-<br>
-Make sure the config item <font face="Courier, monospace">http_server.SSL_cert</font>
-points to the file.</p>
-<p><br>
-<br>
-</p>
-<h1 class="western"><a name="mozTocId967489" class="mozTocH1"></a>4.
-Execution</h1>
-<p>During development I almost always run owcimomd in debug mode (use
+port 5989 which is the IANA assigned port for CIM-XML over https.</P>
+<P>To use SSL you need to setup a SSL host key and certificate. If
+you are just testing, or doing development, you can use the test file
+the comes with OpenWBEM: <FONT FACE="Courier, monospace">test/acceptance/testfiles/hostkey+cert.pem</FONT>
+<BR><BR>Otherwise you can generate your own using a SSL key and
+certificate tool such as openssl, or even get one signed by a
+recognized certificate authority (e.g. Verisign).  The file has to
+contain both the server key and certificate in pem format.</P>
+<P>You may want to use the provided <FONT FACE="Courier, monospace">owgencert</FONT>
+script to create a self signed certificate and key.  <BR><BR>Make
+sure the config item <FONT FACE="Courier, monospace">http_server.SSL_cert</FONT>
+points to the file.</P>
+<P><BR><BR>
+</P>
+<H1 CLASS="western">4. Execution</H1>
+<P>During development I almost always run owcimomd in debug mode (use
 the -d command line argument).  In production, it should be run as a
 normal system daemon.  There is a Linux init script available
-(etc/init/owcimomd) which works on most Linux distributions.  The init
-script assumes openwbem has been <font face="Courier, monospace">./configure</font>'d
-with the following arguments: <font face="Courier, monospace">--prefix=/usr
---sysconfdir=/etc --localstatedir=/var/lib</font></p>
-<h2 class="western"><a name="mozTocId715200" class="mozTocH2"></a>Create
-Namespace(s)</h2>
-<p>owcimomd always has a namespace named <font
- face="Courier, monospace">root</font>.  OpenWBEM supports a<span
- lang="en-US"> hierarchical </span>view of namespaces, using the <font
- face="Courier, monospace">__Namespace</font> class.  The DMTF has
-deprecated <font face="Courier, monospace">__Namespace</font> in lieu
-of <font face="Courier, monospace">CIM_Namespace</font>.  The next
-version of OpenWBEM will support <font face="Courier, monospace">CIM_Namespace</font>.
-The CIM Operations over HTTP spec recommends that CIM_Namespace always
-be available in the <font face="Courier, monospace">root</font>
-namespace. It is common practice to use <font face="Courier, monospace">root/cimv2</font>
+(<FONT FACE="Courier, monospace">etc/init/owcimomd</FONT>) which
+works on most Linux distributions.  The init script assumes openwbem
+has been <FONT FACE="Courier, monospace">./configure</FONT>'d with
+the following arguments: <FONT FACE="Courier, monospace">--prefix=/usr
+--sysconfdir=/etc --localstatedir=/var/lib</FONT></P>
+<H2 CLASS="western">Create Namespace(s)</H2>
+<P>owcimomd always has a namespace named <FONT FACE="Courier, monospace">root</FONT>.
+ OpenWBEM supports a<SPAN LANG="en-US"> hierarchical </SPAN>view of
+namespaces, using the <FONT FACE="Courier, monospace">__Namespace</FONT>
+class.  The DMTF has deprecated <FONT FACE="Courier, monospace">__Namespace</FONT>
+in lieu of <FONT FACE="Courier, monospace">CIM_Namespace</FONT>. 
+OpenWBEM supports  <FONT FACE="Courier, monospace">CIM_Namespace</FONT>
+if the class has been created, and it provides a flat view of
+namespaces. Enumerating instances of the class will return an
+instance for each namespace in the cimom.  The CIM Operations over
+HTTP spec recommends that <FONT FACE="Courier, monospace">CIM_Namespace</FONT>
+always be available in the <FONT FACE="Courier, monospace">root</FONT>
+namespace.  It is common practice to use <FONT FACE="Courier, monospace">root/cimv2</FONT>
 as the namespace to hold version 2 of the CIM schema.  You can create
 namespaces using any CIM client such as the SNIA browser.  OpenWBEM
-provides a utility named <font face="Courier, monospace">owcreatenamespace</font>
-which can create a namespace.  Here is an example of how to create the <font
- face="Courier, monospace">root/cimv2</font> namespace on the cimom
-running on the same machine: </p>
-<p><font face="Courier, monospace">owcreatenamespace
-http://localhost/cimom root/cimv2</font></p>
-<h2 class="western"><a name="mozTocId518227" class="mozTocH2"></a>Import
-Schema(s)</h2>
-<p>You use <font face="Courier, monospace">owmofc</font> to import mof
-classes and instances into the cimom. </p>
-<p>You will have to import the schema into the namespace you wish to
-use (<font face="Courier, monospace">root/cimv2</font> is recommended):</p>
-<p><font face="Courier, monospace">owmofc http://localhost/cimom
-root/cimv2 CIM_Schema27.mof</font></p>
-<p>Substitute the actual schema file you are using.  OpenWBEM 2.0.x
-comes with the CIM 2.5 schema in the schemas/cim25 directory.  Other
+provides a utility named <FONT FACE="Courier, monospace">owcreatenamespace</FONT>
+which can create a namespace.  Here is an example of how to create
+the <FONT FACE="Courier, monospace">root/cimv2</FONT> namespace on
+the cimom running on the same machine: 
+</P>
+<P><FONT FACE="Courier, monospace">owcreatenamespace
+http://localhost/cimom root/cimv2</FONT></P>
+<H2 CLASS="western">Import Schema(s)</H2>
+<P>You use <FONT FACE="Courier, monospace">owmofc</FONT> to import
+mof classes and instances into the cimom.  
+</P>
+<P><BR><BR>
+</P>
+<P>It is recommended that the CIM_Interop schema be present in the
+<FONT FACE="Courier, monospace">root</FONT> namespace.  Run the
+following commands to accomplish this:</P>
+<P><FONT FACE="Courier, monospace">owmofc -u http://localhost/cimom
+-n root CIM_Core28.mof</FONT></P>
+<P><FONT FACE="Courier, monospace">owmofc -u http://localhost/cimom
+-n root CIM_Event28.mof</FONT></P>
+<P><FONT FACE="Courier, monospace">owmofc -u http://localhost/cimom
+-n root CIM_Interop28.mof</FONT></P>
+<P><FONT FACE="Courier, monospace">owmofc -u http://localhost/cimom
+-n root OpenWBEM_Interop.mof</FONT></P>
+<P>As of this writing the current version of the schema is 2.8. 
+Substitute the version of the schema that you wish to use in the
+above commands.</P>
+<P><BR><BR>
+</P>
+<P>For all versions of OpenWBEM:</P>
+<P>You will have to import the schema into the namespace you wish to
+use (<FONT FACE="Courier, monospace">root/cimv2</FONT> is
+recommended):</P>
+<P><FONT FACE="Courier, monospace">owmofc -u http://localhost/cimom
+-n root/cimv2 CIM_Schema28.mof</FONT></P>
+<P>Substitute the actual schema file you are using.  OpenWBEM 3.0.x
+comes with the CIM 2.8 schema in the schemas/cim28 directory.  Other
 versions can be downloaded from the DMTF at
-http://dmtf.org/standards/standard_cim.php.</p>
-<p>If you wish to use ACLs, create the <font face="Courier, monospace">root/security</font>
-namespace and import <font face="Courier, monospace">OpenWBEM_Acl1.0.mof</font>.
-Refer to the ACL.HOWTO file if you want more information about ACLs.</p>
-<h2 class="western"><a name="mozTocId906201" class="mozTocH2"></a>Install
-Providers</h2>
-<h3 class="western"><a name="mozTocId623210" class="mozTocH3"></a>Provider
-Qualifier</h3>
-<p>The provider qualifier is the only method of provider registration
-with OpenWBEM 2.0.  It has been deprecated by the DMTF and will be
-eventually replaced with the Interop schema provider registration
-classes. OpenWBEM will continue to support the provider qualifier as
-long as people still use it.</p>
-<p>To use the provider qualifier, you should first find the class in
-the CIM schema that most closely resembles what you want to model. Then
-you create a subclass for your object.  You attach a provider qualifier
-to the class that identifies your provider.  For instance:</p>
-<p><font face="Courier, monospace">[provider(“c++::foo”)]</font></p>
-<p><font face="Courier, monospace">class foo</font></p>
-<p><font face="Courier, monospace">{</font></p>
-<p><font face="Courier, monospace">};</font></p>
-<p>tells the cimom to look for libfoo.so when it needs to query the
-provider for the foo class.  The value of the qualifier <font
- face="Courier, monospace">“c++::foo”</font> identifies both the
-provider type and the provider library name. <font
- face="Courier, monospace">c++</font> is the type, and <font
- face="Courier, monospace">foo</font> is the name.  Other provider
-interfaces have a different type.  To install the provider, simply copy
-the provider library to the appropriate directory.  The config item <font
- face="Courier, monospace">cppprovifc.prov_location</font> specifies the
-directory.  It defaults to <font face="Courier, monospace">/usr/local/lib/openwbem/c++providers</font>.
-Then import your mof into the cimom and your provider will be
-available. It is <b>not</b> necessary to restart the cimom.</p>
-<h3 class="western"><a name="mozTocId673293" class="mozTocH3"></a>Using
-CIM Clients</h3>
-<p>OpenWBEM currently has utilities to:</p>
-<ul>
-	<li>
-    <p>compile mof (owmofc)</p>
-	</li>
-  <li>
-    <p>generate a http digest password file (owdigestgenpass)</p>
-	</li>
-  <li>
-    <p>create a namespace (owcreatenamespace)</p>
-	</li>
-  <li>
-    <p>delete a namespace (owdeletenamespace)</p>
-	</li>
-  <li>
-    <p>enumerate classes (owenumclasses)</p>
-	</li>
-  <li>
-    <p>enumerate class names (owenumclassnames)</p>
-	</li>
-  <li>
-    <p>enumerate namespaces (owenumnamespace)</p>
-	</li>
-  <li>
-    <p>enumerate qualifiers (enumqualifiers)</p>
-	</li>
-  <li>
-    <p>execute wql queries (owexecwql)</p>
-  </li>
-</ul>
-<h1 class="western"><a name="mozTocId966336" class="mozTocH1"></a>5.
-Client API</h1>
-<h2 class="western"><a name="mozTocId513453" class="mozTocH2"></a>Overview</h2>
-<p>OpenWBEM has all the necessary code to facilitate writing a CIM
-client. All the details of CIM/XML are abstracted.  There are also
+http://dmtf.org/standards/standard_cim.php.</P>
+<P>If you wish to use ACLs, create the <FONT FACE="Courier, monospace">root/security</FONT>
+namespace and import <FONT FACE="Courier, monospace">OpenWBEM_Acl1.0.mof</FONT>.
+ Refer to the ACL.HOWTO file if you want more information about ACLs.</P>
+<H2 CLASS="western">Install Providers</H2>
+<H3 CLASS="western">Automatic Provider Registration</H3>
+<P>When OpenWBEM starts up, it will scan and load all provider
+interfaces.  Each provider interface is given the opportunity to
+automatically register any class/provider combos that its responsible
+for with the provider manager.  Thus this behavior is dependent on
+the provider interface.  The C++ provider interface will scan all
+providers at start-up. It is currently not possible to dynamically
+register a provider that uses this registration scheme.  The cimom
+has to be restarted when one is added or removed.  It is not
+necessary to create any special classes or instances to inform the
+cimom of the provider, since it will be found when the cimom starts
+up.</P>
+<H3 CLASS="western">Provider Qualifier</H3>
+<P>OpenWBEM has support for the provider qualifier and will continue
+to support the provider qualifier as long as people still use it.</P>
+<P>To use the provider qualifier, you should first find the class in
+the CIM schema that most closely resembles what you want to model. 
+Then you create a subclass for your object.  You attach a provider
+qualifier to the class that identifies your provider.  For instance:</P>
+<P><FONT FACE="Courier, monospace">[provider(“c++::acme_foo”)]</FONT></P>
+<P><FONT FACE="Courier, monospace">class ACME_Foo : CIM_Foo</FONT></P>
+<P><FONT FACE="Courier, monospace">{</FONT></P>
+<P><FONT FACE="Courier, monospace">};</FONT></P>
+<P>tells the cimom to look for libacme_foo.so when it needs to query
+the provider for the ACME_Foo class.  The value of the qualifier
+<FONT FACE="Courier, monospace">“c++::acme_foo”</FONT> identifies
+both the provider type and the provider library name.  <FONT FACE="Courier, monospace">c++</FONT>
+is the type, and <FONT FACE="Courier, monospace">acme_foo</FONT> is
+the name.  Other provider interfaces have a different type.  To
+install the provider, simply copy the provider library to the
+appropriate directory.  The config item <FONT FACE="Courier, monospace">cppprovifc.prov_location</FONT>
+specifies the directory.  It defaults to
+<FONT FACE="Courier, monospace">/usr/local/lib/openwbem/c++providers</FONT>.
+ Then import your mof into the cimom and your provider will be
+available.  It is <B>not</B> necessary to restart the cimom.</P>
+<H3 CLASS="western">Using CIM Clients</H3>
+<P>OpenWBEM currently has utilities to:</P>
+<UL>
+	<LI><P>compile mof (owmofc)</P>
+	<LI><P>generate a http digest password file (owdigestgenpass)</P>
+	<LI><P>listen for indications (owcimindicationlistener)</P>
+	<LI><P>create a namespace (owcreatenamespace)</P>
+	<LI><P>delete a namespace (owdeletenamespace)</P>
+	<LI><P>enumerate classes (owenumclasses)</P>
+	<LI><P>enumerate class names (owenumclassnames)</P>
+	<LI><P>enumerate namespaces (owenumnamespace)</P>
+	<LI><P>enumerate qualifiers (enumqualifiers)</P>
+	<LI><P>execute wql queries (owexecwql)</P>
+</UL>
+<H1 CLASS="western">5. Client API</H1>
+<H2 CLASS="western">Overview</H2>
+<P>OpenWBEM has all the necessary code to facilitate writing a CIM
+client.  All the details of CIM/XML are abstracted.  There are also
 utilities for sockets, threading, etc.  See the Doxygen generated API
-docs if you need more information.</p>
-<h2 class="western"><a name="mozTocId102943" class="mozTocH2"></a>Building/Compiling/Linking</h2>
-<p>The client API is broken up into various shared libraries to allow
+docs if you need more information.</P>
+<H2 CLASS="western">Building/Compiling/Linking</H2>
+<P>The client API is broken up into various shared libraries to allow
 developers to be able to pick and choose what subset of functionality
-they need.</p>
-<ul>
-	<li>
-    <p>libopenwbem.so – Common code as well as all CIM meta model
-	classes.</p>
-	</li>
-  <li>
-    <p>libowclient.so – CIM client functionality.</p>
-	</li>
-  <li>
-    <p>libowxml.so – XML functionality used by the CIM/XML 	protocol
-code.</p>
-	</li>
-  <li>
-    <p>libowhttpcommon.so – HTTP functionality that is common 	between
-client and server.</p>
-	</li>
-  <li>
-    <p>libowhttpclient.so – HTTP client code.</p>
-	</li>
-  <li>
-    <p>libowhttpxmllistener.so – The CIM/XML Listener.</p>
-	</li>
-  <li>
-    <p>libowservicehttp.so – The HTTP server.  Used by the CIM/XML
-	Listener.</p>
-  </li>
-</ul>
-<h1 class="western"><a name="mozTocId655901" class="mozTocH1"></a>6.
-Building Providers</h1>
-<h2 class="western"><a name="mozTocId628869" class="mozTocH2"></a>Overview</h2>
-<h3 class="western"><a name="mozTocId112670" class="mozTocH3"></a>Instance</h3>
-<p>Instance providers are responsible for handling the following
-intrinsic methods for a certain class:</p>
-<ul>
-	<li>
-    <p>EnumerateInstanceNames</p>
-	</li>
-  <li>
-    <p>EnumerateInstances</p>
-	</li>
-  <li>
-    <p>GetInstance</p>
-	</li>
-  <li>
-    <p>CreateInstance</p>
-	</li>
-  <li>
-    <p>ModifyInstance</p>
-	</li>
-  <li>
-    <p>DeleteInstance</p>
-  </li>
-</ul>
-<p>Typically, each instance (uniquely identified by it's keys)
-represents one object to be managed.</p>
-<h3 class="western"><a name="mozTocId586930" class="mozTocH3"></a>Associator</h3>
-<p>Associator providers are responsible for handling the following
-intrinsic methods for a certain association class:</p>
-<ul>
-	<li>
-    <p>Associators</p>
-	</li>
-  <li>
-    <p>AssociatorNames</p>
-	</li>
-  <li>
-    <p>References</p>
-	</li>
-  <li>
-    <p>ReferenceNames</p>
-  </li>
-</ul>
-<p>With OpenWBEM, an dynamic association can be implemented with just
-an instance provider, but it can be much more efficient to implement the
-associator provider interface.  Associator providers should also be
-instance providers so that the instance functions will work for the
-association class.</p>
-<h3 class="western"><a name="mozTocId627207" class="mozTocH3"></a>Method</h3>
-<p>Method providers are responsible for handling any extrinsic methods
-defined in a class.  It is common for an instance provider to also be a
-method provider.</p>
-<h3 class="western"><a name="mozTocId111464" class="mozTocH3"></a>Provider
-Development Process</h3>
-<h3 class="western"><a name="mozTocId808344" class="mozTocH3"></a>Extend
-Schema</h3>
-<p>The first step is to find the appropriate class in the standard CIM
-schema that represents the element you want to model.  Next you create
-a subclass for your object.  You can add properties and methods that
-apply. Creating a subclass is done with mof (or you can use the
-Rational Rose plug-in available from the sblim project and generate the
-mof).  The class may be dependent on others via associations, so you
-may have multiple iterations of classes that need to be instrumented. 
-If you implement non-association classes, you also usually need to
-implement associations for them as well.</p>
-<h3 class="western"><a name="mozTocId570581" class="mozTocH3"></a>Use
-CodeGen</h3>
-<p>Decide how much functionality your provider will need.  Is a
-read-only instance provider good enough?  If you have methods you need
-to implement, you will need to be an instance/method provider. If your
-class needs to be monitored for changes, you need to implement the
-indication provider provider interface to send indications.  Once you
-know what provider interfaces you'll need to implement, you can select
-the appropriate CodeGen template, and then generate stubs for your
-provider.  See the CodeGen README for more information on how to use it.</p>
-<h3 class="western"><a name="mozTocId867330" class="mozTocH3"></a>Finish
-writing provider</h3>
-<p>Now you get to do the real work, interface with whatever you're
+they need.</P>
+<UL>
+	<LI><P>libopenwbem.so – Common code as well as all CIM meta model
+	classes.</P>
+	<LI><P>libowclient.so – CIM client functionality.</P>
+	<LI><P>libowxml.so – XML functionality used by the CIM/XML
+	protocol code.</P>
+	<LI><P>libowhttpcommon.so – HTTP functionality that is common
+	between client and server.</P>
+	<LI><P>libowhttpclient.so – HTTP client code.</P>
+	<LI><P>libowhttpxmllistener.so – The CIM/XML Listener.</P>
+	<LI><P>libowservicehttp.so – The HTTP server.  Used by the CIM/XML
+	Listener.</P>
+</UL>
+<H1 CLASS="western">6. Building Providers</H1>
+<H2 CLASS="western">Overview</H2>
+<H3 CLASS="western">Instance</H3>
+<P>Instance providers are responsible for handling the following
+intrinsic methods for a certain class:</P>
+<UL>
+	<LI><P>EnumerateInstanceNames</P>
+	<LI><P>EnumerateInstances</P>
+	<LI><P>GetInstance</P>
+	<LI><P>CreateInstance</P>
+	<LI><P>ModifyInstance</P>
+	<LI><P>DeleteInstance</P>
+</UL>
+<P>Typically, each instance (uniquely identified by it's keys)
+represents one object to be managed.</P>
+<H3 CLASS="western">Secondary Instance</H3>
+<P>Secondary Instance providers aren't responsible to exposing
+instances like instance providers are, but they are given the
+opportunity to filter instances returned by enumInstances() or
+getInstance().  They also get notified on createInstance(),
+modifyInstance() and deleteInstance().</P>
+<H3 CLASS="western">Associator</H3>
+<P>Associator providers are responsible for handling the following
+intrinsic methods for a certain association class:</P>
+<UL>
+	<LI><P>Associators</P>
+	<LI><P>AssociatorNames</P>
+	<LI><P>References</P>
+	<LI><P>ReferenceNames</P>
+</UL>
+<P>With OpenWBEM, an dynamic association can be implemented with just
+an instance provider, but it can be much more efficient to implement
+the associator provider interface.  Associator providers should also
+be instance providers so that the instance functions will work for
+the association class.</P>
+<H3 CLASS="western">Method</H3>
+<P>Method providers are responsible for handling any extrinsic
+methods defined in a class.  It is common for an instance provider to
+also be a method provider.</P>
+<H3 CLASS="western">Indication</H3>
+<P>Indication providers are responsible for generating indications.
+There are two categories of indications, Life-cycle and alert.  See
+the DMTF indication whitepaper for more info.  Life-cycle indications
+are tied to a specific class, and so will usually be implemented as
+an instance/indication provider.  OpenWBEM supports three models of
+implementing indication providers:</P>
+<UL>
+	<LI><P>Instance Life-cycle: polled by the cimom – This is the
+	easiest to implement, but also is more cpu and memory intensive than
+	the other alternatives.  The cimom keeps a cached copy of all the
+	instances of the class and every polling cycle will get the current
+	set.  The differences in the sets between the cycles drive the
+	generation of indications.</P>
+	<LI><P>Separate thread – This is good for the case when a separate
+	thread can block on an external event (such as a socket or kernel
+	semaphore, etc.) and raise an indication whenever something happens.</P>
+	<LI><P>Polled provider – This is good for the case where the
+	provider has to poll for data (e.g. Check the free disk space every
+	30 seconds)</P>
+</UL>
+<P>See the indication provider examples for more detail on these 3
+approaches.</P>
+<H2 CLASS="western">Provider Development Process</H2>
+<H3 CLASS="western">Extend Schema</H3>
+<P>The first step is to find the appropriate class in the standard
+CIM schema that represents the element you want to model.  Next you
+create a subclass for your object.  You can add properties and
+methods that apply. Creating a subclass is done with mof (or you can
+use the new rose plug-in available from the sblim project and
+generate the mof).  The class may be dependent on others via
+associations, so you may have multiple iterations of classes that
+need to be instrumented.  If you implement non-association classes,
+you also usually need to implement associations for them as well.</P>
+<H3 CLASS="western">Use CodeGen</H3>
+<P>Decide how much functionality your provider will need.  Is a
+read-only instance provider good enough?  If you have methods you
+need to implement, you will need to be an instance/method provider. 
+If your class needs to be monitored for changes, you need to
+implement the indication provider provider interface to send
+indications.  Once you know what provider interfaces you'll need to
+implement, you can select the appropriate CodeGen template, and then
+generate stubs for your provider.  See the CodeGen README for more
+information on how to use it.</P>
+<H3 CLASS="western">Finish writing provider</H3>
+<P>Now you get to do the real work, interface with whatever you're
 modeling and convert it into CIM objects.  Link your provider into a
-shared library and you're set.</p>
-</body>
-</html>
+shared library and you're set.</P>
+</BODY>
+</HTML>
