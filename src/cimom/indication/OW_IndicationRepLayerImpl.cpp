@@ -35,7 +35,6 @@
 #include "OW_config.h"
 #include "OW_IndicationRepLayerImpl.hpp"
 #include "OW_Format.hpp"
-#include "OW_DateTime.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMException.hpp"

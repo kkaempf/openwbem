@@ -42,7 +42,6 @@
 #include "OW_Format.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SelectableIFC.hpp"
-#include "OW_DateTime.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_RandomNumber.hpp"

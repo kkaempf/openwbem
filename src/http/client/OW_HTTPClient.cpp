@@ -42,7 +42,6 @@
 #include "OW_HTTPDeflateIStream.hpp"
 #include "OW_HTTPLenLimitIStream.hpp"
 #include "OW_Format.hpp"
-#include "OW_DateTime.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_RandomNumber.hpp"
