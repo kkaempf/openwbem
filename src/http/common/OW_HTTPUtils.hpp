@@ -102,6 +102,7 @@ public:
 	static OW_String base64Encode(const char* src)
 	/*throw (OW_Base64FormatException)*/;
 
+#ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */
 	static void DigestCalcHA1(
 					const OW_String &sAlg,
@@ -125,6 +126,7 @@ public:
 					const OW_String &sHEntity,		/* H(entity body) if qop="auth-int" */
 					OW_String &Response
 						   );
+#endif
 
 	/**
 	 * Do the headers have a certain key?

@@ -196,7 +196,9 @@ namespace OW_ConfigOpts
 	static const char* const HTTPS_PORT_opt = "http_server.https_port";
 	static const char* const ENABLE_DEFLATE_opt = "http_server.enable_deflate";
 	static const char* const HTTP_USE_DIGEST_opt = "http_server.use_digest";
+#ifndef OW_DISABLE_DIGEST
 	static const char* const DIGEST_AUTH_FILE_opt = "http_server.digest_password_file";
+#endif
 	static const char* const MAX_CONNECTIONS_opt = "http_server.max_connections";
 	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
 	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";

@@ -551,6 +551,7 @@ OW_String OW_HTTPUtils::base64Encode(const char* src)
 
 
 
+#ifndef OW_DISABLE_DIGEST
 /* calculate H(A1) as per spec */
 void OW_HTTPUtils::DigestCalcHA1(
 	const OW_String &sAlg,
@@ -629,6 +630,7 @@ void OW_HTTPUtils::DigestCalcResponse(
 	md5new.update(sHA2Hex);
 	sResponse = md5new.toString();
 };
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

@@ -51,7 +51,9 @@
 class OW_ServerSocket;
 class OW_IPCHandler;
 class OW_HTTPSvrConnection;
+#ifndef OW_DISABLE_DIGEST
 class OW_DigestAuthentication;
+#endif
 class OW_HTTPServer;
 
 
@@ -122,7 +124,9 @@ private:
 	OW_Reference<OW_ServerSocket> m_pHttpServerSocket;
 	OW_Reference<OW_ServerSocket> m_pHttpsServerSocket;
 	OW_Reference<OW_ServerSocket> m_pUDSServerSocket;
+#ifndef OW_DISABLE_DIGEST
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
+#endif
 	OW_Mutex m_authGuard;
 
 	friend class OW_HTTPSvrConnection;

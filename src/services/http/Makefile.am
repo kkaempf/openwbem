@@ -23,13 +23,21 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
+if DISABLE_DIGEST
+DIGEST_SOURCE_FILES =
+else
+DIGEST_SOURCE_FILES = \
+OW_DigestAuthentication.cpp \
+OW_DigestAuthentication.hpp
+endif
+
+
 libowservicehttp_a_SOURCES = \
 OW_HTTPServer.cpp \
-OW_DigestAuthentication.cpp \
 OW_HTTPSvrConnection.cpp \
 OW_HTTPServer.hpp \
-OW_DigestAuthentication.hpp \
-OW_HTTPSvrConnection.hpp
+OW_HTTPSvrConnection.hpp \
+$(DIGEST_SOURCE_FILES)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common	\

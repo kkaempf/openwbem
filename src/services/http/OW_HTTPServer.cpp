@@ -43,7 +43,9 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_MD5.hpp"
 #include "OW_HTTPUtils.hpp"
+#ifndef OW_DISABLE_DIGEST
 #include "OW_DigestAuthentication.hpp"
+#endif
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 
@@ -55,7 +57,9 @@ OW_HTTPServer::OW_HTTPServer()
 	, m_urls()
 	, m_pHttpServerSocket(0)
 	, m_pHttpsServerSocket(0)
+#ifndef OW_DISABLE_DIGEST
 	, m_digestAuth(0)
+#endif
 	, m_authGuard()
 {
 }
@@ -79,18 +83,22 @@ OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 			" resource");
 
 		pconn->addHeader("WWW-Authenticate",
-			m_options.useDigest ? m_digestAuth->getChallenge(hostname)
-			: "Basic");
+#ifndef OW_DISABLE_DIGEST
+			m_options.useDigest ? m_digestAuth->getChallenge(hostname) :
+#endif			
+			"Basic");
 
 		return false;
 	}
 	
+#ifndef OW_DISABLE_DIGEST
 	if (m_options.useDigest)
 	{
 		return m_digestAuth->authorize(userName, info, pconn);
 	}
 	else
 	{
+#endif
 		OW_String password;
 		// info is a username:password string that is base64 encoded. decode it.
 		try
@@ -116,7 +124,9 @@ OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 		{
 			return true;
 		}
+#ifndef OW_DISABLE_DIGEST
 	}
+#endif
 
 }
 
@@ -153,6 +163,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 
 		m_options.env = env;
 
+#ifndef OW_DISABLE_DIGEST
 		if (m_options.useDigest)
 		{
 			OW_String passwdFile = env->getConfigItem(
@@ -161,6 +172,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 			m_digestAuth = OW_Reference<OW_DigestAuthentication>(
 				new OW_DigestAuthentication(passwdFile));
 		}
+#endif
 
 		OW_String dumpPrefix = env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt);
 		if (!dumpPrefix.empty())

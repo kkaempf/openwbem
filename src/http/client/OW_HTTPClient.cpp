@@ -208,6 +208,7 @@ OW_HTTPClient::receiveAuthentication()
 	}
 
 
+#ifndef OW_DISABLE_DIGEST
 	if(headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
 		OW_String authInfo = getHeaderValue("authentication-info");
@@ -244,7 +245,9 @@ OW_HTTPClient::receiveAuthentication()
 		OW_HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
 			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
-	else if( getHeaderValue("www-authenticate").indexOf( "Basic" ) >= 0 )
+	else 
+#endif
+	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) >= 0 )
 	{
 		m_sAuthorization = "Basic";
 	}
@@ -266,6 +269,7 @@ void OW_HTTPClient::sendAuthorization()
 			ostr << OW_HTTPUtils::base64Encode( m_url.username + ":" +
 				m_url.password );
 		}
+#ifndef OW_DISABLE_DIGEST
 		else if( m_sAuthorization == "Digest" )
 		{
 			OW_String sNonceCount;
@@ -282,6 +286,7 @@ void OW_HTTPClient::sendAuthorization()
 			ostr << "response=\"" << m_sDigestResponse << "\"";
 			m_iDigestNonceCount++;
 		}
+#endif
 		addHeaderNew("Authorization", ostr.toString());
 	}
 }
