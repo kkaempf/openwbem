@@ -128,10 +128,16 @@ public:
 	Int32 run()
 	{
 		shouldRunOnException x;
-		// just wait a long time for us to get cancelled.
+		// just wait a long time for us to get cancelled, and make sure
+		// we'll get actually cancelled by pthreads by catching all
+		// exceptions.
 		while (true)
 		{
-			Thread::yield();
+			try
+			{
+				Thread::yield();
+			}
+			catch (...) {}
 		}
 		return x.getRV();
 	}
@@ -233,8 +239,8 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	// wait 0 seconds for cooperative cancellation to finish,
 	// since we know it won't ever finish.
 	unitAssert(theThread2.definitiveCancel(0) == false);
-	unitAssertNoThrow(theThread1.cooperativeCancel());
-	unitAssertNoThrow(theThread1.definitiveCancel());
+	unitAssertNoThrow(theThread2.cooperativeCancel());
+	unitAssertNoThrow(theThread2.definitiveCancel());
 	theThread2.join();
 	unitAssert(!theThread2.isRunning());
 	unitAssert(!cancelCleanedUp);
@@ -252,8 +258,8 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	// wait 0 seconds for cooperative cancellation to finish,
 	// since we know it won't ever finish.
 	unitAssert(theThread3.definitiveCancel(0) == false);
-	unitAssertNoThrow(theThread1.cooperativeCancel());
-	unitAssertNoThrow(theThread1.definitiveCancel());
+	unitAssertNoThrow(theThread3.cooperativeCancel());
+	unitAssertNoThrow(theThread3.definitiveCancel());
 	theThread3.join();
 	unitAssert(!theThread3.isRunning());
 	unitAssert(!cancelCleanedUp);
