@@ -320,6 +320,20 @@ case "$host" in
 	;;
 esac
 
+
+#Figure out which architecture we are on
+case "$host" in
+i?86-*-*)
+	AC_DEFINE(ARCH_X86, 1, Intel x86 architecture)
+	;;
+powerpc-*-*)
+	AC_DEFINE(ARCH_PPC, 1, PowerPC architecture)
+	;;
+*)
+	AC_DEFINE(ARCH_UNKNOWN, 1, Unknown architecture)
+	;;
+esac
+
 # This figures out which compiler is invoked
 OW_COMPILER=`basename $CXX`
 case $OW_COMPILER in 
