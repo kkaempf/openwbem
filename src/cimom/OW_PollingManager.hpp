@@ -60,6 +60,8 @@ public:
 		m_startedSem = sem;
 	}
 
+	void addPolledProvider(const OW_PolledProviderIFCRef& p);
+
 protected:
 	virtual void run();
 

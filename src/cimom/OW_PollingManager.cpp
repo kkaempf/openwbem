@@ -227,9 +227,14 @@ OW_PollingManager::processTriggers()
 
 	for (size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
-		if(m_triggerRunners[i].m_isRunning
-			|| m_triggerRunners[i].m_pollInterval == 0)
+		if (m_triggerRunners[i].m_isRunning)
 		{
+			continue;
+		}
+		if (m_triggerRunners[i].m_pollInterval == 0)
+		{
+			// Stopped running - remove it
+			m_triggerRunners.remove(i--);
 			continue;
 		}
 
@@ -252,6 +257,37 @@ OW_PollingManager::shutdown()
 	}
 	// wait until the main thread exits.
 	this->join();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
+{
+	OW_MutexLock l(m_triggerGuard);
+	if (m_shuttingDown)
+		return;
+
+	TriggerRunner tr(this, OW_ACLInfo(), m_env);
+
+	tr.m_pollInterval = p->getInitialPollingInterval(
+		createProvEnvRef(OW_ACLInfo(), m_env));
+
+	m_env->logDebug(format("OW_PollingManager poll interval for provider"
+		" %2", tr.m_pollInterval));
+
+	if(!tr.m_pollInterval)
+	{
+		return;
+	}
+
+	OW_DateTime dtm;
+	dtm.setToCurrent();
+	time_t tm = dtm.get();
+	tr.m_nextPoll = tm + tr.m_pollInterval;
+
+	tr.m_itp = p;
+	m_triggerRunners.append(tr);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -298,7 +334,9 @@ OW_PollingManager::TriggerRunner::run()
 		m_env->logError("Caught Unknown Exception while running poll");
 	}
 
-	if(nextInterval == 0)
+	OW_MutexLock l(m_pollMan->m_triggerGuard);
+
+	if(nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop
 	{
 		m_pollInterval = 0;
 		m_nextPoll = 0;
@@ -315,7 +353,6 @@ OW_PollingManager::TriggerRunner::run()
 		m_nextPoll = dtm.get() + m_pollInterval;
 	}
 
-	OW_MutexLock l(m_pollMan->m_triggerGuard);
 	m_isRunning = false;
 	m_pollMan->m_triggerCondition.notifyOne();
 }
