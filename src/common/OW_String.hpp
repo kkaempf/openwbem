@@ -250,13 +250,29 @@ public:
 	 */
 	int compareTo(const String& arg) const;
 	/**
-	 * Compare another String object with this one ignoring case.
-	 * @param arg	The String object to compare with this one.
+	 * Compare another string with this one.
+	 * @param arg	The string to compare with this one.
+	 * @return 0 if this String object is equal to arg. Greater than 0 if
+	 * this String object is greater than arg. Less than 0 if this String
+	 * object is less than arg.
+	 */
+	int compareTo(const char* arg) const;
+	/**
+	 * Compare another string with this one ignoring case.
+	 * @param arg	The string to compare with this one.
 	 * @return 0 if this String object is equal to arg. Greater than 0 if
 	 * this String object is greater than arg. Less than 0 if this String
 	 * object is less than arg.
 	 */
 	int compareToIgnoreCase(const String& arg) const;
+	/**
+	 * Compare another string with this one ignoring case.
+	 * @param arg	The string to compare with this one.
+	 * @return 0 if this String object is equal to arg. Greater than 0 if
+	 * this String object is greater than arg. Less than 0 if this String
+	 * object is less than arg.
+	 */
+	int compareToIgnoreCase(const char* arg) const;
 	/**
 	 * Append another String object to this String object.
 	 * @param arg	The String object to append to this String object.
@@ -293,6 +309,14 @@ public:
 	 */
 	bool equals(const String& arg) const;
 	/**
+	 * Determine if another string is equal to this String object.
+	 * @param arg The string to check this String object against
+	 * 	for equality.
+	 * @return true if this String object is equal to the given String
+	 * object. Otherwise return false.
+	 */
+	bool equals(const char* arg) const;
+	/**
 	 * Determine if another String object is equal to this String object,
 	 * ignoring case in the comparision.
 	 * @param arg	The String object to check this String object against
@@ -301,6 +325,15 @@ public:
 	 * object. Otherwise return false.
 	 */
 	bool equalsIgnoreCase(const String& arg) const;
+	/**
+	 * Determine if another string is equal to this String object,
+	 * ignoring case in the comparision.
+	 * @param arg	The string to check this String object against
+	 * 	for equality.
+	 * @return true if this String object is equal to the given String
+	 * object. Otherwise return false.
+	 */
+	bool equalsIgnoreCase(const char* arg) const;
 	/**
 	 * @return a 32 bit hashcode of this String object.
 	 */

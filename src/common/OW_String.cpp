@@ -378,35 +378,37 @@ String::charAt(size_t ndx) const
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-String::compareTo(const String& arg) const
+String::compareTo(const char* arg) const
 {
 	const char* lhs = "";
-	const char* rhs = "";
 	if (m_buf)
 	{
 		lhs = m_buf->data();
 	}
-	if (arg.m_buf)
+	return ::strcmp(lhs, arg);
+}
+//////////////////////////////////////////////////////////////////////////////
+int
+String::compareTo(const String& arg) const
+{
+	return compareTo(arg.c_str());
+}
+//////////////////////////////////////////////////////////////////////////////
+int
+String::compareToIgnoreCase(const char* arg) const
+{
+	const char* lhs = "";
+	if (m_buf)
 	{
-		rhs = arg.m_buf->data();
+		lhs = m_buf->data();
 	}
-	return ::strcmp(lhs, rhs);
+	return strcmpi(lhs, arg);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 String::compareToIgnoreCase(const String& arg) const
 {
-	const char* lhs = "";
-	const char* rhs = "";
-	if (m_buf)
-	{
-		lhs = m_buf->data();
-	}
-	if (arg.m_buf)
-	{
-		rhs = arg.m_buf->data();
-	}
-	return strcmpi(lhs, rhs);
+	return compareToIgnoreCase(arg.c_str());
 }
 //////////////////////////////////////////////////////////////////////////////
 String&
@@ -472,15 +474,27 @@ String::endsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-String::equals(const String& arg) const
+String::equals(const char* arg) const
 {
 	return(compareTo(arg) == 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-String::equalsIgnoreCase(const String& arg) const
+String::equals(const String& arg) const
+{
+	return equals(arg.c_str());
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
+String::equalsIgnoreCase(const char* arg) const
 {
 	return(compareToIgnoreCase(arg) == 0);
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
+String::equalsIgnoreCase(const String& arg) const
+{
+	return equalsIgnoreCase(arg.c_str());
 }
 //////////////////////////////////////////////////////////////////////////////
 UInt32
