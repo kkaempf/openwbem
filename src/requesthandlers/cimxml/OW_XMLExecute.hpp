@@ -159,8 +159,10 @@ private:
 	static bool funcEntryCompare(const FuncEntry& f1, const FuncEntry& f2);
 	static FuncEntry* g_funcsEnd;
 
-	// this is the path to the interop instance of CIMXML_CommunicationMechanism this class manages.
+	// this is the path to the interop instance of CIM_CIMXMLCommunicationMechanism this class manages.
 	CIMObjectPath m_commMechPath;
+	// this is the path to the interop instance of CIM_HostedAccessPoint this class manages.
+	CIMObjectPath m_hostedAccessPointPath;
 };
 
 } // end namespace OpenWBEM
