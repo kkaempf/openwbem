@@ -10,6 +10,8 @@
 
 using namespace boost::python;
 
+namespace {
+
 void OW_CIMOMInfo__setitem__(OW_CIMOMInfo& ci, const OW_String& key, const OW_String& value)
 {
     ci[key] = value;
@@ -18,6 +20,8 @@ void OW_CIMOMInfo__setitem__(OW_CIMOMInfo& ci, const OW_String& key, const OW_St
 OW_String OW_CIMOMInfo__getitem__(const OW_CIMOMInfo& ci, const OW_String& key)
 {
     return ci[key];
+}
+
 }
 
 void registerOW_CIMOMInfo()

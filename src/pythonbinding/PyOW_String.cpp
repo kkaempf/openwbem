@@ -15,6 +15,7 @@
 using namespace boost::python;
 
  
+namespace {
 
 struct OW_BoolToPython
 {
@@ -87,7 +88,12 @@ int OW_String_index(const OW_String& s, char c)
         if (s[i] == c)
             return i;
     }
-    // TODO: Raise ValueError
+
+    // Raise ValueError
+    PyErr_SetString(PyExc_ValueError,
+            "OW_String.index(x): x not in list");
+    boost::python::throw_error_already_set();
+
 }
 
 void OW_String_insert(OW_String& s, int i, char x)
@@ -132,26 +138,9 @@ void OW_String_remove(OW_String& s, char x)
     s = s.substring(0, i) + s.substring(i+1);
 }
 
-/*
-inline void char_swap(OW_String& s, size_t x, size_t y)
-{
-    s[x] ^= s[y];
-    s[y] ^= s[x];
-    s[x] ^= s[y];
-}
-*/
-
 void OW_String_reverse(OW_String& s)
 {
-    //size_t first = 0;
     std::reverse(&s[0], &s[s.length()]);
-    /*
-    while (true)
-        if (first == last || first == --last)
-            return;
-        else
-            char_swap(s, first++, last);
-            */
 }
 
 void OW_String_sort(OW_String& s)
@@ -159,12 +148,14 @@ void OW_String_sort(OW_String& s)
     std::sort(&s[0], &s[s.length()]);
 }
 
-// TODO: Handle ints and slice objects
 char OW_String__getitem__(const OW_String& s, int i)
 {
     if (i < 0 || i >= s.length())
     {
-        // TODO: raise IndexError
+        // raise IndexError
+        PyErr_SetString(PyExc_IndexError,
+                "OW_String index out of range");
+        boost::python::throw_error_already_set();
     }
     return s[i];
 }
@@ -173,7 +164,10 @@ void OW_String__setitem__(OW_String& s, int i, char c)
 {
     if (i < 0 || i >= s.length())
     {
-        // TODO: raise IndexError
+        // raise IndexError
+        PyErr_SetString(PyExc_IndexError,
+                "OW_String index out of range");
+        boost::python::throw_error_already_set();
     }
     s[i] = c;
 }
@@ -182,9 +176,14 @@ void OW_String__delitem__(OW_String& s, int i)
 {
     if (i < 0 || i >= s.length())
     {
-        // TODO: raise IndexError
+        // raise IndexError
+        PyErr_SetString(PyExc_IndexError,
+                "OW_String index out of range");
+        boost::python::throw_error_already_set();
     }
     s = s.substring(0, i) + s.substring(i+1);
+}
+
 }
 
 void registerOW_String()
@@ -251,7 +250,6 @@ void registerOW_String()
         .def("trim", &OW_String::trim, return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)())(&OW_String::erase), return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), OW_String_erase_overloads(args("idx", "len"))[return_internal_reference<>()])
-        // TODO: support slice objects as a parameter to getitem. see http://www.python.org/dev/doc/devel/ref/sequence-methods.html
         .def("__getitem__", &OW_String__getitem__)
         .def("__setitem__", &OW_String__setitem__)
         .def("__delitem__", &OW_String__delitem__)

@@ -18,6 +18,7 @@
 using namespace boost::python;
 
  
+namespace {
 
 // OW_CIMClient
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumNameSpaceE_overloads, OW_CIMClient::enumNameSpaceE, 0, 1)
@@ -45,6 +46,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClasses_overloads,
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClassesE_overloads, OW_CIMClient::referencesClassesE, 1, 6)
 
 
+}
 
 
 void registerOW_CIMClient()
