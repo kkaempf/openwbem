@@ -2,6 +2,8 @@
 SO_EXT = $(OPENWBEM_VERSION)
 SOFILENAME = $@.$(SO_EXT)
 TMPLIBDIR = .$@.libs
+BNDLIBDIR = /tmp/.openwbem.bundle
+
 
 # Here's what this does:  It finds all symbols in each object file that are one
 # of T,D,B (Global text symbol, Global data symbol, Global BSS symbol), where
@@ -18,7 +20,7 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 				{ print $$3 } }' | \
 			sort -u > $(@:%.so=%.exp)
 
-%.so %.sl %.dylib : %.a
+%.so %.sl : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
@@ -29,6 +31,22 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 
+# Rules for Darwin so we can get the plugable modules built
+# at the same time, then we sort them out later.
+
+%.dylib : %.a
+	rm -rf $(TMPLIBDIR)
+	mkdir $(TMPLIBDIR)
+	if [ -d $(BNDLIBDIR) ]; then mkdir $(BNDLIBDIR); fi
+	cd $(TMPLIBDIR) && \
+	$(AR) x ../$< 
+	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(BNDLIBDIR)/$(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
+	ln -s $(SOFILENAME) $@
+	chmod +x $(SOFILENAME)
+	ln -s $(BNDLIBDIR)/$(SOFILENAME) $(BNDLIBDIR)/$@
+	chmod +x $(BNDLIBDIR)/$(SOFILENAME)
 
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)
