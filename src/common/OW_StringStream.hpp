@@ -96,6 +96,8 @@ public:
 	OStringStreamBuf(size_t size);
 	virtual ~OStringStreamBuf();
 	String toString() const;
+	// After calling releaseString(), this OStringStream is unusable
+	String releaseString();
 	size_t length() const;
 	const char* c_str() const;
 	void reset();
@@ -119,6 +121,8 @@ public:
 	OStringStream(size_t size = 256);
 	~OStringStream();
 	String toString() const;
+	// After calling releaseString(), this OStringStream is unusable
+	String releaseString();
 	size_t length() const;
 	const char* c_str() const;
 	void reset();

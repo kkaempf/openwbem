@@ -48,6 +48,11 @@ String OStringStreamBuf::toString() const
 	return m_buf.toString();
 }
 ///////////////////////////////////////////////////////////////////////////////
+String OStringStreamBuf::releaseString()
+{
+	return m_buf.releaseString();
+}
+///////////////////////////////////////////////////////////////////////////////
 size_t OStringStreamBuf::length() const
 {
 	return m_buf.length();
@@ -87,6 +92,12 @@ String OStringStream::toString() const
 {
 	m_buf.sync();
 	return m_buf.toString();
+}
+///////////////////////////////////////////////////////////////////////////////
+String OStringStream::releaseString()
+{
+	m_buf.sync();
+	return m_buf.releaseString();
 }
 ///////////////////////////////////////////////////////////////////////////////
 size_t OStringStream::length() const
