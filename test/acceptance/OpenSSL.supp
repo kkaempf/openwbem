@@ -1,38 +1,38 @@
 # OpenSSL suppressions
 {
         libcrypto-cond
-        Cond
+        Memcheck:Cond
         obj:*libcrypto.so*
 }
 
 {
         libcrypto-value4
-        Value4
+        Memcheck:Value4
         obj:*libcrypto.so*
 }
 
 {
         libssl-cond
-        Cond
+        Memcheck:Cond
         obj:*libssl.so*
 }
 
 {
         libssl-value4
-        Value4
+        Memcheck:Value4
         obj:*libssl.so*
 }
 
 {
         memcpy/ssl3_read_bytes
-        Cond
+        Memcheck:Cond
         fun:memcpy
         fun:ssl3_read_bytes
 }
 
 {
         ld-cond
-        Cond
+        Memcheck:Cond
         obj:/lib/ld-2.2.4.so
 }
 
