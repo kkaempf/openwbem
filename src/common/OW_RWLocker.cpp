@@ -32,9 +32,6 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
 
-#include <iostream>
-using namespace std;
-
 //////////////////////////////////////////////////////////////////////////////
 OW_RWLocker::OW_RWLocker()
 	: m_waiting_writers()
@@ -65,9 +62,7 @@ OW_RWLocker::~OW_RWLocker()
 void
 OW_RWLocker::getReadLock()
 {
-	cout << "OW_RWLocker::getReadLock ";
     OW_MutexLock l(m_guard);
-	cout << "locked" << endl;
     
     // Wait until no exclusive lock is held.
     //
@@ -88,9 +83,7 @@ OW_RWLocker::getReadLock()
 void
 OW_RWLocker::getWriteLock()
 {
-	cout << "OW_RWLocker::getWriteLock ";
     OW_MutexLock l(m_guard);
-	cout << "locked" << endl;
 
     // Wait until no exclusive lock is held.
     //
@@ -109,9 +102,7 @@ OW_RWLocker::getWriteLock()
 void
 OW_RWLocker::releaseReadLock()
 {
-	cout << "OW_RWLocker::releaseReadLock ";
     OW_MutexLock l(m_guard);
-	cout << "locked" << endl;
     if(m_state > 0)        // Release a reader.
         --m_state;
     else
@@ -128,9 +119,7 @@ OW_RWLocker::releaseReadLock()
 void
 OW_RWLocker::releaseWriteLock()
 {
-	cout << "OW_RWLocker::releaseWriteLock ";
     OW_MutexLock l(m_guard);
-	cout << "locked" << endl;
     if(m_state == -1)
         m_state = 0;
     else
