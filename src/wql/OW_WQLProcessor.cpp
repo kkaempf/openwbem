@@ -153,23 +153,23 @@ namespace
 	{
 		if (baseNameSpace.endsWith('/'))
 		{
+			OW_WQL_LOG_DEBUG(Format("%1 has trailing slash.", baseNameSpace));
 			return baseNameSpace;
 		}
 		else
 		{
+			OW_WQL_LOG_DEBUG(Format("%1 does not have trailing slash.", baseNameSpace));
 			return baseNameSpace + "/";
 		}
 	}
 
 	String removeTrailingSlash(String const& baseNameSpace)
 	{
-		//Find the last char which is not a slash.
-		size_t lastCharNotSlash= baseNameSpace.length() - 1;
-		while(baseNameSpace[lastCharNotSlash] == '/')
-		{
-			--lastCharNotSlash;
-		}
-		return baseNameSpace.substring(0, lastCharNotSlash + 1);
+		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1",baseNameSpace));
+		StringBuffer name(baseNameSpace);
+		while(name.endsWith('/')){name.chop();}
+		OW_WQL_LOG_DEBUG(Format("Returning %1", name));
+		return name.c_str();
 	}
 
 	/*
@@ -181,13 +181,11 @@ namespace
 	*/
 	String removeLeadingSlash(String const& baseNameSpace)
 	{
-		//Find the last char which is not a slash.
-		size_t firstCharNotSlash= 0;
-		while(baseNameSpace[firstCharNotSlash] == '/')
-		{
-			++firstCharNotSlash;
-		}
-		return baseNameSpace.substring(firstCharNotSlash);
+		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1",baseNameSpace));
+		String name(baseNameSpace);
+		while(name.startsWith('/')){name= name.substring(1);}
+		OW_WQL_LOG_DEBUG(Format("Returning %1", name));
+		return name;
 	}
 
 	String extractUnqualifiedClassName(String const& possiblyQualifiedClassName)
@@ -1173,27 +1171,31 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 		if (rhs.type == DataType::StringType)
 		{
 			CIMInstanceArray newInstances;
+			String nameSpace;
+			String className;
+			getAbsoluteNamespaceAndUnqualifiedClassName(m_ns, rhs.str, nameSpace, className);
+			OW_WQL_LOG_DEBUG(Format("absolute namespace: %1 , unqualified class name: %2", nameSpace, className));
 			//If this is a schema query, the lhs must be '__Dynasty', __Class, etc.
 			if (lhs.str.equalsIgnoreCase("__Class"))
 			{
 				OW_WQL_LOG_DEBUG("Handling __Class query.");
 				//Find the rhs, but no subclasses.
-				newInstances.push_back(embedClassInInstance(m_hdl->getClass(m_ns, rhs.str)));
+				newInstances.push_back(embedClassInInstance(m_hdl->getClass(nameSpace, className)));
 			}
 			else if (lhs.str.equalsIgnoreCase("__Dynasty"))
 			{
 				OW_WQL_LOG_DEBUG("Handling __Dynasty query.");
 				//If the rhs isn't a root class, it doesn't define a dynasty.
-				CIMClass cl= m_hdl->getClass(m_ns, rhs.str);
+				CIMClass cl= m_hdl->getClass(nameSpace, className);
 				if (cl && cl.getSuperClass() == "")
 				{
 					//Find the rhs,and all subclasses.
-					CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(m_ns, rhs.str));
+					CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(nameSpace, className));
 					OW_WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
 					newInstances.push_back(rhsClass);
 					//result will push_back instances with embeded class into newInstances.
 					ClassesEmbeddedInInstancesResultHandler result(newInstances);
-					m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
+					m_hdl->enumClass(nameSpace, className, result, E_DEEP);
 				}
 				else
 				{

@@ -364,6 +364,19 @@ namespace testSchemaQuery
 			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"Child1OfClassWithManyChildren2Level\" ", 1);
 		}
+		
+		void absoluteNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"/absoluteNs/ClassWithNoChildren\" ", 1);
+		}
+
+		void relativeNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"relativeNs/ClassWithNoChildren\" ", 1);
+		}
+		
 	}
 	namespace dynastyTests
 	{
@@ -403,6 +416,19 @@ namespace testSchemaQuery
 			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"Child1OfClassWithManyChildren2Level\" ", 0);
 		}
+		
+		void absoluteNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"/absoluteNs/ClassWithNoChildren\" ", 1);
+		}
+
+		void relativeNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"relativeNs/ClassWithNoChildren\" ", 1);
+		}
+		
 	}
 	void testThis(CIMOMHandleIFCRef& rch)
 	{
@@ -429,6 +455,8 @@ namespace testSchemaQuery
 		classTests::manyChildren(rch);
 		classTests::manyLevelsOfChildren(rch);
 		classTests::notRoot(rch);
+		classTests::absoluteNs(rch);
+		classTests::relativeNs(rch);
 	}
 
 	void testDynasty(CIMOMHandleIFCRef& rch)
@@ -440,6 +468,8 @@ namespace testSchemaQuery
 		noChildren(rch, "=", "__dynasty");
 		dynastyTests::manyChildren(rch);
 		dynastyTests::manyLevelsOfChildren(rch);
+		dynastyTests::absoluteNs(rch);
+		dynastyTests::relativeNs(rch);
 		//For __dynasty, notRoot *must* fail.
 		try
 		{

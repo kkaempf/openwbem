@@ -6711,17 +6711,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 139 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 140 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 141 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
-
-Executing query 142 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 143 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
-
-Executing query 144 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 139 local: SELECT "*" FROM meta_class WHERE __class = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6729,7 +6719,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 144 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 139 remote: SELECT "*" FROM meta_class WHERE __class = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6737,7 +6727,49 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 145 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 140 local: SELECT "*" FROM meta_class WHERE __class = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 140 remote: SELECT "*" FROM meta_class WHERE __class = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 141 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 142 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 143 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+
+Executing query 144 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 145 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+
+Executing query 146 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 146 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 147 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6760,7 +6792,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 145 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 147 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -6783,7 +6815,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 146 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 148 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6851,7 +6883,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 146 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 148 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -6919,19 +6951,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 147 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
-
-Executing query 148 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
-
-Executing query 149 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
-
-Executing query 150 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
-
-Executing query 151 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
-
-Executing query 152 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
-
-Executing query 153 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 149 local: SELECT "*" FROM meta_class WHERE __dynasty = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6939,7 +6959,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 153 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Executing query 149 remote: SELECT "*" FROM meta_class WHERE __dynasty = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6947,7 +6967,51 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 154 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 150 local: SELECT "*" FROM meta_class WHERE __dynasty = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 150 remote: SELECT "*" FROM meta_class WHERE __dynasty = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 151 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
+
+Executing query 152 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 153 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
+
+Executing query 154 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
+
+Executing query 155 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 156 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
+
+Executing query 157 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 157 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 158 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6955,7 +7019,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 154 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Executing query 158 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6963,7 +7027,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 155 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 159 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6971,7 +7035,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 155 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Executing query 159 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6979,7 +7043,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 156 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 160 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6987,7 +7051,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 156 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Executing query 160 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -6995,17 +7059,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 157 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 158 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 159 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
-
-Executing query 160 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
-
-Executing query 161 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
-
-Executing query 162 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 161 local: SELECT "*" FROM meta_class WHERE __class = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -7013,7 +7067,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 162 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Executing query 161 remote: SELECT "*" FROM meta_class WHERE __class = "/absoluteNs/ClassWithNoChildren" 
 Got back 1 instances.  Expected 1
 INSTANCE OF __SchemaQueryResult
 {
@@ -7021,7 +7075,49 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 163 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 162 local: SELECT "*" FROM meta_class WHERE __class = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 162 remote: SELECT "*" FROM meta_class WHERE __class = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 163 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 164 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 165 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+
+Executing query 166 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 167 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+
+Executing query 168 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 168 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 169 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -7044,7 +7140,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 163 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Executing query 169 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
 Got back 4 instances.  Expected 4
 INSTANCE OF __SchemaQueryResult
 {
@@ -7067,7 +7163,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 164 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 170 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -7135,7 +7231,7 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 164 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Executing query 170 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
 Got back 13 instances.  Expected 13
 INSTANCE OF __SchemaQueryResult
 {
@@ -7203,4 +7299,36 @@ INSTANCE OF __SchemaQueryResult
 };
 
 
-Executing query 165 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
+Executing query 171 local: SELECT "*" FROM meta_class WHERE __dynasty = "/absoluteNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 171 remote: SELECT "*" FROM meta_class WHERE __dynasty = "/absoluteNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 172 local: SELECT "*" FROM meta_class WHERE __dynasty = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 172 remote: SELECT "*" FROM meta_class WHERE __dynasty = "relativeNs/ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 173 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
