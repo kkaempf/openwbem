@@ -267,7 +267,8 @@ HTTPClient::receiveAuthentication()
 	{
 		m_sAuthorization = "Basic";
 	}
-	else
+
+    if (m_sAuthorization.empty())
 	{
 		OW_THROW(HTTPException, "No known authentication schemes");
 	}
@@ -312,6 +313,7 @@ void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
 {
 	// Make sure our connection is good
 	checkConnection();
+	handleAuth();
 	String hp;
 	if (m_requestMethod.equals("M-POST"))
 	{
@@ -427,15 +429,6 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 	} while(rt == RETRY);
 	if (rt == FATAL)
 	{
-		/*
-		String sNonceCount;
-		sNonceCount.Format( "%08x", m_iDigestNonceCount );
-		String errDetails = "Bailing out of sendRequest: ";
-		errDetails += "sHA1: >" + m_sDigestSessionKey + "< sNonce: >" +
-			m_sDigestNonce + "< Nonce Count >" + sNonceCount + "< sCNonce: >" +
-			m_sDigestCNonce + "< Method >" + m_requestMethod +
-			"< url >" + m_httpPath + "<";
-		*/
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
 		{
@@ -467,6 +460,7 @@ HTTPClient::getFeatures()
 	do
 	{
 		checkConnection();
+		handleAuth();
 		sendHeaders(m_requestMethod,  "HTTP/1.1");
 		m_ostr.flush();
 		m_requestHeadersNew.clear();
@@ -577,6 +571,11 @@ HTTPClient::sendHeaders(const String& method,
 HTTPClient::Resp_t
 HTTPClient::processHeaders(String& statusLine)
 {
+	if (getHeaderValue("Connection").equalsIgnoreCase("close"))
+	{
+		m_needsConnect = true;
+	}
+
 	Resp_t rt = FATAL;
 	size_t idx = statusLine.indexOf(' ');
 	String respProt;
@@ -690,6 +689,14 @@ HTTPClient::processHeaders(String& statusLine)
 			rt = FATAL; // shouln't happen
 			break;
 	} // switch (sc[0])
+
+	// now check for headers which indicate an error
+	String CIMError = getHeaderValue("CIMError");
+	if (!CIMError.empty())
+	{
+		rt = FATAL;
+	}
+
 	return rt;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -721,8 +728,12 @@ HTTPClient::convertToFiniteStream()
 void
 HTTPClient::handleAuth()
 {
-	receiveAuthentication();
-	sendAuthorization();
+	// add new headers.
+	if (m_authRequired)
+	{
+		receiveAuthentication();
+		sendAuthorization();
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -737,11 +748,6 @@ HTTPClient::checkConnection()
 		m_socket.disconnect();
 		m_socket.connect(m_serverAddress);
 		m_needsConnect = false;
-	}
-	// add new headers.
-	if (m_authRequired)
-	{
-		handleAuth();
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -779,10 +785,6 @@ HTTPClient::checkResponse(Resp_t& rt)
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
 		{
 			OW_THROW(HTTPException, "Received junk from server");
-		}
-		if (getHeaderValue("Connection").equalsIgnoreCase("close"))
-		{
-			m_needsConnect = true;
 		}
 		rt = processHeaders(statusLine);
 		if (rt == CONTINUE)
