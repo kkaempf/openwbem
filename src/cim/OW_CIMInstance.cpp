@@ -43,30 +43,6 @@ using std::istream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMInstance::INSTData
 {
-	INSTData() :
-		m_owningClassName(), m_name(), m_aliasName(), m_keys(), m_properties(),
-		m_qualifiers()
-	{
-	}
-
-	INSTData(const INSTData& x) :
-		m_owningClassName(x.m_owningClassName), m_name(x.m_name),
-		m_aliasName(x.m_aliasName), m_keys(x.m_keys),
-		m_properties(x.m_properties), m_qualifiers(x.m_qualifiers)
-	{
-	}
-
-	INSTData& operator= (const INSTData& x)
-	{
-		m_owningClassName = x.m_owningClassName;
-		m_name = x.m_name;
-		m_aliasName = x.m_aliasName;
-		m_keys = x.m_keys;
-		m_properties = x.m_properties;
-		m_qualifiers = x.m_qualifiers;
-		return *this;
-	}
-
 	OW_String m_owningClassName;
 	OW_String m_name;
 	OW_String m_aliasName;

@@ -1172,6 +1172,7 @@ namespace
 
 			}
 			newInst.setProperties(newprops);
+			newInst.setKeys(inst.getKeyValuePairs());
 			result.handleInstance(newInst);
 		}
 	private:
