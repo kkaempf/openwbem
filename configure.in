@@ -379,7 +379,7 @@ dnl Yes, it exists
 AC_MSG_RESULT(yes)
 AC_DEFINE(HAVE_SIGHANDLER_T, 1, Have sighandler_t)
 ],
-dnl else (not 6 args)
+dnl else don't have it
 [
 AC_MSG_RESULT(no)
 ])
