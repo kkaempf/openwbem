@@ -109,7 +109,13 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 		// received even if the timeout was set as 0.  With a sleep at the
 		// beginning of the test, this should hopefully avoid any scheduling
 		// issues with a child process going too fast on an unloaded machine.
-		cmd.push_back("sleep 1; echo before; sleep 2; echo after");
+
+		// The sequence should go like this:
+		// 1. sleep 1 - test blocks
+		// 2. echo before - test gets it then resets timeout to 2 seconds.
+		// 3. sleep 3 starts
+		// 4. test times out after 2 seconds and throws.
+		cmd.push_back("sleep 1; echo before; sleep 3; echo after");
 		Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 2);
 		unitAssert(0);
 	}
