@@ -110,7 +110,16 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 	{
 		host = sURL.substring( 0, iBeginIndex );
 		if ( sURL.length() > unsigned(iBeginIndex)+1 )
-			port = sURL.substring( iBeginIndex + 1 ).toUInt16();
+		{
+			try
+			{
+				port = sURL.substring( iBeginIndex + 1 ).toUInt16();
+			}
+			catch (const OW_StringConversionException&)
+			{
+				OW_THROW(OW_Exception, "Invalid URL");
+			}
+		}
 	}
 	else if ( iBeginIndex && sURL.length() )
 		host = sURL;

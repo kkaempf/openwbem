@@ -39,17 +39,13 @@
 class OW_CIMDateTimeException : OW_CIMException
 {
 public:
-	OW_CIMDateTimeException() : OW_CIMException() {}
+	OW_CIMDateTimeException() : OW_CIMException(OW_CIMException::FAILED) {}
 
 	OW_CIMDateTimeException(const char* file, int line,
 		const char* msg) :
-		OW_CIMException(file, line, msg) {}
+		OW_CIMException(file, line, OW_CIMException::FAILED, msg) {}
 
-
-	OW_CIMDateTimeException(const char* msg) :
-		OW_CIMException(msg) {}
-
-	virtual const char* type() const 
+	virtual const char* type() const
 		{  return "OW_CIMDateTimeException"; }
 };
 
@@ -238,7 +234,7 @@ public:
 	 * @return true if the given OW_CIMDateTime object is equal to this one.
 	 * Otherwise false.
 	 */
-	OW_Bool operator== (const OW_CIMDateTime& arg) const 
+	OW_Bool operator== (const OW_CIMDateTime& arg) const
 			{  return equal(arg); }
 
 	/**

@@ -38,17 +38,6 @@
 #include "OW_Bool.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_CIMMalformedUrlException : public OW_CIMException
-{
-public:
-	OW_CIMMalformedUrlException() : OW_CIMException() {}
-	OW_CIMMalformedUrlException(const char* file, int line, const char* msg) :
-		OW_CIMException(file, line, msg) {}
-	OW_CIMMalformedUrlException(const char* msg) : OW_CIMException(msg) {}
-	virtual const char* type() const
-		{  return "OW_CIMMalformedUrlException"; }
-};
-
 class OW_IOException;
 
 /**

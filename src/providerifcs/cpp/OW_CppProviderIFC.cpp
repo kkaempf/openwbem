@@ -112,7 +112,7 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIF
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
-		OW_CppIndicationExportProviderIFC* pIEP = 
+		OW_CppIndicationExportProviderIFC* pIEP =
 			pProv->getIndicationExportProvider();
 		if(pIEP)
 		{
@@ -328,7 +328,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 		OW_CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 
-		OW_CppIndicationExportProviderIFC* p_iep = 
+		OW_CppIndicationExportProviderIFC* p_iep =
 			pProv->getIndicationExportProvider();
 
 
@@ -455,7 +455,7 @@ OW_CppProviderIFC::getProvider(
 
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt);
@@ -464,8 +464,12 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 		timeWindow = DEFAULT_CPPIFC_PROV_TTL;
 	}
 
-	OW_Int32 iTimeWindow = timeWindow.toInt32();
-	if (iTimeWindow == 0 && !timeWindow.equals("0"))
+	OW_Int32 iTimeWindow;
+	try
+	{
+		iTimeWindow = timeWindow.toInt32();
+	}
+    catch (const OW_StringConversionException&)
 	{
 		iTimeWindow = OW_String(DEFAULT_CPPIFC_PROV_TTL).toInt32();
 	}

@@ -2106,14 +2106,28 @@ void OW_WQLProcessor::visit_aExprConst_ICONST(
 	const aExprConst_ICONST* paExprConst_ICONST
 	)
 {
-	m_exprValue = DataType(paExprConst_ICONST->m_pICONST1->toInt64());
+	try
+	{
+		m_exprValue = DataType(paExprConst_ICONST->m_pICONST1->toInt64());
+	}
+	catch (const OW_StringConversionException& e)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, e.getMessage());
+	}
 }
 
 void OW_WQLProcessor::visit_aExprConst_FCONST(
 	const aExprConst_FCONST* paExprConst_FCONST
 	)
 {
-	m_exprValue = DataType(paExprConst_FCONST->m_pFCONST1->toReal64());
+	try
+	{
+		m_exprValue = DataType(paExprConst_FCONST->m_pFCONST1->toReal64());
+	}
+	catch (const OW_StringConversionException& e)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, e.getMessage());
+	}
 }
 
 void OW_WQLProcessor::visit_aExprConst_SCONST(

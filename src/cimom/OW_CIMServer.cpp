@@ -1555,7 +1555,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 
 	OW_CIMClass theClass;
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	checkGetClassRvalAndThrow(rc, name);
+	checkGetClassRvalAndThrowInst(rc, name);
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1605,7 +1605,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
-	checkGetClassRvalAndThrow(rc, name);
+	checkGetClassRvalAndThrowInst(rc, name);
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1618,7 +1618,20 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_CIMValue cv(valueArg);
 	if(cv && (cp.getDataType().getType() != cv.getType()))
 	{
-		cv = OW_CIMValueCast::castValueToDataType(cv, cp.getDataType());
+		try
+		{
+			// this throws a FAILED CIMException if it can't convert
+			cv = OW_CIMValueCast::castValueToDataType(cv, cp.getDataType());
+		}
+		catch (OW_CIMException& ce)
+		{
+			// translate FAILED to TYPE_MISMATCH
+			if (ce.getErrNo() == OW_CIMException::FAILED)
+			{
+				ce.setErrNo(OW_CIMException::TYPE_MISMATCH);
+			}
+			throw ce;
+		}
 	}
 
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);

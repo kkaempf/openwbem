@@ -39,19 +39,19 @@
 #ifdef OW_GNU_LINUX
 #define OW_STRPLATFORM "Linux"
 #endif
- 
+
 #ifdef OW_OPENUNIX
 #define OW_STRPLATFORM "OpenUnix"
 #endif
- 
+
 #ifdef OW_SOLARIS
 #define OW_STRPLATFORM "Solaris"
 #endif
- 
+
 #ifdef OW_OPENSERVER
 #define OW_STRPLATFORM "OpenServer"
 #endif
- 
+
 #ifndef OW_STRPLATFORM
 #error "OW_STRPLATFORM is undefined"
 #endif
@@ -67,7 +67,7 @@ static const long INITIAL_POLLING_INTERVAL = 5;
 
 extern "C"
 {
-static 
+static
 void
 slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 {
@@ -89,7 +89,7 @@ public:
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef &env) 
+	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef &env)
 	{
 		if (env->getConfigItem(OW_ConfigOpts::HTTP_SLP_DISABLED_opt).equalsIgnoreCase("true"))
 		{
@@ -97,13 +97,28 @@ public:
 		}
 		OW_Int32 rval = INITIAL_POLLING_INTERVAL;
 		env->getLogger()->logDebug(format(
-			"OW_SLPProvider::getInitialPollingInterval returning %1", 
+			"OW_SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
 
 		m_httpsPort = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
 		m_httpPort = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
 
-		if (m_httpsPort.toInt32() < 1 && m_httpPort.toInt32() < 1)
+		OW_Int32 httpsPort = 0, httpPort = 0;
+		try
+		{
+			httpsPort = m_httpsPort.toInt32();
+		}
+		catch (const OW_StringConversionException&)
+		{
+		}
+		try
+		{
+			httpPort = m_httpPort.toInt32();
+		}
+		catch (const OW_StringConversionException&)
+		{
+		}
+		if (httpsPort < 1 && httpPort < 1)
 		{
 			return 0;
 		}
@@ -124,7 +139,7 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env) 
+	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env)
 	{
 		doSlpRegister(env);
 		return POLLING_INTERVAL;
@@ -137,7 +152,7 @@ public:
 	 * perform any CIM operations.
 	 * @throws OW_CIMException
 	 */
-	virtual void cleanup() 
+	virtual void cleanup()
 	{
 	}
 
@@ -182,17 +197,29 @@ private:
 		OW_String hostname = OW_SocketAddress::getAnyLocalHost().getName();
 
 		OW_StringArray urls;
-		if (m_httpPort.toInt32() > 0)
+		try
 		{
-			OW_String newUrl = "http://";
-			newUrl += hostname + ":" + m_httpPort + "/cimom";
-			urls.push_back(newUrl);
+			if (m_httpPort.toInt32() > 0)
+			{
+				OW_String newUrl = "http://";
+				newUrl += hostname + ":" + m_httpPort + "/cimom";
+				urls.push_back(newUrl);
+			}
 		}
-		if (m_httpsPort.toInt32() > 0)
+		catch (const OW_StringConversionException&)
 		{
-			OW_String newUrl = "https://";
-			newUrl += hostname + ":" + m_httpsPort + "/cimom";
-			urls.push_back(newUrl);
+		}
+		try
+		{
+			if (m_httpsPort.toInt32() > 0)
+			{
+				OW_String newUrl = "https://";
+				newUrl += hostname + ":" + m_httpsPort + "/cimom";
+				urls.push_back(newUrl);
+			}
+		}
+		catch (const OW_StringConversionException&)
+		{
 		}
 		for(size_t i = 0; i < urls.size(); i++)
 		{

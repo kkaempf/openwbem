@@ -242,7 +242,8 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 
 	if(i == g_funcsEnd)
 	{
-		OW_THROW (OW_CIMException, "CIMException.CIM_ERR_NOT_FOUND");
+		// they sent over an intrinsic method call we don't know about
+		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 	}
 	else
 	{
@@ -742,6 +743,10 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 	// Build result
 	//
 	OW_CIMClassEnumeration enu = hdl.enumClass(path, deep, false);
+	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
+	//hdl.enumClass(path, deep, localOnly,
+		//includeQualifiers, includeClassOrigin);
+
 
 	while (enu.hasMoreElements())
 	{
@@ -768,11 +773,8 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 	}
 
 	path.setObjectName(className);
-	//
-	// Note that while the API allows deep the
-	// XML encodings don't.
-	//
-
+	
+	// Note that while the API allows deep the XML encodings don't.
 	OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(path);
 	while (enu.hasMoreElements())
 	{
@@ -815,10 +817,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 	OW_CIMInstanceEnumeration enu = hdl.enumInstances(path, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
 
-	//
 	// Build result
-	//
-	OW_CIMClass cc(true);
 	while (enu.hasMoreElements())
 	{
 		OW_CIMInstance cimInstance = enu.nextElement();
@@ -892,10 +891,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 	cimClass = hdl.getClass(path, localOnly, includeQualifiers,
 		includeClassOrigin,
 		isPropertyList ? &propertyList : 0);
-	//OW_CIMClasstoXML(cimClass, ostr);
-	// Unfortunately this causes problems... Need to fix them.
-
-
+	
 	OW_CIMtoXML(cimClass, ostr,
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
 		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,

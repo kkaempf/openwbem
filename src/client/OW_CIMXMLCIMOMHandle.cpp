@@ -276,11 +276,20 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_XMLNode reply,
 	OW_XMLNode errorNode = reply.findElement(OW_XMLNode::XML_ELEMENT_ERROR);
 	if (errorNode)
 	{
-		OW_CIMException ce = OW_CIMException();
 		OW_String errCode=errorNode.mustGetAttribute(
 			OW_XMLParameters::paramErrorCode);
 		OW_String description=errorNode.mustGetAttribute(
 			OW_XMLParameters::paramErrorDescription);
+		OW_Int32 iErrCode;
+		try
+		{
+			iErrCode = errCode.toInt32();
+		}
+		catch (const OW_StringConversionException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, format("Invalid xml.  %1",
+				e.getMessage()).c_str());
+		}
 		OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
 
@@ -444,16 +453,9 @@ instanceNameToKey(const OW_CIMObjectPath& path,
 		text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
 	}
 	
-	try
-	{
-		OW_StringStream ss;
-		OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isNotInstanceName);
-		text += ss.toString();
-	}
-	catch(OW_CIMMalformedUrlException& me)
-	{
-	    OW_THROWCIMMSG(OW_CIMException::FAILED, me.getMessage());
-	}
+	OW_StringStream ss;
+	OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isNotInstanceName);
+	text += ss.toString();
 
 	if(parameterName.length())
 	{

@@ -55,7 +55,7 @@ private:
 	OW_StringArray m_properties;
 };
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 void
 UtilKeyArray::addElement(const OW_CIMProperty& prop)
 {
@@ -81,7 +81,7 @@ UtilKeyArray::addElement(const OW_CIMProperty& prop)
 	m_properties.append(prop.getValue().toString());
 }
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 OW_String
 UtilKeyArray::toString(const OW_String& className)
 {
@@ -99,9 +99,9 @@ UtilKeyArray::toString(const OW_String& className)
 	return rv.toString();
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-OW_String 
-OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop, 
+//////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
 	if(!cop)
@@ -119,7 +119,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	OW_String oclass = kprops[0].getOriginClass().toLowerCase();
 	if(oclass.length() == 0)
 	{
-		OW_THROW(OW_Exception, 
+		OW_THROW(OW_Exception,
 			format("No orgin class for key property on class: %1",
 				theClass.getName()).c_str());
 	}
@@ -132,7 +132,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	OW_CIMPropertyArray pra = cop.getKeys();
 	if(pra.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, 
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"object path has no keys");
 	}
 
@@ -140,7 +140,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	{
 		if(!pra[i].getValue())
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, 
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				"object path has key with missing value");
 		}
 	}
@@ -206,9 +206,9 @@ OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	return kra.toString(rv);
 }
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_InstanceRepository::makeClassKey(const OW_String& ns, 
+OW_InstanceRepository::makeClassKey(const OW_String& ns,
 	const OW_String& className)
 {
 	OW_String rv(ns);
@@ -217,7 +217,7 @@ OW_InstanceRepository::makeClassKey(const OW_String& ns,
 	return rv.toLowerCase();
 }
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, OW_CIMObjectPathEnumeration& en)
@@ -250,7 +250,7 @@ OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, OW_CIMInstanceEnumeration& en,
@@ -297,8 +297,8 @@ OW_InstanceRepository::getCIMInstances(const OW_CIMObjectPath& cop,
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-OW_CIMInstance 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance
 OW_InstanceRepository::getCIMInstance(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
@@ -317,8 +317,8 @@ OW_InstanceRepository::getCIMInstance(const OW_CIMObjectPath& cop,
 	return ci;
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-void 
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_InstanceRepository::deleteInstance(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
@@ -339,9 +339,9 @@ OW_InstanceRepository::deleteInstance(const OW_CIMObjectPath& cop,
 	hdl->removeNode(node);
 }
 
-////////////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::createInstance(const OW_CIMObjectPath& cop, 
+OW_InstanceRepository::createInstance(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, OW_CIMInstance& ci)
 {
 	throwIfNotOpen();
@@ -373,14 +373,14 @@ OW_InstanceRepository::createInstance(const OW_CIMObjectPath& cop,
 	hdl.getHandle().addChild(clsNode, node);
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-OW_Bool 
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
 OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 {
 	OW_Bool cc = false;
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String ckey = makeClassKey(classPath.getNameSpace(), 
+	OW_String ckey = makeClassKey(classPath.getNameSpace(),
 		classPath.getObjectName());
 	OW_HDBNode node = hdl->getNode(ckey);
 	if(node)
@@ -395,9 +395,9 @@ OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 	return cc;
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-void 
-OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop, 
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, OW_CIMInstance& ci)
 {
 	throwIfNotOpen();
@@ -435,7 +435,7 @@ OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 	ci.syncWithClass(theClass, false);
 
 	// Ensure key values haven't changed
-	OW_CIMPropertyArray oldKeys = cop.getKeys();
+	OW_CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();
 	for(size_t i = 0; i < oldKeys.size(); i++)
 	{
 		OW_CIMProperty kprop = ci.getProperty(oldKeys[i].getName());
@@ -482,8 +482,8 @@ OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 	hdl.getHandle().updateNode(node, ostrm.length(), ostrm.getData());
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-OW_Bool 
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool
 OW_InstanceRepository::instanceExists(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
@@ -507,8 +507,8 @@ OW_InstanceRepository::instanceExists(const OW_CIMObjectPath& cop,
 	return cc;
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-void 
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_InstanceRepository::deleteNameSpace(const OW_String& nsName)
 {
 	throwIfNotOpen();
@@ -517,17 +517,17 @@ OW_InstanceRepository::deleteNameSpace(const OW_String& nsName)
 	OW_GenericHDBRepository::deleteNameSpace(nsName);
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-int 
-OW_InstanceRepository::createNameSpace(const OW_StringArray& nameComps, 
+//////////////////////////////////////////////////////////////////////////////
+int
+OW_InstanceRepository::createNameSpace(const OW_StringArray& nameComps,
 	OW_Bool rootCheck)
 {
 	return OW_GenericHDBRepository::createNameSpace(nameComps, rootCheck);
 }
 
-////////////////////////////////////////////////////////////////////////////// 
-void 
-OW_InstanceRepository::createClass(const OW_String& ns, 
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_InstanceRepository::createClass(const OW_String& ns,
 	const OW_CIMClass& cimClass)
 {
 	throwIfNotOpen();
@@ -546,15 +546,15 @@ OW_InstanceRepository::createClass(const OW_String& ns,
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, ckey.c_str());
 	}
 
-	node = OW_HDBNode(ckey, ckey.length()+1, 
+	node = OW_HDBNode(ckey, ckey.length()+1,
 		(unsigned char*) ckey.c_str());
 	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG | OW_HDBCLSNODE_FLAG);
 	hdl->addChild(pnode, node);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
-OW_InstanceRepository::deleteClass(const OW_String& ns, 
+void
+OW_InstanceRepository::deleteClass(const OW_String& ns,
 	const OW_String& className)
 {
 	throwIfNotOpen();

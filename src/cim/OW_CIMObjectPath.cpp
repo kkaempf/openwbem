@@ -469,7 +469,15 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 		ndx = host.indexOf(':');
 		if(ndx != -1)
 		{
-			port = host.substring(ndx+1).toInt32();
+			try
+			{
+				port = host.substring(ndx+1).toInt32();
+			}
+			catch (const OW_StringConversionException&)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+					"Invalid port in Object Path");
+			}
 			host = host.substring(0, ndx);
 		}
 	}

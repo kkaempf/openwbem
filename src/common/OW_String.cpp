@@ -36,6 +36,7 @@
 #include "OW_Array.hpp"
 #include "OW_IOException.hpp"
 #include "OW_StringStream.hpp"
+#include "OW_Format.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -44,6 +45,7 @@
 #include <cstdarg>
 #include <cerrno>
 #include <iostream>
+#include <cmath> // for HUGE_VAL
 
 using std::istream;
 using std::ostream;
@@ -927,190 +929,197 @@ OW_String::toString() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-char
-OW_String::toChar() const
+static inline void
+throwStringConversion(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
 {
-	char c = 0;
-	if(length() > 0)
-	{
-		c = charAt(0);
-	}
-	return c;
+	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static inline void
+throwStringConversion(const char* str, const char* type)
+{
+	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", str, type).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Char16
 OW_String::toChar16() const
 {
-	OW_Char16 c16;
-
-	if(length() > 0)
+	if(length() != 1)
 	{
-		c16 = OW_Char16((OW_UInt16) charAt(0));
+		throwStringConversion(c_str(), "OW_Char16");
 	}
-	return c16;
+	return charAt(0);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-OW_String::operator OW_Char16() const
+template <typename T>
+static inline
+T convertToRealType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
 {
-	return toChar16();
+	if (m_buf.getPtr())
+	{
+		char* endptr;
+		double v = ::strtod(m_buf->data(), &endptr);
+		T rv = v;
+		if (*endptr != '\0' || errno == ERANGE || rv == HUGE_VAL || rv == -HUGE_VAL)
+		{
+			throwStringConversion(m_buf, type);
+		}
+		return rv;
+	}
+	else
+	{
+		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
+	}
+	return T(); // to make compiler happy
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Real32
 OW_String::toReal32() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Real32) ::strtod(m_buf->data(), (char**)NULL);
-	}
-	else
-	{
-		return 0.0;
-	}
+	return convertToRealType<OW_Real32>(m_buf, "OW_Real32");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Real64
 OW_String::toReal64() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Real64) ::strtod(m_buf->data(), (char**)NULL);
-	}
-	else
-	{
-		return 0.0;
-	}
+	return convertToRealType<OW_Real64>(m_buf, "OW_Real64");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
 OW_String::toBool() const
 {
-	OW_Bool rv(true);
-	if(equalsIgnoreCase("false")
-		|| equalsIgnoreCase("0")
-		|| equalsIgnoreCase("0.0")
-		|| length() == 0)
+	if (equalsIgnoreCase("true"))
 	{
-		rv = false;
+		return true;
 	}
+	else if (equalsIgnoreCase("false"))
+	{
+		return false;
+	}
+	else
+	{
+		throwStringConversion(c_str(), "OW_Bool");
+	}
+	return false; // to make compiler happy
+}
 
-	return rv;
+template <typename T, typename FP, typename FPRT>
+static inline
+T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type, FP fp)
+{
+	if (m_buf.getPtr())
+	{
+		char* endptr;
+		FPRT v = fp(m_buf->data(), &endptr, 10);
+		T rv = v;
+		if (*endptr != '\0' || errno == ERANGE || rv != v)
+		{
+			throwStringConversion(m_buf, type);
+		}
+		return rv;
+	}
+	else
+	{
+		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
+	}
+	return T(); // to make compiler happy
+}
+
+typedef unsigned long int (*strtoulfp_t)(const char *, char **,int);
+typedef long int (*strtolfp_t)(const char *, char **,int);
+typedef unsigned long long int (*strtoullfp_t)(const char *, char **,int);
+typedef long long int (*strtollfp_t)(const char *, char **,int);
+
+
+template <typename T>
+static inline
+T convertToUIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+{
+	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul);
+}
+
+template <typename T>
+static inline
+T convertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+{
+	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol);
+}
+
+template <typename T>
+static inline
+T convertToUInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+{
+	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull);
+}
+
+template <typename T>
+static inline
+T convertToInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+{
+	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt8
 OW_String::toUInt8() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_UInt8)::strtoul(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToUIntType<OW_UInt8>(m_buf, "OW_UInt8");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int8
 OW_String::toInt8() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Int8)::strtol(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToIntType<OW_Int8>(m_buf, "OW_Int8");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt16
 OW_String::toUInt16() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_UInt16)::strtoul(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToUIntType<OW_UInt16>(m_buf, "OW_UInt16");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int16
 OW_String::toInt16() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Int16)::strtol(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToIntType<OW_Int16>(m_buf, "OW_Int16");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt32
 OW_String::toUInt32() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_UInt32)::strtoul(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToUIntType<OW_UInt32>(m_buf, "OW_UInt32");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int32
 OW_String::toInt32() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Int32)::strtol(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToIntType<OW_Int32>(m_buf, "OW_Int32");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt64
 OW_String::toUInt64() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_UInt64)OW_String::strtoull(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToUInt64Type<OW_UInt64>(m_buf, "OW_UInt64");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int64
 OW_String::toInt64() const
 {
-	if (m_buf.getPtr())
-	{
-		return (OW_Int64)OW_String::strtoll(m_buf->data(), NULL, 10);
-	}
-	else
-	{
-		return 0;
-	}
+	return convertToInt64Type<OW_Int64>(m_buf, "OW_Int64");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1118,12 +1127,6 @@ OW_CIMDateTime
 OW_String::toDateTime() const
 {
 	return OW_CIMDateTime(*this);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_String::operator OW_CIMDateTime() const
-{
-	return toDateTime();
 }
 
 //////////////////////////////////////////////////////////////////////////////

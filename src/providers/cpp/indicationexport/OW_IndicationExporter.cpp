@@ -34,6 +34,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMtoXML.hpp"
+#include "OW_Format.hpp"
 
 using std::ostream;
 using std::istream;
@@ -208,11 +209,20 @@ OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
 		OW_XMLNode errorNode = reply.findElement(OW_XMLNode::XML_ELEMENT_ERROR);
 		if (errorNode)
 		{
-			OW_CIMException ce = OW_CIMException();
 			OW_String errCode=errorNode.mustGetAttribute(
 				OW_XMLParameters::paramErrorCode);
 			OW_String description=errorNode.mustGetAttribute(
 				OW_XMLParameters::paramErrorDescription);
+			OW_Int32 iErrCode;
+			try
+			{
+				iErrCode = errCode.toInt32();
+			}
+			catch (const OW_StringConversionException& e)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					format("Invalid XML error code. %1", e.getMessage()).c_str());
+			}
 			OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()),
 				description.c_str());
 		}

@@ -151,73 +151,81 @@ OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 void
 OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 {
-	OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
-	if (item.length() == 0)
+	try
 	{
-		item = DEFAULT_HTTP_PORT;
-	}
-	m_options.httpPort = item.toInt32();
+		OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
+		if (item.length() == 0)
+		{
+			item = DEFAULT_HTTP_PORT;
+		}
+		m_options.httpPort = item.toInt32();
 
-	item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
-	if (item.length() == 0)
+		item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
+		if (item.length() == 0)
+		{
+			item = DEFAULT_HTTPS_PORT;
+		}
+		m_options.httpsPort = item.toInt32();
+
+		item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt);
+		if (item.length() == 0)
+		{
+			item = DEFAULT_USE_UDS;
+		}
+		m_options.useUDS = item.equalsIgnoreCase("true");
+
+		item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
+		if (item.length() == 0)
+		{
+			item = DEFAULT_MAX_CONNECTIONS;
+		}
+		m_options.maxConnections = item.toInt32() + 1;
+
+		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
+		if (item.length() == 0)
+		{
+			item = "false";
+		}
+		m_options.isSepThread = !item.equalsIgnoreCase("true");
+
+		item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt);
+		if (item.length() == 0)
+		{
+			item = "true";
+		}
+		m_options.enableDeflate = !item.equalsIgnoreCase("false");
+
+		item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt);
+		if (item.length() == 0)
+		{
+			item = "true";
+		}
+		m_options.useDigest = !item.equalsIgnoreCase("false");
+
+		item = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt);
+		m_options.allowAnonymous = item.equalsIgnoreCase("true");
+
+		m_options.env = env;
+
+		m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);
+		if (m_options.useDigest)
+		{
+			OW_String passwdFile = env->getConfigItem(
+				OW_ConfigOpts::DIGEST_AUTH_FILE_opt);
+
+			m_digestAuth = OW_Reference<OW_DigestAuthentication>(
+				new OW_DigestAuthentication(passwdFile));
+		}
+
+		OW_SocketBaseImpl::setDumpFiles(
+			env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpIn",
+			env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpOut");
+	}
+	catch (const OW_StringConversionException& e)
 	{
-		item = DEFAULT_HTTPS_PORT;
+		OW_THROW(OW_Exception, format("Unable to initialize HTTP Server because"
+			" of invalid config item. %1", e.getMessage()).c_str());
 	}
-	m_options.httpsPort = item.toInt32();
-
-	item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt);
-	if (item.length() == 0)
-	{
-		item = DEFAULT_USE_UDS;
-	}
-	m_options.useUDS = item.equalsIgnoreCase("true");
-
-	item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
-	if (item.length() == 0)
-	{
-		item = DEFAULT_MAX_CONNECTIONS;
-	}
-	m_options.maxConnections = item.toInt32() + 1;
-
-	item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
-	if (item.length() == 0)
-	{
-		item = "false";
-	}
-	m_options.isSepThread = !item.equalsIgnoreCase("true");
-
-	item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt);
-	if (item.length() == 0)
-	{
-		item = "true";
-	}
-	m_options.enableDeflate = !item.equalsIgnoreCase("false");
-
-	item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt);
-	if (item.length() == 0)
-	{
-		item = "true";
-	}
-	m_options.useDigest = !item.equalsIgnoreCase("false");
-
-	item = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt);
-	m_options.allowAnonymous = item.equalsIgnoreCase("true");
-
-	m_options.env = env;
-
-	m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);
-	if (m_options.useDigest)
-	{
-		OW_String passwdFile = env->getConfigItem(
-			OW_ConfigOpts::DIGEST_AUTH_FILE_opt);
-
-		m_digestAuth = OW_Reference<OW_DigestAuthentication>(
-			new OW_DigestAuthentication(passwdFile));
-	}
-
-	OW_SocketBaseImpl::setDumpFiles(
-		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpIn",
-		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpOut");
 }
 
 //////////////////////////////////////////////////////////////////////////////

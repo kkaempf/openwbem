@@ -1049,6 +1049,7 @@ void CIMOMVisitor::VisitValueInitializer( const ValueInitializer *pValueInitiali
 
 void CIMOMVisitor::VisitIntegerValueBinaryValue( const IntegerValueBinaryValue *pIntegerValueBinaryValue )
 {
+	// TODO: Check for overflow
 	OW_Int64 val = OW_String::strtoll(
 		pIntegerValueBinaryValue->pBinaryValue->c_str(), NULL, 2);
 	m_curValue = OW_CIMValue(val);
@@ -1056,6 +1057,7 @@ void CIMOMVisitor::VisitIntegerValueBinaryValue( const IntegerValueBinaryValue *
 
 void CIMOMVisitor::VisitIntegerValueOctalValue( const IntegerValueOctalValue *pIntegerValueOctalValue )
 {
+	// TODO: Check for overflow
 	OW_Int64 val = OW_String::strtoll(
 		pIntegerValueOctalValue->pOctalValue->c_str(), NULL, 8);
 	m_curValue = OW_CIMValue(val);
@@ -1063,6 +1065,7 @@ void CIMOMVisitor::VisitIntegerValueOctalValue( const IntegerValueOctalValue *pI
 
 void CIMOMVisitor::VisitIntegerValueDecimalValue( const IntegerValueDecimalValue *pIntegerValueDecimalValue )
 {
+	// TODO: Check for overflow
 	OW_Int64 val = OW_String::strtoll(
 		pIntegerValueDecimalValue->pDecimalValue->c_str(), NULL, 10);
 	m_curValue = OW_CIMValue(val);
@@ -1070,6 +1073,7 @@ void CIMOMVisitor::VisitIntegerValueDecimalValue( const IntegerValueDecimalValue
 
 void CIMOMVisitor::VisitIntegerValueHexValue( const IntegerValueHexValue *pIntegerValueHexValue )
 {
+	// TODO: Check for overflow
 	OW_Int64 val = OW_String::strtoll(pIntegerValueHexValue->pHexValue->c_str(),
 		NULL, 16);
 	m_curValue = OW_CIMValue(val);
@@ -1082,6 +1086,7 @@ void CIMOMVisitor::VisitConstantValueIntegerValue( const ConstantValueIntegerVal
 
 void CIMOMVisitor::VisitConstantValueFloatValue( const ConstantValueFloatValue *pConstantValueFloatValue )
 {
+	// TODO: Check for overflow
 	OW_Real64 val = strtod(pConstantValueFloatValue->pFloatValue->c_str(), NULL);
 	m_curValue = OW_CIMValue(val);
 }

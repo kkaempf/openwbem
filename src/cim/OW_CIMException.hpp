@@ -105,9 +105,6 @@ public:
 		METHOD_NOT_FOUND = 17
 	};
 
-	OW_CIMException();
-	OW_CIMException(const char* file, int line, const char* msg);
-	OW_CIMException(const char* msg);
 	OW_CIMException(ErrNoType errval);
 	OW_CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);

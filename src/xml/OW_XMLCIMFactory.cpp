@@ -264,9 +264,61 @@ OW_XMLCIMFactory::createInstance(OW_XMLNode const& node)
 	return rval;
 }
 
+static inline void StringToType(const OW_String& s, OW_Byte& b)
+{
+	b = s.toUInt8();
+}
+static inline void StringToType(const OW_String& s, OW_Int8& b)
+{
+	b = s.toInt8();
+}
+static inline void StringToType(const OW_String& s, OW_UInt16& b)
+{
+	b = s.toUInt16();
+}
+static inline void StringToType(const OW_String& s, OW_Int16& b)
+{
+	b = s.toInt16();
+}
+static inline void StringToType(const OW_String& s, OW_UInt32& b)
+{
+	b = s.toUInt32();
+}
+static inline void StringToType(const OW_String& s, OW_Int32& b)
+{
+	b = s.toInt32();
+}
+static inline void StringToType(const OW_String& s, OW_UInt64& b)
+{
+	b = s.toUInt64();
+}
+static inline void StringToType(const OW_String& s, OW_Int64& b)
+{
+	b = s.toInt64();
+}
+static inline void StringToType(const OW_String& s, OW_String& b)
+{
+	b = s;
+}
+static inline void StringToType(const OW_String& s, OW_Real32& b)
+{
+	b = s.toReal32();
+}
+static inline void StringToType(const OW_String& s, OW_Real64& b)
+{
+	b = s.toReal64();
+}
+static inline void StringToType(const OW_String& s, OW_Char16& b)
+{
+	b = s.toChar16();
+}
+static inline void StringToType(const OW_String& s, OW_CIMDateTime& b)
+{
+	b = s.toDateTime();
+}
 ///////////////////////////////////
 template <class T>
-void
+static inline void
 convertCimType(OW_Array<T>& ra, const OW_XMLNode& node)
 {
 	OW_XMLNode valueNode = node.getChild();
@@ -275,7 +327,9 @@ convertCimType(OW_Array<T>& ra, const OW_XMLNode& node)
 		if(valueNode.getToken() == OW_XMLNode::XML_ELEMENT_VALUE)
 		{
 			OW_String vstr = valueNode.getText();
-			ra.append(T(vstr));
+			T val;
+			StringToType(vstr, val);
+			ra.append(val);
 		}
 		valueNode = valueNode.getNext();
 	}
@@ -294,169 +348,204 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 			"Can't construct OW_CIMValue from NULL xml node");
 	}
 
-	OW_XMLNode node = nodeArg;
-	int token = node.getToken();
-
-	switch(token)
+	try
 	{
-		// <VALUE> elements
-		case OW_XMLNode::XML_ELEMENT_VALUE:
-			{
-				OW_String vstr = node.getText();
-				rval = OW_CIMValue::createSimpleValue(valueType, vstr);
-				return rval;
-			}
-
-		// <VALUE.ARRAY> elements
-		case OW_XMLNode::XML_ELEMENT_VALUE_ARRAY:
-			{
-				int type = OW_CIMDataType::strToSimpleType(valueType);
-				if(type == OW_CIMDataType::INVALID)
+	
+		OW_XMLNode node = nodeArg;
+		int token = node.getToken();
+	
+		switch(token)
+		{
+			// <VALUE> elements
+			case OW_XMLNode::XML_ELEMENT_VALUE:
 				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-						"Invalid data type on node");
+					OW_String vstr = node.getText();
+						rval = OW_CIMValue::createSimpleValue(valueType, vstr);
+					return rval;
 				}
-
-				switch(type)
+	
+			// <VALUE.ARRAY> elements
+			case OW_XMLNode::XML_ELEMENT_VALUE_ARRAY:
 				{
-					case OW_CIMDataType::UINT8:
+					int type = OW_CIMDataType::strToSimpleType(valueType);
+					if(type == OW_CIMDataType::INVALID)
 					{
-						OW_UInt8Array ra;
-						convertCimType(ra, node);
-						rval = OW_CIMValue(ra);
-						break;
-					}
-
-					case OW_CIMDataType::SINT8:
-						{
-							OW_Int8Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::UINT16:
-						{
-							OW_UInt16Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::SINT16:
-						{
-							OW_Int16Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::UINT32:
-						{
-							OW_UInt32Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::SINT32:
-						{
-							OW_Int32Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::UINT64:
-						{
-							OW_UInt64Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::SINT64:
-						{
-							OW_Int64Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::BOOLEAN:
-						{
-							OW_BoolArray ra;
-							OW_StringArray sra;
-							convertCimType(sra, node);
-							for(size_t i = 0; i < sra.size(); i++)
-							{
-								OW_Bool bv = sra[i].equalsIgnoreCase("TRUE");
-								ra.append(bv);
-							}
-
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::REAL32:
-						{
-							OW_Real32Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::REAL64:
-						{
-							OW_Real64Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::CHAR16:
-						{
-							OW_Char16Array ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::DATETIME:
-						{
-							OW_CIMDateTimeArray ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					case OW_CIMDataType::STRING:
-						{
-							OW_StringArray ra;
-							convertCimType(ra, node);
-							rval = OW_CIMValue(ra);
-							break;
-						}
-
-					default:
 						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							"Invalid data type on node");
+					}
+	
+					switch(type)
+					{
+						case OW_CIMDataType::UINT8:
+						{
+							OW_UInt8Array ra;
+							convertCimType(ra, node);
+							rval = OW_CIMValue(ra);
+							break;
+						}
+	
+						case OW_CIMDataType::SINT8:
+							{
+								OW_Int8Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::UINT16:
+							{
+								OW_UInt16Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::SINT16:
+							{
+								OW_Int16Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::UINT32:
+							{
+								OW_UInt32Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::SINT32:
+							{
+								OW_Int32Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::UINT64:
+							{
+								OW_UInt64Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::SINT64:
+							{
+								OW_Int64Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::BOOLEAN:
+							{
+								OW_BoolArray ra;
+								OW_StringArray sra;
+								convertCimType(sra, node);
+								for(size_t i = 0; i < sra.size(); i++)
+								{
+									OW_Bool bv = sra[i].equalsIgnoreCase("TRUE");
+									ra.append(bv);
+								}
+	
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::REAL32:
+							{
+								OW_Real32Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::REAL64:
+							{
+								OW_Real64Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::CHAR16:
+							{
+								OW_Char16Array ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::DATETIME:
+							{
+								OW_CIMDateTimeArray ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						case OW_CIMDataType::STRING:
+							{
+								OW_StringArray ra;
+								convertCimType(ra, node);
+								rval = OW_CIMValue(ra);
+								break;
+							}
+	
+						default:
+							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								"Invalid data type on node");
+					}
+	
+					break;
 				}
-
-				break;
-			}
-
-		case OW_XMLNode::XML_ELEMENT_VALUE_REFARRAY:
-			{
-				OW_CIMObjectPathArray opArray;
-				node = node.mustChildElement(
-					OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE);
-
-				while(node)
+	
+			case OW_XMLNode::XML_ELEMENT_VALUE_REFARRAY:
+				{
+					OW_CIMObjectPathArray opArray;
+					node = node.mustChildElement(
+						OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE);
+	
+					while(node)
+					{
+						OW_CIMObjectPath cop(OW_Bool(true));
+						OW_XMLNode valueNode = node.mustGetChild();
+	
+						token = valueNode.getToken();
+						switch(token)
+						{
+							case OW_XMLNode::XML_ELEMENT_CLASSPATH:
+							case OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH:
+							case OW_XMLNode::XML_ELEMENT_INSTANCEPATH:
+							case OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH:
+								cop = createObjectPath(valueNode);
+								break;
+							case OW_XMLNode::XML_ELEMENT_CLASSNAME:
+								cop.setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME));
+								break;
+							case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
+								OW_XMLClass::getInstanceName(valueNode, cop);
+								break;
+							default:
+								OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+									"Attempting to extract object path");
+						}
+	
+						opArray.append(cop);
+						node = node.getNext();
+					}
+	
+					rval = OW_CIMValue(opArray);
+				}
+	
+			case OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE:
 				{
 					OW_CIMObjectPath cop(OW_Bool(true));
-					OW_XMLNode valueNode = node.mustGetChild();
-
+					OW_XMLNode valueNode = node.getChild();
+	
 					token = valueNode.getToken();
 					switch(token)
 					{
@@ -476,48 +565,21 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 								"Attempting to extract object path");
 					}
-
-					opArray.append(cop);
-					node = node.getNext();
+	
+					rval = OW_CIMValue(cop);
+					break;
 				}
-
-				rval = OW_CIMValue(opArray);
-			}
-
-		case OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE:
-			{
-				OW_CIMObjectPath cop(OW_Bool(true));
-				OW_XMLNode valueNode = node.getChild();
-
-				token = valueNode.getToken();
-				switch(token)
-				{
-					case OW_XMLNode::XML_ELEMENT_CLASSPATH:
-					case OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH:
-					case OW_XMLNode::XML_ELEMENT_INSTANCEPATH:
-					case OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH:
-						cop = createObjectPath(valueNode);
-						break;
-					case OW_XMLNode::XML_ELEMENT_CLASSNAME:
-						cop.setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME));
-						break;
-					case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
-						OW_XMLClass::getInstanceName(valueNode, cop);
-						break;
-					default:
-						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							"Attempting to extract object path");
-				}
-
-				rval = OW_CIMValue(cop);
-				break;
-			}
-
-		default:
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Not value XML");
+	
+			default:
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+					"Not value XML");
+		}
+	
 	}
-
+	catch (const OW_StringConversionException& e)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+	}
 
 	return rval;
 }
@@ -826,7 +888,24 @@ OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
 			OW_XMLParameters::paramArraySize);
 
 		OW_CIMDataType dt = rval.getDataType();
-		dt.setToArrayType(arraySize.toInt32());
+		if (arraySize.length())
+		{
+			OW_Int32 aSize = 0;
+			try
+			{
+				aSize = arraySize.toInt32();
+			}
+			catch (const OW_StringConversionException&)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED, format("Array size: \"%1\" is invalid", arraySize).c_str());
+			}
+			dt.setToArrayType(aSize);
+		}
+		else
+		{
+			// no limit
+			dt.setToArrayType(0);
+		}
 		rval.setDataType(dt);
 	}
 
@@ -979,8 +1058,15 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 					"invalid parameter data type");
 			}
 	
-			dt.setToArrayType(
-				qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+			try
+			{
+				dt.setToArrayType(
+					qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+			}
+			catch (const OW_StringConversionException&)
+			{
+				dt.setToArrayType(0);
+			}
 			rval.setDataType(dt);
 			break;
 		}
@@ -990,8 +1076,15 @@ OW_XMLCIMFactory::createParameter(OW_XMLNode const& node)
 			OW_CIMDataType dt = OW_CIMDataType(
 				qnode.getAttribute(OW_XMLParameters::paramRefClass));
 	
-			dt.setToArrayType(
-				qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+			try
+			{
+				dt.setToArrayType(
+					qnode.getAttribute(OW_XMLParameters::paramArraySize).toInt32());
+			}
+			catch (const OW_StringConversionException&)
+			{
+				dt.setToArrayType(0);
+			}
 			rval.setDataType(dt);
 			break;
 		}

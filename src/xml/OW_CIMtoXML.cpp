@@ -49,7 +49,7 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
 	OW_String name = ns.getNameSpace();
 
 	if(name.length() == 0)
-		OW_THROW(OW_CIMMalformedUrlException, "Namespace not set");
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Namespace not set");
 
 	if(dolocal == OW_CIMtoXMLFlags::dontDoLocal)
 	{
@@ -366,7 +366,7 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 {
 	if(cc.getName().length() == 0)
 	{
-		OW_THROW(OW_CIMMalformedUrlException, "class must have name");
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "class must have name");
 	}
 
 	ostr << "<CLASS NAME=\"";
@@ -386,9 +386,10 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	 * we probably should do the same with indications, but currently
 	 * have no isIndication() flag!  TODO
 	 */
+	const OW_CIMQualifierArray ccquals = cc.getQualifiers();
 	if (cc.isAssociation() &&
-		std::find(cc.getQualifiers().begin(), cc.getQualifiers().end(),
-		OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == cc.getQualifiers().end())
+		std::find(ccquals.begin(), ccquals.end(),
+		OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == ccquals.end())
 	{
 		ostr << "<QUALIFIER NAME=\"Association\" TYPE=\"boolean\" ";
 		if (localOnly == OW_CIMtoXMLFlags::localOnly)
@@ -399,10 +400,9 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	}
 	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
 	{
-		for(size_t i = 0; i < cc.getQualifiers().size(); i++)
+		for(size_t i = 0; i < ccquals.size(); i++)
 		{
-			OW_CIMQualifier q(cc.getQualifiers()[i]);
-			OW_CIMtoXML(q, ostr, localOnly);
+			OW_CIMtoXML(ccquals[i], ostr, localOnly);
 		}
 	}
 
@@ -469,7 +469,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 	}
 	else
 	{
-		OW_THROW(OW_CIMMalformedUrlException, "instance has no class name");
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "instance has no class name");
 	}
 
 	//

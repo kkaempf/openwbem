@@ -570,7 +570,14 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 	{
 		sc = statusLine.substring(0,idx);
 		statusLine = statusLine.substring(idx + 1);
-		isc = sc.toInt32();
+		try
+		{
+			isc = sc.toInt32();
+		}
+		catch (const OW_StringConversionException&)
+		{
+			return FATAL;
+		}
 	}
 	if (sc.length() != 3)
 	{

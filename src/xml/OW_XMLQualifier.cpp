@@ -73,7 +73,15 @@ OW_XMLQualifier::processQualifierDecl(const OW_XMLNode& result,
 		OW_String qualArraySize = result.getAttribute(paramArraySize);
 		if(qualArraySize.length() > 0)
 		{
-			dt.setToArrayType(qualArraySize.toInt32());
+			try
+			{
+				dt.setToArrayType(qualArraySize.toInt32());
+			}
+			catch (const OW_StringConversionException&)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+					"Invalid array size");
+			}
 		}
 		else
 		{

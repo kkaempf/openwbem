@@ -860,7 +860,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->associatorNames(OW_CIMObjectPath("foo", "badNamespace"), "", "", "", "");
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->associatorNames(cop, "", "", "", "");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -875,7 +877,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->references(OW_CIMObjectPath("foo", "badNamespace"),"","");
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->references(cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -890,7 +894,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->referenceNames(OW_CIMObjectPath("foo", "badNamespace"),"","");
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->referenceNames(cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -903,20 +909,128 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// GetProperty
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->getProperty(cop, "theKeyProp");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+	
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->getProperty(cop, "theKeyProp");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		cop.addKey("theKeyProp", OW_CIMValue(false));
+		hdl->getProperty(cop, "theKeyProp");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+	
 	// CIM_ERR_NO_SUCH_PROPERTY
+	try
+	{
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->getProperty(cop, "badProp");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
+	}
+	
 
 
 	// SetProperty
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(true));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+	
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(true));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		cop.addKey("theKeyProp", OW_CIMValue(false));
+		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(false));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
+	
 	// CIM_ERR_NO_SUCH_PROPERTY
+	try
+	{
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->setProperty(cop, "badProp", OW_CIMValue(true));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
+	}
+	
 	// CIM_ERR_TYPE_MISMATCH
+	try
+	{
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		cop.addKey("theKeyProp", OW_CIMValue(true));
+		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(OW_String("x")));
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::TYPE_MISMATCH);
+	}
+	
 
 
 	// GetQualifier

@@ -39,25 +39,6 @@
 static OW_String getMsg(OW_CIMException::ErrNoType errval, const char* msg = 0);
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException() :
-	OW_Exception(), m_errno(FAILED), m_longmsg(0)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* file, int line,
-	const char* msg) :
-	OW_Exception(file, line, msg), m_errno(FAILED), m_longmsg(0)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* msg) :
-	OW_Exception(msg), m_errno(FAILED), m_longmsg(0)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMException::OW_CIMException(OW_CIMException::ErrNoType errval) :
 	OW_Exception(), m_errno(errval), m_longmsg(0)
 {

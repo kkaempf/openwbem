@@ -200,8 +200,18 @@ namespace
 		infile.close();
 		OW_String fileContents = oss.toString();
 		OW_StringArray toks = fileContents.tokenize();
-		OW_Int32 minutes = toks[7].toInt32();
-		OW_UInt16 percent = toks[6].toUInt16();
+		OW_Int32 minutes;
+		OW_UInt16 percent;
+		try
+		{
+			minutes = toks[7].toInt32();
+			toks[6] = toks[6].substring(0, 2); // erase the last %
+			percent = toks[6].toUInt16();
+		}
+		catch (const OW_StringConversionException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed parsing /proc/apm");
+		}
 		OW_UInt16 status = STAT_Unknown;
 		OW_Bool charging = false;
 		if (minutes == -1)

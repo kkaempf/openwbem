@@ -107,8 +107,15 @@ public:
 			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
-			newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[2].toUInt32()));
-			newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[3].toUInt32()));
+			try
+			{
+				newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[2].toUInt32()));
+				newInst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[3].toUInt32()));
+			}
+			catch (const OW_StringConversionException& e)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output from ps");
+			}
 			rval.addElement(newInst);
 		}
 		return rval;
@@ -140,8 +147,15 @@ public:
 		}
 		OW_StringArray proc = pos.out()->readAll().tokenize();
 		inst.setProperty(OW_String("Name"), OW_CIMValue(proc[0]));
-		inst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[1].toUInt32()));
-		inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toUInt32()));
+		try
+		{
+			inst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[1].toUInt32()));
+			inst.setProperty(OW_String("PercentCPU"), OW_CIMValue(proc[2].toUInt32()));
+		}
+		catch (const OW_StringConversionException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output from ps");
+		}
 		return inst;
 	}
 

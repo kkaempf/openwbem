@@ -65,7 +65,7 @@ struct OW_CIMUrl::URLData
 	OW_String m_spec;
 	OW_String m_protocol;
 	OW_String m_host;
-	int m_port;
+	OW_Int32 m_port;
 	OW_String m_file;
 	OW_String m_ref;
 	OW_Bool m_localHost;
@@ -292,6 +292,13 @@ OW_CIMUrl::setComponents()
 		spec = spec.substring(ndx+3);
 	}
 
+	// parse and remove name and password
+	ndx = spec.indexOf('@');
+	if (ndx != -1)
+	{
+		spec = spec.substring(ndx + 1);
+	}
+
 	ndx = spec.indexOf('/');
 	if(ndx != -1)
 	{
@@ -308,7 +315,14 @@ OW_CIMUrl::setComponents()
 	if(ndx != -1)
 	{
 		OW_String sport = m_pdata->m_host.substring(ndx+1);
-		m_pdata->m_port = (int)sport.toInt32();
+		try
+		{
+			m_pdata->m_port = sport.toInt32();
+		}
+		catch (OW_StringConversionException&)
+		{
+			m_pdata->m_port = 5988;
+		}
 		m_pdata->m_host = m_pdata->m_host.substring(0, ndx);
 	}
 	checkRef();

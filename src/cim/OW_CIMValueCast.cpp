@@ -52,43 +52,52 @@ OW_CIMValue
 OW_CIMValueCast::castValueToDataType(const OW_CIMValue& value,
 		const OW_CIMDataType& dataType)
 {
-	// If NULL data type, then return NULL value.
-	if(!dataType || !value)
+	try
 	{
-		return OW_CIMValue();
-	}
+		// If NULL data type, then return NULL value.
+		if(!dataType || !value)
+		{
+			return OW_CIMValue();
+		}
 
-	// If the OW_CIMValue is already what it needs to be, then just return it.
-	if(value.getType() == dataType.getType()
-		&& value.isArray() == dataType.isArrayType())
+		// If the OW_CIMValue is already what it needs to be, then just return it.
+		if(value.getType() == dataType.getType()
+			&& value.isArray() == dataType.isArrayType())
+		{
+			return value;
+		}
+
+		// If we can't convert to the data type specified in the dataType argument,
+		// then throw an exception
+		if(!isCompatible(value.getType(), dataType.getType()))
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				format("Failed to convert \"%1\" to %2", value.toString(),
+					dataType.toString()).c_str());
+		}
+
+		// If value is an array, then do special array processing
+		if(value.isArray())
+		{
+			return convertArray(value, dataType);
+		}
+
+		// Convert value to string
+		OW_String strValue = value.toString();
+		OW_CIMValue cv;
+		cv = convertString(strValue, dataType);
+
+		if(dataType.isArrayType())
+		{
+			makeValueArray(cv);
+		}
+
+		return cv;
+	}
+	catch (const OW_StringConversionException& e)
 	{
-		return value;
+		OW_THROWCIMMSG(OW_CIMException::FAILED, e.getMessage());
 	}
-
-	// If we can't convert to the data type specified in the dataType argument,
-	// then throw an exception
-	if(!isCompatible(value.getType(), dataType.getType()))
-	{
-		OW_String msg("Failed to convert value: ");
-		msg += value.toString();
-		OW_THROWCIMMSG(OW_CIMException::TYPE_MISMATCH, msg.c_str());
-	}
-
-	// If value is an array, then do special array processing
-	if(value.isArray())
-	{
-		return convertArray(value, dataType);
-	}
-
-	// Convert value to string
-	OW_String strValue = value.toString();
-	OW_CIMValue cv = convertString(strValue, dataType);
-	if(dataType.isArrayType())
-	{
-		makeValueArray(cv);
-	}
-
-	return cv;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -372,7 +372,14 @@ private:
 				{
 					curName = "Installed_Size";
 				}
-				inst.setProperty(curName, OW_CIMValue(value.toUInt32()));
+				try
+				{
+					inst.setProperty(curName, OW_CIMValue(value.toUInt32()));
+				}
+				catch (const OW_StringConversionException& e)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output");
+				}
 			}
 
 			else if (curName.equals("Name")

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_STRING_HPP__
-#define __OW_STRING_HPP__
+#ifndef OW_STRING_HPP_
+#define OW_STRING_HPP_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -47,6 +47,8 @@ class OW_CIMObjectPath;
 
 class OW_String;
 typedef OW_Array<OW_String> OW_StringArray;
+
+DEFINE_EXCEPTION(StringConversion);
 
 /**
  * This OW_String class is an abstract data type that represents as NULL
@@ -451,14 +453,14 @@ public:
 	 * @param istrm	The input stream to read this OW_String from.
 	 * @exception OW_IOException
 	 */
-	void readObject(std::istream& istrm) /*throw (OW_IOException)*/;
+	void readObject(std::istream& istrm);
 
 	/**
 	 * Write this OW_String object to the given ostream.
 	 * @param ostrm	The output stream to write this OW_String to.
 	 * @exception OW_IOException
 	 */
-	void writeObject(std::ostream& ostrm) const /*throw(OW_IOException)*/;
+	void writeObject(std::ostream& ostrm) const;
 
 	/**
 	 * @return A copy of this OW_String object.
@@ -466,26 +468,9 @@ public:
 	OW_String toString() const;
 
 	/**
-	 * @return A single char representation of this OW_String object.
-	 */
-	char toChar() const;
-
-	/**
-	 * Operator (char)
-	 * @return A single char representation of this OW_String object.
-	 */
-	operator char() const {  return toChar(); }
-
-	/**
 	 * @return the Char16 value for this OW_String object.
 	 */
 	OW_Char16 toChar16() const;
-
-	/**
-	 * Operator (OW_Char16)
-	 * @return the Char16 value for this OW_String object.
-	 */
-	operator OW_Char16() const;
 
 	/**
 	 * @return The OW_Real32 value of this OW_String object.
@@ -493,21 +478,9 @@ public:
 	OW_Real32 toReal32() const;
 
 	/**
-	 * Operator (OW_Real32)
-	 * @return The OW_Real32 value of this OW_String object.
-	 */
-	operator OW_Real32() const {  return toReal32(); }
-
-	/**
 	 * @return The OW_Real64 value of this OW_String object.
 	 */
 	OW_Real64 toReal64() const;
-
-	/**
-	 * Operator (OW_Real64)
-	 * @return The OW_Real64 value of this OW_String object.
-	 */
-	operator OW_Real64() const { return  toReal64(); }
 
 	/**
 	 * @return The boolean value of this OW_String object. The string is
@@ -516,22 +489,9 @@ public:
 	OW_Bool toBool() const;
 
 	/**
-	 * @return A non-NULL pointer if this object does not contain a false
-	 * boolean value. Otherwise return a NULL pointer. THIS POINTER SHOULD NOT
-	 * BE DEREFERENCED.
-	 */
-	operator void*() const {  return (void*)(toBool() != false); }
-
-	/**
 	 * @return The OW_UInt8 value of this OW_String object.
 	 */
 	OW_UInt8 toUInt8() const;
-
-	/**
-	 * Operator (OW_UInt8)
-	 * @return The OW_UInt8 value of this OW_String object.
-	 */
-	operator OW_UInt8() const {  return toUInt8(); }
 
 	/**
 	 * @return The OW_Int8 value of this OW_String object.
@@ -539,21 +499,9 @@ public:
 	OW_Int8 toInt8() const;
 
 	/**
-	 * Operator (OW_Int8)
-	 * @return The OW_Int8 value of this OW_String object.
-	 */
-	operator OW_Int8() const {  return toInt8(); }
-
-	/**
 	 * @return The OW_UInt16 value of this OW_String object.
 	 */
 	OW_UInt16 toUInt16() const;
-
-	/**
-	 * Operator (OW_UInt16)
-	 * @return The OW_UInt16 value of this OW_String object.
-	 */
-	operator OW_UInt16() const {  return toUInt16(); }
 
 	/**
 	 * @return The OW_Int16 value of this OW_String object.
@@ -561,21 +509,9 @@ public:
 	OW_Int16 toInt16() const;
 
 	/**
-	 * Operator (OW_Int16)
-	 * @return The OW_Int16 value of this OW_String object.
-	 */
-	operator OW_Int16() const {  return toInt16(); }
-
-	/**
 	 * @return The OW_UInt32 value of this OW_String object.
 	 */
 	OW_UInt32 toUInt32() const;
-
-	/**
-	 * Operator (OW_UInt32)
-	 * @return The OW_UInt32 value of this OW_String object.
-	 */
-	operator OW_UInt32() const {  return toUInt32(); }
 
 	/**
 	 * @return The OW_Int32 value of this OW_String object.
@@ -583,21 +519,9 @@ public:
 	OW_Int32 toInt32() const;
 
 	/**
-	 * Operator (OW_Int32)
-	 * @return The OW_Int32 value of this OW_String object.
-	 */
-	operator OW_Int32() const {  return toInt32(); }
-
-	/**
 	 * @return The OW_UInt64 value of this OW_String object.
 	 */
 	OW_UInt64 toUInt64() const;
-
-	/**
-	 * Operator (OW_UInt64)
-	 * @return The OW_UInt64 value of this OW_String object.
-	 */
-	operator OW_UInt64() const {  return toUInt64(); }
 
 	/**
 	 * @return The OW_Int64 value of this OW_String object.
@@ -605,21 +529,9 @@ public:
 	OW_Int64 toInt64() const;
 
 	/**
-	 * Operator (OW_Int64)
-	 * @return The OW_Int64 value of this OW_String object.
-	 */
-	operator OW_Int64() const {  return toInt64(); }
-
-	/**
 	 * @return The OW_CIMDateTime value of this OW_String object.
 	 */
 	OW_CIMDateTime toDateTime() const;
-
-	/**
-	 * Operator (OW_CIMDateTime)
-	 * @return The OW_CIMDateTime value of this OW_String object.
-	 */
-	operator OW_CIMDateTime() const;
 
 	/**
 	 * Convert a null terminated string to an unsigned 64 bit value.

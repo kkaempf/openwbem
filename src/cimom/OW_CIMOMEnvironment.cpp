@@ -828,7 +828,18 @@ void
 OW_CIMOMEnvironment::unloadReqHandlers()
 {
 	//logDebug("Running unloadReqHandlers()");
-	OW_Int32 ttl = getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt).toInt32();
+	OW_Int32 ttl;
+	try
+	{
+		ttl = getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt).toInt32();
+	}
+	catch (const OW_StringConversionException&)
+	{
+		logError(format("Invalid value (%1) for %2 config item.  Using default.",
+            getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt),
+			OW_ConfigOpts::REQ_HANDLER_TTL_opt));
+		ttl = OW_String(DEFAULT_REQ_HANDLER_TTL).toInt32();
+	}
 	if (ttl < 0)
 	{
 		logDebug("Non-Positive TTL for Request Handlers: OpenWBEM will not unload request handlers.");

@@ -785,7 +785,7 @@ OW_CIMValue::OW_CIMValueImpl::createSimpleValue(const OW_String& cimtype,
 	const OW_String& value)
 {
 	OW_CIMValueImpl cimValue;
-	int type = OW_CIMDataType::strToSimpleType(cimtype);
+	OW_CIMDataType::Type type = OW_CIMDataType::strToSimpleType(cimtype);
 
 	switch(type)
 	{
@@ -848,6 +848,9 @@ OW_CIMValue::OW_CIMValueImpl::createSimpleValue(const OW_String& cimtype,
 		case OW_CIMDataType::REFERENCE:
 			cimValue = OW_CIMValueImpl(OW_CIMObjectPath::parse(value));
 			break;
+
+		default:
+			OW_ASSERT(0);
 	}
 
 	return cimValue;

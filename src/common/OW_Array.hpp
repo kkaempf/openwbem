@@ -91,16 +91,16 @@ public:
 	template<class InputIterator>
 	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
 
-	iterator begin() 
+	iterator begin()
 		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->begin(); }
 	const_iterator begin() const { return m_impl->begin(); }
-	iterator end() 
+	iterator end()
 		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->end(); }
 	const_iterator end() const { return m_impl->end(); }
-	reverse_iterator rbegin() 
+	reverse_iterator rbegin()
 		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rbegin(); }
 	const_reverse_iterator rbegin() const { return m_impl->rbegin(); }
-	reverse_iterator rend() 
+	reverse_iterator rend()
 		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rend(); }
 	const_reverse_iterator rend() const { return m_impl->rend(); }
 	size_type size() const { return m_impl->size(); }
