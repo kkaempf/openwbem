@@ -42,7 +42,7 @@ class OW_WQLFilterRep : public OW_RepositoryIFC
 {
 public:
 
-	OW_WQLFilterRep(const OW_CIMInstance& inst, OW_CIMServer* cimServer);
+	OW_WQLFilterRep(const OW_CIMInstance& inst, const OW_RepositoryIFCRef& cimServer);
 
 	/**
 	 * Open this OW_RepositoryIFC.
@@ -490,7 +490,7 @@ public:
 
 private:
 	OW_CIMInstance m_inst;
-	OW_CIMServer* m_pCIMServer;
+	OW_RepositoryIFCRef m_pCIMServer;
 };
 
 

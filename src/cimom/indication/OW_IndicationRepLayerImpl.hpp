@@ -350,7 +350,7 @@ public:
 	safe_bool operator!() const
 		{  return (m_pServer) ? 0: &dummy::nonnull; }
 
-	virtual void setCIMServer(OW_RepositoryIFC *src)
+	virtual void setCIMServer(const OW_RepositoryIFCRef& src)
 	{
 		m_pServer = src;
 	}
@@ -366,7 +366,7 @@ private:
 	}
 
 
-	OW_RepositoryIFC* m_pServer;
+	OW_RepositoryIFCRef m_pServer;
 };
 
 #endif

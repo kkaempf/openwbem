@@ -258,16 +258,22 @@ OW_CIMOMEnvironment::startServices()
 
 	if (!getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
 	{
-		// Start up the polling manager
-		m_Logger->logDebug("CIMOM starting Polling Manager");
-		m_pollingManager->start();
-		OW_Thread::yield();
+        if (m_pollingManager)
+        {
+            // Start up the polling manager
+            m_Logger->logDebug("CIMOM starting Polling Manager");
+            m_pollingManager->start();
+            OW_Thread::yield();
+        }
 
-		// Start up the indication server
-		m_Logger->logDebug("CIMOM starting IndicationServer");
-		m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
-		m_indicationServer->start();
-		OW_Thread::yield();
+        if (m_indicationServer)
+        {
+            // Start up the indication server
+            m_Logger->logDebug("CIMOM starting IndicationServer");
+            m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+            m_indicationServer->start();
+            OW_Thread::yield();
+        }
 	}
 }
 
@@ -680,10 +686,9 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
-	OW_CIMServer* psvr = (OW_CIMServer*)m_cimServer.getPtr();
 	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(
 		OW_CIMOMEnvironmentRef(this, true),
-		OW_RepositoryIFCRef(new OW_WQLFilterRep(inst, psvr)), aclInfo));
+		OW_RepositoryIFCRef(new OW_WQLFilterRep(inst, m_cimServer)), aclInfo));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -803,7 +808,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 
 		if(pirep)
 		{
-			pirep->setCIMServer(m_cimServer.getPtr());
+			pirep->setCIMServer(m_cimServer);
 			retref = OW_SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
 				OW_RepositoryIFCRef(pirep));
 		}
@@ -845,7 +850,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 				iter->second.rqIFCRef->clone());
 			iter->second.dt.setToCurrent();
 			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
-				const_cast<OW_CIMOMEnvironment*>(this), true));
+				this, true));
 			logDebug(format("Request Handler %1 handling request for content type %2",
                 iter->second.filename, id));
 		}
@@ -925,7 +930,7 @@ OW_CIMOMEnvironment::setConfigItem(const OW_String &item,
 	ConfigMap::iterator it = m_configItems->find(item);
 	if(it == m_configItems->end() || overwritePrevious)
 	{
-		(*m_configItems.getPtr())[item] = value;
+		(*m_configItems)[item] = value;
 	}
 }
 

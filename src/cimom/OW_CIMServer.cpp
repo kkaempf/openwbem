@@ -967,7 +967,7 @@ namespace
 
 		virtual OW_String getConfigItem(const OW_String &name) const
 		{
-			return ((OW_LocalCIMOMHandle*) m_ch.getPtr())->getEnvironment()->
+			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
 				getConfigItem(name);
 		}
 
@@ -978,12 +978,12 @@ namespace
 		
 		virtual OW_LoggerRef getLogger() const
 		{
-			return ((OW_LocalCIMOMHandle*) m_ch.getPtr())->getEnvironment()->
+			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
 				getLogger();
 		}
 
 	private:
-		OW_CIMOMHandleIFCRef m_ch;
+		mutable OW_CIMOMHandleIFCRef m_ch;
 	};
 
 	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)

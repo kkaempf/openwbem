@@ -22,6 +22,7 @@ Fix problems:
     - OW_File needs to be more C++ish with a destructor, reasonable copy
       semantics, etc.
     - Use kill(pid, 0) to detect a stale pid file.
+    - Daemon doesn't withstand repeated HUP signals.
 
 New features:
     - Providers/Provider interfaces in a different process. Implement with 

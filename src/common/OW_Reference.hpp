@@ -41,9 +41,99 @@
 #include <cassert>
 #endif
 
+
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-class OW_Reference
+void OW_RefSwap(T& x, T&y)
+{
+    T t = x;
+    x = y;
+    y = t;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// This class contains the non-templated code for OW_Reference, to help 
+// minimize code bloat.
+class OW_ReferenceBase
+{
+protected:
+    OW_ReferenceBase()
+        : m_pRefCount(0) {}
+
+    OW_ReferenceBase(const void* ptr)
+        : m_pRefCount((ptr != 0) ? new OW_RefCount : 0) {}
+
+    OW_ReferenceBase(const void* ptr, bool noDelete)
+        : m_pRefCount(0) 
+    {
+        if(ptr != 0 && !noDelete)
+        {
+            m_pRefCount = new OW_RefCount;
+        }
+    }
+
+    OW_ReferenceBase(const OW_ReferenceBase& arg)
+        : m_pRefCount(0)
+    {
+    	if(arg.m_pRefCount)
+    	{
+    		m_pRefCount = arg.m_pRefCount;
+            m_pRefCount->inc();
+    	}
+    }
+
+    void incRef()
+    {
+    	if(m_pRefCount)
+    	{
+            m_pRefCount->inc();
+    	}
+    }
+	
+    bool decRef()
+    {
+    	if(m_pRefCount)
+    	{
+            if (m_pRefCount->decAndTest())
+    		{
+    			delete m_pRefCount;
+    			m_pRefCount = 0;
+                return true;
+    		}
+    	}
+        return false;
+    }
+
+    void swap(OW_ReferenceBase& arg)
+    {
+        OW_RefSwap(m_pRefCount, arg.m_pRefCount);
+    }
+
+    void useRefCountOf(const OW_ReferenceBase& arg)
+    {
+    	if(m_pRefCount)
+    	{
+            if (m_pRefCount->decAndTest())
+    		{
+    			delete m_pRefCount;
+    			m_pRefCount = 0;
+    		}
+    	}
+    	m_pRefCount = arg.m_pRefCount;
+    	incRef();
+    }
+
+protected:
+    OW_RefCount* volatile m_pRefCount;
+
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+class OW_Reference : private OW_ReferenceBase
 {
 	public:
 
@@ -88,11 +178,9 @@ class OW_Reference
 		void useRefCountOf(const OW_Reference<U>&);
 
 	private:
-		void incRef();
 		void decRef();
 
 		T* volatile m_pObj;
-		OW_RefCount* volatile m_pRefCount;
 		/* This is so the templated constructor will work */
 		template <class U> friend class OW_Reference;
 
@@ -105,51 +193,37 @@ class OW_Reference
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference()
-	: m_pObj(0), m_pRefCount(0)
+	: OW_ReferenceBase(), m_pObj(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(T* ptr)
-	: m_pObj(ptr), m_pRefCount((ptr != 0) ? new OW_RefCount : 0)
+	: OW_ReferenceBase(ptr), m_pObj(ptr)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(T* ptr, bool noDelete)
-	: m_pObj(ptr), m_pRefCount(0)
+	: OW_ReferenceBase(ptr, noDelete), m_pObj(ptr)
 {
-	if(ptr != 0 && !noDelete)
-	{
-		m_pRefCount = new OW_RefCount;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(const OW_Reference<T>& arg)
-	: m_pObj(arg.m_pObj), m_pRefCount(0)
+	: OW_ReferenceBase(arg), m_pObj(arg.m_pObj)
 {
-	if(arg.m_pRefCount)
-	{
-		m_pRefCount = arg.m_pRefCount;
-        m_pRefCount->inc();
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 template<class U>
 inline OW_Reference<T>::OW_Reference(const OW_Reference<U>& arg)
-	: m_pObj(arg.m_pObj), m_pRefCount(0)
+	: OW_ReferenceBase(arg), m_pObj(arg.m_pObj)
 {
-	if(arg.m_pRefCount)
-	{
-		m_pRefCount = arg.m_pRefCount;
-        m_pRefCount->inc();
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,29 +242,14 @@ inline OW_Reference<T>::~OW_Reference()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void OW_Reference<T>::incRef()
-{
-	if(m_pRefCount)
-	{
-        m_pRefCount->inc();
-	}
-}
-	
-//////////////////////////////////////////////////////////////////////////////
-template<class T>
 inline void OW_Reference<T>::decRef()
 {
 	typedef char type_must_be_complete[sizeof(T)];
-	if(m_pRefCount)
-	{
-        if (m_pRefCount->decAndTest())
-		{
-			delete m_pRefCount;
-			m_pRefCount = 0;
-			delete m_pObj;
-			m_pObj = 0;
-		}
-	}
+    if (OW_ReferenceBase::decRef())
+    {
+        delete m_pObj;
+        m_pObj = 0;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -210,20 +269,11 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-template<class T>
-void OW_RefSwap(T& x, T&y)
-{
-    T t = x;
-    x = y;
-    y = t;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 template <class T>
 inline void OW_Reference<T>::swap(OW_Reference<T>& arg)
 {
+    OW_ReferenceBase::swap(arg);
     OW_RefSwap(m_pObj, arg.m_pObj);
-    OW_RefSwap(m_pRefCount, arg.m_pRefCount);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -284,7 +334,7 @@ OW_Reference<T>::cast_to()
 {
 	incRef();
 	OW_Reference<U> rval;
-	rval.m_pObj = reinterpret_cast<U*>(m_pObj);
+	rval.m_pObj = dynamic_cast<U*>(m_pObj);
 	rval.m_pRefCount = m_pRefCount;
 	return rval;
 }
@@ -294,16 +344,7 @@ template <class U>
 inline void
 OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
 {
-	if(m_pRefCount)
-	{
-        if (m_pRefCount->decAndTest())
-		{
-			delete m_pRefCount;
-			m_pRefCount = 0;
-		}
-	}
-	m_pRefCount = arg.m_pRefCount;
-	incRef();
+    OW_ReferenceBase::useRefCountOf(arg);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -34,7 +34,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	OW_CIMClass cc;
 	try
 	{
-		cc = provenv->getPtr()->getCIMOMHandle()->getClass(
+		cc = (*provenv)->getCIMOMHandle()->getClass(
 			nameSpace, className,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
@@ -61,7 +61,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	try
 	{
 		crefs =
-			provenv->getPtr()->getCIMOMHandle()->enumInstanceNamesE(nameSpace, className);
+			(*provenv)->getCIMOMHandle()->enumInstanceNamesE(nameSpace, className);
 	}
 	catch (...)
 	{
@@ -82,7 +82,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	OW_CIMInstanceEnumeration cinsts;
 	try
 	{
-		cinsts = provenv->getPtr()->getCIMOMHandle()->enumInstancesE(
+		cinsts = (*provenv)->getCIMOMHandle()->enumInstancesE(
 			nameSpace, className, OW_CIMOMHandleIFC::DEEP,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
@@ -109,7 +109,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 
 	try
 	{
-		ci = provenv->getPtr()->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
+		ci = (*provenv)->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
 			owcop, localOnly);
 	}
 	catch (...)

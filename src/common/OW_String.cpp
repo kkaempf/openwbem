@@ -318,7 +318,7 @@ OW_String::allocateCString() const
 size_t
 OW_String::length() const
 {
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		return m_buf->length();
 	}
@@ -375,7 +375,7 @@ OW_String::format(const char* fmt, ...)
 char
 OW_String::charAt(size_t ndx) const
 {
-	return (m_buf.getPtr()) ? m_buf->data()[ndx] : (char)0;
+	return (m_buf) ? m_buf->data()[ndx] : (char)0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -384,11 +384,11 @@ OW_String::compareTo(const OW_String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		lhs = m_buf->data();
 	}
-	if (arg.m_buf.getPtr())
+	if (arg.m_buf)
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -402,11 +402,11 @@ OW_String::compareToIgnoreCase(const OW_String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		lhs = m_buf->data();
 	}
-	if (arg.m_buf.getPtr())
+	if (arg.m_buf)
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -423,11 +423,11 @@ OW_String::concat(const OW_String& arg)
 		size_t len = length() + arg.length();
 		char* bfr = new char[len+1];
 		bfr[0] = 0;
-		if (m_buf.getPtr())
+		if (m_buf)
 		{
 			::strcpy(bfr, m_buf->data());
 		}
-		if (arg.m_buf.getPtr())
+		if (arg.m_buf)
 		{
 			::strcat(bfr, arg.m_buf->data());
 		}
@@ -458,11 +458,11 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 	
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		lhs = m_buf->data()+ndx;
 	}
-	if (arg.m_buf.getPtr())
+	if (arg.m_buf)
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -555,7 +555,7 @@ OW_String::indexOf(const OW_String& arg, int fromIndex) const
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
 		char* p;
-		if (arg.m_buf.getPtr())
+		if (arg.m_buf)
 		{
 			p = ::strstr(m_buf->data()+fromIndex, arg.m_buf->data());
 		}
@@ -615,7 +615,7 @@ OW_String::lastIndexOf(const OW_String& arg, int fromIndex) const
 		return -1;
 	}
 
-	if (!arg.m_buf.getPtr())
+	if (!arg.m_buf)
 	{
 		return length() - 1;
 	}
@@ -702,7 +702,7 @@ OW_String::substring(size_t beginIndex, size_t len) const
 OW_Bool
 OW_String::isSpaces() const
 {
-	if (!m_buf.getPtr())
+	if (!m_buf)
 	{
 		return true;
 	}
@@ -720,7 +720,7 @@ OW_String::isSpaces() const
 OW_String&
 OW_String::ltrim()
 {
-	if (!m_buf.getPtr())
+	if (!m_buf)
 	{
 		return *this;
 	}
@@ -880,7 +880,7 @@ OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 
 	const char* p = "";
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		p = m_buf->data();
 	}
@@ -903,7 +903,7 @@ OW_String::operator= (const OW_String& arg)
 const char*
 OW_String::c_str() const
 {
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		return m_buf->data();
 	}
@@ -958,7 +958,7 @@ template <typename T>
 static inline
 T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
 {
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		char* endptr;
 		double v = ::strtod(m_buf->data(), &endptr);
@@ -971,7 +971,7 @@ T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char
 	}
 	else
 	{
-		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
+		throwStringConversion(m_buf ? m_buf->data() : "", type);
 	}
 	return T(); // to make compiler happy
 }
@@ -1015,7 +1015,7 @@ template <typename T, typename FP, typename FPRT>
 static inline
 T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
 {
-	if (m_buf.getPtr())
+	if (m_buf)
 	{
 		char* endptr;
 		FPRT v = fp(m_buf->data(), &endptr, base);
@@ -1028,7 +1028,7 @@ T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const cha
 	}
 	else
 	{
-		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
+		throwStringConversion(m_buf ? m_buf->data() : "", type);
 	}
 	return T(); // to make compiler happy
 }
