@@ -50,9 +50,19 @@ public:
 	virtual const char* type() const { return "OW_HDBException"; }
 };
 
-#define OW_HDBSIGNATURE "OWHIERARCHICALDB"
-const int OW_HDBSIGLEN = 17;
-const OW_UInt32 OW_HDBVERSION = 3000003; // This should be kept in sync with the binary ifc version in OW_BinIfcIO.hpp
+#define OW_HDBSIGNATURE "OWHIERARCHICADB"
+const int OW_HDBSIGLEN = 16;
+
+
+// The general idea is to have it be a concatenation of release numbers with
+// a revision on the end (to prevent problems during development)
+// So 3000003 originated from version 3.0.0 rev 4
+//
+// 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the 
+//   structure of OW_CIMInstance.  The name and alias were removed.  Also
+//   changed the length of the signature to 16 so the header block could be
+//   aligned easier (and slightly smaller).
+const OW_UInt32 OW_HDBVERSION = 3000004;
 
 /**
  * The OW_HDBHeaderBlock structure represent the header information for
@@ -76,15 +86,15 @@ struct OW_HDBBlock
 
 	OW_UInt32 chkSum;		// The check sum of all following fields
 	unsigned char isFree;	// Node is free block
-	size_t size;				// The size of this block (used in free list)
+	OW_UInt32 size;				// The size of this block (used in free list)
 	OW_UInt32 flags;		// User defined flags
 	OW_Int32 nextSib;				// offset of next sibling node in the file
 	OW_Int32 prevSib;				// offset of prev sibling node in the file
 	OW_Int32 parent;				// offset of the parent node in the file
 	OW_Int32 firstChild;			// offset of the first child node for this node
 	OW_Int32 lastChild;			// offset of the last child node for this node
-	size_t keyLength;			// length of the key component of the data
-	size_t dataLength;		// length of data not including key
+	OW_UInt32 keyLength;			// length of the key component of the data
+	OW_UInt32 dataLength;		// length of data not including key
 	// Data follows
 	// The data starts with the key, which is a null terminated string.
 	// The length of the non-key data will be dataLength - keyLength;

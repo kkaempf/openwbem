@@ -53,7 +53,16 @@
 
 
 // Values for local API calls
-const OW_UInt32 OW_BinaryProtocolVersion = 3000003; // This should be kept in sync with the repository version in OW_HDBCommon.hpp
+
+
+// This should be kept in sync with the repository version in OW_HDBCommon.hpp
+// The general idea is to have it be a concatenation of release numbers with
+// a revision on the end (to prevent problems during development)
+// So 3000003 originated from version 3.0.0 rev 4
+//
+// 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the 
+//   structure of OW_CIMInstance.  The name and alias were removed.
+const OW_UInt32 OW_BinaryProtocolVersion = 3000004;
 
 const OW_UInt8 OW_BIN_OK =				0;		// Success returned from server
 const OW_UInt8 OW_BIN_ERROR =			1;		// Error returned from server

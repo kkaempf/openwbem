@@ -1167,7 +1167,13 @@ void
 OW_IndicationServerImpl::modifyFilter(const OW_String& ns, const OW_CIMInstance& filterInst)
 {
 	(void)ns;(void)filterInst;
-	// TODO: Make this update the filters.
+	// If this were to update the filters, it would be quite a bit of work.
+	// Basically all the subscriptions that use the old filter would have to
+	// be unregistered, and then re-registered with the new filter.  If any
+	// of the providers doesn't support the new filter, what then?
+	// So, it's just easiest to disallow filter modification.  If we wanted to
+	// make this a little more friendly, we could allow modification as long
+	// as there's not subscriptions associated to it.
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "modifying a filter is not supported");
 }
 
