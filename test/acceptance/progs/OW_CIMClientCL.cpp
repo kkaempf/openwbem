@@ -389,7 +389,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 	}
 	catch (OW_CIMException& e)
 	{
-		cerr << e << "\n" << e.getStackTrace() << endl;
+		cerr << e << endl;
 	}
 
 	testDone();
@@ -1001,7 +1001,7 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 	}
 	catch (OW_CIMException& e)
 	{
-		cerr << e << "\n" << e.getStackTrace() << endl;
+		cerr << e << endl;
 	}
 
 	testDone();
@@ -1222,17 +1222,7 @@ main(int argc, char* argv[])
 		 * be provided to retrieve authentication credentials.
 		 **********************************************************************/
 
-		/*
-		if (owurl.protocol.equalsIgnoreCase("ipc"))
-		{
-			client = new OW_IPCClient(url);
-		}
-		else
-		{
-		*/
-		OW_CIMProtocolIFCRef client;
-		client = new OW_HTTPClient(url);
-		//}
+		OW_CIMProtocolIFCRef client(new OW_HTTPClient(url));
 
 
 		/**********************************************************************
@@ -1421,7 +1411,6 @@ main(int argc, char* argv[])
 	catch (OW_Exception& e)
 	{
 		cerr << e << endl;
-		cerr << e.getStackTrace() << endl;
 	}
 	return 1;
 }

@@ -36,7 +36,6 @@
 #include <iosfwd>
 #include <exception>
 
-class OW_StackTrace;
 
 class OW_Exception : public std::exception
 {
@@ -50,7 +49,6 @@ public:
 	virtual const char* type() const {  return "OW_Exception"; }
 	const char* getMessage() const;
 	const char* getFile() const;
-	const char* getStackTrace() const;
 	int getLine() const {  return m_line; }
 
 	virtual const char* what() const throw();
@@ -59,7 +57,6 @@ protected:
 	char* m_file;
 	int m_line;
 	char* m_msg;
-	OW_StackTrace* m_stackTrace;
 
 private:
 	static OW_Mutex m_mutex;

@@ -89,24 +89,25 @@ public:
 	 * Gets an existing class from the store
 	 * @param ns	The namespace for the class
 	 * @param className	The name of the class to retrieve
-	 * @return A valid OW_CIMClass object on success. Otherwise a NULL
-	 * OW_CIMClass object.
+	 * @param cc the class to be retrieved. 
+	 * @return 0 on success.  Otherwise a value from OW_CIMException.
 	 * @exception OW_CIMException
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	OW_CIMClass getCIMClass(const OW_String& ns, const OW_String& className);
+	int getCIMClass(const OW_String& ns, const OW_String& className, 
+		OW_CIMClass& cc);
 
 	/**
 	 * Gets an existing class from the store
 	 * @param op The object path that contains the namespace and class name
-	 * @return A valid OW_CIMClass object on success. Otherwise a NULL
-	 * OW_CIMClass object.
+	 * @param cc the class to be retrieved. 
+	 * @return 0 on success.  Otherwise a value from OW_CIMException.
 	 * @exception OW_CIMException
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	OW_CIMClass getCIMClass(const OW_CIMObjectPath& op);
+	int getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc);
 
 	/**
 	 * Delete an existing class from the store

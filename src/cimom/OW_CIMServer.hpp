@@ -171,9 +171,15 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return A valid OW_CIMClass object on success. Otherwise a NULL
+	 * @return A valid OW_CIMClass object on success.  A NULL OW_CIMClass
+	 *    will never be returned.  An exception will be thrown instead. 
 	 * OW_CIMClass object.
 	 * @exception OW_CIMException
+	 *		CIM_ERR_FAILED
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_FOUND
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */

@@ -917,23 +917,6 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 
 	path.setObjectName(className);
 	cimClass = hdl.getClass(path, localOnly);
-	if (!cimClass)
-	{
-		// check if the namespace exists so we can throw the correct exception
-		OW_CIMObjectPath nsPath(path);
-		nsPath.setObjectName(OW_CIMClass::NAMESPACECLASS);
-		nsPath.addKey(OW_CIMProperty::NAME_PROPERTY, OW_CIMValue(path.getNameSpace()));
-		if (hdl.getInstance(nsPath))
-		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-				OW_String("Path=" + path.toString()).c_str());
-		}
-		else
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
-				format("Path=%1", path.toString()).c_str());
-		}
-	}
 
 
 	OW_CIMtoXML(cimClass, ostr,
@@ -942,9 +925,6 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 		propertyList,
 		(isPropertyList && propertyList.size() == 0));
-	//cimClass.toXML(ostr, localOnly, includeQualifiers,
-	//	includeClassOrigin, propertyList,
-	//	(isPropertyList && propertyList.size() == 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1403,9 +1383,8 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 	catch (OW_CIMException& ce)
 	{
 		OW_LOGDEBUG(format("XMLExecute::processSimpleReq caught CIM "
-			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4 \n %5",
-			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage(),
-			ce.getStackTrace()));
+			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
+			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 
 		m_hasError = true;
 		outputError(ce, ostrError);

@@ -428,30 +428,40 @@ OW_MetaRepository::setQualiferType(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_MetaRepository::getCIMClass(const OW_CIMObjectPath& op)
+int
+OW_MetaRepository::getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc)
 {
-	return getCIMClass(op.getNameSpace(), op.getObjectName());
+	return getCIMClass(op.getNameSpace(), op.getObjectName(), cc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className)
+int 
+OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className, 
+	OW_CIMClass& cc)
 {
 	throwIfNotOpen();
 	OW_String ckey = _makeClassPath(ns, className);
-	OW_CIMClass cc = getClassFromCache(ckey);
+	cc = getClassFromCache(ckey);
 	if(!cc)
 	{
 		OW_HDBHandleLock hdl(this, getHandle());
 		OW_HDBNode node = hdl->getNode(ckey);
 		if(node)
 		{
+			// _getClassFromNode throws if unable to get class. 
 			cc = _getClassFromNode(node, hdl.getHandle());
+			if (!cc)
+			{
+				return OW_CIMException::FAILED;
+			}
 			addClassToCache(cc, ckey);
 		}
+		else
+		{
+			return OW_CIMException::NOT_FOUND;
+		}
 	}
-	return cc;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -461,6 +471,10 @@ OW_MetaRepository::_getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
 {
 	OW_CIMClass theClass;
 	nodeToCIMObject(theClass, node);
+	if (!theClass)
+	{
+		return theClass;
+	}
 	_resolveClass(theClass, node, hdl, ns);
 	return theClass;
 }

@@ -252,7 +252,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 	}
 	catch (OW_CIMException& e)
 	{
-		cerr << e << "\n" << e.getStackTrace() << endl;
+		cerr << e << endl;
 		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
@@ -653,7 +653,7 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 	}
 	catch (OW_CIMException& e)
 	{
-		cerr << e << "\n" << e.getStackTrace() << endl;
+		cerr << e << endl;
 		assert(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
 		if (mode == "rw")
 			throw;
@@ -862,7 +862,6 @@ int main(int argc, char* argv[])
 	catch (OW_Exception& e)
 	{
 		cerr << e << endl;
-		cerr << e.getStackTrace() << endl;
 	}
 	return 1;
 }

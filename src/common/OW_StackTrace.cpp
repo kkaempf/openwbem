@@ -50,7 +50,7 @@ using std::flush;
 #endif
 
 // static
-OW_StackTrace* OW_StackTrace::getStackTrace()
+void OW_StackTrace::getStackTrace()
 {
 	OW_StackTrace* retval = 0;
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
@@ -98,8 +98,11 @@ OW_StackTrace* OW_StackTrace::getStackTrace()
 			retval = new OW_StackTrace(output);
 		}
 	}
+	if (retval)
+	{
+		std::cerr << *retval << endl;
+	}
 #endif // OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	return retval;
 }
 
 OW_StackTrace::OW_StackTrace(const OW_String& trace)

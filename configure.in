@@ -545,6 +545,7 @@ AC_OUTPUT(./Makefile
 ./doc/man/Makefile
 ./doc/man/man1/Makefile
 ./doc/man/man8/Makefile
+./doc/examples/Makefile
 ./etc/Makefile
 ./etc/init/Makefile
 ./etc/pam.d/Makefile

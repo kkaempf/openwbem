@@ -100,7 +100,9 @@ Once the class is written, all that is left is to provide a factory
 function that the CIMOM uses to load the provider.  A macro is provided
 to make this very easy.  If your C++ class is called 
 \mbox{MyInstanceProvider}, simply put this line in your file:\\
-\mbox{\texttt{OW\_PROVIDERFACTORY(MyInstanceProvider);}}
+\mbox{\texttt{OW\_PROVIDERFACTORY(MyInstanceProvider, myinstprov);}}\\
+The first argument is the C++ class name.  The second argument is 
+the identifier that the provider will be known as in MOF. 
 \subsection{Making a Shared Library}
 The C++ class representing the provider will need to be compiled into 
 a shared library (.so).  Then, just put the .so file in the directory

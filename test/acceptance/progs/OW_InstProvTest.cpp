@@ -272,7 +272,6 @@ main(int argc, char* argv[])
 	catch (OW_Exception& e)
 	{
 		cerr << e << endl;
-		cerr << e.getStackTrace() << endl;
 	}
 	return 1;
 }

@@ -124,7 +124,6 @@ int main(int argc, char* argv[])
 		env->logError(format("* Msg: %1", e.getMessage()));
 		env->logError(format("* File: %1", e.getFile()));
 		env->logError(format("* Line: %1", e.getLine()));
-		env->logError(format("* Stack Trace: %1", e.getStackTrace()));
 		env->logError("**************************************************");
 	}
 	catch (std::exception& se)

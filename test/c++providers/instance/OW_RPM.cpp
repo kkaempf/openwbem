@@ -1,21 +1,58 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+/*******************************************************************************
+* This is an example of how to create an Instance and Method provider.  
+*******************************************************************************/
 
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
+// because we're creating a provider that is both an instance and method provider
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Exec.hpp"
-#include "OW_UnnamedPipe.hpp"
+#include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_CIMProperty.hpp"
+// we're going to need these
+#include "OW_Exec.hpp"
+#include "OW_UnnamedPipe.hpp"
 #include "OW_Format.hpp"
+// we use these internally
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <algorithm>
 
-
+// We use multiple inheritance here because our provider is to be both an
+// Instance and a method provider
 class RPMIP : public OW_CppInstanceProviderIFC, public OW_CppMethodProviderIFC
 {
 	public:
@@ -23,6 +60,9 @@ class RPMIP : public OW_CppInstanceProviderIFC, public OW_CppMethodProviderIFC
 		virtual ~RPMIP() {}
 
 		RPMIP();
+
+		// Here are the virtual functions we'll implement.  Check the base 
+		// classes for the documentation. 
 
 		virtual void initialize(const OW_ProviderEnvironmentIFCRef&);
 
@@ -97,14 +137,18 @@ RPMIP::initialize(const OW_ProviderEnvironmentIFCRef&)
 	struct stat fs;
 	if(stat("/usr/bin/dpkg", &fs) == 0)
 	{
+		// we have to provide isinstalled.
 		_pkgHandler = "/usr/bin/isinstalled ";
-	} else if(stat("/usr/bin/rpm", &fs) == 0)
+	} 
+	else if(stat("/usr/bin/rpm", &fs) == 0)
 	{
 		_pkgHandler = "/usr/bin/rpm -q ";
-	} else if(stat("/bin/rpm", &fs) == 0)
+	} 
+	else if(stat("/bin/rpm", &fs) == 0)
 	{
 		_pkgHandler = "/bin/rpm -q ";
-	} else
+	} 
+	else
 	{
 		_pkgHandler = "";
 	}
@@ -344,6 +388,7 @@ RPMIP::createInstance(
 		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance )
 {
+	// not applicable with our apt implementation. 
 	(void)env;
 	(void)cop;
 	(void)cimInstance;
@@ -357,6 +402,7 @@ RPMIP::setInstance(
 		OW_CIMObjectPath cop,
 		OW_CIMInstance cimInstance)
 {
+	// not applicable with our apt implementation. 
 	(void)env;
 	(void)cop;
 	(void)cimInstance;
@@ -369,6 +415,7 @@ RPMIP::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop)
 {
+	// not applicable with our apt implementation. 
 	(void)env;
 	(void)cop;
 }

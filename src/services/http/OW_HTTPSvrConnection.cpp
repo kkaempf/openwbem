@@ -271,7 +271,7 @@ OW_HTTPSvrConnection::run()
 	}
 	catch (OW_Exception& e)
 	{
-		OW_LOGERROR(format("%1\n%2", e, e.getStackTrace()));
+		OW_LOGERROR(format("%1", e));
 		m_errDetails = e.getMessage();
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);

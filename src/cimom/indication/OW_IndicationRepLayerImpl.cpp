@@ -99,17 +99,16 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
 	{
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_ClassDeletion"), false, true, true, NULL,
-			intAclInfo);
-
-		if(expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+				OW_CIMObjectPath("CIM_ClassDeletion"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 			exportIndication(expInst, path.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for"
 				" createClass because CIM_ClassDeletion does not exist");
@@ -128,17 +127,16 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
 	{
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
-			intAclInfo);
-
-		if (instOrig && expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+				OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
 			exportIndication(expInst, path.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for createClass"
 				" because CIM_InstDeletion does not exist");
@@ -230,15 +228,15 @@ OW_IndicationRepLayerImpl::getInstance(const OW_CIMObjectPath& name,
 	{
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(OW_CIMObjectPath("CIM_InstRead"),
-			false, true, true, NULL, intAclInfo);
-		if (expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(OW_CIMObjectPath("CIM_InstRead"),
+				false, true, true, NULL, intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("SourceInstance", OW_CIMValue(theInst));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for createClass"
 				" because CIM_InstRead does not exist");
@@ -260,12 +258,11 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 	if (name.getKeys().size() > 0) // process the indication only if instance.
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMClass expCC = m_pServer->getClass(
-            OW_CIMObjectPath("CIM_InstMethodCall"), false, true, true, NULL,
-			intAclInfo);
-
-		if (expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+					OW_CIMObjectPath("CIM_InstMethodCall"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			OW_CIMInstance theInst = m_pServer->getInstance(name, false,
 				true, true, NULL, intAclInfo);
@@ -281,12 +278,6 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 			OW_CIMClass cc = m_pServer->getClass(name, false,
 				true, true, NULL, intAclInfo);
 			
-			if (!cc)
-			{
-				// can't export indication
-				return rval;
-			}
-
 
 			OW_CIMMethod cm = cc.getMethod(methodName);
 			if (!cm)
@@ -332,7 +323,7 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 			expInst.setProperty("ReturnValue", OW_CIMValue(rval.toString()));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for"
 				" createClass because CIM_InstMethodCall does not exist");
@@ -370,18 +361,17 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 	{
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
-			intAclInfo);
-
-		if (expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+				OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
 			expInst.setProperty("ClassDefinition", OW_CIMValue(lcc));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for setClass"
 				" because CIM_ClassModification does not exist");
@@ -399,17 +389,16 @@ OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
 	m_pServer->createClass(name, lcc, aclInfo);
 	OW_ACLInfo intAclInfo;
 
-	OW_CIMClass expCC = m_pServer->getClass(
-        OW_CIMObjectPath("CIM_ClassCreation"), false, true, true, NULL,
-		intAclInfo);
-
-	if(expCC)
+	try
 	{
+		OW_CIMClass expCC = m_pServer->getClass(
+			  OW_CIMObjectPath("CIM_ClassCreation"), false, true, true, NULL,
+			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 		exportIndication(expInst, name.getFullNameSpace());
 	}
-	else
+	catch(OW_CIMException&)
 	{
 		getEnvironment()->logError("Unable to export indication for createClass"
 			" because CIM_ClassCreation does not exist");
@@ -427,19 +416,18 @@ OW_IndicationRepLayerImpl::modifyInstance(const OW_CIMObjectPath& name,
 	{
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
-			intAclInfo);
-
-		if (expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+				OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
 			// TODO refer to MOF.  What about filtering the properties in ss?
 			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
-		else
+		catch (OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for createClass"
 				" because CIM_InstModification does not exist");
@@ -463,18 +451,17 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 
 		OW_ACLInfo intAclInfo;
 
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
-			intAclInfo);
-
-		if (expCC)
+		try
 		{
+			OW_CIMClass expCC = m_pServer->getClass(
+				OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
+				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			// TODO refer to MOF.  What about filtering the properties in ss?
 			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
-		else
+		catch(OW_CIMException&)
 		{
 			getEnvironment()->logError("Unable to export indication for createClass"
 				" because CIM_InstCreation does not exist");

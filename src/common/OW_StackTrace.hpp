@@ -40,7 +40,7 @@ class OW_StackTrace
 {
 	public:
 
-		static OW_StackTrace* getStackTrace();
+		static void getStackTrace();
 
 		friend std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out)
 		{
