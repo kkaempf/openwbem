@@ -1,0 +1,110 @@
+\documentclass[letterpaper,10pt]{article}
+% define the title
+\author {J. Bart Whiteley}
+\title {OpenWBEM Programmer's Guide}
+\begin{document}
+% generates the title
+\maketitle
+%insert the table of contents
+\tableofcontents
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\section{CIM Client API}
+The OpenWBEM Client API can be used to create CIM Client applications.  
+A CIM Client application can come in many forms.  It could be a management
+console, or a controlling agent managing multiple CIMOMs.  A CIM Client 
+developed with the OpenWBEM CIM Client API can communicator with any 
+CIMOM, not just the OpenWBEM CIMOM.  
+\subsection{Selecting a Protocol}
+The first step is to define the means of communication between the
+client and the CIMOM.  Currently the only protocol supported is 
+HTTP.  An OW\_CIMProtocolIFCRef must be created as this will
+be passed to the encoding mechanism.  This can be done in the
+following manner: \\
+\mbox{\texttt{OW\_CIMProtocolIFCRef httpClient(new OW\_HTTPClient(url));}}.
+The constructor of 
+OW\_HTTPClient takes a single argument: an OW\_String that is the 
+URL to the CIMOM.  
+
+A URL takes the form \\
+\mbox{\texttt{[protocol://][username:password@]<hostname>[:port][path]}}.
+The protocol can be http, https, or ipc (Unix Domain Socket).  If the
+protocol is not given, http is assumed.  Username and password are optional.
+If not provided, and authentication is required, the username
+and password can be obtained through a callback which will be described 
+shortly.  The hostname is the name or IP address of the computer where 
+the CIMOM is running.  If the port is not given, 5988 is assumed if 
+the protocol is http, and 5989 is assumed if the protocol is https.  
+The path is currently ignored.  
+
+At this point a callback can be provided to obtain a username and 
+password if the CIM Server requests authentication.  A callback for 
+username and password is created by deriving from OW\_ClientAuthCBIFC.
+Suppose the new derived class is called GetLoginInfo.  The callback 
+would be provided to the HTTP Client in the following manner: \\
+\mbox{\texttt{OW\_CIMClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);}}\\
+\mbox{\texttt{httpClient->setLoginCallBack(getLoginInfo);}}
+\subsection{Choosing the Encoding}
+Now that the protocol is defined, an encoding scheme is selected.  
+Two types of encoding are currently available: CIM-XML (also known as
+WBEM), and Binary.  CIM-XML is supported by all CIMOMs, and Binary is 
+specific to OpenWBEM.  A remote CIMOM ``handle'' can be obtained in 
+the following manner:\\
+\mbox{\texttt{OW\_CIMOMHandleIFCRef handle;}}\\
+\mbox{\texttt{handle = new OW\_CIMXMLCIMOMHandle(httpClient);}}\\
+or 
+\mbox{\texttt{handle = new OW\_BinaryCIMOMHandle(httpClient);}}\\
+\subsection{Using the Remote CIMOM Handle}
+Now the handle can be used to perform CIM operations against the CIMOM.
+refer to the API documentation for the OW\_CIMOMHandleIFC class to 
+see what functions are available on a handle. 
+\section{Adding a new Provider Interface}
+\section{Writing a C++ Provider}
+Providers are used to provide dynamic (not stored in the CIMOM's 
+internal datastore) data.  
+\subsection{Derive from an abstract base class}
+To create a C++ provider, simply derive 
+a class from one or more of the abstract base classes for C++ 
+providers.  The abstract base classes are: 
+\mbox{OW\_CppAssociatorProviderIFC},
+\mbox{OW\_CppIndicationExportProviderIFC},
+\mbox{OW\_CppInstanceProviderIFC},
+\mbox{OW\_CppMethodProviderIFC},
+\mbox{OW\_CppPolledProviderIFC}, and 
+\mbox{OW\_CppPropertyProviderIFC}.
+\subsubsection{Associator Providers}
+Associator Providers are used to provide dynamic associations.
+\subsubsection{Indication Export Providers}
+Indication Export Providers are used to send events.  When an 
+indication is triggered within the CIMOM, it can be exported in multiple
+ways based on the Indication Export Providers that are loaded.  One provider 
+might convert the event to an SNMP trap, while another could send an email
+alert. 
+\subsubsection{Instance Providers}
+As you might expect, Instance providers are used to provide dynamic 
+instances.  
+\subsubsection{Method Providers}
+Method Providers are used to execute ``extrinsic'' methods on the system.
+\subsubsection{Polled Providers}
+Polled Providers can be executed at regular intervals (specified by 
+the polled provider) by the CIMOM, or they can start their own thread 
+and run continuously. 
+\subsubsection{Property Providers}
+Property Providers are used to handle dynamic properties. 
+\subsection{Multiple Inheritance}
+It is possible for a C++ provider to be multiple types of providers.  
+Simply derive from multiple base classes, and implement the appropriate
+virtual functions.  
+\subsection{The C++ Provider Factory Function}
+Once the class is written, all that is left is to provide a factory 
+function that the CIMOM uses to load the provider.  A macro is provided
+to make this very easy.  If your C++ class is called 
+\mbox{MyInstanceProvider}, simply put this line in your file:\\
+\mbox{\texttt{OW\_PROVIDERFACTORY(MyInstanceProvider);}}
+\subsection{Making a Shared Library}
+The C++ class representing the provider will need to be compiled into 
+a shared library (.so).  Then, just put the .so file in the directory
+specified by the \mbox{cppprovifc.prov\_location} configuration item
+in openwbem.conf.
+\end{document}
+
