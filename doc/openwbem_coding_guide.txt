@@ -1,0 +1,89 @@
+-----------------------------------------------------------------------------
+Don't use bool (or OW_Bool) in parameter lists.  It makes calling code 
+impossible to understand.  Use an enum instead.
+	e.g.:  f(true, false, true, true); // what the hell is this doing?
+		// I'll have to look up the function declaration to find out!
+	       f(DO_X, OMIT_Y, USE_Z, DO_A); // don't even need a comment here.
+Using bools makes it difficult (sometimes impossible) to overload the
+function, and can also make it hard to catch errors such as swapping the order
+of parameters and such.
+-----------------------------------------------------------------------------
+Nameing conventions:
+enums begin with E (or OW_E if not otherwise scoped), and if they're used as 
+a parameter to a function, they should end with Flag.  enum values should be
+all caps, with underscores between works and begin with E_.  Avoid anonymous
+(aka unnamed) enums.  Don't use an int variable to store an enum value. i.e.:
+
+// this is bad
+enum
+{
+	E_A,
+	E_B
+};
+
+int myEnumVal = E_A;
+
+// do this instead
+enum EMyEnum
+{
+	E_A,
+	E_B
+};
+
+EMyEnum myEnumVal = E_A;
+
+Don't assign numerical values to enum items unless they have some external
+meaning.  Having numerical values makes enums prone to error as well as makes
+them hard to maintain or refactor.  It sucks to have to renumber all the
+values just to insert a new item in the middle.
+-----------------------------------------------------------------------------
+Exceptions.
+When to use catch(...).  e.g.:
+try
+{
+	//...
+}
+catch (...)
+{
+	// swallow all exceptions
+}
+
+Only do that in destructors.  Never let an exception escape a destructor, if
+it does, it will probably abort the cimom.
+There may be other occasions where this is appropriate, such as in threads
+that need to keep running even though one iteration of it's work has failed.
+In this case, the OW_ThreadCancelledException should *never* be caught:
+
+try
+{
+	//...
+}
+catch (OW_ThreadCancelledException&)
+{
+	throw;
+}
+catch (...)
+{
+	// swallow all exceptions
+}
+
+In some cases (this should be very rare if the code is written correctly using
+the RAII idiom), if may be necessary to use catch(...) like this:
+
+try
+{
+	//...
+}
+catch (...)
+{
+	// do some cleanup
+	throw;
+}
+
+Also, main() should catch(...) and gracefully exit.
+-----------------------------------------------------------------------------
+The following CIM elements are case-insensitive: Classes, Instances, Methods,
+Properties, Qualifiers and Method Parameters.
+Namespaces in OpenWBEM are *NOT* case-insensitive.  i.e. root/CIMV2 is a
+different namespace than root/cimv2.
+-----------------------------------------------------------------------------
