@@ -33,172 +33,173 @@ Projects</a><br>
   <hr>
   <h3><a name="NEWS"></a>News</h3>
   <ul>
+    <li>Mon Apr 26 2004: OpenWBEM 3.0.0 has been released.&nbsp;
+There's too much good stuff to list here.&nbsp; Check out the <a
+ href="http://sourceforge.net/project/shownotes.php?release_id=234133">release
+notes</a> for details.<br>
+      <br>
+    </li>
     <li>Sun Feb 2 2004: We have moved CVS to a new dedicated server
 (cvs.openwbem.org).&nbsp; Click <a href="http://cvs.openwbem.org/">here</a>
 for more info.<br>
       <br>
     </li>
-    <li>Thu Dec 11 2003: Thanks to <a href="http://www.snia.org/">SNIA</a>
-for inviting Dan to participate in a panel session about open-source
-CIMOMs! It got a lot of people interested in the project. Some of the
-features that were discussed are planned for the next release (3.0.0),
-but are already implemented, and can be found in the code in <a
- href="http://cvs.openwbem.org/">CVS</a>. And speaking of the next
-version, stay tuned to this page (or the mailing lists). We are rapidly
-completing the features slated for 3.0.0, so expect a fully tested
-prelease of new version to be released soon!<br>
-      <br>
-    </li>
-    <li>Sat Nov 29 2003: OpenWBEM 2.0.14 has been released.<br>
-This release fixes a few bugs since 2.0.8.<br>
-      <br>
-Changes:<br>
-      <ul>
-        <li>Fixed the index code to flush to disk after a modifying
-operation in order to prevent database corruption if the cimom isn't
-shut down properly.</li>
-        <li>Removed a couple of extra CRLFs that were being generated
-by the HTTP client.</li>
-        <li>Fixed the spec file to build on Fedora Core 1</li>
-        <li>Added locking in provider unloading to avoid a race
-condition.</li>
-        <li>Fixed OW_Array::operator+= to return *this</li>
-        <li>Fixed an issue with the server generating non-standard xml
-when doing an AssociatorNames operation on class paths.</li>
-        <li>Fixed a bug where a NULL CLASSNAME arg wasn't handled</li>
-        <li>Fixed EnumerateClassNames to be about 10x faster</li>
-        <li>Changed createInstance to pass a class-synced-up instance
-to the provider instead of the raw instance that comes in from the
-client.</li>
-        <li>Fixed a problem where the instance keys may not be
-correctly set in the client API when calling associators or references.</li>
-        <li>Fixed an issue with CreateInstance when the new instance
-didn't have any KEY qualifiers.</li>
-      </ul>
-      <br>
-    </li>
-    <li>Sun Oct 12 2003: OpenWBEM 2.0.8 has been released.<br>
-This release fixed a few bugs in 2.0.6.<br>
-      <br>
-Changes:<br>
-      <ul>
-        <li>Added support for compiling on OS X(Darwin). Note that the
-code will compile but the current Makefile build system doesn't work
-yet.</li>
-        <li>Fixed possible segfault if an auth module failed to
-initialize</li>
-        <li>Fixed problems with RedHat 9</li>
-        <li>Fixed a problem with getInstance on association instances
-without namespaces on the reference properties</li>
-        <li>Fixed slp provider to register when the http ports aren't
-specified in the config file</li>
-        <li>Added workaround for clients who send invalid xml as the
-namespace</li>
-        <li>Fix for deflate compression</li>
-      </ul>
-      <br>
-    </li>
-    <li>Mon May 19 2003: OpenWBEM 2.0.6 has been released.<br>
-This release fixed a few bugs in 2.0.4. There are no new features.
-Note that you will have to re-create the CIM repositories (found in
-var/openwbem), because a fix for the association handling required a
-new data format.<br>
-      <br>
-Changes:<br>
-      <ul>
-        <li>Fixed some problems with the association database index.</li>
-        <li>Fixed a problem in OW_CIMServer that caused associations to
-be broken in certain cases.</li>
-        <li>Removed _validatePropagatedKeys from OW_CIMServer because
-it doesn't work right.</li>
-        <li>Fixed a couple of problems with xml generation where an
-object path wasn't being done correctly.</li>
-        <li>Fixed the simple c++ provider interface name.</li>
-      </ul>
-    </li>
-    <br>
-    <li>Wed Apr 9 2003: CodeGen 0.1.0 has been released. <a
- href="CodeGen.0.1.0.README">README</a></li>
   </ul>
-  <hr>The OpenWBEM project is an open-source implementation
+  <br>
+  <hr>The OpenWBEM project is an enterprise-grade open-source
+implementation
 of Web Based Enterprise Management suitable for commercial and
 non-commercial
 applications. <br>
   <br>
 Some of the main features of OpenWBEM are:
   <ul>
-    <li>OpenWBEM CIMOM</li>
+    <li>CIM Server</li>
     <ul>
-      <li>CIM Operations over HTTP</li>
-      <li>CIM Operations over HTTPS (Requires OpenSSL)</li>
+      <li>CIM Operations over HTTP 1.1 is fully supported, including
+ExecQuery &amp; batch operations.</li>
+      <li>CIM 2.2 is supported, including embedded instances, which are
+necessary for proper indication support.</li>
+      <li>HTTPS (Requires OpenSSL)</li>
       <li>Extensible Authentication through authentication plug-in
-modules</li>
+modules. Provided modules:</li>
       <ul>
-        <li>PAM Authentication Module</li>
-        <li>SIMPLE Authentication Module</li>
-        <li>Digest Authentication Module</li>
+        <li>PAM (Uses the native system authentication)</li>
+        <li>Simple (Uses a password file. A good sample of how to write
+an Authentication Module)</li>
+        <li>HTTP Digest (Useful because it doesn't send passwords in
+clear text)</li>
       </ul>
-      <li>Fast scalable hierarchical repository with indexing</li>
+      <li>Fast scalable hierarchical repository with indexing based on
+Berkely DB library.</li>
       <li>Extensible Provider Interface through Provider Interface
 plug-ins</li>
       <ul>
-        <li>C++ Provider Interface</li>
+        <li>C++</li>
         <li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a>
 Provider
-Interface. Thanks to IBM!</li>
+Interface. Thanks to Markus Mueller/IBM</li>
+        <li>CMPI. Thanks to Markus Mueller/IBM and Jon Carey/Novell</li>
+        <li>Perl based on NPI. Thanks to Markus Mueller/IBM</li>
+        <li>Perl using SWIG, created by Jason Long.&nbsp; Located at (<a
+ href="http://jason.long.name/owperl/">http://jason.long.name/owperl/</a>).<br>
+        </li>
       </ul>
-      <li>Providers:</li>
+      <li>CIM Providers Support:</li>
       <ul>
+        <li>Writing providers is easy. Base class adapters are provided
+for the most common situations which reduces development time and
+provider size. Helper functions are available that make it easy to
+correctly write providers.</li>
+        <li>Providers run in a transactional environment, making it
+much easier to write a robust provider free from deadlocks and race
+conditions.</li>
+        <li>Providers are automatically detected, so there is no need
+to use the provider qualifier or registration schema.</li>
         <li>Instance</li>
+        <li>Secondary Instance<br>
+        </li>
         <li>Method</li>
         <li>Associator</li>
-        <li>Property</li>
+        <li>Indication</li>
         <li>Indication Export</li>
-        <li>Polled (can be used as an Indication provider)</li>
-        <li>Authentication</li>
-        <li>WQL</li>
-        <li>Writing providers is easy. Providers don't need to worry
-about locking, since the cimom takes care of it.</li>
       </ul>
-      <li>Indications and CIM Listener support</li>
+      <li>Other types of dynamic pluggable providers:<br>
+      </li>
+      <ul>
+        <li>Polled<br>
+        </li>
+        <li>Authentication</li>
+        <li>Authorization</li>
+        <li>CIM Repository<br>
+        </li>
+        <li>WQL</li>
+      </ul>
+      <li>Indications and CIM Listener support.&nbsp; Both lifecycle
+and alert indications are supported.<br>
+      </li>
       <li>WQL Level 2 support for server and client</li>
       <li>Access Control Lists</li>
-      <li>SLP Integration on the CIMOM and client side using any
-RFC 2614 compliant SLP implementation (e.g. <a
- href="http://www.openslp.org/">OpenSLP</a>)</li>
+      <li>Discovery via SLP Integration on the CIMOM and client side
+using any RFC 2614 compliant SLP implementation (e.g. OpenSLP)</li>
       <li>Support for a binary protocol that is much more efficient
 than
 CIM/XML</li>
-      <li>http compression. (Using the binary protocol and compression
+      <li>http deflate compression with zlib. (Using the binary
+protocol and compression
 is very bandwidth
 efficient.)</li>
-      <li>http chunking allows openwbem to transfer large transactions
-(e.g.
-enumClasses on the entire schema) with no buffering. Memory usage stays
-constant.</li>
+      <li>http chunking &amp; trailers allows OpenWBEM to transfer
+large transactions (e.g. enumClasses on the entire schema) with no
+buffering. Memory usage stays constant. Even if the client doesn't
+support chunking &amp; trailers, large requests are buffered on disk to
+save memory.</li>
       <li>Communication over TCP/IP or Domain sockets.</li>
+      <li>The MOF compiler &amp; cimom have full support for UTF-8, so
+classes and instances can contain the full set of Unicode characters.</li>
+      <li>The owcimomd daemon is heavily tested and we believe it to be
+free from deadlocks &amp; crashes. It also has a restart feature to
+recover from buggy providers.</li>
+      <li>The code has been run through a memory debugger and there are
+no known memory leaks or unconstrained growth.</li>
+      <li>The build system automatically configures itself to the
+platform and available headers &amp; libraries.</li>
       <li>The owcimomd daemon has been designed to be non-intrusive and
-have a small
-footprint. Many features are loaded as shared libraries so you can pick
-and choose
-what features you really need and not waste memory with unused code. </li>
+have a small footprint. Many features are loaded as shared libraries so
+you can pick and choose what features you really need and not waste
+memory with unused code. Optional features include: </li>
       <ul>
         <li>Indication support</li>
         <li>WQL library</li>
         <li>Authentication modules</li>
+        <li>Authorization modules<br>
+        </li>
         <li>Provider interfaces</li>
         <li>Providers are unloaded from memory if they are not used for
 a configurable amount of time</li>
         <li>SLP support is implemented as a provider</li>
         <li>Request handlers (CIM/XML or binary) can be loaded/unloaded
 on demand with a configurable unload timeout</li>
+        <li>HTTP compression</li>
+        <li>HTTP digest authorization</li>
+        <li>HTTPS (SSL)</li>
+        <li>Functional Profiles (Association Traversal, Instance
+Manipulation, etc.)</li>
+      </ul>
+      <li>Available Providers:</li>
+      <ul>
+        <li>__Namespace - Allows manipulation of namespaces for legacy
+CIM Clients using the deprecated __Namespace class.</li>
+        <li>CIM_Namespace - Allows manipulation of namespaces.</li>
+        <li>OpenWBEM_ObjectManager : CIM_ObjectManager - Represents
+owcimomd.</li>
+        <li>CIM_NamespaceInManager - Association between CIM_Namespace
+and CIM_ObjectManager.</li>
+        <li>CIM_ObjectManagerCommunicationMechanism</li>
+        <li>CIM_IndicationSubscription - For indication support.</li>
+        <li>CIM_IndicationFilter - For indication support.</li>
+        <li>SLP advertisement</li>
+        <li>IBM has a lot of system level providers available via the
+SBLIM project. All these NPI &amp; CMPI providers work with OpenWBEM.</li>
+        <li>Test providers, used by the OpenWBEM acceptance test suite.</li>
+        <li>Example providers show how to implement providers. These
+providers implement processes, RPMs, and laptop batteries. These make
+for good demos as well.</li>
       </ul>
     </ul>
     <li> Additional Software</li>
     <ul>
-      <li>C++ Client API library</li>
+      <li>C++ CIM model &amp; WBEM Client API library</li>
       <li>MOF Compiler w/embeddable library</li>
+      <ul>
+        <li>Includes support for aliases.</li>
+        <li>Public API &amp; library can be utilized from any
+application. This also has an API to convert mof text into a C++ CIM
+class/instance without talking to a cimom.</li>
+      </ul>
       <li>WQL command-line utility</li>
+      <li>WQL client library. Use WQL with servers which don't support
+it or don't support your particular queries.</li>
     </ul>
   </ul>
 </blockquote>
@@ -279,7 +280,8 @@ client applications and tools."&nbsp; I find their browser to be useful.<br>
   <li><span style="font-weight: bold;">OpenPegasus</span> (<a
  href="http://openpegasus.org/">http://openpegasus.org/</a>) - "Pegasus
 is an open-source implementation of the DMTF CIM and WBEM
-standards."&nbsp; They have a good Java browser that used to be known
+standards."&nbsp; They have a functional Java browser that used to be
+known
 as the SNIA CIM Browser.</li>
 </ul>
 <hr style="width: 100%; height: 2px;"><br>
