@@ -31,7 +31,6 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
- * @author Bart Whiteley
  */
 
 #ifndef OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
@@ -161,7 +160,6 @@ public:
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
 	CIMInstanceArray getCommunicationMechanisms() const;
-	bool indicationsDisabled() const { return m_indicationsDisabled; }
 	// do not use this variable unless absolutely necessary!
 	static CIMOMEnvironmentRef g_cimomEnvironment;
 private:

@@ -31,7 +31,6 @@
 /**
  * @author Jon Carey
  * @author Dan Nuffer
- * @author Bart Whiteley
  */
 
 #include "OW_config.h"
@@ -782,21 +781,8 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 			cop.toString()));
 	}
 	CIMClass theClass(CIMNULL);
-	CIMInstance oldInst(CIMNULL); 
-	if (!m_env->indicationsDisabled())
-	{
-		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, 
-				E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 
-				NULL, &theClass, context);
-	}
-	else
-	{
-		theClass = _instGetClass(ns, cop.getClassName(),
-				E_NOT_LOCAL_ONLY,
-				E_INCLUDE_QUALIFIERS,
-				E_INCLUDE_CLASS_ORIGIN,
-				0, context);
-	}
+	CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
+		&theClass, context);
 	cop.syncWithClass(theClass);
 	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
 	if(instancep)	// If there is an instance provider, let it do the delete.
@@ -809,10 +795,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		// Delete the instance from the instance repository
 		m_cimRepository->deleteInstance(ns, cop, context);
 	}
-	if (!m_env->indicationsDisabled())
-	{
-		OW_ASSERT(oldInst);
-	}
+	OW_ASSERT(oldInst);
 	
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, cop.getClassName(), context);
 	// now let all the secondary providers know about the delete
