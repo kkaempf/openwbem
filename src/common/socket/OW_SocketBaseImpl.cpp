@@ -449,7 +449,7 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException)
 				{
 					OW_THROW(OW_IOException, "Failed opening tracefile");
 				}
-				if (!traceFile.write(static_cast<const char*>(dataIn), rc))
+				if (!traceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW(OW_IOException, "Failed writing to socket dump");
 				}

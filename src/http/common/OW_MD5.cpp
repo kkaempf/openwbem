@@ -32,6 +32,8 @@
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
 
+#include <string.h> // for memset
+
 #define HASHHEXLEN 32
 
 DEFINE_EXCEPTION(MD5);

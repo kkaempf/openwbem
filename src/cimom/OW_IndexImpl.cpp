@@ -171,11 +171,11 @@ OW_IndexImpl::find(const char* key)
 
 	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_CURSOR) == 0)
 	{
-		if(!::strcmp(static_cast<const char*>(theKey.data), key))
+		if(!::strcmp(reinterpret_cast<const char*>(theKey.data), key))
 		{
 			OW_Int32 tmp;
 			memcpy(&tmp, theRec.data, sizeof(tmp));
-			return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
+			return OW_IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 		}
 	}
 
@@ -280,7 +280,7 @@ OW_IndexImpl::findFirst(const char* key)
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
+		return OW_IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();
@@ -300,7 +300,7 @@ OW_IndexImpl::findNext()
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
+		return OW_IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();
@@ -320,7 +320,7 @@ OW_IndexImpl::findPrev()
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
+		return OW_IndexEntry(reinterpret_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();
@@ -333,7 +333,8 @@ recCompare(const DBT* key1, const DBT* key2)
 {
 	if (key1->data && key2->data)
 	{
-		return strcmp((const char*)key1->data, (const char*)key2->data);
+		return strcmp(reinterpret_cast<const char*>(key1->data), 
+			reinterpret_cast<const char*>(key2->data));
 	}
 	else if (key1->data && !key2->data)
 	{
