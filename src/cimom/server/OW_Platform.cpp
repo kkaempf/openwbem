@@ -42,6 +42,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_PlatformSignal.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_Logger.hpp"
 
 #ifdef OW_NETWARE
 #include "OW_Condition.hpp"
@@ -106,27 +107,33 @@ extern "C" {
 static void theSigHandler(int sig, siginfo_t* info, void* context);
 }
 
-static const int DAEMONIZE_PIPE_TIMEOUT = 25; 
+namespace
+{
+const String COMPONENT_NAME("ow.owcimomd");
 
-static Options processCommandLineOptions(int argc, char** argv);
-static void handleSignal(int sig);
-static void setupSigHandler(bool dbgFlg);
+const int DAEMONIZE_PIPE_TIMEOUT = 25; 
 
-static UnnamedPipeRef plat_upipe;
+Options processCommandLineOptions(int argc, char** argv);
+void handleSignal(int sig);
+void setupSigHandler(bool dbgFlg);
 
-static UnnamedPipeRef daemonize_upipe; 
+UnnamedPipeRef plat_upipe;
 
-static char** g_argv = 0;
+UnnamedPipeRef daemonize_upipe; 
+
+char** g_argv = 0;
 
 #ifdef OW_NETWARE
-static Condition g_shutdownCond; 
-static bool g_shutDown = false; 
-static NonRecursiveMutex g_shutdownGuard; 
-static void* WarnFuncRef = NULL;
-static rtag_t EventRTag;
-static event_handle_t DownEvent;
-static bool FromEventHandler = false;
+Condition g_shutdownCond; 
+bool g_shutDown = false; 
+NonRecursiveMutex g_shutdownGuard; 
+void* WarnFuncRef = NULL;
+rtag_t EventRTag;
+event_handle_t DownEvent;
+bool FromEventHandler = false;
 #endif
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
 Options
@@ -249,6 +256,7 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			Format("Failed to write the pid file (%1)", pidFile).c_str());
 	}
 #endif
+	OW_LOG_INFO(env->getLogger(COMPONENT_NAME), Format("Platform::daemonize() pid = %1", ::getpid()));
 #endif
 	initSig();
 #ifndef WIN32
@@ -280,9 +288,13 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 	shutdownSig();
 	return 0;
 }
+
+namespace
+{
+
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
-static struct option   long_options[] =
+struct option   long_options[] =
 {
 	{ "debug", 0, NULL, 'd' },
 	{ "config", required_argument, NULL, 'c' },
@@ -290,9 +302,9 @@ static struct option   long_options[] =
 	{ 0, 0, 0, 0 }
 };
 #endif
-static const char* const short_options = "dc:h";
+const char* const short_options = "dc:h";
 //////////////////////////////////////////////////////////////////////////////
-static Options
+Options
 processCommandLineOptions(int argc, char** argv)
 {
 	Options rval;
@@ -333,6 +345,8 @@ processCommandLineOptions(int argc, char** argv)
 #endif
 	return rval;
 }
+
+} // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void rerunDaemon()
@@ -411,12 +425,16 @@ void restartDaemon()
 }
 
 #ifndef WIN32
+
+namespace
+{
+
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_HAVE_SIGHANDLER_T)
 typedef void (*sighandler_t)(int);
 #endif
 
-static void
+void
 handleSignalAux(int sig, sighandler_t handler)
 {
 	struct sigaction temp;
@@ -453,7 +471,7 @@ typedef void (*full_sighandler_t)(int,siginfo_t*,void*);
 // different from the normal sighandler type only by the flags in the
 // handler and the field used in the sigaction struct
 // (sa_sigaction/sa_handler).
-static void
+void
 handleSignalAux(int sig, full_sighandler_t handler)
 {
 	struct sigaction temp;
@@ -480,16 +498,18 @@ handleSignalAux(int sig, full_sighandler_t handler)
 	sigaction(sig, &temp, NULL);
 }
 
-static void
+void
 handleSignal(int sig)
 {
 	handleSignalAux(sig, theSigHandler);
 }
-static void
+void
 ignoreSignal(int sig)
 {
 	handleSignalAux(sig, SIG_IGN);
 }
+
+} // end unnamed namespace
 
 #endif
 
@@ -595,8 +615,11 @@ netwareShutDownEventHandler(void*,
 #endif
 } // extern "C"
 #ifndef WIN32
+
+namespace
+{
 //////////////////////////////////////////////////////////////////////////////
-static void
+void
 setupSigHandler(bool dbgFlg)
 {
 	/* Here's a note from the glibc documentation about signal():
@@ -690,6 +713,8 @@ setupSigHandler(bool dbgFlg)
 	}
 #endif
 }
+
+} // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void installFatalSignalHandlers()
