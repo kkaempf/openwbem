@@ -532,7 +532,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 	StringArray dirEntries;
 	if (!FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed geeting the contents of the"
+		OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed getting the contents of the"
 			" request handler directory: %1", libPath));
 		OW_THROW(CIMOMEnvironmentException, "No RequestHandlers");
 	}
@@ -580,8 +580,9 @@ CIMOMEnvironment::_loadRequestHandlers()
 		}
 		else
 		{
-			OW_LOG_ERROR(m_Logger, Format("CIMOM failed to load request handler from file:"
+			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load request handler from file:"
 				" %1", libName));
+			OW_THROW(CIMOMEnvironmentException, "Invalid request handler");
 		}
 	}
 	OW_LOG_INFO(m_Logger, Format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
@@ -630,8 +631,9 @@ CIMOMEnvironment::_loadServices()
 		}
 		else
 		{
-			OW_LOG_ERROR(m_Logger, Format("CIMOM failed to load service from library: %1",
+			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM failed to load service from library: %1",
 				libName));
+			OW_THROW(CIMOMEnvironmentException, "Invalid service");
 		}
 	}
 	OW_LOG_INFO(m_Logger, Format("CIMOM: Number of services loaded: %1",
