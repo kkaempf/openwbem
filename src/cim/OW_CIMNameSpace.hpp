@@ -52,6 +52,8 @@ class OW_CIMNameSpace : public OW_CIMBase
 private:
 
 	struct NSData;
+	friend bool operator<(const OW_CIMNameSpace::NSData& x, 
+			const OW_CIMNameSpace::NSData& y); 
 
 public:
 

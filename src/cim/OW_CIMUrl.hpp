@@ -50,6 +50,8 @@ class OW_CIMUrl : public OW_CIMBase
 private:
 
 	struct URLData;
+	friend bool operator<(const OW_CIMUrl::URLData& x, 
+			const OW_CIMUrl::URLData& y); 
 
 public:
 

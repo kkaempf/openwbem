@@ -48,6 +48,8 @@ class OW_CIMObjectPath : public OW_CIMBase
 {
 private:
 	struct OPData;
+	friend bool operator<(const OW_CIMObjectPath::OPData& x, 
+			const OW_CIMObjectPath::OPData& y);
 
 public:
 
