@@ -58,6 +58,7 @@
 #include <iostream>
 #include <algorithm> // for sort
 
+#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::cin;
@@ -469,15 +470,15 @@ testDynInstances(OW_CIMClient& hdl)
 
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
-		OW_ASSERT(enu.numberOfElements() == 2);
+		TEST_ASSERT(enu.numberOfElements() == 2);
 
 		hdl.deleteInstance( cop1);
 		enu = hdl.enumInstancesE( "testinstance");
-		OW_ASSERT(enu.numberOfElements() == 1);
+		TEST_ASSERT(enu.numberOfElements() == 1);
 
 		hdl.deleteInstance( cop2);
 		enu = hdl.enumInstancesE( "testinstance");
-		OW_ASSERT(enu.numberOfElements() == 0);
+		TEST_ASSERT(enu.numberOfElements() == 0);
 		
 	}
 	catch (OW_CIMException& e)
@@ -513,11 +514,11 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
         {
             // this should fail since the qualifier is now gone.
             ci = hdl.getInstance(cop1);
-            OW_ASSERT(0);
+            TEST_ASSERT(0);
         }
         catch (OW_CIMException& e)
         {
-            OW_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
+            TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
         }
 
         cc.addQualifier(provQual);
@@ -525,11 +526,11 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
-		OW_ASSERT(enu.numberOfElements() == 1);
+		TEST_ASSERT(enu.numberOfElements() == 1);
 
 		hdl.deleteInstance( cop1);
 		enu = hdl.enumInstancesE( "testinstance");
-		OW_ASSERT(enu.numberOfElements() == 0);
+		TEST_ASSERT(enu.numberOfElements() == 0);
 		
 	}
 	catch (OW_CIMException& e)
