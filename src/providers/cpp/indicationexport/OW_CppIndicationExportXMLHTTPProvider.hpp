@@ -38,6 +38,7 @@
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_HTTPClient.hpp"
 #include "OW_Mutex.hpp"
+#include <list>
 
 namespace OW_NAMESPACE
 {
@@ -69,9 +70,9 @@ public:
 
 	virtual void doCooperativeCancel();
 private:
-	// We store this (vs. keeping it on the stack) so that when a cancellation request is made
-	// close() can be called which will stop the exporting thread.
-	HTTPClientRef m_httpClient; 
+	// We store these (vs. keeping it on the stack) so that when a cancellation request is made
+	// close() can be called which will stop the exporting thread(s).
+	std::list<HTTPClientRef> m_httpClients;
 	Mutex m_guard;
 	bool m_cancelled;
 };

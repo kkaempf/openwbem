@@ -52,6 +52,27 @@ using namespace WBEMFlags;
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.CppIndicationExportXMLHTTP");
+
+	class HTTPClientListJanitor
+	{
+	public:
+		HTTPClientListJanitor(std::list<HTTPClientRef>::iterator httpClient, std::list<HTTPClientRef>& list, Mutex& guard)
+			: m_httpClient(httpClient)
+			, m_list(list)
+			, m_guard(guard)
+		{
+		}
+
+		~HTTPClientListJanitor()
+		{
+			MutexLock lock(m_guard);
+			m_list.erase(m_httpClient);
+		}
+	private:
+		std::list<HTTPClientRef>::iterator m_httpClient;
+		std::list<HTTPClientRef>& m_list;
+		Mutex& m_guard;
+	};
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,22 +118,25 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 		}
 	}
 
-	{
-		MutexLock lock(m_guard);
-		if (m_cancelled)
-		{
-			return;
-		}
-		m_httpClient = new HTTPClient(listenerUrl);
-	}
-	IndicationExporter exporter = IndicationExporter(m_httpClient);
+	HTTPClientRef httpClient = new HTTPClient(listenerUrl);
+	IndicationExporter exporter = IndicationExporter(httpClient);
 
 	// the OW 2.0 HTTPXMLCIMListener uses the HTTP path to differentiate different
 	// subscriptions.  This is stored in namespace name of the URL.
 	if (!url.namespaceName.empty())
 	{
-		m_httpClient->setHTTPPath('/' + url.namespaceName);
+		httpClient->setHTTPPath('/' + url.namespaceName);
 	}
+
+	// now add httpClient to the list in case we get cancelled, also check for cancellation while we're at it.
+	MutexLock lock(m_guard);
+	if (m_cancelled)
+	{
+		return;
+	}
+	m_httpClients.push_back(httpClient);
+	HTTPClientListJanitor janitor(--m_httpClients.end(), m_httpClients, m_guard);
+	lock.release();
 
 	exporter.exportIndication(ns, indicationInst);
 }
@@ -138,9 +162,9 @@ CppIndicationExportXMLHTTPProvider::doCooperativeCancel()
 {
 	MutexLock lock(m_guard);
 	m_cancelled = true;
-	if (m_httpClient)
+	for (std::list<HTTPClientRef>::iterator iter = m_httpClients.begin(); iter != m_httpClients.end(); ++iter)
 	{
-		m_httpClient->close();
+		(*iter)->close();
 	}
 }
 
