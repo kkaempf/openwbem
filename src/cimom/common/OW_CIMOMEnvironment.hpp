@@ -50,6 +50,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ConfigFile.hpp"
+#include "OW_HashMap.hpp"
+#include "OW_SortedVectorSet.hpp"
 
 namespace OpenWBEM
 {
@@ -159,7 +161,10 @@ public:
 	void unloadReqHandlers();
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
-	CIMInstanceArray getCommunicationMechanisms() const;
+	virtual CIMInstanceArray getInteropInstances(const String& className) const;
+	virtual void setInteropInstance(const CIMInstance& inst);
+
+
 	// do not use this variable unless absolutely necessary!
 	static CIMOMEnvironmentRef g_cimomEnvironment;
 private:
@@ -209,7 +214,10 @@ private:
 	bool m_running;
 	Mutex m_runningGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
-	CIMInstanceArray m_communicationMechanisms;
+
+	mutable Mutex m_interopInstancesLock;
+	typedef HashMap<String, SortedVectorSet<CIMInstance> > interopInstances_t;
+	interopInstances_t m_interopInstances;
 };
 
 } // end namespace OpenWBEM

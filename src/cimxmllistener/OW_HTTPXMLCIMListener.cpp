@@ -152,6 +152,13 @@ public:
 	{
 		return m_logger;
 	}
+	virtual CIMInstanceArray getInteropInstances(const String& className) const
+	{
+		return CIMInstanceArray();
+	}
+	virtual void setInteropInstance(const CIMInstance& inst)
+	{
+	}
 private:
 	Map<String, String> m_configItems;
 	Reference<ListenerAuthenticator> m_pLAuthenticator;

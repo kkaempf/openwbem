@@ -1080,11 +1080,38 @@ CIMOMEnvironment::getRepository() const
 {
 	return m_cimRepository;
 }
+
 //////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray
-CIMOMEnvironment::getCommunicationMechanisms() const
+CIMInstanceArray CIMOMEnvironment::getInteropInstances(const String& className) const
 {
-	return m_communicationMechanisms;
+	MutexLock lock(m_interopInstancesLock);
+	interopInstances_t::const_iterator citer = m_interopInstances.find(className);
+	if (citer == m_interopInstances.end())
+	{
+		return CIMInstanceArray();
+	}
+
+	return CIMInstanceArray(citer->second.begin(), citer->second.end());
+}
+//////////////////////////////////////////////////////////////////////////////
+void 
+CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
+{
+	String className = inst.getClassName();
+
+	MutexLock lock(m_interopInstancesLock);
+	interopInstances_t::const_iterator citer = m_interopInstances.find(className);
+	if (citer == m_interopInstances.end())
+	{
+		interopInstances_t::data_type s;
+		s.insert(inst);
+		m_interopInstances.insert(interopInstances_t::value_type(className, s));
+	}
+	else
+	{
+		// erase it first, since 
+		//citer->insert(inst);
+	}
 }
 
 } // end namespace OpenWBEM

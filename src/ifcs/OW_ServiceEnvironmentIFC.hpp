@@ -40,6 +40,7 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_ArrayFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -54,7 +55,12 @@ class OperationContext;
 class Logger;
 typedef Reference<Logger> LoggerRef;
 class String;
+class CIMInstance;
+typedef Array<CIMInstance> CIMInstanceArray;
 
+/**
+ * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"
+ */
 class ServiceEnvironmentIFC
 {
 public:
@@ -89,6 +95,9 @@ public:
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) = 0;
+
+	virtual CIMInstanceArray getInteropInstances(const String& className) const = 0;
+	virtual void setInteropInstance(const CIMInstance& inst) = 0;
 };
 
 } // end namespace OpenWBEM

@@ -261,6 +261,13 @@ public:
 	{
 		return defRetVal;
 	}
+	virtual CIMInstanceArray getInteropInstances(const String& className) const
+	{
+		return CIMInstanceArray();
+	}
+	virtual void setInteropInstance(const CIMInstance& inst)
+	{
+	}
 };
 
 void usage()

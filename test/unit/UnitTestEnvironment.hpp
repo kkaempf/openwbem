@@ -41,6 +41,7 @@
 #include "OW_Logger.hpp"
 #include "OW_Map.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_CIMInstance.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -88,6 +89,14 @@ public:
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &, ESendIndicationsFlag, EBypassProvidersFlag) {
 		OW_ASSERT("Cannot call TestEnvironment::getCIMOMHandle()" == 0);
 		return CIMOMHandleIFCRef();
+	}
+
+	virtual CIMInstanceArray getInteropInstances(const String& className) const 
+	{
+		return CIMInstanceArray();
+	}
+	virtual void setInteropInstance(const CIMInstance& inst)
+	{
 	}
 
 	Map<String, String> config;
