@@ -1193,8 +1193,6 @@ CIMServer::modifyInstance(
 	OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
-	logOperation(m_env->getLogger(), context, "ModifyInstance", ns,
-		modifiedInstance.getClassName());
 
 	CIMInstance oldInst(CIMNULL);
 	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(),
@@ -1219,7 +1217,13 @@ CIMServer::modifyInstance(
 			Format("You are not authorized to modify %1 instances in"
 				" namespace %2", lci.getClassName(), ns).c_str());
 	}
+
 	logOperation(m_env->getLogger(), context, "ModifyInstance", ns, modifiedInstance.getClassName());
+	ELogLevel lvl = m_env->getLogger()->getLogLevel();
+	if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
+	{
+		m_env->logInfo(Format("ModifyInstance: modified instance = %1", lci));
+	}
 
 	if(!instancep)
 	{
@@ -1232,6 +1236,12 @@ CIMServer::modifyInstance(
 		// Look for dynamic instances
 		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS,
 			E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
+
+		if (lvl == E_DEBUG_LEVEL || lvl == E_INFO_LEVEL)
+		{
+			m_env->logInfo(Format("ModifyInstance: previous instance = %1", oldInst));
+		}
+
 		instancep->modifyInstance(createProvEnvRef(context, m_env), ns,
 			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
@@ -1348,6 +1358,9 @@ CIMServer::setProperty(
 		msg += cp.getName();
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
+	
+	m_env->logInfo(Format("SetProperty previous value was: %1", cp.getValue()));
+
 	cp.setValue(cv);
 	ci.setProperty(cp);
 	StringArray propertyList;
