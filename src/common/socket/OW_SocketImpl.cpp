@@ -53,14 +53,14 @@ OW_SocketImpl::OW_SocketImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketImpl::OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType) /*throw (OW_SocketException)*/ 
+OW_SocketImpl::OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType)
 	: OW_SocketBaseImpl(fd, addrType)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_SocketImpl::OW_SocketImpl(const OW_SocketAddress addr) 
-	/*throw (OW_SocketException)*/ : OW_SocketBaseImpl(addr)
+	: OW_SocketBaseImpl(addr)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,6 @@ OW_SocketImpl::getSelectObj() const
 
 //////////////////////////////////////////////////////////////////////////////
 int OW_SocketImpl::readAux(void* dataIn, int dataInLen) 
-		/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH
 	return ::read(m_sockfd, dataIn, dataInLen);
@@ -88,7 +87,6 @@ int OW_SocketImpl::readAux(void* dataIn, int dataInLen)
 
 //////////////////////////////////////////////////////////////////////////////
 int OW_SocketImpl::writeAux(const void* dataOut, int dataOutLen)
-		/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH
 	return ::write(m_sockfd, dataOut, dataOutLen);

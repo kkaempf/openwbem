@@ -27,16 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-//
-// OW_XMLOperationGeneric.hpp
-//
-//
-//
-
 #ifndef OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
 #define OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
-
 
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -50,7 +42,10 @@ class OW_XMLOperationGeneric : public OW_XMLParameters
 {
 	public:
 
-		static void XMLGetCIMElement(OW_CIMXMLParser& node) /*throw (OW_CIMException)*/;
+		/**
+		 * @throws OW_CIMException
+		 */
+		static void XMLGetCIMElement(OW_CIMXMLParser& node);
 
 
 	private:

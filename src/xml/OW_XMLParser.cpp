@@ -42,6 +42,9 @@
 //
 // OW_XMLParseException
 //
+// Note that we don't use the OW_THROW macro in this file to throw 
+// an OW_XMLParseException.  This is because it needs extra information not
+// available with OW_THROW.
 ////////////////////////////////////////////////////////////////////////////////
 
 static const char* _xmlMessages[] =

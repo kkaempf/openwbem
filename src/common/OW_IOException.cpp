@@ -33,6 +33,8 @@
 
 DEFINE_EXCEPTION(IO)
 
+// Don't use DEFINE_EXCEPTION because we're not derived directly from 
+// OW_Exception which is what the macro assumes.
 OW_BadCIMSignatureException::OW_BadCIMSignatureException() : OW_IOException() {}
 
 OW_BadCIMSignatureException::OW_BadCIMSignatureException(const char* file, int line, const char* msg)

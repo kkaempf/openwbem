@@ -69,184 +69,184 @@ public:
 	typedef typename M::size_type size_type;
 	typedef typename M::difference_type difference_type;
 
-	OW_Map() /*throw (std::exception)*/ : m_impl(new M) {  }
+	OW_Map() : m_impl(new M) {  }
 
-	explicit OW_Map(M* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
+	explicit OW_Map(M* toWrap) : m_impl(toWrap)
 		{ }
 
-	explicit OW_Map(const Compare& comp) /*throw (std::exception)*/
+	explicit OW_Map(const Compare& comp)
 		: m_impl(new M(comp)) {  }
 
 	template <class InputIterator>
-	OW_Map(InputIterator first, InputIterator last) /*throw (std::exception)*/ :
+	OW_Map(InputIterator first, InputIterator last) :
 		m_impl(new M(first, last))
 	{
 	}
 
 	template <class InputIterator>
-	OW_Map(InputIterator first, InputIterator last, const Compare& comp) /*throw (std::exception)*/ :
+	OW_Map(InputIterator first, InputIterator last, const Compare& comp) :
 		m_impl(new M(first, last, comp))
 	{
 	}
 
-	M* getImpl() /*throw (std::exception)*/
+	M* getImpl()
 	{
 		return &*m_impl;
 	}
 
-	key_compare key_comp() const /*throw (std::exception)*/
+	key_compare key_comp() const
 	{
 		return m_impl->key_comp();
 	}
 
-	value_compare value_comp() const /*throw (std::exception)*/
+	value_compare value_comp() const
 	{
 		return m_impl->value_comp();
 	}
 
-	iterator begin() /*throw (std::exception)*/
+	iterator begin()
 	{
 		return m_impl->begin();
 	}
 
-	const_iterator begin() const /*throw (std::exception)*/
+	const_iterator begin() const
 	{
 		return m_impl->begin();
 	}
 
-	iterator end() /*throw (std::exception)*/
+	iterator end()
 	{
 		return m_impl->end();
 	}
 
-	const_iterator end() const /*throw (std::exception)*/
+	const_iterator end() const
 	{
 		return m_impl->end();
 	}
 
-	reverse_iterator rbegin() /*throw (std::exception)*/
+	reverse_iterator rbegin()
 	{
 		return m_impl->rbegin();
 	}
 
-	const_reverse_iterator rbegin() const /*throw (std::exception)*/
+	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
 	}
 
-	reverse_iterator rend() /*throw (std::exception)*/
+	reverse_iterator rend()
 	{
 		return m_impl->rend();
 	}
 
-	const_reverse_iterator rend() const /*throw (std::exception)*/
+	const_reverse_iterator rend() const
 	{
 		return m_impl->rend();
 	}
 
-	bool empty() const /*throw (std::exception)*/
+	bool empty() const
 	{
 		return m_impl->empty();
 	}
 
-	size_type size() const /*throw (std::exception)*/
+	size_type size() const
 	{
 		return m_impl->size();
 	}
 
-	size_type max_size() const /*throw (std::exception)*/
+	size_type max_size() const
 	{
 		return m_impl->max_size();
 	}
 
-	T& operator[](const key_type& k) /*throw (std::exception)*/
+	T& operator[](const key_type& k)
 	{
 		return m_impl->operator[](k);
 	}
 
-	void swap(OW_Map<Key, T, Compare>& x) /*throw (std::exception)*/
+	void swap(OW_Map<Key, T, Compare>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
 
-	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
+	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		return m_impl->insert(x);
 	}
 
-	iterator insert(iterator position, const value_type& x) /*throw (std::exception)*/
+	iterator insert(iterator position, const value_type& x)
 	{
 		return m_impl->insert(position, x);
 	}
 
 	template <class InputIterator>
-	void insert(InputIterator first, InputIterator last) /*throw (std::exception)*/
+	void insert(InputIterator first, InputIterator last)
 	{
 		return m_impl->insert(first, last);
 	}
 
-	void erase(iterator position) /*throw (std::exception)*/
+	void erase(iterator position)
 	{
 		return m_impl->erase(position);
 	}
 
-	size_type erase(const key_type& x) /*throw (std::exception)*/
+	size_type erase(const key_type& x)
 	{
 		return m_impl->erase(x);
 	}
 
-	void erase(iterator first, iterator last) /*throw (std::exception)*/
+	void erase(iterator first, iterator last)
 	{
 		return m_impl->erase(first, last);
 	}
 
-	void clear() /*throw (std::exception)*/
+	void clear()
 	{
 		return m_impl->clear();
 	}
 
-	iterator find(const key_type& x) /*throw (std::exception)*/
+	iterator find(const key_type& x)
 	{
 		return m_impl->find(x);
 	}
 
-	const_iterator find(const key_type& x) const /*throw (std::exception)*/
+	const_iterator find(const key_type& x) const
 	{
 		return m_impl->find(x);
 	}
 
-	size_type count(const key_type& x) const /*throw (std::exception)*/
+	size_type count(const key_type& x) const
 	{
 		return m_impl->count(x);
 	}
 
-	iterator lower_bound(const key_type& x) /*throw (std::exception)*/
+	iterator lower_bound(const key_type& x)
 	{
 		return m_impl->lower_bound(x);
 	}
 
-	const_iterator lower_bound(const key_type& x) const /*throw (std::exception)*/
+	const_iterator lower_bound(const key_type& x) const
 	{
 		return m_impl->lower_bound(x);
 	}
 
-	iterator upper_bound(const key_type& x) /*throw (std::exception)*/
+	iterator upper_bound(const key_type& x)
 	{
 		return m_impl->upper_bound(x);
 	}
 
-	const_iterator upper_bound(const key_type& x) const /*throw (std::exception)*/
+	const_iterator upper_bound(const key_type& x) const
 	{
 		return m_impl->upper_bound(x);
 	}
 
-	std::pair<iterator, iterator> equal_range(const key_type& x) /*throw (std::exception)*/
+	std::pair<iterator, iterator> equal_range(const key_type& x)
 	{
 		return m_impl->equal_range(x);
 	}
 
 	std::pair<const_iterator, const_iterator>
-		equal_range(const key_type& x) const /*throw (std::exception)*/
+		equal_range(const key_type& x) const
 	{
 		return m_impl->equal_range(x);
 	}
@@ -266,21 +266,21 @@ std::map<Key, T, Compare>* OW_COWReferenceClone(std::map<Key, T, Compare>* obj)
 
 template<class Key, class T, class Compare>
 inline bool operator==(const OW_Map<Key, T, Compare>& x,
-	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
+	const OW_Map<Key, T, Compare>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class Key, class T, class Compare>
 inline bool operator<(const OW_Map<Key, T, Compare>& x,
-	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
+	const OW_Map<Key, T, Compare>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
 
 template <class Key, class T, class Compare>
 inline void swap(OW_Map<Key, T, Compare>& x,
-	OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
+	OW_Map<Key, T, Compare>& y)
 {
 	x.swap(y);
 }

@@ -264,7 +264,6 @@ static const char Pad64 = '=';
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String OW_HTTPUtils::base64Decode(const OW_String& arg)
-/*throw (OW_Base64FormatException)*/
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
@@ -348,7 +347,6 @@ static int char2val(char c)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String OW_HTTPUtils::base64Decode(const char* src)
-/*throw (OW_Base64FormatException)*/
 {
 
 	int szdest = strlen(src) * 2;
@@ -474,7 +472,6 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String OW_HTTPUtils::base64Encode(const OW_String& arg)
-/*throw (OW_Base64FormatException)*/
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
@@ -485,7 +482,6 @@ OW_String OW_HTTPUtils::base64Encode(const OW_String& arg)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String OW_HTTPUtils::base64Encode(const char* src)
-/*throw (OW_Base64FormatException)*/
 {
 	int szdest = strlen(src) * 3 + 4;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.

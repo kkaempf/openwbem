@@ -61,7 +61,6 @@ OW_Socket::OW_Socket(OW_SocketFlags::ESSLFlag isSSL)
 //////////////////////////////////////////////////////////////////////////////
 OW_Socket::OW_Socket(OW_SocketHandle_t fd,
 	OW_SocketAddress::AddressType addrType, OW_SocketFlags::ESSLFlag isSSL)
-		/*throw (OW_SocketException)*/
 {
 	if (isSSL == OW_SocketFlags::E_SSL)
 	{
@@ -79,7 +78,6 @@ OW_Socket::OW_Socket(OW_SocketHandle_t fd,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_SocketFlags::ESSLFlag isSSL)
-		/*throw (OW_SocketException)*/
 {
 	if (isSSL == OW_SocketFlags::E_SSL)
 #ifndef OW_NO_SSL

@@ -93,7 +93,6 @@ OW_Mutex OW_gethostbynameMutex;
 OW_SocketAddress
 OW_SocketAddress::getByName(
 		const OW_String& hostName, OW_UInt16 port)
-	/*throw (OW_UnknownHostException)*/
 {
 #ifdef OW_HAVE_GETHOSTBYNAME_R
 	hostent hostbuf;

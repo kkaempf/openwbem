@@ -52,7 +52,7 @@ public:
 	/**
 	 * @throws OW_SocketException
 	 */
-	OW_NwIface()
+	OW_NwIface();
 	OW_String getName();
 	unsigned long getIPAddress();
 	OW_String getIPAddressString();
@@ -69,7 +69,7 @@ private:
 	/**
 	 * @throws OW_SocketException
 	 */
-	void getInterfaceName(OW_SocketHandle_t sockfd)
+	void getInterfaceName(OW_SocketHandle_t sockfd);
 
 	unsigned long m_addr;
 	unsigned long m_bcastAddr;

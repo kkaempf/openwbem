@@ -655,8 +655,9 @@ private:
 		bool isIntrinsic,
 		OW_ClientOperation& op);
 
+	// throws a CIMException
 	void checkNodeForCIMError(OW_CIMXMLParser& reply,
-		const OW_String& operation, bool isIntrinsic); // throws a CIMException
+		const OW_String& operation, bool isIntrinsic);
 
 	void intrinsicMethod(
 		const OW_String& ns, const OW_String& operation,

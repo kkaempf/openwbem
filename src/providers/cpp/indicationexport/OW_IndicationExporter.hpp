@@ -46,7 +46,7 @@ public:
 	 * @param ci The indication to export.
 	 * @throws OW_CIMException
 	 */
-	void exportIndication( const OW_String& ns, const OW_CIMInstance& ci ); // may throw an OW_CIMException
+	void exportIndication( const OW_String& ns, const OW_CIMInstance& ci );
 
 
 private:
@@ -54,8 +54,11 @@ private:
 	void sendXMLTrailer(std::ostream& ostr);
 	void doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
 		const OW_String& ns);
+	/**
+	 * @throws OW_CIMException
+	 */
 	void checkNodeForCIMError(OW_CIMXMLParser& parser,
-		const OW_String& operation); // throws a CIMException
+		const OW_String& operation);
 	
 	OW_CIMProtocolIFCRef m_protocol;
 

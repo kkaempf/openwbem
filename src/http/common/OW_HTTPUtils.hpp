@@ -89,18 +89,29 @@ public:
 	 */
 	static OW_String getCounterStr();
 
-	// Decode Base64 encoded src into dest, returns the number of data bytes
-	//		stored in dest, or -1 on error
-	static OW_String base64Decode(const OW_String& arg)
-	/*throw (OW_Base64FormatException)*/;
-	static OW_String base64Decode(const char* src)
-	/*throw (OW_Base64FormatException)*/;
-	// Encode src in Base64 into dest, returns the number of data bytes
-	//		stored in dest, or -1 on error
-	static OW_String base64Encode(const OW_String& arg)
-	/*throw (OW_Base64FormatException)*/;
-	static OW_String base64Encode(const char* src)
-	/*throw (OW_Base64FormatException)*/;
+	/**
+	 * Decode Base64 encoded src into dest, returns the number of data bytes
+	 *		stored in dest, or -1 on error
+	 * @throws (OW_Base64FormatException)
+	 */
+	static OW_String base64Decode(const OW_String& arg);
+
+	/**
+	 * @throws (OW_Base64FormatException)
+	 */
+	static OW_String base64Decode(const char* src);
+
+	/**
+	 * Encode src in Base64 into dest, returns the number of data bytes
+	 *		stored in dest, or -1 on error
+	 * @throws (OW_Base64FormatException)
+	 */
+	static OW_String base64Encode(const OW_String& arg);
+
+	/**
+	 * @throws (OW_Base64FormatException)
+	 */
+	static OW_String base64Encode(const char* src);
 
 #ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */

@@ -59,7 +59,6 @@ OW_HTTPChunkedIStreamBuffer::~OW_HTTPChunkedIStreamBuffer()
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
-	/*throw (OW_HTTPChunkException)*/
 {
 	if(m_isEOF)
 		return -1;

@@ -233,7 +233,7 @@ public:
 	 * @exception OW_ThreadException
 	 * @return The return value from the thread's run()
 	 */
-	OW_Int32 join() /*throw (OW_ThreadException)*/;
+	OW_Int32 join();
 
 	/**
 	 * Get this OW_Thread object's id.

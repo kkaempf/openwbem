@@ -68,15 +68,15 @@ public:
 
 	static Options daemonInit( int argc, char* argv[] );
 
-	// Throws OW_DaemonException on error
+	/**
+	 * @throws OW_DaemonException on error
+	 */
 	static void daemonize(bool dbgFlg, const OW_String& daemonName);
 	static int daemonShutdown(const OW_String& daemonName);
 	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
 	static void pushSig(int sig)
 	{
 		plat_upipe->writeInt(sig);
-		//if (plat_upipe->writeInt(sig) == -1)
-		//	std::cerr << "Failed writing signal to pipe";
 		// don't throw from this function, it may cause a segfault or deadlock.
 	}
 	static int popSig()

@@ -308,7 +308,6 @@ OW_ServerSocketImpl::addrString()
 //////////////////////////////////////////////////////////////////////////////
 OW_Socket
 OW_ServerSocketImpl::accept(int timeoutSecs)
-	/*throw (OW_SocketException, OW_SocketTimeoutException)*/
 {
 	if(!m_isActive)
 	{
@@ -382,7 +381,7 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::close() /*throw (OW_SocketException)*/
+OW_ServerSocketImpl::close()
 {
 	if(m_isActive)
 	{
@@ -420,7 +419,7 @@ OW_ServerSocketImpl::close() /*throw (OW_SocketException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::fillAddrParms() /*throw (OW_SocketException)*/
+OW_ServerSocketImpl::fillAddrParms()
 {
 	socklen_t len;
 	if (m_localAddress.getType() == OW_SocketAddress::INET)

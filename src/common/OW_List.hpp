@@ -65,253 +65,250 @@ public:
 	typedef typename L::reverse_iterator reverse_iterator;
 	typedef typename L::const_reverse_iterator const_reverse_iterator;
 
-	OW_List() /*throw (std::exception)*/ : m_impl(new L) {}
+	OW_List() : m_impl(new L) {}
 
-	explicit OW_List(L* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
+	explicit OW_List(L* toWrap) : m_impl(toWrap)
 	{  }
 
 	template<class InputIterator>
-	OW_List(InputIterator first, InputIterator last) /*throw (std::exception)*/ : m_impl(new L(first, last))
+	OW_List(InputIterator first, InputIterator last) : m_impl(new L(first, last))
 	{
 	}
 
-	OW_List(size_type n, const T& value) /*throw (std::exception)*/ : m_impl(new L(n, value))
+	OW_List(size_type n, const T& value) : m_impl(new L(n, value))
 	{
 	}
 
-	OW_List(int n, const T& value) /*throw (std::exception)*/ : m_impl(new L(n, value))
+	OW_List(int n, const T& value) : m_impl(new L(n, value))
 	{
 	}
 
-	OW_List(long n, const T& value) /*throw (std::exception)*/ : m_impl(new L(n, value))
+	OW_List(long n, const T& value) : m_impl(new L(n, value))
 	{
 	}
 
-	explicit OW_List(size_type n) /*throw (std::exception)*/ : m_impl(new L(n))
+	explicit OW_List(size_type n) : m_impl(new L(n))
 	{
 	}
 
-	L* getImpl() /*throw (std::exception)*/
+	L* getImpl()
 	{
 		return &*m_impl;
 	}
 
-	iterator begin() /*throw (std::exception)*/
+	iterator begin()
 	{
 		return m_impl->begin();
 	}
 
-	const_iterator begin() const /*throw (std::exception)*/
+	const_iterator begin() const
 	{
 		return m_impl->begin();
 	}
 
-	iterator end() /*throw (std::exception)*/
+	iterator end()
 	{
 		return m_impl->end();
 	}
 
-	const_iterator end() const /*throw (std::exception)*/
+	const_iterator end() const
 	{
 		return m_impl->end();
 	}
 
-	reverse_iterator rbegin() /*throw (std::exception)*/
+	reverse_iterator rbegin()
 	{
 		return m_impl->rbegin();
 	}
 
-	const_reverse_iterator rbegin() const /*throw (std::exception)*/
+	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
 	}
 
-	reverse_iterator rend() /*throw (std::exception)*/
+	reverse_iterator rend()
 	{
 		return m_impl->rend();
 	}
 
-	const_reverse_iterator rend() const /*throw (std::exception)*/
+	const_reverse_iterator rend() const
 	{
 		return m_impl->rend();
 	}
 
-	bool empty() const /*throw (std::exception)*/
+	bool empty() const
 	{
 		return m_impl->empty();
 	}
 
-	size_type size() const /*throw (std::exception)*/
+	size_type size() const
 	{
 		return m_impl->size();
 	}
 
-	size_type max_size() const /*throw (std::exception)*/
+	size_type max_size() const
 	{
 		return m_impl->max_size();
 	}
 
-	reference front() /*throw (std::exception)*/
+	reference front()
 	{
 		return m_impl->front();
 	}
 
-	const_reference front() const /*throw (std::exception)*/
+	const_reference front() const
 	{
 		return m_impl->front();
 	}
 
-	reference back() /*throw (std::exception)*/
+	reference back()
 	{
 		return m_impl->back();
 	}
 
-	const_reference back() const /*throw (std::exception)*/
+	const_reference back() const
 	{
 		return m_impl->back();
 	}
 
-	void swap(OW_List<T>& x) /*throw (std::exception)*/
+	void swap(OW_List<T>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
 
-	iterator insert(iterator position, const T& x) /*throw (std::exception)*/
+	iterator insert(iterator position, const T& x)
 	{
 		return m_impl->insert(position, x);
 	}
 
-	iterator insert(iterator position) /*throw (std::exception)*/
+	iterator insert(iterator position)
 	{
 		return m_impl->insert(position);
 	}
 
 	template<class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last)
-	/*throw (std::exception)*/
 	{
 		m_impl->insert(position, first, last);
 	}
 
-	void insert(iterator pos, size_type n, const T& x) /*throw (std::exception)*/
+	void insert(iterator pos, size_type n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
 
-	void insert(iterator pos, int n, const T& x) /*throw (std::exception)*/
+	void insert(iterator pos, int n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
 
-	void insert(iterator pos, long n, const T& x) /*throw (std::exception)*/
+	void insert(iterator pos, long n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
 
-	void push_front(const T& x) /*throw (std::exception)*/
+	void push_front(const T& x)
 	{
 		m_impl->push_front(x);
 	}
 
-	void push_back(const T& x) /*throw (std::exception)*/
+	void push_back(const T& x)
 	{
 		m_impl->push_back(x);
 	}
 
-	iterator erase(iterator position) /*throw (std::exception)*/
+	iterator erase(iterator position)
 	{
 		return m_impl->erase(position);
 	}
 
-	iterator erase(iterator first, iterator last) /*throw (std::exception)*/
+	iterator erase(iterator first, iterator last)
 	{
 		return m_impl->erase(first, last);
 	}
 
-	void resize(size_type new_size, const T& x) /*throw (std::exception)*/
+	void resize(size_type new_size, const T& x)
 	{
 		m_impl->resize(new_size, x);
 	}
 
-	void resize(size_type new_size) /*throw (std::exception)*/
+	void resize(size_type new_size)
 	{
 		m_impl->resize(new_size);
 	}
 
-	void clear() /*throw (std::exception)*/
+	void clear()
 	{
 		m_impl->clear();
 	}
 
-	void pop_front() /*throw (std::exception)*/
+	void pop_front()
 	{
 		m_impl->pop_front();
 	}
 
-	void pop_back() /*throw (std::exception)*/
+	void pop_back()
 	{
 		m_impl->pop_back();
 	}
 
-	void splice(iterator position, OW_List& x) /*throw (std::exception)*/
+	void splice(iterator position, OW_List& x)
 	{
 		m_impl->splice(position, *x.m_impl);
 	}
 
-	void splice(iterator position, OW_List& x, iterator i) /*throw (std::exception)*/
+	void splice(iterator position, OW_List& x, iterator i)
 	{
 		m_impl->splice(position, *x.m_impl, i);
 	}
 
 	void splice(iterator position, OW_List& x, iterator first, iterator last)
-	/*throw (std::exception)*/
 	{
 		m_impl->splice(position, *x.m_impl, first, last);
 	}
 
-	void remove(const T& value) /*throw (std::exception)*/
+	void remove(const T& value)
 	{
 		m_impl->remove(value);
 	}
 
-	void unique() /*throw (std::exception)*/
+	void unique()
 	{
 		m_impl->unique();
 	}
 
-	void merge(OW_List& x) /*throw (std::exception)*/
+	void merge(OW_List& x)
 	{
 		m_impl->merge(*x.m_impl);
 	}
 
-	void reverse() /*throw (std::exception)*/
+	void reverse()
 	{
 		m_impl->reverse();
 	}
 
-	void sort() /*throw (std::exception)*/
+	void sort()
 	{
 		m_impl->sort();
 	}
 
-	template<class Predicate> void remove_if(Predicate p) /*throw (std::exception)*/
+	template<class Predicate> void remove_if(Predicate p)
 	{
 		m_impl->remove_if(p);
 	}
 
-	template<class BinaryPredicate> void unique(BinaryPredicate bp) /*throw (std::exception)*/
+	template<class BinaryPredicate> void unique(BinaryPredicate bp)
 	{
 		m_impl->unique(bp);
 	}
 
 	template<class StrictWeakOrdering> void merge(OW_List& x, StrictWeakOrdering swo)
-	/*throw (std::exception)*/
 	{
 		m_impl->merge(*x.m_impl, swo);
 	}
 
 	template<class StrictWeakOrdering> void
-		sort(StrictWeakOrdering swo) /*throw (std::exception)*/
+		sort(StrictWeakOrdering swo)
 	{
 		m_impl->sort(swo);
 	}
@@ -324,19 +321,19 @@ public:
 };
 
 template <class T>
-inline bool operator==(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline bool operator==(const OW_List<T>& x, const OW_List<T>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template <class T>
-inline bool operator<(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline bool operator<(const OW_List<T>& x, const OW_List<T>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
 
 template <class T>
-inline void swap(OW_List<T>& x, OW_List<T>& y) /*throw (std::exception)*/
+inline void swap(OW_List<T>& x, OW_List<T>& y)
 {
 	x.swap(y);
 }

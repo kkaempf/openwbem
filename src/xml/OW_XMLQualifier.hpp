@@ -27,12 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-/**
- *
- *
- */
-
 #ifndef OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
 #define OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
 
@@ -56,17 +50,21 @@ public:
 
 protected:
 
-	static OW_String getQualifierName(OW_CIMXMLParser& node)
-		/*throw (OW_CIMException)*/;
+	/**
+	 * @throws OW_CIMException
+	 */
+	static OW_String getQualifierName(OW_CIMXMLParser& node);
 
 
 
 private:
 
+	/**
+	 * @throws OW_CIMException
+	 */
 	static void processScope(OW_CIMXMLParser& parser,
 		OW_CIMQualifierType& cqt, const char* attrName,
-		OW_CIMScope::Scope scopeValue)
-		/*throw (OW_CIMException)*/;
+		OW_CIMScope::Scope scopeValue);
 
 };
 

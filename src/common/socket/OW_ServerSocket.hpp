@@ -76,11 +76,11 @@ public:
 	 * @param isSSL is the Server Socket an SSL socket?
 	 * @param queueSize the size of the listen queue
 	 * @param allInterfaces do we listen on all interfaces?
+	 * @throws OW_SocketException
 	 */
 	void doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL, int queueSize=10,
 			OW_SocketFlags::EAllInterfacesFlag allInterfaces = OW_SocketFlags::E_NOT_ALL_INTERFACES, 
 			OW_SocketFlags::EReuseAddrFlag reuseAddr = OW_SocketFlags::E_REUSE_ADDR)
-		/*throw (OW_SocketException)*/
 	{
 		m_impl->doListen(port, isSSL, queueSize, allInterfaces, reuseAddr);
 	}
@@ -90,18 +90,19 @@ public:
 	 *
 	 * @param filename The filename for the unix domain socket
 	 * @param queueSize the size of the listen queue
+	 * @throws OW_SocketException
 	 */
 	void doListen(const OW_String& filename, int queueSize=10, 
 		bool reuseAddr=true)
-		/*throw (OW_SocketException)*/
 	{
 		m_impl->doListen(filename, queueSize, reuseAddr);
 	}
 
 	/**
 	 * Close the listen socket
+	 * @throws OW_SocketException
 	 */
-	void close() /*throw (OW_SocketException)*/ { m_impl->close();}
+	void close() { m_impl->close();}
 	
 	/**
 	 * Return the address of the local host

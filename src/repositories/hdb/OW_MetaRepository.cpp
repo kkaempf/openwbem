@@ -78,17 +78,17 @@ OW_MetaRepository::open(const OW_String& path)
 	// Create root qualifier container
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_String qcontk(QUAL_CONTAINER);
-    createRootNode(qcontk, hdl);
+	createRootNode(qcontk, hdl);
 
 	qcontk += "/" + OW_String("root");
-    createRootNode(qcontk,hdl);
+	createRootNode(qcontk,hdl);
 
-    // Create root class container
-    qcontk = CLASS_CONTAINER;
-    createRootNode(qcontk, hdl);
-    
-    qcontk += "/" + OW_String("root");
-    createRootNode(qcontk,hdl);
+	// Create root class container
+	qcontk = CLASS_CONTAINER;
+	createRootNode(qcontk, hdl);
+
+	qcontk += "/" + OW_String("root");
+	createRootNode(qcontk,hdl);
 
 }
 
@@ -104,7 +104,7 @@ OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns_
 	//}
 	if(!ns.empty())
 	{
-		qcontk += "/";                        
+		qcontk += "/";
 		qcontk += ns;
 	}
 
@@ -122,13 +122,13 @@ OW_MetaRepository::_makeQualPath(const OW_String& ns_, const OW_String& qualName
 	//}
 
 	OW_String qp(QUAL_CONTAINER);
-    qp += "/";
+	qp += "/";
 	qp += ns;
-    if (!qualName.empty())
-    {
-        qp += "/";
-        qp += qualName;
-    }
+	if (!qualName.empty())
+	{
+		qp += "/";
+		qp += qualName;
+	}
 
 	return qp.toLowerCase();
 }
@@ -143,8 +143,8 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 	//	cp = cp.substring(1);
 	//}
 	OW_String cp(CLASS_CONTAINER);
-    cp += "/";
-    cp += ns;
+	cp += "/";
+	cp += ns;
 	cp += "/";
 	cp += className;
 
@@ -161,10 +161,10 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 
 	OW_CIMQualifierType qualType = m_qualCache.getFromCache(qkey);
 
-    if (qualType)
-    {
-        return qualType;
-    }
+	if (qualType)
+	{
+		return qualType;
+	}
 
 	OW_GenericHDBRepository* prep;
 	OW_HDBHandle lhdl;
@@ -188,17 +188,17 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 		if (nameSpaceExists(QUAL_CONTAINER + "/" + ns))
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-				format("CIM QualifierType \"%1\" not found in namespace: %2",
-					qualName, ns).c_str());
+					format("CIM QualifierType \"%1\" not found in namespace: %2",
+						qualName, ns).c_str());
 		}
 		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
-				ns.c_str());
+					ns.c_str());
 		}
 	}
 
-    m_qualCache.addToCache(qualType, qkey);
+	m_qualCache.addToCache(qualType, qkey);
 
 	return qualType;
 }
@@ -263,7 +263,7 @@ OW_MetaRepository::deleteQualifierType(const OW_String& ns,
 
 	hdl->removeNode(node);
 
-    m_qualCache.removeFromCache(qkey);
+	m_qualCache.removeFromCache(qkey);
 
 	return true;
 }
@@ -316,7 +316,7 @@ OW_MetaRepository::_addQualifierType(const OW_String& ns,
 
 	addCIMObject(qt, qkey, pnode, hdl.getHandle());
 
-    m_qualCache.addToCache(qt, qkey);
+	m_qualCache.addToCache(qt, qkey);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -343,8 +343,8 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 		// If we made it to this point, we know we have a qualifier type
 		// So go ahead and update it.
 		updateCIMObject(qt, node, hdl.getHandle());
-        m_qualCache.removeFromCache(qkey);
-        m_qualCache.addToCache(qt, qkey);
+		m_qualCache.removeFromCache(qkey);
+		m_qualCache.addToCache(qt, qkey);
 	}
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -430,8 +430,8 @@ OW_MetaRepository::_getClassNameFromNode(OW_HDBNode& node)
 	OW_RepositoryIStream istrm(node.getDataLen(), node.getData());
 	// Not going to do this, it's too slow! cimObj.readObject(istrm);
 	// This is breaking abstraction, and may bite us later if OW_CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
-        OW_CIMBase::readSig( istrm, OW_CIMCLASSSIG );
-        name.readObject(istrm);
+	OW_CIMBase::readSig( istrm, OW_CIMCLASSSIG );
+	name.readObject(istrm);
 
 	return name;
 }
@@ -688,30 +688,30 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	OW_String childName = childClass.getName();
 	OW_String parentName = childClass.getSuperClass();
 	OW_CIMClass parentClass(OW_CIMNULL);
-    OW_HDBNode parentNode;
+	OW_HDBNode parentNode;
 
 	if(!parentName.empty())
 	{
 		// Get the parent class
 		OW_String superID = _makeClassPath(ns, parentName);
-        //parentClass = m_classCache.getFromCache(superID);
+		//parentClass = m_classCache.getFromCache(superID);
 
-        if (!parentClass)
-        {
-            parentNode = hdl.getNode(superID);
-            if(!parentNode)
-            {
-                OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-                    parentName.c_str());
-            }
+		if (!parentClass)
+		{
+			parentNode = hdl.getNode(superID);
+			if(!parentNode)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
+						parentName.c_str());
+			}
 
-            parentClass = _getClassFromNode(parentNode, hdl, ns);
-            if(!parentClass)
-            {
-                OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-                    parentName.c_str());
-            }
-        }
+			parentClass = _getClassFromNode(parentNode, hdl, ns);
+			if(!parentClass)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
+						parentName.c_str());
+			}
+		}
 	}
 
 	if(!parentClass)
@@ -767,8 +767,8 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 				if (pqual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
 				{
 					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-						format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
-							"Child cannot override it.", pqual.getName()).c_str());
+							format("Parent class qualifier %1 has DISABLEOVERRIDE flavor. "
+								"Child cannot override it.", pqual.getName()).c_str());
 				}
 				newQuals.append(qual);
 			}
@@ -798,41 +798,41 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 					propArray[i].setPropagated(true);
 				}
 
-                // now make sure any qualifiers are properly set
-                OW_CIMQualifierArray parentQuals = parentProp.getQualifiers();
-                for (size_t j = 0; j < parentQuals.size(); ++j)
-                {
-                    OW_CIMQualifier& qual = parentQuals[j];
-                    // If the qualifier has DisableOverride flavor, the 
-                    // subclass can't change it.  (e.g. Key). It gets the
-                    // parent qualifier.
-                    if (qual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
-                    {
-                        if (!propArray[i].getQualifier(qual.getName()))
-                        {
-                            propArray[i].addQualifier(qual);
-                        }
-                        else
-                        {
+				// now make sure any qualifiers are properly set
+				OW_CIMQualifierArray parentQuals = parentProp.getQualifiers();
+				for (size_t j = 0; j < parentQuals.size(); ++j)
+				{
+					OW_CIMQualifier& qual = parentQuals[j];
+					// If the qualifier has DisableOverride flavor, the 
+					// subclass can't change it.  (e.g. Key). It gets the
+					// parent qualifier.
+					if (qual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
+					{
+						if (!propArray[i].getQualifier(qual.getName()))
+						{
+							propArray[i].addQualifier(qual);
+						}
+						else
+						{
 							logCustInfo(format("Error: %1.%2: qualifier %3 was "
-								"overridden, but the qualifier can't be "
-								"overridden because it has DisableOverride flavor",
-								childClass.getName(), propArray[i].getName(), 
-								qual.getName()));
-                            propArray[i].setQualifier(qual);
-                        }
-                    }
-                    // If the qualifier has ToSubclass (not Restricted), then
-                    // only propagate it down if it's not overridden in the
-                    // subclass.
-                    else if (!qual.hasFlavor(OW_CIMFlavor::RESTRICTED))
-                    {
-                        if (!propArray[i].getQualifier(qual.getName()))
-                        {
-                            propArray[i].addQualifier(qual);
-                        }
-                    }
-                }
+										"overridden, but the qualifier can't be "
+										"overridden because it has DisableOverride flavor",
+										childClass.getName(), propArray[i].getName(), 
+										qual.getName()));
+							propArray[i].setQualifier(qual);
+						}
+					}
+					// If the qualifier has ToSubclass (not Restricted), then
+					// only propagate it down if it's not overridden in the
+					// subclass.
+					else if (!qual.hasFlavor(OW_CIMFlavor::RESTRICTED))
+					{
+						if (!propArray[i].getQualifier(qual.getName()))
+						{
+							propArray[i].addQualifier(qual);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -851,8 +851,8 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 				if(parentClass.isKeyed())
 				{
 					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-						format("Parent class has keys. Child cannot have additional"
-							" key properties: %1", childClass.getName()).c_str());
+							format("Parent class has keys. Child cannot have additional"
+								" key properties: %1", childClass.getName()).c_str());
 				}
 			}
 
@@ -866,7 +866,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	for(size_t i = 0; i < methArray.size(); i++)
 	{
 		if(parentClass.getMethod(methArray[i].getName()) &&
-		   !methArray[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
+				!methArray[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			methArray[i].setOriginClass(parentName);
 			methArray[i].setPropagated(true);
@@ -877,25 +877,25 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			methArray[i].setPropagated(false);
 		}
 	}
-  childClass.setMethods(methArray);
+	childClass.setMethods(methArray);
 
-  if(parentClass.isKeyed())
-  {
-	  childClass.setIsKeyed();
-  }
+	if(parentClass.isKeyed())
+	{
+		childClass.setIsKeyed();
+	}
 
-  // Don't allow the child class to be an association if the parent class isn't.
-  // This shouldn't normally happen, because the association qualifier has
-  // a DISABLEOVERRIDE flavor, so it will be caught in an earlier test.
-  if(childClass.isAssociation() && !parentClass.isAssociation())
-  {
-	  OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-		  format("Association class is derived from non-association class: %1",
-			  childClass.getName()).c_str());
-  }
+	// Don't allow the child class to be an association if the parent class isn't.
+	// This shouldn't normally happen, because the association qualifier has
+	// a DISABLEOVERRIDE flavor, so it will be caught in an earlier test.
+	if(childClass.isAssociation() && !parentClass.isAssociation())
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				format("Association class is derived from non-association class: %1",
+					childClass.getName()).c_str());
+	}
 
-  //_throwIfBadClass(childClass, parentClass);
-  return parentNode;
+	//_throwIfBadClass(childClass, parentClass);
+	return parentNode;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1121,14 +1121,14 @@ OW_MetaRepository::deleteNameSpace(const OW_String& nsName)
 
 	OW_GenericHDBRepository::deleteNameSpace(QUAL_CONTAINER + "/" + nsName);
 	OW_GenericHDBRepository::deleteNameSpace(CLASS_CONTAINER + "/" + nsName);
-    /*
+	/*
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = _getQualContainer(hdl, nsName);
 	if(node)
 	{
 		hdl->removeNode(node);
 	}
-    */
+	 */
 
 	m_classCache.clearCache();
 }
@@ -1144,7 +1144,7 @@ OW_MetaRepository::createNameSpace(OW_String ns)
 	}
 
 	// Now create the same name space in the qualifier container.
-    // TODO: If the second create fails, we need to undo the first one.
+	// TODO: If the second create fails, we need to undo the first one.
 	return OW_GenericHDBRepository::createNameSpace(QUAL_CONTAINER + "/" + ns);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

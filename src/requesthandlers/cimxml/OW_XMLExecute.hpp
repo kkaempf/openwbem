@@ -71,9 +71,11 @@ private:
 	OW_String m_functionName;
 
 
+	/**
+	 * @throws OW_IOException
+	 */
 	void executeIntrinsic(std::ostream& osrt, OW_CIMXMLParser& parser, OW_CIMOMHandleIFC& hdl,
 			const OW_String& ns);
-		/*throw (OW_IOException); */
 	void executeExtrinsic(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMOMHandleIFC& lch);
 
@@ -93,21 +95,21 @@ private:
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 #endif
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	void createClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void createClass(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void modifyClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void modifyClass(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void deleteClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void deleteClass(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 #endif
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void deleteInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void modifyInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void modifyInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void setProperty(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void setProperty(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 #endif
 	void enumerateClassNames(std::ostream& ostr, OW_CIMXMLParser& parser,
@@ -133,11 +135,11 @@ private:
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl) ;
 #endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-	void setQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void setQualifier(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	void deleteQualifier(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& /*parser*/,
+	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 #endif
 	void execQuery(std::ostream& ostr, OW_CIMXMLParser& parser,

@@ -113,7 +113,7 @@ OW_Thread::~OW_Thread()
 //////////////////////////////////////////////////////////////////////////////
 // Start the thread
 void
-OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadException)*/
+OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb)
 {
 	if(isRunning())
 	{
@@ -150,7 +150,7 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 //////////////////////////////////////////////////////////////////////////////
 // Wait for this object's thread execution (if any) to complete.
 OW_Int32
-OW_Thread::join() /*throw (OW_ThreadException)*/
+OW_Thread::join()
 {
 	OW_ASSERT(!sameId(m_id, NULLTHREAD));
 

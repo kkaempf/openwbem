@@ -332,6 +332,11 @@ testCancel()
 	OW_NonRecursiveMutexLock l(theThread->m_cancelLock);
 	if (theThread->m_cancelRequested)
 	{
+		// We don't use OW_THROW here because 
+		// OW_ThreadCancelledException is special.  It's not derived
+		// from OW_Exception on purpose so it can be propagated up
+		// the stack easier. This exception shouldn't be caught and not
+		// re-thrown anywhere except in OW_Thread::threadRunner()
 		throw OW_ThreadCancelledException();
 	}
 }

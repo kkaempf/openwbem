@@ -171,10 +171,18 @@ private:
 	static certVerifyFuncPtr_t m_clientCertVerifyCB;
 	static certVerifyFuncPtr_t m_serverCertVerifyCB;
 
-	static SSL_CTX* initCtx(const OW_String& keyfile) /*throw (OW_SSLException)*/;
+	/**
+	 * @throws OW_SSLException
+	 */
+	static SSL_CTX* initCtx(const OW_String& keyfile);
+	/**
+	 * @throws OW_SSLException
+	 */
 	static void loadDHParams(SSL_CTX* ctx, const OW_String& file);
-	/*throw (OW_SSLException)*/
-	static void generateEphRSAKey(SSL_CTX* ctx); /*throw (OW_SSLException)*/
+	/**
+	 * @throws OW_SSLException
+	 */
+	static void generateEphRSAKey(SSL_CTX* ctx);
 	static void uninitServer();
 	static void uninitClient();
 

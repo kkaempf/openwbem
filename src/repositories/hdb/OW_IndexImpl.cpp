@@ -306,7 +306,7 @@ OW_IndexImpl::remove(const char* key, OW_Int32 offset)
 
 //////////////////////////////////////////////////////////////////////////////	
 bool
-OW_IndexImpl::update(const char* key, OW_Int32 newOffset) /*throw (OW_IndexImplException)*/
+OW_IndexImpl::update(const char* key, OW_Int32 newOffset)
 {
 	OpenCloser oc(this);
 	if(m_pDB == NULL)

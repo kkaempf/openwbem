@@ -76,7 +76,6 @@ inetAddrToString(OW_UInt64 addr)
 
 int
 waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionFlag forInput)
-/*throw (OW_SocketException)*/
 {
 	fd_set readfds;
 	fd_set writefds;

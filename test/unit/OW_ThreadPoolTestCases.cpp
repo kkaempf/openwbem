@@ -84,7 +84,7 @@ void OW_ThreadPoolTestCases::testThreadPool()
 	// adding a null OW_RunnableRef should fail
 	unitAssert(!thePool.addWork(OW_RunnableRef()));
 
-	thePool.shutdown(true);
+	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, addWork should fail
 	unitAssert(!thePool.addWork(OW_RunnableRef(new testRunner(ints[0]))));
@@ -118,7 +118,7 @@ void OW_ThreadPoolTestCases::testThreadPool2()
 	// let something happen...
 	OW_Thread::yield();
 
-	thePool.shutdown(true);
+	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
@@ -163,7 +163,7 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 	OW_Thread::yield();
 
 	// false doesn't means to ditch the work still in the queue and shutdown asap.
-	thePool.shutdown(false, 0);
+	thePool.shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 0);
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
@@ -200,7 +200,7 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic1()
 	// adding a null OW_RunnableRef should fail
 	unitAssert(!thePool.addWork(OW_RunnableRef()));
 
-	thePool.shutdown(true);
+	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, addWork should fail
 	unitAssert(!thePool.addWork(OW_RunnableRef(new testRunner(ints[0]))));
@@ -234,7 +234,7 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic2()
 	// let something happen...
 	OW_Thread::yield();
 
-	thePool.shutdown(true);
+	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
@@ -278,8 +278,8 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic3()
 	// let something happen...
 	OW_Thread::yield();
 
-	// false doesn't means to ditch the work still in the queue and shutdown asap.
-	thePool.shutdown(false);
+	// ditch the work still in the queue and shutdown asap.
+	thePool.shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
 	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));

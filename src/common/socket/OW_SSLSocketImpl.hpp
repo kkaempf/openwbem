@@ -59,22 +59,32 @@ public:
 	 */
 	OW_SSLSocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
 
-	OW_SSLSocketImpl(const OW_SocketAddress& addr)
-		/*throw (OW_SocketException)*/;
+	/**
+	 * @throws OW_SocketException
+	 */
+	OW_SSLSocketImpl(const OW_SocketAddress& addr);
 
 	virtual ~OW_SSLSocketImpl();
 
-	virtual void connect(const OW_SocketAddress& addr) /*throw (OW_SocketException)*/;
+	/**
+	 * @throws OW_SocketException
+	 */
+	virtual void connect(const OW_SocketAddress& addr);
 	virtual void disconnect();
 
 	OW_Select_t getSelectObj() const;
 
 
 private:
+	/**
+	 * @throws OW_SocketException
+	 */
 	virtual int readAux(void* dataIn, int dataInLen);
-		/*throw (OW_SocketException)*/
+
+	/**
+	 * @throws OW_SocketException
+	 */
 	virtual int writeAux(const void* dataOut, int dataOutLen);
-		/*throw (OW_SocketException)*/
 
 	void connectSSL();
 

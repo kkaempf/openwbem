@@ -150,8 +150,9 @@ public:
 	 * @param dataOutLen the length of the data to be written
 	 * @param errorAsException true if errors should throw exceptions.
 	 * @return the number of bytes written.
+	 * @throws OW_SocketException
 	 */
-	int write(const void* dataOut, int dataOutLen, bool errorAsException=false) /*throw (OW_SocketException)*/
+	int write(const void* dataOut, int dataOutLen, bool errorAsException=false)
 		{ return m_impl->write(dataOut, dataOutLen, errorAsException); }
 
 	/**
@@ -160,8 +161,9 @@ public:
 	 * @param dataInLen the number of bytes to read.
 	 * @param errorAsException true if errors should throw exceptions.
 	 * @return the number of bytes read.
+	 * @throws OW_SocketException
 	 */
-	int read(void* dataIn, int dataInLen, bool errorAsException=false) /*throw (OW_SocketException)*/
+	int read(void* dataIn, int dataInLen, bool errorAsException=false)
 		{ return m_impl->read(dataIn, dataInLen, errorAsException); }
 
 	/**
@@ -169,8 +171,9 @@ public:
 	 * @param timeOutSecs the number of seconds to wait.
 	 * 	-1 means infinite
 	 * @return true if the timeout expired
+	 * @throws OW_SocketException
 	 */
-	bool waitForInput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+	bool waitForInput(int timeOutSecs=-1)
 		{ return m_impl->waitForInput(timeOutSecs); }
 
 	/**
@@ -178,8 +181,9 @@ public:
 	 * @param timeOutSecs the number of seconds to wait.
 	 * 	-1 means infinite
 	 * @return true if the timeout expired
+	 * @throws OW_SocketException
 	 */
-	bool waitForOutput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+	bool waitForOutput(int timeOutSecs=-1)
 		{ return m_impl->waitForOutput(timeOutSecs); }
 
 	/**
@@ -197,22 +201,25 @@ public:
 	/**
 	 * Get an istream to read from the socket
 	 * @return a istream& which can be used for socket input
+	 * @throws OW_SocketException
 	 */
-	std::istream& getInputStream() /*throw (OW_SocketException)*/
+	std::istream& getInputStream()
 		{ return m_impl->getInputStream(); }
 
 	/**
 	 * Get an ostream to write to the socket
 	 * @return an ostream& which can be used for socket output
+	 * @throws OW_SocketException
 	 */
-	std::ostream& getOutputStream() /*throw (OW_SocketException)*/
+	std::ostream& getOutputStream()
 		{ return m_impl->getOutputStream(); }
 
 	/**
 	 * Get an iostream to read/write from/to the socket
 	 * @return an iostream& which can be used for socket input and output.
+	 * @throws OW_SocketException
 	 */
-	std::iostream& getIOStream() /*throw (OW_SocketException)*/ 	
+	std::iostream& getIOStream()
 		{ return m_impl->getIOStream(); }
 
 

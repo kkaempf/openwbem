@@ -124,7 +124,6 @@ OW_SSLSocketImpl::getSelectObj() const
 //////////////////////////////////////////////////////////////////////////////
 void 
 OW_SSLSocketImpl::connect(const OW_SocketAddress& addr)
-	/*throw (OW_SocketException)*/
 {
 	OW_SocketBaseImpl::connect(addr);
 	connectSSL();
@@ -186,7 +185,6 @@ OW_SSLSocketImpl::disconnect()
 //////////////////////////////////////////////////////////////////////////////
 int 
 OW_SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
-	/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
@@ -199,7 +197,6 @@ OW_SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 //////////////////////////////////////////////////////////////////////////////
 int 
 OW_SSLSocketImpl::readAux(void* dataIn, int dataInLen)
-	/*throw (OW_SocketException)*/
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);

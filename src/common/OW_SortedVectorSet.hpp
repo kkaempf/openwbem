@@ -92,12 +92,12 @@ public:
 	size_type size() const { return m_impl->size(); }
 	size_type max_size() const { return m_impl->max_size(); }
 
-	void swap(OW_SortedVectorSet<T, Compare>& x) /*throw (std::exception)*/
+	void swap(OW_SortedVectorSet<T, Compare>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
 
-	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
+	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (i != m_impl->end() && *i == x)
@@ -110,7 +110,7 @@ public:
 		}
 	}
 
-	iterator insert(iterator, const value_type& x) /*throw (std::exception)*/
+	iterator insert(iterator, const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		
@@ -118,7 +118,7 @@ public:
 	}
 
 	template <class InputIterator>
-	void insert(InputIterator first, InputIterator last) /*throw (std::exception)*/
+	void insert(InputIterator first, InputIterator last)
 	{
 		for (; first != last; ++first)
 		{
@@ -128,12 +128,12 @@ public:
 
 	}
 
-	void erase(iterator position) /*throw (std::exception)*/
+	void erase(iterator position)
 	{
 		m_impl->erase(position);
 	}
 
-	size_type erase(const key_type& x) /*throw (std::exception)*/
+	size_type erase(const key_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (i != m_impl->end() && *i == x)
@@ -147,17 +147,17 @@ public:
 		}
 	}
 
-	void erase(iterator first, iterator last) /*throw (std::exception)*/
+	void erase(iterator first, iterator last)
 	{
 		m_impl->erase(first, last);
 	}
 
-	void clear() /*throw (std::exception)*/
+	void clear()
 	{
 		m_impl->clear();
 	}
 
-	iterator find(const key_type& x) const /*throw (std::exception)*/
+	iterator find(const key_type& x) const
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (pos != m_impl->end() && *pos == x)
@@ -170,7 +170,7 @@ public:
 		}
 	}
 
-	size_type count(const key_type& x) const /*throw (std::exception)*/
+	size_type count(const key_type& x) const
 	{
 		if (std::binary_search(m_impl->begin(), m_impl->end(), x, Compare()))
 		{
@@ -182,18 +182,18 @@ public:
 		}
 	}
 
-	iterator lower_bound(const key_type& x) const /*throw (std::exception)*/
+	iterator lower_bound(const key_type& x) const
 	{
 		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
 
-	iterator upper_bound(const key_type& x) const /*throw (std::exception)*/
+	iterator upper_bound(const key_type& x) const
 	{
 		return std::upper_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
 
 	std::pair<iterator, iterator>
-		equal_range(const key_type& x) const /*throw (std::exception)*/
+		equal_range(const key_type& x) const
 	{
 		return std::equal_range(m_impl->begin(), m_impl->end(), x, Compare());
 	}
@@ -207,21 +207,21 @@ public:
 
 template<class T, class Compare>
 inline bool operator==(const OW_SortedVectorSet<T, Compare>& x,
-	const OW_SortedVectorSet<T, Compare>& y) /*throw (std::exception)*/
+	const OW_SortedVectorSet<T, Compare>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class T, class Compare>
 inline bool operator<(const OW_SortedVectorSet<T, Compare>& x,
-	const OW_SortedVectorSet<T, Compare>& y) /*throw (std::exception)*/
+	const OW_SortedVectorSet<T, Compare>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
 
 template <class T, class Compare>
 inline void swap(OW_SortedVectorSet<T, Compare>& x,
-	OW_SortedVectorSet<T, Compare>& y) /*throw (std::exception)*/
+	OW_SortedVectorSet<T, Compare>& y)
 {
 	x.swap(y);
 }

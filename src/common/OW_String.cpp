@@ -844,14 +844,12 @@ OW_String::erase(size_t idx, size_t len)
 OW_String&
 OW_String::toLowerCase()
 {
-	if (length())
+	size_t len = length();
+	for(size_t i = 0; i < len; i++)
 	{
-		for(size_t i = 0; i < length(); i++)
-		{
-			// Don't need to check m_buf for NULL, because if length() == 0,
-			// this code won't be executed.
-			m_buf->data()[i] = tolower(m_buf->data()[i]);
-		}
+		// Don't need to check m_buf for NULL, because if length() == 0,
+		// this code won't be executed.
+		m_buf->data()[i] = tolower(m_buf->data()[i]);
 	}
 	return *this;
 }
@@ -862,21 +860,19 @@ OW_String::toLowerCase()
 OW_String&
 OW_String::toUpperCase()
 {
-	if (length())
+	size_t len = length();
+	for(size_t i = 0; i < len; i++)
 	{
-		for(size_t i = 0; i < length(); i++)
-		{
-			// Don't need to check m_buf for NULL, because if length() == 0,
-			// this code won't be executed.
-			m_buf->data()[i] = toupper(m_buf->data()[i]);
-		}
+		// Don't need to check m_buf for NULL, because if length() == 0,
+		// this code won't be executed.
+		m_buf->data()[i] = toupper(m_buf->data()[i]);
 	}
 	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
+OW_String::readObject(istream& istrm)
 {
 	OW_UInt32 len;
 	OW_BinarySerialization::readLen(istrm, len);
@@ -890,7 +886,7 @@ OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
+OW_String::writeObject(ostream& ostrm) const
 {
 	OW_UInt32 len = static_cast<OW_UInt32>(length());
 	OW_BinarySerialization::writeLen(ostrm, len);
@@ -933,15 +929,15 @@ const char&
 OW_String::operator[] (size_t ndx) const
 {
 #ifdef OW_DEBUG
-    OW_ASSERT(ndx <= length());
+	OW_ASSERT(ndx <= length());
 #endif
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// m_buf->data() won't be executed.
 	//return (ndx <= length()) ? *(m_buf->data() + ndx) : cnullChar;
 	if (ndx <= length()) 
-        return *(m_buf->data() + ndx);
-    else
-        return cnullChar;
+		return *(m_buf->data() + ndx);
+	else
+		return cnullChar;
 }
 
 //////////////////////////////////////////////////////////////////////////////

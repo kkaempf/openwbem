@@ -40,32 +40,31 @@
  */
 class OW_dlSharedLibrary : public OW_SharedLibrary
 {
-	public:
-		OW_dlSharedLibrary(void * libhandle, const OW_String& libName)
-			: OW_SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
-		{
-		}
+public:
+	OW_dlSharedLibrary(void * libhandle, const OW_String& libName)
+		: OW_SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+	{
+	}
 
-		virtual ~OW_dlSharedLibrary();
+	virtual ~OW_dlSharedLibrary();
 
 
-	protected:
-		/**
-		 * Derived classes have to override this function to implement
-		 * the symbol loading.  The symbol to be looked up is contained in
-		 * functionName, and the pointer to the function should be written
-		 * into *fp.  Return true if the function succeeded, false otherwise.
-		 * @param functionName	The name of the function to resolve.
-		 * @param fp				Where to store the function pointer.
-		 * @return true if function succeeded, false otherwise.
-		 */
-		virtual bool doGetFunctionPointer( const OW_String& functionName,
-												  void** fp ) const;
-			// throw ()
+protected:
+	/**
+	 * Derived classes have to override this function to implement
+	 * the symbol loading.  The symbol to be looked up is contained in
+	 * functionName, and the pointer to the function should be written
+	 * into *fp.  Return true if the function succeeded, false otherwise.
+	 * @param functionName	The name of the function to resolve.
+	 * @param fp				Where to store the function pointer.
+	 * @return true if function succeeded, false otherwise.
+	 */
+	virtual bool doGetFunctionPointer( const OW_String& functionName,
+											  void** fp ) const;
 
-	private:
-		void* m_libhandle;
-		OW_String m_libName;
+private:
+	void* m_libhandle;
+	OW_String m_libName;
 };
 
 #endif

@@ -1096,7 +1096,7 @@ OW_HTTPSvrConnection::options()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::sendError(int resCode)	/*throw (OW_IOException)*/
+OW_HTTPSvrConnection::sendError(int resCode)
 {
 	if (!m_ostr)
 	{

@@ -354,7 +354,7 @@ OW_SocketBaseImpl::disconnect()
 //////////////////////////////////////////////////////////////////////////////
 // JBW this needs reworked.
 void
-OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::fillInetAddrParms()
 {
 	socklen_t len;
 	OW_InetSocketAddress_t addr;
@@ -387,7 +387,7 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SocketBaseImpl::fillUnixAddrParms() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::fillUnixAddrParms()
 {
 	socklen_t len;
 	OW_UnixSocketAddress_t addr;
@@ -408,7 +408,6 @@ static OW_Mutex guard;
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException)
-	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
 	bool isError = false;
@@ -460,7 +459,6 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsExcept
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException) 	
-	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
 	bool isError = false;
@@ -507,7 +505,7 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::waitForInput(int timeOutSecs)
 {
 	int rval = OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_INPUT);
 	if (rval == ETIMEDOUT)
@@ -519,28 +517,28 @@ OW_SocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SocketBaseImpl::waitForOutput(int timeOutSecs) /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::waitForOutput(int timeOutSecs)
 {
 	return OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 istream&
-OW_SocketBaseImpl::getInputStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getInputStream()
 {
 	return m_in;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-OW_SocketBaseImpl::getOutputStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getOutputStream()
 {
 	return m_out;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 iostream&
-OW_SocketBaseImpl::getIOStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getIOStream()
 {
 	return m_inout;
 }

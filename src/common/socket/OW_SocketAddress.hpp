@@ -63,9 +63,9 @@ public:
 	 * @param port The port
 	 *
 	 * @return An SocketAddress for the host and port
+	 * @throws OW_UnknownHostException
 	 */
-	static OW_SocketAddress getByName(const OW_String& host, unsigned short port = 0)
-		/*throw (OW_UnknownHostException)*/;
+	static OW_SocketAddress getByName(const OW_String& host, unsigned short port = 0);
 
 	/**
 	 * Do a DNS lookup on a hostname and return a list of all addresses
