@@ -54,7 +54,7 @@ typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
 
 // This class is meant to hold common functionality in the client-side CIMOM
 // handles	
-class ClientCIMOMHandle : public CIMOMHandleIFC
+class OW_CLIENT_API ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 	ClientCIMOMHandle() : CIMOMHandleIFC(), m_trailers() {}

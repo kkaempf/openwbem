@@ -9,8 +9,6 @@ LINK = link
 SRCDIR = ..\..\..\..\src
 TOOLSDIR = ..\tools
 
-MAP2DEF = $(TOOLSDIR)\owmap2def.exe
-
 INCS = /I".." /I$(SRCDIR)\common /I$(SRCDIR)\cim /I$(SRCDIR)\ifcs /I$(SRCDIR)\common\socket /I"C:\OpenSSL\include" /I$(SRCDIR)\client
 
 !IFDEF DEBUG
@@ -75,16 +73,10 @@ OBJS = \
 	$(OBJDIR)\OW_XMLQualifier.obj \
 	$(OBJDIR)\OW_XMLUnescape.obj
 
-$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libowxml.lib" $(OBJS) $(LIBS)
-
-#	$(MAP2DEF) $(TARGETDIR)\libowxml.map $(TARGETDIR)\libowxml.def
-#	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
-#		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-#		/IMPLIB:"$(TARGETDIR)\libowxml.lib" /DEF:"$(TARGETDIR)\libowxml.def" \
-#		$(OBJS) $(LIBS)
 
 clean:
 	-@del $(OBJDIR)\*.obj
@@ -98,9 +90,6 @@ $(TARGETDIR):
 
 $(OBJDIR):
 	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
-
-$(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
-	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib
 
 ###############################################################################
 

@@ -52,7 +52,7 @@ namespace OpenWBEM
  * then the openwbem binary protocol will be used, otherwise CIM/XML is the 
  * default.
  */
-class CIMClient
+class OW_CLIENT_API CIMClient
 {
 public:
 	/**

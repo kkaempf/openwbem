@@ -12,8 +12,6 @@ LINK = link
 SRCDIR = ..\..\..\..\src
 TOOLSDIR = ..\tools
 
-MAP2DEF = $(TOOLSDIR)\owmap2def.exe
-
 !IFDEF DEBUG
 BUILDTYPE = Debug
 CPPDEFS = /D"OW_COMMON_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
@@ -194,17 +192,11 @@ IFCOBJS = \
 	$(OBJDIR)\OW_ServiceEnvironmentIFC.obj \
 	$(OBJDIR)\OW_ServiceIFC.obj 
 
-$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATH) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(COMMONOBJS) $(CIMOBJS) \
 		$(SOCKETOBJS) $(IFCOBJS) $(LIBS)
-
-#	$(MAP2DEF) $(TARGETDIR)\$(LIBNAME).map $(TARGETDIR)\$(LIBNAME).def
-#	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATH) /DLL /DEBUG \
-#		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-#		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" /DEF:"$(TARGETDIR)\$(LIBNAME).def" \
-#		$(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) $(LIBS)
 
 clean:
 	-@del $(OBJDIR)\*.obj
@@ -219,9 +211,6 @@ $(TARGETDIR):
 
 $(OBJDIR):
 	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
-
-$(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
-	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib
 
 
 ###############################################################################

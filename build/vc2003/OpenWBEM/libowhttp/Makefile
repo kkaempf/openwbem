@@ -18,8 +18,6 @@ LINK = link
 SRCDIR = ..\..\..\..\src
 TOOLSDIR = ..\tools
 
-MAP2DEF = $(TOOLSDIR)\owmap2def.exe
-
 INCS = \
 /I".." \
 /I$(SRCDIR)\common \
@@ -76,16 +74,10 @@ COMMONOBJS = \
 CLIENTOBJS = \
 	$(OBJDIR)\OW_HTTPClient.obj
 
-$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CLIENTOBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(COMMONOBJS) $(CLIENTOBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(COMMONOBJS) $(CLIENTOBJS) $(LIBS)
-
-#	$(MAP2DEF) $(TARGETDIR)\$(LIBNAME).map $(TARGETDIR)\$(LIBNAME).def
-#	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
-#		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-#		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" /DEF:"$(TARGETDIR)\$(LIBNAME).def" \
-#		$(COMMONOBJS) $(CLIENTOBJS) $(LIBS)
 
 clean:
 	-@del $(OBJDIR)\*.obj
@@ -98,9 +90,6 @@ $(TARGETDIR):
 
 $(OBJDIR):
 	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
-
-$(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
-	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib
 
 ###############################################################################
 

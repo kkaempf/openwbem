@@ -46,7 +46,7 @@ namespace OpenWBEM
  * A CIMOMInfo object represents information about a CIMOM
  * that is known via a discovery mechanism (slp). 
  */
-class CIMOMInfo
+class OW_CLIENT_API CIMOMInfo
 {
 public:
 	/**

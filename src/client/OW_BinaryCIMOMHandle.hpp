@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-class BinaryCIMOMHandle : public ClientCIMOMHandle
+class OW_CLIENT_API BinaryCIMOMHandle : public ClientCIMOMHandle
 {
 public:
 	/**

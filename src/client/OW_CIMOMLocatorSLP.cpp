@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_Format.hpp"
+
 #ifdef OW_HAVE_SLP_H
 
 namespace OpenWBEM

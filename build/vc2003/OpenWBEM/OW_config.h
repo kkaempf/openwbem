@@ -196,9 +196,9 @@
 #endif */
 
 /* Define to 1 if you have the <slp.h> header file. */
-#ifndef OW_HAVE_SLP_H 
-#define OW_HAVE_SLP_H  1 
-#endif
+//#ifndef OW_HAVE_SLP_H 
+//#define OW_HAVE_SLP_H  1 
+//#endif
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #ifndef OW_HAVE_STDINT_H 
@@ -534,6 +534,10 @@
 #endif
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
 
+#ifdef OW_HAVE_SLP_H 
+#undef OW_HAVE_SLP_H
+#endif
+
 // Statements like:
 // #pragma message(Reminder "Fix this problem!")
 // Which will cause messages like:
@@ -582,6 +586,12 @@
 #define OW_HTTP_API OW_EXPORT
 #else
 #define OW_HTTP_API OW_IMPORT
+#endif
+
+#ifdef OW_CLIENT_BUILD
+#define OW_CLIENT_API OW_EXPORT
+#else
+#define OW_CLIENT_API OW_IMPORT
 #endif
 
  

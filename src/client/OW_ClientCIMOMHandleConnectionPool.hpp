@@ -61,7 +61,7 @@ typedef IntrusiveReference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleCon
  * Copy semantics: Non-copyable
  * Exception safety: Strong
  */
-class ClientCIMOMHandleConnectionPool : public IntrusiveCountableBase
+class OW_CLIENT_API ClientCIMOMHandleConnectionPool : public IntrusiveCountableBase
 {
 public:
 	/**

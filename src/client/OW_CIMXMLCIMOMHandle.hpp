@@ -56,7 +56,7 @@ namespace OpenWBEM
  * Copy semantics: Non-copyable
  * Exception safety: Basic
  */
-class CIMXMLCIMOMHandle : public ClientCIMOMHandle
+class OW_CLIENT_API CIMXMLCIMOMHandle : public ClientCIMOMHandle
 {
 public:
 	/**

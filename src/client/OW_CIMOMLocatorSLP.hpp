@@ -40,7 +40,6 @@
 
 #ifdef OW_HAVE_SLP_H
 #include <slp.h>
-#endif // OW_HAVE_SLP_H
 
 #define OW_CIMOM_SLP_SERVICE_TYPE "wbem"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
@@ -48,7 +47,7 @@
 namespace OpenWBEM
 {
 
-class CIMOMLocatorSLP : public CIMOMLocator
+class OW_CLIENT_API CIMOMLocatorSLP : public CIMOMLocator
 {
 public:
 	CIMOMLocatorSLP(); 
@@ -62,5 +61,7 @@ private:
 };
 
 } // end namespace OpenWBEM
+
+#endif // OW_HAVE_SLP_H
 
 #endif

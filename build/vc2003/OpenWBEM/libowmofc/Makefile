@@ -14,8 +14,6 @@ LINK = link
 SRCDIR = ..\..\..\..\src
 TOOLSDIR = ..\tools
 
-MAP2DEF = $(TOOLSDIR)\owmap2def.exe
-
 INCS = \
 /I".." \
 /I$(SRCDIR)\mof \
@@ -57,16 +55,10 @@ OBJS = \
 	$(OBJDIR)\OW_MOFParser.obj \
 	$(OBJDIR)\OW_MOFLexer.obj
 
-$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) $(MAP2DEF)
+$(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
-
-#	$(MAP2DEF) $(TARGETDIR)\$(LIBNAME).map $(TARGETDIR)\$(LIBNAME).def
-#	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
-#		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-#		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" /DEF:"$(TARGETDIR)\$(LIBNAME).def" \
-#		$(OBJS) $(LIBS)
 
 clean:
 	-@del OW_MOFParser.cpp
@@ -82,9 +74,6 @@ $(TARGETDIR):
 
 $(OBJDIR):
 	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
-
-$(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
-	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib
 
 ###############################################################################
 

@@ -46,12 +46,12 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(CIMOMLocator);
+OW_DECLARE_APIEXCEPTION(CIMOMLocator, OW_CLIENT_API);
 typedef std::pair<String, String> CIMOMAttribute;
 typedef Array<CIMOMAttribute> CIMOMAttributeArray;
 class CIMOMLocator;
 typedef IntrusiveReference<CIMOMLocator> CIMOMLocatorRef;
-class CIMOMLocator : public IntrusiveCountableBase
+class OW_CLIENT_API CIMOMLocator : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMOMLocator();
