@@ -119,6 +119,7 @@ void
 BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	std::ostream* ostrError, OperationContext& context)
 {
+	clearError();
 	String userName = context.getStringDataWithDefault(OperationContext::USER_NAME);
 	if (!userName.empty())
 	{
