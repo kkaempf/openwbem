@@ -28,6 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#include "OW_config.h"
 #include "TestCase.hpp"
 #include "TestResult.hpp"
 #include <stdio.h>
@@ -145,7 +146,7 @@ void handleSignal(int sigtype, const char* where, TestResult* result, TestCase* 
 
 	switch (sigtype)
 	{
-#ifndef OW_WIN32
+#if !defined(OW_WIN32) && !defined(OW_NETWARE)
 	case SIGTRAP:
 		report += " - SIGTRAP (perhaps integer divide by zero)";
 		break;
@@ -200,7 +201,7 @@ bool TestCase::runFuncAndCatchErrors( T func, const char* msg, TestResult* resul
 {
 	int sigtype;
 	SignalScope(SIGFPE, &unitTestSignalHandler);
-#ifndef OW_WIN32
+#if !defined(OW_WIN32) && !defined(OW_NETWARE)
 	SignalScope(SIGTRAP, &unitTestSignalHandler);
 	SignalScope(SIGBUS, &unitTestSignalHandler);
 #endif
