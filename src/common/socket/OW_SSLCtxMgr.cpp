@@ -49,7 +49,11 @@
 #include "OW_Array.hpp"
 #include <openssl/rand.h>
 #include <openssl/err.h>
-#include <string.h>
+#include <cstring>
+#include <csignal>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <fcntl.h>
 
 #ifdef OW_HAVE_SYS_TYPES_H
 #include <sys/types.h>
@@ -142,24 +146,60 @@ bool randFilePathIsSecure(const String& randFilePath)
 	// TODO: write this
 	return false;
 #else
-	// only load or write the file if it's "the directory in which the file resides and all parent directories should have only write access 
+	// only load or write the file if it's "the directory in which the file resides and all parent directories should have only write access
 	// enabled for the directory owner" (Network Security with OpenSSL p. 101).  This is so that we don't load up a rogue random
 	// file. If we load one someone created which we didn't write, or someone else gets it, our security is blown!
 	// Also, check that the owner of each directory is either the current user or root, just to be completely paranoid!
-
-	String dir(FileSystem::Path::realPath(randFilePath));
+	String dir;
+	try
+	{
+		dir = FileSystem::Path::realPath(randFilePath);
+	}
+	catch (FileSystemException&)
+	{
+		return false;
+	}
 	OW_ASSERT(!dir.empty() && dir[0] == '/');
 
 	// now check all dirs
 	do
 	{
+		struct stat dirStats;
+		if (::lstat(dir.c_str(), &dirStats) == -1)
+		{
+			return false;
+		}
+		else
+		{
+			// if either group or other write access is enabled, then fail.
+			if ((dirStats.st_mode & S_IWGRP == S_IWGRP) ||
+				(dirStats.st_mode & S_IWOTH == S_IWOTH) )
+			{
+				return false;
+			}
+			// no hard links allowed
+			if (dirStats.st_nlink > 1)
+			{
+				return false;
+			}
+			// must own it or else root
+			if (dirStats.st_uid != ::getuid() && dirStats.st_uid != 0)
+			{
+				return false;
+			}
+			// directory
+			if (!S_ISDIR(dirStats.st_mode))
+			{
+				return false;
+			}
+		}
 
 
 		size_t lastSlash = dir.lastIndexOf('/');
 		dir = dir.substring(0, lastSlash);
 	} while (!dir.empty());
 
-	return false;
+	return true;
 #endif
 }
 
@@ -176,23 +216,18 @@ bool randFileIsSecure(const char* randFile)
 #else
 
 	// only load or write the file if it's "owned by the user ID of the application, and all access to group members and other users should be
-	// disallowed. Additionally, the directory in which the file resides and all parent directories should have only write access 
+	// disallowed. Additionally, the directory in which the file resides and all parent directories should have only write access
 	// enabled for the directory owner" (Network Security with OpenSSL p. 101).  This is so that we don't load up a rogue random
 	// file. If we load one someone created which we didn't write, or someone else gets it, our security is blown!
-	uid_t myuid(getuid());
 	struct stat randFileStats;
-	if (lstat(randFile, &randFileStats) == -1)
+	if (::lstat(randFile, &randFileStats) == -1)
 	{
-		if (errno != ENOENT)
-		{
-			return false;
-		}
-		// else file doesn't exist, and that's okay.
+		return false;
 	}
 	else
 	{
 		// if either group or other write access is enabled, then fail.
-		if ((randFileStats.st_mode & S_IWGRP == S_IWGRP) || 
+		if ((randFileStats.st_mode & S_IWGRP == S_IWGRP) ||
 			(randFileStats.st_mode & S_IWOTH == S_IWOTH) )
 		{
 			return false;
@@ -203,7 +238,7 @@ bool randFileIsSecure(const char* randFile)
 			return false;
 		}
 		// must own it
-		if (randFileStats.st_uid != myuid)
+		if (randFileStats.st_uid != ::getuid())
 		{
 			return false;
 		}
@@ -216,6 +251,122 @@ bool randFileIsSecure(const char* randFile)
 
 	return true;
 #endif
+}
+
+// These are used to generate random data via signal delivery timing differences.
+// We have to use global data since it's modified from a signal handler.
+volatile sig_atomic_t g_counter;
+volatile unsigned char* g_data;
+volatile sig_atomic_t g_dataIdx;
+int g_dataSize;
+
+extern "C"
+{
+void randomALRMHandler(int sig)
+{
+	if (g_dataIdx < g_dataSize)
+	{
+		g_data[g_dataIdx++] ^= g_counter & 0xFF;
+	}
+}
+}
+
+Mutex g_randomTimerGuard;
+
+// This function will continue to iterate until *iterations <= 0. *iterations may be set by another thread. *iterations should not be < 8.
+void generateRandomTimerData(unsigned char* data, int size, int* iterations)
+{
+	OW_ASSERT(data != 0);
+	OW_ASSERT(size > 0);
+	OW_ASSERT(iterations != 0);
+
+	// make sure we only have one thread running this at a time.
+	MutexLock l(g_randomTimerGuard);
+
+	// set up the global data for the signal handler
+	g_data = data;
+	g_dataSize = size;
+	g_dataIdx = 0;
+
+	// install our ALRM handler
+	struct sigaction sa, osa;
+	sa.sa_handler = randomALRMHandler;
+	sa.sa_flags = 0;
+	sigemptyset(&sa.sa_mask);
+	sigaction(SIGALRM, &sa, &osa);
+
+	// Start timer
+	struct ::itimerval tv, otv;
+	tv.it_value.tv_sec = 0;
+	tv.it_value.tv_usec = 1 * 1000; // 1 ms
+	tv.it_interval = tv.it_value;
+	setitimer(ITIMER_REAL, &tv, &otv);
+	
+	while ((*iterations)-- > 0)
+	{
+		for (g_dataIdx = 0; g_dataIdx < g_dataSize;) // g_dataIdx++ in sigALRM
+		{
+			++g_counter;
+		}
+		for (int j = 0; j < g_dataSize; j++) // rotate the bits to accomodate for a possible lack of low-bit entropy
+		{
+			g_data[j] = (g_data[j]>>3) | (g_data[j]<<5);
+		}
+	}
+	setitimer(ITIMER_REAL, &otv, 0);
+
+	// reset signal handler
+	sigaction(SIGALRM, &osa, 0);
+
+}
+
+// void printBuffer(unsigned char* buf, int size)
+// {
+//     for (int i = 0; i < size; ++i)
+//     {
+//         if (i % 10 == 0)
+//         {
+//             printf("\n");
+//         }
+//         printf("%2.2X ", buf[i]);
+//     }
+//     printf("\n");
+//     fflush(stdout);
+// }
+
+void generateRandomDataFromFile(const char* name, int len)
+{
+	int fd = ::open(name, O_RDONLY);
+	if (fd == -1)
+	{
+		return;
+	}
+
+	std::vector<char> buf(len);
+	int read = ::read(fd, &buf[0], len);
+	if (read == -1)
+	{
+		return;
+	}
+	buf.resize(read);
+	::RAND_add(&buf[0], buf.size(), 0.0); // 0 entropy, since this could all be observable by someone else.
+}
+
+void generateRandomDataFromTime(double entropy)
+{
+	struct timeval tv;
+	::gettimeofday(&tv, 0);
+	::RAND_add(&tv, sizeof(tv), entropy);
+
+	clock_t c(::clock());
+	::RAND_add(&c, sizeof(c), entropy);
+
+	struct rusage ru;
+	::getrusage(RUSAGE_SELF, &ru);
+	::RAND_add(&ru, sizeof(ru), entropy);
+
+	::getrusage(RUSAGE_CHILDREN, &ru);
+	::RAND_add(&ru, sizeof(ru), entropy);
 }
 
 void loadRandomness()
@@ -261,12 +412,12 @@ void loadRandomness()
 
 	// try loading up randomness from a previous run.
 	char randFile[MAXPATHLEN];
-	const char* rval = RAND_file_name(randFile, MAXPATHLEN);
+	const char* rval = ::RAND_file_name(randFile, MAXPATHLEN);
 	if (rval)
 	{
 		if (randFileIsSecure(randFile))
 		{
-			RAND_load_file(randFile, -1);
+			::RAND_load_file(randFile, -1);
 		}
 	}
 
@@ -278,8 +429,49 @@ void loadRandomness()
 	//   This is the same approach a egd daemon would do, but we do it only once to seed the randomness.
 	//   The list of sources comes from gnupg, prngd and egd.
 	// - use a timing based approach which gives decent randomness.
-	// - read some portions of files (e.g. /dev/mem) if possible
 	// - use other variable things, such as pid, execution times, etc.
+	//   most of these values have an entropy of 0, since they are observable to any other user on the system, so even though they are random, they're
+	//   observable, and we can't count them as entropy.
+
+	// do the time based ones before we start, after the timing tests, and then again after running commands.
+	generateRandomDataFromTime(0.0);
+
+	unsigned char buf[256]; // don't initialize to anything, as we may pick up some good random junk off the stack.
+	int iterations = 8;
+	generateRandomTimerData(buf, sizeof(buf), &iterations);
+	::RAND_add(buf, sizeof(buf), 32); // 32 is if we assume 1 bit per byte, and most systems should have something better than that.
+
+	generateRandomDataFromTime(0.1);
+
+	// - read some portions of files and dirs (e.g. /dev/mem) if possible
+	const char* files[] = {
+		"/dev/mem",
+		0
+	};
+	for (const char** p = files; *p; ++p)
+	{
+		generateRandomDataFromFile(*p, 1024*1024*2);
+	}
+
+	generateRandomDataFromTime(0.1);
+
+	pid_t myPid(::getpid());
+	::RAND_add(&myPid, sizeof(myPid), 0.0);
+
+	pid_t parentPid(::getppid());
+	::RAND_add(&parentPid, sizeof(parentPid), 0.0);
+	
+	uid_t myUid(::getuid());
+	::RAND_add(&myUid, sizeof(myUid), 0.0);
+
+	gid_t myGid(::getgid());
+	::RAND_add(&myGid, sizeof(myGid), 0.0);
+
+	// now run commands
+
+
+
+	generateRandomDataFromTime(0.1);
 }
 
 } // end unnamed namespace
