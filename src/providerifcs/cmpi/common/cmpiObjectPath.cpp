@@ -110,13 +110,14 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
 	OpenWBEM::String key(name);
 	CMPIrc rc;
 
-	long i=locateKey(keyBindings,key);
-	if(i>=0)
+	long i = locateKey(keyBindings, key);
+	if(i >= 0)
 	{
 		keyBindings.remove(i);
 		ref->setKeys(keyBindings);
 	}
-	OpenWBEM::CIMValue val=value2CIMValue(data,type,&rc);
+
+	OpenWBEM::CIMValue val = value2CIMValue(data,type,&rc);
 	ref->addKey(key, val);
 	CMReturn(CMPI_RC_OK);
 }

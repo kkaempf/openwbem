@@ -111,11 +111,13 @@ static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
 	dta->value.uint32 = count;
-	for (uint i=1; i<=count; i++) {
+	for (uint i=1; i<=count; i++)
+	{
 		dta[i].type = type;
 		dta[i].state = CMPI_nullValue;
 		dta[i].value.uint64 = 0;
 	}
+
 	return (CMPIArray *)new CMPI_Object(dta);
 }
 
@@ -151,41 +153,44 @@ static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker* mb,
 	return newDateTime(t);
 }
 
-static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
+static CMPIString* mbEncToString(CMPIBroker * mb, void * o, CMPIStatus * rc)
 {
 	(void) mb;
-
-	CMPI_Object *obj=(CMPI_Object*)o;
+	CMPI_Object *obj = (CMPI_Object*)o;
 	OpenWBEM::String str;
-	char msg[128];
-	if (obj==NULL)
+
+	if (obj == NULL)
 	{
-		sprintf(msg,"** Null object ptr (0x%p) **",o);
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-		return (CMPIString*)new CMPI_Object(msg);
+		str.format("** Null object ptr (0x%p) **", o);
+		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
+		return (CMPIString*) new CMPI_Object(str);
 	}
 
 	if (obj->hdl == NULL)
 	{
-		sprintf(msg,"** Null object hdl (0x%p) **",o);
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-		return (CMPIString*)new CMPI_Object(msg);
+		str.format("** Null object hdl (*0x%p) **", o);
+		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
+		return (CMPIString*) new CMPI_Object(str);
 	}
 
-	if (obj->ftab==(void*)CMPI_Instance_Ftab ||
-		obj->ftab==(void*)CMPI_InstanceOnStack_Ftab)
+	if (obj->ftab == (void*)CMPI_Instance_Ftab
+		|| obj->ftab == (void*)CMPI_InstanceOnStack_Ftab)
 	{
-		str = ((OpenWBEM::CIMInstance*)obj->hdl)->toString();
-		sprintf(msg,"** Object not supported (0x%x) **",(int)o);
+		str.format("** Object not supported (0x%x) **", (int)o);
 		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-		return (CMPIString*) new CMPI_Object(msg);
+		return (CMPIString*) new CMPI_Object(str);
 	}
-	else if (obj->ftab==(void*)CMPI_ObjectPath_Ftab ||
-		obj->ftab==(void*)CMPI_ObjectPathOnStack_Ftab)
+	else if (obj->ftab == (void*)CMPI_ObjectPath_Ftab
+			 || obj->ftab == (void*)CMPI_ObjectPathOnStack_Ftab)
 	{
-		str=((OpenWBEM::CIMObjectPath*)obj->hdl)->toString();
+		str = ((OpenWBEM::CIMObjectPath*)obj->hdl)->toString();
 	}
-	/* else if (obj->ftab==(void*)CMPI_SelectExp_Ftab ||
+	else if(obj->ftab == (void*) CMPI_String_Ftab)
+	{
+		str = *((OpenWBEM::String*) obj->hdl);
+	}
+	/* 
+	else if (obj->ftab==(void*)CMPI_SelectExp_Ftab ||
 		obj->ftab==(void*)CMPI_SelectCondDoc_Ftab ||
 		obj->ftab==(void*)CMPI_SelectCondCod_Ftab ||
 		obj->ftab==(void*)CMPI_SubCond_Ftab ||
@@ -194,16 +199,16 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 		sprintf(msg,"** Object not supported (0x%p) **",o);
 		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(msg);
-	} */
+	}
+	*/
 	else 
 	{
-		sprintf(msg,"** Object not recognized (0x%p) **",o);
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-		return (CMPIString*) new CMPI_Object(msg);
+		str.format("** Object not recognized (0x%p) **", o);
+		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
+		return (CMPIString*) new CMPI_Object(str);
 	}
 
-	sprintf(msg,"0x%p: ",o);
-	return (CMPIString*) new CMPI_Object(OpenWBEM::String(msg)+str);
+	return (CMPIString*) new CMPI_Object(str);
 }
 
 static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
