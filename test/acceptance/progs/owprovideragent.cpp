@@ -46,6 +46,7 @@
 #include "OW_SharedLibrary.hpp"
 #include "OW_Format.hpp"
 #include "OW_CmdLineParser.hpp"
+#include "OW_CppProviderIFC.hpp"
 
 #include <csignal>
 #include <iostream> // for cout and cerr
@@ -88,78 +89,6 @@ CmdLineParser::Option g_options[] =
 	{PROVIDER_OPT, 'p', "provider", CmdLineParser::E_REQUIRED_ARG, 0, "Specify a filename of a provider library to use. May be used multiple times."},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
-
-
-//////////////////////////////////////////////////////////////////////////////
-// TODO stole this stuff from OW_CppProviderIFC.cpp. 
-// need to stick them in a common header. 
-typedef CppProviderBaseIFC* (*ProviderCreationFunc)();
-typedef const char* (*versionFunc_t)();
-
-CppProviderBaseIFCRef
-//getProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString,
-getProvider(const String& libName, LoggerRef logger)
-{
-	String provId = libName.substring(libName.lastIndexOf(OW_FILENAME_SEPARATOR)+1); 
-	// chop of lib and .so
-	provId = provId.substring(3,
-			  provId.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
-
-	SharedLibraryLoaderRef ldr =
-		SharedLibraryLoader::createSharedLibraryLoader();
-	if(ldr.isNull())
-	{
-		logger->logError("C++ provider ifc failed to get shared lib loader");
-		return CppProviderBaseIFCRef();
-	}
-	logger->logDebug(Format("getProvider loading library: %1",
-		libName));
-	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, logger); 
-	if(theLib.isNull())
-	{
-		logger->logError(Format("C++ provider ifc failed to load library: %1 "
-			"for provider id %2", libName, provId));
-		return CppProviderBaseIFCRef();
-	}
-	versionFunc_t versFunc;
-	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
-	{
-		logger->logError("C++ provider ifc failed getting"
-			" function pointer to \"getOWVersion\" from library");
-		return CppProviderBaseIFCRef();
-	}
-	const char* strVer = (*versFunc)();
-	if(strcmp(strVer, OW_VERSION))
-	{
-		logger->logError(Format("C++ provider ifc got invalid version from provider:"
-			" %1", libName));
-		return CppProviderBaseIFCRef();
-	}
-	ProviderCreationFunc createProvider;
-	String creationFuncName = String("createProvider") + provId;
-	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
-	{
-		logger->logError(Format("C++ provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		return CppProviderBaseIFCRef();
-	}
-	CppProviderBaseIFC* pProv = (*createProvider)();
-	if(!pProv)
-	{
-		logger->logError(Format("C++ provider ifc: Libary %1 - %2 returned null"
-			" provider", libName, creationFuncName));
-		return CppProviderBaseIFCRef();
-	}
-	/*
-	logger->logDebug(Format("C++ provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, provId));
-	pProv->initialize(env);	// Let provider initialize itself
-	*/
-	logger->logDebug(Format("C++ provider ifc: provider %1 loaded and initialized",
-		provId));
-	CppProviderBaseIFCRef rval(theLib, pProv);
-	return rval;
-}
 
 void Usage()
 {
@@ -236,7 +165,7 @@ int main(int argc, char* argv[])
 		for (size_t i = 0; i < providers.size(); ++i)
 		{
 			String libName(providers[i]); 
-			CppProviderBaseIFCRef provider = getProvider(libName, logger); 
+			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, logger); 
 			if (!provider->getInstanceProvider() 
 				&& !provider->getSecondaryInstanceProvider()
 	#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

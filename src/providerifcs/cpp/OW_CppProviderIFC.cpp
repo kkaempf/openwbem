@@ -334,36 +334,27 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				env->getLogger());
 			if(theLib.isNull())
 			{
-				env->getLogger()->logError(
-					"****************************************");
-				env->getLogger()->logError(Format("C++ provider ifc failed to"
-					" load library: %1", libName));
-				env->getLogger()->logError(
-					"****************************************");
+				env->getLogger()->logError("****************************************");
+				env->getLogger()->logError(Format("C++ provider ifc failed to load library: %1", libName));
+				env->getLogger()->logError("****************************************");
 				continue;
 			}
 			versionFunc_t versFunc;
 			if(!theLib->getFunctionPointer("getOWVersion",
 				versFunc))
 			{
-				env->getLogger()->logError(
-					"****************************************");
-				env->getLogger()->logError(Format("C++ provider ifc failed"
-					" getting function pointer to \"getOWVersion\" from"
+				env->getLogger()->logError("****************************************");
+				env->getLogger()->logError(Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from"
 					" library: %1", libName));
-				env->getLogger()->logError(
-					"****************************************");
+				env->getLogger()->logError("****************************************");
 				continue;
 			}
 			const char* strVer = (*versFunc)();
 			if(strcmp(strVer, OW_VERSION))
 			{
-				env->getLogger()->logError(
-					"****************************************");
-				env->getLogger()->logError(Format("C++ provider ifc got invalid"
-					" version from provider: %1", strVer));
-				env->getLogger()->logError(
-					"****************************************");
+				env->getLogger()->logError("****************************************");
+				env->getLogger()->logError(Format("C++ provider ifc got invalid version from provider: %1", strVer));
+				env->getLogger()->logError("****************************************");
 				continue;
 			}
 			ProviderCreationFunc createProvider;
@@ -383,12 +374,9 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 				if (!p)
 				{
-					env->getLogger()->logDebug(
-						"****************************************");
-					env->getLogger()->logDebug(Format("C++ provider ifc: Libary"
-						" %1 does not load", libName));
-					env->getLogger()->logDebug(
-						"****************************************");
+					env->getLogger()->logDebug("****************************************");
+					env->getLogger()->logDebug(Format("C++ provider ifc: Libary %1 does not load", libName));
+					env->getLogger()->logDebug("****************************************");
 					continue;
 				}
 
@@ -477,12 +465,9 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			AutoPtr<CppProviderBaseIFC> pProv((*createProvider)());
 			if(!pProv.get())
 			{
-				env->getLogger()->logError(
-					"****************************************");
-				env->getLogger()->logError(Format("C++ provider ifc: Libary %1"
-					" - %2 returned null provider", libName, creationFuncName));
-				env->getLogger()->logError(
-					"****************************************");
+				env->getLogger()->logError("****************************************");
+				env->getLogger()->logError(Format("C++ provider ifc: Libary %1 - %2 returned null provider", libName, creationFuncName));
+				env->getLogger()->logError("****************************************");
 				continue;
 			}
 			CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
@@ -510,6 +495,66 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//static
+CppProviderBaseIFCRef
+CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
+{
+	String provId = libName.substring(libName.lastIndexOf(OW_FILENAME_SEPARATOR)+1); 
+	// chop of lib and .so
+	provId = provId.substring(3, provId.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
+
+	SharedLibraryLoaderRef ldr = SharedLibraryLoader::createSharedLibraryLoader();
+	if(!ldr)
+	{
+		logger->logError("C++ provider ifc FAILED to get shared lib loader");
+		return CppProviderBaseIFCRef();
+	}
+
+	logger->logDebug(Format("CppProviderIFC::getProvider loading library: %1", libName));
+
+	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, logger);
+
+	versionFunc_t versFunc;
+	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
+	{
+		logger->logError(Format("C++ provider ifc failed getting"
+			" function pointer to \"getOWVersion\" from library %1.", libName));
+		return CppProviderBaseIFCRef();
+	}
+	const char* strVer = (*versFunc)();
+	if(strcmp(strVer, OW_VERSION))
+	{
+		logger->logError(Format("C++ provider ifc got invalid version from provider: %1.", libName));
+		return CppProviderBaseIFCRef();
+	}
+
+	ProviderCreationFunc createProvider;
+	String creationFuncName = String(CREATIONFUNC) + provId;
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
+	{
+		logger->logError(Format("C++ provider ifc: Libary %1 does not contain %2 function.",
+			libName, creationFuncName));
+		return CppProviderBaseIFCRef();
+	}
+
+	CppProviderBaseIFC* pProv = (*createProvider)();
+
+	if(!pProv)
+	{
+		logger->logError(Format("C++ provider ifc: Libary %1 -"
+			" %2 returned null provider. Not loaded.", libName, creationFuncName));
+		return CppProviderBaseIFCRef();
+	}
+
+	logger->logDebug(Format("C++ provider ifc successfully loaded"
+		" library %1 for provider %2", libName, provId));
+
+	CppProviderBaseIFCRef rval(theLib, pProv);
+	return rval;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CppProviderBaseIFCRef
 CppProviderIFC::getProvider(

@@ -54,6 +54,10 @@ public:
 	static const char* const CREATIONFUNC;
 	CppProviderIFC();
 	~CppProviderIFC();
+
+	// Making this public so other code can re-use it.
+	static CppProviderBaseIFCRef loadProvider(const String& libName, LoggerRef logger);
+
 protected:
 	virtual const char* getName() const { return "c++"; }
 	/**
