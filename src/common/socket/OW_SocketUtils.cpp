@@ -97,8 +97,6 @@ int
 waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 	long networkEvents)
 {
-	OW_ASSERT(Socket::getShutDownMechanism() != NULL);
-
 	DWORD timeout = (timeOutSecs > 0)
 		? static_cast<DWORD>(timeOutSecs * 1000)
 		: INFINITE;
@@ -108,40 +106,58 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 		::WSAEventSelect(fd, eventArg, networkEvents);
 	}
 
-	HANDLE events[2];
-	events[0] = Socket::getShutDownMechanism();
-	events[1] = eventArg;
-
-	DWORD index = ::WaitForMultipleObjects(
-		2,
-		events,
-		FALSE,
-		timeout);
-
 	int cc;
-
-	switch (index)
+	if(Socket::getShutDownMechanism() != NULL)
 	{
-		case WAIT_FAILED:
-			cc = -1;
-			break;
-		case WAIT_TIMEOUT:
-			cc = ETIMEDOUT;
-			break;
-		default:
-			index -= WAIT_OBJECT_0;
-			// If not shutdown event, then reset
-			if (index != 0)
-			{
+		HANDLE events[2];
+		events[0] = Socket::getShutDownMechanism();
+		events[1] = eventArg;
+
+		DWORD index = ::WaitForMultipleObjects(
+			2,
+			events,
+			FALSE,
+			timeout);
+
+		switch (index)
+		{
+			case WAIT_FAILED:
+				cc = -1;
+				break;
+			case WAIT_TIMEOUT:
+				cc = ETIMEDOUT;
+				break;
+			default:
+				index -= WAIT_OBJECT_0;
+				// If not shutdown event, then reset
+				if (index != 0)
+				{
+					::ResetEvent(eventArg);
+					cc = 0;
+				}
+				else
+				{
+					// Shutdown handle was signaled
+					cc = -2;
+				}
+				break;
+		}
+	}
+	else
+	{
+		switch(::WaitForSingleObject(eventArg, timeout))
+		{
+			case WAIT_OBJECT_0:
 				::ResetEvent(eventArg);
 				cc = 0;
-			}
-			else
-			{
-				// Shutdown handle was signaled
-				cc = -2;
-			}
-			break;
+				break;
+			case WAIT_TIMEOUT:
+				cc = ETIMEDOUT;
+				break;
+			default:
+				cc = -1;
+				break;
+		}
 	}
 
 	return cc;

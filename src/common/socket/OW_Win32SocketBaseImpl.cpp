@@ -143,43 +143,59 @@ String SocketBaseImpl::m_traceFileIn;
 int
 SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 {
-	OW_ASSERT(Socket::getShutDownMechanism() != NULL);
-
 	DWORD timeout = (secsToTimeout > 0)
 		? static_cast<DWORD>(secsToTimeout * 1000)
 		: INFINITE;
-
-	HANDLE events[2];
-	events[0] = Socket::getShutDownMechanism();
-	events[1] = eventArg;
-
-	DWORD index = ::WaitForMultipleObjects(
-		2,
-		events,
-		FALSE,
-		timeout);
-
+	
 	int cc;
-
-	switch (index)
+	if(Socket::getShutDownMechanism() != NULL)
 	{
-		case WAIT_FAILED:
-			cc = -2;
-			break;
-		case WAIT_TIMEOUT:
-			cc = -1;
-			break;
-		default:
-			index -= WAIT_OBJECT_0;
-			// If not shutdown event, then reset
-			if (index != 0)
-			{
-				::ResetEvent(eventArg);
-			}
-            cc = static_cast<int>(index);
-			break;
-	}
+		HANDLE events[2];
+		events[0] = Socket::getShutDownMechanism();
+		events[1] = eventArg;
 
+		DWORD index = ::WaitForMultipleObjects(
+			2,
+			events,
+			FALSE,
+			timeout);
+
+		switch (index)
+		{
+			case WAIT_FAILED:
+				cc = -2;
+				break;
+			case WAIT_TIMEOUT:
+				cc = -1;
+				break;
+			default:
+				index -= WAIT_OBJECT_0;
+				// If not shutdown event, then reset
+				if (index != 0)
+				{
+					::ResetEvent(eventArg);
+				}
+				cc = static_cast<int>(index);
+				break;
+		}
+	}
+	else
+	{
+		switch(::WaitForSingleObject(eventArg, timeout))
+		{
+			case WAIT_OBJECT_0:
+				::ResetEvent(eventArg);
+				cc = 1;
+				break;
+			case WAIT_TIMEOUT:
+				cc = -1;
+				break;
+			default:
+				cc = -2;
+				break;
+		}
+	}
+		
 	return cc;
 }
 
@@ -384,9 +400,19 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 void
 SocketBaseImpl::disconnect()
 {
-	m_in.clear(ios::eofbit | ios::badbit | ios::failbit);
-	m_out.clear(ios::eofbit | ios::badbit | ios::failbit);
-	m_inout.clear(ios::eofbit | ios::badbit | ios::failbit);
+	if(m_in)
+	{
+		m_in.clear(ios::eofbit);
+	}
+	if(m_out)
+	{
+        m_out.clear(ios::eofbit);
+	}
+	if(!m_inout.fail())
+	{
+		m_inout.clear(ios::eofbit);
+	}
+
 	_closeSocket(m_sockfd);
 	m_isConnected = false;
 }
