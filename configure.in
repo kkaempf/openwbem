@@ -239,6 +239,14 @@ case "$host" in
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
 	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
 	;;
+*-*-netware*)
+	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
+	PLATFORMDIR="posix"
+	LIB_EXT="nlm"
+	EXEEXT=".nlm"
+	PLAT_CFLAGS="-DEXPERIMENTAL"
+	PLAT_CXXFLAGS="-DEXPERIMENTAL"
+	;;
 *-*-netbsd*)
 	;;
 *-*-freebsd*)
