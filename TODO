@@ -29,14 +29,6 @@ Testing:
       distribution as well.
 
 Fix problems:
-    - The new redhat pthread_cancel() throws an exception that seems to clobber 
-      owcimomd.  Need to figure out how to prevent this from happening.
-      The error printed is: "FATAL: exception not rethrown".
-      Having looked at it, I don't think there is a good way around it since
-      the stack-unwinding is half-baked and can't handle a catch(...) that
-      doesn't re-throw the exception.  A way to avoid the behavior altogether
-      is to set the env var LD_ASSUME_KERNEL=2.4.19 which will use the old
-      LinuxThreads library.
     - Add tests in configure.in for -W flags supported.
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
@@ -45,9 +37,6 @@ Fix problems:
     - To prevent DNS attacks, set a limit on incoming data.
     - Fix uri handling to be consistent with the new spec (once it's done.  
       company review version has problems.)
-    - Have various subscription operation in IndicationServer run in separate
-      threads to help prevent deadlock.  Don't throw error if a subscription
-      can't be supported, set it to disabled.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
