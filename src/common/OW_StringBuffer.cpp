@@ -203,7 +203,11 @@ OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt64 v)
 {
 	char bfr[28];
+#if OW_SIZEOF_LONG_INT == 8
+	::snprintf(bfr, sizeof(bfr), "%lu", v);
+#else
 	::snprintf(bfr, sizeof(bfr), "%llu", v);
+#endif
 	return append(bfr);
 }
 
@@ -212,7 +216,11 @@ OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Int64 v)
 {
 	char bfr[28];
+#if OW_SIZEOF_LONG_INT == 8
+	::snprintf(bfr, sizeof(bfr), "%ld", v);
+#else
 	::snprintf(bfr, sizeof(bfr), "%lld", v);
+#endif
 	return append(bfr);
 }
 
