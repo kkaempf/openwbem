@@ -180,7 +180,7 @@ OW_Runnable.hpp \
 OW_RWLocker.hpp \
 OW_SafeLibCreate.hpp \
 OW_SelectEngine.hpp \
-OW_SessionLanguage.cpp \
+OW_SessionLanguage.hpp \
 OW_Select.hpp \
 OW_Semaphore.hpp \
 OW_SharedLibraryException.hpp \
