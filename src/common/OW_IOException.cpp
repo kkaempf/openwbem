@@ -41,18 +41,7 @@ namespace OpenWBEM
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(IO);
-
-// Don't use OW_DEFINE_EXCEPTION because we're not derived directly from 
-// Exception which is what the macro assumes.
-BadCIMSignatureException::BadCIMSignatureException(const char* file, int line, const char* msg)
-		: IOException(file, line, msg) 
-{ 
-	setSubClassId(ExceptionIds::BadCIMSignatureExceptionId); 
-}
-
-BadCIMSignatureException::~BadCIMSignatureException() throw() { }
-const char* 
-BadCIMSignatureException::type() const { return "BadCIMSignatureException"; }
+OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(BadCIMSignature, IOException);
 
 } // end namespace OpenWBEM
 

@@ -40,6 +40,7 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <cstdio>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -55,23 +56,7 @@ namespace OpenWBEM
 using std::ostream;
 using std::istream;
 
-//////////////////////////////////////////////////////////////////////////////
-CIMDateTimeException::CIMDateTimeException(const char* file, int line, const char* msg) 
-	: CIMException(file, line, CIMException::FAILED, msg) 
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-CIMDateTimeException::~CIMDateTimeException() throw()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-const char*
-CIMDateTimeException::type() const
-{
-	return "CIMDateTimeException"; 
-}
+OW_DEFINE_EXCEPTION_WITH_ID(CIMDateTime);
 
 //////////////////////////////////////////////////////////////////////////////
 struct CIMDateTime::DateTimeData : public COWIntrusiveCountableBase
@@ -383,7 +368,7 @@ fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 	}
 	else
 	{
-		OW_THROW(CIMDateTimeException, "Invalid format for date time");
+		OW_THROW_ERR(CIMDateTimeException, "Invalid format for date time", CIMDateTime::E_INVALID_DATE_TIME_FORMAT);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////

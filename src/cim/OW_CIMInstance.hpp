@@ -77,19 +77,26 @@ namespace OpenWBEM
  * CIMInstance inst = cc.newInstance();
  *
  * 4. Assign properties of inst as desired using setProperty().
- *  
+ *
  */
 class OW_COMMON_API CIMInstance : public CIMElement
 {
 public:
 	struct INSTData;
+	
 	enum { SERIALIZATION_VERSION = 1 };				// Version # for serialization
+	
+	enum EErrorCodes
+	{
+		E_INSTANCE_HAS_NO_SUCH_PROPERTY
+	};
+
 	/**
 	 * Default ctor
 	 */
 	CIMInstance();
 	/**
-	 * This CIMInstance object will be NULL. All subsequent operations on 
+	 * This CIMInstance object will be NULL. All subsequent operations on
 	 * an instance of this type will fail.
 	 */
 	explicit CIMInstance(CIMNULL_t);
@@ -190,10 +197,10 @@ public:
 		Int32 valueDataType = CIMDataType::INVALID) const;
 	/**
 	 * Set the properties associated with this instance.
-	 * Note: this will clobber qualifiers associated with the 
-	 *       properties which may already exist on the instance. 
-	 *       You may want to instead consider updatePropertyValues(), 
-	 *       which does not overwrite qualifiers. 
+	 * Note: this will clobber qualifiers associated with the
+	 *       properties which may already exist on the instance.
+	 *       You may want to instead consider updatePropertyValues(),
+	 *       which does not overwrite qualifiers.
 	 * @param props An CIMPropertyArray that contains the new properties for
 	 * 	this instance.
 	 * @return a reference to *this
@@ -219,7 +226,7 @@ public:
 	 * Gets a property with the specified name.
 	 * @param name The name of the property to retrieve.
 	 * @return The CIMProperty identified by the name on success.
-	 * @throws an NoSuchPropertyException if the property is not found or NULL.
+	 * @throws an NoSuchPropertyException (E_INSTANCE_HAS_NO_SUCH_PROPERTY) if the property is not found or NULL.
 	 */
 	CIMProperty getPropertyT(const CIMName& name) const;
 	/**
@@ -258,7 +265,7 @@ public:
 	/**
 	 * Update the value of a property if it exists. Otherwise add a new one.
 	 * In most cases, updatePropertyValue() should be called instead of this
-	 * function, because it won't add a new property. An instance is 
+	 * function, because it won't add a new property. An instance is
 	 * initialized will all it's properties by CIMClass::newInstance().
 	 * @param name	The name of the property to add or update.
 	 * @param cv The CIMValue that contains the new value for the property.
@@ -269,7 +276,7 @@ public:
 	 * Update a property in the property list if it exists. Otherwise add a
 	 * new one.
 	 * In most cases, updatePropertyValue() should be called instead of this
-	 * function, because it won't add a new property. An instance is 
+	 * function, because it won't add a new property. An instance is
 	 * initialized will all it's properties by CIMClass::newInstance().
 	 * @param prop The property to add or update.
 	 * @return a reference to *this
@@ -373,27 +380,27 @@ public:
 	 *		relevant qualifiers are copied from the class to the instance.
 	 * @return a reference to *this
 	 */
-	CIMInstance& syncWithClass(const CIMClass& cc, 
+	CIMInstance& syncWithClass(const CIMClass& cc,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS);
 	/**
-	 * Create an instance with the set of changes that will occur for a 
+	 * Create an instance with the set of changes that will occur for a
 	 * modifyInstance call.  This instance is the new instance.  The
 	 * previous instance is passed in.  The instance that is returned
 	 * is what the new instance will be after modifyInstance is applied.
 	 * @param previousInstance The instance before being modified.
-	 * @param includeQualifiers "If the IncludeQualifiers input parameter 
+	 * @param includeQualifiers "If the IncludeQualifiers input parameter
 	 *	is true, this specifies that the Qualifiers are modified as specified
-	 *	in the ModifiedInstance.  If false, Qualifiers in the ModifiedInstance 
-	 *	are ignored and no Qualifiers are explicitly modified in the specified 
+	 *	in the ModifiedInstance.  If false, Qualifiers in the ModifiedInstance
+	 *	are ignored and no Qualifiers are explicitly modified in the specified
 	 *	Instance."
-	 * @param propertyList "If the PropertyList input parameter is not NULL, 
+	 * @param propertyList "If the PropertyList input parameter is not NULL,
 	 *	the members of the array define one or more Property names.  Only those
-	 *	properties specified in the PropertyList are modified as specified in 
-	 *	the ModifiedInstance.  Properties of the ModifiedInstance that are 
-	 *	missing from the PropertyList are ignored.  If the PropertyList input 
-	 *	parameter is an empty array this signifies that no Properties are 
-	 *	explicitly modified in the specified Instance. If the PropertyList 
-	 *	input parameter is NULL this specifies that all Properties are updated 
+	 *	properties specified in the PropertyList are modified as specified in
+	 *	the ModifiedInstance.  Properties of the ModifiedInstance that are
+	 *	missing from the PropertyList are ignored.  If the PropertyList input
+	 *	parameter is an empty array this signifies that no Properties are
+	 *	explicitly modified in the specified Instance. If the PropertyList
+	 *	input parameter is NULL this specifies that all Properties are updated
 	 *	in the specified Instance."
 	 * @param theClass The class of this instance.
 	 */

@@ -47,8 +47,8 @@ namespace OpenWBEM
 static String getMsg(CIMException::ErrNoType errval, const char* msg = 0);
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
-	const char* msg) :
-	Exception(ExceptionIds::CIMExceptionId, file, line, msg, errval), m_longmsg(0)
+	const char* msg, const Exception* otherException) :
+	Exception(file, line, msg, errval, otherException, ExceptionIds::CIMExceptionId), m_longmsg(0)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ getMsg(CIMException::ErrNoType err, const char* msg)
 	return rstr;
 }
 
-CIMException* 
+CIMException*
 CIMException::clone() const throw()
 {
 	return new(std::nothrow) CIMException(*this);

@@ -49,7 +49,13 @@
 
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
+#ifdef OW_DEFAULT_UDS_FILENAME
+#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_UDS_FILENAME
+#endif
+
+#ifndef OW_DOMAIN_SOCKET_NAME
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
+#endif
 //#define OW_DOMAIN_SOCKET_NAME OW_DEFAULT_UDS_FILENAME
 
 namespace OpenWBEM
@@ -63,16 +69,16 @@ OW_DECLARE_APIEXCEPTION(SocketTimeout, OW_COMMON_API)
 class OW_COMMON_API Socket : public SelectableIFC, public IOIFC
 {
 public:
-	/** 
+	/**
 	 * Construct a non-SSL Socket
 	 */
-	Socket(); 
-	/** 
+	Socket();
+	/**
 	 * Construct a Socket
 	 * @param sslCtx The SSL client context. If null, the socket will not use SSL.
 	 */
-	Socket(SSLClientCtxRef sslCtx); 
-	/** 
+	Socket(SSLClientCtxRef sslCtx);
+	/**
 	 * Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
@@ -260,14 +266,14 @@ public:
 	 * get the SSL structure associated with the socket (if it
 	 * is an SSL socket)
 	 * @return a pointer to the SSL structure
-	 */ 
-	SSL* getSSL() const; 
+	 */
+	SSL* getSSL() const;
 
 	/**
-	 * did the peer certificate pass verification? 
-	 * @return true if peer cert verified. 
-	 */ 
-	bool peerCertVerified() const; 
+	 * did the peer certificate pass verification?
+	 * @return true if peer cert verified.
+	 */
+	bool peerCertVerified() const;
 #endif
 
 private:
@@ -278,7 +284,7 @@ private:
 	 * @param isSSL is it an SSL socket?
 	 */
 	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
-		SSLServerCtxRef sslCtx); 
+		SSLServerCtxRef sslCtx);
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -295,7 +301,7 @@ private:
 
 	friend class ServerSocketImpl;
 
-}; 
+};
 
 } // end namespace OpenWBEM
 

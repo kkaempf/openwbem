@@ -40,10 +40,8 @@ Fix problems:
       exceptions correctly (maybe just fix operator<< ?)
     - Create a impl namespace and move internal classes into it.
     - Document public/internal classes.
-    - Create forwarding headers, 1 for each library.
     - Indication server should not require that subscriptions have indication 
       providers.
-    - Domain socket should be under the statedir (/var) not /tmp
     - Add forwarding headers for each directory.
     - Doxygen appears to ignore global functions associated with a class in 
       the header file for that class -- for example, when you look up String, 

@@ -128,13 +128,13 @@ CIMInstance::getClassName() const
 	return m_pdata->m_owningClassName.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 CIMInstance::getLanguage() const
 {
 	return m_pdata->m_language;
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMInstance::setLanguage(const String& language)
 {
 	m_pdata->m_language = language;
@@ -272,7 +272,7 @@ CIMInstance::getPropertyT(const CIMName& propertyName) const
 	CIMProperty p = getProperty(propertyName);
 	if (!p)
 	{
-		OW_THROW(NoSuchPropertyException, propertyName.toString().c_str());
+		OW_THROW_ERR(NoSuchPropertyException, propertyName.toString().c_str(), E_INSTANCE_HAS_NO_SUCH_PROPERTY);
 	}
 	return p;
 }

@@ -94,7 +94,7 @@ public:
 		METHOD_NOT_FOUND = 17
 	};
 	CIMException(const char* file, int line, ErrNoType errval,
-		const char* msg=0);
+		const char* msg=0, const Exception* otherException = 0);
 	virtual ~CIMException() throw();
 	void swap(CIMException& x);
 	CIMException(const CIMException& x);
@@ -108,11 +108,31 @@ public:
 private:
 	mutable char* m_longmsg;
 };
+
+/**
+ * Throw a CIMException with error code errval
+ * @param errval One of the CIMException::ErrNoType enumerated values
+ */
 #define OW_THROWCIM(errval) \
-	throw CIMException(__FILE__, __LINE__, errval)
+	throw CIMException(__FILE__, __LINE__, (errval))
 	
+/**
+ * Throw a CIMException with error code errval, a message and a subexception
+ * @param errval One of the CIMException::ErrNoType enumerated values
+ * @param msg A message associated with the exception
+ * @param subex A sub-exception. A pointer to it will be passed to the
+ *   exception constructor, which should clone() it.
+ */
+#define OW_THROWCIM_SUBEX(errval, msg, subex) \
+	throw CIMException(__FILE__, __LINE__, (errval), (msg), (subex))
+	
+/**
+ * Throw a CIMException with error code errval and a message
+ * @param errval One of the CIMException::ErrNoType enumerated values
+ * @param msg A message associated with the exception
+ */
 #define OW_THROWCIMMSG(errval, msg) \
-	throw CIMException(__FILE__, __LINE__, errval, msg)
+	throw CIMException(__FILE__, __LINE__, (errval), (msg))
 
 } // end namespace OpenWBEM
 

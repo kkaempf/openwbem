@@ -58,15 +58,15 @@ CIMBase::readSig( istream& istr, const char* const sig )
 	BinarySerialization::read(istr, &read, sizeof(read));
 	if (expected != read)
 	{
-		OW_THROW(BadCIMSignatureException,
+		OW_THROW_ERR(BadCIMSignatureException,
 			Format("Signature does not match. In CIMBase::readSig. "
 				"signature read: %1, expected: %2",
-				read, sig).c_str() );
+				read, sig).c_str(), E_UNEXPECTED_SIGNATURE);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////		
 // static
-UInt32 
+UInt32
 CIMBase::readSig(std::istream& istr, const char* const sig,
 	const char* const verSig, UInt32 maxVersion)
 {
@@ -80,19 +80,19 @@ CIMBase::readSig(std::istream& istr, const char* const sig,
 	{
 		if (verSig[0] != ch)
 		{
-			OW_THROW(BadCIMSignatureException,
+			OW_THROW_ERR(BadCIMSignatureException,
 				Format("Signature does not match. In CIMBase::readSig. "
 					"signature read: %1, expected: %2 or %3",
-					ch, sig, verSig).c_str() );
+					ch, sig, verSig).c_str(), E_UNEXPECTED_SIGNATURE);
 		}
 
 		// Version is ASN.1 length encoded
 		BinarySerialization::readLen(istr, version);
 		if (version > maxVersion)
 		{
-			OW_THROW(BadCIMSignatureException,
+			OW_THROW_ERR(BadCIMSignatureException,
 				Format("CIMBase::readSig. Unknown version %1, only versions <= %2 are handled.",
-				version, maxVersion).c_str() );
+				version, maxVersion).c_str(), E_UNKNOWN_VERSION);
 		}
 	}
 
@@ -109,7 +109,7 @@ CIMBase::writeSig( ostream& ostr, const char* const sig )
 }
 //////////////////////////////////////////////////////////////////////////////		
 // static
-void 
+void
 CIMBase::writeSig(std::ostream& ostr, const char* const sig, UInt32 version)
 {
 	OW_ASSERT(strlen(sig) == 1);
@@ -125,7 +125,7 @@ std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb)
 	return ostr;
 }
 //////////////////////////////////////////////////////////////////////////////		
-CIMBase::~CIMBase() 
+CIMBase::~CIMBase()
 {
 }
 

@@ -72,13 +72,13 @@ XMLParseException::XMLParseException(
 	Code code,
 	const char* msg,
 	unsigned int xmlline)
-: Exception(ExceptionIds::XMLParseExceptionId, file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
-	msg != 0 ? msg : "").c_str(), code)
+: Exception(file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
+	msg != 0 ? msg : "", 0, ExceptionIds::XMLParseExceptionId).c_str(), code)
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XMLParseException* 
+XMLParseException*
 XMLParseException::clone() const throw()
 {
 	return new(std::nothrow) XMLParseException(*this);
@@ -90,7 +90,7 @@ XMLParseException::~XMLParseException() throw()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-const char* 
+const char*
 XMLParseException::type() const
 {
 	return "XMLParseException";

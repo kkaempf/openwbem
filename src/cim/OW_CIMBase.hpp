@@ -66,6 +66,13 @@ public:
 	 * @return The MOF representation of this object as an String.
 	 */
 	virtual String toMOF() const = 0;
+
+	enum EErrorCodes
+	{
+		E_UNEXPECTED_SIGNATURE,
+		E_UNKNOWN_VERSION
+	};
+
 	/**
 	 * Read the specified signature from the input stream. Each class derived
 	 * from CIMBase must have a unique signature associated with it. If the
@@ -77,7 +84,7 @@ public:
 	 * @param sig The signature to compare the signature read to. This must be
 	 *		a NULL terminated string. If the signature read does not match this
 	 *		string, an BadCIMSignatureException will be thrown.
-	 * 
+	 *
 	 * @throws BadCIMSignatureException
 	 */
 	static void readSig(std::istream& istrm, const char* const sig);
@@ -89,7 +96,7 @@ public:
 	 * version associated with it. If the older signature is read then the
 	 * format version is assumed to be zero. If the new signature is read, then
 	 * the version is read as well. This version will be given to the caller so
-	 * the object can be read in it's proper form. 
+	 * the object can be read in it's proper form.
 	 *
 	 * @param istrm The input stream to read the signature from.
 	 * @param sig The old signature. This will be the signature that was used

@@ -47,7 +47,7 @@ OW_DECLARE_APIEXCEPTION(CmdLineParser, OW_COMMON_API)
 
 /**
  * Do command line parsing.
- * 
+ *
  * Thread safety: read/write
  * Copy semantics: Value
  * Exception safety: Strong
@@ -63,7 +63,7 @@ public:
 	};
 
 	// errors codes that may be specified when a CmdLineParserException is thrown
-	enum EErrorType
+	enum EErrorCodes
 	{
 		E_INVALID_OPTION,  // an unknown option was specified
 		E_MISSING_ARGUMENT // an option for which argtype == E_REQUIRED_ARG did not have an argument
@@ -129,11 +129,11 @@ public:
 	 * "  -1, --one                 first description\n"
 	 * "  -2, --two [arg]           second description (default is optional)\n"
 	 * "  -3, --three <arg>         third description\n"
-	 * 
+	 *
 	 * [arg] is used for E_OPTIONAL_ARG options, and <arg> for E_REQUIRED_ARG options.
-	 * 
+	 *
 	 * @param options An array of Option terminated by a final entry that has a '\0' shortopt && 0 longopt.
-	 * @param maxColumns Wrap the descriptions so no line of the usage string exceeds the specified 
+	 * @param maxColumns Wrap the descriptions so no line of the usage string exceeds the specified
 	 *   number of columns.
 	 */
 	static String getUsage(const Option* options, unsigned int maxColumns = 80);

@@ -611,14 +611,14 @@ void OW_LoggerTestCases::testLogMessageFormat()
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%M");
 		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
-		std::cout << "\n01234567890123456789\n" << outputMessages[0] << std::endl;
-		// This could vary per compiler, but we know what gcc will output
-		#if defined (OW_HAVE_UUPRETTY_FUNCTIONUU)
-		std::cout << __PRETTY_FUNCTION__ << std::endl;
+		//std::cout << "\n01234567890123456789\n" << outputMessages[0] << std::endl;
+#if defined (OW_HAVE_UUPRETTY_FUNCTIONUU)
 		unitAssert(outputMessages[0] == __PRETTY_FUNCTION__);
-		#elif defined (OW_HAVE_UUFUNCUU)
+#elif defined (OW_HAVE_UUFUNCUU)
 		unitAssert(outputMessages[0] == __func__);
-		#endif
+#else
+		unitAssert(outputMessages[0] == "");
+#endif
 	}
 
 }

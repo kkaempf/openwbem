@@ -45,15 +45,12 @@
 namespace OpenWBEM
 {
 
-class OW_COMMON_API CIMDateTimeException : public CIMException
-{
-public:
-	CIMDateTimeException(const char* file, int line, const char* msg);
-	virtual ~CIMDateTimeException() throw();
-	virtual const char* type() const;
-};
+OW_DECLARE_APIEXCEPTION(CIMDateTime, OW_COMMON_API);
 
 class DateTime;
+
+// TODO: Document valid ranges for values in the class and add asserts for them.
+
 /**
  *
  *	The CIMDateTime class represents the CIM datetime data type.
@@ -73,7 +70,7 @@ class DateTime;
  *	    ss = second (00-60) normally 59, but a leap second may be present
  *	    mmmmmm = microseconds (0-999999).
  *	    s = '+' or '-' to represent the UTC sign.
- *	    utc = UTC offset (same as GMT offset).  
+ *	    utc = UTC offset (same as GMT offset).
  *                utc is the offset from UTC in minutes. It's worth noting that
  *                when daylight saving time is in effect, the utc will be
  *                different then when it's not.
@@ -98,8 +95,8 @@ class DateTime;
  *	better to think of an interval as specifying time elapsed since
  *	some event.
  *
- *	Values must be zero-padded so that the entire string is always the 
- *	same 25-character length. Fields which are not significant must be 
+ *	Values must be zero-padded so that the entire string is always the
+ *	same 25-character length. Fields which are not significant must be
  *	replaced with asterisk characters.
  *
  *	CIMDateTime objects are constructed from C character strings or from
@@ -114,8 +111,6 @@ class DateTime;
  *
  *	Instances can be tested for nullness with the isNull() method.
  */
-
-// TODO: Document valid ranges for values in the class and add asserts for them.
 class OW_COMMON_API CIMDateTime
 {
 public:
@@ -127,7 +122,7 @@ public:
 	CIMDateTime();
 	~CIMDateTime();
 	/**
-	 * Create a new interval type of CIMDateTime 
+	 * Create a new interval type of CIMDateTime
 	 * this object will have a null implementation.
 	 */
 	explicit CIMDateTime(CIMNULL_t);
@@ -136,12 +131,20 @@ public:
 	 * @param arg The CIMDateTime object to make a copy of.
 	 */
 	CIMDateTime(const CIMDateTime& arg);
+	
+	enum EErrorCodes
+	{
+		E_INVALID_DATE_TIME_FORMAT
+	};
+
 	/**
 	 * Create a new CIMDateTime object from a string representation of a
 	 * CIM DateTime (See description of this string format in the class
 	 * documentation of CIMDateTime.
 	 * @param arg An String that contains the string form of the CIM Date
 	 *		time.
+	 * @throws CIMDateTimeException E_INVALID_DATE_TIME_FORMAT if arg
+	 *  isn't a valid CIM date time string.
 	 */
 	explicit CIMDateTime(const String& arg);
 	/**

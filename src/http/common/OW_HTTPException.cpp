@@ -41,12 +41,12 @@ namespace OpenWBEM
 
 /////////////////////////////////////////////////////////////////////////////
 HTTPException::HTTPException(const char* file, int line, const char* msg)
-	: Exception(ExceptionIds::HTTPExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE), m_response(-1)
+	: Exception(file, line, msg, Exception::UNKNOWN_ERROR_CODE, 0, ExceptionIds::HTTPExceptionId), m_response(-1)
 {
 }
 /////////////////////////////////////////////////////////////////////////////
 HTTPException::HTTPException(const char* file, int line, const char* msg, int response)
-	: Exception(ExceptionIds::HTTPExceptionId, file, line, msg, response), m_response(response) 
+	: Exception(file, line, msg, response, 0, ExceptionIds::HTTPExceptionId), m_response(response)
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -54,28 +54,28 @@ HTTPException::~HTTPException() throw()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
-const char* 
-HTTPException::getId() 
-{ 
-	return getMessage(); 
+const char*
+HTTPException::getId()
+{
+	return getMessage();
 }
 /////////////////////////////////////////////////////////////////////////////
-int 
-HTTPException::getErrorCode() 
-{ 
-	return m_response; 
+int
+HTTPException::getErrorCode()
+{
+	return m_response;
 }
 /////////////////////////////////////////////////////////////////////////////
-const char* 
-HTTPException::type() const 
-{ 
-	return "HTTPException"; 
+const char*
+HTTPException::type() const
+{
+	return "HTTPException";
 }
 /////////////////////////////////////////////////////////////////////////////
-HTTPException* 
-HTTPException::clone() const throw() 
-{ 
-	return new (std::nothrow)HTTPException(*this); 
+HTTPException*
+HTTPException::clone() const throw()
+{
+	return new (std::nothrow)HTTPException(*this);
 }
 
 } // end namespace OpenWBEM

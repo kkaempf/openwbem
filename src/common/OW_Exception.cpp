@@ -118,6 +118,25 @@ Exception::Exception(int subClassId, const char* file, int line, const char* msg
 	m_msg = dupString(msg);
 }
 //////////////////////////////////////////////////////////////////////////////					
+Exception::Exception(const char* file, int line, const char* msg, int errorCode, const Exception* subException, int subClassId)
+	: std::exception()
+	, m_file(0)
+	, m_line(line)
+	, m_msg(0)
+	, m_subClassId(subClassId)
+	, m_subException(subException ? subException->clone() : 0)
+	, m_errorCode(errorCode)
+{
+#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+	StackTrace::printStackTrace();
+#endif
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
+	m_mutex->acquire();
+#endif
+	m_file = dupString(file);
+	m_msg = dupString(msg);
+}
+//////////////////////////////////////////////////////////////////////////////					
 Exception::Exception( const Exception& e )
     : std::exception(e)
     , m_file(dupString(e.m_file))
@@ -169,17 +188,17 @@ Exception::swap(Exception& rhs)
 }
 		
 //////////////////////////////////////////////////////////////////////////////					
-const char* 
-Exception::type() const 
-{  
-	return "Exception"; 
+const char*
+Exception::type() const
+{
+	return "Exception";
 }
 
 //////////////////////////////////////////////////////////////////////////////					
-int 
-Exception::getLine() const 
-{  
-	return m_line; 
+int
+Exception::getLine() const
+{
+	return m_line;
 }
 
 //////////////////////////////////////////////////////////////////////////////					
@@ -247,14 +266,14 @@ Exception::setSubClassId(int subClassId)
 }
 
 //////////////////////////////////////////////////////////////////////////////					
-Exception* 
+Exception*
 Exception::clone() const
 {
 	return new(std::nothrow) Exception(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
-const Exception* 
+const Exception*
 Exception::getSubException() const
 {
 	return m_subException;
@@ -299,7 +318,7 @@ namespace ExceptionDetail
 	// code is generated only for the one that gets used.
 
 	template <typename Dummy>
-	inline int 
+	inline int
 	strerror_r_wrap(posix_fct strerror_r, int errnum, char * buf, unsigned n,
 	                Dummy)
 	{
@@ -307,7 +326,7 @@ namespace ExceptionDetail
 	}
 
 	template <typename Dummy>
-	inline int 
+	inline int
 	strerror_r_wrap(aix_fct strerror_r, int errnum, char * buf, unsigned n,
 	                Dummy)
 	{

@@ -39,7 +39,7 @@ namespace OpenWBEM
 {
 
 CIMErrorException::CIMErrorException(const char* file, int line, const char* msg)
-	: Exception(ExceptionIds::CIMErrorExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE) 
+	: Exception(file, line, msg, Exception::UNKNOWN_ERROR_CODE, 0, ExceptionIds::CIMErrorExceptionId)
 {
 }
 
@@ -47,30 +47,30 @@ CIMErrorException::~CIMErrorException()	throw()
 {
 }
 
-const char* 
-CIMErrorException::type() const 
-{ 
+const char*
+CIMErrorException::type() const
+{
 	return "CIMErrorException";
 }
 
 
-const char* const CIMErrorException::unsupported_protocol_version = 
+const char* const CIMErrorException::unsupported_protocol_version =
 	"unsupported-protocol-version";
-const char* const CIMErrorException::multiple_requests_unsupported = 
+const char* const CIMErrorException::multiple_requests_unsupported =
 	"multiple-requests-unsupported";
-const char* const CIMErrorException::unsupported_cim_version = 
+const char* const CIMErrorException::unsupported_cim_version =
 	"unsupported-cim-version";
-const char* const CIMErrorException::unsupported_dtd_version = 
+const char* const CIMErrorException::unsupported_dtd_version =
 	"unsupported-dtd-version";
-const char* const CIMErrorException::request_not_valid = 
+const char* const CIMErrorException::request_not_valid =
 	"request-not-valid";
-const char* const CIMErrorException::request_not_well_formed = 
+const char* const CIMErrorException::request_not_well_formed =
 	"request-not-well-formed";
-const char* const CIMErrorException::request_not_loosely_valid = 
+const char* const CIMErrorException::request_not_loosely_valid =
 	"request-not-loosely-valid";
-const char* const CIMErrorException::header_mismatch = 
+const char* const CIMErrorException::header_mismatch =
 	"header-mismatch";
-const char* const CIMErrorException::unsupported_operation = 
+const char* const CIMErrorException::unsupported_operation =
 	"unsupported-operation";
 
 } // end namespace OpenWBEM

@@ -51,11 +51,11 @@ class Mutex;
 /**
  * This class is the base of all exceptions thrown by OpenWBEM code.
  * It cannot be constructed directly, only subclasses can be instantiated.
- * 
+ *
  * Creating a correct subclass is facilitated by the macros defined in
  * this file.
- * 
- * Exceptions should be thrown by using one of the OW_THROW_* macros which 
+ *
+ * Exceptions should be thrown by using one of the OW_THROW_* macros which
  * inserts the file and line number among other helpful things.
  */
 class OW_COMMON_API Exception : public std::exception
@@ -66,22 +66,28 @@ protected:
 	 */
 	Exception(const char* file, int line, const char* msg) OW_DEPRECATED; // in 3.1.0
 	/**
-	 * @param subClassId Each subclass of Exception may create an id.  
-	 *   getSubClassId() will return this value.  You may pass 
-	 *   UNKNOWN_SUBCLASS_ID if no id is required.  Ids should beregistered
-	 *   in OW_ExceptionIds.hpp.
 	 * @param file The filename of the code throwing the exception.
 	 * @param line The line of the code throwing the exception.
 	 * @param msg A human readable message associated with the exception.
-	 * @param errorCode A number identifying the specific error that caused 
+	 * @param errorCode A number identifying the specific error that caused
 	 *   this exception.
-	 * @param otherException A pointer to another exception.  This allows for 
+	 * @param otherException A pointer to another exception.  This allows for
 	 *   exception chaining, presumably otherException is the underlying cause
-	 *   that the current exception is being thrown.  If otherException != 0, 
-	 *   The new Exception instance will store and delete the result of 
+	 *   that the current exception is being thrown.  If otherException != 0,
+	 *   The new Exception instance will store and delete the result of
 	 *   calling otherException->clone(). otherException will not be saved.
+	 * @param subClassId Each subclass of Exception may create an id.
+	 *   getSubClassId() will return this value.  You may pass
+	 *   UNKNOWN_SUBCLASS_ID if no id is required.  OW Ids are be registered
+	 *   in OW_ExceptionIds.hpp.
 	 */
-	Exception(int subClassId, const char* file, int line, const char* msg, int errorCode, const Exception* otherException = 0);
+	Exception(const char* file, int line, const char* msg, int errorCode, const Exception* otherException = 0, int subClassId = UNKNOWN_SUBCLASS_ID);
+
+	Exception(int subClassId, const char* file, int line, const char* msg, int errorCode,
+		const Exception* otherException = 0) OW_DEPRECATED; // in 3.1.0 -
+		// Had to change the order of the parameters so the subClassId could be
+		// defaulted and the subclasses' signature could match the base class signature.
+
 #ifdef OW_WIN32
 	// Can't seem to catch exceptions by reference if copy CTOR is
 	// protected on Windoz
@@ -135,15 +141,15 @@ public:
 	virtual const char* what() const throw();
 
 	/**
-	 * Make a copy of this exception object. If allocation fails, return 0.  
+	 * Make a copy of this exception object. If allocation fails, return 0.
 	 * Subclasses need to override this function.  This function must not
 	 * throw.  Here is an example of how to implement this in a derived class:
-	 * 
+	 *
 	 * virtual DerivedException* clone() const
 	 * {
 	 *     return new(std::nothrow) DerivedException(*this);
 	 * }
-	 * 
+	 *
 	 */
 	virtual Exception* clone() const;
 
@@ -212,15 +218,15 @@ namespace ExceptionDetail
 } // namespace ExceptionDetail
 
 /**
- * Writes the exception object to the stream in the form: 
+ * Writes the exception object to the stream in the form:
  *  <file>: <line> <type>: <message>
  */
 OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
 
 /**
- * Throw an exception using __FILE__ and __LINE__.  If applicable, 
+ * Throw an exception using __FILE__ and __LINE__.  If applicable,
  * OW_THROW_ERR should be used instead of this macro.
- * 
+ *
  * @param exType The type of the exception
  * @param msg The exception message.  A string that will be copied.
  */
@@ -235,7 +241,7 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  * Throw an exception using __FILE__ and __LINE__.
  * @param exType The type of the exception
  * @param msg The exception message.  A string that will be copied.
- * @param subex A sub-exception. A pointer to it will be passed to the 
+ * @param subex A sub-exception. A pointer to it will be passed to the
  *   exception constructor, which should clone() it.
  */
 #define OW_THROW_SUBEX(exType, msg, subex) \
@@ -288,7 +294,7 @@ throw ExceptionDetail::Errno< exType >:: \
  * @param exType The type of the exception
  * @param msg The exception message.  A string that will be copied.
  * @param err The error code.
- * @param subex A sub-exception. A point to it will be passed to the 
+ * @param subex A sub-exception. A point to it will be passed to the
  *   exception constructor, which should clone() it.
  */
 #define OW_THROW_ERR_SUBEX(exType, msg, err, subex) \
@@ -297,7 +303,7 @@ throw exType(__FILE__, __LINE__, (msg), (err), &(subex))
 /**
  * Declare a new exception class named <NAME>Exception that derives from <BASE>.
  * This macro is typically used in a header file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  */
@@ -305,7 +311,7 @@ throw exType(__FILE__, __LINE__, (msg), (err), &(subex))
 class NAME##Exception : public BASE \
 { \
 public: \
-	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0); \
+	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 	virtual NAME##Exception* clone() const; \
@@ -317,7 +323,7 @@ public: \
  * declaration will be prefaced with the linkage_spec parm. This allows
  * the use of OW_COMMON_API when declaring exceptions. Example:
  * 		OW_DECLARE_APIEXCEPTION(Bogus, CIMException, OW_COMMON_API)
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  * @param LINKAGE_SPEC The linkage specifier for the exception class.
@@ -326,7 +332,7 @@ public: \
 class LINKAGE_SPEC NAME##Exception : public BASE \
 { \
 public: \
-	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0); \
+	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0, int subClassId = ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 	virtual NAME##Exception* clone() const; \
@@ -338,32 +344,32 @@ public: \
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
  * This macro is typically used in a header file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
-#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OpenWBEM::Exception) 
+#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OpenWBEM::Exception)
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
  * This macro is typically used in a header file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param LINKAGE_SPEC the linkage specifier. If the OW_DEFINE_EXCEPTION is part
  *		of libopenwbem this would OW_COMMON_API...
  */
-#define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) OW_DECLARE_APIEXCEPTION2(NAME, ::OpenWBEM::Exception, LINKAGE_SPEC) 
+#define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) OW_DECLARE_APIEXCEPTION2(NAME, ::OpenWBEM::Exception, LINKAGE_SPEC)
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
  * The new class will use UNKNOWN_SUBCLASS_ID for the subclass id.
  * This macro is typically used in a cpp file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  */
 #define OW_DEFINE_EXCEPTION2(NAME, BASE) \
-NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException) \
-	: BASE(::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID, file, line, msg, errorCode, otherException) {} \
+NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException, int subClassId) \
+	: BASE(file, line, msg, errorCode, otherException, subClassId) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
 NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; }
@@ -372,14 +378,14 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  * Define a new exception class named <NAME>Exception that derives from <BASE>.
  * The new class will use SUB_CLASS_ID for the subclass id.
  * This macro is typically used in a cpp file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  * @param SUB_CLASS_ID The subclass id.
  */
 #define OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, BASE, SUB_CLASS_ID) \
-NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException) \
-	: BASE(SUB_CLASS_ID, file, line, msg, errorCode, otherException) {} \
+NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException, int subClassId) \
+	: BASE(file, line, msg, errorCode, otherException, subClassId == ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID ? (SUB_CLASS_ID) : subClassId) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
 NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; }
@@ -389,7 +395,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  * The new class will use UNKNOWN_SUBCLASS_ID for the subclass id.
  * Use this macro for internal implementation exceptions that don't have an id.
  * This macro is typically used in a cpp file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OpenWBEM::Exception, ::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID)
@@ -399,7 +405,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  * The new class will use ExceptionIds::<NAME>ExceptionId for the subclass id.
  * Use this macro to create public exceptions that have an id in the OpenWBEM::ExceptionIds namespace that derive from Exception
  * This macro is typically used in a cpp file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DEFINE_EXCEPTION_WITH_ID(NAME) OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID_AUX(NAME, ::OpenWBEM::Exception, ::OpenWBEM::ExceptionIds::NAME##ExceptionId)
@@ -409,7 +415,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
  * The new class will use ExceptionIds::<NAME>ExceptionId for the subclass id.
  * Use this macro to create public exceptions that have an id in the OpenWBEM::ExceptionIds namespace that will derive from BASE
  * This macro is typically used in a cpp file.
- * 
+ *
  * @param NAME The name of the new class (Exception will be postfixed)
  * @param BASE The base class.
  */

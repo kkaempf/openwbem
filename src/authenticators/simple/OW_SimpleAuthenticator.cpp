@@ -55,6 +55,14 @@ class SimpleAuthenticator: public AuthenticatorIFC
 public:
 	SimpleAuthenticator();
 	virtual ~SimpleAuthenticator() { };
+
+	enum EErrorCodes
+	{
+		E_NO_PASSWORD_FILE,
+		E_CANNOT_OPEN_PASSWORD_FILE,
+		E_INVALID_PASSWORD_FILE
+	};
+
    /**
 	* Called when authenticator is loaded
 	*
@@ -126,13 +134,13 @@ SimpleAuthenticator::loadPasswordFile(const ServiceEnvironmentIFCRef& env)
 		ConfigOpts::SIMPLE_AUTH_FILE_opt);
 	if (passwdFile.empty())
 	{
-		OW_THROW(AuthenticationException, "No password file given for "
-			"simple authorization module");
+		OW_THROW_ERR(AuthenticationException, "No password file given for "
+			"simple authorization module", E_NO_PASSWORD_FILE);
 	}
 	std::ifstream infile(passwdFile.c_str(), std::ios::in);
 	if (!infile)
 	{
-		OW_THROW(AuthenticationException, "Cannot open password file");
+		OW_THROW_ERR(AuthenticationException, "Cannot open password file", E_CANNOT_OPEN_PASSWORD_FILE);
 	}
 	// read name/password pairs from file into password map.
 	while (infile)
@@ -156,8 +164,8 @@ SimpleAuthenticator::loadPasswordFile(const ServiceEnvironmentIFCRef& env)
 		}
 		else
 		{
-			OW_THROW(AuthenticationException, Format("Invalid syntax in "
-				"%1 at line %2", passwdFile, lineCount).c_str());
+			OW_THROW_ERR(AuthenticationException, Format("Invalid syntax in "
+				"%1 at line %2", passwdFile, lineCount).c_str(), E_INVALID_PASSWORD_FILE);
 		}
 		m_passwords[name] = passwd;
 	}

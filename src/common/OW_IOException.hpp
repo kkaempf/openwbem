@@ -42,13 +42,7 @@ namespace OpenWBEM
 {
 
 OW_DECLARE_APIEXCEPTION(IO, OW_COMMON_API)
-class OW_COMMON_API BadCIMSignatureException : public IOException
-{
-public:
-	BadCIMSignatureException(const char* file, int line, const char* msg);
-	virtual ~BadCIMSignatureException() throw();
-	virtual const char* type() const;
-};
+OW_DECLARE_APIEXCEPTION2(BadCIMSignature, IOException, OW_COMMON_API)
 
 } // end namespace OpenWBEM
 
