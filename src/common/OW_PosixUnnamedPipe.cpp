@@ -32,6 +32,8 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
+#include "OW_SocketUtils.hpp"
+#include "OW_Assertion.hpp"
 
 extern "C"
 {
@@ -61,12 +63,15 @@ UnnamedPipe::createUnnamedPipe(EOpen doOpen)
 }
 //////////////////////////////////////////////////////////////////////////////
 PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
+	: m_blocking(false)
 {
 	m_fds[0] = m_fds[1] = -1;
 	if(doOpen)
 	{
 		open();
 	}
+	setTimeouts(60 * 10); // 10 minutes. This helps break deadlocks when using safePopen()
+	setBlocking(true);
 }
 	
 //////////////////////////////////////////////////////////////////////////////
@@ -76,20 +81,58 @@ PosixUnnamedPipe::~PosixUnnamedPipe()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
+PosixUnnamedPipe::setBlocking(bool outputIsBlocking)
+{
+	// precondition
+	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
+
+#ifdef OW_WIN32
+	unsigned long argp = !outputIsBlocking;
+	if (ioctlsocket(m_fds[0], FIONBIO, &argp) != 0)
+		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
+		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+#else
+	for (size_t i = 0; i <= 1; ++i)
+	{
+		int fdflags = fcntl(m_fds[i], F_GETFL, 0);
+		if (fdflags == -1)
+		{
+			OW_THROW(IOException, "Failed to set pipe to non-blocking");
+		}
+		if(outputIsBlocking)
+		{
+			fdflags &= !O_NONBLOCK;
+		}
+		else
+		{
+			fdflags |= O_NONBLOCK;
+		}
+		if (fcntl(m_fds[i], F_SETFL, fdflags) == -1)
+		{
+			OW_THROW(IOException, "Failed to set pipe to non-blocking");
+		}
+	}
+
+#endif
+}
+//////////////////////////////////////////////////////////////////////////////
+void
 PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
-	// If not opened, ignore?
-	if(m_fds[1] == -1)
-	{
-		return;
-	}
+	// precondition
+	OW_ASSERT(m_fds[1] != -1);
+
 #ifdef OW_WIN32
-	// TODO: use outputIsBlocking?
-	unsigned long argp = 0;
+	unsigned long argp = !outputIsBlocking;
 	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
 		OW_THROW(IOException, "Failed to set pipe to non-blocking");
 #else
 	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
+	if (fdflags == -1)
+	{
+		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+	}
 	if(outputIsBlocking)
 	{
 		fdflags ^= O_NONBLOCK;
@@ -98,7 +141,10 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 	{
 		fdflags |= O_NONBLOCK;
 	}
-	fcntl(m_fds[1], F_SETFL, fdflags);
+	if (fcntl(m_fds[1], F_SETFL, fdflags) == -1)
+	{
+		OW_THROW(IOException, "Failed to set pipe to non-blocking");
+	}
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -118,13 +164,6 @@ PosixUnnamedPipe::open()
 		m_fds[0] = m_fds[1] = -1;
 		OW_THROW(UnnamedPipeException, ::strerror(errno));
 	}
-#ifdef OW_WIN32
-	unsigned long argp = 1;
-	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
-		OW_THROW(IOException, "Failed to set pipe to blocking");
-#else
-	fcntl(m_fds[1], F_SETFL, O_NONBLOCK);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -174,6 +213,22 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[1] != -1)
 	{
+		if (m_blocking)
+		{
+			rc = SocketUtils::waitForIO(m_fds[1], m_writeTimeout, SocketFlags::E_WAIT_FOR_OUTPUT);
+			if (rc != 0)
+			{
+				if (errorAsException)
+				{
+					OW_THROW(IOException, Format("SocketUtils::waitForIO failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+				}
+				else
+				{
+					return rc;
+				}
+			}
+		}
+
 		// Always use the regular write in this method, instead of the
 		// pth_write. This is because the signal handler calls this method
 		// indirectly when it pushes a signal that has been received.
@@ -192,11 +247,23 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[0] != -1)
 	{
-#ifdef OW_USE_GNU_PTH
-		rc = pth_read(m_fds[0], buffer, bufferLen);
-#else
+		if (m_blocking)
+		{
+			rc = SocketUtils::waitForIO(m_fds[0], m_readTimeout, SocketFlags::E_WAIT_FOR_INPUT);
+			if (rc != 0)
+			{
+				if (errorAsException)
+				{
+					OW_THROW(IOException, Format("SocketUtils::waitForIO failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+				}
+				else
+				{
+					return rc;
+				}
+			}
+		}
+
 		rc = ::read(m_fds[0], buffer, bufferLen);
-#endif
 	}
 	if (errorAsException && rc == -1)
 	{

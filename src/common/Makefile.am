@@ -25,7 +25,8 @@ thelibdir = $(libdir)
 # Shouldn't depend on anything not in common.
 INCLUDES = \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/ifcs
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/common/socket
 
 
 libopenwbem_a_SOURCES =	\
@@ -204,7 +205,4 @@ libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \
 ../common/socket/libOW_Socket.a \
 ../ifcs/libOW_ifcs.a
-
-#libopenwbem_a_LDFLAGS = -release $(OPENWBEM_RELEASE)	\
-#-version-info $(OPENWBEM_CURRENT):$(OPENWBEM_REVISION):$(OPENWBEM_AGE)
 

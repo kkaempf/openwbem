@@ -400,10 +400,8 @@ safePopen(const Array<String>& command,
 	PopenStreams retval;
 	retval.in( UnnamedPipe::createUnnamedPipe() );
 	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
-	upipeOut->setOutputBlocking(true);
 	retval.out( upipeOut );
 	UnnamedPipeRef upipeErr = UnnamedPipe::createUnnamedPipe();
-	upipeErr->setOutputBlocking(true);
 	retval.err( upipeErr );
 	if (initialInput != "")
 	{

@@ -51,6 +51,13 @@ public:
 	int writeString(const String& strData);
 	int readInt(int* value);
 	int readString(String& strData);
+
+	void setReadTimeout(int seconds) { m_readTimeout = seconds; }
+	int getReadTimeout() { return m_readTimeout; }
+	void setWriteTimeout(int seconds) { m_writeTimeout = seconds; }
+	int getWriteTimeout() { return m_writeTimeout; }
+	void setTimeouts(int seconds) { m_readTimeout = m_writeTimeout = seconds; }
+
 	/**
 	 * Read from the pipe and collect into a string, until the other end of the
 	 * pipe is closed.
@@ -59,7 +66,8 @@ public:
 	String readAll();
 	virtual void open() = 0;
 	virtual int close() = 0;
-	virtual void setOutputBlocking(bool outputIsBlocking=true) = 0;
+	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED = 0;
+	virtual void setBlocking(bool outputIsBlocking=true) = 0;
 	enum EOpen
 	{
 		E_DONT_OPEN,
@@ -70,6 +78,8 @@ protected:
 	UnnamedPipe()
 		: SelectableIFC()
 	{}
+	int m_readTimeout;
+	int m_writeTimeout;
 };
 
 } // end namespace OpenWBEM
