@@ -1221,6 +1221,19 @@ DateTime::toString(ETimeOffset timeOffset) const
 	return asctime(&theTime);
 #endif
 }
+
+String DateTime::toString(char const * format, ETimeOffset timeOffset) const
+{
+	tm theTime = getTm(timeOffset);
+	size_t const BUFSZ = 1024;
+	char buf[BUFSZ];
+	size_t n = strftime(buf, BUFSZ, format, &theTime);
+	buf[n >= BUFSZ ? 0 : n] = '\0';
+	return String(buf);
+}
+
+char const DateTime::DEFAULT_FORMAT[] = "%c";
+
 //////////////////////////////////////////////////////////////////////////////
 String
 DateTime::toStringGMT() const 

@@ -470,12 +470,28 @@ public:
 		addSeconds(-seconds);
 		return *this;
 	}
+
 	/**
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return The string representation of this DateTime object.  The format
 	 * is like "Wed Jun 30 21:49:08 1993\n" as returned by ctime().
 	 */
 	String toString(ETimeOffset timeOffset = E_LOCAL_TIME) const;
+
+	/**
+	 * @param format is a date/time format string such as used by strftime.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @return Conversion of this DateTime to String using format.
+	 * REQUIRE: formatted time has length at most 1023.
+	 */
+	String toString(
+		char const * format, ETimeOffset timeOffset = E_LOCAL_TIME) const;
+
+	/**
+	 * A default date/time format to use with toString().
+	**/
+	static char const DEFAULT_FORMAT[];
+
 	/**
 	 * This is the same as toString(E_UTC_TIME).  This function is
 	 * deprecated and exists for backward compatibility purposes.
