@@ -348,9 +348,8 @@ instanceNameToKey(const CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassNamesOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct enumClassNamesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		enumClassNamesOp(StringResultHandlerIFC& result_)
 			: result(result_)
 		{}
@@ -389,9 +388,8 @@ CIMXMLCIMOMHandle::enumClassNames(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct enumClassOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		enumClassOp(CIMClassResultHandlerIFC& result_)
 			: result(result_)
 		{}
@@ -444,9 +442,8 @@ CIMXMLCIMOMHandle::enumClass(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstanceNamesOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct enumInstanceNamesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		enumInstanceNamesOp(CIMObjectPathResultHandlerIFC& result_,
 			const String& ns_)
 			: result(result_)
@@ -505,9 +502,8 @@ static inline void generatePropertyListXML(std::ostream& ostr,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstancesOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct enumInstancesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		enumInstancesOp(CIMInstanceResultHandlerIFC& result_)
 			: result(result_)
 		{}
@@ -568,9 +564,8 @@ CIMXMLCIMOMHandle::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getClassOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct getClassOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		getClassOp(CIMClass& result_)
 			: result(result_)
 		{}
@@ -624,9 +619,8 @@ CIMXMLCIMOMHandle::getClass(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct getInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		getInstanceOp(CIMInstance& result_)
 			: result(result_)
 		{}
@@ -672,9 +666,8 @@ CIMXMLCIMOMHandle::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class invokeMethodOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct invokeMethodOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		invokeMethodOp(CIMValue& result_, CIMParamValueArray& outParams_)
 			: result(result_)
 			, outParams(outParams_)
@@ -786,9 +779,8 @@ CIMXMLCIMOMHandle::invokeMethod(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getQualifierTypeOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct getQualifierTypeOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		getQualifierTypeOp(CIMQualifierType& result_)
 			: result(result_)
 		{}
@@ -840,9 +832,8 @@ CIMXMLCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumQualifierTypesOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct enumQualifierTypesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		enumQualifierTypesOp(CIMQualifierTypeResultHandlerIFC& result_)
 			: result(result_)
 		{}
@@ -955,9 +946,8 @@ CIMXMLCIMOMHandle::modifyInstance(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class createInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct createInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		createInstanceOp(CIMObjectPath& result_)
 			: result(result_)
 		{}
@@ -1034,9 +1024,8 @@ CIMXMLCIMOMHandle::setProperty(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getPropertyOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct getPropertyOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		getPropertyOp(CIMValue& result_)
 			: result(result_)
 		{}
@@ -1072,9 +1061,8 @@ CIMXMLCIMOMHandle::getProperty(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class objectPathOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct objectPathOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		objectPathOp(CIMObjectPathResultHandlerIFC& result_,
 			String ns_)
 			: result(result_)
@@ -1104,9 +1092,8 @@ namespace
 		String ns;
 	};
 //////////////////////////////////////////////////////////////////////////////
-	class objectWithPathOp : public CIMXMLCIMOMHandle::ClientOperation
+	struct objectWithPathOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
-	public:
 		objectWithPathOp(
 			CIMInstanceResultHandlerIFC* iresult_,
 			CIMClassResultHandlerIFC* cresult_,
