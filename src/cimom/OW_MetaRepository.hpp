@@ -40,13 +40,19 @@
 
 #ifdef OW_HAVE_HASH_MAP
 #include <hash_map> // hash_map is better for the cache than OW_SortedVectorMap
+#define OW_HASH_MAP_NS std
+#elif OW_HAVE_EXT_HASH_MAP
+#include <ext/hash_map> // hash_map is better for the cache than OW_SortedVectorMap
+#define OW_HASH_MAP_NS __gnu_cxx
 #else
 #include "OW_SortedVectorMap.hpp"
 #endif
 #include <list>
 
-#ifdef OW_HAVE_HASH_MAP
+#if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
 // need to specialize hash
+namespace OW_HASH_MAP_NS
+{
 template<> struct hash<OW_String>
 {
 	size_t operator()(const OW_String& s) const
@@ -54,6 +60,7 @@ template<> struct hash<OW_String>
 		return hash<const char*>()(s.c_str());
 	}
 };
+}
 #endif
 
 
@@ -295,8 +302,9 @@ private:
 	// will be used in the index.
 	typedef std::list<std::pair<OW_CIMClass, OW_String> > class_cache_t;
 	// the index into the cache.  Speeds up finding a class when we need to.
-#ifdef OW_HAVE_HASH_MAP
-	typedef std::hash_map<OW_String, class_cache_t::iterator> cache_index_t;
+#if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
+	typedef OW_HASH_MAP_NS::hash_map<OW_String, class_cache_t::iterator> cache_index_t;
+#undef OW_HASH_MAP_NS
 #else
 	typedef OW_SortedVectorMap<OW_String, class_cache_t::iterator> cache_index_t;
 #endif

@@ -101,7 +101,7 @@ AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h streambuf streambuf.h ostream \
-ostream.h istream istream.h inttypes.h getopt.h hash_map)
+ostream.h istream istream.h inttypes.h getopt.h hash_map ext/hash_map)
 
 AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield)
 
