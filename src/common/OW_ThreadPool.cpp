@@ -91,11 +91,11 @@ public:
 		}
 
 		OW_NonRecursiveMutexLock l(m_queueLock);
-		if ((m_queue.size() == m_maxQueueSize) && !blockWhenFull)
+		if ((m_maxQueueSize > 0) && (m_queue.size() == m_maxQueueSize) && !blockWhenFull)
 		{
 			return false;
 		}
-		while( (m_queue.size() == m_maxQueueSize) && (!(m_shutdown || m_queueClosed)) )
+		while( (m_maxQueueSize > 0) && (m_queue.size() == m_maxQueueSize) && (!(m_shutdown || m_queueClosed)) )
 		{
 			m_queueNotFull.wait(l);
 		}
@@ -151,6 +151,15 @@ public:
 		
 	}
 
+	void waitForEmptyQueue()
+	{
+		OW_NonRecursiveMutexLock l(m_queueLock);
+		while (m_queue.size() != 0)
+		{
+			m_queueEmpty.wait(l);
+		}
+	}
+
 private:
 	// pool characteristics
 	OW_UInt32 m_maxQueueSize;
@@ -199,10 +208,10 @@ OW_Int32 workerThread::run()
 			m_thePool->m_queueNotFull.notifyAll();
 		}
 
-		// handle waiting shutdown thread
+		// handle waiting shutdown thread or callers of waitForEmptyQueue()
 		if (m_thePool->m_queue.size() == 0)
 		{
-			m_thePool->m_queueEmpty.notifyOne();
+			m_thePool->m_queueEmpty.notifyAll();
 		}
 
 		l.release();
@@ -244,6 +253,12 @@ bool OW_ThreadPool::tryAddWork(const OW_RunnableRef& work)
 void OW_ThreadPool::shutdown(bool finishWorkInQueue)
 {
 	m_impl->shutdown(finishWorkInQueue);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void OW_ThreadPool::waitForEmptyQueue()
+{
+	m_impl->waitForEmptyQueue();
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -85,6 +85,11 @@ public:
 	 */
 	void shutdown(bool finishWorkInQueue=true);
 
+	/**
+	 * Wait for the queue to empty out.
+	 */
+	void waitForEmptyQueue();
+
 	~OW_ThreadPool();
 	OW_ThreadPool(const OW_ThreadPool& x);
 	OW_ThreadPool& operator=(const OW_ThreadPool& x);
