@@ -44,7 +44,10 @@ owenumnamespace \
 $(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
 owenumclassnames \
-owenumclasses \
+owenumclasses
+
+# This isn't done yet
+noinst_PROGRAMS = \
 owrepositorydump
 
 ### owdigestgenpass
