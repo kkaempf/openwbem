@@ -133,6 +133,7 @@ public:
 		bool isSepThread;
 		bool enableDeflate;
 		bool useDigest;
+		bool allowAnonymous;
 		OW_ServiceEnvironmentIFCRef env;
 	};
 

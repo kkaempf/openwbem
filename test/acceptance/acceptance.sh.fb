@@ -96,6 +96,16 @@ Install()
 }
 
 #############################################################################
+EditConfig()
+{
+	OLDDIR=`pwd`
+	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
+	cp openwbem.conf-t openwbem.conf-t~
+	sed -e "$1"  openwbem.conf-t~ > openwbem.conf-t
+	cd $OLDDIR
+}
+
+#############################################################################
 SwitchToLinks()
 {
 	cd $STAGEDIR
@@ -488,17 +498,22 @@ TestAuth()
 		return
 	fi
 
-	# switch from digest to simple
-	OLDDIR=`pwd`
-	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-	cp openwbem.conf-t openwbem.conf-t~
-	sed \
-			-e "s!http_server.use_digest = true!http_server.use_digest = false!g" \
-		openwbem.conf-t~ > openwbem.conf-t
-	cd $OLDDIR
-
-	echo "Testing Simple Authentication Module and GetFeatures"
+	# enable allow_anonymous
+	EditConfig "s!;owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = true!g" 
+	
+	echo "Testing Allow Anonymous"
 	StartDaemon
+	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
+		> $RESULTDIR/AuthTest.out 2>&1
+	[ "$?" = "0" ] || ExitWithFail "Allow Anonymous Failed"
+
+	# disable allow_anonymous
+	EditConfig "s!owcimomd.allow_anonymous = true!;owcimomd.allow_anonymous = true!g" 
+
+	# switch from digest to simple
+	EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
+	echo "Testing Simple Authentication Module and GetFeatures"
+	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "2" ] || \
@@ -524,15 +539,7 @@ TestAuth()
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
-	OLDDIR=`pwd`
-	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-	cp openwbem.conf-t openwbem.conf-t~
-	sed \
-			-e "s!http_server.use_digest = false!http_server.use_digest = true!g" \
-		openwbem.conf-t~ > openwbem.conf-t
-	cd $OLDDIR
-
-
+	EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
 	echo "Testing Digest Authentication"
 	RestartDaemon
 	
@@ -579,13 +586,8 @@ TestACL()
 	fi
 
 	echo "Setting up ACL test..."
-	OLDDIR=`pwd`
-	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-	cp openwbem.conf-t openwbem.conf-t~
-	sed \
-			-e "s!;owcimomd.ACL_superuser =.*!owcimomd.ACL_superuser = test1!g" \
-		openwbem.conf-t~ > openwbem.conf-t
-	cd $OLDDIR
+	EditConfig "s!;owcimomd.ACL_superuser =.*!owcimomd.ACL_superuser = test1!g" 
+
 	ACLPROG=$BUILDDIR/test/acceptance/progs/aclTest
 	WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
 	SUACLURL="ipc://test1:pass1@localhost:30926"
@@ -611,25 +613,15 @@ TestACL()
 		ExitWithFail " ACL test: SuperUser Access Failed."
 
 	echo "Verifying superuser disabled..."
-	OLDDIR=`pwd`
-	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-	cp openwbem.conf-t openwbem.conf-t~
-	sed \
-			-e "s!owcimomd.ACL_superuser.*!;owcimomd.ACL_superuser = test1!g" \
-		openwbem.conf-t~ > openwbem.conf-t
-	cd $OLDDIR
+	EditConfig "s!owcimomd.ACL_superuser.*!;owcimomd.ACL_superuser = test1!g" 
+
 	RestartDaemon
 	$ACLPROG $SUACLURL 0 || \
 		ExitWithFail "ACL test: SuperUser Disabled failed."
 
 	echo "re-enabling superuser access..."
-	OLDDIR=`pwd`
-	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
-	cp openwbem.conf-t openwbem.conf-t~
-	sed \
-			-e "s!;owcimomd.ACL_superuser =.*!owcimomd.ACL_superuser = test1!g" \
-		openwbem.conf-t~ > openwbem.conf-t
-	cd $OLDDIR
+
+	EditConfig "s!;owcimomd.ACL_superuser =.*!owcimomd.ACL_superuser = test1!g" 
 	RestartDaemon
 
 	echo "Testing read-only ACL..."

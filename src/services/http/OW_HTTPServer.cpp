@@ -194,6 +194,9 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	}
 	m_options.useDigest = !item.equalsIgnoreCase("false");
 
+	item = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt);
+	m_options.allowAnonymous = item.equalsIgnoreCase("true");
+
 	m_options.env = env;
 
 	m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);

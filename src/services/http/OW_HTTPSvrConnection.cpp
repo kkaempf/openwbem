@@ -827,28 +827,29 @@ OW_HTTPSvrConnection::processHeaders()
 //
 // Check for Authentication
 //
-	// if m_options.authMgr is NULL, allow_anonymous is true, so don't check.
-	// NOTE, this must be bullet-proof in OW_Environment!! (we cannot be
-	// allowed to start if allow_anonymous != true and auth module fails
-	// to load).
-	if (!m_isAuthenticated)
-	{
-		m_isAuthenticated = false;
-		try
-		{
-			if (performAuthentication(getHeaderValue("Authorization")) < 300 )
-					m_isAuthenticated = true;
+	// if m_options.allowAnonymous is true, we don't check.
 
-		}
-		catch (OW_AuthenticationException& e)
+	if (m_options.allowAnonymous == false)
+	{
+		if (!m_isAuthenticated)
 		{
-			m_errDetails = e.getMessage();
 			m_isAuthenticated = false;
-			return SC_INTERNAL_SERVER_ERROR;
-		}
-		if (m_isAuthenticated == false)
-		{
-			return SC_UNAUTHORIZED;
+			try
+			{
+				if (performAuthentication(getHeaderValue("Authorization")) < 300 )
+						m_isAuthenticated = true;
+
+			}
+			catch (OW_AuthenticationException& e)
+			{
+				m_errDetails = e.getMessage();
+				m_isAuthenticated = false;
+				return SC_INTERNAL_SERVER_ERROR;
+			}
+			if (m_isAuthenticated == false)
+			{
+				return SC_UNAUTHORIZED;
+			}
 		}
 	}
 

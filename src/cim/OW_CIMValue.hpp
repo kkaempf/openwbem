@@ -606,5 +606,12 @@ private:
 	OW_Reference<OW_CIMValueImpl> m_impl;
 };
 
+/**
+ *  * Inserter operator for OW_CIMValue
+ *   */
+ostream& operator<<(std::ostream& ostr, const OW_CIMValue& cv);
+
+
+
 
 #endif	// __OW_CIMVALUE_HPP__
