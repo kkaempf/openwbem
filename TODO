@@ -19,7 +19,6 @@ Testing:
     - Disable indications during testsuite to speed things up.
 
 Fix problems:
-    - Fix mof compiler wrt default qualifiers (see cim spec 4.7)
     - Add an option for user to control SO_REUSEADDR
     - Add an option for user to specify which interfaces to listen on.
     - Fix memory leak in openssl (when restarting) & in wql & in npi.
