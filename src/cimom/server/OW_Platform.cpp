@@ -66,6 +66,10 @@ extern "C"
 
 #ifdef OW_NETWARE
 #include <nks/vm.h>
+#include <nks/netware.h>
+#include <netware.h>
+#include <event.h>
+#include <library.h>
 #endif
 }
 #include <cstring>
@@ -442,6 +446,24 @@ netwareExitHandler(void*)
 		g_shutdownCond.wait(l); 
 	}
 }
+
+static void* WarnFuncRef = NULL;
+static rtag_t EventRTag;
+static event_handle_t DownEvent;
+
+static int
+netwareShutDownEventHandler(void*,
+	void*, void*)
+{
+	theSigHandler(SIGTERM); 
+	pthread_yield();
+	NonRecursiveMutexLock l(g_shutdownGuard); 
+	while(!g_shutDown)
+	{
+		g_shutdownCond.wait(l); 
+	}
+	return 0;
+}
 #endif
 
 } // extern "C"
@@ -523,6 +545,20 @@ setupSigHandler(bool dbgFlg)
 		OW_THROW(DaemonException,
 			Format("FAILED TO REGISTER EXIT HANDLER "
 			"NXVmRegisterExitHandler returned %1", rv).c_str()); 
+	}
+	EventRTag = AllocateResourceTag(getnlmhandle(), "Server down event",
+		EventSignature);
+	if(!EventRTag)
+	{
+		OW_THROW(DaemonException, "AllocationResourceTag FAILED");
+	}
+	NX_WRAP_INTERFACE((void*)netwareShutDownEventHandler, 3, &WarnFuncRef);
+	DownEvent = RegisterForEventNotification(EventRTag,
+		EVENT_DOWN_SERVER | EVENT_CONSUMER_MT_SAFE,
+		EVENT_PRIORITY_APPLICATION, (Warn_t)WarnFuncRef, (Report_t)0, 0);
+	if(!DownEvent)
+	{
+		OW_THROW(DaemonException, "FAILED to register for shutdown event");
 	}
 #endif
 }
