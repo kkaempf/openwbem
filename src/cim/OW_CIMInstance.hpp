@@ -158,6 +158,10 @@ public:
 		Int32 valueDataType = CIMDataType::INVALID) const;
 	/**
 	 * Set the properties associated with this instance.
+         * Note: this will clobber qualifiers associated with the 
+         *       properties which may already exist on the instance. 
+         *       You may want to instead consider updatePropertyValues(), 
+         *       which does not overwrite qualifiers. 
 	 * @param props An CIMPropertyArray that contains the new properties for
 	 * 	this instance.
 	 * @return a reference to *this
