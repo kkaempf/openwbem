@@ -34,7 +34,8 @@ OW_XMLParameters.cpp \
 OW_XMLEscape.cpp \
 OW_XMLUnescape.cpp \
 OW_XMLCIMFactory.cpp \
-OW_CIMtoXML.cpp
+OW_CIMtoXML.cpp \
+OW_XMLPrettyPrint.cpp
 
 pkginclude_HEADERS = \
 OW_CIMXMLParser.hpp \
@@ -48,7 +49,8 @@ OW_XMLQualifier.hpp \
 OW_XMLEscape.hpp \
 OW_XMLUnescape.hpp \
 OW_XMLCIMFactory.hpp \
-OW_CIMtoXML.hpp
+OW_CIMtoXML.hpp \
+OW_XMLPrettyPrint.hpp
 
 
 

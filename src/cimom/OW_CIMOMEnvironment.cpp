@@ -786,7 +786,6 @@ OW_RequestHandlerIFCRef
 OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 {
 	OW_RequestHandlerIFCRef ref;
-	ref.setNull();
 	if (m_shuttingDown)
 	{
 		return ref;
@@ -811,6 +810,8 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 			iter->second.dt.setToCurrent();
 			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
 				const_cast<OW_CIMOMEnvironment*>(this), true));
+			logDebug(format("Request Handler %1 handling request for content type %2",
+                iter->second.filename, id));
 		}
 		else
 		{

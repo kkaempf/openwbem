@@ -84,6 +84,10 @@ public:
 	OW_StringBuffer& operator += (OW_Real64 v);
 	OW_StringBuffer& operator += (const OW_CIMDateTime& arg);
 	OW_StringBuffer& operator += (const OW_CIMObjectPath& arg);
+	OW_StringBuffer& operator += (const OW_StringBuffer& arg)
+	{
+		return append(arg);
+	}
 
 
 	char operator[] (int ndx) const;

@@ -49,6 +49,7 @@
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_XMLPrettyPrint.hpp"
 
 #include <iostream>
 #include <algorithm> // for sort
@@ -220,11 +221,18 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "root");
-		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
-																 false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true, false);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+			OW_CIMClass c = enu.nextElement();
+			cout << "CIMClass: " << c.toMOF() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -240,7 +248,15 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 																 false);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+			OW_CIMClass c = enu.nextElement();
+			cout << "CIMClass: " << c.toMOF() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -256,7 +272,15 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 																 true);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+			OW_CIMClass c = enu.nextElement();
+			cout << "CIMClass: " << c.toMOF() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::localOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -272,7 +296,15 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 																 true);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().toMOF() << endl;
+			OW_CIMClass c = enu.nextElement();
+			cout << "CIMClass: " << c.toMOF() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::localOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -293,11 +325,30 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		cout << "CIMClass before: " << cimClass.toMOF() << endl;
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		cout << OW_XMLPrettyPrint(tfs);
+
 		OW_CIMProperty cimProp(OW_Bool(true));
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
 		hdl.modifyClass(cop, cimClass);
+
+		cimClass = hdl.getClass(cop, false);
+		cout << "CIMClass after: " << cimClass.toMOF() << endl;
+		tfs.reset();
+		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
+
 	}
 	catch (OW_CIMException& e)
 	{
@@ -318,7 +369,14 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
-		cout << cimClass.toMOF() << endl;
+		cout << "CIMClass: " << cimClass.toMOF() << endl;
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -330,7 +388,14 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		OW_CIMClass cimClass = hdl.getClass(cop, true);
-		cout << cimClass.toMOF() << endl;
+		cout << "CIMClass: " << cimClass.toMOF() << endl;
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::localOnly,
+			OW_CIMtoXMLFlags::includeQualifiers,
+			OW_CIMtoXMLFlags::includeClassOrigin,
+			OW_StringArray());
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -339,42 +404,6 @@ getClass(OW_CIMOMHandleIFC& hdl)
 
 	testDone();
 }
-
-//////////////////////////////////////////////////////////////////////////////
-/*
-void
-foobar(OW_CIMOMHandleIFC& hdl)
-{
-	testStart("foobar");
-
-	cout << "localOnly = false" << endl;
-	try
-	{
-		OW_CIMObjectPath cop("CIM_Docked");
-		OW_CIMClass cimClass = hdl.getClass(cop, false);
-		cout << cimClass.toMOF() << endl;
-	}
-	catch (OW_CIMException& e)
-	{
-		cerr << e << endl;
-	}
-
-	cout << "localOnly = true" << endl;
-	try
-	{
-		OW_CIMObjectPath cop("CIM_Docked");
-		OW_CIMClass cimClass = hdl.getClass(cop, true);
-		cout << cimClass.toMOF() << endl;
-	}
-	catch (OW_CIMException& e)
-	{
-		cerr << e << endl;
-	}
-
-	exit(0);
-	testDone();
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -420,7 +449,12 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop);
 		while (enu.hasMoreElements())
 		{
-			cout << enu.nextElement().toString() << endl;
+			OW_CIMObjectPath cop = enu.nextElement();
+			cout << cop.toString() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(cop, tfs, OW_CIMtoXMLFlags::isNotInstanceName);
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -454,11 +488,13 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_B
 		{
 			OW_CIMInstance i = enu.nextElement();
 			cout << i.toMOF() << endl;
-			OW_CIMtoXML(i,cout, OW_CIMObjectPath(),
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(i,tfs, OW_CIMObjectPath(),
 				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-		   cout << endl;
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -492,11 +528,13 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 
 		OW_CIMInstance in = hdl.getInstance(cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
-		OW_CIMtoXML(in, cout, OW_CIMObjectPath(),
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(),
 			OW_CIMtoXMLFlags::isNotInstanceName,
 			OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-		cout << endl;
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -621,6 +659,11 @@ enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 		{
 			OW_CIMQualifierType cqt = enu.nextElement();
 			cout << "Found Qualifier Definition: " << cqt.getName() << endl;
+			cout << cqt.toMOF() << endl;
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(cqt, tfs);
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
 		}
 	}
 	catch (OW_CIMException& e)
@@ -643,6 +686,11 @@ getQualifier(OW_CIMOMHandleIFC& hdl)
 		OW_CIMObjectPath cop(qualType);
 		OW_CIMQualifierType qt = hdl.getQualifierType(cop);
 		cout << "Got Qualifier: " << qt.getName() << endl;
+		cout << qt.toMOF() << endl;
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(qt, tfs);
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -818,20 +866,16 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMInstance>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
-			// XML is an easy way to easily see if the classorigin was sent.
-			if (includeClassOrigin)
-			{
-				cout << "Association Instance: ";
-				OW_CIMtoXML(v[x], cout, OW_CIMObjectPath(),
-					OW_CIMtoXMLFlags::isNotInstanceName,
-					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-				cout << endl;
-			}
-			else
-			{
-				cout << "Association Instance: " << v[x].toMOF() << endl;
-			}
+			cout << "Association Instance: ";
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::isNotInstanceName,
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
+			cout << endl;
+			cout << "In MOF: " << v[x].toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -870,19 +914,15 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMClass>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
-			// XML is an easy way to easily see if the classorigin was sent.
-			if (includeClassOrigin)
-			{
-				cout << "Association Class: ";
-				OW_CIMtoXML(v[x], cout,
-					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-				cout << endl;
-			}
-			else
-			{
-				cout << "Association Class: " << v[x].toMOF() << endl;
-			}
+			cout << "Association Class: ";
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(v[x], tfs,
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
+			cout << endl;
+			cout << "In MOF: " << v[x].toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -997,20 +1037,16 @@ references(OW_CIMOMHandleIFC& hdl,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMInstance>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
-			// XML is an easy way to easily see if the classorigin was sent.
-			if (includeClassOrigin)
-			{
-				cout << "Association Instance: ";
-			  	OW_CIMtoXML(v[x], cout, OW_CIMObjectPath(),
-					OW_CIMtoXMLFlags::isNotInstanceName,
-					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-			  	cout << endl;
-			}
-			else
-			{
-				cout << "Associated Instance: " << v[x].toMOF() << endl;
-			}
+			cout << "Association Instance: ";
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::isNotInstanceName,
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
+			cout << endl;
+			cout << "In MOF: " << v[x].toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -1049,20 +1085,16 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMClass>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
-			// XML is an easy way to easily see if the classorigin was sent.
-			if (includeClassOrigin)
-			{
-				cout << "Referencing Class: ";
-			  	OW_CIMtoXML(v[x], cout,
-					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-			  	cout << endl;
-			}
-			else
-			{
-				OW_CIMClass cc = v[x];
-				cout << "Referencing Class: " << cc.toMOF() << endl;
-			}
+			cout << "Referencing Class: ";
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(v[x], tfs,
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
+			cout << endl;
+			OW_CIMClass cc = v[x];
+			cout << "In MOF: " << cc.toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -1086,7 +1118,16 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 			"select * from EXP_BionicComputerSystem", "wql1");
 		while (cie.hasMoreElements())
 		{
-			cout << "Instance from Query: " << cie.nextElement().toMOF() << endl;
+			OW_CIMInstance i = cie.nextElement();
+			cout << "Instance from Query: ";
+			OW_TempFileStream tfs;
+			OW_CIMtoXML(i, tfs, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::isNotInstanceName,
+				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			tfs.rewind();
+			cout << OW_XMLPrettyPrint(tfs);
+			cout << "In MOF: " << i.toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -1284,6 +1325,10 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 		// with xml, this is a string.  we want a bool.
 		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;
+		OW_TempFileStream tfs;
+		OW_CIMtoXML(v, tfs);
+		tfs.rewind();
+		cout << OW_XMLPrettyPrint(tfs);
 	}
 	catch (OW_CIMException& e)
 	{

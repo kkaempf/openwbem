@@ -1124,7 +1124,7 @@ OW_CIMQualifierType CIMOMVisitor::getQualifierType(const OW_String& qualName, co
 	OW_Map<OW_String, OW_CIMQualifierType>::const_iterator i = m_dataTypeCache.find(lcqualName);
 	if (i == m_dataTypeCache.end())
 	{
-		m_dataTypeCache[lcqualName] = CIMOMgetQualifierType(lcqualName, li);
+		m_dataTypeCache[lcqualName] = CIMOMgetQualifierType(qualName, li);
 	}
 	
 	return m_dataTypeCache[lcqualName];

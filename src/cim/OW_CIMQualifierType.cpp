@@ -41,31 +41,8 @@ using std::ostream;
 struct OW_CIMQualifierType::QUALTData
 {
 	QUALTData()
-		: m_name()
-		, m_dataType(true)
-		, m_scope()
-		, m_flavor()
-		, m_defaultValue()
+		: m_dataType(true)
 	{
-	}
-
-	QUALTData(const QUALTData& x)
-		: m_name(x.m_name)
-		, m_dataType(x.m_dataType)
-		, m_scope(x.m_scope)
-		, m_flavor(x.m_flavor)
-		, m_defaultValue(x.m_defaultValue)
-	{
-	}
-
-	QUALTData& operator= (const QUALTData& x)
-	{
-		m_name = x.m_name;
-		m_dataType = x.m_dataType;
-		m_scope = x.m_scope;
-		m_flavor = x.m_flavor;
-		m_defaultValue = x.m_defaultValue;
-		return *this;
 	}
 
 	OW_String m_name;
@@ -79,6 +56,11 @@ struct OW_CIMQualifierType::QUALTData
 OW_CIMQualifierType::OW_CIMQualifierType(OW_Bool notNull) :
 	OW_CIMElement(), m_pdata((notNull) ? new QUALTData : NULL)
 {
+	if (m_pdata)
+	{
+		addFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
+		addFlavor(OW_CIMFlavor::TOSUBCLASS);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,6 +68,8 @@ OW_CIMQualifierType::OW_CIMQualifierType(const OW_String& name) :
 	OW_CIMElement(), m_pdata(new QUALTData)
 {
 	m_pdata->m_name = name;
+	addFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
+	addFlavor(OW_CIMFlavor::TOSUBCLASS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -93,6 +77,8 @@ OW_CIMQualifierType::OW_CIMQualifierType(const char* name) :
 	OW_CIMElement(), m_pdata(new QUALTData)
 {
 	m_pdata->m_name = name;
+	addFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
+	addFlavor(OW_CIMFlavor::TOSUBCLASS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -181,18 +167,11 @@ void
 OW_CIMQualifierType::setDefaultValue(const OW_CIMValue& defValue)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();
-	try
+	m_pdata->m_defaultValue = defValue;
+	if(m_pdata->m_defaultValue)
 	{
-		m_pdata->m_defaultValue = defValue;
-		if(m_pdata->m_defaultValue)
-		{
-			m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
-				m_pdata->m_defaultValue, m_pdata->m_dataType);
-		}
-	}
-	catch(...)
-	{
-		// Ignore?
+		m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
+			m_pdata->m_defaultValue, m_pdata->m_dataType);
 	}
 }
 
@@ -404,25 +383,30 @@ OW_CIMQualifierType::toMOF() const
 	size_t i;
 	OW_StringBuffer rv;
 
-	rv = m_pdata->m_name;
+	rv = "Qualifier ";
+	rv += m_pdata->m_name;
 	rv += " : ";
 	rv += m_pdata->m_dataType.toMOF();
 
 	if(m_pdata->m_dataType.isArrayType())
 	{
 		rv += '[';
-		rv += m_pdata->m_dataType.getSize() + ']';
+		if (m_pdata->m_dataType.getSize() != -1) // -1 means unlimited
+		{
+			rv += m_pdata->m_dataType.getSize();
+		}
+		rv += ']';
 	}
 
 	if(m_pdata->m_defaultValue)
 	{
-		rv += '=';
+		rv += " = ";
 		rv += m_pdata->m_defaultValue.toMOF();
 	}
 
 	if(m_pdata->m_scope.size() > 0)
 	{
-		rv += ",scope(";
+		rv += ", Scope(";
 
 		for(i = 0; i < m_pdata->m_scope.size(); i++)
 		{
@@ -437,15 +421,30 @@ OW_CIMQualifierType::toMOF() const
 
 	if(m_pdata->m_flavor.size() > 0)
 	{
+		OW_CIMFlavorArray toPrint;
+		// first filter out the default flavors.
 		for(i = 0; i < m_pdata->m_flavor.size(); i++)
 		{
-			if(i > 0)
+			if (m_pdata->m_flavor[i].getFlavor() != OW_CIMFlavor::ENABLEOVERRIDE
+				&& m_pdata->m_flavor[i].getFlavor() != OW_CIMFlavor::TOSUBCLASS)
 			{
-				rv += ',';
+				toPrint.push_back(m_pdata->m_flavor[i]);
 			}
-			rv += m_pdata->m_flavor[i].toMOF();
 		}
-		rv += ')';
+
+		if (toPrint.size() > 0)
+		{
+			rv += ", Flavor(";
+			for(i = 0; i < toPrint.size(); i++)
+			{
+				if(i > 0)
+				{
+					rv += ',';
+				}
+				rv += toPrint[i].toMOF();
+			}
+			rv += ')';
+		}
 	}
 
 	rv += ";\n";

@@ -389,17 +389,17 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	 * have no isIndication() flag!  TODO
 	 */
 	const OW_CIMQualifierArray ccquals = cc.getQualifiers();
-	if (cc.isAssociation() &&
-		std::find(ccquals.begin(), ccquals.end(),
-		OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == ccquals.end())
-	{
-		ostr << "<QUALIFIER NAME=\"Association\" TYPE=\"boolean\" ";
-		if (localOnly == OW_CIMtoXMLFlags::localOnly)
-		{
-			ostr << "PROPAGATED=\"true\" ";
-		}
-		ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE></QUALIFIER>";
-	}
+//     if (cc.isAssociation() &&
+//         std::find(ccquals.begin(), ccquals.end(),
+//         OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == ccquals.end())
+//     {
+//         ostr << "<QUALIFIER NAME=\"Association\" TYPE=\"boolean\" ";
+//         if (localOnly == OW_CIMtoXMLFlags::localOnly)
+//         {
+//             ostr << "PROPAGATED=\"true\" ";
+//         }
+//         ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE></QUALIFIER>";
+//     }
 	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
 	{
 		for(size_t i = 0; i < ccquals.size(); i++)
@@ -962,10 +962,11 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 
 	//
 	// If only local definitions are required and this is a propagated
-	// qualifier then nothing to return. Never ignore the association qualifier.
+	// qualifier then nothing to return. NO- Never ignore the association qualifier.
 	//
-	if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated() &&
-	   !cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
+	//if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated() &&
+	//   !cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
+	if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated())
 	{
 		return;
 	}

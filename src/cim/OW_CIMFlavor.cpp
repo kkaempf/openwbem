@@ -60,11 +60,11 @@ OW_CIMFlavor::toMOF() const
 	const char* strf;
 	switch(m_flavor)
 	{
-		case ENABLEOVERRIDE: strf = "ENABLEOVERRIDE"; break;
-		case DISABLEOVERRIDE: strf = "DISABLEOVERRIDE"; break;
-		case RESTRICTED: strf = "RESTRICTED"; break;
-		case TOSUBCLASS: strf = "TOSUBCLASS"; break;
-		case TRANSLATE: strf = "TRANSLATE"; break;
+		case ENABLEOVERRIDE: strf = "EnableOverride"; break;
+		case DISABLEOVERRIDE: strf = "DisableOverride"; break;
+		case RESTRICTED: strf = "Restricted"; break;
+		case TOSUBCLASS: strf = "ToSubclass"; break;
+		case TRANSLATE: strf = "Translatable"; break;
 		default: strf = "BAD FLAVOR"; break;
 	}
 	

@@ -47,23 +47,19 @@ OW_CIMScope::toString() const
 OW_String
 OW_CIMScope::toMOF() const
 {
-	OW_String rv;
-
 	switch(m_val)
 	{
-		case SCHEMA: rv = "SCHEMA"; break;
-		case CLASS: rv = "CLASS"; break;
-		case ASSOCIATION: rv = "ASSOCIATION";
-		case INDICATION: rv = "INDICATION"; break;
-		case PROPERTY: rv = "PROPERTY"; break;
-		case REFERENCE: rv = "REFERENCE"; break;
-		case METHOD: rv = "METHOD"; break;
-		case PARAMETER: rv = "PARAMETER"; break;
-		case ANY: rv = "ANY"; break;
-		default: rv = "BAD SCOPE"; break;
+		case SCHEMA: return "schema"; break;
+		case CLASS: return "class"; break;
+		case ASSOCIATION: return "association"; break;
+		case INDICATION: return "indication"; break;
+		case PROPERTY: return "property"; break;
+		case REFERENCE: return "reference"; break;
+		case METHOD: return "method"; break;
+		case PARAMETER: return "parameter"; break;
+		case ANY: return "any"; break;
+		default: return "BAD SCOPE"; break;
 	}
-
-	return rv;
 }
 
 //////////////////////////////////////////////////////////////////////////////					

@@ -793,7 +793,7 @@ OW_CIMClass::toMOF() const
 	size_t i;
 	OW_StringBuffer rv;
 
-	if(m_pdata->m_qualifiers.size() != 0 || m_pdata->m_associationFlag)
+	if(m_pdata->m_qualifiers.size() != 0)// || m_pdata->m_associationFlag)
 	{
 		rv += "[\n";
 
@@ -819,14 +819,14 @@ OW_CIMClass::toMOF() const
 		}
 		else
 		{
-			if(m_pdata->m_associationFlag)
-			{
-				OW_CIMQualifierType cqt(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
-				cqt.setDataType(OW_CIMDataType(OW_CIMDataType::BOOLEAN));
-				OW_CIMQualifier cq(cqt);
-				cq.setValue(OW_CIMValue(OW_Bool(true)));
-				qra.insert(qra.begin(), cq);
-			}
+//             if(m_pdata->m_associationFlag)
+//             {
+//                 OW_CIMQualifierType cqt(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+//                 cqt.setDataType(OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+//                 OW_CIMQualifier cq(cqt);
+//                 cq.setValue(OW_CIMValue(OW_Bool(true)));
+//                 qra.insert(qra.begin(), cq);
+//             }
 		}
 
 		iter = std::find( qra.begin(), qra.end(),
