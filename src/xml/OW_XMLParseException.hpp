@@ -83,12 +83,7 @@ class OW_XML_API XMLParseException : public Exception
 
 #define OW_THROWXML(code, message) throw XMLParseException(__FILE__, __LINE__, (code), (message));
 
-#ifdef OW_WIN32
-// Streams on Win32 don't handle the NULL const char* that comes through
-#define OW_THROWXMLLINE(code, line) throw XMLParseException(__FILE__, __LINE__, (code), "", (line));
-#else
 #define OW_THROWXMLLINE(code, line) throw XMLParseException(__FILE__, __LINE__, (code), 0, (line));
-#endif
 
 #define OW_THROWXMLLINEMSG(code, line, message) throw XMLParseException(__FILE__, __LINE__, (code), (message), (line));
 

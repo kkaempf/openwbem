@@ -73,7 +73,7 @@ XMLParseException::XMLParseException(
 	const char* msg,
 	unsigned int xmlline)
 : Exception(ExceptionIds::XMLParseExceptionId, file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
-	msg).c_str(), code)
+	msg != 0 ? msg : "").c_str(), code)
 {
 }
 
