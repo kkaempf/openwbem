@@ -101,7 +101,11 @@ public:
 			INITIAL_POLLING_INTERVAL).c_str());
 
 		m_httpsPort = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
+		if (m_httpsPort.empty())
+			m_httpsPort = DEFAULT_HTTPS_PORT;
 		m_httpPort = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
+		if (m_httpPort.empty())
+			m_httpPort = DEFAULT_HTTP_PORT;
 
 		OW_Int32 httpsPort = 0, httpPort = 0;
 		try
