@@ -42,16 +42,11 @@
 
 #include <climits>
 
-OW_Bool OW_PollingManager::m_running(false);
-
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 	: OW_Thread(true) // true means this thread will be joinable
-	, m_triggerRunners()
-	, m_tevent()
 	, m_shuttingDown(false)
-	, m_runCount(0)
-	, m_triggerGuard()
+	, m_threadCount(new OW_ThreadCounter(256)) // TODO: Make this maximum configurable
 	, m_env(env)
 {
 }
@@ -114,7 +109,9 @@ namespace
 void
 OW_PollingManager::run()
 {
-	m_running = true;
+	// let OW_CIMOMEnvironment know we're running and ready to go.
+	m_startedSem->signal();
+
 	OW_Bool doInit = true;
 
 	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(OW_ACLInfo());
@@ -128,60 +125,56 @@ OW_PollingManager::run()
 	m_env->logDebug(format("OW_PollingManager found %1 polled providers",
 		itpra.size()));
 
-	// Get initial polling interval from mall trigger providers
-	OW_MutexLock ml(m_triggerGuard);
-
-	for (size_t i = 0; i < itpra.size(); ++i)
 	{
-		TriggerRunner tr(this, lch, m_env);
+		// Get initial polling interval from mall trigger providers
+		OW_MutexLock ml(m_triggerGuard);
 
-		tr.m_pollInterval = itpra[i]->getInitialPollingInterval(
-			createProvEnvRef(lch, m_env));
-
-		m_env->logDebug(format("OW_PollingManager poll interval for provider"
-			" %1: %2", i, tr.m_pollInterval));
-
-		if(!tr.m_pollInterval)
+		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			continue;
-		}
+			TriggerRunner tr(this, lch, m_env);
 
-		tr.m_itp = itpra[i];
-		m_triggerRunners.append(tr);
+			tr.m_pollInterval = itpra[i]->getInitialPollingInterval(
+				createProvEnvRef(lch, m_env));
+
+			m_env->logDebug(format("OW_PollingManager poll interval for provider"
+				" %1: %2", i, tr.m_pollInterval));
+
+			if(!tr.m_pollInterval)
+			{
+				continue;
+			}
+
+			tr.m_itp = itpra[i];
+			m_triggerRunners.append(tr);
+		}
 	}
 
-	ml.release();
-
-	m_tevent.reset();
-	OW_Bool rightNow;
-	for(;;)
 	{
-		OW_UInt32 sleepTime = calcSleepTime(rightNow, doInit);
-		doInit = false;
-
-		if(!rightNow)
+		OW_MutexLock l(m_triggerGuard);
+		while (!m_shuttingDown)
 		{
-			m_tevent.waitForSignal(sleepTime * 1000);
+			OW_Bool rightNow;
+			OW_UInt32 sleepTime = calcSleepTime(rightNow, doInit);
+			doInit = false;
+
+			if(!rightNow)
+			{
+				m_triggerCondition.timedWait(l, sleepTime);
+			}
+
+			if (m_shuttingDown)
+			{
+				break;
+			}
+
+			processTriggers();
 		}
-
-		m_tevent.reset();
-
-		if (m_shuttingDown)
-		{
-			break;
-		}
-
-		processTriggers();
 	}
 
 	// wait until all the threads exit
-	while(m_runCount.getCount() > 0)
-	{
-		OW_Thread::yield();
-	}
+	m_threadCount->waitForAll();
 
 	m_triggerRunners.clear();
-	m_running = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -247,7 +240,7 @@ OW_PollingManager::processTriggers()
 
 		if (tm >= m_triggerRunners[i].m_nextPoll)
 		{
-			m_runCount.signal();
+			m_threadCount->incThreadCount();
 			m_triggerRunners[i].start();
 		}
 	}
@@ -257,18 +250,13 @@ OW_PollingManager::processTriggers()
 void
 OW_PollingManager::shutdown()
 {
-	if(m_running)
 	{
-		if(!m_shuttingDown)
-		{
-			m_shuttingDown = true;
-			m_tevent.signal();
-			while(m_running)
-			{
-				OW_Thread::yield();
-			}
-		}
+		OW_MutexLock l(m_triggerGuard);
+		m_shuttingDown = true;
+		m_triggerCondition.notifyAll();
 	}
+	// wait until the main thread exits.
+	this->join();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -286,24 +274,6 @@ OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class runCountDecrementer : public OW_ThreadDoneCallback
-	{
-	public:
-		runCountDecrementer(OW_PollingManager* p_)
-		: p(p_)
-		{}
-	protected:
-		virtual void doNotifyThreadDone(OW_Thread *)
-		{
-			p->signalThreadDone();
-		}
-	private:
-		OW_PollingManager* p;
-	};
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_PollingManager::TriggerRunner::start()
 {
@@ -311,7 +281,7 @@ OW_PollingManager::TriggerRunner::start()
 	OW_RunnableRef rref(this, true);
 	OW_Bool isSepThread = !m_env->getConfigItem(
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	OW_Thread::run(rref, isSepThread, OW_ThreadDoneCallbackRef(new runCountDecrementer(m_pollMan)));
+	OW_Thread::run(rref, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -350,8 +320,9 @@ OW_PollingManager::TriggerRunner::run()
 		m_nextPoll = dtm.get() + m_pollInterval;
 	}
 
+	OW_MutexLock l(m_pollMan->m_triggerGuard);
 	m_isRunning = false;
-	m_pollMan->m_tevent.signal();
+	m_pollMan->m_triggerCondition.notifyOne();
 }
 
 

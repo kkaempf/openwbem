@@ -27,80 +27,77 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-#ifndef _OW_SEMAPHORE_HPP__
-#define _OW_SEMAPHORE_HPP__
-
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_Mutex.hpp"
-#include "OW_Condition.hpp"
+#include "OW_ThreadCounter.hpp"
 #include "OW_MutexLock.hpp"
 
-class OW_Semaphore
+OW_ThreadCounter::OW_ThreadCounter(OW_Int32 maxThreads)
+	: m_maxThreads(maxThreads)
+	, m_runCount(0)
+{}
+
+OW_ThreadCounter::~OW_ThreadCounter()
+{}
+
+void
+OW_ThreadCounter::incThreadCount()
 {
-public:
-	OW_Semaphore()
-		: m_curCount(0)
-	{}
-	OW_Semaphore(OW_Int32 initCount)
-		: m_curCount(initCount)
-	{}
-
-	void wait()
+	OW_MutexLock l(m_runCountGuard);
+	while (m_runCount >= m_maxThreads)
 	{
-		OW_MutexLock l(m_mutex);
-
-		while (m_curCount <= 0)
-		{
-			m_cond.wait(l);
-		}
-
-		--m_curCount;
+		m_runCountCondition.wait(l);
 	}
+	++m_runCount;
+	m_runCountCondition.notifyAll();
+}
 
-	bool timedWait(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+void
+OW_ThreadCounter::decThreadCount()
+{
+	OW_MutexLock l(m_runCountGuard);
+	while (m_runCount <= 0)
 	{
-		bool ret = true;
-
-		OW_MutexLock l(m_mutex);
-
-		while (m_curCount <= 0 && ret == true)
-		{
-			ret = m_cond.timedWait(l, sTimeout, usTimeout);
-		}
-
-		if (ret == true)
-		{
-			--m_curCount;
-		}
-
-		return ret;
+		m_runCountCondition.wait(l);
 	}
+	--m_runCount;
+	m_runCountCondition.notifyAll();
+}
 
-	void signal()
+OW_Int32 
+OW_ThreadCounter::getThreadCount()
+{
+	OW_MutexLock l(m_runCountGuard);
+	return m_runCount;
+}
+
+void 
+OW_ThreadCounter::waitForAll()
+{
+	OW_MutexLock runCountLock(m_runCountGuard);
+	while(m_runCount > 0)
 	{
-		OW_MutexLock l(m_mutex);
-		++m_curCount;
-		m_cond.notifyAll();
+		m_runCountCondition.wait(runCountLock);
 	}
+}
 
-	OW_Int32 getCount()
-	{
-		OW_MutexLock l(m_mutex);
-		return m_curCount;
-	}
+void
+OW_ThreadCounter::setMax(OW_Int32 maxThreads)
+{
+	OW_MutexLock runCountLock(m_runCountGuard);
+	m_maxThreads = maxThreads;
+	m_runCountCondition.notifyAll();
+}
 
-private:
-	OW_Int32 m_curCount;
+OW_ThreadCountDecrementer::OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x)
+	: m_counter(x)
+{}
 
-	OW_Condition m_cond;
-	OW_Mutex m_mutex;
+OW_ThreadCountDecrementer::~OW_ThreadCountDecrementer()
+{}
 
-	// noncopyable
-	OW_Semaphore(const OW_Semaphore&);
-	OW_Semaphore& operator=(const OW_Semaphore&);
+void
+OW_ThreadCountDecrementer::doNotifyThreadDone(OW_Thread *)
+{
+	m_counter->decThreadCount();
+}
 
-};
-
-#endif  // _OW_SEMAPHORE_HPP__

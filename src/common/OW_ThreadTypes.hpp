@@ -47,9 +47,6 @@ typedef pth_t			OW_Thread_t;
 typedef pth_mutex_t	OW_Mutex_t;
 typedef pth_mutex_t OW_NativeMutex_t;
 
-// Platform specific event type
-typedef void*			OW_ThreadEvent_t;
-
 // Platform specific conditional variable type
 typedef pth_cond_t	OW_ConditionVar_t;
 
@@ -86,9 +83,6 @@ struct OW_Mutex_t
 	pthread_t thread_id;
 };
 #endif
-
-// Platform specific event type
-typedef void* 						OW_ThreadEvent_t;
 
 // Platform specific conditional variable type
 typedef pthread_cond_t 			OW_ConditionVar_t;

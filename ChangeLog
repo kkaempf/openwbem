@@ -1,3 +1,10 @@
+Thu Nov 28 11:41:42 MST 2002
+- Got rid of OW_ThreadEvent because it is subject to race conditions.
+  Replaced it with a condition variable class.
+- Create OW_ThreadCounter and use it in OW_HTTPServer, OW_PollingManager and
+  OW_IndicationServerImpl.
+- Fixed all known startup/shutdown/restart race conditions.
+
 Wed Nov 27 07:13:44 MST 2002
 - Redid OW_IndicationServerImpl to use Condition Variables.
 - Make OW_AuthManager::init() throw if it can't load an authentication module.

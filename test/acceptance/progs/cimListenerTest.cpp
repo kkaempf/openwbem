@@ -320,7 +320,7 @@ int main(int argc, char* argv[])
 			// we should get 8 OW_TestIndication1 indications.
 			for (size_t i = 0; i < 8; ++i)
 			{
-				if (!test1sem.wait(25 * 1000))
+				if (!test1sem.timedWait(25))
 				{
 					OW_THROW(OW_Exception, "semaphore timed out");
 				}
@@ -328,7 +328,7 @@ int main(int argc, char* argv[])
 			// we should get 6 OW_TestIndication2 indications.
 			for (size_t i = 0; i < 6; ++i)
 			{
-				if (!test2sem.wait(25 * 1000))
+				if (!test2sem.timedWait(25))
 				{
 					OW_THROW(OW_Exception, "semaphore timed out");
 				}
@@ -421,7 +421,7 @@ int main(int argc, char* argv[])
 		//cout << "Now waiting for intrinsic method indications" << endl;
 		for (size_t i = 0; i < 21; ++i)
 		{
-			if (!sem.wait(25 * 1000))
+			if (!sem.timedWait(25))
 			{
 				OW_THROW(OW_Exception, "timeout on semaphore");
 			}

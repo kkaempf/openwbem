@@ -114,21 +114,6 @@ OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
 		new IndicationServerProviderEnvironment(ch, env));
 }
 
-class runCountDecrementer : public OW_ThreadDoneCallback
-{
-public:
-	runCountDecrementer(OW_IndicationServerImpl* i_)
-	: i(i_)
-	{}
-protected:
-	virtual void doNotifyThreadDone(OW_Thread *)
-	{
-		i->decRunCount();
-	}
-private:
-	OW_IndicationServerImpl* i;
-};
-
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_Notifier::start()
@@ -139,7 +124,7 @@ OW_Notifier::start()
 		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
 
 	OW_Thread::run(OW_RunnableRef(this), !singleThread,
-		OW_ThreadDoneCallbackRef(new runCountDecrementer(m_pmgr)));
+		OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pmgr->m_threadCounter)));
 }
 
 
@@ -181,16 +166,17 @@ OW_Notifier::run()
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServerImpl::OW_IndicationServerImpl()
 	: OW_IndicationServer()
+	, m_threadCounter(new OW_ThreadCounter(MAX_NOTIFIERS))
 	, m_shuttingDown(false)
-	, m_runCount(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
+OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem)
 {
 	m_env = env;
+	m_startedSem = sem;
 	OW_ACLInfo aclInfo;
 
 	//-----------------
@@ -238,6 +224,9 @@ OW_IndicationServerImpl::~OW_IndicationServerImpl()
 void
 OW_IndicationServerImpl::run()
 {
+	// let OW_CIMOMEnvironment know we're running and ready to go.
+	m_startedSem->signal();
+
 	{
 		OW_MutexLock l(m_mainLoopGuard);
 		while(!m_shuttingDown)
@@ -268,22 +257,20 @@ OW_IndicationServerImpl::run()
 	m_env->logDebug("OW_IndicationServerImpl::run shutting down");
 
 	// Wait for OW_Notifier threads to complete any pending notifications
-	{
-		OW_MutexLock runCountLock(m_runCountGuard);
-		while(getRunCount() > 0)
-		{
-			m_runCountCondition.wait(runCountLock);
-		}
-	}
+	m_threadCounter->waitForAll();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::shutdown()
 {
-	OW_MutexLock l(m_mainLoopGuard);
-	m_shuttingDown = true;
-	m_mainLoopCondition.notifyOne();
+	{
+		OW_MutexLock l(m_mainLoopGuard);
+		m_shuttingDown = true;
+		m_mainLoopCondition.notifyAll();
+	}
+	// wait until the main thread exits.
+	this->join();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -486,10 +473,10 @@ OW_IndicationServerImpl::addTrans(
 	OW_MutexLock ml(m_transGuard);
 
 	OW_NotifyTrans trans(ns, indication, handler, provider);
-	if(getRunCount() < MAX_NOTIFIERS)
+	if(m_threadCounter->getThreadCount() < MAX_NOTIFIERS)
 	{
 		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_ACLInfo());
-		incRunCount();
+		m_threadCounter->incThreadCount();
 		pnotifier->start();
 	}
 	else

@@ -43,6 +43,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_ThreadCounter.hpp"
 
 
 class OW_NotifyTrans;
@@ -59,7 +60,7 @@ public:
 	OW_IndicationServerImpl();
 	~OW_IndicationServerImpl();
 
-	virtual void init(OW_CIMOMEnvironmentRef env);
+	virtual void init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem);
 
 	virtual void run();
 	void shutdown();
@@ -67,24 +68,11 @@ public:
 	void processIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS);
 
-	int getRunCount() { OW_MutexLock ml(m_runCountGuard); return m_runCount; }
-	void incRunCount() 
-	{ 
-		OW_MutexLock ml(m_runCountGuard); 
-		++m_runCount; 
-		m_runCountCondition.notifyOne(); 
-	}
-
-	void decRunCount() 
-	{ 
-		OW_MutexLock ml(m_runCountGuard); 
-		--m_runCount; 
-		m_runCountCondition.notifyOne(); 
-	}
-
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
 	bool getNewTrans(OW_NotifyTrans& outTrans);
+
+	OW_ThreadCounterRef m_threadCounter;
 
 private:
 
@@ -123,13 +111,8 @@ private:
 	OW_List<OW_NotifyTrans> m_trans;
 	OW_Mutex m_transGuard;
 
-	// these 3 are grouped together.  m_runCount is the number of running 
-	// threads delivering indications.
-	int m_runCount;
-	OW_Mutex m_runCountGuard;
-	OW_Condition m_runCountCondition;
-
 	OW_CIMOMEnvironmentRef m_env;
+	OW_Semaphore* m_startedSem;
 };
 
 #endif

@@ -451,7 +451,6 @@ OW_DaemonEnv::deleteService()
 	if(m_service)
 	{
 		m_service->shutdown();
-		OW_Thread::yield();
 	}
 	m_service.setNull();
 }

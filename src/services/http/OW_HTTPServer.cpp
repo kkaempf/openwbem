@@ -50,7 +50,7 @@
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
 	: m_options()
-	, m_threadCountSemaphore(0)
+	, m_threadCount(new OW_ThreadCounter(0))
 	, m_upipe(OW_UnnamedPipe::createUnnamedPipe())
 	, m_urls()
 	, m_pHttpServerSocket(0)
@@ -153,6 +153,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 			item = DEFAULT_MAX_CONNECTIONS;
 		}
 		m_options.maxConnections = item.toInt32() + 1;
+		m_threadCount->setMax(m_options.maxConnections);
 
 		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
 		if (item.empty())
@@ -180,7 +181,6 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 
 		m_options.env = env;
 
-		m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);
 		if (m_options.useDigest)
 		{
 			OW_String passwdFile = env->getConfigItem(
@@ -203,25 +203,6 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 		OW_THROW(OW_Exception, format("Unable to initialize HTTP Server because"
 			" of invalid config item. %1", e.getMessage()).c_str());
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class threadCountDecrementer : public OW_ThreadDoneCallback
-	{
-	public:
-		threadCountDecrementer(OW_HTTPServer* httpServer)
-		: m_HTTPServer(httpServer)
-		{}
-	protected:
-		virtual void doNotifyThreadDone(OW_Thread *)
-		{
-			m_HTTPServer->decThreadCount();
-		}
-	private:
-		OW_HTTPServer* m_HTTPServer;
-	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -266,7 +247,7 @@ public:
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
 
-			m_HTTPServer->incThreadCount();
+			m_HTTPServer->m_threadCount->incThreadCount();
 
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
 			if (m_isIPC)
@@ -277,7 +258,7 @@ public:
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 
 			OW_Thread::run(rref, m_HTTPServer->m_options. isSepThread,
-				OW_ThreadDoneCallbackRef(new threadCountDecrementer(m_HTTPServer)));
+				OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_HTTPServer->m_threadCount)));
 		}
 		catch (OW_SSLException& se)
 		{
@@ -457,20 +438,6 @@ OW_HTTPServer::startService()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPServer::decThreadCount()
-{
-	m_threadCountSemaphore->signal();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_HTTPServer::incThreadCount()
-{
-	m_threadCountSemaphore->wait();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_HTTPServer::addURL(const OW_URL& url)
 {
 	m_urls.push_back(url);
@@ -524,11 +491,8 @@ OW_HTTPServer::shutdown()
 	{
 		OW_THROW(OW_IOException, "Failed writing to OW_HTTPServer shutdown pipe");
 	}
-	while (m_threadCountSemaphore->getCount() < m_options.maxConnections)
-	{
-		OW_Thread::yield();
-	}
-	OW_Thread::yield();
+	m_threadCount->waitForAll();
+
 	OW_Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;

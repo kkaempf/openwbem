@@ -27,65 +27,59 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
+#ifndef OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
+#define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ThreadEvent.hpp"
-#include "OW_Assertion.hpp"
-#include "OW_Exception.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "OW_Types.h"
+#include "OW_Mutex.hpp"
+#include "OW_Condition.hpp"
+#include "OW_Reference.hpp"
+#include "OW_Thread.hpp"
 
-//////////////////////////////////////////////////////////////////////////////	  
-OW_ThreadEvent::ThreadEvent::ThreadEvent() :
-	m_hdl(0)
+// Note: Do not inline any functions in these classes, the code must
+// be contained in the main library, if a loadable library contains any,
+// it will cause a race-condition that may segfault the cimom.
+class OW_ThreadCounter
 {
-	if(OW_ThreadEventImpl::createThreadEvent(m_hdl) != 0)
-	{
-		OW_THROW(OW_Assertion, "OW_ThreadEventImpl::createThreadEvent failed");
-	}
+public:
+	OW_ThreadCounter(OW_Int32 maxThreads);
+	~OW_ThreadCounter();
 
-	OW_ThreadEventImpl::resetThreadEvent(m_hdl);
-}
+	void incThreadCount();
+	void decThreadCount();
+	OW_Int32 getThreadCount();
+	void waitForAll();
+	void setMax(OW_Int32 maxThreads);
 
-//////////////////////////////////////////////////////////////////////////////	  
-OW_ThreadEvent::ThreadEvent::~ThreadEvent()
+private:
+	OW_Int32 m_maxThreads;
+	OW_Int32 m_runCount;
+	OW_Mutex m_runCountGuard;
+	OW_Condition m_runCountCondition;
+
+	// noncopyable
+	OW_ThreadCounter(OW_ThreadCounter const&);
+	OW_ThreadCounter& operator=(OW_ThreadCounter const&);
+};
+
+typedef OW_Reference<OW_ThreadCounter> OW_ThreadCounterRef;
+
+class OW_ThreadCountDecrementer : public OW_ThreadDoneCallback
 {
-	OW_ThreadEventImpl::destroyThreadEvent(m_hdl);
-}
+public:
+	OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x);
+	virtual ~OW_ThreadCountDecrementer();
 
-//////////////////////////////////////////////////////////////////////////////	  
-bool
-OW_ThreadEvent::ThreadEvent::waitForSignal(OW_UInt32 ms)
-{
-	return OW_ThreadEventImpl::waitForThreadEventSignal(m_hdl, ms);
-}
+private:
+	virtual void doNotifyThreadDone(OW_Thread *);
 
-//////////////////////////////////////////////////////////////////////////////	  
-void 
-OW_ThreadEvent::ThreadEvent::signal()
-{
-	OW_ThreadEventImpl::signalThreadEvent(m_hdl);
-	OW_ThreadImpl::yield();
-}
+	OW_ThreadCounterRef m_counter;
 
-//////////////////////////////////////////////////////////////////////////////	  
-void 
-OW_ThreadEvent::ThreadEvent::pulse()
-{
-	OW_ThreadEventImpl::pulseThreadEvent(m_hdl);
-	OW_ThreadImpl::yield();
-}
+	// noncopyable
+	OW_ThreadCountDecrementer(OW_ThreadCountDecrementer const&);
+	OW_ThreadCountDecrementer& operator=(OW_ThreadCountDecrementer const&);
+};
 
-//////////////////////////////////////////////////////////////////////////////	  
-void 
-OW_ThreadEvent::ThreadEvent::reset()
-{
-	OW_ThreadEventImpl::resetThreadEvent(m_hdl);
-}
+#endif
 
-//////////////////////////////////////////////////////////////////////////////	  
-bool
-OW_ThreadEvent::ThreadEvent::isSignaled()
-{
-	return OW_ThreadEventImpl::isThreadEventSignaled(m_hdl);
-}
 

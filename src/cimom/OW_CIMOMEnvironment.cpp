@@ -98,7 +98,6 @@ private:
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			OW_THROW(OW_Exception, "Cannot call CIMOMProviderEnvironment::getCIMOMHandle()");
-			//return OW_CIMOMHandleIFCRef();
 		}
 		
 		virtual OW_LoggerRef getLogger() const
@@ -263,17 +262,20 @@ OW_CIMOMEnvironment::startServices()
         {
             // Start up the polling manager
             m_Logger->logDebug("CIMOM starting Polling Manager");
+			OW_Semaphore sem;
+			m_pollingManager->setStartedSemaphore(&sem);
             m_pollingManager->start();
-            OW_Thread::yield();
+            sem.wait();
         }
 
         if (m_indicationServer)
         {
             // Start up the indication server
             m_Logger->logDebug("CIMOM starting IndicationServer");
-            m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+			OW_Semaphore sem;
+            m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true), &sem);
             m_indicationServer->start();
-            OW_Thread::yield();
+            sem.wait();
         }
 	}
 }
@@ -298,7 +300,6 @@ OW_CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
-		m_pollingManager->join();
 		m_pollingManager = 0;
 	}
 	
@@ -334,7 +335,6 @@ OW_CIMOMEnvironment::shutdown()
 	m_wqlLib = 0;
 
 	// Shutdown indication processing
-	m_indicationRepLayerLib = 0;
 	if(m_indicationServer)
 	{
 		try
@@ -344,8 +344,8 @@ OW_CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
-		m_indicationServer->join();
 		m_indicationServer.setNull();
+		m_indicationRepLayerLib = 0;
 	}
 
 	// Delete the authentication manager

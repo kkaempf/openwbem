@@ -35,6 +35,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_Thread.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_Semaphore.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_IndicationServer : public OW_Thread
@@ -47,20 +48,18 @@ public:
 
 	virtual ~OW_IndicationServer() {}
 
-	virtual void init(OW_CIMOMEnvironmentRef env) = 0;
+	virtual void init(OW_CIMOMEnvironmentRef env, OW_Semaphore* sem) = 0;
 
 	virtual void shutdown() = 0;
 
 	virtual void processIndication(const OW_CIMInstance& instance,
 		const OW_String& instNS) = 0;
 
-	virtual int getRunCount() = 0;
-
 protected:
 };
 
 typedef OW_SharedLibraryReference<OW_IndicationServer> OW_IndicationServerRef;
 
-#endif	// __OW_NOTIFYMANAGER_HPP__
+#endif
 
 

@@ -32,7 +32,8 @@
 #define OW_HTTPSERVER_HPP_
 
 #include "OW_config.h"
-#include "OW_Semaphore.hpp"
+#include "OW_Condition.hpp"
+#include "OW_Mutex.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_String.hpp"
 #include "OW_Thread.hpp"
@@ -44,6 +45,7 @@
 #include "OW_ServiceIFC.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_URL.hpp"
+#include "OW_ThreadCounter.hpp"
 #include <ctime>
 
 class OW_ServerSocket;
@@ -103,9 +105,6 @@ public:
 	};
 
 
-	void decThreadCount();
-	void incThreadCount();
-
 private:
 
 	OW_Bool authenticate(OW_HTTPSvrConnection* pconn,
@@ -114,7 +113,8 @@ private:
 
 	Options m_options;
 
-	OW_AutoPtr<OW_Semaphore> m_threadCountSemaphore;
+	OW_ThreadCounterRef m_threadCount;
+
 	OW_Reference<OW_UnnamedPipe> m_upipe;
 	OW_Array<OW_URL> m_urls;
 

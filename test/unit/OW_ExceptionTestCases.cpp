@@ -45,7 +45,7 @@ void OW_ExceptionTestCases::tearDown()
 {
 }
 
-OW_Semaphore g_sem =  OW_Semaphore(0);
+OW_Semaphore g_sem;
 static bool g_caught = false;
 
 class ExTestRunnable: public OW_Runnable
@@ -80,7 +80,7 @@ void OW_ExceptionTestCases::testSomething()
 	g_caught = false;
 	OW_RunnableRef rref(new ExTestRunnable);
 	OW_Thread::run(rref);
-	unitAssert(g_sem.wait(1000 * 30));
+	unitAssert(g_sem.timedWait(30));
 
 	unitAssert(g_caught);
 }

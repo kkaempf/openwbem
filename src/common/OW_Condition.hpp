@@ -33,6 +33,8 @@
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Types.h"
+
 class OW_MutexLock;
 
 DEFINE_EXCEPTION(ConditionLock);
@@ -49,19 +51,39 @@ public:
 
 	void wait(OW_MutexLock& lock);
 
-	template <typename Pr>
-	void wait(OW_MutexLock& lock, Pr pred)
-	{
-		if (!lock)
-		{
-			OW_THROW(OW_ConditionLockException, "Lock must be locked");
-		}
-		while (!pred())
-		{
-			doWait(lock.m_mutex);
-		}
-	}
+//     template <typename Pr>
+//     void wait(OW_MutexLock& lock, Pr pred)
+//     {
+//         if (!lock)
+//         {
+//             OW_THROW(OW_ConditionLockException, "Lock must be locked");
+//         }
+//         while (!pred())
+//         {
+//             doWait(lock.m_mutex);
+//         }
+//     }
 
+	// returns true if the lock was acquired, false if timeout occurred
+	bool timedWait(OW_MutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
+
+	// returns true if the lock was acquired, false if timeout occurred
+//     template <typename Pr>
+//     bool timedWait(OW_MutexLock& lock, Pr pred, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+//     {
+//         if (!lock)
+//         {
+//             OW_THROW(OW_ConditionLockException, "Lock must be locked");
+//         }
+//         while (!pred())
+//         {
+//             if (!doTimedWait(lock.m_mutex, sTimeout, usTimeout))
+//             {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
 
 private:
 
@@ -71,6 +93,7 @@ private:
 
 
 	void doWait(OW_Mutex& mutex);
+	bool doTimedWait(OW_Mutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout);
 	OW_ConditionVar_t m_condition;
 };
 

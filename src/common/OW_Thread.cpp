@@ -32,6 +32,7 @@
 
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Format.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -167,7 +168,8 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 		if(OW_ThreadImpl::joinThread(m_id) != 0)
 		{
 			OW_THROW(OW_ThreadException,
-				"OW_Thread::join - OW_ThreadImpl::joinThread");
+				format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
+					   errno, strerror(errno)).c_str());
 		}
 	}
 }

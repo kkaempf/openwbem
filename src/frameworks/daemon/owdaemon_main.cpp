@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_DaemonEnv.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_ThreadEvent.hpp"
 #include "OW_Platform.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"

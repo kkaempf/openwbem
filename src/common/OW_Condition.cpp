@@ -32,6 +32,7 @@
 #include "OW_MutexLock.hpp"
 
 #include <cassert>
+#include <cerrno>
 
 /////////////////////////////////////////////////////////////////////////////
 OW_Condition::OW_Condition()
@@ -94,6 +95,17 @@ OW_Condition::wait(OW_MutexLock& lock)
 }
 
 /////////////////////////////////////////////////////////////////////////////
+bool 
+OW_Condition::timedWait(OW_MutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+{
+	if (!lock.isLocked())
+	{
+		OW_THROW(OW_ConditionLockException, "Lock must be locked");
+	}
+	return doTimedWait(*(lock.m_mutex), sTimeout, usTimeout);
+}
+
+/////////////////////////////////////////////////////////////////////////////
 void 
 OW_Condition::doWait(OW_Mutex& mutex)
 {
@@ -108,4 +120,28 @@ OW_Condition::doWait(OW_Mutex& mutex)
 	mutex.conditionPostWait(state);
 	assert(res == 0);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+bool 
+OW_Condition::doTimedWait(OW_Mutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+{
+	int res;
+	OW_MutexLockState state;
+	mutex.conditionPreWait(state);
+	bool ret = false;
+	timespec ts;
+	ts.tv_sec = time(NULL) + sTimeout;
+	ts.tv_nsec = usTimeout;
+	#ifdef OW_USE_GNU_PTH
+	res = pth_cond_timedwait(&m_condition, state.pmutex);
+	#else
+	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
+	#endif
+	mutex.conditionPostWait(state);
+	assert(res == 0 || res == ETIMEDOUT);
+	ret = res != ETIMEDOUT;
+	return ret;
+}
+
+
 

@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_ThreadEvent.hpp"
 #include "OW_Thread.hpp"
 #include "OW_List.hpp"
 #include "OW_Array.hpp"
@@ -42,8 +41,10 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_PolledProviderIFC.hpp"
-#include "OW_Semaphore.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_Condition.hpp"
+#include "OW_Semaphore.hpp"
+#include "OW_ThreadCounter.hpp"
 
 class OW_PollingManager : public OW_Thread
 {
@@ -53,10 +54,11 @@ public:
 
 	void shutdown();
 
-	void signalThreadDone()
+	void setStartedSemaphore(OW_Semaphore* sem)
 	{
-		m_runCount.wait();
+		m_startedSem = sem;
 	}
+
 protected:
 	virtual void run();
 
@@ -80,12 +82,15 @@ private:
 	};
 
 	OW_Array<TriggerRunner> m_triggerRunners;
-	OW_ThreadEvent m_tevent;
 	OW_Bool m_shuttingDown;
-	static OW_Bool m_running;
-	OW_Semaphore m_runCount;
 	OW_Mutex m_triggerGuard;
+	OW_Condition m_triggerCondition;
+	
+	OW_ThreadCounterRef m_threadCount;
+
 	OW_CIMOMEnvironmentRef m_env;
+
+	OW_Semaphore* m_startedSem;
 
 	OW_UInt32 calcSleepTime(OW_Bool& rightNow, OW_Bool doInit);
 	void processTriggers();
