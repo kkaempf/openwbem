@@ -107,7 +107,8 @@ public:
 		Condition m_cond;
 	};
 	ThreadBarrierImpl(UInt32 threshold)
-		: m_threshold(threshold)
+		: m_threshold(threshold),
+    		, m_curSubBarrier(0)
 	{
 	}
 	void wait()
@@ -139,12 +140,12 @@ public:
 private:
 	/// The number of threads to synchronize
 	UInt32 m_threshold;
-	NonRecursiveMutex m_mutex;
-	SubBarrier m_subBarrier0;
-	SubBarrier m_subBarrier1;
 	/// Either 0 or 1, depending on whether we are the first generation
 	/// of waiters or the next generation of waiters.
 	int m_curSubBarrier;
+	NonRecursiveMutex m_mutex;
+	SubBarrier m_subBarrier0;
+	SubBarrier m_subBarrier1;
 };
 
 #endif
