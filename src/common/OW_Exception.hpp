@@ -43,7 +43,9 @@
 namespace OpenWBEM
 {
 
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 class Mutex;
+#endif
 
 /**
  * This class is the base of all exceptions thrown by OpenWBEM code.
@@ -144,7 +146,9 @@ private:
 	const Exception* m_subException;
 	int m_errorCode;
 
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	static Mutex* m_mutex;
+#endif
 
 };
 

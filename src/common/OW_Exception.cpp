@@ -36,7 +36,9 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_StackTrace.hpp"
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 #include "OW_Mutex.hpp"
+#endif
 #include <cstring>
 #include <cstdlib>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -50,7 +52,9 @@
 namespace OpenWBEM
 {
 
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 Mutex* Exception::m_mutex = new Mutex();
+#endif
 //////////////////////////////////////////////////////////////////////////////					
 static void freeBuf(char** ptr)
 {
@@ -85,7 +89,9 @@ Exception::Exception(const char* file, int line, const char* msg)
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	StackTrace::printStackTrace();
 #endif
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	m_mutex->acquire();
+#endif
 	m_file = dupString(file);
 	m_msg = dupString(msg);
 }
@@ -102,7 +108,9 @@ Exception::Exception(int subClassId, const char* file, int line, const char* msg
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	StackTrace::printStackTrace();
 #endif
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 	m_mutex->acquire();
+#endif
 	m_file = dupString(file);
 	m_msg = dupString(msg);
 }
@@ -116,7 +124,9 @@ Exception::Exception( const Exception& e )
     , m_subException(e.m_subException ? e.m_subException->clone() : 0)
 	, m_errorCode(e.m_errorCode)
 {
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
     m_mutex->acquire();
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::~Exception() throw()
@@ -126,7 +136,9 @@ Exception::~Exception() throw()
 		delete m_subException;
 		freeBuf(&m_file);
 		freeBuf(&m_msg);
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 		m_mutex->release();
+#endif
 	}
 	catch (...)
 	{
