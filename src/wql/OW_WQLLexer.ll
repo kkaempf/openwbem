@@ -578,8 +578,7 @@ myinput(char* buf, int max)
 	parseCh += len;
 	return len;
 
-	(void)yyunput; // To get rid of compiler warning about unused variable.
-    (void)yy_fatal_error;
+	(void)yy_fatal_error;
 
 }
 
