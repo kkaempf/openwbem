@@ -269,6 +269,7 @@ WQLFilterRep::deleteInstance(const String& /*ns*/, const CIMObjectPath &/*cop*/,
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 WQLFilterRep::setProperty(
@@ -280,7 +281,9 @@ WQLFilterRep::setProperty(
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 WQLFilterRep::getProperty(
@@ -291,6 +294,7 @@ WQLFilterRep::getProperty(
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 WQLFilterRep::invokeMethod(const String&, const CIMObjectPath &/*name*/,

@@ -942,6 +942,7 @@ CIMRepository::modifyInstance(
 		OW_THROWCIM(CIMException::FAILED);
 	}
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::setProperty(
@@ -993,7 +994,10 @@ CIMRepository::setProperty(
 	ci.setProperty(cp);
 	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, 0, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMRepository::getProperty(
@@ -1018,6 +1022,7 @@ CIMRepository::getProperty(
 	}
 	return prop.getValue();
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMRepository::invokeMethod(

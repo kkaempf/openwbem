@@ -990,6 +990,7 @@ CIMXMLCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& inst)
 	intrinsicMethod(ns, commandName, op, params,
 						 instanceNameToKey(inst, "InstanceName"));
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMXMLCIMOMHandle::setProperty(
@@ -1011,7 +1012,10 @@ CIMXMLCIMOMHandle::setProperty(
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -1049,6 +1053,7 @@ CIMXMLCIMOMHandle::getProperty(
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {

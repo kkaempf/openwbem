@@ -144,10 +144,12 @@ public:
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMObjectPath createInstance(const String& ns,
 		const CIMInstance &ci);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual void setProperty(
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, const CIMValue &cv);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual void modifyInstance(
 		const String& ns,
 		const CIMInstance& modifiedInstance,
@@ -155,10 +157,12 @@ public:
 		const StringArray* propertyList);
 	virtual void deleteInstance(const String& ns, const CIMObjectPath& path);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual CIMValue getProperty(
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
 		const String& ns,

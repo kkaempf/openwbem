@@ -377,6 +377,7 @@ void IndicationRepLayerImpl::setQualifierType(const String& ns,
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 void IndicationRepLayerImpl::setProperty(
 	const String& ns,
 	const CIMObjectPath &name,
@@ -385,7 +386,9 @@ void IndicationRepLayerImpl::setProperty(
 {
 	m_pServer->setProperty(ns, name, propertyName, cv, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 CIMValue IndicationRepLayerImpl::getProperty(
 	const String& ns,
 	const CIMObjectPath &name,
@@ -393,6 +396,7 @@ CIMValue IndicationRepLayerImpl::getProperty(
 {
 	return m_pServer->getProperty(ns, name, propertyName, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void IndicationRepLayerImpl::associators(
 	const String& ns,

@@ -314,6 +314,7 @@ void
 {
 	m_ch->deleteInstance(m_namespace, path);
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 ///////////////////////////////////////////////////////////////////////////////
 void 
 	CIMClient::setProperty(
@@ -323,7 +324,9 @@ void
 {
 	m_ch->setProperty(m_namespace, instanceName, propertyName, newValue);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 ///////////////////////////////////////////////////////////////////////////////
 CIMValue 
 	CIMClient::getProperty(
@@ -332,6 +335,7 @@ CIMValue
 {
 	return m_ch->getProperty(m_namespace, instanceName, propertyName);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
 void 

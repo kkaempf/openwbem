@@ -38,6 +38,7 @@
 #include "OW_UTF8Utils.hpp"
 #include <fstream>
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 using namespace OpenWBEM;

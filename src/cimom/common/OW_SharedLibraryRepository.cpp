@@ -123,6 +123,7 @@ CIMInstance SharedLibraryRepository::modifyInstance(
 	return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
 		propertyList, context);
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 void SharedLibraryRepository::setProperty(
 	const String& ns,
 	const CIMObjectPath &name,
@@ -131,6 +132,7 @@ void SharedLibraryRepository::setProperty(
 {
 	m_ref->setProperty(ns, name, propertyName, cv, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 CIMInstance SharedLibraryRepository::deleteInstance(const String& ns, const CIMObjectPath &cop,
 	OperationContext& context)
 {
@@ -237,6 +239,7 @@ void SharedLibraryRepository::referencesClasses(
 		includeClassOrigin, propertyList, context);
 }
 #endif
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 CIMValue SharedLibraryRepository::getProperty(
 	const String& ns,
 	const CIMObjectPath &name,
@@ -244,6 +247,8 @@ CIMValue SharedLibraryRepository::getProperty(
 {
 	return m_ref->getProperty(ns, name, propertyName, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void SharedLibraryRepository::associatorNames(
 	const String& ns,

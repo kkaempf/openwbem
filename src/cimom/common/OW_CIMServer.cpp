@@ -921,6 +921,7 @@ CIMServer::_instanceExists(const String& ns, const CIMObjectPath& icop,
 		return false;
 	}
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMServer::getProperty(
@@ -1000,6 +1001,8 @@ CIMServer::setProperty(
 	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, &propertyList, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#endif //#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMServer::invokeMethod(

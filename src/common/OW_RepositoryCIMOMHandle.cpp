@@ -312,6 +312,7 @@ RepositoryCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& pat
 	m_pServer->deleteInstance(ns, path, m_context);
 	os.completedSuccessfully();
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 RepositoryCIMOMHandle::setProperty(
@@ -323,7 +324,10 @@ RepositoryCIMOMHandle::setProperty(
 	m_pServer->setProperty(ns, name, propertyName, cv, m_context);
 	os.completedSuccessfully();
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 RepositoryCIMOMHandle::getProperty(
@@ -336,6 +340,8 @@ RepositoryCIMOMHandle::getProperty(
 	os.completedSuccessfully();
 	return rval;
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void

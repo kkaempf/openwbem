@@ -612,6 +612,8 @@ SimpleAuthorizer::modifyInstance(
 			includeQualifiers, propertyList, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 SimpleAuthorizer::getProperty(
@@ -623,7 +625,10 @@ SimpleAuthorizer::getProperty(
 	m_accessMgr->checkAccess(AccessMgr::GETPROPERTY, ns, context);
 	return m_cimRepository->getProperty(ns, name, propertyName, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 SimpleAuthorizer::setProperty(
@@ -635,6 +640,8 @@ SimpleAuthorizer::setProperty(
 	m_accessMgr->checkAccess(AccessMgr::SETPROPERTY, ns, context);
 	m_cimRepository->setProperty(ns, name, propertyName, valueArg, context);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 CIMValue

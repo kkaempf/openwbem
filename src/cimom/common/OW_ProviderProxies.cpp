@@ -123,45 +123,11 @@ namespace
 				includeQualifiers, includeClassOrigin);
 		}
 
-		virtual CIMClassEnumeration enumClassE(const String& ns,
-			const String& className, EDeepFlag deep, ELocalOnlyFlag localOnly,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumClassE(ns, className, deep, localOnly,
-				includeQualifiers, includeClassOrigin);
-		}
-
-		virtual CIMClassArray enumClassA(const String& ns,
-			const String& className, EDeepFlag deep, ELocalOnlyFlag localOnly,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumClassA(ns, className, deep, localOnly,
-				includeQualifiers, includeClassOrigin);
-		}
-
 		virtual void enumClassNames(const String& ns, const String& className,
 			StringResultHandlerIFC& result, EDeepFlag deep)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->enumClassNames(ns, className, result, deep);
-		}
-
-		virtual StringEnumeration enumClassNamesE(const String& ns,
-			const String& className, EDeepFlag deep)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumClassNamesE(ns, className, deep);
-		}
-
-		virtual StringArray enumClassNamesA(const String& ns,
-			const String& className, EDeepFlag deep)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumClassNamesA(ns, className, deep);
 		}
 
 		virtual void enumInstances(const String& ns,
@@ -176,47 +142,11 @@ namespace
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 
-		virtual CIMInstanceEnumeration enumInstancesE(const String& ns,
-			const String& className, EDeepFlag deep, ELocalOnlyFlag localOnly,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumInstancesE(ns, className, deep, localOnly,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
-		virtual CIMInstanceArray enumInstancesA(const String& ns,
-			const String& className, EDeepFlag deep, ELocalOnlyFlag localOnly,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumInstancesA(ns, className, deep, localOnly,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
 		virtual void enumInstanceNames(const String& ns,
 			const String& className, CIMObjectPathResultHandlerIFC& result)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->enumInstanceNames(ns, className, result);
-		}
-
-		virtual CIMObjectPathEnumeration enumInstanceNamesE(const String& ns,
-			const String& className)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumInstanceNamesE(ns, className);
-		}
-
-		virtual CIMObjectPathArray enumInstanceNamesA(const String& ns,
-			const String& className)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->enumInstanceNamesA(ns, className);
 		}
 
 		virtual CIMClass getClass(const String& ns, const String& className,
@@ -342,6 +272,7 @@ namespace
 			m_ch->deleteInstance(ns, path);
 		}
 
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 		virtual void setProperty(const String& ns,
 			const CIMObjectPath& instanceName, const String& propertyName,
 			const CIMValue& newValue)
@@ -349,15 +280,19 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->setProperty(ns, instanceName, propertyName, newValue);
 		}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 		virtual CIMValue getProperty(const String& ns,
 			const CIMObjectPath& instanceName, const String& propertyName)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			return m_ch->getProperty(ns, instanceName, propertyName);
 		}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
@@ -369,26 +304,6 @@ namespace
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->associatorNames(ns, objectName, result, assocClass,
-				resultClass, role, resultRole);
-		}
-
-		virtual CIMObjectPathEnumeration associatorNamesE(const String& ns,
-			const CIMObjectPath& objectName, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorNamesE(ns, objectName, assocClass,
-				resultClass, role, resultRole);
-		}
-
-		virtual CIMObjectPathArray associatorNamesA(const String& ns,
-			const CIMObjectPath& objectName, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorNamesA(ns, objectName, assocClass,
 				resultClass, role, resultRole);
 		}
 
@@ -408,34 +323,6 @@ namespace
 				propertyList);
 		}
 
-		virtual CIMInstanceEnumeration associatorsE(const String& ns,
-			const CIMObjectPath& path, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorsE(ns, path, assocClass, resultClass, role,
-				resultRole, includeQualifiers, includeClassOrigin,
-				propertyList);
-		}
-
-		virtual CIMInstanceArray associatorsA(const String& ns,
-			const CIMObjectPath& path, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole,
-			EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorsA(ns, path, assocClass, resultClass, role,
-				resultRole, includeQualifiers, includeClassOrigin,
-				propertyList);
-		}
-
 		virtual void associatorsClasses(const String& ns,
 			const CIMObjectPath& path, CIMClassResultHandlerIFC& result,
 			const String& assocClass, const String& resultClass,
@@ -450,54 +337,12 @@ namespace
 				propertyList);
 		}
 
-		virtual CIMClassEnumeration associatorsClassesE(const String& ns,
-			const CIMObjectPath& path, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorsClassesE(ns, path, assocClass, resultClass,
-				role, resultRole, includeQualifiers, includeClassOrigin,
-				propertyList);
-		}
-
-		virtual CIMClassArray associatorsClassesA(const String& ns,
-			const CIMObjectPath& path, const String& assocClass,
-			const String& resultClass, const String& role,
-			const String& resultRole, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->associatorsClassesA(ns, path, assocClass, resultClass,
-				role, resultRole, includeQualifiers, includeClassOrigin,
-				propertyList);
-		}
-
 		virtual void referenceNames(const String& ns, const CIMObjectPath& path,
 			CIMObjectPathResultHandlerIFC& result, const String& resultClass,
 			const String& role)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->referenceNames(ns, path, result, resultClass, role);
-		}
-
-		virtual CIMObjectPathEnumeration referenceNamesE(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referenceNamesE(ns, path, resultClass, role);
-		}
-
-		virtual CIMObjectPathArray referenceNamesA(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referenceNamesA(ns, path, resultClass, role);
 		}
 
 		virtual void references(const String& ns, const CIMObjectPath& path,
@@ -508,28 +353,6 @@ namespace
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_ch->references(ns, path, result, resultClass, role,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
-		virtual CIMInstanceEnumeration referencesE(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referencesE(ns, path, resultClass, role,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
-		virtual CIMInstanceArray referencesA(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referencesA(ns, path, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 
@@ -545,28 +368,6 @@ namespace
 				includeQualifiers, includeClassOrigin, propertyList);
 		}
 
-		virtual CIMClassEnumeration referencesClassesE(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referencesClassesE(ns, path, resultClass, role,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
-		virtual CIMClassArray referencesClassesA(const String& ns,
-			const CIMObjectPath& path, const String& resultClass,
-			const String& role, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->referencesClassesA(ns, path, resultClass, role,
-				includeQualifiers, includeClassOrigin, propertyList);
-		}
-
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 		virtual void execQuery(const String& ns,
@@ -577,20 +378,6 @@ namespace
 			m_ch->execQuery(ns, result, query, queryLanguage);
 		}
 
-		virtual CIMInstanceEnumeration execQueryE(const String& ns,
-			const String& query, const String& queryLanguage)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->execQueryE(ns, query, queryLanguage);
-		}
-
-		virtual CIMInstanceArray execQueryA(const String& ns,
-			const String& query, const String& queryLanguage)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_ch->execQueryA(ns, query, queryLanguage);
-		}
-		
 		virtual CIMFeatures getServerFeatures()
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
@@ -772,6 +559,7 @@ namespace
 			return m_prep->modifyInstance(ns, modifiedInstance, 
 				includeQualifiers, propertyList, context);
 		}
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 		virtual void setProperty(const String &ns, const CIMObjectPath &name,
 			const String &propertyName, const CIMValue &cv,
 			OperationContext &context)
@@ -779,6 +567,8 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->setProperty(ns, name, propertyName, cv, context);
 		}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #endif
 		virtual void enumInstanceNames(const String &ns,
 			const String &className, CIMObjectPathResultHandlerIFC &result,
@@ -798,6 +588,7 @@ namespace
 			return m_prep->getInstance(ns, instanceName, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 		virtual CIMValue getProperty(const String &ns,
 			const CIMObjectPath &name, const String &propertyName,
 			OperationContext &context)
@@ -805,6 +596,8 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			return m_prep->getProperty(ns, name, propertyName, context);
 		}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 		virtual CIMValue invokeMethod(const String &ns,
 			const CIMObjectPath &path, const String &methodName,
 			const CIMParamValueArray &inParams, CIMParamValueArray &outParams,

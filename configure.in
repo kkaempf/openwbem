@@ -691,6 +691,16 @@ if test "$enable_instance_manipulation" = no; then
 fi
 AM_CONDITIONAL(DISABLE_INSTANCE_MANIPULATION, test x$OW_DISABLE_INSTANCE_MANIPULATION = x1)
 
+AC_ARG_ENABLE(property-operations,
+OW_HELP_STRING(--disable-property-operations,disable GetProperty & SetProperty WBEM Operations))
+
+OW_DISABLE_PROPERTY_OPERATIONS=0
+if test "$enable_property_operations" = no; then
+	AC_DEFINE(DISABLE_PROPERTY_OPERATIONS)
+	OW_DISABLE_PROPERTY_OPERATIONS=1
+fi
+AM_CONDITIONAL(DISABLE_PROPERTY_OPERATIONS, test x$OW_DISABLE_PROPERTY_OPERATIONS = x1)
+
 AC_ARG_WITH(package-prefix,
 	OW_HELP_STRING(--with-package-prefix=PREFIX,Specify an optional prefix for 
 		use when building a commercial version of OpenWBEM.  This allows separate 

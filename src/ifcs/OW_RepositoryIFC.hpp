@@ -402,6 +402,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const StringArray* propertyList,
 		OperationContext& context) = 0;
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Set a property value on an CIMInstance.
 	 * @param ns The namespace in which a property should be modified.
@@ -416,7 +417,10 @@ public:
 		const CIMObjectPath& name,
 		const String& propertyName, const CIMValue& cv,
 		OperationContext& context) = 0;
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
 	 * @param ns The namespace containing the desired instance.
@@ -431,6 +435,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& name,
 		const String& propertyName, OperationContext& context) = 0;
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Invokes a method
 	 *

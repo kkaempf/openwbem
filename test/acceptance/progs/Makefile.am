@@ -10,6 +10,9 @@ else
 if DISABLE_ASSOCIATION_TRAVERSAL
 PROGS=
 else
+if DISABLE_PROPERTY_OPERATIONS
+PROGS=
+else
 PROGS= \
 owcimclientcl \
 testCIMExceptions \
@@ -21,6 +24,7 @@ testMisc \
 hammerClient \
 testSecondaryInstanceProviders \
 testLargeRequest
+endif
 endif
 endif
 endif

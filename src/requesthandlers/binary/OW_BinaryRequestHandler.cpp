@@ -220,17 +220,21 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 						" request");
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_SETPROP:
 					lgr->logDebug("BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
 					break;
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_GETPROP:
 					lgr->logDebug("BinaryRequestHandler get property"
 						" request");
 					getProperty(chdl, *ostrm, *istrm);
 					break;
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_ENUMCLSNAMES:
 					lgr->logDebug("BinaryRequestHandler enum class names"
 						" request");
@@ -645,6 +649,7 @@ BinaryRequestHandler::modifyInstance(CIMOMHandleIFCRef chdl,
 	chdl->modifyInstance(ns, ci, includeQualifiers, propListPtr);
 	BinarySerialization::write(ostrm, BIN_OK);
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
@@ -662,7 +667,10 @@ BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
 	chdl->setProperty(ns, op, propName, cv);
 	BinarySerialization::write(ostrm, BIN_OK);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
@@ -680,6 +688,7 @@ BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
 		BinarySerialization::writeValue(ostrm, cv);
 	}
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::enumClassNames(CIMOMHandleIFCRef chdl,

@@ -84,11 +84,13 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const StringArray* propertyList,
 		OperationContext& context);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual void setProperty(
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, const CIMValue &cv,
 		OperationContext& context);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual CIMInstance deleteInstance(const String& ns, const CIMObjectPath &cop,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -151,10 +153,12 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList, OperationContext& context);
 #endif
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	virtual CIMValue getProperty(
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, OperationContext& context);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const String& ns,

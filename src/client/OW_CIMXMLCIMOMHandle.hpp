@@ -339,6 +339,7 @@ public:
 	 * @exception CIMException If the instance does not exist.
 	 */
 	virtual void deleteInstance(const String& ns, const CIMObjectPath &path);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Set the specified CIM instance property.
 	 * @param name				An CIMObjectPath that identifies the CIM instance
@@ -351,7 +352,10 @@ public:
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, const CIMValue &cv);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
 	 * @param name				An CIMObjectPath that identifies the CIM instance
@@ -364,6 +368,8 @@ public:
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This operation is used to enumerate CIMInstances

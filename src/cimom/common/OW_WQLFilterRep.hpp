@@ -361,6 +361,7 @@ public:
 	 */
 	virtual CIMInstance deleteInstance(const String& ns, const CIMObjectPath &cop,
 		OperationContext& context);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Set a property value on an CIMInstance.
 	 * @param name				The object path of the instance
@@ -374,7 +375,9 @@ public:
 		const CIMObjectPath &name,
 		const String &propertyName, const CIMValue &cv,
 		OperationContext& context);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
 	 * @param name				An CIMObjectPath that identifies the CIM instance
@@ -388,6 +391,7 @@ public:
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, OperationContext& context);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Invokes a method
 	 *

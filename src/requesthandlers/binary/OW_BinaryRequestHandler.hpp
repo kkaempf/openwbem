@@ -71,8 +71,10 @@ private:
 		std::istream& istrm);
 	void modifyInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void setProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void enumClasses(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
@@ -91,8 +93,10 @@ private:
 	void deleteQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void getProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void enumClassNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void enumInstances(CIMOMHandleIFCRef chdl, std::ostream& ostrm,

@@ -351,6 +351,7 @@ public:
 	 * @exception CIMException If the instance does not exist.
 	 */
 	void deleteInstance(const CIMObjectPath& path);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Set the specified CIM instance property.
 	 * @param instanceName An CIMObjectPath that identifies the CIM instance
@@ -363,7 +364,9 @@ public:
 		const CIMObjectPath& instanceName,
 		const String& propertyName,
 		const CIMValue& newValue) ;
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	/**
 	 * Get the specified CIM instance property.
 	 * @param instanceName An CIMObjectPath that identifies the CIM instance to be
@@ -375,6 +378,7 @@ public:
 	CIMValue getProperty(
 		const CIMObjectPath& instanceName,
 		const String& propertyName);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes or

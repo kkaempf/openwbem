@@ -557,6 +557,7 @@ BinaryCIMOMHandle::deleteInstance(const String& ns_, const CIMObjectPath& inst)
 	BinarySerialization::writeObjectPath(strm, inst);
 	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST));
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryCIMOMHandle::setProperty(
@@ -584,7 +585,9 @@ BinaryCIMOMHandle::setProperty(
 		"SetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
 	checkError(in);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 BinaryCIMOMHandle::getProperty(
@@ -621,6 +624,7 @@ BinaryCIMOMHandle::getProperty(
 	}
 	return cv;
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void

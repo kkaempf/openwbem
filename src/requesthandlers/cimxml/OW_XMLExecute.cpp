@@ -110,7 +110,9 @@ XMLExecute::FuncEntry XMLExecute::g_funcs[] =
 	{ "execquery", &XMLExecute::execQuery },
 	{ "getclass", &XMLExecute::getClass },
 	{ "getinstance", &XMLExecute::getInstance },
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	{ "getproperty", &XMLExecute::getProperty },
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	{ "getqualifier", &XMLExecute::getQualifier },
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "modifyclass", &XMLExecute::modifyClass },
@@ -123,7 +125,9 @@ XMLExecute::FuncEntry XMLExecute::g_funcs[] =
 	{ "references", &XMLExecute::references },
 #endif
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	{ "setproperty", &XMLExecute::setProperty },
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "setqualifier", &XMLExecute::setQualifier },
@@ -814,6 +818,7 @@ XMLExecute::deleteInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 	CIMObjectPath instPath = XMLCIMFactory::createObjectPath(parser);
 	hdl.deleteInstance( ns, instPath );
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::setProperty(ostream&	/*ostr*/, CIMXMLParser& parser,
@@ -827,6 +832,7 @@ XMLExecute::setProperty(ostream&	/*ostr*/, CIMXMLParser& parser,
 	CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 	hdl.setProperty(ns, instpath, params[1].val.toString(), params[2].val);
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
@@ -1130,6 +1136,7 @@ XMLExecute::getInstance(ostream& ostr, CIMXMLParser& parser,
 	CIMInstancetoXML(cimInstance, ostr);
 	ostr << "</IRETURNVALUE>";
 }
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::getProperty(ostream& ostr, CIMXMLParser& parser,
@@ -1146,6 +1153,7 @@ XMLExecute::getProperty(ostream& ostr, CIMXMLParser& parser,
 		CIMtoXML(cv, ostr);
 	ostr << "</IRETURNVALUE>";
 }
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::getQualifier(ostream& ostr, CIMXMLParser& parser,

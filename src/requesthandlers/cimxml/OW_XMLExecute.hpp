@@ -104,8 +104,10 @@ private:
 		const String& ns, CIMOMHandleIFC& hdl);
 	void modifyInstance(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void setProperty(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif
 	void enumerateClassNames(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
@@ -119,8 +121,10 @@ private:
 		const String& ns, CIMOMHandleIFC& hdl) ;
 	void getInstance(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void getProperty(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	void getQualifier(std::ostream& ostr, CIMXMLParser& parser,
 		const String& ns, CIMOMHandleIFC& hdl);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

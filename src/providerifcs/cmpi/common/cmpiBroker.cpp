@@ -625,6 +625,7 @@ static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbSetProperty()");
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 
 	CMPIrc rc;
 	OpenWBEM::CIMValue v=value2CIMValue(val,type,&rc);
@@ -651,6 +652,7 @@ static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbSetProperty");
 		CMReturn(CMPI_RC_ERROR_SYSTEM);
 	}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif
 	CMReturn(CMPI_RC_ERR_FAILED);
 }
@@ -663,6 +665,7 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbGetProperty()");
 
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, {0} };
+#if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	try
 	{
 		OpenWBEM::CIMValue v = CM_CIMOM(mb)->getProperty(
@@ -688,6 +691,7 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbGetProperty");
 		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 	return data;
 }
 

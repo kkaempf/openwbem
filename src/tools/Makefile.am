@@ -36,7 +36,8 @@ owenumnamespace \
 $(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
 owenumclassnames \
-owenumclasses
+owenumclasses \
+owrepositorydump
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
@@ -180,6 +181,21 @@ $(BINLINKAPPENDFLAGS)
 owcimindicationlistener_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owcimindicationlistener
+
+### owrepositorydump
+owrepositorydump_SOURCES = owrepositorydump.cpp
+
+owrepositorydump_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb
+
+owrepositorydump_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owrepositorydump
+
+
+
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
