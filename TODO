@@ -43,6 +43,7 @@ Fix problems:
     - Indication server should not require that subscriptions have indication 
       providers.
     - Domain socket should be under the statedir (/var) not /tmp
+    - Add forwarding headers for each directory.
 
 New features:
     - Start to use __attribute__ ((warn_unused_result)) where applicable.
