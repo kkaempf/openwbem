@@ -39,6 +39,7 @@
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -113,8 +114,11 @@ protected:
 void createClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMObjectPath parentPath("EXP_IndicationTestComputerSystem");
-	OW_CIMQualifier cimQualifierKey("Key");
-	//cimQualifierKey.setValue(OW_CIMDataType::STRING);
+	OW_CIMObjectPath cqtPath("Key", "root");
+	OW_CIMQualifierType cqt = hdl.getQualifierType(cqtPath);
+	OW_CIMQualifier cimQualifierKey("Key", cqt);
+	cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
+
 	OW_CIMClass cimClass(OW_Bool(true));
 	cimClass.setName("EXP_IndicationTestComputerSystem");
 	cimClass.setSuperClass("CIM_ComputerSystem");
@@ -502,14 +506,14 @@ int main(int argc, char* argv[])
 		cout << "Success!" << endl;
 		return 0;
 	}
-	catch(OW_Assertion& a)
-	{
-		cerr << "Caught Assertion main() " << a.getMessage() << endl;
-	}
 	catch(OW_Exception& e)
 	{
 		cerr << e << endl;
 	}
+    catch(std::exception& e)
+    {
+        cerr << e.what() << endl;
+    }
 	catch(...)
 	{
 		cerr << "Caught unknown exception in main" << endl;

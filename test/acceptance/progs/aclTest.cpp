@@ -68,8 +68,14 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath parentPath("EXP_BionicComputerSystem2", "/root/acltest");
-		OW_CIMQualifier cimQualifierKey("Key");
-		//cimQualifierKey.setValue(OW_CIMDataType::STRING);
+		OW_CIMObjectPath cqtPath("Key", "/root/acltest");
+		OW_CIMQualifierType cqt("Key");
+		cqt.setDataType(OW_CIMDataType::BOOLEAN);
+		cqt.setDefaultValue(OW_CIMValue(OW_Bool(false)));
+		OW_CIMQualifier cimQualifierKey("Key", cqt);
+
+		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
+
 		OW_CIMClass cimClass(OW_Bool(true));
 		cimClass.setName("EXP_BionicComputerSystem2");
 		cimClass.setSuperClass("CIM_ComputerSystem");

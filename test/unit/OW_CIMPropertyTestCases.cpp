@@ -42,6 +42,8 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_XMLParser.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
+
 
 void OW_CIMPropertyTestCases::setUp()
 {
@@ -55,7 +57,9 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 {
 	OW_CIMClass c1(true);
 	c1.setName("test");
-	c1.addQualifier(OW_CIMQualifier("Description"));
+	OW_CIMQualifierType cqt("Description");
+	cqt.setDataType(OW_CIMDataType::STRING);
+	c1.addQualifier(OW_CIMQualifier("Description", cqt));
 
 	OW_CIMProperty p1("testprop", OW_CIMValue(c1));
 	OW_CIMClass c2;
@@ -79,9 +83,13 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 
 void OW_CIMPropertyTestCases::testEmbeddedInstance()
 {
-	OW_CIMInstance i1(true);
-	i1.setName("test");
-	i1.setQualifier(OW_CIMQualifier("Description"));
+	OW_CIMClass c1(true);
+	c1.setName("test");
+	OW_CIMQualifierType cqt("Description");
+	cqt.setDataType(OW_CIMDataType::STRING);
+	c1.addQualifier(OW_CIMQualifier("Description", cqt));
+
+	OW_CIMInstance i1 = c1.newInstance();
 
 	OW_CIMProperty p1("testprop", OW_CIMValue(i1));
 	OW_CIMInstance i2;
