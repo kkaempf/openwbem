@@ -65,7 +65,7 @@ protected:
 	//int pbackfail(int c);
 	// for output
 	std::streamsize xsputn(const char* s, std::streamsize n);
-	int overflow(int c = EOF);
+	virtual int overflow(int c);
 	virtual int sync();
 	virtual void initBuffers();
 	virtual void initGetBuffer();
