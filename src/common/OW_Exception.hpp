@@ -40,11 +40,6 @@
 #include <exception>
 #include <new>
 
-extern "C"
-{
-#include <errno.h>
-}
-
 namespace OpenWBEM
 {
 
