@@ -489,7 +489,9 @@ public:
 	 * @return The OW_CIMvalue for property identified by propertyName.
 	 * @exception OW_CIMException
 	 */
-	virtual OW_CIMValue getProperty(const OW_CIMObjectPath& name,
+	virtual OW_CIMValue getProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath& name,
 		const OW_String& propertyName, const OW_ACLInfo& aclInfo);
 
 	/**

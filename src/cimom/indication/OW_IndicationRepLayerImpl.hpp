@@ -205,10 +205,12 @@ public:
 	}
 
 
-	virtual OW_CIMValue getProperty(const OW_CIMObjectPath &name,
+	virtual OW_CIMValue getProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_ACLInfo& aclInfo)
 	{
-		return m_pServer->getProperty(name, propertyName, aclInfo);
+		return m_pServer->getProperty(ns, name, propertyName, aclInfo);
 	}
 
 

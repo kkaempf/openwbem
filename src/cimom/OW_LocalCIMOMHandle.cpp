@@ -297,11 +297,13 @@ OW_LocalCIMOMHandle::createInstance(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_LocalCIMOMHandle::getProperty(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
 	const OW_String& propertyName)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getProperty(name, propertyName, m_aclInfo);
+	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

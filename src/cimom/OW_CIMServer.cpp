@@ -1708,7 +1708,9 @@ OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
+OW_CIMServer::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
 	const OW_String& propertyName, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
@@ -1721,8 +1723,8 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 		aclInfo, true);
 
 	OW_CIMClass theClass;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), theClass);
-	checkGetClassRvalAndThrowInst(rc, name.getNameSpace(), name.getObjectName());
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, name.getObjectName(), theClass);
+	checkGetClassRvalAndThrowInst(rc, ns, name.getObjectName());
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1734,7 +1736,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getInstance(name.getNameSpace(), name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(ns, name, false, true, true, NULL,
 			NULL, aclInfo);
 		OW_CIMProperty prop = ci.getProperty(propertyName);
 		if(!prop)
@@ -1757,7 +1759,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 
 	return propp->getPropertyValue(
 		createProvEnvRef(real_ch),
-			name, cp.getOriginClass(), propertyName);
+			ns, name, cp.getOriginClass(), propertyName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1846,7 +1848,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 		propp->setPropertyValue(
 			createProvEnvRef(real_ch),
-				name, cp.getOriginClass(), cp.getName(), cv);
+				/*name.getNameSpace(), */name, cp.getOriginClass(), cp.getName(), cv);
 	}
 }
 
@@ -3317,10 +3319,8 @@ OW_CIMServer::_getProviderProperties(const OW_String& ns, const OW_CIMObjectPath
 			// If we found a provider, ask it for the value of this property
 			if(propp)
 			{
-				OW_CIMObjectPath copWithNS(cop);
-				copWithNS.setNameSpace(ns);
 				clsProp.setValue(propp->getPropertyValue(
-					createProvEnvRef(real_ch), copWithNS,
+					createProvEnvRef(real_ch), ns, cop,
 					clsProp.getOriginClass(), clsProp.getName()));
 				ci.setProperty(clsProp);
 			}

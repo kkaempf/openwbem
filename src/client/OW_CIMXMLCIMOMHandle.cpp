@@ -1062,8 +1062,10 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_CIMXMLCIMOMHandle::getProperty(const OW_CIMObjectPath& path,
-											 const OW_String& propName)
+OW_CIMXMLCIMOMHandle::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName)
 {
 	static const char* const commandName = "GetProperty";
 	OW_Array<OW_Param> params;
@@ -1072,7 +1074,7 @@ OW_CIMXMLCIMOMHandle::getProperty(const OW_CIMObjectPath& path,
 
 	OW_CIMValue rval;
 	getPropertyOp op(rval);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params,
+	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
 }

@@ -549,17 +549,21 @@ OW_BinaryCIMOMHandle::createInstance(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_BinaryCIMOMHandle::getProperty(const OW_CIMObjectPath& path,
-											 const OW_String& propName)
+OW_BinaryCIMOMHandle::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"GetProperty", path.getNameSpace());;
+		"GetProperty", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_GETPROP);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, propName);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "GetProperty", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"GetProperty", ns);
 	checkError(in);
 
 	OW_CIMValue cv;

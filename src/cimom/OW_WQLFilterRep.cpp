@@ -314,7 +314,9 @@ OW_WQLFilterRep::referenceNames(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/,
+OW_WQLFilterRep::getProperty(
+	const OW_String&,
+	const OW_CIMObjectPath &/*name*/,
 	const OW_String &/*propertyName*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
