@@ -39,7 +39,13 @@
 #include "OW_Types.hpp"
 #include "OW_Format.hpp"
 #include "OW_RandomNumber.hpp"
+
+#ifdef OW_WIN32
+#include <windows.h>	// Time functions
+#else
 #include <sys/time.h> // for gettimeofday
+#endif
+
 #include <string.h> // for memcmp
 #include <stdlib.h> // for rand
 #include <ctype.h> // for isxdigit
@@ -48,6 +54,7 @@ namespace OpenWBEM
 {
 
 OW_DEFINE_EXCEPTION(UUID);
+
 namespace {
 // typedefs
 typedef UInt64 uuid_time_t;
@@ -64,6 +71,30 @@ struct uuid_state
 // static generator state
 uuid_state g_state;
 NonRecursiveMutex g_guard;
+
+#ifdef OW_WIN32
+
+/* FILETIME of Jan 1 1970 00:00:00. */
+static const unsigned __int64 epoch = 116444736000000000L;
+
+int gettimeofday(struct timeval * tp, int bogusParm)
+{
+	FILETIME	file_time;
+	SYSTEMTIME	system_time;
+	ULARGE_INTEGER ularge;
+
+	GetSystemTime(&system_time);
+	SystemTimeToFileTime(&system_time, &file_time);
+	ularge.LowPart = file_time.dwLowDateTime;
+	ularge.HighPart = file_time.dwHighDateTime;
+
+	tp->tv_sec = (long) ((ularge.QuadPart - epoch) / 10000000L);
+	tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+
+	return 0;
+}
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 void getSystemTime(uuid_time_t *uuid_time)
 {

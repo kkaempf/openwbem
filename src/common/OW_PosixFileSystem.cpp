@@ -51,6 +51,19 @@ extern "C"
 #include <io.h>
 #include <share.h>
 
+#define _ACCESS ::_access
+#define R_OK 4
+#define F_OK 0
+#define W_OK 2
+#define _CHDIR _chdir
+#define _MKDIR(a,b)	_mkdir((a))
+#define _RMDIR _rmdir
+#define _UNLINK _unlink
+#define _LSEEK ::_lseek
+#define _READ ::_read
+#define _WRITE ::_write
+#define _CLOSEFILE ::_close
+
 #else
 
 #ifdef OW_HAVE_UNISTD_H
@@ -60,13 +73,23 @@ extern "C"
 #include <dirent.h>
 #endif
 
+#define _ACCESS ::access
+#define _CHDIR chdir
+#define _MKDIR(a,b) mkdir((a),(b))
+#define _RMDIR rmdir
+#define _UNLINK unlink
+#define _LSEEK ::lseek
+#define _READ ::read
+#define _WRITE ::write
+#define _CLOSEFILE ::close
+
 #endif
 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-
 }
+
 #include <cstdio> // for rename
 #include <fstream>
 
@@ -132,31 +155,6 @@ openOrCreateFile(const String& path)
 	return File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
 #endif
 }
-
-#ifdef OW_WIN32
-#define _ACCESS ::_access
-#define R_OK 4
-#define F_OK 0
-#define W_OK 2
-#define _CHDIR _chdir
-#define _MKDIR(a,b)	_mkdir((a))
-#define _RMDIR _rmdir
-#define _UNLINK _unlink
-#define _LSEEK ::_lseek
-#define _READ ::_read
-#define _WRITE ::_write
-#define _CLOSEFILE ::_close
-#else
-#define _ACCESS ::access
-#define _CHDIR chdir
-#define _MKDIR(a,b) mkdir((a),(b))
-#define _RMDIR rmdir
-#define _UNLINK unlink
-#define _LSEEK ::lseek
-#define _READ ::read
-#define _WRITE ::write
-#define _CLOSEFILE ::close
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 bool
