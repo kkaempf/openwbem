@@ -420,10 +420,11 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			{
 				String msg(Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from"
 					" library: %1", libName));
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_THROW(CppProviderIFCException, msg.c_str());
+				OW_LOG_INFO(env->getLogger(COMPONENT_NAME), msg);
+				// This isn't treated as a fatal error, since the library isn't an OW library.
+				// On Windows, providers that link to auxiliary dlls, must have those dlls in the same directory 
+				// as the provider.
+				continue;
 			}
 			const char* strVer = (*versFunc)();
 			if (strcmp(strVer, OW_VERSION))
