@@ -287,6 +287,16 @@ public:
 	 */
 	explicit OW_CIMValue(const OW_CIMInstanceArray& x);
 
+private:
+	// These are private/unimplemented to help prevent unintended errors of
+	// passing a pointer to the constructor.
+	OW_CIMValue(const void*);
+	OW_CIMValue(void*);
+	OW_CIMValue(volatile const void*);
+	OW_CIMValue(volatile void*);
+
+public:
+
 	/**
 	 * Destroy this OW_CIMValue object.
 	 */
