@@ -746,7 +746,6 @@ TestMof()
 		return
 	fi
 
-	#RestartDaemon
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
@@ -754,6 +753,29 @@ TestMof()
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
+}
+
+#############################################################################
+SetupInteropSchema()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		MOF >/dev/null 2>&1
+	then
+		return
+	fi
+
+	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926/owbinary root \
+			$TOPSRCDIR/schemas/cim27/CIM_Core27.mof || \
+			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
+	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926/cimom root \
+			$TOPSRCDIR/schemas/cim27/CIM_Event27.mof || \
+			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary root \
+			$TOPSRCDIR/schemas/cim27/CIM_Interop27.mof || \
+			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/cimom root \
+			$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
+			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 }
 
 #############################################################################
@@ -836,6 +858,7 @@ if [ "z$OWLONGTEST" = "z1" ]; then
   TestACL
 fi
 
+SetupInteropSchema
 TestMof
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite.out"
