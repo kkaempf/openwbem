@@ -33,9 +33,8 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
+#include "OW_ThreadTypes.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_Bool.hpp"
 
 /**
  * The ThreadEvent class is used primarily for thread syncronization. It can be in a 
@@ -46,6 +45,8 @@
  * to a signaled state (blocking) and the ThreadEvent gets signaled, all threads
  * will be released.
  */
+
+//#error "This class is subject to race conditions.  Don't use it!"
 class OW_ThreadEvent
 {
 private:
@@ -55,11 +56,11 @@ private:
 	public:
 		ThreadEvent();
 		~ThreadEvent();
-		OW_Bool waitForSignal(OW_UInt32 ms=0);
+		bool waitForSignal(OW_UInt32 ms=0);
 		void signal();
 		void pulse();
 		void reset();
-		OW_Bool isSignaled();
+		bool isSignaled();
 	
 	protected:
 	
@@ -115,7 +116,7 @@ public:
 	 *					until the event get signaled.
 	 * @return true if the ThreadEvent is now in the signaled state. Otherwise false.
 	 */
-	OW_Bool waitForSignal(OW_UInt32 ms=0) 
+	bool waitForSignal(OW_UInt32 ms=0) 
 	{ 
 		return m_impl->waitForSignal(ms); 
 	}
@@ -149,7 +150,7 @@ public:
 	 * 
 	 * @return true if this ThreadEvent object is currently signaled. Otherwise false.
 	 */
-	OW_Bool isSignaled() 
+	bool isSignaled() 
 	{ 
 		return m_impl->isSignaled(); 
 	}

@@ -27,50 +27,82 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-#ifndef _OW_SEMAPHORE_HPP__
-#define _OW_SEMAPHORE_HPP__
-
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_MutexImpl.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "OW_Condition.hpp"
+#include "OW_MutexLock.hpp"
 
-class OW_Semaphore
+#include <cassert>
+
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::OW_Condition()
 {
-public:
-	OW_Semaphore(OW_Int32 initCount)
-		: m_curCount(initCount)
+	#ifdef OW_USE_GNU_PTH
+	int res = pth_cond_init(&m_condition, 0);
+	#else
+	int res = pthread_cond_init(&m_condition, 0);
+	#endif
+	if (res != 0)
 	{
-			OW_MutexImpl::createMutex(m_mutex);
-			OW_SemaphoreImpl::createConditionVar(m_cond);
+		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
 	}
+}
 
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::~OW_Condition()
+{
+	#ifdef OW_USE_GNU_PTH
+	int res = pth_cond_destroy(&m_condition);
+	#else
+	int res = pthread_cond_destroy(&m_condition);
+	#endif
+	assert(res == 0);
+}
 
-	~OW_Semaphore()
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyOne()
+{
+	#ifdef OW_USE_GNU_PTH
+	int res = pth_cond_signal(&m_condition);
+	#else
+	int res = pthread_cond_signal(&m_condition);
+	#endif
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyAll()
+{
+	#ifdef OW_USE_GNU_PTH
+	int res = pth_cond_broadcast(&m_condition);
+	#else
+	int res = pthread_cond_broadcast(&m_condition);
+	#endif
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::wait(OW_MutexLock& lock)
+{
+	if (!lock.isLocked())
 	{
+		OW_THROW(OW_ConditionLockException, "Lock must be locked");
 	}
+	doWait(*(lock.m_mutex));
+}
 
-	bool wait(OW_UInt32 ms=0)
-	{
-		return OW_SemaphoreImpl::wait(m_cond, m_mutex, m_curCount, ms);
-	}
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::doWait(OW_Mutex& mutex)
+{
+	int res;
+	#ifdef OW_USE_GNU_PTH
+	res = pth_cond_wait(&m_condition, &mutex.m_mutex);
+	#else
+	res = pthread_cond_wait(&m_condition, &mutex.m_mutex);
+	#endif
+	assert(res == 0);
+}
 
-	void signal()
-	{
-		OW_SemaphoreImpl::signal(m_cond, m_mutex, m_curCount);
-	}
-
-	OW_Int32 getCount()
-	{
-		return OW_SemaphoreImpl::getCount(m_mutex, m_curCount);
-	}
-
-private:
-	OW_Int32 m_curCount;
-
-	OW_ConditionVar_t m_cond;
-	OW_Mutex_t m_mutex;
-};
-
-#endif  // _OW_SEMAPHORE_HPP__

@@ -53,7 +53,8 @@ public:
 		return OW_RequestHandlerIFCRef();
 	}
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, const OW_Bool) {
-		return OW_CIMOMHandleIFCRef();
+		OW_THROW(OW_Exception, "Cannot call OW_TestEnvironment::getCIMOMHandle()");
+		//return OW_CIMOMHandleIFCRef();
 	}
 
 	OW_Map<OW_String, OW_String> config;

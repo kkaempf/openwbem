@@ -32,254 +32,146 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
 
-using std::vector;
-
-int OW_RWLocker::m_readLockCount = 0;
-int OW_RWLocker::m_writeLockCount = 0;
-OW_Mutex OW_RWLocker::m_countGuard;
+#include <iostream>
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_RWLocker::incReadLockCount()
-{
-	OW_MutexLock ml(m_countGuard);
-	OW_ASSERT(m_writeLockCount == 0);
-	m_readLockCount++;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_RWLocker::decReadLockCount()
-{
-	OW_MutexLock ml(m_countGuard);
-	m_readLockCount--;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_RWLocker::incWriteLockCount()
-{
-	OW_MutexLock ml(m_countGuard);
-	OW_ASSERT(m_readLockCount == 0);
-	m_writeLockCount++;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_RWLocker::decWriteLockCount()
-{
-	OW_MutexLock ml(m_countGuard);
-	m_writeLockCount--;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_RWLocker::OW_RWLocker() : m_guard(), m_queue(), m_state(0)
+OW_RWLocker::OW_RWLocker()
+	: m_waiting_writers()
+	, m_waiting_readers()
+	, m_num_waiting_writers(0)
+	, m_num_waiting_readers(0)
+	, m_readers_next(0)
+    , m_guard()
+	, m_state(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_RWLocker::~OW_RWLocker()
 {
-	try
-	{
-		OW_RWQEntryVect::iterator it = m_queue.begin();
-		while(it != m_queue.end())
-		{
-			it->m_event.signal();
-			it++;
-		}
-	}
-	catch (...)
-	{
+	// ???
+	//try
+	//{
+	//	m_cond.notifyAll();
+	//}
+	//catch (...)
+	//{
 		// don't let exceptions escape
-	}
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ReadLock
+void
 OW_RWLocker::getReadLock()
 {
-	OW_MutexLock lock(m_guard);
-
-	if(m_state >= 0)		// True if a reader currently has the lock/queue empty
-	{
-		if(m_queue.empty())
-		{
-			m_state++;
-			incReadLockCount();
-			return OW_ReadLock(this);
-		}
-	}
-
-	int tryCount = 0;
-	while(true)
-	{
-		OW_RWQEntry qentry(false);
-
-		if(tryCount == 0)
-		{
-			m_queue.push_back(qentry);		// Put reader in the queue
-			tryCount++;
-		}
-		else
-		{
-			m_queue.insert(m_queue.begin(), qentry); // Put in front (someone got it first)
-		}
-
-		lock.release();
-		qentry.m_event.waitForSignal(); 	// Will stop blocking when pulled from queue
-		lock.lock();
-		if(m_state >= 0)
-		{
-			break;
-		}
-	}
-
-	m_state++;
-	incReadLockCount();
-	return OW_ReadLock(this);
+	cout << "OW_RWLocker::getReadLock ";
+    OW_MutexLock l(m_guard);
+	cout << "locked" << endl;
+    
+    // Wait until no exclusive lock is held.
+    //
+    // Note:  Scheduling priorities are enforced in the unlock()
+    //   call.  unlock will wake the proper thread.
+    while(m_state < 0)
+    {
+        ++m_num_waiting_readers;
+        m_waiting_readers.wait(l);
+        --m_num_waiting_readers;
+    }
+    
+    // Increase the reader count
+    m_state++;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_WriteLock
+void
 OW_RWLocker::getWriteLock()
 {
-	int tryCount = 0;
-	OW_MutexLock lock(m_guard);
-	while(m_state != 0)
-	{
-		OW_RWQEntry qentry(true);
+	cout << "OW_RWLocker::getWriteLock ";
+    OW_MutexLock l(m_guard);
+	cout << "locked" << endl;
 
-		if(tryCount > 0)
-			m_queue.insert(m_queue.begin(), qentry); // Put in front (someone got it first)
-		else
-		{
-			m_queue.push_back(qentry);		// Put writer in the queue
-			tryCount++;
-		}
-
-		lock.release();
-		qentry.m_event.waitForSignal(); 	// Will stop blocking when pulled from queue
-		lock.lock();
-	}
-
-	m_state = -1;
-	incWriteLockCount();
-	return OW_WriteLock(this);
+    // Wait until no exclusive lock is held.
+    //
+    // Note:  Scheduling priorities are enforced in the unlock()
+    //   call.  unlock will wake the proper thread.
+    while(m_state != 0)
+    {
+        ++m_num_waiting_writers;
+        m_waiting_writers.wait(l);
+        --m_num_waiting_writers;
+    }
+    m_state = -1;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_RWLocker::releaseReadLock()
 {
-	OW_MutexLock lock(m_guard);
-	--m_state;
-	if(m_queue.size() > 0 && m_state == 0)
-	{
-		OW_RWQEntry qentry = m_queue.front();
-		m_queue.erase(m_queue.begin());
-		qentry.m_event.signal();
-	}
-	decReadLockCount();
+	cout << "OW_RWLocker::releaseReadLock ";
+    OW_MutexLock l(m_guard);
+	cout << "locked" << endl;
+    if(m_state > 0)        // Release a reader.
+        --m_state;
+    else
+		OW_THROW(OW_RWLockerException, "A writer is releasing a read lock");
+
+    if(m_state == 0)
+    {
+        doWakeups();
+    }
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_RWLocker::releaseWriteLock()
 {
-	OW_MutexLock lock(m_guard);
-	m_state = 0;
+	cout << "OW_RWLocker::releaseWriteLock ";
+    OW_MutexLock l(m_guard);
+	cout << "locked" << endl;
+    if(m_state == -1)
+        m_state = 0;
+    else
+        OW_THROW(OW_RWLockerException, "A reader is releasing a write lock");
 
-	if(m_queue.size() > 0)
-	{
-		OW_RWQEntry qentry = m_queue.front();
-		while(m_queue.size() > 0)
-		{
-			m_queue.erase(m_queue.begin());
-			qentry.m_event.signal();
+    // After a writer is unlocked, we are always back in the unlocked state.
+    //
+    doWakeups();
 
-			if(qentry.m_isWriter)
-				break;
-
-			qentry = m_queue.front();
-			if(qentry.m_isWriter)
-				break;
-		}
-	}
-
-	decWriteLockCount();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ReadLock::release()
+OW_RWLocker::doWakeups()
 {
-	if(!m_pdata.isNull())
-	{
-		if(!m_pdata->m_released)
+    if( m_num_waiting_writers > 0 && 
+        m_num_waiting_readers > 0)
+    {
+		if(m_readers_next == 1)
 		{
-			m_pdata->m_locker->releaseReadLock();
-			m_pdata->m_released = true;
+			m_readers_next = 0;
+			m_waiting_readers.notifyAll();
 		}
-	}
-}
-
-OW_ReadLock::RLData::~RLData()
-{
-	try
-	{
-		if(!m_released)
-			m_locker->releaseReadLock();
-	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
-}
-
-OW_ReadLock::RLData&
-OW_ReadLock::RLData::operator= (const OW_ReadLock::RLData& x)
-{
-	m_locker = x.m_locker;
-	m_released = x.m_released;
-	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_WriteLock::release()
-{
-	if(!m_pdata.isNull())
-	{
-		if(!m_pdata->m_released)
+		else
 		{
-			m_pdata->m_locker->releaseWriteLock();
-			m_pdata->m_released = true;
+			m_waiting_writers.notifyOne();
+			m_readers_next = 1;
 		}
-	}
-}
+    }
+    else if(m_num_waiting_writers > 0)
+    {
+        // Only writers - scheduling doesn't matter
+        m_waiting_writers.notifyOne();
+    }
+    else if(m_num_waiting_readers > 0)
+    {
+        // Only readers - scheduling doesn't matter
+        m_waiting_readers.notifyAll();
+    }
 
-OW_WriteLock::WLData::~WLData()
-{
-	try
-	{
-		if(!m_released)
-			m_locker->releaseWriteLock();
-	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
 }
-
-OW_WriteLock::WLData&
-OW_WriteLock::WLData::operator= (const OW_WriteLock::WLData& x)
-{
-	m_locker = x.m_locker;
-	m_released = x.m_released;
-	return *this;
-}
-
 
 
 

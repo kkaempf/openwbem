@@ -326,14 +326,24 @@ public:
 	}
 
 
-	virtual OW_ReadLock getReadLock()
+	virtual void getReadLock()
 	{
-		return m_pServer->getReadLock();
+		m_pServer->getReadLock();
 	}
 
-	virtual OW_WriteLock getWriteLock()
+	virtual void getWriteLock()
 	{
-		return m_pServer->getWriteLock();
+		m_pServer->getWriteLock();
+	}
+
+	virtual void releaseReadLock()
+	{
+		m_pServer->releaseReadLock();
+	}
+
+	virtual void releaseWriteLock()
+	{
+		m_pServer->releaseWriteLock();
 	}
 
 

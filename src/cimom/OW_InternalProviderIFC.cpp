@@ -32,6 +32,7 @@
 #include "OW_InternalProviderIFC.hpp"
 #include "OW_ProxyProvider.hpp"
 #include "OW_Format.hpp"
+#include "OW_Assertion.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_InternalProviderIFC::~OW_InternalProviderIFC()

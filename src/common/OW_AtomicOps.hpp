@@ -36,6 +36,12 @@
 // use fast inline assembly versions
 typedef struct { volatile int val; } OW_Atomic_t;
 
+// OW_ATOMIC() is weird; you can't use it for member variables.  Here's how to do 
+// it correctly.
+// In constructor body:
+//	OW_Atomic_t c = OW_ATOMIC(0);
+//	m_myAtomicVar = c;
+
 #define OW_ATOMIC(i)	{ (i) }
 
 inline void OW_AtomicInc(OW_Atomic_t &v)
@@ -57,6 +63,11 @@ inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 	return c != 0;
 }
 
+inline int OW_AtomicGet(OW_Atomic_t const &v)
+{
+	return v.val;
+}
+
 #else
 // use slow mutex protected versions
 #define OW_USE_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
@@ -66,6 +77,7 @@ typedef int OW_Atomic_t;
 
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);
+int OW_AtomicGet(OW_Atomic_t const &v)
 
 #endif
 

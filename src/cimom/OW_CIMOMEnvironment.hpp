@@ -176,6 +176,7 @@ private:
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;
+	// TODO: Replace m_running with a condition variable.
 	OW_Bool m_running;
 };
 

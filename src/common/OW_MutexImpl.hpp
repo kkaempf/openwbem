@@ -28,49 +28,60 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SEMAPHORE_HPP__
-#define _OW_SEMAPHORE_HPP__
+#ifndef OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
+#define OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_MutexImpl.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "OW_ThreadTypes.hpp"
 
-class OW_Semaphore
+/**
+ * The OW_MutexImpl class represents the functionality needed by the
+ * OpenWbem Mutex class (OW_Mutex). The implementation for this class
+ * must be provided on all platforms that OpenWbem runs on. It is essentially
+ * an abstraction layer over another mutex implementation.
+ */
+class OW_MutexImpl
 {
 public:
-	OW_Semaphore(OW_Int32 initCount)
-		: m_curCount(initCount)
-	{
-			OW_MutexImpl::createMutex(m_mutex);
-			OW_SemaphoreImpl::createConditionVar(m_cond);
-	}
 
+	/**
+	 * Create a platform specific mutext handle.
+	 * @param handle	The mutex handle that should be initialized by this method
+	 * @param isRecursive Specified whether to create a recursive mutex
+	 * @return 0 on success. Otherwise -1.
+	 */
+	static int createMutex(OW_Mutex_t& handle);
 
-	~OW_Semaphore()
-	{
-	}
+	/**
+	 * Destroy a mutex previously created with createMutex.
+	 * @param handle The handle to the mutex that will be destroyed.
+	 * @return The following error codes:
+	 *		 0:	success
+	 *		-1:	Could not be acquired for destruction because it is currently
+	 *				locked.
+	 *		-2:	All other error conditions
+	 */
+	static int destroyMutex(OW_Mutex_t& handle);
 
-	bool wait(OW_UInt32 ms=0)
-	{
-		return OW_SemaphoreImpl::wait(m_cond, m_mutex, m_curCount, ms);
-	}
+	/**
+	 * Acquire the mutex specified by a given mutex handle. This method should
+	 * block until the desired mutex can be acquired. The error return value is
+	 * used to indicate critical errors.
+	 *
+	 * @param handle The mutex to acquire.
+	 * @return 0 on success. -1 indicates a critical error.
+	 */
+	static int acquireMutex(OW_Mutex_t& handle);
 
-	void signal()
-	{
-		OW_SemaphoreImpl::signal(m_cond, m_mutex, m_curCount);
-	}
-
-	OW_Int32 getCount()
-	{
-		return OW_SemaphoreImpl::getCount(m_mutex, m_curCount);
-	}
-
-private:
-	OW_Int32 m_curCount;
-
-	OW_ConditionVar_t m_cond;
-	OW_Mutex_t m_mutex;
+	/**
+	 * Release a mutex that was previously acquired with the acquireMutex
+	 * method.
+	 * @param handle The handle to the mutex that is being released.
+	 * @return 0 on success. -1 indicates a critical error.
+	 */
+	static int releaseMutex(OW_Mutex_t& handle);
 };
 
-#endif  // _OW_SEMAPHORE_HPP__
+#endif
+
+

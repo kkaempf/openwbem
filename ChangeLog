@@ -1,5 +1,6 @@
 Sun Nov 24 13:50:27 MST 2002
 - Run fcntl(fd, F_SETFD, FD_CLOEXEC) on sockets.
+- Fixed: Daemon doesn't withstand repeated HUP signals.
 
 Sat Nov 23 10:38:08 MST 2002
 - Fixed: On startup of UDS if the UDS already exists, SocketImpl need to figure 

@@ -40,6 +40,7 @@ OW_BinIfcIO.cpp \
 OW_Bool.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
+OW_Condition.cpp \
 OW_DateTime.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
@@ -47,6 +48,7 @@ OW_Format.cpp \
 OW_IOIFCStreamBuffer.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
+OW_MutexImpl.cpp \
 OW_PosixFile.cpp \
 OW_PosixFileSystem.cpp \
 OW_PosixOS.cpp \
@@ -81,6 +83,7 @@ OW_ByteSwap.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
+OW_Condition.hpp \
 OW_ConfigOpts.hpp \
 OW_COWReference.hpp \
 OW_DataBlockStream.hpp \
@@ -102,6 +105,7 @@ OW_Map.hpp \
 OW_MemTracer.hpp \
 OW_Memory.hpp \
 OW_Mutex.hpp \
+OW_MutexImpl.hpp \
 OW_MutexLock.hpp \
 OW_NetworkTypes.hpp \
 OW_OS.hpp \

@@ -35,9 +35,6 @@
 #include "OW_Types.h"
 #include "OW_ThreadTypes.hpp"
 
-class OW_Bool;
-
-
 /*----------------------------------
  * Definitions to support threading.
  -----------------------------------*/
@@ -194,7 +191,7 @@ public:
 	 *						to be signaled.
 	 * @return true if the event is now signaled. Otherwise false.
 	 */
-	static OW_Bool waitForThreadEventSignal(OW_ThreadEvent_t& handle, OW_UInt32 ms);
+	static bool waitForThreadEventSignal(OW_ThreadEvent_t& handle, OW_UInt32 ms);
 
 	/**
 	 * Put the given event into the signaled state. If any threads are
@@ -224,13 +221,13 @@ public:
 	 * @param handle	The event that is being check for the signaled state.
 	 * @return true if the event is currently signaled. Otherwise false.
 	 */
-	static OW_Bool isThreadEventSignaled(OW_ThreadEvent_t& handle);
+	static bool isThreadEventSignaled(OW_ThreadEvent_t& handle);
 };
 
 class OW_SemaphoreImpl
 {
 public:
-	static OW_Bool wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
+	static bool wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		OW_Int32& curCount, OW_UInt32 ms);
 	static void signal(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		OW_Int32& curCount);

@@ -169,7 +169,14 @@ OW_ProviderManager::unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	for(size_t i = 0; i < m_IFCArray.size(); i++)
 	{
-		m_IFCArray[i]->unloadProviders(env);
+		try
+		{
+			m_IFCArray[i]->unloadProviders(env);
+		}
+		catch (const OW_Exception& e)
+		{
+			env->getLogger()->logError(format("Caught exception while calling unloadProviders for provider interface %1: %2", m_IFCArray[i]->getName(), e));
+		}
 	}
 }
 

@@ -121,7 +121,7 @@ OW_PollingManager::run()
 
 	// Get all of the indication trigger providers
 	OW_ProviderManagerRef pm = m_env->getProviderManager();
-
+	
 	OW_PolledProviderIFCRefArray itpra =
 			pm->getPolledProviders(createProvEnvRef(lch, m_env));
 

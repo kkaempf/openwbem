@@ -27,50 +27,53 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-#ifndef _OW_SEMAPHORE_HPP__
-#define _OW_SEMAPHORE_HPP__
+#ifndef OW_CONDITION_HPP_INCLUDE_GUARD_
+#define OW_CONDITION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_MutexImpl.hpp"
-#include "OW_ThreadImpl.hpp"
+#include "OW_ThreadTypes.hpp"
+#include "OW_Exception.hpp"
+class OW_MutexLock;
 
-class OW_Semaphore
+DEFINE_EXCEPTION(ConditionLock);
+DEFINE_EXCEPTION(ConditionResource);
+
+class OW_Condition
 {
 public:
-	OW_Semaphore(OW_Int32 initCount)
-		: m_curCount(initCount)
+	OW_Condition();
+	~OW_Condition();
+
+	void notifyOne();
+	void notifyAll();
+
+	void wait(OW_MutexLock& lock);
+
+	template <typename Pr>
+	void wait(OW_MutexLock& lock, Pr pred)
 	{
-			OW_MutexImpl::createMutex(m_mutex);
-			OW_SemaphoreImpl::createConditionVar(m_cond);
+		if (!lock)
+		{
+			OW_THROW(OW_ConditionLockException, "Lock must be locked");
+		}
+		while (!pred())
+		{
+			doWait(lock.m_mutex);
+		}
 	}
 
-
-	~OW_Semaphore()
-	{
-	}
-
-	bool wait(OW_UInt32 ms=0)
-	{
-		return OW_SemaphoreImpl::wait(m_cond, m_mutex, m_curCount, ms);
-	}
-
-	void signal()
-	{
-		OW_SemaphoreImpl::signal(m_cond, m_mutex, m_curCount);
-	}
-
-	OW_Int32 getCount()
-	{
-		return OW_SemaphoreImpl::getCount(m_mutex, m_curCount);
-	}
 
 private:
-	OW_Int32 m_curCount;
 
-	OW_ConditionVar_t m_cond;
-	OW_Mutex_t m_mutex;
+	// unimplemented
+	OW_Condition(const OW_Condition&);
+	OW_Condition& operator=(const OW_Condition&);
+
+
+	void doWait(OW_Mutex& mutex);
+	OW_ConditionVar_t m_condition;
 };
 
-#endif  // _OW_SEMAPHORE_HPP__
+#endif
+
+

@@ -485,8 +485,10 @@ public:
 		const OW_String &query, const OW_String &queryLanguage,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_ReadLock getReadLock();
-	virtual OW_WriteLock getWriteLock();
+	virtual void getReadLock();
+	virtual void getWriteLock();
+	virtual void releaseReadLock();
+	virtual void releaseWriteLock();
 
 private:
 	OW_CIMInstance m_inst;

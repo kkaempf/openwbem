@@ -396,17 +396,31 @@ OW_WQLFilterRep::execQuery(const OW_String& /*ns*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ReadLock
+void
 OW_WQLFilterRep::getReadLock()
 {
-	return m_pCIMServer->getReadLock();
+	m_pCIMServer->getReadLock();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_WriteLock
+void
 OW_WQLFilterRep::getWriteLock()
 {
-	return m_pCIMServer->getWriteLock();
+	m_pCIMServer->getWriteLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::releaseReadLock()
+{
+	m_pCIMServer->releaseReadLock();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_WQLFilterRep::releaseWriteLock()
+{
+	return m_pCIMServer->releaseWriteLock();
 }
 
 

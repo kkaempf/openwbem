@@ -315,10 +315,6 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 
 	instance.setProperty("IndicationTime", OW_CIMValue(cdt));
 	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
-	if (!hdl)
-	{
-		return;
-	}
 
 	// TODO: Make this function much more efficient.
 	//		1. Put the code into a callback so we don't have to build an enumeration.

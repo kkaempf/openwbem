@@ -32,6 +32,7 @@
 #include "OW_ThreadEvent.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
+#include "OW_ThreadImpl.hpp"
 
 //////////////////////////////////////////////////////////////////////////////	  
 OW_ThreadEvent::ThreadEvent::ThreadEvent() :
@@ -52,7 +53,7 @@ OW_ThreadEvent::ThreadEvent::~ThreadEvent()
 }
 
 //////////////////////////////////////////////////////////////////////////////	  
-OW_Bool
+bool
 OW_ThreadEvent::ThreadEvent::waitForSignal(OW_UInt32 ms)
 {
 	return OW_ThreadEventImpl::waitForThreadEventSignal(m_hdl, ms);
@@ -82,7 +83,7 @@ OW_ThreadEvent::ThreadEvent::reset()
 }
 
 //////////////////////////////////////////////////////////////////////////////	  
-OW_Bool
+bool
 OW_ThreadEvent::ThreadEvent::isSignaled()
 {
 	return OW_ThreadEventImpl::isThreadEventSignaled(m_hdl);

@@ -310,14 +310,24 @@ public:
 		m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
 	}
 
-	virtual OW_ReadLock getReadLock()
+	virtual void getReadLock()
 	{
-		return m_ref->getReadLock();
+		m_ref->getReadLock();
 	}
 
-	virtual OW_WriteLock getWriteLock()
+	virtual void getWriteLock()
 	{
-		return m_ref->getWriteLock();
+		m_ref->getWriteLock();
+	}
+
+	virtual void releaseReadLock()
+	{
+		m_ref->releaseReadLock();
+	}
+
+	virtual void releaseWriteLock()
+	{
+		m_ref->releaseWriteLock();
 	}
 
 private:

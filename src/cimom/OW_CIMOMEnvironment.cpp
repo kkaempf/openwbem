@@ -97,7 +97,8 @@ private:
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return OW_CIMOMHandleIFCRef();
+			OW_THROW(OW_Exception, "Cannot call CIMOMProviderEnvironment::getCIMOMHandle()");
+			//return OW_CIMOMHandleIFCRef();
 		}
 		
 		virtual OW_LoggerRef getLogger() const
@@ -377,7 +378,8 @@ OW_CIMOMEnvironment::getProviderManager()
 {
 	if (!m_running)
 	{
-		return OW_ProviderManagerRef();
+		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		//return OW_ProviderManagerRef();
 	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_providerManager);
@@ -682,7 +684,8 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 {
 	if (!m_running)
 	{
-		return OW_CIMOMHandleIFCRef();
+		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		//return OW_CIMOMHandleIFCRef();
 	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
@@ -698,7 +701,8 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 {
 	if (!m_running)
 	{
-		return OW_CIMOMHandleIFCRef();
+		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		//return OW_CIMOMHandleIFCRef();
 	}
 
 	OW_MutexLock ml(m_monitor);
@@ -739,7 +743,8 @@ OW_CIMOMEnvironment::getWQLRef()
 {
 	if (!m_running)
 	{
-		return OW_WQLIFCRef();
+		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		//return OW_WQLIFCRef();
 	}
 
 	OW_MutexLock ml(m_monitor);

@@ -153,9 +153,12 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 	}
 	OW_ACLInfo intACLInfo;
 
-	m_env->logDebug(format("Checking access to namespace: \"%1\"", ns));
-	m_env->logDebug(format("UserName is: \"%1\" Operation is : %2",
-		aclInfo.getUserName(), op));
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("Checking access to namespace: \"%1\"", ns));
+		m_env->logDebug(format("UserName is: \"%1\" Operation is : %2",
+			aclInfo.getUserName(), op));
+	}
 
 	OW_String lns(ns);
 	while (!lns.empty() && lns[0] == '/')
@@ -266,8 +269,11 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		}
 		catch(const OW_CIMException& ce)
 		{
-			m_env->logDebug(format("Caught exception: %1 in"
-				" OW_AccessMgr::checkAccess", ce));
+			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			{
+				m_env->logDebug(format("Caught exception: %1 in"
+					" OW_AccessMgr::checkAccess", ce));
+			}
 			ci.setNull();
 		}
 	
@@ -361,7 +367,7 @@ OW_CIMServer::~OW_CIMServer()
 void
 OW_CIMServer::open(const OW_String& path)
 {
-	OW_WriteLock wl = m_rwLocker.getWriteLock();
+	OW_WriteLock wl(m_rwLocker);
 
 	if(m_nStore.isOpen())
 	{
@@ -403,7 +409,7 @@ OW_CIMServer::close()
 {
 	if(m_nStore.isOpen())
 	{
-		OW_WriteLock wl = m_rwLocker.getWriteLock();
+		OW_WriteLock wl(m_rwLocker);
 		m_nStore.close();
 		m_iStore.close();
 		m_mStore.close();
@@ -438,8 +444,6 @@ OW_CIMServer::createNameSpace(const OW_String& ns,
 	// Check to see if user has rights to create the namespace
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATENAMESPACE, parns, aclInfo);
 
-	m_env->logDebug(format("OW_CIMServer creating namespace: %1", ns));
-
 	if(m_nStore.createNameSpace(nameComps) == -1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS,
@@ -448,6 +452,11 @@ OW_CIMServer::createNameSpace(const OW_String& ns,
 
 	m_iStore.createNameSpace(nameComps, true);
 	m_mStore.createNameSpace(nameComps, true);
+
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer created namespace: %1", ns));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -466,6 +475,11 @@ OW_CIMServer::deleteNameSpace(const OW_String& ns,
 	m_nStore.deleteNameSpace(ns);
 	m_iStore.deleteNameSpace(ns);
 	m_mStore.deleteNameSpace(ns);
+	
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer deleted namespace: %1", ns));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -476,9 +490,12 @@ OW_CIMServer::getQualifierType(const OW_String& ns,
 {
 	// Check to see if user has rights to get a qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, ns, aclInfo);
-	
-	m_env->logDebug(format("OW_CIMServer getting qualifier type: %1",
-		OW_CIMObjectPath(qualifierName,ns).toString()));
+
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer getting qualifier type: %1",
+			OW_CIMObjectPath(qualifierName,ns).toString()));
+	}
 
 	return m_mStore.getQualifierType(ns, qualifierName);
 }
@@ -494,6 +511,11 @@ OW_CIMServer::enumQualifierTypes(
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, ns, aclInfo);
 
 	m_mStore.enumQualifierTypes(ns, result);
+
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer enumerated qualifiers in namespace: %1", ns));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -527,6 +549,11 @@ OW_CIMServer::enumNameSpace(const OW_String& nsName,
 			_getChildKeys(hdl.getHandle(), result, nsNode);
 		}
 		nsNode = hdl->getNextSibling(nsNode);
+	}
+
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer enumerated namespace: %1", nsName));
 	}
 }
 
@@ -566,6 +593,11 @@ OW_CIMServer::deleteQualifierType(const OW_String& ns, const OW_String& qualName
 				OW_String(ns + "/" + qualName).c_str());
 		}
 	}
+	
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer deleted qualifier type: %1 in namespace: %2", qualName, ns));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -576,9 +608,12 @@ OW_CIMServer::setQualifierType(
 {
 	// Check to see if user has rights to update the qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, ns, aclInfo);
-	m_env->logDebug(format("OW_CIMServer setting qualifier type: %1 in "
-		"namespace: %2", qt.toString(), ns));
 	m_mStore.setQualifierType(ns, qt);
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer set qualifier type: %1 in "
+			"namespace: %2", qt.toString(), ns));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -618,6 +653,12 @@ OW_CIMServer::getClass(
 		{
 			// clone doesn't throw
 			OW_THROWCIM(OW_CIMException::FAILED);
+		}
+		
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("OW_CIMServer got class: %1 from "
+				"namespace: %2", theClass.toMOF(), ns));
 		}
 
 		return theClass;
@@ -729,6 +770,12 @@ OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
             intAcl);
 		ccd.handle(cc);
 
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("OW_CIMServer deleted class: %1 in "
+				"namespace: %2", className, ns));
+		}
+
 		return cc;
 	}
 	catch(OW_IOException&)
@@ -758,13 +805,17 @@ OW_CIMServer::createClass(const OW_String& ns, const OW_CIMClass& cimClass,
 
 	try
 	{
-		m_env->logDebug(format("Creating class: %1:%2", ns, cimClass.toMOF()));
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
 		if (cimClass.isAssociation())
 		{
 			OW_AssocDbHandle hdl = m_assocDb.getHandle();
 			hdl.addEntries(ns,cimClass);
+		}
+
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Created class: %1:%2", ns, cimClass.toMOF()));
 		}
 	}
 	catch (OW_HDBException&)
@@ -802,6 +853,11 @@ OW_CIMServer::modifyClass(
 
 		m_mStore.modifyClass(ns, cc);
 		OW_ASSERT(origClass);
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Modified class: %1:%2 from %3 to %4", ns, 
+				cc.getName(), origClass.toMOF(), cc.toMOF()));
+		}
 		return origClass;
 	}
 	catch (OW_HDBException&)
@@ -829,6 +885,11 @@ OW_CIMServer::enumClasses(const OW_String& ns,
 		m_mStore.enumClass(ns, className,
 			result, deep,
 			localOnly, includeQualifiers, includeClassOrigin);
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Enumerated classes: %1:%2", ns, 
+				className));
+		}
 	}
 	catch (OW_HDBException&)
 	{
@@ -896,6 +957,11 @@ OW_CIMServer::enumClassNames(
 		CIMClassToCIMObjectPathHandler handler(result,lcop);
 		m_mStore.enumClass(ns, className, handler,
 			deep, false, true, true);
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Enumerated class names: %1:%2", ns, 
+				className));
+		}
 	}
 	catch (OW_HDBException&)
 	{
@@ -926,6 +992,11 @@ OW_CIMServer::enumInstanceNames(
 
 		_getCIMInstanceNames(ns, className, theClass, result, deep, aclInfo);
 
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Enumerated instance names: %1:%2", ns, 
+				className));
+		}
 		// If this is the namespace class then just return now
 		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
 			|| !deep)
@@ -940,6 +1011,11 @@ OW_CIMServer::enumInstanceNames(
 		{
 			theClass = _instGetClass(ns, classNames[i]);
 			_getCIMInstanceNames(ns, classNames[i], theClass, result, deep, aclInfo);
+			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			{
+				m_env->logDebug(format("Enumerated derived instance names: %1:%2", ns, 
+					classNames[i]));
+			}
 		}
 	}
 	catch (OW_HDBException&)
@@ -1034,6 +1110,11 @@ OW_CIMServer::enumInstances(
 		_getCIMInstances(ns, className, theTopClass, theTopClass, result, deep, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 		
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("Enumerated instances: %1:%2", ns, 
+				className));
+		}
 		// If this is the namespace class then we're done.
 		if(theTopClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
 		{
@@ -1049,6 +1130,11 @@ OW_CIMServer::enumInstances(
 
 			_getCIMInstances(ns, classNames[i], theTopClass, theClass, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+			if (m_env->getLogger()->getLogLevel() == DebugLevel)
+			{
+				m_env->logDebug(format("Enumerated derived instances: %1:%2", ns, 
+					classNames[i]));
+			}
 		}
 	}
 	catch (OW_HDBException&)
@@ -1308,9 +1394,11 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 	cop.setNameSpace(ns);
 	// Check to see if user has rights to delete the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::DELETEINSTANCE, ns, aclInfo);
-
-	m_env->logDebug(format("OW_CIMServer::deleteInstance.  cop = %1",
-		cop.toString()));
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->logDebug(format("OW_CIMServer::deleteInstance.  cop = %1",
+			cop.toString()));
+	}
 
 	OW_ACLInfo intAclInfo;
 
@@ -1345,9 +1433,6 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 		// traces of it in the association database.
 		if(theClass.isAssociation())
 		{
-			m_env->logDebug("OW_CIMServer::deleteInstance."
-				" theClass.isAssociation() == true");
-
 			// If there is no associator provider for this instance, then go ahead
 			// delete the entries from the database for this association.
 			if(!_getAssociatorProvider(theClass))
@@ -1421,8 +1506,11 @@ OW_CIMServer::createInstance(
 		OW_CIMInstance lci(ci);
 		lci.syncWithClass(theClass, false);
 
-		m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
-			"instance = %2", ns, lci.toMOF()));
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
+				"instance = %2", ns, lci.toMOF()));
+		}
 
 		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
 		if (instancep)
@@ -1955,30 +2043,32 @@ OW_CIMServer::invokeMethod(
 				"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 		}
 
-
 		OW_StringBuffer methodStr;
-		methodStr += "OW_CIMServer invoking extrinsic method provider: ";
-		methodStr += cq.getValue().toString();
-		methodStr += '\n';
-		methodStr += ns;
-		methodStr += ':';
-		methodStr += path.toString();
-		methodStr += '.';
-		methodStr += methodName;
-		methodStr += '(';
-		for (size_t i = 0; i < orderedParams.size(); ++i)
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			methodStr += orderedParams[i].getName();
-			methodStr += '=';
-			methodStr += orderedParams[i].getValue().toString();
-			if (i != orderedParams.size() - 1)
+			methodStr += "OW_CIMServer invoking extrinsic method provider: ";
+			methodStr += cq.getValue().toString();
+			methodStr += '\n';
+			methodStr += ns;
+			methodStr += ':';
+			methodStr += path.toString();
+			methodStr += '.';
+			methodStr += methodName;
+			methodStr += '(';
+			for (size_t i = 0; i < orderedParams.size(); ++i)
 			{
-				methodStr += ", ";
+				methodStr += orderedParams[i].getName();
+				methodStr += '=';
+				methodStr += orderedParams[i].getValue().toString();
+				if (i != orderedParams.size() - 1)
+				{
+					methodStr += ", ";
+				}
 			}
+			methodStr += ')';
+	
+			m_env->logDebug(methodStr.toString());
 		}
-		methodStr += ')';
-
-		m_env->logDebug(methodStr.toString());
 
 		cv = methodp->invokeMethod(
 			createProvEnvRef(real_ch),
@@ -1998,29 +2088,32 @@ OW_CIMServer::invokeMethod(
 			}
 		}
 
-		methodStr.reset();
-		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
-		methodStr += cq.getValue().toString();
-		methodStr += '\n';
-		methodStr += ns;
-		methodStr += ':';
-		methodStr += path.toString();
-		methodStr += '.';
-		methodStr += methodName;
-		methodStr += " OUT Params(";
-		for (size_t i = 0; i < outParams.size(); ++i)
+		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			methodStr += outParams[i].getName();
-			methodStr += '=';
-			methodStr += outParams[i].getValue().toString();
-			if (i != outParams.size() - 1)
+			methodStr.reset();
+			methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
+			methodStr += cq.getValue().toString();
+			methodStr += '\n';
+			methodStr += ns;
+			methodStr += ':';
+			methodStr += path.toString();
+			methodStr += '.';
+			methodStr += methodName;
+			methodStr += " OUT Params(";
+			for (size_t i = 0; i < outParams.size(); ++i)
 			{
-				methodStr += ", ";
+				methodStr += outParams[i].getName();
+				methodStr += '=';
+				methodStr += outParams[i].getValue().toString();
+				if (i != outParams.size() - 1)
+				{
+					methodStr += ", ";
+				}
 			}
+			methodStr += ") return value: ";
+			methodStr += cv.toString();
+			m_env->logDebug(methodStr.toString());
 		}
-		methodStr += ") return value: ";
-		methodStr += cv.toString();
-		m_env->logDebug(methodStr.toString());
 	}
 	catch(OW_CIMException& e)
 	{
@@ -2231,12 +2324,6 @@ OW_CIMServer::associators(
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, ns, aclInfo);
-
-	m_env->logDebug(format("OW_CIMServer associators. ns = %1, path = %2, assocClass ="
-		" %3, resultClass = %4, role = %5, resultRole = %6, includeQualifiers ="
-		" %7, includeClassOrigin = %8",
-		ns, path, assocClass, resultClass, role, resultRole, includeQualifiers,
-		includeClassOrigin));
 
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,

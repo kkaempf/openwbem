@@ -34,142 +34,10 @@
 #include "OW_config.h"
 
 #include "OW_MutexLock.hpp"
-#include "OW_ThreadEvent.hpp"
-#include "OW_Reference.hpp"
+#include "OW_Condition.hpp"
+#include "OW_Exception.hpp"
 
-#ifdef OW_NEW
-#undef new
-#endif
-
-#include <vector>
-
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
-
-class OW_RWLocker;
-
-//////////////////////////////////////////////////////////////////////////////
-class OW_ReadLock
-{
-	class RLData
-	{
-	public:
-		RLData(OW_RWLocker* pl) : m_locker(pl), m_released(false)
-		{
-		}
-		RLData(const RLData& x) :
-			m_locker(x.m_locker), m_released(x.m_released)
-		{
-		}
-		~RLData();
-		RLData& operator= (const RLData& x);
-		OW_RWLocker* m_locker;
-		OW_Bool m_released;
-	};
-
-public:
-	OW_ReadLock() : m_pdata(NULL)
-	{
-	}
-	OW_ReadLock(const OW_ReadLock& arg) :
-		m_pdata(arg.m_pdata)
-	{
-	}
-
-	OW_ReadLock& operator= (const OW_ReadLock& arg)
-	{
-		m_pdata = arg.m_pdata;
-		return *this;
-	}
-
-	void release();
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-
-	typedef void (dummy::*safe_bool)();
-
-public:
-	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
-private:
-	OW_ReadLock(OW_RWLocker* locker) :
-		m_pdata(new RLData(locker))
-	{
-	}
-	
-	OW_Reference<RLData> m_pdata;
-
-	friend class OW_RWLocker;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-class OW_WriteLock
-{
-	class WLData
-	{
-	public:
-		WLData(OW_RWLocker* pl) : m_locker(pl), m_released(false)
-		{
-		}
-		WLData(const WLData& x) :
-			m_locker(x.m_locker), m_released(x.m_released)
-		{
-		}
-		~WLData();
-		WLData& operator= (const WLData& x);
-
-		OW_RWLocker* m_locker;
-		OW_Bool m_released;
-	};
-
-public:
-	OW_WriteLock() : m_pdata(NULL)
-	{
-	}
-	OW_WriteLock(const OW_WriteLock& arg) :
-		m_pdata(arg.m_pdata)
-	{
-	}
-
-	OW_WriteLock& operator= (const OW_WriteLock& arg)
-	{
-		m_pdata = arg.m_pdata;
-		return *this;
-	}
-
-	void release();
-
-private:
-	struct dummy
-	{
-		void nonnull() {};
-	};
-
-	typedef void (dummy::*safe_bool)();
-
-public:
-	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
-	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
-private:
-	OW_WriteLock(OW_RWLocker* locker) :
-		m_pdata(new WLData(locker))
-	{
-	}
-	
-	OW_Reference<WLData> m_pdata;
-
-	friend class OW_RWLocker;
-};
+DEFINE_EXCEPTION(RWLocker);
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_RWLocker
@@ -177,55 +45,116 @@ class OW_RWLocker
 public:
 	OW_RWLocker();
 	~OW_RWLocker();
-	OW_ReadLock getReadLock();
-	OW_WriteLock getWriteLock();
 
-private:
+	void getReadLock();
+	void getWriteLock();
 
 	void releaseReadLock();
 	void releaseWriteLock();
 
-	struct OW_RWQEntry
-	{
-		OW_RWQEntry(OW_Bool isWriter) :
-			m_event(), m_isWriter(isWriter)
-		{
-		}
-		OW_RWQEntry(const OW_RWQEntry& arg) :
-			m_event(arg.m_event), m_isWriter(arg.m_isWriter)
-		{
-		}
+private:
 
-		OW_RWQEntry& operator=(const OW_RWQEntry& arg)
-		{
-			m_event = arg.m_event;
-			m_isWriter = arg.m_isWriter;
-			return *this;
-		}
+	void doWakeups();
 
-		OW_ThreadEvent m_event;
-		OW_Bool m_isWriter;
-	};
-
-	typedef std::vector<OW_RWQEntry> OW_RWQEntryVect;
-
+	OW_Condition   m_waiting_writers;
+	OW_Condition   m_waiting_readers;
+	
+	int         m_num_waiting_writers;
+	int         m_num_waiting_readers;
+	int			m_readers_next;
+	
 	OW_Mutex	m_guard;
-	OW_RWQEntryVect m_queue;
+
+	// -1 means writer has lock.  0 means no one has the lock. 
+	// > 0 means readers have the lock.
 	int m_state;
 
-	static int m_readLockCount;
-	static int m_writeLockCount;
-	static OW_Mutex m_countGuard;
+};
 
-	static void incReadLockCount();
-	static void decReadLockCount();
-	static void incWriteLockCount();
-	static void decWriteLockCount();
+//////////////////////////////////////////////////////////////////////////////
+class OW_ReadLock
+{
+public:
+	OW_ReadLock(OW_RWLocker& locker)
+		: m_locker(&locker)
+		, m_released(false)
+	{
+		m_locker->getReadLock();
+	}
 
-	friend class OW_ReadLock;
-	friend class OW_ReadLock::RLData;
-	friend class OW_WriteLock;
-	friend class OW_WriteLock::WLData;
+	~OW_ReadLock()
+	{
+		release();
+	}
+
+	void lock()
+	{
+		if(m_released)
+		{
+			m_locker->getReadLock();
+			m_released = false;
+		}
+	}
+
+	void release()
+	{
+		if(!m_released)
+		{
+			m_locker->releaseReadLock();
+			m_released = true;
+		}
+	}
+
+private:
+	OW_RWLocker* m_locker;
+	bool m_released;
+
+	// noncopyable
+	OW_ReadLock(const OW_ReadLock&);
+	OW_ReadLock& operator=(const OW_ReadLock&);
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_WriteLock
+{
+public:
+	OW_WriteLock(OW_RWLocker& locker)
+		: m_locker(&locker)
+		, m_released(false)
+	{
+		m_locker->getWriteLock();
+	}
+
+	~OW_WriteLock()
+	{
+		release();
+	}
+
+	void lock()
+	{
+		if(m_released)
+		{
+			m_locker->getWriteLock();
+			m_released = false;
+		}
+	}
+
+	void release()
+	{
+		if(!m_released)
+		{
+			m_locker->releaseWriteLock();
+			m_released = true;
+		}
+	}
+
+private:
+	OW_RWLocker* m_locker;
+	bool m_released;
+	
+	// noncopyable
+	OW_WriteLock(const OW_WriteLock&);
+	OW_WriteLock& operator=(const OW_WriteLock&);
 };
 
 #endif

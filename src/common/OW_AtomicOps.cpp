@@ -34,7 +34,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
-OW_Mutex guard;
+static OW_Mutex guard;
 void OW_AtomicInc(OW_Atomic_t &v)
 {
     OW_MutexLock lock(guard);
@@ -45,6 +45,12 @@ bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 {
     OW_MutexLock lock(guard);
     return --v == 0;
+}
+
+int OW_AtomicGet(OW_Atomic_t const &v)
+{
+    OW_MutexLock lock(guard);
+	return v->counter;
 }
 #endif
 

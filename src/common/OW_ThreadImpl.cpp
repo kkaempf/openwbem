@@ -296,8 +296,8 @@ struct OW_PlatformThreadEvent
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 #endif
-	OW_Bool wasPulsed;
-	OW_Bool signaled;
+	bool wasPulsed;
+	bool signaled;
 };
 #define EVENTSIG 0x0aabbccd
 
@@ -368,7 +368,7 @@ OW_ThreadEventImpl::destroyThreadEvent(OW_ThreadEvent_t& handle)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_ThreadEventImpl::waitForThreadEventSignal(OW_ThreadEvent_t& handle,
 															OW_UInt32 ms)
 {
@@ -394,7 +394,7 @@ OW_ThreadEventImpl::waitForThreadEventSignal(OW_ThreadEvent_t& handle,
 		}
 	}
 
-	OW_Bool rval = (pev->wasPulsed) ? OW_Bool(true) : pev->signaled;
+	bool rval = (pev->wasPulsed) ? bool(true) : pev->signaled;
 	pev->wasPulsed = false;
     pth_mutex_release(&pev->mutex);
 	return rval;
@@ -423,7 +423,7 @@ OW_ThreadEventImpl::waitForThreadEventSignal(OW_ThreadEvent_t& handle,
 		}
 	}
 
-	OW_Bool rval = (pev->wasPulsed) ? OW_Bool(true) : pev->signaled;
+	bool rval = (pev->wasPulsed) ? bool(true) : pev->signaled;
 	pev->wasPulsed = false;
 	cc = pthread_mutex_unlock(&pev->mutex);
 	OW_ASSERT(cc == 0);
@@ -527,7 +527,7 @@ OW_ThreadEventImpl::resetThreadEvent(OW_ThreadEvent_t& handle)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_ThreadEventImpl::isThreadEventSignaled(OW_ThreadEvent_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
@@ -536,7 +536,7 @@ OW_ThreadEventImpl::isThreadEventSignaled(OW_ThreadEvent_t& handle)
 	OW_ASSERT(pev->sig == EVENTSIG);
 
     pth_mutex_acquire(&pev->mutex, false, NULL);
-	OW_Bool rval = pev->signaled;
+	bool rval = pev->signaled;
     pth_mutex_release(&pev->mutex);
 	return rval;
 #else
@@ -547,7 +547,7 @@ OW_ThreadEventImpl::isThreadEventSignaled(OW_ThreadEvent_t& handle)
 	int cc = pthread_mutex_lock(&pev->mutex);
 	OW_ASSERT(cc == 0);
 
-	OW_Bool rval = pev->signaled;
+	bool rval = pev->signaled;
 
 	cc = pthread_mutex_unlock(&pev->mutex);
 	OW_ASSERT(cc == 0);
@@ -588,7 +588,7 @@ OW_SemaphoreImpl::signal(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 							  OW_Int32& curCount, OW_UInt32 ms)
 {
@@ -618,7 +618,7 @@ OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		}
 	}
 
-	OW_Bool rval = true;
+	bool rval = true;
 	if (retcode == ETIMEDOUT)
 	{
 		rval = false;
@@ -656,7 +656,7 @@ OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		}
 	}
 
-	OW_Bool rval = true;
+	bool rval = true;
 	if (retcode == ETIMEDOUT)
 	{
 		rval = false;

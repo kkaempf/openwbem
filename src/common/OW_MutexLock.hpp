@@ -83,6 +83,11 @@ public:
 		arg.m_locked = false;
 	}
 
+	bool isLocked() const
+	{
+		return m_locked;
+	}
+
 	/*
 	OW_MutexLock& operator= (const OW_MutexLock& arg)
 	{
@@ -99,6 +104,8 @@ private:
 
 	OW_Mutex* m_mutex;
 	mutable bool m_locked;
+
+	friend class OW_Condition;
 };
 
 

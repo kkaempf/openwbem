@@ -18,11 +18,11 @@ Testing:
     - Test storing 1 million instances.
 
 Fix problems:
-    - Daemon doesn't withstand repeated HUP signals.
     - Get rid of OW_ThreadEvent because it is subject to race conditions.
       Replace it with a condition variable class.
     - Add an option for user to control SO_REUSEADDR
     - Add an option for user to specify which interfaces to listen on.
+    - Fix memory leak in openssl (when restarting) & in wql & in npi.
 
 New features:
     - Providers/Provider interfaces in a different process. Implement with 
@@ -61,6 +61,7 @@ New features:
     - Add configure options to disable usage of zlib, pam, ssl, slp
     - Make null reference and array indexing default to on unless 
       specifically disabled.
+    - Merge the PollingManager and the SelectEngine to remove a thread.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 

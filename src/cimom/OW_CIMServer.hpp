@@ -583,9 +583,10 @@ public:
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_ReadLock getReadLock() { return m_rwLocker.getReadLock(); }
-
-	virtual OW_WriteLock getWriteLock() { return m_rwLocker.getWriteLock(); }
+	virtual void getReadLock() { m_rwLocker.getReadLock(); }
+	virtual void getWriteLock() { m_rwLocker.getWriteLock(); }
+	virtual void releaseReadLock() { m_rwLocker.releaseReadLock(); }
+	virtual void releaseWriteLock() { m_rwLocker.releaseWriteLock(); }
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
