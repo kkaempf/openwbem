@@ -96,7 +96,12 @@ public:
 	{
 		return OW_CIMObjectPath();
 	}
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
+	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, 
+			const OW_CIMInstance& ,
+			const OW_CIMInstance& ,
+			OW_Bool ,
+			const OW_StringArray* ,
+			const OW_CIMClass& )
 	{
 	}
 	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)

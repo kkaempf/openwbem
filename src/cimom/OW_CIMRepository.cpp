@@ -864,8 +864,8 @@ OW_CIMInstance
 OW_CIMRepository::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_Bool,
-	OW_StringArray*,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList,
 	const OW_ACLInfo& acl)
 {
 	try
@@ -875,9 +875,10 @@ OW_CIMRepository::modifyInstance(
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
 
-		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst);
+		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst, includeQualifiers, propertyList);
 
 		// TODO: Verify that this code is needed.  Aren't all references keys, and thus can't be changed?  So why update the assoc db?
+		// just create a test to try and break it.
 		if(theClass.isAssociation())
 		{
 			OW_AssocDbHandle adbHdl = m_instAssocDb.getHandle();

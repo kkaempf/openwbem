@@ -147,11 +147,19 @@ public:
 		modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance)
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
 		(void)modifiedInstance;
+		(void)previousInstance;
+		(void)includeQualifiers;
+		(void)propertyList;
+		(void)theClass;
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 

@@ -248,11 +248,17 @@ void
 OW_SimpleCppInstanceProviderProxy::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance)
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 {
 	m_pProv->updateAccessTime();
 	(void)ns;
-	m_pProv->modifyInstance(env, modifiedInstance);
+	OW_CIMInstance newInst(modifiedInstance.createModifiedInstance(
+		previousInstance, includeQualifiers, propertyList, theClass));
+	m_pProv->modifyInstance(env, newInst);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

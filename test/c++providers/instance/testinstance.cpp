@@ -182,11 +182,18 @@ public:
 		modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance)
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 	{
-		(void)env;
+		env->getLogger()->logDebug("TestInstance::modifyInstance");
 		(void)ns;
-		(void)modifiedInstance;
+		(void)previousInstance;
+		(void)includeQualifiers;
+		(void)propertyList;
+		(void)theClass;
 		OW_String name;
 		OW_StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);

@@ -16,6 +16,7 @@ Testing:
     - Test case insensitivity (eg. try to add a disk and DISK class)
     - Test storing 1 million instances.
     - Disable indications during testsuite to speed things up.
+    - Test that OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
     - Add an option for user to control SO_REUSEADDR

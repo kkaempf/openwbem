@@ -1154,68 +1154,30 @@ OW_CIMServer::modifyInstance(
 {
 	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, ns, aclInfo);
 
+	OW_CIMInstance oldInst;
+
 	OW_ACLInfo intAclInfo;
-	OW_CIMClass theClass;
-	OW_CIMObjectPath cop(modifiedInstance);
-	OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
-		&theClass, intAclInfo);
-
-	OW_CIMInstance newInst(modifiedInstance);
-
-	if (!includeQualifiers)
-	{
-		newInst.setQualifiers(oldInst.getQualifiers());
-	}
-
-	if (propertyList)
-	{
-		newInst.setProperties(oldInst.getProperties());
-		for (OW_StringArray::const_iterator i = propertyList->begin();
-			 i != propertyList->end(); ++i)
-		{
-			OW_CIMProperty p = modifiedInstance.getProperty(*i);
-			if (p)
-			{
-				if (!includeQualifiers)
-				{
-					OW_CIMProperty cp = theClass.getProperty(*i);
-					if (cp)
-					{
-						p.setQualifiers(cp.getQualifiers());
-					}
-				}
-				newInst.setProperty(p);
-			}
-			else
-			{
-				OW_CIMProperty cp = theClass.getProperty(*i);
-				if (cp)
-				{
-					newInst.setProperty(cp);
-				}
-				else
-				{
-					newInst.removeProperty(*i);
-				}
-			}
-		}
-	}
+	OW_CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(), 
+		false, true, true, 0, intAclInfo);
 
 	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
-
 	if(!instancep)
 	{
 		// No instance provider qualifier found
-		m_cimRepository->modifyInstance(ns, newInst, 
+		oldInst = m_cimRepository->modifyInstance(ns, modifiedInstance, 
 			includeQualifiers, propertyList, aclInfo);
 	}
 	else
 	{
 		// Look for dynamic instances
+		OW_CIMObjectPath cop(modifiedInstance);
+		oldInst = getInstance(ns, cop, false, true, true, NULL,
+			intAclInfo);
+
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, true);
 		instancep->modifyInstance(createProvEnvRef(real_ch), ns,
-			newInst);
+			modifiedInstance, oldInst, includeQualifiers, propertyList, theClass);
 	}
 
 	OW_ASSERT(oldInst);

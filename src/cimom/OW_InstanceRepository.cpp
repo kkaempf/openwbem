@@ -415,12 +415,14 @@ void
 OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
-	const OW_CIMInstance& oldInst)
+	const OW_CIMInstance& oldInst,
+	OW_Bool includeQualifiers,
+	OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
-	OW_CIMInstance ci(ci_);
+	OW_CIMInstance ci(ci_.createModifiedInstance(oldInst,includeQualifiers,propertyList,theClass));
 
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be

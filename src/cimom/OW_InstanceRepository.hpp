@@ -113,7 +113,9 @@ public:
 	 */
 	void modifyInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass, const OW_CIMInstance& ci,
-		const OW_CIMInstance& oldInst);
+		const OW_CIMInstance& oldInst,
+		OW_Bool includeQualifiers,
+		OW_StringArray* propertyList);
 
 	/**
 	 * Determines if an instance already exists

@@ -189,9 +189,13 @@ public:
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance)
+			const OW_CIMInstance& modifiedInstance,
+			const OW_CIMInstance& previousInstance,
+			OW_Bool includeQualifiers,
+			const OW_StringArray* propertyList,
+			const OW_CIMClass& theClass)
 	{
-		m_pProv->modifyInstance(env, ns, modifiedInstance);
+		m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
 	}
 
 private:

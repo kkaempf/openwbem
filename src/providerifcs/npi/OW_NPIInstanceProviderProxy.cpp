@@ -308,22 +308,28 @@ OW_NPIInstanceProviderProxy::createInstance(
 void
 OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
-	const OW_CIMInstance& modifiedInstance)
+	const OW_CIMInstance& modifiedInstance,
+	const OW_CIMInstance& previousInstance,
+	OW_Bool includeQualifiers,
+	const OW_StringArray* propertyList,
+	const OW_CIMClass& theClass)
 {
 	env->getLogger()->
-		logDebug("OW_NPIInstanceProviderProxy::modifyInstance()");
+	logDebug("OW_NPIInstanceProviderProxy::modifyInstance()");
 
 	if (m_ftable->fp_setInstance != NULL)
 	{
-            	::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		//  may the arguments must be copied verbatim
 		//  to avoid locking problems
+		OW_CIMInstance newInst(modifiedInstance.createModifiedInstance(
+			previousInstance, includeQualifiers, propertyList, theClass));
 
-		CIMInstance _ci = { (void*)static_cast<const void *> (&modifiedInstance)};
+		CIMInstance _ci = { (void*)static_cast<const void *> (&newInst)};
 
 		OW_CIMObjectPath cop(modifiedInstance);
 		cop.setNameSpace(ns);
@@ -337,10 +343,11 @@ OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &
 				_npiHandle.providerError);
 		}
 
+
 	}
 	else
 	{
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 }
 
