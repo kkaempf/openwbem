@@ -204,3 +204,5 @@ Optimizations:
       would be a good candidate for this.
     - Have OW_CIMClass store a list of base classes.  Then remove some of the
       algorithms that have to run up the chain by doing a repeated getClass.
+    - OW_CIMXMLCimomHandle: Only send optional parameters if they aren't the
+      default to save transmission bytes.
