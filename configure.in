@@ -617,7 +617,6 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 [
 	AC_DEFINE(DEBUG)
 	CFLAGS="$CFLAGS -g"
-	#CFLAGS="$CFLAGS -g -Werror -Wall -W -Wno-format"
 	CXXFLAGS="$CXXFLAGS -g"
 	OW_CHECK_COMPILER_FLAG(Werror,[CXXFLAGS="$CXXFLAGS -Werror"])
 	OW_CHECK_COMPILER_FLAG(Wall,[CXXFLAGS="$CXXFLAGS -Wall"])
@@ -629,7 +628,7 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 dnl I wish we could enable this, but unfortunately network macros cause it to blow chunks.
 dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast"])
 ],[
-	CFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
+	CFLAGS="$CFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 	CXXFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 ])
 
