@@ -31,6 +31,7 @@
 #include "OW_config.h"
 #include "OW_CIMMethod.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMParameter.hpp"
@@ -56,8 +57,6 @@ struct OW_CIMMethod::METHData
 	OW_String m_originClass;
 	OW_String m_override;
 	OW_Bool m_propagated;
-
-    METHData* clone() const { return new METHData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -140,6 +139,7 @@ OW_CIMMethod::operator= (const OW_CIMMethod& x)
 void
 OW_CIMMethod::addQualifier(const OW_CIMQualifier& qual)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers.append(qual);
 }
 
@@ -147,6 +147,7 @@ OW_CIMMethod::addQualifier(const OW_CIMQualifier& qual)
 void
 OW_CIMMethod::setQualifiers(const OW_CIMQualifierArray& quals)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
 }
 
@@ -184,6 +185,7 @@ OW_CIMMethod::getOriginClass() const
 void
 OW_CIMMethod::setOriginClass(const OW_String& originCls)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_originClass = originCls;
 }
 
@@ -191,6 +193,7 @@ OW_CIMMethod::setOriginClass(const OW_String& originCls)
 void
 OW_CIMMethod::addParameter(const OW_CIMParameter& param)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_parameters.append(param);
 }
 
@@ -199,6 +202,7 @@ OW_CIMMethod::addParameter(const OW_CIMParameter& param)
 void
 OW_CIMMethod::setParameters(const OW_CIMParameterArray& inParms)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_parameters = inParms;
 }
 
@@ -243,6 +247,7 @@ OW_CIMMethod::getOUTParameters() const
 void
 OW_CIMMethod::setReturnType(const OW_CIMDataType& type)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_returnDatatype = type;
 }
 
@@ -264,6 +269,7 @@ OW_CIMMethod::getReturnDataSize() const
 void
 OW_CIMMethod::setOverridingMethod(const OW_String& omname)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_override = omname;
 }
 
@@ -308,6 +314,7 @@ OW_CIMMethod::clone(OW_Bool includeQualifiers,
 void
 OW_CIMMethod::setPropagated(OW_Bool propagated)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_propagated = propagated;
 }
 
@@ -329,6 +336,7 @@ OW_CIMMethod::getName() const
 void
 OW_CIMMethod::setName(const OW_String& name)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -358,6 +366,7 @@ OW_CIMMethod::readObject(istream &istrm)
 		m_pdata = new METHData;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_originClass = originClass;
 	m_pdata->m_override = override;

@@ -50,7 +50,7 @@ public:
 	OW_StringBuffer(const OW_StringBuffer& arg);
 	~OW_StringBuffer() { delete [] m_bfr; }
 
-	OW_StringBuffer& operator= (OW_StringBuffer arg);
+	OW_StringBuffer& operator= (const OW_StringBuffer& arg);
 	OW_StringBuffer& operator= (const OW_String& arg);
 	OW_StringBuffer& operator= (const char* str);
 	void swap(OW_StringBuffer& x);

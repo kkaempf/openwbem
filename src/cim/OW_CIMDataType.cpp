@@ -32,6 +32,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_CIM.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
 
@@ -49,8 +50,6 @@ struct OW_CIMDataType::DTData
 	OW_Int32 m_numberOfElements;
 	OW_Int32 m_sizeRange;
 	OW_String m_reference;
-
-    DTData* clone() const { return new DTData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -229,6 +228,7 @@ OW_CIMDataType::operator!() const
 OW_Bool
 OW_CIMDataType::setToArrayType(OW_Int32 size)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
 	m_pdata->m_sizeRange = m_pdata->m_numberOfElements >= 1 ? SIZE_LIMITED
 		: SIZE_UNLIMITED;
@@ -244,6 +244,7 @@ OW_CIMDataType::syncWithValue(const OW_CIMValue& value)
 
 	OW_Bool rv(false);
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	if(m_pdata.isNull())
 	{
 		m_pdata = new DTData;
@@ -312,6 +313,7 @@ OW_CIMDataType::readObject(istream &istrm)
 		m_pdata = new DTData;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_type = OW_CIMDataType::Type(OW_ntoh32(type));
 	m_pdata->m_numberOfElements = OW_ntoh32(numberOfElements);
 	m_pdata->m_sizeRange = OW_ntoh32(sizeRange);

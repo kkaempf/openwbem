@@ -41,7 +41,7 @@ class OW_IndicationRepLayer : public OW_RepositoryIFC
 public:
 	virtual ~OW_IndicationRepLayer() {}
 
-	virtual void setCIMServer(const OW_RepositoryIFCRef& src) = 0;
+	virtual void setCIMServer(OW_RepositoryIFC *src) = 0;
 };
 
 #endif

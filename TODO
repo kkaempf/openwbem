@@ -1,7 +1,41 @@
+x Test XML with IPC and Binary with HTTP
+x Change C++ Provider IFC to append provider name on factory fuction
+x Release Providers from memory if haven't been used for a while
+x Remove IPC service and have HTTP service handle UDS
+x PKI authentication
+x fix make install to symlink libowhttpservice.so to $PREFIX/lib
+x Add client SSL authentication
+x Unload request handlers if not used after X minutes.
+x fix OW_CIMServer to throw right exceptions.  OW_CIMServer public
+  funcs shouldn't ever return null objects. 
+x overhaul Provider interface with consistent const& params. 
+x handle enumerations differently.
+x fix chuncked output with binary cimomhandle
+x fix deleteClass
+x search for all reads and writes.  check return values and throw. 
+x Create a common base class for client CIMOM handles (OW_CIMXMLCIMOMHandle 
+  and OW_BinaryCIMOMHandle) and put common code there (namespace funcs in 
+  particular).
+x simple C++ provider interface. 
+x configurable Class cache in meta repository. 
+x long and short versions of make check
+x add a test for the matrix on the bottom of
+  http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
+x change XML parser to be lazy. 
+x fix execQuery XML
+x pretty-print the XML in the test suites.
+x add a test for extrinsic methods with OUT and IN/OUT parameters
+x Add executeMethod fail tests to testCIMExceptions
+x Add empty() call to OW_String and change all length() == 0 to empty()
+x split out namespace parameters to cimom handle calls.
+x Intrinsic indications are fetched from root namespace.  Less than optimal.
+x Remove any bad NOT_SUPPORTED exceptions.
+x Split out the internal provider ifc from the Provider Manager.  
+x Fix CIM Server so that an instance provider can provide associations.
+x Trailers need to strip newlines from error description.
 
 
 Testing:
-    - Add an property provider to the test suite.
     - smaller schema for make check.  create classes to exercise all aspects 
       of mof and xml.
     - bad xml tests
@@ -13,22 +47,16 @@ Testing:
     - various make check components to have separate namespaces.
     - review CIM operations over HTTP v1.1 and see where we deviate.
       specifically, the indication delivery is known to be different. 
+    - Add an instance, property, and associator provider to the test suite.
     - Test case insensitivity (eg. try to add a disk and DISK class)
 
 Fix problems:
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
       out if someone else is listening. If so, then fail, otherwise delete it.
-      Use fcntl locking (if available, else try flock) to check.
-    - OW_File needs to be more C++ish with a destructor, reasonable copy
-      semantics, etc.
-    - Use kill(pid, 0) to detect a stale pid file.
-    - Daemon doesn't withstand repeated HUP signals.
-    - Get rid of OW_ThreadEvent because it is subject to race conditions.
-      Replace it with a condition variable class.
+
 
 New features:
-    - Providers/Provider interfaces in a different process. Implement with 
-      fork/exec/pipes for communication?
+    - Providers/Provider interfaces in a different process.
     - Internationalization.
     - Deal with locale on WBEM requests. (at least reject those that won't work)
     - Add better error handling/messages to the MOF compiler.
@@ -39,21 +67,6 @@ New features:
       providers?)
         - add handling for new namespace model
         - New model for provider registration .
-    - Fix the lexer of the MOF compiler to parse unicode MOF files.  
-        - Replace the input functions so that they translate from Unicode to
-          UTF8, and fix the lexer to handle UTF8 strings and identifiers.
-        - Or replace the lexer with something that can handle unicode,
-          possibly the slex lexer from spirit.
-    - Have an option for the mof compiler to parse a string.  Add interfaces
-      such as OW_CIMQualifierType createQualifierType(const OW_String& qualMof)
-      and OW_CIMClass createClass(const OW_String& clsMof) to the MOFCompiler
-      class.
-    - Use Boost.Python to create a python binding to the client library, to
-      allow for easy scripting or dynamic CIMOM interaction.
-    - Write a command line utility to register for and print indications.
-    - Add -I flag for mof include search path.
-    - Write a config file provider so the CIMOM config can be programatically
-      changed from remote.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
@@ -73,3 +86,5 @@ Documentation:
 Optimizations:
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
     - Switch OW_Reference to be intrusive reference counted.
+    - Use <asm/atomic.h> operations for reference counting (and reduce header 
+      dependencies).

@@ -86,14 +86,16 @@ class OW_String::ByteBuf
 public:
 
 	ByteBuf(const char* s) :
-		m_len(::strlen(s)), m_buf(new char[m_len+1])
+		m_len(::strlen(s)), m_buf(NULL)
 	{
+		m_buf = new char[m_len+1];
 		strcpy(m_buf, s);
 	}
 
 	ByteBuf(const ByteBuf& arg) :
-		m_len(arg.m_len), m_buf(new char[m_len+1])
+		m_len(arg.m_len), m_buf(NULL)
 	{
+		m_buf = new char[m_len+1];
 		strcpy(m_buf, arg.m_buf);
 	}
 
@@ -113,10 +115,8 @@ public:
 		return *this;
 	}
 
-	size_t length() const { return m_len; }
-	char* data() const { return m_buf; }
-
-    ByteBuf* clone() const { return new ByteBuf(*this); }
+	size_t length() { return m_len; }
+	char* data() { return m_buf; }
 
 private:
 	size_t m_len;
@@ -318,7 +318,7 @@ OW_String::allocateCString() const
 size_t
 OW_String::length() const
 {
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		return m_buf->length();
 	}
@@ -375,7 +375,7 @@ OW_String::format(const char* fmt, ...)
 char
 OW_String::charAt(size_t ndx) const
 {
-	return (m_buf) ? m_buf->data()[ndx] : (char)0;
+	return (m_buf.getPtr()) ? m_buf->data()[ndx] : (char)0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -384,11 +384,11 @@ OW_String::compareTo(const OW_String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		lhs = m_buf->data();
 	}
-	if (arg.m_buf)
+	if (arg.m_buf.getPtr())
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -402,11 +402,11 @@ OW_String::compareToIgnoreCase(const OW_String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		lhs = m_buf->data();
 	}
-	if (arg.m_buf)
+	if (arg.m_buf.getPtr())
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -423,11 +423,11 @@ OW_String::concat(const OW_String& arg)
 		size_t len = length() + arg.length();
 		char* bfr = new char[len+1];
 		bfr[0] = 0;
-		if (m_buf)
+		if (m_buf.getPtr())
 		{
 			::strcpy(bfr, m_buf->data());
 		}
-		if (arg.m_buf)
+		if (arg.m_buf.getPtr())
 		{
 			::strcat(bfr, arg.m_buf->data());
 		}
@@ -458,11 +458,11 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 	
 	const char* lhs = "";
 	const char* rhs = "";
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		lhs = m_buf->data()+ndx;
 	}
-	if (arg.m_buf)
+	if (arg.m_buf.getPtr())
 	{
 		rhs = arg.m_buf->data();
 	}
@@ -555,7 +555,7 @@ OW_String::indexOf(const OW_String& arg, int fromIndex) const
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
 		char* p;
-		if (arg.m_buf)
+		if (arg.m_buf.getPtr())
 		{
 			p = ::strstr(m_buf->data()+fromIndex, arg.m_buf->data());
 		}
@@ -615,7 +615,7 @@ OW_String::lastIndexOf(const OW_String& arg, int fromIndex) const
 		return -1;
 	}
 
-	if (!arg.m_buf)
+	if (!arg.m_buf.getPtr())
 	{
 		return length() - 1;
 	}
@@ -702,7 +702,7 @@ OW_String::substring(size_t beginIndex, size_t len) const
 OW_Bool
 OW_String::isSpaces() const
 {
-	if (!m_buf)
+	if (!m_buf.getPtr())
 	{
 		return true;
 	}
@@ -720,7 +720,7 @@ OW_String::isSpaces() const
 OW_String&
 OW_String::ltrim()
 {
-	if (!m_buf)
+	if (!m_buf.getPtr())
 	{
 		return *this;
 	}
@@ -831,6 +831,7 @@ OW_String::toLowerCase()
 {
 	if (length())
 	{
+		OW_MutexLock l = m_buf.getWriteLock();
 		for(size_t i = 0; i < length(); i++)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
@@ -847,6 +848,7 @@ OW_String::toUpperCase()
 {
 	if (length())
 	{
+		OW_MutexLock l = m_buf.getWriteLock();
 		for(size_t i = 0; i < length(); i++)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
@@ -880,7 +882,7 @@ OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
 
 	const char* p = "";
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		p = m_buf->data();
 	}
@@ -903,7 +905,7 @@ OW_String::operator= (const OW_String& arg)
 const char*
 OW_String::c_str() const
 {
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		return m_buf->data();
 	}
@@ -931,7 +933,7 @@ OW_String::toString() const
 
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-throwStringConversion(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
+throwStringConversion(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
 {
 	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
 }
@@ -956,9 +958,9 @@ OW_String::toChar16() const
 
 template <typename T>
 static inline
-T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
+T convertToRealType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
 {
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		char* endptr;
 		double v = ::strtod(m_buf->data(), &endptr);
@@ -971,7 +973,7 @@ T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char
 	}
 	else
 	{
-		throwStringConversion(m_buf ? m_buf->data() : "", type);
+		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
 	}
 	return T(); // to make compiler happy
 }
@@ -1013,9 +1015,9 @@ OW_String::toBool() const
 
 template <typename T, typename FP, typename FPRT>
 static inline
-T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
+T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
 {
-	if (m_buf)
+	if (m_buf.getPtr())
 	{
 		char* endptr;
 		FPRT v = fp(m_buf->data(), &endptr, base);
@@ -1028,7 +1030,7 @@ T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const cha
 	}
 	else
 	{
-		throwStringConversion(m_buf ? m_buf->data() : "", type);
+		throwStringConversion(m_buf.getPtr() ? m_buf->data() : "", type);
 	}
 	return T(); // to make compiler happy
 }
@@ -1041,28 +1043,28 @@ typedef long long int (*strtollfp_t)(const char *, char **,int);
 
 template <typename T>
 static inline
-T convertToUIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul, base);
 }
 
 template <typename T>
 static inline
-T convertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol, base);
 }
 
 template <typename T>
 static inline
-T convertToUInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull, base);
 }
 
 template <typename T>
 static inline
-T convertToInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll, base);
 }

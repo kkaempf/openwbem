@@ -35,7 +35,7 @@
 #include "OW_config.h"
 
 #include "OW_CIMBase.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
 
@@ -209,7 +209,7 @@ public:
 
 private:
 
-	OW_COWReference<NSData> m_pdata;
+	OW_Reference<NSData> m_pdata;
 };
 
 #endif	// __OW_CIMNAMESPACE_HPP__

@@ -34,7 +34,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	OW_CIMClass cc;
 	try
 	{
-		cc = (*provenv)->getCIMOMHandle()->getClass(
+		cc = provenv->getPtr()->getCIMOMHandle()->getClass(
 			nameSpace, className,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
@@ -61,7 +61,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	try
 	{
 		crefs =
-			(*provenv)->getCIMOMHandle()->enumInstanceNamesE(nameSpace, className);
+			provenv->getPtr()->getCIMOMHandle()->enumInstanceNamesE(nameSpace, className);
 	}
 	catch (...)
 	{
@@ -82,7 +82,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	OW_CIMInstanceEnumeration cinsts;
 	try
 	{
-		cinsts = (*provenv)->getCIMOMHandle()->enumInstancesE(
+		cinsts = provenv->getPtr()->getCIMOMHandle()->enumInstancesE(
 			nameSpace, className, OW_CIMOMHandleIFC::DEEP,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
@@ -109,7 +109,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 
 	try
 	{
-		ci = (*provenv)->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
+		ci = provenv->getPtr()->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
 			owcop, localOnly);
 	}
 	catch (...)
@@ -730,7 +730,7 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+		if (cp.getName() == Key)
 		{
 			OW_CIMValue cv = cp.getValue();
 			if (cv.getType() != OW_CIMDataType::STRING)	return NULL;
@@ -781,7 +781,7 @@ CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+		if (cp.getName() == Key)
 		{
 			OW_CIMValue cv = cp.getValue();
 
@@ -852,7 +852,7 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	for (int i = 0, n = props.size(); i < n; i++)
 	{
 		OW_CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+		if (cp.getName() == Key)
 		{
 			OW_CIMValue cv = cp.getValue();
 

@@ -691,8 +691,8 @@ private:
 	OW_Bool _isInStringArray(const OW_StringArray& sra, const OW_String& val);
 
 	void _getAssociationClasses(const OW_String& ns,
-		const OW_String& assocClassName, const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result, const OW_String& role);
+		const OW_String& className, OW_CIMClassResultHandlerIFC& result,
+		const OW_String& role);
 
 	/**
 	 * Get the special __Namespace class
@@ -728,7 +728,7 @@ private:
 public:
 	void _getProviderProperties(const OW_String& ns, const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass,
-		const OW_ACLInfo& aclInfo, const OW_StringArray* propList);
+		const OW_ACLInfo& aclInfo);
 
 private:
 	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);

@@ -32,6 +32,7 @@
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 using std::istream;
@@ -63,8 +64,6 @@ struct OW_CIMProperty::PROPData
 
 	// propagated means inherited without change
 	OW_Bool m_propagated;
-
-    PROPData* clone() const { return new PROPData(*this); }
 };
 
 OW_CIMProperty::PROPData::PROPData() :
@@ -208,6 +207,7 @@ OW_CIMProperty::getQualifiers() const
 void
 OW_CIMProperty::setQualifiers(const OW_CIMQualifierArray& quals)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
 }
 
@@ -222,6 +222,7 @@ OW_CIMProperty::getOriginClass() const
 void
 OW_CIMProperty::setOriginClass(const OW_String& originCls)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_originClass = originCls;
 }
 
@@ -229,6 +230,7 @@ OW_CIMProperty::setOriginClass(const OW_String& originCls)
 void
 OW_CIMProperty::setValue(const OW_CIMValue& val)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_cimValue = val;
 }
 
@@ -243,6 +245,7 @@ OW_CIMProperty::getValue() const
 void
 OW_CIMProperty::setDataType(const OW_CIMDataType& type)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_propertyDataType = type;
 	if(m_pdata->m_cimValue)
 	{
@@ -281,6 +284,7 @@ OW_CIMProperty::getSize() const
 void
 OW_CIMProperty::setDataSize(OW_Int32 size)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_sizeDataType = size;
 }
 
@@ -288,6 +292,7 @@ OW_CIMProperty::setDataSize(OW_Int32 size)
 void
 OW_CIMProperty::setOverridingProperty(const OW_String& opname)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_override = opname;
 }
 
@@ -329,6 +334,7 @@ OW_CIMProperty::setQualifier(const OW_CIMQualifier& qual)
 	if(!qual)
 		return qual;
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	size_t tsize = m_pdata->m_qualifiers.size();
 	for(size_t i = 0; i < tsize; i++)
 	{
@@ -351,6 +357,7 @@ OW_CIMProperty::setQualifier(const OW_CIMQualifier& qual)
 void
 OW_CIMProperty::addQualifier(const OW_CIMQualifier& qual)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	size_t tsize = m_pdata->m_qualifiers.size();
 	for(size_t i = 0; i < tsize; i++)
 	{
@@ -371,6 +378,7 @@ OW_CIMProperty::addQualifier(const OW_CIMQualifier& qual)
 OW_Bool
 OW_CIMProperty::removeQualifier(const OW_String& name)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	size_t tsize = m_pdata->m_qualifiers.size();
 	for(size_t i = 0; i < tsize; i++)
 	{
@@ -433,6 +441,7 @@ OW_CIMProperty::filter(OW_Bool localOnly, OW_Bool includeQualifiers) const
 void
 OW_CIMProperty::setPropagated(OW_Bool propagated)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_propagated = propagated;
 }
 
@@ -454,6 +463,7 @@ OW_CIMProperty::getName() const
 void
 OW_CIMProperty::setName(const OW_String& name)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -461,6 +471,7 @@ OW_CIMProperty::setName(const OW_String& name)
 void
 OW_CIMProperty::clearQualifiers()
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers.clear();
 }
 
@@ -544,6 +555,7 @@ OW_CIMProperty::readObject(istream &istrm)
 		m_pdata = new PROPData;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_override = override;
 	m_pdata->m_originClass = originClass;

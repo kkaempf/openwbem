@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -50,13 +50,13 @@ template<class Key, class T, class Compare = std::less<Key> > class OW_Map
 {
 
 	typedef std::map<Key, T, Compare > M;
-	OW_COWReference<M> m_impl;
+	OW_Reference<M> m_impl;
 
 public:
 	typedef typename M::key_type key_type;
 	typedef typename M::mapped_type mapped_type;
 	typedef typename M::value_type value_type;
-	typedef typename M::key_compare key_compare;
+	typedef typename M::key_compare key_compare;    
 	typedef typename M::value_compare value_compare;
 	typedef typename M::pointer pointer;
 	typedef typename M::const_pointer const_pointer;
@@ -70,11 +70,15 @@ public:
 	typedef typename M::difference_type difference_type;
 
 	OW_Map() /*throw (std::exception)*/ : m_impl(new M) {  }
-
-	explicit OW_Map(M* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
+	OW_Map(const OW_Map<Key, T, Compare>& arg) : m_impl(arg.m_impl) 
 		{ }
 
-	explicit OW_Map(const Compare& comp) /*throw (std::exception)*/
+	~OW_Map() /*throw ()*/ {  }
+
+	explicit OW_Map(M* toWrap) /*throw (std::exception)*/ : m_impl(toWrap) 
+		{ }
+
+	explicit OW_Map(const Compare& comp) /*throw (std::exception)*/ 
 		: m_impl(new M(comp)) {  }
 
 	template <class InputIterator>
@@ -144,7 +148,7 @@ public:
 		return m_impl->rend();
 	}
 
-	bool empty() const /*throw (std::exception)*/
+	OW_Bool empty() const /*throw (std::exception)*/
 	{
 		return m_impl->empty();
 	}
@@ -166,10 +170,10 @@ public:
 
 	void swap(OW_Map<Key, T, Compare>& x) /*throw (std::exception)*/
 	{
-		m_impl.swap(x.m_impl);
+		m_impl->swap(*x.m_impl);
 	}
 
-	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
+	std::pair<iterator, OW_Bool> insert(const value_type& x) /*throw (std::exception)*/
 	{
 		return m_impl->insert(x);
 	}
@@ -251,28 +255,22 @@ public:
 		return m_impl->equal_range(x);
 	}
 
-	friend bool operator== <>(const OW_Map<Key, T, Compare>& x,
+	friend OW_Bool operator== <>(const OW_Map<Key, T, Compare>& x, 
 		const OW_Map<Key, T, Compare>& y);
 
-	friend bool operator< <>(const OW_Map<Key, T, Compare>& x,
+	friend OW_Bool operator< <>(const OW_Map<Key, T, Compare>& x, 
 		const OW_Map<Key, T, Compare>& y);
 };
 
-template <class Key, class T, class Compare>
-std::map<Key, T, Compare>* OW_COWReferenceClone(std::map<Key, T, Compare>* obj)
-{
-    return new std::map<Key, T, Compare>(*obj);
-}
-
 template<class Key, class T, class Compare>
-inline bool operator==(const OW_Map<Key, T, Compare>& x,
+inline OW_Bool operator==(const OW_Map<Key, T, Compare>& x,
 	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class Key, class T, class Compare>
-inline bool operator<(const OW_Map<Key, T, Compare>& x,
+inline OW_Bool operator<(const OW_Map<Key, T, Compare>& x,
 	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl < *y.m_impl;

@@ -31,6 +31,7 @@
 #include "OW_config.h"
 #include "OW_CIMParamValue.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 using std::istream;
@@ -41,8 +42,6 @@ struct OW_CIMParamValue::Data
 {
 	OW_String m_name;
 	OW_CIMValue m_val;
-
-    Data* clone() const { return new Data(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,6 +105,7 @@ OW_CIMParamValue::getName() const
 void
 OW_CIMParamValue::setName(const OW_String& name)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -120,6 +120,7 @@ OW_CIMParamValue::getValue() const
 void
 OW_CIMParamValue::setValue(const OW_CIMValue& val)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_val = val;
 }
 
@@ -163,6 +164,7 @@ OW_CIMParamValue::readObject(istream &istrm)
 		val.readObject(istrm);
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_val = val;
 }

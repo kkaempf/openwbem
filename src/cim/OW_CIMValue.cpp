@@ -87,8 +87,6 @@ public:
 	explicit OW_CIMValueImpl(const OW_CIMInstanceArray& arg);
 	~OW_CIMValueImpl();
 
-    OW_CIMValueImpl* clone() { return new OW_CIMValueImpl(*this); }
-
 	void get(OW_Bool& val) const;
 	void get(OW_Char16& arg) const;
 	void get(OW_UInt8& arg) const;
@@ -258,6 +256,7 @@ OW_CIMValue::readObject(istream &istrm)
 		m_impl = new OW_CIMValueImpl;
 	}
 
+	OW_MutexLock l = m_impl.getWriteLock();
 	m_impl->readObject(istrm);
 }
 

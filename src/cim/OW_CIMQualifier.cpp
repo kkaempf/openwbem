@@ -32,6 +32,7 @@
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 using std::istream;
@@ -49,8 +50,6 @@ struct OW_CIMQualifier::QUALData
 	OW_CIMQualifierType m_qualifierType;
 	OW_Bool m_propagated;
 	OW_CIMFlavorArray m_flavors;
-
-    QUALData* clone() const { return new QUALData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -155,6 +154,7 @@ OW_CIMQualifier::getValue() const
 void
 OW_CIMQualifier::setValue(const OW_CIMValue& value)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifierValue = value;
 }
 
@@ -162,6 +162,7 @@ OW_CIMQualifier::setValue(const OW_CIMValue& value)
 void
 OW_CIMQualifier::setDefaults(const OW_CIMQualifierType& qtype)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifierType = qtype;
 }
 
@@ -229,6 +230,7 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 				break;
 		}
 
+		OW_MutexLock l = m_pdata.getWriteLock();
 		m_pdata->m_flavors.append(flavor);
 	}
 }
@@ -237,6 +239,7 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 void
 OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	for(size_t i = 0; i < m_pdata->m_flavors.size(); i++)
 	{
 		if(m_pdata->m_flavors[i].getFlavor() == flavor)
@@ -271,6 +274,7 @@ OW_CIMQualifier::getFlavor() const
 void
 OW_CIMQualifier::setPropagated(OW_Bool propagated)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_propagated = propagated;
 }
 
@@ -292,6 +296,7 @@ OW_CIMQualifier::getName() const
 void
 OW_CIMQualifier::setName(const OW_String& name)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -324,6 +329,7 @@ OW_CIMQualifier::readObject(istream &istrm)
 		m_pdata = new QUALData;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_qualifierValue = qualifierValue;
 	m_pdata->m_qualifierType = qualifierType;
@@ -338,16 +344,15 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
 	m_pdata->m_name.writeObject(ostrm);
 
-    OW_CIMValue qv = m_pdata->m_qualifierValue;
-	if(!qv && m_pdata->m_qualifierType)
+	if(!m_pdata->m_qualifierValue && m_pdata->m_qualifierType)
 	{
-		qv = m_pdata->m_qualifierType.getDefaultValue();
+		m_pdata->m_qualifierValue = m_pdata->m_qualifierType.getDefaultValue();
 	}
 
 	if(m_pdata->m_qualifierValue)
 	{
 		OW_Bool(true).writeObject(ostrm);
-		qv.writeObject(ostrm);
+		m_pdata->m_qualifierValue.writeObject(ostrm);
 	}
 	else
 	{

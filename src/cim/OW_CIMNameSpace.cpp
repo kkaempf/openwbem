@@ -30,6 +30,7 @@
 
 #include "OW_config.h"
 #include "OW_CIM.hpp"
+#include "OW_MutexLock.hpp"
 #include <cctype>
 
 using std::ostream;
@@ -41,10 +42,18 @@ struct OW_CIMNameSpace::NSData
 	NSData() :
 		m_nameSpace(), m_url(OW_Bool(true)) {}
 
+	NSData(const NSData& x) :
+		m_nameSpace(x.m_nameSpace), m_url(x.m_url) {  }
+
+	NSData& operator= (const NSData& x)
+	{
+		m_nameSpace = x.m_nameSpace;
+		m_url = x.m_url;
+		return *this;
+	}
+
 	OW_String m_nameSpace;
 	OW_CIMUrl m_url;
-
-    NSData* clone() const { return new NSData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -197,6 +206,7 @@ OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
 		p++;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_nameSpace = p;
 }
 
@@ -204,6 +214,7 @@ OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
 void
 OW_CIMNameSpace::setHostUrl(const OW_CIMUrl& hostUrl)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_url = hostUrl;
 }
 
@@ -211,6 +222,7 @@ OW_CIMNameSpace::setHostUrl(const OW_CIMUrl& hostUrl)
 void
 OW_CIMNameSpace::setHost(const OW_String& host)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_url.setHost(host);
 }
 
@@ -218,6 +230,7 @@ OW_CIMNameSpace::setHost(const OW_String& host)
 void
 OW_CIMNameSpace::setProtocol(const OW_String& protocol)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_url.setProtocol(protocol);
 }
 
@@ -237,6 +250,7 @@ OW_CIMNameSpace::readObject(istream &istrm)
 	{
 		m_pdata = new NSData;
 	}
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_nameSpace = ns;
 	m_pdata->m_url = url;
 }

@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Array.hpp"
@@ -626,7 +626,7 @@ public:
 
 private:
 
-	OW_COWReference<OW_CIMValueImpl> m_impl;
+	OW_Reference<OW_CIMValueImpl> m_impl;
 };
 
 

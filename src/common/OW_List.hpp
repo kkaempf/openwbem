@@ -32,7 +32,7 @@
 #define __OW_LIST_HPP__
 
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -50,7 +50,7 @@ template<class T> class OW_List
 private:
 
 	typedef std::list<T> L;
-	OW_COWReference<L> m_impl;
+	OW_Reference<L> m_impl;
 
 public:
 	typedef typename L::value_type value_type;
@@ -66,8 +66,11 @@ public:
 	typedef typename L::const_reverse_iterator const_reverse_iterator;
 
 	OW_List() /*throw (std::exception)*/ : m_impl(new L) {}
+	OW_List(const OW_List<T>& arg) : m_impl(arg.m_impl) 
+		{  }
+	~OW_List() /*throw ()*/ {}
 
-	explicit OW_List(L* toWrap) /*throw (std::exception)*/ : m_impl(toWrap)
+	explicit OW_List(L* toWrap) /*throw (std::exception)*/ : m_impl(toWrap) 
 	{  }
 
 	template<class InputIterator>
@@ -136,7 +139,7 @@ public:
 		return m_impl->rend();
 	}
 
-	bool empty() const /*throw (std::exception)*/
+	OW_Bool empty() const /*throw (std::exception)*/
 	{
 		return m_impl->empty();
 	}
@@ -173,7 +176,7 @@ public:
 
 	void swap(OW_List<T>& x) /*throw (std::exception)*/
 	{
-		m_impl.swap(x.m_impl);
+		m_impl->swap(*x.m_impl);
 	}
 
 	iterator insert(iterator position, const T& x) /*throw (std::exception)*/
@@ -316,21 +319,21 @@ public:
 		m_impl->sort(swo);
 	}
 
-	friend bool operator== <>(const OW_List<T>& x,
+	friend OW_Bool operator== <>(const OW_List<T>& x,
 		const OW_List<T>& y);
 
-	friend bool operator< <>(const OW_List<T>& x,
+	friend OW_Bool operator< <>(const OW_List<T>& x,
 		const OW_List<T>& y);
 };
 
 template <class T>
-inline bool operator==(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline OW_Bool operator==(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template <class T>
-inline bool operator<(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline OW_Bool operator<(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl < *y.m_impl;
 }
@@ -339,12 +342,6 @@ template <class T>
 inline void swap(OW_List<T>& x, OW_List<T>& y) /*throw (std::exception)*/
 {
 	x.swap(y);
-}
-
-template <class T>
-std::list<T>* OW_COWReferenceClone(std::list<T>* obj)
-{
-    return new std::list<T>(*obj);
 }
 
 #endif	// __OW_LIST_HPP__

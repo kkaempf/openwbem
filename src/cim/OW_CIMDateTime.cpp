@@ -35,6 +35,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 #include <cstdlib>
@@ -200,6 +201,7 @@ OW_CIMDateTime::operator !() const
 void
 OW_CIMDateTime::setYear(OW_UInt16 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_year = arg;
 }
 
@@ -207,6 +209,7 @@ OW_CIMDateTime::setYear(OW_UInt16 arg)
 void
 OW_CIMDateTime::setMonth(OW_UInt8 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_month = arg;
 }
 
@@ -214,6 +217,7 @@ OW_CIMDateTime::setMonth(OW_UInt8 arg)
 void
 OW_CIMDateTime::setDays(OW_UInt32 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_days = arg;
 }
 
@@ -221,6 +225,7 @@ OW_CIMDateTime::setDays(OW_UInt32 arg)
 void
 OW_CIMDateTime::setDay(OW_UInt32 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_days = arg;
 }
 
@@ -228,6 +233,7 @@ OW_CIMDateTime::setDay(OW_UInt32 arg)
 void
 OW_CIMDateTime::setHours(OW_UInt8 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_hours = arg;
 }
 
@@ -235,6 +241,7 @@ OW_CIMDateTime::setHours(OW_UInt8 arg)
 void
 OW_CIMDateTime::setMinutes(OW_UInt8 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_minutes = arg;
 }
 
@@ -242,6 +249,7 @@ OW_CIMDateTime::setMinutes(OW_UInt8 arg)
 void
 OW_CIMDateTime::setSeconds(OW_UInt8 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_seconds = arg;
 }
 
@@ -249,6 +257,7 @@ OW_CIMDateTime::setSeconds(OW_UInt8 arg)
 void
 OW_CIMDateTime::setMicroSeconds(OW_UInt32 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_microSeconds = arg;
 }
 
@@ -256,6 +265,7 @@ OW_CIMDateTime::setMicroSeconds(OW_UInt32 arg)
 void
 OW_CIMDateTime::setUtc(OW_Int16 arg)
 {
+	OW_MutexLock l = m_dptr.getWriteLock();
 	m_dptr->m_utc = arg;
 }
 
@@ -284,6 +294,7 @@ OW_CIMDateTime::readObject(istream &istrm)
 		m_dptr = new OW_DateTimeData;
 	}
 
+	OW_MutexLock l = m_dptr.getWriteLock();
 	*m_dptr = dtdata;
 }
 

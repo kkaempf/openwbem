@@ -33,10 +33,9 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Bool.hpp"
 
 #include <iosfwd>
 
@@ -584,7 +583,7 @@ public:
 
 private:
 
-	OW_COWReference<ByteBuf> m_buf;
+	OW_Reference<ByteBuf> m_buf;
 };
 
 std::ostream& operator<< (std::ostream& ostr, const OW_String& arg);

@@ -35,7 +35,7 @@
 #include "OW_config.h"
 
 #include "OW_CIMElement.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMFwd.hpp"
 
 /**
@@ -282,7 +282,7 @@ public:
 
 private:
 
-	OW_COWReference<QUALData> m_pdata;
+	OW_Reference<QUALData> m_pdata;
 
 	friend bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y);
 };

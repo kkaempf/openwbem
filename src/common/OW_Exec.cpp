@@ -53,8 +53,6 @@ extern "C"
 using std::cerr;
 using std::endl;
 
-typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
-
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_Exec::safeSystem(const OW_Array<OW_String>& command)
@@ -258,9 +256,9 @@ OW_Exec::safePopen(const OW_Array<OW_String>& command,
 		close(2);
 
 		// this should only fail because of programmer error.
-		OW_PosixUnnamedPipeRef in = retval.in().cast_to<OW_PosixUnnamedPipe>();
-		OW_PosixUnnamedPipeRef out = retval.out().cast_to<OW_PosixUnnamedPipe>();
-		OW_PosixUnnamedPipeRef err = retval.err().cast_to<OW_PosixUnnamedPipe>();
+		OW_PosixUnnamedPipe* in = dynamic_cast<OW_PosixUnnamedPipe*>(retval.in().getPtr());
+		OW_PosixUnnamedPipe* out = dynamic_cast<OW_PosixUnnamedPipe*>(retval.out().getPtr());
+		OW_PosixUnnamedPipe* err = dynamic_cast<OW_PosixUnnamedPipe*>(retval.err().getPtr());
 		OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
 
 		// connect stdin, stdout, and stderr to the return pipes.
@@ -294,9 +292,9 @@ OW_Exec::safePopen(const OW_Array<OW_String>& command,
 	}
 
 	// this should only fail because of programmer error.
-	OW_PosixUnnamedPipeRef in = retval.in().cast_to<OW_PosixUnnamedPipe>();
-	OW_PosixUnnamedPipeRef out = retval.out().cast_to<OW_PosixUnnamedPipe>();
-	OW_PosixUnnamedPipeRef err = retval.err().cast_to<OW_PosixUnnamedPipe>();
+	OW_PosixUnnamedPipe* in = dynamic_cast<OW_PosixUnnamedPipe*>(retval.in().getPtr());
+	OW_PosixUnnamedPipe* out = dynamic_cast<OW_PosixUnnamedPipe*>(retval.out().getPtr());
+	OW_PosixUnnamedPipe* err = dynamic_cast<OW_PosixUnnamedPipe*>(retval.err().getPtr());
 	OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
 
 	// prevent the parent from using the child's end of the pipes.

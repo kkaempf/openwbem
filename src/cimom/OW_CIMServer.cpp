@@ -967,7 +967,7 @@ namespace
 
 		virtual OW_String getConfigItem(const OW_String &name) const
 		{
-			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
+			return ((OW_LocalCIMOMHandle*) m_ch.getPtr())->getEnvironment()->
 				getConfigItem(name);
 		}
 
@@ -978,12 +978,12 @@ namespace
 		
 		virtual OW_LoggerRef getLogger() const
 		{
-			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
+			return ((OW_LocalCIMOMHandle*) m_ch.getPtr())->getEnvironment()->
 				getLogger();
 		}
 
 	private:
-		mutable OW_CIMOMHandleIFCRef m_ch;
+		OW_CIMOMHandleIFCRef m_ch;
 	};
 
 	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
@@ -1071,13 +1071,13 @@ namespace
 		HandleProviderInstance(const OW_CIMClass& theClass_,
 			const OW_ACLInfo& aclInfo_,
 			bool includeQualifiers_, bool includeClassOrigin_,
-			const OW_StringArray* propList_, const OW_String& ns_,
+			OW_StringArray& lpropList_, const OW_String& ns_,
 			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
 		: theClass(theClass_)
 		, aclInfo(aclInfo_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
-		, propList(propList_)
+		, lpropList(lpropList_)
 		, ns(ns_)
 		, server(server_)
 		, result(result_)
@@ -1088,15 +1088,15 @@ namespace
 			OW_CIMInstance ci(c);
 			OW_CIMObjectPath lcop(ci);
 
-			server._getProviderProperties(ns, lcop, ci, theClass, aclInfo, propList);
+			server._getProviderProperties(ns, lcop, ci, theClass, aclInfo);
 			result.handle(ci.clone(false, includeQualifiers,
-				includeClassOrigin, propList));
+				includeClassOrigin, lpropList));
 		}
 	private:
 		const OW_CIMClass& theClass;
 		const OW_ACLInfo& aclInfo;
 		bool includeQualifiers, includeClassOrigin;
-		const OW_StringArray* propList;
+		OW_StringArray& lpropList;
 		const OW_String& ns;
 		OW_CIMServer& server;
 		OW_CIMInstanceResultHandlerIFC& result;
@@ -1184,6 +1184,12 @@ OW_CIMServer::_getCIMInstances(
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
+	OW_StringArray lpropList;
+	if(propertyList)
+	{
+		lpropList = *propertyList;
+	}
+
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo, true);
@@ -1193,7 +1199,7 @@ OW_CIMServer::_getCIMInstances(
 	{
 		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
 		HandleProviderInstance handler2(theClass,aclInfo,
-			includeQualifiers, includeClassOrigin, propertyList, ns, *this, handler1);
+			includeQualifiers,includeClassOrigin,lpropList, ns, *this, handler1);
 		instancep->enumInstances(
 			createProvEnvRef(real_ch), ns, className, handler2, deep, theClass, localOnly);
 	}
@@ -1294,7 +1300,7 @@ OW_CIMServer::getInstance(
 	
 	ci.syncWithClass(cc, true);
 	
-	_getProviderProperties(ns, instanceName, ci, cc, aclInfo, propertyList);
+	_getProviderProperties(ns, instanceName, ci, cc, aclInfo);
 	ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 		propertyList);
 	
@@ -2392,14 +2398,14 @@ OW_CIMServer::_commonReferences(
 	}
 
 	// Get all association classes from the repository
-	// If the result class was specified, only children of it will be
+	// If the assoc class was specified, only children of it will be
 	// returned.
 
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
+	_getAssociationClasses(ns, resultClass, assocClassResult, role);
 	OW_StringArray resultClassNames;
 	for(size_t i = 0; i < staticAssocs.size(); i++)
 	{
@@ -2683,7 +2689,7 @@ OW_CIMServer::_commonAssociators(
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
+	_getAssociationClasses(ns, assocClassName, assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
@@ -3020,16 +3026,14 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-		const OW_String& assocClassName, const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result, const OW_String& role)
+	const OW_String& className, OW_CIMClassResultHandlerIFC& result,
+	const OW_String& role)
 {
-	if(!assocClassName.empty())
+	if(!className.empty())
 	{
-		// they gave us a class name so we can use the class association index
-		// to only look at the ones that could provide associations
-		m_mStore.enumClass(ns, assocClassName, result, true, false, true, true);
+		m_mStore.enumClass(ns, className, result, true, false, true, true);
 		OW_CIMClass cc;
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, assocClassName, cc);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(OW_CIMException::FAILED);
@@ -3041,10 +3045,6 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		// need to get all the assoc classes with dynamic providers
 		OW_CIMObjectPath cop(className, ns);
 		_staticReferencesClass(cop,0,role,true,false,0,0,&result);
-
-		// TODO: test if this is faster
-		//assocHelper helper(result, m_mStore, ns);
-		//m_mStore.getTopLevelAssociations(ns, helper);
 	}
 }
 
@@ -3212,8 +3212,7 @@ OW_CIMServer::_setProviderProperties(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_getProviderProperties(const OW_String& ns, const OW_CIMObjectPath& cop,
-	OW_CIMInstance& ci, const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo,
-	const OW_StringArray* propertyList)
+	OW_CIMInstance& ci, const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo)
 {
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 		aclInfo, true);
@@ -3225,14 +3224,6 @@ OW_CIMServer::_getProviderProperties(const OW_String& ns, const OW_CIMObjectPath
 	{
 		OW_CIMProperty clsProp = pra[i];
 
-		if (propertyList)
-		{
-			if (std::find(propertyList->begin(), propertyList->end(),
-				clsProp.getName()) == propertyList->end())
-			{
-				continue;
-			}
-		}
 		OW_PropertyProviderIFCRef propp = _getPropertyProvider(clsProp);
 		if(propp)
 		{	// We have a provider for this property

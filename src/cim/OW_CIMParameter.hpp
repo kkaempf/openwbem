@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 
@@ -181,7 +181,7 @@ public:
 	
 private:
 
-	OW_COWReference<PARMData> m_pdata;
+	OW_Reference<PARMData> m_pdata;
 
 	friend bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y);
 };

@@ -28,13 +28,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_ARRAY_HPP_
-#define OW_ARRAY_HPP_
+#ifndef __OW_ARRAY_HPP__
+#define __OW_ARRAY_HPP__
 
 
 #include "OW_config.h"
 
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
+#include "OW_MutexLock.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -55,10 +56,7 @@ class OW_BinIfcIO;
 #include <cassert>
 #endif
 
-#ifdef OW_CHECK_ARRAY_INDEXING
-#include "OW_Exception.hpp"
 DEFINE_EXCEPTION(OutOfBounds);
-#endif
 
 /**
  * The OW_Array class is essentially takes the vector class of the stl and
@@ -67,7 +65,7 @@ DEFINE_EXCEPTION(OutOfBounds);
 template<class T> class OW_Array
 {
 	typedef std::vector<T> V;
-	OW_COWReference<V> m_impl;
+	OW_Reference<V> m_impl;
 
 public:
 	typedef typename V::value_type value_type;
@@ -83,7 +81,7 @@ public:
 	typedef typename V::const_reverse_iterator const_reverse_iterator;
 
 	OW_Array() : m_impl(new V) {}
-	//OW_Array(const OW_Array<T>& arg) : m_impl(arg.m_impl) {}
+	OW_Array(const OW_Array<T>& arg) : m_impl(arg.m_impl) {}
 	~OW_Array() {}
 	explicit OW_Array(V* toWrap) : m_impl(toWrap) {}
 	OW_Array(size_type n, const T& value) : m_impl(new V(n, value)) {}
@@ -91,33 +89,34 @@ public:
 	OW_Array(long n, const T& value) : m_impl(new V(n, value)) {}
 	explicit OW_Array(size_type n) : m_impl(new V(n)) {}
 
-	//OW_Array<T>& operator= (const OW_Array<T>& arg)
-	//{
-		//m_impl = arg.m_impl;
-		//return *this;
-	//}
+	OW_Array<T>& operator= (const OW_Array<T>& arg)
+	{
+		m_impl = arg.m_impl;
+		return *this;
+	}
 
 	template<class InputIterator>
 	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
 
 	iterator begin()
-		{ return m_impl->begin(); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->begin(); }
 	const_iterator begin() const { return m_impl->begin(); }
 	iterator end()
-		{ return m_impl->end(); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->end(); }
 	const_iterator end() const { return m_impl->end(); }
 	reverse_iterator rbegin()
-		{ return m_impl->rbegin(); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rbegin(); }
 	const_reverse_iterator rbegin() const { return m_impl->rbegin(); }
 	reverse_iterator rend()
-		{ return m_impl->rend(); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->rend(); }
 	const_reverse_iterator rend() const { return m_impl->rend(); }
 	size_type size() const { return m_impl->size(); }
 	size_type max_size() const { return m_impl->max_size(); }
 	size_type capacity() const { return m_impl->capacity(); }
-	bool empty() const { return m_impl->empty(); }
+	OW_Bool empty() const { return m_impl->empty(); }
 	reference operator[](size_type n)
 	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
 #ifdef OW_CHECK_ARRAY_INDEXING
 		checkValidIndex(n);
 #endif
@@ -126,6 +125,7 @@ public:
 
 	OW_Array<T>& operator+= (const T& x)
 	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
 		m_impl->push_back(x);
 	}
 
@@ -136,22 +136,23 @@ public:
 #endif
 		return m_impl->operator[](n);
 	}
-	void reserve(size_type n) { m_impl->reserve(n); }
+	void reserve(size_type n) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->reserve(n); }
 	reference front() { return m_impl->front(); }
 	const_reference front() const { return m_impl->front(); }
 	reference back() { return m_impl->back(); }
 	const_reference back() const { return m_impl->back(); }
-	void push_back(const T& x) { m_impl->push_back(x); }
+	void push_back(const T& x) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->push_back(x); }
 	void append(const T& x) { push_back(x); }
-	void swap(OW_Array<T>& x) { m_impl.swap(x.m_impl); }
+	void swap(OW_Array<T>& x) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->swap(*x.m_impl); }
 	iterator insert(iterator position, const T& x)
-		{ return m_impl->insert(position, x); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->insert(position, x); }
 
 	void insert(size_t position, const T& x)
-		{ m_impl->insert(m_impl->begin() + position, x); }
+		{ OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->insert(m_impl->begin() + position, x); }
 
 	void remove(size_t index)
 	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
 #ifdef OW_CHECK_ARRAY_INDEXING
 		checkValidIndex(index);
 #endif
@@ -159,6 +160,7 @@ public:
 	}
 	void remove(size_t begin, size_t end)
 	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
 #ifdef OW_CHECK_ARRAY_INDEXING
 		checkValidIndex(begin);
 		checkValidIndex(end - 1);
@@ -169,6 +171,7 @@ public:
 	template<class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last)
 	{
+		OW_MutexLock mlock = m_impl.getWriteLock();
 		m_impl->insert(position, first, last);
 	}
 
@@ -177,16 +180,17 @@ public:
 		insert(end(), x.begin(), x.end());
 	}
 
-	void pop_back() { m_impl->pop_back(); }
+	void pop_back() { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->pop_back(); }
 
-	iterator erase(iterator position) { return m_impl->erase(position); }
-	iterator erase(iterator first, iterator last) { return m_impl->erase(first, last); }
-	void resize(size_type new_size, const T& x) { m_impl->resize(new_size, x); }
-	void resize(size_type new_size) { m_impl->resize(new_size); }
-	void clear() { m_impl->clear(); }
+	iterator erase(iterator position) { OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->erase(position); }
+	iterator erase(iterator first, iterator last) { OW_MutexLock mlock = m_impl.getWriteLock(); return m_impl->erase(first, last); }
+	void resize(size_type new_size, const T& x) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->resize(new_size, x); }
+	void resize(size_type new_size) { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->resize(new_size); }
+	void clear() { OW_MutexLock mlock = m_impl.getWriteLock(); m_impl->clear(); }
 
 	void readObject(std::istream& istr)
 	{
+		OW_MutexLock mlock(m_impl.getWriteLock());
 		m_impl->clear();
 		OW_UInt32 len;
 		OW_BinIfcIO::read(istr, len);
@@ -211,8 +215,8 @@ public:
 		}
 	}
 
-	friend bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
-	friend bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);
+	friend OW_Bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
+	friend OW_Bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);
 
 private:
 #ifdef OW_CHECK_ARRAY_INDEXING
@@ -230,20 +234,14 @@ private:
 #endif
 };
 
-template <class T>
-std::vector<T>* OW_COWReferenceClone(std::vector<T>* obj)
-{
-    return new std::vector<T>(*obj);
-}
-
 template<class T>
-inline bool operator==(const OW_Array<T>& x, const OW_Array<T>& y)
+inline OW_Bool operator==(const OW_Array<T>& x, const OW_Array<T>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class T>
-inline bool operator<(const OW_Array<T>& x, const OW_Array<T>& y)
+inline OW_Bool operator<(const OW_Array<T>& x, const OW_Array<T>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
@@ -265,8 +263,9 @@ typedef OW_Array<OW_UInt64>     OW_UInt64Array;
 typedef OW_Array<OW_Int64>      OW_Int64Array;
 typedef OW_Array<OW_Real64>     OW_Real64Array;
 typedef OW_Array<OW_Real32>     OW_Real32Array;
+typedef OW_Array<OW_Bool>       OW_BoolArray;
 
 
-#endif
+#endif	// __OW_ARRAY_HPP__
 	
 

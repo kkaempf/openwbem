@@ -11,7 +11,7 @@ class OW_Stack : public OW_Array<T>
 public:
 	OW_Stack() : OW_Array<T>() {  }
 
-	bool empty() {   return (size() == 0); }
+	OW_Bool empty() {   return (size() == 0); }
 
 	T peek() {   return operator[](size()-1); }
 

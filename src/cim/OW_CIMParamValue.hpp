@@ -32,7 +32,7 @@
 
 #include "OW_config.h"
 #include "OW_Bool.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include <iosfwd>
@@ -133,7 +133,7 @@ public:
 
 private:
 
-	OW_COWReference<Data> m_pdata;
+	OW_Reference<Data> m_pdata;
 
 	friend bool operator<(const OW_CIMParamValue& x, const OW_CIMParamValue& y);
 };

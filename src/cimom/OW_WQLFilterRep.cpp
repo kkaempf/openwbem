@@ -40,7 +40,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_WQLFilterRep::OW_WQLFilterRep(const OW_CIMInstance& inst,
-	const OW_RepositoryIFCRef& cimServer)
+	OW_CIMServer* cimServer)
 	: OW_RepositoryIFC()
 	, m_inst(inst)
 	, m_pCIMServer(cimServer)

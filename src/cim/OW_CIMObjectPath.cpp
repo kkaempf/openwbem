@@ -29,6 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_MutexLock.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -58,8 +59,6 @@ struct OW_CIMObjectPath::OPData
 	OW_CIMNameSpace m_nameSpace;
 	OW_String m_objectName;
 	OW_CIMPropertyArray m_keys;
-
-    OPData* clone() const { return new OPData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -156,6 +155,7 @@ OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 		if(cp)
 		{
 			cp.setDataType(value.getCIMDataType());
+			OW_MutexLock l = m_pdata.getWriteLock();
 			m_pdata->m_keys.append(cp);
 		}
 	}
@@ -186,6 +186,7 @@ OW_CIMObjectPath::getKey(const OW_String& keyName) const
 void
 OW_CIMObjectPath::setKeys(const OW_CIMPropertyArray& newKeys)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_keys = newKeys;
 }
 
@@ -193,6 +194,7 @@ OW_CIMObjectPath::setKeys(const OW_CIMPropertyArray& newKeys)
 void
 OW_CIMObjectPath::setKeys(const OW_CIMInstance& instance)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_keys = instance.getKeyValuePairs();
 }
 
@@ -221,6 +223,7 @@ OW_CIMObjectPath::getObjectName() const
 void
 OW_CIMObjectPath::setHost(const OW_String& host)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_nameSpace.setHost(host);
 }
 
@@ -228,6 +231,7 @@ OW_CIMObjectPath::setHost(const OW_String& host)
 void
 OW_CIMObjectPath::setNameSpace(const OW_String& ns)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_nameSpace.setNameSpace(ns);
 }
 
@@ -235,6 +239,7 @@ OW_CIMObjectPath::setNameSpace(const OW_String& ns)
 void
 OW_CIMObjectPath::setObjectName(const OW_String& objectName)
 {
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_objectName = objectName;
 }
 
@@ -401,6 +406,7 @@ OW_CIMObjectPath::readObject(istream& istrm)
 		m_pdata = new OPData;
 	}
 
+	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_nameSpace = nameSpace;
 	m_pdata->m_objectName = objectName;
 	m_pdata->m_keys = keys;

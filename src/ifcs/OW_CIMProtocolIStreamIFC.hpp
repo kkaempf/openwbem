@@ -34,7 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
 
 #if defined(OW_HAVE_ISTREAM)
 #include <istream>

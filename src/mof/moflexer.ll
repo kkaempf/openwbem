@@ -41,15 +41,26 @@
 #define WHITE_RETURN(x) /* skip it */
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
-#define RETURN_VAL(x) yylval->pString = new OW_String(yytext); return(x);
+#define RETURN_VAL(x) yylval.pString = new OW_String(yytext); return(x);
 
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
-	OW_THROW(OW_Exception, msg);
+		MofCompiler::theErrorHandler->fatalError( \
+			format("Fatal Parser Error: %1", msg).c_str(), \
+			MofCompiler::theLineInfo);
 
-#define YYLEX_PARAM context
-#define YY_DECL int yylex(YYSTYPE *yylval, void* YYLEX_PARAM)
-#define MOF_COMPILER ((MofCompiler*)context)
+
+// Needed by the code to implement includes
+#define MAX_INCLUDE_DEPTH 10
+struct include_t
+{
+	YY_BUFFER_STATE yyBufferState;
+	lineInfo theLineInfo;
+};
+
+include_t include_stack[MAX_INCLUDE_DEPTH];
+int include_stack_ptr = 0;
+
 %}
 
 /* here are the definitions */
@@ -83,21 +94,21 @@ ws		[ \t]+
 "/*"							BEGIN(Ccomment);
 <Ccomment>[^*\n\r]*			/* eat anything that's not a '*' */
 <Ccomment>"*"+[^*/\n\r]*	/* eat up '*'s not followed by '/'s */
-<Ccomment>"\r\n"				++MOF_COMPILER->theLineInfo.lineNum;
-<Ccomment>\n				++MOF_COMPILER->theLineInfo.lineNum;
-<Ccomment>\r				++MOF_COMPILER->theLineInfo.lineNum;
+<Ccomment>"\r\n"				++MofCompiler::theLineInfo.lineNum;
+<Ccomment>\n				++MofCompiler::theLineInfo.lineNum;
+<Ccomment>\r				++MofCompiler::theLineInfo.lineNum;
 <Ccomment>"*"+"/"			BEGIN(INITIAL);
 <Ccomment><<EOF>>		{
-	MOF_COMPILER->theErrorHandler->fatalError("Unterminated Comment",
-		MOF_COMPILER->theLineInfo);
+	MofCompiler::theErrorHandler->fatalError("Unterminated Comment",
+		MofCompiler::theLineInfo);
 	yyterminate();
 }
 
 "//"							BEGIN(CPPcomment);
 <CPPcomment>[^\n\r]*		/* eat anything but newline */
-<CPPcomment>"\r\n"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
-<CPPcomment>"\n"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
-<CPPcomment>"\r"			++MOF_COMPILER->theLineInfo.lineNum; BEGIN(INITIAL);
+<CPPcomment>"\r\n"			++MofCompiler::theLineInfo.lineNum; BEGIN(INITIAL);
+<CPPcomment>"\n"			++MofCompiler::theLineInfo.lineNum; BEGIN(INITIAL);
+<CPPcomment>"\r"			++MofCompiler::theLineInfo.lineNum; BEGIN(INITIAL);
 
 	/* Shame on whoever put special cases in the mof lexical specs and
 	didn't even document it! */
@@ -105,9 +116,9 @@ ws		[ \t]+
 <OnlyIdentifier>{identifier} {BEGIN(INITIAL);RETURN_VAL(IDENTIFIER_TOK);}
 
 {ws}	/* skip blanks and tabs */
-"\r\n"	++MOF_COMPILER->theLineInfo.lineNum;
-"\n"	++MOF_COMPILER->theLineInfo.lineNum;
-"\r"	++MOF_COMPILER->theLineInfo.lineNum;
+"\r\n"	++MofCompiler::theLineInfo.lineNum;
+"\n"	++MofCompiler::theLineInfo.lineNum;
+"\r"	++MofCompiler::theLineInfo.lineNum;
 
 any					{RETURN_VAL(ANY_TOK);}
 as						{RETURN_VAL(AS_TOK);}
@@ -181,7 +192,7 @@ true					{RETURN_VAL(TRUE_TOK);}
 	{
 		if ( yytext[i] == '\r' || yytext[i] == '\n' )
 		{
-			++MOF_COMPILER->theLineInfo.lineNum;
+			++MofCompiler::theLineInfo.lineNum;
 			if ( ( i + 1 ) < yyleng )
 				if ( yytext[i] == '\r' && yytext[i + 1] == '\n' )
 					++i;
@@ -193,36 +204,36 @@ true					{RETURN_VAL(TRUE_TOK);}
 {identifier}		{RETURN_VAL(IDENTIFIER_TOK);}
 
 <<EOF>> {
-	if ( --(MOF_COMPILER->include_stack_ptr) < 0 )
+	if ( --include_stack_ptr < 0 )
 	{
 		yyterminate();
 	}
 	else
 	{
 		yy_delete_buffer( YY_CURRENT_BUFFER );
-		MOF_COMPILER->theErrorHandler->progressMessage("Finished parsing.", MOF_COMPILER->theLineInfo);
-		MOF_COMPILER->theLineInfo = MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo;
+		MofCompiler::theErrorHandler->progressMessage("Finished parsing.", MofCompiler::theLineInfo);
+		MofCompiler::theLineInfo = include_stack[include_stack_ptr].theLineInfo;
 		yy_switch_to_buffer(
-			MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].yyBufferState );
+			include_stack[include_stack_ptr].yyBufferState );
 	}
 }
 
 %%
 /* here is the user code */
 
-void lexIncludeFile( void* context, const OW_String& filename )
+void lexIncludeFile( const OW_String& filename )
 {
-	if ( MOF_COMPILER->include_stack_ptr >= MAX_INCLUDE_DEPTH )
+	if ( include_stack_ptr >= MAX_INCLUDE_DEPTH )
 	{
 		// REPORT AN ERROR
-		MOF_COMPILER->theErrorHandler->fatalError(
+		MofCompiler::theErrorHandler->fatalError(
 			format("Includes nested too deep (Max of %1 levels)", MAX_INCLUDE_DEPTH).c_str(),
-			MOF_COMPILER->theLineInfo);
+			MofCompiler::theLineInfo);
 		return;
 	}
 
 	// first try to find the file in the same dir as our original file.
-	OW_String filenameWithPath = MOF_COMPILER->basepath + "/" + filename;
+	OW_String filenameWithPath = MofCompiler::basepath + "/" + filename;
 	FILE* newfile = fopen( filenameWithPath.c_str(), "r" );
 
 	if ( !newfile )
@@ -231,21 +242,21 @@ void lexIncludeFile( void* context, const OW_String& filename )
 		newfile = fopen( filename.c_str(), "r" );
 		if ( !newfile )
 		{
-			MOF_COMPILER->theErrorHandler->fatalError(
-				format("Could not open include file %1", filename).c_str(), MOF_COMPILER->theLineInfo);
+			MofCompiler::theErrorHandler->fatalError(
+				format("Could not open include file %1", filename).c_str(), MofCompiler::theLineInfo);
 			return;
 		}
 		filenameWithPath = filename;
 	}
 	
 	yyin = newfile;
-	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].yyBufferState = YY_CURRENT_BUFFER;
-	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo = MOF_COMPILER->theLineInfo;
-	MOF_COMPILER->theLineInfo.filename = filenameWithPath;
-	MOF_COMPILER->theLineInfo.lineNum = 1;
-	MOF_COMPILER->theErrorHandler->progressMessage("Starting parsing.", MOF_COMPILER->theLineInfo);
+	include_stack[include_stack_ptr].yyBufferState = YY_CURRENT_BUFFER;
+	include_stack[include_stack_ptr].theLineInfo = MofCompiler::theLineInfo;
+	MofCompiler::theLineInfo.filename = filenameWithPath;
+	MofCompiler::theLineInfo.lineNum = 1;
+	MofCompiler::theErrorHandler->progressMessage("Starting parsing.", MofCompiler::theLineInfo);
 	
-	++(MOF_COMPILER->include_stack_ptr);
+	++include_stack_ptr;
 
 	yy_switch_to_buffer( yy_create_buffer( yyin, YY_BUF_SIZE ) );
 

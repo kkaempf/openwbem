@@ -35,7 +35,6 @@
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Bool.hpp"
 
 DEFINE_EXCEPTION(Select)
 

@@ -52,13 +52,13 @@ namespace
 	{
 
 		OW_String classOfSource = ci.getClassName();
-		if (classOfSource.equalsIgnoreCase("EXP_BionicComputerSystem"))
+		if (classOfSource.equalsIgnoreCase("EXP_DemoComputerSystem"))
 		{
-			return "EXP_BionicComputerSystem2";
+			return "EXP_UnitaryComputerSystem";
 		}
-		else if (classOfSource.equalsIgnoreCase("EXP_BionicComputerSystem2"))
+		else if (classOfSource.equalsIgnoreCase("EXP_UnitaryComputerSystem"))
 		{
-			return "EXP_BionicComputerSystem";
+			return "EXP_DemoComputerSystem";
 		}
 		else
 		{
@@ -102,15 +102,8 @@ namespace
 			if (destClass.length() == 0)
 				return;
 
-			// All other instances of the other class are associated.
-			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(assocName.getNameSpace(),destClass, true);
-			while (instances.hasMoreElements())
-			{
-				OW_CIMInstance ci = instances.nextElement();
-				ci.setProperty("producedByAssocTest", OW_CIMValue(true));
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", ci));
-				result.handle(ci.clone(false,includeQualifiers,includeClassOrigin,propertyList));
-			}
+			// Just assume that all other instances of the other class are associated!
+			hdl->enumInstances(assocName.getNameSpace(),destClass, result, true);
 
 		}
 
@@ -147,8 +140,6 @@ namespace
 			{
 				OW_CIMInstance ci = instances.nextElement();
 				OW_CIMObjectPath cop(ci);
-				cop.setNameSpace(assocName.getNameSpace());
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
 		}
@@ -192,13 +183,11 @@ namespace
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci);
 
-				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
+				newInstance.setProperty("firstRef", OW_CIMValue(objectName));
 
-				newInstance.setProperty("PartComponent", OW_CIMValue(path));
-				newInstance.setProperty("producedByAssocTest", OW_CIMValue(true));
+				newInstance.setProperty("secondRef", OW_CIMValue(path));
 
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newInstance));
-				result.handle(newInstance.clone(false,includeQualifiers,includeClassOrigin,propertyList));
+				result.handle(newInstance);
 			}
 		}
 
@@ -235,14 +224,13 @@ namespace
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci);
 
-				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
+				newInstance.setProperty("firstRef", OW_CIMValue(objectName));
 
-				newInstance.setProperty("PartComponent", OW_CIMValue(path));
+				newInstance.setProperty("secondRef", OW_CIMValue(path));
 
 				OW_CIMObjectPath newPath(newInstance);
 
 				newPath.setNameSpace(assocName.getNameSpace());
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}
 		}

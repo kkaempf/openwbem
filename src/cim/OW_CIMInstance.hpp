@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp" // for OW_CIMDataType::INVALID
@@ -378,7 +378,7 @@ protected:
 
 	void _buildKeys();
 
-	OW_COWReference<INSTData> m_pdata;
+	OW_Reference<INSTData> m_pdata;
 	
 	friend bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y);
 };

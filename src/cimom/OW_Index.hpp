@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Reference.hpp"
 
 class OW_IndexEntry;
 
@@ -154,7 +153,8 @@ public:
 	/**
 	 * Create dynamically allocated instances of a sub-class of OW_Indexer.
 	 * This method must be implemented by whomever desires to implement an
-	 * OW_Indexer sub-class.
+	 * OW_Indexer sub-class. The caller of this method is responsible for
+	 * deleting the object when it is no longer needed.
 	 * @return An instance of a sub-class of OW_Indexer.
 	 */
 	static OW_Reference<OW_Index> createIndexObject();

@@ -35,7 +35,6 @@
 #include "OW_Types.h"
 #include "OW_Reference.hpp"
 #include "OW_ThreadImpl.hpp"
-#include "OW_Bool.hpp"
 
 /**
  * The ThreadEvent class is used primarily for thread syncronization. It can be in a 

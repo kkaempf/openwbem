@@ -41,8 +41,7 @@
 
 #include <assert.h>
 
-CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns,
-		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler)
+CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns)
 : m_curClass(OW_Bool(true))
 , m_curInstance(OW_Bool(true))
 , m_curValue()
@@ -50,7 +49,6 @@ CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns
 , m_curMethod(OW_Bool(true))
 , m_hdl(handle)
 , m_namespace(ns)
-, theErrorHandler(_theErrorHandler)
 {
 }
 
@@ -129,7 +127,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 		if (!m_nonLocalType.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
-			theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocal ignored",
+			MofCompiler::theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocal ignored",
 				pCompilerDirective->theLineInfo);
 		}
 		m_nonLocal = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
@@ -139,7 +137,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 		if (!m_nonLocal.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
-			theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocaltype ignored",
+			MofCompiler::theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocaltype ignored",
 				pCompilerDirective->theLineInfo);
 		}
 		m_nonLocalType = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
@@ -149,7 +147,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 		if (!m_sourceType.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
-			theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma source ignored",
+			MofCompiler::theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma source ignored",
 				pCompilerDirective->theLineInfo);
 		}
 		m_source = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
@@ -159,14 +157,14 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 		if (!m_source.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
-			theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma sourcetype ignored",
+			MofCompiler::theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma sourcetype ignored",
 				pCompilerDirective->theLineInfo);
 		}
 		m_sourceType = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else
 	{
-		theErrorHandler->recoverableError(
+		MofCompiler::theErrorHandler->recoverableError(
 			format("Ignoring unknown pragma: %1",
 				*pCompilerDirective->pPragmaName->pPragmaName).c_str(),
 			pCompilerDirective->theLineInfo);
@@ -321,7 +319,7 @@ void CIMOMVisitor::VisitAliasIdentifier( const AliasIdentifier *pAliasIdentifier
 	OW_String alias = m_aliasMap[*pAliasIdentifier->pAliasIdentifier];
 	if (alias.empty())
 	{
-		theErrorHandler->recoverableError(format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
+		MofCompiler::theErrorHandler->recoverableError(format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
 			pAliasIdentifier->theLineInfo);
 	}
 	m_curValue = OW_CIMValue(alias);
@@ -378,7 +376,7 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 		}
 		else
 		{
-			theErrorHandler->fatalError(
+			MofCompiler::theErrorHandler->fatalError(
 				"Missing value for non-boolean qualifier.",
 				pQualifier->theLineInfo);
 		}
@@ -411,7 +409,7 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 			}
 			else
 			{
-				theErrorHandler->fatalError(
+				MofCompiler::theErrorHandler->fatalError(
 					format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
 					(*i)->theLineInfo);
 			}
@@ -486,14 +484,14 @@ void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropert
 			{
 				if ( m_curValue.getArraySize() != arraySize )
 				{
-					theErrorHandler->recoverableError(
+					MofCompiler::theErrorHandler->recoverableError(
 						format("Array size (%1) doesn't match number of elements (%2)", arraySize, m_curValue.getArraySize()).c_str(),
 						pPropertyDeclaration->theLineInfo);
 				}
 			}
 			else
 			{
-				theErrorHandler->recoverableError(
+				MofCompiler::theErrorHandler->recoverableError(
 					"Property declared as array, but value is not an array",
 					pPropertyDeclaration->theLineInfo);
 			}
@@ -902,7 +900,7 @@ void CIMOMVisitor::VisitScope( const Scope *pScope )
 		}
 		else
 		{
-			theErrorHandler->recoverableError(
+			MofCompiler::theErrorHandler->recoverableError(
 				format("Invalid scope: %1", *(*i)->pMetaElement).c_str(),
 				(*i)->theLineInfo );
 		}
@@ -947,7 +945,7 @@ void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 		}
 		else
 		{
-			theErrorHandler->fatalError(
+			MofCompiler::theErrorHandler->fatalError(
 				format("Internal Compiler Error. Invalid flavor: %1", *(*i)->pFlavor).c_str(),
 				(*i)->theLineInfo);
 		}
@@ -1006,7 +1004,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 
 				if (!castValue)
 				{
-					theErrorHandler->recoverableError(
+					MofCompiler::theErrorHandler->recoverableError(
 							format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
 				}
 
@@ -1136,9 +1134,9 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
+		MofCompiler::theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
 		m_hdl->createClass(m_namespace, m_curClass);
-		theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
+		MofCompiler::theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
 	}
 	catch (const OW_CIMException& ce)
 	{
@@ -1147,16 +1145,16 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 			try
 			{
 				m_hdl->modifyClass(m_namespace, m_curClass);
-				theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
+				MofCompiler::theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)
 			{
-				theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+				MofCompiler::theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+			MofCompiler::theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1165,7 +1163,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
+		MofCompiler::theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
 		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
 		// save it in the cache
 		OW_String lcqualName = m_curQualifierType.getName();
@@ -1174,7 +1172,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	}
 	catch (const OW_CIMException& ce)
 	{
-		theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+		MofCompiler::theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 	}
 }
 
@@ -1182,11 +1180,11 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
 	OW_CIMObjectPath cop(m_curInstance);
 	cop.setNameSpace(m_namespace);
-	theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
+	MofCompiler::theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try
 	{
 		m_hdl->createInstance(m_namespace, m_curInstance);
-		theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
+		MofCompiler::theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
 	}
 	catch (const OW_CIMException& ce)
 	{
@@ -1195,16 +1193,16 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 			try
 			{
 				m_hdl->modifyInstance(m_namespace, m_curInstance);
-				theErrorHandler->progressMessage(format("Updated Instance: %1", cop.toString()).c_str(), li);
+				MofCompiler::theErrorHandler->progressMessage(format("Updated Instance: %1", cop.toString()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)
 			{
-				theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+				MofCompiler::theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+			MofCompiler::theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1217,7 +1215,7 @@ OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualNam
 	}
 	catch (const OW_CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+		MofCompiler::theErrorHandler->fatalError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 	}
 	return OW_CIMQualifierType(true);
 }

@@ -9,23 +9,23 @@
 #		the staged install will be replaced with symlinks to their 
 #		counter-parts in the build directory.  
 #   OWNODIFF
-#		If this has a value of 1, no diffs will be performed.  This
-#		can be usefull if using the OW_MemTracer
+#     If this has a value of 1, no diffs will be performed.  This
+#     can be usefull if using the OW_MemTracer
 #   OWTESTLIST
-#		If this is non-empty, only the specified tests will be performed.
-#		Valid values are (case insensitive):
-#		install
-#		testIndividualHeaders
-#		testHeaders
-#		auth
-#		acl
-#		mof
-#		testsuite
-#		testipcsuite
-#		indications
-#		wql
-#		multiReq
-#		cimexceptions
+#     If this is non-empty, only the specified tests will be performed.
+#     Valid values are (case insensitive):
+#        install
+#        testIndividualHeaders
+#        testHeaders
+#        auth
+#        acl
+#        mof
+#        testsuite
+#			testipcsuite
+#        indications
+#        wql
+#        multiReq
+#        cimexceptions
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -93,9 +93,6 @@ Install()
 	ln -sf $BUILDDIR/test/c++providers/instance/libtestinstance.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 		
-	ln -sf $BUILDDIR/test/c++providers/associator/libassociatortest.so  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-		
 	
 	if [ "$OWSYMLINKS" = "1" ]; then
 		SwitchToLinks
@@ -131,10 +128,10 @@ SwitchToLinks()
 CreateNameSpace() 
 {
 	#WQLEXEC=$STAGEDIR/$OWBINDIR/owexecwql
-	CREATENS=$STAGEDIR/$OWBINDIR/owcreatenamespace
+    CREATENS=$STAGEDIR/$OWBINDIR/owcreatenamespace
 	OWURL="ipc://test1:pass1@localhost/owbinary"
 	#$WQLEXEC $OWURL /root 'insert into __Namespace values ("'"$1"'")'
-	$CREATENS $OWURL /root/$1
+    $CREATENS $OWURL /root/$1
 }
 
 
@@ -160,6 +157,8 @@ StartDaemon()
 #############################################################################
 RestartDaemon()
 {
+#	StopDaemon
+#	StartDaemon
 	echo "Restarting owcimomd..."
 	if [ ! "$OWTESTLIST" = "" ]; then
 		if [ ! -f $PIDFILE ]; then
@@ -168,15 +167,8 @@ RestartDaemon()
 			return
 		fi
 	fi
-	# the nightly cronjob on solaris doesn't seem to deliver the HUP, so do it
-	# the hard way.
-	if [ "x$HOSTTYPE" = "xsparc" ]; then
-		StopDaemon
-		StartDaemon
-	else
-		PID=`cat $PIDFILE`
-		kill -1 $PID # HUP
-	fi
+	PID=`cat $PIDFILE`
+	kill -HUP $PID
 	echo "Waiting for daemon to re-initialize"
 	sleep 4
 }
@@ -197,10 +189,10 @@ StopDaemon()
 	  rm -f $PIDFILE
 	  Exit 1
 	fi
-	kill -15 $PID # TERM
+	kill -TERM $PID
 	sleep 1
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
-	  kill -9 $PID # KILL
+	  kill -KILL $PID
 	  echo "** Daemon failed to terminate!!!  Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
 	  echo "** for clues."
@@ -218,7 +210,7 @@ ExitWithFail()
 	echo "** The acceptance test script has failed.  The line above"
 	echo "   should describe what part of the test failed."
 	echo " The results of the tests are in "
-	echo "	$STAGEDIR/results/"
+	echo "    $STAGEDIR/results/"
 	echo " You can look here for clues about what went wrong. "
 	StopDaemon
 	Exit 1
@@ -269,33 +261,33 @@ TestInstalledHeadersOneByOne()
 	fi
 
 	cd $STAGEDIR
-		echo "Testing header inclusion one-by-one..."
-		mkdir compilation
-		cd compilation
+        echo "Testing header inclusion one-by-one..."
+        mkdir compilation
+        cd compilation
 		  INCLUSION_FAIL_LIST=""
-		for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
-		  EXECFILE=`basename $i`
-		  OUTFILE=$EXECFILE.cpp
-		  echo '#include "'"$EXECFILE"'"' >> $OUTFILE
+        for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
+          EXECFILE=`basename $i`
+          OUTFILE=$EXECFILE.cpp
+          echo '#include "'"$EXECFILE"'"' >> $OUTFILE
 	  cat <<EOS >> $OUTFILE
 #include <iostream>
 int main(int argc, char* argv[])
 {
-		char* execName = argv[0] + 2;
-		std::cout << execName << " Passed!" << std::endl;
+        char* execName = argv[0] + 2;
+        std::cout << execName << " Passed!" << std::endl;
 	return 0;
 }
 EOS
-		  echo "$EXECFILE:."
-		  g++ -o $EXECFILE.o -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include -c $OUTFILE \
-			   || Exit 1
-		  echo "."
-#		  g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o $EXECFILE \
-#			   $EXECFILE.o || ExitWithFail
-#		  echo "."
-#		  ./$EXECFILE || ExitWithFail
+          echo "$EXECFILE:."
+          g++ -o $EXECFILE.o -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include -c $OUTFILE \
+               || Exit 1
+          echo "."
+#          g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o $EXECFILE \
+#               $EXECFILE.o || ExitWithFail
+#          echo "."
+#          ./$EXECFILE || ExitWithFail
 
-		  # check for inclusion of OW_config.h
+          # check for inclusion of OW_config.h
 			 if [ ! "$EXECFILE" = "OW_config.h" ] \
 			   && [ ! "$EXECFILE" = "config.h" ] \
 				&& [ ! "$EXECFILE" = "OW_MemTracer.hpp" ];
@@ -307,16 +299,16 @@ EOS
 				fi
 			 fi
 			 echo "."
-		done
+        done
 		  if [ ! "$INCLUSION_FAIL_LIST" = "" ]; then
-			echo "FAIL!  ## The following headers do not include \"OW_config.h\":"
+		    echo "FAIL!  ## The following headers do not include \"OW_config.h\":"
 			 for j in $INCLUSION_FAIL_LIST; do
 			   echo "   ###   $j"
 			 done
 			 ExitWithFail
 		  fi
-		cd ..		   
-		echo 'Header inclusion (one-by-one) passed!' 
+        cd ..           
+        echo 'Header inclusion (one-by-one) passed!' 
 }
 
 Diff()
@@ -324,8 +316,8 @@ Diff()
 	DIFF_FILE1=$1
 	DIFF_FILE2=$2
 	if [ "$NODIFF" = "0" ]; then
-		echo "diff $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
-			$RESULTDIR/$DIFF_FILE2"
+        echo "diff $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
+            $RESULTDIR/$DIFF_FILE2"
 		diff  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
 			 $RESULTDIR/$DIFF_FILE2 || \
 			 ExitWithFail "$3"
@@ -343,18 +335,15 @@ TestSuite()
 
 	RestartDaemon
 
-	URL=$1
-	DIFF_FILE=$2
-	DIFF_FILE2=$3
+    URL=$1
+    DIFF_FILE=$2
+    DIFF_FILE2=$3
 
 	if [ "$TESTMOFDONE" = "0" ]; then
 		TESTMOFDONE=1
 		echo "Importing mof files for test"
 		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
-			ExitWithFail "TestSuite: MOF compiler exited with error."
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
-			$TOPSRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/c++providers/instance/testinstance.mof || \
@@ -385,8 +374,8 @@ TestCIMExceptions()
 
 	RestartDaemon
 
-	URL=$1
-	OUT_FILE=testCIMExceptions.out
+    URL=$1
+    OUT_FILE=testCIMExceptions.out
 
 	echo "Executing test suite, saving output in " $RESULTDIR/$OUT_FILE
 	$BUILDDIR/test/acceptance/progs/testCIMExceptions $URL $RESULTDIR/testCIMExceptions \
@@ -516,75 +505,68 @@ TestAuth()
 	# enable allow_anonymous
 	EditConfig "s!;owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = true!g" 
 	
-	echo "1. Testing Allow Anonymous"
+	echo "Testing Allow Anonymous"
 	StartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
-	[ "$?" = "0" ] || ExitWithFail "1. Allow Anonymous Failed"
+	[ "$?" = "0" ] || ExitWithFail "Allow Anonymous Failed"
 
 	# disable allow_anonymous
 	EditConfig "s!owcimomd.allow_anonymous = true!;owcimomd.allow_anonymous = true!g" 
 
 	# switch from digest to simple
 	EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
-	echo "2. Testing Simple Authentication Module and GetFeatures"
+	echo "Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-		>> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "2" ] || \
-	ExitWithFail "2. Authentication test (simple): fakeclient return wrong code. $RVAL != 2"
+		> $RESULTDIR/AuthTest.out 2>&1
+	[ "$?" = "2" ] || \
+	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 		 >> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "1" ] || \
-	ExitWithFail "3. Authentication test (simple): fakeclient return wrong code. $RVAL != 1"
+	[ "$?" = "1" ] || \
+	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1 
 	RVAL=$?
 	cat $RESULTDIR/GetFeatures.out >> $RESULTDIR/AuthTest.out
 	[ "$RVAL" = "0" ] || \
-	ExitWithFail "4. Authentication test (simple): fakeclient return wrong code. $RVAL != 0"
+	ExitWithFail "Authentication test (simple): fakeclient return wrong code."
 
 	Diff GetFeatures.out GetFeatures.out "Authentication test (simple): Diff failed."
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
 	EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
-	echo "5. Testing Digest Authentication"
+	echo "Testing Digest Authentication"
 	RestartDaemon
 	
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "2" ] || \
-	ExitWithFail "5. Authentication test (digest): fakeclient return wrong code. $RVAL != 2"
+	[ "$?" = "2" ] || \
+	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 		 >> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "1" ] || \
-	ExitWithFail "6. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
+	[ "$?" = "1" ] || \
+	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "1" ] || \
-	ExitWithFail "7. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
+	[ "$?" = "1" ] || \
+	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "0" ] || \
-	ExitWithFail "8. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
+	[ "$?" = "0" ] || \
+	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test2:pass2@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "0" ] || \
-	ExitWithFail "9. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
+	[ "$?" = "0" ] || \
+	ExitWithFail "Authentication test (digest): fakeclient return wrong code."
 
 	Diff GetFeatures.out GetFeatures.out "Authentication test (digest): Diff failed."
 	echo "Digest Authentication passed"
@@ -731,7 +713,6 @@ GatherResults()
 Exit()
 {
 	GatherResults
-	CoreCheck
 	exit $1
 }
 
@@ -756,10 +737,10 @@ fi
 
 SYSNAME=`uname -s`
 if [ $SYSNAME = "Linux" ]; then
-	# allow core file dumps
-	ulimit -c unlimited
-	# turn on symlinks
-	OWSYMLINKS=1
+    # allow core file dumps
+    ulimit -c unlimited
+    # turn on symlinks
+    OWSYMLINKS=1
 fi
 
 STAGEDIR=`pwd`/stage
@@ -801,9 +782,9 @@ TestMultiReq
 
 StopDaemon
 
+TestInstalledHeaders
 
 if [ "$OWLONGTEST" = "1" ]; then
-  TestInstalledHeaders
   TestInstalledHeadersOneByOne
 fi
 

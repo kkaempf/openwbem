@@ -3,7 +3,8 @@ start: Make sure all important changes are committed.
 
 update changelog & TODO
 get a new cvs checkout.
-run make check (with OWLONGTEST=1)
+run make check
+test installed headers one-by-one. (cd test/acceptance; OWTESTLIST='testIndividualHeaders' ./acceptance.sh)
 run make distcheck.  
 	If passes:
 		configure; make; make check on all supported platforms. (with dist

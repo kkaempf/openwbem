@@ -33,10 +33,9 @@
 
 
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Bool.hpp"
 
 /**
  * The OW_CIMOMObjectPath class represents the location of CIM classes and
@@ -294,7 +293,7 @@ public:
 
 private:
 
-	OW_COWReference<OPData> m_pdata;
+	OW_Reference<OPData> m_pdata;
 };
 
 bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs);

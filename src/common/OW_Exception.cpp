@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_StackTrace.hpp"
-#include "OW_Mutex.hpp"
 
 #include <cstring>
 #include <cstdlib>
@@ -136,9 +135,9 @@ OW_Exception::~OW_Exception() throw()
 
 //////////////////////////////////////////////////////////////////////////////					
 OW_Exception&
-OW_Exception::operator=(OW_Exception rhs)
+OW_Exception::operator=( const OW_Exception& rhs )
 {
-	rhs.swap(*this);
+	OW_Exception(rhs).swap(*this);
 	return *this;
 }
 

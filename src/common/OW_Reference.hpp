@@ -32,108 +32,24 @@
 #define OW_REFERENCE_HPP_
 
 #include "OW_config.h"
-#include "OW_RefCount.hpp"
-#ifdef OW_CHECK_NULL_REFERENCES
+#include "OW_MutexLock.hpp"
 #include "OW_Exception.hpp"
-#endif
 
 #ifdef OW_DEBUG
 #include <cassert>
 #endif
-
-
 //////////////////////////////////////////////////////////////////////////////
-template<class T>
-void OW_RefSwap(T& x, T&y)
+
+struct OW_RefCount
 {
-    T t = x;
-    x = y;
-    y = t;
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////
-// This class contains the non-templated code for OW_Reference, to help 
-// minimize code bloat.
-class OW_ReferenceBase
-{
-protected:
-    OW_ReferenceBase()
-        : m_pRefCount(0) {}
-
-    OW_ReferenceBase(const void* ptr)
-        : m_pRefCount((ptr != 0) ? new OW_RefCount : 0) {}
-
-    OW_ReferenceBase(const void* ptr, bool noDelete)
-        : m_pRefCount(0) 
-    {
-        if(ptr != 0 && !noDelete)
-        {
-            m_pRefCount = new OW_RefCount;
-        }
-    }
-
-    OW_ReferenceBase(const OW_ReferenceBase& arg)
-        : m_pRefCount(0)
-    {
-    	if(arg.m_pRefCount)
-    	{
-    		m_pRefCount = arg.m_pRefCount;
-            m_pRefCount->inc();
-    	}
-    }
-
-    void incRef()
-    {
-    	if(m_pRefCount)
-    	{
-            m_pRefCount->inc();
-    	}
-    }
-	
-    bool decRef()
-    {
-    	if(m_pRefCount)
-    	{
-            if (m_pRefCount->decAndTest())
-    		{
-    			delete m_pRefCount;
-    			m_pRefCount = 0;
-                return true;
-    		}
-    	}
-        return false;
-    }
-
-    void swap(OW_ReferenceBase& arg)
-    {
-        OW_RefSwap(m_pRefCount, arg.m_pRefCount);
-    }
-
-    void useRefCountOf(const OW_ReferenceBase& arg)
-    {
-    	if(m_pRefCount)
-    	{
-            if (m_pRefCount->decAndTest())
-    		{
-    			delete m_pRefCount;
-    			m_pRefCount = 0;
-    		}
-    	}
-    	m_pRefCount = arg.m_pRefCount;
-    	incRef();
-    }
-
-protected:
-    OW_RefCount* volatile m_pRefCount;
-
+	OW_RefCount();
+	OW_Mutex m_mutex;
+	unsigned long volatile m_count;
 };
 
-
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-class OW_Reference : private OW_ReferenceBase
+class OW_Reference
 {
 	public:
 
@@ -148,10 +64,14 @@ class OW_Reference : private OW_ReferenceBase
 		OW_Reference(const OW_Reference<U>& arg);
 
 		~OW_Reference();
-		OW_Reference<T>& operator= (OW_Reference<T> arg);
-		OW_Reference<T>& operator= (T* newObj);
-        void swap(OW_Reference<T>& arg);
 
+		void incRef();
+		void decRef();
+
+		OW_MutexLock getWriteLock();
+
+		OW_Reference<T>& operator= (const OW_Reference<T> arg);
+		OW_Reference<T>& operator= (T* newObj);
 		T* operator->() const;
 		T& operator*() const;
 		T* getPtr() const;
@@ -178,9 +98,8 @@ class OW_Reference : private OW_ReferenceBase
 		void useRefCountOf(const OW_Reference<U>&);
 
 	private:
-		void decRef();
-
 		T* volatile m_pObj;
+		OW_RefCount* volatile m_pRefCount;
 		/* This is so the templated constructor will work */
 		template <class U> friend class OW_Reference;
 
@@ -191,39 +110,61 @@ class OW_Reference : private OW_ReferenceBase
 
 
 //////////////////////////////////////////////////////////////////////////////
+inline OW_RefCount::OW_RefCount()
+	: m_mutex(), m_count(1L)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference()
-	: OW_ReferenceBase(), m_pObj(0)
+	: m_pObj(0), m_pRefCount(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(T* ptr)
-	: OW_ReferenceBase(ptr), m_pObj(ptr)
+	: m_pObj(ptr), m_pRefCount((ptr != 0) ? new OW_RefCount : 0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(T* ptr, bool noDelete)
-	: OW_ReferenceBase(ptr, noDelete), m_pObj(ptr)
+	: m_pObj(ptr), m_pRefCount(0)
 {
+	if(ptr != 0 && !noDelete)
+	{
+		m_pRefCount = new OW_RefCount;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline OW_Reference<T>::OW_Reference(const OW_Reference<T>& arg)
-	: OW_ReferenceBase(arg), m_pObj(arg.m_pObj)
+	: m_pObj(arg.m_pObj), m_pRefCount(0)
 {
+	if(arg.m_pRefCount)
+	{
+		m_pRefCount = arg.m_pRefCount;
+		OW_MutexLock ml(m_pRefCount->m_mutex);
+		++(m_pRefCount->m_count);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 template<class U>
 inline OW_Reference<T>::OW_Reference(const OW_Reference<U>& arg)
-	: OW_ReferenceBase(arg), m_pObj(arg.m_pObj)
+	: m_pObj(arg.m_pObj), m_pRefCount(0)
 {
+	if(arg.m_pRefCount)
+	{
+		m_pRefCount = arg.m_pRefCount;
+		OW_MutexLock ml(m_pRefCount->m_mutex);
+		++(m_pRefCount->m_count);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -242,21 +183,71 @@ inline OW_Reference<T>::~OW_Reference()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
+inline void OW_Reference<T>::incRef()
+{
+	if(m_pRefCount)
+	{
+		OW_MutexLock l(m_pRefCount->m_mutex);
+		++(m_pRefCount->m_count);
+	}
+}
+	
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
 inline void OW_Reference<T>::decRef()
 {
 	typedef char type_must_be_complete[sizeof(T)];
-    if (OW_ReferenceBase::decRef())
-    {
-        delete m_pObj;
-        m_pObj = 0;
-    }
+	if(m_pRefCount)
+	{
+		OW_MutexLock l(m_pRefCount->m_mutex);
+		if(m_pRefCount->m_count == 1)
+		{
+			l.release();
+			delete m_pRefCount;
+			m_pRefCount = 0;
+			delete m_pObj;
+			m_pObj = 0;
+		}
+		else
+		{
+			--(m_pRefCount->m_count);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>& OW_Reference<T>::operator= (OW_Reference<T> arg)
+inline OW_MutexLock OW_Reference<T>::getWriteLock()
 {
-    arg.swap(*this);
+	if(!m_pRefCount)
+	{
+		OW_THROW(OW_Exception, "writeLock not allowed on non-delete "
+				"or NULL object");
+	}
+
+	OW_MutexLock l(m_pRefCount->m_mutex);
+	if(m_pRefCount->m_count > 1)
+	{
+		--(m_pRefCount->m_count);
+		m_pObj = new T(*m_pObj);
+		m_pRefCount = new OW_RefCount;
+	}
+
+	return l;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
+{
+	if(arg.m_pRefCount != m_pRefCount
+			|| (arg.m_pRefCount == 0 && m_pRefCount == 0))
+	{
+		decRef();
+		m_pObj = arg.m_pObj;
+		m_pRefCount = arg.m_pRefCount;
+		incRef();
+	}
 	return *this;
 }
 
@@ -264,16 +255,13 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (OW_Reference<T> arg)
 template<class T>
 inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 {
-    OW_Reference<T>(newObj).swap(*this);
+	if(newObj != m_pObj)
+	{
+		decRef();
+		m_pObj = newObj;
+		m_pRefCount = new OW_RefCount;
+	}
 	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-template <class T>
-inline void OW_Reference<T>::swap(OW_Reference<T>& arg)
-{
-    OW_ReferenceBase::swap(arg);
-    OW_RefSwap(m_pObj, arg.m_pObj);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -323,6 +311,8 @@ inline void OW_Reference<T>::checkNull() const
 		assert(0); // segfault so we can get a core
 #endif
 		OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
+		//throw OW_Exception(__FILE__, __LINE__,
+			//"NULL OW_Reference dereferenced");
 	}
 }
 #endif
@@ -334,7 +324,7 @@ OW_Reference<T>::cast_to()
 {
 	incRef();
 	OW_Reference<U> rval;
-	rval.m_pObj = dynamic_cast<U*>(m_pObj);
+	rval.m_pObj = reinterpret_cast<U*>(m_pObj);
 	rval.m_pRefCount = m_pRefCount;
 	return rval;
 }
@@ -344,7 +334,22 @@ template <class U>
 inline void
 OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
 {
-    OW_ReferenceBase::useRefCountOf(arg);
+	if(m_pRefCount)
+	{
+		OW_MutexLock l(m_pRefCount->m_mutex);
+		if(m_pRefCount->m_count == 1)
+		{
+			l.release();
+			delete m_pRefCount;
+			m_pRefCount = 0;
+		}
+		else
+		{
+			--(m_pRefCount->m_count);
+		}
+	}
+	m_pRefCount = arg.m_pRefCount;
+	incRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////

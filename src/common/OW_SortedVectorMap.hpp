@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -88,7 +88,7 @@ class OW_SortedVectorMap
 	typedef std::pair<Key, T> Data;
 
 	typedef std::vector<Data> container_t;
-	OW_COWReference<container_t> m_impl;
+	OW_Reference<container_t> m_impl;
 
 public:
 	typedef          Key key_type;
@@ -107,6 +107,10 @@ public:
 	typedef typename container_t::difference_type difference_type;
 
 	OW_SortedVectorMap() : m_impl(new container_t) {  }
+	OW_SortedVectorMap(const OW_SortedVectorMap<Key, T, Compare>& arg) : m_impl(arg.m_impl)
+		{ }
+
+	~OW_SortedVectorMap() {  }
 
 	explicit OW_SortedVectorMap(container_t* toWrap) : m_impl(toWrap)
 		{ }
@@ -165,6 +169,8 @@ public:
 
 	data_type& operator[](const key_type& k) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
+
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), k, Compare());
 		if (i != m_impl->end() && i->first == k)
 		{
@@ -175,11 +181,14 @@ public:
 
 	void swap(OW_SortedVectorMap<Key, T, Compare>& x) /*throw (std::exception)*/
 	{
-		m_impl.swap(x.m_impl);
+		OW_MutexLock lock = m_impl.getWriteLock();
+		m_impl->swap(*x.m_impl);
 	}
 
 	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
+
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (i != m_impl->end() && i->first == x.first)
 		{
@@ -193,6 +202,8 @@ public:
 
 	iterator insert(iterator, const value_type& x) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
+
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		
 		return m_impl->insert(i, x);
@@ -201,6 +212,8 @@ public:
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
+
 		for (; first != last; ++first)
 		{
 			m_impl->push_back(*first);
@@ -210,11 +223,13 @@ public:
 
 	void erase(iterator position) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
 		m_impl->erase(position);
 	}
 
 	size_type erase(const key_type& x) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (i != m_impl->end() && i->first == x)
 		{
@@ -229,11 +244,13 @@ public:
 
 	void erase(iterator first, iterator last) /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
 		m_impl->erase(first, last);
 	}
 
 	void clear() /*throw (std::exception)*/
 	{
+		OW_MutexLock lock = m_impl.getWriteLock();
 		m_impl->clear();
 	}
 

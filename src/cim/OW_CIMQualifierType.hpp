@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
 
@@ -229,7 +229,7 @@ public:
 
 private:
 
-	OW_COWReference<QUALTData> m_pdata;
+	OW_Reference<QUALTData> m_pdata;
 };
 
 #endif	// __OW_CIMQUALIFIERTYPE_HPP__

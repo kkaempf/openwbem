@@ -68,8 +68,6 @@ OW_SocketUtils::inetAddrToString(OW_UInt64 addr)
 	#define OW_MAX(A,B) (((A) > (B))? (A): (B))
 #endif
 //////////////////////////////////////////////////////////////////////////////
-typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
-
 int
 OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 /*throw (OW_SocketException)*/
@@ -77,16 +75,16 @@ OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInpu
 	fd_set readfds;
 	fd_set writefds;
 	int rc;
-	struct timeval *ptimeval = 0;
+	struct timeval *ptimeval = NULL;
 	struct timeval timeout;
 
-	OW_PosixUnnamedPipeRef lUPipe;
+	OW_PosixUnnamedPipe* lUPipe = NULL;
 
 	int pipefd = 0;
 
 	if (OW_Socket::m_pUpipe)
 	{
-		lUPipe = OW_Socket::m_pUpipe.cast_to<OW_PosixUnnamedPipe>();
+		lUPipe = dynamic_cast<OW_PosixUnnamedPipe*>(OW_Socket::m_pUpipe.getPtr());
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
 		

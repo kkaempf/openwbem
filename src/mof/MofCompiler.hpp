@@ -38,9 +38,6 @@
 #include "OW_Reference.hpp"
 #include "Grammar.h"
 
-struct yy_buffer_state;
-typedef struct yy_buffer_state *YY_BUFFER_STATE;
-
 class MofCompiler
 {
 public:
@@ -48,28 +45,16 @@ public:
 	~MofCompiler();
 
 	long compile( const OW_String& filename );
-	long compileString( const OW_String& mof );
 
 	static OW_String fixParsedString(const OW_String& s);
-	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
-	OW_AutoPtr<MOFSpecification> mofSpecification;
-	OW_String basepath;
+	static OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
+	static OW_AutoPtr<MOFSpecification> mofSpecification;
+	static OW_String basepath;
 
 	// This variable is only for convenience for the lexer and parser.
 	// After parsing is complete, it should not be used.  The filename and
 	// line numbers are stored in the AST.
-	lineInfo theLineInfo;
-
-	// Needed by the code to implement includes
-#define MAX_INCLUDE_DEPTH 10
-	struct include_t
-	{
-		YY_BUFFER_STATE yyBufferState;
-		lineInfo theLineInfo;
-	};
-
-	include_t include_stack[MAX_INCLUDE_DEPTH];
-	int include_stack_ptr;
+	static lineInfo theLineInfo;
 
 private:
 	OW_Reference<OW_CIMOMHandleIFC> m_ch;

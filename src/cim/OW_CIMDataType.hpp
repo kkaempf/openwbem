@@ -32,7 +32,7 @@
 
 #include "OW_config.h"
 #include "OW_Bool.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_CIMBase.hpp"
 #include <iosfwd>
 
@@ -249,7 +249,7 @@ public:
 
 private:
 
-	OW_COWReference<DTData> m_pdata;
+	OW_Reference<DTData> m_pdata;
 
 	friend bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y);
 };
