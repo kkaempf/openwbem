@@ -16,7 +16,6 @@ SHAREDLIBADD = \
 
 thelibdir = $(pkglibdir)/provifcs
 
-#OW_CMPIPolledProviderProxy.cpp  \
 #OW_CMPIIndicationProviderProxy.cpp
 
 if DISABLE_ASSOCIATION_TRAVERSAL
@@ -33,7 +32,6 @@ OW_CMPIInstanceProviderProxy.cpp \
 OW_CMPIInstanceProviderProxy.hpp \
 OW_CMPIMethodProviderProxy.cpp  \
 OW_CMPIMethodProviderProxy.hpp  \
-OW_CMPIPolledProviderProxy.hpp  \
 OW_CMPIIndicationProviderProxy.cpp \
 OW_CMPIIndicationProviderProxy.hpp \
 OW_CMPIProviderIFC.cpp \
