@@ -43,6 +43,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 CMPIMethodProviderProxy::CMPIMethodProviderProxy(const CMPIFTABLERef& f)
 	: m_ftable(f)
@@ -60,7 +65,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const String &methodName,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIMethodProviderProxy::invokeMethod()");
 
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)

@@ -45,6 +45,11 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RemoteAssociatorProvider::RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 	bool alwaysSendCredentials, bool useConnectionCredentials)
@@ -63,17 +68,17 @@ RemoteAssociatorProvider::~RemoteAssociatorProvider()
 //////////////////////////////////////////////////////////////////////////////
 void
 RemoteAssociatorProvider::references(
-	const ProviderEnvironmentIFCRef &env, 
-	CIMInstanceResultHandlerIFC &result, 
-	const String &ns, 
-	const CIMObjectPath &objectName, 
-	const String &resultClass, 
-	const String &role, 
-	EIncludeQualifiersFlag includeQualifiers, 
-	EIncludeClassOriginFlag includeClassOrigin, 
+	const ProviderEnvironmentIFCRef &env,
+	CIMInstanceResultHandlerIFC &result,
+	const String &ns,
+	const CIMObjectPath &objectName,
+	const String &resultClass,
+	const String &role,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteAssociatorProvider::references ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -109,12 +114,12 @@ RemoteAssociatorProvider::references(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
-	const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
+RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName,
+	const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
 	WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList)
 {
-	LoggerRef lgr = env->getLogger();
-	lgr->logDebug(Format("RemoteAssociatorProvider::associators ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6", 
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	lgr->logDebug(Format("RemoteAssociatorProvider::associators ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
 		ns, objectName, assocClass, resultClass, role, resultRole));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -149,11 +154,11 @@ RemoteAssociatorProvider::associators(const ProviderEnvironmentIFCRef &env, CIMI
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
+RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName,
 	const String &assocClass, const String &resultClass, const String &role, const String &resultRole)
 {
-	LoggerRef lgr = env->getLogger();
-	lgr->logDebug(Format("RemoteAssociatorProvider::associatorNames ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6", 
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
+	lgr->logDebug(Format("RemoteAssociatorProvider::associatorNames ns = %1, objectName = %2, assocClass = %3, resultClass = %4, role = %5, resultRole = %6",
 		ns, objectName, assocClass, resultClass, role, resultRole));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -187,10 +192,10 @@ RemoteAssociatorProvider::associatorNames(const ProviderEnvironmentIFCRef &env, 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, 
+RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, CIMObjectPathResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName,
 	const String &resultClass, const String &role)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteAssociatorProvider::referenceNames ns = %1, objectName = %2, resultClass = %3, role = %4", ns, objectName, resultClass, role));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

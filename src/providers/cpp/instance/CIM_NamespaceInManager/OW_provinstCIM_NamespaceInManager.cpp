@@ -49,6 +49,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.CIM_NamespaceInManager");
+}
+
 using namespace WBEMFlags;
 
 class CIM_NamespaceInManagerInstProv :
@@ -76,7 +81,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
@@ -102,15 +107,15 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
 		CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
@@ -137,12 +142,12 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		try
 		{
@@ -216,7 +221,7 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associator provider functions.
-	virtual void getAssociatorProviderInfo(AssociatorProviderInfo &info) 
+	virtual void getAssociatorProviderInfo(AssociatorProviderInfo &info)
 	{
 		info.addInstrumentedClass("CIM_NamespaceInManager");
 	}
@@ -236,16 +241,16 @@ public:
 		String ns;
 	};
 	virtual void associatorNames(
-		const ProviderEnvironmentIFCRef &env, 
-		CIMObjectPathResultHandlerIFC &result, 
-		const String &ns, 
-		const CIMObjectPath &objectName, 
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC &result,
+		const String &ns,
+		const CIMObjectPath &objectName,
 		const String &assocClass,
-		const String &resultClass, 
-		const String &role, 
-		const String &resultRole) 
+		const String &resultClass,
+		const String &role,
+		const String &resultRole)
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::associatorNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::associatorNames");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
@@ -253,14 +258,14 @@ public:
 		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
 	virtual void referenceNames(
-		const ProviderEnvironmentIFCRef &env, 
-		CIMObjectPathResultHandlerIFC &result, 
-		const String &ns, 
-		const CIMObjectPath &objectName, 
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC &result,
+		const String &ns,
+		const CIMObjectPath &objectName,
 		const String &resultClass,
-		const String &role) 
+		const String &role)
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::referenceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::referenceNames");
 		
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
@@ -319,23 +324,23 @@ public:
 		const StringArray* propertyList;
 	};
 	virtual void associators(
-		const ProviderEnvironmentIFCRef &env, 
-		CIMInstanceResultHandlerIFC &result, 
-		const String &ns, 
-		const CIMObjectPath &objectName, 
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC &result,
+		const String &ns,
+		const CIMObjectPath &objectName,
 		const String &assocClass,
-		const String &resultClass, 
-		const String &role, 
-		const String &resultRole, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList) 
+		const String &resultClass,
+		const String &role,
+		const String &resultRole,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList)
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::associators");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::associators");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager") 
+		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager")
 			|| objectName.getClassName().equalsIgnoreCase("CIM_ObjectManager"))
 		{
 			if (!role.empty() && !role.equalsIgnoreCase("Antecedent"))
@@ -388,17 +393,17 @@ public:
 		CIMInstanceResultHandlerIFC& result;
 	};
 	virtual void references(
-		const ProviderEnvironmentIFCRef &env, 
-		CIMInstanceResultHandlerIFC &result, 
-		const String &ns, 
-		const CIMObjectPath &objectName, 
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC &result,
+		const String &ns,
+		const CIMObjectPath &objectName,
 		const String &resultClass,
-		const String &role, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList) 
+		const String &role,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList)
 	{
-		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::references");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_NamespaceInManagerInstProv::references");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));

@@ -53,6 +53,11 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RemoteSecondaryInstanceProvider::RemoteSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 	bool alwaysSendCredentials, bool useConnectionCredentials)
@@ -70,11 +75,11 @@ RemoteSecondaryInstanceProvider::~RemoteSecondaryInstanceProvider()
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-void 
-RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, 
+void
+RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance,
 	const CIMInstance &previousInstance, EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteSecondaryInstanceProvider::modifyInstance ns = %1, modifiedInstance = %2", ns, modifiedInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -105,7 +110,7 @@ RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef 
 void
 RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteSecondaryInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -135,14 +140,14 @@ RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef 
 
 //////////////////////////////////////////////////////////////////////////////
 void
-RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, 
-	ELocalOnlyFlag localOnly, 
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
-	EIncludeClassOriginFlag includeClassOrigin, 
+RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances,
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteSecondaryInstanceProvider::filterInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -206,7 +211,7 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 void
 RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteSecondaryInstanceProvider::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

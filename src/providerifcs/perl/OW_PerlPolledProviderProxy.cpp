@@ -42,8 +42,13 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.perlnpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-PerlPolledProviderProxy::~PerlPolledProviderProxy() 
+PerlPolledProviderProxy::~PerlPolledProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -51,14 +56,14 @@ Int32
 PerlPolledProviderProxy::getInitialPollingInterval(
 	  const ProviderEnvironmentIFCRef& env)
 {
-		env->getLogger()->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
+		env->getLogger(COMPONENT_NAME)->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
 PerlPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
 	CIMValue rval(CIMNULL);
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("PerlPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{

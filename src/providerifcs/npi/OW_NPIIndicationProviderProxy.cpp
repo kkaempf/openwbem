@@ -38,22 +38,27 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 void
 NPIIndicationProviderProxy::deActivateFilter(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
 	const String& nameSpace,
 	const StringArray& classes)
 {
 	bool lastActivation = (--m_activationCount == 0);
-	env->getLogger()->logDebug("deactivateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		env->getLogger()->logDebug("deactivateFilter");
+		env->getLogger(COMPONENT_NAME)->logDebug("deactivateFilter");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);
@@ -74,17 +79,17 @@ NPIIndicationProviderProxy::deActivateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 NPIIndicationProviderProxy::activateFilter(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
 	const String& nameSpace,
 	const StringArray& classes)
 {
 	bool firstActivation = (m_activationCount++ == 0);
-	env->getLogger()->logDebug("activateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-		env->getLogger()->logDebug("activateFilter2");
+		env->getLogger(COMPONENT_NAME)->logDebug("activateFilter2");
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
@@ -108,19 +113,19 @@ NPIIndicationProviderProxy::activateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 NPIIndicationProviderProxy::authorizeFilter(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
 	const String& nameSpace,
-	const StringArray& classes, 
+	const StringArray& classes,
 	const String &owner)
 {
-	env->getLogger()->logDebug("authorizeFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		env->getLogger()->logDebug("authorizeFilter2");
+		env->getLogger(COMPONENT_NAME)->logDebug("authorizeFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);
@@ -142,18 +147,18 @@ NPIIndicationProviderProxy::authorizeFilter(
 /////////////////////////////////////////////////////////////////////////////
 int
 NPIIndicationProviderProxy::mustPoll(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
 	const String& nameSpace,
 	const StringArray& classes)
 {
-	env->getLogger()->logDebug("mustPoll");
+	env->getLogger(COMPONENT_NAME)->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
 			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		env->getLogger()->logDebug("mustPoll2");
+		env->getLogger(COMPONENT_NAME)->logDebug("mustPoll2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		WQLSelectStatement mutableFilter(filter);
@@ -172,7 +177,7 @@ NPIIndicationProviderProxy::mustPoll(
 		}
 		// NPI providers only return 0 or 1 for mustPoll.
 		// OpenWBEM expects mustPoll to return the polling interval,
-		// so we'll return a reasonable polling interval (5 mins.)  
+		// so we'll return a reasonable polling interval (5 mins.)
 		if (rval > 0)
 		{
 			return 5 * 60;

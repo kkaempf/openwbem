@@ -46,6 +46,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.CppIndicationExportXMLHTTP");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 CppIndicationExportXMLHTTPProvider::CppIndicationExportXMLHTTPProvider()
 	: m_cancelled(false)
@@ -66,7 +71,7 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 	const CIMInstance &indHandlerInst,
 	const CIMInstance &indicationInst)
 {
-	LoggerRef logger = env->getLogger();
+	LoggerRef logger = env->getLogger(COMPONENT_NAME);
 	if (logger->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		logger->logDebug(Format("CppIndicationExportXMLHTTPProvider "
@@ -120,7 +125,7 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 	rv.append("CIM_IndicationHandlerXMLHTTPS"); // used by OW 2.0 for HTTPS indications
 	rv.append("CIM_IndicationHandlerCIMXML"); // new name in the 2.6 schema
 	// new in the 2.8 schema
-	rv.append("CIM_ListenerDestinationCIMXML"); 
+	rv.append("CIM_ListenerDestinationCIMXML");
 
 	return rv;
 }

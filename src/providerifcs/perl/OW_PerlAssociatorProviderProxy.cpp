@@ -38,6 +38,11 @@ namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.perlnpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 void
 PerlAssociatorProviderProxy::associatorNames(
@@ -50,7 +55,7 @@ PerlAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("PerlAssociatorProviderProxy::associatorNames()");
 	if (m_ftable->fp_associatorNames != NULL)
 	{
@@ -105,7 +110,7 @@ PerlAssociatorProviderProxy::associators(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("PerlAssociatorProviderProxy::associators()");
 	if (m_ftable->fp_associators != NULL)
 	{
@@ -148,7 +153,7 @@ PerlAssociatorProviderProxy::associators(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(Format("PerlAssociatorProviderProxy::"
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("PerlAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -162,7 +167,7 @@ PerlAssociatorProviderProxy::associators(
 			// result.handle(ow_inst);
 			//
 			// we clone our instance to set the property list & includequalifier stuff
-			// 
+			//
 			result.handle( ow_inst.clone(localOnly,includeQualifiers,
 				includeClassOrigin,propertyList) );
 		}
@@ -185,7 +190,7 @@ PerlAssociatorProviderProxy::references(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger()->logDebug("PerlAssociatorProviderProxy::references()");
+	env->getLogger(COMPONENT_NAME)->logDebug("PerlAssociatorProviderProxy::references()");
 	if (m_ftable->fp_references != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -225,7 +230,7 @@ PerlAssociatorProviderProxy::references(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(Format("PerlAssociatorProviderProxy::"
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("PerlAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		//we need  a localOnly flag here
 		//as local_only cannot be specified in associators calls we assume 'NO'
@@ -239,7 +244,7 @@ PerlAssociatorProviderProxy::references(
 			// result.handle(ow_inst);
 			//
 			// we clone our instance to set the property list & includequalifier stuff
-			// 
+			//
 			result.handle( ow_inst.clone(localOnly,includeQualifiers,
 				includeClassOrigin,propertyList) );
 		}
@@ -259,7 +264,7 @@ PerlAssociatorProviderProxy::referenceNames(
 		const String& resultClass,
 		const String& role)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("PerlAssociatorProviderProxy::referenceNames()");
 	if (m_ftable->fp_referenceNames != NULL)
 	{

@@ -12,7 +12,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIBroker up-call support
@@ -27,15 +27,21 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ResultHandlers.hpp"
+#include "OW_String.hpp"
 
 using namespace OpenWBEM::WBEMFlags;
 using OpenWBEM::Format;
 //extern int traceAdapter;
 
+namespace
+{
+	const OpenWBEM::String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
 #define CM_CIMOM() \
 (* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getCIMOMHandle()
 #define CM_LOGGER() \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger()
+(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger(COMPONENT_NAME)
 #define CM_Context(ctx) (((CMPI_Context*)ctx)->ctx)
 #define CM_Instance(ci) ((OpenWBEM::CIMInstance*)ci->hdl)
 #define CM_ObjectPath(cop) ((OpenWBEM::CIMObjectPath*)cop->hdl)
@@ -85,8 +91,8 @@ OpenWBEM::CIMClass* mbGetClass(CMPIBroker *, const OpenWBEM::CIMObjectPath &cop)
 		OpenWBEM::CIMClass cc=CM_CIMOM()->getClass(
 			cop.getNameSpace(),
 			cop.getClassName(),
-			E_NOT_LOCAL_ONLY, 
-			E_INCLUDE_QUALIFIERS, 
+			E_NOT_LOCAL_ONLY,
+			E_INCLUDE_QUALIFIERS,
 			E_EXCLUDE_CLASS_ORIGIN);
 
 		return new OpenWBEM::CIMClass(cc);

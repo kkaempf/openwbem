@@ -56,6 +56,11 @@ using std::endl;
 using namespace OpenWBEM;
 using namespace WBEMFlags;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.test.TestInstance");
+}
+
 
 struct TestInstanceData
 {
@@ -100,9 +105,9 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
@@ -129,9 +134,9 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
 		String al = procAcceptLanguage(env);
@@ -150,7 +155,7 @@ public:
 				break;
 			}
 		}
-		return rval.clone(localOnly, includeQualifiers, includeClassOrigin, 
+		return rval.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);
 	}
 
@@ -195,7 +200,7 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		env->getLogger()->logDebug("TestInstance::modifyInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::modifyInstance");
 		String name;
 		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
@@ -238,13 +243,13 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	String 
+	String
 	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger()->logDebug("TestInstance::procAcceptLanguage");
+		env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage");
 
 		String al;
-		OperationContext::DataRef dataRef = 
+		OperationContext::DataRef dataRef =
 			env->getOperationContext().getData(SESSION_LANGUAGE_KEY);
 
 		if (dataRef)
@@ -254,22 +259,22 @@ public:
 			{
 				al = slref->getAcceptLanguageString();
 				slref->addContentLanguage("x-testinst");
-				env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+				env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
 					" setting content-language in SessionLanguage object");
 				String cl = slref->getContentLanguage();
-				env->getLogger()->logDebug(Format(
+				env->getLogger(COMPONENT_NAME)->logDebug(Format(
 					"TestInstance::procAcceptLanguage content-language"
 					" now is %1", cl).c_str());
 			}
 			else
 			{
-				env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+				env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
 					" didn't find SessionLanguage object in opctx");
 			}
 		}
 		else
 		{
-			env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
+			env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
 				" didn't find SESSION_LANGUAGE_KEY in opctx");
 		}
 

@@ -41,6 +41,11 @@
 
 using namespace OpenWBEM;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.test");
+}
+
 void OW_LinuxSharedLibraryLoaderTestCases::setUp()
 {
 }
@@ -54,7 +59,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::testLoadLibrary()
 	// TODO: rename this to be generic
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
-			"../../src/common/libopenwbem"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
+			"../../src/common/libopenwbem"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger(COMPONENT_NAME));
 	unitAssert( lib );
 }
 
@@ -62,7 +67,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer()
 {
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
-			"../../src/cimom/server/libowserver"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());
+			"../../src/cimom/server/libowserver"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger(COMPONENT_NAME));
 	unitAssert( lib );
 /*
 	SharedLibraryLoaderRef (*createFunc)();

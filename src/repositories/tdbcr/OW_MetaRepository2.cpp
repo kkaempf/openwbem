@@ -517,9 +517,9 @@ MetaRepository2::createNameSpace(String ns, OperationContext& context)
 			ns.c_str());
 	}
 	m_namespaces.put(ns, std::vector<unsigned char>(), txn);
-	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
+	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger()->logDebug(Format("CIMRepository created namespace: %1", ns));
+		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository created namespace: %1", ns));
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

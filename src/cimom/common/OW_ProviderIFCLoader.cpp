@@ -44,25 +44,30 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+const String COMPONENT_NAME("ow.owcimomd.ProviderIFCLoader");
+}
 ///////////////////////////////////////////////////////////////////////////////
 ProviderIFCBaseIFCRef
 ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const String& libname) const
 {
-	m_env->getLogger()->logDebug(Format(
+	LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
+	lgr->logDebug(Format(
 		"ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
-		m_env->getLogger());
+		lgr);
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
 	{
 		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl,
-				"createProviderIFC", m_env->getLogger());
+				"createProviderIFC", lgr);
 	}
 	else
 	{
-		m_env->getLogger()->logDebug(Format("ProviderIFCBaseIFCLoaderBase::"
+		lgr->logDebug(Format("ProviderIFCBaseIFCLoaderBase::"
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
 	ProviderIFCBaseIFCRef retval(sl, ptr);
@@ -74,13 +79,14 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	ServiceEnvironmentIFCRef env = getEnvironment();
 	String libdir = env->getConfigItem(
 		ConfigOpts::PROVIDER_IFC_LIBS_opt);
-	env->getLogger()->logDebug(Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
+	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
+	lgr->logDebug(Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
 		" interfaces from: %1", libdir));
 	StringArray libs;
 	FileSystem::getDirectoryContents(libdir, libs);
 	if (libs.size() == 0)
 	{
-		env->getLogger()->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
+		lgr->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
 			" provider interfaces");
 		return;
 	}
@@ -109,16 +115,16 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			}
 			else
 			{
-				env->getLogger()->logError(Format("Unable to load ProviderIFC library %1",
+				lgr->logError(Format("Unable to load ProviderIFC library %1",
 					libs[i]));
 			}
 		}
 		catch (const Exception& e)
 		{
-			env->getLogger()->logError(Format("Caught exception: \"%1\" while loading library: %2", e, libs[i])); 
+			lgr->logError(Format("Caught exception: \"%1\" while loading library: %2", e, libs[i]));
 		}
 	}
-	env->getLogger()->logDebug(Format("Number of provider interfaces loaded: %1",
+	lgr->logDebug(Format("Number of provider interfaces loaded: %1",
 		ifcCount));
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -130,7 +136,7 @@ ProviderIFCLoader::createProviderIFCLoader(ServiceEnvironmentIFCRef env)
 		SharedLibraryLoader::createSharedLibraryLoader(), env));
 }
 //////////////////////////////////////////////////////////////////////////////
-ProviderIFCLoaderBase::~ProviderIFCLoaderBase() 
+ProviderIFCLoaderBase::~ProviderIFCLoaderBase()
 {
 }
 //////////////////////////////////////////////////////////////////////////////

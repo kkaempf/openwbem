@@ -65,9 +65,11 @@ using namespace WBEMFlags;
 namespace
 {
 
-// This is an example/test of a simple instance/indication provider.  It 
+const String COMPONENT_NAME("ow.test.IndicationProviderTest2");
+
+// This is an example/test of a simple instance/indication provider.  It
 // doesn't implement mustPoll.  The CIMOM will call the *Filter methods.
-// We'll start up a separate thread to "watch" the instances we are 
+// We'll start up a separate thread to "watch" the instances we are
 // instrumenting.  Really, we'll just change them once a second, so this
 // provider has something to do.  A real indication provider should only
 // use this model if it can block and wait for some sort of notification
@@ -86,7 +88,7 @@ class IndicationProviderTest2;
 class TestProviderThread : public Thread
 {
 public:
-	// joinable, so we can wait for it to stop before the library gets 
+	// joinable, so we can wait for it to stop before the library gets
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
@@ -178,19 +180,19 @@ public:
 	// Indication provider methods
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool firstActivation)
 	{
-		env->getLogger()->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// create the thread now that someone is listening for our events.
 		if (m_threadStarted == false && !m_thread)
 		{
-			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter creating helper thread");
+			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::activateFilter creating helper thread");
 			m_thread = new TestProviderThread(this);
 		}
 		// eventType contains the name of the indication the listener subscribed to.
@@ -234,7 +236,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (m_threadStarted == false)
 		{
-			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
+			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -242,24 +244,24 @@ public:
 	
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool lastActivation)
 	{
-		env->getLogger()->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation && m_thread && m_threadStarted == true)
 		{
-			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
+			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
 			m_threadStarted = false;
-			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
+			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
 			return;
 		}
 
@@ -317,10 +319,10 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getIndicationProviderInfo(IndicationProviderInfo& info) 
+	virtual void getIndicationProviderInfo(IndicationProviderInfo& info)
 	{
 		// Add the class(es) we are monitoring for lifecycle indications.
-		const char* theMonitoredClasses[] = 
+		const char* theMonitoredClasses[] =
 			{
 				"OW_IndicationProviderTest2",
 				0
@@ -367,22 +369,22 @@ public:
 		OW_THROWCIMMSG(CIMException::FAILED, "Delete not supported");
 	}
 
-	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &) 
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Create not supported");
 	}
 	
 	virtual CIMInstance getInstance(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const CIMObjectPath &instanceName, 
-		ELocalOnlyFlag localOnly, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const CIMObjectPath &instanceName,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -403,19 +405,19 @@ public:
 	}
 
 	virtual void enumInstances(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMInstanceResultHandlerIFC &result, 
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &requestedClass, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMInstanceResultHandlerIFC &result,
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &requestedClass,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -425,13 +427,13 @@ public:
 	}
 	
 	virtual void enumInstanceNames(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMObjectPathResultHandlerIFC &result, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMObjectPathResultHandlerIFC &result,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -454,12 +456,12 @@ public:
 
 	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::initialize - creating the thread");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
 	}
 
-	void do_cleanup() 
+	void do_cleanup()
 	{
 		using std::cout;
 		using std::endl;

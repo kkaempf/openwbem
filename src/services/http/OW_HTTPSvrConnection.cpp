@@ -70,25 +70,31 @@ using std::ios;
 using std::istream;
 using std::ostream;
 using std::flush;
+
+namespace
+{
+	const String COMPONENT_NAME("ow.httpserver");
+}
+
 #ifndef OW_LOGDEBUG
-#define OW_LOGDEBUG(x) m_options.env->getLogger()->logDebug(x)
+#define OW_LOGDEBUG(x) m_options.env->getLogger(COMPONENT_NAME)->logDebug(x)
 #endif
 #ifndef OW_LOGERROR
-#define OW_LOGERROR(x) m_options.env->getLogger()->logError(x)
+#define OW_LOGERROR(x) m_options.env->getLogger(COMPONENT_NAME)->logError(x)
 #endif
 #ifndef OW_LOGCUSTINFO
-#define OW_LOGCUSTINFO(x) m_options.env->getLogger()->logInfo(x)
+#define OW_LOGCUSTINFO(x) m_options.env->getLogger(COMPONENT_NAME)->logInfo(x)
 #endif
 #ifndef OW_LOGFATALERROR
-#define OW_LOGFATALERROR(x) m_options.env->getLogger()->logFatalError(x)
+#define OW_LOGFATALERROR(x) m_options.env->getLogger(COMPONENT_NAME)->logFatalError(x)
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
 #ifdef OW_WIN32
 HTTPSvrConnection::HTTPSvrConnection(
-	const Socket& socket, 
+	const Socket& socket,
 	HTTPServer* htin,
-	HANDLE eventArg, 
+	HANDLE eventArg,
 	const HTTPServer::Options& opts)
 #else
 HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
@@ -970,7 +976,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 	{
 		if (getHeaderValue(HTTPUtils::Header_BypassLocker) == HTTPUtils::HeaderValue_true)
 		{
-			context.setStringData(OperationContext::BYPASS_LOCKERKEY, "true"); 
+			context.setStringData(OperationContext::BYPASS_LOCKERKEY, "true");
 		}
 	}
 
@@ -1239,7 +1245,7 @@ HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 HTTPSvrConnection::getContentLanguage(OperationContext& context,
 	bool& setByProvider, bool& clientSpecified)
 {

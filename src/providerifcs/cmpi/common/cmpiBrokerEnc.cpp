@@ -12,7 +12,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIBroker Encapsulated type factory support
@@ -25,8 +25,13 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
+namespace
+{
+	const OpenWBEM::String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
 #define CM_LOGGER() \
-(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger()
+(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(CMPI_ThreadContext::getBroker()->hdl))->getLogger(COMPONENT_NAME)
 
 // Factory section
 
@@ -171,7 +176,7 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 	{
 		str = *((OpenWBEM::String*) obj->hdl);
 	}
-	/* 
+	/*
 	else if (obj->ftab==(void*)CMPI_SelectExp_Ftab ||
 		obj->ftab==(void*)CMPI_SelectCondDoc_Ftab ||
 		obj->ftab==(void*)CMPI_SelectCondCod_Ftab ||
@@ -183,7 +188,7 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 		return (CMPIString*) new CMPI_Object(msg);
 	}
 	*/
-	else 
+	else
 	{
 		str.format("** Object not recognized (0x%p) **", o);
 		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
@@ -199,9 +204,9 @@ static CMPIBoolean mbEncClassPathIsA(CMPIBroker *, CMPIObjectPath *eCp,
 	OpenWBEM::CIMObjectPath* cop=static_cast<OpenWBEM::CIMObjectPath *>(eCp->hdl);
 
 	OpenWBEM::String tcn(type);
- 
+
 	if (tcn == cop->getClassName()) return 1;
- 
+
 	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(0,*cop));
 	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
@@ -226,7 +231,7 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 	}
 																				
 	CMSetStatus(rc,CMPI_RC_OK);
- 
+
 	if (obj->ftab==(void*)CMPI_Instance_Ftab &&
 		strcmp(type,"CMPIInstance")==0) return 1;
 	if (obj->ftab!=(void*)CMPI_ObjectPath_Ftab &&
@@ -258,7 +263,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 	if (obj==NULL) {
 		sprintf(msg,"** Null object ptr (%p) **",o);
 		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
-		return NULL; 
+		return NULL;
 	}
 																				
 	CMSetStatus(rc,CMPI_RC_OK);
@@ -324,7 +329,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
    CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
    return Formatter::Arg((Boolean)0);
 }
- 
+
 CMPIString* mbEncGetMessage(CMPIBroker *, char *msgId, char *defMsg,
 			CMPIStatus* rc, unsigned int count, ...) {
    MessageLoaderParms parms(msgId,defMsg);

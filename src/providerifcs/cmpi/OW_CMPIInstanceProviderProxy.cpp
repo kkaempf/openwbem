@@ -48,6 +48,12 @@ namespace OpenWBEM
 // debugging
 #define DDD(X) // X
 using namespace WBEMFlags;
+
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 CMPIInstanceProviderProxy::~CMPIInstanceProviderProxy()
 {
@@ -62,7 +68,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIInstanceProviderProxy::enumInstanceNames()");
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
@@ -111,7 +117,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIInstanceProviderProxy::enumInstances()");
 
 	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
@@ -179,7 +185,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const CIMClass& cimClass)
 {
 	CIMInstance rval;
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIInstanceProviderProxy::getInstance()");
 
 	if (m_ftable->miVector.instMI->ft->getInstance != NULL)
@@ -250,7 +256,7 @@ void
 CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
@@ -291,7 +297,7 @@ CIMObjectPath
 	const CIMInstance& cimInstance)
 {
 	CIMObjectPath rval;
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug(Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
@@ -339,7 +345,7 @@ void
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
 	{

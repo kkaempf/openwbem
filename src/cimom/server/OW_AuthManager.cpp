@@ -47,6 +47,11 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION_WITH_ID(AuthManager)
 
+namespace
+{
+	const String COMPONENT_NAME("ow.owcimomd.AuthManager");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 AuthManager::AuthManager()
 	: m_authenticator()
@@ -63,23 +68,24 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 	m_authenticator.setNull();
 	String authLib = env->getConfigItem(
 		ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
-	env->getLogger()->logInfo(Format("Authentication Manager: Loading"
+	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	logger->logInfo(Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 	m_authenticator =
 		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib,
-			"createAuthenticator", env->getLogger());
+			"createAuthenticator", logger);
 	if (m_authenticator)
 	{
 		try
 		{
 			m_authenticator->init(env);
-			env->getLogger()->logInfo(Format("Authentication module %1"
+			logger->logInfo(Format("Authentication module %1"
 				" is now being used for authentication to the CIMOM",
 				authLib));
 		}
 		catch(Exception& e)
 		{
-			env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
+			logger->logFatalError(Format("Authentication Module %1 failed"
 				" to initialize: %2 - %3"
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
@@ -91,7 +97,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 		}
 		catch(...)
 		{
-			env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
+			logger->logFatalError(Format("Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
 			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
@@ -99,7 +105,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 	}
 	else
 	{
-		env->getLogger()->logFatalError(Format("Authentication Module %1 failed"
+		logger->logFatalError(Format("Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
 		OW_THROW(AuthManagerException, "No Authentication Mechanism Available");

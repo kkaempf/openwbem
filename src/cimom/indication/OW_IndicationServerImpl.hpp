@@ -53,6 +53,7 @@
 #include "OW_LifecycleIndicationPoller.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_ThreadBarrier.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {
@@ -151,6 +152,7 @@ private:
 	ThreadPoolRef m_notifierThreadPool;
 	ThreadPoolRef m_subscriptionPool;
 	WQLIFCRef m_wqlRef;
+	LoggerRef m_logger;
 };
 
 } // end namespace OpenWBEM

@@ -41,8 +41,13 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-NPIMethodProviderProxy::~NPIMethodProviderProxy() 
+NPIMethodProviderProxy::~NPIMethodProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -55,7 +60,7 @@ NPIMethodProviderProxy::invokeMethod(
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 		CIMValue rval(CIMNULL);
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("NPIInstanceProviderProxy::invokeMethod()");
 		if (m_ftable->fp_invokeMethod != NULL)
 		{

@@ -12,6 +12,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 using namespace WBEMFlags;
 // Garbage Collection helper functions
 void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type)
@@ -85,7 +90,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const String& nameSpace,
 	try
 	{
 		cinsts = (*provenv)->getCIMOMHandle()->enumInstancesE(
-			nameSpace, className, 
+			nameSpace, className,
 			E_DEEP,
 			E_NOT_LOCAL_ONLY,
 			E_EXCLUDE_QUALIFIERS,
@@ -529,20 +534,20 @@ CIMInstanceSetRefProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 //////////////////////////////////////////////////////////////////////////////
 //
 // NPI needs arrays, too
-// as NPI doesn't know anything about OpenWBEM::* classes, we cannot expect 
-// or handle a OpenWBEM::StringArray in our parameter list - we would break 
+// as NPI doesn't know anything about OpenWBEM::* classes, we cannot expect
+// or handle a OpenWBEM::StringArray in our parameter list - we would break
 // NPI if we did.
-// But we can dig a char*, cast it to a OpenWBEM::String and add it to 
+// But we can dig a char*, cast it to a OpenWBEM::String and add it to
 // our property.
 //
-// This means that users will have to add every String of a StringArray 
+// This means that users will have to add every String of a StringArray
 // separately by calling something like
 //
 // char * name = 'Foo';
-// char * value = 'Bar';  
+// char * value = 'Bar';
 // CIMInstanceAddStringArrayProperty(npiHandle, ci, name, value);
 //
-// but this is the only way to fill our array unless we define a NPI 
+// but this is the only way to fill our array unless we define a NPI
 // StringArray type
 //
 extern "C" void
@@ -573,7 +578,7 @@ CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 		raiseError(npiHandle,"Error adding string array property");
 		return;
 	}
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ...and NPI also needs to read that stuff
@@ -599,7 +604,7 @@ CIMInstanceGetStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 		raiseError(npiHandle, "Error retrieving array property element. Possible attempt to retrive element of non-array property");
 		return NULL;
 	}
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ...and we need to know how long that is.
@@ -626,7 +631,7 @@ CIMInstanceGetStringArrayPropertySize(NPIHandle* npiHandle, ::CIMInstance ci,
 		raiseError(npiHandle, "Error retrieving array property size. Possible attempt to retrive size of non-array property");
 		return -1;
 	}
-} 
+}
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" char*
@@ -991,7 +996,7 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 }
 // SelectExp functions
 //////////////////////////////////////////////////////////////////////////////
-extern "C" char * 
+extern "C" char *
 SelectExpGetSelectString(NPIHandle* npiHandle, ::SelectExp sxp)
 {
 	try {
@@ -1105,7 +1110,7 @@ CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
 CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
-			::CIMInstance indication, 
+			::CIMInstance indication,
 						  ::CIMInstance source, ::CIMInstance previous)
 {
 	ProviderEnvironmentIFCRef * provenv =
@@ -1118,7 +1123,7 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 		OpenWBEM::CIMValue src_val(* ow_source);
 		OpenWBEM::CIMValue prev_val(* ow_previous);
 	ow_indication->setProperty(String("SourceInstance"), src_val);
-		   
+		
 	ow_indication->setProperty(String("PreviousInstance"), prev_val);
 	try
 	{
@@ -1131,7 +1136,7 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 		// TODO: log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
 	}
-	(*provenv)->getLogger()->logDebug(Format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
+	(*provenv)->getLogger(COMPONENT_NAME)->logDebug(Format("NPIExternal: Deliver %1", npiHandle->errorOccurred));
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" NPIHandle *
@@ -1149,7 +1154,7 @@ CIMOMPrepareAttach(NPIHandle* npiHandle)
 	// CHECK: do I have to allocate a new perl context here ?
 	((NPIContext *)(nh->context))->my_perl =
 		   ((NPIContext *)(npiHandle->context))->my_perl;
-	// need to worry about errorOccurred and providerError???   
+	// need to worry about errorOccurred and providerError???
 	return nh;
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -42,8 +42,13 @@ namespace OpenWBEM
 // debugging
 #define DDD(X) // X
 using namespace WBEMFlags;
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-NPIInstanceProviderProxy::~NPIInstanceProviderProxy() 
+NPIInstanceProviderProxy::~NPIInstanceProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -55,7 +60,7 @@ NPIInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("NPIInstanceProviderProxy::enumInstanceNames()");
 		if (m_ftable->fp_enumInstanceNames!= NULL)
 		{
@@ -98,15 +103,15 @@ NPIInstanceProviderProxy::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	ELocalOnlyFlag localOnly, 
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 	logDebug("NPIInstanceProviderProxy::enumInstances()");
 	if (m_ftable->fp_enumInstances == NULL)
 	{
@@ -150,13 +155,13 @@ NPIInstanceProviderProxy::getInstance(
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
+	const StringArray* propertyList,
 	const CIMClass& cimClass)
 {
 	CIMInstance rval(CIMNULL);
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIInstanceProviderProxy::getInstance()");
 	if (m_ftable->fp_getInstance != NULL)
 	{
@@ -195,12 +200,12 @@ NPIInstanceProviderProxy::getInstance(
 /////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 NPIInstanceProviderProxy::createInstance(
-	const ProviderEnvironmentIFCRef &env, 
+	const ProviderEnvironmentIFCRef &env,
 	const String& ns,
 	const CIMInstance& cimInstance)
 {
 		CIMObjectPath rval(CIMNULL);
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("NPIInstanceProviderProxy::createInstance()");
 		if (m_ftable->fp_createInstance != NULL)
 		{
@@ -240,7 +245,7 @@ NPIInstanceProviderProxy::modifyInstance(
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 	logDebug("NPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->fp_setInstance != NULL)
 	{
@@ -273,7 +278,7 @@ NPIInstanceProviderProxy::deleteInstance(
 	const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{

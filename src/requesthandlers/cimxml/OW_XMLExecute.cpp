@@ -64,13 +64,18 @@
 
 #include <algorithm>
 
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
-#define OW_LOGINFO(msg) this->getEnvironment()->getLogger()->logInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
-#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger()->logFatalError(msg)
+#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logDebug(msg)
+#define OW_LOGINFO(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(msg)
+#define OW_LOGERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logError(msg)
+#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logFatalError(msg)
 
 namespace OpenWBEM
 {
+
+namespace
+{
+	const String COMPONENT_NAME("ow.requesthandler.cimxml");
+}
 
 OW_DECLARE_EXCEPTION(BadStream)
 OW_DEFINE_EXCEPTION_WITH_ID(BadStream)

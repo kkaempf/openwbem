@@ -48,6 +48,11 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.CIM_ObjectManagerCommunicationMechanism");
+}
+
 class CIM_ObjectManagerCommunicationMechanismInstProv : public CppInstanceProviderIFC
 {
 public:
@@ -68,7 +73,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
@@ -90,15 +95,15 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
@@ -121,12 +126,12 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		inst.updatePropertyValues(instanceName.getKeys());
 		String className = cimClass.getName();

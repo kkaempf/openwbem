@@ -39,6 +39,11 @@ namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 void
 NPIAssociatorProviderProxy::associatorNames(
@@ -51,7 +56,7 @@ NPIAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIAssociatorProviderProxy::associatorNames()");
 	if (m_ftable->fp_associatorNames != NULL)
 	{
@@ -106,7 +111,7 @@ NPIAssociatorProviderProxy::associators(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIAssociatorProviderProxy::associators()");
 	if (m_ftable->fp_associators != NULL)
 	{
@@ -149,7 +154,7 @@ NPIAssociatorProviderProxy::associators(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("NPIAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -163,7 +168,7 @@ NPIAssociatorProviderProxy::associators(
 			// result.handle(ow_inst);
 			//
 			// we clone our instance to set the property list & includequalifier stuff
-			// 
+			//
 			result.handle( ow_inst.clone(localOnly,includeQualifiers,
 				includeClassOrigin,propertyList) );
 		}
@@ -186,7 +191,7 @@ NPIAssociatorProviderProxy::references(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger()->logDebug("NPIAssociatorProviderProxy::references()");
+	env->getLogger(COMPONENT_NAME)->logDebug("NPIAssociatorProviderProxy::references()");
 	if (m_ftable->fp_references != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -226,7 +231,7 @@ NPIAssociatorProviderProxy::references(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger()->logDebug(Format("NPIAssociatorProviderProxy::"
+		env->getLogger(COMPONENT_NAME)->logDebug(Format("NPIAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -240,7 +245,7 @@ NPIAssociatorProviderProxy::references(
 			// result.handle(ow_inst);
 			//
 			// we clone our instance to set the property list & includequalifier stuff
-			// 
+			//
 			result.handle( ow_inst.clone(localOnly,includeQualifiers,
 				includeClassOrigin,propertyList) );
 		}
@@ -260,7 +265,7 @@ NPIAssociatorProviderProxy::referenceNames(
 		const String& resultClass,
 		const String& role)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIAssociatorProviderProxy::referenceNames()");
 	if (m_ftable->fp_referenceNames != NULL)
 	{

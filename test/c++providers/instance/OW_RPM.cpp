@@ -63,6 +63,8 @@ using namespace WBEMFlags;
 
 namespace{
 
+const String COMPONENT_NAME("ow.test.RPMIP");
+
 // We use multiple inheritance here because our provider is to be both an
 // Instance and a method provider
 class RPMIP : public CppInstanceProviderIFC, public CppMethodProviderIFC
@@ -164,15 +166,15 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("in RPM::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("in RPM::enumInstances");
 		String cmd = "/usr/bin/apt-cache search .*";
 		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
@@ -210,9 +212,9 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
 		CIMInstance rval = cimClass.newInstance();
@@ -225,7 +227,7 @@ public:
 				"The Instance does not (any longer) exist");
 		}
 
-		return rval.clone(localOnly, includeQualifiers, includeClassOrigin, 
+		return rval.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);
 	}
 

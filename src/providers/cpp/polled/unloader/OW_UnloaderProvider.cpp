@@ -43,10 +43,15 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.Unloader");
+}
+
 UnloaderProvider::UnloaderProvider()
 {
 }
-UnloaderProvider::~UnloaderProvider() 
+UnloaderProvider::~UnloaderProvider()
 {
 }
 /**
@@ -61,7 +66,7 @@ UnloaderProvider::~UnloaderProvider()
 Int32
 UnloaderProvider::poll(const ProviderEnvironmentIFCRef &/*env*/)
 {
-	//env->getLogger()->logDebug( "Polling UnloaderProvider");
+	//env->getLogger(COMPONENT_NAME)->logDebug( "Polling UnloaderProvider");
 	CIMOMEnvironment::g_cimomEnvironment->unloadProviders();
 	CIMOMEnvironment::g_cimomEnvironment->unloadReqHandlers();
 	return -1;
@@ -74,7 +79,7 @@ Int32
 UnloaderProvider::getInitialPollingInterval(const
 		ProviderEnvironmentIFCRef &env)
 {
-	env->getLogger()->logDebug(Format(
+	env->getLogger(COMPONENT_NAME)->logDebug(Format(
 		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
 		OW_POLLING_INTERVAL));
 	return OW_POLLING_INTERVAL;

@@ -64,9 +64,11 @@ using namespace WBEMFlags;
 namespace
 {
 
-// This is an example/test of a simple instance/indication/polled provider.  It 
+const String COMPONENT_NAME("ow.test.IndicationProviderTest3");
+
+// This is an example/test of a simple instance/indication/polled provider.  It
 // doesn't implement mustPoll.  The CIMOM will call the *Filter methods.
-// We'll start up a the polled provider to "watch" the objects we are 
+// We'll start up a the polled provider to "watch" the objects we are
 // instrumenting.  Really, we'll just change them once a second, so this
 // provider has something to do.
 // Once the subscriptions are deleted, deActivateFilter will cause the filter
@@ -95,13 +97,13 @@ public:
 
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool firstActivation)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::activateFilter");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::activateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -156,13 +158,13 @@ public:
 	
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& /*nameSpace*/,
-		const StringArray& classes, 
+		const StringArray& classes,
 		bool lastActivation)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::deActivateFilter");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::deActivateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -225,10 +227,10 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getIndicationProviderInfo(IndicationProviderInfo& info) 
+	virtual void getIndicationProviderInfo(IndicationProviderInfo& info)
 	{
 		// Add the class(es) we are monitoring for lifecycle indications.
-		const char* theMonitoredClasses[] = 
+		const char* theMonitoredClasses[] =
 			{
 				"OW_IndicationProviderTest3",
 				0
@@ -275,22 +277,22 @@ public:
 		OW_THROWCIMMSG(CIMException::FAILED, "Delete not supported");
 	}
 
-	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &) 
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Create not supported");
 	}
 	
 	virtual CIMInstance getInstance(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const CIMObjectPath &instanceName, 
-		ELocalOnlyFlag localOnly, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const CIMObjectPath &instanceName,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -311,19 +313,19 @@ public:
 	}
 
 	virtual void enumInstances(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMInstanceResultHandlerIFC &result, 
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &requestedClass, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMInstanceResultHandlerIFC &result,
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &requestedClass,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::enumInstances");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -333,13 +335,13 @@ public:
 	}
 	
 	virtual void enumInstanceNames(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMObjectPathResultHandlerIFC &result, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMObjectPathResultHandlerIFC &result,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -378,7 +380,7 @@ public:
 
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest3::getInitialPollingInterval");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::getInitialPollingInterval");
 		MutexLock l(m_guard);
 		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
 		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)

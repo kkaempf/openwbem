@@ -53,12 +53,14 @@ using namespace WBEMFlags;
 namespace
 {
 
-// This is an example/test of a simple instance/indication provider.  It 
+const String COMPONENT_NAME("ow.test.IndicationProviderTest1");
+
+// This is an example/test of a simple instance/indication provider.  It
 // returns non-zero from mustPoll, so the CIMOM will then "poll" the
 // provider by calling enumInstances.  The number of seconds between
 // polls is indicated by the return value of mustPoll.  The CIMOM
-// will generate life-cycle indications (CIM_InstCreation, 
-// CIM_InstModification, CIM_InstDeletion) for any changes in the set of 
+// will generate life-cycle indications (CIM_InstCreation,
+// CIM_InstModification, CIM_InstDeletion) for any changes in the set of
 // instances returned by enumInstances.
 
 class IndicationProviderTest1 : public CppIndicationProviderIFC, public CppInstanceProviderIFC
@@ -66,9 +68,9 @@ class IndicationProviderTest1 : public CppIndicationProviderIFC, public CppInsta
 public:
 	// Indication provider methods - Only have to implement getIndicationProviderInfo() and mustPoll()
 	// The default implementation of the others suits us fine.
-	virtual int mustPoll(const ProviderEnvironmentIFCRef &env, const WQLSelectStatement &, const String &, const String&, const StringArray&) 
+	virtual int mustPoll(const ProviderEnvironmentIFCRef &env, const WQLSelectStatement &, const String &, const String&, const StringArray&)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest1::mustPoll");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest1::mustPoll");
 		// going to be lazy and make the cimom poll
 		return 1;
 	}
@@ -87,10 +89,10 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getIndicationProviderInfo(IndicationProviderInfo& info) 
+	virtual void getIndicationProviderInfo(IndicationProviderInfo& info)
 	{
 		// Add the class(es) we are monitoring for lifecycle indications.
-		const char* theMonitoredClasses[] = 
+		const char* theMonitoredClasses[] =
 			{
 				"OW_IndicationProviderTest1",
 				0
@@ -137,22 +139,22 @@ public:
 		OW_THROWCIMMSG(CIMException::FAILED, "Delete not supported");
 	}
 
-	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &) 
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Create not supported");
 	}
 	
 	virtual CIMInstance getInstance(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const CIMObjectPath &instanceName, 
-		ELocalOnlyFlag localOnly, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const CIMObjectPath &instanceName,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest1::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest1::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -171,19 +173,19 @@ public:
 	}
 
 	virtual void enumInstances(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMInstanceResultHandlerIFC &result, 
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin, 
-		const StringArray *propertyList, 
-		const CIMClass &requestedClass, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMInstanceResultHandlerIFC &result,
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList,
+		const CIMClass &requestedClass,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest1::enumInstances");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest1::enumInstances");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
 		updateInstances(cimClass);
@@ -194,13 +196,13 @@ public:
 	}
 	
 	virtual void enumInstanceNames(
-		const ProviderEnvironmentIFCRef &env, 
-		const String &ns, 
-		const String &className, 
-		CIMObjectPathResultHandlerIFC &result, 
-		const CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const String &className,
+		CIMObjectPathResultHandlerIFC &result,
+		const CIMClass &cimClass)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest1::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest1::enumInstanceNames");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
 		updateInstances(cimClass);

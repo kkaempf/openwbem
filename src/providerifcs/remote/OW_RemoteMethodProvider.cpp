@@ -43,6 +43,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RemoteMethodProvider::RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 	bool alwaysSendCredentials, bool useConnectionCredentials)
@@ -67,7 +72,7 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		const CIMParamValueArray& in,
 		CIMParamValueArray& out )
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

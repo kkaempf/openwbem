@@ -66,6 +66,12 @@ OW_DECLARE_EXCEPTION(IndicationServer);
 OW_DEFINE_EXCEPTION_WITH_ID(IndicationServer);
 
 using namespace WBEMFlags;
+
+namespace
+{
+String COMPONENT_NAME("ow.owcimomd.indication.Server");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 IndicationServer::~IndicationServer()
 {
@@ -136,7 +142,7 @@ public:
 	
 	virtual LoggerRef getLogger() const
 	{
-		return m_env->getLogger();
+		return m_env->getLogger(COMPONENT_NAME);
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
@@ -168,7 +174,7 @@ Notifier::run()
 	CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 	try
 	{
-		m_trans.m_provider->exportIndication(createProvEnvRef(env), 
+		m_trans.m_provider->exportIndication(createProvEnvRef(env),
 			m_trans.m_ns, m_trans.m_handler, m_trans.m_indication);
 	}
 	catch(Exception& e)
@@ -268,6 +274,7 @@ void
 IndicationServerImpl::init(CIMOMEnvironmentRef env)
 {
 	m_env = env;
+	m_logger = env->getLogger(COMPONENT_NAME);
 	// set up the thread pool
 	Int32 maxIndicationExportThreads;
 	try
@@ -279,14 +286,14 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 			maxIndicationExportThreads = String(OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
 	}
 	m_notifierThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
-				maxIndicationExportThreads, maxIndicationExportThreads * 100, env->getLogger(), "Indication Server Notifiers"));
+				maxIndicationExportThreads, maxIndicationExportThreads * 100, m_logger, "Indication Server Notifiers"));
 	
 	// pool to handle threads modifying subscriptions
 	m_subscriptionPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
-		1, // 1 thread because only 1 can run at a time because of mutex locking.  
+		1, // 1 thread because only 1 can run at a time because of mutex locking.
 		   // Also modifyFilter() takes advantage of this detail to make sure a delete/create are processed in order.
 		0, // unlimited size queue
-		env->getLogger(), "Indication Server Subscriptions"));
+		m_logger, "Indication Server Subscriptions"));
 
 	//-----------------
 	// Load map with available indication export providers
@@ -715,19 +722,18 @@ IndicationServerImpl::getProvider(const String& className)
 void
 IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& subPath)
 {
-	LoggerRef log = m_env->getLogger();
-	log->logDebug(Format("IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
+	m_logger->logDebug(Format("IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
 	CIMObjectPath cop(subPath);
 	cop.setNameSpace(ns);
-	log->logDebug(Format("cop = %1", cop));
+	m_logger->logDebug(Format("cop = %1", cop));
 	
 	MutexLock l(m_subGuard);
 	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end();)
 	{
-		log->logDebug(Format("subPath = %1", iter->second.m_subPath));
+		m_logger->logDebug(Format("subPath = %1", iter->second.m_subPath));
 		if (cop.equals(iter->second.m_subPath))
 		{
-			log->logDebug("found a match");
+			m_logger->logDebug("found a match");
 			Subscription& sub = iter->second;
 			for (size_t i = 0; i < sub.m_providers.size(); ++i)
 			{
@@ -783,7 +789,7 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 				}
 				catch (const Exception& e)
 				{
-					m_env->getLogger()->logError(Format("Caught exception while calling deActivateFilter for provider: %1", e));
+					m_logger->logError(Format("Caught exception while calling deActivateFilter for provider: %1", e));
 				}
 				catch(ThreadCancelledException&)
 				{
@@ -791,7 +797,7 @@ IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& 
 				}
 				catch (...)
 				{
-					m_env->getLogger()->logError("Caught unknown exception while calling deActivateFilter for provider");
+					m_logger->logError("Caught unknown exception while calling deActivateFilter for provider");
 				}
 			}
 			m_subscriptions.erase(iter++);
@@ -907,8 +913,8 @@ IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectP
 void
 IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
-	LoggerRef log = m_env->getLogger();
-	log->logDebug(Format("IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
+	m_logger->logDebug(Format("IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
+	
 	// get the filter
 	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle(context);
@@ -918,22 +924,26 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	{
 		filterNS = ns;
 	}
+
 	CIMInstance filterInst = hdl->getInstance(filterNS, filterPath);
 	String filterQuery = filterInst.getPropertyT("Query").getValueT().toString();
+	
 	// parse the filter
 	// Get query language
 	String queryLanguage = filterInst.getPropertyT("QueryLanguage").getValueT().toString();
-	log->logDebug(Format("Got query statement (%1) in %2", filterQuery, queryLanguage));
+	m_logger->logDebug(Format("Got query statement (%1) in %2", filterQuery, queryLanguage));
 	if (!m_wqlRef->supportsQueryLanguage(queryLanguage))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, Format("Filter uses queryLanguage %1, which is"
 			" not supported", queryLanguage).c_str());
 	}
+
 	WQLSelectStatement selectStmt(m_wqlRef->createSelectStatement(filterQuery));
 	WQLCompile compiledStmt(selectStmt);
 	const WQLCompile::Tableau& tableau(compiledStmt.getTableau());
 	String indicationClassName = selectStmt.getClassName();
-	log->logDebug(Format("query is for indication class: %1", indicationClassName));
+	m_logger->logDebug(Format("query is for indication class: %1", indicationClassName));
+
 	// collect up all the class names
 	StringArray isaClassNames;
 	for (size_t i = 0; i < tableau.size(); ++i)
@@ -949,12 +959,12 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 					if (opn2.getType() == WQLOperand::PROPERTY_NAME)
 					{
 						isaClassNames.push_back(opn2.getPropertyName());
-						log->logDebug(Format("Found ISA class name: %1", opn2.getPropertyName()));
+						m_logger->logDebug(Format("Found ISA class name: %1", opn2.getPropertyName()));
 					}
 					else if (opn2.getType() == WQLOperand::STRING_VALUE)
 					{
 						isaClassNames.push_back(opn2.getStringValue());
-						log->logDebug(Format("Found ISA class name: %1", opn2.getStringValue()));
+						m_logger->logDebug(Format("Found ISA class name: %1", opn2.getStringValue()));
 					}
 				}
 			}
@@ -982,10 +992,11 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		catch (CIMException& e)
 		{
 			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e);
-			log->logError(msg);
+			m_logger->logError(msg);
 			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
+	
 	isaClassNames.appendArray(subClasses);
 
 	// get rid of duplicates - unique() requires that the range be sorted
@@ -994,7 +1005,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 
 	OStringStream ss;
 	std::copy(isaClassNames.begin(), isaClassNames.end(), std::ostream_iterator<String>(ss, ", "));
-	log->logDebug(Format("isaClassNames = %1", ss.toString()));
+	m_logger->logDebug(Format("isaClassNames = %1", ss.toString()));
 
 	// find providers that support this query. If none are found, throw an exception.
 	ProviderManagerRef pm (m_env->getProviderManager());
@@ -1011,7 +1022,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 			indicationClassName, StringArray());
 	}
 	
-	log->logDebug(Format("Found %1 providers for the subscription", providers.size()));
+	m_logger->logDebug(Format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No indication provider found for this subscription");
@@ -1027,7 +1038,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
-		log->logDebug(Format("Calling authorizeFilter for provider %1", i));
+		m_logger->logDebug(Format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
 			selectStmt, indicationClassName, ns, isaClassNames, username);
 	}
@@ -1037,10 +1048,10 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	{
 		try
 		{
-			log->logDebug(Format("Calling mustPoll for provider %1", i));
+			m_logger->logDebug(Format("Calling mustPoll for provider %1", i));
 			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
 				selectStmt, indicationClassName, ns, isaClassNames);
-			log->logDebug(Format("got pollInterval %1", pollInterval));
+			m_logger->logDebug(Format("got pollInterval %1", pollInterval));
 			if (pollInterval > 0)
 			{
 				isPolled[i] = true;
@@ -1048,17 +1059,17 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 				{
 					String key = isaClassNames[j];
 					key.toLowerCase();
-					log->logDebug(Format("searching on class key %1", isaClassNames[j]));
+					m_logger->logDebug(Format("searching on class key %1", isaClassNames[j]));
 					poller_map_t::iterator iter = m_pollers.find(key);
 					LifecycleIndicationPollerRef p;
 					if (iter != m_pollers.end())
 					{
-						log->logDebug(Format("found on class key %1: %2", isaClassNames[j], iter->first));
+						m_logger->logDebug(Format("found on class key %1: %2", isaClassNames[j], iter->first));
 						p = iter->second;
 					}
 					else
 					{
-						log->logDebug(Format("not found on class key %1", isaClassNames[j]));
+						m_logger->logDebug(Format("not found on class key %1", isaClassNames[j]));
 						p = LifecycleIndicationPollerRef(SharedLibraryRef(0),
 							LifecycleIndicationPollerRef::element_type(new LifecycleIndicationPoller(ns, key, pollInterval)));
 					}
@@ -1084,7 +1095,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 					p->addPollInterval(pollInterval);
 					if (iter == m_pollers.end())
 					{
-						log->logDebug(Format("Inserting %1 into m_pollers", key));
+						m_logger->logDebug(Format("Inserting %1 into m_pollers", key));
 						m_pollers.insert(std::make_pair(key, p));
 						m_env->getPollingManager()->addPolledProvider(
 							PolledProviderIFCRef(
@@ -1097,7 +1108,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 		catch (CIMException& ce)
 		{
-			m_env->getLogger()->logError(Format("Caught exception while calling mustPoll for provider: %1", ce));
+			m_logger->logError(Format("Caught exception while calling mustPoll for provider: %1", ce));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1105,9 +1116,10 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 		catch (...)
 		{
-			m_env->getLogger()->logError("Caught unknown exception while calling mustPoll for provider");
+			m_logger->logError("Caught unknown exception while calling mustPoll for provider");
 		}
 	}
+
 	// create a subscription (save the compiled filter and other info)
 	Subscription sub;
 	sub.m_subPath = CIMObjectPath(ns, subInst);
@@ -1162,7 +1174,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 		catch (CIMException& ce)
 		{
-			m_env->getLogger()->logError(Format("Caught exception while calling activateFilter for provider: %1", ce));
+			m_logger->logError(Format("Caught exception while calling activateFilter for provider: %1", ce));
 		}
 		catch(ThreadCancelledException&)
 		{
@@ -1170,9 +1182,10 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 		catch (...)
 		{
-			m_env->getLogger()->logError("Caught unknown exception while calling activateFilter for provider");
+			m_logger->logError("Caught unknown exception while calling activateFilter for provider");
 		}
 	}
+
 	if (successfulActivations == 0)
 	{
 		// Remove it and throw

@@ -49,8 +49,13 @@ namespace OpenWBEM
 namespace RemoteProviderUtils
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl, 
+ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	bool useConnectionCredentials, const ProviderEnvironmentIFCRef &env,
 	const ClientCIMOMHandleConnectionPoolRef& pool, bool alwaysSendCredentials)
 {
@@ -75,7 +80,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteProviderUtils::getRemoteClientCIMOMHandle() failed to get a connection: %1", e);
-		env->getLogger()->logError(msg);
+		env->getLogger(COMPONENT_NAME)->logError(msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 
@@ -102,6 +107,6 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 
 
 
-					 
+					
 
 

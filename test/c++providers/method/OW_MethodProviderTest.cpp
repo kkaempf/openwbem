@@ -53,6 +53,8 @@ using namespace OpenWBEM;
 namespace
 {
 
+const String COMPONENT_NAME("ow.test.MethodProviderTest");
+
 class MethodProviderTest: public CppMethodProviderIFC
 {
 public:
@@ -90,7 +92,7 @@ private:
 void
 MethodProviderTest::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	env->getLogger()->logDebug("MethodProviderTest initialize called");
+	env->getLogger(COMPONENT_NAME)->logDebug("MethodProviderTest initialize called");
 }
 
 

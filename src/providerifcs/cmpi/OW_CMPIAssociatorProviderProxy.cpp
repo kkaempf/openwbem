@@ -46,6 +46,11 @@ namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
+
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
 /////////////////////////////////////////////////////////////////////////////
 void CMPIAssociatorProviderProxy::associatorNames(
 	const ProviderEnvironmentIFCRef &env,
@@ -57,7 +62,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIAssociatorProviderProxy::associatorNames()");
 
 	if (m_ftable->miVector.assocMI->ft->associatorNames != NULL)
@@ -120,7 +125,7 @@ void CMPIAssociatorProviderProxy::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIAssociatorProviderProxy::associators()");
 
 	if (m_ftable->miVector.assocMI->ft->associators != NULL)
@@ -209,7 +214,7 @@ void CMPIAssociatorProviderProxy::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIAssociatorProviderProxy::references()");
 
 	if (m_ftable->miVector.assocMI->ft->references != NULL)
@@ -290,7 +295,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& resultClass,
 	const String& role)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("CMPIAssociatorProviderProxy::referenceNames()");
 
 	if (m_ftable->miVector.assocMI->ft->referenceNames != NULL)

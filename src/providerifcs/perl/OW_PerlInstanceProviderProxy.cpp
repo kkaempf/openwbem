@@ -42,8 +42,13 @@ namespace OpenWBEM
 // debugging
 #define DDD(X) // X
 using namespace WBEMFlags;
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.perlnpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-PerlInstanceProviderProxy::~PerlInstanceProviderProxy() 
+PerlInstanceProviderProxy::~PerlInstanceProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -55,7 +60,7 @@ PerlInstanceProviderProxy::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("PerlInstanceProviderProxy::enumInstanceNames()");
 		if (m_ftable->fp_enumInstanceNames!= NULL)
 		{
@@ -101,15 +106,15 @@ PerlInstanceProviderProxy::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	ELocalOnlyFlag localOnly, 
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 	logDebug("PerlInstanceProviderProxy::enumInstances()");
 	if (m_ftable->fp_enumInstances == NULL)
 	{
@@ -154,13 +159,13 @@ PerlInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
+	const StringArray* propertyList,
 	const CIMClass& cimClass)
 {
 		CIMInstance rval;
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("PerlInstanceProviderProxy::getInstance()");
 		if (m_ftable->fp_getInstance != NULL)
 		{
@@ -204,7 +209,7 @@ PerlInstanceProviderProxy::createInstance(
 	const CIMInstance& cimInstance)
 {
 		CIMObjectPath rval;
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("PerlInstanceProviderProxy::createInstance()");
 		if (m_ftable->fp_createInstance != NULL)
 		{
@@ -243,7 +248,7 @@ PerlInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env,
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 	logDebug("PerlInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->fp_setInstance != NULL)
 	{
@@ -275,7 +280,7 @@ void
 PerlInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("PerlInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{

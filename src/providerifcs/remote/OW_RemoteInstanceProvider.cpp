@@ -43,6 +43,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RemoteInstanceProvider::RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool,
 	bool alwaysSendCredentials, bool useConnectionCredentials)
@@ -67,7 +72,7 @@ RemoteInstanceProvider::enumInstanceNames(
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -105,15 +110,15 @@ RemoteInstanceProvider::enumInstances(
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::ELocalOnlyFlag localOnly, 
-		WBEMFlags::EDeepFlag deep, 
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EDeepFlag deep,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -151,12 +156,12 @@ RemoteInstanceProvider::getInstance(
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -197,7 +202,7 @@ RemoteInstanceProvider::createInstance(
 		const String& ns,
 		const CIMInstance& cimInstance )
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::createInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -241,7 +246,7 @@ RemoteInstanceProvider::modifyInstance(
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
@@ -279,7 +284,7 @@ RemoteInstanceProvider::deleteInstance(
 		const String& ns,
 		const CIMObjectPath& cop)
 {
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	lgr->logDebug(Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);

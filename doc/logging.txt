@@ -89,17 +89,6 @@ log.<log name>.location
 Only applicable/required for if the type == "file". Specifies the filename of the log.
 
 
-Code modifications:
-- ProviderEnvironment/ServiceEnvironment changed to pass component to
-  getLogger()
-- Internal parts use component names.
-- Switch log statements to use the logging macros.
-- Redo all subclasses of LoggerIFC to use LogAppenderIFC and LoggerIFC::createLogger()
-- Deprecate old broken interfaces
-  - Fix all code using them.
-- Uninline all the junk in the headers.
-
-
 Components are organized hierarchically using a '.' as the ancestor/child
 separator. In the code, all component namess are represented by a local 
 variable COMPONENT_NAME.
@@ -108,11 +97,35 @@ Component list:
 ow                                - Root for all OpenWBEM components
 ow.owcimomd                       - The cimom daemon
 ow.owcimomd.CIMServer             - The CIM Server
+ow.owcimomd.PollingManager        - The polling manager
+ow.owcimomd.ProviderIFCLoader     - The Provider interface loader
+ow.owcimomd.indication.Server     - The indication server
+ow.owcimomd.indication.LifecyclePoller - Indication lifecycle poller
+ow.owcimomd.AuthManager           - AuthManager responsible for loading
+                                    authentication modules.
+ow.requesthandler.cimxml          - cimxml request handler/operation decoder
+ow.requesthandler.owbinary        - OpenWBEM binary request handler
+ow.repository.hdb                 - hdb CIM repository
+ow.httpserver                     - The http server
 ow.authorizer                     - Authorizers
 ow.authorizer.simple              - SimpleAuthorizer
 ow.authorizer.simple2             - SimpleAuthorizer2
+ow.authorizer.AuthorizerManager   - The AuthorizerManager
 ow.listener.cimxml                - HTTPXMLCIMListener
 ow.provideragent                  - ProviderAgent
+ow.provider.cpp.ifc               - The c++ provider interface
+ow.provider.remote.ifc            - The remote provider interface
+ow.provider.npi.ifc               - The npi provider interface
+ow.provider.perlnpi.ifc           - The perl npi provider interface
+ow.provider.cmpi.ifc              - CMPI provider interface
+ow.provider.*                     - Each OW provider uses it's name with the
+                                    ow.provider. prefix
 ow.owmofc                         - The mof compiler utility
 ow.owrepositorydump               - The owrepositorydump utility
+
+
+Code modifications:
+- Switch log statements to use the logging macros.
+- Redo all subclasses of LoggerIFC to use LogAppenderIFC and LoggerIFC::createLogger()
+
 

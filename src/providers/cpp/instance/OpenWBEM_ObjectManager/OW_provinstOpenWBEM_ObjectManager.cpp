@@ -46,6 +46,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.OpenWBEM_ObjectManager");
+}
+
 using namespace WBEMFlags;
 class OpenWBEM_ObjectManagerInstProv : public CppReadOnlyInstanceProviderIFC
 {
@@ -76,7 +81,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
+		env->getLogger(COMPONENT_NAME)->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
@@ -105,7 +110,7 @@ public:
 			Name = "OpenWBEM:";
 		}
 		
-		Name += m_uuid; 
+		Name += m_uuid;
 
 		newInst.setProperty("Name", CIMValue(Name));
 		newInst.setProperty("Started", CIMValue(true));
@@ -120,12 +125,12 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
+		env->getLogger(COMPONENT_NAME)->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);

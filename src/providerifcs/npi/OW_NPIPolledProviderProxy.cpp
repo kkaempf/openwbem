@@ -41,8 +41,13 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.npi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-NPIPolledProviderProxy::~NPIPolledProviderProxy() 
+NPIPolledProviderProxy::~NPIPolledProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -50,14 +55,14 @@ Int32
 NPIPolledProviderProxy::getInitialPollingInterval(
 	  const ProviderEnvironmentIFCRef& env)
 {
-		env->getLogger()->logDebug("NPIPolledProviderIFC::getInitialPollingInterval()");
+		env->getLogger(COMPONENT_NAME)->logDebug("NPIPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
 NPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
 	CIMValue rval(CIMNULL);
-	env->getLogger()->
+	env->getLogger(COMPONENT_NAME)->
 		logDebug("NPIPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
@@ -81,10 +86,10 @@ void NPIPolledProviderProxy::activateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
 {
-	env->getLogger()->logDebug("activateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-		env->getLogger()->logDebug("activateFilter2");
+		env->getLogger(COMPONENT_NAME)->logDebug("activateFilter2");
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
@@ -107,12 +112,12 @@ void NPIPolledProviderProxy::deactivateFilter(
 	const ProviderEnvironmentIFCRef& env, const String& query,
 	const String& Type)
 {
-	env->getLogger()->logDebug("deactivateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
-		env->getLogger()->logDebug("deactivateFilter2");
+		env->getLogger(COMPONENT_NAME)->logDebug("deactivateFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
 		char * expo = query.allocateCString();

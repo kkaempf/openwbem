@@ -78,7 +78,7 @@ public:
 	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
 
-	virtual LoggerRef getLogger() const = 0;
+	virtual LoggerRef getLogger() const OW_DEPRECATED = 0; // in 3.1.0
 	virtual LoggerRef getLogger(const String& componentName) const = 0;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
 	virtual String getUserName() const = 0;

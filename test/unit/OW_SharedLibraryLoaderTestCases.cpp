@@ -42,6 +42,11 @@
 
 using namespace OpenWBEM;
 
+namespace
+{
+	const String COMPONENT_NAME("ow.test");
+}
+
 void OW_SharedLibraryLoaderTestCases::setUp()
 {
 }
@@ -54,7 +59,7 @@ void OW_SharedLibraryLoaderTestCases::tearDown()
 void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
 {
 	testSharedLibraryLoader sll;
-	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
+	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger(COMPONENT_NAME) );
 	unitAssert( slp );
 }
 

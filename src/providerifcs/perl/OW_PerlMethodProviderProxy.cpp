@@ -42,8 +42,13 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.perlnpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
-PerlMethodProviderProxy::~PerlMethodProviderProxy() 
+PerlMethodProviderProxy::~PerlMethodProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -55,7 +60,7 @@ PerlMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 		CIMValue rval(CIMNULL);
-		env->getLogger()->
+		env->getLogger(COMPONENT_NAME)->
 			logDebug("PerlInstanceProviderProxy::invokeMethod()");
 		if (m_ftable->fp_invokeMethod != NULL)
 		{

@@ -46,14 +46,18 @@
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
 
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
-#define OW_LOGINFO(msg) this->getEnvironment()->getLogger()->logInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
-#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger()->logFatalError(msg)
+#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logDebug(msg)
+#define OW_LOGINFO(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(msg)
+#define OW_LOGERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logError(msg)
+#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logFatalError(msg)
 
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.requesthandler.cimxml");
+}
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////

@@ -65,6 +65,11 @@ extern "C"
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.requesthandler.owbinary");
+}
+
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 BinaryRequestHandler::BinaryRequestHandler()
@@ -116,7 +121,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		}
 	}
 	UInt8 funcNo = 0;
-	LoggerRef lgr = getEnvironment()->getLogger();
+	LoggerRef lgr = getEnvironment()->getLogger(COMPONENT_NAME);
 	try
 	{
 		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
@@ -919,7 +924,7 @@ bool
 BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	const String& fname)
 {
-	LoggerRef lgr = getEnvironment()->getLogger();
+	LoggerRef lgr = getEnvironment()->getLogger(COMPONENT_NAME);
 	if (m_userId == UserId(-1))
 	{
 		lgr->logError("Binary request handler cannot change file ownership:"

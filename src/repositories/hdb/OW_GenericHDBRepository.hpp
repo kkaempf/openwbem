@@ -134,10 +134,12 @@ public:
 	 * Otherwise a null HDBNode
 	 */
 	HDBNode getNameSpaceNode(HDBHandleLock& hdl, String key);
-	void logFatalError(const String& s) { m_env->getLogger()->logFatalError(s); }
-	void logError(const String& s) { m_env->getLogger()->logError(s); }
-	void logInfo(const String& s) { m_env->getLogger()->logInfo(s); }
-	void logDebug(const String& s) { m_env->getLogger()->logDebug(s); }
+	void logFatalError(const String& s) { m_env->getLogger(COMPONENT_NAME)->logFatalError(s); }
+	void logError(const String& s) { m_env->getLogger(COMPONENT_NAME)->logError(s); }
+	void logInfo(const String& s) { m_env->getLogger(COMPONENT_NAME)->logInfo(s); }
+	void logDebug(const String& s) { m_env->getLogger(COMPONENT_NAME)->logDebug(s); }
+
+	static const String COMPONENT_NAME;
 protected:
 	/**
 	 * Throw an IOException is this repository is not open.

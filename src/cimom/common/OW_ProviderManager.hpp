@@ -50,6 +50,7 @@
 #include "OW_HashMultiMap.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {
@@ -167,7 +168,7 @@ public:
 	 *  they will be passed in this parameter.
 	 */
 	IndicationProviderIFCRefArray
-		getIndicationProviders(const ProviderEnvironmentIFCRef& env, 
+		getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 			const String& ns, const String& indicationClassName,
 			const StringArray& monitoredClassNames) const;
 	/**
@@ -190,6 +191,8 @@ public:	// so free functions in cpp file can access them.
 	typedef HashMap<String, ProvReg> ProvRegMap_t;
 	typedef HashMultiMap<String, ProvReg> MultiProvRegMap_t;
 	
+	static String COMPONENT_NAME;
+
 private:
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
@@ -210,6 +213,8 @@ private:
 	// namespace:classname for a specific namespace.
 	// For a lifecycle provider, /* and /classname entries are made for each lifecycle class.
 	MultiProvRegMap_t m_registeredIndProvs;
+
+	LoggerRef m_logger;
 };
 typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
 

@@ -49,6 +49,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.__Namespace");
+}
+
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -333,7 +338,7 @@ NameSpaceProvider::createInstance(
 	String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
-	env->getLogger()->logDebug(Format("NameSpaceProvider::createInstance calling"
+	env->getLogger(COMPONENT_NAME)->logDebug(Format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 	env->getRepository()->createNameSpace(newNameSpace, env->getOperationContext());
 	return CIMObjectPath(ns, cimInstance);
@@ -356,7 +361,7 @@ NameSpaceProvider::modifyInstance(
 void
 NameSpaceProvider::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	env->getLogger()->logDebug("NameSpaceProvider initialize called");
+	env->getLogger(COMPONENT_NAME)->logDebug("NameSpaceProvider initialize called");
 }
 //////////////////////////////////////////////////////////////////////////////
 void

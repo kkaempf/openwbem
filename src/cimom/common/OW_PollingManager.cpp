@@ -51,6 +51,12 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+const String COMPONENT_NAME("ow.owcimomd.PollingManager");
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::PollingManager(CIMOMEnvironmentRef env)
 	: Thread()
@@ -68,7 +74,8 @@ PollingManager::PollingManager(CIMOMEnvironmentRef env)
 		maxThreads = String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
 	
-	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10, env->getLogger(), "Polling Manager"));
+	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10,
+		env->getLogger(COMPONENT_NAME), "Polling Manager"));
 }
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::~PollingManager()
@@ -103,7 +110,7 @@ namespace
 		
 		virtual LoggerRef getLogger() const
 		{
-			return m_env->getLogger();
+			return m_env->getLogger(COMPONENT_NAME);
 		}
 		virtual LoggerRef getLogger(const String& componentName) const
 		{

@@ -52,6 +52,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.remote.ifc");
+}
+
 //////////////////////////////////////////////////////////////////////////////
 RemoteProviderInterface::RemoteProviderInterface()
 {
@@ -90,7 +95,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 	}
 	m_connectionPool = ClientCIMOMHandleConnectionPoolRef(new ClientCIMOMHandleConnectionPool(maxConnectionsPerUrl));
 
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	CIMInstanceArray registrations;
 	try
@@ -129,7 +134,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case E_INSTANCE:
 						{
 							// keep it for ourselves
-							m_instanceProvReg[instanceID] = info; 
+							m_instanceProvReg[instanceID] = info;
 							// give the info back to the provider manager
 							InstanceProviderInfo ipi;
 							ipi.setProviderName(instanceID);
@@ -146,7 +151,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case E_SECONDARY_INSTANCE:
 						{
 							// keep it for ourselves
-							m_secondaryInstanceProvReg[instanceID] = info; 
+							m_secondaryInstanceProvReg[instanceID] = info;
 							// give the info back to the provider manager
 							SecondaryInstanceProviderInfo sipi;
 							sipi.setProviderName(instanceID);
@@ -164,7 +169,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 						{
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 							// keep it for ourselves
-							m_associatorProvReg[instanceID] = info; 
+							m_associatorProvReg[instanceID] = info;
 							// give the info back to the provider manager
 							AssociatorProviderInfo api;
 							api.setProviderName(instanceID);
@@ -189,7 +194,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 					case E_METHOD:
 						{
 							// keep it for ourselves
-							m_methodProvReg[instanceID] = info; 
+							m_methodProvReg[instanceID] = info;
 							// give the info back to the provider manager
 							MethodProviderInfo mpi;
 							mpi.setProviderName(instanceID);
@@ -234,7 +239,7 @@ RemoteProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& 
 	}
 	else
 	{
-		return InstanceProviderIFCRef(new RemoteInstanceProvider(env, iter->second.url, m_connectionPool, 
+		return InstanceProviderIFCRef(new RemoteInstanceProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
 }
@@ -251,7 +256,7 @@ RemoteProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmen
 	}
 	else
 	{
-		return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, iter->second.url, m_connectionPool, 
+		return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
 }
@@ -268,7 +273,7 @@ RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& en
 	}
 	else
 	{
-		return MethodProviderIFCRef(new RemoteMethodProvider(env, iter->second.url, m_connectionPool, 
+		return MethodProviderIFCRef(new RemoteMethodProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
 }
@@ -286,7 +291,7 @@ RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef
 	}
 	else
 	{
-		return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, iter->second.url, m_connectionPool, 
+		return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, iter->second.url, m_connectionPool,
 			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
 	}
 }

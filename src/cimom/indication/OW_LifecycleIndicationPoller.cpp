@@ -146,18 +146,22 @@ LifecycleIndicationPoller::getInitialPollingInterval(
 }
 namespace
 {
-	struct sortByInstancePath
+struct sortByInstancePath
+{
+	bool operator()(const CIMInstance& x, const CIMInstance& y) const
 	{
-		bool operator()(const CIMInstance& x, const CIMInstance& y) const
-		{
-			return CIMObjectPath("", x) < CIMObjectPath("", y);
-		}
-	};
+		return CIMObjectPath("", x) < CIMObjectPath("", y);
+	}
+};
+
+const String COMPONENT_NAME("ow.owcimomd.indication.LifecyclePoller");
+	
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 Int32
 LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 {
+	LoggerRef logger(env->getLogger(COMPONENT_NAME));
 	// do enumInstances to populate m_prevInsts
 	if (!m_initializedInstances)
 	{
@@ -166,13 +170,15 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		m_initializedInstances = true;
 		return 1; // have poll called again in 1 second.
 	}
-	env->getLogger()->logDebug(Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+
+	logger->logDebug(Format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
-		env->getLogger()->logDebug("LifecycleIndicationPoller::poll nothing to do, returning 0");
+		logger->logDebug("LifecycleIndicationPoller::poll nothing to do, returning 0");
 		return 0;
 	}
+	
 	// do enumInstances of the class
 	CIMInstanceArray curInstances;
 	InstanceArrayBuilder iab(curInstances);
@@ -183,10 +189,11 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 	}
 	catch (const CIMException& e)
 	{
-		env->getLogger()->logError(Format("LifecycleIndicationPoller::poll caught exception: %1", e));
+		logger->logError(Format("LifecycleIndicationPoller::poll caught exception: %1", e));
 		return 0;
 	}
-	env->getLogger()->logDebug(Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
+	
+	logger->logDebug(Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
 	// Compare the new instances with the previous instances
 	// and send any indications that may be necessary.
 	typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
@@ -262,6 +269,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		}
 		++ci;
 	}
+	
 	// save the current instances to m_prevInsts
 	m_prevInsts = curInstances;
 	return getPollInterval();

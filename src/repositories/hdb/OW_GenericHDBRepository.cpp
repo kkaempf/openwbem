@@ -46,6 +46,7 @@ namespace OpenWBEM
 
 static const int HDL_NOTINUSE = -1;
 static const int HDL_NOTCACHED = -2;
+const String GenericHDBRepository::COMPONENT_NAME("ow.repository.hdb");
 //////////////////////////////////////////////////////////////////////////////
 GenericHDBRepository::GenericHDBRepository(ServiceEnvironmentIFCRef env)
 	: m_hdb()

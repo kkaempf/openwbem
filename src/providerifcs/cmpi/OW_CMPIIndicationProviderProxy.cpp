@@ -43,6 +43,11 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	const String COMPONENT_NAME("ow.provider.cmpi.ifc");
+}
+
 /////////////////////////////////////////////////////////////////////////////
 void
 CMPIIndicationProviderProxy::deActivateFilter(
@@ -53,7 +58,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 	const StringArray& classes)
 {
 	bool lastActivation = (--m_activationCount == 0);
-	env->getLogger()->logDebug("deactivateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("deactivateFilter");
 	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -100,7 +105,7 @@ CMPIIndicationProviderProxy::activateFilter(
 	const StringArray& classes)
 {
 	bool firstActivation = (m_activationCount++ == 0);
-	env->getLogger()->logDebug("activateFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("activateFilter");
 	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -148,7 +153,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 	const StringArray &classes,
 	const String &owner)
 {
-	env->getLogger()->logDebug("authorizeFilter");
+	env->getLogger(COMPONENT_NAME)->logDebug("authorizeFilter");
 	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -194,7 +199,7 @@ CMPIIndicationProviderProxy::mustPoll(
 	const String &nameSpace,
 	const StringArray &classes)
 {
-	env->getLogger()->logDebug("mustPoll");
+	env->getLogger(COMPONENT_NAME)->logDebug("mustPoll");
 	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
