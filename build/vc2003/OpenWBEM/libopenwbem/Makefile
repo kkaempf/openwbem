@@ -59,7 +59,6 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_LogAppender.obj \
 	$(OBJDIR)\OW_Logger.obj \
 	$(OBJDIR)\OW_LogMessagePatternFormatter.obj \
-	$(OBJDIR)\OW_LoggerImpls.obj \
 	$(OBJDIR)\OW_MD5.obj \
 	$(OBJDIR)\OW_MemTracer.obj \
 	$(OBJDIR)\OW_Mutex.obj \
@@ -293,9 +292,6 @@ $(OBJDIR)\OW_Logger.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_LogMessagePatternFormatter.obj: $(COMMONSRCDIR)\$(@B).cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
-
-$(OBJDIR)\OW_LoggerImpls.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_MD5.obj: $(COMMONSRCDIR)\$(@B).cpp
