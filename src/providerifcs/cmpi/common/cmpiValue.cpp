@@ -148,7 +148,14 @@ OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc)
 	}
 	else if(type == CMPI_chars)
 	{
-		v.set(OpenWBEM::CIMValue(OpenWBEM::String(data->chars)));
+		// Apparently everyone who uses the cmpi interface assumes that
+		// a pointer to a CMPIValue is the same thing as a pointer to a
+		// Null terminated character string. Since CMPIValue is a union,
+		// a pointer to a CMPIValue that has the type of CMPI_chars would be
+		// a pointer to a char pointer. But that is not the way it is being
+		// used, So I'm coding this to treat it as a straight char*.
+		//v.set(OpenWBEM::CIMValue(OpenWBEM::String(data->chars)));
+		v.set(OpenWBEM::CIMValue(OpenWBEM::String((const char*)data)));
 	}
 	else if((type & (CMPI_UINT|CMPI_SINT)) == CMPI_UINT)
 	{
