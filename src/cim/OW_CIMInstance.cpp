@@ -867,6 +867,10 @@ CIMInstance::toMOF() const
 		// note that we can't use CIMProperty::toMOF() since it prints out
 		// the data type.
 		const CIMProperty& p = m_pdata->m_properties[i];
+		if (p.hasTrueQualifier(CIMQualifier::CIM_QUAL_INVISIBLE))
+		{
+			continue;
+		}
 		CIMValue v = p.getValue();
 		if (v)
 		{
@@ -914,6 +918,11 @@ CIMInstance::toString() const
 	for (i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
+		if (cp.hasTrueQualifier(CIMQualifier::CIM_QUAL_INVISIBLE))
+		{
+			continue;
+		}
+
 		CIMValue val = cp.getValue();
 		if (!val)
 		{
