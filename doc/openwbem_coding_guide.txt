@@ -208,6 +208,9 @@ well as any types used as member variables.  Everything else can be forward
 declared.  If you use the pimpl idiom, you can get away with only including
 Reference (or COWReference).  This helps to greatly reduce compilation
 time and also helps prevent bloat from inline functions.
+When creating forward declarations, for commonly used classes, it's good to
+create a *Fwd.hpp header, especially for template classes, since the number
+& type of template parameters has to be part of the declaration.
 -----------------------------------------------------------------------------
 If a function has unused parameters, don't comment out or omit the parameter
 name to avoid an unused parameter warning.  Cast it to void at the beginning
