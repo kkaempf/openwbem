@@ -384,15 +384,12 @@ setupSigHandler(bool dbgFlg)
 
 void installFatalSignalHandlers()
 {
-	// only do this in production mode. During development we want it to crash!
-#ifdef OW_DEBUG
 	handleSignalAux(SIGABRT, abortHandler);
 
 	handleSignalAux(SIGILL, fatalSigHandler);
 	handleSignalAux(SIGBUS, fatalSigHandler);
 	handleSignalAux(SIGSEGV, fatalSigHandler);
 	handleSignalAux(SIGFPE, fatalSigHandler);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 String getCurrentUserName()

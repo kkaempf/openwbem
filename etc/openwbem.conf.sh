@@ -165,6 +165,17 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.max_indication_export_threads = 30
 
 ################################################################################
+# owcimomd.restart_on_error controls the use of the fatal signal handler.
+# If this option is set to true, if owcimomd receives a fatal signal
+# (SIGSEGV, SIGBUS, SIGILL, SIGFPE or SIGABRT) which may be caused by faulty
+# code, then it will restart itself.  Note that this feature is disabled if
+# the cimom is built in debug mode (OW_DEBUG is defined).
+# This feature help to keep the cimom running in the case a buggy provider
+# (or the cimom itself) causes a fatal signal.
+# The default is true
+;owcimomd.restart_on_error = true
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option

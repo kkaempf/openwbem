@@ -66,8 +66,16 @@ int main(int argc, char* argv[])
 		// Start all of the cimom services
 		env->startServices();
 		env->logInfo("CIMOM is now running!");
+
+		// only do this in production mode. During development we want it to crash!
+#ifdef OW_DEBUG
 		// Do this after initialization to prevent an infinite loop.
-		Platform::installFatalSignalHandlers();
+		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
+		{
+			Platform::installFatalSignalHandlers();
+		}
+#endif
+
 		int sig;
 		bool shuttingDown(false);
 		while(!shuttingDown)

@@ -131,6 +131,10 @@
 #ifndef OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS
 #define OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS "30"
 #endif
+#ifndef OW_DEFAULT_RESTART_ON_ERROR
+#define OW_DEFAULT_RESTART_ON_ERROR "true"
+#endif
+
 
 namespace OpenWBEM
 {
@@ -185,6 +189,7 @@ namespace ConfigOpts
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
+	static const char* const RESTART_ON_ERROR_opt = "owcimomd.restart_on_error";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
