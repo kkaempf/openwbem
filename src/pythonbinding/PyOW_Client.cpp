@@ -14,6 +14,20 @@ struct OW_BoolToPython
 };
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_tokenize_overloads, OW_String::tokenize, 0, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_endsWith_overloads, OW_String::endsWith, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_indexOf_overloads, OW_String::indexOf, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_lastIndexOf_overloads, OW_String::lastIndexOf, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_startsWith_overloads, OW_String::startsWith, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_substring_overloads, OW_String::substring, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_erase_overloads, OW_String::erase, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toUInt8_overloads, OW_String::toUInt8, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt8_overloads, OW_String::toInt8, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toUInt16_overloads, OW_String::toUInt16, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt16_overloads, OW_String::toInt16, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toUInt32_overloads, OW_String::toUInt32, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt32_overloads, OW_String::toInt32, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toUInt64_overloads, OW_String::toUInt64, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt64_overloads, OW_String::toInt64, 0, 1)
 
 BOOST_PYTHON_MODULE(owclient)
 {
@@ -46,16 +60,16 @@ BOOST_PYTHON_MODULE(owclient)
         .def("compareTo", &OW_String::compareTo)
         .def("compareToIgnoreCase", &OW_String::compareToIgnoreCase)
         .def("concat", &OW_String::concat, return_internal_reference<>())
-        .def("endsWith", &OW_String::endsWith) // has default
+        .def("endsWith", &OW_String::endsWith, OW_String_endsWith_overloads(args("arg", "ignoreCase")))
         .def("equals", &OW_String::equals)
         .def("equalsIgnoreCase", &OW_String::equalsIgnoreCase)
         .def("hashCode", &OW_String::hashCode)
-        .def("indexOf", (int (OW_String::*)(char, int=0) const)(&OW_String::indexOf)) // has default
-        .def("indexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::indexOf)) // has default
-        .def("lastIndexOf", (int (OW_String::*)(char, int) const)(&OW_String::lastIndexOf)) // has default
-        .def("lastIndexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::lastIndexOf)) // has default
-        .def("startsWith", &OW_String::startsWith) // has default
-        .def("substring", &OW_String::substring) // has default
+        .def("indexOf", (int (OW_String::*)(char, int) const)(&OW_String::indexOf), OW_String_indexOf_overloads(args("ch", "fromIndex")))
+        .def("indexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::indexOf), OW_String_indexOf_overloads(args("arg", "fromIndex")))
+        .def("lastIndexOf", (int (OW_String::*)(char, int) const)(&OW_String::lastIndexOf), OW_String_lastIndexOf_overloads(args("ch", "fromIndex")))
+        .def("lastIndexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::lastIndexOf), OW_String_lastIndexOf_overloads(args("arg", "fromIndex")))
+        .def("startsWith", &OW_String::startsWith, OW_String_startsWith_overloads(args("arg", "ignoreCase")))
+        .def("substring", &OW_String::substring, OW_String_substring_overloads(args("beginIndex", "length")))
         .def("isSpaces", &OW_String::isSpaces)
         .def("toLowerCase", &OW_String::toLowerCase, return_internal_reference<>())
         .def("toUpperCase", &OW_String::toUpperCase, return_internal_reference<>())
@@ -63,7 +77,7 @@ BOOST_PYTHON_MODULE(owclient)
         .def("rtrim", &OW_String::rtrim, return_internal_reference<>())
         .def("trim", &OW_String::trim, return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)())(&OW_String::erase), return_internal_reference<>())
-        .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), return_internal_reference<>()) // has default
+        .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), OW_String_erase_overloads(args("idx", "len"))[return_internal_reference<>()])
         // assignment operator
 //        .def(self[size_t()])
         .def(self += self)
@@ -74,14 +88,14 @@ BOOST_PYTHON_MODULE(owclient)
         .def("toReal32", &OW_String::toReal32)
         .def("toReal64", &OW_String::toReal64)
         .def("toBool", &OW_String::toBool)
-        .def("toUInt8", &OW_String::toUInt8) // has default
-        .def("toInt8", &OW_String::toInt8) // has default
-        .def("toUInt16", &OW_String::toUInt16) // has default
-        .def("toInt16", &OW_String::toInt16) // has default
-        .def("toUInt32", &OW_String::toUInt32) // has default
-        .def("toInt32", &OW_String::toInt32) // has default
-        .def("toUInt64", &OW_String::toUInt64) // has default
-        .def("toInt64", &OW_String::toInt64) // has default
+        .def("toUInt8", &OW_String::toUInt8, OW_String_toUInt8_overloads(args("base")))
+        .def("toInt8", &OW_String::toInt8, OW_String_toInt8_overloads(args("base")))
+        .def("toUInt16", &OW_String::toUInt16, OW_String_toUInt16_overloads(args("base")))
+        .def("toInt16", &OW_String::toInt16, OW_String_toInt16_overloads(args("base")))
+        .def("toUInt32", &OW_String::toUInt32, OW_String_toUInt32_overloads(args("base")))
+        .def("toInt32", &OW_String::toInt32, OW_String_toInt32_overloads(args("base")))
+        .def("toUInt64", &OW_String::toUInt64, OW_String_toUInt64_overloads(args("base")))
+        .def("toInt64", &OW_String::toInt64, OW_String_toInt64_overloads(args("base")))
         .def("toDateTime", &OW_String::toDateTime)
         .def("strtoull", &OW_String::strtoull)
         .def("strtoll", &OW_String::strtoll)
