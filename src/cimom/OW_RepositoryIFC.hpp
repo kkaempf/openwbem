@@ -37,6 +37,7 @@
 #include "OW_ACLInfo.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 class OW_RepositoryIFC
 {
@@ -445,6 +446,9 @@ public:
 };
 
 typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
+
+typedef OW_SharedLibraryReference<OW_RepositoryIFC>
+	OW_SharedLibraryRepositoryIFCRef;
 
 #endif	// __OW_REPOSITORYIFC_HPP__
 

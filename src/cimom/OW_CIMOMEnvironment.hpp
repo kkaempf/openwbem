@@ -69,13 +69,14 @@ typedef OW_Reference<OW_Logger> OW_LoggerRef;
 typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
 typedef OW_SharedLibraryReference<OW_WQLIFC> OW_WQLIFCRef;
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;
-typedef OW_SharedLibraryReference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
 typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
 typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
 typedef OW_Reference<OW_PollingManager> OW_PollingManagerRef;
 typedef OW_SharedLibraryReference<OW_IndicationServer> OW_IndicationServerRef;
 typedef OW_SharedLibraryReference<OW_ServiceIFC> OW_ServiceIFCRef;
 typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
+typedef OW_SharedLibraryReference<OW_RepositoryIFC>
+	OW_SharedLibraryRepositoryIFCRef;
 
 class OW_CIMOMEnvironment : public OW_ServiceEnvironmentIFC
 {
@@ -161,7 +162,7 @@ private:
 	void _createAuthManager();
 	void _createPollingManager();
 	void _createIndicationServer();
-	OW_IndicationRepLayerRef _getIndicationRepLayer();
+	OW_SharedLibraryRepositoryIFCRef _getIndicationRepLayer();
 	void _clearSelectables();
 
 	// Types

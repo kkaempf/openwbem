@@ -1,0 +1,266 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+#ifndef __OW_SHAREDLIBRARYREPOSITORY_HPP__
+#define __OW_SHAREDLIBRARYREPOSITORY_HPP__
+
+#include "OW_config.h"
+#include "OW_Types.h"
+#include "OW_RepositoryIFC.hpp"
+
+class OW_SharedLibraryRepository : public OW_RepositoryIFC
+{
+public:
+
+	OW_SharedLibraryRepository(OW_SharedLibraryRepositoryIFCRef ref)
+		: OW_RepositoryIFC()
+		, m_ref(ref) {}
+
+	virtual void close() { m_ref->close(); }
+
+	virtual void open(const OW_String &path) { m_ref->open(path); }
+
+	virtual void addQualifierType(const OW_CIMObjectPath &name,
+		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
+	{
+		m_ref->addQualifierType(name, qt, aclInfo);
+	}
+
+	virtual OW_CIMQualifierType getQualifierType(
+		const OW_CIMObjectPath &objPath, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getQualifierType(objPath, aclInfo);
+	}
+
+	virtual OW_CIMOMEnvironmentRef getEnvironment() const
+	{
+		return m_ref->getEnvironment();
+	}
+
+	virtual void createNameSpace(const OW_CIMNameSpace &ns,
+		const OW_ACLInfo &aclInfo)
+	{
+		m_ref->createNameSpace(ns, aclInfo);
+	}
+
+	virtual void deleteNameSpace(const OW_CIMNameSpace &ns,
+		const OW_ACLInfo &aclInfo)
+	{
+		m_ref->deleteNameSpace(ns, aclInfo);
+	}
+
+	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace &ns,
+		OW_Bool deep, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->enumNameSpace(ns, deep, aclInfo);
+	}
+
+	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(
+		const OW_CIMObjectPath &path, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->enumQualifierTypes(path, aclInfo);
+	}
+
+	virtual void deleteQualifierType(const OW_CIMObjectPath &objPath,
+		const OW_ACLInfo &aclInfo)
+	{
+		m_ref->deleteQualifierType(objPath, aclInfo);
+	}
+
+	virtual void updateQualifierType(const OW_CIMObjectPath &name,
+		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
+	{
+		m_ref->updateQualifierType(name, qt, aclInfo);
+	}
+
+	virtual OW_CIMClass getClass(const OW_CIMObjectPath &path,
+		OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
+		const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getClass(path, localOnly, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
+	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath &path,
+		const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->deleteClass(path, aclInfo);
+	}
+
+	virtual void createInstance(const OW_CIMObjectPath &cop, OW_CIMInstance &ci,
+		const OW_ACLInfo &aclInfo)
+	{
+		m_ref->createInstance(cop, ci, aclInfo);
+	}
+
+	virtual OW_CIMInstanceEnumeration getCIMInstances(
+		const OW_CIMObjectPath &path, OW_Bool deep, OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getCIMInstances(path, deep, localOnly,includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
+	virtual void createClass(const OW_CIMObjectPath &path,
+		OW_CIMClass &cimClass, const OW_ACLInfo &aclInfo)
+	{
+		m_ref->createClass(path, cimClass, aclInfo);
+	}
+
+	virtual OW_CIMClass updateClass(const OW_CIMObjectPath &name,
+		OW_CIMClass &cc, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->updateClass(name, cc, aclInfo);
+	}
+
+	virtual OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath &path,
+		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->enumClass(path, deep, localOnly, includeQualifiers,
+			includeClassOrigin, aclInfo);
+	}
+
+	virtual OW_CIMObjectPathEnumeration enumClassNames(
+		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->enumClassNames(path, deep, aclInfo);
+	}
+
+	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
+		const OW_String &methodName, const OW_CIMValueArray &inParams,
+		OW_CIMValueArray &outParams, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->invokeMethod(name, methodName, inParams,
+			outParams, aclInfo);
+	}
+
+	virtual OW_CIMObjectPathEnumeration getCIMInstanceNames(
+		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getCIMInstanceNames(path, deep, aclInfo);
+	}
+
+	virtual OW_CIMInstance getCIMInstance(const OW_CIMObjectPath &cop,
+		OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
+		const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getCIMInstance(cop, localOnly, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
+	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath &cop,
+		const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->deleteInstance(cop, aclInfo);
+	}
+
+	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path,
+		const OW_String &resultClass, const OW_String &role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->references(path, resultClass, role, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
+	virtual OW_CIMInstance updateInstance(const OW_CIMObjectPath &cop,
+		OW_CIMInstance &ci, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->updateInstance(cop, ci, aclInfo);
+	}
+
+	virtual void setProperty(const OW_CIMObjectPath &name,
+		const OW_String &propertyName, const OW_CIMValue &cv,
+		const OW_ACLInfo &aclInfo)
+	{
+		m_ref->setProperty(name, propertyName, cv, aclInfo);
+	}
+
+	virtual OW_CIMValue getProperty(const OW_CIMObjectPath &name,
+		const OW_String &propertyName, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->getProperty(name, propertyName, aclInfo);
+	}
+
+	virtual OW_CIMObjectPathEnumeration associatorNames(
+		const OW_CIMObjectPath &path, const OW_String &assocClass,
+		const OW_String &resultClass, const OW_String &role,
+		const OW_String &resultRole, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->associatorNames(path, assocClass, resultClass, role,
+			resultRole, aclInfo);
+	}
+
+	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,
+		const OW_String &assocClass, const OW_String &resultClass,
+		const OW_String &role, const OW_String &resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->associators(path, assocClass, resultClass, role, 
+			resultRole, includeQualifiers, includeClassOrigin, propertyList,
+			aclInfo);
+	}
+
+	virtual OW_CIMObjectPathEnumeration referenceNames(
+		const OW_CIMObjectPath &path, const OW_String &resultClass,
+		const OW_String &role, const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->referenceNames(path, resultClass, role, aclInfo);
+	}
+
+	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace &ns,
+		const OW_String &query, const OW_String &queryLanguage,
+		const OW_ACLInfo &aclInfo)
+	{
+		return m_ref->execQuery(ns, query, queryLanguage, aclInfo);
+	}
+
+	virtual OW_ReadLock getReadLock()
+	{
+		return m_ref->getReadLock();
+	}
+
+	virtual OW_WriteLock getWriteLock()
+	{
+		return m_ref->getWriteLock();
+	}
+
+private:
+
+	OW_SharedLibraryRepositoryIFCRef m_ref;
+};
+
+#endif	// __OW_SHAREDLIBRARYREPOSITORY_HPP__
+
+

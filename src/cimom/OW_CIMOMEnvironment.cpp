@@ -49,6 +49,7 @@
 #include "OW_IndicationRepLayer.hpp"
 #include "OW_Platform.hpp"
 #include "OW_WQLIFC.hpp"
+#include "OW_SharedLibraryRepository.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -561,11 +562,11 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	   && m_indicationServer
 	   && !m_indicationsDisabled)
 	{
-		OW_IndicationRepLayerRef irl = _getIndicationRepLayer();
+		OW_SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer();
+
 		if(irl)
 		{
-			irl->setCIMServer(m_cimServer.getPtr());
-			OW_RepositoryIFCRef rref(new OW_IndicationRepository(irl));
+			OW_RepositoryIFCRef rref(new OW_SharedLibraryRepository(irl));
 			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
 				aclInfo));
 		}
@@ -611,10 +612,10 @@ OW_CIMOMEnvironment::getWQLRef()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_IndicationRepLayerRef
+OW_SharedLibraryRepositoryIFCRef
 OW_CIMOMEnvironment::_getIndicationRepLayer()
 {
-	OW_IndicationRepLayerRef retref;
+	OW_SharedLibraryRepositoryIFCRef retref;
 
 	if(!m_indicationRepLayerDisabled)
 	{
@@ -647,11 +648,17 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 			}
 		}
 
-		retref = OW_IndicationRepLayerRef(m_indicationRepLayerLib,
+		OW_IndicationRepLayer* pirep = 
 			OW_SafeLibCreate<OW_IndicationRepLayer>::createObj(
-				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger));
+				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
 
-		if(!retref)
+		if(pirep)
+		{
+			pirep->setCIMServer(m_cimServer.getPtr());
+			retref = OW_SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
+				OW_RepositoryIFCRef(pirep));
+		}
+		else
 		{
 			m_indicationRepLayerDisabled = true;
 			m_indicationRepLayerLib = 0;

@@ -50,6 +50,7 @@ OW_PollingManager.hpp \
 OW_ProviderIFCLoader.hpp \
 OW_ProviderManager.hpp \
 OW_RepositoryIFC.hpp \
+OW_SharedLibraryRepository.hpp \
 OW_RepositoryStreams.hpp \
 OW_WQLFilterRep.hpp \
 OW_AssocDb.hpp \
