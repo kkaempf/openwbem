@@ -35,20 +35,7 @@
 
 
 #include "OW_config.h"
-#include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
-#include "OW_CppSimpleInstanceProviderIFC.hpp"
-#include "OW_Format.hpp"
-#include "OW_String.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_Logger.hpp"
-#include "OW_CIMOMHandleIFC.hpp"
-#include "OW_ResultHandlerIFC.hpp"
+#include "OW_CppProviderIncludes.hpp"
 
 #include <fstream>
 

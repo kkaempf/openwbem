@@ -54,7 +54,10 @@
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
-
+#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
+#include "OW_CppSimpleInstanceProviderIFC.hpp"
+#include "OW_Format.hpp"
+#include "OW_Enumeration.hpp"
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ResultHandlerIFC.hpp"
@@ -63,6 +66,8 @@
 #include "OW_String.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_StringStream.hpp"
+#include "OW_Assertion.hpp"
 
 
 #endif

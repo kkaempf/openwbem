@@ -35,18 +35,8 @@
 
 #include "OW_config.h"
 
-#include "OW_CppIndicationProviderIFC.hpp"
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CIMException.hpp"
+#include "OW_CppProviderIncludes.hpp"
 #include "OW_WQLSelectStatement.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_Format.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_Logger.hpp"
-#include "OW_ResultHandlerIFC.hpp"
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;

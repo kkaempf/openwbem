@@ -33,22 +33,11 @@
  * @author Dan Nuffer
  */
 
+#include "OW_CppProviderIncludes.hpp"
 
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CppMethodProviderIFC.hpp"
-#include "OW_CppIndicationProviderIFC.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_CIMException.hpp"
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"
-#include "OW_CIMValue.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_Format.hpp"
-#include "OW_CIMParamValue.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream> // for cerr
 #include <sys/types.h>

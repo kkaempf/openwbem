@@ -56,6 +56,7 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMParamValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"

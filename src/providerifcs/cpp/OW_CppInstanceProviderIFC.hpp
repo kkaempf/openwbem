@@ -39,6 +39,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {

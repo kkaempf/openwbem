@@ -35,11 +35,13 @@
 #ifndef OW_CPP_ASSOCIATORPROVIDERIFC_HPP_
 #define OW_CPP_ASSOCIATORPROVIDERIFC_HPP_
 #include "OW_config.h"
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 namespace OpenWBEM
 {
 

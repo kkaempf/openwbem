@@ -40,6 +40,9 @@
 #include "OW_IfcsFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
+#include "OW_Logger.hpp" // TODO: Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
+#include "OW_CIMOMHandleIFC.hpp" // TODO: Remove this once everybody has been warned to use OW_CppProviderIncludes.hpp instead.
+
 namespace OpenWBEM
 {
 
