@@ -403,6 +403,9 @@ theSigHandler(int sig)
 		{
 			case SIGTERM:
 			case SIGINT:
+#if defined(OW_NETWARE)
+			case SIGABRT: 
+#endif
 				pushSig(SHUTDOWN);
 				break;
 			case SIGHUP:
