@@ -38,7 +38,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
 
-#ifdef __APPLE__
+#ifdef OW_HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
 
