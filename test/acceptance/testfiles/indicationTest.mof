@@ -1,48 +1,18 @@
 
-[Description("Test Class 1"), Abstract(false)]
-class TestClass1
+
+ 
+[ Description("This is our test class that is just a dummy device") ]
+class OW_IndicationProviderTest1 : CIM_LogicalDevice
 {
-    [Description("A dummy string"), Key]
-    string dummykey;
 };
 
-[Description("Test Class 2"), Abstract(false)]
-class TestClass2
+[ Description("This is our test class that is just a dummy device") ]
+class OW_IndicationProviderTest2 : CIM_LogicalDevice
 {
-    [Description("A dummy string"), Key]
-    string dummykey;
 };
 
-[Indication,
-    Description (
-     "OW_TestIndication1 is used for testing OpenWBEM") ]
-class OW_TestIndication1 : CIM_Indication
+[ Description("This is our test class that is just a dummy device") ]
+class OW_IndicationProviderTest3 : CIM_LogicalDevice
 {
-    [Required,
-     Description (
-      "The number of the indication") ]
-    UInt32 indicationNumber;
-	
-    [EmbeddedObject, Required,
-     Description (
-      "An Embedded class (TestClass1), so we can test ISA") ]
-    string TheClass;
-
-};
-
-[Indication,
-    Description (
-     "OW_TestIndication2 is used for testing OpenWBEM") ]
-class OW_TestIndication2 : CIM_Indication
-{
-    [Required,
-     Description (
-      "The number of the indication") ]
-    UInt32 indicationNumber;
-
-	 [EmbeddedObject, Required,
-     Description (
-      "An Embedded instance (of TestClass2), so we can test ISA") ]
-    string TheInstance;
 };
 

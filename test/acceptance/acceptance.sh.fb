@@ -459,6 +459,11 @@ TestIndications()
 
 	RestartDaemon
 
+	# import the mof
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
+		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
+		ExitWithFail "MOF compiler test: owmofc exited with error."
+
 	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
 	$BUILDDIR/test/acceptance/progs/cimlistener http://test1:pass1@localhost:30926 \
 		2>&1 > $RESULTDIR/indicationTest.out || \
@@ -480,6 +485,8 @@ TestIndications()
 	# FIXME
 
 	echo "Indication Testsuite Passed"
+
+	# TODO: delete the mof
 
 	# turn off indications
 	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest1.so 
@@ -745,9 +752,6 @@ TestMof()
 			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
-		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
-		ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 }
@@ -841,7 +845,7 @@ TestCIMExceptions "http://test1:pass1@localhost:30926"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
 
 # Disabled for now until I get the test working again
-#TestIndications
+TestIndications
 
 TestWQL
 
