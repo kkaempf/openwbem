@@ -37,6 +37,7 @@
 #include "OW_CIMScope.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include <assert.h>
 
 namespace OpenWBEM
@@ -46,12 +47,15 @@ namespace MOF
 {
 
 using namespace WBEMFlags;
-CIMOMVisitor::CIMOMVisitor(Reference<CIMOMHandleIFC> handle, String& ns,
-		Reference<ParserErrorHandlerIFC> _theErrorHandler)
+CIMOMVisitor::CIMOMVisitor(const CIMOMHandleIFCRef& handle, 
+	const Compiler::Options& opts,
+	const Reference<ParserErrorHandlerIFC>& _theErrorHandler)
 : m_curValue(CIMNULL)
 , m_hdl(handle)
-, m_namespace(ns)
+, m_rephdl(handle.cast_to<RepositoryCIMOMHandle>())
 , theErrorHandler(_theErrorHandler)
+, m_opts(opts)
+, m_namespace(opts.m_namespace)
 {
 }
 CIMOMVisitor::~CIMOMVisitor()
@@ -1015,7 +1019,22 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 	try
 	{
 		theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
-		m_hdl->createClass(m_namespace, m_curClass);
+		try
+		{
+			m_hdl->createClass(m_namespace, m_curClass);
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			{
+				CIMOMcreateNamespace(li);
+				m_hdl->createClass(m_namespace, m_curClass);
+			}
+			else
+			{
+				throw;
+			}
+		}
 		theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
 		// Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
 		// in the case that there are lots of instances, each class will only have to be fetched once.
@@ -1045,12 +1064,26 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	try
 	{
 		theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
-		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+		try
+		{
+			m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			{
+				CIMOMcreateNamespace(li);
+				m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+			}
+			else
+			{
+				throw;
+			}
+		}
 		// save it in the cache
 		String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
 		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
-		//m_dataTypeCache[lcqualName] = m_curQualifierType;
 	}
 	catch (const CIMException& ce)
 	{
@@ -1063,7 +1096,22 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 	theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try
 	{
-		m_hdl->createInstance(m_namespace, m_curInstance);
+		try
+		{
+			m_hdl->createInstance(m_namespace, m_curInstance);
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			{
+				CIMOMcreateNamespace(li);
+				m_hdl->createInstance(m_namespace, m_curInstance);
+			}
+			else
+			{
+				throw;
+			}
+		}
 		theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
 	}
 	catch (const CIMException& ce)
@@ -1090,7 +1138,22 @@ CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, con
 {
 	try
 	{
-		return m_hdl->getQualifierType(m_namespace, qualName);
+		try
+		{
+			return m_hdl->getQualifierType(m_namespace, qualName);
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			{
+				CIMOMcreateNamespace(li);
+				return m_hdl->getQualifierType(m_namespace, qualName);
+			}
+			else
+			{
+				throw;
+			}
+		}
 	}
 	catch (const CIMException& ce)
 	{
@@ -1102,13 +1165,54 @@ CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const lineInfo& li
 {
 	try
 	{
-		return m_hdl->getClass(m_namespace, className, E_NOT_LOCAL_ONLY);
+		try
+		{
+			return m_hdl->getClass(m_namespace, className, E_NOT_LOCAL_ONLY);
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
+			{
+				CIMOMcreateNamespace(li);
+				return m_hdl->getClass(m_namespace, className, E_NOT_LOCAL_ONLY);
+			}
+			else
+			{
+				throw;
+			}
+		}
 	}
 	catch (const CIMException& ce)
 	{
 		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 	return CIMClass();
+}
+
+void CIMOMVisitor::CIMOMcreateNamespace(const lineInfo& li)
+{
+	// don't bother catching exceptions here.  This function is only called if
+	// the namespace needs to exist.  If we can't create the namespace, that's
+	// a fatal error.
+	theErrorHandler->progressMessage(format("Creating namespace: %1", m_namespace).c_str(), li);
+	if (m_rephdl)
+	{
+		m_rephdl->createNameSpace(m_namespace);
+	}
+	else
+	{
+		try
+		{
+			CIMNameSpaceUtils::createCIM_Namespace(*m_hdl, m_namespace);
+		}
+		catch (const CIMException& e)
+		{
+			// server doesn't support CIM_Namespace, try __Namespace
+			CIMNameSpaceUtils::create__Namespace(*m_hdl, m_namespace);
+		}
+
+	}
+	theErrorHandler->progressMessage(format("Created namespace: %1", m_namespace).c_str(), li);
 }
 
 } // end namespace MOF

@@ -34,7 +34,6 @@
 #include "OW_String.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_Reference.hpp"
-#include "OW_MOFGrammar.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Array.hpp"
 
@@ -49,6 +48,8 @@ OW_DECLARE_EXCEPTION(MOFCompiler)
 
 namespace MOF
 {
+
+class MOFSpecification;
 
 class Compiler
 {

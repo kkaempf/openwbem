@@ -45,6 +45,8 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_Cache.hpp"
+#include "OW_RepositoryCIMOMHandle.hpp"
+#include "OW_MOFCompiler.hpp"
 
 namespace OpenWBEM
 {
@@ -56,8 +58,8 @@ struct lineInfo;
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( CIMOMHandleIFCRef hdl, String& ns,
-		Reference<ParserErrorHandlerIFC> _theErrorHandler);
+	CIMOMVisitor(const CIMOMHandleIFCRef& hdl, const Compiler::Options& opts,
+		const Reference<ParserErrorHandlerIFC>& _theErrorHandler);
 	~CIMOMVisitor();
 	void VisitMOFSpecification( const MOFSpecification * );
 	
@@ -133,6 +135,8 @@ public:
 	void VisitInstanceDeclaration( const InstanceDeclaration * );
 	void VisitValueInitializer( const ValueInitializer * );
 private:
+
+	// state vars used while processing the tree
 	CIMClass m_curClass;
 	CIMInstance m_curInstance;
 	CIMQualifier m_curQualifier;
@@ -141,13 +145,22 @@ private:
 	CIMProperty m_curProperty;
 	CIMMethod m_curMethod;
 	CIMParameter m_curParameter;
-	Reference<CIMOMHandleIFC> m_hdl;
+
+	// connection to the rest of the world
+	CIMOMHandleIFCRef m_hdl;
+	RepositoryCIMOMHandleRef m_rephdl;
+	Reference<ParserErrorHandlerIFC> theErrorHandler;
+
+	// instance aliases
 	Map<String, String> m_aliasMap;
-	String m_namespace;
+
+	// config
+	Compiler::Options m_opts;
 	
+	// used for current #pragma values
+	String m_namespace;
 	String m_instanceLocale;
 	String m_locale;
-	
 	String m_nonLocal;
 	String m_nonLocalType;
 	String m_source;
@@ -156,6 +169,7 @@ private:
 	Cache<CIMQualifierType> m_dataTypeCache;
 	CIMDataType getQualifierDataType(const String& qualName, const lineInfo& li);
 	CIMQualifierType getQualifierType(const String& qualName, const lineInfo& li);
+
 	Cache<CIMClass> m_classCache;
 	CIMClass getClass(const String& className, const lineInfo& li);
 	
@@ -167,7 +181,8 @@ private:
 	void CIMOMsetQualifierType(const lineInfo& li);
 	void CIMOMcreateInstance(const lineInfo& li);
 	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const lineInfo& li);
-	Reference<ParserErrorHandlerIFC> theErrorHandler;
+	void CIMOMcreateNamespace(const lineInfo& li);
+	
 };
 
 } // end namespace MOF

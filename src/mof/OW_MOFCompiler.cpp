@@ -33,6 +33,7 @@
 #include "OW_MOFCIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_MOFGrammar.hpp"
 #include <assert.h>
 #include <cctype>
 
@@ -91,7 +92,7 @@ long Compiler::compile( const String& filename )
 			yyparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-			CIMOMVisitor v(m_ch, m_opts.m_namespace, theErrorHandler);
+			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
@@ -152,7 +153,7 @@ long Compiler::compileString( const String& mof )
 			yyparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-			CIMOMVisitor v(m_ch, m_opts.m_namespace, theErrorHandler);
+			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
 		catch (const ParseFatalErrorException&)
