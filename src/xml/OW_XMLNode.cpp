@@ -399,15 +399,23 @@ XMLNodeImpl::printNode( std::ostream& ostr ) const
 	{
 		ostr << " " << aiter->getName() << "=\"" << XMLEscape(aiter->getValue()) << '"';
 	}
-	ostr << ">";
-	ostr << XMLEscape(getText());
-	XMLNode curChild = getChild();
-	while (curChild)
+
+	if (getText().empty() && !getChild())
 	{
-		curChild.printNode(ostr);
-		curChild = curChild.getNext();
+		ostr << "/>";
 	}
-	ostr << "</" << name << ">";
+	else
+	{
+		ostr << ">";
+		ostr << XMLEscape(getText());
+		XMLNode curChild = getChild();
+		while (curChild)
+		{
+			curChild.printNode(ostr);
+			curChild = curChild.getNext();
+		}
+		ostr << "</" << name << ">";
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
