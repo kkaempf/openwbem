@@ -30,7 +30,7 @@
 
 
 
-// autoconf set variables here
+/* autoconf set variables here */
 
 @TOP@
 
@@ -117,7 +117,7 @@
 
 @BOTTOM@
 
-// end of autoconf set vars
+/* end of autoconf set vars */
 
 
 #ifdef __cplusplus
@@ -153,7 +153,7 @@
 #define OW_PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i)
 #define OW_PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
 #define OW_PRINT_FUNC_NAME
-#endif // #ifdef OW_PRINT_FUNC_DEBUG
+#endif /* #ifdef OW_PRINT_FUNC_DEBUG */
 
 /**
  * The OW_DEPRECATED macro can be used to trigger compile-time warnings
@@ -190,6 +190,6 @@
 
 
 
-#endif // #ifdef __cplusplus
+#endif /* #ifdef __cplusplus */
 
 

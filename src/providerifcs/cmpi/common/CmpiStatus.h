@@ -67,7 +67,7 @@ class CmpiStatus {
      st.rc=rcp;
      st.msg=CMNewString(CmpiProviderBase::getBroker(),(char*)msg,NULL);
    }
-//   CmpiStatus(const CMPIrc rc, const char *msg);
+  /*   CmpiStatus(const CMPIrc rc, const char *msg); */
    /** rc - get the rc value.
    */
    inline CMPIrc rc() const

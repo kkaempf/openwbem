@@ -51,7 +51,11 @@ public:
 	int getNextCounter();
 private:
 	int m_counter;
+#if defined(OW_AIX)
+	static const int m_maxValue;
+#else
 	static const int m_maxValue = 99;
+#endif // OW_AIX
 	Mutex m_mutex;
 };
 

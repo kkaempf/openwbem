@@ -60,7 +60,10 @@ public:
 
 typedef Array<IndicationProviderInfo> IndicationProviderInfoArray;
 
+
+#if defined(__GNUC__) || defined(__GNUG__)
 extern template class ProviderInfoBase<IndicationProviderInfoEntry>;
+#endif // defined(__GNUC__) || defined(__GNUG__)
 
 } // end namespace OpenWBEM
 

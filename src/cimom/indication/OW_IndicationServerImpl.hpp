@@ -98,11 +98,18 @@ private:
 	};
 	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
 	typedef HashMultiMap<String, Subscription> subscriptions_t;
+#if defined(OW_AIX)
+	typedef subscriptions_t subscriptions_copy_t;
+#else
+	// Save setup time and memory by using a vector instead of a map.
+	typedef std::vector<subscriptions_t>::value_type subscriptions_copy_t;
+#endif // AIX
+	typedef subscriptions_copy_t::iterator subscriptions_iterator;
 	void _processIndication(const CIMInstance& instance,
 		const String& instNS);
 	void _processIndicationRange(
 		const CIMInstance& instanceArg, const String instNS,
-		std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last);
+		subscriptions_iterator first, subscriptions_iterator last);
 	void addTrans(const String& ns, const CIMInstance& indication,
 		const CIMInstance& handler,
 		const CIMInstance& subscription,

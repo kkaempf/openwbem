@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-class CIMDateTimeException : CIMException
+class CIMDateTimeException : public CIMException
 {
 public:
 	CIMDateTimeException(const char* file, int line,

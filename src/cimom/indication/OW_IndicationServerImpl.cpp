@@ -527,7 +527,7 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 			m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
 			
 			// make a copy so we can free the lock, otherwise we may cause a deadlock.
-			std::vector<subscriptions_t::value_type> subs(range.first, range.second);
+			subscriptions_copy_t subs(range.first, range.second);
 			lock.release();
 			_processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
 		}
@@ -550,7 +550,8 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 					m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
 					
 					// make a copy so we can free the lock, otherwise we may cause a deadlock.
-					std::vector<subscriptions_t::value_type> subs(range.first, range.second);
+					subscriptions_copy_t subs(range.first, range.second);
+
 					lock.release();
 					_processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
 				}
@@ -573,7 +574,8 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 void
 IndicationServerImpl::_processIndicationRange(
 	const CIMInstance& instanceArg, const String instNS,
-	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
+	IndicationServerImpl::subscriptions_iterator first,
+	IndicationServerImpl::subscriptions_iterator last)
 {
 	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);

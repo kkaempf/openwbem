@@ -197,13 +197,13 @@ if((st)) { \
 #endif
 
 
-    // Life-cycle macros
+/* Life-cycle macros */
 
   #define CMClone(o,rc)                        ((o)->ft->clone((o),(rc)))
   #define CMRelease(o)                            ((o)->ft->release((o)))
   #define CMGetCharPtr(s)   ((s)!=NULL?((char*)(s)->hdl):(char*)"(NULL)")
  
-    // CMPIBroker factory macros
+/* CMPIBroker factory macros */
 
 #ifdef CMPI_INLINE
      /** Instance factory service.
@@ -355,7 +355,7 @@ if((st)) { \
                               ((b)->eft->classPathIsA((b),(p),(pn),(rc)))
 #endif
 
-    // Debugging macros
+/* Debugging macros */
 
 #ifdef CMPI_INLINE
      /** Attempts to transforms an CMPI object to a broker specific string format.
@@ -443,9 +443,9 @@ if((st)) { \
      10,v1,t1,v2,t2,v3,t3,v4,t4,v5,t5,v6,t6,v7,t7,v8,t8,v9,t9,v10,t10
   
   #define CMGetMessage(b,id,def,rc,parms)      ((b)->eft->getMessage((b),(id),(def),(rc),parms))
-#endif //CMPI_VER_85
+#endif /* CMPI_VER_85 */
 
-    // CMPIInstance macros
+/* CMPIInstance macros */
 
 
 #ifdef CMPI_INLINE
@@ -541,7 +541,7 @@ if((st)) { \
 
 
 
-   // CMPIObjectPath macros
+/* CMPIObjectPath macros */
 
 
 #ifdef CMPI_INLINE
@@ -714,7 +714,7 @@ if((st)) { \
 
 
 
-    // CMPIArray macros
+/* CMPIArray macros */
 
 
 #ifdef CMPI_INLINE
@@ -776,7 +776,7 @@ if((st)) { \
 
 
 
-    // CMPIARgs macros
+/* CMPIARgs macros */
 
 
 #ifdef CMPI_INLINE
@@ -841,7 +841,7 @@ if((st)) { \
 
 
 
-    // CMPIString Macros
+/* CMPIString Macros */
 
 
 #ifdef CMPI_INLINE
@@ -859,7 +859,7 @@ if((st)) { \
 
 
 
-    // CMPIDateTime macros
+/* CMPIDateTime macros */
 
 
 #ifdef CMPI_INLINE
@@ -903,7 +903,7 @@ if((st)) { \
 #endif
 
 
-    // CMPIEnumeration Macros
+/* CMPIEnumeration Macros */
 
 
 #ifdef CMPI_INLINE
@@ -946,7 +946,7 @@ if((st)) { \
 #endif
 
 
-   // CMPIResult Macros
+/* CMPIResult Macros */
 
 
 #ifdef CMPI_INLINE
@@ -1004,7 +1004,7 @@ if((st)) { \
 
 
 
-    // CMPIContext Macros
+/* CMPIContext Macros */
 
 
 #ifdef CMPI_INLINE
@@ -1071,7 +1071,7 @@ if((st)) { \
 
 
 
-    // CMPISelectExp macros
+/* CMPISelectExp macros */
 
 
 
@@ -1130,7 +1130,7 @@ if((st)) { \
 
 
 
-    // CMPISelectCond macros
+/* CMPISelectCond macros */
 
     
 
@@ -1166,7 +1166,7 @@ if((st)) { \
 
 
 
-    // CMPISubCond macros
+/* CMPISubCond macros */
 
 
 
@@ -1214,7 +1214,7 @@ if((st)) { \
 
 
 
-    // CMPIPredicate macros
+/* CMPIPredicate macros */
 
 
 #ifdef CMPI_INLINE
@@ -1255,7 +1255,7 @@ if((st)) { \
 
 
 
-    // CMPIBroker Macros
+/* CMPIBroker Macros */
 
 
 
@@ -1691,7 +1691,7 @@ if((st)) { \
 
 
 #ifndef DOC_ONLY
-   // MI factory stubs
+/* MI factory stubs */
 
   #define CMNoHook if (brkr)
 #endif
@@ -2139,4 +2139,4 @@ if((st)) { \
    CmpiProviderBase* CmpiProviderBase::base=NULL; \
    CmpiProviderBase b();
 
-#endif // _CMPIMACS_H_
+#endif /* _CMPIMACS_H_ */

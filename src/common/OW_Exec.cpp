@@ -428,9 +428,15 @@ safePopen(const Array<String>& command,
 		close(1);
 		close(2);
 		// this should only fail because of programmer error.
-		PosixUnnamedPipeRef in = retval.in().cast_to<PosixUnnamedPipe>();
-		PosixUnnamedPipeRef out = retval.out().cast_to<PosixUnnamedPipe>();
-		PosixUnnamedPipeRef err = retval.err().cast_to<PosixUnnamedPipe>();
+		UnnamedPipeRef foo1 = retval.in();
+		PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
+
+		UnnamedPipeRef foo2 = retval.out();
+		PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
+
+		UnnamedPipeRef foo3 = retval.err();
+		PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
+		
 		OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
 		// connect stdin, stdout, and stderr to the return pipes.
 		dup(in->getInputHandle());
@@ -458,9 +464,12 @@ safePopen(const Array<String>& command,
 		_exit(1);
 	}
 	// this should only fail because of programmer error.
-	PosixUnnamedPipeRef in = retval.in().cast_to<PosixUnnamedPipe>();
-	PosixUnnamedPipeRef out = retval.out().cast_to<PosixUnnamedPipe>();
-	PosixUnnamedPipeRef err = retval.err().cast_to<PosixUnnamedPipe>();
+	UnnamedPipeRef foo1 = retval.in();
+	PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
+	UnnamedPipeRef foo2 = retval.out();	
+	PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
+	UnnamedPipeRef foo3 = retval.err();	
+	PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
 	OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
 	// prevent the parent from using the child's end of the pipes.
 	in->closeInputHandle();

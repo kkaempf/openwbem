@@ -102,7 +102,8 @@ OperationContext::setStringData(const String& key, const String& str)
 String  
 OperationContext::getStringData(const String& key) const
 {
-	Reference<StringData> strData = getData(key).cast_to<StringData>();
+	DataRef foo = getData(key);
+	Reference<StringData> strData = foo.cast_to<StringData>();
 	if (!strData)
 	{
 		OW_THROW(ContextDataNotFoundException, key.c_str());

@@ -358,58 +358,62 @@ createInstance(CIMXMLParser& parser)
 	parser.mustGetEndTag();
 	return rval;
 }
-static inline void StringToType(const String& s, UInt8& b)
+namespace /* anonymous */
+{
+inline void StringToType(const String& s, UInt8& b)
 {
 	b = s.toUInt8();
 }
-static inline void StringToType(const String& s, Int8& b)
+inline void StringToType(const String& s, Int8& b)
 {
 	b = s.toInt8();
 }
-static inline void StringToType(const String& s, UInt16& b)
+inline void StringToType(const String& s, UInt16& b)
 {
 	b = s.toUInt16();
 }
-static inline void StringToType(const String& s, Int16& b)
+inline void StringToType(const String& s, Int16& b)
 {
 	b = s.toInt16();
 }
-static inline void StringToType(const String& s, UInt32& b)
+inline void StringToType(const String& s, UInt32& b)
 {
 	b = s.toUInt32();
 }
-static inline void StringToType(const String& s, Int32& b)
+inline void StringToType(const String& s, Int32& b)
 {
 	b = s.toInt32();
 }
-static inline void StringToType(const String& s, UInt64& b)
+inline void StringToType(const String& s, UInt64& b)
 {
 	b = s.toUInt64();
 }
-static inline void StringToType(const String& s, Int64& b)
+inline void StringToType(const String& s, Int64& b)
 {
 	b = s.toInt64();
 }
-static inline void StringToType(const String& s, String& b)
+inline void StringToType(const String& s, String& b)
 {
 	b = s;
 }
-static inline void StringToType(const String& s, Real32& b)
+inline void StringToType(const String& s, Real32& b)
 {
 	b = s.toReal32();
 }
-static inline void StringToType(const String& s, Real64& b)
+inline void StringToType(const String& s, Real64& b)
 {
 	b = s.toReal64();
 }
-static inline void StringToType(const String& s, Char16& b)
+inline void StringToType(const String& s, Char16& b)
 {
 	b = s.toChar16();
 }
-static inline void StringToType(const String& s, CIMDateTime& b)
+inline void StringToType(const String& s, CIMDateTime& b)
 {
 	b = s.toDateTime();
 }
+} /* end anonymous namespace */
+
 ///////////////////////////////////
 template <class T>
 static inline void

@@ -113,10 +113,10 @@ typedef void (*FP_DEACTIVATEFILTER)(NPIHandle*,SelectExp,const char*,
 
 /* the function pointer table returned by <LIBNAME>_initFunctionTable() */  
 typedef struct {
-  //CIMProvider;
+  /* CIMProvider; */
   FP_INITIALIZE         fp_initialize;
   FP_CLEANUP            fp_cleanup;
-  //InstanceProvider;
+  /* InstanceProvider; */
   FP_ENUMINSTANCENAMES  fp_enumInstanceNames;
   FP_ENUMINSTANCES      fp_enumInstances;
   FP_GETINSTANCE        fp_getInstance;
@@ -124,14 +124,14 @@ typedef struct {
   FP_SETINSTANCE        fp_setInstance;
   FP_DELETEINSTANCE     fp_deleteInstance;
   FP_EXECQUERY          fp_execQuery;
-  //AssociatorProvider
+  /* AssociatorProvider */
   FP_ASSOCIATORS        fp_associators;
   FP_ASSOCIATORNAMES    fp_associatorNames;
   FP_REFERENCES         fp_references;
   FP_REFERENCENAMES     fp_referenceNames;
-  //MethodProvider
+  /* MethodProvider */
   FP_INVOKEMETHOD       fp_invokeMethod;
-  //EventProvider
+  /* EventProvider */
   FP_AUTHORIZEFILTER    fp_authorizeFilter;
   FP_MUSTPOLL           fp_mustPoll;
   FP_ACTIVATEFILTER     fp_activateFilter;

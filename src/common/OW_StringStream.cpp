@@ -88,6 +88,24 @@ OStringStream::~OStringStream()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
+OStringStream::OStringStream(const OStringStream& ostr)
+	: OStringStreamBase(ostr.length()), std::ostream(&m_buf)
+{
+	*this << ostr.toString();
+}
+///////////////////////////////////////////////////////////////////////////////
+OStringStream& OStringStream::operator=(const OStringStream& ostr)
+{
+	if( &ostr != this )
+	{
+		this->reset();
+		*this << ostr.toString();
+	}
+	return *this;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 String OStringStream::toString() const
 {
 	m_buf.sync();

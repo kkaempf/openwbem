@@ -46,6 +46,9 @@
 namespace OpenWBEM
 {
 
+#if defined(OW_AIX)  
+const size_t StringBuffer::OW_DEFAULT_ALLOCATION_UNIT = 128;
+#endif // OW_AIX
 //////////////////////////////////////////////////////////////////////////////
 StringBuffer::StringBuffer(size_t allocSize) :
 	m_len(0),

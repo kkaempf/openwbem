@@ -35,6 +35,10 @@
 namespace OpenWBEM
 {
 
+#if defined(OW_AIX)
+const UInt32 HTTPDeflateIStreamBuffer::m_inBufSize = HTTP_BUF_SIZE;
+#endif // OW_AIX
+  
 using std::istream;
 HTTPDeflateIStreamBuffer::HTTPDeflateIStreamBuffer(istream& istr)
 	: BaseStreamBuffer(HTTP_BUF_SIZE, "in")

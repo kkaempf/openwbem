@@ -180,7 +180,7 @@ CMPIStatus testProvCreateInstance
    CMPIString *k,*d;
    CMPIArray *a;
    CMPIStatus rc;
-   //CMPIData data;
+   /*CMPIData data;*/
    void * _hdl;
 
    (void) cThis;
@@ -221,7 +221,7 @@ CMPIStatus testProvDeleteInstance
                  CMPIObjectPath* cop) {
    CMPIString *k;
    CMPIStatus rc;
-   //CMPIObjectPath *nx;
+   /*CMPIObjectPath *nx; */
    CMPIInstance *inst;
 
    (void) cThis;
@@ -230,9 +230,11 @@ CMPIStatus testProvDeleteInstance
    fprintf(stderr,"+++ testProvDeleteInstance()\n");
 
    fprintf(stderr,"--- trying 1 ...as %d\n",(int)(void*)pthread_self());
+   /*
 //   nx=broker->eft->newObjectPath(broker,"xyz",
 //      CMStringCharPtr(cop->ft->getNameSpace(cop,&rc)),&rc);
 //   printf("--- trying 2 ...\n");
+*/
    inst=broker->bft->getInstance(broker,ctx,cop,NULL,&rc);
    fprintf(stderr,"--- thru ...\n");
 
@@ -258,11 +260,13 @@ CMPIStatus testProvExecQuery
 
 
 
+/*
 //----------------------------------------------------------
 //---
 //	Provider Factory
 //---
 //----------------------------------------------------------
+*/
 
 
 static CMPIInstanceMIFT instMIFT={
@@ -283,7 +287,7 @@ CMPIInstanceMI* cmpiTestProvider_Create_InstanceMI(CMPIBroker* brkr, CMPIContext
    static CMPIInstanceMI mi={
       NULL,
       &instMIFT
-      //,NULL
+      /*,NULL */
    };
    (void) ctx;
    broker=brkr;

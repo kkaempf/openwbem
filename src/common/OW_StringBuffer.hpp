@@ -43,7 +43,11 @@ class CIMObjectPath;
 class StringBuffer
 {
 public:
-	static const size_t OW_DEFAULT_ALLOCATION_UNIT = 128;
+#if defined(OW_AIX)
+	static const size_t OW_DEFAULT_ALLOCATION_UNIT;
+#else
+	static const size_t OW_DEFAULT_ALLOCATION_UNIT = 128;  
+#endif // OW_AIX
 	StringBuffer(size_t allocSize = OW_DEFAULT_ALLOCATION_UNIT);
 	StringBuffer(const char* arg);
 	StringBuffer(const String& arg);

@@ -164,7 +164,7 @@ void freeMLogAll()
    if (lindex==NULL) return;
 
    for (i=0; i<IDXS; i++) {
- //     if (debug) printf("--- trying %d - %d\n",i,index->entry.nextFree[i]);
+     /*     if (debug) printf("--- trying %d - %d\n",i,index->entry.nextFree[i]); */
       if (lindex->entry.nextFree[i]>IDXS+2) freeMLog(i);
    }
 

@@ -73,7 +73,7 @@ static void segv_handler(int signum, siginfo_t * info, void * obscure)
 		sfp=sfp->sf_previous;
 	}
 }  
-#endif // #if defined(i386) && defined(__GNUC__)
+#endif /* #if defined(i386) && defined(__GNUC__) */
 
 void * setupCrashHandler()
 {
@@ -100,7 +100,7 @@ void * setupCrashHandler()
 	return oldaction;
 #else
 	return 0;
-#endif // #if defined(i386) && defined(__GNUC__)
+#endif /* #if defined(i386) && defined(__GNUC__) */
 }
 
 void  restoreCrashHandler(void *oldac)
@@ -123,6 +123,6 @@ void  restoreCrashHandler(void *oldac)
 	}
 #else
 	(void)oldac;
-#endif // #if defined(i386) && defined(__GNUC__)
+#endif /* #if defined(i386) && defined(__GNUC__) */
 }
 

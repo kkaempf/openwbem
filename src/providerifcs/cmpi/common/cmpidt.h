@@ -30,25 +30,29 @@
 extern "C" {
 #endif
 
-// defintion of version numbers to be used by providers using CMBrokerVersion()
-// They indicate what CMPI version is supported by both the broker and its adapter
+/*
+ * defintion of version numbers to be used by providers using CMBrokerVersion()
+ * They indicate what CMPI version is supported by both the broker and its
+ * adapter 
+ */
+#define CMPIVersion051 51     /* 0.51 */
+#define CMPIVersion060 60     /* 0.60 */
+#define CMPIVersion070 70     /* 0.70 */
+#define CMPIVersion080 80     /* 0.80 */
+#define CMPIVersion085 85     /* 0.85 */
 
-   #define CMPIVersion051 51     //  0.51
-   #define CMPIVersion060 60     //  0.60
-   #define CMPIVersion070 70     //  0.70
-   #define CMPIVersion080 80     //  0.80
-   #define CMPIVersion085 85     //  0.85
-   
-// Version compile switches to control inclusion of new CMPI support
-// Version definitions are cummulative
-// A new version definition must #define all previous definitions
+/*
+ * Version compile switches to control inclusion of new CMPI support
+ * Version definitions are cummulative
+ * A new version definition must #define all previous definitions
+ */
    
 #if   defined (CMPI_VER_85) || defined(CMPI_VER_ALL)
   #define CMPI_VER_80
   #define CMPICurrentVersion CMPIVersion085
 #elif defined (CMPI_VER_80) || defined(CMPI_VER_ALL)
   #define CMPICurrentVersion CMPIVersion080
-#else  // default version
+#else  /* default version */
   #define CMPI_VER_80
   #define CMPICurrentVersion CMPIVersion080
 #endif     
@@ -231,17 +235,17 @@ extern "C" {
         #define CMPI_ENCA         (CMPI_ARRAY | CMPI_ENC)
         #define CMPI_stringA      (CMPI_ARRAY | CMPI_string)
         #define CMPI_charsA       (CMPI_ARRAY | CMPI_chars)
-        #define CMPI_dateTimeA    (CMPI_ARRAY | CMPI_dateTime
+        #define CMPI_dateTimeA    (CMPI_ARRAY | CMPI_dateTime)
 
-	// the following are CMPIObjectPath key-types synonyms
-	// and are valid only when CMPI_keyValue of CMPIValueState is set
+        /* the following are CMPIObjectPath key-types synonyms 
+	 * and are valid only when CMPI_keyValue of CMPIValueState is set
+	 */
 
         #define CMPI_keyInteger   (CMPI_sint64)
 	#define CMPI_keyString    (CMPI_string)
 	#define CMPI_keyBoolean   (CMPI_boolean)
 	#define CMPI_keyRef       (CMPI_ref)
-
-	// the following are predicate types only
+	/* the following are predicate types only */
 
         #define CMPI_charString      (CMPI_string)
         #define CMPI_numericString   (CMPI_string | CMPI_sint64)
@@ -276,7 +280,7 @@ extern "C" {
    #define CMPI_LongA   CMPI_sint64A
    #define CMPI_FloatA  CMPI_real32A
    #define CMPI_DoubleA CMPI_real64A
-#endif // CMPI_NO_SYNONYM_SUPPORT
+#endif /* CMPI_NO_SYNONYM_SUPPORT */
 
    typedef unsigned int CMPICount;
 
@@ -351,7 +355,7 @@ extern "C" {
  };
 #endif
 
-#endif // _CMPIDT_H_
+#endif /* _CMPIDT_H_ */
 
 
 

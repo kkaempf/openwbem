@@ -34,7 +34,7 @@
 /** This class wraps a CIMOM specific string representation.
 */
 
-class CmpiString { //: public CmpiObject {
+class CmpiString { /*: public CmpiObject { */
    friend class CmpiBroker;
    friend class CmpiData;
    friend class CmpiObjectPath;

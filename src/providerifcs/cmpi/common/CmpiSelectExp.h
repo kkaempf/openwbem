@@ -27,7 +27,7 @@
 #include "cmpidt.h"
 #include "cmpift.h"
 
-//#include "CmpiImpl.h"
+/*#include "CmpiImpl.h" */
 
 #include "CmpiObject.h"
 

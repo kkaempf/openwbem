@@ -4,3 +4,5 @@ Makefile
 .*.libs
 *.lo
 *.la
+lib*so*
+OW_config.h

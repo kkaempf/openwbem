@@ -254,7 +254,7 @@ void lexIncludeFile( void* context, const String& filename )
 	{
 		// REPORT AN ERROR
 		MOF_COMPILER->theErrorHandler->fatalError(
-			format("Includes nested too deep (Max of %1 levels)", Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
+			format("Includes nested too deep (Max of %1 levels)", (int)Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
 			MOF_COMPILER->theLineInfo);
 		return;
 	}

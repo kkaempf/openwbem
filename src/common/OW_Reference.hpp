@@ -110,7 +110,8 @@ inline Reference<T>::Reference(const Reference<T>& arg)
 template<class T>
 template<class U>
 inline Reference<T>::Reference(const Reference<U>& arg)
-	: ReferenceBase(arg), m_pObj(arg.m_pObj)
+  : ReferenceBase(arg),
+  m_pObj(arg.m_pObj)
 {
 }
 //////////////////////////////////////////////////////////////////////////////

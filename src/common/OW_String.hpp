@@ -587,7 +587,12 @@ public:
 	 * @return an String containing the line.
 	 */
 	static String getLine(std::istream& istr);
-	static const size_t npos = ~0;
+
+#if defined(OW_AIX)  
+	static const size_t npos;
+#else
+	static const size_t npos = ~0;  
+#endif // OW_AIX
 private:
 	COWReference<ByteBuf> m_buf;
 };

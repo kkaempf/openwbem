@@ -490,7 +490,8 @@ void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op, Operatio
 void IndicationRepLayerImpl::setCIMServer(const RepositoryIFCRef& src)
 {
 	m_pServer = src;
-	m_pEnv = m_pServer->getEnvironment().cast_to<CIMOMEnvironment>();
+	ServiceEnvironmentIFCRef env = m_pServer->getEnvironment();
+	m_pEnv = env.cast_to<CIMOMEnvironment>();
 }
 void IndicationRepLayerImpl::exportIndication(const CIMInstance& instance,
 	const String& instNS)

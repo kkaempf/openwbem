@@ -84,6 +84,7 @@ private:
 	void put (unsigned long t);
 	void put (long long t);
 	void put (unsigned long long t);
+public:
 	friend std::ostream& operator<<(std::ostream& os, const Format& f);
 }; // class Format
 

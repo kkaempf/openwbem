@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-Param::Param(String argname, int mode, String value) : m_argName(argname), m_argValue(value), m_argMode(mode)
+Param::Param(String argname, Param::ParamValues mode, String value) : m_argName(argname), m_argValue(value), m_argMode(mode)
 {
 }
 Param::Param(String argname, String value) : m_argName(argname), m_argValue(value), m_argMode(VALUENOTSET)

@@ -90,10 +90,11 @@ typedef double						OW_Real32;
 
 typedef off_t	OW_off_t;
 
-// OW_Select_t is the type of object that can be used in
-// synchronous I/O multiplexing (i.e. select). There is a
-// possibility this can be something other than an int on
-// a platform we don't yet support.
+/* OW_Select_t is the type of object that can be used in
+ * synchronous I/O multiplexing (i.e. select). There is a
+ * possibility this can be something other than an int on
+ * a platform we don't yet support.
+ */
 typedef int OW_Select_t;
 
 #ifdef OW_WIN32

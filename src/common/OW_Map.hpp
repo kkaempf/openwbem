@@ -151,7 +151,7 @@ public:
 	}
 	void erase(iterator position)
 	{
-		return m_impl->erase(position);
+		m_impl->erase(position);
 	}
 	size_type erase(const key_type& x)
 	{

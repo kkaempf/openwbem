@@ -129,14 +129,18 @@ AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 case "$host" in
 *-*-aix*)
 	PLATFORMDIR="posix"
-	AC_DEFINE(AIX, 1, Target OS is AIX)
+	AIX=1
+	AC_DEFINE(AIX, $AIX, Target OS is AIX)
+	AC_SUBST(AIX)
 	LIBS="$LIBS -lxnet"
-	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -pipe -mcpu=common"
-	CXXCOMMONLINKFLAGS="-L/usr/lib/threads -pthread -Wl,-E"
-	CXXBINLINKFLAGS="$LDFLAGS -Wl,-brtl"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-G'
-	PLAT_OPTFLAGS="-O0"
+	PLAT_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
+	PLAT_CXXFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1 -qrtti=all"
+	CXXCOMMONLINKFLAGS=
+	CXXBINLINKFLAGS="-brtl -bdynamic"
+	# This is a bad hack, as it includes an export using GNU make (others?)
+	# substitutions. 
+	CXXSHAREDLIBLINKFLAGS='-G -qmkshrobj -bnoentry -bexport:$(@:%.so=%.exp)'
+	PLAT_OPTFLAGS=""
 	PIDFILEDIR="/var/opt/vintela/vmx"
 	LIB_EXT="so"
 	;;

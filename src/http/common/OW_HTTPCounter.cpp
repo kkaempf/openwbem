@@ -33,6 +33,9 @@
 namespace OpenWBEM
 {
 
+#if defined(OW_AIX)
+const int HTTPCounter::m_maxValue = 99;
+#endif // OW_AIX
 
 //////////////////////////////////////////////////////////////////////////////
 HTTPCounter::HTTPCounter()

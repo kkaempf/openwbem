@@ -31,11 +31,13 @@ extern "C" {
 
 
 
+   /*
    //---------------------------------------------------
    //--
    //	_CMPIBrokerEncFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers to broker and factory services
@@ -190,16 +192,18 @@ extern "C" {
      #if defined(CMPI_VER_85)
      CMPIString* (*getMessage)
                  (CMPIBroker* mb, char *msgId, char *defMsg, CMPIStatus* rc, unsigned int count, ...);
-     #endif // CMPI_VER_85	 
+     #endif /* CMPI_VER_85 */
    };
 
 
 
+   /*
    //---------------------------------------------------
    //--
    //	_CMPIBrokerFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers to broker CIMOM services
@@ -249,7 +253,7 @@ extern "C" {
      CMPIStatus (*detachThread)
                 (CMPIBroker* mb, CMPIContext* ctx);
 
-     // class 0 services
+     /* class 0 services */
 
       /** This function requests delivery of an Indication. The CIMOM will
          locate pertinent subscribers and notify them about the event.
@@ -262,7 +266,7 @@ extern "C" {
      CMPIStatus (*deliverIndication)
                 (CMPIBroker* mb, CMPIContext* ctx,
                  char* ns, CMPIInstance* ind);
-     // class 1 services
+     /* class 1 services */
 
       /** Enumerate Instance Names of the class (and subclasses) defined by <op>.
 	 @param mb Broker this pointer.
@@ -290,7 +294,7 @@ extern "C" {
                 (CMPIBroker* mb, CMPIContext* ctx,
                  CMPIObjectPath* op, char** properties, CMPIStatus* rc);
 
-     // class 2 services
+     /* class 2 services */
 
       /** Create Instance from <inst> using <op> as reference.
 	 @param mb Broker this pointer.
@@ -516,11 +520,13 @@ extern "C" {
 
 
 
+   /*
    //---------------------------------------------------
    //--
    //	_CMPIBroker Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Management Broker (CIM Object Manager).
@@ -542,11 +548,13 @@ extern "C" {
 
 
 
+   /*
    //---------------------------------------------------
    //--
    //	_CMPIContext Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Context
@@ -615,11 +623,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIContextr Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Context object.
@@ -638,11 +648,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIResult Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Result object.
@@ -659,11 +671,13 @@ extern "C" {
   };
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIResult Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Result
@@ -728,11 +742,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIInstance Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Instance object.
@@ -750,11 +766,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIInstance Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Instance
@@ -847,11 +865,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIObjectPath Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Instance object.
@@ -869,11 +889,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIInstance Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to ObjectPath
@@ -1008,7 +1030,7 @@ extern "C" {
 
 
 
-		// optional qualifier support
+     /* optional qualifier support */
 
 
        /** Get class qualifier value.
@@ -1067,11 +1089,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISelectExp Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated SelectExp object.
@@ -1089,11 +1113,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISelectExpFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to SelectExp
@@ -1159,11 +1185,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISelectCond Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated SelectCond object.
@@ -1181,11 +1209,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISelectCondFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to SelectCond
@@ -1237,11 +1267,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISubCond Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated SubCond object.
@@ -1259,11 +1291,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPISubCondFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to SubCond
@@ -1322,11 +1356,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIPredicate Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Predicate object.
@@ -1345,11 +1381,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIPredicateFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to SubCond
@@ -1406,11 +1444,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIArgs Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Args object.
@@ -1428,11 +1468,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIArgsFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Args
@@ -1504,11 +1546,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIString Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated String object.
@@ -1526,11 +1570,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIStringFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to String
@@ -1571,11 +1617,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIArray Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Array object.
@@ -1593,11 +1641,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIArrayFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Array
@@ -1666,11 +1716,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIEnumeration Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the Encapsulated Enumeration object.
@@ -1688,11 +1740,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIEnumerationFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Enumeration
@@ -1750,11 +1804,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIDateTime Encapsulated object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents the DateTime object.
@@ -1772,11 +1828,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIDateTimeFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to DateTime
@@ -1836,11 +1894,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIInstanceMI Instance Provider object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents an Instance provider.
@@ -1859,11 +1919,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIInstanceMIFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Instance
@@ -1990,11 +2052,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIAssociationMI Association Provider object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents an Association provider.
@@ -2012,11 +2076,13 @@ extern "C" {
    } CMPIAssociationMI;
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIAssociationMIFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Association
@@ -2166,11 +2232,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIMethodMI Method Provider object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents an Method provider.
@@ -2188,12 +2256,13 @@ extern "C" {
    } CMPIMethodMI;
 
 
-
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIMethodMIFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Method
@@ -2242,11 +2311,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIPropertyMI Property Provider object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents an Property provider.
@@ -2265,11 +2336,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIPropertyMIFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Property
@@ -2328,11 +2401,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIIndicationMI Indication Provider object
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure represents an Indication provider.
@@ -2351,11 +2426,13 @@ extern "C" {
 
 
 
+  /*
    //---------------------------------------------------
    //--
    //	_CMPIIndicationMIFT Function Table
    //--
    //---------------------------------------------------
+   */
 
 
    /** This structure is a table of pointers providing access to Indication
@@ -2404,4 +2481,4 @@ extern "C" {
  };
 #endif
 
-#endif // _CMPIFT_H_
+#endif /* _CMPIFT_H_ */

@@ -41,6 +41,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef index
+#undef index
+#endif /* index */
 #include <unistd.h>
 
 #include <db.h>
@@ -516,6 +519,7 @@ dump(dbp, rev)
 		}
 done:	return;
 }
+
 	
 OW_UInt32
 setflags(s)

@@ -35,11 +35,15 @@
 
 #include <sys/param.h>
 
+/*
 //#ifdef OW_HAVE_SYS_QUEUE_H
 //#include <sys/queue.h>
 //#else
+*/
 #include "queue.h"
+/*
 //#endif
+*/
 
 #include <sys/stat.h>
 

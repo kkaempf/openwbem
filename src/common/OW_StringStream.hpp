@@ -120,16 +120,14 @@ class OStringStream : private OStringStreamBase, public std::ostream
 public:
 	OStringStream(size_t size = 256);
 	~OStringStream();
+	OStringStream(const OStringStream&);
+	OStringStream& operator=(const OStringStream&);  
 	String toString() const;
 	// After calling releaseString(), this OStringStream is unusable
 	String releaseString();
 	size_t length() const;
 	const char* c_str() const;
 	void reset();
-private:
-	// not implemented
-	OStringStream(const OStringStream&);
-	OStringStream& operator=(const OStringStream&);
 };
 
 } // end namespace OpenWBEM

@@ -58,7 +58,9 @@ using std::ostream;
 using std::iostream;
 using std::istream;
 using namespace WBEMFlags;
-static inline void
+namespace // anonymous
+{
+inline void
 checkError(std::istream& istrm)
 {
 	UInt8 rc;
@@ -87,7 +89,7 @@ checkError(std::istream& istrm)
 		}
 	}
 }
-static inline void
+inline void
 checkError(CIMProtocolIStreamIFCRef istr)
 {
 	try
@@ -101,53 +103,53 @@ checkError(CIMProtocolIStreamIFCRef istr)
 		throw e;
 	}
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMClass& cc)
 {
 	cc = BinarySerialization::readClass(*istr);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMClassResultHandlerIFC& result)
 {
 	BinarySerialization::readClassEnum(*istr, result);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMInstance& ci)
 {
 	ci = BinarySerialization::readInstance(*istr);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMObjectPath& cop)
 {
 	cop = BinarySerialization::readObjectPath(*istr);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMObjectPathResultHandlerIFC& result)
 {
 	BinarySerialization::readObjectPathEnum(*istr, result);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMInstanceResultHandlerIFC& result)
 {
 	BinarySerialization::readInstanceEnum(*istr, result);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMQualifierType& arg)
 {
 	arg = BinarySerialization::readQualType(*istr);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMQualifierTypeResultHandlerIFC& result)
 {
 	BinarySerialization::readQualifierTypeEnum(*istr, result);
 }
-static inline void
+inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, StringResultHandlerIFC& result)
 {
 	BinarySerialization::readStringEnum(*istr, result);
 }
 template<class T>
-static inline T
+inline T
 readCIMObject(CIMProtocolIStreamIFCRef& istr)
 {
 	T rval;
@@ -167,7 +169,7 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr)
 	return rval;
 }
 template<class T>
-static inline void
+inline void
 readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result)
 {
 	try
@@ -184,6 +186,7 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result)
 	while(*istr) istr->get();
 	istr->checkForError();
 }
+} // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 BinaryCIMOMHandle::BinaryCIMOMHandle(CIMProtocolIFCRef prot)
 : ClientCIMOMHandle(), m_protocol(prot)

@@ -40,9 +40,9 @@
 	#define HashMultiMap __gnu_cxx::hash_multimap
 #else
 	// TODO: Write a real hash multi map
-	#include <multimap>
+	#include <map>
 	#define OW_HASH_MAP_NS std
-	#define HashMultiMap multimap
+	#define HashMultiMap std::multimap
 #endif
 
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_

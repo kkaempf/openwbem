@@ -36,11 +36,15 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 
+/*
 //#ifdef OW_HAVE_SYS_QUEUE_H
 //#include <sys/queue.h>
 //#else
+*/
 #include "queue.h"
+/*
 //#endif
+*/
 
 /*
  * The memory pool scheme is a simple one.  Each in-memory page is referenced

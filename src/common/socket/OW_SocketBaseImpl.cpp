@@ -218,7 +218,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		int pipefd = -1;
 		if (Socket::m_pUpipe)
 		{
-			lUPipe = Socket::m_pUpipe.cast_to<PosixUnnamedPipe>();
+			UnnamedPipeRef foo = Socket::m_pUpipe;
+			lUPipe = foo.cast_to<PosixUnnamedPipe>();
 			OW_ASSERT(lUPipe);
 			pipefd = lUPipe->getInputHandle();
 		}

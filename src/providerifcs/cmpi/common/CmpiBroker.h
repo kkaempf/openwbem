@@ -88,7 +88,7 @@ class CmpiBroker : public CmpiObject {
   void detachThread
                 (const CmpiContext& ctx);
 
-     // class 0 services
+  /* class 0 services */
 
       /** This function requests delivery of an Indication. The CIMOM will
          locate pertinent subscribers and notify them about the event.
@@ -99,7 +99,7 @@ class CmpiBroker : public CmpiObject {
    void deliverIndication
                 (const CmpiContext& ctx, const char* ns,const CmpiInstance& ind);
 
-     // class 1 services
+  /* class 1 services */
 
       /** Enumerate Instance Names of the class (and subclasses) defined by <op>.
 	 @param ctx Context object
@@ -122,7 +122,7 @@ class CmpiBroker : public CmpiObject {
                 (const CmpiContext& ctx, const CmpiObjectPath& op,
 		const char** properties);
 
-     // class 2 services
+  /* class 2 services */
 
       /** Create Instance from <inst> using <op> as reference.
 	 @param ctx Context object

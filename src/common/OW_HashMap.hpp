@@ -41,7 +41,7 @@
 #else
 	#include "OW_SortedVectorMap.hpp"
 	#define OW_HASH_MAP_NS OpenWBEM
-	#define HashMap OW_SortedVectorMap
+	#define HashMap SortedVectorMap
 #endif
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_
 #define OW_HASH_SPECIALIZED_INCLUDE_GUARD_
