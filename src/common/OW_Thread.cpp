@@ -33,6 +33,7 @@
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
+#include "OW_ThreadBarrier.hpp"
 
 #include <cstring>
 #include <cstdio>
@@ -68,6 +69,21 @@ private:
 	OW_RunnableRef m_runnable;
 };
 
+
+//////////////////////////////////////////////////////////////////////
+// this is what's really passed to threadRunner
+struct OW_ThreadParam
+{
+	OW_ThreadParam(OW_Thread* t, const OW_Reference<OW_ThreadDoneCallback>& c, const OW_ThreadBarrier& b)
+		: thread(t)
+		, cb(c)
+		, barrier(b)
+	{}
+
+	OW_Thread* thread;
+	OW_Reference<OW_ThreadDoneCallback> cb;
+	OW_ThreadBarrier barrier;
+};
 
 
 static OW_Thread_t zeroThread();
@@ -133,19 +149,15 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 
 	OW_UInt32 flgs = (m_isJoinable == true) ? OW_THREAD_FLG_JOINABLE : 0;
 
+	OW_ThreadBarrier barrier(2);
 	// p will be delted by threadRunner
-	OW_ThreadParam* p = new OW_ThreadParam;
-	p->thread = this;
-	p->cb = cb;
+	OW_ThreadParam* p = new OW_ThreadParam(this, cb, barrier);
 	if(OW_ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
 
-	while(!m_isRunning)
-	{
-		yield();
-	}
+	barrier.wait();
 
 	m_isStarting = false;
 
@@ -206,7 +218,7 @@ OW_Int32
 OW_Thread::threadRunner(void* paramPtr)
 {
 	OW_Thread_t theThreadID;
-	OW_Int32 rval;
+	OW_Int32 rval = -1;
 	try
 	{
 		// scope is important so destructors will run before the thread is clobbered by exitThread
@@ -216,13 +228,11 @@ OW_Thread::threadRunner(void* paramPtr)
 		OW_Thread* pTheThread = pParam->thread;
 		theThreadID = pTheThread->m_id;
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
+		OW_ThreadBarrier barrier = pParam->barrier;
+
+		barrier.wait();
 
 		pTheThread->m_isRunning = true;
-
-		while(pTheThread->m_isStarting)
-		{
-			yield();
-		}
 
 		rval = pTheThread->run();
 

@@ -184,13 +184,6 @@ protected:
 
 private:
 
-	// this is what's really passed to threadRunner
-	struct OW_ThreadParam
-	{
-		OW_Thread* thread;
-		OW_Reference<OW_ThreadDoneCallback> cb;
-	};
-
 	static OW_Int32 threadRunner(void* paramPtr);
 	
 	// non-copyable
