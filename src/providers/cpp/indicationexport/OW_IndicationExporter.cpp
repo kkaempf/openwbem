@@ -197,7 +197,7 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	{
 		String errCode = parser.mustGetAttribute(
 			CIMXMLParser::A_CODE);
-		String description = parser.mustGetAttribute(
+		String description = parser.getAttribute(
 			CIMXMLParser::A_DESCRIPTION);
 		Int32 iErrCode;
 		try

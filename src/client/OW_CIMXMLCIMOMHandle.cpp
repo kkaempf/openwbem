@@ -128,7 +128,7 @@ CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr, const String& cimProtocolV
 void
 CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const String &sMethod,
 	const String& ns,
-	ostream& ostr, 
+	ostream& ostr,
 	const String& cimProtocolVersion)
 {
 	sendCommonXMLHeader(ostr, cimProtocolVersion);
@@ -141,7 +141,7 @@ void
 CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const String &sMethod,
 	const String& ns,
 	const CIMObjectPath& path,
-	ostream& ostr, 
+	ostream& ostr,
 	const String& cimProtocolVersion)
 {
 	sendCommonXMLHeader(ostr, cimProtocolVersion);
@@ -185,7 +185,7 @@ CIMXMLCIMOMHandle::doSendRequest(
 	const String& methodName,
 	const String& cimObject,
 	bool isIntrinsic,
-	ClientOperation& op, 
+	ClientOperation& op,
 	const String& cimProtocolVersion)
 {
 	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(
@@ -307,14 +307,14 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	}
 	parser.mustGetNextTag();
 	//
-	// See if there was an error, and if there was throw an equivalent
+	// See if there was an error, and if there was, throw an equivalent
 	// exception on the client
 	//
 	if (parser.tokenIsId(CIMXMLParser::E_ERROR))
 	{
 		String errCode = parser.mustGetAttribute(
 			CIMXMLParser::A_CODE);
-		String description = parser.mustGetAttribute(
+		String description = parser.getAttribute(
 			CIMXMLParser::A_DESCRIPTION);
 		Int32 iErrCode;
 		try
