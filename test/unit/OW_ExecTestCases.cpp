@@ -81,8 +81,10 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 
 	processstatus = 0;
 	output.erase();
-	Exec::executeProcessAndGatherOutput(String("/bin/echo -n false").tokenize(), output, processstatus);
-	unitAssert(output == "false");
+	Exec::executeProcessAndGatherOutput(String("/bin/echo false").tokenize(), output, processstatus);
+	StringArray out_array = output.tokenize();
+	unitAssert(out_array.size() == 1)
+	unitAssert(*out_array.begin() == "false");
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
