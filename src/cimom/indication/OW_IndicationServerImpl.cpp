@@ -361,9 +361,6 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 	m_mainLoopCondition.notifyOne();
 }
 
-#include <iostream>
-using namespace std;
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -398,16 +395,12 @@ public:
 
 	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const 
 	{
-cout << "InstancePropertySource::getValue propertyName = " << propertyName << endl;
 		OW_StringArray propNames = propertyName.tokenize(".");
-cout << "propNames.size() = " << propNames.size() << endl;
 		if (propNames.empty())
 		{
-cout << "returning false because propNames.empty()" << endl;
 			return false;
 		}
 
-cout << "propNames[0] = " << propNames[0] << " ci.getClassName = " << ci.getClassName() << endl;
 		if (propNames[0].equalsIgnoreCase(ci.getClassName()))
 		{
 			propNames.remove(0);
@@ -470,17 +463,14 @@ private:
 	// This is for recursion on embedded instances
 	static bool getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value)
 	{
-cout << "propNames.size() = " << propNames.size() << endl;
 		if (propNames.empty())
 		{
-cout << "getValueAux returning false because propNames.empty()" << endl;
 			return false;
 		}
 
 		OW_CIMProperty p = ci.getProperty(propNames[0]);
 		if (!p)
 		{
-cout << "getValueAux returning false because failed to get property " << propNames[0] << endl;
 			return false;
 		}
 
@@ -537,7 +527,6 @@ cout << "getValueAux returning false because failed to get property " << propNam
 				v.get(embed);
 				if (!embed)
 				{
-cout << "getValueAux returning false because the embedded instance is NULL" << endl;
 					return false;
 				}
 				return getValueAux(embed, propNames, value);
@@ -560,21 +549,41 @@ private:
 void splitUpProps(const OW_StringArray& props, 
 	OW_HashMap<OW_String, OW_StringArray>& map)
 {
+    // This function may appear a little complicated...
+    // It's handling the many cases needed to split up
+    // the props so they can be quickly accessed in
+    // filterInstance().
+    // The props that are possible are:
+    // *
+    // PropertyName
+    // ClassName.PropertyName
+    // ClassName.*
+    // PropertyName.*
+    // PropertyName.EmbedName
+    // ClassName.PropertyName.*
+    // ClassName.PropertyName.EmbedName
+
 	for (size_t i = 0; i < props.size(); ++i)
 	{
 		OW_String prop = props[i];
+        prop.toLowerCase();
 		int idx = prop.indexOf('.');
-		if (idx == -1)
-		{
-			map[""].push_back(prop);
-		}
-		else
+        map[""].push_back(prop); // for no ClassName
+		if (idx != -1)
 		{
 			OW_String key = prop.substring(0, idx);
-			key.toLowerCase();
 			OW_String val = prop.substring(idx+1);
-			val.toLowerCase();
-			map[key].push_back(val);
+
+            map[""].push_back(key); // Store PropertyName for PropertyName.EmbedName
+			map[key].push_back(val); // Store PropertyName for ClassName.PropertyName and EmbedName for PropertyName.EmbedName
+
+            // now remove trailing periods.
+            idx = val.indexOf('.');
+            if (idx != -1)
+            {
+                val = val.substring(0, idx);
+            }
+			map[key].push_back(val); // Store PropertyName for ClassName.PropertyName.EmbedName
 		}
 	}
 }
@@ -584,6 +593,11 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 	OW_CIMInstance rval(toFilter.clone(OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 		OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
 		OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN));
+
+    if (props.empty())
+    {
+        return rval;
+    }
 
 	OW_HashMap<OW_String, OW_StringArray> propMap;
 	splitUpProps(props, propMap);
@@ -618,8 +632,21 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 					v.get(embed);
 					if (embed)
 					{
+                        OW_StringArray embeddedProps;
+                        for (size_t i = 0; i < propsToKeepArray.size(); ++i)
+                        {
+                            const OW_String& curPropName = propsToKeepArray[i];
+                            if (curPropName.startsWith(lowerPropName))
+                            {
+                                int idx = curPropName.indexOf('.');
+                                if (idx != -1)
+                                {
+                                    embeddedProps.push_back(curPropName.substring(idx));
+                                }
+                            }
+                        }
 						thePropToKeep.setValue(OW_CIMValue(
-							filterInstance(embed, propsToKeepArray)));
+							filterInstance(embed, embeddedProps)));
 					}
 				}
 			}
