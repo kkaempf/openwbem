@@ -229,7 +229,7 @@ ldconfig
 #%config /etc/sysconfig/daemons/%{daemonname}
 %config /etc/pam.d/@GENERIC@openwbem
 %attr(0755,root,root) /etc/init.d/%{initname}
-%{@GENERIC@prefix}/lib/lib*
+%{@GENERIC@prefix}/lib/lib*.so*
 %{@GENERIC@prefix}/bin/*
 %{@GENERIC@prefix}/sbin/*
 %{@GENERIC@prefix}/man/*/*
@@ -241,6 +241,7 @@ ldconfig
 %defattr(-,root,root)
 %dir %{@GENERIC@prefix}/include/openwbem
 %{@GENERIC@prefix}/include/openwbem/*
+%{@GENERIC@prefix}/lib/lib*.a
 
 #%Files doc
 #%defattr(-,root,root)

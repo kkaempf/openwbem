@@ -319,7 +319,7 @@ CIMQualifier::readObject(istream &istrm)
 	Bool isValue;
 	String language;
 
-	UInt32 version = CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG, OW_CIMQUALIFIERSIG_V, CIMQualifier::VERSION );
+	UInt32 version = CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG, OW_CIMQUALIFIERSIG_V, CIMQualifier::SERIALIZATION_VERSION );
 
 	name.readObject(istrm);
 	isValue.readObject(istrm);
@@ -352,7 +352,7 @@ CIMQualifier::readObject(istream &istrm)
 void
 CIMQualifier::writeObject(ostream &ostrm) const
 {
-	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG_V, CIMQualifier::VERSION);
+	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG_V, CIMQualifier::SERIALIZATION_VERSION);
 
 	m_pdata->m_name.writeObject(ostrm);
 	CIMValue qv = m_pdata->m_qualifierValue;

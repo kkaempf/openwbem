@@ -66,7 +66,7 @@ public:
 	 * Version 1 had a language.
 	 * Since a class doesn't actually have a language it was removed for version 2
 	 */
-	enum { VERSION = 2 };
+	enum { SERIALIZATION_VERSION = 2 };
 	/**
 	 * Create a new CIMClass object.
 	 */

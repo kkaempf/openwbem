@@ -294,7 +294,7 @@ public:
 	 * Binary serialization version.
 	 * Version 1 added a language.
 	 */
-	enum { VERSION = 1 };
+	enum { SERIALIZATION_VERSION = 1 };
 
 private:
 	COWIntrusiveReference<QUALData> m_pdata;

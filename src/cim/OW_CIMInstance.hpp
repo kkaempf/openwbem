@@ -67,7 +67,7 @@ class CIMInstance : public CIMElement
 {
 public:
 	struct INSTData;
-	enum { VERSION = 1 };				// Version # for serialization
+	enum { SERIALIZATION_VERSION = 1 };				// Version # for serialization
 	/**
 	 * Default ctor
 	 */

@@ -655,7 +655,7 @@ CIMClass::readObject(istream &istrm)
 	Bool isAssocFlag;
 	Bool isK;
 
-	UInt32 version = CIMBase::readSig(istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V, CIMClass::VERSION);
+	UInt32 version = CIMBase::readSig(istrm, OW_CIMCLASSSIG, OW_CIMCLASSSIG_V, CIMClass::SERIALIZATION_VERSION);
 	name.readObject(istrm);
 	pcName.readObject(istrm);
 	isAssocFlag.readObject(istrm);
