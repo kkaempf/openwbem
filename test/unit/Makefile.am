@@ -37,20 +37,20 @@ INCLUDES = \
 
 unitMain_LDADD = \
 -L$(top_builddir)/test/CppUnit -lCppUnit \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/cimom/server -lowserver \
--L$(top_builddir)/src/cimom/common -lowcimomcommon \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/services/http -lowservicehttp \
--L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/mof -lowmofc \
+-L$(top_builddir)/src/cimom/common -lowcimomcommon \
+-L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/mof -lowmofc \
+-L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
