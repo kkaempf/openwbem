@@ -635,6 +635,36 @@ fi
 else
    AC_DEFINE(NO_SSL)
 fi
+
+dnl
+dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
+dnl   of a bourne-style shell script 
+dnl
+dnl   Note: This chunk of tests was added because Redhat includes dependencies
+dnl   to kerberos in their compilation of the openSSL libraries.  To allow
+dnl   things to compile happily, we need to include the proper directories and
+dnl   libraries (as is set in pkg-config openssl --cflags --libs)
+dnl
+dnl
+AC_MSG_CHECKING("For additional SSL dependencies")
+dnl Make sure that pkg-config exists.
+if `pkg-config --version &> /dev/null` 
+then
+  
+  if `pkg-config openssl`
+  then
+    EXTRA_SSL_LIBS=`pkg-config openssl --libs`
+    EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
+    LIBS="$LIBS $EXTRA_SSL_LIBS"
+    CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
+    AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
+  else
+    AC_MSG_RESULT("None")
+  fi
+else
+  AC_MSG_RESULT("None (pkg-config not found)")
+fi
+
 dnl End of the ssl check
 
 dnl Now check for threading stuff
