@@ -1,4 +1,22 @@
-noinst_PROGRAMS = MemTracerTest unitMain
+if DISABLE_INSTANCE_MANIPULATION
+PROGS=
+else
+if DISABLE_SCHEMA_MANIPULATION
+PROGS=
+else
+if DISABLE_QUALIFIER_DECLARATION
+PROGS=
+else
+if DISABLE_NAMESPACE_MANIPULATION
+PROGS=
+else
+PROGS= MemTracerTest unitMain
+endif
+endif
+endif
+endif
+
+noinst_PROGRAMS = $(PROGS)
 #check_PROGRAMS = unitMain
 
 
