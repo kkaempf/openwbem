@@ -38,96 +38,141 @@
 #include "OW_String.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_CmdLineParser.hpp"
+
 #include <iostream>
-#include <unistd.h>
-#include <stdlib.h>
 #include <fstream>
-#include <stdlib.h>
 
 using namespace OpenWBEM;
+using namespace std;
 
-using std::ofstream;
-using std::cout;
-using std::cerr;
-using std::endl;
-void usage(const char* cmd)
+enum
 {
-	cerr << "Usage: " << cmd << " -l <login_name> [-h <hostname>] "
-		"-f <password_file> [-p <password>]" << endl;
+	HELP_OPT,
+	VERSION_OPT,
+	LOGIN_NAME_OPT,
+	HOSTNAME_OPT,
+	PASSWORD_FILE_OPT,
+	PASSWORD_OPT
+};
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{LOGIN_NAME_OPT, 'l', "login_name", CmdLineParser::E_REQUIRED_ARG, 0, "Set the user name. Required."},
+	{HOSTNAME_OPT, 'h', "hostname", CmdLineParser::E_REQUIRED_ARG, 0, "Set the hostname of the computer on which the password file will be used. "
+		"If omitted, the current system's hostname will be used."},
+	{PASSWORD_FILE_OPT, 'f', "password_file", CmdLineParser::E_REQUIRED_ARG, 0, "Set the path identifying the password file. Required."},
+	{PASSWORD_OPT, 'p', "password", CmdLineParser::E_REQUIRED_ARG, 0, "Set the password for the new user. If this option is omitted, you will be "
+		"prompted for the password."},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owdigestgenpass [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
 }
+
+
+
+// void usage(const char* cmd)
+// {
+//     cerr << "Usage: " << cmd << " -l <login_name> [-h <hostname>] "
+//         "-f <password_file> [-p <password>]" << endl;
+// }
+
 int main(int argc, char* argv[])
 {
-	const char* const short_options = "l:h:f:p:";
-	String name;
-	String hostname;
-	String filename;
-	String passwd;
-	int c = getopt(argc, argv, short_options);
-	while (c != -1)
+	try
 	{
-		switch (c)
+		CmdLineParser parser(argc, argv, g_options);
+	
+		if (parser.isSet(HELP_OPT))
 		{
-			case 'l':
-				name = optarg;
-				break;
-			case 'h':
-				hostname = optarg;
-				break;
-			case 'f':
-				filename = optarg;
-				break;
-			case 'p':
-				passwd = optarg;
-				break;
+			Usage();
+			return 0;
+		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owdigestgenpass (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Bart Whiteley and Dan Nuffer.\n";
+			return 0;
+		}
+	
+		String name = parser.getOptionValue(LOGIN_NAME_OPT);
+		String hostname = parser.getOptionValue(HOSTNAME_OPT);
+		String filename = parser.getOptionValue(PASSWORD_FILE_OPT);
+		String passwd = parser.getOptionValue(PASSWORD_OPT);
+	
+		if (filename.empty() || name.empty() )
+		{
+			Usage();
+			return 1;
+		}
+		if (hostname.empty())
+		{
+			SocketAddress iaddr = SocketAddress::getAnyLocalHost();
+			hostname = iaddr.getName();
+		}
+
+		ofstream outfile(filename.c_str(), std::ios::app);
+		
+		if (!outfile)
+		{
+			cerr << "Unable to open password file " << filename << endl;
+			exit(1);
+		}
+		
+		if (passwd.empty())
+		{
+			for (;;)
+			{
+				passwd = GetPass::getPass("Please enter the password for " +
+					name + ": ");
+				String rePasswd = GetPass::getPass("Please retype the password for " +
+					name + ": ");
+				if (passwd.equals(rePasswd))
+				{
+					break;
+				}
+				else
+				{
+					cout << "Passwords do not match.  Please try again" << endl;
+					continue;
+				}
+			}
+		}
+		
+		MD5 md5;
+		md5.update(name);
+		md5.update(":");
+		md5.update(hostname);
+		md5.update(":");
+		md5.update(passwd);
+		outfile << name << ":" << hostname << ":" << md5.toString() << endl;
+		
+		return 0;
+
+	}
+	catch (CmdLineParserException& e)
+	{
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				cerr << "unknown option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				cerr << "missing argument for option: " << e.getMessage() << '\n';
+			break;
 			default:
-				usage(argv[0]);
-				exit(1);
+				cerr << "failed parsing command line options\n";
+			break;
 		}
-		c = getopt(argc, argv, short_options);
+		Usage();
 	}
-	if (filename.empty() || name.empty() )
-	{
-		usage(argv[0]);
-		exit(1);
-	}
-	if (hostname.empty())
-	{
-		SocketAddress iaddr = SocketAddress::getAnyLocalHost();
-		hostname = iaddr.getName();
-	}
-	ofstream outfile(filename.c_str(), std::ios::app);
-	if (!outfile)
-	{
-		cerr << "Unable to open password file " << filename << endl;
-		exit(1);
-	}
-	if (passwd.empty())
-	{
-		for (;;)
-		{
-			passwd = GetPass::getPass("Please enter the password for " +
-				name + ": ");
-			String rePasswd = GetPass::getPass("Please retype the password for " +
-				name + ": ");
-			if (passwd.equals(rePasswd))
-			{
-				break;
-			}
-			else
-			{
-				cout << "Passwords do not match.  Please try again" << endl;
-				continue;
-			}
-		}
-	}
-	MD5 md5;
-	md5.update(name);
-	md5.update(":");
-	md5.update(hostname);
-	md5.update(":");
-	md5.update(passwd);
-	outfile << name << ":" << hostname << ":" << md5.toString() << endl;
-	return 0;
+	return 1;
 }
 
 
