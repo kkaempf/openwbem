@@ -767,7 +767,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			methArray[i].setOriginClass(childName);
 		}
 		childClass.setMethods(methArray);
-		_throwIfBadClass(childClass, parentClass);
+		//_throwIfBadClass(childClass, parentClass);
 		return parentNode;
 	}
 
@@ -886,7 +886,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 			  childClass.getName()).c_str());
   }
 
-  _throwIfBadClass(childClass, parentClass);
+  //_throwIfBadClass(childClass, parentClass);
   return parentNode;
 }
 
@@ -1122,6 +1122,9 @@ OW_MetaRepository::createNameSpace(const OW_StringArray& nameComps,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Since singletons (classes w/out keys that can have one instance) are allowed
+// in the spec, this function is unnecessary, and wrong.
+#if 0
 void
 OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass)
 {
@@ -1218,6 +1221,7 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 				cc.getName()).c_str());
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)

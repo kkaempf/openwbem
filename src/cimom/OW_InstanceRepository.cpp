@@ -110,11 +110,17 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "no object path");
 	}
 
+	OW_StringBuffer rv(makeClassKey(ns, cop.getObjectName()));
+	rv += '/';
+
 	OW_CIMPropertyArray kprops = theClass.getKeys();
 	if(kprops.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
-			format("No key properties for class: %1", theClass.getName()).c_str());
+		rv += cop.getObjectName();
+		return rv.releaseString();
+		// don't do this to allow for singleton classes without keys.
+		//OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+		//	format("No key properties for class: %1", theClass.getName()).c_str());
 	}
 
 	OW_String oclass = kprops[0].getOriginClass().toLowerCase();
@@ -126,7 +132,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 	}
 
 	// Start return value with the namespace
-	OW_String rv = makeClassKey(ns, cop.getObjectName()) + "/";
+	//OW_String rv = makeClassKey(ns, cop.getObjectName()) + "/";
 	rv += oclass;
 
 	// Get keys from object path
@@ -164,14 +170,15 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 				format("Property in model path is not a key: %1", pname).c_str());
 		}
 
-		rv += ".";
-		rv += pname + "=";
+		rv += '.';
+		rv += pname;
+		rv += '=';
 
 		OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(pra[0].getValue(),
 			kprops[0].getDataType());
 
 		rv += cv.toString();
-		return rv;
+		return rv.releaseString();
 	}
 
 	// Ensure no non-key properties were specified in the path
@@ -204,7 +211,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		kra.addElement(pra[i]);
 	}
 
-	return kra.toString(rv);
+	return kra.toString(rv.releaseString());
 }
 
 //////////////////////////////////////////////////////////////////////////////

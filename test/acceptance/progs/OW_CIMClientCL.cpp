@@ -627,7 +627,7 @@ enumerateInstanceNames(OW_CIMClient& hdl)
 			OW_CIMObjectPath cop = enu.nextElement();
 			cout << cop.toString() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(cop, tfs, OW_CIMtoXMLFlags::isNotInstanceName);
+			OW_CIMInstancePathtoXML(cop, tfs, OW_CIMtoXMLFlags::isNotInstanceName);
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -1591,6 +1591,93 @@ setProperty(OW_CIMClient& hdl, const OW_String& instName)
 	testDone();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+testSingleton(OW_CIMClient& hdl)
+{
+	testStart("testSingleton");
+
+	try
+	{
+		// first create the singletonClass
+		OW_CIMClass cimClass("singletonClass");
+
+		OW_Array<OW_String> zargs;
+
+		zargs.push_back("Name");
+		zargs.push_back("string");
+
+		zargs.push_back("OptionalArg");
+		zargs.push_back("boolean");
+
+		OW_String name;
+		OW_String type;
+
+		for (size_t i = 0; i < zargs.size(); i += 2)
+		{
+			name = zargs[i];
+			type = zargs[i + 1];
+			OW_CIMProperty cimProp;
+			if (type.equals("string"))
+			{
+				cimProp.setDataType(OW_CIMDataType::STRING);
+			}
+			else if (type.equals("boolean"))
+			{
+				cimProp.setDataType(OW_CIMDataType::BOOLEAN);
+			}
+
+			cimProp.setName(name);
+			cimClass.addProperty(cimProp);
+		}
+
+		hdl.createClass(cimClass);
+
+		OW_CIMInstance newInst = cimClass.newInstance();
+		newInst.setProperty("Name", OW_CIMValue("singleton"));
+		newInst.setProperty("OptionalArg", OW_CIMValue(true));
+
+		hdl.createInstance(newInst);
+
+		OW_CIMInstance got = hdl.getInstance(OW_CIMObjectPath(newInst));
+
+		TEST_ASSERT(got.getPropertyT("Name").getValueT() == OW_CIMValue("singleton"));
+		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == OW_CIMValue(true));
+
+		newInst.setProperty("Name", OW_CIMValue("singleton2"));
+		newInst.setProperty("OptionalArg", OW_CIMValue(false));
+
+		hdl.modifyInstance(newInst);
+		
+		got = hdl.getInstance(OW_CIMObjectPath(newInst));
+
+		TEST_ASSERT(got.getPropertyT("Name").getValueT() == OW_CIMValue("singleton2"));
+		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == OW_CIMValue(false));
+
+		OW_CIMObjectPathEnumeration e(hdl.enumInstanceNamesE("singletonClass"));
+		TEST_ASSERT(e.numberOfElements() == 1);
+		OW_CIMObjectPath gotpath = e.nextElement();
+		TEST_ASSERT(gotpath.getObjectName() == "singletonClass");
+		TEST_ASSERT(gotpath.getKeys().size() == 0);
+
+		OW_CIMInstanceEnumeration e2(hdl.enumInstancesE("singletonClass"));
+		TEST_ASSERT(e2.numberOfElements() == 1);
+		got = e2.nextElement();
+		TEST_ASSERT(got.getPropertyT("Name").getValueT() == OW_CIMValue("singleton2"));
+		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == OW_CIMValue(false));
+
+		hdl.deleteInstance(gotpath);
+
+		hdl.deleteClass("singletonClass");
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+
+	testDone();
+}
+
 
 
 /****************************************************************************
@@ -1701,6 +1788,7 @@ main(int argc, char* argv[])
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
+		testSingleton(rch);
 
 		createNameSpace(rch);
 		enumNameSpace(rch);

@@ -411,18 +411,6 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
-	try
-	{
-		// test adding a class with no keys
-		OW_CIMClass cc2("invalidTestSub");
-		hdl->createClass("root/testsuite", cc2);
-		TEST_ASSERT(0);
-	}
-	catch (const OW_CIMException& e)
-	{
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
-	}
-
 	// CIM_ERR_ALREADY_EXISTS
 	try
 	{
@@ -545,18 +533,6 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType::BOOLEAN);
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
-		hdl->modifyClass("root/testsuite", cc2);
-		TEST_ASSERT(0);
-	}
-	catch (const OW_CIMException& e)
-	{
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
-	}
-
-	try
-	{
-		// test adding a class with no keys
-		OW_CIMClass cc2("invalidTestSub");
 		hdl->modifyClass("root/testsuite", cc2);
 		TEST_ASSERT(0);
 	}

@@ -260,7 +260,7 @@ private:
 	void _resolveQualifiers(const OW_String& ns, OW_CIMQualifierArray& quals,
 		OW_HDBHandle hdl);
 
-	void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
+	//void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 
 	// a list of classes that are cached.  The list is sorted by lru.  The least
 	// recently acessed class will be at begin(), and the most recenly acessed

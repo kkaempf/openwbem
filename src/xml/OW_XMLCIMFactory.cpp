@@ -156,7 +156,8 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 	OW_String thisClassName = parser.getAttribute(OW_CIMXMLParser::A_CLASS_NAME);
 	cimPath.setObjectName(thisClassName);
 
-	parser.getChild();
+	//parser.getChild();
+	parser.getNextTag();
 	if (parser.tokenIs(OW_CIMXMLParser::E_KEYBINDING))
 	{
 		do
@@ -212,15 +213,18 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 		cp.setValue(value);
 		propertyArray.push_back(cp);
 	}
-	else
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"not a valid instance declaration");
-	}
+	// No. Any of the sub-elements are optional.  If none are found, then the
+	// path is to a singleton.
+	//else
+	//{
+	//	OW_THROWCIMMSG(OW_CIMException::FAILED,
+	//		"not a valid instance declaration");
+	//}
+
+	parser.mustGetEndTag();
 
 	cimPath.setKeys(propertyArray);
 
-	parser.mustGetEndTag();
 }
 
 ///////////////////////////////////
