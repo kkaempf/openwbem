@@ -18,7 +18,6 @@
 
 #include <unistd.h>
 #include <stdio.h>
-#include <alloca.h>
 
 //#ifdef PERLIFC
 
@@ -93,7 +92,7 @@ static void initialize( NPIHandle *nh, CIMOMHandle ch)
 {
     char *args[] = {"","","initialize"};
     int error;
-    char *msg,script[256];
+    char msg[512],script[256];
 
     PerlInterpreter * my_perl;
 
@@ -110,7 +109,6 @@ static void initialize( NPIHandle *nh, CIMOMHandle ch)
 
     error=perl_parse(my_perl, xs_init, 2 , args, NULL);  
     if (error) {
-       msg=(char*)alloca(512);
        strcpy(msg,"Unable to load perl script: ");
        strcat(msg,script);
        raiseError(nh,msg);
