@@ -37,6 +37,8 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_String.hpp"
+#include "OW_Assertion.hpp"
+
 #include <cstring>
 #include <cstdlib>
 #include <algorithm> // for std::swap
@@ -44,25 +46,19 @@
 namespace OpenWBEM
 {
 
-static String getMsg(CIMException::ErrNoType errval, const char* msg = 0);
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
 	const char* msg, const Exception* otherException) :
-	Exception(file, line, msg, errval, otherException, ExceptionIds::CIMExceptionId), m_longmsg(0)
+	Exception(file, line, msg, errval, otherException, ExceptionIds::CIMExceptionId)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMException::~CIMException() throw()
 {
-	if (m_longmsg)
-	{
-		free(m_longmsg);
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const CIMException& x)
 	: Exception(x)
-	, m_longmsg(x.m_longmsg ? strdup(x.m_longmsg) : 0)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -77,7 +73,6 @@ void
 CIMException::swap(CIMException& x)
 {
 	Exception::swap(x);
-	std::swap(m_longmsg, x.m_longmsg);
 }
 //////////////////////////////////////////////////////////////////////////////					
 const char*
@@ -85,22 +80,14 @@ CIMException::type() const
 {
 	return "CIMException";
 }
-//////////////////////////////////////////////////////////////////////////////					
-const char*
-CIMException::getMessage() const
-{
-	if (!m_longmsg)
-	{
-		m_longmsg = strdup(getMsg(ErrNoType(getErrorCode()), Exception::getMessage()).c_str());
-	}
-	return m_longmsg;
-}
+
 //////////////////////////////////////////////////////////////////////////////
 struct MsgRec
 {
 	CIMException::ErrNoType errval;
 	const char* msg;
 };
+
 static MsgRec _pmsgs[] =
 {
 	{ CIMException::SUCCESS, "no error" },
@@ -120,34 +107,19 @@ static MsgRec _pmsgs[] =
 	{ CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "query language is not recognized or supported" },
 	{ CIMException::INVALID_QUERY, "query is not valid for the specified query language" },
 	{ CIMException::METHOD_NOT_AVAILABLE, "extrinsic method could not be executed" },
-	{ CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" },
-	{ CIMException::SUCCESS, 0 }
+	{ CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" }
 };
-static String
-getMsg(CIMException::ErrNoType err, const char* msg)
+
+// static
+const char*
+CIMException::getCodeDescription(ErrNoType errCode)
 {
-	const char* p = "unknown error";
-	for (int i = 0; _pmsgs[i].msg != NULL; i++)
+	if (errCode >= SUCCESS && errCode <= METHOD_NOT_FOUND)
 	{
-		if (err == _pmsgs[i].errval)
-		{
-			p = _pmsgs[i].msg;
-			break;
-		}
+		OW_ASSERT(_pmsgs[errCode].errval == errCode);
+		return _pmsgs[errCode].msg;
 	}
-	String rstr(p);
-	// avoid multiple appendings of the exception message
-	if (rstr == String(msg).substring(0, rstr.length()))
-	{
-		rstr = msg;
-	}
-	else if (msg != NULL && strlen(msg) > 0)
-	{
-		rstr += " (";
-		rstr += msg;
-		rstr += ")";
-	}
-	return rstr;
+	return "unknown error";
 }
 
 CIMException*

@@ -93,20 +93,28 @@ public:
 		/** The specified extrinsic Method does not exist */
 		METHOD_NOT_FOUND = 17
 	};
+
 	CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0, const Exception* otherException = 0);
+
 	virtual ~CIMException() throw();
 	void swap(CIMException& x);
 	CIMException(const CIMException& x);
 	CIMException& operator=(const CIMException& x);
 	
-	ErrNoType getErrNo() const {  return ErrNoType(getErrorCode()); }
+	ErrNoType getErrNo() const { return ErrNoType(getErrorCode()); }
 	void setErrNo(ErrNoType e) { setErrorCode(e); }
 	virtual const char* type() const;
-	virtual const char* getMessage() const;
 	virtual CIMException* clone() const throw();
-private:
-	mutable char* m_longmsg;
+
+	/**
+	 * Get a static string description of errCode.
+	 * This function is thread safe. Each description is stored in a separate buffer.
+	 * Caller must not free or modify the result.
+	 * If errCode is invalid a pointer to "unknown error" will be returned.
+	 */
+	static const char* getCodeDescription(ErrNoType errCode);
+
 };
 
 /**
