@@ -541,8 +541,17 @@ void loadRandomness()
 	}
 
 #ifdef OW_WIN32
-	// use these 2 functions to get some entropy
-	CryptGenRandom(); // part of windows crypto api - win32 equivalent of /dev/random
+	HCRYPTPROV hProvider = 0;
+	BYTE buf[64];
+
+	if (CryptAcquireContext(&hProvider, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+	{
+		if (CryptGenRandom(hProvider, sizeof(buf), buf))
+		{
+			RAND_add(buf, sizeof(buf), sizeof(buf));
+		}
+		CryptReleaseContext(hProvider, 0);
+	}
 	RAND_screen(); // provided by OpenSSL. Try doing something in addition to CryptGenRandom(), since we can't trust closed source.
 #endif
 
