@@ -166,19 +166,12 @@ OW_CIMQualifierType::getDefaultValue() const
 OW_CIMQualifierType&
 OW_CIMQualifierType::setDataType(const OW_CIMDataType& dataType)
 {
-	//try
-	//{
-		m_pdata->m_dataType = dataType;
-		if(m_pdata->m_defaultValue)
-		{
-			m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
-				m_pdata->m_defaultValue, m_pdata->m_dataType);
-		}
-	//}
-	//catch(...)
-	//{
-		// Ignore?
-	//}
+	m_pdata->m_dataType = dataType;
+	if(m_pdata->m_defaultValue)
+	{
+		m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
+			m_pdata->m_defaultValue, m_pdata->m_dataType);
+	}
 	return *this;
 }
 
