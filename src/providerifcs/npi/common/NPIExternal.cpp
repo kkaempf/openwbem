@@ -1208,3 +1208,26 @@ raiseError(NPIHandle* npiHandle, const char* msg)
 
 //static void raiseNPIException( void* env, char* msg) {}
 //static void throwProviderError (NPIHandle* npiHandle) {}
+
+extern "C" {
+// Dummy functions for CMPI Compatibility
+void* NPIOnCMPI_Create_InstanceMI(void *, void *, const char *)  {
+	return 0;
+}
+
+void* NPIOnCMPI_Create_AssociationMI(void *, void *, const char *)
+{
+	return 0;
+}
+
+void* NPIOnCMPI_Create_MethodMI(void *, void *, const char *)
+{
+	return 0;
+}
+
+void* NPIOnCMPI_Create_IndicationMI(void *, void *, const char *)
+{
+	return 0;
+}
+}
+
