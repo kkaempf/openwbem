@@ -18,8 +18,10 @@ endif
 
 if DISABLE_INSTANCE_MANIPULATION
 CIMXMLLISTENERDIR=
+CIMXMLLISTENER_FILES=
 else
 CIMXMLLISTENERDIR= cimxmllistener
+CIMXMLLISTENER_FILES=$(top_builddir)/src/cimxmllistener/libowhttpxmllistener.a
 endif
 
 SUBDIRS = \
@@ -96,7 +98,7 @@ $(top_builddir)/src/cimom/indication/libowindicationserver.a \
 $(top_builddir)/src/cimom/indication/libowindicationreplayer.a \
 $(top_builddir)/src/providers/cpp/indication/IndicationRepLayer/libowprovindIndicationRepLayer.a \
 \
-$(top_builddir)/src/cimxmllistener/libowhttpxmllistener.a \
+$(CIMXMLLISTENER_FILES) \
 \
 $(top_builddir)/src/http/client/libowhttpclient.a \
 $(top_builddir)/src/http/common/libowhttpcommon.a \
