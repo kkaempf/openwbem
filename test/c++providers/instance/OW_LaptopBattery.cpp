@@ -73,7 +73,8 @@ namespace
 		/////////////////////////////////////////////////////////////////////////
 		virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
+			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass )
@@ -81,14 +82,14 @@ namespace
 			(void)env;
 			(void)cimClass;
 			(void)deep;
-			OW_CIMObjectPath instCop = cop;
+			OW_CIMObjectPath instCop = OW_CIMObjectPath(className, ns);
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
 			OW_String hostname(hostbuf);
 			instCop.addKey("SystemCreationClassName",
 				OW_CIMValue(OW_String("CIM_System")));
 			instCop.addKey("SystemName", OW_CIMValue(hostname));
-			instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
+			instCop.addKey("CreationClassName", OW_CIMValue(className));
 			instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
 			result.handle(instCop);
 		}

@@ -82,16 +82,6 @@ public:
 	 * checkAccess will check that access is granted through the ACL. If
 	 * Access is not granted, an OW_CIMException will be thrown.
 	 * @param op	The operation that access is being checked for.
-	 * @param cop	The CIM object path the operation is being done on.
-	 * @param aclInfo The ACL info for the user request.
-	 */
-	void checkAccess(int op, const OW_CIMObjectPath& cop,
-		const OW_ACLInfo& aclInfo);
-
-	/**
-	 * checkAccess will check that access is granted through the ACL. If
-	 * Access is not granted, an OW_CIMException will be thrown.
-	 * @param op	The operation that access is being checked for.
 	 * @param ns	The name space that access is being check on.
 	 * @param aclInfo The ACL info for the user request.
 	 */
@@ -110,16 +100,6 @@ OW_AccessMgr::OW_AccessMgr(OW_CIMServer* pServer,
 	: m_pServer(pServer)
 	, m_env(env)
 {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// TODO: Remove this function
-void
-OW_AccessMgr::checkAccess(int op, const OW_CIMObjectPath& cop,
-	const OW_ACLInfo& aclInfo)
-{
-	OW_String ns = cop.getNameSpace();
-	checkAccess(op, ns, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -472,7 +452,7 @@ OW_CIMServer::getQualifierType(const OW_CIMObjectPath& objPath,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get a qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, objPath, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, objPath.getNameSpace(), aclInfo);
 	
 	m_env->logDebug(format("OW_CIMServer getting qualifier type: %1", objPath.toString()));
 
@@ -487,7 +467,7 @@ OW_CIMServer::enumQualifierTypes(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get a qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, path.getNameSpace(), aclInfo);
 
 	m_mStore.enumQualifierTypes(path.getNameSpace(), result);
 }
@@ -578,7 +558,7 @@ OW_CIMServer::setQualifierType(const OW_CIMObjectPath& name,
 	const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to update the qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name.getNameSpace(), aclInfo);
 	m_env->logDebug(format("OW_CIMServer setting qualifier type: %1 in "
 		"namespace: %2", qt.toString(), name.getNameSpace()));
 	m_mStore.setQualiferType(name.getNameSpace(), qt);
@@ -596,7 +576,7 @@ OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 		if(!theClass)
 		{
 			// Check to see if user has rights to get the class
-			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path, aclInfo);
+			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path.getNameSpace(), aclInfo);
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path.getNameSpace(), path.getObjectName(), theClass);
 			checkGetClassRvalAndThrow(rval, path.getNameSpace(), path.getObjectName());
 		}
@@ -723,7 +703,7 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to create the class
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATECLASS, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::CREATECLASS, path.getNameSpace(), aclInfo);
 
 	if(cimClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
 	{
@@ -760,7 +740,7 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to create the class
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYCLASS, name, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYCLASS, name.getNameSpace(), aclInfo);
 
 	if (!cc)
 	{
@@ -890,27 +870,28 @@ OW_CIMServer::enumClassNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path,
+OW_CIMServer::enumInstanceNames(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate instance names
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCENAMES, path,
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCENAMES, ns,
 		aclInfo);
 
 	try
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMObjectPath lcop(path);
-		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
+		OW_CIMClass theClass = _getNameSpaceClass(className);
 		if(!theClass)
 		{
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop.getNameSpace(), lcop.getObjectName(), theClass);
-			checkGetClassRvalAndThrowInst(rval, lcop.getNameSpace(), lcop.getObjectName());
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, theClass);
+			checkGetClassRvalAndThrowInst(rval, ns, className);
 		}
 
-		_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
+		_getCIMInstanceNames(ns, className, theClass, result, deep, aclInfo);
 
 		// If this is the namespace class then just return now
 		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
@@ -919,16 +900,15 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path,
 			return;
 		}
 
-		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
+		OW_StringArray classNames = m_mStore.getClassChildren(ns,
 			theClass.getName());
 
 		for(size_t i = 0; i < classNames.size(); i++)
 		{
-			lcop.setObjectName(classNames[i]);
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop.getNameSpace(), lcop.getObjectName(), theClass);
-			checkGetClassRvalAndThrowInst(rval, lcop.getNameSpace(), lcop.getObjectName());
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, classNames[i], theClass);
+			checkGetClassRvalAndThrowInst(rval, ns, classNames[i]);
 
-			_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
+			_getCIMInstanceNames(ns, classNames[i], theClass, result, deep, aclInfo);
 		}
 	}
 	catch (OW_HDBException&)
@@ -982,7 +962,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
+OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& className,
 	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
@@ -1013,12 +993,12 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 		}
 
 		instancep->enumInstanceNames(createProvEnvRef(real_ch),
-			cop, result, deep, theClass);
+			ns, className, result, deep, theClass);
 
 	}
 	else
 	{
-		m_iStore.getInstanceNames(cop, theClass, result);
+		m_iStore.getInstanceNames(ns, theClass, result);
 	}
 }
 
@@ -1264,7 +1244,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	}
 
 	// Check to see if user has rights to get the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::GETINSTANCE, cop, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETINSTANCE, cop.getNameSpace(), aclInfo);
 
 	OW_CIMClass cc;
 	OW_CIMInstance ci;
@@ -1432,7 +1412,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 {
 	OW_CIMObjectPath rval = cop;
 	// Check to see if user has rights to create the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, cop, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, cop.getNameSpace(), aclInfo);
 
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
@@ -1575,7 +1555,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to modify the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, cop, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, cop.getNameSpace(), aclInfo);
 
 	try
 	{
@@ -1696,7 +1676,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	const OW_String& propertyName, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::GETPROPERTY, name, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETPROPERTY, name.getNameSpace(), aclInfo);
 
 	OW_ACLInfo intAclInfo;
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
@@ -1751,7 +1731,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, name, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, name.getNameSpace(), aclInfo);
 
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
@@ -1841,7 +1821,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, name, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, name.getNameSpace(), aclInfo);
 
 	// Not creating any read/write locks here because the provider
 	// could call back into the CIM Server for something and then we
@@ -2258,7 +2238,7 @@ OW_CIMServer::associators(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
 
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
@@ -2275,7 +2255,7 @@ OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
 
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
@@ -2291,7 +2271,7 @@ OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path.getNameSpace(), aclInfo);
 
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
 		false, false, 0, 0, &result, 0, aclInfo);
@@ -2306,7 +2286,7 @@ OW_CIMServer::references(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path.getNameSpace(), aclInfo);
 
 	_commonReferences(path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, &result, 0, 0, aclInfo);
@@ -2321,7 +2301,7 @@ OW_CIMServer::referencesClasses(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path.getNameSpace(), aclInfo);
 
 	_commonReferences(path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, 0, 0, &result, aclInfo);
@@ -2335,7 +2315,7 @@ OW_CIMServer::referenceNames(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCENAMES, path, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCENAMES, path.getNameSpace(), aclInfo);
 
 	_commonReferences(path, resultClass, role, false, false, 0, 0, &result, 0,
 		aclInfo);

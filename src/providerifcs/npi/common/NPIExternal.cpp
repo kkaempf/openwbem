@@ -55,8 +55,6 @@ extern "C" OW_CIMObjectPathEnumeration
 NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	const OW_String& nameSpace, const OW_String& className)
 {
-	OW_CIMObjectPath op(className, nameSpace);
-
 	OW_ProviderEnvironmentIFCRef * provenv =
 		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
@@ -64,7 +62,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	try
 	{
 		crefs =
-			provenv->getPtr()->getCIMOMHandle()->enumInstanceNamesE(op);
+			provenv->getPtr()->getCIMOMHandle()->enumInstanceNamesE(nameSpace, className);
 	}
 	catch (...)
 	{

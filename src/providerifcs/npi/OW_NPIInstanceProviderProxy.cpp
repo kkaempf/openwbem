@@ -44,7 +44,8 @@
 void
 OW_NPIInstanceProviderProxy::enumInstanceNames(
         const OW_ProviderEnvironmentIFCRef& env,
-        const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
         const OW_Bool& deep,
         const OW_CIMClass& cimClass )
@@ -65,6 +66,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 
             CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
 
+			OW_CIMObjectPath cop(className, ns);
             CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             ::Vector v =

@@ -56,7 +56,7 @@ namespace
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
-		OW_String ns;
+		const OW_String& ns;
 	};
 }
 
@@ -64,12 +64,13 @@ namespace
 void
 OW_SimpleCppInstanceProviderIFC::enumInstanceNames(
 	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_CIMObjectPath& cop,
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_CIMClass& cimClass )
 {
-	instanceToObjectPathFilter handler(result,cop.getNameSpace());
-	enumInstances(env, cop.getNameSpace(), cop.getObjectName(), handler, cimClass);
+	instanceToObjectPathFilter handler(result, ns);
+	enumInstances(env, ns, className, handler, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -190,11 +190,12 @@ OW_CIMOMHandleIFC::enumInstancesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::enumInstanceNamesE(
-		const OW_CIMObjectPath& path)
+	const OW_String& ns,
+	const OW_String& className)
 {
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
-	enumInstanceNames(path, handler);
+	enumInstanceNames(ns, className, handler);
 	return rval;
 }
 

@@ -907,7 +907,8 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
 		params[4].val.toBool());
-	hdl.enumClass(path.getNameSpace(), className, handler, params[1].val.toBool(), false);
+	OW_String ns = path.getNameSpace();
+	hdl.enumClass(ns, className, handler, params[1].val.toBool(), false);
 
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
 	//hdl.enumClass(path, deep, localOnly,
@@ -944,10 +945,11 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
 
 	getParameterValues(parser, params);
-	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
+	OW_String ns = path.getNameSpace();
 	
 	CIMInstanceNameXMLOutputter handler(ostr);
-	hdl.enumInstanceNames(path, handler);
+	hdl.enumInstanceNames(ns, className, handler);
 }
 
 //////////////////////////////////////////////////////////////////////////////

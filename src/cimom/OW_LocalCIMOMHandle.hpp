@@ -245,7 +245,8 @@ public:
 	 * 		(OW_CIMObjectPathEnumeration)
 	 */
 	virtual void enumInstanceNames(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**

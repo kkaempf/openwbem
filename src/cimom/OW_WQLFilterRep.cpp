@@ -232,7 +232,8 @@ OW_WQLFilterRep::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::enumInstanceNames(
-	const OW_CIMObjectPath &/*path*/,
+	const OW_String&,
+	const OW_String&,
 	OW_CIMObjectPathResultHandlerIFC&,
 	OW_Bool /*deep*/,
 	const OW_ACLInfo& /*aclInfo*/)

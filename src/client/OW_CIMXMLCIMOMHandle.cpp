@@ -492,18 +492,19 @@ namespace
 		}
 
 		OW_CIMObjectPathResultHandlerIFC& result;
-		OW_String ns;
+		const OW_String& ns;
 	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::enumInstanceNames(
+	const OW_String& ns,
+	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
 	static const char* const commandName = "EnumerateInstanceNames";
 
-	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
 
 	if (!className.empty())
@@ -517,8 +518,8 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 							"EnumerateInstanceNames");
 	}
 
-	enumInstanceNamesOp op(result, path.getNameSpace());
-	intrinsicMethod(path.getNameSpace(), commandName, op, params);
+	enumInstanceNamesOp op(result, ns);
+	intrinsicMethod(ns, commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -241,7 +241,8 @@ public:
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	virtual void enumInstanceNames(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**

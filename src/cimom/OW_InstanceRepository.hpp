@@ -57,7 +57,7 @@ public:
 		const OW_StringArray* propertyList=NULL, OW_CIMServer* pServer = NULL,
 		const OW_ACLInfo* pACLInfo=NULL);
 
-	void getInstanceNames(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
+	void getInstanceNames(const OW_String& ns, const OW_CIMClass& theClass,
 		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**

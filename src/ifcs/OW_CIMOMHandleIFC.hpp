@@ -233,8 +233,7 @@ public:
 	 *
 	 * @param ns The namespace.
 	 *
-	 * @param className The class whose instances
-	 * 	are to be enumerated.
+	 * @param className The class whose instances are to be enumerated.
 	 *
 	 * @param deep Return properties defined on subclasses of the class in path
 	 *
@@ -282,17 +281,19 @@ public:
 	 * This could include instances of all the classes in the specified class'
 	 * hierarchy.
 	 *
-	 * @param path The OW_CIMObjectPath identifying the class whose	instances
-	 *		are to be enumerated.
+	 * @param ns The namespace.
+	 * @param className The class whose instances are to be enumerated.
 	 * @return An Enumeration of OW_CIMObjectPaths (OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	virtual void enumInstanceNames(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result) = 0;
 
 	virtual OW_CIMObjectPathEnumeration enumInstanceNamesE(
-		const OW_CIMObjectPath& path);
+		const OW_String& ns,
+		const OW_String& className);
 
 	/**
 	 * Enumerates the qualifiers defined in a namespace.

@@ -91,15 +91,17 @@ namespace
 	{
 	public:
 		CIMInstanceToObjectPath(OW_CIMObjectPathResultHandlerIFC& h,
-			OW_String& className_) : m_h(h), className(className_) {}
+			const OW_String& ns_,
+			const OW_String& className_) : m_h(h), cop(className_, ns_) {}
 	protected:
 		virtual void doHandle(const OW_CIMInstance &ci)
 		{
-			m_h.handle(OW_CIMObjectPath(className, ci.getKeyValuePairs()));
+			cop.setKeys(ci.getKeyValuePairs());
+			m_h.handle(cop);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& m_h;
-		OW_String& className;
+		OW_CIMObjectPath cop;
 	};
 }
 
@@ -107,15 +109,14 @@ namespace
 void
 OW_NameSpaceProvider::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
-	OW_String className = cimClass.getName();
-
-	CIMInstanceToObjectPath handler(result, className);
-	enumInstances(env, cop.getNameSpace(), cop.getObjectName(), handler, deep, cimClass, false);
+	CIMInstanceToObjectPath handler(result, ns, className);
+	enumInstances(env, ns, className, handler, deep, cimClass, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////

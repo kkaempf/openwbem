@@ -339,7 +339,8 @@ public:
 	 * @exception OW_IOException
 	 */
 	virtual void enumInstanceNames(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 

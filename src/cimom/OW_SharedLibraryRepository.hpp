@@ -168,11 +168,12 @@ public:
 	}
 
 	virtual void enumInstanceNames(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumInstanceNames(path, result, deep, aclInfo);
+		return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
 	}
 
 	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath &cop,

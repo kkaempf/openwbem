@@ -101,7 +101,8 @@ public:
 	void
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
@@ -126,7 +127,7 @@ public:
 		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
-			OW_CIMObjectPath newCop = cop;
+			OW_CIMObjectPath newCop(className, ns);
 			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
 			result.handle(newCop);
 		}

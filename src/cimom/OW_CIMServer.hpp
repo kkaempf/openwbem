@@ -360,7 +360,9 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_FAILED
 	 */
-	virtual void enumInstanceNames(const OW_CIMObjectPath& path,
+	virtual void enumInstanceNames(
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
@@ -565,7 +567,7 @@ public:
 
 private:
 
-	void _getCIMInstanceNames(const OW_CIMObjectPath cop,
+	void _getCIMInstanceNames(const OW_String& ns, const OW_String& className,
 		const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 

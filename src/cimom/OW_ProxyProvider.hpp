@@ -130,12 +130,13 @@ public:
 
 	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
+			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass)
 	{
-		m_pProv->enumInstanceNames(env,cop,result,deep,cimClass);
+		m_pProv->enumInstanceNames(env, ns, className, result,deep,cimClass);
 	}
 
 	virtual void enumInstances(

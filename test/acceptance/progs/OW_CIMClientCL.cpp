@@ -438,8 +438,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("root/testsuite", ofClass);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMObjectPath cop = enu.nextElement();

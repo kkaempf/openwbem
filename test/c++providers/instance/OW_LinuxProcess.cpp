@@ -30,7 +30,8 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
@@ -53,10 +54,10 @@ public:
 			iter != lines.end(); iter++)
 		{
 			OW_StringArray proc = iter->tokenize();
-			OW_CIMObjectPath newCop = cop;
+			OW_CIMObjectPath newCop(className, ns);
 			newCop.addKey(OW_String("Handle"), OW_CIMValue(proc[0]));
 			newCop.addKey(OW_String("CreationClassName"),
-				OW_CIMValue(cop.getObjectName()));
+				OW_CIMValue(className));
 			newCop.addKey(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
 			newCop.addKey(OW_String("OSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_OperatingSystem")));

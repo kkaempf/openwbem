@@ -173,14 +173,15 @@ OW_SimpleCppInstanceProviderProxy::deleteInstance(
 void
 OW_SimpleCppInstanceProviderProxy::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	(void)deep;
-	return m_pProv->enumInstanceNames(env, cop, result, cimClass);
+	return m_pProv->enumInstanceNames(env, ns, className, result, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -60,7 +60,8 @@ public:
 	void
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
@@ -72,7 +73,7 @@ public:
 		OW_UInt64 count = 0;
 		for (;;++count)
 		{
-			OW_CIMObjectPath newCop(cop);
+			OW_CIMObjectPath newCop(className, ns);
 			newCop.addKey(OW_String("InstanceNumber"), OW_CIMValue(count));
 			result.handle(newCop);
 		}
