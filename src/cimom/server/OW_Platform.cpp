@@ -358,8 +358,17 @@ void rerunDaemon()
 	// called twice.
 	pthread_kill_other_threads_np();
 #endif
-	// TODO: try doing a fork() here instead of clearing the file locks and signal mask, which seems to be problematic sometimes.
-	// fork() clears the locks and resets the signal mask for the child process.
+
+#ifdef OW_DARWIN
+	// On Darwin, execv() fails with a ENOTIMP if any threads are running. 
+	// The only way we have to really get rid of all the threads is to call fork() and exit() the parent.
+	// Note that we don't do this on other platforms because fork() isn't safe to call from a signal handler, and isn't necessary.
+	if (::fork() != 0)
+	{
+		_exit(1); // if fork fails or we're the parent, just exit.
+	}
+	// child continues.
+#endif
 
 	// On Linux pthreads will kill off all the threads when we call
 	// execv().  If we close all the fds, then that breaks pthreads and
@@ -551,35 +560,11 @@ theSigHandler(int sig, siginfo_t* info, void* context)
 
 #ifndef WIN32
 
-static void 
-abortHandler(int sig, siginfo_t* info, void* context)
-{
-	// TODO: Fix this so that it will allow proper logging in
-	// owcimomd_main.cpp.  Currently, it immediately restarts without
-	// allowing the signal information to be printed.
-	Signal::SignalInformation extractedSignal;
-	if( info )
-	{
-		Signal::extractSignalInformation( *info, extractedSignal );
-	}
-	extractedSignal.signalAction = REINIT;
-	pushSig(extractedSignal);
-	Platform::rerunDaemon();
-}
-
 static void
 fatalSigHandler(int sig, siginfo_t* info, void* context)
 {
-	// TODO: Fix this so that it will allow proper logging in
-	// owcimomd_main.cpp.  Currently, it immediately restarts without
-	// allowing the signal information to be printed.
-	Signal::SignalInformation extractedSignal;
-	if( info )
-	{
-		Signal::extractSignalInformation( *info, extractedSignal );
-	}
-	extractedSignal.signalAction = REINIT;
-	pushSig(extractedSignal);
+	// we can't do much of *anything* besides restart here, since whatever caused the signal has left us in an unpredictable state,
+	// it's unknown what could or could not work, not to mention that there are hardly any signal safe functions we could call.
 	Platform::rerunDaemon();
 }
 
@@ -719,7 +704,7 @@ setupSigHandler(bool dbgFlg)
 //////////////////////////////////////////////////////////////////////////////
 void installFatalSignalHandlers()
 {
-	handleSignalAux(SIGABRT, abortHandler);
+	handleSignalAux(SIGABRT, fatalSigHandler);
 
 	handleSignalAux(SIGILL, fatalSigHandler);
 #ifdef SIGBUS // NetWare doesn't have this signal
