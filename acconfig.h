@@ -78,6 +78,7 @@
 #undef OPENSERVER
 #undef DARWIN
 #undef HPUX
+#undef FREEBSD
 
 
 #undef u_int8_t
