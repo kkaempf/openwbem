@@ -72,13 +72,13 @@ struct OW_Atomic_t
 {
 	OW_Atomic_t();
 	OW_Atomic_t(int i);
-	int rep;
+	int val;
 	pthread_spinlock_t spinlock;
 };
 
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);
-int OW_AtomicGet(OW_Atomic_t const &v)
+int OW_AtomicGet(OW_Atomic_t const &v);
 
 
 #else
@@ -95,7 +95,7 @@ struct OW_Atomic_t
 
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);
-int OW_AtomicGet(OW_Atomic_t const &v)
+int OW_AtomicGet(OW_Atomic_t const &v);
 
 #endif
 

@@ -35,13 +35,13 @@
 
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
 OW_Atomic_t::OW_Atomic_t()
-	: rep(0)
+	: val(0)
 {
 	pthread_spin_init(&spinlock);
 }
 
 OW_Atomic_t::OW_Atomic_t(int i)
-	: rep(i)
+	: val(i)
 {
 	pthread_spin_init(&spinlock);
 }
@@ -49,7 +49,7 @@ OW_Atomic_t::OW_Atomic_t(int i)
 void OW_AtomicInc(OW_Atomic_t &v)
 {
 	pthread_spin_lock(&v.spinlock);
-	++v.rep;
+	++v.val;
 	pthread_spin_unlock(&v.spinlock);
 }
 
@@ -57,15 +57,15 @@ void OW_AtomicInc(OW_Atomic_t &v)
 bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 {
 	pthread_spin_lock(&v.spinlock);
-	--v.rep;
-	bool b = ((_rep == 0) ? true : false) ;
+	--v.val;
+	bool b = ((v.val == 0) ? true : false) ;
 	pthread_spin_unlock(&v.spinlock);
 	return b;
 }
 
 int OW_AtomicGet(OW_Atomic_t const &v)
 {
-	return v.rep;
+	return v.val;
 }
 
 #else
@@ -81,19 +81,19 @@ static OW_Mutex guard;
 void OW_AtomicInc(OW_Atomic_t &v)
 {
     OW_MutexLock lock(guard);
-    ++v;
+    ++v.val;
 }
 
 bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 {
     OW_MutexLock lock(guard);
-    return --v == 0;
+    return --v.val == 0;
 }
 
 int OW_AtomicGet(OW_Atomic_t const &v)
 {
     OW_MutexLock lock(guard);
-	return v->counter;
+	return v.val;
 }
 
 #endif
