@@ -397,7 +397,7 @@ OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 
 ////////////////////////////////////////////////////////////////////////////// 
 void 
-OW_InstanceRepository::updateInstance(const OW_CIMObjectPath& cop, 
+OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop, 
 	const OW_CIMClass& theClass, OW_CIMInstance& ci)
 {
 	throwIfNotOpen();

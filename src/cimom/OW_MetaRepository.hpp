@@ -76,14 +76,6 @@ public:
 	 */
 	OW_Bool deleteQualifierType(const OW_String& ns, const OW_String& qualName);
 
-	/**
-	 * Add a qualifier type to the repository
-	 * @param ns	The namespace for the qualifier type
-	 * @param qt	The qualifier type to add to the repository
-	 * @exception OW_CIMException
-	 */
-	void addQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt,
-		OW_HDBHandle* phdl=0);
 
 	/**
 	 * Update a qualifier type in the repository
@@ -91,7 +83,7 @@ public:
 	 * @param qt	The qualifier type to update
 	 * @exception OW_CIMException
 	 */
-	void updateQualiferType(const OW_String& ns, const OW_CIMQualifierType& qt);
+	void setQualiferType(const OW_String& ns, const OW_CIMQualifierType& qt);
 
 	/**
 	 * Gets an existing class from the store
@@ -144,7 +136,7 @@ public:
 	 * @param cimClass The class to update
 	 * @exception CIMException if the class already exists
 	 */
-	void updateClass(const OW_String& ns, OW_CIMClass& cimClass);
+	void modifyClass(const OW_String& ns, OW_CIMClass& cimClass);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -237,6 +229,15 @@ private:
 	 * @return A string that can be used to locate the class.
 	 */
 	OW_String _makeClassPath(const OW_String& ns, const OW_String& className);
+
+	/**
+	 * Add a qualifier type to the repository
+	 * @param ns	The namespace for the qualifier type
+	 * @param qt	The qualifier type to add to the repository
+	 * @exception OW_CIMException
+	 */
+	void _addQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt,
+		OW_HDBHandle* phdl=0);
 
 	void _getClassNodes(OW_CIMClassEnumeration& en, OW_HDBNode node,
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,

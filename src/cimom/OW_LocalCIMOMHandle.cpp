@@ -146,7 +146,7 @@ OW_LocalCIMOMHandle::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_ReadLock rl = getReadLock();
-	OW_CIMClassEnumeration cenum = m_pServer->enumClass(path, deep, localOnly,
+	OW_CIMClassEnumeration cenum = m_pServer->enumClasses(path, deep, localOnly,
 		includeQualifiers, includeClassOrigin, m_aclInfo);
 	return cenum;
 }
@@ -167,7 +167,7 @@ OW_LocalCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getCIMInstances(path, deep, localOnly, includeQualifiers,
+	return m_pServer->enumInstances(path, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
 
@@ -177,7 +177,7 @@ OW_LocalCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 	OW_Bool deep)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getCIMInstanceNames(path, deep, m_aclInfo);
+	return m_pServer->enumInstanceNames(path, deep, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -209,7 +209,7 @@ OW_LocalCIMOMHandle::getInstance(const OW_CIMObjectPath& name,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getCIMInstance(name, localOnly, includeQualifiers,
+	return m_pServer->getInstance(name, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
 
@@ -238,16 +238,7 @@ OW_LocalCIMOMHandle::setQualifierType(const OW_CIMObjectPath& name,
 	const OW_CIMQualifierType& qt)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->updateQualifierType(name, qt, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_LocalCIMOMHandle::createQualifierType(const OW_CIMObjectPath& name,
-	const OW_CIMQualifierType& qt)
-{
-	OW_WriteLock wl = getWriteLock();
-	m_pServer->addQualifierType(name, qt, m_aclInfo);
+	m_pServer->setQualifierType(name, qt, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -257,7 +248,7 @@ OW_LocalCIMOMHandle::setClass(const OW_CIMObjectPath& name,
 {
 	OW_WriteLock wl = getWriteLock();
 	OW_CIMClass lcc(cc);
-	m_pServer->updateClass(name, lcc, m_aclInfo);
+	m_pServer->modifyClass(name, lcc, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -277,7 +268,7 @@ OW_LocalCIMOMHandle::setInstance(const OW_CIMObjectPath& name,
 {
 	OW_WriteLock wl = getWriteLock();
 	OW_CIMInstance lci(ci);
-	m_pServer->updateInstance(name, lci, m_aclInfo);
+	m_pServer->modifyInstance(name, lci, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

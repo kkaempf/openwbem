@@ -353,7 +353,7 @@ OW_MetaRepository::deleteQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::addQualifierType(const OW_String& ns,
+OW_MetaRepository::_addQualifierType(const OW_String& ns,
 	const OW_CIMQualifierType& qt, OW_HDBHandle* phdl)
 {
 	throwIfNotOpen();
@@ -402,7 +402,7 @@ OW_MetaRepository::addQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::updateQualiferType(const OW_String& ns,
+OW_MetaRepository::setQualiferType(const OW_String& ns,
 	const OW_CIMQualifierType& qt)
 {
 	throwIfNotOpen();
@@ -413,7 +413,7 @@ OW_MetaRepository::updateQualiferType(const OW_String& ns,
 	if(!node)
 	{
 		OW_HDBHandle lhdl = hdl.getHandle();
-		addQualifierType(ns, qt, &lhdl);
+		_addQualifierType(ns, qt, &lhdl);
 	}
 	else
 	{
@@ -862,7 +862,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::updateClass(const OW_String& ns,
+OW_MetaRepository::modifyClass(const OW_String& ns,
 	OW_CIMClass& cimClass)
 {
 	throwIfNotOpen();

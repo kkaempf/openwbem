@@ -206,7 +206,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 			OW_CIMInstance ci;
 			try
 			{
-				ci = m_pServer->getCIMInstance(cop, false, true, true, NULL,
+				ci = m_pServer->getInstance(cop, false, true, true, NULL,
 					NULL, intACLInfo);
 			}
 			catch(const OW_CIMException&)
@@ -263,7 +263,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		OW_CIMInstance ci;
 		try
 		{
-			ci = m_pServer->getCIMInstance(cop, false, true, true, NULL,
+			ci = m_pServer->getInstance(cop, false, true, true, NULL,
 				NULL, intACLInfo);
 		}
 		catch(const OW_CIMException& ce)
@@ -555,23 +555,12 @@ OW_CIMServer::deleteQualifierType(const OW_CIMObjectPath& objPath,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::addQualifierType(const OW_CIMObjectPath& name,
-	const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
-{
-	// Check to see if user has rights to add the qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name, aclInfo);
-
-	m_mStore.addQualifierType(name.getNameSpace(), qt);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMServer::updateQualifierType(const OW_CIMObjectPath& name,
+OW_CIMServer::setQualifierType(const OW_CIMObjectPath& name,
 	const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to update the qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name, aclInfo);
-	m_mStore.updateQualiferType(name.getNameSpace(), qt);
+	m_mStore.setQualiferType(name.getNameSpace(), qt);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -662,7 +651,7 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMServer::updateClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
+OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to create the class
@@ -682,13 +671,13 @@ OW_CIMServer::updateClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 			cc.getName()).c_str());
 	}
 
-	m_mStore.updateClass(name.getNameSpace(), cc);
+	m_mStore.modifyClass(name.getNameSpace(), cc);
 	return origClass;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
-OW_CIMServer::enumClass(const OW_CIMObjectPath& path,
+OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
 {
@@ -725,7 +714,7 @@ OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path, OW_Bool deep,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
-OW_CIMServer::getCIMInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
+OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate instance names
@@ -864,7 +853,7 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
-OW_CIMServer::getCIMInstances(const OW_CIMObjectPath& path, OW_Bool deep,
+OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
@@ -999,17 +988,17 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::getCIMInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
+OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	return getCIMInstance(cop, localOnly, includeQualifiers, includeClassOrigin,
+	return getInstance(cop, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, NULL, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::getCIMInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
+OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMClass* pOutClass,
 	const OW_ACLInfo& aclInfo)
@@ -1086,7 +1075,7 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 		true);
 
 	OW_CIMClass theClass;
-	OW_CIMInstance oldInst = getCIMInstance(cop, false, true, true, NULL,
+	OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
 		&theClass, intAclInfo);
 
 	if (!oldInst)
@@ -1285,14 +1274,14 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::updateInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
+OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to modify the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, cop, aclInfo);
 
 	OW_ACLInfo intAclInfo;
-	OW_CIMInstance oldInst = getCIMInstance(cop, false, true, true, NULL,
+	OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
 		NULL, intAclInfo);
 
 	if (!oldInst)
@@ -1322,7 +1311,7 @@ OW_CIMServer::updateInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	if(!instancep)
 	{
 		// No instance provider qualifier found
-		m_iStore.updateInstance(cop, theClass, ci);
+		m_iStore.modifyInstance(cop, theClass, ci);
 	}
 	else
 	{
@@ -1419,7 +1408,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getCIMInstance(name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(name, false, true, true, NULL,
 			NULL, aclInfo);
 		OW_CIMProperty prop = ci.getProperty(propertyName);
 		if(!prop)
@@ -1479,7 +1468,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getCIMInstance(name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(name, false, true, true, NULL,
 			NULL, intAclInfo);
 
 		if(!ci)
@@ -1498,7 +1487,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 		cp.setValue(cv);
 		ci.setProperty(cp);
-		updateInstance(name, ci, intAclInfo);
+		modifyInstance(name, ci, intAclInfo);
 	}
 	else
 	{
@@ -1984,7 +1973,7 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 		// object path to the object path enumeration
 		// Get the instance of the association
 		OW_CIMClass cc;
-		OW_CIMInstance ainst = getCIMInstance(assocPath, false, true, true,
+		OW_CIMInstance ainst = getInstance(assocPath, false, true, true,
 			NULL, &cc, intAclInfo);
 
 		if(!ainst)
@@ -2162,7 +2151,7 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 		OW_CIMObjectPath assocPath = OW_CIMObjectPath::parse(
 			adbentries[i].getAssocKey());
 
-		OW_CIMInstance ainst = getCIMInstance(assocPath, false, true, true,
+		OW_CIMInstance ainst = getInstance(assocPath, false, true, true,
 			NULL, NULL, intAclInfo);
 
 		if(!ainst)
@@ -2224,7 +2213,7 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 			}
 
 			OW_CIMClass cc;
-			OW_CIMInstance ci = getCIMInstance(op, false, true, true, NULL,
+			OW_CIMInstance ci = getInstance(op, false, true, true, NULL,
 				&cc, intAclInfo);
 
 			if(!ci)

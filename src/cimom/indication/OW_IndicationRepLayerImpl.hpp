@@ -62,7 +62,7 @@ public:
 	virtual void deleteQualifierType(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
 
@@ -75,17 +75,17 @@ public:
 	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(const
 		OW_CIMObjectPath &path, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstance getCIMInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration getCIMInstances(
+	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMObjectPathEnumeration getCIMInstanceNames(
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 		const OW_CIMObjectPath& path, OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMQualifierType getQualifierType(
@@ -96,9 +96,6 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	virtual void addQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
-
 	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
 		const OW_String &methodName, const OW_CIMValueArray &inParams,
 		OW_CIMValueArray &outParams, const OW_ACLInfo& aclInfo);
@@ -106,20 +103,20 @@ public:
 	virtual void createClass(const OW_CIMObjectPath &name,
 		OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
 
-	virtual void updateQualifierType(const OW_CIMObjectPath& name,
+	virtual void setQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
 		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMClass updateClass(const OW_CIMObjectPath& name,
+	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name,
 		OW_CIMClass& cc, const OW_ACLInfo& aclInfo);
 
 	virtual void setProperty(const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstance updateInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,

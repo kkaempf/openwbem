@@ -46,12 +46,6 @@ public:
 
 	virtual void open(const OW_String &path) { m_ref->open(path); }
 
-	virtual void addQualifierType(const OW_CIMObjectPath &name,
-		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
-	{
-		m_ref->addQualifierType(name, qt, aclInfo);
-	}
-
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_CIMObjectPath &objPath, const OW_ACLInfo &aclInfo)
 	{
@@ -93,10 +87,10 @@ public:
 		m_ref->deleteQualifierType(objPath, aclInfo);
 	}
 
-	virtual void updateQualifierType(const OW_CIMObjectPath &name,
+	virtual void setQualifierType(const OW_CIMObjectPath &name,
 		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
 	{
-		m_ref->updateQualifierType(name, qt, aclInfo);
+		m_ref->setQualifierType(name, qt, aclInfo);
 	}
 
 	virtual OW_CIMClass getClass(const OW_CIMObjectPath &path,
@@ -120,12 +114,12 @@ public:
 		return m_ref->createInstance(cop, ci, aclInfo);
 	}
 
-	virtual OW_CIMInstanceEnumeration getCIMInstances(
+	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_CIMObjectPath &path, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getCIMInstances(path, deep, localOnly,includeQualifiers,
+		return m_ref->enumInstances(path, deep, localOnly,includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
@@ -135,17 +129,17 @@ public:
 		m_ref->createClass(path, cimClass, aclInfo);
 	}
 
-	virtual OW_CIMClass updateClass(const OW_CIMObjectPath &name,
+	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath &name,
 		OW_CIMClass &cc, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->updateClass(name, cc, aclInfo);
+		return m_ref->modifyClass(name, cc, aclInfo);
 	}
 
-	virtual OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath &path,
+	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath &path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumClass(path, deep, localOnly, includeQualifiers,
+		return m_ref->enumClasses(path, deep, localOnly, includeQualifiers,
 			includeClassOrigin, aclInfo);
 	}
 
@@ -163,18 +157,18 @@ public:
 			outParams, aclInfo);
 	}
 
-	virtual OW_CIMObjectPathEnumeration getCIMInstanceNames(
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getCIMInstanceNames(path, deep, aclInfo);
+		return m_ref->enumInstanceNames(path, deep, aclInfo);
 	}
 
-	virtual OW_CIMInstance getCIMInstance(const OW_CIMObjectPath &cop,
+	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath &cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getCIMInstance(cop, localOnly, includeQualifiers,
+		return m_ref->getInstance(cop, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
@@ -193,10 +187,10 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMInstance updateInstance(const OW_CIMObjectPath &cop,
+	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
 		OW_CIMInstance &ci, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->updateInstance(cop, ci, aclInfo);
+		return m_ref->modifyInstance(cop, ci, aclInfo);
 	}
 
 	virtual void setProperty(const OW_CIMObjectPath &name,

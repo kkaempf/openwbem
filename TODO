@@ -24,3 +24,5 @@ x Unload request handlers if not used after X minutes.
 - long and short versions of make check
 - CMPI (replace NPI)
 
+- add handling for new namespace model
+

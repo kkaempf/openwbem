@@ -146,16 +146,6 @@ public:
 		const OW_ACLInfo& aclInfo);
 
 	/**
-	 * Add a qualifier type to the repository
-	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
-	 * @param qt	The CIM qualifier type to be added
-	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException
-	 */
-	void addQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
-
-	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
 	 * @param name	Am OW_CIMObjectPath that identifies the CIM qualifier type.
 	 * @param qt	The CIM qualifier type to be updated.
@@ -164,7 +154,7 @@ public:
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	void updateQualifierType(const OW_CIMObjectPath& name,
+	void setQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -228,7 +218,7 @@ public:
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	OW_CIMClass updateClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
+	OW_CIMClass modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 		const OW_ACLInfo& aclInfo);
 
 	/**
@@ -249,7 +239,7 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath& path,
+	OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
 
@@ -299,7 +289,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstanceEnumeration getCIMInstances(
+	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
@@ -321,7 +311,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_CIMObjectPathEnumeration getCIMInstanceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathEnumeration enumInstanceNames(const OW_CIMObjectPath& path,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -343,12 +333,12 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_CIMInstance getCIMInstance(const OW_CIMObjectPath& cop,
+	OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	OW_CIMInstance getCIMInstance(const OW_CIMObjectPath& cop,
+	OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		OW_CIMClass* pOutClass, const OW_ACLInfo& aclInfo);
@@ -391,7 +381,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_CIMInstance updateInstance(const OW_CIMObjectPath& cop,
+	OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo);
 
 	/**

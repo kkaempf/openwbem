@@ -279,15 +279,6 @@ public:
 
 
 	/**
-	 * Create a new qualifier type.
-	 * @param name The object path that identifies the namespace for the new
-	 *		qualifier type.
-	 * @param qt The qualifier type to create.
-	 */
-	void createQualifierType(const OW_CIMObjectPath &name,
-		const OW_CIMQualifierType &qt);
-
-	/**
 	 * Executes the specified method on the specified object. A method is a
 	 * declaration containing the method name, return type, and parameters in
 	 * the method.

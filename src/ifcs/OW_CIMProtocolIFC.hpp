@@ -36,6 +36,7 @@
 #include "OW_CIMFeatures.hpp"
 #include "OW_Reference.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
+#include "OW_SocketAddress.hpp"
 #include <iosfwd>
 
 DEFINE_EXCEPTION(CIMProtocol);
@@ -84,6 +85,18 @@ public:
 
 	void setContentType(const OW_String& ct)
 		{ m_contentType = ct; }
+
+	/**
+	 * Gets the address of the local machine
+	 * @return An OW_SocketAddress corresponding to the local machine.
+	 */
+	virtual OW_SocketAddress getLocalAddress() const = 0;
+
+	/**
+	 * Gets the address of the peer connection
+	 * @return An OW_SocketAddress corresponding to the peer connection
+	 */
+	virtual OW_SocketAddress getPeerAddress()  const = 0;
 
 protected:
 	OW_ClientAuthCBIFCRef m_loginCB;

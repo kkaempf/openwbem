@@ -79,18 +79,6 @@ public:
 		const OW_ACLInfo& aclInfo) = 0;
 
 	/**
-	 * Get an existing qualifier type from the repository.
-	 * @param objPath	The object path for the qaulifer type.
-	 * @param aclInfo ACL object describing user making request.
-	 * @return A valid OW_CIMQaulifer type on success. Otherwise a NULL
-	 * OW_CIMQualifier type.
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
-	 */
-	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath& objPath, const OW_ACLInfo& aclInfo) = 0;
-
-	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM
 	 * object path.
 	 * @param ns	The parent namespace to enumerate.
@@ -106,6 +94,18 @@ public:
 	 */
 	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns,
 		OW_Bool deep, const OW_ACLInfo& aclInfo) = 0;
+
+	/**
+	 * Get an existing qualifier type from the repository.
+	 * @param objPath	The object path for the qaulifer type.
+	 * @param aclInfo ACL object describing user making request.
+	 * @return A valid OW_CIMQaulifer type on success. Otherwise a NULL
+	 * OW_CIMQualifier type.
+	 * @exception OW_CIMException
+	 * @exception OW_IOException
+	 */
+	virtual OW_CIMQualifierType getQualifierType(
+		const OW_CIMObjectPath& objPath, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Enumerate the qualifier types in a name space.
@@ -126,6 +126,7 @@ public:
 	virtual void deleteQualifierType(const OW_CIMObjectPath& objPath,
 		const OW_ACLInfo& aclInfo) = 0;
 
+	// TODO remove
 	/**
 	 * Add a qualifier type to the repository
 	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
@@ -133,8 +134,10 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception OW_CIMException
 	 */
+	/*
 	virtual void addQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo) = 0;
+	*/
 
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
@@ -145,7 +148,7 @@ public:
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	virtual void updateQualifierType(const OW_CIMObjectPath& name,
+	virtual void setQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
@@ -210,7 +213,7 @@ public:
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	virtual OW_CIMClass updateClass(const OW_CIMObjectPath& name, 
+	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name, 
 		OW_CIMClass& cc, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
@@ -231,7 +234,7 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual OW_CIMClassEnumeration enumClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo) = 0;
 
@@ -279,7 +282,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstanceEnumeration getCIMInstances(
+	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo) = 0;
@@ -301,7 +304,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMObjectPathEnumeration getCIMInstanceNames(
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 		const OW_CIMObjectPath& path, OW_Bool deep,
 		const OW_ACLInfo& aclInfo) = 0;
 
@@ -324,7 +327,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstance getCIMInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo) = 0;
@@ -369,7 +372,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMInstance updateInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo) = 0;
 
 	/**

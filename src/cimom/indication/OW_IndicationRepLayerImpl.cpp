@@ -165,11 +165,11 @@ OW_IndicationRepLayerImpl::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
-OW_IndicationRepLayerImpl::enumClass(const OW_CIMObjectPath& path, OW_Bool deep,
+OW_IndicationRepLayerImpl::enumClasses(const OW_CIMObjectPath& path, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumClass(path, deep, localOnly, includeQualifiers,
+	return m_pServer->enumClasses(path, deep, localOnly, includeQualifiers,
 		includeClassOrigin, aclInfo);
 }
 
@@ -183,21 +183,21 @@ OW_IndicationRepLayerImpl::enumClassNames(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
-OW_IndicationRepLayerImpl::getCIMInstances(const OW_CIMObjectPath& path,
+OW_IndicationRepLayerImpl::enumInstances(const OW_CIMObjectPath& path,
 	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->getCIMInstances(path, deep, localOnly, includeQualifiers,
+	return m_pServer->enumInstances(path, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
-OW_IndicationRepLayerImpl::getCIMInstanceNames(const OW_CIMObjectPath& path,
+OW_IndicationRepLayerImpl::enumInstanceNames(const OW_CIMObjectPath& path,
 	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->getCIMInstanceNames(path, deep, aclInfo);
+	return m_pServer->enumInstanceNames(path, deep, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -220,11 +220,11 @@ OW_IndicationRepLayerImpl::getClass(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_IndicationRepLayerImpl::getCIMInstance(const OW_CIMObjectPath& name,
+OW_IndicationRepLayerImpl::getInstance(const OW_CIMObjectPath& name,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMInstance theInst = m_pServer->getCIMInstance(name, localOnly,
+	OW_CIMInstance theInst = m_pServer->getInstance(name, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 	if (theInst)
 	{
@@ -267,7 +267,7 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 		if (expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_CIMInstance theInst = m_pServer->getCIMInstance(name, false,
+			OW_CIMInstance theInst = m_pServer->getInstance(name, false,
 				true, true, NULL, intAclInfo);
 
 			if (!theInst)
@@ -352,27 +352,20 @@ OW_IndicationRepLayerImpl::getQualifierType(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationRepLayerImpl::updateQualifierType(const OW_CIMObjectPath& name,
+OW_IndicationRepLayerImpl::setQualifierType(const OW_CIMObjectPath& name,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
 {
-	m_pServer->updateQualifierType(name, qt, aclInfo);
+	m_pServer->setQualifierType(name, qt, aclInfo);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::addQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->addQualifierType(name, qt, aclInfo);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_IndicationRepLayerImpl::updateClass(const OW_CIMObjectPath& name,
+OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 	OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass lcc(cc);
-	OW_CIMClass CCOrig = m_pServer->updateClass(name, lcc, aclInfo);
+	OW_CIMClass CCOrig = m_pServer->modifyClass(name, lcc, aclInfo);
 	if (CCOrig)
 	{
 		OW_ACLInfo intAclInfo;
@@ -425,11 +418,11 @@ OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_IndicationRepLayerImpl::updateInstance(const OW_CIMObjectPath& name,
+OW_IndicationRepLayerImpl::modifyInstance(const OW_CIMObjectPath& name,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMInstance lci(ci);
-	OW_CIMInstance ciOrig = m_pServer->updateInstance(name, lci, aclInfo);
+	OW_CIMInstance ciOrig = m_pServer->modifyInstance(name, lci, aclInfo);
 	if (ciOrig)
 	{
 		OW_ACLInfo intAclInfo;

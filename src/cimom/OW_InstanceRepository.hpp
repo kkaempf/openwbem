@@ -107,7 +107,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	void updateInstance(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
+	void modifyInstance(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
 		OW_CIMInstance& ci);
 
 	/**
