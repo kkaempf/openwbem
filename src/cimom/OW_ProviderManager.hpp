@@ -45,7 +45,8 @@
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_InternalProviderIFC.hpp"
-#include "OW_Map.hpp"
+#include "OW_HashMap.hpp"
+
 
 /**
  * This class will be used by the CIMOM as a way of finding providers.
@@ -202,12 +203,12 @@ private:
 
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
-	typedef OW_Map<OW_String, InstProvReg> InstProvRegMap_t;
+	typedef OW_HashMap<OW_String, InstProvReg> InstProvRegMap_t;
 	InstProvRegMap_t m_registeredInstProvs;
 
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
-	typedef OW_Map<OW_String, AssocProvReg> AssocProvRegMap_t;
+	typedef OW_HashMap<OW_String, AssocProvReg> AssocProvRegMap_t;
 	AssocProvRegMap_t m_registeredAssocProvs;
 
 };
