@@ -48,9 +48,13 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
+
+OW_DECLARE_EXCEPTION(CppProviderIFC);
+OW_DEFINE_EXCEPTION_WITH_ID(CppProviderIFC);
 
 //#include <setjmp.h>
 typedef CppProviderBaseIFC* (*ProviderCreationFunc)();
@@ -361,9 +365,9 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
 	{
-		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "C++ provider ifc failed to get shared lib"
-			" loader");
-		return;
+		const char* msg = "C++ provider ifc failed to get shared lib loader";
+		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
+		OW_THROW(CppProviderIFCException, msg);
 	}
 
 	String libPathsStr = env->getConfigItem(
@@ -374,9 +378,10 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		StringArray dirEntries;
 		if (!FileSystem::getDirectoryContents(paths[i1], dirEntries))
 		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc failed getting"
+			String msg(Format("C++ provider ifc failed getting"
 				" contents of directory: %1", paths[i1]));
-			continue;
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
+			OW_THROW(CppProviderIFCException, msg.c_str());
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
@@ -388,39 +393,42 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			libName += OW_FILENAME_SEPARATOR;
 			libName += dirEntries[i];
 
-	#ifdef OW_DARWIN
+#ifdef OW_DARWIN
 			if (!FileSystem::isLink(libName))
 			{
 				continue;
 			}
-	#endif // OW_DARWIN
+#endif // OW_DARWIN
 	
 			SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 				env->getLogger(COMPONENT_NAME));
 			if (!theLib)
 			{
+				String msg(Format("C++ provider ifc failed to load library: %1", libName));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc failed to load library: %1", libName));
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				continue;
+				OW_THROW(CppProviderIFCException, msg.c_str());
 			}
 			versionFunc_t versFunc;
 			if (!theLib->getFunctionPointer("getOWVersion",
 				versFunc))
 			{
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from"
+				String msg(Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from"
 					" library: %1", libName));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				continue;
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
+				OW_THROW(CppProviderIFCException, msg.c_str());
 			}
 			const char* strVer = (*versFunc)();
 			if (strcmp(strVer, OW_VERSION))
 			{
+				String msg(Format("C++ provider ifc got invalid version from provider: %1", strVer));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc got invalid version from provider: %1", strVer));
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				continue;
+				OW_THROW(CppProviderIFCException, msg.c_str());
 			}
 			ProviderCreationFunc createProvider;
 			String creationFuncName = String(CREATIONFUNC) + "NO_ID";
@@ -439,10 +447,11 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 				if (!p)
 				{
+					String msg(Format("C++ provider ifc: Libary %1 does not load", libName));
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
-					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: Libary %1 does not load", libName));
+					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), msg);
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
-					continue;
+					OW_THROW(CppProviderIFCException, msg.c_str());
 				}
 
 				// The named provider may also be an indication export or a
@@ -530,10 +539,11 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			AutoPtr<CppProviderBaseIFC> pProv((*createProvider)());
 			if (!pProv.get())
 			{
+				String msg(Format("C++ provider ifc: Libary %1 - %2 returned null provider", libName, creationFuncName));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: Libary %1 - %2 returned null provider", libName, creationFuncName));
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
-				continue;
+				OW_THROW(CppProviderIFCException, msg.c_str());
 			}
 			CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 			CppIndicationExportProviderIFC* p_iep =
@@ -777,12 +787,34 @@ void CppProviderIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	// while calling shuttingDown(), since that might cause a deadlock, so make a copy.
 	MutexLock l(m_guard);
 	ProviderMap provsCopy(m_provs);
+	LoadedProviderArray noUnloadProvidersCopy(m_noUnloadProviders);
 	l.release();
 
 	ProviderMap::iterator it, itend = provsCopy.end();
 	for (it = provsCopy.begin(); it != itend; ++it)
 	{
 		it->second->getProvider()->shuttingDown(env);
+	}
+
+	// call shuttingDown() for any providers in noUnloadProviders which *aren't* in provsCopy,
+	// so we don't call it twice for one provider
+	for (LoadedProviderArray::iterator curProv = noUnloadProvidersCopy.begin(); curProv != noUnloadProvidersCopy.end(); ++curProv)
+	{
+		bool found(false);
+
+		for (it = provsCopy.begin(); it != itend; ++it)
+		{
+			if (it->second->getProvider() == *curProv)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+			(*curProv)->shuttingDown(env);
+		}
 	}
 }
 

@@ -127,6 +127,9 @@ namespace OpenWBEM
 		// mof compiler lib
 		static const int MOFCompilerExceptionId = 9001;
 		static const int ParseFatalErrorExceptionId = 9002;
+
+		// cpp provider interface
+		static const int CppProviderIFCExceptionId = 10001;
 	}
 }
 
