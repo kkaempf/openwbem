@@ -45,6 +45,8 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
+#include "OW_CIMOMEnvironment.hpp"
+#include "OW_OperationContext.hpp"
 
 #include <algorithm>
 
@@ -83,13 +85,12 @@ public:
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
-	TestProviderThread(const ProviderEnvironmentIFCRef& env, IndicationProviderTest2* pProv)
+	TestProviderThread(IndicationProviderTest2* pProv)
 		: Thread()
 		, m_shuttingDown(false)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
-		, m_env(env)
 		, m_pProv(pProv)
 	{
 	}
@@ -146,7 +147,6 @@ protected:
 	int m_creationFilterCount;
 	int m_modificationFilterCount;
 	int m_deletionFilterCount;
-	ProviderEnvironmentIFCRef m_env;
 	IndicationProviderTest2* m_pProv;
 };
 	
@@ -176,6 +176,13 @@ public:
 	{
 		env->getLogger()->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
+		// create the thread now that someone is listening for our events.
+		if (m_threadStarted == false)
+		{
+			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter creating helper thread");
+			NonRecursiveMutexLock l(m_mtx);
+			m_thread = new TestProviderThread(this);
+		}
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
 		// so for this provider (and most other life cycle indication providers), it's got to be one of:
@@ -216,11 +223,10 @@ public:
 		(void)comp;
 
 		// start the thread now that someone is listening for our events.
-		if (firstActivation)
+		if (m_threadStarted == false)
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
 			NonRecursiveMutexLock l(m_mtx);
-			OW_ASSERT(m_threadStarted == false);
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -236,6 +242,19 @@ public:
 	{
 		env->getLogger()->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
+		// terminate the thread if no one is listening for our events.
+		if (lastActivation && m_threadStarted == true)
+		{
+			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
+			NonRecursiveMutexLock l(m_mtx);
+			m_thread->shutdown();
+			m_thread->join();
+			m_thread = 0;
+			m_threadStarted = false;
+			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
+			return;
+		}
+
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
 		// so for this provider (and most other life cycle indication providers), it's got to be one of:
@@ -275,18 +294,6 @@ public:
 		// do something with comp
 		(void)comp;
 		
-		// terminate the thread if no one is listening for our events.
-		if (lastActivation)
-		{
-			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
-			NonRecursiveMutexLock l(m_mtx);
-			OW_ASSERT(m_threadStarted == true);
-			m_thread->shutdown();
-			m_thread->join();
-			m_thread = new TestProviderThread(env, this);
-			m_threadStarted = false;
-			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
-		}
 	}
 
 	/**
@@ -433,7 +440,6 @@ public:
 		env->getLogger()->logDebug("IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
-		m_thread = new TestProviderThread(env, this);
 	}
 
 	void do_cleanup() 
@@ -533,7 +539,8 @@ Int32 TestProviderThread::run()
 	NonRecursiveMutexLock l(m_guard);
 	while (!m_shuttingDown)
 	{
-		m_pProv->updateInstancesAndSendIndications(m_env->getCIMOMHandle(), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
+		OperationContext context;
+		m_pProv->updateInstancesAndSendIndications(CIMOMEnvironment::g_cimomEnvironment->getCIMOMHandle(context), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
 		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
 		// to be able to stop the thread when the cimom shuts down or restarts.
 		m_cond.timedWait(l, 1);
