@@ -134,7 +134,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
 		UInt32 version = 0;
 		BinarySerialization::read(*istrm, version);
-		if (version != BinaryProtocolVersion)
+		if (version < MinBinaryProtocolVersion || version > BinaryProtocolVersion)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Incompatible version");
 		}

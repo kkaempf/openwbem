@@ -75,7 +75,15 @@ namespace OpenWBEM
 // 2/20/2004 - 3000007. Changed to not send an extra unnecessary signature,
 //   since all the CIM objects already send a signature.  Note that the 
 //   repository version was not incremented.
-const UInt32 BinaryProtocolVersion = 3000007;
+// 7/22/2004 - 3000008. Changed signatures and added versioning. Now all
+//   readObject() calls will be able to read older versions as well as the
+//   current.  Introduced MinBinaryProtocolVersion which is the oldest version
+//   we can sucessfully read.
+const UInt32 BinaryProtocolVersion = 3000008;
+
+// This is the oldest version the code can handle.
+const UInt32 MinBinaryProtocolVersion = 3000007;
+
 // These values are all used by the binary protocol
 const UInt8 BIN_OK =				0;		// Success returned from server
 const UInt8 BIN_ERROR =			1;		// Error returned from server

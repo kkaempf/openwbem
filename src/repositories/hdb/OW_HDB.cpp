@@ -151,7 +151,7 @@ HDB::checkFile()
 		msg += m_fileName;
 		OW_THROW(HDBException, msg.c_str());
 	}
-	if (m_hdrBlock.version != HDBVERSION)
+	if (m_hdrBlock.version < MinHDBVERSION || m_hdrBlock.version > HDBVERSION)
 	{
 		OW_THROW(HDBException, Format("Invalid version (%1) for file (%2). Expected (%3)", m_hdrBlock.version, m_fileName, HDBVERSION).c_str());
 	}

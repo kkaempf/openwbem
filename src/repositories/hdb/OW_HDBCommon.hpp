@@ -59,7 +59,15 @@ const int HDBSIGLEN = 16;
 //   instead of object paths.
 // 2/6/2004 - 3000006. Changed CIMDateTime::{read,write}Object to write each
 //   item individually so struct packing doesn't cause incompatibilities.
-const UInt32 HDBVERSION = 3000006;
+// 7/22/2004 - 3000008. Changed signatures and added versioning. Now all
+//   readObject() calls will be able to read older versions as well as the
+//   current.  Introduced MinBinaryProtocolVersion which is the oldest version
+//   we can sucessfully read.
+const UInt32 HDBVERSION = 3000008;
+
+// This is the oldest version the code can handle.
+const UInt32 MinHDBVERSION = 3000006;
+
 /**
  * The HDBHeaderBlock structure represent the header information for
  * the database.
