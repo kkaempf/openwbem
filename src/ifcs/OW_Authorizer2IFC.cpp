@@ -38,5 +38,11 @@ Authorizer2IFC::~Authorizer2IFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+Authorizer2IFC::init(ServiceEnvironmentIFCRef&) 
+{
+}
+
 } // end namespace OpenWBEM
 

@@ -207,7 +207,7 @@ public:
 		const String& methodName,
 		OperationContext& context) = 0;
 
-	virtual void init(ServiceEnvironmentIFCRef&) {}
+	virtual void init(ServiceEnvironmentIFCRef&);
 };
 
 typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2IFCRef;
