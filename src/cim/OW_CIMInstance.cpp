@@ -877,7 +877,39 @@ OW_CIMInstance::toMOF() const
 
 	for(i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		rv += m_pdata->m_properties[i].toMOF();
+		// note that we can't use OW_CIMProperty::toMOF() since it prints out
+		// the data type.
+		const OW_CIMProperty& p = m_pdata->m_properties[i];
+
+
+		OW_CIMValue v = p.getValue();
+		if(v)
+		{
+			// do qualifiers
+			OW_CIMQualifierArray qualifiers = p.getQualifiers();
+			if(qualifiers.size() > 0)
+			{
+				rv += "  [";
+
+				for(size_t i = 0; i < qualifiers.size(); i++)
+				{
+					const OW_CIMQualifier& nq = qualifiers[i];
+					if(i > 0)
+					{
+						rv += ',';
+					}
+					rv += nq.toMOF();
+				}
+				rv += "]\n";
+			}
+
+			rv += "  ";
+			rv += p.getName();
+			rv += '=';
+			rv += v.toMOF();
+			rv += ";\n";
+		}
+
 	}
 
 	rv += "};\n";
