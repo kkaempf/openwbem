@@ -53,6 +53,13 @@ extern "C"
 #include <fcntl.h>
 #include <paths.h>
 #include <sys/mdi.h>
+#elif defined (OW_DARWIN)
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/sockio.h>
+#include <strings.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #else
 #include <stropts.h>
 #include <net/if.h>
