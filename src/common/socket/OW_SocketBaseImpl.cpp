@@ -36,6 +36,8 @@
 #include "OW_IOException.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_PosixUnnamedPipe.hpp"
+#include "OW_Socket.hpp"
 
 extern "C"
 {
@@ -201,87 +203,95 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 
 	int lerrno;
 
-	if(m_connectTimeout > 0)
+	int n;
+	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
+	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
+
+#ifdef OW_USE_GNU_PTH
+	if((n = ::pth_connect(m_sockfd, addr.getNativeForm(),
+					addr.getNativeFormSize())) < 0)
+#else
+	if((n = ::connect(m_sockfd, addr.getNativeForm(),
+					addr.getNativeFormSize())) < 0)
+#endif
 	{
-		int n;
-		int flags = ::fcntl(m_sockfd, F_GETFL, 0);
-		::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
-
-#ifdef OW_USE_GNU_PTH
-		if((n = ::pth_connect(m_sockfd, addr.getNativeForm(),
-						addr.getNativeFormSize())) < 0)
-#else
-		if((n = ::connect(m_sockfd, addr.getNativeForm(),
-						addr.getNativeFormSize())) < 0)
-#endif
-		{
-			if(errno != EINPROGRESS)
-			{
-				lerrno = errno;
-				::close(m_sockfd);
-				OW_THROW(OW_SocketException,
-					format("Failed to connect to: %1", addr.getAddress()).c_str());
-			}
-		}
-
-		if(n != 0)
-		{
-			fd_set rset, wset;
-			struct timeval tval;
-
-			FD_ZERO(&rset);
-			FD_SET(m_sockfd, &rset);
-			wset = rset;
-			tval.tv_sec = m_connectTimeout;
-			tval.tv_usec = 0;
-#ifdef OW_USE_GNU_PTH
-			if((n = ::pth_select(m_sockfd+1, &rset, &wset, NULL, &tval)) == 0)
-#else
-			if((n = ::select(m_sockfd+1, &rset, &wset, NULL, &tval)) == 0)
-#endif
-			{
-				::close(m_sockfd);
-				OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
-			}
-
-			if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
-			{
-				int error;
-				socklen_t len = sizeof(error);
-
-				if(::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
-							&len) < 0)
-				{
-					::close(m_sockfd);
-					OW_THROW(OW_SocketException,
-							"OW_SocketBaseImpl::connect");
-				}
-			}
-			else
-			{
-				::close(m_sockfd);
-				OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
-			}
-		}
-
-   	    ::fcntl(m_sockfd, F_SETFL, flags);
-	}
-	else
-	{
-#ifdef OW_USE_GNU_PTH
-		if(::pth_connect(m_sockfd, addr.getNativeForm(),
-					addr.getNativeFormSize()) == -1)
-#else
-		if(::connect(m_sockfd, addr.getNativeForm(),
-					addr.getNativeFormSize()) == -1)
-#endif
+		if(errno != EINPROGRESS)
 		{
 			lerrno = errno;
 			::close(m_sockfd);
 			OW_THROW(OW_SocketException,
-				format("Failed to connect to: %1", addr.toString()).c_str());
+				format("Failed to connect to: %1", addr.getAddress()).c_str());
 		}
 	}
+
+	if(n != 0)
+	{
+		OW_PosixUnnamedPipeRef lUPipe;
+
+		int pipefd = 0;
+
+		if (OW_Socket::m_pUpipe)
+		{
+			lUPipe = OW_Socket::m_pUpipe.cast_to<OW_PosixUnnamedPipe>();
+			OW_ASSERT(lUPipe);
+			pipefd = lUPipe->getInputHandle();
+
+		}
+
+		fd_set rset, wset;
+		struct timeval tval;
+
+		FD_ZERO(&rset);
+		FD_SET(m_sockfd, &rset);
+		FD_SET(pipefd, &rset);
+
+		FD_ZERO(&wset);
+		FD_SET(m_sockfd, &wset);
+
+		struct timeval* ptval = 0;
+		if (m_connectTimeout > 0)
+		{
+			tval.tv_sec = m_connectTimeout;
+			tval.tv_usec = 0;
+			ptval = &tval;
+		}
+
+		int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
+#ifdef OW_USE_GNU_PTH
+		if((n = ::pth_select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
+#else
+		if((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
+#endif
+		{
+			::close(m_sockfd);
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
+		}
+
+		if(FD_ISSET(pipefd, &rset))
+		{
+			OW_THROW(OW_SocketException, "Sockets have been shutdown");
+		}
+		else if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
+		{
+			int error;
+			socklen_t len = sizeof(error);
+
+			if(::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
+						&len) < 0)
+			{
+				::close(m_sockfd);
+				OW_THROW(OW_SocketException,
+						"OW_SocketBaseImpl::connect");
+			}
+		}
+		else
+		{
+			::close(m_sockfd);
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
+		}
+	}
+
+	::fcntl(m_sockfd, F_SETFL, flags);
 
 	m_isConnected = true;
 	if (addr.getType() == OW_SocketAddress::INET)
