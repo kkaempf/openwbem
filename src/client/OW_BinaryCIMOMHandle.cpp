@@ -58,7 +58,7 @@ using std::istream;
 static inline void
 checkError(std::istream& istrm)
 {
-	OW_Int32 rc;
+	OW_UInt8 rc;
 	OW_BinIfcIO::read(istrm, rc);
 	if(rc != OW_BIN_OK)
 	{
@@ -72,7 +72,7 @@ checkError(std::istream& istrm)
 			}
 			case OW_BIN_EXCEPTION:
 			{
-				OW_Int32 cimerrno;
+				OW_UInt16 cimerrno;
 				OW_String cimMsg;
 				OW_BinIfcIO::read(istrm, cimerrno);
 				OW_BinIfcIO::read(istrm, cimMsg);
@@ -199,6 +199,7 @@ OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& classNa
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteClass", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_DELETECLS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -215,6 +216,7 @@ OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPat
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteInstance", ns);;
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_DELETEINST);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, inst);
@@ -230,6 +232,7 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String&
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteQualifier", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_DELETEQUAL);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, qualName);
@@ -248,6 +251,7 @@ OW_BinaryCIMOMHandle::enumClassNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClassNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSNAMES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -269,6 +273,7 @@ OW_BinaryCIMOMHandle::enumClass(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClasses", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -294,6 +299,7 @@ OW_BinaryCIMOMHandle::enumInstanceNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTNAMES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -316,6 +322,7 @@ OW_BinaryCIMOMHandle::enumInstances(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstances", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -340,6 +347,7 @@ OW_BinaryCIMOMHandle::enumQualifierTypes(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMQUALS);
 	OW_BinIfcIO::writeString(strm, ns);
 
@@ -362,6 +370,7 @@ OW_BinaryCIMOMHandle::getClass(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetClass", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_GETCLS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, className);
@@ -388,6 +397,7 @@ OW_BinaryCIMOMHandle::getInstance(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetInstance", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_GETINST);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, instanceName);
@@ -415,12 +425,13 @@ OW_BinaryCIMOMHandle::invokeMethod(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_INVMETH);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, methodName);
 
-	OW_BinIfcIO::write(strm, OW_Int32(OW_BINSIG_PARAMVALUEARRAY));
+	OW_BinIfcIO::write(strm, OW_BINSIG_PARAMVALUEARRAY);
 	inParams.writeObject(strm);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
@@ -457,6 +468,7 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetQualifier", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_GETQUAL);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, qualifierName);
@@ -476,6 +488,7 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetQualifier", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_SETQUAL);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeQual(strm, qt);
@@ -494,6 +507,7 @@ OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_MODIFYCLS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeClass(strm, cc);
@@ -512,6 +526,7 @@ OW_BinaryCIMOMHandle::createClass(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateClass", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_CREATECLS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeClass(strm, cc);
@@ -533,6 +548,7 @@ OW_BinaryCIMOMHandle::modifyInstance(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_MODIFYINST);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeInstance(strm, modifiedInstance);
@@ -553,6 +569,7 @@ OW_BinaryCIMOMHandle::createInstance(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateInstance", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_CREATEINST);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeInstance(strm, ci);
@@ -575,6 +592,7 @@ OW_BinaryCIMOMHandle::getProperty(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetProperty", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_GETPROP);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -615,6 +633,7 @@ OW_BinaryCIMOMHandle::setProperty(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetProperty", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_SETPROP);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -644,6 +663,7 @@ OW_BinaryCIMOMHandle::associatorNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"AssociatorNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ASSOCNAMES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -679,6 +699,7 @@ OW_BinaryCIMOMHandle::associators(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -716,6 +737,7 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -746,6 +768,7 @@ OW_BinaryCIMOMHandle::referenceNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_REFNAMES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -778,6 +801,7 @@ OW_BinaryCIMOMHandle::references(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -812,6 +836,7 @@ OW_BinaryCIMOMHandle::referencesClasses(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
@@ -848,6 +873,7 @@ OW_BinaryCIMOMHandle::execQuery(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ExecQuery", ns);
 	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
 	OW_BinIfcIO::write(strm, OW_BIN_EXECQUERY);
 	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeString(strm, query);

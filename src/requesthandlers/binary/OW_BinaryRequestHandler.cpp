@@ -97,7 +97,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		}
 	}
 
-	OW_Int32 funcNo = 0;
+	OW_UInt8 funcNo = 0;
 
 	OW_Bool doIndications = !(getEnvironment()->getConfigItem(
 		OW_ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
@@ -107,6 +107,13 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	try
 	{
 		OW_CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName, doIndications);
+		OW_UInt32 version = 0;
+		OW_BinIfcIO::read(*istrm, version);
+		if (version != OW_BinaryProtocolVersion)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Incompatible version");
+		}
+
 		OW_BinIfcIO::read(*istrm, funcNo);
 
 		try
@@ -275,7 +282,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 			lgr->logDebug(format("CIM Exception caught in"
 				" OW_BinaryRequestHandler: %1", e));
 			OW_BinIfcIO::write(*ostrError, OW_BIN_EXCEPTION);
-			OW_BinIfcIO::write(*ostrError, OW_Int32(e.getErrNo()));
+			OW_BinIfcIO::write(*ostrError, OW_UInt16(e.getErrNo()));
 			OW_BinIfcIO::write(*ostrError, e.getMessage());
 			setError(e.getErrNo(), e.getMessage());
 		}

@@ -53,64 +53,66 @@
 
 
 // Values for local API calls
+const OW_UInt32 OW_BinaryProtocolVersion = 3000001;
 
-const OW_Int32 OW_IPC_AUTHENTICATE =	3000;	// Authenticate
-const OW_Int32 OW_IPC_FUNCTIONCALL =	4000;	// Regular function call
-const OW_Int32 OW_IPC_CLOSECONN =		9999;	// Close connection
+const OW_UInt8 OW_BIN_OK =				0;		// Success returned from server
+const OW_UInt8 OW_BIN_ERROR =			1;		// Error returned from server
+const OW_UInt8 OW_BIN_EXCEPTION =		2;		// CIM Exception returned from server
 
-const OW_Int32 OW_BIN_DELETECLS =		40;		// Delete class
-const OW_Int32 OW_BIN_DELETEINST =		50;		// Delete instance
-const OW_Int32 OW_BIN_DELETEQUAL =		60;		// Delete qualifier type
-const OW_Int32 OW_BIN_ENUMCLSS =		70;		// Enum class
-const OW_Int32 OW_BIN_ENUMCLSNAMES =	80;		// Enum class names
-const OW_Int32 OW_BIN_ENUMINSTS =		90;		// Enum instances
-const OW_Int32 OW_BIN_ENUMINSTNAMES =	100;		// Enum instance names
-const OW_Int32 OW_BIN_ENUMQUALS =		110;		// Enum qualifiers types
-const OW_Int32 OW_BIN_GETCLS =			120;		// Get class
-const OW_Int32 OW_BIN_GETINST =			130;		// Get instance
-const OW_Int32 OW_BIN_INVMETH =			140;		// Invoke method
-const OW_Int32 OW_BIN_GETQUAL =			150;		// Get qualifier type
-const OW_Int32 OW_BIN_SETQUAL =			160;		// Set qualifier type
-const OW_Int32 OW_BIN_MODIFYCLS =		170;		// Modify class
-const OW_Int32 OW_BIN_CREATECLS =		180;		// Create class
-const OW_Int32 OW_BIN_MODIFYINST =		190;		// Modify instances
-const OW_Int32 OW_BIN_CREATEINST =		200;		// Create instance
-const OW_Int32 OW_BIN_GETPROP =			210;		// Get property
-const OW_Int32 OW_BIN_SETPROP =			220;		// Set property
-const OW_Int32 OW_BIN_ASSOCNAMES =		230;		// Associator names
-const OW_Int32 OW_BIN_ASSOCIATORS =		240;		// Associators
-const OW_Int32 OW_BIN_REFNAMES =		250;		// Reference names
-const OW_Int32 OW_BIN_REFERENCES =		260;		// References
-const OW_Int32 OW_BIN_EXECQUERY =		270;		// Execute query
-const OW_Int32 OW_BIN_GETSVRFEATURES =	280;		// Get Server Features
+const OW_UInt8 OW_IPC_AUTHENTICATE =	10;	// Authenticate
+const OW_UInt8 OW_IPC_FUNCTIONCALL =	11;	// Regular function call
+const OW_UInt8 OW_IPC_CLOSECONN =		12;	// Close connection
 
-const OW_Int32 OW_BIN_OK =				0;		// Success returned from server
-const OW_Int32 OW_BIN_ERROR =			-1;		// Error returned from server
-const OW_Int32 OW_BIN_EXCEPTION =		-2;		// CIM Exception returned from server
+const OW_UInt8 OW_BIN_DELETECLS =		20;		// Delete class
+const OW_UInt8 OW_BIN_DELETEINST =		21;		// Delete instance
+const OW_UInt8 OW_BIN_DELETEQUAL =		22;		// Delete qualifier type
+const OW_UInt8 OW_BIN_ENUMCLSS =		23;		// Enum class
+const OW_UInt8 OW_BIN_ENUMCLSNAMES =	24;		// Enum class names
+const OW_UInt8 OW_BIN_ENUMINSTS =		25;		// Enum instances
+const OW_UInt8 OW_BIN_ENUMINSTNAMES =	26;		// Enum instance names
+const OW_UInt8 OW_BIN_ENUMQUALS =		27;		// Enum qualifiers types
+const OW_UInt8 OW_BIN_GETCLS =			28;		// Get class
+const OW_UInt8 OW_BIN_GETINST =			29;		// Get instance
+const OW_UInt8 OW_BIN_INVMETH =			30;		// Invoke method
+const OW_UInt8 OW_BIN_GETQUAL =			31;		// Get qualifier type
+const OW_UInt8 OW_BIN_SETQUAL =			32;		// Set qualifier type
+const OW_UInt8 OW_BIN_MODIFYCLS =		33;		// Modify class
+const OW_UInt8 OW_BIN_CREATECLS =		34;		// Create class
+const OW_UInt8 OW_BIN_MODIFYINST =		35;		// Modify instances
+const OW_UInt8 OW_BIN_CREATEINST =		36;		// Create instance
+const OW_UInt8 OW_BIN_GETPROP =			37;		// Get property
+const OW_UInt8 OW_BIN_SETPROP =			38;		// Set property
+const OW_UInt8 OW_BIN_ASSOCNAMES =		39;		// Associator names
+const OW_UInt8 OW_BIN_ASSOCIATORS =		40;		// Associators
+const OW_UInt8 OW_BIN_REFNAMES =		41;		// Reference names
+const OW_UInt8 OW_BIN_REFERENCES =		42;		// References
+const OW_UInt8 OW_BIN_EXECQUERY =		43;		// Execute query
+const OW_UInt8 OW_BIN_GETSVRFEATURES =	44;		// Get Server Features
 
-const OW_Int32 OW_BINSIG_NS	=			0xa0000001;
-const OW_Int32 OW_BINSIG_OP =			0xa0000002;
-const OW_Int32 OW_BINSIG_CLS =			0xa0000003;
-const OW_Int32 OW_BINSIG_INST =			0xa0000004;
-const OW_Int32 OW_BINSIG_BOOL =			0xa0000005;
-const OW_Int32 OW_BINSIG_CLSENUM =		0xa0000006;
-const OW_Int32 OW_BINSIG_STR =			0xa0000007;
-const OW_Int32 OW_BINSIG_STRARRAY =		0xa0000008;
-const OW_Int32 OW_BINSIG_QUAL =			0xa0000009;
-const OW_Int32 OW_BINSIG_VALUE =		0xa000000a;
-const OW_Int32 OW_BINSIG_OPENUM =		0xa000000b;
-const OW_Int32 OW_BINSIG_INSTENUM =		0xa000000c;
-const OW_Int32 OW_BINSIG_QUALENUM =		0xa000000d;
-const OW_Int32 OW_BINSIG_VALUEARRAY =	0xa000000e;
-const OW_Int32 OW_BINSIG_PARAMVALUEARRAY =	0xa000000f;
+const OW_UInt8 OW_BINSIG_NS	=			100;
+const OW_UInt8 OW_BINSIG_OP =			101;
+const OW_UInt8 OW_BINSIG_CLS =			102;
+const OW_UInt8 OW_BINSIG_INST =			103;
+const OW_UInt8 OW_BINSIG_BOOL =			104;
+const OW_UInt8 OW_BINSIG_CLSENUM =		105;
+const OW_UInt8 OW_BINSIG_STR =			106;
+const OW_UInt8 OW_BINSIG_STRARRAY =		107;
+const OW_UInt8 OW_BINSIG_QUAL =			108;
+const OW_UInt8 OW_BINSIG_VALUE =		109;
+const OW_UInt8 OW_BINSIG_OPENUM =		110;
+const OW_UInt8 OW_BINSIG_INSTENUM =		111;
+const OW_UInt8 OW_BINSIG_QUALENUM =		112;
+const OW_UInt8 OW_BINSIG_VALUEARRAY =	113;
+const OW_UInt8 OW_BINSIG_PARAMVALUEARRAY =	114;
 
-const OW_Int32 OW_END_CLSENUM =			0x00001001;
-const OW_Int32 OW_END_OPENUM =			0x00001002;
-const OW_Int32 OW_END_INSTENUM =		0x00001003;
-const OW_Int32 OW_END_QUALENUM =		0x00001004;
+const OW_UInt8 OW_END_CLSENUM =			150;
+const OW_UInt8 OW_END_OPENUM =			151;
+const OW_UInt8 OW_END_INSTENUM =		152;
+const OW_UInt8 OW_END_QUALENUM =		153;
 
 
 //////////////////////////////////////////////////////////////////////////////
+// TODO: Refactor this and put these in a more common place, since they're used in more than just the binary protocol
 class OW_BinIfcIO
 {
 public:
@@ -125,16 +127,16 @@ public:
 	}
 
 
-	static void verifySignature(std::istream& istrm, OW_Int32 validSig)
+	static void verifySignature(std::istream& istrm, OW_UInt8 validSig)
 	{
-		OW_Int32 val;
+		OW_UInt8 val;
 		OW_BinIfcIO::read(istrm, val);
 	
 		if(val != validSig)
 		{
 			OW_THROW(OW_BadCIMSignatureException,
-				format("Received invalid signature. Got: %1 Expected: %2", val,
-					validSig).c_str());
+				format("Received invalid signature. Got: %1 Expected: %2", OW_Int32(val),
+					OW_Int32(validSig)).c_str());
 		}
 	
 	}
@@ -146,6 +148,23 @@ public:
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
+	static void write(std::ostream& ostrm, OW_UInt32 val)
+	{
+		val = OW_hton32(val);
+		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+	}
+
+	static void write(std::ostream& ostrm, OW_UInt8 val)
+	{
+		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+	}
+
+	static void write(std::ostream& ostrm, OW_UInt16 val)
+	{
+		val = OW_hton16(val);
+		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+	}
+
 
 	static void write(std::ostream& ostrm, const OW_String& str)
 	{
@@ -153,7 +172,7 @@ public:
 	}
 
 
-	static void writeObject(std::ostream& ostrm, OW_Int32 sig,
+	static void writeObject(std::ostream& ostrm, OW_UInt8 sig,
 		const OW_CIMBase& obj)
 	{
 		OW_BinIfcIO::write(ostrm, sig);
@@ -260,8 +279,19 @@ public:
 		val = OW_ntoh32(val);
 	}
 
+	static void read(std::istream& istrm, OW_UInt16& val)
+	{
+		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+		val = OW_ntoh16(val);
+	}
 
-	static void readObject(std::istream& istrm, OW_Int32 validSig,
+	static void read(std::istream& istrm, OW_UInt8& val)
+	{
+		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+	}
+
+
+	static void readObject(std::istream& istrm, OW_UInt8 validSig,
 		OW_CIMBase& obj)
 	{
 		OW_BinIfcIO::verifySignature(istrm, validSig);
