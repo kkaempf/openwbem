@@ -12,8 +12,7 @@ PORTING.txt \
 ProviderInterface.HOWTO \
 LICENSE \
 ow_ar.sh \
-Makefile-shared-lib.inc \
-Makefile-shared-lib-inst.inc.in \
+Makefile-shared-lib-inst.inc \
 openwbem-sf.spec \
 generic-company-openwbem.spec.in \
 openwbem-faq.html
