@@ -1936,7 +1936,7 @@ CIMValue::CIMValueImpl::get(CIMDateTime& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMObjectPath& arg) const
 {
-	if(m_type != CIMDataType::REFERENCE)
+	if(m_type != CIMDataType::REFERENCE || isArray())
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a REFERENCE");
 	arg = *(reinterpret_cast<const CIMObjectPath*>(&m_obj));
@@ -1945,7 +1945,7 @@ CIMValue::CIMValueImpl::get(CIMObjectPath& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMClass& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDCLASS)
+	if(m_type != CIMDataType::EMBEDDEDCLASS || isArray())
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDCLASS");
 	arg = *(reinterpret_cast<const CIMClass*>(&m_obj));
@@ -1954,7 +1954,7 @@ CIMValue::CIMValueImpl::get(CIMClass& arg) const
 void
 CIMValue::CIMValueImpl::get(CIMInstance& arg) const
 {
-	if(m_type != CIMDataType::EMBEDDEDINSTANCE)
+	if(m_type != CIMDataType::EMBEDDEDINSTANCE || isArray())
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a EMBEDDEDINSTANCE");
 	arg = *(reinterpret_cast<const CIMInstance*>(&m_obj));
