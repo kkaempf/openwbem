@@ -34,7 +34,7 @@
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
-
+#include "OW_NoSuchProviderException.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_InternalProviderIFC::~OW_InternalProviderIFC()

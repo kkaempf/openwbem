@@ -80,3 +80,8 @@ std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb)
 	return ostr;
 }
 
+//////////////////////////////////////////////////////////////////////////////		
+OW_CIMBase::~OW_CIMBase() 
+{
+}
+

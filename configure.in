@@ -685,6 +685,7 @@ AC_OUTPUT(./Makefile
 ./mof/Makefile
 ./schemas/Makefile
 ./schemas/cim25/Makefile
+./schemas/cim27/Makefile
 ./src/Makefile
 ./src/authenticators/Makefile
 ./src/authenticators/simple/Makefile

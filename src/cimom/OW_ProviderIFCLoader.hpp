@@ -59,7 +59,7 @@ public:
 	{
 	}
 
-	virtual ~OW_ProviderIFCLoaderBase() {}
+	virtual ~OW_ProviderIFCLoaderBase();
 
 	/**
 	 * This function needs to be overridden by derived classes and implement a
@@ -135,7 +135,7 @@ public:
 		OW_ServiceEnvironmentIFCRef env)
 		: OW_ProviderIFCLoaderBase(sll, env) {}
 
-	virtual ~OW_ProviderIFCLoader(){}
+	virtual ~OW_ProviderIFCLoader();
 
 	virtual void loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const;
 

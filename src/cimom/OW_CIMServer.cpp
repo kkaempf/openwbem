@@ -39,6 +39,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMRepository.hpp"
+#include "OW_NoSuchProviderException.hpp"
 
 #if !defined(OW_DISABLE_ACLS)
 class OW_AccessMgr
@@ -1119,7 +1120,7 @@ OW_CIMServer::createInstance(
 	{
 		if (acq.getValue() == OW_CIMValue(true))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 					format("Unable to create instance because class (%1)"
 						" is abstract", theClass.getName()).c_str());
 		}

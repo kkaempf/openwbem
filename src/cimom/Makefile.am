@@ -13,7 +13,8 @@ owcimomd_LDADD = \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -ldl \
--L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/src/provider -lowprovider
 
 # OpenServer may need this one day, but Linux doesn't like it
 #owcimomd_LDFLAGS = "-Wl,-Bexport"

@@ -50,7 +50,7 @@ public:
 	/**
 	 * Destroy this OW_CIMBase object.
 	 */
-	virtual ~OW_CIMBase() {  }
+	virtual ~OW_CIMBase();
 
 	/**
 	 * Set this object to NULL. This should invalidate the OW_CIMBase object, so
