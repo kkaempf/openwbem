@@ -55,6 +55,9 @@ New features:
     - Add -I flag for mof include search path.
     - Write a config file provider so the CIMOM config can be programatically
       changed from remote.
+    - Make the OW_*Repository classes into a shared library, and have a config
+      item so people can use a custom repository.
+    - Write an SQL repository.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
@@ -65,6 +68,9 @@ Refactorings:
       commonly used classes.
     - XMLExecute has handling of flags like localonly, etc.  remove this
       and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
+    - Get a better separation between OW_CIMServer and OW_*Repository.
+      Have CIMServer do all the CIM Stuff, and have the repository classes just
+      responsible for storage and indexing.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
