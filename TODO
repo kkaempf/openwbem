@@ -61,6 +61,7 @@ New features:
     - Make null reference and array indexing default to on unless 
       specifically disabled.
     - Merge the PollingManager and the SelectEngine to remove a thread.
+    - Create a mechanism to share schemas between namespaces.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
@@ -83,6 +84,7 @@ Documentation:
       http://www.opengroup.org/snia-cimom/) Also see: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/wmisdk/wmi/supporting_features_for_wmi.asp
 
 Optimizations:
+    - Use KCacheGrind to find any hot spots
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
     - Switch OW_Reference to be intrusive reference counted.
     - See if using OW_StringBuffer as the OW_String internal representation is 
