@@ -4358,26 +4358,26 @@ INSTANCE OF EXP_BionicComputerSystem2
 *** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-  string K1="1k1";
-  string K2="1k2";
-  string K3="1k3";
+  string CK1="1k1";
+  string CK2="1k2";
+  string CK3="1k3";
   string P1="1p1";
   string P2="1p2";
   string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k3
     </VALUE>
@@ -4404,9 +4404,9 @@ INSTANCE OF Example_C2
 {
   string P2="2p2";
   string P4="2p4";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -4422,17 +4422,17 @@ INSTANCE OF Example_C2
       2p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -4456,9 +4456,9 @@ INSTANCE OF Example_C3
   string P3="3p3";
   string P5="3p5";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -4483,17 +4483,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -4509,26 +4509,26 @@ INSTANCE OF Example_C3
 *** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-  string K1="1k1";
-  string K2="1k2";
-  string K3="1k3";
+  string CK1="1k1";
+  string CK2="1k2";
+  string CK3="1k3";
   string P1="1p1";
   string P2="1p2";
   string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k3
     </VALUE>
@@ -4555,9 +4555,9 @@ INSTANCE OF Example_C2
 {
   string P2="2p2";
   string P4="2p4";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -4573,17 +4573,17 @@ INSTANCE OF Example_C2
       2p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -4607,9 +4607,9 @@ INSTANCE OF Example_C3
   string P3="3p3";
   string P5="3p5";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -4634,17 +4634,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -4660,26 +4660,26 @@ INSTANCE OF Example_C3
 *** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-  string K1="1k1";
-  string K2="1k2";
-  string K3="1k3";
+  string CK1="1k1";
+  string CK2="1k2";
+  string CK3="1k3";
   string P1="1p1";
   string P2="1p2";
   string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k3
     </VALUE>
@@ -4705,9 +4705,9 @@ INSTANCE OF Example_C1
 INSTANCE OF Example_C2
 {
   string P2="2p2";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -4718,17 +4718,17 @@ INSTANCE OF Example_C2
       2p2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -4750,9 +4750,9 @@ INSTANCE OF Example_C3
 {
   string P2="3p2";
   string P3="3p3";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -4767,17 +4767,17 @@ INSTANCE OF Example_C3
       3p3
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -4793,26 +4793,26 @@ INSTANCE OF Example_C3
 *** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-  string K1="1k1";
-  string K2="1k2";
-  string K3="1k3";
+  string CK1="1k1";
+  string CK2="1k2";
+  string CK3="1k3";
   string P1="1p1";
   string P2="1p2";
   string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1">
     <VALUE>
       1k3
     </VALUE>
@@ -4838,9 +4838,9 @@ INSTANCE OF Example_C1
 INSTANCE OF Example_C2
 {
   string P2="2p2";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -4851,17 +4851,17 @@ INSTANCE OF Example_C2
       2p2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -4883,9 +4883,9 @@ INSTANCE OF Example_C3
 {
   string P2="3p2";
   string P3="3p3";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -4900,17 +4900,17 @@ INSTANCE OF Example_C3
       3p3
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -4981,9 +4981,9 @@ INSTANCE OF Example_C2
 {
   string P2="2p2";
   string P4="2p4";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -4999,17 +4999,17 @@ INSTANCE OF Example_C2
       2p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -5033,9 +5033,9 @@ INSTANCE OF Example_C3
   string P3="3p3";
   string P5="3p5";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -5060,17 +5060,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -5129,9 +5129,9 @@ INSTANCE OF Example_C2
 {
   string P2="2p2";
   string P4="2p4";
-  string K1="2k1";
-  string K2="2k2";
-  string K3="2k3";
+  string CK1="2k1";
+  string CK2="2k2";
+  string CK3="2k3";
   string P1="2p1";
   string P3="2p3";
 };
@@ -5147,17 +5147,17 @@ INSTANCE OF Example_C2
       2p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       2k3
     </VALUE>
@@ -5180,9 +5180,9 @@ INSTANCE OF Example_C3
   string P2="3p2";
   string P3="3p3";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -5202,17 +5202,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -5259,9 +5259,9 @@ INSTANCE OF Example_C3
   string P3="3p3";
   string P5="3p5";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -5286,17 +5286,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>
@@ -5343,9 +5343,9 @@ INSTANCE OF Example_C3
   string P3="3p3";
   string P5="3p5";
   string P4="3p4";
-  string K1="3k1";
-  string K2="3k2";
-  string K3="3k3";
+  string CK1="3k1";
+  string CK2="3k2";
+  string CK3="3k3";
   string P1="3p1";
 };
 
@@ -5370,17 +5370,17 @@ INSTANCE OF Example_C3
       3p4
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k1
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k2
     </VALUE>
   </PROPERTY>
-  <PROPERTY NAME="K3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
     <VALUE>
       3k3
     </VALUE>

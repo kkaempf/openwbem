@@ -22,9 +22,9 @@ instance of S1
 };
 
 class Example_C1 {
-	[Key] string K1;
-	[Propagated("S1.K2"), Key] string K2;
-	[Propagated("S1.K3"), Key] string K3;
+	[Key] string CK1;
+	[Propagated("S1.K2"), Key] string CK2;
+	[Propagated("S1.K3"), Key] string CK3;
 	string P1;
 	string P2;
 	string P3;
@@ -43,9 +43,9 @@ class Example_C3 : Example_C2 {
 
 instance of Example_C1
 {
-	K1 = "1k1";
-	K2 = "1k2";
-	K3 = "1k3";
+	CK1 = "1k1";
+	CK2 = "1k2";
+	CK3 = "1k3";
 	P1 = "1p1";
 	P2 = "1p2";
 	P3 = "1p3";
@@ -53,9 +53,9 @@ instance of Example_C1
 
 instance of Example_C2
 {
-	K1 = "2k1";
-	K2 = "2k2";
-	K3 = "2k3";
+	CK1 = "2k1";
+	CK2 = "2k2";
+	CK3 = "2k3";
 	P1 = "2p1";
 	P2 = "2p2";
 	P3 = "2p3";
@@ -64,9 +64,9 @@ instance of Example_C2
 
 instance of Example_C3
 {
-	K1 = "3k1";
-	K2 = "3k2";
-	K3 = "3k3";
+	CK1 = "3k1";
+	CK2 = "3k2";
+	CK3 = "3k3";
 	P1 = "3p1";
 	P2 = "3p2";
 	P3 = "3p3";

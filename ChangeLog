@@ -1,3 +1,8 @@
+Wed Nov 13 14:25:35 MST 2002
+- Fixed a bug in _validatePropagatedKeys when the name of the key that the
+  Propagated qualifier refered to was different than the name of the
+  qualifier's property.
+
 Mon Nov 11 07:39:29 MST 2002
 - Fixed registerForIndication to set the key properties correctly on
   CIM_IndicationFilter and CIM_IndicationHandler* instances.
