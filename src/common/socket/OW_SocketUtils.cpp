@@ -123,7 +123,7 @@ int
 waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 	long networkEvents)
 {
-	OW_ASSERT(Socket::m_SocketsEvent != NULL);
+	OW_ASSERT(Socket::getShutDownMechanism() != NULL);
 
 	DWORD timeout = (timeOutSecs > 0)
 		? static_cast<DWORD>(timeOutSecs * 1000)
@@ -135,7 +135,7 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 	}
 
 	HANDLE events[2];
-	events[0] = Socket::m_SocketsEvent;
+	events[0] = Socket::getShutDownMechanism();
 	events[1] = eventArg;
 
 	DWORD index = ::WaitForMultipleObjects(
@@ -191,9 +191,9 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
 	struct timeval timeout;
 	PosixUnnamedPipeRef lUPipe;
 	int pipefd = -1;
-	if (Socket::m_pUpipe)
+	if (Socket::getShutDownMechanism())
 	{
-  		UnnamedPipeRef foo = Socket::m_pUpipe;
+  		UnnamedPipeRef foo = Socket::getShutDownMechanism();
   		lUPipe = foo.cast_to<PosixUnnamedPipe>();
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();

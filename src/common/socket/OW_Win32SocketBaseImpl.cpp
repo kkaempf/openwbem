@@ -142,14 +142,14 @@ String SocketBaseImpl::m_traceFileIn;
 int
 SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 {
-	OW_ASSERT(Socket::m_SocketsEvent != NULL);
+	OW_ASSERT(Socket::getShutDownMechanism() != NULL);
 
 	DWORD timeout = (secsToTimeout > 0)
 		? static_cast<DWORD>(secsToTimeout * 1000)
 		: INFINITE;
 
 	HANDLE events[2];
-	events[0] = Socket::m_SocketsEvent;
+	events[0] = Socket::getShutDownMechanism();
 	events[1] = eventArg;
 
 	DWORD index = ::WaitForMultipleObjects(

@@ -225,12 +225,6 @@ public:
 	 */
 	bool isConnected() const { return m_impl->isConnected(); }
 
-#if defined(OW_WIN32)
-	static HANDLE m_SocketsEvent;
-#else
-	static UnnamedPipeRef m_pUpipe;
-#endif
-
 	static void createShutDownMechanism();
 	/**
 	 * Call this to shutdown all sockets.  This is usefull when the CIMOM
@@ -244,8 +238,23 @@ public:
 	 */
 	static bool gotShutDown();
 	static void deleteShutDownMechanism();
+
+#if defined(OW_WIN32)
+	typedef HANDLE ShutDownMechanism_t;
+#else
+	typedef UnnamedPipeRef ShutDownMechanism_t;
+#endif
+
+	static ShutDownMechanism_t getShutDownMechanism()
+	{
+		return s_shutDownMechanism;
+	}
+
 private:
 	SocketBaseImplRef m_impl;
+
+	static ShutDownMechanism_t s_shutDownMechanism;
+
 };
 
 } // end namespace OpenWBEM

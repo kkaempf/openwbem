@@ -217,9 +217,9 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		// not connected yet, need to select and wait for connection to complete.
 		PosixUnnamedPipeRef lUPipe;
 		int pipefd = -1;
-		if (Socket::m_pUpipe)
+		if (Socket::getShutDownMechanism())
 		{
-			UnnamedPipeRef foo = Socket::m_pUpipe;
+			UnnamedPipeRef foo = Socket::getShutDownMechanism();
 			lUPipe = foo.cast_to<PosixUnnamedPipe>();
 			OW_ASSERT(lUPipe);
 			pipefd = lUPipe->getInputHandle();
