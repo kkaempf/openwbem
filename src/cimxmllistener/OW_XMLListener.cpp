@@ -176,7 +176,7 @@ XMLListener::processSimpleExpReq(CIMXMLParser& parser,
 	catch(CIMException& ce)
 	{
 		makeXMLHeader(messageId, ostrError);
-		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
+		outputError(ce.getErrNo(), ce.getDescription(), ostrError);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -187,9 +187,15 @@ XMLListener::outputError(CIMException::ErrNoType errorCode,
 	setError(errorCode, msg);
 	ostr << "<SIMPLEEXPRSP>";
 	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
-	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
+	ostr << "<ERROR CODE=\"" << errorCode << "\"";
+	// always have to send DESCRIPTION, since there are clients that can't handle it not being there.
+	//if (!msg.empty())
+	//{
+		ostr << " DESCRIPTION=\"" <<
 		XMLEscape(msg) <<
-		"\"></ERROR>";
+		"\"";
+	//}
+	ostr << "></ERROR>";
 	ostr << "</EXPMETHODRESPONSE>";
 	ostr << "</SIMPLEEXPRSP>";
 	ostr << "</MESSAGE></CIM>\r\n";
