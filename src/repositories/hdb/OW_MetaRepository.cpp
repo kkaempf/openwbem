@@ -92,55 +92,42 @@ MetaRepository::open(const String& path)
 }
 //////////////////////////////////////////////////////////////////////////////
 HDBNode
-MetaRepository::_getQualContainer(HDBHandleLock& hdl, const String& ns_)
+MetaRepository::_getQualContainer(HDBHandleLock& hdl, const String& ns)
 {
-	String qcontk(QUAL_CONTAINER);
-	String ns(ns_);
-	//while (!ns.empty() && ns[0] == '/')
-	//{
-	//	ns = ns.substring(1);
-	//}
+	StringBuffer qcontk(QUAL_CONTAINER);
 	if (!ns.empty())
 	{
-		qcontk += "/";
+		qcontk += '/';
 		qcontk += ns;
 	}
-	return getNameSpaceNode(hdl, qcontk);
+	return getNameSpaceNode(hdl, qcontk.releaseString());
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 MetaRepository::_makeQualPath(const String& ns_, const CIMName& qualName)
 {
 	String ns(ns_);
-	//while (!ns.empty() && ns[0] == '/')
-	//{
-	//	ns = ns.substring(1);
-	//}
-	String qp(QUAL_CONTAINER);
-	qp += "/";
+	StringBuffer qp(QUAL_CONTAINER);
+	qp += '/';
 	qp += ns;
 	if (qualName != CIMName())
 	{
-		qp += "/";
+		qp += '/';
 		qp += qualName.toString();
 	}
-	return qp.toLowerCase();
+	return qp.releaseString().toLowerCase();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 MetaRepository::_makeClassPath(const String& ns,
 	const CIMName& className)
 {
-	//while (!cp.empty() && cp[0] == '/')
-	//{
-	//	cp = cp.substring(1);
-	//}
-	String cp(CLASS_CONTAINER);
-	cp += "/";
+	StringBuffer cp(CLASS_CONTAINER);
+	cp += '/';
 	cp += ns;
-	cp += "/";
+	cp += '/';
 	cp += className.toString();
-	return cp.toLowerCase();
+	return cp.releaseString().toLowerCase();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType
