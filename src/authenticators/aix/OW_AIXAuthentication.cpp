@@ -140,7 +140,6 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 		if( message )
 		{
 			details = message;
-			free(message);	    
 		}
 		else if( attempts_left <= 0 )
 		{
@@ -150,6 +149,10 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 		{
 			details = "Unknown authentication failure.";
 		}
+	}
+	if( message )
+	{
+		free(message);
 	}
 
 	// FIXME! Potentially check to see if the password has expired, or that kind of stuff.
