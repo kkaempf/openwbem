@@ -32,48 +32,28 @@
  * @author Dan Nuffer
  */
 
-
-#ifndef OW_XMLPARSERDOM_HPP_INCLUDE_GUARD_
-#define OW_XMLPARSERDOM_HPP_INCLUDE_GUARD_
-
+#ifndef OW_SERVICES_HTTP_FWD_HPP_INCLUDE_GUARD_
+#define OW_SERVICES_HTTP_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
-#include "OW_CommonFwd.hpp"
-#include "OW_XMLFwd.hpp"
-
-#include <iosfwd>
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DECLARE_APIEXCEPTION(DOM, OW_XML_API)
+class HTTPServer;
+typedef IntrusiveReference<HTTPServer> HTTPServerRef;
+class HTTPSvrConnection;
+#ifndef OW_DISABLE_DIGEST
+class DigestAuthentication;
+#endif
+#ifndef OW_WIN32
+class LocalAuthentication;
+#endif
 
-namespace XMLParserDOM
-{
-	/**
-	 * Parse the XML document contained in the string xmlData
-	 *
-	 * @param xmlData The String containing the XML document to parse
-	 * @return OW_XMLNode which is the root of the XML document parsed.
-	 * Guaranteed to not be NULL.
-	 * @throws DOMException if xml is no good.
-	 */
-	OW_XML_API XMLNode parse(const String& xmlData);
-	
-	/**
-	 * Parse the XML document to be read from the std::istream data
-	 *
-	 * @param data   std::istream to read the XML document to be parsed
-	 * @return XMLNode which is the root of the XML document parsed
-	 * Guaranteed to not be NULL.
-	 * @throws DOMException if xml is no good.
-	 */
-	OW_XML_API XMLNode parse(std::istream& data);
-	
 
-} // end namespace XMLParserDOM
 } // end namespace OpenWBEM
 
-
 #endif
+
+
 

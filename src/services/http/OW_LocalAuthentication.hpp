@@ -39,13 +39,12 @@
 #include "OW_String.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServicesHttpFwd.hpp"
 
 #include <vector>
 
 namespace OpenWBEM
 {
-
-class HTTPSvrConnection;
 
 class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
 {

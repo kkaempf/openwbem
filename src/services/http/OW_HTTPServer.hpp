@@ -46,17 +46,10 @@
 #include "OW_SortedVectorSet.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_ServicesHttpFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class HTTPSvrConnection;
-#ifndef OW_DISABLE_DIGEST
-class DigestAuthentication;
-#endif
-#ifndef OW_WIN32
-class LocalAuthentication;
-#endif
 
 OW_DECLARE_EXCEPTION(HTTPServer)
 

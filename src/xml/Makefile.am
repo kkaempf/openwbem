@@ -53,7 +53,8 @@ OW_XMLPullParser.hpp \
 OW_XMLParserSAX.hpp \
 OW_XMLParserDOM.hpp \
 OW_XMLNode.hpp \
-OW_XMLAttribute.hpp
+OW_XMLAttribute.hpp \
+OW_XMLFwd.hpp
 
 
 

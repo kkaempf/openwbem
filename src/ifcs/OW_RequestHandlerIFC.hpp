@@ -43,6 +43,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_IfcsFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 #include <iosfwd>
 
@@ -51,8 +52,6 @@
 
 namespace OpenWBEM
 {
-
-struct CIMFeatures;
 
 /**
  * This is an abstract base class for a CIM product requiring a HTTP Server.

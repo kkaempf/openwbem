@@ -42,11 +42,11 @@
 #include "OW_Map.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
+#include "OW_HttpCommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class HTTPChunkedIStream;
 class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 {
 	public:
@@ -65,14 +65,14 @@ class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 		HTTPChunkedIStreamBuffer(const HTTPChunkedIStreamBuffer&);
 		HTTPChunkedIStreamBuffer& operator=(const HTTPChunkedIStreamBuffer&);
 };
-class OW_HTTP_API HTTPChunkedIStreamBase 
+class OW_HTTP_API HTTPChunkedIStreamBase
 {
 public:
-	HTTPChunkedIStreamBase(std::istream& istr, 
+	HTTPChunkedIStreamBase(std::istream& istr,
 		HTTPChunkedIStream* chunkedIStr) : m_strbuf(istr, chunkedIStr) {}
 	HTTPChunkedIStreamBuffer m_strbuf;
 };
-class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase, 
+class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 	public CIMProtocolIStreamIFC
 {
 	public:

@@ -49,6 +49,8 @@ namespace OpenWBEM
 
 // this class is part of the wqlcommon library, which is not in libopenwbem
 class WQLSelectStatement;
+// TODO: FIX THIS! This class in libopenwbem cannot depend on anything outside of libopenwbem.
+// Either move this class out of libopenwbem or else move WQLSelectStatement into libopenwbem
 class OW_COMMON_API WQLIFC : public IntrusiveCountableBase
 {
 public:

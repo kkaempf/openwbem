@@ -49,6 +49,7 @@ namespace OpenWBEM
 {
 
 struct LogMessage;
+
 class Logger;
 typedef IntrusiveReference<Logger> LoggerRef;
 
@@ -73,7 +74,9 @@ namespace ConfigFile
 }
 
 class StringBuffer;
+
 class DateTime;
+
 class OperationContext;
 
 template <class T> class Enumeration;
@@ -81,6 +84,7 @@ typedef Enumeration<String> StringEnumeration;
 
 class Thread;
 typedef IntrusiveReference<Thread> ThreadRef;
+
 class ThreadPool;
 typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
@@ -88,7 +92,9 @@ class Bool;
 typedef Array<Bool>       			BoolArray;
 
 struct CIMFeatures;
+
 class NonRecursiveMutexLock;
+
 class NonRecursiveMutex;
 class Mutex;
 
@@ -96,16 +102,21 @@ class UnnamedPipe;
 typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 
 class File;
+
 class MD5;
+
 class UserInfo;
 
 class SharedLibraryLoader;
 typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
+
 class TmpFile;
 
 class Socket;
+
 class SocketBaseImpl;
 typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
+
 class ServerSocket;
 
 class TempFileStream;

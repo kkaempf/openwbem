@@ -47,7 +47,6 @@
 namespace OpenWBEM
 {
 
-class CIMListenerCallback;
 class OW_LISTENER_API XMLListener : public RequestHandlerIFCXML
 {
 public:

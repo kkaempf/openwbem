@@ -50,11 +50,10 @@
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_CIMXMLListenerFwd.hpp"
+#include "OW_ServicesHttpFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class HTTPServer;
 
 class OW_LISTENER_API HTTPXMLCIMListener : public CIMListenerCallback
 {

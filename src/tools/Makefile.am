@@ -232,6 +232,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/cimxmllistener \
+-I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/repositories/hdb
 
 

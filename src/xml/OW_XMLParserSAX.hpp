@@ -38,14 +38,13 @@
 
 #include "OW_config.h"
 #include "OW_CommonFwd.hpp"
+#include "OW_XMLFwd.hpp"
+
 #include <iosfwd>
 
 
 namespace OpenWBEM
 {
-
-struct XMLToken;
-class XMLParseException;
 
 namespace XMLParserSAX
 {

@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_XMLClass.hpp"
 #include "OW_CIMScope.hpp"
+#include "OW_XMLFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -45,8 +46,6 @@
 // TODO: Get rid of this file.  Move the function into XMLCIMFactory
 namespace OpenWBEM
 {
-
-class CIMXMLParser;
 
 namespace XMLQualifier
 {

@@ -38,7 +38,8 @@ OW_HTTPDeflateOStream.hpp \
 OW_HTTPException.hpp \
 OW_HTTPLenLimitIStream.hpp \
 OW_HTTPStatusCodes.hpp \
-OW_HTTPUtils.hpp 
+OW_HTTPUtils.hpp \
+OW_HttpCommonFwd.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

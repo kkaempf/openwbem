@@ -42,6 +42,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_XMLAttribute.hpp"
+#include "OW_XMLFwd.hpp"
 
 #include <iosfwd>
 
@@ -49,10 +50,8 @@ namespace OpenWBEM
 {
 
 class XMLNodeImpl;
-class XMLNode;
 
 typedef IntrusiveReference<XMLNodeImpl> XMLNodeImplRef;
-typedef Array<XMLNode> XMLNodeArray;
 
 /**
  * Base class used to represent an XML tag such as <name> and
@@ -159,7 +158,7 @@ public:
 	 * @exception CIMException
 	 *                   thrown if the attribute name is not found
 	 */
-	String mustGetAttribute(const String& name) const; 
+	String mustGetAttribute(const String& name) const;
 	
 	/**
 	 * Gets the attribute array for the currrent node
@@ -381,24 +380,24 @@ public:
 
 	/**
 	 * Gets the current node's children.
-	 * 
+	 *
 	 * @return XMLNodeArray containing child nodes
 	 */
 	XMLNodeArray getChildren() const;
 
 	/**
 	 * Prints the node in UTF8 format
-	 * 
+	 *
 	 * @param iostream& to print to
-	 * 
+	 *
 	 */
 	void printNode( std::ostream& ostr ) const;
 
 	/**
 	 * Returns formatted xml representation of node in String
-	 * 
+	 *
 	 * @param XMLNode node to format
-	 * 
+	 *
 	 * @returns String containing formatted xml
 	 */
 	String toString() const;

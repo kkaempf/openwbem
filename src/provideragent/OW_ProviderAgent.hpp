@@ -47,12 +47,11 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_ServicesHttpFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class HTTPServer;
-typedef IntrusiveReference<HTTPServer> HTTPServerRef;
 
 class ProviderAgent
 {

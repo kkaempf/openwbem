@@ -60,6 +60,10 @@ OW_LocalAuthentication.cpp \
 OW_LocalAuthentication.hpp \
 $(DIGEST_SOURCE_FILES)
 
+pkginclude_HEADERS = \
+OW_ServicesHttpFwd.hpp
+
+
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/common/socket \

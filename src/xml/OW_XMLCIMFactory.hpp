@@ -37,11 +37,11 @@
 #define OW_XMLCIMFACTORY_HPP_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
+#include "OW_XMLFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMXMLParser;
 namespace XMLCIMFactory
 {
 	OW_XML_API CIMObjectPath createObjectPath(CIMXMLParser& parser);
