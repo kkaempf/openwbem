@@ -38,8 +38,11 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
+#include "OW_CIMQualifier.hpp"
 #include "OW_Format.hpp"
 
+
+static OW_CIMClass nsClass;
 //////////////////////////////////////////////////////////////////////////////
 void
 	OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
@@ -55,10 +58,19 @@ void
 	OW_String parentPath = ns.substring(0, index);
 	OW_String newNameSpace = ns.substring(index + 1);
 
-	OW_CIMClass cimClass = getClass(parentPath, 
-		OW_String(OW_CIMClass::NAMESPACECLASS), false);
+	//OW_CIMClass cimClass = getClass(parentPath, 
+	//	OW_String(OW_CIMClass::NAMESPACECLASS), false);
+	if (!nsClass)
+	{
+		nsClass = OW_CIMClass("__Namespace");
 
-	OW_CIMInstance cimInstance = cimClass.newInstance();
+		OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
+		cimProp.setDataType(OW_CIMDataType::STRING);
+		cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
+		nsClass.addProperty(cimProp);
+	}
+
+	OW_CIMInstance cimInstance = nsClass.newInstance();
 	OW_CIMValue cv(newNameSpace);
 	cimInstance.setProperty("Name", cv);
 
