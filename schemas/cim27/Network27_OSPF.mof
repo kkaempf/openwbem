@@ -2,10 +2,10 @@
 // Title:       Network OSPF 2.7
 // Filename:    Network27_OSPF.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        09/23/2002
+// Status:      Final
+// Date:        April 15, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -59,6 +59,9 @@
 // CR863 - Update the format of the MappingStrings qualifier when
 //         referencing IETF RFCs
 // CR903 - Correction of EndpointInLink.Member reference.
+// CR959 - Reposition OSPFLink using the ConnectivityCollection class
+// CR982 - Removal of Experimental for preliminary to final
+// CR994 - Update of the InstanceID property Description 
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -67,7 +70,7 @@
 // ==================================================================== 
 // OSPFArea 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class represents an OSPF area. The definition of an "
       "OSPF area from RFC2328, is 'OSPF allows sets of networks to "
       "be grouped together. Such a grouping is called an area. "
@@ -104,7 +107,7 @@ class CIM_OSPFArea : CIM_RoutingProtocolDomain {
 // ==================================================================== 
 // OSPFService 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "This class is used to represent the basic operation of OSPF. " 
       "It is derived from the RouteCalculationService, the superclass " 
       "of all routing protocols.") ] 
@@ -161,7 +164,7 @@ class CIM_OSPFService : CIM_RouteCalculationService {
 // ================================================================== 
 // OSPFServiceCapabilities 
 // ================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "The OSPFServiceCapabilities class represents the capabilities " 
       "of an OSPF service.") ] 
 class CIM_OSPFServiceCapabilities : CIM_Capabilities { 
@@ -189,7 +192,7 @@ class CIM_OSPFServiceCapabilities : CIM_Capabilities {
 // ==================================================================== 
 // OSPFAreaConfiguration 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "Each OSPF router has an association to one or more OSPF areas. " 
       "Into these areas, a router advertises summaries filtered by " 
       "specific address ranges. This would natively be modeled as a "
@@ -227,27 +230,32 @@ class CIM_OSPFServiceCapabilities : CIM_Capabilities {
       "hiearchy does not exist.") ] 
 class CIM_OSPFAreaConfiguration : CIM_LogicalElement { 
 
-        [Key, Description ( 
-         "InstanceID opaquely identifies a unique instance of " 
-         "OSPFAreaConfiguration. The InstanceID must be unique " 
-         "within a namespace. In order to ensure this, the " 
-         "value of InstanceID SHOULD be constructed in the " 
-         "following manner:  \n" 
-         "<Vendor ID><OSPFService ID><Area Configuration ID> \n" 
+        [Key, Description (
+         "Within the scope of the instantiating Namespace, InstanceID " 
+         "opaquely and uniquely identifies an instance of this class. "
+         "In order to ensure uniqueness within the NameSpace, the "
+         "value of InstanceID SHOULD be constructed using the "
+         "following 'preferred' algorithm: \n"
+         "  <OrgID>:<OSPFService ID><Area Configuration ID> \n" 
          "where: \n" 
-         "  <Vendor ID> MUST include a copyrighted, trademarked " 
-         "or otherwise unique name that is owned by the business " 
-         "entity (or a registered ID that is assigned to the " 
-         "business entity) that is defining the InstanceID. " 
-         "(This is similar to the <Schema Name>_<Class Name> " 
-         "structure of Schema class names.) The purpose of " 
-         "<Vendor ID> is to ensure that <ID> is truly unique " 
-         "across multiple vendor implementations. For instances defined " 
-         "by the DMTF, <Vendor ID> is 'CIM'. \n" 
+         "  <OrgID> and the remainder of the InstanceID "
+         "are separated by a colon ':', and where <OrgID> MUST "
+         "include a copyrighted, trademarked or otherwise unique "
+         "name that is owned by the business entity "
+         "creating/defining the InstanceID, or is a registered ID that "
+         "is assigned to the business entity by a recognized global "
+         "authority. (This is similar to the <Schema Name>_<Class Name> "
+         "structure of Schema class names.) In addition, to ensure "
+         "uniqueness <OrgID> MUST NOT contain a colon (':'). When "
+         "using this algorithm, the first colon to appear in "
+         "InstanceID MUST appear between <OrgID> and the "
+         "<OSPFService ID>. For DMTF defined instances, "
+         "the 'preferred' algorithm MUST be used, and the "
+         "<OrgID> set to 'CIM'. \n"
          "   <OSPFService ID> and <Area Configuration ID> MUST " 
          "specify vendor-unique identifiers for the OSPFService" 
          "and AreaConfiguration.") ] 
-    string InstanceID; 
+    string InstanceID;
 
         [Description ( 
          "This attribute contains the value of the default route that " 
@@ -269,54 +277,48 @@ class CIM_OSPFAreaConfiguration : CIM_LogicalElement {
 // ==================================================================== 
 // OSPFLink 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
-      "This class is used to represent a OSPF link between two or " 
-      "more OSPF protocol endpoints.") ] 
-class CIM_OSPFLink : CIM_CollectionOfMSEs { 
-
-        [Override ("CollectionID"), Key, Description ( 
-         "The CollectionID property uniquely identifies an " 
-         "OSPF link.") ] 
-    string CollectionID; 
-
+   [Version ("2.7.0"), Description ( 
+      "This class is used to represent OSPF connectivity between " 
+      "two or more OSPF protocol endpoints.") ] 
+class CIM_OSPFLink : CIM_ConnectivityCollection { 
+ 
         [Required, Description ( 
-         "The type of the link, see 1.2 in RFC 2328."), 
+         "The type of the OSPF link, see section 1.2 in RFC 2328."), 
          ValueMap {"2", "3", "4", "5"}, 
          Values {"Point-To-Point", "Point-To-Multipoint", "Broadcast", 
             "NBMA"} ] 
     uint16 LinkType; 
-
+ 
         [Description ( 
          "The time, in seconds, between sending OSPF Hello-packets " 
-         "over the interface, see C.3 in RFC 2328." ), 
+         "over the interface, see section C.3 in RFC 2328." ), 
          MappingStrings {"MIB.IETF|OSPF-MIB.ospfIfHelloInterval"}, 
          Units ("Seconds") ] 
     uint32 HelloInterval; 
-
+ 
         [Description ( 
-         "After ceasing to hear a router's Hello packets, the number " 
+         "After ceasing to hear a router's Hello-packets, the number " 
          "of seconds before its neighbors declare the router down, " 
-         "see C.3 in RFC 2328." ), 
+         "see section C.3 in RFC 2328." ), 
          MappingStrings {"MIB.IETF|OSPF-MIB.ospfIfRtrDeadInterval"}, 
          Units ("Seconds") ] 
     uint32 RouterDeadInterval; 
-
+ 
         [Required, Description ( 
          "This parameter indicates whether IP multicast datagrams " 
          "should be forwarded over this OSPF link, and if so, how " 
-         "the forwarding should be done, see B.2 in RFC 1584."), 
+         "the forwarding should be done, see section B.2 in RFC 1584."), 
          MappingStrings {"MIB.IETF|OSPF-MIB.ospfIfMulticastForwarding"}, 
          ValueMap {"2", "3", "4"}, 
          Values {"Disabled", "Data-link Multicast", 
             "Data-link Unicast"} ] 
     uint16 MulticastForwarding; 
 }; 
-  
 
 // ==================================================================== 
 // AreaOfConfiguration 
 // ==================================================================== 
-   [Association, Experimental, Version ("2.7.0"), Description ( 
+   [Association, Version ("2.7.0"), Description ( 
       "This association connects an area configuration to its area. " 
       "The OSPFAreaConfiguration class is defined to act as a " 
       "focal point to bring together the router (indicated as a " 
@@ -345,7 +347,7 @@ class CIM_AreaOfConfiguration : CIM_Dependency {
 // ==================================================================== 
 // OSPFServiceConfiguration 
 // ==================================================================== 
-   [Association, Experimental, Version ("2.7.0"), Description ( 
+   [Association, Version ("2.7.0"), Description ( 
       "OSPFServiceConfiguration connects an OSPF service to its area " 
       "configurations. The configurations are defined for the OSPF" 
       "Service, and so do not make sense as stand alone objects. " 
@@ -377,7 +379,7 @@ class CIM_OSPFServiceConfiguration : CIM_Dependency {
 // ==================================================================== 
 // RangesOfConfiguration 
 // ==================================================================== 
-   [Association, Experimental, Version ("2.7.0"), Description ( 
+   [Association,  Version ("2.7.0"), Description ( 
       "This association connects address ranges to the OSPF area " 
       "configuration. When network administrators want to control the " 
       "advertisements of OSPF routers by filters, they first define " 
@@ -409,16 +411,16 @@ class CIM_RangesOfConfiguration : CIM_Dependency {
 // ==================================================================== 
 // EndpointInLink 
 // ==================================================================== 
-   [Association, Aggregation, Experimental, Version ("2.7.0"), 
+    [Association, Aggregation, Version ("2.7.0"), 
     Description ( 
-      "This assocation connects an OSPFLink to the OSPFProtocol" 
-      "Endpoints that this link contains.") ] 
-class CIM_EndpointInLink : CIM_CollectedMSEs { 
-
+      "This association connects an OSPFLink to the OSPFProtocol" 
+      "Endpoints that this link aggregates.") ] 
+class CIM_EndpointInLink : CIM_MemberOfCollection { 
+ 
         [Aggregate, Override ("Collection"), Max (1), 
          Description ("The OSPF link.") ] 
     CIM_OSPFLink REF Collection; 
-
+ 
         [Override ("Member"), 
          Description ("The OSPF protocol endpoint.") ] 
     CIM_OSPFProtocolEndpointBase REF Member; 
@@ -428,7 +430,7 @@ class CIM_EndpointInLink : CIM_CollectedMSEs {
 // ==================================================================== 
 // EndpointInArea 
 // ==================================================================== 
-   [Association, Aggregation, Composition, Experimental, 
+   [Association, Aggregation, Composition,  
     Version ("2.7.0"), Description ( 
       "This relation connects an OSPF endpoint to an area.") ] 
 class CIM_EndpointInArea : CIM_Component { 

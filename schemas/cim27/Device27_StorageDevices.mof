@@ -2,10 +2,10 @@
 // Title:       Storage Devices 2.7
 // Filename:    Device27_StorageDevices.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/17/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,9 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR970 - Removal of the Experimental qualifier
+//
 // Change Log for v2.7
 // CR721 - Add DeviceErrorCountData that is part of the new statistics
 //         hierarchy
@@ -486,7 +489,7 @@ class CIM_MediaAccessStatInfo : CIM_DeviceStatisticalInformation {
 // ===================================================================
 // MediaAccessStatData
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "Statistics related to reading and writing at a specific "
     "MediaAccessDevice, or for a specific StorageExtent. The same "
     "class is used to represent this data - whether for the "

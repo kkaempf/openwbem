@@ -2,10 +2,10 @@
 // Title:       System Unix 2.7
 // Filename:    System27_Unix.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/08/02
+// Release:     Final
+// Date:        04/02/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2001-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -269,12 +269,12 @@ CIM_StatisticalInformation {
     uint64 VirtualSharedMemory;
     
     [Description (
-        "CPU time of terminated child processes in clock ticks"),
+        "CPU time of terminated child processes in clock ticks."),
         Units ("Clock Ticks"), Counter]
     uint64 CpuTimeDeadChildren;
     
     [Description (
-        "System time of terminated child processes in clock ticks"),
+        "System time of terminated child processes in clock ticks."),
         Units ("Clock Ticks"), Counter]
     uint64 SystemTimeDeadChildren;
 };
@@ -312,7 +312,7 @@ class CIM_UnixThread : CIM_Thread {
     [Description (
         "Indicates the thread's scheduling policy. Set to \"Other\" "
         "when using OtherSchedPolicy to specifiy additional values. "
-        "\"Other\" represents SCHED_OTHER as defined in sched.h" ),
+        "\"Other\" represents SCHED_OTHER as defined in sched.h." ),
         ValueMap {"0", "1", "2", "3"},
         Values {"Unknown", "Other", "SCHED_FIFO", "SCHED_RR"},
         ModelCorrespondence {"CIM_UnixThread.OtherSchedPolicy"} ] 

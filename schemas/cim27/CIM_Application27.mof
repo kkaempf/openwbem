@@ -2,11 +2,11 @@
 // Title:       Application MOF Specification 2.7
 // Filename:    CIM_Application27.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/03/2002
-// CVS:         $Revision: 1.3 $     
+// Status:      Final
+// Date:        31 March 2003
+// CVS:         $Revision: 1.6 $     $Date: 2003/03/23 17:47:41 $
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -52,6 +52,8 @@
 //      by other working groups, are omitted.
 // ==================================================================
 //    CHANGE HISTORY
+//    03/17/2003 CIM 2.7.0 (Final)
+//          No changes except for date update.
 //    06/06/2002 CIM 2.7.0 (Preliminary)
 //        - Separated CIM_Applications into multiple files.
 //          See the Includes below.  The change history for each

@@ -2,10 +2,10 @@
 // Title:       User-Security Users Access 2.7
 // Filename:    User27_UsersAccess.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/07/2002
+// Status:      Final
+// Date:        04/04/2003
 // ===================================================================
-// Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -236,7 +236,7 @@ class CIM_PublicPrivateKeyPair : CIM_UsersCredential {
 
    [Description (
       "The Certificate may be used for signature only "
-      "or for confidentiality as well as signature"),
+      "or for confidentiality as well as signature."),
       ValueMap {"0", "1"},
       Values {"SignOnly", "ConfidentialityOrSignature"} ]
    uint16 Use;

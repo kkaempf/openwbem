@@ -2,10 +2,10 @@
 // Title:       Core Elements 2.7
 // Filename:    Core27_CoreElements.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        04/13/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -52,6 +52,23 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR961 - Rename EnabledLogicalElement. xxxStatus properties to be
+//         State.
+//       - Update description of xxxState properties to reflect the
+//         expected behavior of the state values.
+//       - Change references to EnabledStatus and RequestedStatus to 
+//         EnabledState and RequestedState in the Service.
+//            StartService()
+//            StopService()  
+// CR966 - Remove the Terminal qualifier from ConcreteDependency,
+//         ConcreteComponent, and ConcreteIdentity associations and
+//         add text to describe the intent of the original placement
+// CR968 - Remove the Experimental qualifier
+// CR993 - Change property name and description of 
+//            ManagedSystemElement.OtherStatusDescription
+// CR1009 - Add ServiceAccessURI class
+//
 // Change Log for v2.7
 // CR641 - Add ConcreteDependency
 // CR643 - Promote Component to ManagedElement, and add 
@@ -159,17 +176,20 @@ class CIM_Dependency {
 // ==================================================================
 // ConcreteDependency   
 // ==================================================================
-[Association, Terminal, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "  CIM_ConcreteDependency is a generic association used to "
     "establish dependency relationships between ManagedElements. It "
-    "is defined as a Terminal, concrete subclass of Dependency, to be "
-    "used in place of many specific subclasses of Dependency that "
-    "add no semantics - i.e., that do not clarify the type of "
-    "dependency, update cardinalities, or add/remove qualifiers. Note "
-    "that a Terminal class cannot be subclassed. This is done to "
-    "limit the use of ConcreteDependency - as a concrete form of a "
-    "general dependency. Specific semantics continue to be defined "
-    "as subclasses of the abstract CIM_Dependency.  \n\n"
+    "is defined as a concrete subclass of the abstract "
+    "CIM_Dependency class, to be used in place of many specific "
+    "subclasses of Dependency that add no semantics - "
+    "i.e., that do not clarify the type of dependency, update "
+    "cardinalities, or add/remove qualifiers. Note that when "
+    "defining additional semantics for Dependency that this class "
+    "MUST NOT be subclassed. Specific semantics continue to "
+    "be defined as subclasses of the abstract CIM_Dependency. "
+    "ConcreteDependency is limited in its use as a concrete form of "
+    "a general dependency. \n"
+    "\n"
     "  It was deemed more prudent to create this concrete subclass "
     "than to change Dependency from an abstract to a concrete class. "
     "Dependency already had multiple abstract subclasses in the CIM "
@@ -186,8 +206,7 @@ class CIM_ConcreteDependency : CIM_Dependency {
         "Dependent represents the object dependent on the "   
         "Antecedent.") ]    
     CIM_ManagedElement REF Dependent;   
-};   
-
+};
 
 // ==================================================================
 // Component
@@ -212,18 +231,21 @@ class CIM_Component {
 // ==================================================================
 // ConcreteComponent
 // ==================================================================
-[Association, Aggregation, Terminal, Experimental,
+[Association, Aggregation, 
     Version ("2.7.0"), Description (   
     "  CIM_ConcreteComponent is a generic association used to "
     "establish 'part of' relationships between ManagedElements. It "
-    "is defined as a Terminal, concrete subclass of Component, to be "
-    "used in place of many specific subclasses of Component that "
-    "add no semantics - i.e., that do not clarify the type of "
-    "composition, update cardinalities, or add/remove qualifiers. "
-    "Note that a Terminal class cannot be subclassed. This is done "
-    "to limit the use of ConcreteComponent - as a concrete form of "
-    "general composition. Specific semantics continue to be defined "
-    "as subclasses of the abstract CIM_Component.  \n\n"
+    "is defined as a concrete subclass of the abstract "
+    "CIM_Component class, to be used in place of many "
+    "specific subclasses of Component that add no semantics - "
+    "i.e., that do not clarify the type of composition, update "
+    "cardinalities, or add/remove qualifiers. Note that when "
+    "defining additional semantics for Component that this "
+    "class MUST NOT be subclassed. Specific semantics "
+    "continue to be defined as subclasses of the abstract "
+    "CIM_Component.  ConcreteComponent is limited in its use "
+    "as a concrete form of a general composition. \n"
+    "\n"
     "  It was deemed more prudent to create this concrete subclass "
     "than to change Component from an abstract to a concrete class. "
     "Industry usage and impact could not be anticipated.") ]    
@@ -281,19 +303,25 @@ class CIM_LogicalIdentity {
 // ==================================================================     
 // ConcreteIdentity
 // ==================================================================     
-[Association, Terminal, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "  CIM_ConcreteIdentity associates two elements representing "
     "different aspects of the same underlying entity. It is "
-    "defined as a Terminal, concrete subclass of "
-    "LogicalIdentity, to be used in place of many specific "
+    "defined as a concrete subclass of the abstract "
+    "CIM_LogicalIdentity class, to be used in place of many specific "
     "subclasses of LogicalIdentity that add no semantics - "
     "i.e., that do not clarify the type of identity, update "
-    "cardinalities, or add/remove qualifiers. Note that a "
-    "Terminal class cannot be subclassed. This is done to "
-    "limit the use of ConcreteIdentity - as a concrete form of "
-    "a general identity relationship. Specific semantics "
-    "continue to be defined as subclasses of the abstract "
-    "CIM_LogicalIdentity class.") ]
+    "cardinalities, or add/remove qualifiers. Note -that when  "
+    "defining additional semantics for LogicalIdentity that this class "
+    "should not be subclassed. Specifc semantics continue to be "
+    "defined as subclasses of the abstract CIM_LogicalIdentity. "
+    "ConcreteIdentity is limited in its use as a concrete form of "
+    "a general identity relationship. \n"
+    "\n"
+    "  It was deemed more prudent to create this concrete subclass "
+    "than to change LogicalIdentity from an abstract to a concrete "
+    "class. LogicalIdentity already had multiple abstract subclasses "
+    "in the CIM Schema, and wider industry usage and impact could "
+    "not be anticipated.") ]
 class CIM_ConcreteIdentity : CIM_LogicalIdentity {
      
     [Override ("SystemElement"), Description (
@@ -334,7 +362,7 @@ class CIM_ManagedSystemElement : CIM_ManagedElement {
         "to be a Key property.") ] 
     string Name;
    
-    [Experimental, Description ( 
+    [Description ( 
         "   Indicates the current status(es) of the element. "
         "Various health and operational statuses are "
         "defined. Many of the enumeration's values are self-"
@@ -391,16 +419,22 @@ class CIM_ManagedSystemElement : CIM_ManagedElement {
             "Starting", "Stopping", "Stopped", "In Service", 
             "No Contact", "Lost Communication", "Aborted", 
             "Dormant", "Supporting Entity in Error", "Completed"}, 
+        ArrayType ("Indexed"),
         ModelCorrespondence {
-            "CIM_ManagedSystemElement.OtherStatusDescriptions"} ] 
+            "CIM_ManagedSystemElement.StatusDescriptions"} ] 
     uint16 OperationalStatus[];
     
-    [Experimental, Description (
-        "A string describing the status - used when the "
-        "OperationalStatus property is set to 1 (\"Other\")."), 
+    [Description (
+        "Strings describing the various OperationalStatus "
+        "array values. For example, if \"Stopping\" is the value "
+        "assigned to OperationalStatus, then this property may "
+        "contain an explanation as to why an object is being "
+        "stopped. Note that entries in this array are correlated "
+        "with those at the same array index in OperationalStatus."),
+        ArrayType ("Indexed"), 
         ModelCorrespondence {
             "CIM_ManagedSystemElement.OperationalStatus"} ]
-    string OtherStatusDescriptions[];
+    string StatusDescriptions[];
     
     [MaxLen (10), 
         Deprecated {"CIM_ManagedSystemElement.OperationalStatus"},
@@ -444,60 +478,93 @@ class CIM_LogicalElement : CIM_ManagedSystemElement {
 // ==================================================================
 // EnabledLogicalElement
 // ==================================================================
-[Abstract, Experimental, Version ("2.7.0"), Description (
+[Abstract, Version ("2.7.0"), Description (
     "This class extends LogicalElement to abstract the concept of an "
     "element that is enabled and disabled, such as a LogicalDevice or "
     "a ServiceAccessPoint.") ]
 class CIM_EnabledLogicalElement : CIM_LogicalElement {
 
     [Description (
-        "EnabledStatus is an integer enumeration indicating "
-        "whether the element is currently shutting down (value = 4), "
-        "or in an enabled (value = 2) or disabled (value = 3) "
-        "state.  In various situations, an element that is being "
-        "tested is neither enabled or disabled - this is addressed "
-        "by the value \"In Test\" (7). It is possible that a "
-        "particular instance of a LogicalDevice, SAP, etc. may not "
-        "support being enabled/disabled. If this occurs, the value 5 "
-        "(\"Not  Applicable\") is used."),
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"}, 
+        "EnabledState is an integer enumeration that indicates the "
+        "enabled/disabled states of an element. It can also indicate "
+        "the transitions between these requested states. For "
+        "example, shutting down (value = 4) and starting "
+        "(value=8) are transient states between enabled and disabled. "
+        "The following text briefly summarizes the various "
+        "enabled/disabled states: \n"
+        "Enabled (2) indicates that the element is/could be executing "
+        "commands, will process any queued commands, and queues new "
+        "requests. \n"
+        "Disabled (3) indicates that the element will not execute "
+        "commands and will drop any new requests. \n"
+        "Shutting Down (4) indicates that the element is in the process "
+        "of going to a Disabled state. \n"
+        "Not Applicable (5) indicates the element doesn't support being "
+        "enabled/disabled. \n"
+        "Enabled but Offline (6) indicates that the element may be "
+        "completing commands, and will drop any new requests. \n"
+        "Test (7) indicates that the element is in a test state. \n"
+        "Deferred (8) indicates that the element may be completing "
+        "commands, but will queue any new requests. \n"
+        "Quiesce (9) indicates that the element is enabled but in a "
+        "restricted mode. The element's behavior is similar to the "
+        "Enabled state, but it only processes a restricted set of "
+        "commands. All other requests are queued. \n"
+        "Starting (10) indicates that the element is in the process of "
+        "going to an Enabled state.  New requests are queued. \n"),
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                        "11..32767", "32768..65535" }, 
         Values {"Unknown", "Other", "Enabled", "Disabled", 
             "Shutting Down", "Not Applicable", "Enabled but Offline",
-            "In Test"},
+            "In Test", "Deferred", "Quiesce", "Starting",
+            "DMTF Reserved", "Vendor Reserved" },
         ModelCorrespondence {
-            "CIM_EnabledLogicalElement.OtherEnabledStatus"} ]
-    uint16 EnabledStatus = 5;
+            "CIM_EnabledLogicalElement.OtherEnabledState"} ]
+    uint16 EnabledState = 5;
     
     [Description (
         "A string describing the element's enabled/disabled state when "
-        "the EnabledStatus property is set to 1 (\"Other\"). This "
-        "property MUST be set to NULL when EnabledStatus "
+        "the EnabledState property is set to 1 (\"Other\"). This "
+        "property MUST be set to NULL when EnabledState "
         "is any value other than 1."),
-        ModelCorrespondence {"CIM_EnabledLogicalElement.EnabledStatus"} ]
-    string OtherEnabledStatus;
-    
-    [Write, Description (
-        "RequestedStatus is an integer enumeration indicating "
-        "whether the element should be shut down (value = 4), "
-        "enabled (2), disabled (3), taken offline (6) or "
-        "tested (7) at the next opportunity. This "
-        "property is provided to compare Requested and "
-        "current Enabled statuses. Note that when "
-        "EnabledStatus is set to 5 (\"Not Applicable\"), "
-        "then writing this property has no effect. By default, "
-        "the element's RequestedStatus is 5 (\"No Change\")."), 
-        ValueMap {"2", "3", "4", "5", "6", "7"}, 
+        ModelCorrespondence {"CIM_EnabledLogicalElement.EnabledState"} ]
+    string OtherEnabledState;
+ 
+    [Description (
+        "RequestedState is an integer enumeration indicating "
+        "the last requested or desired state for the element. "
+        "The actual state of the element is represented by EnabledState. " 
+        "This property is provided to compare the last requested and "
+        "current enabled/disabled states. Note that when "
+        "EnabledState is set to 5 (\"Not Applicable\"), "
+        "then this property has no meaning. By default, "
+        "the element's RequestedState is 5 (\"No Change\"). Refer "
+        "to the EnabledState's property Description for explanations "
+        "of the values in the RequestedState enumeration. \n" 
+        "\n"
+        "This property is set as the result of a method invocation "
+        "(such as Start or StopService on CIM_Service), or may be "
+        "overridden and defined as WRITEable in a subclass. The method "
+        "approach is considered superior to a WRITEable property, "
+        "since it allows an explicit invocation of the operation and "
+        "the return of a result code."),
+        ModelCorrespondence  {"CIM_EnabledLogicalElement.EnabledState"},
+        ValueMap {"2", "3", "4", "5", "6", "7", "8", "9",
+                        "10..32767", "32768..65535" },  
         Values {"Enabled", "Disabled", "Shut Down", "No Change",
-            "Offline", "Test"} ]
-    uint16 RequestedStatus = 5;
-    
+            "Offline", "Test", "Deferred", "Quiesce",
+            "DMTF Reserved", "Vendor Reserved"} ]
+    uint16 RequestedState = 5;
+ 
     [Write, Description (
         "An enumerated value indicating an administrator's "
         "default/startup configuration for an element's Enabled"
-        "Status. By default, the element is \"Enabled\" (value=2)."), 
-        ValueMap {"2", "3", "5", "6", "7"}, 
+        "State. By default, the element is \"Enabled\" (value=2)."), 
+        ValueMap {"2", "3", "5", "6", "7", "8..32767", 
+                        "32768..65535"}, 
         Values {"Enabled", "Disabled", "Not Applicable", 
-            "Enabled but Offline", "No Default"} ] 
+            "Enabled but Offline", "No Default",
+            "DMTF Reserved", "Vendor Reserved"} ] 
     uint16 EnabledDefault = 2;
 };
 
@@ -742,14 +809,14 @@ class CIM_Service : CIM_EnabledLogicalElement {
         "the object's Description property.") ] 
     string Name;
        
-    [Experimental, MaxLen (64), Write, Description (
+    [MaxLen (64), Write, Description (
         "The name of the primary owner for the service, if "
         "one is defined. The primary owner is the initial "
         "support contact for the Service."),
         MappingStrings {"MIF.DMTF|General Information|001.3"} ]  
     string PrimaryOwnerName;
 
-    [Experimental, MaxLen (256), Write, Description (
+    [MaxLen (256), Write, Description (
         "A string that provides information on how the primary "
         "owner of the Service can be reached (e.g. phone "
         "number, email address, ...)."),
@@ -782,10 +849,10 @@ class CIM_Service : CIM_EnabledLogicalElement {
     [Description (
         "The StartService method places the Service in the started "
         "state. Note that this method's function overlaps with the "
-        "RequestedStatus property. RequestedStatus was added to "
+        "RequestedState property. RequestedState was added to "
         "the model to maintain a record (i.e., a persisted value) "
-        "of the last status request. Invoking the StartService "
-        "method should set the RequestedStatus property appropriately."
+        "of the last state request. Invoking the StartService "
+        "method should set the RequestedState property appropriately."
         " The method returns an integer value of 0 if the Service was "
         "successfully started, 1 if the request is not supported and "
         "any other number to indicate an error. In a subclass, the "
@@ -798,10 +865,10 @@ class CIM_Service : CIM_EnabledLogicalElement {
     [Description (
         "The StopService method places the Service in the stopped "
         "state. Note that this method's function overlaps with the "
-        "RequestedStatus property. RequestedStatus was added to "
+        "RequestedState property. RequestedState was added to "
         "the model to maintain a record (i.e., a persisted value) "
-        "of the last status request. Invoking the StopService "
-        "method should set the RequestedStatus property appropriately."
+        "of the last state request. Invoking the StopService "
+        "method should set the RequestedState property appropriately."
         " The method returns an integer value of 0 if the Service was "
         "successfully stopped, 1 if the request is not supported and "
         "any other number to indicate an error. In a subclass, the "
@@ -878,7 +945,7 @@ class CIM_ProvidesServiceToElement : CIM_Dependency {
 // ==================================================================
 // ServiceAvailableToElement
 // ==================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "CIM_ServiceAvailableToElement conveys the semantics "
     "of a Service being available for the 'use' of a ManagedElement. "
     "An example is that a Processor and an enclosure "
@@ -905,7 +972,7 @@ class CIM_ServiceAvailableToElement {
 // ===================================================================
 // ServiceAffectsElement
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "ServiceAffectsElement represents an association between a "
     "Service and the ManagedElement(s) that may be affected by its "
     "execution. Instantiating this association indicates that running "
@@ -1209,7 +1276,7 @@ class CIM_ActiveConnection : CIM_SAPSAPDependency {
 // ==================================================================
 // RemoteServiceAccessPoint
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "   RemoteServiceAccessPoint describes access and/or "
     "addressing information for a remote connection, that is "
     "known to a 'local' network element. This information is "
@@ -1257,7 +1324,7 @@ class CIM_RemoteServiceAccessPoint : CIM_ServiceAccessPoint {
 // ==================================================================
 // RemotePort
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "RemotePort adds port information to the access data "
     "(such as IP Address), specified in and inherited from "
     "RemoteServiceAccessPoint. For example, using the "
@@ -1290,6 +1357,29 @@ class CIM_RemotePort : CIM_RemoteServiceAccessPoint {
         ModelCorrespondence {
             "CIM_RemotePort.PortProtocol"} ]
     string OtherProtocolDescription;
+};
+
+
+// ==================================================================
+// ServiceAccessURI
+// ==================================================================
+[Version ("2.7.0"), Description (
+    "CIM_ServiceAccessURI represents the ability to utilize or "
+    "invoke a Service via a uniform resource identifier. "
+    "RFC 1738 describes the Uniform Resource Locator which is a "
+    "more specific form of a URI, and RFC 2396 describes the broader, "
+    "inclusive URI. Quoting from the RFC, 'A Uniform Resource "
+    "Identifier (URI) is a compact string of characters for identifying "
+    "an abstract or physical resource.' In the context of a "
+    "ServiceAccessPoint, a URI contains the information necessary "
+    "to access an associated service (associated via "
+    "ServiceAccessBySAP), using a syntax specific to that service.") ]
+class CIM_ServiceAccessURI : CIM_ServiceAccessPoint {
+
+    [Required, MaxLen (256), Description (
+        "The LabeledURI property is based on RFC 2079 and its value "
+        "and syntax is service specific.") ]
+    string LabeledURI;
 };
 
 

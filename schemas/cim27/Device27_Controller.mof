@@ -2,10 +2,10 @@
 // Title:       Device Controller 2.7
 // Filename:    Device27_Contoller.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,11 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR934 - Remove Controller.PortNumber
+// CR971 - Remove PortController and SCSILUN, so they can remain
+//         experimental in 2.8.
+//
 // Change Log for v2.7
 // CR622 - Fix the DMI mapping string to include the attribute number
 //         for Controller.ProtocolSupported, .MaxNumberControlled, &
@@ -84,10 +89,6 @@
     "(data, control, and reset) with devices.") ] 
 class CIM_Controller : CIM_LogicalDevice {
 
-    [Experimental, Description(
-        "System level port or bus identification number")]
-    uint64 PortNumber;
-    
     [Description (
         "Time of last reset of the Controller.") ]
     datetime TimeOfLastReset;
@@ -163,24 +164,6 @@ class CIM_ControlledBy : CIM_DeviceConnection {
         Description ("The controlled Device.") ]
     CIM_LogicalDevice REF Dependent;
 
-    [Experimental, Description(
-        "Address of associated Device in context of the "
-        "antecedent Controller.") ]
-    string DeviceNumber;
-    
-    [Experimental, Description (
-        "This property describes the accessibility of the device "
-        "thru the antedecent controller."),
-        ValueMap {"2", "3", "4"},
-        Values {"ReadWrite", "ReadOnly", "NoAccess"} ]
-    uint16 AccessMode;
-
-    [Experimental, Description (
-        "The property describes the priority given to accesses of "
-        "the device thru this controller. The highest priority path "
-        "will have the lowest value for this parameter.")]
-    uint16 AccessPriority;
-    
     [Description (
         "The State property indicates whether the Controller is "
         "actively commanding or accessing the Device (value=1) or "
@@ -309,43 +292,6 @@ class CIM_PCMCIAController : CIM_Controller {
 };
 
 
-// ==================================================================
-// PortController
-// ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "PortController is a logical device corresponding to a hardware "
-    "network port controller.  Port controllers provide various "
-    "features depending on their types and versions.") ]
-class CIM_PortController : CIM_Controller {
-      
-    [Description (
-        "The type or model of the port controller. Specific "
-        "values will be enumerated in a later release of this "
-        "schema. When set to 1 (\"Other\"), the related property "
-        "OtherControllerType contains a string description of "
-        "the controller's type."),
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8"},
-        Values {"Unknown", "Other", "Ethernet", "IB", "FC",
-            "FDDI", "ATM", "Token Ring", "Frame Relay"},
-        ModelCorrespondence {
-            "CIM_PortController.OtherControllerType"} ]
-    uint16 ControllerType;
-    
-    [Description (
-        "A string value for controller types not captured by the "
-        "ControllerType enumeration.  This should only be used "
-        "when the value of the ControllerType property is "
-        "set to 1, \"Other\"."),
-        ModelCorrespondence {
-            "CIM_PortController.ControllerType"} ]
-    string OtherControllerType;
-    
-    [Description (
-        "The revision number of the controller.") ]
-    uint16 ControllerVersion;
-};
-
-
 // ===================================================================
 // SCSIController
 // ===================================================================
@@ -469,27 +415,6 @@ class CIM_SCSIInterface : CIM_ControlledBy {
         "(CDBs) that the initiator will send to the target. This "
         "value should never be greater than MaxQueueDepth.") ]
     uint32 QueueDepthLimit;
-};
-
-
-// ===================================================================
-// SCSILUN
-// ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
-    "The association indicates a relationship between a Storage"
-    "Volume exposed as a LUN through a slave SCSI Controller.  "
-    "A new relationship is required in order to distinguish "
-    "between the 'Host' connection (represented by SCSIInterface) "
-    "and the 'Target' connection (represented by SCSILUN).") ] 
-class CIM_SCSILUN : CIM_ControlledBy {
-    
-    [Override ("Antecedent"),
-        Description ("The SCSIController.") ]
-    CIM_SCSIController REF Antecedent;  
-
-    [Override ("DeviceNumber"), Description (
-        "LUN Identifier assigned to the target device.") ]
-    string DeviceNumber;
 };
 
 

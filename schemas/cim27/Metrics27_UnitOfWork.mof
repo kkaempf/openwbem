@@ -3,11 +3,10 @@
 // Author:      DMTF Application Working Group
 // Filename:    Metrics27_UnitofWork.MOF
 // Version      2.7.0
-// Status:      Prelimanary
-// Date:        07/26/2002
-// CVS:         $Revision: 1.9 $    
+// Status:      Final
+// Date:        13 April 2003
 // ===================================================================
-// Copyright 2001-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2001-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -102,6 +101,18 @@
 //           restricted inherited key to MaxLen(16) for compatibility
 //       CR 864: Change the superclassing and reference names of the
 //           UoWDefTraceLevelType association 
+//
+//    CIM 2.7.1 Preliminary (12 November 2002)
+//       CR 920: Add missing parenthesis to the Description for 
+//           TraceLevelType.BaseType
+//
+//    CIM 2.7.0 Final (12 February 2003)
+//       CR 987: remove experimental qualifier from
+//          -CIM_UnitOfWorkDefinition.TraceLevelTypeId
+//          -CIM_TraceLevelType
+//          -CIM_UnitOfWork.TraceLevel
+//          -CIM_UnitOfWork.MutualContextId
+//          -CIM_UoWDefTraceLevelType
 // ==================================================================
 
 #pragma Locale ("en_US")
@@ -137,7 +148,7 @@ class CIM_UnitOfWorkDefinition : CIM_LogicalElement {
           "Definition. The use of OSF UUID/GUIDs is recommended.") ]
    string Id;
 
-      [Experimental, MaxLen (16),
+      [MaxLen (16),
        ModelCorrespondence {"CIM_TraceLevelType.InstanceId"},
        Description ( 
           "   A 16 byte value that uniquely identifies the applied "
@@ -205,7 +216,7 @@ class CIM_MetricDefinition : CIM_BaseMetricDefinition {
 // ================================================================== 
 // TraceLevelType
 // ==================================================================
-    [Version("2.7.0"), Experimental, Description (
+    [Version("2.7.0"), Description (
        "TraceLevelType defines the encoding and semantics of trace "
        "levels. A trace is data that is produced during the "
        "execution of program code in order to provide information on "
@@ -242,13 +253,13 @@ class CIM_TraceLevelType: CIM_ManagedElement {
       [Description(
           "Describes the technical encoding of the trace level. \n"
           "0: bit map = switches to turn on/off appropriate trace "
-          "production (e.g. 0x00000010, Ox0000F000); the use of bit "
+          "production (e.g. 0x00000010, 0x0000F000); the use of bit "
           "maps implies that the switches can be or-ed bitwise: "
           "Values[1] | Values[2] | ... . \n"
           "1: number = plain numbers that define levels (e.g. 1, 2, 7); "
           "the recommended and most common encoding scheme \n"
           "2: any other encoding scheme you could think of (e.g. "
-          "mixture of bit maps and numbers."), 
+          "mixture of bit maps and numbers)."), 
        Values{"Other", "Bitmap", "Number"}, 
        ValueMap{"1", "2", "3"} ] 
    uint16 BaseType; 
@@ -367,7 +378,7 @@ class CIM_UnitOfWork : CIM_ManagedElement {
           "Completed Failed", "Completed Aborted"} ]
    uint16 Status;
 
-      [Experimental, Description (
+      [Description (
           "   Indicates the granularity at which traces are written "
           "for this particular instance of UnitOfWork. Traces allow "
           "providing more detailed information on the course of the "
@@ -397,7 +408,7 @@ class CIM_UnitOfWork : CIM_ManagedElement {
           "scheme.") ]
    uint32 TraceLevel;
 
-      [Experimental, Description (
+      [Description (
           "   A string that uniquely identifies the mutual "
           "context of UnitOfWork instances. The context is defined "
           "as an individual action that several UnitOfWork instances "
@@ -590,7 +601,7 @@ class CIM_SubUoW : CIM_Dependency {
 // ================================================================== 
 // UoWDefTraceLevelType
 // ==================================================================
-   [Association, Version("2.7.0"), Experimental, 
+   [Association, Version("2.7.0"), 
     Description (
        "Refers to the refinement of the UnitOfWorkDefinition: the "
        "trace level type. It is not required that a UnitOfWork be "

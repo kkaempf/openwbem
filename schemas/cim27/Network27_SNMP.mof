@@ -2,10 +2,10 @@
 // Title:       Network SNMP Management 2.7
 // Filename:    Network27_SNMP.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/31/2002
+// Status:      Final
+// Date:        March 31, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -53,6 +53,7 @@
 // Change Log for v2.7
 // CR791 - Add classes to support the configuration and management
 //         of SNMP services
+// CR982 - Removal of Experimental for preliminary to final
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -61,7 +62,7 @@
 // ==================================================================
 // SNMPService
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "SNMPService represents an SNMP agent running on a hosting "
       "system. The UDP port to use to contact the agent is "
       "an instance of UDPProtocolEndpoint. The endpoint is "
@@ -77,7 +78,7 @@ class CIM_SNMPService : CIM_Service {
 // ==================================================================
 // SNMPCommunityString
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "SNMPCommunityString is an access point for an SNMPService. "
       "Each instance stores a community string that can be used "
       "for making SNMP requests.") ]
@@ -130,7 +131,7 @@ class CIM_SNMPCommunityString : CIM_ServiceAccessPoint {
 // ==================================================================
 // SNMPTrapTarget
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [ Version ("2.7.0"), Description (
       "SNMPTrapTarget contains information describing "
       "a remote system, to which Informs and Traps are sent. "
       "An SNMPService is related via a ServiceSAPDependency "
@@ -171,7 +172,7 @@ class CIM_SNMPTrapTarget : CIM_RemotePort {
 // ==================================================================
 // TrapSourceForSNMPService
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association,  Version ("2.7.0"), 
     Description (
       "TrapSourceForSNMPService specifies the protocol "
       "endpoint/interface (and hence its IP address) from which "

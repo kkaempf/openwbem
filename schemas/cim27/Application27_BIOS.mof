@@ -3,11 +3,11 @@
 //              Device Driver Software
 // Filename:    Application27_BIOS.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/03/2002 
-// CVS:         $Revision: 1.4 $     $Date: $
+// Status:      Final
+// Date:        31 March 2003 
+// CVS:         $Revision: 1.2 $           
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -58,6 +58,8 @@
 //               since they inherit from SoftwareElement/Feature
 //         - CR718 - Promote SystemBIOS.GroupComponent from 
 //              System to ComputerSystem
+//      -3/17/2003 CIM 2.7 Final
+//         - No Changes
 // ===================================================================
 
 #pragma locale ("en_US")

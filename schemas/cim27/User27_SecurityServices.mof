@@ -2,10 +2,10 @@
 // Title:       User-Security Security Services 2.7
 // Filename:    User27_SecurityServices.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/07/2002
+// Status:      Final
+// Date:        03/31/2003
 // ===================================================================
-// Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,7 +50,8 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ===================================================================
-// Change Log for v2.7 - None
+// Change Log for v2.7 
+//    CR965 - Update the Description for SecurityServiceForSystem
 // ===================================================================
 
 #pragma Locale ("en_US")
@@ -87,7 +88,13 @@ class CIM_ServiceUsesSecurityService : CIM_ServiceServiceDependency {
 [Association, Version ("2.6.0"), Description (
    "The CIM_SecurityServiceForSystem provides the association between "
    "a System and a SecurityService that provides services for that "
-   "system.") ]
+   "system. Examining the SecurityServiceForSystem class definition, "
+   "note that its superclass ProvidesServiceToElement is deprecated. "
+   "Unfortunately, ProvidesServiceToElement cannot be removed from "
+   "the object hierarchy without a major Schema release. "
+   "When/if this occurs, the ProvidesServiceToElement superclass "
+   "will be removed, and SecurityServiceForSystem will subclass "
+   "from CIM_Dependency directly. ") ]
 class CIM_SecurityServiceForSystem : CIM_ProvidesServiceToElement {
 
    [Override ("Antecedent"), Description ( 

@@ -2,10 +2,10 @@
 // Title:       Device Network Adapters 2.7
 // Filename:    Device27_NetworkAdapter.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        08/05/02
+// Release:     Final
+// Date:        04/02/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -1593,7 +1593,7 @@ class CIM_FCAdapterEventCounters : CIM_DeviceStatisticalInformation {
         "should be used instead, but redefines the level at which "
         "data is collected. This is why there is no direct translation "
         "of the individual counters between the two classes. This "
-        "object defines error counters specific to a FibrePort") ]
+        "object defines error counters specific to a FibrePort.") ]
 class CIM_FibrePortEventCounters : CIM_DeviceStatisticalInformation {
 
     [Deprecated {"No value"}, Counter,  

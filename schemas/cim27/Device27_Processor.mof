@@ -2,10 +2,10 @@
 // Title:       Device Processor 2.7
 // Filename:    Device27_Processor.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,12 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR928 - Correction of AMD processor values for values 182 & 183.
+//       - Add Socket 754 and Socket 940 to the values to Processor.
+//         UpgradeMethod.
+// CR995 - Update processor Family to include mainframes.
+//
 // Change Log for v2.7
 // CR616 - Extend Processor.UpgradeMethod to include Socket 478
 // CR622 - Fix the DMI mapping string to include the attribute number
@@ -177,7 +183,7 @@ class CIM_Processor : CIM_LogicalDevice {
             "144", "145", "146", "147", "148", "149", "150", 
             "160", "176", "177", "178", "179", 
             "180", "181", "182", "183", "184", "185",
-            "190", "200", "201", "202", 
+            "190", "200", "201", "202", "203", "204",
             "250", "251", "260", "261", "280", "281", 
             "300", "301", "302", "320", "350", "500"}, 
         Values {"Other", "Unknown", "8086", "80286", "80386", "80486", 
@@ -224,19 +230,20 @@ class CIM_Processor : CIM_LogicalDevice {
             "Pentium(R) 4", "Intel(R) Xeon(TM)", 
             // 180 
             "AS400 Family", "Intel(R) Xeon(TM) processor MP", 
-            "AMD AthlonXP(TM) Family", "AMD AthlonMP(TM) Family",
+            "AMD Athlon(TM) XP Family", "AMD Athlon(TM) MP Family",
             "Intel(R) Itanium(R) 2",
             "Intel(R) Pentium(R) 4 processor with HT Technology",
             // 190 
             "K7", 
             // 200 
-            "IBM390 Family", "G4", "G5", 
+            "S/390 and zSeries Family", "ESA/390 G4", "ESA/390 G5",
+            "ESA/390 G6", "z/Architectur base", 
             // 250 
             "i860", "i960", "SH-3", "SH-4", "ARM", "StrongARM", 
             // 300 
             "6x86", "MediaGX", "MII", "WinChip", "DSP", 
             "Video Processor"},
-        MappingStrings {"MIF.DMTF|Processor|014.3"},
+        MappingStrings {"MIF.DMTF|Processor|017.3"},
         ModelCorrespondence {"CIM_Processor.OtherFamilyDescription"} ]
     uint16 Family;
 
@@ -253,22 +260,23 @@ class CIM_Processor : CIM_LogicalDevice {
         "Processor can be upgraded (if upgrades are supported). "
         "This property is an integer enumeration."),
         ValueMap {"1", "2", "3", "4", "5", "6", "7", "8", "9", 
-            "10", "11", "12", "13", "14", "15"}, 
+            "10", "11", "12", "13", "14", "15", "16", "17"}, 
         Values {"Other", "Unknown", "Daughter Board", "ZIF Socket",
             "Replacement/Piggy Back", "None", "LIF Socket", "Slot 1",
             "Slot 2", "370 Pin Socket", "Slot A", "Slot M", 
-            "Socket 423", "Socket A (Socket 462)", "Socket 478"}, 
-        MappingStrings {"MIF.DMTF|Processor|014.7"} ]
+            "Socket 423", "Socket A (Socket 462)", "Socket 478",
+            "Socket 754", "Socket 940"}, 
+        MappingStrings {"MIF.DMTF|Processor|017.7"} ]
     uint16 UpgradeMethod;
 
     [Description ("The maximum speed (in MHz) of this Processor."),
         Units ("MegaHertz"),
-        MappingStrings {"MIF.DMTF|Processor|014.5"} ]
+        MappingStrings {"MIF.DMTF|Processor|017.5"} ]
     uint32 MaxClockSpeed;
 
     [Description ("The current speed (in MHz) of this Processor."),
         Units ("MegaHertz"),
-        MappingStrings {"MIF.DMTF|Processor|014.6"} ]
+        MappingStrings {"MIF.DMTF|Processor|017.6"} ]
     uint32 CurrentClockSpeed;
  
     [Description ("Processor data width in bits."),

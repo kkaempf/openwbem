@@ -2,10 +2,10 @@
 // Title:       Core Device 2.7
 // Filename:    Core27_Device.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/02/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,14 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR961 - Change references to EnabledStatus and RequestedStatus to 
+//         EnabledState and RequestedState in the LogicalDevice.
+//            StatusInfo,
+//            EnableDevice(),
+//            OnlineDevice(),
+//            QuiesceDevice()
+//
 // Change Log for v2.7
 // CR624 - Fixed several of the DMI mapping strings that were missing 
 //         the attribute number in LogicalDevice
@@ -173,7 +181,7 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
         "property does not apply to the LogicalDevice, the value, "
         "5 (\"Not Applicable\"), should be used.  StatusInfo has "
         "been deprecated in lieu of a more clearly named property "
-        "with additional enumerated values (EnabledStatus), "
+        "with additional enumerated values (EnabledState), "
         "that is inherited from ManagedSystemElement. \n"
         "  If a Device is (\"Enabled\")(value=3), it has been "
         "powered up, and is configured and operational.  The Device "
@@ -308,13 +316,13 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
     [Description (
         "  Requests that the LogicalDevice be enabled (\"Enabled\" "
         "input parameter = TRUE) or disabled (= FALSE). If "
-        "successful, the Device's StatusInfo/EnabledStatus properties "
+        "successful, the Device's StatusInfo/EnabledState properties "
         "should reflect the desired state (enabled/disabled). "
         "Note that this method's function overlaps with the "
-        "RequestedStatus property. RequestedStatus was added to "
+        "RequestedState property. RequestedState was added to "
         "the model to maintain a record (i.e., a persisted value) "
-        "of the last status request. Invoking the EnableDevice "
-        "method should set the RequestedStatus property "
+        "of the last state request. Invoking the EnableDevice "
+        "method should set the RequestedState property "
         "appropriately. \n"
         "  The return code should be 0 if the request was "
         "successfully executed, 1 if the request is not supported "
@@ -348,7 +356,7 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
         "indeterminate state. When bringing a Device back \"Online\", "
         "from an \"Offline\" mode, the Device should be restored to "
         "its last \"Online\" state, if at all possible. Only a Device "
-        "that has an EnabledStatus/StatusInfo of \"Enabled\" and has "
+        "that has an EnabledState/StatusInfo of \"Enabled\" and has "
         "been configured can be brought online or taken offline. \n"
         "OnlineDevice should return 0 if successful, 1 if the request "
         "is not supported at all, 2 if the request is not supported "
@@ -357,7 +365,13 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
         "possible return codes could be specified, using a ValueMap "
         "qualifier on the method. The strings to which the ValueMap "
         "contents are 'translated' may also be specified in the "
-        "subclass as a Values array qualifier.") ]
+        "subclass as a Values array qualifier. \n"
+        "Note that this method's function overlaps with the "
+        "RequestedState property. RequestedState was added to "
+        "the model to maintain a record (i.e., a persisted value) "
+        "of the last state request. Invoking the OnlineDevice "
+        "method should set the RequestedState property "
+        "appropriately.") ]
     uint32 OnlineDevice(
         [IN] boolean Online);
     
@@ -367,12 +381,12 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
         "activity (= FALSE). For this method to quiesce a Device, "
         "that Device should have an Availability (or Additional"
         "Availability) of \"Running/Full Power\" (value=3) and an "
-        "EnabledStatus/StatusInfo of \"Enabled\". For example, if "
+        "EnabledState/StatusInfo of \"Enabled\". For example, if "
         "quiesced, a Device may then be offlined for diagnostics, "
         "or disabled for power off and hot swap.  For the method to "
         "\"unquiesce\" a Device, that Device should have an "
         "Availability (or AdditionalAvailability) of \"Quiesced\" "
-        "(value=21) and an EnabledStatus/StatusInfo of \"Enabled\". "
+        "(value=21) and an EnabledState/StatusInfo of \"Enabled\". "
         "In this case, the Device would be returned to an \"Enabled\" "
         "and \"Running/Full Power\" status. \n"
         "The method's return code should indicate the success or "
@@ -384,7 +398,13 @@ class CIM_LogicalDevice : CIM_EnabledLogicalElement {
         "specified, using a ValueMap qualifier on the method.  The "
         "strings to which the ValueMap contents are 'translated' may "
         "also be specified in the subclass as a Values array "
-        "qualifier.") ]
+        "qualifier. \n"
+        "Note that this method's function overlaps with the "
+        "RequestedState property. RequestedState was added to "
+        "the model to maintain a record (i.e., a persisted value) "
+        "of the last state request. Invoking the QuiesceDevice "
+        "method should set the RequestedState property "
+        "appropriately.") ]
     uint32 QuiesceDevice(
         [IN] boolean Quiesce);
     

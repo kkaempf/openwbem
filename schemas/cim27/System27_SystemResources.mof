@@ -2,10 +2,10 @@
 // Title:       System Resources 2.7
 // Filename:    System27_SystemResources.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/30/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,9 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR969 - Remove the experimental qualifier
+//
 // Change Log for v2.7
 // CR757 - Change the subclassing of SystemResource from LogicalElement
 //         to EnabledLogicalElement
@@ -85,7 +88,7 @@ class CIM_SystemResource : CIM_EnabledLogicalElement {
         "Boolean indicating whether the Resource can be shared.") ]
     boolean Shareable;
    
-    [Experimental, Description (
+    [Description (
         "Indicates whether the Resource is implemented in hardware, "
         "software or both."),
         ValueMap {"0", "2", "3", "4"},

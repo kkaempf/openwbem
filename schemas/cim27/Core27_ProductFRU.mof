@@ -2,10 +2,10 @@
 // Title:       Core Products & FRUs 2.7
 // Filename:    Core27_ProductFRU.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/30/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,9 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7
+// CR968 - Remove the Experimental qualifier
+//
 // Change Log for v2.7
 // CR753 - Update description for Product and add ModelCorrespondence
 //         to the CIM Support Schema
@@ -139,7 +142,7 @@ class CIM_Product : CIM_ManagedElement {
 // ==================================================================
 // ProductComponent
 // ==================================================================
-[Association, Aggregation, Composition, Experimental, 
+[Association, Aggregation, Composition, 
     Version ("2.7.0"), Description (
         "The CIM_ProductComponent association defines a containment "
         "and component relationship among Products.  For example, a "
@@ -414,7 +417,7 @@ class CIM_ReplaceableProductFRU {
 // ==================================================================
 // ProductPhysicalComponent
 // ==================================================================
-[Association, Aggregation, Composition, Experimental, 
+[Association, Aggregation, Composition, 
     Version ("2.7.0"), Description (
         "Indicates that the referenced PhysicalElement is acquired "
         "as part of a Product.") ]
@@ -433,7 +436,7 @@ class CIM_ProductPhysicalComponent : CIM_Component {
 // ==================================================================
 // ProductSoftwareComponent
 // ==================================================================
-[Association, Aggregation, Composition, Experimental, 
+[Association, Aggregation, Composition, 
     Version ("2.7.0"), Description (
         "Indicates that the referenced SoftwareIdentity is acquired "
         "as part of a Product.") ]
@@ -452,7 +455,7 @@ class CIM_ProductSoftwareComponent : CIM_Component {
 // ==================================================================
 // ProductServiceComponent
 // ==================================================================
-[Association, Aggregation, Composition, Experimental, 
+[Association, Aggregation, Composition, 
     Version ("2.7.0"), Description (
         "Indicates that the referenced Service is acquired as part "
         "of a Product. Examples of Services that may be acquired "

@@ -2,10 +2,10 @@
 // Title:       Core Settings 2.7
 // Filename:    Core27_Settings.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/01/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,12 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR927 - Relax cardinality for the ManagedElement side of ElementProfile
+//       - Update the description of Profile to reflect this change.
+// CR968 - Remove the Experimental qualifier
+// CR994 - Update description of InstanceID
+//
 // Change Log for v2.7
 // CR723 - Introduce SettingData, ScopedSetttingData, ScopedSetting,
 //         and ElementSettingData.
@@ -63,7 +69,7 @@
 // ===================================================================
 // SettingData
 // ===================================================================
-[Abstract, Experimental, Version ("2.7.0"), Description (
+[Abstract, Version ("2.7.0"), Description (
     "  The SettingData class represents configuration-related and "
     "operational parameters for one or more ManagedElement(s). A "
     "ManagedElement may have multiple SettingData objects associated "
@@ -83,24 +89,30 @@
 class CIM_SettingData : CIM_ManagedElement {
     
     [Key, Description (
-        "InstanceID opaquely identifies a unique instance of "
-        "SettingData.  The InstanceID must be unique within a "
-        "namespace. In order to ensure uniqueness, the value of "
-        "InstanceID SHOULD be constructed in the following manner: \n"
-        "<Vendor ID><ID> \n"
-        "   <Vendor ID> MUST include a copyrighted, trademarked "
+        "Within the scope of the instantiating Namespace, InstanceID "
+        "opaquely and uniquely identifies an instance of this class. "
+        "In order to ensure uniqueness within the NameSpace, the "
+        "value of InstanceID SHOULD be constructed using the "
+        "following 'preferred' algorithm: \n"
+        "   <OrgID>:<LocalID> \n"
+        "Where <OrgID> and <LocalID> are separated by a colon ':', "
+        "and where <OrgID> MUST include a copyrighted, trademarked "
         "or otherwise unique name that is owned by the business entity "
-        "or a registered ID that is assigned to the business entity "
-        "that is defining the InstanceID. (This is similar to the "
-        "<Schema Name>_<Class Name> structure of Schema class names.) "
-        "The purpose of <Vendor ID> is to ensure that <ID> is truly "
-        "unique across multiple vendor implementations.   If such a "
-        "name is not used, the defining entity MUST assure that the "
-        "<ID> portion of the Instance ID is unique when compared with "
-        "other instance providers. For DMTF defined instances, the "
-        "<Vendor ID> is 'CIM'. \n"
-        "   <ID> MUST include a vendor specified unique "
-        "identifier.") ]        
+        "creating/defining the InstanceID, or is a registered ID that is "
+        "assigned to the business entity by a recognized global "
+        "authority (This is similar to the <Schema Name>_<Class Name> "
+        "structure of Schema class names.) In addition, to ensure "
+        "uniqueness <OrgID> MUST NOT contain a colon (':'). When using "
+        "this algorithm, the first colon to appear in "
+        "InstanceID MUST appear between <OrgID> and <LocalID>.  \n"
+        "   <LocalID> is chosen by the business entity and SHOULD not be "
+        "re-used to identify different underlying (real-world) elements. "
+        "If the above 'preferred' algorithm is not used, the defining "
+        "entity MUST assure that the resultant InstanceID is not "
+        "re-used across any InstanceIDs produced by this or other "
+        "providers for this instance's NameSpace. \n"
+        "For DMTF defined instances, the 'preferred' algorithm MUST be "
+        "used with the <OrgID> set to 'CIM'.") ]        
     string InstanceID;
 
     [Override ("ElementName"), Required, Description (
@@ -115,7 +127,7 @@ class CIM_SettingData : CIM_ManagedElement {
 // ===================================================================
 // ScopedSettingData
 // ===================================================================
-[Abstract, Experimental, Version ("2.7.0"), Description (
+[Abstract, Version ("2.7.0"), Description (
     "The ScopedSettingData class represents the general concept of "
     "SettingData which is scoped/contained by a ManagedElement "
     "(i.e. settings that are specifically defined for a system, "
@@ -135,7 +147,7 @@ class CIM_ScopedSettingData : CIM_SettingData {
 // ===================================================================
 // ScopedSetting
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "ScopedSetting defines a setting in the context of the Managed"
     "Element which it resides.") ]
 class CIM_ScopedSetting : CIM_Dependency {
@@ -153,7 +165,7 @@ class CIM_ScopedSetting : CIM_Dependency {
 // ===================================================================
 // ElementSettingData
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "ElementSettingData represents the association between "
     "ManagedElements and applicable setting data. This "
     "association also describes whether this is a default "
@@ -189,44 +201,54 @@ class CIM_ElementSettingData {
 // ==================================================================
 // Profile
 // ================================================================== 
-[Experimental, Version ("2.7.0"), Description (   
+[Version ("2.7.0"), Description (   
     "   Profile specifies a general collection of Settings/SettingData "
     "that are logically grouped together. Note that the CIM_Profile "
     "class uses simplified naming/identity and collection algorithms, "
     "as compared to CIM_Configuration.  The settings are 'collected' "
-    "into the Profile using the MemberOfCollection association. One "
-    "example of a Profile is to define the collection of settings "
-    "for a particular person. Another is to define the collection "
-    "of settings appropriate when initializing a system."
-    "Profile is tied to a ManagedElement using the ElementProfile "
-    "association.  Note that the cardinality of the ManagedElement "
-    "reference is Min(1), Max(1). This cardinality mandates the "
-    "instantiation of the ElementProfile association for the "
-    "referenced instance of Profile. ElementProfile describes the "
-    "existence requirements and context for the referenced instance "
-    "of ManagedElement. Specifically, the ManagedElement MUST exist "
-    "and provides the context for the Profile.") ] 
+    "into the Profile using the MemberOfCollection association. Note "
+    "that a Profile obtains its setting data and other necessary "
+    "information from collected Setting/SettingData instances, and "
+    "by the definition of additional properties in subclasses. "
+    "One example of a Profile is to define the collection of "
+    "settings for a particular person. Another is to define the "
+    "collection of settings appropriate when initializing a system. \n"
+    "\n"
+    "   Profile is tied to a ManagedElement using the ElementProfile "
+    "association.  The ManagedElement provides context for the "
+    "Profile, and the settings collected by Profile SHOULD be "
+    "settings of the associated ManagedElement.  Note that a "
+    "ManagedElement MAY NOT exist when the Profile is "
+    "instantiated.  This is true when the Profile is used in the "
+    "creation of the real world entity represented by (and then "
+    "instantiated in) the ManagedElement.") ]
 class CIM_Profile : CIM_Collection {
 
     [Key, Description (
-        "InstanceID opaquely identifies a unique instance of "
-        "Profile.  The InstanceID must be unique within a namespace. "
-        "In order to ensure uniqueness, the value of InstanceID "
-        "should be constructed in the following manner:  \n"
-        "<Vendor ID><ID> \n"
-        "   <Vendor ID> MUST include a copyrighted, trademarked "
-        "or otherwise unique name that is owned by the business entity or a "
-        "registered ID that is assigned to the business entity that is defining "
-        "the InstanceID. (This is similar to the <Schema Name>_<Class Name> "
-        "structure of Schema class names.) The purpose of <Vendor ID> "
-        "is to ensure that <ID> is truly unique across multiple "
-        "vendor implementations.   If such a name is not "
-        "used, the defining entity MUST assure that the <ID> "
-        "portion of the Instance ID is unique when compared with "
-        "other instance providers. For DMTF defined instances, the "
-        "<Vendor ID> is 'CIM'. \n"
-        "   <ID> MUST include a vendor specified unique "
-        "identifier.") ]    
+        "Within the scope of the instantiating Namespace, InstanceID "
+        "opaquely and uniquely identifies an instance of this class. "
+        "In order to ensure uniqueness within the NameSpace, the "
+        "value of InstanceID SHOULD be constructed using the "
+        "following 'preferred' algorithm: \n"
+        "   <OrgID>:<LocalID> \n"
+        "Where <OrgID> and <LocalID> are separated by a colon ':', "
+        "and where <OrgID> MUST include a copyrighted, trademarked "
+        "or otherwise unique name that is owned by the business entity "
+        "creating/defining the InstanceID, or is a registered ID that is "
+        "assigned to the business entity by a recognized global "
+        "authority (This is similar to the <Schema Name>_<Class Name> "
+        "structure of Schema class names.) In addition, to ensure "
+        "uniqueness <OrgID> MUST NOT contain a colon (':'). When using "
+        "this algorithm, the first colon to appear in "
+        "InstanceID MUST appear between <OrgID> and <LocalID>.  \n"
+        "   <LocalID> is chosen by the business entity and SHOULD not be "
+        "re-used to identify different underlying (real-world) elements. "
+        "If the above 'preferred' algorithm is not used, the defining "
+        "entity MUST assure that the resultant InstanceID is not "
+        "re-used across any InstanceIDs produced by this or other "
+        "providers for this instance's NameSpace. \n"
+        "For DMTF defined instances, the 'preferred' algorithm MUST be "
+        "used with the <OrgID> set to 'CIM'.") ]        
     string InstanceID;
 };
 
@@ -234,13 +256,15 @@ class CIM_Profile : CIM_Collection {
 // ===================================================================
 // ElementProfile
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "ElementProfile represents the association between "
     "ManagedElements and the Profiles (collection of "
-    "settings) defined for them.") ]
+    "settings) defined for them.  This association describes that "
+    "the settings collected by the Profile apply to the "
+    "associated ManagedElement.") ]
 class CIM_ElementProfile {
 
-   [Key, Min(1), Max(1), Description (
+   [Key, Description (
        "The managed element.") ]
    CIM_ManagedElement REF ManagedElement;
 

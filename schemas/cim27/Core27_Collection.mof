@@ -2,10 +2,10 @@
 // Title:       Core Collections 2.7
 // Filename:    Core27_Collection.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/01/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,12 @@
 //              by other working groups, are omitted.
 // ==================================================================
 // Change Log for v2.7
+// CR968 - Remove the Experimental qualifier
+//       - Keep RedundancySet, SparedSet, IsSpare, StorageRedundancySet,
+//         and ExtraCapacitySet experimental for 2.8
+// CR994 - Update description for InstanceID
+//
+// Change Log for v2.7
 // CR684 - Add SystemSpecificCollection and HostedCollection
 // CR760 - Add OrderedMemberOfCollection
 // ================================================================== 
@@ -89,7 +95,7 @@ class CIM_MemberOfCollection {
 // ==============================================================
 // OrderedMemberOfCollection
 // ==============================================================
-[Association, Aggregation, Experimental, Version ("2.7.0"), 
+[Association, Aggregation, Version ("2.7.0"), 
     Description (   
     "CIM_OrderedMemberOfCollection is an aggregation used to "
     "establish an ordered membership of ManagedElements in a "
@@ -131,7 +137,7 @@ class CIM_OrderedMemberOfCollection : CIM_MemberOfCollection {
 // ==================================================================
 // SystemSpecificCollection
 // ================================================================== 
-[Experimental, Version ("2.7.0"), Description (   
+[Version ("2.7.0"), Description (   
     "   SystemSpecificCollection represents the general "
     "concept of a collection which is scoped (or contained) by a "
     "System. It represents a Collection that only has meaning "
@@ -149,25 +155,30 @@ class CIM_OrderedMemberOfCollection : CIM_MemberOfCollection {
 class CIM_SystemSpecificCollection : CIM_Collection {
 
     [Key, Description (
-        "InstanceID opaquely identifies a unique instance of "
-        "collection that is scoped (contained) by a System. "
-        "The InstanceID must be unique within a namespace. "
-        "In order to ensure uniqueness, the value of InstanceID "
-        "should be constructed in the following manner:  \n"
-        "<Vendor ID><ID> \n"
-        "   <Vendor ID> MUST include a copyrighted, trademarked "
-        "or otherwise unique name that is owned by the business "
-        "entity or a registered ID that is assigned to the business "
-        "entity that is defining the InstanceID. (This is similar to "
-        "the <Schema Name>_<Class Name> structure of Schema class "
-        "names.) The purpose of <Vendor ID> is to ensure that <ID> "
-        "is truly unique across multiple vendor implementations. "
-        "If such a name is not used, the defining entity MUST assure "
-        "that the <ID> portion of the Instance ID is unique when "
-        "compared with other instance providers. For DMTF defined "
-        "instances, the <Vendor ID> is 'CIM'. \n"
-        "   <ID> MUST include a vendor specified unique "
-        "identifier.") ]    
+        "Within the scope of the instantiating Namespace, InstanceID "
+        "opaquely and uniquely identifies an instance of this class. "
+        "In order to ensure uniqueness within the NameSpace, the "
+        "value of InstanceID SHOULD be constructed using the "
+        "following 'preferred' algorithm: \n"
+        "   <OrgID>:<LocalID> \n"
+        "Where <OrgID> and <LocalID> are separated by a colon ':', "
+        "and where <OrgID> MUST include a copyrighted, trademarked "
+        "or otherwise unique name that is owned by the business entity "
+        "creating/defining the InstanceID, or is a registered ID that is "
+        "assigned to the business entity by a recognized global "
+        "authority (This is similar to the <Schema Name>_<Class Name> "
+        "structure of Schema class names.) In addition, to ensure "
+        "uniqueness <OrgID> MUST NOT contain a colon (':'). When using "
+        "this algorithm, the first colon to appear in "
+        "InstanceID MUST appear between <OrgID> and <LocalID>.  \n"
+        "   <LocalID> is chosen by the business entity and SHOULD not be "
+        "re-used to identify different underlying (real-world) elements. "
+        "If the above 'preferred' algorithm is not used, the defining "
+        "entity MUST assure that the resultant InstanceID is not "
+        "re-used across any InstanceIDs produced by this or other "
+        "providers for this instance's NameSpace. \n"
+        "For DMTF defined instances, the 'preferred' algorithm MUST be "
+        "used with the <OrgID> set to 'CIM'.") ]        
     string InstanceID;
 };
 
@@ -175,7 +186,7 @@ class CIM_SystemSpecificCollection : CIM_Collection {
 // ==================================================================
 // HostedCollection    
 // ==================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "HostedCollection defines a SystemSpecificCollection "
     "in the context of a scoping System. It represents a "
     "Collection that only has meaning in the context of a "

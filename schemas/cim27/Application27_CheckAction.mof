@@ -2,11 +2,11 @@
 // Title:       Application MOF Specification 2.7, Checks and Actions
 // Filename:    Application27_CheckAction.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        09/22/2002
+// Status:      Final
+// Date:        31 March 2003
 // CVS:         $Revision: 1.4 $           
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -95,6 +95,18 @@
 //                        type to "Tru64 UNIX".
 //            -  CR 893 - Add Intel(R) Pentium(R) 4 processor with 
 //                        HT Technology 
+//
+//    10/21/2002 CIM 2.7.1 - Preliminary
+//            -  CR 914 - Remove Pentium 4 with HT from the 
+//                        CIM_ArchitectureCheck.ArchitectureType enum
+//                        (It was added by CR893)
+//
+//    03/20/2003 CIM 2.7.0 Public Final Release
+//            -  CR 935 - Add z/OS entry and rename VM/ESA to VM in
+//                        TargetOperatingSystem and 
+//                        TargetOperatingSystemDesired
+//            -  CR 951 - Add to the enumeration in CIM_ArchitectureCheck
+//                        (185 - Intel Pentium M processor)
 // ===================================================================
 
 #pragma locale ("en_US")
@@ -153,44 +165,44 @@ class CIM_Check : CIM_ManagedElement {
         Description (
         "The Target Operating System of the SoftwareElement being "
         "checked."), 
-        ValueMap {"0", "1", "2", "3", "4", 
-           "5", "6", "7", "8", "9", 
-           "10", "11", "12", "13", "14", 
-           "15", "16", "17", "18", "19", 
-           "20", "21", "22", "23", "24", 
-           "25", "26", "27", "28", "29", 
-           "30", "31", "32", "33", "34", 
-           "35", "36", "37", "38", "39", 
-           "40", "41", "42", "43", "44", 
-           "45", "46", "47", "48", "49", 
-           "50", "51", "52", "53", "54", 
-           "55", "56", "57", "58", "59", 
-           "60", "61", "62", "63", "64", 
-           "65", "66", "67"}, 
-        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX", 
-           "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX", 
-           //10 
-           "MVS", "OS400", "OS/2", "JavaVM", "MSDOS", 
-           "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE", 
-           //20 
-           "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX", 
-           "SCO UnixWare", "SCO OpenServer", "Sequent", 
-           "IRIX", "Solaris", 
-           //30 
-           "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT", 
-           "BS2000", "LINUX", "Lynx", "XENIX", "VM/ESA", 
-           //40 
-           "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD", 
-           "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX", 
-           "EPOC", 
-           //50 
-           "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE", 
-           "NextStep", "PalmPilot", "Rhapsody", "Windows 2000", 
-           "Dedicated", 
-           //60 
-           "OS/390", "VSE", "TPF","Windows (R) Me", 
-           "Caldera Open UNIX", "OpenBSD", "Not Applicable",
-           "Windows XP"} ]
+        ValueMap {"0", "1", "2", "3", "4",
+            "5", "6", "7", "8", "9",
+            "10", "11", "12", "13", "14",
+            "15", "16", "17", "18", "19",
+            "20", "21", "22", "23", "24",
+            "25", "26", "27", "28", "29",
+            "30", "31", "32", "33", "34",
+            "35", "36", "37", "38", "39",
+            "40", "41", "42", "43", "44",
+            "45", "46", "47", "48", "49",
+            "50", "51", "52", "53", "54",
+            "55", "56", "57", "58", "59",
+            "60", "61", "62", "63", "64",
+            "65", "66", "67", "68"},
+        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX",
+            "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX",
+            //10
+            "MVS", "OS400", "OS/2", "JavaVM", "MSDOS",
+            "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE",
+            //20
+            "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX",
+            "SCO UnixWare", "SCO OpenServer", "Sequent",
+            "IRIX", "Solaris",
+            //30
+            "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT",
+            "BS2000", "LINUX", "Lynx", "XENIX", "VM",
+            //40
+            "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD",
+            "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX",
+            "EPOC",
+            //50
+            "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE",
+            "NextStep", "PalmPilot", "Rhapsody", "Windows 2000",
+            "Dedicated",
+            //60
+            "OS/390", "VSE", "TPF","Windows (R) Me",
+            "Caldera Open UNIX", "OpenBSD", "Not Applicable",
+            "Windows XP", "z/OS"} ]
     uint16 TargetOperatingSystem;
 
         [Key, MaxLen (256), Description (
@@ -300,78 +312,79 @@ class CIM_ArchitectureCheck : CIM_Check {
         "properly execute a particular SoftwareElement. The intent "
         "is to capture the details about the machine instructions "
         "exploited by the executables of the SoftwareElement."),
-        ValueMap {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", 
-            "11", "12", "13", "14", "15", "16", "17", "18", "19", 
-            "24", "25", "26", "27", "28", "29", "30", 
-            "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "48", "49", "50", "51", "52", "53", "54", "55", 
-            "64", "65", "66", "67", "68", "69", 
-            "80", "81", "82", "83", "84", "85", "86", "87", "88", 
-            "96", "97", "98", "99", "100", "101", 
-            "112", "120", "121", "128", "130", 
-            "144", "145", "146", "147", "148", "149", "150", 
-            "160", "176", "177", "178", "179", 
+        ValueMap {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "15", "16", "17", "18", "19",
+            "24", "25", "26", "27", "28", "29", "30",
+            "31", "32", "33", "34", "35", "36", "37", "38", "39",
+            "48", "49", "50", "51", "52", "53", "54", "55",
+            "64", "65", "66", "67", "68", "69",
+            "80", "81", "82", "83", "84", "85", "86", "87", "88",
+            "96", "97", "98", "99", "100", "101",
+            "112", "120", "121", "128", "130",
+            "144", "145", "146", "147", "148", "149", "150",
+            "160", "176", "177", "178", "179",
             "180", "181", "182", "183", "184", "185",
-            "190", "200", "201", "202", 
-            "250", "251", "260", "261", "280", "281", 
-            "300", "301", "302", "320", "350", "500"}, 
-        Values {"Other", "Unknown", "8086", "80286", "80386", "80486", 
-            "8087", "80287", "80387", "80487", 
-            // 11 
-            "Pentium(R) brand", "Pentium(R) Pro", "Pentium(R) II", 
-            "Pentium(R) processor with MMX(TM) technology", 
-            "Celeron(TM)", "Pentium(R) II Xeon(TM)", 
-            "Pentium(R) III", "M1 Family", "M2 Family", 
-            //24 
-            "K5 Family", "K6 Family", "K6-2", "K6-3", 
-            "AMD Athlon(TM) Processor Family", 
-            "AMD(R) Duron(TM) Processor", "AMD29000 Family", 
-            //31 
-            "K6-2+", "Power PC Family", "Power PC 601", 
-            "Power PC 603", "Power PC 603+", "Power PC 604", 
-            "Power PC 620", "Power PC X704", "Power PC 750", 
-            // 48 
-            "Alpha Family", "Alpha 21064", "Alpha 21066", 
-            "Alpha 21164", "Alpha 21164PC", "Alpha 21164a", 
-            "Alpha 21264", "Alpha 21364", 
-            // 64 
-            "MIPS Family", "MIPS R4000", "MIPS R4200", 
-            "MIPS R4400", "MIPS R4600", "MIPS R10000", 
-            // 80 
-            "SPARC Family", "SuperSPARC","microSPARC II", 
-            "microSPARC IIep", "UltraSPARC", "UltraSPARC II", 
-            "UltraSPARC IIi", "UltraSPARC III", "UltraSPARC IIIi", 
-            // 96 
-            "68040", "68xxx Family", "68000", 
-            "68010", "68020", "68030", 
-            // 112 
-            "Hobbit Family", 
-            "Crusoe(TM) TM5000 Family", "Crusoe(TM) TM3000 Family", 
-            "Weitek", "Itanium(TM) Processor", 
-            // 144 
-            "PA-RISC Family", "PA-RISC 8500", "PA-RISC 8000", 
-            "PA-RISC 7300LC", "PA-RISC 7200", "PA-RISC 7100LC", 
-            "PA-RISC 7100", 
-            // 160 
-            "V30 Family", "Pentium(R) III Xeon(TM)", 
+            "190", "200", "201", "202", "203", "204",
+            "250", "251", "260", "261", "280", "281",
+            "300", "301", "302", "320", "350", "500"},
+        Values {"Other", "Unknown", "8086", "80286", "80386", "80486",
+            "8087", "80287", "80387", "80487",
+            // 11
+            "Pentium(R) brand", "Pentium(R) Pro", "Pentium(R) II",
+            "Pentium(R) processor with MMX(TM) technology",
+            "Celeron(TM)", "Pentium(R) II Xeon(TM)",
+            "Pentium(R) III", "M1 Family", "M2 Family",
+            //24
+            "K5 Family", "K6 Family", "K6-2", "K6-3",
+            "AMD Athlon(TM) Processor Family",
+            "AMD(R) Duron(TM) Processor", "AMD29000 Family",
+            //31
+            "K6-2+", "Power PC Family", "Power PC 601",
+            "Power PC 603", "Power PC 603+", "Power PC 604",
+            "Power PC 620", "Power PC X704", "Power PC 750",
+            // 48
+            "Alpha Family", "Alpha 21064", "Alpha 21066",
+            "Alpha 21164", "Alpha 21164PC", "Alpha 21164a",
+            "Alpha 21264", "Alpha 21364",
+            // 64
+            "MIPS Family", "MIPS R4000", "MIPS R4200",
+            "MIPS R4400", "MIPS R4600", "MIPS R10000",
+            // 80
+            "SPARC Family", "SuperSPARC","microSPARC II",
+            "microSPARC IIep", "UltraSPARC", "UltraSPARC II",
+            "UltraSPARC IIi", "UltraSPARC III", "UltraSPARC IIIi",
+            // 96
+            "68040", "68xxx Family", "68000",
+            "68010", "68020", "68030",
+            // 112
+            "Hobbit Family",
+            "Crusoe(TM) TM5000 Family", "Crusoe(TM) TM3000 Family",
+            "Weitek", "Itanium(TM) Processor",
+            // 144
+            "PA-RISC Family", "PA-RISC 8500", "PA-RISC 8000",
+            "PA-RISC 7300LC", "PA-RISC 7200", "PA-RISC 7100LC",
+            "PA-RISC 7100",
+            // 160
+            "V30 Family", "Pentium(R) III Xeon(TM)",
             "Pentium(R) III Processor with Intel(R) SpeedStep(TM) "
             "Technology",
-            "Pentium(R) 4", "Intel(R) Xeon(TM)", 
-            // 180 
-            "AS400 Family", "Intel(R) Xeon(TM) processor MP", 
-            "AMD AthlonXP(TM) Family", "AMD AthlonMP(TM) Family",
+            "Pentium(R) 4", "Intel(R) Xeon(TM)",
+            // 180
+            "AS400 Family", "Intel(R) Xeon(TM) processor MP",
+            "AMD Athlon(TM) XP Family", "AMD Athlon(TM) MP Family",
             "Intel(R) Itanium(R) 2",
             "Intel(R) Pentium(R) 4 processor with HT Technology",
-            // 190 
-            "K7", 
-            // 200 
-            "IBM390 Family", "G4", "G5", 
-            // 250 
-            "i860", "i960", "SH-3", "SH-4", "ARM", "StrongARM", 
-            // 300 
-            "6x86", "MediaGX", "MII", "WinChip", "DSP", 
+            // 190
+            "K7",
+            // 200
+            "S/390 and zSeries Family", "ESA/390 G4", "ESA/390 G5",
+            "ESA/390 G6", "z/Architectur base",
+            // 250
+            "i860", "i960", "SH-3", "SH-4", "ARM", "StrongARM",
+            // 300
+            "6x86", "MediaGX", "MII", "WinChip", "DSP",
             "Video Processor"},
-        MappingStrings {"MIF.DMTF|Processor|004.3"}, 
+        MappingStrings {"MIF.DMTF|Processor|017.3"}, 
         ModelCorrespondence {"CIM_Processor.Family"} ] 
     uint16 ArchitectureType;
 };
@@ -544,44 +557,44 @@ class CIM_SoftwareElementVersionCheck : CIM_Check {
         [Description (
         "The target operating system of the SoftwareElement being "
         "checked."),  
-        ValueMap {"0", "1", "2", "3", "4", 
-           "5", "6", "7", "8", "9", 
-           "10", "11", "12", "13", "14", 
-           "15", "16", "17", "18", "19", 
-           "20", "21", "22", "23", "24", 
-           "25", "26", "27", "28", "29", 
-           "30", "31", "32", "33", "34", 
-           "35", "36", "37", "38", "39", 
-           "40", "41", "42", "43", "44", 
-           "45", "46", "47", "48", "49", 
-           "50", "51", "52", "53", "54", 
-           "55", "56", "57", "58", "59", 
-           "60", "61", "62", "63", "64", 
-           "65", "66", "67"}, 
-        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX", 
-           "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX", 
-           //10 
-           "MVS", "OS400", "OS/2", "JavaVM", "MSDOS", 
-           "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE", 
-           //20 
-           "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX", 
-           "SCO UnixWare", "SCO OpenServer", "Sequent", 
-           "IRIX", "Solaris", 
-           //30 
-           "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT", 
-           "BS2000", "LINUX", "Lynx", "XENIX", "VM/ESA", 
-           //40 
-           "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD", 
-           "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX", 
-          "EPOC", 
-           //50 
-           "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE", 
-           "NextStep", "PalmPilot", "Rhapsody", "Windows 2000", 
-           "Dedicated", 
-           //60 
-           "OS/390", "VSE", "TPF","Windows (R) Me", 
-           "Caldera Open UNIX", "OpenBSD", "Not Applicable",
-           "Windows XP"},
+        ValueMap {"0", "1", "2", "3", "4",
+            "5", "6", "7", "8", "9",
+            "10", "11", "12", "13", "14",
+            "15", "16", "17", "18", "19",
+            "20", "21", "22", "23", "24",
+            "25", "26", "27", "28", "29",
+            "30", "31", "32", "33", "34",
+            "35", "36", "37", "38", "39",
+            "40", "41", "42", "43", "44",
+            "45", "46", "47", "48", "49",
+            "50", "51", "52", "53", "54",
+            "55", "56", "57", "58", "59",
+            "60", "61", "62", "63", "64",
+            "65", "66", "67", "68"},
+        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX",
+            "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX",
+            //10
+            "MVS", "OS400", "OS/2", "JavaVM", "MSDOS",
+            "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE",
+            //20
+            "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX",
+            "SCO UnixWare", "SCO OpenServer", "Sequent",
+            "IRIX", "Solaris",
+            //30
+            "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT",
+            "BS2000", "LINUX", "Lynx", "XENIX", "VM",
+            //40
+            "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD",
+            "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX",
+            "EPOC",
+            //50
+            "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE",
+            "NextStep", "PalmPilot", "Rhapsody", "Windows 2000",
+            "Dedicated",
+            //60
+            "OS/390", "VSE", "TPF","Windows (R) Me",
+            "Caldera Open UNIX", "OpenBSD", "Not Applicable",
+            "Windows XP", "z/OS"},
         ModelCorrespondence {
             "CIM_SoftwareElement.TargetOperatingSystem"} ] 
     uint16 TargetOperatingSystemDesired;
@@ -804,44 +817,44 @@ class CIM_Action : CIM_ManagedElement {
         Description (
         "The Target Operating System of the SoftwareElement being "
         "acted upon."), 
-        ValueMap {"0", "1", "2", "3", "4", 
-           "5", "6", "7", "8", "9", 
-           "10", "11", "12", "13", "14", 
-           "15", "16", "17", "18", "19", 
-           "20", "21", "22", "23", "24", 
-           "25", "26", "27", "28", "29", 
-           "30", "31", "32", "33", "34", 
-           "35", "36", "37", "38", "39", 
-           "40", "41", "42", "43", "44", 
-           "45", "46", "47", "48", "49", 
-           "50", "51", "52", "53", "54", 
-           "55", "56", "57", "58", "59", 
-           "60", "61", "62", "63", "64", 
-           "65", "66", "67"}, 
-        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX", 
-           "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX", 
-           //10 
-           "MVS", "OS400", "OS/2", "JavaVM", "MSDOS", 
-           "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE", 
-           //20 
-           "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX", 
-           "SCO UnixWare", "SCO OpenServer", "Sequent", 
-           "IRIX", "Solaris", 
-           //30 
-           "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT", 
-           "BS2000", "LINUX", "Lynx", "XENIX", "VM/ESA", 
-           //40 
-           "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD", 
-           "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX", 
-           "EPOC", 
-           //50 
-           "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE", 
-           "NextStep", "PalmPilot", "Rhapsody", "Windows 2000", 
-           "Dedicated", 
-           //60 
-           "OS/390", "VSE", "TPF","Windows (R) Me", 
-           "Caldera Open UNIX", "OpenBSD", "Not Applicable",
-           "Windows XP"} ]
+        ValueMap {"0", "1", "2", "3", "4",
+            "5", "6", "7", "8", "9",
+            "10", "11", "12", "13", "14",
+            "15", "16", "17", "18", "19",
+            "20", "21", "22", "23", "24",
+            "25", "26", "27", "28", "29",
+            "30", "31", "32", "33", "34",
+            "35", "36", "37", "38", "39",
+            "40", "41", "42", "43", "44",
+            "45", "46", "47", "48", "49",
+            "50", "51", "52", "53", "54",
+            "55", "56", "57", "58", "59",
+            "60", "61", "62", "63", "64",
+            "65", "66", "67", "68"},
+        Values {"Unknown", "Other", "MACOS", "ATTUNIX", "DGUX",
+            "DECNT", "Tru64 UNIX", "OpenVMS", "HPUX", "AIX",
+            //10
+            "MVS", "OS400", "OS/2", "JavaVM", "MSDOS",
+            "WIN3x", "WIN95", "WIN98", "WINNT", "WINCE",
+            //20
+            "NCR3000", "NetWare", "OSF", "DC/OS", "Reliant UNIX",
+            "SCO UnixWare", "SCO OpenServer", "Sequent",
+            "IRIX", "Solaris",
+            //30
+            "SunOS", "U6000", "ASERIES", "TandemNSK", "TandemNT",
+            "BS2000", "LINUX", "Lynx", "XENIX", "VM",
+            //40
+            "Interactive UNIX", "BSDUNIX", "FreeBSD", "NetBSD",
+            "GNU Hurd", "OS9", "MACH Kernel", "Inferno", "QNX",
+            "EPOC",
+            //50
+            "IxWorks", "VxWorks", "MiNT", "BeOS", "HP MPE",
+            "NextStep", "PalmPilot", "Rhapsody", "Windows 2000",
+            "Dedicated",
+            //60
+            "OS/390", "VSE", "TPF","Windows (R) Me",
+            "Caldera Open UNIX", "OpenBSD", "Not Applicable",
+            "Windows XP", "z/OS"} ]
     uint16 TargetOperatingSystem;
 
         [Key, MaxLen (256), Description (

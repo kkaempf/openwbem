@@ -2,10 +2,10 @@
 // Title:       System Elements 2.7
 // Filename:    System27_SystemElements.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        10/04/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR963 - Update description for ComputerSystem.
+// CR969 - Remove the experimental qualifier
+//
 // Change Log for v2.7
 // CR640 - Add ComputerSystem.OtherDedicatedDescriptions
 //       - Add corresponding model correspondence to ComputerSystem.
@@ -92,26 +96,15 @@
 class CIM_ComputerSystem : CIM_System {
 
     [Override ("NameFormat"), Description (
-        "  The ComputerSystem object and its derivatives are Top "
+        "The ComputerSystem object and its derivatives are Top "
         "Level Objects of CIM. They provide the scope for numerous "
         "components. Having unique System keys is required. "
-        "A heuristic is defined to create the ComputerSystem Name "
-        "to attempt to always generate the same Name, independent of "
-        "discovery protocol. This prevents inventory and management "
-        "problems where the same asset or entity is discovered "
-        "multiple times, but cannot be resolved to a single object. "
-        "Use of the heuristic is optional, but recommended. \n"
-        "  The NameFormat property identifies how the ComputerSystem "
-        "Name is generated, using a heuristic. The heuristic is "
-        "outlined, in detail, in the CIM V2 System Model spec. "
-        "It assumes that the documented rules are traversed in order, "
-        "to determine and assign a Name. The NameFormat Values "
-        "list defines the precedence order for assigning the Computer"
-        "System Name. Several rules do map to the same Value. \n"
-        "  Note that the ComputerSystem Name calculated using the "
-        "heuristic is the System's key value. Other names can be "
-        "assigned and used for the ComputerSystem, that better suit "
-        "a business, using Aliases."), 
+        "The NameFormat property identifies how the ComputerSystem "
+        "Name is generated. The NameFormat ValueMap qualifier "
+        "defines the various mechanisms for assigning the name. "
+        "Note that another name can be assigned and "
+        "used for the ComputerSystem that better suit "
+        "a business, using the inherited ElementName property."), 
         ValueMap {"Other", "IP", "Dial", "HID", "NWA", "HWA", "X25", 
             "ISDN", "IPX", "DCC", "ICD", "E.164", "SNA", "OID/OSI",
             "WWN"} ]
@@ -168,7 +161,7 @@ class CIM_ComputerSystem : CIM_System {
             "CIM_ComputerSystem.OtherDedicatedDescriptions"} ]
     uint16 Dedicated[];
     
-    [Experimental, Description (
+    [Description (
         "A string describing how or why the system is dedicated "
         "when the Dedicated array includes the value 2, "
         "\"Other\"."),

@@ -2,10 +2,10 @@
 // Title:       User-Security Public Key Services and Credentials 2.7
 // Filename:    User27_PublicKey.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/07/2002
+// Status:      Final
+// Date:        04/02/2003
 // ===================================================================
-// Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -53,6 +53,7 @@
 // ===================================================================
 // Change Log for v2.7
 // CR784 - Deprecate Expires property from CASignsPublicKeyCertificate 
+// CR980 - Take the Deprecation to Final status
 // ===================================================================
 
 #pragma Locale ("en_US")
@@ -216,11 +217,11 @@ class CIM_CASignsPublicKeyCertificate : CIM_ManagedCredential {
    CIM_PublicKeyCertificate REF Dependent;
    
    [Description (
-      "The Serial Number")]
+      "The Serial Number.") ]
    string SerialNumber;
 
    [Octetstring, Description (
-      "The Signature") ]
+      "The Signature.") ]
    uint8 Signature[];
 
    [Deprecated {"CIM_Credential.Expires"}, Description (

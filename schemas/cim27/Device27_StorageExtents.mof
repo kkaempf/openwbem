@@ -2,10 +2,10 @@
 // Title:       Device Storage Extents 2.7
 // Filename:    Device27_StorgaeExtents.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,11 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR970 - Removal of the Experimental qualifier
+//       - Remove several properties from StorageVolume and make them
+//         Experimental in 2.8
+//
 // Change Log for v2.7
 // CR722 - Add ProtectedExtentBasedOn, CompositeExtent, and 
 //         CompositeExtentBasedOn
@@ -158,21 +163,6 @@ class CIM_RealizedOnSide : CIM_RealizesExtent {
     "result of assembling lower level Extents.") ]
 class CIM_StorageVolume : CIM_StorageExtent {
     
-    [Experimental, Description (
-        "Indicates whether or not there exists no single point of failure.")]
-    boolean NoSinglePointOfFailure;
-
-    [Experimental, Description (
-        "Number of complete copies of data maintained.")]
-    uint16 DataRedundancy;
-
-    [Experimental, Description (
-        "How many disk spindles can fail without data loss.")]
-    uint16 SpindleRedundancy;
-
-    [Experimental, MinValue (1), MaxValue (100), Description (
-        "Current value for Delta reservation. ") ]
-    uint16 DeltaReservation;
 };
 
 
@@ -601,7 +591,7 @@ class CIM_RealizesDiskPartition : CIM_RealizesExtent {
 // ===================================================================
 // ProtectedExtentBasedOn
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "Protected StorageExtents map to an underlying "
     "StorageExtent. This mapping includes information about "
     "the placement of check data on the underlying extent. "
@@ -668,7 +658,7 @@ class CIM_ProtectedExtentBasedOn : CIM_BasedOn {
 // ===================================================================
 // CompositeExtent
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A CompositeExtent is used to model the distribution of "
     "user data across one or more underlying StorageExtents, which "
     "may or not be protected by some redundancy mechanism. "
@@ -710,7 +700,7 @@ class CIM_CompositeExtent : CIM_StorageExtent {
 // ===================================================================
 // CompositeExtentBasedOn
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "This specialization defines how data is striped across "
     "StorageExtents.  Additionally, it includes information on "
     "distribution of check data so that the 'usual case' RAID "

@@ -2,13 +2,13 @@
 // Title:       Master MOF
 // Filename:    CIM_Schema27.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/02/2002
+// Status:      Final
+// Date:        03/31/2003
 // Description: The include file to bring in the CIM Core and 
 //              Common Models, in the correct order to avoid
 //              forward referencing.
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 

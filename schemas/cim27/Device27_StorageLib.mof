@@ -2,10 +2,10 @@
 // Title:       Device Storage Library 2.7
 // Filename:    Device27_StorageLib.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/17/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,9 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR970 - Removal of the Experimental qualifier
+//
 // Change Log for v2.7
 // CR721 - Add LabelReaderStatData and PickerStatData that are part 
 //         of the new statistics hierarcy
@@ -625,7 +628,7 @@ class CIM_PickerStatInfo : CIM_DeviceStatisticalInformation {
 // ===================================================================
 // LabelReaderStatData
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "Statistics for a LabelReader, related to read successes, "
     "failures and retries. The element whose statistics are "
     "described is associated using the relationship, "
@@ -649,7 +652,7 @@ class CIM_LabelReaderStatData : CIM_StatisticalData {
 // ===================================================================
 // PickerStatData
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "Statistics for a PickerElement, related to pick/put successes, "
     "retries and failures. The element whose statistics are described "
     "is associated using the relationship, ElementStatisticalData.") ]

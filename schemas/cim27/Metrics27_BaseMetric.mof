@@ -3,10 +3,10 @@
 // Author:      DMTF Application Working Group
 // Filename:    Metric27_BaseMetric.MOF
 // Version      2.7.0
-// Status:      Prelimanary
-// Date:        07/30/02   $Version$ $Date: 2002/07/02 12:52:14 $
+// Status:      Final
+// Date:        31 March 2003
 // ===================================================================
-// Copyright 1999-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -63,6 +63,13 @@
 //     CR820 - Defined Base Metrics Classes and associations
 //     CR851 - Change the Description of BaseMetricValue.Duration 
 //             to define the timestamp as the end of the duration
+// CIM 2.7.0 (Final) 17 March 2003
+//     CR987 - Remove experimental qualifier from:
+//              -CIM_BaseMetricDefinition
+//              -CIM_BaseMetricValue
+//              -CIM_MetricInstance
+//              -CIM_MetricDefForME
+//              -CIM_MetricForME
 // ==================================================================
 
 #pragma Locale ("en_US")
@@ -71,7 +78,7 @@
 // ================================================================== 
 // BaseMetricDefinition
 // ==================================================================
-      [Version("2.7.0"), Experimental, Description (
+      [Version("2.7.0"), Description (
         "CIM_BaseMetricDefinition represents the definitional aspects "
         "of a metric, i.e., a definition template containing meta data "
         "about a new metric. Since CIM_BaseMetricDefinition does not "
@@ -163,7 +170,7 @@ class CIM_BaseMetricDefinition : CIM_ManagedElement {
 // ================================================================== 
 // BaseMetricValue
 // ==================================================================
-      [Version("2.7.0"), Experimental, Description (
+      [Version("2.7.0"), Description (
         "   Each CIM_BaseMetricValue object represents the instance "
         "value of a metric. Since the gathering of metric information "
         "can involve large quantities of information there may be many "
@@ -269,7 +276,7 @@ class CIM_BaseMetricValue : CIM_ManagedElement {
 // ===================================================================
 // MetricInstance
 // ===================================================================
-      [Association, Version("2.7.0"), Experimental, Description (   
+      [Association, Version("2.7.0"), Description (   
         "Weak association of metric value objects with their metric "
         "definition. This association ties an instance of "
         "CIM_BaseMetricValue to its CIM_BaseMetricDefinition; it is weak "
@@ -295,7 +302,7 @@ class CIM_MetricInstance : CIM_Dependency {
 // ===================================================================
 // MetricDefForME
 // ===================================================================
-      [Association, Version("2.7.0"), Experimental, Description (   
+      [Association, Version("2.7.0"), Description (   
         "This association ties a CIM_BaseMetricDefinition to a "
         "CIM_ManagedElement to define metrics for the latter. The "
         "metrics definition is given context by the ManagedElement, "
@@ -318,7 +325,7 @@ class CIM_MetricDefForME : CIM_Dependency {
 // ===================================================================
 // MetricForME
 // ===================================================================
-      [Association, Version("2.7.0"), Experimental, Description (   
+      [Association, Version("2.7.0"), Description (   
         "This association links a ManagedElement to the metric "
         "values being maintained for it.") ]
 class CIM_MetricForME : CIM_Dependency {

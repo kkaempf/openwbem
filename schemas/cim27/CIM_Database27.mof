@@ -2,10 +2,10 @@
 // Title:       Database MOF Specification 2.7
 // Filename:    CIM_Database27.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/30/2002
+// Status:      Final
+// Date:        03/31/2003
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2002-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -71,9 +71,11 @@
 //       avoids forward references. Required objects that have been 
 //       defined by other working groups are omitted.
 // ==================================================================
-// Change Log for v2.7
+// Change Log for V2.7.0 Final
 // CR776 - Initial submission of the Database Model 
 // CR847 - InstanceID is the Key of CommonDatabase
+// CR984 - Request to move the Database Model to final
+// CR994 - Fix description of InstanceID
 // ==================================================================
 
 #pragma Locale ("en-US")
@@ -92,7 +94,7 @@
 // DatabaseSystem Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ("The CIM_DatabaseSystem class is used to represent the "
           "application software portion of a database environment."
@@ -118,7 +120,7 @@ class CIM_DatabaseSystem : CIM_ApplicationSystem {
 // CommonDatabase Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ("A database is a collection of interrelated data, treated "
           "as a unit, which is organized into one or more schemas.  "
@@ -134,25 +136,31 @@ class CIM_DatabaseSystem : CIM_ApplicationSystem {
           "\n") ] 
 class CIM_CommonDatabase : CIM_EnabledLogicalElement {
 
-      [Key, Description(
-        "InstanceID opaquely identifies a specific instance of "
-        "CommonDatabase.  The InstanceID must be unique within a "
-        "namespace. In order to ensure uniqueness, the value of "
-        "InstanceID SHOULD be constructed in the following manner: \n"
-        "<Vendor ID><ID> \n"
-        "   <Vendor ID> MUST include a copyrighted, trademarked "
-        "or otherwise unique name that is owned by the business "
-        "entity or a registered ID that is assigned to the business "
-        "entity that is defining the InstanceID. (This is similar to "
-        "the <Schema Name>_<Class Name> structure of Schema class "
-        "names.) The purpose of <Vendor ID> is to ensure that <ID> "
-        "is truly unique across multiple vendor implementations.  "
-        "If such a name is not used, the defining entity MUST assure "
-        "that the <ID> portion of the Instance ID is unique when "
-        "compared with other instance providers. For DMTF defined "
-        "instances, the <Vendor ID> is 'CIM'. \n"
-        "   <ID> MUST include a vendor specified unique "
-        "identifier.") ]        
+    [Key, Description (
+        "Within the scope of the instantiating Namespace, InstanceID " 
+        "opaquely and uniquely identifies an instance of this class. "
+        "In order to ensure uniqueness within the NameSpace, the "
+        "value of InstanceID SHOULD be constructed using the "
+        "following 'preferred' algorithm: \n"
+        " <OrgID>:<LocalID> \n"
+        "Where <OrgID> and <LocalID> are separated by a colon ':', "
+        "and where <OrgID> MUST include a copyrighted, trademarked "
+        "or otherwise unique name that is owned by the business entity "
+        "creating/defining the InstanceID, or is a registered ID that "
+        "is assigned to the business entity by a recognized global "
+        "authority. (This is similar to the <Schema Name>_<Class Name> "
+        "structure of Schema class names.) In addition, to ensure "
+        "uniqueness <OrgID> MUST NOT contain a colon (':'). When "
+        "using this algorithm, the first colon to appear in "
+        "InstanceID MUST appear between <OrgID> and <LocalID>. \n"
+        " <LocalID> is chosen by the business entity and SHOULD not be "
+        "re-used to identify different underlying (real-world) elements. " 
+        "If the above 'preferred' algorithm is not used, the defining "
+        "entity MUST assure that the resultant InstanceID is not "
+        "re-used across any InstanceIDs produced by this or other "
+        "providers for this instance's NameSpace. \n"
+        "For DMTF defined instances, the 'preferred' algorithm MUST be "
+        "used with the <OrgID> set to 'CIM'.") ] 
     string InstanceID;
 
       [Description 
@@ -199,7 +207,7 @@ class CIM_CommonDatabase : CIM_EnabledLogicalElement {
 // AssociatedDatabaseSystem Association
 // ==================================================================
 
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
       Description 
          ("The CIM_AssociatedDatabaseSystem association identifies "
           "the database system that is responsible for the database.") ]
@@ -222,7 +230,7 @@ class CIM_AssociatedDatabaseSystem : CIM_Dependency {
 // DatabaseAdministrator Association
 // ==================================================================
 
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
       Description 
          ( "The CIM_DatabaseAdministrator association identifies " 
            "a CIM_UserEntity as a database administrator "
@@ -246,7 +254,7 @@ class CIM_DatabaseAdministrator : CIM_Dependency {
 // DatabaseService Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ("Database services perform tasks for a database.  "
           "Examples of tasks that are performed by a database service "
@@ -311,7 +319,7 @@ class CIM_DatabaseService : CIM_Service {
 // ServiceAvailableToDatabase Association
 // ==================================================================
 
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
       Description 
          ("The CIM_ServiceAvailableToDatabase association relates "
           "databases to the database services that are available "
@@ -371,7 +379,7 @@ class CIM_ServiceAvailableToDatabase : CIM_ServiceAvailableToElement {
 // DatabaseParameter Class
 // ==================================================================
 
-   [Abstract, Experimental, Version ("2.7.0"), 
+   [Abstract, Version ("2.7.0"), 
       Description 
          ("The CIM_DatabaseParameter class extends from "
           "CIM_ScopedSettingData.  This is an abstract class that "
@@ -410,7 +418,7 @@ class CIM_DatabaseParameter : CIM_ScopedSettingData {
 // SNMPDatabaseParameter Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ( "The CIM_SNMPDatabaseParameter class extends from "
            "CIM_DatabaseParameter.  This class is included in the "
@@ -440,7 +448,7 @@ class CIM_SNMPDatabaseParameter : CIM_DatabaseParameter {
 // DatabaseServiceStatistics Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ( "The CIM_DatabaseServiceStatistics class contains the "
            "current statistics for a database service.  These are "
@@ -577,7 +585,7 @@ class CIM_DatabaseServiceStatistics : CIM_StatisticalData {
 // CommonDatabaseStatistics Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
           ("The CIM_CommonDatabaseStatistics class contains the "
            "current statistics for a database.") ]
@@ -596,7 +604,7 @@ class CIM_CommonDatabaseStatistics : CIM_StatisticalData {
 // DatabaseResourceStatistics Class
 // ==================================================================
 
-   [Experimental, Version ("2.7.0"), 
+   [Version ("2.7.0"), 
       Description 
          ("The CIM_DatabaseServiceStatistics class contains the "
           "current statistics for a database resource.  This class "

@@ -2,10 +2,10 @@
 // Title:       Device Fibre Channel 2.7
 // Filename:    Device27_FC.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/30/02
+// Release:     Final
+// Date:        04/15/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,17 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR940 - Fix Value/ValueMap mismatch in FCPort.ActiveFC4Types
+// CR948 - Add additional value of "G" to FCPort.PortType
+// CR970 - Removal of the Experimental qualifier
+//       - Move ZoneCapabilities to CIM V2.8, as Experimental 
+// CR975 - Clean up of Zone
+// CR976 - Remove ZoneAlias in lieu of the Network's class
+//         NamedAddressCollection
+// CR977 - Update to ZoneMemberSettingData to allow for common
+//         superclass of ConnectivitySettingData
+//
 // Change Log for v2.7
 // CR630 - Add FCPort and FCPortStatistics
 // CR674 - Add ZoneSet, Zone, ZoneAlias, ZoneMemberSettingData,
@@ -63,8 +74,8 @@
 // ==================================================================
 // FCPort
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "Capabilities and management of a Fibre Channel Port Device") ] 
+[Version ("2.7.0"), Description (
+    "Capabilities and management of a Fibre Channel Port Device.") ] 
 class CIM_FCPort : CIM_NetworkPort {
     
     [Override("PortType"), Description (
@@ -73,15 +84,16 @@ class CIM_FCPort : CIM_NetworkPort {
         "supporting FC arbitrated loop, \"E\" = Expansion Port "
         "connecting fabric elements (for example, FC switches), "
         "\"F\" = Fabric (element) Port, \"FL\" = Fabric (element) "
-        "Port supporting FC arbitrated loop, and \"B\" = Bridge "
-        "Port. PortTypes are defined in the ANSI X3 standards."
+        "Port supporting FC arbitrated loop, \"B\" = Bridge "
+        "and \"G\" = Generic Port.  "
+        "PortTypes are defined in the ANSI X3 standards. "
         "When set to 1 (\"Other\"), the related property "
         "OtherPortType contains a string description of "
         "the port's type."),
         ValueMap {"0", "1", "10", "11", "12", "13", "14", "15", 
-            "16", "17", "16000.."},
+            "16", "17", "18", "16000..65535"},
         Values {"Unknown", "Other", "N", "NL", "F/NL", "Nx", "E", 
-            "F", "FL", "B", "Vendor Reserved"} ]
+            "F", "FL", "B", "G", "Vendor Reserved"} ]
     uint16 PortType;
 
     [Description (
@@ -126,16 +138,18 @@ class CIM_FCPort : CIM_NetworkPort {
         "An array of integers indicating the Fibre Channel FC-4 "
         "protocols currently running. A list of all protocols "
         "supported is indicated in the SupportedFC4Types property."), 
-        ValueMap {"0", "1", "4", "5", "8", "9", "17", "18", "19", "21", 
-            "22", "23", "25", "26", "27", "28", "32", "34", "36", 
+        ValueMap {"0", "1", "4", "5", "8", "9", 
+            "17", "18", "19", "21", "22", "23", 
+            "25", "26", "27", "28", "32", "34", "36", 
             "64", "80", "81", "82", "88", "96", "255"}, 
         Values {"Unknown", "Other", "ISO/IEC 8802 - 2 LLC", 
             "IP over FC", "SCSI - FCP", "SCSI - GPP", 
             "IPI - 3 Master", "IPI - 3 Slave", "IPI - 3 Peer", 
-            "SBCCS Channel", 
+            "CP IPI - 3 Master", "CP IPI - 3 Slave", 
+            "CP IPI - 3 Peer", "SBCCS Channel", 
             "SBCCS Control Unit", "FC-SB-2 Channel", 
             "FC-SB-2 Control Unit", 
-            "Fibre Channel Services (FC-GS)", 
+            "Fibre Channel Services (FC-GS, FC-GS-2, FC-GS-3)", 
             "FC-SW", "FC - SNMP", "HIPPI - FP", "BBL Control", 
             "BBL FDDI Encapsulated LAN PDU", 
             "BBL 802.3 Encapsulated LAN PDU", "FC - VI", "FC - AV", 
@@ -148,14 +162,14 @@ class CIM_FCPort : CIM_NetworkPort {
 // ==================================================================
 // ZoneSet
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A ZoneSet is a group of zones that are managed collectively "
     "by the same domain.  The managing domain is indicated by the "
     "HostedCollection association.  For example, for Fibre Channel, "
     "this would indicate a set of zones that are part of a fabric.  "
     "The zones are only under zone enforcement by the fabric,"
     "if the zoneset is set to active.") ] 
-class CIM_ZoneSet : CIM_SystemSpecificCollection {
+class CIM_ZoneSet : CIM_ConnectivityCollection {
  
     [Override ("ElementName"), Required, Write, Description (  
         "A user-friendly name for the ZoneSet that is unique "
@@ -175,13 +189,14 @@ class CIM_ZoneSet : CIM_SystemSpecificCollection {
 // ==================================================================
 // Zone
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A zone is a group of Ports, Endpoints, Nodes, Zones, and/or "
-    "ZoneAliases that are managed collectively by the same domain.  "
-    "The managing domain is indicated by the HostedCollection "
-    "association.  For Fibre Channel a zones would indicate a set of "
-    "members that are participating together in the fabric.") ]
-class CIM_Zone : CIM_SystemSpecificCollection { 
+    "NamedAddressCollections that are managed collectively by "
+    "the same domain. The managing domain is indicated by the "
+    "HostedCollection association. For Fibre Channel, a zone "
+    "indicates a set of members that are participating together "
+    "in the fabric.") ]
+class CIM_Zone : CIM_ConnectivityCollection { 
  
     [Override ("ElementName"), Required, Write, Description (  
         "A user-friendly name for the Zone that is unique "
@@ -198,7 +213,7 @@ class CIM_Zone : CIM_SystemSpecificCollection {
     
     [Required, Description (
         "The type of zoning to be enforced."),
-        ValueMap {"0", "1", "2", "3", "..", "0x8000.."},
+        ValueMap {"0", "1", "2", "3", "..", "32768..65535"},
         Values {"Unknown", "Other", "Default", "Protocol",
             "DMTF Reserved", "Vendor Reserved"},
         ModelCorrespondence {"CIM_Zone.OtherZoneTypeDescription"} ]
@@ -211,82 +226,64 @@ class CIM_Zone : CIM_SystemSpecificCollection {
     string OtherZoneTypeDescription;
     
     [Description (
-        "The protocol that is allowed to participate in the Zone. "
-        "For Fibre Channel, this is the FC4 type."),
-        ValueMap {"0", "1", "2", "3", "4"},
-        Values {"Unknown", "Other", "SCSI", "VI", "IP"},
-        ModelCorrespondence {"CIM_Zone.OtherProtocolTypeDescription"} ]
-    uint16 ProtocolType;
+        "Specific clarification when necessary when the ProtocolType "
+        "has an enumeration that requires it.  Specifically, if "
+        "ProtocolType is \"Protocol\", then SubType the Fibre Channel "
+        "FC4 type."),
+        ValueMap {"0", "1", "2", "3", "4", "..", 
+            "32768..65535"},
+        Values {"Unknown", "Other", "SCSI", "VI", "IP",
+            "DMTF Reserved", "Vendor Reserved"},
+        ModelCorrespondence {"CIM_Zone.OtherZoneSubTypeDescription"} ]
+    uint16 ZoneSubType;
     
     [Description (
-        "A string describing the ProtocolType when the ProtocolType "
+        "A string describing the ZoneSubType when the ZoneSubType "
         "value is 1 \"Other\"."),
-       ModelCorrespondence {"CIM_Zone.ProtocolType"} ]
-    string OtherProtocolTypeDescription;
-        
-    [Description (
-        "The access mode allowed for the ProtocolType.") ]
-    boolean ReadOnly;
+       ModelCorrespondence {"CIM_Zone.ZoneSubType"} ]
+    string OtherZoneSubTypeDescription;
 };
  
  
 // ==================================================================
-// ZoneAlias
+// ZoneMembershipSettingData
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "A zone is a group of Ports, Endpoints, Nodes, and/or other Zones "
-    "that are managed collectively by the same domain. The managing "
-    "domain is indicated by the HostedCollection association.") ]
-class CIM_ZoneAlias : CIM_SystemSpecificCollection { 
+[Version ("2.7.0"), Description (
+    "ZoneMembershipSettingData provides the identification criteria "
+    "for possible Zone and ZoneAlias members.") ]
+class CIM_ZoneMembershipSettingData : CIM_SettingData {
  
-    [Override ("ElementName"), Required, Write, Description (  
-        "A user-friendly name for the ZoneAlias that is unique "
-        "within the AdminDomain.") ]
-    string ElementName;
-};
- 
- 
-// ==================================================================
-// ZoneMemberSettingData
-// ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "ZoneMemberSettingData provides the identification criteria for "
-    "possible Zone and ZoneAlias members.") ]
-class CIM_ZoneMemberSettingData : CIM_SettingData {
- 
-    [Required, Write, Description (
+    [Required, Description (
         "This specifies the type of identification "
-        "used in the ZoneMemberID field.  For Fibre Channel: \n"
-        "* A ZoneMemberType of 'PermanentAddress', the "
-        "ZoneMemberID is the NxPort WWN; \n"
-        "* A ZoneMemberType of 'NetworkAddress', the "
-        "ZoneMemberID is the NXPort Address ID; \n"
-        "* A ZoneMemberType of 'SwitchPortID', the ZoneMemberID "
-        "is 'Domain:PortNumber'; \n"
-        "* A ZoneMemberType of 'Alias', the ZoneMemberID is "
-        "ZoneAlias name."),
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "..", 
-            "0x8000.."},
+        "used in the ConnectivityMemberID field.  For Fibre Channel: \n"
+        "* A ConnectivityMemberType of 'PermanentAddress', the "
+        "ConnectivityMemberID is the NxPort WWN; \n"
+        "* A ConnectivityMemberType of 'NetworkAddress', the "
+        "ConnectivityMemberID is the NXPort Address ID; \n"
+        "* A ConnectivityMemberType of 'SwitchPortID', the "
+        "ConnectivityMemberID is 'Domain:PortNumber'."),
+        ValueMap {"0", "1", "2", "3", "4", "5", "..", 
+            "32768..65535"},
         Values {"Unknown", "Other", "PermanentAddress", 
             "NetworkAddress", "SwitchPortID", "LogicalPortGroup",
-            "Alias", "DMTF Reserved", "Vendor Reserved"},
+            "DMTF Reserved", "Vendor Reserved"},
         ModelCorrespondence {
-            "CIM_ZoneMemberSettingData.ZoneMemberID"} ] 
-    uint16 ZoneMemberType;
+            "CIM_ConnectivityMemberSettingData.ConnectivityMemberID"} ] 
+    uint16 ConnectivityMemberType;
  
-    [Required, Write, Description (
+    [Required, Description (
         "The identification of the member "
-        "based on the type specified by ZoneMemberType."),
+        "based on the type specified by ConnectivityMemberType."),
         ModelCorrespondence {
-            "CIM_ZoneMemberSettingData.ZoneMemberType"} ] 
-    string ZoneMemberID;
+            "CIM_ConnectivityMemberSettingData.ConnectivityMemberType"} ] 
+    string ConnectivityMemberID;
 };
  
  
 // ==================================================================
 // ZoneService
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "The ZoneService if responsible for managing the zone "
     "enforcement for the fabric.  The ZoneService is hosted on an "
     "AdminDomain.  This is depicted by the HostedService "
@@ -294,53 +291,6 @@ class CIM_ZoneMemberSettingData : CIM_SettingData {
 class CIM_ZoneService: CIM_Service {
 }; 
  
-
-// ==================================================================
-// ZoneCapabilities
-// ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "ZoneCapabilities exposes the capabilities for zoning of an "
-    "AdminDomain.") ] 
-class CIM_ZoneCapabilities : CIM_Capabilities {
-        
-    [Description (
-        "The maximum length for the Zone Name that the AdminDomain "
-        "is capable of supporting.") ]
-    uint32 ZoneNameMaxLen;
- 
-    [Description (
-        "The ZoneNameFormat supported by the AdminDomain."),
-        ValueMap {"0", "2", "3", "..", "0x8000.."},
-        Values {"Unknown", "Numeric", "Alpha Numeric",
-            "DMTF Reserved", "Vendor Reserved"} ]
-    uint16 ZoneNameFormat;
- 
-    [Description (
-         "The maximum number of ZoneSets that the AdminDomain "
-         "is capable of supporting.") ]
-    uint32 MaxNumZoneSets;
- 
-    [Description (
-         "The maximum number of Zones that the AdminDomain is "
-         "capable of supporting.") ]
-    uint32 MaxNumZone;
- 
-    [Description (
-         "The maximum number of ZoneMembers that the AdminDomain "
-         "is capable of supporting.") ]
-    uint32 MaxNumZoneMembers;
- 
-    [Description (
-         "The maximum number of Zones per ZoneSet that the "
-         "AdminDomain is capable of supporting.") ]
-    uint32 MaxNumZonesPerZoneSet;
- 
-    [Description (
-         "The maximum number of ZoneAliases that the AdminDomain "
-         "is capable of supporting.") ]
-    uint32 MaxNumZoneAliases;
-};
-
 
 // ==================================================================
 // FibreProtocolService 
@@ -358,7 +308,7 @@ class CIM_FibreProtocolService : CIM_Service {
 // ==================================================================
 // FCPortStatistics
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "FCPortStatistics is the statistics for the FCPort.") ]
 class CIM_FCPortStatistics : CIM_NetworkPortStatistics {
     

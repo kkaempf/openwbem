@@ -2,10 +2,10 @@
 // Title:       Network Filtering 2.7
 // Filename:    Network27_Filtering.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/31/2002
+// Status:      Final
+// Date:        March 31, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -65,6 +65,8 @@
 //         HdrXXX8021 to comply with the CIM Spec
 // CR867 - Add Override qualifier to FilterEntryBase and 
 //         FilterList.Name
+// CR982 - Removal of Experimental for preliminary to final
+// CR983 - Deprecations for v2.7 made final
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -483,7 +485,7 @@ class CIM_IPHeadersFilter : CIM_FilterEntryBase {
 // ==================================================================
 // 8021Filter
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "8021Filter allows 802.1.source and destination MAC addresses, "
       "as well as the 802.1 protocol ID, priority, and VLAN "
       "identifier fields, to be expressed in a single object to "
@@ -570,7 +572,7 @@ class CIM_8021Filter : CIM_FilterEntryBase {
 // ==================================================================
 // PreambleFilter
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "PreambleFilter allows the classification of packets "
       "using traffic-conditioning results (where the results are "
       "determined by a PreambleMarkerService and stored in a "
@@ -757,7 +759,7 @@ class CIM_FilterListInSystem : CIM_SystemComponent {
 // ==================================================================
 // HostedFilterEntryBase
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "All filter entries (FilterEntryBase and its subclasses) "
       "are defined in the context of a ComputerSystem/network "
@@ -779,7 +781,7 @@ class CIM_HostedFilterEntryBase : CIM_Dependency {
 // ==================================================================
 // HostedFilterList
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "FilterLists are defined in the context of a ComputerSystem/"
       "network device, where the list is used and administered.") ]

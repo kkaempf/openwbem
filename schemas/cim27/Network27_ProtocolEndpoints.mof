@@ -2,10 +2,10 @@
 // Title:       Network Protocol Endpoints 2.7
 // Filename:    Network27_ProtocolEndpoints.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        08/04/2002
+// Status:      Final
+// Date:        April 21, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -67,6 +67,15 @@
 // CR866 - Fixes to BGPProtocolEndpoint - Deprecated several 
 //         properties and added properties from BGPPeerGroup that 
 //         are per Endpoint
+// CR920 - Add missing parenthesis to the Description for 
+//         BGPProtocolEndpoint.IsEBGPMultihop
+// CR961 - Changes to Enabled and RequestedState in BGPProtocolEndpoint
+//         and OSPFProtocolEndpointBase, inherited from 
+//         EnabledLogicalElement
+// CR982 - Removal of Experimental for preliminary to final
+// CR983 - Deprecations for v2.7 made final
+// CR991 - Adjust LANEndpoint classes to reference LANConnectivitySegment 
+//         and deprecate the association InSegment
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -78,8 +87,8 @@
    [Version ("2.7.0"), Description (
       "A communication endpoint which, when its associated "
       "interface device is connected to a LAN, may send and "
-      "receive data frames. LANEndpoints link switch ports and "
-      "host interfaces to LANs.") ]
+      "receive data frames. LANEndpoints include Ethernet,"
+      "Token Ring and FDDI interfaces.") ]
 class CIM_LANEndpoint : CIM_ProtocolEndpoint {
 
         [Description (
@@ -87,7 +96,8 @@ class CIM_LANEndpoint : CIM_ProtocolEndpoint {
          "Endpoint is connected. If the Endpoint is not currently "
          "active/connected or this information is not known, then "
          "LANID is NULL."),
-         ModelCorrespondence {"CIM_LANSegment.LANID"} ]
+         ModelCorrespondence {"CIM_LANConnectivitySegment.LANID", 
+              "CIM_LANSegment.LANID"} ]
     string LANID;
 
         [Deprecated {"CIM_ProtocolEndpoint.ProtocolType"},
@@ -98,7 +108,8 @@ class CIM_LANEndpoint : CIM_ProtocolEndpoint {
          "the Values specified here."), 
          ValueMap {"0", "1", "2", "3", "4"},
          Values {"Unknown", "Other", "Ethernet", "TokenRing", "FDDI"},
-         ModelCorrespondence {"CIM_LANSegment.LANType"} ]
+         ModelCorrespondence {"CIM_LANConnectivitySegment.ConnectivityType",
+              "CIM_LANSegment.LANType"} ]
     uint16 LANType;
 
         [Deprecated {"CIM_ProtocolEndpoint.OtherTypeDescription"},
@@ -108,7 +119,8 @@ class CIM_LANEndpoint : CIM_ProtocolEndpoint {
          "is equal to 1 (i.e., \"Other\"). This property is deprecated "
          "since its purpose overlaps with OtherTypeDescription, which "
          "which is inherited from ProtocolEndpoint."),
-         ModelCorrespondence {"CIM_LANEndpoint.LANType"} ]
+         ModelCorrespondence {"CIM_LANConnectivitySegment.OtherTypeDescription",
+             "CIM_LANEndpoint.LANType"} ]
     string OtherLANType;
 
         [MaxLen(12), Description (
@@ -139,21 +151,29 @@ class CIM_LANEndpoint : CIM_ProtocolEndpoint {
 // ==================================================================
 // InSegment
 // ==================================================================
-   [Association, Aggregation, Version ("2.6.0"), 
+    [Association, Aggregation, Deprecated {"CIM_MemberOfCollection"}, 
+    Version ("2.7.0"), 
     Description (
       "Defines a LANEndpoint as a member of a specific "
-      "LANSegment.") ]
+      "LANSegment. Note that one of this association's references "
+      "(LANSegment) is deprecated, as well as its superclass "
+      "(InLogicalNetwork). Following the same logic as its "
+      "parent, this association is deprecated to the "
+      "MemberOfCollection association.") ]
 class CIM_InSegment : CIM_InLogicalNetwork {
-
-        [Override ("Collection"), Aggregate, Max (1), Description (
+ 
+        [Deprecated {"CIM_MemberOfCollection.Collection"}, 
+         Override ("Collection"), Aggregate, Max (1), Description (
          "The LANSegment that groups the LANEndpoint instances.") ]
     CIM_LANSegment REF Collection;
-
-        [Override ("Member"), Description (
+ 
+        [Deprecated {"CIM_MemberOfCollection.Member"}, 
+         Override ("Member"), Description (
          "A child LANEndpoint that is a component of the "
          "LANSegment.") ]
     CIM_LANEndpoint REF Member;
 };
+
 
 
 // ==================================================================
@@ -192,11 +212,11 @@ class CIM_BindsToLANEndpoint : CIM_BindsTo {
       "A ProtocolEndpoint that is dedicated to running IP.") ]
 class CIM_IPProtocolEndpoint : CIM_ProtocolEndpoint {
 
-        [Experimental, Description (
+        [Description (
          "The IPv4 address that this ProtocolEndpoint represents.") ]
     string IPv4Address;
 
-        [Experimental, Description (
+        [Description (
          "The IPv6 address that this ProtocolEndpoint represents.") ]
     string IPv6Address;
 
@@ -215,7 +235,7 @@ class CIM_IPProtocolEndpoint : CIM_ProtocolEndpoint {
          "if one is defined.") ]
     string SubnetMask;
 
-        [Experimental, Description (
+        [Description (
          "The prefix length for the IPv6 address of this Protocol"
          "Endpoint, if one is defined.") ]
     uint8 PrefixLength;
@@ -256,7 +276,7 @@ class CIM_BGPProtocolEndpoint : CIM_ProtocolEndpoint {
          "connected. This boolean, when TRUE, denotes a LOGICAL "
          "connection between two routers that are running EBGP " 
          "(e.g., there is an intermediate router or interface "
-         "between them.") ] 
+         "between them).") ] 
     boolean IsEBGPMultihop;
 
         [Description (
@@ -280,10 +300,10 @@ class CIM_BGPProtocolEndpoint : CIM_ProtocolEndpoint {
          MappingStrings {"MIB.IETF|BGP4-MIB.bgpPeerState"} ]
     uint16 State;
 
-        [Deprecated {"CIM_EnabledLogicalElement.RequestedStatus"}, 
+        [Deprecated {"CIM_EnabledLogicalElement.RequestedState"}, 
          Description (
          "This defines the desired state of the BGP connection. "
-         "It is equivalent to the RequestedStatus property (i.e., "
+         "It is equivalent to the RequestedState property (i.e., "
          "enabled/disabled status) that is inherited from "
          "EnabledLogicalElement. AdminStatus is deprecated in "
          "lieu of this inherited property."),
@@ -474,7 +494,7 @@ class CIM_IPXProtocolEndpoint : CIM_ProtocolEndpoint {
 // ==================================================================
 // TCPProtocolEndpoint
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "A protocol endpoint that is dedicated to running TCP.") ]
 class CIM_TCPProtocolEndpoint : CIM_ProtocolEndpoint {
 
@@ -486,7 +506,7 @@ class CIM_TCPProtocolEndpoint : CIM_ProtocolEndpoint {
 // ==================================================================
 // UDPProtocolEndpoint
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "A protocol endpoint that is dedicated to running UDP.") ]
 class CIM_UDPProtocolEndpoint : CIM_ProtocolEndpoint {
  
@@ -498,22 +518,17 @@ class CIM_UDPProtocolEndpoint : CIM_ProtocolEndpoint {
 // ==================================================================== 
 // OSPFProtocolEndpointBase 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "Base class for OSPF protocol endpoints, defining several" 
       "general properties.")] 
 class CIM_OSPFProtocolEndpointBase : CIM_ProtocolEndpoint { 
 
-        [Override ("EnabledStatus"), Description ( 
+        [Override ("EnabledState"), Description ( 
          "The operational status of the interface, see ospfIfAdminStat " 
-         "in RFC 1850. It is an integer enumeration indicating " 
-         "whether the element is currently in an enabled " 
-         "(value = 1), disabled (value = 2) or an unknown (0) " 
-         "state. If this property does not apply, the value " 
-         "3 (\"Not Applicable\"), should be used."), 
-         ValueMap{"0", "1", "2", "3"}, 
-         Values {"Unknown", "Enabled", "Disabled", "Not Applicable"}, 
+         "in RFC 1850. This is an integer enumeration whose complete " 
+         "definition is found in the EnabledLogicalElement class."),
          MappingStrings {"MIB.IETF|OSPF-MIB.ospfIfAdminStat"} ] 
-    uint16 EnabledStatus; 
+    uint16 EnabledState; 
 
         [Description ( 
          "Estimated delay, in seconds that it takes to transmit a " 
@@ -558,7 +573,7 @@ class CIM_OSPFProtocolEndpointBase : CIM_ProtocolEndpoint {
 // ==================================================================== 
 // OSPFProtocolEndpoint 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "This class represents the OSPF configuration of an interface " 
       "running OSPF. The instance of this class should be connected to " 
       "an IPProtocolEndpoint instance via a BindsTo association. The " 
@@ -603,7 +618,7 @@ class CIM_OSPFProtocolEndpoint : CIM_OSPFProtocolEndpointBase {
 // ==================================================================== 
 // OSPFVirtualInterface 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "This class represent an OSPF protocol endpoint on a virtual " 
       "link. The definition of a virtual link from RFC2328, is " 
       "'Virtual links can be configured between any two backbone " 
@@ -613,60 +628,6 @@ class CIM_OSPFProtocolEndpoint : CIM_OSPFProtocolEndpointBase {
       "unnumbered point-to-point backbone network.'") ] 
 class CIM_OSPFVirtualInterface : CIM_OSPFProtocolEndpointBase { 
 }; 
-
-
-// ==================================================================
-// MPLSProtocolEndpoint
-// ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
-      "This is the representation of an MPLS interface on a Label "
-      "Switch Router (LSR).") ]
-class CIM_MPLSProtocolEndpoint : CIM_ProtocolEndpoint {
-
-        [Description (
-         "If this property is true, the Label Min/Max In/Out values "
-         "of the ProtocolEndpoint's MPLSCapabilities overrule the "
-         "values specified for the Label Switched Router as a whole "
-         "(where the LSR is indicated by the existence of an "
-         "MPLSService). Note that the min/max in/out labels are only "
-         "defined in the MPLSCapabilities class, which is associated "
-         "with either an MPLSService or an MPLSProtocolEndpoint via "
-         "the CIM_ElementCapabilities relationship.") ]
-    boolean OverruleLSR;
-
-        [Description (
-         "This property indicates the total amount of usable "
-         "bandwidth on this interface and is specified in "
-         "kilobits per second (Kbps)."), 
-         Units ("KiloBits per Second"),
-         MappingStrings {
-            "MIB.IETF|MPLS-LSR-MIB.MPLSInterfaceTotalBandwidth"} ]
-    uint32 TotalBandwidth;
-
-        [Description (
-         "This property indicates the total amount of available "
-         "bandwidth for the interface and is specified in "
-         "kilobits per second (Kbps).  This value is calculated as "
-         "the difference between the amount of bandwidth currently in "
-         "use and that specified in TotalBandwidth. Note that this is "
-         "not statistical data, since change is not frequent, "
-         "and the property can be regarded as the 'current state' of " 
-         "the network. It is intended that this data be used by "
-         "applications doing centralized LSP provisioning."), 
-         Units ("KiloBits per Second"),
-         ModelCorrespondence {
-            "CIM_MPLSProtocolEndpoint.TotalBandwidth"},
-         MappingStrings {
-            "MIB.IETF|MPLS-LSR-MIB.MPLSInterfaceAvailableBandwidth"} ]
-    uint32 AvailableBandwidth;
-
-     [Description (
-      "The ResourceClasses property defines a 32-bit vector " 
-      "representing the classes associated with a link, "
-      "where the link originates at this ProtocolEndpoint. A "
-      "resource class is described in [RFC2702].") ]
-    uint32 ResourceClasses;
-};
 
 
 // ===================================================================

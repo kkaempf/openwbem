@@ -2,10 +2,10 @@
 // Title:       Device Printing 2.7
 // Filename:    Device27_Printing.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/23/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,9 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR990 - Cleanup of PrintQueue
+//
 // Change Log for v2.7
 // CR617 - Remove ArrayType qualifier from PrintJob.Language property
 // CR675 - Extend Printer.LanguagesSupport, Printer.CurrentLanguages,
@@ -504,26 +507,58 @@ class CIM_Printer : CIM_LogicalDevice {
 // ===================================================================
 // PrintQueue 
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "Capabilities and management of a Printer Queue. A PrintQueue "
     "holds PrintJobs - which are placed on the Queue by a Print"
     "Service. Jobs can move from Queue to Queue.") ]
 class CIM_PrintQueue : CIM_JobDestination {
 
-    [Description (
+    [Deprecated {"CIM_EnabledLogicalElement.EnabledState"}, Description (
         "Indicates that Jobs on the Queue will be passed to a "
         "Printer. When FALSE, a Job will remain on the Queue and "
-        "will not be passed to a Printer for output.") ]
+        "will not be passed to a Printer for output. This property, "
+        "coupled with the information in QueueAccepting, aligns with "
+        "various values of the inherited EnabledState property: \n"
+        " - When both QueueEnabled and QueueAccepting are TRUE, "
+        "then EnabledState is set to 2 (\"Enabled\") \n"
+        " - When both QueueEnabled and QueueAccepting are FALSE, "
+        "then EnabledState is set to 3 (\"Disabled\") \n"
+        " - When QueueEnabled is TRUE and QueueAccepting is FALSE "
+        "(i.e., when the Queue is outputting jobs to the printer, but "
+        "not accepting new jobs), then EnabledState is set to 6 "
+        "(\"Enabled but Offline\") \n"
+        " - When QueueEnabled is FALSE and QueueAccepting is TRUE "
+        "(i.e., when the Queue is accepting print jobs but not "
+        "sending them to a printer), then EnabledState is set to 8 "
+        "(\"Deferred\") \n"
+        "Both this property and QueueAccepting are deprecated in " 
+        "lieu of EnabledState.") ]
     boolean QueueEnabled;
-
-    [Description (
+ 
+    [Deprecated {"CIM_EnabledLogicalElement.EnabledState"}, Description (
         "When FALSE, no PrintService can place PrintJobs on the "
         "PrintQueue. The ability of an individual PrintService "
         "to place a Job on the Queue can be specified using the "
         "QueueAcceptingFromService property in the QueueForPrint"
-        "Service association.") ]
+        "Service association. This property, coupled with the "
+        "information in QueueEnabled, aligns with various values "
+        "of the inherited EnabledState property: \n"
+        " - When both QueueEnabled and QueueAccepting are TRUE, "
+        "then EnabledState is set to 2 (\"Enabled\") \n"
+        " - When both QueueEnabled and QueueAccepting are FALSE, "
+        "then EnabledState is set to 3 (\"Disabled\") \n"
+        " - When QueueEnabled is TRUE and QueueAccepting is FALSE "
+        "(i.e., when the Queue is outputting jobs to the printer, but "
+        "not accepting new jobs), then EnabledState is set to 6 "
+        "(\"Enabled but Offline\") \n"
+        " - When QueueEnabled is FALSE and QueueAccepting is TRUE "
+        "(i.e., when the Queue is accepting print jobs but not "
+        "sending them to a printer), then EnabledState is set to 8 "
+        "(\"Deferred\") \n"
+        "Both this property and QueueEnabled are deprecated in " 
+        "lieu of EnabledState.") ]
     boolean QueueAccepting;
-
+    
     [Description (
         "The current number of Jobs on the Queue."),
         Gauge ]
@@ -654,7 +689,7 @@ class CIM_PrintJob : CIM_Job {
         "Provides additional textual descriptions of how this "
         "Job should be scheduled.") ]
     string SchedulingInformation;
-
+    
     [Description (
         "Specifies the size of the PrintJob (as a byte stream) in "
         "units of Kbytes."), 

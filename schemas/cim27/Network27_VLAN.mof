@@ -2,10 +2,10 @@
 // Title:       Network VLAN 2.7
 // Filename:    Network27_VLAN.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/30/2002
+// Status:      Final
+// Date:        March 31, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -53,6 +53,7 @@
 // Change Log for v2.7
 // CR867 - Remove Min(1), Max(1) cardinality restrictions on Related
 //         TransparentBridgingService
+// CR920 - Add missing parenthesis to the Description for CIM_VLAN
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -75,7 +76,7 @@
       "synthesize a textual name, e.g., VLAN 0003. (Consider "
       "leading zero fill, as shown, to ensure that if the textual "
       "VLAN names are extracted and presented by a management "
-      "applictions, the VLAN names will sort in the expected order. "
+      "applictions, the VLAN names will sort in the expected order.) "
       "The numeric part of the name should be at least four "
       "digits wide since 802.1Q specifies 4095 VLANs. \n"
       "\n"

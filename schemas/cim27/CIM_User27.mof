@@ -2,10 +2,10 @@
 // Title:       User-Security MOF Specification 2.7
 // Filename:    CIM_User27.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/07/2002
+// Status:      Final
+// Date:        03/31/2003
 // ===================================================================
-// Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 

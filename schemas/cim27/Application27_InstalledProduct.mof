@@ -3,11 +3,11 @@
 //              Installed Product 
 // Filename:    Application27_InstalledProduct.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/03/2002
-// CVS:         $Revision: 1.0 $           
+// Status:      Final
+// Date:        31 March 2003
+// CVS:         $Revision: 1.2 $           
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -64,6 +64,8 @@
 //
 //    06/06/2002 CIM 2.7 Preliminary Release
 //             - Define Application MOF structure
+//    03/17/2003 CIM 2.7 Final
+//             - No changes
 // ===================================================================
 
 #pragma locale ("en_US")

@@ -2,10 +2,10 @@
 // Title:       Core Redundancy 2.7
 // Filename:    Core27_Redundancy.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/01/02
+// Release:     Final
+// Date:        04/02/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,12 @@
 //              by other working groups, are omitted.
 // ==================================================================
 // Change Log for v2.7
+// CR940 - Fix Value/ValueMap mismatch in StorageRedundancySet.
+//         TypeOfAlgorithm
+// CR968 - Keep RedundancySet, SparedSet, IsSpare, StorageRedundancySet,
+//         and ExtraCapacitySet experimental for 2.8
+//
+// Change Log for v2.7
 // CR722 - Update description for StorageRedundancyGroup
 // CR752 - Add RedundancySet, SparedSet, IsSpare, StorageRedundancySet,
 //         and ExtraCapacitySet
@@ -60,205 +66,6 @@
 
 
 // ===================================================================
-// RedundancySet
-// ===================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "  A class derived from SystemSpecificCollection that is a special "
-    "collection of ManagedElements. This collection indicates "
-    "that the aggregated elements together provide redundancy, or "
-    "that redundancy is provided via sparing. All elements "
-    "collected in a RedundancySet should be instantiations of the "
-    "same object class. \n"
-    "  Note that the CIM_RedundancySet class is very similar to "
-    "CIM_RedundancyGroup, yet both classes are present in the model.  "
-    "This is because some implementations have successfully used "
-    "CIM_RedundancyGroup.  However, issues have arisen that could not "
-    "be resolved without defining a new class.  Therefore, until a "
-    "new major release occurs, both classes will exist in the model. "
-    "Refer to the Core White Paper for additional information.") ]
-class CIM_RedundancySet : CIM_SystemSpecificCollection {
-    
-    [Override ("ElementName"), Required, Description (
-        "The user friendly name for this instance of RedundancySet. "
-        "In addition, the user friendly name can be used as a "
-        "property for a search or query.  (Note:  InstanceName "
-        "does not have to be unique within a namespace.)") ]
-    string ElementName;
-   
-    [Description (
-        "RedundancyStatus provides information on the state of "
-        "the RedundancySet. \n"
-        " - Fully Redundant (=2) means that all of the "
-        "configured redundancy is still available. \n "
-        " - Degraded Redundancy (=3) means that some failures "
-        "have been experienced but some reduced amount of "
-        "redundancy is still available \n"
-        " - Redundancy Lost (=4) means that a sufficient number "
-        "of failures have been experienced such that no "
-        "redundancy is available and the next failure "
-        "experienced will cause overall failure."), 
-        ValueMap {"0", "1", "2", "3", "4"},
-        Values {"Unknown", "Other", "Fully Redundant", 
-            "Degraded Redundancy", "Redundancy Lost"} ]
-    uint16 RedundancyStatus;
-};
-
-
-// ===================================================================
-// SparedSet
-// ===================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "A class derived from RedundancySet indicating that the "
-    "collected elements can be spared. (The actual spares are "
-    "defined using the IsSpare association.) An example is "
-    "the use of redundant network adapters in a ComputerSystem - "
-    "where one adapter is Primary and the other is Spare. The "
-    "'primary' adapter would be a member of the SparedSet "
-    "(associated using MemberOfCollection) and the 'other' adapter "
-    "would be associated to the SparedSet using the IsSpare "
-    "relationship.") ] 
-class CIM_SparedSet : CIM_RedundancySet {
-
-    [Description (
-        "The type of failover algorithms that are supported."),
-        ValueMap {"0", "1", "2", "3"},      
-        Values {"Unknown", "Other", "Automatic", "Manual"} ]
-    uint16 FailoverSupported;   
-   
-    [Description (
-        "This method forces a failover from one ManagedElement to "
-        "another. There are two parameters to the Failover method. \n"
-        " - FailoverFrom is a reference to an 'active' ManagedElement "
-        "that will become inactive after the method.  This element "
-        "should be part of the SparedSet via a MemberOfCollection "
-        "relationship. \n"
-        " - FailoverTo is a reference to the ManagedElement that "
-        "will take over for the FailoverFrom element. This element "
-        "should be associated with the SparedSet via an IsSpare "
-        "relationship.  \n"
-        "Once the failover has occurred, the MemberOfCollection and "
-        "IsSpare associations are updated to reflect the "
-        "current state.  For example, the MemberOfCollection "
-        "association for the FailoverFrom element is deleted. "
-        "The IsSpare association for the FailoverTo element is "
-        "replaced with MemberOfCollection. \n"  
-        "The method should return 0 if successful, 1 if the "
-        "request is not supported, and some other value if any "
-        "other error occurred. In a subclass, the set of possible "
-        "return codes could be specified, using Value and ValueMap "
-        "qualifiers on the method.") ]
-    uint32 Failover(
-        [IN] CIM_ManagedElement REF FailoverFrom, 
-        [IN] CIM_ManagedElement REF FailoverTo);      
-};
-
-
-// ===================================================================
-// IsSpare
-// ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
-    "The IsSpare association indicates an element that can "
-    "spare or replace one of the elements in the referenced "
-    "SparedSet. If the 'spare' is itself a Collection, this "
-    "indicates that each of the 'spare' members can replace "
-    "one of the elements in the SparedSet. The fact that a "
-    "spare can operate in 'hot standby' mode is specified on "
-    "an element by element basis - i.e., in this association.") ]
-class CIM_IsSpare : CIM_Dependency {
-
-    [Override ("Antecedent"), Description (
-        "A ManagedElement or Collection of elements acting as a "
-        "spare.") ]
-    CIM_ManagedElement REF Antecedent; 
-
-    [Override ("Dependent"), Description (
-        "The set of elements that ARE spared.") ]
-    CIM_SparedSet REF Dependent;
-
-    [Description (
-        "HotStandby is a boolean indicating that the 'spare' is "
-        "operating as a hot standby.") ]
-    boolean HotStandby;   
-};
-
-
-// ===================================================================
-// StorageRedundancySet
-// ===================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "A class derived from RedundancySet describing storage-related "
-    "redundancy information. StorageRedundancySets are used to "
-    "protect user data. They aggregate on one or more underlying "
-    "StorageExtents, associated via MemberOfCollection, and "
-    "produce one or more higher-level Extents.  The Extents are "
-    "related to each other via a BasedOn association. And, "
-    "the higher level Extent is related to the StorageRedundancy"
-    "Set via the LogicalIdentity association. \n"
-    "Note that StorageRedundancySets may overlap in their "
-    "aggregation of members. If this occurs, the overlapping "
-    "Extents should not contain any check data.") ]
-class CIM_StorageRedundancySet : CIM_RedundancySet {
-
-    [Description (
-        "TypeOfAlgorithm specifies the algorithm used for "
-        "storage data redundancy and reconstruction. For example, "
-        "'P+Q' (=5) or 'P+S' (=7) may be specified. The value "
-        "of 0, is defined as 'None' to indicate that data "
-        "redundancy is not active. An inactive redundancy "
-        "should only be instantiated if data striping or "
-        "concatenation are active. These are indicated by "
-        "the IsStriped or IsConcatentated boolean properties "
-        "of this RedundancySet."), 
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7" },
-        Values {"Unknown", "Other", "Copy", "XOR", "P+Q", 
-            "S", "P+S"}, 
-        MappingStrings {"MIF.DMTF|Redundancy Group|001.2"},
-        ModelCorrespondence {"StorageRedundancySet.OtherAlgorithm"} ]
-    uint16 TypeOfAlgorithm;
-
-    [Description (
-        "A string describing the redundancy algorithm  when the"
-        "TypeOfAlgorithm is set to 1 'Other'."),
-        ModelCorrespondence {
-            "StorageRedundancySet.TypeOfAlgorithm"} ]
-    string OtherAlgorithm;
-};
-
-
-// ===================================================================
-// ExtraCapacitySet
-// ===================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "A class derived from RedundancySet to describe that the "
-    "aggregated elements have more capacity or capability than is "
-    "needed.  Some examples of this type of redundancy are clusters, "
-    "or the installation of N+1 power supplies or fans in a "
-    "computer.") ] 
-class CIM_ExtraCapacitySet : CIM_RedundancySet {
-
-    [Description (
-        "MinNumberNeeded indicates the smallest number of elements "
-        "that must be operational in order to function.  "
-        "For example, in an N+1 redundancy relationship, "
-        "the MinNumberNeeded property is set equal to N."),
-        MinValue (1) ]
-    uint32 MinNumberNeeded;
-
-    [Description (
-        "MaxNumberSupported indicates the largest number of "
-        "elements that can participate in the ExtraCapacitySet. "
-        "A value of 0 indicates there is no limit on the number "
-        "of elements.") ]
-    uint32 MaxNumberSupported;  
-   
-    [Description (
-        "Boolean indicating whether load balancing is supported by "
-        "the ExtraCapacitySet.") ]
-    boolean LoadBalancedSet; 
-};
-
-
-// ===================================================================
 // RedundancyGroup
 // ===================================================================
 [Version ("2.7.0"), Description (
@@ -266,14 +73,7 @@ class CIM_ExtraCapacitySet : CIM_RedundancySet {
     "collection of ManagedSystemElements. This collection indicates "
     "that the aggregated components together provide redundancy. "
     "All elements aggregated in a RedundancyGroup should be "
-    "instantiations of the same object class.\n"
-    "  Note that the CIM_RedundancySet class is very similar to "
-    "CIM_RedundancyGroup, yet both classes are present in the model. "
-    "This is because some implementations have successfully used "
-    "CIM_RedundancyGroup.  However, issues have arisen that could not "
-    "be resolved without defining a new class.  Therefore, until a "
-    "new major release occurs, both classes will exist in the model. "
-    "Refer to the Core White Paper for additional information.") ] 
+    "instantiations of the same object class.") ] 
 class CIM_RedundancyGroup : CIM_LogicalElement {
 
     [Key, MaxLen (256), Description (
@@ -382,8 +182,7 @@ class CIM_SpareGroup : CIM_RedundancyGroup {
     "element by element basis.") ]
 class CIM_ActsAsSpare  {
 
-    [Key, Description (
-        "The SpareGroup") ]
+    [Key, Description ("The SpareGroup.") ]
     CIM_SpareGroup REF Group;
     
     [Key, Description (

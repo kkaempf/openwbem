@@ -2,11 +2,10 @@
 // Title:       Metrics MOF Specification 2.7
 // Filename:    CIM_Metrics27.MOF
 // Version      2.7.0
-// Status:      Preliminary
-// Date:        07/30/2002
-// CVS:         $Revision: 1.7 $ 
+// Status:      Final
+// Date:        31 March 2003
 // ===================================================================
-// Copyright 1999-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -47,6 +46,9 @@
 // ===================================================================
 // CIM 2.7.0 (Preliminary) - 30 July 2002
 //     (Broke Metrics into 3 files with this as just #includes)
+// ===================================================================
+// CIM 2.7.0 (Final) - 17 March 2003
+//     No changes. Simply noted that this is released in header.
 // ===================================================================
 
 #pragma locale ("en_US")

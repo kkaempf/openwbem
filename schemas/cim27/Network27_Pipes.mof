@@ -2,10 +2,10 @@
 // Title:       Network Pipes 2.7
 // Filename:    Network27_Pipes.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        08/05/2002
+// Status:      Final
+// Date:        March 31, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -56,6 +56,10 @@
 // CR850 - Change CIM_Pipe to CIM_NetworkPipe; Propagate this change
 //         through the model; Make similar name changes throughout
 //         the other classes
+// CR961 - Changes to Enabled and RequestedState in NetworkPipe, 
+//         inherited from EnabledLogicalElement
+// CR982 - Removal of Experimental for preliminary to final
+// CR994 - Update of the InstanceID property Description
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -64,13 +68,13 @@
 // ================================================================
 // NetworkPipe
 // ================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "NetworkPipe is a subclass of EnabledLogicalElement, "
-      "representing the status and management of a connection or "
+      "representing the state and management of a connection or "
       "trail between endpoints. This object is different than the "
       "association between the endpoints (CIM_ActiveConnection) "
       "since the emphasis is NOT on the endpoints but on the "
-      "management of the pipe itself - its status, configuration, "
+      "management of the pipe itself - its state, configuration, "
       "etc. NetworkPipes are defined in the context of a "
       "CIM_Network and represent the 'transfer of information . . . "
       "between . . . endpoints'. These concepts are aligned with "
@@ -83,25 +87,25 @@
 class CIM_NetworkPipe : CIM_EnabledLogicalElement {
 
         [Key, Description (
-         "InstanceID opaquely identifies a unique instance of "
-         "NetworkPipe. The InstanceID must be unique within a "
-         "namespace. In order to ensure uniqueness, the value of "
-         "InstanceID SHOULD be constructed in the following "
-         "manner:  \n"
-         "<Vendor ID><ID> \n" 
-         "   <Vendor ID> MUST include a copyrighted, trademarked "
-         "or otherwise unique name that is owned by the business "
-         "entity or a registered ID that is assigned to the "
-         "business entity that is defining the InstanceID. "
-         "(This is similar to the <Schema Name>_<Class Name> "
-         "structure of Schema class names.) The purpose of "
-         "<Vendor ID> is to ensure that <ID> is truly unique "
-         "across multiple vendor implementations. If such a name "
-         "is not used, the defining entity MUST assure that the <ID> "
-         "portion of the Instance ID is unique when compared with "
-         "other instance providers. For DMTF defined instances, the "
-         "<Vendor ID> is 'CIM'. \n"
-         "   <ID> MUST include either a vendor specified unique "
+         "Within the scope of the instantiating Namespace, InstanceID " 
+         "opaquely and uniquely identifies an instance of this class. "
+         "In order to ensure uniqueness within the NameSpace, the "
+         "value of InstanceID SHOULD be constructed using the "
+         "following 'preferred' algorithm: \n"
+         " <OrgID>:<LocalID> \n"
+         "Where <OrgID> and <LocalID> are separated by a colon ':', "
+         "and where <OrgID> MUST include a copyrighted, trademarked "
+         "or otherwise unique name that is owned by the business entity "
+         "creating/defining the InstanceID, or is a registered ID that "
+         "is assigned to the business entity by a recognized global "
+         "authority. (This is similar to the <Schema Name>_<Class Name> "
+         "structure of Schema class names.) In addition, to ensure "
+         "uniqueness <OrgID> MUST NOT contain a colon (':'). When "
+         "using this algorithm, the first colon to appear in "
+         "InstanceID MUST appear between <OrgID> and <LocalID>. "
+         "(For DMTF defined instances, the 'preferred' algorithm MUST be "
+         "used with the <OrgID> set to 'CIM'.) \n"
+         " <LocalID> MUST include either a vendor specified unique "
          "identifier, or if mapping from an ITU M.3100 environment, "
          "the trailID, connectionID or subNetworkConnectionID of "
          "the instances of PipeR2."),         
@@ -144,48 +148,22 @@ class CIM_NetworkPipe : CIM_EnabledLogicalElement {
           "Combined In Parallel", "Combined In Sequence"} ]
     uint16 AggregationBehavior;
 
-      [Override ("EnabledStatus"), Description (
-       "EnabledStatus is an integer enumeration indicating "
-       "whether the element is currently shutting down (value = 4), "
-       "or in an enabled (value = 2) or disabled (value = 3) "
-       "state.  In various situations, an element that is being "
-       "tested is neither enabled or disabled - this is addressed "
-       "by the value \"In Test\" (7). If this property does not "
-       "apply to an instance of EnabledLogicalElement, the value 5 "
-       "(\"Not  Applicable\"), is used."),
-       ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"}, 
-       Values {"Unknown", "Other", "Enabled", "Disabled", 
-          "Shutting Down", "Not Applicable", "Enabled but Offline",
-          "In Test"},
-       ModelCorrespondence {
-          "CIM_EnabledLogicalElement.OtherEnabledStatus"},
+      [Override ("EnabledState"), 
        MappingStrings {
           "Recommendation.ITU|M3100.Pipe.operationalState"} ]
-    uint16 EnabledStatus;
+    uint16 EnabledState;
 
-      [Override ("RequestedStatus"), Write, Description (
-       "RequestedStatus is an integer enumeration indicating "
-       "whether the element should be shut down (value = 4), "
-       "enabled (2), disabled (3), taken offline (6) or "
-       "tested (7) at the next opportunity. This "
-       "property is provided to compare Requested and "
-       "current Enabled statuses. Note that when "
-       "EnabledStatus is set to 5 (\"Not Applicable\"), "
-       "then writing this property has no effect. By default, "
-       "the element's RequestedStatus is 5 (\"No Change\")."), 
-       ValueMap {"2", "3", "4", "5", "6", "7"}, 
-       Values {"Enabled", "Disabled", "Shut Down", "No Change",
-          "Offline", "Test"},
+      [Override ("RequestedState"), Write, 
        MappingStrings {
           "Recommendation.ITU|M3100.Pipe.administrativeState"} ]
-    uint16 RequestedStatus = 5;
+    uint16 RequestedState = 5;
 };
 
 
 // ==================================================================
 // HostedNetworkPipe
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), Description (
+   [Association,  Version ("2.7.0"), Description (
       "HostedNetworkPipe is an association between a pipe and the "
       "network in whose context the pipe is defined.  The "
       "cardinality of this association is 1-to-many. A network may "
@@ -206,7 +184,7 @@ class CIM_HostedNetworkPipe : CIM_Dependency {
 // ==================================================================
 // EndpointOfNetworkPipe
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), Description (
+   [Association,  Version ("2.7.0"), Description (
       "EndpointOfNetworkPipe describes the endpoints between which "
       "a pipe transfers information. Whether an endpoint is a source "
       "or sink is indicated by a property of the association, "
@@ -238,7 +216,7 @@ class CIM_EndpointOfNetworkPipe : CIM_Dependency {
 // ==================================================================
 // NetworkPipeComposition
 // ==================================================================
-   [Association, Aggregation, Composition, Experimental, 
+   [Association, Aggregation, Composition,  
     Version ("2.7.0"), Description (
       "NetworkPipeComposition describes the makeup a pipe, based on "
       "lower-level ones. If the pipe is not composed of lower-level "

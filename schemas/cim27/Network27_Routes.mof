@@ -2,10 +2,10 @@
 // Title:       Network Routes 2.7
 // Filename:    Network27_Routes.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/28/2002
+// Status:      Final
+// Date:        March 31, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -59,7 +59,10 @@
 //         RouteUsesEndpoint, and AssociatedNextHop  
 // CR866 - Add default values to the definition of the distance
 //         properties in AdministrativeDistance; Override the Name
-//         property since it is inherited from MSE     
+//         property since it is inherited from MSE   
+// CR982 - Removal of Experimental for preliminary to final
+// CR983 - v2.7 Deprecations promoted to final  
+// CR994 - Update the InstanceID property Description 
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -68,7 +71,7 @@
 // ==================================================================
 // NextHopRoute
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "NextHopRoute represents one of a series of 'hops' to reach "
       "a network destination. A route is administratively defined, "
       "or calculated/learned by a particular routing process. A "
@@ -78,24 +81,30 @@
 class CIM_NextHopRoute : CIM_ManagedElement {
 
         [Key, Description (
-         "InstanceID opaquely identifies a unique instance of Next"
-         "HopRoute. The InstanceID must be unique within a namespace. "
-         "In order to ensure uniqueness, the value of InstanceID "
-         "SHOULD be constructed in the following manner:  \n"
-         "<Vendor ID><Route ID> \n"
-         "   <Vendor ID> MUST include a copyrighted, trademarked "
+         "Within the scope of the instantiating Namespace, InstanceID " 
+         "opaquely and uniquely identifies an instance of this class. "
+         "In order to ensure uniqueness within the NameSpace, the "
+         "value of InstanceID SHOULD be constructed using the "
+         "following 'preferred' algorithm: \n"
+         " <OrgID>:<LocalID> \n"
+         "Where <OrgID> and <LocalID> are separated by a colon ':', "
+         "and where <OrgID> MUST include a copyrighted, trademarked "
          "or otherwise unique name that is owned by the business entity "
-         "or a registered ID that is assigned to the business entity "
-         "that is defining the InstanceID. (This is similar to the "
-         "<Schema Name>_<Class Name> structure of Schema class names.) "
-         "The purpose of <Vendor ID> is to ensure that <ID> is truly "
-         "unique across multiple vendor implementations. If such a "
-         "name is not used, the defining entity MUST assure that the "
-         "<ID> portion of the Instance ID is unique when compared with "
-         "other instance providers. For DMTF defined instances, the "
-         "<Vendor ID> is 'CIM'. \n"
-         "   <ID> MUST include a vendor specified unique "
-         "identifier.") ]        
+         "creating/defining the InstanceID, or is a registered ID that "
+         "is assigned to the business entity by a recognized global "
+         "authority. (This is similar to the <Schema Name>_<Class Name> "
+         "structure of Schema class names.) In addition, to ensure "
+         "uniqueness <OrgID> MUST NOT contain a colon (':'). When "
+         "using this algorithm, the first colon to appear in "
+         "InstanceID MUST appear between <OrgID> and <LocalID>. \n"
+         " <LocalID> is chosen by the business entity and SHOULD not be "
+         "re-used to identify different underlying (real-world) elements. " 
+         "If the above 'preferred' algorithm is not used, the defining "
+         "entity MUST assure that the resultant InstanceID is not "
+         "re-used across any InstanceIDs produced by this or other "
+         "providers for this instance's NameSpace. \n"
+         "For DMTF defined instances, the 'preferred' algorithm MUST be "
+         "used with the <OrgID> set to 'CIM'.") ] 
     string InstanceID;
 
         [Description (
@@ -136,7 +145,7 @@ class CIM_NextHopRoute : CIM_ManagedElement {
 // ==================================================================
 // HostedRoute
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "HostedRoute describes the relationship between the "
       "route and the system in whose context it is defined.") ]
@@ -157,7 +166,7 @@ class CIM_HostedRoute : CIM_Dependency {
 // ==================================================================
 // NextHopIPRoute
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "NextHopIPRoute specifies routing in an IP network.") ]
 class CIM_NextHopIPRoute : CIM_NextHopRoute {
 
@@ -200,7 +209,7 @@ class CIM_NextHopIPRoute : CIM_NextHopRoute {
 // ==================================================================
 // RouteUsesEndpoint
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "RouteUsesEndpoint depicts the relationship between a next "
       "hop route and the local Endpoint that is used to transmit the "
@@ -220,7 +229,7 @@ class CIM_RouteUsesEndpoint : CIM_Dependency {
 // ==================================================================
 // AssociatedNextHop
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "AssociatedNextHop depicts the relationship between a "
       "route and the specification of its next hop. The next hop "

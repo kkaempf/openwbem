@@ -2,10 +2,10 @@
 // Title:       Device Elements 2.7
 // Filename:    Device27_Elements.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/30/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR942 - Rename DeviceErrorCountData to DeviceErrorData.
+// CR970 - Removal of the Experimental qualifier.
+//
 // Change Log for v2.7
 // CR621 - Add PackageDependency
 // CR622 - Fix the DMI mapping string to include the attribute number
@@ -318,17 +322,17 @@ class CIM_ErrorCountersForDevice : CIM_Statistics {
 
 
 // ==================================================================
-// DeviceErrorCountData
+// DeviceErrorData
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "DeviceErrorCountData is a statistical class containing error-" 
+[Version ("2.7.0"), Description (
+    "DeviceErrorData is a statistical class containing error-" 
     "related counters for a LogicalDevice. The types of errors " 
     "are as defined by CCITT (Rec X.733) and ISO (IEC 10164-4)."
     "The element whose statistics are described is associated "
     "using the relationship, ElementStatisticalData. Note that "
     "this class uses a simplified identity/naming algorithm over "
     "CIM_DeviceErrorCounts.") ]
-class CIM_DeviceErrorCountData : CIM_StatisticalData {
+class CIM_DeviceErrorData : CIM_StatisticalData {
 
     [Description ("Count of the indeterminate errors. "),
         Counter ] 

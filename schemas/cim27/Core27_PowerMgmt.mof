@@ -2,10 +2,10 @@
 // Title:       Core Power Management 2.7
 // Filename:    Core27_PowerMgmt.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/01/02
+// Release:     Final
+// Date:        03/31/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2002-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,9 @@
 //              by other working groups, are omitted.
 // ==================================================================
 // Change Log for v2.7
+// CR968 - Remove the Experimental qualifier
+//
+// Change Log for v2.7
 // CR720 - Introduce PowerManagementCapabilities & 
 //         PowerManagementService
 // ===================================================================
@@ -60,7 +63,7 @@
 // ===================================================================
 // PowerManagementCapabilites
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A class derived from Capabilities that describes the power "
     "management aspects of an element (typically a system or device). "
     "The element's power management capabilities are decoupled from "
@@ -112,7 +115,7 @@ class CIM_PowerManagementCapabilities : CIM_Capabilities {
 // ===================================================================
 // PowerManagementService
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A class derived from Service that describes power "
     "management functionality, hosted on a System. The fact "
     "that this service may be used to affect the power state "

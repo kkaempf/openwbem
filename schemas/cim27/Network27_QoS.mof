@@ -1,11 +1,11 @@
 // ===================================================================
-// Title:       Network Quality of Service 2.7
+// Title:       Network Quality of Service 2.7.0
 // Filename:    Network27_QoS.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        08/04/2002
+// Status:      Final
+// Date:        April 18, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -145,6 +145,19 @@
 //       (ERRATA) - Remove the TrafficClass property
 //       - Fix spelling of reference (Preceeding, should be Preceding)
 // CR849 - Define InstanceID as the Key of SchedulingElement
+// CR914 - Change inheritance of the deprecated association,
+//         ConditioningServiceOnEndpoint (from ForwardsAmong to its
+//         superclass, Dependency). Remove the ValueMap qualifier
+//         from the properties, WRRSchedulingElement.WorkConserving,
+//         PrioritySchedulingElement.WorkConserving, and
+//         BoundedPrioritySchedulingElement.WorkConserving
+// CR920 - Remove the Key qualifier from NextScheduler.FollowingService
+//         since its superclass defines the key; Add missing parenthesis
+//         to the Description of AFService
+// CR961 - Update the reference to EnabledLogicalElement.EnabledState
+// CR982 - Removal of Experimental for preliminary to final
+// CR983 - v2.7 Deprecations promoted to final
+// CR994 - Update the InstanceID property Description
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -341,7 +354,7 @@ class CIM_8021PService : CIM_QoSService {
       "different AF classes to represent four different treatments "
       "of traffic (e.g., a different amount of forwarding "
       "resources, such as buffer space and bandwidth, are "
-      "allocated. Within each AF class, IP packets are marked with "
+      "allocated). Within each AF class, IP packets are marked with "
       "one of three possible drop precedence values. The drop "
       "precedence of a packet determines the relative "
       "importance of that packet compared to other packets within "
@@ -384,7 +397,7 @@ class CIM_AFService : CIM_DiffServService {
 // ===================================================================
 // FlowService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class represents a service that supports a particular "
       "microflow. The microflow is identified by the string-valued "
       "property FlowID. In some implementations, an instance of this "
@@ -488,7 +501,7 @@ class CIM_AFRelatedServices {
       "different traffic streams.") ]
 class CIM_ConditioningService : CIM_Service {
 
-        [Deprecated {"CIM_EnabledLogicalElement.EnabledStatus"}, 
+        [Deprecated {"CIM_EnabledLogicalElement.EnabledState"}, 
          Description (
          "This property is a boolean that, if TRUE, signifies that "
          "one or more conditioning functions can be performed on "
@@ -547,7 +560,7 @@ class CIM_QoSConditioningSubService : CIM_ServiceComponent {
       "packets. This association is deprecated since different "
       "cardinalities are needed on the ingress and egress "
       "classes. This cannot be done using a single association.") ]
-class CIM_ConditioningServiceOnEndpoint : CIM_ForwardsAmong {
+class CIM_ConditioningServiceOnEndpoint : CIM_Dependency {
 
         [Deprecated {
             "CIM_IngressConditioningServiceOnEndpoint.Antecedent",
@@ -580,7 +593,7 @@ class CIM_ConditioningServiceOnEndpoint : CIM_ForwardsAmong {
 // ==================================================================
 // IngressConditioningServiceOnEndpoint
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association represents the binding, in the ingress "
       "direction, between a ProtocolEndpoint and the first "
@@ -610,7 +623,7 @@ class CIM_IngressConditioningServiceOnEndpoint :
 // ==================================================================
 // EgressConditioningServiceOnEndpoint
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association,  Version ("2.7.0"), 
     Description (
       "This association represents the binding, in the egress "
       "direction, between a ProtocolEndpoint and the last "
@@ -707,7 +720,7 @@ class CIM_ClassifierService : CIM_ConditioningService {
 // ===================================================================
 // ClassifierElement
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "ClassifierElement represents the linkage, within a single "
       "ClassifierService, between a FilterList (that defines the "
       "criteria to select packets from the stream of packets "
@@ -737,7 +750,7 @@ class CIM_ClassifierElement : CIM_ClassifierService {
 // ===================================================================
 // ClassifierElementInClassifierService
 // ===================================================================
-   [Association, Aggregation, Composition, Experimental, 
+   [Association, Aggregation, Composition,  
     Version ("2.7.0"), Description (
       "This aggregation represents the relationship between "
       "a ClassifierService and the ClassifierElements that provide "
@@ -773,7 +786,7 @@ class CIM_ClassifierElementInClassifierService : CIM_ServiceComponent {
 // ===================================================================
 // ClassifierElementUsesFilterList
 // ===================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association relates one or more ClassifierElements "
       "with a FilterList that defines the criteria to select packets "
@@ -801,7 +814,7 @@ class CIM_ClassifierElementUsesFilterList : CIM_Dependency {
 // ===================================================================
 // NextServiceAfterClassifierElement
 // ===================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "An association used to establish a predecessor-successor "
       "relationship between a single ClassifierElement (within a "
@@ -853,7 +866,7 @@ class CIM_NextServiceAfterClassifierElement : CIM_NextService {
 class CIM_ClassifierFilterSet : CIM_Dependency {
 
         [Deprecated {"CIM_ClassifierElementUsesFilterList.Antecedent"}, 
-         Override ("Antecedent"), Min (1), Description (
+         Override ("Antecedent"), Description (
          "The FilterList aggregating FilterEntries, these in turn "
          "describe how traffic is identified and processed by the "
          "ClassifierService.") ]
@@ -1145,7 +1158,7 @@ class CIM_MarkerService : CIM_ConditioningService {
 // ===================================================================
 // PreambleMarkerService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "PreambleMarkerService models the storing of traffic-"
       "conditioning results in a packet preamble. An instance "
       "appends a two-part string of the form '<type>,<value>' to "
@@ -1185,7 +1198,7 @@ class CIM_PreambleMarkerService : CIM_MarkerService {
 // ===================================================================
 // ToSMarkerService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "ToSMarkerService marks the ToS (type of service) field "
       "in the IPv4 packet header [R791] with a specific value. "
       "Packets are marked in order to control the conditioning "
@@ -1210,7 +1223,7 @@ class CIM_ToSMarkerService : CIM_MarkerService {
 // ===================================================================
 // DSCPMarkerService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "DSCPMarkerService marks the differentiated services "
       "codepoint (DSCP) within the DS field in the IPv4 and IPv6 "
       "packet headers, as defined in [R2474]. It is marked with "
@@ -1233,7 +1246,7 @@ class CIM_DSCPMarkerService : CIM_MarkerService {
 // ===================================================================
 // 8021QMarkerService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "8021QMarkerService marks the Priority field in an 802.1Q-"
       "compliant frame, with a specified value. Frames are "
       "marked in order to control the conditioning that they will "
@@ -1313,7 +1326,7 @@ class CIM_DropperService : CIM_ConditioningService {
          Values {"Unknown", "Always Drop", "Do Not Always Drop"} ]
     uint16 AlwaysDrop;
 
-        [Experimental, Description (
+        [Description (
          "This enumeration indicates the point in the associated "
          "queue (associated via the NextService relationship) "
          "from which packets should be dropped. If the value is "
@@ -1435,7 +1448,7 @@ class CIM_REDDropperService : CIM_DropperService {
             "CIM_REDDropperService.StartProbability"} ]
     uint32 StopProbability;
 
-        [Experimental, Description (
+        [Description (
          "ThresholdUnits is an enumerated integer that identifies "
          "the units for the Min and MaxQueueThreshold properties. "
          "The values are either bytes (1) or packets (2)."), 
@@ -1513,7 +1526,7 @@ class CIM_WeightedREDDropperService : CIM_DropperService {
 // ===================================================================
 // HeadTailDropper
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "HeadTailDropper describes the threshold information "
       "of a head or tail dropper. The inherited property "
       "DropFrom indicates whether a particular instance of "
@@ -1550,14 +1563,14 @@ class CIM_HeadTailDropper : CIM_DropperService {
       "underlies the QoSService.") ]
 class CIM_QueuingService : CIM_ConditioningService {
 
-        [Gauge, Experimental, Description (
+        [Gauge, Description (
          "Indicates the current depth of this queue in units "
          "specified by DepthUnits. This value may be important "
          "in diagnosing unexpected behavior."),
          ModelCorrespondence {"CIM_QueuingService.DepthUnits"} ]
     uint32 CurrentQueueDepth;
 
-        [Experimental, Description (
+        [Description (
          "DepthUnits is an enumerated integer that identifies "
          "the units for the CurrentQueueDepth property. "
          "The values are either bytes (1) or packets (2)."), 
@@ -1570,7 +1583,7 @@ class CIM_QueuingService : CIM_ConditioningService {
 // ===================================================================
 // DropThresholdCalculationService
 // ===================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class calculates an average depth for a queue, based "
       "on a smoothing weight and a sampling time interval.  The "
       "latter are properties of this Service, describing how it "
@@ -1611,7 +1624,7 @@ class CIM_DropThresholdCalculationService : CIM_Service {
 // ==================================================================
 // QueueHierarchy
 // ==================================================================
-   [Association, Version ("2.6.0"), Deprecated {"No value"}, 
+   [Association, Version ("2.7.0"), Deprecated {"No value"}, 
     Description (
       "Describes the reliance of a QueuingService on other, "
       "supporting queues and their QueuingServices. A given Service "
@@ -1645,7 +1658,7 @@ class CIM_QueueHierarchy : CIM_ServiceServiceDependency {
 // ==================================================================
 // CalculationServiceForDropper
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association is a subclass of ServiceServiceDependency, "
       "and represents the reliance of a REDDropperService on one or "
@@ -1669,7 +1682,7 @@ class CIM_CalculationServiceForDropper : CIM_ServiceServiceDependency {
 // ==================================================================
 // CalculationBasedOnQueue
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association establishes a dependency relationship "
       "between a QueuingService and an instance of the "
@@ -1693,7 +1706,7 @@ class CIM_CalculationBasedOnQueue : CIM_ServiceServiceDependency {
 // ==================================================================
 // HeadTailDropQueueBinding
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association describes the relationship between a "
       "head or tail dropper and the queue that it monitors to "
@@ -1808,7 +1821,7 @@ class CIM_PacketSchedulingService : CIM_ConditioningService {
 // ==================================================================
 // NextScheduler
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), Description (
+   [Association,  Version ("2.7.0"), Description (
       "This association is a subclass of NextService, and defines "
       "a predecessor-successor relationship between Packet"
       "SchedulingServices.  In a hierarchical queuing "
@@ -1825,7 +1838,7 @@ class CIM_NextScheduler : CIM_NextService {
          "outputs of multiple prior schedulers.") ]
     CIM_PacketSchedulingService REF PrecedingService;
 
-        [Override ("FollowingService"), Key, Max (1), Description (
+        [Override ("FollowingService"), Max (1), Description (
          "A scheduler that includes among its inputs the aggregated "
          "outputs of one or more PrecedingService schedulers.") ]
     CIM_PacketSchedulingService REF FollowingService;
@@ -1871,7 +1884,7 @@ class CIM_SchedulerUsed : CIM_ServiceServiceDependency {
 // ==================================================================
 // NonWorkConservingSchedulingService
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "A type of packet scheduler, that is capable of "
       "operating in a non-work conserving manner. This class "
       "does not add any properties beyond those it inherits "
@@ -1886,7 +1899,7 @@ class CIM_NonWorkConservingSchedulingService :
 // ==================================================================
 // FailNextScheduler
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This association is a subclass of NextScheduler, and defines "
       "a predecessor-successor relationship between a NonWork"
@@ -1916,7 +1929,7 @@ class CIM_FailNextScheduler : CIM_NextScheduler {
 // ==================================================================
 // SchedulingElement
 // ==================================================================
-   [Experimental, Abstract, Version ("2.7.0"), Description (
+   [Abstract, Version ("2.7.0"), Description (
       "SchedulingElement represents the configuration "
       "information that a PacketSchedulingService has for one "
       "of the elements that it is scheduling. The scheduled "
@@ -1935,25 +1948,30 @@ class CIM_FailNextScheduler : CIM_NextScheduler {
 class CIM_SchedulingElement : CIM_ManagedElement {
 
         [Key, Description (
-         "InstanceID opaquely identifies a unique instance of "
-         "SchedulingElement. The InstanceID must be unique within "
-         "a namespace. In order to ensure uniqueness, the value of "
-         "InstanceID SHOULD be constructed in the following "
-         "manner: \n"
-         "  <Vendor ID><ID> \n"
-         "  <Vendor ID> MUST include a copyrighted, trademarked "
-         "or otherwise unique name that is owned by the business "
-         "entity or a registered ID that is assigned to the business "
-         "entity that is defining the InstanceID. (This is similar to "
-         "the <Schema Name>_<Class Name> structure of Schema class "
-         "names.) The purpose of <Vendor ID> is to ensure that <ID> "
-         "is truly unique across multiple vendor implementations. "
-         "If such a name is not used, the defining entity MUST assure "
-         "that the <ID> portion of the Instance ID is unique when "
-         "compared with other instance providers. For DMTF defined "
-         "instances, the <Vendor ID> is 'CIM'. \n"
-         "  <ID> MUST include a vendor specified unique "
-         "identifier.") ]        
+         "Within the scope of the instantiating Namespace, InstanceID " 
+         "opaquely and uniquely identifies an instance of this class. "
+         "In order to ensure uniqueness within the NameSpace, the "
+         "value of InstanceID SHOULD be constructed using the "
+         "following 'preferred' algorithm: \n"
+         " <OrgID>:<LocalID> \n"
+         "Where <OrgID> and <LocalID> are separated by a colon ':', "
+         "and where <OrgID> MUST include a copyrighted, trademarked "
+         "or otherwise unique name that is owned by the business entity "
+         "creating/defining the InstanceID, or is a registered ID that "
+         "is assigned to the business entity by a recognized global "
+         "authority. (This is similar to the <Schema Name>_<Class Name> "
+         "structure of Schema class names.) In addition, to ensure "
+         "uniqueness <OrgID> MUST NOT contain a colon (':'). When "
+         "using this algorithm, the first colon to appear in "
+         "InstanceID MUST appear between <OrgID> and <LocalID>. \n"
+         " <LocalID> is chosen by the business entity and SHOULD not be "
+         "re-used to identify different underlying (real-world) elements. " 
+         "If the above 'preferred' algorithm is not used, the defining "
+         "entity MUST assure that the resultant InstanceID is not "
+         "re-used across any InstanceIDs produced by this or other "
+         "providers for this instance's NameSpace. \n"
+         "For DMTF defined instances, the 'preferred' algorithm MUST be "
+         "used with the <OrgID> set to 'CIM'.") ] 
     string InstanceID;
 
         [Write, Description (
@@ -1974,7 +1992,7 @@ class CIM_SchedulingElement : CIM_ManagedElement {
 // ==================================================================
 // AllocationSchedulingElement
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class is a subclass of the abstract class "
       "SchedulingElement. It introduces five new properties to "
       "support bandwidth-based scheduling. As is the case with "
@@ -2037,7 +2055,7 @@ class CIM_AllocationSchedulingElement : CIM_SchedulingElement {
 // ==================================================================
 // WRRSchedulingElement
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class is a subclass of the abstract class "
       "SchedulingElement. It introduces a new property, "
       "WeightingFactor, to give some inputs a higher probability "
@@ -2052,7 +2070,7 @@ class CIM_AllocationSchedulingElement : CIM_SchedulingElement {
       "to TRUE in this class.") ]
 class CIM_WRRSchedulingElement : CIM_SchedulingElement {
 
-        [Override ("WorkConserving"), ValueMap {"TRUE"} ]
+        [Override ("WorkConserving") ]
     boolean WorkConserving = TRUE;
 
         [MinValue (0), MaxValue (100000), Description (
@@ -2081,7 +2099,7 @@ class CIM_WRRSchedulingElement : CIM_SchedulingElement {
 // ==================================================================
 // PrioritySchedulingElement
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class is a subclass of the abstract class "
       "SchedulingElement. It indicates that a scheduler is "
       "taking packets from a set of inputs using the priority "
@@ -2100,7 +2118,7 @@ class CIM_WRRSchedulingElement : CIM_SchedulingElement {
       "in this class.") ]
 class CIM_PrioritySchedulingElement : CIM_SchedulingElement {
 
-        [Override ("WorkConserving"), ValueMap {"TRUE"} ]
+        [Override ("WorkConserving") ]
     boolean WorkConserving = TRUE;
 
         [Description (
@@ -2116,7 +2134,7 @@ class CIM_PrioritySchedulingElement : CIM_SchedulingElement {
 // ==================================================================
 // BoundedPrioritySchedulingElement
 // ==================================================================
-   [Experimental, Version ("2.7.0"), Description (
+   [Version ("2.7.0"), Description (
       "This class is a subclass of the class PriorityScheduling"
       "Element, which is itself derived from the abstract class "
       "SchedulingElement. As is the case with all subclasses of "
@@ -2133,7 +2151,7 @@ class CIM_PrioritySchedulingElement : CIM_SchedulingElement {
 class CIM_BoundedPrioritySchedulingElement : 
  CIM_PrioritySchedulingElement {
 
-        [Override ("WorkConserving"), ValueMap {"TRUE"} ]
+        [Override ("WorkConserving") ]
     boolean WorkConserving = TRUE;
 
         [Description (
@@ -2151,7 +2169,7 @@ class CIM_BoundedPrioritySchedulingElement :
 // ==================================================================
 // QueueToSchedule
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This is a top-level association, representing the "
       "relationship between a queue (QueuingService) and a "
@@ -2183,7 +2201,7 @@ class CIM_QueueToSchedule {
 // ==================================================================
 // SchedulingServiceToSchedule
 // ==================================================================
-   [Association, Experimental, Version ("2.7.0"), 
+   [Association, Version ("2.7.0"), 
     Description (
       "This is a top-level association, representing the "
       "relationship between a scheduler (PacketSchedulingService) "
@@ -2214,7 +2232,7 @@ class CIM_SchedulingServiceToSchedule {
 // ==================================================================
 // ElementInSchedulingService
 // ==================================================================
-   [Association, Aggregation, Composition, Experimental, 
+   [Association, Aggregation, Composition, 
     Version ("2.7.0"), Description (
       "This association represents the relationship between a "
       "PacketSchedulingService and the set of SchedulingElements "

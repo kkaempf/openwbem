@@ -2,10 +2,10 @@
 // Title:       Core Storage Extents 2.7
 // Filename:    Core27_StorageExtent.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        04/15/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -49,6 +49,11 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR967 - Add values "DMTF reserved" and "Vendor reserved" to 
+//         StorageExtent.ExtentStatus.
+// CR968 - Remove the Experimental qualifier
+//
 // Change Log for v2.7
 // CR722 - Add StorageExtent.ExtentStatus
 // CR775 - StorageExtent.NoSinglePointOfFailure, StorageExtent. 
@@ -108,7 +113,7 @@ class CIM_StorageExtent : CIM_LogicalDevice {
         "Memory or LogicalDisks), enter a 1."), 
         Units ("Bytes"),
         MappingStrings {"MIF.DMTF|Host Storage|001.4", 
-            "MIB.IETF|HOST-RESOURCES-MIB.hrStorageAllocationUnits,"
+            "MIB.IETF|HOST-RESOURCES-MIB.hrStorageAllocationUnits",
             "MIF.DMTF|Storage Devices|001.5"} ]
     uint64 BlockSize;
 
@@ -148,19 +153,20 @@ class CIM_StorageExtent : CIM_LogicalDevice {
         "Extents.") ]
     boolean SequentialAccess;
         
-    [Experimental, Description (
+    [Description (
         "StorageExtents have additional status information beyond that "
         "captured in the OperationalStatus and other properties, inherited "
         "from ManagedSystemElement. This additional information (for "
         "example, \"Protection Disabled\", value=9) is captured in the "
         "VolumeStatus property."),
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-            "10", "11", "12", "13", "14"},
+            "10", "11", "12", "13", "14", "15..32767", "32768..65535"},
         Values {"Other", "Unknown", "None/Not Applicable", "Broken", 
             "Data Lost", "Dynamic Reconfig", "Exposed", 
             "Fractionally Exposed", "Partially Exposed", 
             "Protection Disabled", "Readying", "Rebuild", 
-            "Recalculate", "Spare in Use", "Verify In Progress"} ]
+            "Recalculate", "Spare in Use", "Verify In Progress",
+            "DMTF Reserved", "Vendor Reserved"} ]
     uint16 ExtentStatus[];
 };
 

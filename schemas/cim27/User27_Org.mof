@@ -2,10 +2,10 @@
 // Title:       User-Security Organizations and Persons 2.7
 // Filename:    User27_Org.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        07/07/2002
+// Status:      Final
+// Date:        03/31/2003
 // ===================================================================
-// Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -57,6 +57,8 @@
 // (ERRATA) CR855 - Change cardinality of the Antecedent from 0..1
 //         to 1 for MoreOrganizationInfo, MoreOrgUnitInfo, and
 //         MorePersonInfo
+// CR980 - Remove the Experimental qualifier from 2 properties in 
+//         Person
 // ===================================================================
 
 #pragma Locale ("en_US")
@@ -786,7 +788,7 @@ class CIM_Person : CIM_UserEntity {
       "The person's facsimile telephone number.") ]
    string FacsimileTelephoneNumber;
 
-   [Experimental, Description (
+   [Description (
       "The Given Name property is used for the part of a person's "
       "name that is not their surname nor their middle name (i.e., "
       "their first name).") ]
@@ -886,7 +888,7 @@ class CIM_Person : CIM_UserEntity {
       "organization, e.g., Manager, Vice-President, etc.") ]
    string Title;
 
-   [Experimental, Description (
+   [Description (
       "A User ID property. Based on RFC1274, the property may be "
       "used to specify a computer system login name.") ]
    string UserID;

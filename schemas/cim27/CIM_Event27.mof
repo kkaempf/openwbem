@@ -2,10 +2,10 @@
 // Title:      Event MOF Specification 2.7 
 // Filename:   CIM_Event27.mof
 // Version:    2.7.0
-// Status:     Preliminary
-// Date:       09/23/2002
+// Status:     Final
+// Date:       03/17/2003
 // ===================================================================
-// Copyright 2001-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2001-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -51,6 +51,8 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted. 
 // ===================================================================
+// 03/17/2003 - 2.7 Final
+//          CR986 - Remove Experimental Qualifier
 // 09/23/2002 - 2.7 Preliminary
 //          CR869 - Fix the Description for IndicationHandlerCIMXML.
 //                      Destination Description
@@ -92,7 +94,7 @@
     "CIM_IndicationSubscription associating the Filter and Handler.") ]
 class CIM_Indication {
 
-    [Experimental, Description (
+    [Description (
         "An identifier for the Indication. This property is "
         "similar to a key value in that it can be used for "
         "identification, when correlating Indications (see "
@@ -104,7 +106,7 @@ class CIM_Indication {
              "Recommendation.ITU|X733.Notification identifier"} ]
     string IndicationIdentifier;
 
-    [Experimental, Description (
+    [Description (
         "A list of IndicationIdentifiers whose notifications are correlated "
         "with (related to) this one."),
         MappingStrings {
@@ -630,7 +632,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         MappingStrings {"Recommendation.ITU|X733.Proposed repair actions"} ]
     string RecommendedActions[];
 
-    [Experimental, Description ( 
+    [Description ( 
         "An instrumentation or provider specific value that " 
         "describes the underlying \"real-world\" event represented " 
         "by the Indication. Two Indications with the same, " 
@@ -642,7 +644,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         ModelCorrespondence {"CIM_AlertIndication.ProbableCause"} ] 
     string EventID; 
 
-    [Experimental, Description ( 
+    [Description ( 
         "The time and date the underlying event was first " 
         "detected. If specified, this property MUST be set to " 
         "NULL if the creating entity is not capable of providing " 
@@ -652,17 +654,17 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         ModelCorrespondence {"CIM_AlertIndication.ProbableCause"} ] 
     datetime EventTime; 
 
-    [Experimental, MaxLen (256), Description (
+    [MaxLen (256), Description (
         "The scoping System's CreationClassName for the Provider "
         "generating this Indication.") ] 
     string SystemCreationClassName; 
 
-    [Experimental, MaxLen (256), Description (
+    [MaxLen (256), Description (
         "The scoping System's Name for the Provider generating "
         "this Indication.") ] 
     string SystemName; 
 
-    [Experimental, MaxLen (256), Description (
+    [MaxLen (256), Description (
         "The name of the Provider generating this Indication.") ] 
     string ProviderName; 
 };
@@ -804,7 +806,7 @@ class CIM_IndicationFilter: CIM_ManagedElement {
     "or it may define a process to invoke. This class is derived "
     "from CIM_ManagedElement to allow modeling the "
     "dependency of the Handler on a specific service.") ]
-class CIM_IndicationHandler: CIM_ManagedElement {
+class CIM_IndicationHandler : CIM_ManagedElement {
 
     [Key, MaxLen (256), Description (
         "A System's CreationClassName. The Handler is defined in the "
@@ -842,7 +844,7 @@ class CIM_IndicationHandler: CIM_ManagedElement {
         "Handler.") ]
     string Owner;
 
-    [Experimental, Description (
+    [Description (
         "Describes the Persistence Type of the destination defined "
         "by this instance. If the value of PersistenceType is not "
         "set, the value of PersistenceType MUST be treated as "
@@ -862,7 +864,7 @@ class CIM_IndicationHandler: CIM_ManagedElement {
            "CIM_IndicationHandler.OtherPersistenceType"} ]
     uint16 PersistenceType;
 
-    [Experimental, Description (
+    [Description (
         "A string describing (\"Other\") values for PersistenceType. "
         "This value MUST be set to a non NULL value when the "
         "PersistenceType is 1 (\"Other\"). For all other values of "
@@ -914,7 +916,7 @@ class CIM_IndicationSubscription {
         "of this subscription.") ]
     CIM_IndicationHandler REF Handler;
 
-    [Experimental, Description (
+    [Description (
         "Defines the desired behavior for a subscription when a "
         "fatal error occurs in one of the Indication processing "
         "subcomponents (e.g., Indication processor, Indication "
@@ -938,41 +940,41 @@ class CIM_IndicationSubscription {
         Values {"Other", "Ignore", "Disable", "Remove"} ]
     uint16 OnFatalErrorPolicy;
 
-    [Experimental, Description ("A string defining \"Other\" "
+    [Description ("A string defining \"Other\" "
         "values for OnFatalErrorPolicy.  This value MUST "
         "be set to a non NULL value when OnFatalErrorPolicy "
         "is set to a value of 1 (\"Other\"). For all other values, "
         "the OtherOnFatalErrorPolicy MUST be NULL.") ]
     string OtherOnFatalErrorPolicy;
 
-    [Experimental, Description (
+    [Description (
         "The FailureTriggerTimeInterval is used by the client to "
         "specify a recommended minimum delay before the "
         "OnFatalErrorPolicy is implemented."),
         Units ("Seconds") ]
     uint64 FailureTriggerTimeInterval;
 
-    [Experimental, Write, Description (
+    [Write, Description (
         "Indicates the current processing state of the subscription. "),
         ValueMap {"0", "1", "2", "3", "4"},
         Values {"Unknown", "Other", "Enabled", "Enabled Degraded", 
                 "Disabled"} ]
     uint16 SubscriptionState;
 
-    [Experimental, Description ("A string defining \"Other\"  "
+    [Description ("A string defining \"Other\"  "
         "values for SubscriptionState.  This value MUST "
         "be set to a non NULL value when SubscriptionState "
         "is set to a value of 1 (\"Other\"). For all other values, "
         "the OtherSubscriptionState MUST be NULL.") ]
     string OtherSubscriptionState;
 
-    [Experimental, Description (
+    [Description (
         "Date and time of the last state change.  This value is based "
         "on the notion of local date and time of the Managed System "
         "Element running the Indication processing subcomponents.") ]
     datetime TimeOfLastStateChange;
 
-    [Experimental, Write, Description (
+    [Write, Description (
         "SubscriptionDuration defines the desired length of the "
         "subscription. Indications generated after the duration of "
         "the subscription has exceeded SubscriptionDuration MUST "
@@ -984,20 +986,20 @@ class CIM_IndicationSubscription {
         Units ("Seconds") ]
     uint64 SubscriptionDuration;
 
-    [Experimental, Write (false), Description (
+    [Write (false), Description (
         "SubscriptionStartTime is the time the subscription was "
         "started. The value of this property is computed based on "
         "the notion of date and time of the ManagedSystemElement "
         "running the Indication processing subcomponents.") ]
     datetime SubscriptionStartTime;
 
-    [Experimental, Write (false), Description (
+    [Write (false), Description (
         "SubscriptionTimeRemaining is a computed value that"
         "provides a snapshot of the time remaining in the"
         "Subscription."), Units ("Seconds") ]
     uint64 SubscriptionTimeRemaining;
 
-    [Experimental, Description (
+    [Description (
         "The RepeatNotificationPolicy property defines  "
         "the desired behavior for handling Indications that "
         "report the occurrence of the same underlying event "
@@ -1037,7 +1039,7 @@ class CIM_IndicationSubscription {
         Values {"Unknown", "Other", "None", "Suppress", "Delay"} ]
     uint16 RepeatNotificationPolicy;
 
-    [Experimental, Description (
+    [Description (
         "A string defining \"Other\" "
         "values for RepeatNotificationPolicy.  This value MUST "
         "be set to a non NULL value when RepeatNotificationPolicy "
@@ -1045,19 +1047,19 @@ class CIM_IndicationSubscription {
         "the OtherRepeatNotificationPolicy MUST be NULL.") ]
     string OtherRepeatNotificationPolicy;
 
-    [Experimental, Description (
+    [Description (
         "Defines the time interval for the repeat " 
         "notification policy calculation."),
         Units ("Seconds") ]
     uint64 RepeatNotificationInterval;
 
-    [Experimental, Description (
+    [Description (
         "Defines the gap interval for the repeat " 
         "notification policy calculation."), 
         Units ("Seconds") ]
     uint64 RepeatNotificationGap;
 
-    [Experimental, Description (
+    [Description (
         "Defines the count property for the repeat " 
         "notification policy calculation.") ] 
     uint16 RepeatNotificationCount;

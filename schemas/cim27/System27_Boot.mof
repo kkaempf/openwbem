@@ -2,10 +2,10 @@
 // Title:       System Boot 2.7
 // Filename:    System27_Boot.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        07/08/02
+// Release:     Final
+// Date:        04/02/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -234,12 +234,12 @@ class CIM_OOBAlertService : CIM_Service {
 
     [Read, Description ( 
         "If the OOB Alerting service is capable of sending Presence " 
-        "heart beat messages") ] 
+        "heart beat messages.") ] 
     boolean PresenceHeartbeatCapable; 
   
     [Description (   
         "When set to true causes the OOBAlertService to send Presence" 
-        "heart beat messages"), 
+        "heart beat messages."), 
         ModelCorrespondence {
             "CIM_OOBAlertService.PresenceHeartbeatCapable"} ]
     boolean EnablePresenceHeartbeats; 

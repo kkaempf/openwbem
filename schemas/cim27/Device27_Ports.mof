@@ -2,10 +2,10 @@
 // Title:       Device Ports 2.7
 // Filename:    Device27_Ports.mof
 // Version:     2.7.0
-// Release:     Preliminary 
-// Date:        09/20/02
+// Release:     Final
+// Date:        04/13/03
 // ===================================================================
-// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -50,6 +50,11 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7 Final
+// CR971 - Removal of the Experimental qualifier
+//       - Remove LogicalModule, ModulePort, and PortActiveConnection
+//         so they can be experimental in 2.8
+//
 // Change Log for v2.7
 // CR630 - Remove NetworkAdapterStatistics and Add NetworkPortStatistics
 //       - Add Port
@@ -93,26 +98,6 @@ class CIM_LogicalPort : CIM_LogicalDevice {
 };
 
 
-// ==================================================================
-// LogicalModule
-// ==================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "LogicalModule is the logical device corresponding to a "
-    "line card/blade in a device. For example, a line "
-    "card in a switch is an instance of LogicalModule, "
-    "associated with the the switch itself.  A logical module "
-    "is not necessarily independently managed.") ]
-class CIM_LogicalModule : CIM_LogicalDevice {
-
-    [Description (
-        "Logical modules are often named by the physical or "
-        "logical slot that they occupy within the containing "
-        "device. ModuleNumber is the number assigned "
-        "to the module by its parent.") ]
-    uint16 ModuleNumber;        
-};
-
-
 // ===================================================================
 // PortOnDevice 
 // ===================================================================
@@ -134,7 +119,7 @@ class CIM_PortOnDevice : CIM_Dependency {
 // ==================================================================
 // LogicalPortGroup
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "A collection of one or more ports logically grouped for "
     "administrative purposes.  This class is created for specific "
     "ease of query when a Port is associated to more than one "
@@ -147,7 +132,7 @@ class CIM_LogicalPortGroup: CIM_SystemSpecificCollection {
 // ==================================================================
 // NetworkPort
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "NetworkPort is the logical representation of network "
     "communications hardware - a physical connector and the "
     "setup/operation of the network chips, at the lowest layers "
@@ -172,7 +157,7 @@ class CIM_NetworkPort : CIM_LogicalPort {
         "the of the port's type.  A range of values, DMTF_Reserved, "
         "has been defined that allows subclasses to override and "
         "define their specific port types."),
-        ValueMap {"0", "1", "2", "..15999", "16000.."},
+        ValueMap {"0", "1", "2", "3..15999", "16000..65535"},
         Values {"Unknown", "Other", "Not Applicable", "DMTF Reserved", 
             "Vendor Reserved"},
         ModelCorrespondence {"CIM_NetworkPort.OtherNetworkPortType"} ]
@@ -249,7 +234,7 @@ class CIM_NetworkPort : CIM_LogicalPort {
 // ===================================================================
 // EthernetPort
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "Capabilities and management of an EthernetPort.") ]
 class CIM_EthernetPort : CIM_NetworkPort {
  
@@ -258,7 +243,7 @@ class CIM_EthernetPort : CIM_NetworkPort {
         "When set to 1 (\"Other\"), the related property "
         "OtherPortType contains a string description of "
         "the port's type."),
-        ValueMap {"0", "1", "50", "51", "52", "53", "16000.."},
+        ValueMap {"0", "1", "50", "51", "52", "53", "16000..65535"},
         Values {"Unknown", "Other", "10BaseT", "10-100BaseT",  
             "100BaseT", "1000BaseT", "Vendor Reserved"} ]
     uint16 PortType;
@@ -327,7 +312,7 @@ class CIM_EthernetPort : CIM_NetworkPort {
 // ===================================================================
 // TokenRingPort
 // ===================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "Capabilities and management of a TokenRingPort.") ]
 class CIM_TokenRingPort : CIM_NetworkPort {
  
@@ -446,28 +431,10 @@ class CIM_TokenRingPort : CIM_NetworkPort {
 };
  
  
-// ==================================================================
-// ModulePort
-// ==================================================================
-[Association, Aggregation, Experimental, Version ("2.7.0"),
-    Description (
-        "ModulePort associates ports with their hosting modules.") ]
-class CIM_ModulePort : CIM_Component {
-
-    [Override ("GroupComponent"), Aggregate, Max (1), Description (
-        "A module that has ports.") ] 
-    CIM_LogicalModule REF GroupComponent;
-    
-    [Override ("PartComponent"), Description (
-        "A Port that is associated with a module.") ] 
-    CIM_NetworkPort REF PartComponent;
-};
-
-
 // ===================================================================
 // OOBAlertServiceOnNetworkPort 
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "OOBAlertServiceOnNetworkPort defines where the out of band "
     "alerting Service is implemented. Currently, the Service can "
     "either employ a Modem or a NetworkPort to send alerts.") ]
@@ -487,7 +454,7 @@ CIM_DeviceServiceImplementation {
 // ===================================================================
 // WakeUpServiceOnNetworkPort
 // ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
+[Association, Version ("2.7.0"), Description (
     "WakeUpServiceOnNetworkPort defines where the WakeUpService "
     "is implemented. Currently, the Service can either employ a Modem "
     "or a NetworkPort for wakeup.") ]
@@ -525,37 +492,10 @@ class CIM_PortImplementsEndpoint : CIM_DeviceSAPImplementation {
 }; 
  
  
-// ===================================================================
-// PortActiveConnection 
-// ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
-    "The PortActiveConnection relationship indicates that a "
-    "NetworkPort is using the referenced PhysicalConnector "
-    "to output to the network. This relationship is important when "
-    "the port can choose to output from one of several "
-    "connectors. The connectors may be associated with the "
-    "NetworkPort in a Realizes relationship - but this is not "
-    "required. This association provides additional information "
-    "(i.e., 'in use for communication') different than Realizes.") ]
-class CIM_PortActiveConnection : CIM_Dependency {
-    
-    [Override ("Antecedent"), 
-        Description (
-            "The PhysicalConnector.") ]
-    CIM_PhysicalConnector REF Antecedent;
-    
-    [Override ("Dependent"), 
-        Description (
-            "The NetworkPort that transmits using the "
-            "Connector.") ]
-    CIM_NetworkPort REF Dependent;
-};
-
-
 // ==================================================================
 // NetworkPortStatistics
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "The NetworkPortStatistics class describes the statistics "
     "for the NetworkPort.") ]
 class CIM_NetworkPortStatistics : CIM_StatisticalData {
@@ -589,7 +529,7 @@ class CIM_NetworkPortStatistics : CIM_StatisticalData {
 // ==================================================================
 // EthernetPortStatistics
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "The EthernetPortStatistics class describes the statistics for "
     "the EthernetPort.") ]
 class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
@@ -763,12 +703,12 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
 // ==================================================================
 // TokenRingPortStatistics
 // ==================================================================
-[Experimental, Version ("2.7.0"), Description (
+[Version ("2.7.0"), Description (
     "The TokenRingPortStatistics class describes the statistics for "
     "the TokenRingPort.") ]
 class CIM_TokenRingPortStatistics : CIM_NetworkPortStatistics {
     
-    [Experimental, Counter, Description (
+    [Counter, Description (
         "This counter is incremented when a station detects the "
         "absence of transitions for five half-bit timers (burst-five "
         "errors)."), 

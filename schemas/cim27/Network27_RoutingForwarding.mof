@@ -2,10 +2,10 @@
 // Title:       Network Routing and Forwarding Services 2.7
 // Filename:    Network27_RoutingForwarding.mof
 // Version:     2.7.0
-// Status:      Preliminary
-// Date:        08/04/2002
+// Status:      Final
+// Date:        April 18, 2003
 // ===================================================================
-// Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
+// Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
 // DMTF is a not-for-profit association of industry members dedicated 
 // to promoting enterprise and systems management and interoperability. 
@@ -60,6 +60,9 @@
 // CR788 - Add the classes, RoutingProtocolDomain and RoutingProtocol
 //         DomainInAS, from the OSPF submission
 // CR866 - Cleanup of the RoutingPolicy class
+// CR982 - Removal of Experimental for preliminary to final
+// CR983 - v2.7 Deprecations promoted to final
+// CR1009 - Correct deprecation of NetworkService.ServiceURL
 // ===================================================================
  
 #pragma Locale ("en_US")
@@ -88,12 +91,14 @@ class CIM_NetworkService : CIM_Service {
          "necessary.  Therefore, the property is deprecated.") ] 
     string Keywords [ ];
 
-        [Deprecated {"CIM_ServiceAccessPoint"}, Description (
+        [Deprecated {"CIM_ServiceAccessURI"}, Description (
          "This is a URL that provides the protocol, network "
          "location, and other service-specific information required "
          "in order to access the service. It is deprecated with the "
-         "recommendation that ServiceAccessPoint be subclassed and "
-         "instantiated instead.") ]
+         "recommendation that ServiceAccessURI be instantiated "
+         "instead. This new class correctly positions the semantics "
+         "of the service access, and clarifies the format of the "
+         "information.") ]
     string ServiceURL;
 
         [Deprecated {"No value"}, Description (
@@ -248,11 +253,11 @@ class CIM_ForwardingService : CIM_NetworkService {
 class CIM_ForwardsAmong : CIM_ServiceSAPDependency {
 
         [Override ("Antecedent"), Description(
-         "The ProtocolEndpoints that are used to forward the data") ] 
+         "The ProtocolEndpoints that are used to forward the data.") ] 
     CIM_ProtocolEndpoint REF Antecedent;
 
         [Override ("Dependent"), Description(
-         "The service that is forwarding the data") ]
+         "The service that is forwarding the data.") ]
     CIM_ForwardingService REF Dependent;
 };
 
@@ -262,7 +267,7 @@ class CIM_ForwardsAmong : CIM_ServiceSAPDependency {
 // ==================================================================
    [Association, Version ("2.7.0"), 
     Deprecated {"CIM_HostedService"}, Description (
-      "This is a specialization of CIM_HostedService, which is an"
+      "This is a specialization of CIM_HostedService, which is an "
       "association between a Service and the System on which the "
       "functionality resides. The class, HostedForwardingServices, "
       "is deprecated since it provides no additional semantics "
@@ -271,11 +276,13 @@ class CIM_ForwardsAmong : CIM_ServiceSAPDependency {
       "reside in a Network or other higher level System.") ]
 class CIM_HostedForwardingServices : CIM_HostedService {
 
-        [Override ("Antecedent"), Min (1), Max (1),
+        [Override ("Antecedent"), Min (0), Max (1),
+         Deprecated {"CIM_HostedService.Antecedent"}, 
          Description ("The hosting router.") ]
     CIM_ComputerSystem REF Antecedent;
 
-        [Override ("Dependent"), Description (
+        [Override ("Dependent"),
+         Deprecated {"CIM_HostedService.Dependent"}, Description (
          "The Service hosted on the System.") ]
     CIM_ForwardingService REF Dependent;
 };
@@ -324,7 +331,7 @@ class CIM_RouteCalculationService : CIM_NetworkService {
 // ==================================================================
 // CalculatesAmong 
 // ==================================================================
-   [Association, Version ("2.6.0"), Description (
+   [Association, Version ("2.7.0"), Description (
       "This is a specialization of the ServiceSAPDependency "
       "association, indicating that the referenced "
       "ProtocolEndpoint is utilized by the "
@@ -332,7 +339,7 @@ class CIM_RouteCalculationService : CIM_NetworkService {
 class CIM_CalculatesAmong : CIM_ServiceSAPDependency {
 
         [Override ("Antecedent"), 
-         Description ("The required ProtocolEndpoint") ] 
+         Description ("The required ProtocolEndpoint.") ] 
     CIM_ProtocolEndpoint REF Antecedent;
 
         [Override ("Dependent"), Description (
@@ -355,7 +362,7 @@ class CIM_CalculatesAmong : CIM_ServiceSAPDependency {
 // ==================================================================
    [Association, Version ("2.7.0"), 
     Deprecated {"CIM_HostedService"}, Description (
-      "This is a specialization of CIM_HostedService, which is an"
+      "This is a specialization of CIM_HostedService, which is an "
       "association between a Service and the System on which the "
       "functionality resides. The class, HostedRoutingServices, "
       "is deprecated since it provides no additional semantics "
@@ -364,11 +371,13 @@ class CIM_CalculatesAmong : CIM_ServiceSAPDependency {
       "reside in a Network or other higher level System.") ]
 class CIM_HostedRoutingServices : CIM_HostedService {
 
-        [Override ("Antecedent"), Min (1), Max (1),
+        [Override ("Antecedent"), Min (0), Max (1),
+         Deprecated {"CIM_HostedService.Antecedent"}, 
          Description ("The hosting router.") ]
     CIM_ComputerSystem REF Antecedent;
 
-        [Override ("Dependent"), Description (
+        [Override ("Dependent"), 
+         Deprecated {"CIM_HostedService.Dependent"}, Description (
          "The Service hosted on the System.") ]
     CIM_RouteCalculationService REF Dependent;
 };
@@ -377,7 +386,7 @@ class CIM_HostedRoutingServices : CIM_HostedService {
 // ==================================================================== 
 // RoutingProtocolDomain 
 // ==================================================================== 
-   [Experimental, Version ("2.7.0"), Description ( 
+   [Version ("2.7.0"), Description ( 
       "A Routing Protocol Domain is a collection of routers which " 
       "coordinate their routing knowledge using a single [instance of " 
       "a] routing protocol. This class represents the " 
@@ -395,7 +404,7 @@ class CIM_RoutingProtocolDomain : CIM_AdminDomain {
 // ==================================================================== 
 // RoutingProtocolDomainInAS 
 // ==================================================================== 
-   [Association, Aggregation, Experimental, Version ("2.7.0"), 
+   [Association, Aggregation, Version ("2.7.0"), 
     Description ( 
       "This assocation connects an AutonomousSystem to the routing " 
       "domains that it contains.") ] 
@@ -481,30 +490,23 @@ class CIM_RoutingPolicy : CIM_LogicalElement {
          ValueMap {"1", "2", "3"},
          Values {"Replace", "Prepend", "Append"},
          ModelCorrespondence {
-            "CIM_RoutingPolicy.ProtocolAttributeAction"} ]
+            "CIM_RoutingPolicy.BGPAction"} ]
     uint16 AttributeAction;
 
-        [Deprecated {"CIM_BGPSpecificPolicyAttributes.BGPActions"},
-         Description (
+        [Description (
          "This defines one or more BGP-specific attributes "
-         "that should be used to modify this routing update. "
-         "The property is deprecated in lieu of specific "
-         "attribute Settings classes - for example, BGPSpecific"
-         "PolicyAttributes - that are associated using the "
-         "ElementSettingData relationship."),
+         "that should be used to modify this routing update."),
          ValueMap {"1", "2", "3", "4", "5", "6", "7", "8", "9", 
             "10"},
          Values {"Origin", "AS_Path", "NEXT_HOP", "Multi_Exit_Disc",
             "Local_Pref", "Atomic_Aggregate", "Aggregator", "Community",
-            "Originator_ID", "Cluster_List"} ]
+            "Originator_ID", "Cluster_List"}, 
+         ModelCorrespondence {"CIM_RoutingPolicy.BGPValue"} ]
     uint16 BGPAction;
 
-        [Deprecated {"CIM_BGPSpecificPolicyAttributes"},
-         Description (
-         "The value for the corresponding BGPAction. The property "
-         "is deprecated in lieu of specific 'protocol' SettingData "
-         "classes - for example, BGPSpecificPolicyAttribute - that "
-         "are associated using the ElementSettingData relationship.") ]
+        [Description (
+         "The value for the corresponding BGPAction."),
+         ModelCorrespondence {"CIM_RoutingPolicy.BGPAction"} ]
     string BGPValue;
 
         [Description (
@@ -527,7 +529,8 @@ class CIM_RoutingPolicy : CIM_LogicalElement {
             "Output Flow Policing", "Input Aggregate Policing",
             "Output Aggregate Policing",
             "Police By Marking Down", "Police By Dropping Down"},
-         ModelCorrespondence {"CIM_RoutingPolicy.ConditioningValue"} ]
+         ModelCorrespondence {"CIM_RoutingPolicy.ConditioningValue", 
+            "CIM_RoutingPolicy.OtherConditioningAction"} ]
     uint16 ConditioningAction;
 
         [Description (
