@@ -44,7 +44,9 @@ typedef void* (*OW_ThreadFunction)(void*);
 
 /**
  * The OW_ThreadImpl class represents the functionality needed by the
- * OpenWbem Thread class (OW_Thread). The implementation for this class
+ * OpenWbem Thread class (OW_Thread). It also contains other misellaneous 
+ * functions which are useful for synchronization and threads.
+ * The implementation for this class
  * must be provided on all platforms that OpenWbem runs on. It is essentially
  * an abstraction layer over another thread implementation.
  */
@@ -149,6 +151,34 @@ public:
 	 * @param milliSeconds	The number of milliseconds to suspend execution for.
 	 */
 	static void sleep(OW_UInt32 milliSeconds);
+
+	/**
+	 * "Multi-processor cache coherency.  Certain multi-processor platforms,
+	 * such as the COMPAQ Alpha and Intel Itanium, perform aggressive memory
+	 * caching optimization in which read and write operation can execute
+	 * 'out of order' across multiple CPU caches.  On these platforms, it may
+	 * not be possible to use the Double-Checked Locking Optimization pattern
+	 * without further modification because CPU cache lines will not be flushed
+	 * properly if shared data is accessed without locks held." 
+	 * (Pattern-Oriented Software Architecture Vol. 2, Schmidt, Stal, Rohnert, 
+	 * Buschmann. p. 361
+	 *
+	 * This function executes a memory barrier if necessary for the platform,
+	 * else it is a noop.
+	 */
+	static void memoryBarrier()
+	{
+		// DEC/COMPAQ/HP Alpha
+		#if defined(__alpha)
+		__asm__ __volatile__("mb");
+		#endif
+		
+		// Intel Itanium
+		#if defined(__ia64__) || defined(__ia64)
+		__asm__ __volatile__("mf");
+		#endif
+
+	}
 };
 
 #endif
