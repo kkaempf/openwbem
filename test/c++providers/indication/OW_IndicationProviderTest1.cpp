@@ -223,7 +223,7 @@ private:
 			iToAdd.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
 			iToAdd.setProperty("SystemName", CIMValue("localhost"));
 			iToAdd.setProperty("CreationClassName", CIMValue("OW_IndicationProviderTest1"));
-			iToAdd.setProperty("DeviceID", CIMValue(String(m_insts.size())));
+			iToAdd.setProperty("DeviceID", CIMValue(String(UInt32(m_insts.size()))));
 			// PowerOnHours is our property that will be modified
 			iToAdd.setProperty("PowerOnHours", CIMValue(UInt64(m_insts.size())));
 			m_insts.push_back(iToAdd);
