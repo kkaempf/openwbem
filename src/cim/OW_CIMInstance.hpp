@@ -200,6 +200,14 @@ public:
 	OW_CIMProperty getProperty(const OW_String& name) const;
 
 	/**
+	 * Gets a property with the specified name.
+	 * @param name The name of the property to retrieve.
+	 * @return The OW_CIMProperty identified by the name on success.
+	 * @throws an OW_NoSuchPropertyException if the property is not found or NULL.
+	 */
+	OW_CIMProperty getPropertyT(const OW_String& name) const;
+
+	/**
 	 * Get the alias name associated with this instance.
 	 * @return The alias name for this instance if it has one. Otherwise return
 	 * an empty string.
@@ -413,6 +421,15 @@ public:
 	 * @return The string representation of the OW_CIMInstance object.
 	 */
 	virtual OW_String toString() const;
+
+	/**
+	 * This compares the properties of the instances, and returns true
+	 * if they are equal.  It will sort the properties before comparing,
+	 * so the order of the properties is irrelevant.
+	 * @param other The instance to compare
+	 * @return true if the properties are the same
+	 */
+	bool propertiesAreEqualTo(const OW_CIMInstance& other) const;
 
 private:
 	struct dummy { void nonnull() {}; };

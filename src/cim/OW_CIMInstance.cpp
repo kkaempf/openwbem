@@ -35,6 +35,7 @@
 #include "OW_String.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_NoSuchPropertyException.hpp"
 
 using std::ostream;
 using std::istream;
@@ -274,6 +275,18 @@ OW_CIMInstance::getProperty(const OW_String& propertyName) const
 	}
 
 	return OW_CIMProperty();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMProperty
+OW_CIMInstance::getPropertyT(const OW_String& propertyName) const
+{
+	OW_CIMProperty p = getProperty(propertyName);
+	if (!p)
+	{
+		OW_THROW(OW_NoSuchPropertyException, propertyName.c_str());
+	}
+	return p;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -926,7 +939,40 @@ OW_CIMInstance::toString() const
 	return temp.releaseString();
 }
 
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool OW_CIMInstance::propertiesAreEqualTo(const OW_CIMInstance& other) const
+{
+	OW_CIMPropertyArray props1(getProperties());
+	OW_CIMPropertyArray props2(other.getProperties());
+	if (props1.size() != props2.size())
+	{
+		return false;
+	}
+	std::sort(props1.begin(), props1.end());
+	std::sort(props2.begin(), props2.end());
+	OW_CIMPropertyArray::iterator i1 = props1.begin();
+	OW_CIMPropertyArray::iterator i2 = props2.begin();
+	while (i1 != props1.end())
+	{
+		OW_CIMProperty p1 = *i1;
+		OW_CIMProperty p2 = *i2;
+		if (p1 != p2) // checks the name
+		{
+			return false;
+		}
+		if (p1.getValue() != p2.getValue()) // check the value
+		{
+			return false;
+		}
+		++i1;
+		++i2;
+	}
+	return true;
+}
+
