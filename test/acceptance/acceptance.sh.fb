@@ -787,7 +787,7 @@ TestAuth()
 	echo "TestAuth"
 
 	# enable allow_anonymous
-	EditConfig "s!;owcimomd.allow_anonymous = .*!owcimomd.allow_anonymous = true!g" 
+	EditConfig "s!owcimomd.allow_anonymous = .*!owcimomd.allow_anonymous = true!g" 
 	
 	echo "1. Testing Allow Anonymous"
 	RestartDaemon
@@ -907,7 +907,7 @@ TestAuth()
 	# Also, because of the security sensitive nature of owlocalhelper, it has to be installed in it's final location.
 	# owcimomd will only run it from there.
 	if CanRunLocalAuthTest; then
-		EditConfig "s!;http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
+		EditConfig "s!http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
 		
 		echo "11. Testing Local Authentication"
 		RestartDaemon
