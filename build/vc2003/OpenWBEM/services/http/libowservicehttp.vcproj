@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\xml;$(SrcDir)\services\http;$(SrcDir)\http\common;$(SrcDir)\client;$(SrcDir)\wql\common;$(SrcDir)\common\socket;$(OpenSSL)\include;$(ZLib)\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SrcDir)\common&quot;;&quot;$(SrcDir)\cim&quot;;&quot;$(SrcDir)\ifcs&quot;;&quot;$(SrcDir)\xml&quot;;&quot;$(SrcDir)\services\http&quot;;&quot;$(SrcDir)\http\common&quot;;&quot;$(SrcDir)\client&quot;;&quot;$(SrcDir)\wql\common&quot;;&quot;$(SrcDir)\common\socket&quot;;&quot;$(OpenSSL)\include&quot;;&quot;$(ZLib)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_HTTPSVC_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -38,7 +38,7 @@
 				AdditionalDependencies="libeay32.lib ssleay32.lib"
 				OutputFile="$(OutDir)/libowservicehttp.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OpenSSL)\lib\VC"
+				AdditionalLibraryDirectories="$(OpenSSL)\out32dll"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/libowservicehttp.pdb"
 				SubSystem="2"
@@ -73,7 +73,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\xml;$(SrcDir)\services\http;$(SrcDir)\http\common;$(SrcDir)\client;$(SrcDir)\wql\common;$(SrcDir)\common\socket;$(OpenSSL)\include;$(ZLib)\include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SrcDir)\common&quot;;&quot;$(SrcDir)\cim&quot;;&quot;$(SrcDir)\ifcs&quot;;&quot;$(SrcDir)\xml&quot;;&quot;$(SrcDir)\services\http&quot;;&quot;$(SrcDir)\http\common&quot;;&quot;$(SrcDir)\client&quot;;&quot;$(SrcDir)\wql\common&quot;;&quot;$(SrcDir)\common\socket&quot;;&quot;$(OpenSSL)\include&quot;;&quot;$(ZLib)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_HTTPSVC_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -90,7 +90,7 @@
 				AdditionalDependencies="libeay32.lib ssleay32.lib"
 				OutputFile="$(OutDir)/libowservicehttp.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(OpenSSL)\lib\VC"
+				AdditionalLibraryDirectories="$(OpenSSL)\out32dll"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"

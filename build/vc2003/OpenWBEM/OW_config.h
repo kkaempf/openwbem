@@ -401,6 +401,10 @@
 #define OW_VERSION  "2.9.1" 
 #endif
 
+#ifndef OW_OPENWBEM_LIBRARY_VERSION
+#define OW_OPENWBEM_LIBRARY_VERSION 4
+#endif
+
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
 /* #undef OW_WORDS_BIGENDIAN */
@@ -461,7 +465,7 @@
 # define OW_DEPRECATED
 #endif
 
-
+#ifdef __cplusplus
 /* Need this first macro because ## doesn't expand vars, and we need an intermediate step */
 #ifndef OW_NAMESPACE_CAT 
 #define OW_NAMESPACE_CAT(ow, ver) ow ## ver 
@@ -479,8 +483,6 @@ namespace OW_NAMESPACE
 }
 
 namespace OpenWBEM = OW_NAMESPACE;
-
-
 
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
@@ -560,6 +562,8 @@ namespace OpenWBEM = OW_NAMESPACE;
 #define OW_PRINT_FUNC_NAME  
 #endif
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
+
+#endif // #ifdef __cplusplus
 
 #ifdef OW_HAVE_SLP_H 
 #undef OW_HAVE_SLP_H

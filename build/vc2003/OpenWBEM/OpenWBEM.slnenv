@@ -1,8 +1,8 @@
 SrcDir=$(SolutionDir)\..\..\..\src
 DbDir=$(SolutionDir)\..\..\..\db
 
-OpenSSL=C:\OpenSSL
-Zlib=C:\Zlib
+OpenSSL=C:\cygwin\home\Dan\openssl-0.9.7e
+Zlib=C:\cygwin\home\Dan\zlib-1.2.1
 
 Flex=C:\usr\local\wbin\flex
 Bison=C:\usr\local\wbin\bison
