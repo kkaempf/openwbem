@@ -32,7 +32,6 @@
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include <stdlib.h>
-#include <dlfcn.h>
 #include "npi.h"
 
 
