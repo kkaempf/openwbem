@@ -263,10 +263,11 @@ int OW_PopenStreamsImpl::getExitStatus()
 		pid_t waitpidrv;
 		
 		// give it up to 10 seconds to quit
+		waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 		for (int i = 0; i < 100 && waitpidrv == 0; ++i)
 		{
-			waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 			milliSleep(100); // 1/10 of a second
+			waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 		}
 
 		if (waitpidrv == 0)
@@ -274,10 +275,11 @@ int OW_PopenStreamsImpl::getExitStatus()
 			if (kill(m_pid, SIGTERM) != -1)
 			{
 				// give it up to 10 seconds to quit
+				waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 				for (int i = 0; i < 100 && waitpidrv == 0; ++i)
 				{
-					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					milliSleep(100); // 1/10 of a second
+					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 				}
 	
 				if (waitpidrv == 0)
@@ -286,16 +288,17 @@ int OW_PopenStreamsImpl::getExitStatus()
 					   try sending it SIGKILL */
 					if (kill(m_pid, SIGKILL) == -1)
 					{
-						// call waitpid in case the thing has turned into a zombie.
+						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 						OW_THROW(OW_ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 					}
 
 					// give the kernel 1 sec to clean it up, otherwise we bail.
+					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					for (int i = 0; i < 100 && waitpidrv == 0; ++i)
 					{
-						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 						milliSleep(10); // 1/100 of a second
+						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					}
 
 					if (waitpidrv == 0)
@@ -309,12 +312,12 @@ int OW_PopenStreamsImpl::getExitStatus()
 				}
 				else
 				{
-					OW_THROW(OW_ExecErrorException, format("waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+					OW_THROW(OW_ExecErrorException, format("OW_PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 				}
 			}
 			else
 			{
-				// call waitpid in case the thing has turned into a zombie.
+				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 				OW_THROW(OW_ExecErrorException, format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 			}
@@ -325,7 +328,7 @@ int OW_PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
-			OW_THROW(OW_ExecErrorException, format("waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+			OW_THROW(OW_ExecErrorException, format("OW_PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 		}
 	}
 	return m_processstatus;
@@ -569,7 +572,7 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 			waitpidrv = waitpidNoINTR(streams.pid(), &processstatus, WNOHANG);
 			if (waitpidrv == -1)
 			{
-				OW_THROW(OW_ExecErrorException, format("waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+				OW_THROW(OW_ExecErrorException, format("OW_Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
 			}
 			else if (waitpidrv != 0)
 			{
