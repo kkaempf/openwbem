@@ -862,7 +862,8 @@ HTTPClient::checkResponse(Resp_t& rt)
 			// (infinite loop).
 			// not sure why it was retry before, maybe FATAL
 			// will break something else?
-			if (++m_retryCount > 3)
+			++m_retryCount;
+			if (m_retryCount > 3)
 			{
 				rt = FATAL;
 			}
