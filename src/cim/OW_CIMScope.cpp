@@ -55,18 +55,51 @@ CIMScope::toMOF() const
 {
 	switch(m_val)
 	{
-		case SCHEMA: return "schema"; break;
-		case CLASS: return "class"; break;
-		case ASSOCIATION: return "association"; break;
-		case INDICATION: return "indication"; break;
-		case QUALIFIER: return "qualifier"; break;
-		case PROPERTY: return "property"; break;
-		case REFERENCE: return "reference"; break;
-		case METHOD: return "method"; break;
-		case PARAMETER: return "parameter"; break;
-		case ANY: return "any"; break;
-		default: return "BAD SCOPE"; break;
+		case SCHEMA: 
+		return "schema"; 
+		break;
+		
+		case CLASS: 
+		return "class"; 
+		break;
+		
+		case ASSOCIATION: 
+		return "association"; 
+		break;
+		
+		case INDICATION: 
+		return "indication"; 
+		break;
+		
+		case QUALIFIER: 
+		return "qualifier"; 
+		break;
+		
+		case PROPERTY: 
+		return "property"; 
+		break;
+		
+		case REFERENCE: 
+		return "reference"; 
+		break;
+		
+		case METHOD: 
+		return "method"; 
+		break;
+		
+		case PARAMETER: 
+		return "parameter"; 
+		break;
+		
+		case ANY: 
+		return "any"; 
+		break;
+		
+		default: 
+		return "BAD SCOPE"; 
+		break;
 	}
+
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
