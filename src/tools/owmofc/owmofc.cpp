@@ -156,7 +156,7 @@ CmdLineParser::Option options[] =
 		"Create a repository in the specified directory without connecting to a cimom. "
 		"Bypassing the cimom may incorrectly bypass providers and create instances which should not exist in the repository."},
 	{ E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
-		"The url of the cimom. Default is http://localhost/root/cimv2 if not specified."},
+		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
 	{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0,
 		"Remove all the Description qualifiers to save space."},
 	{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0,
