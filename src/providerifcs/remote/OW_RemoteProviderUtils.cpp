@@ -57,20 +57,20 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl,
 	ClientCIMOMHandleRef hdl;
 	try
 	{
-		URL url(remoteUrl);
 		if (useConnectionCredentials)
 		{
+			URL url(remoteUrl);
 			try
 			{
 				url.principal = env->getOperationContext().getStringData(OperationContext::USER_NAME);
 				url.credential = env->getOperationContext().getStringData("remote_provider.user_credentials");
-				remoteUrl = url.toString();
 			}
 			catch (ContextDataNotFoundException& e)
 			{
 			}
+			remoteUrl = url.toString();
 		}
-		hdl = pool->getConnection(url.toString());
+		hdl = pool->getConnection(remoteUrl);
 	}
 	catch (const Exception& e)
 	{
