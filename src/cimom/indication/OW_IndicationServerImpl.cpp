@@ -604,7 +604,12 @@ IndicationServerImpl::_processIndicationRange(
 			// Now get the export handler for this indication subscription
 			CIMObjectPath handlerCOP =
 				sub.m_subPath.getKeyT("Handler").getValueT().toCIMObjectPath();
-			CIMInstance handler = hdl->getInstance(handlerCOP.getNameSpace(),
+
+			String handlerNS = handlerCOP.getNameSpace();
+			if (handlerNS.empty())
+				handlerNS = instNS;
+
+			CIMInstance handler = hdl->getInstance(handlerNS,
 				handlerCOP);
 			if(!handler)
 			{
