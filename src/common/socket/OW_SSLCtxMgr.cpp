@@ -51,6 +51,17 @@
 #include <openssl/err.h>
 #include <string.h>
 
+#ifdef OW_HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef OW_HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
+#ifdef OW_HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #ifdef OW_DEBUG
 #include <iostream>
@@ -58,18 +69,32 @@
 
 #include <fstream>
 
-static OpenWBEM::Mutex* mutex_buf = 0;
+// This struct has to be in the global namespace
 extern "C"
 {
 struct CRYPTO_dynlock_value
 {
 	OpenWBEM::Mutex mutex;
 };
-static struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
+}
+
+namespace OpenWBEM
+{
+
+namespace
+{
+
+OpenWBEM::Mutex* mutex_buf = 0;
+
+extern "C"
+{
+
+struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
 {
 	return new CRYPTO_dynlock_value;
 }
-static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
+
+void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
 				  const char *, int)
 {
 	if (mode & CRYPTO_LOCK)
@@ -81,16 +106,19 @@ static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
 		l->mutex.release();
 	}
 }
-static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
+
+void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 				 const char *, int)
 {
 	delete l;
 }
-static unsigned long id_function()
+
+unsigned long id_function()
 {
 	return (unsigned long)OpenWBEM::ThreadImpl::thread_t_ToUInt64(OpenWBEM::ThreadImpl::currentThread());
 }
-static void locking_function(int mode, int n, const char*, int)
+
+void locking_function(int mode, int n, const char*, int)
 {
 	if (mode & CRYPTO_LOCK)
 	{
@@ -101,12 +129,161 @@ static void locking_function(int mode, int n, const char*, int)
 		mutex_buf[n].release();
 	}
 }
+} // end extern "C"
+
+/**
+ * @param randFilePath the directory name to check.
+ */
+bool randFilePathIsSecure(const String& randFilePath)
+{
+	OW_ASSERT(!randFilePath.empty());
+
+#ifdef OW_WIN32
+	// TODO: write this
+	return false;
+#else
+	// only load or write the file if it's "the directory in which the file resides and all parent directories should have only write access 
+	// enabled for the directory owner" (Network Security with OpenSSL p. 101).  This is so that we don't load up a rogue random
+	// file. If we load one someone created which we didn't write, or someone else gets it, our security is blown!
+	// Also, check that the owner of each directory is either the current user or root, just to be completely paranoid!
+
+	String dir(FileSystem::Path::realPath(randFilePath));
+	OW_ASSERT(!dir.empty() && dir[0] == '/');
+
+	// now check all dirs
+	do
+	{
+
+
+		size_t lastSlash = dir.lastIndexOf('/');
+		dir = dir.substring(0, lastSlash);
+	} while (!dir.empty());
+
+	return false;
+#endif
 }
 
-namespace OpenWBEM
+bool randFileIsSecure(const char* randFile)
 {
+	if (!randFilePathIsSecure(FileSystem::Path::dirname(randFile)))
+	{
+		return false;
+	}
 
-BIO* SSLCtxMgr::m_bio_err = 0;
+#ifdef OW_WIN32
+	// TODO: write this
+	return false;
+#else
+
+	// only load or write the file if it's "owned by the user ID of the application, and all access to group members and other users should be
+	// disallowed. Additionally, the directory in which the file resides and all parent directories should have only write access 
+	// enabled for the directory owner" (Network Security with OpenSSL p. 101).  This is so that we don't load up a rogue random
+	// file. If we load one someone created which we didn't write, or someone else gets it, our security is blown!
+	uid_t myuid(getuid());
+	struct stat randFileStats;
+	if (lstat(randFile, &randFileStats) == -1)
+	{
+		if (errno != ENOENT)
+		{
+			return false;
+		}
+		// else file doesn't exist, and that's okay.
+	}
+	else
+	{
+		// if either group or other write access is enabled, then fail.
+		if ((randFileStats.st_mode & S_IWGRP == S_IWGRP) || 
+			(randFileStats.st_mode & S_IWOTH == S_IWOTH) )
+		{
+			return false;
+		}
+		// no hard links allowed
+		if (randFileStats.st_nlink > 1)
+		{
+			return false;
+		}
+		// must own it
+		if (randFileStats.st_uid != myuid)
+		{
+			return false;
+		}
+		// regular file
+		if (!S_ISREG(randFileStats.st_mode))
+		{
+			return false;
+		}
+	}
+
+	return true;
+#endif
+}
+
+void loadRandomness()
+{
+	// with OpenSSL 0.9.7 calling RAND_status() will try to load sufficient randomness, so hopefully we won't have to do anything.
+	if (RAND_status() == 1)
+	{
+		return;
+	}
+
+	// OpenSSL 0.9.7 does this automatically, so only try if we've got an older version of OpenSSL.
+	if (SSLeay() < 0x00907000L)
+	{
+		// now try adding in /dev/random
+		int loadedBytes = RAND_load_file("/dev/random", 1024);
+		if (loadedBytes == 0)
+		{
+			// okay, no /dev/random... try adding in /dev/urandom
+			RAND_load_file("/dev/urandom", 1024);
+		}
+
+		if (RAND_status() == 1)
+		{
+			return;
+		}
+
+		// now try adding in data from an entropy gathering daemon (egd)
+		const char *names[] = { "/var/run/egd-pool","/dev/egd-pool","/etc/egd-pool","/etc/entropy", NULL };
+
+		for (int i = 0; names[i]; i++)
+		{
+			if (RAND_egd(names[i]) != -1)
+			{
+				break;
+			}
+		}
+
+		if (RAND_status() == 1)
+		{
+			return;
+		}
+	}
+
+	// try loading up randomness from a previous run.
+	char randFile[MAXPATHLEN];
+	const char* rval = RAND_file_name(randFile, MAXPATHLEN);
+	if (rval)
+	{
+		if (randFileIsSecure(randFile))
+		{
+			RAND_load_file(randFile, -1);
+		}
+	}
+
+	// don't check RAND_status() again, since we don't really trust the random file to be very secure--there are too many ways an attacker
+	// could get or change it, so we'll do this other stuff as well.
+
+	// we're on a really broken system.  We'll try to get some random data by:
+	// - running commands that reflect random system activity.
+	//   This is the same approach a egd daemon would do, but we do it only once to seed the randomness.
+	//   The list of sources comes from gnupg, prngd and egd.
+	// - use a timing based approach which gives decent randomness.
+	// - read some portions of files (e.g. /dev/mem) if possible
+	// - use other variable things, such as pid, execution times, etc.
+}
+
+} // end unnamed namespace
+
 SSL_CTX* SSLCtxMgr::m_ctxClient = 0;
 SSL_CTX* SSLCtxMgr::m_ctxServer = 0;
 certVerifyFuncPtr_t SSLCtxMgr::m_clientCertVerifyCB = 0;
@@ -115,25 +292,6 @@ certVerifyFuncPtr_t SSLCtxMgr::m_serverCertVerifyCB = 0;
 SSL_CTX*
 SSLCtxMgr::initCtx(const String& keyfile)
 {
-#if 0
-	if (!m_bio_err)
-	{
-		SSL_library_init();
-		SSL_load_error_strings();
-		m_bio_err = BIO_new_fp(stderr, BIO_NOCLOSE); // TODO fix this
-	}
-	if (!mutex_buf)
-	{
-		mutex_buf = new Mutex[CRYPTO_num_locks()];
-	}
-	CRYPTO_set_id_callback(id_function);
-	CRYPTO_set_locking_callback(locking_function);
-	  /* The following three CRYPTO_... functions are the OpenSSL functions
-		 for registering the callbacks we implemented above */
-	CRYPTO_set_dynlock_create_callback(dyn_create_function);
-	CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
-	CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
-#endif
 	SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
 	SSL_CTX_set_default_passwd_cb(ctx, pem_passwd_cb);
 	if (!keyfile.empty())
@@ -148,39 +306,15 @@ SSLCtxMgr::initCtx(const String& keyfile)
 			OW_THROW(SSLException, "Couldn't read key file");
 		}
 	}
-	/*String CAFile = Environment::getConfigItem("SSL_CAFile");
-	String CAPath;
-	char* CAFileStr = NULL;
-	char* CAPathStr = NULL;
-	if (CAFile.length() > 0)
-		CAFileStr = strdup(CAFile.c_str());
-	if (CAPath.length() > 0)
-		CAPathStr = const_cast<char*>(CAPath.c_str());
-	if (!(SSL_CTX_load_verify_locations(ctx, CAFileStr, CAPathStr)))
-		OW_THROW(SSLException, "Couldn't read CA list");
-	free(CAFileStr);*/ // TODO do we need this?
-	// TODO get random file from GlobalConfig??? or at least OS
-	char randFile[MAXPATHLEN];
-	const char* rval = RAND_file_name(randFile, MAXPATHLEN);
-	if (!rval)
-	{
-		OW_THROW(SSLException, "Couldn't obtain random filename");
-	}
-	off_t fileSize = 0;
-	if (!FileSystem::getFileSize(String(randFile), fileSize)
-			|| fileSize < 1024)
-	{
-		FileSystem::initRandomFile(String(randFile));
-	}
-	if (!(RAND_load_file(randFile, 1024))) // TODO is this sufficient?
-	{
-		OW_THROW(SSLException, Format("Couldn't load randomness from %1, errno=%2(%3)", randFile, errno, strerror(errno)).c_str());
-	}
+
+	loadRandomness();
 
 	return ctx;
 }
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
 class SSLGlobalWork
 {
 public:
@@ -190,16 +324,14 @@ public:
 		{
 			mutex_buf = new Mutex[CRYPTO_num_locks()];
 		}
-	//if (!m_bio_err)
-	//{
 		SSL_library_init();
 		SSL_load_error_strings();
-		//m_bio_err = BIO_new_fp(stderr, BIO_NOCLOSE); // TODO What the heck is this?
-	//}
+
 		CRYPTO_set_id_callback(id_function);
 		CRYPTO_set_locking_callback(locking_function);
-	  /* The following three CRYPTO_... functions are the OpenSSL functions
-		 for registering the callbacks we implemented above */
+
+	    // The following three CRYPTO_... functions are the OpenSSL functions
+		// for registering the callbacks we implemented above
 		CRYPTO_set_dynlock_create_callback(dyn_create_function);
 		CRYPTO_set_dynlock_lock_callback(dyn_lock_function);
 		CRYPTO_set_dynlock_destroy_callback(dyn_destroy_function);
@@ -213,7 +345,11 @@ public:
 			const char* rval = RAND_file_name(randFile, MAXPATHLEN);
 			if (rval)
 			{
-				RAND_write_file(randFile);
+				// we only create this file is there's no chance an attacker could read or write it. see Network Security with OpenSSL p. 101
+				if (randFilePathIsSecure(FileSystem::Path::dirname(randFile)))
+				{
+					RAND_write_file(randFile);
+				}
 			}
 		}
 		SSLCtxMgr::uninit();
@@ -222,10 +358,11 @@ public:
 	}
 private:
 };
-// This is kind of a hack to get the random file to be written at
-// the time of shutdown.
-static SSLGlobalWork g_sslGLobalWork;
-//////////////////////////////////////////////////////////////////////////////
+
+SSLGlobalWork g_sslGLobalWork;
+
+} // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 void
 SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const String& file)
@@ -439,16 +576,11 @@ SSLCtxMgr::uninit()
 {
 	uninitClient();
 	uninitServer();
-	if (m_bio_err)
-	{
-		BIO_free(m_bio_err);
-		m_bio_err = NULL;
 		
-		// free up memory allocated in SSL_library_init()
-		EVP_cleanup();
-		// free up memory allocated in SSL_load_error_strings()
-		ERR_free_strings();
-	}
+	// free up memory allocated in SSL_library_init()
+	EVP_cleanup();
+	// free up memory allocated in SSL_load_error_strings()
+	ERR_free_strings();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -470,6 +602,9 @@ SSLCtxMgr::uninitServer()
 		m_ctxServer = NULL;
 	}
 }
+
+namespace
+{
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C"
@@ -526,7 +661,10 @@ int verify_callback(int ok, X509_STORE_CTX *store)
 
     return 1;
 }
-}
+} // end extern "C"
+
+} // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	: m_ctx(0)
@@ -556,25 +694,11 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	if (!(SSL_CTX_load_verify_locations(ctx, CAFileStr, CAPathStr)))
 		OW_THROW(SSLException, "Couldn't read CA list");
 	free(CAFileStr);*/ // TODO do we need this?
-	// TODO get random file from GlobalConfig??? or at least OS
-	char randFile[MAXPATHLEN];
-	const char* rval = RAND_file_name(randFile, MAXPATHLEN);
-	if (!rval)
-	{
-		OW_THROW(SSLException, "Couldn't obtain random filename");
-	}
-	off_t fileSize = 0;
-	if (!FileSystem::getFileSize(String(randFile), fileSize)
-			|| fileSize < 1024)
-	{
-		FileSystem::initRandomFile(String(randFile));
-	}
-	if (!(RAND_load_file(randFile, 1024))) // TODO is this sufficient?
-	{
-		OW_THROW(SSLException, Format("Couldn't load randomness from %1, errno=%2(%3)", randFile, errno, strerror(errno)).c_str());
-	}
 	//String dhfile = "certs/dh1024.pem"; // TODO = GlobalConfig.getSSLDHFile();
 	//loadDHParams(m_ctx, dhfile);
+
+	loadRandomness();
+
 	SSLCtxMgr::generateEphRSAKey(m_ctx); // TODO what the heck is this?
 	String sessID("SSL_SESSION_");
 	RandomNumber rn(0, 10000);

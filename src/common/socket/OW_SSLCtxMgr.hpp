@@ -163,7 +163,6 @@ public:
 private:
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
-	static BIO* m_bio_err;
 	static certVerifyFuncPtr_t m_clientCertVerifyCB;
 	static certVerifyFuncPtr_t m_serverCertVerifyCB;
 	/**
