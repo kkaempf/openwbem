@@ -83,7 +83,6 @@ SocketBaseImpl::SocketBaseImpl()
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
 {
-	m_in.tie(&m_out);
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
 }
@@ -105,7 +104,6 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
 {
-	m_in.tie(&m_out);
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
 	if (addrType == SocketAddress::INET)
@@ -138,7 +136,6 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
 {
-	m_in.tie(&m_out);
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
 	connect(m_peerAddress);
