@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CppInstanceProvider.hpp"
+#include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMValue.hpp"
@@ -38,6 +38,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
+#include "OW_LocalCIMOMHandle.hpp"
 
 #include <fstream>
 #include <unistd.h>
@@ -48,7 +49,7 @@ using std::ofstream;
 using std::endl;
 
 
-class OW_LaptopBattery: public OW_CppInstanceProvider
+class OW_LaptopBattery: public OW_CppInstanceProviderIFC
 {
 public:
 	virtual ~OW_LaptopBattery() {}

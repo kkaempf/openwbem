@@ -3,6 +3,7 @@
 
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Map.hpp"
 #include <iostream>
