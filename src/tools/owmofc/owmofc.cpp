@@ -274,6 +274,9 @@ void usage()
 {
 	cout << "Usage: owmofc [OPTION] <FILE>...\n";
 	cout << "  -d,--direct <DIR>: create a repository in the specified directory without connecting to a cimom\n";
+	cout << "                     Be extremely cautious using this option. Bypassing the cimom can have the following negative consequences:\n";
+	cout << "                     - Instances may incorrectly bypass providers.\n";
+	cout << "                     - The repository will be corrupted if the cimom is running simultaneously.\n";
 	cout << "  -u,--url <URL>: the url of the cimom. Default is " << def_url_arg << " if not specified\n";
 	cout << "  -n,--namespace <NAMESPACE>: This option is deprecated in favor of the URL namespace. The initial namespace to use. Default is " << def_namespace_arg << " if not specified via this option or in the URL\n";
 	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it\n";
