@@ -1,29 +1,40 @@
-.Id $Id: owmofc.1,v 1.1.1.1 2002-03-01 16:58:14 nuffer Exp $
+.Id $Id: owmofc.1,v 1.2 2003-07-23 18:14:13 nuffer Exp $
 .TH owmofc 1 "September 2001" owmofc "OpenWBEM Framework"
 .SH NAME
 owmofc \- Compile and import a MOF.
 .SH SYNOPSIS
 .B owmofc
-.IR URL
-.IR NAMESPACE
-.IR FILE
+.IR [OPTIONS]
+.IR <FILES>...
 .SH DESCRIPTION
 .B owmofc
 is a command-line tool used to compile a MOF and import it into a CIMOM.
 .PP
 .SH OPTIONS
 .TP 8
-.IR URL
+.BI "-d " "DIRECTORY"
+Compile the mof directly into a repository.  You must specify the directory 
+of the repository.  If an existing OpenWBEM cimom repository is there, 
+it will be opened and added to, otherwise a new one will be created.  
+You shouldn't specify a repository of a running cimom, you should stop it 
+first.  
+If this option is specified, then the -u and -e options are meaningless.
+.TP 8
+.BI "-u " "URL"
 The URL to the CIMOM.  This has the form 
 http[s]://[<name>:<password>@]<hostname>[:<port>][/<path>]
 If no name and password are provided in the URL, and the CIMOM requires
 authentication, you will be prompted for a name and password.
+If not specified, the default is http://localhost:5988/
 .TP 8
-.IR NAMESPACE
-The namespace in which to import the MOF
+.BI "-n " "NAMESPACE"
+The namespace in which to import the MOF.  If not specified, the default is root/cimv2
 .TP 8
-.IR FILE
-The path to the file to compile and import.
+.BI "-e " ENCODING
+The message encoding to use.  Valid values are "cimxml" and "owbinary".  "cimxml" is the default.
+.TP 8
+.IR FILES
+The path to the file(s) to compile and import. To read from stdin, use - as the filename, or omit the list of files altogether.
 .PP
 .SH "SEE ALSO"
 owcimomd(8)

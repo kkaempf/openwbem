@@ -9,10 +9,13 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/xml \
--I$(top_srcdir)/src/common/socket
+-I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/repositories/hdb
 
 owmofc_SOURCES = \
-owmofc.cpp
+owmofc.cpp \
+OW_MOFCompCIMOMHandle.cpp \
+OW_MOFCompCIMOMHandle.hpp
 
 owmofc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -24,5 +27,7 @@ owmofc_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/db/db -lowdb
 

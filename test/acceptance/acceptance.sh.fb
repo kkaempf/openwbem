@@ -366,16 +366,16 @@ TestSuite()
 	if [ "$TESTMOFDONE" = "0" ]; then
 		TESTMOFDONE=1
 		echo "Importing mof files for test"
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
+		$STAGEDIR/$OWBINDIR/owmofc -u $URL -n /root/testsuite \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
+		$STAGEDIR/$OWBINDIR/owmofc -u $URL -n /root/testsuite \
 			$TOPSRCDIR/test/c++providers/associator/OW_AssociatorTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
+		$STAGEDIR/$OWBINDIR/owmofc -u $URL -n /root/testsuite \
 			$TOPSRCDIR/test/c++providers/instance/testinstance.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
+		$STAGEDIR/$OWBINDIR/owmofc -u $URL -n /root/testsuite \
 			$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 	fi
@@ -485,7 +485,7 @@ TestIndications()
 	RestartDaemon
 
 	# import the mof
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "MOF compiler test: owmofc exited with error."
 
@@ -697,16 +697,16 @@ TestACL()
 	echo "Importing MOF to enable ACLs..."
 	CreateNameSpace "security"
 	CreateNameSpace "acltest"
-	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root \
+	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -e owbinary -n /root \
 		$TOPSRCDIR/mof/OpenWBEM_Acl1.0.mof || 
 		ExitWithFail "ACL test: MOF compiler exited with error"
-	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root/acltest \
+	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -e owbinary -n /root/acltest \
 		$TOPSRCDIR/test/acceptance/testfiles/CIM_Min25.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
-	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root/acltest \
+	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -e owbinary -n /root/acltest \
 		$TOPSRCDIR/test/acceptance/testfiles/ACLTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
-	$STAGEDIR/$OWBINDIR/owmofc $SUACLURL /root/acltest \
+	$STAGEDIR/$OWBINDIR/owmofc -u $SUACLURL -e owbinary -n /root/acltest \
 		$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 		ExitWithFail "ACL test: MOF compiler exited with error"
 
@@ -782,10 +782,10 @@ TestMof()
 	fi
 
 	CreateNameSpace testsuite
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 }
@@ -799,16 +799,16 @@ SetupInteropSchema()
 		return
 	fi
 
-	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926/owbinary root \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -e owbinary -n root \
 			$TOPSRCDIR/schemas/cim27/CIM_Core27.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc http://test1:pass1@localhost:30926/cimom root \
+	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -n root \
 			$TOPSRCDIR/schemas/cim27/CIM_Event27.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary root \
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -e owbinary -n root \
 			$TOPSRCDIR/schemas/cim27/CIM_Interop27.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/cimom root \
+	$STAGEDIR/$OWBINDIR/owmofc -u ipc://test1:pass1@localhost/ -n root \
 			$TOPSRCDIR/mof/OpenWBEM_Interop.mof || \
 			ExitWithFail "Setup Interop Schema test: owmofc exited with error."
 }
@@ -919,7 +919,7 @@ SetupInteropSchema
 TestMof
 
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite.out"
-TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuite.out"
+TestSuite "ipc://test1:pass1@localhost/ -e owbinary " "testsuiteUDSBIN.out" "testsuite.out"
 
 TestCIMExceptions "http://test1:pass1@localhost:30926"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
