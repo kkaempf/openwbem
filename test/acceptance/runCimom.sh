@@ -7,7 +7,13 @@ ulimit -c unlimited
 STAGEDIR=`dirname $0`/stage
 
 LD_LIBRARY_PATH=$STAGEDIR/usr/local/lib:$STAGEDIR/usr/local/lib/openwbem/services:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
+# AIX
+LIBPATH="$LD_LIBRARY_PATH:$LIBPATH" 
+
+# HP-UX
+SHLIB_PATH="$LD_LIBRARY_PATH:$SHLIB_PATH"
+
+export LD_LIBRARY_PATH LIBPATH SHLIB_PATH
 
 if [ "$1" = "vg" ]; then
   valgrind \

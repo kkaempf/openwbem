@@ -77,8 +77,8 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 ################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
-# The default for this option is "@libdir@/libowwql.so"
-owcimomd.wql_lib = @libdir@/libowwql.so
+# The default for this option is "@libdir@/libowwql.@lib_ext@"
+owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
 
 ################################################################################
 # The owcimomd.dump_socket_io defines the directory where owcimomd will
@@ -100,7 +100,7 @@ owcimomd.wql_lib = @libdir@/libowwql.so
 ################################################################################
 # the authentication module to be used by owcimomd.  This should be a
 # an absolute path to the shared library containing the authentication module.
-owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.so
+owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.@lib_ext@
 
 ################################################################################
 # the maximum number of classes that will be cached by the cimom.
@@ -178,7 +178,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # library will be loaded from.
 # If this option is empty or commented out, no authorization module will be
 # used.
-owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.so
+owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.@lib_ext@
 
 ################################################################################
 # owcimomd.interop_schema_namespace specifies the namespace which contains the

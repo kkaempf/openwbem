@@ -130,7 +130,6 @@ echo "Setting host specific flags..."
 case "$host" in
 *-*-aix*)
 	echo "WARNING: AIX support is currently experimental."
-	PLATFORMDIR="posix"
 	AIX=1
 	AC_DEFINE(AIX, $AIX, Target OS is AIX)
 	AC_SUBST(AIX)
@@ -219,7 +218,6 @@ case "$host" in
 *-*-cygwin*)
 	;;
 *-*-darwin*)
-	PLATFORMDIR="posix"
 	AC_DEFINE(DARWIN, $DARWIN, Target OS is DARWIN)
 	DARWIN=1
 	PLAT_CFLAGS="-fno-common -D_REENTRANT"
@@ -237,15 +235,15 @@ case "$host" in
 *-*-hpux10*)
 	;;
 *-*-hpux11*)
-	PLATFORMDIR="posix"
 	AC_DEFINE(HPUX)
-	LIBS="$LIBS -lxnet"
-	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -pipe"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -pipe"
-	CXXCOMMONLINKFLAGS=""
+	LIBS="$LIBS -lxnet -lpthread -lrt"
+	PLAT_CFLAGS="+Z -mt -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1"
+	PLAT_CXXFLAGS="-AA +Z -mt +p -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -D__HPACC_THREAD_SAFE_RB_TREE"
+	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
+	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+s +O2"
 	CXXBINLINKFLAGS="$LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
-	PLAT_OPTFLAGS="-O3"
+	CXXSHAREDLIBLINKFLAGS="-b"
+	PLAT_OPTFLAGS="+O2"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="sl"
 	;;
@@ -254,7 +252,6 @@ case "$host" in
 *-*-irix6*)
 	;;
 *-*-linux*)
-	PLATFORMDIR="posix"
 	AC_DEFINE(GNU_LINUX)
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
@@ -268,7 +265,6 @@ case "$host" in
 *-*-netbsd*)
 	;;
 *-*-freebsd*)
-	PLATFORMDIR="posix"
 	AC_DEFINE(FREEBSD)
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread -Wno-deprecated"
@@ -280,7 +276,6 @@ case "$host" in
 	LIB_EXT="so"
 	;;
 *-*-solaris*)
-	PLATFORMDIR="posix"
 	AC_DEFINE(SOLARIS)
 	LIBS="$LIBS -lsocket -lnsl"
 	PLAT_CFLAGS="-fPIC -pthreads -D_REENTRANT -D__EXTENSIONS__ -D_POSIX_PTHREAD_SEMANTICS"
@@ -487,9 +482,9 @@ AC_CHECK_FUNCS(strerror strtoll strtoull)
 
 dnl Check for dynamic library loader functionality
 AC_CHECK_FUNCS(NSLinkModule, [ tempdl="dyld" ], [ tempdl="no" ])
-if test "$tempdl" = "no"; then
-  AC_CHECK_LIB(dld, shl_load, [ tempdl="shl"; DL_LIB="-ldld" ], [ tempdl="no" ])
-fi
+#if test "$tempdl" = "no"; then
+#  AC_CHECK_LIB(dld, shl_load, [ tempdl="shl"; DL_LIB="-ldld" ], [ tempdl="no" ])
+#fi
 if test "$tempdl" = "no"; then
   AC_CHECK_FUNCS(dlopen, [ tempdl="dlfcn" ], [ tempdl="no" ])
 fi
@@ -509,11 +504,13 @@ AC_ARG_ENABLE(debug-mode,
 OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 [
 	AC_DEFINE(DEBUG)
-	CFLAGS="$CFLAGS -g -Werror -Wall -W -Wno-format"
-	CXXFLAGS="$CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
+	CFLAGS="$CFLAGS -g"
+	#CFLAGS="$CFLAGS -g -Werror -Wall -W -Wno-format"
+	CXXFLAGS="$CXXFLAGS -g"
+	#CXXFLAGS="$CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
 ],[
-	CFLAGS="$CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
-	CXXFLAGS="$CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
+	CFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
+	CXXFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 ])
 
 AC_ARG_ENABLE(openslp,

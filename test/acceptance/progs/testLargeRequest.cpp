@@ -92,7 +92,8 @@ main(int argc, char* argv[])
 		CIMClient hdl(url, "root");
 
 		StringBuffer longBuf;
-		for (size_t i = 0; i < 20000; ++i)
+		// note that 20000 was too small on HPUX 
+		for (size_t i = 0; i < 100000; ++i)
 		{
 			longBuf += 'A';
 		}

@@ -104,6 +104,8 @@ typedef int OW_Select_t;
 #else
 #if defined OW_DARWIN
 #define OW_SHAREDLIB_EXTENSION ".dylib"
+#elif defined OW_HPUX
+#define OW_SHAREDLIB_EXTENSION ".sl"
 #else
 #define OW_SHAREDLIB_EXTENSION ".so"
 #endif

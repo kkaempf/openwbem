@@ -34,7 +34,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/mof
 
 unitMain_LDADD = \
-$(top_builddir)/test/CppUnit/libCppUnit.a \
+-L$(top_builddir)/test/CppUnit -lCppUnit \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/server -lowserver \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \

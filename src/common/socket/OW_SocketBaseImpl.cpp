@@ -387,6 +387,17 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 				{
 					OW_THROW(IOException, "Failed writing to socket dump");
 				}
+
+				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+				if (!comboTraceFile)
+				{
+					OW_THROW(IOException, "Failed opening socket dump file");
+				}
+				comboTraceFile << "\n--->Out " << rc << " bytes<---\n";
+				if (!comboTraceFile.write(static_cast<const char*>(dataOut), rc))
+				{
+					OW_THROW(IOException, "Failed writing to socket dump");
+				}
 			}
 		}
 	}
@@ -425,6 +436,17 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 					OW_THROW(IOException, "Failed opening tracefile");
 				}
 				if (!traceFile.write(reinterpret_cast<const char*>(dataIn), rc))
+				{
+					OW_THROW(IOException, "Failed writing to socket dump");
+				}
+
+				ofstream comboTraceFile(String(m_traceFileOut + "Combo").c_str(), std::ios::app);
+				if (!comboTraceFile)
+				{
+					OW_THROW(IOException, "Failed opening socket dump file");
+				}
+				comboTraceFile << "\n--->In " << rc << " bytes<---\n";
+				if (!comboTraceFile.write(static_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW(IOException, "Failed writing to socket dump");
 				}

@@ -1,2 +1,10 @@
-export LD_LIBRARY_PATH=`pwd`/stage/usr/local/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=`pwd`/stage/usr/local/lib:$LD_LIBRARY_PATH
+
+# AIX
+LIBPATH="$LD_LIBRARY_PATH:$LIBPATH" 
+
+# HP-UX
+SHLIB_PATH="$LD_LIBRARY_PATH:$SHLIB_PATH"
+
+export LD_LIBRARY_PATH LIBPATH SHLIB_PATH
 export PATH=`pwd`/stage/usr/local/bin:$PATH

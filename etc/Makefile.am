@@ -16,6 +16,7 @@ SUFFIXES = .sh
 		-e 's!@''libexecdir''@!$(libexecdir)!g' \
 		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
 		-e 's!@''localstatedir''@!$(localstatedir)!g' \
+		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
 	$< > $@-t
 	@MV@	$@-t $@
 
