@@ -61,15 +61,17 @@ class CppIndicationProviderIFC;
  * It is recommended that all type and data declarations in the provider be
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
+ * 
+ * DO NOT put inline functions in this class, they will be duplicated in
+ * every provider and cause code bloat.
  */
 class CppProviderBaseIFC : public virtual IntrusiveCountableBase
 {
 public:
 
-	CppProviderBaseIFC() : m_dt(0), m_persist(false) {}
+	CppProviderBaseIFC();
 
-	CppProviderBaseIFC(const CppProviderBaseIFC& arg)
-		: IntrusiveCountableBase(arg), m_dt(arg.m_dt), m_persist(arg.m_persist) {}
+	CppProviderBaseIFC(const CppProviderBaseIFC& arg);
 
 	virtual ~CppProviderBaseIFC();
 	/**
@@ -77,31 +79,30 @@ public:
 	 * @param hdl The handle to the cimom
 	 * @throws CIMException
 	 */
-	virtual void initialize(const ProviderEnvironmentIFCRef&) {}
+	virtual void initialize(const ProviderEnvironmentIFCRef&);
 	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with
 	 * optimizations.  It will return a (supposedly) valid pointer, 
 	 * when it should return NULL.
 	 */
-	virtual CppInstanceProviderIFC* getInstanceProvider() { return 0; }
-	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider() { return 0; }
-	virtual CppMethodProviderIFC* getMethodProvider() { return 0; }
+	virtual CppInstanceProviderIFC* getInstanceProvider();
+	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider();
+	virtual CppMethodProviderIFC* getMethodProvider();
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+	virtual CppAssociatorProviderIFC* getAssociatorProvider();
 #endif
-	virtual CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
-	virtual CppPolledProviderIFC* getPolledProvider() { return 0; }
-	virtual CppIndicationProviderIFC* getIndicationProvider() { return 0; }
-	DateTime getLastAccessTime() const  { return m_dt; }
+	virtual CppIndicationExportProviderIFC* getIndicationExportProvider();
+	virtual CppPolledProviderIFC* getPolledProvider();
+	virtual CppIndicationProviderIFC* getIndicationProvider();
+	DateTime getLastAccessTime() const;
 	void updateAccessTime();
 	
-	virtual bool canUnload() { return true; }
+	virtual bool canUnload();
 
-	bool getPersist() const { return m_persist; }
-	void setPersist(bool persist=true) { m_persist = persist; }
+	bool getPersist() const;
+	void setPersist(bool persist=true);
 
-protected:
 private:
 	DateTime m_dt;
 	bool m_persist;

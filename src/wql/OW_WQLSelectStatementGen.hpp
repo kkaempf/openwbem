@@ -45,9 +45,7 @@ class WQLSelectStatementGen : public WQLVisitor
 {
 public:
 	WQLSelectStatementGen();
-	virtual ~WQLSelectStatementGen()
-	{
-	}
+	virtual ~WQLSelectStatementGen();
 	virtual void visit_stmt_selectStmt_optSemicolon(
 		const stmt_selectStmt_optSemicolon* pstmt_selectStmt_optSemicolon
 		);

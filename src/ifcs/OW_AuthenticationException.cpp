@@ -34,7 +34,7 @@
  */
 
 #include "OW_config.h"
-#include "OW_AuthenticatorIFC.hpp"
+#include "OW_AuthenticationException.hpp"
 #include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM

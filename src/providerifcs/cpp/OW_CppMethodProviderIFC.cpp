@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,53 +29,35 @@
 *******************************************************************************/
 
 /**
+ * @author Jon Carey
  * @author Dan Nuffer
  */
 
-#ifndef OW_WQLIMPL_HPP_
-#define OW_WQLIMPL_HPP_
 #include "OW_config.h"
-#include "OW_WQLIFC.hpp"
-#include "OW_Mutex.hpp"
-#include <cstdio>
+#include "OW_CppMethodProviderIFC.hpp"
 
 namespace OpenWBEM
 {
 
-class stmt;
-class WQLImpl : public WQLIFC
+/////////////////////////////////////////////////////////////////////////////
+CppMethodProviderIFC::~CppMethodProviderIFC() 
 {
-public:
-	virtual ~WQLImpl();
-	virtual void evaluate(const String& nameSpace,
-		CIMInstanceResultHandlerIFC& result,
-		const String& query, const String& queryLanguage,
-		const CIMOMHandleIFCRef& hdl);
-	virtual WQLSelectStatement createSelectStatement(const String& query);
-	virtual bool supportsQueryLanguage(const String& lang);
+}
 
-	static stmt* setStatement(stmt* statement)
-	{
-		s_statement = statement;
-		return statement;
-	}
+/////////////////////////////////////////////////////////////////////////////
+void 
+CppMethodProviderIFC::getMethodProviderInfo(MethodProviderInfo&)
+{
+}
 
-	static const char* getParserInput()
-	{
-		return s_parserInput;
-	}
-private:
-	static Mutex s_classLock;
-	static const char* s_parserInput;
-	static stmt* s_statement;
-};
-		
+/////////////////////////////////////////////////////////////////////////////
+CppMethodProviderIFC* 
+CppMethodProviderIFC::getMethodProvider() 
+{ 
+	return this; 
+}
+
+
 } // end namespace OpenWBEM
 
-extern int owwqldebug;
-extern "C" int owwqlparse();
-extern FILE* owwqlin;
-extern void WQLscanner_init();
 
-
-#endif

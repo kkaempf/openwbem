@@ -41,6 +41,10 @@
 namespace OpenWBEM
 {
 
+WQLSelectStatementGen::~WQLSelectStatementGen()
+{
+}
+
 WQLSelectStatementGen::WQLSelectStatementGen()
 	: m_isPropertyList(false)
 {

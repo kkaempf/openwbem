@@ -40,9 +40,23 @@ namespace OpenWBEM
 {
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+/////////////////////////////////////////////////////////////////////////////
 CppAssociatorProviderIFC::~CppAssociatorProviderIFC()
 {
 }
+
+/////////////////////////////////////////////////////////////////////////////
+void CppAssociatorProviderIFC::getAssociatorProviderInfo(AssociatorProviderInfo&)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CppAssociatorProviderIFC* 
+CppAssociatorProviderIFC::getAssociatorProvider() 
+{ 
+	return this; 
+}
+
 #endif
 
 } // end namespace OpenWBEM

@@ -21,6 +21,7 @@ OW_CIMProtocolException.cpp \
 OW_WQLIFC.cpp
 
 pkginclude_HEADERS = \
+OW_AuthenticationException.hpp \
 OW_AuthenticatorIFC.hpp \
 OW_Authorizer2IFC.hpp \
 OW_AuthorizerIFC.hpp \

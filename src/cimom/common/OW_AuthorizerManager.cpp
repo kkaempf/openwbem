@@ -154,7 +154,7 @@ AuthorizerManager::AuthorizerManager()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-AuthorizerManager::AuthorizerManager(Authorizer2IFCRef authorizerRef)
+AuthorizerManager::AuthorizerManager(const Authorizer2IFCRef& authorizerRef)
 	: m_authorizer(authorizerRef)
 {
 }

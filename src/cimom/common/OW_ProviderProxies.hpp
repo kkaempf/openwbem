@@ -215,4 +215,4 @@ private:
 #undef OW_SETUID_PROVIDERS
 #endif	// OW_GNU_LINUX
 
-#endif	//  __OW_PROVIDERPROXIES_HPP__
+#endif

@@ -123,14 +123,6 @@ private:
 	ClassRetrievalFlag m_classRetrieval; 
 	ClientCIMOMHandleConnectionPool m_connectionPool; 
 
-	class DummyLogger : public Logger
-	{
-	protected:
-		virtual void doLogMessage(const String &, const ELogLevel) const
-		{
-			return;
-		}
-	};
 };
 
 } // end namespace OpenWBEM

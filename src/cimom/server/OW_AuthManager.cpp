@@ -40,6 +40,7 @@
 #include "OW_SafeLibCreate.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_AuthenticatorIFC.hpp"
 
 namespace OpenWBEM
 {

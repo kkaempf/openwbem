@@ -30,16 +30,17 @@
 #ifndef OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AuthenticatorIFC.hpp"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_Array.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 namespace OpenWBEM
 {
+
+class AuthenticatorIFC;
+typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
 OW_DECLARE_EXCEPTION(AuthManager)
 

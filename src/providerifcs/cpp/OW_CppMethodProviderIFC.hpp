@@ -66,9 +66,7 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getMethodProviderInfo(MethodProviderInfo&)
-	{
-	}
+	virtual void getMethodProviderInfo(MethodProviderInfo&);
 	
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
@@ -94,7 +92,7 @@ public:
 			const String& methodName,
 			const CIMParamValueArray& in,
 			CIMParamValueArray& out ) = 0;
-	virtual CppMethodProviderIFC* getMethodProvider() { return this; }
+	virtual CppMethodProviderIFC* getMethodProvider();
 };
 typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMethodProviderIFCRef;
 

@@ -236,5 +236,5 @@ typedef SharedLibraryReference<IntrusiveReference<Authorizer2IFC> > Authorizer2I
 #endif /* !defined(OW_STATIC_SERVICES) */
 
 
-#endif	// __OW_AUTHORIZER2IFC_HPP__
+#endif
 

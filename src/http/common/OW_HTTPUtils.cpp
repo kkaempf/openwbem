@@ -40,7 +40,7 @@
 #include "OW_HTTPCounter.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_AuthenticatorIFC.hpp" // for OW_AuthenticationException
+#include "OW_AuthenticationException.hpp"
 #include "OW_MD5.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Format.hpp"

@@ -69,9 +69,8 @@ class CppAssociatorProviderIFC: public virtual CppInstanceProviderIFC
 		 * provider location method is removed, this member function will be pure
 		 * virtual.
 		 */
-		virtual void getAssociatorProviderInfo(AssociatorProviderInfo&)
-		{
-		}
+		virtual void getAssociatorProviderInfo(AssociatorProviderInfo&);
+
 		/**
 		 * This method is invoked in order to do the Associators operation as
 		 * defined by the CIM operations over HTTP spec at
@@ -254,7 +253,7 @@ class CppAssociatorProviderIFC: public virtual CppInstanceProviderIFC
 				const CIMObjectPath& objectName,
 				const String& resultClass,
 				const String& role ) = 0;
-		virtual CppAssociatorProviderIFC* getAssociatorProvider() { return this; }
+		virtual CppAssociatorProviderIFC* getAssociatorProvider();
 };
 typedef SharedLibraryReference< IntrusiveReference<CppAssociatorProviderIFC> > CppAssociatorProviderIFCRef;
 

@@ -47,6 +47,10 @@ Mutex WQLImpl::s_classLock;
 const char* WQLImpl::s_parserInput = 0;
 stmt* WQLImpl::s_statement = 0;
 
+WQLImpl::~WQLImpl()
+{
+}
+
 void WQLImpl::evaluate(const String& nameSpace,
 	CIMInstanceResultHandlerIFC& result,
 	const String& query, const String& queryLanguage,

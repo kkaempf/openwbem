@@ -57,6 +57,7 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_SessionLanguage.hpp"
+#include "OW_AuthenticationException.hpp"
 
 #if defined(BAD)
 #undef BAD

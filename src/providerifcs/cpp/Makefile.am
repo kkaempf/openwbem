@@ -32,6 +32,8 @@ OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.cpp \
 OW_CppIndicationProviderIFC.cpp \
+OW_CppMethodProviderIFC.cpp \
+OW_CppPolledProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \
 OW_CppSecondaryInstanceProviderIFC.cpp \

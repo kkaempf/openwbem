@@ -59,6 +59,7 @@
 #include "OW_LocalAuthentication.hpp"
 #include "OW_SSLException.hpp"
 #include "OW_SSLCtxMgr.hpp"
+#include "OW_AuthenticationException.hpp"
 
 namespace OpenWBEM
 {

@@ -32,8 +32,8 @@
  * @author Jon Carey
  */
 
-#ifndef __OW_SESSIONLANGUAGE_HPP__
-#define __OW_SESSIONLANGUAGE_HPP__
+#ifndef OW_SESSIONLANGUAGE_HPP_INCLUDE_GUARD
+#define OW_SESSIONLANGUAGE_HPP_INCLUDE_GUARD
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -143,5 +143,5 @@ typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
 
 }	// End of namespace OpenWBEM
 
-#endif	// __OW_SESSIONLANGUAGE_HPP__
+#endif
 

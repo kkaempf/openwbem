@@ -53,6 +53,17 @@
 
 namespace OpenWBEM
 {
+namespace 
+{
+class DummyLogger : public Logger
+{
+protected:
+	virtual void doLogMessage(const String &, const ELogLevel) const
+	{
+		return;
+	}
+};
+}
 
 
 ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,

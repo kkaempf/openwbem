@@ -48,7 +48,6 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Authentication);
 class AuthenticatorIFC : public IntrusiveCountableBase
 {
 public:

@@ -48,11 +48,11 @@ class AuthorizerManager : public IntrusiveCountableBase
 public:
 
 	AuthorizerManager();
-	AuthorizerManager(Authorizer2IFCRef authorizerRef);
+	AuthorizerManager(const Authorizer2IFCRef& authorizerRef);
 	
 	~AuthorizerManager();
 
-	void setAuthorizer(Authorizer2IFCRef authorizerRef)
+	void setAuthorizer(const Authorizer2IFCRef& authorizerRef)
 	{
 		m_authorizer = authorizerRef;
 	}
@@ -217,6 +217,6 @@ typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
 }
 
 
-#endif	//  __OW_AUTHORIZERMANAGER_HPP__
+#endif
 
 

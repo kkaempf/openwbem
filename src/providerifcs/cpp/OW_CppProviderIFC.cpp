@@ -675,10 +675,6 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 		++iter;
 	}
 }
-// TODO: Move these into their own files.
-CppMethodProviderIFC::~CppMethodProviderIFC() {}
-CppPolledProviderIFC::~CppPolledProviderIFC() {}
-//OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
 
 } // end namespace OpenWBEM
 

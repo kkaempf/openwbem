@@ -42,6 +42,7 @@
 #include "OW_Format.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_UserUtils.hpp"
+#include "OW_AuthenticationException.hpp"
 
 #ifdef OW_HAVE_PWD_H
 #include <pwd.h>
