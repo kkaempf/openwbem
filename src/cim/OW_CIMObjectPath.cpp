@@ -40,6 +40,7 @@
 #include "OW_Array.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_NoSuchPropertyException.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -182,6 +183,17 @@ OW_CIMObjectPath::getKey(const OW_String& keyName) const
 	return OW_CIMProperty();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMProperty
+OW_CIMObjectPath::getKeyT(const OW_String& keyName) const
+{
+	OW_CIMProperty p = getKey(keyName);
+	if (!p)
+	{
+		OW_THROW(OW_NoSuchPropertyException, keyName.c_str());
+	}
+	return p;
+}
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMObjectPath::setKeys(const OW_CIMPropertyArray& newKeys)

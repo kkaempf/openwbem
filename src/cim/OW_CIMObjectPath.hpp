@@ -161,6 +161,15 @@ public:
 	OW_CIMProperty getKey(const OW_String& keyName) const;
 
 	/**
+	 * Get a key from this ObjectPath
+	 * @param key The Name of the key to get
+	 * @return An OW_CIMProperty corresponding to key.  If there is no key
+	 *  found, an OW_NoSuchPropertyException exception is thrown.
+	 * @throws OW_NoSuchPropertyException if keyName is not a property
+	 */
+	OW_CIMProperty getKeyT(const OW_String& keyName) const;
+
+	/**
 	 * Set the keys of this object path
 	 * @param newKeys	An OW_CIMPropertyArray that contains the keys for this
 	 * 	object path.
