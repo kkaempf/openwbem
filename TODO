@@ -84,6 +84,7 @@ New features:
       beyond the number of processing threads, set a maximum limit on
       the time one can stay around.
     - Implement the CIM_Interop build-in providers.
+      - Let services register a callback with CIMOMEnvironment so they can provide interop instances when requested.
       - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
       - CIM_CommMechanismForManager
