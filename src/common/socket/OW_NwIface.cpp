@@ -231,22 +231,10 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd) /*throw (OW_SocketExcepti
 		if(ifc.ifc_buf == NULL)
 		{
 			ifc.ifc_buf = new char[ifc.ifc_len];
-			if(ifc.ifc_buf == NULL)
-			{
-				lerrno = errno;
-				appliesTo = "operator new";
-				break;
-			}
 		}
 		else
 		{
  			p = new char[ifc.ifc_len];
-			if(p == NULL)
-			{
-				lerrno = errno;
-				appliesTo = "operator new";
-				break;
-			}
 
 			memmove(p, ifc.ifc_buf, oldlen);
 			delete [] ifc.ifc_buf;
