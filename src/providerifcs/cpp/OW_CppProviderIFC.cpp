@@ -793,7 +793,14 @@ void CppProviderIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 	ProviderMap::iterator it, itend = provsCopy.end();
 	for (it = provsCopy.begin(); it != itend; ++it)
 	{
-		it->second->getProvider()->shuttingDown(env);
+		try
+		{
+			it->second->getProvider()->shuttingDown(env);
+		}
+		catch (Exception& e)
+		{
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Caught exception while calling shuttingDown() on provider: %1", e));
+		}
 	}
 
 	// call shuttingDown() for any providers in noUnloadProviders which *aren't* in provsCopy,
@@ -813,7 +820,14 @@ void CppProviderIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 
 		if (!found)
 		{
-			(*curProv)->shuttingDown(env);
+			try
+			{
+				(*curProv)->shuttingDown(env);
+			}
+			catch (Exception& e)
+			{
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("Caught exception while calling shuttingDown() on provider: %1", e));
+			}
 		}
 	}
 }
