@@ -1234,27 +1234,35 @@ DateTime::getGMTOffset()
 
 Int16 DateTime::localTimeAndOffset(time_t t, struct tm & t_loc)
 {
-  struct tm t_utc;
-  struct tm * ptm_utc = ::gmtime_r(&t, &t_utc);
-  struct tm * ptm_loc = ::localtime_r(&t, &t_loc);
-  if (!ptm_utc || !ptm_loc)
-    OW_THROW(DateTimeException, Format("Invalid time_t: %1", t).c_str());
-  int min_diff = 
-    (t_loc.tm_min - t_utc.tm_min) + 60 * (t_loc.tm_hour - t_utc.tm_hour);
-  // Note: UTC offsets can be greater than 12 hours, but are guaranteed to
-  // be less than 24 hours.
-  int day_diff = t_loc.tm_mday - t_utc.tm_mday;
-  int const one_day = 24 * 60;
-  if (day_diff == 0)
-    return min_diff;
-  else if (day_diff == 1 || day_diff < -1)
-    // if day_diff < -1, then UTC day is last day of month and local day
-    // is 1st of next month.
-    return min_diff + one_day;
-  else /* day_diff == -1 || day_diff > 1 */
-    // if day_diff > 1, then UTC day is 1st of month and local day is last
-    // day of previous month.
-    return min_diff - one_day;
+	struct tm t_utc;
+	struct tm * ptm_utc = ::gmtime_r(&t, &t_utc);
+	struct tm * ptm_loc = ::localtime_r(&t, &t_loc);
+	if (!ptm_utc || !ptm_loc)
+	{
+		OW_THROW(DateTimeException, Format("Invalid time_t: %1", t).c_str());
+	}
+	int min_diff =
+		(t_loc.tm_min - t_utc.tm_min) + 60 * (t_loc.tm_hour - t_utc.tm_hour);
+	// Note: UTC offsets can be greater than 12 hours, but are guaranteed to
+	// be less than 24 hours.
+	int day_diff = t_loc.tm_mday - t_utc.tm_mday;
+	int const one_day = 24 * 60;
+	if (day_diff == 0)
+	{
+		return min_diff;
+	}
+	else if (day_diff == 1 || day_diff < -1)
+	{
+		// if day_diff < -1, then UTC day is last day of month and local day
+		// is 1st of next month.
+		return min_diff + one_day;
+	}
+	else /* day_diff == -1 || day_diff > 1 */
+	{
+		// if day_diff > 1, then UTC day is 1st of month and local day is last
+		// day of previous month.
+		return min_diff - one_day;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
