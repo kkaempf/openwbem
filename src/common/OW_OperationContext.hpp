@@ -92,6 +92,11 @@ public:
 	 * @throws ContextDataNotFoundException if key is not found
 	 */
 	String getStringData(const String& key) const;
+
+	/**
+	 * @returns def if key is not found
+	 */
+	String getStringDataWithDefault(const String& key, const String& def = String() ) const;
 	
 	// Keys values we use.
 	static const char* const USER_NAME;

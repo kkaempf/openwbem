@@ -124,6 +124,19 @@ OperationContext::getStringData(const String& key) const
 	return strData->m_str;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+String  
+OperationContext::getStringDataWithDefault(const String& key, const String& def) const
+{
+	DataRef foo = getData(key);
+	Reference<StringData> strData = foo.cast_to<StringData>();
+	if (!strData)
+	{
+		return def;
+	}
+	return strData->m_str;
+}
+
 const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
