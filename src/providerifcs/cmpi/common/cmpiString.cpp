@@ -33,7 +33,7 @@ CMPI_String* string2CMPIString(const OpenWBEM::String &s) {
 
 static CMPIStatus stringRelease(CMPIString *eStr) {
    (void) eStr;
-   std::cout << "--- stringRelease()" << std::endl;
+   //std::cout << "--- stringRelease()" << std::endl;
    CMReturn(CMPI_RC_OK);
 }
 

@@ -146,7 +146,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 	{
 		if (opts.error)
 		{
-            std::cout << "Unknown command line argument for CIMOM" << std::endl;
+            std::cerr << "Unknown command line argument for CIMOM" << std::endl;
 		}
 		printUsage(std::cout);
 		exit(0);

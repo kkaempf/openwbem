@@ -51,7 +51,7 @@ static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
 	const OpenWBEM::CIMInstance& inst =
 		 * (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
 	try {
-		std::cout << "inst to handle " << inst.toMOF() << std::endl;
+		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
    		res->handle(inst);
 	}
 	catch (const OpenWBEM::CIMException& e)
@@ -75,7 +75,7 @@ static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
 		* (static_cast<OpenWBEM::CIMInstance *>(eInst->hdl));
 
 	try {
-		std::cout << "inst to handle " << inst.toMOF() << std::endl;
+		//std::cout << "inst to handle " << inst.toMOF() << std::endl;
    		// TODO - turn instance into object
    		res->handle(inst);
 
@@ -100,7 +100,7 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
 	const OpenWBEM::CIMObjectPath& cop =
 		* (static_cast<OpenWBEM::CIMObjectPath *>(eRef->hdl));
 	try {
-		std::cout << "cop to handle " << cop.toMOF() << std::endl;
+		//std::cout << "cop to handle " << cop.toMOF() << std::endl;
 		res->handle(cop);
 	}
 	catch (const OpenWBEM::CIMException& e)
@@ -296,7 +296,7 @@ CMPI_ResultOnStack::CMPI_ResultOnStack() {
 }
 
 CMPI_ResultOnStack::~CMPI_ResultOnStack() {
-	std::cout << "--- ~CMPI_ResultOnStack()" << std::endl;
+	//std::cout << "--- ~CMPI_ResultOnStack()" << std::endl;
       //if (flags & RESULT_set==0)  ((ResponseHandler*)hdl)->processing();
       //if (flags & RESULT_done==0) ((ResponseHandler*)hdl)->complete();
   }

@@ -218,7 +218,7 @@ CMPIrc value2CMPIData(const OpenWBEM::CIMValue& v, CMPIType t, CMPIData *data) {
    else if (t==CMPI_string) {
       OpenWBEM::String str;
       v.get(str);
-std::cout << " string is " << v << std::endl;
+//std::cout << " string is " << v << std::endl;
       data->value.string=string2CMPIString(str);
    }
 

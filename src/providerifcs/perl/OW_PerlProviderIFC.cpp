@@ -220,7 +220,7 @@ PerlProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 // BMMU
-	std::cout << "Get IndicationProvider for Id " << provIdString << std::endl;
+	//std::cout << "Get IndicationProvider for Id " << provIdString << std::endl;
 	FTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{

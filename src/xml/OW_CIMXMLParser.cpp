@@ -340,7 +340,6 @@ CIMXMLParser::getChild()
 void
 CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId) const
 {
-//	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
 	if (!tokenIs(g_elems[tId].name))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,

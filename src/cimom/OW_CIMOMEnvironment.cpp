@@ -559,8 +559,9 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 		OW_THROW(ConfigException, format("Unable to read config"
 					" file: %1", filename).c_str());
 	}
-	// We don't have a logger at this point
-	std::cout << "CIMOM reading config file: " << filename << std::endl;
+	
+	// We don't have a logger at this point, but it will get printed anyway
+	logDebug("\nCIMOM reading config file: " + filename);
 	String line;
 	int lineNum = 0;
 	while(file)
