@@ -44,8 +44,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_Logger.hpp"
-#include "OW_WQLLogger.hpp"
 #include "OW_WQLScanUtils.hpp"
+#include "OW_StringStream.hpp"
 #include <errno.h>
 #include <iterator> // for back_inserter
 #include <algorithm> // for set_union
@@ -53,9 +53,11 @@
 #define OW_WQL_THROWCIMMSG(type, message)											\
 do																														\
 {																															\
-	WQL_LOG_DEBUG(Format("Throwing %1 %2",(type), (message)));	\
+	OW_WQL_LOG_DEBUG(Format("Throwing %1 %2",(type), (message)));	\
 	OW_THROWCIMMSG((type),(message));														\
 }while(0)
+
+using namespace WBEMFlags;
 
 namespace OpenWBEM
 {
@@ -64,7 +66,7 @@ namespace
 {
 	CIMInstance embedClassInInstance(CIMClass const& x)
 	{
-		WQL_LOG_DEBUG(Format("Embedding %1 .", x.getName()));
+		OW_WQL_LOG_DEBUG(Format("Embedding %1 .", x.getName()));
 		CIMInstance ret("__SchemaQueryResult");
 		ret.setProperty(CIMName("CimClass"),CIMValue(x.getName()));
 		return ret;
@@ -89,7 +91,7 @@ namespace
 	//This class only exists so this function can be called.
 	void ClassesEmbeddedInInstancesResultHandler::doHandle(CIMClass const& x)
 	{
-		WQL_LOG_DEBUG(Format("About to add %1 to results.", x.getName()));
+		OW_WQL_LOG_DEBUG(Format("About to add %1 to results.", x.getName()));
 		//Embed the class in an instance.
 		//Store the instance in the array.
 		m_instances.push_back(embedClassInInstance(x));
@@ -110,43 +112,41 @@ namespace
 
 	String debugDump(CIMInstanceArray const& array)
 	{
-		std::ostringstream arrayString;
+		OStringStream arrayString;
 		arrayString << "{{";
-		for(  CIMInstanceArray::const_iterator current= array.begin()
-					; current != array.end() ; ++current
-	     )
+		for (CIMInstanceArray::const_iterator current= array.begin(); current != array.end() ; ++current)
 		{
 			arrayString << " { " << current->toString() << " }\n";
 		}
 		arrayString << "}}\n";
-		return String(arrayString.str().c_str());
+		return String(arrayString.toString());
 	}
-}
 
-using namespace WBEMFlags;
-const char * typeStrings[] =
-{
-	"CIMInstanceArray",
-	"String",
-	"IntType",
-	"Real",
-	"Bool",
-	"ColumnName",
-	"Null",
-	"Invalid"
-};
-
-char const* typeName(WQLProcessor::DataType::Type type)
-{
-	size_t index(type);
-	if(index >= sizeof(typeStrings)/sizeof(typeStrings[0]))
+	const char * typeStrings[] =
 	{
-		return "Unknown";
-	}
-	else
+		"CIMInstanceArray",
+		"String",
+		"IntType",
+		"Real",
+		"Bool",
+		"ColumnName",
+		"Null",
+		"Invalid"
+	};
+	
+	char const* typeName(WQLProcessor::DataType::Type type)
 	{
-		return typeStrings[index];
+		size_t index(type);
+		if(index >= sizeof(typeStrings)/sizeof(typeStrings[0]))
+		{
+			return "Unknown";
+		}
+		else
+		{
+			return typeStrings[index];
+		}
 	}
+	
 }
 
 WQLProcessor::WQLProcessor(
@@ -162,40 +162,40 @@ void WQLProcessor::visit_stmt_selectStmt_optSemicolon(
 	const stmt_selectStmt_optSemicolon* pstmt_selectStmt_optSemicolon
 	)
 {
-	pstmt_selectStmt_optSemicolon->m_pselectStmt1->accept_interface(this);
+	pstmt_selectStmt_optSemicolon->m_pselectStmt1->acceptInterface(this);
 	if (pstmt_selectStmt_optSemicolon->m_poptSemicolon2)
 	{
-		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->accept_interface(this);
+		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_stmt_updateStmt_optSemicolon(
 	const stmt_updateStmt_optSemicolon* pstmt_updateStmt_optSemicolon
 	)
 {
-	pstmt_updateStmt_optSemicolon->m_pupdateStmt1->accept_interface(this);
+	pstmt_updateStmt_optSemicolon->m_pupdateStmt1->acceptInterface(this);
 	if (pstmt_updateStmt_optSemicolon->m_poptSemicolon2)
 	{
-		pstmt_updateStmt_optSemicolon->m_poptSemicolon2->accept_interface(this);
+		pstmt_updateStmt_optSemicolon->m_poptSemicolon2->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_stmt_insertStmt_optSemicolon(
 	const stmt_insertStmt_optSemicolon* pstmt_insertStmt_optSemicolon
 	)
 {
-	pstmt_insertStmt_optSemicolon->m_pinsertStmt1->accept_interface(this);
+	pstmt_insertStmt_optSemicolon->m_pinsertStmt1->acceptInterface(this);
 	if (pstmt_insertStmt_optSemicolon->m_poptSemicolon2)
 	{
-		pstmt_insertStmt_optSemicolon->m_poptSemicolon2->accept_interface(this);
+		pstmt_insertStmt_optSemicolon->m_poptSemicolon2->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_stmt_deleteStmt_optSemicolon(
 	const stmt_deleteStmt_optSemicolon* pstmt_deleteStmt_optSemicolon
 	)
 {
-	pstmt_deleteStmt_optSemicolon->m_pdeleteStmt1->accept_interface(this);
+	pstmt_deleteStmt_optSemicolon->m_pdeleteStmt1->acceptInterface(this);
 	if (pstmt_deleteStmt_optSemicolon->m_poptSemicolon2)
 	{
-		pstmt_deleteStmt_optSemicolon->m_poptSemicolon2->accept_interface(this);
+		pstmt_deleteStmt_optSemicolon->m_poptSemicolon2->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_optSemicolon_empty(
@@ -213,7 +213,7 @@ void WQLProcessor::visit_insertStmt(
 	)
 {
 	m_tableRef = *pinsertStmt->m_pstrRelationName3;
-	pinsertStmt->m_pinsertRest4->accept_interface(this);
+	pinsertStmt->m_pinsertRest4->acceptInterface(this);
 }
 void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	const insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN
@@ -234,7 +234,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 		i != pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList3->end();
 		++i, ++curProperty )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 		// Fill out the properties on the instance
 		CIMProperty cp = *curProperty;
 		
@@ -272,7 +272,7 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	}
 	
 	// create the instance
-	//WQL_LOG_DEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+	//OW_WQL_LOG_DEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
 	m_instances.clear();
 	m_instances.push_back(ci);
@@ -311,7 +311,7 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 		i != pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->end();
 		++i, ++column )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 		// Fill out the properties on the instance
 		CIMProperty cp = ci.getProperty(*column);
 		if (!cp)
@@ -351,7 +351,7 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 		ci.setProperty(cp);
 	}
 	// create the instance
-	//WQL_LOG_DEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+	//OW_WQL_LOG_DEBUG(Format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(m_ns, ci);
 	m_instances.clear();
 	m_instances.push_back(ci);
@@ -367,7 +367,7 @@ void WQLProcessor::visit_deleteStmt(
 	populateInstances(*pdeleteStmt->m_pstrRelationName3);
 	if (pdeleteStmt->m_poptWhereClause4)
 	{
-		pdeleteStmt->m_poptWhereClause4->accept_interface(this);
+		pdeleteStmt->m_poptWhereClause4->acceptInterface(this);
 	}
 
 	// Delete all the m_instances
@@ -376,7 +376,7 @@ void WQLProcessor::visit_deleteStmt(
 		 ++i)
 	{
 		CIMObjectPath cop(m_ns, *i);
-		//WQL_LOG_DEBUG(Format("Deleting instance:\n%1", cop.toString()));
+		//OW_WQL_LOG_DEBUG(Format("Deleting instance:\n%1", cop.toString()));
 		m_hdl->deleteInstance(m_ns, cop);
 	}
 #else
@@ -392,14 +392,14 @@ void WQLProcessor::visit_updateStmt(
 	// Filter out the m_instances
 	if (pupdateStmt->m_poptWhereClause5)
 	{
-		pupdateStmt->m_poptWhereClause5->accept_interface(this);
+		pupdateStmt->m_poptWhereClause5->acceptInterface(this);
 	}
 	// Gather up the property names and values
 	for (List<updateTargetEl*>::const_iterator i = pupdateStmt->m_pupdateTargetList4->begin();
 		i != pupdateStmt->m_pupdateTargetList4->end();
 		++i )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 	}
 	
 	// loop through the m_instances
@@ -458,7 +458,7 @@ void WQLProcessor::visit_updateStmt(
 			ci.setProperty(cp);
 		}
 		// update the instance
-		//WQL_LOG_DEBUG(Format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
+		//OW_WQL_LOG_DEBUG(Format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 		m_hdl->modifyInstance(m_ns, ci);
 	}
 #else
@@ -478,47 +478,47 @@ void WQLProcessor::visit_selectStmt(
 	m_doingSelect = true;
 	if (pselectStmt->m_poptDistinct2)
 	{
-		pselectStmt->m_poptDistinct2->accept_interface(this);
+		pselectStmt->m_poptDistinct2->acceptInterface(this);
 	}
 	// FROM clause will populate the m_instances array
 	if (pselectStmt->m_poptFromClause4)
 	{
-		pselectStmt->m_poptFromClause4->accept_interface(this);
+		pselectStmt->m_poptFromClause4->acceptInterface(this);
 	}
 	// WHERE will apply filter out the instance array
 	if (pselectStmt->m_poptWhereClause5)
 	{
-		pselectStmt->m_poptWhereClause5->accept_interface(this);
+		pselectStmt->m_poptWhereClause5->acceptInterface(this);
 	}
 	if (pselectStmt->m_poptGroupClause6)
 	{
-		pselectStmt->m_poptGroupClause6->accept_interface(this);
+		pselectStmt->m_poptGroupClause6->acceptInterface(this);
 	}
 	if (pselectStmt->m_poptHavingClause7)
 	{
-		pselectStmt->m_poptHavingClause7->accept_interface(this);
+		pselectStmt->m_poptHavingClause7->acceptInterface(this);
 	}
 	if (pselectStmt->m_poptSortClause8)
 	{
-		pselectStmt->m_poptSortClause8->accept_interface(this);
+		pselectStmt->m_poptSortClause8->acceptInterface(this);
 	}
 	// Now filter the properties on the m_instances
 	for (List<targetEl*>::const_iterator i = pselectStmt->m_ptargetList3->begin();
 		i != pselectStmt->m_ptargetList3->end();
 		++i )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 	}
-	WQL_LOG_DEBUG("Filtering the properties");
+	OW_WQL_LOG_DEBUG("Filtering the properties");
 	for (size_t i = 0; i < m_propertyArray.size(); ++i)
 	{
-		WQL_LOG_DEBUG(Format("Property %1: ", i));
+		OW_WQL_LOG_DEBUG(Format("Property %1: ", i));
 		size_t j = m_propertyArray[i].indexOf('.');
 		if (j != String::npos)
 		{
 			m_propertyArray[i] = m_propertyArray[i].substring(j+1);
 		}
-		WQL_LOG_DEBUG(m_propertyArray[i].toString());
+		OW_WQL_LOG_DEBUG(m_propertyArray[i].toString());
 	}
 	if (m_propertyArray.size() > 1 || (m_propertyArray.size() > 0 && m_propertyArray[0] != "*"))
 	{
@@ -535,23 +535,23 @@ void WQLProcessor::visit_exprSeq_aExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pexprSeq_aExpr->m_paExpr1->accept_interface(this);
+	pexprSeq_aExpr->m_paExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_exprSeq_exprSeq_COMMA_aExpr(
 	const exprSeq_exprSeq_COMMA_aExpr* pexprSeq_exprSeq_COMMA_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pexprSeq_exprSeq_COMMA_aExpr->m_pexprSeq1->accept_interface(this);
-	pexprSeq_exprSeq_COMMA_aExpr->m_paExpr3->accept_interface(this);
+	pexprSeq_exprSeq_COMMA_aExpr->m_pexprSeq1->acceptInterface(this);
+	pexprSeq_exprSeq_COMMA_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_exprSeq_exprSeq_USING_aExpr(
 	const exprSeq_exprSeq_USING_aExpr* pexprSeq_exprSeq_USING_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pexprSeq_exprSeq_USING_aExpr->m_pexprSeq1->accept_interface(this);
-	pexprSeq_exprSeq_USING_aExpr->m_paExpr3->accept_interface(this);
+	pexprSeq_exprSeq_USING_aExpr->m_pexprSeq1->acceptInterface(this);
+	pexprSeq_exprSeq_USING_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_optDistinct_empty(
 	const optDistinct_empty* poptDistinct_empty
@@ -569,7 +569,7 @@ void WQLProcessor::visit_optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN->m_pexprSeq4->accept_interface(this);
+	poptDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN->m_pexprSeq4->acceptInterface(this);
 }
 void WQLProcessor::visit_optDistinct_ALL(
 	const optDistinct_ALL* poptDistinct_ALL
@@ -586,7 +586,7 @@ void WQLProcessor::visit_sortClause(
 		i != psortClause->m_psortbyList3->end();
 		++i )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_optSortClause_empty(
@@ -599,14 +599,14 @@ void WQLProcessor::visit_optSortClause_sortClause(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSortClause_sortClause->m_psortClause1->accept_interface(this);
+	poptSortClause_sortClause->m_psortClause1->acceptInterface(this);
 }
 void WQLProcessor::visit_sortby(
 	const sortby* psortby
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	psortby->m_paExpr1->accept_interface(this);
+	psortby->m_paExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_optGroupClause_empty(
 	const optGroupClause_empty* poptGroupClause_empty
@@ -618,7 +618,7 @@ void WQLProcessor::visit_optGroupClause_GROUP_BY_exprSeq(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptGroupClause_GROUP_BY_exprSeq->m_pexprSeq3->accept_interface(this);
+	poptGroupClause_GROUP_BY_exprSeq->m_pexprSeq3->acceptInterface(this);
 }
 void WQLProcessor::visit_optHavingClause_empty(
 	const optHavingClause_empty* poptHavingClause_empty
@@ -631,7 +631,7 @@ void WQLProcessor::visit_optHavingClause_HAVING_aExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptHavingClause_HAVING_aExpr->m_paExpr2->accept_interface(this);
+	poptHavingClause_HAVING_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_optFromClause_empty(
 	const optFromClause_empty* poptFromClause_empty
@@ -646,7 +646,7 @@ void WQLProcessor::visit_optFromClause_FROM_fromList(
 		i != poptFromClause_FROM_fromList->m_pfromList2->end();
 		++i )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 		//Find out if *i is 'meta_class' ; if it is, this is a schema query.
 		m_isSchemaQuery= isTableRefMetaClass(*i);
 		//If this is a schema query, don't populate the instances. Instead, set a cookie
@@ -661,89 +661,89 @@ void WQLProcessor::visit_tableRef_relationExpr(
 	const tableRef_relationExpr* ptableRef_relationExpr
 	)
 {
-	ptableRef_relationExpr->m_prelationExpr1->accept_interface(this);
+	ptableRef_relationExpr->m_prelationExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_tableRef_relationExpr_aliasClause(
 	const tableRef_relationExpr_aliasClause* ptableRef_relationExpr_aliasClause
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptableRef_relationExpr_aliasClause->m_prelationExpr1->accept_interface(this);
-	ptableRef_relationExpr_aliasClause->m_paliasClause2->accept_interface(this);
+	ptableRef_relationExpr_aliasClause->m_prelationExpr1->acceptInterface(this);
+	ptableRef_relationExpr_aliasClause->m_paliasClause2->acceptInterface(this);
 }
 void WQLProcessor::visit_tableRef_joinedTable(
 	const tableRef_joinedTable* ptableRef_joinedTable
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptableRef_joinedTable->m_pjoinedTable1->accept_interface(this);
+	ptableRef_joinedTable->m_pjoinedTable1->acceptInterface(this);
 }
 void WQLProcessor::visit_tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause(
 	const tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause* ptableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause->m_pjoinedTable2->accept_interface(this);
-	ptableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause->m_paliasClause4->accept_interface(this);
+	ptableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause->m_pjoinedTable2->acceptInterface(this);
+	ptableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause->m_paliasClause4->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN(
 	const joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN* pjoinedTable_LEFTPAREN_joinedTable_RIGHTPAREN
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_LEFTPAREN_joinedTable_RIGHTPAREN->m_pjoinedTable2->accept_interface(this);
+	pjoinedTable_LEFTPAREN_joinedTable_RIGHTPAREN->m_pjoinedTable2->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_CROSS_JOIN_tableRef(
 	const joinedTable_tableRef_CROSS_JOIN_tableRef* pjoinedTable_tableRef_CROSS_JOIN_tableRef
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_CROSS_JOIN_tableRef->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_CROSS_JOIN_tableRef->m_ptableRef4->accept_interface(this);
+	pjoinedTable_tableRef_CROSS_JOIN_tableRef->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_CROSS_JOIN_tableRef->m_ptableRef4->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_UNIONJOIN_tableRef(
 	const joinedTable_tableRef_UNIONJOIN_tableRef* pjoinedTable_tableRef_UNIONJOIN_tableRef
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_UNIONJOIN_tableRef->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_UNIONJOIN_tableRef->m_ptableRef3->accept_interface(this);
+	pjoinedTable_tableRef_UNIONJOIN_tableRef->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_UNIONJOIN_tableRef->m_ptableRef3->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_joinType_JOIN_tableRef_joinQual(
 	const joinedTable_tableRef_joinType_JOIN_tableRef_joinQual* pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_pjoinType2->accept_interface(this);
-	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_ptableRef4->accept_interface(this);
-	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_pjoinQual5->accept_interface(this);
+	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_pjoinType2->acceptInterface(this);
+	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_ptableRef4->acceptInterface(this);
+	pjoinedTable_tableRef_joinType_JOIN_tableRef_joinQual->m_pjoinQual5->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_JOIN_tableRef_joinQual(
 	const joinedTable_tableRef_JOIN_tableRef_joinQual* pjoinedTable_tableRef_JOIN_tableRef_joinQual
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_ptableRef3->accept_interface(this);
-	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_pjoinQual4->accept_interface(this);
+	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_ptableRef3->acceptInterface(this);
+	pjoinedTable_tableRef_JOIN_tableRef_joinQual->m_pjoinQual4->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef(
 	const joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef* pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_pjoinType3->accept_interface(this);
-	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_ptableRef5->accept_interface(this);
+	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_pjoinType3->acceptInterface(this);
+	pjoinedTable_tableRef_NATURAL_joinType_JOIN_tableRef->m_ptableRef5->acceptInterface(this);
 }
 void WQLProcessor::visit_joinedTable_tableRef_NATURAL_JOIN_tableRef(
 	const joinedTable_tableRef_NATURAL_JOIN_tableRef* pjoinedTable_tableRef_NATURAL_JOIN_tableRef
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinedTable_tableRef_NATURAL_JOIN_tableRef->m_ptableRef1->accept_interface(this);
-	pjoinedTable_tableRef_NATURAL_JOIN_tableRef->m_ptableRef4->accept_interface(this);
+	pjoinedTable_tableRef_NATURAL_JOIN_tableRef->m_ptableRef1->acceptInterface(this);
+	pjoinedTable_tableRef_NATURAL_JOIN_tableRef->m_ptableRef4->acceptInterface(this);
 }
 void WQLProcessor::visit_aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN(
 	const aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN* paliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN
@@ -819,14 +819,14 @@ void WQLProcessor::visit_joinQual_ON_aExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pjoinQual_ON_aExpr->m_paExpr2->accept_interface(this);
+	pjoinQual_ON_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_relationExpr_strRelationName(
 	const relationExpr_strRelationName* prelationExpr_strRelationName
 	)
 {
 	m_tableRef = *prelationExpr_strRelationName->m_pstrRelationName1;
-	//WQL_LOG_DEBUG(Format("Setting m_tableRef to: %1", m_tableRef.toString()));
+	//OW_WQL_LOG_DEBUG(Format("Setting m_tableRef to: %1", m_tableRef.toString()));
 }
 void WQLProcessor::visit_relationExpr_strRelationName_ASTERISK(
 	const relationExpr_strRelationName_ASTERISK* prelationExpr_strRelationName_ASTERISK
@@ -849,7 +849,7 @@ void WQLProcessor::visit_optWhereClause_WHERE_aExpr(
 	const optWhereClause_WHERE_aExpr* poptWhereClause_WHERE_aExpr
 	)
 {
-	poptWhereClause_WHERE_aExpr->m_paExpr2->accept_interface(this);
+	poptWhereClause_WHERE_aExpr->m_paExpr2->acceptInterface(this);
 	if (m_exprValue.type == DataType::CIMInstanceArrayType)
 	{
 		m_instances = m_exprValue.cia;
@@ -864,8 +864,8 @@ void WQLProcessor::visit_rowExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	prowExpr->m_prowDescriptor2->accept_interface(this);
-	prowExpr->m_prowDescriptor6->accept_interface(this);
+	prowExpr->m_prowDescriptor2->acceptInterface(this);
+	prowExpr->m_prowDescriptor6->acceptInterface(this);
 }
 void WQLProcessor::visit_rowDescriptor(
 	const rowDescriptor* prowDescriptor
@@ -876,124 +876,124 @@ void WQLProcessor::visit_rowDescriptor(
 		i != prowDescriptor->m_prowList1->end();
 		++i )
 	{
-		(*i)->accept_interface(this);
+		(*i)->acceptInterface(this);
 	}
-	prowDescriptor->m_paExpr3->accept_interface(this);
+	prowDescriptor->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_cExpr(
 	const aExpr_cExpr* paExpr_cExpr
 	)
 {
-	paExpr_cExpr->m_pcExpr1->accept_interface(this);
+	paExpr_cExpr->m_pcExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_AT_TIME_ZONE_cExpr(
 	const aExpr_aExpr_AT_TIME_ZONE_cExpr* paExpr_aExpr_AT_TIME_ZONE_cExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_AT_TIME_ZONE_cExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_AT_TIME_ZONE_cExpr->m_pcExpr5->accept_interface(this);
+	paExpr_aExpr_AT_TIME_ZONE_cExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_AT_TIME_ZONE_cExpr->m_pcExpr5->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_PLUS_aExpr(
 	const aExpr_PLUS_aExpr* paExpr_PLUS_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_PLUS_aExpr->m_paExpr2->accept_interface(this);
+	paExpr_PLUS_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_MINUS_aExpr(
 	const aExpr_MINUS_aExpr* paExpr_MINUS_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_MINUS_aExpr->m_paExpr2->accept_interface(this);
+	paExpr_MINUS_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_BITINVERT_aExpr(
 	const aExpr_BITINVERT_aExpr* paExpr_BITINVERT_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_BITINVERT_aExpr->m_paExpr2->accept_interface(this);
+	paExpr_BITINVERT_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_PLUS_aExpr(
 	const aExpr_aExpr_PLUS_aExpr* paExpr_aExpr_PLUS_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_PLUS_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_PLUS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_PLUS_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_PLUS_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_MINUS_aExpr(
 	const aExpr_aExpr_MINUS_aExpr* paExpr_aExpr_MINUS_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_MINUS_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_MINUS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_MINUS_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_MINUS_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_ASTERISK_aExpr(
 	const aExpr_aExpr_ASTERISK_aExpr* paExpr_aExpr_ASTERISK_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_ASTERISK_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_ASTERISK_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_ASTERISK_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_ASTERISK_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_SOLIDUS_aExpr(
 	const aExpr_aExpr_SOLIDUS_aExpr* paExpr_aExpr_SOLIDUS_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_SOLIDUS_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_SOLIDUS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_SOLIDUS_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_SOLIDUS_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_PERCENT_aExpr(
 	const aExpr_aExpr_PERCENT_aExpr* paExpr_aExpr_PERCENT_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_PERCENT_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_PERCENT_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_PERCENT_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_PERCENT_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_BITAND_aExpr(
 	const aExpr_aExpr_BITAND_aExpr* paExpr_aExpr_BITAND_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_BITAND_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_BITAND_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_BITAND_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_BITAND_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_BITOR_aExpr(
 	const aExpr_aExpr_BITOR_aExpr* paExpr_aExpr_BITOR_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_BITOR_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_BITOR_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_BITOR_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_BITOR_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_BITSHIFTLEFT_aExpr(
 	const aExpr_aExpr_BITSHIFTLEFT_aExpr* paExpr_aExpr_BITSHIFTLEFT_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_BITSHIFTLEFT_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_BITSHIFTLEFT_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_BITSHIFTLEFT_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_BITSHIFTLEFT_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_BITSHIFTRIGHT_aExpr(
 	const aExpr_aExpr_BITSHIFTRIGHT_aExpr* paExpr_aExpr_BITSHIFTRIGHT_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_BITSHIFTRIGHT_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_BITSHIFTRIGHT_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_BITSHIFTRIGHT_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_BITSHIFTRIGHT_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_LESSTHAN_aExpr(
 	const aExpr_aExpr_LESSTHAN_aExpr* paExpr_aExpr_LESSTHAN_aExpr
 	)
 {
-	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	
 	doComparison(lhs, rhs, Compare(Compare::LessThanType));
@@ -1002,10 +1002,10 @@ void WQLProcessor::visit_aExpr_aExpr_LESSTHANOREQUALS_aExpr(
 	const aExpr_aExpr_LESSTHANOREQUALS_aExpr* paExpr_aExpr_LESSTHANOREQUALS_aExpr
 	)
 {
-	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	
-	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	
 	doComparison(lhs, rhs, Compare(Compare::LessThanOrEqualsType));
@@ -1014,10 +1014,10 @@ void WQLProcessor::visit_aExpr_aExpr_GREATERTHAN_aExpr(
 	const aExpr_aExpr_GREATERTHAN_aExpr* paExpr_aExpr_GREATERTHAN_aExpr
 	)
 {
-	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	
-	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	
 	doComparison(lhs, rhs, Compare(Compare::GreaterThanType));
@@ -1026,10 +1026,10 @@ void WQLProcessor::visit_aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
 	const aExpr_aExpr_GREATERTHANOREQUALS_aExpr* paExpr_aExpr_GREATERTHANOREQUALS_aExpr
 	)
 {
-	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	
-	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	doComparison(lhs, rhs, Compare(Compare::GreaterThanOrEqualsType));
 }
@@ -1037,13 +1037,13 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 	const aExpr_aExpr_EQUALS_aExpr* paExpr_aExpr_EQUALS_aExpr
 	)
 {
-	paExpr_aExpr_EQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_EQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	paExpr_aExpr_EQUALS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_EQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (m_isSchemaQuery)
 	{
-		WQL_LOG_DEBUG("Handling schema query.");
+		OW_WQL_LOG_DEBUG("Handling schema query.");
 		//The right hand side of a schema query must be a string.
 		if (rhs.type == DataType::StringType)
 		{
@@ -1051,20 +1051,20 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 			//If this is a schema query, the lhs must be '__Dynasty', __Class, etc.
 			if (lhs.str.equalsIgnoreCase("__Class"))
 			{
-				WQL_LOG_DEBUG("Handling __Class query.");
+				OW_WQL_LOG_DEBUG("Handling __Class query.");
 				//Find the rhs, but no subclasses.
 				newInstances.push_back(embedClassInInstance(m_hdl->getClass(m_ns, rhs.str)));
 			}
 			else if (lhs.str.equalsIgnoreCase("__Dynasty"))
 			{
-				WQL_LOG_DEBUG("Handling __Dynasty query.");
+				OW_WQL_LOG_DEBUG("Handling __Dynasty query.");
 				//If the rhs isn't a root class, it doesn't define a dynasty.
 				CIMClass cl= m_hdl->getClass(m_ns, rhs.str);
 				if (cl && cl.getSuperClass() == "")
 				{
 					//Find the rhs,and all subclasses.
 					CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(m_ns, rhs.str));
-					WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
+					OW_WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
 					newInstances.push_back(rhsClass);
 					//result will push_back instances with embeded class into newInstances.
 					ClassesEmbeddedInInstancesResultHandler result(newInstances);
@@ -1236,9 +1236,9 @@ void WQLProcessor::visit_aExpr_aExpr_NOTEQUALS_aExpr(
 	const aExpr_aExpr_NOTEQUALS_aExpr* paExpr_aExpr_NOTEQUALS_aExpr
 	)
 {
-	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
-	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
 }
@@ -1246,14 +1246,14 @@ void WQLProcessor::visit_aExpr_aExpr_AND_aExpr(
 	const aExpr_aExpr_AND_aExpr* paExpr_aExpr_AND_aExpr
 	)
 {
-	paExpr_aExpr_AND_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_AND_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	if (lhs.type != DataType::CIMInstanceArrayType)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "invalid OR argument");
 	}
 	
-	paExpr_aExpr_AND_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_AND_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (rhs.type != DataType::CIMInstanceArrayType)
 	{
@@ -1261,30 +1261,30 @@ void WQLProcessor::visit_aExpr_aExpr_AND_aExpr(
 	}
 	
 	// set_union requires sorted containers
-	//WQL_LOG_DEBUG("Beginning first sort");
+	//OW_WQL_LOG_DEBUG("Beginning first sort");
 	std::sort(lhs.cia.begin(), lhs.cia.end(), CIMInstanceSortCriterion);
-	//WQL_LOG_DEBUG("Beginning second sort");
+	//OW_WQL_LOG_DEBUG("Beginning second sort");
 	std::sort(rhs.cia.begin(), rhs.cia.end(), CIMInstanceSortCriterion);
 	// take the union of the two and assign it to the return value.
-	//WQL_LOG_DEBUG("Calling set_intersection");
-	//WQL_LOG_DEBUG(Format("lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
+	//OW_WQL_LOG_DEBUG("Calling set_intersection");
+	//OW_WQL_LOG_DEBUG(Format("lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
 	CIMInstanceArray rVal;
 	std::set_intersection(lhs.cia.begin(), lhs.cia.end(), rhs.cia.begin(), rhs.cia.end(), std::back_inserter(rVal), CIMInstanceSortCriterion);
-	//WQL_LOG_DEBUG(Format("set_intersection finished.  rVal.size() = %1", rVal.size()));
+	//OW_WQL_LOG_DEBUG(Format("set_intersection finished.  rVal.size() = %1", rVal.size()));
 	m_exprValue = DataType(rVal);
 }
 void WQLProcessor::visit_aExpr_aExpr_OR_aExpr(
 	const aExpr_aExpr_OR_aExpr* paExpr_aExpr_OR_aExpr
 	)
 {
-	paExpr_aExpr_OR_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_OR_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	if (lhs.type != DataType::CIMInstanceArrayType)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "invalid OR argument");
 	}
 	
-	paExpr_aExpr_OR_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_OR_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (rhs.type != DataType::CIMInstanceArrayType)
 	{
@@ -1294,15 +1294,15 @@ void WQLProcessor::visit_aExpr_aExpr_OR_aExpr(
 	std::sort(lhs.cia.begin(), lhs.cia.end(), CIMInstanceSortCriterion);
 	std::sort(rhs.cia.begin(), rhs.cia.end(), CIMInstanceSortCriterion);
 	// take the union of the two and assign it to the return value.
-	//WQL_LOG_DEBUG(Format("About to call set_union. lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
+	//OW_WQL_LOG_DEBUG(Format("About to call set_union. lhs.cia.size() = %1, rhs.cia.size() = %2", lhs.cia.size(), rhs.cia.size()));
 	CIMInstanceArray unionArray;
 	std::set_union(lhs.cia.begin(), lhs.cia.end(), rhs.cia.begin(), rhs.cia.end(), std::back_inserter(unionArray), CIMInstanceSortCriterion);
-	//WQL_LOG_DEBUG(Format("set_union finished.  unionArray.size() = %1", unionArray.size()));
+	//OW_WQL_LOG_DEBUG(Format("set_union finished.  unionArray.size() = %1", unionArray.size()));
 	m_exprValue = DataType(unionArray);
 }
 bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs)
 {
-	//WQL_LOG_DEBUG(Format("in CIMInstanceSortCriterion.  Comparing:\n%1\n%2\n%3", lhs.toString(), rhs.toString(), lhs.toString() < rhs.toString()));
+	//OW_WQL_LOG_DEBUG(Format("in CIMInstanceSortCriterion.  Comparing:\n%1\n%2\n%3", lhs.toString(), rhs.toString(), lhs.toString() < rhs.toString()));
 	return lhs.toString() < rhs.toString();
 }
 void WQLProcessor::visit_aExpr_NOT_aExpr(
@@ -1310,55 +1310,55 @@ void WQLProcessor::visit_aExpr_NOT_aExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_NOT_aExpr->m_paExpr2->accept_interface(this);
+	paExpr_NOT_aExpr->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_CONCATENATION_aExpr(
 	const aExpr_aExpr_CONCATENATION_aExpr* paExpr_aExpr_CONCATENATION_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_CONCATENATION_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_CONCATENATION_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_CONCATENATION_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_CONCATENATION_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_LIKE_aExpr(
 	const aExpr_aExpr_LIKE_aExpr* paExpr_aExpr_LIKE_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_LIKE_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_LIKE_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_LIKE_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_LIKE_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr(
 	const aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr* paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr3->accept_interface(this);
-	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr5->accept_interface(this);
+	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr3->acceptInterface(this);
+	paExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr->m_paExpr5->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_NOT_LIKE_aExpr(
 	const aExpr_aExpr_NOT_LIKE_aExpr* paExpr_aExpr_NOT_LIKE_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_NOT_LIKE_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_NOT_LIKE_aExpr->m_paExpr4->accept_interface(this);
+	paExpr_aExpr_NOT_LIKE_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_NOT_LIKE_aExpr->m_paExpr4->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr(
 	const aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr* paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr1->accept_interface(this);
-	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr4->accept_interface(this);
-	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr6->accept_interface(this);
+	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr1->acceptInterface(this);
+	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr4->acceptInterface(this);
+	paExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr->m_paExpr6->acceptInterface(this);
 }
 void WQLProcessor::visit_aExpr_aExpr_ISNULL(
 	const aExpr_aExpr_ISNULL* paExpr_aExpr_ISNULL
 	)
 {
-	paExpr_aExpr_ISNULL->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_ISNULL->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(DataType::NullType);
 	doComparison(lhs, rhs, Compare(Compare::EqualsType));
@@ -1367,7 +1367,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_NULLP(
 	const aExpr_aExpr_IS_NULLP* paExpr_aExpr_IS_NULLP
 	)
 {
-	paExpr_aExpr_IS_NULLP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_NULLP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(DataType::NullType);
 	doComparison(lhs, rhs, Compare(Compare::EqualsType));
@@ -1376,7 +1376,7 @@ void WQLProcessor::visit_aExpr_aExpr_NOTNULL(
 	const aExpr_aExpr_NOTNULL* paExpr_aExpr_NOTNULL
 	)
 {
-	paExpr_aExpr_NOTNULL->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_NOTNULL->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(DataType::NullType);
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
@@ -1385,7 +1385,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_NOT_NULLP(
 	const aExpr_aExpr_IS_NOT_NULLP* paExpr_aExpr_IS_NOT_NULLP
 	)
 {
-	paExpr_aExpr_IS_NOT_NULLP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_NOT_NULLP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(DataType::NullType);
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
@@ -1394,7 +1394,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_TRUEP(
 	const aExpr_aExpr_IS_TRUEP* paExpr_aExpr_IS_TRUEP
 	)
 {
-	paExpr_aExpr_IS_TRUEP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_TRUEP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(Bool(true));
 	doComparison(lhs, rhs, Compare(Compare::EqualsType));
@@ -1403,7 +1403,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_NOT_FALSEP(
 	const aExpr_aExpr_IS_NOT_FALSEP* paExpr_aExpr_IS_NOT_FALSEP
 	)
 {
-	paExpr_aExpr_IS_NOT_FALSEP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_NOT_FALSEP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(Bool(false));
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
@@ -1412,7 +1412,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_FALSEP(
 	const aExpr_aExpr_IS_FALSEP* paExpr_aExpr_IS_FALSEP
 	)
 {
-	paExpr_aExpr_IS_FALSEP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_FALSEP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(Bool(false));
 	doComparison(lhs, rhs, Compare(Compare::EqualsType));
@@ -1421,7 +1421,7 @@ void WQLProcessor::visit_aExpr_aExpr_IS_NOT_TRUEP(
 	const aExpr_aExpr_IS_NOT_TRUEP* paExpr_aExpr_IS_NOT_TRUEP
 	)
 {
-	paExpr_aExpr_IS_NOT_TRUEP->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_IS_NOT_TRUEP->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	DataType rhs = DataType(Bool(true));
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
@@ -1452,14 +1452,14 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
 		)
 {
-	paExpr_aExpr_ISA_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_ISA_aExpr->m_paExpr1->acceptInterface(this);
 	DataType lhs = m_exprValue;
 	if (lhs.type != DataType::ColumnNameType)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Invalid first parameter type for ISA (should be a property name)");
 	}
 	String propName = lhs.str;
-	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept_interface(this);
+	paExpr_aExpr_ISA_aExpr->m_paExpr3->acceptInterface(this);
 	DataType rhs = m_exprValue;
 	if (rhs.type != DataType::StringType && rhs.type != DataType::ColumnNameType)
 	{
@@ -1469,22 +1469,22 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 	CIMInstanceArray newInstances;
 	if (m_isSchemaQuery)
 	{
-		WQL_LOG_DEBUG("Handling schema query.");
+		OW_WQL_LOG_DEBUG("Handling schema query.");
 		//If this is a schema query, the lhs must be '__This' .
 		if (lhs.str.equalsIgnoreCase("__This"))
 		{
-			WQL_LOG_DEBUG(Format("Found %1", lhs.str));
+			OW_WQL_LOG_DEBUG(Format("Found %1", lhs.str));
 			if (rhs.type == DataType::StringType)
 			{
 				//Find the rhs and all its subclasses.
 				CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(m_ns, rhs.str));
-				WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
+				OW_WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
 				newInstances.push_back(rhsClass);
 				//result will push_back instances with embeded class into newInstances.
 				ClassesEmbeddedInInstancesResultHandler result(newInstances);
-				WQL_LOG_DEBUG(Format("About to call enumClass(%1, %2, result, E_DEEP)", m_ns, rhs.str));
+				OW_WQL_LOG_DEBUG(Format("About to call enumClass(%1, %2, result, E_DEEP)", m_ns, rhs.str));
 				m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
-				WQL_LOG_DEBUG(Format("Enumerated classes: %1", debugDump(newInstances)));
+				OW_WQL_LOG_DEBUG(Format("Enumerated classes: %1", debugDump(newInstances)));
 			}
 			else
 			{
@@ -1540,168 +1540,168 @@ void WQLProcessor::visit_aExpr_rowExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	paExpr_rowExpr->m_prowExpr1->accept_interface(this);
+	paExpr_rowExpr->m_prowExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_cExpr(
 	const bExpr_cExpr* pbExpr_cExpr
 	)
 {
-	pbExpr_cExpr->m_pcExpr1->accept_interface(this);
+	pbExpr_cExpr->m_pcExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_PLUS_bExpr(
 	const bExpr_PLUS_bExpr* pbExpr_PLUS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_PLUS_bExpr->m_pbExpr2->accept_interface(this);
+	pbExpr_PLUS_bExpr->m_pbExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_MINUS_bExpr(
 	const bExpr_MINUS_bExpr* pbExpr_MINUS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_MINUS_bExpr->m_pbExpr2->accept_interface(this);
+	pbExpr_MINUS_bExpr->m_pbExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_BITINVERT_bExpr(
 	const bExpr_BITINVERT_bExpr* pbExpr_BITINVERT_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_BITINVERT_bExpr->m_pbExpr2->accept_interface(this);
+	pbExpr_BITINVERT_bExpr->m_pbExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_PLUS_bExpr(
 	const bExpr_bExpr_PLUS_bExpr* pbExpr_bExpr_PLUS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_PLUS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_PLUS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_PLUS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_PLUS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_MINUS_bExpr(
 	const bExpr_bExpr_MINUS_bExpr* pbExpr_bExpr_MINUS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_MINUS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_MINUS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_MINUS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_MINUS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_ASTERISK_bExpr(
 	const bExpr_bExpr_ASTERISK_bExpr* pbExpr_bExpr_ASTERISK_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_ASTERISK_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_ASTERISK_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_ASTERISK_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_ASTERISK_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_SOLIDUS_bExpr(
 	const bExpr_bExpr_SOLIDUS_bExpr* pbExpr_bExpr_SOLIDUS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_SOLIDUS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_SOLIDUS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_SOLIDUS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_SOLIDUS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_PERCENT_bExpr(
 	const bExpr_bExpr_PERCENT_bExpr* pbExpr_bExpr_PERCENT_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_PERCENT_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_PERCENT_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_PERCENT_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_PERCENT_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_BITAND_bExpr(
 	const bExpr_bExpr_BITAND_bExpr* pbExpr_bExpr_BITAND_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_BITAND_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_BITAND_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_BITAND_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_BITAND_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_BITOR_bExpr(
 	const bExpr_bExpr_BITOR_bExpr* pbExpr_bExpr_BITOR_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_BITOR_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_BITOR_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_BITOR_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_BITOR_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_BITSHIFTLEFT_bExpr(
 	const bExpr_bExpr_BITSHIFTLEFT_bExpr* pbExpr_bExpr_BITSHIFTLEFT_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_BITSHIFTLEFT_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_BITSHIFTLEFT_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_BITSHIFTLEFT_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_BITSHIFTLEFT_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_BITSHIFTRIGHT_bExpr(
 	const bExpr_bExpr_BITSHIFTRIGHT_bExpr* pbExpr_bExpr_BITSHIFTRIGHT_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_BITSHIFTRIGHT_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_BITSHIFTRIGHT_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_BITSHIFTRIGHT_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_BITSHIFTRIGHT_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_LESSTHAN_bExpr(
 	const bExpr_bExpr_LESSTHAN_bExpr* pbExpr_bExpr_LESSTHAN_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_LESSTHAN_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_LESSTHAN_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_LESSTHAN_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_LESSTHAN_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_LESSTHANOREQUALS_bExpr(
 	const bExpr_bExpr_LESSTHANOREQUALS_bExpr* pbExpr_bExpr_LESSTHANOREQUALS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_LESSTHANOREQUALS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_LESSTHANOREQUALS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_LESSTHANOREQUALS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_LESSTHANOREQUALS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_GREATERTHAN_bExpr(
 	const bExpr_bExpr_GREATERTHAN_bExpr* pbExpr_bExpr_GREATERTHAN_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_GREATERTHAN_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_GREATERTHAN_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_GREATERTHAN_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_GREATERTHAN_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_GREATERTHANOREQUALS_bExpr(
 	const bExpr_bExpr_GREATERTHANOREQUALS_bExpr* pbExpr_bExpr_GREATERTHANOREQUALS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_GREATERTHANOREQUALS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_GREATERTHANOREQUALS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_GREATERTHANOREQUALS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_GREATERTHANOREQUALS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_EQUALS_bExpr(
 	const bExpr_bExpr_EQUALS_bExpr* pbExpr_bExpr_EQUALS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_EQUALS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_EQUALS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_EQUALS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_EQUALS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_NOTEQUALS_bExpr(
 	const bExpr_bExpr_NOTEQUALS_bExpr* pbExpr_bExpr_NOTEQUALS_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_NOTEQUALS_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_NOTEQUALS_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_NOTEQUALS_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_NOTEQUALS_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_bExpr_bExpr_CONCATENATION_bExpr(
 	const bExpr_bExpr_CONCATENATION_bExpr* pbExpr_bExpr_CONCATENATION_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pbExpr_bExpr_CONCATENATION_bExpr->m_pbExpr1->accept_interface(this);
-	pbExpr_bExpr_CONCATENATION_bExpr->m_pbExpr3->accept_interface(this);
+	pbExpr_bExpr_CONCATENATION_bExpr->m_pbExpr1->acceptInterface(this);
+	pbExpr_bExpr_CONCATENATION_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_attr(
 	const cExpr_attr* pcExpr_attr
 	)
 {
-	pcExpr_attr->m_pattr1->accept_interface(this);
+	pcExpr_attr->m_pattr1->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_strColId_optIndirection(
 	const cExpr_strColId_optIndirection* pcExpr_strColId_optIndirection
@@ -1711,20 +1711,20 @@ void WQLProcessor::visit_cExpr_strColId_optIndirection(
 	// TODO: What does indirection do? Array index
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
 	{
-		pcExpr_strColId_optIndirection->m_poptIndirection2->accept_interface(this);
+		pcExpr_strColId_optIndirection->m_poptIndirection2->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_cExpr_aExprConst(
 	const cExpr_aExprConst* pcExpr_aExprConst
 	)
 {
-	pcExpr_aExprConst->m_paExprConst1->accept_interface(this);
+	pcExpr_aExprConst->m_paExprConst1->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_LEFTPAREN_aExpr_RIGHTPAREN(
 	const cExpr_LEFTPAREN_aExpr_RIGHTPAREN* pcExpr_LEFTPAREN_aExpr_RIGHTPAREN
 	)
 {
-	pcExpr_LEFTPAREN_aExpr_RIGHTPAREN->m_paExpr2->accept_interface(this);
+	pcExpr_LEFTPAREN_aExpr_RIGHTPAREN->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_RIGHTPAREN
@@ -1737,21 +1737,21 @@ void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN->m_pexprSeq3->accept_interface(this);
+	pcExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN->m_pexprSeq3->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN->m_pexprSeq4->accept_interface(this);
+	pcExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN->m_pexprSeq4->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN->m_pexprSeq4->accept_interface(this);
+	pcExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN->m_pexprSeq4->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN
@@ -1814,7 +1814,7 @@ void WQLProcessor::visit_cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN(
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN->m_poptExtract3)
 	{
-		pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN->m_poptExtract3->accept_interface(this);
+		pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN->m_poptExtract3->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN(
@@ -1822,7 +1822,7 @@ void WQLProcessor::visit_cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN->m_ppositionExpr3->accept_interface(this);
+	pcExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN->m_ppositionExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN(
 	const cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN* pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN
@@ -1831,7 +1831,7 @@ void WQLProcessor::visit_cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN(
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN->m_poptSubstrExpr3)
 	{
-		pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN->m_poptSubstrExpr3->accept_interface(this);
+		pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN->m_poptSubstrExpr3->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN(
@@ -1839,21 +1839,21 @@ void WQLProcessor::visit_cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN->m_ptrimExpr4->accept_interface(this);
+	pcExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN->m_ptrimExpr4->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN(
 	const cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN* pcExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN->m_ptrimExpr4->accept_interface(this);
+	pcExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN->m_ptrimExpr4->acceptInterface(this);
 }
 void WQLProcessor::visit_cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN(
 	const cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN* pcExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	pcExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN->m_ptrimExpr3->accept_interface(this);
+	pcExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN->m_ptrimExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_optIndirection_empty(
 	const optIndirection_empty* poptIndirection_empty
@@ -1867,9 +1867,9 @@ void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBR
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_poptIndirection1)
 	{
-		poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_poptIndirection1->accept_interface(this);
+		poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_poptIndirection1->acceptInterface(this);
 	}
-	poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_paExpr3->accept_interface(this);
+	poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET(
 	const optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET* poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET
@@ -1878,10 +1878,10 @@ void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_a
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_poptIndirection1)
 	{
-		poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_poptIndirection1->accept_interface(this);
+		poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_poptIndirection1->acceptInterface(this);
 	}
-	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr3->accept_interface(this);
-	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr5->accept_interface(this);
+	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr3->acceptInterface(this);
+	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr5->acceptInterface(this);
 }
 void WQLProcessor::visit_optExtract_empty(
 	const optExtract_empty* poptExtract_empty
@@ -1893,15 +1893,15 @@ void WQLProcessor::visit_optExtract_strExtractArg_FROM_aExpr(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptExtract_strExtractArg_FROM_aExpr->m_paExpr3->accept_interface(this);
+	poptExtract_strExtractArg_FROM_aExpr->m_paExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_positionExpr_bExpr_IN_bExpr(
 	const positionExpr_bExpr_IN_bExpr* ppositionExpr_bExpr_IN_bExpr
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ppositionExpr_bExpr_IN_bExpr->m_pbExpr1->accept_interface(this);
-	ppositionExpr_bExpr_IN_bExpr->m_pbExpr3->accept_interface(this);
+	ppositionExpr_bExpr_IN_bExpr->m_pbExpr1->acceptInterface(this);
+	ppositionExpr_bExpr_IN_bExpr->m_pbExpr3->acceptInterface(this);
 }
 void WQLProcessor::visit_positionExpr_empty(
 	const positionExpr_empty* ppositionExpr_empty
@@ -1918,88 +1918,88 @@ void WQLProcessor::visit_optSubstrExpr_aExpr_substrFrom_substrFor(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSubstrExpr_aExpr_substrFrom_substrFor->m_paExpr1->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFrom_substrFor->m_psubstrFrom2->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFrom_substrFor->m_psubstrFor3->accept_interface(this);
+	poptSubstrExpr_aExpr_substrFrom_substrFor->m_paExpr1->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFrom_substrFor->m_psubstrFrom2->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFrom_substrFor->m_psubstrFor3->acceptInterface(this);
 }
 void WQLProcessor::visit_optSubstrExpr_aExpr_substrFor_substrFrom(
 	const optSubstrExpr_aExpr_substrFor_substrFrom* poptSubstrExpr_aExpr_substrFor_substrFrom
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSubstrExpr_aExpr_substrFor_substrFrom->m_paExpr1->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFor_substrFrom->m_psubstrFor2->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFor_substrFrom->m_psubstrFrom3->accept_interface(this);
+	poptSubstrExpr_aExpr_substrFor_substrFrom->m_paExpr1->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFor_substrFrom->m_psubstrFor2->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFor_substrFrom->m_psubstrFrom3->acceptInterface(this);
 }
 void WQLProcessor::visit_optSubstrExpr_aExpr_substrFrom(
 	const optSubstrExpr_aExpr_substrFrom* poptSubstrExpr_aExpr_substrFrom
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSubstrExpr_aExpr_substrFrom->m_paExpr1->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFrom->m_psubstrFrom2->accept_interface(this);
+	poptSubstrExpr_aExpr_substrFrom->m_paExpr1->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFrom->m_psubstrFrom2->acceptInterface(this);
 }
 void WQLProcessor::visit_optSubstrExpr_aExpr_substrFor(
 	const optSubstrExpr_aExpr_substrFor* poptSubstrExpr_aExpr_substrFor
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSubstrExpr_aExpr_substrFor->m_paExpr1->accept_interface(this);
-	poptSubstrExpr_aExpr_substrFor->m_psubstrFor2->accept_interface(this);
+	poptSubstrExpr_aExpr_substrFor->m_paExpr1->acceptInterface(this);
+	poptSubstrExpr_aExpr_substrFor->m_psubstrFor2->acceptInterface(this);
 }
 void WQLProcessor::visit_optSubstrExpr_exprSeq(
 	const optSubstrExpr_exprSeq* poptSubstrExpr_exprSeq
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	poptSubstrExpr_exprSeq->m_pexprSeq1->accept_interface(this);
+	poptSubstrExpr_exprSeq->m_pexprSeq1->acceptInterface(this);
 }
 void WQLProcessor::visit_substrFrom(
 	const substrFrom* psubstrFrom
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	psubstrFrom->m_paExpr2->accept_interface(this);
+	psubstrFrom->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_substrFor(
 	const substrFor* psubstrFor
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	psubstrFor->m_paExpr2->accept_interface(this);
+	psubstrFor->m_paExpr2->acceptInterface(this);
 }
 void WQLProcessor::visit_trimExpr_aExpr_FROM_exprSeq(
 	const trimExpr_aExpr_FROM_exprSeq* ptrimExpr_aExpr_FROM_exprSeq
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptrimExpr_aExpr_FROM_exprSeq->m_paExpr1->accept_interface(this);
-	ptrimExpr_aExpr_FROM_exprSeq->m_pexprSeq3->accept_interface(this);
+	ptrimExpr_aExpr_FROM_exprSeq->m_paExpr1->acceptInterface(this);
+	ptrimExpr_aExpr_FROM_exprSeq->m_pexprSeq3->acceptInterface(this);
 }
 void WQLProcessor::visit_trimExpr_FROM_exprSeq(
 	const trimExpr_FROM_exprSeq* ptrimExpr_FROM_exprSeq
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptrimExpr_FROM_exprSeq->m_pexprSeq2->accept_interface(this);
+	ptrimExpr_FROM_exprSeq->m_pexprSeq2->acceptInterface(this);
 }
 void WQLProcessor::visit_trimExpr_exprSeq(
 	const trimExpr_exprSeq* ptrimExpr_exprSeq
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptrimExpr_exprSeq->m_pexprSeq1->accept_interface(this);
+	ptrimExpr_exprSeq->m_pexprSeq1->acceptInterface(this);
 }
 void WQLProcessor::visit_attr(
 	const attr* pattr
 	)
 {
 	m_exprValue = DataType(*pattr->m_pstrRelationName1, DataType::ColumnNameType);
-	pattr->m_pattrs3->accept_interface(this);
+	pattr->m_pattrs3->acceptInterface(this);
 	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
 	{
-		pattr->m_poptIndirection4->accept_interface(this);
+		pattr->m_poptIndirection4->acceptInterface(this);
 	}
 }
 void WQLProcessor::visit_attrs_strAttrName(
@@ -2012,14 +2012,14 @@ void WQLProcessor::visit_attrs_attrs_PERIOD_strAttrName(
 	const attrs_attrs_PERIOD_strAttrName* pattrs_attrs_PERIOD_strAttrName
 	)
 {
-	pattrs_attrs_PERIOD_strAttrName->m_pattrs1->accept_interface(this);
+	pattrs_attrs_PERIOD_strAttrName->m_pattrs1->acceptInterface(this);
 	m_exprValue = DataType(m_exprValue.str + "." + *pattrs_attrs_PERIOD_strAttrName->m_pstrAttrName3, DataType::ColumnNameType);
 }
 void WQLProcessor::visit_attrs_attrs_PERIOD_ASTERISK(
 	const attrs_attrs_PERIOD_ASTERISK* pattrs_attrs_PERIOD_ASTERISK
 	)
 {
-	pattrs_attrs_PERIOD_ASTERISK->m_pattrs1->accept_interface(this);
+	pattrs_attrs_PERIOD_ASTERISK->m_pattrs1->acceptInterface(this);
 	m_exprValue = DataType(m_exprValue.str + ".*", DataType::ColumnNameType);
 }
 void WQLProcessor::visit_targetEl_aExpr_AS_strColLabel(
@@ -2027,18 +2027,18 @@ void WQLProcessor::visit_targetEl_aExpr_AS_strColLabel(
 	)
 {
 	OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	ptargetEl_aExpr_AS_strColLabel->m_paExpr1->accept_interface(this);
+	ptargetEl_aExpr_AS_strColLabel->m_paExpr1->acceptInterface(this);
 }
 void WQLProcessor::visit_targetEl_aExpr(
 	const targetEl_aExpr* ptargetEl_aExpr
 	)
 {
-	ptargetEl_aExpr->m_paExpr1->accept_interface(this);
+	ptargetEl_aExpr->m_paExpr1->acceptInterface(this);
 	if (m_doingSelect)
 	{
 		if (m_isSchemaQuery)
 		{
-			WQL_LOG_DEBUG("Doing schema query.");
+			OW_WQL_LOG_DEBUG("Doing schema query.");
 		}
 		else
 		{
@@ -2075,9 +2075,9 @@ void WQLProcessor::visit_updateTargetEl(
 	if (pupdateTargetEl->m_poptIndirection2)
 	{
 		OW_WQL_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-		pupdateTargetEl->m_poptIndirection2->accept_interface(this);
+		pupdateTargetEl->m_poptIndirection2->acceptInterface(this);
 	}
-	pupdateTargetEl->m_paExpr4->accept_interface(this);
+	pupdateTargetEl->m_paExpr4->acceptInterface(this);
 	m_valueArray.push_back(m_exprValue);
 }
 void WQLProcessor::visit_aExprConst_ICONST(
@@ -2165,7 +2165,7 @@ void WQLProcessor::visit_aExprConst_NULLP(
 CIMInstanceArray
 WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare)
 {
-  WQL_LOG_DEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
+  OW_WQL_LOG_DEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
 		"\tFiltering m_instances on property: %1 %2 %3", propName, compare.c_str(), val ? val.toString() : "NULL" ));
 	CIMInstanceArray rval;
 	for (size_t i = 0; i < m_instances.size(); ++i)
@@ -2258,7 +2258,7 @@ WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMVa
 			}
 		}
 	}
-	WQL_LOG_DEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
+	OW_WQL_LOG_DEBUG(Format("WQLProcessor::filterInstancesOnPropertyValue\n"
 		"\treturning %1 m_instances", rval.size()));
 	return rval;
 }
@@ -2360,7 +2360,7 @@ namespace
 }
 void WQLProcessor::populateInstances()
 {
-	WQL_LOG_DEBUG("");
+	OW_WQL_LOG_DEBUG("");
 	InstanceArrayBuilder handler(m_instances);
 	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
 }

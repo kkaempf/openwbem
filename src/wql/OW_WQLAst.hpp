@@ -38,10 +38,11 @@
 #include "OW_String.hpp"
 #include "OW_Format.hpp"
 #include "OW_List.hpp"
-#include "OW_WQLLogger.hpp"
 #include "OW_WQLVisitor.hpp"
 
 #include <typeinfo>
+
+#define OW_WQL_LOG_DEBUG(message) //nothing - until we create a way to get a logger
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -53,13 +54,13 @@ class OW_WQL_API node
 {
 	public:
 		virtual ~node() {}
-	  void accept_interface( WQLVisitor * v)
-	{
-		WQL_LOG_DEBUG(Format("About to accept node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
-		accept(v);
-		WQL_LOG_DEBUG(Format("Finished accepting node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
-	}
-private:
+		void acceptInterface( WQLVisitor * v)
+		{
+			OW_WQL_LOG_DEBUG(Format("About to accept node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
+			accept(v);
+			OW_WQL_LOG_DEBUG(Format("Finished accepting node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
+		}
+	private:
 		virtual void accept( WQLVisitor * ) const = 0;
 };
 class OW_WQL_API stmt: public node
