@@ -89,8 +89,15 @@ Specifies the format of the log messages. If not set, "%m%n" is the default.
 log.<log name>.type
 Specifies the type of the log.  If not set, "syslog" is the default. Possible values: "syslog", "file", "stderr"
 
+The following options are applicable to the "file" log type:
 log.<log name>.location
-Only applicable/required for if the type == "file". Specifies the filename of the log.
+Specifies the filename of the log.
+
+log.<log name>.max_file_size
+An unsigned integer. The log file's maximum size in KB. 0 means unlimited. The default is 0.
+
+log.<log name>.max_backup_index
+An unsigned integer. Determines how many backup files are kept before the oldest is erased. If set to 0, no backup files will be made and the log file will be truncated when it reaches max_file_size. Default is 1.
 
 
 Components are organized hierarchically using a '.' as the ancestor/child

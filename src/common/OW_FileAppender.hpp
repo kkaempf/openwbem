@@ -48,10 +48,14 @@ namespace OpenWBEM
 class FileAppender : public LogAppender
 {
 public:
+	static const unsigned int NO_MAX_LOG_SIZE = 0;
+
 	FileAppender(const StringArray& components,
 		const StringArray& categories,
 		const char* filename,
-		const String& pattern );
+		const String& pattern,
+		UInt64 maxFileSize,
+		unsigned int maxBackupIndex);
 	virtual ~FileAppender();
 
 	static const String STR_DEFAULT_MESSAGE_PATTERN;
@@ -60,6 +64,8 @@ protected:
 	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
 private:
 	String m_filename;
+	UInt64 m_maxFileSize;
+	unsigned int m_maxBackupIndex;
 };
 
 } // end namespace OpenWBEM

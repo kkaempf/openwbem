@@ -81,6 +81,8 @@ public:
 	 *  configuration.
 	 * @return a class that implements the Logger interface.
 	 * @throws LoggerException - E_UNKNOWN_LOG_APPENDER_TYPE - if type is unkonwn.
+	 *                         - E_INVALID_MAX_FILE_SIZE     - if the max_file_size option is invalid
+	 *                         - E_INVALID_MAX_BACKUP_INDEX  - if the max_backup_index option is invalid
 	 */
 	static LogAppenderRef createLogAppender(
 		const String& name,

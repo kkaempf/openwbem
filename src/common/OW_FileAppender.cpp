@@ -39,8 +39,11 @@
 #include "OW_LogMessage.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_FileSystem.hpp"
 
 #include <fstream>
+
+#include <iostream>
 
 namespace OpenWBEM
 {
@@ -49,9 +52,13 @@ namespace OpenWBEM
 FileAppender::FileAppender(const StringArray& components,
 	const StringArray& categories,
 	const char* filename,
-	const String& pattern )
+	const String& pattern,
+	UInt64 maxFileSize,
+	unsigned int maxBackupIndex)
 	: LogAppender(components, categories, pattern)
 	, m_filename(filename)
+	, m_maxFileSize(maxFileSize)
+	, m_maxBackupIndex(maxBackupIndex)
 {
 	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
 	if (!log)
@@ -73,6 +80,8 @@ namespace
 void
 FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
+	MutexLock lock(fileGuard);
+
 	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
 	if (!log)
 	{
@@ -80,8 +89,35 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 	}
 	else
 	{
-		MutexLock lock(fileGuard);
 		log << formattedMessage << std::endl;
+		if (m_maxFileSize != NO_MAX_LOG_SIZE && log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))
+		{
+			// since we can't throw an exception, or log any errors, it something fails here, we'll just return silently :-(
+
+			// do the roll over
+			log.close();
+
+			if (m_maxBackupIndex > 0)
+			{
+				// delete the oldest file first - this may or may not exist, we try anyway.
+				FileSystem::removeFile(m_filename + '.' + String(m_maxBackupIndex));
+
+				// increment the numbers on all the files - some may exist or not, but try anyway.
+				for (unsigned int i = m_maxBackupIndex - 1; i >= 1; --i)
+				{
+					FileSystem::renameFile(m_filename + '.' + String(i), m_filename + '.' + String(i + 1));
+				}
+
+				if (!FileSystem::renameFile(m_filename, m_filename + ".1"))
+				{
+					// if we can't rename it, avoid truncating it.
+					return;
+				}
+			}
+
+			// truncate the existing one
+			log.open(m_filename.c_str(), std::ios_base::out | std::ios_base::trunc);
+		}
 	}
 }
 

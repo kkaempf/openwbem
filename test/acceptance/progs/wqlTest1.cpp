@@ -86,12 +86,8 @@ namespace
 		StringArray components; components.push_back("test.wql.schema_query");
 		StringArray categories; categories.push_back("*");
 		String messageFormat("%r [%t] %p %c - %m");
-		appenders.push_back
-			( LogAppenderRef
-				( new FileAppender
-					(components, categories, (String("results/") + components[0]).c_str(), messageFormat)
-			  )
-		  );
+		appenders.push_back(LogAppenderRef(
+			new FileAppender(components, categories, (String("results/") + components[0]).c_str(), messageFormat, 0, 0)));
 
 		return LoggerRef(new AppenderLogger(components[0], appenders));
 	}

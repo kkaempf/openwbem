@@ -32,8 +32,21 @@
 ;log.main.type = syslog
 
 ################################################################################
-# log.main.location specifies the location of the file log (if configured.)
+# log.main.location specifies the location of the log file
+# (if the type == "file".)
 ;log.main.location = 
+
+################################################################################
+# An unsigned integer. The log file's maximum size in KB. 0 means unlimited. 
+# The default is "0"
+;log.main.max_file_size = 0
+
+################################################################################
+# An unsigned integer. Determines how many backup files are kept before the 
+# oldest is erased. If set to 0, no backup files will be made and the log file
+# will be truncated when it reaches max_file_size. 
+# Default is "1"
+;log.main.max_backup_index = 1
 
 ################################################################################
 # A space delimited list of the components the log will output.  

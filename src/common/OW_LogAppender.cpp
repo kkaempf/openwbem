@@ -168,7 +168,34 @@ LogAppender::createLogAppender(
 	{
 		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
 		String filename = ConfigFile::getConfigItem(configItems, configItem);
-		appender = new FileAppender(components, categories, filename.c_str(), messageFormat);
+		
+		UInt64 maxFileSize(0);
+		try
+		{
+			maxFileSize = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_FILE_SIZE_opt, name), 
+				OW_DEFAULT_LOG_1_MAX_FILE_SIZE).toUInt64();
+		}
+		catch (StringConversionException& e)
+		{
+			OW_THROW_ERR_SUBEX(LoggerException, 
+				Format("%1: Invalid config value: %2", ConfigOpts::LOG_1_MAX_FILE_SIZE_opt, e.getMessage()).c_str(), 
+				Logger::E_INVALID_MAX_FILE_SIZE, e);
+		}
+		
+		unsigned int maxBackupIndex(0);
+		try
+		{
+			maxBackupIndex = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_BACKUP_INDEX_opt, name), 
+				OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX).toUnsignedInt();
+		}
+		catch (StringConversionException& e)
+		{
+			OW_THROW_ERR_SUBEX(LoggerException, 
+				Format("%1: Invalid config value: %2", ConfigOpts::LOG_1_MAX_BACKUP_INDEX_opt, e.getMessage()).c_str(), 
+				Logger::E_INVALID_MAX_BACKUP_INDEX, e);
+		}
+		
+		appender = new FileAppender(components, categories, filename.c_str(), messageFormat, maxFileSize, maxBackupIndex);
 	}
 	else
 	{

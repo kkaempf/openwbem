@@ -190,6 +190,13 @@
 #ifndef OW_DEFAULT_LOG_1_FORMAT
 #define OW_DEFAULT_LOG_1_FORMAT "[%t]%m"
 #endif
+#ifndef OW_DEFAULT_LOG_1_MAX_FILE_SIZE
+#define OW_DEFAULT_LOG_1_MAX_FILE_SIZE "0"
+#endif
+#ifndef OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX
+#define OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX "1"
+#endif
+
 
 namespace OpenWBEM
 {
@@ -267,6 +274,8 @@ namespace ConfigOpts
 	static const char* const LOG_1_LEVEL_opt = "log.%1.level";
 	static const char* const LOG_1_FORMAT_opt = "log.%1.format";
 	static const char* const LOG_1_LOCATION_opt = "log.%1.location";
+	static const char* const LOG_1_MAX_FILE_SIZE_opt = "log.%1.max_file_size";
+	static const char* const LOG_1_MAX_BACKUP_INDEX_opt = "log.%1.max_backup_index";
 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
