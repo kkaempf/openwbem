@@ -97,6 +97,8 @@ public:
 		CIMInstance newInst = cimClass.newInstance();
 		newInst.setProperty("Version", CIMValue(OW_VERSION));
 		//newInst.setProperty("GatherStatisticalData", CIMValue(/* TODO: Put the value here */));
+		
+		// TODO: Try to find a CIM_ComputerSystem and use it's keys.
 		// This property is a KEY, it must be filled out
 		newInst.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
 		// This property is a KEY, it must be filled out
