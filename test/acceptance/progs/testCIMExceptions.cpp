@@ -324,15 +324,33 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// There are different ways to get this error.  Let's try all of them.
 	// 1. A subclass overrides a qualifier that has the DISABLEOVERRIDE flavor
 	// on the base class
+	
+	// create a base class that has the associator qualifier, which can't be overridden
 	OW_CIMClass baseClass("invalidTestBase");
 	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root"));
 	OW_CIMQualifier assocQual(assocQualType);
+	assocQual.setValue(OW_CIMValue(true));
 	baseClass.addQualifier(assocQual);
 	try
 	{
-		OW_CIMClass cc2(cc);
-		cc2.addMethod(OW_CIMMethod(""));
-		OW_CIMObjectPath cop("footest", "root");
+		hdl->createClass(OW_CIMObjectPath(baseClass.getName(), "root"), baseClass);
+	}
+	catch (const OW_CIMException& e)
+	{
+		if (e.getErrNo() != OW_CIMException::ALREADY_EXISTS)
+		{
+			throw e;
+		}
+	}
+
+	try
+	{
+		OW_CIMClass cc2("invalidTestSub");
+		cc2.setSuperClass("invalidTestBase");
+		OW_CIMQualifier assocQual2(assocQual);
+		assocQual2.setValue(OW_CIMValue(false));
+		cc2.addQualifier(assocQual2);
+		OW_CIMObjectPath cop(cc2.getName(), "root");
 		hdl->createClass(cop, cc2);
 		assert(0);
 	}
@@ -340,6 +358,8 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
+
+	hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
 
 	// CIM_ERR_ALREADY_EXISTS
 	// CIM_ERR_INVALID_SUPERCLASS

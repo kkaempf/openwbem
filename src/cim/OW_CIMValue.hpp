@@ -91,6 +91,12 @@ public:
 	explicit OW_CIMValue(OW_Bool x);
 
 	/**
+	 * Create a new OW_CIMValue that represents a boolean data type.
+	 * @param x The boolean value this object will contain.
+	 */
+	explicit OW_CIMValue(bool x);
+
+	/**
 	 * Create a new OW_CIMValue that represents a uint8 data type.
 	 * @param x The uint8 value this object will contain.
 	 */

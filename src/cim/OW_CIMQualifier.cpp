@@ -423,8 +423,8 @@ OW_CIMQualifier::createKeyQualifier()
 
 
 // Meta qualifiers
-const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "ASSOCIATION";
-const char* const OW_CIMQualifier::CIM_QUAL_INDICATION		= "indication";
+const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "Association";
+const char* const OW_CIMQualifier::CIM_QUAL_INDICATION		= "Indication";
 
 // Standard qualifiers
 const char* const OW_CIMQualifier::CIM_QUAL_ABSTRACT 		= "abstract";

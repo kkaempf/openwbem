@@ -102,74 +102,6 @@ OW_CIMClass::OW_CIMClass(const OW_String& name) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-OW_CIMClass::OW_CIMClass(const OW_XMLNode& node)
-	: OW_CIMElement(), m_pdata(new CLSData)
-{
-	OW_ASSERT(node);
-	OW_String superClassName;
-	OW_String inClassName;
-
-	OW_XMLNode valueNode =
-		node.mustFindElement(OW_XMLNode::XML_ELEMENT_CLASS);
-
-	inClassName = valueNode.mustGetAttribute(OW_XMLParameters::paramName);
-	m_pdata->m_name = inClassName;
-
-	superClassName = valueNode.getAttribute(OW_XMLParameters::paramSuperName);
-	if(superClassName.length() > 0)
-	{
-		m_pdata->m_parentClassName = superClassName;
-	}
-
-	//
-	// Find qualifier information
-	//
-	for(valueNode = valueNode.getChild();
-		 valueNode != 0
-		 && valueNode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 valueNode = valueNode.getNext())
-	{
-		OW_CIMQualifier cq = OW_CIMQualifier(valueNode);
-		if(cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
-		{
-			m_pdata->m_associationFlag = true;
-		}
-
-		m_pdata->m_qualifiers.append(cq);
-	}
-
-	//
-	// Load properties
-	//
-	for(;valueNode != 0; valueNode = valueNode.getNext())
-	{
-		int token = valueNode.getToken();
-
-		if(token == OW_XMLNode::XML_ELEMENT_PROPERTY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
-		{
-			OW_CIMProperty cp(valueNode);
-			m_pdata->m_properties.append(cp);
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	//
-	// Load methods
-	//
-	for(;valueNode && valueNode.getToken() == OW_XMLNode::XML_ELEMENT_METHOD;
-		 valueNode = valueNode.getNext())
-	{
-		m_pdata->m_methods.append(OW_CIMMethod(valueNode));
-	}
-}
-*/
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMClass::setName(const OW_String& name)
 {
@@ -520,7 +452,19 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 
 	if(qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 	{
-		m_pdata->m_associationFlag = true;
+		if (qual.getValue())
+		{
+			OW_Bool b;
+			qual.getValue().get(b);
+			if (b)
+			{
+				m_pdata->m_associationFlag = true;
+			}
+		}
+		else
+		{
+			m_pdata->m_associationFlag = true;
+		}
 	}
 	m_pdata->m_qualifiers.append(qual);
 }
@@ -1022,6 +966,7 @@ OW_CIMClass::toMOF() const
 		{
 			if (iter != qra.begin())
 			{
+				//std::swap(*iter, *qra.begin());
 				OW_CIMQualifier tmp = *iter;
 				qra.erase(iter);
 				qra.insert(qra.begin(), tmp);

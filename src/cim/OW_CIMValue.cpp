@@ -49,40 +49,41 @@ public:
 
 	OW_CIMValueImpl();
 	OW_CIMValueImpl(const OW_CIMValueImpl& arg);
-	OW_CIMValueImpl(OW_Bool val);
-	OW_CIMValueImpl(OW_UInt8 arg);
-	OW_CIMValueImpl(OW_Int8 arg);
-	OW_CIMValueImpl(OW_UInt16 arg);
-	OW_CIMValueImpl(OW_Int16 arg);
-	OW_CIMValueImpl(OW_UInt32 arg);
-	OW_CIMValueImpl(OW_Int32 arg);
-	OW_CIMValueImpl(OW_UInt64 arg);
-	OW_CIMValueImpl(OW_Int64 arg);
-	OW_CIMValueImpl(OW_Real32 arg);
-	OW_CIMValueImpl(OW_Real64 arg);
-	OW_CIMValueImpl(const OW_Char16& arg);
-	OW_CIMValueImpl(const OW_String& arg);
-	OW_CIMValueImpl(const OW_CIMDateTime& arg);
-	OW_CIMValueImpl(const OW_CIMObjectPath& arg);
-	OW_CIMValueImpl(const OW_CIMClass& arg);
-	OW_CIMValueImpl(const OW_CIMInstance& arg);
-	OW_CIMValueImpl(const OW_BoolArray& arg);
-	OW_CIMValueImpl(const OW_Char16Array& arg);
-	OW_CIMValueImpl(const OW_UInt8Array& arg);
-	OW_CIMValueImpl(const OW_Int8Array& arg);
-	OW_CIMValueImpl(const OW_UInt16Array& arg);
-	OW_CIMValueImpl(const OW_Int16Array& arg);
-	OW_CIMValueImpl(const OW_UInt32Array& arg);
-	OW_CIMValueImpl(const OW_Int32Array& arg);
-	OW_CIMValueImpl(const OW_UInt64Array& arg);
-	OW_CIMValueImpl(const OW_Int64Array& arg);
-	OW_CIMValueImpl(const OW_Real64Array& arg);
-	OW_CIMValueImpl(const OW_Real32Array& arg);
-	OW_CIMValueImpl(const OW_StringArray& arg);
-	OW_CIMValueImpl(const OW_CIMDateTimeArray& arg);
-	OW_CIMValueImpl(const OW_CIMObjectPathArray& arg);
-	OW_CIMValueImpl(const OW_CIMClassArray& arg);
-	OW_CIMValueImpl(const OW_CIMInstanceArray& arg);
+	explicit OW_CIMValueImpl(OW_Bool val);
+	explicit OW_CIMValueImpl(bool val);
+	explicit OW_CIMValueImpl(OW_UInt8 arg);
+	explicit OW_CIMValueImpl(OW_Int8 arg);
+	explicit OW_CIMValueImpl(OW_UInt16 arg);
+	explicit OW_CIMValueImpl(OW_Int16 arg);
+	explicit OW_CIMValueImpl(OW_UInt32 arg);
+	explicit OW_CIMValueImpl(OW_Int32 arg);
+	explicit OW_CIMValueImpl(OW_UInt64 arg);
+	explicit OW_CIMValueImpl(OW_Int64 arg);
+	explicit OW_CIMValueImpl(OW_Real32 arg);
+	explicit OW_CIMValueImpl(OW_Real64 arg);
+	explicit OW_CIMValueImpl(const OW_Char16& arg);
+	explicit OW_CIMValueImpl(const OW_String& arg);
+	explicit OW_CIMValueImpl(const OW_CIMDateTime& arg);
+	explicit OW_CIMValueImpl(const OW_CIMObjectPath& arg);
+	explicit OW_CIMValueImpl(const OW_CIMClass& arg);
+	explicit OW_CIMValueImpl(const OW_CIMInstance& arg);
+	explicit OW_CIMValueImpl(const OW_BoolArray& arg);
+	explicit OW_CIMValueImpl(const OW_Char16Array& arg);
+	explicit OW_CIMValueImpl(const OW_UInt8Array& arg);
+	explicit OW_CIMValueImpl(const OW_Int8Array& arg);
+	explicit OW_CIMValueImpl(const OW_UInt16Array& arg);
+	explicit OW_CIMValueImpl(const OW_Int16Array& arg);
+	explicit OW_CIMValueImpl(const OW_UInt32Array& arg);
+	explicit OW_CIMValueImpl(const OW_Int32Array& arg);
+	explicit OW_CIMValueImpl(const OW_UInt64Array& arg);
+	explicit OW_CIMValueImpl(const OW_Int64Array& arg);
+	explicit OW_CIMValueImpl(const OW_Real64Array& arg);
+	explicit OW_CIMValueImpl(const OW_Real32Array& arg);
+	explicit OW_CIMValueImpl(const OW_StringArray& arg);
+	explicit OW_CIMValueImpl(const OW_CIMDateTimeArray& arg);
+	explicit OW_CIMValueImpl(const OW_CIMObjectPathArray& arg);
+	explicit OW_CIMValueImpl(const OW_CIMClassArray& arg);
+	explicit OW_CIMValueImpl(const OW_CIMInstanceArray& arg);
 	~OW_CIMValueImpl();
 
 	void get(OW_Bool& val) const;
@@ -274,6 +275,10 @@ OW_CIMValue::OW_CIMValue(const OW_CIMValue& x)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue::OW_CIMValue(OW_Bool x)
+	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)){}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue::OW_CIMValue(bool x)
 	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)){}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -865,6 +870,14 @@ OW_CIMValue::OW_CIMValueImpl::OW_CIMValueImpl(const OW_CIMValueImpl& arg) :
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue::OW_CIMValueImpl::OW_CIMValueImpl(OW_Bool v) :
+	m_type(OW_CIMDataType::BOOLEAN), m_isArray(false),
+	m_objDestroyed(false), m_obj()
+{
+	m_obj.m_booleanValue = (v) ? 1 : 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue::OW_CIMValueImpl::OW_CIMValueImpl(bool v) :
 	m_type(OW_CIMDataType::BOOLEAN), m_isArray(false),
 	m_objDestroyed(false), m_obj()
 {
