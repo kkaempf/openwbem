@@ -153,18 +153,19 @@ OW_IndicationRepLayerImpl::invokeMethod(
 				return rval;
 			}
 
-			OW_CIMClass ParamsEmbed("__MethodParameters");
+			OW_CIMInstance ParamsEmbed(true);
+			ParamsEmbed.setClassName("__MethodParameters");
 
 			for(size_t i = 0; i < inParams.size(); i++)
 			{
 				OW_CIMProperty prop(inParams[i].getName(), inParams[i].getValue());
-				ParamsEmbed.addProperty(prop);
+				ParamsEmbed.setProperty(prop);
 			}
 
 			for(size_t i = 0; i < outParams.size(); i++)
 			{
 				OW_CIMProperty prop(outParams[i].getName(), outParams[i].getValue());
-				ParamsEmbed.addProperty(prop);
+				ParamsEmbed.setProperty(prop);
 			}
 
 
@@ -286,6 +287,16 @@ OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
 		// the values of the new instance via the query.  HOWEVER, the query
 		// is NOT run (or written) against the instance that changed, but
 		// against the indication instance!
+		//
+		// After reading the Indication white-paper again, I think that what
+		// the MOF is referring to is how the filter can select properties
+		// from SourceInstance to be returned in the indication.  So, we
+		// definitely don't want to filter them here, the wql engine has to
+		// do that.  One problem is that the mof says "SourceInstance contains
+		// the current values of the properties selected by the Indication
+		// Filter's Query".  I don't think that wql will actually modify
+		// the embedded instance in SourceInstance.  This will have to be
+		// specified in the upcoming wql spec.
 		expInst.setProperty("SourceInstance", OW_CIMValue(ci));
 		exportIndication(expInst, ns);
 	}
