@@ -39,6 +39,8 @@
 #include "OW_LogAppender.hpp"
 #include "OW_String.hpp"
 
+#include <fstream>
+
 namespace OpenWBEM
 {
 
@@ -66,6 +68,7 @@ private:
 	String m_filename;
 	UInt64 m_maxFileSize;
 	unsigned int m_maxBackupIndex;
+	mutable std::ofstream m_log;
 };
 
 } // end namespace OpenWBEM

@@ -58,8 +58,8 @@ FileAppender::FileAppender(const StringArray& components,
 	, m_maxFileSize(maxFileSize)
 	, m_maxBackupIndex(maxBackupIndex)
 {
-	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
-	if (!log)
+	m_log.open(m_filename.c_str(), std::ios::out | std::ios::app);
+	if (!m_log)
 	{
 		OW_THROW(LoggerException, Format("FileAppender: Unable to open file: %1", m_filename).toString().c_str() );
 	}
@@ -80,42 +80,49 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 {
 	MutexLock lock(fileGuard);
 
-	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
-	if (!log)
+	// take into account external log rotators, if the file we have open no longer exists, then reopen it.
+	if (!FileSystem::exists(m_filename.c_str()))
+	{
+		m_log.close();
+		m_log.open(m_filename.c_str(), std::ios::out | std::ios::app);
+	}
+
+	if (!m_log)
 	{
 		// hmm, not much we can do here.  doProcessLogMessage can't throw.
+		return;
 	}
-	else
+
+	m_log << formattedMessage << '\n';
+
+	// handle log rotation
+	if (m_maxFileSize != NO_MAX_LOG_SIZE && m_log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))
 	{
-		log << formattedMessage << std::endl;
-		if (m_maxFileSize != NO_MAX_LOG_SIZE && log.tellp() >= static_cast<std::streampos>(m_maxFileSize * 1024))
+		// since we can't throw an exception, or log any errors, it something fails here, we'll just return silently :-(
+
+		// do the roll over
+		m_log.close();
+
+		if (m_maxBackupIndex > 0)
 		{
-			// since we can't throw an exception, or log any errors, it something fails here, we'll just return silently :-(
+			// delete the oldest file first - this may or may not exist, we try anyway.
+			FileSystem::removeFile(m_filename + '.' + String(m_maxBackupIndex));
 
-			// do the roll over
-			log.close();
-
-			if (m_maxBackupIndex > 0)
+			// increment the numbers on all the files - some may exist or not, but try anyway.
+			for (unsigned int i = m_maxBackupIndex - 1; i >= 1; --i)
 			{
-				// delete the oldest file first - this may or may not exist, we try anyway.
-				FileSystem::removeFile(m_filename + '.' + String(m_maxBackupIndex));
-
-				// increment the numbers on all the files - some may exist or not, but try anyway.
-				for (unsigned int i = m_maxBackupIndex - 1; i >= 1; --i)
-				{
-					FileSystem::renameFile(m_filename + '.' + String(i), m_filename + '.' + String(i + 1));
-				}
-
-				if (!FileSystem::renameFile(m_filename, m_filename + ".1"))
-				{
-					// if we can't rename it, avoid truncating it.
-					return;
-				}
+				FileSystem::renameFile(m_filename + '.' + String(i), m_filename + '.' + String(i + 1));
 			}
 
-			// truncate the existing one
-			log.open(m_filename.c_str(), std::ios_base::out | std::ios_base::trunc);
+			if (!FileSystem::renameFile(m_filename, m_filename + ".1"))
+			{
+				// if we can't rename it, avoid truncating it.
+				return;
+			}
 		}
+
+		// truncate the existing one
+		m_log.open(m_filename.c_str(), std::ios_base::out | std::ios_base::trunc);
 	}
 }
 
