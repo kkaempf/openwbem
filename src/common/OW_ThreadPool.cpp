@@ -425,7 +425,12 @@ public:
 		
 		logDebug("Work has been added to the queue");
 
-		// release the lock and wake up a thread waiting for work in the queue
+		// Release the lock and wake up a thread waiting for work in the queue
+		// This bit of code is a race condition with the thread,
+		// but if we acquire the lock again before it does, then we
+		// properly handle that case.  The only disadvantage if we win
+		// the "race" is that we'll unnecessarily start a new thread.
+		// In practice it works all the time.
 		l.release();
 		m_queueNotEmpty.notifyOne();
 		Thread::yield(); // give the thread a chance to run
