@@ -104,6 +104,10 @@ void OW_CIMValueTestCases::test_createSimpleValue()
 	unitAssert(v.getType() == CIMDataType::DATETIME);
 	unitAssert(v.isArray() == false);
 	unitAssert(v.toCIMDateTime() == CIMDateTime());
+	CIMDateTime cdt(CIMNULL);
+	v.get(cdt);
+	unitAssert(cdt == CIMDateTime());
+	unitAssert(cdt.toString() == v.toString());
 }
 
 Test* OW_CIMValueTestCases::suite()
