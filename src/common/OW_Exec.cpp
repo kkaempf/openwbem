@@ -109,7 +109,7 @@ OW_Exec::safeSystem(const OW_Array<OW_String>& command)
 		}
 		else
 		{
-			return status;
+			return WEXITSTATUS(status);
 		}
 	} while (1);
 }
@@ -196,7 +196,7 @@ int OW_PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
-			return status;
+			return WEXITSTATUS(status);
 		}
 	} while (1);
 }

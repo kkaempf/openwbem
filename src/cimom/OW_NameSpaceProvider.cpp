@@ -89,7 +89,7 @@ OW_NameSpaceProvider::deleteInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
-OW_NameSpaceProvider::enumInstances(
+OW_NameSpaceProvider::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_Bool deep,

@@ -312,7 +312,6 @@ setupSigHandler(const OW_Bool& dbgFlg)
 //	handleSignal(SIGUSR2);
 //	handleSignal(SIGUSR1);
 
-	signal(SIGCHLD, SIG_IGN);
 	signal(SIGTTIN, SIG_IGN);
 	signal(SIGTTOU, SIG_IGN);
 	signal(SIGTSTP, SIG_IGN);

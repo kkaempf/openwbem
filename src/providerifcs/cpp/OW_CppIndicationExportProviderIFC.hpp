@@ -34,7 +34,7 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-class OW_CppIndicationExportProviderIFC : public OW_CppProviderBaseIFC
+class OW_CppIndicationExportProviderIFC : public virtual OW_CppProviderBaseIFC
 {
 public:
 

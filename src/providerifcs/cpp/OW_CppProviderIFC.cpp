@@ -307,14 +307,14 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 
 		OW_CppPolledProviderIFC* p_itp = (pProv->isPolledProvider())
-			? static_cast<OW_CppPolledProviderIFC*>(pProv) : 0;
+			? dynamic_cast<OW_CppPolledProviderIFC*>(pProv) : 0;
 
 		OW_CppIndicationExportProviderIFC* p_iep = 0;
 
 		if (!p_itp)
 		{
 			p_iep = (pProv->isIndicationExportProvider())
-				? static_cast<OW_CppIndicationExportProviderIFC*>(pProv) : 0;
+				? dynamic_cast<OW_CppIndicationExportProviderIFC*>(pProv) : 0;
 		}
 
 		if (p_itp || p_iep)

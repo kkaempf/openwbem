@@ -45,7 +45,7 @@ public:
 			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop);
 
-	virtual OW_CIMObjectPathEnumeration enumInstances(
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,

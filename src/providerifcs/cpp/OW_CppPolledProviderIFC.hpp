@@ -34,7 +34,7 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-class OW_CppPolledProviderIFC : public OW_CppProviderBaseIFC
+class OW_CppPolledProviderIFC : public virtual OW_CppProviderBaseIFC
 {
 public:
 

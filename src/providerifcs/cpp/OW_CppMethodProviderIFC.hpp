@@ -41,7 +41,7 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppMethodProviderIFC: public OW_CppProviderBaseIFC
+class OW_CppMethodProviderIFC: public virtual OW_CppProviderBaseIFC
 {
 public:
 	virtual ~OW_CppMethodProviderIFC() {}

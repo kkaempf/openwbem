@@ -54,121 +54,37 @@ class OW_LaptopBattery: public OW_CppInstanceProviderIFC
 public:
 	virtual ~OW_LaptopBattery() {}
 
-	/**
-	 * This method enumerates all names of instances of the class which is
-	 * specified in cop.
-	 *
-	 * @param cop The object path specifies the class that must be enumerated.
-	 * @param deep If true, deep enumeration is done, otherwise shallow.
-	 * @param cimClass The class reference
-	 *
-	 * @returns An array of OW_CIMObjectPath containing names of the
-	 * 	enumerated instances.
-	 * @throws OW_CIMException - throws in the CIMObjectPath is incorrect
-	 * 	or does not exist.
-	 */
-	virtual OW_CIMObjectPathEnumeration enumInstances( 
-			OW_LocalCIMOMHandle& hdl,
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames( 
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep, 
 			OW_CIMClass cimClass );
 
-	/**
-	 * This method enumerates
-	 * all instances of the class which is specified in cop.  The entire
-	 * instances and not just the names are returned.  Deep or shallow
-	 * enumeration is possible.
-	 *
-	 * @param cop The object path specifies the class that must be
-	 * 	enumerated.
-	 *
-	 * @param deep If true, deep enumeration must be done, otherwise shallow.
-	 *
-	 * @param cimClass The class reference.
-	 *
-	 * @param localOnly If true, only the non-inherited properties are to be
-	 * 	returned, otherwise all properties are required.
-	 *
-	 * @returns An array of OW_CIMInstance containing names of the enumerated
-	 * 	instances.
-	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
-	 */
 	virtual OW_CIMInstanceEnumeration enumInstances( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep, 
 			OW_CIMClass cimClass, 
 			OW_Bool localOnly );
 
-	/**
-	 * This method retrieves the instance specified in the object path.
-	 *
-	 * @param cop The name of the instance to be retrieved.
-	 *
-	 * @param cimClass The class to which the instance belongs.  This is
-	 * 	useful for providers which do not want to create instances from
-	 * 	scratch.  They can call the class newInstance() routine to create
-	 * 	a template for the new instance.
-	 *
-	 * @param localOnly If true, only the non-inherited properties are to be
-	 * 	returned, otherwise all properties are required.
-	 *
-	 * @returns The retrieved instance
-	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist
-	 */
 	virtual OW_CIMInstance getInstance( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMClass cimClass, 
 			OW_Bool localOnly );
 
-	/**
-	 * This method creates the instance specified in the object path.  If the
-	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
-	 * must be thrown.  The parameter should be the instance name.
-	 *
-	 * @param cop The path to the instance to be set.  The import part in
-	 * 	this parameter is the namespace component.
-	 *
-	 * @param cimInstance The instance to be set
-	 *
-	 * @returns A CIM ObjectPath of the instance that was created.
-	 *
-	 * @throws OW_CIMException
-	 */
 	virtual OW_CIMObjectPath createInstance( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance );
 
-	/**
-	 * This method sets the instance specified in the object path.  If the
-	 * instance does not exist an OW_CIMException with ID CIM_ERR_NOT_FOUND
-	 * must be thrown.  The parameter should be the instance name.
-	 *
-	 * @param cop The path of the instance to be set.  The important part in
-	 * 	this parameter is the namespace component.
-	 *
-	 * @param cimInstance The instance to be set.
-	 *
-	 * @throws OW_CIMException
-	 */
 	virtual void setInstance(
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance);
 
-	/**
-	 * This method deletes the instance specified in the object path
-	 *
-	 * @param cop The instance to be deleted
-	 *
-	 * @throws OW_CIMException
-	 */
 	virtual void deleteInstance(
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop);
 
 	/** 
@@ -185,13 +101,13 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration 
-OW_LaptopBattery::enumInstances( 
-			OW_LocalCIMOMHandle& hdl,
+OW_LaptopBattery::enumInstanceNames( 
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep, 
 			OW_CIMClass cimClass )
 {
-	(void)hdl;
+	(void)env;
 	(void)cimClass;
 	(void)deep;
 	OW_CIMObjectPathEnumeration rval;
@@ -211,14 +127,14 @@ OW_LaptopBattery::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration 
 OW_LaptopBattery::enumInstances( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep, 
 			OW_CIMClass cimClass, 
 			OW_Bool localOnly )
 {
 	(void)cop;
-	(void)hdl;
+	(void)env;
 	(void)localOnly;
 	(void)deep;
 	OW_CIMInstanceEnumeration rval;
@@ -242,13 +158,13 @@ OW_LaptopBattery::enumInstances(
 
 OW_CIMInstance 
 OW_LaptopBattery::getInstance( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMClass cimClass, 
 			OW_Bool localOnly )
 {
 	(void)cop;
-	(void)hdl;
+	(void)env;
 	(void)localOnly;
 	OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
 	return rval;
@@ -257,12 +173,12 @@ OW_LaptopBattery::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath 
 OW_LaptopBattery::createInstance( 
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance )
 {
 
-	(void)hdl;
+	(void)env;
 	(void)cop;
 	(void)cimInstance;
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
@@ -271,12 +187,12 @@ OW_LaptopBattery::createInstance(
 //////////////////////////////////////////////////////////////////////////////
 void 
 OW_LaptopBattery::setInstance(
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_CIMInstance cimInstance)
 {
 
-	(void)hdl;
+	(void)env;
 	(void)cop;
 	(void)cimInstance;
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
@@ -285,10 +201,10 @@ OW_LaptopBattery::setInstance(
 //////////////////////////////////////////////////////////////////////////////
 void 
 OW_LaptopBattery::deleteInstance(
-			OW_LocalCIMOMHandle& hdl,
+			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop)
 {
-	(void)hdl;
+	(void)env;
 	(void)cop;
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 }

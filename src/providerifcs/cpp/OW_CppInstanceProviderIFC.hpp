@@ -43,7 +43,7 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppInstanceProviderIFC: public OW_CppProviderBaseIFC
+class OW_CppInstanceProviderIFC: public virtual OW_CppProviderBaseIFC
 {
 public:
 	virtual ~OW_CppInstanceProviderIFC() {}
@@ -61,7 +61,7 @@ public:
 	 * @throws OW_CIMException - throws if the CIMObjectPath is incorrect
 	 * 	or does not exist.
 	 */
-	virtual OW_CIMObjectPathEnumeration enumInstances(
+	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			OW_CIMObjectPath cop,
 			OW_Bool deep,

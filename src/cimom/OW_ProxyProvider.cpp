@@ -121,7 +121,7 @@ OW_InstanceProviderProxy::enumInstances(
 		OW_Bool deep,
 		OW_CIMClass cimClass)
 {
-	return m_pProv->enumInstances(env, cop, deep, cimClass);
+	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
