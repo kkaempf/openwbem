@@ -9,7 +9,7 @@ Makefile-shared-lib.inc \
 LICENSE \
 ow_ar.sh \
 Makefile-shared-lib-inst.inc \
-openwbem-sf.spec \
+openwbem.spec \
 generic-company-openwbem.spec.in
 
 CLEANFILES = Doxyfile $(PACKAGE_PREFIX_D)openwbem.spec
@@ -26,13 +26,15 @@ SUFFIXES = .sh
 	@MV@	$@-t $@
 
 $(PACKAGE_PREFIX_D)openwbem.spec: generic-company-openwbem.spec.in Makefile
-	@RM@ -f $@ $@-t
-	@SED@ \
-		-e 's!@''GENERIC_D''@!$(PACKAGE_PREFIX_D)!g' \
-		-e 's!@''GENERIC''@!$(PACKAGE_PREFIX)!g' \
-		-e 's!@''OWVERSION''@!$(OPENWBEM_VERSION)!g' \
-	$< > $@-t
-	@MV@    $@-t $@
+	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
+		@RM@ -f $@ $@-t; \
+		@SED@ \
+			-e 's!@''GENERIC_D''@!$(PACKAGE_PREFIX_D)!g' \
+			-e 's!@''GENERIC''@!$(PACKAGE_PREFIX)!g' \
+			-e 's!@''OWVERSION''@!$(OPENWBEM_VERSION)!g' \
+		$< > $@-t; \
+		@MV@    $@-t $@; \
+	fi
 
 docs: Doxyfile
 	doxygen Doxyfile
