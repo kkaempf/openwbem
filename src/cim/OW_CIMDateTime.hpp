@@ -325,6 +325,12 @@ private:
 #endif
 
 	friend OW_COMMON_API bool operator==(const CIMDateTime& x, const CIMDateTime& y);
+	/**
+	 * Compare 2 CIMDateTime instances.
+	 * An interval is always less than a date/time.  Comparing a CIMNULL instance is undefined,
+	 * and may throw a COWNULLReference exception or dereference a NULL pointer.
+	 * The result of a comparison with an invalid date/time (any value out of range) is undefined.
+	 */
 	friend OW_COMMON_API bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);

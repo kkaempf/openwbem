@@ -41,6 +41,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_Assertion.hpp"
 
 #include <cstdio>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -124,6 +125,7 @@ CIMDateTime::CIMDateTime(const DateTime& arg) :
 CIMDateTime::CIMDateTime(UInt64 microSeconds) :
 	m_dptr(new DateTimeData)
 {
+	m_dptr->m_isInterval = 1;
 	UInt32 secs = microSeconds / 1000000ULL;
 	microSeconds -= secs * 1000000;
 	UInt32 minutes = secs / 60;
@@ -419,10 +421,74 @@ bool operator==(const CIMDateTime& x, const CIMDateTime& y)
 	return x.equal(y);
 }
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
+	// Nonzero if YEAR is a leap year (every 4 years, except every 100th isn't, and every 400th is).
+	inline bool isLeap(UInt16 year)
+	{
+		return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+	}
+
+	// How many days come before each month (0-12).
+	const unsigned short int monthYearDay[2][13] =
+	{
+		// Normal years.
+		{ 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 },
+		// Leap years.
+		{ 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 }
+	};
+
+	Int64 secondsFromEpoch(const CIMDateTime& dt)
+	{
+		OW_ASSERT(!dt.isInterval());
+
+		// only check the month, we don't check the rest since it won't cause a crash...
+		if (dt.getMonth() > 12)
+		{
+			return 0; // invalid month would cause an access violation.
+		}
+
+		const int EPOCH_YEAR = 1970;
+
+		int yday = monthYearDay[isLeap(dt.getYear())][dt.getMonth() - 1] + dt.getDay() - 1;
+		Int64 iday = 365 * (dt.getYear() - EPOCH_YEAR) + yday;
+
+		// because iday is an Int64, it will propagate through this operation and not cause an overflow
+		return dt.getSeconds() 
+			+ 60 * (dt.getMinutes() + dt.getUtc()) 
+			+ 3600 * (dt.getHours() + 24 * iday);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 {
-	// this doesn't work right: return *x.m_dptr < *y.m_dptr;
-	return x.toDateTime() < y.toDateTime();
+	// see if they both the same type (intervals or date/times) or are different types.
+	if (x.isInterval() ^ y.isInterval())
+	{
+		if (x.isInterval())
+		{
+			return StrictWeakOrdering(
+				x.getDays(), y.getDays(),
+				x.getHours(), y.getHours(),
+				x.getMinutes(), y.getMinutes(),
+				x.getSeconds(), y.getSeconds(),
+				x.getMicroSeconds(), y.getMicroSeconds());
+		}
+		else
+		{
+			// they're both date/times
+			return StrictWeakOrdering(
+				secondsFromEpoch(x), secondsFromEpoch(y),
+				x.getMicroSeconds(), y.getMicroSeconds());
+		}
+	}
+	else
+	{
+		// they're different.  We define an interval to be < a date/time
+		return x.isInterval();
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
