@@ -26,7 +26,7 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMFwd.hpp"
 
-static OW_CIMDateTime * makeCIMDateTime(time_t inTime, ulong usec, CMPIBoolean interval)
+static OW_CIMDateTime * makeCIMDateTime(time_t inTime, unsigned long usec, CMPIBoolean interval)
 {
    OW_CIMDateTime * dt;
    char strTime[256];
@@ -40,11 +40,11 @@ static OW_CIMDateTime * makeCIMDateTime(time_t inTime, ulong usec, CMPIBoolean i
       strcat(strTime,usTime);
       if (interval) strcpy(utcOffset,":000");
       else {
-//#if defined (PEGASUS_PLATFORM_LINUX_IX86_GNU)
+#if defined (OW_GNU_LINUX)
         snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
-//#else
-//      snprintf(utcOffset,20,"%+4.3ld",0);
-//#endif
+#else
+      snprintf(utcOffset,20,"%+4.3ld",0L);
+#endif
       }
       strncat(strTime,utcOffset,256);
       dt = new OW_CIMDateTime(OW_String(strTime));

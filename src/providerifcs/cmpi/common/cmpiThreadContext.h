@@ -33,15 +33,15 @@
 
 
 class CMPI_ThreadContext {
-   static ulong hiKey;
-   ulong key;
+   static unsigned long hiKey;
+   unsigned long key;
    CMPI_ThreadContext* prev;
    CMPI_Object *CIMfirst,*CIMlast;
    void add(CMPI_Object *o);
    void remove(CMPI_Object *o);
    void setThreadContext();
    void setContext();
-   static CMPI_ThreadContext* getContext(ulong *kp=NULL);
+   static CMPI_ThreadContext* getContext(unsigned long *kp=NULL);
   public:
    static void addObject(CMPI_Object*);
    static void remObject(CMPI_Object*);

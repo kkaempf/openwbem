@@ -129,13 +129,13 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc) {
    OW_String str;
    char msg[128];
    if (obj==NULL) {
-      sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
+      sprintf(msg,"** Null object ptr (0x%p) **",o);
       if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
       return (CMPIString*)new CMPI_Object(msg);
    }
 
    if (obj->hdl==NULL) {
-      sprintf(msg,"** Null object hdl (0x%x) **",(int)o);
+      sprintf(msg,"** Null object hdl (0x%p) **",o);
       if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
       return (CMPIString*)new CMPI_Object(msg);
    }
@@ -143,7 +143,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc) {
    if (obj->ftab==(void*)CMPI_Instance_Ftab ||
        obj->ftab==(void*)CMPI_InstanceOnStack_Ftab) {
       str = ((OW_CIMInstance*)obj->hdl)->toString();
-      //sprintf(msg,"** Object not supported (0x%x) **",(int)o);
+      //sprintf(msg,"** Object not supported (0x%p) **",o);
       //if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
       //return (CMPIString*) new CMPI_Object(msg);
       //str=((OW_CIMInstance*)obj->hdl)->toString();
@@ -157,17 +157,17 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc) {
        obj->ftab==(void*)CMPI_SelectCondCod_Ftab ||
        obj->ftab==(void*)CMPI_SubCond_Ftab ||
        obj->ftab==(void*)CMPI_Predicate_Ftab) {
-      sprintf(msg,"** Object not supported (0x%x) **",(int)o);
+      sprintf(msg,"** Object not supported (0x%p) **",o);
       if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
       return (CMPIString*) new CMPI_Object(msg);
    } */
    else {
-      sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
+      sprintf(msg,"** Object not recognized (0x%p) **",o);
       if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
       return (CMPIString*) new CMPI_Object(msg);
    }
 
-   sprintf(msg,"0x%X: ",(int)o);
+   sprintf(msg,"0x%p: ",o);
    return (CMPIString*) new CMPI_Object(OW_String(msg)+str);
 }
 

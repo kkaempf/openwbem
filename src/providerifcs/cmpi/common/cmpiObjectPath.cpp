@@ -84,7 +84,7 @@ static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc) {
 
 
 static long locateKey(const OW_CIMPropertyArray &kb, const OW_String& eName) {
-   for (ulong i=0,s=kb.size(); i<s; i++) {
+   for (unsigned long i=0,s=kb.size(); i<s; i++) {
       const OW_String &n=kb[i].getName();
       if (n.compareToIgnoreCase(eName)) return i;
    }

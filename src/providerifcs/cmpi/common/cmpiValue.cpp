@@ -282,7 +282,7 @@ CMPIrc key2CMPIData(const OW_String& v, OW_CIMDataType t, CMPIData *data) {
    if (t < OW_CIMDataType::STRING)
    {
          const char *vp=v.c_str();
-         data->value.sint64=atoll(vp);
+         data->value.sint64=OW_String(vp).toInt64();
          data->type=CMPI_sint64;
          //delete vp;
    }

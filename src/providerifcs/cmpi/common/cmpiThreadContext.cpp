@@ -24,13 +24,19 @@
 #include <limits.h>
 
 
-ulong CMPI_ThreadContext::hiKey=PTHREAD_KEYS_MAX+1;
+unsigned long CMPI_ThreadContext::hiKey=PTHREAD_KEYS_MAX+1;
 
-CMPI_ThreadContext* CMPI_ThreadContext::getContext(ulong *kp) {
+#if OW_SIZEOF_CHAR_P == 8
+#define KEY_VAL 0xFFFFFFFFFFFFFC00
+#else
+#define KEY_VAL 0xFFFFFC00
+#endif
+
+CMPI_ThreadContext* CMPI_ThreadContext::getContext(unsigned long *kp) {
    int i;
-   ulong k;
-   for (i=hiKey,k=0; i>=0 && ((k)&0xffffc00)!=0xffffc00; i--)
-       k=(ulong)pthread_getspecific(i);
+   unsigned long k;
+   for (i=hiKey,k=0; i>=0 && ((k)&KEY_VAL)!=KEY_VAL; i--)
+       k=(unsigned long)pthread_getspecific(i);
    if (i<0) return NULL;
    k&=0x3ff;
    if (kp) *kp=k;
@@ -42,12 +48,13 @@ void CMPI_ThreadContext::setContext() {
    pthread_key_create(&k,NULL);
    pthread_key_create((pthread_key_t*)&key,NULL);
    pthread_setspecific(k,this);
-   pthread_setspecific((pthread_key_t)key,(void*)(0xfffffc00|k));
+   pthread_setspecific((pthread_key_t)key,(void*)(KEY_VAL|k));
 }
 
+#undef KEY_VAL
 
 void CMPI_ThreadContext::setThreadContext() {
-   ulong k;
+   unsigned long k;
    CMPI_ThreadContext* prevCtx;
 
    if (hiKey>PTHREAD_KEYS_MAX) {
@@ -103,7 +110,7 @@ CMPI_ThreadContext::~CMPI_ThreadContext() {
       ((CMPIInstance*)cur)->ft->release((CMPIInstance*)cur);
    }
 
-   ulong k=(ulong)pthread_getspecific(key);
+   unsigned long k=(unsigned long)pthread_getspecific(key);
    if (prev!=NULL) {
       pthread_setspecific(k&0x3ff,prev);
       return;
