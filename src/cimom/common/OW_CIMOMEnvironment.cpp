@@ -263,6 +263,7 @@ private:
 void
 CIMOMEnvironment::startServices()
 {
+	// TODO: Split this up into 3 sections: load, init, start
 	{
 		MutexLock ml(m_monitor);
 		_createLogger();
