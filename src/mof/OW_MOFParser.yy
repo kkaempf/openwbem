@@ -32,10 +32,10 @@
 /*************** Includes and Defines *****************************/
 #include <stdio.h> /* for debugging */
 #include <assert.h>
-#include "Grammar.h"
+#include "OW_MOFGrammar.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "MofCompiler.hpp"
+#include "OW_MOFCompiler.hpp"
 
 //#define YYDEBUG 1
 

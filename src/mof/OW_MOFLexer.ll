@@ -33,9 +33,9 @@
 %option noyywrap
 
 %{
-#include "Grammar.h"
-#include "mofparser.h"
-#include "MofCompiler.hpp"
+#include "OW_MOFGrammar.hpp"
+#include "OW_MOFParser.h"
+#include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
 
 #define WHITE_RETURN(x) /* skip it */

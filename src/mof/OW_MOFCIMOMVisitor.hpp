@@ -28,20 +28,34 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_DEBUGVISITOR_H
-#define OW_DEBUGVISITOR_H
+#ifndef CIMOMVISITOR_HPP_
+#define CIMOMVISITOR_HPP_
 
 #include "OW_config.h"
-#include "Visitor.h"
+#include "OW_CIMFwd.hpp"
+#include "OW_Map.hpp"
+#include "OW_MOFVisitor.h"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifier.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMMethod.hpp"
+#include "OW_CIMParameter.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_MOFParserErrorHandlerIFC.hpp"
+#include "OW_Cache.hpp"
 
-/**
-  *@author Shane Smit
-  */
+struct lineInfo;
 
-class DebugVisitor : public Visitor  {
-public: 
-	DebugVisitor();
-	~DebugVisitor();
+class CIMOMVisitor : public Visitor
+{
+public:
+	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_String& ns,
+		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler);
+	~CIMOMVisitor();
 
 	void VisitMOFSpecification( const MOFSpecification * );
 	
@@ -83,6 +97,18 @@ public:
 	void VisitMethodName( const MethodName * );
 	void VisitDataType( const DataType * );
 	void VisitObjectRef( const ObjectRef * );
+
+	void VisitIntegerValueBinaryValue( const IntegerValueBinaryValue * );
+	void VisitIntegerValueOctalValue( const IntegerValueOctalValue * );
+	void VisitIntegerValueDecimalValue( const IntegerValueDecimalValue * );
+	void VisitIntegerValueHexValue( const IntegerValueHexValue * );
+
+	void VisitConstantValueIntegerValue( const ConstantValueIntegerValue * );
+	void VisitConstantValueFloatValue( const ConstantValueFloatValue * );
+	void VisitConstantValueStringValue( const ConstantValueStringValue * );
+	void VisitConstantValueCharValue( const ConstantValueCharValue * );
+	void VisitConstantValueBooleanValue( const ConstantValueBooleanValue * );
+	void VisitConstantValueNullValue( const ConstantValueNullValue * );
 	
 	void VisitParameterDataType( const ParameterDataType * );
 	void VisitParameterObjectRef( const ParameterObjectRef * );
@@ -109,6 +135,45 @@ public:
 	void VisitDefaultFlavor( const DefaultFlavor * );
 	void VisitInstanceDeclaration( const InstanceDeclaration * );
 	void VisitValueInitializer( const ValueInitializer * );
+
+private:
+	OW_CIMClass m_curClass;
+	OW_CIMInstance m_curInstance;
+	OW_CIMQualifier m_curQualifier;
+	OW_CIMQualifierType m_curQualifierType;
+	OW_CIMValue m_curValue;
+	OW_CIMProperty m_curProperty;
+	OW_CIMMethod m_curMethod;
+	OW_CIMParameter m_curParameter;
+	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
+	OW_Map<OW_String, OW_String> m_aliasMap;
+	OW_String m_namespace;
+	
+	OW_String m_instanceLocale;
+	OW_String m_locale;
+	
+	OW_String m_nonLocal;
+	OW_String m_nonLocalType;
+	OW_String m_source;
+	OW_String m_sourceType;
+	
+    OW_Cache<OW_CIMQualifierType> m_dataTypeCache;
+	OW_CIMDataType getQualifierDataType(const OW_String& qualName, const lineInfo& li);
+	OW_CIMQualifierType getQualifierType(const OW_String& qualName, const lineInfo& li);
+
+    OW_Cache<OW_CIMClass> m_classCache;
+	OW_CIMClass getClass(const OW_String& className, const lineInfo& li);
+	
+	OW_CIMValue convertValuesIntoValueArray( const OW_CIMValueArray& values );
+	
+	// Functions that call into the remote cimom handle
+    OW_CIMClass CIMOMgetClass(const OW_String& className, const lineInfo& li);
+	void CIMOMcreateClass(const lineInfo& li);
+	void CIMOMsetQualifierType(const lineInfo& li);
+	void CIMOMcreateInstance(const lineInfo& li);
+	OW_CIMQualifierType CIMOMgetQualifierType(const OW_String& qualName, const lineInfo& li);
+
+	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
 };
 
 #endif

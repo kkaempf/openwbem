@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003 Center 7, Inc All rights reserved.
+* Copyright (C) 2001 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,47 +27,46 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+#ifndef OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
+#define OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
 #include "OW_config.h"
-#include "OW_MofParserErrorHandlerIFC.hpp"
+#include "OW_MOFLineInfo.hpp"
+#include "OW_Exception.hpp"
 
-/////////////////////////////////////////////////////////////////////////////// 
-OW_MofParserErrorHandlerIFC::OW_MofParserErrorHandlerIFC() 
-	: m_errorCount(0) 
+DECLARE_EXCEPTION(MofParseFatalError);
+
+// this is an abstract base class for create concrete error handlers for the mof parser
+class OW_MofParserErrorHandlerIFC
 {
-}
+public:
+	OW_MofParserErrorHandlerIFC();
+	virtual ~OW_MofParserErrorHandlerIFC();
 
-/////////////////////////////////////////////////////////////////////////////// 
-OW_MofParserErrorHandlerIFC::~OW_MofParserErrorHandlerIFC()
-{
-}
+	void fatalError( const char* error, const lineInfo& li );
 
-/////////////////////////////////////////////////////////////////////////////// 
-long
-OW_MofParserErrorHandlerIFC::errorCount() 
-{ 
-	return m_errorCount; 
-}
+	enum ParserAction
+	{
+		Abort,
+		Ignore
+	};
 
-/////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
-{
-	++m_errorCount;
-	doFatalError(error,li);
-	OW_THROW(OW_MofParseFatalErrorException, "");
-}
+	void recoverableError( const char* error, const lineInfo& li );
 
-/////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
-{
-	++m_errorCount;
-	if ( doRecoverableError(error,li) == Abort )
-		OW_THROW(OW_MofParseFatalErrorException, "");
-}
+	void progressMessage( const char* message, const lineInfo& li );
 
-/////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
-{
-	doProgressMessage( message, li );
-}
+	long errorCount();
+
+protected:
+	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
+	virtual ParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
+	virtual void doProgressMessage( const char* message, const lineInfo& li ) = 0;
 
 
+private:
+	long m_errorCount;
+
+};
+
+
+#endif //MOF_PARSER_ERROR_HANDLER_HPP

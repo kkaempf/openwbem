@@ -16,10 +16,10 @@ Testing:
     - Capture XML and run it through xmllint with the dtd.
     - Create a test that does a createInstance with a class that has an 
       infinite number of properties (to try and simulate a DNS attack)
+    - Cleanup/integrate some of the tests under src/*/test subdirs
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
-    - Fix std::exception (basic_ios::clear(iostate) caused exception in OW_HTTPSvrConnection::run()
     - Update the *.HOWTO files.
     - To avoid permanent deadlocks, change most locks to use a timeout.
       - If a timeout happens, certain places can retry the operation.
@@ -45,21 +45,22 @@ New features:
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
     - Add support for running under inetd
-    - Add a function for providers to store/retrieve data.
+    - Add a function for providers to store/retrieve data(OW_Array<OW_UInt8>).
     - Create provider base classes which will make writing providers easier
       - Have the simple associator providers only have to
         implement references.  The base class can easily do the rest.
-      - No need for enumerateInstanceNames, just pass the keys in propertyList
       - Template method base class for weak to ComputerSystem(anything?) providers (almost all hardware)
       - Use ideas from SBLIM: http://oss.software.ibm.com/developerworks/oss/sblim/doc/ProviderArchitecture.pdf
+    - Add log messages to the thread pool class so we can output
+      information about threads starting and exiting.
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.
       This won't support cross-cimom associations. Extend the interface to
       handle this. Maybe add the extra information to OW_CIMInstance, or create
       a new class to encapsulate an OW_CIMObjectPath and an OW_CIMInstance.
-    - Add a virtual log message to the thread counter class so we can output
-      information about threads starting and exiting.
+    - Refactor OW_CIMObjectPath into various classes which represent different
+      usages of paths (e.g. ClassName, ModelPath, LocalPath, etc.)
     - Providers/Provider interfaces in a different process. Implement with 
       fork/exec/pipes for communication?
     - Internationalization.
@@ -131,7 +132,7 @@ Refactorings:
       that return OW_Enumeration<T> and OW_Array<T>.
     - Rename OW_Types.h to OW_Types.hpp
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
-    - Rename mof compiler files/classes to have OW_MOF prefix.
+    - Rename mof compiler classes to have OW_MOF prefix.
     - XML Things:
       - Split OW_CIMXMLParser into OW_XMLPullParser (generic) and OW_CIMXMLParser (CIM/XML specific)
       - Resurrect the old OW_XMLParser and create OW_XMLSaxParser and OW_XMLDOMParser

@@ -29,11 +29,11 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "Grammar.h"
-#include "CIMOMVisitor.hpp"
+#include "OW_MOFGrammar.hpp"
+#include "OW_MOFCIMOMVisitor.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_Format.hpp"
-#include "MofCompiler.hpp"
+#include "OW_MOFCompiler.hpp"
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMObjectPath.hpp"

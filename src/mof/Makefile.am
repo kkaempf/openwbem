@@ -19,24 +19,24 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim
 
 libowmofc_a_SOURCES = \
-Visitor.cpp \
-mofparser.cc \
-moflexer.cc \
-mofparser.yy \
-moflexer.ll \
-CIMOMVisitor.cpp \
-MofCompiler.cpp \
-OW_MofParserErrorHandlerIFC.cpp \
-OW_MofParseFatalErrorException.cpp
+OW_MOFVisitor.cpp \
+OW_MOFParser.cc \
+OW_MOFLexer.cc \
+OW_MOFParser.yy \
+OW_MOFLexer.ll \
+OW_MOFCIMOMVisitor.cpp \
+OW_MOFCompiler.cpp \
+OW_MOFParserErrorHandlerIFC.cpp \
+OW_MOFParseFatalErrorException.cpp
 
 pkginclude_HEADERS = \
-Grammar.h \
-Visitor.h \
-OW_MofParserErrorHandlerIFC.hpp \
-CIMOMVisitor.hpp \
-MofCompiler.hpp \
-MofParserDecls.hpp \
-LineInfo.hpp
+OW_MOFGrammar.hpp \
+OW_MOFVisitor.h \
+OW_MOFParserErrorHandlerIFC.hpp \
+OW_MOFCIMOMVisitor.hpp \
+OW_MOFCompiler.hpp \
+OW_MOFParserDecls.hpp \
+OW_MOFLineInfo.hpp
 
 #libowmofc_a_LDFLAGS = -L$(top_builddir)/src/common/.libs
 
@@ -44,11 +44,9 @@ LineInfo.hpp
 
 
 EXTRA_DIST = \
-$(top_builddir)/src/mof/mofparser.cc \
-$(top_builddir)/src/mof/moflexer.cc \
-$(top_builddir)/src/mof/mofparser.h \
-DebugVisitor.cpp \
-DebugVisitor.h
+$(top_builddir)/src/mof/OW_MOFParser.cc \
+$(top_builddir)/src/mof/OW_MOFLexer.cc \
+$(top_builddir)/src/mof/OW_MOFParser.h
 
 #debug versions
 #AM_YFLAGS = -d -t -v

@@ -28,8 +28,46 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_MofParserErrorHandlerIFC.hpp"
+#include "OW_MOFParserErrorHandlerIFC.hpp"
 
-DEFINE_EXCEPTION(MofParseFatalError)
+/////////////////////////////////////////////////////////////////////////////// 
+OW_MofParserErrorHandlerIFC::OW_MofParserErrorHandlerIFC() 
+	: m_errorCount(0) 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////// 
+OW_MofParserErrorHandlerIFC::~OW_MofParserErrorHandlerIFC()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////// 
+long
+OW_MofParserErrorHandlerIFC::errorCount() 
+{ 
+	return m_errorCount; 
+}
+
+/////////////////////////////////////////////////////////////////////////////// 
+void OW_MofParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
+{
+	++m_errorCount;
+	doFatalError(error,li);
+	OW_THROW(OW_MofParseFatalErrorException, "");
+}
+
+/////////////////////////////////////////////////////////////////////////////// 
+void OW_MofParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
+{
+	++m_errorCount;
+	if ( doRecoverableError(error,li) == Abort )
+		OW_THROW(OW_MofParseFatalErrorException, "");
+}
+
+/////////////////////////////////////////////////////////////////////////////// 
+void OW_MofParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
+{
+	doProgressMessage( message, li );
+}
 
 

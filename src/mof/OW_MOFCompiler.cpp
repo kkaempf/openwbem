@@ -28,10 +28,10 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "MofCompiler.hpp"
+#include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
-#include "MofParserDecls.hpp"
-#include "CIMOMVisitor.hpp"
+#include "OW_MOFParserDecls.hpp"
+#include "OW_MOFCIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include <assert.h>

@@ -28,45 +28,53 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
-#define OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
+#ifndef MOF_COMPILER_HPP_
+#define MOF_COMPILER_HPP_
+
 #include "OW_config.h"
-#include "LineInfo.hpp"
-#include "OW_Exception.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_String.hpp"
+#include "OW_MOFParserErrorHandlerIFC.hpp"
+#include "OW_Reference.hpp"
+#include "OW_MOFGrammar.hpp"
 
-DECLARE_EXCEPTION(MofParseFatalError);
+struct yy_buffer_state;
+typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
-// this is an abstract base class for create concrete error handlers for the mof parser
-class OW_MofParserErrorHandlerIFC
+class MofCompiler
 {
 public:
-	OW_MofParserErrorHandlerIFC();
-	virtual ~OW_MofParserErrorHandlerIFC();
+	MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh );
+	~MofCompiler();
 
-	void fatalError( const char* error, const lineInfo& li );
+	long compile( const OW_String& filename );
+	long compileString( const OW_String& mof );
 
-	enum ParserAction
+	static OW_String fixParsedString(const OW_String& s);
+	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
+	OW_AutoPtr<MOFSpecification> mofSpecification;
+	OW_String basepath;
+
+	// This variable is only for convenience for the lexer and parser.
+	// After parsing is complete, it should not be used.  The filename and
+	// line numbers are stored in the AST.
+	lineInfo theLineInfo;
+
+	// Needed by the code to implement includes
+#define MAX_INCLUDE_DEPTH 10
+	struct include_t
 	{
-		Abort,
-		Ignore
+		YY_BUFFER_STATE yyBufferState;
+		lineInfo theLineInfo;
 	};
 
-	void recoverableError( const char* error, const lineInfo& li );
-
-	void progressMessage( const char* message, const lineInfo& li );
-
-	long errorCount();
-
-protected:
-	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
-	virtual ParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
-	virtual void doProgressMessage( const char* message, const lineInfo& li ) = 0;
-
+	include_t include_stack[MAX_INCLUDE_DEPTH];
+	int include_stack_ptr;
 
 private:
-	long m_errorCount;
+	OW_Reference<OW_CIMOMHandleIFC> m_ch;
+	OW_String m_nameSpace;
 
 };
 
-
-#endif //MOF_PARSER_ERROR_HANDLER_HPP
+#endif // MOF_COMPILER_HPP_

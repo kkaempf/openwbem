@@ -37,8 +37,8 @@
 #include "OW_List.hpp"
 #include "OW_AutoPtr.hpp"
 
-#include "Visitor.h"
-#include "LineInfo.hpp"
+#include "OW_MOFVisitor.h"
+#include "OW_MOFLineInfo.hpp"
 
 class Initializer
 {
