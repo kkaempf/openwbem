@@ -52,7 +52,7 @@ public:
 
 protected:
 
-	virtual const char* getName() const { return "c++"; }
+	virtual const char* getName() const { return "simplec++"; }
 
 	/**
 	 * The derived classes must override these functions to implement the
