@@ -42,32 +42,22 @@ using std::istream;
 using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////		
-union OW_CIMSignature
-{
-	OW_UInt32	val;
-	char		chars[4];
-};
-
-//////////////////////////////////////////////////////////////////////////////		
 // static
 void
 OW_CIMBase::readSig( istream& istr, const char* const sig )
 {
-	OW_CIMSignature expected, read;
-	OW_ASSERT( strlen(sig) == 4 );
+	char expected, read;
+	OW_ASSERT( strlen(sig) == 1 );
 
-	memcpy(expected.chars, sig, sizeof(expected.chars));
+	expected = sig[0];
+	OW_BinIfcIO::read(istr, &read, sizeof(read));
 
-	OW_BinIfcIO::read(istr, read.chars, sizeof(read.val));
-
-	if(expected.val != read.val)
+	if(expected != read)
 	{
 		OW_THROW(OW_BadCIMSignatureException,
 			format("Signature does not match. In OW_CIMBase::readSig. "
 				"signature read: %1, expected: %2",
-				// use the special OW_String constructor because the chars
-				// aren't null terminated.
-				OW_String(read.chars, sizeof(read.chars)), sig).c_str() );
+				read, sig).c_str() );
 	}
 }
 
@@ -78,8 +68,8 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 // static
 void OW_CIMBase::writeSig( ostream& ostr, const char* const sig )
 {
-	OW_ASSERT(strlen(sig) == 4);
-	OW_BinIfcIO::write(ostr, sig, 4);
+	OW_ASSERT(strlen(sig) == 1);
+	OW_BinIfcIO::write(ostr, sig, 1);
 }
 
 

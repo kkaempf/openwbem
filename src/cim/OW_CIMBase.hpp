@@ -114,22 +114,22 @@ std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb);
 
 ///////////////////////////////////////////////////////////////////////////////
 // signatures to be passed to readSig and writeSig
-#define OW_CIMCLASSSIG					"CLAS"	// OW_CIMClass
-#define OW_CIMINSTANCESIG				"INST"	// OW_CIMInstance
-#define OW_CIMMETHODSIG					"METH"	// OW_CIMMethod
-#define OW_CIMPARAMETERSIG				"PARM"	// OW_CIMParameter
-#define OW_CIMPARAMVALSIG				"PVAL"	// OW_CIMParamValue
-#define OW_CIMPROPERTYSIG				"PROP"	// OW_CIMProperty
-#define OW_CIMQUALIFIERSIG				"QUAL"	// OW_CIMQualifier
-#define OW_CIMQUALIFIERTYPESIG			"QTYP"	// OW_CIMQualifierType
-#define OW_CIMDATATYPESIG				"DTYP"	// OW_CIMDataType
-#define OW_CIMFLAVORSIG					"FLAV"	// OW_CIMFlavor
-#define OW_CIMNAMESPACESIG				"NMSP"	// OW_CIMNameSpace
-#define OW_CIMOBJECTPATHSIG				"OPTH"	// OW_CIMObjectPath
-#define OW_CIMSCOPESIG					"SCOP"	// OW_CIMScope
-#define OW_CIMVALUESIG					"VALU"	// OW_CIMValue
-#define OW_CIMURLSIG					"CURL"	// OW_CIMUrl
-#define OW_INTERNNAMESPACESIG			"INNS"	// Internval namespace class
-#define OW_CIMPARAMVALUESIG				"PRVL"	// OW_CIMParamValue
+#define OW_CIMCLASSSIG					"C"	// OW_CIMClass
+#define OW_CIMINSTANCESIG				"I"	// OW_CIMInstance
+#define OW_CIMMETHODSIG					"M"	// OW_CIMMethod
+#define OW_CIMPARAMETERSIG				"P"	// OW_CIMParameter
+#define OW_CIMPARAMVALSIG				"A"	// OW_CIMParamValue
+#define OW_CIMPROPERTYSIG				"R"	// OW_CIMProperty
+#define OW_CIMQUALIFIERSIG				"Q"	// OW_CIMQualifier
+#define OW_CIMQUALIFIERTYPESIG			"T"	// OW_CIMQualifierType
+#define OW_CIMDATATYPESIG				"D"	// OW_CIMDataType
+#define OW_CIMFLAVORSIG					"F"	// OW_CIMFlavor
+#define OW_CIMNAMESPACESIG				"N"	// OW_CIMNameSpace
+#define OW_CIMOBJECTPATHSIG				"O"	// OW_CIMObjectPath
+#define OW_CIMSCOPESIG					"S"	// OW_CIMScope
+#define OW_CIMVALUESIG					"V"	// OW_CIMValue
+#define OW_CIMURLSIG					"U"	// OW_CIMUrl
+#define OW_INTERNNAMESPACESIG			"E"	// Internval namespace class
+#define OW_CIMPARAMVALUESIG				"L"	// OW_CIMParamValue
 
 #endif	// OW_CIMBASE_HPP_
