@@ -35,6 +35,7 @@
 #ifndef OW_CIM_XML_LISTENER_FWD_HPP_INCLUDE_GUARD_
 #define OW_CIM_XML_LISTENER_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
