@@ -2,6 +2,9 @@ SUBDIRS = db src etc test mof doc schemas
 
 noinst_SCRIPTS = $(PACKAGE_PREFIX_D)openwbem.spec
 
+m4dir = $(datadir)/aclocal
+m4_DATA = openwbem.m4
+
 EXTRA_DIST = \
 Doxyfile.sh \
 ow_ar.sh \
@@ -11,7 +14,8 @@ ow_ar.sh \
 Makefile-shared-lib-inst.inc \
 openwbem.spec \
 fake_library_creator.sh \
-generic-company-openwbem.spec.in
+generic-company-openwbem.spec.in \
+$(m4_DATA)
 
 CLEANFILES = Doxyfile
 
