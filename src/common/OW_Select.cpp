@@ -138,7 +138,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	fd_set rfds;
 	// here we spin checking for thread cancellation every so often.
 	timeval now, end;
-	const UInt32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
+	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
 	gettimeofday(&now, NULL);
 	end = now;
 	end.tv_sec  += ms / 1000;
