@@ -667,20 +667,32 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		OW_String cname = path.getObjectName();
 
 		// TODO: this doesn't work quite right.  what about associations to
-		// the instances we delete?  What about instances of subclasses?
+		// the instances we delete?
 		// should this operation be atomic?  If something fails, how can we
 		// undo so as to not leave things in a weird state?
 
 		// delete the class and any subclasses
-		// TODO: This doesn't seem to delete the sub-classes.  FIXME!!!
+		OW_CIMClassEnumeration children = this->enumClasses(path,
+			OW_CIMOMHandleIFC::SHALLOW, OW_CIMOMHandleIFC::LOCAL_ONLY,
+			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
+			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+            aclInfo);
+		while (children.hasMoreElements())
+		{
+			OW_CIMClass toDelete;
+			children.nextElement(toDelete);
+			OW_CIMObjectPath p(path);
+			p.setObjectName(toDelete.getName());
+			deleteClass(p, aclInfo); // recursively delete subclasses - this could probably be optimized
+		}
+
+
 		if(!m_mStore.deleteClass(ns, cname))
 		{
 			OW_THROWCIM(OW_CIMException::NOT_FOUND);
 		}
 
 		// delete any instances of the class
-		// TODO: Does this also delete the instances of the subclasses? If not,
-		// then it needs to be fixed!
 		m_iStore.deleteClass(ns, cname);
 
 
@@ -1323,6 +1335,10 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 					if (!m_nStore.nameSpaceExists(cop.getNameSpace()))
 					{
 						rc = OW_CIMException::INVALID_NAMESPACE;
+					}
+					else
+					{
+						rc = OW_CIMException::INVALID_CLASS;
 					}
 				}
 

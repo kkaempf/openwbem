@@ -344,14 +344,14 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	try
 	{
-		try
-		{
-			// shouldn't need to do this, but there seems to be a bug in OpenWBEM
-			hdl->deleteClass(OW_CIMObjectPath("invalidTestSub", "root"));
-		}
-		catch (const OW_CIMException&)
-		{
-		}
+//         try
+//         {
+//             // shouldn't need to do this, but there seems to be a bug in OpenWBEM
+//             hdl->deleteClass(OW_CIMObjectPath("invalidTestSub", "root"));
+//         }
+//         catch (const OW_CIMException&)
+//         {
+//         }
 		try
 		{
 			hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
@@ -368,6 +368,21 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 			throw e;
 		}
 	}
+
+	try
+	{
+		OW_CIMInstance ci = baseClass.newInstance();
+		ci.setProperty(theKeyProp);
+		OW_CIMObjectPath cop("foo", "root");
+		cop.setKeys(ci);
+		hdl->createInstance(cop, ci);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(0);
+	}
+
+
 
 	// setup's done, now do the tests
 	try
@@ -463,10 +478,166 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
+
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMInstance ci = baseClass.newInstance();
+		ci.setClassName("nonexistentClass");
+		ci.setProperty(theKeyProp);
+		OW_CIMObjectPath cop("foo", "root");
+		cop.setKeys(ci);
+		hdl->createInstance(cop, ci);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 	// CIM_ERR_ALREADY_EXISTS
+	try
+	{
+		OW_CIMInstance ci = baseClass.newInstance();
+		ci.setProperty(theKeyProp);
+		OW_CIMObjectPath cop("foo", "root");
+		cop.setKeys(ci);
+		hdl->createInstance(cop, ci);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
+	}
+
+
+	// ModifyClass
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_NOT_FOUND
+	// CIM_ERR_INVALID_SUPERCLASS
+	// CIM_ERR_CLASS_HAS_CHILDREN
+	// CIM_ERR_CLASS_HAS_INSTANCES
+
+
+	// ModifyInstance
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+	// CIM_ERR_NOT_FOUND
+
+
+	// EnumerateClasses
+	
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+
+
+	// EnumerateClassNames
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+
+
+	// EnumerateInstances
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+
+
+	// EnumerateInstanceNames
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+	
+
+	// ExecQuery
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
+	// CIM_ERR_INVALID_QUERY
+
+
+	// Associators
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	
+	
+	// AssociatorNames
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	
+
+	// References
+	
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
 
 	
+	// ReferenceNames
+	
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+
+
+	// GetProperty
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+	// CIM_ERR_NOT_FOUND
+	// CIM_ERR_NO_SUCH_PROPERTY
+
+
+	// SetProperty
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+	// CIM_ERR_NOT_FOUND
+	// CIM_ERR_NO_SUCH_PROPERTY
+	// CIM_ERR_TYPE_MISMATCH
+
+
+	// GetQualifier
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_NOT_FOUND
+
+
+	// SetQualifier
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+
+
+	// DeleteQualifier
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_NOT_FOUND
+
+
+	// EnumerateQualifiers
+
+	// CIM_ERR_INVALID_NAMESPACE
+	// CIM_ERR_INVALID_PARAMETER
+
+
+	// CreateNamespace
+	// DeleteNamespace
+	// EnumNameSpaces
+
 	// cleanup
 
 	hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
