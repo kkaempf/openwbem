@@ -654,6 +654,7 @@ private:
 #endif
 
 	ServiceEnvironmentIFCRef m_env;
+	LoggerRef m_logger;
 	bool m_checkReferentialIntegrity;
 	RWLocker m_schemaLock;
 	RWLocker m_instanceLock;
