@@ -35,87 +35,22 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
 #include "OW_ResultHandlerIFC.hpp"
-#include <iosfwd>
+#include "OW_IOException.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMValue.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-class OW_BinIfcIO
-{
-public:
+#if defined(OW_HAVE_OSTREAM) && defined(OW_HAVE_ISTREAM)
+#include <ostream>
+#include <istream>
+#else
+#include <iostream>
+#endif
 
-	// TODO: inline these functions, they are used quite heavily.
-	static void write(std::ostream& ostrm, const void* dataOut,
-		int dataOutLen);
-
-	static void verifySignature(std::istream& istrm, OW_Int32 validSig);
-
-	static void write(std::ostream& ostrm, OW_Int32 val);
-
-	static void write(std::ostream& ostrm, const char* str);
-
-	static void write(std::ostream& ostrm, const OW_String& str);
-
-	static void writeObject(std::ostream& ostrm, OW_Int32 sig,
-		const OW_CIMBase& obj);
-
-	static void writeObjectPath(std::ostream& ostrm,
-		const OW_CIMObjectPath& op);
-
-	static void writeNameSpace(std::ostream& ostrm,
-		const OW_CIMNameSpace& ns);
-
-	static void writeBool(std::ostream& ostrm,
-		OW_Bool arg);
-
-	static void writeClass(std::ostream& ostrm, const OW_CIMClass& cc);
-
-	static void writeInstance(std::ostream& ostrm, const OW_CIMInstance& ci);
-
-	static void writeQual(std::ostream& ostrm, const OW_CIMQualifierType& qt);
-
-	static void writeValue(std::ostream& ostrm, const OW_CIMValue& value);
-
-	static void writeString(std::ostream& ostrm, const OW_String& str);
-
-	static void writeStringArray(std::ostream& ostrm,
-		const OW_StringArray& stra);
-
-	static void read(std::istream& istrm, void* dataIn, int dataInLen);
-
-	static void read(std::istream& istrm, OW_String& arg);
-
-	static void read(std::istream& istrm, OW_Int32& val);
-
-	static void readObject(std::istream& istrm, OW_Int32 validSig,
-		OW_CIMBase& obj);
-
-	static OW_CIMObjectPath readObjectPath(std::istream& istrm);
-
-	static OW_CIMInstance readInstance(std::istream& istrm);
-
-	static OW_Bool readBool(std::istream& istrm);
-
-	static OW_CIMNameSpace readNameSpace(std::istream& istrm);
-
-	static OW_CIMClass readClass(std::istream& istrm);
-
-	static OW_String readString(std::istream& istrm);
-
-	static OW_CIMQualifierType readQual(std::istream& istrm);
-
-	static OW_CIMValue readValue(std::istream& istrm);
-
-	static OW_StringArray readStringArray(std::istream& istrm);
-
-	static void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
-
-	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
-
-	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
-
-	static void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
-
-
-};
 
 // Values for local API calls
 
@@ -172,6 +107,236 @@ const OW_Int32 OW_END_CLSENUM =			0x00001001;
 const OW_Int32 OW_END_OPENUM =			0x00001002;
 const OW_Int32 OW_END_INSTENUM =		0x00001003;
 const OW_Int32 OW_END_QUALENUM =		0x00001004;
+
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_BinIfcIO
+{
+public:
+
+	// TODO: inline these functions, they are used quite heavily.
+	static void write(std::ostream& ostrm, const void* dataOut,
+		int dataOutLen)
+	{
+		if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
+		{
+			OW_THROW(OW_IOException, "Failed writing data to IPC connection");
+		}
+	}
+
+
+	static void verifySignature(std::istream& istrm, OW_Int32 validSig)
+	{
+		OW_Int32 val;
+		OW_BinIfcIO::read(istrm, val);
+	
+		if(val != validSig)
+		{
+			OW_THROW(OW_BadCIMSignatureException,
+				format("Received invalid signature. Got: %1  Expected: %2", val,
+					validSig).c_str());
+		}
+	
+	}
+
+
+	static void write(std::ostream& ostrm, OW_Int32 val)
+	{
+		val = OW_hton32(val);
+		OW_BinIfcIO::write(ostrm, (const void*)&val, sizeof(val));
+	}
+
+
+	static void write(std::ostream& ostrm, const OW_String& str)
+	{
+		str.writeObject(ostrm);
+	}
+
+
+	static void writeObject(std::ostream& ostrm, OW_Int32 sig,
+		const OW_CIMBase& obj)
+	{
+		OW_BinIfcIO::write(ostrm, sig);
+		obj.writeObject(ostrm);
+	}
+
+
+	static void writeObjectPath(std::ostream& ostrm,
+		const OW_CIMObjectPath& op)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_OP, op);
+	}
+
+
+	static void writeNameSpace(std::ostream& ostrm,
+		const OW_CIMNameSpace& ns)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_NS, ns);
+	}
+
+
+	static void writeBool(std::ostream& ostrm,
+		OW_Bool arg)
+	{
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_BOOL);
+		arg.writeObject(ostrm);
+	}
+
+
+	static void writeClass(std::ostream& ostrm, const OW_CIMClass& cc)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_CLS, cc);
+	}
+
+
+	static void writeInstance(std::ostream& ostrm, const OW_CIMInstance& ci)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_INST, ci);
+	}
+
+
+	static void writeQual(std::ostream& ostrm, const OW_CIMQualifierType& qt)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_QUAL, qt);
+	}
+
+
+	static void writeValue(std::ostream& ostrm, const OW_CIMValue& value)
+	{
+		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_VALUE, value);
+	}
+
+
+	static void writeString(std::ostream& ostrm, const OW_String& str)
+	{
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_STR);
+		str.writeObject(ostrm);
+	}
+
+
+	static void writeStringArray(std::ostream& ostrm,
+		const OW_StringArray& stra)
+	{
+		OW_BinIfcIO::write(ostrm, OW_BINSIG_STRARRAY);
+		stra.writeObject(ostrm);
+	}
+
+	static void read(std::istream& istrm, void* dataIn, int dataInLen)
+	{
+		if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
+		{
+			OW_THROW(OW_IOException, "Failed reading data from IPC connection");
+		}
+	}
+
+
+	static void read(std::istream& istrm, OW_String& arg)
+	{
+		arg.readObject(istrm);
+	}
+
+
+	static void read(std::istream& istrm, OW_Int32& val)
+	{
+		OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val));
+		val = OW_ntoh32(val);
+	}
+
+
+	static void readObject(std::istream& istrm, OW_Int32 validSig,
+		OW_CIMBase& obj)
+	{
+		OW_BinIfcIO::verifySignature(istrm, validSig);
+		obj.readObject(istrm);
+	}
+
+
+	static OW_CIMObjectPath readObjectPath(std::istream& istrm)
+	{
+		OW_CIMObjectPath op;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_OP, op);
+		return op;
+	}
+
+
+	static OW_CIMInstance readInstance(std::istream& istrm)
+	{
+		OW_CIMInstance ci;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_INST, ci);
+		return ci;
+	}
+
+
+	static OW_Bool readBool(std::istream& istrm)
+	{
+		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_BOOL);
+		OW_Bool b;
+		b.readObject(istrm);
+		return b;
+	}
+
+
+	static OW_CIMNameSpace readNameSpace(std::istream& istrm)
+	{
+		OW_CIMNameSpace ns;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_NS, ns);
+		return ns;
+	}
+
+
+	static OW_CIMClass readClass(std::istream& istrm)
+	{
+		OW_CIMClass cc;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_CLS, cc);
+		return cc;
+	}
+
+
+	static OW_String readString(std::istream& istrm)
+	{
+		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STR);
+		OW_String rv;
+		rv.readObject(istrm);
+		return rv;
+	}
+
+
+	static OW_CIMQualifierType readQual(std::istream& istrm)
+	{
+		OW_CIMQualifierType qt;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_QUAL, qt);
+		return qt;
+	}
+
+
+	static OW_CIMValue readValue(std::istream& istrm)
+	{
+		OW_CIMValue value;
+		OW_BinIfcIO::readObject(istrm, OW_BINSIG_VALUE, value);
+		return value;
+	}
+
+
+	static OW_StringArray readStringArray(std::istream& istrm)
+	{
+		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STRARRAY);
+		OW_StringArray stra;
+		stra.readObject(istrm);
+		return stra;
+	}
+
+
+	static void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
+
+	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
+
+	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
+
+	static void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
+
+
+};
+
 
 #endif	// OW_BINIFCIO_HPP_
 

@@ -490,42 +490,42 @@ public:
 	/**
 	 * @return The OW_UInt8 value of this OW_String object.
 	 */
-	OW_UInt8 toUInt8() const;
+	OW_UInt8 toUInt8(int base=10) const;
 
 	/**
 	 * @return The OW_Int8 value of this OW_String object.
 	 */
-	OW_Int8 toInt8() const;
+	OW_Int8 toInt8(int base=10) const;
 
 	/**
 	 * @return The OW_UInt16 value of this OW_String object.
 	 */
-	OW_UInt16 toUInt16() const;
+	OW_UInt16 toUInt16(int base=10) const;
 
 	/**
 	 * @return The OW_Int16 value of this OW_String object.
 	 */
-	OW_Int16 toInt16() const;
+	OW_Int16 toInt16(int base=10) const;
 
 	/**
 	 * @return The OW_UInt32 value of this OW_String object.
 	 */
-	OW_UInt32 toUInt32() const;
+	OW_UInt32 toUInt32(int base=10) const;
 
 	/**
 	 * @return The OW_Int32 value of this OW_String object.
 	 */
-	OW_Int32 toInt32() const;
+	OW_Int32 toInt32(int base=10) const;
 
 	/**
 	 * @return The OW_UInt64 value of this OW_String object.
 	 */
-	OW_UInt64 toUInt64() const;
+	OW_UInt64 toUInt64(int base=10) const;
 
 	/**
 	 * @return The OW_Int64 value of this OW_String object.
 	 */
-	OW_Int64 toInt64() const;
+	OW_Int64 toInt64(int base=10) const;
 
 	/**
 	 * @return The OW_CIMDateTime value of this OW_String object.

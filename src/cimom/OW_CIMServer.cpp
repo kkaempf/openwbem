@@ -1075,13 +1075,11 @@ namespace
 	public:
 		HandleProviderInstance(const OW_CIMClass& theClass_,
 			const OW_ACLInfo& aclInfo_,
-			bool localOnly_, bool deep_, bool includeQualifiers_, bool includeClassOrigin_,
+			bool includeQualifiers_, bool includeClassOrigin_,
 			OW_StringArray& lpropList_, const OW_CIMObjectPath& cop_,
 			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
 		: theClass(theClass_)
 		, aclInfo(aclInfo_)
-		, localOnly(localOnly_)
-		, deep(deep_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, lpropList(lpropList_)
@@ -1098,14 +1096,13 @@ namespace
 			lcop.setKeys(ci.getKeyValuePairs());
 
 			server._getProviderProperties(lcop, ci, theClass, aclInfo);
-			// TODO: Filter out localonly and deep properties
-			result.handleInstance(ci.clone(localOnly, includeQualifiers,
+			result.handleInstance(ci.clone(false, includeQualifiers,
 				includeClassOrigin, lpropList));
 		}
 	private:
 		const OW_CIMClass& theClass;
 		const OW_ACLInfo& aclInfo;
-		bool localOnly, deep, includeQualifiers, includeClassOrigin;
+		bool includeQualifiers, includeClassOrigin;
 		OW_StringArray& lpropList;
 		const OW_CIMObjectPath& cop;
 		OW_CIMServer& server;
@@ -1219,10 +1216,11 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
-		HandleProviderInstance handler(theClass,aclInfo,localOnly,deep,
-			includeQualifiers,includeClassOrigin,lpropList, cop, *this, result);
+		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
+		HandleProviderInstance handler2(theClass,aclInfo,
+			includeQualifiers,includeClassOrigin,lpropList, cop, *this, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), cop, handler, deep, theClass, localOnly);
+			createProvEnvRef(real_ch), cop, handler2, deep, theClass, localOnly);
 	}
 	else
 	{
@@ -1266,7 +1264,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 
 	try
 	{
-		// TODO: Switch this to use m_mStore
+		// this doesn't use m_mStore because of __Namespace
 		cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
@@ -1973,12 +1971,6 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 			{
 				break;
 			}
-
-			// TODO: Why should we do this?
-			//if(cc.isAssociation())
-			//{
-			//	break;
-			//}																	
 
 			OW_CIMQualifier cq = cc.getQualifier(
 				OW_CIMQualifier::CIM_QUAL_PROVIDER);

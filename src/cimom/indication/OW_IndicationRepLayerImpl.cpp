@@ -30,10 +30,8 @@
 
 #include "OW_config.h"
 #include "OW_IndicationRepLayerImpl.hpp"
-#include "OW_CIMServer.hpp"
 #include "OW_Format.hpp"
 #include "OW_DateTime.hpp"
-#include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMException.hpp"
@@ -41,53 +39,6 @@
 #include "OW_CIMMethod.hpp"
 
 											
-// TODO: inline some of these 1-line pass-thru functions.											
-											
-//////////////////////////////////////////////////////////////////////////////
-OW_IndicationRepLayerImpl::OW_IndicationRepLayerImpl(OW_CIMServer* pRepos) :
-	OW_IndicationRepLayer(), m_pServer(pRepos)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_IndicationRepLayerImpl::OW_IndicationRepLayerImpl(
-	const OW_IndicationRepLayerImpl& arg)
-	: OW_IndicationRepLayer()
-	, m_pServer(arg.m_pServer)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_IndicationRepLayerImpl&
-OW_IndicationRepLayerImpl::operator= (const OW_IndicationRepLayerImpl& arg)
-{
-	m_pServer = arg.m_pServer;
-	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::createNameSpace(const OW_CIMNameSpace& ns,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->createNameSpace(ns, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::close()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::deleteNameSpace(const OW_CIMNameSpace& ns,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->deleteNameSpace(ns, aclInfo);
-}
-
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
@@ -140,83 +91,6 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
 			" because CIM_InstDeletion does not exist");
 	}
 	return instOrig;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::deleteQualifierType(const OW_CIMObjectPath& path,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->deleteQualifierType(path, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumNameSpace(const OW_CIMNameSpace& ns,
-	OW_StringResultHandlerIFC& result, OW_Bool deep,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->enumNameSpace(ns, result, deep, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumClasses(const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->enumClasses(path, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumClassNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->enumClassNames(path, result, deep, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumInstances(const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->enumInstances(path, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumInstanceNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep, const OW_ACLInfo& aclInfo)
-{
-	return m_pServer->enumInstanceNames(path, result, deep, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::enumQualifierTypes(const OW_CIMObjectPath& path,
-	OW_CIMQualifierTypeResultHandlerIFC& result,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->enumQualifierTypes(path, result, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_IndicationRepLayerImpl::getClass(const OW_CIMObjectPath& path,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
-{
-	return m_pServer->getClass(path, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -337,23 +211,6 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_IndicationRepLayerImpl::getQualifierType(const OW_CIMObjectPath& name,
-	const OW_ACLInfo& aclInfo)
-{
-	return m_pServer->getQualifierType(name, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::setQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->setQualifierType(name, qt, aclInfo);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 	OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
@@ -462,135 +319,6 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 			" because CIM_InstCreation does not exist");
 	}
 	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_IndicationRepLayerImpl::getProperty(const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_ACLInfo& aclInfo)
-{
-	return m_pServer->getProperty(name, propertyName, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::setProperty(const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_CIMValue& cv,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->setProperty(name, propertyName, cv, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::associatorNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->associatorNames(path, result, assocClass, resultClass, role,
-		resultRole, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::associators(const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->associators(path, result, assocClass, resultClass, role,
-		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::associatorsClasses(const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->associatorsClasses(path, result, assocClass, resultClass, role,
-		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::referenceNames(const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->referenceNames(path, result, resultClass, role, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::references(const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->references(path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::referencesClasses(const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
-{
-	m_pServer->referencesClasses(path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::execQuery(const OW_CIMNameSpace& ns,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& query, const OW_String& queryLanguage,
-	const OW_ACLInfo& aclInfo)
-{
-	m_pServer->execQuery(ns, result, query, queryLanguage, aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::exportIndication(const OW_CIMInstance& instance,
-	const OW_CIMNameSpace& instNS)
-{
-	getEnvironment()->exportIndication(instance, instNS);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_ReadLock
-OW_IndicationRepLayerImpl::getReadLock()
-{
-	return m_pServer->getReadLock();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_WriteLock
-OW_IndicationRepLayerImpl::getWriteLock()
-{
-	return m_pServer->getWriteLock();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_IndicationRepLayerImpl::setCIMServer(OW_RepositoryIFC *src)
-{
-	m_pServer = src;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -208,7 +208,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 	{
 		if (superClassName.equalsIgnoreCase(path.getObjectName()))
 		{
-			// TODO: Do correct localOnly & deep processing?
+			// Don't need to do correct localOnly & deep processing.
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 			//	includeClassOrigin, propertyList));
 			(void)deep; (void)localOnly; (void)includeQualifiers;

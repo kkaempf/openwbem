@@ -35,24 +35,20 @@
 #include "OW_Types.h"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_IndicationRepLayer.hpp"
-
-class OW_CIMServer;
+#include "OW_CIMServer.hpp"
+#include "OW_CIMValue.hpp"
 
 class OW_IndicationRepLayerImpl : public OW_IndicationRepLayer
 {
 public:
 	OW_IndicationRepLayerImpl() : OW_IndicationRepLayer(), m_pServer(0) {}
-	OW_IndicationRepLayerImpl(OW_CIMServer* pRepos);
-	OW_IndicationRepLayerImpl(const OW_IndicationRepLayerImpl& arg);
-
-	OW_IndicationRepLayerImpl& operator= (const OW_IndicationRepLayerImpl& arg);
 
 	virtual OW_CIMClass deleteClass(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
 	virtual void open(const OW_String&) {}
 
-	virtual void close();
+	virtual void close() {}
 
 	virtual OW_CIMOMEnvironmentRef getEnvironment() const
 	{
@@ -60,24 +56,41 @@ public:
 	}
 
 	virtual void deleteQualifierType(const OW_CIMObjectPath &path,
-		const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->deleteQualifierType(path, aclInfo);
+	}
+
 
 	virtual void enumClasses(const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
+		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->enumClasses(path, result, deep, localOnly, includeQualifiers,
+			includeClassOrigin, aclInfo);
+	}
+
 
 	virtual void enumClassNames(
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo);
+		OW_Bool deep, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->enumClassNames(path, result, deep, aclInfo);
+	}
+
 
 	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
 	virtual void enumQualifierTypes(const
 		OW_CIMObjectPath &path,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo);
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->enumQualifierTypes(path, result, aclInfo);
+	}
+
 
 	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -89,20 +102,38 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->enumInstances(path, result, deep, localOnly, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual void enumInstanceNames(
 		const OW_CIMObjectPath& path,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo);
+		OW_Bool deep, const OW_ACLInfo& aclInfo)
+	{
+		return m_pServer->enumInstanceNames(path, result, deep, aclInfo);
+	}
+
 
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath &name, const OW_ACLInfo& aclInfo);
+		const OW_CIMObjectPath &name, const OW_ACLInfo& aclInfo)
+	{
+		return m_pServer->getQualifierType(name, aclInfo);
+	}
+
 
 	virtual OW_CIMClass getClass(const OW_CIMObjectPath& path,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo)
+	{
+		return m_pServer->getClass(path, localOnly, includeQualifiers,
+			includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
 		const OW_String &methodName, const OW_CIMValueArray &inParams,
@@ -112,7 +143,11 @@ public:
 		OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
 
 	virtual void setQualifierType(const OW_CIMObjectPath& name,
-		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
+		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->setQualifierType(name, qt, aclInfo);
+	}
+
 
 	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
 		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
@@ -122,7 +157,11 @@ public:
 
 	virtual void setProperty(const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->setProperty(name, propertyName, cv, aclInfo);
+	}
+
 
 	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo);
@@ -132,47 +171,84 @@ public:
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->associators(path, result, assocClass, resultClass, role,
+			resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual void associatorsClasses(const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->associatorsClasses(path, result, assocClass, resultClass, role,
+			resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual OW_CIMValue getProperty(const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_ACLInfo& aclInfo);
+		const OW_String &propertyName, const OW_ACLInfo& aclInfo)
+	{
+		return m_pServer->getProperty(name, propertyName, aclInfo);
+	}
+
 
 	virtual void references(const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->references(path, result, resultClass, role,
+			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual void referencesClasses(const OW_CIMObjectPath &path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->referencesClasses(path, result, resultClass, role,
+			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+	}
+
 
 	virtual void associatorNames(
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_ACLInfo& aclInfo);
+		const OW_String &resultRole, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->associatorNames(path, result, assocClass, resultClass, role,
+			resultRole, aclInfo);
+	}
+
 
 	virtual void referenceNames(
 		const OW_CIMObjectPath &path,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
-		const OW_String &role, const OW_ACLInfo& aclInfo);
+		const OW_String &role, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->referenceNames(path, result, resultClass, role, aclInfo);
+	}
+
 	
-	virtual void execQuery(const OW_CIMNameSpace &cop,
+	virtual void execQuery(const OW_CIMNameSpace &ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String& queryLanguage,
-		const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->execQuery(ns, result, query, queryLanguage, aclInfo);
+	}
+
 
 	/**
 	 * Delete a specified namespace.
@@ -180,7 +256,11 @@ public:
 	 *					to delete.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
-	void deleteNameSpace(const OW_CIMNameSpace &ns, const OW_ACLInfo& aclInfo);
+	void deleteNameSpace(const OW_CIMNameSpace &ns, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->deleteNameSpace(ns, aclInfo);
+	}
+
 
 	/**
 	 * Create a cim namespace.
@@ -188,7 +268,11 @@ public:
 	 *					host and a string for the namespace.
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
-	void createNameSpace(const OW_CIMNameSpace &ns, const OW_ACLInfo& aclInfo);
+	void createNameSpace(const OW_CIMNameSpace &ns, const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->createNameSpace(ns, aclInfo);
+	}
+
 
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM
@@ -204,23 +288,43 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	void enumNameSpace(const OW_CIMNameSpace& path,
+	void enumNameSpace(const OW_CIMNameSpace& ns,
 		OW_StringResultHandlerIFC& result,
 		OW_Bool deep,
-		const OW_ACLInfo& aclInfo);
+		const OW_ACLInfo& aclInfo)
+	{
+		m_pServer->enumNameSpace(ns, result, deep, aclInfo);
+	}
 
-	virtual OW_ReadLock getReadLock();
-	virtual OW_WriteLock getWriteLock();
+
+	virtual OW_ReadLock getReadLock()
+	{
+		return m_pServer->getReadLock();
+	}
+
+	virtual OW_WriteLock getWriteLock()
+	{
+		return m_pServer->getWriteLock();
+	}
+
 
 	operator void*() { return (void*)m_pServer; }
 
-	virtual void setCIMServer(OW_RepositoryIFC *src);
+	virtual void setCIMServer(OW_RepositoryIFC *src)
+	{
+		m_pServer = src;
+	}
+
 
 
 private:
 
 	void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_CIMNameSpace& instNS)
+	{
+		getEnvironment()->exportIndication(instance, instNS);
+	}
+
 
 	OW_RepositoryIFC* m_pServer;
 };

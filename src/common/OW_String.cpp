@@ -1015,12 +1015,12 @@ OW_String::toBool() const
 
 template <typename T, typename FP, typename FPRT>
 static inline
-T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type, FP fp)
+T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
 {
 	if (m_buf.getPtr())
 	{
 		char* endptr;
-		FPRT v = fp(m_buf->data(), &endptr, 10);
+		FPRT v = fp(m_buf->data(), &endptr, base);
 		T rv = v;
 		if (*endptr != '\0' || errno == ERANGE || FPRT(rv) != v)
 		{
@@ -1043,86 +1043,86 @@ typedef long long int (*strtollfp_t)(const char *, char **,int);
 
 template <typename T>
 static inline
-T convertToUIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+T convertToUIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul);
+	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul, base);
 }
 
 template <typename T>
 static inline
-T convertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+T convertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol);
+	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol, base);
 }
 
 template <typename T>
 static inline
-T convertToUInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+T convertToUInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull);
+	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull, base);
 }
 
 template <typename T>
 static inline
-T convertToInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg)
+T convertToInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll);
+	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll, base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt8
-OW_String::toUInt8() const
+OW_String::toUInt8(int base) const
 {
-	return convertToUIntType<OW_UInt8>(m_buf, "OW_UInt8");
+	return convertToUIntType<OW_UInt8>(m_buf, "OW_UInt8", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int8
-OW_String::toInt8() const
+OW_String::toInt8(int base) const
 {
-	return convertToIntType<OW_Int8>(m_buf, "OW_Int8");
+	return convertToIntType<OW_Int8>(m_buf, "OW_Int8", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt16
-OW_String::toUInt16() const
+OW_String::toUInt16(int base) const
 {
-	return convertToUIntType<OW_UInt16>(m_buf, "OW_UInt16");
+	return convertToUIntType<OW_UInt16>(m_buf, "OW_UInt16", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int16
-OW_String::toInt16() const
+OW_String::toInt16(int base) const
 {
-	return convertToIntType<OW_Int16>(m_buf, "OW_Int16");
+	return convertToIntType<OW_Int16>(m_buf, "OW_Int16", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt32
-OW_String::toUInt32() const
+OW_String::toUInt32(int base) const
 {
-	return convertToUIntType<OW_UInt32>(m_buf, "OW_UInt32");
+	return convertToUIntType<OW_UInt32>(m_buf, "OW_UInt32", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int32
-OW_String::toInt32() const
+OW_String::toInt32(int base) const
 {
-	return convertToIntType<OW_Int32>(m_buf, "OW_Int32");
+	return convertToIntType<OW_Int32>(m_buf, "OW_Int32", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt64
-OW_String::toUInt64() const
+OW_String::toUInt64(int base) const
 {
-	return convertToUInt64Type<OW_UInt64>(m_buf, "OW_UInt64");
+	return convertToUInt64Type<OW_UInt64>(m_buf, "OW_UInt64", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int64
-OW_String::toInt64() const
+OW_String::toInt64(int base) const
 {
-	return convertToInt64Type<OW_Int64>(m_buf, "OW_Int64");
+	return convertToInt64Type<OW_Int64>(m_buf, "OW_Int64", base);
 }
 
 //////////////////////////////////////////////////////////////////////////////

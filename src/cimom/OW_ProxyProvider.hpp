@@ -44,12 +44,15 @@
 #include "OW_CppPropertyProviderIFC.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
+#include "OW_CIMValue.hpp"
 
 class OW_AssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
 public:
 
-	OW_AssociatorProviderProxy(OW_CppAssociatorProviderIFCRef pProv);
+	OW_AssociatorProviderProxy(OW_CppAssociatorProviderIFCRef pProv)
+	: OW_AssociatorProviderIFC(), m_pProv(pProv)
+	{}
 	
 	virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
@@ -61,7 +64,11 @@ public:
 			const OW_String& resultRole,
 			const OW_Bool& includeQualifiers,
 			const OW_Bool& includeClassOrigin,
-			const OW_StringArray* propertyList);
+			const OW_StringArray* propertyList)
+	{
+		m_pProv->associators(env,assocName,objectName,result,resultClass,role,
+			resultRole,includeQualifiers,includeClassOrigin,propertyList);
+	}
 
 	virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
@@ -70,7 +77,11 @@ public:
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& resultClass,
 			const OW_String& role,
-			const OW_String& resultRole);
+			const OW_String& resultRole)
+	{
+		m_pProv->associatorNames(env,assocName,objectName,result,resultClass,
+			role,resultRole);
+	}
 
 	virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
@@ -80,14 +91,21 @@ public:
 			const OW_String& role,
 			const OW_Bool& includeQualifiers,
 			const OW_Bool& includeClassOrigin,
-			const OW_StringArray* propertyList);
+			const OW_StringArray* propertyList)
+	{
+		m_pProv->references(env,assocName,objectName,result,role,
+			includeQualifiers,includeClassOrigin,propertyList);
+	}
 
 	virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_String& role);
+			const OW_String& role)
+	{
+		m_pProv->referenceNames(env,assocName,objectName,result,role);
+	}
 
 private:
 	OW_CppAssociatorProviderIFCRef m_pProv;
@@ -96,18 +114,28 @@ private:
 class OW_InstanceProviderProxy : public OW_InstanceProviderIFC
 {
 public:
-	OW_InstanceProviderProxy(OW_CppInstanceProviderIFCRef pProv);
+	OW_InstanceProviderProxy(OW_CppInstanceProviderIFCRef pProv)
+		: OW_InstanceProviderIFC()
+		, m_pProv(pProv)
+	{}
+
 
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop);
+			const OW_CIMObjectPath& cop)
+	{
+		m_pProv->deleteInstance(env,cop);
+	}
 
 	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_Bool& deep,
-			const OW_CIMClass& cimClass);
+			const OW_CIMClass& cimClass)
+	{
+		m_pProv->enumInstanceNames(env,cop,result,deep,cimClass);
+	}
 
 	virtual void enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
@@ -115,23 +143,35 @@ public:
 			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly);
+			const OW_Bool& localOnly)
+	{
+		m_pProv->enumInstances(env,cop,result,deep,cimClass,localOnly);
+	}
 
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly);
+			const OW_Bool& localOnly)
+	{
+		return m_pProv->getInstance(env,cop,cimClass,localOnly);
+	}
 
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance);
+			const OW_CIMInstance& cimInstance)
+	{
+		return m_pProv->createInstance(env,cop,cimInstance);
+	}
 
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance);
+			const OW_CIMInstance& cimInstance)
+	{
+		m_pProv->modifyInstance(env,cop,cimInstance);
+	}
 
 private:
 	OW_CppInstanceProviderIFCRef m_pProv;
@@ -141,14 +181,20 @@ class OW_MethodProviderProxy : public OW_MethodProviderIFC
 {
 public:
 
-	OW_MethodProviderProxy(OW_CppMethodProviderIFCRef pProv);
+	OW_MethodProviderProxy(OW_CppMethodProviderIFCRef pProv)
+	: OW_MethodProviderIFC()
+	, m_pProv(pProv)
+	{}
 
 	virtual OW_CIMValue invokeMethod(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& methodName,
 			const OW_CIMValueArray& in,
-			OW_CIMValueArray& out);
+			OW_CIMValueArray& out)
+	{
+		return m_pProv->invokeMethod(env,cop,methodName,in,out);
+	}
 
 private:
 
@@ -158,19 +204,29 @@ private:
 class OW_PropertyProviderProxy : public OW_PropertyProviderIFC
 {
 public:
-	OW_PropertyProviderProxy(OW_CppPropertyProviderIFCRef pProv);
+	OW_PropertyProviderProxy(OW_CppPropertyProviderIFCRef pProv)
+	: OW_PropertyProviderIFC()
+	, m_pProv(pProv)
+	{}
+
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
-			const OW_String& propertyName);
+			const OW_String& propertyName)
+	{
+		return m_pProv->getPropertyValue(env,cop,originClass,propertyName);
+	}
 
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName, 	
-			const OW_CIMValue& val);
+			const OW_CIMValue& val)
+	{
+		m_pProv->setPropertyValue(env,cop,originClass,propertyName,val);
+	}
 
 private:
 	OW_CppPropertyProviderIFCRef m_pProv;
