@@ -151,7 +151,7 @@ namespace
 	{
 		bool operator()(const OW_CIMInstance& x, const OW_CIMInstance& y) const
 		{
-			return OW_CIMObjectPath(x) == OW_CIMObjectPath(y);
+			return OW_CIMObjectPath(x) < OW_CIMObjectPath(y);
 		}
 	};
 } // end anonymous namespace
@@ -221,7 +221,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			{
 				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
-				expInst.setProperty("SourceInstance", OW_CIMValue(*pi));
+				expInst.setProperty("SourceInstance", OW_CIMValue(*ci));
 				hdl->exportIndication(expInst, m_ns);
 			}
 			++ci;
