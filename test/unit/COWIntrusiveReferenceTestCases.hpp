@@ -33,6 +33,7 @@
 
 #include "OW_config.h"
 #include "TestCase.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 
 class COWIntrusiveReferenceTestCases : public TestCase
 {
@@ -46,7 +47,21 @@ public:
 
 private:
 	// test methods
-	void testSomething();
+	void n_element_type();
+	void default_constructor();
+	void pointer_constructor();
+	void copy_constructor();
+	void n_destructor();
+	void n_access();
+	void n_swap();
+	void n_comparison();
+	void n_transitive();
+	void n_report_1();
+
+
+	// helpers
+	template<class T, class U> void test2(OpenWBEM::COWIntrusiveReference<T> const & p, OpenWBEM::COWIntrusiveReference<U> const & q);
+	template<class T> void test3(OpenWBEM::COWIntrusiveReference<T> const & p, OpenWBEM::COWIntrusiveReference<T> const & q);
 };
 
 #endif
