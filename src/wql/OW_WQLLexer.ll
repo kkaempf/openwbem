@@ -579,7 +579,7 @@ myinput(char* buf, int max)
 	int len;
 
 	if (parseCh == NULL)
-		parseCh = WQLImpl::parserInput;
+		parseCh = WQLImpl::getParserInput();
 	len = strlen(parseCh);		/* remaining data available */
 	/* Note: this code used to think that flex wants a null-terminated
 	 * string.  It does NOT, and returning 1 less character than it asks

@@ -55,11 +55,21 @@ public:
 		CIMOMHandleIFCRef hdl);
 	virtual WQLSelectStatement createSelectStatement(const String& query);
 	virtual bool supportsQueryLanguage(const String& lang);
+
+	static stmt* setStatement(stmt* statement)
+	{
+		s_statement = statement;
+		return statement;
+	}
+
+	static const char* getParserInput()
+	{
+		return s_parserInput;
+	}
 private:
-	static Mutex classLock;
-public:
-	static const char* parserInput;
-	static stmt* statement;
+	static Mutex s_classLock;
+	static const char* s_parserInput;
+	static stmt* s_statement;
 };
 		
 } // end namespace OpenWBEM

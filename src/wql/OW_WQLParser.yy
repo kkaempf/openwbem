@@ -298,13 +298,13 @@ using namespace OpenWBEM;
 
 stmt:
 	selectStmt optSemicolon
-	  { $$ = WQLImpl::statement = new stmt_selectStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::setStatement(new stmt_selectStmt_optSemicolon($1, $2)); }
 	| updateStmt optSemicolon
-	  { $$ = WQLImpl::statement = new stmt_updateStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::setStatement(new stmt_updateStmt_optSemicolon($1, $2)); }
 	| insertStmt optSemicolon
-	  { $$ = WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::setStatement(new stmt_insertStmt_optSemicolon($1, $2)); }
 	| deleteStmt optSemicolon
-	  { $$ = WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::setStatement(new stmt_deleteStmt_optSemicolon($1, $2)); }
 	;
 
 
