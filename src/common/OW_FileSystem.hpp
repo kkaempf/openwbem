@@ -32,6 +32,8 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_ArrayFwd.hpp"
+#include "OW_Exception.hpp"
+
 #ifdef OW_HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
@@ -41,6 +43,8 @@
 
 namespace OpenWBEM
 {
+
+OW_DECLARE_EXCEPTION(FileSystem)
 
 class File;
 class String;
@@ -208,11 +212,25 @@ namespace FileSystem
 	 * @param filename  The name of the file to write the random data to
 	 */
 	void initRandomFile(const String& file);
+	/**
+	 * Read and return the contents of a text file.  If the file contains a null
+	 * character ('\0') then only previous data will be returned.
+	 * @param filename The name of the file to read
+	 * @exception FileSystemException if the file doesn't exist or reading fails
+	 * for any reason.
+	 */
+	String getFileContents(const String& filename);
+	/**
+	 * Read and return the lines of a test file. If the file contains a null
+	 * character ('\0') then only previous data will be returned.
+	 * @param filename The name of the file to read
+	 * @exception FileSystemException if the file doesn't exist or reading fails
+	 * for any reason.
+	 */
+	StringArray getFileLines(const String& filename);
 
 } // end namespace FileSystem
 
 } // end namespace OpenWBEM
-
-//namespace OW_FileSystem = OpenWBEM::FileSystem;
 
 #endif

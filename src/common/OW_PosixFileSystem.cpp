@@ -30,13 +30,13 @@
 #include "OW_config.h"
 #include "OW_FileSystem.hpp"
 #include "OW_RandomNumber.hpp"
-#include "OW_Exception.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_File.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
+
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -53,17 +53,20 @@ extern "C"
 #endif
 }
 #include <cstdio> // for rename
+#include <fstream>
 
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(FileSystem)
 OW_DEFINE_EXCEPTION(FileSystem)
+
+namespace FileSystem
+{
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-FileSystem::changeFileOwner(const String& filename,
+changeFileOwner(const String& filename,
 	const UserId& userId)
 {
 	return ::chown(filename.c_str(), userId, gid_t(-1));
@@ -71,14 +74,14 @@ FileSystem::changeFileOwner(const String& filename,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 File
-FileSystem::openFile(const String& path)
+openFile(const String& path)
 {
 	return File(::open(path.c_str(), O_RDWR));
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 File
-FileSystem::createFile(const String& path)
+createFile(const String& path)
 {
 	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
 	if(fd != -1)
@@ -90,31 +93,31 @@ FileSystem::createFile(const String& path)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 File
-FileSystem::openOrCreateFile(const String& path)
+openOrCreateFile(const String& path)
 {
 	return File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::exists(const String& path)
+exists(const String& path)
 {
 	return access(path.c_str(), F_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::canRead(const String& path)
+canRead(const String& path)
 {
 	return access(path.c_str(), R_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::canWrite(const String& path)
+canWrite(const String& path)
 {
 	return access(path.c_str(), W_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::isDirectory(const String& path)
+isDirectory(const String& path)
 {
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
@@ -123,19 +126,19 @@ FileSystem::isDirectory(const String& path)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::changeDirectory(const String& path)
+changeDirectory(const String& path)
 {
 	return chdir(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::makeDirectory(const String& path, int mode)
+makeDirectory(const String& path, int mode)
 {
 	return mkdir(path.c_str(), mode) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::getFileSize(const String& path, UInt32& size)
+getFileSize(const String& path, UInt32& size)
 {
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
@@ -145,19 +148,19 @@ FileSystem::getFileSize(const String& path, UInt32& size)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::removeDirectory(const String& path)
+removeDirectory(const String& path)
 {
 	return rmdir(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::removeFile(const String& path)
+removeFile(const String& path)
 {
 	return unlink(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::getDirectoryContents(const String& path,
+getDirectoryContents(const String& path,
 	StringArray& dirEntries)
 {
 	static Mutex readdirGuard;
@@ -178,14 +181,14 @@ FileSystem::getDirectoryContents(const String& path,
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-FileSystem::renameFile(const String& oldFileName,
+renameFile(const String& oldFileName,
 	const String& newFileName)
 {
 	return ::rename(oldFileName.c_str(), newFileName.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
+read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	long offset)
 {
 	if(offset != -1L)
@@ -200,7 +203,7 @@ FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
+write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	long offset)
 {
 	if(offset != -1L)
@@ -215,37 +218,37 @@ FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-FileSystem::seek(FileHandle& hdl, off_t offset, int whence)
+seek(FileHandle& hdl, off_t offset, int whence)
 {
 	return ::lseek(hdl, offset, whence);
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
-FileSystem::tell(FileHandle& hdl)
+tell(FileHandle& hdl)
 {
 	return ::lseek(hdl, 0, SEEK_CUR);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-FileSystem::rewind(FileHandle& hdl)
+rewind(FileHandle& hdl)
 {
 	::lseek(hdl, 0, SEEK_SET);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-FileSystem::close(FileHandle& hdl)
+close(FileHandle& hdl)
 {
 	return ::close(hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-FileSystem::flush(FileHandle&)
+flush(FileHandle&)
 {
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-FileSystem::initRandomFile(const String& filename)
+initRandomFile(const String& filename)
 {
 	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	if (hdl == -1)
@@ -261,5 +264,25 @@ FileSystem::initRandomFile(const String& filename)
 	::close(hdl);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+String getFileContents(const String& filename)
+{
+	std::ifstream in(filename.c_str());
+	if (!in)
+	{
+		OW_THROW(FileSystemException, Format("Failed to open file %1", filename).c_str());
+	}
+	OStringStream ss;
+	ss << in.rdbuf();
+	return ss.toString();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+StringArray getFileLines(const String& filename)
+{
+	return getFileContents(filename).tokenize("\r\n");
+}
+
+} // end namespace FileSystem
 } // end namespace OpenWBEM
 
