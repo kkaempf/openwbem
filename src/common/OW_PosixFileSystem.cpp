@@ -178,6 +178,22 @@ canWrite(const String& path)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
+isLink(const String& path)
+{
+#ifdef OW_WIN32
+  struct _stat st;
+  if(_stat(path.c_str(), &st) !=0)
+    return false;
+  return ((st.st_mode & _S_IFLNK) != 0);
+#else
+  struct stat st;
+  if(stat(path.c_str(), &st) != 0)
+    return false;
+  return S_ISLNK(st.st_mode);
+#endif
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
 isDirectory(const String& path)
 {
 #ifdef OW_WIN32

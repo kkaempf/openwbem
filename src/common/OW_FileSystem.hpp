@@ -101,6 +101,10 @@ namespace FileSystem
 	 * @return true if the file exists and can be written
 	 */
 	bool canWrite(const String& path);
+  /**
+   * @return true if file exists and is a symbolic link
+   */
+  bool isLink(const String& path);
 	/**
 	 * @return true if file exists and is a directory
 	 */
