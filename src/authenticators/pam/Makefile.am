@@ -26,6 +26,6 @@ INCLUDES = \
 else
 clean-local:
 
-EXTRA_DIST = OW_LinuxPAMAuthentication.cpp
 
 endif
+EXTRA_DIST = OW_LinuxPAMAuthentication.cpp
