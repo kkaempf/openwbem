@@ -147,6 +147,43 @@ CreateNameSpace()
 	$CREATENS $OWURL /root/$1
 }
 
+###########################################################################
+WAIT_RESULTS=1
+WaitForLogResults()
+{
+  WAIT_RESULTS=1
+  if [ $# -lt 2 ]
+  then
+    echo "WaitForLogResults requires at least TWO arguments (string, max wait, [lines])."
+  fi
+  TEXT="$1"
+  MAX_WAIT=$2
+  LINES_TO_SEARCH=20
+
+  if [ $# -gt 2 ]; then
+    LINES_TO_SEARCH=$3
+  fi
+
+  echo "Waiting up to $MAX_WAIT seconds for \"$TEXT\"".
+
+  let WAIT_LEFT=$MAX_WAIT
+  while [ $WAIT_LEFT -gt 0 ]
+  do
+    tail -n $LINES_TO_SEARCH $RESULTDIR/owcimomd.output 2>/dev/null | grep -- "$TEXT" >/dev/null 2>/dev/null
+    if [ $? -ne 0 ]; then
+      sleep 1
+      let WAIT_LEFT-=1
+    else
+      let SECONDS_WAITED=$MAX_WAIT-$WAIT_LEFT
+      WAIT_RESULTS=0
+      echo "Found text (waited $SECONDS_WAITED seconds)."
+      break
+    fi
+  done
+  unset TEXT
+  unset MAX_WAIT
+  unset LINES_TO_SEARCH
+}
 
 #############################################################################
 StartDaemon()
@@ -172,11 +209,11 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	if [ "$OWVALGRIND" = "1" ]; then
-		sleep 30
-	else
-		sleep 3
-	fi
+	WaitForLogResults 'CIMOM is now running' 60 20
+	if [ $WAIT_RESULTS -eq 0 ]
+        then
+          echo "The daemon should now be running."
+        fi
 	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
 	  echo "** Daemon failed to start!  Another instance could be running Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
@@ -211,11 +248,11 @@ RestartDaemon()
 		fi
 	fi
 	echo "Waiting for daemon to re-initialize"
-	if [ "$OWVALGRIND" = "1" ]; then
-		sleep 30
-	else
-		sleep 4
-	fi
+	WaitForLogResults 'CIMOM is now running' 60 20
+	if [ $WAIT_RESULTS -eq 0 ]
+        then
+          echo "The daemon should now be running."
+        fi
 	PID=`cat $PIDFILE`
 	if kill -0 $PID; then # Test if it's running
 		:
@@ -958,56 +995,80 @@ BUILDDIR=$STAGEDIR/../../..
 PIDFILE=$STAGEDIR/@PACKAGE_PREFIX@owcimomd.pid
 
 LD_LIBRARY_PATH="$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH
+LIBPATH="$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH LIBPATH
 
 RANDFILE=$STAGEDIR/ssl_randfile
 export RANDFILE
 
+echo "Install"
 Install
 
 cd $STAGEDIR
 
+echo "Daemon Start"
 StartDaemon
 
 if [ "z$OWLONGTEST" = "z1" ]; then
+  echo "TestAuth"
   TestAuth
+  echo "TestACL"
   TestACL
 fi
 
+echo "SetupInteropSchema"
 SetupInteropSchema
+echo "TestMof"
 TestMof
 
+echo "testsuiteTCPXML"
 TestSuite "http://test1:pass1@localhost:30926" "testsuiteTCPXML.out" "testsuite28.out"
+echo "testsuiteUDSBIN"
 TestSuite "ipc://test1:pass1@localhost/ -e owbinary " "testsuiteUDSBIN.out" "testsuite28.out"
 
+echo "TestCIMExceptions 1"
 TestCIMExceptions "http://test1:pass1@localhost:30926"
+echo "TestCIMExceptions 2"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
 
+echo "TestNamespaces 1"
 TestNamespaces "http://test1:pass1@localhost:30926"
+echo "TestNamespaces 2"
 TestNamespaces "ipc://test1:pass1@localhost/owbinary"
 
+echo "TestMisc 1"
 TestMisc "http://test1:pass1@localhost:30926"
+echo "TestMisc 2"
 TestMisc "ipc://test1:pass1@localhost/owbinary"
 
+echo "TestIndications"
 TestIndications
 
+echo "TestWQL"
 TestWQL
 
+echo "TestMultiReq"
 TestMultiReq
 
 if [ "z$OWLONGTEST" = "z1" ]; then
+  echo "TestHammer 1"
   TestHammer "http://test1:pass1@localhost:30926"
+  echo "TestHammer 1"
   TestHammer "ipc://test1:pass1@localhost/owbinary"
 fi
 
+echo "StopDaemon"
 StopDaemon
 
 
 if [ "z$OWLONGTEST" = "z1" ]; then
+  echo "TestInstalledHeaders"
   TestInstalledHeaders
+  echo "TestInstalledHeadersOneByOne"
   TestInstalledHeadersOneByOne
 fi
 
+echo "CoreCheck"
 CoreCheck
 
 Exit 0
