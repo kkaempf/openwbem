@@ -150,11 +150,10 @@ private:
 class SelectEngineThread : public Thread
 {
 public:
-	SelectEngineThread(Reference<Array<SelectablePair_t> > selectables,
-		SelectableIFCRef stopObject)
+	SelectEngineThread(Reference<Array<SelectablePair_t> > selectables)
 	: Thread()
 	, m_selectables(selectables)
-	, m_stopObject(stopObject)
+	, m_stopObject(UnnamedPipe::createUnnamedPipe())
 	{}
 	/**
 	 * The method that will be run when the start method is called on this
@@ -173,9 +172,18 @@ public:
 		engine.go();
 		return 0;
 	}
+	virtual void doCooperativeCancel()
+	{
+		// write something into the stop pipe to stop the select engine so the
+		// thread will exit
+		if (m_stopObject->writeInt(0) == -1)
+		{
+			OW_THROW(IOException, "Writing to the termination pipe failed");
+		}
+	}
 private:
 	Reference<Array<SelectablePair_t> > m_selectables;
-	SelectableIFCRef m_stopObject;
+	UnnamedPipeRef m_stopObject;
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
@@ -200,8 +208,7 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(LoggerRef logger)
 	m_httpListenPort = m_httpServer->getLocalHTTPAddress().getPort();
 	m_httpsListenPort = m_httpServer->getLocalHTTPSAddress().getPort();
 	// start a thread to run the http server
-	m_stopHttpPipe = UnnamedPipe::createUnnamedPipe();
-	m_httpThread = new SelectEngineThread(selectables, m_stopHttpPipe);
+	m_httpThread = new SelectEngineThread(selectables);
 	m_httpThread->start();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -245,18 +252,9 @@ HTTPXMLCIMListener::~HTTPXMLCIMListener()
 void
 HTTPXMLCIMListener::shutdownHttpServer()
 {
-	if (m_stopHttpPipe)
-	{
-		// write something into the stop pipe to stop the select engine so the
-		// thread will exit
-		if (m_stopHttpPipe->writeInt(0) == -1)
-		{
-			OW_THROW(IOException, "Writing to the termination pipe failed");
-		}
-		m_stopHttpPipe = 0;
-	}
 	if (m_httpThread)
 	{
+		m_httpThread->definitiveCancel();
 		// wait for the thread to quit
 		m_httpThread->join();
 		m_httpThread = 0;
