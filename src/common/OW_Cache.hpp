@@ -161,13 +161,16 @@ Cache<T>::setMaxCacheSize(UInt32 max)
 {
 	MutexLock l(cacheGuard);
 	maxCacheSize = max;
-	while(theCacheIndex.size() >= maxCacheSize)
+	if (max != 0)
 	{
-		if (!theCache.empty())
+		while(theCacheIndex.size() >= maxCacheSize)
 		{
-			String key = theCache.begin()->second;
-			theCache.pop_front();
-			theCacheIndex.erase(key);
+			if (!theCache.empty())
+			{
+				String key = theCache.begin()->second;
+				theCache.pop_front();
+				theCacheIndex.erase(key);
+			}
 		}
 	}
 }
