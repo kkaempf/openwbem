@@ -60,7 +60,7 @@ public:
 	struct CLSData;
 	/** Name of the internal namespace class */
 	static const char* const NAMESPACECLASS;
-	static const UInt32 VERSION = 1;	// Version # for serialization
+	enum { _VERSION_ = 1 };
 	/**
 	 * Create a new CIMClass object.
 	 */

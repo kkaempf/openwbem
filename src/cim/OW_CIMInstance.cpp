@@ -811,7 +811,7 @@ CIMInstance::readObject(istream &istrm)
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
-	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, VERSION);
+	CIMBase::writeSig(ostrm, OW_CIMINSTANCESIG_V, _VERSION_);
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
 	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
