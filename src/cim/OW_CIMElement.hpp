@@ -51,6 +51,7 @@ namespace OpenWBEM
 class CIMElement : public CIMBase
 {
 public:
+	virtual ~CIMElement();
 	/**
 	 * @return The name of this CIMElement object as an String.
 	 */
