@@ -201,8 +201,6 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 			strerror(errno)).c_str());
 	}
 
-	int lerrno;
-
 	int n;
 	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
@@ -217,10 +215,9 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	{
 		if(errno != EINPROGRESS)
 		{
-			lerrno = errno;
 			::close(m_sockfd);
 			OW_THROW(OW_SocketException,
-				format("Failed to connect to: %1", addr.getAddress()).c_str());
+				format("Failed to connect to: %1: %2(%3)", addr.getAddress(), errno, strerror(errno)).c_str());
 		}
 	}
 
