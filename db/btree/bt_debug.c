@@ -44,7 +44,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined (OW_HAVE_INTTYPES_H) && ! defined(OW_DARWIN)
+/* If <inttypes.h> doesn't #define PRIu32 and PRIx32, we don't need it.*/
+#if defined (OW_HAVE_INTTYPES_H) && defined(INTTYPES_H_DEFINES_PRI)
 #include <inttypes.h>
 #else
 #define PRIu32 "u"
