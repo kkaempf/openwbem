@@ -59,11 +59,7 @@ static char* dupString(const char* str)
 //////////////////////////////////////////////////////////////////////////////					 
 OW_Exception::OW_Exception() : 
 	m_file(0), m_line(0), m_msg(0), 
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	m_stackTrace(OW_StackTrace::getStackTrace())
-#else
-	m_stackTrace(0)
-#endif
 {
 	m_mutex.acquire();
 }
@@ -71,11 +67,7 @@ OW_Exception::OW_Exception() :
 //////////////////////////////////////////////////////////////////////////////					 
 OW_Exception::OW_Exception(const char* file, int line, const char* msg) :
 	m_file(0), m_line(line), m_msg(0),
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	m_stackTrace(OW_StackTrace::getStackTrace())
-#else
-	m_stackTrace(0)
-#endif
 {
 	m_mutex.acquire();
 	if(file)
@@ -92,11 +84,7 @@ OW_Exception::OW_Exception(const char* file, int line, const char* msg) :
 //////////////////////////////////////////////////////////////////////////////					 
 OW_Exception::OW_Exception(const char* msg) : 
 	m_file(0), m_line(0), m_msg(0),
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	m_stackTrace(OW_StackTrace::getStackTrace())
-#else
-	m_stackTrace(0)
-#endif
 {
 	m_mutex.acquire();
 	if(msg)

@@ -471,14 +471,23 @@ CIMInstanceSetStringProperty(NPIHandle* npiHandle, CIMInstance ci,
 
 	if(value)
 	{
-		if(strlen(value)>0) Val = OW_String(value);
-		else Val = OW_String("-empty-");
+		if(strlen(value)>0)
+		{
+			 Val = OW_String(value);
+		}
+		else 
+		{
+			Val = OW_String("-empty-");
+		}
 	}
-	else Val = OW_String("-empty-");
+	else
+	{
+		 Val = OW_String("-empty-");
+	}
 
 
 	OW_CIMValue Value(Val);
-        owci->setProperty(Key,Value);
+   owci->setProperty(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////

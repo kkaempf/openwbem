@@ -19,7 +19,7 @@
  * in this case the library has to be SampleProvider.dll (win) or 
  * libSampleProvider.so (unix)
  */
-PROVIDER_NAME (SampleProvider)
+PROVIDER_NAME (sampleprovider)
 
 
 /* these two functions have to be written for any CIM provider */
@@ -41,10 +41,11 @@ static void cleanup ( NPIHandle *npiHandle )
 static Vector enumInstanceNames ( NPIHandle *npiHandle, CIMObjectPath cop, 
 				  int bool_deep, CIMClass cc ) 
 {
+	Vector vec = VectorNew(npiHandle);
 	(void)cop;
 	(void)bool_deep;
 	(void)cc;
-  return VectorNew( npiHandle );
+  return vec;
 }
 
 static Vector enumInstances ( NPIHandle *npiHandle, CIMObjectPath cop, 

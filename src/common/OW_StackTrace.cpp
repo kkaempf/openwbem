@@ -53,47 +53,52 @@ using std::flush;
 OW_StackTrace* OW_StackTrace::getStackTrace()
 {
 	OW_StackTrace* retval = 0;
-	ifstream file(DEFAULT_GDB_PATH);
-	if (file)
+#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+	if (getenv("OW_STACKTRACE"))
 	{
-		file.close();
-		OW_String scriptName("/tmp/owgdb-");
-		OW_String outputName("/tmp/owgdbout-");
-		// TODO: don't use getppid, get it from somewhere else!
-		outputName += OW_String(OW_UInt32(::getpid()));
-		scriptName += OW_String(OW_UInt32(::getpid())) + ".sh";
-		OW_String exeName("/proc/");
-		exeName += OW_String(OW_UInt32(::getppid())) + "/exe";
-		
-		ofstream scriptFile(scriptName.c_str(), std::ios::out);
-		scriptFile << "#!/bin/sh\n"
-			<< "gdb " << exeName << " " << ::getppid() << " << EOS > " << outputName << " 2>&1\n"
-			<< "thread apply all bt\n"
-			<< "detach\n"
-			<< "q\n"
-			<< "EOS\n" << flush;
-		scriptFile.close();
-
-		OW_Array<OW_String> command;
-		command.push_back( "/bin/sh" );
-		command.push_back( scriptName );
-		OW_Exec::safeSystem(command);
-
-
-		ifstream outputFile(outputName.c_str(), std::ios::in);
-
-		OW_String output;
-		while (outputFile)
+		ifstream file(DEFAULT_GDB_PATH);
+		if (file)
 		{
-			output += OW_String::getLine(outputFile) + "\n";
+			file.close();
+			OW_String scriptName("/tmp/owgdb-");
+			OW_String outputName("/tmp/owgdbout-");
+			// TODO: don't use getppid, get it from somewhere else!
+			outputName += OW_String(OW_UInt32(::getpid()));
+			scriptName += OW_String(OW_UInt32(::getpid())) + ".sh";
+			OW_String exeName("/proc/");
+			exeName += OW_String(OW_UInt32(::getppid())) + "/exe";
+			
+			ofstream scriptFile(scriptName.c_str(), std::ios::out);
+			scriptFile << "#!/bin/sh\n"
+				<< "gdb " << exeName << " " << ::getppid() << " << EOS > " << outputName << " 2>&1\n"
+				<< "thread apply all bt\n"
+				<< "detach\n"
+				<< "q\n"
+				<< "EOS\n" << flush;
+			scriptFile.close();
+
+			OW_Array<OW_String> command;
+			command.push_back( "/bin/sh" );
+			command.push_back( scriptName );
+			OW_Exec::safeSystem(command);
+
+
+			ifstream outputFile(outputName.c_str(), std::ios::in);
+
+			OW_String output;
+			while (outputFile)
+			{
+				output += OW_String::getLine(outputFile) + "\n";
+			}
+
+			outputFile.close();
+			unlink(outputName.c_str());
+			unlink(scriptName.c_str());
+
+			retval = new OW_StackTrace(output);
 		}
-
-		outputFile.close();
-		unlink(outputName.c_str());
-		unlink(scriptName.c_str());
-
-		retval = new OW_StackTrace(output);
 	}
+#endif // OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	return retval;
 }
 

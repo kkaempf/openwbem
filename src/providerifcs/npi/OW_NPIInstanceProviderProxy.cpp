@@ -113,50 +113,47 @@ OW_NPIInstanceProviderProxy::enumInstances(
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
 
-        if (m_ftable->fp_enumInstances!= NULL)
-        {
-            ::NPIHandle _npiHandle = { 0,0,0,0};
+        if (m_ftable->fp_enumInstances == NULL)
+		  {
+			  OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+		  }
+	 
+			::NPIHandle _npiHandle = { 0,0,0,0};
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 
-            CIMClass _cc = { static_cast<void *> (&cimClass)};
+			CIMClass _cc = { static_cast<void *> (&cimClass)};
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+			CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
-            int de = deep;
-            int lo = localOnly;
-            ::Vector v =
-                m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
+			int de = deep;
+			int lo = localOnly;
+			::Vector v =
+				 m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
 
-            OW_NPIVectorFreer vf1(v);
+			OW_NPIVectorFreer vf1(v);
 
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(OW_CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
+			if (_npiHandle.errorOccurred)
+			{
+				 OW_THROWCIMMSG(OW_CIMException::FAILED,
+					  _npiHandle.providerError);
+			}
 
-            CIMInstance my_inst;
-            for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
-            {
-                my_inst.ptr = _VectorGet(&_npiHandle,v,i);
-                OW_CIMInstance ow_inst(*
-                    static_cast<OW_CIMInstance *>(my_inst.ptr) );
+			CIMInstance my_inst;
+			for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
+			{
+				 my_inst.ptr = _VectorGet(&_npiHandle,v,i);
+				 OW_CIMInstance ow_inst(*
+					  static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
 // FIXME
-                ow_inst.setClassName(cimClass.getName());
+				 ow_inst.setClassName(cimClass.getName());
 
-                rval.addElement(ow_inst);
-            }
-
-        }
-        else
-        {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
-        }
+				 rval.addElement(ow_inst);
+			}
 
         return rval;
 }

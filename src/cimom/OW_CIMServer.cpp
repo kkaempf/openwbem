@@ -39,6 +39,7 @@
 #include "OW_Format.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_CIM.hpp"
+#include "OW_Assertion.hpp"
 
 OW_Reference<OW_AccessMgr> m_accessMgr;
 
@@ -886,6 +887,15 @@ OW_CIMServer::getCIMInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 
 	OW_Bool deepHonored = _getCIMInstances(lcop, theClass, en, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+	// DEBUG
+	//OW_ASSERT(en.numberOfElements() == 1);
+	//OW_CIMInstance debugInst = en.nextElement();
+	//en.addElement(debugInst);
+	//OW_CIMPropertyArray debugProps = debugInst.getKeyValuePairs();
+	//cerr << "*** number of properties: " << debugProps.size() << endl;
+	//OW_CIMProperty debugProp = debugProps[0];
+	//cerr << "*** property name: " << debugProp.getName() << " value: " << debugProp.getValue() << endl;
+	// end of DEBUG
 
 	// If this is the namespace class or we're not going deep or the deep flag
 	// was already honored, then we're done
