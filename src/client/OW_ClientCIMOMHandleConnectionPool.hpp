@@ -39,9 +39,7 @@
 #include "OW_CommonFwd.hpp"
 #include "OW_ClientFwd.hpp"
 #include "OW_Mutex.hpp"
-//#include "OW_String.hpp"
-//#include "OW_ClientCIMOMHandle.hpp"
-//#include "OW_IntrusiveReference.hpp"
+#include "OW_String.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
 #include <map>
