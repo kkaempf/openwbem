@@ -16,4 +16,5 @@ OW_ServiceIFC.hpp \
 OW_WQLIFC.hpp
 
 INCLUDES = \
--I$(top_srcdir)/src/common
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/cim

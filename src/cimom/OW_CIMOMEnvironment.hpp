@@ -40,17 +40,6 @@
 #include "OW_Map.hpp"
 #include "OW_Array.hpp"
 
-//#include "OW_ServiceIFC.hpp"
-//#include "OW_RequestHandlerIFC.hpp"
-
-//#include "OW_CIMFwd.hpp"
-//#include "OW_RepositoryIFC.hpp"
-//#include "OW_AuthManager.hpp"
-//#include "OW_ProviderManager.hpp"
-//#include "OW_PollingManager.hpp"
-//#include "OW_IndicationServer.hpp"
-//#include "OW_RequestHandlerIFC.hpp"
-
 class OW_CIMServer;
 class OW_CIMOMHandleIFC;
 class OW_RequestHandlerIFC;

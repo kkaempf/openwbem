@@ -41,15 +41,68 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_XMLParser.hpp"
+#include "OW_XMLException.hpp"
 
 using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
-: OW_RequestHandlerIFCXML(), m_hasError(false), m_callback(callback)
+: OW_RequestHandlerIFC(), m_hasError(false), m_callback(callback)
 {
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_XMLListener::doProcess(istream* istr, ostream* ostrEntity,
+	ostream* ostrError, const OW_String& userName)
+{
+
+	OW_ASSERT(ostrEntity);
+	OW_ASSERT(ostrError);
+
+	OW_XMLNode node;
+	try
+	{
+		OW_XMLParser parser(istr);
+		node = parser.parse();
+		if (!node)
+		{
+			OW_THROW(OW_XMLException, "Invalid XML node returned from parser");
+		}
+	}
+	catch (OW_XMLException& e)
+	{
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_valid);
+		// TODO outputerror here.
+	}
+
+	node = OW_XMLOperationGeneric::XMLGetCIMElement(node);
+	if (!node)
+	{
+		OW_THROW(OW_CIMErrorException, "failed to find <CIM> tag");
+	}
+
+	// TODO if debugXML log "cim element obtained"
+	node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
+	if (!node)
+	{
+		OW_THROW(OW_CIMErrorException, "failed to find <MESSAGE> tag");
+	}
+
+	executeXML(node, ostrEntity, ostrError, userName);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+static void
+makeXMLHeader(const OW_String& messageID, ostream& ostr)
+{
+	ostr << "<?xml version=\"1.0\" ?>\r\n";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">\r\n";
+	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\"1.0\">\r\n";
+}
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,

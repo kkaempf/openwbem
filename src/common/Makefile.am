@@ -25,7 +25,10 @@ clean-local:
 
 
 
-# Shouldn't depend on anything else. INCLUDES =
+# Shouldn't depend on anything not in common. 
+INCLUDES = \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/ifcs
 
 
 libopenwbem_a_SOURCES =	\
@@ -34,6 +37,7 @@ OW_BaseStreamBuffer.cpp \
 OW_BinIfcIO.cpp \
 OW_Bool.cpp \
 OW_Char16.cpp \
+OW_CIMErrorException.cpp \
 OW_DateTime.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
@@ -69,6 +73,8 @@ OW_BinIfcIO.hpp \
 OW_Bool.hpp \
 OW_ByteSwap.hpp \
 OW_Char16.hpp \
+OW_CIMErrorException.hpp \
+OW_CIMFeatures.hpp \
 OW_ConfigOpts.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \

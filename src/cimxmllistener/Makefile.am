@@ -34,14 +34,14 @@ OW_XMLListener.hpp \
 OW_HTTPXMLCIMListener.hpp
 
 
-INCLUDES = -I$(top_srcdir)/src \
+INCLUDES = \
 -I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/http \
--I$(top_srcdir)/src/services/http \
--I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/common/socket \
--I$(top_srcdir)/src/cimom \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/http/common \
+-I$(top_srcdir)/src/http/client \
+-I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/xml
 

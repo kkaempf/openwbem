@@ -37,4 +37,5 @@ OW_SocketStreamBuffer.hpp \
 OW_SocketUtils.hpp
 
 INCLUDES = \
--I$(top_srcdir)/src/common
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/ifcs

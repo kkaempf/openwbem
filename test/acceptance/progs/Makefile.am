@@ -5,7 +5,11 @@ $(CXXBINLINKFLAGS) \
 -o CIMOMLocator
 
 CIMOMLocator_LDADD = \
--L$(top_builddir)/src/common -lopenwbem
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 CIMOMLocator_SOURCES = \
 CIMOMLocator.cpp
@@ -15,13 +19,23 @@ $(CXXBINLINKFLAGS) \
 -o cimlistener
 
 cimlistener_LDADD = \
--L$(top_builddir)/src/common -L$(top_builddir)/src/services/http -L$(top_builddir)/src/listener -lopenwbem -lowservicehttp -lowhttpxmllistener
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 cimlistener_SOURCES = \
 cimListenerTest.cpp
 
 wqlTest1_LDADD = \
--L$(top_builddir)/src/common -lopenwbem 
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 wqlTest1_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -31,7 +45,11 @@ wqlTest1_SOURCES = \
 wqlTest1.cpp
 
 aclTest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem 
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 aclTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -40,13 +58,16 @@ $(CXXBINLINKFLAGS) \
 aclTest_SOURCES = \
 aclTest.cpp
 
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/cim -I$(top_srcdir)/src/xml \
--I$(top_srcdir)/src/server -I$(top_srcdir)/src/http \
--I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src/client \
+INCLUDES = \
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/server \
+-I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/http/client \
--I$(top_srcdir)/src/net/socket \
--I$(top_srcdir)/src/listener
+-I$(top_srcdir)/src/client \
+-I$(top_srcdir)/src/cimxmllistener
 
-AM_CXXFLAGS = -ftemplate-depth-25
+AM_CXXFLAGS=-ftemplate-depth-25

@@ -186,9 +186,5 @@ private:
 	OW_Bool m_isSuperUser;
 };
 
-#define OW_IPC_AUTHENTICATE			3000	// Authenticate
-#define OW_IPC_FUNCTIONCALL			4000	// Regular function call
-#define OW_IPC_CLOSECONN			9999	// Close connection
-
 #endif	// __OW_IPCCONNECTION_HPP__
 

@@ -1,8 +1,8 @@
 SUBDIRS = \
-common \
 cim \
 ifcs \
 provider \
+common \
  \
 client \
  \

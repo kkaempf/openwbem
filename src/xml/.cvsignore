@@ -6,3 +6,4 @@ Makefile
 *.la
 OW_XMLUnescape.cc
 OW_XMLEscape.cc
+lib*so*

@@ -8,6 +8,10 @@ $(CXXBINLINKFLAGS) \
 newdaemon_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/db/db -lowdb
 #remove the server line once things are separated
 
@@ -23,6 +27,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/server
 
 

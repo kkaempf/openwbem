@@ -31,7 +31,6 @@
 #include "MofCompiler.hpp"
 #include "OW_Format.hpp"
 #include "MofParserDecls.hpp"
-#include "OW_InetSocketBaseImpl.hpp" // for setDumpFiles
 #include "CIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
 #include <assert.h>
@@ -86,10 +85,6 @@ long MofCompiler::compile( const OW_String& filename )
 
         MofCompiler::theErrorHandler->progressMessage("Finished parsing",
                 MofCompiler::theLineInfo);
-
-        #ifdef OW_DEBUG
-        OW_InetSocketBaseImpl::setDumpFiles("/tmp/mofSocketIn", "/tmp/mofSocketOut");
-        #endif
 
         OW_CIMNameSpace ns(true);
         ns.setNameSpace(m_nameSpace);

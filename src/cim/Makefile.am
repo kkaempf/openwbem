@@ -30,7 +30,6 @@ OW_CIMDataType.hpp \
 OW_CIMDateTime.hpp \
 OW_CIMElement.hpp \
 OW_CIMException.hpp \
-OW_CIMFeatures.hpp \
 OW_CIMFlavor.hpp \
 OW_CIMFwd.hpp \
 OW_CIMInstance.hpp \

@@ -31,8 +31,10 @@
 #define __OW_BINIFCIO_HPP__
 
 #include "OW_config.h"
-#include "OW_IPCConnection.hpp"
+#include "OW_Types.h"
 #include "OW_CIMFwd.hpp"
+#include "OW_Bool.hpp"
+#include <iosfwd>
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_BinIfcIO
@@ -119,6 +121,11 @@ public:
 };
 
 // Values for local API calls
+
+#define OW_IPC_AUTHENTICATE			3000	// Authenticate
+#define OW_IPC_FUNCTIONCALL			4000	// Regular function call
+#define OW_IPC_CLOSECONN			9999	// Close connection
+
 #define OW_BIN_DELETECLS			40		// Delete class
 #define OW_BIN_DELETEINST			50		// Delete instance
 #define OW_BIN_DELETEQUAL			60		// Delete qualifier type

@@ -22,8 +22,9 @@ clean-local:
 noinst_LIBRARIES = libowwql.a
 
 INCLUDES = \
--I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/cim	\
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/client
 
 pkginclude_HEADERS = \

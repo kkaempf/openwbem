@@ -21,12 +21,15 @@ clean-local:
 	done
 
 libowrequesthandlercimxml_a_SOURCES = \
+OW_RequestHandlerIFCXML.cpp \
+OW_RequestHandlerIFCXML.hpp \
 OW_XMLExecute.cpp \
 OW_XMLExecute.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/cim
 

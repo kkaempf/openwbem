@@ -38,13 +38,13 @@
 #define __OW_XMLOPERATIONGENERIC_HPP__
 
 
-#include	"OW_config.h"
-#include	"OW_String.hpp"
-#include	"OW_XMLNode.hpp"
-#include	"OW_CIMOMHandleIFC.hpp"
-#include	"OW_Param.hpp"
+#include "OW_config.h"
+#include "OW_String.hpp"
+#include "OW_XMLNode.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_Param.hpp"
 #include "OW_CIMFwd.hpp"
-#include	"OW_XMLParameters.hpp"
+#include "OW_XMLParameters.hpp"
 
 class OW_XMLOperationGeneric : public OW_XMLParameters
 {

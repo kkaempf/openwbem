@@ -23,7 +23,8 @@ clean-local:
 
 
 INCLUDES = \
--I$(top_srcdir)/src/common	\
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim
 
 libowmofc_a_SOURCES = \

@@ -32,7 +32,6 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
-#include "OW_HTTPUtils.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 

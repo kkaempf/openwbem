@@ -1,6 +1,27 @@
-noinst_LIBRARIES = libOW_Xml.a
+include $(top_srcdir)/Makefile-shared-lib.inc
 
-libOW_Xml_a_SOURCES = \
+noinst_LIBRARIES = libowxml.a
+
+OW_SHARED_LIBS = libowxml.so
+thelibdir = $(libdir)
+
+all-local: $(OW_SHARED_LIBS)
+
+install-exec-local:
+	@INSTALL@ -d $(DESTDIR)$(thelibdir)
+	for i in $(OW_SHARED_LIBS); do \
+		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+	done
+	
+clean-local:
+	for i in $(OW_SHARED_LIBS); do \
+		rm -rf $$i* .$$i.libs; \
+	done
+
+
+
+libowxml_a_SOURCES = \
 OW_XMLAttribute.cpp \
 OW_XMLNode.cpp \
 OW_XMLParser.cpp \
@@ -10,7 +31,6 @@ OW_XMLClass.cpp \
 OW_XMLQualifier.cpp \
 OW_XMLParserSax.cpp \
 OW_XMLParameters.cpp \
-OW_RequestHandlerIFCXML.cpp \
 OW_XMLEscape.cpp \
 OW_XMLUnescape.cpp \
 OW_XMLCIMFactory.cpp \
@@ -29,7 +49,6 @@ OW_XMLQualifier.hpp \
 OW_XMLException.hpp \
 OW_XMLParserSax.hpp \
 OW_XMLEscape.hpp \
-OW_RequestHandlerIFCXML.hpp \
 OW_XMLUnescape.hpp \
 OW_XMLCIMFactory.hpp \
 OW_CIMtoXML.hpp
@@ -37,8 +56,9 @@ OW_CIMtoXML.hpp
 
 
 INCLUDES = \
--I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/common/socket	\
--I$(top_srcdir)/src/cim		\
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/client
 

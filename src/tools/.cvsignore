@@ -4,3 +4,8 @@ Makefile
 .*.libs
 *.lo
 *.la
+owexecwql
+owcreatenamespace
+owdeletenamespace
+owenumnamespace
+owdigestgenpass

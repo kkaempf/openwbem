@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_Map.hpp"
 #include "Visitor.h"
 #include "OW_CIMValue.hpp"

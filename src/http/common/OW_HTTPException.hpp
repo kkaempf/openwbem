@@ -34,7 +34,7 @@
 #include "OW_config.h"
 
 #include "OW_HTTPStatusCodes.h"
-#include "OW_CIMProtocol.hpp"
+#include "OW_Exception.hpp"
 
 #define HTTP_ERR_NEEDCONTENTLEN "HTTP_ERR_NEEDCONTENTLEN"
 #define HTTP_ERR_OPTIONSREQUESTED "HTTP_ERR_OPTIONSREQUESTED"
@@ -43,15 +43,15 @@
 #define HTTP_ERR_TRUNCATED "HTTP_ERR_TRUNCATED"
 #define HTTP_ERR_ILLEGALRESPONSE "HTTP_ERR_ILLEGALRESPONSE"
 
-class OW_HTTPException : public OW_CIMProtocolException
+class OW_HTTPException : public OW_Exception
 {
 public:
-	OW_HTTPException() : OW_CIMProtocolException(), m_response(-1) {}
+	OW_HTTPException() : OW_Exception(), m_response(-1) {}
 	OW_HTTPException(const char* file, int line, const char* msg)
-		: OW_CIMProtocolException(file, line, msg), m_response(-1){}
+		: OW_Exception(file, line, msg), m_response(-1){}
 	OW_HTTPException(const char* file, int line, const char* msg, int response)
-		: OW_CIMProtocolException(file, line, msg), m_response(response) {}
-	OW_HTTPException(const char* msg) : OW_CIMProtocolException(msg),
+		: OW_Exception(file, line, msg), m_response(response) {}
+	OW_HTTPException(const char* msg) : OW_Exception(msg),
 		m_response(-1) {}
 	const char* getId() { return getMessage(); }
 	int getErrorCode() { return m_response; }

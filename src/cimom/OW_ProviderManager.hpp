@@ -42,8 +42,8 @@
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppPropertyProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_ProviderIFCBaseIFCLoader.hpp"
-#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
+#include "OW_ProviderIFCLoader.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_Map.hpp"
 

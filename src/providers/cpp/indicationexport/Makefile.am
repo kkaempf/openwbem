@@ -30,7 +30,11 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/http/client \
--I$(top_srcdir)/src/xml
+-I$(top_srcdir)/src/client \
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/providerifcs/cpp \
+-I$(top_srcdir)/src/provider
 

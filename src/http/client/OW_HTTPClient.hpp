@@ -35,7 +35,6 @@
 #include "OW_InetSocket.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Map.hpp"
-#include "OW_XMLNode.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_Bool.hpp"
 #include "OW_CIMProtocol.hpp"

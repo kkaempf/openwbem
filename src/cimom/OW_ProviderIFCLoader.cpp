@@ -30,7 +30,7 @@
 
 #include "OW_config.h"
 #include "OW_SharedLibraryException.hpp"
-#include "OW_ProviderIFCBaseIFCLoader.hpp"
+#include "OW_ProviderIFCLoader.hpp"
 #include "OW_Format.hpp"
 #include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"

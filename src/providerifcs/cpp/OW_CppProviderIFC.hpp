@@ -32,7 +32,7 @@
 #define OW_CPPPROVIDERIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "OW_CppProviderBaseIFC.hpp"

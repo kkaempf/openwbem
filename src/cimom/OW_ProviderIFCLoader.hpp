@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
-#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMOMEnvironment.hpp"

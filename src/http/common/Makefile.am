@@ -1,7 +1,26 @@
-noinst_LIBRARIES = libOW_Http.a
+include $(top_srcdir)/Makefile-shared-lib.inc
 
-libOW_Http_a_SOURCES =	\
-OW_CIMErrorException.cpp \
+noinst_LIBRARIES = libowhttpcommon.a
+
+OW_SHARED_LIBS = libowhttpcommon.so
+thelibdir = $(libdir)
+
+all-local: $(OW_SHARED_LIBS)
+
+install-exec-local:
+	@INSTALL@ -d $(DESTDIR)$(thelibdir)
+	for i in $(OW_SHARED_LIBS); do \
+		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+	done
+	
+clean-local:
+	for i in $(OW_SHARED_LIBS); do \
+		rm -rf $$i* .$$i.libs; \
+	done
+
+
+libowhttpcommon_a_SOURCES =	\
 OW_HTTPChunkedIStream.cpp \
 OW_HTTPChunkedOStream.cpp \
 OW_HTTPCounter.cpp \
@@ -14,7 +33,6 @@ OW_MD5.cpp
 
 pkginclude_HEADERS =	\
 OW_Base64FormatException.hpp \
-OW_CIMErrorException.hpp \
 OW_HTTPChunkException.hpp \
 OW_HTTPChunkedIStream.hpp \
 OW_HTTPChunkedOStream.hpp \
@@ -27,6 +45,7 @@ OW_HTTPUtils.hpp \
 OW_MD5.hpp
 
 INCLUDES = \
--I$(top_srcdir)/src/common	\
--I$(top_srcdir)/src/common/socket
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/common/socket \
+-I$(top_srcdir)/src/ifcs
 

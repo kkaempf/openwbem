@@ -32,13 +32,15 @@
 #define OW_XMLLISTENER_HPP_
 
 #include "OW_config.h"
-#include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_XMLNode.hpp"
+#include "OW_CIMFeatures.hpp"
+#include "OW_RequestHandlerIFC.hpp"
 #include <iosfwd>
 
 class OW_CIMListenerCallback;
 
-class OW_XMLListener : public OW_RequestHandlerIFCXML
+class OW_XMLListener : public OW_RequestHandlerIFC
 {
 public:
 
@@ -57,6 +59,17 @@ public:
 	}
 
 protected:
+
+        /**
+         * Process the input stream and generate appropriate output.
+         * @param istr the istream containing the input.
+         * @param ostrEntity write to this ostream if no errors occur.
+         * @param ostrError write to this ostream if an error occurs.
+         * @param userName the name of the user performing the action.
+         */
+        virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
+            std::ostream *ostrError, const OW_String& userName);
+
 	/**
 	 * After doProcess is called, and the XML is parsed, executeXML
 	 * is called on the root node.

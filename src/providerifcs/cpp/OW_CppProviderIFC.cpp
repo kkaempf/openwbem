@@ -36,7 +36,7 @@
 #include "OW_SignalScope.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
-#include "OW_ProxyProvider.hpp"
+#include "OW_CppProxyProvider.hpp"
 //#include <setjmp.h>
 
 typedef OW_CppProviderBaseIFC* (*ProviderCreationFunc)();
@@ -89,7 +89,7 @@ OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found instance"
 				" provider %1", provIdString));
 
-			return OW_InstanceProviderIFCRef(new OW_InstanceProviderProxy(
+			return OW_InstanceProviderIFCRef(new OW_CppInstanceProviderProxy(
 				pProv.cast_to<OW_CppInstanceProviderIFC>()));
 		}
 
@@ -113,7 +113,7 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIF
 		{
 			rvra.append(
 				OW_IndicationExportProviderIFCRef(new
-					OW_IndicationExportProviderProxy(
+					OW_CppIndicationExportProviderProxy(
 						pProv.cast_to<OW_CppIndicationExportProviderIFC>())));
 		}
 	}
@@ -134,7 +134,7 @@ OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 		{
 			rvra.append(
 				OW_PolledProviderIFCRef(new
-					OW_PolledProviderProxy(pProv.cast_to<OW_CppPolledProviderIFC>())));
+					OW_CppPolledProviderProxy(pProv.cast_to<OW_CppPolledProviderIFC>())));
 		}
 	}
 
@@ -155,7 +155,7 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 				provIdString));
 
 			return OW_MethodProviderIFCRef(
-				new OW_MethodProviderProxy(pProv.cast_to<OW_CppMethodProviderIFC>()));
+				new OW_CppMethodProviderProxy(pProv.cast_to<OW_CppMethodProviderIFC>()));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not a method provider",
@@ -178,7 +178,7 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 			env->getLogger()->logDebug(format("OW_CPPProviderIFC found property provider %1",
 				provIdString));
 
-			return OW_PropertyProviderIFCRef(new OW_PropertyProviderProxy(
+			return OW_PropertyProviderIFCRef(new OW_CppPropertyProviderProxy(
 				pProv.cast_to<OW_CppPropertyProviderIFC>()));
 		}
 
@@ -203,7 +203,7 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 				provIdString));
 
 			return OW_AssociatorProviderIFCRef(new
-				OW_AssociatorProviderProxy(pProv.cast_to<OW_CppAssociatorProviderIFC>()));
+				OW_CppAssociatorProviderProxy(pProv.cast_to<OW_CppAssociatorProviderIFC>()));
 		}
 
 		env->getLogger()->logError(format("Provider %1 is not an associator provider",
