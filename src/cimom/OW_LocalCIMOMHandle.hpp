@@ -98,7 +98,7 @@ public:
 	 * Deletes the CIM qualfier for the object specified by the CIM object path.
 	 * @param path	The OW_CIMObjectPath identifying the qualifier type to delete.
 	 */
-	virtual void deleteQualifierType(const OW_CIMObjectPath &path);
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

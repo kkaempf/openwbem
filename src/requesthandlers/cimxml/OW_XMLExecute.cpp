@@ -813,12 +813,11 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& qualparser,
+OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String qname = getQualifierName(qualparser);
-	path.setObjectName(qname);
-	hdl.deleteQualifierType(path);
+	OW_String qualName = getQualifierName(parser);
+	hdl.deleteQualifierType(path.getNameSpace(), qualName);
 }
 
 //////////////////////////////////////////////////////////////////////////////

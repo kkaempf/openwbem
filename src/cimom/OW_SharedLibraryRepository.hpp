@@ -83,10 +83,10 @@ public:
 		return m_ref->enumQualifierTypes(path, result, aclInfo);
 	}
 
-	virtual void deleteQualifierType(const OW_CIMObjectPath &objPath,
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
 		const OW_ACLInfo &aclInfo)
 	{
-		m_ref->deleteQualifierType(objPath, aclInfo);
+		m_ref->deleteQualifierType(ns, qualName, aclInfo);
 	}
 
 	virtual void setQualifierType(const OW_CIMObjectPath &name,

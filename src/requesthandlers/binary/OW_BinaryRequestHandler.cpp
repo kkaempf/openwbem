@@ -503,8 +503,9 @@ void
 OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	chdl->deleteQualifierType(op);
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String qualName(OW_BinIfcIO::readString(istrm));
+	chdl->deleteQualifierType(ns, qualName);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

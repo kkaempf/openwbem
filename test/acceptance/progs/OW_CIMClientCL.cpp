@@ -1149,9 +1149,7 @@ deleteQualifier(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_String qualType = "borgishness";
-		OW_CIMObjectPath cop(qualType, "root/testsuite");
-		hdl.deleteQualifierType(cop);
+		hdl.deleteQualifierType("root/testsuite", "borgishness");
 	}
 	catch (OW_CIMException& e)
 	{

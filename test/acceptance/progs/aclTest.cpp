@@ -596,9 +596,7 @@ void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing deleteQualifier() *******\n" << endl;
 	try
 	{
-		OW_String qualType = "borgishness";
-		OW_CIMObjectPath cop(qualType, "/root/acltest");
-		hdl.deleteQualifierType(cop);
+		hdl.deleteQualifierType("/root/acltest", "borgishness");
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

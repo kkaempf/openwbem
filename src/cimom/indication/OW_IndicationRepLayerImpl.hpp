@@ -55,10 +55,10 @@ public:
 		return m_pServer->getEnvironment();
 	}
 
-	virtual void deleteQualifierType(const OW_CIMObjectPath &path,
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
 		const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->deleteQualifierType(path, aclInfo);
+		m_pServer->deleteQualifierType(ns, qualName, aclInfo);
 	}
 
 

@@ -312,6 +312,10 @@ OW_GenericHDBRepository::nameSpaceExists(const OW_String& key)
 	throwIfNotOpen();
 
 	OW_String k(key.toString().toLowerCase());
+	while (k.length() > 0 && k[0] == '/')
+	{
+		k = k.substring(1);
+	}
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(k);

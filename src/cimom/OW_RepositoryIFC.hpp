@@ -125,7 +125,7 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception OW_CIMException
 	 */
-	virtual void deleteQualifierType(const OW_CIMObjectPath& objPath,
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
 		const OW_ACLInfo& aclInfo) = 0;
 
 	/**

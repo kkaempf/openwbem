@@ -112,7 +112,7 @@ OW_WQLFilterRep::enumQualifierTypes(
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::deleteQualifierType(const OW_CIMObjectPath &/*objPath*/,
+OW_WQLFilterRep::deleteQualifierType(const OW_String& /*ns*/, const OW_String& /*qualName*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

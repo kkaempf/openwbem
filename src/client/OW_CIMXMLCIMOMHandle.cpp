@@ -370,17 +370,15 @@ OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
+OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
 {
 	static const char* const commandName = "DeleteQualifier";
 	OW_Array<OW_Param> params;
 
-	OW_String qualName = path.getObjectName();
-
 	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
 
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, params);
+	intrinsicMethod(ns, commandName, op, params);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -547,24 +547,23 @@ OW_CIMServer::_getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::deleteQualifierType(const OW_CIMObjectPath& objPath,
+OW_CIMServer::deleteQualifierType(const OW_String& ns, const OW_String& qualName,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to delete the qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETEQUALIFIER, objPath, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::DELETEQUALIFIER, ns, aclInfo);
 
-	if(!m_mStore.deleteQualifierType(objPath.getNameSpace(),
-		objPath.getObjectName()))
+	if(!m_mStore.deleteQualifierType(ns, qualName))
 	{
-		if (m_mStore.nameSpaceExists(objPath.getNameSpace()))
+		if (m_mStore.nameSpaceExists(ns))
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-				objPath.getObjectName().c_str());
+				OW_String(ns + "/" + qualName).c_str());
 		}
 		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
-				objPath.getNameSpace().c_str());
+				OW_String(ns + "/" + qualName).c_str());
 		}
 	}
 }

@@ -1085,7 +1085,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->deleteQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"));
+		hdl->deleteQualifierType("badNamespace", OW_CIMQualifier::CIM_QUAL_ABSTRACT);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -1096,7 +1096,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->deleteQualifierType(OW_CIMObjectPath("badQualifierType", "root/testsuite"));
+		hdl->deleteQualifierType("root/testsuite", "badQualifierType");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

@@ -120,10 +120,10 @@ OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath&
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
+OW_LocalCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->deleteQualifierType(path, m_aclInfo);
+	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

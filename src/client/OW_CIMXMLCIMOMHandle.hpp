@@ -80,7 +80,7 @@ public:
 	 * @param path	The OW_CIMObjectPath identifying the qualifier type to delete.
 	 * @exception OW_CIMException If the qualifier type does not exist.
 	 */
-	virtual void deleteQualifierType(const OW_CIMObjectPath &path);
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

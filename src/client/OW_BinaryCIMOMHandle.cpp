@@ -222,14 +222,15 @@ OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
+OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteQualifier", path.getNameSpace());
+		"DeleteQualifier", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_DELETEQUAL);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", path.getNameSpace()));
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, qualName);
+	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -165,8 +165,14 @@ OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_MetaRepository::_makeQualPath(const OW_String& ns, const OW_String& qualName)
+OW_MetaRepository::_makeQualPath(const OW_String& ns_, const OW_String& qualName)
 {
+	OW_String ns(ns_);
+	while (ns.length() > 0 && ns[0] == '/')
+	{
+		ns = ns.substring(1);
+	}
+
 	OW_String qp(QUAL_CONTAINER "/");
 	if(ns.length() > 0)
 	{
