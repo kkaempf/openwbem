@@ -23,9 +23,9 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
-	- Have a mechanism in the read-write locker to detect simple deadlock,
-	  the case where one thread acquired a write lock and then later tried
-	  to acquire a read lock, which would block.
+    - Have a mechanism in the read-write locker to detect simple deadlock,
+      the case where one thread acquired a write lock and then later tried
+      to acquire a read lock, which would block.
     - Man pages aren't getting included in the rpm.
 
 New features:
@@ -33,8 +33,8 @@ New features:
       CIM_IndicationSubscription that interfaces with the providers.
       X Create a polling class, so if the provider is lazy, the
         cimom will check for differences (by calling enumInstances) and send 
-		out the appropriate lifecycle indications.  This will be used if the 
-		provider responds true to the mustPoll() call.
+        out the appropriate lifecycle indications.  This will be used if the 
+        provider responds true to the mustPoll() call.
         X Polling manager needs capability to add/remove or start/stop a polled 
           provider
       X Indication providers must also indicate what class they are 
@@ -64,14 +64,14 @@ New features:
       - OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
       - Fix cimListener.cpp to use the new indication providers.
-		- Modifying existing filters will affect the indication server, and
-		  may mean that indication providers need to be notified, etc. So:
-		  Create an CIM_IndicationFilter pass-thru provider so we can either:
-		  1. Prevent modifications to existing filters, or
-		  2. Do the work to re-initialize everything correctly in 
-		     OW_IndicationServerImpl.
-	   - Handle the various options in the CIM_IndicationSubscription and
-		  CIM_IndicationHandler classes.
+        - Modifying existing filters will affect the indication server, and
+          may mean that indication providers need to be notified, etc. So:
+          Create an CIM_IndicationFilter pass-thru provider so we can either:
+          1. Prevent modifications to existing filters, or
+          2. Do the work to re-initialize everything correctly in 
+             OW_IndicationServerImpl.
+       - Handle the various options in the CIM_IndicationSubscription and
+          CIM_IndicationHandler classes.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -92,7 +92,7 @@ New features:
     - CMPI
     - Implement the CIM_Interop27 build-in providers.
         - add handling for new namespace model.  Make namespaces flat instead
-		    of hierarchial.
+            of hierarchial.
         - New model for provider registration.
         - Do the rest of them.
     - Fix the lexer of the MOF compiler to parse unicode MOF files.  
@@ -140,6 +140,8 @@ New features:
       - Add -I flag for mof include search path.
       - Specify a file containing a list of MOFs to compile
       - output XML only to stdout.
+      - Ignore double #includes so that you don't have to be so careful.
+      - If the class already exists, don't do anything, just continue on.
     - Add an option for user to specify which interfaces to listen on.
     - ModifyInstance (deprecate empty PropertyList and ignore includeQualifiers)
     - New advanced errors.
@@ -150,14 +152,14 @@ New features:
     - Overriding a method cannot add a required parameter.
     - Deprecate TOINSTANCE (don't send as XML, & ignore on incoming XML)
     - Use libcwd to improve the new segfault handler on linux.  De-mangle names
-	   and print filename/line numbers.
+       and print filename/line numbers.
     - Add a page to the website similar to http://cygwin.com/bugs.html
-	 - Add rbac authentication
+     - Add rbac authentication
     - Validate the "Required" qualifier on properties during create & modifyInstance.
 
 Refactorings:
-	 - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
-	   move OW_Cpp*ProviderIFC classes into the cimom.
+     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
+       move OW_Cpp*ProviderIFC classes into the cimom.
     - Create a base class for all the common code in the provider interfaces.
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
@@ -175,13 +177,13 @@ Refactorings:
     - Remove *E functions from the CIMOMHandle.  Create 2 wrapper cimom
       handles that return OW_Enumeration<T> and OW_Array<T>.
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
-	- Clean up naming. Create a CIM class/instance path, local object path,
-	  etc. and use them where appropriate.
+    - Clean up naming. Create a CIM class/instance path, local object path,
+      etc. and use them where appropriate.
     - Put everything into namespace OpenWBEM and remove OW_
     - Make a new header OW_PPconfig.h that is like OW_config.h now.  Make
       OW_config.h to not use PP symbols, use consts derived from the pp symbols.
-	- Get rid of all the bool parameters and replace them with enums
-	  (esp. for cimom handle calls.)
+    - Get rid of all the bool parameters and replace them with enums
+      (esp. for cimom handle calls.)
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
@@ -211,5 +213,5 @@ Optimizations:
       a provider.  Let the provider ifc/provider do all the work.
     - Do explicit template instantiation to help speed up compiles.  OW_Array
       would be a good candidate for this.
-	- Have OW_CIMClass store a list of base classes.  Then remove some of the
-	  algorithms that have to run up the chain by doing a repeated getClass.
+    - Have OW_CIMClass store a list of base classes.  Then remove some of the
+      algorithms that have to run up the chain by doing a repeated getClass.
