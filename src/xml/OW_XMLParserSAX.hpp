@@ -28,50 +28,73 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
-#define OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
+#ifndef OW_XMLPARSERSAX_HPP_INCLUDE_GUARD_
+#define OW_XMLPARSERSAX_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include <iosfwd>
+
 
 namespace OpenWBEM
 {
 
-class XMLAttribute
+class String;
+class StringBuffer;
+class XMLToken;
+class XMLParseException;
+
+namespace XMLParserSAX 
+{
+
+// -----------------------------------------------------------------------
+//  SAXDocumentHandler abstract interface
+// -----------------------------------------------------------------------
+class SAXDocumentHandler
 {
 public:
+	virtual ~SAXDocumentHandler();
 
-	XMLAttribute()
-	{
-	}
-
-	XMLAttribute(const String& name, const String& value) 
-		: m_name(name)
-		, m_value(value)
-	{
-	}
-
-	String getName() const
-	{
-		return m_name;
-	}
-	String getValue() const
-	{
-		return m_value;
-	}
-	bool equals(const XMLAttribute& attr) const
-	{
-		return m_name == attr.m_name && m_value == attr.m_value;
-	}
-
-private:
-	String m_name;
-	String m_value;
+	virtual void endDocument() = 0;
+	// name is not unescaped (implementation has to do it if necessary)
+	virtual void endElement(const StringBuffer& name) = 0;
+	// chars is not unescaped (implementation has to do it if necessary)
+	virtual void characters(const StringBuffer& chars) = 0;
+	virtual void startDocument() = 0;
+	virtual void startElement(const XMLToken& entry) = 0;
 };
 
-typedef Array<XMLAttribute> XMLAttributeArray;
+// -----------------------------------------------------------------------
+//  SAXErrorHandler abstract interface
+// -----------------------------------------------------------------------
+class SAXErrorHandler
+{
+public:
+	virtual ~SAXErrorHandler();
 
+	virtual void warning(const XMLParseException& exception) = 0;
+	virtual void error(const XMLParseException& exception) = 0;
+	virtual void fatalError(const XMLParseException& exception) = 0;
+};
+
+
+/**
+ * Parse the XML document contained in the file named fileName
+ *
+ * @param fileName The name of the file containing the XML document to parse
+ */
+void parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
+
+/**
+ * Parse the XML document to be read from the std::istream data
+ *
+ * @param data   std::istream to read the XML document to be parsed
+ */
+void parse(std::istream& data, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
+	
+
+} // end namespace XMLParserSAX
 } // end namespace OpenWBEM
 
+
 #endif
+

@@ -28,50 +28,95 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
-#define OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "OW_XMLParserSAX.hpp"
+#include "OW_XMLParserCore.hpp"
+#include "OW_XMLParseException.hpp"
+#include "OW_TempFileStream.hpp"
+
+#ifdef OW_HAVE_ISTREAM
+#include <istream>
+#else
+#include <iostream>
+#endif
+
+using std::istream;
 
 namespace OpenWBEM
 {
-
-class XMLAttribute
+namespace XMLParserSAX
 {
-public:
 
-	XMLAttribute()
+/////////////////////////////////////////////////////////////////////////////
+SAXDocumentHandler::~SAXDocumentHandler()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+SAXErrorHandler::~SAXErrorHandler()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void parse(istream& istr, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler)
+{
+	XMLParserCore parser(istr);
+
+	XMLToken entry;
+	docHandler.startDocument();
+	try
 	{
+		while (parser.next(entry))
+		{
+			switch(entry.type)
+			{
+				case XMLToken::INVALID:
+					break;
+				case XMLToken::XML_DECLARATION:
+					break;
+				case XMLToken::START_TAG:
+					docHandler.startElement(entry);
+					break;
+				case XMLToken::END_TAG:
+					docHandler.endElement(entry.text);
+					break;
+				case XMLToken::COMMENT:
+					break;
+				case XMLToken::CDATA:
+					docHandler.characters(entry.text);
+					break;
+				case XMLToken::DOCTYPE:
+					break;
+				case XMLToken::CONTENT:
+					docHandler.characters(entry.text);
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	catch (XMLParseException& e)
+	{
+		errHandler.fatalError(e);
 	}
 
-	XMLAttribute(const String& name, const String& value) 
-		: m_name(name)
-		, m_value(value)
-	{
-	}
+	docHandler.endDocument();
 
-	String getName() const
-	{
-		return m_name;
-	}
-	String getValue() const
-	{
-		return m_value;
-	}
-	bool equals(const XMLAttribute& attr) const
-	{
-		return m_name == attr.m_name && m_value == attr.m_value;
-	}
+}
 
-private:
-	String m_name;
-	String m_value;
-};
+/////////////////////////////////////////////////////////////////////////////
+void 
+parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler)
+{
+	TempFileStream tfs;
+	tfs << xmlData;
+	tfs.rewind();
+	parse(tfs, docHandler, errHandler);
+}
 
-typedef Array<XMLAttribute> XMLAttributeArray;
+} // end namespace XMLParser
 
 } // end namespace OpenWBEM
 
-#endif
+
+

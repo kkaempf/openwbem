@@ -28,7 +28,11 @@ OW_XMLCIMFactory.cpp \
 OW_CIMtoXML.cpp \
 OW_XMLPrettyPrint.cpp \
 OW_XMLParseException.cpp \
-OW_XMLPullParser.cpp
+OW_XMLPullParser.cpp \
+OW_XMLParserSAX.cpp \
+OW_XMLParserDOM.cpp \
+OW_XMLNode.cpp \
+OW_XMLAttribute.cpp
 
 pkginclude_HEADERS = \
 OW_CIMXMLParser.hpp \
@@ -45,7 +49,11 @@ OW_XMLCIMFactory.hpp \
 OW_CIMtoXML.hpp \
 OW_XMLPrettyPrint.hpp \
 OW_XMLParseException.hpp \
-OW_XMLPullParser.hpp
+OW_XMLPullParser.hpp \
+OW_XMLParserSAX.hpp \
+OW_XMLParserDOM.hpp \
+OW_XMLNode.hpp \
+OW_XMLAttribute.hpp
 
 
 
