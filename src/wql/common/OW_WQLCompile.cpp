@@ -367,10 +367,6 @@ void OW_WQLCompile::printTableau(std::ostream& ostr)
 	}
 }
 
-static OW_WQLOperand dummy;
-static OW_WQLOperand TrueVal(true, WQL_BOOLEAN_VALUE_TAG);
-static OW_WQLOperand FalseVal(false, WQL_BOOLEAN_VALUE_TAG);
-
 void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 {
 	OW_Stack<stack_el> stack;
