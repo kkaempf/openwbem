@@ -627,7 +627,7 @@ enumerateInstanceNames(OW_CIMClient& hdl)
 			OW_CIMObjectPath cop = enu.nextElement();
 			cout << cop.toString() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMInstancePathtoXML(cop, tfs, OW_CIMtoXMLFlags::isNotInstanceName);
+			OW_CIMInstancePathtoXML(cop, tfs);
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
