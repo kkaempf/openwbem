@@ -123,6 +123,7 @@ Refactorings:
       that return OW_Enumeration<T> and OW_Array<T>.
     - Rename OW_Types.h to OW_Types.hpp
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
+    - Rename mof compiler files/classes to have OW_ prefix.
 
       Post 3.0
     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
