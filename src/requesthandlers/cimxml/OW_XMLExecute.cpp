@@ -199,13 +199,12 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	}
 	else
 	{
-		// TODO: void functions should not have the <IRETURNVALUE> tag!
 		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName <<
-			"\"><IRETURNVALUE>";
+			"\">";
 
 		// call the member function that was found
 		(this->*((*i).func))(ostr, parser, ns, hdl);
-		ostr << "</IRETURNVALUE></IMETHODRESPONSE>";
+		ostr << "</IMETHODRESPONSE>";
 	}
 }
 
@@ -570,9 +569,11 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 		resultClass = params[2].val.toString();
 	}
 
+	ostr << "<IRETURNVALUE>";
 	CIMObjectPathXMLOutputter handler(ostr);
 	hdl.associatorNames(ns, objectName, handler, assocClass, resultClass,
 		params[3].val.toString(), params[4].val.toString());
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -706,6 +707,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	OW_String role = params[3].val.toString();
 	OW_String resultRole = params[4].val.toString();
 
+	ostr << "<IRETURNVALUE>";
 	if (objectName.getKeys().size() == 0)
 	{
 		// class path
@@ -726,6 +728,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, pPropList);
 	}
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -770,29 +773,11 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		cimInstance.setProperty(prop);
 	}
 
-	/* This should be done in CIMServer
-	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
-	if(keys.size() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,"Instance doesn't have keys");
-	}
 
-	for (size_t i = 0; i < keys.size(); ++i)
-	{
-		OW_CIMProperty key = keys[i];
-		if (!key.getValue())
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				format("Key must be provided!  Property \"%1\" does not have a "
-					"valid value.", key.getName()).c_str());
-		}
-	}
-
-	realPath.setKeys(keys);
-	*/
-
+	ostr << "<IRETURNVALUE>";
 	OW_CIMObjectPath newPath = hdl.createInstance(ns, cimInstance);
 	OW_CIMtoXML(newPath, ostr, OW_CIMtoXMLFlags::isInstanceName);
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -866,8 +851,10 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String className = params[0].val.toString();
 	OW_Bool deepInheritance = params[1].val.toBool();
 
+	ostr << "<IRETURNVALUE>";
 	ClassNameXMLWriter handler(ostr);
 	hdl.enumClassNames(ns, className, handler, deepInheritance);
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -919,6 +906,7 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 		className = params[0].val.toString();
 	}
 
+	ostr << "<IRETURNVALUE>";
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
 		params[4].val.toBool());
 	hdl.enumClass(ns, className, handler, params[1].val.toBool(), false);
@@ -927,6 +915,7 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 	//hdl.enumClass(path, deep, localOnly,
 		//includeQualifiers, includeClassOrigin);
 
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -960,8 +949,10 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 	OW_String className = params[0].val.toString();
 	
+	ostr << "<IRETURNVALUE>";
 	CIMInstanceNameXMLOutputter handler(ostr);
 	hdl.enumInstanceNames(ns, className, handler);
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1040,11 +1031,13 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeQualifiers = params[3].val.toBool();
 	bool includeClassOrigin = params[4].val.toBool();
 
+	ostr << "<IRETURNVALUE>";
 	// TODO: remove as many of these flags from handler as possible
 	CIMInstanceXMLOutputter handler(ostr, ns, localOnly, includeQualifiers,
 		includeClassOrigin, params[5].isSet, propertyList);
 	hdl.enumInstances(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1072,8 +1065,10 @@ void
 OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
 	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
+	ostr << "<IRETURNVALUE>";
 	CIMQualifierTypeXMLOutputter handler(ostr);
 	hdl.enumQualifierTypes(ns, handler);
+	ostr << "</IRETURNVALUE>";
 }
 
 
@@ -1107,6 +1102,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[3].val.toBool();
 
 
+	ostr << "<IRETURNVALUE>";
 	OW_CIMClass cimClass = hdl.getClass(ns, className, localOnly, includeQualifiers,
 		includeClassOrigin,
 		pPropList);
@@ -1117,6 +1113,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 		propertyList,
 		(params[4].isSet && propertyList.size() == 0));
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1148,6 +1145,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeQualifiers = params[2].val.toBool();
 	bool includeClassOrigin = params[3].val.toBool();
 
+	ostr << "<IRETURNVALUE>";
 	OW_CIMInstance cimInstance = hdl.getInstance(ns, instancePath, localOnly,
 		includeQualifiers, includeClassOrigin,
 		pPropList);
@@ -1159,6 +1157,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 		propertyList,
 		(pPropList && propertyList.size() == 0));
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1174,10 +1173,13 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_CIMXMLParser& parser,
 
 	OW_CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 
+	ostr << "<IRETURNVALUE>";
 	OW_CIMValue cv = hdl.getProperty(ns, instpath, params[1].val.toString());
 
 	if (cv)
 		OW_CIMtoXML(cv, ostr);
+
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1187,11 +1189,10 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 {
 	OW_String qualifierName = getQualifierName(parser);
 
+	ostr << "<IRETURNVALUE>";
 	OW_CIMQualifierType qual = hdl.getQualifierType(ns, qualifierName);
-	if (qual)
-	{
-		OW_CIMtoXML(qual, ostr);
-	}
+	OW_CIMtoXML(qual, ostr);
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1263,8 +1264,10 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 		resultClass = params[1].val.toString();
 	}
 
+	ostr << "<IRETURNVALUE>";
 	CIMObjectPathXMLOutputter handler(ostr);
 	hdl.referenceNames(ns, path, handler, resultClass, params[2].val.toString());
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1304,6 +1307,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	bool isPropertyList = params[5].isSet;
 	OW_String role = params[2].val.toString();
 	
+	ostr << "<IRETURNVALUE>";
 	if (path.getKeys().size() == 0)
 	{
 		// It's a class
@@ -1321,6 +1325,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 		hdl.references(ns, path, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, pPropList);
 	}
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1383,8 +1388,10 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
+	ostr << "<IRETURNVALUE>";
 	execQueryXMLOutputter handler(ostr, ns);
 	hdl.execQuery(ns, handler, params[1].val.toString(), params[0].val.toString());
+	ostr << "</IRETURNVALUE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
