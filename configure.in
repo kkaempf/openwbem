@@ -1050,7 +1050,6 @@ src/cimom/server/Makefile
 src/cimom/indication/Makefile
 src/cimxmllistener/Makefile
 src/client/Makefile
-src/client/test/Makefile
 src/common/Makefile
 src/common/socket/Makefile
 src/common/socket/test/Makefile
