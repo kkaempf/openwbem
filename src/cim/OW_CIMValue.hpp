@@ -468,10 +468,39 @@ public:
 	 */
 	void get(OW_CIMInstanceArray& x) const;
 
-	OW_CIMObjectPath toCIMObjectPath() const;
-	OW_StringArray toStringArray() const;
 	OW_Bool toBool() const;
+	OW_Char16 toChar16() const;
+	OW_UInt8 toUInt8() const;
+	OW_Int8 toInt8() const;
+	OW_UInt16 toUInt16() const;
+	OW_Int16 toInt16() const;
+	OW_UInt32 toUInt32() const;
+	OW_Int32 toInt32() const;
 	OW_UInt64 toUInt64() const;
+	OW_Int64 toInt64() const;
+	OW_Real32 toReal32() const;
+	OW_Real64 toReal64() const;
+	OW_CIMDateTime toCIMDateTime() const;
+	OW_CIMObjectPath toCIMObjectPath() const;
+	OW_CIMClass toCIMClass() const;
+	OW_CIMInstance toCIMInstance() const;
+	OW_CIMObjectPathArray toCIMObjectPathArray() const;
+	OW_Char16Array toChar16Array() const;
+	OW_UInt8Array toUInt8Array() const;
+	OW_Int8Array toInt8Array() const;
+	OW_UInt16Array toUInt16Array() const;
+	OW_Int16Array toInt16Array() const;
+	OW_UInt32Array toUInt32Array() const;
+	OW_Int32Array toInt32Array() const;
+	OW_UInt64Array toUInt64Array() const;
+	OW_Int64Array toInt64Array() const;
+	OW_Real64Array toReal64Array() const;
+	OW_Real32Array toReal32Array() const;
+	OW_StringArray toStringArray() const;
+	OW_BoolArray toBoolArray() const;
+	OW_CIMDateTimeArray toCIMDateTimeArray() const;
+	OW_CIMClassArray toCIMClassArray() const;
+	OW_CIMInstanceArray toCIMInstanceArray() const;
 	
 	/**
 	 * Set this to a null object.

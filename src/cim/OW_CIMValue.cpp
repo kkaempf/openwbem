@@ -630,9 +630,225 @@ void OW_CIMValue::get(OW_CIMInstanceArray& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_Bool OW_CIMValue::toBool() const
+{
+	OW_Bool rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Char16 OW_CIMValue::toChar16() const
+{
+	OW_Char16 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt8 OW_CIMValue::toUInt8() const
+{
+	OW_UInt8 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int8 OW_CIMValue::toInt8() const
+{
+	OW_Int8 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt16 OW_CIMValue::toUInt16() const
+{
+	OW_UInt16 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int16 OW_CIMValue::toInt16() const
+{
+	OW_Int16 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt32 OW_CIMValue::toUInt32() const
+{
+	OW_UInt32 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int32 OW_CIMValue::toInt32() const
+{
+	OW_Int32 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt64 OW_CIMValue::toUInt64() const
+{
+	OW_UInt64 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int64 OW_CIMValue::toInt64() const
+{
+	OW_Int64 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Real32 OW_CIMValue::toReal32() const
+{
+	OW_Real32 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Real64 OW_CIMValue::toReal64() const
+{
+	OW_Real64 rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDateTime OW_CIMValue::toCIMDateTime() const
+{
+	OW_CIMDateTime rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath OW_CIMValue::toCIMObjectPath() const
 {
-	OW_CIMObjectPath rval(OW_CIMNULL);
+	OW_CIMObjectPath rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClass OW_CIMValue::toCIMClass() const
+{
+	OW_CIMClass rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance OW_CIMValue::toCIMInstance() const
+{
+	OW_CIMInstance rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathArray OW_CIMValue::toCIMObjectPathArray() const
+{
+	OW_CIMObjectPathArray rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Char16Array OW_CIMValue::toChar16Array() const
+{
+	OW_Char16Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt8Array OW_CIMValue::toUInt8Array() const
+{
+	OW_UInt8Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int8Array OW_CIMValue::toInt8Array() const
+{
+	OW_Int8Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt16Array OW_CIMValue::toUInt16Array() const
+{
+	OW_UInt16Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int16Array OW_CIMValue::toInt16Array() const
+{
+	OW_Int16Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt32Array OW_CIMValue::toUInt32Array() const
+{
+	OW_UInt32Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int32Array OW_CIMValue::toInt32Array() const
+{
+	OW_Int32Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_UInt64Array OW_CIMValue::toUInt64Array() const
+{
+	OW_UInt64Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Int64Array OW_CIMValue::toInt64Array() const
+{
+	OW_Int64Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Real64Array OW_CIMValue::toReal64Array() const
+{
+	OW_Real64Array rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Real32Array OW_CIMValue::toReal32Array() const
+{
+	OW_Real32Array rval;
 	m_impl->get(rval);
 	return rval;
 }
@@ -646,17 +862,33 @@ OW_StringArray OW_CIMValue::toStringArray() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::toBool() const
+OW_BoolArray OW_CIMValue::toBoolArray() const
 {
-	OW_Bool rval;
+	OW_BoolArray rval;
 	m_impl->get(rval);
 	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt64 OW_CIMValue::toUInt64() const
+OW_CIMDateTimeArray OW_CIMValue::toCIMDateTimeArray() const
 {
-	OW_UInt64 rval;
+	OW_CIMDateTimeArray rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMClassArray OW_CIMValue::toCIMClassArray() const
+{
+	OW_CIMClassArray rval;
+	m_impl->get(rval);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceArray OW_CIMValue::toCIMInstanceArray() const
+{
+	OW_CIMInstanceArray rval;
 	m_impl->get(rval);
 	return rval;
 }
