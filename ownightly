@@ -4,6 +4,8 @@
 #
 # 
 
+unset OWLONGTEST
+
 DESTDIR=$HOME/public_html/owNightlyTest/$OSTYPE
 ADIR="$HOME/scripts"
 if [ "$HOSTNAME" = "sparcwbem.calderalabs.com" ]; then
@@ -30,8 +32,7 @@ doTest()
 		&& make -j3 check >> $LOGFILE 2>&1 \
 		&& OWLONGTEST=1 make -j3 check >> $LOGFILE 2>&1 \
 		&& make clean >> $LOGFILE 2>&1 \
-		&& make -j3 distcheck >> $LOGFILE 2>&1 \
-		&& make distclean >> $LOGFILE 2>&1
+		&& make -j3 distcheck >> $LOGFILE 2>&1
 
 	RVAL=$?
 
@@ -47,8 +48,7 @@ doTest()
 			&& make -j3 check >> $LOGFILE 2>&1 \
 			&& OWLONGTEST=1 make -j3 check >> $LOGFILE 2>&1 \
 			&& make clean >> $LOGFILE 2>&1 \
-			&& make -j3 distcheck >> $LOGFILE 2>&1 \
-			&& make distclean >> $LOGFILE 2>&1
+			&& make -j3 distcheck >> $LOGFILE 2>&1
 
 		RVAL=$?
 	fi
@@ -88,5 +88,5 @@ doTest
 
 
 # set the next reminder
-at -f $THIS -m 3am tomorrow 
+at -f $THIS -m 10pm tomorrow 
 
