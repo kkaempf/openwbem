@@ -95,8 +95,10 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, std::ostream& ostr,
 void OW_CIMtoXML(OW_CIMQualifierType const& cqt, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr,
-	OW_CIMtoXMLFlags::is_instance_name_flag const& i);
+void OW_CIMtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
+
+/////////////////////////////////////////////////////////////
+void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMClass const& cc, std::ostream& ostr,

@@ -311,7 +311,7 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
-			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+			OW_CIMtoXML(cop, ostr);
 			checkStream(ostr);
 		}
 	private:
@@ -776,7 +776,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 
 	ostr << "<IRETURNVALUE>";
 	OW_CIMObjectPath newPath = hdl.createInstance(ns, cimInstance);
-	OW_CIMtoXML(newPath, ostr, OW_CIMtoXMLFlags::isInstanceName);
+	OW_CIMInstanceNametoXML(newPath, ostr);
 	ostr << "</IRETURNVALUE>";
 }
 
@@ -930,7 +930,7 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
-			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
+			OW_CIMInstanceNametoXML(cop, ostr);
 			checkStream(ostr);
 		}
 	private:

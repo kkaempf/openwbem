@@ -295,8 +295,7 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
-	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName)
+void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 {
 	if (cop.getKeys().size() == 0)
 	{
@@ -330,12 +329,24 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 		//
 		// Instance path
 		//
-		if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
+		bool outputInstancePath = !cop.getNameSpace().empty();
+		if (outputInstancePath)
 		{
 			ostr << "<INSTANCEPATH>";
 			OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
 		}
 
+		OW_CIMInstanceNametoXML(cop, ostr);
+
+		if (outputInstancePath)
+		{
+			ostr << "</INSTANCEPATH>";
+		}
+	}
+}
+
+void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, ostream& ostr)
+{
 		ostr << "<INSTANCENAME CLASSNAME=\"";
 		ostr << cop.getObjectName() << "\">";
 
@@ -368,12 +379,6 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 		}
 
 		ostr << "</INSTANCENAME>";
-
-		if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
-		{
-			ostr << "</INSTANCEPATH>";
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -477,7 +482,14 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 {
 	if(cop)
 	{
-		OW_CIMtoXML(cop, ostr, isInstanceName);
+		if (isInstanceName == OW_CIMtoXMLFlags::isInstanceName)
+		{
+			OW_CIMInstanceNametoXML(cop, ostr);
+		}
+		else
+		{
+			OW_CIMtoXML(cop, ostr);
+		}
 	}
 
 	//
@@ -561,7 +573,7 @@ static void valueToXML(T const& x, ostream& out)
 
 static void valueToXML(OW_CIMObjectPath const& x, ostream& out)
 {
-	OW_CIMtoXML(x, out, OW_CIMtoXMLFlags::isNotInstanceName);
+	OW_CIMtoXML(x, out);
 }
 
 static void raToXmlCOP(ostream& out, const OW_Array<OW_CIMObjectPath>& ra)
@@ -803,7 +815,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 		out << "<VALUE.REFERENCE>";
 		OW_CIMObjectPath a;
 		cv.get(a);
-		OW_CIMtoXML(a, out, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(a, out);
 		out << "</VALUE.REFERENCE>";
 	}
 	else
