@@ -184,7 +184,7 @@ public:
 	 * @return true if the update was successful. Otherwise false.
 	 * @exception HDBException
 	 */
-	bool updateNode(HDBNode& node, Int32 dataLen, unsigned char* data);
+	bool updateNode(HDBNode& node, Int32 dataLen, const unsigned char* data);
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param node		The node to turn the flags on in

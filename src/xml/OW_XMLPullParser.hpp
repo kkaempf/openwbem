@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Center 7 nor the names of its
+*  - Neither the name of Vintela, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -27,58 +27,71 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_XMLPARSE_EXCEPTION_HPP_INCLUDE_GUARD_
-#define OW_XMLPARSE_EXCEPTION_HPP_INCLUDE_GUARD_
+#ifndef OW_XMLPULLPARSER_HPP_INCLUDE_GUARD_
+#define OW_XMLPULLPARSER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
+#include "OW_AutoPtr.hpp"
+#include "OW_TempFileStream.hpp"
+#include "OW_String.hpp"
+#include "OW_XMLParserCore.hpp"
+
+#ifdef OW_HAVE_ISTREAM
+#include <istream>
+#else
+#include <iostream>
+#endif
 
 namespace OpenWBEM
 {
 
-class XMLParseException : public Exception
+class XMLPullParser
 {
-	public:
-		enum Code
-		{
-			BAD_START_TAG = 1,
-			BAD_END_TAG,
-			BAD_ATTRIBUTE_NAME,
-			EXPECTED_EQUAL_SIGN,
-			BAD_ATTRIBUTE_VALUE,
-			MINUS_MINUS_IN_COMMENT,
-			UNTERMINATED_COMMENT,
-			UNTERMINATED_CDATA,
-			UNTERMINATED_DOCTYPE,
-			TOO_MANY_ATTRIBUTES,
-			MALFORMED_REFERENCE,
-			EXPECTED_COMMENT_OR_CDATA,
-			START_END_MISMATCH,
-			UNCLOSED_TAGS,
-			MULTIPLE_ROOTS,
-			VALIDATION_ERROR,
-			SEMANTIC_ERROR
-		};
-		XMLParseException(
-				const char* file,
-				unsigned int line,
-				Code code,
-				const char* msg,
-				unsigned int xmlline = 0);
-		XMLParseException::Code getCode() const
-		{
-			return _code;
-		}
-	private:
-		Code _code;
-};
+public:
+	XMLPullParser(const String& str);
+	XMLPullParser(std::istream& sb);
+	XMLPullParser();
+	String mustGetAttribute(const char* const attrName)
+	{
+		return getAttribute(attrName, true);
+	}
+	String getAttribute(const char* const attrName, bool throwIfError = false);
+	void getChild();
+	void mustGetChild();
+	void getNextTag(bool throwIfError = false);
+	void getNext(bool throwIfError = false);
+	void mustGetNext()
+	{
+		getNext(true);
+	}
+	void mustGetNextTag()
+	{
+		getNextTag(true);
+	}
+	void mustGetEndTag();
+	bool tokenIs(const char* const arg) const
+	{
+		return m_curTok.text.equals(arg);
+	}
+	String getName() const;
+	String getData() const;
+	bool isData() const;
+protected:
+	AutoPtr<TempFileStream> m_ptfs;
+	XMLParserCore m_parser;
+	XMLToken m_curTok;
+	bool m_good;
+	void prime();
+	void nextToken();
+	void skipData();
+	
+private:
+	// unimplemented
+	XMLPullParser(const XMLPullParser& x);
+	XMLPullParser& operator=(const XMLPullParser& x);
 
-#define OW_THROWXML(code, message) throw XMLParseException(__FILE__, __LINE__, (code), (message));
-#define OW_THROWXMLLINE(code, line) throw XMLParseException(__FILE__, __LINE__, (code), 0, (line));
-#define OW_THROWXMLLINEMSG(code, line, message) throw XMLParseException(__FILE__, __LINE__, (code), (message), (line));
+	friend std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p);
+};
 
 } // end namespace OpenWBEM
 
-
 #endif
-
-

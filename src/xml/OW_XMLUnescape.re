@@ -72,7 +72,7 @@ start:
 		long lval = strtol( thisTokStart + 3, NULL, 16 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(XMLException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
@@ -83,7 +83,7 @@ start:
 		long lval = strtol( thisTokStart + 2, NULL, 10 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROWXML(XMLParseException::MALFORMED_REFERENCE, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;

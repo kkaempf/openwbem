@@ -42,7 +42,7 @@ using std::ostream;
 void
 XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 {
-	if(!parser.tokenIs(CIMXMLParser::E_CIM))
+	if(!parser.tokenIsId(CIMXMLParser::E_CIM))
 	{
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}

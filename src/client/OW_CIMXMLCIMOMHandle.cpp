@@ -68,7 +68,7 @@ using std::iostream;
 using std::istream;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-CIMXMLCIMOMHandle::ClientOperation::~ClientOperation() 
+CIMXMLCIMOMHandle::ClientOperation::~ClientOperation()
 {
 }
 
@@ -175,7 +175,7 @@ CIMXMLCIMOMHandle::doSendRequest(
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		if (isIntrinsic)
 		{
-			if (parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
+			if (parser.tokenIsId(CIMXMLParser::E_IRETURNVALUE))
 			{
 				parser.mustGetNextTag(); // pass over <IRETURNVALUE>
 				op(parser);
@@ -208,7 +208,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// Check for <CIM> element
 	//
-	if (!parser || !parser.tokenIs(CIMXMLParser::E_CIM))
+	if (!parser || !parser.tokenIsId(CIMXMLParser::E_CIM))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
 	}
@@ -233,7 +233,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// Find <MESSAGE>
 	//
-	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
+	parser.mustGetChildId(CIMXMLParser::E_MESSAGE);
 	String cimattr = parser.mustGetAttribute(CIMXMLParser::A_ID);
 	if (!cimattr.equals(String(m_iMessageID)))
 	{
@@ -254,14 +254,14 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// Find <SIMPLERSP>
 	//
-	parser.mustGetChild(CIMXMLParser::E_SIMPLERSP);
+	parser.mustGetChildId(CIMXMLParser::E_SIMPLERSP);
 	//
 	// TODO-NICE: need to look for complex RSPs!!
 	//
 	//
 	// <METHODRESPONSE> or <IMETHODRESPONSE>
 	//
-	parser.mustGetNext(isIntrinsic ?
+	parser.mustGetNextId(isIntrinsic ?
 		CIMXMLParser::E_IMETHODRESPONSE :
 		CIMXMLParser::E_METHODRESPONSE);
 	String nameOfMethod = parser.mustGetAttribute("NAME");
@@ -276,7 +276,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	// See if there was an error, and if there was throw an equivalent
 	// exception on the client
 	//
-	if (parser.tokenIs(CIMXMLParser::E_ERROR))
+	if (parser.tokenIsId(CIMXMLParser::E_ERROR))
 	{
 		String errCode = parser.mustGetAttribute(
 			CIMXMLParser::A_CODE);
@@ -319,7 +319,7 @@ instanceNameToKey(const CIMObjectPath& path,
 {
 	StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
 	
-	StringStream ss;
+	OStringStream ss;
 	CIMInstanceNametoXML(path, ss);
 	text += ss.toString();
 	text += "</IPARAMVALUE>";
@@ -336,7 +336,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(CIMXMLParser::E_CLASSNAME))
+			while (parser.tokenIsId(CIMXMLParser::E_CLASSNAME))
 			{
 				result.handle(XMLCIMFactory::createObjectPath(parser).getClassName());
 			}
@@ -374,7 +374,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(CIMXMLParser::E_CLASS))
+			while (parser.tokenIsId(CIMXMLParser::E_CLASS))
 			{
 				result.handle(XMLCIMFactory::createClass(parser));
 			}
@@ -386,10 +386,10 @@ namespace
 void
 CIMXMLCIMOMHandle::enumClass(const String& ns,
 	const String& className,
-	CIMClassResultHandlerIFC& result, 
+	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep,
-	ELocalOnlyFlag localOnly, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
 {
 	static const char* const commandName = "EnumerateClasses";
@@ -419,7 +419,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(CIMXMLParser::E_INSTANCENAME))
+			while (parser.tokenIsId(CIMXMLParser::E_INSTANCENAME))
 			{
 				CIMObjectPath p = XMLCIMFactory::createObjectPath(parser);
 				p.setNameSpace(ns);
@@ -478,9 +478,9 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
+			while (parser.tokenIsId(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 			{
-				parser.mustGetChild(CIMXMLParser::E_INSTANCENAME);
+				parser.mustGetChildId(CIMXMLParser::E_INSTANCENAME);
 				CIMObjectPath iop(XMLCIMFactory::createObjectPath(parser));
 				CIMInstance ci = XMLCIMFactory::createInstance(parser);
 				ci.setKeys(iop.getKeys());
@@ -501,7 +501,7 @@ CIMXMLCIMOMHandle::enumInstances(
 	const StringArray* propertyList)
 {
 	static const char* const commandName = "EnumerateInstances";
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	Array<Param> params;
 	if(className.empty())
 	{
@@ -558,7 +558,7 @@ CIMXMLCIMOMHandle::getClass(
 	params.push_back(Param(CIMXMLParser::P_LocalOnly, localOnly));
 	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
 	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
-	StringStream extra;
+	OStringStream extra;
 	generatePropertyListXML(extra,propertyList);
 	CIMClass rval(CIMNULL);
 	getClassOp op(rval);
@@ -590,7 +590,7 @@ CIMXMLCIMOMHandle::getInstance(
 	const StringArray* propertyList)
 {
 	static const char* const commandName = "GetInstance";
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	Array<Param> params;
 	params.push_back(Param(CIMXMLParser::P_LocalOnly, localOnly));
 	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
@@ -619,7 +619,7 @@ namespace
 			// For extrinsic methods, the parser is sitting on either
 			// RETURNVALUE, PARAMVALUE or /METHODRESPONSE
 			// handle RETURNVALUE, which is optional
-			if (parser.tokenIs(CIMXMLParser::E_RETURNVALUE))
+			if (parser.tokenIsId(CIMXMLParser::E_RETURNVALUE))
 			{
 				String returnType = parser.getAttribute(CIMXMLParser::A_PARAMTYPE);
 				if (returnType.empty())
@@ -627,8 +627,8 @@ namespace
 					returnType = "string";
 				}
 				parser.mustGetChild();
-				if (!parser.tokenIs(CIMXMLParser::E_VALUE) &&
-					!parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
+				if (!parser.tokenIsId(CIMXMLParser::E_VALUE) &&
+					!parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 				{
 					OW_THROWCIMMSG(CIMException::FAILED,
 						"<RETURNVALUE> did not contain a <VALUE> or "
@@ -639,7 +639,7 @@ namespace
 			}
 			// handle PARAMVALUE*
 			for (size_t outParamCount = 0;
-				  parser && parser.tokenIs(CIMXMLParser::E_PARAMVALUE);
+				  parser && parser.tokenIsId(CIMXMLParser::E_PARAMVALUE);
 				  ++outParamCount)
 			{
 				String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
@@ -713,7 +713,7 @@ CIMXMLCIMOMHandle::invokeMethod(
 	sendXMLTrailer(tfs, false);
 	CIMValue rval(CIMNULL);
 	invokeMethodOp op(rval, outParams);
-	doSendRequest(iostrRef, methodName, 
+	doSendRequest(iostrRef, methodName,
 		ns + ":" + path.modelPath(),
 		false, op);
 	return rval;
@@ -754,7 +754,7 @@ CIMXMLCIMOMHandle::setQualifierType(const String& ns,
 		const CIMQualifierType& qt)
 {
 	static const char* const commandName = "SetQualifier";
-	StringStream extra;
+	OStringStream extra;
 	extra << "<IPARAMVALUE NAME=\"QualifierDeclaration\">";
 	CIMtoXML(qt, extra);
 	extra << "</IPARAMVALUE>";
@@ -783,7 +783,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(CIMXMLParser::E_QUALIFIER_DECLARATION))
+			while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER_DECLARATION))
 			{
 				CIMQualifierType cqt;
 				XMLQualifier::processQualifierDecl(parser, cqt);
@@ -811,7 +811,7 @@ CIMXMLCIMOMHandle::modifyClass(const String &ns,
 		const CIMClass& cc)
 {
 	static const char* const commandName = "ModifyClass";
-	StringStream extra(1024);
+	OStringStream extra(1024);
 	extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ModifiedClass << "\">";
 	CIMtoXML(cc, extra);
 	extra << "</IPARAMVALUE>";
@@ -825,7 +825,7 @@ CIMXMLCIMOMHandle::createClass(const String& ns,
 		const CIMClass& cc)
 {
 	static const char* const commandName = "CreateClass";
-	StringStream ostr;
+	OStringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewClass\">";
 	CIMtoXML(cc, ostr);
 	ostr << "</IPARAMVALUE>";
@@ -868,10 +868,10 @@ CIMXMLCIMOMHandle::modifyInstance(
 	//{
 	//	OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Instance must have keys");
 	//}
-	StringStream ostr(1000);
+	OStringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr, 
+	CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr,
 		CIMObjectPath(ns, modifiedInstance));
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	
@@ -895,7 +895,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			if (!parser.tokenIs(CIMXMLParser::E_INSTANCENAME))
+			if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME))
 			{
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Expected but did not get <INSTANCENAME>");
 			}
@@ -910,14 +910,14 @@ CIMXMLCIMOMHandle::createInstance(const String& ns,
 	const CIMInstance& ci)
 {
 	static const char* const commandName = "CreateInstance";
-	// This check isn't necessary, because of singleton classes/instances 
+	// This check isn't necessary, because of singleton classes/instances
 	// that don't have any keys
 	//if (ci.getKeyValuePairs().empty())
 	//{
 	//	OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 	//		"The instance does not have any keys");
 	//}
-	StringStream ostr;
+	OStringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewInstance\">";
 	CIMInstancetoXML(ci, ostr);
 	ostr << "</IPARAMVALUE>";
@@ -948,7 +948,7 @@ CIMXMLCIMOMHandle::setProperty(
 	static const char* const commandName = "SetProperty";
 	Array<Param> params;
 	params.push_back(Param(CIMXMLParser::P_PropertyName, propName));
-	StringStream ostr;
+	OStringStream ostr;
 	CIMtoXML(cv, ostr);
 	params.push_back(Param(CIMXMLParser::P_NewValue, Param::VALUESET, ostr.toString()));
 	voidRetValOp op;
@@ -967,7 +967,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			if (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
+			if (!parser.tokenIsId(CIMXMLParser::E_IRETURNVALUE))
 			{
 				// "string" because we don't know the type--defect in the spec.
 				result = XMLCIMFactory::createValue(parser, "string");
@@ -1006,7 +1006,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
+			while (!parser.tokenIsId(CIMXMLParser::E_IRETURNVALUE))
 			{
 				CIMXMLParser::tokenId token = parser.getToken();
 				CIMObjectPath cop = XMLCIMFactory::createObjectPath(parser);
@@ -1041,7 +1041,7 @@ namespace
 		{}
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
+			while (!parser.tokenIsId(CIMXMLParser::E_IRETURNVALUE))
 			{
 				CIMInstance ci(CIMNULL);
 				CIMClass cc(CIMNULL);
@@ -1085,7 +1085,7 @@ CIMXMLCIMOMHandle::associatorNames(
 {
 	static const char* const commandName = "AssociatorNames";
 	Array<Param> params;
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	if (!role.empty())
 	{
 		params.push_back(Param(CIMXMLParser::P_Role, role));
@@ -1174,7 +1174,7 @@ CIMXMLCIMOMHandle::associatorsCommon(
 {
 	static const char* const commandName = "Associators";
 	Array<Param> params;
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	if (!role.empty())
 	{
 		params.push_back(Param(CIMXMLParser::P_Role, role));
@@ -1224,7 +1224,7 @@ CIMXMLCIMOMHandle::referenceNames(
 {
 	static const char* const commandName = "ReferenceNames";
 	Array<Param> params;
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	if (!role.empty())
 	{
 		params.push_back(Param(CIMXMLParser::P_Role, role));
@@ -1300,7 +1300,7 @@ CIMXMLCIMOMHandle::referencesCommon(
 {
 	static const char* const commandName = "References";
 	Array<Param> params;
-	StringStream extra(1000);
+	OStringStream extra(1000);
 	if (!role.empty())
 	{
 		params.push_back(Param(CIMXMLParser::P_Role, role));
@@ -1336,7 +1336,7 @@ CIMXMLCIMOMHandle::execQuery(
 	const String& ns,
 	const String& query, int wqlLevel)
 {
-	return CIMOMHandleIFC::execQueryE(ns, query, 
+	return CIMOMHandleIFC::execQueryE(ns, query,
 		String("WQL") + String(wqlLevel));
 }
 //////////////////////////////////////////////////////////////////////////////

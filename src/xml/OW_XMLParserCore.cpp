@@ -53,7 +53,7 @@ bool XMLParserCore::next(XMLToken& entry)
 	{
 		if (!m_stack.empty())
 		{
-			throw XMLParseException(XMLParseException::UNCLOSED_TAGS, m_line);
+			OW_THROWXMLLINE(XMLParseException::UNCLOSED_TAGS, m_line);
 		}
 		return false;
 	}
@@ -78,7 +78,7 @@ bool XMLParserCore::next(XMLToken& entry)
 		if (entry.type == XMLToken::START_TAG)
 		{
 			if (m_stack.empty() && m_foundRoot)
-				throw XMLParseException(XMLParseException::MULTIPLE_ROOTS, m_line);
+				OW_THROWXMLLINE(XMLParseException::MULTIPLE_ROOTS, m_line);
 			m_foundRoot = true;
 			if (!m_tagIsEmpty)
 			{
@@ -88,9 +88,9 @@ bool XMLParserCore::next(XMLToken& entry)
 		else if (entry.type == XMLToken::END_TAG)
 		{
 			if (m_stack.empty())
-				throw XMLParseException(XMLParseException::START_END_MISMATCH, m_line);
+				OW_THROWXMLLINE(XMLParseException::START_END_MISMATCH, m_line);
 			if (m_stack.top() != entry.text.toString())
-				throw XMLParseException(XMLParseException::START_END_MISMATCH, m_line);
+				OW_THROWXMLLINE(XMLParseException::START_END_MISMATCH, m_line);
 			m_stack.pop();
 		}
 		return true;
@@ -134,7 +134,7 @@ inline bool isNameChar(char c)
 bool XMLParserCore::getElementName(XMLToken& entry)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
-		throw XMLParseException(XMLParseException::BAD_START_TAG, m_line);
+		OW_THROWXMLLINE(XMLParseException::BAD_START_TAG, m_line);
 	entry.text.reset();
 	while (isNameChar(*m_current))
 	{
@@ -173,7 +173,7 @@ bool XMLParserCore::getOpenElementName(XMLToken& entry, bool& openCloseElement)
 void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
-		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_NAME,
+		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
 			m_line, format("Expected alpha or _; got %1", *m_current).c_str());
 	att.name.reset();
 	while (isalnum(*m_current) || *m_current == '_' || *m_current == '-' ||
@@ -183,7 +183,7 @@ void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 	}
 	skipWhitespace();
 	if (*m_current != '=')
-		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_NAME,
+		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
 			m_line, format("Expected =; got %1", *m_current).c_str());
 	m_current++;
 	skipWhitespace();
@@ -192,7 +192,7 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 {
 	// ATTN-B: handle values contained in semiquotes:
 	if (*m_current != '"' && *m_current != '\'')
-		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
+		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			m_line, format("Expecting \" or '; got %1", *m_current).c_str());
 	char startChar = *m_current++;
 	att.value.reset();
@@ -202,7 +202,7 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 	}
 		
 	if (*m_current != startChar)
-		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
+		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			m_line, format("Expecting %1; Got %2", startChar, static_cast<int>(*m_current)).c_str());
 	++m_current;
 }
@@ -224,14 +224,14 @@ void XMLParserCore::getComment()
 				}
 				else
 				{
-					throw XMLParseException(
+					OW_THROWXMLLINE(
 							XMLParseException::MINUS_MINUS_IN_COMMENT, m_line);
 				}
 			}
 		}
 	}
 	// If it got this far, then the comment is unterminated:
-	throw XMLParseException(XMLParseException::UNTERMINATED_COMMENT, m_line);
+	OW_THROWXMLLINE(XMLParseException::UNTERMINATED_COMMENT, m_line);
 }
 void XMLParserCore::getCData(XMLToken& entry)
 {
@@ -266,7 +266,7 @@ void XMLParserCore::getCData(XMLToken& entry)
 		entry.text += *m_current++;
 	}
 	// If it got this far, then the cdata is unterminated:
-	throw XMLParseException(XMLParseException::UNTERMINATED_CDATA, m_line);
+	OW_THROWXMLLINE(XMLParseException::UNTERMINATED_CDATA, m_line);
 }
 void XMLParserCore::getDocType()
 {
@@ -277,7 +277,7 @@ void XMLParserCore::getDocType()
 			++m_line;
 	}
 	if (*m_current != '>')
-		throw XMLParseException(XMLParseException::UNTERMINATED_DOCTYPE, m_line);
+		OW_THROWXMLLINE(XMLParseException::UNTERMINATED_DOCTYPE, m_line);
 	m_current++;
 }
 //void XMLParserCore::getContent(XMLToken& entry, bool& isWhiteSpace)
@@ -333,7 +333,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
-					throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line));
+					OW_THROWXMLLINE(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line);
 			}
 			entry.type = XMLToken::CDATA;
 			getCData(entry);
@@ -346,20 +346,20 @@ void XMLParserCore::getElement(XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
-					throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line));
+					OW_THROWXMLLINE(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line);
 			}
 			entry.type = XMLToken::DOCTYPE;
 			getDocType();
 			return;
 		}
-		throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line));
+		OW_THROWXMLLINE(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line);
 	}
 	else if (*m_current == '/')
 	{
 		entry.type = XMLToken::END_TAG;
 		++m_current;
 		if (!getElementName(entry))
-			throw(XMLParseException(XMLParseException::BAD_END_TAG, m_line));
+			OW_THROWXMLLINE(XMLParseException::BAD_END_TAG, m_line);
 		return;
 	}
 	else if (isalpha(*m_current) || *m_current == '_')
@@ -377,7 +377,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 		}
 	}
 	else
-		throw XMLParseException(XMLParseException::BAD_START_TAG, m_line);
+		OW_THROWXMLLINE(XMLParseException::BAD_START_TAG, m_line);
 	//--------------------------------------------------------------------------
 	// Grab all the attributes:
 	//--------------------------------------------------------------------------
@@ -396,7 +396,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 				}
 				else
 				{
-					throw XMLParseException(
+					OW_THROWXMLLINEMSG(
 						XMLParseException::BAD_ATTRIBUTE_VALUE, m_line,
 						format("Expecting >; Got %1", *m_current).c_str());
 				}
@@ -414,7 +414,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 			}
 			else
 			{
-				throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
+				OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
 					m_line, format("Expecting >; Got %1", *m_current).c_str());
 			}
 		}
@@ -428,7 +428,7 @@ void XMLParserCore::getElement(XMLToken& entry)
 		getAttributeNameAndEqual(attr);
 		getAttributeValue(attr);
 		if (entry.attributeCount == XMLToken::MAX_ATTRIBUTES)
-			throw XMLParseException(XMLParseException::TOO_MANY_ATTRIBUTES, m_line);
+			OW_THROWXMLLINE(XMLParseException::TOO_MANY_ATTRIBUTES, m_line);
 	}
 }
 

@@ -761,7 +761,7 @@ HDBHandle::removeNode(const String& key)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-HDBHandle::updateNode(HDBNode& node, Int32 dataLen, unsigned char* data)
+HDBHandle::updateNode(HDBNode& node, Int32 dataLen, const unsigned char* data)
 {
 	bool cc = false;
 	if(node)

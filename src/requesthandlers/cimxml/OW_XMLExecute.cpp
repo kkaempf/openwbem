@@ -121,7 +121,7 @@ XMLExecute::FuncEntry XMLExecute::g_funcs[] =
 #endif
 	{ "garbage", 0 }
 };
-XMLExecute::FuncEntry* XMLExecute::g_funcsEnd = &XMLExecute::g_funcs[0] + 
+XMLExecute::FuncEntry* XMLExecute::g_funcsEnd = &XMLExecute::g_funcs[0] +
 	(sizeof(XMLExecute::g_funcs)/sizeof(*XMLExecute::g_funcs)) - 1;
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -140,7 +140,7 @@ XMLExecute::XMLExecute()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-XMLExecute::~XMLExecute() 
+XMLExecute::~XMLExecute()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	{
 		(*m_ostrEntity) << "<MULTIRSP>";
 		parser.getChild();
-		while (parser.tokenIs(CIMXMLParser::E_SIMPLEREQ))
+		while (parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ))
 		{
 			TempFileStream ostrEnt, ostrErr(500);
 			processSimpleReq(parser, ostrEnt, ostrErr, userName);
@@ -274,7 +274,7 @@ XMLExecute::getParameters(CIMXMLParser& parser,
 	//
 	// Process parameters
 	//
-	while (parser.tokenIs(CIMXMLParser::E_PARAMVALUE))
+	while (parser.tokenIsId(CIMXMLParser::E_PARAMVALUE))
 	{
 		String parameterName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		String parameterType = parser.getAttribute(CIMXMLParser::A_PARAMTYPE);
@@ -393,7 +393,7 @@ namespace
 		Array<param>& params)
 	{
 		// scan all the parameters and set them
-		while (parser.tokenIs(CIMXMLParser::E_IPARAMVALUE))
+		while (parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 		{
 			String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 			Array<param>::iterator i = std::find_if(params.begin(), params.end(),
@@ -405,7 +405,7 @@ namespace
 			}
 			
 			parser.getNextTag();
-			if (parser.tokenIs(CIMXMLParser::E_IPARAMVALUE))
+			if (parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 			{
 				// pointing at </IPARAMVALUE>, thus
 				// IPARAMVALUE was empty, so the value is NULL
@@ -417,7 +417,7 @@ namespace
 				switch (i->type)
 				{
 					case param::CLASSNAME:
-						if (!parser.tokenIs(CIMXMLParser::E_CLASSNAME))
+						if (!parser.tokenIsId(CIMXMLParser::E_CLASSNAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <CLASSNAME> tag.",
@@ -427,7 +427,7 @@ namespace
 						i->val = CIMValue(XMLCIMFactory::createObjectPath(parser).getObjectName());
 						break;
 					case param::BOOLEAN:
-						if (!parser.tokenIs(CIMXMLParser::E_VALUE))
+						if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
@@ -437,7 +437,7 @@ namespace
 						i->val = XMLCIMFactory::createValue(parser, "boolean");
 						break;
 					case param::STRINGARRAY:
-						if (!parser.tokenIs(CIMXMLParser::E_VALUE_ARRAY))
+						if (!parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <VALUE.ARRAY> tag.",
@@ -447,7 +447,7 @@ namespace
 						i->val = XMLCIMFactory::createValue(parser, "string");
 						break;
 					case param::INSTANCENAME:
-						if (!parser.tokenIs(CIMXMLParser::E_INSTANCENAME))
+						if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> tag.",
@@ -458,14 +458,14 @@ namespace
 						break;
 					case param::NAMEDINSTANCE:
 					{
-						if (!parser.tokenIs(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
+						if (!parser.tokenIsId(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <VALUE.NAMEDINSTANCE> tag. %2",
 									i->name, parser).c_str());
 						}
 						i->isSet = true;
-						parser.mustGetChild(CIMXMLParser::E_INSTANCENAME);
+						parser.mustGetChildId(CIMXMLParser::E_INSTANCENAME);
 						CIMObjectPath ipath(XMLCIMFactory::createObjectPath(parser));
 						CIMInstance inst(XMLCIMFactory::createInstance(parser));
 						parser.mustGetEndTag(); // pass </VALUE.NAMEDINSTANCE>
@@ -474,7 +474,7 @@ namespace
 						break;
 					}
 					case param::STRING:
-						if (!parser.tokenIs(CIMXMLParser::E_VALUE))
+						if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <VALUE> tag.",
@@ -484,8 +484,8 @@ namespace
 						i->val = XMLCIMFactory::createValue(parser, "string");
 						break;
 					case param::OBJECTNAME:
-						if (!parser.tokenIs(CIMXMLParser::E_INSTANCENAME)
-							&& !parser.tokenIs(CIMXMLParser::E_CLASSNAME))
+						if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME)
+							&& !parser.tokenIsId(CIMXMLParser::E_CLASSNAME))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <INSTANCENAME> or <CLASSNAME> tag.",
@@ -495,9 +495,9 @@ namespace
 						i->val = CIMValue(XMLCIMFactory::createObjectPath(parser));
 						break;
 					case param::PROPERTYVALUE:
-						if (!parser.tokenIs(CIMXMLParser::E_VALUE)
-							&& !parser.tokenIs(CIMXMLParser::E_VALUE_ARRAY)
-							&& !parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
+						if (!parser.tokenIsId(CIMXMLParser::E_VALUE)
+							&& !parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
+							&& !parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 						{
 							OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 								format("Parameter %1 is the wrong type.  Expected <VALUE> or <VALUE.ARRAY> or <VALUE.REFERENCE> tag.",
@@ -674,20 +674,20 @@ void XMLExecute::associators(ostream& ostr,
 		// class path
 		AssocCIMClassXMLOutputter handler(ostr, ns);
 		hdl.associatorsClasses(ns, objectName, handler,
-			assocClass, resultClass, role, resultRole, 
+			assocClass, resultClass, role, resultRole,
 			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
-			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pPropList);
 	}
 	else
 	{
 		// instance path
-		AssocCIMInstanceXMLOutputter handler(ostr, ns, 
+		AssocCIMInstanceXMLOutputter handler(ostr, ns,
 			getHost());
 		hdl.associators(ns, objectName, handler,
-			assocClass, resultClass, role, resultRole, 
+			assocClass, resultClass, role, resultRole,
 			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
-			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pPropList);
 	}
 	ostr << "</IRETURNVALUE>";
@@ -785,8 +785,8 @@ XMLExecute::modifyInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 	bool includeQualifiers = params[1].val.toBool();
 	CIMInstance modifiedInstance(CIMNULL);
 	params[0].val.get(modifiedInstance);
-	hdl.modifyInstance(ns, modifiedInstance, 
-		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+	hdl.modifyInstance(ns, modifiedInstance,
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 		pPropList);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -828,7 +828,7 @@ XMLExecute::setQualifier(ostream& /*ostr*/, CIMXMLParser& parser,
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"invalid qualifier xml");
 	}
-	parser.mustGetChild(
+	parser.mustGetChildId(
 		CIMXMLParser::E_QUALIFIER_DECLARATION);
 	
 	CIMQualifierType cimQualifier;
@@ -905,7 +905,7 @@ XMLExecute::enumerateClassNames(ostream& ostr, CIMXMLParser& parser,
 		params[1].val.toBool() ? E_DEEP : E_SHALLOW);
 	ostr << "<IRETURNVALUE>";
 	ClassNameXMLWriter handler(ostr);
-	hdl.enumClassNames(ns, className, handler, 
+	hdl.enumClassNames(ns, className, handler,
 		deepInheritance);
 	ostr << "</IRETURNVALUE>";
 }
@@ -951,8 +951,8 @@ XMLExecute::enumerateClasses( ostream& ostr, CIMXMLParser& parser,
 	bool includeQualifiers = params[3].val.toBool();
 	bool includeClassOrigin = params[4].val.toBool();
 	CIMClassXMLOutputter handler(ostr);
-	hdl.enumClass(ns, className, handler, 
-		deep ? E_DEEP : E_SHALLOW, 
+	hdl.enumClass(ns, className, handler,
+		deep ? E_DEEP : E_SHALLOW,
 		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
 		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
@@ -1045,11 +1045,11 @@ XMLExecute::enumerateInstances(ostream& ostr, CIMXMLParser& parser,
 	bool includeClassOrigin = params[4].val.toBool();
 	ostr << "<IRETURNVALUE>";
 	CIMInstanceXMLOutputter handler(ostr, ns);
-	hdl.enumInstances(ns, className, handler, 
-		deep ? E_DEEP : E_SHALLOW, 
+	hdl.enumInstances(ns, className, handler,
+		deep ? E_DEEP : E_SHALLOW,
 		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
-		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
-		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 	ostr << "</IRETURNVALUE>";
 }
@@ -1077,8 +1077,8 @@ XMLExecute::getClass(ostream& ostr, CIMXMLParser& parser,
 	bool includeQualifiers = params[2].val.toBool();
 	bool includeClassOrigin = params[3].val.toBool();
 	ostr << "<IRETURNVALUE>";
-	CIMClass cimClass = hdl.getClass(ns, className, 
-		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY, 
+	CIMClass cimClass = hdl.getClass(ns, className,
+		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
 		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
@@ -1110,9 +1110,9 @@ XMLExecute::getInstance(ostream& ostr, CIMXMLParser& parser,
 	bool includeQualifiers = params[2].val.toBool();
 	bool includeClassOrigin = params[3].val.toBool();
 	ostr << "<IRETURNVALUE>";
-	CIMInstance cimInstance = hdl.getInstance(ns, instancePath, 
+	CIMInstance cimInstance = hdl.getInstance(ns, instancePath,
 		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
-		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 	CIMInstancetoXML(cimInstance, ostr);
@@ -1204,9 +1204,9 @@ XMLExecute::references(ostream& ostr, CIMXMLParser& parser,
 		// It's a class
 		AssocCIMClassXMLOutputter handler(ostr, ns);
 		hdl.referencesClasses(ns, path, handler, resultClass,
-			role, 
-			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
-			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			role,
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pPropList);
 	}
 	else
@@ -1214,9 +1214,9 @@ XMLExecute::references(ostream& ostr, CIMXMLParser& parser,
 		AssocCIMInstanceXMLOutputter handler(ostr, ns,
 			getHost());
 		hdl.references(ns, path, handler, resultClass,
-			role, 
-			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
-			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			role,
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pPropList);
 	}
 	ostr << "</IRETURNVALUE>";
@@ -1270,7 +1270,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		ostrEntity << "<SIMPLERSP>";
 		
 		// start out pointing to SIMPLEREQ
-		OW_ASSERT(parser.tokenIs(CIMXMLParser::E_SIMPLEREQ));
+		OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ));
 		// <!ELEMENT SIMPLEREQ (IMETHODCALL|METHODCALL)>
 		parser.mustGetChild();
 		if (parser.getToken() == CIMXMLParser::E_METHODCALL)
@@ -1297,7 +1297,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		if (m_isIntrinsic)
 		{
 			// <!ELEMENT LOCALNAMESPACEPATH (NAMESPACE+)>
-			parser.mustGetChild(CIMXMLParser::E_NAMESPACE);
+			parser.mustGetChildId(CIMXMLParser::E_NAMESPACE);
 			String nameSpace = XMLClass::getNameSpace(parser);
 			
 			// move past LOCALNAMESPACEPATH to IPARAMVALUE*

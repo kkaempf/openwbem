@@ -39,55 +39,21 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::prime()
-{
-	if (!(m_good = m_parser.next(m_curTok)))
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
-	}
-	if (m_curTok.type == XMLToken::XML_DECLARATION)
-	{
-		if (!(m_good = m_parser.next(m_curTok)))
-		{
-			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
-		}
-		skipData();
-	}
-	if (m_curTok.type == XMLToken::DOCTYPE)
-	{
-		if (!(m_good = m_parser.next(m_curTok)))
-		{
-			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
-		}
-		skipData();
-	}
-}
-///////////////////////////////////////////////////////////////////////////////
 CIMXMLParser::CIMXMLParser(const String& str)
-	: m_ptfs(new TempFileStream())
-	, m_parser()
-	, m_curTok()
-	, m_good(true)
+	: XMLPullParser(str)
 {
-	*m_ptfs << str;
-	m_parser.setInput(*m_ptfs);
-	prime();
 }
 ///////////////////////////////////////////////////////////////////////////////
 CIMXMLParser::CIMXMLParser(std::istream& istr)
-	: m_ptfs()
-	, m_parser(istr)
-	, m_curTok()
-	, m_good(true)
+	: XMLPullParser(istr)
 {
-	prime();
 }
 ///////////////////////////////////////////////////////////////////////////////
 CIMXMLParser::CIMXMLParser()
-	: m_good(false)
+	: XMLPullParser()
 {
 }
+
 // This needs to be sorted alphabetically.
 CIMXMLParser::ElemEntry CIMXMLParser::g_elems[] =
 {
@@ -246,34 +212,9 @@ const char* const CIMXMLParser::P_QualifierName = "QualifierName";
 const char* const CIMXMLParser::P_QualifierDeclaration = "QualifierDeclaration";
 
 
-
-
-
-
-String
-CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
-{
-	OW_ASSERT(m_curTok.type == XMLToken::START_TAG);
-	for (unsigned i = 0; i < m_curTok.attributeCount; i++)
-	{
-		XMLToken::Attribute& attr = m_curTok.attributes[i];
-		// Should this be case insensentive? NO
-		if (attr.name.equals(attrId))
-		{
-			return XMLUnescape(attr.value.c_str(), attr.value.length());
-		}
-	}
-	if (throwIfError)
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-					format("Failed to find "
-						"attribute: %1 in node: %2", attrId, m_curTok.text).c_str() );
-	}
-	return String();
-}
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId)
+CIMXMLParser::mustGetChildId(CIMXMLParser::tokenId tId)
 {
 	if (!m_good)
 	{
@@ -282,7 +223,7 @@ CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId)
 			"CIMXMLParser has reached EOF");
 	}
 	getChild();
-	if (!m_good || !tokenIs(tId))
+	if (!m_good || !tokenIsId(tId))
 	{
 		m_good = false;
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -292,53 +233,7 @@ CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMXMLParser::mustGetChild()
-{
-	if (!m_good)
-	{
-		m_good = false;
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::mustGetChild() failed.  parser = %1",
-				*this).c_str());
-	}
-	getChild();
-	if (!m_good)
-	{
-		m_good = false;
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::mustGetChild() failed.  parser = %1",
-				*this).c_str());
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::getChild()
-{
-	if (!m_good)
-	{
-		return;
-	}
-	for(;;)
-	{
-		nextToken();
-		if (!m_good)
-		{
-			return;
-		}
-		switch (m_curTok.type)
-		{
-			case XMLToken::END_TAG: // hit the end, no children
-				m_good = false;
-			case XMLToken::START_TAG: // valid token for a child
-				return;
-			default:
-				break;
-		}
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId) const
+CIMXMLParser::mustTokenIsId(CIMXMLParser::tokenId tId) const
 {
 	if (!tokenIs(g_elems[tId].name))
 	{
@@ -349,32 +244,7 @@ CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId) const
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMXMLParser::getNextTag(bool throwIfError)
-{
-	nextToken();
-	skipData();
-	if (!m_good && throwIfError)
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::getNext() failed.  parser = %1",
-				*this).c_str());
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::getNext(bool throwIfError)
-{
-	nextToken();
-	if (!m_good && throwIfError)
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::getNext() failed.  parser = %1",
-				*this).c_str());
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok, bool throwIfError)
+CIMXMLParser::getNextId(CIMXMLParser::tokenId beginTok, bool throwIfError)
 {
 	while (m_good)
 	{
@@ -393,99 +263,6 @@ CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok, bool throwIfError)
 			format("CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok=%1) failed.  parser = %2",
 				g_elems[beginTok].name, *this).c_str());
 	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::mustGetEndTag()
-{
-	skipData();
-	if (m_curTok.type != XMLToken::END_TAG)
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			format("CIMXMLParser::mustGetEndTag() failed.  parser = %1",
-				*this).c_str());
-	}
-	getNext();
-	skipData();
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-CIMXMLParser::getName() const
-{
-	OW_ASSERT(m_curTok.type == XMLToken::START_TAG || m_curTok.type == XMLToken::END_TAG);
-	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
-}
-//////////////////////////////////////////////////////////////////////////////
-String
-CIMXMLParser::getData() const
-{
-	OW_ASSERT(m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA);
-	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
-}
-//////////////////////////////////////////////////////////////////////////////
-bool
-CIMXMLParser::isData() const
-{
-	return m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA;
-}
-///////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::nextToken()
-{
-	do
-	{
-		m_good = m_parser.next(m_curTok);
-	} while (m_curTok.type == XMLToken::COMMENT && m_good);
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-CIMXMLParser::skipData()
-{
-	while (isData() && m_good)
-	{
-		nextToken();
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& ostr, const CIMXMLParser& p)
-{
-	ostr << "m_good = " << p.m_good << '\n';
-	switch (p.m_curTok.type)
-	{
-		case XMLToken::INVALID:
-			ostr << "*INVALID*\n";
-			break;
-		case XMLToken::XML_DECLARATION:
-			ostr << "<xml>\n";
-			break;
-		case XMLToken::START_TAG:
-			ostr << '<' << p.m_curTok.text << ' ';
-			for (unsigned int x = 0; x < p.m_curTok.attributeCount; ++x)
-			{
-				ostr << p.m_curTok.attributes[x].name << "=\"" <<
-					p.m_curTok.attributes[x].value << "\" ";
-			}
-			ostr << ">\n";
-			break;
-		case XMLToken::END_TAG:
-			ostr << "</" << p.m_curTok.text << ">\n";
-			break;
-		case XMLToken::COMMENT:
-			ostr << "<--" << p.m_curTok.text << "-->\n";
-			break;
-		case XMLToken::CDATA:
-			ostr << "<CDATA[[" << p.m_curTok.text << "]]>\n";
-			break;
-		case XMLToken::DOCTYPE:
-			ostr << "<DOCTYPE>\n";
-			break;
-		case XMLToken::CONTENT:
-			ostr << "CONTENT: " << p.m_curTok.text << '\n';
-			break;
-		default:
-			ostr << "Unknown token type\n";
-	}
-	return ostr;
 }
 
 } // end namespace OpenWBEM

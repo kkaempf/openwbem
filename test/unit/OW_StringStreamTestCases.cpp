@@ -45,7 +45,7 @@ void OW_StringStreamTestCases::tearDown()
 
 void OW_StringStreamTestCases::testSomething()
 {
-	StringStream ss;
+	OStringStream ss;
 	ss << "O";
 	unitAssert(ss.length() == 1);
 	unitAssert(ss.toString().equals("O"));

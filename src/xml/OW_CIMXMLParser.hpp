@@ -30,20 +30,12 @@
 #ifndef OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 #define OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AutoPtr.hpp"
-#include "OW_TempFileStream.hpp"
-#include "OW_String.hpp"
-#include "OW_XMLParserCore.hpp"
-#ifdef OW_HAVE_ISTREAM
-#include <istream>
-#else
-#include <iostream>
-#endif
+#include "OW_XMLPullParser.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMXMLParser
+class CIMXMLParser : public XMLPullParser
 {
 public:
 	// These must be sorted alphabetically, except E_UNKNOWN, which must be last!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -116,52 +108,22 @@ public:
 	CIMXMLParser(const String& str);
 	CIMXMLParser(std::istream& sb);
 	CIMXMLParser();
-	String mustGetAttribute(const char* const attrId)
+	void mustGetChildId(tokenId tId);
+	void getNextId(tokenId beginTok, bool throwIfError = false);
+	void mustGetNextId(tokenId beginTok)
 	{
-		return getAttribute(attrId, true);
+		getNextId(beginTok, true);
 	}
-	String getAttribute(const char* const attrId, bool throwIfError = false);
-	void getChild();
-	void mustGetChild(tokenId tId);
-	void mustGetChild();
-	void getNextTag(bool throwIfError = false);
-	void getNext(tokenId beginTok, bool throwIfError = false);
-	void getNext(bool throwIfError = false);
-	void mustGetNext()
+	bool tokenIsId(tokenId tId) const
 	{
-		getNext(true);
+		return XMLPullParser::tokenIs(g_elems[tId].name);
 	}
-	void mustGetNextTag()
-	{
-		getNextTag(true);
-	}
-	void mustGetNext(tokenId beginTok)
-	{
-		getNext(beginTok, true);
-	}
-	void mustGetEndTag();
-	bool tokenIs(const char* const arg) const
-	{
-		return m_curTok.text.equals(arg);
-	}
-	bool tokenIs(tokenId tId) const
-	{
-		return tokenIs(g_elems[tId].name);
-	}
-	void mustTokenIs(tokenId tId) const;
+	void mustTokenIsId(tokenId tId) const;
 	tokenId getToken() const
 	{
 		return getTokenFromName(m_curTok.text.c_str());
 	}
-	String getName() const;
-	String getData() const;
-	bool isData() const;
 private:
-	AutoPtr<TempFileStream> m_ptfs;
-	XMLParserCore m_parser;
-	XMLToken m_curTok;
-	bool m_good;
-	void prime();
 	static tokenId getTokenFromName(const char* name);
 	struct ElemEntry
 	{
@@ -172,8 +134,6 @@ private:
 	static ElemEntry g_elems[];
 	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
 	static ElemEntry* g_elemsEnd;
-	void nextToken();
-	void skipData();
 	// unimplemented
 	CIMXMLParser(const CIMXMLParser& x);
 	CIMXMLParser& operator=(const CIMXMLParser& x);
@@ -255,13 +215,8 @@ public:
 	static const char* const P_Query;
 	static const char* const P_QualifierName;
 	static const char* const P_QualifierDeclaration;
-
-
-	friend std::ostream& operator<<(std::ostream& ostr, const CIMXMLParser& p);
 };
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::CIMXMLParser OW_CIMXMLParser;
 
 #endif

@@ -555,6 +555,32 @@ int
 HTTPSvrConnection::processHeaders()
 {
 //
+// Check for Authentication
+//
+	// if m_options.allowAnonymous is true, we don't check.
+	if (m_options.allowAnonymous == false)
+	{
+		if (!m_isAuthenticated)
+		{
+			m_isAuthenticated = false;
+			try
+			{
+				if (performAuthentication(getHeaderValue("Authorization")) < 300 )
+						m_isAuthenticated = true;
+			}
+			catch (AuthenticationException& e)
+			{
+				m_errDetails = e.getMessage();
+				m_isAuthenticated = false;
+				return SC_INTERNAL_SERVER_ERROR;
+			}
+			if (m_isAuthenticated == false)
+			{
+				return SC_UNAUTHORIZED;
+			}
+		}
+	}
+//
 // check for required headers with HTTP/1.1
 //
 	if (m_httpVersion == HTTP_VER_11)
@@ -672,7 +698,7 @@ HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Accept"))
 		{
 			String ac = getHeaderValue("Accept");
-			if (ac.indexOf("text/xml") == String::npos 
+			if (ac.indexOf("text/xml") == String::npos
 				&& ac.indexOf("application/xml") == String::npos)
 			{
 				m_errDetails = "Only entities of type \"text/xml\" or "
@@ -831,32 +857,6 @@ HTTPSvrConnection::processHeaders()
 			return SC_NOT_EXTENDED;
 		}
 	} // if (m_method == M_POST)
-//
-// Check for Authentication
-//
-	// if m_options.allowAnonymous is true, we don't check.
-	if (m_options.allowAnonymous == false)
-	{
-		if (!m_isAuthenticated)
-		{
-			m_isAuthenticated = false;
-			try
-			{
-				if (performAuthentication(getHeaderValue("Authorization")) < 300 )
-						m_isAuthenticated = true;
-			}
-			catch (AuthenticationException& e)
-			{
-				m_errDetails = e.getMessage();
-				m_isAuthenticated = false;
-				return SC_INTERNAL_SERVER_ERROR;
-			}
-			if (m_isAuthenticated == false)
-			{
-				return SC_UNAUTHORIZED;
-			}
-		}
-	}
 //
 //
 //

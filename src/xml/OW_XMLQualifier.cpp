@@ -51,7 +51,7 @@ void
 processQualifierDecl(CIMXMLParser& parser,
 	CIMQualifierType& cimQualifier)
 {
-	if (!parser.tokenIs(CIMXMLParser::E_QUALIFIER_DECLARATION))
+	if (!parser.tokenIsId(CIMXMLParser::E_QUALIFIER_DECLARATION))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Expected but did not find <QUALIFIER.DECLARATION>");
 	}
@@ -112,7 +112,7 @@ processQualifierDecl(CIMXMLParser& parser,
 		cimQualifier.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 	}
 	parser.getNextTag();
-	if(parser.tokenIs(CIMXMLParser::E_SCOPE))
+	if(parser.tokenIsId(CIMXMLParser::E_SCOPE))
 	{
 		// process optional scope child
 		processScope(parser,cimQualifier,"CLASS",CIMScope::CLASS);
@@ -142,8 +142,8 @@ processQualifierDecl(CIMXMLParser& parser,
 		// (so that it has 'any' scop in the terminology of CIM)
 		cimQualifier.addScope(CIMScope::ANY);
 	}
-	if (parser.tokenIs(CIMXMLParser::E_VALUE) ||
-		parser.tokenIs(CIMXMLParser::E_VALUE_ARRAY))
+	if (parser.tokenIsId(CIMXMLParser::E_VALUE) ||
+		parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY))
 	{
 		// process optional value or value.array child
 		CIMValue val = XMLCIMFactory::createValue(parser,qualType);
@@ -173,7 +173,7 @@ processScope(CIMXMLParser& parser,
 String
 getQualifierName(CIMXMLParser& parser)
 {
-	if(!parser.tokenIs(CIMXMLParser::E_IPARAMVALUE))
+	if(!parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"Expected IPARAMVALUE to lead into QualifierName");
@@ -183,7 +183,7 @@ getQualifierName(CIMXMLParser& parser)
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find qualifier name");
 	parser.getChild();
-	if (!parser.tokenIs(CIMXMLParser::E_VALUE))
+	if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find value for qualifier name");
 	parser.mustGetNext();

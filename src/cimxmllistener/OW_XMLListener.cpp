@@ -51,7 +51,7 @@ XMLListener::XMLListener(CIMListenerCallback* callback)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-XMLListener::~XMLListener() 
+XMLListener::~XMLListener()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
 	makeXMLHeader(messageId, *ostrEntity);
-	if (parser.tokenIs(CIMXMLParser::E_MULTIEXPREQ))
+	if (parser.tokenIsId(CIMXMLParser::E_MULTIEXPREQ))
 	{
 		parser.getChild();
 		if (!parser)
@@ -90,7 +90,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 			parser.getNext(CIMXMLParser::E_SIMPLEEXPREQ);
 		}
 	}
-	else if (parser.tokenIs(CIMXMLParser::E_SIMPLEEXPREQ))
+	else if (parser.tokenIsId(CIMXMLParser::E_SIMPLEEXPREQ))
 	{
 		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
 	}
@@ -123,14 +123,14 @@ XMLListener::processSimpleExpReq(CIMXMLParser& parser,
 {
 	try
 	{
-		if (!parser.tokenIs(CIMXMLParser::E_SIMPLEEXPREQ))
+		if (!parser.tokenIsId(CIMXMLParser::E_SIMPLEEXPREQ))
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		parser.mustGetChild(CIMXMLParser::E_EXPMETHODCALL);
+		parser.mustGetChildId(CIMXMLParser::E_EXPMETHODCALL);
 		parser.mustGetNextTag();
-		while (parser.tokenIs(CIMXMLParser::E_EXPPARAMVALUE)
-			|| parser.tokenIs(CIMXMLParser::E_IPARAMVALUE) // do this because of a bug in the CIMXML 2.1 DTD
+		while (parser.tokenIsId(CIMXMLParser::E_EXPPARAMVALUE)
+			|| parser.tokenIsId(CIMXMLParser::E_IPARAMVALUE) // do this because of a bug in the CIMXML 2.1 DTD
 		)
 		{
 			String paramName = parser.getAttribute(CIMXMLParser::A_NAME);
@@ -139,7 +139,7 @@ XMLListener::processSimpleExpReq(CIMXMLParser& parser,
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					paramName.c_str());
 			}
-			parser.mustGetChild(CIMXMLParser::E_INSTANCE);
+			parser.mustGetChildId(CIMXMLParser::E_INSTANCE);
 			CIMInstance inst = XMLCIMFactory::createInstance(parser);
 			m_callback->indicationOccurred(inst, m_path);
 			parser.mustGetEndTag(); // pass </EXPPARAMVALUE>

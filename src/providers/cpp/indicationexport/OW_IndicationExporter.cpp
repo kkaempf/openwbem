@@ -118,7 +118,7 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// Check for <CIM> element
 	//
-	if (!parser || !parser.tokenIs(CIMXMLParser::E_CIM))
+	if (!parser || !parser.tokenIsId(CIMXMLParser::E_CIM))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
 	}
@@ -141,7 +141,7 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// Find <MESSAGE>
 	//
-	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
+	parser.mustGetChildId(CIMXMLParser::E_MESSAGE);
 	cimattr=parser.mustGetAttribute(CIMXMLParser::A_ID);
 	if (!cimattr.equals(String(m_iMessageID)))
 	{
@@ -162,11 +162,11 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	// TODO-NICE: need to look for complex EXPRSPs!!
 	//
-	parser.mustGetChild(CIMXMLParser::E_SIMPLEEXPRSP);
+	parser.mustGetChildId(CIMXMLParser::E_SIMPLEEXPRSP);
 	//
 	// <EXPMETHODRESPONSE>
 	//
-	parser.mustGetChild(CIMXMLParser::E_EXPMETHODRESPONSE);
+	parser.mustGetChildId(CIMXMLParser::E_EXPMETHODRESPONSE);
 	String nameOfMethod = parser.getAttribute(CIMXMLParser::A_NAME);
 	if (nameOfMethod.empty())
 	{
@@ -180,7 +180,7 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 										 nameOfMethod).c_str());
 	}
 	parser.mustGetNextTag();
-	if (parser.tokenIs(CIMXMLParser::E_ERROR))
+	if (parser.tokenIsId(CIMXMLParser::E_ERROR))
 	{
 		String errCode = parser.mustGetAttribute(
 			CIMXMLParser::A_CODE);

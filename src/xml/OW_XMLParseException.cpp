@@ -60,48 +60,13 @@ static const char* _xmlMessages[] =
 	"Semantic error"
 };
 XMLParseException::XMLParseException(
-		XMLParseException::Code code,
-		unsigned int lineNumber)
-: Exception(__FILE__, lineNumber, _xmlMessages[code - 1])
-{
-}
-XMLParseException::XMLParseException(
-		XMLParseException::Code code,
-		unsigned int lineNumber,
-		const char* message)
-: Exception(__FILE__, lineNumber, format("%1: %2", _xmlMessages[code - 1], 
-	message).c_str())
-{
-}
-XMLParseException::XMLParseException(
-		const char* file,
-		unsigned int line,
-		const char* msg)
-: Exception(file, line, msg)
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// XMLParseValidationError
-//
-////////////////////////////////////////////////////////////////////////////////
-XMLParseValidationError::XMLParseValidationError(
-		unsigned int lineNumber,
-		const char* message)
-: XMLParseException(XMLParseException::VALIDATION_ERROR, lineNumber, message)
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//
-// XMLParseSemanticError
-//
-////////////////////////////////////////////////////////////////////////////////
-XMLParseSemanticError::XMLParseSemanticError(
-		unsigned int lineNumber,
-		const char* message)
-: XMLParseException(XMLParseException::SEMANTIC_ERROR, lineNumber, message)
+	const char* file,
+	unsigned int line,
+	Code code,
+	const char* msg,
+	unsigned int xmlline)
+: Exception(file, line, format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
+	msg).c_str())
 {
 }
 

@@ -297,7 +297,7 @@ HDBNode::turnFlagsOff(HDBHandle& hdl, UInt32 flags)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-HDBNode::updateData(HDBHandle& hdl, int dataLen, unsigned char* data)
+HDBNode::updateData(HDBHandle& hdl, int dataLen, const unsigned char* data)
 {
 	bool cc = false;
 	if(!m_pdata.isNull())

@@ -35,45 +35,25 @@
 namespace OpenWBEM
 {
 
-using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
-RepositoryOStreamBuf::RepositoryOStreamBuf(int incSize) : 
-	streambuf(), 
-	m_incSize(incSize < MIN_INCSIZE ? MIN_INCSIZE : incSize),
-	m_bfr(new unsigned char[m_incSize]), m_size(m_incSize), m_count(0)
+RepositoryOStreamBuf::RepositoryOStreamBuf(size_t initialSize)
+	: std::streambuf()
 {
+	m_bfr.reserve(initialSize);
 }
 //////////////////////////////////////////////////////////////////////////////
-RepositoryOStreamBuf::~RepositoryOStreamBuf()
-{
-	delete [] m_bfr;
-}
-//////////////////////////////////////////////////////////////////////////////
-int 
+int
 RepositoryOStreamBuf::overflow(int c)
 {
-	if(m_count == m_size)
-	{
-		m_size += m_incSize;
-		unsigned char* bfr = new unsigned char[m_size];
-		::memcpy(bfr, m_bfr, m_count);
-		delete [] m_bfr;
-		m_bfr = bfr;
-	}
-	m_bfr[m_count++] = c;
+	m_bfr.push_back(c);
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
-RepositoryOStreamBuf::clear()
+std::streamsize
+RepositoryOStreamBuf::xsputn(const char* s, std::streamsize n)
 {
-	if(m_size != m_incSize)
-	{
-		delete [] m_bfr;
-		m_bfr = new unsigned char[m_incSize];
-		m_size = m_incSize;
-	}
-	m_count = 0;
+	m_bfr.insert(m_bfr.end(), s, s+n);
+	return n;
 }
 
 } // end namespace OpenWBEM

@@ -34,76 +34,76 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-StringStreamBuf::StringStreamBuf(size_t size)
-	: BaseStreamBuffer(size, "out"), m_buf(size) 
+OStringStreamBuf::OStringStreamBuf(size_t size)
+	: BaseStreamBuffer(size, "out"), m_buf(size)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-StringStreamBuf::~StringStreamBuf() 
+OStringStreamBuf::~OStringStreamBuf()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-String StringStreamBuf::toString() const 
-{ 
-	return m_buf.toString(); 
+String OStringStreamBuf::toString() const
+{
+	return m_buf.toString();
 }
 ///////////////////////////////////////////////////////////////////////////////
-size_t StringStreamBuf::length() const 
-{ 
-	return m_buf.length(); 
+size_t OStringStreamBuf::length() const
+{
+	return m_buf.length();
 }
 ///////////////////////////////////////////////////////////////////////////////
-const char* StringStreamBuf::c_str() const 
-{ 
-	return m_buf.c_str(); 
+const char* OStringStreamBuf::c_str() const
+{
+	return m_buf.c_str();
 }
 ///////////////////////////////////////////////////////////////////////////////
-void StringStreamBuf::reset() 
-{ 
-	m_buf.reset(); 
+void OStringStreamBuf::reset()
+{
+	m_buf.reset();
 }
 ///////////////////////////////////////////////////////////////////////////////
-int StringStreamBuf::buffer_to_device(const char *c, int n)
+int OStringStreamBuf::buffer_to_device(const char *c, int n)
 {
 	m_buf.append(c, n);
 	return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////
-StringStreamBase::StringStreamBase(size_t sz) 
-	: m_buf(sz) 
+OStringStreamBase::OStringStreamBase(size_t sz)
+	: m_buf(sz)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-StringStream::StringStream(size_t size)
-	: StringStreamBase(size), std::ostream(&m_buf)
+OStringStream::OStringStream(size_t size)
+	: OStringStreamBase(size), std::ostream(&m_buf)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-StringStream::~StringStream()
+OStringStream::~OStringStream()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-String StringStream::toString() const 
-{ 
-	m_buf.sync(); 
-	return m_buf.toString(); 
+String OStringStream::toString() const
+{
+	m_buf.sync();
+	return m_buf.toString();
 }
 ///////////////////////////////////////////////////////////////////////////////
-size_t StringStream::length() const 
-{ 
-	m_buf.sync(); 
-	return m_buf.length(); 
+size_t OStringStream::length() const
+{
+	m_buf.sync();
+	return m_buf.length();
 }
 ///////////////////////////////////////////////////////////////////////////////
-const char* StringStream::c_str() const 
-{ 
-	m_buf.sync(); 
-	return m_buf.c_str(); 
+const char* OStringStream::c_str() const
+{
+	m_buf.sync();
+	return m_buf.c_str();
 }
 ///////////////////////////////////////////////////////////////////////////////
-void StringStream::reset() 
-{ 
-	m_buf.reset(); 
+void OStringStream::reset()
+{
+	m_buf.reset();
 }
 
 } // end namespace OpenWBEM

@@ -31,7 +31,6 @@
 #define OW_REPOSITORYSTREAMS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_AutoPtr.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -43,6 +42,7 @@
 #elif defined(OW_HAVE_STREAMBUF_H)
 #include <streambuf.h>
 #endif
+#include <vector>
 
 namespace OpenWBEM
 {
@@ -54,8 +54,8 @@ public:
 	RepositoryIStreamBuf(int dataLen, const unsigned char* data) :
 		std::streambuf()
 	{
-		setg(const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)), 
-			const_cast<char*>(reinterpret_cast<const char*>(data)), 
+		setg(const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)),
+			const_cast<char*>(reinterpret_cast<const char*>(data)),
 			const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)));
 	}
 protected:
@@ -65,46 +65,53 @@ protected:
 	}
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryIStream : public std::istream
+class RepositoryIStreamBase
+{
+protected:
+	RepositoryIStreamBase(int dataLen, const unsigned char* data) : m_strbuf(dataLen, data) {}
+	RepositoryIStreamBuf m_strbuf;
+};
+//////////////////////////////////////////////////////////////////////////////
+class RepositoryIStream : private RepositoryIStreamBase, public std::istream
 {
 public:
-	RepositoryIStream(int dataLen, const unsigned char* data) :
-		std::istream(new RepositoryIStreamBuf(dataLen, data))
-		, m_strbuf(dynamic_cast<RepositoryIStreamBuf*>(rdbuf())) {}
-private:
-		AutoPtr<RepositoryIStreamBuf> m_strbuf;
+	RepositoryIStream(int dataLen, const unsigned char* data)
+	: RepositoryIStreamBase(dataLen, data), std::istream(&m_strbuf)	{}
 };
 //////////////////////////////////////////////////////////////////////////////
 class RepositoryOStreamBuf : public std::streambuf
 {
 public:
-	RepositoryOStreamBuf(int incSize=-1);
-	~RepositoryOStreamBuf();
-	unsigned char* getData() { return m_bfr; }
-	const int length() { return m_count; }
-	void clear();
+	RepositoryOStreamBuf(size_t initialSize = 256);
+	const unsigned char* getData() const { return &m_bfr[0]; }
+	int length() const { return m_bfr.size(); }
+	void clear() { m_bfr.clear(); }
 protected:
-	int overflow(int c=EOF);
+	virtual int overflow(int c=EOF);
+	virtual std::streamsize xsputn(const char* s, std::streamsize n);
 private:
-	enum { OW_DEFAULT_INCSIZE = 64, MIN_INCSIZE = 16 };
-	int m_incSize;
-	unsigned char* m_bfr;
-	int m_size;
-	int m_count;
+	std::vector<unsigned char> m_bfr;
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryOStream : public std::ostream
+class RepositoryOStreamBase
+{
+protected:
+	RepositoryOStreamBase(size_t initialSize = 256)
+	: m_buf(initialSize) {}
+
+	RepositoryOStreamBuf m_buf;
+};
+//////////////////////////////////////////////////////////////////////////////
+class RepositoryOStream : private RepositoryOStreamBase, public std::ostream
 {
 public:
-	RepositoryOStream()
-		: std::ostream(new RepositoryOStreamBuf)
-		, m_buf(dynamic_cast<RepositoryOStreamBuf*>(rdbuf()))
+	RepositoryOStream(size_t initialSize = 256)
+		: RepositoryOStreamBase(initialSize)
+		, std::ostream(&m_buf)
 	{}
-	unsigned char* getData() { return m_buf->getData(); }
-	int length() { return m_buf->length();  }
-	void clearData() { m_buf->clear(); }
-private:
-	AutoPtr<RepositoryOStreamBuf> m_buf;
+	const unsigned char* getData() const { return m_buf.getData(); }
+	int length() const { return m_buf.length();  }
+	void clearData() { m_buf.clear(); }
 };
 
 } // end namespace OpenWBEM

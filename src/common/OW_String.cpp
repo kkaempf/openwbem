@@ -107,7 +107,7 @@ public:
 	{
 		strcpy(m_buf, arg.m_buf);
 	}
-	ByteBuf(AutoPtrVec<char>& s, size_t len) 
+	ByteBuf(AutoPtrVec<char>& s, size_t len)
 		: m_len(len), m_buf(s.release())
 	{
 	}
@@ -173,7 +173,7 @@ String::String(UInt32 val) :
 String::String(Int64 val) :
 	m_buf(NULL)
 {
-	StringStream ss(33);
+	OStringStream ss(33);
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
 }
@@ -181,7 +181,7 @@ String::String(Int64 val) :
 String::String(UInt64 val) :
 	m_buf(NULL)
 {
-	StringStream ss(33);
+	OStringStream ss(33);
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
 }
@@ -189,7 +189,7 @@ String::String(UInt64 val) :
 String::String(Real64 val) :
 	m_buf(NULL)
 {
-	StringStream ss;
+	OStringStream ss;
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
 }
@@ -844,7 +844,7 @@ String::operator[] (size_t ndx) const
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// m_buf->data() won't be executed.
 	//return (ndx <= length()) ? *(m_buf->data() + ndx) : cnullChar;
-	if (ndx <= length()) 
+	if (ndx <= length())
 		return *(m_buf->data() + ndx);
 	else
 		return cnullChar;

@@ -32,7 +32,8 @@
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
 #include "OW_BaseStreamBuffer.hpp"
-#if defined(OW_HAVE_OSTREAM)
+#if defined(OW_HAVE_OSTREAM) && defined(OW_HAVE_ISTREAM)
+#include <istream>
 #include <ostream>
 #else
 #include <iostream>
@@ -46,11 +47,54 @@
 namespace OpenWBEM
 {
 
-class StringStreamBuf : public BaseStreamBuffer
+
+///////////////////////////////////////////////////////////////////////////////
+class IStringStreamBuf : public std::streambuf
 {
 public:
-	StringStreamBuf(size_t size);
-	virtual ~StringStreamBuf();
+	IStringStreamBuf(const String& s)
+		: std::streambuf()
+		, m_buf(s)
+	{
+		setg(const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str()+m_buf.length())),
+			const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str())),
+			const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str()+m_buf.length())));
+	}
+protected:
+	int underflow()
+	{
+		return (gptr() < egptr()) ? static_cast<int>(*gptr()) : EOF;
+	}
+private:
+	String m_buf;
+	friend class OStringStream;
+};
+///////////////////////////////////////////////////////////////////////////////
+class IStringStreamBase
+{
+public:
+	IStringStreamBase(const String& s) : m_buf(s) {}
+	mutable IStringStreamBuf m_buf;
+};
+///////////////////////////////////////////////////////////////////////////////
+class IStringStream : private IStringStreamBase, public std::istream
+{
+public:
+	IStringStream(const String& s);
+	~IStringStream();
+	void reset();
+private:
+	// not implemented
+	IStringStream(const IStringStream&);
+	IStringStream& operator=(const IStringStream&);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class OStringStreamBuf : public BaseStreamBuffer
+{
+public:
+	OStringStreamBuf(size_t size);
+	virtual ~OStringStreamBuf();
 	String toString() const;
 	size_t length() const;
 	const char* c_str() const;
@@ -59,34 +103,31 @@ protected:
 	virtual int buffer_to_device(const char *c, int n);
 private:
 	StringBuffer m_buf;
-	friend class StringStream;
+	friend class OStringStream;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class StringStreamBase
+class OStringStreamBase
 {
 public:
-	StringStreamBase(size_t sz);
-	mutable StringStreamBuf m_buf;
+	OStringStreamBase(size_t sz);
+	mutable OStringStreamBuf m_buf;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class StringStream : private StringStreamBase, public std::ostream
+class OStringStream : private OStringStreamBase, public std::ostream
 {
 public:
-	StringStream(size_t size = 256);
-	~StringStream();
+	OStringStream(size_t size = 256);
+	~OStringStream();
 	String toString() const;
 	size_t length() const;
 	const char* c_str() const;
 	void reset();
 private:
 	// not implemented
-	StringStream(const StringStream&);
-	StringStream& operator=(const StringStream&);
+	OStringStream(const OStringStream&);
+	OStringStream& operator=(const OStringStream&);
 };
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::StringStreamBuf OW_StringStreamBuf;
-typedef OpenWBEM::StringStream OW_StringStream;
 
 #endif

@@ -51,7 +51,7 @@ getNameSpace(CIMXMLParser& parser)
 {
 	String nameSpace;
 	bool firstTime = true;
-	while (parser.tokenIs(CIMXMLParser::E_NAMESPACE))
+	while (parser.tokenIsId(CIMXMLParser::E_NAMESPACE))
 	{
 		String pname = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		if(pname.empty())
@@ -90,12 +90,12 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 			
 		if (token == CIMXMLParser::E_CLASSPATH)
 		{
-			parser.mustTokenIs(CIMXMLParser::E_CLASS);
+			parser.mustTokenIsId(CIMXMLParser::E_CLASS);
 			c = readClass(parser,tmpcop);
 		}
 		else if (token==CIMXMLParser::E_INSTANCEPATH)
 		{
-			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
+			parser.mustTokenIsId(CIMXMLParser::E_INSTANCE);
 			i = readInstance(parser,tmpcop);
 		}
 		else
@@ -114,12 +114,12 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 			
 		if (token == CIMXMLParser::E_LOCALCLASSPATH)
 		{
-			parser.mustTokenIs(CIMXMLParser::E_CLASS);
+			parser.mustTokenIsId(CIMXMLParser::E_CLASS);
 			c = readClass(parser, tmpcop);
 		}
 		else if (token == CIMXMLParser::E_LOCALINSTANCEPATH)
 		{
-			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
+			parser.mustTokenIsId(CIMXMLParser::E_INSTANCE);
 			i = readInstance(parser, tmpcop);
 		}
 		else

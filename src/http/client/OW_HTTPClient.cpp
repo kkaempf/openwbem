@@ -234,7 +234,7 @@ HTTPClient::receiveAuthentication()
 		HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
 			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
-	else 
+	else
 #endif
 	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) != String::npos )
 	{
@@ -251,7 +251,7 @@ void HTTPClient::sendAuthorization()
 {
 	if( !m_sAuthorization.empty())
 	{
-		StringStream ostr;
+		OStringStream ostr;
 		ostr << m_sAuthorization << " ";
 		if( m_sAuthorization == "Basic" )
 		{

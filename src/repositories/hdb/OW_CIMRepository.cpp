@@ -66,7 +66,7 @@ CIMRepository::CIMRepository(ServiceEnvironmentIFCRef env)
 	, m_env(env)
 	, m_checkReferentialIntegrity(false)
 {
-	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt, 
+	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt,
 		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
 	{
 		m_checkReferentialIntegrity = true;
@@ -270,7 +270,7 @@ CIMRepository::setQualifierType(
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
 CIMRepository::getClass(
-	const String& ns, const String& className, 
+	const String& ns, const String& className,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 	const UserInfo&)
@@ -278,8 +278,8 @@ CIMRepository::getClass(
 	try
 	{
 		CIMClass theClass(CIMNULL);
-		CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, 
-			localOnly, includeQualifiers, includeClassOrigin, propertyList, 
+		CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className,
+			localOnly, includeQualifiers, includeClassOrigin, propertyList,
 			theClass);
 		checkGetClassRvalAndThrow(rval, ns, className);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
@@ -345,7 +345,7 @@ namespace
 				OW_THROWCIM(CIMException::NOT_FOUND);
 			}
 			// TODO: this doesn't work quite right.  what about associations to
-			// the instances we delete?  If we fix deleteInstance to also delete 
+			// the instances we delete?  If we fix deleteInstance to also delete
 			// associations, then we could just call enumInstances and then
 			// deleteInstance for all instances.
 			// delete any instances of the class
@@ -420,7 +420,7 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 {
 	try
 	{
-		// m_mStore.createClass modifies cimClass to be consistent with base 
+		// m_mStore.createClass modifies cimClass to be consistent with base
 		// classes, etc.
 		CIMClass cimClass(cimClass_);
 		m_mStore.createClass(ns, cimClass);
@@ -440,13 +440,13 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 			m_env->getLogger()->logDebug(format("Created class: %1:%2", ns, cimClass.toMOF()));
 		}
 	}
-	catch (HDBException&)
+	catch (HDBException& e)
 	{
 		OW_THROWCIM(CIMException::FAILED);
 	}
-	catch (IOException&)
+	catch (IOException& e)
 	{
-		OW_THROWCIM(CIMException::FAILED);
+		OW_THROWCIMMSG(CIMException::FAILED, Format("%1", e).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -667,10 +667,10 @@ CIMRepository::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
-	ELocalOnlyFlag localOnly, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
+	const StringArray* propertyList,
 	EEnumSubclassesFlag enumSubclasses, const UserInfo&)
 {
 	// deep means a different thing here than for enumInstanceNames.  See the spec.
@@ -722,7 +722,7 @@ CIMRepository::getInstance(
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, const UserInfo& aclInfo)
 {
@@ -748,7 +748,7 @@ CIMRepository::getInstance(
 	CIMClass cc(_instGetClass(ns, instanceName.getObjectName()));
 	try
 	{
-		ci = m_iStore.getCIMInstance(ns, instanceName, cc, localOnly, 
+		ci = m_iStore.getCIMInstance(ns, instanceName, cc, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList);
 	}
 	catch (IOException&)
@@ -1257,9 +1257,9 @@ namespace
 	public:
 		staticAssociatorsInstResultHandler(
 			const UserInfo& intAclInfo_,
-			CIMRepository& server_, 
+			CIMRepository& server_,
 			CIMInstanceResultHandlerIFC& result_,
-			EIncludeQualifiersFlag includeQualifiers_, 
+			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_)
 		: intAclInfo(intAclInfo_)
@@ -1291,9 +1291,9 @@ namespace
 	{
 	public:
 		staticReferencesInstResultHandler(const UserInfo& intAclInfo_,
-			CIMRepository& server_, 
+			CIMRepository& server_,
 			CIMInstanceResultHandlerIFC& result_,
-			EIncludeQualifiersFlag includeQualifiers_, 
+			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propertyList_)
 		: intAclInfo(intAclInfo_)

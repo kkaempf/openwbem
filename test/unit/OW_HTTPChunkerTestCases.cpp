@@ -46,7 +46,7 @@ void OW_HTTPChunkerTestCases::tearDown()
 
 void OW_HTTPChunkerTestCases::testChunking()
 {
-	StringStream chunkedTarget;
+	OStringStream chunkedTarget;
 	HTTPChunkedOStream ostr(chunkedTarget);
 	ostr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::flush;
 	unitAssert( chunkedTarget.toString() ==
@@ -60,7 +60,7 @@ void OW_HTTPChunkerTestCases::testBigChunking()
 	char* lotsOfAs = new char[10000];
 	memset( lotsOfAs, 'A', 9999 );
 	lotsOfAs[9999] = 0;
-	StringStream chunkedTarget;
+	OStringStream chunkedTarget;
 	HTTPChunkedOStream ostr(chunkedTarget);
 	ostr << lotsOfAs << std::flush;
 	unitAssert( chunkedTarget.toString().length() == 10022 );

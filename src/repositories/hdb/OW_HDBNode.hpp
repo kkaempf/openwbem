@@ -204,7 +204,7 @@ private:
 	bool remove(HDBHandle& hdl);
 	void removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset);
 	void addChild(HDBHandle& hdl, HDBNode& arg);
-	bool updateData(HDBHandle& hdl, int dataLen, unsigned char* data);
+	bool updateData(HDBHandle& hdl, int dataLen, const unsigned char* data);
 	void setNull() { m_pdata = 0; }
 	Reference<HDBNodeData> m_pdata;
 	friend class HDBHandle;

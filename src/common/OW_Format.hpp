@@ -69,7 +69,7 @@ public:
 	Format(const char* ca, const String& a, const String& b);
 	Format(const char* ca, const String& a, const String& b, const String& c);
 private:
-	StringStream oss;
+	OStringStream oss;
 	char process(String& f, char c0);
 	template<typename T> void put(const T& t);
 	// These are to help prevent template bloat
@@ -87,7 +87,7 @@ private:
 	friend std::ostream& operator<<(std::ostream& os, const Format& f);
 }; // class Format
 
-template<typename T> 
+template<typename T>
 void Format::put(const T& t)
 { // t is inserted into oss
 	if (!oss.good())

@@ -237,14 +237,14 @@ outputKEYVALUE(ostream& ostr, const CIMProperty& cp)
 	if(dtype.isReferenceType())
 	{
 		CIMProperty lcp(cp);
-		// This is sort of a bad thing to do, basically we are taking advantage 
+		// This is sort of a bad thing to do, basically we are taking advantage
 		// of a side effect of setDataType.  If the type isn't correct then
 		// the value will be cast to the correct type.	This is to work around
 		// a problem that may happen if a provider writer sets the value of a
 		// reference property to a String instead of an CIMObjectPath.
 		// If the value is a string, the xml that is output will be malformed,
 		// and the client will throw an exception.
-		lcp.setDataType(lcp.getDataType()); 
+		lcp.setDataType(lcp.getDataType());
 		CIMtoXML(lcp.getValue(), ostr);
 		return;
 	}
@@ -438,14 +438,14 @@ void CIMInstancetoXML(CIMInstance const& ci, ostream& ostr)
 	ostr << "</INSTANCE>";
 }
 //////////////////////////////////////////////////////////////////////////////
-void CIMInstanceNameAndInstancetoXML(CIMInstance const& instance, 
+void CIMInstanceNameAndInstancetoXML(CIMInstance const& instance,
 	ostream& ostr, CIMObjectPath const& instanceName)
 {
 	CIMInstanceNametoXML(instanceName, ostr);
 	CIMInstancetoXML(instance, ostr);
 }
 //////////////////////////////////////////////////////////////////////////////
-void CIMInstancePathAndInstancetoXML(CIMInstance const& instance, 
+void CIMInstancePathAndInstancetoXML(CIMInstance const& instance,
 	ostream& ostr, CIMObjectPath const& instancePath)
 {
 	CIMInstancePathtoXML(instancePath, ostr);
@@ -653,7 +653,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				StringArray sa;
 				for (size_t i = 0; i < ca.size(); ++i)
 				{
-					StringStream ss;
+					OStringStream ss;
 					CIMtoXML(ca[i], ss);
 					sa.push_back(ss.toString());
 				}
@@ -668,7 +668,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				StringArray sa;
 				for (size_t i = 0; i < ia.size(); ++i)
 				{
-					StringStream ss;
+					OStringStream ss;
 					CIMInstancetoXML(ia[i],ss);
 					sa.push_back(ss.toString());
 				}
@@ -796,7 +796,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				CIMClass cc(CIMNULL);
 				cv.get(cc);
 				String s;
-				StringStream ss;
+				OStringStream ss;
 				CIMtoXML(cc, ss);
 				out << XMLEscape(ss.toString());
 				break;
@@ -807,7 +807,7 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 				CIMInstance i(CIMNULL);
 				cv.get(i);
 				String s;
-				StringStream ss;
+				OStringStream ss;
 				CIMInstancetoXML(i,ss);
 				out << XMLEscape(ss.toString());
 				break;

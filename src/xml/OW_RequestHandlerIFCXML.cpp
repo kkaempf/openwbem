@@ -68,7 +68,7 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		if (!parser.tokenIs(CIMXMLParser::E_MESSAGE))
+		if (!parser.tokenIsId(CIMXMLParser::E_MESSAGE))
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}

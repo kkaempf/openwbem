@@ -209,7 +209,7 @@ namespace
 		// or
 		// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
 		ifstream infile("/proc/apm", std::ios::in);
-		StringStream oss;
+		OStringStream oss;
 		oss << infile.rdbuf();
 		infile.close();
 		String fileContents = oss.toString();

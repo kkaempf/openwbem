@@ -61,15 +61,15 @@ static void
 getLocalNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 {
 	// <!ELEMENT LOCALNAMESPACEPATH (NAMESPACE+)>
-	if (!parser.tokenIs(CIMXMLParser::E_LOCALNAMESPACEPATH))
+	if (!parser.tokenIsId(CIMXMLParser::E_LOCALNAMESPACEPATH))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Expected <LOCALNAMESPACEPATH>");
 	}
-	parser.mustGetChild(CIMXMLParser::E_NAMESPACE);
+	parser.mustGetChildId(CIMXMLParser::E_NAMESPACE);
 	// <!ELEMENT NAMESPACE EMPTY>
 	// <!ATTLIST NAMESPACE %CIMName;>
 	String ns;
-	while(parser.tokenIs(CIMXMLParser::E_NAMESPACE))	
+	while(parser.tokenIsId(CIMXMLParser::E_NAMESPACE))	
 	{
 		String nscomp = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		if(!nscomp.empty())
@@ -96,7 +96,7 @@ getNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 {
 	// <!ELEMENT NAMESPACEPATH (HOST,LOCALNAMESPACEPATH)>
 	// <!ELEMENT HOST (#PCDATA)>
-	parser.mustGetChild(CIMXMLParser::E_HOST);
+	parser.mustGetChildId(CIMXMLParser::E_HOST);
 	parser.mustGetNext();
 	if (!parser.isData())
 	{
@@ -146,12 +146,12 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 	// <!ATTLIST INSTANCENAME %ClassName;>
 	CIMPropertyArray propertyArray;
 	CIMProperty cp(CIMNULL);
-	OW_ASSERT(parser.tokenIs(CIMXMLParser::E_INSTANCENAME));
+	OW_ASSERT(parser.tokenIsId(CIMXMLParser::E_INSTANCENAME));
 	String thisClassName = parser.getAttribute(CIMXMLParser::A_CLASSNAME);
 	cimPath.setObjectName(thisClassName);
 	//parser.getChild();
 	parser.getNextTag();
-	if (parser.tokenIs(CIMXMLParser::E_KEYBINDING))
+	if (parser.tokenIsId(CIMXMLParser::E_KEYBINDING))
 	{
 		do
 		{
@@ -181,9 +181,9 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 			cp = CIMProperty(name, value);
 			propertyArray.push_back(cp);
 			parser.mustGetEndTag(); // pass </KEYBINDING>
-		} while (parser.tokenIs(CIMXMLParser::E_KEYBINDING));
+		} while (parser.tokenIsId(CIMXMLParser::E_KEYBINDING));
 	}
-	else if (parser.tokenIs(CIMXMLParser::E_KEYVALUE))
+	else if (parser.tokenIsId(CIMXMLParser::E_KEYVALUE))
 	{
 		CIMValue value(CIMNULL);
 		cp = CIMProperty();
@@ -192,7 +192,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 		cp.setValue(value);
 		propertyArray.push_back(cp);
 	}
-	else if (parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
+	else if (parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 	{
 		CIMValue value = XMLCIMFactory::createValue(parser, "REF");
 		cp = CIMProperty();
@@ -224,18 +224,18 @@ createObjectPath(CIMXMLParser& parser)
 			parser.mustGetEndTag(); // pass </OBJECTPATH>
 			return rval;
 		case CIMXMLParser::E_LOCALCLASSPATH:
-			parser.mustGetChild(CIMXMLParser::E_LOCALNAMESPACEPATH);
+			parser.mustGetChildId(CIMXMLParser::E_LOCALNAMESPACEPATH);
 			getLocalNameSpacePathAndSet(rval, parser);
-			parser.mustGetNext(CIMXMLParser::E_CLASSNAME);
+			parser.mustGetNextId(CIMXMLParser::E_CLASSNAME);
 			rval.setObjectName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 			parser.mustGetNextTag();
 			parser.mustGetEndTag(); // pass </CLASSNAME>
 			parser.mustGetEndTag(); // pass </LOCALCLASSPATH>
 			return rval;
 		case CIMXMLParser::E_CLASSPATH:
-			parser.mustGetChild(CIMXMLParser::E_NAMESPACEPATH);
+			parser.mustGetChildId(CIMXMLParser::E_NAMESPACEPATH);
 			getNameSpacePathAndSet(rval, parser);
-			parser.mustGetNext(CIMXMLParser::E_CLASSNAME);
+			parser.mustGetNextId(CIMXMLParser::E_CLASSNAME);
 			rval.setObjectName(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 			parser.mustGetNextTag();
 			parser.mustGetEndTag(); // pass </CLASSNAME>
@@ -250,11 +250,11 @@ createObjectPath(CIMXMLParser& parser)
 			getInstanceName(parser, rval);
 			return rval;
 		case CIMXMLParser::E_LOCALINSTANCEPATH:
-			parser.mustGetChild(CIMXMLParser::E_LOCALNAMESPACEPATH);
+			parser.mustGetChildId(CIMXMLParser::E_LOCALNAMESPACEPATH);
 			getLocalNameSpacePathAndSet(rval, parser);
 			break;
 		case CIMXMLParser::E_INSTANCEPATH:
-			parser.mustGetChild(CIMXMLParser::E_NAMESPACEPATH);
+			parser.mustGetChildId(CIMXMLParser::E_NAMESPACEPATH);
 			getNameSpacePathAndSet(rval, parser);
 			break;
 		default:
@@ -275,7 +275,7 @@ createClass(CIMXMLParser& parser)
 	CIMClass rval;
 	String superClassName;
 	
-	if (!parser.tokenIs(CIMXMLParser::E_CLASS))
+	if (!parser.tokenIsId(CIMXMLParser::E_CLASS))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not class XML");
 	}
@@ -291,7 +291,7 @@ createClass(CIMXMLParser& parser)
 	// Find qualifier information
 	//
 	parser.mustGetNextTag();
-	while (parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		CIMQualifier cq = createQualifier(parser);
 //         if(cq.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_ASSOCIATION))
@@ -307,16 +307,16 @@ createClass(CIMXMLParser& parser)
 	//
 	// Load properties
 	//
-	while (parser.tokenIs(CIMXMLParser::E_PROPERTY)
-		   || parser.tokenIs(CIMXMLParser::E_PROPERTY_ARRAY)
-		   || parser.tokenIs(CIMXMLParser::E_PROPERTY_REFERENCE))
+	while (parser.tokenIsId(CIMXMLParser::E_PROPERTY)
+		   || parser.tokenIsId(CIMXMLParser::E_PROPERTY_ARRAY)
+		   || parser.tokenIsId(CIMXMLParser::E_PROPERTY_REFERENCE))
 	{
 		rval.addProperty(createProperty(parser));
 	}
 	//
 	// Load methods
 	//
-	while (parser.tokenIs(CIMXMLParser::E_METHOD))
+	while (parser.tokenIsId(CIMXMLParser::E_METHOD))
 	{
 		rval.addMethod(createMethod(parser));
 	}
@@ -328,7 +328,7 @@ CIMInstance
 createInstance(CIMXMLParser& parser)
 {
 	CIMInstance rval;
-	if (!parser.tokenIs(CIMXMLParser::E_INSTANCE))
+	if (!parser.tokenIsId(CIMXMLParser::E_INSTANCE))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not instance XML");
 	}
@@ -339,7 +339,7 @@ createInstance(CIMXMLParser& parser)
 	//
 	CIMQualifierArray quals;
 	parser.getChild();
-	while (parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		quals.append(createQualifier(parser));
 	}
@@ -348,9 +348,9 @@ createInstance(CIMXMLParser& parser)
 	// Load properties
 	//
 	CIMPropertyArray props;
-	while (parser.tokenIs(CIMXMLParser::E_PROPERTY)
-		   || parser.tokenIs(CIMXMLParser::E_PROPERTY_ARRAY)
-		   || parser.tokenIs(CIMXMLParser::E_PROPERTY_REFERENCE))
+	while (parser.tokenIsId(CIMXMLParser::E_PROPERTY)
+		   || parser.tokenIsId(CIMXMLParser::E_PROPERTY_ARRAY)
+		   || parser.tokenIsId(CIMXMLParser::E_PROPERTY_REFERENCE))
 	{
 		props.append(createProperty(parser));
 	}
@@ -416,7 +416,7 @@ static inline void
 convertCimType(Array<T>& ra, CIMXMLParser& parser)
 {
 	// start out possibly pointing at <VALUE>
-	while(parser.tokenIs(CIMXMLParser::E_VALUE))
+	while(parser.tokenIsId(CIMXMLParser::E_VALUE))
 	{
 		parser.mustGetNext();
 		if (parser.isData())
@@ -613,7 +613,7 @@ createValue(CIMXMLParser& parser,
 					CIMObjectPathArray opArray;
 					parser.getNextTag();
 	
-					while(parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
+					while(parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 					{
 						CIMObjectPath cop(CIMNULL);
 						CIMValue v = createValue(parser, valueType);
@@ -670,7 +670,7 @@ createValue(CIMXMLParser& parser,
 CIMQualifier
 createQualifier(CIMXMLParser& parser)
 {
-	if (!parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	if (!parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not qualifier XML");
 	}
@@ -728,8 +728,8 @@ createQualifier(CIMXMLParser& parser)
 	}
 	rval.setPropagated(propagate.equalsIgnoreCase("true"));
 	parser.mustGetNextTag();
-	if(parser.tokenIs(CIMXMLParser::E_VALUE_ARRAY)
-		|| parser.tokenIs(CIMXMLParser::E_VALUE))
+	if(parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
+		|| parser.tokenIsId(CIMXMLParser::E_VALUE))
 	{
 		rval.setValue(createValue(parser, cimType));
 	}
@@ -740,7 +740,7 @@ createQualifier(CIMXMLParser& parser)
 CIMMethod
 createMethod(CIMXMLParser& parser)
 {
-	if(!parser.tokenIs(CIMXMLParser::E_METHOD))
+	if(!parser.tokenIsId(CIMXMLParser::E_METHOD))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not method XML");
 	}
@@ -775,16 +775,16 @@ createMethod(CIMXMLParser& parser)
 	//
 	// See if there are qualifiers
 	//
-	while (parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		rval.addQualifier(createQualifier(parser));
 	}
 	//
 	// Handle parameters
-	while (parser.tokenIs(CIMXMLParser::E_PARAMETER)
-		|| parser.tokenIs(CIMXMLParser::E_PARAMETER_REFERENCE)
-		|| parser.tokenIs(CIMXMLParser::E_PARAMETER_ARRAY)
-		|| parser.tokenIs(CIMXMLParser::E_PARAMETER_REFARRAY))
+	while (parser.tokenIsId(CIMXMLParser::E_PARAMETER)
+		|| parser.tokenIsId(CIMXMLParser::E_PARAMETER_REFERENCE)
+		|| parser.tokenIsId(CIMXMLParser::E_PARAMETER_ARRAY)
+		|| parser.tokenIsId(CIMXMLParser::E_PARAMETER_REFARRAY))
 	{
 		rval.addParameter(createParameter(parser));
 	}
@@ -932,13 +932,13 @@ createProperty(CIMXMLParser& parser)
 	// See if there are qualifiers
 	//
 	parser.mustGetNextTag();
-	while (parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		rval.addQualifier(createQualifier(parser));
 	}
-	if (parser.tokenIs(CIMXMLParser::E_VALUE)
-		|| parser.tokenIs(CIMXMLParser::E_VALUE_ARRAY)
-		|| parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
+	if (parser.tokenIsId(CIMXMLParser::E_VALUE)
+		|| parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
+		|| parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 	{
 		rval.setValue(createValue(parser,cimType));
 		
@@ -1120,7 +1120,7 @@ createParameter(CIMXMLParser& parser)
 	//
 	CIMQualifierArray qualArray;
 	parser.mustGetNextTag();
-	while (parser.tokenIs(CIMXMLParser::E_QUALIFIER))
+	while (parser.tokenIsId(CIMXMLParser::E_QUALIFIER))
 	{
 		qualArray.append(createQualifier(parser));
 	}
