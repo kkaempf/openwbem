@@ -260,7 +260,7 @@ OW_HDB::findBlock(OW_File file, OW_Int32 size)
 			// If the current block size is greater than or equal to the
 			// size being requested, then we found a block in the file
 			// we can use.
-			if(fblk.size >= (OW_UInt32)size)
+			if(fblk.size >= static_cast<OW_UInt32>(size))
 			{
 				offset = coffset;
 				break;
@@ -452,7 +452,7 @@ void
 OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 {
 	fblk.chkSum = 0;
-	OW_UInt32 chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
+	OW_UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
 	fblk.chkSum = chkSum;
 
 	int cc = file.write(&fblk, sizeof(fblk), offset);
@@ -475,7 +475,7 @@ OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 
 	OW_UInt32 chkSum = fblk.chkSum;
 	fblk.chkSum = 0;
-	fblk.chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
+	fblk.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
 	if(chkSum != fblk.chkSum)
 	{
 		OW_THROW(OW_HDBException, "CORRUPT DATA? Invalid check sum in node");
@@ -590,7 +590,7 @@ calcCheckSum(unsigned char* src, OW_Int32 len)
 
 	for(i = 0; i < len; i++)
 	{
-		cksum += (OW_UInt32) src[i];
+		cksum += src[i];
 	}
 
 	return cksum;

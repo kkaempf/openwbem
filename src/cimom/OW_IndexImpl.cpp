@@ -88,7 +88,7 @@ OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
 	if(OW_FileSystem::canRead(m_dbFileName)
 		&& OW_FileSystem::canWrite(m_dbFileName))
 	{
-		m_pDB = (DB*) dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
+		m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 			DB_BTREE, &dbinfo);
 
 		if(m_pDB == NULL)
@@ -100,7 +100,7 @@ OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
 	}
 	else
 	{
-		m_pDB = (DB*) dbopen(m_dbFileName.c_str(), O_TRUNC | O_RDWR | O_CREAT,
+		m_pDB = dbopen(m_dbFileName.c_str(), O_TRUNC | O_RDWR | O_CREAT,
 			S_IRUSR | S_IWUSR,  DB_BTREE, &dbinfo);
 
 		if(m_pDB == NULL)
@@ -121,7 +121,7 @@ OW_IndexImpl::reopen()
 	close();
 	::memset(&dbinfo, 0, sizeof(dbinfo));
 	dbinfo.compare = recCompare;
-	m_pDB = (DB*) dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
+	m_pDB = dbopen(m_dbFileName.c_str(), O_RDWR, S_IRUSR | S_IWUSR,
 		DB_BTREE, &dbinfo);
 
 	if(m_pDB == NULL)
@@ -166,16 +166,16 @@ OW_IndexImpl::find(const char* key)
 
 	DBT theKey, theRec;
 
-	theKey.data = (void*) key;
+	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key+1);
 
 	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_CURSOR) == 0)
 	{
-		if(!::strcmp((const char*)theKey.data, key))
+		if(!::strcmp(static_cast<const char*>(theKey.data), key))
 		{
 			OW_Int32 tmp;
 			memcpy(&tmp, theRec.data, sizeof(tmp));
-			return OW_IndexEntry((const char*)theKey.data, tmp);
+			return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
 		}
 	}
 
@@ -194,7 +194,7 @@ OW_IndexImpl::add(const char* key, OW_Int32 offset)
 	DBT theRec, theKey;
 	theRec.data = &offset;
 	theRec.size = sizeof(offset);
-	theKey.data = (void*) key;
+	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
 	return (m_pDB->put(m_pDB, &theKey, &theRec, 0) == 0);
 }
@@ -209,7 +209,7 @@ OW_IndexImpl::remove(const char* key, OW_Int32 offset)
 	}
 
 	DBT theKey;
-	theKey.data = (void*) key;
+	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
 
 	OW_IndexEntry ientry = findFirst(key);
@@ -248,7 +248,7 @@ OW_IndexImpl::update(const char* key, OW_Int32 newOffset) /*throw (OW_IndexImplE
 	DBT theRec, theKey;
 	theRec.data = &newOffset;
 	theRec.size = sizeof(newOffset);
-	theKey.data = (void*) key;
+	theKey.data = const_cast<void*>(static_cast<const void*>(key));
 	theKey.size = ::strlen(key)+1;
 	return (m_pDB->put(m_pDB, &theKey, &theRec, R_CURSOR) == 0);
 }
@@ -271,7 +271,7 @@ OW_IndexImpl::findFirst(const char* key)
 	if(key != NULL)
 	{
 		op = R_CURSOR;
-		theKey.data = (void*)key;
+		theKey.data = const_cast<void*>(static_cast<const void*>(key));
 		theKey.size = ::strlen(key)+1;
 	}
 
@@ -280,7 +280,7 @@ OW_IndexImpl::findFirst(const char* key)
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry((const char*)theKey.data, tmp);
+		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();
@@ -300,7 +300,7 @@ OW_IndexImpl::findNext()
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry((const char*)theKey.data, tmp);
+		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();
@@ -320,7 +320,7 @@ OW_IndexImpl::findPrev()
 	{
 		OW_Int32 tmp;
 		memcpy(&tmp, theRec.data, sizeof(tmp));
-		return OW_IndexEntry((const char*)theKey.data, tmp);
+		return OW_IndexEntry(static_cast<const char*>(theKey.data), tmp);
 	}
 
 	return OW_IndexEntry();

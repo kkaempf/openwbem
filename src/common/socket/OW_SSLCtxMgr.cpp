@@ -209,7 +209,7 @@ OW_SSLCtxMgr::initServer(const OW_String& keyfile)
 	generateEphRSAKey(m_ctxServer);
 	OW_String sessID("OW_SSL_SESSION_");
 	OW_RandomNumber rn(0, 10000);
-	sessID += OW_String((OW_UInt32)rn.getNextNumber());
+	sessID += OW_String(static_cast<OW_UInt32>(rn.getNextNumber()));
 	int sessIDLen =
 		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length() * sizeof(char))) ?
 		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length() * sizeof(char));

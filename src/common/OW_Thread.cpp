@@ -212,7 +212,7 @@ OW_Thread::threadRunner(void* paramPtr)
 		// scope is important so destructors will run before the thread is clobbered by exitThread
 		OW_ASSERT(paramPtr != NULL);
 
-		OW_ThreadParam* pParam = (OW_ThreadParam*)paramPtr;
+		OW_ThreadParam* pParam = static_cast<OW_ThreadParam*>(paramPtr);
 		OW_Thread* pTheThread = pParam->thread;
 		theThreadID = pTheThread->m_id;
 		pTheThread->m_isRunning = true;

@@ -261,7 +261,7 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 						{
 							OW_THROW(OW_Exception, "Escape sequence larger than supported maximum");
 						}
-						unescaped += (char)hex;
+						unescaped += static_cast<char>(hex);
 					}
 					break;
 

@@ -63,7 +63,7 @@ OW_RepositoryOStreamBuf::overflow(int c)
 		m_bfr = bfr;
 	}
 
-	m_bfr[m_count++] = (unsigned char) c;
+	m_bfr[m_count++] = c;
 	return 0;
 }
 

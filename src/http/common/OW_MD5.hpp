@@ -149,7 +149,7 @@ private:
 	OW_String convertBinToHex( const unsigned char sBin[ 16 ]);
 	static void MD5Init(MD5_CTX * md5ctx);
 	static void MD5Update(MD5_CTX *md5ctx, const unsigned char* input,
-		unsigned int inputLen);
+		OW_UInt32 inputLen);
 	static void MD5Final(unsigned char [16], MD5_CTX *);
 
 	friend class OW_MD5StreamBuffer;

@@ -26,6 +26,9 @@ Fix problems:
       will not actually release the mutex (if it had  been  locked
       multiple times). If this occurs, no other thread can satisfy
       the condition of the predicate."
+    - Put everything into namespace OpenWBEM and remove OW_
+    - Make a new header OW_PPconfig.h that is like OW_config.h now.  Make
+      OW_config.h to not use PP symbols, use consts derived from the pp symbols.
 
 New features:
     - Create intrinsic providers for
@@ -203,3 +206,5 @@ Optimizations:
       generic *ProviderIFC, so that various interfaces can make use of them.
       Change OW_CIMServer to not do anything with the parameters when calling
       a provider.  Let the provider ifc/provider do all the work.
+    - Do explicit template instantiation to help speed up compiles.  OW_Array
+      would be a good candidate for this.

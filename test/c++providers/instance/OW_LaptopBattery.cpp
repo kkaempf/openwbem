@@ -252,7 +252,7 @@ namespace
 			}
 		}
 		rval.setProperty("EstimatedChargeRemaining", OW_CIMValue(percent));
-		rval.setProperty("EstimatedRunTime", OW_CIMValue((OW_UInt32)minutes));
+		rval.setProperty("EstimatedRunTime", OW_CIMValue(static_cast<OW_UInt32>(minutes)));
 		rval.setProperty("BatteryStatus", OW_CIMValue(status));
 		rval.setProperty("Charging", OW_CIMValue(charging));
 		return rval;

@@ -327,12 +327,12 @@ static void
 fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str)
 {
 	::memset(&data, 0, sizeof(OW_CIMDateTime::OW_DateTimeData));
-	if(str == NULL || *str == (char)0)
+	if(str == NULL || *str == '\0')
 		return;
 
 	char bfr[35];
 	::strncpy(bfr, str, sizeof(bfr));
-	bfr[34] = (char)0;
+	bfr[34] = '\0';
 
 	if(bfr[21] == ':')	// Is this an interval
 	{

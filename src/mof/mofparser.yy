@@ -45,7 +45,7 @@ void yyerror( char* );
 
 /* This is so we can avoid static variables and pass a pointer into yyparse */
 #define YYPARSE_PARAM context
-#define MOF_COMPILER ((MofCompiler*)context)
+#define MOF_COMPILER (reinterpret_cast<MofCompiler*>(context))
 %}
 
 /* avoid non-reentrant global variables */

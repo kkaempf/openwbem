@@ -54,7 +54,8 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 
 		env->getLogger()->logDebug("deactivateFilter");
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 		OW_WQLSelectStatement mutableFilter(filter);
 
@@ -93,7 +94,8 @@ OW_NPIIndicationProviderProxy::activateFilter(
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};
@@ -132,7 +134,8 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 
 		env->getLogger()->logDebug("deactivateFilter2");
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};
@@ -170,7 +173,8 @@ OW_NPIIndicationProviderProxy::mustPoll(
 
 		env->getLogger()->logDebug("mustPoll2");
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};

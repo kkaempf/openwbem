@@ -285,7 +285,7 @@ public:
 	 */
 	operator unsigned long () const
 	{
-		return (unsigned long) m_time;
+		return m_time;
 	}
 
 	/**

@@ -561,7 +561,7 @@ void OW_WQLCompile::_factoring(void)
 				// insert two new expression before entry i
 				eval_el evl(false, WQL_OR, i+1, EVAL_HEAP, i, EVAL_HEAP);
 
-				if ((OW_UInt32 )i < eval_heap.size()-1)
+				if (i < static_cast<int>(eval_heap.size())-1)
 					eval_heap.insert(i+1, evl);
 				else
 					eval_heap.append(evl);

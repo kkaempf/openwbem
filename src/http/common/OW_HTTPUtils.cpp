@@ -553,14 +553,14 @@ OW_String OW_HTTPUtils::base64Encode(const char* src)
 
 /* calculate H(A1) as per spec */
 void OW_HTTPUtils::DigestCalcHA1(
-										  const OW_String &sAlg,
-										  const OW_String &sUserName,
-										  const OW_String &sRealm,
-										  const OW_String &sPassword,
-										  const OW_String &sNonce,
-										  const OW_String &sCNonce,
-										  OW_String &sSessionKey
-										  )
+	const OW_String &sAlg,
+	const OW_String &sUserName,
+	const OW_String &sRealm,
+	const OW_String &sPassword,
+	const OW_String &sNonce,
+	const OW_String &sCNonce,
+	OW_String &sSessionKey
+	)
 {
 	OW_MD5 md5;
 
@@ -575,7 +575,7 @@ void OW_HTTPUtils::DigestCalcHA1(
 		unsigned char sHA1[HASHLEN];
 		memcpy(sHA1, md5.getDigest(), HASHLEN);
 		OW_MD5 md5_2;
-		md5_2.update((const char*)sHA1);
+		md5_2.update(reinterpret_cast<const char*>(sHA1));
 		md5_2.update(":");
 		md5_2.update(sNonce);
 		md5_2.update(":");

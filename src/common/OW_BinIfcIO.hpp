@@ -143,7 +143,7 @@ public:
 	static void write(std::ostream& ostrm, OW_Int32 val)
 	{
 		val = OW_hton32(val);
-		OW_BinIfcIO::write(ostrm, (const void*)&val, sizeof(val));
+		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
 
@@ -250,13 +250,13 @@ public:
 
 	static void read(std::istream& istrm, OW_Int32& val)
 	{
-		OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val));
+		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 
 	static void read(std::istream& istrm, OW_UInt32& val)
 	{
-		OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val));
+		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 

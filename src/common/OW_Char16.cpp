@@ -53,7 +53,7 @@ OW_Char16::OW_Char16(const OW_String& x) :
 {
 	if(!x.empty())
 	{
-		m_value = (OW_UInt16) x.charAt(0);
+		m_value = x.charAt(0);
 	}
 }
 
@@ -63,7 +63,7 @@ OW_Char16::OW_Char16(const OW_String& x) :
 const char*
 OW_Char16::xmlExcape(OW_UInt16 c16, char bfr[20])
 {
-	switch ((char)c16)
+	switch (c16)
 	{
 		case '\n': strcpy(bfr, "\\n"); break;
 		case '\t': strcpy(bfr, "\\t"); break;
@@ -72,7 +72,7 @@ OW_Char16::xmlExcape(OW_UInt16 c16, char bfr[20])
 		case '<': strcpy(bfr, "&lt;"); break;
 		case '>': strcpy(bfr, "&gt;"); break;
 		case '&': strcpy(bfr, "&amp;"); break;
-		default: bfr[0] = (char)c16; bfr[1] = (char)0; break;
+		default: bfr[0] = c16; bfr[1] = '\0'; break;
 	}
 
 	return bfr;

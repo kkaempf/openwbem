@@ -48,7 +48,7 @@ using std::istream;
 void
 OW_Bool::writeObject(ostream& ostrm) const
 {
-	unsigned char v = (unsigned char)m_val;
+	unsigned char v = m_val;
 	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
 }
 

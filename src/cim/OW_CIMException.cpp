@@ -56,7 +56,7 @@ OW_CIMException::~OW_CIMException() throw()
 {
 	if (m_longmsg)
 	{
-		free((void*)m_longmsg);
+		free(m_longmsg);
 	}
 }
 

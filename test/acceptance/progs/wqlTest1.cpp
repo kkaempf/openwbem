@@ -50,7 +50,7 @@ OW_CIMInstanceArray testQueryRemote(OW_CIMOMHandleIFCRef& rch, const char* query
 	}
 	if (expectedSize >= 0)
 	{
-		assert(cia.size() == (size_t)expectedSize);
+		assert(cia.size() == static_cast<size_t>(expectedSize));
 	}
 	return cia;
 }
@@ -73,7 +73,7 @@ OW_CIMInstanceArray testQueryLocal(OW_CIMOMHandleIFCRef& rch, const char* query,
 	}
 	if (expectedSize >= 0)
 	{
-		assert(cia.size() == (size_t)expectedSize);
+		assert(cia.size() == static_cast<size_t>(expectedSize));
 	}
 	return cia;
 }
@@ -124,15 +124,15 @@ int main(int argc, char* argv[])
 
 		// test some equals on the where clause
 		cia = testQuery(rch, "select * from wqlTestClass where name = \"test1\"", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue((OW_Int32)0)) );
+		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
 		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(OW_String("test1"))) );
 		testQuery(rch, "select * from wqlTestClass where \"test1\" = name", 1);
 		testQuery(rch, "select * from wqlTestClass where sint32Data = 0", 1);
 		testQuery(rch, "select * from wqlTestClass where 0 = sint32Data", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data = b'1010'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue((OW_Int32)10)) );
+		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(10))) );
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data = x'A'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue((OW_Int32)10)) );
+		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(10))) );
 		testQuery(rch, "select * from wqlTestClass where booleanData = TRUE", 1);
 		testQuery(rch, "select * from wqlTestClass where TRUE = booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData = FALSE", 1);
@@ -150,9 +150,9 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where sint32Data <> 0", 1);
 		testQuery(rch, "select * from wqlTestClass where 0 <> sint32Data", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data <> b'1010'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue((OW_Int32)0)) );
+		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data <> x'A'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue((OW_Int32)0)) );
+		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
 		testQuery(rch, "select * from wqlTestClass where booleanData <> TRUE", 1);
 		testQuery(rch, "select * from wqlTestClass where TRUE <> booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData <> FALSE", 1);
@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
 		assert( cia[0].getProperty("stringData").getValue().equal(OW_CIMValue(
 			OW_String("test11String"))) );
 		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(
-			(OW_Int32)12345)) );
+			static_cast<OW_Int32>(12345))) );
 		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(
 			OW_String("test11"))) );
 

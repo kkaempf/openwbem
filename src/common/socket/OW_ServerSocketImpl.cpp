@@ -143,7 +143,7 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	}
 
 	inetAddr.sin_port = OW_hton16(port);
-	if(bind(m_sockfd, (sockaddr*)&inetAddr, sizeof(inetAddr)) == -1)
+	if(bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
@@ -320,12 +320,12 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 		struct sockaddr* pSA;
 		if (m_localAddress.getType() == OW_SocketAddress::INET)
 		{
-			pSA = (struct sockaddr*)&clntInetAddr;
+			pSA = reinterpret_cast<struct sockaddr*>(&clntInetAddr);
 			clntlen = sizeof(clntInetAddr);
 		}
 		else if (m_localAddress.getType() == OW_SocketAddress::UDS)
 		{
-			pSA = (struct sockaddr*)&clntUnixAddr;
+			pSA = reinterpret_cast<struct sockaddr*>(&clntUnixAddr);
 			clntlen = sizeof(clntUnixAddr);
 		}
 		else
@@ -420,7 +420,7 @@ OW_ServerSocketImpl::fillAddrParms() /*throw (OW_SocketException)*/
 		memset(&addr, 0, sizeof(addr));
 
 		len = sizeof(addr);
-		if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
 			OW_THROW(OW_SocketException, "OW_SocketImpl::fillAddrParms: "
 				"getsockname");
@@ -434,7 +434,7 @@ OW_ServerSocketImpl::fillAddrParms() /*throw (OW_SocketException)*/
 		memset(&addr, 0, sizeof(addr));
 
 		len = sizeof(addr);
-		if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
 			OW_THROW(OW_SocketException, "OW_SocketImpl::fillAddrParms: "
 				"getsockname");

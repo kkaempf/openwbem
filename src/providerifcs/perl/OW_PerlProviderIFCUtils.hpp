@@ -80,7 +80,7 @@ public:
 	{
 		if (m_handle.providerError != NULL)
 		{
-			free((void*)m_handle.providerError);
+			free(const_cast<void*>(static_cast<const void*>(m_handle.providerError)));
 		}
 	}
 private:

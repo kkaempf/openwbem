@@ -73,7 +73,7 @@ OW_HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 		return 0;
 	}
 	m_zstr.avail_out = n;
-	m_zstr.next_out = (Bytef*)c;
+	m_zstr.next_out = reinterpret_cast<Bytef*>(c);
 	int bytesRead = 0;
 	while (m_zstr.avail_out > 0)
 	{

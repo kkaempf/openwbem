@@ -52,20 +52,22 @@ OW_PerlAssociatorProviderProxy::associatorNames(
 
     if (m_ftable->fp_associatorNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-        _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+        _npiHandle.thisObject = static_cast<void *>(&env2);
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
+		OW_CIMObjectPath assocName2(assocName);
+        CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
 		OW_CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
+        CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         ::Vector v =
             m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
@@ -116,21 +118,23 @@ OW_PerlAssociatorProviderProxy::associators(
 
     if (m_ftable->fp_associators != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-        _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+        _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
+		OW_CIMObjectPath assocName2(assocName);
+        CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
 		OW_CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
+        CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
 
@@ -155,7 +159,7 @@ OW_PerlAssociatorProviderProxy::associators(
         for (std::vector<const char*>::iterator i = _propertyList.begin();
              i != _propertyList.end(); ++i)
         {
-            free((void*)(*i));
+            free(const_cast<void*>(static_cast<const void*>(*i)));
         }
 
         OW_NPIVectorFreer vf1(v);
@@ -202,21 +206,23 @@ OW_PerlAssociatorProviderProxy::references(
 
     if (m_ftable->fp_references != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-        _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+        _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
+		OW_CIMObjectPath assocName2(assocName);
+        CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
 		OW_CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
+        CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
 
@@ -239,7 +245,7 @@ OW_PerlAssociatorProviderProxy::references(
         for (std::vector<const char*>::iterator i = _propertyList.begin();
              i != _propertyList.end(); ++i)
         {
-            free((void*)(*i));
+            free(const_cast<void*>(static_cast<const void*>(*i)));
         }
 
         OW_NPIVectorFreer vf1(v);
@@ -284,21 +290,23 @@ OW_PerlAssociatorProviderProxy::referenceNames(
 
     if (m_ftable->fp_referenceNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-        _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+        _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
+		OW_CIMObjectPath assocName2(assocName);
+        CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
 		OW_CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
-        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectNameWithNS)};
+        CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,

@@ -55,10 +55,11 @@ OW_PerlMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 
         if (m_ftable->fp_invokeMethod != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			OW_ProviderEnvironmentIFCRef env2(env);
+            _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems

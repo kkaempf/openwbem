@@ -77,7 +77,7 @@ class OW_SharedLibrary
 			static OW_Bool getFunctionPointer( const OW_Reference<OW_SharedLibrary>& sl, const OW_String& functionName, fptype& retval )
 			{
 				OW_MutexLock l(m_guard);
-				return sl->doGetFunctionPointer( functionName, (void**)(&retval));
+				return sl->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
 			}
 	protected:
 		static OW_Mutex m_guard;

@@ -1213,39 +1213,39 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 	switch(m_type)
 	{
 		case OW_CIMDataType::UINT8:
-			sz = ((OW_UInt8Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_UInt8Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::SINT8:
-			sz = ((OW_Int8Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Int8Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::UINT16:
-			sz = ((OW_UInt16Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_UInt16Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::SINT16:
-			sz = ((OW_Int16Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Int16Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::UINT32:
-			sz = ((OW_UInt32Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_UInt32Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::SINT32:
-			sz = ((OW_Int32Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Int32Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::UINT64:
-			sz = ((OW_UInt64Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_UInt64Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::SINT64:
-			sz = ((OW_Int64Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Int64Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::BOOLEAN:
-			sz = ((OW_BoolArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_BoolArray*>(&m_obj))->size(); break;
 		case OW_CIMDataType::REAL32:
-			sz = ((OW_Real32Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Real32Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::REAL64:
-			sz = ((OW_Real64Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Real64Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::CHAR16:
-			sz = ((OW_Char16Array*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_Char16Array*>(&m_obj))->size(); break;
 		case OW_CIMDataType::DATETIME:
-			sz = ((OW_CIMDateTimeArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj))->size(); break;
 		case OW_CIMDataType::STRING:
-			sz = ((OW_StringArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_StringArray*>(&m_obj))->size(); break;
 		case OW_CIMDataType::REFERENCE:
-			sz = ((OW_CIMObjectPathArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj))->size(); break;
 		case OW_CIMDataType::EMBEDDEDCLASS:
-			sz = ((OW_CIMClassArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_CIMClassArray*>(&m_obj))->size(); break;
 		case OW_CIMDataType::EMBEDDEDINSTANCE:
-			sz = ((OW_CIMInstanceArray*)&m_obj)->size(); break;
+			sz = (reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj))->size(); break;
 		default:
 			sz = 0;
 	}
@@ -1266,46 +1266,39 @@ OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, OW_CIMDa
 		switch(m_type)
 		{
 			case OW_CIMDataType::UINT8:
-				new(&m_obj) OW_UInt8Array(*((OW_UInt8Array*)&odata)); break;
+				new(&m_obj) OW_UInt8Array(*(reinterpret_cast<const OW_UInt8Array*>(&odata))); break;
 			case OW_CIMDataType::SINT8:
-				new(&m_obj) OW_Int8Array(*((OW_Int8Array*)&odata)); break;
+				new(&m_obj) OW_Int8Array(*(reinterpret_cast<const OW_Int8Array*>(&odata))); break;
 			case OW_CIMDataType::UINT16:
-				new(&m_obj) OW_UInt16Array(*((OW_UInt16Array*)&odata)); break;
+				new(&m_obj) OW_UInt16Array(*(reinterpret_cast<const OW_UInt16Array*>(&odata))); break;
 			case OW_CIMDataType::SINT16:
-				new(&m_obj) OW_Int16Array(*((OW_Int16Array*)&odata)); break;
+				new(&m_obj) OW_Int16Array(*(reinterpret_cast<const OW_Int16Array*>(&odata))); break;
 			case OW_CIMDataType::UINT32:
-				new(&m_obj) OW_UInt32Array(*((OW_UInt32Array*)&odata)); break;
+				new(&m_obj) OW_UInt32Array(*(reinterpret_cast<const OW_UInt32Array*>(&odata))); break;
 			case OW_CIMDataType::SINT32:
-				new(&m_obj) OW_Int32Array(*((OW_Int32Array*)&odata)); break;
+				new(&m_obj) OW_Int32Array(*(reinterpret_cast<const OW_Int32Array*>(&odata))); break;
 			case OW_CIMDataType::UINT64:
-				new(&m_obj) OW_UInt64Array(*((OW_UInt64Array*)&odata)); break;
+				new(&m_obj) OW_UInt64Array(*(reinterpret_cast<const OW_UInt64Array*>(&odata))); break;
 			case OW_CIMDataType::SINT64:
-				new(&m_obj) OW_Int64Array(*((OW_Int64Array*)&odata)); break;
+				new(&m_obj) OW_Int64Array(*(reinterpret_cast<const OW_Int64Array*>(&odata))); break;
 			case OW_CIMDataType::BOOLEAN:
-				new(&m_obj) OW_BoolArray(*((OW_BoolArray*)&odata)); break;
+				new(&m_obj) OW_BoolArray(*(reinterpret_cast<const OW_BoolArray*>(&odata))); break;
 			case OW_CIMDataType::REAL32:
-				new(&m_obj) OW_Real32Array(*((OW_Real32Array*)&odata)); break;
+				new(&m_obj) OW_Real32Array(*(reinterpret_cast<const OW_Real32Array*>(&odata))); break;
 			case OW_CIMDataType::REAL64:
-				new(&m_obj) OW_Real64Array(*((OW_Real64Array*)&odata)); break;
+				new(&m_obj) OW_Real64Array(*(reinterpret_cast<const OW_Real64Array*>(&odata))); break;
 			case OW_CIMDataType::CHAR16:
-				new(&m_obj) OW_Char16Array(*((OW_Char16Array*)&odata)); break;
+				new(&m_obj) OW_Char16Array(*(reinterpret_cast<const OW_Char16Array*>(&odata))); break;
 			case OW_CIMDataType::DATETIME:
-				new(&m_obj) OW_CIMDateTimeArray(*((OW_CIMDateTimeArray*)&odata));
-				break;
+				new(&m_obj) OW_CIMDateTimeArray(*(reinterpret_cast<const OW_CIMDateTimeArray*>(&odata))); break;
 			case OW_CIMDataType::STRING:
-				new(&m_obj) OW_StringArray(*((OW_StringArray*)&odata)); break;
+				new(&m_obj) OW_StringArray(*(reinterpret_cast<const OW_StringArray*>(&odata))); break;
 			case OW_CIMDataType::REFERENCE:
-				new(&m_obj) OW_CIMObjectPathArray(*((OW_CIMObjectPathArray*)
-					&odata));
-				break;
+				new(&m_obj) OW_CIMObjectPathArray(*(reinterpret_cast<const OW_CIMObjectPathArray*>(&odata))); break;
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				new(&m_obj) OW_CIMClassArray(*((OW_CIMClassArray*)
-					&odata));
-				break;
+				new(&m_obj) OW_CIMClassArray(*(reinterpret_cast<const OW_CIMClassArray*>(&odata))); break;
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				new(&m_obj) OW_CIMInstanceArray(*((OW_CIMInstanceArray*)
-					&odata));
-				break;
+				new(&m_obj) OW_CIMInstanceArray(*(reinterpret_cast<const OW_CIMInstanceArray*>(&odata))); break;
 			default:
 				m_objDestroyed = true;
 				m_type = OW_CIMDataType::CIMNULL;
@@ -1331,20 +1324,17 @@ OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, OW_CIMDa
 				break;
 
 			case OW_CIMDataType::CHAR16:
-				new(&m_obj) OW_Char16(*((OW_Char16*)&odata)); break;
+				new(&m_obj) OW_Char16(*(reinterpret_cast<const OW_Char16*>(&odata))); break;
 			case OW_CIMDataType::REFERENCE:
-				new(&m_obj) OW_CIMObjectPath(*((OW_CIMObjectPath*)&odata)); break;
+				new(&m_obj) OW_CIMObjectPath(*(reinterpret_cast<const OW_CIMObjectPath*>(&odata))); break;
 			case OW_CIMDataType::DATETIME:
-				new(&m_obj) OW_CIMDateTime(*((OW_CIMDateTime*)&odata)); break;
+				new(&m_obj) OW_CIMDateTime(*(reinterpret_cast<const OW_CIMDateTime*>(&odata))); break;
 			case OW_CIMDataType::STRING:
-				new(&m_obj) OW_String(*((OW_String*)&odata));
-				break;
+				new(&m_obj) OW_String(*(reinterpret_cast<const OW_String*>(&odata))); break;
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				new(&m_obj) OW_CIMClass(*((OW_CIMClass*)&odata));
-				break;
+				new(&m_obj) OW_CIMClass(*(reinterpret_cast<const OW_CIMClass*>(&odata))); break;
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				new(&m_obj) OW_CIMInstance(*((OW_CIMInstance*)&odata));
-				break;
+				new(&m_obj) OW_CIMInstance(*(reinterpret_cast<const OW_CIMInstance*>(&odata))); break;
 
 			default:
 				m_objDestroyed = true;
@@ -1370,39 +1360,39 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 		switch(m_type)
 		{
 			case OW_CIMDataType::UINT8:
-				((OW_UInt8Array*)&m_obj)->~OW_UInt8Array(); break;
+				(reinterpret_cast<OW_UInt8Array*>(&m_obj))->~OW_UInt8Array(); break;
 			case OW_CIMDataType::SINT8:
-				((OW_Int8Array*)&m_obj)->~OW_Int8Array(); break;
+				(reinterpret_cast<OW_Int8Array*>(&m_obj))->~OW_Int8Array(); break;
 			case OW_CIMDataType::UINT16:
-				((OW_UInt16Array*)&m_obj)->~OW_UInt16Array(); break;
+				(reinterpret_cast<OW_UInt16Array*>(&m_obj))->~OW_UInt16Array(); break;
 			case OW_CIMDataType::SINT16:
-				((OW_Int16Array*)&m_obj)->~OW_Int16Array(); break;
+				(reinterpret_cast<OW_Int16Array*>(&m_obj))->~OW_Int16Array(); break;
 			case OW_CIMDataType::UINT32:
-				((OW_UInt32Array*)&m_obj)->~OW_UInt32Array(); break;
+				(reinterpret_cast<OW_UInt32Array*>(&m_obj))->~OW_UInt32Array(); break;
 			case OW_CIMDataType::SINT32:
-				((OW_Int32Array*)&m_obj)->~OW_Int32Array(); break;
+				(reinterpret_cast<OW_Int32Array*>(&m_obj))->~OW_Int32Array(); break;
 			case OW_CIMDataType::UINT64:
-				((OW_UInt64Array*)&m_obj)->~OW_UInt64Array(); break;
+				(reinterpret_cast<OW_UInt64Array*>(&m_obj))->~OW_UInt64Array(); break;
 			case OW_CIMDataType::SINT64:
-				((OW_Int64Array*)&m_obj)->~OW_Int64Array(); break;
+				(reinterpret_cast<OW_Int64Array*>(&m_obj))->~OW_Int64Array(); break;
 			case OW_CIMDataType::BOOLEAN:
-				((OW_BoolArray*)&m_obj)->~OW_BoolArray(); break;
+				(reinterpret_cast<OW_BoolArray*>(&m_obj))->~OW_BoolArray(); break;
 			case OW_CIMDataType::REAL32:
-				((OW_Real32Array*)&m_obj)->~OW_Real32Array(); break;
+				(reinterpret_cast<OW_Real32Array*>(&m_obj))->~OW_Real32Array(); break;
 			case OW_CIMDataType::REAL64:
-				((OW_Real64Array*)&m_obj)->~OW_Real64Array(); break;
+				(reinterpret_cast<OW_Real64Array*>(&m_obj))->~OW_Real64Array(); break;
 			case OW_CIMDataType::CHAR16:
-				((OW_Char16Array*)&m_obj)->~OW_Char16Array(); break;
+				(reinterpret_cast<OW_Char16Array*>(&m_obj))->~OW_Char16Array(); break;
 			case OW_CIMDataType::DATETIME:
-				((OW_CIMDateTimeArray*)&m_obj)->~OW_CIMDateTimeArray(); break;
+				(reinterpret_cast<OW_CIMDateTimeArray*>(&m_obj))->~OW_CIMDateTimeArray(); break;
 			case OW_CIMDataType::STRING:
-				((OW_StringArray*)&m_obj)->~OW_StringArray(); break;
+				(reinterpret_cast<OW_StringArray*>(&m_obj))->~OW_StringArray(); break;
 			case OW_CIMDataType::REFERENCE:
-				((OW_CIMObjectPathArray*)&m_obj)->~OW_CIMObjectPathArray(); break;
+				(reinterpret_cast<OW_CIMObjectPathArray*>(&m_obj))->~OW_CIMObjectPathArray(); break;
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				((OW_CIMClassArray*)&m_obj)->~OW_CIMClassArray(); break;
+				(reinterpret_cast<OW_CIMClassArray*>(&m_obj))->~OW_CIMClassArray(); break;
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				((OW_CIMInstanceArray*)&m_obj)->~OW_CIMInstanceArray(); break;
+				(reinterpret_cast<OW_CIMInstanceArray*>(&m_obj))->~OW_CIMInstanceArray(); break;
 			default:
 				assert(0); // don't want to throw from a destructor, just segfault
 		}
@@ -1424,22 +1414,22 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 			case OW_CIMDataType::REAL64:
 				break;
 			case OW_CIMDataType::CHAR16:
-				((OW_Char16*)&m_obj)->~OW_Char16();
+				(reinterpret_cast<OW_Char16*>(&m_obj))->~OW_Char16();
 				break;
 			case OW_CIMDataType::REFERENCE:
-				((OW_CIMObjectPath*)&m_obj)->~OW_CIMObjectPath();
+				(reinterpret_cast<OW_CIMObjectPath*>(&m_obj))->~OW_CIMObjectPath();
 				break;
 			case OW_CIMDataType::DATETIME:
-				((OW_CIMDateTime*)&m_obj)->~OW_CIMDateTime();
+				(reinterpret_cast<OW_CIMDateTime*>(&m_obj))->~OW_CIMDateTime();
 				break;
 			case OW_CIMDataType::STRING:
-				((OW_String*)&m_obj)->~OW_String();
+				(reinterpret_cast<OW_String*>(&m_obj))->~OW_String();
 				break;
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				((OW_CIMClass*)&m_obj)->~OW_CIMClass();
+				(reinterpret_cast<OW_CIMClass*>(&m_obj))->~OW_CIMClass();
 				break;
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				((OW_CIMInstance*)&m_obj)->~OW_CIMInstance();
+				(reinterpret_cast<OW_CIMInstance*>(&m_obj))->~OW_CIMInstance();
 				break;
 			default:
 				assert(0); // don't want to throw from a destructor, just segfault
@@ -1478,86 +1468,86 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 			switch(m_type)
 			{
 				case OW_CIMDataType::CHAR16:
-					cc = *((OW_Char16Array*)&m_obj) ==
-						*((OW_Char16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Char16Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Char16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT8:
-					cc = *((OW_UInt8Array*)&m_obj) ==
-						*((OW_UInt8Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt8Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_UInt8Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT8:
-					cc = *((OW_Int8Array*)&m_obj) == *((OW_Int8Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int8Array*>(&m_obj)) == *(reinterpret_cast<const OW_Int8Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT16:
-					cc = *((OW_UInt16Array*)&m_obj) ==
-						*((OW_UInt16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt16Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_UInt16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT16:
-					cc = *((OW_Int16Array*)&m_obj) ==
-						*((OW_Int16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int16Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Int16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT32:
-					cc = *((OW_UInt32Array*)&m_obj) ==
-						*((OW_UInt32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt32Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_UInt32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT32:
-					cc = *((OW_Int32Array*)&m_obj) ==
-						*((OW_Int32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int32Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Int32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT64:
-					cc = *((OW_UInt64Array*)&m_obj) ==
-						*((OW_UInt64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt64Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_UInt64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT64:
-					cc = *((OW_Int64Array*)&m_obj) ==
-						*((OW_Int64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int64Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Int64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::STRING:
-					cc = *((OW_StringArray*)&m_obj) ==
-						*((OW_StringArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_StringArray*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_StringArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REFERENCE:
-					cc = *((OW_CIMObjectPathArray*)&m_obj) ==
-						*((OW_CIMObjectPathArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMObjectPathArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::BOOLEAN:
-					cc = *((OW_BoolArray*)&m_obj) == *((OW_BoolArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_BoolArray*>(&m_obj)) == *(reinterpret_cast<const OW_BoolArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REAL32:
-					cc = *((OW_Real32Array*)&m_obj) ==
-						*((OW_Real32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Real32Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Real32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REAL64:
-					cc = *((OW_Real64Array*)&m_obj) ==
-						*((OW_Real64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Real64Array*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_Real64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::DATETIME:
-					cc = *((OW_CIMDateTimeArray*)&m_obj) ==
-						*((OW_CIMDateTimeArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMDateTimeArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDCLASS:
-					cc = *((OW_CIMClassArray*)&m_obj) ==
-						*((OW_CIMClassArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMClassArray*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMClassArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDINSTANCE:
-					cc = *((OW_CIMInstanceArray*)&m_obj) ==
-						*((OW_CIMInstanceArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMInstanceArray*>(&arg.m_obj));
 					break;
 				default:
 					OW_ASSERT(0);
@@ -1600,11 +1590,11 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 					break;
 
 				case OW_CIMDataType::CHAR16:
-					cc = *((OW_Char16*)&m_obj) == *((OW_Char16*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Char16*>(&m_obj)) == *(reinterpret_cast<const OW_Char16*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::STRING:
-					cc = *((OW_String*)&m_obj) == *((OW_String*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_String*>(&m_obj)) == *(reinterpret_cast<const OW_String*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::BOOLEAN:
@@ -1620,23 +1610,23 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 					break;
 
 				case OW_CIMDataType::DATETIME:
-					cc = *((OW_CIMDateTime*)&m_obj) ==
-						*((OW_CIMDateTime*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMDateTime*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMDateTime*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REFERENCE:
-					cc = *((OW_CIMObjectPath*)&m_obj) ==
-						*((OW_CIMObjectPath*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMObjectPath*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMObjectPath*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDCLASS:
-					cc = *((OW_CIMClass*)&m_obj) ==
-						*((OW_CIMClass*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMClass*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMClass*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDINSTANCE:
-					cc = *((OW_CIMInstance*)&m_obj) ==
-						*((OW_CIMInstance*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMInstance*>(&m_obj)) ==
+						*(reinterpret_cast<const OW_CIMInstance*>(&arg.m_obj));
 					break;
 				default:
 					OW_ASSERT(0);
@@ -1660,86 +1650,86 @@ OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 			switch(m_type)
 			{
 				case OW_CIMDataType::CHAR16:
-					cc = *((OW_Char16Array*)&m_obj) <
-						*((OW_Char16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Char16Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Char16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT8:
-					cc = *((OW_UInt8Array*)&m_obj) <
-						*((OW_UInt8Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt8Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_UInt8Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT8:
-					cc = *((OW_Int8Array*)&m_obj) < *((OW_Int8Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int8Array*>(&m_obj)) < *(reinterpret_cast<const OW_Int8Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT16:
-					cc = *((OW_UInt16Array*)&m_obj) <
-						*((OW_UInt16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt16Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_UInt16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT16:
-					cc = *((OW_Int16Array*)&m_obj) <
-						*((OW_Int16Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int16Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Int16Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT32:
-					cc = *((OW_UInt32Array*)&m_obj) <
-						*((OW_UInt32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt32Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_UInt32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT32:
-					cc = *((OW_Int32Array*)&m_obj) <
-						*((OW_Int32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int32Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Int32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::UINT64:
-					cc = *((OW_UInt64Array*)&m_obj) <
-						*((OW_UInt64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_UInt64Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_UInt64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::SINT64:
-					cc = *((OW_Int64Array*)&m_obj) <
-						*((OW_Int64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Int64Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Int64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::STRING:
-					cc = *((OW_StringArray*)&m_obj) <
-						*((OW_StringArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_StringArray*>(&m_obj)) <
+						*(reinterpret_cast<const OW_StringArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REFERENCE:
-					cc = *((OW_CIMObjectPathArray*)&m_obj) <
-						*((OW_CIMObjectPathArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMObjectPathArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::BOOLEAN:
-					cc = *((OW_BoolArray*)&m_obj) < *((OW_BoolArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_BoolArray*>(&m_obj)) < *(reinterpret_cast<const OW_BoolArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REAL32:
-					cc = *((OW_Real32Array*)&m_obj) <
-						*((OW_Real32Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Real32Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Real32Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REAL64:
-					cc = *((OW_Real64Array*)&m_obj) <
-						*((OW_Real64Array*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Real64Array*>(&m_obj)) <
+						*(reinterpret_cast<const OW_Real64Array*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::DATETIME:
-					cc = *((OW_CIMDateTimeArray*)&m_obj) <
-						*((OW_CIMDateTimeArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMDateTimeArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDCLASS:
-					cc = *((OW_CIMClassArray*)&m_obj) <
-						*((OW_CIMClassArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMClassArray*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMClassArray*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDINSTANCE:
-					cc = *((OW_CIMInstanceArray*)&m_obj) <
-						*((OW_CIMInstanceArray*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMInstanceArray*>(&arg.m_obj));
 					break;
 				default:
 					OW_ASSERT(0);
@@ -1782,11 +1772,11 @@ OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 					break;
 
 				case OW_CIMDataType::CHAR16:
-					cc = *((OW_Char16*)&m_obj) < *((OW_Char16*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_Char16*>(&m_obj)) < *(reinterpret_cast<const OW_Char16*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::STRING:
-					cc = *((OW_String*)&m_obj) < *((OW_String*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_String*>(&m_obj)) < *(reinterpret_cast<const OW_String*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::BOOLEAN:
@@ -1802,23 +1792,23 @@ OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 					break;
 
 				case OW_CIMDataType::DATETIME:
-					cc = *((OW_CIMDateTime*)&m_obj) <
-						*((OW_CIMDateTime*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMDateTime*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMDateTime*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::REFERENCE:
-					cc = *((OW_CIMObjectPath*)&m_obj) <
-						*((OW_CIMObjectPath*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMObjectPath*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMObjectPath*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDCLASS:
-					cc = *((OW_CIMClass*)&m_obj) <
-						*((OW_CIMClass*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMClass*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMClass*>(&arg.m_obj));
 					break;
 
 				case OW_CIMDataType::EMBEDDEDINSTANCE:
-					cc = *((OW_CIMInstance*)&m_obj) <
-						*((OW_CIMInstance*)&arg.m_obj);
+					cc = *(reinterpret_cast<const OW_CIMInstance*>(&m_obj)) <
+						*(reinterpret_cast<const OW_CIMInstance*>(&arg.m_obj));
 					break;
 				default:
 					OW_ASSERT(0);
@@ -1848,7 +1838,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Char16& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a CHAR16");
 
-	arg = *((OW_Char16*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Char16*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1969,7 +1959,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_String& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a STRING");
 
-	arg = *((OW_String*)&m_obj);
+	arg = *(reinterpret_cast<const OW_String*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1980,7 +1970,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMDateTime& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a DATETIME");
 
-	arg = *((OW_CIMDateTime*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMDateTime*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1991,7 +1981,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMObjectPath& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a REFERENCE");
 
-	arg = *((OW_CIMObjectPath*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMObjectPath*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2002,7 +1992,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMClass& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a EMBEDDEDCLASS");
 
-	arg = *((OW_CIMClass*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMClass*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2013,7 +2003,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMInstance& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a EMBEDDEDINSTANCE");
 
-	arg = *((OW_CIMInstance*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMInstance*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2024,7 +2014,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Char16Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a CHAR16 ARRAY");
 
-	arg = *((OW_Char16Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Char16Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2035,7 +2025,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_UInt8Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a UINT8 ARRAY");
 
-	arg = *((OW_UInt8Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_UInt8Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2046,7 +2036,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Int8Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a SINT8 ARRAY");
 
-	arg = *((OW_Int8Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Int8Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2057,7 +2047,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_UInt16Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a UINT16 ARRAY");
 
-	arg = *((OW_UInt16Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_UInt16Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2068,7 +2058,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Int16Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a SINT16 ARRAY");
 
-	arg = *((OW_Int16Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Int16Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2079,7 +2069,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_UInt32Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a UINT32 ARRAY");
 
-	arg = *((OW_UInt32Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_UInt32Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2090,7 +2080,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Int32Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a SINT32 ARRAY");
 
-	arg = *((OW_Int32Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Int32Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2101,7 +2091,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_UInt64Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a UINT64 ARRAY");
 
-	arg = *((OW_UInt64Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_UInt64Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2112,7 +2102,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Int64Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a SINT64 ARRAY");
 
-	arg = *((OW_Int64Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Int64Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2123,7 +2113,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Real64Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a REAL64 ARRAY");
 
-	arg = *((OW_Real64Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Real64Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2134,7 +2124,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_Real32Array& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a REAL32 ARRAY");
 
-	arg = *((OW_Real32Array*)&m_obj);
+	arg = *(reinterpret_cast<const OW_Real32Array*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2145,7 +2135,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_StringArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a STRING ARRAY");
 
-	arg = *((OW_StringArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_StringArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2156,7 +2146,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_BoolArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a BOOLEAN ARRAY");
 
-	arg = *((OW_BoolArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_BoolArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2167,7 +2157,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMDateTimeArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a DATETIME ARRAY");
 
-	arg = *((OW_CIMDateTimeArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2178,7 +2168,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMObjectPathArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a OBJECTPATH ARRAY");
 
-	arg = *((OW_CIMObjectPathArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2189,7 +2179,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMClassArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a EMBEDDEDCLASS ARRAY");
 
-	arg = *((OW_CIMClassArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMClassArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2200,7 +2190,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMInstanceArray& arg) const
 		OW_THROW(OW_ValueCastException,
 			"OW_CIMValue::OW_CIMValueImpl::get - Value is not a EMBEDDEDINSTANCE ARRAY");
 
-	arg = *((OW_CIMInstanceArray*)&m_obj);
+	arg = *(reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2340,72 +2330,72 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				out = raToString(*((OW_BoolArray*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_BoolArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::UINT8:
-				out = raToString(*((OW_UInt8Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_UInt8Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::SINT8:
-				out = raToString(*((OW_Int8Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Int8Array*>(&m_obj)));
 				break;
 
 			// ATTN: UTF8
 			case OW_CIMDataType::CHAR16:
-				out = raToString(*((OW_Char16Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Char16Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::UINT16:
-				out = raToString(*((OW_UInt16Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_UInt16Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::SINT16:
-				out = raToString(*((OW_Int16Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Int16Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::UINT32:
-				out = raToString(*((OW_UInt32Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_UInt32Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::SINT32:
-				out = raToString(*((OW_Int32Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Int32Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::UINT64:
-				out = raToString(*((OW_UInt64Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_UInt64Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::SINT64:
-				out = raToString(*((OW_Int64Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Int64Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REAL32:
-				out = raToString(*((OW_Real32Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Real32Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REAL64:
-				out = raToString(*((OW_Real64Array*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_Real64Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::STRING:
-				out = raToString(*((OW_StringArray*)&m_obj), forMOF);
+				out = raToString(*(reinterpret_cast<const OW_StringArray*>(&m_obj)), forMOF);
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				out = raToString(*((OW_CIMDateTimeArray*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REFERENCE:
-				out = raToString(*((OW_CIMObjectPathArray*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj)));
 				break;
 			
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				out = raToString(*((OW_CIMClassArray*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_CIMClassArray*>(&m_obj)));
 				break;
 			
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				out = raToString(*((OW_CIMInstanceArray*)&m_obj));
+				out = raToString(*(reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj)));
 				break;
 			default:
 				OW_ASSERT(0);
@@ -2420,23 +2410,23 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 				break;
 
 			case OW_CIMDataType::UINT8:
-				out = OW_String((OW_UInt32)m_obj.m_uint8Value);
+				out = OW_String(static_cast<OW_UInt32>(m_obj.m_uint8Value));
 				break;
 
 			case OW_CIMDataType::SINT8:
-				out = OW_String((OW_Int32)m_obj.m_sint8Value);
+				out = OW_String(static_cast<OW_Int32>(m_obj.m_sint8Value));
 				break;
 
 			case OW_CIMDataType::CHAR16:
-				out = OW_String((char)((OW_Char16*)&m_obj)->getValue());
+				out = OW_String(static_cast<char>(reinterpret_cast<const OW_Char16*>(&m_obj)->getValue()));
 				break;
 
 			case OW_CIMDataType::UINT16:
-				out = OW_String((OW_UInt32)m_obj.m_uint16Value);
+				out = OW_String(static_cast<OW_UInt32>(m_obj.m_uint16Value));
 				break;
 
 			case OW_CIMDataType::SINT16:
-				out = OW_String((OW_Int32)m_obj.m_sint16Value);
+				out = OW_String(static_cast<OW_Int32>(m_obj.m_sint16Value));
 				break;
 
 			case OW_CIMDataType::UINT32:
@@ -2456,7 +2446,7 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 				break;
 
 			case OW_CIMDataType::REAL32:
-				out = OW_String((OW_Real64)m_obj.m_real32Value);
+				out = OW_String(static_cast<OW_Real64>(m_obj.m_real32Value));
 				break;
 
 			case OW_CIMDataType::REAL64:
@@ -2467,28 +2457,27 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 				if(forMOF)
 				{
 					out = "\"";
-					out += OW_CIMObjectPath::escape(*((OW_String*)&m_obj));
+					out += OW_CIMObjectPath::escape(*(reinterpret_cast<const OW_String*>(&m_obj)));
 					out += "\"";
 				}
 				else
 				{
-					out = *((OW_String*)&m_obj);
+					out = *(reinterpret_cast<const OW_String*>(&m_obj));
 				}
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				out = ((OW_CIMDateTime*)&m_obj)->toString();
+				out = (reinterpret_cast<const OW_CIMDateTime*>(&m_obj))->toString();
 				break;
 
 			case OW_CIMDataType::REFERENCE:
 				if (forMOF)
 				{
-					out = OW_CIMObjectPath::escape(((OW_CIMObjectPath*)
-						&m_obj)->toString());
+					out = OW_CIMObjectPath::escape((reinterpret_cast<const OW_CIMObjectPath*>(&m_obj))->toString());
 				}
 				else
 				{
-					out = ((OW_CIMObjectPath*)&m_obj)->toString();
+					out = (reinterpret_cast<const OW_CIMObjectPath*>(&m_obj))->toString();
 				}
 				break;
 			
@@ -2496,12 +2485,12 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 				if(forMOF)
 				{
 					out = "\"";
-					out += OW_CIMObjectPath::escape(((OW_CIMClass*)&m_obj)->toString());
+					out += OW_CIMObjectPath::escape((reinterpret_cast<const OW_CIMClass*>(&m_obj))->toString());
 					out += "\"";
 				}
 				else
 				{
-					out = ((OW_CIMClass*)&m_obj)->toString();
+					out = (reinterpret_cast<const OW_CIMClass*>(&m_obj))->toString();
 				}
 				break;
 
@@ -2509,12 +2498,12 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 				if(forMOF)
 				{
 					out = "\"";
-					out += OW_CIMObjectPath::escape(((OW_CIMInstance*)&m_obj)->toString());
+					out += OW_CIMObjectPath::escape((reinterpret_cast<const OW_CIMInstance*>(&m_obj))->toString());
 					out += "\"";
 				}
 				else
 				{
-					out = ((OW_CIMInstance*)&m_obj)->toString();
+					out = (reinterpret_cast<const OW_CIMInstance*>(&m_obj))->toString();
 				}
 				break;
 			default:
@@ -2616,7 +2605,7 @@ readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 	readValue(istrm, sz, 2);
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
-		OW_Real32 v = (OW_Real32) readRealValue(istrm);
+		OW_Real32 v = readRealValue(istrm);
 		ra.push_back(v);
 	}
 }
@@ -2668,87 +2657,87 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 		{
 			case OW_CIMDataType::BOOLEAN:
 				new(&m_obj) OW_BoolArray;
-				readArray(istrm, *((OW_BoolArray*)&m_obj), 0);
+				readArray(istrm, *(reinterpret_cast<OW_BoolArray*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
 				new(&m_obj) OW_UInt8Array;
-				readArray(istrm, *((OW_UInt8Array*)&m_obj), 0);
+				readArray(istrm, *(reinterpret_cast<OW_UInt8Array*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
 				new(&m_obj) OW_Int8Array;
-				readArray(istrm, *((OW_Int8Array*)&m_obj), 0);
+				readArray(istrm, *(reinterpret_cast<OW_Int8Array*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::CHAR16:
 				new(&m_obj) OW_Char16Array;
-				readObjectArray(istrm, *((OW_Char16Array*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_Char16Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::UINT16:
 				new(&m_obj) OW_UInt16Array;
-				readArray(istrm, *((OW_UInt16Array*)&m_obj), 1);
+				readArray(istrm, *(reinterpret_cast<OW_UInt16Array*>(&m_obj)), 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
 				new(&m_obj) OW_Int16Array;
-				readArray(istrm, *((OW_Int16Array*)&m_obj), 1);
+				readArray(istrm, *(reinterpret_cast<OW_Int16Array*>(&m_obj)), 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
 				new(&m_obj) OW_UInt32Array;
-				readArray(istrm, *((OW_UInt32Array*)&m_obj), 2);
+				readArray(istrm, *(reinterpret_cast<OW_UInt32Array*>(&m_obj)), 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
 				new(&m_obj) OW_Int32Array;
-				readArray(istrm, *((OW_Int32Array*)&m_obj), 2);
+				readArray(istrm, *(reinterpret_cast<OW_Int32Array*>(&m_obj)), 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
 				new(&m_obj) OW_UInt64Array;
-				readArray(istrm, *((OW_UInt64Array*)&m_obj), 3);
+				readArray(istrm, *(reinterpret_cast<OW_UInt64Array*>(&m_obj)), 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
 				new(&m_obj) OW_Int64Array;
-				readArray(istrm, *((OW_Int64Array*)&m_obj), 3);
+				readArray(istrm, *(reinterpret_cast<OW_Int64Array*>(&m_obj)), 3);
 				break;
 
 			case OW_CIMDataType::REAL32:
 				new(&m_obj) OW_Real32Array;
-				readReal32Array(istrm, *((OW_Real32Array*)&m_obj));
+				readReal32Array(istrm, *(reinterpret_cast<OW_Real32Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REAL64:
 				new(&m_obj) OW_Real64Array;
-				readReal64Array(istrm, *((OW_Real64Array*)&m_obj));
+				readReal64Array(istrm, *(reinterpret_cast<OW_Real64Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::STRING:
 				new(&m_obj) OW_StringArray;
-				readObjectArray(istrm, *((OW_StringArray*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_StringArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::DATETIME:
 				new(&m_obj) OW_CIMDateTimeArray;
-				readObjectArray(istrm, *((OW_CIMDateTimeArray*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_CIMDateTimeArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REFERENCE:
 				new(&m_obj) OW_CIMObjectPathArray;
-				readObjectArray(istrm, *((OW_CIMObjectPathArray*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_CIMObjectPathArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
 				new(&m_obj) OW_CIMClassArray;
-				readObjectArray(istrm, *((OW_CIMClassArray*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_CIMClassArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				new(&m_obj) OW_CIMInstanceArray;
-				readObjectArray(istrm, *((OW_CIMInstanceArray*)&m_obj));
+				readObjectArray(istrm, *(reinterpret_cast<OW_CIMInstanceArray*>(&m_obj)));
 				break;
 			default:
 				OW_ASSERT(0);
@@ -2795,7 +2784,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::REAL32:
-				m_obj.m_real32Value = (OW_Real32)readRealValue(istrm);
+				m_obj.m_real32Value = readRealValue(istrm);
 				break;
 
 			case OW_CIMDataType::REAL64:
@@ -2804,32 +2793,32 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 
 			case OW_CIMDataType::CHAR16:
 				new(&m_obj) OW_Char16;
-				((OW_Char16*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_Char16*>(&m_obj))->readObject(istrm);
 				break;
 
 			case OW_CIMDataType::STRING:
 				new(&m_obj) OW_String;
-				((OW_String*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_String*>(&m_obj))->readObject(istrm);
 				break;
 
 			case OW_CIMDataType::DATETIME:
 				new(&m_obj) OW_CIMDateTime(OW_CIMNULL);
-				((OW_CIMDateTime*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_CIMDateTime*>(&m_obj))->readObject(istrm);
 				break;
 
 			case OW_CIMDataType::REFERENCE:
 				new(&m_obj) OW_CIMObjectPath(OW_CIMNULL);
-				((OW_CIMObjectPath*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_CIMObjectPath*>(&m_obj))->readObject(istrm);
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
 				new(&m_obj) OW_CIMClass(OW_CIMNULL);
-				((OW_CIMClass*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_CIMClass*>(&m_obj))->readObject(istrm);
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				new(&m_obj) OW_CIMInstance(OW_CIMNULL);
-				((OW_CIMInstance*)&m_obj)->readObject(istrm);
+				(reinterpret_cast<OW_CIMInstance*>(&m_obj))->readObject(istrm);
 				break;
 			default:
 				OW_ASSERT(0);
@@ -2900,7 +2889,7 @@ writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra)
 
 	for(OW_Int32 i = 0; i < sz; i++)
 	{
-		writeRealValue(ostrm, (OW_Real64)ra[i]);
+		writeRealValue(ostrm, static_cast<OW_Real64>(ra[i]));
 	}
 }
 
@@ -2943,71 +2932,71 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				writeArray(ostrm, *((OW_BoolArray*)&m_obj), 0);
+				writeArray(ostrm, *(reinterpret_cast<const OW_BoolArray*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::UINT8:
-				writeArray(ostrm, *((OW_UInt8Array*)&m_obj), 0);
+				writeArray(ostrm, *(reinterpret_cast<const OW_UInt8Array*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::SINT8:
-				writeArray(ostrm, *((OW_Int8Array*)&m_obj), 0);
+				writeArray(ostrm, *(reinterpret_cast<const OW_Int8Array*>(&m_obj)), 0);
 				break;
 
 			case OW_CIMDataType::UINT16:
-				writeArray(ostrm, *((OW_UInt16Array*)&m_obj), 1);
+				writeArray(ostrm, *(reinterpret_cast<const OW_UInt16Array*>(&m_obj)), 1);
 				break;
 
 			case OW_CIMDataType::SINT16:
-				writeArray(ostrm, *((OW_Int16Array*)&m_obj), 1);
+				writeArray(ostrm, *(reinterpret_cast<const OW_Int16Array*>(&m_obj)), 1);
 				break;
 
 			case OW_CIMDataType::UINT32:
-				writeArray(ostrm, *((OW_UInt32Array*)&m_obj), 2);
+				writeArray(ostrm, *(reinterpret_cast<const OW_UInt32Array*>(&m_obj)), 2);
 				break;
 
 			case OW_CIMDataType::SINT32:
-				writeArray(ostrm, *((OW_Int32Array*)&m_obj), 2);
+				writeArray(ostrm, *(reinterpret_cast<const OW_Int32Array*>(&m_obj)), 2);
 				break;
 
 			case OW_CIMDataType::UINT64:
-				writeArray(ostrm, *((OW_UInt64Array*)&m_obj), 3);
+				writeArray(ostrm, *(reinterpret_cast<const OW_UInt64Array*>(&m_obj)), 3);
 				break;
 
 			case OW_CIMDataType::SINT64:
-				writeArray(ostrm, *((OW_Int64Array*)&m_obj), 3);
+				writeArray(ostrm, *(reinterpret_cast<const OW_Int64Array*>(&m_obj)), 3);
 				break;
 
 			case OW_CIMDataType::REAL32:
-				writeArray(ostrm, *((OW_Real32Array*)&m_obj));
+				writeArray(ostrm, *(reinterpret_cast<const OW_Real32Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REAL64:
-				writeArray(ostrm, *((OW_Real64Array*)&m_obj));
+				writeArray(ostrm, *(reinterpret_cast<const OW_Real64Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::CHAR16:
-				writeObjectArray(ostrm, *((OW_Char16Array*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_Char16Array*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::STRING:
-				writeObjectArray(ostrm, *((OW_StringArray*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_StringArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				writeObjectArray(ostrm, *((OW_CIMDateTimeArray*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_CIMDateTimeArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::REFERENCE:
-				writeObjectArray(ostrm, *((OW_CIMObjectPathArray*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_CIMObjectPathArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				writeObjectArray(ostrm, *((OW_CIMClassArray*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_CIMClassArray*>(&m_obj)));
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				writeObjectArray(ostrm, *((OW_CIMInstanceArray*)&m_obj));
+				writeObjectArray(ostrm, *(reinterpret_cast<const OW_CIMInstanceArray*>(&m_obj)));
 				break;
 			default:
 				OW_ASSERT(0);
@@ -3055,7 +3044,7 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 				break;
 
 			case OW_CIMDataType::REAL32:
-				writeRealValue(ostrm, (OW_Real64)m_obj.m_real32Value);
+				writeRealValue(ostrm, static_cast<OW_Real64>(m_obj.m_real32Value));
 				break;
 
 			case OW_CIMDataType::REAL64:
@@ -3063,27 +3052,27 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 				break;
 
 			case OW_CIMDataType::CHAR16:
-				((OW_Char16*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_Char16*>(&m_obj))->writeObject(ostrm);
 				break;
 
 			case OW_CIMDataType::STRING:
-				((OW_String*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_String*>(&m_obj))->writeObject(ostrm);
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				((OW_CIMDateTime*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_CIMDateTime*>(&m_obj))->writeObject(ostrm);
 				break;
 
 			case OW_CIMDataType::REFERENCE:
-				((OW_CIMObjectPath*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_CIMObjectPath*>(&m_obj))->writeObject(ostrm);
 				break;
 
 			case OW_CIMDataType::EMBEDDEDCLASS:
-				((OW_CIMClass*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_CIMClass*>(&m_obj))->writeObject(ostrm);
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				((OW_CIMInstance*)&m_obj)->writeObject(ostrm);
+				(reinterpret_cast<const OW_CIMInstance*>(&m_obj))->writeObject(ostrm);
 				break;
 			default:
 				OW_ASSERT(0);

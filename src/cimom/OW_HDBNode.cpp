@@ -724,16 +724,16 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset)
 	{
 		while(coffset > 0)
 		{
-			OW_HDB::readBlock(*((OW_HDBBlock*)pbfr.get()), file, coffset);
+			OW_HDB::readBlock(*(reinterpret_cast<OW_HDBBlock*>(pbfr.get())), file, coffset);
 
 			// Save current offset for call to removeBlock
 			OW_Int32 toffset = coffset;
 
 			// Get pointer to previous sibling
-			coffset = ((OW_HDBBlock*)pbfr.get())->prevSib;
+			coffset = (reinterpret_cast<OW_HDBBlock*>(pbfr.get()))->prevSib;
 
 			// Recursive call to removeBlock. *pblk.get() will be modified.
-			removeBlock(hdl, *((OW_HDBBlock*)pbfr.get()), toffset);
+			removeBlock(hdl, *(reinterpret_cast<OW_HDBBlock*>(pbfr.get())), toffset);
 		}
 	}
 
@@ -745,7 +745,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset)
 	}
 
 	// Remove this node's key from the index
-	hdl.removeIndexEntry((const char*)pbfr.get());
+	hdl.removeIndexEntry(reinterpret_cast<const char*>(pbfr.get()));
 
 	// Add the block to the free list
 	hdl.getHDB()->addBlockToFreeList(file, fblk, offset);

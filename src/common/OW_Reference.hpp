@@ -309,7 +309,7 @@ inline T* OW_Reference<T>::getPtr() const
 template<class T>
 inline bool OW_Reference<T>::isNull() const
 {
-	return (m_pObj == (T*)0);
+	return (m_pObj == 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

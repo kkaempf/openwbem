@@ -56,8 +56,8 @@ void OW_StringTestCases::testSubstring()
 	OW_String s = "abc";
 	unitAssert( s.substring(0, 0) == "" );
 	unitAssert( s.substring(0, 0).length() == 0 );
-	unitAssert( s.substring((OW_UInt32)-1) == "" );
-	unitAssert( s.substring((OW_UInt32)-1).length() == 0 );
+	unitAssert( s.substring(static_cast<OW_UInt32>(-1)) == "" );
+	unitAssert( s.substring(static_cast<OW_UInt32>(-1)).length() == 0 );
 }
 
 void OW_StringTestCases::testNumbers()

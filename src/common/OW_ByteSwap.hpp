@@ -53,30 +53,30 @@ inline OW_UInt64 OW_ntoh64(OW_UInt64 v) { return __bswap_64(v); }
 inline OW_UInt16 OW_hton16(OW_UInt16 v)
 {
 	OW_UInt16 rval;
-	((unsigned char*)&rval)[1] = ((unsigned char*)&v)[0];
-	((unsigned char*)&rval)[0] = ((unsigned char*)&v)[1];
+	(reinterpret_cast<unsigned char*>(&rval))[1] = (reinterpret_cast<unsigned char*>(&v))[0];
+	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[1];
 	return rval;
 }
 inline OW_UInt32 OW_hton32(OW_UInt32 v)
 {
 	OW_UInt32 rval;
-	((unsigned char*)&rval)[3] = ((unsigned char*)&v)[0];
-	((unsigned char*)&rval)[2] = ((unsigned char*)&v)[1];
-	((unsigned char*)&rval)[1] = ((unsigned char*)&v)[2];
-	((unsigned char*)&rval)[0] = ((unsigned char*)&v)[3];
+	(reinterpret_cast<unsigned char*>(&rval))[3] = (reinterpret_cast<unsigned char*>(&v))[0];
+	(reinterpret_cast<unsigned char*>(&rval))[2] = (reinterpret_cast<unsigned char*>(&v))[1];
+	(reinterpret_cast<unsigned char*>(&rval))[1] = (reinterpret_cast<unsigned char*>(&v))[2];
+	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[3];
 	return rval;
 }
 inline OW_UInt64 OW_hton64(OW_UInt64 v)
 {
 	OW_UInt64 rval;
-	((unsigned char*)&rval)[7] = ((unsigned char*)&v)[0];
-	((unsigned char*)&rval)[6] = ((unsigned char*)&v)[1];
-	((unsigned char*)&rval)[5] = ((unsigned char*)&v)[2];
-	((unsigned char*)&rval)[4] = ((unsigned char*)&v)[3];
-	((unsigned char*)&rval)[3] = ((unsigned char*)&v)[4];
-	((unsigned char*)&rval)[2] = ((unsigned char*)&v)[5];
-	((unsigned char*)&rval)[1] = ((unsigned char*)&v)[6];
-	((unsigned char*)&rval)[0] = ((unsigned char*)&v)[7];
+	(reinterpret_cast<unsigned char*>(&rval))[7] = (reinterpret_cast<unsigned char*>(&v))[0];
+	(reinterpret_cast<unsigned char*>(&rval))[6] = (reinterpret_cast<unsigned char*>(&v))[1];
+	(reinterpret_cast<unsigned char*>(&rval))[5] = (reinterpret_cast<unsigned char*>(&v))[2];
+	(reinterpret_cast<unsigned char*>(&rval))[4] = (reinterpret_cast<unsigned char*>(&v))[3];
+	(reinterpret_cast<unsigned char*>(&rval))[3] = (reinterpret_cast<unsigned char*>(&v))[4];
+	(reinterpret_cast<unsigned char*>(&rval))[2] = (reinterpret_cast<unsigned char*>(&v))[5];
+	(reinterpret_cast<unsigned char*>(&rval))[1] = (reinterpret_cast<unsigned char*>(&v))[6];
+	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[7];
 	return rval;
 }
 inline OW_UInt16 OW_ntoh16(OW_UInt16 v)

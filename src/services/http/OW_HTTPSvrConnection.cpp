@@ -535,7 +535,7 @@ OW_HTTPSvrConnection::processRequestLine()
 			break;
 		default:
 			m_errDetails = "Invalid number of tokens on request line: " +
-				OW_String((unsigned int)m_requestLine.size());
+				OW_String(static_cast<unsigned int>(m_requestLine.size()));
 			return SC_BAD_REQUEST;
 	}
 

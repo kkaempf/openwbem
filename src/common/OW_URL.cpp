@@ -48,7 +48,7 @@ OW_URL::toString() const
 	retval += this->host;
 	if ( this->port > 0 )
 	{
-		retval += ":" + OW_String((OW_UInt32)this->port);
+		retval += ":" + OW_String(static_cast<OW_UInt32>(this->port));
 	}
 	if ( !this->path.empty())
 	{

@@ -112,7 +112,7 @@ void
 OW_StringBuffer::reset()
 {
 	m_len = 0;
-	m_bfr[0] = (char)0;
+	m_bfr[0] = '\0';
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ OW_StringBuffer::operator += (OW_UInt8 v)
 {
 	char bfr[6];
 	::snprintf(bfr, sizeof(bfr), "%u", OW_UInt32(v));
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ OW_StringBuffer::operator += (OW_Int8 v)
 {
 	char bfr[6];
 	::snprintf(bfr, sizeof(bfr), "%d", OW_Int32(v));
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ OW_StringBuffer::operator += (OW_UInt16 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%u", OW_UInt32(v));
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ OW_StringBuffer::operator += (OW_Int16 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%d", OW_Int32(v));
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ OW_StringBuffer::operator += (OW_UInt32 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%u", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -195,7 +195,7 @@ OW_StringBuffer::operator += (OW_Int32 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%d", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -204,7 +204,7 @@ OW_StringBuffer::operator += (OW_UInt64 v)
 {
 	char bfr[28];
 	::snprintf(bfr, sizeof(bfr), "%llu", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ OW_StringBuffer::operator += (OW_Int64 v)
 {
 	char bfr[28];
 	::snprintf(bfr, sizeof(bfr), "%lld", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ OW_StringBuffer::operator += (OW_Real32 v)
 {
 	char bfr[32];
 	::snprintf(bfr, sizeof(bfr), "%f", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ OW_StringBuffer::operator += (OW_Real64 v)
 {
 	char bfr[32];
 	::snprintf(bfr, sizeof(bfr), "%f", v);
-	return append((const char*)bfr);
+	return append(bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////

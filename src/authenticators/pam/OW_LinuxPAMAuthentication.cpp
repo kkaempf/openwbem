@@ -165,8 +165,7 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 
 	//D(("allocating empty response structure array."));
 
-	reply = (struct pam_response *) calloc(num_msg,
-														sizeof(struct pam_response));
+	reply = static_cast<struct pam_response *>(calloc(num_msg, sizeof(struct pam_response)));
 	if (reply == NULL)
 	{
 		//D(("no memory for responses"));

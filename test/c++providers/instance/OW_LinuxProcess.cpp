@@ -235,7 +235,7 @@ public:
 				{
 					OW_String spid;
 					iter->getValue().get(spid);
-					pid = (pid_t)spid.toInt32();
+					pid = static_cast<pid_t>(spid.toInt32());
 					break;
 				}
 			}

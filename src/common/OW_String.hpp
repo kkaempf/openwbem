@@ -326,7 +326,7 @@ public:
 	 * was found. -1 if the character was not found at or after the given
 	 * fromIndex.
 	 */
-	int indexOf(char ch, int fromIndex=0) const;
+	int indexOf(char ch, size_t fromIndex=0) const;
 
 	/**
 	 * Find the first occurence of a string in this OW_String object.
@@ -335,7 +335,7 @@ public:
 	 * @return The index of the given string in the underlying array if it
 	 * was found. -1 if the string was not found at or after the fromIndex.
 	 */
-	int indexOf(const OW_String& arg, int fromIndex=0) const;
+	int indexOf(const OW_String& arg, size_t fromIndex=0) const;
 
 	/**
 	 * Find the last occurence of a character in this OW_String object.
@@ -591,7 +591,7 @@ public:
 	 * @return a  pointer to the first occurrence of the character c in the
 	 * string theStr if found. Otherwise a NULL pointer.
 	 */
-	static char* strchr(const char* theStr, int c);
+	static const char* strchr(const char* theStr, int c);
 
 	/**
 	 * Reads from in input stream until a newline is encountered.

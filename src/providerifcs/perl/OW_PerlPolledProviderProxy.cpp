@@ -53,17 +53,18 @@ OW_PerlPolledProviderProxy::getInitialPollingInterval(
 OW_Int32
 OW_PerlPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
-        OW_CIMValue rval(OW_CIMNULL);
+	OW_CIMValue rval(OW_CIMNULL);
 
-        env->getLogger()->
-            logDebug("OW_PerlPolledProviderIFC::poll()");
+	env->getLogger()->
+		logDebug("OW_PerlPolledProviderIFC::poll()");
 
-        if (m_ftable->fp_mustPoll != NULL)
+	if (m_ftable->fp_mustPoll != NULL)
 	{
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 	    char * expo = "SourceInstance.PercentageSpaceUse 80";
 	    SelectExp exp = {expo};
@@ -87,11 +88,12 @@ void OW_PerlPolledProviderProxy::activateFilter(
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-            env->getLogger()->logDebug("activateFilter2");
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+        env->getLogger()->logDebug("activateFilter2");
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+        _npiHandle.thisObject = static_cast<void *>(&env2);
 
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();
@@ -117,12 +119,13 @@ void OW_PerlPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            env->getLogger()->logDebug("deactivateFilter2");
+		env->getLogger()->logDebug("deactivateFilter2");
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();
@@ -130,7 +133,7 @@ void OW_PerlPolledProviderProxy::deactivateFilter(
 	    CIMObjectPath cop = {NULL};
 	    char * type = NULL;
 
-            m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
+        m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
 	    free(type);
 	    free(expo);
 

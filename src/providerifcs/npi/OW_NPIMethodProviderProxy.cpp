@@ -42,7 +42,8 @@
 
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
+OW_NPIMethodProviderProxy::invokeMethod(
+	const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
 	const OW_CIMObjectPath& path,
 	const OW_String &methodName,
@@ -58,7 +59,8 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
             ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			OW_ProviderEnvironmentIFCRef env2(env);
+            _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems

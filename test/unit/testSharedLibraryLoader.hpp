@@ -62,7 +62,7 @@ class testSharedLibrary: public OW_SharedLibrary
 	protected:
 		virtual OW_Bool doGetFunctionPointer( const OW_String&, void** fp ) const
 		{
-			*fp = (void*)&testFunction;
+			*fp = (void*)(&testFunction);
 			return true;
 		}
 };
@@ -460,9 +460,9 @@ class testMuxSharedLibrary: public OW_SharedLibrary
 		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
-				*fp = (void*)&versionFunction;
+				*fp = (void*)(&versionFunction);
 			else
-				*fp = (void*)&testCreateProviderMux;
+				*fp = (void*)(&testCreateProviderMux);
 			return true;
 		}
 };
@@ -476,9 +476,9 @@ class testMuxSharedLibrary2: public OW_SharedLibrary
 		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
-				*fp = (void*)&versionFunction;
+				*fp = (void*)(&versionFunction);
 			else
-				*fp = (void*)&testCreateProviderMux2;
+				*fp = (void*)(&testCreateProviderMux2);
 			return true;
 		}
 };
@@ -492,9 +492,9 @@ class testMuxSharedLibrary3: public OW_SharedLibrary
 		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
-				*fp = (void*)&versionFunction;
+				*fp = (void*)(&versionFunction);
 			else
-				*fp = (void*)&testCreateProviderMux3;
+				*fp = (void*)(&testCreateProviderMux3);
 			return true;
 		}
 };

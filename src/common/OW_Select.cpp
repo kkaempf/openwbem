@@ -56,12 +56,12 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
    FD_ZERO(&rfds);
    for(size_t i = 0; i < selarray.size(); i++)
    {
-	  if(maxfd < (int)selarray[i])
+	  if(maxfd < selarray[i])
 	  {
-		 maxfd = (int) selarray[i];
+		 maxfd = selarray[i];
 	  }
 
-	  FD_SET((int)selarray[i], &rfds);
+	  FD_SET(selarray[i], &rfds);
    }
 
    struct timeval* ptv = NULL;
@@ -97,7 +97,7 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
 
    for(size_t i = 0; i < selarray.size(); i++)
    {
-	  if(FD_ISSET((int)selarray[i], &rfds))
+	  if(FD_ISSET(selarray[i], &rfds))
 	  {
 		 return int(i);
 	  }

@@ -333,7 +333,7 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 	memset(&addr, 0, sizeof(addr));
 
 	len = sizeof(addr);
-	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
 				"OW_SocketBaseImpl::fillInetAddrParms: getsockname");
@@ -341,7 +341,7 @@ OW_SocketBaseImpl::fillInetAddrParms() /*throw (OW_SocketException)*/
 	m_localAddress.assignFromNativeForm(&addr, len);
 
 	len = sizeof(addr);
-	if(getpeername(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+	if(getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
 				"OW_SocketBaseImpl::fillInetAddrParms: getpeername");
@@ -359,7 +359,7 @@ OW_SocketBaseImpl::fillUnixAddrParms() /*throw (OW_SocketException)*/
 	memset(&addr, 0, sizeof(addr));
 
 	len = sizeof(addr);
-	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
+	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
 				"OW_SocketBaseImpl::fillUnixAddrParms: getsockname");
@@ -397,7 +397,7 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsExc
 				{
 					OW_THROW(OW_IOException, "Failed opening socket dump file");
 				}
-				if (!traceFile.write((const char*)dataOut, rc))
+				if (!traceFile.write(static_cast<const char*>(dataOut), rc))
 				{
 					OW_THROW(OW_IOException, "Failed writing to socket dump");
 				}
@@ -449,7 +449,7 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException)
 				{
 					OW_THROW(OW_IOException, "Failed opening tracefile");
 				}
-				if (!traceFile.write((const char*)dataIn, rc))
+				if (!traceFile.write(static_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW(OW_IOException, "Failed writing to socket dump");
 				}

@@ -289,6 +289,7 @@ private:
 
 // The following structure represents the format of header that
 // preceeds all records in the associations db
+// TODO: Fix all the code that uses this thing that assumes it's all packed data.
 struct AssocDbRecHeader
 {
 	AssocDbRecHeader() { memset(this, 0, sizeof(*this)); }

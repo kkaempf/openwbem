@@ -330,7 +330,7 @@ void OW_XMLParser::_getAttributeValue(OW_XMLToken::Attribute& att)
 
 	if (*_current != startChar)
 		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
-			_line, format("Expecting %1; Got %2", startChar, (int)*_current).c_str());
+			_line, format("Expecting %1; Got %2", startChar, static_cast<int>(*_current)).c_str());
 
 	++_current;
 }

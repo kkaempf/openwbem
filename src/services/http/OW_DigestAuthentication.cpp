@@ -93,7 +93,7 @@ OW_DigestAuthentication::generateNewNonce( void )
 {
 	OW_DateTime DateTime;
 	DateTime.setToCurrent();
-	OW_String sDateTime( (long long)DateTime.get() );
+	OW_String sDateTime( static_cast<OW_Int64>(DateTime.get()) );
 
 	OW_String sPrivateData;
 

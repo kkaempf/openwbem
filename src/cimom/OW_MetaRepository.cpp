@@ -133,7 +133,7 @@ OW_MetaRepository::open(const OW_String& path)
 	if(!rnode)
 	{
 		rnode = OW_HDBNode(qcontk, qcontk.length()+1,
-			(const unsigned char*) qcontk.c_str());
+			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
 
 		hdl->turnFlagsOn(rnode, OW_HDBNSNODE_FLAG);
 		hdl->addRootNode(rnode);
@@ -145,7 +145,7 @@ OW_MetaRepository::open(const OW_String& path)
 	if(!node)
 	{
 		node = OW_HDBNode(qcontk, qcontk.length()+1,
-			(const unsigned char*) qcontk.c_str());
+			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
 		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
 		hdl->addChild(rnode, node);
 	}

@@ -53,23 +53,24 @@ OW_NPIPolledProviderProxy::getInitialPollingInterval(
 OW_Int32
 OW_NPIPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
-        OW_CIMValue rval(OW_CIMNULL);
+	OW_CIMValue rval(OW_CIMNULL);
 
-        env->getLogger()->
-            logDebug("OW_NPIPolledProviderIFC::poll()");
+	env->getLogger()->
+		logDebug("OW_NPIPolledProviderIFC::poll()");
 
-        if (m_ftable->fp_mustPoll != NULL)
+	if (m_ftable->fp_mustPoll != NULL)
 	{
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			OW_NPIHandleFreer nhf(_npiHandle);
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
-	    char * expo = "SourceInstance.PercentageSpaceUse 80";
-	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
+		char * expo = "SourceInstance.PercentageSpaceUse 80";
+		SelectExp exp = {expo};
+		CIMObjectPath cop = {NULL};
 
-            m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
+		m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
 
 		if (_npiHandle.errorOccurred)
 		{
@@ -87,11 +88,12 @@ void OW_NPIPolledProviderProxy::activateFilter(
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-            env->getLogger()->logDebug("activateFilter2");
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			OW_NPIHandleFreer nhf(_npiHandle);
+		env->getLogger()->logDebug("activateFilter2");
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();
@@ -117,12 +119,13 @@ void OW_NPIPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-			OW_NPIHandleFreer nhf(_npiHandle);
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            env->getLogger()->logDebug("deactivateFilter2");
+		env->getLogger()->logDebug("deactivateFilter2");
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();

@@ -50,7 +50,7 @@
 
 #define YYLEX_PARAM context
 #define YY_DECL int yylex(YYSTYPE *yylval, void* YYLEX_PARAM)
-#define MOF_COMPILER ((MofCompiler*)context)
+#define MOF_COMPILER (reinterpret_cast<MofCompiler*>(context))
 %}
 
 /* here are the definitions */

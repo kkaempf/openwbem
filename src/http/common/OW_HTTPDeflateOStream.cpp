@@ -88,7 +88,7 @@ OW_HTTPDeflateOStreamBuffer::sync()
 int
 OW_HTTPDeflateOStreamBuffer::buffer_to_device(const char* c, int n)
 {
-	m_zstr.next_in = (Bytef*)c;
+	m_zstr.next_in = const_cast<Bytef*>(reinterpret_cast<const Bytef*>(c));
 	m_zstr.avail_in = n;
 	int rval = 0;
 	while (m_zstr.avail_in > 0)

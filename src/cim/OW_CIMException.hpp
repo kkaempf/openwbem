@@ -123,7 +123,7 @@ public:
 private:
 
 	ErrNoType m_errno;
-	mutable const char* m_longmsg;
+	mutable char* m_longmsg;
 };
 
 #define OW_THROWCIM(errval) \

@@ -495,7 +495,7 @@ OW_PerlProviderIFC::getProvider(
 
 
 	//fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)fTable.perlcontext};
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.perlcontext};
 	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
 
 	env->getLogger()->logDebug(format("Perl provider ifc: provider %1 loaded and initialized (script %2)",

@@ -48,7 +48,7 @@ int
 doLock(int hdl, int cmd, short int type)
 {
 	struct flock lck;
-	::memset ((char *) &lck, '\0', sizeof (lck));
+	::memset (&lck, '\0', sizeof (lck));
 	lck.l_type = type;       /* write (exclusive) lock */
 	lck.l_whence = 0;           /* 0 offset for l_start */
 	lck.l_start = 0L;           /* lock starts at BOF */

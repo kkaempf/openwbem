@@ -85,7 +85,7 @@ OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
 
 	getInterfaceName(s);
 
-	bzero((char *)&ifr, sizeof(ifr));
+	bzero(&ifr, sizeof(ifr));
 	strncpy(ifr.ifr_name, m_name.c_str(), sizeof(ifr.ifr_name));
 
 	////////////////////
@@ -96,7 +96,7 @@ OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
 		close(s);
 		OW_THROW(OW_SocketException, "ioctl:SIOCGIFADDR");
 	}
-	sin = (struct sockaddr_in *) &ifr.ifr_addr;
+	sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_addr);
 	m_addr = sin->sin_addr.s_addr;
 
 	////////////////////
@@ -109,7 +109,7 @@ OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
 		OW_THROW(OW_SocketException, "ioctl:SIOCGIFBRDADDR");
 	}
 
-	sin = (struct sockaddr_in*) &ifr.ifr_broadaddr;
+	sin = reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_broadaddr);
 	m_bcastAddr = sin->sin_addr.s_addr;
 
 	////////////////////
@@ -122,9 +122,9 @@ OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
 	}
 
 #ifdef OW_GNU_LINUX
-	sin = (struct sockaddr_in *) &ifr.ifr_netmask;
+	sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_netmask);
 #else
-	sin = (struct sockaddr_in *) &ifr.ifr_broadaddr;
+	sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_broadaddr);
 #endif
 	m_netmask = sin->sin_addr.s_addr;
 	close(s);
@@ -255,7 +255,7 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd) /*throw (OW_SocketExcepti
 			appliesTo = "ioctl:SIOCGIFCONF";
 			break;
 		}
-		if(ifc.ifc_len == (int)(sizeof(struct ifreq) * numreqs))
+		if(ifc.ifc_len == static_cast<int>(sizeof(struct ifreq) * numreqs))
 		{
 			/* assume it overflowed and try again */
 			numreqs += 10;

@@ -121,7 +121,7 @@ OW_GenericHDBRepository::open(const OW_String& path)
 	if(!node)
 	{
 		node = OW_HDBNode(contk, contk.length()+1,
-			(const unsigned char*) contk.c_str());
+			reinterpret_cast<const unsigned char*>(contk.c_str()));
 		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
 	}
@@ -229,7 +229,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 		if(!node)
 		{
 			node = OW_HDBNode(ks, ks.length()+1,
-				(const unsigned char*) ks.c_str());
+				reinterpret_cast<const unsigned char*>(ks.c_str()));
 			hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
 
 			if(!pnode)
@@ -273,7 +273,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 		return -1;
 	}
 
-	node = OW_HDBNode(ks, ks.length()+1, (const unsigned char*) ks.c_str());
+	node = OW_HDBNode(ks, ks.length()+1, reinterpret_cast<const unsigned char*>(ks.c_str()));
 	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
 	hdl->addChild(pnode, node);
 	return 0;

@@ -54,18 +54,19 @@ OW_PerlInstanceProviderProxy::enumInstanceNames(
 
         if (m_ftable->fp_enumInstanceNames!= NULL)
         {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+            ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			OW_ProviderEnvironmentIFCRef env2(env);
+            _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
-
-            CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
+			OW_CIMClass cimClass2(cimClass);
+            CIMClass _cc = { static_cast<void *> (&cimClass2)};
 
 			OW_CIMObjectPath cop(className, ns);
-            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+            CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
             ::Vector v =
                 m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
@@ -120,18 +121,20 @@ OW_PerlInstanceProviderProxy::enumInstances(
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 	}
 
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 	OW_NPIHandleFreer nhf(_npiHandle);
 
-	_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+	OW_ProviderEnvironmentIFCRef env2(env);
+	_npiHandle.thisObject = static_cast<void *>(&env2);
 
 	//  may the arguments must be copied verbatim
 	//  to avoid locking problems
 
-	CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
+	OW_CIMClass cimClass2(cimClass);
+	CIMClass _cc = { static_cast<void *> (&cimClass2)};
 
 	OW_CIMObjectPath cop(className, ns);
-	CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+	CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
 	int de = deep;
 	int lo = localOnly;
@@ -166,35 +169,36 @@ void
 OW_PerlInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns, const OW_CIMObjectPath& cop)
 {
-        env->getLogger()->
-            logDebug("OW_PerlInstanceProviderProxy::deleteInstance()");
+	env->getLogger()->
+		logDebug("OW_PerlInstanceProviderProxy::deleteInstance()");
 
-        if (m_ftable->fp_deleteInstance!= NULL)
-        {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
+	if (m_ftable->fp_deleteInstance!= NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
 
-			OW_CIMObjectPath copWithNS(cop);
-			copWithNS.setNameSpace(ns);
-            CIMObjectPath _cop = { (void*)static_cast<const void *> (&copWithNS)};
+		OW_CIMObjectPath copWithNS(cop);
+		copWithNS.setNameSpace(ns);
+		CIMObjectPath _cop = { static_cast<void *> (&copWithNS)};
 
-            m_ftable->fp_deleteInstance(&_npiHandle, _cop);
+		m_ftable->fp_deleteInstance(&_npiHandle, _cop);
 
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(OW_CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-        }
-        else
-        {
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
-        }
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				_npiHandle.providerError);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -215,19 +219,21 @@ OW_PerlInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &en
 
         if (m_ftable->fp_getInstance != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			OW_ProviderEnvironmentIFCRef env2(env);
+            _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
+			OW_CIMClass cimClass2(cimClass);
+            CIMClass _cc = { static_cast<void *> (&cimClass2)};
 
 			OW_CIMObjectPath cop(instanceName);
 			cop.setNameSpace(ns);
-            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+            CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
             int lo = localOnly;
 
@@ -271,15 +277,17 @@ OW_PerlInstanceProviderProxy::createInstance(
 
         if (m_ftable->fp_createInstance != NULL)
         {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+			OW_ProviderEnvironmentIFCRef env2(env);
+            _npiHandle.thisObject = static_cast<void *>(&env2);
 
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMInstance _ci = { (void*)static_cast<const void *> (&cimInstance)};
+			OW_CIMInstance cimInstance2(cimInstance);
+            CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
 
 			OW_CIMObjectPath cop(cimInstance);
 			cop.setNameSpace(ns);
@@ -319,21 +327,22 @@ OW_PerlInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 
 	if (m_ftable->fp_setInstance != NULL)
 	{
-	        ::NPIHandle _npiHandle = { 0, 0, 0, 0, (void *)m_ftable->perlcontext};
+	        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->perlcontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
 
 		//  may the arguments must be copied verbatim
 		//  to avoid locking problems
 		OW_CIMInstance newInst(modifiedInstance.createModifiedInstance(
 			previousInstance, includeQualifiers, propertyList, theClass));
 
-		CIMInstance _ci = { (void*)static_cast<const void *> (&newInst)};
+		CIMInstance _ci = { static_cast<void *> (&newInst)};
 
 		OW_CIMObjectPath cop(modifiedInstance);
 		cop.setNameSpace(ns);
-		CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+		CIMObjectPath _cop = { static_cast<void *> (&cop)};
 
 		m_ftable->fp_setInstance(&_npiHandle, _cop, _ci);
 

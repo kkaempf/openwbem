@@ -55,7 +55,9 @@ public:
 	OW_RepositoryIStreamBuf(int dataLen, const unsigned char* data) :
 		std::streambuf()
 	{
-		setg((char*)(data+dataLen), (char*)(data), (char*)(data+dataLen));
+		setg(const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)), 
+			const_cast<char*>(reinterpret_cast<const char*>(data)), 
+			const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)));
 	}
 
 protected:

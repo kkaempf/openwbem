@@ -100,7 +100,7 @@ RemoveEscapes(const OW_String& s)
 							 k++)
 							octVal = (octVal << 3) + (s[i + k] - '0');
 						i += k - 1;
-						newStr += ((char) octVal);
+						newStr += (static_cast<char>(octVal));
 					}
 					break;
 				default:

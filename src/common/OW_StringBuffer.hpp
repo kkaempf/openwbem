@@ -59,7 +59,7 @@ public:
 	{
 		checkAvail();
 		m_bfr[m_len++] = c;
-		m_bfr[m_len] = (char)0;
+		m_bfr[m_len] = '\0';
 		return *this;
 	}
 

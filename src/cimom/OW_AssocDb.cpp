@@ -751,7 +751,7 @@ OW_AssocDb::getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 static void
 writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
 {
-	rh.chkSum = calcCheckSum((unsigned char*)&rh.nextFree,
+	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
 
 	if(file.write(&rh, sizeof(rh), offset) != sizeof(rh))
@@ -769,7 +769,7 @@ readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
 		OW_THROW(OW_IOException, "Failed to read record from assoc db");
 	}
 
-	OW_UInt32 chkSum = calcCheckSum((unsigned char*)&rh.nextFree,
+	OW_UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		 sizeof(rh) - sizeof(rh.chkSum));
 
 	if(chkSum != rh.chkSum)
@@ -787,7 +787,7 @@ calcCheckSum(unsigned char* src, OW_Int32 len)
 
 	for(i = 0; i < len; i++)
 	{
-		cksum += (OW_UInt32) src[i];
+		cksum += static_cast<OW_UInt32>(src[i]);
 	}
 
 	return cksum;

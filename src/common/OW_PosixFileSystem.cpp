@@ -275,7 +275,7 @@ OW_FileSystem::initRandomFile(const OW_String& filename)
 	OW_RandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)
 	{
-		char c = (char)rnum.getNextNumber();
+		char c = rnum.getNextNumber();
 		::write(hdl, &c, 1);
 	}
 	::close(hdl);

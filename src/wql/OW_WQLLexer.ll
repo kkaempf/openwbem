@@ -461,7 +461,7 @@ ZONE { RETURN_VAL(ZONE); }
 					char* endptr;
 
 					errno = 0;
-					val = strtol((char *)yytext, &endptr, 10);
+					val = strtol(static_cast<char *>(yytext), &endptr, 10);
 					if (*endptr != '\0' || errno == ERANGE)
 					{
 						/* integer too large, treat it as a float */
@@ -483,8 +483,8 @@ ZONE { RETURN_VAL(ZONE); }
 					 *  Convert the identifier to lower case
 					for (int i = 0; yytext[i]; i++)
 					{
-						if (isupper((unsigned char) yytext[i]))
-							yytext[i] = tolower((unsigned char) yytext[i]);
+						if (isupper(static_cast<unsigned char>(yytext[i])))
+							yytext[i] = tolower(static_cast<unsigned char>(yytext[i]));
 					}
 					 */
 					RETURN_STR(IDENT);

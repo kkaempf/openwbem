@@ -143,8 +143,8 @@ OW_String::OW_String(const OW_Char16& parm) :
 	m_buf(NULL)
 {
 	char bfr[2];
-	bfr[0] = (char)parm.getValue();
-	bfr[1] = (char)0;
+	bfr[0] = parm.getValue();
+	bfr[1] = '\0';
 	m_buf = new ByteBuf(bfr);
 }
 
@@ -234,7 +234,7 @@ OW_String::OW_String(const char* str, size_t len) :
 	{
 		char* bfr = new char[len+1];
 		::memcpy(bfr, str, len);
-		bfr[len] = (char)0;
+		bfr[len] = '\0';
 		m_buf = new ByteBuf(bfr, len);
 	}
 }
@@ -272,9 +272,9 @@ OW_String::OW_String(const OW_Char16Array& ra) :
 		char* bfr = new char[sz+1];
 		for(int i = 0; i < sz; i++)
 		{
-			bfr[i] = (char)ra[i].getValue();
+			bfr[i] = ra[i].getValue();
 		}
-		bfr[sz] = (char)0;
+		bfr[sz] = '\0';
 		m_buf = new ByteBuf(bfr, sz);
 	}
 	else
@@ -288,11 +288,11 @@ OW_String::OW_String(const OW_Char16Array& ra) :
 OW_String::OW_String(char c) :
 	m_buf(NULL)
 {
-	if(c != (char)0)
+	if(c != '\0')
 	{
 		char bfr[2];
 		bfr[0] = c;
-		bfr[1] = (char)0;
+		bfr[1] = '\0';
 		m_buf = new ByteBuf(bfr);
 	}
 	else
@@ -311,7 +311,7 @@ char*
 OW_String::allocateCString() const
 {
 	size_t len = length() + 1;
-	char* str = (char*)malloc(len);
+	char* str = static_cast<char*>(malloc(len));
 	::strcpy(str, c_str());
 	return str;
 }
@@ -355,7 +355,7 @@ OW_String::format(const char* fmt, ...)
 		if(n > -1 && n < size)
 		{
 			m_buf = new ByteBuf(p, n);
-			return (int)length();
+			return static_cast<int>(length());
 		}
 
 		if (n > -1)    // glibc 2.1
@@ -377,7 +377,7 @@ OW_String::format(const char* fmt, ...)
 char
 OW_String::charAt(size_t ndx) const
 {
-	return (m_buf) ? m_buf->data()[ndx] : (char)0;
+	return (m_buf) ? m_buf->data()[ndx] : '\0';
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -456,7 +456,7 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 	}
 
 	int ndx = length();
-	ndx -= (int)arg.length();
+	ndx -= static_cast<int>(arg.length());
 
 	if(ndx < 0)
 	{
@@ -528,20 +528,20 @@ OW_String::hashCode() const
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_String::indexOf(char ch, int fromIndex) const
+OW_String::indexOf(char ch, size_t fromIndex) const
 {
-	if(fromIndex < 0)
-	{
-		fromIndex = 0;
-	}
+	//if(fromIndex < 0)
+	//{
+	//	fromIndex = 0;
+	//}
 
 	int cc = -1;
-	if((size_t)fromIndex < length())
+	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		char* p = OW_String::strchr(m_buf->data()+fromIndex, ch);
-		if(p != NULL)
+		const char* p = OW_String::strchr(m_buf->data()+fromIndex, ch);
+		if(p)
 		{
 			cc = p - m_buf->data();
 		}
@@ -551,15 +551,15 @@ OW_String::indexOf(char ch, int fromIndex) const
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_String::indexOf(const OW_String& arg, int fromIndex) const
+OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 {
-	if(fromIndex < 0)
-	{
-		fromIndex = 0;
-	}
+	//if(fromIndex < 0)
+	//{
+	//	fromIndex = 0;
+	//}
 
 	int cc = -1;
-	if((size_t)fromIndex < length())
+	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed, but we do need to check arg.m_buf
@@ -593,9 +593,9 @@ OW_String::lastIndexOf(char ch, int fromIndex) const
 	}
 
 	int cc = -1;
-	if((size_t)fromIndex < length())
+	if(static_cast<size_t>(fromIndex) < length())
 	{
-		for(int i = (int)fromIndex; i >= 0; i--)
+		for(int i = fromIndex; i >= 0; i--)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
 			// this code won't be executed.
@@ -613,7 +613,7 @@ OW_String::lastIndexOf(char ch, int fromIndex) const
 int
 OW_String::lastIndexOf(const OW_String& arg, int fromIndex) const
 {
-	if(fromIndex < 0 || (size_t)fromIndex >= length())
+	if(fromIndex < 0 || static_cast<size_t>(fromIndex) >= length())
 	{
 		if((fromIndex = length()-1) < 0)
 			return -1;
@@ -717,12 +717,12 @@ OW_String::isSpaces() const
 	}
 
 	char* p = m_buf->data();
-	while(isspace(*p) && *p != (char)0)
+	while(isspace(*p) && *p != '\0')
 	{
 		p++;
 	}
 
-	return (*p == (char)0);
+	return (*p == '\0');
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -735,7 +735,7 @@ OW_String::ltrim()
 	}
 
 	char* s1 = m_buf->data();
-	while(isspace(*s1) && *s1 != (char)0)
+	while(isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
@@ -743,7 +743,7 @@ OW_String::ltrim()
 	if(s1 == m_buf->data())
 		return *this;
 
-	*this = OW_String((const char*)s1);
+	*this = OW_String(s1);
 	return *this;
 }
 
@@ -770,7 +770,7 @@ OW_String::rtrim()
 	}
 
 	size_t len = (s1 - m_buf->data()) + 1;
-	*this = OW_String((const char*)m_buf->data(), len);
+	*this = OW_String(m_buf->data(), len);
 	return *this;
 }
 
@@ -784,20 +784,20 @@ OW_String::trim()
 	}
 
 	char* s1 = m_buf->data();
-	while(isspace(*s1) && *s1 != (char)0)
+	while(isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
 
-	if(*s1 == (char)0)
+	if(*s1 == '\0')
 	{
 		// String is all spaces
 		*this = OW_String();
 		return *this;
 	}
 
-	char* p2 = OW_String::strchr(s1, (char)0);
-	char* s2 = p2 - 1;
+	const char* p2 = OW_String::strchr(s1, '\0');
+	const char* s2 = p2 - 1;
 
 	while(isspace(*s2))
 	{
@@ -811,7 +811,7 @@ OW_String::trim()
 	}
 
 	size_t len = (s2 - s1) + 1;
-	*this = OW_String((const char*)s1, len);
+	*this = OW_String(s1, len);
 	return *this;
 }
 
@@ -1533,7 +1533,7 @@ OW_String::getLine(istream& is)
 			if(ch == '\n')
 				break;
 			
-			rv += (char) ch;
+			rv += static_cast<char>(ch);
 		}
 	}
 
@@ -1549,7 +1549,7 @@ OW_String::getLine(istream& is)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-char*
+const char*
 OW_String::strchr(const char* theStr, int c)
 {
 	const char* tmpChar = theStr;
@@ -1557,7 +1557,7 @@ OW_String::strchr(const char* theStr, int c)
 	{
 		// empty
 	}
-	return ((*tmpChar) == c ? (char*) tmpChar : (char*)0);
+	return ((*tmpChar) == c ? tmpChar : 0);
 }
 
 

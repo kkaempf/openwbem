@@ -165,7 +165,7 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 	parg->m_func = func;
 	parg->m_funcParm = funcParm;
 
-	if (pthread_create(&handle, &attr, threadStarter, (void*)parg) != 0)
+	if (pthread_create(&handle, &attr, threadStarter, parg) != 0)
 	{
 		cc = -1;
 	}

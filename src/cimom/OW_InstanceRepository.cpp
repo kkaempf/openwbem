@@ -568,7 +568,7 @@ OW_InstanceRepository::createClass(const OW_String& ns,
 	}
 
 	node = OW_HDBNode(ckey, ckey.length()+1,
-		(unsigned char*) ckey.c_str());
+		reinterpret_cast<const unsigned char*>(ckey.c_str()));
 	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG | OW_HDBCLSNODE_FLAG);
 	hdl->addChild(pnode, node);
 }
