@@ -84,6 +84,8 @@ OW_SocketBaseImpl::OW_SocketBaseImpl()
 	, m_connectTimeout(0)
 {
 	m_in.tie(&m_out);
+	m_out.exceptions(std::ios::badbit);
+	m_inout.exceptions(std::ios::badbit);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,6 +107,8 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
 	, m_connectTimeout(0)
 {
 	m_in.tie(&m_out);
+	m_out.exceptions(std::ios::badbit);
+	m_inout.exceptions(std::ios::badbit);
 	if (addrType == OW_SocketAddress::INET)
 	{
 		fillInetAddrParms();
@@ -137,6 +141,8 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(const OW_SocketAddress& addr)
 	, m_connectTimeout(0)
 {
 	m_in.tie(&m_out);
+	m_out.exceptions(std::ios::badbit);
+	m_inout.exceptions(std::ios::badbit);
 	connect(m_peerAddress);
 }
 //////////////////////////////////////////////////////////////////////////////
