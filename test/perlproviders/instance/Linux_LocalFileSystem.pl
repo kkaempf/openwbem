@@ -338,9 +338,10 @@ sub referenceNames {
 sub fsWatcher {
    my ($npiHandle, $expr) = @_;
    perlNPI::CIMOMAttachThread($npiHandle);
+            print "FsWatcher started\n";
    
    while (true) {
-      my @filesystems = `df -T | grep '/'|tr -s ' ' `;
+      my @filesystems = `sleep 5 && df -T | grep '/'|tr -s ' ' `;
       print "fsWatcher\n";
 
       foreach my $item (@filesystems) {
@@ -389,13 +390,14 @@ sub fsWatcher {
 
 sub activateFilter {
     my ($npiHandle, $exp, $eventType, $cop, $lastAct) = @_;
-    print "activate Filter of type",$eventType,"\n";
-    if ((index($eventType, "CIM_InstModification") > 0) |
-        (index($eventType, "CIM_InstCreation") > 0)) {
+    print "activate Filter of type ",$eventType,"\n";
+    if ((index($eventType, "CIM_InstModification") >= 0) |
+        (index($eventType, "CIM_InstCreation") >= 0)) {
        print "start thread\n";
-       my $sxpr = PerlNPI::SelectExpGetSelectString($npiHandle, $exp);
+       #my $sxpr = PerlNPI::SelectExpGetSelectString($npiHandle, $exp);
        print "start thread for expr ", $sxpr, "\n";
-       my $thr = threads->new(\&fsWatcher, $npiHandle, $sxpr);       
+       my $newHandle = perlNPI::CIMOMPrepareAttach($npiHandle);
+       my $thr = threads->new(\&fsWatcher, $newHandle, $sxpr);       
     }
 }
 
