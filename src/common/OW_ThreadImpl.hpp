@@ -101,6 +101,10 @@ public:
 	 */
 	static void exitThread(OW_Thread_t& handle);
 
+	#ifdef OW_USE_GNU_PTH
+	static void initThreads();
+	#endif
+
 	/**
 	 * @return The thread handle for the current running thread.
 	 */

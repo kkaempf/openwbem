@@ -31,6 +31,7 @@ x split out namespace parameters to cimom handle calls.
 x Intrinsic indications are fetched from root namespace.  Less than optimal.
 x Remove any bad NOT_SUPPORTED exceptions.
 x Split out the internal provider ifc from the Provider Manager.  
+x Fix CIM Server so that an instance provider can provide associations.
 
 
 Testing:
@@ -49,7 +50,6 @@ Testing:
     - Test case insensitivity (eg. try to add a disk and DISK class)
 
 Fix problems:
-    - Fix CIM Server so that an instance provider can provide associations.
     - Trailers need to strip newlines from error description.
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
       out if someone else is listening. If so, then fail, otherwise delete it.

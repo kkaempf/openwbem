@@ -73,8 +73,8 @@ static pth_attr_t g_nonjoinable_attr;
 bool g_initialized = false;
 
 //////////////////////////////////////////////////////////////////////////////
-static void
-initThreads()
+void
+OW_ThreadImpl::initThreads()
 {
     if(!g_initialized)
     {

@@ -58,7 +58,7 @@ public:
 	static int createMutex(OW_Mutex_t& handle)
 	{
 	#ifdef OW_USE_GNU_PTH
-		initThreads();
+		OW_ThreadImpl::initThreads();
 		int cc = 0;
 		if(!pth_mutex_init(&handle))
 		{
@@ -119,7 +119,7 @@ public:
 	static int acquireMutex(OW_Mutex_t& handle)
 	{
 	#ifdef OW_USE_GNU_PTH
-		pth_mutex_acquire(&handle, false, NULL);
+		pth_mutex_acquire(&handle, false, 0);
 		return 0;
 	#else
 		int cc = pthread_mutex_lock(&handle);

@@ -67,13 +67,9 @@ typedef int 			OW_SocketHandle_t;
 // Platform specific socket address family type
 //typedef sa_family_t		OW_SAFamily_t;
 
-#ifdef OW_OPENUNIX
+#ifndef OW_HAVE_SOCKLEN_T
 typedef unsigned socklen_t;
-#else
-#ifdef OW_SOLARIS
-typedef unsigned socklen_t;
-#endif // #ifdef OW_SOLARIS
-#endif // #ifdef OW_OPENUNIX
+#endif
 
 
 #endif //  #if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX) 
