@@ -43,9 +43,10 @@ OW_PerlIndicationProviderProxy::deActivateFilter(
 	const OW_WQLSelectStatement& filter, 
 	const OW_String& eventType, 
 	const OW_String& nameSpace,
-	const OW_StringArray& classes, 
-	bool lastActivation)
+	const OW_StringArray& classes)
 {
+	bool lastActivation = (--m_activationCount == 0);
+
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
@@ -79,9 +80,10 @@ OW_PerlIndicationProviderProxy::activateFilter(
 	const OW_WQLSelectStatement& filter, 
 	const OW_String& eventType, 
 	const OW_String& nameSpace,
-	const OW_StringArray& classes, 
-	bool firstActivation)
+	const OW_StringArray& classes)
 {
+	bool firstActivation = (m_activationCount++ == 0);
+
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
@@ -117,13 +119,13 @@ OW_PerlIndicationProviderProxy::authorizeFilter(
 	const OW_StringArray& classes, 
 	const OW_String& owner)
 {
-	env->getLogger()->logDebug("deactivateFilter");
+	env->getLogger()->logDebug("authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-		env->getLogger()->logDebug("deactivateFilter2");
+		env->getLogger()->logDebug("authorizeFilter2");
 
 		OW_ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
