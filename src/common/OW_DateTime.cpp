@@ -30,9 +30,10 @@
 #include "OW_config.h"
 #include "OW_DateTime.hpp"
 #include "OW_String.hpp"
-#include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_Format.hpp"
+#include "OW_ThreadImpl.hpp"
+#include "OW_MutexLock.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -1115,6 +1116,34 @@ String
 DateTime::toStringGMT() const 
 { 
 	return toString(E_UTC_TIME); 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+namespace {
+Int16 gmtOffset = 0;
+bool offsetComputed = false;
+Mutex tzmutex;
+} // end anonymous namespace
+//////////////////////////////////////////////////////////////////////////////
+// static
+Int16
+DateTime::getGMTOffset()
+{
+	ThreadImpl::memoryBarrier();
+	if(!offsetComputed)
+	{
+		// double-checked locking
+		MutexLock ml(tzmutex);
+		if (!offsetComputed)
+		{
+			time_t tm = time(NULL);
+			time_t gmt = mktime(gmtime(&tm));
+			time_t lctm = mktime(localtime(&tm));
+			gmtOffset = ((lctm - gmt) / 60) / 60;
+			offsetComputed = true;
+		}
+	}
+	return gmtOffset;
 }
 
 } // end namespace OpenWBEM

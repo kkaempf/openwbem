@@ -30,17 +30,13 @@
 #include "OW_config.h"
 #include "OW_CIMDateTime.hpp"
 #include "OW_DateTime.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
-#include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
-#include "OW_ThreadImpl.hpp"
-#include <cstdlib>
-#include <cstring>
+//#include <cstdlib>
+//#include <cstring>
 #include <cstdio>
-#include <ctime>
+//#include <ctime>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -54,7 +50,6 @@ namespace OpenWBEM
 using std::ostream;
 using std::istream;
 static void fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str);
-static Int16 getGMTOffset();
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime()
 	: m_dptr(new DateTimeData)
@@ -88,7 +83,7 @@ CIMDateTime::CIMDateTime(const DateTime& arg) :
 	m_dptr->m_seconds = arg.getSecond();
 	m_dptr->m_isInterval = 0;
 	m_dptr->m_microSeconds = arg.getMicrosecond();
-	m_dptr->m_utc = getGMTOffset() * 60;
+	m_dptr->m_utc = DateTime::getGMTOffset() * 60;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime(UInt64 microSeconds) :
@@ -349,32 +344,6 @@ operator<< (ostream& ostr, const CIMDateTime& arg)
 	return ostr;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-namespace {
-Int16 gmtOffset = 0;
-bool offsetComputed = false;
-Mutex tzmutex;
-} // end anonymous namespace
-//////////////////////////////////////////////////////////////////////////////
-static Int16
-getGMTOffset()
-{
-	ThreadImpl::memoryBarrier();
-	if(!offsetComputed)
-	{
-		// double-checked locking
-		MutexLock ml(tzmutex);
-		if (!offsetComputed)
-		{
-			time_t tm = time(NULL);
-			time_t gmt = mktime(gmtime(&tm));
-			time_t lctm = mktime(localtime(&tm));
-			gmtOffset = ((lctm - gmt) / 60) / 60;
-			offsetComputed = true;
-		}
-	}
-	return gmtOffset;
-}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 {

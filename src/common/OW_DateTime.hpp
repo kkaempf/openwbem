@@ -459,6 +459,11 @@ public:
 	 */
 	String toStringGMT() const;
 
+	/**
+	 * Returns the GMT Offset (number of hours) of the system's timezone.
+	 */
+	static Int16 getGMTOffset();
+
 private:
 	time_t	m_time;
 	UInt32	m_microseconds;

@@ -110,6 +110,8 @@ class DateTime;
  *
  *	Instances can be tested for nullness with the isNull() method.
  */
+
+// TODO: Document valid ranges for values in the class and add asserts for them.
 class CIMDateTime
 {
 public:
