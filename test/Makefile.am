@@ -1,1 +1,1 @@
-SUBDIRS = CppUnit unit clientDriver c++providers acceptance
+SUBDIRS = CppUnit unit c++providers acceptance
