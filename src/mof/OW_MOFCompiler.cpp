@@ -420,29 +420,46 @@ class NULLErrHandler : public ParserErrorHandlerIFC
 protected:
 	virtual void doProgressMessage(const char *message, const lineInfo &li)
 	{
+		warnings.push_back(message);
 	}
 	virtual void doFatalError(const char *error, const lineInfo &li)
 	{
+		errors.push_back(error);
 	}
 	virtual EParserAction doRecoverableError(const char *error, const lineInfo &li)
 	{
+		errors.push_back(error);
 		return ParserErrorHandlerIFC::E_ABORT;
 	}
+public:
+	StringArray errors;
+	StringArray warnings;
 };
 
 CIMInstance compileInstanceFromMOF(const String& instMOF)
 {
-	CIMOMHandleIFCRef hdl(new StoreLocalInstancesHandle);
-	MOF::Compiler::Options opts;
-	Reference<ParserErrorHandlerIFC> errHandler(new NULLErrHandler);
-	MOF::Compiler comp(hdl, opts, errHandler);
-	comp.compileString(instMOF);
-	CIMInstanceArray cia = hdl.cast_to<StoreLocalInstancesHandle>()->getInstances();
+	CIMInstanceArray cia = compileInstancesFromMOF(instMOF);
 	if (cia.size() == 1)
 	{
 		return cia[0];
 	}
 	OW_THROW(MOFCompilerException, "MOF did not contain one instance");
+}
+
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF)
+{
+	Reference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle);
+	MOF::Compiler::Options opts;
+	Reference<NULLErrHandler> errHandler(new NULLErrHandler);
+	MOF::Compiler comp(hdl, opts, errHandler);
+	long errors = comp.compileString(instMOF);
+	if (errors > 0)
+	{
+		// just report the first message, since anything else is too complicated :-{
+		OW_THROW(MOFCompilerException, errHandler->errors.size() > 0 ? errHandler->errors[0].c_str() : "");
+	}
+	CIMInstanceArray cia = hdl->getInstances();
+	return cia;
 }
 
 

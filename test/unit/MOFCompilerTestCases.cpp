@@ -62,7 +62,27 @@ void MOFCompilerTestCases::testcompileInstance()
 	unitAssert(inst.getProperty("intprop").getValue().toString() == CIMValue(55).toString());
 
 	unitAssertThrows(MOF::compileInstanceFromMOF("this is not good mof"));
-	unitAssertThrows(MOF::compileInstanceFromMOF("instance of one{}; instance of two{};"));
+	unitAssertThrows(MOF::compileInstanceFromMOF("instance of one{x=1;}; instance of two{x=2;};"));
+}
+
+void MOFCompilerTestCases::testcompileInstances()
+{
+	CIMInstanceArray insts;
+	unitAssertNoThrow( insts = MOF::compileInstancesFromMOF(
+		"INSTANCE OF fooClass {\n"
+		"  strprop=\"x\";\n"
+		"  intprop=55;\n"
+		"};") );
+	unitAssert(insts.size() == 1);
+	unitAssert(insts[0].getClassName() == "fooClass");
+	unitAssert(insts[0].getProperties().size() == 2);
+	unitAssert(insts[0].getProperty("strprop").getValue() == CIMValue("x"));
+	// don't check the actual type, since it probably won't be right.
+	unitAssert(insts[0].getProperty("intprop").getValue().toString() == CIMValue(55).toString());
+				   
+	unitAssertThrows(MOF::compileInstancesFromMOF("this is not good mof"));
+	unitAssertNoThrow(insts = MOF::compileInstancesFromMOF("instance of one{x=1;}; instance of two{x=2;};"));
+	unitAssert(insts.size() == 2);
 }
 
 Test* MOFCompilerTestCases::suite()
@@ -70,6 +90,7 @@ Test* MOFCompilerTestCases::suite()
 	TestSuite *testSuite = new TestSuite ("MOFCompiler");
 
 	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileInstance);
+	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileInstances);
 
 	return testSuite;
 }

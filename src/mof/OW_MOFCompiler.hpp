@@ -131,6 +131,7 @@ private:
 
 
 CIMInstance compileInstanceFromMOF(const String& instMOF);
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF);
 
 
 } // end namespace MOF
