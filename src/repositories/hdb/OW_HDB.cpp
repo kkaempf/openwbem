@@ -80,6 +80,8 @@ HDB::close()
 		m_pindex->close();
 		m_pindex = 0;
 		m_opened = false;
+        m_lockFile.unlock();
+        m_lockFile.close();
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -94,6 +96,24 @@ HDB::open(const char* fileName)
 	m_hdlCount = 0;
 	m_version = 0;
 	m_fileName = fileName;
+
+	String lockFilename = m_fileName + ".lock";
+	m_lockFile = FileSystem::openOrCreateFile(lockFilename);
+	if (!m_lockFile)
+	{
+		OW_THROW(HDBException,
+			Format("Unable to open or create lock: %1, errno: %2(%3)",
+				lockFilename, errno, strerror(errno)).c_str());
+	}
+
+	// if we can't get a lock, someone else has got it open.
+	if (m_lockFile.tryLock() == -1)
+	{
+		OW_THROW(HDBException,
+			Format("Unable to lock HDB, verify it's not in use: %1, errno: %2(%3)",
+				lockFilename, errno, strerror(errno)).c_str());
+	}
+
 	String fname = m_fileName + ".dat";
 	createFile();
 	if (!checkFile())
@@ -122,6 +142,7 @@ HDB::createFile()
 		OW_THROW(HDBException, "Failed to write header of HDB");
 	}
 	f.close();
+
 	m_pindex = Index::createIndexObject();
 	m_pindex->open(m_fileName.c_str());
 	return true;
