@@ -203,6 +203,16 @@ public:
 	bool componentAndCategoryAreEnabled(const String& component, const String& category) const;
 
 	/**
+	 * Make a copy of the derived instance.
+	 * Provided the derived class has a suitable copy constructor, an implementation of clone should simply be:
+	 * LoggerRef DerivedLogger::doClone() const
+	 * {
+	 *     return LoggerRef(new DerivedLogger(*this));
+	 * }
+	 */
+	LoggerRef clone() const;
+
+	/**
 	 * Create a concrete logger depending on the type string passed in.
 	 * On Linux, if type == "syslog" a logger the writes to the syslog
 	 * will be returned.
@@ -269,13 +279,23 @@ protected:
 	 */
 	virtual bool doComponentAndCategoryAreEnabled(const String& component, const String& category) const;
 
+	/**
+	 * Make a copy of the derived instance.
+	 * Provided the derived class has a suitable copy constructor, an implementation of clone should simply be:
+	 * LoggerRef DerivedLogger::doClone() const
+	 * {
+	 *     return LoggerRef(new DerivedLogger(*this));
+	 * }
+	 */
+	virtual LoggerRef doClone() const = 0;
+
+protected:
+	Logger(const Logger&);
+	Logger& operator=(const Logger&);
+	void swap(Logger& x);
 
 private:
 	void processLogMessage(const LogMessage& message) const;
-
-	// non-copyable
-	Logger(const Logger&);
-	Logger& operator=(const Logger&);
 
 private: // data
 	ELogLevel m_logLevel;

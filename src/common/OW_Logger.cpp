@@ -314,5 +314,39 @@ Logger::createLogger( const String& type, bool debug )
 
 }
 
+/////////////////////////////////////////////////////////////////////////////
+LoggerRef
+Logger::clone() const
+{
+	return doClone();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+Logger::Logger(const Logger& x)
+	: IntrusiveCountableBase(x)
+	, m_logLevel(x.m_logLevel)
+	, m_defaultComponent(x.m_defaultComponent)
+
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+Logger& 
+Logger::operator=(const Logger& x)
+{
+	m_logLevel = x.m_logLevel;
+	m_defaultComponent = x.m_defaultComponent;
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+Logger::swap(Logger& x)
+{
+	std::swap(m_logLevel, x.m_logLevel);
+	m_defaultComponent.swap(x.m_defaultComponent);
+}
+
+
 } // end namespace OpenWBEM
 
