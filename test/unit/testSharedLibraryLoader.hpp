@@ -223,6 +223,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 			MethodProviderInfoArray& ma,
 			IndicationProviderInfoArray& inda)
 		{
+			(void) si;
 			if (m_name == "lib1")
 			{
 				// instance provider registration

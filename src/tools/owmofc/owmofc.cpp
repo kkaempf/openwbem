@@ -220,6 +220,7 @@ public:
 	}
 	virtual bool authenticate(String &, const String &, String &, OperationContext& context)
 	{
+		(void) context;
 		return true;
 	}
 	virtual void addSelectable(const SelectableIFCRef& , const SelectableCallbackIFCRef&)

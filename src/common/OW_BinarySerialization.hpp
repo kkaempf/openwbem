@@ -163,6 +163,7 @@ namespace BinarySerialization
 	inline void writeObject(std::ostream& ostrm, UInt8 sig,
 		const CIMBase& obj)
 	{
+		(void) sig;
 		obj.writeObject(ostrm);
 	}
 	inline void writeObjectPath(std::ostream& ostrm,
@@ -276,6 +277,7 @@ namespace BinarySerialization
 	inline void readObject(std::istream& istrm, UInt8 validSig,
 		CIMBase& obj)
 	{
+		(void) validSig;
 		obj.readObject(istrm);
 	}
 	inline CIMObjectPath readObjectPath(std::istream& istrm)

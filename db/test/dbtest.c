@@ -351,7 +351,7 @@ compare(db1, db2)
 	for (p1 = db1->data, p2 = db2->data; len--;)
 		if (*p1++ != *p2++) {
 			printf("compare failed at offset %d\n",
-			    p1 - (OW_UInt8 *)db1->data);
+			    (int)(p1 - (OW_UInt8 *)db1->data));
 			break;
 		}
 }
