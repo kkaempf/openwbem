@@ -47,6 +47,7 @@ For 3.1.0:
       interface, so don't forget to tell Jason Long.
     - Provider environments should throw exceptions after they are no longer 
       valid. Indication provider environments can be saved.
+    - bw compat for old logging options may be broken.
 Later:
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
