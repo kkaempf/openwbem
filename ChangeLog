@@ -1,3 +1,8 @@
+Mon May 19 16:19:35 MDT 2003
+- Fixed mof compiler to report current line number when an exception is
+  caught.
+- Fixed deflate compression
+
 Fri May 16 12:50:33 MDT 2003
 - Fixed some problems with the association database index.
 - Fixed a problem in OW_CIMServer that caused associations to be broken in
