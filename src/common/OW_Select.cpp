@@ -187,7 +187,13 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	{
 		if (errno == EINTR)
 		{
+#ifdef OW_NETWARE
+			// Evidently EINTR on NetWare means the Socket is pretty
+			// much un-usable from this point on
+			return Select::SELECT_ERROR;
+#else
 			return Select::SELECT_INTERRUPTED;
+#endif
 		}
 		else
 		{
