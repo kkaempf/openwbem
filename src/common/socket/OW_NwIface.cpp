@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 
-#if !defined(OW_WIN32)
+#if !defined(OW_WIN32) && !defined(OW_NETWARE)
 
 extern "C"
 {
@@ -301,5 +301,5 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 
 } // end namespace OpenWBEM
 
-#endif	// #if !defined(OW_WIN32)
+#endif	// #if !defined(OW_WIN32) && !defined(OW_NETWARE)
 
