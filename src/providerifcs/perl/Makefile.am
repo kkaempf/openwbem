@@ -31,8 +31,6 @@ OW_PerlInstanceProviderProxy.cpp \
 OW_PerlInstanceProviderProxy.hpp \
 OW_PerlMethodProviderProxy.cpp \
 OW_PerlMethodProviderProxy.hpp \
-OW_PerlPolledProviderProxy.cpp \
-OW_PerlPolledProviderProxy.hpp \
 OW_PerlProviderIFC.cpp \
 OW_PerlProviderIFC.hpp \
 OW_PerlIndicationProviderProxy.cpp \

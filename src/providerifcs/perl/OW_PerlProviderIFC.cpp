@@ -41,7 +41,6 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_PerlAssociatorProviderProxy.hpp"
 #endif
-#include "OW_PerlPolledProviderProxy.hpp"
 #include "OW_PerlIndicationProviderProxy.hpp"
 // BMMU
 #include <iostream>
