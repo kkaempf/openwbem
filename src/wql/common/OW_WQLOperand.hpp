@@ -166,8 +166,7 @@ public:
 	 */
 	OW_WQLOperand(const OW_String& x, WQLStringValueTag)
 	{
-		//new(_stringValue) OW_String(x);
-		_stringValue = x;
+		_string = x;
 		_type = STRING_VALUE;
 	}
 
@@ -175,8 +174,7 @@ public:
 	 */
 	OW_WQLOperand(const OW_String& x, WQLPropertyNameTag)
 	{
-		//new(_propertyName) OW_String(x);
-		_propertyName = x;
+		_string = x;
 		_type = PROPERTY_NAME;
 	}
 
@@ -212,7 +210,7 @@ public:
 	 */
 	void setStringValue(const OW_String& x)
 	{
-		_stringValue = x;
+		_string = x;
 		_type = STRING_VALUE;
 	}
 
@@ -220,7 +218,7 @@ public:
 	 */
 	void setPropertyName(const OW_String& x)
 	{
-		_propertyName = x;
+		_string = x;
 		_type = PROPERTY_NAME;
 	}
 
@@ -264,7 +262,7 @@ public:
 		if (_type != STRING_VALUE)
 			OW_THROW(OW_TypeMismatchException, "Type mismatch");
 
-		return _stringValue;
+		return _string;
 	}
 
 	/** Gets this object as a PROPERTY_NAME.
@@ -275,7 +273,7 @@ public:
 		if (_type != PROPERTY_NAME)
 			OW_THROW(OW_TypeMismatchException, "Type mismatch");
 
-		return _propertyName;
+		return _string;
 	}
 
 	/** Converts this object to a string for output purposes.
@@ -284,11 +282,13 @@ public:
 
 private:
 
-	OW_Int64 _integerValue;
-	OW_Real64 _doubleValue;
-	OW_Bool _booleanValue;
-	OW_String _stringValue;
-	OW_String _propertyName;
+	union
+	{
+		OW_Int64 _integerValue;
+		OW_Real64 _doubleValue;
+		bool _booleanValue;
+	};
+	OW_String _string;
 
 	Type _type;
 };

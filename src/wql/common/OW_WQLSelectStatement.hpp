@@ -127,7 +127,7 @@ public:
 	 */
 	void appendOperation(OW_WQLOperation x)
 	{
-		_operations.append(x);
+		_operStack.push_back(x);
 	}
 
 	/** Appends an operand to the operation array. This method should only
@@ -135,14 +135,14 @@ public:
 	 */
 	void appendOperand(const OW_WQLOperand& x)
 	{
-		_operands.append(x);
+		_operStack.push_back(x);
 	}
 
 	/** Returns true if this class has a where clause.
 	 */
 	bool hasWhereClause() const
 	{
-		return _operations.size() != 0;
+		return !_operStack.empty();
 	}
 
 	/** Evalautes the where clause using the symbol table to resolve symbols.
@@ -203,7 +203,7 @@ private:
 	//	 WQL_OR
 	//
 
-	OW_Array<OW_WQLOperation> _operations;
+	//OW_Array<OW_WQLOperation> _operations;
 
 	// 
 	// The list of operands encountered while parsing the WHERE clause. They
@@ -212,9 +212,43 @@ private:
 	//	 count, 10, peak, 20, state, "OKAY"
 	//
 
-	OW_Array<OW_WQLOperand> _operands;
+	//OW_Array<OW_WQLOperand> _operands;
+	struct OperandOrOperation
+	{
+		enum Type
+		{
+			OPERATION,
+			OPERAND
+		};
 
-	void f() const { }
+		OperandOrOperation(OW_WQLOperation o)
+			: m_type(OPERATION)
+			, m_operation(o)
+		{}
+
+		OperandOrOperation(const OW_WQLOperand& o)
+			: m_type(OPERAND)
+			, m_operand(o)
+		{}
+
+		Type m_type;
+		OW_WQLOperation m_operation;
+		OW_WQLOperand m_operand;
+
+		OW_String toString() const
+		{
+			if (m_type == OPERATION)
+			{
+				return OW_WQLOperationToString(m_operation);
+			}
+			else
+			{
+				return m_operand.toString();
+			}
+		}
+	};
+
+	OW_Array<OperandOrOperation> _operStack;
 
 	friend class OW_WQLCompile;
 };

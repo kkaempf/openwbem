@@ -40,14 +40,14 @@ OW_String OW_WQLOperand::toString() const
 	case PROPERTY_NAME:
 		{
 			result = "PROPERTY_NAME: ";
-			result += _propertyName;
+			result += _string;
 			break;
 		}
 
 	case STRING_VALUE:
 		{
 			result = "STRING_VALUE: ";
-			result += _stringValue;
+			result += _string;
 			break;
 		}
 

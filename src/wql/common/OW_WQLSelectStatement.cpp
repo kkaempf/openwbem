@@ -125,8 +125,7 @@ static bool _Evaluate(
 
 OW_WQLSelectStatement::OW_WQLSelectStatement()
 {
-	_operations.reserve(16);
-	_operands.reserve(16);
+	_operStack.reserve(32);
 }
 
 OW_WQLSelectStatement::~OW_WQLSelectStatement()
@@ -138,8 +137,7 @@ void OW_WQLSelectStatement::clear()
 {
 	_className.erase();
 	_selectPropertyNames.clear();
-	_operations.clear();
-	_operands.clear();
+	_operStack.clear();
 }
 
 bool OW_WQLSelectStatement::appendWherePropertyName(const OW_String& x)
@@ -199,6 +197,8 @@ bool OW_WQLSelectStatement::evaluateWhereClause(
 	// Process each of the operations:
 	//
 
+	(void)stack; (void)j; (void)source; (void)that; (void)_Evaluate;
+	/* TODO: Fix this
 	for (OW_UInt32 i = 0, n = _operations.size(); i < n; i++)
 	{
 		OW_WQLOperation op = _operations[i];
@@ -325,6 +325,7 @@ bool OW_WQLSelectStatement::evaluateWhereClause(
 	}
 
 	OW_ASSERT(stack.size() == 1);
+	*/
 	return stack.top();
 }
 
@@ -356,6 +357,17 @@ void OW_WQLSelectStatement::print(std::ostream& ostr) const
 		ostr << '"' << _selectPropertyNames[i] << '"' << '\n';
 	}
 
+	// Print the operations/operands
+	for (size_t i = 0; i < _operStack.size(); i++)
+	{
+		if (i == 0)
+			ostr << '\n';
+
+		ostr << "	_operStack[" << i << "]: ";
+		ostr << '"' << _operStack[i].toString() << '"' << '\n';
+	}
+
+	/*
 	//
 	// Print the operations:
 	//
@@ -381,6 +393,7 @@ void OW_WQLSelectStatement::print(std::ostream& ostr) const
 		ostr << "	_operands[" << i << "]: ";
 		ostr << '"' << _operands[i].toString() << '"' << '\n';
 	}
+	*/
 
 	//
 	// Print the trailer:

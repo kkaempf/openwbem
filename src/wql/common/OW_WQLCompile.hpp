@@ -63,17 +63,24 @@ public:
 		void negate(void);
 	};
 	
-	class stack_el
+	enum el_type
 	{
-	public:
+		EVAL_HEAP,
+		TERMINAL_HEAP,
+		OPERAND
+	};
+
+	struct stack_el
+	{
 		stack_el()
 		{}
-		stack_el(int opn_, bool is_terminal_)
+		stack_el(int opn_, el_type type_)
 			: opn(opn_)
-			, is_terminal(is_terminal_)
+			, type(type_)
 		{}
-		int   opn;     // either to terminals or eval_heap
-		bool is_terminal;
+
+		int  opn;     // either to terminals or eval_heap
+		el_type type;
 	};
 	
 	
@@ -82,7 +89,7 @@ public:
 	public:
 		eval_el()
 		{}
-		eval_el(bool mark_, OW_WQLOperation op_, int opn1_, bool is_terminal1_, int opn2_, bool is_terminal2_)
+		eval_el(bool mark_, OW_WQLOperation op_, int opn1_, el_type is_terminal1_, int opn2_, el_type is_terminal2_)
 			: mark(mark_)
 			, op(op_)
 			, opn1(opn1_)
@@ -95,9 +102,9 @@ public:
 		bool mark;
 		OW_WQLOperation op;
 		int opn1;
-		bool is_terminal1; // if yes, look in terminal Array
+		el_type is_terminal1; // if yes, look in terminal Array
 		int opn2;
-		bool is_terminal2; // if no, look in eval heap
+		el_type is_terminal2; // if no, look in eval heap
 	
 		stack_el getFirst();
 	

@@ -70,13 +70,13 @@ OW_WQLCompile::eval_el::getSecond()
 void OW_WQLCompile::eval_el::setFirst(const OW_WQLCompile::stack_el s)
 {
 	opn1 = s.opn;
-	is_terminal1 = s.is_terminal;
+	is_terminal1 = s.type;
 }
 
 void OW_WQLCompile::eval_el::setSecond(const OW_WQLCompile::stack_el s)
 {
 	opn2 = s.opn;
-	is_terminal2 = s.is_terminal;
+	is_terminal2 = s.type;
 }
 
 void OW_WQLCompile::eval_el::assign_unary_to_first(const OW_WQLCompile::eval_el & assignee)
@@ -110,8 +110,8 @@ void OW_WQLCompile::eval_el::order(void)
 		{
 			opn2 = opn1;
 			opn1 =  k;
-			is_terminal1 = false;
-			is_terminal2 = true;
+			is_terminal1 = EVAL_HEAP;
+			is_terminal2 = TERMINAL_HEAP;
 		}
 	}
 }
@@ -245,14 +245,14 @@ void OW_WQLCompile::compile(const OW_WQLSelectStatement * wqs)
 	if (disj.size() == 0)
 		if (terminal_heap.size() > 0)
 			// point to the remaining terminal element
-			disj.append(stack_el(0, true));
+			disj.append(stack_el(0, TERMINAL_HEAP));
 
 	for (OW_UInt32 i=0, n =disj.size(); i< n; i++)
 	{
 		TableauRow tr;
 		OW_Array<stack_el> conj;
 
-		if (!disj[i].is_terminal)
+		if (!disj[i].type == TERMINAL_HEAP)
 		{
 			_gatherConj(conj, disj[i]);
 			for ( OW_UInt32 j=0, m = conj.size(); j < m; j++)
@@ -308,16 +308,20 @@ void OW_WQLCompile::print(std::ostream& ostr)
 		if (wop == WQL_IS_TRUE)	
 			continue;
 		ostr << "Eval element " << i << ": "; 
-		if (eval_heap[i].is_terminal1) 
+		if (eval_heap[i].is_terminal1 == TERMINAL_HEAP) 
 			ostr << "T(";
-		else 
-			ostr << "E("; 
+		else if (eval_heap[i].is_terminal1 == EVAL_HEAP)
+			ostr << "E(";
+		else
+			ostr << "O(";
 		ostr << eval_heap[i].opn1 << ") "; 
 		ostr << OW_WQLOperationToString(eval_heap[i].op); 
-		if (eval_heap[i].is_terminal2) 
+		if (eval_heap[i].is_terminal2 == TERMINAL_HEAP) 
 			ostr << " T(";
-		else 
-			ostr << " E("; 
+		else if (eval_heap[i].is_terminal2 == EVAL_HEAP)
+			ostr << "E(";
+		else
+			ostr << "O(";
 		ostr << eval_heap[i].opn2 << ")" << std::endl; 
 	} 
 	for (OW_UInt32 i=0, n=terminal_heap.size();i < n;i++)
@@ -348,114 +352,134 @@ void OW_WQLCompile::printTableau(std::ostream& ostr)
 void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 {
 
-	//OW_WQLSelectStatement* that = (OW_WQLSelectStatement*)wqs;
-
 	OW_WQLOperand dummy;
 	OW_Stack<stack_el> stack;
 
-	// Counter for Operands
-
-	OW_UInt32 j = 0;
-
-	//cerr << "Build eval heap\n";
-
-	for (OW_UInt32 i = 0, n = wqs->_operations.size(); i < n; i++)
+	for (OW_UInt32 i = 0, n = wqs->_operStack.size(); i < n; i++)
 	{
-		OW_WQLOperation op = wqs->_operations[i];
-
-		switch (op)
+		OW_WQLSelectStatement::OperandOrOperation curItem = wqs->_operStack[i];
+		if (curItem.m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND)
 		{
-			case WQL_OR:
-			case WQL_AND:
-				{
-					OW_ASSERT(stack.size() >= 2);
+			// put point to it onto the stack
+			stack.push(stack_el(i, OPERAND));
+		}
+		else
+		{
+			OW_WQLOperation op = curItem.m_operation;
+	
+			switch (op)
+			{
+				case WQL_OR:
+				case WQL_AND:
+					{
+						OW_ASSERT(stack.size() >= 2);
+	
+						stack_el op1 = stack.top();
+						stack.pop();
+	
+						stack_el op2 = stack.top();
+	
+						// generate Eval expression
+						eval_heap.append(eval_el(false, op, op1.opn, op1.type,
+							op2.opn , op2.type));
+	
+						stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
+	
+						break;
+					}
+	
+				case WQL_NOT:
+					{
+						OW_ASSERT(stack.size() >= 1);
+	
+						stack_el op1 = stack.top();
+	
+						// generate Eval expression
+						eval_heap.append(eval_el(false, op, op1.opn, op1.type,
+							-1, TERMINAL_HEAP));
+	
+						stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
+	
+						break;
+					}
+	
+				case WQL_EQ:
+				case WQL_NE:
+				case WQL_LT:
+				case WQL_LE:
+				case WQL_GT:
+				case WQL_GE:
+				case WQL_ISA:
+					{
+						OW_ASSERT(stack.size() >= 2);
+	
+						stack_el op1 = stack.top();
+						stack.pop();
+	
+						stack_el op2 = stack.top();
 
-					stack_el op1 = stack.top();
-					stack.pop();
+						if (op1.type == OPERAND && op2.type == OPERAND)
+						{
+							OW_ASSERT(op1.type == OPERAND);
+							OW_ASSERT(wqs->_operStack[op1.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
+							OW_WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
 
-					stack_el op2 = stack.top();
+							OW_ASSERT(op2.type == OPERAND);
+							OW_ASSERT(wqs->_operStack[op2.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
+							OW_WQLOperand rhs = wqs->_operStack[op2.opn].m_operand;
 
-					// generate Eval expression
-					eval_heap.append(eval_el(false, op, op1.opn, op1.is_terminal,
-						op2.opn , op2.is_terminal));
+							terminal_heap.push_back(term_el(false, op, lhs, rhs));
 
-					stack.top() = stack_el(eval_heap.size()-1, false);
+							stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
+						}
+						else
+						{
+							// generate Eval expression
+							eval_heap.append(eval_el(false, op, op1.opn, op1.type,
+								op2.opn , op2.type));
 
-					break;
-				}
+							stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
+						}
+	
+						break;
+					}
+	
+				case WQL_IS_TRUE:
+				case WQL_IS_NOT_FALSE:
+				case WQL_IS_NULL:
+					{
+						OW_ASSERT(stack.size() >= 1);
+						stack_el op1 = stack.top();
 
-			case WQL_NOT:
-			case WQL_IS_FALSE:
-			case WQL_IS_NOT_TRUE:
-				{
-					OW_ASSERT(stack.size() >= 1);
+						OW_ASSERT(op1.type == OPERAND);
+						OW_ASSERT(wqs->_operStack[op1.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
+						OW_WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
+	
+						terminal_heap.push_back(term_el(false, WQL_EQ, lhs, dummy));
+	
+						stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
+	
+						break;
+					}
+	
+				case WQL_IS_FALSE:
+				case WQL_IS_NOT_TRUE:
+				case WQL_IS_NOT_NULL:
+					{
+						OW_ASSERT(stack.size() >= 1);
+						stack_el op1 = stack.top();
 
-					stack_el op1 = stack.top();
-
-					// generate Eval expression
-					eval_heap.append(eval_el(false, op, op1.opn, op1.is_terminal,
-						-1, true));
-
-					stack.top() = stack_el(eval_heap.size()-1, false);
-
-					break;
-				}
-
-			case WQL_EQ:
-			case WQL_NE:
-			case WQL_LT:
-			case WQL_LE:
-			case WQL_GT:
-			case WQL_GE:
-				{
-					OW_ASSERT(wqs->_operands.size() >= 2);
-
-					OW_WQLOperand lhs = wqs->_operands[j++];
-
-					OW_WQLOperand rhs = wqs->_operands[j++];
-
-					terminal_heap.push_back(term_el(false, op, lhs, rhs));
-
-					stack.push(stack_el(terminal_heap.size()-1, true));
-
-					break;
-				}
-
-			case WQL_IS_TRUE:
-			case WQL_IS_NOT_FALSE:
-				{
-					OW_ASSERT(stack.size() >= 1);
-					break;
-				}
-
-			case WQL_IS_NULL:
-				{
-					OW_ASSERT(wqs->_operands.size() >= 1);
-					OW_WQLOperand op = wqs->_operands[j++];
-
-					terminal_heap.push_back(term_el(false, WQL_EQ, op, dummy));
-
-					stack.push(stack_el(terminal_heap.size()-1, true));
-
-					break;
-				}
-
-			case WQL_IS_NOT_NULL:
-				{
-					OW_ASSERT(wqs->_operands.size() >= 1);
-					OW_WQLOperand op = wqs->_operands[j++];
-
-					terminal_heap.push_back(term_el(false, WQL_NE, op, dummy));
-
-					stack.push(stack_el(terminal_heap.size()-1, true));
-
-					break;
-				}
-			case WQL_ISA:
-				{
-					// TODO!
-					break;
-				}
+						OW_ASSERT(op1.type == OPERAND);
+						OW_ASSERT(wqs->_operStack[op1.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
+						OW_WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
+	
+						terminal_heap.push_back(term_el(false, WQL_NE, lhs, dummy));
+	
+						stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
+	
+						break;
+					}
+			}
 		}
 	}
 
@@ -528,20 +552,20 @@ void OW_WQLCompile::_pushNOTDown()
 			// First operand
 
 			int j = eval_heap[i].opn1;
-			if (eval_heap[i].is_terminal1)
+			if (eval_heap[i].is_terminal1 == TERMINAL_HEAP)
 				// Flip NOT mark
 				terminal_heap[j].negate();
-			else
+			else if (eval_heap[i].is_terminal1 == EVAL_HEAP)
 				eval_heap[j].mark = !(eval_heap[j].mark);
 
 			//Second operand (if it exists)
 
 			if ((j = eval_heap[i].opn2) >= 0)
 			{
-				if (eval_heap[i].is_terminal2)
+				if (eval_heap[i].is_terminal2 == TERMINAL_HEAP)
 					// Flip NOT mark
 					terminal_heap[j].negate();
-				else
+				else if (eval_heap[i].is_terminal2 == EVAL_HEAP)
 					eval_heap[j].mark = !(eval_heap[j].mark);
 			}
 		}
@@ -583,7 +607,7 @@ void OW_WQLCompile::_factoring(void)
 					s = eval_heap[i].getFirst();
 
 				// insert two new expression before entry i
-				eval_el evl(false, WQL_OR, i+1, false, i, false);
+				eval_el evl(false, WQL_OR, i+1, EVAL_HEAP, i, EVAL_HEAP);
 
 				if ((OW_UInt32 )i < eval_heap.size()-1)
 					eval_heap.insert(i+1, evl);
@@ -640,7 +664,7 @@ void OW_WQLCompile::_factoring(void)
 
 void OW_WQLCompile::_gatherDisj(OW_Array<stack_el>& stk)
 {
-	_gather(stk, stack_el(0, true), true);
+	_gather(stk, stack_el(0, TERMINAL_HEAP), true);
 }
 
 void OW_WQLCompile::_gatherConj(OW_Array<stack_el>& stk, stack_el sel)
@@ -665,10 +689,10 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 	//if (i == 0) return;
 
 	if (or_flag)
-		stk.append(stack_el(i-1, false));
+		stk.append(stack_el(i-1, EVAL_HEAP));
 	else
 	{
-		if (sel.is_terminal) return;
+		if (sel.type == TERMINAL_HEAP) return;
 		stk.append(sel);
 	}
 
@@ -678,7 +702,7 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 	{
 		int k = stk[i].opn;
 
-		if ((k < 0) || (stk[i].is_terminal))
+		if ((k < 0) || (stk[i].type == TERMINAL_HEAP))
 			i++;
 		else
 		{
