@@ -44,8 +44,6 @@
 #include <iostream>
 #endif
 
-// TODO: Inline some of these funcs.
-
 class OW_CIMXMLParser
 {
 
@@ -65,6 +63,7 @@ public:
 		E_ERROR								,
 		E_EXPMETHODCALL 					,
 		E_EXPMETHODRESPONSE				,
+		E_EXPPARAMVALUE  				,
 		E_HOST								,
 		E_IMETHODCALL						,
 		E_IMETHODRESPONSE				,
@@ -116,7 +115,6 @@ public:
 		E_VALUE_REFARRAY					,
 		E_VALUE_REFERENCE				,
 
-//		E_EXPPARAMVALUE  				,
 		E_UNKNOWN
 	};
 

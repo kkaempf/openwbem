@@ -38,8 +38,6 @@
 
 #include <algorithm> // for std::lower_bound
 
-// TODO: Inline some of these smaller functions
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLParser::prime()
@@ -97,7 +95,7 @@ OW_CIMXMLParser::OW_CIMXMLParser()
 
 // This needs to be sorted alphabetically.
 // Also, if you add an entry, make sure and update the size and g_elemsEnd.
-OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
+OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[63] =
 {
 	{ "CIM", OW_CIMXMLParser::E_CIM },
 	{ "CLASS", OW_CIMXMLParser::E_CLASS },
@@ -110,7 +108,7 @@ OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
 	{ "ERROR", OW_CIMXMLParser::E_ERROR },
 	{ "EXPMETHODCALL", OW_CIMXMLParser::E_EXPMETHODCALL },
 	{ "EXPMETHODRESPONSE", OW_CIMXMLParser::E_EXPMETHODRESPONSE },
-//	{ "EXPPARAMVALUE", OW_CIMXMLParser::E_EXPPARAMVALUE },
+	{ "EXPPARAMVALUE", OW_CIMXMLParser::E_EXPPARAMVALUE },
 	{ "HOST", OW_CIMXMLParser::E_HOST },
 	{ "IMETHODCALL", OW_CIMXMLParser::E_IMETHODCALL },
 	{ "IMETHODRESPONSE", OW_CIMXMLParser::E_IMETHODRESPONSE },
@@ -165,7 +163,7 @@ OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
 };
 
 		
-OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[61];
+OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[62];
 
 //////////////////////////////////////////////////////////////////////////////
 inline bool

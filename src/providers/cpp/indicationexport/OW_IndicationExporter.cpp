@@ -56,16 +56,14 @@ OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstan
 	
 	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
 	sendXMLHeader(*iostr);
-	*iostr << "<IPARAMVALUE NAME=\"NewIndication\">";
-//	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
+	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
 	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::isNotInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
-	*iostr << "</IPARAMVALUE>";
-//	*iostr << "</EXPPARAMVALUE>";
+	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
 	doSendRequest(iostr, commandName, ns);
 }
@@ -188,7 +186,7 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 										 nameOfMethod).c_str());
 	}
 
-	parser.mustGetChild();
+	parser.mustGetNextTag();
 	if (parser.tokenIs(OW_CIMXMLParser::E_ERROR))
 	{
 		OW_String errCode = parser.mustGetAttribute(

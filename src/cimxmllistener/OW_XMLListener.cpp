@@ -70,7 +70,6 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	makeXMLHeader(messageId, *ostrEntity);
 
 	if (parser.tokenIs(OW_CIMXMLParser::E_MULTIEXPREQ))
-	//if (node.getToken() == OW_CIMXMLParser::E_MULTIEXPREQ)
 	{
 		parser.getChild();
 		if (!parser)
@@ -137,11 +136,17 @@ OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 		parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODCALL);
-//		node = node.mustChildElement(OW_CIMXMLParser::E_EXPPARAMVALUE);
-		parser.mustGetChild(OW_CIMXMLParser::E_IPARAMVALUE);
-		parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
-		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
-		m_callback->indicationOccurred(inst, m_path);
+		parser.mustGetNextTag();
+		while (parser.tokenIs(OW_CIMXMLParser::E_EXPPARAMVALUE))
+		{
+			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
+			OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
+			m_callback->indicationOccurred(inst, m_path);
+			parser.mustGetEndTag(); // pass </EXPPARAMVALUE>
+		}
+		parser.mustGetEndTag(); // pass </EXPMETHODCALL>
+		parser.mustGetEndTag(); // pass </SIMPLEEXPREQ>
+
 		ostrEntity << "<SIMPLEEXPRSP>";
 		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
 
