@@ -320,7 +320,10 @@ InstanceRepository::getCIMInstance(
 	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	
 	// only filter if we need to
-	if (propertyList || localOnly == true || includeQualifiers == false || includeClassOrigin == false)
+	if (propertyList 
+		|| localOnly == E_LOCAL_ONLY 
+		|| includeQualifiers == E_EXCLUDE_QUALIFIERS 
+		|| includeClassOrigin == E_EXCLUDE_CLASS_ORIGIN)
 	{
 		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);

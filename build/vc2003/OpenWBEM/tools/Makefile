@@ -1,36 +1,14 @@
-DEBUG = 1
-WARNLEVEL = 0
-OPENSSLBASE = c:\openssl
-ZLIBBASE = c:\zlib
+!include ..\common.mk
 
-BASEDIR = ..
-
-CPP = cl
-LINK = link
-
-SRCDIR = ..\..\..\..\src
 TOOLSRCDIR = $(SRCDIR)\tools
 
 !IFDEF DEBUG
-BUILDTYPE = Debug
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-LINKDBG = /DEBUG
 CPPDEFS = /D"WIN32" /D"_DEBUG" /D"_CONSOLE" /D"OW_WIN32" /D"_MBCS"
-#CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-#CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MDd /c /Fo"$@"
 CPPFLAGS = /Od /RTC1 /MDd /Zc:forScope /GR /Fo"$@" /Fd"$(TARGETDIR)\$(@B).pdb" /W2 /Z7 /Wp64 /TP /c /GX
 !ELSE
-BUILDTYPE = Release
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 CPPDEFS = /D"WIN32" /D"_CONSOLE" /D"OW_WIN32" /D"_MBCS"
-#CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-#CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 CPPFLAGS = /MD /Zc:forScope /GR /Fo"$@" /W$(WARNLEVEL) /Wp64 /TP /c /GX
-LINKDBG = 
 !ENDIF
-
-OBJDIR = $(BUILDTYPE)
-
 
 INCS = \
 /I".." \
@@ -53,7 +31,6 @@ LIBPATH = \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
 
-#ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
 #REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
 ENUMCLSNAMES = owenumclassnames
@@ -86,28 +63,39 @@ $(ENUMCLSNAMESEXE) \
 $(ENUMNSEXE) \
 $(ENUMQUALSEXE)
 
+
+LIBOWXML = libowxml$(BLDCHAR).lib
+LIBOWCLIENT = libowclient$(BLDCHAR).lib
+LIBOWHTTP = libowhttp$(BLDCHAR).lib
+LIBOPENWBEM = libopenwbem$(BLDCHAR).lib
+LIBOWMOFC = libowmofc$(BLDCHAR).lib
+LIBOWREP = librepositoryhdb$(BLDCHAR).lib
+LIBOWDB = libowdb$(BLDCHAR).lib
+LIBOWLISTENER = libcimxmllistener$(BLDCHAR).lib
+
+
 ALL: $(EXES)
+
 #
 # owenumqualifiers
 #
 $(ENUMQUALSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 
 $(OBJDIR)\$(ENUMQUALS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
+
 #
 # owenumnamespace
 #
 $(ENUMNSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 
 $(OBJDIR)\$(ENUMNS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -116,11 +104,10 @@ $(OBJDIR)\$(ENUMNS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owenumclassnames
 #
 $(ENUMCLSNAMESEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 
 $(OBJDIR)\$(ENUMCLSNAMES).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -129,11 +116,10 @@ $(OBJDIR)\$(ENUMCLSNAMES).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owexecwql
 #
 $(EXECWQLEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib \
-	libeay32.lib ssleay32.lib 
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 	
 $(OBJDIR)\$(EXECWQL).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -142,12 +128,11 @@ $(OBJDIR)\$(EXECWQL).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owmofc
 #
 $(MOFCEXE): $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj $(TARGETDIR)
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
 	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj \
-	libowmofc.lib libowclient.lib libowxml.lib libowhttp.lib \
-	librepositoryhdb.lib libowdb.lib libopenwbem.lib \
-	zdll.lib libeay32.lib ssleay32.lib
+	$(LIBOWMOFC) $(LIBOWCLIENT) $(LIBOWXML) $(LIBOWHTTP) \
+	$(LIBOWREP) $(LIBOWDB) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 	
 $(OBJDIR)\$(MOFC).obj: $(TOOLSRCDIR)\owmofc\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\$(@B).cpp
@@ -159,11 +144,11 @@ $(OBJDIR)\OW_MOFCompCIMOMHandle.obj: $(TOOLSRCDIR)\owmofc\$(@B).cpp $(OBJDIR)
 # owcimindicationlistener
 #
 $(CIMLISTENEREXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
 	/MACHINE:X86 $(OBJDIR)\$(@B).obj \
-	libowhttp.lib libowclient.lib libowxml.lib libopenwbem.lib \
-	libcimxmllistener.lib zdll.lib libeay32.lib ssleay32.lib
+	$(LIBOWHTTP) $(LIBOWCLIENT) $(LIBOWXML) $(LIBOPENWBEM) \
+	$(LIBOWLISTENER) $(ZLIB) $(SSLLIBS)
 	
 $(OBJDIR)\$(CIMLISTENER).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -172,11 +157,10 @@ $(OBJDIR)\$(CIMLISTENER).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owcreatenamespace
 #
 $(CREATENSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 	
 $(OBJDIR)\$(CREATENS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -185,11 +169,10 @@ $(OBJDIR)\$(CREATENS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owdeletenamespace
 #
 $(DELETENSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 
 $(OBJDIR)\$(DELETENS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
@@ -198,18 +181,17 @@ $(OBJDIR)\$(DELETENS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 # owenumclasses
 #
 $(ENUMCLSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
-	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	link /OUT:$@ /nologo $(LIBPATH) $(LINKDBG) \
 	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
-	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
-	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
-	ssleay32.lib
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(LIBOWCLIENT) \
+	$(LIBOWXML) $(LIBOWHTTP) $(LIBOPENWBEM) $(ZLIB) $(SSLLIBS)
 
 $(OBJDIR)\$(ENUMCLS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(EXES)
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(EXES)
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

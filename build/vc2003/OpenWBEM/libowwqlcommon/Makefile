@@ -1,29 +1,8 @@
-DEBUG = 1
-WARNLEVEL = 0
-LIBNAME = libowwqlcommon
-OPENSSLBASE = C:\openssl
+!include ..\common.mk
 
-CPP = cl
-LINK = link
-
-SRCDIR = ..\..\..\..\src
-
-!IFDEF DEBUG
-BUILDTYPE = Debug
-CPPDEFS = /D"OW_WQLCOMMON_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-LINKDBG = /DEBUG
-!ELSE
-BUILDTYPE = Release
-CPPDEFS = /D"OW_WQLCOMMON_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-LINKDBG = 
-!ENDIF
-
-BASEDIR = ..
+LIBNAME = libowwqlcommon$(BLDCHAR)
+CPPDEFS = $(CPPDEFS) /D"OW_WQLCOMMON_BUILD"
 TARGET = $(LIBNAME).dll
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-OBJDIR = $(BUILDTYPE)
 
 INCS = \
 /I$(BASEDIR) \
@@ -40,7 +19,7 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib 
+libopenwbem$(BLDCHAR).lib 
 
 OBJS = \
 	$(OBJDIR)\OW_WQLCompile.obj \
@@ -55,10 +34,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

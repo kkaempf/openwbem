@@ -65,7 +65,18 @@ private:
 	static bool getValueAux(const CIMInstance& ci, const StringArray& propNames, WQLOperand& value);
 private:
 	CIMInstance ci;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	CIMOMHandleIFCRef m_hdl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	String m_ns;
 };
 

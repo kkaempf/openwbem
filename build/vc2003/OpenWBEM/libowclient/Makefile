@@ -1,9 +1,8 @@
 !include ..\common.mk
 
-BASEDIR = ..
-LIBNAME = libowclient
-
-SRCDIR = ..\..\..\..\src
+LIBNAME = libowclient$(BLDCHAR)
+TARGET = $(LIBNAME).dll
+CPPDEFS = $(CPPDEFS) /D"OW_CLIENT_BUILD"
 
 INCS = \
 /I$(BASEDIR) \
@@ -18,20 +17,6 @@ INCS = \
 /I$(OPENSSLBASE)\include
 
 
-!IFDEF DEBUG
-CPPDEFS = /D"OW_CLIENT_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-LINKDBG = /DEBUG
-!ELSE
-CPPDEFS = /D"OW_CLIENT_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-LINKDBG = 
-!ENDIF
-
-TARGET = $(LIBNAME).dll
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-OBJDIR = $(BUILDTYPE)
-
 LIBPATHS = \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
@@ -42,12 +27,10 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib \
-libowhttp.lib \
-libowxml.lib \
+libopenwbem$(BLDCHAR).lib \
+libowhttp$(BLDCHAR).lib \
+libowxml$(BLDCHAR).lib \
 zdll.lib
-
-CLIENTSRCDIR = $(SRCDIR)\client
 
 OBJS = \
 	$(OBJDIR)\OW_CIMOMLocator.obj \
@@ -65,10 +48,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

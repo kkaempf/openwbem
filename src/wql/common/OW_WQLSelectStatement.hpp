@@ -149,6 +149,12 @@ public:
 	String toString() const;
 	void compileWhereClause(const WQLPropertySource* source, WQLCompile& wcl);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	//
 	// The name of the target class. For example:
 	//
@@ -228,6 +234,11 @@ private:
 	};
 	Array<OperandOrOperation> _operStack;
 	friend class WQLCompile;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

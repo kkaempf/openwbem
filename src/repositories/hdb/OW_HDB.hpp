@@ -240,7 +240,18 @@ private:
 	bool updateIndexEntry(const char* key, Int32 newOffset);
 	friend class HDB;
 	friend class HDBNode;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	HDBHandleDataRef m_pdata;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_HDB_API HDB
@@ -333,6 +344,12 @@ private:
 	bool removeIndexEntry(const char* key);
 	bool updateIndexEntry(const char* key, Int32 newOffset);
 	void flushIndex();
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	HDBHeaderBlock m_hdrBlock;
 	String m_fileName;
 	Int32 m_version;
@@ -343,7 +360,12 @@ private:
 	Mutex m_guard;
 	friend class HDBNode;
 	friend class HDBHandle;
-	friend class HDBHandle::HDBHandleData;
+	friend struct HDBHandle::HDBHandleData;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

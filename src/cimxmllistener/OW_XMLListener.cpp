@@ -99,7 +99,8 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 			{
 				(*ostrEntity) << ostrEnt.rdbuf();
 			}
-			parser.getNext(CIMXMLParser::E_SIMPLEEXPREQ);
+
+			parser.getNextId(CIMXMLParser::E_SIMPLEEXPREQ, true);
 		}
 	}
 	else if (parser.tokenIsId(CIMXMLParser::E_SIMPLEEXPREQ))

@@ -158,6 +158,12 @@ private:
 				OW_THROW(NoSuchPropertyException, "No such property");
 		}
 	}
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	// Structure to contain the compiled DNF form
 	Tableau _tableau;
 	//
@@ -167,6 +173,11 @@ private:
 	//
 	Array<term_el> terminal_heap;
 	Array<eval_el> eval_heap;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 OW_WQLCOMMON_API bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 OW_WQLCOMMON_API bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);

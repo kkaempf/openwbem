@@ -1,15 +1,8 @@
 !include ..\common.mk
 
-LIBNAME = libowdb
-BASEDIR = ..
-
+LIBNAME = libowdb$(BLDCHAR)
 TARGET = $(LIBNAME).dll
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-CC = cl
-LINK = link
-
-SRCDIR = ..\..\..\..\src
+CCDEFS = $(CCDEFS) /D"OW_DB_BUILD"
 
 INCS = \
 /I".." \
@@ -24,19 +17,8 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib 
+libopenwbem$(BLDCHAR).lib 
 
-!IFDEF DEBUG
-CCDEFS = /D"OW_DB_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CCFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-OBJDIR = Debug
-LINKDBG = /DEBUG
-!ELSE
-CCDEFS = /D"OW_DB_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CCFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-OBJDIR = Release
-LINKDBG = 
-!ENDIF
 
 OBJS = \
 	$(OBJDIR)\bt_close.obj \
@@ -61,10 +43,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@def /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

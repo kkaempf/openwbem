@@ -644,10 +644,20 @@ private:
 	AssocDb m_classAssocDb;
 	AssocDb m_instAssocDb;
 #endif
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	ServiceEnvironmentIFCRef m_env;
 	bool m_checkReferentialIntegrity;
 	RWLocker m_schemaLock;
 	RWLocker m_instanceLock;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	friend class CIMServer;
 	friend class CIMRepositoryImpl::instEnumerator;

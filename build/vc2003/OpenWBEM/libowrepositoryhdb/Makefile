@@ -1,35 +1,15 @@
-DEBUG = 1
-WARNLEVEL = /W0
-LIBNAME = librepositoryhdb
+!include ..\common.mk
 
-CPP = cl
-LINK = link
-
-SRCDIR = ..\..\..\..\src
+LIBNAME = librepositoryhdb$(BLDCHAR)
+TARGET = $(LIBNAME).dll
+CPPDEFS = $(CPPDEFS) /D"OW_REPHDB_BUILD"
 
 INCS = \
-/I".." \
+/I$(BASEDIR) \
 /I$(SRCDIR)\common \
 /I$(SRCDIR)\ifcs \
 /I$(SRCDIR)\cim \
 /I$(SRCDIR)\..\db\include
-
-!IFDEF DEBUG
-BUILDTYPE = Debug
-CPPDEFS = /D"OW_REPHDB_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-LINKDBG = /DEBUG
-!ELSE
-BUILDTYPE = Release
-CPPDEFS = /D"OW_REPHDB_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
-LINKDBG = 
-!ENDIF
-
-BASEDIR = ..
-TARGET = $(LIBNAME).dll
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-OBJDIR = $(BUILDTYPE)
 
 LIBPATHS = \
 /LIBPATH:$(OPENSSLBASE)\lib\vc \
@@ -41,8 +21,8 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib \
-libowdb.lib
+libopenwbem$(BLDCHAR).lib \
+libowdb$(BLDCHAR).lib
 
 OBJS = \
 	$(OBJDIR)\OW_AssocDb.obj \
@@ -62,10 +42,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

@@ -176,7 +176,7 @@ public:
 	 */
 	bool isSibling() const
 	{
-		return (hasNextSibling() > 0 || hasPreviousSibling() > 0);
+		return ( hasNextSibling() || hasPreviousSibling() );
 	}
 
 	typedef HDBNodeDataRef HDBNode::*safe_bool;
@@ -210,7 +210,18 @@ private:
 	void addChild(HDBHandle& hdl, HDBNode& arg);
 	bool updateData(HDBHandle& hdl, int dataLen, const unsigned char* data);
 	void setNull() { m_pdata = 0; }
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	HDBNodeDataRef m_pdata;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	friend class HDBHandle;
 };
 

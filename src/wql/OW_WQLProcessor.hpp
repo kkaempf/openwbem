@@ -742,6 +742,12 @@ public:
 	}
 	
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	CIMInstanceArray m_instances; // return value after processing is done.
 	DataType m_exprValue;
 	Array<DataType> m_valueArray;
@@ -750,6 +756,11 @@ private:
 	String m_tableRef;
 	bool m_doingSelect;
 	StringArray m_propertyArray;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	CIMInstanceArray filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare);
 	void doComparison(const DataType& lhs, const DataType& rhs, const Compare& compare);
 	void populateInstances(const String& className);

@@ -1,15 +1,11 @@
 !include ..\common.mk
 
-LIBNAME = libowmofc
-BASEDIR = ..
-
+LIBNAME = libowmofc$(BLDCHAR)
 TARGET = $(LIBNAME).dll
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-SRCDIR = ..\..\..\..\src
+CPPDEFS = $(CPPDEFS) /D"OW_MOF_BUILD"
 
 INCS = \
-/I".." \
+/I$(BASEDIR) \
 /I$(SRCDIR)\mof \
 /I$(SRCDIR)\common \
 /I$(SRCDIR)\ifcs \
@@ -24,21 +20,7 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib 
-
-!IFDEF DEBUG
-CPPDEFS = /D"OW_MOF_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-OBJDIR = Debug
-LINKDBG = /DEBUG
-!ELSE
-CPPDEFS = /D"OW_MOF_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-OBJDIR = Release
-LINKDBG = 
-!ENDIF
-
-MOFSRCDIR = $(SRCDIR)\mof
+libopenwbem$(BLDCHAR).lib 
 
 OBJS = \
 	$(OBJDIR)\OW_MOFCIMOMVisitor.obj \
@@ -55,13 +37,11 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del OW_MOFParser.cpp
-	-@del OW_MOFParser.h
-	-@del OW_MOFLexer.cpp
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q OW_MOFParser.cpp
+	-@del /Q OW_MOFParser.h
+	-@del /Q OW_MOFLexer.cpp
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
@@ -70,6 +50,8 @@ $(OBJDIR):
 	IF NOT EXIST $(OBJDIR) (md $(OBJDIR))
 
 ###############################################################################
+
+MOFSRCDIR = $(SRCDIR)\mof
 
 $(OBJDIR)\OW_MOFCIMOMVisitor.obj: $(MOFSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(MOFSRCDIR)\$(@B).cpp

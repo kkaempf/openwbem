@@ -109,6 +109,12 @@ protected:
 	virtual void doIndicationOccurred( CIMInstance& ci,
 		const String& listenerPath );
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	struct registrationInfo
 	{
 		registrationInfo()
@@ -137,6 +143,8 @@ private:
 	IntrusiveReference<Thread> m_httpThread;
 #ifndef OW_WIN32
 	UnnamedPipeRef m_stopHttpPipe;
+#else
+#pragma warning (pop)
 #endif
 };
 

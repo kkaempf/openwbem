@@ -99,12 +99,21 @@ struct OW_HDB_API AssocDbEntry
 	bool operator!() const
 		{  return !m_objectName; }
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
 
 	CIMObjectPath m_objectName; // part 1 of key
 	String m_role; // part 2 of key
 	String m_resultRole; // part 3 of key
 	Array<entry> m_entries;
 	Int32 m_offset;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 OW_HDB_API std::ostream& operator << (std::ostream& ostrm, const AssocDbEntry& arg);
 typedef Array<AssocDbEntry> AssocDbEntryArray;
@@ -218,10 +227,21 @@ private:
 	
 	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
 	void addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	AssocDbHandle(AssocDb* pdb, const File& file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
 	AssocDbHandleDataRef m_pdata;
 	friend class AssocDb;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 // The following structure represents the format of header that
 // preceeds all records in the associations db
@@ -313,6 +333,12 @@ private:
 		AssocDbHandle& hdl);
 	bool createFile();
 	bool checkFile();
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	AssocDbHeader m_hdrBlock;
 	IndexRef m_pIndex;
 	String m_fileName;
@@ -322,6 +348,11 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 	friend class AssocDbHandle;
 	friend struct AssocDbHandle::AssocDbHandleData;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

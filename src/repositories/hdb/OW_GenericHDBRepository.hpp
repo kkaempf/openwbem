@@ -148,6 +148,12 @@ protected:
 		if (!isOpen())
 			OW_THROW(HDBException, "Database is not open");
 	}
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	HDB m_hdb;
 	bool m_opened;
 	Mutex m_guard;
@@ -155,6 +161,11 @@ protected:
 	ServiceEnvironmentIFCRef m_env;
 	enum { MAXHANDLES = 10 };
 	friend class HDBHandleLock;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 /**
  * The HDBHandleLock class helps facilitate the releasing of HDBHandle

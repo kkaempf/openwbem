@@ -109,7 +109,7 @@ private:
 	XMLPullParser(const XMLPullParser& x);
 	XMLPullParser& operator=(const XMLPullParser& x);
 
-	friend std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p);
+	friend OW_XML_API std::ostream& operator<<(std::ostream& ostr, const XMLPullParser& p);
 };
 
 } // end namespace OpenWBEM

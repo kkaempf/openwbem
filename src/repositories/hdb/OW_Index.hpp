@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class IndexEntry;
+struct IndexEntry;
 class Index;
 typedef IntrusiveReference<Index> IndexRef;
 

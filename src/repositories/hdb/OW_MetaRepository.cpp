@@ -341,7 +341,10 @@ MetaRepository::getCIMClass(const String& ns, const String& className,
 		}
 	}
 	// now do some filtering
-	if (propertyList || localOnly == true || includeQualifiers == false || includeClassOrigin == false)
+	if (propertyList 
+		|| localOnly == E_LOCAL_ONLY 
+		|| includeQualifiers == E_EXCLUDE_QUALIFIERS 
+		|| includeClassOrigin == E_EXCLUDE_CLASS_ORIGIN)
 	{ // only clone if we have to
 		StringArray lpropList;
 		bool noProps = false;

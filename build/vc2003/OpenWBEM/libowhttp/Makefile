@@ -1,16 +1,11 @@
 !include ..\common.mk
 
-BASEDIR = ..
-LIBNAME = libowhttp
-
+LIBNAME = libowhttp$(BLDCHAR)
 TARGET = $(LIBNAME).dll
-BASEDIR = ..
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-SRCDIR = ..\..\..\..\src
+CPPDEFS = $(CPPDEFS) /D"OW_HTTP_BUILD"
 
 INCS = \
-/I".." \
+/I$(BASEDIR) \
 /I$(SRCDIR)\common \
 /I$(SRCDIR)\ifcs \
 /I$(SRCDIR)\common\socket \
@@ -34,19 +29,7 @@ kernel32.lib \
 user32.lib \
 uuid.lib \
 zdll.lib \
-libopenwbem.lib 
-
-!IFDEF DEBUG
-CPPDEFS = /D"OW_HTTP_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-OBJDIR = Debug
-LINKDBG = /DEBUG
-!ELSE
-CPPDEFS = /D"OW_HTTP_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-OBJDIR = Release
-LINKDBG = 
-!ENDIF
+libopenwbem$(BLDCHAR).lib 
 
 COMMONOBJS = \
 	$(OBJDIR)\OW_HTTPChunkedIStream.obj \
@@ -74,10 +57,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

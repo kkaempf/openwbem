@@ -258,8 +258,19 @@ private:
 		const String& ns);
 	String _getClassNameFromNode(HDBNode& node);
 	//void _throwIfBadClass(const CIMClass& cc, const CIMClass& parentClass);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Cache<CIMClass> m_classCache;
 	Cache<CIMQualifierType> m_qualCache;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

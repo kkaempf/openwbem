@@ -1,14 +1,8 @@
 !include ..\common.mk
 
-BASEDIR = ..
-
-LIBNAME = libcimxmllistener
-
+LIBNAME = libcimxmllistener$(BLDCHAR)
 TARGET = $(LIBNAME).dll
-BASEDIR = ..
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-SRCDIR = ..\..\..\..\src
+CPPDEFS = $(CPPDEFS) /D"OW_LISTENER_BUILD"
 
 INCS = \
 /I".." \
@@ -39,28 +33,16 @@ kernel32.lib \
 user32.lib \
 uuid.lib \
 zdll.lib \
-libopenwbem.lib \
-libowhttp.lib \
-libowclient.lib \
-libowxml.lib 
-
-!IFDEF DEBUG
-CPPDEFS = /D"OW_LISTENER_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-OBJDIR = Debug
-LINKDBG = /DEBUG
-!ELSE
-CPPDEFS = /D"OW_LISTENER_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-OBJDIR = Release
-LINKDBG = 
-!ENDIF
+libopenwbem$(BLDCHAR).lib \
+libowhttp$(BLDCHAR).lib \
+libowclient$(BLDCHAR).lib \
+libowxml$(BLDCHAR).lib 
 
 OBJS = \
-$(OBJDIR)\OW_CIMListenerCallback.obj \
-$(OBJDIR)\OW_XMLListener.obj \
-$(OBJDIR)\OW_ListenerAuthenticator.obj \
-$(OBJDIR)\OW_HTTPXMLCIMListener.obj
+	$(OBJDIR)\OW_CIMListenerCallback.obj \
+	$(OBJDIR)\OW_XMLListener.obj \
+	$(OBJDIR)\OW_ListenerAuthenticator.obj \
+	$(OBJDIR)\OW_HTTPXMLCIMListener.obj
 
 $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS) 
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
@@ -68,10 +50,8 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

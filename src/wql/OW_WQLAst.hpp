@@ -45,20 +45,20 @@
 namespace OpenWBEM
 {
 
-class OW_WQL_API OW_WQL_API node
+class OW_WQL_API node
 {
 	public:
 		virtual ~node() {}
 		virtual void accept( WQLVisitor * ) const = 0;
 };
-class OW_WQL_API OW_WQL_API stmt: public node
+class OW_WQL_API stmt: public node
 {
 	public:
 		stmt()
 			{}
 		virtual ~stmt() {}
 };
-class OW_WQL_API OW_WQL_API stmt_selectStmt_optSemicolon : public stmt
+class OW_WQL_API stmt_selectStmt_optSemicolon : public stmt
 {
 	public:
 		stmt_selectStmt_optSemicolon(
@@ -77,7 +77,7 @@ class OW_WQL_API OW_WQL_API stmt_selectStmt_optSemicolon : public stmt
 		selectStmt* m_pselectStmt1;
 		optSemicolon* m_poptSemicolon2;
 };
-class OW_WQL_API OW_WQL_API stmt_updateStmt_optSemicolon : public stmt
+class OW_WQL_API stmt_updateStmt_optSemicolon : public stmt
 {
 	public:
 		stmt_updateStmt_optSemicolon(
@@ -96,7 +96,7 @@ class OW_WQL_API OW_WQL_API stmt_updateStmt_optSemicolon : public stmt
 		updateStmt* m_pupdateStmt1;
 		optSemicolon* m_poptSemicolon2;
 };
-class OW_WQL_API OW_WQL_API stmt_insertStmt_optSemicolon : public stmt
+class OW_WQL_API stmt_insertStmt_optSemicolon : public stmt
 {
 	public:
 		stmt_insertStmt_optSemicolon(
@@ -115,7 +115,7 @@ class OW_WQL_API OW_WQL_API stmt_insertStmt_optSemicolon : public stmt
 		insertStmt* m_pinsertStmt1;
 		optSemicolon* m_poptSemicolon2;
 };
-class OW_WQL_API OW_WQL_API stmt_deleteStmt_optSemicolon : public stmt
+class OW_WQL_API stmt_deleteStmt_optSemicolon : public stmt
 {
 	public:
 		stmt_deleteStmt_optSemicolon(
@@ -134,14 +134,14 @@ class OW_WQL_API OW_WQL_API stmt_deleteStmt_optSemicolon : public stmt
 		deleteStmt* m_pdeleteStmt1;
 		optSemicolon* m_poptSemicolon2;
 };
-class OW_WQL_API OW_WQL_API optSemicolon: public node
+class OW_WQL_API optSemicolon: public node
 {
 	public:
 		optSemicolon()
 			{}
 		virtual ~optSemicolon() {}
 };
-class OW_WQL_API OW_WQL_API optSemicolon_empty : public optSemicolon
+class OW_WQL_API optSemicolon_empty : public optSemicolon
 {
 	public:
 		optSemicolon_empty(
@@ -154,7 +154,7 @@ class OW_WQL_API OW_WQL_API optSemicolon_empty : public optSemicolon
 			v->visit_optSemicolon_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optSemicolon_SEMICOLON : public optSemicolon
+class OW_WQL_API optSemicolon_SEMICOLON : public optSemicolon
 {
 	public:
 		optSemicolon_SEMICOLON(
@@ -170,7 +170,7 @@ class OW_WQL_API OW_WQL_API optSemicolon_SEMICOLON : public optSemicolon
 		}
 		String* m_pSEMICOLON1;
 };
-class OW_WQL_API OW_WQL_API insertStmt : public node
+class OW_WQL_API insertStmt : public node
 {
 	public:
 		insertStmt(
@@ -194,14 +194,14 @@ class OW_WQL_API OW_WQL_API insertStmt : public node
 		String* m_pstrRelationName3;
 		insertRest* m_pinsertRest4;
 };
-class OW_WQL_API OW_WQL_API insertRest: public node
+class OW_WQL_API insertRest: public node
 {
 	public:
 		insertRest()
 			{}
 		virtual ~insertRest() {}
 };
-class OW_WQL_API OW_WQL_API insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public insertRest
+class OW_WQL_API insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public insertRest
 {
 	public:
 		insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
@@ -226,7 +226,7 @@ class OW_WQL_API OW_WQL_API insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN : 
 		List< targetEl* >* m_ptargetList3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API insertRest_DEFAULT_VALUES : public insertRest
+class OW_WQL_API insertRest_DEFAULT_VALUES : public insertRest
 {
 	public:
 		insertRest_DEFAULT_VALUES(
@@ -245,7 +245,7 @@ class OW_WQL_API OW_WQL_API insertRest_DEFAULT_VALUES : public insertRest
 		String* m_pDEFAULT1;
 		String* m_pVALUES2;
 };
-class OW_WQL_API OW_WQL_API insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public insertRest
+class OW_WQL_API insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN : public insertRest
 {
 	public:
 		insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
@@ -279,7 +279,7 @@ class OW_WQL_API OW_WQL_API insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 		List< targetEl* >* m_ptargetList6;
 		String* m_pRIGHTPAREN7;
 };
-class OW_WQL_API OW_WQL_API deleteStmt : public node
+class OW_WQL_API deleteStmt : public node
 {
 	public:
 		deleteStmt(
@@ -303,7 +303,7 @@ class OW_WQL_API OW_WQL_API deleteStmt : public node
 		String* m_pstrRelationName3;
 		optWhereClause* m_poptWhereClause4;
 };
-class OW_WQL_API OW_WQL_API updateStmt : public node
+class OW_WQL_API updateStmt : public node
 {
 	public:
 		updateStmt(
@@ -330,7 +330,7 @@ class OW_WQL_API OW_WQL_API updateStmt : public node
 		List< updateTargetEl* >* m_pupdateTargetList4;
 		optWhereClause* m_poptWhereClause5;
 };
-class OW_WQL_API OW_WQL_API selectStmt : public node
+class OW_WQL_API selectStmt : public node
 {
 	public:
 		selectStmt(
@@ -366,14 +366,14 @@ class OW_WQL_API OW_WQL_API selectStmt : public node
 		optHavingClause* m_poptHavingClause7;
 		optSortClause* m_poptSortClause8;
 };
-class OW_WQL_API OW_WQL_API exprSeq: public node
+class OW_WQL_API exprSeq: public node
 {
 	public:
 		exprSeq()
 			{}
 		virtual ~exprSeq() {}
 };
-class OW_WQL_API OW_WQL_API exprSeq_aExpr : public exprSeq
+class OW_WQL_API exprSeq_aExpr : public exprSeq
 {
 	public:
 		exprSeq_aExpr(
@@ -389,7 +389,7 @@ class OW_WQL_API OW_WQL_API exprSeq_aExpr : public exprSeq
 		}
 		aExpr* m_paExpr1;
 };
-class OW_WQL_API OW_WQL_API exprSeq_exprSeq_COMMA_aExpr : public exprSeq
+class OW_WQL_API exprSeq_exprSeq_COMMA_aExpr : public exprSeq
 {
 	public:
 		exprSeq_exprSeq_COMMA_aExpr(
@@ -411,7 +411,7 @@ class OW_WQL_API OW_WQL_API exprSeq_exprSeq_COMMA_aExpr : public exprSeq
 		String* m_pCOMMA2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
+class OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
 {
 	public:
 		exprSeq_exprSeq_USING_aExpr(
@@ -433,14 +433,14 @@ class OW_WQL_API OW_WQL_API exprSeq_exprSeq_USING_aExpr : public exprSeq
 		String* m_pUSING2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API optDistinct: public node
+class OW_WQL_API optDistinct: public node
 {
 	public:
 		optDistinct()
 			{}
 		virtual ~optDistinct() {}
 };
-class OW_WQL_API OW_WQL_API optDistinct_empty : public optDistinct
+class OW_WQL_API optDistinct_empty : public optDistinct
 {
 	public:
 		optDistinct_empty(
@@ -453,7 +453,7 @@ class OW_WQL_API OW_WQL_API optDistinct_empty : public optDistinct
 			v->visit_optDistinct_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optDistinct_DISTINCT : public optDistinct
+class OW_WQL_API optDistinct_DISTINCT : public optDistinct
 {
 	public:
 		optDistinct_DISTINCT(
@@ -469,7 +469,7 @@ class OW_WQL_API OW_WQL_API optDistinct_DISTINCT : public optDistinct
 		}
 		String* m_pDISTINCT1;
 };
-class OW_WQL_API OW_WQL_API optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN : public optDistinct
+class OW_WQL_API optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN : public optDistinct
 {
 	public:
 		optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN(
@@ -497,7 +497,7 @@ class OW_WQL_API OW_WQL_API optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN
 		exprSeq* m_pexprSeq4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API optDistinct_ALL : public optDistinct
+class OW_WQL_API optDistinct_ALL : public optDistinct
 {
 	public:
 		optDistinct_ALL(
@@ -513,7 +513,7 @@ class OW_WQL_API OW_WQL_API optDistinct_ALL : public optDistinct
 		}
 		String* m_pALL1;
 };
-class OW_WQL_API OW_WQL_API sortClause : public node
+class OW_WQL_API sortClause : public node
 {
 	public:
 		sortClause(
@@ -534,14 +534,14 @@ class OW_WQL_API OW_WQL_API sortClause : public node
 		String* m_pBY2;
 		List< sortby* >* m_psortbyList3;
 };
-class OW_WQL_API OW_WQL_API optSortClause: public node
+class OW_WQL_API optSortClause: public node
 {
 	public:
 		optSortClause()
 			{}
 		virtual ~optSortClause() {}
 };
-class OW_WQL_API OW_WQL_API optSortClause_empty : public optSortClause
+class OW_WQL_API optSortClause_empty : public optSortClause
 {
 	public:
 		optSortClause_empty(
@@ -554,7 +554,7 @@ class OW_WQL_API OW_WQL_API optSortClause_empty : public optSortClause
 			v->visit_optSortClause_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optSortClause_sortClause : public optSortClause
+class OW_WQL_API optSortClause_sortClause : public optSortClause
 {
 	public:
 		optSortClause_sortClause(
@@ -570,7 +570,7 @@ class OW_WQL_API OW_WQL_API optSortClause_sortClause : public optSortClause
 		}
 		sortClause* m_psortClause1;
 };
-class OW_WQL_API OW_WQL_API sortby : public node
+class OW_WQL_API sortby : public node
 {
 	public:
 		sortby(
@@ -588,14 +588,14 @@ class OW_WQL_API OW_WQL_API sortby : public node
 		aExpr* m_paExpr1;
 		String* m_pstrOptOrderSpecification2;
 };
-class OW_WQL_API OW_WQL_API optGroupClause: public node
+class OW_WQL_API optGroupClause: public node
 {
 	public:
 		optGroupClause()
 			{}
 		virtual ~optGroupClause() {}
 };
-class OW_WQL_API OW_WQL_API optGroupClause_empty : public optGroupClause
+class OW_WQL_API optGroupClause_empty : public optGroupClause
 {
 	public:
 		optGroupClause_empty(
@@ -608,7 +608,7 @@ class OW_WQL_API OW_WQL_API optGroupClause_empty : public optGroupClause
 			v->visit_optGroupClause_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optGroupClause_GROUP_BY_exprSeq : public optGroupClause
+class OW_WQL_API optGroupClause_GROUP_BY_exprSeq : public optGroupClause
 {
 	public:
 		optGroupClause_GROUP_BY_exprSeq(
@@ -630,14 +630,14 @@ class OW_WQL_API OW_WQL_API optGroupClause_GROUP_BY_exprSeq : public optGroupCla
 		String* m_pBY2;
 		exprSeq* m_pexprSeq3;
 };
-class OW_WQL_API OW_WQL_API optHavingClause: public node
+class OW_WQL_API optHavingClause: public node
 {
 	public:
 		optHavingClause()
 			{}
 		virtual ~optHavingClause() {}
 };
-class OW_WQL_API OW_WQL_API optHavingClause_empty : public optHavingClause
+class OW_WQL_API optHavingClause_empty : public optHavingClause
 {
 	public:
 		optHavingClause_empty(
@@ -650,7 +650,7 @@ class OW_WQL_API OW_WQL_API optHavingClause_empty : public optHavingClause
 			v->visit_optHavingClause_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optHavingClause_HAVING_aExpr : public optHavingClause
+class OW_WQL_API optHavingClause_HAVING_aExpr : public optHavingClause
 {
 	public:
 		optHavingClause_HAVING_aExpr(
@@ -669,14 +669,14 @@ class OW_WQL_API OW_WQL_API optHavingClause_HAVING_aExpr : public optHavingClaus
 		String* m_pHAVING1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API optFromClause: public node
+class OW_WQL_API optFromClause: public node
 {
 	public:
 		optFromClause()
 			{}
 		virtual ~optFromClause() {}
 };
-class OW_WQL_API OW_WQL_API optFromClause_empty : public optFromClause
+class OW_WQL_API optFromClause_empty : public optFromClause
 {
 	public:
 		optFromClause_empty(
@@ -689,7 +689,7 @@ class OW_WQL_API OW_WQL_API optFromClause_empty : public optFromClause
 			v->visit_optFromClause_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optFromClause_FROM_fromList : public optFromClause
+class OW_WQL_API optFromClause_FROM_fromList : public optFromClause
 {
 	public:
 		optFromClause_FROM_fromList(
@@ -708,14 +708,14 @@ class OW_WQL_API OW_WQL_API optFromClause_FROM_fromList : public optFromClause
 		String* m_pFROM1;
 		List< tableRef* >* m_pfromList2;
 };
-class OW_WQL_API OW_WQL_API tableRef: public node
+class OW_WQL_API tableRef: public node
 {
 	public:
 		tableRef()
 			{}
 		virtual ~tableRef() {}
 };
-class OW_WQL_API OW_WQL_API tableRef_relationExpr : public tableRef
+class OW_WQL_API tableRef_relationExpr : public tableRef
 {
 	public:
 		tableRef_relationExpr(
@@ -731,7 +731,7 @@ class OW_WQL_API OW_WQL_API tableRef_relationExpr : public tableRef
 		}
 		relationExpr* m_prelationExpr1;
 };
-class OW_WQL_API OW_WQL_API tableRef_relationExpr_aliasClause : public tableRef
+class OW_WQL_API tableRef_relationExpr_aliasClause : public tableRef
 {
 	public:
 		tableRef_relationExpr_aliasClause(
@@ -750,7 +750,7 @@ class OW_WQL_API OW_WQL_API tableRef_relationExpr_aliasClause : public tableRef
 		relationExpr* m_prelationExpr1;
 		aliasClause* m_paliasClause2;
 };
-class OW_WQL_API OW_WQL_API tableRef_joinedTable : public tableRef
+class OW_WQL_API tableRef_joinedTable : public tableRef
 {
 	public:
 		tableRef_joinedTable(
@@ -766,7 +766,7 @@ class OW_WQL_API OW_WQL_API tableRef_joinedTable : public tableRef
 		}
 		joinedTable* m_pjoinedTable1;
 };
-class OW_WQL_API OW_WQL_API tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause : public tableRef
+class OW_WQL_API tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause : public tableRef
 {
 	public:
 		tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause(
@@ -791,14 +791,14 @@ class OW_WQL_API OW_WQL_API tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClaus
 		String* m_pRIGHTPAREN3;
 		aliasClause* m_paliasClause4;
 };
-class OW_WQL_API OW_WQL_API joinedTable: public node
+class OW_WQL_API joinedTable: public node
 {
 	public:
 		joinedTable()
 			{}
 		virtual ~joinedTable() {}
 };
-class OW_WQL_API OW_WQL_API joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN : public joinedTable
+class OW_WQL_API joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN : public joinedTable
 {
 	public:
 		joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN(
@@ -820,7 +820,7 @@ class OW_WQL_API OW_WQL_API joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN : publi
 		joinedTable* m_pjoinedTable2;
 		String* m_pRIGHTPAREN3;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_CROSS_JOIN_tableRef : public joinedTable
+class OW_WQL_API joinedTable_tableRef_CROSS_JOIN_tableRef : public joinedTable
 {
 	public:
 		joinedTable_tableRef_CROSS_JOIN_tableRef(
@@ -845,7 +845,7 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_CROSS_JOIN_tableRef : public jo
 		String* m_pJOIN3;
 		tableRef* m_ptableRef4;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joinedTable
+class OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joinedTable
 {
 	public:
 		joinedTable_tableRef_UNIONJOIN_tableRef(
@@ -867,7 +867,7 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_UNIONJOIN_tableRef : public joi
 		String* m_pUNIONJOIN2;
 		tableRef* m_ptableRef3;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual : public joinedTable
+class OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual : public joinedTable
 {
 	public:
 		joinedTable_tableRef_joinType_JOIN_tableRef_joinQual(
@@ -895,7 +895,7 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_joinType_JOIN_tableRef_joinQual
 		tableRef* m_ptableRef4;
 		joinQual* m_pjoinQual5;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_JOIN_tableRef_joinQual : public joinedTable
+class OW_WQL_API joinedTable_tableRef_JOIN_tableRef_joinQual : public joinedTable
 {
 	public:
 		joinedTable_tableRef_JOIN_tableRef_joinQual(
@@ -920,7 +920,7 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_JOIN_tableRef_joinQual : public
 		tableRef* m_ptableRef3;
 		joinQual* m_pjoinQual4;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef : public joinedTable
+class OW_WQL_API joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef : public joinedTable
 {
 	public:
 		joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef(
@@ -948,7 +948,7 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef 
 		String* m_pJOIN4;
 		tableRef* m_ptableRef5;
 };
-class OW_WQL_API OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public joinedTable
+class OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public joinedTable
 {
 	public:
 		joinedTable_tableRef_NATURAL_JOIN_tableRef(
@@ -973,14 +973,14 @@ class OW_WQL_API OW_WQL_API joinedTable_tableRef_NATURAL_JOIN_tableRef : public 
 		String* m_pJOIN3;
 		tableRef* m_ptableRef4;
 };
-class OW_WQL_API OW_WQL_API aliasClause: public node
+class OW_WQL_API aliasClause: public node
 {
 	public:
 		aliasClause()
 			{}
 		virtual ~aliasClause() {}
 };
-class OW_WQL_API OW_WQL_API aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN : public aliasClause
+class OW_WQL_API aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN : public aliasClause
 {
 	public:
 		aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN(
@@ -1008,7 +1008,7 @@ class OW_WQL_API OW_WQL_API aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPARE
 		List< String* >* m_pnameList4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API aliasClause_AS_strColId : public aliasClause
+class OW_WQL_API aliasClause_AS_strColId : public aliasClause
 {
 	public:
 		aliasClause_AS_strColId(
@@ -1027,7 +1027,7 @@ class OW_WQL_API OW_WQL_API aliasClause_AS_strColId : public aliasClause
 		String* m_pAS1;
 		String* m_pstrColId2;
 };
-class OW_WQL_API OW_WQL_API aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN : public aliasClause
+class OW_WQL_API aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN : public aliasClause
 {
 	public:
 		aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN(
@@ -1052,7 +1052,7 @@ class OW_WQL_API OW_WQL_API aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN :
 		List< String* >* m_pnameList3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API aliasClause_strColId : public aliasClause
+class OW_WQL_API aliasClause_strColId : public aliasClause
 {
 	public:
 		aliasClause_strColId(
@@ -1068,14 +1068,14 @@ class OW_WQL_API OW_WQL_API aliasClause_strColId : public aliasClause
 		}
 		String* m_pstrColId1;
 };
-class OW_WQL_API OW_WQL_API joinType: public node
+class OW_WQL_API joinType: public node
 {
 	public:
 		joinType()
 			{}
 		virtual ~joinType() {}
 };
-class OW_WQL_API OW_WQL_API joinType_FULL_strOptJoinOuter : public joinType
+class OW_WQL_API joinType_FULL_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_FULL_strOptJoinOuter(
@@ -1094,7 +1094,7 @@ class OW_WQL_API OW_WQL_API joinType_FULL_strOptJoinOuter : public joinType
 		String* m_pFULL1;
 		String* m_pstrOptJoinOuter2;
 };
-class OW_WQL_API OW_WQL_API joinType_LEFT_strOptJoinOuter : public joinType
+class OW_WQL_API joinType_LEFT_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_LEFT_strOptJoinOuter(
@@ -1113,7 +1113,7 @@ class OW_WQL_API OW_WQL_API joinType_LEFT_strOptJoinOuter : public joinType
 		String* m_pLEFT1;
 		String* m_pstrOptJoinOuter2;
 };
-class OW_WQL_API OW_WQL_API joinType_RIGHT_strOptJoinOuter : public joinType
+class OW_WQL_API joinType_RIGHT_strOptJoinOuter : public joinType
 {
 	public:
 		joinType_RIGHT_strOptJoinOuter(
@@ -1132,7 +1132,7 @@ class OW_WQL_API OW_WQL_API joinType_RIGHT_strOptJoinOuter : public joinType
 		String* m_pRIGHT1;
 		String* m_pstrOptJoinOuter2;
 };
-class OW_WQL_API OW_WQL_API joinType_INNERP : public joinType
+class OW_WQL_API joinType_INNERP : public joinType
 {
 	public:
 		joinType_INNERP(
@@ -1148,14 +1148,14 @@ class OW_WQL_API OW_WQL_API joinType_INNERP : public joinType
 		}
 		String* m_pINNERP1;
 };
-class OW_WQL_API OW_WQL_API joinQual: public node
+class OW_WQL_API joinQual: public node
 {
 	public:
 		joinQual()
 			{}
 		virtual ~joinQual() {}
 };
-class OW_WQL_API OW_WQL_API joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN : public joinQual
+class OW_WQL_API joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN : public joinQual
 {
 	public:
 		joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN(
@@ -1180,7 +1180,7 @@ class OW_WQL_API OW_WQL_API joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN : publi
 		List< String* >* m_pnameList3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API joinQual_ON_aExpr : public joinQual
+class OW_WQL_API joinQual_ON_aExpr : public joinQual
 {
 	public:
 		joinQual_ON_aExpr(
@@ -1199,14 +1199,14 @@ class OW_WQL_API OW_WQL_API joinQual_ON_aExpr : public joinQual
 		String* m_pON1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API relationExpr: public node
+class OW_WQL_API relationExpr: public node
 {
 	public:
 		relationExpr()
 			{}
 		virtual ~relationExpr() {}
 };
-class OW_WQL_API OW_WQL_API relationExpr_strRelationName : public relationExpr
+class OW_WQL_API relationExpr_strRelationName : public relationExpr
 {
 	public:
 		relationExpr_strRelationName(
@@ -1222,7 +1222,7 @@ class OW_WQL_API OW_WQL_API relationExpr_strRelationName : public relationExpr
 		}
 		String* m_pstrRelationName1;
 };
-class OW_WQL_API OW_WQL_API relationExpr_strRelationName_ASTERISK : public relationExpr
+class OW_WQL_API relationExpr_strRelationName_ASTERISK : public relationExpr
 {
 	public:
 		relationExpr_strRelationName_ASTERISK(
@@ -1241,7 +1241,7 @@ class OW_WQL_API OW_WQL_API relationExpr_strRelationName_ASTERISK : public relat
 		String* m_pstrRelationName1;
 		String* m_pASTERISK2;
 };
-class OW_WQL_API OW_WQL_API relationExpr_ONLY_strRelationName : public relationExpr
+class OW_WQL_API relationExpr_ONLY_strRelationName : public relationExpr
 {
 	public:
 		relationExpr_ONLY_strRelationName(
@@ -1260,14 +1260,14 @@ class OW_WQL_API OW_WQL_API relationExpr_ONLY_strRelationName : public relationE
 		String* m_pONLY1;
 		String* m_pstrRelationName2;
 };
-class OW_WQL_API OW_WQL_API optWhereClause: public node
+class OW_WQL_API optWhereClause: public node
 {
 	public:
 		optWhereClause()
 			{}
 		virtual ~optWhereClause() {}
 };
-class OW_WQL_API OW_WQL_API optWhereClause_empty : public optWhereClause
+class OW_WQL_API optWhereClause_empty : public optWhereClause
 {
 	public:
 		optWhereClause_empty(
@@ -1280,7 +1280,7 @@ class OW_WQL_API OW_WQL_API optWhereClause_empty : public optWhereClause
 			v->visit_optWhereClause_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optWhereClause_WHERE_aExpr : public optWhereClause
+class OW_WQL_API optWhereClause_WHERE_aExpr : public optWhereClause
 {
 	public:
 		optWhereClause_WHERE_aExpr(
@@ -1299,7 +1299,7 @@ class OW_WQL_API OW_WQL_API optWhereClause_WHERE_aExpr : public optWhereClause
 		String* m_pWHERE1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API rowExpr : public node
+class OW_WQL_API rowExpr : public node
 {
 	public:
 		rowExpr(
@@ -1332,7 +1332,7 @@ class OW_WQL_API OW_WQL_API rowExpr : public node
 		rowDescriptor* m_prowDescriptor6;
 		String* m_pRIGHTPAREN7;
 };
-class OW_WQL_API OW_WQL_API rowDescriptor : public node
+class OW_WQL_API rowDescriptor : public node
 {
 	public:
 		rowDescriptor(
@@ -1353,14 +1353,14 @@ class OW_WQL_API OW_WQL_API rowDescriptor : public node
 		String* m_pCOMMA2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr: public node
+class OW_WQL_API aExpr: public node
 {
 	public:
 		aExpr()
 			{}
 		virtual ~aExpr() {}
 };
-class OW_WQL_API OW_WQL_API aExpr_cExpr : public aExpr
+class OW_WQL_API aExpr_cExpr : public aExpr
 {
 	public:
 		aExpr_cExpr(
@@ -1376,7 +1376,7 @@ class OW_WQL_API OW_WQL_API aExpr_cExpr : public aExpr
 		}
 		cExpr* m_pcExpr1;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_AT_TIME_ZONE_cExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_AT_TIME_ZONE_cExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_AT_TIME_ZONE_cExpr(
@@ -1404,7 +1404,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_AT_TIME_ZONE_cExpr : public aExpr
 		String* m_pZONE4;
 		cExpr* m_pcExpr5;
 };
-class OW_WQL_API OW_WQL_API aExpr_PLUS_aExpr : public aExpr
+class OW_WQL_API aExpr_PLUS_aExpr : public aExpr
 {
 	public:
 		aExpr_PLUS_aExpr(
@@ -1423,7 +1423,7 @@ class OW_WQL_API OW_WQL_API aExpr_PLUS_aExpr : public aExpr
 		String* m_pPLUS1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API aExpr_MINUS_aExpr : public aExpr
+class OW_WQL_API aExpr_MINUS_aExpr : public aExpr
 {
 	public:
 		aExpr_MINUS_aExpr(
@@ -1442,7 +1442,7 @@ class OW_WQL_API OW_WQL_API aExpr_MINUS_aExpr : public aExpr
 		String* m_pMINUS1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API aExpr_BITINVERT_aExpr : public aExpr
+class OW_WQL_API aExpr_BITINVERT_aExpr : public aExpr
 {
 	public:
 		aExpr_BITINVERT_aExpr(
@@ -1461,7 +1461,7 @@ class OW_WQL_API OW_WQL_API aExpr_BITINVERT_aExpr : public aExpr
 		String* m_pBITINVERT1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_PLUS_aExpr(
@@ -1483,7 +1483,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_PLUS_aExpr : public aExpr
 		String* m_pPLUS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_MINUS_aExpr(
@@ -1505,7 +1505,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_MINUS_aExpr : public aExpr
 		String* m_pMINUS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_ASTERISK_aExpr(
@@ -1527,7 +1527,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_ASTERISK_aExpr : public aExpr
 		String* m_pASTERISK2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_SOLIDUS_aExpr(
@@ -1549,7 +1549,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_SOLIDUS_aExpr : public aExpr
 		String* m_pSOLIDUS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_PERCENT_aExpr(
@@ -1571,7 +1571,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_PERCENT_aExpr : public aExpr
 		String* m_pPERCENT2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_BITAND_aExpr(
@@ -1593,7 +1593,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_BITAND_aExpr : public aExpr
 		String* m_pBITAND2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_BITOR_aExpr(
@@ -1615,7 +1615,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_BITOR_aExpr : public aExpr
 		String* m_pBITOR2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_BITSHIFTLEFT_aExpr(
@@ -1637,7 +1637,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_BITSHIFTLEFT_aExpr : public aExpr
 		String* m_pBITSHIFTLEFT2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_BITSHIFTRIGHT_aExpr(
@@ -1659,7 +1659,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_BITSHIFTRIGHT_aExpr : public aExpr
 		String* m_pBITSHIFTRIGHT2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_LESSTHAN_aExpr(
@@ -1681,7 +1681,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_LESSTHAN_aExpr : public aExpr
 		String* m_pLESSTHAN2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_LESSTHANOREQUALS_aExpr(
@@ -1703,7 +1703,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_LESSTHANOREQUALS_aExpr : public aExpr
 		String* m_pLESSTHANOREQUALS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_GREATERTHAN_aExpr(
@@ -1725,7 +1725,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_GREATERTHAN_aExpr : public aExpr
 		String* m_pGREATERTHAN2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
@@ -1747,7 +1747,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_GREATERTHANOREQUALS_aExpr : public aExpr
 		String* m_pGREATERTHANOREQUALS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_EQUALS_aExpr(
@@ -1769,7 +1769,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_EQUALS_aExpr : public aExpr
 		String* m_pEQUALS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_NOTEQUALS_aExpr(
@@ -1791,7 +1791,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_NOTEQUALS_aExpr : public aExpr
 		String* m_pNOTEQUALS2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_AND_aExpr(
@@ -1813,7 +1813,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_AND_aExpr : public aExpr
 		String* m_pAND2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_OR_aExpr(
@@ -1835,7 +1835,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_OR_aExpr : public aExpr
 		String* m_pOR2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_NOT_aExpr : public aExpr
+class OW_WQL_API aExpr_NOT_aExpr : public aExpr
 {
 	public:
 		aExpr_NOT_aExpr(
@@ -1854,7 +1854,7 @@ class OW_WQL_API OW_WQL_API aExpr_NOT_aExpr : public aExpr
 		String* m_pNOT1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_CONCATENATION_aExpr(
@@ -1876,7 +1876,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_CONCATENATION_aExpr : public aExpr
 		String* m_pCONCATENATION2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_LIKE_aExpr(
@@ -1898,7 +1898,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_LIKE_aExpr : public aExpr
 		String* m_pLIKE2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr(
@@ -1926,7 +1926,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 		String* m_pESCAPE4;
 		aExpr* m_paExpr5;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_NOT_LIKE_aExpr(
@@ -1951,7 +1951,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr : public aExpr
 		String* m_pLIKE3;
 		aExpr* m_paExpr4;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr(
@@ -1982,7 +1982,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr : public aEx
 		String* m_pESCAPE5;
 		aExpr* m_paExpr6;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
+class OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
 {
 	public:
 		aExpr_aExpr_ISNULL(
@@ -2001,7 +2001,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_ISNULL : public aExpr
 		aExpr* m_paExpr1;
 		String* m_pISNULL2;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NULLP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_NULLP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NULLP(
@@ -2023,7 +2023,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NULLP : public aExpr
 		String* m_pIS2;
 		String* m_pNULLP3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_NOTNULL : public aExpr
+class OW_WQL_API aExpr_aExpr_NOTNULL : public aExpr
 {
 	public:
 		aExpr_aExpr_NOTNULL(
@@ -2042,7 +2042,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_NOTNULL : public aExpr
 		aExpr* m_paExpr1;
 		String* m_pNOTNULL2;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_NULLP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_NOT_NULLP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_NULLP(
@@ -2067,7 +2067,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_NULLP : public aExpr
 		String* m_pNOT3;
 		String* m_pNULLP4;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_TRUEP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_TRUEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_TRUEP(
@@ -2089,7 +2089,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_TRUEP : public aExpr
 		String* m_pIS2;
 		String* m_pTRUEP3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_FALSEP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_NOT_FALSEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_FALSEP(
@@ -2114,7 +2114,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_FALSEP : public aExpr
 		String* m_pNOT3;
 		String* m_pFALSEP4;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_FALSEP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_FALSEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_FALSEP(
@@ -2136,7 +2136,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_FALSEP : public aExpr
 		String* m_pIS2;
 		String* m_pFALSEP3;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_TRUEP : public aExpr
+class OW_WQL_API aExpr_aExpr_IS_NOT_TRUEP : public aExpr
 {
 	public:
 		aExpr_aExpr_IS_NOT_TRUEP(
@@ -2161,7 +2161,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_IS_NOT_TRUEP : public aExpr
 		String* m_pNOT3;
 		String* m_pTRUEP4;
 };
-class OW_WQL_API OW_WQL_API aExpr_aExpr_ISA_aExpr : public aExpr
+class OW_WQL_API aExpr_aExpr_ISA_aExpr : public aExpr
 {
 	public:
 		aExpr_aExpr_ISA_aExpr(
@@ -2183,7 +2183,7 @@ class OW_WQL_API OW_WQL_API aExpr_aExpr_ISA_aExpr : public aExpr
 		String* m_pISA2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API aExpr_rowExpr : public aExpr
+class OW_WQL_API aExpr_rowExpr : public aExpr
 {
 	public:
 		aExpr_rowExpr(
@@ -2199,14 +2199,14 @@ class OW_WQL_API OW_WQL_API aExpr_rowExpr : public aExpr
 		}
 		rowExpr* m_prowExpr1;
 };
-class OW_WQL_API OW_WQL_API bExpr: public node
+class OW_WQL_API bExpr: public node
 {
 	public:
 		bExpr()
 			{}
 		virtual ~bExpr() {}
 };
-class OW_WQL_API OW_WQL_API bExpr_cExpr : public bExpr
+class OW_WQL_API bExpr_cExpr : public bExpr
 {
 	public:
 		bExpr_cExpr(
@@ -2222,7 +2222,7 @@ class OW_WQL_API OW_WQL_API bExpr_cExpr : public bExpr
 		}
 		cExpr* m_pcExpr1;
 };
-class OW_WQL_API OW_WQL_API bExpr_PLUS_bExpr : public bExpr
+class OW_WQL_API bExpr_PLUS_bExpr : public bExpr
 {
 	public:
 		bExpr_PLUS_bExpr(
@@ -2241,7 +2241,7 @@ class OW_WQL_API OW_WQL_API bExpr_PLUS_bExpr : public bExpr
 		String* m_pPLUS1;
 		bExpr* m_pbExpr2;
 };
-class OW_WQL_API OW_WQL_API bExpr_MINUS_bExpr : public bExpr
+class OW_WQL_API bExpr_MINUS_bExpr : public bExpr
 {
 	public:
 		bExpr_MINUS_bExpr(
@@ -2260,7 +2260,7 @@ class OW_WQL_API OW_WQL_API bExpr_MINUS_bExpr : public bExpr
 		String* m_pMINUS1;
 		bExpr* m_pbExpr2;
 };
-class OW_WQL_API OW_WQL_API bExpr_BITINVERT_bExpr : public bExpr
+class OW_WQL_API bExpr_BITINVERT_bExpr : public bExpr
 {
 	public:
 		bExpr_BITINVERT_bExpr(
@@ -2279,7 +2279,7 @@ class OW_WQL_API OW_WQL_API bExpr_BITINVERT_bExpr : public bExpr
 		String* m_pBITINVERT1;
 		bExpr* m_pbExpr2;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_PLUS_bExpr(
@@ -2301,7 +2301,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_PLUS_bExpr : public bExpr
 		String* m_pPLUS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_MINUS_bExpr(
@@ -2323,7 +2323,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_MINUS_bExpr : public bExpr
 		String* m_pMINUS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_ASTERISK_bExpr(
@@ -2345,7 +2345,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_ASTERISK_bExpr : public bExpr
 		String* m_pASTERISK2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_SOLIDUS_bExpr(
@@ -2367,7 +2367,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_SOLIDUS_bExpr : public bExpr
 		String* m_pSOLIDUS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_PERCENT_bExpr(
@@ -2389,7 +2389,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_PERCENT_bExpr : public bExpr
 		String* m_pPERCENT2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_BITAND_bExpr(
@@ -2411,7 +2411,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_BITAND_bExpr : public bExpr
 		String* m_pBITAND2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_BITOR_bExpr(
@@ -2433,7 +2433,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_BITOR_bExpr : public bExpr
 		String* m_pBITOR2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_BITSHIFTLEFT_bExpr(
@@ -2455,7 +2455,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_BITSHIFTLEFT_bExpr : public bExpr
 		String* m_pBITSHIFTLEFT2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_BITSHIFTRIGHT_bExpr(
@@ -2477,7 +2477,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_BITSHIFTRIGHT_bExpr : public bExpr
 		String* m_pBITSHIFTRIGHT2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_LESSTHAN_bExpr(
@@ -2499,7 +2499,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_LESSTHAN_bExpr : public bExpr
 		String* m_pLESSTHAN2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_LESSTHANOREQUALS_bExpr(
@@ -2521,7 +2521,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_LESSTHANOREQUALS_bExpr : public bExpr
 		String* m_pLESSTHANOREQUALS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_GREATERTHAN_bExpr(
@@ -2543,7 +2543,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_GREATERTHAN_bExpr : public bExpr
 		String* m_pGREATERTHAN2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_GREATERTHANOREQUALS_bExpr(
@@ -2565,7 +2565,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_GREATERTHANOREQUALS_bExpr : public bExpr
 		String* m_pGREATERTHANOREQUALS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_EQUALS_bExpr(
@@ -2587,7 +2587,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_EQUALS_bExpr : public bExpr
 		String* m_pEQUALS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_NOTEQUALS_bExpr(
@@ -2609,7 +2609,7 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_NOTEQUALS_bExpr : public bExpr
 		String* m_pNOTEQUALS2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
+class OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
 {
 	public:
 		bExpr_bExpr_CONCATENATION_bExpr(
@@ -2631,14 +2631,14 @@ class OW_WQL_API OW_WQL_API bExpr_bExpr_CONCATENATION_bExpr : public bExpr
 		String* m_pCONCATENATION2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API cExpr: public node
+class OW_WQL_API cExpr: public node
 {
 	public:
 		cExpr()
 			{}
 		virtual ~cExpr() {}
 };
-class OW_WQL_API OW_WQL_API cExpr_attr : public cExpr
+class OW_WQL_API cExpr_attr : public cExpr
 {
 	public:
 		cExpr_attr(
@@ -2654,7 +2654,7 @@ class OW_WQL_API OW_WQL_API cExpr_attr : public cExpr
 		}
 		attr* m_pattr1;
 };
-class OW_WQL_API OW_WQL_API cExpr_strColId_optIndirection : public cExpr
+class OW_WQL_API cExpr_strColId_optIndirection : public cExpr
 {
 	public:
 		cExpr_strColId_optIndirection(
@@ -2673,7 +2673,7 @@ class OW_WQL_API OW_WQL_API cExpr_strColId_optIndirection : public cExpr
 		String* m_pstrColId1;
 		optIndirection* m_poptIndirection2;
 };
-class OW_WQL_API OW_WQL_API cExpr_aExprConst : public cExpr
+class OW_WQL_API cExpr_aExprConst : public cExpr
 {
 	public:
 		cExpr_aExprConst(
@@ -2689,7 +2689,7 @@ class OW_WQL_API OW_WQL_API cExpr_aExprConst : public cExpr
 		}
 		aExprConst* m_paExprConst1;
 };
-class OW_WQL_API OW_WQL_API cExpr_LEFTPAREN_aExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_LEFTPAREN_aExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_LEFTPAREN_aExpr_RIGHTPAREN(
@@ -2711,7 +2711,7 @@ class OW_WQL_API OW_WQL_API cExpr_LEFTPAREN_aExpr_RIGHTPAREN : public cExpr
 		aExpr* m_paExpr2;
 		String* m_pRIGHTPAREN3;
 };
-class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_strFuncName_LEFTPAREN_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
@@ -2733,7 +2733,7 @@ class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_RIGHTPAREN : public cExp
 		String* m_pLEFTPAREN2;
 		String* m_pRIGHTPAREN3;
 };
-class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN(
@@ -2758,7 +2758,7 @@ class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN : pub
 		exprSeq* m_pexprSeq3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN(
@@ -2786,7 +2786,7 @@ class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN :
 		exprSeq* m_pexprSeq4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN(
@@ -2814,7 +2814,7 @@ class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPA
 		exprSeq* m_pexprSeq4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN(
@@ -2839,7 +2839,7 @@ class OW_WQL_API OW_WQL_API cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN : pu
 		String* m_pASTERISK3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTDATE : public cExpr
+class OW_WQL_API cExpr_CURRENTDATE : public cExpr
 {
 	public:
 		cExpr_CURRENTDATE(
@@ -2855,7 +2855,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTDATE : public cExpr
 		}
 		String* m_pCURRENTDATE1;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTTIME : public cExpr
+class OW_WQL_API cExpr_CURRENTTIME : public cExpr
 {
 	public:
 		cExpr_CURRENTTIME(
@@ -2871,7 +2871,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTTIME : public cExpr
 		}
 		String* m_pCURRENTTIME1;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN(
@@ -2896,7 +2896,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN : publ
 		String* m_pICONST3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTTIMESTAMP : public cExpr
+class OW_WQL_API cExpr_CURRENTTIMESTAMP : public cExpr
 {
 	public:
 		cExpr_CURRENTTIMESTAMP(
@@ -2912,7 +2912,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTTIMESTAMP : public cExpr
 		}
 		String* m_pCURRENTTIMESTAMP1;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN(
@@ -2937,7 +2937,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN :
 		String* m_pICONST3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_CURRENTUSER : public cExpr
+class OW_WQL_API cExpr_CURRENTUSER : public cExpr
 {
 	public:
 		cExpr_CURRENTUSER(
@@ -2953,7 +2953,7 @@ class OW_WQL_API OW_WQL_API cExpr_CURRENTUSER : public cExpr
 		}
 		String* m_pCURRENTUSER1;
 };
-class OW_WQL_API OW_WQL_API cExpr_SESSIONUSER : public cExpr
+class OW_WQL_API cExpr_SESSIONUSER : public cExpr
 {
 	public:
 		cExpr_SESSIONUSER(
@@ -2969,7 +2969,7 @@ class OW_WQL_API OW_WQL_API cExpr_SESSIONUSER : public cExpr
 		}
 		String* m_pSESSIONUSER1;
 };
-class OW_WQL_API OW_WQL_API cExpr_USER : public cExpr
+class OW_WQL_API cExpr_USER : public cExpr
 {
 	public:
 		cExpr_USER(
@@ -2985,7 +2985,7 @@ class OW_WQL_API OW_WQL_API cExpr_USER : public cExpr
 		}
 		String* m_pUSER1;
 };
-class OW_WQL_API OW_WQL_API cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN(
@@ -3010,7 +3010,7 @@ class OW_WQL_API OW_WQL_API cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN : publ
 		optExtract* m_poptExtract3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN(
@@ -3035,7 +3035,7 @@ class OW_WQL_API OW_WQL_API cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN : p
 		positionExpr* m_ppositionExpr3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN(
@@ -3060,7 +3060,7 @@ class OW_WQL_API OW_WQL_API cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN :
 		optSubstrExpr* m_poptSubstrExpr3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN(
@@ -3088,7 +3088,7 @@ class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN : p
 		trimExpr* m_ptrimExpr4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN(
@@ -3116,7 +3116,7 @@ class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN : 
 		trimExpr* m_ptrimExpr4;
 		String* m_pRIGHTPAREN5;
 };
-class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN : public cExpr
+class OW_WQL_API cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN : public cExpr
 {
 	public:
 		cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN(
@@ -3141,14 +3141,14 @@ class OW_WQL_API OW_WQL_API cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN : public cE
 		trimExpr* m_ptrimExpr3;
 		String* m_pRIGHTPAREN4;
 };
-class OW_WQL_API OW_WQL_API optIndirection: public node
+class OW_WQL_API optIndirection: public node
 {
 	public:
 		optIndirection()
 			{}
 		virtual ~optIndirection() {}
 };
-class OW_WQL_API OW_WQL_API optIndirection_empty : public optIndirection
+class OW_WQL_API optIndirection_empty : public optIndirection
 {
 	public:
 		optIndirection_empty(
@@ -3161,7 +3161,7 @@ class OW_WQL_API OW_WQL_API optIndirection_empty : public optIndirection
 			v->visit_optIndirection_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET : public optIndirection
+class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET : public optIndirection
 {
 	public:
 		optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET(
@@ -3186,7 +3186,7 @@ class OW_WQL_API OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGH
 		aExpr* m_paExpr3;
 		String* m_pRIGHTBRACKET4;
 };
-class OW_WQL_API OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET : public optIndirection
+class OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET : public optIndirection
 {
 	public:
 		optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET(
@@ -3217,14 +3217,14 @@ class OW_WQL_API OW_WQL_API optIndirection_optIndirection_LEFTBRACKET_aExpr_COLO
 		aExpr* m_paExpr5;
 		String* m_pRIGHTBRACKET6;
 };
-class OW_WQL_API OW_WQL_API optExtract: public node
+class OW_WQL_API optExtract: public node
 {
 	public:
 		optExtract()
 			{}
 		virtual ~optExtract() {}
 };
-class OW_WQL_API OW_WQL_API optExtract_empty : public optExtract
+class OW_WQL_API optExtract_empty : public optExtract
 {
 	public:
 		optExtract_empty(
@@ -3237,7 +3237,7 @@ class OW_WQL_API OW_WQL_API optExtract_empty : public optExtract
 			v->visit_optExtract_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optExtract_strExtractArg_FROM_aExpr : public optExtract
+class OW_WQL_API optExtract_strExtractArg_FROM_aExpr : public optExtract
 {
 	public:
 		optExtract_strExtractArg_FROM_aExpr(
@@ -3259,14 +3259,14 @@ class OW_WQL_API OW_WQL_API optExtract_strExtractArg_FROM_aExpr : public optExtr
 		String* m_pFROM2;
 		aExpr* m_paExpr3;
 };
-class OW_WQL_API OW_WQL_API positionExpr: public node
+class OW_WQL_API positionExpr: public node
 {
 	public:
 		positionExpr()
 			{}
 		virtual ~positionExpr() {}
 };
-class OW_WQL_API OW_WQL_API positionExpr_bExpr_IN_bExpr : public positionExpr
+class OW_WQL_API positionExpr_bExpr_IN_bExpr : public positionExpr
 {
 	public:
 		positionExpr_bExpr_IN_bExpr(
@@ -3288,7 +3288,7 @@ class OW_WQL_API OW_WQL_API positionExpr_bExpr_IN_bExpr : public positionExpr
 		String* m_pIN2;
 		bExpr* m_pbExpr3;
 };
-class OW_WQL_API OW_WQL_API positionExpr_empty : public positionExpr
+class OW_WQL_API positionExpr_empty : public positionExpr
 {
 	public:
 		positionExpr_empty(
@@ -3301,14 +3301,14 @@ class OW_WQL_API OW_WQL_API positionExpr_empty : public positionExpr
 			v->visit_positionExpr_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr: public node
+class OW_WQL_API optSubstrExpr: public node
 {
 	public:
 		optSubstrExpr()
 			{}
 		virtual ~optSubstrExpr() {}
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_empty : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_empty : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_empty(
@@ -3321,7 +3321,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_empty : public optSubstrExpr
 			v->visit_optSubstrExpr_empty( this );
 		}
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFrom_substrFor : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_aExpr_substrFrom_substrFor : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_aExpr_substrFrom_substrFor(
@@ -3343,7 +3343,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFrom_substrFor : public op
 		substrFrom* m_psubstrFrom2;
 		substrFor* m_psubstrFor3;
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFor_substrFrom : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_aExpr_substrFor_substrFrom : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_aExpr_substrFor_substrFrom(
@@ -3365,7 +3365,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFor_substrFrom : public op
 		substrFor* m_psubstrFor2;
 		substrFrom* m_psubstrFrom3;
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFrom : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_aExpr_substrFrom : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_aExpr_substrFrom(
@@ -3384,7 +3384,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFrom : public optSubstrExp
 		aExpr* m_paExpr1;
 		substrFrom* m_psubstrFrom2;
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFor : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_aExpr_substrFor : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_aExpr_substrFor(
@@ -3403,7 +3403,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_aExpr_substrFor : public optSubstrExpr
 		aExpr* m_paExpr1;
 		substrFor* m_psubstrFor2;
 };
-class OW_WQL_API OW_WQL_API optSubstrExpr_exprSeq : public optSubstrExpr
+class OW_WQL_API optSubstrExpr_exprSeq : public optSubstrExpr
 {
 	public:
 		optSubstrExpr_exprSeq(
@@ -3419,7 +3419,7 @@ class OW_WQL_API OW_WQL_API optSubstrExpr_exprSeq : public optSubstrExpr
 		}
 		exprSeq* m_pexprSeq1;
 };
-class OW_WQL_API OW_WQL_API substrFrom : public node
+class OW_WQL_API substrFrom : public node
 {
 	public:
 		substrFrom(
@@ -3437,7 +3437,7 @@ class OW_WQL_API OW_WQL_API substrFrom : public node
 		String* m_pFROM1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API substrFor : public node
+class OW_WQL_API substrFor : public node
 {
 	public:
 		substrFor(
@@ -3455,14 +3455,14 @@ class OW_WQL_API OW_WQL_API substrFor : public node
 		String* m_pFOR1;
 		aExpr* m_paExpr2;
 };
-class OW_WQL_API OW_WQL_API trimExpr: public node
+class OW_WQL_API trimExpr: public node
 {
 	public:
 		trimExpr()
 			{}
 		virtual ~trimExpr() {}
 };
-class OW_WQL_API OW_WQL_API trimExpr_aExpr_FROM_exprSeq : public trimExpr
+class OW_WQL_API trimExpr_aExpr_FROM_exprSeq : public trimExpr
 {
 	public:
 		trimExpr_aExpr_FROM_exprSeq(
@@ -3484,7 +3484,7 @@ class OW_WQL_API OW_WQL_API trimExpr_aExpr_FROM_exprSeq : public trimExpr
 		String* m_pFROM2;
 		exprSeq* m_pexprSeq3;
 };
-class OW_WQL_API OW_WQL_API trimExpr_FROM_exprSeq : public trimExpr
+class OW_WQL_API trimExpr_FROM_exprSeq : public trimExpr
 {
 	public:
 		trimExpr_FROM_exprSeq(
@@ -3503,7 +3503,7 @@ class OW_WQL_API OW_WQL_API trimExpr_FROM_exprSeq : public trimExpr
 		String* m_pFROM1;
 		exprSeq* m_pexprSeq2;
 };
-class OW_WQL_API OW_WQL_API trimExpr_exprSeq : public trimExpr
+class OW_WQL_API trimExpr_exprSeq : public trimExpr
 {
 	public:
 		trimExpr_exprSeq(
@@ -3519,7 +3519,7 @@ class OW_WQL_API OW_WQL_API trimExpr_exprSeq : public trimExpr
 		}
 		exprSeq* m_pexprSeq1;
 };
-class OW_WQL_API OW_WQL_API attr : public node
+class OW_WQL_API attr : public node
 {
 	public:
 		attr(
@@ -3543,14 +3543,14 @@ class OW_WQL_API OW_WQL_API attr : public node
 		attrs* m_pattrs3;
 		optIndirection* m_poptIndirection4;
 };
-class OW_WQL_API OW_WQL_API attrs: public node
+class OW_WQL_API attrs: public node
 {
 	public:
 		attrs()
 			{}
 		virtual ~attrs() {}
 };
-class OW_WQL_API OW_WQL_API attrs_strAttrName : public attrs
+class OW_WQL_API attrs_strAttrName : public attrs
 {
 	public:
 		attrs_strAttrName(
@@ -3566,7 +3566,7 @@ class OW_WQL_API OW_WQL_API attrs_strAttrName : public attrs
 		}
 		String* m_pstrAttrName1;
 };
-class OW_WQL_API OW_WQL_API attrs_attrs_PERIOD_strAttrName : public attrs
+class OW_WQL_API attrs_attrs_PERIOD_strAttrName : public attrs
 {
 	public:
 		attrs_attrs_PERIOD_strAttrName(
@@ -3588,7 +3588,7 @@ class OW_WQL_API OW_WQL_API attrs_attrs_PERIOD_strAttrName : public attrs
 		String* m_pPERIOD2;
 		String* m_pstrAttrName3;
 };
-class OW_WQL_API OW_WQL_API attrs_attrs_PERIOD_ASTERISK : public attrs
+class OW_WQL_API attrs_attrs_PERIOD_ASTERISK : public attrs
 {
 	public:
 		attrs_attrs_PERIOD_ASTERISK(
@@ -3610,14 +3610,14 @@ class OW_WQL_API OW_WQL_API attrs_attrs_PERIOD_ASTERISK : public attrs
 		String* m_pPERIOD2;
 		String* m_pASTERISK3;
 };
-class OW_WQL_API OW_WQL_API targetEl: public node
+class OW_WQL_API targetEl: public node
 {
 	public:
 		targetEl()
 			{}
 		virtual ~targetEl() {}
 };
-class OW_WQL_API OW_WQL_API targetEl_aExpr_AS_strColLabel : public targetEl
+class OW_WQL_API targetEl_aExpr_AS_strColLabel : public targetEl
 {
 	public:
 		targetEl_aExpr_AS_strColLabel(

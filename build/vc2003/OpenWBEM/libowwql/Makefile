@@ -1,21 +1,13 @@
-DEBUG = 1
-WARNLEVEL = 0
+!include ..\common.mk
 
-BUILDTYPE = Debug
-LIBNAME = libowwql
-
+LIBNAME = libowwql$(BLDCHAR)
 TARGET = $(LIBNAME).dll
-BASEDIR = ..
-TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
+CPPDEFS = $(CPPDEFS) /D"OW_WQL_BUILD"
 
-CPP = cl
-LINK = link
-
-SRCDIR = ..\..\..\..\src
 WQLSRCDIR = $(SRCDIR)\wql
 
 INCS = \
-/I".." \
+/I$(BASEDIR) \
 /I$(WQLSRCDIR) \
 /I$(SRCDIR)\common \
 /I$(SRCDIR)\ifcs \
@@ -32,20 +24,8 @@ advapi32.lib \
 kernel32.lib \
 user32.lib \
 uuid.lib \
-libopenwbem.lib \
-libowwqlcommon.lib
-
-!IFDEF DEBUG
-CPPDEFS = /D"OW_WQL_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-OBJDIR = Debug
-LINKDBG = /DEBUG
-!ELSE
-CPPDEFS = /D"OW_WQL_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
-OBJDIR = Release
-LINKDBG = 
-!ENDIF
+libopenwbem$(BLDCHAR).lib \
+libowwqlcommon$(BLDCHAR).lib
 
 OBJS = \
 	$(OBJDIR)\OW_WQLAst.obj \
@@ -62,13 +42,11 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
-	-@del OW_WQLParser.cpp
-	-@del OW_WQLParser.h
-	-@del OW_WQLLexer.cpp
-	-@del $(OBJDIR)\*.obj
-	-@del $(OBJDIR)\*.map
-	-@del $(OBJDIR)\*.def
-	-@del $(OBJDIR)\*.dll
+	-@del /Q OW_WQLParser.cpp
+	-@del /Q OW_WQLParser.h
+	-@del /Q OW_WQLLexer.cpp
+	-@del /Q $(OBJDIR)\*.*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
@@ -89,9 +67,23 @@ $(OBJDIR)\OW_WQLParser.obj: $(@B).cpp
 OW_WQLParser.cpp: $(WQLSRCDIR)\OW_WQLParser.yy
 	-@del OW_WQLParser.cpp
 	-@del OW_WQLParser.h
-	-@echo #include "OW_config.h" 1 > OW_WQLParser.cpp
+	-@echo #include "OW_config.h" > OW_WQLParser.cpp
+	-@echo #ifdef DELETE >> OW_WQLParser.cpp
+	-@echo #undef DELETE >> OW_WQLParser.cpp
+	-@echo #endif >> OW_WQLParser.cpp
+	-@echo #ifdef IN >> OW_WQLParser.cpp
+	-@echo #undef IN >> OW_WQLParser.cpp
+	-@echo #endif >> OW_WQLParser.cpp
 	bison -y -d -powwql $(WQLSRCDIR)\OW_WQLParser.yy
-	rename y.tab.h OW_WQLParser.h
+	-@echo #include "OW_config.h" > OW_WQLParser.h
+	-@echo #ifdef DELETE >> OW_WQLParser.h
+	-@echo #undef DELETE >> OW_WQLParser.h
+	-@echo #endif >> OW_WQLParser.h
+	-@echo #ifdef IN >> OW_WQLParser.h
+	-@echo #undef IN >> OW_WQLParser.h
+	-@echo #endif >> OW_WQLParser.h
+	cat y.tab.h >> OW_WQLParser.h
+	-@del y.tab.h
 	sed "/\#line/d" y.tab.c >> OW_WQLParser.cpp
 	-@del y.tab.c
 
