@@ -55,7 +55,8 @@ public:
 	 */
 	Thread();
 	/**
-	 * Destroy this Thread object.  The destructor will call join().
+	 * Destroy this Thread object.  The destructor will call join() if it
+	 * hasn't been previously called.
 	 * This function won't return until the thread has exited.
 	 */
 	virtual ~Thread();
@@ -259,6 +260,7 @@ protected:
 	Thread_t m_id;
 	bool m_isRunning;
 	bool m_isStarting;
+	bool m_joined;
 	// used to implement cancellation.
 	friend void ThreadImpl::testCancel();
 	NonRecursiveMutex m_cancelLock;

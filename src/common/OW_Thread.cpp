@@ -72,6 +72,7 @@ Thread::Thread()
 	: m_id(NULLTHREAD)
 	, m_isRunning(false)
 	, m_isStarting(false)
+	, m_joined(false)
 	, m_cancelRequested(false)
 	, m_cancelled(false)
 {
@@ -82,13 +83,9 @@ Thread::~Thread()
 {
 	try
 	{
-		try
+		if (!m_joined)
 		{
 			join();
-		}
-		catch (ThreadException& e)
-		{
-			// this will happen if join has already been called
 		}
 		OW_ASSERT(m_isRunning == false);
 		if(!sameId(m_id, NULLTHREAD))
@@ -145,6 +142,7 @@ Thread::join()
 	}
 	// need to set this to false, since the thread may have been cancelled, in which case the m_isRunning flag will be wrong.
 	m_isRunning = false;
+	m_joined = true;
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
