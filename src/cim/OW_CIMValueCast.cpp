@@ -57,7 +57,7 @@ OW_CIMValueCast::castValueToDataType(const OW_CIMValue& value,
 		// If NULL data type, then return NULL value.
 		if(!dataType || !value)
 		{
-			return OW_CIMValue();
+			return OW_CIMValue(OW_CIMNULL);
 		}
 
 		// If the OW_CIMValue is already what it needs to be, then just return it.
@@ -84,7 +84,7 @@ OW_CIMValueCast::castValueToDataType(const OW_CIMValue& value,
 
 		// Convert value to string
 		OW_String strValue = value.toString();
-		OW_CIMValue cv;
+		OW_CIMValue cv(OW_CIMNULL);
 		cv = convertString(strValue, dataType);
 
 		if(dataType.isArrayType())
@@ -225,7 +225,7 @@ makeValueArray(OW_CIMValue& theValue)
 
 		case OW_CIMDataType::REFERENCE:
 		{
-			OW_CIMObjectPath v;
+			OW_CIMObjectPath v(OW_CIMNULL);
 			theValue.get(v);
 			theValue = OW_CIMValue(OW_CIMObjectPathArray(1, v));
 			break;
@@ -296,7 +296,7 @@ convertString(const OW_String& strValue, const OW_CIMDataType& dataType)
 OW_CIMValue
 convertArray(const OW_CIMValue& value, const OW_CIMDataType& dataType)
 {
-	OW_CIMValue rcv;
+	OW_CIMValue rcv(OW_CIMNULL);
 	OW_Bool onlyOne = !dataType.isArrayType();
 	OW_StringArray strArray = convertToStringArray(value, onlyOne);
 	size_t sz = strArray.size();

@@ -172,7 +172,7 @@ OW_CIMInstance::getQualifier(const OW_String& qualName) const
 		}
 	}
 
-	return OW_CIMQualifier();
+	return OW_CIMQualifier(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ OW_CIMInstance::getProperty(const OW_String& name,
 		}
 	}
 
-	return OW_CIMProperty();
+	return OW_CIMProperty(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -270,7 +270,7 @@ OW_CIMProperty
 OW_CIMInstance::getProperty(const OW_String& propertyName) const
 {
 	if(propertyName.empty())
-		return OW_CIMProperty();
+		return OW_CIMProperty(OW_CIMNULL);
 
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
@@ -282,7 +282,7 @@ OW_CIMInstance::getProperty(const OW_String& propertyName) const
 			return(cp);
 	}
 
-	return OW_CIMProperty();
+	return OW_CIMProperty(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////

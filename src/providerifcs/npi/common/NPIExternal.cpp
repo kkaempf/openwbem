@@ -266,7 +266,7 @@ CIMValueGetRef(NPIHandle* npiHandle, CIMValue cv)
 {
 	(void)npiHandle;
 	OW_CIMValue* pcv = (OW_CIMValue*) cv.ptr;
-	OW_CIMObjectPath cref;
+	OW_CIMObjectPath cref(OW_CIMNULL);
 	pcv->get(cref);
 	OW_CIMObjectPath* ncop = new OW_CIMObjectPath(cref);
 	CIMObjectPath cop = {(void*) ncop};
@@ -407,7 +407,7 @@ CIMParameterGetRefValue(NPIHandle* npiHandle, CIMParameter cp)
 {
 	(void)npiHandle;
 	OW_CIMParamValue* pcpv = (OW_CIMParamValue*)cp.ptr;
-	OW_CIMObjectPath op;
+	OW_CIMObjectPath op(OW_CIMNULL);
 	OW_CIMValue val = pcpv->getValue();
 	val.get(op);
 	OW_CIMObjectPath * pop = new OW_CIMObjectPath(op);
@@ -623,7 +623,7 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, CIMInstance ci, const char* name)
 
 	if (cv.getType() != OW_CIMDataType::REFERENCE) return cop;
 
-	OW_CIMObjectPath owcop;
+	OW_CIMObjectPath owcop(OW_CIMNULL);
 	cv.get(owcop);
 
 	//cop.ptr = static_cast<void *>(owcop.toBlob());
@@ -869,7 +869,7 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 
 			if (cv.getType() != OW_CIMDataType::REFERENCE) return cop2;
 
-			OW_CIMObjectPath * ref2 = new OW_CIMObjectPath;
+			OW_CIMObjectPath * ref2 = new OW_CIMObjectPath(OW_CIMNULL);
 			cv.get(*ref2);
 
 			cop2.ptr = (void *) ref;

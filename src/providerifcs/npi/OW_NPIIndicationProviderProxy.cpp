@@ -58,7 +58,7 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 
 		OW_WQLSelectStatement mutableFilter(filter);
 
-		OW_CIMObjectPath mutablePath(true);
+		OW_CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
@@ -98,7 +98,7 @@ OW_NPIIndicationProviderProxy::activateFilter(
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};
 		
-		OW_CIMObjectPath mutablePath(true);
+		OW_CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
@@ -137,7 +137,7 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};
 		
-		OW_CIMObjectPath mutablePath(true);
+		OW_CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);
@@ -175,7 +175,7 @@ OW_NPIIndicationProviderProxy::mustPoll(
 		OW_WQLSelectStatement mutableFilter(filter);
 		SelectExp exp = {&mutableFilter};
 		
-		OW_CIMObjectPath mutablePath(true);
+		OW_CIMObjectPath mutablePath;
 		mutablePath.setNameSpace(nameSpace);
 		if (!classes.empty())
 			mutablePath.setObjectName(classes[0]);

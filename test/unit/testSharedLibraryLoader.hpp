@@ -94,7 +94,7 @@ public:
 	}
 	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
 	{
-		return OW_CIMObjectPath();
+		return OW_CIMObjectPath(OW_CIMNULL);
 	}
 	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, 
 			const OW_CIMInstance& ,
@@ -114,7 +114,7 @@ class TestMethodProvider : public OW_MethodProviderIFC
 public:
 	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_CIMParamValueArray &, OW_CIMParamValueArray &)
 	{
-		return OW_CIMValue();
+		return OW_CIMValue(OW_CIMNULL);
 	}
 };
 
@@ -140,7 +140,7 @@ class TestPropertyProvider : public OW_PropertyProviderIFC
 public:
 	virtual OW_CIMValue getPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &)
 	{
-		return OW_CIMValue();
+		return OW_CIMValue(OW_CIMNULL);
 	}
 	virtual void setPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &, const OW_CIMValue &)
 	{

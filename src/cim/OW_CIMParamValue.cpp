@@ -39,6 +39,10 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMParamValue::Data
 {
+	Data()
+		: m_val(OW_CIMNULL)
+	{}
+
 	OW_String m_name;
 	OW_CIMValue m_val;
 
@@ -58,6 +62,12 @@ bool operator<(const OW_CIMParamValue::Data& x, const OW_CIMParamValue::Data& y)
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMParamValue::OW_CIMParamValue() :
 	m_pdata(new Data)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMParamValue::OW_CIMParamValue(OW_CIMNULL_t) :
+	m_pdata(0)
 {
 }
 
@@ -152,7 +162,7 @@ void
 OW_CIMParamValue::readObject(istream &istrm)
 {
 	OW_String name;
-	OW_CIMValue val;
+	OW_CIMValue val(OW_CIMNULL);
 
 	OW_CIMBase::readSig( istrm, OW_CIMPARAMVALUESIG );
 	name.readObject(istrm);

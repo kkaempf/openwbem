@@ -144,7 +144,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		name = zargs[i];
 		type = zargs[i + 1];
 		isKey = zargs[i + 2];
-		OW_CIMProperty cimProp(OW_Bool(true));
+		OW_CIMProperty cimProp;
 		if (type.equals("string"))
 		{
 			cimProp.setDataType(OW_CIMDataType::STRING);
@@ -179,7 +179,7 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMClass cimClass = hdl.getClass("root/testsuite",
 		"EXP_IndicationTestComputerSystem", false);
-	OW_CIMProperty cimProp(OW_Bool(true));
+	OW_CIMProperty cimProp;
 	cimProp.setDataType(OW_CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
 	cimClass.addProperty(cimProp);

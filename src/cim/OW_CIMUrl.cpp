@@ -63,11 +63,17 @@ struct OW_CIMUrl::URLData
 
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
-OW_CIMUrl::OW_CIMUrl(OW_Bool notNull) :
-	OW_CIMBase(), m_pdata((notNull) ? new URLData : NULL)
+OW_CIMUrl::OW_CIMUrl() :
+	OW_CIMBase(), m_pdata(new URLData)
 {
-	if(!m_pdata.isNull())
-		setDefaultValues();
+	setDefaultValues();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// PUBLIC
+OW_CIMUrl::OW_CIMUrl(OW_CIMNULL_t) :
+	OW_CIMBase(), m_pdata(0)
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////

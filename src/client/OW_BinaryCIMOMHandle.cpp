@@ -415,7 +415,7 @@ OW_BinaryCIMOMHandle::invokeMethod(
 		methodName, ns);
 	checkError(in);
 
-	OW_CIMValue cv;
+	OW_CIMValue cv(OW_CIMNULL);
 	try
 	{
 		OW_Bool isrv(OW_BinIfcIO::readBool(*in));
@@ -565,7 +565,7 @@ OW_BinaryCIMOMHandle::getProperty(
 		"GetProperty", ns);
 	checkError(in);
 
-	OW_CIMValue cv;
+	OW_CIMValue cv(OW_CIMNULL);
 	try
 	{
 		OW_Bool isValue(OW_BinIfcIO::readBool(*in));

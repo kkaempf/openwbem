@@ -149,7 +149,7 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 		// Fill out the properties on the instance
 		OW_CIMProperty cp = *curProperty;
 		
-		OW_CIMValue newVal;
+		OW_CIMValue newVal(OW_CIMNULL);
 		switch (m_exprValue.type)
 		{
 			case DataType::OW_BoolType:
@@ -230,7 +230,7 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, format("Property %1 does not exist on class", *column).c_str());
 		}
-		OW_CIMValue newVal;
+		OW_CIMValue newVal(OW_CIMNULL);
 		switch (m_exprValue.type)
 		{
 			case DataType::OW_BoolType:
@@ -326,7 +326,7 @@ void OW_WQLProcessor::visit_updateStmt(
 			{
 				OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, format("Property %1 does not exist on class", *curProperty).c_str());
 			}
-			OW_CIMValue newVal;
+			OW_CIMValue newVal(OW_CIMNULL);
 			switch (curValue->type)
 			{
 				case DataType::OW_BoolType:
@@ -1045,7 +1045,7 @@ void OW_WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Com
 				break;
 				case DataType::NullType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(lhs.str, OW_CIMValue(), compare));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(lhs.str, OW_CIMValue(OW_CIMNULL), compare));
 				}
 				break;
 
@@ -1140,7 +1140,7 @@ void OW_WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Com
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, OW_CIMValue(), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, OW_CIMValue(OW_CIMNULL), compare.reverseOrder()));
 				}
 				break;
 				
@@ -2211,7 +2211,7 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 			}
 			else
 			{
-				OW_CIMProperty cp;
+				OW_CIMProperty cp(OW_CIMNULL);
 				if (propName.indexOf('.') != -1)
 				{
 					// it's an embedded property

@@ -52,8 +52,12 @@ class OW_AssocDbEntry
 public:
 	OW_AssocDbEntry(std::istream& istrm);
 
-	OW_AssocDbEntry() :
-		m_offset(-1L) {}
+	OW_AssocDbEntry() 
+		: m_objectName(OW_CIMNULL)
+		, m_associatedObject(OW_CIMNULL)
+		, m_associationPath(OW_CIMNULL)
+		, m_offset(-1L)
+	{}
 
 	OW_AssocDbEntry(const OW_CIMObjectPath& objectName,
 		const OW_String& assocClass,

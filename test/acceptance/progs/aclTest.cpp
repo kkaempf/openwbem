@@ -104,7 +104,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 			name = zargs[i];
 			type = zargs[i + 1];
 			isKey = zargs[i + 2];
-			OW_CIMProperty cimProp(OW_Bool(true));
+			OW_CIMProperty cimProp;
 			if (type.equals("string"))
 			{
 				cimProp.setDataType(OW_CIMDataType::STRING);
@@ -187,7 +187,7 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMClass cimClass = bionicClass;
-		OW_CIMProperty cimProp(OW_Bool(true));
+		OW_CIMProperty cimProp;
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
@@ -614,7 +614,7 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
-		OW_CIMValue cv;
+		OW_CIMValue cv(OW_CIMNULL);
 		switch (num)
 		{
 			case 1:

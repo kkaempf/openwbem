@@ -38,9 +38,6 @@ using std::istream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMNameSpace::NSData
 {
-	NSData() :
-		m_nameSpace(), m_url(OW_Bool(true)) {}
-
 	OW_String m_nameSpace;
 	OW_CIMUrl m_url;
 
@@ -48,13 +45,16 @@ struct OW_CIMNameSpace::NSData
 };
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace(OW_Bool notNull) :
-	OW_CIMBase(), m_pdata((notNull) ? new NSData : NULL)
+OW_CIMNameSpace::OW_CIMNameSpace() :
+	OW_CIMBase(), m_pdata(new NSData)
 {
-	if(!m_pdata.isNull())
-	{
-		m_pdata->m_nameSpace = CIM_DEFAULT_NS;
-	}
+	m_pdata->m_nameSpace = CIM_DEFAULT_NS;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMNameSpace::OW_CIMNameSpace(OW_CIMNULL_t) :
+	OW_CIMBase(), m_pdata(0)
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ OW_CIMNameSpace::readObject(istream &istrm)
 	OW_String ns;
 	ns.readObject(istrm);
 
-	OW_CIMUrl url;
+	OW_CIMUrl url(OW_CIMNULL);
 	url.readObject(istrm);
 
 	// Assign here in case exception gets thrown on preceeding readObjects

@@ -240,7 +240,7 @@ OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
 		// If this is not a namespace node, assume it's a qualifier
 		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
 		{
-			OW_CIMQualifierType qual;
+			OW_CIMQualifierType qual(OW_CIMNULL);
 			nodeToCIMObject(qual, node);
 			result.handle(qual);
 		}
@@ -254,7 +254,6 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 	const OW_String& qualName, OW_HDBHandle* phdl)
 {
 	throwIfNotOpen();
-	OW_CIMQualifierType qualType;
 	OW_String qkey = _makeQualPath(ns, qualName);
 
 	OW_GenericHDBRepository* prep;
@@ -271,6 +270,7 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 		lhdl = getHandle();
 	}
 
+	OW_CIMQualifierType qualType(OW_CIMNULL);
 	OW_HDBHandleLock hdl(prep, lhdl);
 	getCIMObject(qualType, qkey, hdl.getHandle());
 
@@ -309,7 +309,7 @@ OW_MetaRepository::deleteQualifierType(const OW_String& ns,
 	// To ensure the node is a qualifier type, we create a qualifier
 	// type from the node. If the node is not a qualifier type, an
 	// exception will be thrown
-	OW_CIMQualifierType qt;
+	OW_CIMQualifierType qt(OW_CIMNULL);
 	nodeToCIMObject(qt, node);
 
 	// If we've hit this point, we know this is a qualifier
@@ -385,8 +385,8 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 	else
 	{
 		// No ensure the node is a qualifier type before we delete it
-		OW_CIMQualifierType tqt;
-		nodeToCIMObject(tqt, node);
+		//OW_CIMQualifierType tqt(OW_CIMNULL);
+		//nodeToCIMObject(tqt, node);
 
 		// If we made it to this point, we know we have a qualifier type
 		// So go ahead and update it.

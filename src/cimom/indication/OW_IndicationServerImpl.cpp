@@ -385,7 +385,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		try
 		{
 			OW_CIMInstance subscription = subscriptions.nextElement();
-			OW_CIMObjectPath cop;
+			OW_CIMObjectPath cop(OW_CIMNULL);
 
 			// Get object path to filter object
 			OW_CIMProperty filterProp = subscription.getProperty("Filter");
@@ -472,7 +472,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			
 
 			// Now get the export handler for this indication subscription
-			OW_CIMObjectPath handlerCOP;
+			OW_CIMObjectPath handlerCOP(OW_CIMNULL);
 			OW_CIMProperty cp = subscription.getProperty("Handler");
 			if(!cp)
 			{

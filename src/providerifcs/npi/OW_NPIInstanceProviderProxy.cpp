@@ -264,7 +264,7 @@ OW_NPIInstanceProviderProxy::createInstance(
     const OW_ProviderEnvironmentIFCRef &env, const OW_String& ns,
     const OW_CIMInstance& cimInstance)
 {
-        OW_CIMObjectPath rval;
+        OW_CIMObjectPath rval(OW_CIMNULL);
 
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::createInstance()");

@@ -197,7 +197,7 @@ OW_NameSpaceProvider::getInstance(
 		const OW_CIMClass& cimClass)
 {
 	OW_CIMProperty cp = instanceName.getKey(OW_CIMProperty::NAME_PROPERTY);
-	OW_CIMValue nsVal;
+	OW_CIMValue nsVal(OW_CIMNULL);
 	if (cp)
 	{
 		nsVal = cp.getValue();

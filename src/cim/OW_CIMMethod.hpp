@@ -37,6 +37,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMMethod class encapsulates all data and behaviour pertinent to an
@@ -62,11 +63,13 @@ public:
 
 	/**
 	 * Create a new OW_CIMMethod object.
-	 * @param notNull If false, This object will not contain any data/
-	 * 	implementation, which will cause all subsequent operations to fail.
-	 *		If true, this object will be a valid OW_CIMMethod with default values.
 	 */
-	explicit OW_CIMMethod(OW_Bool notNull=false);
+	OW_CIMMethod();
+
+	/**
+	 * Create a NULL OW_CIMMethod object.
+	 */
+	explicit OW_CIMMethod(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMMethod with a name

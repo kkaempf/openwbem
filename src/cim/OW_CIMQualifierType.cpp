@@ -41,6 +41,10 @@ using std::ostream;
 
 struct OW_CIMQualifierType::QUALTData
 {
+	QUALTData()
+		: m_defaultValue(OW_CIMNULL)
+	{}
+
 	OW_String m_name;
 	OW_CIMDataType m_dataType;
 	OW_CIMScopeArray m_scope;
@@ -79,14 +83,17 @@ bool operator<(const OW_CIMQualifierType& x, const OW_CIMQualifierType& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType::OW_CIMQualifierType(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new QUALTData : NULL)
+OW_CIMQualifierType::OW_CIMQualifierType() :
+	OW_CIMElement(), m_pdata(new QUALTData)
 {
-	if (m_pdata)
-	{
-		addFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
-		addFlavor(OW_CIMFlavor::TOSUBCLASS);
-	}
+	addFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
+	addFlavor(OW_CIMFlavor::TOSUBCLASS);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierType::OW_CIMQualifierType(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -365,7 +372,7 @@ OW_CIMQualifierType::readObject(istream &istrm)
 	OW_CIMDataType dataType(OW_CIMNULL);
 	OW_CIMScopeArray scope;
 	OW_CIMFlavorArray flavor;
-	OW_CIMValue defaultValue;
+	OW_CIMValue defaultValue(OW_CIMNULL);
 
 	OW_CIMBase::readSig( istrm, OW_CIMQUALIFIERTYPESIG );
 	name.readObject(istrm);

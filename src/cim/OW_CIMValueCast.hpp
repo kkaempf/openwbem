@@ -33,6 +33,20 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
+#include "OW_Exception.hpp"
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_ValueCastException : public OW_Exception
+{
+public:
+	OW_ValueCastException() : OW_Exception() {}
+	OW_ValueCastException(const char* file, int line, const char* msg)
+	: OW_Exception(file, line, msg) {}
+	OW_ValueCastException(const char* msg) : OW_Exception(msg)
+		{  }
+	virtual const char* type() const
+		{  return "OW_ValueCastException"; }
+};
 
 class OW_CIMValueCast
 {

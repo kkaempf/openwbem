@@ -186,7 +186,7 @@ OW_CIMClass::getQualifier(const OW_String& name) const
 		}
 	}
 
-	return OW_CIMQualifier();
+	return OW_CIMQualifier(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ OW_CIMClass::getProperty(const OW_String& prpName) const
 		}
 	}
 
-	return OW_CIMProperty();
+	return OW_CIMProperty(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -275,7 +275,7 @@ OW_CIMClass::getMethod(const OW_String& name) const
 		}
 	}
 
-	return OW_CIMMethod();
+	return OW_CIMMethod(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////

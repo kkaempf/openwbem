@@ -36,6 +36,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_Bool.hpp"
+#include "OW_CIMNULL.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_IOException;
@@ -54,17 +55,20 @@ public:
 
 	/**
 	 * Create a new OW_CIMUrl object.
-	 * @param notNull If false, this object will not have any data or
-	 * 	implementation associated with it.
 	 */
-	explicit OW_CIMUrl(OW_Bool notNull=OW_Bool(false));
+	OW_CIMUrl();
+
+	/**
+	 * Create a NULL OW_CIMUrl object.
+	 */
+	explicit OW_CIMUrl(OW_CIMNULL_t);
 
 	/**
 	 * Create a new OW_CIMUrl object from a URL string
 	 * (i.e. http://localhost:5988/cimom)
 	 * @param spec The string that contains the URL
 	 */
-	OW_CIMUrl(const OW_String& spec);
+	explicit OW_CIMUrl(const OW_String& spec);
 
 	/**
 	 * Create a new OW_CIMUrl object.

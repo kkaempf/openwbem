@@ -61,8 +61,14 @@ bool operator<(const OW_CIMParameter::PARMData& x, const OW_CIMParameter::PARMDa
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new PARMData : NULL)
+OW_CIMParameter::OW_CIMParameter() :
+	OW_CIMElement(), m_pdata(new PARMData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMParameter::OW_CIMParameter(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
 {
 }
 
@@ -154,7 +160,7 @@ OW_CIMParameter::getQualifier(const OW_String& name) const
 		}
 	}
 
-	return OW_CIMQualifier();
+	return OW_CIMQualifier(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////

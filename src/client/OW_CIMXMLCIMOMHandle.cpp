@@ -611,7 +611,7 @@ namespace
 		{
 			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
 			{
-				OW_CIMQualifierType cqt(OW_Bool(true));
+				OW_CIMQualifierType cqt;
 				OW_XMLQualifier::processQualifierDecl(parser, cqt);
 				result.handle(cqt);
 			}
@@ -794,7 +794,7 @@ namespace
 					)
 				{
 					outParams[outParamCount] = OW_CIMParamValue(name,
-						OW_CIMValue());
+						OW_CIMValue(OW_CIMNULL));
 				}
 				else
 				{
@@ -850,7 +850,7 @@ OW_CIMXMLCIMOMHandle::invokeMethod(
 
 	sendXMLTrailer(tfs, false);
 
-	OW_CIMValue rval;
+	OW_CIMValue rval(OW_CIMNULL);
 	invokeMethodOp op(rval, outParams);
 	doSendRequest(iostrRef, methodName, ns, false, op);
 	return rval;
@@ -885,7 +885,7 @@ OW_CIMXMLCIMOMHandle::getQualifierType(const OW_String& ns,
 
 	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualifierName));
 
-	OW_CIMQualifierType rval(OW_Bool(true));
+	OW_CIMQualifierType rval;
 	getQualifierTypeOp op(rval);
 	intrinsicMethod(ns, commandName, op, params);
 	return rval;
@@ -965,7 +965,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	OW_CIMObjectPath path(modifiedInstance);
 	path.setNameSpace(ns);
 	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
-	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(),
+	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
 		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
@@ -1021,7 +1021,7 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
 
 	OW_StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewInstance\">";
-	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
+	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(OW_CIMNULL),
 		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
@@ -1030,7 +1030,7 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
 
 	ostr << "</IPARAMVALUE>";
 
-	OW_CIMObjectPath rval;
+	OW_CIMObjectPath rval(OW_CIMNULL);
 	createInstanceOp op(rval);
 	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(), ostr.toString());
 	rval.setNameSpace(ns);
@@ -1072,7 +1072,7 @@ OW_CIMXMLCIMOMHandle::getProperty(
 
 	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
 
-	OW_CIMValue rval;
+	OW_CIMValue rval(OW_CIMNULL);
 	getPropertyOp op(rval);
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));

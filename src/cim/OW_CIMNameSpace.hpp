@@ -38,6 +38,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMNameSpace class represents a CIM namespace. The CIM namespace
@@ -56,10 +57,13 @@ public:
 
 	/**
 	 * Create a new OW_CIMNameSpace object.
-	 * @param notNull If false, this object will not have any data or
-	 * 	implementation associated with it (NULL Object).
 	 */
-	explicit OW_CIMNameSpace(OW_Bool notNull=OW_Bool(false));
+	OW_CIMNameSpace();
+
+	/**
+	 * Create a NULL OW_CIMNameSpace object.
+	 */
+	explicit OW_CIMNameSpace(OW_CIMNULL_t);
 
 	/**
 	 * Create a new OW_CIMNameSpace object.

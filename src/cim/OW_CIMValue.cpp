@@ -34,6 +34,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_CIMValueCast.hpp" // for OW_ValueCastException
 
 #include <new>
 
@@ -239,11 +240,11 @@ OW_CIMValue::createSimpleValue(const OW_String& cimtype,
 	int type = OW_CIMDataType::strToSimpleType(cimtype);
 	if(type == OW_CIMDataType::INVALID)
 	{
-		return OW_CIMValue();
+		return OW_CIMValue(OW_CIMNULL);
 	}
 
 	OW_CIMValueImpl impl = OW_CIMValueImpl::createSimpleValue(cimtype, value);
-	OW_CIMValue cv;
+	OW_CIMValue cv(OW_CIMNULL);
 	cv.m_impl = new OW_CIMValueImpl(impl);
 	return cv;
 }
@@ -265,8 +266,8 @@ OW_CIMValue::readObject(istream &istrm)
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue::OW_CIMValue()
-	: OW_CIMBase(), m_impl(NULL) { }
+OW_CIMValue::OW_CIMValue(OW_CIMNULL_t)
+	: OW_CIMBase(), m_impl(0) { }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue::OW_CIMValue(const OW_CIMValue& x)
@@ -630,7 +631,7 @@ void OW_CIMValue::get(OW_CIMInstanceArray& x) const
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath OW_CIMValue::toCIMObjectPath() const
 {
-	OW_CIMObjectPath rval;
+	OW_CIMObjectPath rval(OW_CIMNULL);
 	m_impl->get(rval);
 	return rval;
 }
@@ -2817,7 +2818,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::REFERENCE:
-				new(&m_obj) OW_CIMObjectPath;
+				new(&m_obj) OW_CIMObjectPath(OW_CIMNULL);
 				((OW_CIMObjectPath*)&m_obj)->readObject(istrm);
 				break;
 

@@ -271,7 +271,7 @@ public:
 
 	static OW_CIMObjectPath readObjectPath(std::istream& istrm)
 	{
-		OW_CIMObjectPath op;
+		OW_CIMObjectPath op(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_OP, op);
 		return op;
 	}
@@ -296,7 +296,7 @@ public:
 
 	static OW_CIMNameSpace readNameSpace(std::istream& istrm)
 	{
-		OW_CIMNameSpace ns;
+		OW_CIMNameSpace ns(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_NS, ns);
 		return ns;
 	}
@@ -321,7 +321,7 @@ public:
 
 	static OW_CIMQualifierType readQual(std::istream& istrm)
 	{
-		OW_CIMQualifierType qt;
+		OW_CIMQualifierType qt(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_QUAL, qt);
 		return qt;
 	}
@@ -329,7 +329,7 @@ public:
 
 	static OW_CIMValue readValue(std::istream& istrm)
 	{
-		OW_CIMValue value;
+		OW_CIMValue value(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_VALUE, value);
 		return value;
 	}

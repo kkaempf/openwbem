@@ -38,6 +38,7 @@
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMProperty class encapsulates all data and functionality petinent to
@@ -52,10 +53,13 @@ public:
 
 	/**
 	 * Create a new OW_CIMProperty object.
-	 * @param notNull if false, this object will not have any data or
-	 *		implementation associated with it.
 	 */
-	explicit OW_CIMProperty(OW_Bool notNull=false);
+	OW_CIMProperty();
+
+	/**
+	 * Create a NULL OW_CIMProperty object.
+	 */
+	explicit OW_CIMProperty(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMProperty object with a given name.

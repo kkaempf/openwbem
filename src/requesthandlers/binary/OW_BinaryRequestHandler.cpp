@@ -619,7 +619,7 @@ OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleIFCRef chdl,
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String propName(OW_BinIfcIO::readString(istrm));
 	OW_Bool isValue(OW_BinIfcIO::readBool(istrm));
-	OW_CIMValue cv;
+	OW_CIMValue cv(OW_CIMNULL);
 	if(isValue)
 	{
 		cv = OW_BinIfcIO::readValue(istrm);

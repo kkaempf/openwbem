@@ -288,7 +288,7 @@ OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
 			)
 		{
 			params.push_back(OW_CIMParamValue(parameterName,
-				OW_CIMValue()));
+				OW_CIMValue(OW_CIMNULL)));
 		}
 		else
 		{
@@ -349,13 +349,13 @@ namespace
 		param(const OW_String& name_,
 			bool optional_ = true,
 			Type type_ = STRING,
-			OW_CIMValue defaultVal_ = OW_CIMValue())
+			OW_CIMValue defaultVal_ = OW_CIMValue(OW_CIMNULL))
 			: name(name_)
 			, optional(optional_)
 			, type(type_)
 			, defaultVal(defaultVal_)
 			, isSet(false)
-			, val()
+			, val(OW_CIMNULL)
 		{}
 	};
 
@@ -676,7 +676,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	params.push_back(param(XMLP_RESULTROLE, true, param::STRING, OW_CIMValue("")));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(false)));
 	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, OW_CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 
 	getParameterValues(parser, params);
 
@@ -1014,7 +1014,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_DEEP, true, param::BOOLEAN, OW_CIMValue(true)));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(false)));
 	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, OW_CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 
 	getParameterValues(parser, params);
 
@@ -1085,7 +1085,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, OW_CIMValue(true)));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
 	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, OW_CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 
 	getParameterValues(parser, params);
 
@@ -1129,7 +1129,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, OW_CIMValue(true)));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(false)));
 	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, OW_CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 
 	getParameterValues(parser, params);
 
@@ -1153,7 +1153,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		includeQualifiers, includeClassOrigin,
 		pPropList);
 
-	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(),
+	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
 		OW_CIMtoXMLFlags::isNotInstanceName,
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
 		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
@@ -1226,7 +1226,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_Array<param> params;
 	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 	
 	getParameterValues(parser, params);
 	
@@ -1284,7 +1284,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_ROLE, true, param::STRING, OW_CIMValue("")));
 	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(false)));
 	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, OW_CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue()));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
 
 	getParameterValues(parser, params);
 
@@ -1413,7 +1413,7 @@ OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	parser.mustGetChild(
 		OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
 	
-	OW_CIMQualifierType cimQualifier(OW_Bool(true));
+	OW_CIMQualifierType cimQualifier;
 	OW_XMLQualifier::processQualifierDecl(parser, cimQualifier);
 
 	hdl.setQualifierType(ns, cimQualifier);

@@ -96,6 +96,12 @@ private:
 
 	struct registrationInfo
 	{
+		registrationInfo()
+			: handler(OW_CIMNULL)
+			, filter(OW_CIMNULL)
+			, subscription(OW_CIMNULL)
+		{}
+
 		OW_URL cimomUrl;
 		OW_String ns;
 		OW_CIMObjectPath handler;

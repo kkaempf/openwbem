@@ -36,6 +36,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMQualifierType class encapsulates the data and functionality
@@ -48,10 +49,13 @@ public:
 
 	/**
 	 * Create a new OW_CIMQualifierType object.
-	 * @param notNull If false, this object will not have any data or
-	 * 	implementation associated with it.
 	 */
-	explicit OW_CIMQualifierType(OW_Bool notNull=OW_Bool(false));
+	OW_CIMQualifierType();
+
+	/**
+	 * Create a NULL OW_CIMQualifierType object.
+	 */
+	explicit OW_CIMQualifierType(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMQualifierType with a given name.

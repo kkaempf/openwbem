@@ -37,6 +37,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMOMObjectPath class represents the location of CIM classes and
@@ -66,10 +67,13 @@ public:
 
 	/**
 	 * Create a new OW_CIMObjectPath object.
-	 * @param notNull If false, this object will not have any implementation or
-	 *		data associated with it (NULL Object).
 	 */
-	explicit OW_CIMObjectPath(OW_Bool notNull=OW_Bool(false));
+	OW_CIMObjectPath();
+
+	/**
+	 * Create a NULL OW_CIMObjectPath object.
+	 */
+	explicit OW_CIMObjectPath(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMObjectPath to access the specified object

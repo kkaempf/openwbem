@@ -57,7 +57,7 @@ OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstan
 	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
 	sendXMLHeader(*iostr);
 	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
-	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(),
+	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(OW_CIMNULL),
 		OW_CIMtoXMLFlags::isNotInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,

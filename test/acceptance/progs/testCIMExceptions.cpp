@@ -1124,7 +1124,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
-        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue(OW_CIMNULL)));
         in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));
         OW_UInt8Array uint8array;
         in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));
@@ -1144,7 +1144,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
-        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue(OW_CIMNULL)));
         in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));
         OW_StringArray sarray;
         sarray.push_back("x");
@@ -1165,7 +1165,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
-        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+        in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue(OW_CIMNULL)));
         in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));
         OW_UInt8Array uint8array;
         in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));

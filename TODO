@@ -17,10 +17,6 @@ Testing:
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
-    - Make it harder to create NULL CIM objects.  Remove the bool constructor
-      and add a explicit void* constructor.  (e.g. OW_CIMClass c; wouldn't
-      be NULL.  To create a NULL OW_CIMClass, you'd have to say 
-      OW_CIMClass c(NULL);)
     - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Man pages aren't getting included in the rpm.
     - Fix memory leak in npi.

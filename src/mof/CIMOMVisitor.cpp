@@ -43,11 +43,7 @@
 
 CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns,
 		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler)
-: m_curClass()
-, m_curInstance()
-, m_curValue()
-, m_curProperty(OW_Bool(true))
-, m_curMethod(OW_Bool(true))
+: m_curValue(OW_CIMNULL)
 , m_hdl(handle)
 , m_namespace(ns)
 , theErrorHandler(_theErrorHandler)
@@ -388,7 +384,7 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 		}
 		else
 		{
-			m_curQualifier.setValue(OW_CIMValue());
+			m_curQualifier.setValue(OW_CIMValue(OW_CIMNULL));
 		}
 	}
 
@@ -788,7 +784,7 @@ OW_CIMValue CIMOMVisitor::convertValuesIntoValueArray( const OW_CIMValueArray& v
 			return doArrayConversion(temp, values);
 		}
 	}
-	return OW_CIMValue();
+	return OW_CIMValue(OW_CIMNULL);
 }
 
 
@@ -999,7 +995,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 
 				if (castValue.getType() == OW_CIMDataType::REFERENCE)
 				{
-					OW_CIMObjectPath cop;
+					OW_CIMObjectPath cop(OW_CIMNULL);
 					castValue.get(cop);
 					if (cop)
 					{
@@ -1227,6 +1223,6 @@ OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualNam
 	{
 		theErrorHandler->fatalError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
 	}
-	return OW_CIMQualifierType(true);
+	return OW_CIMQualifierType();
 }
 

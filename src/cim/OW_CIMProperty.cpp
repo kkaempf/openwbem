@@ -69,7 +69,7 @@ struct OW_CIMProperty::PROPData
 };
 
 OW_CIMProperty::PROPData::PROPData() :
-	m_sizeDataType(-1), m_propagated(false)
+	m_sizeDataType(-1), m_cimValue(OW_CIMNULL), m_propagated(false)
 {
 }
 
@@ -105,9 +105,16 @@ bool operator<(const OW_CIMProperty::PROPData& x, const OW_CIMProperty::PROPData
 	}
 	return x.m_name < y.m_name;
 }
+
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMProperty::OW_CIMProperty(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new PROPData : NULL)
+OW_CIMProperty::OW_CIMProperty() :
+	OW_CIMElement(), m_pdata(new PROPData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMProperty::OW_CIMProperty(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
 {
 }
 
@@ -176,7 +183,7 @@ OW_CIMProperty
 OW_CIMProperty::clone(OW_Bool includeQualifier,
 	OW_Bool includeClassOrigin) const
 {
-	OW_CIMProperty cp(OW_Bool(true));
+	OW_CIMProperty cp;
 
 	if(includeQualifier)
 	{
@@ -331,7 +338,7 @@ OW_CIMProperty::getQualifier(const OW_String& name) const
 		}
 	}
 
-	return OW_CIMQualifier();
+	return OW_CIMQualifier(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -421,10 +428,10 @@ OW_CIMProperty::filter(OW_Bool localOnly, OW_Bool includeQualifiers) const
 	//
 	if(localOnly && m_pdata->m_propagated)
 	{
-		return OW_CIMProperty();
+		return OW_CIMProperty(OW_CIMNULL);
 	}
 
-	OW_CIMProperty cp(OW_Bool(true));
+	OW_CIMProperty cp;
 	cp.m_pdata->m_propertyDataType = m_pdata->m_propertyDataType;
 	cp.m_pdata->m_sizeDataType = m_pdata->m_sizeDataType;
 	cp.m_pdata->m_name = m_pdata->m_name;
@@ -525,7 +532,7 @@ OW_CIMProperty::readObject(istream &istrm)
 	OW_String name;
 	OW_String override;
 	OW_String originClass;
-	OW_CIMValue cimValue;
+	OW_CIMValue cimValue(OW_CIMNULL);
 	OW_CIMDataType propertyDataType(OW_CIMNULL);
 	OW_Int32 sizeDataType;
 	OW_Bool propagated;

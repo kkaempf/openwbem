@@ -124,6 +124,10 @@ private:
 
 	struct Subscription
 	{
+		Subscription()
+			: m_subPath(OW_CIMNULL)
+		{}
+
 		OW_CIMObjectPath m_subPath;
 	};
 

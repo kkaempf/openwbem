@@ -51,8 +51,11 @@ static void writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
 static void readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
 
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbEntry::OW_AssocDbEntry(istream& istrm) :
-	m_offset(-1L)
+OW_AssocDbEntry::OW_AssocDbEntry(istream& istrm) 
+	: m_objectName(OW_CIMNULL)
+	, m_associatedObject(OW_CIMNULL)
+	, m_associationPath(OW_CIMNULL)
+	, m_offset(-1L)
 {
 	readObject(istrm);
 }
@@ -255,13 +258,13 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& 
 				{
 					// found a second reference, now set up the vars we need
 					// and create index entries.
-					OW_CIMObjectPath objectName;
+					OW_CIMObjectPath objectName(OW_CIMNULL);
 					propValue1.get(objectName);
 					if (objectName.getNameSpace().empty())
 					{
 						objectName.setNameSpace(ns);
 					}
-					OW_CIMObjectPath associatedObject;
+					OW_CIMObjectPath associatedObject(OW_CIMNULL);
 					propValue2.get(associatedObject);
 					if (associatedObject.getNameSpace().empty())
 					{

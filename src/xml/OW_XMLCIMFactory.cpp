@@ -149,7 +149,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 	// <!ATTLIST INSTANCENAME %ClassName;>
 
 	OW_CIMPropertyArray propertyArray;
-	OW_CIMProperty cp;
+	OW_CIMProperty cp(OW_CIMNULL);
 
 	OW_ASSERT(parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME));
 
@@ -168,7 +168,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 			// <!ATTLIST KEYVALUE
 			//          VALUETYPE    (string|boolean|numeric)  'string'>
 
-			OW_CIMValue value;
+			OW_CIMValue value(OW_CIMNULL);
 			OW_String name;
 			OW_CIMXMLParser keyval;
 
@@ -197,8 +197,8 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 
 	else if (parser.tokenIs(OW_CIMXMLParser::E_KEYVALUE))
 	{
-		OW_CIMValue value;
-		cp = OW_CIMProperty(OW_Bool(true));
+		OW_CIMValue value(OW_CIMNULL);
+		cp = OW_CIMProperty();
 		getKeyValue(parser,value);
 		cp.setDataType(value.getCIMDataType());
 		cp.setValue(value);
@@ -207,7 +207,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 	else if (parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
 	{
 		OW_CIMValue value = OW_XMLCIMFactory::createValue(parser, "REF");
-		cp = OW_CIMProperty(OW_Bool(true));
+		cp = OW_CIMProperty();
 		cp.setDataType(OW_CIMDataType::REFERENCE);
 		cp.setValue(value);
 		propertyArray.push_back(cp);
@@ -227,7 +227,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 OW_CIMObjectPath
 OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 {
-	OW_CIMObjectPath rval(true);
+	OW_CIMObjectPath rval;
 
 	int token = parser.getToken();
 
@@ -473,7 +473,7 @@ OW_CIMValue
 OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 	OW_String const& valueType)
 {
-	OW_CIMValue rval;
+	OW_CIMValue rval(OW_CIMNULL);
 	try
 	{
 	
@@ -649,7 +649,7 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 	
 					while(parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
 					{
-						OW_CIMObjectPath cop(OW_Bool(true));
+						OW_CIMObjectPath cop(OW_CIMNULL);
 						OW_CIMValue v = createValue(parser, valueType);
 						v.get(cop);
 	
@@ -682,7 +682,7 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 		// Workaround for SNIA client which sends <VALUE>NULL</VALUE> for NULL values
 		if (parser.getData().equalsIgnoreCase("NULL"))
 		{
-			rval = OW_CIMValue();
+			rval = OW_CIMValue(OW_CIMNULL);
 			parser.getNextTag();
 			parser.mustGetEndTag(); // pass <VALUE.REFARRAY>
 		}
@@ -703,8 +703,6 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not qualifier XML");
 	}
-
-	OW_CIMQualifier rval(true);
 
 	OW_CIMDataType dt(OW_CIMNULL);
 
@@ -737,10 +735,11 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 			format("Qualifier not assigned a data type: %1", name).c_str());
 	}
 
-	OW_CIMQualifierType cqt(OW_Bool(true));
+	OW_CIMQualifierType cqt;
 	cqt.setDataType(dt);
 	cqt.setName(name);
-	rval = OW_CIMQualifier(cqt);
+	
+	OW_CIMQualifier rval(cqt);
 
 	if(overridable.equalsIgnoreCase("false"))
 	{
@@ -793,8 +792,6 @@ OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not method XML");
 	}
 
-	OW_CIMMethod rval(true);
-
 	OW_String methodName = parser.mustGetAttribute(OW_XMLParameters::paramName);
 	OW_String cimType = parser.getAttribute(OW_XMLParameters::paramTypeAssign);
 
@@ -811,6 +808,8 @@ OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"No method name in XML");
 	}
+
+	OW_CIMMethod rval;
 
 	//
 	// If no return data type, then method returns nothing (void)
@@ -855,7 +854,7 @@ OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 static OW_CIMValue
 convertXMLtoEmbeddedObject(const OW_String& str)
 {
-	OW_CIMValue rval;
+	OW_CIMValue rval(OW_CIMNULL);
 	// try to convert the string to an class or instance
 	OW_TempFileStream ostr;
 	ostr << str;
@@ -944,8 +943,6 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "not property XML");
 	}
 
-	OW_CIMProperty rval(true);
-
 	OW_String superClassName;
 	OW_String inClassName;
 
@@ -955,7 +952,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 		OW_XMLParameters::paramClassOrigin);
 	OW_String propagate = parser.getAttribute(OW_XMLParameters::paramPropagated);
 
-	rval.setName(propName);
+	OW_CIMProperty rval(propName);
 
 	//
 	// If no return data type, then property isn't properly defined
@@ -1130,12 +1127,10 @@ OW_XMLCIMFactory::createParameter(OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not parameter XML");
 	}
 	
-	OW_CIMParameter rval(true);
-
 	//
 	// Fetch name
 	//
-	rval.setName(parser.mustGetAttribute(OW_XMLParameters::paramName));
+	OW_CIMParameter rval(parser.mustGetAttribute(OW_XMLParameters::paramName));
 	
 	//
 	// Get parameter type

@@ -784,7 +784,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				for (size_t i = 0; i < ia.size(); ++i)
 				{
 					OW_StringStream ss;
-					OW_CIMtoXML(ia[i],ss,OW_CIMObjectPath(),
+					OW_CIMtoXML(ia[i],ss,OW_CIMObjectPath(OW_CIMNULL),
 						OW_CIMtoXMLFlags::isNotInstanceName,
 						OW_CIMtoXMLFlags::notLocalOnly,
 						OW_CIMtoXMLFlags::includeQualifiers,
@@ -802,7 +802,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 	else if(cv.getType() == OW_CIMDataType::REFERENCE)
 	{
 		out << "<VALUE.REFERENCE>";
-		OW_CIMObjectPath a;
+		OW_CIMObjectPath a(OW_CIMNULL);
 		cv.get(a);
 		OW_CIMtoXML(a, out, OW_CIMtoXMLFlags::isNotInstanceName);
 		out << "</VALUE.REFERENCE>";
@@ -946,7 +946,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				cv.get(i);
 				OW_String s;
 				OW_StringStream ss;
-				OW_CIMtoXML(i,ss,OW_CIMObjectPath(),
+				OW_CIMtoXML(i,ss,OW_CIMObjectPath(OW_CIMNULL),
 					OW_CIMtoXMLFlags::isNotInstanceName,
 					OW_CIMtoXMLFlags::notLocalOnly,
 					OW_CIMtoXMLFlags::includeQualifiers,

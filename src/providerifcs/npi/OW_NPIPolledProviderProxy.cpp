@@ -53,7 +53,7 @@ OW_NPIPolledProviderProxy::getInitialPollingInterval(
 OW_Int32
 OW_NPIPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
-        OW_CIMValue rval;
+        OW_CIMValue rval(OW_CIMNULL);
 
         env->getLogger()->
             logDebug("OW_NPIPolledProviderIFC::poll()");

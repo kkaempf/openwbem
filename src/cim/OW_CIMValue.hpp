@@ -34,24 +34,11 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
-#include "OW_Exception.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMDataType.hpp"
+#include "OW_CIMNULL.hpp"
 
-
-//////////////////////////////////////////////////////////////////////////////
-class OW_ValueCastException : public OW_Exception
-{
-public:
-	OW_ValueCastException() : OW_Exception() {}
-	OW_ValueCastException(const char* file, int line, const char* msg)
-	: OW_Exception(file, line, msg) {}
-	OW_ValueCastException(const char* msg) : OW_Exception(msg)
-		{  }
-	virtual const char* type() const
-		{  return "OW_ValueCastException"; }
-};
 
 /**
  * The OW_CIMValue class is an abstraction for all CIM data types.
@@ -74,9 +61,9 @@ public:
 		const OW_String& value);
 
 	/**
-	 * Create a new OW_CIMValue object without any data or implementation.
+	 * Create a new NULL OW_CIMValue object without any data or implementation.
 	 */
-	OW_CIMValue();
+	explicit OW_CIMValue(OW_CIMNULL_t);
 
 	/**
 	 * Copy constructor
@@ -481,7 +468,7 @@ public:
 	 */
 	void get(OW_CIMInstanceArray& x) const;
 
-	// TODO: Have these function call ValueCast?
+	// TODO: Have these functions call ValueCast?
 	OW_CIMObjectPath toCIMObjectPath() const;
 	OW_StringArray toStringArray() const;
 	OW_Bool toBool() const;

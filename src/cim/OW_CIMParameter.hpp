@@ -37,6 +37,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMNULL.hpp"
 
 /**
  * The OW_CIMParameter class encapsulates all data and functionality pertinent
@@ -47,12 +48,16 @@ class OW_CIMParameter : public OW_CIMElement
 public:
 
 	struct PARMData;
+
 	/**
 	 * Create a new OW_CIMParameter object.
-	 * @param notNull If false, this object will not have any data or
-	 *		implementation associated with it.
 	 */
-	explicit OW_CIMParameter(OW_Bool notNull=false);
+	OW_CIMParameter();
+
+	/**
+	 * Create a NULL OW_CIMParameter object.
+	 */
+	explicit OW_CIMParameter(OW_CIMNULL_t);
 
 	/**
 	 * Create an OW_CIMParameter object with a given name.

@@ -48,7 +48,7 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String &methodName,
     const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
 {
-        OW_CIMValue rval;
+        OW_CIMValue rval(OW_CIMNULL);
 
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::invokeMethod()");

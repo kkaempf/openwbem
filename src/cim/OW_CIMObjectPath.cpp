@@ -51,11 +51,6 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMObjectPath::OPData
 {
-	OPData() :
-		m_nameSpace(OW_Bool(true))
-	{
-	}
-
 	OW_CIMNameSpace m_nameSpace;
 	OW_String m_objectName;
 	OW_CIMPropertyArray m_keys;
@@ -64,8 +59,14 @@ struct OW_CIMObjectPath::OPData
 };
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath::OW_CIMObjectPath(OW_Bool notNull) :
-	OW_CIMBase(), m_pdata((notNull) ?  new OPData : 0)
+OW_CIMObjectPath::OW_CIMObjectPath() :
+	OW_CIMBase(), m_pdata(new OPData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath::OW_CIMObjectPath(OW_CIMNULL_t) :
+	OW_CIMBase(), m_pdata(0)
 {
 }
 
@@ -180,7 +181,7 @@ OW_CIMObjectPath::getKey(const OW_String& keyName) const
 			return m_pdata->m_keys[i];
 		}
 	}
-	return OW_CIMProperty();
+	return OW_CIMProperty(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -399,7 +400,7 @@ OW_CIMObjectPath::toMOF() const
 void
 OW_CIMObjectPath::readObject(istream& istrm)
 {
-	OW_CIMNameSpace nameSpace;
+	OW_CIMNameSpace nameSpace(OW_CIMNULL);
 	OW_String objectName;
 	OW_CIMPropertyArray keys;
 
@@ -436,7 +437,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 	instanceName.trim();
 	if(instanceName.empty())
 	{
-		return OW_CIMObjectPath();
+		return OW_CIMObjectPath(OW_CIMNULL);
 	}
 
 	OW_String protocol = "HTTP";
@@ -503,9 +504,9 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 	OW_CIMUrl url(protocol, host, OW_String(), port);
 	OW_CIMNameSpace ns(url, nameSpace);
 
-	OW_CIMObjectPath op(true);
+	OW_CIMObjectPath op(className);
 	op.m_pdata->m_nameSpace = ns;
-	op.m_pdata->m_objectName = className;
+	//op.m_pdata->m_objectName = className;
 
 	int valuesLen = instanceName.length();
 
@@ -617,8 +618,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 			equalspos = 0;
 			keystart = i;
 
-			OW_CIMProperty cp(true);
-			cp.setName(keyprop);
+			OW_CIMProperty cp(keyprop);
 			cp.setValue(OW_CIMValue(keyvalue));
 			cp.setDataType(OW_CIMDataType::STRING);
 			tmpkeys.append(cp);

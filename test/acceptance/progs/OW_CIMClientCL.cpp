@@ -141,7 +141,7 @@ createClass(OW_CIMClient& hdl, const OW_String& name)
 			name = zargs[i];
 			type = zargs[i + 1];
 			isKey = zargs[i + 2];
-			OW_CIMProperty cimProp(OW_Bool(true));
+			OW_CIMProperty cimProp;
 			if (type.equals("string"))
 			{
 				cimProp.setDataType(OW_CIMDataType::STRING);
@@ -330,7 +330,7 @@ modifyClass(OW_CIMClient& hdl)
 			OW_StringArray());
 		cout << OW_XMLPrettyPrint(tfs);
 
-		OW_CIMProperty cimProp(OW_Bool(true));
+		OW_CIMProperty cimProp;
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
@@ -661,7 +661,7 @@ enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, OW_Bool deep, OW_Bool l
 			OW_CIMInstance i = enu.nextElement();
 			cout << i.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(i,tfs, OW_CIMObjectPath(),
+			OW_CIMtoXML(i,tfs, OW_CIMObjectPath(OW_CIMNULL),
 				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
@@ -701,7 +701,7 @@ getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 		OW_CIMInstance in = hdl.getInstance( cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
 		OW_TempFileStream tfs;
-		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(),
+		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(OW_CIMNULL),
 			OW_CIMtoXMLFlags::isNotInstanceName,
 			OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
@@ -1058,7 +1058,7 @@ associators(OW_CIMClient& hdl, const OW_String& assocClass,
 		{
 			cout << "Association Instance: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(),
+			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(OW_CIMNULL),
 				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
@@ -1229,7 +1229,7 @@ references(OW_CIMClient& hdl,
 		{
 			cout << "Association Instance: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(),
+			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(OW_CIMNULL),
 				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
@@ -1310,7 +1310,7 @@ execQuery(OW_CIMClient& hdl)
 			OW_CIMInstance i = cie.nextElement();
 			cout << "Instance from Query: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(i, tfs, OW_CIMObjectPath(),
+			OW_CIMtoXML(i, tfs, OW_CIMObjectPath(OW_CIMNULL),
 				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
@@ -1379,7 +1379,7 @@ prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
 
 	// These are out of order on purpose, to test that the CIMOM will order them correctly.
 	in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
-	in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+	in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue(OW_CIMNULL)));
 	in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));
 	OW_UInt8Array uint8array;
 	uint8array.push_back(1);
@@ -1411,7 +1411,7 @@ invokeMethod(OW_CIMClient& hdl, int num)
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
-		OW_CIMValue cv;
+		OW_CIMValue cv(OW_CIMNULL);
 		switch (num)
 		{
 			case 1:

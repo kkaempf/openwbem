@@ -40,9 +40,10 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMQualifier::QUALData
 {
-	QUALData() :
-		m_qualifierType(OW_Bool(true)),
-		m_propagated(false) {}
+	QUALData() 
+		: m_qualifierValue(OW_CIMNULL)
+		, m_propagated(false) 
+	{}
 
 	OW_String m_name;
 	OW_CIMValue m_qualifierValue;
@@ -76,8 +77,14 @@ bool operator<(const OW_CIMQualifier::QUALData& x, const OW_CIMQualifier::QUALDa
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new QUALData : NULL)
+OW_CIMQualifier::OW_CIMQualifier() :
+	OW_CIMElement(), m_pdata(new QUALData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifier::OW_CIMQualifier(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
 {
 }
 
@@ -300,8 +307,8 @@ void
 OW_CIMQualifier::readObject(istream &istrm)
 {
 	OW_String name;
-	OW_CIMValue qualifierValue;
-	OW_CIMQualifierType qualifierType;
+	OW_CIMValue qualifierValue(OW_CIMNULL);
+	OW_CIMQualifierType qualifierType(OW_CIMNULL);
 	OW_Bool propagated;
 	OW_CIMFlavorArray flavors;
 	OW_Bool isValue;

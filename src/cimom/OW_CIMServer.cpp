@@ -1094,7 +1094,7 @@ OW_CIMServer::createInstance(
 					"Association has a NULL reference");
 			}
 
-			OW_CIMObjectPath op;
+			OW_CIMObjectPath op(OW_CIMNULL);
 			cv.get(op);
 
 			if(!op)
@@ -1304,7 +1304,6 @@ OW_CIMServer::invokeMethod(
 	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, ns, aclInfo);
 
 	OW_ACLInfo intAclInfo;
-	OW_CIMMethod method;
 
 	OW_CIMClass cc = _getClass(ns, path.getObjectName(),false,true,true,0,intAclInfo);
 
@@ -1321,13 +1320,13 @@ OW_CIMServer::invokeMethod(
 	}
 
 	// Get the method from the class definition
-	method = cc.getMethod(methodName);
+	OW_CIMMethod method = cc.getMethod(methodName);
 	if(!method)
 	{
 		OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND, methodName.c_str());
 	}
 
-	OW_CIMValue cv;
+	OW_CIMValue cv(OW_CIMNULL);
 	OW_MethodProviderIFCRef methodp;
 
 	try

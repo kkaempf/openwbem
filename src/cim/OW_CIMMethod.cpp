@@ -90,8 +90,14 @@ bool operator<(const OW_CIMMethod::METHData& x, const OW_CIMMethod::METHData& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new METHData : NULL)
+OW_CIMMethod::OW_CIMMethod() :
+	OW_CIMElement(), m_pdata(new METHData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////													
+OW_CIMMethod::OW_CIMMethod(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
 {
 }
 
@@ -169,7 +175,7 @@ OW_CIMMethod::getQualifier(const OW_String& name) const
 			return nq;
 		}
 	}
-	return OW_CIMQualifier();
+	return OW_CIMQualifier(OW_CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -280,10 +286,10 @@ OW_CIMMethod::clone(OW_Bool includeQualifiers,
 {
 	if(m_pdata.isNull())
 	{
-		return OW_CIMMethod();
+		return OW_CIMMethod(OW_CIMNULL);
 	}
 
-	OW_CIMMethod theMethod(true);
+	OW_CIMMethod theMethod;
 	theMethod.m_pdata->m_name = m_pdata->m_name;
 	theMethod.m_pdata->m_returnDatatype = m_pdata->m_returnDatatype;
 	theMethod.m_pdata->m_parameters = m_pdata->m_parameters;

@@ -35,6 +35,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMNULL.hpp"
 #include <iosfwd>
 
 class OW_CIMParamValue : public OW_CIMBase
@@ -47,6 +48,11 @@ public:
 	 * Create an OW_CIMParamValue
 	 */
 	OW_CIMParamValue();
+
+	/**
+	 * Create a null OW_CIMParamValue
+	 */
+	explicit OW_CIMParamValue(OW_CIMNULL_t);
 
 	/**
 	 * Create a new OW_CIMParamValue object.
