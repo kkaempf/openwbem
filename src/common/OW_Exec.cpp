@@ -186,7 +186,7 @@ int PopenStreamsImpl::getExitStatus()
 	in()->close();
 	out()->close();
 	err()->close();
-	// Now make sure the process has exited. We do everything possible to make 
+	// Now make sure the process has exited. We do everything possible to make
 	// sure the sub-process dies.
 	if (m_pid != -1) // it's set to -1 if we already sucessfully waited for it.
 	{
@@ -345,6 +345,12 @@ PopenStreams& PopenStreams::operator=(const PopenStreams& src)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+bool operator==(const PopenStreams& x, const PopenStreams& y)
+{
+	return x.m_impl == y.m_impl;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 namespace Exec
 {
 
@@ -454,8 +460,8 @@ safePopen(const Array<String>& command,
 		UnnamedPipeRef foo3 = retval.err();
 		PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
 		
-		OW_ASSERT(in); 
-		OW_ASSERT(out); 
+		OW_ASSERT(in);
+		OW_ASSERT(out);
 		OW_ASSERT(err);
 		// connect stdin, stdout, and stderr to the return pipes.
 		dup2(in->getInputHandle(), 0);
@@ -466,14 +472,14 @@ safePopen(const Array<String>& command,
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 		{
-		  if ( i < 0 )
-		  {
-		    i = rl.rlim_max;
-		  }
-		  else
-		  {
-		    i = std::min<int>(rl.rlim_max, i);
-		  }
+			if ( i < 0 )
+			{
+				i = rl.rlim_max;
+			}
+			else
+			{
+				i = std::min<int>(rl.rlim_max, i);
+			}
 		}
 		while (i > 2)
 		{
@@ -498,8 +504,8 @@ safePopen(const Array<String>& command,
 	PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
 	UnnamedPipeRef foo3 = retval.err();	
 	PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
-	OW_ASSERT(in); 
-	OW_ASSERT(out); 
+	OW_ASSERT(in);
+	OW_ASSERT(out);
 	OW_ASSERT(err);
 	// prevent the parent from using the child's end of the pipes.
 	in->closeInputHandle();
@@ -509,7 +515,7 @@ safePopen(const Array<String>& command,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 executeProcessAndGatherOutput(const Array<String>& command,
 	String& output, int& processstatus,
 	int timeoutsecs, int outputlimit)
@@ -525,7 +531,7 @@ executeProcessAndGatherOutput(const Array<String>& command,
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
 {
 	bool outIsOpen = true;
@@ -654,6 +660,191 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+OutputCallback::~OutputCallback()
+{
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+OutputCallback::handleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex)
+{
+	doHandleData(data, dataLen, theStream, streamIndex);
+}
+
+namespace
+{
+	struct ProcessOutputState
+	{
+		bool outIsOpen;
+		bool errIsOpen;
+
+		ProcessOutputState()
+			: outIsOpen(true)
+			, errIsOpen(true)
+		{
+		}
+	};
+
+}
+/////////////////////////////////////////////////////////////////////////////
+void
+gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, int timeoutsecs)
+{
+	processStatuses.clear();
+	processStatuses.resize(streams.size());
+
+	Array<ProcessOutputState> processStates(streams.size());
+	int numOpenPipes(streams.size() * 2); // count of stdout & stderr
+
+	DateTime curTime;
+	curTime.setToCurrent();
+	DateTime timeoutEnd(curTime);
+	timeoutEnd += timeoutsecs;
+
+	while (numOpenPipes > 0)
+	{
+		SelectTypeArray fdset;
+		for (size_t i = 0; i < streams.size(); ++i)
+		{
+			if (processStates[i].outIsOpen)
+			{
+				fdset.push_back(streams[i].out()->getSelectObj());
+			}
+			if (processStates[i].errIsOpen)
+			{
+				fdset.push_back(streams[i].err()->getSelectObj());
+			}
+
+			// check if the child has exited - the pid gets set to -1 once it's exited.
+			if (streams[i].pid() != -1)
+			{
+				pid_t waitpidrv;
+				int processStatus(-1);
+				waitpidrv = waitpidNoINTR(streams[i].pid(), &processStatus, WNOHANG);
+				if (waitpidrv == -1)
+				{
+					OW_THROW(ExecErrorException, Format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+				}
+				else if (waitpidrv != 0)
+				{
+					streams[i].pid(-1);
+					streams[i].setProcessStatus(processStatus);
+					processStatuses[i] = ProcessStatus(processStatus);
+				}
+			}
+		}
+
+		const int mstimeout = 100; // use 1/10 of a second
+		int selectrval = Select::select(fdset, mstimeout);
+		switch (selectrval)
+		{
+			case Select::SELECT_INTERRUPTED:
+				// if we got interrupted, just try again
+				break;
+			case Select::SELECT_ERROR:
+			{
+				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+			}
+			break;
+			case Select::SELECT_TIMEOUT:
+			{
+				// Check all processes and see if they've exited but the pipes are still open. If so, close the pipes,
+				// since there's nothing to read from them.
+				for (size_t i = 0; i < streams.size(); ++i)
+				{
+					if (streams[i].pid() == -1)
+					{
+						streams[i].in()->close();
+						if (processStates[i].outIsOpen)
+						{
+							processStates[i].outIsOpen = false;
+							streams[i].out()->close();
+							--numOpenPipes;
+						}
+						if (processStates[i].errIsOpen)
+						{
+							processStates[i].errIsOpen = false;
+							streams[i].err()->close();
+							--numOpenPipes;
+						}
+					}
+				}
+
+				curTime.setToCurrent();
+				if (timeoutsecs >= 0 && curTime > timeoutEnd)
+				{
+					OW_THROW(ExecTimeoutException, "Exec::gatherOutput: timedout");
+				}
+			}
+			break;
+			default:
+			{
+				// reset the timeout counter
+				curTime.setToCurrent();
+				timeoutEnd = curTime;
+				timeoutEnd += timeoutsecs;
+
+				for (size_t i = 0; i < streams.size(); ++i)
+				{
+					UnnamedPipeRef readstream;
+					if (processStates[i].outIsOpen)
+					{
+						if (streams[i].out()->getSelectObj() == fdset[selectrval])
+						{
+							readstream = streams[i].out();
+						}
+					}
+
+					if (!readstream && processStates[i].errIsOpen)
+					{
+						if (streams[i].err()->getSelectObj() == fdset[selectrval])
+						{
+							readstream = streams[i].err();
+						}
+					}
+
+					if (!readstream)
+					{
+						continue; // for loop
+					}
+
+					char buff[1024];
+					int readrc = readstream->read(buff, sizeof(buff) - 1);
+					if (readrc == 0)
+					{
+						if (readstream == streams[i].out())
+						{
+							processStates[i].outIsOpen = false;
+							streams[i].out()->close();
+						}
+						else
+						{
+							processStates[i].errIsOpen = false;
+							streams[i].err()->close();
+						}
+						--numOpenPipes;
+					}
+					else if (readrc == -1)
+					{
+						OW_THROW(ExecErrorException, Format("Exec::gatherOutput: read error: %1(%2)", errno, strerror(errno)).c_str());
+					}
+					else
+					{
+						buff[readrc] = '\0';
+						output.handleData(buff, readrc, streams[i], i);
+					}
+
+					break; // for loop - doesn't make sense to keep going, since we can only process one fd per call to select.
+				}
+			}
+			break;
+		}
+	}
+}
+
 
 } // end namespace Exec
 } // end namespace OpenWBEM

@@ -37,12 +37,17 @@
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
+#include "OW_Format.hpp"
+
+#include <utility> // for pair
+#include <cassert>
 
 #if defined(OW_HAVE_SYS_WAIT_H) && defined(OW_WIFEXITED_NEEDS_WAIT_H)
 #include <sys/wait.h>
 #endif
 
 using namespace OpenWBEM;
+using namespace std;
 
 void OW_ExecTestCases::setUp()
 {
@@ -143,17 +148,119 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 
 }
 
+class TestOutputGatherer : public Exec::OutputCallback
+{
+public:
+	TestOutputGatherer(Array<pair<PopenStreams, String> >& outputs)
+		: m_outputs(outputs)
+	{
+	}
+private:
+	virtual void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex)
+	{
+		assert(m_outputs[streamIndex].first == theStream); // too bad we can't do unitAssert...
+		m_outputs[streamIndex].second += String(data, dataLen);
+	}
+
+	Array<pair<PopenStreams, String> >& m_outputs;
+};
+
+void OW_ExecTestCases::testgatherOutput()
+{
+	{
+		Array<PopenStreams> streams;
+		Array<pair<PopenStreams, String> > outputs;
+		const int TEST_PROC_COUNT = 5;
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			PopenStreams curStream(Exec::safePopen(String(String("/bin/echo ") + String(i)).tokenize()));
+			streams.push_back(curStream);
+			outputs.push_back(make_pair(curStream, String()));
+		}
+
+		TestOutputGatherer testOutputGatherer(outputs);
+		Array<Exec::ProcessStatus> processStatuses;
+		gatherOutput(testOutputGatherer, streams, processStatuses, Exec::INFINITE_TIMEOUT);
+		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			int exitStatus = streams[i].getExitStatus();
+			if (processStatuses[i].hasExited())
+			{
+				unitAssert(exitStatus == processStatuses[i].getStatus());
+			}
+			unitAssert(WIFEXITED(exitStatus));
+			unitAssert(WEXITSTATUS(exitStatus) == 0);
+			unitAssert(outputs[i].second == String(i) + "\n");
+		}
+	}
+
+	{
+		Array<PopenStreams> streams;
+		Array<pair<PopenStreams, String> > outputs;
+		const int TEST_PROC_COUNT = 4;
+		const int TEST_TIMEOUT = 2;
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			StringArray cmd;
+			cmd.push_back("/bin/sh");
+			cmd.push_back("-c");
+			cmd.push_back(Format("sleep %1; echo before; sleep %2; echo after", i, i * i));
+			PopenStreams curStream(Exec::safePopen(cmd));
+			streams.push_back(curStream);
+			outputs.push_back(make_pair(curStream, String()));
+		}
+
+		TestOutputGatherer testOutputGatherer(outputs);
+		Array<Exec::ProcessStatus> processStatuses;
+		try
+		{
+			gatherOutput(testOutputGatherer, streams, processStatuses, TEST_TIMEOUT);
+			unitAssert(0);
+		}
+		catch (ExecTimeoutException& e)
+		{
+		}
+		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			int exitStatus = streams[i].getExitStatus();
+			if (i * i + i < TEST_TIMEOUT + TEST_PROC_COUNT) // all the ones that finished before the timout
+			{
+				unitAssert(processStatuses[i].hasExited());
+				unitAssert(processStatuses[i].getStatus() == exitStatus);
+				unitAssert(WIFEXITED(exitStatus));
+				unitAssert(WEXITSTATUS(exitStatus) == 0);
+			}
+			else // these ones got killed
+			{
+				unitAssert(!processStatuses[i].hasExited());
+				unitAssert(WIFSIGNALED(exitStatus));
+				unitAssert(WTERMSIG(exitStatus) == SIGTERM || WTERMSIG(exitStatus) == SIGPIPE);
+			}
+			if (i * i + i < TEST_TIMEOUT + TEST_PROC_COUNT)
+			{
+				unitAssert(outputs[i].second == "before\nafter\n");
+			}
+			else
+			{
+				// these ones got killed during the middle sleep
+				unitAssert(outputs[i].second == "before\n");
+			}
+		}
+	}
+
+
+}
+
 Test* OW_ExecTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Exec");
 
-	testSuite->addTest (new TestCaller <OW_ExecTestCases> 
-			("testSafePopen", 
-			&OW_ExecTestCases::testSafePopen));
+	ADD_TEST_TO_SUITE(OW_ExecTestCases, testgatherOutput);
+//	ADD_TEST_TO_SUITE(OW_ExecTestCases, testSafePopen);
+//	ADD_TEST_TO_SUITE(OW_ExecTestCases, testExecuteProcessAndGatherOutput);
 
-	testSuite->addTest (new TestCaller <OW_ExecTestCases> 
-			("testExecuteProcessAndGatherOutput", 
-			&OW_ExecTestCases::testExecuteProcessAndGatherOutput));
 	return testSuite;
 }
 

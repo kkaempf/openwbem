@@ -118,6 +118,8 @@ public:
 	void setProcessStatus(int ps);
 private:
 	IntrusiveReference<PopenStreamsImpl> m_impl;
+
+	friend bool operator==(const PopenStreams& x, const PopenStreams& y);
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -167,6 +169,9 @@ namespace Exec
 	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,
 			const String& initialInput = String());
+
+	const int INFINITE_TIMEOUT = -1;
+
 	/**
 	 * Wait for output from a child process.  The function returns when the
 	 * process exits. In the case that the child process doesn't exit, if a
@@ -183,7 +188,7 @@ namespace Exec
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
 	 * @param timeoutsecs Specifies the number of seconds to wait for the
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown. If timeoutsecs < 0, the
+	 *  an ExecTimeoutException will be thrown. If timeoutsecs == INFINITE_TIMEOUT, the
 	 *  timeout will be infinite, and no exception will ever be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
@@ -195,10 +200,54 @@ namespace Exec
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
+	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1);
 	
+	class OutputCallback
+	{
+	public:
+		virtual ~OutputCallback();
+		void handleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex);
+	private:
+		virtual void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex) = 0;
+	};
+
+	enum EProcessRunning
+	{
+		E_PROCESS_RUNNING,
+		E_PROCESS_EXITED
+	};
+
+	// class invariant: if m_running == E_PROCESS_RUNNING, then m_status == 0.
+	class ProcessStatus
+	{
+	public:
+		ProcessStatus()
+		: m_running(E_PROCESS_RUNNING)
+		, m_status(0)
+		{
+		}
+
+		explicit ProcessStatus(int status)
+		: m_running(E_PROCESS_EXITED)
+		, m_status(status)
+		{
+		}
+
+		bool hasExited() const
+		{
+			return m_running == E_PROCESS_EXITED;
+		}
+
+		const int& getStatus() const
+		{
+			return m_status;
+		}
+	private:
+		EProcessRunning m_running;
+		int m_status;
+	};
+
 	/**
-	 * TODO: Write this, and change the other gatherOutput() to use it.
 	 * Wait for output from child processes.  The function returns when the
 	 * processes have exited. In the case that a child process doesn't exit, if a
 	 * timout is specified, then an ExecTimeoutException is thrown.
@@ -206,31 +255,26 @@ namespace Exec
 	 * @param output A callback, whenever data is received from a process, it will
 	 *  be passed to output.handleData().
 	 * @param streams The connections to the child processes.
-	 * @param processstatus An out parameter, which will contain a bool flag 
+	 * @param processstatus An out parameter, which will contain a enum flag
 	 *  indicating if the process has exited, and if it has, the processes'
-	 *  status. The pair::second value, if pair::first == true, should be evaluated
-	 *  using the family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
+	 *  status. The ProcessStatus::status value, if ProcessStatus::running == E_PROCESS_RUNNING,
+	 *  should be evaluated using the family of macros (WIFEXITED(), WEXITSTATUS(), etc.)
+	 *  from "sys/wait.h"
 	 *  Each status corresponds to the element at the same index in streams.
-	 *  If processstatuses.size() != streams.size(), it will be resized.
-	 *  Each element will be set to (false, 0) or else (true, the status of the exited process).
-	 * @param timeoutsecs Specifies the number of seconds to wait for all the
+	 *  If processStatuses.size() != streams.size(), it will be resized.
+	 *  Each element will be set to (E_PROCESS_RUNNING, 0) or else
+	 *  (E_PROCESS_EXITED, the status of the exited process).
+	 * @param timeoutSecs Specifies the number of seconds to wait for all the
 	 *  processes to exit. If no output has been received and all the processes
-	 *  haven't exited after timeoutsecs seconds, an ExecTimeoutException will 
-	 *  be thrown. If timeoutsecs < 0, the timeout will be infinite, and no 
+	 *  haven't exited after timeoutSecs seconds, an ExecTimeoutException will
+	 *  be thrown. If timeoutSecs == INFINITE_TIMEOUT, the timeout will be infinite, and no
 	 *  exception will ever be thrown.
 	 *
-	 * @throws ProcessError on error.
-	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
+	 * @throws ExecErrorException on error.
+	 * @throws ExecTimeoutException if the process hasn't finished within timeoutSecs.
 	 */
-	//class OutputCallback
-	//{
-	//public:
-	//	virtual ~OutputCallback();
-	//	void handleData(const char* data, size_t dataLen, PopenStreams& theStream);
-	//private:
-	//	void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream);
-	//};
-	//OW_COMMON_API void gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<pair<bool, int> >& processstatuses, int timeoutsecs = -1);
+	OW_COMMON_API void gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses,
+		int timeoutSecs = INFINITE_TIMEOUT);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The
@@ -270,7 +314,7 @@ namespace Exec
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
 	 *  an ExecTimeoutException will be thrown, and the process will be
 	 *  killed.
-	 *  If timeoutsecs < 0, the timeout will be infinite, and a
+	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
 	 *  ExecTimeoutException will not be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
@@ -279,14 +323,14 @@ namespace Exec
 	 *  If outputlimit < 0, the limit will be infinite, and an
 	 *  ExecBufferFullException will not be thrown.
 	 *
-	 * @throws ProcessError on error.
-	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
-	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
+	 * @throws ExecErrorException on error.
+	 * @throws ExecTimeoutException if the process hasn't finished within timeoutsecs.
+	 * @throws ExecBufferFullException if the process output exceeds outputlimit bytes.
 	 */
 	OW_COMMON_API void executeProcessAndGatherOutput(
 		const Array<String>& command,
 		String& output, int& processstatus,
-		int timeoutsecs = -1, int outputlimit = -1);
+		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1);
 	
 	
 } // end namespace Exec
