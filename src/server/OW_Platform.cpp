@@ -260,18 +260,44 @@ processCommandLineOptions(int argc, char** argv)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-handleSignal(int sig)
+handleSignalAux(int sig, sighandler_t handler)
 {
 	struct sigaction temp;
 	memset(&temp, '\0', sizeof(temp));
 	sigaction(sig, 0, &temp);
 	if(temp.sa_handler != SIG_IGN)
 	{
-		temp.sa_handler = theSigHandler;
+		temp.sa_handler = handler;
 		sigemptyset(&temp.sa_mask);
+
+		/* Here's a note from the glibc documentation: 
+		 * When you don't specify with `sigaction' or `siginterrupt' what a
+		 * particular handler should do, it uses a default choice.  The default
+		 * choice in the GNU library depends on the feature test macros you have
+		 * defined.  If you define `_BSD_SOURCE' or `_GNU_SOURCE' before calling
+		 * `signal', the default is to resume primitives; otherwise, the default
+		 * is to make them fail with `EINTR'.  (The library contains alternate
+		 * versions of the `signal' function, and the feature test macros
+		 * determine which one you really call.)
+		 *
+		 * We want the EINTR behavior, so we can cancel threads and shutdown
+		 * or restart if the occasion arises, so we set flags to 0.
+		 */
 		temp.sa_flags = 0;
 		sigaction(sig, &temp, NULL);
 	}
+}
+
+static void
+handleSignal(int sig)
+{
+	handleSignalAux(sig, theSigHandler);
+}
+
+static void
+ignoreSignal(int sig)
+{
+	handleSignalAux(sig, SIG_IGN);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -303,7 +329,21 @@ theSigHandler(int sig)
 static void
 setupSigHandler(const OW_Bool& dbgFlg)
 {
-	//OW_String dbgFlg = OW_Environment::getConfigItem(OW_ConfigOpts::OW_DEBUG_opt);
+	/* Here's a note from the glibc documentation about signal():
+	 *Compatibility Note:* A problem encountered when working with the
+	 `signal' function is that it has different semantics on BSD and SVID
+	 systems.  The difference is that on SVID systems the signal handler is
+	 deinstalled after signal delivery.  On BSD systems the handler must be
+	 explicitly deinstalled.  In the GNU C Library we use the BSD version by
+	 default.  To use the SVID version you can either use the function
+	 `sysv_signal' (see below) or use the `_XOPEN_SOURCE' feature select
+	 macro ( Feature Test Macros).  In general, use of these
+	 functions should be avoided because of compatibility problems.  It is
+	 better to use `sigaction' if it is available since the results are much
+	 more reliable.
+
+	 We avoid using signal and use sigaction instead.
+	 */
 
 	if(dbgFlg)
 	{
@@ -311,7 +351,7 @@ setupSigHandler(const OW_Bool& dbgFlg)
 	}
 	else
 	{
-		signal(SIGINT, SIG_IGN);
+		ignoreSignal(SIGINT);
 	}
 
 
@@ -321,26 +361,26 @@ setupSigHandler(const OW_Bool& dbgFlg)
 //	handleSignal(SIGUSR2);
 //	handleSignal(SIGUSR1);
 
-	signal(SIGTTIN, SIG_IGN);
-	signal(SIGTTOU, SIG_IGN);
-	signal(SIGTSTP, SIG_IGN);
+	ignoreSignal(SIGTTIN);
+	ignoreSignal(SIGTTOU);
+	ignoreSignal(SIGTSTP);
 #ifdef OW_OPENSERVER
-    signal(SIGPOLL, SIG_IGN);
+	ignoreSignal(SIGPOLL);
 #else
-	signal(SIGIO, SIG_IGN);
+	ignoreSignal(SIGIO);
 #endif
-	signal(SIGPIPE, SIG_IGN);
+	ignoreSignal(SIGPIPE);
 
 	// ?
-	signal(SIGIOT, SIG_IGN);
-	signal(SIGBUS, SIG_IGN);
-	signal(SIGCONT, SIG_IGN);
-	signal(SIGURG, SIG_IGN);
-	signal(SIGXCPU, SIG_IGN);
-	signal(SIGXFSZ, SIG_IGN);
-	signal(SIGVTALRM, SIG_IGN);
-	signal(SIGPROF, SIG_IGN);
-	signal(SIGPWR, SIG_IGN);
+	ignoreSignal(SIGIOT);
+	ignoreSignal(SIGBUS);
+	ignoreSignal(SIGCONT);
+	ignoreSignal(SIGURG);
+	ignoreSignal(SIGXCPU);
+	ignoreSignal(SIGXFSZ);
+	ignoreSignal(SIGVTALRM);
+	ignoreSignal(SIGPROF);
+	ignoreSignal(SIGPWR);
 
 	// ?
 	//handleSignal(SIGALRM);
