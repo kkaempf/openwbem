@@ -41,7 +41,8 @@
 #include "OW_CIMException.hpp"
 #include "OW_RWLocker.hpp"
 
-const OW_UInt32 OW_LockTimeout = 10; // seconds
+// TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
+const OW_UInt32 OW_LockTimeout = 100; // seconds
 
 #if !defined(OW_DISABLE_ACLS)
 class OW_AccessMgr;
