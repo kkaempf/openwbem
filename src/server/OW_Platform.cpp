@@ -337,7 +337,9 @@ setupSigHandler(const OW_Bool& dbgFlg)
 	signal(SIGXFSZ, SIG_IGN);
 	signal(SIGVTALRM, SIG_IGN);
 	signal(SIGPROF, SIG_IGN);
+#ifndef OW_DARWIN
 	signal(SIGPWR, SIG_IGN);
+#endif
 
 	// ?
 	//handleSignal(SIGALRM);
