@@ -13,7 +13,7 @@ if [ "$1" = "vg" ]; then
   valgrind \
 	--leak-check=yes \
 	--error-limit=no \
-	--num-callers=9 \
+	--num-callers=99 \
 	--logfile-fd=9 \
 	9>> valgrind.out \
 	$STAGEDIR/usr/local/sbin/owcimomd -d \
