@@ -73,6 +73,15 @@ namespace Platform
 	void shutdownSig();
 	SelectableIFCRef getSigSelectable();
 	String getCurrentUserName();
+
+	/** 
+	 * Restart the daemon.  This closes all file handles and then calls
+	 * execv to replace the current process with a new copy of the daemon.
+	 * precondition: daemonInit() must have been called previously, because
+	 * the same set of arguments will be passed to execv().
+	 * @throws DaemonException in the case execv() fails.
+	 */
+	void restartDaemon();
 };
 
 } // end namespace OpenWBEM

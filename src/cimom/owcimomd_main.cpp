@@ -36,6 +36,8 @@
 #include <exception>
 #include <iostream> // for cout
 
+#include <unistd.h> // for execv
+
 using namespace OpenWBEM;
 
 static bool processCommandLine(int argc, char* argv[],
@@ -86,10 +88,8 @@ int main(int argc, char* argv[])
 					env->shutdown();
 					env->clearConfigItems();
 					env = CIMOMEnvironment::g_cimomEnvironment = 0;
-					env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
-					processCommandLine(argc, argv, env);
-					env->init();
-					env->startServices();
+					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
+					Platform::restartDaemon();
 					break;
 				default:
 					break;

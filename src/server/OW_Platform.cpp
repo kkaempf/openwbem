@@ -50,6 +50,7 @@ extern "C"
 #include <pth.h>
 #endif
 #include <pwd.h>
+#include <sys/resource.h>
 }
 #include <cstring>
 #include <cstdio>
@@ -76,10 +77,13 @@ static void setupSigHandler(bool dbgFlg);
 
 static Reference<UnnamedPipe> plat_upipe;
 
+static char** g_argv = 0;
+
 //////////////////////////////////////////////////////////////////////////////
 Options
 daemonInit( int argc, char* argv[] )
 {
+	g_argv = argv;
 	return processCommandLineOptions(argc, argv);
 }
 /**
@@ -223,6 +227,22 @@ processCommandLineOptions(int argc, char** argv)
 	}
 	return rval;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void restartDaemon()
+{
+	// It would be good to close all file handles > 2, but we can't do it.
+	// On Linux pthreads will kill off all the threads when we call
+	// execv().  If we close all the fds, then that breaks pthreads and
+	// execv() will just hang.
+	// This doesn't return. execv() will replace the current process with a
+	// new copy of g_argv[0] (owcimomd).
+	if (::execv(g_argv[0], g_argv) == -1)
+	{
+		OW_THROW(DaemonException, format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 #if defined (OW_FREEBSD) || defined (OW_DARWIN)
 typedef void (*sighandler_t)(int);
@@ -233,6 +253,7 @@ handleSignalAux(int sig, sighandler_t handler)
 {
 	struct sigaction temp;
 	memset(&temp, '\0', sizeof(temp));
+	// TODO: Figure out why we don't set it if it's set to SIG_IGN already.
 	sigaction(sig, 0, &temp);
 	if(temp.sa_handler != SIG_IGN)
 	{
@@ -286,6 +307,29 @@ theSigHandler(int sig)
 	catch (...) // can't let exceptions escape from here or we'll segfault.
 	{
 	}
+}
+static int g_internalAbort = 0;
+
+void handleAbort(int sig)
+{
+	if (!g_internalAbort)
+		Platform::restartDaemon();
+}
+
+static void
+fatalSigHandler(int sig)
+{
+	char msg[] = "Caught fatal signal.  Restarting.";
+	::write(2, msg, ::strlen(msg));
+#ifdef DEBUG
+	// this will end up calling our SIGABRT handler, and we want it to
+	// acutally abort instead of restarting the daemon.
+	g_internalAbort = 1;
+	::abort();
+#else
+	Platform::restartDaemon();
+#endif
+
 }
 } // extern "C"
 //////////////////////////////////////////////////////////////////////////////
