@@ -95,25 +95,6 @@ OW_HDB::open(const char* fileName)
 
 	OW_String fname = m_fileName + ".dat";
 
-	// TODO: Fix this! This is subject to a race condition!
-//     if(!OW_FileSystem::canWrite(fname.c_str()))
-//     {
-//         if(!createFile())
-//         {
-//             OW_String msg("Failed to create file: ");
-//             msg += fname;
-//             OW_THROW(OW_HDBException, msg.c_str());
-//         }
-//     }
-//     else
-//     {
-//         if(!checkFile())
-//         {
-//             OW_String msg("Failed to open file: ");
-//             msg += fname;
-//             OW_THROW(OW_HDBException, msg.c_str());
-//         }
-//     }
 	createFile();
 	if(!checkFile())
 	{
