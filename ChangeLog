@@ -1,3 +1,7 @@
+Mon Nov 11 07:39:29 MST 2002
+- Fixed registerForIndication to set the key properties correctly on
+  CIM_IndicationFilter and CIM_IndicationHandler* instances.
+
 Sat Nov  9 22:10:51 MST 2002
 - Added a test for more than 1 propagated key.  
 - Fixed a bug in _validatePropagatedKeys when there was more than 1.  

@@ -307,13 +307,13 @@ int main(int argc, char* argv[])
 		{
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from OW_TestIndication1 where TheClass ISA "
-				"\"TestClass1\"", "wql1", test1cb);
+				"\"TestClass1\"", "wql1", "root/testsuite", test1cb);
 			registrationHandles.append(handle);
 
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from OW_TestIndication2 where TheInstance ISA "
 				"\"TestClass2\" and TheInstance.dummykey = \"foo\"", "wql1",
-				test2cb);
+				"root/testsuite", test2cb);
 			registrationHandles.append(handle);
 
 			// Now wait for our test trigger providers to send out their indications.
@@ -369,35 +369,35 @@ int main(int argc, char* argv[])
 			cout << e.getMessage() << endl;
 		}
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
 
 
-		//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", mcb);
+		//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", "root/testsuite", mcb);
 		//registrationHandles.append(handle);
 
 
