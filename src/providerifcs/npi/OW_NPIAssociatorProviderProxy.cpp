@@ -69,7 +69,9 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 
         ::Vector v =
             m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
-                resultClass.c_str(), role.c_str(), resultRole.c_str());
+                resultClass.empty() ? 0 : resultClass.c_str(), 
+				role.empty() ? 0 : role.c_str(), 
+				resultRole.empty() ? 0 : resultRole.c_str());
 
         OW_NPIVectorFreer vf1(v);
 
@@ -141,7 +143,9 @@ OW_NPIAssociatorProviderProxy::associators(
 
         ::Vector v =
             m_ftable->fp_associators(&_npiHandle, _assoc, _path,
-                resultClass.c_str(), role.c_str(), resultRole.c_str(),
+                resultClass.empty() ? 0 : resultClass.c_str(), 
+				role.empty() ? 0 : role.c_str(), 
+				resultRole.empty() ? 0 : resultRole.c_str(),
                 includeQualifiers, includeClassOrigin,
                 _plLen > 0 ? &_propertyList[0] : 0, _plLen);
 
@@ -224,7 +228,8 @@ OW_NPIAssociatorProviderProxy::references(
 
         ::Vector v =
             m_ftable->fp_references(&_npiHandle, _assoc, _path,
-                role.c_str(), includeQualifiers, includeClassOrigin,
+                role.empty() ? 0 : role.c_str(), 
+				includeQualifiers, includeClassOrigin,
                 _plLen > 0 ? &_propertyList[0] : 0, _plLen);
 
 
@@ -294,7 +299,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
 
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,
-                    role.c_str());
+                    role.empty() ? 0 : role.c_str());
 
         OW_NPIVectorFreer vf1(v);
 
