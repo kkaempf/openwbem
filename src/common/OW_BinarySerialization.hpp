@@ -66,7 +66,10 @@ namespace OpenWBEM
 //   instead of object paths.
 // 2/6/2004 - 3000006. Changed CIMDateTime::{read,write}Object to write each
 //   item individually so struct packing doesn't cause incompatibilities.
-const UInt32 BinaryProtocolVersion = 3000006;
+// 2/20/2004 - 3000007. Changed to not send an extra unnecessary signature,
+//   since all the CIM objects already send a signature.  Note that the 
+//   repository version was not incremented.
+const UInt32 BinaryProtocolVersion = 3000007;
 // These values are all used by the binary protocol
 const UInt8 BIN_OK =				0;		// Success returned from server
 const UInt8 BIN_ERROR =			1;		// Error returned from server
@@ -160,7 +163,6 @@ namespace BinarySerialization
 	inline void writeObject(std::ostream& ostrm, UInt8 sig,
 		const CIMBase& obj)
 	{
-		BinarySerialization::write(ostrm, sig);
 		obj.writeObject(ostrm);
 	}
 	inline void writeObjectPath(std::ostream& ostrm,
@@ -274,7 +276,6 @@ namespace BinarySerialization
 	inline void readObject(std::istream& istrm, UInt8 validSig,
 		CIMBase& obj)
 	{
-		BinarySerialization::verifySignature(istrm, validSig);
 		obj.readObject(istrm);
 	}
 	inline CIMObjectPath readObjectPath(std::istream& istrm)
