@@ -375,9 +375,9 @@ OW_String::format(const char* fmt, ...)
 		else           // glibc 2.0
 			size *= 2;  // twice the old size
 
+		delete [] p;
 		if((np = new char[size]) == NULL)
 		{
-			delete [] p;
 			return -1;
 		}
 
