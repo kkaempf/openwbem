@@ -8,3 +8,6 @@ wqlTest1
 cimlistener
 aclTest
 CIMOMLocator
+owcimclientcl
+fakeclient
+IPCClientTest

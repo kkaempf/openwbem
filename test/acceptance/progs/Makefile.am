@@ -1,5 +1,6 @@
-noinst_PROGRAMS = cimlistener wqlTest1 aclTest CIMOMLocator
+noinst_PROGRAMS = cimlistener wqlTest1 aclTest CIMOMLocator owcimclientcl fakeclient IPCClientTest
 
+#CIMOMLocator
 CIMOMLocator_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o CIMOMLocator
@@ -14,6 +15,7 @@ CIMOMLocator_LDADD = \
 CIMOMLocator_SOURCES = \
 CIMOMLocator.cpp
  
+#cimlistener
 cimlistener_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o cimlistener
@@ -30,6 +32,7 @@ cimlistener_LDADD = \
 cimlistener_SOURCES = \
 cimListenerTest.cpp
 
+#wqlTest1
 wqlTest1_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
@@ -44,6 +47,7 @@ $(CXXBINLINKFLAGS) \
 wqlTest1_SOURCES = \
 wqlTest1.cpp
 
+#aclTest
 aclTest_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
@@ -57,6 +61,50 @@ $(CXXBINLINKFLAGS) \
 
 aclTest_SOURCES = \
 aclTest.cpp
+
+#owcimclientcl
+owcimclientcl_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+owcimclientcl_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owcimclientcl
+
+owcimclientcl_SOURCES = \
+OW_CIMClientCL.cpp
+
+#IPCClientTest
+IPCClientTest_LDADD = \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/common -lopenwbem
+
+IPCClientTest_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o IPCClientTest
+
+IPCClientTest_SOURCES = \
+IPCClientTest.cpp								
+
+#fakeclient
+fakeclient_LDADD = \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem
+
+fakeclient_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o fakeclient
+
+fakeclient_SOURCES = \
+fakeClient.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \

@@ -19,10 +19,10 @@ $(CXXBINLINKFLAGS) \
 -o owmofc
 
 owmofc_LDADD = \
--L../../common -lopenwbem \
--L../../mof -lowmofc \
--L../../client -lowclient \
--L../../xml -lowxml \
--L../../http/common -lowhttpcommon \
--L../../http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/mof -lowmofc \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 

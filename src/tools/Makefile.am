@@ -11,8 +11,8 @@ owenumnamespace
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
 
 owdigestgenpass_LDADD = \
--L../common -lopenwbem \
--L../http/common -lowhttpcommon
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/http/common -lowhttpcommon
 
 owdigestgenpass_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -22,11 +22,11 @@ $(CXXBINLINKFLAGS) \
 owexecwql_SOURCES = owexecwql.cpp
 
 owexecwql_LDADD = \
--L../common -lopenwbem \
--L../client -lowclient \
--L../xml -lowxml \
--L../http/common -lowhttpcommon \
--L../http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 owexecwql_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -36,11 +36,11 @@ $(CXXBINLINKFLAGS) \
 owcreatenamespace_SOURCES = owcreatenamespace.cpp
 
 owcreatenamespace_LDADD = \
--L../common -lopenwbem \
--L../client -lowclient \
--L../xml -lowxml \
--L../http/common -lowhttpcommon \
--L../http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 owcreatenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -50,11 +50,11 @@ $(CXXBINLINKFLAGS) \
 owdeletenamespace_SOURCES = owdeletenamespace.cpp
 
 owdeletenamespace_LDADD = \
--L../common -lopenwbem \
--L../client -lowclient \
--L../xml -lowxml \
--L../http/common -lowhttpcommon \
--L../http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 owdeletenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -64,11 +64,11 @@ $(CXXBINLINKFLAGS) \
 owenumnamespace_SOURCES = owenumnamespace.cpp
 
 owenumnamespace_LDADD = \
--L../common -lopenwbem \
--L../client -lowclient \
--L../xml -lowxml \
--L../http/common -lowhttpcommon \
--L../http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
 
 owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
