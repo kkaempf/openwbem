@@ -45,6 +45,8 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_Enumeration.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <assert.h>
 #include <cctype>
@@ -61,6 +63,13 @@ OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
 namespace MOF
 {
 
+
+namespace
+{
+// since flex/bison and our implementation aren't re-entrant or thread-safe.
+Mutex g_guard;
+}
+
 Compiler::Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh )
 	: theErrorHandler(mpeh)
 	, include_stack_ptr(0)
@@ -73,6 +82,8 @@ Compiler::~Compiler()
 }
 long Compiler::compile( const String& filename )
 {
+	MutexLock lock(g_guard);
+	include_stack_ptr = 0;
 	theLineInfo = LineInfo(filename,1);
 	try
 	{
@@ -149,6 +160,8 @@ namespace {
 }
 long Compiler::compileString( const String& mof )
 {
+	MutexLock lock(g_guard);
+	include_stack_ptr = 0;
 	String filename = "string";
 	theLineInfo = LineInfo(filename,1);
 	try
