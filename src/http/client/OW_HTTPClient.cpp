@@ -47,6 +47,8 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_UserUtils.hpp"
+#include "OW_Select.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 #include <fstream>
 #include <cerrno>
@@ -481,6 +483,12 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 #endif
 	// if there remains bytes from last response, eat them.
 	cleanUpIStreams();
+
+	// if the server has disconnected or sent us something since our last request
+	// (remember connections are persistent), we need to process it *before* we 
+	// send another request
+	checkForClosedConnection();
+
 	String statusLine;
 	Resp_t rt = RETRY;
 	do
@@ -641,7 +649,7 @@ HTTPClient::processHeaders(String& statusLine)
 		m_needsConnect = true;
 	}
 
-	Resp_t rt = FATAL;
+	Resp_t rt = RETRY;
 	size_t idx = statusLine.indexOf(' ');
 	String respProt;
 	String sc; // http status code
@@ -662,12 +670,12 @@ HTTPClient::processHeaders(String& statusLine)
 		}
 		catch (const StringConversionException&)
 		{
-			return FATAL;
+			return RETRY;
 		}
 	}
 	if (sc.length() != 3)
 	{
-		return FATAL;
+		return RETRY;
 	}
 	switch (sc[0])
 	{
@@ -723,7 +731,7 @@ HTTPClient::processHeaders(String& statusLine)
 					break;
 			default:
 					m_needsConnect = true;
-					rt = FATAL;
+					rt = RETRY;
 					break;
 			} // switch (isc)
 			break;
@@ -746,12 +754,12 @@ HTTPClient::processHeaders(String& statusLine)
 					}
 					break;
 				default:
-					rt = FATAL;
+					rt = RETRY;
 					break;
 			} // switch (isc)
 			break;
 		default:
-			rt = FATAL; // shouln't happen
+			rt = RETRY; // shouln't happen
 			break;
 	} // switch (sc[0])
 
@@ -914,6 +922,29 @@ void HTTPClient::close()
 {
 	m_socket.disconnect();
 	m_needsConnect = true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void HTTPClient::checkForClosedConnection()
+{
+	// If there's some input, we need to read it and set up for a reconnect
+	// It's a pretty safe assumption that if the server sent us anything not
+	// in response, but just out of the blue, it's terminating the connection
+	// for some reason.
+	if (m_socket.isConnected() && !m_socket.waitForInput(0))
+	{
+		try
+		{
+			Resp_t rt;
+			String statusLine = checkResponse(rt);
+		}
+		catch (HTTPException&)
+		{
+			// this will happen for a number of reasons that the server may have sent us.  Just ignore it.
+		}
+		close();
+	}
 }
 
 } // end namespace OpenWBEM

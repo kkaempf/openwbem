@@ -250,6 +250,7 @@ class HTTPClient : public CIMProtocolIFC
 		 * @throws HTTPException if the postcondition cannot be satisfied.
 		 */
 		void getCredentialsIfNecessary();
+		void checkForClosedConnection();
 
 		// unimplemented
 		HTTPClient(const HTTPClient&);
