@@ -84,6 +84,13 @@ public:
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
 	virtual String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;
+
+	/**
+	 * When a provider is passed a ProviderEnvironmentIFCRef, the particular instance is only valid for the lifetime of the particular
+	 * call.  If a provider needs to save a ProviderEnvironmentIFCRef for later use (e.g. in another thread), it must call clone() on
+	 * the original ProviderEnvironmentIFC and save the result for later use.
+	 */
+	virtual ProviderEnvironmentIFCRef clone() const = 0;
 };
 									
 

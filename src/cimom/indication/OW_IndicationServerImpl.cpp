@@ -223,21 +223,17 @@ public:
 		const CIMOMEnvironmentRef& env)
 		: ProviderEnvironmentIFC()
 		, m_opctx()
-		, m_ch()
 		, m_env(env)
-		, m_repch()
 	{
-		m_ch = m_env->getCIMOMHandle(m_opctx);
-		m_repch = m_env->getCIMOMHandle(m_opctx, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
-		return m_ch;
+		return m_env->getCIMOMHandle(m_opctx);;
 	}
 	
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		return m_repch;
+		return m_env->getCIMOMHandle(m_opctx, ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);;
 	}
 	virtual RepositoryIFCRef getRepository() const
 	{
@@ -264,11 +260,13 @@ public:
 	{
 		return m_opctx;
 	}
+	virtual ProviderEnvironmentIFCRef clone() const
+	{
+		return ProviderEnvironmentIFCRef(new IndicationServerProviderEnvironment(m_env));
+	}
 private:
-	OperationContext m_opctx;
-	CIMOMHandleIFCRef m_ch;
+	mutable OperationContext m_opctx;
 	CIMOMEnvironmentRef m_env;
-	CIMOMHandleIFCRef m_repch;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 {

@@ -212,6 +212,10 @@ namespace
 		{
 			return m_context;
 		}
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(m_env));
+		}
 	private:
 		mutable OperationContext m_context;
 		ServiceEnvironmentIFCRef m_env;

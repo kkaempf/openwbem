@@ -96,6 +96,59 @@ namespace
 		OperationContext& m_context;
 	};
 
+	class ClonedCIMServerProviderEnvironment : public ProviderEnvironmentIFC
+	{
+	public:
+		ClonedCIMServerProviderEnvironment(
+			const ServiceEnvironmentIFCRef& env)
+			: m_env(env)
+		{}
+		virtual String getConfigItem(const String &name,
+			const String& defRetVal="") const
+		{
+			return m_env->getConfigItem(name, defRetVal);
+		}
+		virtual CIMOMHandleIFCRef getCIMOMHandle() const
+		{
+			return m_env->getCIMOMHandle(m_context,
+				ServiceEnvironmentIFC::E_USE_PROVIDERS);
+		}
+		
+		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		{
+			return m_env->getCIMOMHandle(m_context,
+				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+		}
+		
+		virtual RepositoryIFCRef getRepository() const
+		{
+			return m_env->getRepository();
+		}
+		virtual LoggerRef getLogger() const
+		{
+			return m_env->getLogger(COMPONENT_NAME);
+		}
+		virtual LoggerRef getLogger(const String& componentName) const
+		{
+			return m_env->getLogger(componentName);
+		}
+		virtual String getUserName() const
+		{
+			return m_context.getUserInfo().getUserName();
+		}
+		virtual OperationContext& getOperationContext()
+		{
+			return m_context;
+		}
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef(new ClonedCIMServerProviderEnvironment(m_env));
+		}
+	private:
+		mutable OperationContext m_context;
+		ServiceEnvironmentIFCRef m_env;
+	};
+
 	class CIMServerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
@@ -142,6 +195,10 @@ namespace
 		virtual OperationContext& getOperationContext()
 		{
 			return m_context;
+		}
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef(new ClonedCIMServerProviderEnvironment(m_env));
 		}
 	private:
 		OperationContext& m_context;

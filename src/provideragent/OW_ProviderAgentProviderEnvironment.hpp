@@ -75,6 +75,7 @@ public:
 	virtual LoggerRef getLogger(const String& componentName) const;
 	virtual String getUserName() const;
 	virtual OperationContext& getOperationContext();
+	virtual ProviderEnvironmentIFCRef clone() const;
 private:
 	LoggerRef m_logger;
 	ConfigFile::ConfigMap m_configMap;

@@ -147,6 +147,10 @@ namespace
 		{
 			return m_context;
 		}
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef(new CIMOMProviderEnvironment(m_pCenv));
+		}
 	private:
 		CIMOMEnvironmentRef m_pCenv;
 		OperationContext m_context;

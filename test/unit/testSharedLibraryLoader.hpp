@@ -567,6 +567,10 @@ namespace
 			return m_context;
 		}
 
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			return ProviderEnvironmentIFCRef(new testProviderEnvironment());
+		}
 	private:
 		OperationContext m_context;
 		CIMOMHandleIFCRef m_ch;

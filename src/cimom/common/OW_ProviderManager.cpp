@@ -141,6 +141,10 @@ public:
 	{
 		return m_context;
 	}
+	virtual ProviderEnvironmentIFCRef clone() const
+	{
+		return ProviderEnvironmentIFCRef(new ProviderEnvironmentServiceEnvironmentWrapper(env));
+	}
 private:
 	ServiceEnvironmentIFCRef env;
 	mutable OperationContext m_context;

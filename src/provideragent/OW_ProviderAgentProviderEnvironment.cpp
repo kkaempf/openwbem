@@ -71,8 +71,9 @@ ProviderAgentProviderEnvironment::~ProviderAgentProviderEnvironment()
 		m_connectionPool.addConnectionToPool(*iter, m_callbackURL);
 	}
 }
+
 //////////////////////////////////////////////////////////////////////////////
-	// This function returns a regular cimom handle that does access checking and may call providers.
+// This function returns a regular cimom handle that does access checking and may call providers.
 CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getCIMOMHandle() const
 {
@@ -134,7 +135,7 @@ ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String
 CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 {
-	OW_ASSERT("not implemented" == 0);
+	OW_ASSERTMSG(0, "not implemented");
 	return CIMOMHandleIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 RepositoryIFCRef
 ProviderAgentProviderEnvironment::getRepository() const
 {
-	OW_ASSERT("not implemented" == 0);
+	OW_ASSERTMSG(0, "not implemented");
 	return RepositoryIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -164,7 +165,7 @@ ProviderAgentProviderEnvironment::getLogger(const String& componentName) const
 String
 ProviderAgentProviderEnvironment::getUserName() const
 {
-	OW_ASSERT("not implemented" == 0);
+	OW_ASSERTMSG(0, "not implemented");
 	return String();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -172,6 +173,14 @@ OperationContext&
 ProviderAgentProviderEnvironment::getOperationContext()
 {
 	return m_operationContext;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+ProviderEnvironmentIFCRef
+ProviderAgentProviderEnvironment::clone() const
+{
+	OW_ASSERTMSG(0, "not implemented");
+	return ProviderEnvironmentIFCRef();
 }
 
 //////////////////////////////////////////////////////////////////////////////
