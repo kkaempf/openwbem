@@ -31,6 +31,9 @@
 #define OW_ATOMIC_OPS_HPP_
 #include "OW_config.h"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 #if defined(__i386__) && defined(__GNUC__)
 
 namespace OpenWBEM

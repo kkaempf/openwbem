@@ -41,10 +41,6 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(OutOfBounds);
 
-#ifdef OW_CHECK_ARRAY_INDEXING
-void throwArrayOutOfBoundsException(size_t size, size_t idx);
-#endif
-
 /**
  * Array<> wraps std::vector<> in COWReference<> adding ref counting and copy 
  * on write capability.  It also adds valid range checks to operator[] if
