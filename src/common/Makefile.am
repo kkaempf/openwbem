@@ -123,6 +123,8 @@ OW_ConfigException.hpp \
 OW_ConfigFile.hpp \
 OW_config.h \
 OW_ConfigOpts.hpp \
+OW_COWIntrusiveCountableBase.hpp \
+OW_COWIntrusiveReference.hpp \
 OW_COWReferenceBase.hpp \
 OW_COWReference.hpp \
 OW_DataStreams.hpp \
