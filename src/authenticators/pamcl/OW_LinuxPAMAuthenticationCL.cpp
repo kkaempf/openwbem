@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Array.hpp"
+#include <sys/wait.h>
 
 #include <string.h>
 
