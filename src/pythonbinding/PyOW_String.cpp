@@ -64,6 +64,129 @@ PyObject* OW_String_repr(const OW_String& s)
     return Py_BuildValue("s#", str.c_str(), str.length());
 }
 
+int OW_String_count(const OW_String& s, char c)
+{
+    int rval = 0;
+    for (size_t i = 0; i < s.length(); ++i)
+    {
+        if (s[i] == c)
+            ++rval;
+    }
+    return rval;
+}
+
+void OW_String_append(OW_String& s, char c)
+{
+    s.concat(c);
+}
+
+int OW_String_index(const OW_String& s, char c)
+{
+    for (size_t i = 0; i < s.length(); ++i)
+    {
+        if (s[i] == c)
+            return i;
+    }
+    // TODO: Raise ValueError
+}
+
+void OW_String_insert(OW_String& s, int i, char x)
+{
+    size_t length = s.length();
+    if (i < 0)
+    {
+        i = 0;
+    }
+    s = s.substring(0, i) + OW_String(x) + s.substring(i);
+}
+
+char OW_String_pop(OW_String& s, int i = -1)
+{
+    size_t length = s.length();
+    while (true)
+    {
+        if (i < 0)
+        {
+            i += length;
+        }
+        else if (i >= length)
+        {
+            i -= length;
+        }
+        else
+        {
+            break;
+        }
+    }
+    char rval = s[i];
+    s = s.substring(0, i) + s.substring(i+1);
+
+    return rval;
+}
+
+BOOST_PYTHON_FUNCTION_OVERLOADS(OW_String_pop_overloads, OW_String_pop, 1, 2)
+
+void OW_String_remove(OW_String& s, char x)
+{
+    int i = OW_String_index(s, x);
+    s = s.substring(0, i) + s.substring(i+1);
+}
+
+/*
+inline void char_swap(OW_String& s, size_t x, size_t y)
+{
+    s[x] ^= s[y];
+    s[y] ^= s[x];
+    s[x] ^= s[y];
+}
+*/
+
+void OW_String_reverse(OW_String& s)
+{
+    //size_t first = 0;
+    std::reverse(&s[0], &s[s.length()]);
+    /*
+    while (true)
+        if (first == last || first == --last)
+            return;
+        else
+            char_swap(s, first++, last);
+            */
+}
+
+void OW_String_sort(OW_String& s)
+{
+    std::sort(&s[0], &s[s.length()]);
+}
+
+// TODO: Handle ints and slice objects
+char OW_String__getitem__(const OW_String& s, int i)
+{
+    if (i < 0 || i >= s.length())
+    {
+        // TODO: raise IndexError
+    }
+    return s[i];
+}
+
+void OW_String__setitem__(OW_String& s, int i, char c)
+{
+    if (i < 0 || i >= s.length())
+    {
+        // TODO: raise IndexError
+    }
+    s[i] = c;
+}
+
+void OW_String__delitem__(OW_String& s, int i)
+{
+    if (i < 0 || i >= s.length())
+    {
+        // TODO: raise IndexError
+    }
+    s = s.substring(0, i) + s.substring(i+1);
+}
+
 void registerOW_String()
 {
     class_<OW_String>("OW_String")
@@ -96,7 +219,7 @@ void registerOW_String()
         .def("charAt", &OW_String::charAt)
         .def("compareTo", &OW_String::compareTo)
         .def("compareToIgnoreCase", &OW_String::compareToIgnoreCase)
-        .def("concat", &OW_String::concat, return_internal_reference<>())
+        .def("concat", (OW_String& (OW_String::*)(const OW_String&))(&OW_String::concat), return_internal_reference<>())
         .def("endsWith", &OW_String::endsWith, OW_String_endsWith_overloads(args("arg", "ignoreCase")))
         .def("equals", &OW_String::equals)
         .def("equalsIgnoreCase", &OW_String::equalsIgnoreCase)
@@ -107,8 +230,19 @@ void registerOW_String()
         .def("lastIndexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::lastIndexOf), OW_String_lastIndexOf_overloads(args("arg", "fromIndex")))
         .def("startsWith", &OW_String::startsWith, OW_String_startsWith_overloads(args("arg", "ignoreCase")))
         .def("substring", &OW_String::substring, OW_String_substring_overloads(args("beginIndex", "length")))
+        // The next few methods are to support enumlating a python container type
         .def("__getslice__", &OW_String_getslice)
-        // TODO: add __setslice__ and __delslice__
+        // TODO: add __setslice__ and __delslice__ 
+        .def("append", &OW_String_append)
+        .def("count", &OW_String_count)
+        .def("index", &OW_String_index)
+        .def("insert", &OW_String_insert)
+        .def("pop", &OW_String_pop, OW_String_pop_overloads(args("i")))
+        .def("remove", &OW_String_remove)
+        .def("reverse", &OW_String_reverse)
+        .def("sort", &OW_String_sort)
+
+
         .def("isSpaces", &OW_String::isSpaces)
         .def("toLowerCase", &OW_String::toLowerCase, return_internal_reference<>())
         .def("toUpperCase", &OW_String::toUpperCase, return_internal_reference<>())
@@ -117,7 +251,10 @@ void registerOW_String()
         .def("trim", &OW_String::trim, return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)())(&OW_String::erase), return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), OW_String_erase_overloads(args("idx", "len"))[return_internal_reference<>()])
-        .def("__getitem__", &OW_String::operator[])
+        // TODO: support slice objects as a parameter to getitem. see http://www.python.org/dev/doc/devel/ref/sequence-methods.html
+        .def("__getitem__", &OW_String__getitem__)
+        .def("__setitem__", &OW_String__setitem__)
+        .def("__delitem__", &OW_String__delitem__)
         .def(self += self)
         .def("readObject", &OW_String::readObject)
         .def("writeObject", &OW_String::writeObject)

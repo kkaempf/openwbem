@@ -1,21 +1,19 @@
-#include <boost/python.hpp>
+#include <boost/python/module.hpp>
 #ifdef ANY
 #undef ANY
 #endif
 
-using namespace boost::python;
-
- 
 void registerOW_String();
 void registerOW_CIMClient();
+void registerOW_CIMOMInfo();
+void registerOW_Array();
 
 BOOST_PYTHON_MODULE(owclient)
 {
     registerOW_String();
     registerOW_CIMClient();
-
-    //
-    //    OW_CIMOMInfo
+    registerOW_CIMOMInfo();
+    registerOW_Array();
     //
     //    OW_CIMOMLocator
     //
@@ -56,8 +54,6 @@ BOOST_PYTHON_MODULE(owclient)
     //
     //    OW_CIMValueCast
     //
-    //    OW_StringArray
-    //
     //    OW_StringResultHandlerIFC
     //
     //    OW_CIMClassResultHandlerIFC
@@ -75,8 +71,6 @@ BOOST_PYTHON_MODULE(owclient)
     //    OW_CIMQualifierTypeResultHandlerIFC
     //
     //    OW_CIMQualifierTypeEnumeration
-    //
-    //    OW_CIMParamValueArray
     //
     //    MofCompiler
 }

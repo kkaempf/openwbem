@@ -37,5 +37,7 @@ INCLUDES = \
 owclient_a_SOURCES = \
 PyOW_CIMClient.cpp \
 PyOW_Client.cpp \
-PyOW_String.cpp
+PyOW_String.cpp \
+PyOW_CIMOMInfo.cpp \
+PyOW_Array.cpp
 
