@@ -95,6 +95,7 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 			-e "s!owcimomd.allowed_users =.*!owcimomd.allowed_users = test test1 test2 test3 $USER!g" \
 			-e "s!;http_server.ssl_trust_store =.*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
 			-e "s!;owcimomd.check_referential_integrity =.*!owcimomd.check_referential_integrity = true!g" \
+			-e "s!;owcimomd.pidfile =.*!owcimomd.pidfile = $PIDFILE!g" \
 		openwbem.conf > openwbem.conf-t
 	cd $STAGEDIR
 	# undo the change for the UDS, since the client won't know to use the
@@ -202,7 +203,7 @@ WaitForLogResults()
   WAIT_LEFT=$MAX_WAIT
   while [ $WAIT_LEFT -gt 0 ]
   do
-    tail -n $LINES_TO_SEARCH $RESULTDIR/owcimomd.output 2>/dev/null | grep -- "$TEXT" >/dev/null 2>/dev/null
+    tail -n $LINES_TO_SEARCH $RESULTDIR/logfile 2>/dev/null | grep -- "$TEXT" >/dev/null 2>/dev/null
     if [ $? -ne 0 ]; then
       sleep 1
       WAIT_LEFT=`expr $WAIT_LEFT - 1`
@@ -231,27 +232,37 @@ StartDaemon()
 			--logfile-fd=9 \
 			--suppressions=../OpenSSL.supp \
 			9>> valgrind.out \
-		$STAGEDIR/$OWSBINDIR/owcimomd -d -c \
+		$STAGEDIR/$OWSBINDIR/owcimomd -c \
 			$STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
-			>> $RESULTDIR/owcimomd.output 2>&1 &
+			>> $RESULTDIR/owcimomd.output 2>&1
 	else
-		$STAGEDIR/$OWSBINDIR/owcimomd -d -c \
+		$STAGEDIR/$OWSBINDIR/owcimomd -c \
 			$STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
-			>> $RESULTDIR/owcimomd.output 2>&1 &
+			>> $RESULTDIR/owcimomd.output 2>&1
 	fi
-	PID=$!
-	echo $PID > $PIDFILE
+
+	RVAL=$?
+	if [ $RVAL != "0" ]; then
+		echo "** Daemon failed to start! Exit code: $RVAL. Check"
+		echo "** $STAGEDIR/results/owcimomd.output "
+		echo "** for clues."
+		Exit 1
+	fi
+
+	PID=`cat $PIDFILE`
+	if kill -0 $PID ; then
+		:
+	else
+		echo "** Daemon failed to start!  Another instance could be running. Check"
+		echo "** $STAGEDIR/results/owcimomd.output "
+		echo "** for clues."
+		Exit 1
+	fi
+
 	echo "Waiting for daemon to initialize"
 	WaitForLogResults 'owcimomd is now running' 60
-	if [ $WAIT_RESULTS -eq 0 ]
-        then
-          echo "The daemon should now be running."
-        fi
-	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
-	  echo "** Daemon failed to start!  Another instance could be running Check"
-	  echo "** $STAGEDIR/results/owcimomd.output "
-	  echo "** for clues."
-	  Exit 1
+	if [ $WAIT_RESULTS -eq 0 ]; then
+		echo "The daemon should now be running."
 	fi
 }
 
@@ -304,22 +315,24 @@ StopDaemon()
 		return
 	fi
 	PID=`cat $PIDFILE`
-	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
-	  echo "** Daemon is not running!  It may have crashed.  Check "
-	  echo "** $STAGEDIR/results/owcimomd.output "
-	  echo "** for clues."
-	  rm -f $PIDFILE
-	  Exit 1
+	if kill -0 $PID; then
+		:
+	else
+		echo "** Daemon is not running!  It may have crashed.  Check "
+		echo "** $STAGEDIR/results/logfile "
+		echo "** for clues."
+		rm -f $PIDFILE
+		Exit 1
 	fi
 	kill -15 $PID # TERM
 	WaitForLogResults 'owcimomd has shutdown' 60 5
-	if [ -d /proc ] && [ -d /proc/$PID ]; then
-	  kill -9 $PID # KILL
-	  echo "** Daemon failed to terminate!!!  Check"
-	  echo "** $STAGEDIR/results/owcimomd.output "
-	  echo "** for clues."
-	  rm -f $PIDFILE
-	  Exit 1
+	if kill -0 $PID 2>/dev/null; then
+		kill -9 $PID # KILL
+		echo "** Daemon failed to terminate!!!  Check"
+		echo "** $STAGEDIR/results/logfile "
+		echo "** for clues."
+		rm -f $PIDFILE
+		Exit 1
 	fi
 	rm -f $PIDFILE
 }
@@ -1153,7 +1166,13 @@ BUILDDIR=$STAGEDIR/../../..
 
 PIDFILE=$STAGEDIR/owcimomd.pid
 
+# This is how the test method provider knows where to store it's state.
+OW_METHOD_PROVIDER_TEST_FILENAME=$STAGEDIR/ow_MethodProviderTest.txt
+export OW_METHOD_PROVIDER_TEST_FILENAME
+
+# Linux
 LD_LIBRARY_PATH="$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:$LD_LIBRARY_PATH"
+
 # AIX
 LIBPATH="$LD_LIBRARY_PATH:$LIBPATH" 
 
@@ -1162,7 +1181,6 @@ SHLIB_PATH="$LD_LIBRARY_PATH:$SHLIB_PATH"
 
 # OSX
 DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH:$DYLD_LIBRARY_PATH"
-
 
 export LD_LIBRARY_PATH LIBPATH SHLIB_PATH DYLD_LIBRARY_PATH
 

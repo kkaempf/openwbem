@@ -97,10 +97,19 @@ MethodProviderTest::initialize(const ProviderEnvironmentIFCRef& env)
 }
 
 
-String fileName("ow_methodProviderTestFile.txt");
+String getFileName()
+{
+    const char* fNameEnv = getenv("OW_METHOD_PROVIDER_TEST_FILENAME");
+	if (fNameEnv)
+	{
+		return fNameEnv;
+	}
+	return "ow_methodProviderTestFile.txt";
+}
+
 String getState()
 {
-	ifstream ifstr(fileName.c_str(), std::ios::in);
+	ifstream ifstr(getFileName().c_str(), std::ios::in);
 	if (!ifstr)
 	{
 		return String("off");
@@ -121,7 +130,7 @@ String getState()
 
 void setState(const String& newState)
 {
-	ofstream ofstr(fileName.c_str(), std::ios::out | std::ios::trunc);
+	ofstream ofstr(getFileName().c_str(), std::ios::out | std::ios::trunc);
 	ofstr << newState << endl;
 }
 
