@@ -38,6 +38,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_SocketUtils.hpp"
 
 #include <exception>
 
@@ -381,8 +382,15 @@ namespace
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_CIMObjectPath &cop_)
 		{
+			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
+			OW_CIMObjectPath cop(cop_);
+            if (cop.getFullNameSpace().isLocal())
+			{
+				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+			}
+
 			OW_BinIfcIO::writeObjectPath(ostrm, cop);
 		}
 	private:
