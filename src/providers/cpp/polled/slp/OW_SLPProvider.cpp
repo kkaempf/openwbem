@@ -342,5 +342,5 @@ private:
 
 } // end namespace OpenWBEM
 
-OW_PROVIDERFACTORY_NOID(OpenWBEM::SLPProvider)
+OW_PROVIDERFACTORY_NOID(OpenWBEM::SLPProvider, owslpprovider)
 
