@@ -314,10 +314,10 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		libName += OW_FILENAME_SEPARATOR;
 		libName += dirEntries[i];
 #ifdef OW_DARWIN
-    if(! FileSystem::isLink(libName))
-    {
-      continue;
-    }
+		if(!FileSystem::isLink(libName))
+		{
+			continue;
+		}
 #endif // OW_DARWIN
 		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
