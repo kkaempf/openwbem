@@ -513,11 +513,18 @@ char *	CIMOMEnumInstanceNames(npiHandle, cop, i)
 	char * cop
 	int i
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMObjectPath ccop = {argsfromperl(cop)};
 	Vector v;
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	v = CIMOMEnumInstanceNames(nh, ccop, i);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 	RETVAL = v.ptr;
 	OUTPUT:
 	RETVAL
@@ -528,38 +535,59 @@ char *	CIMOMEnumInstances(npiHandle, cop, i, j)
 	int i
 	int j
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMObjectPath ccop = {argsfromperl(cop)};
 	Vector v;
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	v = CIMOMEnumInstances(nh, ccop, i, j);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 	RETVAL = argsforperl(v.ptr);
 	OUTPUT:
 	RETVAL
 
-char *	CIMOMGetInstance(npiHandle, cop , i)
+char *  CIMOMGetInstance(npiHandle, cop, i)
 	char * npiHandle
 	char * cop
 	int i
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMObjectPath ccop = {argsfromperl(cop)};
 	CIMInstance ci;
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	ci = CIMOMGetInstance(nh, ccop, i);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 	RETVAL = argsforperl(ci.ptr);
 	OUTPUT:
-	RETVAL
+	RETVAL 
 
 void	CIMOMDeliverProcessEvent(npiHandle, ns , ind)
 	char * npiHandle
 	char * ns 
 	char * ind 
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMInstance cin = {argsfromperl(ind)};
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	CIMOMDeliverProcessEvent(nh, ns, cin);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 
 void	CIMOMDeliverInstanceEvent(npiHandle, ns , ind, src, prev)
 	char * npiHandle
@@ -568,42 +596,77 @@ void	CIMOMDeliverInstanceEvent(npiHandle, ns , ind, src, prev)
 	char * src
 	char * prev
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMInstance cin = {argsfromperl(ind)};
 	CIMInstance cs = {argsfromperl(src)};
 	CIMInstance cp = {argsfromperl(prev)};
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	CIMOMDeliverInstanceEvent(nh, ns, cin, cs, cp);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 
 char*	CIMOMPrepareAttach(npiHandle)
 	char * npiHandle
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	RETVAL = argsforperl(CIMOMPrepareAttach(nh));
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 	OUTPUT:
 	RETVAL
 
 void	CIMOMCancelAttach(npiHandle)
 	char * npiHandle
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	CIMOMCancelAttach(nh);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 
 void	CIMOMAttachThread(npiHandle)
 	char * npiHandle
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	CIMOMAttachThread(nh);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 
 void	CIMOMDetachThread(npiHandle)
 	char * npiHandle
 	PREINIT:
+	PerlInterpreter  * local_interpreter;
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
+	local_interpreter = (PerlInterpreter *)(
+		((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl = NULL;
 	CIMOMDetachThread(nh);
+	PERL_SET_CONTEXT(local_interpreter);
+	((PerlContext *)((NPIHandle *)nh->context))->my_perl =
+		(void *)local_interpreter;
 
 int	errorCheck(npiHandle)
 	char * npiHandle

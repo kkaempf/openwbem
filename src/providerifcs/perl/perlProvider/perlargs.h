@@ -18,6 +18,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+/* used in perlProvider.h and perlNPI/perlNPI.xs */
+typedef struct {
+  char * scriptName;
+  void * my_perl;
+} PerlContext;
+
 static inline char * argsforperl(void * arg)
 {
     //char my_arg[sizeof(void *)/4 + 3];

@@ -40,11 +40,6 @@ EXTERN_C void xs_init();
 #include <npi.h>
 
 typedef struct {
-  char * scriptName;
-  void * my_perl;
-} PerlContext;
-
-typedef struct {
   //CIMProvider;
   FP_INITIALIZE         fp_initialize;
   FP_CLEANUP            fp_cleanup;
