@@ -363,7 +363,7 @@ remoteprovifc.max_connections_per_url = 5
 
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
-# responses.  This option controls whether it will acutally use it or not.
+# responses.  This option controls whether it will actually use it or not.
 # Performance tests on a 100Mbit lan have shown that enabling deflate is slower 
 # than if it is disabled.
 # The default is true
