@@ -1,3 +1,4 @@
+if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 owpamauthbin_PROGRAMS = OW_PAMAuth
@@ -37,4 +38,6 @@ OW_LinuxPAMAuthenticationCL.cpp
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/ifcs
+
+endif
 

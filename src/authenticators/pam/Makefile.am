@@ -1,3 +1,4 @@
+if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libpamauthentication.so
@@ -28,3 +29,4 @@ INCLUDES = \
 -I$(top_srcdir)/src/common	\
 -I$(top_srcdir)/src/ifcs
 
+endif
