@@ -56,7 +56,7 @@ void OW_CIMDateTimeTestCases::testToDateTime()
 	CIMDateTime cd(d1);
 	DateTime d2 = cd.toDateTime();
 	unitAssert(d1 == d2);
-	unitAssert(DateTime("21111020051022.333333+000") == CIMDateTime("21111020051022.333333+000").toDateTime());
+	unitAssert(DateTime("20111020051022.333333+000") == CIMDateTime("20111020051022.333333+000").toDateTime());
 }
 
 void OW_CIMDateTimeTestCases::testConstructor()
