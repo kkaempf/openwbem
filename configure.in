@@ -1415,6 +1415,7 @@ src/services/Makefile
 src/services/http/Makefile
 src/tools/Makefile
 src/tools/owmofc/Makefile
+src/tools/owprovideragent/Makefile
 src/wql/Makefile
 src/wql/common/Makefile
 src/xml/Makefile
