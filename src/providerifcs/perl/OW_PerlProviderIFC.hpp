@@ -53,6 +53,7 @@ protected:
 	virtual const char* getName() const { return "perl"; }
 	virtual void doInit(const ProviderEnvironmentIFCRef& env,
 		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray& a,
 #endif
