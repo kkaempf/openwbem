@@ -322,6 +322,9 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 		StringArray sa = (*iter)->getSupportedContentTypes(); 
 		if (std::find(sa.begin(), sa.end(), ct) != sa.end())
 		{
+			RequestHandlerIFCRef ref = RequestHandlerIFCRef(iter->getLibRef(),
+				(*iter)->clone());
+			ref->setEnvironment(ServiceEnvironmentIFCRef(this));
 			return *iter; 
 		}
 	}
