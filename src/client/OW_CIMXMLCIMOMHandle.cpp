@@ -213,12 +213,12 @@ CIMXMLCIMOMHandle::doSendRequest(
 		getHTTPTrailers(istr);
 		istr->checkForError();
 	}
-	catch (XMLParseException& xmlE)
+	catch (Exception&)
 	{
 		HTTPUtils::eatEntity(*istr);
 		getHTTPTrailers(istr);
 		istr->checkForError();
-		throw xmlE;
+		throw;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	//
 	if (!parser || !parser.tokenIsId(CIMXMLParser::E_CIM))
 	{
-		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
+		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML. <CIM> not found.");
 	}
 	if (m_performStrictChecks)
 	{
