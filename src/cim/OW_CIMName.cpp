@@ -34,7 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_CIMName.hpp"
+#if defined(OW_HAVE_OSTREAM)
 #include <ostream>
+#else
+#include <iostream>
+#endif
+/* #endif defined(OW_HAVE_OSTREAM)*/
 
 namespace OpenWBEM
 {
