@@ -66,6 +66,8 @@ int main(int argc, char* argv[])
 		// Start all of the cimom services
 		env->startServices();
 		env->logInfo("CIMOM is now running!");
+		// Do this after initialization to prevent an infinite loop.
+		Platform::installFatalSignalHandlers();
 		int sig;
 		bool shuttingDown(false);
 		while(!shuttingDown)
