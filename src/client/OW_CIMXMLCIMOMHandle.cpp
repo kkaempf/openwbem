@@ -174,12 +174,16 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		if (isIntrinsic)
 		{
-			parser.mustGetNextTag(); // pass over <IRETURNVALUE>
+			if (parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			{
+				parser.mustGetNextTag(); // pass over <IRETURNVALUE>
+				op(parser);
+				parser.mustGetEndTag(); // pass </IRETURNVALUE>
+			}
 		}
-		op(parser);
-		if (isIntrinsic)
+		else
 		{
-			parser.mustGetEndTag(); // pass </IRETURNVALUE>
+			op(parser);
 		}
 		parser.mustGetEndTag(); // pass </(I)METHODRESPONSE>
 		parser.mustGetEndTag(); // pass </SIMPLERSP>
@@ -266,12 +270,7 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 										 nameOfMethod).c_str());
 	}
 
-	parser.getChild();
-	if (!parser)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							"No E_IRETURNVALUE");
-	}
+	parser.mustGetNextTag();
 
 	//
 	// See if there was an error, and if there was throw an equivalent

@@ -141,6 +141,13 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		parser.mustGetNextTag();
 		parser.mustGetEndTag();
 	}
+	else
+	{
+		// The SCOPE subelement ... if absent it implies that there is no
+		// restriction on the scope at which the Qualifier may be applied
+		// (so that it has 'any' scop in the terminology of CIM)
+		cimQualifier.addScope(OW_CIMScope::ANY);
+	}
 
 	if (parser.tokenIs(OW_CIMXMLParser::E_VALUE) ||
 		parser.tokenIs(OW_CIMXMLParser::E_VALUE_ARRAY))

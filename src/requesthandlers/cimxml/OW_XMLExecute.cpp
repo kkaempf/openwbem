@@ -199,6 +199,7 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	}
 	else
 	{
+		// TODO: void functions should not have the <IRETURNVALUE> tag!
 		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName <<
 			"\"><IRETURNVALUE>";
 

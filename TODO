@@ -30,6 +30,7 @@ x Add empty() call to OW_String and change all length() == 0 to empty()
 x split out namespace parameters to cimom handle calls.
 x Intrinsic indications are fetched from root namespace.  Less than optimal.
 x Remove any bad NOT_SUPPORTED exceptions.
+x Split out the internal provider ifc from the Provider Manager.  
 
 
 Testing:
@@ -69,14 +70,14 @@ New features:
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
-    - Split out the internal provider ifc from the Provider Manager.  Create a 
-      common base class for C++ provider ifcs (internal, c++, simplec++)
+    - Create a common base class for C++ provider ifcs (internal, c++, 
+      simplec++)
     - inline the smaller functions in OW_String, OW_StringBuffer, and other 
       commonly used classes.
     - XMLExecute has handling of flags like localonly, etc.  remove this
       and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 
 Documentation:
-    - Write developer documentation (similar to "SNIA CIM Object Manager 
+    - Enhance developer documentation (similar to "SNIA CIM Object Manager 
       Architecture and Developers Guide" found at 
       http://www.opengroup.org/snia-cimom/)
