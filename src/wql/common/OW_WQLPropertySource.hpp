@@ -45,21 +45,49 @@ public:
 
 	/** Virtual destructor.
 	*/
-	virtual ~OW_WQLPropertySource();
+	virtual ~OW_WQLPropertySource() {}
 
 	/** Returns the value whose property has the given name. The output
-	parameter value is populated with the value of that parameter.
-	Note that only integer, double, and string types are supported
-	(see the WQLOperand class). The implementer of this method must
-	perform appropriate conversions to the appropriate type.
+		parameter value is populated with the value of that parameter.
+		Note that only integer, double, and string types are supported
+		(see the WQLOperand class). The implementer of this method must
+		perform appropriate conversions to the appropriate type.
 
-	@param propertyName name of property to be gotten.
-	@param value holds the value of the property upon return.
-	@return true if such a property was found and false otherwise.
+		@param propertyName name of property to be gotten.  This can be of the form:
+		  name(.subname)*
+		  examples:
+		  propertyName
+		  className.propertyName
+		  propertyName.embeddedPropertyName1
+		  propertyName.embeddedPropertyName1.embeddedPropertyName2
+		  className.propertyName.embeddedPropertyName1
+		@param value holds the value of the property upon return.
+		@return true if such a property was found and false otherwise.
 	*/
 	virtual bool getValue(
 		const OW_String& propertyName, 
 		OW_WQLOperand& value) const = 0;
+
+	/** Returns true if the property identified by propertyName is an
+		EmbeddedObject instance or class that is either className or
+		is derived from className.
+
+		@param propertyName name of property to be gotten.  This can be of the form:
+		  name(.subname)*
+		  examples:
+		  propertyName
+		  className.propertyName
+		  propertyName.embeddedPropertyName1
+		  propertyName.embeddedPropertyName1.embeddedPropertyName2
+		  className.propertyName.embeddedPropertyName1
+		@param className The name of the class against which the property is 
+		  to be checked.
+		@return true or false
+	*/
+	virtual bool evaluateISA(
+		const OW_String& propertyName,
+		const OW_String& className) const = 0;
+
 };
 
 #endif

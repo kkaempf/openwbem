@@ -1,3 +1,7 @@
+Sat Dec 14 23:17:17 MST 2002
+- Changed the WQL lexer to not make all identifiers lower case.
+- Made lots of progress and got the new WQL classes working.
+
 Fri Dec 13 23:05:03 MST 2002
 - Got the WQL SelectStatement to successfully compile all the test queries.
 - Fixed the MOF & WQL lexer to only allocate strings when needed instead of 

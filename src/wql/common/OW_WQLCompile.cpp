@@ -1,4 +1,5 @@
 // Copyright (c) 2000, 2001 The Open group, BMC Software, Tivoli Systems, IBM
+// Copyright (c) 2002 Caldera International, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -19,9 +20,9 @@
 //==============================================================================//
 // Author: Markus Mueller (sedgewick_de@yahoo.de)
 //
-// Modified By:
+// Modified By: Dan Nuffer
 //
-//%/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 #include "OW_config.h"
 #include "OW_Assertion.hpp"
@@ -159,13 +160,9 @@ OW_WQLOperation op)
 	{
 		case OW_WQLOperand::NULL_VALUE:
 			{
-				// This cannot happen since expressions of the form
-				// OPERAND OPERATOR NULL are converted to unary form.
-				// For example: "count IS NULL" is treated as a unary
-				// operation in which IS_NULL is the unary operation
-				// and count is the the unary operand.
-
-				OW_ASSERT(0);
+				// return true if the op is WQL_EQ and the rhs is NULL
+				// also if op is WQL_NE and rhs is not NULL
+				return !(op == WQL_EQ) ^ (rhs.getType() == OW_WQLOperand::NULL_VALUE);
 				break;
 			}
 
@@ -220,11 +217,6 @@ OW_WQLCompile::OW_WQLCompile()
 OW_WQLCompile::OW_WQLCompile(const OW_WQLSelectStatement & wqs)
 {
 	compile(&wqs);
-}
-
-OW_WQLCompile::OW_WQLCompile(const OW_WQLSelectStatement * wqs)
-{
-	compile(wqs);
 }
 
 OW_WQLCompile::~OW_WQLCompile()
@@ -305,7 +297,7 @@ void OW_WQLCompile::print(std::ostream& ostr)
 	for (OW_UInt32 i=0, n=eval_heap.size();i < n;i++)
 	{
 		OW_WQLOperation wop = eval_heap[i].op; 
-		if (wop == WQL_IS_TRUE)	
+		if (wop == WQL_DO_NOTHING)	
 			continue;
 		ostr << "Eval element " << i << ": "; 
 		if (eval_heap[i].is_terminal1 == TERMINAL_HEAP) 
@@ -349,18 +341,20 @@ void OW_WQLCompile::printTableau(std::ostream& ostr)
 	}
 }
 
+static OW_WQLOperand dummy;
+static OW_WQLOperand TrueVal(true, WQL_BOOLEAN_VALUE_TAG);
+static OW_WQLOperand FalseVal(false, WQL_BOOLEAN_VALUE_TAG);
+
 void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 {
-
-	OW_WQLOperand dummy;
 	OW_Stack<stack_el> stack;
 
 	for (OW_UInt32 i = 0, n = wqs->_operStack.size(); i < n; i++)
 	{
-		OW_WQLSelectStatement::OperandOrOperation curItem = wqs->_operStack[i];
+		const OW_WQLSelectStatement::OperandOrOperation& curItem = wqs->_operStack[i];
 		if (curItem.m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND)
 		{
-			// put point to it onto the stack
+			// put pointer to it onto the stack
 			stack.push(stack_el(i, OPERAND));
 		}
 		else
@@ -369,25 +363,7 @@ void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 	
 			switch (op)
 			{
-				case WQL_OR:
-				case WQL_AND:
-					{
-						OW_ASSERT(stack.size() >= 2);
-	
-						stack_el op1 = stack.top();
-						stack.pop();
-	
-						stack_el op2 = stack.top();
-	
-						// generate Eval expression
-						eval_heap.append(eval_el(false, op, op1.opn, op1.type,
-							op2.opn , op2.type));
-	
-						stack.top() = stack_el(eval_heap.size()-1, EVAL_HEAP);
-	
-						break;
-					}
-	
+				// unary
 				case WQL_NOT:
 					{
 						OW_ASSERT(stack.size() >= 1);
@@ -403,6 +379,9 @@ void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 						break;
 					}
 	
+				// binary
+				case WQL_OR:
+				case WQL_AND:
 				case WQL_EQ:
 				case WQL_NE:
 				case WQL_LT:
@@ -413,10 +392,10 @@ void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 					{
 						OW_ASSERT(stack.size() >= 2);
 	
-						stack_el op1 = stack.top();
+						stack_el op2 = stack.top();
 						stack.pop();
 	
-						stack_el op2 = stack.top();
+						stack_el op1 = stack.top();
 
 						if (op1.type == OPERAND && op2.type == OPERAND)
 						{
@@ -443,42 +422,13 @@ void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 	
 						break;
 					}
-	
-				case WQL_IS_TRUE:
-				case WQL_IS_NOT_FALSE:
-				case WQL_IS_NULL:
-					{
-						OW_ASSERT(stack.size() >= 1);
-						stack_el op1 = stack.top();
 
-						OW_ASSERT(op1.type == OPERAND);
-						OW_ASSERT(wqs->_operStack[op1.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
-						OW_WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
-	
-						terminal_heap.push_back(term_el(false, WQL_EQ, lhs, dummy));
-	
-						stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
-	
+				case WQL_DO_NOTHING:
+					{
+						OW_ASSERT(0); // this should never happen
 						break;
 					}
-	
-				case WQL_IS_FALSE:
-				case WQL_IS_NOT_TRUE:
-				case WQL_IS_NOT_NULL:
-					{
-						OW_ASSERT(stack.size() >= 1);
-						stack_el op1 = stack.top();
 
-						OW_ASSERT(op1.type == OPERAND);
-						OW_ASSERT(wqs->_operStack[op1.opn].m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND);
-						OW_WQLOperand lhs = wqs->_operStack[op1.opn].m_operand;
-	
-						terminal_heap.push_back(term_el(false, WQL_NE, lhs, dummy));
-	
-						stack.top() = stack_el(terminal_heap.size()-1, TERMINAL_HEAP);
-	
-						break;
-					}
 			}
 		}
 	}
@@ -502,7 +452,7 @@ void OW_WQLCompile::_pushNOTDown()
 		if (eval_heap[i].op == WQL_NOT)
 		{
 			// This serves as the equivalent of an empty operator
-			eval_heap[i].op = WQL_IS_TRUE;
+			eval_heap[i].op = WQL_DO_NOTHING;
 
 			// Substitute this expression in all higher order eval statements
 			// so that this node becomes disconnected from the tree
@@ -680,7 +630,7 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 
 	if ((i = eval_heap.size()) == 0) return;
 
-	while (eval_heap[i-1].op == WQL_IS_TRUE)
+	while (eval_heap[i-1].op == WQL_DO_NOTHING)
 	{
 		eval_heap.remove(i-1);
 		i--;
@@ -715,7 +665,7 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 				stk[i] = eval_heap[k].getSecond();
 				stk.insert(i, eval_heap[k].getFirst());
 				if (or_flag)
-					eval_heap[k].op = WQL_IS_TRUE;
+					eval_heap[k].op = WQL_DO_NOTHING;
 			}
 		}
 	}
@@ -757,6 +707,7 @@ void OW_WQLCompile::_sortTableau()
 
 		OW_String key1, key2;
 
+		// switch this to use std::sort ?
 		for (OW_UInt32 j = 0, m = tr.size(); j < m; j++)
 		{
 			if ((tr[j].opn1.getType() == OW_WQLOperand::PROPERTY_NAME)

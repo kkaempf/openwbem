@@ -708,7 +708,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_ISNULL(
 	)
 {
 	paExpr_aExpr_ISNULL->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_NULL);
+	m_stmt.appendOperand(OW_WQLOperand()); // default constructor creates NULL operand
+	m_stmt.appendOperation(WQL_EQ);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NULLP(
@@ -716,7 +717,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NULLP(
 	)
 {
 	paExpr_aExpr_IS_NULLP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_NULL);
+	m_stmt.appendOperand(OW_WQLOperand()); // default constructor creates NULL operand
+	m_stmt.appendOperation(WQL_EQ);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_NOTNULL(
@@ -724,7 +726,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_NOTNULL(
 	)
 {
 	paExpr_aExpr_NOTNULL->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_NOT_NULL);
+	m_stmt.appendOperand(OW_WQLOperand()); // default constructor creates NULL operand
+	m_stmt.appendOperation(WQL_NE);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_NULLP(
@@ -732,7 +735,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_NULLP(
 	)
 {
 	paExpr_aExpr_IS_NOT_NULLP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_NOT_NULL);
+	m_stmt.appendOperand(OW_WQLOperand()); // default constructor creates NULL operand
+	m_stmt.appendOperation(WQL_NE);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_TRUEP(
@@ -740,7 +744,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_TRUEP(
 	)
 {
 	paExpr_aExpr_IS_TRUEP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_TRUE);
+	m_stmt.appendOperand(OW_WQLOperand(true, WQL_BOOLEAN_VALUE_TAG));
+	m_stmt.appendOperation(WQL_EQ);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_FALSEP(
@@ -748,7 +753,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_FALSEP(
 	)
 {
 	paExpr_aExpr_IS_NOT_FALSEP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_TRUE);
+	m_stmt.appendOperand(OW_WQLOperand(false, WQL_BOOLEAN_VALUE_TAG));
+	m_stmt.appendOperation(WQL_NE);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_FALSEP(
@@ -756,7 +762,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_FALSEP(
 	)
 {
 	paExpr_aExpr_IS_FALSEP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_FALSE);
+	m_stmt.appendOperand(OW_WQLOperand(false, WQL_BOOLEAN_VALUE_TAG));
+	m_stmt.appendOperation(WQL_EQ);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_TRUEP(
@@ -764,7 +771,8 @@ void OW_WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_TRUEP(
 	)
 {
 	paExpr_aExpr_IS_NOT_TRUEP->m_paExpr1->accept(this);
-	m_stmt.appendOperation(WQL_IS_FALSE);
+	m_stmt.appendOperand(OW_WQLOperand(true, WQL_BOOLEAN_VALUE_TAG));
+	m_stmt.appendOperation(WQL_NE);
 }
 
 void OW_WQLSelectStatementGen::visit_aExpr_aExpr_ISA_aExpr(
@@ -1296,9 +1304,9 @@ void OW_WQLSelectStatementGen::visit_targetEl_strRelationName_PERIOD_ASTERISK(
 	const targetEl_strRelationName_PERIOD_ASTERISK* ptargetEl_strRelationName_PERIOD_ASTERISK
 	)
 {
-	//m_stmt.appendSelectPropertyName(*ptargetEl_strRelationName_PERIOD_ASTERISK->m_pstrRelationName1 + ".*");
-	(void)ptargetEl_strRelationName_PERIOD_ASTERISK;
-	m_stmt.appendSelectPropertyName("*");
+	m_stmt.appendSelectPropertyName(*ptargetEl_strRelationName_PERIOD_ASTERISK->m_pstrRelationName1 + ".*");
+	// this isn't correct because it could be an embedded property, we need to keep the relation name
+	//m_stmt.appendSelectPropertyName("*");
 }
 
 void OW_WQLSelectStatementGen::visit_targetEl_ASTERISK(

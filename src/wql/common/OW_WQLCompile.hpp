@@ -131,9 +131,8 @@ public:
 
     OW_WQLCompile();
 
+	// calls compile()
     OW_WQLCompile(const OW_WQLSelectStatement& wqs);
-
-    OW_WQLCompile(const OW_WQLSelectStatement * wqs);
 
     ~OW_WQLCompile();
 
@@ -141,6 +140,14 @@ public:
 
     Tableau& getTableau() {return _tableau;}
 
+	/** Evalautes the where clause using the symbol table to resolve symbols.
+	 * @return true or false if the source passes the query
+	 * @throws OW_NoSuchPropertyException if the where clause references a 
+	 *		property that is unknown to source.
+	 * @throws OW_TypeMismatchException if the there is a type error in
+	 *		the where clause or if the property type of the source property
+	 *		doesn't match the query.
+	 */
     bool evaluate(OW_WQLPropertySource * source) const;
 
     void print(std::ostream& ostr);

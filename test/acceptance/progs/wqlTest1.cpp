@@ -119,6 +119,7 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select name from wqlTestClass", 10);
 		testQuery(rch, "select sint32Data from wqlTestClass", 10);
 		testQuery(rch, "select wqlTestClass.sint32Data from wqlTestClass", 10);
+		testQuery(rch, "select booleanData, wqlTestClass.sint32Data from wqlTestClass", 10);
 		testQuery(rch, "select wqlTestClass.* from wqlTestClass", 10);
 
 		// test some equals on the where clause
@@ -241,11 +242,11 @@ int main(int argc, char* argv[])
 
 		// test and and or
 		testQuery(rch, "select * from wqltestClass where name = \"test4\" or booleanData IS true", 1);
-		testQuery(rch, "select * from wqltestClass where name = \"test5\" or booleanData IS true", 2);
-		testQuery(rch, "select * from wqltestClass where name = \"test4\" and sint32Data = 1", 0);
-		testQuery(rch, "select * from wqltestClass where name = \"test4\" and booleanData IS TRUE", 1);
-		testQuery(rch, "select * from wqltestClass where name IS NOT NULL and realData IS NOT NULL", 2);
-		testQuery(rch, "select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = \"test5\" or booleanData IS true)", 4);
+		testQuery(rch, "select name, booleanData from wqltestClass where name = \"test5\" or booleanData IS true", 2);
+		testQuery(rch, "select name, sint32Data from wqltestClass where name = \"test4\" and sint32Data = 1", 0);
+		testQuery(rch, "select name, booleanData, sint32Data from wqltestClass where name = \"test4\" and booleanData IS TRUE", 1);
+		testQuery(rch, "select name, realData from wqltestClass where name IS NOT NULL and realData IS NOT NULL", 2);
+		testQuery(rch, "select name, booleanData from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = \"test5\" or booleanData IS true)", 4);
 		testQuery(rch, "select * from wqltestClass where (name = \"test4\" or name = \"test2\") and (sint32Data = 1 or booleanData = true)", 1);
 		
 		// test a simple insert

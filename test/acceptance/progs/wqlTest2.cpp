@@ -40,6 +40,7 @@ int main(int , char**)
 		testQuery("select name from wqlTestClass");
 		testQuery("select sint32Data from wqlTestClass");
 		testQuery("select wqlTestClass.sint32Data from wqlTestClass");
+		testQuery("select booleanData, wqlTestClass.sint32Data from wqlTestClass");
 		testQuery("select wqlTestClass.* from wqlTestClass");
 
 		// test some equals on the where clause
@@ -163,17 +164,6 @@ int main(int , char**)
 		testQuery("select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = \"test5\" or booleanData IS true)");
 		testQuery("select * from wqltestClass where (name = \"test4\" or name = \"test2\") and (sint32Data = 1 or booleanData = true)");
 		
-		testQuery("select * from wqlTestClass where name = "
-			"\"test11\"");
-
-		testQuery("select * from wqlTestClass where name = \"test11\"");
-		testQuery("select * from wqlTestClass where name = \"test11\"");
-
-		testQuery("select * from wqlTestClass where name = \"test11\"");
-
-		testQuery("select * from wqlTestClass where name = \"test11\"");
-		testQuery("select * from wqlTestClass where name = \"test12\"");
-
 		// test ISA and embedded properties
 		testQuery("select * from wqlTestClass where embed ISA fooClass");
 		testQuery("select * from wqlTestClass where embed ISA \"fooClass\"");
@@ -193,6 +183,7 @@ int main(int , char**)
 		testQuery("SELECT w,x,y,z FROM ClassName WHERE w = TRUE OR w = FALSE");
 		testQuery("SELECT w,x,y,z FROM ClassName WHERE w = TRUE AND x >= 10 AND y <= 13.10 AND z = \"Ten\"");
 		testQuery("SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = \"Ten\") AND NOT w = TRUE IS NOT TRUE");
+		testQuery("SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = \"Ten\") AND NOT ((w = TRUE) IS NOT TRUE)");
 		testQuery("SELECT * FROM ClassName WHERE NOT NOT NOT x < 5");
 		testQuery("SELECT * FROM ClassName WHERE v IS NULL");
 		testQuery("SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = \"BLAH\")) AND NOT ((x<10) OR (y>4.0))");

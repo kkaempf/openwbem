@@ -36,6 +36,7 @@
 #include <iostream>
 
 
+// TODO: Merge this code with OW_WQLCompile.cpp, it's all duplicated.
 template<class T>
 inline static bool _Compare(const T& x, const T& y, OW_WQLOperation op)
 {
@@ -74,13 +75,9 @@ static bool _Evaluate(
 	{
 		case OW_WQLOperand::NULL_VALUE:
 			{
-				// This cannot happen since expressions of the form
-				// OPERAND OPERATOR NULL are converted to unary form.
-				// For example: "count IS NULL" is treated as a unary
-				// operation in which IS_NULL is the unary operation
-				// and count is the the unary operand.
-
-				OW_ASSERT(0);
+				// return true if the op is WQL_EQ and the rhs is NULL
+				// also if op is WQL_NE and rhs is not NULL
+				return !(op == WQL_EQ) ^ (rhs.getType() == OW_WQLOperand::NULL_VALUE);
 				break;
 			}
 
@@ -172,6 +169,7 @@ static inline void _ResolveProperty(
 	{
 		const OW_String& propertyName = op.getPropertyName();
 
+		// it's up to the source to handle embedded properties.
 		if (!source->getValue(propertyName, op))
 			OW_THROW(OW_NoSuchPropertyException, propertyName.c_str());
 	}
@@ -183,170 +181,159 @@ bool OW_WQLSelectStatement::evaluateWhereClause(
 	if (!hasWhereClause())
 		return true;
 
-	OW_WQLSelectStatement* that = (OW_WQLSelectStatement*)this;
-	OW_Stack<bool> stack;
-	//stack.reserve(16);
-
-	// 
-	// Counter for operands:
-	//
-
-	OW_UInt32 j = 0;
+	OW_Stack<OW_WQLOperand> stack;
 
 	//
 	// Process each of the operations:
 	//
 
-	(void)stack; (void)j; (void)source; (void)that; (void)_Evaluate;
-	/* TODO: Fix this
-	for (OW_UInt32 i = 0, n = _operations.size(); i < n; i++)
+	for (OW_UInt32 i = 0, n = _operStack.size(); i < n; i++)
 	{
-		OW_WQLOperation op = _operations[i];
-
-		switch (op)
+		const OW_WQLSelectStatement::OperandOrOperation& curItem = _operStack[i];
+		if (curItem.m_type == OW_WQLSelectStatement::OperandOrOperation::OPERAND)
 		{
-			case WQL_OR:
-				{
-					OW_ASSERT(stack.size() >= 2);
+			// put it onto the stack
+			stack.push(curItem.m_operand);
+		}
+		else
+		{
+			OW_WQLOperation op = curItem.m_operation;
 
-					bool op1 = stack.top();
-					stack.pop();
+			switch (op)
+			{
+				case WQL_OR:
+					{
+						OW_ASSERT(stack.size() >= 2);
 
-					bool op2 = stack.top();
+						OW_WQLOperand op1 = stack.top();
+						stack.pop();
 
-					stack.top() = op1 || op2;
-					break;
-				}
+						OW_WQLOperand& op2 = stack.top();
 
-			case WQL_AND:
-				{
-					OW_ASSERT(stack.size() >= 2);
+						bool b1 = op1.getBooleanValue();
+						bool b2 = op2.getBooleanValue();
+						stack.top() = OW_WQLOperand(b1 || b2, WQL_BOOLEAN_VALUE_TAG);
+						break;
+					}
 
-					bool op1 = stack.top();
-					stack.pop();
+				case WQL_AND:
+					{
+						OW_ASSERT(stack.size() >= 2);
 
-					bool op2 = stack.top();
+						OW_WQLOperand op1 = stack.top();
+						stack.pop();
 
-					stack.top() = op1 && op2;
-					break;
-				}
+						OW_WQLOperand& op2 = stack.top();
 
-			case WQL_NOT:
-				{
-					OW_ASSERT(stack.size() >= 1);
+						bool b1 = op1.getBooleanValue();
+						bool b2 = op2.getBooleanValue();
+						stack.top() = OW_WQLOperand(b1 && b2, WQL_BOOLEAN_VALUE_TAG);
+						break;
+					}
 
-					bool op = stack.top();
-					stack.top() = !op;
-					break;
-				}
+				case WQL_NOT:
+					{
+						OW_ASSERT(stack.size() >= 1);
 
-			case WQL_EQ:
-			case WQL_NE:
-			case WQL_LT:
-			case WQL_LE:
-			case WQL_GT:
-			case WQL_GE:
-				{
-					OW_ASSERT(_operands.size() >= 2);
+						OW_WQLOperand& op = stack.top();
+						bool b1 = op.getBooleanValue();
+						stack.top() = OW_WQLOperand(!b1, WQL_BOOLEAN_VALUE_TAG);
+						break;
+					}
 
-					//
-					// Resolve the left-hand-side to a value (if not already
-					// a value).
-					//
+				case WQL_EQ:
+				case WQL_NE:
+				case WQL_LT:
+				case WQL_LE:
+				case WQL_GT:
+				case WQL_GE:
+					{
+						OW_ASSERT(stack.size() >= 2);
 
-					OW_WQLOperand& lhs = that->_operands[j++];
-					_ResolveProperty(lhs, source);
+						//
+						// Resolve the left-hand-side to a value (if not already
+						// a value).
+						//
 
-					//
-					// Resolve the right-hand-side to a value (if not already
-					// a value).
-					//
+						OW_WQLOperand lhs = stack.top();
+						stack.pop();
+						_ResolveProperty(lhs, source);
 
-					OW_WQLOperand& rhs = that->_operands[j++];
-					_ResolveProperty(rhs, source);
+						//
+						// Resolve the right-hand-side to a value (if not already
+						// a value).
+						//
 
-					//
-					// Check for a type mismatch:
-					//
+						OW_WQLOperand& rhs = stack.top();
+						_ResolveProperty(rhs, source);
 
-					// PEGASUS_OUT(lhs.toString());
-					// PEGASUS_OUT(rhs.toString());
+						//
+						// Check for a type mismatch:
+						//
 
-					if (rhs.getType() != lhs.getType())
-						OW_THROW(OW_TypeMismatchException, "");
+						if (rhs.getType() != lhs.getType())
+							OW_THROW(OW_TypeMismatchException, "");
 
-					//
-					// Now that the types are known to be alike, apply the
-					// operation:
-					//
+						//
+						// Now that the types are known to be alike, apply the
+						// operation:
+						//
 
-					stack.push(_Evaluate(lhs, rhs, op));
-					break;
-				}
+						stack.top() = OW_WQLOperand(_Evaluate(lhs, rhs, op), WQL_BOOLEAN_VALUE_TAG);
+						break;
+					}
 
-			case WQL_IS_TRUE:
-			case WQL_IS_NOT_FALSE:
-				{
-					OW_ASSERT(stack.size() >= 1);
-					break;
-				}
+				case WQL_ISA:
+					{
+						OW_ASSERT(stack.size() >= 2);
 
-			case WQL_IS_FALSE:
-			case WQL_IS_NOT_TRUE:
-				{
-					OW_ASSERT(stack.size() >= 1);
-					stack.top() = !stack.top();
-					break;
-				}
+						OW_WQLOperand lhs = stack.top();
+						stack.pop();
+						if (lhs.getType() != OW_WQLOperand::PROPERTY_NAME)
+						{
+							OW_THROW(OW_TypeMismatchException, "First argument of ISA must be a property name");
+						}
 
-			case WQL_IS_NULL:
-				{
-					OW_ASSERT(_operands.size() >= 1);
-					OW_WQLOperand& op = that->_operands[j++];
-					_ResolveProperty(op, source);
-					stack.push(op.getType() == OW_WQLOperand::NULL_VALUE);
-					break;
-				}
+						OW_WQLOperand& rhs = stack.top();
+						OW_String className;
+						if (rhs.getType() == OW_WQLOperand::PROPERTY_NAME)
+						{
+							className = rhs.getPropertyName();
+						}
+						else if (rhs.getType() == OW_WQLOperand::STRING_VALUE)
+						{
+							className = rhs.getStringValue();
+						}
+						else
+						{
+							OW_THROW(OW_TypeMismatchException, "Second argument of ISA must be a property name or string constant");
+						}
 
-			case WQL_IS_NOT_NULL:
-				{
-					OW_ASSERT(_operands.size() >= 1);
-					OW_WQLOperand& op = that->_operands[j++];
-					_ResolveProperty(op, source);
-					stack.push(op.getType() != OW_WQLOperand::NULL_VALUE);
-					break;
-				}
-			case WQL_ISA:
-				{
-					// TODO!
-					break;
-				}
+						stack.top() = OW_WQLOperand(source->evaluateISA(lhs.getPropertyName(), className), WQL_BOOLEAN_VALUE_TAG);
+						break;
+						break;
+					}
+
+				case WQL_DO_NOTHING:
+					{
+						OW_ASSERT(0); // should never happen
+						break;
+					}
+
+			}
 		}
 	}
 
 	OW_ASSERT(stack.size() == 1);
-	*/
-	return stack.top();
+	return stack.top().getBooleanValue();
 }
 
 void OW_WQLSelectStatement::print(std::ostream& ostr) const
 {
-	//
-	// Print the header:
-	//
-
 	ostr << "OW_WQLSelectStatement\n";
 	ostr << "{\n";
 
-	//
-	// Print the class name:
-	//
-
 	ostr << "	_className: \"" << _className << "\"\n";
-
-	// 
-	// Print the property:
-	//
 
 	for (size_t i = 0; i < _selectPropertyNames.size(); i++)
 	{
@@ -366,38 +353,6 @@ void OW_WQLSelectStatement::print(std::ostream& ostr) const
 		ostr << "	_operStack[" << i << "]: ";
 		ostr << '"' << _operStack[i].toString() << '"' << '\n';
 	}
-
-	/*
-	//
-	// Print the operations:
-	//
-
-	for (size_t i = 0; i < _operations.size(); i++)
-	{
-		if (i == 0)
-			ostr << '\n';
-
-		ostr << "	_operations[" << i << "]: ";
-		ostr << '"' << OW_WQLOperationToString(_operations[i]) << '"' << '\n';
-	}
-
-	//
-	// Print the operands:
-	//
-
-	for (size_t i = 0; i < _operands.size(); i++)
-	{
-		if (i == 0)
-			ostr << '\n';
-
-		ostr << "	_operands[" << i << "]: ";
-		ostr << '"' << _operands[i].toString() << '"' << '\n';
-	}
-	*/
-
-	//
-	// Print the trailer:
-	//
 
 	ostr << "}" << std::endl;
 }

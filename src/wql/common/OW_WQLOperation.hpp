@@ -110,12 +110,7 @@ enum OW_WQLOperation
 	WQL_LE,
 	WQL_GT,
 	WQL_GE,
-	WQL_IS_NULL,
-	WQL_IS_NOT_NULL,
-	WQL_IS_TRUE,
-	WQL_IS_NOT_TRUE,
-	WQL_IS_FALSE,
-	WQL_IS_NOT_FALSE,
+	WQL_DO_NOTHING,
 	WQL_ISA
 };
 
@@ -141,18 +136,8 @@ inline OW_String OW_WQLOperationToString(OW_WQLOperation op)
 			return ">";
 		case WQL_GE:
 			return ">=";
-		case WQL_IS_NULL:
-			return "IS NULL";
-		case WQL_IS_NOT_NULL:
-			return "IS NOT NULL";
-		case WQL_IS_TRUE:
-			return "IS TRUE";
-		case WQL_IS_NOT_TRUE:
-			return "IS NOT TRUE";
-		case WQL_IS_FALSE:
-			return "IS FALSE";
-		case WQL_IS_NOT_FALSE:
-			return "IS NOT FALSE";
+		case WQL_DO_NOTHING:
+			return "**INTERNAL NOTHING OPERATOR**";
 		case WQL_ISA:
 			return "ISA";
 	}

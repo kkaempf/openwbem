@@ -27,6 +27,8 @@ Fix problems:
     - Man pages aren't getting included in the rpm.
 
 New features:
+    - Add a virtual log message to the thread counter class so we can output
+      information about threads starting and exiting.
     - Write an event Provider interface.  Create intrinsic providers for
       CIM_IndicationSubscription that interfaces with the providers.
     - Write some SelectExp classes that event providers can use to easily
