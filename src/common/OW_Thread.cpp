@@ -226,7 +226,23 @@ OW_Thread::threadRunner(void* paramPtr)
 			pTheThread->m_state = Running;
 			pTheThread->m_stateCond.notifyAll();
 		}
-		pTheThread->run();
+		try
+		{
+			pTheThread->run();
+		}
+		catch(OW_Exception& ex)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread::threadRunner. Msg: " << ex.getMessage() << "\n";
+			std::cerr << ex << std::endl;
+#endif
+		}
+		catch (...)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Unknown Exception caught in OW_Thread::threadRunner" << std::endl;
+#endif
+		}
 		{
 			OW_NonRecursiveMutexLock l(pTheThread->m_stateMtx);
 			pTheThread->m_state = Finished;
@@ -248,14 +264,14 @@ OW_Thread::threadRunner(void* paramPtr)
 	catch(OW_Exception& ex)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread class\n";
+		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread::threadRunner. Msg: " << ex.getMessage() << "\n";
 		std::cerr << ex << std::endl;
 #endif
 	}
 	catch(...)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Unknown Exception caught in OW_Thread class" << std::endl;
+		std::cerr << "!!! Unknown Exception caught in OW_Thread::threadRunner." << std::endl;
 #endif
 	}
 
