@@ -83,7 +83,7 @@ class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 		 * 
 		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 		 */
-		HTTPClient(const String& url, SSLClientCtxRef sslCtx = 0);
+		HTTPClient(const String& url, SSLClientCtxRef sslCtx = SSLClientCtxRef());
 		virtual ~HTTPClient();
 		virtual Reference<std::iostream> beginRequest(
 				const String& methodName, const String& cimObject);
