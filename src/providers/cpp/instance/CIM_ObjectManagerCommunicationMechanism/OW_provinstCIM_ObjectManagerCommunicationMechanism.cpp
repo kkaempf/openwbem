@@ -22,7 +22,7 @@ public:
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_ObjectManagerCommunicationMechanism");
 	}

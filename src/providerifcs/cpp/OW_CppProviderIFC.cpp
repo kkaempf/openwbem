@@ -355,7 +355,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			{
 				OW_InstanceProviderInfo info;
 				info.setProviderName(providerid);
-				p_ip->getProviderInfo(info);
+				p_ip->getInstanceProviderInfo(info);
 				instanceProviderInfo.push_back(info);
 			}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -364,7 +364,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			{
 				OW_AssociatorProviderInfo info;
 				info.setProviderName(providerid);
-				p_ap->getProviderInfo(info);
+				p_ap->getAssociatorProviderInfo(info);
 				associatorProviderInfo.push_back(info);
 			}
 #endif
@@ -373,7 +373,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			{
 				OW_MethodProviderInfo info;
 				info.setProviderName(providerid);
-				p_mp->getProviderInfo(info);
+				p_mp->getMethodProviderInfo(info);
 				methodProviderInfo.push_back(info);
 			}
 			OW_CppIndicationProviderIFC* p_indp = p->getIndicationProvider();
@@ -381,7 +381,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			{
 				OW_IndicationProviderInfo info;
 				info.setProviderName(providerid);
-				p_indp->getProviderInfo(info);
+				p_indp->getIndicationProviderInfo(info);
 				indicationProviderInfo.push_back(info);
 			}
 			continue;

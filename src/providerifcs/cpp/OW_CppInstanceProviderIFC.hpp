@@ -61,7 +61,7 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		(void)info;
 	}

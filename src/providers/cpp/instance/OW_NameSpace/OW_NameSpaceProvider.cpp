@@ -383,7 +383,7 @@ OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::getProviderInfo(OW_InstanceProviderInfo& info)
+OW_NameSpaceProvider::getInstanceProviderInfo(OW_InstanceProviderInfo& info)
 {
 	info.addInstrumentedClass("__Namespace");
 }

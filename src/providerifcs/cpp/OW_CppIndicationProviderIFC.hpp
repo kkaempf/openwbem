@@ -64,7 +64,7 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getProviderInfo(OW_IndicationProviderInfo& info);
+	virtual void getIndicationProviderInfo(OW_IndicationProviderInfo& info);
 	
 	virtual void activateFilter(
 		const OW_ProviderEnvironmentIFCRef& env,

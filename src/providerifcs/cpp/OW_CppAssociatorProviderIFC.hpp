@@ -62,7 +62,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * provider location method is removed, this member function will be pure
 		 * virtual.
 		 */
-		virtual void getProviderInfo(OW_AssociatorProviderInfo&)
+		virtual void getAssociatorProviderInfo(OW_AssociatorProviderInfo&)
 		{
 		}
 

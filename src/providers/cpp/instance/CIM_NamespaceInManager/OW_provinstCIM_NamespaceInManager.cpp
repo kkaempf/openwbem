@@ -44,9 +44,11 @@
 namespace OpenWBEM
 {
 
-class CIM_NamespaceInManagerInstProv : public OW_CppInstanceProviderIFC
+class CIM_NamespaceInManagerInstProv :
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-, public OW_CppAssociatorProviderIFC
+public OW_CppAssociatorProviderIFC
+#else
+public OW_CppInstanceProviderIFC
 #endif
 {
 public:
@@ -57,7 +59,7 @@ public:
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_NamespaceInManager");
 	}
@@ -240,7 +242,7 @@ public:
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associator provider functions.
-	virtual void getProviderInfo(OW_AssociatorProviderInfo &info) 
+	virtual void getAssociatorProviderInfo(OW_AssociatorProviderInfo &info) 
 	{
 		info.addInstrumentedClass("CIM_NamespaceInManager");
 	}

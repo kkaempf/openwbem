@@ -60,7 +60,7 @@ class OW_TestInstance: public OW_CppInstanceProviderIFC
 public:
 	virtual ~OW_TestInstance(){}
 
-	void getProviderInfo(OW_InstanceProviderInfo& info)
+	void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("TestInstance");
 	}

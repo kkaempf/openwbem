@@ -95,7 +95,7 @@ public:
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
 			);
 
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info);
+	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info);
 };
 
 #endif

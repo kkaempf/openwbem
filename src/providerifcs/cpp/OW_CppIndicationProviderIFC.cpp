@@ -60,7 +60,7 @@ OW_CppIndicationProviderIFC::authorizeFilter(
 	
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppIndicationProviderIFC::getProviderInfo(OW_IndicationProviderInfo&)
+OW_CppIndicationProviderIFC::getIndicationProviderInfo(OW_IndicationProviderInfo&)
 {
 }
 
