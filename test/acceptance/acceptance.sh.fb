@@ -29,6 +29,7 @@
 #		namespaces
 #		interop
 #		misc
+#		hammer
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -861,8 +862,6 @@ TestMisc()
 		return
 	fi
 
-	#RestartDaemon
-
 	URL=$1
 	OUT_FILE=testMisc.out
 
@@ -870,6 +869,38 @@ TestMisc()
 	$BUILDDIR/test/acceptance/progs/testMisc $URL $RESULTDIR/testMisc \
 		> $RESULTDIR/$OUT_FILE 2>&1 || \
 		ExitWithFail "TestMisc: testMisc failed with an error.  "
+
+	echo "Testsuite Passed"
+}
+
+#############################################################################
+TestHammer()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		hammer >/dev/null 2>&1
+	then
+		return
+	fi
+
+	URL=$1
+	OUT_FILE=hammerClient.out
+
+	echo "Executing hammerClient $URL single, saving output in " $RESULTDIR/$OUT_FILE
+	$BUILDDIR/test/acceptance/progs/hammerClient $URL single \
+		> $RESULTDIR/$OUT_FILE 2>&1 || \
+		ExitWithFail "TestHammer: hammerClient failed with an error.  "
+
+	echo "Executing hammerClient $URL pool=10, saving output in " $RESULTDIR/$OUT_FILE
+	$BUILDDIR/test/acceptance/progs/hammerClient $URL pool=10\
+		> $RESULTDIR/$OUT_FILE 2>&1 || \
+		ExitWithFail "TestHammer: hammerClient failed with an error.  "
+
+# we probably shouldn't do this one, because it can overwhelm the system, use up all the file descriptors, etc.
+# but it's fun to run and watch it go :-)
+#	echo "Executing hammerClient $URL thread, saving output in " $RESULTDIR/$OUT_FILE
+#	$BUILDDIR/test/acceptance/progs/hammerClient $URL thread\
+#		> $RESULTDIR/$OUT_FILE 2>&1 || \
+#		ExitWithFail "TestHammer: hammerClient failed with an error.  "
 
 	echo "Testsuite Passed"
 }
@@ -974,6 +1005,11 @@ TestIndications
 TestWQL
 
 TestMultiReq
+
+if [ "z$OWLONGTEST" = "z1" ]; then
+  TestHammer "http://test1:pass1@localhost:30926"
+  TestHammer "ipc://test1:pass1@localhost/owbinary"
+fi
 
 StopDaemon
 
