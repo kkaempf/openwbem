@@ -4,9 +4,6 @@ SOFILENAME = $@.$(SO_EXT)
 TMPLIBDIR = .$@.libs
 
 
-#.a.so:
-#$(LIBNAME).so : $(LIBNAME).a
-
 %.so : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
