@@ -143,8 +143,15 @@ else
 	AC_MSG_WARN(*** You must edit the config file and use a different   ***)
 	AC_MSG_WARN(*** authentication module or else the daemon won't start***)
 fi
+AC_SUBST(platform_pamdir)
 
-AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
+
+AC_ARG_ENABLE(zlib,
+[  --disable-zlib     disable zlib integration])
+
+if test "$enable_zlib" != no; then
+  AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
+fi
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h \
@@ -407,6 +414,11 @@ AC_ARG_WITH(search-dir,
 	]
 )
 
+AC_ARG_ENABLE(ssl,
+[  --disable-ssl     disable ssl integration])
+
+if test "$enable_ssl" != no; then
+
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 AC_ARG_WITH(ssl-dir,
    [  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
@@ -416,8 +428,6 @@ AC_ARG_WITH(ssl-dir,
       fi
    ]
 )
-
-AC_SUBST(platform_pamdir)
 
 saved_LIBS="$LIBS"
 saved_LDFLAGS="$LDFLAGS"
@@ -536,6 +546,10 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 	fi
 	LIBS="$saved_LIBS -lssl -lcrypto"
 fi
+else
+   AC_DEFINE(NO_SSL)
+fi
+dnl End of the ssl check
 
 dnl Now check for threading stuff
 OLD_LIBS=$LIBS
