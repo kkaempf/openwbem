@@ -283,6 +283,12 @@
 #define PROVIDERAGENT_API OW_IMPORT
 #endif
 
+#ifdef OW_OWBI1PROVIFC_BUILD
+#define OWBI1PROVIFC_API OW_EXPORT
+#else
+#define OWBI1PROVIFC_API OW_IMPORT
+#endif
+
 #ifdef OW_WIN32
 #define EXPORT_TEMPLATE(API, TMPL, X) template class API TMPL< X >
 #else
@@ -297,12 +303,15 @@
 #define NAMESPACE_AUX(ver) OW_NAMESPACE_CAT(OpenWBEM, ver)
 #define NAMESPACE OW_NAMESPACE_AUX(OW_OPENWBEM_LIBRARY_VERSION)
 
+/* This is so this particular code is only active in OW_config.h, not OWBI1_config.h */
+#ifdef OW_NAMESPACE
 /* need this to set up an alias. */
 namespace OW_NAMESPACE
 {
 }
 
 namespace OpenWBEM = OW_NAMESPACE;
+#endif
 
 #ifdef OW_DEBUG_MEMORY
 #include "OW_MemTracer.hpp"
