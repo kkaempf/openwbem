@@ -350,7 +350,7 @@ inline bool operator>=(const CIMDateTime& x, const CIMDateTime& y)
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMDateTimeException OW_CIMDateTimeException OW_DEPRECATED;
-typedef OpenWBEM::CIMDateTime OW_CIMDateTime OW_DEPRECATED;
+typedef OpenWBEM::CIMDateTimeException OW_CIMDateTimeException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::CIMDateTime OW_CIMDateTime OW_DEPRECATED; // in 3.0.0
 
 #endif

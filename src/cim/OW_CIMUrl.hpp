@@ -214,6 +214,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMUrl OW_CIMUrl OW_DEPRECATED;
+typedef OpenWBEM::CIMUrl OW_CIMUrl OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -78,7 +78,7 @@ ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& au
 	client->setLoginCallBack(authCb);
 
 	if (owurl.scheme.startsWith(URL::OWBINARY) 
-		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
+		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated in 3.0.0 and may be removed!
 	{
 		return ClientCIMOMHandleRef(new BinaryCIMOMHandle(client));
 	}

@@ -89,6 +89,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::XMLListener OW_XMLListener OW_DEPRECATED;
+typedef OpenWBEM::XMLListener OW_XMLListener OW_DEPRECATED; // in 3.0.0
 
 #endif

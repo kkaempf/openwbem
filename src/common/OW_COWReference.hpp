@@ -64,7 +64,7 @@ class COWReference : private COWReferenceBase
 		const T* operator->() const;
 		const T& operator*() const;
 		const T* getPtr() const;
-		bool isNull() const OW_DEPRECATED;
+		bool isNull() const OW_DEPRECATED; // in 3.1.0
 
 		typedef T* volatile COWReference::*safe_bool;
 		operator safe_bool () const

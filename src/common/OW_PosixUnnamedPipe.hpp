@@ -57,7 +57,7 @@ public:
 	virtual int close();
 	int closeInputHandle();
 	int closeOutputHandle();
-	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED;
+	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED; // in 3.0.0
 	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING);
 	virtual Select_t getSelectObj() const;
 private:
@@ -68,6 +68,6 @@ typedef IntrusiveReference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::PosixUnnamedPipe OW_PosixUnnamedPipe OW_DEPRECATED;
+typedef OpenWBEM::PosixUnnamedPipe OW_PosixUnnamedPipe OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -61,6 +61,6 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Runnable OW_Runnable OW_DEPRECATED;
+typedef OpenWBEM::Runnable OW_Runnable OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -92,6 +92,6 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::RequestHandlerIFCXML OW_RequestHandlerIFCXML OW_DEPRECATED;
+typedef OpenWBEM::RequestHandlerIFCXML OW_RequestHandlerIFCXML OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -251,7 +251,7 @@ public:
 	/**
 	 * Deprecated in favor of toString()
 	 */
-	String toUTF8() const OW_DEPRECATED;
+	String toUTF8() const OW_DEPRECATED; // in 3.1.0
 	/**
 	 * Convert this to UTF8
 	 */
@@ -330,6 +330,6 @@ typedef Array<Char16> Char16Array;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Char16 OW_Char16 OW_DEPRECATED;
+typedef OpenWBEM::Char16 OW_Char16 OW_DEPRECATED; // in 3.0.0
 
 #endif

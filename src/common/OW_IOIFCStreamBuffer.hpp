@@ -60,6 +60,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::IOIFCStreamBuffer OW_IOIFCStreamBuffer OW_DEPRECATED;
+typedef OpenWBEM::IOIFCStreamBuffer OW_IOIFCStreamBuffer OW_DEPRECATED; // in 3.0.0
 
 #endif

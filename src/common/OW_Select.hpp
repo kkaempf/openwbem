@@ -77,6 +77,6 @@ namespace Select
 } // end namespace OpenWBEM
 
 namespace OW_Select = OpenWBEM::Select;
-typedef OpenWBEM::SelectTypeArray OW_SelectTypeArray OW_DEPRECATED;
+typedef OpenWBEM::SelectTypeArray OW_SelectTypeArray OW_DEPRECATED; // in 3.0.0
 
 #endif // OW_SELECT_HPP_

@@ -80,7 +80,7 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::DeadlockException OW_DeadlockException OW_DEPRECATED;
-typedef OpenWBEM::NonRecursiveMutex OW_NonRecursiveMutex OW_DEPRECATED;
+typedef OpenWBEM::DeadlockException OW_DeadlockException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::NonRecursiveMutex OW_NonRecursiveMutex OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -117,7 +117,7 @@ public:
 //     {
 //         m_obj.useRefCountOf(arg.m_obj);
 //     }
-	OW_DEPRECATED bool isNull() const
+	OW_DEPRECATED bool isNull() const // in 3.1.0
 	{
 		return !m_obj;
 	}

@@ -148,7 +148,7 @@ processCommandLineOptions(int argc, char** argv)
 
 	// handle backwards compatible options, which was <URL> <namespace> <file>
 	// This has to be done after setting the defaults.
-	// TODO: This is deprecated, remove it post 3.0
+	// TODO: This is deprecated in 3.0.0, remove it post 3.1
 	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 	{
 		g_url = argv[1];
@@ -281,9 +281,9 @@ void usage()
 	cout << "                     - Instances may incorrectly bypass providers.\n";
 	cout << "                     - The repository will be corrupted if the cimom is running simultaneously.\n";
 	cout << "  -u,--url <URL>: the url of the cimom. Default is " << def_url_arg << " if not specified\n";
-	cout << "  -n,--namespace <NAMESPACE>: This option is deprecated in favor of the URL namespace. The initial namespace to use. Default is " << def_namespace_arg << " if not specified via this option or in the URL\n";
+	cout << "  -n,--namespace <NAMESPACE>: This option is deprecated (in 3.1.0) in favor of the URL namespace. The initial namespace to use. Default is " << def_namespace_arg << " if not specified via this option or in the URL\n";
 	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it\n";
-	cout << "  -e,--encoding <ENCODING>: This option is deprecated in favor of the URL scheme. Specify the encoding, valid values are cimxml and owbinary. "
+	cout << "  -e,--encoding <ENCODING>: This option is deprecated (in 3.1.0) in favor of the URL scheme. Specify the encoding, valid values are cimxml and owbinary. "
 		"This can also be specified by using the owbinary.wbem URI scheme.\n";
 	cout << "  -s,--check-syntax: Only parse the mof, don't actually do anything <UNIMPLEMENTED>\n";
 	cout << "  -x,--dump-xml <FILE>: Write the xml to FILE <UNIMPLEMENTED>\n";
@@ -322,7 +322,7 @@ int main(int argc, char** argv)
 		else
 		{
 			URL url(g_url);
-			// override what was in the url - TODO: deprecated. Remove this post 3.0.x
+			// override what was in the url - TODO: deprecated in 3.0.0. Remove this post 3.1.x
 			if(g_encoding == URL::OWBINARY)
 			{
 				if (url.scheme.endsWith('s'))

@@ -82,6 +82,6 @@ typedef Array<CIMOMInfo> CIMOMInfoArray;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMOMInfo OW_CIMOMInfo OW_DEPRECATED;
+typedef OpenWBEM::CIMOMInfo OW_CIMOMInfo OW_DEPRECATED; // in 3.0.0
 
 #endif

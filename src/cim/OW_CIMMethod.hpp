@@ -268,6 +268,6 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMMethod OW_CIMMethod OW_DEPRECATED;
+typedef OpenWBEM::CIMMethod OW_CIMMethod OW_DEPRECATED; // in 3.0.0
 
 #endif

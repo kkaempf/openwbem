@@ -83,7 +83,7 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::NwIface OW_NwIface OW_DEPRECATED;
+typedef OpenWBEM::NwIface OW_NwIface OW_DEPRECATED; // in 3.0.0
 
 #endif	// #if !defined(OW_WIN32) && !defined(OW_NETWARE)
 

@@ -643,6 +643,6 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::BinaryCIMOMHandle OW_BinaryCIMOMHandle OW_DEPRECATED;
+typedef OpenWBEM::BinaryCIMOMHandle OW_BinaryCIMOMHandle OW_DEPRECATED; // in 3.0.0
 
 #endif

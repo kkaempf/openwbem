@@ -232,6 +232,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLSelectStatement OW_WQLSelectStatement OW_DEPRECATED;
+typedef OpenWBEM::WQLSelectStatement OW_WQLSelectStatement OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -463,7 +463,7 @@ public:
 	 * This is the same as toString(E_UTC_TIME).  This function is 
 	 * deprecated and exists for backward compatibility purposes.
 	 */
-	String toStringGMT() const OW_DEPRECATED;
+	String toStringGMT() const OW_DEPRECATED; // in 3.0.0
 
 	/**
 	 * Returns the GMT Offset (number of hours) of the system's timezone.
@@ -479,6 +479,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::DateTime OW_DateTime OW_DEPRECATED;
+typedef OpenWBEM::DateTime OW_DateTime OW_DEPRECATED; // in 3.0.0
 
 #endif

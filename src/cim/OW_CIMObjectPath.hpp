@@ -134,13 +134,13 @@ public:
 	 * It's just still here for backward compatibility. It's deprecated and will
 	 * be removed in the future.
 	 */
-	CIMObjectPath& addKey(const String& keyname, const CIMValue& value) OW_DEPRECATED;
+	CIMObjectPath& addKey(const String& keyname, const CIMValue& value) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * This function is too error prone.  Use setKeyValue() instead.
 	 * It's just still here for backward compatibility. It's deprecated and will
 	 * be removed in the future.
 	 */
-	CIMObjectPath& addKey(const CIMProperty& key) OW_DEPRECATED;
+	CIMObjectPath& addKey(const CIMProperty& key) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * Get the keys for this object path
 	 * @return An CIMPropertyArray containing the keys for this object path.
@@ -211,7 +211,7 @@ public:
 	 * This function is deprecated in favor of getClassName()
 	 * @return The class name for this object path
 	 */
-	String getObjectName() const OW_DEPRECATED;
+	String getObjectName() const OW_DEPRECATED; // in 3.0.0
 	/**
 	 * @return The class name for this object path
 	 */
@@ -241,7 +241,7 @@ public:
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setObjectName(const String& className) OW_DEPRECATED;
+	CIMObjectPath& setObjectName(const String& className) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * Assign a class name to this object path.
 	 * @param className	The name of the class to assign to this object path.
@@ -336,6 +336,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath OW_DEPRECATED;
+typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath OW_DEPRECATED; // in 3.0.0
 
 #endif

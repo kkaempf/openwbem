@@ -199,7 +199,7 @@ void HTTPClient::setUrl()
 #endif // #ifndef OW_NO_SSL
 	}
 	if (m_url.port.equalsIgnoreCase(URL::OWIPC) 
-		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated and will be removed!
+		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated in 3.0.0 and will be removed!
 	{
 		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
 	}

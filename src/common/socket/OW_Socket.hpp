@@ -250,7 +250,7 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SocketTimeoutException OW_SocketTimeoutException OW_DEPRECATED;
-typedef OpenWBEM::Socket OW_Socket OW_DEPRECATED;
+typedef OpenWBEM::SocketTimeoutException OW_SocketTimeoutException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::Socket OW_Socket OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -172,7 +172,7 @@ public:
 	 * @param outputIsBlocking new blocking mode.
 	 */
 	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING) = 0;
-	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED = 0;
+	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED = 0; // in 3.0.0
 
 	
 	enum EOpen
@@ -197,8 +197,8 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::UnnamedPipeException OW_UnnamedPipeException OW_DEPRECATED;
-typedef OpenWBEM::UnnamedPipeRef OW_UnnamedPipeRef OW_DEPRECATED;
-typedef OpenWBEM::UnnamedPipe OW_UnnamedPipe OW_DEPRECATED;
+typedef OpenWBEM::UnnamedPipeException OW_UnnamedPipeException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::UnnamedPipeRef OW_UnnamedPipeRef OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::UnnamedPipe OW_UnnamedPipe OW_DEPRECATED; // in 3.0.0
 
 #endif	// OW_UNNAMEDPIPE_HPP_

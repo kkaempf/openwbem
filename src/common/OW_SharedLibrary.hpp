@@ -86,7 +86,7 @@ typedef IntrusiveReference<SharedLibrary> SharedLibraryRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SharedLibrary OW_SharedLibrary OW_DEPRECATED;
-typedef OpenWBEM::SharedLibraryRef OW_SharedLibraryRef OW_DEPRECATED;
+typedef OpenWBEM::SharedLibrary OW_SharedLibrary OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::SharedLibraryRef OW_SharedLibraryRef OW_DEPRECATED; // in 3.0.0
 
 #endif

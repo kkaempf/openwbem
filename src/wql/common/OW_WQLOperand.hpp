@@ -258,6 +258,6 @@ bool operator==(const WQLOperand& x, const WQLOperand& y);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLOperand OW_WQLOperand OW_DEPRECATED;
+typedef OpenWBEM::WQLOperand OW_WQLOperand OW_DEPRECATED; // in 3.0.0
 
 #endif

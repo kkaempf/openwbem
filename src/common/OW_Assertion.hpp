@@ -44,7 +44,7 @@ namespace OpenWBEM
 OW_DECLARE_EXCEPTION(Assertion);
 
 // for backward compatibility
-typedef AssertionException Assertion OW_DEPRECATED;
+typedef AssertionException Assertion OW_DEPRECATED; // in 3.0.0
 
 /**
  * OW_ASSERT works similar to the assert() macro.  But instead of calling 

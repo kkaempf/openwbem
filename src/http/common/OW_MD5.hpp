@@ -139,6 +139,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::MD5 OW_MD5 OW_DEPRECATED;
+typedef OpenWBEM::MD5 OW_MD5 OW_DEPRECATED; // in 3.0.0
 
 #endif

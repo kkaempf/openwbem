@@ -74,6 +74,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Mutex OW_Mutex OW_DEPRECATED;
+typedef OpenWBEM::Mutex OW_Mutex OW_DEPRECATED; // in 3.0.0
 
 #endif

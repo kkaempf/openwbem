@@ -128,7 +128,7 @@ typedef SharedLibraryReference< IntrusiveReference<CppIndicationProviderIFC> > C
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppIndicationProviderIFC OW_CppIndicationProviderIFC OW_DEPRECATED;
+typedef OpenWBEM::CppIndicationProviderIFC OW_CppIndicationProviderIFC OW_DEPRECATED; // in 3.0.0
 
 #endif
 								

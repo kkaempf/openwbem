@@ -260,7 +260,7 @@ typedef SharedLibraryReference< IntrusiveReference<CppAssociatorProviderIFC> > C
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC OW_DEPRECATED;
+typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC OW_DEPRECATED; // in 3.0.0
 
 #endif //#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

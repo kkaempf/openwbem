@@ -127,7 +127,7 @@ public:
 	{
 		return m_pObj == 0;
 	}
-	OW_DEPRECATED bool isNull() const
+	OW_DEPRECATED bool isNull() const // in 3.1.0
 	{
 	    return m_pObj == 0;
 	}

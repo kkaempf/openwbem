@@ -201,6 +201,6 @@ typedef SharedLibraryReference< IntrusiveReference<CppInstanceProviderIFC> > Cpp
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppInstanceProviderIFC OW_CppInstanceProviderIFC OW_DEPRECATED;
+typedef OpenWBEM::CppInstanceProviderIFC OW_CppInstanceProviderIFC OW_DEPRECATED; // in 3.0.0
 
 #endif

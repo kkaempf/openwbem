@@ -51,6 +51,6 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SSLException OW_SSLException OW_DEPRECATED;
+typedef OpenWBEM::SSLException OW_SSLException OW_DEPRECATED; // in 3.0.0
 
 #endif

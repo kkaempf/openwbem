@@ -63,6 +63,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMOMLocatorSLP OW_CIMOMLocatorSLP OW_DEPRECATED;
+typedef OpenWBEM::CIMOMLocatorSLP OW_CIMOMLocatorSLP OW_DEPRECATED; // in 3.0.0
 
 #endif

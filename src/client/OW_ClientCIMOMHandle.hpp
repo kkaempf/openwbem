@@ -61,13 +61,13 @@ public:
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
-	virtual void createNameSpace(const String& ns) OW_DEPRECATED;
+	virtual void createNameSpace(const String& ns) OW_DEPRECATED; // in 3.0.0
 	/** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
-	virtual void deleteNameSpace(const String& ns) OW_DEPRECATED;
+	virtual void deleteNameSpace(const String& ns) OW_DEPRECATED; // in 3.0.0
 #endif
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void enumNameSpace(const String& ns,
-		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep) OW_DEPRECATED;
+		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep) OW_DEPRECATED; // in 3.0.0
 
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)
@@ -130,7 +130,7 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle OW_DEPRECATED;
+typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle OW_DEPRECATED; // in 3.0.0
 
 #endif
 	

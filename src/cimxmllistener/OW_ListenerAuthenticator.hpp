@@ -77,6 +77,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ListenerAuthenticator OW_ListenerAuthenticator OW_DEPRECATED;
+typedef OpenWBEM::ListenerAuthenticator OW_ListenerAuthenticator OW_DEPRECATED; // in 3.0.0
 
 #endif

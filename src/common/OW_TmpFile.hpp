@@ -118,6 +118,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::TmpFile OW_TmpFile OW_DEPRECATED;
+typedef OpenWBEM::TmpFile OW_TmpFile OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -63,6 +63,6 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::NonAuthenticatingAuthenticator OW_NonAuthenticatingAuthenticator OW_DEPRECATED;
+typedef OpenWBEM::NonAuthenticatingAuthenticator OW_NonAuthenticatingAuthenticator OW_DEPRECATED; // in 3.0.0
 
 #endif

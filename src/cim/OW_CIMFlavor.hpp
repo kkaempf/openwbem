@@ -212,6 +212,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMFlavor OW_CIMFlavor OW_DEPRECATED;
+typedef OpenWBEM::CIMFlavor OW_CIMFlavor OW_DEPRECATED; // in 3.0.0
 
 #endif

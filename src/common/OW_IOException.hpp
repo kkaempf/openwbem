@@ -52,7 +52,7 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::IOException OW_IOException OW_DEPRECATED;
-typedef OpenWBEM::BadCIMSignatureException OW_BadCIMSignatureException OW_DEPRECATED;
+typedef OpenWBEM::IOException OW_IOException OW_DEPRECATED; // in 3.0.0
+typedef OpenWBEM::BadCIMSignatureException OW_BadCIMSignatureException OW_DEPRECATED; // in 3.0.0
 
 #endif

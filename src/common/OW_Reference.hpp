@@ -68,7 +68,7 @@ class Reference :
 		T* operator->() const;
 		T& operator*() const;
 		T* getPtr() const;
-		bool isNull() const OW_DEPRECATED;
+		bool isNull() const OW_DEPRECATED; // in 3.1.0
 		typedef T* volatile Reference::*safe_bool;
 		operator safe_bool () const
 			{  return (m_pObj ? &Reference::m_pObj : 0); }

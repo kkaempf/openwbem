@@ -63,7 +63,7 @@ protected:
 	/**
 	 * This constructor is deprecated
 	 */
-	Exception(const char* file, int line, const char* msg) OW_DEPRECATED;
+	Exception(const char* file, int line, const char* msg) OW_DEPRECATED; // in 3.1.0
 	/**
 	 * @param subClassId Each subclass of Exception may create an id.  
 	 *   getSubClassId() will return this value.  You may pass 
@@ -168,7 +168,7 @@ std::ostream& operator<< (std::ostream& os, const Exception& e);
 #define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
 
 /**
- * This macro is deprecated.
+ * This macro is deprecated in 3.1.0.
  */
 #define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
 
@@ -300,6 +300,6 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Exception OW_Exception OW_DEPRECATED;
+typedef OpenWBEM::Exception OW_Exception OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -283,6 +283,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMQualifier OW_CIMQualifier OW_DEPRECATED;
+typedef OpenWBEM::CIMQualifier OW_CIMQualifier OW_DEPRECATED; // in 3.0.0
 
 #endif

@@ -97,6 +97,6 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Semaphore OW_Semaphore OW_DEPRECATED;
+typedef OpenWBEM::Semaphore OW_Semaphore OW_DEPRECATED; // in 3.0.0
 
 #endif

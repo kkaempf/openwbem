@@ -84,6 +84,6 @@ createWQL_##wqlname() \
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLIFC OW_WQLIFC OW_DEPRECATED;
+typedef OpenWBEM::WQLIFC OW_WQLIFC OW_DEPRECATED; // in 3.0.0
 
 #endif
