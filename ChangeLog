@@ -1,3 +1,10 @@
+Mon Nov  4 10:44:51 MST 2002
+- Refactored OW_Reference and OW_COWReference to help minimize code bloat
+- Fixed up a few spots that were calling OW_*Reference::getPtr() that didn't
+  need to.
+- Changed a few places that were using a raw OW_CIMServer pointer to use a
+  OW_RepositoryIFCRef instead.
+
 Fri Nov  1 11:36:06 MST 2002
 - A lot of this was done pre-2.0.0 but it just got moved into the ChangeLog
 - Test XML with IPC and Binary with HTTP
