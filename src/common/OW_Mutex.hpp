@@ -69,7 +69,7 @@ private:
 	Mutex_t m_mutex;
 	// noncopyable
 	Mutex(const Mutex&);
-	Mutex operator = (const Mutex&);
+	Mutex& operator = (const Mutex&);
 };
 
 } // end namespace OpenWBEM

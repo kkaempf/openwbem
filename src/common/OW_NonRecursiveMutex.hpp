@@ -72,7 +72,7 @@ private:
 	NonRecursiveMutex_t m_mutex;
 	// noncopyable
 	NonRecursiveMutex(const NonRecursiveMutex&);
-	NonRecursiveMutex operator = (const NonRecursiveMutex&);
+	NonRecursiveMutex& operator = (const NonRecursiveMutex&);
 	friend class Condition;
 	void conditionPreWait(NonRecursiveMutexLockState& state);
 	void conditionPostWait(NonRecursiveMutexLockState& state);
