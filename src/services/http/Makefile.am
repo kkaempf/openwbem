@@ -9,21 +9,6 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 # This is an exception to the rule, we need libowservicehttp to be in $(libdir) 
 # for listeners to use as well as the services dir for the cimom to use.
 install-exec-local : install-ow-shared-libs
-if OW_NETWARE_INSTALL
-# NetWare does not handle symbolic links so we'll just copy it.
-	rm -f $(DESTDIR)$(libdir)/$(OW_SHARED_LIBS)
-	cp -f $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
-else
-	ln -sf $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
-	ln -sf $(thelibdir)/$(OW_SHARED_LIBS:%.so=%.so.$(LIBRARY_BINARY_VERSION)) $(DESTDIR)$(libdir)
-endif
-	if [ "$(LIB_EXT)" = "dylib" ]; then \
-		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
-			mv $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).dso; \
-			cp $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT); \
-			ln -sf $(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/$(OW_SHARED_LIBS); \
-			fi; \
-	fi;
 
 uninstall-local : uninstall-ow-shared-libs
 
@@ -41,7 +26,11 @@ LIBRARY_BINARY_VERSION = 4
 owstatlib_LIBRARIES = \
 libowservicehttp.a
 
-thelibdir = $(pkglibdir)/services
+#install to here
+thelibdir = $(libdir)
+
+#create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/services
 
 # We want the static lib in $(libdir), not $(thelibdir) in this case. 
 owstatlibdir = $(libdir)

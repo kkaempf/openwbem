@@ -131,10 +131,12 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 	if [ "$OWSYMLINKS" = "1" ]; then
 		SwitchToLinks
 	fi
-	# Fix the symlink to libowservicehttp
-	rm -f $STAGEDIR/$OWLIBDIR/libowservicehttp.so
-	ln -sf $STAGEDIR/$OWLIBDIR/openwbem/services/libowservicehttp.so \
-		$STAGEDIR/$OWLIBDIR/libowservicehttp.so
+
+	# Fix the symlinks to point into $STAGEDIR
+	for link in $STAGEDIR/$OWLIBDIR/openwbem/{services,requesthandlers,authentication}/*; do
+		rm -f $link
+		ln -sf $STAGEDIR/$OWLIBDIR/`basename $link` $link
+	done
 		
 }
 

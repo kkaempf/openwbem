@@ -18,7 +18,12 @@ LIBRARY_BINARY_VERSION = 4
 noinst_LIBRARIES = \
 	libpamauthentication.a 
 
-thelibdir = $(pkglibdir)/authentication
+#install to here
+thelibdir = $(libdir)
+
+#create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/authentication
+
 
 libpamauthentication_a_SOURCES = \
 OW_PAMAuthentication.cpp

@@ -18,7 +18,11 @@ LIBRARY_BINARY_VERSION = 4
 noinst_LIBRARIES = \
 	libaixauthentication.a 
 
-thelibdir = $(pkglibdir)/authentication
+#install to here
+thelibdir = $(libdir)
+
+#create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/authentication
 
 libaixauthentication_a_SOURCES = \
 OW_AIXAuthentication.cpp

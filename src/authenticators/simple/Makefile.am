@@ -17,7 +17,12 @@ LIBRARY_BINARY_VERSION = 4
 noinst_LIBRARIES = \
 	libsimpleauthentication.a 
 
-thelibdir = $(pkglibdir)/authentication
+#install to here
+thelibdir = $(libdir)
+
+#create links here
+OW_EXTRA_LINK_DIRS=$(pkglibdir)/authentication
+
 
 libsimpleauthentication_a_SOURCES = \
 OW_SimpleAuthenticator.cpp 
