@@ -76,7 +76,7 @@ protected:
 };
 } // end anonymous namespace
 
-void OW_ExceptionTestCases::testSomething()
+void OW_ExceptionTestCases::testThreadThrow()
 {
 	g_caught = false;
 	try
@@ -97,13 +97,58 @@ void OW_ExceptionTestCases::testSomething()
 	unitAssert(g_caught);
 }
 
+namespace 
+{
+OW_DECLARE_EXCEPTION(test1);
+OW_DEFINE_EXCEPTION(test1);
+OW_DECLARE_EXCEPTION(test2);
+OW_DEFINE_EXCEPTION(test2);
+}
+
+void OW_ExceptionTestCases::testSubException()
+{
+	try
+	{
+		try
+		{
+			OW_THROW_ERR(test1Exception, "message 1", 1);
+		}
+		catch (const test1Exception& e)
+		{
+			OW_THROW_ERR_SUBEX(test2Exception, "message 2", 2, e);
+		}
+		unitAssert(false);
+	}
+	catch (const test2Exception& e2)
+	{
+		unitAssert(e2.getFile() != 0);
+		unitAssert(e2.getLine() != 0);
+		unitAssert(e2.getMessage() == String("message 2"));
+		unitAssert(e2.getErrorCode() == 2);
+		unitAssert(e2.type() == String("test2Exception"));
+		unitAssert(e2.getSubClassId() == Exception::UNKNOWN_SUBCLASS_ID);
+		unitAssert(e2.what() == String("message 2"));
+		unitAssert(e2.getSubException() != 0);
+
+		unitAssert(e2.getSubException()->getFile() != 0);
+		unitAssert(e2.getSubException()->getLine() != 0);
+		unitAssert(e2.getSubException()->getMessage() == String("message 1"));
+		unitAssert(e2.getSubException()->getErrorCode() == 1);
+		unitAssert(e2.getSubException()->type() == String("test1Exception"));
+		unitAssert(e2.getSubException()->getSubClassId() == Exception::UNKNOWN_SUBCLASS_ID);
+		unitAssert(e2.getSubException()->what() == String("message 1"));
+		unitAssert(e2.getSubException()->getSubException() == 0);
+	}
+
+}
+
 Test* OW_ExceptionTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_Exception");
 
-	testSuite->addTest (new TestCaller <OW_ExceptionTestCases>
-			("testSomething",
-			&OW_ExceptionTestCases::testSomething));
+	ADD_TEST_TO_SUITE(OW_ExceptionTestCases, testThreadThrow);
+	ADD_TEST_TO_SUITE(OW_ExceptionTestCases, testSubException);
+	
 
 	return testSuite;
 }

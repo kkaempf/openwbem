@@ -50,7 +50,8 @@ public:
 
 private:
 	// test methods
-	void testSomething();
+	void testThreadThrow();
+	void testSubException();
 };
 
 #endif
