@@ -1,3 +1,4 @@
+
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(Makefile.am)
 AM_CONFIG_HEADER(config.h)
@@ -48,6 +49,17 @@ AC_PATH_PROG(MV, mv, mv)
 AC_PATH_PROG(RM, rm, rm)
 AC_PATH_PROG(SED, sed, sed)
 
+dnl FreeBSD and darwin have true in /usr/bin/true, while most other systems
+dnl   (e.g. linux) have true in /bin/true . Similarly for false.
+dnl
+dnl So here we find out where true and false are, and add #defines to the config
+dnl   headers. OW_ExecTestCases.cpp relies on these.
+dnl
+AC_PATH_PROG(TRUE_PATHNAME, true, [Error, true not found.])
+AC_DEFINE_UNQUOTED(TRUE_PATHNAME, "$TRUE_PATHNAME", [Where true is.])
+
+AC_PATH_PROG(FALSE_PATHNAME, false, [Error, false not found.])
+AC_DEFINE_UNQUOTED(FALSE_PATHNAME, "$FALSE_PATHNAME", [Where false is.])
 
 dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
 HAVE_PERL=no
@@ -466,6 +478,66 @@ ext/hash_map \
 cxxabi.h \
 )
 
+dnl On FreeBSD 4.9, <unistd.h> and <getopt.h> contain conflicting declarations
+dnl    for getopt.
+dnl This *MUST* be done while AC_LANG_CPLUSPLUS is set; the conflict does not occur in C;
+dnl    It is C++ only.				
+AC_MSG_CHECKING(if <unistd.h> and <getopt.h> conflict)
+AC_TRY_COMPILE(
+[
+#include<getopt.h>
+#include<unistd.h>
+],
+[
+],
+[
+	AC_MSG_RESULT(no)
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(GETOPT_AND_UNISTD_CONFLICT, 1, [Define to 1 if getopt and unistd conflict])
+])
+
+dnl On FreeBSD 4.9, WIFEXITED and WEXITSTATUS require wait.h .
+AC_MSG_CHECKING(if WIFEXITED and WEXITSTATUS require <wait.h>)
+AC_TRY_COMPILE(
+[
+],
+[
+	int i;
+	int* status= &i;
+	WIFEXITED(status);
+	WEXITSTATUS(status);
+],
+[
+	AC_MSG_RESULT(no)
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(WIFEXITED_NEEDS_WAIT_H, 1, [Define to 1 if WIFEXITED and WEXITSTATUS require wait.h])
+])
+
+dnl bt_debug.c expects <inttypes.h> to #define PRIu32 and PRIx32 .
+dnl Trouble is, whether <inttypes.h> #defines PRIu32 and PRIx32 is system dependent;
+dnl linux <inttypes.h> does, FreeBSD and Darwin <inttypes.h> do not.
+AC_MSG_CHECKING([does <inttypes.h> define PRIu32 and PRIx32?])
+AC_TRY_COMPILE(
+[
+	#include <inttypes.h>
+],
+[
+	char const* c= PRIu32;
+	char const* d= PRIx32;
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(INTTYPES_H_DEFINES_PRI, 1, [Define to 1 if <inttypes.h> defines PRIu32 and PRIx32.])
+],
+[
+  AC_MSG_RESULT(no)
+	AC_DEFINE(INTTYPES_H_DOES_NOT_DEFINE_PRI, 1, [Define to 1 if <inttypes.h> does not define PRIu32 or PRIx32.])
+])
+				
 AC_LANG_C
 
 AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \
