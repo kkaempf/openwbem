@@ -170,7 +170,7 @@ OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
 void
 OW_LocalCIMOMHandle::enumClassNames(const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	OW_CIMServerSchemaReadLocker rl(this);

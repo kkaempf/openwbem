@@ -335,7 +335,7 @@ void OW_IndicationRepLayerImpl::enumClasses(const OW_String& ns,
 void OW_IndicationRepLayerImpl::enumClassNames(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_StringResultHandlerIFC& result,
 	OW_Bool deep, const OW_UserInfo& aclInfo)
 {
 	m_pServer->enumClassNames(ns, className, result, deep, aclInfo);

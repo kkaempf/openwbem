@@ -37,6 +37,7 @@
 #include "OW_Reference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_String.hpp"
+#include "OW_StringEnumeration.hpp"
 
 /**
  * The OW_CIMOMHandleIFC class is an abstract class used as an interface
@@ -171,10 +172,10 @@ public:
 	virtual void enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep=DEEP) = 0;
 
-	virtual OW_CIMObjectPathEnumeration enumClassNamesE(
+	virtual OW_StringEnumeration enumClassNamesE(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_Bool deep=DEEP);

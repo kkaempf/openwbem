@@ -62,7 +62,9 @@ const int OW_HDBSIGLEN = 16;
 //   structure of OW_CIMInstance.  The name and alias were removed.  Also
 //   changed the length of the signature to 16 so the header block could be
 //   aligned easier (and slightly smaller).
-const OW_UInt32 OW_HDBVERSION = 3000004;
+// 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
+//   instead of object paths.
+const OW_UInt32 OW_HDBVERSION = 3000005;
 
 /**
  * The OW_HDBHeaderBlock structure represent the header information for

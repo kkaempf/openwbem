@@ -600,7 +600,7 @@ void
 OW_CIMServer::enumClassNames(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_StringResultHandlerIFC& result,
 	OW_Bool deep, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -2103,16 +2103,16 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 
 namespace
 {
-	class classNamesBuilder : public OW_CIMObjectPathResultHandlerIFC
+	class classNamesBuilder : public OW_StringResultHandlerIFC
 	{
 	public:
 		classNamesBuilder(OW_StringArray& resultClassNames) 
 			: m_resultClassNames(resultClassNames) 
 		{}
 
-		void doHandle(const OW_CIMObjectPath& op)
+		void doHandle(const OW_String& op)
 		{
-			m_resultClassNames.push_back(op.getObjectName());
+			m_resultClassNames.push_back(op);
 		}
 
 	private:

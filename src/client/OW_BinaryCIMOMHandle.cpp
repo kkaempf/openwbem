@@ -142,6 +142,11 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeResultHandle
 {
 	OW_BinarySerialization::readQualifierTypeEnum(*istr, result);
 }
+static inline void
+readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_StringResultHandlerIFC& result)
+{
+	OW_BinarySerialization::readStringEnum(*istr, result);
+}
 
 template<class T>
 static inline T
@@ -197,10 +202,10 @@ void
 OW_BinaryCIMOMHandle::enumClassNames(
 	const OW_String& ns_,
 	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_StringResultHandlerIFC& result,
 	OW_Bool deep)
 {
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClassNames", ns);
 	std::iostream& strm = *strmRef;

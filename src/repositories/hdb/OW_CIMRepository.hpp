@@ -290,7 +290,7 @@ public:
 	 */
 	virtual void enumClassNames(const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep, const OW_UserInfo& aclInfo);
 
 	/**
@@ -584,7 +584,7 @@ public:
 
 	OW_ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
-private:
+//private:
 
 	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className);
 
@@ -679,7 +679,7 @@ private:
 #endif
 	OW_ServiceEnvironmentIFCRef m_env;
 
-    bool m_checkReferentialIntegrity;
+	bool m_checkReferentialIntegrity;
 
 	friend class OW_CIMServer;
 };

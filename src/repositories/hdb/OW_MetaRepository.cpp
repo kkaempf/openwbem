@@ -421,6 +421,20 @@ OW_MetaRepository::_getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_MetaRepository::_getClassNameFromNode(OW_HDBNode& node)
+{
+	OW_String name;
+	OW_RepositoryIStream istrm(node.getDataLen(), node.getData());
+	// Not going to do this, it's too slow! cimObj.readObject(istrm);
+	// This is breaking abstraction, and may bite us later if OW_CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
+        OW_CIMBase::readSig( istrm, OW_CIMCLASSSIG );
+        name.readObject(istrm);
+
+	return name;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 	OW_HDBHandle& hdl, const OW_String& ns)
@@ -986,19 +1000,6 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 		}
 	}
 
-	/*
-	// The following code is really a paranoid check. It is meant to ensure
-	// the node we have is read a cim class node.
-	//
-	if(className.length() > 0)
-	{
-		// Create a parent class from the node just to ensure we have the node
-		// to an OW_CIMClass. If we don't, an exception will be thrown.
-		OW_CIMClass parentClass(OW_CIMNULL);
-		nodeToCIMObject(parentClass, pnode);
-	}
-	// */
-
 	pnode = hdl->getFirstChild(pnode);
 	while(pnode)
 	{
@@ -1019,6 +1020,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
 	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
+	// TODO: Check cimCls for NULL?
 	result.handle(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
 
@@ -1035,46 +1037,74 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_MetaRepository::getClassChildren(const OW_String& ns,
-	const OW_String& className)
+void
+OW_MetaRepository::enumClassNames(const OW_String& ns, const OW_String& className,
+	OW_StringResultHandlerIFC& result,
+	OW_Bool deep)
 {
 	throwIfNotOpen();
-	OW_StringArray ra;
-	OW_String classID = _makeClassPath(ns, className);
 	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(classID);
-	if(node)
-	{
-		// Ensure node belongs to an OW_CIMClass
-		OW_CIMClass verifyClass(OW_CIMNULL);
-		nodeToCIMObject(verifyClass, node);
+	OW_HDBNode pnode;
 
-		node = hdl->getFirstChild(node);
-		while(node)
+	if(!className.empty())
+	{
+		OW_String ckey = _makeClassPath(ns, className);
+		pnode = hdl->getNode(ckey);
+		if(!pnode)
 		{
-			_getClassChildNames(ra, node, hdl.getHandle());
-			node = hdl->getNextSibling(node);
+			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
+			if(!pnode)
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+			}
+			else
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, className.c_str());
+			}
+		}
+	}
+	else
+	{
+		OW_String ns2(ns);
+		while (!ns2.empty() && ns2[0] == '/')
+		{
+			ns2 = ns2.substring(1);
+		}
+		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
+		if(!pnode)
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns2.c_str());
 		}
 	}
 
-	return ra;
+	pnode = hdl->getFirstChild(pnode);
+	while(pnode)
+	{
+		if(!pnode.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		{
+			_getClassNameNodes(result, pnode, hdl.getHandle(), deep);
+		}
+
+		pnode = hdl->getNextSibling(pnode);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::_getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
-	OW_HDBHandle hdl)
+OW_MetaRepository::_getClassNameNodes(OW_StringResultHandlerIFC& result, OW_HDBNode node,
+	OW_HDBHandle hdl, OW_Bool deep)
 {
-	OW_CIMClass cimCls(OW_CIMNULL);
-	nodeToCIMObject(cimCls, node);
-	ra.append(cimCls.getName());
+	OW_String cimClsName = _getClassNameFromNode(node);
+	result.handle(cimClsName);
 
-	node = hdl.getFirstChild(node);
-	while(node)
+	if(deep)
 	{
-		_getClassChildNames(ra, node, hdl);
-		node = hdl.getNextSibling(node);
+		node = hdl.getFirstChild(node);
+		while(node)
+		{
+			_getClassNameNodes(result, node, hdl, deep);
+			node = hdl.getNextSibling(node);
+		}
 	}
 }
 

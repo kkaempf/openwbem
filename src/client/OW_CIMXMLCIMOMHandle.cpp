@@ -342,18 +342,18 @@ namespace
 	class enumClassNamesOp : public OW_ClientOperation
 	{
 	public:
-		enumClassNamesOp(OW_CIMObjectPathResultHandlerIFC& result_)
+		enumClassNamesOp(OW_StringResultHandlerIFC& result_)
 			: result(result_)
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
 			while (parser.tokenIs(OW_CIMXMLParser::E_CLASSNAME))
 			{
-				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
+				result.handle(OW_XMLCIMFactory::createObjectPath(parser).getClassName());
 			}
 		}
 
-		OW_CIMObjectPathResultHandlerIFC& result;
+		OW_StringResultHandlerIFC& result;
 	};
 }
 
@@ -362,7 +362,7 @@ void
 OW_CIMXMLCIMOMHandle::enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	static const char* const commandName = "EnumerateClassNames";

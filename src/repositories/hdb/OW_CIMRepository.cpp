@@ -559,44 +559,16 @@ OW_CIMRepository::enumClasses(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class CIMClassToCIMObjectPathHandler : public OW_CIMClassResultHandlerIFC
-	{
-	public:
-		CIMClassToCIMObjectPathHandler(OW_CIMObjectPathResultHandlerIFC& oph_,
-			OW_CIMObjectPath& lcop_)
-		: oph(oph_)
-		, lcop(lcop_)
-		{}
-	protected:
-		virtual void doHandle(const OW_CIMClass &c)
-		{
-			// namespace is already set on lcop
-			lcop.setObjectName(c.getName());
-			oph.handle(lcop);
-		}
-	private:
-		OW_CIMObjectPathResultHandlerIFC& oph;
-		OW_CIMObjectPath& lcop;
-	};
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMRepository::enumClassNames(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_StringResultHandlerIFC& result,
 	OW_Bool deep, const OW_UserInfo&)
 {
 	try
 	{
-		// TODO: Make this a bit more efficient. getClassChildren()?
-		OW_CIMObjectPath lcop(className, ns);
-		CIMClassToCIMObjectPathHandler handler(result,lcop);
-		m_mStore.enumClass(ns, className, handler,
-			deep, false, true, true);
+		m_mStore.enumClassNames(ns, className, result, deep);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
 			m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated class names: %1:%2", ns,
@@ -611,6 +583,37 @@ OW_CIMRepository::enumClassNames(
 	{
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+namespace {
+
+class stringArrayBuilder : public OW_StringResultHandlerIFC
+{
+public:
+	stringArrayBuilder(OW_StringArray& result)
+		: m_result(result)
+	{}
+
+	void doHandle(const OW_String& name)
+	{
+		m_result.push_back(name);
+	}
+
+private:
+	OW_StringArray& m_result;
+};
+
+// utility function
+OW_StringArray getClassChildren(OW_MetaRepository& rep, const OW_String& ns, const OW_String& clsName)
+{
+	OW_StringArray result;
+	stringArrayBuilder handler(result);
+	rep.enumClassNames(ns, clsName, handler, OW_CIMOMHandleIFC::DEEP);
+
+	return result;
+}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -641,8 +644,11 @@ OW_CIMRepository::enumInstanceNames(
 		// This code probably won't ever be executed, because CIMServer
 		// has to do each class at a time because of providers, and will
 		// thus only call us with deep=false.
+		// If the situation ever changes, fix and enable the code below.
 
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Internal server error");
 		// TODO: Switch this to use a callback interface.
+		/*
 		OW_StringArray classNames = m_mStore.getClassChildren(ns,
 			theClass.getName());
 
@@ -656,6 +662,7 @@ OW_CIMRepository::enumInstanceNames(
 					classNames[i]));
 			}
 		}
+		*/
 	}
 	catch (OW_HDBException&)
 	{
@@ -666,6 +673,57 @@ OW_CIMRepository::enumInstanceNames(
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+namespace {
+
+class instEnumerator : public OW_StringResultHandlerIFC
+{
+public:
+	instEnumerator(OW_CIMRepository& rep_,
+		const OW_String& ns_,
+		const OW_CIMClass& theTopClass_,
+		OW_CIMInstanceResultHandlerIFC& result_,
+		OW_Bool deep_,
+		OW_Bool localOnly_,
+		OW_Bool includeQualifiers_,
+		OW_Bool includeClassOrigin_,
+		const OW_StringArray* propertyList_)
+		: rep(rep_)
+		, ns(ns_)
+		, theTopClass(theTopClass_)
+		, result(result_)
+		, deep(deep_)
+		, localOnly(localOnly_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propertyList(propertyList_)
+	{}
+
+	void doHandle(const OW_String& className)
+	{
+		OW_CIMClass theClass = rep._instGetClass(ns, className);
+
+		rep.m_iStore.getCIMInstances(ns, className, theTopClass, theClass, result,
+			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+		if (rep.m_env->getLogger()->getLogLevel() == DebugLevel)
+		{
+			rep.m_env->getLogger()->logDebug(format("OW_CIMRepository Enumerated derived instances: %1:%2", ns, className));
+		}
+	}
+private:
+	OW_CIMRepository& rep;
+	const OW_String& ns;
+	const OW_CIMClass& theTopClass;
+	OW_CIMInstanceResultHandlerIFC& result;
+	OW_Bool deep;
+	OW_Bool localOnly;
+	OW_Bool includeQualifiers;
+	OW_Bool includeClassOrigin;
+	const OW_StringArray* propertyList;
+};
+
+} // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -692,7 +750,10 @@ OW_CIMRepository::enumInstances(
 
 		if (enumSubClasses)
 		{
+			instEnumerator ie(*this, ns, theTopClass, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+			m_mStore.enumClassNames(ns, className, ie, OW_CIMOMHandleIFC::DEEP);
 			// TODO: Switch this to use the callback interface.
+/*
 			OW_StringArray classNames = m_mStore.getClassChildren(ns,
 				className);
 
@@ -708,6 +769,7 @@ OW_CIMRepository::enumInstances(
 						classNames[i]));
 				}
 			}
+*/
 		}
 	}
 	catch (OW_HDBException&)
@@ -1450,7 +1512,7 @@ OW_CIMRepository::_commonAssociators(
 	OW_StringArray resultClassNames;
 	if(!resultClass.empty())
 	{
-		resultClassNames = m_mStore.getClassChildren(ns, resultClass);
+		resultClassNames = getClassChildren(m_mStore, ns, resultClass);
 		resultClassNames.append(resultClass);
 	}
 
@@ -1901,7 +1963,7 @@ OW_CIMRepository::_validatePropagatedKeys(const OW_String& ns,
         // since we don't know what class the keys refer to, we get all subclasses
         // and try calling getInstance for each to see if we can find one with
         // the matching keys.
-		OW_StringArray classes = m_mStore.getClassChildren(ns,
+		OW_StringArray classes = getClassChildren(m_mStore, ns,
 			theClass.getName());
         classes.push_back(clsname);
 

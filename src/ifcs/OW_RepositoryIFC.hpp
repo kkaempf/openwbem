@@ -233,20 +233,18 @@ public:
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
-	 * @param path		The OW_CIMObjectPath identifying the class to be
-	 *						enumerated.
+	 * @param path		Identifying the class to be enumerated.
 	 * @param deep		If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *						contain the names of all classes derived from the
-	 *						enumerated class. If set to OW_CIMClient::SHALLOW the
-	 *						enumermation will return only the names of the first level
-	 *						children of the enumerated class.
+	 *  contain the names of all classes derived from the
+	 *  enumerated class. If set to OW_CIMClient::SHALLOW the
+	 *  enumermation will return only the names of the first level
+	 *  children of the enumerated class.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 * @exception OW_CIMException  	If the specified CIMObjectPath object cannot be found.
 	 */
 	virtual void enumClassNames(const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep, const OW_UserInfo& aclInfo) = 0;
 
 	/**

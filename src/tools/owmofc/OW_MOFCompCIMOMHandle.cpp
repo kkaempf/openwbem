@@ -67,7 +67,7 @@ OW_MOFCompCIMOMHandle::enumClass(const OW_String& ns,
 void
 OW_MOFCompCIMOMHandle::enumClassNames(const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);

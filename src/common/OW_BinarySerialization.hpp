@@ -62,7 +62,9 @@
 //
 // 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the 
 //   structure of OW_CIMInstance.  The name and alias were removed.
-const OW_UInt32 OW_BinaryProtocolVersion = 3000004;
+// 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
+//   instead of object paths.
+const OW_UInt32 OW_BinaryProtocolVersion = 3000005;
 
 // These values are all used by the binary protocol
 const OW_UInt8 OW_BIN_OK =				0;		// Success returned from server
@@ -116,11 +118,13 @@ const OW_UInt8 OW_BINSIG_INSTENUM =		111;
 const OW_UInt8 OW_BINSIG_QUALENUM =		112;
 const OW_UInt8 OW_BINSIG_VALUEARRAY =	113;
 const OW_UInt8 OW_BINSIG_PARAMVALUEARRAY =	114;
+const OW_UInt8 OW_BINSIG_STRINGENUM =	115;
 
 const OW_UInt8 OW_END_CLSENUM =			150;
 const OW_UInt8 OW_END_OPENUM =			151;
 const OW_UInt8 OW_END_INSTENUM =		152;
 const OW_UInt8 OW_END_QUALENUM =		153;
+const OW_UInt8 OW_END_STRINGENUM =		154;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -392,6 +396,8 @@ namespace OW_BinarySerialization
 	void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
 
 	void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
+
+	void readStringEnum(std::istream& istrm, OW_StringResultHandlerIFC& result);
 
 }
 

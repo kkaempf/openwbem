@@ -155,14 +155,14 @@ OW_CIMClient::enumClassE(const OW_String& className,
 void 
 	OW_CIMClient::enumClassNames(
 	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_StringResultHandlerIFC& result,
 	OW_Bool deep)
 {
 	m_ch->enumClassNames(m_namespace, className, result, deep);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
+OW_StringEnumeration 
 	OW_CIMClient::enumClassNamesE(
 	const OW_String& className,
 	OW_Bool deep)

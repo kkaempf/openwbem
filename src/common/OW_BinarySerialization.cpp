@@ -94,6 +94,14 @@ readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
+readStringEnum(std::istream& istrm, OW_StringResultHandlerIFC& result)
+{
+	readEnum(istrm, result, &readString, OW_BINSIG_STRINGENUM, OW_END_STRINGENUM);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
 writeLen(std::ostream& ostrm, OW_UInt32 len)
 {
 	// This is ASN.1 length encoding

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -145,7 +145,7 @@ public:
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
+	 * Enumerates the class specified by className.
 	 * @param ns The namespace of the class
 	 * @param className	The name of the class to enumerate
 	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
@@ -159,7 +159,7 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 *		cannot be found.
 	 */
 	void enumClass(const OW_String& ns,
 		const OW_String& className,
@@ -168,15 +168,20 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin);
 
 	/**
-	 * Gets the children of a class
-	 *
-	 * @param ns		 The namespace for the class
-	 * @param className The class for whose children are to be retrieved
-	 * @return An array of the class names of the children
-	 * @exception CIMException if class does not exist
+	 * Enumerates the class names specified by className.
+	 * @param ns The namespace of the class
+	 * @param className	The name of the class to enumerate
+	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
+	 *		contain the names of all classes derived from the enumerated class.
+	 *		If set to OW_CIMClient::SHALLOW the enumermation will return only
+	 *		the names of the first level children of the enumerated class.
+	 * @exception OW_CIMException  	If the specified CIMObjectPath object
+	 *		cannot be found.
 	 */
-	OW_StringArray getClassChildren(const OW_String& ns,
-		const OW_String& className);
+	void enumClassNames(const OW_String& ns,
+		const OW_String& className,
+		OW_StringResultHandlerIFC& result,
+		OW_Bool deep);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
@@ -252,8 +257,11 @@ private:
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true);
 
-	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
-		OW_HDBHandle hdl);
+	void _getClassNameNodes(OW_StringResultHandlerIFC& result, OW_HDBNode node,
+		OW_HDBHandle hdl, OW_Bool deep);
+
+//	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
+//		OW_HDBHandle hdl);
 
 	void _resolveClass(OW_CIMClass& cls, OW_HDBNode& node, OW_HDBHandle& hdl,
 		const OW_String& ns);
@@ -268,6 +276,8 @@ private:
 
 	OW_CIMClass _getClassFromNode(OW_HDBNode& node, OW_HDBHandle hdl,
 		const OW_String& ns=OW_String());
+
+	OW_String _getClassNameFromNode(OW_HDBNode& node);
 
 	//void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 

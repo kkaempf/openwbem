@@ -994,14 +994,14 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class ClassNameXMLWriter : public OW_CIMObjectPathResultHandlerIFC
+	class ClassNameXMLWriter : public OW_StringResultHandlerIFC
 	{
 	public:
 		ClassNameXMLWriter(std::ostream& ostr_) : ostr(ostr_) {}
 	protected:
-		virtual void doHandle(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const OW_String &name)
 		{
-			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() <<
+			ostr << "<CLASSNAME NAME=\"" << name <<
 				"\"/>";
 			checkStream(ostr);
 		}

@@ -161,10 +161,10 @@ namespace OpenWBEM
 			bool found;
 		};
 
-		class DeleteHandler : public OW_CIMObjectPathResultHandlerIFC
+		class DeleteHandler : public OW_StringResultHandlerIFC
 		{
 		public:
-			void doHandle(const OW_CIMObjectPath&)
+			void doHandle(const OW_String&)
 			{
 				OW_THROWCIMMSG(OW_CIMException::FAILED, "Cannot delete namespace because it is not empty");
 			}

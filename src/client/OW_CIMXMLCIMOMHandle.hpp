@@ -102,13 +102,12 @@ public:
 	 *						enumerated class. If set to OW_CIMClient::SHALLOW the
 	 *						enumermation will return only the names of the first level
 	 *						children of the enumerated class.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 * @exception OW_CIMException  	If the specified CIMObjectPath object cannot be found.
 	 */
 	virtual void enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep=true);
 
 	/**

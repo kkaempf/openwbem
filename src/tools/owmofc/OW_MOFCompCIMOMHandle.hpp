@@ -101,7 +101,7 @@ public:
 	virtual void enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep=true);
 
 	/**

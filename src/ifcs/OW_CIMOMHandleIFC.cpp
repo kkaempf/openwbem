@@ -101,6 +101,19 @@ namespace
 		OW_StringArray& m_a;
 	};
 	
+	class StringEnumBuilder : public OW_StringResultHandlerIFC
+	{
+	public:
+		StringEnumBuilder(OW_StringEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandle(const OW_String &s)
+		{
+			m_e.addElement(s);
+		}
+	private:
+		OW_StringEnumeration& m_e;
+	};
+	
 	class CIMObjectPathEnumBuilder : public OW_CIMObjectPathResultHandlerIFC
 	{
 	public:
@@ -156,14 +169,14 @@ OW_CIMOMHandleIFC::enumClassE(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+OW_StringEnumeration
 OW_CIMOMHandleIFC::enumClassNamesE(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_Bool deep)
 {
-	OW_CIMObjectPathEnumeration rval;
-	CIMObjectPathEnumBuilder handler(rval);
+	OW_StringEnumeration rval;
+	StringEnumBuilder handler(rval);
 	enumClassNames(ns, className, handler, deep);
 	return rval;
 }

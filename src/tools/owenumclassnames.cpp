@@ -62,12 +62,12 @@ class GetLoginInfo : public OW_ClientAuthCBIFC
 		}
 };
 
-class classNamePrinter : public OW_CIMObjectPathResultHandlerIFC
+class classNamePrinter : public OW_StringResultHandlerIFC
 {
 	public:
-		void doHandle(const OW_CIMObjectPath& t)
+		void doHandle(const OW_String& t)
 		{
-			cout << t.getObjectName() << '\n';
+			cout << t << '\n';
 		}
 };	
 

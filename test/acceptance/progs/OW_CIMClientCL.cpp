@@ -186,10 +186,10 @@ enumClassNames(OW_CIMClient& hdl)
 
 	try
 	{
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE( "", true);
+		OW_StringEnumeration enu = hdl.enumClassNamesE( "", true);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
+			cout << "CIMClass: " << enu.nextElement() << endl;
 		}
 	}
 	catch (OW_CIMException& e)
@@ -201,10 +201,10 @@ enumClassNames(OW_CIMClient& hdl)
 
 	try
 	{
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE( "", false);
+		OW_StringEnumeration enu = hdl.enumClassNamesE( "", false);
 		while (enu.hasMoreElements())
 		{
-			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
+			cout << "CIMClass: " << enu.nextElement() << endl;
 		}
 	}
 	catch (OW_CIMException& e)

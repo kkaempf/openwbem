@@ -136,15 +136,14 @@ public:
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
 	 *		the names of the first level children of the enumerated class.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be found
+	 * @exception OW_CIMException  	If the specified CIMObjectPath object cannot be found.
 	 */
 	void enumClassNames(
 		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
 
-	OW_CIMObjectPathEnumeration enumClassNamesE(
+	OW_StringEnumeration enumClassNamesE(
 		const OW_String& className,
 		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
 

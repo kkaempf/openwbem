@@ -151,7 +151,7 @@ void enumClassNames(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumClassNames() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", true);
+		OW_StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", true);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}

@@ -190,7 +190,7 @@ void
 OW_WQLFilterRep::enumClassNames(
 	const OW_String&,
 	const OW_String&,
-	OW_CIMObjectPathResultHandlerIFC&,
+	OW_StringResultHandlerIFC&,
 	OW_Bool /*deep*/, const OW_UserInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

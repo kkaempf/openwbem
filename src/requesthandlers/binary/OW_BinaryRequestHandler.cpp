@@ -455,6 +455,21 @@ namespace
 		std::ostream& ostrm;
 	};
 
+	class BinaryStringWriter : public OW_StringResultHandlerIFC
+	{
+	public:
+		BinaryStringWriter(std::ostream& ostrm_)
+		: ostrm(ostrm_)
+		{}
+	protected:
+		virtual void doHandle(const OW_String &name)
+		{
+			OW_BinarySerialization::writeString(ostrm, name);
+		}
+	private:
+		std::ostream& ostrm;
+	};
+
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -730,12 +745,12 @@ OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
 	OW_Bool deep(OW_BinarySerialization::readBool(istrm));
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
-	BinaryCIMObjectPathWriter handler(ostrm);
+	OW_BinarySerialization::write(ostrm, OW_BINSIG_STRINGENUM);
+	BinaryStringWriter handler(ostrm);
 	chdl->enumClassNames(ns, className, handler, deep);
 
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
+	OW_BinarySerialization::write(ostrm, OW_END_STRINGENUM);
+	OW_BinarySerialization::write(ostrm, OW_END_STRINGENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
