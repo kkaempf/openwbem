@@ -41,57 +41,58 @@ namespace OW_CIMNameSpaceUtils
 {
 	/**
 	 * Create a cim namespace by creating an instance of the CIM_Namespace 
-     * class.
-     * @param hdl The cimom handle that will be used.
+	 * class.
+	 * @param hdl The cimom handle that will be used.
 	 * @param ns 	The namespace name to be created.
-     * @param classInfo     [Required, Write, Description (
-     *   "Enumeration indicating the organization/schema of the "
-     *   "Namespace's objects. For example, they may be instances "
-     *   "of classes of a specific CIM version."),
-     *   ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-     *             "200", "201", "202"},
-     *   Values {"Unknown", "Other", "CIM 1.0", "CIM 2.0",
-     *           "CIM 2.1", "CIM 2.2", "CIM 2.3", "CIM 2.4", "CIM 2.5",
-     *           "CIM 2.6", "DMI Recast", "SNMP Recast", "CMIP Recast"},
-     *   ModelCorrespondence {"CIM_Namespace.DescriptionOfClassInfo"} ]
-     * @param descriptionOfClassInfo [Write, Description (
-     *   "A string providing more detail (beyond the general "
-     *   "classification in ClassInfo) for the object hierarchy of "
-     *   "the Namespace."),
-     *   ModelCorrespondence {"CIM_Namespace.ClassInfo"} ]
-     * @param interopNS The interop namespace which contains the CIM_Namespace 
-     *  class & instances.  The default is root because the CIM Ops. spec says: 
-     *  "It is the common practice proposed by this document that instances of
-     *  CIM_Namespace be created in root unless there is a specific reason to
-     *  define them in another namespace."
+	 * @param classInfo     [Required, Write, Description (
+	 *   "Enumeration indicating the organization/schema of the "
+	 *   "Namespace's objects. For example, they may be instances "
+	 *   "of classes of a specific CIM version."),
+	 *   ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+	 *             "200", "201", "202"},
+	 *   Values {"Unknown", "Other", "CIM 1.0", "CIM 2.0",
+	 *           "CIM 2.1", "CIM 2.2", "CIM 2.3", "CIM 2.4", "CIM 2.5",
+	 *           "CIM 2.6", "DMI Recast", "SNMP Recast", "CMIP Recast"},
+	 *   ModelCorrespondence {"CIM_Namespace.DescriptionOfClassInfo"} ]
+	 * @param descriptionOfClassInfo [Write, Description (
+	 *   "A string providing more detail (beyond the general "
+	 *   "classification in ClassInfo) for the object hierarchy of "
+	 *   "the Namespace."),
+	 *   ModelCorrespondence {"CIM_Namespace.ClassInfo"} ]
+	 * @param interopNS The interop namespace which contains the CIM_Namespace 
+	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 *  "It is the common practice proposed by this document that instances of
+	 *  CIM_Namespace be created in root unless there is a specific reason to
+	 *  define them in another namespace."
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
 	void createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, 
-        OW_UInt16 classInfo = 0, const OW_String& descriptionOfClassInfo = "", const OW_String& interopNs = "root");
+		OW_UInt16 classInfo = 0, const OW_String& descriptionOfClassInfo = "", const OW_String& interopNs = "root");
 
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
-     * CIM_Namespace class.
-     * @param hdl The cimom handle that will be used.
- 	 * @param ns	The namespace to delete.
-     * @param interopNS The interop namespace which contains the CIM_Namespace 
-     *  class & instances.  The default is root because the CIM Ops. spec says: 
-     *  "It is the common practice proposed by this document that instances of
-     *  CIM_Namespace be created in root unless there is a specific reason to
-     *  define them in another namespace."
+	 * CIM_Namespace class. The namespace must be empty of all classes and
+	 * instances before it can be deleted.
+	 * @param hdl The cimom handle that will be used.
+	 * @param ns	The namespace to delete.
+	 * @param interopNS The interop namespace which contains the CIM_Namespace 
+	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 *  "It is the common practice proposed by this document that instances of
+	 *  CIM_Namespace be created in root unless there is a specific reason to
+	 *  define them in another namespace."
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	void deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, const OW_String& interopNs = "root");
 
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
-     * CIM_Namespace class.
-     * @param hdl The cimom handle that will be used.
-     * @param interopNS The interop namespace which contains the CIM_Namespace 
-     *  class & instances.  The default is root because the CIM Ops. spec says: 
-     *  "It is the common practice proposed by this document that instances of
-     *  CIM_Namespace be created in root unless there is a specific reason to
-     *  define them in another namespace."
+	 * CIM_Namespace class.
+	 * @param hdl The cimom handle that will be used.
+	 * @param interopNS The interop namespace which contains the CIM_Namespace 
+	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 *  "It is the common practice proposed by this document that instances of
+	 *  CIM_Namespace be created in root unless there is a specific reason to
+	 *  define them in another namespace."
 	 * @return An Array of namespace names as strings.
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
@@ -99,16 +100,16 @@ namespace OW_CIMNameSpaceUtils
 	OW_StringArray enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& interopNs = "root");
 
 	/**
-     * Gets a list of the namespaces by enumerating the instances of the
-     * CIM_Namespace class.
-     * @param hdl The cimom handle that will be used.
-     * @param result result.handle will be called once for each enumerated
-     *  namespace.
-     * @param interopNS The interop namespace which contains the CIM_Namespace 
-     *  class & instances.  The default is root because the CIM Ops. spec says: 
-     *  "It is the common practice proposed by this document that instances of
-     *  CIM_Namespace be created in root unless there is a specific reason to
-     *  define them in another namespace."
+	 * Gets a list of the namespaces by enumerating the instances of the
+	 * CIM_Namespace class.
+	 * @param hdl The cimom handle that will be used.
+	 * @param result result.handle will be called once for each enumerated
+	 *  namespace.
+	 * @param interopNS The interop namespace which contains the CIM_Namespace 
+	 *  class & instances.  The default is root because the CIM Ops. spec says: 
+	 *  "It is the common practice proposed by this document that instances of
+	 *  CIM_Namespace be created in root unless there is a specific reason to
+	 *  define them in another namespace."
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
@@ -117,10 +118,10 @@ namespace OW_CIMNameSpaceUtils
 
 	/**
 	 * Create a cim namespace by creating an instance of the __Namespace 
-     * class.  This method has been deprecated in the CIM Ops spec.
-     * This implementation assumes that __Namespace presents a hierarcial view
-     * of the namespaces.
-     * @param hdl The cimom handle that will be used.
+	 * class.  This method has been deprecated in the CIM Ops spec.
+	 * This implementation assumes that __Namespace presents a hierarcial view
+	 * of the namespaces.
+	 * @param hdl The cimom handle that will be used.
 	 * @param ns 	The namespace name to be created.
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
@@ -128,26 +129,26 @@ namespace OW_CIMNameSpaceUtils
 
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
-     * __Namespace class.  This method has been deprecated in the CIM Ops spec.
-     * This implementation assumes that __Namespace presents a hierarcial view
-     * of the namespaces.
-     * @param hdl The cimom handle that will be used.
- 	 * @param ns	The namespace to delete.
+	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
+	 * This implementation assumes that __Namespace presents a hierarcial view
+	 * of the namespaces.
+	 * @param hdl The cimom handle that will be used.
+	 * @param ns	The namespace to delete.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	void delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns);
 
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
-     * __Namespace class.  This method has been deprecated in the CIM Ops spec.
-     * This implementation assumes that __Namespace presents a hierarcial view
-     * of the namespaces.
-     * @param hdl The cimom handle that will be used.
+	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
+	 * This implementation assumes that __Namespace presents a hierarcial view
+	 * of the namespaces.
+	 * @param hdl The cimom handle that will be used.
 	 * @param ns The parent namespace to enumerate
-     * @param deep If set to DEEP, the enumeration returned will contain the
-     *		entire hierarchy of namespaces present under the enumerated
-     *		namespace. If set to SHALLOW  the enuermation will return only the
-     *		first level children of the enumerated namespace.
+	 * @param deep If set to DEEP, the enumeration returned will contain the
+	 *		entire hierarchy of namespaces present under the enumerated
+	 *		namespace. If set to SHALLOW  the enuermation will return only the
+	 *		first level children of the enumerated namespace.
 	 * @return An Array of namespace names as strings.
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
@@ -155,18 +156,18 @@ namespace OW_CIMNameSpaceUtils
 	OW_StringArray enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
 
 	/**
-     * Gets a list of the namespaces by enumerating the instances of the
-     * __Namespace class.  This method has been deprecated in the CIM Ops spec.
-     * This implementation assumes that __Namespace presents a hierarcial view
-     * of the namespaces.
-     * @param hdl The cimom handle that will be used.
+	 * Gets a list of the namespaces by enumerating the instances of the
+	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
+	 * This implementation assumes that __Namespace presents a hierarcial view
+	 * of the namespaces.
+	 * @param hdl The cimom handle that will be used.
 	 * @param ns The parent namespace to enumerate
-     * @param result result.handle will be called once for each enumerated
-     *  namespace.
-     * @param deep If set to DEEP, the enumeration returned will contain the
-     *		entire hierarchy of namespaces present under the enumerated
-     *		namespace. If set to SHALLOW  the enuermation will return only the
-     *		first level children of the enumerated namespace.
+	 * @param result result.handle will be called once for each enumerated
+	 *  namespace.
+	 * @param deep If set to DEEP, the enumeration returned will contain the
+	 *		entire hierarchy of namespaces present under the enumerated
+	 *		namespace. If set to SHALLOW  the enuermation will return only the
+	 *		first level children of the enumerated namespace.
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
@@ -174,17 +175,17 @@ namespace OW_CIMNameSpaceUtils
 		OW_StringResultHandlerIFC& result, OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
 
 
-    /**
-     * This function creates a "normalized" namespace.  Because of differing 
-     * WBEM implementations, it's expected that the following all refer to the
-     * same namespace: root, /root, and \root.  As far as the openwbem cimom
-     * is concerned, they are all different, so this function translates all
-     * backslashes to forward slashes and also removes all beginning slashes.
-     * So /root and \root yield just root.
-     * @param ns The namespace name.
-     * @return ns The normalized version of ns.
-     */
-    OW_String prepareNamespace(OW_String ns);
+	/**
+	 * This function creates a "normalized" namespace.  Because of differing 
+	 * WBEM implementations, it's expected that the following all refer to the
+	 * same namespace: root, /root, and \root.  As far as the openwbem cimom
+	 * is concerned, they are all different, so this function translates all
+	 * backslashes to forward slashes and also removes all beginning slashes.
+	 * So /root and \root yield just root.
+	 * @param ns The namespace name.
+	 * @return ns The normalized version of ns.
+	 */
+	OW_String prepareNamespace(OW_String ns);
 
 }
 
