@@ -49,7 +49,7 @@ perlNPI.marker:
 # hmm, it seems to be okay with the perl on Fedora Core 1
 	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI
 
-perlxsi.c:
+perlxsi.c: Makefile
 	$(PERL) -MExtUtils::Embed -e xsinit -- -o $(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c
 
 install-exec-local:
@@ -81,8 +81,13 @@ distclean-local:
 libperlProvider_a_SOURCES = \
 perlProvider.c \
 perlProvider.h \
-perlxsi.c \
 perlargs.h
+
+nodist_libperlProvider_a_SOURCES = \
+perlxsi.c
+
+CLEANFILES = \
+perlxsi.c
 
 INCLUDES = -I$(top_srcdir)/src/providerifcs/perl \
 -I$(top_srcdir)/src/providerifcs/npi/common \
