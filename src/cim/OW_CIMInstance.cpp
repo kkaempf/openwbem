@@ -52,7 +52,7 @@ struct OW_CIMInstance::INSTData
 	OW_CIMPropertyArray m_properties;
 	OW_CIMQualifierArray m_qualifiers;
 
-    INSTData* clone() const { return new INSTData(*this); }
+	INSTData* clone() const { return new INSTData(*this); }
 };
 
 bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData& y)
@@ -843,7 +843,7 @@ OW_CIMInstance::writeObject(std::ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
 	m_pdata->m_owningClassName.writeObject(ostrm);
 	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
-    OW_BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
 	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 }
 

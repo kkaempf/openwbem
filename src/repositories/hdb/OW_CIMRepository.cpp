@@ -852,51 +852,51 @@ OW_CIMRepository::createInstance(
 
 		OW_CIMClass theClass = _instGetClass(ns, ci.getClassName());
 
-        if (m_checkReferentialIntegrity)
-        {
-            if(theClass.isAssociation())
-            {
-                OW_CIMPropertyArray pra = ci.getProperties(
-                    OW_CIMDataType::REFERENCE);
+		if (m_checkReferentialIntegrity)
+		{
+			if(theClass.isAssociation())
+			{
+				OW_CIMPropertyArray pra = ci.getProperties(
+					OW_CIMDataType::REFERENCE);
 
-                for(size_t j = 0; j < pra.size(); j++)
-                {
-                    OW_CIMValue cv = pra[j].getValue();
-                    if(!cv)
-                    {
-                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-                            "Association has a NULL reference");
-                    }
+				for(size_t j = 0; j < pra.size(); j++)
+				{
+					OW_CIMValue cv = pra[j].getValue();
+					if(!cv)
+					{
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+							"Association has a NULL reference");
+					}
 
-                    OW_CIMObjectPath op(OW_CIMNULL);
-                    cv.get(op);
+					OW_CIMObjectPath op(OW_CIMNULL);
+					cv.get(op);
 
-                    if(!op)
-                    {
-                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-                            "Association has a NULL reference");
-                    }
+					if(!op)
+					{
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+							"Association has a NULL reference");
+					}
 
-                    OW_CIMClass rcc(OW_CIMNULL);
-                    try
-                    {
-                        rcc = _instGetClass(ns,op.getObjectName());
-                        m_iStore.getCIMInstance(ns, op,rcc,false,true,true,0);
-                    }
-                    catch (OW_CIMException&)
-                    {
-                        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-                            format("Association references an invalid instance:"
-                                " %1", op.toString()).c_str());
-                    }
+					OW_CIMClass rcc(OW_CIMNULL);
+					try
+					{
+						rcc = _instGetClass(ns,op.getObjectName());
+						m_iStore.getCIMInstance(ns, op,rcc,false,true,true,0);
+					}
+					catch (OW_CIMException&)
+					{
+						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+							format("Association references an invalid instance:"
+								" %1", op.toString()).c_str());
+					}
 
-                }
+				}
 
-            }
+			}
 
 
-            _validatePropagatedKeys(ns, ci, theClass);
-        }
+			_validatePropagatedKeys(ns, ci, theClass);
+		}
 		//TODO: _checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
 
