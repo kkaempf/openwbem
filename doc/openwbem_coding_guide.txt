@@ -519,4 +519,8 @@ Pass objects by reference instead of by value. An exception is made for Bool
 and Char16.
 
 Pass native types by value instead of by reference, unless it's an out parameter.
+-----------------------------------------------------------------------------
+Don't use the old deprecated way of including C library headers 
+(#include <stdlib.h>), the correct way to do it is to put a c infront of the 
+name and remove the .h (#include <cstdlib>).
 
