@@ -164,6 +164,7 @@ namespace ConfigOpts
 	// 2.0 additions
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
 	static const char* const CIMOM_REQUEST_HANDLER_LOCATION_opt = "owcimomd.request_handler_path";
+	static const char* const HTTP_SLP_DISABLED_opt = "http_server.disable.slp";
 	static const char* const USE_UDS_opt = "http_server.use_UDS";
 	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
 	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
