@@ -36,6 +36,8 @@ Fix problems:
     - Fix uri handling to be consistent with the new spec (once it's done.  
       company review version has problems.)
     - Add the version to the PACKAGE_PREFIX (for install paths, etc.)
+    - Validate & sync incoming object paths to the class: fix types, all/only
+      keys present.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
