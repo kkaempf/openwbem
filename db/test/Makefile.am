@@ -3,7 +3,8 @@ check_PROGRAMS = dbtest
 dbtest_SOURCES = dbtest.c
 
 dbtest_LDADD = \
--L$(top_builddir)/db/db -lowdb
+-L$(top_builddir)/db/db -lowdb \
+$(BINLINKAPPENDFLAGS)
 
 dbtest_LDFLAGS = \
 $(CBINLINKFLAGS) \

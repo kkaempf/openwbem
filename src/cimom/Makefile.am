@@ -17,7 +17,7 @@ owcimomd_LDADD = \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
--L$(top_builddir)/db/db -lowdb
+-L$(top_builddir)/db/db -lowdb $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 owcimomd_SOURCES = \
 owcimomd_main.cpp 
@@ -29,8 +29,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/cimom/common
 
-
 #use this rule to create the data dir
 install-exec-local:
 	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
-

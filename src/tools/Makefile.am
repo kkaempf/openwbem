@@ -43,7 +43,9 @@ owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
 
 owdigestgenpass_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/http/common -lowhttpcommon
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owdigestgenpass_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -53,11 +55,13 @@ $(CXXBINLINKFLAGS) \
 owexecwql_SOURCES = owexecwql.cpp
 
 owexecwql_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS)\
+$(BINLINKAPPENDFLAGS)
 
 owexecwql_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -67,11 +71,13 @@ $(CXXBINLINKFLAGS) \
 owcreatenamespace_SOURCES = owcreatenamespace.cpp
 
 owcreatenamespace_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owcreatenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -81,11 +87,13 @@ $(CXXBINLINKFLAGS) \
 owdeletenamespace_SOURCES = owdeletenamespace.cpp
 
 owdeletenamespace_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owdeletenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -95,11 +103,13 @@ $(CXXBINLINKFLAGS) \
 owenumnamespace_SOURCES = owenumnamespace.cpp
 
 owenumnamespace_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -109,11 +119,13 @@ $(CXXBINLINKFLAGS) \
 owenumqualifiers_SOURCES = owenumqualifiers.cpp
 
 owenumqualifiers_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owenumqualifiers_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -123,11 +135,13 @@ $(CXXBINLINKFLAGS) \
 owenumclassnames_SOURCES = owenumclassnames.cpp
 
 owenumclassnames_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owenumclassnames_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -137,11 +151,13 @@ $(CXXBINLINKFLAGS) \
 owenumclasses_SOURCES = owenumclasses.cpp
 
 owenumclasses_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owenumclasses_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -151,13 +167,15 @@ $(CXXBINLINKFLAGS) \
 owcimindicationlistener_SOURCES = owcimindicationlistener.cpp
 
 owcimindicationlistener_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
--L$(top_builddir)/src/services/http -lowservicehttp
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owcimindicationlistener_LDFLAGS = \
 $(CXXBINLINKFLAGS) \

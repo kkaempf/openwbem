@@ -2,10 +2,11 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
+EXPORT_PREFIX=createProvider
+
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
-
 
 noinst_LIBRARIES = libowprovinstCIM_IndicationFilter.a
 

@@ -3,10 +3,11 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
+EXPORT_PREFIX=createAuthenticator
+
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
-
 
 owpamauthbin_PROGRAMS = OW_PAMAuth
 
@@ -16,7 +17,7 @@ $(CXXBINLINKFLAGS) \
 
 owpamauthbindir = $(libexecdir)/openwbem
 OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
-OW_PAMAuth_LDADD = -lpam
+OW_PAMAuth_LDADD = -lpam $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
 SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem

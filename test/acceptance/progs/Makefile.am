@@ -46,7 +46,9 @@ CIMOMLocator_LDADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/http/client -lowhttpclient \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 CIMOMLocator_SOURCES = \
 CIMOMLocator.cpp
@@ -57,26 +59,30 @@ $(CXXBINLINKFLAGS) \
 -o cimlistener
 
 cimlistener_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 cimlistener_SOURCES = \
 cimListenerTest.cpp
 
 #wqlTest1
 wqlTest1_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/wql -lowwql \
 -L$(top_builddir)/src/wql/common -lowwqlcommon \
--L$(top_builddir)/src/wql -lowwql
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 wqlTest1_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -89,7 +95,9 @@ wqlTest1.cpp
 wqlTest2_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/wql/common -lowwqlcommon \
--L$(top_builddir)/src/wql -lowwql
+-L$(top_builddir)/src/wql -lowwql \
+$(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 wqlTest2_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -100,11 +108,13 @@ wqlTest2.cpp
 
 #aclTest
 aclTest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/http/client -lowhttpclient
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 aclTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -115,11 +125,13 @@ aclTest.cpp
 
 #infiniteClient
 infiniteClient_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 infiniteClient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -132,11 +144,13 @@ InfiniteClient.cpp
 
 #owcimclientcl
 owcimclientcl_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 owcimclientcl_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -148,11 +162,13 @@ OW_CIMClientCL.cpp
 
 #testinstprov
 testinstprov_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testinstprov_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -165,10 +181,12 @@ OW_InstProvTest.cpp
 #fakeclient
 fakeclient_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/common -lopenwbem
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 fakeclient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -180,11 +198,13 @@ fakeClient.cpp
 
 #testCIMExceptions
 testCIMExceptions_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testCIMExceptions_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -195,11 +215,13 @@ testCIMExceptions.cpp
 
 #testNamespaces
 testNamespaces_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testNamespaces_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -210,11 +232,13 @@ testNamespaces.cpp
 
 #testMisc
 testMisc_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testMisc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -225,11 +249,13 @@ testMisc.cpp
 
 #hammerClient
 hammerClient_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 hammerClient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -240,11 +266,13 @@ hammerClient.cpp
 
 #testSecondaryInstanceProviders
 testSecondaryInstanceProviders_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testSecondaryInstanceProviders_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -255,11 +283,13 @@ testSecondaryInstanceProviders.cpp
 
 #testLargeRequest
 testLargeRequest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
--L$(top_builddir)/src/xml -lowxml
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/common -lopenwbem \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 testLargeRequest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \

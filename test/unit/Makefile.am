@@ -3,7 +3,9 @@ noinst_PROGRAMS = MemTracerTest
 
 MemTracerTest_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/src/ -lopenwbem 
+-L$(top_builddir)/src/ -lopenwbem  \
+$(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 MemTracerTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
@@ -48,7 +50,9 @@ unitMain_LDADD = \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/provider -lowprovider \
--L$(top_builddir)/src/mof -lowmofc
+-L$(top_builddir)/src/mof -lowmofc \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
 
 
 unitMain_LDFLAGS = \

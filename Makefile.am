@@ -10,6 +10,7 @@ LICENSE \
 ow_ar.sh \
 Makefile-shared-lib-inst.inc \
 openwbem.spec \
+fake_library_creator.sh \
 generic-company-openwbem.spec.in
 
 CLEANFILES = Doxyfile

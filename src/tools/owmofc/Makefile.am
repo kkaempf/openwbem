@@ -19,15 +19,17 @@ OW_MOFCompCIMOMHandle.hpp
 
 owmofc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owmofc
+-o owmofc 
 
 owmofc_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/mof -lowmofc \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
--L$(top_builddir)/db/db -lowdb
+-L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS) \
+$(BINLINKAPPENDFLAGS)
 

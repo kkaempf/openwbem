@@ -7,6 +7,7 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
+EXPORT_PREFIX=createAuthenticator
 
 OW_SHARED_LIBS = libpamauthentication.$(LIB_EXT)
 SHAREDLIBADD = -lpam -L$(top_builddir)/src/common -lopenwbem
