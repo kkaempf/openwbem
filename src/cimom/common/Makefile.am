@@ -47,6 +47,7 @@ OW_SharedLibraryRepository.cpp \
 OW_SharedLibraryRepository.hpp \
 OW_WQLFilterRep.cpp \
 OW_WQLFilterRep.hpp \
+OW_IndicationRepLayer.hpp \
 OW_IndicationRepLayerMediator.cpp \
 OW_IndicationRepLayerMediator.hpp \
 OW_AuthorizerManager.cpp \
