@@ -115,6 +115,13 @@ public:
 	explicit String(UInt64 val);
 	/**
 	 * Create a new String object that will hold the string representation
+	 * of the given Real32 value.
+	 * @param val	The real value this String will hold the string
+	 * representation of.
+	 */
+	explicit String(Real32 val);
+	/**
+	 * Create a new String object that will hold the string representation
 	 * of the given Real64 value.
 	 * @param val	The real value this String will hold the string
 	 * representation of.

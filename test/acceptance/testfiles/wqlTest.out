@@ -88,7 +88,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -98,7 +98,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -191,7 +191,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -201,7 +201,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -738,7 +738,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -748,7 +748,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -841,7 +841,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -851,7 +851,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -1115,7 +1115,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 17 local: select * from wqlTestClass where realData = 123.456
+Executing query 17 local: select * from wqlTestClass where realData = 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -1124,11 +1124,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 17 remote: select * from wqlTestClass where realData = 123.456
+Executing query 17 remote: select * from wqlTestClass where realData = 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -1137,11 +1137,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 18 local: select * from wqlTestClass where 123.456 = realData
+Executing query 18 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 = realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -1150,11 +1150,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 18 remote: select * from wqlTestClass where 123.456 = realData
+Executing query 18 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 = realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -1163,7 +1163,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -1630,7 +1630,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -1640,7 +1640,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -1723,7 +1723,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -1733,7 +1733,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -1816,7 +1816,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -1826,7 +1826,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -1909,7 +1909,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -1919,7 +1919,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2131,7 +2131,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 33 local: select * from wqlTestClass where realData <> 123.456
+Executing query 33 local: select * from wqlTestClass where realData <> 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -2140,11 +2140,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 33 remote: select * from wqlTestClass where realData <> 123.456
+Executing query 33 remote: select * from wqlTestClass where realData <> 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -2153,11 +2153,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 34 local: select * from wqlTestClass where 123.456 <> realData
+Executing query 34 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <> realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -2166,11 +2166,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 34 remote: select * from wqlTestClass where 123.456 <> realData
+Executing query 34 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <> realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -2179,7 +2179,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2192,7 +2192,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2202,7 +2202,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2215,7 +2215,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2225,7 +2225,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2238,7 +2238,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2248,7 +2248,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2261,7 +2261,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2271,7 +2271,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2354,7 +2354,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2364,7 +2364,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2447,7 +2447,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2457,7 +2457,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2540,7 +2540,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2550,7 +2550,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2633,7 +2633,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2643,7 +2643,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2736,7 +2736,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2746,7 +2746,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -2839,7 +2839,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -2849,7 +2849,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -3147,7 +3147,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 49 local: select * from wqlTestClass where realData >= 123.456
+Executing query 49 local: select * from wqlTestClass where realData >= 123.4567890000000005557012627832591533660888671875
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -3156,7 +3156,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -3166,11 +3166,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 49 remote: select * from wqlTestClass where realData >= 123.456
+Executing query 49 remote: select * from wqlTestClass where realData >= 123.4567890000000005557012627832591533660888671875
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -3179,7 +3179,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -3189,11 +3189,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 50 local: select * from wqlTestClass where 123.456 >= realData
+Executing query 50 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 >= realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -3202,11 +3202,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 50 remote: select * from wqlTestClass where 123.456 >= realData
+Executing query 50 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 >= realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -3215,7 +3215,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -3268,7 +3268,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -3321,7 +3321,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -3384,7 +3384,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -3447,7 +3447,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -3566,7 +3566,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -3576,7 +3576,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -3669,7 +3669,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -3679,7 +3679,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -3991,7 +3991,7 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 63 local: select * from wqlTestClass where realData <= 123.456
+Executing query 63 local: select * from wqlTestClass where realData <= 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -4000,11 +4000,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 63 remote: select * from wqlTestClass where realData <= 123.456
+Executing query 63 remote: select * from wqlTestClass where realData <= 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -4013,11 +4013,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
-Executing query 64 local: select * from wqlTestClass where 123.456 <= realData
+Executing query 64 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <= realData
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -4026,7 +4026,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -4036,11 +4036,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 64 remote: select * from wqlTestClass where 123.456 <= realData
+Executing query 64 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <= realData
 Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
@@ -4049,7 +4049,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -4059,7 +4059,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4122,7 +4122,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4185,7 +4185,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4238,7 +4238,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -4291,7 +4291,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -4374,7 +4374,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -4384,7 +4384,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4467,7 +4467,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -4477,7 +4477,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4595,7 +4595,7 @@ Got back 0 instances.  Expected 0
 Executing query 76 remote: select * from wqlTestClass where FALSE > booleanData
 Got back 0 instances.  Expected 0
 
-Executing query 77 local: select * from wqlTestClass where realData > 123.456
+Executing query 77 local: select * from wqlTestClass where realData > 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -4604,11 +4604,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 77 remote: select * from wqlTestClass where realData > 123.456
+Executing query 77 remote: select * from wqlTestClass where realData > 123.4567890000000005557012627832591533660888671875
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -4617,14 +4617,14 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 78 local: select * from wqlTestClass where 123.456 > realData
+Executing query 78 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 > realData
 Got back 0 instances.  Expected 0
 
-Executing query 78 remote: select * from wqlTestClass where 123.456 > realData
+Executing query 78 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 > realData
 Got back 0 instances.  Expected 0
 
 Executing query 79 local: select * from wqlTestClass where __Path > "wqlTestClass.name=\"test5\""
@@ -4666,7 +4666,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -4709,7 +4709,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -4762,7 +4762,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4815,7 +4815,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4904,7 +4904,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -4914,7 +4914,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -4997,7 +4997,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -5007,7 +5007,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5159,13 +5159,13 @@ INSTANCE OF wqlTestClass
 };
 
 
-Executing query 91 local: select * from wqlTestClass where realData < 123.456
+Executing query 91 local: select * from wqlTestClass where realData < 123.4567890000000005557012627832591533660888671875
 Got back 0 instances.  Expected 0
 
-Executing query 91 remote: select * from wqlTestClass where realData < 123.456
+Executing query 91 remote: select * from wqlTestClass where realData < 123.4567890000000005557012627832591533660888671875
 Got back 0 instances.  Expected 0
 
-Executing query 92 local: select * from wqlTestClass where 123.456 < realData
+Executing query 92 local: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 < realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5174,11 +5174,11 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
-Executing query 92 remote: select * from wqlTestClass where 123.456 < realData
+Executing query 92 remote: select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 < realData
 Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
@@ -5187,7 +5187,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5240,7 +5240,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5293,7 +5293,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5336,7 +5336,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -5379,7 +5379,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -5828,7 +5828,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -5838,7 +5838,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5851,7 +5851,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -5861,7 +5861,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5874,7 +5874,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -5884,7 +5884,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5897,7 +5897,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 INSTANCE OF wqlTestClass
@@ -5907,7 +5907,7 @@ INSTANCE OF wqlTestClass
   booleanData=NULL;
   uint64Data=NULL;
   stringData=NULL;
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 
@@ -5998,13 +5998,13 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test10";
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 
@@ -6013,13 +6013,13 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test10";
-  realData=4.56e+20;
+  realData=4567890123000000014557642752;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
-  realData=123.456;
+  realData=123.4567890000000005557012627832591533660888671875;
 };
 
 

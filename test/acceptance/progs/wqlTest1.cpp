@@ -487,8 +487,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE = booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData = FALSE", 1);
 		testQuery(rch, "select * from wqlTestClass where FALSE = booleanData", 1);
-		testQuery(rch, "select * from wqlTestClass where realData = 123.456", 1);
-		testQuery(rch, "select * from wqlTestClass where 123.456 = realData", 1);
+		testQuery(rch, "select * from wqlTestClass where realData = 123.4567890000000005557012627832591533660888671875", 1);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 = realData", 1);
 		testQuery(rch, "select * from wqlTestClass where realData = NULL", 8);
 		testQuery(rch, "select * from wqlTestClass where NULL = realData", 8);
 		testQuery(rch, "select * from wqlTestClass where __Path = \"wqlTestClass.name=\\\"test5\\\"\"", 1);
@@ -507,8 +507,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE <> booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData <> FALSE", 1);
 		testQuery(rch, "select * from wqlTestClass where FALSE <> booleanData", 1);
-		testQuery(rch, "select * from wqlTestClass where realData <> 123.456", 1);
-		testQuery(rch, "select * from wqlTestClass where 123.456 <> realData", 1);
+		testQuery(rch, "select * from wqlTestClass where realData <> 123.4567890000000005557012627832591533660888671875", 1);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <> realData", 1);
 		testQuery(rch, "select * from wqlTestClass where realData <> NULL", 2);
 		testQuery(rch, "select * from wqlTestClass where NULL <> realData", 2);
 		testQuery(rch, "select * from wqlTestClass where __Path <> \"wqlTestClass.name=\\\"test5\\\"\"", 9);
@@ -525,8 +525,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE >= booleanData", 2);
 		testQuery(rch, "select * from wqlTestClass where booleanData >= FALSE", 2);
 		testQuery(rch, "select * from wqlTestClass where FALSE >= booleanData", 1);
-		testQuery(rch, "select * from wqlTestClass where realData >= 123.456", 2);
-		testQuery(rch, "select * from wqlTestClass where 123.456 >= realData", 1);
+		testQuery(rch, "select * from wqlTestClass where realData >= 123.4567890000000005557012627832591533660888671875", 2);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 >= realData", 1);
 		testQuery(rch, "select * from wqlTestClass where __Path >= \"wqlTestClass.name=\\\"test5\\\"\"", 5);
 		testQuery(rch, "select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" >= __Path", 6);
 
@@ -541,8 +541,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE <= booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData <= FALSE", 1);
 		testQuery(rch, "select * from wqlTestClass where FALSE <= booleanData", 2);
-		testQuery(rch, "select * from wqlTestClass where realData <= 123.456", 1);
-		testQuery(rch, "select * from wqlTestClass where 123.456 <= realData", 2);
+		testQuery(rch, "select * from wqlTestClass where realData <= 123.4567890000000005557012627832591533660888671875", 1);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 <= realData", 2);
 		testQuery(rch, "select * from wqlTestClass where __Path <= \"wqlTestClass.name=\\\"test5\\\"\"", 6);
 		testQuery(rch, "select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" <= __Path", 5);
 
@@ -557,8 +557,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE > booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData > FALSE", 1);
 		testQuery(rch, "select * from wqlTestClass where FALSE > booleanData", 0);
-		testQuery(rch, "select * from wqlTestClass where realData > 123.456", 1);
-		testQuery(rch, "select * from wqlTestClass where 123.456 > realData", 0);
+		testQuery(rch, "select * from wqlTestClass where realData > 123.4567890000000005557012627832591533660888671875", 1);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 > realData", 0);
 		testQuery(rch, "select * from wqlTestClass where __Path > \"wqlTestClass.name=\\\"test5\\\"\"", 4);
 		testQuery(rch, "select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" > __Path", 5);
 
@@ -573,8 +573,8 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where TRUE < booleanData", 0);
 		testQuery(rch, "select * from wqlTestClass where booleanData < FALSE", 0);
 		testQuery(rch, "select * from wqlTestClass where FALSE < booleanData", 1);
-		testQuery(rch, "select * from wqlTestClass where realData < 123.456", 0);
-		testQuery(rch, "select * from wqlTestClass where 123.456 < realData", 1);
+		testQuery(rch, "select * from wqlTestClass where realData < 123.4567890000000005557012627832591533660888671875", 0);
+		testQuery(rch, "select * from wqlTestClass where 123.4567890000000005557012627832591533660888671875 < realData", 1);
 		testQuery(rch, "select * from wqlTestClass where __Path < \"wqlTestClass.name=\\\"test5\\\"\"", 5);
 		testQuery(rch, "select * from wqlTestClass where \"wqlTestClass.name=\\\"test5\\\"\" < __Path", 4);
 

@@ -218,12 +218,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: "="
 }
-Terminal expression 0: PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 18 local: select * from wqlTestClass where 123.456 = realData
 WQLSelectStatement
@@ -232,13 +232,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: "="
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 = PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 = PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 19 local: select * from wqlTestClass where realData = NULL
 WQLSelectStatement
@@ -458,12 +458,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: "<>"
 }
-Terminal expression 0: PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 34 local: select * from wqlTestClass where 123.456 <> realData
 WQLSelectStatement
@@ -472,13 +472,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: "<>"
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 <> PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 <> PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 35 local: select * from wqlTestClass where realData <> NULL
 WQLSelectStatement
@@ -698,12 +698,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: ">="
 }
-Terminal expression 0: PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 50 local: select * from wqlTestClass where 123.456 >= realData
 WQLSelectStatement
@@ -712,13 +712,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: ">="
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 >= PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 >= PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 51 local: select * from wqlTestClass where __Path >= "wqlTestClass.name=\"test5\""
 WQLSelectStatement
@@ -908,12 +908,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: "<="
 }
-Terminal expression 0: PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 64 local: select * from wqlTestClass where 123.456 <= realData
 WQLSelectStatement
@@ -922,13 +922,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: "<="
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 <= PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 <= PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 65 local: select * from wqlTestClass where __Path <= "wqlTestClass.name=\"test5\""
 WQLSelectStatement
@@ -1118,12 +1118,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: ">"
 }
-Terminal expression 0: PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 78 local: select * from wqlTestClass where 123.456 > realData
 WQLSelectStatement
@@ -1132,13 +1132,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: ">"
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 > PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 > PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 79 local: select * from wqlTestClass where __Path > "wqlTestClass.name=\"test5\""
 WQLSelectStatement
@@ -1328,12 +1328,12 @@ WQLSelectStatement
 	_selectPropertyNames[0]: "*"
 
 	_operStack[0]: "PROPERTY_NAME: realData"
-	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[2]: "<"
 }
-Terminal expression 0: PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+Terminal expression 0: PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000000000003069544618483
 Tableau 0
-PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 92 local: select * from wqlTestClass where 123.456 < realData
 WQLSelectStatement
@@ -1342,13 +1342,13 @@ WQLSelectStatement
 
 	_selectPropertyNames[0]: "*"
 
-	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[0]: "DOUBLE_VALUE: 123.456000000000003069544618483"
 	_operStack[1]: "PROPERTY_NAME: realData"
 	_operStack[2]: "<"
 }
-Terminal expression 0: DOUBLE_VALUE: 123.456000 < PROPERTY_NAME: realData
+Terminal expression 0: DOUBLE_VALUE: 123.456000000000003069544618483 < PROPERTY_NAME: realData
 Tableau 0
-PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000000000003069544618483
 
 Executing query 93 local: select * from wqlTestClass where __Path < "wqlTestClass.name=\"test5\""
 WQLSelectStatement
@@ -1834,17 +1834,17 @@ WQLSelectStatement
 	_operStack[5]: "<"
 	_operStack[6]: "AND"
 	_operStack[7]: "PROPERTY_NAME: z"
-	_operStack[8]: "DOUBLE_VALUE: 1.200000"
+	_operStack[8]: "DOUBLE_VALUE: 1.19999999999999995559107901499"
 	_operStack[9]: ">"
 	_operStack[10]: "AND"
 }
 Terminal expression 0: PROPERTY_NAME: x > INTEGER_VALUE: 5
 Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
-Terminal expression 2: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Terminal expression 2: PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 Tableau 0
 PROPERTY_NAME: x > INTEGER_VALUE: 5
 PROPERTY_NAME: y < INTEGER_VALUE: 25
-PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 
 Executing query 120 local: SELECT x,y,z,a FROM myclass WHERE (x > 5) AND ((y < 25) OR (a = "Foo")) AND (z > 1.2)
 WQLSelectStatement
@@ -1868,22 +1868,22 @@ WQLSelectStatement
 	_operStack[9]: "OR"
 	_operStack[10]: "AND"
 	_operStack[11]: "PROPERTY_NAME: z"
-	_operStack[12]: "DOUBLE_VALUE: 1.200000"
+	_operStack[12]: "DOUBLE_VALUE: 1.19999999999999995559107901499"
 	_operStack[13]: ">"
 	_operStack[14]: "AND"
 }
 Terminal expression 0: PROPERTY_NAME: x > INTEGER_VALUE: 5
 Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
 Terminal expression 2: PROPERTY_NAME: a = STRING_VALUE: Foo
-Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 Tableau 0
 PROPERTY_NAME: y < INTEGER_VALUE: 25
 PROPERTY_NAME: x > INTEGER_VALUE: 5
-PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 Tableau 1
 PROPERTY_NAME: a = STRING_VALUE: Foo
 PROPERTY_NAME: x > INTEGER_VALUE: 5
-PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 
 Executing query 121 local: SELECT x,y,z,a FROM myclass WHERE (y > x) AND (((y < 25) OR (a = "Bar")) OR (z > 1.2))
 WQLSelectStatement
@@ -1906,7 +1906,7 @@ WQLSelectStatement
 	_operStack[8]: "="
 	_operStack[9]: "OR"
 	_operStack[10]: "PROPERTY_NAME: z"
-	_operStack[11]: "DOUBLE_VALUE: 1.200000"
+	_operStack[11]: "DOUBLE_VALUE: 1.19999999999999995559107901499"
 	_operStack[12]: ">"
 	_operStack[13]: "OR"
 	_operStack[14]: "AND"
@@ -1914,7 +1914,7 @@ WQLSelectStatement
 Terminal expression 0: PROPERTY_NAME: y > PROPERTY_NAME: x
 Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
 Terminal expression 2: PROPERTY_NAME: a = STRING_VALUE: Bar
-Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 Tableau 0
 PROPERTY_NAME: y > PROPERTY_NAME: x
 PROPERTY_NAME: y < INTEGER_VALUE: 25
@@ -1923,7 +1923,7 @@ PROPERTY_NAME: y > PROPERTY_NAME: x
 PROPERTY_NAME: a = STRING_VALUE: Bar
 Tableau 2
 PROPERTY_NAME: y > PROPERTY_NAME: x
-PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.19999999999999995559107901499
 
 Executing query 122 local: SELECT w,x,y,z FROM ClassName
 WQLSelectStatement
@@ -1979,7 +1979,7 @@ WQLSelectStatement
 	_operStack[5]: ">="
 	_operStack[6]: "AND"
 	_operStack[7]: "PROPERTY_NAME: y"
-	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[8]: "DOUBLE_VALUE: 13.0999999999999996447286321199"
 	_operStack[9]: "<="
 	_operStack[10]: "AND"
 	_operStack[11]: "PROPERTY_NAME: z"
@@ -1989,12 +1989,12 @@ WQLSelectStatement
 }
 Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
-Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
 Tableau 0
 PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: x >= INTEGER_VALUE: 10
-PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 PROPERTY_NAME: z = STRING_VALUE: Ten
 
 Executing query 125 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT w = TRUE IS NOT TRUE
@@ -2012,7 +2012,7 @@ WQLSelectStatement
 	_operStack[5]: ">="
 	_operStack[6]: "AND"
 	_operStack[7]: "PROPERTY_NAME: y"
-	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[8]: "DOUBLE_VALUE: 13.0999999999999996447286321199"
 	_operStack[9]: "<="
 	_operStack[10]: "AND"
 	_operStack[11]: "PROPERTY_NAME: z"
@@ -2029,11 +2029,11 @@ WQLSelectStatement
 }
 Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
-Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
 Terminal expression 4: BOOLEAN_VALUE: TRUE = BOOLEAN_VALUE: TRUE
 Tableau 0
-PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: z = STRING_VALUE: Ten
@@ -2053,7 +2053,7 @@ WQLSelectStatement
 	_operStack[5]: ">="
 	_operStack[6]: "AND"
 	_operStack[7]: "PROPERTY_NAME: y"
-	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[8]: "DOUBLE_VALUE: 13.0999999999999996447286321199"
 	_operStack[9]: "<="
 	_operStack[10]: "AND"
 	_operStack[11]: "PROPERTY_NAME: z"
@@ -2070,11 +2070,11 @@ WQLSelectStatement
 }
 Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
-Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
 Terminal expression 4: PROPERTY_NAME: w <> BOOLEAN_VALUE: TRUE
 Tableau 0
-PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.0999999999999996447286321199
 PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
 PROPERTY_NAME: z = STRING_VALUE: Ten
@@ -2124,7 +2124,7 @@ WQLSelectStatement
 	_operStack[2]: ">"
 	_operStack[3]: "NOT"
 	_operStack[4]: "PROPERTY_NAME: y"
-	_operStack[5]: "DOUBLE_VALUE: 1.000000"
+	_operStack[5]: "DOUBLE_VALUE: 1"
 	_operStack[6]: "<"
 	_operStack[7]: "PROPERTY_NAME: z"
 	_operStack[8]: "STRING_VALUE: BLAH"
@@ -2135,26 +2135,26 @@ WQLSelectStatement
 	_operStack[13]: "INTEGER_VALUE: 10"
 	_operStack[14]: "<"
 	_operStack[15]: "PROPERTY_NAME: y"
-	_operStack[16]: "DOUBLE_VALUE: 4.000000"
+	_operStack[16]: "DOUBLE_VALUE: 4"
 	_operStack[17]: ">"
 	_operStack[18]: "OR"
 	_operStack[19]: "NOT"
 	_operStack[20]: "AND"
 }
 Terminal expression 0: PROPERTY_NAME: x <= INTEGER_VALUE: 5
-Terminal expression 1: PROPERTY_NAME: y < DOUBLE_VALUE: 1.000000
+Terminal expression 1: PROPERTY_NAME: y < DOUBLE_VALUE: 1
 Terminal expression 2: PROPERTY_NAME: z = STRING_VALUE: BLAH
 Terminal expression 3: PROPERTY_NAME: x >= INTEGER_VALUE: 10
-Terminal expression 4: PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
+Terminal expression 4: PROPERTY_NAME: y <= DOUBLE_VALUE: 4
 Tableau 0
 PROPERTY_NAME: x >= INTEGER_VALUE: 10
-PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
-PROPERTY_NAME: y < DOUBLE_VALUE: 1.000000
+PROPERTY_NAME: y <= DOUBLE_VALUE: 4
+PROPERTY_NAME: y < DOUBLE_VALUE: 1
 PROPERTY_NAME: z = STRING_VALUE: BLAH
 Tableau 1
 PROPERTY_NAME: x >= INTEGER_VALUE: 10
 PROPERTY_NAME: x <= INTEGER_VALUE: 5
-PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
+PROPERTY_NAME: y <= DOUBLE_VALUE: 4
 
 Executing query 130 local: SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = "BLAH")) AND NOT NOT ((x<10) OR (y>4.0)))
 WQLSelectStatement
@@ -2168,7 +2168,7 @@ WQLSelectStatement
 	_operStack[2]: ">"
 	_operStack[3]: "NOT"
 	_operStack[4]: "PROPERTY_NAME: y"
-	_operStack[5]: "DOUBLE_VALUE: 1.000000"
+	_operStack[5]: "DOUBLE_VALUE: 1"
 	_operStack[6]: "<"
 	_operStack[7]: "PROPERTY_NAME: z"
 	_operStack[8]: "STRING_VALUE: BLAH"
@@ -2181,7 +2181,7 @@ WQLSelectStatement
 	_operStack[15]: "INTEGER_VALUE: 10"
 	_operStack[16]: "<"
 	_operStack[17]: "PROPERTY_NAME: y"
-	_operStack[18]: "DOUBLE_VALUE: 4.000000"
+	_operStack[18]: "DOUBLE_VALUE: 4"
 	_operStack[19]: ">"
 	_operStack[20]: "OR"
 	_operStack[21]: "NOT"
@@ -2191,25 +2191,25 @@ WQLSelectStatement
 	_operStack[25]: "NOT"
 }
 Terminal expression 0: INTEGER_VALUE: 5 > PROPERTY_NAME: x
-Terminal expression 1: PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+Terminal expression 1: PROPERTY_NAME: y >= DOUBLE_VALUE: 1
 Terminal expression 2: PROPERTY_NAME: z = STRING_VALUE: BLAH
 Terminal expression 3: PROPERTY_NAME: x < INTEGER_VALUE: 10
-Terminal expression 4: PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
+Terminal expression 4: PROPERTY_NAME: y > DOUBLE_VALUE: 4
 Tableau 0
 PROPERTY_NAME: x < INTEGER_VALUE: 5
 PROPERTY_NAME: x < INTEGER_VALUE: 10
-PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+PROPERTY_NAME: y >= DOUBLE_VALUE: 1
 Tableau 1
 PROPERTY_NAME: x < INTEGER_VALUE: 10
 PROPERTY_NAME: x < INTEGER_VALUE: 5
 PROPERTY_NAME: z = STRING_VALUE: BLAH
 Tableau 2
 PROPERTY_NAME: x < INTEGER_VALUE: 5
-PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
-PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+PROPERTY_NAME: y > DOUBLE_VALUE: 4
+PROPERTY_NAME: y >= DOUBLE_VALUE: 1
 Tableau 3
 PROPERTY_NAME: x < INTEGER_VALUE: 5
-PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
+PROPERTY_NAME: y > DOUBLE_VALUE: 4
 PROPERTY_NAME: z = STRING_VALUE: BLAH
 
 Executing query 131 local: select * from wqlTestClass

@@ -62,6 +62,7 @@
 #include <iostream>
 #endif
 #include <cmath> // for HUGE_VAL
+#include <cfloat> // for macros DBL_MANT_DIG and friends
 
 namespace OpenWBEM
 {
@@ -112,7 +113,7 @@ public:
 		strcpy(m_buf, s);
 	}
 
-	ByteBuf(const ByteBuf& arg) 
+	ByteBuf(const ByteBuf& arg)
 		: COWIntrusiveCountableBase(arg)
 		, m_len(arg.m_len)
 		, m_buf(new char[m_len+1])
@@ -223,17 +224,40 @@ String::String(Int64 val) :
 String::String(UInt64 val) :
 	m_buf(NULL)
 {
-	OStringStream ss(33);
+#if defined(OW_INT64_IS_LONG)
+	char tmpbuf[32];
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%lu", val);
+	m_buf = new ByteBuf(tmpbuf);
+#elif defined(OW_INT64_IS_LONG_LONG)
+	// unfortunately not all C libraries support long long with snprintf().
+	// but the C++ iostream library handles it.
+	OStringStream ss;
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
+#endif
+}
+//////////////////////////////////////////////////////////////////////////////
+#define OW_STRINGIZE_AUX(x) #x
+#define OW_STRINGIZE(x) OW_STRINGIZE_AUX(x)
+
+String::String(Real32 val) :
+	m_buf(NULL)
+{
+	char tmpbuf[128];
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", static_cast<double>(val));
+	m_buf = new ByteBuf(tmpbuf);
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(Real64 val) :
 	m_buf(NULL)
 {
-	OStringStream ss;
-	ss << val;
-	m_buf = new ByteBuf(ss.c_str());
+	char tmpbuf[128];
+#if defined(OW_REAL64_IS_DOUBLE)
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", val);
+#elif defined(OW_REAL64_IS_LONG_DOUBLE)
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(LDBL_MANT_DIG) "Lg", val);
+#endif
+	m_buf = new ByteBuf(tmpbuf);
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(const char* str) :
@@ -461,11 +485,11 @@ String::concat(char arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 String::endsWith(char arg) const
 {
-	return (m_buf 
-			&& m_buf->length() 
+	return (m_buf
+			&& m_buf->length()
 			&& m_buf->data()[m_buf->length()-1] == arg);
 }
 
@@ -646,7 +670,7 @@ String::lastIndexOf(const char* arg, size_t fromIndex) const
 	return fromIndex;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 String::startsWith(char arg) const
 {
 	return (m_buf
@@ -967,16 +991,15 @@ String::toChar16() const
 	}
 	return Char16(*this);
 }
-template <typename T>
+template <typename T, typename FP>
 static inline
-T convertToRealType(const String::buf_t& m_buf, const char* type)
+T convertToRealType(const String::buf_t& m_buf, const char* type, FP fp)
 {
 	if (m_buf)
 	{
 		char* endptr(0);
 		errno = 0;		// errno is thread local
-		double v = ::strtod(m_buf->data(), &endptr);
-		T rv = static_cast<T>(v);
+		T rv = fp(m_buf->data(), &endptr);
 		if (*endptr != '\0' || errno == ERANGE || rv == HUGE_VAL || rv == -HUGE_VAL)
 		{
 			throwStringConversion(m_buf, type);
@@ -993,13 +1016,21 @@ T convertToRealType(const String::buf_t& m_buf, const char* type)
 Real32
 String::toReal32() const
 {
-	return convertToRealType<Real32>(m_buf, "Real32");
+#if defined(OW_REAL32_IS_FLOAT)
+	return convertToRealType<Real32>(m_buf, "Real32", &strtof);
+#elif defined(OW_REAL32_IS_DOUBLE)
+	return convertToRealType<Real32>(m_buf, "Real32", &strtod);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 Real64
 String::toReal64() const
 {
-	return convertToRealType<Real64>(m_buf, "Real64");
+#if defined(OW_REAL64_IS_DOUBLE)
+	return convertToRealType<Real64>(m_buf, "Real64", &strtod);
+#elif defined(OW_REAL64_IS_LONG_DOUBLE)
+	return convertToRealType<Real64>(m_buf, "Real64", &strtold);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -1178,7 +1209,7 @@ String::tokenize(const char* delims, EReturnDelimitersFlag returnDelimitersAsTok
 		}
 		else
 		{
-			last_was_delim = false;  
+			last_was_delim = false;
 			data[i++] = *pstr;
 			data[i] = 0;
 		}

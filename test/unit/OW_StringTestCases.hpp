@@ -55,6 +55,7 @@ private:
 	void testSubstring();
 	void testNumbers();
   	void testTokenize();
+	void testRealConstructors();
 };
 
 #endif

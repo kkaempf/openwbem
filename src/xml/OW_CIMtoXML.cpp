@@ -484,7 +484,7 @@ void CIMInstancePathAndInstancetoXML(CIMInstance const& instance,
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-void raToXml(ostream& out, const Array<T>& ra)
+static void raToXml(ostream& out, const Array<T>& ra)
 {
 	out << "<VALUE.ARRAY>";
 	for (size_t i = 0; i < ra.size(); i++)
@@ -495,6 +495,22 @@ void raToXml(ostream& out, const Array<T>& ra)
 	}
 	out << "</VALUE.ARRAY>";
 }
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+static void realArrayToXml(ostream& out, const Array<T>& ra)
+{
+	out << "<VALUE.ARRAY>";
+	for (size_t i = 0; i < ra.size(); i++)
+	{
+		out << "<VALUE>";
+		out << String(ra[i]); // operator<< doesn't use the right precision by default,
+		// and it's just easier to let the String constructor do it right for us.
+		out << "</VALUE>";
+	}
+	out << "</VALUE.ARRAY>";
+}
+//////////////////////////////////////////////////////////////////////////////
 template <typename T>
 static void valueToXML(T const& x, ostream& out)
 {
@@ -659,14 +675,14 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 			{
 				Real32Array a;
 				cv.get(a);
-				raToXml(out, a);
+				realArrayToXml(out, a);
 				break;
 			}
 			case CIMDataType::REAL64:
 			{
 				Real64Array a;
 				cv.get(a);
-				raToXml(out, a);
+				realArrayToXml(out, a);
 				break;
 			}
 			case CIMDataType::STRING:
@@ -752,101 +768,26 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 		switch (cv.getType())
 		{
 			case CIMDataType::BOOLEAN:
-			{
-				Bool a;
-				cv.get(a);
-				out << a.toString();
-				break;
-			}
 			case CIMDataType::UINT8:
-			{
-				UInt8 a;
-				cv.get(a);
-				out << UInt32(a);
-				break;
-			}
 			case CIMDataType::SINT8:
-			{
-				Int8 a;
-				cv.get(a);
-				out << Int32(a);
-				break;
-			}
-			case CIMDataType::CHAR16:
-			{
-				Char16 a;
-				cv.get(a);
-				out << XMLEscape(a.toString());
-				break;
-			}
 			case CIMDataType::UINT16:
-			{
-				UInt16 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::SINT16:
-			{
-				Int16 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::UINT32:
-			{
-				UInt32 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::SINT32:
-			{
-				Int32 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::UINT64:
-			{
-				UInt64 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::SINT64:
-			{
-				Int64 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::REAL32:
-			{
-				Real32 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
 			case CIMDataType::REAL64:
-			{
-				Real64 a;
-				cv.get(a);
-				out << a;
-				break;
-			}
-			case CIMDataType::STRING:
-			{
-				String a;
-				cv.get(a);
-				out << XMLEscape(a);
-				break;
-			}
 			case CIMDataType::DATETIME:
 			{
-				CIMDateTime a(CIMNULL);
-				cv.get(a);
-				out << a.toString();
+				out << cv.toString();
+				break;
+			}
+
+			case CIMDataType::CHAR16:
+			case CIMDataType::STRING:
+			{
+				out << XMLEscape(cv.toString());
 				break;
 			}
 			

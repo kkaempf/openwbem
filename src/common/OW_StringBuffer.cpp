@@ -49,6 +49,7 @@
 #include <iostream>
 #endif
 #include <algorithm> // for std::swap
+#include <cfloat> // for DBL_MANT_DIG
 
 namespace OpenWBEM
 {
@@ -236,11 +237,14 @@ StringBuffer::operator += (Int64 v)
 	return append(bfr);
 }
 //////////////////////////////////////////////////////////////////////////////
+#define OW_STRINGIZE_AUX(x) #x
+#define OW_STRINGIZE(x) OW_STRINGIZE_AUX(x)
+
 StringBuffer&
 StringBuffer::operator += (Real32 v)
 {
-	char bfr[32];
-	::snprintf(bfr, sizeof(bfr), "%f", v);
+	char bfr[128];
+	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", static_cast<double>(v));
 	return append(bfr);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -248,7 +252,11 @@ StringBuffer&
 StringBuffer::operator += (Real64 v)
 {
 	char bfr[32];
-	::snprintf(bfr, sizeof(bfr), "%f", v);
+#if defined(OW_REAL64_IS_DOUBLE)
+	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", v);
+#elif defined(OW_REAL64_IS_LONG_DOUBLE)
+	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(LDBL_MANT_DIG) "Lg", v);
+#endif
 	return append(bfr);
 }
 #if defined(OW_WIN32)

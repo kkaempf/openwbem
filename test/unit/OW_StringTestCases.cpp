@@ -64,9 +64,9 @@ void OW_StringTestCases::testErase()
 void OW_StringTestCases::testEqualsIgnoreCase()
 {
 	String s = "abc";
-	unitAssert(s.equalsIgnoreCase("abc")); 
-	s = ""; 
-	unitAssert(s.equalsIgnoreCase("")); 
+	unitAssert(s.equalsIgnoreCase("abc"));
+	s = "";
+	unitAssert(s.equalsIgnoreCase(""));
 }
 
 void OW_StringTestCases::testSubstring()
@@ -227,7 +227,7 @@ void OW_StringTestCases::testTokenize()
 	unitAssert( tokenized4.size() == 9 );
 	unitAssert( tokenized4[0] == "foo" );
 	unitAssert( tokenized4[1] == "bar" );
-	unitAssert( tokenized4[2] == "baz" ); 
+	unitAssert( tokenized4[2] == "baz" );
 	unitAssert( tokenized4[3] == "quux" );
 	unitAssert( tokenized4[4] == "flarp" );
 	unitAssert( tokenized4[5] == "snoz" );
@@ -236,26 +236,35 @@ void OW_StringTestCases::testTokenize()
 	unitAssert( tokenized4[8].indexOf("veryvery") == 0 );
 }
 
+void OW_StringTestCases::testRealConstructors()
+{
+	unitAssert(String(Real32(-32897.23828125)).startsWith("-32897.23828125"));
+	unitAssert(String(Real64(-32897.23828125)).startsWith("-32897.23828125"));
+}
+
 Test* OW_StringTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_String");
 
-	testSuite->addTest (new TestCaller <OW_StringTestCases> 
-			("testErase", 
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testErase",
 			&OW_StringTestCases::testErase));
-	testSuite->addTest (new TestCaller <OW_StringTestCases> 
-			("testSubstring", 
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testSubstring",
 			&OW_StringTestCases::testSubstring));
-	testSuite->addTest (new TestCaller <OW_StringTestCases> 
-			("testNumbers", 
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testNumbers",
 			&OW_StringTestCases::testNumbers));
-	testSuite->addTest (new TestCaller <OW_StringTestCases> 
-			("testEqualsIgnoreCase", 
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testEqualsIgnoreCase",
 			&OW_StringTestCases::testEqualsIgnoreCase));
-	testSuite->addTest (new TestCaller <OW_StringTestCases> 
-			("testTokenize", 
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testTokenize",
 			&OW_StringTestCases::testTokenize));	
-
+	testSuite->addTest (new TestCaller <OW_StringTestCases>
+			("testRealConstructors",
+			&OW_StringTestCases::testRealConstructors));	
+	
 	return testSuite;
 }
 
