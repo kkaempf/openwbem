@@ -109,13 +109,13 @@ String getUserName(uid_t uid,bool& ok)
 	passwd pw;
 	//I can't imagine an easy way to calculate the size of the additional buffer
 	//  ahead of time. 
-	size_t const additional_size =
+	size_t const additionalSize =
 #ifdef _SC_GETPW_R_SIZE_MAX
 		sysconf (_SC_GETPW_R_SIZE_MAX);
 #else
-		1024;
+		10240;
 #endif
-	std::vector<char> additional(additional_size);
+	std::vector<char> additional(additionalSize);
 	passwd* result;
 	::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
 #else
