@@ -32,7 +32,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
@@ -293,9 +293,9 @@ OW_CIMDataType::readObject(istream &istrm)
 
 	OW_CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
 
-	OW_BinIfcIO::readLen(istrm, type);
-	OW_BinIfcIO::readLen(istrm, numberOfElements);
-	OW_BinIfcIO::readLen(istrm, sizeRange);
+	OW_BinarySerialization::readLen(istrm, type);
+	OW_BinarySerialization::readLen(istrm, numberOfElements);
+	OW_BinarySerialization::readLen(istrm, sizeRange);
 
 	ref.readObject(istrm);
 
@@ -316,9 +316,9 @@ OW_CIMDataType::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
 
-	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_type);
-	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_numberOfElements);
-	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_sizeRange);
+	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_type);
+	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_numberOfElements);
+	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_sizeRange);
 
 	m_pdata->m_reference.writeObject(ostrm);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_BINIFCIO_HPP_
-#define OW_BINIFCIO_HPP_
+#ifndef OW_BinarySerialization_HPP_
+#define OW_BinarySerialization_HPP_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -64,6 +64,7 @@
 //   structure of OW_CIMInstance.  The name and alias were removed.
 const OW_UInt32 OW_BinaryProtocolVersion = 3000004;
 
+// These values are all used by the binary protocol
 const OW_UInt8 OW_BIN_OK =				0;		// Success returned from server
 const OW_UInt8 OW_BIN_ERROR =			1;		// Error returned from server
 const OW_UInt8 OW_BIN_EXCEPTION =		2;		// CIM Exception returned from server
@@ -127,7 +128,7 @@ const OW_UInt8 OW_END_QUALENUM =		153;
 
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Refactor this and put these in a more common place, since they're used in more than just the binary protocol
-namespace OW_BinIfcIO
+namespace OW_BinarySerialization
 {
 
 	void write(std::ostream& ostrm, const void* dataOut,
@@ -138,26 +139,26 @@ namespace OW_BinIfcIO
 	inline void write(std::ostream& ostrm, OW_Int32 val)
 	{
 		val = OW_hton32(val);
-		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+		OW_BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
 	inline void write(std::ostream& ostrm, OW_UInt32 val)
 	{
 		val = OW_hton32(val);
-		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+		OW_BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
 	void writeLen(std::ostream& ostrm, OW_UInt32 len);
 
 	inline void write(std::ostream& ostrm, OW_UInt8 val)
 	{
-		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+		OW_BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
 	inline void write(std::ostream& ostrm, OW_UInt16 val)
 	{
 		val = OW_hton16(val);
-		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
+		OW_BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
 
 
@@ -170,7 +171,7 @@ namespace OW_BinIfcIO
 	inline void writeObject(std::ostream& ostrm, OW_UInt8 sig,
 		const OW_CIMBase& obj)
 	{
-		OW_BinIfcIO::write(ostrm, sig);
+		OW_BinarySerialization::write(ostrm, sig);
 		obj.writeObject(ostrm);
 	}
 
@@ -178,52 +179,52 @@ namespace OW_BinIfcIO
 	inline void writeObjectPath(std::ostream& ostrm,
 		const OW_CIMObjectPath& op)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_OP, op);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_OP, op);
 	}
 
 
 	inline void writeNameSpace(std::ostream& ostrm,
 		const OW_CIMNameSpace& ns)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_NS, ns);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_NS, ns);
 	}
 
 
 	inline void writeBool(std::ostream& ostrm,
 		OW_Bool arg)
 	{
-		OW_BinIfcIO::write(ostrm, OW_BINSIG_BOOL);
+		OW_BinarySerialization::write(ostrm, OW_BINSIG_BOOL);
 		arg.writeObject(ostrm);
 	}
 
 
 	inline void writeClass(std::ostream& ostrm, const OW_CIMClass& cc)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_CLS, cc);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_CLS, cc);
 	}
 
 
 	inline void writeInstance(std::ostream& ostrm, const OW_CIMInstance& ci)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_INST, ci);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_INST, ci);
 	}
 
 
 	inline void writeQual(std::ostream& ostrm, const OW_CIMQualifierType& qt)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_QUAL, qt);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_QUAL, qt);
 	}
 
 
 	inline void writeValue(std::ostream& ostrm, const OW_CIMValue& value)
 	{
-		OW_BinIfcIO::writeObject(ostrm, OW_BINSIG_VALUE, value);
+		OW_BinarySerialization::writeObject(ostrm, OW_BINSIG_VALUE, value);
 	}
 
 
 	inline void writeString(std::ostream& ostrm, const OW_String& str)
 	{
-		OW_BinIfcIO::write(ostrm, OW_BINSIG_STR);
+		OW_BinarySerialization::write(ostrm, OW_BINSIG_STR);
 		str.writeObject(ostrm);
 	}
 
@@ -235,7 +236,7 @@ namespace OW_BinIfcIO
 	{
 		a.clear();
 		OW_UInt32 len;
-		OW_BinIfcIO::readLen(istr, len);
+		OW_BinarySerialization::readLen(istr, len);
 		
 		a.reserve(len);
 		for(OW_UInt32 i = 0; i < len; i++)
@@ -253,7 +254,7 @@ namespace OW_BinIfcIO
 	writeArray(std::ostream& ostrm, const T& a)
 	{
 		OW_UInt32 len = a.size();
-		OW_BinIfcIO::writeLen(ostrm, len);
+		OW_BinarySerialization::writeLen(ostrm, len);
 		for(OW_UInt32 i = 0; i < len; i++)
 		{
 			a.operator[](i).writeObject(ostrm);
@@ -263,7 +264,7 @@ namespace OW_BinIfcIO
 	inline void writeStringArray(std::ostream& ostrm,
 		const OW_StringArray& stra)
 	{
-		OW_BinIfcIO::write(ostrm, OW_BINSIG_STRARRAY);
+		OW_BinarySerialization::write(ostrm, OW_BINSIG_STRARRAY);
 		writeArray(ostrm, stra);
 	}
 
@@ -281,13 +282,13 @@ namespace OW_BinIfcIO
 
 	inline void read(std::istream& istrm, OW_Int32& val)
 	{
-		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+		OW_BinarySerialization::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 
 	inline void read(std::istream& istrm, OW_UInt32& val)
 	{
-		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+		OW_BinarySerialization::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
 
@@ -295,20 +296,20 @@ namespace OW_BinIfcIO
 
 	inline void read(std::istream& istrm, OW_UInt16& val)
 	{
-		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+		OW_BinarySerialization::read(istrm, &val, sizeof(val));
 		val = OW_ntoh16(val);
 	}
 
 	inline void read(std::istream& istrm, OW_UInt8& val)
 	{
-		OW_BinIfcIO::read(istrm, &val, sizeof(val));
+		OW_BinarySerialization::read(istrm, &val, sizeof(val));
 	}
 
 
 	inline void readObject(std::istream& istrm, OW_UInt8 validSig,
 		OW_CIMBase& obj)
 	{
-		OW_BinIfcIO::verifySignature(istrm, validSig);
+		OW_BinarySerialization::verifySignature(istrm, validSig);
 		obj.readObject(istrm);
 	}
 
@@ -316,7 +317,7 @@ namespace OW_BinIfcIO
 	inline OW_CIMObjectPath readObjectPath(std::istream& istrm)
 	{
 		OW_CIMObjectPath op(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_OP, op);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_OP, op);
 		return op;
 	}
 
@@ -324,14 +325,14 @@ namespace OW_BinIfcIO
 	inline OW_CIMInstance readInstance(std::istream& istrm)
 	{
 		OW_CIMInstance ci(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_INST, ci);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_INST, ci);
 		return ci;
 	}
 
 
 	inline OW_Bool readBool(std::istream& istrm)
 	{
-		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_BOOL);
+		OW_BinarySerialization::verifySignature(istrm, OW_BINSIG_BOOL);
 		OW_Bool b;
 		b.readObject(istrm);
 		return b;
@@ -341,7 +342,7 @@ namespace OW_BinIfcIO
 	inline OW_CIMNameSpace readNameSpace(std::istream& istrm)
 	{
 		OW_CIMNameSpace ns(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_NS, ns);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_NS, ns);
 		return ns;
 	}
 
@@ -349,14 +350,14 @@ namespace OW_BinIfcIO
 	inline OW_CIMClass readClass(std::istream& istrm)
 	{
 		OW_CIMClass cc(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_CLS, cc);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_CLS, cc);
 		return cc;
 	}
 
 
 	inline OW_String readString(std::istream& istrm)
 	{
-		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STR);
+		OW_BinarySerialization::verifySignature(istrm, OW_BINSIG_STR);
 		OW_String rv;
 		rv.readObject(istrm);
 		return rv;
@@ -366,7 +367,7 @@ namespace OW_BinIfcIO
 	inline OW_CIMQualifierType readQual(std::istream& istrm)
 	{
 		OW_CIMQualifierType qt(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_QUAL, qt);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_QUAL, qt);
 		return qt;
 	}
 
@@ -374,14 +375,14 @@ namespace OW_BinIfcIO
 	inline OW_CIMValue readValue(std::istream& istrm)
 	{
 		OW_CIMValue value(OW_CIMNULL);
-		OW_BinIfcIO::readObject(istrm, OW_BINSIG_VALUE, value);
+		OW_BinarySerialization::readObject(istrm, OW_BINSIG_VALUE, value);
 		return value;
 	}
 
 
 	inline OW_StringArray readStringArray(std::istream& istrm)
 	{
-		OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_STRARRAY);
+		OW_BinarySerialization::verifySignature(istrm, OW_BINSIG_STRARRAY);
 		OW_StringArray stra;
 		readArray(istrm, stra);
 		return stra;
@@ -399,5 +400,5 @@ namespace OW_BinIfcIO
 }
 
 
-#endif	// OW_BINIFCIO_HPP_
+#endif	// OW_BinarySerialization_HPP_
 

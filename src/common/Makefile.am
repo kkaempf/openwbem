@@ -36,7 +36,7 @@ libopenwbem_a_SOURCES =	\
 OW_Assertion.cpp \
 OW_AtomicOps.cpp \
 OW_BaseStreamBuffer.cpp \
-OW_BinIfcIO.cpp \
+OW_BinarySerialization.cpp \
 OW_Bool.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
@@ -93,7 +93,7 @@ OW_Assertion.hpp \
 OW_AtomicOps.hpp \
 OW_AutoPtr.hpp \
 OW_BaseStreamBuffer.hpp \
-OW_BinIfcIO.hpp \
+OW_BinarySerialization.hpp \
 OW_Bool.hpp \
 OW_ByteSwap.hpp \
 OW_Cache.hpp \

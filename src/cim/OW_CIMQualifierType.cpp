@@ -32,7 +32,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMDataType.hpp"
@@ -349,8 +349,8 @@ OW_CIMQualifierType::writeObject(ostream &ostrm) const
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
 
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_scope);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_flavor);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_scope);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_flavor);
 
 	if(m_pdata->m_defaultValue)
 	{
@@ -376,8 +376,8 @@ OW_CIMQualifierType::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMQUALIFIERTYPESIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, scope);
-	OW_BinIfcIO::readArray(istrm, flavor);
+	OW_BinarySerialization::readArray(istrm, scope);
+	OW_BinarySerialization::readArray(istrm, flavor);
 
 	OW_Bool isValue;
 	isValue.readObject(istrm);

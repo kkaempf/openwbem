@@ -35,7 +35,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_Array.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
 using std::ostream;
@@ -345,8 +345,8 @@ OW_CIMMethod::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMMETHODSIG );
 	name.readObject(istrm);
 	returnDatatype.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, qualifiers);
-	OW_BinIfcIO::readArray(istrm, parameters);
+	OW_BinarySerialization::readArray(istrm, qualifiers);
+	OW_BinarySerialization::readArray(istrm, parameters);
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
@@ -372,8 +372,8 @@ OW_CIMMethod::writeObject(ostream &ostrm) const
 	OW_CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_returnDatatype.writeObject(ostrm);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_parameters);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_parameters);
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_override.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);

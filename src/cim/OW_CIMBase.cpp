@@ -34,7 +34,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_IOException.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 
 #include <cstring>
 
@@ -50,7 +50,7 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 	OW_ASSERT( strlen(sig) == 1 );
 
 	expected = sig[0];
-	OW_BinIfcIO::read(istr, &read, sizeof(read));
+	OW_BinarySerialization::read(istr, &read, sizeof(read));
 
 	if(expected != read)
 	{
@@ -69,7 +69,7 @@ OW_CIMBase::readSig( istream& istr, const char* const sig )
 void OW_CIMBase::writeSig( ostream& ostr, const char* const sig )
 {
 	OW_ASSERT(strlen(sig) == 1);
-	OW_BinIfcIO::write(ostr, sig, 1);
+	OW_BinarySerialization::write(ostr, sig, 1);
 }
 
 

@@ -32,7 +32,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_CIMValueCast.hpp" // for OW_ValueCastException
 #include "OW_CIMDateTime.hpp"
 
@@ -2548,7 +2548,7 @@ template<class T>
 void
 readValue(istream& istrm, T& val, int convType)
 {
-	OW_BinIfcIO::read(istrm, &val, sizeof(val));
+	OW_BinarySerialization::read(istrm, &val, sizeof(val));
 
 	switch(convType)
 	{
@@ -2579,12 +2579,12 @@ readArray(istream& istrm, T& ra, int convType)
 	ra.clear();
 	OW_UInt32 sz;
 
-	OW_BinIfcIO::readLen(istrm, sz);
+	OW_BinarySerialization::readLen(istrm, sz);
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 
-		OW_BinIfcIO::read(istrm, &v, sizeof(v));
+		OW_BinarySerialization::read(istrm, &v, sizeof(v));
 
 		switch(convType)
 		{
@@ -2603,7 +2603,7 @@ readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 	ra.clear();
 	OW_UInt32 sz;
 
-	OW_BinIfcIO::readLen(istrm, sz);
+	OW_BinarySerialization::readLen(istrm, sz);
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		OW_Real32 v = readRealValue(istrm);
@@ -2617,7 +2617,7 @@ readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 	ra.clear();
 	OW_UInt32 sz;
 
-	OW_BinIfcIO::readLen(istrm, sz);
+	OW_BinarySerialization::readLen(istrm, sz);
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		OW_Real64 v = readRealValue(istrm);
@@ -2630,7 +2630,7 @@ template<class T>
 void
 readObjectArray(istream& istrm, T& ra)
 {
-	OW_BinIfcIO::readArray(istrm, ra);
+	OW_BinarySerialization::readArray(istrm, ra);
 //	ra.clear();
 //	OW_Int32 sz;
 
@@ -2651,7 +2651,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 	destroyObject();
 	m_objDestroyed = false;
 	OW_UInt32 tmp;
-	OW_BinIfcIO::readLen(istrm, tmp);
+	OW_BinarySerialization::readLen(istrm, tmp);
 	m_type = OW_CIMDataType::Type(tmp);
 	m_isArray.readObject(istrm);
 
@@ -2848,7 +2848,7 @@ writeValue(ostream& ostrm, T val, int convType)
 		default: v = val; break;
 	}
 
-	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
+	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
 }
 
 static void
@@ -2868,7 +2868,7 @@ void
 writeArray(ostream& ostrm, const T& ra, int convType)
 {
 	OW_UInt32 sz = ra.size();
-	OW_BinIfcIO::writeLen(ostrm, sz);
+	OW_BinarySerialization::writeLen(ostrm, sz);
 
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
@@ -2881,7 +2881,7 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 			default: v = ra[i]; break;
 		}
 
-		OW_BinIfcIO::write(ostrm, &v, sizeof(v));
+		OW_BinarySerialization::write(ostrm, &v, sizeof(v));
 	}
 }
 
@@ -2889,7 +2889,7 @@ static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra)
 {
 	OW_UInt32 sz = ra.size();
-	OW_BinIfcIO::writeLen(ostrm, sz);
+	OW_BinarySerialization::writeLen(ostrm, sz);
 
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
@@ -2901,7 +2901,7 @@ static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra)
 {
 	OW_UInt32 sz = ra.size();
-	OW_BinIfcIO::writeLen(ostrm, sz);
+	OW_BinarySerialization::writeLen(ostrm, sz);
 
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
@@ -2914,7 +2914,7 @@ template<class T>
 void
 writeObjectArray(ostream& ostrm, const T& ra)
 {
-	OW_BinIfcIO::writeArray(ostrm, ra);
+	OW_BinarySerialization::writeArray(ostrm, ra);
 //	OW_Int32 sz = ra.size();
 //	writeValue(ostrm, sz, 2);
 
@@ -2929,7 +2929,7 @@ void
 OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig(ostrm, OW_CIMVALUESIG);
-	OW_BinIfcIO::writeLen(ostrm, m_type);
+	OW_BinarySerialization::writeLen(ostrm, m_type);
 	m_isArray.writeObject(ostrm);
 
 	if(m_isArray)

@@ -30,7 +30,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMFlavor.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_String.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -78,7 +78,7 @@ OW_CIMFlavor::readObject(istream &istrm)
 	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMFLAVORSIG );
 
 	OW_UInt32 f;
-	OW_BinIfcIO::readLen(istrm, f);
+	OW_BinarySerialization::readLen(istrm, f);
 	m_flavor = f;
 }
 
@@ -88,7 +88,7 @@ OW_CIMFlavor::writeObject(ostream &ostrm) const
 {
 	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
 
-	OW_BinIfcIO::writeLen(ostrm, m_flavor);
+	OW_BinarySerialization::writeLen(ostrm, m_flavor);
 }
 
 

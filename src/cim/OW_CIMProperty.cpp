@@ -32,7 +32,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_NULLValueException.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_NoSuchQualifierException.hpp"
@@ -501,16 +501,16 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_propertyDataType.writeObject(ostrm);
 
-	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_sizeDataType);
+	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_sizeDataType);
 	m_pdata->m_propagated.writeObject(ostrm);
 
 	if(includeQualifiers)
 	{
-		OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
+		OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 	}
 	else
 	{
-		OW_BinIfcIO::writeArray(ostrm, OW_CIMQualifierArray());
+		OW_BinarySerialization::writeArray(ostrm, OW_CIMQualifierArray());
 	}
 
 	if(m_pdata->m_cimValue)
@@ -543,11 +543,11 @@ OW_CIMProperty::readObject(istream &istrm)
 	originClass.readObject(istrm);
 	propertyDataType.readObject(istrm);
 
-	OW_BinIfcIO::readLen(istrm, sizeDataType);
+	OW_BinarySerialization::readLen(istrm, sizeDataType);
 
 	propagated.readObject(istrm);
 
-	OW_BinIfcIO::readArray(istrm, qualifiers);
+	OW_BinarySerialization::readArray(istrm, qualifiers);
 	OW_Bool isValue;
 	isValue.readObject(istrm);
 

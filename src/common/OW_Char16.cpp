@@ -32,7 +32,7 @@
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 
 #include <cstdio>
 #include <cstring>
@@ -83,14 +83,14 @@ void
 OW_Char16::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
 	OW_UInt16 v = OW_hton16(m_value);
-	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
+	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_Char16::readObject(istream& istrm) /*throw (OW_IOException)*/
 {
-	OW_BinIfcIO::read(istrm, &m_value, sizeof(m_value));
+	OW_BinarySerialization::read(istrm, &m_value, sizeof(m_value));
 	m_value = OW_ntoh16(m_value);
 }
 

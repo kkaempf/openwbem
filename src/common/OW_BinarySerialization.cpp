@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,12 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
 
-namespace OW_BinIfcIO
+namespace OW_BinarySerialization
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ template <typename Handler, typename ReaderFunc>
 static inline void readEnum(std::istream& istrm, Handler& result,
 	const ReaderFunc& read, const OW_Int32 beginsig, const OW_Int32 endsig)
 {
-	OW_BinIfcIO::verifySignature(istrm, beginsig);
+	verifySignature(istrm, beginsig);
 	bool done = false;
 	while (!done)
 	{
@@ -52,7 +52,7 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 		catch (const OW_BadCIMSignatureException& e)
 		{
 			// read threw because we've read all the objects
-			OW_BinIfcIO::verifySignature(istrm, endsig);
+			verifySignature(istrm, endsig);
 			done = true;
 		}
 	}
@@ -63,7 +63,7 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 void
 readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &OW_BinIfcIO::readObjectPath, OW_BINSIG_OPENUM, OW_END_OPENUM);
+	readEnum(istrm, result, &readObjectPath, OW_BINSIG_OPENUM, OW_END_OPENUM);
 }
 
 
@@ -72,7 +72,7 @@ readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result
 void
 readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &OW_BinIfcIO::readClass, OW_BINSIG_CLSENUM, OW_END_CLSENUM);
+	readEnum(istrm, result, &readClass, OW_BINSIG_CLSENUM, OW_END_CLSENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 void
 readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &OW_BinIfcIO::readInstance, OW_BINSIG_INSTENUM, OW_END_INSTENUM);
+	readEnum(istrm, result, &readInstance, OW_BINSIG_INSTENUM, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
 void
 readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &OW_BinIfcIO::readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
+	readEnum(istrm, result, &readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@ void
 verifySignature(std::istream& istrm, OW_UInt8 validSig)
 {
 	OW_UInt8 val;
-	OW_BinIfcIO::read(istrm, val);
+	read(istrm, val);
 
 	if(val != validSig)
 	{
@@ -218,10 +218,10 @@ writeStringArray(std::ostream& ostrm,
 	const OW_StringArray* propertyList)
 {
 	OW_Bool nullPropertyList = (propertyList == 0);
-	OW_BinIfcIO::writeBool(ostrm, nullPropertyList);
+	writeBool(ostrm, nullPropertyList);
 	if(!nullPropertyList)
 	{
-		OW_BinIfcIO::writeStringArray(ostrm, *propertyList);
+		writeStringArray(ostrm, *propertyList);
 	}
 }
 

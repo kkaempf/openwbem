@@ -38,7 +38,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
 #include <cstdio> // for SEEK_END
 
@@ -76,7 +76,7 @@ OW_AssocDbEntry::writeObject(ostream& ostrm) const
 	m_objectName.writeObject(ostrm);
 	m_role.writeObject(ostrm);
 	m_resultRole.writeObject(ostrm);
-	OW_BinIfcIO::writeArray(ostrm, m_entries);
+	OW_BinarySerialization::writeArray(ostrm, m_entries);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ OW_AssocDbEntry::readObject(istream& istrm)
 	m_objectName.readObject(istrm);
 	m_role.readObject(istrm);
 	m_resultRole.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, m_entries);
+	OW_BinarySerialization::readArray(istrm, m_entries);
 }
 
 //////////////////////////////////////////////////////////////////////////////

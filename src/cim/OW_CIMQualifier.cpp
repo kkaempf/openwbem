@@ -32,7 +32,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_NULLValueException.hpp"
 #include "OW_CIMValue.hpp"
@@ -335,7 +335,7 @@ OW_CIMQualifier::readObject(istream &istrm)
 
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, flavors);
+	OW_BinarySerialization::readArray(istrm, flavors);
 
 	if(m_pdata.isNull())
 	{
@@ -374,7 +374,7 @@ OW_CIMQualifier::writeObject(ostream &ostrm) const
 
 	m_pdata->m_qualifierType.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_flavors);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_flavors);
 }
 
 //////////////////////////////////////////////////////////////////////////////

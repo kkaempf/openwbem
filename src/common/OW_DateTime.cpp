@@ -33,7 +33,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>

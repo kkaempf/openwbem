@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -49,7 +49,7 @@ void
 OW_Bool::writeObject(ostream& ostrm) const
 {
 	OW_UInt8 v = m_val;
-	OW_BinIfcIO::write(ostrm, v);
+	OW_BinarySerialization::write(ostrm, v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ void
 OW_Bool::readObject(istream& istrm)
 {
 	OW_UInt8 v;
-	OW_BinIfcIO::read(istrm, v);
+	OW_BinarySerialization::read(istrm, v);
 	m_val = bool(v);
 }
 

@@ -33,7 +33,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMValueCast.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMProperty.hpp"
@@ -821,9 +821,9 @@ OW_CIMInstance::readObject(istream &istrm)
 
 	OW_CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
 	owningClassName.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, keys);
-	OW_BinIfcIO::readArray(istrm, properties);
-	OW_BinIfcIO::readArray(istrm, qualifiers);
+	OW_BinarySerialization::readArray(istrm, keys);
+	OW_BinarySerialization::readArray(istrm, properties);
+	OW_BinarySerialization::readArray(istrm, qualifiers);
 
 	if(m_pdata.isNull())
 	{
@@ -842,9 +842,9 @@ OW_CIMInstance::writeObject(std::ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
 	m_pdata->m_owningClassName.writeObject(ostrm);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_keys);
-    OW_BinIfcIO::writeArray(ostrm, m_pdata->m_properties);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
+    OW_BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 }
 
 //////////////////////////////////////////////////////////////////////////////

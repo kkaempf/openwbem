@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_CIMParamValue.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;

@@ -39,7 +39,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
 using std::istream;
@@ -733,9 +733,9 @@ OW_CIMClass::readObject(istream &istrm)
 	pcName.readObject(istrm);
 	isAssocFlag.readObject(istrm);
 	isK.readObject(istrm);
-	OW_BinIfcIO::readArray(istrm, qra);
-	OW_BinIfcIO::readArray(istrm, pra);
-	OW_BinIfcIO::readArray(istrm, mra);
+	OW_BinarySerialization::readArray(istrm, qra);
+	OW_BinarySerialization::readArray(istrm, pra);
+	OW_BinarySerialization::readArray(istrm, mra);
 
 	if(m_pdata.isNull())
 	{
@@ -760,9 +760,9 @@ OW_CIMClass::writeObject(ostream &ostrm) const
 	m_pdata->m_parentClassName.writeObject(ostrm);
 	m_pdata->m_associationFlag.writeObject(ostrm);
 	m_pdata->m_isKeyed.writeObject(ostrm);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_qualifiers);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_properties);
-	OW_BinIfcIO::writeArray(ostrm, m_pdata->m_methods);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
+	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_methods);
 }
 
 //////////////////////////////////////////////////////////////////////////////

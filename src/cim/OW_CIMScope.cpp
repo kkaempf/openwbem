@@ -31,7 +31,7 @@
 #include "OW_config.h"
 #include "OW_CIMScope.hpp"
 #include "OW_String.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 
 using std::istream;
 using std::ostream;
@@ -69,7 +69,7 @@ OW_CIMScope::readObject(istream &istrm)
 {
 	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
 	OW_UInt32 v;
-	OW_BinIfcIO::readLen(istrm, v);
+	OW_BinarySerialization::readLen(istrm, v);
 	m_val = Scope(v);
 }
 
@@ -78,6 +78,6 @@ void
 OW_CIMScope::writeObject(ostream &ostrm) const
 {
 	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
-	OW_BinIfcIO::writeLen(ostrm, m_val);
+	OW_BinarySerialization::writeLen(ostrm, m_val);
 }
 

@@ -35,7 +35,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
 #include <cstdlib>
@@ -268,7 +268,7 @@ void
 OW_CIMDateTime::readObject(istream &istrm)
 {
 	OW_DateTimeData dtdata;
-	OW_BinIfcIO::read(istrm, &dtdata, sizeof(dtdata));
+	OW_BinarySerialization::read(istrm, &dtdata, sizeof(dtdata));
 
 	dtdata.m_year = OW_ntoh16(dtdata.m_year);
 	dtdata.m_days = OW_ntoh32(dtdata.m_days);
@@ -295,7 +295,7 @@ OW_CIMDateTime::writeObject(ostream &ostrm) const
 	dtdata.m_microSeconds = OW_hton32(dtdata.m_microSeconds);
 	dtdata.m_utc = OW_hton16(dtdata.m_utc);
 
-	OW_BinIfcIO::write(ostrm, &dtdata, sizeof(dtdata));
+	OW_BinarySerialization::write(ostrm, &dtdata, sizeof(dtdata));
 }
 
 //////////////////////////////////////////////////////////////////////////////

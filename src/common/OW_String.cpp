@@ -36,7 +36,7 @@
 #include "OW_Array.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
 
 #include <cstdio>
@@ -872,10 +872,10 @@ void
 OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 {
 	OW_UInt32 len;
-	OW_BinIfcIO::readLen(istrm, len);
+	OW_BinarySerialization::readLen(istrm, len);
 
 	char* bfr = new char[len+1];
-	OW_BinIfcIO::read(istrm, bfr, len);
+	OW_BinarySerialization::read(istrm, bfr, len);
 	bfr[len] = '\0';
 
 	m_buf = new ByteBuf(bfr, len);
@@ -886,11 +886,11 @@ void
 OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
 	OW_UInt32 len = length();
-	OW_BinIfcIO::writeLen(ostrm, len);
+	OW_BinarySerialization::writeLen(ostrm, len);
 
 	if (len)
 	{
-        OW_BinIfcIO::write(ostrm, m_buf->data(), len);
+        OW_BinarySerialization::write(ostrm, m_buf->data(), len);
 	}
 }
 

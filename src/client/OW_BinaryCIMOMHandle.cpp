@@ -38,7 +38,7 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_BinIfcIO.hpp"
+#include "OW_BinarySerialization.hpp"
 #include "OW_IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -59,7 +59,7 @@ static inline void
 checkError(std::istream& istrm)
 {
 	OW_UInt8 rc;
-	OW_BinIfcIO::read(istrm, rc);
+	OW_BinarySerialization::read(istrm, rc);
 	if(rc != OW_BIN_OK)
 	{
 		switch(rc)
@@ -67,15 +67,15 @@ checkError(std::istream& istrm)
 			case OW_BIN_ERROR:
 			{
 				OW_String msg;
-				OW_BinIfcIO::read(istrm, msg);
+				OW_BinarySerialization::read(istrm, msg);
 				OW_THROW(OW_IOException, msg.c_str());
 			}
 			case OW_BIN_EXCEPTION:
 			{
 				OW_UInt16 cimerrno;
 				OW_String cimMsg;
-				OW_BinIfcIO::read(istrm, cimerrno);
-				OW_BinIfcIO::read(istrm, cimMsg);
+				OW_BinarySerialization::read(istrm, cimerrno);
+				OW_BinarySerialization::read(istrm, cimMsg);
 				OW_THROWCIMMSG(OW_CIMException::ErrNoType(cimerrno), cimMsg.c_str());
 			}
 			default:
@@ -105,42 +105,42 @@ checkError(OW_CIMProtocolIStreamIFCRef istr)
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClass& cc)
 {
-	cc = OW_BinIfcIO::readClass(*istr);
+	cc = OW_BinarySerialization::readClass(*istr);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassResultHandlerIFC& result)
 {
-	OW_BinIfcIO::readClassEnum(*istr, result);
+	OW_BinarySerialization::readClassEnum(*istr, result);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstance& ci)
 {
-	ci = OW_BinIfcIO::readInstance(*istr);
+	ci = OW_BinarySerialization::readInstance(*istr);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 {
-	cop = OW_BinIfcIO::readObjectPath(*istr);
+	cop = OW_BinarySerialization::readObjectPath(*istr);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathResultHandlerIFC& result)
 {
-	OW_BinIfcIO::readObjectPathEnum(*istr, result);
+	OW_BinarySerialization::readObjectPathEnum(*istr, result);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceResultHandlerIFC& result)
 {
-	OW_BinIfcIO::readInstanceEnum(*istr, result);
+	OW_BinarySerialization::readInstanceEnum(*istr, result);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierType& arg)
 {
-	arg = OW_BinIfcIO::readQual(*istr);
+	arg = OW_BinarySerialization::readQual(*istr);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeResultHandlerIFC& result)
 {
-	OW_BinIfcIO::readQualifierTypeEnum(*istr, result);
+	OW_BinarySerialization::readQualifierTypeEnum(*istr, result);
 }
 
 template<class T>
@@ -204,11 +204,11 @@ OW_BinaryCIMOMHandle::enumClassNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClassNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSNAMES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
-	OW_BinIfcIO::writeBool(strm, deep);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ENUMCLSNAMES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
+	OW_BinarySerialization::writeBool(strm, deep);
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateClassNames", ns);
 
@@ -226,14 +226,14 @@ OW_BinaryCIMOMHandle::enumClass(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClasses", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMCLSS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
-	OW_BinIfcIO::writeBool(strm, deep);
-	OW_BinIfcIO::writeBool(strm, localOnly);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ENUMCLSS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
+	OW_BinarySerialization::writeBool(strm, deep);
+	OW_BinarySerialization::writeBool(strm, localOnly);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
 
 	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClasses", ns);
@@ -252,10 +252,10 @@ OW_BinaryCIMOMHandle::enumInstanceNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTNAMES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ENUMINSTNAMES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateInstanceNames", ns);
@@ -275,15 +275,15 @@ OW_BinaryCIMOMHandle::enumInstances(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstances", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMINSTS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
-	OW_BinIfcIO::writeBool(strm, deep);
-	OW_BinIfcIO::writeBool(strm, localOnly);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ENUMINSTS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
+	OW_BinarySerialization::writeBool(strm, deep);
+	OW_BinarySerialization::writeBool(strm, localOnly);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateInstances", ns);
@@ -303,14 +303,14 @@ OW_BinaryCIMOMHandle::getClass(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetClass", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_GETCLS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
-	OW_BinIfcIO::writeBool(strm, localOnly);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_GETCLS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
+	OW_BinarySerialization::writeBool(strm, localOnly);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetClass", ns);
@@ -330,14 +330,14 @@ OW_BinaryCIMOMHandle::getInstance(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetInstance", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_GETINST);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, instanceName);
-	OW_BinIfcIO::writeBool(strm, localOnly);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_GETINST);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, instanceName);
+	OW_BinarySerialization::writeBool(strm, localOnly);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetInstance", ns);
@@ -358,14 +358,14 @@ OW_BinaryCIMOMHandle::invokeMethod(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_INVMETH);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, methodName);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_INVMETH);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, methodName);
 
-	OW_BinIfcIO::write(strm, OW_BINSIG_PARAMVALUEARRAY);
-	OW_BinIfcIO::writeArray(strm, inParams);
+	OW_BinarySerialization::write(strm, OW_BINSIG_PARAMVALUEARRAY);
+	OW_BinarySerialization::writeArray(strm, inParams);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		methodName, ns);
@@ -374,14 +374,14 @@ OW_BinaryCIMOMHandle::invokeMethod(
 	OW_CIMValue cv(OW_CIMNULL);
 	try
 	{
-		OW_Bool isrv(OW_BinIfcIO::readBool(*in));
+		OW_Bool isrv(OW_BinarySerialization::readBool(*in));
 		if(isrv)
 		{
-			cv = OW_BinIfcIO::readValue(*in);
+			cv = OW_BinarySerialization::readValue(*in);
 		}
 
-		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
-		OW_BinIfcIO::readArray(*in, outParams);
+		OW_BinarySerialization::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
+		OW_BinarySerialization::readArray(*in, outParams);
 	}
 	catch(OW_IOException& e)
 	{
@@ -401,10 +401,10 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetQualifier", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_GETQUAL);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, qualifierName);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_GETQUAL);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, qualifierName);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetQualifier", ns);
@@ -422,10 +422,10 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetQualifier", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_SETQUAL);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeQual(strm, qt);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_SETQUAL);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeQual(strm, qt);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"SetQualifier", ns);
@@ -442,9 +442,9 @@ OW_BinaryCIMOMHandle::enumQualifierTypes(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMQUALS);
-	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ENUMQUALS);
+	OW_BinarySerialization::writeString(strm, ns);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateQualifiers", ns);
@@ -460,10 +460,10 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String&
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteQualifier", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETEQUAL);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, qualName);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_DELETEQUAL);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, qualName);
 	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns));
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -479,10 +479,10 @@ OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_MODIFYCLS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeClass(strm, cc);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_MODIFYCLS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeClass(strm, cc);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ModifyClass", ns);
@@ -498,10 +498,10 @@ OW_BinaryCIMOMHandle::createClass(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateClass", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_CREATECLS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeClass(strm, cc);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_CREATECLS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeClass(strm, cc);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"CreateClass", ns);
@@ -516,10 +516,10 @@ OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& classNa
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteClass", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETECLS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, className);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_DELETECLS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, className);
 	
 	checkError(m_protocol->endRequest(strmRef, "DeleteClass", ns));
 }
@@ -538,12 +538,12 @@ OW_BinaryCIMOMHandle::modifyInstance(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_MODIFYINST);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeInstance(strm, modifiedInstance);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_MODIFYINST);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeInstance(strm, modifiedInstance);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ModifyInstance", ns);
@@ -559,10 +559,10 @@ OW_BinaryCIMOMHandle::createInstance(const OW_String& ns_,
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateInstance", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_CREATEINST);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeInstance(strm, ci);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_CREATEINST);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeInstance(strm, ci);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"CreateInstance", ns);
@@ -579,10 +579,10 @@ OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPat
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteInstance", ns);;
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETEINST);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, inst);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_DELETEINST);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, inst);
 
 	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns));
 }
@@ -599,16 +599,16 @@ OW_BinaryCIMOMHandle::setProperty(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetProperty", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_SETPROP);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, propName);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_SETPROP);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, propName);
 	OW_Bool isValue = (cv) ? true : false;
-	OW_BinIfcIO::writeBool(strm, isValue);
+	OW_BinarySerialization::writeBool(strm, isValue);
 	if(isValue)
 	{
-		OW_BinIfcIO::writeValue(strm, cv);
+		OW_BinarySerialization::writeValue(strm, cv);
 	}
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
@@ -628,11 +628,11 @@ OW_BinaryCIMOMHandle::getProperty(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetProperty", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_GETPROP);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, propName);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_GETPROP);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, propName);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetProperty", ns);
@@ -641,10 +641,10 @@ OW_BinaryCIMOMHandle::getProperty(
 	OW_CIMValue cv(OW_CIMNULL);
 	try
 	{
-		OW_Bool isValue(OW_BinIfcIO::readBool(*in));
+		OW_Bool isValue(OW_BinarySerialization::readBool(*in));
 		if(isValue)
 		{
-			cv = OW_BinIfcIO::readValue(*in);
+			cv = OW_BinarySerialization::readValue(*in);
 		}
 
 	}
@@ -672,14 +672,14 @@ OW_BinaryCIMOMHandle::associatorNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"AssociatorNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ASSOCNAMES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, assocClass);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
-	OW_BinIfcIO::writeString(strm, resultRole);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ASSOCNAMES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, assocClass);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
+	OW_BinarySerialization::writeString(strm, resultRole);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"AssociatorNames", ns);
@@ -708,17 +708,17 @@ OW_BinaryCIMOMHandle::associators(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, assocClass);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
-	OW_BinIfcIO::writeString(strm, resultRole);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ASSOCIATORS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, assocClass);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
+	OW_BinarySerialization::writeString(strm, resultRole);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"Associators", ns);
@@ -746,17 +746,17 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ASSOCIATORS);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, assocClass);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
-	OW_BinIfcIO::writeString(strm, resultRole);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_ASSOCIATORS);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, assocClass);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
+	OW_BinarySerialization::writeString(strm, resultRole);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"Associators", ns);
@@ -777,12 +777,12 @@ OW_BinaryCIMOMHandle::referenceNames(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_REFNAMES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_REFNAMES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns);
@@ -810,15 +810,15 @@ OW_BinaryCIMOMHandle::references(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_REFERENCES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns);
@@ -845,15 +845,15 @@ OW_BinaryCIMOMHandle::referencesClasses(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_REFERENCES);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, resultClass);
-	OW_BinIfcIO::writeString(strm, role);
-	OW_BinIfcIO::writeBool(strm, includeQualifiers);
-	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
-	OW_BinIfcIO::writeStringArray(strm, propertyList);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_REFERENCES);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeObjectPath(strm, path);
+	OW_BinarySerialization::writeString(strm, resultClass);
+	OW_BinarySerialization::writeString(strm, role);
+	OW_BinarySerialization::writeBool(strm, includeQualifiers);
+	OW_BinarySerialization::writeBool(strm, includeClassOrigin);
+	OW_BinarySerialization::writeStringArray(strm, propertyList);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ReferenceNames", ns);
@@ -883,11 +883,11 @@ OW_BinaryCIMOMHandle::execQuery(
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ExecQuery", ns);
 	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_EXECQUERY);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, query);
-	OW_BinIfcIO::writeString(strm, queryLanguage);
+	OW_BinarySerialization::write(strm, OW_BinaryProtocolVersion);
+	OW_BinarySerialization::write(strm, OW_BIN_EXECQUERY);
+	OW_BinarySerialization::writeString(strm, ns);
+	OW_BinarySerialization::writeString(strm, query);
+	OW_BinarySerialization::writeString(strm, queryLanguage);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ExecQuery", ns);
