@@ -38,6 +38,8 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 
+// TODO: Move this into src/common.  It doesn't belong under src/common/socket.
+
 namespace OpenWBEM
 {
 

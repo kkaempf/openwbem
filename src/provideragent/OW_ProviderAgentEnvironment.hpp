@@ -48,6 +48,9 @@
 #include "OW_Reference.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

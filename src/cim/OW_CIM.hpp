@@ -60,10 +60,4 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
 
-namespace OpenWBEM
-{
-
-
-} // end namespace OpenWBEM
-
 #endif

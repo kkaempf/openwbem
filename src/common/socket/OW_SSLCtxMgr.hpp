@@ -59,6 +59,7 @@ namespace OpenWBEM
  * 	If 0 is returned, the SSL handshake will abort.
  */
 typedef int (*certVerifyFuncPtr_t)(X509* cert, const String& hostName);
+
 // TODO: Make this class be a singleton.
 class OW_COMMON_API SSLCtxMgr
 {

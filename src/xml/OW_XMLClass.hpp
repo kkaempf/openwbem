@@ -39,6 +39,10 @@
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_CIMFwd.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
+// TODO: Get rid of this file.  Move the function into XMLCIMFactory
 namespace OpenWBEM
 {
 
@@ -55,7 +59,5 @@ namespace XMLClass
 } // end namespace XMLClass
 
 } // end namespace OpenWBEM
-
-namespace OW_XMLClass = OpenWBEM::XMLClass;
 
 #endif  // OW_XMLClass_HPP_

@@ -114,6 +114,7 @@ typedef SharedLibraryReference< IntrusiveReference<CppProviderBaseIFC> > CppProv
 
 
 // This is here to prevent existing code from breaking.  New code should use OW_PROVIDERFACTORY_NOID.
+// deprecated in 3.0.0
 #define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
 
 #if !defined(OW_STATIC_SERVICES)

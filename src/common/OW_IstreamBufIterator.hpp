@@ -41,14 +41,14 @@
 #include <iostream>
 #endif
 
-// This class is mostly just a replacement for std::istreambuf_iterator<>, since it
-// doesn't exist in the gcc 2.95.x standard lib.  We also added/removed some features to make it more efficient.
 
 namespace OpenWBEM
 {
 
 /**
  * This class differs from a std::istreambuf_iterator in that dereferncing an eof iterator returns 0
+ * This class is mostly just a replacement for std::istreambuf_iterator<>, since it
+ * doesn't exist in the gcc 2.95.x standard lib.  We also added/removed some features to make it more efficient.
  */
 class IstreamBufIterator
 {

@@ -36,6 +36,9 @@
 #define OW_WQL_SCAN_UTILS_HPP_
 #include "OW_config.h"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

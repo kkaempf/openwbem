@@ -39,6 +39,9 @@
 #include "OW_List.hpp"
 #include "OW_WQLVisitor.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

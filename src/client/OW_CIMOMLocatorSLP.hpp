@@ -41,6 +41,9 @@
 #ifdef OW_HAVE_SLP_H
 #include <slp.h>
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 #define OW_CIMOM_SLP_SERVICE_TYPE "wbem"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
 

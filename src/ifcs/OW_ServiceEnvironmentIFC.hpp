@@ -43,6 +43,9 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ArrayFwd.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

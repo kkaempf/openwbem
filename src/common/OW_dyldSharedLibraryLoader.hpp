@@ -38,6 +38,9 @@
 #if defined(OW_USE_DYLD)
 #include "OW_SharedLibraryLoader.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

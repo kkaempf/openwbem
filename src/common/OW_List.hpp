@@ -39,7 +39,6 @@
 #include "OW_COWReference.hpp"
 #include <list>
 
-// This class is a wrapper around std::list<> and adds COW capabilities.
 namespace OpenWBEM
 {
 
@@ -53,6 +52,9 @@ template <class T>
 inline bool operator<(const List<T>& x, const List<T>& y);
 
 	
+/**
+ * This class is a wrapper around std::list<> and adds COW capabilities.
+ */
 template<class T> class List
 {
 private:

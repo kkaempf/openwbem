@@ -43,8 +43,6 @@
 namespace OpenWBEM
 {
 
-class Runnable;
-typedef IntrusiveReference<Runnable> RunnableRef;
 /**
  * There are two methods for creating a thread of execution in the OW systems.
  * One is to derive from Thread and implement the run method and call start
@@ -85,6 +83,8 @@ public:
 	 */
 	virtual void doDefinitiveCancel();
 };
+
+typedef IntrusiveReference<Runnable> RunnableRef;
 
 } // end namespace OpenWBEM
 

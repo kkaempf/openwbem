@@ -246,7 +246,7 @@ Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, c
 	}
 }
 
-typedef Format format OW_DEPRECATED;
+//typedef Format format OW_DEPRECATED;
 
 } // end namespace OpenWBEM
 

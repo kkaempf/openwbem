@@ -40,6 +40,7 @@
 
 namespace OpenWBEM
 {
+    /// Facade encapsulating OS specific user functionality.
 	namespace UserUtils
 	{
 #ifdef OW_WIN32

@@ -39,6 +39,10 @@
 #include "OW_XMLClass.hpp"
 #include "OW_CIMScope.hpp"
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
+// TODO: Get rid of this file.  Move the function into XMLCIMFactory
 namespace OpenWBEM
 {
 
@@ -63,7 +67,5 @@ namespace XMLQualifier
 } // end namespace XMLQualifiers
 
 } // end namespace OpenWBEM
-
-namespace OW_XMLQualifiers = OpenWBEM::XMLQualifier;
 
 #endif

@@ -45,7 +45,8 @@ namespace OpenWBEM
 class ThreadBarrierImpl;
 OW_DECLARE_APIEXCEPTION(ThreadBarrier, OW_COMMON_API);
 /**
- * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
+ * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will 
+ * block until <i>threshold</i> number of threads has called wait()
  * This class is freely copyable.  All copies reference the same underlying implementation.
  */
 class OW_COMMON_API ThreadBarrier
@@ -53,12 +54,14 @@ class OW_COMMON_API ThreadBarrier
 public:
 	/**
 	 * Constructor
-	 * @param threshold The number of threads that must call wait() before any of them successfully return from the call. The value specified by threshold must be greater than zero.
+	 * @param threshold The number of threads that must call wait() before any of them successfully 
+     * return from the call. The value specified by threshold must be greater than zero.
 	 * @throw ThreadBarrierException if the underlying implementation fails.
 	 */
 	ThreadBarrier(UInt32 threshold);
 	/**
-	 * Synchronize participating threads at the barrier. The calling thread shall block until the required number of threads have called wait().
+	 * Synchronize participating threads at the barrier. The calling thread shall block until the 
+     * required number of threads have called wait().
 	 * @throw ThreadBarrierException if the underlying implementation fails.
 	 */
 	void wait();

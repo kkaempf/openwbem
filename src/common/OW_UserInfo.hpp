@@ -47,7 +47,7 @@ namespace OpenWBEM
  * the time the user authenticates to the CIMOM. If an UserInfo object
  * contains a user name, then read/write request will be verified against
  * the access rights of that user. If an UserInfo object does NOT contain
- * user a user name and the m_internal flag is set, then access rights are
+ * a user name and the m_internal flag is set, then access rights are
  * not checked on read/write operations. Only select components of the
  * CIMOM are allowed to construct this type of an UserInfo object.
  * Invariants:
