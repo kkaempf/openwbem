@@ -33,6 +33,7 @@
  * @author Dan Nuffer
  */
 
+#include "OW_config.h"
 #include "OW_CppProviderIncludes.hpp"
 #include "OW_SocketAddress.hpp"
 
