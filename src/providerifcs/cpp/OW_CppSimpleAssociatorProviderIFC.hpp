@@ -31,6 +31,7 @@
 #ifndef OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
 #define OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
 
+#include "OW_config.h"
 #include "OW_CppAssociatorProviderIFC.hpp"
 
 

@@ -28,6 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#include "OW_config.h"
 #include "OW_CppSimpleAssociatorProviderIFC.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMClass.hpp"
