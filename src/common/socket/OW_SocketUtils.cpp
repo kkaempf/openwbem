@@ -50,12 +50,22 @@
 extern "C"
 {
 #if !defined(OW_WIN32)
+#ifdef OW_NETWARE
+/* The NetWare standard libc library is striving to be posix.  According to the documentation
+ * for select, pselect, etc. we must include <sys/select.h> to be posix, whereas earlier
+ * standards required the three includes <sys/time.h>, <sys/types.h> and <unistd.h>
+ */
+#include <sys/select.h>
+#endif
+
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/socket.h>
+#if !defined(OW_NETWARE) // Is this include used anymore???
 #include <sys/resource.h>
+#endif
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
