@@ -1068,16 +1068,38 @@ namespace
 	class HandleProviderInstance : public OW_CIMInstanceResultHandlerIFC
 	{
 	public:
-		HandleProviderInstance(const OW_CIMClass& theClass_,
-			const OW_ACLInfo& aclInfo_,
+		HandleProviderInstance(
 			bool includeQualifiers_, bool includeClassOrigin_,
-			OW_StringArray& lpropList_, const OW_String& ns_,
+			OW_StringArray& lpropList_,
+			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
+		: includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, lpropList(lpropList_)
+		, server(server_)
+		, result(result_)
+		{}
+	protected:
+		virtual void doHandle(const OW_CIMInstance &ci)
+		{
+			result.handle(ci.clone(false, includeQualifiers,
+				includeClassOrigin, lpropList));
+		}
+	private:
+		bool includeQualifiers, includeClassOrigin;
+		OW_StringArray& lpropList;
+		OW_CIMServer& server;
+		OW_CIMInstanceResultHandlerIFC& result;
+	};
+
+	class HandleProviderProps : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		HandleProviderProps(const OW_CIMClass& theClass_,
+			const OW_ACLInfo& aclInfo_,
+			const OW_String& ns_,
 			OW_CIMServer& server_, OW_CIMInstanceResultHandlerIFC& result_)
 		: theClass(theClass_)
 		, aclInfo(aclInfo_)
-		, includeQualifiers(includeQualifiers_)
-		, includeClassOrigin(includeClassOrigin_)
-		, lpropList(lpropList_)
 		, ns(ns_)
 		, server(server_)
 		, result(result_)
@@ -1089,14 +1111,11 @@ namespace
 			OW_CIMObjectPath lcop(ci);
 
 			server._getProviderProperties(ns, lcop, ci, theClass, aclInfo);
-			result.handle(ci.clone(false, includeQualifiers,
-				includeClassOrigin, lpropList));
+			result.handle(ci);
 		}
 	private:
 		const OW_CIMClass& theClass;
 		const OW_ACLInfo& aclInfo;
-		bool includeQualifiers, includeClassOrigin;
-		OW_StringArray& lpropList;
 		const OW_String& ns;
 		OW_CIMServer& server;
 		OW_CIMInstanceResultHandlerIFC& result;
@@ -1197,16 +1216,19 @@ OW_CIMServer::_getCIMInstances(
 	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(theClass));
 	if (instancep)
 	{
-		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
-		HandleProviderInstance handler2(theClass,aclInfo,
-			includeQualifiers,includeClassOrigin,lpropList, ns, *this, handler1);
+		HandleLocalOnlyAndDeep handler1(result, theClass, localOnly, deep);
+		HandleProviderInstance handler2(
+			includeQualifiers, includeClassOrigin, lpropList, *this, handler1);
+		HandleProviderProps handler3(theClass, aclInfo, ns, *this, handler2);
+		
 		instancep->enumInstances(
-			createProvEnvRef(real_ch), ns, className, handler2, deep, theClass, localOnly);
+			createProvEnvRef(real_ch), ns, className, handler3, deep, theClass, localOnly);
 	}
 	else
 	{
-		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
-		m_iStore.getCIMInstances(ns, className, theClass, handler,
+		HandleLocalOnlyAndDeep handler1(result, theTopClass, localOnly, deep);
+		HandleProviderProps handler2(theClass, aclInfo, ns, *this, handler1);
+		m_iStore.getCIMInstances(ns, className, theClass, handler2,
 			includeQualifiers, includeClassOrigin, propertyList, this,
 			&aclInfo);
 	}
@@ -3026,7 +3048,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-		const OW_String& assocClassName, const OW_String& className, 
+		const OW_String& assocClassName, const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result, const OW_String& role)
 {
 	if(!assocClassName.empty())
