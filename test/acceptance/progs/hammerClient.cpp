@@ -53,10 +53,38 @@
 
 // TODO list:
 // cover *all* read operations
-//  wql queries
-//  assoc*
-//  reference*
-//  enum*Names
+// GetClass - Done
+// GetInstance - Done
+// EnumerateClasses - Done
+// EnumerateClassNames - Done
+// EnumerateInstances - Done
+// EnumerateInstanceNames - Done
+// ExecQuery
+// Associators
+// AssociatorNames
+// AssociatorsClasses
+// References
+// ReferenceNames
+// ReferencesClasses
+// GetProperty
+// GetQualifier
+// EnumerateQualifiers
+
+// possible modifying operations:
+// DeleteClass
+// DeleteInstance
+// CreateClass
+// CreateInstance
+// ModifyClass
+// ModifyInstance
+// SetProperty
+// SetQualifier
+// DeleteQualifier
+
+// As we're traversing instances, we need to do association traversal and
+// check referential integrity.  When we find an association instance, we
+// should be able to get the 2 references, and also call the assoc funcs
+// and get the appropriate response back.
 
 
 
@@ -428,7 +456,111 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ClassResultHandler : public OW_CIMClassResultHandlerIFC
+class AssociatorsClassesChecker : public OW_ErrorReportRunnable
+{
+public:
+	AssociatorsClassesChecker(const OW_String& ns, const OW_String& clsName)
+		: OW_ErrorReportRunnable("associatorsClasses", clsName)
+		, m_ns(ns)
+		, m_clsName(clsName)
+	{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		OW_CIMClassEnumeration e = rch.associatorsClassesE(OW_CIMObjectPath(m_clsName));
+		while (e.hasMoreElements())
+		{
+			OW_CIMClass c = e.nextElement();
+			OW_CIMClassEnumeration e2 = rch.associatorsClassesE(OW_CIMObjectPath(c.getName()));
+			bool foundOrigClass = false;
+			while (e2.hasMoreElements())
+			{
+				OW_CIMClass c2 = e2.nextElement();
+				if (c2.getName() == m_clsName)
+				{
+					foundOrigClass = true;
+					break;
+				}
+			}
+			if (!foundOrigClass)
+			{
+				reportError("associatorsClasses referential integrity broken", m_clsName);
+			}
+		}
+	}
+
+private:
+	OW_String m_ns;
+	OW_String m_clsName;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class ReferencesClassesChecker : public OW_ErrorReportRunnable
+{
+public:
+	ReferencesClassesChecker(const OW_String& ns, const OW_String& clsName)
+		: OW_ErrorReportRunnable("referencesClasses", clsName)
+		, m_ns(ns)
+		, m_clsName(clsName)
+	{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		OW_CIMClassEnumeration e = rch.referencesClassesE(OW_CIMObjectPath(m_clsName));
+		while (e.hasMoreElements())
+		{
+			OW_CIMClass c = e.nextElement();
+			bool foundReferenceToOrigClass = false;
+			OW_CIMPropertyArray props = c.getAllProperties();
+			for (size_t i = 0; i < props.size(); ++i)
+			{
+				OW_CIMProperty& p = props[i];
+				if (p.getDataType().getType() == OW_CIMDataType::REFERENCE)
+				{
+					if (p.getDataType().getRefClassName() == m_clsName)
+					{
+						foundReferenceToOrigClass = true;
+						break;
+					}
+				}
+			}
+			if (!foundReferenceToOrigClass)
+			{
+				reportError("referencesClasses referential integrity broken", m_clsName);
+			}
+		}
+	}
+
+private:
+	OW_String m_ns;
+	OW_String m_clsName;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class ClassGetter : public OW_ErrorReportRunnable
+{
+public:
+	ClassGetter(const OW_String& ns, const OW_String& clsName)
+		: OW_ErrorReportRunnable("getClass", clsName)
+		, m_ns(ns)
+		, m_clsName(clsName)
+	{}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		OW_CIMClass c = rch.getClass(m_clsName);
+	}
+
+private:
+	OW_String m_ns;
+	OW_String m_clsName;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class ClassResultHandler : public OW_CIMClassResultHandlerIFC, public OW_StringResultHandlerIFC
 {
 public:
 	ClassResultHandler(const OW_String& ns)
@@ -437,10 +569,24 @@ public:
 
 	void doHandle(const OW_CIMClass& cls)
 	{
-		OW_RunnableRef worker(new InstanceEnumerator(m_ns, cls.getName()));
-		doWork(worker);
-		// TODO: call assoc* things on it.
+		(void)cls;
 	}
+
+	void doHandle(const OW_String& clsName)
+	{
+		OW_RunnableRef worker1(new InstanceEnumerator(m_ns, clsName));
+		doWork(worker1);
+
+		OW_RunnableRef worker2(new ClassGetter(m_ns, clsName));
+		doWork(worker2);
+
+		OW_RunnableRef worker3(new AssociatorsClassesChecker(m_ns, clsName));
+		doWork(worker3);
+
+		OW_RunnableRef worker4(new ReferencesClassesChecker(m_ns, clsName));
+		doWork(worker4);
+	}
+
 private:
 	OW_String m_ns;
 };
@@ -465,6 +611,25 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+class ClassNameEnumerator : public OW_ErrorReportRunnable
+{
+public:
+	ClassNameEnumerator(const OW_String& ns)
+		: OW_ErrorReportRunnable("enumClassNames", ns)
+		, m_ns(ns) {}
+
+	void doRun()
+	{
+		OW_CIMClient rch(url, m_ns);
+		ClassResultHandler classNameResultHandler(m_ns);
+		rch.enumClassNames("", classNameResultHandler);
+	}
+
+private:
+	OW_String m_ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
 class NamespaceResultHandler : public OW_StringResultHandlerIFC
 {
 	void doHandle(const OW_String& ns)
@@ -472,18 +637,13 @@ class NamespaceResultHandler : public OW_StringResultHandlerIFC
 		OW_RunnableRef worker(new ClassEnumerator(ns));
 		doWork(worker);
 
-		// TODO
-		//ClassNameEnumerator worker(ns);
-		//doWork(worker);
+		OW_RunnableRef worker2(new ClassNameEnumerator(ns));
+		doWork(worker2);
 	}
 };
 
 	
 
-// As we're traversing instances, we need to do association traversal and
-// check referential integrity.  When we find an association instance, we
-// should be able to get the 2 references, and also call the assoc funcs
-// and get the appropriate response back.
 //////////////////////////////////////////////////////////////////////////////
 int
 main(int argc, char* argv[])
@@ -504,7 +664,7 @@ main(int argc, char* argv[])
 		else if (threadModeArg.startsWith("pool"))
 		{
 			OW_UInt32 poolSize = threadModeArg.substring(threadModeArg.indexOf('=') + 1).toUInt32();
-			pool = new OW_ThreadPool(poolSize, 1000); // large queue since we don't want to be too restrictive
+			pool = new OW_ThreadPool(poolSize, 10000); // large queue since we don't want to be too restrictive and cause a deadlock
 			threadMode = POOL;
 		}
 		else if (threadModeArg == "thread")
@@ -530,9 +690,7 @@ main(int argc, char* argv[])
 				pool->shutdown();
 			break;
 			case THREAD:
-			{
 				threadCount->waitForAll(60000, 0); // 1000 min timeout
-			}
 			break;
 		}
 
