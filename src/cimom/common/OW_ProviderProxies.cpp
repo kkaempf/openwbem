@@ -802,6 +802,7 @@ namespace
 			m_prep->setProperty(ns, name, propertyName, cv, context);
 		}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		virtual void associatorsClasses(const String &ns,
 			const CIMObjectPath &path, CIMClassResultHandlerIFC &result,
 			const String &assocClass, const String &resultClass,
@@ -811,9 +812,9 @@ namespace
 			const StringArray *propertyList, OperationContext &context)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
-			m_prep->associatorsClasses(ns, path, result, assocClass, resultClass,
-				role, resultRole, includeQualifiers, includeClassOrigin,
-				propertyList, context);
+			m_prep->associatorsClasses(ns, path, result, assocClass,
+				resultClass, role, resultRole, includeQualifiers, 
+				includeClassOrigin,	propertyList, context);
 		}
 		virtual void referenceNames(const String &ns,
 			const CIMObjectPath &path, CIMObjectPathResultHandlerIFC &result,
@@ -867,6 +868,7 @@ namespace
 			m_prep->referencesClasses(ns, path, result, resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList, context);
 		}
+#endif
 		virtual void execQuery(const String &ns,
 			CIMInstanceResultHandlerIFC &result, const String &query,
 			const String &queryLanguage, OperationContext &context)
