@@ -45,13 +45,6 @@ public:
 	OW_Mutex();
 
 	/**
-	 * Create a new OW_Mutex object.
-	 * @param recursive	If true then this is a recursive mutext. Otherwise
-	 * a thread will block indefinately if it calls acquire more than once.
-	 */
-	//OW_Mutex(bool recursive);
-
-	/**
 	 * Destroy this OW_Mutex object.
 	 */
 	~OW_Mutex();
@@ -78,16 +71,10 @@ public:
 protected:
 
 	OW_Mutex_t m_mutex;
-	OW_Thread_t volatile m_owner;
-	int volatile m_refCount;
-	bool m_isRecursive;
 
 private:
 	OW_Mutex(const OW_Mutex&);
 	OW_Mutex operator = (const OW_Mutex&);
-
-	static OW_Thread_t zeroThread();
-	static OW_Thread_t NULLTHREAD;
 
 	friend class OW_Condition;
 };

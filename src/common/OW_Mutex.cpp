@@ -40,37 +40,13 @@
 
 
 
-OW_Thread_t OW_Mutex::NULLTHREAD = zeroThread();
-
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Thread_t
-OW_Mutex::zeroThread()
-{
-	OW_Thread_t zthr;
-	::memset(&zthr, 0, sizeof(zthr));
-	return zthr;
-}
-
 OW_Mutex::OW_Mutex()
-	: m_owner(NULLTHREAD), m_refCount(0), m_isRecursive(true)
 {
 	if(OW_MutexImpl::createMutex(m_mutex) != 0)
 	{
 		OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
 	}
 }
-
-/*
-OW_Mutex::OW_Mutex(bool recursive)
-	: m_owner(NULLTHREAD), m_refCount(0), m_isRecursive(recursive)
-{
-	if(OW_MutexImpl::createMutex(m_mutex, m_isRecursive) != 0)
-	{
-		OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
-	}
-}
-*/
 
 OW_Mutex::~OW_Mutex()
 {
@@ -85,31 +61,11 @@ OW_Mutex::~OW_Mutex()
 void 
 OW_Mutex::acquire()
 {
-	if(!m_isRecursive)
+	int rv = OW_MutexImpl::acquireMutex(m_mutex);
+	if (rv != 0)
 	{
-		int rv = OW_MutexImpl::acquireMutex(m_mutex);
-		if (rv != 0)
-		{
-			OW_THROW(OW_Assertion,
-				"OW_MutexImpl::acquireMutex returned with error");
-		}
-	}
-	else
-	{
-		OW_Thread_t volatile curThread = OW_ThreadImpl::currentThread();
-		if(OW_ThreadImpl::sameThreads(m_owner, curThread))
-		{
-			m_refCount++;
-		}
-		else
-		{
-			if (OW_MutexImpl::acquireMutex(m_mutex) != 0)
-			{
-				OW_THROW(OW_Assertion, "OW_MutexImpl::acquireMutex returned with error");
-			}
-			m_owner = OW_ThreadImpl::currentThread();
-			m_refCount = 1;
-		}
+		OW_THROW(OW_Assertion,
+			"OW_MutexImpl::acquireMutex returned with error");
 	}
 }
 
@@ -117,39 +73,11 @@ OW_Mutex::acquire()
 bool
 OW_Mutex::release()
 {
-	if(!m_isRecursive)
+	if (OW_MutexImpl::releaseMutex(m_mutex) != 0)
 	{
-		if (OW_MutexImpl::releaseMutex(m_mutex) != 0)
-		{
-			OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
-		}
-		return true;
+		OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
 	}
-	else
-	{
-		OW_Thread_t curThread = OW_ThreadImpl::currentThread();
-		if(OW_ThreadImpl::sameThreads(m_owner, curThread))
-		{
-			--m_refCount;
-			if(m_refCount <= 0)
-			{
-				m_refCount = 0;
-				m_owner = NULLTHREAD;
-				if (OW_MutexImpl::releaseMutex(m_mutex) != 0)
-				{
-					OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
-				}
-			}
-			return true;
-		}
-		else
-		{
-			OW_THROW(OW_Exception, "attempted to release mutex "
-				"owned by another thread!");
-		}
-	}
-
-	return false;
+	return true;
 }
 
 

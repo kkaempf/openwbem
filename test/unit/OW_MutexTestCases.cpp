@@ -94,11 +94,6 @@ void OW_MutexTestCases::testAcquireRelease()
 	m.release();
 	m.release();
 
-	// try a non-recursive one
-	OW_Mutex n(false);
-	n.acquire();
-	n.release();
-
 	// try a static class mutex
 	testClass::m.acquire();
 	testClass::m.release();

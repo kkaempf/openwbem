@@ -32,6 +32,7 @@
 #include "OW_MutexImpl.hpp"
 
 #include <cerrno>
+#include <cassert>
 
 
 /**
@@ -52,34 +53,30 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
 	}
 	return cc;
 #else
-	pthread_mutex_init(&handle, NULL);
-	return 0;
-#endif
 
-/*
     pthread_mutexattr_t attr;
-    int res = 0;
-    res = pthread_mutexattr_init(&attr);
+    int res = pthread_mutexattr_init(&attr);
     assert(res == 0);
  
-#   if defined(BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE)
+#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
     res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     assert(res == 0);
-#   endif
+#endif
  
-    res = pthread_mutex_init(&m_mutex, &attr);
+    res = pthread_mutex_init(&handle.mutex, &attr);
     if (res != 0)
-        throw thread_resource_error();
+        return -1;
  
-#   if !defined(BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_init(&m_unlocked, 0);
+#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    res = pthread_cond_init(&handle.unlocked, 0);
     if (res != 0)
     {
-        pthread_mutex_destroy(&m_mutex);
-        throw thread_resource_error();
+        pthread_mutex_destroy(&handle.mutex);
+        return -1;
     }
-#   endif
-*/
+#endif
+	return 0;
+#endif
 }
 
 
@@ -100,23 +97,27 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 	(void)handle;
 	return 0;
 #else
-	int cc = pthread_mutex_destroy(&handle);
-	switch (cc)
+	switch (pthread_mutex_destroy(&handle.mutex))
 	{
 		case 0:
 			break;
 
 		case EBUSY:
 			//cerr << "OW_MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
-			cc = -1;
+			return -1;
 			break;
 
 		default:
 			//cerr << "OW_MutexImpl::destroyMutex - Error on destroy: "
 			//	<< cc << endl;
-			cc = -2;
+			return -2;
 	}
-	return cc;
+
+#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    res = pthread_cond_destroy(&handle.unlocked);
+    assert(res == 0);
+#endif
+	return 0;
 #endif
 }
 
@@ -137,14 +138,34 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
 #else
-	int cc = pthread_mutex_lock(&handle);
-	if(cc != 0)
-	{
-		//cerr << "OW_MutexImpl::acquireMutex got err on lock: " << cc << endl;
-		return cc;
-	}
 
-	return 0;
+    int res = pthread_mutex_lock(&handle.mutex);
+    assert(res == 0);
+	return res;
+ 
+#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    pthread_t tid = pthread_self();
+    if (handle.valid_id && pthread_equal(handle.thread_id, tid))
+        ++handle.count;
+    else
+    {
+        while (handle.valid_id)
+        {
+            res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
+            assert(res == 0);
+        }
+ 
+        handle.thread_id = tid;
+        handle.valid_id = true;
+        handle.count = 1;
+    }
+ 
+    res = pthread_mutex_unlock(&handle.mutex);
+    assert(res == 0);
+	return res;
+#endif
+
+
 #endif
 }
 
@@ -160,17 +181,39 @@ int
 OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
+	// TODO: ?!?!
 	(void)handle;
 	return 0;
 #else
-	int cc = pthread_mutex_unlock(&handle);
-	if(cc != 0)
-	{
-		//cerr << "OW_MutexImpl::releaseMutex got err on lock: " << cc << endl;
-		return -1;
-	}
-
-	return 0;
+#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+	int res = pthread_mutex_unlock(&handle.mutex);
+	assert(res == 0);
+	return res;
+#else
+    int res = 0;
+    res = pthread_mutex_lock(&handle.mutex);
+    assert(res == 0);
+ 
+    pthread_t tid = pthread_self();
+    if (handle.valid_id && !pthread_equal(handle.thread_id, tid))
+    {
+        res = pthread_mutex_unlock(&handle.mutex);
+        assert(res == 0);
+        return -1;
+    }
+ 
+    if (--handle.count == 0)
+    {
+        assert(handle.valid_id);
+        handle.valid_id = false;
+ 
+        res = pthread_cond_signal(&handle.unlocked);
+        assert(res == 0);
+    }
+ 
+    res = pthread_mutex_unlock(&handle.mutex);
+    assert(res == 0);
+#endif
 #endif
 }
 

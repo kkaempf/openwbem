@@ -101,7 +101,7 @@ OW_Condition::doWait(OW_Mutex& mutex)
 	#ifdef OW_USE_GNU_PTH
 	res = pth_cond_wait(&m_condition, &mutex.m_mutex);
 	#else
-	res = pthread_cond_wait(&m_condition, &mutex.m_mutex);
+	res = pthread_cond_wait(&m_condition, &mutex.m_mutex.mutex);
 	#endif
 	assert(res == 0);
 }

@@ -16,6 +16,7 @@ Testing:
       specifically, the indication delivery is known to be different. 
     - Test case insensitivity (eg. try to add a disk and DISK class)
     - Test storing 1 million instances.
+    - Disable indications during testsuite to speed things up.
 
 Fix problems:
     - Get rid of OW_ThreadEvent because it is subject to race conditions.

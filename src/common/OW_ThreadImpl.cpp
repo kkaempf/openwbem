@@ -571,7 +571,7 @@ OW_SemaphoreImpl::signal(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 	}
     pth_mutex_release(&mutex);
 #else
-	int cc = pthread_mutex_lock(&mutex);
+	int cc = pthread_mutex_lock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 
 	++curCount;
@@ -581,7 +581,7 @@ OW_SemaphoreImpl::signal(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		OW_ASSERT(cc == 0);
 	}
 
-	cc = pthread_mutex_unlock(&mutex);
+	cc = pthread_mutex_unlock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 #endif
 }
@@ -633,7 +633,7 @@ OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 #else
 	int retcode;
 
-	int cc = pthread_mutex_lock(&mutex);
+	int cc = pthread_mutex_lock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 
 	timespec ts;
@@ -648,11 +648,11 @@ OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 	{
 		if (ms != 0)
 		{
-			retcode = pthread_cond_timedwait(&cond, &mutex, &ts);
+			retcode = pthread_cond_timedwait(&cond, &mutex.mutex, &ts);
 		}
 		else
 		{
-			retcode = pthread_cond_wait(&cond, &mutex);
+			retcode = pthread_cond_wait(&cond, &mutex.mutex);
 		}
 	}
 
@@ -666,7 +666,7 @@ OW_SemaphoreImpl::wait(OW_ConditionVar_t& cond, OW_Mutex_t& mutex,
 		--curCount;
 	}
 
-	cc = pthread_mutex_unlock(&mutex);
+	cc = pthread_mutex_unlock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 
 	return rval;
@@ -705,12 +705,12 @@ OW_SemaphoreImpl::getCount(OW_Mutex_t& mutex, OW_Int32& count)
 	return tmp;
 #else
 	OW_Int32 tmp;
-	int cc = pthread_mutex_lock(&mutex);
+	int cc = pthread_mutex_lock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 
 	tmp = count;
 
-	cc = pthread_mutex_unlock(&mutex);
+	cc = pthread_mutex_unlock(&mutex.mutex);
 	OW_ASSERT(cc == 0);
 
 	return tmp;

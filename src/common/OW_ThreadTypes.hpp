@@ -64,8 +64,19 @@ extern "C"
 // Platform specific thread type
 typedef pthread_t					OW_Thread_t;
 
+#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 // Platform specific mutex type
-typedef pthread_mutex_t 		OW_Mutex_t;
+struct OW_Mutex_t
+{
+	pthread_mutex_t mutex;
+};
+//typedef pthread_mutex_t 		OW_Mutex_t;
+#else
+struct OW_Mutex_t
+{
+	pthread_mutex_t mutex;
+};
+#endif
 
 // Platform specific event type
 typedef void* 						OW_ThreadEvent_t;

@@ -79,6 +79,8 @@
 #undef u_int32_t
 #undef HAVE_SOCKLEN_T
 
+#undef HAVE_PTHREAD_MUTEXATTR_SETTYPE
+
 @BOTTOM@
 
 // end of autoconf set vars

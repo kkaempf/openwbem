@@ -224,6 +224,7 @@ public:
 	static bool isThreadEventSignaled(OW_ThreadEvent_t& handle);
 };
 
+// TODO: Rewrite this to use OW_Mutex and OW_Condition
 class OW_SemaphoreImpl
 {
 public:
