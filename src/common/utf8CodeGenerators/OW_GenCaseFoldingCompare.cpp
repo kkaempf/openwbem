@@ -37,6 +37,8 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
+#include <map>
+#include <set>
 
 using namespace std;
 using namespace OpenWBEM;
@@ -160,6 +162,9 @@ public:
 };
 
 StateMachine stateMachine;
+typedef std::multimap<String, String> mmap_t;
+typedef mmap_t::const_iterator ci_t;
+std::multimap<String, String> caseFoldingEntries;
 
 int followOrAddTransition(int curTransition, UInt8 input, int aux)
 {
@@ -248,8 +253,10 @@ struct processLine
 			str2 += UTF8Utils::UCS4toUTF8(c2chars[i]);
 		}
 
-		buildTransitions(str1, str2);
-		buildTransitions(str2, str1);
+		caseFoldingEntries.insert(std::make_pair(str1, str2));
+		caseFoldingEntries.insert(std::make_pair(str2, str1));
+		//buildTransitions(str1, str2);
+		//buildTransitions(str2, str1);
 	}
 };
 
@@ -438,6 +445,68 @@ void minimizeStateMachine()
 	}
 }
 
+void getEntriesFor(const String& key, set<String>& rval)
+{
+	for (ci_t ci = caseFoldingEntries.lower_bound(key);
+		ci->first == key;
+		++ci)
+	{
+		if (rval.find(ci->second) == rval.end())
+		{
+			rval.insert(ci->second);
+			getEntriesFor(ci->second, rval);
+		}
+	}
+}
+
+bool haveEntry(const String& key, const String& val)
+{
+	for (ci_t ci = caseFoldingEntries.lower_bound(key);
+		ci->first == key;
+		++ci)
+	{
+		if (ci->second == val)
+			return true;
+	}
+	return false;
+}
+
+void calculateTransitiveClosure()
+{
+	DEBUG("calculateTransitiveClosure\n");
+start_over:
+	for (ci_t ci = caseFoldingEntries.begin();
+		ci != caseFoldingEntries.end();
+		++ci)
+	{
+		set<String> newEntries;
+		getEntriesFor(ci->second, newEntries);
+		bool addedAnEntry = false;
+		String key = ci->first;  // make a copy since the iterator may be invalidated after an insert
+		for (set<String>::const_iterator curEntry = newEntries.begin(); curEntry != newEntries.end(); ++curEntry)
+		{
+			if (!haveEntry(key, *curEntry))
+			{
+				caseFoldingEntries.insert(std::make_pair(key, *curEntry));
+				addedAnEntry = true;
+			}
+		}
+
+		if (addedAnEntry)
+			goto start_over; // since the iterators may be invalidated.
+	}
+}
+
+void buildStateMachine()
+{
+	for (ci_t ci = caseFoldingEntries.begin();
+		ci != caseFoldingEntries.end();
+		++ci)
+	{
+		buildTransitions(ci->first, ci->second);
+	}
+}
+
 int main(int argc, char** argv)
 {
 	if (argc != 2)
@@ -457,15 +526,19 @@ int main(int argc, char** argv)
 	for (int i = 1; i < 256; ++i)
 	{
 		String s = String(char(i));
-		buildTransitions(s, s);
+		caseFoldingEntries.insert(std::make_pair(s, s));
+		//buildTransitions(s, s);
 	}
 
 	// read in a process the input file
-	StringStream ss;
+	OStringStream ss;
 	ss << in.rdbuf();
 	String s = ss.toString();
 	StringArray sa = s.tokenize("\n");
 	for_each(sa.begin(), sa.end(), processLine());
+
+	calculateTransitiveClosure();
+	buildStateMachine();
 
 	// disable duplicate states
 	minimizeStateMachine();

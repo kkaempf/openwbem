@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 	}
 
 	// read in a process the input file
-	StringStream ss;
+	OStringStream ss;
 	ss << in.rdbuf();
 	String s = ss.toString();
 	StringArray sa = s.tokenize("\n");
