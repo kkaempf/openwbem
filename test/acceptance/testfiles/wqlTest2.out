@@ -1,0 +1,2203 @@
+
+Executing query 1 local: select * from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+}
+
+Executing query 2 local: select name from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "name"
+}
+
+Executing query 3 local: select sint32Data from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "sint32Data"
+}
+
+Executing query 4 local: select wqlTestClass.sint32Data from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "wqlTestClass.sint32Data"
+}
+
+Executing query 5 local: select booleanData, wqlTestClass.sint32Data from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "booleanData"
+	_selectPropertyNames[1]: "wqlTestClass.sint32Data"
+}
+
+Executing query 6 local: select wqlTestClass.* from wqlTestClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "wqlTestClass.*"
+}
+
+Executing query 7 local: select * from wqlTestClass where name = "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test1
+
+Executing query 8 local: select * from wqlTestClass where "test1" = name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: "="
+}
+Terminal expression 0: STRING_VALUE: test1 = PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test1
+
+Executing query 9 local: select * from wqlTestClass where sint32Data = 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
+
+Executing query 10 local: select * from wqlTestClass where 0 = sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: "="
+}
+Terminal expression 0: INTEGER_VALUE: 0 = PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 0
+
+Executing query 11 local: select * from wqlTestClass where sint32Data = b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+
+Executing query 12 local: select * from wqlTestClass where sint32Data = x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 10
+
+Executing query 13 local: select * from wqlTestClass where booleanData = TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+
+Executing query 14 local: select * from wqlTestClass where TRUE = booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "="
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE = PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+
+Executing query 15 local: select * from wqlTestClass where booleanData = FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
+
+Executing query 16 local: select * from wqlTestClass where FALSE = booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "="
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE = PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
+
+Executing query 17 local: select * from wqlTestClass where realData = 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+
+Executing query 18 local: select * from wqlTestClass where 123.456 = realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "="
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 = PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData = DOUBLE_VALUE: 123.456000
+
+Executing query 19 local: select * from wqlTestClass where realData = NULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: realData = NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData = NULL_VALUE
+
+Executing query 20 local: select * from wqlTestClass where NULL = realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "NULL_VALUE"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "="
+}
+Terminal expression 0: NULL_VALUE = PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData = NULL_VALUE
+
+Executing query 21 local: select * from wqlTestClass where __Path = "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: __Path = STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path = STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 22 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" = __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: "="
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" = PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path = STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 23 local: select * from wqlTestClass where name <> "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: name <> STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name <> STRING_VALUE: test1
+
+Executing query 24 local: select * from wqlTestClass where "test1" <> name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: test1 <> PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name <> STRING_VALUE: test1
+
+Executing query 25 local: select * from wqlTestClass where sint32Data <> 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 0
+
+Executing query 26 local: select * from wqlTestClass where 0 <> sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: INTEGER_VALUE: 0 <> PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 0
+
+Executing query 27 local: select * from wqlTestClass where sint32Data <> b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 10
+
+Executing query 28 local: select * from wqlTestClass where sint32Data <> x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data <> INTEGER_VALUE: 10
+
+Executing query 29 local: select * from wqlTestClass where booleanData <> TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
+
+Executing query 30 local: select * from wqlTestClass where TRUE <> booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE <> PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
+
+Executing query 31 local: select * from wqlTestClass where booleanData <> FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
+
+Executing query 32 local: select * from wqlTestClass where FALSE <> booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE <> PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
+
+Executing query 33 local: select * from wqlTestClass where realData <> 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+
+Executing query 34 local: select * from wqlTestClass where 123.456 <> realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 <> PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData <> DOUBLE_VALUE: 123.456000
+
+Executing query 35 local: select * from wqlTestClass where realData <> NULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: realData <> NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 36 local: select * from wqlTestClass where NULL <> realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "NULL_VALUE"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: NULL_VALUE <> PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 37 local: select * from wqlTestClass where __Path <> "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: __Path <> STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path <> STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 38 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" <> __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" <> PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path <> STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 39 local: select * from wqlTestClass where name >= "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: name >= STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name >= STRING_VALUE: test1
+
+Executing query 40 local: select * from wqlTestClass where "test1" >= name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: ">="
+}
+Terminal expression 0: STRING_VALUE: test1 >= PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name <= STRING_VALUE: test1
+
+Executing query 41 local: select * from wqlTestClass where sint32Data >= 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 0
+
+Executing query 42 local: select * from wqlTestClass where 0 >= sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: ">="
+}
+Terminal expression 0: INTEGER_VALUE: 0 >= PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 0
+
+Executing query 43 local: select * from wqlTestClass where sint32Data >= b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 10
+
+Executing query 44 local: select * from wqlTestClass where sint32Data >= x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 10
+
+Executing query 45 local: select * from wqlTestClass where booleanData >= TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: TRUE
+
+Executing query 46 local: select * from wqlTestClass where TRUE >= booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: ">="
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE >= PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: TRUE
+
+Executing query 47 local: select * from wqlTestClass where booleanData >= FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: FALSE
+
+Executing query 48 local: select * from wqlTestClass where FALSE >= booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: ">="
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE >= PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: FALSE
+
+Executing query 49 local: select * from wqlTestClass where realData >= 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+
+Executing query 50 local: select * from wqlTestClass where 123.456 >= realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: ">="
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 >= PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+
+Executing query 51 local: select * from wqlTestClass where __Path >= "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: ">="
+}
+Terminal expression 0: PROPERTY_NAME: __Path >= STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path >= STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 52 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" >= __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: ">="
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" >= PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path <= STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 53 local: select * from wqlTestClass where name <= "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: name <= STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name <= STRING_VALUE: test1
+
+Executing query 54 local: select * from wqlTestClass where "test1" <= name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: "<="
+}
+Terminal expression 0: STRING_VALUE: test1 <= PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name >= STRING_VALUE: test1
+
+Executing query 55 local: select * from wqlTestClass where sint32Data <= 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 0
+
+Executing query 56 local: select * from wqlTestClass where 0 <= sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: "<="
+}
+Terminal expression 0: INTEGER_VALUE: 0 <= PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data >= INTEGER_VALUE: 0
+
+Executing query 57 local: select * from wqlTestClass where sint32Data <= b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 10
+
+Executing query 58 local: select * from wqlTestClass where sint32Data <= x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data <= INTEGER_VALUE: 10
+
+Executing query 59 local: select * from wqlTestClass where booleanData <= TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: TRUE
+
+Executing query 60 local: select * from wqlTestClass where TRUE <= booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<="
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE <= PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: TRUE
+
+Executing query 61 local: select * from wqlTestClass where booleanData <= FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData <= BOOLEAN_VALUE: FALSE
+
+Executing query 62 local: select * from wqlTestClass where FALSE <= booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<="
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE <= PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData >= BOOLEAN_VALUE: FALSE
+
+Executing query 63 local: select * from wqlTestClass where realData <= 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData <= DOUBLE_VALUE: 123.456000
+
+Executing query 64 local: select * from wqlTestClass where 123.456 <= realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "<="
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 <= PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData >= DOUBLE_VALUE: 123.456000
+
+Executing query 65 local: select * from wqlTestClass where __Path <= "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: "<="
+}
+Terminal expression 0: PROPERTY_NAME: __Path <= STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path <= STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 66 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" <= __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: "<="
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" <= PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path >= STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 67 local: select * from wqlTestClass where name > "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: name > STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name > STRING_VALUE: test1
+
+Executing query 68 local: select * from wqlTestClass where "test1" > name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: ">"
+}
+Terminal expression 0: STRING_VALUE: test1 > PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name < STRING_VALUE: test1
+
+Executing query 69 local: select * from wqlTestClass where sint32Data > 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data > INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data > INTEGER_VALUE: 0
+
+Executing query 70 local: select * from wqlTestClass where 0 > sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: ">"
+}
+Terminal expression 0: INTEGER_VALUE: 0 > PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data < INTEGER_VALUE: 0
+
+Executing query 71 local: select * from wqlTestClass where sint32Data > b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data > INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data > INTEGER_VALUE: 10
+
+Executing query 72 local: select * from wqlTestClass where sint32Data > x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data > INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data > INTEGER_VALUE: 10
+
+Executing query 73 local: select * from wqlTestClass where booleanData > TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData > BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData > BOOLEAN_VALUE: TRUE
+
+Executing query 74 local: select * from wqlTestClass where TRUE > booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: ">"
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE > PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData < BOOLEAN_VALUE: TRUE
+
+Executing query 75 local: select * from wqlTestClass where booleanData > FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData > BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData > BOOLEAN_VALUE: FALSE
+
+Executing query 76 local: select * from wqlTestClass where FALSE > booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: ">"
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE > PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData < BOOLEAN_VALUE: FALSE
+
+Executing query 77 local: select * from wqlTestClass where realData > 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+
+Executing query 78 local: select * from wqlTestClass where 123.456 > realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: ">"
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 > PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+
+Executing query 79 local: select * from wqlTestClass where __Path > "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: ">"
+}
+Terminal expression 0: PROPERTY_NAME: __Path > STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path > STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 80 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" > __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: ">"
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" > PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path < STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 81 local: select * from wqlTestClass where name < "test1"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test1"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: name < STRING_VALUE: test1
+Tableau 0
+PROPERTY_NAME: name < STRING_VALUE: test1
+
+Executing query 82 local: select * from wqlTestClass where "test1" < name
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: test1"
+	_operStack[1]: "PROPERTY_NAME: name"
+	_operStack[2]: "<"
+}
+Terminal expression 0: STRING_VALUE: test1 < PROPERTY_NAME: name
+Tableau 0
+PROPERTY_NAME: name > STRING_VALUE: test1
+
+Executing query 83 local: select * from wqlTestClass where sint32Data < 0
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 0"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data < INTEGER_VALUE: 0
+Tableau 0
+PROPERTY_NAME: sint32Data < INTEGER_VALUE: 0
+
+Executing query 84 local: select * from wqlTestClass where 0 < sint32Data
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 0"
+	_operStack[1]: "PROPERTY_NAME: sint32Data"
+	_operStack[2]: "<"
+}
+Terminal expression 0: INTEGER_VALUE: 0 < PROPERTY_NAME: sint32Data
+Tableau 0
+PROPERTY_NAME: sint32Data > INTEGER_VALUE: 0
+
+Executing query 85 local: select * from wqlTestClass where sint32Data < b'1010'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data < INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data < INTEGER_VALUE: 10
+
+Executing query 86 local: select * from wqlTestClass where sint32Data < x'A'
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: sint32Data"
+	_operStack[1]: "INTEGER_VALUE: 10"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: sint32Data < INTEGER_VALUE: 10
+Tableau 0
+PROPERTY_NAME: sint32Data < INTEGER_VALUE: 10
+
+Executing query 87 local: select * from wqlTestClass where booleanData < TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData < BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData < BOOLEAN_VALUE: TRUE
+
+Executing query 88 local: select * from wqlTestClass where TRUE < booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: TRUE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<"
+}
+Terminal expression 0: BOOLEAN_VALUE: TRUE < PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData > BOOLEAN_VALUE: TRUE
+
+Executing query 89 local: select * from wqlTestClass where booleanData < FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData < BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData < BOOLEAN_VALUE: FALSE
+
+Executing query 90 local: select * from wqlTestClass where FALSE < booleanData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "BOOLEAN_VALUE: FALSE"
+	_operStack[1]: "PROPERTY_NAME: booleanData"
+	_operStack[2]: "<"
+}
+Terminal expression 0: BOOLEAN_VALUE: FALSE < PROPERTY_NAME: booleanData
+Tableau 0
+PROPERTY_NAME: booleanData > BOOLEAN_VALUE: FALSE
+
+Executing query 91 local: select * from wqlTestClass where realData < 123.456
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "DOUBLE_VALUE: 123.456000"
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+Tableau 0
+PROPERTY_NAME: realData < DOUBLE_VALUE: 123.456000
+
+Executing query 92 local: select * from wqlTestClass where 123.456 < realData
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "DOUBLE_VALUE: 123.456000"
+	_operStack[1]: "PROPERTY_NAME: realData"
+	_operStack[2]: "<"
+}
+Terminal expression 0: DOUBLE_VALUE: 123.456000 < PROPERTY_NAME: realData
+Tableau 0
+PROPERTY_NAME: realData > DOUBLE_VALUE: 123.456000
+
+Executing query 93 local: select * from wqlTestClass where __Path < "wqlTestClass.name=\"test5\""
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: __Path"
+	_operStack[1]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[2]: "<"
+}
+Terminal expression 0: PROPERTY_NAME: __Path < STRING_VALUE: wqlTestClass.name="test5"
+Tableau 0
+PROPERTY_NAME: __Path < STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 94 local: select * from wqlTestClass where "wqlTestClass.name=\"test5\"" < __Path
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "STRING_VALUE: wqlTestClass.name="test5""
+	_operStack[1]: "PROPERTY_NAME: __Path"
+	_operStack[2]: "<"
+}
+Terminal expression 0: STRING_VALUE: wqlTestClass.name="test5" < PROPERTY_NAME: __Path
+Tableau 0
+PROPERTY_NAME: __Path > STRING_VALUE: wqlTestClass.name="test5"
+
+Executing query 95 local: select * from wqlTestClass where booleanData IS TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+
+Executing query 96 local: select * from wqlTestClass where booleanData IS NOT TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: TRUE
+
+Executing query 97 local: select * from wqlTestClass where booleanData IS FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: FALSE
+
+Executing query 98 local: select * from wqlTestClass where booleanData IS NOT FALSE
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: booleanData"
+	_operStack[1]: "BOOLEAN_VALUE: FALSE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: booleanData <> BOOLEAN_VALUE: FALSE
+
+Executing query 99 local: select * from wqlTestClass where realData ISNULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: realData = NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData = NULL_VALUE
+
+Executing query 100 local: select * from wqlTestClass where realData IS NULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: realData = NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData = NULL_VALUE
+
+Executing query 101 local: select * from wqlTestClass where realData NOTNULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: realData <> NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 102 local: select * from wqlTestClass where realData IS NOT NULL
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: realData"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "<>"
+}
+Terminal expression 0: PROPERTY_NAME: realData <> NULL_VALUE
+Tableau 0
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 103 local: select * from wqltestClass where name = "test4" or booleanData IS true
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test4"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: booleanData"
+	_operStack[4]: "BOOLEAN_VALUE: TRUE"
+	_operStack[5]: "="
+	_operStack[6]: "OR"
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test4
+Terminal expression 1: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test4
+Tableau 1
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+
+Executing query 104 local: select * from wqltestClass where name = "test5" or booleanData IS true
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test5"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: booleanData"
+	_operStack[4]: "BOOLEAN_VALUE: TRUE"
+	_operStack[5]: "="
+	_operStack[6]: "OR"
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test5
+Terminal expression 1: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test5
+Tableau 1
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+
+Executing query 105 local: select * from wqltestClass where name = "test4" and sint32Data = 1
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test4"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: sint32Data"
+	_operStack[4]: "INTEGER_VALUE: 1"
+	_operStack[5]: "="
+	_operStack[6]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test4
+Terminal expression 1: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test4
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
+
+Executing query 106 local: select * from wqltestClass where name = "test4" and booleanData IS TRUE
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test4"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: booleanData"
+	_operStack[4]: "BOOLEAN_VALUE: TRUE"
+	_operStack[5]: "="
+	_operStack[6]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test4
+Terminal expression 1: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: name = STRING_VALUE: test4
+
+Executing query 107 local: select * from wqltestClass where name IS NOT NULL and realData IS NOT NULL
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "<>"
+	_operStack[3]: "PROPERTY_NAME: realData"
+	_operStack[4]: "NULL_VALUE"
+	_operStack[5]: "<>"
+	_operStack[6]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: name <> NULL_VALUE
+Terminal expression 1: PROPERTY_NAME: realData <> NULL_VALUE
+Tableau 0
+PROPERTY_NAME: name <> NULL_VALUE
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 108 local: select * from wqltestClass where (name IS NOT NULL and realData IS NOT NULL) or (name = "test5" or booleanData IS true)
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "<>"
+	_operStack[3]: "PROPERTY_NAME: realData"
+	_operStack[4]: "NULL_VALUE"
+	_operStack[5]: "<>"
+	_operStack[6]: "AND"
+	_operStack[7]: "PROPERTY_NAME: name"
+	_operStack[8]: "STRING_VALUE: test5"
+	_operStack[9]: "="
+	_operStack[10]: "PROPERTY_NAME: booleanData"
+	_operStack[11]: "BOOLEAN_VALUE: TRUE"
+	_operStack[12]: "="
+	_operStack[13]: "OR"
+	_operStack[14]: "OR"
+}
+Terminal expression 0: PROPERTY_NAME: name <> NULL_VALUE
+Terminal expression 1: PROPERTY_NAME: realData <> NULL_VALUE
+Terminal expression 2: PROPERTY_NAME: name = STRING_VALUE: test5
+Terminal expression 3: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test5
+Tableau 1
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 2
+PROPERTY_NAME: name <> NULL_VALUE
+PROPERTY_NAME: realData <> NULL_VALUE
+
+Executing query 109 local: select * from wqltestClass where (name = "test4" or name = "test2") and (sint32Data = 1 or booleanData = true)
+OW_WQLSelectStatement
+{
+	_className: "wqltestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: name"
+	_operStack[1]: "STRING_VALUE: test4"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: name"
+	_operStack[4]: "STRING_VALUE: test2"
+	_operStack[5]: "="
+	_operStack[6]: "OR"
+	_operStack[7]: "PROPERTY_NAME: sint32Data"
+	_operStack[8]: "INTEGER_VALUE: 1"
+	_operStack[9]: "="
+	_operStack[10]: "PROPERTY_NAME: booleanData"
+	_operStack[11]: "BOOLEAN_VALUE: TRUE"
+	_operStack[12]: "="
+	_operStack[13]: "OR"
+	_operStack[14]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: name = STRING_VALUE: test4
+Terminal expression 1: PROPERTY_NAME: name = STRING_VALUE: test2
+Terminal expression 2: PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
+Terminal expression 3: PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: name = STRING_VALUE: test4
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
+Tableau 1
+PROPERTY_NAME: name = STRING_VALUE: test2
+PROPERTY_NAME: sint32Data = INTEGER_VALUE: 1
+Tableau 2
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: name = STRING_VALUE: test4
+Tableau 3
+PROPERTY_NAME: booleanData = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: name = STRING_VALUE: test2
+
+Executing query 110 local: select * from wqlTestClass where embed ISA fooClass
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: embed"
+	_operStack[1]: "PROPERTY_NAME: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: embed ISA PROPERTY_NAME: fooClass
+Tableau 0
+PROPERTY_NAME: embed ISA PROPERTY_NAME: fooClass
+
+Executing query 111 local: select * from wqlTestClass where embed ISA "fooClass"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: embed"
+	_operStack[1]: "STRING_VALUE: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: embed ISA STRING_VALUE: fooClass
+Tableau 0
+PROPERTY_NAME: embed ISA STRING_VALUE: fooClass
+
+Executing query 112 local: select * from wqlTestClass where wqlTestClass.embed ISA "fooClass"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: wqlTestClass.embed"
+	_operStack[1]: "STRING_VALUE: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed ISA STRING_VALUE: fooClass
+Tableau 0
+PROPERTY_NAME: wqlTestClass.embed ISA STRING_VALUE: fooClass
+
+Executing query 113 local: select * from wqlTestClass where wqlTestClass.embed.embed2 ISA "fooClass"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: wqlTestClass.embed.embed2"
+	_operStack[1]: "STRING_VALUE: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embed2 ISA STRING_VALUE: fooClass
+Tableau 0
+PROPERTY_NAME: wqlTestClass.embed.embed2 ISA STRING_VALUE: fooClass
+
+Executing query 114 local: select * from wqlTestClass where embed.embed2 ISA "fooClass"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: embed.embed2"
+	_operStack[1]: "STRING_VALUE: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
+Tableau 0
+PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
+
+Executing query 115 local: select embed from wqlTestClass where embed.embed2 ISA "fooClass"
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "embed"
+
+	_operStack[0]: "PROPERTY_NAME: embed.embed2"
+	_operStack[1]: "STRING_VALUE: fooClass"
+	_operStack[2]: "ISA"
+}
+Terminal expression 0: PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
+Tableau 0
+PROPERTY_NAME: embed.embed2 ISA STRING_VALUE: fooClass
+
+Executing query 116 local: select embed from wqlTestClass where wqlTestClass.embed.embedInt = 1
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "embed"
+
+	_operStack[0]: "PROPERTY_NAME: wqlTestClass.embed.embedInt"
+	_operStack[1]: "INTEGER_VALUE: 1"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+Tableau 0
+PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+
+Executing query 117 local: select embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "embed.Name"
+
+	_operStack[0]: "PROPERTY_NAME: wqlTestClass.embed.embedInt"
+	_operStack[1]: "INTEGER_VALUE: 1"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+Tableau 0
+PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+
+Executing query 118 local: select wqlTestClass.embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1
+OW_WQLSelectStatement
+{
+	_className: "wqlTestClass"
+
+	_selectPropertyNames[0]: "wqlTestClass.embed.Name"
+
+	_operStack[0]: "PROPERTY_NAME: wqlTestClass.embed.embedInt"
+	_operStack[1]: "INTEGER_VALUE: 1"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+Tableau 0
+PROPERTY_NAME: wqlTestClass.embed.embedInt = INTEGER_VALUE: 1
+
+Executing query 119 local: SELECT x,y,z FROM myclass WHERE x > 5 AND y < 25 AND z > 1.2
+OW_WQLSelectStatement
+{
+	_className: "myclass"
+
+	_selectPropertyNames[0]: "x"
+	_selectPropertyNames[1]: "y"
+	_selectPropertyNames[2]: "z"
+
+	_operStack[0]: "PROPERTY_NAME: x"
+	_operStack[1]: "INTEGER_VALUE: 5"
+	_operStack[2]: ">"
+	_operStack[3]: "PROPERTY_NAME: y"
+	_operStack[4]: "INTEGER_VALUE: 25"
+	_operStack[5]: "<"
+	_operStack[6]: "AND"
+	_operStack[7]: "PROPERTY_NAME: z"
+	_operStack[8]: "DOUBLE_VALUE: 1.200000"
+	_operStack[9]: ">"
+	_operStack[10]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: x > INTEGER_VALUE: 5
+Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
+Terminal expression 2: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Tableau 0
+PROPERTY_NAME: x > INTEGER_VALUE: 5
+PROPERTY_NAME: y < INTEGER_VALUE: 25
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+
+Executing query 120 local: SELECT x,y,z,a FROM myclass WHERE (x > 5) AND ((y < 25) OR (a = "Foo")) AND (z > 1.2)
+OW_WQLSelectStatement
+{
+	_className: "myclass"
+
+	_selectPropertyNames[0]: "x"
+	_selectPropertyNames[1]: "y"
+	_selectPropertyNames[2]: "z"
+	_selectPropertyNames[3]: "a"
+
+	_operStack[0]: "PROPERTY_NAME: x"
+	_operStack[1]: "INTEGER_VALUE: 5"
+	_operStack[2]: ">"
+	_operStack[3]: "PROPERTY_NAME: y"
+	_operStack[4]: "INTEGER_VALUE: 25"
+	_operStack[5]: "<"
+	_operStack[6]: "PROPERTY_NAME: a"
+	_operStack[7]: "STRING_VALUE: Foo"
+	_operStack[8]: "="
+	_operStack[9]: "OR"
+	_operStack[10]: "AND"
+	_operStack[11]: "PROPERTY_NAME: z"
+	_operStack[12]: "DOUBLE_VALUE: 1.200000"
+	_operStack[13]: ">"
+	_operStack[14]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: x > INTEGER_VALUE: 5
+Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
+Terminal expression 2: PROPERTY_NAME: a = STRING_VALUE: Foo
+Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Tableau 0
+PROPERTY_NAME: y < INTEGER_VALUE: 25
+PROPERTY_NAME: x > INTEGER_VALUE: 5
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Tableau 1
+PROPERTY_NAME: a = STRING_VALUE: Foo
+PROPERTY_NAME: x > INTEGER_VALUE: 5
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+
+Executing query 121 local: SELECT x,y,z,a FROM myclass WHERE (y > x) AND (((y < 25) OR (a = "Bar")) OR (z > 1.2))
+OW_WQLSelectStatement
+{
+	_className: "myclass"
+
+	_selectPropertyNames[0]: "x"
+	_selectPropertyNames[1]: "y"
+	_selectPropertyNames[2]: "z"
+	_selectPropertyNames[3]: "a"
+
+	_operStack[0]: "PROPERTY_NAME: y"
+	_operStack[1]: "PROPERTY_NAME: x"
+	_operStack[2]: ">"
+	_operStack[3]: "PROPERTY_NAME: y"
+	_operStack[4]: "INTEGER_VALUE: 25"
+	_operStack[5]: "<"
+	_operStack[6]: "PROPERTY_NAME: a"
+	_operStack[7]: "STRING_VALUE: Bar"
+	_operStack[8]: "="
+	_operStack[9]: "OR"
+	_operStack[10]: "PROPERTY_NAME: z"
+	_operStack[11]: "DOUBLE_VALUE: 1.200000"
+	_operStack[12]: ">"
+	_operStack[13]: "OR"
+	_operStack[14]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: y > PROPERTY_NAME: x
+Terminal expression 1: PROPERTY_NAME: y < INTEGER_VALUE: 25
+Terminal expression 2: PROPERTY_NAME: a = STRING_VALUE: Bar
+Terminal expression 3: PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+Tableau 0
+PROPERTY_NAME: y > PROPERTY_NAME: x
+PROPERTY_NAME: y < INTEGER_VALUE: 25
+Tableau 1
+PROPERTY_NAME: y > PROPERTY_NAME: x
+PROPERTY_NAME: a = STRING_VALUE: Bar
+Tableau 2
+PROPERTY_NAME: y > PROPERTY_NAME: x
+PROPERTY_NAME: z > DOUBLE_VALUE: 1.200000
+
+Executing query 122 local: SELECT w,x,y,z FROM ClassName
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "w"
+	_selectPropertyNames[1]: "x"
+	_selectPropertyNames[2]: "y"
+	_selectPropertyNames[3]: "z"
+}
+
+Executing query 123 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE OR w = FALSE
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "w"
+	_selectPropertyNames[1]: "x"
+	_selectPropertyNames[2]: "y"
+	_selectPropertyNames[3]: "z"
+
+	_operStack[0]: "PROPERTY_NAME: w"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: w"
+	_operStack[4]: "BOOLEAN_VALUE: FALSE"
+	_operStack[5]: "="
+	_operStack[6]: "OR"
+}
+Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+Terminal expression 1: PROPERTY_NAME: w = BOOLEAN_VALUE: FALSE
+Tableau 0
+PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+Tableau 1
+PROPERTY_NAME: w = BOOLEAN_VALUE: FALSE
+
+Executing query 124 local: SELECT w,x,y,z FROM ClassName WHERE w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten"
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "w"
+	_selectPropertyNames[1]: "x"
+	_selectPropertyNames[2]: "y"
+	_selectPropertyNames[3]: "z"
+
+	_operStack[0]: "PROPERTY_NAME: w"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: x"
+	_operStack[4]: "INTEGER_VALUE: 10"
+	_operStack[5]: ">="
+	_operStack[6]: "AND"
+	_operStack[7]: "PROPERTY_NAME: y"
+	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[9]: "<="
+	_operStack[10]: "AND"
+	_operStack[11]: "PROPERTY_NAME: z"
+	_operStack[12]: "STRING_VALUE: Ten"
+	_operStack[13]: "="
+	_operStack[14]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
+Tableau 0
+PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: x >= INTEGER_VALUE: 10
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: z = STRING_VALUE: Ten
+
+Executing query 125 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT w = TRUE IS NOT TRUE
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: w"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: x"
+	_operStack[4]: "INTEGER_VALUE: 10"
+	_operStack[5]: ">="
+	_operStack[6]: "AND"
+	_operStack[7]: "PROPERTY_NAME: y"
+	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[9]: "<="
+	_operStack[10]: "AND"
+	_operStack[11]: "PROPERTY_NAME: z"
+	_operStack[12]: "STRING_VALUE: Ten"
+	_operStack[13]: "="
+	_operStack[14]: "AND"
+	_operStack[15]: "PROPERTY_NAME: w"
+	_operStack[16]: "BOOLEAN_VALUE: TRUE"
+	_operStack[17]: "BOOLEAN_VALUE: TRUE"
+	_operStack[18]: "<>"
+	_operStack[19]: "="
+	_operStack[20]: "NOT"
+	_operStack[21]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
+Terminal expression 4: BOOLEAN_VALUE: TRUE = BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: x >= INTEGER_VALUE: 10
+PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: z = STRING_VALUE: Ten
+PROPERTY_NAME: z = STRING_VALUE: Ten
+
+Executing query 126 local: SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = "Ten") AND NOT ((w = TRUE) IS NOT TRUE)
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: w"
+	_operStack[1]: "BOOLEAN_VALUE: TRUE"
+	_operStack[2]: "="
+	_operStack[3]: "PROPERTY_NAME: x"
+	_operStack[4]: "INTEGER_VALUE: 10"
+	_operStack[5]: ">="
+	_operStack[6]: "AND"
+	_operStack[7]: "PROPERTY_NAME: y"
+	_operStack[8]: "DOUBLE_VALUE: 13.100000"
+	_operStack[9]: "<="
+	_operStack[10]: "AND"
+	_operStack[11]: "PROPERTY_NAME: z"
+	_operStack[12]: "STRING_VALUE: Ten"
+	_operStack[13]: "="
+	_operStack[14]: "AND"
+	_operStack[15]: "PROPERTY_NAME: w"
+	_operStack[16]: "BOOLEAN_VALUE: TRUE"
+	_operStack[17]: "="
+	_operStack[18]: "BOOLEAN_VALUE: TRUE"
+	_operStack[19]: "<>"
+	_operStack[20]: "NOT"
+	_operStack[21]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+Terminal expression 1: PROPERTY_NAME: x >= INTEGER_VALUE: 10
+Terminal expression 2: PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+Terminal expression 3: PROPERTY_NAME: z = STRING_VALUE: Ten
+Terminal expression 4: PROPERTY_NAME: w <> BOOLEAN_VALUE: TRUE
+Tableau 0
+PROPERTY_NAME: y <= DOUBLE_VALUE: 13.100000
+PROPERTY_NAME: x >= INTEGER_VALUE: 10
+PROPERTY_NAME: w = BOOLEAN_VALUE: TRUE
+PROPERTY_NAME: z = STRING_VALUE: Ten
+PROPERTY_NAME: z = STRING_VALUE: Ten
+
+Executing query 127 local: SELECT * FROM ClassName WHERE NOT NOT NOT x < 5
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: x"
+	_operStack[1]: "INTEGER_VALUE: 5"
+	_operStack[2]: "<"
+	_operStack[3]: "NOT"
+	_operStack[4]: "NOT"
+	_operStack[5]: "NOT"
+}
+Terminal expression 0: PROPERTY_NAME: x >= INTEGER_VALUE: 5
+Tableau 0
+PROPERTY_NAME: x >= INTEGER_VALUE: 5
+
+Executing query 128 local: SELECT * FROM ClassName WHERE v IS NULL
+OW_WQLSelectStatement
+{
+	_className: "ClassName"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: v"
+	_operStack[1]: "NULL_VALUE"
+	_operStack[2]: "="
+}
+Terminal expression 0: PROPERTY_NAME: v = NULL_VALUE
+Tableau 0
+PROPERTY_NAME: v = NULL_VALUE
+
+Executing query 129 local: SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = "BLAH")) AND NOT ((x<10) OR (y>4.0))
+OW_WQLSelectStatement
+{
+	_className: "myclass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "PROPERTY_NAME: x"
+	_operStack[1]: "INTEGER_VALUE: 5"
+	_operStack[2]: ">"
+	_operStack[3]: "NOT"
+	_operStack[4]: "PROPERTY_NAME: y"
+	_operStack[5]: "DOUBLE_VALUE: 1.000000"
+	_operStack[6]: "<"
+	_operStack[7]: "PROPERTY_NAME: z"
+	_operStack[8]: "STRING_VALUE: BLAH"
+	_operStack[9]: "="
+	_operStack[10]: "AND"
+	_operStack[11]: "OR"
+	_operStack[12]: "PROPERTY_NAME: x"
+	_operStack[13]: "INTEGER_VALUE: 10"
+	_operStack[14]: "<"
+	_operStack[15]: "PROPERTY_NAME: y"
+	_operStack[16]: "DOUBLE_VALUE: 4.000000"
+	_operStack[17]: ">"
+	_operStack[18]: "OR"
+	_operStack[19]: "NOT"
+	_operStack[20]: "AND"
+}
+Terminal expression 0: PROPERTY_NAME: x <= INTEGER_VALUE: 5
+Terminal expression 1: PROPERTY_NAME: y < DOUBLE_VALUE: 1.000000
+Terminal expression 2: PROPERTY_NAME: z = STRING_VALUE: BLAH
+Terminal expression 3: PROPERTY_NAME: x >= INTEGER_VALUE: 10
+Terminal expression 4: PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
+Tableau 0
+PROPERTY_NAME: x >= INTEGER_VALUE: 10
+PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
+PROPERTY_NAME: y < DOUBLE_VALUE: 1.000000
+PROPERTY_NAME: z = STRING_VALUE: BLAH
+Tableau 1
+PROPERTY_NAME: x >= INTEGER_VALUE: 10
+PROPERTY_NAME: x <= INTEGER_VALUE: 5
+PROPERTY_NAME: y <= DOUBLE_VALUE: 4.000000
+
+Executing query 130 local: SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = "BLAH")) AND NOT NOT ((x<10) OR (y>4.0)))
+OW_WQLSelectStatement
+{
+	_className: "myclass"
+
+	_selectPropertyNames[0]: "*"
+
+	_operStack[0]: "INTEGER_VALUE: 5"
+	_operStack[1]: "PROPERTY_NAME: x"
+	_operStack[2]: ">"
+	_operStack[3]: "NOT"
+	_operStack[4]: "PROPERTY_NAME: y"
+	_operStack[5]: "DOUBLE_VALUE: 1.000000"
+	_operStack[6]: "<"
+	_operStack[7]: "PROPERTY_NAME: z"
+	_operStack[8]: "STRING_VALUE: BLAH"
+	_operStack[9]: "="
+	_operStack[10]: "NOT"
+	_operStack[11]: "AND"
+	_operStack[12]: "OR"
+	_operStack[13]: "NOT"
+	_operStack[14]: "PROPERTY_NAME: x"
+	_operStack[15]: "INTEGER_VALUE: 10"
+	_operStack[16]: "<"
+	_operStack[17]: "PROPERTY_NAME: y"
+	_operStack[18]: "DOUBLE_VALUE: 4.000000"
+	_operStack[19]: ">"
+	_operStack[20]: "OR"
+	_operStack[21]: "NOT"
+	_operStack[22]: "NOT"
+	_operStack[23]: "AND"
+	_operStack[24]: "NOT"
+	_operStack[25]: "NOT"
+}
+Terminal expression 0: INTEGER_VALUE: 5 > PROPERTY_NAME: x
+Terminal expression 1: PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+Terminal expression 2: PROPERTY_NAME: z = STRING_VALUE: BLAH
+Terminal expression 3: PROPERTY_NAME: x < INTEGER_VALUE: 10
+Terminal expression 4: PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
+Tableau 0
+PROPERTY_NAME: x < INTEGER_VALUE: 5
+PROPERTY_NAME: x < INTEGER_VALUE: 10
+PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+Tableau 1
+PROPERTY_NAME: x < INTEGER_VALUE: 10
+PROPERTY_NAME: x < INTEGER_VALUE: 5
+PROPERTY_NAME: z = STRING_VALUE: BLAH
+Tableau 2
+PROPERTY_NAME: x < INTEGER_VALUE: 5
+PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
+PROPERTY_NAME: y >= DOUBLE_VALUE: 1.000000
+Tableau 3
+PROPERTY_NAME: x < INTEGER_VALUE: 5
+PROPERTY_NAME: y > DOUBLE_VALUE: 4.000000
+PROPERTY_NAME: z = STRING_VALUE: BLAH

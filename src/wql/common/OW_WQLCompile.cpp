@@ -96,23 +96,19 @@ void OW_WQLCompile::eval_el::assign_unary_to_second(const OW_WQLCompile::eval_el
 // and terminals appear in the second operand first
 void OW_WQLCompile::eval_el::order(void)
 {
-	int k;
-	if ((!is_terminal1) && (!is_terminal2))
+	if ((is_terminal1 == EVAL_HEAP) && (is_terminal2 == EVAL_HEAP))
 	{
-		if ((k = opn2) > opn1)
+		if (opn2 > opn1)
 		{
-			opn2 = opn1;
-			opn1 =  k;
+			std::swap(opn1, opn2);
 		}
 	}
-	else if ((is_terminal1) && (!is_terminal2))
+	else if ((is_terminal1 != EVAL_HEAP) && (is_terminal2 == EVAL_HEAP))
 	{
-		if ((k = opn2) > opn1)
+		if (opn2 > opn1)
 		{
-			opn2 = opn1;
-			opn1 =  k;
-			is_terminal1 = EVAL_HEAP;
-			is_terminal2 = TERMINAL_HEAP;
+			std::swap(opn1, opn2);
+			std::swap(is_terminal1, is_terminal2);
 		}
 	}
 }
@@ -244,7 +240,7 @@ void OW_WQLCompile::compile(const OW_WQLSelectStatement * wqs)
 		TableauRow tr;
 		OW_Array<stack_el> conj;
 
-		if (!disj[i].type == TERMINAL_HEAP)
+		if (disj[i].type == EVAL_HEAP)
 		{
 			_gatherConj(conj, disj[i]);
 			for ( OW_UInt32 j=0, m = conj.size(); j < m; j++)
@@ -460,12 +456,12 @@ void OW_WQLCompile::_pushNOTDown()
 			for (OW_Int32 j=eval_heap.size()-1; j > i;j--)
 			{
 				// Test first operand
-				if ((!eval_heap[j].is_terminal1) && (eval_heap[j].opn1 == i))
+				if ((eval_heap[j].is_terminal1 == EVAL_HEAP) && (eval_heap[j].opn1 == i))
 
 					eval_heap[j].assign_unary_to_first(eval_heap[i]);
 
 				// Test second operand
-				if ((!eval_heap[j].is_terminal2) && (eval_heap[j].opn2 == i))
+				if ((eval_heap[j].is_terminal2 == EVAL_HEAP) && (eval_heap[j].opn2 == i))
 
 					eval_heap[j].assign_unary_to_second(eval_heap[i]);
 			}
@@ -535,13 +531,13 @@ void OW_WQLCompile::_factoring(void)
 
 		if (eval_heap[i].op == WQL_AND)
 		{
-			if (!eval_heap[i].is_terminal1)
+			if (eval_heap[i].is_terminal1 == EVAL_HEAP)
 			{
 				index = eval_heap[i].opn1; // remember the index
 				if (eval_heap[index].op == WQL_OR) _found = 1;
 			}
 
-			if ((_found == 0) && (!eval_heap[i].is_terminal2))
+			if ((_found == 0) && (eval_heap[i].is_terminal2 == EVAL_HEAP))
 			{
 				index = eval_heap[i].opn2; // remember the index
 				if (eval_heap[index].op == WQL_OR) _found = 2;
@@ -572,12 +568,17 @@ void OW_WQLCompile::_factoring(void)
 
 					// adjust pointers
 
-					if ((!eval_heap[j].is_terminal1)&&
-					(eval_heap[j].opn1 >= i))
+					if ((eval_heap[j].is_terminal1 == EVAL_HEAP) &&
+						(eval_heap[j].opn1 >= i))
+					{
 						eval_heap[j].opn1 += 2;
-					if ((!eval_heap[j].is_terminal2)&&
-					(eval_heap[j].opn2 >= i))
+					}
+
+					if ((eval_heap[j].is_terminal2 == EVAL_HEAP) &&
+						(eval_heap[j].opn2 >= i))
+					{
 						eval_heap[j].opn2 += 2;
+					}
 				}
 
 				n+=2; // increase size of array
@@ -628,21 +629,25 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 
 	stk.empty();
 
-	if ((i = eval_heap.size()) == 0) return;
+	if ((i = eval_heap.size()) == 0) 
+		return;
 
 	while (eval_heap[i-1].op == WQL_DO_NOTHING)
 	{
 		eval_heap.remove(i-1);
 		i--;
-		if (i == 0)	return;
+		if (i == 0)	
+			return;
 	}
-	//if (i == 0) return;
 
 	if (or_flag)
+	{
 		stk.append(stack_el(i-1, EVAL_HEAP));
+	}
 	else
 	{
-		if (sel.type == TERMINAL_HEAP) return;
+		if (sel.type != EVAL_HEAP) 
+			return;
 		stk.append(sel);
 	}
 
@@ -652,13 +657,17 @@ void OW_WQLCompile::_gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag)
 	{
 		int k = stk[i].opn;
 
-		if ((k < 0) || (stk[i].type == TERMINAL_HEAP))
+		if ((k < 0) || (stk[i].type != EVAL_HEAP))
+		{
 			i++;
+		}
 		else
 		{
 			if ( ((eval_heap[k].op != WQL_OR) && (or_flag)) ||
-			((eval_heap[k].op != WQL_AND) && (!or_flag))  )
+				((eval_heap[k].op != WQL_AND) && (!or_flag))  )
+			{
 				i++;
+			}
 			else
 			{
 				// replace the element with disjunction

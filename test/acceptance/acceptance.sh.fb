@@ -424,6 +424,13 @@ TestWQL()
 		ExitWithFail "WQL test exited with error"
 
 	Diff wqlTest.out wqlTest.out "WQL test: Diff test for WQL failed."
+
+	echo "Executing wql test suite 2, saving output in " $RESULTDIR/wqlTest2.out
+	$BUILDDIR/test/acceptance/progs/wqlTest2 \
+		> $RESULTDIR/wqlTest2.out 2>&1 || \
+		ExitWithFail "WQL test 2 exited with error"
+
+	Diff wqlTest2.out wqlTest2.out "WQL test 2: Diff test for WQL failed."
 	echo "WQL Testsuite Passed"
 }
 
