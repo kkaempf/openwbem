@@ -55,9 +55,9 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION(ThreadPool);
 
-
-#define OW_POOL_LOG_DEBUG(logger, arg) OW_LOG_DEBUG(logger, m_poolName + ": " + arg)
-#define OW_POOL_LOG_FATAL_ERROR(logger, arg) OW_LOG_FATAL_ERROR(logger, m_poolName + ": " + arg)
+// logger can be null
+#define OW_POOL_LOG_DEBUG(logger, arg) do { if ((logger)) OW_LOG_DEBUG(logger, m_poolName + ": " + arg); } while (0)
+#define OW_POOL_LOG_FATAL_ERROR(logger, arg) do { if ((logger)) OW_LOG_FATAL_ERROR(logger, m_poolName + ": " + arg); } while (0)
 
 /////////////////////////////////////////////////////////////////////////////
 class ThreadPoolImpl : public IntrusiveCountableBase
