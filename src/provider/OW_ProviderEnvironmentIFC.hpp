@@ -45,19 +45,39 @@
 namespace OpenWBEM
 {
 
+/**
+ * Note that some derived classes do not carry their own OperationContext,
+ * instead carrying only a reference to one.  In such a case, the
+ * ProviderEnvironmentIFC object is valid only for the lifetime of the
+ * referenced OperationContext.
+ */
 class ProviderEnvironmentIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ProviderEnvironmentIFC();
-	// This function returns a regular cimom handle that does access checking and may call providers.
+
+	/** This function returns a regular cimom handle that does access
+	 * checking and may call providers.  WARNING: The return value
+	 * is valid only as long as this object is valid (see class note).
+	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const = 0;
-	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
-	// no providers will be called.  This function should only be called if getCIMOMHandle()
-	// is insufficent.
+
+	/** This function returns a cimom handle that directly accesses
+	 * the repository (CIMServer is bypassed).  No providers will be
+	 * called.  This function should only be called if getCIMOMHandle()
+	 * is insufficent.  WARNING: The return value is valid only as long
+	 * as this object is valid (see class note).
+	 */
 	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
-	// This function returns a reference to the repository.  This function should only
-	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
+
+	/** This function returns a reference to the repository.  This
+	 * function should only be called if getCIMOMHandle() and
+	 * getRepositoryCIMOMHandle() are insufficient.
+	 * WARNING: The return value is valid only as long as this object
+	 * is valid (see class note).
+	 */
 	virtual RepositoryIFCRef getRepository() const = 0;
+
 	virtual LoggerRef getLogger() const = 0;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
 	virtual String getUserName() const = 0;

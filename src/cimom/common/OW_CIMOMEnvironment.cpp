@@ -344,6 +344,8 @@ CIMOMEnvironment::shutdown()
 	}
 	MutexLock ml(m_monitor);
 
+	// PHASE 1: SHUTDOWNS
+
 	// this is a global thing, so do it here
 	Socket::shutdownAllSockets();
 
@@ -357,17 +359,8 @@ CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
-		m_pollingManager = 0;
 	}
-	
-	// Clear selectable objects
-	try
-	{
-		_clearSelectables();
-	}
-	catch(...)
-	{
-	}
+
 	// Shutdown any loaded services
 	// For now. We need to unload these in the opposite order that
 	// they were loaded.
@@ -380,13 +373,8 @@ CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
-		m_services[i].setNull();
 	}
-	m_services.clear();
-	// Unload all request handlers
-	m_reqHandlers.clear();
-	// Unload the wql library if loaded
-	m_wqlLib = 0;
+
 	// Shutdown indication processing
 	if (m_indicationServer)
 	{
@@ -397,18 +385,15 @@ CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
-		m_indicationServer.setNull();
-		m_indicationRepLayerLib = 0;
 	}
-	// Delete the authentication manager
-	m_authManager = 0;
-	// Shutdown the cim server and delete it
+
+	// Shutdown the cim server
 	if (m_cimServer)
 	{
 		m_cimServer->shutdown();
-		m_cimServer = 0;
 	}
-	// Shutdown the cim repository and delete it
+
+	// Shutdown the cim repository
 	if (m_cimRepository)
 	{
 		try
@@ -419,16 +404,54 @@ CIMOMEnvironment::shutdown()
 		{
 		}
 		m_cimRepository->shutdown();
-		m_cimRepository = 0;
 	}
-	// Delete the authorization managerw
-	m_authorizerManager = 0;
-	// Delete the provider manager
+
+	// Shut down the provider manager
 	if (m_providerManager)
 	{
 		m_providerManager->shutdown();
-		m_providerManager = 0;
 	}
+
+	// PHASE 2: unload/delete
+
+	m_pollingManager = 0;
+	
+	// Clear selectable objects
+	try
+	{
+		_clearSelectables();
+	}
+	catch(...)
+	{
+	}
+
+	// We need to unload these in the opposite order that
+	// they were loaded.
+	for (int i = int(m_services.size())-1; i >= 0; i--)
+	{
+		m_services[i].setNull();
+	}
+	m_services.clear();
+	// Unload all request handlers
+	m_reqHandlers.clear();
+	// Unload the wql library if loaded
+	m_wqlLib = 0;
+	// Shutdown indication processing
+	if (m_indicationServer)
+	{
+		m_indicationServer.setNull();
+		m_indicationRepLayerLib = 0;
+	}
+	// Delete the authentication manager
+	m_authManager = 0;
+	// Delete the cim server
+	m_cimServer = 0;
+	// Delete the cim repository
+	m_cimRepository = 0;
+	// Delete the authorization managerw
+	m_authorizerManager = 0;
+	// Delete the provider manager
+	m_providerManager = 0;
 
 	logDebug("CIMOM Environment has shut down");
 }

@@ -62,6 +62,10 @@ class CppIndicationProviderIFC;
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  * 
+ * If your provider spawns a separate thread that needs access to a
+ * provider environment (for example, to get a CIMOM handle or logger),
+ * see the comment for the initialize() function.
+ *
  * DO NOT put inline functions in this class, they will be duplicated in
  * every provider and cause code bloat.
  */
@@ -76,10 +80,16 @@ public:
 	virtual ~CppProviderBaseIFC();
 	/**
 	 * Called by the CIMOM when the provider is initialized
-	 * @param hdl The handle to the cimom
+	 * @param env Gives the provider access to things such as a
+	 *            CIMOM handle, logger, etc.  This provider environment
+	 *            carries its own OperationContext and hence things like
+	 *            the CIMOM handle remain valid for the lifetime of *env.
+	 *            Thus the provider can store a copy of env for
+	 *            later use, e.g., by a separate thread spawned by
+	 *            the provider.
 	 * @throws CIMException
 	 */
-	virtual void initialize(const ProviderEnvironmentIFCRef&);
+	virtual void initialize(const ProviderEnvironmentIFCRef& env);
 	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with

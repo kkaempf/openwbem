@@ -129,16 +129,32 @@ public:
 	};
 	
 	// from ServiceEnvironmentIFC
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS);
+
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
 	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag doIndications,
 		EBypassProvidersFlag bypassProviders,
 		ELockingFlag locking);
+
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
 	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context);
+
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
 	CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const CIMInstance& inst,
 		OperationContext& context);
+
 	WQLIFCRef getWQLRef();
 	virtual RequestHandlerIFCRef getRequestHandler(
 		const String &id);
