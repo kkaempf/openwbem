@@ -38,6 +38,8 @@ OW_Bool.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_Condition.cpp \
+OW_ConfigException.cpp \
+OW_ConfigFile.cpp \
 OW_COWReferenceBase.cpp \
 OW_DataStreams.cpp \
 OW_DateTime.cpp \
@@ -109,6 +111,8 @@ OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
 OW_Condition.hpp \
+OW_ConfigException.hpp \
+OW_ConfigFile.hpp \
 OW_ConfigOpts.hpp \
 OW_COWReference.hpp \
 OW_COWReferenceBase.hpp \

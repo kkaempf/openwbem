@@ -43,6 +43,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_ConfigFile.hpp"
 
 namespace OpenWBEM
 {
@@ -160,7 +161,7 @@ private:
 		RequestHandlerIFCRef rqIFCRef;
 		String filename;
 	};
-	typedef Map<String, String> ConfigMap;
+	typedef ConfigFile::ConfigMap ConfigMap;
 	typedef Reference<ConfigMap> ConfigMapRef;
 	typedef SortedVectorMap<String, ReqHandlerData> ReqHandlerMap;
 	mutable Mutex m_monitor;

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,14 +11,14 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Center 7 nor the names of its
+*  - Neither the name of Vintela, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
 * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -30,6 +30,8 @@
 #ifndef OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+
+
 #ifndef OW_DEFAULT_HTTP_PORT
 #define OW_DEFAULT_HTTP_PORT "5988"
 #endif
@@ -66,11 +68,6 @@
 #ifndef OW_DEFAULT_AUTH_MOD
 #define OW_DEFAULT_AUTH_MOD OW_DEFAULT_OWLIB_DIR"/authentication/libpamauthentication"OW_SHAREDLIB_EXTENSION
 #endif
-
-namespace OpenWBEM
-{
-
-									
 #ifndef OW_DEFAULT_CONFIG_FILE
 #define OW_DEFAULT_CONFIG_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf"
 #endif
@@ -134,6 +131,9 @@ namespace OpenWBEM
 #ifndef OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS
 #define OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS "30"
 #endif
+
+namespace OpenWBEM
+{
 namespace ConfigOpts
 {
 	static const char* const DEBUG_opt = "owcimomd.debugflag";
@@ -185,8 +185,8 @@ namespace ConfigOpts
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
-} // end namespace ConfigOpts
 
+} // end namespace ConfigOpts
 } // end namespace OpenWBEM
 
 #endif

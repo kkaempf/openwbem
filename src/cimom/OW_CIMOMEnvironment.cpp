@@ -54,7 +54,6 @@
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_OperationContext.hpp"
 
-#include <fstream>
 #include <iostream>
 
 namespace OpenWBEM
@@ -65,9 +64,10 @@ OW_DEFINE_EXCEPTION(CIMOMEnvironment)
 
 using std::cerr;
 using std::endl;
-using std::ifstream;
+
 // static global
 CIMOMEnvironmentRef CIMOMEnvironment::g_cimomEnvironment;
+
 namespace
 {
 	class CIMOMProviderEnvironment : public ProviderEnvironmentIFC
@@ -565,52 +565,9 @@ CIMOMEnvironment::_createLogger()
 void
 CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 {
-	ifstream file(filename.c_str(), std::ios::in);
-	if (!file)
-	{
-		file.close();
-		OW_THROW(ConfigException, format("Unable to read config"
-					" file: %1", filename).c_str());
-	}
-	
 	// We don't have a logger at this point, but it will get printed anyway
-	logDebug("\nCIMOM reading config file: " + filename);
-	String line;
-	int lineNum = 0;
-	while(file)
-	{
-		lineNum++;
-		line = String::getLine(file);
-		if (!line.empty())
-		{
-			// If comment line, ignore
-			if (line[0] == '#' || line[0] == ';')
-			{
-				continue;
-			}
-			size_t idx = line.indexOf('=');
-			if (idx != String::npos)
-			{
-				if(idx + 1 < line.length())
-				{
-					String itemValue = line.substring(idx + 1).trim();
-					if(!itemValue.empty())
-					{
-						setConfigItem(line.substring(0, idx).trim(), itemValue,
-							E_PRESERVE_PREVIOUS);
-					}
-				}
-			}
-			else
-			{
-				file.close();
-				OW_THROW(ConfigException, format("Error in config file:"
-					" %1 at line %2.\n  Line is %3", filename, lineNum,
-					line).c_str());
-			}
-		}
-	}
-	file.close();
+	logDebug("\nUsing config file: " + filename);
+	ConfigFile::loadConfigFile(filename, *m_configItems);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
