@@ -21,8 +21,6 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
-noinst_LIBRARIES = libowhttpxmllistener.a
-
 libowhttpxmllistener_a_SOURCES = \
 OW_XMLListener.cpp \
 OW_ListenerAuthenticator.cpp \

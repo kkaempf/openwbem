@@ -3,12 +3,12 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 noinst_LIBRARIES = \
 libsampleprovider.a 
 
-#libindprovider.a \
+#libindprovider.a
 
 OW_SHARED_LIBS = \
 libsampleprovider.so 
 
-#libindprovider.so \
+#libindprovider.so
 
 all-local: $(OW_SHARED_LIBS)
 	
