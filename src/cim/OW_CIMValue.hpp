@@ -256,10 +256,10 @@ public:
 private:
 	// These are private/unimplemented to help prevent unintended errors of
 	// passing a pointer to the constructor.
-	CIMValue(const void*);
-	CIMValue(void*);
-	CIMValue(volatile const void*);
-	CIMValue(volatile void*);
+	explicit CIMValue(const void*);
+	explicit CIMValue(void*);
+	explicit CIMValue(volatile const void*);
+	explicit CIMValue(volatile void*);
 public:
 	/**
 	 * Destroy this CIMValue object.
