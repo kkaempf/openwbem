@@ -157,8 +157,6 @@ public:
 			m_inst = createTheInst(cimClass);
 		}
 
-		OW_CIMInstance inst = createTheInst(cimClass);
-
 		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 
