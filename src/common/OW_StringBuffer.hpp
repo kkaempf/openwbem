@@ -111,6 +111,16 @@ public:
 		return String(String::E_TAKE_OWNERSHIP, bfr, m_len);
 	}
 	size_t length() const {  return m_len; }
+
+	/**
+	 * Truncate the string at the given index. This doesn't change anything
+	 * before the given index and does not free up any memory.
+	 * @param index The index to truncate the string buffer at. If this value
+	 * is greater than the current length of the StringBuffer, then nothing
+	 * is done.
+	 */
+	void truncate(size_t index);
+
 	size_t allocated() const {  return m_allocated; }
 	void reset();
 	const char* c_str() const {  return m_bfr; }

@@ -113,6 +113,18 @@ StringBuffer::reset()
 	m_len = 0;
 	m_bfr[0] = '\0';
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StringBuffer::truncate(size_t index)
+{
+	if(index < m_len)
+	{
+		m_bfr[index] = '\0';
+		m_len = index+1;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 char
 StringBuffer::operator[] (size_t ndx) const
