@@ -33,9 +33,12 @@
 #include "OW_String.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_Reference.hpp"
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
+
+OW_DECLARE_EXCEPTION(Logger)
 
 /**
  * Logging interface.

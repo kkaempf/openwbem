@@ -39,11 +39,6 @@ namespace OpenWBEM
 
 static String getMsg(CIMException::ErrNoType errval, const char* msg = 0);
 //////////////////////////////////////////////////////////////////////////////
-CIMException::CIMException(CIMException::ErrNoType errval) :
-	Exception(), m_errno(errval), m_longmsg(0)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
 	const char* msg) :
 	Exception(file, line, msg), m_errno(errval), m_longmsg(0)

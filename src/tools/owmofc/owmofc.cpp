@@ -42,6 +42,7 @@
 #include "OW_MOFCompCIMOMHandle.hpp"
 #include "OW_CIMRepository.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_RequestHandlerIFC.hpp"
 #include <iostream>
 #ifdef OW_HAVE_GETOPT_H
 #include <getopt.h>
@@ -199,19 +200,21 @@ public:
 	}
 	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
 	{
-		OW_THROW(Exception, "Unsupported");
+		OW_ASSERT("Unsupported" == 0);
 	}
 	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
 	{
-		OW_THROW(Exception, "Unsupported");
+		OW_ASSERT("Unsupported" == 0);
 	}
 	virtual RequestHandlerIFCRef getRequestHandler(const String &) 
 	{
-		OW_THROW(Exception, "Unsupported");
+		OW_ASSERT("Unsupported" == 0);
+		return RequestHandlerIFCRef();
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &, ESendIndicationsFlag, EBypassProvidersFlag) 
 	{
-		OW_THROW(Exception, "Unsupported");
+		OW_ASSERT("Unsupported" == 0);
+		return CIMOMHandleIFCRef();
 	}
 	virtual String getConfigItem(const String &, const String &defRetVal) const 
 	{

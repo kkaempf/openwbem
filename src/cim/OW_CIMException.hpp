@@ -87,7 +87,6 @@ public:
 		/** The specified extrinsic Method does not exist */
 		METHOD_NOT_FOUND = 17
 	};
-	CIMException(ErrNoType errval);
 	CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);
 	~CIMException() throw();

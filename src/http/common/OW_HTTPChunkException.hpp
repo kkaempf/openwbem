@@ -38,10 +38,8 @@ namespace OpenWBEM
 class HTTPChunkException : public SocketException
 {
 public:
-	HTTPChunkException() : SocketException() {}
 	HTTPChunkException(const char* file, int line, const char* msg)
 		: SocketException(file, line, msg) {}
-	HTTPChunkException(const char* msg) : SocketException(msg) {}
 	virtual const char* type() const { return "HTTPChunkException"; }
 };
 

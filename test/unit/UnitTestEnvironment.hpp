@@ -35,6 +35,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Map.hpp"
+#include "OW_Assertion.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -80,8 +81,8 @@ public:
 		return RequestHandlerIFCRef();
 	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &, ESendIndicationsFlag, EBypassProvidersFlag) {
-		OW_THROW(Exception, "Cannot call TestEnvironment::getCIMOMHandle()");
-		//return CIMOMHandleIFCRef();
+		OW_ASSERT("Cannot call TestEnvironment::getCIMOMHandle()" == 0);
+		return CIMOMHandleIFCRef();
 	}
 
 	Map<String, String> config;

@@ -40,12 +40,15 @@ namespace OpenWBEM
 {
 
 #ifdef OW_CHECK_NULL_REFERENCES
+OW_DECLARE_EXCEPTION(NULLCOWReference);
+OW_DEFINE_EXCEPTION(NULLCOWReference);
+
 void COWReferenceBase::throwNULLException()
 {
 #ifdef OW_DEBUG
 	assert(0); // segfault so we can get a core
 #endif
-	OW_THROW(Exception, "NULL COWReference dereferenced");
+	OW_THROW(NULLCOWReferenceException, "NULL COWReference dereferenced");
 }
 #endif
 

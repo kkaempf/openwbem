@@ -52,6 +52,9 @@ using std::endl;
 using std::cerr;
 using namespace OpenWBEM;
 
+OW_DECLARE_EXCEPTION(ListenerTest);
+OW_DEFINE_EXCEPTION(ListenerTest);
+
 Semaphore sem(0);
 Semaphore test1sem(0);
 Semaphore test2sem(0);
@@ -324,7 +327,7 @@ int main(int argc, char* argv[])
 			{
 				if (!test1sem.timedWait(25))
 				{
-					OW_THROW(Exception, "semaphore 1 timed out");
+					OW_THROW(ListenerTestException, "semaphore 1 timed out");
 				}
 			}
 			// we'll wait for 5 TestIndication2 indications.
@@ -425,7 +428,7 @@ int main(int argc, char* argv[])
 		{
 			if (!sem.timedWait(25))
 			{
-				OW_THROW(Exception, "timeout on semaphore");
+				OW_THROW(ListenerTestException, "timeout on semaphore");
 			}
 			MutexLock guard4(coutMutex);
 			cout << i << endl;

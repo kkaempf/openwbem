@@ -39,13 +39,10 @@ namespace OpenWBEM
 class HTTPException : public Exception
 {
 public:
-	HTTPException() : Exception(), m_response(-1) {}
 	HTTPException(const char* file, int line, const char* msg)
 		: Exception(file, line, msg), m_response(-1){}
 	HTTPException(const char* file, int line, const char* msg, int response)
 		: Exception(file, line, msg), m_response(response) {}
-	HTTPException(const char* msg) : Exception(msg),
-		m_response(-1) {}
 	const char* getId() { return getMessage(); }
 	int getErrorCode() { return m_response; }
 	virtual const char* type() const { return "HTTPException"; }

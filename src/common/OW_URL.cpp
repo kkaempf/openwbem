@@ -29,10 +29,11 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_URL.hpp"
-#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
+
+OW_DEFINE_EXCEPTION(MalformedURL)
 
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -112,7 +113,7 @@ URL::URL(const String& sUrl): port(0)
 			}
 			catch (const StringConversionException&)
 			{
-				OW_THROW(Exception, String("Invalid URL: " + sUrl).c_str());
+				OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
 			}
 		}
 	}
@@ -120,7 +121,7 @@ URL::URL(const String& sUrl): port(0)
 		host = sURL;
 	else
 	{
-		OW_THROW(Exception, String("Invalid URL: " + sUrl).c_str());
+		OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
 	}
 }
 

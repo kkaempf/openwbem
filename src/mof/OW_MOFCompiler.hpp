@@ -35,6 +35,7 @@
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_Reference.hpp"
 #include "OW_MOFGrammar.hpp"
+#include "OW_Exception.hpp"
 
 // these 2 need to be at global scope because flex also declares them.
 struct yy_buffer_state;
@@ -42,6 +43,8 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 namespace OpenWBEM
 {
+
+OW_DECLARE_EXCEPTION(MOFCompiler)
 
 namespace MOF
 {

@@ -58,6 +58,9 @@
 namespace OpenWBEM
 {
 
+OW_DECLARE_EXCEPTION(CIMOMEnvironment)
+OW_DEFINE_EXCEPTION(CIMOMEnvironment)
+
 using std::cerr;
 using std::endl;
 using std::ifstream;
@@ -77,12 +80,14 @@ namespace
 		}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			OW_THROW(Exception, "Cannot call CIMOMProviderEnvironment::getCIMOMHandle()");
+			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getCIMOMHandle()" == 0);
+			return CIMOMHandleIFCRef();
 		}
 		
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			OW_THROW(Exception, "Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()");
+			OW_ASSERT("Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()" == 0);
+			return CIMOMHandleIFCRef();
 		}
 		
 		virtual RepositoryIFCRef getRepository() const
@@ -374,8 +379,7 @@ CIMOMEnvironment::getProviderManager()
 		MutexLock l(m_runningGuard);
 		if (!m_running)
 		{
-			OW_THROW(Exception, "CIMOMEnvironment is shutting down");
-			//return ProviderManagerRef();
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
 		}
 	}
 	MutexLock ml(m_monitor);
@@ -386,7 +390,6 @@ CIMOMEnvironment::getProviderManager()
 void
 CIMOMEnvironment::_createAuthManager()
 {
-	//ServiceEnvironmentIFCRef env(this, true); // no-delete reference
 	m_authManager = AuthManagerRef(new AuthManager);
 	m_authManager->init(g_cimomEnvironment);
 }
@@ -634,7 +637,7 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 		MutexLock l(m_runningGuard);
 		if (!m_running)
 		{
-			OW_THROW(Exception, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
 		}
 	}
 	MutexLock ml(m_monitor);
@@ -654,7 +657,7 @@ CIMOMEnvironment::getCIMOMHandle(const UserInfo& aclInfo,
 		MutexLock l(m_runningGuard);
 		if (!m_running)
 		{
-			OW_THROW(Exception, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
 		}
 	}
 	MutexLock ml(m_monitor);
@@ -711,7 +714,7 @@ CIMOMEnvironment::getWQLRef()
 		MutexLock l(m_runningGuard);
 		if (!m_running)
 		{
-			OW_THROW(Exception, "CIMOMEnvironment is shutting down");
+			OW_THROW(CIMOMEnvironmentException, "CIMOMEnvironment is shutting down");
 		}
 	}
 	MutexLock ml(m_monitor);

@@ -63,18 +63,6 @@ static char* dupString(const char* str)
 	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////					
-Exception::Exception()
-	: std::exception()
-	, m_file(0)
-	, m_line(0)
-	, m_msg(0)
-{
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	StackTrace::printStackTrace();
-#endif
-	m_mutex->acquire();
-}
-//////////////////////////////////////////////////////////////////////////////					
 Exception::Exception(const char* file, int line, const char* msg)
 	: std::exception()
 	, m_file(0)
@@ -86,19 +74,6 @@ Exception::Exception(const char* file, int line, const char* msg)
 #endif
 	m_mutex->acquire();
 	m_file = dupString(file);
-	m_msg = dupString(msg);
-}
-//////////////////////////////////////////////////////////////////////////////					
-Exception::Exception(const char* msg)
-	: std::exception()
-	, m_file(0)
-	, m_line(0)
-	, m_msg(0)
-{
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	StackTrace::printStackTrace();
-#endif
-	m_mutex->acquire();
 	m_msg = dupString(msg);
 }
 //////////////////////////////////////////////////////////////////////////////					
@@ -142,6 +117,20 @@ Exception::swap(Exception& rhs)
 	std::swap(m_msg, rhs.m_msg);
 }
 		
+//////////////////////////////////////////////////////////////////////////////					
+const char* 
+Exception::type() const 
+{  
+	return "Exception"; 
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+int 
+Exception::getLine() const 
+{  
+	return m_line; 
+}
+
 //////////////////////////////////////////////////////////////////////////////					
 const char*
 Exception::getMessage() const

@@ -50,6 +50,7 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
+#include "OW_Assertion.hpp"
 #include <algorithm> // for std::remove
 
 namespace OpenWBEM
@@ -126,7 +127,8 @@ public:
 		ESendIndicationsFlag /*doIndications*/, 
 		EBypassProvidersFlag /*bypassProviders*/)
 	{
-		OW_THROW(Exception, "Not implemented");
+		OW_ASSERT("Not implemented" == 0);
+		return CIMOMHandleIFCRef();
 	}
 	virtual LoggerRef getLogger() const
 	{

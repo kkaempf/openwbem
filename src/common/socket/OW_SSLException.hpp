@@ -38,10 +38,8 @@ namespace OpenWBEM
 class SSLException : public SocketException
 {
 public:
-	SSLException() : SocketException() {}
 	SSLException(const char* file, int line, const char* msg)
 		: SocketException(file, line, msg) {}
-	SSLException(const char* msg) : SocketException(msg) {}
 	virtual const char* type() const { return "SSLException"; }
 };
 

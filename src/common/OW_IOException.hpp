@@ -39,9 +39,7 @@ OW_DECLARE_EXCEPTION(IO);
 class BadCIMSignatureException : public IOException
 {
 public:
-	BadCIMSignatureException();
 	BadCIMSignatureException(const char* file, int line, const char* msg);
-	BadCIMSignatureException(const char* msg);
 	virtual ~BadCIMSignatureException() throw();
 	virtual const char* type() const;
 };

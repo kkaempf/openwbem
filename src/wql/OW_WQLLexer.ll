@@ -165,8 +165,33 @@ xcstop			\*+\/
 xcinside		[^*/]+
 
 digit			[0-9]
-letter			[\200-\377_A-Za-z]
-letter_or_digit	[\200-\377_A-Za-z0-9]
+
+/* UTF-8 (from Unicode 4.0.0 standard):
+Table 3-6. Well-Formed UTF-8 Byte Sequences Code Points 
+                   1st Byte 2nd Byte 3rd Byte 4th Byte 
+U+0000..U+007F     00..7F 
+U+0080..U+07FF     C2..DF   80..BF 
+U+0800..U+0FFF     E0       A0..BF   80..BF 
+U+1000..U+CFFF     E1..EC   80..BF   80..BF 
+U+D000..U+D7FF     ED       80..9F   80..BF 
+U+E000..U+FFFF     EE..EF   80..BF   80..BF 
+U+10000..U+3FFFF   F0       90..BF   80..BF   80..BF 
+U+40000..U+FFFFF   F1..F3   80..BF   80..BF   80..BF 
+U+100000..U+10FFFF F4       80..8F   80..BF   80..BF
+*/
+utf8_2 [\xC2-\xDF][\x80-\xBF]
+utf8_3_1 \xE0[\xA0-\xBF][\x80-\xBF]
+utf8_3_2 [\xE1-\xEC][\x80-\xBF][\x80-\xBF]
+utf8_3_3 \xED[\x80-\x9F][\x80-\xBF]
+utf8_3_4 [\xEE-\xEF][\x80-\xBF][\x80-\xBF]
+utf8_4_1 \xF0[\x90-\xBF][\x80-\xBF][\x80-\xBF]
+utf8_4_2 [\xF1-\xF3][\x80-\xBF][\x80-\xBF][\x80-\xBF]
+utf8_4_3 \xF4[\x80-\x8F][\x80-\xBF][\x80-\xBF]
+
+utf8Char {utf8_2}|{utf8_3_1}|{utf8_3_2}|{utf8_3_3}|{utf8_3_4}|{utf8_4_1}|{utf8_4_2}|{utf8_4_3}
+
+letter			[_A-Za-z]|{utf8Char}
+letter_or_digit		[_A-Za-z0-9]|{utf8Char}
 
 identifier		{letter}{letter_or_digit}*
 
@@ -482,14 +507,6 @@ ZONE { RETURN_VAL(ZONE); }
 				}
 
 {identifier}			{
-					/*
-					 *  Convert the identifier to lower case
-					for (int i = 0; yytext[i]; i++)
-					{
-						if (isupper(static_cast<unsigned char>(yytext[i])))
-							yytext[i] = tolower(static_cast<unsigned char>(yytext[i]));
-					}
-					 */
 					RETURN_STR(IDENT);
 				}
 

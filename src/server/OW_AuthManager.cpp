@@ -37,6 +37,8 @@
 namespace OpenWBEM
 {
 
+OW_DEFINE_EXCEPTION(AuthManager)
+
 ///////////////////////////////////////////////////////////////////////////////
 AuthManager::AuthManager()
 	: m_authenticator()
@@ -73,7 +75,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 				" to initialize: %2 - %3"
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
-			OW_THROW(Exception, "No Authentication Mechanism Available");
+			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
 		}
 		catch (ThreadCancelledException&)
 		{
@@ -84,7 +86,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 			env->getLogger()->logError(format("Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
-			OW_THROW(Exception, "No Authentication Mechanism Available");
+			OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
 		}
 	}
 	else
@@ -92,7 +94,7 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 		env->getLogger()->logError(format("Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
-		OW_THROW(Exception, "No Authentication Mechanism Available");
+		OW_THROW(AuthManagerException, "No Authentication Mechanism Available");
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////

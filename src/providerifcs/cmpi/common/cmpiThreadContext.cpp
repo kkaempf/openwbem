@@ -37,16 +37,21 @@ CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext()
 	return (CMPI_ThreadContext*)pthread_getspecific(theKey);
 }
 
+namespace OpenWBEM {
+OW_DECLARE_EXCEPTION(CMPI_ThreadContext)
+OW_DEFINE_EXCEPTION(CMPI_ThreadContext)
+}
+
 void CMPI_ThreadContext::setContext()
 {
 	pthread_key_t k;
 	int rc = pthread_key_create(&k,NULL);
 	if (rc != 0)
-		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_key_create failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_key_create failed. error = %1", rc).c_str());
 
 	rc = pthread_setspecific(k,this);
 	if (rc != 0)
-		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
 	theKey = k;
 	//std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
@@ -83,7 +88,7 @@ void CMPI_ThreadContext::setThreadContext()
 	// set this as the context
 	int rc = pthread_setspecific(theKey,this);
 	if (rc != 0)
-		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
 	return;
 }
@@ -149,9 +154,8 @@ CMPI_ThreadContext::~CMPI_ThreadContext()
 
 	if (m_prev != NULL)
 	{
-		int rc = pthread_setspecific(theKey, m_prev);
-		if (rc != 0)
-			OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
+		pthread_setspecific(theKey, m_prev);
+		// can't throw an exception, so just ignore errors
 		return;
 	}
 }

@@ -140,9 +140,10 @@ AccessMgr::getMethodType(int op)
 		case INVOKEMETHOD:
 			return String("rw");
 		default:
-			OW_THROW(Exception, "Unknown operation type passed to "
-				"AccessMgr.  This shouldn't happen");
+			OW_ASSERT("Unknown operation type passed to "
+				"AccessMgr.  This shouldn't happen" == 0);
 	}
+	return "";
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -41,12 +41,15 @@ namespace OpenWBEM
 {
 
 #ifdef OW_CHECK_NULL_REFERENCES
+OW_DECLARE_EXCEPTION(NULLReference)
+OW_DEFINE_EXCEPTION(NULLReference)
+
 void ReferenceBase::throwNULLException()
 {
 #ifdef OW_DEBUG
 	assert(0); // segfault so we can get a core
 #endif
-	OW_THROW(Exception, "NULL Reference dereferenced");
+	OW_THROW(NULLReferenceException, "NULL Reference dereferenced");
 }
 #endif
 

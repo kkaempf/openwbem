@@ -39,18 +39,17 @@ namespace OpenWBEM
 class Mutex;
 class Exception : public std::exception
 {
-public:
-	Exception();
+protected:
 	Exception(const char* file, int line, const char* msg);
-	explicit Exception(const char* msg);
 	Exception(const Exception& e);
 	Exception& operator= (Exception rhs);
 	void swap(Exception& x);
 	virtual ~Exception() throw();
-	virtual const char* type() const {  return "Exception"; }
+public:
+	virtual const char* type() const;
 	virtual const char* getMessage() const;
 	const char* getFile() const;
-	int getLine() const {  return m_line; }
+	int getLine() const;
 	virtual const char* what() const throw();
 protected:
 	char* m_file;
@@ -59,26 +58,25 @@ protected:
 private:
 	static Mutex* m_mutex;
 };
+
 std::ostream& operator<< (std::ostream& os, const Exception& e);
+
 #define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
 #define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
+
 #define OW_DECLARE_EXCEPTION(NAME) \
 class NAME##Exception : public Exception \
 { \
 public: \
-	NAME##Exception(); \
 	NAME##Exception(const char* file, int line, const char* msg); \
-	NAME##Exception(const char* msg); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 };
+
 #define OW_DEFINE_EXCEPTION(NAME) \
-NAME##Exception::NAME##Exception() : Exception() {} \
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg) \
 	: Exception(file, line, msg) {} \
-NAME##Exception::NAME##Exception(const char* msg) : Exception(msg) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
-\
 const char* NAME##Exception::type() const { return #NAME "Exception"; } \
 
 } // end namespace OpenWBEM

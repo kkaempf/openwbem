@@ -34,6 +34,9 @@
 namespace OpenWBEM
 {
 
+OW_DEFINE_EXCEPTION(Logger)
+
+
 Mutex loggerMutex;
 //////////////////////////////////////////////////////////////////////////////
 Logger::~Logger()

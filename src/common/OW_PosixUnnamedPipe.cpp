@@ -181,7 +181,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(Exception, Format("pipe write failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+		OW_THROW(IOException, Format("pipe write failed. errno = %1(%2)", errno, strerror(errno)).c_str());
 	}
 	return rc;
 }
@@ -200,7 +200,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(Exception, Format("pipe read failed. errno = %1(%2)", errno, strerror(errno)).c_str());
+		OW_THROW(IOException, Format("pipe read failed. errno = %1(%2)", errno, strerror(errno)).c_str());
 	}
 	return rc;
 }

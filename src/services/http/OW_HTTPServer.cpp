@@ -54,6 +54,8 @@
 namespace OpenWBEM
 {
 
+OW_DEFINE_EXCEPTION(HTTPServer)
+
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::HTTPServer()
 	: m_upipe(UnnamedPipe::createUnnamedPipe())
@@ -168,7 +170,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 	}
 	catch (const StringConversionException& e)
 	{
-		OW_THROW(Exception, format("Unable to initialize HTTP Server because"
+		OW_THROW(HTTPServerException, format("Unable to initialize HTTP Server because"
 			" of invalid config item. %1", e.getMessage()).c_str());
 	}
 }

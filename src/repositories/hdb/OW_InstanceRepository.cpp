@@ -121,7 +121,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 	String oclass = kprops[0].getOriginClass().toLowerCase();
 	if(oclass.empty())
 	{
-		OW_THROW(Exception,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			format("No orgin class for key property on class: %1",
 				theClass.getName()).c_str());
 	}

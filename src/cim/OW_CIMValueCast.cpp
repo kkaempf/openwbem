@@ -216,7 +216,7 @@ makeValueArray(CIMValue& theValue)
 			break;
 		}
 		default:
-			OW_THROW(Exception, format("Invalid data type: %1",
+			OW_THROW(ValueCastException, format("Invalid data type: %1",
 				theValue.getType()).c_str());
 	}
 }
@@ -258,7 +258,7 @@ isCompatible(CIMDataType::Type from, CIMDataType::Type to)
 		}
 		return false;
 	}
-	OW_THROW(Exception, format("Invalid to datatype: %1", to).c_str());
+	OW_THROW(ValueCastException, format("Invalid to datatype: %1", to).c_str());
 	return false;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ convertArray(const CIMValue& value, const CIMDataType& dataType)
 			break;
 		}
 		default:
-			OW_THROW(Exception, "LOGIC ERROR");
+			OW_THROW(ValueCastException, "LOGIC ERROR");
 	}
 	return rcv;
 }
@@ -592,7 +592,7 @@ convertToStringArray(const CIMValue& value, bool onlyOne)
 			break;
 		}
 		default:
-			OW_THROW(Exception, "LOGIC ERROR");
+			OW_THROW(ValueCastException, "LOGIC ERROR");
 	}
 	return rvra;
 }

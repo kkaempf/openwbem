@@ -40,11 +40,8 @@ namespace OpenWBEM
 class HDBException : public Exception
 {
 public:
-	HDBException() : Exception() {}
 	HDBException(const char* file, int line, const char* msg) :
 		Exception(file, line, msg) {}
-	HDBException(const char* msg) : Exception(msg) {}
-	HDBException(const HDBException& e) : Exception(e) {}
 		
 	virtual const char* type() const { return "HDBException"; }
 };

@@ -46,6 +46,7 @@ void OW_LinuxSharedLibraryLoaderTestCases::tearDown()
 
 void OW_LinuxSharedLibraryLoaderTestCases::testLoadLibrary()
 {
+	// TODO: rename this to be generic
 	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
 	SharedLibraryRef lib = sll->loadSharedLibrary(
 			"../../src/common/libopenwbem"OW_SHAREDLIB_EXTENSION, g_testEnvironment->getLogger());

@@ -961,8 +961,8 @@ HTTPSvrConnection::options()
 			headerKey = hp + "CIMSupportedExportGroups";
 			break;
 		default:
-			OW_THROW(Exception, "Attempting OPTIONS on a CIMProductIFC "
-				"that is not a LISTENER or SERVER");
+			OW_ASSERT( "Attempting OPTIONS on a CIMProductIFC "
+				"that is not a LISTENER or SERVER" == 0);
 	}
 	String headerVal;
 	for (size_t i = 0; i < cf.supportedGroups.size(); i++)

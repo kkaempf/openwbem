@@ -31,9 +31,12 @@
 #define OW_URL_HPP_
 #include "OW_config.h"
 #include "OW_String.hpp"
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
+
+OW_DECLARE_EXCEPTION(MalformedURL)
 
 /**
  * This is used easily parse and manage http URLs
@@ -44,6 +47,7 @@ struct URL
 	/**
 	 * Allocate a new URL, based on a string.  This ctor parses the string
 	 * and fills out the member variables.
+	 * @throws MalformedURLException
 	 */
 	URL(const String& sUrl);
 	String protocol;

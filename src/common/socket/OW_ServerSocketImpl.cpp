@@ -213,17 +213,24 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 		}
 	}
 		
-	if(bind(m_sockfd, m_localAddress.getNativeForm(),
+	if(::bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
-		OW_THROW(SocketException, format("ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: bind failed: %1",
 				strerror(errno)).c_str());
 	}
-	if(listen(m_sockfd, queueSize) == -1)
+	// give anybody access to the socket
+	if(::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
-		OW_THROW(SocketException, format("ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: chmod failed: %1",
+				strerror(errno)).c_str());
+	}
+	if(::listen(m_sockfd, queueSize) == -1)
+	{
+		close();
+		OW_THROW(SocketException, format("ServerSocketImpl: listen failed: %1",
 			strerror(errno)).c_str());
 	}
 	fillAddrParms();

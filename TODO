@@ -41,10 +41,8 @@ Fix problems:
       doesn't re-throw the exception.  A way to avoid the behavior altogether
       is to set the env var LD_ASSUME_KERNEL=2.4.19 which will use the old
       LinuxThreads library.
-    - Domain socket is only openable by root.
     - Add tests in configure.in for -W flags supported.
-    - Fix String::equalsIgnoreCase(), toUpperCase(), toLowerCase() to be UTF-8
-      aware.
+    - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
     - CIMExport and CIMExportMethod headers should be used for indications.
     - Name dirs/libs such that OW 2.0 and 3.0 can coexist on the same machine.
@@ -188,8 +186,6 @@ Post 3.0
       digest, pki, kerberos, or user defined.
 
 Refactorings:
-    - Get rid of all the bool parameters and replace them with enums
-    - Make OW_Exception constructor protected and fix appropriate code.
     - Remove *E functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
       that return OW_Enumeration<T> and OW_Array<T>.
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)

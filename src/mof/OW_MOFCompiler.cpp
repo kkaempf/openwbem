@@ -43,6 +43,8 @@ YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
 namespace OpenWBEM
 {
 
+OW_DEFINE_EXCEPTION(MOFCompiler)
+
 namespace MOF
 {
 
@@ -264,14 +266,14 @@ String Compiler::fixParsedString(const String& s)
 						}
 						if (hex > CHAR_MAX)
 						{
-							OW_THROW(Exception, "Escape sequence larger than supported maximum");
+							OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
 						}
 						unescaped += static_cast<char>(hex);
 					}
 					break;
 				default:
-					/* this could never happen unless someone meses up the lexer
-					OW_THROW(Exception, "Invalid escape sequence"); */
+					// this could never happen unless someone messes up the lexer
+					OW_ASSERT("Invalid escape sequence" == 0);
 					break;
 			}
 		}

@@ -35,6 +35,7 @@
 #include "OW_ServiceIFC.hpp"
 #include "OW_URL.hpp"
 #include "OW_ThreadPool.hpp"
+#include "OW_Exception.hpp"
 #include <ctime>
 
 namespace OpenWBEM
@@ -48,6 +49,9 @@ class DigestAuthentication;
 #endif
 class HTTPServer;
 class UnnamedPipe;
+
+OW_DECLARE_EXCEPTION(HTTPServer)
+
 class HTTPServer : public ServiceIFC
 {
 public:

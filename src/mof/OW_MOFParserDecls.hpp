@@ -30,10 +30,16 @@
 #ifndef OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #define OW_MOF_PARSER_DECLS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_Exception.hpp"
 #include <stdio.h>
 
 extern int yydebug;
 extern int yyparse(void *context);
 extern FILE* yyin;
+
+namespace OpenWBEM
+{
+OW_DECLARE_EXCEPTION(MOFParser)
+}
 
 #endif // MOF_PARSER_DECLS_HPP_

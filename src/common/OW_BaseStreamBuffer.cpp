@@ -31,6 +31,7 @@
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Exception.hpp"
 #include "OW_String.hpp"
+#include "OW_Assertion.hpp"
 #include <iostream> // for cerr
 #include <cstring> // for memcpy
 
@@ -203,7 +204,7 @@ BaseStreamBuffer::buffer_in()
 int
 BaseStreamBuffer::buffer_to_device(const char* c, int n)
 {
-	OW_THROW(Exception, "Not implemented, should overwrite");
+	OW_ASSERT("Not implemented, should overwrite" == 0);
 	(void)c; (void)n;
 	return -1; // make the compiler happy
 }
@@ -211,7 +212,7 @@ BaseStreamBuffer::buffer_to_device(const char* c, int n)
 int
 BaseStreamBuffer::buffer_from_device(char* c, int n)
 {
-	OW_THROW(Exception, "Not implemented, should overwrite");
+	OW_ASSERT("Not implemented, should overwrite" == 0);
 	(void)c; (void)n;
 	return -1; // make the compiler happy
 }

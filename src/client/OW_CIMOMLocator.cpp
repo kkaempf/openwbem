@@ -55,7 +55,7 @@ CIMOMLocator::createCIMOMLocator(const String& locatorType)
 	}
 	else
 	{
-		OW_THROW(Exception, "Unknown CIMOMLocator type");
+		OW_THROW(CIMOMLocatorException, "Unknown CIMOMLocator type");
 	}
 	return CIMOMLocatorRef();
 }

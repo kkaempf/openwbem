@@ -71,14 +71,14 @@ static const char* _xmlMessages[] =
 XMLParseException::XMLParseException(
 		XMLParseException::Code code,
 		unsigned int lineNumber)
-: Exception(format("%1: on line %2", _xmlMessages[code - 1], lineNumber).c_str())
+: Exception(__FILE__, lineNumber, _xmlMessages[code - 1])
 {
 }
 XMLParseException::XMLParseException(
 		XMLParseException::Code code,
 		unsigned int lineNumber,
 		const char* message)
-: Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber,
+: Exception(__FILE__, lineNumber, format("%1: %2", _xmlMessages[code - 1], 
 	message).c_str())
 {
 }

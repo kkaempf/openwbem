@@ -57,6 +57,9 @@ extern "C"
 namespace OpenWBEM
 {
 
+OW_DECLARE_EXCEPTION(FileSystem)
+OW_DEFINE_EXCEPTION(FileSystem)
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
@@ -247,7 +250,7 @@ FileSystem::initRandomFile(const String& filename)
 	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	if (hdl == -1)
 	{
-		OW_THROW(Exception, format("Can't open random file %1 for writing", filename).c_str());
+		OW_THROW(FileSystemException, format("Can't open random file %1 for writing", filename).c_str());
 	}
 	RandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)

@@ -36,9 +36,15 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_MOFCompiler.hpp"
+#include "OW_MOFParserDecls.hpp"
 
 using namespace OpenWBEM;
 using namespace OpenWBEM::MOF;
+
+namespace OpenWBEM
+{
+OW_DEFINE_EXCEPTION(MOFParser)
+}
 
 //#define YYDEBUG 1
 
@@ -913,7 +919,7 @@ IDENTIFIER:
 %%
 void yyerror(char* string)
 {
-	OW_THROW(Exception, string);
+	OW_THROW(MOFParserException, string);
 }
 
 

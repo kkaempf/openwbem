@@ -36,8 +36,9 @@
 #include "OW_MOFGrammar.hpp"
 #include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
+#include "OW_Exception.hpp"
 
-// since this file is generated we can't control it.  We need to do some thing
+// since OW_MOFParser.h is generated we can't control it.  We need to do something
 // bad, but we don't have a choice.  These using statements have to be before
 // the include or things will break!
 using namespace OpenWBEM;
@@ -50,9 +51,15 @@ using namespace OpenWBEM::MOF;
 #define RETURN_VAL(x) yylval->pString = 0; return(x);
 #define RETURN_STR(x) yylval->pString = new String(yytext); return(x);
 
+namespace OpenWBEM
+{
+OW_DECLARE_EXCEPTION(MOFLexer)
+OW_DEFINE_EXCEPTION(MOFLexer)
+}
+
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
-	OW_THROW(Exception, msg);
+	OW_THROW(OpenWBEM::MOFLexerException, msg);
 
 #define YYLEX_PARAM context
 #define YY_DECL int yylex(YYSTYPE *yylval, void* YYLEX_PARAM)
