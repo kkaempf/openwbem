@@ -907,8 +907,8 @@ OW_CIMXMLCIMOMHandle::getQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
-													const OW_CIMQualifierType& qt)
+OW_CIMXMLCIMOMHandle::setQualifierType(const OW_String& ns,
+		const OW_CIMQualifierType& qt)
 {
 	static const char* const commandName = "SetQualifier";
 	OW_StringStream extra;
@@ -917,7 +917,7 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 	extra << "</IPARAMVALUE>";
 
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
 						 extra.toString());
 }
 

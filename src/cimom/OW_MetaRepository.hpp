@@ -111,7 +111,7 @@ public:
 	 * @param qt	The qualifier type to update
 	 * @exception OW_CIMException
 	 */
-	void setQualiferType(const OW_String& ns, const OW_CIMQualifierType& qt);
+	void setQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt);
 
 	/**
 	 * Gets an existing class from the store

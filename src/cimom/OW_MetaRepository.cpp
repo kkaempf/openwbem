@@ -151,9 +151,14 @@ OW_MetaRepository::open(const OW_String& path)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HDBNode
-OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns)
+OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns_)
 {
 	OW_String qcontk(QUAL_CONTAINER);
+	OW_String ns(ns_);
+	while (!ns.empty() && ns[0] == '/')
+	{
+		ns = ns.substring(1);
+	}
 	if(!ns.empty())
 	{
 		qcontk += "/";
@@ -168,7 +173,7 @@ OW_String
 OW_MetaRepository::_makeQualPath(const OW_String& ns_, const OW_String& qualName)
 {
 	OW_String ns(ns_);
-	while (ns.length() > 0 && ns[0] == '/')
+	while (!ns.empty() && ns[0] == '/')
 	{
 		ns = ns.substring(1);
 	}
@@ -362,7 +367,7 @@ OW_MetaRepository::_addQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MetaRepository::setQualiferType(const OW_String& ns,
+OW_MetaRepository::setQualifierType(const OW_String& ns,
 	const OW_CIMQualifierType& qt)
 {
 	throwIfNotOpen();

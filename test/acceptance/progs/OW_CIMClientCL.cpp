@@ -614,7 +614,6 @@ setQualifier(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String qualName = "borgishness";
 
-		OW_CIMObjectPath cop(qualName, "root/testsuite");
 		OW_CIMQualifierType qt(qualName);
 
 		qt.setDataType(OW_CIMDataType::STRING);
@@ -626,7 +625,7 @@ setQualifier(OW_CIMOMHandleIFC& hdl)
 		qt.addFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
 
 
-		hdl.setQualifierType(cop, qt);
+		hdl.setQualifierType("root/testsuite", qt);
 	}
 	catch (OW_CIMException& e)
 	{

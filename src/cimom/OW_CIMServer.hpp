@@ -156,7 +156,7 @@ public:
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	virtual void setQualifierType(const OW_CIMObjectPath& name,
+	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo);
 
 	/**

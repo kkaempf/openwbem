@@ -316,7 +316,7 @@ public:
 	 * @param name	An OW_CIMObjectPath that identifies the CIM qualifier type.
 	 * @param qt	The CIM qualifier type to be updated or added.
 	 */
-	virtual void setQualifierType(const OW_CIMObjectPath& name,
+	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt);
 
 	/**

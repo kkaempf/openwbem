@@ -472,18 +472,18 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
-								   		const OW_CIMQualifierType& qt)
+OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns,
+		const OW_CIMQualifierType& qt)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"SetQualifier", path.getNameSpace());;
+		"SetQualifier", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_SETQUAL);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeQual(strm, qt);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		"SetQualifier", path.getNameSpace());
+		"SetQualifier", ns);
 	checkError(in);
 }
 

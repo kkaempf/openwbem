@@ -1064,7 +1064,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMQualifierType cqt("fooqt");
 		cqt.setDataType(OW_CIMDataType::BOOLEAN);
 		cqt.addScope(OW_CIMScope::ANY);
-		hdl->setQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"), cqt);
+		hdl->setQualifierType("badNamespace", cqt);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

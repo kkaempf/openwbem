@@ -153,10 +153,10 @@ public:
 	virtual void createClass(const OW_CIMObjectPath &name,
 		OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
 
-	virtual void setQualifierType(const OW_CIMObjectPath& name,
+	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->setQualifierType(name, qt, aclInfo);
+		m_pServer->setQualifierType(ns, qt, aclInfo);
 	}
 
 

@@ -582,9 +582,9 @@ void
 OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMQualifierType qt(OW_BinIfcIO::readQual(istrm));
-	chdl->setQualifierType(op, qt);
+	chdl->setQualifierType(ns, qt);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

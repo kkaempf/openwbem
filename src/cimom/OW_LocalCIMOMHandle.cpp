@@ -247,11 +247,11 @@ OW_LocalCIMOMHandle::getQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::setQualifierType(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::setQualifierType(const OW_String& ns,
 	const OW_CIMQualifierType& qt)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->setQualifierType(name, qt, m_aclInfo);
+	m_pServer->setQualifierType(ns, qt, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

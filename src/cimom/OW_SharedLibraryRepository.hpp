@@ -90,10 +90,10 @@ public:
 		m_ref->deleteQualifierType(ns, qualName, aclInfo);
 	}
 
-	virtual void setQualifierType(const OW_CIMObjectPath &name,
+	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType &qt, const OW_ACLInfo &aclInfo)
 	{
-		m_ref->setQualifierType(name, qt, aclInfo);
+		m_ref->setQualifierType(ns, qt, aclInfo);
 	}
 
 	virtual OW_CIMClass getClass(

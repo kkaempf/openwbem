@@ -94,7 +94,7 @@ OW_WQLFilterRep::deleteNameSpace(const OW_String& /*ns*/,
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::setQualifierType(const OW_CIMObjectPath &/*name*/,
+OW_WQLFilterRep::setQualifierType(const OW_String &/*ns*/,
 	const OW_CIMQualifierType &/*qt*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

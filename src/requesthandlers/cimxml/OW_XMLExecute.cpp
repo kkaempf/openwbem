@@ -1399,6 +1399,7 @@ void
 OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
 	OW_String argName = parser.mustGetAttribute(paramName);
 
 	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
@@ -1414,7 +1415,7 @@ OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_XMLQualifier::processQualifierDecl(parser, cimQualifier);
 
 	path.setObjectName(cimQualifier.getName());
-	hdl.setQualifierType(path, cimQualifier);
+	hdl.setQualifierType(ns, cimQualifier);
 }
 
 //////////////////////////////////////////////////////////////////////////////

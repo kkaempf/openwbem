@@ -1164,7 +1164,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	try
 	{
 		MofCompiler::theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
-		m_hdl->setQualifierType(OW_CIMObjectPath(m_curQualifierType.getName(), m_namespace), m_curQualifierType);
+		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
 		// save it in the cache
 		OW_String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();

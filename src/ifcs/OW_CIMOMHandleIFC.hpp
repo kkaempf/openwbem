@@ -410,7 +410,7 @@ public:
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
 	virtual void setQualifierType(
-		const OW_CIMObjectPath& qualifierName,
+		const OW_String& ns,
 		const OW_CIMQualifierType& qualifierType) = 0;
 
 	/**

@@ -559,14 +559,15 @@ OW_CIMServer::deleteQualifierType(const OW_String& ns, const OW_String& qualName
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::setQualifierType(const OW_CIMObjectPath& name,
+OW_CIMServer::setQualifierType(
+	const OW_String& ns,
 	const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to update the qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, ns, aclInfo);
 	m_env->logDebug(format("OW_CIMServer setting qualifier type: %1 in "
-		"namespace: %2", qt.toString(), name.getNameSpace()));
-	m_mStore.setQualiferType(name.getNameSpace(), qt);
+		"namespace: %2", qt.toString(), ns));
+	m_mStore.setQualifierType(ns, qt);
 }
 
 //////////////////////////////////////////////////////////////////////////////

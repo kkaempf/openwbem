@@ -379,7 +379,6 @@ void setQualifier(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String qualName = "borgishness";
 
-		OW_CIMObjectPath cop(qualName, "/root/acltest");
 		OW_CIMQualifierType qt(qualName);
 
 		qt.setDataType(OW_CIMDataType::STRING);
@@ -391,7 +390,7 @@ void setQualifier(OW_CIMOMHandleIFC& hdl)
 		qt.addFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
 
 
-		hdl.setQualifierType(cop, qt);
+		hdl.setQualifierType("/root/acltest", qt);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}
