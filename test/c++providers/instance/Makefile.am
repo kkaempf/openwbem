@@ -3,13 +3,15 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 noinst_LIBRARIES = \
 liblaptopbat.a \
 liblinuxprocess.a \
-librpmip.a 
+librpmip.a \
+libtestinstance.a
 
 
 OW_SHARED_LIBS = \
 liblaptopbat.so \
 liblinuxprocess.so \
-librpmip.so 
+librpmip.so \
+libtestinstance.so 
 
 all-local: $(OW_SHARED_LIBS)
 	
@@ -27,6 +29,9 @@ OW_LinuxProcess.cpp
 
 librpmip_a_SOURCES = \
 OW_RPM.cpp
+
+libtestinstance_a_SOURCES = \
+testinstance.cpp
 
 EXTRA_DIST = LaptopBattery.mof LinuxProcess.mof SoftwarePackage.mof
 
