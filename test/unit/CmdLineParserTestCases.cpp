@@ -181,6 +181,40 @@ void CmdLineParserTestCases::testSomething()
 			"  -3, --three <arg>         third description\n"
 			);
 	}
+
+	CmdLineParser::Option options2[] = 
+	{
+		{opt1, '1', 0, CmdLineParser::E_NO_ARG, 0, "first description"},
+		{opt2, '\0', "two", CmdLineParser::E_OPTIONAL_ARG, "optional", "second description"},
+		{opt3, '3', "three", CmdLineParser::E_REQUIRED_ARG, 0, "third description"},
+		{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+	};
+	
+	{
+		int argc = 5;
+		const char* argv[] = {
+			"progname",
+			"-1",
+			"--two=abc",
+			"-3",
+			"1"
+		};
+		CmdLineParser parser(argc, argv, options2);
+		unitAssert(parser.isSet(opt1));
+		unitAssert(parser.isSet(opt2));
+		unitAssert(parser.isSet(opt3));
+		unitAssert(!parser.isSet(invalidOpt));
+		unitAssert(parser.getOptionValue(opt2) == "abc");
+		unitAssert(parser.getOptionValue(opt3) == "1");
+	}
+	{
+		unitAssert(CmdLineParser::getUsage(options2) ==
+			"Options:\n"
+			"  -1                        first description\n"
+			"  --two [arg]               second description (default is optional)\n"
+			"  -3, --three <arg>         third description\n"
+			);
+	}
 }
 
 Test* CmdLineParserTestCases::suite()

@@ -56,7 +56,11 @@ namespace
 
 		bool operator()(const CmdLineParser::Option& x) const
 		{
-			return m_longOpt.startsWith(x.longopt);
+			if (x.longopt != 0)
+			{
+				return m_longOpt.startsWith(x.longopt);
+			}
+			return false;
 		}
 
 		String m_longOpt;
@@ -89,7 +93,7 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longopt.
 	optionsEnd = options;
-	while (optionsEnd->shortopt != '\0' && optionsEnd->longopt != 0)
+	while (optionsEnd->shortopt != '\0' || optionsEnd->longopt != 0)
 	{
 		++optionsEnd;
 	}
@@ -131,7 +135,7 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 			}
 			// now see if we can get the value
 			String val;
-			if (theOpt->argtype == E_OPTIONAL_ARG)
+			if ((theOpt->argtype == E_OPTIONAL_ARG) && (theOpt->defaultValue != 0))
 			{
 				val = theOpt->defaultValue;
 			}
@@ -189,7 +193,7 @@ CmdLineParser::getUsage(const Option* options)
 	StringBuffer usage("Options:\n");
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longOpt.
-	for (const Option* curOption = options; curOption->shortopt != '\0' && curOption->shortopt != 0; ++curOption)
+	for (const Option* curOption = options; curOption->shortopt != '\0' || curOption->longopt != 0; ++curOption)
 	{
 		StringBuffer curLine;
 		curLine += "  ";
