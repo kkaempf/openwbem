@@ -352,6 +352,34 @@ public:
 	void syncWithClass(const OW_CIMClass& cc, OW_Bool includeQualifiers=false);
 
 	/**
+	 * Create an instance with the set of changes that will occur for a 
+	 * modifyInstance call.  This instance is the new instance.  The
+	 * previous instance is passed in.  The instance that is returned
+	 * is what the new instance will be after modifyInstance is applied.
+	 * @param previousInstance The instance before being modified.
+	 * @param includeQualifiers "If the IncludeQualifiers input parameter 
+	 *	is true, this specifies that the Qualifiers are modified as specified
+	 *	in the ModifiedInstance.  If false, Qualifiers in the ModifiedInstance 
+	 *	are ignored and no Qualifiers are explicitly modified in the specified 
+	 *	Instance."
+	 * @param propertyList "If the PropertyList input parameter is not NULL, 
+	 *	the members of the array define one or more Property names.  Only those
+	 *	properties specified in the PropertyList are modified as specified in 
+	 *	the ModifiedInstance.  Properties of the ModifiedInstance that are 
+	 *	missing from the PropertyList are ignored.  If the PropertyList input 
+	 *	parameter is an empty array this signifies that no Properties are 
+	 *	explicitly modified in the specified Instance. If the PropertyList 
+	 *	input parameter is NULL this specifies that all Properties are updated 
+	 *	in the specified Instance."
+	 * @param theClass The class of this instance.
+	 */
+	OW_CIMInstance createModifiedInstance(
+		const OW_CIMInstance& previousInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass) const;
+
+	/**
 	 * Gets the name of this instance.
 	 * The name is made by concating all key properties and their values
 	 * @return The name of this instance.

@@ -750,6 +750,57 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance 
+OW_CIMInstance::createModifiedInstance(
+	const OW_CIMInstance& previousInstance,
+	OW_Bool includeQualifiers,
+	const OW_StringArray* propertyList,
+	const OW_CIMClass& theClass) const
+{
+	OW_CIMInstance newInst(*this);
+
+	if (!includeQualifiers)
+	{
+		newInst.setQualifiers(previousInstance.getQualifiers());
+	}
+
+	if (propertyList)
+	{
+		newInst.setProperties(previousInstance.getProperties());
+		for (OW_StringArray::const_iterator i = propertyList->begin();
+			 i != propertyList->end(); ++i)
+		{
+			OW_CIMProperty p = this->getProperty(*i);
+			if (p)
+			{
+				if (!includeQualifiers)
+				{
+					OW_CIMProperty cp = theClass.getProperty(*i);
+					if (cp)
+					{
+						p.setQualifiers(cp.getQualifiers());
+					}
+				}
+				newInst.setProperty(p);
+			}
+			else
+			{
+				OW_CIMProperty cp = theClass.getProperty(*i);
+				if (cp)
+				{
+					newInst.setProperty(cp);
+				}
+				else
+				{
+					newInst.removeProperty(*i);
+				}
+			}
+		}
+	}
+	return newInst;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMInstance::setName(const OW_String& name)
 {
