@@ -17,7 +17,8 @@ testinstprov \
 aclTest \
 cimlistener \
 testNamespaces \
-testMisc
+testMisc \
+hammerClient
 endif
 endif
 endif
@@ -29,8 +30,7 @@ wqlTest1 \
 wqlTest2 \
 CIMOMLocator \
 fakeclient \
-infiniteClient \
-hammerClient
+infiniteClient
 
 
 
