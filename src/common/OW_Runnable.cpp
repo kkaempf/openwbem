@@ -32,6 +32,10 @@
 #include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
 
+#ifdef OW_DEBUG		
+#include <iostream>
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 class OW_RunnableThread : public OW_Thread
 {
@@ -44,14 +48,7 @@ public:
 
 	virtual OW_Int32 run()
 	{
-		try
-		{
-			m_runnable->run();
-		}
-		catch(...)
-		{
-			// Ignore?
-		}
+		m_runnable->run();
 		return 0; // Return code just gets dropped, but we have to return something...
 	}
 
@@ -81,10 +78,24 @@ OW_Runnable::run(OW_RunnableRef theRunnable, bool separateThread, OW_Reference<O
 		{
 			theRunnable->run();
 		}
-		catch(...)
+		catch (OW_ThreadCancelledException&)
 		{
-			// Ignore?
+			throw;
+		}
+		catch (OW_Exception& ex)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Runnable::run(): " << ex << std::endl;
+#endif
+		}
+		catch (...)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Unknown Exception caught in OW_Runnable::run()" << std::endl;
+#endif
 		}
 	}
 }
+
+
 
