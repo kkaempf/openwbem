@@ -263,7 +263,9 @@ XMLExecute::doInvokeMethod(ostream& ostr, CIMXMLParser& parser,
 		inParams, outParams);
 	if(cv)
 	{
-		ostr << "<RETURNVALUE>";
+		ostr << "<RETURNVALUE PARAMTYPE=\"";
+		CIMtoXML(cv.getCIMDataType(), ostr);
+		ostr << "\">";
 		CIMtoXML(cv, ostr);
 		ostr << "</RETURNVALUE>";
 	}
