@@ -25,8 +25,19 @@ Fix problems:
     - Add a segfault handler on linux that will create a stack trace using
       the glibc functions.
     - Man pages aren't getting included in the rpm.
+    - Create a non-recursive mutex, and use it with condition variables,
+      since using a recursive mutex with condition variables can deadlock
+      "because  the  implicit  unlock  performed for a 
+      pthread_cond_wait() or pthread_cond_timedwait()
+      will not actually release the mutex (if it had  been  locked
+      multiple times). If this occurs, no other thread can satisfy
+      the condition of the predicate."
 
 New features:
+    - Add an option to the mof compiler to output provider skeleton code for
+      a MOF class.
+    - Add an option to the mof compiler to output a client class that wraps
+      a CIMInstance for a specific class.
     - Generalize the class cache in OW_MetaRepository.cpp
     - Create caching cimom handles (qualifier, class, instance).
     - Have the mof compiler and the various test programs use the caching
@@ -80,6 +91,7 @@ New features:
       indications.)
     - Create a CIM class & provider to control the provider manager (re-scan
       providers, reload/unload providers, register new providers, etc.)
+    - Deprecated property providers.
 
 Refactorings:
     - Create a base class for all the common code in the provider interfaces.
