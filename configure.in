@@ -95,8 +95,31 @@ if test "$with_perl" != no; then
   PGAC_CHECK_PERL_CONFIG(useshrplib)
   PGAC_CHECK_PERL_EMBED_CCFLAGS
   PGAC_CHECK_PERL_EMBED_LDFLAGS
-  AC_DEFINE(PERLIFC)
-  HAVE_PERL=yes
+  saved_LDFLAGS="$LDFLAGS"
+  saved_CXXFLAGS="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS $perl_embed_ccflags"
+  LDFLAGS="$LDFLAGS $perl_embed_ldflags"
+
+  # Basic test to check for compilation success
+  AC_TRY_COMPILE(
+	 [
+#include <EXTERN.h>
+#include <perl.h>
+	 ],
+	 [
+
+	 ],
+	 [
+       AC_DEFINE(PERLIFC)
+       HAVE_PERL=yes
+       break;
+	 ], 
+	 [
+       HAVE_PERL=no
+	 ]
+  )
+  CXXFLAGS="$saved_CXXFLAGS"
+  LDFLAGS="$saved_LDFLAGS"
 fi
 AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 
