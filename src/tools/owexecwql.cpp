@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
 		for (size_t i = 0; cie.hasMoreElements(); ++i)
 		{
 			cout << "CIMInstance " << (i + 1) << ":\n";
-			cout << cie.nextElement().toString() << '\n';
+			cout << cie.nextElement().toMOF() << '\n';
 		}
 		return 0;
 	}
