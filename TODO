@@ -31,6 +31,8 @@ Fix problems:
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
     - To prevent DNS attacks, set a limit on incoming data.
+    - Audit classes in src/{cim,common}, especially comparison operators and 
+      operator<<
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
