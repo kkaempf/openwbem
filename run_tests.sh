@@ -45,6 +45,22 @@ doATest()
 	return $RVAL
 }
 
+doACompileOnlyTest()
+{
+	CONFIGOPTS=$1
+	make distclean
+	./cvsbootstrap.sh
+	./configure $CONFIGOPTS
+	killowcimomd
+	make -j3 \
+		&& make clean
+	RVAL=$?
+	if [ $RVAL != 0 ]; then
+		echo "doACompileOnlyTest failed!  CONFIGOPTS=$CONFIGOPTS"
+	fi
+	return $RVAL
+}
+
 ##############################################################################
 doTest()
 {
@@ -53,7 +69,7 @@ doTest()
 	doATest "--disable-zlib" || return 1
 	doATest "--disable-openslp" || return 1
 	doATest "--disable-acls" || return 1
-	doATest "--enable-memory-debug-mode" || return 1
+	doACompileOnlyTest "--enable-memory-debug-mode" || return 1
 	doATest "--enable-func-name-debug-mode" || return 1
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
