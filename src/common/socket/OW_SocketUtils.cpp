@@ -178,6 +178,12 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 int
 waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput)
 {
+	if (fd == -1)
+	{
+		errno = EBADF;
+		return -1;
+	}
+
 	fd_set readfds;
 	fd_set writefds;
 	int rc;
