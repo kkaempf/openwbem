@@ -13,5 +13,6 @@ wqlTest.mof \
 wqlTest.out \
 testsuite28.out \
 testsuite.mof \
-wqlTest2.out
+wqlTest2.out \
+remote.mof
 
