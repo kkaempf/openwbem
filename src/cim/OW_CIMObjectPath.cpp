@@ -393,8 +393,11 @@ OW_CIMObjectPath::toString() const
 		}
 
 		rv += str;
-		rv += ":";
-		rv += m_pdata->m_nameSpace.getPortNumber();
+		if (m_pdata->m_nameSpace.getPortNumber() != 5988)
+		{
+			rv += ":";
+			rv += m_pdata->m_nameSpace.getPortNumber();
+		}
 	}
 
 	rv += '/';
