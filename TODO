@@ -59,7 +59,9 @@ Fix problems:
     - All libs should be installed in $(libdir) and links created in $(libdir)/openwbem/*/
       This is necessary for listener and provider agent support.
     - Enum on CIM_IndicationSubscription broken: http://sourceforge.net/mailarchive/forum.php?thread_id=5696976&forum_id=1848
-	- CMAddArg() broken.
+    - CMAddArg() broken.
+    - Add a rw lock to the repositories so that a provider doesn't violate 
+      integrity if it does a write operation when only the global read lock is held.
 
 New features:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
@@ -88,17 +90,12 @@ New features:
       beyond the number of processing threads, set a maximum limit on
       the time one can stay around.
     - Implement the CIM_Interop build-in providers.
-      - Let services register a callback with CIMOMEnvironment so they can provide interop instances when requested.
-      - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
       - CIM_CommMechanismForManager
-      Optional:
-      - CIM_ProtocolAdapter
-      - CIM_CommMechanismForAdapter
-      - CIM_SystemIdentification
-      - CIM_SystemInNamespace
-      - CIM_IdentificationOfManagedSystem
-      - CIM_CIMOMStatisticalData
+      - CIM_ObjectManagerAdapter
+      - CIM_CommMechanismForObjectManagerAdapter
+      - CIM_ObjectManager (including indication for SELECT * FROM CIM_InstModification WHERE SourceInstance ISA ObjectManager AND SourceInstance.Started <> PreviousInstance.Started This would be used to indicate that the object manager has been stopped This indication is RECOMENDED.)
+      - CIM_HostedService
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
     - Add support for running under inetd
