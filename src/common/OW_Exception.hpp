@@ -230,7 +230,7 @@ namespace ExceptionDetail
 		                     char const * msg, int errnum)
 		{
 			FormatMsg fm(msg, errnum);
-			return exType(file, line, fm.get());
+			return exType(file, line, fm.get(), errnum);
 		}
 	}; // struct Errno
 
