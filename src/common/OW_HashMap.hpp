@@ -48,6 +48,7 @@
 #endif
 
 #if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
+#include "OW_String.hpp"
 // need to specialize hash
 namespace OW_HASH_MAP_NS
 {
