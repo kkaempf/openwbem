@@ -216,7 +216,7 @@ OW_HTTPXMLCIMListener::OW_HTTPXMLCIMListener(OW_LoggerRef logger)
 
 	// start a thread to run the http server
 	m_stopHttpPipe = OW_UnnamedPipe::createUnnamedPipe();
-    m_httpThread = new SelectEngineThread(selectables, m_stopHttpPipe);
+	m_httpThread = new SelectEngineThread(selectables, m_stopHttpPipe);
 	m_httpThread->start();
 }
 
@@ -295,7 +295,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	const OW_String& ns,
 	const OW_String& filter,
 	const OW_String& querylanguage,
-    const OW_String& sourceNamespace,
+	const OW_String& sourceNamespace,
 	OW_CIMListenerCallbackRef cb)
 {
 	registrationInfo reg;
@@ -333,7 +333,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			}
 			else
 				throw;
-        }
+	}
 	}
 
 	if (!useHttps)
@@ -351,7 +351,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			}
 			else
 				throw;
-        }
+	}
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
 	}
@@ -376,7 +376,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
 	ci.setProperty("CreationClassName", OW_CIMValue(delivery.getName()));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
-    ci.setProperty("Owner", OW_CIMValue("OW_HTTPXMLCIMListener on " + ipAddress));
+	ci.setProperty("Owner", OW_CIMValue("OW_HTTPXMLCIMListener on " + ipAddress));
 
 	try
 	{
@@ -410,10 +410,10 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("CreationClassName", OW_CIMValue(cimFilter.getName()));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
 
-    if (!sourceNamespace.empty())
-    {
-        ci.setProperty("SourceNamespace", OW_CIMValue(sourceNamespace));
-    }
+	if (!sourceNamespace.empty())
+	{
+		ci.setProperty("SourceNamespace", OW_CIMValue(sourceNamespace));
+	}
 
 	// create instance of filter
 	reg.filter = hdl.createInstance(ns, ci);
