@@ -140,6 +140,7 @@ ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 void
 Notifier::run()
 {
+	// TODO: process the subscription error handling here
 	CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 	try
 	{
@@ -149,10 +150,7 @@ Notifier::run()
 	}
 	catch(Exception& e)
 	{
-		env->logError(format("%1 caught in Notifier::run", e.type()));
-		env->logError(format("File: %1", e.getFile()));
-		env->logError(format("Line: %1", e.getLine()));
-		env->logError(format("Msg: %1", e.getMessage()));
+		env->logError(format("Caught exception while exporting indication: %1", e));
 	}
 	catch(ThreadCancelledException&)
 	{
@@ -160,7 +158,7 @@ Notifier::run()
 	}
 	catch(...)
 	{
-		env->logError("Unknown exception caught in Notifier::run");
+		env->logError("Unknown exception caught while exporting indication");
 	}
 }
 } // end anonymous namespace
