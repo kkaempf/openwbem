@@ -47,6 +47,9 @@
 #include "OW_Assertion.hpp"
 #include "OW_MD5.hpp"
 #include "OW_Array.hpp"
+#include "OW_Exec.hpp"
+#include "OW_Thread.hpp"
+
 #include <openssl/rand.h>
 #include <openssl/err.h>
 #include <cstring>
@@ -298,7 +301,7 @@ void generateRandomTimerData(unsigned char* data, int size, int* iterations)
 	// Start timer
 	struct ::itimerval tv, otv;
 	tv.it_value.tv_sec = 0;
-	tv.it_value.tv_usec = 1 * 1000; // 1 ms
+	tv.it_value.tv_usec = 10 * 1000; // 10 ms
 	tv.it_interval = tv.it_value;
 	setitimer(ITIMER_REAL, &tv, &otv);
 	
@@ -343,12 +346,12 @@ void generateRandomDataFromFile(const char* name, int len)
 	}
 
 	std::vector<char> buf(len);
-	int read = ::read(fd, &buf[0], len);
-	if (read == -1)
+	int bytesRead = ::read(fd, &buf[0], len);
+	if (bytesRead == -1)
 	{
 		return;
 	}
-	buf.resize(read);
+	buf.resize(bytesRead);
 	::RAND_add(&buf[0], buf.size(), 0.0); // 0 entropy, since this could all be observable by someone else.
 }
 
@@ -369,6 +372,158 @@ void generateRandomDataFromTime(double entropy)
 	::RAND_add(&ru, sizeof(ru), entropy);
 }
 
+struct cmd
+{
+	const char* command;
+	const double usefulness; // estimated number of bytes of entropy per 1K of output
+};
+
+// This list of sources comes from gnupg, prngd and egd.
+cmd randomSourceCommands[] =
+{
+	{ "advfsstat -b usr_domain", 0.01 },
+	{ "advfsstat -l 2 usr_domain", 0.5 },
+	{ "advfsstat -p usr_domain", 0.01 },
+	{ "arp -a -n", 0.5 },
+	{ "df", 0.5 },
+	{ "df -i", 0.5 },
+	{ "df -a", 0.5 },
+	{ "df -in", 0.5 },
+	{ "dmesg", 0.5 },
+	{ "errpt -a", 0.5 },
+	{ "ifconfig -a", 0.5 },
+	{ "iostat", 0.5 },
+	{ "ipcs -a", 0.5 },
+	{ "last", 0.5 },
+	{ "lastlog", 0.5 },
+	{ "lpstat -t", 0.1 },
+	{ "ls -alniR /var/log", 1.0 },
+	{ "ls -alniR /var/adm", 1.0 },
+	{ "ls -alni /var/spool/mail", 1.0 },
+	{ "ls -alni /proc", 1.0 },
+	{ "ls -alniR /tmp", 1.0 },
+	{ "ls -alniR /var/tmp", 1.0 },
+	{ "ls -alni /var/mail", 1.0 },
+	{ "ls -alniR /var/db", 1.0 },
+	{ "ls -alniR /etc", 1.0 },
+	{ "ls -alniR /private/var/log", 1.0 },
+	{ "ls -alniR /private/var/db", 1.0 },
+	{ "ls -alniR /private/etc", 1.0 },
+	{ "ls -alniR /private/tmp", 1.0 },
+	{ "ls -alniR /private/var/tmp", 1.0 },
+	{ "mpstat", 1.5 },
+	{ "netstat -s", 1.5 },
+	{ "netstat -n", 1.5 },
+	{ "netstat -a -n", 1.5 },
+	{ "netstat -anv", 1.5 },
+	{ "netstat -i -n", 0.5 },
+	{ "netstat -r -n", 0.1 },
+	{ "netstat -m", 0.5 },
+	{ "netstat -ms", 0.5 },
+	{ "nfsstat", 0.5 },
+	{ "ps laxww", 1.5 },
+	{ "ps -laxww", 1.5 },
+	{ "ps -al", 1.5 },
+	{ "ps -el", 1.5 },
+	{ "ps -efl", 1.5 },
+	{ "ps -efly", 1.5 },
+	{ "ps aux", 1.5 },
+	{ "ps -A", 1.5 },
+	{ "pfstat", 0.5 },
+	{ "portstat", 0.5 },
+	{ "pstat -p", 0.5 },
+	{ "pstat -S", 0.5 },
+	{ "pstat -A", 0.5 },
+	{ "pstat -t", 0.5 },
+	{ "pstat -v", 0.5 },
+	{ "pstat -x", 0.5 },
+	{ "pstat -t", 0.5 },
+	{ "ripquery -nw 1 127.0.0.1", 0.5 },
+	{ "sar -A 1 1", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.7.1.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.7.4.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.4.3.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.6.10.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.6.11.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.6.13.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.5.1.0", 0.5 },
+	{ "snmp_request localhost public get 1.3.6.1.2.1.5.3.0", 0.5 },
+	{ "tail -c 1024 /var/log/messages", 1.0 },
+	{ "tail -c 1024 /var/log/syslog", 1.0 },
+	{ "tail -c 1024 /var/log/system.log", 1.0 },
+	{ "tail -c 1024 /var/log/debug", 1.0 },
+	{ "tail -c 1024 /var/adm/messages", 1.0 },
+	{ "tail -c 1024 /var/adm/syslog", 1.0 },
+	{ "tail -c 1024 /var/adm/syslog/mail.log", 1.0 },
+	{ "tail -c 1024 /var/adm/syslog/syslog.log", 1.0 },
+	{ "tail -c 1024 /var/log/maillog", 1.0 },
+	{ "tail -c 1024 /var/adm/maillog", 1.0 },
+	{ "tail -c 1024 /var/adm/SPlogs/SPdaemon.log", 1.0 },
+	{ "tail -c 1024 /usr/es/adm/cluster.log", 1.0 },
+	{ "tail -c 1024 /usr/adm/cluster.log", 1.0 },
+	{ "tail -c 1024 /var/adm/cluster.log", 1.0 },
+	{ "tail -c 1024 /var/adm/ras/conslog", 1.0 },
+	{ "tcpdump -c 100 -efvvx", 1 },
+	{ "uptime", 0.5 },
+	{ "vmstat", 2.0 },
+	{ "vmstat -c", 2.0 },
+	{ "vmstat -s", 2.0 },
+	{ "vmstat -i", 2.0 },
+	{ "vmstat -f", 2.0 },
+	{ "w", 2.5 },
+	{ "who -u", 0.5 },
+	{ "who -i", 0.5 },
+	{ "who -a", 0.5 },
+
+	{ 0, 0 }
+};
+
+class RandomOutputGatherer : public Exec::OutputCallback
+{
+private:
+	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
+	{
+		// streamIndex is the index into the PopenStreams array which correlates to randomSourceCommands
+		::RAND_add(data, dataLen, randomSourceCommands[streamIndex].usefulness * static_cast<double>(dataLen) / 1024.0);
+		// the actual length of stuff we got could be random
+		::RAND_add(&dataLen, sizeof(dataLen), 0.01);
+		::RAND_add(&outputSource, sizeof(outputSource), 0.0);
+		// The timing is random too.
+		generateRandomDataFromTime(0.1);
+	}
+
+};
+
+String
+locateInPath(const String& cmd, const String& path)
+{
+	StringArray pathElements(path.tokenize(":"));
+	for (size_t i = 0; i < pathElements.size(); ++i)
+	{
+		String testCmd(pathElements[i] + '/' + cmd);
+		if (FileSystem::exists(testCmd))
+		{
+			return testCmd;
+		}
+	}
+	return cmd;
+}
+
+class RandomTimerThread : public Thread
+{
+	virtual Int32 run()
+	{
+		unsigned char buf[256]; // don't initialize to anything, as we may pick up some good random junk off the stack.
+		int iterations = 8;
+		generateRandomTimerData(buf, sizeof(buf), &iterations);
+		::RAND_add(buf, sizeof(buf), 32); // 32 is if we assume 1 bit per byte, and most systems should have something better than that.
+
+		generateRandomDataFromTime(0.1);
+		
+		return 0;
+	}
+};
+
 void loadRandomness()
 {
 	// with OpenSSL 0.9.7 calling RAND_status() will try to load sufficient randomness, so hopefully we won't have to do anything.
@@ -376,6 +531,12 @@ void loadRandomness()
 	{
 		return;
 	}
+
+#ifdef OW_WIN32
+	// use these 2 functions to get some entropy
+	CryptGenRandom(); // part of windows crypto api - win32 equivalent of /dev/random
+	RAND_screen(); // provided by OpenSSL. Try doing something in addition to CryptGenRandom(), since we can't trust closed source.
+#endif
 
 	// OpenSSL 0.9.7 does this automatically, so only try if we've got an older version of OpenSSL.
 	if (SSLeay() < 0x00907000L)
@@ -436,12 +597,9 @@ void loadRandomness()
 	// do the time based ones before we start, after the timing tests, and then again after running commands.
 	generateRandomDataFromTime(0.0);
 
-	unsigned char buf[256]; // don't initialize to anything, as we may pick up some good random junk off the stack.
-	int iterations = 8;
-	generateRandomTimerData(buf, sizeof(buf), &iterations);
-	::RAND_add(buf, sizeof(buf), 32); // 32 is if we assume 1 bit per byte, and most systems should have something better than that.
+	RandomTimerThread randomTimerThread;
+	randomTimerThread.start();
 
-	generateRandomDataFromTime(0.1);
 
 	// - read some portions of files and dirs (e.g. /dev/mem) if possible
 	const char* files[] = {
@@ -468,8 +626,38 @@ void loadRandomness()
 	::RAND_add(&myGid, sizeof(myGid), 0.0);
 
 	// now run commands
+	Array<PopenStreams> streams;
+	for (size_t i = 0; randomSourceCommands[i].command != 0; ++i)
+	{
+		StringArray cmd = StringArray(String(randomSourceCommands[i].command).tokenize());
+		if (cmd[0] != '/')
+		{
+			const char* RANDOM_COMMAND_PATH = "/bin:/sbin:/usr/bin:/usr/sbin:/usr/ucb:/usr/etc:/usr/bsd:/etc:/usr/local/bin:/usr/local/sbin";
+			cmd[0] = locateInPath(cmd[0], RANDOM_COMMAND_PATH);
+		}
+		streams.push_back(Exec::safePopen(cmd));
+	}
 
+	RandomOutputGatherer randomOutputGatherer;
+	Array<Exec::ProcessStatus> processStatuses;
+	const int RANDOM_COMMAND_TIMEOUT = 10;
+	try
+	{
+		gatherOutput(randomOutputGatherer, streams, processStatuses, RANDOM_COMMAND_TIMEOUT);
+	}
+	catch (ExecTimeoutException&)
+	{
+		// ignore it.
+	}
 
+	// terminate all the processes and add their return code to the pool.
+	for (size_t i = 0; i < streams.size(); ++i)
+	{
+		int rv = streams[i].getExitStatus();
+		::RAND_add(&rv, sizeof(rv), 0.0);
+	}
+
+	randomTimerThread.join();
 
 	generateRandomDataFromTime(0.1);
 }
