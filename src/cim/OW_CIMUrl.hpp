@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMURL_HPP__
-#define __OW_CIMURL_HPP__
+#ifndef OW_CIMURL_HPP_INCLUDE_GUARD_
+#define OW_CIMURL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMException.hpp"
@@ -238,5 +238,6 @@ private:
 	OW_COWReference<URLData> m_pdata;
 };
 
-#endif	// __OW_CIMURL_HPP__
+#endif
+
 

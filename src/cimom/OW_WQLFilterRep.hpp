@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_WQLFILTERREP_HPP__
-#define _OW_WQLFILTERREP_HPP__
+#ifndef OW_WQLFILTERREP_HPP_INCLUDE_GUARD_
+#define OW_WQLFILTERREP_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
@@ -497,4 +497,5 @@ private:
 };
 
 
-#endif //_OW_WQLFILTERREP_HPP__
+#endif
+

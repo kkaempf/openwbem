@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_INDEX_HPP__
-#define __OW_INDEX_HPP__
+#ifndef OW_INDEX_HPP_INCLUDE_GUARD_
+#define OW_INDEX_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -217,5 +217,6 @@ public:
 	OW_Int32 offset;
 };
 
-#endif	// __OW_INDEX_HPP__
+#endif
+
 

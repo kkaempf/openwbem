@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SOCKET_HPP__
-#define _OW_SOCKET_HPP__
+#ifndef OW_SOCKET_HPP_INCLUDE_GUARD_
+#define OW_SOCKET_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
@@ -42,7 +42,7 @@
 
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"
 
-DEFINE_EXCEPTION(TimeOut)
+DECLARE_EXCEPTION(TimeOut)
 
 class OW_Socket : public OW_SelectableIFC, public OW_IOIFC
 {
@@ -248,5 +248,6 @@ private:
 	OW_SocketBaseImplRef m_impl;
 };
 
-#endif	//  __INETSOCKET_HPP__
+#endif
+
 

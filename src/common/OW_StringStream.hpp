@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_STRINGSTREAM_HPP__
-#define __OW_STRINGSTREAM_HPP__
+#ifndef OW_STRINGSTREAM_HPP_INCLUDE_GUARD_
+#define OW_STRINGSTREAM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
@@ -101,5 +101,6 @@ private:
 };
 
 
-#endif	// __OW_STRINGSTREAM_HPP__
+#endif
+
 

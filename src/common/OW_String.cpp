@@ -58,6 +58,8 @@
 using std::istream;
 using std::ostream;
 
+DEFINE_EXCEPTION(StringConversion);
+
 //////////////////////////////////////////////////////////////////////////////
 inline int
 strcmpi(const char* s1, const char* s2)

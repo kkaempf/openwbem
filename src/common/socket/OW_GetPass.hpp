@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _OW_GETPASS_HPP__
-#define _OW_GETPASS_HPP__
+#ifndef OW_GETPASS_HPP_INCLUDE_GUARD_
+#define OW_GETPASS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -64,5 +64,6 @@ private:
 	OW_GetPass(); // don't allow instantiation.
 };
 
-#endif // _OW_GETPASS_HPP__
+#endif
+
 	

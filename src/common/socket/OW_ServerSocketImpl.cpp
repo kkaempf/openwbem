@@ -87,7 +87,7 @@ OW_ServerSocketImpl::getSelectObj() const
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
-	int queueSize, OW_Bool allInterfaces)
+	int queueSize, OW_Bool allInterfaces, bool reuseAddr)
 {
 	m_localAddress = OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
 	m_isSSL = isSSL;
@@ -113,7 +113,6 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-//#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
@@ -123,9 +122,11 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 
 	// Let the kernel reuse the port without waiting for it to time out.
 	// Without this line, you can't stop and immediately re-start the daemon.
-	int reuse = 1;
-	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-//#endif
+	if (reuseAddr)
+	{
+		int reuse = 1;
+		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+	}
 
 		
 	OW_InetSocketAddress_t inetAddr;
@@ -163,7 +164,7 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
+OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reuseAddr)
 {
 	m_localAddress = OW_SocketAddress::getUDS(filename);
 	close();
@@ -188,7 +189,6 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-//#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
@@ -198,9 +198,11 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	
 	// Let the kernel reuse the port without waiting for it to time out.
 	// Without this line, you can't stop and immediately re-start the daemon.
-	int reuse = 1;
-	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-//#endif
+	if (reuseAddr)
+	{
+		int reuse = 1;
+		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+	}
 
 	OW_String lockfilename = filename + ".lock";
 	m_udsFile = OW_FileSystem::openOrCreateFile(lockfilename);

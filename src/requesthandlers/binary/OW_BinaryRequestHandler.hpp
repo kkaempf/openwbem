@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_BINARYREQUESTHANDLER_HPP__
-#define __OW_BINARYREQUESTHANDLER_HPP__
+#ifndef OW_BINARYREQUESTHANDLER_HPP_INCLUDE_GUARD_
+#define OW_BINARYREQUESTHANDLER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -138,6 +138,7 @@ private:
 	OW_UserId m_userId;
 };
 
-#endif	// __OW_BINARYREQUESTHANDLER_HPP__
+#endif
+
 
 

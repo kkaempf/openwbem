@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMINSTANCE_HPP__
-#define __OW_CIMINSTANCE_HPP__
+#ifndef OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
+#define OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -451,4 +451,5 @@ protected:
 };
 
 
-#endif	// __OW_CIMINSTANCE_HPP__
+#endif
+

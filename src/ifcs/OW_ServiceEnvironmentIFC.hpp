@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_SERVICE_ENVIRONMENTIFC_HPP__
-#define __OW_SERVICE_ENVIRONMENTIFC_HPP__
+#ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
+#define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Reference.hpp"
@@ -75,5 +75,6 @@ public:
 		const OW_Bool doIndications = true, const OW_Bool bypassProviders = false) = 0;
 };
 
-#endif	// __OW_SERVICE_ENVIRONMENTIFC_HPP__
+#endif
+
 

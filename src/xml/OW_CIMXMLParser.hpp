@@ -29,8 +29,8 @@
 *******************************************************************************/
 
 
-#ifndef _OW_CIMXMLPARSER_HPP__
-#define _OW_CIMXMLPARSER_HPP__
+#ifndef OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
+#define OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_AutoPtr.hpp"
@@ -241,7 +241,7 @@ public:
 	static const char* const A_RESULT_ROLE;
 	static const char* const A_ROLE;
 	static const char* const A_SUPER_CLASS;
-	static const char* const A_TOINSTANCE;
+	static const char* const A_TOINSTANCE; // This is a bug in the spec, but we still support it for backward compatibility.
 	static const char* const A_TOSUBCLASS;
 	static const char* const A_TRANSLATABLE;
 	static const char* const A_TYPE;
@@ -260,7 +260,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p);
 };
 
-#endif //#ifndef _OW_CIMXMLPARSER_HPP__
+#endif
 
 
 

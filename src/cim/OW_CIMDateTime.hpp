@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMDATETIME_HPP__
-#define __OW_CIMDATETIME_HPP__
+#ifndef OW_CIMDATETIME_HPP_INCLUDE_GUARD_
+#define OW_CIMDATETIME_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -343,5 +343,6 @@ private:
 
 std::ostream& operator<< (std::ostream& ostr, const OW_CIMDateTime& arg);
 
-#endif	// __OW_CIMDATETIME_HPP__
+#endif
+
 

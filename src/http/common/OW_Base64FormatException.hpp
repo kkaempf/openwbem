@@ -28,13 +28,13 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_BASE64FORMATEXCEPTION_HPP__
-#define __OW_BASE64FORMATEXCEPTION_HPP__
+#ifndef OW_BASE64FORMATEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_BASE64FORMATEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(Base64Format);
+DECLARE_EXCEPTION(Base64Format);
 
-#endif // __OW_SOCKETEXCEPTION_H__
+#endif

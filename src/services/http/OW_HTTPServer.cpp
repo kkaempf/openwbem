@@ -197,6 +197,9 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 				dumpPrefix + "/owHTTPSockDumpIn",
 				dumpPrefix + "/owHTTPSockDumpOut");
 		}
+
+		item = env->getConfigItem(OW_ConfigOpts::REUSE_ADDR_opt);
+		m_options.reuseAddr = !item.equalsIgnoreCase("false");
 	}
 	catch (const OW_StringConversionException& e)
 	{
@@ -320,7 +323,7 @@ OW_HTTPServer::startService()
 		try
 		{
 			m_pUDSServerSocket = new OW_ServerSocket;
-			m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000);
+			m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000, m_options.reuseAddr);
 
 			lgr->logCustInfo("HTTP server listening on Unix Domain Socket");
 
@@ -344,7 +347,7 @@ OW_HTTPServer::startService()
 		{
 			OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
 			m_pHttpServerSocket = new OW_ServerSocket;
-			m_pHttpServerSocket->doListen(lport, false, 1000, true);
+			m_pHttpServerSocket->doListen(lport, false, 1000, true, m_options.reuseAddr);
 			m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
 
 			lgr->logCustInfo(format("HTTP server listening on port: %1",
@@ -386,7 +389,7 @@ OW_HTTPServer::startService()
 			try
 			{
 				m_pHttpsServerSocket = new OW_ServerSocket;
-				m_pHttpsServerSocket->doListen(lport, true, 1000, true);
+				m_pHttpsServerSocket->doListen(lport, true, 1000, true, m_options.reuseAddr);
 
 				m_options.httpsPort =
 				   m_pHttpsServerSocket->getLocalAddress().getPort();

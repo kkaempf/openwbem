@@ -43,8 +43,8 @@
 //	efficiency (which in some cases removes uncessary loops).
 //
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef __OW_MEMORY_HPP__
-#define __OW_MEMORY_HPP__
+#ifndef OW_MEMORY_HPP_INCLUDE_GUARD_
+#define OW_MEMORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -214,5 +214,6 @@ inline void OW_initializeRaw(OW_Real64* items, OW_UInt32 size)
 	OW_zeros(items, size);
 }
 
-#endif	// __OW_MEMORY_HPP__
+#endif
+
 	

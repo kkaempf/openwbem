@@ -34,8 +34,8 @@
  *
  */
  
-#ifndef _OW_CIMCLASSENUMERATION_HPP__
-#define _OW_CIMCLASSENUMERATION_HPP__
+#ifndef OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
+#define OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
@@ -44,4 +44,4 @@
 typedef OW_Enumeration<OW_CIMClass> OW_CIMClassEnumeration;
 
 
-#endif //  _OW_CIMCLASSENUMERATION_HPP__
+#endif

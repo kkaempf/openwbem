@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_GENERICHDBREPOSITORY_HPP__
-#define __OW_GENERICHDBREPOSITORY_HPP__
+#ifndef OW_GENERICHDBREPOSITORY_HPP_INCLUDE_GUARD_
+#define OW_GENERICHDBREPOSITORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -210,5 +210,6 @@ private:
 #define OW_HDBCLSNODE_FLAG			0x20000000
 #define OW_HDBCLSASSOCNODE_FLAG	0x08000000
 
-#endif	// __OW_GENERICHDBREPOSITORY_HPP__
+#endif
+
 

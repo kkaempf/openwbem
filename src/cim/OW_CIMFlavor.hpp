@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMFLAVOR_HPP__
-#define __OW_CIMFLAVOR_HPP__
+#ifndef OW_CIMFLAVOR_HPP_INCLUDE_GUARD_
+#define OW_CIMFLAVOR_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
@@ -239,5 +239,6 @@ private:
 	}
 };
 
-#endif	// __OW_CIMFLAVOR_HPP__
+#endif
+
 

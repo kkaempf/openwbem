@@ -31,41 +31,7 @@
 
 #include "OW_config.h"
 
-/*
 #include "OW_Assertion.hpp"
-#include <iostream>
 
-std::ostream&
-operator<< (std::ostream& os, const OW_Assertion& a)
-{
-	if(*a.getFile() == '\0')
-	{
-		os << "[no file]: ";
-	}
-	else
-	{
-		os << a.getFile() << ": ";
-	}
+DEFINE_EXCEPTION(Assertion)
 
-	if(a.getLine() == 0)
-	{
-		os << "[no line] ";
-	}
-	else
-	{
-		os << a.getLine() << ' ';
-	}
-
-	if(*a.getMessage() == '\0')
-	{
-		os << "[no message]";
-	}
-	else
-	{
-		os << a.getMessage();
-	}
-
-	return os;
-}
-
-*/

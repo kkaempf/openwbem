@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(SharedLibrary);
+DECLARE_EXCEPTION(SharedLibrary);
 
 #endif
 

@@ -37,8 +37,8 @@
 
 class OW_MutexLock;
 
-DEFINE_EXCEPTION(ConditionLock);
-DEFINE_EXCEPTION(ConditionResource);
+DECLARE_EXCEPTION(ConditionLock);
+DECLARE_EXCEPTION(ConditionResource);
 
 class OW_Condition
 {

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_CIMERROREXCEPTION_H__
-#define _OW_CIMERROREXCEPTION_H__
+#ifndef OW_CIMERROREXCEPTION_H_INCLUDE_GUARD_
+#define OW_CIMERROREXCEPTION_H_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Exception.hpp"
@@ -56,4 +56,5 @@ public:
 	
 };
 
-#endif //  _OW_CIMERROREXCEPTION_H__
+#endif
+

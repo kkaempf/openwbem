@@ -57,11 +57,11 @@ class OW_BinIfcIO;
 
 #ifdef OW_CHECK_ARRAY_INDEXING
 #include "OW_Exception.hpp"
-DEFINE_EXCEPTION(OutOfBounds);
+DECLARE_EXCEPTION(OutOfBounds);
 #endif
 
 /**
- * The OW_Array class is essentially takes the vector class of the stl and
+ * The OW_Array class essentially takes the vector class of the stl and
  * adds ref counting and copy on write capability.
  */
 template<class T> class OW_Array

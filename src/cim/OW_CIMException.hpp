@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMEXCEPTION_HPP__
-#define __OW_CIMEXCEPTION_HPP__
+#ifndef OW_CIMEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_CIMEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Exception.hpp"
@@ -132,6 +132,7 @@ private:
 #define OW_THROWCIMMSG(errval, msg) \
 	throw OW_CIMException(__FILE__, __LINE__, errval, msg)
 
-#endif	// __OW_CIMEXCEPTION_HPP__
+#endif
+
 
 

@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(NoSuchProperty);
+DECLARE_EXCEPTION(NoSuchProperty);
 
 
 #endif

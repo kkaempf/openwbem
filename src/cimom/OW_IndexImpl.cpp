@@ -17,6 +17,7 @@ extern "C" {
 static int recCompare(const DBT* key1, const DBT* key2);
 }
 
+DECLARE_EXCEPTION(Index);
 DEFINE_EXCEPTION(Index);
 
 class OW_IndexImpl : public OW_Index

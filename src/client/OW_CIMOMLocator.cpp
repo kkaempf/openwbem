@@ -34,6 +34,8 @@
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_Exception.hpp"
 
+DEFINE_EXCEPTION(CIMOMLocator);
+
 OW_CIMOMLocatorRef
 OW_CIMOMLocator::createCIMOMLocator(const OW_String& locatorType)
 {

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_INETSERVERSOCKET_HPP__
-#define __OW_INETSERVERSOCKET_HPP__
+#ifndef OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
+#define OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
@@ -77,10 +77,10 @@ public:
 	 * @param allInterfaces do we listen on all interfaces?
 	 */
 	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10,
-			OW_Bool allInterfaces=false)
+			OW_Bool allInterfaces=false, bool reuseAddr = true)
 		/*throw (OW_SocketException)*/
 	{
-		m_impl->doListen(port, isSSL, queueSize, allInterfaces);
+		m_impl->doListen(port, isSSL, queueSize, allInterfaces, reuseAddr);
 	}
 
 	/**
@@ -89,10 +89,11 @@ public:
 	 * @param filename The filename for the unix domain socket
 	 * @param queueSize the size of the listen queue
 	 */
-	void doListen(const OW_String& filename, int queueSize=10)
+	void doListen(const OW_String& filename, int queueSize=10, 
+		bool reuseAddr=true)
 		/*throw (OW_SocketException)*/
 	{
-		m_impl->doListen(filename, queueSize);
+		m_impl->doListen(filename, queueSize, reuseAddr);
 	}
 
 	/**
@@ -118,4 +119,5 @@ private:
 	OW_Reference<OW_ServerSocketImpl> m_impl;
 };
 
-#endif	// __INETSERVERSOCKET_HPP__
+#endif
+

@@ -55,8 +55,8 @@ documentation and/or software.
  */
 
 
-#ifndef _OW_MD5_HPP__
-#define _OW_MD5_HPP__
+#ifndef OW_MD5_HPP_INCLUDE_GUARD_
+#define OW_MD5_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -76,7 +76,7 @@ documentation and/or software.
 #include <iostream>
 #endif
 
-DEFINE_EXCEPTION(MD5);
+DECLARE_EXCEPTION(MD5);
 
 #define HASHLEN 16
 
@@ -156,4 +156,5 @@ private:
 };
 
 
-#endif //  _OW_MD5_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_ASSOCDB_HPP_
-#define OW_ASSOCDB_HPP_
+#ifndef OW_ASSOCDB_HPP_INCLUDE_GUARD_
+#define OW_ASSOCDB_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -398,5 +398,5 @@ private:
 	friend struct OW_AssocDbHandle::AssocDbHandleData;
 };
 
-#endif	// __OW_ASSOCDB_HPP__
+#endif
 

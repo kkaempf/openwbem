@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _OW_HTTPSTATUSCODES_H__
-#define _OW_HTTPSTATUSCODES_H__
+#ifndef OW_HTTPSTATUSCODES_H_INCLUDE_GUARD_
+#define OW_HTTPSTATUSCODES_H_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -80,4 +80,4 @@
 
 
 
-#endif // _OW_HTTPSTATUSCODES_H__
+#endif

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef __OW_HTTTPCOUNTER_HPP__
-#define __OW_HTTTPCOUNTER_HPP__
+#ifndef OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
+#define OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_MutexLock.hpp"

@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef _OW_CONFIGOPTS_HPP__
-#define _OW_CONFIGOPTS_HPP__
+#ifndef OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
+#define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -183,6 +183,10 @@ namespace OW_ConfigOpts
 	static const char* const REQ_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
 	static const char* const SIMPLECPPIFC_PROV_LOC_opt = "simplecppprovifc.prov_location";
 	static const char* const MAX_CLASS_CACHE_SIZE_opt = "owcimomd.max_class_cache_size";
+
+	// 2.1 additions
+	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 };
 
-#endif //_OW_CONFIGOPTS_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SIGNALSCOPE_HPP__
-#define _OW_SIGNALSCOPE_HPP__
+#ifndef OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
+#define OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include <signal.h>
@@ -65,4 +65,5 @@ private:
 	sighandler_t m_oldHandler;
 };
 
-#endif // _OW_SIGNALSCOPE_HPP__
+#endif
+

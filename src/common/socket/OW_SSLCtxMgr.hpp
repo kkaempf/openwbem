@@ -35,8 +35,8 @@
  *
  */
 
-#ifndef __OW_SSLCtxMgr_HPP__
-#define __OW_SSLCtxMgr_HPP__
+#ifndef OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
+#define OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -192,4 +192,4 @@ private:
 
 #endif // ifdef OW_HAVE_OPENSSL
 
-#endif // #define __OW_SSLCtxMgr_HPP__
+#endif

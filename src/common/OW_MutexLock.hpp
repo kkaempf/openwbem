@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_MUTEXLOCK_HPP
-#define __OW_MUTEXLOCK_HPP
+#ifndef OW_MUTEXLOCK_HPP_INCLUDE_GUARD_
+#define OW_MUTEXLOCK_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
@@ -109,4 +109,5 @@ private:
 };
 
 
-#endif	// __OW_MUTEXLOCK_HPP
+#endif
+

@@ -71,7 +71,6 @@ extern "C"
 #include "OW_Exception.hpp"
 #include "OW_SocketUtils.hpp"
 
-
 //////////////////////////////////////////////////////////////////////////////
 OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
 {

@@ -1,7 +1,8 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libowserver.a
-SHAREDLIBADD =
+SHAREDLIBADD = \
+../provider/libowprovider.a
 
 OW_SHARED_LIBS = libowserver.so
 thelibdir = $(libdir)
@@ -28,6 +29,7 @@ libowserver_a_SOURCES =	\
 OW_AuthManager.cpp \
 OW_AuthManager.hpp \
 OW_ConfigException.hpp \
+OW_ConfigException.cpp \
 OW_Logger.cpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \

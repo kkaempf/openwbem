@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_PLATFORM_HPP__
-#define __OW_PLATFORM_HPP__
+#ifndef OW_PLATFORM_HPP_INCLUDE_GUARD_
+#define OW_PLATFORM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -37,7 +37,7 @@
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 
-DEFINE_EXCEPTION(Daemon);
+DECLARE_EXCEPTION(Daemon);
 
 class OW_Platform
 {
@@ -97,4 +97,5 @@ private:
 	static OW_Reference<OW_UnnamedPipe> plat_upipe;
 };
 
-#endif	// __OW_PLATFORM_HPP__
+#endif
+

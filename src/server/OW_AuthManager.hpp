@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef _OW_AUTHLOADER_HPP_
-#define _OW_AUTHLOADER_HPP_
+#ifndef OW_AUTHLOADER_HPP_INCLUDE_GUARD_
+#define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
@@ -53,4 +53,4 @@ private:
 
 typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
 
-#endif // _OW_AUTHLOADER_HPP__
+#endif

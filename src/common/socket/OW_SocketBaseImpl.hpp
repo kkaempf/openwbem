@@ -37,8 +37,8 @@
  * @description
  *		Interface file for the OW_SocketBaseImpl class
  */
-#ifndef _OW_SOCKETBASEIMPL_HPP__
-#define _OW_SOCKETBASEIMPL_HPP__
+#ifndef OW_SOCKETBASEIMPL_HPP_INCLUDE_GUARD_
+#define OW_SOCKETBASEIMPL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
@@ -127,5 +127,6 @@ private:
 	OW_SocketBaseImpl& operator= (const OW_SocketBaseImpl& arg);
 };
 
-#endif	// _SOCKETBASEIMPL_HPP__
+#endif
+
 

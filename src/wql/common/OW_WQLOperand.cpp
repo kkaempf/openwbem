@@ -31,6 +31,8 @@
 #include "OW_WQLOperand.hpp"
 #include "OW_StringBuffer.hpp"
 
+DEFINE_EXCEPTION(TypeMismatch);
+
 OW_String OW_WQLOperand::toString() const
 {
 	OW_StringBuffer result;

@@ -340,7 +340,7 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 	, m_rwSchemaLocker()
 	, m_rwInstanceLocker()
 	, m_accessMgr(new OW_AccessMgr(this, env))
-	, m_nsClass__Namespace()
+	, m_nsClass_Namespace()
 	, m_nsClassCIM_Namespace()
 	, m_env(env)
 	, m_cimRepository(cimRepository)
@@ -1392,8 +1392,21 @@ OW_CIMServer::invokeMethod(
 
 			if (paramIdx == inParams2.size())
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-					"Parameter %1 was not specified.", parameterName).c_str());
+				// The parameter wasn't specified.
+				// Parameters are optional unless they have a Required(true)
+				// qualifier
+				OW_CIMQualifier reqd(methodInParams[i].getQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED));
+				if (reqd && reqd.getValue() == OW_CIMValue(true))
+				{
+					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+						"Parameter %1 was not specified.", parameterName).c_str());
+				}
+				else
+				{
+					// put a param with a null value
+					OW_CIMParamValue optionalParam(methodInParams[i].getName());
+					inParams2.push_back(optionalParam);
+				}
 			}
 
 			// move the param from inParams2 to orderedParams
@@ -1630,20 +1643,20 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 
 	if (className.equalsIgnoreCase("__Namespace"))
 	{
-		if(!m_nsClass__Namespace)
+		if(!m_nsClass_Namespace)
 		{
-			m_nsClass__Namespace = OW_CIMClass("__Namespace");
+			m_nsClass_Namespace = OW_CIMClass("__Namespace");
 
 			OW_CIMQualifier cimQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 			cimQualifier.setValue(OW_CIMValue(OW_String(NAMESPACE_PROVIDER)));
 			OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
 			cimProp.setDataType(OW_CIMDataType::STRING);
 			cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
-			m_nsClass__Namespace.addQualifier(cimQualifier);
-			m_nsClass__Namespace.addProperty(cimProp);
+			m_nsClass_Namespace.addQualifier(cimQualifier);
+			m_nsClass_Namespace.addProperty(cimProp);
 		}
 
-		return m_nsClass__Namespace;
+		return m_nsClass_Namespace;
 	}
 	/*
 	else if (className.equalsIgnoreCase("CIM_Namespace"))

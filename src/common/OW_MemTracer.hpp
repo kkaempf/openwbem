@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_MEMTRACER_HPP__
-#define __OW_MEMTRACER_HPP__
+#ifndef OW_MEMTRACER_HPP_INCLUDE_GUARD_
+#define OW_MEMTRACER_HPP_INCLUDE_GUARD_
 
 #ifdef __cplusplus
 
@@ -43,7 +43,7 @@ void* operator new[](unsigned int size, char const* file, int line);
 void operator delete(void* p);
 void operator delete[](void* p);
 
-#ifndef __OW_MEMTRACER_CPP__
+#ifndef OW_MEMTRACER_CPP_INCLUDE_GUARD_
 #define OW_NEW new(__FILE__, __LINE__)
 #define new OW_NEW
 #endif
@@ -52,5 +52,6 @@ void operator delete[](void* p);
 
 #endif // __cplusplus
 
-#endif	// __OW_MEMTRACER_HPP__
+#endif
+
 

@@ -39,6 +39,8 @@
 #include <cerrno>
 #include <iostream>
 
+DEFINE_EXCEPTION(Thread);
+
 //////////////////////////////////////////////////////////////////////////////
 class OW_RunnableThread : public OW_Thread
 {

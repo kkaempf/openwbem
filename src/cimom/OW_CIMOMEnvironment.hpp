@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_CIMOMENVIRONMENT_HPP__
-#define __OW_CIMOMENVIRONMENT_HPP__
+#ifndef OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
+#define OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 
 #define OW_DAEMON_NAME "owcimomd"
 
@@ -196,5 +196,6 @@ private:
 	OW_Mutex m_runningGuard;
 };
 
-#endif	// __OW_CIMOMENVIRONMENT_HPP__
+#endif
+
 

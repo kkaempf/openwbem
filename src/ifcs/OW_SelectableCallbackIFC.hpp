@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_SELECTABLE_CALLBACKIFC_HPP__
-#define __OW_SELECTABLE_CALLBACKIFC_HPP__
+#ifndef OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
+#define OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Reference.hpp"
@@ -50,5 +50,6 @@ protected:
 
 typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
 
-#endif	// __OW_SELECTABLE_CALLBACKIFC_HPP__
+#endif
+
 

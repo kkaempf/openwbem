@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_THREAD_HPP__
-#define __OW_THREAD_HPP__
+#ifndef OW_THREAD_HPP_INCLUDE_GUARD_
+#define OW_THREAD_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -39,7 +39,7 @@
 #include "OW_Reference.hpp"
 
 
-DEFINE_EXCEPTION(Thread);
+DECLARE_EXCEPTION(Thread);
 
 
 /**
@@ -246,4 +246,4 @@ protected:
 
 
 
-#endif // OW_THREAD_H
+#endif

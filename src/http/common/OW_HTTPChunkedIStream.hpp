@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _OW_HTTPChunkedIStream_HPP__
-#define _OW_HTTPChunkedIStream_HPP__
+#ifndef OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
+#define OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_HTTPChunkException.hpp"
@@ -135,5 +135,6 @@ class OW_HTTPChunkedIStream : private OW_HTTPChunkedIStreamBase,
 };
 
 
-#endif // _OW_HTTPChunkedIStream_HPP__
+#endif
+
 

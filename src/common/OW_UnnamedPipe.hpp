@@ -42,7 +42,7 @@
 class OW_String;
 
 
-DEFINE_EXCEPTION(UnnamedPipe);
+DECLARE_EXCEPTION(UnnamedPipe);
 
 class OW_UnnamedPipe;
 typedef OW_Reference<OW_UnnamedPipe> OW_UnnamedPipeRef;

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_BASESTREAMBUFFER_HPP__
-#define __OW_BASESTREAMBUFFER_HPP__
+#ifndef OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
+#define OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 
 #define BASE_BUF_SIZE 256
 #define HTTP_BUF_SIZE 4096

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_PROXYPROVIDER_HPP__
-#define __OW_PROXYPROVIDER_HPP__
+#ifndef OW_PROXYPROVIDER_HPP_INCLUDE_GUARD_
+#define OW_PROXYPROVIDER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_AssociatorProviderIFC.hpp"
@@ -348,5 +348,6 @@ private:
 	OW_CppIndicationProviderIFCRef m_pProv;
 };
 
-#endif	// __OW_PROXYPROVIDER_HPP__
+#endif
+
 

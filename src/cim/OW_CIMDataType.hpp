@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_CIMDATATYPE_HPP__
-#define __OW_CIMDATATYPE_HPP__
+#ifndef OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
+#define OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Bool.hpp"
@@ -254,5 +254,6 @@ private:
 	friend bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y);
 };
 
-#endif	// __OW_CIMDATATYPE_HPP__
+#endif
+
 

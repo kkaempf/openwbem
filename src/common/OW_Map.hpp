@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_MAP_HPP_
-#define OW_MAP_HPP_
+#ifndef OW_MAP_HPP_INCLUDE_GUARD_
+#define OW_MAP_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -285,5 +285,6 @@ inline void swap(OW_Map<Key, T, Compare>& x,
 	x.swap(y);
 }
 
-#endif	// __OW_MAP_HPP__
+#endif
+
 

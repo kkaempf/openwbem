@@ -37,7 +37,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-DEFINE_EXCEPTION(Authentication);
+DECLARE_EXCEPTION(Authentication);
 
 class OW_AuthenticatorIFC
 {

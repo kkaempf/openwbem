@@ -101,5 +101,6 @@ typedef int		OW_FileHandle;
 
 typedef uid_t OW_UserId;
 
-#endif	/* __OW_OS_TYPES_H__ */
+#endif
+
 

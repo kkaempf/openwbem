@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_REPOSITORYSTREAMS_HPP__
-#define __OW_REPOSITORYSTREAMS_HPP__
+#ifndef OW_REPOSITORYSTREAMS_HPP_INCLUDE_GUARD_
+#define OW_REPOSITORYSTREAMS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -117,6 +117,7 @@ private:
 	OW_AutoPtr<OW_RepositoryOStreamBuf> m_buf;
 };
 
-#endif	// __OW_REPOSITORYSTREAMS_HPP__
+#endif
+
 
 

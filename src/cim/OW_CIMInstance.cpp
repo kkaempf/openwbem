@@ -665,7 +665,7 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 	{
 		return;
 	}
-
+/*
 	if(includeQualifiers)
 	{
 		// Ensure all class qualifiers are on the instance
@@ -700,6 +700,7 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 			}
 		}
 	}
+*/
 
 	OW_String propName;
 	OW_CIMPropertyArray classProps = theClass.getAllProperties();

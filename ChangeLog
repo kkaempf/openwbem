@@ -1,3 +1,9 @@
+Tue Jan 21 21:13:49 MST 2003
+- Method parameters are optional unless there is a "Required" qualifier.
+
+Tue Jan 21 12:00:35 MST 2003
+- Added an option for user to control SO_REUSEADDR
+
 Sun Dec 29 19:27:54 MST 2002
 - Wrap OW_*Repository into one class that implements OW_RepositoryIFC.
   Have a way for providers to access it, so they can basically be

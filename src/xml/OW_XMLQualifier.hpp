@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _OW_XMLQWALIFIER_HPP__
-#define _OW_XMLQWALIFIER_HPP__
+#ifndef OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
+#define OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_XMLClass.hpp"
@@ -70,4 +70,5 @@ private:
 
 };
 
-#endif // _OW_XMLQWALIFIER_HPP__
+#endif
+

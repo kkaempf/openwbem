@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_THREADIMPL_HPP__
-#define __OW_THREADIMPL_HPP__
+#ifndef OW_THREADIMPL_HPP_INCLUDE_GUARD_
+#define OW_THREADIMPL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -149,6 +149,7 @@ public:
 	static void sleep(OW_UInt32 milliSeconds);
 };
 
-#endif	// __OW_THREADIMPL_HPP__
+#endif
+
 
 

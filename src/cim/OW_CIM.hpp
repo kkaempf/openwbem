@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIM_HPP__
-#define __OW_CIM_HPP__
+#ifndef OW_CIM_HPP_INCLUDE_GUARD_
+#define OW_CIM_HPP_INCLUDE_GUARD_
 
 // TODO: Get rid of this file!
 
@@ -64,5 +64,5 @@
 #include "OW_CIMQualifier.hpp"
 
 
-#endif	// __OW_CIM_HPP__
+#endif
 

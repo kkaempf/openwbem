@@ -54,6 +54,8 @@
 
 using std::istream;
 
+DEFINE_EXCEPTION(Base64Format);
+
 ///////////////////////////////////////////////////////////////////////////////
 OW_Bool
 OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map,

@@ -716,8 +716,8 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 	OW_String overridable = parser.getAttribute(
 		OW_XMLParameters::paramOverridable);
 
-	OW_String toinstance = parser.getAttribute(
-		OW_XMLParameters::paramToInstance);
+	//OW_String toinstance = parser.getAttribute(
+	//	OW_XMLParameters::paramToInstance);
 
 	OW_String translatable = parser.getAttribute(
 		OW_XMLParameters::paramTranslatable);
@@ -759,10 +759,10 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 		rval.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOSUBCLASS));
 	}
 
-	if(toinstance.equalsIgnoreCase("true"))
-	{
-		rval.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE));
-	}
+	//if(toinstance.equalsIgnoreCase("true"))
+	//{
+	//	rval.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE));
+	//}
 
 	if(translatable.equalsIgnoreCase("true"))
 	{

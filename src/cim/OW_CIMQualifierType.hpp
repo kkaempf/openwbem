@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMQUALIFIERTYPE_HPP__
-#define __OW_CIMQUALIFIERTYPE_HPP__
+#ifndef OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
+#define OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
@@ -232,4 +232,5 @@ private:
 	OW_COWReference<QUALTData> m_pdata;
 };
 
-#endif	// __OW_CIMQUALIFIERTYPE_HPP__
+#endif
+

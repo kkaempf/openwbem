@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SEMAPHORE_HPP__
-#define _OW_SEMAPHORE_HPP__
+#ifndef OW_SEMAPHORE_HPP_INCLUDE_GUARD_
+#define OW_SEMAPHORE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -103,4 +103,5 @@ private:
 
 };
 
-#endif  // _OW_SEMAPHORE_HPP__
+#endif
+

@@ -29,8 +29,8 @@
 *******************************************************************************/
 
 
-#ifndef _src_client_OW_CIMClient_hpp__
-#define _src_client_OW_CIMClient_hpp__
+#ifndef src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
+#define src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
@@ -732,5 +732,6 @@ private:
 	
 };
 
-#endif // #ifndef _src_client_OW_CIMClient_hpp__
+#endif
+
 

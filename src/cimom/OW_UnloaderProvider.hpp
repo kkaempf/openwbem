@@ -42,7 +42,7 @@ class OW_UnloaderProvider : public OW_CppPolledProviderIFC
 {
 public:
 	OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv);
-	~OW_UnloaderProvider();
+	virtual ~OW_UnloaderProvider();
 
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
@@ -68,5 +68,5 @@ private:
 
 
 
-#endif // #ifndef _OW_PROVIDERUNLOADER_HPP__
+#endif
 

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_BOOL_HPP__
-#define __OW_BOOL_HPP__
+#ifndef OW_BOOL_HPP_INCLUDE_GUARD_
+#define OW_BOOL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include <iosfwd>
@@ -152,4 +152,5 @@ private:
 std::ostream& operator << (std::ostream& ostrm, const OW_Bool& arg);
 
 
-#endif	// __OW_BOOL_HPP__
+#endif
+

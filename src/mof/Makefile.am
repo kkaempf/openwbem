@@ -33,7 +33,8 @@ moflexer.cc \
 mofparser.yy \
 moflexer.ll \
 CIMOMVisitor.cpp \
-MofCompiler.cpp
+MofCompiler.cpp \
+OW_MofParseFatalErrorException.cpp
 
 pkginclude_HEADERS = \
 Grammar.h \

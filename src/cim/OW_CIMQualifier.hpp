@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMQUALIFIER_HPP__
-#define __OW_CIMQUALIFIER_HPP__
+#ifndef OW_CIMQUALIFIER_HPP_INCLUDE_GUARD_
+#define OW_CIMQUALIFIER_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -287,4 +287,5 @@ private:
 	friend bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y);
 };
 
-#endif	// __OW_CIMQUALIFIER_HPP__
+#endif
+

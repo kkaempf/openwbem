@@ -34,7 +34,7 @@
 #include "LineInfo.hpp"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(MofParseFatalError);
+DECLARE_EXCEPTION(MofParseFatalError);
 
 // this is an abstract base class for create concrete error handlers for the mof parser
 class OW_MofParserErrorHandlerIFC

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_HTTPSERVER_HPP_
-#define OW_HTTPSERVER_HPP_
+#ifndef OW_HTTPSERVER_HPP_INCLUDE_GUARD_
+#define OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Condition.hpp"
@@ -101,6 +101,7 @@ public:
 		bool useDigest;
 		bool allowAnonymous;
 		bool useUDS;
+		bool reuseAddr;
 		OW_ServiceEnvironmentIFCRef env;
 	};
 
@@ -130,4 +131,4 @@ private:
 	friend class OW_HTTPServerSelectableCallback;
 };
 
-#endif // _OW_HTTPSERVER_HPP__
+#endif

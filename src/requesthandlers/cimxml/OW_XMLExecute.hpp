@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_XMLEXECUTE_HPP__
-#define _OW_XMLEXECUTE_HPP__
+#ifndef OW_XMLEXECUTE_HPP_INCLUDE_GUARD_
+#define OW_XMLEXECUTE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -149,4 +149,5 @@ private:
 };
 
 
-#endif // _OW_XMLEXECUTE_HPP__
+#endif
+

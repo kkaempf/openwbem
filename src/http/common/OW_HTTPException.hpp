@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_HTTPEXCEPTION_HPP__
-#define __OW_HTTPEXCEPTION_HPP__
+#ifndef OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -64,6 +64,7 @@ private:
 #define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
 
-#endif //__HTTPEXCEPTION_HPP__
+#endif
+
 
 

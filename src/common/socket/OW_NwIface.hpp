@@ -39,8 +39,8 @@
  *		The purpose of the OW_NwIface class is to provide useful utility
  *		functions pertaining to the network interface.
  */
-#ifndef __OW_NWIFACE_HPP__
-#define __OW_NWIFACE_HPP__
+#ifndef OW_NWIFACE_HPP_INCLUDE_GUARD_
+#define OW_NWIFACE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -75,6 +75,7 @@ private:
 };
 
 
-#endif	// __NWIFACE_HPP__
+#endif
+
 
 

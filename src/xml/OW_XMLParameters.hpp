@@ -34,8 +34,8 @@
 //
 //
 
-#ifndef __OW_XMLPARAMETERS_HPP__
-#define __OW_XMLPARAMETERS_HPP__
+#ifndef OW_XMLPARAMETERS_HPP_INCLUDE_GUARD_
+#define OW_XMLPARAMETERS_HPP_INCLUDE_GUARD_
 
 #include	"OW_config.h"
 
@@ -53,7 +53,6 @@ public:
 	static const char* const paramTypeAssign 	;
 	static const char* const paramOverridable   ;
 	static const char* const paramToSubClass 	;
-	static const char* const paramToInstance 	;
 	static const char* const paramTranslatable  ;
 	static const char* const paramReferenceClass;
 	static const char* const classParamName     ;

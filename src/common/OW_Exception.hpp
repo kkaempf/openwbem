@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_EXCEPTION_HPP_
-#define OW_EXCEPTION_HPP_
+#ifndef OW_EXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_EXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include <iosfwd>
@@ -68,19 +68,27 @@ std::ostream& operator<< (std::ostream& os, const OW_Exception& e);
 #define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
 #define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
 
-#define DEFINE_EXCEPTION(NAME) \
+#define DECLARE_EXCEPTION(NAME) \
 class OW_##NAME##Exception : public OW_Exception \
 { \
 public: \
-	OW_##NAME##Exception() : OW_Exception() {} \
-	OW_##NAME##Exception(const char* file, int line, const char* msg) \
-		: OW_Exception(file, line, msg) {} \
-	OW_##NAME##Exception(const char* msg) : OW_Exception(msg) {} \
-	virtual ~OW_##NAME##Exception() throw() { } \
-  \
-	virtual const char* type() const { return "OW_" #NAME "Exception"; } \
+	OW_##NAME##Exception(); \
+	OW_##NAME##Exception(const char* file, int line, const char* msg); \
+	OW_##NAME##Exception(const char* msg); \
+	virtual ~OW_##NAME##Exception() throw(); \
+	virtual const char* type() const; \
 };
 
-#endif	// __OW_EXCEPTION_HPP__
+#define DEFINE_EXCEPTION(NAME) \
+OW_##NAME##Exception::OW_##NAME##Exception() : OW_Exception() {} \
+OW_##NAME##Exception::OW_##NAME##Exception(const char* file, int line, const char* msg) \
+	: OW_Exception(file, line, msg) {} \
+OW_##NAME##Exception::OW_##NAME##Exception(const char* msg) : OW_Exception(msg) {} \
+OW_##NAME##Exception::~OW_##NAME##Exception() throw() { } \
+\
+const char* OW_##NAME##Exception::type() const { return "OW_" #NAME "Exception"; } \
+
+#endif
+
 
 

@@ -37,7 +37,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Bool.hpp"
 
-DEFINE_EXCEPTION(Select)
+DECLARE_EXCEPTION(Select)
 
 class OW_SelectEngine
 {

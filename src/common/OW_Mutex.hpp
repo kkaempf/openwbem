@@ -82,4 +82,4 @@ private:
 };
 
 
-#endif // __OW_MUTEX_HPP__
+#endif

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SOCKETUTILS_HPP__
-#define _OW_SOCKETUTILS_HPP__
+#ifndef OW_SOCKETUTILS_HPP_INCLUDE_GUARD_
+#define OW_SOCKETUTILS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -57,5 +57,6 @@ private:
 };
 
 
-#endif	// _OW_SOCKETUTILS_HPP__
+#endif
+
 

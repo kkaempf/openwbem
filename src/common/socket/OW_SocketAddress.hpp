@@ -30,8 +30,8 @@
 
 
 
-#ifndef __OW_SocketADDRESS_HPP__
-#define __OW_SocketADDRESS_HPP__
+#ifndef OW_SocketADDRESS_HPP_INCLUDE_GUARD_
+#define OW_SocketADDRESS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Array.hpp"
@@ -40,8 +40,8 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(UnknownHost);
-DEFINE_EXCEPTION(SocketAddress);
+DECLARE_EXCEPTION(UnknownHost);
+DECLARE_EXCEPTION(SocketAddress);
 
 class OW_SocketAddress
 {

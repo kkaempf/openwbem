@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_SERVICEIFC_HPP__
-#define __OW_SERVICEIFC_HPP__
+#ifndef OW_SERVICEIFC_HPP_INCLUDE_GUARD_
+#define OW_SERVICEIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
@@ -60,5 +60,6 @@ getOWVersion() \
 	return OW_VERSION; \
 }
 
-#endif	// __OW_SERVICEIFC_HPP__
+#endif
+
 

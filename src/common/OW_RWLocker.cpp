@@ -32,6 +32,8 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
 
+DEFINE_EXCEPTION(RWLocker);
+
 //////////////////////////////////////////////////////////////////////////////
 OW_RWLocker::OW_RWLocker()
 	: m_waiting_writers()

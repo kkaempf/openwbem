@@ -34,6 +34,8 @@
 
 #define HASHHEXLEN 32
 
+DEFINE_EXCEPTION(MD5);
+
 //////////////////////////////////////////////////////////////////////////////
 OW_MD5OStreamBase::OW_MD5OStreamBase(OW_MD5* md5): _buf(md5) {}
 

@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_IOIFC_HPP__
-#define __OW_IOIFC_HPP__
+#ifndef OW_IOIFC_HPP_INCLUDE_GUARD_
+#define OW_IOIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -71,5 +71,6 @@ public:
 			OW_Bool errorAsException=false) = 0;
 };
 
-#endif	// __OW_IOIFC_HPP__
+#endif
+
 

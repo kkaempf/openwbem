@@ -29,8 +29,8 @@
 *******************************************************************************/
 
 
-#ifndef _OW_RANDOMNUMBER_HPP__
-#define _OW_RANDOMNUMBER_HPP__
+#ifndef OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
+#define OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_RWLOCKER_HPP__
-#define __OW_RWLOCKER_HPP__
+#ifndef OW_RWLOCKER_HPP_INCLUDE_GUARD_
+#define OW_RWLOCKER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -37,7 +37,7 @@
 #include "OW_Condition.hpp"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(RWLocker);
+DECLARE_EXCEPTION(RWLocker);
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_RWLocker

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __CIMOBJECTPATH_HPP__
-#define __CIMOBJECTPATH_HPP__
+#ifndef OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
+#define OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"

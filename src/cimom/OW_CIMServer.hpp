@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMSERVER_HPP__
-#define __OW_CIMSERVER_HPP__
+#ifndef OW_CIMSERVER_HPP_INCLUDE_GUARD_
+#define OW_CIMSERVER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
@@ -697,7 +697,7 @@ private:
 	mutable OW_RWLocker m_rwSchemaLocker;
 	mutable OW_RWLocker m_rwInstanceLocker;
 	OW_Reference<OW_AccessMgr> m_accessMgr;
-	OW_CIMClass m_nsClass__Namespace;
+	OW_CIMClass m_nsClass_Namespace;
 	OW_CIMClass m_nsClassCIM_Namespace;
 	OW_CIMOMEnvironmentRef m_env;
 	OW_RepositoryIFCRef m_cimRepository;
@@ -705,6 +705,7 @@ private:
 
 };
 
-#endif	// __OW_CIMSERVER_HPP__
+#endif
+
 
 

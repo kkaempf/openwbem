@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SSLEXCEPTION_HPP__
-#define _OW_SSLEXCEPTION_HPP__
+#ifndef OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -46,4 +46,4 @@ public:
 	virtual const char* type() const { return "OW_SSLException"; }
 };
 
-#endif //_SSLEXCEPTION_HPP__
+#endif

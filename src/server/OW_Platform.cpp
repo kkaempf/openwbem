@@ -60,6 +60,8 @@ extern "C"
 using std::ostream;
 using std::endl;
 
+DEFINE_EXCEPTION(Daemon);
+
 OW_Reference<OW_UnnamedPipe> OW_Platform::plat_upipe;
 
 static OW_Platform::Options processCommandLineOptions(int argc, char** argv);

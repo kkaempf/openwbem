@@ -48,8 +48,7 @@
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_PropertyProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
-
-DEFINE_EXCEPTION(NoSuchProvider);
+#include "OW_NoSuchProviderException.hpp"
 
 /**
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the

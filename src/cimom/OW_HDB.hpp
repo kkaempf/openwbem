@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_HDB_HPP__
-#define __OW_HDB_HPP__
+#ifndef OW_HDB_HPP_INCLUDE_GUARD_
+#define OW_HDB_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
@@ -402,6 +402,7 @@ private:
 	friend class OW_HDBHandle::OW_HDBHandleData;
 };
 
-#endif	// __OW_HDB_HPP__
+#endif
+
 
 

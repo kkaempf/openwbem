@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_HDBCOMMOM_HPP__
-#define __OW_HDBCOMMOM_HPP__
+#ifndef OW_HDBCOMMOM_HPP_INCLUDE_GUARD_
+#define OW_HDBCOMMOM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -92,5 +92,6 @@ struct OW_HDBBlock
 
 #define OW_HDBLKSZ sizeof(HDBBlock);
 
-#endif	// __OW_HDBCOMMOM_HPP__
+#endif
+
 

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_LOCALCIMOMHANDLE_HPP__
-#define __OW_LOCALCIMOMHANDLE_HPP__
+#ifndef OW_LOCALCIMOMHANDLE_HPP_INCLUDE_GUARD_
+#define OW_LOCALCIMOMHANDLE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -692,5 +692,6 @@ private:
 
 typedef OW_Reference<OW_LocalCIMOMHandle> OW_LocalCIMOMHandleRef;
 
-#endif	// __OW_LOCALCIMOMHANDLE_HPP__
+#endif
+
 

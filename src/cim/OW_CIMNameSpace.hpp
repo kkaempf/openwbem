@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMNAMESPACE_HPP__
-#define __OW_CIMNAMESPACE_HPP__
+#ifndef OW_CIMNAMESPACE_HPP_INCLUDE_GUARD_
+#define OW_CIMNAMESPACE_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -212,5 +212,6 @@ private:
 	OW_COWReference<NSData> m_pdata;
 };
 
-#endif	// __OW_CIMNAMESPACE_HPP__
+#endif
+
 

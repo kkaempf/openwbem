@@ -33,6 +33,8 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
 
+DEFINE_EXCEPTION(UnnamedPipe);
+
 //////////////////////////////////////////////////////////////////////////////
 OW_UnnamedPipe::~OW_UnnamedPipe()
 {

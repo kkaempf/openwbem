@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_AUTOPTR_HPP_
-#define OW_AUTOPTR_HPP_
+#ifndef OW_AUTOPTR_HPP_INCLUDE_GUARD_
+#define OW_AUTOPTR_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -155,7 +155,8 @@ public:
 };
 
 
-#endif	// __OW_AUTOPTR_HPP__
+#endif
+
 
 
 

@@ -28,14 +28,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_IOEXCEPTION_HPP__
-#define __OW_IOEXCEPTION_HPP__
+#ifndef OW_IOEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_IOEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(IO);
+DECLARE_EXCEPTION(IO);
 
 class OW_BadCIMSignatureException : public OW_IOException
 {
@@ -51,4 +51,5 @@ public:
 
 
 
-#endif	// __OW_IOEXCEPTION_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMPARAMETER_HPP__
-#define __OW_CIMPARAMETER_HPP__
+#ifndef OW_CIMPARAMETER_HPP_INCLUDE_GUARD_
+#define OW_CIMPARAMETER_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -186,5 +186,6 @@ private:
 	friend bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y);
 };
 
-#endif	// __OW_CIMPARAMETER_HPP__
+#endif
+
 

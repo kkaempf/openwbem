@@ -27,13 +27,14 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_OS_HPP__
-#define __OW_OS_HPP__
+#ifndef OW_OS_HPP_INCLUDE_GUARD_
+#define OW_OS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_String.hpp"
 
+// TODO: Remove this file
 class OW_OS
 {
 public:

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_STRINGBUFFER_HPP__
-#define __OW_STRINGBUFFER_HPP__
+#ifndef OW_STRINGBUFFER_HPP_INCLUDE_GUARD_
+#define OW_STRINGBUFFER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -149,5 +149,6 @@ private:
 	char* m_bfr;
 };
 
-#endif	// __OW_STRINGBUFFER_HPP__
+#endif
+
 

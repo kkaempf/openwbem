@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_FILESYSTEM_HPP__
-#define __OW_FILESYSTEM_HPP__
+#ifndef OW_FILESYSTEM_HPP_INCLUDE_GUARD_
+#define OW_FILESYSTEM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -235,5 +235,6 @@ public:
 };
 
 
-#endif	// __OW_FILESYSTEM_HPP__
+#endif
+
 

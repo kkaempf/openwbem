@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#define __OW_MEMTRACER_CPP__
+#define OW_MEMTRACER_CPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
 #ifdef OW_DEBUG_MEMORY

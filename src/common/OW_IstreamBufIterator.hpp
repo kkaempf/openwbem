@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_ISTREAMBUFITERATOR_HPP__
-#define _OW_ISTREAMBUFITERATOR_HPP__
+#ifndef OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
+#define OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Bool.hpp"
 #if defined(OW_HAVE_ISTREAM)
@@ -131,5 +131,6 @@ inline OW_Bool operator!=(const OW_IstreamBufIterator& lhs, const OW_IstreamBufI
 }
 
 
-#endif // _OW_ISTREAMBUFITERATOR_HPP__
+#endif
+
 

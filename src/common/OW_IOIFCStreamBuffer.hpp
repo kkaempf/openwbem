@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_IOIFCSTREAMBUFFER_HPP__
-#define __OW_IOIFCSTREAMBUFFER_HPP__
+#ifndef OW_IOIFCSTREAMBUFFER_HPP_INCLUDE_GUARD_
+#define OW_IOIFCSTREAMBUFFER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_IOIFC.hpp"
@@ -59,7 +59,8 @@ private:
 
 
 
-#endif	// __OW_IOIFCSTREAMBUFFER_HPP__
+#endif
+
 
 
 

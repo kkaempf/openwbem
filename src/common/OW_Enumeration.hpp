@@ -43,7 +43,7 @@
 #include <iterator>
 #include <cstdio> // for SEEK_END
 
-DEFINE_EXCEPTION(Enumeration);
+DECLARE_EXCEPTION(Enumeration);
 
 template <class T>
 class OW_TempFileEnumerationImpl

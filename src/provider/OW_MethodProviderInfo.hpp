@@ -1,6 +1,5 @@
-
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2003 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:

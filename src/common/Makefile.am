@@ -42,13 +42,18 @@ OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_Condition.cpp \
 OW_DateTime.cpp \
+OW_EnumerationException.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
 OW_Format.cpp \
+OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \
+OW_NoSuchPropertyException.cpp \
+OW_NULLValueException.cpp \
+OW_OutOfBoundsException.cpp \
 OW_PosixFile.cpp \
 OW_PosixFileSystem.cpp \
 OW_PosixOS.cpp \
@@ -57,6 +62,7 @@ OW_RWLocker.cpp \
 OW_RandomNumber.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
+OW_SharedLibraryException.cpp \
 OW_StackTrace.cpp \
 OW_String.cpp \
 OW_StringBuffer.cpp \

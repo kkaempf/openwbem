@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_ACLINFO_HPP__
-#define __OW_ACLINFO_HPP__
+#ifndef OW_ACLINFO_HPP_INCLUDE_GUARD_
+#define OW_ACLINFO_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -120,4 +120,5 @@ private:
 	friend class OW_CIMOMEnvironment;
 };
 
-#endif	// __OW_ACLINFO_HPP__
+#endif
+

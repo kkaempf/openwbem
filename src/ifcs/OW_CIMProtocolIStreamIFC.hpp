@@ -29,8 +29,8 @@
 *******************************************************************************/
 
 
-#ifndef _OW_CIMPROTOCOLISTREAMIFC_HPP__
-#define _OW_CIMPROTOCOLISTREAMIFC_HPP__
+#ifndef OW_CIMPROTOCOLISTREAMIFC_HPP_INCLUDE_GUARD_
+#define OW_CIMPROTOCOLISTREAMIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
@@ -64,6 +64,7 @@ public:
 	virtual ~OW_CIMProtocolIStreamIFC() {}
 };
 
-#endif // #define _OW_CIMPROTOCOLISTREAMIFC_HPP__
+#endif
+
 
 

@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CIMPARAMVALUE_HPP_
-#define OW_CIMPARAMVALUE_HPP_
+#ifndef OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
+#define OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Bool.hpp"
@@ -138,5 +138,6 @@ private:
 	friend bool operator<(const OW_CIMParamValue& x, const OW_CIMParamValue& y);
 };
 
-#endif	// __OW_CIMParamValue_HPP__
+#endif
+
 

@@ -30,8 +30,8 @@
 
 #ifdef OW_HAVE_ZLIB_H
 
-#ifndef _OW_HTTPDEFLATEOSTREAM_HPP__
-#define _OW_HTTPDEFLATEOSTREAM_HPP__
+#ifndef OW_HTTPDEFLATEOSTREAM_HPP_INCLUDE_GUARD_
+#define OW_HTTPDEFLATEOSTREAM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
@@ -117,6 +117,6 @@ private:
 };
 
 
-#endif //  _OW_HTTPDEFLATEOSTREAM_HPP__
+#endif
 
 #endif // #ifdef OW_HAVE_ZLIB_H

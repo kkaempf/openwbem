@@ -28,15 +28,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_ASSERTION_HPP__
-#define _OW_ASSERTION_HPP__
+#ifndef OW_ASSERTION_HPP_INCLUDE_GUARD_
+#define OW_ASSERTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include <iosfwd>
 
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(Assertion);
+DECLARE_EXCEPTION(Assertion);
 
 typedef OW_AssertionException OW_Assertion;
 
@@ -47,5 +47,6 @@ typedef OW_AssertionException OW_Assertion;
 #define OW_ASSERT(CON)
 #endif
 
-#endif	// __OW_ASSERTION_HPP__
+#endif
+
 

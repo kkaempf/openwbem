@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_CIMMETHOD_HPP_
-#define OW_CIMMETHOD_HPP_
+#ifndef OW_CIMMETHOD_HPP_INCLUDE_GUARD_
+#define OW_CIMMETHOD_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -293,6 +293,7 @@ protected:
 	friend bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y);
 };
 
-#endif	// __OW_CIMMETHOD_HPP__
+#endif
+
 
 

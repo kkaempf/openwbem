@@ -35,6 +35,7 @@
 #include "OW_Semaphore.hpp"
 #include "OW_Exception.hpp"
 
+DECLARE_EXCEPTION(Test);
 DEFINE_EXCEPTION(Test);
 
 void OW_ExceptionTestCases::setUp()

@@ -148,7 +148,7 @@ void OW_String_sort(OW_String& s)
     std::sort(&s[0], &s[s.length()]);
 }
 
-char OW_String__getitem__(const OW_String& s, int i)
+char OW_String_getitem_(const OW_String& s, int i)
 {
     if (i < 0 || i >= s.length())
     {
@@ -160,7 +160,7 @@ char OW_String__getitem__(const OW_String& s, int i)
     return s[i];
 }
 
-void OW_String__setitem__(OW_String& s, int i, char c)
+void OW_String_setitem_(OW_String& s, int i, char c)
 {
     if (i < 0 || i >= s.length())
     {
@@ -172,7 +172,7 @@ void OW_String__setitem__(OW_String& s, int i, char c)
     s[i] = c;
 }
 
-void OW_String__delitem__(OW_String& s, int i)
+void OW_String_delitem_(OW_String& s, int i)
 {
     if (i < 0 || i >= s.length())
     {
@@ -250,9 +250,9 @@ void registerOW_String()
         .def("trim", &OW_String::trim, return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)())(&OW_String::erase), return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), OW_String_erase_overloads(args("idx", "len"))[return_internal_reference<>()])
-        .def("__getitem__", &OW_String__getitem__)
-        .def("__setitem__", &OW_String__setitem__)
-        .def("__delitem__", &OW_String__delitem__)
+        .def("__getitem__", &OW_String_getitem_)
+        .def("__setitem__", &OW_String_setitem_)
+        .def("__delitem__", &OW_String_delitem_)
         .def(self += self)
         .def("readObject", &OW_String::readObject)
         .def("writeObject", &OW_String::writeObject)

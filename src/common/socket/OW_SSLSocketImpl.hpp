@@ -37,8 +37,8 @@
  * @description
  *		Interface file for the OW_SSLSocketImpl class
  */
-#ifndef __OW_INETSSLSOCKETIMPL_HPP__
-#define __OW_INETSSLSOCKETIMPL_HPP__
+#ifndef OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
+#define OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -90,5 +90,5 @@ private:
 
 #endif // #ifndef OW_NO_SSL
 
-#endif	// __OW_INETSSLSOCKETIMPL_HPP__
+#endif
 

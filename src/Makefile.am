@@ -1,7 +1,6 @@
 SUBDIRS = \
 cim \
 ifcs \
-provider \
 common \
  \
 client \
@@ -18,6 +17,7 @@ wql \
 authenticators \
 services \
 requesthandlers \
+provider \
 providerifcs \
 providers \
 cimom \

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_REPOSITORYIFC_HPP__
-#define __OW_REPOSITORYIFC_HPP__
+#ifndef OW_REPOSITORYIFC_HPP_INCLUDE_GUARD_
+#define OW_REPOSITORYIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMOMEnvironment.hpp"
@@ -504,7 +504,8 @@ typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
 typedef OW_SharedLibraryReference<OW_RepositoryIFC>
 	OW_SharedLibraryRepositoryIFCRef;
 
-#endif	// __OW_REPOSITORYIFC_HPP__
+#endif
+
 
 
 

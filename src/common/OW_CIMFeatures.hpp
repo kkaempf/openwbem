@@ -34,8 +34,8 @@
 //
 //
 
-#ifndef __OW_CIMFEATURES_HPP__
-#define __OW_CIMFEATURES_HPP__
+#ifndef OW_CIMFEATURES_HPP_INCLUDE_GUARD_
+#define OW_CIMFEATURES_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"

@@ -36,7 +36,8 @@
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
-DEFINE_EXCEPTION(TypeMismatch);
+
+DECLARE_EXCEPTION(TypeMismatch);
 
 /** Tag used to force invocation of the integer value form of the OW_WQLOperand
   Constructor.

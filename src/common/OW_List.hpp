@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_LIST_HPP__
-#define __OW_LIST_HPP__
+#ifndef OW_LIST_HPP_INCLUDE_GUARD_
+#define OW_LIST_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
@@ -347,5 +347,6 @@ std::list<T>* OW_COWReferenceClone(std::list<T>* obj)
     return new std::list<T>(*obj);
 }
 
-#endif	// __OW_LIST_HPP__
+#endif
+
 

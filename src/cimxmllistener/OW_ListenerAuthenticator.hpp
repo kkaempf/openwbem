@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_LISTENERAUTHORIZER_HPP__
-#define _OW_LISTENERAUTHORIZER_HPP__
+#ifndef OW_LISTENERAUTHORIZER_HPP_INCLUDE_GUARD_
+#define OW_LISTENERAUTHORIZER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
@@ -78,5 +78,6 @@ private:
 };
 
 
-#endif // _OW_LISTENERAUTHORIZER_HPP__
+#endif
+
 

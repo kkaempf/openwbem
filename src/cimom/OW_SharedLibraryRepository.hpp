@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_SHAREDLIBRARYREPOSITORY_HPP__
-#define __OW_SHAREDLIBRARYREPOSITORY_HPP__
+#ifndef OW_SHAREDLIBRARYREPOSITORY_HPP_INCLUDE_GUARD_
+#define OW_SHAREDLIBRARYREPOSITORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -356,6 +356,7 @@ private:
 	OW_SharedLibraryRepositoryIFCRef m_ref;
 };
 
-#endif	// __OW_SHAREDLIBRARYREPOSITORY_HPP__
+#endif
+
 
 

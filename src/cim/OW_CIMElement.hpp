@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMELEMENT_HPP__
-#define __OW_CIMELEMENT_HPP__
+#ifndef OW_CIMELEMENT_HPP_INCLUDE_GUARD_
+#define OW_CIMELEMENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_Bool.hpp"
@@ -81,4 +81,5 @@ public:
 	}
 };
 
-#endif	// __OW_CIMELEMENT_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_CIMPROTOCOL_HPP__
-#define _OW_CIMPROTOCOL_HPP__
+#ifndef OW_CIMPROTOCOL_HPP_INCLUDE_GUARD_
+#define OW_CIMPROTOCOL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Exception.hpp"
@@ -40,7 +40,7 @@
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include <iosfwd>
 
-DEFINE_EXCEPTION(CIMProtocol);
+DECLARE_EXCEPTION(CIMProtocol);
 
 
 class OW_CIMProtocolIFC
@@ -106,4 +106,5 @@ protected:
 
 typedef OW_Reference<OW_CIMProtocolIFC> OW_CIMProtocolIFCRef;
 
-#endif // _OW_CIMPROTOCOL_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_STRING_HPP_
-#define OW_STRING_HPP_
+#ifndef OW_STRING_HPP_INCLUDE_GUARD_
+#define OW_STRING_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -40,7 +40,7 @@
 
 #include <iosfwd>
 
-class OW_IOException;
+//class OW_IOException;
 class OW_Char16;
 typedef OW_Array<OW_Char16> OW_Char16Array;
 
@@ -50,7 +50,7 @@ class OW_CIMObjectPath;
 class OW_String;
 typedef OW_Array<OW_String> OW_StringArray;
 
-DEFINE_EXCEPTION(StringConversion);
+DECLARE_EXCEPTION(StringConversion);
 
 /**
  * This OW_String class is an abstract data type that represents as NULL
@@ -723,5 +723,5 @@ operator >= (const char* p, const OW_String& s)
 	return (OW_String(p).compareTo(s) >= 0);
 }
 
-#endif	// __OW_STRING_HPP__
+#endif
 

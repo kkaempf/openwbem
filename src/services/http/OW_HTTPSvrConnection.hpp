@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef _OW_HTTPSVRCONNECTION_HPP__
-#define _OW_HTTPSVRCONNECTION_HPP__
+#ifndef OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
+#define OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Thread.hpp"
@@ -192,5 +192,5 @@ private:
 			std::istream& istr);
 };
 
-#endif	// _OW_HTTPSVRCONNECTION_HPP__
+#endif
 

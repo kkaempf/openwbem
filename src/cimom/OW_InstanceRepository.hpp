@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_INSTANCEREPOSITORY_HPP__
-#define __OW_INSTANCEREPOSITORY_HPP__
+#ifndef OW_INSTANCEREPOSITORY_HPP_INCLUDE_GUARD_
+#define OW_INSTANCEREPOSITORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
@@ -179,5 +179,6 @@ private:
 
 };
 
-#endif	// __OW_INSTANCEREPOSITORY_HPP__
+#endif
+
 

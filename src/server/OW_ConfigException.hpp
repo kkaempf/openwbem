@@ -28,13 +28,13 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_CONFIGEXCEPTION_HPP__
-#define _OW_CONFIGEXCEPTION_HPP__
+#ifndef OW_CONFIGEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_CONFIGEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(Config);
+DECLARE_EXCEPTION(Config);
 
-#endif //_CONFIGEXCEPTION_HPP__
+#endif

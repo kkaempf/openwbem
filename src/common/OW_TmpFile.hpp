@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_TMPFILE_HPP__
-#define __OW_TMPFILE_HPP__
+#ifndef OW_TMPFILE_HPP_INCLUDE_GUARD_
+#define OW_TMPFILE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Reference.hpp"
@@ -120,4 +120,5 @@ private:
 	OW_Reference<OW_TmpFileImpl> m_impl;
 };
 
-#endif	// __OW_TMPFILE_HPP__
+#endif
+

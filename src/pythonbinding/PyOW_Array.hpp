@@ -15,7 +15,7 @@
 namespace {
 
 template <typename T>
-T T__getslice__(const T& a, int i, int j)
+T T_getslice_(const T& a, int i, int j)
 {
     int len = a.size();
     if (i < 0)
@@ -41,7 +41,7 @@ T T__getslice__(const T& a, int i, int j)
 }
 
 template <typename T>
-typename T::value_type T__getitem__(const T& t, int i)
+typename T::value_type T_getitem_(const T& t, int i)
 {
     if (i < 0 || i >= t.size())
     {
@@ -54,7 +54,7 @@ typename T::value_type T__getitem__(const T& t, int i)
 }
 
 template <typename T>
-void T__setitem__(T& t, int i, const typename T::value_type& x)
+void T_setitem_(T& t, int i, const typename T::value_type& x)
 {
     if (i < 0 || i >= t.size())
     {
@@ -67,7 +67,7 @@ void T__setitem__(T& t, int i, const typename T::value_type& x)
 }
 
 template <typename T>
-void T__delitem__(T& t, int i)
+void T_delitem_(T& t, int i)
 {
     if (i < 0 || i >= t.size())
     {
@@ -178,7 +178,7 @@ void T_sort(T& s)
 }
 
 template <typename T>
-T T__add__(T const& x, T const& y)
+T T_add_(T const& x, T const& y)
 {
     T rval(x);
     rval.insert(rval.end(), y.begin(), y.end());
@@ -186,14 +186,14 @@ T T__add__(T const& x, T const& y)
 }
 
 template <typename T>
-T& T__iadd__(T& x, T const& y)
+T& T_iadd_(T& x, T const& y)
 {
     x.insert(x.end(), y.begin(), y.end());
     return x;
 }
 
 template <typename T>
-T T__mul__(T const& x, int y)
+T T_mul_(T const& x, int y)
 {
     T rval;
     for (int i = 0; i < y; ++i)
@@ -204,13 +204,13 @@ T T__mul__(T const& x, int y)
 }
 
 template <typename T>
-T T__rmul__(int y, T const& x)
+T T_rmul_(int y, T const& x)
 {
-    return T__mul__(x, y);
+    return T_mul_(x, y);
 }
 
 template <typename T>
-T& T__imul__(T & x, int y)
+T& T_imul_(T & x, int y)
 {
     if (y < 1)
     {
@@ -230,7 +230,7 @@ T& T__imul__(T & x, int y)
 }
 
 template <typename T>
-bool T__contains__(T const& self, typename T::value_type const& item)
+bool T_contains_(T const& self, typename T::value_type const& item)
 {
     return std::find(self.begin(), self.end(), item) != self.end();
 }
@@ -321,10 +321,10 @@ void registerOW_ArrayImpl(const char* className)
 
         // python container functions
         .def("__len__", &OW_Array<T>::size)
-        .def("__getslice__", &T__getslice__<OW_Array<T> >)
-        .def("__getitem__", &T__getitem__<OW_Array<T> >)
-        .def("__setitem__", &T__setitem__<OW_Array<T> >)
-        .def("__delitem__", &T__delitem__<OW_Array<T> >)
+        .def("__getslice__", &T_getslice_<OW_Array<T> >)
+        .def("__getitem__", &T_getitem_<OW_Array<T> >)
+        .def("__setitem__", &T_setitem_<OW_Array<T> >)
+        .def("__delitem__", &T_delitem_<OW_Array<T> >)
         .def("append", &T_append<OW_Array<T> >)
         .def("count", &T_count<OW_Array<T> >)
         .def("index", &T_index<OW_Array<T> >)
@@ -333,13 +333,13 @@ void registerOW_ArrayImpl(const char* className)
         .def("remove", &T_remove<OW_Array<T> >)
         .def("reverse", &T_reverse<OW_Array<T> >)
         .def("sort", &T_sort<OW_Array<T> >)
-        .def("__add__", &T__add__<OW_Array<T> >)
-        .def("__radd__", &T__add__<OW_Array<T> >)
-        .def("__iadd__", &T__iadd__<OW_Array<T> >, return_internal_reference<1>())
-        .def("__mul__", &T__mul__<OW_Array<T> >)
-        .def("__rmul__", &T__rmul__<OW_Array<T> >)
-        .def("__imul__", &T__imul__<OW_Array<T> >, return_internal_reference<1>())
-        .def("__contains__", &T__contains__<OW_Array<T> >)
+        .def("__add__", &T_add_<OW_Array<T> >)
+        .def("__radd__", &T_add_<OW_Array<T> >)
+        .def("__iadd__", &T_iadd_<OW_Array<T> >, return_internal_reference<1>())
+        .def("__mul__", &T_mul_<OW_Array<T> >)
+        .def("__rmul__", &T_rmul_<OW_Array<T> >)
+        .def("__imul__", &T_imul_<OW_Array<T> >, return_internal_reference<1>())
+        .def("__contains__", &T_contains_<OW_Array<T> >)
 
         .def("__repr__", &T_repr<OW_Array<T> >)
         .def("__str__", &T_str<OW_Array<T> >)

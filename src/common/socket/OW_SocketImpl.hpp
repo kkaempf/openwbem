@@ -37,8 +37,8 @@
  * @description
  *		Interface file for the OW_SocketImpl class
  */
-#ifndef __OW_INETSOCKETIMPL_HPP__
-#define __OW_INETSOCKETIMPL_HPP__
+#ifndef OW_INETSOCKETIMPL_HPP_INCLUDE_GUARD_
+#define OW_INETSOCKETIMPL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_SocketStreamBuffer.hpp"
@@ -64,5 +64,6 @@ protected:
 	virtual int writeAux(const void* dataOut, int dataOutLen);
 };
 
-#endif	// __INETSOCKETIMPL_HPP__
+#endif
+
 

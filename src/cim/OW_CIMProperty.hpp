@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMPROPERTY_HPP__
-#define __OW_CIMPROPERTY_HPP__
+#ifndef OW_CIMPROPERTY_HPP_INCLUDE_GUARD_
+#define OW_CIMPROPERTY_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -336,4 +336,5 @@ private:
 };
 
 
-#endif	// __OW_CIMPROPERTY_HPP__
+#endif
+

@@ -37,8 +37,8 @@
  * @description
  *		Interface file for the OW_ServerSocketImpl class
  */
-#ifndef __OW_INETSERVERSOCKETIMPL_HPP__
-#define __OW_INETSERVERSOCKETIMPL_HPP__
+#ifndef OW_INETSERVERSOCKETIMPL_HPP_INCLUDE_GUARD_
+#define OW_INETSERVERSOCKETIMPL_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
@@ -62,8 +62,9 @@ public:
 	OW_SocketAddress getLocalAddress() { return m_localAddress; }
 	OW_SocketHandle_t getfd() const { return m_sockfd; }
 	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-		OW_Bool allInterfaces=false);
-	void doListen(const OW_String& filename, int queueSize=10);
+		OW_Bool allInterfaces=false, bool reuseAddr = true);
+	void doListen(const OW_String& filename, int queueSize=10, 
+		bool reuseAddr = true);
 	OW_Bool waitForIO(int fd, int timeOutSecs, OW_Bool forInput);
 	OW_Select_t getSelectObj() const;
 
@@ -84,4 +85,5 @@ private:
 	OW_File m_udsFile;
 };
 
-#endif	// __INETSERVERSOCKETIMPL_HPP__
+#endif
+

@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef _OW_HTTPCHUNKEDOSTREAM_HPP__
-#define _OW_HTTPCHUNKEDOSTREAM_HPP__
+#ifndef OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
+#define OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
@@ -122,4 +122,4 @@ private:
 };
 
 
-#endif // _OW_HTTPCHUNKEDOSTREAM_HPP__
+#endif

@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_SELECTABLEIFC_HPP__
-#define __OW_SELECTABLEIFC_HPP__
+#ifndef OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
+#define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -44,5 +44,6 @@ public:
 
 typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
 
-#endif	// __OW_SELECTABLEIFC_HPP__
+#endif
+
 

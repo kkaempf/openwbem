@@ -32,8 +32,8 @@
 // OW_Param.hpp
 //
 
-#ifndef __OW_PARAM_HPP__
-#define __OW_PARAM_HPP__
+#ifndef OW_PARAM_HPP_INCLUDE_GUARD_
+#define OW_PARAM_HPP_INCLUDE_GUARD_
 
 #include	"OW_config.h"
 #include	"OW_String.hpp"
@@ -64,5 +64,6 @@ private:
 
 typedef OW_Array<OW_Param> OW_ParamArray;
 
-#endif  // __OW_PARAM_HPP__
+#endif
+
 

@@ -34,8 +34,8 @@
  *
  */
  
-#ifndef _OW_CIMQUALIFIERENUMERATION_HPP__
-#define _OW_CIMQUALIFIERENUMERATION_HPP__
+#ifndef OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
+#define OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
@@ -46,4 +46,5 @@ typedef OW_Enumeration<OW_CIMQualifier> OW_CIMQualifierEnumeration;
 typedef OW_Enumeration<OW_CIMQualifierType> OW_CIMQualifierTypeEnumeration;
 
 
-#endif //  _OW_CIMQUALIFIERENUMERATION_HPP__
+#endif
+

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_CIMOMLOCATOR_HPP__
-#define _OW_CIMOMLOCATOR_HPP__
+#ifndef OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
+#define OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMOMInfo.hpp"
@@ -38,7 +38,7 @@
 #include "OW_Array.hpp"
 #include <utility>
 
-DEFINE_EXCEPTION(CIMOMLocator);
+DECLARE_EXCEPTION(CIMOMLocator);
 
 typedef std::pair<OW_String, OW_String> OW_CIMOMAttribute;
 typedef OW_Array<OW_CIMOMAttribute> OW_CIMOMAttributeArray;
@@ -68,4 +68,5 @@ public:
 };
 
 
-#endif // #ifndef _OW_CIMOMLOCATOR_HPP__
+#endif
+

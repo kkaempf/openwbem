@@ -34,6 +34,9 @@
 #include <cassert>
 #include <cerrno>
 
+DEFINE_EXCEPTION(ConditionLock);
+DEFINE_EXCEPTION(ConditionResource);
+
 /////////////////////////////////////////////////////////////////////////////
 OW_Condition::OW_Condition()
 {

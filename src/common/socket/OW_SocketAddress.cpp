@@ -48,6 +48,9 @@ extern "C"
 #include <errno.h>
 }
 
+DEFINE_EXCEPTION(UnknownHost);
+DEFINE_EXCEPTION(SocketAddress);
+
 
 //static
 OW_SocketAddress

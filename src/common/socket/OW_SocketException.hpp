@@ -28,14 +28,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_SOCKETEXCEPTION_HPP__
-#define _OW_SOCKETEXCEPTION_HPP__
+#ifndef OW_SOCKETEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_SOCKETEXCEPTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(Socket);
+DECLARE_EXCEPTION(Socket);
 
 
-#endif //_SOCKETEXCEPTION_HPP__
+#endif
+

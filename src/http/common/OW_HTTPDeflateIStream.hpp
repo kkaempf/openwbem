@@ -30,8 +30,8 @@
 
 #ifdef OW_HAVE_ZLIB_H
 
-#ifndef _OW_HTTPDEFLATEISTREAM_HPP__
-#define _OW_HTTPDEFLATEISTREAM_HPP__
+#ifndef OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
+#define OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMProtocolIStreamIFC.hpp"
@@ -101,8 +101,6 @@ private:
 	OW_HTTPDeflateIStream& operator=(OW_HTTPDeflateIStream&);
 };
 
-#endif // _OW_HTTPDEFLATEISTREAM_HPP__
-
-
+#endif
 
 #endif // #ifdef OW_HAVE_ZLIB_H

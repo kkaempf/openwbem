@@ -13,7 +13,7 @@ TMPLIBDIR = .$@.libs
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$< 
 	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
-	rm -f $@
+	rm -rf $@ $(TMPLIBDIR)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 

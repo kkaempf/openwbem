@@ -233,3 +233,17 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # Unix Domain Socket.  The default value is true.
 ;http_server.use_UDS = true
 
+################################################################################
+# http_server.reuse_addr specifies whether the http server will set the 
+# SO_REUSEADDR when it listens on a socket.  This is provided because some
+# Unix kernels have security problems when this option is set.
+# If this option is not turned on, you may not be able to immediately restart
+# the daemon because it can't listen on the port until the kernel releases it.
+# It's OK to use on current linux versions.  Definitely not on
+# OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
+# OpenServer?
+# See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
+# or just google for "bind() Security Problems"
+# The default value is true.
+;http_server.reuse_addr = true
+

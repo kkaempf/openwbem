@@ -161,17 +161,18 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 		}
 	}
 
-	fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
-	if(cqt.hasFlavor(fv))
-	{
-		OW_CIMtoXML(fv, ostr);
-		ostr << "=\"true\" ";
-	}
-	else
-	{
+	// This is a bug in the spec, but we still support it for backward compatibility.
+	//fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
+	//if(cqt.hasFlavor(fv))
+	//{
+	//	OW_CIMtoXML(fv, ostr);
+	//	ostr << "=\"true\" ";
+	//}
+	//else
+	//{
 		//
 		// Not needed, because TOINSTANCE defaults to false!
-	}
+	//}
 
 
 	fv = OW_CIMFlavor(OW_CIMFlavor::TRANSLATE);
@@ -1087,17 +1088,18 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 		}
 	}
 
-	fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
-	if(cq.hasFlavor(fv))
-	{
-		OW_CIMtoXML(fv, ostr);
-		ostr << "=\"true\" ";
-	}
-	else
-	{
+	// This is a bug in the spec, but we still support it for backward compatibility.
+	//fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
+	//if(cq.hasFlavor(fv))
+	//{
+	//	OW_CIMtoXML(fv, ostr);
+	//	ostr << "=\"true\" ";
+	//}
+	//else
+	//{
 		//
 		// Not needed, because TOINSTANCE defaults to false!
-	}
+	//}
 
 	fv = OW_CIMFlavor(OW_CIMFlavor::TRANSLATE);
 	if(cq.hasFlavor(fv))

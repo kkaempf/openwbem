@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(NULLValue);
+DECLARE_EXCEPTION(NULLValue);
 
 #endif
 

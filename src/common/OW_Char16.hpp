@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CHAR16_HPP__
-#define __OW_CHAR16_HPP__
+#ifndef OW_CHAR16_HPP_INCLUDE_GUARD_
+#define OW_CHAR16_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
@@ -430,4 +430,5 @@ std::ostream& operator<< (std::ostream& ostrm, const OW_Char16& arg);
 
 typedef OW_Array<OW_Char16> OW_Char16Array;
 
-#endif	// __OW_CHAR16_HPP__
+#endif
+

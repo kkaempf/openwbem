@@ -105,11 +105,11 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOSUBCLASS));
 	}
 
-	qualFlavor = parser.getAttribute("TOINSTANCE");
-	if(qualFlavor.equalsIgnoreCase("true"))
-	{
-		cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE));
-	}
+	//qualFlavor = parser.getAttribute("TOINSTANCE");
+	//if(qualFlavor.equalsIgnoreCase("true"))
+	//{
+	//	cimQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE));
+	//}
 
 	qualFlavor = parser.getAttribute("TRANSLATABLE");
 	if(qualFlavor.equalsIgnoreCase("true"))

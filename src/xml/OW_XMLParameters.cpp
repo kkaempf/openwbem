@@ -43,7 +43,6 @@ const char* const OW_XMLParameters::paramRefClass      	= "REFERENCECLASS";
 const char* const OW_XMLParameters::paramTypeAssign 		= "TYPE";
 const char* const OW_XMLParameters::paramOverridable   	= "OVERRIDABLE";
 const char* const OW_XMLParameters::paramToSubClass 		= "TOSUBCLASS";
-const char* const OW_XMLParameters::paramToInstance 		= "TOINSTANCE";
 const char* const OW_XMLParameters::paramTranslatable  	= "TRANSLATABLE";
 const char* const OW_XMLParameters::paramReferenceClass	= "REFERENCECLASS";
 const char* const OW_XMLParameters::classParamName     	= "CLASSNAME";

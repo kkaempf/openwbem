@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMVALUECAST_HPP__
-#define __OW_CIMVALUECAST_HPP__
+#ifndef OW_CIMVALUECAST_HPP_INCLUDE_GUARD_
+#define OW_CIMVALUECAST_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
@@ -48,4 +48,5 @@ public:
 		const OW_CIMDataType& dataType) /*throw (OW_CIMException)*/;
 };
 
-#endif	// __OW_CIMVALUECAST_HPP__
+#endif
+

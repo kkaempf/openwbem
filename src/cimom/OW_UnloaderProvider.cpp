@@ -37,23 +37,24 @@
 #define POLLING_INTERVAL 60
 
 OW_UnloaderProvider::OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv)
-: m_pcenv(pcenv)
+	: m_pcenv(pcenv) 
 {
 }
 
-OW_UnloaderProvider::~OW_UnloaderProvider()
+OW_UnloaderProvider::~OW_UnloaderProvider() 
 {
 }
 
-	/**
-	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
-	 * opportunity to export indications if needed.
-	 * @param lch	A local CIMOM handle the provider can use to export
-	 *					indications if needed.
-	 * @return How many seconds before the next call to the poll method. If this
-	 * method returns -1 then the last polling interval will be used. If it
-	 * returns 0 then the poll method will never be called again.
-	 */
+
+/**
+ * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+ * opportunity to export indications if needed.
+ * @param lch	A local CIMOM handle the provider can use to export
+ *					indications if needed.
+ * @return How many seconds before the next call to the poll method. If this
+ * method returns -1 then the last polling interval will be used. If it
+ * returns 0 then the poll method will never be called again.
+ */
 OW_Int32
 OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &/*env*/)
 {
@@ -63,10 +64,10 @@ OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &/*env*/)
 	return -1;
 }
 
-	/**
-	 * @return The amount of seconds before the first call to the poll method.
-	 * If this method returns zero, then the poll method is never called.
-	 */
+/**
+ * @return The amount of seconds before the first call to the poll method.
+ * If this method returns zero, then the poll method is never called.
+ */
 OW_Int32
 OW_UnloaderProvider::getInitialPollingInterval(const
 		OW_ProviderEnvironmentIFCRef &env)

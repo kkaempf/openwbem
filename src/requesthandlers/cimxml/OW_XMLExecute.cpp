@@ -52,6 +52,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
 
+DECLARE_EXCEPTION(BadStream)
 DEFINE_EXCEPTION(BadStream)
 
 #include <algorithm>

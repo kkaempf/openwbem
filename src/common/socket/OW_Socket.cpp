@@ -43,6 +43,9 @@
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 
+DEFINE_EXCEPTION(Socket)
+DEFINE_EXCEPTION(TimeOut)
+
 OW_UnnamedPipeRef OW_Socket::m_pUpipe;
 
 OW_Socket::OW_Socket(OW_Bool isSSL)

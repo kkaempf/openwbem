@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_HTTPCHUNKEXCEPTION_H__
-#define __OW_HTTPCHUNKEXCEPTION_H__
+#ifndef OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
+#define OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
@@ -46,4 +46,5 @@ public:
 	virtual const char* type() const { return "OW_HTTPChunkException"; }
 };
 
-#endif //__HTTPCHUNKEXCEPTION_H__
+#endif
+

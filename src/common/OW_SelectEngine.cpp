@@ -32,6 +32,8 @@
 #include "OW_SelectEngine.hpp"
 #include "OW_Select.hpp"
 
+DEFINE_EXCEPTION(Select)
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SelectEngine::addSelectableObject(OW_SelectableIFCRef obj,

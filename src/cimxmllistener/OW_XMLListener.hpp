@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_XMLLISTENER_HPP_
-#define OW_XMLLISTENER_HPP_
+#ifndef OW_XMLLISTENER_HPP_INCLUDE_GUARD_
+#define OW_XMLLISTENER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
@@ -94,5 +94,6 @@ private:
 };
 
 
-#endif // __OW_XMLLISTENER_HPP__
+#endif
+
 
