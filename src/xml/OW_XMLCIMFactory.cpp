@@ -794,6 +794,11 @@ createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag e
 						// we'll just leave the property alone (as a string)
 					}
 				}
+				else if (values.size() == 0)
+				{
+					// it was an empty array.  Assume it was instances, not classes.
+					rval = CIMValue(CIMInstanceArray());
+				}
 			}
 			else
 			{
