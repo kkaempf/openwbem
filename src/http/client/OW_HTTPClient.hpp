@@ -78,7 +78,7 @@ public:
 	 * A port may be a number to indicate a TCP port, or it may be the special
 	 *  value owipc which indicates the Unix Domain Socket for the system.
 	 * 
-	 * example: "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
+	 * example: "https://jdd:test@myhost.com:5989/root/cimv2"
 	 * 
 	 * If (principal == "" && (host == "localhost" || host == "127.0.0.1")) then HTTPClient will attempt to use OWLocal 
 	 * authentication.
