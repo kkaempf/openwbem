@@ -1,4 +1,7 @@
 MAKEDYLIB=1
+
+if ENABLE_CMPI
+
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
@@ -68,4 +71,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/npi 
+
+endif
 

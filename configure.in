@@ -731,6 +731,13 @@ if test "$enable_association_traversal" = no; then
 fi
 AM_CONDITIONAL(DISABLE_ASSOCIATION_TRAVERSAL, test x$OW_DISABLE_ASSOCIATION_TRAVERSAL = x1)
 
+OW_ENABLE_CMPI=1
+AC_ARG_ENABLE(cmpi,
+OW_HELP_STRING(--disable-cmpi, disable the cmpi provider interface))
+if test "$enable_cmpi" = no; then
+	OW_ENABLE_CMPI=0
+fi
+AM_CONDITIONAL(ENABLE_CMPI, test x$OW_ENABLE_CMPI = x1)
 
 AC_ARG_ENABLE(qualifier-declaration,
 OW_HELP_STRING(--disable-qualifier-declaration,disable qualifier declaration))

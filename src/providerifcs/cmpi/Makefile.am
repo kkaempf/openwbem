@@ -1,5 +1,8 @@
 MAKEBUNDLE=1
 SUBDIRS = common
+
+if ENABLE_CMPI
+
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
@@ -58,3 +61,4 @@ INCLUDES = \
 -I$(top_srcdir)/src/cimom/server \
 -I$(top_srcdir)/src/wql/common
 
+endif
