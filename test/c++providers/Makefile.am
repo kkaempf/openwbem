@@ -4,5 +4,5 @@ else
 ASSOC_DIR=associator
 endif
 
-SUBDIRS = $(ASSOC_DIR) method instance indication
+SUBDIRS = $(ASSOC_DIR) method instance indication secondary_instance
 

@@ -1059,6 +1059,7 @@ test/c++providers/associator/Makefile
 test/c++providers/method/Makefile
 test/c++providers/instance/Makefile
 test/c++providers/indication/Makefile
+test/c++providers/secondary_instance/Makefile
 test/npiproviders/Makefile
 test/cmpiproviders/Makefile
 test/unit/Makefile)
