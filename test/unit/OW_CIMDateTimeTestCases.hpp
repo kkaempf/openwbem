@@ -58,6 +58,7 @@ private:
 	void testSetMethods();
 	void testGetMethods();
 	void testStringConstructor();
+	void testLessThan();
 };
 
 #endif

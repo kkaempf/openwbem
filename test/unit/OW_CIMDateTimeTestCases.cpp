@@ -149,6 +149,41 @@ void OW_CIMDateTimeTestCases::testSetMethodsInterval()
 	unitAssert(testDateTime2.equal(testDateTime));
 }
 
+void OW_CIMDateTimeTestCases::testLessThan()
+{
+	// compare all sequential days to make sure we didn't screw up leap years.
+	DateTime dt(0); // start out at the epoch
+	while (dt.getYear() < 2020)
+	{
+		DateTime dt2(dt);
+		dt2.addDays(1);
+		unitAssert(CIMDateTime(dt) < CIMDateTime(dt2));
+
+		dt.addDays(1);
+	}
+
+	// now a few from before the epoch, which unfortunately we can't use DateTime to help out.
+	unitAssert(CIMDateTime("00040102030405.678987-420") < CIMDateTime("00040103000000.000000-000"));
+	// extremes
+	unitAssert(CIMDateTime("00000101000000.000000-999") < CIMDateTime("99991231235959.999999+999"));
+	unitAssert(CIMDateTime("00000101000000.000000-000") < CIMDateTime("00000101000000.000001-000"));
+	unitAssert(CIMDateTime("99991231235959.999998-000") < CIMDateTime("99991231235959.999999-000"));
+	// off by 1 millisecond
+	unitAssert(CIMDateTime("19691231235959.999999-000") < CIMDateTime("19700101000000.000000-000"));
+	// try a leap day on a leap year
+	unitAssert(CIMDateTime("20040228000000.000000-000") < CIMDateTime("20040229000000.000000-000"));
+	unitAssert(CIMDateTime("19680228000000.000000-000") < CIMDateTime("19680229000000.000000-000"));
+	// test milliseconds
+	unitAssert(CIMDateTime("19680228000000.000000-000") < CIMDateTime("19680228000000.000001-000"));
+	// test equivalence
+	unitAssert(!(CIMDateTime("19680228000000.000000-000") < CIMDateTime("19680228000000.000000-000")));
+	// test UTC offset
+	unitAssert(CIMDateTime("19691231220000.000000-120") < CIMDateTime("19691231210000.000000-000"));
+	// UTC offset equivalence
+	unitAssert(!(CIMDateTime("19691231220000.000000-120") < CIMDateTime("19691231200000.000000-000")));
+	unitAssert(!(CIMDateTime("19691231200000.000000-000") < CIMDateTime("19691231220000.000000-120")));
+}
+
 Test* OW_CIMDateTimeTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMDateTime");
@@ -161,5 +196,6 @@ Test* OW_CIMDateTimeTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testStringConstructorInterval);
 	ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testGetMethodsInterval);
 	ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testSetMethodsInterval);
+    ADD_TEST_TO_SUITE(OW_CIMDateTimeTestCases, testLessThan);
 	return testSuite;
 }

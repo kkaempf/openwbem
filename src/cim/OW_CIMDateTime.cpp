@@ -453,10 +453,14 @@ namespace
 
 		int yday = monthYearDay[isLeap(dt.getYear())][dt.getMonth() - 1] + dt.getDay() - 1;
 		Int64 iday = 365 * (dt.getYear() - EPOCH_YEAR) + yday;
+		// adjust for leap years
+		iday += (dt.getYear() - 1 - (EPOCH_YEAR - 2)) / 4; // to include 1972 as a leap year, we start at 1968.
+		iday -= (dt.getYear() - 1 - 2000) / 100;
+		iday += (dt.getYear() - 1 - 2000) / 400;
 
 		// because iday is an Int64, it will propagate through this operation and not cause an overflow
-		return dt.getSeconds() 
-			+ 60 * (dt.getMinutes() + dt.getUtc()) 
+		return dt.getSeconds()
+			+ 60 * (dt.getMinutes() + dt.getUtc())
 			+ 3600 * (dt.getHours() + 24 * iday);
 	}
 }
@@ -466,8 +470,14 @@ bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 	// see if they both the same type (intervals or date/times) or are different types.
 	if (x.isInterval() ^ y.isInterval())
 	{
+		// they're different.  We define an interval to be < a date/time
+		return x.isInterval();
+	}
+	else
+	{
 		if (x.isInterval())
 		{
+			// both intervals
 			return StrictWeakOrdering(
 				x.getDays(), y.getDays(),
 				x.getHours(), y.getHours(),
@@ -482,11 +492,6 @@ bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 				secondsFromEpoch(x), secondsFromEpoch(y),
 				x.getMicroSeconds(), y.getMicroSeconds());
 		}
-	}
-	else
-	{
-		// they're different.  We define an interval to be < a date/time
-		return x.isInterval();
 	}
 
 }
