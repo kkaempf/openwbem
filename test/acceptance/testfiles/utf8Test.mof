@@ -1,0 +1,11 @@
+
+[Description("This class tests use of UTF-8 in strings and property names")]
+class UTF8_Test
+{
+		[Description("A string from icu many.txt: 外国語の勉強と教え")]
+	string 外国語の勉強と教え;
+
+		[Description("Another one from many.txt: Изучение и обучение иностранных языков")]
+	string 語文教學・语文教学 = "Enseñanza y estudio de idiomas";
+};
+
