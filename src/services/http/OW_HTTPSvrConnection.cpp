@@ -191,6 +191,11 @@ OW_HTTPSvrConnection::run()
 					m_errDetails = "Server is shutting down!";
 					m_resCode = SC_INTERNAL_SERVER_ERROR;
 				}
+				else if (!m_istr)
+				{
+					// client closed the socket
+					return;
+				}
 				else
 				{
 					m_errDetails = "There was a problem parsing the request Header";
@@ -1150,6 +1155,12 @@ OW_HTTPSvrConnection::options()
 void
 OW_HTTPSvrConnection::sendError(int resCode)	/*throw (OW_IOException)*/
 {
+	if (!m_ostr)
+	{
+		// connection closed, bail out
+		return;
+	}
+
 	if (m_socket.receiveTimeOutExpired())
 	{
 		resCode = SC_REQUEST_TIMEOUT;
@@ -1174,17 +1185,6 @@ OW_HTTPSvrConnection::sendError(int resCode)	/*throw (OW_IOException)*/
 	}
 
 
-	/*OW_StringStream tmpOstr; // TODO replace with intellibuffer.
-	tmpOstr << "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n";
-	tmpOstr << "<HTML><HEAD>\r\n";
-	tmpOstr << "</HEAD><BODY>\r\n";
-	tmpOstr << "<H1>" << resCode << " " << resMessage << "</H1>\r\n";
-	tmpOstr << m_errDetails << "<P>\r\n";
-	tmpOstr << "<HR>\r\n";
-	tmpOstr << "<ADDRESS>" << "TODO fill this in" << "</ADDRESS>\r\n";
-	tmpOstr << "</BODY></HTML>\r\n";
-	*/  // No body for HTTP errors any more.
-
 	m_ostr << reqProtocol << " " << resCode << " " << resMessage << "\r\n";
 
 	// TODO more headers (date and such)
@@ -1198,9 +1198,7 @@ OW_HTTPSvrConnection::sendError(int resCode)	/*throw (OW_IOException)*/
 		m_ostr << m_responseHeaders[i] << "\r\n";
 	}
 	m_ostr << "\r\n";
-	//m_ostr << tmpOstr.c_str();
 	m_ostr.flush();
-	//m_socket.disconnect();
 }
 
 
