@@ -563,13 +563,9 @@ class RandomTimerThread : public Thread
 void
 CryptographicRandomNumber::initRandomness()
 {
-	// with OpenSSL 0.9.7 calling RAND_status() will try to load sufficient randomness, so hopefully we won't have to do anything.
-	if (::RAND_status() == 1)
-	{
-		return;
-	}
-
 #ifdef OW_WIN32
+	// There are issues on win32 with calling RAND_status() w/out sufficient entropy 
+	// in a threaded environment, so we'll just add some before calling RAND_status()
 	HCRYPTPROV hProvider = 0;
 	BYTE buf[64];
 
@@ -582,8 +578,15 @@ CryptographicRandomNumber::initRandomness()
 		CryptReleaseContext(hProvider, 0);
 	}
 	::RAND_screen(); // provided by OpenSSL. Try doing something in addition to CryptGenRandom(), since we can't trust closed source.
-#else
+#endif
 
+	// with OpenSSL 0.9.7 calling RAND_status() will try to load sufficient randomness, so hopefully we won't have to do anything.
+	if (::RAND_status() == 1)
+	{
+		return;
+	}
+
+#ifndef OW_WIN32
 	// OpenSSL 0.9.7 does this automatically, so only try if we've got an older version of OpenSSL.
 	if (::SSLeay() < 0x00907000L)
 	{
