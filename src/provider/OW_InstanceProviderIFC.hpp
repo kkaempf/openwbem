@@ -64,9 +64,9 @@ public:
 	 */
 	virtual OW_CIMObjectPathEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass ) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass ) = 0;
 
 	/**
 	 * This method enumerates
@@ -91,10 +91,10 @@ public:
 	 */
 	virtual OW_CIMInstanceEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly ) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly ) = 0;
 
 	/**
 	 * This method retrieves the instance specified in the object path.
@@ -115,9 +115,9 @@ public:
 	 */
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly ) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly ) = 0;
 
 	/**
 	 * This method creates the instance specified in the object path.  If the
@@ -136,7 +136,7 @@ public:
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			OW_CIMInstance cimInstance ) = 0;
+			const OW_CIMInstance& cimInstance ) = 0;
 
 	/**
 	 * This method sets the instance specified in the object path.  If the
@@ -152,8 +152,8 @@ public:
 	 */
 	virtual void setInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMInstance cimInstance) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_CIMInstance& cimInstance) = 0;
 
 	/**
 	 * This method deletes the instance specified in the object path
@@ -164,7 +164,7 @@ public:
 	 */
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop) = 0;
+			const OW_CIMObjectPath& cop) = 0;
 
 };
 

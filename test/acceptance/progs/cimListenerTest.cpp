@@ -333,9 +333,9 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		if (argc != 2)
+		if (argc < 2 || argc > 3)
 		{
-			cerr << "Usage: " << argv[0] << " <URL>" << endl;
+			cerr << "Usage: " << argv[0] << " <URL> [dump file prefix]" << endl;
 			exit(1);
 		}
 
@@ -344,6 +344,15 @@ int main(int argc, char* argv[])
 		#ifdef OW_DEBUG
 		OW_SocketBaseImpl::setDumpFiles("/tmp/indicationSocketIn", "/tmp/indicationSocketOut");
 		#endif
+		if (argc == 3)
+		{
+			OW_String sockDumpOut = argv[2];
+			OW_String sockDumpIn = argv[2];
+			sockDumpOut += "SockDumpOut";
+			sockDumpIn += "SockDumpIn";
+			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+				sockDumpOut.c_str());
+		}
 		// These callbacks need to be BEFORE the OW_HTTPXMLCIMListener,
 		// so that they will be destructed after, because the listener could
 		// receive an indication in the millisecond between the destruction of

@@ -39,35 +39,51 @@ class OW_NPIAssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
 public:
 	OW_NPIAssociatorProviderProxy(const OW_FTABLERef& f)
-		: m_ftable(f)
+	: m_ftable(f)
 	{
 	}
 
-	virtual ~OW_NPIAssociatorProviderProxy() {}
+	virtual ~OW_NPIAssociatorProviderProxy()
+	{
+	}
 
 	virtual OW_CIMObjectPathEnumeration associatorNames(
-		const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName, OW_String resultClass, OW_String role,
-		OW_String resultRole);
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName, 
+		const OW_String& resultClass, 
+		const OW_String& role,
+		const OW_String& resultRole);
 
 	virtual OW_CIMInstanceEnumeration associators(
-		const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName, OW_String resultClass, OW_String role,
-		OW_String resultRole, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray *propertyList);
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName, 
+		const OW_String& resultClass, 
+		const OW_String& role,
+		const OW_String& resultRole, 
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin, 
+		const OW_StringArray *propertyList);
 
 	virtual OW_CIMInstanceEnumeration references(
-		const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName, OW_String role, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray *propertyList);
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName, 
+		const OW_String& role, 
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin, 
+		const OW_StringArray *propertyList);
 
 	virtual OW_CIMObjectPathEnumeration referenceNames(
-		const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName, OW_String role);
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName, 
+		const OW_String& role);
 
 private:
 	OW_FTABLERef m_ftable;
 };
-										
+
 #endif
 

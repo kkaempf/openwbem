@@ -336,7 +336,8 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 	, m_assocDb(env)
 	, m_rwLocker()
 	, m_accessMgr(new OW_AccessMgr(this, env))
-	, m_nameSpaceClass()
+	, m_nsClass__Namespace()
+	, m_nsClassCIM_Namespace()
 	, m_env(env)
 {
 	// Add the name space provider to the provider manager
@@ -1856,25 +1857,37 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 OW_CIMClass
 OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 {
-	if(!className.equalsIgnoreCase(OW_CIMClass::NAMESPACECLASS))
+
+	if (className.equalsIgnoreCase("__Namespace"))
+	{
+		if(!m_nsClass__Namespace)
+		{
+			m_nsClass__Namespace = OW_CIMClass("__Namespace");
+
+			OW_CIMQualifier cimQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
+			cimQualifier.setValue(OW_CIMValue(OW_String(NAMESPACE_PROVIDER)));
+			OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
+			cimProp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
+			cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
+			m_nsClass__Namespace.addQualifier(cimQualifier);
+			m_nsClass__Namespace.addProperty(cimProp);
+		}
+
+		return m_nsClass__Namespace;
+	}
+	else if (className.equalsIgnoreCase("CIM_Namespace"))
+	{
+		if (!m_nsClassCIM_Namespace)
+		{
+			m_nsClassCIM_Namespace = OW_CIMClass("CIM_Namespace");
+
+		}
+		return m_nsClassCIM_Namespace;
+	}
+	else
 	{
 		return OW_CIMClass();
 	}
-
-	if(!m_nameSpaceClass)
-	{
-		m_nameSpaceClass = OW_CIMClass(OW_CIMClass::NAMESPACECLASS);
-
-		OW_CIMQualifier cimQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-		cimQualifier.setValue(OW_CIMValue(OW_String(NAMESPACE_PROVIDER)));
-		OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
-		cimProp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
-		cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
-		m_nameSpaceClass.addQualifier(cimQualifier);
-		m_nameSpaceClass.addProperty(cimProp);
-	}
-
-	return m_nameSpaceClass;
 }
 
 //////////////////////////////////////////////////////////////////////

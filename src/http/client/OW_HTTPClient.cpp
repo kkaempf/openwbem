@@ -793,6 +793,7 @@ OW_HTTPClient::prepareHeaders()
 {
 	m_requestHeadersCommon.clear();
 	addHeaderCommon("Host", m_url.host);
+	addHeaderCommon("User-Agent", OW_PACKAGE"/"OW_VERSION);
 	m_responseHeaders.clear();
 }
 

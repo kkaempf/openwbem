@@ -38,9 +38,12 @@
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_NPIAssociatorProviderProxy::associatorNames(
-    const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-    OW_CIMObjectPath objectName, OW_String resultClass, OW_String role,
-    OW_String resultRole)
+   const OW_ProviderEnvironmentIFCRef &env, 
+	const OW_CIMObjectPath& assocName,
+   const OW_CIMObjectPath& objectName, 
+	const OW_String& resultClass, 
+	const OW_String& role,
+   const OW_String& resultRole)
 {
     OW_CIMObjectPathEnumeration rval;
 
@@ -57,10 +60,10 @@ OW_NPIAssociatorProviderProxy::associatorNames(
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { static_cast<void *> (&assocName)};
+        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { static_cast<void *> (&objectName)};
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
 
         ::Vector v =
             m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
@@ -93,10 +96,15 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_NPIAssociatorProviderProxy::associators(
-    const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-    OW_CIMObjectPath objectName, OW_String resultClass, OW_String role,
-    OW_String resultRole, OW_Bool includeQualifiers,
-    OW_Bool includeClassOrigin, const OW_StringArray *propertyList)
+   const OW_ProviderEnvironmentIFCRef &env, 
+	const OW_CIMObjectPath& assocName,
+   const OW_CIMObjectPath& objectName, 
+	const OW_String& resultClass, 
+	const OW_String& role,
+   const OW_String& resultRole, 
+	const OW_Bool& includeQualifiers,
+   const OW_Bool& includeClassOrigin, 
+	const OW_StringArray *propertyList)
 {
     OW_CIMInstanceEnumeration rval;
 
@@ -113,10 +121,10 @@ OW_NPIAssociatorProviderProxy::associators(
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { static_cast<void *> (&assocName)};
+        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { static_cast<void *> (&objectName)};
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
 
         int _plLen = 0;
 
@@ -175,9 +183,13 @@ OW_NPIAssociatorProviderProxy::associators(
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_NPIAssociatorProviderProxy::references(
-    const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-    OW_CIMObjectPath objectName, OW_String role, OW_Bool includeQualifiers,
-    OW_Bool includeClassOrigin, const OW_StringArray *propertyList)
+   const OW_ProviderEnvironmentIFCRef &env, 
+	const OW_CIMObjectPath& assocName,
+   const OW_CIMObjectPath& objectName, 
+	const OW_String& role, 
+	const OW_Bool& includeQualifiers,
+   const OW_Bool& includeClassOrigin, 
+	const OW_StringArray *propertyList)
 {
     OW_CIMInstanceEnumeration rval;
 
@@ -193,10 +205,10 @@ OW_NPIAssociatorProviderProxy::references(
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { static_cast<void *> (&assocName)};
+        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { static_cast<void *> (&objectName)};
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
 
         int _plLen = 0;
 
@@ -253,8 +265,10 @@ OW_NPIAssociatorProviderProxy::references(
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_NPIAssociatorProviderProxy::referenceNames(
-    const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath assocName,
-    OW_CIMObjectPath objectName, OW_String role)
+   const OW_ProviderEnvironmentIFCRef &env, 
+	const OW_CIMObjectPath& assocName,
+   const OW_CIMObjectPath& objectName, 
+	const OW_String& role)
 {
     OW_CIMObjectPathEnumeration rval;
 
@@ -271,10 +285,10 @@ OW_NPIAssociatorProviderProxy::referenceNames(
         //  to avoid locking problems
 
         // initialize association class
-        CIMObjectPath _assoc = { static_cast<void *> (&assocName)};
+        CIMObjectPath _assoc = { (void*)static_cast<const void *> (&assocName)};
 
         // initialize path
-        CIMObjectPath _path = { static_cast<void *> (&objectName)};
+        CIMObjectPath _path = { (void*)static_cast<const void *> (&objectName)};
 
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,

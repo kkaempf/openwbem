@@ -44,13 +44,13 @@ OW_AssociatorProviderProxy::OW_AssociatorProviderProxy(
 OW_CIMInstanceEnumeration
 OW_AssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String resultClass,
-		OW_String role,
-		OW_String resultRole,
-		OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	return m_pProv->associators(env, assocName, objectName, resultClass, role,
@@ -61,11 +61,11 @@ OW_AssociatorProviderProxy::associators(
 OW_CIMObjectPathEnumeration
 OW_AssociatorProviderProxy::associatorNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String resultClass,
-		OW_String role,
-		OW_String resultRole)
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole)
 {
 	return m_pProv->associatorNames(env, assocName, objectName, resultClass,
 			role, resultRole);
@@ -75,11 +75,11 @@ OW_AssociatorProviderProxy::associatorNames(
 OW_CIMInstanceEnumeration
 OW_AssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String role,
-		OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& role,
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	return m_pProv->references(env, assocName, objectName, role,
@@ -90,9 +90,9 @@ OW_AssociatorProviderProxy::references(
 OW_CIMObjectPathEnumeration
 OW_AssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String role)
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& role)
 {
 	return m_pProv->referenceNames(env, assocName, objectName, role);
 }
@@ -108,7 +108,7 @@ OW_InstanceProviderProxy::OW_InstanceProviderProxy(
 void
 OW_InstanceProviderProxy::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop)
+		const OW_CIMObjectPath& cop)
 {
 	m_pProv->deleteInstance(env, cop);
 }
@@ -117,9 +117,9 @@ OW_InstanceProviderProxy::deleteInstance(
 OW_CIMObjectPathEnumeration
 OW_InstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep,
-		OW_CIMClass cimClass)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass)
 {
 	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
 }
@@ -128,10 +128,10 @@ OW_InstanceProviderProxy::enumInstances(
 OW_CIMInstanceEnumeration
 OW_InstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep,
-		OW_CIMClass cimClass,
-		OW_Bool localOnly)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& localOnly)
 {
 	return m_pProv->enumInstances(env, cop, deep, cimClass, localOnly);
 }
@@ -140,9 +140,9 @@ OW_InstanceProviderProxy::enumInstances(
 OW_CIMInstance
 OW_InstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMClass cimClass,
-		OW_Bool localOnly)
+		const OW_CIMObjectPath& cop,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& localOnly)
 {
 	return m_pProv->getInstance(env, cop, cimClass, localOnly);
 }
@@ -152,7 +152,7 @@ OW_CIMObjectPath
 OW_InstanceProviderProxy::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		OW_CIMInstance cimInstance)
+		const OW_CIMInstance& cimInstance)
 {
 	return m_pProv->createInstance(env, cop, cimInstance);
 }
@@ -161,8 +161,8 @@ OW_InstanceProviderProxy::createInstance(
 void
 OW_InstanceProviderProxy::setInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMInstance cimInstance)
+		const OW_CIMObjectPath& cop,
+		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->setInstance(env, cop, cimInstance);
 }
@@ -196,9 +196,9 @@ OW_PropertyProviderProxy::OW_PropertyProviderProxy(
 OW_CIMValue
 OW_PropertyProviderProxy::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName)
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName)
 {
 	return m_pProv->getPropertyValue(env, cop, originClass, propertyName);
 
@@ -208,10 +208,10 @@ OW_PropertyProviderProxy::getPropertyValue(
 void
 OW_PropertyProviderProxy::setPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName,
-		OW_CIMValue val)
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName,
+		const OW_CIMValue& val)
 {
 	m_pProv->setPropertyValue(env, cop, originClass, propertyName, val);
 }

@@ -70,16 +70,16 @@ public:
 	 */
 	virtual OW_CIMObjectPathEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass );
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass );
 
 	virtual OW_CIMInstanceEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly );
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly );
 	
 	/**
 	 * This method deletes the instance specified in the object path
@@ -89,7 +89,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPath cop);
+		const OW_CIMObjectPath& cop);
 
 	/**
 	 * This method retrieves the instance specified in the object path.
@@ -110,7 +110,8 @@ public:
 	 */
 	
 	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPath cop, OW_CIMClass cimClass, OW_Bool localOnly);
+		const OW_CIMObjectPath& cop, const OW_CIMClass& cimClass, 
+		const OW_Bool& localOnly);
 
 	/**
 	 * This method creates the instance specified in the object path.  If the
@@ -129,7 +130,7 @@ public:
 	
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef &env, const OW_CIMObjectPath& cop,
-		OW_CIMInstance cimInstance);
+		const OW_CIMInstance& cimInstance);
 
 	/**
 	 * This method sets the instance specified in the object path.  If the
@@ -144,7 +145,7 @@ public:
 	 * @throws OW_CIMException
 	 */
 	virtual void setInstance(const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPath cop, OW_CIMInstance cimInstance);
+		const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance);
 
 private:
 	OW_FTABLERef m_ftable;

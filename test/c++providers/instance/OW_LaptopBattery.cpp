@@ -41,109 +41,16 @@
 #include "OW_LocalCIMOMHandle.hpp"
 #include "OW_StringStream.hpp"
 
+namespace
+{
+
 #include <fstream>
 #include <unistd.h>
 
-using std::ifstream;
-using std::ofstream;
-using std::endl;
+	using std::ifstream;
+	using std::ofstream;
+	using std::endl;
 
-
-class OW_LaptopBattery: public OW_CppInstanceProviderIFC
-{
-public:
-	virtual ~OW_LaptopBattery() {}
-
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep, 
-			OW_CIMClass cimClass );
-
-	virtual OW_CIMInstanceEnumeration enumInstances( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep, 
-			OW_CIMClass cimClass, 
-			OW_Bool localOnly );
-
-	virtual OW_CIMInstance getInstance( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMClass cimClass, 
-			OW_Bool localOnly );
-
-	virtual OW_CIMObjectPath createInstance( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			OW_CIMInstance cimInstance );
-
-	virtual void setInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMInstance cimInstance);
-
-	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop);
-
-	/** 
-	 * Fill in the params for a laptop battery instance
-	 *
-	 * @param cc a LaptopBattery CIMClass
-	 *
-	 * @return The laptop batter cim instance
-	 */
-	OW_CIMInstance createLaptopBatInst(const OW_CIMClass& cc);
-};
-
-
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-OW_LaptopBattery::enumInstanceNames( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep, 
-			OW_CIMClass cimClass )
-{
-	(void)env;
-	(void)cimClass;
-	(void)deep;
-	OW_CIMObjectPathEnumeration rval;
-	OW_CIMObjectPath instCop = cop;
-	char hostbuf[256];
-	gethostname(hostbuf, 256);
-	OW_String hostname(hostbuf);
-	instCop.addKey("SystemCreationClassName", 
-		OW_CIMValue(OW_String("CIM_System")));
-	instCop.addKey("SystemName", OW_CIMValue(hostname));
-	instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
-	instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
-	rval.addElement(instCop);
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_LaptopBattery::enumInstances( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep, 
-			OW_CIMClass cimClass, 
-			OW_Bool localOnly )
-{
-	(void)cop;
-	(void)env;
-	(void)localOnly;
-	(void)deep;
-	OW_CIMInstanceEnumeration rval;
-	OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
-	rval.addElement(inst);
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 #define STAT_Other 1
 #define STAT_Unknown 2
 #define STAT_Fully_Charged 3
@@ -156,117 +63,178 @@ OW_LaptopBattery::enumInstances(
 #define STAT_Undefined 10
 #define STAT_Partially_Charge 11
 
-OW_CIMInstance 
-OW_LaptopBattery::getInstance( 
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMClass cimClass, 
-			OW_Bool localOnly )
-{
-	(void)cop;
-	(void)env;
-	(void)localOnly;
-	OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
-	return rval;
-}
+	class OW_LaptopBattery: public OW_CppInstanceProviderIFC
+	{
+	public:
+		virtual ~OW_LaptopBattery()
+		{
+		}
 
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath 
-OW_LaptopBattery::createInstance( 
+		/////////////////////////////////////////////////////////////////////////
+		virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			OW_CIMInstance cimInstance )
-{
-
-	(void)env;
-	(void)cop;
-	(void)cimInstance;
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-OW_LaptopBattery::setInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMInstance cimInstance)
-{
-
-	(void)env;
-	(void)cop;
-	(void)cimInstance;
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-OW_LaptopBattery::deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop)
-{
-	(void)env;
-	(void)cop;
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
-{
-	OW_CIMInstance rval = cc.newInstance();
-	rval.setProperty("SystemCreationClassName", 
-		OW_CIMValue(OW_String("CIM_System")));
-	char hostbuf[256];
-	gethostname(hostbuf, 256);
-	OW_String hostname(hostbuf);
-	rval.setProperty("SystemName", OW_CIMValue(hostname));
-	rval.setProperty("CreationClassName", OW_CIMValue(cc.getName()));
-	rval.setProperty("DeviceID", OW_CIMValue(OW_String("bat01")));
-
-	// /proc/apm typically looks like:
-	// 1.16 1.2 0x03 0x00 0x00 0x01 72% 183 min
-	// or 
-	// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
-	ifstream infile("/proc/apm", std::ios::in);
-    OW_StringStream oss;
-	oss << infile.rdbuf();
-	infile.close();
-	OW_String fileContents = oss.toString();
-	OW_StringArray toks = fileContents.tokenize();
-	OW_Int32 minutes = toks[7].toInt32();
-	OW_UInt16 percent = toks[6].toUInt16();
-	OW_UInt16 status = STAT_Unknown;
-	OW_Bool charging = false;
-	if (minutes == -1)
-	{
-		status = STAT_Charging;
-		charging = true;
-		minutes = 0;
-	}
-	else
-	{
-		if (percent > 80)
+			const OW_Bool& deep, 
+			const OW_CIMClass& cimClass )
 		{
-			status = STAT_Fully_Charged;
+			(void)env;
+			(void)cimClass;
+			(void)deep;
+			OW_CIMObjectPathEnumeration rval;
+			OW_CIMObjectPath instCop = cop;
+			char hostbuf[256];
+			gethostname(hostbuf, 256);
+			OW_String hostname(hostbuf);
+			instCop.addKey("SystemCreationClassName", 
+				OW_CIMValue(OW_String("CIM_System")));
+			instCop.addKey("SystemName", OW_CIMValue(hostname));
+			instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
+			instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
+			rval.addElement(instCop);
+			return rval;
 		}
-		else if (percent > 30)
+
+		/////////////////////////////////////////////////////////////////////////
+		virtual OW_CIMInstanceEnumeration enumInstances(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep, 
+			const OW_CIMClass& cimClass, 
+			const OW_Bool& localOnly )
 		{
-			status = STAT_Low;
+			(void)cop;
+			(void)env;
+			(void)localOnly;
+			(void)deep;
+			OW_CIMInstanceEnumeration rval;
+			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
+			rval.addElement(inst);
+			return rval;
+		}
+
+		/////////////////////////////////////////////////////////////////////////
+		virtual OW_CIMInstance getInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_CIMObjectPath& cop,
+			const OW_CIMClass& cimClass, 
+			const OW_Bool& localOnly )
+		{
+			(void)cop;
+			(void)env;
+			(void)localOnly;
+			OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
+			return rval;
+		}
+
+		/////////////////////////////////////////////////////////////////////////
+		virtual OW_CIMObjectPath createInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_CIMObjectPath& cop,
+			const OW_CIMInstance& cimInstance )
+		{
+
+			(void)env;
+			(void)cop;
+			(void)cimInstance;
+			OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+		}
+
+		/////////////////////////////////////////////////////////////////////////
+		virtual void setInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_CIMObjectPath& cop,
+			const OW_CIMInstance& cimInstance)
+		{
+
+			(void)env;
+			(void)cop;
+			(void)cimInstance;
+			OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+		}
+
+		/////////////////////////////////////////////////////////////////////////
+		virtual void deleteInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_CIMObjectPath& cop)
+		{
+			(void)env;
+			(void)cop;
+			OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+		}
+
+		/** 
+		 * Fill in the params for a laptop battery instance
+		 *
+		 * @param cc a LaptopBattery CIMClass
+		 *
+		 * @return The laptop batter cim instance
+		 */
+		OW_CIMInstance createLaptopBatInst(const OW_CIMClass& cc);
+	};
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+	OW_CIMInstance
+		OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
+	{
+		OW_CIMInstance rval = cc.newInstance();
+		rval.setProperty("SystemCreationClassName", 
+			OW_CIMValue(OW_String("CIM_System")));
+		char hostbuf[256];
+		gethostname(hostbuf, 256);
+		OW_String hostname(hostbuf);
+		rval.setProperty("SystemName", OW_CIMValue(hostname));
+		rval.setProperty("CreationClassName", OW_CIMValue(cc.getName()));
+		rval.setProperty("DeviceID", OW_CIMValue(OW_String("bat01")));
+
+		// /proc/apm typically looks like:
+		// 1.16 1.2 0x03 0x00 0x00 0x01 72% 183 min
+		// or 
+		// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
+		ifstream infile("/proc/apm", std::ios::in);
+		OW_StringStream oss;
+		oss << infile.rdbuf();
+		infile.close();
+		OW_String fileContents = oss.toString();
+		OW_StringArray toks = fileContents.tokenize();
+		OW_Int32 minutes = toks[7].toInt32();
+		OW_UInt16 percent = toks[6].toUInt16();
+		OW_UInt16 status = STAT_Unknown;
+		OW_Bool charging = false;
+		if (minutes == -1)
+		{
+			status = STAT_Charging;
+			charging = true;
+			minutes = 0;
 		}
 		else
 		{
-			status = STAT_Critical;
+			if (percent > 80)
+			{
+				status = STAT_Fully_Charged;
+			}
+			else if (percent > 30)
+			{
+				status = STAT_Low;
+			}
+			else
+			{
+				status = STAT_Critical;
+			}
 		}
+		rval.setProperty("EstimatedChargeRemaining", OW_CIMValue(percent));
+		rval.setProperty("EstimatedRunTime", OW_CIMValue((OW_UInt32)minutes));
+		rval.setProperty("BatteryStatus", OW_CIMValue(status));
+		rval.setProperty("Charging", OW_CIMValue(charging));
+		return rval;
 	}
-	rval.setProperty("EstimatedChargeRemaining", OW_CIMValue(percent));
-	rval.setProperty("EstimatedRunTime", OW_CIMValue((OW_UInt32)minutes));
-	rval.setProperty("BatteryStatus", OW_CIMValue(status));
-	rval.setProperty("Charging", OW_CIMValue(charging));
-	return rval;
-}
 
+}
 
 
 OW_PROVIDERFACTORY(OW_LaptopBattery, laptopbat)
 
+	

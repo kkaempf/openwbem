@@ -53,37 +53,37 @@ public:
 	
 	virtual OW_CIMInstanceEnumeration associators(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath assocName,
-			OW_CIMObjectPath objectName,
-			OW_String resultClass,
-			OW_String role,
-			OW_String resultRole,
-			OW_Bool includeQualifiers,
-			OW_Bool includeClassOrigin,
+			const OW_CIMObjectPath& assocName,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& resultClass,
+			const OW_String& role,
+			const OW_String& resultRole,
+			const OW_Bool& includeQualifiers,
+			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList);
 
 	virtual OW_CIMObjectPathEnumeration associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath assocName,
-			OW_CIMObjectPath objectName,
-			OW_String resultClass,
-			OW_String role,
-			OW_String resultRole);
+			const OW_CIMObjectPath& assocName,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& resultClass,
+			const OW_String& role,
+			const OW_String& resultRole);
 
 	virtual OW_CIMInstanceEnumeration references(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath assocName,
-			OW_CIMObjectPath objectName,
-			OW_String role,
-			OW_Bool includeQualifiers,
-			OW_Bool includeClassOrigin,
+			const OW_CIMObjectPath& assocName,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& role,
+			const OW_Bool& includeQualifiers,
+			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList);
 
 	virtual OW_CIMObjectPathEnumeration referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath assocName,
-			OW_CIMObjectPath objectName,
-			OW_String role);
+			const OW_CIMObjectPath& assocName,
+			const OW_CIMObjectPath& objectName,
+			const OW_String& role);
 
 private:
 	OW_CppAssociatorProviderIFCRef m_pProv;
@@ -96,36 +96,36 @@ public:
 
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop);
+			const OW_CIMObjectPath& cop);
 
 	virtual OW_CIMObjectPathEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass);
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass);
 
 	virtual OW_CIMInstanceEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly);
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly);
 
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly);
+			const OW_CIMObjectPath& cop,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly);
 
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			OW_CIMInstance cimInstance);
+			const OW_CIMInstance& cimInstance);
 
 	virtual void setInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMInstance cimInstance);
+			const OW_CIMObjectPath& cop,
+			const OW_CIMInstance& cimInstance);
 
 private:
 	OW_CppInstanceProviderIFCRef m_pProv;
@@ -155,15 +155,16 @@ public:
 	OW_PropertyProviderProxy(OW_CppPropertyProviderIFCRef pProv);
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName);
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName);
 
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName, 	OW_CIMValue val);
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName, 	
+			const OW_CIMValue& val);
 
 private:
 	OW_CppPropertyProviderIFCRef m_pProv;

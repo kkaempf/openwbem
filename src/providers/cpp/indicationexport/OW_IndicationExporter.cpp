@@ -55,12 +55,14 @@ OW_IndicationExporter::exportIndication( const OW_CIMInstance& ci )
 	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
 	sendXMLHeader(*iostr);
 	*iostr << "<IPARAMVALUE NAME=\"NewIndication\">";
+//	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
 	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
 	*iostr << "</IPARAMVALUE>";
+//	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
 	doSendRequest(iostr, commandName, path);
 }

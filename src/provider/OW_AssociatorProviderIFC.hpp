@@ -139,13 +139,13 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual OW_CIMInstanceEnumeration associators(
 				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPath assocName,
-				OW_CIMObjectPath objectName,
-				OW_String resultClass,
-				OW_String role,
-				OW_String resultRole,
-				OW_Bool includeQualifiers,
-				OW_Bool includeClassOrigin,
+				const OW_CIMObjectPath& assocName,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
+				const OW_String& role,
+				const OW_String& resultRole,
+				const OW_Bool& includeQualifiers,
+				const OW_Bool& includeClassOrigin,
 				const OW_StringArray* propertyList) = 0;
 
 		/**
@@ -175,11 +175,11 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual OW_CIMObjectPathEnumeration associatorNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPath assocName,
-				OW_CIMObjectPath objectName,
-				OW_String resultClass,
-				OW_String role,
-				OW_String resultRole ) = 0;
+				const OW_CIMObjectPath& assocName,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& resultClass,
+				const OW_String& role,
+				const OW_String& resultRole ) = 0;
 
 		/**
 		 * For definition of this operation, refer to
@@ -218,11 +218,11 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual OW_CIMInstanceEnumeration references(
 				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPath assocName,
-				OW_CIMObjectPath objectName,
-				OW_String role,
-				OW_Bool includeQualifiers,
-				OW_Bool includeClassOrigin,
+				const OW_CIMObjectPath& assocName,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& role,
+				const OW_Bool& includeQualifiers,
+				const OW_Bool& includeClassOrigin,
 				const OW_StringArray* propertyList) = 0;
 
 		/**
@@ -246,9 +246,9 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 */
 		virtual OW_CIMObjectPathEnumeration referenceNames(
 				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPath assocName,
-				OW_CIMObjectPath objectName,
-				OW_String role ) = 0;
+				const OW_CIMObjectPath& assocName,
+				const OW_CIMObjectPath& objectName,
+				const OW_String& role ) = 0;
 };
 
 typedef OW_Reference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;

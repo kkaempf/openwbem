@@ -48,7 +48,7 @@ OW_NameSpaceProvider::~OW_NameSpaceProvider()
 void
 OW_NameSpaceProvider::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop)
+		const OW_CIMObjectPath& cop)
 {
 	OW_CIMPropertyArray pra = cop.getKeys();
 	if(pra.size() == 0)
@@ -91,9 +91,9 @@ OW_NameSpaceProvider::deleteInstance(
 OW_CIMObjectPathEnumeration
 OW_NameSpaceProvider::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep,
-		OW_CIMClass cimClass)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass)
 {
 	OW_String className = cimClass.getName();
 	OW_CIMObjectPathEnumeration openum;
@@ -112,10 +112,10 @@ OW_NameSpaceProvider::enumInstanceNames(
 OW_CIMInstanceEnumeration
 OW_NameSpaceProvider::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool /*deep*/,
-		OW_CIMClass cimClass,
-		OW_Bool /*localOnly*/)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& /*deep*/,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& /*localOnly*/)
 {
 	OW_CIMInstanceEnumeration cienum;
 	OW_StringArray nsra = env->getCIMOMHandle()->enumNameSpace(
@@ -142,9 +142,9 @@ OW_NameSpaceProvider::enumInstances(
 OW_CIMInstance
 OW_NameSpaceProvider::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMClass cimClass,
-		OW_Bool /*localOnly*/)
+		const OW_CIMObjectPath& cop,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& /*localOnly*/)
 {
 	OW_CIMInstance ci;
 	OW_CIMProperty cp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
@@ -199,7 +199,7 @@ OW_CIMObjectPath
 OW_NameSpaceProvider::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		OW_CIMInstance cimInstance)
+		const OW_CIMInstance& cimInstance)
 {
 	OW_CIMProperty cp = cimInstance.getProperty(OW_CIMProperty::NAME_PROPERTY);
 	if(!cp)
@@ -229,8 +229,8 @@ OW_NameSpaceProvider::createInstance(
 void
 OW_NameSpaceProvider::setInstance(
 		const OW_ProviderEnvironmentIFCRef& /*env*/,
-		OW_CIMObjectPath /*cop*/,
-		OW_CIMInstance /*cimInstance*/)
+		const OW_CIMObjectPath& /*cop*/,
+		const OW_CIMInstance& /*cimInstance*/)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 }

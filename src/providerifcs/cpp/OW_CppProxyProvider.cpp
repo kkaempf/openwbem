@@ -44,13 +44,13 @@ OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
 OW_CIMInstanceEnumeration
 OW_CppAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String resultClass,
-		OW_String role,
-		OW_String resultRole,
-		OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
@@ -62,11 +62,11 @@ OW_CppAssociatorProviderProxy::associators(
 OW_CIMObjectPathEnumeration
 OW_CppAssociatorProviderProxy::associatorNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String resultClass,
-		OW_String role,
-		OW_String resultRole)
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->associatorNames(env, assocName, objectName, resultClass,
@@ -77,11 +77,11 @@ OW_CppAssociatorProviderProxy::associatorNames(
 OW_CIMInstanceEnumeration
 OW_CppAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String role,
-		OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin,
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& role,
+		const OW_Bool& includeQualifiers,
+		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
@@ -93,9 +93,9 @@ OW_CppAssociatorProviderProxy::references(
 OW_CIMObjectPathEnumeration
 OW_CppAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath assocName,
-		OW_CIMObjectPath objectName,
-		OW_String role)
+		const OW_CIMObjectPath& assocName,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& role)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->referenceNames(env, assocName, objectName, role);
@@ -112,7 +112,7 @@ OW_CppInstanceProviderProxy::OW_CppInstanceProviderProxy(
 void
 OW_CppInstanceProviderProxy::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop)
+		const OW_CIMObjectPath& cop)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->deleteInstance(env, cop);
@@ -122,9 +122,9 @@ OW_CppInstanceProviderProxy::deleteInstance(
 OW_CIMObjectPathEnumeration
 OW_CppInstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep,
-		OW_CIMClass cimClass)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
@@ -134,10 +134,10 @@ OW_CppInstanceProviderProxy::enumInstances(
 OW_CIMInstanceEnumeration
 OW_CppInstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep,
-		OW_CIMClass cimClass,
-		OW_Bool localOnly)
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& localOnly)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->enumInstances(env, cop, deep, cimClass, localOnly);
@@ -147,9 +147,9 @@ OW_CppInstanceProviderProxy::enumInstances(
 OW_CIMInstance
 OW_CppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMClass cimClass,
-		OW_Bool localOnly)
+		const OW_CIMObjectPath& cop,
+		const OW_CIMClass& cimClass,
+		const OW_Bool& localOnly)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->getInstance(env, cop, cimClass, localOnly);
@@ -160,7 +160,7 @@ OW_CIMObjectPath
 OW_CppInstanceProviderProxy::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		OW_CIMInstance cimInstance)
+		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->createInstance(env, cop, cimInstance);
@@ -170,8 +170,8 @@ OW_CppInstanceProviderProxy::createInstance(
 void
 OW_CppInstanceProviderProxy::setInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMInstance cimInstance)
+		const OW_CIMObjectPath& cop,
+		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->setInstance(env, cop, cimInstance);
@@ -207,9 +207,9 @@ OW_CppPropertyProviderProxy::OW_CppPropertyProviderProxy(
 OW_CIMValue
 OW_CppPropertyProviderProxy::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName)
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->getPropertyValue(env, cop, originClass, propertyName);
@@ -220,10 +220,10 @@ OW_CppPropertyProviderProxy::getPropertyValue(
 void
 OW_CppPropertyProviderProxy::setPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName,
-		OW_CIMValue val)
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName,
+		const OW_CIMValue& val)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->setPropertyValue(env, cop, originClass, propertyName, val);

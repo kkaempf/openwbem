@@ -44,9 +44,9 @@
 OW_CIMObjectPathEnumeration
 OW_NPIInstanceProviderProxy::enumInstances(
         const OW_ProviderEnvironmentIFCRef& env,
-        OW_CIMObjectPath cop,
-        OW_Bool deep,
-        OW_CIMClass cimClass )
+        const OW_CIMObjectPath& cop,
+        const OW_Bool& deep,
+        const OW_CIMClass& cimClass )
 {
         OW_CIMObjectPathEnumeration rval;
 		  (void)deep;
@@ -63,9 +63,9 @@ OW_NPIInstanceProviderProxy::enumInstances(
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMClass _cc = { static_cast<void *> (&cimClass)};
+            CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             ::Vector v =
                 m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
@@ -103,10 +103,10 @@ OW_NPIInstanceProviderProxy::enumInstances(
 OW_CIMInstanceEnumeration
 OW_NPIInstanceProviderProxy::enumInstances(
         const OW_ProviderEnvironmentIFCRef& env,
-        OW_CIMObjectPath cop,
-        OW_Bool deep,
-        OW_CIMClass cimClass,
-        OW_Bool localOnly )
+        const OW_CIMObjectPath& cop,
+        const OW_Bool& deep,
+        const OW_CIMClass& cimClass,
+        const OW_Bool& localOnly )
 {
         OW_CIMInstanceEnumeration rval;
 
@@ -125,9 +125,9 @@ OW_NPIInstanceProviderProxy::enumInstances(
 			//  may the arguments must be copied verbatim
 			//  to avoid locking problems
 
-			CIMClass _cc = { static_cast<void *> (&cimClass) };
+			CIMClass _cc = { (void*)static_cast<const void *> (&cimClass) };
 
-			CIMObjectPath _cop = { static_cast<void *> (&cop) };
+			CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop) };
 
 			int de = deep;
 			int lo = localOnly;
@@ -161,7 +161,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-    OW_CIMObjectPath cop)
+    const OW_CIMObjectPath& cop)
 {
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::deleteInstance()");
@@ -175,7 +175,7 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             m_ftable->fp_deleteInstance(&_npiHandle, _cop);
 
@@ -194,7 +194,7 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
-    OW_CIMObjectPath cop, OW_CIMClass cimClass, OW_Bool localOnly)
+    const OW_CIMObjectPath &cop, const OW_CIMClass& cimClass, const OW_Bool& localOnly)
 {
         OW_CIMInstance rval;
 
@@ -210,9 +210,9 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMClass _cc = { static_cast<void *> (&cimClass)};
+            CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             int lo = localOnly;
 
@@ -245,7 +245,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 OW_CIMObjectPath
 OW_NPIInstanceProviderProxy::createInstance(
     const OW_ProviderEnvironmentIFCRef &env, const OW_CIMObjectPath&  cop,
-    OW_CIMInstance cimInstance)
+    const OW_CIMInstance& cimInstance)
 {
         OW_CIMObjectPath rval;
 
@@ -261,7 +261,7 @@ OW_NPIInstanceProviderProxy::createInstance(
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMInstance _ci = { static_cast<void *> (&cimInstance)};
+            CIMInstance _ci = { (void*)static_cast<const void *> (&cimInstance)};
 
             CIMObjectPath _cop = { static_cast<void *> (const_cast<OW_CIMObjectPath*>(&cop))};
 
@@ -287,7 +287,7 @@ OW_NPIInstanceProviderProxy::createInstance(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIInstanceProviderProxy::setInstance(const OW_ProviderEnvironmentIFCRef &env,
-    OW_CIMObjectPath cop, OW_CIMInstance cimInstance)
+    const OW_CIMObjectPath& cop, const OW_CIMInstance& cimInstance)
 {
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::setInstance()");
@@ -301,9 +301,9 @@ OW_NPIInstanceProviderProxy::setInstance(const OW_ProviderEnvironmentIFCRef &env
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMInstance _ci = { static_cast<void *> (&cimInstance)};
+            CIMInstance _ci = { (void*)static_cast<const void *> (&cimInstance)};
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             m_ftable->fp_setInstance(&_npiHandle, _cop, _ci);
 

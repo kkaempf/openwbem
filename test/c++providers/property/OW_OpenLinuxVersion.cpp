@@ -54,16 +54,16 @@ public:
 
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName);
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName);
 
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName,
-			OW_CIMValue val );
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName,
+			const OW_CIMValue& val );
 
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 	virtual void cleanup();
@@ -80,9 +80,9 @@ OW_OpenLinuxVersion::~OW_OpenLinuxVersion()
 OW_CIMValue
 OW_OpenLinuxVersion::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName)
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName)
 {
 	env->getLogger()->logDebug(format("OW_OpenLinuxVersion::getPropertyValue: "
 				"cop = %1, originClass = %2, propertyName = %3",
@@ -101,10 +101,10 @@ OW_OpenLinuxVersion::getPropertyValue(
 void
 OW_OpenLinuxVersion::setPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_String originClass,
-		OW_String propertyName,
-		OW_CIMValue val )
+		const OW_CIMObjectPath& cop,
+		const OW_String& originClass,
+		const OW_String& propertyName,
+		const OW_CIMValue& val )
 {
 	env->getLogger()->logDebug(format("OW_OpenLinuxVersion::setPropertyValue: "
 				"cop = %1, originClass = %2, propertyName = %3, "

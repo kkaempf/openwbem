@@ -43,36 +43,36 @@ public:
 
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop);
+			const OW_CIMObjectPath& cop);
 
 	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass);
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass);
 
 	virtual OW_CIMInstanceEnumeration enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_Bool deep,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly);
+			const OW_CIMObjectPath& cop,
+			const OW_Bool& deep,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly);
 
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMClass cimClass,
-			OW_Bool localOnly);
+			const OW_CIMObjectPath& cop,
+			const OW_CIMClass& cimClass,
+			const OW_Bool& localOnly);
 
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
-			OW_CIMInstance cimInstance);
+			const OW_CIMInstance& cimInstance);
 
 	virtual void setInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_CIMInstance cimInstance);
+			const OW_CIMObjectPath& cop,
+			const OW_CIMInstance& cimInstance);
 
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
 			);

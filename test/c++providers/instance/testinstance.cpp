@@ -62,203 +62,172 @@ public:
 	{
 	}
 
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep, 
-		OW_CIMClass cimClass );
-
-	virtual OW_CIMInstanceEnumeration enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_Bool deep, 
-		OW_CIMClass cimClass, 
-		OW_Bool localOnly );
-
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMClass cimClass, 
-		OW_Bool localOnly );
-
-	virtual OW_CIMObjectPath createInstance(
+//////////////////////////////////////////////////////////////////////////////
+	OW_CIMObjectPathEnumeration 
+		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		OW_CIMInstance cimInstance );
+		const OW_Bool& deep, 
+		const OW_CIMClass& cimClass )
+	{
+		(void)env;
+		(void)cimClass;
+		(void)deep;
+		OW_CIMObjectPathEnumeration rval;
+		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			OW_CIMObjectPath instCop = cop;
+			instCop.addKey("Name", OW_CIMValue(iter->name));
+			rval.addElement(instCop);
+		}
+		return rval;
+	}
 
-	virtual void setInstance(
+//////////////////////////////////////////////////////////////////////////////
+	OW_CIMInstanceEnumeration 
+		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
-		OW_CIMInstance cimInstance);
+		const OW_CIMObjectPath& cop,
+		const OW_Bool& deep, 
+		const OW_CIMClass& cimClass, 
+		const OW_Bool& localOnly )
+	{
+		(void)cop;
+		(void)env;
+		(void)localOnly;
+		(void)deep;
+		OW_CIMInstanceEnumeration rval;
+		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			OW_CIMInstance inst = cimClass.newInstance();
+			inst.setProperty("Name", OW_CIMValue(iter->name));
+			inst.setProperty("Params", OW_CIMValue(iter->params));
+			rval.addElement(inst);
+		}
+		return rval;
+	}
 
-	virtual void deleteInstance(
+//////////////////////////////////////////////////////////////////////////////
+
+	OW_CIMInstance 
+		getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop);
+		const OW_CIMObjectPath& cop,
+		const OW_CIMClass& cimClass, 
+		const OW_Bool& localOnly )
+	{
+		(void)cop;
+		(void)env;
+		(void)localOnly;
+		OW_CIMInstance rval = cimClass.newInstance();
+		OW_String name;
+		cop.getKeys()[0].getValue().get(name);
+		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			if (iter->name == name)
+			{
+				rval.setProperty("Name", OW_CIMValue(name));
+				rval.setProperty("Params", OW_CIMValue(iter->params));
+				break;
+			}
+		}
+		return rval;
+	}
+
+//////////////////////////////////////////////////////////////////////////////
+	OW_CIMObjectPath 
+		createInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_CIMObjectPath& cop,
+		const OW_CIMInstance& cimInstance )
+	{
+
+		(void)env;
+		(void)cop;
+		OW_String name;
+		OW_StringArray params;
+		cimInstance.getProperty("Name").getValue().get(name);
+
+		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			if (iter->name == name)
+			{
+				OW_THROWCIM(OW_CIMException::ALREADY_EXISTS);
+				break;
+			}
+		}
+
+		cimInstance.getProperty("Params").getValue().get(params);
+		TestInstance newInst;
+		newInst.name = name;
+		newInst.params = params;
+		g_saa.push_back(newInst);
+		return cop;
+	}
+
+//////////////////////////////////////////////////////////////////////////////
+	void 
+		setInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_CIMObjectPath& cop,
+		const OW_CIMInstance& cimInstance)
+	{
+		(void)env;
+		(void)cop;
+		OW_String name;
+		OW_StringArray params;
+		cimInstance.getProperty("Name").getValue().get(name);
+		cimInstance.getProperty("Params").getValue().get(params);
+
+		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			if (iter->name == name)
+			{
+				iter->params = params;
+				return;
+			}
+		}
+		// new instance
+		TestInstance newInst;
+		newInst.name = name;
+		newInst.params = params;
+		g_saa.push_back(newInst);
+	}
+
+//////////////////////////////////////////////////////////////////////////////
+	void 
+		deleteInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_CIMObjectPath& cop)
+	{
+		(void)env;
+		OW_String name;
+		cop.getKeys()[0].getValue().get(name);
+		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
+			iter != g_saa.end(); iter++)
+		{
+			if (iter->name == name)
+			{
+				g_saa.erase(iter);   
+				break;
+			}
+		}
+	}
+
 
 };
 
 
 
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-	OW_TestInstance::enumInstanceNames(
-	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop,
-	OW_Bool deep, 
-	OW_CIMClass cimClass )
-{
-	(void)env;
-	(void)cimClass;
-	(void)deep;
-	OW_CIMObjectPathEnumeration rval;
-	for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
-		iter != g_saa.end(); iter++)
-	{
-		OW_CIMObjectPath instCop = cop;
-		instCop.addKey("Name", OW_CIMValue(iter->name));
-		rval.addElement(instCop);
-	}
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-	OW_TestInstance::enumInstances(
-	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop,
-	OW_Bool deep, 
-	OW_CIMClass cimClass, 
-	OW_Bool localOnly )
-{
-	(void)cop;
-	(void)env;
-	(void)localOnly;
-	(void)deep;
-	OW_CIMInstanceEnumeration rval;
-	for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
-		iter != g_saa.end(); iter++)
-	{
-		OW_CIMInstance inst = cimClass.newInstance();
-		inst.setProperty("Name", OW_CIMValue(iter->name));
-		inst.setProperty("Params", OW_CIMValue(iter->params));
-		rval.addElement(inst);
-	}
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-OW_CIMInstance 
-	OW_TestInstance::getInstance(
-	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop,
-	OW_CIMClass cimClass, 
-	OW_Bool localOnly )
-{
-	(void)cop;
-	(void)env;
-	(void)localOnly;
-	OW_CIMInstance rval = cimClass.newInstance();
-	OW_String name;
-	cop.getKeys()[0].getValue().get(name);
-	for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
-		  iter != g_saa.end(); iter++)
-	{
-		if (iter->name == name)
-		{
-			rval.setProperty("Name", OW_CIMValue(name));
-			rval.setProperty("Params", OW_CIMValue(iter->params));
-			break;
-		}
-	}
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath 
-	OW_TestInstance::createInstance(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_CIMObjectPath& cop,
-	OW_CIMInstance cimInstance )
-{
-
-	(void)env;
-	(void)cop;
-	OW_String name;
-	OW_StringArray params;
-	cimInstance.getProperty("Name").getValue().get(name);
-
-	for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
-		  iter != g_saa.end(); iter++)
-	{
-		if (iter->name == name)
-		{
-			OW_THROWCIM(OW_CIMException::ALREADY_EXISTS);
-			break;
-		}
-	}
-
-	cimInstance.getProperty("Params").getValue().get(params);
-	TestInstance newInst;
-	newInst.name = name;
-	newInst.params = params;
-	g_saa.push_back(newInst);
-	return cop;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-	OW_TestInstance::setInstance(
-	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop,
-	OW_CIMInstance cimInstance)
-{
-	(void)env;
-	(void)cop;
-	OW_String name;
-	OW_StringArray params;
-	cimInstance.getProperty("Name").getValue().get(name);
-	cimInstance.getProperty("Params").getValue().get(params);
-
-	for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
-		  iter != g_saa.end(); iter++)
-	{
-		if (iter->name == name)
-		{
-			iter->params = params;
-			return;
-		}
-	}
-	// new instance
-	TestInstance newInst;
-	newInst.name = name;
-	newInst.params = params;
-	g_saa.push_back(newInst);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-	OW_TestInstance::deleteInstance(
-	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop)
-{
-	(void)env;
-	OW_String name;
-	cop.getKeys()[0].getValue().get(name);
-	for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
-		  iter != g_saa.end(); iter++)
-	{
-		if (iter->name == name)
-		{
-			g_saa.erase(iter);	
-			break;
-		}
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 
 OW_PROVIDERFACTORY(OW_TestInstance, testinstance)
+
 
 	

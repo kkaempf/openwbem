@@ -760,12 +760,10 @@ OW_HTTPSvrConnection::processHeaders()
 // Check for TE header
 //
 
-	/* // TODO uncomment this when the dmtf accepts the CR for Trailers
 	if (getHeaderValue("TE").indexOf("trailers") >= 0)
 	{
 		m_chunkedOut = true;
 	}
-	*/
 
 //
 // Check for Accept-Languages

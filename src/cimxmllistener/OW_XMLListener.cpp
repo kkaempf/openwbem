@@ -213,6 +213,7 @@ OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
 				node.getNodeName()).c_str());
 		}
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPMETHODCALL);
+//		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPPARAMVALUE);
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
 		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(node);

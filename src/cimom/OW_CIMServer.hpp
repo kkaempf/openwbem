@@ -508,6 +508,18 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 	
+	/**
+	 *
+	 * @exception OW_CIMException
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_QUERY
+	 *		CIM_ERR_FAILED
+	 *
+	 */
 	OW_CIMInstanceArray execQuery(const OW_CIMNameSpace& ns,
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_ACLInfo& aclInfo);
@@ -626,7 +638,8 @@ private:
 	OW_AssocDb m_assocDb;
 	mutable OW_RWLocker m_rwLocker;
 	OW_Reference<OW_AccessMgr> m_accessMgr;
-	OW_CIMClass m_nameSpaceClass;
+	OW_CIMClass m_nsClass__Namespace;
+	OW_CIMClass m_nsClassCIM_Namespace;
 	OW_CIMOMEnvironmentRef m_env;
 
 	friend class OW_InstanceRepository;

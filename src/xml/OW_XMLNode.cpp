@@ -42,7 +42,9 @@
 #include "OW_Format.hpp"
 #include <algorithm> // for std::lower_bound
 
-OW_XMLNode::ElemEntry OW_XMLNode::g_elems[62] =
+// It would appear that this needs to be sorted alphabetically, 
+// although dan didn't put any such comment here.  :)
+OW_XMLNode::ElemEntry OW_XMLNode::g_elems[63] =
 {
 	{ "CIM", OW_XMLNode::XML_ELEMENT_CIM },
 	{ "CLASS", OW_XMLNode::XML_ELEMENT_CLASS },
@@ -55,6 +57,7 @@ OW_XMLNode::ElemEntry OW_XMLNode::g_elems[62] =
 	{ "ERROR", OW_XMLNode::XML_ELEMENT_ERROR },
 	{ "EXPMETHODCALL", OW_XMLNode::XML_ELEMENT_EXPMETHODCALL },
 	{ "EXPMETHODRESPONSE", OW_XMLNode::XML_ELEMENT_EXPMETHODRESPONSE },
+//	{ "EXPPARAMVALUE", OW_XMLNode::XML_ELEMENT_EXPPARAMVALUE },
 	{ "HOST", OW_XMLNode::XML_ELEMENT_HOST },
 	{ "IMETHODCALL", OW_XMLNode::XML_ELEMENT_IMETHODCALL },
 	{ "IMETHODRESPONSE", OW_XMLNode::XML_ELEMENT_IMETHODRESPONSE },

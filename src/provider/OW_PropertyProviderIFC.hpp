@@ -64,9 +64,9 @@ public:
 	 */
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName) = 0;
 
 	/**
 	 * This method sets the value of the property specified by the
@@ -83,10 +83,10 @@ public:
 	 */
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPath cop,
-			OW_String originClass,
-			OW_String propertyName,
-			OW_CIMValue val ) = 0;
+			const OW_CIMObjectPath& cop,
+			const OW_String& originClass,
+			const OW_String& propertyName,
+			const OW_CIMValue& val ) = 0;
 };
 
 typedef OW_Reference< OW_PropertyProviderIFC > OW_PropertyProviderIFCRef;
