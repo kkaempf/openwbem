@@ -398,6 +398,16 @@ AC_ARG_ENABLE(property-providers,
   )
 AM_CONDITIONAL(ENABLE_PROPERTY_PROVIDERS, test x$OW_ENABLE_PROPERTY_PROVIDERS = x1)
 
+AC_ARG_ENABLE(digest,
+[  --disable-digest     disable digest authentication])
+
+OW_DISABLE_DIGEST=0
+if test "$enable_digest" = no; then
+	AC_DEFINE(DISABLE_DIGEST)
+	OW_DISABLE_DIGEST=1
+fi
+AM_CONDITIONAL(DISABLE_DIGEST, test x$OW_DISABLE_DIGEST = x1)
+
 
 AC_ARG_ENABLE(gnu-pth,
 [  --enable-gnu-pth   use pth library],
