@@ -119,6 +119,30 @@ private:
 };
 
 template <class T>
+inline bool operator != (const Array<T>& x, const Array<T>& y)
+{
+	return !(x == y);
+}
+
+template <class T>
+inline bool operator <= (const Array<T>& x, const Array<T>& y)
+{
+	return !(y < x);
+}
+
+template <class T>
+inline bool operator >= (const Array<T>& x, const Array<T>& y)
+{
+	return !(x < y);
+}
+
+template <class T>
+inline bool operator > (const Array<T>& x, const Array<T>& y)
+{
+	return y < x;
+}
+  
+template <class T>
 inline std::vector<T>* COWReferenceClone(std::vector<T>* obj);
 
 typedef Array<UInt8>      UInt8Array;
