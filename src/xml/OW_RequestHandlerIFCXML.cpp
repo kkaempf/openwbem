@@ -97,6 +97,13 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 			m_cimError = cee.getMessage();
 			outputError(CIMException::FAILED, cee.getMessage(), *ostrError);
 		}
+		catch (Exception& e)
+		{
+			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught "
+				"Exception:%1",	e));
+			m_cimError = e.getMessage();
+			outputError(CIMException::FAILED, e.getMessage(), *ostrError);
+		}
 		catch (std::exception& e)
 		{
 			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught std exception: %1"
