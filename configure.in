@@ -155,7 +155,7 @@ fi
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h \
-inttypes.h getopt.h sys/sockio.h sys/time.h sys/param.h dirent.h sys/resource.h)
+inttypes.h getopt.h sys/sockio.h sys/time.h sys/param.h dirent.h sys/resource.h sys/socket.h netinet/in.h sys/un.h)
 
 # check for C++ headers
 AC_LANG_CPLUSPLUS
