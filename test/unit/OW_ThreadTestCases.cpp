@@ -201,6 +201,7 @@ void OW_ThreadTestCases::testCooperativeCancellation()
 	unitAssert(!cancelCleanedUp);
 	theThread.start();
 	theThread.cooperativeCancel();
+	unitAssertNoThrow(theThread.cooperativeCancel());
 	theThread.join();
 	unitAssert(!theThread.isRunning());
 	unitAssert(cancelCleanedUp);
@@ -215,6 +216,8 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	unitAssert(!cancelCleanedUp);
 	theThread1.start();
 	unitAssert(theThread1.definitiveCancel() == true);
+	unitAssertNoThrow(theThread1.cooperativeCancel());
+	unitAssertNoThrow(theThread1.definitiveCancel());
 	theThread1.join();
 	unitAssert(!theThread1.isRunning());
 	unitAssert(cancelCleanedUp);
@@ -228,6 +231,8 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	// wait 0 seconds for cooperative cancellation to finish,
 	// since we know it won't ever finish.
 	unitAssert(theThread2.definitiveCancel(0) == false);
+	unitAssertNoThrow(theThread1.cooperativeCancel());
+	unitAssertNoThrow(theThread1.definitiveCancel());
 	theThread2.join();
 	unitAssert(!theThread2.isRunning());
 	unitAssert(!cancelCleanedUp);
@@ -245,6 +250,8 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	// wait 0 seconds for cooperative cancellation to finish,
 	// since we know it won't ever finish.
 	unitAssert(theThread3.definitiveCancel(0) == false);
+	unitAssertNoThrow(theThread1.cooperativeCancel());
+	unitAssertNoThrow(theThread1.definitiveCancel());
 	theThread3.join();
 	unitAssert(!theThread3.isRunning());
 	unitAssert(!cancelCleanedUp);

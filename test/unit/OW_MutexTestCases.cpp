@@ -72,10 +72,12 @@ protected:
 		catch(OW_Exception& e)
 		{
 			cout << e << endl;
+			throw;
 		}
 		catch(...)
 		{
 			cout << "Unknown exception in myRunnable::run" << endl;
+			throw;
 		}
 	}
 };

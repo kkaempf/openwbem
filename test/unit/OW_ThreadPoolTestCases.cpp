@@ -72,7 +72,7 @@ public:
 void OW_ThreadPoolTestCases::testThreadPool()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(10, 20);
+	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -99,7 +99,7 @@ void OW_ThreadPoolTestCases::testThreadPool()
 void OW_ThreadPoolTestCases::testThreadPool2()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(10, 20);
+	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -143,7 +143,123 @@ void OW_ThreadPoolTestCases::testThreadPool2()
 void OW_ThreadPoolTestCases::testThreadPool3()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(10, 20);
+	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
+	const int NUM_RUNNERS = 100;
+	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
+	// we'll try and stuff it as full as possible, but some shouldn't make it in.
+	int ran = 0, didntRun = 0;
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		if (!(i % 5))
+			OW_Thread::yield();
+	}
+
+	// adding a null OW_RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+
+	// let something happen...
+	OW_Thread::yield();
+
+	// false doesn't means to ditch the work still in the queue and shutdown asap.
+	thePool.shutdown(false, 0);
+
+	// after the pool is shutdown, tryAddWork should fail
+	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+
+	int ran2 = 0, didntRun2 = 0;
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		if (ints[i] == RUNNER_COUNT_MAX)
+		{
+			++ran2;
+		}
+		else
+		{
+			++didntRun2;
+		}
+	}
+	unitAssert(ran >= ran2);
+	unitAssert(didntRun <= didntRun2);
+
+}
+
+void OW_ThreadPoolTestCases::testThreadPoolDynamic1()
+{
+	// The pool has 10 threads, max queue of 20
+	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
+	const int NUM_RUNNERS = 100;
+	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		unitAssert(thePool.addWork(OW_RunnableRef(new testRunner(ints[i]))));
+	}
+
+	// adding a null OW_RunnableRef should fail
+	unitAssert(!thePool.addWork(OW_RunnableRef()));
+
+	thePool.shutdown(true);
+
+	// after the pool is shutdown, addWork should fail
+	unitAssert(!thePool.addWork(OW_RunnableRef(new testRunner(ints[0]))));
+
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		unitAssert(ints[i] == RUNNER_COUNT_MAX);
+	}
+
+}
+
+void OW_ThreadPoolTestCases::testThreadPoolDynamic2()
+{
+	// The pool has 10 threads, max queue of 20
+	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
+	const int NUM_RUNNERS = 100;
+	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
+	// we'll try and stuff it as full as possible, but some shouldn't make it in.
+	int ran = 0, didntRun = 0;
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		if (!(i % 5))
+			OW_Thread::yield();
+	}
+
+	// adding a null OW_RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+
+	// let something happen...
+	OW_Thread::yield();
+
+	thePool.shutdown(true);
+
+	// after the pool is shutdown, tryAddWork should fail
+	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+
+	int ran2 = 0, didntRun2 = 0;
+	for (int i = 0; i < NUM_RUNNERS; ++i)
+	{
+		if (ints[i] == RUNNER_COUNT_MAX)
+		{
+			++ran2;
+		}
+		else
+		{
+			++didntRun2;
+		}
+	}
+	unitAssert(ran == ran2);
+	unitAssert(didntRun == didntRun2);
+
+}
+
+void OW_ThreadPoolTestCases::testThreadPoolDynamic3()
+{
+	// The pool has 10 threads, max queue of 20
+	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -192,6 +308,9 @@ Test* OW_ThreadPoolTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPool);
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPool2);
 	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPool3);
+	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic1);
+	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic2);
+	ADD_TEST_TO_SUITE(OW_ThreadPoolTestCases, testThreadPoolDynamic3);
 
 	return testSuite;
 }

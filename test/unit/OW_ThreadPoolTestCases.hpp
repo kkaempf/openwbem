@@ -48,6 +48,9 @@ private:
 	void testThreadPool();
 	void testThreadPool2();
 	void testThreadPool3();
+	void testThreadPoolDynamic1();
+	void testThreadPoolDynamic2();
+	void testThreadPoolDynamic3();
 };
 
 #endif
