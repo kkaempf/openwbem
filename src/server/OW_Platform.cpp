@@ -238,10 +238,10 @@ void restartDaemon()
 	// execv() will just hang.
 	// This doesn't return. execv() will replace the current process with a
 	// new copy of g_argv[0] (owcimomd).
-	if (::execv(g_argv[0], g_argv) == -1)
-	{
-		OW_THROW(DaemonException, format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
-	}
+	::execv(g_argv[0], g_argv);
+
+	// If we get here we're pretty much hosed.
+	OW_THROW(DaemonException, format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -309,28 +309,17 @@ theSigHandler(int sig)
 	{
 	}
 }
-static int g_internalAbort = 0;
 
-void handleAbort(int sig)
+static void 
+abortHandler(int sig)
 {
-	if (!g_internalAbort)
-		Platform::restartDaemon();
+	Platform::restartDaemon();
 }
 
 static void
 fatalSigHandler(int sig)
 {
-	char msg[] = "Caught fatal signal.  Restarting.";
-	::write(2, msg, ::strlen(msg));
-#ifdef DEBUG
-	// this will end up calling our SIGABRT handler, and we want it to
-	// acutally abort instead of restarting the daemon.
-	g_internalAbort = 1;
-	::abort();
-#else
 	Platform::restartDaemon();
-#endif
-
 }
 } // extern "C"
 //////////////////////////////////////////////////////////////////////////////
@@ -362,19 +351,23 @@ setupSigHandler(bool dbgFlg)
 	handleSignal(SIGTERM);
 	handleSignal(SIGHUP);
 //	handleSignal(SIGUSR2);
+
+// The thread code uses SIGUSR1 to implement cooperative cancellation, since
+// sending a signal can wake up a blocked system call.
 //	handleSignal(SIGUSR1);
+
 	ignoreSignal(SIGTTIN);
 	ignoreSignal(SIGTTOU);
 	ignoreSignal(SIGTSTP);
-#ifdef OW_OPENSERVER
+#ifdef SIGPOLL
 	ignoreSignal(SIGPOLL);
-#else
+#endif
+#ifdef SIGIO
 	ignoreSignal(SIGIO);
 #endif
 	ignoreSignal(SIGPIPE);
 	// ?
 	ignoreSignal(SIGIOT);
-	ignoreSignal(SIGBUS);
 	ignoreSignal(SIGCONT);
 	ignoreSignal(SIGURG);
 	ignoreSignal(SIGXCPU);
@@ -384,13 +377,19 @@ setupSigHandler(bool dbgFlg)
 #ifdef SIGPWR // FreeBSD doesn't have SIGPWR
 	ignoreSignal(SIGPWR);
 #endif
-	// ?
+
 	//handleSignal(SIGALRM);
-	//handleSignal(SIGABRT);
-	//handleSignal(SIGILL);
-	//handleSignal(SIGSEGV);
-	//handleSignal(SIGFPE);
 	//handleSignal(SIGSTKFLT);
+
+	// only do this in production mode. During development we want it to crash!
+#ifdef OW_DEBUG
+	handleSignalAux(SIGABRT, abortHandler);
+
+	handleSignalAux(SIGILL, fatalSigHandler);
+	handleSignalAux(SIGBUS, fatalSigHandler);
+	handleSignalAux(SIGSEGV, fatalSigHandler);
+	handleSignalAux(SIGFPE, fatalSigHandler);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 String getCurrentUserName()
