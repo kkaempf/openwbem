@@ -10,7 +10,6 @@ configure
 config.log
 config.cache
 config.status
-build
 openwbem.v*
 stamp-h.in
 config.h.in

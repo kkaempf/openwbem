@@ -133,33 +133,17 @@ public:
 	const OW_String toString() const;
 
 	void assignFromNativeForm(const OW_InetSocketAddress_t* address, size_t len);
+#if !defined(OW_WIN32)
 	void assignFromNativeForm(const OW_UnixSocketAddress_t* address, size_t len);
+#endif
 
 	OW_SocketAddress();
-	OW_SocketAddress(const OW_SocketAddress& arg)
-		: m_name(arg.m_name)
-		, m_address(arg.m_address)
-		, m_nativeSize(arg.m_nativeSize)
-		, m_inetNativeAddress(arg.m_inetNativeAddress)
-		, m_UDSNativeAddress(arg.m_UDSNativeAddress)
-		, m_type(arg.m_type)
-	{
-	}
-
-	OW_SocketAddress& operator=(const OW_SocketAddress& arg)
-	{
-		m_name = arg.m_name;
-		m_address = arg.m_address;
-		m_nativeSize = arg.m_nativeSize;
-		m_inetNativeAddress = arg.m_inetNativeAddress;
-		m_UDSNativeAddress = arg.m_UDSNativeAddress;
-		m_type = arg.m_type;
-		return *this;
-	}
 
 private:
 	OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm);
+#if !defined(OW_WIN32)
 	OW_SocketAddress(const OW_UnixSocketAddress_t& nativeForm);
+#endif
 
 	OW_String m_name;
 	OW_String m_address;
@@ -167,7 +151,9 @@ private:
 	
 
 	OW_InetSocketAddress_t m_inetNativeAddress;
+#if !defined(OW_WIN32)
 	OW_UnixSocketAddress_t m_UDSNativeAddress;
+#endif
 	AddressType m_type;
 
 
@@ -175,8 +161,10 @@ private:
 			OW_UInt16 nativePort, const OW_String& hostname );
 	static OW_SocketAddress getFromNativeForm(
 		const OW_InetSocketAddress_t& nativeForm);
+#if !defined(OW_WIN32)
 	static OW_SocketAddress getFromNativeForm(
 		const OW_UnixSocketAddress_t& nativeForm);
+#endif
 
 };
 

@@ -36,11 +36,19 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <signal.h>
+#ifdef OW_HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef OW_HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
+#ifdef OW_HAVE_SYS_UN_H
 #include <sys/un.h>
+#endif
 }
 
 #undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be
@@ -52,8 +60,10 @@ typedef sockaddr		OW_SocketAddress_t;
 // Platform specific inet socket address type
 typedef sockaddr_in		OW_InetSocketAddress_t;
 
+#if !defined(OW_WIN32)
 // Platform specific unix socket address type
 typedef sockaddr_un		OW_UnixSocketAddress_t;
+#endif
 
 // Platform specific socket address type
 typedef in_addr		OW_InetAddress_t;

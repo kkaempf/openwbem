@@ -40,10 +40,12 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 }
 
-
+#if !defined(OW_WIN32)
 OW_String
 OW_GetPass::getPass(const OW_String& prompt)
 {
@@ -52,4 +54,4 @@ OW_GetPass::getPass(const OW_String& prompt)
 	memset(ptr, 0x00, strlen(ptr) * sizeof(char));
 	return retStr;
 }
-
+#endif

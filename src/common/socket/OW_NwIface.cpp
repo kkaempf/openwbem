@@ -31,11 +31,15 @@
 #include "OW_config.h"
 extern "C"
 {
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#ifdef OW_HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
 #include <arpa/inet.h>
 #include <errno.h>
 
