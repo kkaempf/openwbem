@@ -39,6 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

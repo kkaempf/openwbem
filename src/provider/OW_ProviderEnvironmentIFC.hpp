@@ -35,12 +35,10 @@
 #ifndef OW_PROVIDER_ENVIRONMENT_HPP_
 #define OW_PROVIDER_ENVIRONMENT_HPP_
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_CIMOMHandleIFC.hpp"
-#include "OW_RepositoryIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_RepositoryIFC.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -84,7 +82,6 @@ public:
 	virtual String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;
 };
-typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 									
 
 } // end namespace OpenWBEM

@@ -46,6 +46,8 @@
 #include "OW_Logger.hpp"
 #include "OW_WQLScanUtils.hpp"
 #include "OW_StringStream.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+
 #include <errno.h>
 #include <iterator> // for back_inserter
 #include <algorithm> // for set_union

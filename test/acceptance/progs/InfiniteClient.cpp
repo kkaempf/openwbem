@@ -55,6 +55,7 @@
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_SocketBaseImpl.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream>
 #include <algorithm> // for sort

@@ -46,6 +46,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
 #include "OW_SessionLanguage.hpp"
+#include "OW_Logger.hpp"
 
 #include <fstream>
 #include <unistd.h>

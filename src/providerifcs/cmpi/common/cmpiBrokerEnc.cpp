@@ -24,6 +24,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_Logger.hpp"
 
 namespace
 {

@@ -42,6 +42,8 @@
 #include "OW_IndicationServer.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {

@@ -33,16 +33,13 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_CIMOMHANDLE_HPP_
-#define OW_CIMOMHANDLE_HPP_
+#ifndef OW_CIMOMHANDLE_IFC_HPP_INCLUDE_GUARD_
+#define OW_CIMOMHANDLE_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_ResultHandlerIFC.hpp"
-#include "OW_String.hpp"
-#include "OW_StringEnumeration.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_IfcsFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -75,7 +72,7 @@ public:
 	 * 	the first level children of the enumerated class.
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 * 	properties are returned on each instance, otherwise all
-	 * 	properties are returned. 
+	 * 	properties are returned.
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all
 	 * 	class, property and method qualifiers will be returned.
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
@@ -86,7 +83,7 @@ public:
 	virtual void enumClass(const String& ns,
 		const String& className,
 		CIMClassResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN) = 0;
@@ -100,7 +97,7 @@ public:
 	 * 	of the first level children of the enumerated class.
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 * 	properties are returned on each instance, otherwise all
-	 * 	properties are returned. 
+	 * 	properties are returned.
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all
 	 * 	class, property and method qualifiers will be returned.
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
@@ -111,7 +108,7 @@ public:
 	 */
 	virtual CIMClassEnumeration enumClassE(const String& ns,
 		const String& className,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
@@ -122,10 +119,10 @@ public:
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
 	 * 	the names of all classes derived from the enumerated class.
 	 *	If set to E_SHALLOW the enumermation will return only the names
-	 *	of the first level children of the enumerated class. 
+	 *	of the first level children of the enumerated class.
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 * 	properties are returned on each instance, otherwise all
-	 * 	properties are returned. 
+	 * 	properties are returned.
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all
 	 * 	class, property and method qualifiers will be returned.
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
@@ -136,11 +133,11 @@ public:
 	 */
 	virtual CIMClassArray enumClassA(const String& ns,
 		const String& className,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
-  
+
 	/**
 	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
@@ -151,7 +148,7 @@ public:
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
 	 *	the names of all classes derived from the enumerated class.
  	 *	If set to E_SHALLOW the enumermation will return only the names
-	 *	of the first level children of the enumerated class. 
+	 *	of the first level children of the enumerated class.
 	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *	be found.
 	 */
@@ -164,11 +161,11 @@ public:
 	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated. Pass an empty string if
-	 *	you wish to enumerate all classes. 
+	 *	you wish to enumerate all classes.
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
-	 *	the names of all classes derived from the enumerated class. 
+	 *	the names of all classes derived from the enumerated class.
 	 *	If set to E_SHALLOW the enumermation will return only the names
-	 *	of the first level children of the enumerated class. 
+	 *	of the first level children of the enumerated class.
 	 * @return A StringEnumeration of classnames.
 	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *	be found.
@@ -181,11 +178,11 @@ public:
 	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated. Pass an empty string if
-	 *	you wish to enumerate all classes. 
+	 *	you wish to enumerate all classes.
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
-	 *	the names of all classes derived from the enumerated class. 
+	 *	the names of all classes derived from the enumerated class.
 	 *	If set to E_SHALLOW the enumermation will return only the names
-	 *	of the first level children of the enumerated class. 
+	 *	of the first level children of the enumerated class.
 	 * @return A StringArray of classnames.
 	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *	be found.
@@ -206,7 +203,7 @@ public:
 	 * @param result A callback object that will handle the instances as
 	 *	they are received.
 	 * @param deep Return properties defined on subclasses of the class in
-	 *	path 
+	 *	path
 	 *
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 *	properties are returned on each instance, otherwise all
@@ -214,7 +211,7 @@ public:
 	 *
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all of
 	 *	the qualifiers from the class will be returned with the each
-	 *	instance. 
+	 *	instance.
 	 *
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
 	 *	origin attribute will be returned on all appropriate elements.
@@ -225,7 +222,7 @@ public:
 	 * 	properties will be included in the instances. If propertyList
 	 * 	IS NULL, then it is ignored and all properties are returned
 	 * 	with the instances subject to constraints specified in the
-	 * 	other parameters. 
+	 * 	other parameters.
 	 *
 	 * @exception CIMException If the object cannot be found.
 	 */
@@ -248,7 +245,7 @@ public:
 	 * @param className The class whose instances are to be enumerated.
 	 *
 	 * @param deep Return properties defined on subclasses of the class in
-	 * 	path 
+	 * 	path
 	 *
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 *	properties are returned on each instance, otherwise all
@@ -256,10 +253,10 @@ public:
 	 *
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all of
 	 *	the qualifiers from the class will be returned with the each
-	 *	instance. 
+	 *	instance.
 	 *
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
-	 * 	origin attribute will be returned on all appropriate elements. 
+	 * 	origin attribute will be returned on all appropriate elements.
 	 *
 	 * @param propertyList If not NULL and has 0 or more elements, the
 	 *	returned instances will not contain properties missing from
@@ -271,7 +268,7 @@ public:
 	 *
 	 * @return An Enumeration of CIMInstance (CIMInstanceEnumeration)
 	 * @exception CIMException If the object cannot be found
-	 */  
+	 */
 	virtual CIMInstanceEnumeration enumInstancesE(
 		const String& ns,
 		const String& className,
@@ -290,7 +287,7 @@ public:
 	 * @param className The class whose instances are to be enumerated.
 	 *
 	 * @param deep Return properties defined on subclasses of the class in
-	 * 	path. 
+	 * 	path.
 	 *
 	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited
 	 *	properties are returned on each instance, otherwise all
@@ -298,7 +295,7 @@ public:
 	 *
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all of
 	 * 	the qualifiers from the class will be returned with the each
-	 * 	instance. 
+	 * 	instance.
 	 *
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
 	 * 	origin attribute will be returned on all appropriate elements.
@@ -313,7 +310,7 @@ public:
 	 *
 	 * @return An array of CIMInstances (CIMInstanceArray)
 	 * @exception CIMException If the object cannot be found
-	 */  
+	 */
 	virtual CIMInstanceArray enumInstancesA(
 		const String& ns,
 		const String& className,
@@ -347,7 +344,7 @@ public:
 	 * @param className The class whose instances are to be enumerated.
 	 * @return An Enumeration of CIMObjectPaths (CIMObjectPathEnumeration).
 	 * @exception CIMException If the object cannot be found.
-	 */  
+	 */
 	virtual CIMObjectPathEnumeration enumInstanceNamesE(
 		const String& ns,
 		const String& className);
@@ -360,7 +357,7 @@ public:
 	 * @param className The class whose instances are to be enumerated.
 	 * @return An array of CIMObjectPaths (CIMObjectPathEnumeration)
 	 * @exception CIMException If the object cannot be found
-	 */  
+	 */
 	virtual CIMObjectPathArray enumInstanceNamesA(
 		const String& ns,
 		const String& className);
@@ -373,7 +370,7 @@ public:
 	 * 	and methods are returned.
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all
 	 *	class, property and method qualifiers will be included in the
-	 * 	CIMClass.  Otherwise qualifiers will be excluded. 
+	 * 	CIMClass.  Otherwise qualifiers will be excluded.
 	 * @param includeClassOrigin If true, then the classOrigin attribute
 	 * 	will be present on all appropriate elements of the CIMClass.
 	 * @param propertyList If not NULL, only properties contained in this
@@ -401,11 +398,11 @@ public:
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all of
 	 *	the qualifiers from the class will be returned with the
 	 *	instance. Otherwise no qualifiers will be included with the
-	 *	instance. 
+	 *	instance.
 	 *
 	 * @param includeClassOrigin If set to E_INCLUDE_CLASS_ORIGIN, then the
 	 * 	class origin attribute will be returned on all appropriate
-	 * 	elements. 
+	 * 	elements.
 	 *
 	 * @param propertyList If not NULL and has 0 or more elements, the
 	 *	returned instance will not contain properties missing from this
@@ -413,7 +410,7 @@ public:
 	 *	properties will be included in the instance. If propertyList IS
 	 *	NULL, then it is ignored and all properties are returned with
 	 *	the instance subject to constraints specified in the other
-	 *	parameters. 
+	 *	parameters.
 	 *
 	 * @return The CIMInstance identified by the CIMObjectPath.
 	 * @exception CIMException If the specified CIMObjectPath cannot be found.
@@ -431,7 +428,7 @@ public:
 	 * in the method.
 	 * @param ns The namespace.
 	 * @param path An CIMObjectPath that identifies the class or instance
-	 * 	on which to invoke the method. 
+	 * 	on which to invoke the method.
 	 * @param methodName The string name of the method to be invoked
 	 * @param inParams The input parameters specified as an CIMValueArray.
 	 * @param outParams The output parameters.
@@ -457,7 +454,7 @@ public:
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace
-	 * if it exists. If it doesn't exist, it will be added. 
+	 * if it exists. If it doesn't exist, it will be added.
 	 * @param ns The namespace
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
@@ -474,7 +471,7 @@ public:
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
 	 * @param ns The namespace whose qualifier definitions are to be
-	 * 	enumerated. 
+	 * 	enumerated.
 	 * @param result A callback object that will handle the qualifier types
 	 * 	as they are received.
 	 */
@@ -484,10 +481,10 @@ public:
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
 	 * @param ns The namespace whose qualifier definitions are to be
-	 *	enumerated. 
+	 *	enumerated.
 	 * @return An Enumeration of CIMQualifierTypes
 	 *	(CIMQualifierEnumeration).
-	 */  
+	 */
 	virtual CIMQualifierTypeEnumeration enumQualifierTypesE(
 		const String& ns);
 	/**
@@ -495,7 +492,7 @@ public:
 	 * @param ns The namespace whose qualifier definitions are to be
 	 * 	enumerated.
 	 * @return An array of CIMQualifierTypes (CIMQualifierTypeArray).
-	 */  
+	 */
 	virtual CIMQualifierTypeArray enumQualifierTypesA(
 		const String& ns);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -597,7 +594,7 @@ public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes
-	 * or Instances) that are associated to a particular CIM Object. 
+	 * or Instances) that are associated to a particular CIM Object.
 	 *
 	 * @param ns The namespace containing the CIM Objects to be enumerated.
 	 * @param objectName Defines the source CIM Object whose associated
@@ -621,7 +618,7 @@ public:
 	 *	associated to the source Object via an Association in which the
 	 *	source Object plays the specified role (i.e. the name of the
 	 *	Property in the Association Class that refers to the source
-	 *	Object MUST match the value of this parameter). 
+	 *	Object MUST match the value of this parameter).
 	 * @param resultRole The ResultRole input parameter, if not empty (""),
 	 * 	MUST be a valid Property name. It acts as a filter on the
 	 * 	returned set of Objects by mandating that each returned Object
@@ -676,7 +673,7 @@ public:
 		const String& resultRole = String());
 	/**
 	 * This operation is used to enumerate CIM Objects (Classes or
-	 * Instances) that are associated to a particular source CIM Object. 
+	 * Instances) that are associated to a particular source CIM Object.
 	 * @param ns The namspace.
  	 * @param path Defines the path of the source CIM Object whose
 	 * 	associated Objects are to be returned.  This may be a path to
@@ -694,7 +691,7 @@ public:
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 * 	the returned set of Objects by mandating that each returned
 	 * 	Object MUST be either an Instance of this Class (or one of its
-	 * 	subclasses) or be this Class (or one of its subclasses). 
+	 * 	subclasses) or be this Class (or one of its subclasses).
 	 *
 	 * @param role The Role input parameter, if not empty (""), MUST be a
 	 * 	valid Property name. It acts as a filter on the returned set of
@@ -743,7 +740,7 @@ public:
 	 *
 	 *	Clients SHOULD NOT explicitly specify properties in the
 	 *	PropertyList parameter unless they have specified a non-empty
-	 *	("") value for the ResultClass parameter. 
+	 *	("") value for the ResultClass parameter.
 	 *
 	 * @exception CIMException. The following IDs can be expected:
 	 *	CIM_ERR_ACCESS_DENIED, CIM_ERR_NOT_SUPPORTED,
@@ -773,7 +770,7 @@ public:
 	 * 	more CIM Instances meeting the requested criteria.  Since it is
 	 * 	possible for CIM Objects from different hosts or namespaces to
 	 * 	be associated, each returned Object includes location
-	 * 	information.  
+	 * 	information.
 	 */
   	virtual CIMInstanceEnumeration associatorsE(
 		const String& ns,
@@ -796,7 +793,7 @@ public:
 	 *	possible for CIM Objects from different hosts or namespaces to
 	 *	be associated, each returned Object includes location
 	 *	information.
-	 */  
+	 */
 	virtual CIMInstanceArray associatorsA(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -809,7 +806,7 @@ public:
 		const StringArray* propertyList = 0);
 	/**
 	 * This operation is used to enumerate CIMClasses that are associated
-	 * to a particular source CIM Object. 
+	 * to a particular source CIM Object.
 	 *
 	 * @param ns The namspace.
  	 * @param path Defines the path of the source CIM Object whose
@@ -823,7 +820,7 @@ public:
 	 * 	MUST be a valid CIM Association Class name. It acts as a filter
 	 * 	on the returned set of Objects by mandating that each returned
 	 * 	Object MUST be associated to the source Object via an Instance
-	 * 	of this Class or one of its subclasses. 
+	 * 	of this Class or one of its subclasses.
 	 *
 	 * @param resultClass The ResultClass input parameter, if not empty
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
@@ -837,7 +834,7 @@ public:
 	 * 	associated to the source Object via an Association in which the
 	 * 	source Object plays the specified role (i.e. the name of the
 	 * 	Property in the Association Class that refers to the source
-	 * 	Object MUST match the value of this parameter). 
+	 * 	Object MUST match the value of this parameter).
 	 *
 	 * @param resultRole The ResultRole input parameter, if not empty (""),
 	 * 	MUST be a valid Property name. It acts as a filter on the
@@ -878,7 +875,7 @@ public:
 	 *
 	 *	Clients SHOULD NOT explicitly specify properties in the
 	 *	PropertyList parameter unless they have specified a non-empty
-	 *	("") value for the ResultClass parameter. 	 
+	 *	("") value for the ResultClass parameter. 	
 	 *
 	 *
 	 * @exception CIMException. The following IDs can be expected:
@@ -886,7 +883,7 @@ public:
 	 *	CIM_ERR_INVALID_NAMESPACE, CIM_ERR_INVALID_PARAMETER (including
 	 *	missing, duplicate, unrecognized or otherwise incorrect
 	 *	parameters), CIM_ERR_FAILED (some other unspecified error
-	 *	occurred) 
+	 *	occurred)
 	 */
 	virtual void associatorsClasses(
 		const String& ns,
@@ -952,9 +949,9 @@ public:
 	 * @param ns The namespace.
 	 * @param path The ObjectName input parameter defines the target CIM
 	 * 	Object path whose referring object names are to be returned. It
-	 * 	may be either a Class name or an Instance name (model path). 
+	 * 	may be either a Class name or an Instance name (model path).
 	 * @param result A callback object to handle the object paths as they
-	 * 	are received.	 
+	 * 	are received.	
 	 * @param resultClass  The ResultClass input parameter, if not empty
 	 *	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 *	the returned set of Object Names by mandating that each
@@ -1016,7 +1013,7 @@ public:
 		const String& role = String());
 	/**
 	 * This operation is used to enumerate the association objects that
-	 * refer to a particular target CIM Object (Class or Instance). 
+	 * refer to a particular target CIM Object (Class or Instance).
 	 *
 	 * @param ns The namespace.
 	 *
@@ -1030,7 +1027,7 @@ public:
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 * 	the returned set of Objects by mandating that each returned
 	 * 	Object MUST be an Instance of this Class (or one of its
-	 * 	subclasses), or this Class (or one of its subclasses).	 
+	 * 	subclasses), or this Class (or one of its subclasses).	
 	 *
 	 * @param role The Role input parameter, if not empty (""), MUST be a
 	 * 	valid Property name. It acts as a filter on the returned set of
@@ -1059,7 +1056,7 @@ public:
 		const StringArray* propertyList = 0) = 0;
 	/**
 	 * This operation is used to enumerate the association objects that
-	 * refer to a particular target CIM Object (Class or Instance). 
+	 * refer to a particular target CIM Object (Class or Instance).
 	 *
 	 * @see references
 	 *
@@ -1067,7 +1064,7 @@ public:
 	 *	more CIM Instances meeting the requested criteria.  Since it is
 	 *	possible for CIM Objects from different hosts or namespaces to
 	 *	be associated, each returned Object includes location
-	 *	information. 
+	 *	information.
 	 *
 	 * @exception CIMException - as defined for associators method.
 	 */
@@ -1081,7 +1078,7 @@ public:
 		const StringArray* propertyList = 0);
 	/**
 	 * This operation is used to enumerate the association objects that
-	 * refer to a particular target CIM Object (Class or Instance). 
+	 * refer to a particular target CIM Object (Class or Instance).
 	 *
 	 * @see references
 	 *
@@ -1167,7 +1164,7 @@ public:
 	 * Executes a query to retrieve or modify objects.
 	 *
 	 * @param ns CIMNameSpace that identifies the namespace in which to
-	 * 	query. 
+	 * 	query.
 	 *
 	 * @param query A string containing the text of the query. This
 	 * 	parameter cannot be empty..
@@ -1202,7 +1199,7 @@ public:
 	 *	The user does not have permission to view the result.
 	 *	The requested query language is not supported.
 	 *	The query specifies a class that does not exist.
-	 */  
+	 */
 	virtual CIMInstanceEnumeration execQueryE(
 		const String& ns,
 		const String& query,
@@ -1220,7 +1217,7 @@ public:
 	 *	The user does not have permission to view the result.
 	 *	The requested query language is not supported.
 	 *	The query specifies a class that does not exist.
-	 */  
+	 */
 	virtual CIMInstanceArray execQueryA(
 		const String& ns,
 		const String& query,
@@ -1242,8 +1239,6 @@ public:
 	virtual void exportIndication(const CIMInstance& instance,
 		const String& instNS);
 };
-
-typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -45,6 +45,7 @@
 #include "OW_Platform.hpp"
 #include "OW_TimeoutException.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 #include <climits>
 

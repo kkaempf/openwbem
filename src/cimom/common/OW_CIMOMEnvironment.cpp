@@ -68,6 +68,8 @@
 #include "OW_LogAppender.hpp"
 #include "OW_AppenderLogger.hpp"
 #include "OW_CerrLogger.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderManager.hpp"
 
 #include <iostream>
 

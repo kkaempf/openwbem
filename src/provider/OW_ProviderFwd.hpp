@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,11 +32,39 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
-#define OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
+#ifndef OW_PROVIDER_FWD_HPP_INCLUDE_GUARD_
+#define OW_PROVIDER_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Enumeration.hpp"
-#include "OW_String.hpp"
-#include "OW_CommonFwd.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_ArrayFwd.hpp"
+
+namespace OpenWBEM
+{
+
+class ProviderEnvironmentIFC;
+typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
+
+class InstanceProviderIFC;
+typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
+class SecondaryInstanceProviderIFC;
+typedef IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
+typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
+class ProviderBaseIFC;
+typedef IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
+typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
+class AssociatorProviderIFC;
+typedef IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
+class IndicationProviderIFC;
+typedef IntrusiveReference< IndicationProviderIFC > IndicationProviderIFCRef;
+typedef Array<IndicationProviderIFCRef> IndicationProviderIFCRefArray;
+class IndicationExportProviderIFC;
+typedef IntrusiveReference<IndicationExportProviderIFC> IndicationExportProviderIFCRef;
+typedef Array<IndicationExportProviderIFCRef> IndicationExportProviderIFCRefArray;
+
+
+} // end namespace OpenWBEM
 
 #endif
+
+
+

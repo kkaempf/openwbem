@@ -42,6 +42,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

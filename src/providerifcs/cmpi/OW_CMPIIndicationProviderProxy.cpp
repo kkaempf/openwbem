@@ -36,6 +36,7 @@
 #include "OW_Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_Logger.hpp"
 #include "cmpisrv.h"
 
 #define CMPI_POLLING_INTERVAL (5*60)

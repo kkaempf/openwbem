@@ -39,6 +39,8 @@
 #include "OW_Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_Logger.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
 {

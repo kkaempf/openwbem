@@ -34,6 +34,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/cpp \
--I$(top_srcdir)/src/cimom/common
+-I$(top_srcdir)/src/cimom/common \
+-I$(top_srcdir)/src/cimom/server
 
 

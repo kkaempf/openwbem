@@ -34,8 +34,6 @@
  */
 
 
-#include <sys/types.h>
-#include <signal.h>
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
@@ -50,7 +48,11 @@
 #include "OW_Format.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+
 #include <iostream> // for cerr
+#include <sys/types.h>
+#include <signal.h>
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
@@ -111,9 +113,9 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
@@ -164,9 +166,9 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
 		CIMInstance inst = cimClass.newInstance();

@@ -28,6 +28,8 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ResultHandlers.hpp"
 #include "OW_String.hpp"
+#include "OW_Logger.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 using namespace OpenWBEM::WBEMFlags;
 using OpenWBEM::Format;

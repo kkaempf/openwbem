@@ -8,6 +8,7 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

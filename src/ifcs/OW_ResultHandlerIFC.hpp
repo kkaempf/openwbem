@@ -33,10 +33,10 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_RESULTHANDLERIFC_HPP_
-#define OW_RESULTHANDLERIFC_HPP_
+#ifndef OW_RESULTHANDLERIFC_HPP_INCLUDE_GUARD_
+#define OW_RESULTHANDLERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CIMFwd.hpp"
+#include "OW_IfcsFwd.hpp" // for the *ResultHandler typedefs
 
 namespace OpenWBEM
 {
@@ -66,12 +66,6 @@ template <typename T>
 ResultHandlerIFC<T>::~ResultHandlerIFC()
 {
 }
-
-typedef ResultHandlerIFC<CIMClass> CIMClassResultHandlerIFC;
-typedef ResultHandlerIFC<CIMInstance> CIMInstanceResultHandlerIFC;
-typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
-typedef ResultHandlerIFC<String> StringResultHandlerIFC;
-typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
 } // end namespace OpenWBEM
 

@@ -61,6 +61,7 @@
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #include <algorithm>
 

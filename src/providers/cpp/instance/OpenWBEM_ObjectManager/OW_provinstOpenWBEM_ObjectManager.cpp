@@ -42,6 +42,8 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_UUID.hpp"
+#include "OW_Logger.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {

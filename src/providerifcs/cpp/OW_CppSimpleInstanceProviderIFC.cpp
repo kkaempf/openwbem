@@ -37,6 +37,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -68,15 +69,15 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-CIMInstance 
+CIMInstance
 CppSimpleInstanceProviderIFC::getInstance(
-	const ProviderEnvironmentIFCRef &env, 
-	const String &ns, 
-	const CIMObjectPath &instanceName, 
-	ELocalOnlyFlag localOnly, 
-	EIncludeQualifiersFlag includeQualifiers, 
-	EIncludeClassOriginFlag includeClassOrigin, 
-	const StringArray *propertyList, 
+	const ProviderEnvironmentIFCRef &env,
+	const String &ns,
+	const CIMObjectPath &instanceName,
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray *propertyList,
 	const CIMClass &cimClass)
 {
 	CIMInstance theInst(CIMNULL);
@@ -115,12 +116,12 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CppSimpleInstanceProviderIFC::enumInstanceNames(
-	const ProviderEnvironmentIFCRef &env, 
-	const String &ns, 
-	const String &className, 
-	CIMObjectPathResultHandlerIFC &result, 
+	const ProviderEnvironmentIFCRef &env,
+	const String &ns,
+	const String &className,
+	CIMObjectPathResultHandlerIFC &result,
 	const CIMClass &cimClass)
 {
 	EnumInstanceNamesHandler handler(result, ns);
@@ -133,11 +134,11 @@ class EnumInstancesHandler : public CIMInstanceResultHandlerIFC
 public:
 	EnumInstancesHandler(CIMInstanceResultHandlerIFC &result,
 		ELocalOnlyFlag localOnly_,
-		EDeepFlag deep_, 
-		EIncludeQualifiersFlag includeQualifiers_, 
-		EIncludeClassOriginFlag includeClassOrigin_, 
-		const StringArray *propertyList_, 
-		const CIMClass &requestedClass_, 
+		EDeepFlag deep_,
+		EIncludeQualifiersFlag includeQualifiers_,
+		EIncludeClassOriginFlag includeClassOrigin_,
+		const StringArray *propertyList_,
+		const CIMClass &requestedClass_,
 		const CIMClass &cimClass_)
 		: m_result(result)
 		, localOnly(localOnly_)
@@ -167,18 +168,18 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CppSimpleInstanceProviderIFC::enumInstances(
-	const ProviderEnvironmentIFCRef &env, 
-	const String &ns, 
-	const String &className, 
-	CIMInstanceResultHandlerIFC &result, 
+	const ProviderEnvironmentIFCRef &env,
+	const String &ns,
+	const String &className,
+	CIMInstanceResultHandlerIFC &result,
 	ELocalOnlyFlag localOnly,
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
-	EIncludeClassOriginFlag includeClassOrigin, 
-	const StringArray *propertyList, 
-	const CIMClass &requestedClass, 
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray *propertyList,
+	const CIMClass &requestedClass,
 	const CIMClass &cimClass)
 {
 	EnumInstancesHandler handler(result, localOnly, deep, includeQualifiers,

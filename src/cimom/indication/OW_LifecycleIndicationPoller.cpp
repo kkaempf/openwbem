@@ -40,6 +40,9 @@
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

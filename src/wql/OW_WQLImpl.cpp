@@ -39,6 +39,7 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatementGen.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {

@@ -36,12 +36,11 @@
 #define OW_INDICATION_REP_LAYER_IMPL_HPP_
 #include "OW_config.h"
 #include "OW_IndicationRepLayer.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMOMEnvironment;
-typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 class IndicationRepLayerImpl : public IndicationRepLayer
 {
 public:

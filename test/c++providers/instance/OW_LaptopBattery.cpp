@@ -45,6 +45,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_StringStream.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #include <fstream>
 #include <unistd.h>
@@ -106,16 +107,16 @@ namespace
 			const String& ns,
 			const String& className,
 			CIMInstanceResultHandlerIFC& result,
-			ELocalOnlyFlag localOnly, 
-			EDeepFlag deep, 
-			EIncludeQualifiersFlag includeQualifiers, 
+			ELocalOnlyFlag localOnly,
+			EDeepFlag deep,
+			EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass )
 		{
 			CIMInstance inst = this->createLaptopBatInst(cimClass);
-			result.handle(inst.clone(localOnly, deep, includeQualifiers, 
+			result.handle(inst.clone(localOnly, deep, includeQualifiers,
 				includeClassOrigin, propertyList, requestedClass, cimClass));
 		}
 
@@ -125,9 +126,9 @@ namespace
 			const String& ns,
 			const CIMObjectPath& instanceName,
 			ELocalOnlyFlag localOnly,
-			EIncludeQualifiersFlag includeQualifiers, 
+			EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList, 
+			const StringArray* propertyList,
 			const CIMClass& cimClass )
 		{
 			CIMInstance rval = this->createLaptopBatInst(cimClass);

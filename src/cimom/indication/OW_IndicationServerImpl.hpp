@@ -37,28 +37,30 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_HashMap.hpp"
+//#include "OW_HashMap.hpp"
 #include "OW_List.hpp"
-#include "OW_IndicationExportProviderIFC.hpp"
-#include "OW_IndicationProviderIFC.hpp"
+//#include "OW_IndicationExportProviderIFC.hpp"
+//#include "OW_IndicationProviderIFC.hpp"
 #include "OW_Condition.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
+//#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_CIMNameSpace.hpp"
+//#include "OW_CIMNameSpace.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_HashMultiMap.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_WQLCompile.hpp"
-#include "OW_LifecycleIndicationPoller.hpp"
-#include "OW_ThreadPool.hpp"
+//#include "OW_ThreadPool.hpp"
 #include "OW_ThreadBarrier.hpp"
-#include "OW_Logger.hpp"
+//#include "OW_Logger.hpp"
+#include "OW_ProviderFwd.hpp"
 
 namespace OpenWBEM
 {
 
 class NotifyTrans;
+class LifecycleIndicationPoller;
+
 //////////////////////////////////////////////////////////////////////////////
 class IndicationServerImpl : public IndicationServer
 {

@@ -52,6 +52,9 @@
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Format.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+#include "OW_Logger.hpp"
+
 // we use these internally
 #include <sys/types.h>
 #include <sys/stat.h>

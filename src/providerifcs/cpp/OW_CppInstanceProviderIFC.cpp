@@ -35,21 +35,22 @@
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {
 
     class _RHEnumInstances : public CIMObjectPathResultHandlerIFC
     {
-    public: 
+    public:
         _RHEnumInstances(
-          CppInstanceProviderIFC& ip, 
+          CppInstanceProviderIFC& ip,
           const ProviderEnvironmentIFCRef& env,
           const String& ns,
           CIMInstanceResultHandlerIFC& result,
-          WBEMFlags::ELocalOnlyFlag localOnly, 
-          WBEMFlags::EDeepFlag deep, 
-          WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+          WBEMFlags::ELocalOnlyFlag localOnly,
+          WBEMFlags::EDeepFlag deep,
+          WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
           WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
           const StringArray* propertyList,
           const CIMClass& cimClass )
@@ -69,16 +70,16 @@ namespace OpenWBEM
             CIMInstance inst = _ip.getInstance(_env,_ns, cop,_localOnly,
                                                 _includeQualifiers,
                                                 _includeClassOrigin,
-                                                _propertyList, _cimClass); 
-            _realHandler.handle(inst); 
+                                                _propertyList, _cimClass);
+            _realHandler.handle(inst);
         }
-    private: 
-        CppInstanceProviderIFC& _ip; 
-        const ProviderEnvironmentIFCRef& _env; 
-        const String& _ns; 
-        CIMInstanceResultHandlerIFC& _realHandler; 
-        WBEMFlags::ELocalOnlyFlag _localOnly; 
-        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
+    private:
+        CppInstanceProviderIFC& _ip;
+        const ProviderEnvironmentIFCRef& _env;
+        const String& _ns;
+        CIMInstanceResultHandlerIFC& _realHandler;
+        WBEMFlags::ELocalOnlyFlag _localOnly;
+        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers;
         WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin;
         const StringArray* _propertyList;
         const CIMClass& _cimClass;
@@ -91,34 +92,34 @@ namespace OpenWBEM
                                       const String& ns,
                                       const String& className,
                                       CIMInstanceResultHandlerIFC& result,
-                                      WBEMFlags::ELocalOnlyFlag localOnly, 
-                                      WBEMFlags::EDeepFlag deep, 
-                                      WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+                                      WBEMFlags::ELocalOnlyFlag localOnly,
+                                      WBEMFlags::EDeepFlag deep,
+                                      WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
                                       WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
                                       const StringArray* propertyList,
                                       const CIMClass& requestedClass,
                                       const CIMClass& cimClass )
     {
         _RHEnumInstances rh(*this,env , ns,result ,localOnly ,deep ,includeQualifiers ,
-              includeClassOrigin ,propertyList , cimClass); 
-        enumInstanceNames(env,ns ,className , rh,cimClass); 
+              includeClassOrigin ,propertyList , cimClass);
+        enumInstanceNames(env,ns ,className , rh,cimClass);
     }
 
 ///////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	CppInstanceProviderIFC::getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 	}
 
 ///////////////////////////////////////////////////////////////////////////////
-	CppInstanceProviderIFC* 
-	CppInstanceProviderIFC::getInstanceProvider() 
-	{ 
-		return this; 
+	CppInstanceProviderIFC*
+	CppInstanceProviderIFC::getInstanceProvider()
+	{
+		return this;
 	}
 
 ///////////////////////////////////////////////////////////////////////////////
-	CppInstanceProviderIFC::~CppInstanceProviderIFC() 
+	CppInstanceProviderIFC::~CppInstanceProviderIFC()
 	{
 	}
 

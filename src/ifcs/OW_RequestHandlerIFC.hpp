@@ -42,6 +42,7 @@
 #include "OW_SortedVectorMap.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IfcsFwd.hpp"
 
 #include <iosfwd>
 
@@ -52,9 +53,6 @@ namespace OpenWBEM
 {
 
 struct CIMFeatures;
-class ServiceEnvironmentIFC;
-typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
-class OperationContext;
 
 /**
  * This is an abstract base class for a CIM product requiring a HTTP Server.
@@ -62,8 +60,6 @@ class OperationContext;
  * to one of these.  When a [M-]POST or OPTIONS is done, the process() and
  * options() functions for this class are called, respectively.
  */
-class RequestHandlerIFC;
-typedef SharedLibraryReference< IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
 class OW_COMMON_API RequestHandlerIFC : public IntrusiveCountableBase
 {
 public:
@@ -72,7 +68,7 @@ public:
 	/**
 	 * The HTTP server calls this once all HTTP headers have been processed
 	 * and removed from the input stream.  Also, the http server takes care
-	 * of any necessary content coding (SSL, chunking, compression). 
+	 * of any necessary content coding (SSL, chunking, compression).
 	 * @param istr The input for the request to be processed.
 	 * @param ostrEntity Non-error output gets written here.
 	 * @param ostrError Error output gets written here.
@@ -115,7 +111,7 @@ protected:
 	/**
 	 * The HTTP server calls this once all HTTP headers have been processed
 	 * and removed from the input stream.  Also, the http server takes care
-	 * of any necessary content coding (SSL, chunking, compression). 
+	 * of any necessary content coding (SSL, chunking, compression).
 	 * @param istr The input for the request to be processed.
 	 * @param ostrEntity Non-error output gets written here.
 	 * @param ostrError Error output gets written here.

@@ -144,7 +144,6 @@ private:
 #endif
 
 };
-typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
 } // end namespace OpenWBEM
 

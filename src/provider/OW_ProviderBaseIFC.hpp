@@ -35,9 +35,8 @@
 #ifndef OW_PROVIDERBASEIFC_HPP_
 #define OW_PROVIDERBASEIFC_HPP_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_Array.hpp"
+#include "OW_ProviderFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -50,9 +49,6 @@ class ProviderBaseIFC : public virtual IntrusiveCountableBase
 	public:
 		virtual ~ProviderBaseIFC();
 };
-
-typedef IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
-typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
 
 } // end namespace OpenWBEM
 

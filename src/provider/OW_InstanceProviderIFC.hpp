@@ -36,15 +36,17 @@
 #define OW_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {
 
 /**
  * Classes wishing to implement an instance provider must derive from this
- * class.  Provider interfaces will usually create a proxy between this 
+ * class.  Provider interfaces will usually create a proxy between this
  * interface and their own interface.
  */
 class InstanceProviderIFC: public ProviderBaseIFC
@@ -89,9 +91,9 @@ public:
 			const String& ns,
 			const String& className,
 			CIMInstanceResultHandlerIFC& result,
-			WBEMFlags::ELocalOnlyFlag localOnly, 
-			WBEMFlags::EDeepFlag deep, 
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EDeepFlag deep,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
@@ -118,9 +120,9 @@ public:
 			const String& ns,
 			const CIMObjectPath& instanceName,
 			WBEMFlags::ELocalOnlyFlag localOnly,
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList, 
+			const StringArray* propertyList,
 			const CIMClass& cimClass ) = 0;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -174,7 +176,6 @@ public:
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
-typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -45,6 +45,9 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

@@ -51,6 +51,7 @@
 #include "OW_LogAppender.hpp"
 #include "OW_WQLImpl.hpp"
 #include "OW_Bool.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream>
 #include <sstream>

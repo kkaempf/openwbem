@@ -30,17 +30,14 @@
 #ifndef OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_Exception.hpp"
-#include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_SharedLibraryReference.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_CimomServerFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class AuthenticatorIFC;
-typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
 OW_DECLARE_EXCEPTION(AuthManager)
 
@@ -49,13 +46,12 @@ class AuthManager : public IntrusiveCountableBase
 public:
 	AuthManager();
 	~AuthManager();
-	void init(ServiceEnvironmentIFCRef env);
+	void init(const ServiceEnvironmentIFCRef& env);
 	bool authenticate(String& userName,
 		const String& info, String& details, OperationContext& context);
 private:
 	AuthenticatorIFCRef m_authenticator;
 };
-typedef IntrusiveReference<AuthManager> AuthManagerRef;
 
 } // end namespace OpenWBEM
 

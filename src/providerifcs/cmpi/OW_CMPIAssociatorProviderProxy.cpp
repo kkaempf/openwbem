@@ -36,7 +36,9 @@
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
+#include "OW_Logger.hpp"
 #include "cmpisrv.h"
+
 #ifdef OW_HAVE_ALLOCA_H
 #include <alloca.h>
 #endif

@@ -37,6 +37,8 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_CIMFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -59,6 +61,18 @@ typedef SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;
 class AuthorizerIFC;
 typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
 
+class AuthenticatorIFC;
+typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
+
+class ServiceEnvironmentIFC;
+typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+
+template <typename T> class ResultHandlerIFC;
+typedef ResultHandlerIFC<CIMClass> CIMClassResultHandlerIFC;
+typedef ResultHandlerIFC<CIMInstance> CIMInstanceResultHandlerIFC;
+typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
+typedef ResultHandlerIFC<String> StringResultHandlerIFC;
+typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
 
 } // end namespace OpenWBEM

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,11 +32,19 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
-#define OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
+#ifndef OW_CIMOM_SERVER_FWD_HPP_INCLUDE_GUARD_
+#define OW_CIMOM_SERVER_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Enumeration.hpp"
-#include "OW_String.hpp"
-#include "OW_CommonFwd.hpp"
+#include "OW_IntrusiveReference.hpp"
+
+namespace OpenWBEM
+{
+
+class AuthManager;
+typedef IntrusiveReference<AuthManager> AuthManagerRef;
+
+} // end namespace OpenWBEM
 
 #endif
+
+

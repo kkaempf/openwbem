@@ -42,6 +42,8 @@
 #include "OW_IndicationServer.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -110,7 +112,7 @@ public:
 		// Tell the indication server about the modified subscription.
 		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->modifyFilter(
 			ns,
-			modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass), 
+			modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass),
 			env->getUserName());
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

@@ -74,6 +74,13 @@ namespace ConfigFile
 
 class StringBuffer;
 class DateTime;
+class OperationContext;
+
+template <class T> class Enumeration;
+typedef Enumeration<String> StringEnumeration;
+
+class ThreadPool;
+typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
 } // end namespace OpenWBEM
 

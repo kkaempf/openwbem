@@ -52,6 +52,8 @@
 #include "OW_WQLCompile.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 // TODO: Find a way to get rid of these
 #include "OW_PollingManager.hpp"

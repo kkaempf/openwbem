@@ -52,6 +52,9 @@
 #include "OW_WQLCompile.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_Logger.hpp"
+#include "OW_ResultHandlerIFC.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 #include <algorithm>
 

@@ -37,13 +37,13 @@
 #define OW_CIMSERVER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_ProviderManager.hpp"
-#include "OW_Map.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_SortedVectorSet.hpp" // fwd?
-#include "OW_CIMException.hpp"
 #include "OW_Authorizer2IFC.hpp"
+#include "OW_CimomCommonFwd.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_CIMFwd.hpp"
+#include "OW_Mutex.hpp"
 
 namespace OpenWBEM
 {
@@ -572,7 +572,7 @@ public:
 		const String &query, const String& queryLanguage,
 		OperationContext& context);
 
-	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
+	ServiceEnvironmentIFCRef getEnvironment() const;
 public:
 	void _getCIMInstanceNames(const String& ns, const CIMName& className,
 		const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result,

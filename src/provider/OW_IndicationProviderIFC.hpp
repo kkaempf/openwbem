@@ -36,8 +36,10 @@
 #define OW_INDICATION_PROVIDER_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {
@@ -52,37 +54,34 @@ public:
 	virtual ~IndicationProviderIFC();
 	virtual void activateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes
 		) = 0;
 	virtual void authorizeFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
-		const StringArray& classes, 
+		const StringArray& classes,
 		const String& owner
 		) = 0;
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes
 		) = 0;
 	virtual int mustPoll(
 		const ProviderEnvironmentIFCRef& env,
-		const WQLSelectStatement& filter, 
-		const String& eventType, 
+		const WQLSelectStatement& filter,
+		const String& eventType,
 		const String& nameSpace,
 		const StringArray& classes
 		) = 0;
 };
-typedef IntrusiveReference< IndicationProviderIFC > IndicationProviderIFCRef;
-typedef Array<IndicationProviderIFCRef>
-		IndicationProviderIFCRefArray;
 
 } // end namespace OpenWBEM
 

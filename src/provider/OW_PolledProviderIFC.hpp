@@ -36,9 +36,10 @@
 #define OW_POLLEDPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_Array.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {

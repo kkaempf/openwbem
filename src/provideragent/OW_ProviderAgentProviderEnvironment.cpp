@@ -39,16 +39,17 @@
 #include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_HTTPClient.hpp"
-
+#include "OW_Logger.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(
-	const LoggerRef& logger, 
+	const LoggerRef& logger,
 	const ConfigFile::ConfigMap& configMap,
-	OperationContext& operationContext, 
+	OperationContext& operationContext,
 	const String& callbackURL,
 	ClientCIMOMHandleConnectionPool& pool,
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag useConnectionCredentials)
@@ -64,20 +65,20 @@ ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentProviderEnvironment::~ProviderAgentProviderEnvironment()
 {
-	for (Array<ClientCIMOMHandleRef>::const_iterator iter = m_CIMOMHandleRA.begin(); 
+	for (Array<ClientCIMOMHandleRef>::const_iterator iter = m_CIMOMHandleRA.begin();
 		  iter < m_CIMOMHandleRA.end(); ++iter)
 	{
-		m_connectionPool.addConnectionToPool(*iter, m_callbackURL); 
+		m_connectionPool.addConnectionToPool(*iter, m_callbackURL);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
 	// This function returns a regular cimom handle that does access checking and may call providers.
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getCIMOMHandle() const
 {
 	if (m_callbackURL.empty())
 	{
-		return CIMOMHandleIFCRef(0); 
+		return CIMOMHandleIFCRef(0);
 	}
 
 	String callbackURL(m_callbackURL);
@@ -95,7 +96,7 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 		callbackURL = url.toString();
 	}
 
-	ClientCIMOMHandleRef client = m_connectionPool.getConnection(callbackURL); 
+	ClientCIMOMHandleRef client = m_connectionPool.getConnection(callbackURL);
 
 	CIMProtocolIFCRef tmp = client->getWBEMProtocolHandler();
 	if (tmp)
@@ -104,14 +105,14 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 		if (httpClient)
 		{
 			httpClient->addCustomHeader(HTTPUtils::Header_BypassLocker,
-										HTTPUtils::HeaderValue_true); 
+										HTTPUtils::HeaderValue_true);
 		}
 	}
-	m_CIMOMHandleRA.push_back(client); 
-	return client; 
+	m_CIMOMHandleRA.push_back(client);
+	return client;
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String &defRetVal) const
 {
 	ConfigFile::ConfigMap::const_iterator i =
@@ -130,26 +131,26 @@ ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String
 // This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 // no providers will be called.  This function should only be called if getCIMOMHandle()
 // is insufficent.
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 {
-	OW_ASSERT("not implemented" == 0); 
+	OW_ASSERT("not implemented" == 0);
 	return CIMOMHandleIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 // This function returns a reference to the repository.  This function should only
 // be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
-RepositoryIFCRef 
+RepositoryIFCRef
 ProviderAgentProviderEnvironment::getRepository() const
 {
-	OW_ASSERT("not implemented" == 0); 
+	OW_ASSERT("not implemented" == 0);
 	return RepositoryIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
-LoggerRef 
+LoggerRef
 ProviderAgentProviderEnvironment::getLogger() const
 {
-	return m_logger->clone(); 
+	return m_logger->clone();
 }
 //////////////////////////////////////////////////////////////////////////////
 LoggerRef
@@ -160,17 +161,17 @@ ProviderAgentProviderEnvironment::getLogger(const String& componentName) const
 	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 ProviderAgentProviderEnvironment::getUserName() const
 {
-	OW_ASSERT("not implemented" == 0); 
+	OW_ASSERT("not implemented" == 0);
 	return String();
 }
 //////////////////////////////////////////////////////////////////////////////
-OperationContext& 
+OperationContext&
 ProviderAgentProviderEnvironment::getOperationContext()
 {
-	return m_operationContext; 
+	return m_operationContext;
 }
 
 //////////////////////////////////////////////////////////////////////////////

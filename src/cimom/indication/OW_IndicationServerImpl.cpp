@@ -56,6 +56,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMDateTime.hpp"
+#include "OW_LifecycleIndicationPoller.hpp"
 
 #include <iterator>
 

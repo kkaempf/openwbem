@@ -47,6 +47,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_Logger.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
 {

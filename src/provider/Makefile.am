@@ -59,7 +59,8 @@ OW_SecondaryInstanceProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
 OW_IndicationProviderInfo.hpp \
-OW_ProviderInfoBase.hpp
+OW_ProviderInfoBase.hpp \
+OW_ProviderFwd.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

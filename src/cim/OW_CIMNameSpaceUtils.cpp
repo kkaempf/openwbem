@@ -42,6 +42,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -245,15 +246,15 @@ namespace
 		while (en.hasMoreElements())
 		{
 			CIMInstance i = en.nextElement();
-			CIMValue nameVal = i.getPropertyValue("Name"); 
-			if (!nameVal || nameVal.getType() != CIMDataType::STRING 
+			CIMValue nameVal = i.getPropertyValue("Name");
+			if (!nameVal || nameVal.getType() != CIMDataType::STRING
 			    || nameVal.isArray())
 			{
 			    OW_THROWCIMMSG(CIMException::FAILED,
 				    "Name of namespace not found");
 			}
-			String name; 
-			nameVal.get(name); 
+			String name;
+			nameVal.get(name);
 
 			result.handle(ns + "/" + name);
 			if (deep)

@@ -55,6 +55,9 @@
 #include "OW_UserInfo.hpp"
 #include "OW_ResultHandlers.hpp"
 #include "OW_AuthorizerManager.hpp"	
+#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_CIMOMEnvironment.hpp"
+#include "OW_ProviderManager.hpp"
 
 #include <iterator>
 
@@ -2412,6 +2415,12 @@ CIMServer::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context,
 	m_cimRepository->endOperation(op, context, result);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+ServiceEnvironmentIFCRef
+CIMServer::getEnvironment() const
+{
+	return m_env;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 const char* const CIMServer::INST_REPOS_NAME = "instances";

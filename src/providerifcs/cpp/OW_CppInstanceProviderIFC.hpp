@@ -38,6 +38,7 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_InstanceProviderInfo.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {
@@ -109,9 +110,9 @@ public:
 			const String& ns,
 			const String& className,
 			CIMInstanceResultHandlerIFC& result,
-			WBEMFlags::ELocalOnlyFlag localOnly, 
-			WBEMFlags::EDeepFlag deep, 
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EDeepFlag deep,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
@@ -138,9 +139,9 @@ public:
 			const String& ns,
 			const CIMObjectPath& instanceName,
 			WBEMFlags::ELocalOnlyFlag localOnly,
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const StringArray* propertyList, 
+			const StringArray* propertyList,
 			const CIMClass& cimClass ) = 0;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**

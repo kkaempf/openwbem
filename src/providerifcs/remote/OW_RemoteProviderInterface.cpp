@@ -48,6 +48,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_NULLValueException.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

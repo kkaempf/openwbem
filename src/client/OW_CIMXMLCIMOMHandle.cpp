@@ -59,6 +59,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_HTTPClient.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -96,7 +97,7 @@ CIMXMLCIMOMHandle::getWBEMProtocolHandler() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void CIMXMLCIMOMHandle::close() 
+void CIMXMLCIMOMHandle::close()
 {
 	m_protocol->close();
 }
@@ -1458,12 +1459,12 @@ CIMXMLCIMOMHandle::intrinsicMethod(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 CIMXMLCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
 	const String& hdrValue)
 {
 	bool cc = false;
-	IntrusiveReference<HTTPClient> httpClient = 
+	IntrusiveReference<HTTPClient> httpClient =
 		m_protocol.cast_to<HTTPClient>();
 	if (httpClient)
 	{
@@ -1474,12 +1475,12 @@ CIMXMLCIMOMHandle::setHTTPRequestHeader(const String& hdrName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 CIMXMLCIMOMHandle::getHTTPResponseHeader(const String& hdrName,
 	String& valueOut) const
 {
 	bool cc = false;
-	IntrusiveReference<HTTPClient> httpClient = 
+	IntrusiveReference<HTTPClient> httpClient =
 		m_protocol.cast_to<HTTPClient>();
 	if (httpClient)
 	{

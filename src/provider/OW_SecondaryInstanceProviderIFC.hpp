@@ -36,8 +36,10 @@
 #define OW_SECONDARY_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {
@@ -67,7 +69,7 @@ public:
 	 *  See CIM Operations over HTTP for a description of this parameter.
 	 * @param propertyList The value the CIM Client specified in the request.
 	 *  See CIM Operations over HTTP for a description of this parameter.
-	 * @param requestedClass The class the client specified when calling 
+	 * @param requestedClass The class the client specified when calling
 	 *  EnumerateInstances.  For GetInstance(), requestedClass == cimClass.
 	 * @param cimClass The class the provider is responsible for.
 	 *
@@ -79,19 +81,19 @@ public:
 			const String& ns,
 			const String& className,
 			CIMInstanceArray& instances,
-			WBEMFlags::ELocalOnlyFlag localOnly, 
-			WBEMFlags::EDeepFlag deep, 
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EDeepFlag deep,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass ) = 0;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
-	 * This method is called when the instance specified by cimInstance is 
-	 * created.  The provider cannot override this operation, since it will 
+	 * This method is called when the instance specified by cimInstance is
+	 * created.  The provider cannot override this operation, since it will
 	 * have been already processed by the primary instance provider.
-	 * Throwing an exception will cause the error to be returned to the 
+	 * Throwing an exception will cause the error to be returned to the
 	 * CIM Client, but the work that other providers may have done will not be
 	 * undone.
 	 *
@@ -104,10 +106,10 @@ public:
 			const String& ns,
 			const CIMInstance& cimInstance ) = 0;
 	/**
-	 * This method is called when the instance specified by previousInstance is 
-	 * modified.  The provider cannot override this operation, since it will 
+	 * This method is called when the instance specified by previousInstance is
+	 * modified.  The provider cannot override this operation, since it will
 	 * have been already processed by the primary instance provider.
-	 * Throwing an exception will cause the error to be returned to the 
+	 * Throwing an exception will cause the error to be returned to the
 	 * CIM Client, but the work that other providers may have done will not be
 	 * undone.
 	 *
@@ -123,10 +125,10 @@ public:
 			const StringArray* propertyList,
 			const CIMClass& theClass) = 0;
 	/**
-	 * This method is called when the instance specified by cop is 
-	 * deleted.  The provider cannot override this operation, since it will 
+	 * This method is called when the instance specified by cop is
+	 * deleted.  The provider cannot override this operation, since it will
 	 * have been already processed by the primary instance provider.
-	 * Throwing an exception will cause the error to be returned to the 
+	 * Throwing an exception will cause the error to be returned to the
 	 * CIM Client, but the work that other providers may have done will not be
 	 * undone.
 	 *
@@ -140,9 +142,6 @@ public:
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
-
-typedef IntrusiveReference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
-typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
 
 } // end namespace OpenWBEM
 

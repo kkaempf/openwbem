@@ -63,7 +63,7 @@ AuthManager::~AuthManager()
 }
 ///////////////////////////////////////////////////////////////////////////////
 void
-AuthManager::init(ServiceEnvironmentIFCRef env)
+AuthManager::init(const ServiceEnvironmentIFCRef& env)
 {
 	m_authenticator.setNull();
 	String authLib = env->getConfigItem(

@@ -38,11 +38,11 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMServer;
 class WQLFilterRep : public RepositoryIFC
 {
 public:

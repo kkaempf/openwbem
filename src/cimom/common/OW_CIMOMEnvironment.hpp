@@ -54,17 +54,11 @@
 #include "OW_HashMap.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_CimomCommonFwd.hpp"
+#include "OW_CimomServerFwd.hpp"
 #include "OW_CIMFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class AuthManager;
-typedef IntrusiveReference<AuthManager> AuthManagerRef;
-
-
-
-
 
 class CIMOMEnvironment : public ServiceEnvironmentIFC
 {

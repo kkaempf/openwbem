@@ -36,8 +36,10 @@
 #define OW_ASSOCIATORPROVIDERIFC_HPP_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ProviderFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_WBEMFlags.hpp"
 
 namespace OpenWBEM
 {
@@ -259,7 +261,6 @@ class AssociatorProviderIFC: public ProviderBaseIFC
 				const String& resultClass,
 				const String& role ) = 0;
 };
-typedef IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
 
 } // end namespace OpenWBEM
 
