@@ -46,6 +46,7 @@ class SSLException : public SocketException
 public:
 	SSLException(const char* file, int line, const char* msg)
 		: SocketException(file, line, msg) {}
+	// TODO: Make a .cpp for this class and put this func and the destructor in it.
 	virtual const char* type() const { return "SSLException"; }
 };
 
