@@ -334,6 +334,6 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # You probably don't need to modify this option.
-# The default value is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q
-http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q
+# The default value is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
+;http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 

@@ -17,6 +17,7 @@ SUFFIXES = .sh
 		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
 		-e 's!@''localstatedir''@!$(localstatedir)!g' \
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
+		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
 	$< > $@-t
 	@MV@	$@-t $@
 
