@@ -30,7 +30,50 @@
 #include "OW_config.h"
 #include "OW_AtomicOps.hpp"
 
+#if defined(__i386__) && defined(__GNUC__)
+// inline in the header
+
+#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
+OW_Atomic_t::OW_Atomic_t()
+	: rep(0)
+{
+	pthread_spin_init(&spinlock);
+}
+
+OW_Atomic_t::OW_Atomic_t(int i)
+	: rep(i)
+{
+	pthread_spin_init(&spinlock);
+}
+
+void OW_AtomicInc(OW_Atomic_t &v)
+{
+	pthread_spin_lock(&v.spinlock);
+	++v.rep;
+	pthread_spin_unlock(&v.spinlock);
+}
+
+
+bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+{
+	pthread_spin_lock(&v.spinlock);
+	--v.rep;
+	bool b = ((_rep == 0) ? true : false) ;
+	pthread_spin_unlock(&v.spinlock);
+	return b;
+}
+
+int OW_AtomicGet(OW_Atomic_t const &v)
+{
+	return v.rep;
+}
+
+#else
+
 #if defined(OW_USE_DEFAULT_ATOMIC_OPS)
+
+
+// pth doesn't have pth_spin_lock
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
@@ -52,5 +95,8 @@ int OW_AtomicGet(OW_Atomic_t const &v)
     OW_MutexLock lock(guard);
 	return v->counter;
 }
+
+#endif
+
 #endif
 

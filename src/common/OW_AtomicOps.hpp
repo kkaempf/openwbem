@@ -34,15 +34,12 @@
 
 #if defined(__i386__) && defined(__GNUC__)
 // use fast inline assembly versions
-typedef struct { volatile int val; } OW_Atomic_t;
-
-// OW_ATOMIC() is weird; you can't use it for member variables.  Here's how to do 
-// it correctly.
-// In constructor body:
-//	OW_Atomic_t c = OW_ATOMIC(0);
-//	m_myAtomicVar = c;
-
-#define OW_ATOMIC(i)	{ (i) }
+struct OW_Atomic_t
+{ 
+	OW_Atomic_t() : val(0) {}
+	OW_Atomic_t(int i) : val(i) {}
+	volatile int val; 
+};
 
 inline void OW_AtomicInc(OW_Atomic_t &v)
 {
@@ -68,12 +65,33 @@ inline int OW_AtomicGet(OW_Atomic_t const &v)
 	return v.val;
 }
 
+#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
+
+#include <pthread.h>
+struct OW_Atomic_t
+{
+	OW_Atomic_t();
+	OW_Atomic_t(int i);
+	int rep;
+	pthread_spinlock_t spinlock;
+};
+
+void OW_AtomicInc(OW_Atomic_t &v);
+bool OW_AtomicDecAndTest(OW_Atomic_t &v);
+int OW_AtomicGet(OW_Atomic_t const &v)
+
+
 #else
 // use slow mutex protected versions
 #define OW_USE_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
-typedef int OW_Atomic_t;
 
-#define OW_ATOMIC(i)	(i)
+
+struct OW_Atomic_t
+{ 
+	OW_Atomic_t() : val(0) {}
+	OW_Atomic_t(int i) : val(i) {}
+	volatile int val; 
+};
 
 void OW_AtomicInc(OW_Atomic_t &v);
 bool OW_AtomicDecAndTest(OW_Atomic_t &v);

@@ -39,9 +39,8 @@
 struct OW_RefCount
 {
 	OW_RefCount()
+		: m_count(1)
     {
-        OW_Atomic_t c = OW_ATOMIC(1);
-        m_count = c;
     }
 
     void inc()

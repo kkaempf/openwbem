@@ -163,8 +163,8 @@ case "$host" in
 *-*-linux*)
 	PLATFORMDIR="posix"
 	AC_DEFINE(GNU_LINUX)
-	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe"
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
@@ -473,6 +473,7 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 	LIBS="$saved_LIBS -lssl -lcrypto"
 fi
 
+dnl Now check for threading stuff
 OLD_LIBS=$LIBS
 LIBS="-pthread $LIBS"
 AC_MSG_CHECKING("pthread_mutexattr_settype")
@@ -496,6 +497,34 @@ int main()
  ],
  [
     AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    AC_MSG_RESULT("yes")
+ ],
+ [
+    AC_MSG_RESULT("no")
+ ],
+    AC_MSG_RESULT("no")
+ ]
+)
+
+AC_MSG_CHECKING("pthread_spin_lock")
+AC_TRY_RUN(
+ [
+#include <pthread.h>
+#include <assert.h>
+ 
+int main()
+{
+	pthread_spinlock_t spinlock;
+	pthread_spin_init(&spinlock, 0);
+	if (pthread_spin_lock(&spinlock) != 0)
+		return 1;
+	if (pthread_spin_unlock(&spinlock) != 0)
+		return 1;
+	return 0;
+}
+ ],
+ [
+    AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
     AC_MSG_RESULT("yes")
  ],
  [

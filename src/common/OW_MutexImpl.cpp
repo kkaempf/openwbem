@@ -121,8 +121,9 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 			return -2;
 	}
 
+	int res = 0;
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    int res = pthread_cond_destroy(&handle.unlocked);
+    res = pthread_cond_destroy(&handle.unlocked);
     assert(res == 0);
 #endif
 	return res;
@@ -169,10 +170,8 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
  
     res = pthread_mutex_unlock(&handle.mutex);
     assert(res == 0);
-	return res;
 #endif
-
-
+	return res;
 #endif
 }
 
