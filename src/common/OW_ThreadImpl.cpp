@@ -140,6 +140,31 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 #endif
 }
 
+#ifdef OW_USE_PTHREAD
+namespace {
+
+// The purpose of this class is to retrieve the default stack size only once at library load time and re-use it thereafter.
+struct default_stack_size
+{
+	default_stack_size()
+	{
+		// if anything in this function fails, we'll just leave val == 0.
+		val = 0;
+		pthread_attr_t stack_size_attr;
+		if (pthread_attr_init(&stack_size_attr) != 0)
+			return;
+		if (pthread_attr_getstacksize(&stack_size_attr, &val) != 0)
+			return;
+	}
+	static size_t val;
+};
+
+size_t default_stack_size::val = 0;
+
+default_stack_size g_theDefaultStackSize;
+} // end unnamed namespace
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
@@ -173,6 +198,32 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 	{
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	}
+
+	// make sure we have a big enough stack.  OpenWBEM can use quite a bit, so we'll try to make sure we get at least 1 MB.
+	// 1 MB is just an arbitrary number.  The default on Linux is 2 MB which has never been a problem.  However, on UnixWare
+	// the default is really low (16K IIRC) and that isn't enough. It would be good to do some sort of measurement...
+#ifdef _POSIX_THREAD_ATTR_STACKSIZE
+
+// This bunch of yuckiness is to make sure we get the larger of 1 MB or PTHREAD_STACK_MIN
+#define OW_MIN_REQ_STACK_SIZE 1048576 // 1 MB
+#ifdef PTHREAD_STACK_MIN
+	#if PTHREAD_STACK_MIN > OW_MIN_REQ_STACK_SIZE
+		#define MIN_REQ_STACK_SIZE PTHREAD_STACK_MIN
+	#else
+		#define MIN_REQ_STACK_SIZE OW_MIN_REQ_STACK_SIZE
+	#endif
+#else
+	#define MIN_REQ_STACK_SIZE OW_MIN_REQ_STACK_SIZE
+#endif
+
+	if (default_stack_size::val < MIN_REQ_STACK_SIZE)
+	{
+		pthread_attr_setstacksize(&attr, MIN_REQ_STACK_SIZE);
+	}
+#undef MIN_REQ_STACK_SIZE
+#undef OW_MIN_REQ_STACK_SIZE
+
+#endif
 
 	LocalThreadParm* parg = new LocalThreadParm;
 	parg->m_func = func;
