@@ -21,6 +21,8 @@
 #ifndef _CmpiBaseMI_h_
 #define _CmpiBaseMI_h_
 
+#include "OW_config.h"
+
 #include <iostream>
 
 #include "cmpidt.h"

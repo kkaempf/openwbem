@@ -21,12 +21,14 @@
 
 #ifndef _CmpiContext_h_
 #define _CmpiContext_h_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "cmpift.h"
 
 #include "CmpiObject.h"
 #include "CmpiStatus.h"
+#include "CmpiData.h"
 
 /** This class acts as a container to holding provider functions context information.
 */

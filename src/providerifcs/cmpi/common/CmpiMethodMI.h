@@ -21,6 +21,7 @@
 
 #ifndef _CmpiMethodMI_h_
 #define _CmpiMethodMI_h_
+#include "OW_config.h"
 
 #include <iostream>
 

@@ -22,6 +22,7 @@
 
 #ifndef _CMPISRV_H_
 #define _CMPISRV_H_
+#include "OW_config.h"
 
 #include <stdlib.h>
 #include <iostream>

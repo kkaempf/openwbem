@@ -20,6 +20,7 @@
 
 #ifndef _CmpiStatus_h_
 #define _CmpiStatus_h_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "cmpift.h"

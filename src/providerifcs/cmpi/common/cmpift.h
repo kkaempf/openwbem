@@ -21,6 +21,7 @@
 
 #ifndef _CMPIFT_H_
 #define _CMPIFT_H_
+#include "OW_config.h"
 
 #include <cmpidt.h>
 

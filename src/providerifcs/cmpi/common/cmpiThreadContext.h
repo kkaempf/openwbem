@@ -22,6 +22,7 @@
 
 #ifndef _CMPITHREADCONTEXT_H_
 #define _CMPITHREADCONTEXT_H_
+#include "OW_config.h"
 
 #include <stdlib.h>
 #include <iostream>

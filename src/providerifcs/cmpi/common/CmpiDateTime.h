@@ -21,6 +21,7 @@
 
 #ifndef _CmpiDateTime_h_
 #define _CmpiDateTime_h_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "cmpift.h"

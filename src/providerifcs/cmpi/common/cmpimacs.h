@@ -22,6 +22,7 @@
 
 #ifndef _CMPIMACS_H_
 #define _CMPIMACS_H_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "cmpift.h"

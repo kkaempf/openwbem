@@ -30,7 +30,6 @@ cmpiObject.cpp \
 cmpiObjectPath.cpp \
 cmpiResult.cpp \
 cmpiString.cpp \
-cmpiThreadContext.h \
 cmpiThreadContext.cpp \
 cmpiValue.cpp 
 
@@ -42,8 +41,10 @@ cmpidt.h \
 cmpift.h \
 cmpimacs.h \
 cmpisrv.h \
+cmpiThreadContext.h \
 CmpiArgs.h \
 CmpiArray.h \
+CmpiBaseMI.h \
 CmpiBroker.h \
 CmpiContext.h \
 CmpiData.h \
@@ -52,6 +53,7 @@ CmpiEnumeration.h \
 CmpiInstance.h \
 CmpiInstanceMI.h \
 CmpiMethodMI.h \
+CmpiObject.h \
 CmpiObjectPath.h \
 CmpiResult.h \
 CmpiStatus.h \

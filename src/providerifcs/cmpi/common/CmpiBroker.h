@@ -21,6 +21,7 @@
 
 #ifndef _CmpiBroker_h_
 #define _CmpiBroker_h_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "cmpift.h"

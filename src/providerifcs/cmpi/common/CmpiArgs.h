@@ -22,6 +22,7 @@
 #ifndef _CmpiArgs_h_
 #define _CmpiArgs_h_
 
+#include "OW_config.h"
 #include "cmpidt.h"
 #include "cmpift.h"
 

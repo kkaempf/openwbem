@@ -21,6 +21,7 @@
 
 #ifndef _CmpiData_h_
 #define _CmpiData_h_
+#include "OW_config.h"
 
 #include "cmpidt.h"
 #include "CmpiString.h"

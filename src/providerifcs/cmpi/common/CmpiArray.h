@@ -22,13 +22,9 @@
 #ifndef _CmpiArray_h_
 #define _CmpiArray_h_
 
+#include "OW_config.h"
 #include "cmpidt.h"
 #include "CmpiString.h"
-
-#include "CmpiObjectPath.h"
-#include "CmpiInstance.h"
-#include "CmpiData.h"
-
 
 class CmpiArrayIdx {
   friend class CmpiArray;
