@@ -174,7 +174,7 @@ String getFullyQualifiedHostName()
 #else
 		hostent hostbuf;
 		hostent* host = &hostbuf;
-#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6)
+#if (OW_GETHOSTBYNAME_R_ARGUMENTS == 6 || OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
 		char buf[2048];
 		int h_err = 0;
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
@@ -193,6 +193,12 @@ String getFullyQualifiedHostName()
 			if (gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf),
 						&host, &h_err) != -1)
 			{
+				worked = true;
+				break;
+			}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
+			// returns NULL if not successful
+			if ((host = gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf), &h_err))) {
 				worked = true;
 				break;
 			}

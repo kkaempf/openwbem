@@ -100,6 +100,13 @@ SocketAddress::getByName(
 	{
 		host = NULL;
 	}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
+ 
+	char buf[2048];
+	int h_err(0);
+	// returns NULL if not successful
+	host = gethostbyname_r(hostName.c_str(), &hostbuf, buf, sizeof(buf), &h_err);
+
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
 	hostent_data hostdata;
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, &hostdata) != 0)
@@ -200,6 +207,13 @@ SocketAddress::getAnyLocalHost(UInt16 port)
 	{
 		hent = NULL;
 	}
+#elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 5)
+ 
+	char local_buf[2048];
+	int h_err(0);
+	// returns NULL if not successful
+	hent = gethostbyname_r(buf, &hostbuf, local_buf, sizeof(local_buf), &h_err);
+
 #elif (OW_GETHOSTBYNAME_R_ARGUMENTS == 3)
 	hostent_data hostdata;
 	if (gethostbyname_r(buf, &hostbuf, &hostdata) != 0)
