@@ -770,32 +770,32 @@ public:
 		}
 
 		DataType(const Type t)
-		: type(t)
+		: type(t), cia(), str(), i(), r(), b()
 		{
 		}
 
 		DataType(const OW_String& s, const Type t)
-		: type(t), str(s)
+		: type(t), cia(), str(s), i(), r(), b()
 		{
 		}
 
 		DataType(const OW_CIMInstanceArray& c)
-		: type(OW_CIMInstanceArrayType), cia(c)
+		: type(OW_CIMInstanceArrayType), cia(c), str(), i(), r(), b()
 		{
 		}
 
 		DataType(const OW_Int64& newInt)
-		: type(OW_IntType), i(newInt)
+		: type(OW_IntType), cia(), str(), i(newInt), r(), b()
 		{
 		}
 
 		DataType(const OW_Bool& newBool)
-		: type (OW_BoolType), b(newBool)
+		: type (OW_BoolType), cia(), str(), i(), r(), b(newBool)
 		{
 		}
 
 		DataType(const OW_Real64& newReal)
-		: type (OW_RealType), r(newReal)
+		: type (OW_RealType), cia(), str(), i(), r(newReal), b()
 		{
 		}
 
