@@ -588,7 +588,7 @@ CIMRepository::enumInstanceNames(
 		// has to do each class at a time because of providers, and will
 		// thus only call us with deep=false.
 		// If the situation ever changes, fix and enable the code below.
-		OW_THROWCIMMSG(CIMException::FAILED, "Internal server error");
+		OW_THROWCIMMSG(CIMException::FAILED, "Internal server error. CIMRepository::enumInstanceNames() cannot be called with deep==E_DEEP");
 		// TODO: Switch this to use a callback interface.
 		/*
 		StringArray classNames = m_mStore.getClassChildren(ns,
