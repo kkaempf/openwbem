@@ -162,10 +162,25 @@ void OW_CIMDateTimeTestCases::testLessThan()
 		dt.addDays(1);
 	}
 
+	// test every year boundary -- validates that leap years don't overlap
+	for (int i = 0; i <= 9998; ++i)
+	{
+		CIMDateTime endOfYear1("00001231235959.999999-000");
+		endOfYear1.setYear(i);
+		CIMDateTime beginOfYear2("00010101000000.000000-000");
+		beginOfYear2.setYear(i + 1);
+		if (!(endOfYear1 < beginOfYear2))
+		{
+			std::cout << "\nFailed for year " << i << std::endl;
+		}
+		unitAssert(endOfYear1 < beginOfYear2);
+	}
+
 	// now a few from before the epoch, which unfortunately we can't use DateTime to help out.
 	unitAssert(CIMDateTime("00040102030405.678987-420") < CIMDateTime("00040103000000.000000-000"));
 	// extremes
 	unitAssert(CIMDateTime("00000101000000.000000-999") < CIMDateTime("99991231235959.999999+999"));
+	unitAssert(CIMDateTime("00000101000000.000000-000") < CIMDateTime("00000101000001.000000-000"));
 	unitAssert(CIMDateTime("00000101000000.000000-000") < CIMDateTime("00000101000000.000001-000"));
 	unitAssert(CIMDateTime("99991231235959.999998-000") < CIMDateTime("99991231235959.999999-000"));
 	// off by 1 millisecond
@@ -182,6 +197,23 @@ void OW_CIMDateTimeTestCases::testLessThan()
 	// UTC offset equivalence
 	unitAssert(!(CIMDateTime("19691231220000.000000-120") < CIMDateTime("19691231200000.000000-000")));
 	unitAssert(!(CIMDateTime("19691231200000.000000-000") < CIMDateTime("19691231220000.000000-120")));
+	// intervals are always less than datetimes
+	unitAssert(CIMDateTime("99999999235959.999999:000") < CIMDateTime("00000101000000.000000-999"));
+	unitAssert(CIMDateTime("00000000000000.000000:000") < CIMDateTime("99991231235959.999999+999"));
+	unitAssert(!(CIMDateTime("99991231235959.999999+999") < CIMDateTime("00000000000000.000000:000")));
+	unitAssert(!(CIMDateTime("00000101000000.000000-999") < CIMDateTime("99999999235959.999999:000")));
+	// check intervals
+	unitAssert(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654322010203.678987:000"));
+	unitAssert(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654321020203.678987:000"));
+	unitAssert(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654321010303.678987:000"));
+	unitAssert(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654321010204.678987:000"));
+	unitAssert(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654321010203.678988:000"));
+	unitAssert(!(CIMDateTime("87654321010203.678987:000") < CIMDateTime("87654321010203.678987:000")));
+	unitAssert(!(CIMDateTime("87654322010203.678987:000") < CIMDateTime("87654321010203.678987:000")));
+	unitAssert(!(CIMDateTime("87654321020203.678987:000") < CIMDateTime("87654321010203.678987:000")));
+	unitAssert(!(CIMDateTime("87654321010303.678987:000") < CIMDateTime("87654321010203.678987:000")));
+	unitAssert(!(CIMDateTime("87654321010204.678987:000") < CIMDateTime("87654321010203.678987:000")));
+	unitAssert(!(CIMDateTime("87654321010203.678988:000") < CIMDateTime("87654321010203.678987:000")));
 }
 
 Test* OW_CIMDateTimeTestCases::suite()
