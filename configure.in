@@ -650,6 +650,8 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/indicationexport/Makefile
 ./src/providers/cpp/polled/Makefile
 ./src/providers/cpp/polled/slp/Makefile
+./src/providers/cpp/instance/Makefile
+./src/providers/cpp/instance/CIM_IndicationSubscription/Makefile
 ./src/requesthandlers/Makefile
 ./src/requesthandlers/binary/Makefile
 ./src/requesthandlers/cimxml/Makefile
@@ -672,6 +674,7 @@ AC_OUTPUT(./Makefile
 ./test/c++providers/property/Makefile
 ./test/c++providers/trigger/Makefile
 ./test/c++providers/instance/Makefile
+./test/c++providers/indication/Makefile
 ./test/npiproviders/Makefile
 ./test/unit/Makefile)
 
