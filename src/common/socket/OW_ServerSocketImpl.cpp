@@ -374,38 +374,7 @@ bool
 ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
 	SocketFlags::EWaitDirectionFlag forInput)
 {
-	// TODO: Why is this duplicated with the version in SocketUtils?
-	fd_set thefds;
-	fd_set* preadfds = NULL;
-	fd_set* pwritefds = NULL;
-	int rc;
-	struct timeval *ptimeval = NULL;
-	struct timeval timeout;
-	FD_ZERO(&thefds);
-	FD_SET(fd, &thefds);
-	if(timeOutSecs != -1)
-	{
-		timeout.tv_sec = timeOutSecs;
-		timeout.tv_usec = 0;
-		ptimeval = &timeout;
-	}
-	if(forInput == SocketFlags::E_WAIT_FOR_INPUT)
-	{
-		preadfds = &thefds;
-	}
-	else
-	{
-		pwritefds = &thefds;
-	}
-	if ((rc = ::select(fd+1, preadfds, pwritefds, NULL, ptimeval)) == -1)
-	{
-		if (errno == EINTR)
-		{
-			Thread::testCancel();
-		}
-		OW_THROW(SocketException, "waitForIO: select");
-	}
-	return (rc > 0);
+	return SocketUtils::waitForIO(fd, timeOutSecs, forInput) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 /*
@@ -423,7 +392,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 	{
 		OW_THROW(SocketException, "ServerSocketImpl::accept: NONE");
 	}
-	if(waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT))
+	if(SocketUtils::waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT) == 0)
 	{
 		int clntfd;
 		socklen_t clntlen;

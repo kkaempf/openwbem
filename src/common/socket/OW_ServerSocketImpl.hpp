@@ -68,7 +68,7 @@ public:
 #if !defined(OW_WIN32)
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);
-	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput);
+	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput) OW_DEPRECATED;
 #endif
 
 	Select_t getSelectObj() const;
