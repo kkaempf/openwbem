@@ -302,7 +302,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 		::close(authfd);
 		::unlink(tfname);
 		OW_THROW(LocalAuthenticationException,
-			Format("IPC Authenticate: Failed changing permissions on temp "
+			Format("OWLocal Authenticate: Failed changing permissions on temp "
 				"file %1  error: %2", tfname, ::strerror(errno)).c_str());
 	}
 
@@ -312,7 +312,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 		::close(authfd);
 		::unlink(tfname);
 		OW_THROW(LocalAuthenticationException,
-			Format("IPC Authenticate: Failed changing ownership on file "
+			Format("OWLocal Authenticate: Failed changing ownership on file "
 			"%1 to userid %2. Error = %3", tfname, userid,
 			::strerror(errno)).c_str());
 	}
