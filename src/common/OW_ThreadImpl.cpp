@@ -353,7 +353,7 @@ namespace {
 struct WThreadInfo
 {
 	HANDLE	handle;
-	bool	canceled;
+	OpenWBEM::Thread* pTheThread;
 };
 
 typedef Map<DWORD, WThreadInfo> Win32ThreadMap;
@@ -387,7 +387,7 @@ addThreadToMap(DWORD threadId, HANDLE threadHandle)
 	MutexLock ml(g_threadsGuard);
 	WThreadInfo wi;
 	wi.handle = threadHandle;
-	wi.canceled = false;
+	wi.pTheThread = 0;
 	g_threads[threadId] = wi;
 }
 
@@ -406,6 +406,18 @@ getThreadHandle(DWORD threadId)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+setThreadPointer(DWORD threadId, Thread* pTheThread)
+{
+	MutexLock ml(g_threadsGuard);
+	Win32ThreadMap::iterator it = g_threads.find(threadId);
+	if(it != g_threads.end())
+	{
+		it->second.pTheThread = pTheThread;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 HANDLE
 removeThreadFromMap(DWORD threadId)
 {
@@ -420,31 +432,18 @@ removeThreadFromMap(DWORD threadId)
 	return chdl;
 }
 
-bool
-isThreadCanceled(DWORD threadId)
+//////////////////////////////////////////////////////////////////////////////
+Thread*
+getThreadObject(DWORD threadId)
 {
-	bool cc = false;
+	Thread* pTheThread = 0;
 	MutexLock ml(g_threadsGuard);
 	Win32ThreadMap::iterator it = g_threads.find(threadId);
 	if(it != g_threads.end())
 	{
-		cc = it->second.canceled;
+		pTheThread = it->second.pTheThread;
 	}
-	return cc;
-}
-
-HANDLE
-setThreadCanceled(DWORD threadId)
-{
-	MutexLock ml(g_threadsGuard);
-	HANDLE chdl = 0;
-	Win32ThreadMap::iterator it = g_threads.find(threadId);
-	if(it != g_threads.end())
-	{
-		chdl = it->second.handle;
-		it->second.canceled = true;
-	}
-	return chdl;
+	return pTheThread;
 }
 
 }	// End unnamed namespace
@@ -524,34 +523,36 @@ void
 testCancel()
 {
 	DWORD threadId = ThreadImpl::currentThread();
-	if(isThreadCanceled(threadId))
+	Thread* pTheThread = getThreadObject(threadId);
+	if(pTheThread)
 	{
-		// We don't use OW_THROW here because 
-		// ThreadCancelledException is special.  It's not derived
-		// from Exception on purpose so it can be propagated up
-		// the stack easier. This exception shouldn't be caught and not
-		// re-thrown anywhere except in Thread::threadRunner()
-		throw ThreadCancelledException();
+		NonRecursiveMutexLock l(pTheThread->m_cancelLock);
+		if (pTheThread->m_cancelRequested)
+		{
+			// We don't use OW_THROW here because 
+			// ThreadCancelledException is special.  It's not derived
+			// from Exception on purpose so it can be propagated up
+			// the stack easier. This exception shouldn't be caught and not
+			// re-thrown anywhere except in Thread::threadRunner()
+			throw ThreadCancelledException();
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////
-void saveThreadInTLS(void* pTheThread)
+void saveThreadInTLS(void* pThreadArg)
 {
-	// ATTN?
+	Thread* pThread = static_cast<Thread*>(pThreadArg);
+	DWORD threadId = pThread->getId();
+    setThreadPointer(threadId, pThread);
 }
 //////////////////////////////////////////////////////////////////////
 void sendSignalToThread(Thread_t threadID, int signo)
 {
-	DWORD threadId = ThreadImpl::currentThread();
-	if(setThreadCanceled(threadId) == 0)
-	{
-		OW_THROW(ThreadException, "No thread id for current thread found?!");
-	}
 }
 //////////////////////////////////////////////////////////////////////
 void cancel(Thread_t threadId)
 {
-	HANDLE thdl = removeThreadFromMap(threadId);
+	HANDLE thdl = getThreadHandle(threadId);
 	if(thdl != 0)
 	{
 		::TerminateThread(thdl, -1);
