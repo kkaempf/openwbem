@@ -319,9 +319,28 @@ private:
 	 * @throws HTTPException if the postcondition cannot be satisfied.
 	 */
 	void getCredentialsIfNecessary();
-	void checkForClosedConnection();
 	void copyStreams(std::ostream& ostr, std::istream& istr);
-	String getStatusLine();
+	/**
+	 * sets m_statusLine if there is a status line to be read, this function doesn't block.
+	 */
+	void getStatusLine();
+
+	/**
+	 * if the server has disconnected or sent us something since our last request
+	 * (remember connections are persistent), we need to process it *before* we
+	 * send another request, or if we get something while we are sending, we need
+	 * to look at the header to know if we should keep sending data.
+	 * This function doesn't block, it just looks to see if there is a http status
+	 * line on the incoming socket, and if so it reads it and examines the status
+	 * code.  If there is no input or If the status code < 300, E_STATUS_GOOD is 
+	 * returned, else E_STATUS_ERROR.
+	 */
+	enum EStatusLineSummary
+	{
+		E_STATUS_GOOD,
+		E_STATUS_ERROR
+	};
+	EStatusLineSummary checkAndExamineStatusLine();
 
 
 

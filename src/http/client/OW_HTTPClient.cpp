@@ -414,13 +414,75 @@ void HTTPClient::sendAuthorization()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+HTTPClient::EStatusLineSummary
+HTTPClient::checkAndExamineStatusLine()
+{
+	// If there's some input, we need to read the header. If we got anything 
+	// besides a 100 or 2xx, we need to stop sending!
+	// It's a pretty safe assumption that if the server sent us anything not
+	// in response, but just out of the blue, it's terminating the connection
+	// for some reason.
+	if (m_socket.isConnected() && !m_socket.waitForInput(0))
+	{
+		getStatusLine();
+		StringArray statusLine(m_statusLine.tokenize(" "));
+		if (statusLine.size() < 2)
+		{
+			return E_STATUS_ERROR;
+		}
+		int statusCode = 500;
+		try
+		{
+			statusCode = statusLine[1].toInt32();
+		}
+		catch (const StringConversionException&)
+		{
+			return E_STATUS_ERROR;
+		}
+		if (statusCode >= 300)
+		{
+			return E_STATUS_ERROR;
+		}
+		return E_STATUS_GOOD;
+	}
+	return E_STATUS_GOOD;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void HTTPClient::copyStreams(std::ostream& ostr, std::istream& istr)
 {
-	// check for data
-	if (!m_socket.waitForInput(0))
+	std::streambuf* outbuf(ostr.rdbuf());
+	std::streambuf* inbuf(istr.rdbuf());
+	std::streamsize rv = 0;
+	std::streamsize curbufsize = inbuf->in_avail();
+	std::streamsize bytesWritten;
+
+	std::vector<char> buffer(curbufsize);
+	while (curbufsize != -1)
 	{
+		if (checkAndExamineStatusLine() == E_STATUS_ERROR)
+		{
+			break;
+		}
+
+		streamsize bytesToRead(curbufsize > 0 ? curbufsize : 1);
+
+		// reserve() is guaranteed to allocate the appropriate number of bytes.
+		buffer.reserve(bytesToRead);
+
+		streamsize charsRead = inbuf->sgetn(&buffer[0], bytesToRead);
+		bytesWritten = outbuf->sputn(&buffer[0], charsRead);
 		
+		rv += bytesWritten;
+		if (bytesWritten != charsRead)
+			break;
+
+		if (std::istream::traits_type::eq_int_type(inbuf->sgetc(), std::istream::traits_type::eof()))
+			break;
+
+		curbufsize = inbuf->in_avail();
 	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -494,7 +556,7 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		HTTPChunkedOStream chunkostr(m_ostr);
 		HTTPDeflateOStream deflateostr(chunkostr);
 		deflateostr << tfs->rdbuf();
-		//copyStreams(deflateostr, *tfs);
+//		copyStreams(deflateostr, *tfs);
 		deflateostr.termOutput();
 		chunkostr.termOutput();
 		// end deflate test stuff
@@ -506,7 +568,8 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	else
 	{
 		m_ostr << tfs->rdbuf() << flush;
-		//copyStreams(m_ostr, *tfs);
+//		copyStreams(m_ostr, *tfs);
+		m_ostr.flush();
 	}
 	m_requestHeadersNew.clear();
 	m_responseHeaders.clear();
@@ -554,16 +617,15 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 	// if there remains bytes from last response, eat them.
 	cleanUpIStreams();
 
-	// if the server has disconnected or sent us something since our last request
-	// (remember connections are persistent), we need to process it *before* we
-	// send another request
-	checkForClosedConnection();
 
 	String reasonPhrase;
 	Resp_t rt = RETRY;
 	do
 	{
-		sendDataToServer(tfs, methodName, cimObject, requestType);
+		if (checkAndExamineStatusLine() == E_STATUS_GOOD)
+		{
+			sendDataToServer(tfs, methodName, cimObject, requestType);
+		}
 		reasonPhrase = checkResponse(rt);
 	} while (rt == RETRY);
 	if (rt == FATAL)
@@ -594,7 +656,7 @@ HTTPClient::getFeatures()
 	String methodOrig = m_requestMethod;
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
-	String statusLine;
+	String reasonPhrase;
 	Resp_t rt = RETRY;
 	do
 	{
@@ -604,13 +666,14 @@ HTTPClient::getFeatures()
 		m_ostr.flush();
 		m_requestHeadersNew.clear();
 		m_responseHeaders.clear();
-		statusLine = checkResponse(rt);
+		m_statusLine.erase();
+		reasonPhrase = checkResponse(rt);
 	} while (rt == RETRY);
 	m_requestMethod = methodOrig;
 	if (rt == FATAL)
 	{
 		OW_THROW(HTTPException, Format("Unable to process request: %1",
-			statusLine).c_str());
+			reasonPhrase).c_str());
 	}
 	if (getHeaderValue("allow").indexOf("M-POST") == String::npos)
 	{
@@ -709,9 +772,6 @@ HTTPClient::sendHeaders(const String& method,
 		m_ostr << m_requestHeadersNew[i] << "\r\n";
 	}
 	m_ostr << "\r\n";
-
-	// do this so we might avoid sending more than we need to, in the case that we would get a 40x or 50x error back.
-	m_ostr.flush();
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::Resp_t
@@ -889,7 +949,7 @@ HTTPClient::checkConnection()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-String
+void
 HTTPClient::getStatusLine()
 {
 	// RFC 2616 says to skip leading blank lines...
@@ -897,16 +957,15 @@ HTTPClient::getStatusLine()
 	{
 		m_statusLine = String::getLine(m_istr);
 	}
-	return m_statusLine;
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 HTTPClient::checkResponse(Resp_t& rt)
 {
-	String statusLine;
+	String reasonPhrase;
 	do
 	{
-		statusLine = getStatusLine();
+		getStatusLine();
 		
 		if (!m_istr)
 		{
@@ -915,9 +974,9 @@ HTTPClient::checkResponse(Resp_t& rt)
 		}
 		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
 		{
-			OW_THROW(HTTPException, "Received junk from server");
+			OW_THROW(HTTPException, Format("Received junk from server statusline = %1", m_statusLine).c_str());
 		}
-		rt = processHeaders(statusLine);
+		rt = processHeaders(reasonPhrase);
 		if (rt == CONTINUE)
 		{
 			prepareForRetry();
@@ -939,7 +998,7 @@ HTTPClient::checkResponse(Resp_t& rt)
 	{
 		m_retryCount = 0;
 	}
-	return statusLine;
+	return reasonPhrase;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -991,28 +1050,6 @@ void HTTPClient::close()
 	m_socket.disconnect();
 }
 
-
-//////////////////////////////////////////////////////////////////////////////
-void HTTPClient::checkForClosedConnection()
-{
-	// If there's some input, we need to read it and set up for a reconnect
-	// It's a pretty safe assumption that if the server sent us anything not
-	// in response, but just out of the blue, it's terminating the connection
-	// for some reason.
-	if (m_socket.isConnected() && !m_socket.waitForInput(0))
-	{
-		try
-		{
-			Resp_t rt;
-			String statusLine = checkResponse(rt);
-		}
-		catch (HTTPException&)
-		{
-			// this will happen for a number of reasons that the server may have sent us.  Just ignore it.
-		}
-		close();
-	}
-}
 
 //////////////////////////////////////////////////////////////////////////////
 void
