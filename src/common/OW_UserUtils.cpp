@@ -92,7 +92,7 @@ namespace OpenWBEM
 			char name[256];
 			unsigned long size = sizeof(name);
 			size = sizeof(name);
-			if(!GetUserName(name, &size))
+			if(!::GetUserName(name, &size))
 			{
 				return String();
 			}

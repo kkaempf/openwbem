@@ -37,18 +37,22 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_BinarySerialization.obj \
 	$(OBJDIR)\OW_Bool.obj \
 	$(OBJDIR)\OW_CIMErrorException.obj \
+	$(OBJDIR)\OW_COWIntrusiveCountableBase.obj \
+	$(OBJDIR)\OW_COWIntrusiveReference.obj \
 	$(OBJDIR)\OW_COWReferenceBase.obj \
 	$(OBJDIR)\OW_Char16.obj \
+	$(OBJDIR)\OW_CmdLineParser.obj \
 	$(OBJDIR)\OW_Condition.obj \
 	$(OBJDIR)\OW_ConfigException.obj \
 	$(OBJDIR)\OW_ConfigFile.obj \
+	$(OBJDIR)\OW_DataStreams.obj \
 	$(OBJDIR)\OW_DLLSharedLibrary.obj \
 	$(OBJDIR)\OW_DLLSharedLibraryLoader.obj \
-	$(OBJDIR)\OW_DataStreams.obj \
 	$(OBJDIR)\OW_DateTime.obj \
 	$(OBJDIR)\OW_EnumerationException.obj \
 	$(OBJDIR)\OW_Exception.obj \
 	$(OBJDIR)\OW_Format.obj \
+	$(OBJDIR)\OW_IntrusiveCountableBase.obj \
 	$(OBJDIR)\OW_IOException.obj \
 	$(OBJDIR)\OW_IOIFCStreamBuffer.obj \
 	$(OBJDIR)\OW_Logger.obj \
@@ -74,6 +78,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_Runnable.obj \
 	$(OBJDIR)\OW_Select.obj \
 	$(OBJDIR)\OW_SelectEngine.obj \
+	$(OBJDIR)\OW_SessionLanguage.obj \
 	$(OBJDIR)\OW_SharedLibrary.obj \
 	$(OBJDIR)\OW_SharedLibraryException.obj \
 	$(OBJDIR)\OW_StackTrace.obj \
@@ -96,6 +101,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_UUID.obj \
 	$(OBJDIR)\OW_UnnamedPipe.obj \
 	$(OBJDIR)\OW_UserInfo.obj \
+	$(OBJDIR)\OW_UserUtils.obj \
 	$(OBJDIR)\OW_dlSharedLibrary.obj \
 	$(OBJDIR)\OW_dlSharedLibraryLoader.obj \
 	$(OBJDIR)\OW_dyldSharedLibrary.obj \
@@ -167,13 +173,13 @@ $(TARGETDIR)\$(TARGET): $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IF
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO /LIBPATH:"C:\OpenSSL\lib\vc" /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libopenwbem.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libopenwbem.lib" $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) \
-		ws2_32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
+		ws2_32.lib advapi32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
 	$(MAP2DEF) $(TARGETDIR)\libopenwbem.map $(TARGETDIR)\libopenwbem.def
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO /LIBPATH:"C:\OpenSSL\lib\vc" /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libopenwbem.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libopenwbem.lib" /DEF:"$(TARGETDIR)\libopenwbem.def" \
 		$(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) \
-		ws2_32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
+		ws2_32.lib advapi32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
 
 clean:
 	del $(OBJDIR)\*.obj
@@ -211,11 +217,20 @@ $(OBJDIR)\OW_Bool.obj: $(COMMONSRCDIR)\OW_Bool.cpp
 $(OBJDIR)\OW_CIMErrorException.obj: $(COMMONSRCDIR)\OW_CIMErrorException.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_CIMErrorException.cpp
 
+$(OBJDIR)\OW_COWIntrusiveCountableBase.obj: $(COMMONSRCDIR)\OW_COWIntrusiveCountableBase.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_COWIntrusiveCountableBase.cpp
+
+$(OBJDIR)\OW_COWIntrusiveReference.obj: $(COMMONSRCDIR)\OW_COWIntrusiveReference.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_COWIntrusiveReference.cpp
+
 $(OBJDIR)\OW_COWReferenceBase.obj: $(COMMONSRCDIR)\OW_COWReferenceBase.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_COWReferenceBase.cpp
 
 $(OBJDIR)\OW_Char16.obj: $(COMMONSRCDIR)\OW_Char16.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_Char16.cpp
+
+$(OBJDIR)\OW_CmdLineParser.obj: $(COMMONSRCDIR)\OW_CmdLineParser.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_CmdLineParser.cpp
 
 $(OBJDIR)\OW_Condition.obj: $(COMMONSRCDIR)\OW_Condition.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_Condition.cpp
@@ -246,6 +261,9 @@ $(OBJDIR)\OW_Exception.obj: $(COMMONSRCDIR)\OW_Exception.cpp
 
 $(OBJDIR)\OW_Format.obj: $(COMMONSRCDIR)\OW_Format.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_Format.cpp
+
+$(OBJDIR)\OW_IntrusiveCountableBase.obj: $(COMMONSRCDIR)\OW_IntrusiveCountableBase.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_IntrusiveCountableBase.cpp
 
 $(OBJDIR)\OW_IOException.obj: $(COMMONSRCDIR)\OW_IOException.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_IOException.cpp
@@ -322,6 +340,9 @@ $(OBJDIR)\OW_Select.obj: $(COMMONSRCDIR)\OW_Select.cpp
 $(OBJDIR)\OW_SelectEngine.obj: $(COMMONSRCDIR)\OW_SelectEngine.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SelectEngine.cpp
 
+$(OBJDIR)\OW_SessionLanguage.obj: $(COMMONSRCDIR)\OW_SessionLanguage.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SessionLanguage.cpp
+
 $(OBJDIR)\OW_SharedLibrary.obj: $(COMMONSRCDIR)\OW_SharedLibrary.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SharedLibrary.cpp
 
@@ -387,6 +408,9 @@ $(OBJDIR)\OW_UnnamedPipe.obj: $(COMMONSRCDIR)\OW_UnnamedPipe.cpp
 
 $(OBJDIR)\OW_UserInfo.obj: $(COMMONSRCDIR)\OW_UserInfo.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_UserInfo.cpp
+
+$(OBJDIR)\OW_UserUtils.obj: $(COMMONSRCDIR)\OW_UserUtils.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_UserUtils.cpp
 
 $(OBJDIR)\OW_dlSharedLibrary.obj: $(COMMONSRCDIR)\OW_dlSharedLibrary.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_dlSharedLibrary.cpp
