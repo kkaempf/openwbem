@@ -3,7 +3,7 @@ SUBDIRS = common
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowwql.so
-SHAREDLIBADD =
+SHAREDLIBADD = -L$(top_builddir)/src/wql/common -lowwqlcommon
 thelibdir = $(libdir)
 
 all-local: $(OW_SHARED_LIBS)

@@ -744,7 +744,10 @@ public:
 
 public:
 
-	OW_WQLSelectStatement getSelectStatement() const;
+	OW_WQLSelectStatement getSelectStatement() const
+	{
+		return m_stmt;
+	}
 
 private:
 	OW_WQLSelectStatement m_stmt;
