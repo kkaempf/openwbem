@@ -357,6 +357,7 @@ sys/un.h \
 stropts.h \
 alloca.h \
 sys/types.h \
+sys/stat.h \
 pwd.h \
 )
 
@@ -379,7 +380,7 @@ AC_LANG_C
 
 AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \
 mkstemp snprintf random srandom asctime_r gmtime_r localtime_r gettimeofday \
-timegm)
+timegm getpwnam_r getpwuid_r)
 
 dnl This horrible mess is here because there are variations in the number of
 dnl parameters that gethostbyname_r takes on various platforms.  The general
