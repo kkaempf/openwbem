@@ -43,6 +43,7 @@ Fix problems:
     - Fix String::equalsIgnoreCase(), toUpperCase(), toLowerCase() to be UTF-8
       aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
+    - CIMExport and CIMExportMethod headers should be used for indications.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
