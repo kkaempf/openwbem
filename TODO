@@ -31,6 +31,9 @@ Fix problems:
       OW_config.h to not use PP symbols, use consts derived from the pp symbols.
 	- Get rid of all the bool parameters and replace them with enums
 	  (esp. for cimom handle calls.)
+	- Have a mechanism in the read-write locker to detect simple deadlock,
+	  the case where one thread acquired a write lock and then later tried
+	  to acquire a read lock, which would block.
 
 New features:
     - Create intrinsic providers for
