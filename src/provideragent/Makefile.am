@@ -13,6 +13,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/services/http -lowservicehttp 
 
 

@@ -31,10 +31,10 @@ client \
  \
 services \
 $(CIMXMLLISTENERDIR) \
-provideragent \
- \
  \
 provider \
+ \
+provideragent \
  \
 wql \
 authenticators \
@@ -59,6 +59,7 @@ $(top_builddir)/src/provider/libowprovider.a \
 $(top_builddir)/src/cimom/common/libowcimomcommon.a \
 $(top_builddir)/src/cimom/server/libowserver.a \
 $(top_builddir)/src/provider/libowprovider.a \
+$(top_builddir)/src/provideragent/libowprovideragent.a \
 $(top_builddir)/src/repositories/hdb/libowrepositoryhdb.a \
 $(top_builddir)/src/providerifcs/cpp/libowcppprovifc.a \
 $(top_builddir)/src/wql/common/libowwqlcommon.a \
