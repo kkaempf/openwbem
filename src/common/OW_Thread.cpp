@@ -108,12 +108,6 @@ OW_Thread::OW_Thread(OW_Bool isjoinable) :
 // Destructor
 OW_Thread::~OW_Thread()
 {
-	// Should never have to do this
-	// while(m_isRunning)
-	//{
-	//	OW_Thread::sleep(1);
-	//}
-
 	try
 	{
 		OW_ASSERT(m_isRunning == false);
@@ -157,10 +151,12 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
 
-	barrier.wait();
-
 	m_isStarting = false;
 
+	barrier.wait();
+
+	// Note that you can't do *anything* with the this pointer after barrier.wait()
+	// returns, because it may have been deleted already by the thread itself.
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -171,12 +167,6 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 	OW_ASSERT(isJoinable());
 
 	OW_ASSERT(!sameId(m_id, NULLTHREAD));
-
-	// If thread is starting up, let it finish
-	//while(!m_isRunning && m_isStarting)
-	//{
-	//	yield();
-	//}
 
 	OW_Int32 rval;
 	if(OW_ThreadImpl::joinThread(m_id, rval) != 0)
