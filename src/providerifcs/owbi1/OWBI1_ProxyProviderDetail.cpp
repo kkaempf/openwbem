@@ -180,6 +180,7 @@ CIMInstanceResultHandlerWrapper::CIMInstanceResultHandlerWrapper(OpenWBEM::CIMIn
 
 void CIMInstanceResultHandlerWrapper::doHandle(const CIMInstance& i)
 {
+	// TODO: handle includeQualifiers & includeClassOrigin
 	m_wrapped.handle(convertCIMInstance(i));
 }
 
