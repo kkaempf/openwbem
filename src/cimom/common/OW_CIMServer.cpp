@@ -1049,6 +1049,8 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		context);
 	m_authorizerMgr->turnOn(context);
 
+#ifndef OW_DISABLE_NAMESPACE_MANIPULATION
+	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
 	if(theClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
 		if(!m_authorizerMgr->allowDeleteNameSpace(m_env, ns, context))
@@ -1058,20 +1060,19 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 					ns).c_str());
 		}
 	}
-	else
-	{
-		// Allow authorizer a chance to determine if the deletion is allowed
-		if(!m_authorizerMgr->allowWriteInstance(m_env, ns, cop,
-			(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
-			Authorizer2IFC::E_DELETE, context))
-		{
-			m_env->logDebug(Format("Authorizer did NOT authorize deletion of %1"
-				" instances from namespace %2", theClass.getName(), ns));
+#endif
 
-			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-				Format("You are not authorized to delete %1 instances from"
-					" namespace %2", theClass.getName(), ns).c_str());
-		}
+	// Allow authorizer a chance to determine if the deletion is allowed
+	if(!m_authorizerMgr->allowWriteInstance(m_env, ns, cop,
+		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+		Authorizer2IFC::E_DELETE, context))
+	{
+		m_env->logDebug(Format("Authorizer did NOT authorize deletion of %1"
+			" instances from namespace %2", theClass.getName(), ns));
+
+		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+			Format("You are not authorized to delete %1 instances from"
+				" namespace %2", theClass.getName(), ns).c_str());
 	}
 
 	m_authorizerMgr->turnOff(context);
@@ -1135,6 +1136,8 @@ CIMServer::createInstance(
 	// Allow authorizer a chance to determine if the creation is allowed
 	CIMObjectPath cop(ns, lci);
 
+#ifndef OW_DISABLE_NAMESPACE_MANIPULATION
+	// TODO: This is broken!!!  Not only is __Namespace deprecated, but requests for CIM_Namespace won't be checked!
 	if(theClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
 		if(!m_authorizerMgr->allowCreateNameSpace(m_env, ns, context))
@@ -1144,19 +1147,17 @@ CIMServer::createInstance(
 					ns).c_str());
 		}
 	}
-	else
+#endif
+	if(!m_authorizerMgr->allowWriteInstance(m_env, ns, cop,
+		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+		Authorizer2IFC::E_CREATE, context))
 	{
-		if(!m_authorizerMgr->allowWriteInstance(m_env, ns, cop,
-			(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
-			Authorizer2IFC::E_CREATE, context))
-		{
-			m_env->logDebug(Format("Authorizer did NOT authorize creation of %1"
-				" instances	 in namespace %2", lci.getClassName(), ns));
+		m_env->logDebug(Format("Authorizer did NOT authorize creation of %1"
+			" instances	 in namespace %2", lci.getClassName(), ns));
 
-			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-				Format("You are not authorized to create %1 instances in"
-					" namespace %2", lci.getClassName(), ns).c_str());
-		}
+		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+			Format("You are not authorized to create %1 instances in"
+				" namespace %2", lci.getClassName(), ns).c_str());
 	}
 
 	if (instancep)

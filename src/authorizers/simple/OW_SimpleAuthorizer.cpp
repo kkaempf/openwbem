@@ -410,7 +410,7 @@ SimpleAuthorizer::getEnvironment() const
 	return m_cimRepository->getEnvironment();
 }
 
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 SimpleAuthorizer::createNameSpace(const String& ns,
@@ -427,7 +427,7 @@ SimpleAuthorizer::deleteNameSpace(const String& ns,
 	// Don't need to check ACLs, since this is a result of calling deleteInstance.
 	m_cimRepository->deleteNameSpace(ns,context);
 }
-#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#endif // #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 SimpleAuthorizer::enumNameSpace(StringResultHandlerIFC& result,

@@ -7,7 +7,11 @@ else
 if DISABLE_INSTANCE_MANIPULATION
 MOFC_DIR=
 else
+if DISABLE_NAMESPACE_MANIPULATION
+MOFC_DIR=
+else
 MOFC_DIR= owmofc
+endif
 endif
 endif
 endif
