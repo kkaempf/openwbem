@@ -623,7 +623,7 @@ private:
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
 
 	void doSendRequest(Reference<std::iostream> ostr,
-		const String& methodName, const String& ns,
+		const String& methodName, const String& cimObject,
 		bool isIntrinsic,
 		ClientOperation& op);
 	// throws a CIMException

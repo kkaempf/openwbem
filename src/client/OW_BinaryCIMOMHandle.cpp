@@ -348,7 +348,7 @@ BinaryCIMOMHandle::invokeMethod(
 	BinarySerialization::write(strm, BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::writeArray(strm, inParams);
 	Reference<CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		methodName, ns);
+		methodName, ns + ":" + path.modelPath());
 	checkError(in);
 	CIMValue cv(CIMNULL);
 	try

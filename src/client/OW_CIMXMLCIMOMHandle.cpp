@@ -150,12 +150,12 @@ void
 CIMXMLCIMOMHandle::doSendRequest(
 	Reference<std::iostream> ostrRef,
 	const String& methodName,
-	const String& ns,
+	const String& cimObject,
 	bool isIntrinsic,
 	ClientOperation& op)
 {
 	Reference<CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
-		ostrRef, methodName, ns);
+		ostrRef, methodName, cimObject);
 	// Debug stuff
 	/*
 	TempFileStream buf;
@@ -711,7 +711,9 @@ CIMXMLCIMOMHandle::invokeMethod(
 	sendXMLTrailer(tfs, false);
 	CIMValue rval(CIMNULL);
 	invokeMethodOp op(rval, outParams);
-	doSendRequest(iostrRef, methodName, ns, false, op);
+	doSendRequest(iostrRef, methodName, 
+		ns + ":" + path.modelPath(),
+		false, op);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
