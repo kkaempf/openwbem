@@ -49,6 +49,25 @@ cmpiValue.cpp
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM
 
+pkginclude_HEADERS = \
+cmpidt.h \
+cmpift.h \
+cmpimacs.h \
+cmpisrv.h \
+CmpiArgs.h \
+CmpiArray.h \
+CmpiBroker.h \
+CmpiContext.h \
+CmpiData.h \
+CmpiDateTime.h \
+CmpiEnumeration.h \
+CmpiInstance.h \
+CmpiInstanceMI.h \
+CmpiMethodMI.h \
+CmpiObjectPath.h \
+CmpiResult.h \
+CmpiStatus.h \
+CmpiString.h 
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

@@ -3,7 +3,7 @@
  *
  * cmpidt.h
  *
- * Copyright (c) 2002, International Business Machines
+ * Copyright (c) 2003, International Business Machines
  * 
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -30,10 +30,11 @@ extern "C" {
 #endif
 
    #define CMPIVersion051 51     //  0.51
-   #define CMPICurrentVersion CMPIVersion051
+   #define CMPIVersion060 60     //  0.60
+   #define CMPIVersion070 70     //  0.70
+   #define CMPICurrentVersion CMPIVersion070
 
    struct _CMPIBroker;
-   struct _CMPIAdapter;
    struct _CMPIInstance;
    struct _CMPIObjectPath;
    struct _CMPIArgs;
@@ -49,7 +50,6 @@ extern "C" {
    struct _CMPIDateTime;
 
    typedef struct _CMPIBroker         CMPIBroker;
-   typedef struct _CMPIAdapter        CMPIAdapter;
    typedef struct _CMPIInstance       CMPIInstance;
    typedef struct _CMPIObjectPath     CMPIObjectPath;
    typedef struct _CMPIArgs           CMPIArgs;
@@ -66,7 +66,6 @@ extern "C" {
 
    struct _CMPIBrokerFT;
    struct _CMPIBrokerEncFT;
-   struct _CMPIAdapterFT;
    struct _CMPIInstanceFT;
    struct _CMPIObjectPathFT;
    struct _CMPIArgsFT;
@@ -85,7 +84,6 @@ extern "C" {
 
    typedef struct _CMPIBrokerFT        CMPIBrokerFT;
    typedef struct _CMPIBrokerEncFT     CMPIBrokerEncFT;
-   typedef struct _CMPIAdapterFT       CMPIAdapterFT;
    typedef struct _CMPIInstanceFT      CMPIInstanceFT;
    typedef struct _CMPIObjectPathFT    CMPIObjectPathFT;
    typedef struct _CMPIArgsFT          CMPIArgsFT;
@@ -298,13 +296,6 @@ extern "C" {
       CMPIString *msg;
    } CMPIStatus;
 
-   /* Management Instrumentation type */
-
-   #define CMPI_MIType_Instance    1
-   #define CMPI_MIType_Association 2
-   #define CMPI_MIType_Method      4
-   #define CMPI_MIType_Property    8
-   #define CMPI_MIType_Indication 16
 
    /* Management Broker classification and feature support */
 
@@ -318,7 +309,6 @@ extern "C" {
    #define CMPI_MB_Supports_QueryNormalization 0x00000800
    #define CMPI_MB_Supports_Qualifier          0x00001000
    #define CMPI_MB_Supports_Schema             0x00003000
-   #define CMPI_MB_Supports_Adapter            0x00004000
 
    /* Query Predicate operations */
 

@@ -113,7 +113,7 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc) {
    OW_CIMObjectPath* ref=(OW_CIMObjectPath*)eRef->hdl;
    const OW_String eName(name);
    OW_CIMProperty cpr = ref->getKey(eName);
-   std::cout << " cop key " << cpr.toMOF() << std::endl;
+   if (cpr) std::cout << " cop key " << cpr.toMOF() << std::endl;
 
    CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
    CMSetStatus(rc,CMPI_RC_OK);
@@ -166,25 +166,25 @@ static CMPIStatus refSetNameSpaceFromObjectPath(CMPIObjectPath* eRef,
    CMReturn(CMPI_RC_OK);
 }
 
+#if 0
 static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
 		char * classname, CMPIStatus * rc)
 {
    (void) eRef;
    (void) classname;
    (void) rc;
-   //OW_CIMObjectPath* ref=(OW_CIMObjectPath*)eRef->hdl;
-   //OW_String className(classname);
-   //CMSetStatus(rc,CMPI_RC_OK);
    return false;
 }
+#endif
 
 CMPIObjectPathFT objectPath_FT={
      CMPICurrentVersion,
      refRelease,
      refClone,
-     NULL,
      refSetNameSpace,
      refGetNameSpace,
+     NULL,		// setHostName
+     NULL,		// getHostName
      refSetClassName,
      refGetClassName,
      refAddKey,
@@ -192,7 +192,8 @@ CMPIObjectPathFT objectPath_FT={
      refGetKeyAt,
      refGetKeyCount,
      refSetNameSpaceFromObjectPath,
-     refClassPathIsA,
+     NULL,		//refSetHostAndNameSpaceFromObjectPath,
+     //refClassPathIsA,
      // no qualifier support yet
      NULL,
      NULL,
@@ -206,9 +207,10 @@ CMPIObjectPathFT objectPathOnStack_FT={
      CMPICurrentVersion,
      refReleaseNop,
      refClone,
-     NULL,
      refSetNameSpace,
      refGetNameSpace,
+     NULL,		// setHostName
+     NULL,		// getHostName
      refSetClassName,
      refGetClassName,
      refAddKey,
@@ -216,7 +218,8 @@ CMPIObjectPathFT objectPathOnStack_FT={
      refGetKeyAt,
      refGetKeyCount,
      refSetNameSpaceFromObjectPath,
-     refClassPathIsA,
+     NULL,		//refSetHostAndNameSpaceFromObjectPath,
+     //refClassPathIsA,
      // no qualifier support yet
      NULL,
      NULL,

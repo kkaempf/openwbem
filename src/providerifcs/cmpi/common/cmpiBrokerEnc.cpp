@@ -44,11 +44,12 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop, CMPI
    return neInst;
 }
 
-static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *cls, char *ns,
+static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *ns, char *cls,
                   CMPIStatus *rc) {
    (void) mb;
 
-   std::cout<<"--- mbEncNewObjectPath()"<<std::endl;
+   std::cout << "--- mbEncNewObjectPath() with name " << cls <<
+               " in namespace " << ns << std::endl;
    OW_String className(cls);
    OW_String nameSpace(ns);
    OW_CIMObjectPath * cop =
@@ -77,6 +78,7 @@ static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
                                 CMPIStatus *rc) {
    (void) mb;
 
+   std::cout<<"--- mbEncNewArray()" << std::endl;
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    CMPIData *dta=new CMPIData[count+1];
    dta->type=type;
@@ -140,10 +142,11 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc) {
 
    if (obj->ftab==(void*)CMPI_Instance_Ftab ||
        obj->ftab==(void*)CMPI_InstanceOnStack_Ftab) {
-      sprintf(msg,"** Object not supported (0x%x) **",(int)o);
-      if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-      return (CMPIString*) new CMPI_Object(msg);
-      // str=((OW_CIMInstance*)obj->hdl)->toString();
+      str = ((OW_CIMInstance*)obj->hdl)->toString();
+      //sprintf(msg,"** Object not supported (0x%x) **",(int)o);
+      //if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+      //return (CMPIString*) new CMPI_Object(msg);
+      //str=((OW_CIMInstance*)obj->hdl)->toString();
    }
    else if (obj->ftab==(void*)CMPI_ObjectPath_Ftab ||
        obj->ftab==(void*)CMPI_ObjectPathOnStack_Ftab) {
@@ -260,17 +263,20 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 }
 
 static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIInstance *ci, CMPIStatus *rc) {
+                 CMPIObjectPath *op, CMPIInstance *ci, CMPIStatus *rc) {
    (void) mb;
    (void) ctx;
+   (void) op;
    (void) ci;
    if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
    return NULL;
 }
 
-static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx, CMPIInstance *ci) {
+static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
+                 CMPIObjectPath *op, CMPIInstance *ci) {
    (void) mb;
    (void) ctx;
+   (void) op;
    (void) ci;
    CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
@@ -420,11 +426,11 @@ static CMPIBrokerEncFT brokerEnc_FT={
 static CMPIBrokerFT broker_FT={
      0, // brokerClassification;
      0, // brokerVersion;
-     "Pegasus",
-     NULL,
-     NULL,
-     NULL,
-     NULL,
+     "OpenWBEM",
+     NULL, 		// prepareAttachThread
+     NULL,		// attachThread
+     NULL,		// detachThread
+     NULL,		// deliverIndication
      mbEnumInstanceNames,
      mbGetInstance,
      mbCreateInstance,

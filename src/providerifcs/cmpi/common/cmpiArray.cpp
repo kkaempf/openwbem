@@ -78,7 +78,7 @@ static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
    CMPIData *dta=(CMPIData*)eArray->hdl;
 
    if (pos<dta->value.uint32) {
-      if (dta->type==type) {
+      if ((dta->type == type)||(dta->type == type | CMPI_ARRAY)) {
          dta[pos+1].state=0;
          dta[pos+1].value=*val;
          CMReturn(CMPI_RC_OK);
@@ -104,7 +104,6 @@ static CMPIArrayFT array_FT={
      CMPICurrentVersion,
      arrayRelease,
      arrayClone,
-     NULL,
      arrayGetSize,
      arrayGetType,
      arrayGetElementAt,

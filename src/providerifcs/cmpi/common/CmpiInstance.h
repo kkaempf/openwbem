@@ -3,8 +3,8 @@
  *
  * CmpiInstance.h
  *
- * Copyright (c) 2002, International Business Machines
- * 
+ * Copyright (c) 2003, International Business Machines
+ *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
  * CONSTITUTES RECIPIENTS ACCEPTANCE OF THE AGREEMENT.
@@ -22,55 +22,94 @@
 #ifndef _CmpiInstance_h_
 #define _CmpiInstance_h_
 
-#include "cmpisrv.h"
+#include "cmpidt.h"
+#include "cmpift.h"
 
+//#include "CmpiImpl.h"
+
+#include "CmpiObject.h"
+#include "CmpiStatus.h"
 #include "CmpiObjectPath.h"
+#include "CmpiBroker.h"
+#include "CmpiData.h"
 
-class CmpiInstance {
+class CmpiObjectPath;
+
+extern CMPIBroker* CmpiBaseMIBroker;
+
+/** This class represents the instance of a CIM class. It is used manipulate
+    instances and their parts.
+*/
+
+class CmpiInstance : public CmpiObject {
    friend class CmpiBroker;
    friend class CmpiResult;
- protected:
-  CMPIInstance *enc;
-  private:
+   friend class CmpiInstanceMIDriver;
+   friend class CmpiMethodMIDriver;
+   friend class CmpiData;
+  protected:
+
+   /** Protected constructor used by MIDrivers to encapsulate CMPIInstance.
+   */
+   inline CmpiInstance(const CMPIInstance* enc)
+      { this->enc=(void*)enc; }
+
+   /** Gets the encapsulated CMPIInstance.
+   */
+   inline CMPIInstance *getEnc() const
+      { return (CMPIInstance*)enc; }
+   private:
+
+   /** Constructor - Should not be called
+   */
    CmpiInstance() {}
   public:
-   void makeGlobal() {}
-   CmpiInstance(CMPIInstance* enc)  { this->enc=enc; }
-   CmpiData getProperty(char* name) {
-      CmpiData d;
-      CMPIrc rc;
-      d.data=enc->ft->getProperty(enc,name,&d.type,&rc);
-      if (rc!=CMPI_RC_OK) throw rc;
-      return d;
-   }
-   CmpiData getProperty(int pos, CmpiString *name=NULL) {
-      CmpiData d;
-      CMPIrc rc;
-      CMPIString *s;
-      d.data=enc->ft->getPropertyAt(enc,pos,&s,&d.type,&rc);
-      if (rc!=CMPI_RC_OK) throw rc;
-      if (name) *name=*(new CmpiString(s));
-      return d;
-   };
-   unsigned int getPropertyCount() {
-      CMPIrc rc;
-      unsigned int c=enc->ft->getPropertyCount(enc,&rc);
-      if (rc!=CMPI_RC_OK) throw rc;
-      return c;
-   }
-   void setProperty(char* name, CmpiData data) {
-      CMPIrc rc=enc->ft->setProperty(enc,name,&data.data,data.type,data.count);
-      if (rc!=CMPI_RC_OK) throw rc;
-   }
-   CmpiObjectPath getObjectPath() {
-      CMPIrc rc;
-      CmpiObjectPath cop(enc->ft->getObjectPath(enc,&rc));
-      if (rc!=CMPI_RC_OK) throw rc;
-      return cop;
-   }
+    /**	Constructor - Creates an Instance object with the classname
+	from the input parameter.
+	@param op defining classname and namespace
+	@return The new Instance object
+    */
+   CmpiInstance(const CmpiObjectPath& op);
+
+    /**	instanceIsA - Tests whether this CIM Instance is of type <className>.
+	@param className CIM classname to be tested for.
+	@return True or False
+    */
+   CmpiBoolean instanceIsA(const char *className);
+
+    /**	getPropertyCount - Gets the number of Properties
+	defined for this Instance.
+	@return	Number of Properties of this instance.
+    */
+   unsigned int getPropertyCount();
+
+    /**	getProperty - Gets the CmpiData object representing the value
+        associated with the property name
+	@param name Property name.
+	@return CmpiData value object associated with the property.
+    */
+   CmpiData getProperty(const char* name);
+
+    /**	getProperty - Gets the CmpiData object defined
+	by the input index parameter.
+	@param index Index into the Property array.
+	@param name Optional output parameter returning the property name.
+	@return CmpiData value object corresponding to the index.
+    */
+   CmpiData getProperty(const int index, CmpiString *name=NULL);
+
+    /**	setProperty - adds/replaces a property value defined by the input
+	parameter to the Instance
+	@param name Property name.
+	@param data Type and Value to be added.
+    */
+   void setProperty(const char* name, const CmpiData data);
+
+    /**	getObjectPath - generates an ObjectPath out of the namespace, classname and
+	key propeties of this Instance
+	@return the generated ObjectPath.
+    */
+   CmpiObjectPath getObjectPath();
 };
 
 #endif
-
-
-

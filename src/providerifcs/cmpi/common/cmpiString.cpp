@@ -55,7 +55,6 @@ static CMPIStringFT string_FT={
      CMPICurrentVersion,
      stringRelease,
      stringClone,
-     NULL,
      stringGetCharPtr,
 };
 

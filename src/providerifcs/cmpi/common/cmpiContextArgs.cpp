@@ -120,7 +120,6 @@ static CMPIArgsFT args_FT={
      CMPICurrentVersion,
      argsRelease,
      argsClone,
-     NULL,
      argsAddArg,
      argsGetArg,
      argsGetArgAt,
@@ -133,7 +132,6 @@ static CMPIArgsFT argsOnStack_FT={
      CMPICurrentVersion,
      argsReleaseNop,
      argsClone,
-     NULL,
      argsAddArg,
      argsGetArg,
      argsGetArgAt,
@@ -173,8 +171,7 @@ static CMPIStatus contextAddEntry(CMPIContext* eCtx, char* name,
 static CMPIContextFT context_FT={
      CMPICurrentVersion,
      contextReleaseNop,
-     NULL,
-     NULL,
+     NULL,		// clone
      contextGetEntry,
      contextGetEntryAt,
      contextGetEntryCount,
@@ -186,8 +183,7 @@ CMPIContextFT *CMPI_Context_Ftab=&context_FT;
 static CMPIContextFT contextOnStack_FT={
      CMPICurrentVersion,
      contextReleaseNop,
-     NULL,
-     NULL,
+     NULL,		// clone
      contextGetEntry,
      contextGetEntryAt,
      contextGetEntryCount,

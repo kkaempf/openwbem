@@ -31,7 +31,7 @@
    v.set(OW_CIMValue(ar##pt)); }
 
 #define CopyToStringArray(pt,ct) { OW_Array<pt> ar##pt(aSize); \
-   for (int i=0; i<aSize; i++) ar##pt[i]=OW_String(((char*)aData[i].value.ct)); \
+   for (int i=0; i<aSize; i++) ar##pt[i]=OW_String(((char*)aData[i].value)->ct)); \
    v.set(OW_CIMValue(ar##pt)); }
 
 #define CopyToEncArray(pt,ct) { OW_Array<pt> ar##pt(aSize); \
@@ -46,6 +46,8 @@ OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc) {
       CMPIArray *ar=data->array;
       CMPIData *aData=(CMPIData*)ar->hdl;
       CMPIType aType=aData->type;
+
+      if (aType & CMPI_ARRAY) aType ^= CMPI_ARRAY;
       int aSize=aData->value.sint32;
       aData++;
 
@@ -59,8 +61,21 @@ OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc) {
          }
       }
 
-      else if (aType==CMPI_chars)  CopyToStringArray(OW_String,chars)
-      else if (aType==CMPI_string) CopyToStringArray(OW_String,string->hdl)
+      //else if (aType==CMPI_chars)  CopyToStringArray(OW_String,chars)
+      //else if (aType==CMPI_string) CopyToStringArray(OW_String,string->hdl)
+      else if (aType==CMPI_chars)  {
+        OW_Array<OW_String> helper(aSize); 
+        for (int i=0; i<aSize; i++)
+	 	helper[i]=OW_String( (char *)(aData[i].value.chars));
+        v.set(OW_CIMValue(helper));
+      }
+
+      else if (aType==CMPI_string) {
+        OW_Array<OW_String> helper(aSize); 
+        for (int i=0; i<aSize; i++)
+	 	helper[i]=OW_String((char *)(aData[i].value.string->hdl));
+        v.set(OW_CIMValue(helper));
+      }
 
       else if ((aType & (CMPI_UINT|CMPI_SINT))==CMPI_UINT) {
          switch (aType) {
@@ -87,6 +102,10 @@ OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc) {
 
    else if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_SINT) {
       switch (type) {
+         //case CMPI_sint32: v.set(OW_CIMValue((OW_Int32)data->sint32)); break;
+         //case CMPI_sint16: v.set(OW_CIMValue((OW_Int16)data->sint16)); break;
+         //case CMPI_sint8:  v.set(OW_CIMValue((OW_Int8)data->sint8));   break;
+         //case CMPI_sint64: v.set(OW_CIMValue((OW_Int64)data->sint64)); break;
          case CMPI_sint32: v.set(OW_CIMValue((OW_Int32)data->sint32)); break;
          case CMPI_sint16: v.set(OW_CIMValue((OW_Int16)data->sint16)); break;
          case CMPI_sint8:  v.set(OW_CIMValue((OW_Int8)data->sint8));   break;
@@ -95,8 +114,9 @@ OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc) {
       }
    }
 
-   else if (type==CMPI_chars)  v.set(OW_CIMValue(OW_String(data->chars)));
+   //else if (type==CMPI_chars)  v.set(OW_CIMValue(OW_String(data->chars)));
    else if (type==CMPI_string) v.set(OW_CIMValue(OW_String((char*)data->string->hdl)));
+   else if (type==CMPI_chars)  v.set(OW_CIMValue(OW_String((char *)data)));
 
    else if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_UINT) {
       switch (type) {

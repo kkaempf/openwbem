@@ -110,9 +110,8 @@ static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes, CMPIObjectPath* eR
 
 static CMPIResultFT resultMeth_FT={
      CMPICurrentVersion,
-     NULL,
-     NULL,
-     NULL,
+     NULL,		// release
+     NULL,		// clone
      resultReturnData,
      resultBadReturnInstance,
      resultBadReturnObjectPath,
@@ -121,9 +120,8 @@ static CMPIResultFT resultMeth_FT={
 
 static CMPIResultFT resultData_FT={
      CMPICurrentVersion,
-     NULL,
-     NULL,
-     NULL,
+     NULL,		// release
+     NULL,		// clone
      resultReturnData,
      resultBadReturnInstance,
      resultBadReturnObjectPath,
@@ -132,9 +130,8 @@ static CMPIResultFT resultData_FT={
 
 static CMPIResultFT resultInstOnStack_FT={
      CMPICurrentVersion,
-     NULL,
-     NULL,
-     NULL,
+     NULL,		// release
+     NULL,		// clone
      resultBadReturnData,
      resultReturnInstance,
      resultBadReturnObjectPath,
@@ -143,9 +140,8 @@ static CMPIResultFT resultInstOnStack_FT={
 
 static CMPIResultFT resultRefOnStack_FT={
      CMPICurrentVersion,
-     NULL,
-     NULL,
-     NULL,
+     NULL,		// release
+     NULL,		// clone
      resultBadReturnData,
      resultBadReturnInstance,
      resultReturnObjectPath,
@@ -154,9 +150,8 @@ static CMPIResultFT resultRefOnStack_FT={
 
 static CMPIResultFT resultResponseOnStack_FT={
      CMPICurrentVersion,
-     NULL,
-     NULL,
-     NULL,
+     NULL,		// release
+     NULL,		// clone
      resultBadReturnData,
      resultReturnInstance,
      resultReturnObjectPath,

@@ -41,7 +41,7 @@ static OW_CIMDateTime * makeCIMDateTime(time_t inTime, ulong usec, CMPIBoolean i
       if (interval) strcpy(utcOffset,":000");
       else {
 //#if defined (PEGASUS_PLATFORM_LINUX_IX86_GNU)
-      snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
+        snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
 //#else
 //      snprintf(utcOffset,20,"%+4.3ld",0);
 //#endif
@@ -65,8 +65,6 @@ CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval) {
 }
 
 CMPIDateTime *newDateTime(char *strTime) {
-   //OW_CIMDateTime *dt=new OW_CIMDateTime();
-   //*dt=String(strTime);
    OW_CIMDateTime *dt=new OW_CIMDateTime(OW_String(strTime));
    return (CMPIDateTime*)new CMPI_Object(dt);
 }
@@ -166,7 +164,6 @@ static CMPIDateTimeFT dateTime_FT={
      CMPICurrentVersion,
      dtRelease,
      dtClone,
-     NULL,
      dtGetBinaryFormat,
      dtGetStringFormat,
      dtIsInterval,
