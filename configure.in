@@ -94,8 +94,11 @@ AC_HEADER_STDC
 AC_CHECK_HEADER(pthread.h, have_pthread=1)
 AC_CHECK_HEADER(pth.h, have_pth=1)
 use_pam=1
-AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h \
-pam/pam_misc.h pam/pam_appl.h, true, use_pam=0)
+AC_CHECK_HEADERS(pam/pam_misc.h pam/pam_appl.h, true, use_pam=0)
+if test x$use_pam = x0; then
+    AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h, 
+	    use_pam=1, use_pam=0)
+fi
 
 AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
 if test x$use_pam = x1; then
