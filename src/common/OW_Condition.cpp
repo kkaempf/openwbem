@@ -64,21 +64,21 @@ Condition::~Condition()
 	assert(res == 0);
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::notifyOne()
 {
 	int res = pthread_cond_signal(&m_condition);
 	assert(res == 0);
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::notifyAll()
 {
 	int res = pthread_cond_broadcast(&m_condition);
 	assert(res == 0);
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::doWait(NonRecursiveMutex& mutex)
 {
 	int res;
@@ -89,7 +89,7 @@ Condition::doWait(NonRecursiveMutex& mutex)
 	assert(res == 0);
 }
 /////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
 	int res;
@@ -99,8 +99,15 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 	timespec ts;
 	struct timeval now;
 	::gettimeofday(&now, NULL);
+	
 	ts.tv_sec = now.tv_sec + sTimeout;
-	ts.tv_nsec = (now.tv_usec + usTimeout) * 1000;
+
+	const int NANOSECONDS_PER_MICROSECOND = 1000;
+	const int NANOSECONDS_PER_SECOND = 1000000000;
+	int nsec = (now.tv_usec + usTimeout) * NANOSECONDS_PER_MICROSECOND;
+	ts.tv_sec += nsec / NANOSECONDS_PER_SECOND;
+	ts.tv_nsec = nsec % NANOSECONDS_PER_SECOND;
+
 	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
 	mutex.conditionPostWait(state);
 	assert(res == 0 || res == ETIMEDOUT);
@@ -135,7 +142,7 @@ Condition::~Condition()
 	delete m_condition;
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::notifyOne()
 {
 	::EnterCriticalSection(&m_condition->waitersCountLock);
@@ -149,7 +156,7 @@ Condition::notifyOne()
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::notifyAll()
 {
 	::EnterCriticalSection(&m_condition->waitersCountLock);
@@ -176,13 +183,13 @@ Condition::notifyAll()
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::doWait(NonRecursiveMutex& mutex)
 {
 	doTimedWait(mutex, INFINITE, 0);
 }
 /////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
 	bool cc = true;
@@ -200,7 +207,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 		sTimeout += usTimeout / 1000;		// Convert micro seconds to ms and add
 	}
 
-	// Atomically release the mutex and wait on the 
+	// Atomically release the mutex and wait on the
 	// queue until signal/broadcast.
 	if (::SignalObjectAndWait(mutex.m_mutex, m_condition->queue, sTimeout,
 		false) == WAIT_TIMEOUT)
@@ -238,7 +245,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 #error "port me!"
 #endif
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 Condition::wait(NonRecursiveMutexLock& lock)
 {
 	if (!lock.isLocked())
@@ -248,7 +255,7 @@ Condition::wait(NonRecursiveMutexLock& lock)
 	doWait(*(lock.m_mutex));
 }
 /////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 Condition::timedWait(NonRecursiveMutexLock& lock, UInt32 sTimeout, UInt32 usTimeout)
 {
 	if (!lock.isLocked())
