@@ -72,6 +72,7 @@ SocketAddress::getUDS(const String& filename)
 	SocketAddress rval;
 	rval.m_type = UDS;
 	rval.m_name = filename;
+	rval.m_address = "127.0.0.1";
 	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
 	rval.m_UDSNativeAddress.sun_family = AF_UNIX;
 	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(),
