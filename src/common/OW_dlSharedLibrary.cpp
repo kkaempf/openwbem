@@ -123,8 +123,6 @@ bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		}
 		realFunctionName = symIter->second;
 	}
-	// FIXME! Remove this, when things are sufficiently debugged.
-	std::cout << "faked=" << functionName << " realFunctionName=" << realFunctionName << std::endl;
 	*fp = dlsym( m_libhandle, realFunctionName.c_str() );
 #else
 	*fp = dlsym( m_libhandle, functionName.c_str() );
