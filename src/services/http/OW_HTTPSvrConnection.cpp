@@ -32,7 +32,7 @@
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_IOException.hpp"
 #include "OW_HTTPStatusCodes.hpp"
-#include "OW_StringStream.hpp"
+#include "OW_DataBlockStream.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_HTTPDeflateIStream.hpp"
@@ -49,6 +49,7 @@
 #include "OW_HTTPException.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SortedVector.hpp"
+#include "OW_StringBuffer.hpp"
 
 using std::ios;
 using std::istream;
@@ -367,7 +368,7 @@ OW_HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
-	OW_StringStream& ostrError)
+	OW_DataBlockStream& ostrError)
 {
 	int clen = -1;
 	if (!m_chunkedOut)
@@ -380,15 +381,15 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
 
-		OW_StringStream* ss = NULL;
+		OW_DataBlockStream* ss = NULL;
 		OW_TempFileStream* tfs = NULL;
 		if ((tfs = dynamic_cast<OW_TempFileStream*>(ostrToSend)))
 		{
 			clen = tfs->getSize();
 		}
-		else if ((ss = dynamic_cast<OW_StringStream*>(ostrToSend)))
+		else if ((ss = dynamic_cast<OW_DataBlockStream*>(ostrToSend)))
 		{
-			clen = ss->length();
+			clen = ss->size();
 		}
 
 		if (m_deflateCompressionOut && tfs)
@@ -430,7 +431,8 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		{
 			if (clen > 0)
 			{
-				m_ostr << ss->c_str();
+				// c_str() may contain NULL bytes which we DO want to write
+				m_ostr.write(ss->data(), clen);
 			}
 		}
 		m_ostr.flush();
@@ -460,13 +462,39 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		OW_ASSERT(ostrChunk);
 		if (m_requestHandler && m_requestHandler->hasError())
 		{
+			const char* data = ostrError.data();
+			size_t size = ostrError.size();
+			OW_StringBuffer escapedError;
+			for (size_t idx = 0; idx < size; ++idx)
+			{
+				switch (data[idx])
+				{
+					case '\0':
+						escapedError += "\\0";
+						break;
+					case '\n':
+						escapedError += "\\n";
+						break;
+					case '\r':
+						escapedError += "\\r";
+						break;
+					case '\\':
+						escapedError += "\\\\";
+						break;
+					default:
+						escapedError += data[idx];
+						break;
+				}
+			}
+			/*
 			OW_Array<OW_String> errorAr = ostrError.toString().tokenize("\n\r");
 			OW_String strippedError;
 			for (size_t i = 0; i < errorAr.size(); ++i)
 			{
 				strippedError += errorAr[i] + " ";
 			}
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError", strippedError);
+			*/
+			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError", escapedError.toString());
 		}
 		ostrChunk->termOutput();
 	} // else m_chunkedOut
@@ -981,7 +1009,7 @@ void
 OW_HTTPSvrConnection::post(istream& istr)
 {
 	ostream* ostrEntity = NULL;
-	OW_StringStream ostrError(400);
+	OW_DataBlockStream ostrError(400);
 
 	initRespStream(ostrEntity);
 	OW_ASSERT(ostrEntity);

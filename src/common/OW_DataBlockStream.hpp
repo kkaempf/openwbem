@@ -28,11 +28,10 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_STRINGSTREAM_HPP__
-#define __OW_STRINGSTREAM_HPP__
+#ifndef OW_DATABLOCKSTREAM_HPP_
+#define OW_DATABLOCKSTREAM_HPP_
 
 #include "OW_config.h"
-#include "OW_StringBuffer.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 
 #include <iostream>
@@ -42,59 +41,62 @@
 #include <streambuf.h>
 #endif
 
-class OW_StringStreamBuf : public OW_BaseStreamBuffer
+#include <vector>
+
+class OW_DataBlockStreamBuf : public OW_BaseStreamBuffer
 {
 public:
-	OW_StringStreamBuf(size_t size)
-		: OW_BaseStreamBuffer(size, "out"), m_buf(size) {}
-	virtual ~OW_StringStreamBuf() {}
-	OW_String toString() const { return m_buf.toString(); }
-	size_t length() const { return m_buf.length(); }
-	const char* c_str() const { return m_buf.c_str(); }
-	void reset() { m_buf.reset(); }
+	OW_DataBlockStreamBuf(size_t size)
+		: OW_BaseStreamBuffer(size, "out"), m_buf() {m_buf.reserve(size);}
+	virtual ~OW_DataBlockStreamBuf() {}
+	size_t size() const { return m_buf.size(); }
+	void reset() { m_buf.clear(); }
+	const char* data() const
+	{
+		return &m_buf[0];
+	}
 
 protected:
 	virtual int buffer_to_device(const char *c, int n)
 	{
-		m_buf.append(c, n);
+		m_buf.insert(m_buf.end(), c, c + n);
 		return n;
 	}
 
 private:
-	OW_StringBuffer m_buf;
+	std::vector<char> m_buf;
 
-	friend class OW_StringStream;
+	friend class OW_DataBlockStream;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class OW_StringStreamBase
+class OW_DataBlockStreamBase
 {
 public:
-	OW_StringStreamBase(size_t sz) : m_buf(sz) {}
+	OW_DataBlockStreamBase(size_t sz) : m_buf(sz) {}
 
-	mutable OW_StringStreamBuf m_buf;
+	mutable OW_DataBlockStreamBuf m_buf;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class OW_StringStream : private OW_StringStreamBase, public std::ostream
+class OW_DataBlockStream : private OW_DataBlockStreamBase, public std::ostream
 {
 public:
-	OW_StringStream(size_t size = 256)
-		: OW_StringStreamBase(size), std::ostream(&m_buf)
+	OW_DataBlockStream(size_t size = 256)
+		: OW_DataBlockStreamBase(size), std::ostream(&m_buf)
 	{}
 	
-	OW_String toString() const { m_buf.sync(); return m_buf.toString(); }
-	size_t length() const { m_buf.sync(); return m_buf.length(); }
-	const char* c_str() const { m_buf.sync(); return m_buf.c_str(); }
+	size_t size() const { m_buf.sync(); return m_buf.size(); }
+	const char* data() const { m_buf.sync(); return m_buf.data(); }
 	void reset() { m_buf.reset(); }
 
 private:
 
 	// not implemented
-	OW_StringStream(const OW_StringStream&);
-	OW_StringStream& operator=(const OW_StringStream&);
+	OW_DataBlockStream(const OW_DataBlockStream&);
+	OW_DataBlockStream& operator=(const OW_DataBlockStream&);
 };
 
 
-#endif	// __OW_STRINGSTREAM_HPP__
+#endif
 

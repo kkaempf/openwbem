@@ -45,7 +45,7 @@
 #include <fstream>
 
 class OW_UnnamedPipe;
-class OW_StringStream;
+class OW_DataBlockStream;
 
 class OW_HTTPSvrConnection: public OW_Runnable
 {
@@ -183,7 +183,7 @@ private:
 	void beginPostResponse();
 	void initRespStream(std::ostream*& ostrEntity);
 	void sendPostResponse(std::ostream* ostrEntity,
-		OW_StringStream& ostrError);
+		OW_DataBlockStream& ostrError);
 	int performAuthentication(const OW_String& info);
 	void sendHeaders(int sc, int len = -1);
 	void cleanUpIStreams(std::istream*& istrm);

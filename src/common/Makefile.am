@@ -79,6 +79,7 @@ OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
 OW_ConfigOpts.hpp \
+OW_DataBlockStream.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \
