@@ -324,6 +324,7 @@ TestInstalledHeadersOneByOne()
 		for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
 		  EXECFILE=`basename $i`
 		  OUTFILE=$EXECFILE.cpp
+		  echo '#include "OW_config.h"' >> $OUTFILE
 		  echo '#include "'"$EXECFILE"'"' >> $OUTFILE
 	  cat <<EOS >> $OUTFILE
 #include <iostream>
