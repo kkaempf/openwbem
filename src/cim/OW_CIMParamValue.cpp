@@ -183,5 +183,21 @@ bool operator<(const CIMParamValue& x, const CIMParamValue& y)
 	return *x.m_pdata < *y.m_pdata;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+CIMValue 
+getParamValue(const String& paramName, const CIMParamValueArray& params)
+{
+	for ( CIMParamValueArray::const_iterator param = params.begin();
+		param != params.end();
+		++param )
+	{
+		if ( param->getName().equalsIgnoreCase(paramName) )
+		{
+			return param->getValue();
+		}
+	}
+	return CIMValue(CIMNULL);
+}
+
 } // end namespace OpenWBEM
 

@@ -136,6 +136,15 @@ private:
 	friend OW_COMMON_API bool operator<(const CIMParamValue& x, const CIMParamValue& y);
 };
 
+/**
+ * Search for paramName in params, and return the associated CIMValue. If
+ * an element with paranName name isn't found, a CIMValue(CIMNULL) will be
+ * returned.
+ */
+CIMValue getParamValue(const String& paramName, const CIMParamValueArray& params);
+
+
+
 } // end namespace OpenWBEM
 
 #endif
