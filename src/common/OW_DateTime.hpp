@@ -483,16 +483,45 @@ public:
 	 */
 	String toStringGMT() const OW_DEPRECATED; // in 3.0.0
 
+#if 0
 	/**
-	 * Returns the GMT Offset (number of hours) of the system's timezone.
+	 * Returns the current GMT offset (number of hours) of the system's
+	   timezone.  This may vary due to daylight savings time.  It is
+	   also misleading for those few timezones that differ from UTC
+	   by an ODD number of half-hours.
 	 */
 	static Int16 getGMTOffset();
+	// Removed due to the above problems
+#endif
+
+	/**
+	 * Returns the GMT offset (number of minutes) of the system's timezone
+	 * at the current moment.  Replacement for getGMTOffset(), if anyone
+	 * is using it.
+	 */
+	static Int16 getGMTOffsetMinutesNow()
+	{
+		time_t t = time(0);
+		struct tm tt;
+		return DateTime::localTimeAndOffset(t, tt);
+	}
+
+	/**
+	 * Converts date/time specified by *this to local time, stored in
+	 * tt as per the C localtime function, and returns the corresponding
+	 * GMT offset in minutes.
+	 */
+	Int16 toLocal(struct tm & tt) const
+	{
+		return  DateTime::localTimeAndOffset(m_time, tt);
+	}
 
 private:
 	time_t	m_time;
 	UInt32	m_microseconds;
 	tm getTm(ETimeOffset timeOffset) const;
 	void setTime(tm& tmarg, ETimeOffset timeOffset);
+        static Int16 localTimeAndOffset(time_t t, struct tm & tt);
 };
 
 } // end namespace OpenWBEM

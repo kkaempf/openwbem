@@ -124,15 +124,16 @@ CIMDateTime::CIMDateTime(const String& arg) :
 CIMDateTime::CIMDateTime(const DateTime& arg) :
 	m_dptr(new DateTimeData)
 {
-	m_dptr->m_days = arg.getDay();
-	m_dptr->m_year = arg.getYear();
-	m_dptr->m_month = arg.getMonth();
-	m_dptr->m_hours = arg.getHour();
-	m_dptr->m_minutes = arg.getMinute();
-	m_dptr->m_seconds = arg.getSecond();
+	struct tm t_loc;
 	m_dptr->m_isInterval = 0;
+	m_dptr->m_utc = arg.toLocal(t_loc);
+	m_dptr->m_year = t_loc.tm_year + 1900;
+	m_dptr->m_month = t_loc.tm_mon + 1;
+	m_dptr->m_days = t_loc.tm_mday;
+	m_dptr->m_hours = t_loc.tm_hour;
+	m_dptr->m_minutes = t_loc.tm_min;
+	m_dptr->m_seconds = t_loc.tm_sec;
 	m_dptr->m_microSeconds = arg.getMicrosecond();
-	m_dptr->m_utc = DateTime::getGMTOffset() * 60;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime::CIMDateTime(UInt64 microSeconds) :
