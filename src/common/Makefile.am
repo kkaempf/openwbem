@@ -56,6 +56,7 @@ OW_NonRecursiveMutex.cpp \
 OW_NonRecursiveMutexImpl.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
+OW_NoSuchQualifierException.cpp \
 OW_NULLValueException.cpp \
 OW_OutOfBoundsException.cpp \
 OW_PosixFile.cpp \
@@ -166,6 +167,7 @@ OW_dlSharedLibraryLoader.hpp \
 OW_SharedLibraryReference.hpp \
 OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \
+OW_NoSuchQualifierException.hpp \
 OW_NULLValueException.hpp \
 OW_config.h
 
