@@ -26,6 +26,7 @@ perlxsi.c:
 install-exec-local:
 	@INSTALL@ -d $(DESTDIR)$(thelibdir)
 	for i in $(OW_SHARED_LIBS); do \
+		PREFIX=$(DESTDIR); \
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
