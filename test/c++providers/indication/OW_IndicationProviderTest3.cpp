@@ -124,6 +124,12 @@ public:
 		{
 			addDeletionFilter();
 		}
+        else if (eventType.equalsIgnoreCase("CIM_InstIndication") || eventType.equalsIgnoreCase("CIM_Indication"))
+        {
+            addCreationFilter();
+            addModificationFilter();
+            addDeletionFilter();
+        }
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
@@ -131,7 +137,7 @@ public:
 		}
 		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
 		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
-		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") != classes.end())
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
@@ -180,6 +186,12 @@ public:
 		{
 			removeDeletionFilter();
 		}
+        else if (eventType.equalsIgnoreCase("CIM_InstIndication") || eventType.equalsIgnoreCase("CIM_Indication"))
+        {
+            removeCreationFilter();
+            removeModificationFilter();
+            removeDeletionFilter();
+        }
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
@@ -187,7 +199,7 @@ public:
 		}
 		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
 		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
-		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") != classes.end())
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");

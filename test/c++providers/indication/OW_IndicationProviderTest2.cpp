@@ -46,8 +46,10 @@
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
 
-#include <iostream>
 #include <algorithm>
+
+#include <iostream>
+#include <iterator> // debug
 
 // anonymous namespace to prevent library symbol conflicts
 namespace
@@ -200,6 +202,12 @@ public:
 		{
 			m_thread->addDeletionFilter();
 		}
+        else if (eventType.equalsIgnoreCase("CIM_InstIndication") || eventType.equalsIgnoreCase("CIM_Indication"))
+        {
+            m_thread->addCreationFilter();
+            m_thread->addModificationFilter();
+            m_thread->addDeletionFilter();
+        }
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
@@ -207,7 +215,7 @@ public:
 		}
 		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
 		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest2")
-		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") != classes.end())
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
@@ -251,6 +259,12 @@ public:
 		{
 			m_thread->removeDeletionFilter();
 		}
+        else if (eventType.equalsIgnoreCase("CIM_InstIndication") || eventType.equalsIgnoreCase("CIM_Indication"))
+        {
+            m_thread->removeCreationFilter();
+            m_thread->removeModificationFilter();
+            m_thread->removeDeletionFilter();
+        }
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
@@ -258,7 +272,7 @@ public:
 		}
 		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
 		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest2")
-		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") != classes.end())
+		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest2") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");

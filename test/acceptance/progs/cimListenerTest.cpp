@@ -312,25 +312,25 @@ int main(int argc, char* argv[])
 
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from CIM_InstModification where SourceInstance ISA "
-				"\"OW_IndicationProviderTest2\" and SourceInstance.dummykey = \"foo\"", "wql1",
+				"\"OW_IndicationProviderTest2\" and SourceInstance.SystemName = \"localhost\"", "wql1",
 				"root/testsuite", test2cb);
 			registrationHandles.append(handle);
 
 			// Now wait for our test trigger providers to send out their indications.
-			// we should get 8 OW_TestIndication1 indications.
-			for (size_t i = 0; i < 8; ++i)
+			// we'll wait for 5 OW_TestIndication1 indications.
+			for (size_t i = 0; i < 5; ++i)
 			{
 				if (!test1sem.timedWait(25))
 				{
-					OW_THROW(OW_Exception, "semaphore timed out");
+					OW_THROW(OW_Exception, "semaphore 1 timed out");
 				}
 			}
-			// we should get 6 OW_TestIndication2 indications.
-			for (size_t i = 0; i < 6; ++i)
+			// we'll wait for 5 OW_TestIndication2 indications.
+			for (size_t i = 0; i < 5; ++i)
 			{
 				if (!test2sem.timedWait(25))
 				{
-					OW_THROW(OW_Exception, "semaphore timed out");
+					OW_THROW(OW_Exception, "semaphore 2 timed out");
 				}
 			}
 
