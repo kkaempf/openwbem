@@ -226,6 +226,7 @@ private:
 	MultiProvRegMap_t m_registeredIndProvs;
 
 	LoggerRef m_logger;
+	ServiceEnvironmentIFCRef m_env;
 };
 
 } // end namespace OpenWBEM

@@ -189,7 +189,7 @@ public:
 	 * shuts down.  It gives providers the opportunity to do any cleanup
 	 * needed for shutdown, while the CIMOM services are still available.
 	 */
-	void shuttingDown();
+	void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 protected:
 	/**
@@ -225,7 +225,7 @@ protected:
 		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
-	virtual void doShuttingDown();
+	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 };
 
 typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;

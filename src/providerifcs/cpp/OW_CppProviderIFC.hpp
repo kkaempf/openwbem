@@ -99,7 +99,7 @@ protected:
 		const ProviderEnvironmentIFCRef& env
 		);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
-	virtual void doShuttingDown();
+	virtual void doShuttingDown(const ProviderEnvironmentIFCRef& env);
 private:
 	// To prevent a potential deadlock situation, we can't call initialize() while m_guard is locked.
 	// However, that presents a race condition for initializing providers, so each CppProviderBaseIFCRef

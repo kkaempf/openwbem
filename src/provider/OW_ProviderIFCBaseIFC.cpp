@@ -45,7 +45,7 @@ ProviderIFCBaseIFC::ProviderIFCBaseIFC()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
-ProviderIFCBaseIFC::~ProviderIFCBaseIFC() 
+ProviderIFCBaseIFC::~ProviderIFCBaseIFC()
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,30 +59,30 @@ ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
 	MethodProviderInfoArray& m,
 	IndicationProviderInfoArray& ind)
 {
-	doInit(env, i, 
+	doInit(env, i,
 		si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		a, 
+		a,
 #endif
-		m, 
+		m,
 		ind);
 }
 ///////////////////////////////////////////////////////////////////////////////
-InstanceProviderIFCRef 
+InstanceProviderIFCRef
 ProviderIFCBaseIFC::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return doGetInstanceProvider(env, provIdString);
 }
 ///////////////////////////////////////////////////////////////////////////////
-SecondaryInstanceProviderIFCRef 
+SecondaryInstanceProviderIFCRef
 ProviderIFCBaseIFC::getSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return doGetSecondaryInstanceProvider(env, provIdString);
 }
 ///////////////////////////////////////////////////////////////////////////////
-MethodProviderIFCRef 
+MethodProviderIFCRef
 ProviderIFCBaseIFC::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
@@ -90,7 +90,7 @@ ProviderIFCBaseIFC::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
-AssociatorProviderIFCRef 
+AssociatorProviderIFCRef
 ProviderIFCBaseIFC::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
@@ -98,7 +98,7 @@ ProviderIFCBaseIFC::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 }
 #endif
 ///////////////////////////////////////////////////////////////////////////////
-IndicationExportProviderIFCRefArray 
+IndicationExportProviderIFCRefArray
 ProviderIFCBaseIFC::getIndicationExportProviders(
 	const ProviderEnvironmentIFCRef& env
 	)
@@ -106,29 +106,29 @@ ProviderIFCBaseIFC::getIndicationExportProviders(
 	return doGetIndicationExportProviders(env);
 }
 ///////////////////////////////////////////////////////////////////////////////
-PolledProviderIFCRefArray 
+PolledProviderIFCRefArray
 ProviderIFCBaseIFC::getPolledProviders(const ProviderEnvironmentIFCRef& env
 	)
 {
 	return doGetPolledProviders(env);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 ProviderIFCBaseIFC::unloadProviders(const ProviderEnvironmentIFCRef& env)
 {
 	doUnloadProviders(env);
 }
 ///////////////////////////////////////////////////////////////////////////////
-IndicationProviderIFCRef 
+IndicationProviderIFCRef
 ProviderIFCBaseIFC::getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return  doGetIndicationProvider(env, provIdString);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void ProviderIFCBaseIFC::shuttingDown()
+void ProviderIFCBaseIFC::shuttingDown(const ProviderEnvironmentIFCRef& env)
 {
-	doShuttingDown();
+	doShuttingDown(env);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,8 @@ ProviderIFCBaseIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
 }
 
-void ProviderIFCBaseIFC::doShuttingDown()
+///////////////////////////////////////////////////////////////////////////////
+void ProviderIFCBaseIFC::doShuttingDown(const ProviderEnvironmentIFCRef& env)
 {
 }
 

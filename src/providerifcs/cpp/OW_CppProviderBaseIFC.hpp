@@ -61,7 +61,7 @@ class CppIndicationProviderIFC;
  * It is recommended that all type and data declarations in the provider be
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
- * 
+ *
  * If your provider spawns a separate thread that needs access to a
  * provider environment (for example, to get a CIMOM handle or logger),
  * see the comment for the initialize() function.
@@ -96,12 +96,12 @@ public:
 	 * Providers should override this to do any portion of their
 	 * shutdown process that requires access to the CIMOM.
 	 */
-	virtual void shuttingDown();
+	virtual void shuttingDown(const ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with
-	 * optimizations.  It will return a (supposedly) valid pointer, 
+	 * optimizations.  It will return a (supposedly) valid pointer,
 	 * when it should return NULL.
 	 */
 	virtual CppInstanceProviderIFC* getInstanceProvider();

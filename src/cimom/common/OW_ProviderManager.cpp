@@ -87,14 +87,72 @@ void ProviderManager::shutdown()
 	m_registeredPropProvs.clear();
 	m_registeredIndProvs.clear();
 	m_IFCArray.clear();
+
+	m_env = 0;
 }
 
+namespace
+{
+//////////////////////////////////////////////////////////////////////////////
+class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentIFC
+{
+public:
+	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
+		: env(env_)
+		, m_context()
+	{}
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const
+	{
+		return env->getCIMOMHandle(m_context);
+	}
+	
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+	{
+		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
+			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
+	}
+	
+	virtual RepositoryIFCRef getRepository() const
+	{
+		return env->getRepository();
+	}
+	virtual LoggerRef getLogger() const
+	{
+		return env->getLogger();
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return env->getLogger(componentName);
+	}
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const
+	{
+		return env->getConfigItem(name, defRetVal);
+	}
+	virtual String getUserName() const
+	{
+		return Platform::getCurrentUserName();
+	}
+	virtual OperationContext& getOperationContext()
+	{
+		return m_context;
+	}
+private:
+	ServiceEnvironmentIFCRef env;
+	mutable OperationContext m_context;
+};
+
+} // end anonymous namespace
+
+/////////////////////////////////////////////////////////////////////////////
 void ProviderManager::shuttingDown()
 {
+	ProviderEnvironmentIFCRef penv = ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(m_env));
+
 	size_t const n = m_IFCArray.size();
 	for (size_t i = 0; i < n; ++i)
 	{
-		m_IFCArray[i]->shuttingDown();
+		m_IFCArray[i]->shuttingDown(penv);
 	}
 }
 
@@ -338,62 +396,16 @@ void processProviderInfo(
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentIFC
-{
-public:
-	ProviderEnvironmentServiceEnvironmentWrapper(ServiceEnvironmentIFCRef env_)
-		: env(env_)
-		, m_context()
-	{}
-	virtual CIMOMHandleIFCRef getCIMOMHandle() const
-	{
-		return env->getCIMOMHandle(m_context);
-	}
-	
-	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
-	{
-		return env->getCIMOMHandle(m_context, ServiceEnvironmentIFC::E_SEND_INDICATIONS,
-			ServiceEnvironmentIFC::E_BYPASS_PROVIDERS);
-	}
-	
-	virtual RepositoryIFCRef getRepository() const
-	{
-		return env->getRepository();
-	}
-	virtual LoggerRef getLogger() const
-	{
-		return env->getLogger();
-	}
-	virtual LoggerRef getLogger(const String& componentName) const
-	{
-		return env->getLogger(componentName);
-	}
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const
-	{
-		return env->getConfigItem(name, defRetVal);
-	}
-	virtual String getUserName() const
-	{
-		return Platform::getCurrentUserName();
-	}
-	virtual OperationContext& getOperationContext()
-	{
-		return m_context;
-	}
-private:
-	ServiceEnvironmentIFCRef env;
-	mutable OperationContext m_context;
-};
-
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void ProviderManager::init(const ServiceEnvironmentIFCRef& env)
 {
-	ProviderEnvironmentIFCRef penv = ProviderEnvironmentIFCRef(
-		new ProviderEnvironmentServiceEnvironmentWrapper(env));
+	m_env = env;
 
 	m_logger = env->getLogger(COMPONENT_NAME);
+
+	ProviderEnvironmentIFCRef penv = ProviderEnvironmentIFCRef(
+		new ProviderEnvironmentServiceEnvironmentWrapper(env));
 
 	for (size_t i = 0; i < m_IFCArray.size(); ++i)
 	{

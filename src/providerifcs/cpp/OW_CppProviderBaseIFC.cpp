@@ -40,9 +40,9 @@ namespace OpenWBEM
 {
 
 /////////////////////////////////////////////////////////////////////////////
-CppProviderBaseIFC::CppProviderBaseIFC() 
+CppProviderBaseIFC::CppProviderBaseIFC()
 	: m_dt(0)
-	, m_persist(false) 
+	, m_persist(false)
 {
 }
 
@@ -50,104 +50,105 @@ CppProviderBaseIFC::CppProviderBaseIFC()
 CppProviderBaseIFC::CppProviderBaseIFC(const CppProviderBaseIFC& arg)
 	: IntrusiveCountableBase(arg)
 	, m_dt(arg.m_dt)
-	, m_persist(arg.m_persist) 
+	, m_persist(arg.m_persist)
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CppProviderBaseIFC::~CppProviderBaseIFC() 
+CppProviderBaseIFC::~CppProviderBaseIFC()
 {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void CppProviderBaseIFC::updateAccessTime() 
-{ 
-	m_dt.setToCurrent(); 
+void CppProviderBaseIFC::updateAccessTime()
+{
+	m_dt.setToCurrent();
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CppProviderBaseIFC::initialize(const ProviderEnvironmentIFCRef&) {}
 /////////////////////////////////////////////////////////////////////////////
-CppInstanceProviderIFC* 
-CppProviderBaseIFC::getInstanceProvider() 
-{ 
-	return 0; 
+CppInstanceProviderIFC*
+CppProviderBaseIFC::getInstanceProvider()
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CppSecondaryInstanceProviderIFC* 
-CppProviderBaseIFC::getSecondaryInstanceProvider() 
-{ 
-	return 0; 
+CppSecondaryInstanceProviderIFC*
+CppProviderBaseIFC::getSecondaryInstanceProvider()
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CppMethodProviderIFC* 
-CppProviderBaseIFC::getMethodProvider() 
-{ 
-	return 0; 
+CppMethodProviderIFC*
+CppProviderBaseIFC::getMethodProvider()
+{
+	return 0;
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 /////////////////////////////////////////////////////////////////////////////
-CppAssociatorProviderIFC* 
-CppProviderBaseIFC::getAssociatorProvider() 
-{ 
-	return 0; 
+CppAssociatorProviderIFC*
+CppProviderBaseIFC::getAssociatorProvider()
+{
+	return 0;
 }
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-CppIndicationExportProviderIFC* 
-CppProviderBaseIFC::getIndicationExportProvider() 
-{ 
-	return 0; 
+CppIndicationExportProviderIFC*
+CppProviderBaseIFC::getIndicationExportProvider()
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CppPolledProviderIFC* 
-CppProviderBaseIFC::getPolledProvider() 
-{ 
-	return 0; 
+CppPolledProviderIFC*
+CppProviderBaseIFC::getPolledProvider()
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CppIndicationProviderIFC* 
-CppProviderBaseIFC::getIndicationProvider() 
-{ 
-	return 0; 
+CppIndicationProviderIFC*
+CppProviderBaseIFC::getIndicationProvider()
+{
+	return 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-DateTime 
-CppProviderBaseIFC::getLastAccessTime() const  
-{ 
-	return m_dt; 
+DateTime
+CppProviderBaseIFC::getLastAccessTime() const
+{
+	return m_dt;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool 
-CppProviderBaseIFC::canUnload() 
-{ 
-	return true; 
+bool
+CppProviderBaseIFC::canUnload()
+{
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-bool 
-CppProviderBaseIFC::getPersist() const 
-{ 
-	return m_persist; 
+bool
+CppProviderBaseIFC::getPersist() const
+{
+	return m_persist;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void 
-CppProviderBaseIFC::setPersist(bool persist) 
-{ 
-	m_persist = persist; 
+void
+CppProviderBaseIFC::setPersist(bool persist)
+{
+	m_persist = persist;
 }
 
-void CppProviderBaseIFC::shuttingDown()
+/////////////////////////////////////////////////////////////////////////////
+void CppProviderBaseIFC::shuttingDown(const ProviderEnvironmentIFCRef& env)
 {
 }
 
