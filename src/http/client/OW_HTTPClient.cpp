@@ -359,7 +359,7 @@ void OW_HTTPClient::sendDataToServer( OW_Reference<OW_TempFileStream> tfs,
 	}
 	else
 	{
-		m_ostr << tfs->rdbuf() << "\r\n" << flush;
+		m_ostr << tfs->rdbuf() << flush;
 	}
 
 	m_requestHeadersNew.clear();
@@ -389,7 +389,12 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 	prepareHeaders();
 	OW_ASSERT(!m_contentType.empty());
 	addHeaderCommon("Content-Type", m_contentType);
-	addHeaderCommon("Content-Length", OW_String(len));
+
+	if (!m_doDeflateOut)
+	{
+		addHeaderCommon("Content-Length", OW_String(len));
+	}
+	// else we're chunked and don't need the Content-Length header
 
 	addHeaderCommon("TE", "trailers");
 
