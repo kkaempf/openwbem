@@ -120,7 +120,7 @@ public:
 	{
 		if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
 		{
-			OW_THROW(OW_IOException, "Failed writing data to IPC connection");
+			OW_THROW(OW_IOException, "Failed writing data");
 		}
 	}
 
@@ -133,7 +133,7 @@ public:
 		if(val != validSig)
 		{
 			OW_THROW(OW_BadCIMSignatureException,
-				format("Received invalid signature. Got: %1  Expected: %2", val,
+				format("Received invalid signature. Got: %1 Expected: %2", val,
 					validSig).c_str());
 		}
 	
@@ -237,7 +237,7 @@ public:
 	{
 		if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
 		{
-			OW_THROW(OW_IOException, "Failed reading data from IPC connection");
+			OW_THROW(OW_IOException, "Failed reading data");
 		}
 	}
 
