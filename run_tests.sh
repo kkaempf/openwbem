@@ -93,7 +93,8 @@ doTests()
 	doACompileOnlyTest "--disable-property-operations" || return 1
 	doACompileOnlyTest "--disable-association-traversal --disable-qualifier-declaration --disable-schema-manipulation --disable-instance-manipulation --disable-property-operations" || return 1
 	doATest "--enable-static-services" || return 1
-	doATest "--prefix=/opt/some/other/prefix --enable-rpath-link --with-runtime-link-path=/opt/some/other/prefix/lib" || return 1
+	doATest "--prefix=/opt/some/other/prefix --enable-rpath-link" || return 1
+	doATest "--prefix=/opt/some/other/prefix --with-runtime-link-path=/opt/some/other/prefix/some/other/lib/dir" || return 1
 }
 
 ## MAIN ######################################################################
