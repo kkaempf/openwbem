@@ -66,4 +66,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLInstancePropertySource OW_WQLInstancePropertySource;
+
 #endif

@@ -334,4 +334,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::DateTime OW_DateTime;
+
 #endif

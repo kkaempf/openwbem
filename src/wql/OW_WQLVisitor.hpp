@@ -766,4 +766,6 @@ class WQLVisitor
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLVisitor OW_WQLVisitor;
+
 #endif

@@ -36,6 +36,10 @@
 #include <assert.h>
 #include <cctype>
 
+// forward declarations of some lex/yacc functions we need to call.
+void yy_delete_buffer(YY_BUFFER_STATE b);
+YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
+
 namespace OpenWBEM
 {
 
@@ -120,8 +124,6 @@ long Compiler::compile( const String& filename )
 	}
 	return theErrorHandler->errorCount();
 }
-void yy_delete_buffer(YY_BUFFER_STATE b);
-YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
 namespace {
 	struct yyBufferDeleter
 	{

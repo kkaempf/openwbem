@@ -75,4 +75,7 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::DeadlockException OW_DeadlockException;
+typedef OpenWBEM::NonRecursiveMutex OW_NonRecursiveMutex;
+
 #endif

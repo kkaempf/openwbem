@@ -1179,7 +1179,7 @@ void WQLSelectStatementGen::visit_aExprConst_SCONST(
 	const aExprConst_SCONST* paExprConst_SCONST
 	)
 {
-	m_stmt.appendOperand(WQLOperand(RemoveEscapes(*paExprConst_SCONST->m_pSCONST1), WQL_STRING_VALUE_TAG));
+	m_stmt.appendOperand(WQLOperand(WQLRemoveStringEscapes(*paExprConst_SCONST->m_pSCONST1), WQL_STRING_VALUE_TAG));
 }
 void WQLSelectStatementGen::visit_aExprConst_BITCONST(
 	const aExprConst_BITCONST* paExprConst_BITCONST

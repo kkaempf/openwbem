@@ -39,12 +39,6 @@
 namespace OpenWBEM
 {
 
-class ClientOperation
-{
-public:
-	virtual ~ClientOperation();
-	virtual void operator()(CIMXMLParser& parser) = 0;
-};
 class CIMXMLCIMOMHandle : public ClientCIMOMHandle, XMLQualifier
 {
 public:
@@ -611,6 +605,14 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage);
 	virtual CIMFeatures getServerFeatures();
+
+	class ClientOperation
+	{
+	public:
+		virtual ~ClientOperation();
+		virtual void operator()(CIMXMLParser& parser) = 0;
+	};
+
 private:
 	void sendCommonXMLHeader(std::ostream& ostr);
 	void sendIntrinsicXMLHeader(const String &, const String& ns,
@@ -619,6 +621,7 @@ private:
 		const CIMObjectPath& path,
 		std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
+
 	void doSendRequest(Reference<std::iostream> ostr,
 		const String& methodName, const String& ns,
 		bool isIntrinsic,
@@ -659,5 +662,7 @@ private:
 };
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::CIMXMLCIMOMHandle OW_CIMXMLCIMOMHandle;
 
 #endif

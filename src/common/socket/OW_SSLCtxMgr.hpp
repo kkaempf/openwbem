@@ -175,4 +175,7 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SSLCtxMgr OW_SSLCtxMgr;
+typedef OpenWBEM::certVerifyFuncPtr_t OW_certVerifyFuncPtr_t;
+
 #endif

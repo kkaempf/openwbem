@@ -53,6 +53,9 @@
 namespace OpenWBEM
 {
 
+namespace XMLCIMFactory
+{
+
 static void
 getLocalNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 {
@@ -208,7 +211,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 }
 ///////////////////////////////////
 CIMObjectPath
-XMLCIMFactory::createObjectPath(CIMXMLParser& parser)
+createObjectPath(CIMXMLParser& parser)
 {
 	CIMObjectPath rval;
 	int token = parser.getToken();
@@ -266,7 +269,7 @@ XMLCIMFactory::createObjectPath(CIMXMLParser& parser)
 }
 ///////////////////////////////////
 CIMClass
-XMLCIMFactory::createClass(CIMXMLParser& parser)
+createClass(CIMXMLParser& parser)
 {
 	CIMClass rval;
 	String superClassName;
@@ -321,7 +324,7 @@ XMLCIMFactory::createClass(CIMXMLParser& parser)
 }
 ///////////////////////////////////
 CIMInstance
-XMLCIMFactory::createInstance(CIMXMLParser& parser)
+createInstance(CIMXMLParser& parser)
 {
 	CIMInstance rval;
 	if (!parser.tokenIs(CIMXMLParser::E_INSTANCE))
@@ -434,7 +437,7 @@ convertCimType(Array<T>& ra, CIMXMLParser& parser)
 }
 ///////////////////////////////////
 CIMValue
-XMLCIMFactory::createValue(CIMXMLParser& parser,
+createValue(CIMXMLParser& parser,
 	String const& valueType)
 {
 	CIMValue rval(CIMNULL);
@@ -664,7 +667,7 @@ XMLCIMFactory::createValue(CIMXMLParser& parser,
 }
 ///////////////////////////////////
 CIMQualifier
-XMLCIMFactory::createQualifier(CIMXMLParser& parser)
+createQualifier(CIMXMLParser& parser)
 {
 	if (!parser.tokenIs(CIMXMLParser::E_QUALIFIER))
 	{
@@ -734,7 +737,7 @@ XMLCIMFactory::createQualifier(CIMXMLParser& parser)
 }
 ///////////////////////////////////
 CIMMethod
-XMLCIMFactory::createMethod(CIMXMLParser& parser)
+createMethod(CIMXMLParser& parser)
 {
 	if(!parser.tokenIs(CIMXMLParser::E_METHOD))
 	{
@@ -860,7 +863,7 @@ bool isKnownEmbeddedObjectName(String name)
 }
 ///////////////////////////////////
 CIMProperty
-XMLCIMFactory::createProperty(CIMXMLParser& parser)
+createProperty(CIMXMLParser& parser)
 {
 	int token = parser.getToken();
 	if(token != CIMXMLParser::E_PROPERTY
@@ -1028,7 +1031,7 @@ XMLCIMFactory::createProperty(CIMXMLParser& parser)
 }
 ///////////////////////////////////
 CIMParameter
-XMLCIMFactory::createParameter(CIMXMLParser& parser)
+createParameter(CIMXMLParser& parser)
 {
 	int paramToken = parser.getToken();
 	
@@ -1125,5 +1128,6 @@ XMLCIMFactory::createParameter(CIMXMLParser& parser)
 	return rval;
 }
 
+} // end namespace XMLCIMFactory
 } // end namespace OpenWBEM
 

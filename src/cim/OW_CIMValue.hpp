@@ -557,4 +557,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMValue OW_CIMValue;
+
 #endif

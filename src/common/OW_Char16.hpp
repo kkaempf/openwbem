@@ -325,4 +325,6 @@ typedef Array<Char16> Char16Array;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Char16 OW_Char16;
+
 #endif

@@ -62,4 +62,6 @@ private:
 
 #define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
+typedef OpenWBEM::HTTPException OW_HTTPException;
+
 #endif

@@ -67,4 +67,7 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SharedLibraryLoaderRef OW_SharedLibraryLoaderRef;
+typedef OpenWBEM::SharedLibraryLoader OW_SharedLibraryLoader;
+
 #endif

@@ -65,5 +65,7 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::GetPass OW_GetPass;
+
 #endif
 	

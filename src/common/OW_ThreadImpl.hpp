@@ -195,4 +195,6 @@ namespace ThreadImpl
 
 } // end namespace OpenWBEM
 
+namespace OW_ThreadImpl = OpenWBEM::ThreadImpl;
+
 #endif

@@ -604,4 +604,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::BinaryCIMOMHandle OW_BinaryCIMOMHandle;
+
 #endif

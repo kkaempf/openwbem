@@ -49,6 +49,7 @@ public:
 	virtual const char* type() const
 		{  return "CIMDateTimeException"; }
 };
+
 class DateTime;
 /**
  *
@@ -317,5 +318,8 @@ private:
 std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::CIMDateTimeException OW_CIMDateTimeException;
+typedef OpenWBEM::CIMDateTime OW_CIMDateTime;
 
 #endif

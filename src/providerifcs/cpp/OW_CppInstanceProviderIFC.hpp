@@ -196,4 +196,6 @@ typedef SharedLibraryReference<CppInstanceProviderIFC> CppInstanceProviderIFCRef
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CppInstanceProviderIFC OW_CppInstanceProviderIFC;
+
 #endif

@@ -78,4 +78,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMElement OW_CIMElement;
+
 #endif

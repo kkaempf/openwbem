@@ -123,5 +123,7 @@ typedef SharedLibraryReference< CppIndicationProviderIFC > CppIndicationProvider
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CppIndicationProviderIFC OW_CppIndicationProviderIFC;
+
 #endif
 								

@@ -62,4 +62,6 @@ namespace SocketUtils
 
 } // end namespace OpenWBEM
 
+namespace OW_SocketUtils = OpenWBEM::SocketUtils;
+
 #endif

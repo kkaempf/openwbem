@@ -103,4 +103,7 @@ typedef Reference<Logger> LoggerRef;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Logger OW_Logger;
+typedef OpenWBEM::LoggerRef OW_LoggerRef;
+
 #endif

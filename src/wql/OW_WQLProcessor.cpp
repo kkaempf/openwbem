@@ -1923,7 +1923,7 @@ void WQLProcessor::visit_aExprConst_SCONST(
 	const aExprConst_SCONST* paExprConst_SCONST
 	)
 {
-	m_exprValue = DataType(RemoveEscapes(*paExprConst_SCONST->m_pSCONST1), DataType::StringType);
+	m_exprValue = DataType(WQLRemoveStringEscapes(*paExprConst_SCONST->m_pSCONST1), DataType::StringType);
 }
 void WQLProcessor::visit_aExprConst_BITCONST(
 	const aExprConst_BITCONST* paExprConst_BITCONST

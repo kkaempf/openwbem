@@ -79,4 +79,7 @@ typedef Reference<SharedLibrary> SharedLibraryRef;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SharedLibrary OW_SharedLibrary;
+typedef OpenWBEM::SharedLibraryRef OW_SharedLibraryRef;
+
 #endif

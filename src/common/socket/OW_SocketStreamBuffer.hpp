@@ -51,4 +51,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SocketStreamBuffer OW_SocketStreamBuffer;
+
 #endif 

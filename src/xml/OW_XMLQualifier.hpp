@@ -63,4 +63,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLQualifier OW_XMLQualifier;
+
 #endif

@@ -213,4 +213,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::File OW_File;
+
 #endif

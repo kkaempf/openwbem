@@ -124,7 +124,7 @@ OpenWBEM::CIMClass* mbGetClass(CMPIBroker *mb, const OpenWBEM::CIMObjectPath &co
 		return new OpenWBEM::CIMClass(cc);
 	}
 	catch (OpenWBEM::CIMException &e) {
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbGetClass code: %1, msg %2",
 			e.type(), e.getMessage()));
 	}
@@ -159,7 +159,7 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 		return (CMPIInstance*)new CMPI_Object(new OpenWBEM::CIMInstance(ci));
 	}
 	catch (OpenWBEM::CIMException &e) {
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbGetInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -191,7 +191,7 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mCreateInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -224,7 +224,7 @@ static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbSetInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 		CMReturn((CMPIrc)e.getErrNo());
@@ -256,7 +256,7 @@ static CMPIStatus mbDeleteInstance (CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbDeleteInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 		CMReturn((CMPIrc)e.getErrNo());
@@ -292,7 +292,7 @@ static CMPIEnumeration* mbExecQuery(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbExecQuery code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -333,7 +333,7 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbEnumInstances code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -368,7 +368,7 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbEnumInstanceNames code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -415,7 +415,7 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbAssociators code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -454,7 +454,7 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbAssociatorNames code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -500,7 +500,7 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbReferences code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -537,7 +537,7 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbReferenceNames code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
@@ -590,7 +590,7 @@ static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbSetProperty code: %1, msg %2",
 			e.type(), e.getMessage()));
 		CMReturn((CMPIrc)e.getErrNo());
@@ -626,7 +626,7 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 	}
 	catch (OpenWBEM::CIMException &e)
 	{
-		CM_LOGGER(mb)->logDebug(OpenWBEM::format("CMPIBroker Exception in "
+		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbGetProperty code: %1, msg %2",
 			e.type(), e.getMessage()));
 		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());

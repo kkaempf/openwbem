@@ -141,4 +141,8 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::UnknownHostException OW_UnknownHostException;
+typedef OpenWBEM::SocketAddressException OW_SocketAddressException;
+typedef OpenWBEM::SocketAddress OW_SocketAddress;
+
 #endif

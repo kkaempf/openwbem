@@ -51,6 +51,7 @@ template <typename T>
 ResultHandlerIFC<T>::~ResultHandlerIFC()
 {
 }
+
 typedef ResultHandlerIFC<CIMClass> CIMClassResultHandlerIFC;
 typedef ResultHandlerIFC<CIMInstance> CIMInstanceResultHandlerIFC;
 typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
@@ -58,5 +59,12 @@ typedef ResultHandlerIFC<String> StringResultHandlerIFC;
 typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::CIMClassResultHandlerIFC OW_CIMClassResultHandlerIFC;
+typedef OpenWBEM::CIMInstanceResultHandlerIFC OW_CIMInstanceResultHandlerIFC;
+typedef OpenWBEM::CIMObjectPathResultHandlerIFC OW_CIMObjectPathResultHandlerIFC;
+typedef OpenWBEM::StringResultHandlerIFC OW_StringResultHandlerIFC;
+typedef OpenWBEM::CIMQualifierTypeResultHandlerIFC OW_CIMQualifierTypeResultHandlerIFC;
+
 
 #endif

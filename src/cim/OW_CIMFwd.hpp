@@ -87,4 +87,52 @@ typedef Array<Bool>       			BoolArray;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Bool OW_Bool;
+typedef OpenWBEM::CIMDateTime OW_CIMDateTime;
+typedef OpenWBEM::CIMBase OW_CIMBase;
+typedef OpenWBEM::CIMDataType OW_CIMDataType;
+typedef OpenWBEM::CIMScope OW_CIMScope;
+typedef OpenWBEM::CIMUrl OW_CIMUrl;
+typedef OpenWBEM::CIMNameSpace OW_CIMNameSpace;
+typedef OpenWBEM::CIMElement OW_CIMElement;
+typedef OpenWBEM::CIMFlavor OW_CIMFlavor;
+typedef OpenWBEM::CIMProperty OW_CIMProperty;
+typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath;
+typedef OpenWBEM::CIMQualifierType OW_CIMQualifierType;
+typedef OpenWBEM::CIMQualifier OW_CIMQualifier;
+typedef OpenWBEM::CIMMethod OW_CIMMethod;
+typedef OpenWBEM::CIMClass OW_CIMClass;
+typedef OpenWBEM::CIMParameter OW_CIMParameter;
+typedef OpenWBEM::CIMParamValue OW_CIMParamValue;
+typedef OpenWBEM::CIMInstance OW_CIMInstance;
+typedef OpenWBEM::CIMValue OW_CIMValue;
+typedef OpenWBEM::String OW_String;
+typedef OpenWBEM::Char16 OW_Char16;
+typedef OpenWBEM::CIMFeatures OW_CIMFeatures;
+typedef OpenWBEM::Enumeration<OpenWBEM::CIMObjectPath> OW_CIMObjectPathEnumeration;
+typedef OpenWBEM::Enumeration<OpenWBEM::CIMQualifierType> OW_CIMQualifierTypeEnumeration;
+typedef OpenWBEM::Enumeration<OpenWBEM::CIMClass> OW_CIMClassEnumeration;
+typedef OpenWBEM::Enumeration<OpenWBEM::CIMInstance> OW_CIMInstanceEnumeration;
+typedef OpenWBEM::Array<OpenWBEM::CIMDateTime> 		OW_CIMDateTimeArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMBase> 				OW_CIMBaseArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMDataType> 		OW_CIMDataTypeArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMScope> 			OW_CIMScopeArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMUrl> 				OW_CIMUrlArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMNameSpace>		OW_CIMNameSpaceArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMElement> 			OW_CIMElementArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMFlavor> 			OW_CIMFlavorArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMProperty> 		OW_CIMPropertyArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMObjectPath> 		OW_CIMObjectPathArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMQualifierType> 	OW_CIMQualifierTypeArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMQualifier> 		OW_CIMQualifierArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMMethod> 			OW_CIMMethodArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMClass> 			OW_CIMClassArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMParameter> 		OW_CIMParameterArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMParamValue> 		OW_CIMParamValueArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMInstance> 		OW_CIMInstanceArray;
+typedef OpenWBEM::Array<OpenWBEM::CIMValue> 			OW_CIMValueArray;
+typedef OpenWBEM::Array<OpenWBEM::String>				OW_StringArray;
+typedef OpenWBEM::Array<OpenWBEM::Char16>				OW_Char16Array;
+typedef OpenWBEM::Array<OpenWBEM::Bool>       			OW_BoolArray;
+
 #endif

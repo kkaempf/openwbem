@@ -48,4 +48,7 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::IOException OW_IOException;
+typedef OpenWBEM::BadCIMSignatureException OW_BadCIMSignatureException;
+
 #endif

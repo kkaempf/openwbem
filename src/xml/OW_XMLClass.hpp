@@ -50,4 +50,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLClass OW_XMLClass;
+
 #endif  // OW_XMLClass_HPP_

@@ -212,4 +212,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMQualifierType OW_CIMQualifierType;
+
 #endif

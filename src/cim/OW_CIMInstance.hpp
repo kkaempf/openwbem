@@ -402,4 +402,6 @@ protected:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMInstance OW_CIMInstance;
+
 #endif

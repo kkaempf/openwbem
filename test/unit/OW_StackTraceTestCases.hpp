@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_StackTrace;
-
 class OW_StackTraceTestCases : public TestCase
 {
 public:

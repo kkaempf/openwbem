@@ -78,4 +78,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLParameters OW_XMLParameters;
+
 #endif

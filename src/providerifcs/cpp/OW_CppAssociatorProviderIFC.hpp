@@ -254,4 +254,6 @@ typedef SharedLibraryReference< CppAssociatorProviderIFC > CppAssociatorProvider
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CppAssociatorProviderIFC OW_CppAssociatorProviderIFC;
+
 #endif

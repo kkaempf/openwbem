@@ -86,6 +86,7 @@ private:
 	void put (unsigned long long t);
 	friend std::ostream& operator<<(std::ostream& os, const Format& f);
 }; // class Format
+
 template<typename T> 
 void Format::put(const T& t)
 { // t is inserted into oss
@@ -93,6 +94,7 @@ void Format::put(const T& t)
 		return;
 	oss << t;
 }
+
 template<typename A>
 Format::Format(const char* ca, const A& a) : oss()
 {
@@ -237,9 +239,11 @@ Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, c
 		}
 	}
 }
-typedef Format format;
-
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Format OW_Format;
+typedef OpenWBEM::Format format;
+
+
 #endif
-// end of OW_Format.hpp ---------------------------------------------------------//
+

@@ -42,7 +42,7 @@ namespace OpenWBEM
 {
 
 String
-RemoveEscapes(const String& s)
+WQLRemoveStringEscapes(const String& s)
 {
 	if (s.empty())
 	{

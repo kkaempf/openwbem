@@ -73,4 +73,7 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Select OW_Select;
+typedef OpenWBEM::SelectTypeArray OW_SelectTypeArray;
+
 #endif // OW_SELECT_HPP_

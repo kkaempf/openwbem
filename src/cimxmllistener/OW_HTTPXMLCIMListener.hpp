@@ -123,4 +123,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::HTTPXMLCIMListener OW_HTTPXMLCIMListener;
+
 #endif

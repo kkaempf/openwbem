@@ -52,4 +52,6 @@ class StackTrace
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::StackTrace OW_StackTrace;
+
 #endif

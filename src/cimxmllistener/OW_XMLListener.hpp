@@ -84,4 +84,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLListener OW_XMLListener;
+
 #endif

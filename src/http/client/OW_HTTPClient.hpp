@@ -157,4 +157,6 @@ class HTTPClient : public CIMProtocolIFC
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::HTTPClient OW_HTTPClient;
+
 #endif	// OW_HTTPCLIENT_HPP_

@@ -47,4 +47,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SSLException OW_SSLException;
+
 #endif

@@ -42,9 +42,8 @@ namespace OpenWBEM
 {
 
 typedef Map<String, String> HTTPHeaderMap;
-class HTTPUtils
+namespace HTTPUtils
 {
-public:
 	/**
 	 * Read from an input stream, and fill out a <String, String> map and
 	 * String Array representing the status line.
@@ -54,7 +53,7 @@ public:
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	static bool parseHeader(HTTPHeaderMap& map, Array<String>& array,
+	bool parseHeader(HTTPHeaderMap& map, Array<String>& array,
 									std::istream& istr);
 	/**
 	 * Read from in input stream, parse HTTP headers into a <String,
@@ -63,46 +62,46 @@ public:
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	static bool parseHeader(HTTPHeaderMap& map, std::istream& istr);
+	bool parseHeader(HTTPHeaderMap& map, std::istream& istr);
 	/**
 	 * Get the date (for http headers)
 	 * @return a String representing the current date/time
 	 */
-	static String date( void );
+	String date( void );
 	/**
 	 * Return a descriptive string associated with a HTTP status code.
 	 * @param code the status code to interpret.
 	 * @return a String represetation of code
 	 */
-	static String status2String(int code);
+	String status2String(int code);
 	/**
 	 * Returns a two digit sequence for header counting.
 	 * @return String containing a two digit number
 	 */
-	static String getCounterStr();
+	String getCounterStr();
 	/**
 	 * Decode Base64 encoded src into dest, returns the number of data bytes
 	 *		stored in dest, or -1 on error
 	 * @throws (Base64FormatException)
 	 */
-	static String base64Decode(const String& arg);
+	String base64Decode(const String& arg);
 	/**
 	 * @throws (Base64FormatException)
 	 */
-	static String base64Decode(const char* src);
+	String base64Decode(const char* src);
 	/**
 	 * Encode src in Base64 into dest, returns the number of data bytes
 	 *		stored in dest, or -1 on error
 	 * @throws (Base64FormatException)
 	 */
-	static String base64Encode(const String& arg);
+	String base64Encode(const String& arg);
 	/**
 	 * @throws (Base64FormatException)
 	 */
-	static String base64Encode(const char* src);
+	String base64Encode(const char* src);
 #ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */
-	static void DigestCalcHA1(
+	void DigestCalcHA1(
 					const String &sAlg,
 					const String &sUserName,
 					const String &sRealm,
@@ -112,7 +111,7 @@ public:
 					String &sSessionKey
 					  );
 	/* calculate request-digest/response-digest as per HTTP Digest spec */
-	static void DigestCalcResponse(
+	void DigestCalcResponse(
 					const String &sHA1,			/* H(A1) */
 					const String &sNonce,		/* nonce from server */
 					const String &sNonceCount,	/* 8 hex digits */
@@ -130,7 +129,7 @@ public:
 	 * @param key the key to look for.
 	 * @return true if the headers contain the key
 	 */
-	static bool headerHasKey(const HTTPHeaderMap& headers,
+	bool headerHasKey(const HTTPHeaderMap& headers,
 		const String& key);
 	/**
 	 * Get a value (based on a key/value pair) from the http headers
@@ -138,7 +137,7 @@ public:
 	 * @param key The key to look for.
 	 * @return the value associated with the key
 	 */
-	static String getHeaderValue(const HTTPHeaderMap& headers,
+	String getHeaderValue(const HTTPHeaderMap& headers,
 		const String& key);
 	/**
 	 * Add a HTTP header
@@ -146,7 +145,7 @@ public:
 	 * @param key the key for the header (left of the ':')
 	 * @param value the value for the header (right of the ':')
 	 */
-	static void addHeader(Array<String>& headers,
+	void addHeader(Array<String>& headers,
 		const String& key, const String& value);
 	/**
 	 * Read from an input stream, until the end of the entity is reached.
@@ -156,7 +155,7 @@ public:
 	 * @param istr A istream& containing the entity (presumably a
 	 * 	HTTPChunkedIStream, HTTPLenLimitIStream, or TempFileStream)
 	 */
-	static void eatEntity(std::istream& istr);
+	void eatEntity(std::istream& istr);
 	/**
 	 * Base64Decode a user name/password.
 	 * @param info a base64 encoded representation of a "<name>:<password>"
@@ -164,14 +163,14 @@ public:
 	 * @param name The name gets assigned here.
 	 * @param password the password gets assigned here.
 	 */
-	static void decodeBasicCreds(const String& info, String& name,
+	void decodeBasicCreds(const String& info, String& name,
 		String& password);
 	
-private:
-	HTTPUtils();  // Don't allow instantiation
-	static bool buildMap(HTTPHeaderMap& map, std::istream& istr);
+	bool buildMap(HTTPHeaderMap& map, std::istream& istr);
 };
 
 } // end namespace OpenWBEM
+
+namespace OW_HTTPUtils = OpenWBEM::HTTPUtils;
 
 #endif	// OW_HTTPUTILS_HPP_

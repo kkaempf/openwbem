@@ -172,4 +172,10 @@ class  XMLParser
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLParseException OW_XMLParseException;
+typedef OpenWBEM::XMLParseValidationError OW_XMLParseValidationError;
+typedef OpenWBEM::XMLParseSemanticError OW_XMLParseSemanticError;
+typedef OpenWBEM::XMLToken OW_XMLToken;
+typedef OpenWBEM::XMLParser OW_XMLParser;
+
 #endif

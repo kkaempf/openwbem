@@ -31,10 +31,11 @@
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
 #include <string.h> // for memset
-#define HASHHEXLEN 32
 
 namespace OpenWBEM
 {
+
+const int MD5HASHHEXLEN = 32;
 
 DEFINE_EXCEPTION(MD5);
 //////////////////////////////////////////////////////////////////////////////
@@ -112,8 +113,8 @@ MD5::convertBinToHex( const unsigned char sBin[ 16 ])
 {
 	unsigned short i;
 	unsigned char j;
-	char Hex[ HASHHEXLEN + 1 ];
-	for ( i = 0; i < HASHLEN; i++ )
+	char Hex[ MD5HASHHEXLEN + 1 ];
+	for ( i = 0; i < MD5HASHLEN; i++ )
 	{
 		j = (sBin[i] >> 4) & 0xf;
 		if ( j <= 9 )
@@ -126,7 +127,7 @@ MD5::convertBinToHex( const unsigned char sBin[ 16 ])
 		else
 			Hex[i*2+1] = (j + 'a' - 10);
 	};
-	Hex[HASHHEXLEN] = '\0';
+	Hex[MD5HASHHEXLEN] = '\0';
 	return String(Hex);
 };
 //A.3 md5c.c

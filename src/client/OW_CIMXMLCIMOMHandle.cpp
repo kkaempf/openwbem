@@ -66,9 +66,10 @@ using std::iostream;
 using std::istream;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-ClientOperation::~ClientOperation() 
+CIMXMLCIMOMHandle::ClientOperation::~ClientOperation() 
 {
 }
+
 //////////////////////////////////////////////////////////////////////////////
 CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(CIMProtocolIFCRef prot)
 	: ClientCIMOMHandle()
@@ -299,7 +300,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class voidRetValOp : public ClientOperation
+	class voidRetValOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		virtual void operator ()(CIMXMLParser &parser)
@@ -325,7 +326,7 @@ instanceNameToKey(const CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassNamesOp : public ClientOperation
+	class enumClassNamesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		enumClassNamesOp(StringResultHandlerIFC& result_)
@@ -363,7 +364,7 @@ CIMXMLCIMOMHandle::enumClassNames(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassOp : public ClientOperation
+	class enumClassOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		enumClassOp(CIMClassResultHandlerIFC& result_)
@@ -406,7 +407,7 @@ CIMXMLCIMOMHandle::enumClass(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstanceNamesOp : public ClientOperation
+	class enumInstanceNamesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		enumInstanceNamesOp(CIMObjectPathResultHandlerIFC& result_,
@@ -467,7 +468,7 @@ static inline void generatePropertyListXML(std::ostream& ostr,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstancesOp : public ClientOperation
+	class enumInstancesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		enumInstancesOp(CIMInstanceResultHandlerIFC& result_)
@@ -518,7 +519,7 @@ CIMXMLCIMOMHandle::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getClassOp : public ClientOperation
+	class getClassOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		getClassOp(CIMClass& result_)
@@ -565,7 +566,7 @@ CIMXMLCIMOMHandle::getClass(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getInstanceOp : public ClientOperation
+	class getInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		getInstanceOp(CIMInstance& result_)
@@ -604,7 +605,7 @@ CIMXMLCIMOMHandle::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class invokeMethodOp : public ClientOperation
+	class invokeMethodOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		invokeMethodOp(CIMValue& result_, CIMParamValueArray& outParams_)
@@ -716,7 +717,7 @@ CIMXMLCIMOMHandle::invokeMethod(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getQualifierTypeOp : public ClientOperation
+	class getQualifierTypeOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		getQualifierTypeOp(CIMQualifierType& result_)
@@ -770,7 +771,7 @@ CIMXMLCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumQualifierTypesOp : public ClientOperation
+	class enumQualifierTypesOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		enumQualifierTypesOp(CIMQualifierTypeResultHandlerIFC& result_)
@@ -882,7 +883,7 @@ CIMXMLCIMOMHandle::modifyInstance(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class createInstanceOp : public ClientOperation
+	class createInstanceOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		createInstanceOp(CIMObjectPath& result_)
@@ -954,7 +955,7 @@ CIMXMLCIMOMHandle::setProperty(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getPropertyOp : public ClientOperation
+	class getPropertyOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		getPropertyOp(CIMValue& result_)
@@ -991,7 +992,7 @@ CIMXMLCIMOMHandle::getProperty(
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class objectPathOp : public ClientOperation
+	class objectPathOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		objectPathOp(CIMObjectPathResultHandlerIFC& result_,
@@ -1023,7 +1024,7 @@ namespace
 		String ns;
 	};
 //////////////////////////////////////////////////////////////////////////////
-	class objectWithPathOp : public ClientOperation
+	class objectWithPathOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 	public:
 		objectWithPathOp(

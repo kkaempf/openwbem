@@ -58,4 +58,6 @@ typedef Reference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::PosixUnnamedPipe OW_PosixUnnamedPipe;
+
 #endif

@@ -115,4 +115,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::ServerSocket OW_ServerSocket;
+
 #endif

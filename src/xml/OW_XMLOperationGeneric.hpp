@@ -51,4 +51,6 @@ class XMLOperationGeneric : public XMLParameters
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::XMLOperationGeneric OW_XMLOperationGeneric;
+
 #endif

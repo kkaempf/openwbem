@@ -138,4 +138,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::StringBuffer OW_StringBuffer;
+
 #endif

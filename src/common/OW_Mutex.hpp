@@ -68,4 +68,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Mutex OW_Mutex;
+
 #endif

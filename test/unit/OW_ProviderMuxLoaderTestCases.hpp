@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_ProviderMuxLoader;
-
 class OW_ProviderMuxLoaderTestCases : public TestCase
 {
 public:

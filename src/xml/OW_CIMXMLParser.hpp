@@ -234,4 +234,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMXMLParser OW_CIMXMLParser;
+
 #endif

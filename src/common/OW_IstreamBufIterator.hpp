@@ -122,4 +122,6 @@ inline bool operator!=(const IstreamBufIterator& lhs, const IstreamBufIterator& 
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::IstreamBufIterator OW_IstreamBufIterator;
+
 #endif

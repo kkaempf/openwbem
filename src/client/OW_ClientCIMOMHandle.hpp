@@ -53,5 +53,7 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle;
+
 #endif
 	

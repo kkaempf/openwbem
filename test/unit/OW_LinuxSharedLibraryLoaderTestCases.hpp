@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_LinuxSharedLibraryLoader;
-
 class OW_LinuxSharedLibraryLoaderTestCases : public TestCase
 {
 public:

@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-//class OW_String;
-
 class OW_StringTestCases : public TestCase
 {
 public:

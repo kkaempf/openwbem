@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_SharedLibrary;
-
 class OW_SharedLibraryTestCases : public TestCase
 {
 public:

@@ -64,4 +64,10 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMOMLocatorException OW_CIMOMLocatorException;
+typedef OpenWBEM::CIMOMAttribute OW_CIMOMAttribute;
+typedef OpenWBEM::CIMOMAttributeArray OW_CIMOMAttributeArray;
+typedef OpenWBEM::CIMOMLocatorRef OW_CIMOMLocatorRef;
+typedef OpenWBEM::CIMOMLocator OW_CIMOMLocator;
+
 #endif

@@ -126,4 +126,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMParamValue OW_CIMParamValue;
+
 #endif

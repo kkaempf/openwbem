@@ -51,6 +51,7 @@ private:
 	Array<SelectableCallbackIFCRef> m_callbacks;
 	bool m_stopFlag;
 };
+
 class SelectEngineStopper : public SelectableCallbackIFC
 {
 public:
@@ -69,5 +70,9 @@ private:
 };
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::SelectException OW_SelectException;
+typedef OpenWBEM::SelectEngine OW_SelectEngine;
+typedef OpenWBEM::SelectEngineStopper OW_SelectEngineStopper;
 
 #endif

@@ -35,7 +35,7 @@ namespace OpenWBEM
 {
 
 class String;
-String RemoveEscapes(const String& str);
+String WQLRemoveStringEscapes(const String& str);
 
 } // end namespace OpenWBEM
 

@@ -55,4 +55,7 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::ValueCastException OW_ValueCastException;
+typedef OpenWBEM::CIMValueCast OW_CIMValueCast;
+
 #endif

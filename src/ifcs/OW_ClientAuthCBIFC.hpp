@@ -68,4 +68,6 @@ typedef Reference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::ClientAuthCBIFC OW_ClientAuthCBIFC;
+
 #endif

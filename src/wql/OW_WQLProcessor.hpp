@@ -748,4 +748,6 @@ bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLProcessor OW_WQLProcessor;
+
 #endif

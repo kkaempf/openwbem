@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_Exec;
-
 class OW_ExecTestCases : public TestCase
 {
 public:

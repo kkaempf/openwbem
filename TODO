@@ -59,6 +59,7 @@ New features:
       - Use ideas from SBLIM: http://oss.software.ibm.com/developerworks/oss/sblim/doc/ProviderArchitecture.pdf
     - Add log messages to the thread pool class so we can output
       information about threads starting and exiting.
+    - create static CIMQualifiers for standard qualifiers.
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.

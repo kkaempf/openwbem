@@ -147,4 +147,6 @@ std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Bool OW_Bool;
+
 #endif

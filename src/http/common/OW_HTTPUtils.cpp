@@ -526,8 +526,8 @@ void HTTPUtils::DigestCalcHA1(
 	sSessionKey = md5.toString();
 	if ( sAlg.equalsIgnoreCase( "md5-sess" ))
 	{
-		unsigned char sHA1[HASHLEN];
-		memcpy(sHA1, md5.getDigest(), HASHLEN);
+		unsigned char sHA1[MD5HASHLEN];
+		memcpy(sHA1, md5.getDigest(), MD5HASHLEN);
 		MD5 md5_2;
 		md5_2.update(reinterpret_cast<const char*>(sHA1));
 		md5_2.update(":");

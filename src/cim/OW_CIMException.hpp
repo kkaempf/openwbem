@@ -111,4 +111,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMException OW_CIMException;
+
 #endif

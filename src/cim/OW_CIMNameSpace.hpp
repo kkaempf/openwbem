@@ -192,4 +192,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMNameSpace OW_CIMNameSpace;
+
 #endif

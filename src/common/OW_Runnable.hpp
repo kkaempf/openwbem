@@ -54,4 +54,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::Runnable OW_Runnable;
+
 #endif

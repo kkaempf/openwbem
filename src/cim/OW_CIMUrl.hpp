@@ -213,4 +213,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMUrl OW_CIMUrl;
+
 #endif

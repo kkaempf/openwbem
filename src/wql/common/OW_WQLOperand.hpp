@@ -258,4 +258,6 @@ bool operator==(const WQLOperand& x, const WQLOperand& y);
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLOperand OW_WQLOperand;
+
 #endif

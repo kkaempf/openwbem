@@ -57,4 +57,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMErrorException OW_CIMErrorException;
+
 #endif

@@ -210,4 +210,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMFlavor OW_CIMFlavor;
+
 #endif

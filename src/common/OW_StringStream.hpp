@@ -86,4 +86,7 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::StringStreamBuf OW_StringStreamBuf;
+typedef OpenWBEM::StringStream OW_StringStream;
+
 #endif

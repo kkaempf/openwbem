@@ -175,4 +175,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMParameter OW_CIMParameter;
+
 #endif

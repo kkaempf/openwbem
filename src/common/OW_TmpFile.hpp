@@ -111,4 +111,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::TmpFile OW_TmpFile;
+
 #endif

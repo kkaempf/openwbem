@@ -31,8 +31,11 @@
 #define OW_CIMOMLOCATORSLP_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMLocator.hpp"
+
 #ifdef OW_HAVE_SLP_H
 #include <slp.h>
+#endif // OW_HAVE_SLP_H
+
 #define OW_CIMOM_SLP_SERVICE_TYPE "CIM-Object-Manager"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
 
@@ -46,11 +49,14 @@ public:
 	CIMOMInfoArray findCIMOMs();
 	virtual ~CIMOMLocatorSLP();
 private:
+#ifdef OW_HAVE_SLP_H
 	SLPHandle m_hslp; 
+#endif // OW_HAVE_SLP_H
 	static void processAttributes(const String& attrs, CIMOMInfo& info);
 };
-#endif // OW_HAVE_SLP_H
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::CIMOMLocatorSLP OW_CIMOMLocatorSLP;
 
 #endif

@@ -294,4 +294,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMObjectPath OW_CIMObjectPath;
+
 #endif

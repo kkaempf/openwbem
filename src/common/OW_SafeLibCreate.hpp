@@ -27,6 +27,9 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+#ifndef OW_SAFE_LIB_CREATE_HPP_INCLUDE_GUARD_
+#define OW_SAFE_LIB_CREATE_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SharedLibrary.hpp"
@@ -184,4 +187,6 @@ template <typename T>
 jmp_buf SafeLibCreate<T>::theLoaderBuf;
 
 } // end namespace OpenWBEM
+
+#endif
 

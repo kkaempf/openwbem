@@ -88,4 +88,6 @@ protected:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::RequestHandlerIFCXML OW_RequestHandlerIFCXML;
+
 #endif

@@ -168,4 +168,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::CIMScope OW_CIMScope;
+
 #endif

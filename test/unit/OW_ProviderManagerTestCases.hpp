@@ -34,8 +34,6 @@
 #include "OW_config.h"
 #include "TestCase.hpp"
 
-class OW_ProviderManager;
-
 class OW_ProviderManagerTestCases : public TestCase
 {
 public:

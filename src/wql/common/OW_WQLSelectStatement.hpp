@@ -232,4 +232,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLSelectStatement OW_WQLSelectStatement;
+
 #endif

@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_Logger;
-
 class OW_LoggerTestCases : public TestCase
 {
 public:

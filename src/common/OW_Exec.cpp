@@ -60,62 +60,7 @@ using std::endl;
 DEFINE_EXCEPTION(ExecTimeout);
 DEFINE_EXCEPTION(ExecBufferFull);
 DEFINE_EXCEPTION(ExecError);
-//////////////////////////////////////////////////////////////////////////////
-int
-Exec::safeSystem(const Array<String>& command)
-{
-	int status;
-	pid_t pid;
-	if (command.size() == 0)
-		return 1;
-#ifdef OW_USE_GNU_PTH
-    pid = pth_fork();
-#else
-	pid = fork();
-#endif
-	if (pid == -1)
-		return -1;
-	if (pid == 0)
-	{
-		// Close all file handle from parent process
-		rlimit rl;
-		int i = sysconf(_SC_OPEN_MAX);
-		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
-			i = rl.rlim_max;
-		while (i > 2)
-		{
-			close(i);
-			i--;
-		}
-		char** argv = new char*[command.size() + 1];
-		for (size_t i = 0; i < command.size(); i++)
-		{
-			argv[i] = strdup(command[i].c_str());
-		}
-		argv[command.size()] = 0;
-		int rval = execv(argv[0], argv);
-		cerr << format( "Platform::safeSystem: execv failed for program "
-				"%1, rval is %2", argv[0], rval);
-		_exit(1);
-	}
-	do
-	{
-		Thread::testCancel();
-#ifdef OW_USE_GNUPTH
-		if (pth_waitpid(pid, &status, 0) == -1)
-#else
-		if (waitpid(pid, &status, 0) == -1)
-#endif
-		{
-			if (errno != EINTR)
-				return -1;
-		}
-		else
-		{
-			return WEXITSTATUS(status);
-		}
-	} while (1);
-}
+
 class PopenStreamsImpl
 {
 public:
@@ -315,9 +260,141 @@ PopenStreamsImpl::~PopenStreamsImpl()
 	{
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+PopenStreams::PopenStreams()
+	: m_impl(new PopenStreamsImpl)
+{
+}
+/////////////////////////////////////////////////////////////////////////////
+PopenStreams::~PopenStreams()
+{
+}
+/////////////////////////////////////////////////////////////////////////////
+Reference<UnnamedPipe> PopenStreams::in() const
+{
+	return m_impl->in();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::in(UnnamedPipeRef pipe)
+{
+	m_impl->in(pipe);
+}
+/////////////////////////////////////////////////////////////////////////////
+UnnamedPipeRef PopenStreams::out() const
+{
+	return m_impl->out();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::out(UnnamedPipeRef pipe)
+{
+	m_impl->out(pipe);
+}
+/////////////////////////////////////////////////////////////////////////////
+UnnamedPipeRef PopenStreams::err() const
+{
+	return m_impl->err();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::err(UnnamedPipeRef pipe)
+{
+	m_impl->err(pipe);
+}
+/////////////////////////////////////////////////////////////////////////////
+pid_t PopenStreams::pid() const
+{
+	return m_impl->pid();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::pid(pid_t newPid)
+{
+	m_impl->pid(newPid);
+}
+/////////////////////////////////////////////////////////////////////////////
+int PopenStreams::getExitStatus()
+{
+	return m_impl->getExitStatus();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::setProcessStatus(int ps)
+{
+	m_impl->setProcessStatus(ps);
+}
+/////////////////////////////////////////////////////////////////////////////
+PopenStreams::PopenStreams(const PopenStreams& src)
+	: m_impl(src.m_impl)
+{
+}
+/////////////////////////////////////////////////////////////////////////////
+PopenStreams& PopenStreams::operator=(const PopenStreams& src)
+{
+	m_impl = src.m_impl;
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+namespace Exec
+{
+
+int
+safeSystem(const Array<String>& command)
+{
+	int status;
+	pid_t pid;
+	if (command.size() == 0)
+		return 1;
+#ifdef OW_USE_GNU_PTH
+    pid = pth_fork();
+#else
+	pid = fork();
+#endif
+	if (pid == -1)
+		return -1;
+	if (pid == 0)
+	{
+		// Close all file handle from parent process
+		rlimit rl;
+		int i = sysconf(_SC_OPEN_MAX);
+		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+			i = rl.rlim_max;
+		while (i > 2)
+		{
+			close(i);
+			i--;
+		}
+		char** argv = new char*[command.size() + 1];
+		for (size_t i = 0; i < command.size(); i++)
+		{
+			argv[i] = strdup(command[i].c_str());
+		}
+		argv[command.size()] = 0;
+		int rval = execv(argv[0], argv);
+		cerr << format( "Platform::safeSystem: execv failed for program "
+				"%1, rval is %2", argv[0], rval);
+		_exit(1);
+	}
+	do
+	{
+		Thread::testCancel();
+#ifdef OW_USE_GNUPTH
+		if (pth_waitpid(pid, &status, 0) == -1)
+#else
+		if (waitpid(pid, &status, 0) == -1)
+#endif
+		{
+			if (errno != EINTR)
+				return -1;
+		}
+		else
+		{
+			return WEXITSTATUS(status);
+		}
+	} while (1);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 PopenStreams
-Exec::safePopen(const Array<String>& command,
+safePopen(const Array<String>& command,
 		const String& initialInput)
 {
 	PopenStreams retval;
@@ -393,79 +470,10 @@ Exec::safePopen(const Array<String>& command,
 	err->closeOutputHandle();
 	return retval;
 }
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::PopenStreams()
-	: m_impl(new PopenStreamsImpl)
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::~PopenStreams()
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-Reference<UnnamedPipe> PopenStreams::in() const
-{
-	return m_impl->in();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::in(UnnamedPipeRef pipe)
-{
-	m_impl->in(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreams::out() const
-{
-	return m_impl->out();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::out(UnnamedPipeRef pipe)
-{
-	m_impl->out(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreams::err() const
-{
-	return m_impl->err();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::err(UnnamedPipeRef pipe)
-{
-	m_impl->err(pipe);
-}
-/////////////////////////////////////////////////////////////////////////////
-pid_t PopenStreams::pid() const
-{
-	return m_impl->pid();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::pid(pid_t newPid)
-{
-	m_impl->pid(newPid);
-}
-/////////////////////////////////////////////////////////////////////////////
-int PopenStreams::getExitStatus()
-{
-	return m_impl->getExitStatus();
-}
-/////////////////////////////////////////////////////////////////////////////
-void PopenStreams::setProcessStatus(int ps)
-{
-	m_impl->setProcessStatus(ps);
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams::PopenStreams(const PopenStreams& src)
-	: m_impl(src.m_impl)
-{
-}
-/////////////////////////////////////////////////////////////////////////////
-PopenStreams& PopenStreams::operator=(const PopenStreams& src)
-{
-	m_impl = src.m_impl;
-	return *this;
-}
+
 /////////////////////////////////////////////////////////////////////////////
 void 
-Exec::executeProcessAndGatherOutput(const Array<String>& command,
+executeProcessAndGatherOutput(const Array<String>& command,
 	String& output, int& processstatus,
 	int timeoutsecs, int outputlimit)
 {
@@ -478,9 +486,10 @@ Exec::executeProcessAndGatherOutput(const Array<String>& command,
 		processstatus = streams.getExitStatus();
 	}
 }
+
 /////////////////////////////////////////////////////////////////////////////
 void 
-Exec::gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
+gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
 {
 	bool outIsOpen = true;
 	bool errIsOpen = true;
@@ -596,5 +605,6 @@ Exec::gatherOutput(String& output, PopenStreams& streams, int& processstatus, in
 	}
 }
 
+} // end namespace Exec
 } // end namespace OpenWBEM
 

@@ -97,4 +97,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::BaseStreamBuffer OW_BaseStreamBuffer;
+
 #endif

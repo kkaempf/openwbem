@@ -115,9 +115,10 @@ public:
 private:
 	Reference<PopenStreamsImpl> m_impl;
 };
-class Exec
+
+/////////////////////////////////////////////////////////////////////////////
+namespace Exec
 {
-public:
 	/**
 	 * Execute a command.
 	 * The command will inherit stdin, stdout, and stderr from the parent
@@ -138,7 +139,7 @@ public:
      * fails,  -1 if there was another error and the return code
      * of the command otherwise.
 	 */
-	static int safeSystem(const Array<String>& command);
+	int safeSystem(const Array<String>& command);
 	/**
 	 * Execute a command.
 	 * The command's stdin, stdout, and stderr will be connected via pipes to
@@ -160,7 +161,7 @@ public:
 	 * @return A PopenStreams object which can be used to access the child
 	 *  process and/or get it's return value.
 	 */
-	static PopenStreams safePopen(const Array<String>& command,
+	PopenStreams safePopen(const Array<String>& command,
 			const String& initialInput = String());
 	/**
 	 * Wait for output from a child process.  The function returns when the
@@ -190,7 +191,7 @@ public:
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	static void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
+	void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The 
@@ -243,13 +244,18 @@ public:
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	static void executeProcessAndGatherOutput(const Array<String>& command,
+	void executeProcessAndGatherOutput(const Array<String>& command,
 		String& output, int& processstatus,
 		int timeoutsecs = -1, int outputlimit = -1);
 	
 	
-};
+} // end namespace Exec
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::ExecTimeoutException OW_ExecTimeoutException;
+typedef OpenWBEM::ExecBufferFullException OW_ExecBufferFullException;
+typedef OpenWBEM::ExecErrorException OW_ExecErrorException;
+typedef OpenWBEM::PopenStreams OW_PopenStreams;
 
 #endif

@@ -68,4 +68,6 @@ createWQL() \
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLIFC OW_WQLIFC;
+
 #endif

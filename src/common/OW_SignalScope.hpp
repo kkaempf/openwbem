@@ -65,4 +65,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SignalScope OW_SignalScope;
+
 #endif

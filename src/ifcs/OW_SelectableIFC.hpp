@@ -47,4 +47,6 @@ typedef Reference<SelectableIFC> SelectableIFCRef;
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::SelectableIFC OW_SelectableIFC;
+
 #endif

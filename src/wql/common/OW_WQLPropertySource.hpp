@@ -88,4 +88,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::WQLPropertySource OW_WQLPropertySource;
+
 #endif

@@ -107,4 +107,6 @@ private:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::UserInfo OW_UserInfo;
+
 #endif

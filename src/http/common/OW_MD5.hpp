@@ -69,7 +69,7 @@ namespace OpenWBEM
 {
 
 DECLARE_EXCEPTION(MD5);
-#define HASHLEN 16
+const int MD5HASHLEN = 16;
 class String;
 class MD5;
 //////////////////////////////////////////////////////////////////////////////
@@ -132,5 +132,7 @@ private:
 };
 
 } // end namespace OpenWBEM
+
+typedef OpenWBEM::MD5 OW_MD5;
 
 #endif

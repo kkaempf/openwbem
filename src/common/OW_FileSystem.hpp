@@ -212,4 +212,6 @@ public:
 
 } // end namespace OpenWBEM
 
+typedef OpenWBEM::FileSystem OW_FileSystem;
+
 #endif

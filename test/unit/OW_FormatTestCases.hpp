@@ -33,8 +33,6 @@
 
 #include "TestCase.hpp"
 
-class OW_Format;
-
 class OW_FormatTestCases : public TestCase
 {
 public:
