@@ -42,7 +42,9 @@
 #endif
 
 #include <time.h>
+#ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 
 namespace OpenWBEM
 {
@@ -525,10 +527,15 @@ DateTime::set(int year, int month, int day, int hour, int minute, int second,
 void
 DateTime::setToCurrent()
 {
+#ifdef OW_HAVE_GETTIMEOFDAY
 	timeval tv;
 	gettimeofday(&tv, NULL);
 	m_time = tv.tv_sec;
 	m_microseconds = tv.tv_usec;
+#else
+	m_time = time(NULL);
+	m_microseconds = 0;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void

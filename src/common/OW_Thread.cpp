@@ -252,6 +252,7 @@ Thread::cooperativeCancel()
 	doCooperativeCancel();
 	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
+#ifndef OW_WIN32
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
 	// If the thread has already exited, an ThreadException will be thrown
@@ -263,6 +264,7 @@ Thread::cooperativeCancel()
 	catch (ThreadException&) 
 	{
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////
 bool
@@ -274,6 +276,7 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 	doCooperativeCancel();
 	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
+#ifndef OW_WIN32
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
 	// If the thread has already exited, an ThreadException will be thrown
@@ -285,6 +288,7 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 	catch (ThreadException&) 
 	{
 	}
+#endif
 	while (!m_cancelled && isRunning())
 	{
 		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))

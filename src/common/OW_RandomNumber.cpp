@@ -34,9 +34,17 @@
 #include "OW_ThreadImpl.hpp"
 #include <fstream>
 #include <sys/types.h>
+
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
+#ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+
 #include <stdlib.h>
+#include <time.h>
 
 namespace OpenWBEM
 {
@@ -58,6 +66,10 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 		MutexLock lock(guard);
 		if (seed == 0)
 		{
+#ifdef OW_WIN32
+			time_t timeval = ::time(NULL);
+			seed = timeval;
+#else
 			// use the time as part of the seed
 			struct timeval tv;
 			gettimeofday(&tv, 0);
@@ -75,6 +87,7 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 			}
 			// Build the seed. Take into account our pid and uid.
 			seed = dev_rand_input ^ (getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec;
+#endif
 #ifdef OW_HAVE_SRANDOM
 			srandom(seed);
 #else
