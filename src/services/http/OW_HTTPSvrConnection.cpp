@@ -114,6 +114,7 @@ HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
 	, m_clientIsOpenWBEM2(false)
 	, m_requestHandler()
 	, m_options(opts)
+	, m_shutdown(false)
 {
 	m_socket.setTimeouts(m_options.timeout);
 }
@@ -189,7 +190,7 @@ HTTPSvrConnection::run()
 			}
 			if (!HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
 			{
-				if (Socket::gotShutDown())
+				if (m_shutdown)
 				{
 					m_errDetails = "Server is shutting down!";
 					m_resCode = SC_INTERNAL_SERVER_ERROR;
@@ -1122,7 +1123,7 @@ HTTPSvrConnection::sendError(int resCode)
 		resCode = SC_REQUEST_TIMEOUT;
 		m_errDetails = "Timeout waiting for request.";
 	}
-	else if (Socket::gotShutDown())
+	else if (m_shutdown)
 	{
 		resCode = SC_SERVICE_UNAVAILABLE;
 		m_errDetails = "The server is shutting down.  Please try "
@@ -1258,6 +1259,7 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 void
 HTTPSvrConnection::doCooperativeCancel()
 {
+	m_shutdown = true;
 	m_socket.disconnect();
 }
 

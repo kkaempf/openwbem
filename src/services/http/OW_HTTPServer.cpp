@@ -381,7 +381,6 @@ private:
 void
 HTTPServer::startService()
 {
-	Socket::createShutDownMechanism();
 	ServiceEnvironmentIFCRef env = m_options.env;
 	LoggerRef lgr = env->getLogger();
 	lgr->logDebug("HTTP Service is starting...");
@@ -570,14 +569,12 @@ HTTPServer::shutdown()
 	m_options.env->removeSelectable(m_pUDSServerSocket);
 
 	// now stop all current connections
-	Socket::shutdownAllSockets();
 	if (m_upipe->writeString("shutdown") == -1)
 	{
 		OW_THROW(IOException, "Failed writing to HTTPServer shutdown pipe");
 	}
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
 	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
-	Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;
 	m_pUDSServerSocket = 0;

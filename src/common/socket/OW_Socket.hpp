@@ -225,19 +225,19 @@ public:
 	 */
 	bool isConnected() const { return m_impl->isConnected(); }
 
-	static void createShutDownMechanism();
+	static void createShutDownMechanism() OW_DEPRECATED; // deprecated in 3.1.0
 	/**
 	 * Call this to shutdown all sockets.  This is usefull when the CIMOM
 	 * is shutting down.  We want any outstanding connections to close
 	 * immediately.
 	 */
-	static void shutdownAllSockets();
+	static void shutdownAllSockets() OW_DEPRECATED; // deprecated in 3.1.0
 	/**
 	 * Have the sockets been shutdown?
 	 * @return true if the sockets have been shutdown
 	 */
-	static bool gotShutDown();
-	static void deleteShutDownMechanism();
+	static bool gotShutDown() OW_DEPRECATED; // deprecated in 3.1.0
+	static void deleteShutDownMechanism() OW_DEPRECATED; // deprecated in 3.1.0
 
 #if defined(OW_WIN32)
 	typedef HANDLE ShutDownMechanism_t;
@@ -245,7 +245,7 @@ public:
 	typedef UnnamedPipeRef ShutDownMechanism_t;
 #endif
 
-	static ShutDownMechanism_t getShutDownMechanism()
+	static ShutDownMechanism_t getShutDownMechanism() // deprecated in 3.1.0 - not marked as OW_DEPRECATED because other code still calls this.
 	{
 		return s_shutDownMechanism;
 	}

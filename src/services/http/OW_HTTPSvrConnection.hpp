@@ -168,6 +168,7 @@ private:
 
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
+	bool m_shutdown;
 
 	int processRequestLine();
 	int processHeaders(OperationContext& context);
