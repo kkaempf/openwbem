@@ -3,6 +3,7 @@ SUBDIRS = socket
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libopenwbem.so
+SHAREDLIBADD = -lpthread
 
 
 noinst_LIBRARIES = libopenwbem.a

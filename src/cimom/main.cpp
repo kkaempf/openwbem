@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
 		while(!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into
-			// the signal pipe.
+			// the signal pipe or an error has happened
 			env->runSelectEngine();
 			sig = OW_Platform::popSig();
 			switch (sig)

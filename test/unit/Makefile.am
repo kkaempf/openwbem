@@ -32,6 +32,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/client
 
 unitMain_LDADD = \
+-lpthread \
 $(top_builddir)/src/cimom/OW_LocalCIMOMHandle.o \
 $(top_builddir)/src/cimom/OW_CIMOMEnvironment.o \
 $(top_builddir)/src/cimom/OW_ProviderManager.o \

@@ -6,6 +6,7 @@ $(CXXBINLINKFLAGS) \
 -o newdaemon
 
 newdaemon_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
 -L$(top_builddir)/src/client -lowclient \

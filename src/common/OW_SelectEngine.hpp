@@ -34,6 +34,9 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Array.hpp"
+#include "OW_Exception.hpp"
+
+DEFINE_EXCEPTION(Select)
 
 class OW_SelectEngine
 {
@@ -41,7 +44,7 @@ public:
 	void addSelectableObject(OW_SelectableIFCRef obj,
 		OW_SelectableCallbackIFCRef cb);
 
-	void go();
+	void go(); // Throws OW_SelectException on error
 	void stop();
 
 private:

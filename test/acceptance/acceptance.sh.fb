@@ -69,10 +69,10 @@ Install()
 
 	cd $STAGEDIR
 	# create some users for digest authentication.
-	#DIGPASSFILE=$STAGEDIR/$OWSYSCONFDIR/openwbem/digest_auth.passwd
-	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test1 -f $DIGPASSFILE -p pass1
-	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test2 -f $DIGPASSFILE -p pass2
-	#$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test3 -f $DIGPASSFILE -p pass3
+	DIGPASSFILE=$STAGEDIR/$OWSYSCONFDIR/openwbem/digest_auth.passwd
+	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test1 -f $DIGPASSFILE -p pass1
+	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test2 -f $DIGPASSFILE -p pass2
+	$STAGEDIR/$OWSBINDIR/owdigestgenpass -l test3 -f $DIGPASSFILE -p pass3
 
 	# create a password file for simple authentication
 	echo "test:test" > $STAGEDIR/$OWSYSCONFDIR/openwbem/simple_auth.passwd
@@ -129,7 +129,7 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	sleep 5
+	sleep 1
 	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
 	  echo "** Daemon failed to start!  Another instance could be running Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
@@ -154,7 +154,7 @@ RestartDaemon()
 	PID=`cat $PIDFILE`
 	kill -HUP $PID
 	echo "Waiting for daemon to re-initialize"
-	sleep 3
+	sleep 2
 }
 
 #############################################################################
@@ -174,7 +174,7 @@ StopDaemon()
 	  Exit 1
 	fi
 	kill -TERM $PID
-	sleep 4
+	sleep 1
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
 	  kill -KILL $PID
 	  echo "** Daemon failed to terminate!!!  Check"
@@ -760,7 +760,7 @@ BUILDDIR=$STAGEDIR/../../..
 
 PIDFILE=$STAGEDIR/owcimomd.pid
 
-LD_LIBRARY_PATH="$STAGEDIR/$OWLIBDIR:$LD_LIBRARY_PATH"
+LD_LIBRARY_PATH="$STAGEDIR/$OWLIBDIR:$STAGEDIR/$OWLIBDIR/openwbem/services:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH
 
 RANDFILE=$STAGEDIR/ssl_randfile

@@ -1,6 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowrequesthandlerbinary.so
+SHAREDLIBADD = -lpthread
 
 noinst_LIBRARIES = \
 libowrequesthandlerbinary.a

@@ -6,6 +6,7 @@ $(CXXBINLINKFLAGS) \
 -o CIMOMLocator
 
 CIMOMLocator_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
@@ -21,6 +22,7 @@ $(CXXBINLINKFLAGS) \
 -o cimlistener
 
 cimlistener_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
@@ -34,6 +36,7 @@ cimListenerTest.cpp
 
 #wqlTest1
 wqlTest1_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
@@ -49,6 +52,7 @@ wqlTest1.cpp
 
 #aclTest
 aclTest_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
@@ -64,6 +68,7 @@ aclTest.cpp
 
 #owcimclientcl
 owcimclientcl_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
@@ -79,6 +84,7 @@ OW_CIMClientCL.cpp
 
 #IPCClientTest
 IPCClientTest_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
@@ -93,6 +99,7 @@ IPCClientTest.cpp
 
 #fakeclient
 fakeclient_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/http/client -lowhttpclient \

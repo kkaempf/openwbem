@@ -442,7 +442,7 @@ OW_CppProviderIFC::getProvider(
 
 	m_provs[provId] = lp;
 
-	return OW_CppProviderBaseIFCRef(pProv);
+	return lp.m_pProv; //OW_CppProviderBaseIFCRef(pProv);
 }
 
 OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)

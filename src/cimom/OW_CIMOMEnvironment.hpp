@@ -102,7 +102,7 @@ public:
 	OW_Reference<T> m_obj;
 	OW_SharedLibraryRef m_lib;
 };
-				  
+				
 class OW_CIMOMEnvironment : public OW_ServiceEnvironmentIFC
 {
 public:
@@ -149,17 +149,30 @@ public:
 
 	void logCustInfo(const OW_String& s) const
 	{
-		m_Logger->logCustInfo(s);
+		if (m_Logger)
+		{
+			m_Logger->logCustInfo(s);
+		}
 	}
 
 	void logDebug(const OW_String& s) const
 	{
-		m_Logger->logDebug(s);
+		if (m_Logger)
+		{
+			m_Logger->logDebug(s);
+		}
 	}
 
 	void logError(const OW_String& s) const
 	{
-		m_Logger->logError(s);
+		if (m_Logger)
+		{
+			m_Logger->logError(s);
+		}
+		else
+		{
+			cerr << s << endl;
+		}
 	}
 
 	void exportIndication(const OW_CIMInstance& instance,

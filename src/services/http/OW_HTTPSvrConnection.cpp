@@ -111,6 +111,17 @@ OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 void
 OW_HTTPSvrConnection::run()
 {
+	class printOutOnExit
+	{
+	public:
+		~printOutOnExit()
+		{
+			cout << "********* OW_HTTPSvrConnection exiting*" << endl;
+		}
+	};
+	printOutOnExit a;
+	(void)a;
+	cout << "In OW_HTTPSvrConnection::run" << endl;
 	istream* istrToReadFrom = NULL;
 	OW_SelectTypeArray selArray;
 
@@ -122,6 +133,7 @@ OW_HTTPSvrConnection::run()
 		m_isAuthenticated = false;
 		while (m_istr.good())
 		{
+cout << "OW_HTTPSvrConnection::run - in while (m_istr.good())" << endl;
 			//m_isAuthenticated = false;
 			m_errDetails.erase();
 			m_requestLine.clear();
@@ -143,14 +155,16 @@ OW_HTTPSvrConnection::run()
 				"OpenWBEM/" OW_VERSION " (CIMOM)");
 
 			int selType = OW_Select::select(selArray, SOCKET_TIMEOUT * 1000);
-
+cout << "OW_HTTPSvrConnection::run - got select" << endl;
 			if(selType == OW_Select::OW_SELECT_ERROR)
 			{
+cout << "OW_HTTPSvrConnection::run - got OW_SELECT_ERROR" << endl;
 			   OW_THROW(OW_SocketException, "Error occurred during select()");
 			}
 
 			if(selType == OW_Select::OW_SELECT_TIMEOUT)
 			{
+cout << "OW_HTTPSvrConnection::run - got OW_SELECT_TIMEOUT" << endl;
 			   m_resCode = SC_REQUEST_TIMEOUT;
 			   m_errDetails = "Timeout waiting for request.";
 			   sendError(m_resCode);
@@ -159,6 +173,7 @@ OW_HTTPSvrConnection::run()
 
 			if(selType == 0)	// Unnamped pipe selected
 			{
+cout << "OW_HTTPSvrConnection::run - got select on unnamed pipe" << endl;
 			   m_resCode = SC_SERVICE_UNAVAILABLE;
 			   m_errDetails = "Server is shutting down."
 				   "  Please try again later.";

@@ -58,7 +58,7 @@ OW_SelectEngine::go()
 		int selected = OW_Select::select(selObjs);
 		if (selected == OW_Select::OW_SELECT_ERROR)
 		{
-			return;
+			OW_THROW(OW_SelectException, "Select Error");
 		}
 		else if (selected == OW_Select::OW_SELECT_TIMEOUT
 				 || selected == OW_Select::OW_SELECT_INTERRUPTED)

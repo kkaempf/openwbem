@@ -1,6 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libowhttpclient.a
+SHAREDLIBADD = -lpthread
 
 OW_SHARED_LIBS = libowhttpclient.so
 thelibdir = $(libdir)

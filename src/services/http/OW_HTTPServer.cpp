@@ -121,12 +121,47 @@ OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 void
 OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 {
-	m_options.httpPort = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt).toInt32();
-	m_options.httpsPort = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt).toInt32();
-	m_options.maxConnections = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt).toInt32() + 1;
-	m_options.isSepThread = !env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	m_options.enableDeflate = !env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt).equalsIgnoreCase("false");
-	m_options.useDigest = !env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt).equalsIgnoreCase("false");
+	OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
+	if (item.length() == 0)
+	{
+		item = DEFAULT_HTTP_PORT;
+	}
+	m_options.httpPort = item.toInt32();
+
+	item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
+	if (item.length() == 0)
+	{
+		item = DEFAULT_HTTPS_PORT;
+	}
+	m_options.httpsPort = item.toInt32();
+
+	item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
+	if (item.length() == 0)
+	{
+		item = DEFAULT_MAX_CONNECTIONS;
+	}
+	m_options.maxConnections = item.toInt32() + 1;
+
+	item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
+	if (item.length() == 0)
+	{
+		item = "false";
+	}
+	m_options.isSepThread = !item.equalsIgnoreCase("true");
+
+	item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt);
+	if (item.length() == 0)
+	{
+		item = "true";
+	}
+	m_options.enableDeflate = !item.equalsIgnoreCase("false");
+
+	item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt);
+	if (item.length() == 0)
+	{
+		item = "true";
+	}
+	m_options.useDigest = !item.equalsIgnoreCase("false");
 
 	// TODO: Fix this
 	m_options.requestHandler = env->getRequestHandler("CIM/XML");
@@ -250,15 +285,16 @@ public:
 				 socket.getPeerAddress().toString()));
 
 			m_HTTPServer->incThreadCount();
-
+cout << "got past incThreadCount" << endl;
 			OW_RequestHandlerIFCRef newRequestHandler(m_HTTPServer->m_options.requestHandler->clone());
-
+cout << "got past 2" << endl;
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
-
+cout << "got past 3" << endl;
 			// create a wrapper environment that will report the path to the
 			// request handler
 			OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
 				newOpts.env));
+cout << "got past 4" << endl;
 
 			newOpts.env = wrapperEnv;
 
@@ -266,8 +302,10 @@ public:
 			newOpts.requestHandler->setEnvironment(wrapperEnv);
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
+cout << "got past 5" << endl;
 
 			OW_Thread::run(rref, m_HTTPServer->m_options.isSepThread);
+cout << "got past 6" << endl;
 		}
 		catch (OW_SSLException& se)
 		{
@@ -284,6 +322,16 @@ public:
 		catch (OW_IOException &e)
 		{
 			m_HTTPServer->m_options.env->getLogger()->logError(format("IO Exception in HTTPServer: %1", e));
+		}
+		catch (OW_Exception& e)
+		{
+			m_HTTPServer->m_options.env->getLogger()->logError(format("OW_Exception in HTTPServer: %1", e));
+			throw;
+		}
+		catch (...)
+		{
+			m_HTTPServer->m_options.env->getLogger()->logError("Unknown exception in HTTPServer.");
+			throw;
 		}
 
 	}

@@ -1,5 +1,3 @@
-IPCClientTest authenticating as test1
-IPCClientTest authenticated as test1
 *** Doing createNameSpace() ***
 *** Doing enumNamespace() ***
 deep = false

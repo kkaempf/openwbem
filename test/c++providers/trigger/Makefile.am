@@ -1,6 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libtriggertest1.a libtriggertest2.a
+SHAREDLIBADD = -lpthread
 
 
 OW_SHARED_LIBS = libtriggertest1.so libtriggertest2.so

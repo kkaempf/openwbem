@@ -11,6 +11,7 @@ owenumnamespace
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
 
 owdigestgenpass_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
@@ -22,6 +23,7 @@ $(CXXBINLINKFLAGS) \
 owexecwql_SOURCES = owexecwql.cpp
 
 owexecwql_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -36,6 +38,7 @@ $(CXXBINLINKFLAGS) \
 owcreatenamespace_SOURCES = owcreatenamespace.cpp
 
 owcreatenamespace_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -50,6 +53,7 @@ $(CXXBINLINKFLAGS) \
 owdeletenamespace_SOURCES = owdeletenamespace.cpp
 
 owdeletenamespace_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
@@ -64,6 +68,7 @@ $(CXXBINLINKFLAGS) \
 owenumnamespace_SOURCES = owenumnamespace.cpp
 
 owenumnamespace_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \

@@ -8,6 +8,7 @@ $(CXXBINLINKFLAGS) \
 -rdynamic -o owcimomd
 
 owcimomd_LDADD = \
+-lpthread \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
 -L$(top_builddir)/db/db -lowdb -ldl

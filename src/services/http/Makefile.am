@@ -1,7 +1,8 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowservicehttp.so
-SHAREDLIBADD = -L$(top_builddir)/src/http/common -lowhttpcommon
+SHAREDLIBADD = -lpthread $(top_builddir)/src/http/common/libowhttpcommon.a
+#SHAREDLIBADD = -L$(top_builddir)/src/http/common -lowhttpcommon
 
 noinst_LIBRARIES = \
 libowservicehttp.a

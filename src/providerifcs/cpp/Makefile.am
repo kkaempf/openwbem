@@ -2,6 +2,7 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libcppprovifc.a
 OW_SHARED_LIBS = libcppprovifc.so
+SHAREDLIBADD = -lpthread
 
 thelibdir = $(pkglibdir)/provifcs
 

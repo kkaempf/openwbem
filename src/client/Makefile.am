@@ -1,6 +1,7 @@
 SUBDIRS = test
 
 include $(top_srcdir)/Makefile-shared-lib.inc
+SHAREDLIBADD = -lpthread
 
 noinst_LIBRARIES = libowclient.a
 
