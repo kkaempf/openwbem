@@ -67,11 +67,13 @@ class OpenWBEM_ObjectManagerInstProv
 private:
 	// Only have one Object Manager
 	CIMInstance m_inst;
+	bool m_haveSubscriptions;
 
 public:
 	////////////////////////////////////////////////////////////////////////////
 	OpenWBEM_ObjectManagerInstProv()
 		: m_inst(CIMNULL)
+		, m_haveSubscriptions(false)
 	{
 	}
 	
@@ -125,8 +127,32 @@ public:
 		}
 	}
 
-	// Amazingly, we don't have to implement any other of the indication provider functions, as the default
-	// implementations are all just what we want.
+	void activateFilter(
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter,
+		const String& eventType,
+		const String& nameSpace,
+		const StringArray& classes,
+		bool firstActivation
+		)
+	{
+		m_haveSubscriptions = true;
+	}
+
+	void deActivateFilter(
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter,
+		const String& eventType,
+		const String& nameSpace,
+		const StringArray& classes,
+		bool lastActivation
+		)
+	{
+		if (lastActivation)
+		{
+			m_haveSubscriptions = false;
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////
 	virtual void initialize(const ProviderEnvironmentIFCRef &env)
@@ -179,27 +205,31 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual void shuttingDown(const ProviderEnvironmentIFCRef &env)
 	{
-		// build the indication
-		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
-		CIMOMHandleIFCRef hdl(env->getCIMOMHandle());
-		try
+		if (m_haveSubscriptions)
 		{
-			CIMClass CIM_InstModification(hdl->getClass(interopNS, CLASS_CIM_InstModification));
-			CIMInstance indicationInst(CIM_InstModification.newInstance());
-			indicationInst.updatePropertyValue("PreviousInstance", CIMValue(m_inst));
-			// set our instance to Started=false
-			m_inst.updatePropertyValue("Started", CIMValue(false));
-			indicationInst.updatePropertyValue("SourceInstance", CIMValue(m_inst));
-			hdl->exportIndication(indicationInst, interopNS);
-			// Wait a bit to give the indication server time to export it.
-			// Yeah this doesn't guarantee the listeners will receive the indication,
-			// but shutting down is more important. And if we don't sleep, there's no chance
-			// they'll ever get it.
-			Thread::sleep(250);
-		}
-		catch (Exception& e)
-		{
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
+			// build the indication
+			String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+			CIMOMHandleIFCRef hdl(env->getCIMOMHandle());
+			try
+			{
+				CIMClass CIM_InstModification(hdl->getClass(interopNS, CLASS_CIM_InstModification));
+				CIMInstance indicationInst(CIM_InstModification.newInstance());
+				indicationInst.updatePropertyValue("PreviousInstance", CIMValue(m_inst));
+				// set our instance to Started=false
+				m_inst.updatePropertyValue("Started", CIMValue(false));
+				indicationInst.updatePropertyValue("SourceInstance", CIMValue(m_inst));
+				hdl->exportIndication(indicationInst, interopNS);
+				// Wait a bit to give the indication server time to export it.
+				// Yeah this doesn't guarantee the listeners will receive the indication,
+				// but shutting down is more important. And if we don't sleep, there's no chance
+				// they'll ever get it.
+				Thread::sleep(1000);
+			}
+			catch (Exception& e)
+			{
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("OpenWBEM_ObjectManager caught exception while exporting indication in shuttingDown(): %1", e));
+			}
+				
 		}
 	}
 
