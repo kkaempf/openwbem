@@ -178,6 +178,4 @@ OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMBase OW_CIMBase OW_DEPRECATED; // in 3.0.0
-
 #endif	// OW_CIMBASE_HPP_

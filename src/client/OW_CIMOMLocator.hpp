@@ -71,10 +71,4 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMOMLocatorException OW_CIMOMLocatorException OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMOMAttribute OW_CIMOMAttribute OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMOMAttributeArray OW_CIMOMAttributeArray OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMOMLocatorRef OW_CIMOMLocatorRef OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMOMLocator OW_CIMOMLocator OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -173,6 +173,4 @@ bool operator!=(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLCompile OW_WQLCompile OW_DEPRECATED; // in 3.0.0
-
 #endif

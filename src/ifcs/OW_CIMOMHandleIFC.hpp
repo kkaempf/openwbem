@@ -1247,7 +1247,4 @@ typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMOMHandleIFC OW_CIMOMHandleIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMOMHandleIFCRef OW_CIMOMHandleIFCRef OW_DEPRECATED; // in 3.0.0
-
 #endif

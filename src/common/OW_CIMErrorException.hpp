@@ -63,6 +63,4 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMErrorException OW_CIMErrorException OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -719,6 +719,4 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMXMLCIMOMHandle OW_CIMXMLCIMOMHandle OW_DEPRECATED; // in 3.0.0
-
 #endif

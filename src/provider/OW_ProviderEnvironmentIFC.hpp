@@ -68,6 +68,4 @@ typedef IntrusiveReference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ProviderEnvironmentIFC OW_ProviderEnvironmentIFC OW_DEPRECATED; // in 3.0.0
-
 #endif									

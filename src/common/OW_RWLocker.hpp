@@ -149,9 +149,4 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::RWLockerException OW_RWLockerException OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::RWLocker OW_RWLocker OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::ReadLock OW_ReadLock OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::WriteLock OW_WriteLock OW_DEPRECATED; // in 3.0.0
-
 #endif

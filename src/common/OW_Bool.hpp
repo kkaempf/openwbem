@@ -153,6 +153,4 @@ OW_COMMON_API std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Bool OW_Bool OW_DEPRECATED; // in 3.0.0
-
 #endif

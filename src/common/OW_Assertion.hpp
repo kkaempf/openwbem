@@ -43,9 +43,6 @@ namespace OpenWBEM
 
 OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
 
-// for backward compatibility
-typedef AssertionException Assertion OW_DEPRECATED; // in 3.0.0
-
 /**
  * OW_ASSERT works similar to the assert() macro.  But instead of calling 
  * abort(), instead it throws an AssertionException.

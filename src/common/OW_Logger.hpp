@@ -120,7 +120,4 @@ class OW_COMMON_API Logger : public IntrusiveCountableBase
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Logger OW_Logger OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::LoggerRef OW_LoggerRef OW_DEPRECATED; // in 3.0.0
-
 #endif

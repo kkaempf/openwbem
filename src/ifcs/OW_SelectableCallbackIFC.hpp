@@ -58,7 +58,4 @@ typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::SelectableCallbackIFC OW_SelectableCallbackIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::SelectableCallbackIFCRef OW_SelectableCallbackIFCRef OW_DEPRECATED; // in 3.0.0
-
 #endif

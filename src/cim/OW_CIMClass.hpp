@@ -419,6 +419,4 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMClass OW_CIMClass OW_DEPRECATED; // in 3.0.0
-
 #endif

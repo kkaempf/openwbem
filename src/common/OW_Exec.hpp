@@ -259,9 +259,4 @@ namespace Exec
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ExecTimeoutException OW_ExecTimeoutException OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::ExecBufferFullException OW_ExecBufferFullException OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::ExecErrorException OW_ExecErrorException OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::PopenStreams OW_PopenStreams OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -760,6 +760,4 @@ bool CIMInstanceSortCriterion( const CIMInstance& lhs, const CIMInstance& rhs);
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLProcessor OW_WQLProcessor OW_DEPRECATED; // in 3.0.0
-
 #endif

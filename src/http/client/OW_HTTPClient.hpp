@@ -267,6 +267,4 @@ class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::HTTPClient OW_HTTPClient OW_DEPRECATED; // in 3.0.0
-
 #endif	// OW_HTTPCLIENT_HPP_

@@ -88,6 +88,4 @@ public:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::WQLPropertySource OW_WQLPropertySource OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -130,7 +130,5 @@ protected:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ClientCIMOMHandle OW_ClientCIMOMHandle OW_DEPRECATED; // in 3.0.0
-
 #endif
 	

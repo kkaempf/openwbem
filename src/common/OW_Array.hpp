@@ -165,16 +165,5 @@ typedef Array<Real32>     Real32Array;
 
 #include "OW_ArrayImpl.hpp"
 
-typedef OpenWBEM::UInt8Array OW_UInt8Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Int8Array OW_Int8Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::UInt16Array OW_UInt16Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Int16Array OW_Int16Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::UInt32Array OW_UInt32Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Int32Array OW_Int32Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::UInt64Array OW_UInt64Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Int64Array OW_Int64Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Real64Array OW_Real64Array OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::Real32Array OW_Real32Array OW_DEPRECATED; // in 3.0.0
-
 #endif
 	

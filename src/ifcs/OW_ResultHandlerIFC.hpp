@@ -75,11 +75,4 @@ typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMClassResultHandlerIFC OW_CIMClassResultHandlerIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMInstanceResultHandlerIFC OW_CIMInstanceResultHandlerIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMObjectPathResultHandlerIFC OW_CIMObjectPathResultHandlerIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::StringResultHandlerIFC OW_StringResultHandlerIFC OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::CIMQualifierTypeResultHandlerIFC OW_CIMQualifierTypeResultHandlerIFC OW_DEPRECATED; // in 3.0.0
-
-
 #endif

@@ -178,6 +178,4 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::StringBuffer OW_StringBuffer OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -78,6 +78,4 @@ typedef IntrusiveReference<CIMListenerCallback> CIMListenerCallbackRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CIMListenerCallback OW_CIMListenerCallback OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -98,7 +98,5 @@ typedef SharedLibraryReference< IntrusiveReference<CppMethodProviderIFC> > CppMe
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::CppMethodProviderIFC OW_CppMethodProviderIFC OW_DEPRECATED; // in 3.0.0
-
 #endif
 								

@@ -287,7 +287,4 @@ typedef IntrusiveReference<Thread> ThreadRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Thread OW_Thread OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::ThreadException OW_ThreadException OW_DEPRECATED; // in 3.0.0
-
 #endif

@@ -68,6 +68,4 @@ typedef IntrusiveReference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::PosixUnnamedPipe OW_PosixUnnamedPipe OW_DEPRECATED; // in 3.0.0
-
 #endif

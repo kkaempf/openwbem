@@ -121,7 +121,4 @@ private:
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::TempFileBuffer OW_TempFileBuffer OW_DEPRECATED; // in 3.0.0
-typedef OpenWBEM::TempFileStream OW_TempFileStream OW_DEPRECATED; // in 3.0.0
-
 #endif
