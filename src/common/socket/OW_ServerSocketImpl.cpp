@@ -354,7 +354,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 				strerror(errno)).c_str());
 	}
 	// give anybody access to the socket
-	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
+	if (::fchmod(m_sockfd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: chmod failed: %1",
