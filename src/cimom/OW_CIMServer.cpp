@@ -1105,8 +1105,6 @@ OW_CIMServer::createInstance(
 	const OW_CIMInstance& ci,
 	const OW_UserInfo& aclInfo)
 {
-	OW_CIMObjectPath rval(ci);
-
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
@@ -1141,6 +1139,7 @@ OW_CIMServer::createInstance(
 			"instance = %2", ns, lci.toMOF()));
 	}
 
+	OW_CIMObjectPath rval(OW_CIMNULL);
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
