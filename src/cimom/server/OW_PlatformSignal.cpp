@@ -133,20 +133,7 @@ namespace OW_NAMESPACE
 				template<class T>
 				void flattenToPipe(const T& t, UnnamedPipeRef& destPipe)
 				{
-					if( sizeof(T) <= sizeof(int) )
-					{
-						destPipe->writeInt(*reinterpret_cast<const int*>(&t));
-					}
-					else // NOT USUALLY SAFE, but will work for larger numeric types (long, double, etc).
-					{
-						int num = sizeof(T) / sizeof(int);
-						for( const int* ptr = reinterpret_cast<const int*>(&t);
-							  num > 0;
-							  --num, ++ptr )
-						{
-							destPipe->writeInt(*ptr);
-						}
-					}
+					destPipe->write(&t, sizeof(t));
 				}
 
 				// A helper function to unflatten types from a pipe without
@@ -155,31 +142,7 @@ namespace OW_NAMESPACE
 				template <class T>
 				bool unflattenFromPipe(T& dest, UnnamedPipeRef& sourcePipe)
 				{
-					if( sizeof(T) <= sizeof(int) )
-					{
-						int temp;
-						if( sourcePipe->readInt(&temp) < 0 )
-						{
-							return false;
-						}
-						dest = *reinterpret_cast<T*>(&temp);
-					}
-					else
-					{
-						int num = sizeof(T) / sizeof(int);
-						for( int* ptr = reinterpret_cast<int*>(&dest);
-							  num > 0;
-							  --num, ++ptr )
-						{
-							int temp;
-							if( sourcePipe->readInt(&temp) < 0 )
-							{
-								return false;
-							}
-							*ptr = *reinterpret_cast<int*>(&temp);
-						}
-					}
-					return true;
+					return sourcePipe->read(&dest, sizeof(dest));
 				}
 			}
 
