@@ -36,7 +36,9 @@
 #ifdef OW_THREADS_RUN_AS_USER
 
 #include "OW_ProviderProxies.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_Logger.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -45,6 +47,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
