@@ -28,6 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_StringStreamTestCases.hpp"

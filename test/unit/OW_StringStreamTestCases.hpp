@@ -31,6 +31,7 @@
 #ifndef OW_StringStream_TEST_CASES_HPP_
 #define OW_StringStream_TEST_CASES_HPP_
 
+#include "OW_config.h"
 #include "TestCase.hpp"
 
 class OW_StringStreamTestCases : public TestCase
