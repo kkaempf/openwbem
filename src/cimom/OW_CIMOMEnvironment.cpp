@@ -69,8 +69,9 @@ public:
 	{}
 
 protected:
-	virtual void doSelected()
+	virtual void doSelected(OW_SelectableIFCRef& selectedObject)
 	{
+		(void)selectedObject;
 		m_engine.stop();
 	}
 

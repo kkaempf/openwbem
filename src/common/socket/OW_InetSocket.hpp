@@ -35,7 +35,7 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_InetSocketImpl.hpp"
 #include "OW_InetSSLSocketImpl.hpp"
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
 #include "OW_Types.h"
@@ -72,7 +72,7 @@ public:
 	 * @isSSL is it an SSL socket?
 	 * @exception OW_SocketException
 	 */
-	OW_InetSocket(const OW_InetAddress& addr, OW_Bool isSSL = false);
+	OW_InetSocket(const OW_SocketAddress& addr, OW_Bool isSSL = false);
 
 	/**
 	 * Copy ctor
@@ -91,7 +91,7 @@ public:
 	 * @param addr The address of the machine to connect to.
 	 * @exception OW_SocketException
 	 */
-	void connect(const OW_InetAddress& addr)
+	void connect(const OW_SocketAddress& addr)
 		{ m_impl->connect(addr); }
 
 	/**
@@ -187,15 +187,15 @@ public:
 
 	/**
 	 * Get the local address associated with the socket connection
-	 * @return an OW_InetAddress representing the local machine
+	 * @return an OW_SocketAddress representing the local machine
 	 */
-	OW_InetAddress getLocalAddress() const { return m_impl->getLocalAddress(); }
+	OW_SocketAddress getLocalAddress() const { return m_impl->getLocalAddress(); }
 
 	/**
 	 * Get the peer address associated with the socket connection
-	 * @return an OW_InetAddress representing the peer machine
+	 * @return an OW_SocketAddress representing the peer machine
 	 */
-	OW_InetAddress getPeerAddress() const { return m_impl->getPeerAddress(); }
+	OW_SocketAddress getPeerAddress() const { return m_impl->getPeerAddress(); }
 
 	/**
 	 * Get an istream to read from the socket
@@ -249,7 +249,7 @@ public:
 	static void deleteShutDownMechanism();
 
 private:
-	OW_InetSocketBaseImplRef m_impl;
+	OW_SocketBaseImplRef m_impl;
 };
 
 #endif	//  __INETSOCKET_HPP__

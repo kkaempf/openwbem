@@ -34,7 +34,7 @@
 #endif
 
 #include "OW_InetSocket.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunker.hpp"
 #include "OW_String.hpp"
 #include <iostream>
@@ -65,8 +65,8 @@ main(int argc, char* argv[])
 //		cout << "Enter an IP or hostname: ";
 //		cin >> ipOrHost;
 
-		OW_InetAddress addr;
-		addr = OW_InetAddress::getByName(argv[1], 80);
+		OW_SocketAddress addr;
+		addr = OW_SocketAddress::getByName(argv[1], 80);
 
 		cout << "\n\nTrying to connect on port 80...\n";
 		OW_InetSocket sock(addr);

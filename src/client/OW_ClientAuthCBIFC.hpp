@@ -62,7 +62,7 @@ public:
 	 * 		request.
 	 */
 	virtual OW_Bool getCredentials(const OW_String& realm, OW_String& name,
-			OW_String& passwd) = 0;
+			OW_String& passwd, const OW_String& details) = 0;
 	virtual ~OW_ClientAuthCBIFC() {}
 };
 

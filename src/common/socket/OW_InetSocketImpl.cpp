@@ -50,19 +50,19 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InetSocketImpl::OW_InetSocketImpl() 
-	: OW_InetSocketBaseImpl()
+	: OW_SocketBaseImpl()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InetSocketImpl::OW_InetSocketImpl(OW_SocketHandle_t fd) /*throw (OW_SocketException)*/ 
-	: OW_InetSocketBaseImpl(fd)
+	: OW_SocketBaseImpl(fd)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocketImpl::OW_InetSocketImpl(const OW_InetAddress addr) 
-	/*throw (OW_SocketException)*/ : OW_InetSocketBaseImpl(addr)
+OW_InetSocketImpl::OW_InetSocketImpl(const OW_SocketAddress addr) 
+	/*throw (OW_SocketException)*/ : OW_SocketBaseImpl(addr)
 {
 }
 //////////////////////////////////////////////////////////////////////////////

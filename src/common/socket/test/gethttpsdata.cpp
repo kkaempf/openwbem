@@ -34,7 +34,7 @@
 #endif
 
 #include "OW_InetSocket.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_String.hpp"
 #include <string>
@@ -61,8 +61,8 @@ main(int argc, char* argv[])
 //		cout << "Enter an IP or hostname: ";
 //		cin >> ipOrHost;
 
-		OW_InetAddress addr;
-		addr = OW_InetAddress::getByName(argv[1], 443);
+		OW_SocketAddress addr;
+		addr = OW_SocketAddress::getByName(argv[1], 443);
 
 		cout << "\n\nTrying to connect on port 443...\n";
 		OW_InetSocket sock(addr, true);

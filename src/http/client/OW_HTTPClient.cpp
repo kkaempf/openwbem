@@ -135,7 +135,7 @@ void OW_HTTPClient::setUrl()
 #endif // #ifndef OW_NO_SSL
 	}
 
-	m_serverAddress = OW_InetAddress::getByName(m_url.host,
+	m_serverAddress = OW_SocketAddress::getByName(m_url.host,
 		m_url.port);
 
 	if( m_url.path.length() == 0)
@@ -195,7 +195,7 @@ OW_HTTPClient::receiveAuthentication()
 				realm = m_sRealm;
 			}
 			OW_String name, passwd;
-			if (m_loginCB->getCredentials(realm, name, passwd))
+			if (m_loginCB->getCredentials(realm, name, passwd, ""))
 			{
 				m_url.username = name;
 				m_url.password = passwd;
@@ -791,7 +791,7 @@ OW_HTTPClient::prepareHeaders()
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetAddress
+OW_SocketAddress
 OW_HTTPClient::getLocalAddress() const
 {
 	if (m_needsConnect)
@@ -804,7 +804,7 @@ OW_HTTPClient::getLocalAddress() const
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetAddress
+OW_SocketAddress
 OW_HTTPClient::getPeerAddress() const
 {
 	if (m_needsConnect)

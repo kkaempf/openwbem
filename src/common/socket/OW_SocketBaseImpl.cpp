@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_Format.hpp"
 
@@ -61,17 +61,17 @@ using std::ofstream;
 using std::fstream;
 using std::ios;
 
-OW_String OW_InetSocketBaseImpl::m_traceFileOut = "";
-OW_String OW_InetSocketBaseImpl::m_traceFileIn = "";
+OW_String OW_SocketBaseImpl::m_traceFileOut = "";
+OW_String OW_SocketBaseImpl::m_traceFileIn = "";
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocketBaseImpl::OW_InetSocketBaseImpl()
+OW_SocketBaseImpl::OW_SocketBaseImpl()
 	: OW_SelectableIFC()
 	, OW_IOIFC()
 	, m_isConnected(false)
 	, m_sockfd(-1)
-	, m_localAddress(OW_InetAddress::getAnyLocalHost())
-	, m_peerAddress(OW_InetAddress::allocEmptyAddress())
+	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
+	, m_peerAddress(OW_SocketAddress::allocEmptyAddress())
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -85,13 +85,13 @@ OW_InetSocketBaseImpl::OW_InetSocketBaseImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocketBaseImpl::OW_InetSocketBaseImpl(OW_SocketHandle_t fd)
+OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd)
 	: OW_SelectableIFC()
 	, OW_IOIFC()
 	, m_isConnected(true)
 	, m_sockfd(fd)
-	, m_localAddress(OW_InetAddress::getAnyLocalHost())
-	, m_peerAddress(OW_InetAddress::allocEmptyAddress())
+	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
+	, m_peerAddress(OW_SocketAddress::allocEmptyAddress())
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -106,12 +106,12 @@ OW_InetSocketBaseImpl::OW_InetSocketBaseImpl(OW_SocketHandle_t fd)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocketBaseImpl::OW_InetSocketBaseImpl(const OW_InetAddress& addr)
+OW_SocketBaseImpl::OW_SocketBaseImpl(const OW_SocketAddress& addr)
 	: OW_SelectableIFC()
 	, OW_IOIFC()
 	, m_isConnected(false)
 	, m_sockfd(-1)
-	, m_localAddress(OW_InetAddress::getAnyLocalHost())
+	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
 	, m_peerAddress(addr)
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
@@ -126,21 +126,21 @@ OW_InetSocketBaseImpl::OW_InetSocketBaseImpl(const OW_InetAddress& addr)
 	connect(m_peerAddress);
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocketBaseImpl::~OW_InetSocketBaseImpl()
+OW_SocketBaseImpl::~OW_SocketBaseImpl()
 {
 	disconnect();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Select_t
-OW_InetSocketBaseImpl::getSelectObj() const
+OW_SocketBaseImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
+OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 {
 	if(m_isConnected)
 	{
@@ -166,10 +166,10 @@ OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
 		::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
 
 #ifdef OW_USE_GNU_PTH
-		if((n = ::pth_connect(m_sockfd, (sockaddr *)addr.getNativeForm(),
+		if((n = ::pth_connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
 						addr.getNativeFormSize())) < 0)
 #else
-		if((n = ::connect(m_sockfd, (sockaddr *)addr.getNativeForm(),
+		if((n = ::connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
 						addr.getNativeFormSize())) < 0)
 #endif
 		{
@@ -199,7 +199,7 @@ OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
 #endif
 			{
 				::close(m_sockfd);
-				OW_THROW(OW_SocketException, "OW_InetSocketBaseImpl::connect");
+				OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
 			}
 
 			if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
@@ -212,13 +212,13 @@ OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
 				{
 					::close(m_sockfd);
 					OW_THROW(OW_SocketException,
-							"OW_InetSocketBaseImpl::connect");
+							"OW_SocketBaseImpl::connect");
 				}
 			}
 			else
 			{
 				::close(m_sockfd);
-				OW_THROW(OW_SocketException, "OW_InetSocketBaseImpl::connect");
+				OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
 			}
 		}
 
@@ -227,10 +227,10 @@ OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
 	else
 	{
 #ifdef OW_USE_GNU_PTH
-		if(::pth_connect(m_sockfd, (sockaddr *)addr.getNativeForm(),
+		if(::pth_connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
 					addr.getNativeFormSize()) == -1)
 #else
-		if(::connect(m_sockfd, (sockaddr *)addr.getNativeForm(),
+		if(::connect(m_sockfd, (sockaddr *)addr.getInetNativeForm(),
 					addr.getNativeFormSize()) == -1)
 #endif
 		{
@@ -248,7 +248,7 @@ OW_InetSocketBaseImpl::connect(const OW_InetAddress& addr)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InetSocketBaseImpl::disconnect()
+OW_SocketBaseImpl::disconnect()
 {
 	if (m_in)
 	{
@@ -274,7 +274,7 @@ OW_InetSocketBaseImpl::disconnect()
 #if 0
 /*
 void
-OW_InetSocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
+OW_SocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
 {
 	socklen_t len;
 	struct sockaddr_in addr;
@@ -282,7 +282,7 @@ OW_InetSocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
 	len = sizeof(addr);
 	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 		OW_THROW(OW_SocketException,
-				"OW_InetSocketBaseImpl::fillAddrParms: getsockname");
+				"OW_SocketBaseImpl::fillAddrParms: getsockname");
 
 	m_localAddress = addr.sin_addr.s_addr;
 	m_localPort = addr.sin_port;
@@ -290,7 +290,7 @@ OW_InetSocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
 	len = sizeof(addr);
 	if(getpeername(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 		OW_THROW(OW_SocketException,
-				"OW_InetSocketBaseImpl::fillAddrParms: getpeername");
+				"OW_SocketBaseImpl::fillAddrParms: getpeername");
 
 	m_peerAddress = addr.sin_addr.s_addr;
 	m_peerPort = addr.sin_port;
@@ -300,7 +300,7 @@ OW_InetSocketBaseImpl::fillAddrParms() //throw (OW_SocketException)
 //////////////////////////////////////////////////////////////////////////////
 // JBW this needs reworked.
 void
-OW_InetSocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
 {
 	socklen_t len;
 	struct sockaddr_in addr;
@@ -310,7 +310,7 @@ OW_InetSocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
 	if(getsockname(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_InetSocketBaseImpl::fillAddrParms: getsockname");
+				"OW_SocketBaseImpl::fillAddrParms: getsockname");
 	}
 	m_localAddress.assignFromNativeForm(&addr, len);
 
@@ -318,7 +318,7 @@ OW_InetSocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
 	if(getpeername(m_sockfd, (struct sockaddr*) &addr, &len) == -1)
 	{
 		OW_THROW(OW_SocketException,
-				"OW_InetSocketBaseImpl::fillAddrParms: getpeername");
+				"OW_SocketBaseImpl::fillAddrParms: getpeername");
 	}
 
 	m_peerAddress.assignFromNativeForm(&addr, len);
@@ -326,7 +326,7 @@ OW_InetSocketBaseImpl::fillAddrParms() /*throw (OW_SocketException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_InetSocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsException)
+OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsException)
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
@@ -362,7 +362,7 @@ OW_InetSocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorA
 			disconnect();
 		}
 		if(errorAsException)
-			OW_THROW(OW_SocketException, "OW_InetSocketBaseImpl::write");
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::write");
 	}
 
 	return rc;
@@ -370,7 +370,7 @@ OW_InetSocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorA
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_InetSocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException) 	
+OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException) 	
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
@@ -402,7 +402,7 @@ OW_InetSocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsExceptio
 	if(rc < 0)
 	{
 		if(errorAsException)
-			OW_THROW(OW_SocketException, "OW_InetSocketBaseImpl::read");
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::read");
 	}
 
 	return rc;
@@ -410,7 +410,7 @@ OW_InetSocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsExceptio
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_InetSocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
 {
 	int rval = OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, true);
 	if (rval == ETIMEDOUT)
@@ -422,28 +422,28 @@ OW_InetSocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_InetSocketBaseImpl::waitForOutput(int timeOutSecs) /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::waitForOutput(int timeOutSecs) /*throw (OW_SocketException)*/
 {
 	return OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, false) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 istream&
-OW_InetSocketBaseImpl::getInputStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getInputStream() /*throw (OW_SocketException)*/
 {
 	return m_in;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-OW_InetSocketBaseImpl::getOutputStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getOutputStream() /*throw (OW_SocketException)*/
 {
 	return m_out;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 iostream&
-OW_InetSocketBaseImpl::getIOStream() /*throw (OW_SocketException)*/
+OW_SocketBaseImpl::getIOStream() /*throw (OW_SocketException)*/
 {
 	return m_inout;
 }
@@ -452,7 +452,7 @@ OW_InetSocketBaseImpl::getIOStream() /*throw (OW_SocketException)*/
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_InetSocketBaseImpl::setDumpFiles(const OW_String& in, const OW_String& out)
+OW_SocketBaseImpl::setDumpFiles(const OW_String& in, const OW_String& out)
 {
 	m_traceFileOut = out;
 	m_traceFileIn = in;

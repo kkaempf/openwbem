@@ -37,7 +37,7 @@
 */
 
 #include "OW_InetServerSocket.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 
 #include <iostream>
 #include <fstream.h>
@@ -56,14 +56,14 @@ int main(void)
 		cin >> port;
 
 		OW_InetServerSocket svr(port);
-		OW_InetAddress localAddr = svr.getLocalAddress();
+		OW_SocketAddress localAddr = svr.getLocalAddress();
 		cout << "Listening on address " << localAddr.getName() << 
 			"(" << localAddr.getAddress() << ")" << ":" 
 			<< localAddr.getPort() << endl;
 		cout.flush();
 
 		OW_InetSocket sock = svr.accept();
-		OW_InetAddress peerAddr = sock.getPeerAddress();
+		OW_SocketAddress peerAddr = sock.getPeerAddress();
 		cout << "Connection is made. Client is " << peerAddr.getName() << 
 			"(" << peerAddr.getAddress() << ")" << ":" 
 			<< peerAddr.getPort() << endl;

@@ -34,7 +34,7 @@
 #endif
 
 #include "OW_InetSocket.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_String.hpp"
 #include <string>
@@ -60,8 +60,8 @@ main(int argc, char* argv[])
 	}
 	try
 	{
-		OW_InetAddress addr;
-		addr = OW_InetAddress::getByName(argv[1], atoi(argv[2]));
+		OW_SocketAddress addr;
+		addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
 
 		cout << "\n\nTrying to connect..." << endl;
 		OW_InetSocket sock(addr);

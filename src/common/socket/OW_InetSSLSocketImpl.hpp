@@ -44,13 +44,13 @@
 
 #include "OW_config.h"
 
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_SSLException.hpp"
 #include "OW_Bool.hpp"
 
 
-class OW_InetSSLSocketImpl : public OW_InetSocketBaseImpl
+class OW_InetSSLSocketImpl : public OW_SocketBaseImpl
 {
 public:
 
@@ -62,12 +62,12 @@ public:
 	 */
 	OW_InetSSLSocketImpl(OW_SocketHandle_t fd) /*throw (OW_SocketException)*/;
 
-	OW_InetSSLSocketImpl(const OW_InetAddress& addr)
+	OW_InetSSLSocketImpl(const OW_SocketAddress& addr)
 		/*throw (OW_SocketException)*/;
 
 	virtual ~OW_InetSSLSocketImpl();
 
-	virtual void connect(const OW_InetAddress& addr) /*throw (OW_SocketException)*/;
+	virtual void connect(const OW_SocketAddress& addr) /*throw (OW_SocketException)*/;
 	virtual void disconnect();
 
 	OW_Select_t getSelectObj() const;

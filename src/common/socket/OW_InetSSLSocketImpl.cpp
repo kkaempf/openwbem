@@ -50,13 +50,13 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InetSSLSocketImpl::OW_InetSSLSocketImpl() 
-	: OW_InetSocketBaseImpl()
+	: OW_SocketBaseImpl()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(OW_SocketHandle_t fd) 
-	: OW_InetSocketBaseImpl(fd)
+	: OW_SocketBaseImpl(fd)
 {
 #ifdef OW_USE_GNU_PTH
     pth_yield(NULL);
@@ -74,8 +74,8 @@ OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(OW_SocketHandle_t fd)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(const OW_InetAddress& addr) 
-	: OW_InetSocketBaseImpl(addr)
+OW_InetSSLSocketImpl::OW_InetSSLSocketImpl(const OW_SocketAddress& addr) 
+	: OW_SocketBaseImpl(addr)
 {
 	connectSSL();
 }
@@ -98,10 +98,10 @@ OW_InetSSLSocketImpl::getSelectObj() const
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_InetSSLSocketImpl::connect(const OW_InetAddress& addr)
+OW_InetSSLSocketImpl::connect(const OW_SocketAddress& addr)
 	/*throw (OW_SocketException)*/
 {
-	OW_InetSocketBaseImpl::connect(addr);
+	OW_SocketBaseImpl::connect(addr);
 	connectSSL();
 }
 
@@ -142,7 +142,7 @@ OW_InetSSLSocketImpl::disconnect()
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
 	}
-	OW_InetSocketBaseImpl::disconnect();
+	OW_SocketBaseImpl::disconnect();
 }
 
 //////////////////////////////////////////////////////////////////////////////

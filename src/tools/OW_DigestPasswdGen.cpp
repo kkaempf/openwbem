@@ -33,7 +33,7 @@
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 
 	if (hostname.length() == 0)
 	{
-		OW_InetAddress iaddr = OW_InetAddress::getAnyLocalHost();
+		OW_SocketAddress iaddr = OW_SocketAddress::getAnyLocalHost();
 		hostname = iaddr.getName();
 	}
 

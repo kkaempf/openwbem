@@ -43,7 +43,7 @@
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_InetSocket.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_Types.h"
 
 class OW_InetServerSocketImpl : public OW_SelectableIFC
@@ -60,7 +60,7 @@ public:
 //	unsigned long getLocalAddressRaw() { return m_localAddress; }
 //	unsigned short getLocalPortRaw() { return m_localPort; }
 
-	OW_InetAddress getLocalAddress() { return m_localAddress; }
+	OW_SocketAddress getLocalAddress() { return m_localAddress; }
 	OW_SocketHandle_t getfd() const { return m_sockfd; }
 	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
 		OW_Bool allInterfaces=false);
@@ -74,7 +74,7 @@ private:
 	OW_SocketHandle_t m_sockfd;
 //	unsigned long m_localAddress;
 //	unsigned short m_localPort;
-	OW_InetAddress m_localAddress;
+	OW_SocketAddress m_localAddress;
 	OW_Bool m_isActive;
 
 	OW_InetServerSocketImpl(const OW_InetServerSocketImpl& arg);

@@ -48,14 +48,14 @@ OW_InetSocket::OW_InetSocket(OW_Bool isSSL)
 	if (isSSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSSLSocketImpl);
+		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl);
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
 	{
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSocketImpl);
+		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl);
 	}
 }
 
@@ -66,27 +66,27 @@ OW_InetSocket::OW_InetSocket(OW_SocketHandle_t fd, OW_Bool isSSL)
 	if (isSSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSSLSocketImpl(fd));
+		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl(fd));
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSocketImpl(fd));
+		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl(fd));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetSocket::OW_InetSocket(const OW_InetAddress& addr, OW_Bool isSSL)
+OW_InetSocket::OW_InetSocket(const OW_SocketAddress& addr, OW_Bool isSSL)
 		/*throw (OW_SocketException)*/
 {
 	if (isSSL)
 #ifndef OW_NO_SSL
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSSLSocketImpl(addr));
+		m_impl = OW_SocketBaseImplRef(new OW_InetSSLSocketImpl(addr));
 #else
 		OW_THROW(OW_SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	else
-		m_impl = OW_InetSocketBaseImplRef(new OW_InetSocketImpl(addr));
+		m_impl = OW_SocketBaseImplRef(new OW_InetSocketImpl(addr));
 }
 
 static OW_Bool b_gotShutDown = false;

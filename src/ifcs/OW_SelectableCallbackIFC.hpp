@@ -32,19 +32,20 @@
 
 #include "OW_config.h"
 #include "OW_Reference.hpp"
+#include "OW_SelectableIFC.hpp"
 
 class OW_SelectableCallbackIFC
 {
 public:
 	virtual ~OW_SelectableCallbackIFC() {}
 
-	void selected()
+	void selected(OW_SelectableIFCRef& selectedObject)
 	{
-		doSelected();
+		doSelected(selectedObject);
 	}
 
 protected:
-	virtual void doSelected() = 0;
+	virtual void doSelected(OW_SelectableIFCRef& selectedObject) = 0;
 };
 
 typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;

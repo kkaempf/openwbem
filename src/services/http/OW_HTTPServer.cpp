@@ -45,7 +45,7 @@
 #include "OW_HTTPUtils.hpp"
 #include "OW_DigestAuthentication.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_InetSocketBaseImpl.hpp" // for setDumpFiles()
+#include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 
 #ifdef OW_HAVE_SLP_H
 #ifdef OW_GNU_LINUX
@@ -209,7 +209,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 			new OW_DigestAuthentication(passwdFile));
 	}
 
-	OW_InetSocketBaseImpl::setDumpFiles(
+	OW_SocketBaseImpl::setDumpFiles(
 		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpIn",
 		env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt) + "/owHTTPSockDumpOut");
 }
@@ -219,19 +219,21 @@ class OW_HTTPServerSelectableCallback : public OW_SelectableCallbackIFC
 {
 public:
 	OW_HTTPServerSelectableCallback(bool isHTTPS,
-		OW_HTTPServer* httpServer)
+		OW_HTTPServer* httpServer, bool isIPC)
 		: OW_SelectableCallbackIFC()
 		, m_isHTTPS(isHTTPS)
-        , m_HTTPServer(httpServer)
+      , m_HTTPServer(httpServer)
+		, m_isIPC(isIPC)
 	{
 	}
 
 	virtual ~OW_HTTPServerSelectableCallback() {}
 
-	virtual void doSelected()
+	virtual void doSelected(OW_SelectableIFCRef& selectedObject)
 	{
 		try
 		{
+			(void)selectedObject;
 
 			OW_Reference<OW_InetServerSocket> pServerSocket;
 			if(m_isHTTPS)
@@ -253,6 +255,10 @@ public:
 			m_HTTPServer->incThreadCount();
 
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
+			if (m_isIPC)
+			{
+				newOpts.enableDeflate = false;
+			}
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 
@@ -295,6 +301,7 @@ public:
 private:
 	bool m_isHTTPS;
 	OW_HTTPServer* m_HTTPServer;
+	bool m_isIPC;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -320,12 +327,12 @@ OW_HTTPServer::startService()
 		lgr->logCustInfo(format("HTTP server listening on port: %1",
 		   m_options.httpPort));
 
-		OW_String URL = "http://" + OW_InetAddress::getAnyLocalHost().getName()
+		OW_String URL = "http://" + OW_SocketAddress::getAnyLocalHost().getName()
 			+ ":" + OW_String(m_options.httpPort) + "/cimom";
 		addURL(OW_URL(URL));
 		
 		OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
-			false, this));
+			false, this, false));
 
 		env->addSelectable(m_pHttpServerSocket, cb);
 	}
@@ -357,13 +364,13 @@ OW_HTTPServer::startService()
 			   m_options.httpsPort));
 
 			OW_String URL = "https://" +
-				OW_InetAddress::getAnyLocalHost().getName() + ":" +
+				OW_SocketAddress::getAnyLocalHost().getName() + ":" +
 				OW_String(m_options.httpsPort) + "/cimom";
 
 			addURL(OW_URL(URL));
 
 			OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
-				true, this));
+				true, this, false));
 
 			env->addSelectable(m_pHttpsServerSocket, cb);
 		}
@@ -430,7 +437,7 @@ OW_HTTPServer::getURLs() const
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetAddress
+OW_SocketAddress
 OW_HTTPServer::getLocalHTTPAddress()
 {
 	if (m_pHttpServerSocket)
@@ -439,12 +446,12 @@ OW_HTTPServer::getLocalHTTPAddress()
 	}
 	else
 	{
-		return OW_InetAddress::allocEmptyAddress();
+		return OW_SocketAddress::allocEmptyAddress();
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_InetAddress
+OW_SocketAddress
 OW_HTTPServer::getLocalHTTPSAddress()
 {
 	if (m_pHttpsServerSocket)
@@ -453,7 +460,7 @@ OW_HTTPServer::getLocalHTTPSAddress()
 	}
 	else
 	{
-		return OW_InetAddress::allocEmptyAddress();
+		return OW_SocketAddress::allocEmptyAddress();
 	}
 }
 

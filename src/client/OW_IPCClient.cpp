@@ -137,7 +137,7 @@ OW_IPCClient::authenticate(const OW_String& userName,
 			format("Authentication failed: %1", details).c_str());
 	}
 
-	m_authenticated = true;
+	m_authenticated = authenticated;
 	return authenticated;
 }
 
@@ -161,7 +161,7 @@ OW_IPCClient::authenticateIfNeeded()
 				}
 				else
 				{
-					if (!m_loginCB->getCredentials(m_url, url.username, url.password))
+					if (!m_loginCB->getCredentials(m_url, url.username, url.password, details))
 					{
 						OW_THROWCIMMSG(OW_CIMException::ACCESS_DENIED,
 							"Authentication failed: Unable to get valid credentials");

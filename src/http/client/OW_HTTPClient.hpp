@@ -84,15 +84,15 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 
 		/**
 		 * Gets the address of the local machine
-		 * @return An OW_InetAddress corresponding to the local machine.
+		 * @return An OW_SocketAddress corresponding to the local machine.
 		 */
-		OW_InetAddress getLocalAddress() const;
+		OW_SocketAddress getLocalAddress() const;
 
 		/**
 		 * Gets the address of the peer connection
-		 * @return An OW_InetAddress corresponding to the peer connection
+		 * @return An OW_SocketAddress corresponding to the peer connection
 		 */
-		OW_InetAddress getPeerAddress()  const;
+		OW_SocketAddress getPeerAddress()  const;
 
 
 
@@ -124,7 +124,7 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 			CONTINUE
 		};
 
-		OW_InetAddress m_serverAddress;
+		OW_SocketAddress m_serverAddress;
 		OW_URL m_url;
 		OW_HTTPHeaderMap m_responseHeaders;
 		OW_Array<OW_String> m_requestHeadersCommon;

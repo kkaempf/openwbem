@@ -96,7 +96,7 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
 	runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
 	runner.addTest( "OW_ListenerAuthenticator", OW_ListenerAuthenticatorTestCases::suite());
-	runner.addTest( "OW_InetAddress", OW_InetAddressTestCases::suite());
+	runner.addTest( "OW_SocketAddress", OW_InetAddressTestCases::suite());
 	runner.addTest( "OW_Base64", OW_Base64TestCases::suite());
 	runner.addTest( "OW_MD5", OW_MD5TestCases::suite());
 	runner.addTest( "OW_XMLEscape", OW_XMLEscapeTestCases::suite());

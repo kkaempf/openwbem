@@ -32,7 +32,7 @@
 #include "OW_IPCClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -77,8 +77,9 @@ class GetLoginInfo : public OW_ClientAuthCBIFC
 {
 	public:
 		OW_Bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd)
+				OW_String& passwd, const OW_String& details)
 		{
+			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
 			name = OW_String::getLine(cin);
@@ -119,12 +120,12 @@ main(int argc, char* argv[])
 			OW_String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
-			OW_InetSocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_InetSocketBaseImpl::setDumpFiles("","");
+			OW_SocketBaseImpl::setDumpFiles("","");
 		}
 
 		OW_String url(argv[1]);

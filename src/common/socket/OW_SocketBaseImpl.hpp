@@ -37,34 +37,34 @@
  * @description
  *		Interface file for the OW_InetSocketBaseImpl class
  */
-#ifndef __OW_INETSOCKETBASEIMPL_HPP__
-#define __OW_INETSOCKETBASEIMPL_HPP__
+#ifndef _OW_SOCKETBASEIMPL_HPP__
+#define _OW_SOCKETBASEIMPL_HPP__
 
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Reference.hpp"
 #include "OW_SocketException.hpp"
 #include "OW_String.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_Types.h"
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_IOIFC.hpp"
 #include <iostream>
 
-class OW_InetSocketBaseImpl;
+class OW_SocketBaseImpl;
 
-typedef OW_Reference<OW_InetSocketBaseImpl> OW_InetSocketBaseImplRef;
+typedef OW_Reference<OW_SocketBaseImpl> OW_SocketBaseImplRef;
 
-class OW_InetSocketBaseImpl : public OW_SelectableIFC, public OW_IOIFC
+class OW_SocketBaseImpl : public OW_SelectableIFC, public OW_IOIFC
 {
 public:
 
-	OW_InetSocketBaseImpl();
-	OW_InetSocketBaseImpl(OW_SocketHandle_t fd);
-	OW_InetSocketBaseImpl(const OW_InetAddress& addr);
-	virtual ~OW_InetSocketBaseImpl();
+	OW_SocketBaseImpl();
+	OW_SocketBaseImpl(OW_SocketHandle_t fd);
+	OW_SocketBaseImpl(const OW_SocketAddress& addr);
+	virtual ~OW_SocketBaseImpl();
 
-	virtual void connect(const OW_InetAddress& addr);
+	virtual void connect(const OW_SocketAddress& addr);
 	virtual void disconnect();
 	void setReceiveTimeout(int seconds) { m_recvTimeout = seconds; }
 	int getReceiveTimeout() { return m_recvTimeout; }
@@ -85,8 +85,8 @@ public:
 	std::istream& getInputStream();
 	std::ostream& getOutputStream();
 	std::iostream& getIOStream();
-	OW_InetAddress getLocalAddress() const { return m_localAddress; }
-	OW_InetAddress getPeerAddress() const { return m_peerAddress; }
+	OW_SocketAddress getLocalAddress() const { return m_localAddress; }
+	OW_SocketAddress getPeerAddress() const { return m_peerAddress; }
 	OW_SocketHandle_t getfd() { return m_sockfd; }
 
 	OW_Select_t getSelectObj() const;
@@ -98,8 +98,8 @@ protected:
 
 	OW_Bool m_isConnected;
 	OW_SocketHandle_t m_sockfd;
-	OW_InetAddress m_localAddress;
-	OW_InetAddress m_peerAddress;
+	OW_SocketAddress m_localAddress;
+	OW_SocketAddress m_peerAddress;
 
 private:
 	void fillAddrParms();
@@ -116,9 +116,9 @@ private:
 	static OW_String m_traceFileOut;
 	static OW_String m_traceFileIn;
 
-	OW_InetSocketBaseImpl(const OW_InetSocketBaseImpl& arg);
-	OW_InetSocketBaseImpl& operator= (const OW_InetSocketBaseImpl& arg);
+	OW_SocketBaseImpl(const OW_SocketBaseImpl& arg);
+	OW_SocketBaseImpl& operator= (const OW_SocketBaseImpl& arg);
 };
 
-#endif	// __INETSOCKETBASEIMPL_HPP__
+#endif	// _SOCKETBASEIMPL_HPP__
 

@@ -42,16 +42,16 @@
 
 #include "OW_config.h"
 #include "OW_SocketStreamBuffer.hpp"
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 
 
-class OW_InetSocketImpl : public OW_InetSocketBaseImpl
+class OW_InetSocketImpl : public OW_SocketBaseImpl
 {
 public:
 
 	OW_InetSocketImpl();
 	OW_InetSocketImpl(OW_SocketHandle_t fd);
-	OW_InetSocketImpl(const OW_InetAddress addr);
+	OW_InetSocketImpl(const OW_SocketAddress addr);
 
 	virtual ~OW_InetSocketImpl();
 

@@ -29,13 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_InetAddressFactory.hpp"
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
-	OW_InetAddress addr;
+	OW_SocketAddress addr;
 	try
 	{
 		addr = OW_InetAddressFactory::getByName(argv[1],80);
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 	cout << addr.getName() << endl;
 	cout << addr.getAddress() << endl;
 	cout << addr.getPort() << endl;
-	OW_InetAddress addr2;
+	OW_SocketAddress addr2;
 	addr2 = addr;
 	cout << addr2.getAddress() << endl;
 }

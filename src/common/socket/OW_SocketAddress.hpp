@@ -30,27 +30,41 @@
 
 
 
-#ifndef __OW_INETADDRESS_HPP__
-#define __OW_INETADDRESS_HPP__
+#ifndef __OW_SocketADDRESS_HPP__
+#define __OW_SocketADDRESS_HPP__
 
 #include "OW_config.h"
-#include "OW_InetAddressImpl.hpp"
 #include "OW_Array.hpp"
 #include "OW_Reference.hpp"
+#include "OW_Types.h"
+#include "OW_NetworkTypes.hpp"
+#include "OW_String.hpp"
+#include "OW_Exception.hpp"
 
+DEFINE_EXCEPTION(UnknownHost);
 
-class OW_InetAddress 
+class OW_SocketAddress 
 {
 public:
+
+	enum AddressType
+	{
+		UNSET,
+		INET,
+		UDS
+	};
+
+
+	AddressType getType() const { return m_type; }
 	/**
-	 * Do a DNS lookup on a hostname and return an InetAddress for that host
+	 * Do a DNS lookup on a hostname and return an SocketAddress for that host
 	 *
 	 * @param host The hostname
 	 * @param port The port
 	 *
-	 * @return An InetAddress for the host and port
+	 * @return An SocketAddress for the host and port
 	 */
-	static OW_InetAddress getByName(const OW_String& host, unsigned short port = 0)
+	static OW_SocketAddress getByName(const OW_String& host, unsigned short port = 0)
 		/*throw (OW_UnknownHostException)*/;
 
 	/**
@@ -60,29 +74,26 @@ public:
 	 * @param host The hostname
 	 * @param port The port
 	 *
-	 * @return An OW_Array of InetAddresses for the host and port
+	 * @return An OW_Array of SocketAddresses for the host and port
 	 */
-	//static OW_Array<OW_InetAddress> getAllByName(const OW_String& hostName,
+	//static OW_Array<OW_SocketAddress> getAllByName(const OW_String& hostName,
 	//		unsigned short port = 0);
 
-	static OW_InetAddress getFromNativeForm(
-		const OW_InetSocketAddress_t& nativeForm);
 
-	static OW_InetAddress getFromNativeForm(const OW_InetAddress_t& nativeForm,
-			unsigned short nativePort = 0);
+	static OW_SocketAddress getUDS(const OW_String& filename);
 
 	/**
-	 * Get an OW_InetAddress appropriate for referring to the local host
+	 * Get an OW_SocketAddress appropriate for referring to the local host
 	 * @param port The port
-	 * @return An OW_InetAddress representing the local machine
+	 * @return An OW_SocketAddress representing the local machine
 	 */
-	static OW_InetAddress getAnyLocalHost(unsigned short port = 0);
+	static OW_SocketAddress getAnyLocalHost(OW_UInt16 port = 0);
 
 	/**
-	 * Allocate an empty InetAddress.
+	 * Allocate an empty SocketAddress.
 	 * @return an empty address
 	 */
-	static OW_InetAddress allocEmptyAddress();
+	static OW_SocketAddress allocEmptyAddress();
 
 	/**
 	 * Get the port associated with the address
@@ -90,14 +101,7 @@ public:
 	 */
 	OW_UInt16 getPort() const;
 
-	/**
-	 * Set the port on the inet address
-	 * @param port The port
-	 */
-	void setPort(OW_UInt16 port);
-
-	OW_InetAddress();
-	~OW_InetAddress() {}
+	~OW_SocketAddress() {}
 
 
 	/**
@@ -105,10 +109,7 @@ public:
 	 *
 	 * @return The hostname of the address.
 	 */
-	const OW_String getName() const
-	{
-		 return m_impl->getName();
-	}
+	const OW_String getName() const;
 
 	/**
 	 * Returns the IP address of the host
@@ -116,36 +117,13 @@ public:
 	 * @return The IP address of the host
 	 */
 
-	const OW_String getAddress() const 
-	{
-		 return m_impl->getAddress();
-	}
+	const OW_String getAddress() const;
 
-	const OW_SocketAddress_t* getNativeForm() const
-	{
-		 return m_impl->getNativeForm();
-	}
+	const OW_SocketAddress_t* getInetNativeForm() const;
 
 
-	size_t getNativeFormSize() const
-	{
-		 return m_impl->getNativeFormSize();
-	}
+	size_t getNativeFormSize() const;
 
-	size_t getNativeFormMaxSize() const
-	{
-		 return m_impl->getNativeFormMaxSize();
-	}
-
-	void assignFromNativeForm(OW_InetSocketAddress_t* address, size_t len)
-	{
-		 m_impl->assignFromNativeForm(address, len);
-	}
-
-	OW_InetAddressImpl* makeEmptyClone() const
-	{
-		 return m_impl->makeEmptyClone();
-	}
 
 	/** 
 	 * Returns the IP address and the port with a colon in between.
@@ -157,11 +135,29 @@ public:
 		return getAddress() + ":" + OW_String(OW_UInt32(getPort()));
 	}
 
-	operator void*() const { return (void*)m_impl; }
+	//operator void*() const { return (void*)m_impl; }
 
+	void assignFromNativeForm(const OW_InetSocketAddress_t* address, size_t len);
+
+	OW_SocketAddress();
 private:
-	OW_InetAddress(OW_InetAddressRef impl);
-	OW_InetAddressRef m_impl;
+	OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm);
+
+	OW_String m_name;
+	OW_String m_address;
+	size_t m_nativeSize;
+	
+
+	OW_InetSocketAddress_t m_inetNativeAddress;
+	OW_UnixSocketAddress_t m_UDSNativeAddress;
+	AddressType m_type;
+
+
+	static OW_SocketAddress getFromNativeForm(const OW_InetAddress_t& nativeForm,
+			OW_UInt16 nativePort, const OW_String& hostname );
+	static OW_SocketAddress getFromNativeForm(
+		const OW_InetSocketAddress_t& nativeForm);
+
 };
 
 

@@ -30,9 +30,9 @@
 
 
 #include "OW_config.h"
-#include "OW_InetAddressImpl.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_Assertion.hpp"
 
 #include <netdb.h>
 #include <iostream>
@@ -47,20 +47,45 @@ extern "C"
 #include <errno.h>
 }
 
-OW_InetAddressImpl::OW_InetAddressImpl()
-	: m_nativeSize(0), m_nativeMaxSize(sizeof(m_nativeAddress))
+
+//static 
+OW_SocketAddress 
+OW_SocketAddress::getUDS(const OW_String& filename)
 {
-	OW_InetSocketAddress_t addr;
-	memset(&addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	assignFromNativeForm(&addr, sizeof(addr));
+	OW_SocketAddress rval;
+	rval.m_type = UDS;
+	rval.m_name = filename;
+	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
+	rval.m_UDSNativeAddress.sun_family = AF_LOCAL;
+	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(), 
+		sizeof(rval.m_UDSNativeAddress.sun_path) - 1);
+
+
+#ifdef OW_SOLARIS
+	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
+		offsetof(struct sockaddr_un, sun_path);
+#elif defined OW_OPENUNIX
+	rval.m_UDSNativeAddress.sun_len = sizeof(rval.m_UDSNativeAddress);
+	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
+		offsetof(struct sockaddr_un, sun_path);
+#else
+	rval.m_nativeSize = sizeof(rval.m_UDSNativeAddress.sun_family) + 
+		 ::strlen(rval.m_UDSNativeAddress.sun_path);
+#endif
+	return rval;
 }
 
-OW_InetAddressImpl::~OW_InetAddressImpl() { }
+OW_SocketAddress::OW_SocketAddress()
+	: m_nativeSize(0) , m_type(UNSET)
+{
+}
+
 
 static OW_Mutex gethostbynameMutex;
 
-OW_InetAddressRef OW_InetAddressImpl::getByName(
+//static 
+OW_SocketAddress 
+OW_SocketAddress::getByName(
 		const OW_String& hostName, OW_UInt16 port)
 	/*throw (OW_UnknownHostException)*/
 {
@@ -91,38 +116,42 @@ OW_InetAddressRef OW_InetAddressImpl::getByName(
 	return getFromNativeForm(addr, port, host->h_name);
 }
 
-OW_InetAddressRef OW_InetAddressImpl::getFromNativeForm(
-		const OW_InetSocketAddress_t& nativeForm)
+//static
+OW_SocketAddress 
+OW_SocketAddress::getFromNativeForm( const OW_InetSocketAddress_t& nativeForm)
 {
-	return OW_InetAddressRef(new OW_InetAddressImpl(nativeForm));
+	return OW_SocketAddress(nativeForm);
 }
 
-OW_InetAddressRef OW_InetAddressImpl::getFromNativeForm(
-		const OW_InetAddress_t& nativeForm, OW_UInt16 nativePort,
-		const OW_String& hostName)
+//static
+OW_SocketAddress 
+OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm, 
+		OW_UInt16 nativePort, const OW_String& hostName)
 {
-	sockaddr_in addr;
+	OW_InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = OW_hton16(nativePort);
 	addr.sin_addr = nativeForm;
 
-	OW_InetAddressImpl* p = new OW_InetAddressImpl(addr);
-	p->m_name = hostName;
+	OW_SocketAddress p = OW_SocketAddress(addr);
+	p.m_type = INET;
+	p.m_name = hostName;
 
-	return OW_InetAddressRef(p);
+	return p;
 }
 
-const OW_SocketAddress_t* OW_InetAddressImpl::getNativeForm() const
+const OW_SocketAddress_t* OW_SocketAddress::getInetNativeForm() const
 {
-	return reinterpret_cast<const sockaddr*>(&m_nativeAddress);
+	return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
 }
 
-OW_InetAddressRef OW_InetAddressImpl::getAnyLocalHost(OW_UInt16 port)
+OW_SocketAddress 
+OW_SocketAddress::getAnyLocalHost(OW_UInt16 port)
 {
 	struct in_addr addr;
 	addr.s_addr = OW_hton32(INADDR_ANY);
-	OW_InetAddressRef rval = getFromNativeForm(addr, port);
+	OW_SocketAddress rval = getFromNativeForm(addr, port, "localhost");
 	char buf[256];
 	gethostname(buf, sizeof(buf));
     OW_String hname(buf);
@@ -149,59 +178,53 @@ OW_InetAddressRef OW_InetAddressImpl::getAnyLocalHost(OW_UInt16 port)
             hname = OW_String(hent->h_name);
         }
     }
-    rval->m_name = hname;
+	rval.m_name = hname;
 	return rval;
 }
 
-void OW_InetAddressImpl::assignFromNativeForm(
+void OW_SocketAddress::assignFromNativeForm(
 	const OW_InetSocketAddress_t* address, size_t /*size*/)
 {
-	memcpy(&m_nativeAddress, address, sizeof(m_nativeAddress));
-	m_address = inet_ntoa(m_nativeAddress.sin_addr);
-	m_nativeSize = sizeof(m_nativeAddress);
+	m_type = INET;
+	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
+	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
+	m_nativeSize = sizeof(m_inetNativeAddress);
 }
 
-OW_InetAddressImpl* OW_InetAddressImpl::makeEmptyClone() const
+OW_UInt16 OW_SocketAddress::getPort() const
 {
-	return new OW_InetAddressImpl;
+	OW_ASSERT(m_type == INET);
+	return OW_ntoh16(m_inetNativeAddress.sin_port);
 }
 
-OW_UInt16 OW_InetAddressImpl::getPort() const
-{
-	return OW_ntoh16(m_nativeAddress.sin_port);
-}
 
-void OW_InetAddressImpl::setPort(OW_UInt16 port)
-{
-	m_nativeAddress.sin_port = OW_hton16(port);
-}
-	
-
-OW_InetAddressImpl::OW_InetAddressImpl(const OW_InetSocketAddress_t& nativeForm)
-	: m_nativeSize(0), m_nativeMaxSize(sizeof(m_nativeAddress))
+OW_SocketAddress::OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm)
+	: m_nativeSize(0), m_type(INET)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
 
-const OW_String& OW_InetAddressImpl::getName() const
+const OW_String OW_SocketAddress::getName() const
 {
 	return m_name;
 }
 
-const OW_String& OW_InetAddressImpl::getAddress() const
+const OW_String OW_SocketAddress::getAddress() const
 {
 	return m_address;
 }
 
-size_t OW_InetAddressImpl::getNativeFormSize() const
+size_t OW_SocketAddress::getNativeFormSize() const
 {
 	return m_nativeSize;
 }
 
-size_t OW_InetAddressImpl::getNativeFormMaxSize() const
+
+OW_SocketAddress OW_SocketAddress::allocEmptyAddress()
 {
-	return m_nativeMaxSize;
+	sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
 }
-
-
 

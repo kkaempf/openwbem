@@ -9,7 +9,7 @@
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_Format.hpp"
 
@@ -101,7 +101,7 @@ OW_CIMObjectPathEnumeration
 	  newCop.addKey(OW_String("OSCreationClassName"), 
 		 OW_CIMValue(OW_String("CIM_OperatingSystem")));
 	  newCop.addKey(OW_String("CSName"), 
-		 OW_CIMValue(OW_InetAddress::getAnyLocalHost().getName()));
+		 OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
 	  newCop.addKey(OW_String("CSCreationClassName"), 
 		 OW_CIMValue(OW_String("CIM_ComputerSystem")));
 	  rval.addElement(newCop);
@@ -146,7 +146,7 @@ OW_CIMInstanceEnumeration
 	  newInst.setProperty(OW_String("OSCreationClassName"), 
 		 OW_CIMValue(OW_String("CIM_OperatingSystem")));
 	  newInst.setProperty(OW_String("CSName"), 
-		 OW_CIMValue(OW_InetAddress::getAnyLocalHost().getName()));
+		 OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
 	  newInst.setProperty(OW_String("CSCreationClassName"), 
 		 OW_CIMValue(OW_String("CIM_ComputerSystem")));
 	  newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));

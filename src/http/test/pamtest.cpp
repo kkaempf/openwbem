@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 		OW_String encoded = OW_HTTPUtils::base64Encode(namePass);
 		OW_String info = "Basic " + encoded;
 
-		OW_InetAddress addr = OW_InetAddress::getByName(argv[1], atoi(argv[2]));
+		OW_SocketAddress addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
 		OW_HTTPServer htIn(9877);
 		OW_InetSocket sock(addr);
 		OW_HTTPSvrConnection svr(sock, &htIn);

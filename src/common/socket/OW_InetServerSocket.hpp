@@ -109,9 +109,9 @@ public:
 //
 	/**
 	 * Return the address of the local host
-	 * @return an OW_InetAddress representing the local node
+	 * @return an OW_SocketAddress representing the local node
 	 */
-	OW_InetAddress getLocalAddress() { return m_impl->getLocalAddress(); }
+	OW_SocketAddress getLocalAddress() { return m_impl->getLocalAddress(); }
 
 	/**
 	 * Get the file descriptor of the listen socket

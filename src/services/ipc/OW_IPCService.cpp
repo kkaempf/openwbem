@@ -108,7 +108,8 @@ public:
 		: OW_SelectableCallbackIFC(), m_pservice(pservice) {}
 
 protected:
-	virtual void doSelected() { m_pservice->doSelected(); }
+	virtual void doSelected(OW_SelectableIFCRef& selectedObject) 
+			{ (void)selectedObject; m_pservice->doSelected(); }
 	OW_IPCService* m_pservice;
 };
 

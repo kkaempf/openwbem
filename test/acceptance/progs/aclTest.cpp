@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_InetSocketBaseImpl.hpp"
+#include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -774,12 +774,12 @@ int main(int argc, char* argv[])
 			OW_String sockDumpIn = "/tmp/owACLDumpIn";
 			sockDumpOut += argv[3];
 			sockDumpIn += argv[3];
-			OW_InetSocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_InetSocketBaseImpl::setDumpFiles("","");
+			OW_SocketBaseImpl::setDumpFiles("","");
 		}
 
 		mode = argv[2];

@@ -49,8 +49,9 @@ class GetLoginInfo : public OW_ClientAuthCBIFC
 {
 	public:
 		OW_Bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd)
+				OW_String& passwd, const OW_String& details)
 		{
+			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
 			name = OW_String::getLine(cin);

@@ -53,7 +53,7 @@ extern "C"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InetServerSocketImpl::OW_InetServerSocketImpl(OW_Bool isSSL) :
-	m_sockfd(-1), m_localAddress(OW_InetAddress::allocEmptyAddress()),
+	m_sockfd(-1), m_localAddress(OW_SocketAddress::allocEmptyAddress()),
 	m_isActive(false), m_isSSL(isSSL)
 {
 }
@@ -61,7 +61,7 @@ OW_InetServerSocketImpl::OW_InetServerSocketImpl(OW_Bool isSSL) :
 //////////////////////////////////////////////////////////////////////////////
 OW_InetServerSocketImpl::OW_InetServerSocketImpl(OW_UInt16 port,
 	OW_Bool isSSL, int queueSize, OW_Bool allInterfaces) :
-	m_sockfd(-1), m_localAddress(OW_InetAddress::allocEmptyAddress()),
+	m_sockfd(-1), m_localAddress(OW_SocketAddress::allocEmptyAddress()),
 	m_isActive(false), m_isSSL(isSSL)
 {
 	doListen(port, queueSize, allInterfaces);

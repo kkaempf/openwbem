@@ -36,12 +36,12 @@
 #include "OW_Types.h"
 #include "OW_IOIFCStreamBuffer.hpp"
 
-class OW_InetSocketBaseImpl;
+class OW_SocketBaseImpl;
 
 class OW_SocketStreamBuffer : public OW_IOIFCStreamBuffer
 {
 public:
-	OW_SocketStreamBuffer(OW_InetSocketBaseImpl* sock);
+	OW_SocketStreamBuffer(OW_SocketBaseImpl* sock);
 
 private:
 

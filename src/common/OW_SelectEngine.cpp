@@ -67,7 +67,7 @@ OW_SelectEngine::go()
 		}
 		else
 		{
-			m_callbacks[selected]->selected();
+			m_callbacks[selected]->selected(m_selectableObjs[selected]);
 		}
 	} while (!m_stopFlag);
 }

@@ -40,7 +40,7 @@
 #include "OW_Map.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_AutoPtr.hpp"
@@ -121,8 +121,8 @@ public:
 	 */
 	void addURL(const OW_URL& url);
 
-	OW_InetAddress getLocalHTTPAddress();
-	OW_InetAddress getLocalHTTPSAddress();
+	OW_SocketAddress getLocalHTTPAddress();
+	OW_SocketAddress getLocalHTTPSAddress();
 	
 	
 	struct Options

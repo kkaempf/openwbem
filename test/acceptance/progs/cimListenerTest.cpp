@@ -338,7 +338,7 @@ int main(int argc, char* argv[])
 		OW_String url(argv[1]);
 
 		#ifdef OW_DEBUG
-		OW_InetSocketBaseImpl::setDumpFiles("/tmp/indicationSocketIn", "/tmp/indicationSocketOut");
+		OW_SocketBaseImpl::setDumpFiles("/tmp/indicationSocketIn", "/tmp/indicationSocketOut");
 		#endif
 		// These callbacks need to be BEFORE the OW_HTTPXMLCIMListener,
 		// so that they will be destructed after, because the listener could

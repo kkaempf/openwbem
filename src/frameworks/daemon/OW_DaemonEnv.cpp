@@ -90,7 +90,7 @@ OW_DaemonEnv::init()
 	OW_String dumpPrefix = getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt);
 	if (dumpPrefix.length() > 0)
 	{
-		OW_InetSocketBaseImpl::setDumpFiles(dumpPrefix + "/owSockDumpIn",
+		OW_SocketBaseImpl::setDumpFiles(dumpPrefix + "/owSockDumpIn",
 			dumpPrefix + "/owSockDumpOut");
 		logDebug(format("Logging socket dump to files: %1 and %2",
 			dumpPrefix + "/owSockDumpIn", dumpPrefix + "/owSockDumpOut"));

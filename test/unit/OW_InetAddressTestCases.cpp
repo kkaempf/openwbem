@@ -31,7 +31,7 @@
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_InetAddressTestCases.hpp"
-#include "OW_InetAddress.hpp"
+#include "OW_SocketAddress.hpp"
 
 void OW_InetAddressTestCases::setUp()
 {
@@ -43,7 +43,7 @@ void OW_InetAddressTestCases::tearDown()
 
 void OW_InetAddressTestCases::testSomething()
 {
-	OW_InetAddress addr = OW_InetAddress::getAnyLocalHost();
+	OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
 	OW_String addrName = addr.getName();
 	unitAssert(addrName.length());
 	//unitAssert(addrName.indexOf('.') > 0);
@@ -51,7 +51,7 @@ void OW_InetAddressTestCases::testSomething()
 
 Test* OW_InetAddressTestCases::suite()
 {
-	TestSuite *testSuite = new TestSuite ("OW_InetAddress");
+	TestSuite *testSuite = new TestSuite ("OW_SocketAddress");
 
 	testSuite->addTest (new TestCaller <OW_InetAddressTestCases> 
 			("testSomething", 
