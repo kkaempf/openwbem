@@ -57,6 +57,7 @@ extern "C"
 #include <signal.h>
 }
 
+#include <cerrno>
 #include <iostream>	// for cerr
 
 
@@ -219,7 +220,7 @@ int PopenStreamsImpl::getExitStatus()
 					{
 						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+						OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGKILL to process %1", m_pid).c_str());
 					}
 					// give the kernel 1 sec to clean it up, otherwise we bail.
 					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
@@ -230,7 +231,7 @@ int PopenStreamsImpl::getExitStatus()
 					}
 					if (waitpidrv == 0)
 					{
-						OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
+						OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL.");
 					}
 				}
 				else if (waitpidrv > 0)
@@ -239,14 +240,14 @@ int PopenStreamsImpl::getExitStatus()
 				}
 				else
 				{
-					OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+					OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: second waitpid() failed.");
 				}
 			}
 			else
 			{
 				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGTERM to process %1.", m_pid).c_str());
 			}
 		}
 		else if (waitpidrv > 0)
@@ -255,7 +256,7 @@ int PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
-			OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+			OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: first waitpid() failed.");
 		}
 	}
 	return m_processstatus;
@@ -428,13 +429,6 @@ safePopen(const Array<String>& command,
 	retval.out( upipeOut );
 	UnnamedPipeRef upipeErr = UnnamedPipe::createUnnamedPipe();
 	retval.err( upipeErr );
-	if (initialInput != "")
-	{
-		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
-		{
-			OW_THROW(IOException, "Platform::safePopen: Failed writing input to process");
-		}
-	}
 	if (command.size() == 0)
 	{
 		OW_THROW(ExecErrorException, "Platform::safePopen: command is empty");
@@ -442,7 +436,7 @@ safePopen(const Array<String>& command,
 	retval.pid ( fork() );
 	if (retval.pid() == -1)
 	{
-		OW_THROW(ExecErrorException, "Platform::safePopen: fork() failed");
+		OW_THROW_ERRNO_MSG(ExecErrorException, "Platform::safePopen: fork() failed");
 	}
 	if (retval.pid() == 0)
 	{
@@ -495,7 +489,7 @@ safePopen(const Array<String>& command,
 		int rval = execv(argv[0], argv);
 		cerr << Format( "Platform::safePopen: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
-		_exit(1);
+		_exit(127);
 	}
 	// this should only fail because of programmer error.
 	UnnamedPipeRef foo1 = retval.in();
@@ -511,6 +505,15 @@ safePopen(const Array<String>& command,
 	in->closeInputHandle();
 	out->closeOutputHandle();
 	err->closeOutputHandle();
+
+	if (initialInput != "")
+	{
+		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Platform::safePopen: Failed writing input to process");
+		}
+	}
+
 	return retval;
 }
 
@@ -562,7 +565,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 			waitpidrv = waitpidNoINTR(streams.pid(), &processstatus, WNOHANG);
 			if (waitpidrv == -1)
 			{
-				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: waitpid() failed");
 			}
 			else if (waitpidrv != 0)
 			{
@@ -580,7 +583,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 				break;
 			case Select::SELECT_ERROR:
 			{
-				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: error selecting on stdout and stderr");
 			}
 			break;
 			case Select::SELECT_TIMEOUT:
@@ -636,7 +639,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					}
 					else if (readrc == -1)
 					{
-						OW_THROW(ExecErrorException, Format("Exec::gatherOutput: read error: %1(%2)", errno, strerror(errno)).c_str());
+						OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: read error");
 					}
 					else
 					{
@@ -650,7 +653,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 								buff[lentocopy] = '\0';
 								output += buff;
 							}
-							OW_THROW(ExecBufferFullException, "");
+							OW_THROW(ExecBufferFullException, "Exec::gatherOutput: timedout");
 						}
 						output += buff;
 					}
@@ -669,9 +672,9 @@ OutputCallback::~OutputCallback()
 
 /////////////////////////////////////////////////////////////////////////////
 void
-OutputCallback::handleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex)
+OutputCallback::handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
 {
-	doHandleData(data, dataLen, theStream, streamIndex);
+	doHandleData(data, dataLen, outputSource, theStream, streamIndex);
 }
 
 namespace
@@ -726,7 +729,7 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 				waitpidrv = waitpidNoINTR(streams[i].pid(), &processStatus, WNOHANG);
 				if (waitpidrv == -1)
 				{
-					OW_THROW(ExecErrorException, Format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+					OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: waitpid() failed");
 				}
 				else if (waitpidrv != 0)
 				{
@@ -746,7 +749,7 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 				break;
 			case Select::SELECT_ERROR:
 			{
-				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: error selecting on stdout and stderr");
 			}
 			break;
 			case Select::SELECT_TIMEOUT:
@@ -829,12 +832,12 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 					}
 					else if (readrc == -1)
 					{
-						OW_THROW(ExecErrorException, Format("Exec::gatherOutput: read error: %1(%2)", errno, strerror(errno)).c_str());
+						OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: read error");
 					}
 					else
 					{
 						buff[readrc] = '\0';
-						output.handleData(buff, readrc, streams[i], i);
+						output.handleData(buff, readrc, readstream == streams[i].out() ? E_STDOUT : E_STDERR, streams[i], i);
 					}
 
 					break; // for loop - doesn't make sense to keep going, since we can only process one fd per call to select.

@@ -156,16 +156,25 @@ namespace Exec
 	 * and then fill in the rest of the array with the command you wish to
 	 * execute.
 	 * This function does *not* block until the child process exits.
+	 * If the binary specified in command[0] does not exist, execv() will fail,
+	 * and the return code of the sub-process will be 127. However, this is not
+	 * distinguishable from the command process returning 127.
 	 *
 	 * @param command
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
 	 *
 	 * @param initialInput
-	 *  The string is sent to stdin of the child process.
+	 *  The string is sent to stdin of the child process. If initialInput.length()
+	 *  >= the kernel's buffer size for an unnamed pipe, the call may block
+	 *  writing data to the child process until the child reads the data and frees
+	 *  up space in the buffer.
 	 *
 	 * @return A PopenStreams object which can be used to access the child
 	 *  process and/or get it's return value.
+	 *
+	 * @throws IOException If writing initialInput to the child process input fails.
+	 *         ExecErrorException If command.size() == 0 or if fork() fails.
 	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,
 			const String& initialInput = String());
@@ -202,13 +211,19 @@ namespace Exec
 	 */
 	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1);
 	
+	enum EOutputSource
+	{
+		E_STDOUT,
+		E_STDERR
+	};
+
 	class OutputCallback
 	{
 	public:
 		virtual ~OutputCallback();
-		void handleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex);
+		void handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex);
 	private:
-		virtual void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream, size_t streamIndex) = 0;
+		virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex) = 0;
 	};
 
 	enum EProcessRunning
