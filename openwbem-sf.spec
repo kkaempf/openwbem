@@ -192,6 +192,7 @@ ldconfig
 %defattr(-,root,root)
 %doc PORTING.txt README TODO 
 %doc *.HOWTO AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS
+%doc doc/*
 %doc openwbem-faq.html
 %dir %{prefix}/lib/openwbem
 %{prefix}/lib/openwbem/*

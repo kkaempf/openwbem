@@ -6,8 +6,6 @@ EXTRA_DIST = \
 Doxyfile.sh \
 ow_ar.sh \
 Makefile-shared-lib.inc \
-AuthModule.HOWTO \
-ACL.HOWTO \
 PORTING.txt \
 ProviderInterface.HOWTO \
 LICENSE \
