@@ -318,6 +318,7 @@ private:
 void
 OW_HTTPServer::startService()
 {
+	OW_Socket::createShutDownMechanism();
 	OW_ServiceEnvironmentIFCRef env = m_options.env;
 	OW_LoggerRef lgr = env->getLogger();
 	lgr->logDebug("HTTP Service is starting...");
@@ -414,7 +415,6 @@ OW_HTTPServer::startService()
 		}
 	} // if (m_httpsPort > 0)
 
-	OW_Socket::createShutDownMechanism();
 
 
 	lgr->logDebug("HTTP Service has started");
