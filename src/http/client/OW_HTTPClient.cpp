@@ -373,7 +373,7 @@ void HTTPClient::sendAuthorization()
 			{
 				// first round - we just send our euid
 
-				ostr << "uid=" << UserUtils::getEffectiveUserId();
+				ostr << "uid=\"" << UserUtils::getEffectiveUserId() << "\"";
 			}
 			else
 			{
