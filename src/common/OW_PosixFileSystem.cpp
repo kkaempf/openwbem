@@ -114,7 +114,7 @@ openFile(const String& path)
 {
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
@@ -129,7 +129,7 @@ createFile(const String& path)
 {
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
@@ -149,7 +149,7 @@ openOrCreateFile(const String& path)
 {
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
@@ -272,10 +272,10 @@ getDirectoryContents(const String& path,
 	MutexLock lock(readdirGuard);
 
 #ifdef OW_WIN32
-    struct _finddata_t dentry;
-    long hFile;
-    // Find first directory entry
-    if ((hFile = _findfirst( "*", &dentry)) == -1L)
+	struct _finddata_t dentry;
+	long hFile;
+	// Find first directory entry
+	if ((hFile = _findfirst( "*", &dentry)) == -1L)
 	{
 		return false;
 	}
@@ -441,7 +441,7 @@ initRandomFile(const String& filename)
 		bfr[i] = (char)rnum.getNextNumber();
 	}
 	HANDLE fh = ::CreateFile(filename.c_str(), GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if(fh == INVALID_HANDLE_VALUE)
 	{

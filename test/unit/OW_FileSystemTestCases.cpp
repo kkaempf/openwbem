@@ -232,31 +232,29 @@ void OW_FileSystemTestCases::testrealPath()
 	unitAssert(realPath("/etc/./././.") == "/etc");
 	try
 	{
-        realPath("/etc/.//doesNotExist");
+		realPath("/etc/.//doesNotExist");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
 	{
 		unitAssert(e.getErrorCode() == ENOENT);
 	}
-    unitAssert(realPath("./doesExist") == getCurrentWorkingDirectory() + "/doesExist");
-    unitAssert(realPath("./doesExist/") == getCurrentWorkingDirectory() + "/doesExist");
-    unitAssert(realPath("./doesExist/../doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("./doesExist") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("./doesExist/") == getCurrentWorkingDirectory() + "/doesExist");
+	unitAssert(realPath("./doesExist/../doesExist") == getCurrentWorkingDirectory() + "/doesExist");
 	try
 	{
-//		cout << '"' << realPath("doesNotExist") << '"' << endl;
-        realPath("doesNotExist");
+		realPath("doesNotExist");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
 	{
 		unitAssert(e.getErrorCode() == ENOENT);
 	}
-    unitAssert(realPath(".") == getCurrentWorkingDirectory());
+	unitAssert(realPath(".") == getCurrentWorkingDirectory());
 	try
 	{
-//		cout << '"' << realPath("doesNotExist") << '"' << endl;
-        realPath("./doesNotExist");
+		realPath("./doesNotExist");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -265,7 +263,7 @@ void OW_FileSystemTestCases::testrealPath()
 	}
 	try
 	{
-        realPath("SYMLINK_LOOP");
+		realPath("SYMLINK_LOOP");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -274,7 +272,7 @@ void OW_FileSystemTestCases::testrealPath()
 	}
 	try
 	{
-        realPath("./SYMLINK_LOOP");
+		realPath("./SYMLINK_LOOP");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -284,7 +282,7 @@ void OW_FileSystemTestCases::testrealPath()
 	unitAssert(realPath("SYMLINK_1") == getCurrentWorkingDirectory());
 	try
 	{
-        realPath("SYMLINK_1/doesNotExist");
+		realPath("SYMLINK_1/doesNotExist");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -300,7 +298,7 @@ void OW_FileSystemTestCases::testrealPath()
 	unitAssert(realPath("../unit/SYMLINK_4") == "/etc");
 	try
 	{
-        realPath("./SYMLINK_5");
+		realPath("./SYMLINK_5");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -309,7 +307,7 @@ void OW_FileSystemTestCases::testrealPath()
 	}
 	try
 	{
-        realPath("SYMLINK_5");
+		realPath("SYMLINK_5");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
@@ -318,7 +316,7 @@ void OW_FileSystemTestCases::testrealPath()
 	}
 	try
 	{
-        realPath("SYMLINK_5/doesNotExist");
+		realPath("SYMLINK_5/doesNotExist");
 		unitAssert(0);
 	}
 	catch (FileSystemException& e)
