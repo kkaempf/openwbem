@@ -148,11 +148,10 @@ void processProviderClassExtraInfo(
 	const OW_String& providerName,
 	OW_ProviderManager::IndProvRegMap_t& regMap)
 {
-    if (extra.empty())
     {
         registerProviderInfo(env, name, ifc, providerName, regMap);
     }
-    else
+    if (!extra.empty())
     {
         for (size_t i = 0; i < extra.size(); ++i)
         {
