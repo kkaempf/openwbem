@@ -1,0 +1,10 @@
+
+
+You have to be root to successfully install perlNPI !!!
+
+
+An alternative rpm provider realized through perl can be found in the rpm,
+resp. the perl subdirectory, where the stuff in rpm realizes the stub for the
+Pegasus CIMOM. To successful execute it, the correct path to the perl script
+has to be specified in rpm/RPMPerlPath.h
+
