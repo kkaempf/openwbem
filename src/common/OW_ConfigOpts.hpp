@@ -215,7 +215,7 @@
 #define OW_DEFAULT_REUSE_ADDR "true" 
 #endif
 #ifndef OW_DEFAULT_PIDFILE
-#define OW_DEFAULT_PIDFILE OW_PIDFILEDIR "/" OW_PACKAGE_PREFIX "owcimomd.pid"
+#define OW_DEFAULT_PIDFILE OW_PIDFILE_DIR "/" OW_PACKAGE_PREFIX "owcimomd.pid"
 #endif
 
 
