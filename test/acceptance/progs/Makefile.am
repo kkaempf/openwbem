@@ -50,6 +50,8 @@ owprovideragent_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/authenticators/nonauthenticating -lnonauthenticatingauthentication \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/provider -lowprovider \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
