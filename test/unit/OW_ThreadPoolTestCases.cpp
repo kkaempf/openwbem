@@ -34,8 +34,6 @@
 #include "OW_ThreadPool.hpp"
 #include "OW_Thread.hpp"
 
-#include <iostream>
-
 void OW_ThreadPoolTestCases::setUp()
 {
 }
@@ -77,6 +75,7 @@ void OW_ThreadPoolTestCases::testThreadPool()
 	OW_ThreadPool thePool(10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
 		unitAssert(thePool.addWork(OW_RunnableRef(new testRunner(ints[i]))));
@@ -103,6 +102,7 @@ void OW_ThreadPoolTestCases::testThreadPool2()
 	OW_ThreadPool thePool(10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
 	// we'll try and stuff it as full as possible, but some shouldn't make it in.
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
@@ -146,6 +146,7 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 	OW_ThreadPool thePool(10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
+	memset(ints, 0, NUM_RUNNERS * sizeof(int));
 	// we'll try and stuff it as full as possible, but some shouldn't make it in.
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
