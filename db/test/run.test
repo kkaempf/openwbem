@@ -2,7 +2,7 @@
 #
 #	@(#)run.test	8.10 (Berkeley) 7/26/94
 #
-
+export DYLD_LIBRARY_PATH=../../db/db
 # db regression tests
 main()
 {
