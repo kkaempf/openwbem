@@ -1,0 +1,11 @@
+key						data (all to be written via writeObject())
+ns/qualifier name		OW_CIMQualifier
+ns/class name			OW_CIMClass
+ns/class name			multi-valued list of subclasses OW_String
+ns							multi-valued list of root classes OW_String
+ns							multi-valued list of qualifiers OW_CIMQualifier
+?							multi-valued list of namespaces OW_String
+assoc key				OW_AssocDbEntry (possibly re-do this to be multi-valued)
+ns/class name			multi-valued list of instance names OW_CIMObjectPath
+ns/class name			multi-valued list of instances OW_CIMInstance (this is redundant, but will make enumerateInstances faster)
+ns/instance name		OW_CIMInstance
