@@ -22,18 +22,25 @@
 
 #include "cmpisrv.h"
 #include <pthread.h>
-#include <limits.h>
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Format.hpp"
 #include "OW_ThreadImpl.hpp"
 
-static const unsigned long NOKEY = PTHREAD_KEYS_MAX+1;
-volatile unsigned long CMPI_ThreadContext::theKey=NOKEY;
-static OpenWBEM::NonRecursiveMutex keyGuard;
+pthread_key_t CMPI_ThreadContext::theKey;
+namespace 
+{
+
+//////////////////////////////////////////////////////////////////////
+pthread_once_t once_control = PTHREAD_ONCE_INIT;
+
+} // end unsigned namespace
 
 CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext()
 {
+	// set up our TLS which will be used to store the Thread* in.
+	pthread_once(&once_control, &initializeTheKey);
+
 	return (CMPI_ThreadContext*)pthread_getspecific(theKey);
 }
 
@@ -44,53 +51,24 @@ OW_DEFINE_EXCEPTION(CMPI_ThreadContext)
 
 void CMPI_ThreadContext::setContext()
 {
-	pthread_key_t k;
-	int rc = pthread_key_create(&k,NULL);
-	if (rc != 0)
-		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_key_create failed. error = %1", rc).c_str());
+	// set up our TLS which will be used to store the Thread* in.
+	pthread_once(&once_control, &initializeTheKey);
 
-	rc = pthread_setspecific(k,this);
-	if (rc != 0)
-		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
-
-	theKey = k;
-	//std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
-}
-
-#undef KEY_VAL
-
-void CMPI_ThreadContext::setThreadContext()
-{
-	// if this is the first time setThreadContext() has run.
-	// hiKey is initially PTHREAD_KEYS_MAX+1, but then gets set as 
-	// CMPI_ThreadContext objects are created.
-	OpenWBEM::ThreadImpl::memoryBarrier();
-	if (theKey == NOKEY)
-	{
-		// double-checked locking pattern.  See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
-		OpenWBEM::NonRecursiveMutexLock l(keyGuard);
-		if (theKey == NOKEY)
-		{
-			m_prev=NULL;
-
-			// this adds us to the tsd and sets m_key
-			setContext();
-
-			return;
-		}
-	}
-
-	// another context already exists or existed
-
-	// if we get one, then one exists
-	m_prev=getThreadContext();
-
-	// set this as the context
 	int rc = pthread_setspecific(theKey,this);
 	if (rc != 0)
 		OW_THROW(OpenWBEM::CMPI_ThreadContextException, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
-	return;
+	//std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
+}
+
+
+void CMPI_ThreadContext::setThreadContext()
+{
+	// if we get one, then one exists
+	m_prev=getThreadContext();
+
+	// this adds us to the tsd and sets m_key
+	setContext();
 }
 
 void CMPI_ThreadContext::add(CMPI_Object *o)
@@ -152,10 +130,5 @@ CMPI_ThreadContext::~CMPI_ThreadContext()
 		((CMPIInstance*)cur)->ft->release((CMPIInstance*)cur);
 	}
 
-	if (m_prev != NULL)
-	{
-		pthread_setspecific(theKey, m_prev);
-		// can't throw an exception, so just ignore errors
-		return;
-	}
+	pthread_setspecific(theKey, m_prev);
 }

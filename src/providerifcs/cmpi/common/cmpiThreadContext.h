@@ -25,6 +25,7 @@
 #include "OW_config.h"
 
 #include <stdlib.h>
+#include <pthread.h>
 #include <iostream>
 
 #include "cmpidt.h"
@@ -33,7 +34,7 @@
 
 
 class CMPI_ThreadContext {
-   static volatile unsigned long theKey;
+   static pthread_key_t theKey;
    CMPI_ThreadContext* m_prev;
    CMPI_Object *CIMfirst,*CIMlast;
 
@@ -55,6 +56,12 @@ class CMPI_ThreadContext {
    CMPI_ThreadContext();
    CMPI_ThreadContext(CMPIBroker*,CMPIContext*);
    ~CMPI_ThreadContext();
+
+   friend void initializeTheKey()
+   {
+	   pthread_key_create(&CMPI_ThreadContext::theKey,NULL);
+   }
+
 };
 
 #endif
