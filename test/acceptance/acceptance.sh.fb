@@ -74,6 +74,7 @@ Install()
 			-e "s!;http_server.enable_deflate = .*!http_server.enable_deflate = false!g" \
 			-e "s!;owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g" \
 			-e "s!;http_server.timeout = .*!http_server.timeout = 3000!g" \
+			-e "s!;owcimomd.restart_on_error = .*!owcimomd.restart_on_error = false!g" \
 		openwbem.conf > openwbem.conf-t
 
 	cd $STAGEDIR
