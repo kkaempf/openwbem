@@ -200,8 +200,6 @@ OW_CIMOMEnvironment::init()
 
 	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt,
 		DEFAULT_REQ_HANDLER_TTL, false);
-
-	_createLogger();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -217,6 +215,8 @@ OW_CIMOMEnvironment::startServices()
 {
 	OW_MutexLock ml(m_monitor);
 
+	_createLogger();
+	
 	OW_CIMOMEnvironmentRef eref(this, true);
 	m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
 	m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
@@ -353,10 +353,9 @@ OW_CIMOMEnvironment::shutdown()
 	// Delete the provider manager
 	m_providerManager = 0;
 
-	// We keep the logger around so all of the shutdown sequence can be
-	// logged
-
 	logDebug("CIMOM Environment has shut down");
+
+	m_Logger = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
