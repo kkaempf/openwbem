@@ -696,11 +696,11 @@ void getProperty(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMValue v = hdl.getProperty(cop, "OptionalArg");
+		OW_CIMValue v = hdl.getProperty("/root/acltest", cop, "OptionalArg");
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

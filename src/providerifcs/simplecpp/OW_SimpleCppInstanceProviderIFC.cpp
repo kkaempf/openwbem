@@ -41,22 +41,19 @@ namespace
 	{
 	public:
 		instanceToObjectPathFilter(
-			OW_CIMObjectPathResultHandlerIFC& result_,
-			const OW_String& ns_)
+			OW_CIMObjectPathResultHandlerIFC& result_)
 		: result(result_)
-		, ns(ns_)
 		{}
 
 	protected:
 		virtual void doHandle(const OW_CIMInstance &i)
 		{
-			OW_CIMObjectPath cop(i.getClassName(), ns);
+			OW_CIMObjectPath cop(i.getClassName());
 			cop.setKeys(i);
 			result.handle(cop);
 		}
 	private:
 		OW_CIMObjectPathResultHandlerIFC& result;
-		const OW_String& ns;
 	};
 }
 
@@ -64,20 +61,18 @@ namespace
 void
 OW_SimpleCppInstanceProviderIFC::enumInstanceNames(
 	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_CIMClass& cimClass )
 {
-	instanceToObjectPathFilter handler(result, ns);
-	enumInstances(env, ns, className, handler, cimClass);
+	instanceToObjectPathFilter handler(result);
+	enumInstances(env, className, handler, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SimpleCppInstanceProviderIFC::enumInstances(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_String&,
 	const OW_String&,
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_CIMClass&)
@@ -89,7 +84,6 @@ OW_SimpleCppInstanceProviderIFC::enumInstances(
 OW_CIMInstance
 OW_SimpleCppInstanceProviderIFC::getInstance(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_String&,
 	const OW_CIMObjectPath&,
 	const OW_CIMClass&)
 {
@@ -100,7 +94,6 @@ OW_SimpleCppInstanceProviderIFC::getInstance(
 OW_CIMObjectPath
 OW_SimpleCppInstanceProviderIFC::createInstance(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_String&,
 	const OW_CIMInstance&)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
@@ -110,7 +103,6 @@ OW_SimpleCppInstanceProviderIFC::createInstance(
 void
 OW_SimpleCppInstanceProviderIFC::modifyInstance(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_String&,
 	const OW_CIMInstance&)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
@@ -120,7 +112,6 @@ OW_SimpleCppInstanceProviderIFC::modifyInstance(
 void
 OW_SimpleCppInstanceProviderIFC::deleteInstance(
 	const OW_ProviderEnvironmentIFCRef&,
-	const OW_String&,
 	const OW_CIMObjectPath&)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);

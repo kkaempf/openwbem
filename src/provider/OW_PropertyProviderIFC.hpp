@@ -64,6 +64,7 @@ public:
 	 */
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName) = 0;

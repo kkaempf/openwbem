@@ -64,7 +64,6 @@ public:
 	 */
 	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_CIMClass& cimClass );
@@ -83,7 +82,6 @@ public:
 	 */
 	virtual void enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_String& className,
 			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_CIMClass& cimClass);
@@ -104,7 +102,6 @@ public:
 	 */
 	virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_CIMObjectPath& instanceName,
 			const OW_CIMClass& cimClass);
 
@@ -125,7 +122,6 @@ public:
 	 */
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_CIMInstance& cimInstance );
 
 	/**
@@ -142,7 +138,6 @@ public:
 	 */
 	virtual void modifyInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_CIMInstance& modifiedInstance);
 
 	/**
@@ -154,7 +149,6 @@ public:
 	 */
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
 			const OW_CIMObjectPath& cop);
 
 	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider() { return this; }

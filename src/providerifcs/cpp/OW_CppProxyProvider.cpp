@@ -221,12 +221,13 @@ OW_CppPropertyProviderProxy::OW_CppPropertyProviderProxy(
 OW_CIMValue
 OW_CppPropertyProviderProxy::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop,
 		const OW_String& originClass,
 		const OW_String& propertyName)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->getPropertyValue(env, cop, originClass, propertyName);
+	return m_pProv->getPropertyValue(env, ns, cop, originClass, propertyName);
 
 }
 

@@ -1340,11 +1340,11 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
 
-		OW_CIMValue v = hdl.getProperty(cop, "OptionalArg");
+		OW_CIMValue v = hdl.getProperty("root/testsuite", cop, "OptionalArg");
 		// with xml, this is a string.  we want a bool.
 		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::BOOLEAN);
 		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;

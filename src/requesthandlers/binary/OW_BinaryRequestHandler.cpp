@@ -645,10 +645,11 @@ void
 OW_BinaryRequestHandler::getProperty(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
+	OW_String ns (OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String propName(OW_BinIfcIO::readString(istrm));
 
-	OW_CIMValue cv = chdl->getProperty(op, propName);
+	OW_CIMValue cv = chdl->getProperty(ns, op, propName);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_Bool isValue = (cv) ? true : false;
 	OW_BinIfcIO::writeBool(ostrm, isValue);

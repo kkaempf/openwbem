@@ -54,6 +54,7 @@ public:
 
 	virtual OW_CIMValue getPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName);
@@ -80,13 +81,14 @@ OW_OpenLinuxVersion::~OW_OpenLinuxVersion()
 OW_CIMValue
 OW_OpenLinuxVersion::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop,
 		const OW_String& originClass,
 		const OW_String& propertyName)
 {
 	env->getLogger()->logDebug(format("OW_OpenLinuxVersion::getPropertyValue: "
-				"cop = %1, originClass = %2, propertyName = %3",
-				cop.toString(), originClass, propertyName));
+				"ns = %1, cop = %2, originClass = %3, propertyName = %4",
+				ns, cop.toString(), originClass, propertyName));
 	ifstream in("/etc/.installdata");
 	OW_String data;
 	while(in)

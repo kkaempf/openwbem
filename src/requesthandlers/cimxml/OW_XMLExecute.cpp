@@ -1181,17 +1181,16 @@ void
 OW_XMLExecute::getProperty(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
 	OW_Array<param> params;
 	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
 	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-	path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
+	OW_CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 
-	OW_CIMValue cv = hdl.getProperty(path, params[1].val.toString());
+	OW_CIMValue cv = hdl.getProperty(ns, instpath, params[1].val.toString());
 
 	if (cv)
 		OW_CIMtoXML(cv, ostr);

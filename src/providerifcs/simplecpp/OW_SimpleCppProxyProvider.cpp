@@ -165,8 +165,9 @@ OW_SimpleCppInstanceProviderProxy::deleteInstance(
 		const OW_String& ns,
 		const OW_CIMObjectPath& cop)
 {
+	(void)ns;
 	m_pProv->updateAccessTime();
-	m_pProv->deleteInstance(env, ns, cop);
+	m_pProv->deleteInstance(env, cop);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -181,7 +182,8 @@ OW_SimpleCppInstanceProviderProxy::enumInstanceNames(
 {
 	m_pProv->updateAccessTime();
 	(void)deep;
-	return m_pProv->enumInstanceNames(env, ns, className, result, cimClass);
+	(void)ns;
+	return m_pProv->enumInstanceNames(env, className, result, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -219,8 +221,9 @@ OW_SimpleCppInstanceProviderProxy::enumInstances(
 {
 	m_pProv->updateAccessTime();
 	(void)deep;
+	(void)ns;
 	localOnlyFilter filter(result,localOnly);
-	m_pProv->enumInstances(env, ns, className, filter, cimClass);
+	m_pProv->enumInstances(env, className, filter, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -233,7 +236,8 @@ OW_SimpleCppInstanceProviderProxy::getInstance(
 		const OW_Bool& localOnly)
 {
 	m_pProv->updateAccessTime();
-	OW_CIMInstance ci = m_pProv->getInstance(env, ns, instanceName, cimClass);
+	(void)ns;
+	OW_CIMInstance ci = m_pProv->getInstance(env, instanceName, cimClass);
 	ci = ci.clone(localOnly,true,true);
 	return ci;
 }
@@ -246,7 +250,8 @@ OW_SimpleCppInstanceProviderProxy::createInstance(
 		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->createInstance(env, ns, cimInstance);
+	(void)ns;
+	return m_pProv->createInstance(env, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -262,7 +267,8 @@ OW_SimpleCppInstanceProviderProxy::modifyInstance(
 	// TODO: just ignore includeQualifiers and propertyList?
 	(void)includeQualifiers;
 	(void)propertyList;
-	m_pProv->modifyInstance(env, ns, modifiedInstance);
+	(void)ns;
+	m_pProv->modifyInstance(env, modifiedInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
@@ -276,12 +282,14 @@ OW_SimpleCppPropertyProviderProxy::OW_SimpleCppPropertyProviderProxy(
 OW_CIMValue
 OW_SimpleCppPropertyProviderProxy::getPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop,
 		const OW_String& originClass,
 		const OW_String& propertyName)
 {
 	m_pProv->updateAccessTime();
 	(void)originClass;
+	(void)ns;
 	return m_pProv->getPropertyValue(env, cop, propertyName);
 
 }

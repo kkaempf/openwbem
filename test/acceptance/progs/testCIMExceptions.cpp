@@ -882,9 +882,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
+		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->getProperty(cop, "theKeyProp");
+		hdl->getProperty("badNamespace", cop, "theKeyProp");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -896,9 +896,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root/testsuite");
+		OW_CIMObjectPath cop("badClass");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->getProperty(cop, "theKeyProp");
+		hdl->getProperty("root/testsuite", cop, "theKeyProp");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -909,9 +909,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
+		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(false));
-		hdl->getProperty(cop, "theKeyProp");
+		hdl->getProperty("root/testsuite", cop, "theKeyProp");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -922,9 +922,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NO_SUCH_PROPERTY
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
+		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->getProperty(cop, "badProp");
+		hdl->getProperty("root/testsuite", cop, "badProp");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
