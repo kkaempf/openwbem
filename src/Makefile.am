@@ -186,7 +186,7 @@ owcimomd.def:
 	echo 'copyright "Copyright (C) 2000-2004 Vintela, Inc. All rights reserved"' >>$@
 	echo 'version $(OPENWBEM_MAJOR_VERSION),$(OPENWBEM_MINOR_VERSION),$(OPENWBEM_MICRO_VERSION)' >>$@
 	echo 'stacksize 1065536' >>$@
-	echo 'Flag_On 0x00400000' >>$@
+	echo 'Flag_On 0x00400200' >>$@
 	echo 'export @owcimomd.exp' >> $@
 
 clean-local:
