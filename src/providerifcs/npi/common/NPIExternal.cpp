@@ -646,7 +646,8 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, CIMInstance ci, const char* name)
         OW_CIMObjectPath owcop;
         cv.get(owcop);
         
-        cop.ptr = static_cast<void *>(owcop.toBlob());
+        //cop.ptr = static_cast<void *>(owcop.toBlob());
+        cop.ptr = static_cast<void *>(&owcop);
 
 	return cop;
 }
@@ -941,12 +942,12 @@ CIMOMGetClass(NPIHandle* npiHandle, CIMObjectPath cop, int localOnly)
 
 	OW_CIMClass cc = NPI_getmyClass(npiHandle, nameSpace, className);
 
-        OW_Blob * myblob = cc.toBlob();
+    //    OW_Blob * myblob = cc.toBlob();
 
 	//CIMClass localcc = { static_cast<void *> (cc.toBlob()) };
 
-        OW_CIMClass * my_cc = new OW_CIMClass;
-        my_cc->fromBlob(myblob);
+        OW_CIMClass * my_cc = new OW_CIMClass(cc);
+   //     my_cc->fromBlob(myblob);
 	CIMClass localcc = { static_cast<void *> (my_cc) };
 
 	return localcc;
@@ -1012,10 +1013,10 @@ CIMOMGetInstance(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 
 	OW_CIMInstance ci = NPI_getmyInstance(npiHandle, *ref, i);
 
-        OW_Blob * myblob = ci.toBlob();
+        //OW_Blob * myblob = ci.toBlob();
 
-        OW_CIMInstance * my_ci = new OW_CIMInstance;
-        my_ci->fromBlob(myblob);
+        OW_CIMInstance * my_ci = new OW_CIMInstance(ci);
+        //my_ci->fromBlob(myblob);
 
 	CIMInstance localci = { static_cast<void *> (my_ci) };
 

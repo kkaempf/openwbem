@@ -32,9 +32,9 @@
 #define OW_NPI_PROFIDER_IFC_UTILS_HPP_
 
 #include "OW_config.h"
-#include "OW_Blob.hpp"
 #include "NPIExternal.hpp"
 
+/*
 class OW_BlobFreer
 {
 public:
@@ -48,6 +48,7 @@ public:
 private:
 	OW_Blob* m_blob;
 };
+*/
 
 
 class OW_NPIVectorFreer
