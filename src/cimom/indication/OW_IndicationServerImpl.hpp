@@ -153,6 +153,8 @@ private:
 		const CIMInstance& subscription,
 		IndicationExportProviderIFCRef provider);
 	IndicationExportProviderIFCRef getProvider(const CIMName& className);
+	void deactivateAllSubscriptions();
+
 	struct ProcIndicationTrans
 	{
 		ProcIndicationTrans(const CIMInstance& inst,

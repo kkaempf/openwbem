@@ -494,6 +494,35 @@ IndicationServerImplThread::run()
 	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 	return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImplThread::deactivateAllSubscriptions()
+{
+	for (subscriptions_t::iterator curSubscription = m_subscriptions.begin();
+		  curSubscription != m_subscriptions.end(); ++curSubscription)
+	{
+		Subscription& sub(curSubscription->second);
+		IndicationProviderIFCRefArray& providers(sub.m_providers);
+		for (IndicationProviderIFCRefArray::iterator curProvider = providers.begin();
+			  curProvider != providers.end(); ++curProvider)
+		{
+			try
+			{
+				OW_LOG_DEBUG(m_logger, Format("About to call deActivateFilter() for subscription %1, provider %2",
+					sub.m_subPath.toString(), curProvider - providers.begin()));
+				(*curProvider)->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(),
+					sub.m_subPath.getNameSpace(), sub.m_classes);
+				OW_LOG_DEBUG(m_logger, "deActivateFilter() done");
+			}
+			catch (Exception& e)
+			{
+				OW_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter(): %1", e));
+			}
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 IndicationServerImplThread::shutdown()
@@ -506,6 +535,8 @@ IndicationServerImplThread::shutdown()
 	// wait until the main thread exits.
 	this->join();
 	
+	deactivateAllSubscriptions();
+
 	// clear out variables to avoid circular reference counts.
 	m_providers.clear();
 	m_procTrans.clear();
@@ -1084,7 +1115,8 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (CIMException& e)
 		{
-			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e.getMessage());
+			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3",
+				filterSourceNameSpace, isaClassNames[i], e.getMessage());
 			OW_LOG_ERROR(m_logger, msg);
 			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}

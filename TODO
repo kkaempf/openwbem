@@ -29,8 +29,6 @@ Testing:
 
 Fix problems:
 For 3.1.0:
-    - Indication server needs to call deActivateFilter on all active providers
-      when shutting down.
     - Change all cmd line utilities to use the CmdLineParser class and support --help and --version
     - All libs should be installed in $(libdir) and links created in $(libdir)/openwbem/*/
       This is necessary for listener and provider agent support.
@@ -70,13 +68,6 @@ Later:
       it doesn't show you the associated relational operators ==, !=, <, etc.
 
 New features:
-For 3.1.0
-    - Implement the CIM_Interop build-in providers.
-      - CIM_CommMechanismForManager
-      - CIM_ObjectManagerAdapter
-      - CIM_CommMechanismForObjectManagerAdapter
-
-Later:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
