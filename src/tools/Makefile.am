@@ -186,9 +186,10 @@ $(CXXBINLINKFLAGS) \
 owrepositorydump_SOURCES = owrepositorydump.cpp
 
 owrepositorydump_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
--L$(top_builddir)/db/db -lowdb
+-L$(top_builddir)/db/db -lowdb \
+-L$(top_builddir)/src/common -lopenwbem \
+$(BINLINKAPPENDFLAGS)
 
 owrepositorydump_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
