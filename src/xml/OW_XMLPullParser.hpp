@@ -61,6 +61,7 @@ public:
 	{
 		return getAttribute(attrName, true);
 	}
+	// TODO: Get rid of all these bool parameters!
 	String getAttribute(const char* const attrName, bool throwIfError = false);
 	void getChild();
 	void mustGetChild();
