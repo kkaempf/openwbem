@@ -258,7 +258,7 @@ printUsage(std::ostream& ostrm)
 //////////////////////////////////////////////////////////////////////////////
 void owcimomd_new_handler()
 {
-#ifdef OW_DEBUG
+#if defined (OW_DEBUG)  || defined (OW_NETWARE)
 	abort();
 #endif
 
