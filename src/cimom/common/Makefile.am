@@ -14,7 +14,6 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
 -L$(top_builddir)/db/db -lowdb \
--ldl \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc
 
 
