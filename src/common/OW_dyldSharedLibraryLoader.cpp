@@ -38,6 +38,9 @@
 #include "OW_dyldSharedLibrary.hpp"
 #include "OW_Format.hpp"
 
+#include "iostream"
+#include "ostream"
+
 namespace OpenWBEM
 {
 
@@ -50,6 +53,8 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
     NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
 	const char* err_msg = NULL;
 	void* libhandle = NULL;
+
+  std::cerr << "Attempting to load [" << filename << "] and dsoerr is: " << dsoerr << " : " << std::endl;
 
     if (dsoerr == NSObjectFileImageSuccess) 
 	{
