@@ -52,6 +52,7 @@
  */
 typedef int (*certVerifyFuncPtr_t)(X509* cert, const OW_String& hostName);
 
+// TODO: Make this class be a singleton.
 class OW_SSLCtxMgr
 {
 public:
