@@ -53,6 +53,21 @@ class OW_COMMON_API ServiceIFC : public IntrusiveCountableBase
 public:
 	virtual ~ServiceIFC();
 	/**
+	 * Every service may have a name.  The name is used to calculate dependencies, other services can return
+	 * the name from getDependencies(), to instruct the cimom about which order to start and shutdown
+	 * all the services.
+	 * The default is to have no name, in that case, no other service can depend on it.
+	 */
+	//virtual String getName() const = 0;
+
+	/**
+	 * Get the list of services this service depends on.  Services names returned will be started before and
+	 * shutdown after this service.  If a dependent service doesn't exist, then the cimom startup will fail.
+	 * The default is to have no dependencies.
+	 */
+	//virtual StringArray getDependencies() const = 0;
+
+	/**
 	 * init() will be called to give the derived class an opportunity to initialize itself.
 	 * Do not create threads which interact with the environment until start() is called.
 	 * During the loading/initializing phase, the environment is single-threaded.
