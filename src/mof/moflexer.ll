@@ -41,7 +41,8 @@
 #define WHITE_RETURN(x) /* skip it */
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
-#define RETURN_VAL(x) yylval->pString = new OW_String(yytext); return(x);
+#define RETURN_VAL(x) yylval->pString = 0; return(x);
+#define RETURN_STR(x) yylval->pString = new OW_String(yytext); return(x);
 
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
@@ -102,52 +103,52 @@ ws		[ \t]+
 	/* Shame on whoever put special cases in the mof lexical specs and
 	didn't even document it! */
 <OnlyIdentifier>{ws}*			/* eat up whitespace */
-<OnlyIdentifier>{identifier} {BEGIN(INITIAL);RETURN_VAL(IDENTIFIER_TOK);}
+<OnlyIdentifier>{identifier} {BEGIN(INITIAL);RETURN_STR(IDENTIFIER_TOK);}
 
 {ws}	/* skip blanks and tabs */
 "\r\n"	++MOF_COMPILER->theLineInfo.lineNum;
 "\n"	++MOF_COMPILER->theLineInfo.lineNum;
 "\r"	++MOF_COMPILER->theLineInfo.lineNum;
 
-any					{RETURN_VAL(ANY_TOK);}
-as						{RETURN_VAL(AS_TOK);}
-association			{RETURN_VAL(ASSOCIATION_TOK);}
-class					{RETURN_VAL(CLASS_TOK);}
-disableoverride	{RETURN_VAL(DISABLEOVERRIDE_TOK);}
-boolean				{RETURN_VAL(DT_BOOL_TOK);}
-char16				{RETURN_VAL(DT_CHAR16_TOK);}
-datetime				{RETURN_VAL(DT_DATETIME_TOK);}
-real32				{RETURN_VAL(DT_REAL32_TOK);}
-real64				{RETURN_VAL(DT_REAL64_TOK);}
-sint16				{RETURN_VAL(DT_SINT16_TOK);}
-sint32				{RETURN_VAL(DT_SINT32_TOK);}
-sint64				{RETURN_VAL(DT_SINT64_TOK);}
-sint8					{RETURN_VAL(DT_SINT8_TOK);}
-string				{RETURN_VAL(DT_STR_TOK);}
-uint16				{RETURN_VAL(DT_UINT16_TOK);}
-uint32				{RETURN_VAL(DT_UINT32_TOK);}
-uint64				{RETURN_VAL(DT_UINT64_TOK);}
-uint8					{RETURN_VAL(DT_UINT8_TOK);}
-enableoverride		{RETURN_VAL(ENABLEOVERRIDE_TOK);}
-false					{RETURN_VAL(FALSE_TOK);}
-flavor				{RETURN_VAL(FLAVOR_TOK);}
-indication			{RETURN_VAL(INDICATION_TOK);}
-instance				{RETURN_VAL(INSTANCE_TOK);}
-method				{RETURN_VAL(METHOD_TOK);}
-null					{RETURN_VAL(NULL_TOK);}
-of						{RETURN_VAL(OF_TOK);}
-parameter			{RETURN_VAL(PARAMETER_TOK);}
-#pragma				{RETURN_VAL(PRAGMA_TOK);}
-property				{RETURN_VAL(PROPERTY_TOK);}
-qualifier			{BEGIN(OnlyIdentifier); RETURN_VAL(QUALIFIER_TOK);}
+any					{RETURN_STR(ANY_TOK);}
+as						{RETURN_STR(AS_TOK);}
+association			{RETURN_STR(ASSOCIATION_TOK);}
+class					{RETURN_STR(CLASS_TOK);}
+disableoverride	{RETURN_STR(DISABLEOVERRIDE_TOK);}
+boolean				{RETURN_STR(DT_BOOL_TOK);}
+char16				{RETURN_STR(DT_CHAR16_TOK);}
+datetime				{RETURN_STR(DT_DATETIME_TOK);}
+real32				{RETURN_STR(DT_REAL32_TOK);}
+real64				{RETURN_STR(DT_REAL64_TOK);}
+sint16				{RETURN_STR(DT_SINT16_TOK);}
+sint32				{RETURN_STR(DT_SINT32_TOK);}
+sint64				{RETURN_STR(DT_SINT64_TOK);}
+sint8					{RETURN_STR(DT_SINT8_TOK);}
+string				{RETURN_STR(DT_STR_TOK);}
+uint16				{RETURN_STR(DT_UINT16_TOK);}
+uint32				{RETURN_STR(DT_UINT32_TOK);}
+uint64				{RETURN_STR(DT_UINT64_TOK);}
+uint8					{RETURN_STR(DT_UINT8_TOK);}
+enableoverride		{RETURN_STR(ENABLEOVERRIDE_TOK);}
+false					{RETURN_STR(FALSE_TOK);}
+flavor				{RETURN_STR(FLAVOR_TOK);}
+indication			{RETURN_STR(INDICATION_TOK);}
+instance				{RETURN_STR(INSTANCE_TOK);}
+method				{RETURN_STR(METHOD_TOK);}
+null					{RETURN_STR(NULL_TOK);}
+of						{RETURN_STR(OF_TOK);}
+parameter			{RETURN_STR(PARAMETER_TOK);}
+#pragma				{RETURN_STR(PRAGMA_TOK);}
+property				{RETURN_STR(PROPERTY_TOK);}
+qualifier			{BEGIN(OnlyIdentifier); RETURN_STR(QUALIFIER_TOK);}
 ref					{RETURN_VAL(REF_TOK);}
-reference			{RETURN_VAL(REFERENCE_TOK);}
-restricted			{RETURN_VAL(RESTRICTED_TOK);}
-schema				{RETURN_VAL(SCHEMA_TOK);}
-scope					{RETURN_VAL(SCOPE_TOK);}
-tosubclass			{RETURN_VAL(TOSUBCLASS_TOK);}
-translatable		{RETURN_VAL(TRANSLATABLE_TOK);}
-true					{RETURN_VAL(TRUE_TOK);}
+reference			{RETURN_STR(REFERENCE_TOK);}
+restricted			{RETURN_STR(RESTRICTED_TOK);}
+schema				{RETURN_STR(SCHEMA_TOK);}
+scope					{RETURN_STR(SCOPE_TOK);}
+tosubclass			{RETURN_STR(TOSUBCLASS_TOK);}
+translatable		{RETURN_STR(TRANSLATABLE_TOK);}
+true					{RETURN_STR(TRUE_TOK);}
 "("					{RETURN_VAL(LPAREN_TOK);}
 ")"					{RETURN_VAL(RPAREN_TOK);}
 "{"					{RETURN_VAL(LBRACE_TOK);}
@@ -162,17 +163,17 @@ true					{RETURN_VAL(TRUE_TOK);}
 
 
 
-{binaryValue}		{RETURN_VAL(binaryValue);}
+{binaryValue}		{RETURN_STR(binaryValue);}
 
-{octalValue}		{RETURN_VAL(octalValue);}
+{octalValue}		{RETURN_STR(octalValue);}
 
-{decimalValue}		{RETURN_VAL(decimalValue);}
+{decimalValue}		{RETURN_STR(decimalValue);}
 
-{hexValue}			{RETURN_VAL(hexValue);}
+{hexValue}			{RETURN_STR(hexValue);}
 
-{floatValue}			{RETURN_VAL(floatValue);}
+{floatValue}			{RETURN_STR(floatValue);}
 
-{charValue}			{RETURN_VAL(charValue);}
+{charValue}			{RETURN_STR(charValue);}
 
 {stringValue}(({ws}|[\r\n])*{stringValue})*		{
 	/* figure out how many lines we passed over */
@@ -187,10 +188,10 @@ true					{RETURN_VAL(TRUE_TOK);}
 					++i;
 		}
 	}
-	RETURN_VAL(stringValue);
+	RETURN_STR(stringValue);
 }
 
-{identifier}		{RETURN_VAL(IDENTIFIER_TOK);}
+{identifier}		{RETURN_STR(IDENTIFIER_TOK);}
 
 <<EOF>> {
 	if ( --(MOF_COMPILER->include_stack_ptr) < 0 )

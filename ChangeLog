@@ -1,3 +1,8 @@
+Fri Dec 13 23:05:03 MST 2002
+- Got the WQL SelectStatement to successfully compile all the test queries.
+- Fixed the MOF & WQL lexer to only allocate strings when needed instead of 
+  for all tokens.
+
 Wed Dec 11 21:22:12 MST 2002
 - Added a warning to the configure.in script that will tell the user that
   they have to edit the config file to not use the PAM authentication

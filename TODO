@@ -20,7 +20,7 @@ Testing:
 Fix problems:
     - Add an option for user to control SO_REUSEADDR
     - Add an option for user to specify which interfaces to listen on.
-    - Fix memory leak in openssl (when restarting) & in wql & in npi.
+    - Fix memory leak in openssl (when restarting) & in npi.
     - Add a page to the website similar to http://cygwin.com/bugs.html
     - Add a segfault handler on linux that will create a stack trace using
       the glibc functions.
