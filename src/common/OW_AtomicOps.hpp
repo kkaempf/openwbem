@@ -79,8 +79,13 @@ namespace OpenWBEM
 {
 
 // use fast inline assembly versions
-typedef struct { volatile int val; } Atomic_t;
-#define OW_ATOMIC(i)	{ (i) }
+struct Atomic_t
+{ 
+	Atomic_t() : val(0) {}
+	Atomic_t(int i) : val(i) {}
+	volatile int val; 
+};
+
 inline void AtomicInc(Atomic_t &v)
 {
 	int t;

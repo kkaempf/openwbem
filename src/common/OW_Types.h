@@ -101,7 +101,11 @@ typedef int OW_Select_t;
 #define OW_FILENAME_SEPARATOR "\\"
 #define OW_PATHNAME_SEPARATOR ";"
 #else
+#if defined OW_DARWIN
+#define OW_SHAREDLIB_EXTENSION ".dylib"
+#else
 #define OW_SHAREDLIB_EXTENSION ".so"
+#endif
 #define OW_FILENAME_SEPARATOR "/"
 #define OW_PATHNAME_SEPARATOR ":"
 #endif

@@ -55,6 +55,9 @@ extern "C"
 #include <fcntl.h>
 #include <paths.h>
 #include <sys/mdi.h>
+#elif defined (OW_DARWIN)
+#include <net/if.h>
+#include <sys/ioctl.h>
 #else
 #ifdef OW_HAVE_STROPTS_H
 #include <stropts.h>

@@ -64,7 +64,7 @@
 #define OW_DEFAULT_PERL_PROVIDER_LOCATION OW_DEFAULT_OWLIB_DIR"/perlproviders"
 #endif
 #ifndef OW_DEFAULT_AUTH_MOD
-#define OW_DEFAULT_AUTH_MOD OW_DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
+#define OW_DEFAULT_AUTH_MOD OW_DEFAULT_OWLIB_DIR"/authentication/libpamauthentication"OW_SHAREDLIB_EXTENSION
 #endif
 
 namespace OpenWBEM
@@ -96,7 +96,7 @@ namespace OpenWBEM
 #define OW_DEFAULT_DISABLE_INDICATIONS "false"
 #endif
 #ifndef OW_DEFAULT_WQL_LIB
-#define OW_DEFAULT_WQL_LIB OW_DEFAULT_LIB_DIR"/libowwql.so"
+#define OW_DEFAULT_WQL_LIB OW_DEFAULT_LIB_DIR"/libowwql"OW_SHAREDLIB_EXTENSION
 #endif
 #ifndef OW_DEFAULT_ENABLE_DEFLATE
 #define OW_DEFAULT_ENABLE_DEFLATE "true"
