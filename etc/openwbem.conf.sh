@@ -85,6 +85,8 @@
 # %F - The file name
 # %l - The filename and line number. e.g. file.cpp(100)
 # %L - The line number
+# %M - The method name where the logging request was issued (only works on gcc
+#      or a C++ compiler which supports the C99 __func__)
 # %m - The message
 # %e - The message as XML CDATA. This includes the "<![CDATA[" and ending "]]>"
 # %n - The platform dependent line separator character (\n) or characters (\r\n)

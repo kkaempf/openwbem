@@ -547,6 +547,22 @@ AC_TRY_COMPILE(
 	AC_DEFINE(INTTYPES_H_DOES_NOT_DEFINE_PRI, 1, [Define to 1 if <inttypes.h> does not define PRIu32 or PRIx32.])
 ])
 				
+dnl See if the C++ compiler supports the C99 __func__
+AC_MSG_CHECKING(if the C++ compiler supports the C99 __func__)
+AC_TRY_COMPILE(
+[
+],
+[
+	const char* f = __func__;
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_C99_UUFUNCUU, 1, [Define to 1 if the C++ compiler supports the C99 __func__])
+],
+[
+	AC_MSG_RESULT(no)
+])
+
 AC_LANG_C
 
 AC_CHECK_FUNCS(getopt_long sched_yield backtrace nanosleep \

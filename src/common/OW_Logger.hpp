@@ -93,32 +93,36 @@ public:
 	 * @param message The string to log.
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logFatalError(const String& message, const char* filename = 0, int fileline = -1) const;
+	void logFatalError(const String& message, const char* filename = 0, int fileline = -1, const char* methodname = 0) const;
 	
 	/**
 	 * If getLogLevel() >= E_ERROR_LEVEL, Log message with an error category and the default component.
 	 * @param message The string to log.
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logError(const String& message, const char* filename = 0, int fileline = -1) const;
+	void logError(const String& message, const char* filename = 0, int fileline = -1, const char* methodname = 0) const;
 	
 	/**
 	 * If getLogLevel() >= E_INFO_LEVEL, Log info.
 	 * @param message The string to log.
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logInfo(const String& message, const char* filename = 0, int fileline = -1) const;
+	void logInfo(const String& message, const char* filename = 0, int fileline = -1, const char* methodname = 0) const;
 	
 	/**
 	 * If getLogLevel() >= E_DEBUG_LEVEL, Log debug info.
 	 * @param message The string to log.
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logDebug(const String& message, const char* filename = 0, int fileline = -1) const;
+	void logDebug(const String& message, const char* filename = 0, int fileline = -1, const char* methodname = 0) const;
 
 	// Note that we don't use defaults on logMessage so the correct overload will be chosen.
 	/**
@@ -137,8 +141,9 @@ public:
 	 * @param message The message to log
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline) const;
+	void logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline, const char* methodname) const;
 
 	/**
 	 * Log a message using the default component and specified category.
@@ -155,8 +160,9 @@ public:
 	 * @param message The message to log
 	 * @param filename The file where the log statement was written.
 	 * @param fileline The line number of the file where the log statement was written.
+	 * @param methodname The method name where the log statement was written.
 	 */
-	void logMessage(const String& category, const String& message, const char* filename, int fileline) const;
+	void logMessage(const String& category, const String& message, const char* filename, int fileline, const char* methodname) const;
 
 	/**
 	 * Log a message.
@@ -296,6 +302,15 @@ private: // data
 
 } // end namespace OpenWBEM
 
+
+#if defined(__GNUC__)
+#define OW_LOGGER_PRETTY_FUNCTION __PRETTY_FUNCTION__
+#elif defined(OW_HAVE_C99_UUFUNCUU)
+#define OW_LOGGER_PRETTY_FUNCTION __func__
+#else
+#define OW_LOGGER_PRETTY_FUNCTION ""
+#endif
+
 /**
  * Log message to logger with the Debug level.  message is only evaluated if logger->getLogLevel() >= E_DEBUG_LEVEL
  * __FILE__ and __LINE__ are logged.
@@ -307,7 +322,7 @@ do \
 { \
 	if ((logger)->getLogLevel() >= ::OpenWBEM::E_DEBUG_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__); \
+		(logger)->logMessage(::OpenWBEM::Logger::STR_DEBUG_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -322,7 +337,7 @@ do \
 { \
 	if ((logger)->getLogLevel() >= ::OpenWBEM::E_INFO_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__); \
+		(logger)->logMessage(::OpenWBEM::Logger::STR_INFO_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -337,7 +352,7 @@ do \
 { \
 	if ((logger)->getLogLevel() >= ::OpenWBEM::E_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__); \
+		(logger)->logMessage(::OpenWBEM::Logger::STR_ERROR_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -352,7 +367,7 @@ do \
 { \
 	if ((logger)->getLogLevel() >= ::OpenWBEM::E_FATAL_ERROR_LEVEL) \
 	{ \
-		(logger)->logMessage(::OpenWBEM::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__); \
+		(logger)->logMessage(::OpenWBEM::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 
@@ -368,7 +383,7 @@ do \
 { \
 	if ((logger)->categoryIsEnabled((category))) \
 	{ \
-		(logger)->logMessage((category), (message), __FILE__, __LINE__); \
+		(logger)->logMessage((category), (message), __FILE__, __LINE__, OW_LOGGER_PRETTY_FUNCTION); \
 	} \
 } while (0)
 

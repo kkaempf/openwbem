@@ -60,6 +60,7 @@ Fix problems:
       when shutting down.
 
 New features:
+    - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
     - Start to use __attribute__ ((warn_unused_result)) where applicable.
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.

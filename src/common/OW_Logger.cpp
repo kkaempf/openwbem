@@ -128,41 +128,41 @@ Logger::setLogLevel(const String& l)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logFatalError(const String& message, const char* filename, int fileline) const
+Logger::logFatalError(const String& message, const char* filename, int fileline, const char* methodname) const
 {
 	if (m_logLevel >= E_FATAL_ERROR_LEVEL)
 	{
-		processLogMessage( LogMessage(m_defaultComponent, STR_FATAL_CATEGORY, message, filename, fileline) );
+		processLogMessage( LogMessage(m_defaultComponent, STR_FATAL_CATEGORY, message, filename, fileline, methodname) );
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logError(const String& message, const char* filename, int fileline) const
+Logger::logError(const String& message, const char* filename, int fileline, const char* methodname) const
 {
 	if (m_logLevel >= E_ERROR_LEVEL)
 	{
-		processLogMessage( LogMessage(m_defaultComponent, STR_ERROR_CATEGORY, message, filename, fileline) );
+		processLogMessage( LogMessage(m_defaultComponent, STR_ERROR_CATEGORY, message, filename, fileline, methodname) );
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logInfo(const String& message, const char* filename, int fileline) const
+Logger::logInfo(const String& message, const char* filename, int fileline, const char* methodname) const
 {
 	if (m_logLevel >= E_INFO_LEVEL)
 	{
-		processLogMessage( LogMessage(m_defaultComponent, STR_INFO_CATEGORY, message, filename, fileline) );
+		processLogMessage( LogMessage(m_defaultComponent, STR_INFO_CATEGORY, message, filename, fileline, methodname) );
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logDebug(const String& message, const char* filename, int fileline) const
+Logger::logDebug(const String& message, const char* filename, int fileline, const char* methodname) const
 {
 	if (m_logLevel >= E_DEBUG_LEVEL)
 	{
-		processLogMessage( LogMessage(m_defaultComponent, STR_DEBUG_CATEGORY, message, filename, fileline) );
+		processLogMessage( LogMessage(m_defaultComponent, STR_DEBUG_CATEGORY, message, filename, fileline, methodname) );
 	}
 }
 	
@@ -170,28 +170,28 @@ Logger::logDebug(const String& message, const char* filename, int fileline) cons
 void
 Logger::logMessage(const String& component, const String& category, const String& message) const
 {
-	processLogMessage(LogMessage(component, category, message, 0, -1));
+	processLogMessage(LogMessage(component, category, message, 0, -1, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline) const
+Logger::logMessage(const String& component, const String& category, const String& message, const char* filename, int fileline, const char* methodname) const
 {
-	processLogMessage(LogMessage(component, category, message, filename, fileline));
+	processLogMessage(LogMessage(component, category, message, filename, fileline, methodname));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 Logger::logMessage(const String& category, const String& message) const
 {
-	processLogMessage(LogMessage(m_defaultComponent, category, message, 0, -1));
+	processLogMessage(LogMessage(m_defaultComponent, category, message, 0, -1, 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-Logger::logMessage(const String& category, const String& message, const char* filename, int fileline) const
+Logger::logMessage(const String& category, const String& message, const char* filename, int fileline, const char* methodname) const
 {
-	processLogMessage(LogMessage(m_defaultComponent, category, message, filename, fileline));
+	processLogMessage(LogMessage(m_defaultComponent, category, message, filename, fileline, methodname));
 }
 
 //////////////////////////////////////////////////////////////////////////////

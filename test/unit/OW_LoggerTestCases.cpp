@@ -606,6 +606,17 @@ void OW_LoggerTestCases::testLogMessageFormat()
 		//std::cout << "\n01234567890123456789\n" << outputMessages[1] << std::endl;
 		unitAssert(outputMessages[1] == "<![CDATA[]]>]]&gt;<![CDATA[err]]>]]&gt;<![CDATA[or1]]>]]&gt;<![CDATA[]]>");
 	}
+	{ // method name %M
+		StringArray outputMessages;
+		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%M");
+		OW_LOG_ERROR(lgr, "error1");
+		unitAssert(outputMessages.size() == 1);
+		//std::cout << "\n01234567890123456789\n" << outputMessages[0] << std::endl;
+		// This could vary per compiler, but we know what gcc will output
+		#if defined (__GNUC__)
+		unitAssert(outputMessages[0] == "void OW_LoggerTestCases::testLogMessageFormat()");
+		#endif
+	}
 
 }
 

@@ -362,6 +362,23 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+class MethodLocationConverter : public Converter
+{
+public:
+	MethodLocationConverter(const Formatting& formatting)
+		: Converter(formatting)
+	{}
+
+	virtual void convert(const LogMessage &message, StringBuffer &output) const
+	{
+		if (message.methodname != 0)
+		{
+			output += message.methodname;
+		}
+	}
+};
+
+/////////////////////////////////////////////////////////////////////////////
 class CategoryConverter : public Converter
 {
 public:
@@ -784,6 +801,12 @@ public:
 			case 'L':
 			{
 				rv = new LineLocationConverter(formatting);
+			}
+			break;
+
+			case 'M':
+			{
+				rv = new MethodLocationConverter(formatting);
 			}
 			break;
 

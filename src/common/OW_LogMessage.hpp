@@ -42,12 +42,13 @@ namespace OpenWBEM
 
 struct OW_COMMON_API LogMessage
 {
-	LogMessage(const String& component_, const String& category_, const String& message_, const char* filename_, int fileline_)
+	LogMessage(const String& component_, const String& category_, const String& message_, const char* filename_, int fileline_, const char* methodname_)
 		: component(component_)
 		, category(category_)
 		, message(message_)
 		, filename(filename_)
 		, fileline(fileline_)
+		, methodname(methodname_)
 	{
 	}
 
@@ -56,6 +57,7 @@ struct OW_COMMON_API LogMessage
 	String message;
 	const char* filename;
 	int fileline;
+	const char* methodname;
 };
 
 

@@ -1,3 +1,4 @@
+-----------------------------------------------------------------------------
 Definitions:
 log
 	n. The end-point that log messages are sent to.  Examples include a log file, syslog and the console.
@@ -28,6 +29,7 @@ message
 message format
 	A pattern which indicates the format of the log message and associated attributes.
 
+-----------------------------------------------------------------------------
 Feature requirements & Use case list:
 
 - Existing functionality to log all messages at or below a threshold into a log.
@@ -51,6 +53,7 @@ Available data includes: [date and time] [pid/thread-id] [category] [component] 
 - Ability to configure the console logging when the cimom is run in debug mode
   (with -d)
 
+-----------------------------------------------------------------------------
 On to the design:
 
 Each log message will have an associated component, category, source filename, source line number, date/time, process id, thread id.
@@ -67,6 +70,7 @@ and levels.
 
 When a message is sent to a logger, it will be evaluated against each log's configuration and if it matches, the message will be formatted according to the format configuration and output to the log.
 
+-----------------------------------------------------------------------------
 Configuration
 A config item ("owcimomd.logs" ? ) will contain a space separated list of names for each additional log to configure.  For each log name, the following config items will apply:
 
@@ -93,6 +97,7 @@ Components are organized hierarchically using a '.' as the ancestor/child
 separator. In the code, all component namess are represented by a local 
 variable COMPONENT_NAME.
 
+-----------------------------------------------------------------------------
 Component list:
 ow                                - Root for all OpenWBEM components
 ow.owcimomd                       - The cimom daemon
@@ -125,4 +130,83 @@ ow.provider.*                     - Each OW provider uses it's name with the
 ow.owmofc                         - The mof compiler utility
 ow.owrepositorydump               - The owrepositorydump utility
 
+-----------------------------------------------------------------------------
+Log message format
 
+Text mixed with printf() style conversion specifiers.
+Available conversion specifiers:
+%c - The component (e.g. owcimomd)
+%d - The date. May be followed by a date format specifier enclosed between 
+     braces. For example, %d{%H:%M:%S} or %d{%d %b %Y %H:%M:%S}. If no date 
+     format specifier is given then ISO8601 format is assumed. 
+     For more information of the date format specifiers, lookup the 
+     documentation for the strftime() function found in the <ctime> header.
+     The only addition is %Q, which is the number of milliseconds.
+%F - The file name
+%l - The filename and line number. e.g. file.cpp(100)
+%L - The line number
+%M - The method name where the logging request was issued (only works on gcc
+     or a C++ compiler which supports the C99 __func__)
+%m - The message
+%e - The message as XML CDATA. This includes the "<![CDATA[" and ending "]]>"
+%n - The platform dependent line separator character (\n) or characters (\r\n)
+%p - category, aka level, aka priority
+%r - The number of milliseconds elapsed since the start of the application 
+     until the creation of the logging event
+%t - Thread id
+%% - %
+\n - newline
+\t - tab
+\r - linefeed
+\\ - \
+\x<hexDigits> - The character represented in hexadecimal.
+
+  It is possible to change the minimum field width, the maximum field width 
+and justification. The optional format modifier is placed between the 
+percent sign and the conversion character.
+  The first optional format modifier is the left justification flag which is 
+the minus (-) character. The optional minimum field width modifier follows. 
+It is an integer that represents the minimum number of characters to 
+output. If the data item requires fewer characters, it is padded with 
+spaces on either the left or the right, according to the justification 
+flag. If the data item is larger than the minimum field width, the field 
+is expanded to accommodate the data.
+  The maximum field width modifier is designated by a period followed by a 
+decimal constant. If the data item is longer than the maximum field, then 
+the extra characters are removed from the beginning of the data item 
+(by default), or from the end if the left justification flag was specified. 
+
+Examples:
+  Log4j TTCC layout:
+  "%r [%t] %-5p %c - %m"
+
+  Similar to TTCC, but with some fixed size fields:
+  "%-6r [%15.15t] %-5p %30.30c - %m"
+
+  XML output conforming to log4j.dtd 1.2 which can be processed by Chainsaw.
+  If used, this has to be on one line, it's split up here for readability.
+  "<log4j:event logger="%c" timestamp="%d" level="%p" thread="%t">
+   <log4j:message>%e</log4j:message>
+   <log4j:locationInfo file="%F" line="%L"/>
+   </log4j:event>" 
+
+A Color version using ascii escape codes
+log.debug.format = \x1b[1;37;40m[\x1b[1;31;40m%-.6t\x1b[1;37;40m]\x1b[1;32;40m %m\x1b[0;37;40m
+
+More ascii colors:
+red:        \x1b[1;31;40m
+dark red    \x1b[0;31;40m
+green       \x1b[1;32;40m
+dark green  \x1b[0;32;40m
+yellow      \x1b[1;33;40m
+dark yellow \x1b[0;33;40m
+blue        \x1b[1;34;40m
+dark blue   \x1b[0;34;40m
+purple      \x1b[1;35;40m
+dark purple \x1b[0;35;40m
+cyan        \x1b[1;36;40m
+dark cyan   \x1b[0;36;40m
+white       \x1b[1;37;40m
+dark white  \x1b[0;37;40m
+gray        \x1b[0;37;40m
+reset color \x1b[0;37;40m
