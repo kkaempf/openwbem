@@ -22,7 +22,7 @@ CONTENTS
    is what we call the provider interface. Our CIMOM has what we call a provider
    interface multi-plexor. It is capable of supporting any number of provider
    interfaces at the same time. A new provider interface can be added to the
-   CIMOM by simply creating a shared library that can create an OW_ProviderIFC
+   CIMOM by simply creating a shared library that can create an ProviderIFC
    object and placing it in the directory the CIMOM loads it's provider 
    interfaces from (this is specified in the CIMOM's configuration file). The
    format of the provider qualifier that the CIMOM understands is 
@@ -35,20 +35,20 @@ CONTENTS
    that would provide an interface for Java, Python or Perl providers.
    
    The only component within the CIMOM that deals directly with provider
-   interfaces is the provider manager (OW_ProviderManager). The provider
+   interfaces is the provider manager (ProviderManager). The provider
    manager is the provider interface multiplexor. When the CIMOM is first
-   started, an instance of an OW_ProviderManager is created. When the
-   OW_ProviderManager is created it will load all of the shared libraries in the
+   started, an instance of an ProviderManager is created. When the
+   ProviderManager is created it will load all of the shared libraries in the
    designated provider interface directory (specified in the configuration file
-   with the owcimomd.provider_ifc_libs option). OW_ProviderManager expects every
+   with the owcimomd.provider_ifc_libs option). ProviderManager expects every
    library it loads to have a createProviderIFC function. The prototype for this
    function is as follows:
    
-      extern "C" OW_ProviderIFCBaseIFC* createProviderIFC();
+      extern "C" OpenWBEM::ProviderIFCBaseIFC* createProviderIFC();
       
    The createProviderIFC function is responsible for creating an instance
-   of some sub-class of OW_ProviderIFCBaseIFC and returning to the provider manager.
-   The OW_ProviderIFCBaseIFC instance will be owned by the OW_ProviderManager from
+   of some sub-class of ProviderIFCBaseIFC and returning to the provider manager.
+   The ProviderIFCBaseIFC instance will be owned by the ProviderManager from
    that point. It will be deleted when it is no longer needed.
       
    If the provider manager does not find createProviderIFC function, the shared
@@ -58,21 +58,21 @@ CONTENTS
 2.0 Writing a Provider Interface
 
    Writing a provider interface is actually a relatively simple thing to do.
-   There is a base class called OW_ProviderIFCBaseIFC found in 
+   There is a base class called ProviderIFCBaseIFC found in 
    OW_ProviderIFCBaseIFC.hpp.
-   You will have to create a class that sub-classes OW_ProviderIFCBaseIFC:
+   You will have to create a class that sub-classes ProviderIFCBaseIFC:
    
       #include <OW_ProviderIFCBaseIFC.hpp>
       
-      class MyProviderIFC : public OW_ProviderIFCBaseIFC
+      class MyProviderIFC : public ProviderIFCBaseIFC
       {
-	     ...
+         ...
       };
 
       
    Please see the header file OW_ProviderIFCBaseIFC.hpp for a description of
    all the methods that need to be implemented.
-	
+
    The provider interface must be placed in a shared library that provides
    a createProviderIFC() function. This function is described in section
    1.0 Extensible Provider Interface.
@@ -97,12 +97,11 @@ CONTENTS
             ./src/ifcs/cpp/OW_CppProviderIFC.cpp
 
       3.2 NPI
-	  3.3 CMPI
-	  3.4 Perl
-	  3.5 Simple C++
-	  3.6 Remote - Not completed yet.
-	  3.7 Java - Not completed yet.
+      3.3 CMPI
+      3.4 Perl
+      3.5 Remote - Not completed yet.
+      3.6 Java - Not completed yet.
 
 
-This file last updated: Wed Jul 16 15:51:53 MDT 2003
+This file last updated: Wed Dec  3 22:48:08 MST 2003
 
