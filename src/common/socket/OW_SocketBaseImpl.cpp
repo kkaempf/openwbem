@@ -452,7 +452,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 					OW_THROW(IOException, "Failed opening socket dump file");
 				}
 				comboTraceFile << "\n--->In " << rc << " bytes<---\n";
-				if (!comboTraceFile.write(static_cast<const char*>(dataIn), rc))
+				if (!comboTraceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
 					OW_THROW(IOException, "Failed writing to socket dump");
 				}
