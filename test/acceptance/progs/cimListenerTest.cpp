@@ -310,6 +310,8 @@ int main(int argc, char* argv[])
 
 		if (getenv("OWLONGTEST"))
 		{
+			// TODO: Add tests here for alert indications
+
 			handle = hxcl.registerForIndication(url, ns,
 				"select * from CIM_Indication where SourceInstance ISA "
 				"OW_IndicationProviderTest1", "wql1", "root/testsuite", test1cb);
