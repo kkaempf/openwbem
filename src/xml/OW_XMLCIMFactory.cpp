@@ -294,7 +294,7 @@ createClass(CIMXMLParser& parser)
 		rval.setSuperClass(superClassName);
 	}
 
-	String language = parser.getAttribute(CIMXMLParser::A_LANGUAGE, false);
+	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
 	if(!language.empty())
 	{
 		rval.setLanguage(language);
@@ -348,7 +348,7 @@ createInstance(CIMXMLParser& parser)
 		
 	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASSNAME));
 
-	String language = parser.getAttribute(CIMXMLParser::A_LANGUAGE, false);
+	String language = parser.getAttribute(CIMXMLParser::A_XML_LANG, false);
 	if(!language.empty())
 	{
 		rval.setLanguage(language);
