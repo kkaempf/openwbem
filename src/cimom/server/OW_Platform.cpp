@@ -417,13 +417,25 @@ setupSigHandler(bool dbgFlg)
 #endif
 	ignoreSignal(SIGPIPE);
 	// ?
+#ifdef SIGIOT // NetWare doesn't have this signal
 	ignoreSignal(SIGIOT);
+#endif
 	ignoreSignal(SIGCONT);
+#ifdef SIGURG // NetWare doesn't have this signal
 	ignoreSignal(SIGURG);
+#endif
+#ifdef SIGXCPU // NetWare doesn't have this signal
 	ignoreSignal(SIGXCPU);
+#endif
+#ifdef SIGXFSZ // NetWare doesn't have this signal
 	ignoreSignal(SIGXFSZ);
+#endif
+#ifdef SIGVTALRM // NetWare doesn't have this signal
 	ignoreSignal(SIGVTALRM);
+#endif
+#ifdef SIGPROF // NetWare doesn't have this signal
 	ignoreSignal(SIGPROF);
+#endif
 #ifdef SIGPWR // FreeBSD doesn't have SIGPWR
 	ignoreSignal(SIGPWR);
 #endif
@@ -438,7 +450,9 @@ void installFatalSignalHandlers()
 	handleSignalAux(SIGABRT, abortHandler);
 
 	handleSignalAux(SIGILL, fatalSigHandler);
+#ifdef SIGBUS // NetWare doesn't have this signal
 	handleSignalAux(SIGBUS, fatalSigHandler);
+#endif
 	handleSignalAux(SIGSEGV, fatalSigHandler);
 	handleSignalAux(SIGFPE, fatalSigHandler);
 }
@@ -449,7 +463,9 @@ void removeFatalSignalHandlers()
 	handleSignalAux(SIGABRT, SIG_DFL);
 
 	handleSignalAux(SIGILL, SIG_DFL);
+#ifdef SIGBUS // NetWare doesn't have this signal
 	handleSignalAux(SIGBUS, SIG_DFL);
+#endif
 	handleSignalAux(SIGSEGV, SIG_DFL);
 	handleSignalAux(SIGFPE, SIG_DFL);
 }
