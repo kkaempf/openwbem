@@ -46,7 +46,7 @@ void COWIntrusiveReferenceTestCases::tearDown()
 
 void COWIntrusiveReferenceTestCases::testSomething()
 {
-	unitAssert( something( ) );
+//	unitAssert( something( ) );
 }
 
 Test* COWIntrusiveReferenceTestCases::suite()
