@@ -81,8 +81,9 @@ private:
 	SSLSocketImpl(const SSLSocketImpl& arg);
 	SSLSocketImpl operator =(const SSLSocketImpl& arg);
 };
-#endif // #ifndef OW_NO_SSL
 
 } // end namespace OpenWBEM
+
+#endif // #ifndef OW_NO_SSL
 
 #endif
