@@ -102,14 +102,19 @@ public:
 	 *  or instance path in ObjectPath format.
 	 * @param requestType The type of request, currently must be one of
 	 *  E_CIM_OPERATION_REQUEST, E_CIM_EXPORT_REQUEST
+	 * @param cimProtocolVersion The version of the CIM Protocol in use
 	 * @return an istream& containing the response from the server
 	 * @exception HTTPException
 	 * @exception SocketException
 	 *
 	 */
-	virtual CIMProtocolIStreamIFCRef
-		endRequest(const Reference<std::iostream>& request,
-			const String& methodName, const String& cimObject, ERequestType requestType);
+	virtual CIMProtocolIStreamIFCRef endRequest(
+		const Reference<std::iostream>& request,
+		const String& methodName, 
+		const String& cimObject, 
+		ERequestType requestType, 
+		const String& cimProtocolVersion);
+
 	/**
 	 * Sends an OPTIONS request to the HTTP server, and reports the
 	 * results.

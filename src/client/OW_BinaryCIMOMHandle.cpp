@@ -233,6 +233,12 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
 	_getHTTPTrailers(istr, trailers);
 	istr->checkForError();
 }
+
+// We always send the lowest possible version. If 1.0 and 1.1 are the same, we send 1.0 so that 1.0 only clients will accept the request.
+// If we're using a 1.1 only feature, then we have to send 1.1.
+const String PROTOCOL_VERSION_1_0("1.0");
+const String PROTOCOL_VERSION_1_1("1.1");
+
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 BinaryCIMOMHandle::BinaryCIMOMHandle(const CIMProtocolIFCRef& prot)
@@ -273,7 +279,7 @@ BinaryCIMOMHandle::enumClassNames(
 	BinarySerialization::writeString(strm, className);
 	BinarySerialization::writeBool(strm, deep);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateClassNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"EnumerateClassNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -298,7 +304,7 @@ BinaryCIMOMHandle::enumClass(const String& ns_,
 	BinarySerialization::writeBool(strm, includeQualifiers);
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateClasses", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"EnumerateClasses", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -318,7 +324,7 @@ BinaryCIMOMHandle::enumInstanceNames(
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, className);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateInstanceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"EnumerateInstanceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -345,7 +351,7 @@ BinaryCIMOMHandle::enumInstances(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateInstances", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"EnumerateInstances", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -371,7 +377,7 @@ BinaryCIMOMHandle::getClass(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"GetClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"GetClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	return readCIMObject<CIMClass>(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -396,7 +402,7 @@ BinaryCIMOMHandle::getInstance(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"GetInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"GetInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	return readCIMObject<CIMInstance>(in, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -421,7 +427,7 @@ BinaryCIMOMHandle::invokeMethod(
 	BinarySerialization::write(strm, BINSIG_PARAMVALUEARRAY);
 	BinarySerialization::writeArray(strm, inParams);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		methodName, ns + ":" + path.modelPath(), CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		methodName, ns + ":" + path.modelPath(), CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	CIMValue cv(CIMNULL);
 	try
@@ -463,7 +469,7 @@ BinaryCIMOMHandle::getQualifierType(const String& ns_,
 	BinarySerialization::writeString(strm, qualifierName);
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"GetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"GetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	return readCIMObject<CIMQualifierType>(in, m_trailers);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -482,7 +488,7 @@ BinaryCIMOMHandle::setQualifierType(const String& ns_,
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeQualType(strm, qt);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"SetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"SetQualifier", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -501,7 +507,7 @@ BinaryCIMOMHandle::enumQualifierTypes(
 	BinarySerialization::write(strm, BIN_ENUMQUALS);
 	BinarySerialization::writeString(strm, ns);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"EnumerateQualifiers", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"EnumerateQualifiers", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -518,7 +524,7 @@ BinaryCIMOMHandle::deleteQualifierType(const String& ns_, const String& qualName
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, qualName);
 	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns,
-		CIMProtocolIFC::E_CIM_OPERATION_REQUEST), m_trailers);
+		CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0), m_trailers);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -537,7 +543,7 @@ BinaryCIMOMHandle::modifyClass(const String &ns_,
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeClass(strm, cc);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ModifyClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ModifyClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -556,7 +562,7 @@ BinaryCIMOMHandle::createClass(const String& ns_,
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeClass(strm, cc);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"CreateClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"CreateClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -574,7 +580,7 @@ BinaryCIMOMHandle::deleteClass(const String& ns_, const String& className)
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeString(strm, className);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"DeleteClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"DeleteClass", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -601,7 +607,7 @@ BinaryCIMOMHandle::modifyInstance(
 	BinarySerialization::writeStringArray(strm, propertyList);
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ModifyInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ModifyInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_1);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -621,7 +627,7 @@ BinaryCIMOMHandle::createInstance(const String& ns_,
 	BinarySerialization::writeInstance(strm, ci);
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"CreateInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"CreateInstance", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	CIMObjectPath rval = readCIMObject<CIMObjectPath>(in, m_trailers);
 	rval.setNameSpace(ns);
 	return rval;
@@ -640,7 +646,7 @@ BinaryCIMOMHandle::deleteInstance(const String& ns_, const CIMObjectPath& inst)
 	BinarySerialization::writeString(strm, ns);
 	BinarySerialization::writeObjectPath(strm, inst);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef, "DeleteInstance", ns,
-		CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -670,7 +676,7 @@ BinaryCIMOMHandle::setProperty(
 		BinarySerialization::writeValue(strm, cv);
 	}
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"SetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"SetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	_getHTTPTrailers(in, m_trailers);
 }
@@ -695,7 +701,7 @@ BinaryCIMOMHandle::getProperty(
 	BinarySerialization::writeObjectPath(strm, path);
 	BinarySerialization::writeString(strm, propName);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"GetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"GetProperty", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	checkError(in, m_trailers);
 	CIMValue cv(CIMNULL);
 	try
@@ -744,7 +750,7 @@ BinaryCIMOMHandle::associatorNames(
 	BinarySerialization::writeString(strm, role);
 	BinarySerialization::writeString(strm, resultRole);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"AssociatorNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"AssociatorNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -780,7 +786,7 @@ BinaryCIMOMHandle::associators(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -816,7 +822,7 @@ BinaryCIMOMHandle::associatorsClasses(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"Associators", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -841,7 +847,7 @@ BinaryCIMOMHandle::referenceNames(
 	BinarySerialization::writeString(strm, role);
 	
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -874,7 +880,7 @@ BinaryCIMOMHandle::references(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -907,7 +913,7 @@ BinaryCIMOMHandle::referencesClasses(
 	BinarySerialization::writeBool(strm, includeClassOrigin);
 	BinarySerialization::writeStringArray(strm, propertyList);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ReferenceNames", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -942,7 +948,7 @@ BinaryCIMOMHandle::execQuery(
 	BinarySerialization::writeString(strm, query);
 	BinarySerialization::writeString(strm, queryLanguage);
 	CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
-		"ExecQuery", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		"ExecQuery", ns, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, PROTOCOL_VERSION_1_0);
 	readAndDeliver(in, result, m_trailers);
 }
 

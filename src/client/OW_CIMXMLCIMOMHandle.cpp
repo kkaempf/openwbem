@@ -68,8 +68,17 @@
 #include <iostream>
 #endif
 
+
 namespace OpenWBEM
 {
+
+// We always send the lowest possible version. If 1.0 and 1.1 are the same, we send 1.0 so that 1.0 only clients will accept the request.
+// If we're using a 1.1 only feature, then we have to send 1.1.
+namespace
+{
+const String PROTOCOL_VERSION_1_0("1.0");
+const String PROTOCOL_VERSION_1_1("1.1");
+}
 
 using std::ostream;
 using std::iostream;
@@ -104,7 +113,7 @@ void CIMXMLCIMOMHandle::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
+CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr, const String& cimProtocolVersion)
 {
 	if (++m_iMessageID > 65535)
 	{
@@ -112,16 +121,17 @@ CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
 	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"" << cimProtocolVersion << "\">";
 	ostr << "<SIMPLEREQ>";
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const String &sMethod,
 	const String& ns,
-	ostream& ostr)
+	ostream& ostr, 
+	const String& cimProtocolVersion)
 {
-	sendCommonXMLHeader(ostr);
+	sendCommonXMLHeader(ostr, cimProtocolVersion);
 	CIMNameSpace nameSpace(ns);
 	ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
 	LocalCIMNameSpacetoXML(nameSpace, ostr);
@@ -131,9 +141,10 @@ void
 CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const String &sMethod,
 	const String& ns,
 	const CIMObjectPath& path,
-	ostream& ostr)
+	ostream& ostr, 
+	const String& cimProtocolVersion)
 {
-	sendCommonXMLHeader(ostr);
+	sendCommonXMLHeader(ostr, cimProtocolVersion);
 	CIMNameSpace nameSpace(ns);
 	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
 	if (path.isInstancePath())
@@ -174,10 +185,11 @@ CIMXMLCIMOMHandle::doSendRequest(
 	const String& methodName,
 	const String& cimObject,
 	bool isIntrinsic,
-	ClientOperation& op)
+	ClientOperation& op, 
+	const String& cimProtocolVersion)
 {
 	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(
-		ostrRef, methodName, cimObject, CIMProtocolIFC::E_CIM_OPERATION_REQUEST);
+		ostrRef, methodName, cimObject, CIMProtocolIFC::E_CIM_OPERATION_REQUEST, cimProtocolVersion);
 	// Debug stuff
 	/*
 	TempFileStream buf;
@@ -384,7 +396,7 @@ CIMXMLCIMOMHandle::enumClassNames(
 		params.push_back(Param(CIMXMLParser::P_DeepInheritance,deep));
 	}
 	enumClassNamesOp op(result);
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -438,7 +450,7 @@ CIMXMLCIMOMHandle::enumClass(const String& ns,
 		params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	}
 	enumClassOp op(result);
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -483,7 +495,7 @@ CIMXMLCIMOMHandle::enumInstanceNames(
 							"EnumerateInstanceNames");
 	}
 	enumInstanceNamesOp op(result, ns);
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 //////////////////////////////////////////////////////////////////////////////
 static inline void generatePropertyListXML(std::ostream& ostr,
@@ -560,7 +572,7 @@ CIMXMLCIMOMHandle::enumInstances(
 	}
 	generatePropertyListXML(extra,propertyList);
 	enumInstancesOp op(result);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -614,7 +626,7 @@ CIMXMLCIMOMHandle::getClass(
 	generatePropertyListXML(extra,propertyList);
 	CIMClass rval(CIMNULL);
 	getClassOp op(rval);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -661,7 +673,7 @@ CIMXMLCIMOMHandle::getInstance(
 	generatePropertyListXML(extra,propertyList);
 	CIMInstance rval(CIMNULL);
 	getInstanceOp op(rval);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -748,7 +760,7 @@ CIMXMLCIMOMHandle::invokeMethod(
 	Reference<std::iostream> iostrRef =
 		m_protocol->beginRequest(methodName, ns);
 	std::iostream& tfs = *iostrRef;
-	sendExtrinsicXMLHeader(methodName, ns, path, tfs);
+	sendExtrinsicXMLHeader(methodName, ns, path, tfs, PROTOCOL_VERSION_1_0);
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
 		tfs << "<PARAMVALUE NAME=\"" << inParams[i].getName() << "\"";
@@ -774,7 +786,7 @@ CIMXMLCIMOMHandle::invokeMethod(
 	invokeMethodOp op(rval, outParams);
 	doSendRequest(iostrRef, methodName,
 		ns + ":" + path.modelPath(),
-		false, op);
+		false, op, PROTOCOL_VERSION_1_0);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -802,7 +814,7 @@ CIMXMLCIMOMHandle::getQualifierType(const String& ns,
 	params.push_back(Param(CIMXMLParser::P_QualifierName, qualifierName));
 	CIMQualifierType rval;
 	getQualifierTypeOp op(rval);
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 	return rval;
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -817,7 +829,7 @@ CIMXMLCIMOMHandle::setQualifierType(const String& ns,
 	CIMtoXML(qt, extra);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, Array<Param>(),
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, Array<Param>(),
 						 extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -828,7 +840,7 @@ CIMXMLCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 	Array<Param> params;
 	params.push_back(Param(CIMXMLParser::P_QualifierName, qualName));
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -858,7 +870,7 @@ CIMXMLCIMOMHandle::enumQualifierTypes(
 {
 	static const char* const commandName = "EnumerateQualifiers";
 	enumQualifierTypesOp op(result);
-	intrinsicMethod(ns, commandName, op);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -873,7 +885,7 @@ CIMXMLCIMOMHandle::modifyClass(const String &ns,
 	CIMtoXML(cc, extra);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, Array<Param>(),
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, Array<Param>(),
 		extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -887,7 +899,7 @@ CIMXMLCIMOMHandle::createClass(const String& ns,
 	CIMtoXML(cc, ostr);
 	ostr << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, Array<Param>(),
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, Array<Param>(),
 		ostr.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -907,7 +919,7 @@ CIMXMLCIMOMHandle::deleteClass(const String& nameSpace, const String& className)
 							" to deleteClass()");
 	}
 	voidRetValOp op;
-	intrinsicMethod(nameSpace, commandName, op, params);
+	intrinsicMethod(nameSpace, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -933,15 +945,24 @@ CIMXMLCIMOMHandle::modifyInstance(
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	
 	Array<Param> params;
+	
+	// check for 1.1 only stuff
+	String cimProtocolVersion(PROTOCOL_VERSION_1_0);
+
 	if (includeQualifiers != E_INCLUDE_QUALIFIERS)
 	{
 		params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+		cimProtocolVersion = PROTOCOL_VERSION_1_1;
 	}
 	
-	generatePropertyListXML(ostr, propertyList);
-	
+	if (propertyList != 0)
+	{
+		generatePropertyListXML(ostr, propertyList);
+		cimProtocolVersion = PROTOCOL_VERSION_1_1;
+	}
+
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params,
+	intrinsicMethod(ns, commandName, op, cimProtocolVersion, params,
 		ostr.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -982,7 +1003,7 @@ CIMXMLCIMOMHandle::createInstance(const String& ns,
 	ostr << "</IPARAMVALUE>";
 	CIMObjectPath rval(CIMNULL);
 	createInstanceOp op(rval);
-	intrinsicMethod(ns, commandName, op, Array<Param>(), ostr.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, Array<Param>(), ostr.toString());
 	rval.setNameSpace(ns);
 	return rval;
 }
@@ -993,7 +1014,7 @@ CIMXMLCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& inst)
 	static const char* const commandName = "DeleteInstance";
 	Array<Param> params;
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params,
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params,
 						 instanceNameToKey(inst, "InstanceName"));
 }
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -1015,7 +1036,7 @@ CIMXMLCIMOMHandle::setProperty(
 		params.push_back(Param(CIMXMLParser::P_NewValue, Param::VALUESET, ostr.toString()));
 	}
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params,
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params,
 		instanceNameToKey(path,"InstanceName"));
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -1054,7 +1075,7 @@ CIMXMLCIMOMHandle::getProperty(
 	params.push_back(Param(CIMXMLParser::P_PropertyName, propName));
 	CIMValue rval(CIMNULL);
 	getPropertyOp op(rval);
-	intrinsicMethod(ns, commandName, op, params,
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params,
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
 }
@@ -1183,7 +1204,7 @@ CIMXMLCIMOMHandle::associatorNames(
 		"\"/></IPARAMVALUE>";
 	}
 	objectPathOp op(result, ns);
-	intrinsicMethod(ns, commandName, op, params,
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params,
 		extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1281,7 +1302,7 @@ CIMXMLCIMOMHandle::associatorsCommon(
 		"\"/></IPARAMVALUE>";
 	}
 	objectWithPathOp op(iresult, cresult, ns);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1318,7 +1339,7 @@ CIMXMLCIMOMHandle::referenceNames(
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 	objectPathOp op(result, ns);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1403,7 +1424,7 @@ CIMXMLCIMOMHandle::referencesCommon(
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 	objectWithPathOp op(iresult,cresult,ns);
-	intrinsicMethod(ns, commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params, extra.toString());
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -1427,7 +1448,7 @@ CIMXMLCIMOMHandle::execQuery(
 	params.push_back(Param(CIMXMLParser::P_QueryLanguage, XMLEscape(queryLanguage)));
 	params.push_back(Param(CIMXMLParser::P_Query, XMLEscape(query)));
 	objectWithPathOp op(&result, 0, ns);
-	intrinsicMethod(ns, commandName, op, params);
+	intrinsicMethod(ns, commandName, op, PROTOCOL_VERSION_1_0, params);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMFeatures
@@ -1440,11 +1461,12 @@ void
 CIMXMLCIMOMHandle::intrinsicMethod(
 	const String& ns, const String& operation,
 	ClientOperation& op,
+	const String& cimProtocolVersion,
 	const Array<Param>& params, const String& extra)
 {
 	Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, ns);
 	std::iostream& iostr = *iostrRef;
-	sendIntrinsicXMLHeader(operation, ns, iostr);
+	sendIntrinsicXMLHeader(operation, ns, iostr, cimProtocolVersion);
 	for (size_t i = 0; i < params.size(); i++)
 	{
 		iostr << "<IPARAMVALUE NAME=\"" << params[i].getArgName()
@@ -1455,7 +1477,7 @@ CIMXMLCIMOMHandle::intrinsicMethod(
 		iostr << extra;
 	}
 	sendXMLTrailer(iostr);
-	doSendRequest(iostrRef, operation, ns, true, op);
+	doSendRequest(iostrRef, operation, ns, true, op, cimProtocolVersion);
 }
 
 //////////////////////////////////////////////////////////////////////////////

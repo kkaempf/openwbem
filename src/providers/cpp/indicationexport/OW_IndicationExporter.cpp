@@ -47,6 +47,13 @@
 namespace OpenWBEM
 {
 
+// We always send the lowest possible version. If 1.0 and 1.1 are the same, we send 1.0 so that 1.0 only clients will accept the request.
+// If we're using a 1.1 only feature, then we have to send 1.1.
+namespace
+{
+const String PROTOCOL_VERSION_1_1("1.1");
+}
+
 using std::ostream;
 using std::istream;
 using std::iostream;
@@ -62,15 +69,15 @@ IndicationExporter::exportIndication( const String& ns, const CIMInstance& ci )
 	Array<Param> params;
 	
 	Reference<TempFileStream> iostr(new TempFileStream);
-	sendXMLHeader(*iostr);
+	sendXMLHeader(*iostr, PROTOCOL_VERSION_1_1);
 	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
 	CIMInstancetoXML(ci, *iostr);
 	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
-	doSendRequest(iostr, commandName, ns);
+	doSendRequest(iostr, commandName, ns, PROTOCOL_VERSION_1_1);
 }
 void
-IndicationExporter::sendXMLHeader(ostream& ostr)
+IndicationExporter::sendXMLHeader(ostream& ostr, const String& cimProtocolVersion)
 {
 	// TODO: merge this with the code in CIMXMLCIMOMHandle.cpp
 	// TODO: WRT the versions, have a way of doing a fallback to older
@@ -81,7 +88,7 @@ IndicationExporter::sendXMLHeader(ostream& ostr)
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
 	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"" << cimProtocolVersion << "\">";
 	ostr << "<SIMPLEEXPREQ>";
 	ostr << "<EXPMETHODCALL NAME=\"ExportIndication\">";
 }
@@ -97,10 +104,10 @@ IndicationExporter::sendXMLTrailer(ostream& ostr)
 	
 void
 IndicationExporter::doSendRequest(Reference<iostream> ostr, const String& methodName,
-		const String& ns)
+		const String& ns, const String& cimProtocolVersion)
 {
 	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
-		ns, CIMProtocolIFC::E_CIM_EXPORT_REQUEST);
+		ns, CIMProtocolIFC::E_CIM_EXPORT_REQUEST, cimProtocolVersion);
 	// Debug stuff
 	/*
 	TempFileStream buf;

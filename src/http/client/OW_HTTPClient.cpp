@@ -504,7 +504,7 @@ HTTPClient::beginRequest(const String& methodName,
 //////////////////////////////////////////////////////////////////////////////
 CIMProtocolIStreamIFCRef
 HTTPClient::endRequest(const Reference<std::iostream>& request, const String& methodName,
-			const String& cimObject, ERequestType requestType)
+			const String& cimObject, ERequestType requestType, const String& cimProtocolVersion)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
 	OW_ASSERT(tfs);
@@ -527,6 +527,13 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 #ifdef OW_HAVE_ZLIB_H
 	addHeaderCommon("Accept-Encoding", "deflate");
 #endif
+
+	// default of 1.0 if we leave it out, so don't bother sending it if that's the case.
+	if (!cimProtocolVersion.empty() && cimProtocolVersion != "1.0") 
+	{
+		addHeaderCommon("CIMProtocolVersion", cimProtocolVersion);
+	}
+
 	// if there remains bytes from last response, eat them.
 	cleanUpIStreams();
 

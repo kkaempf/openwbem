@@ -53,10 +53,10 @@ public:
 	 */
 	void exportIndication( const String& ns, const CIMInstance& ci );
 private:
-	void sendXMLHeader(std::ostream& ostr);
+	void sendXMLHeader(std::ostream& ostr, const String& cimProtocolVersion);
 	void sendXMLTrailer(std::ostream& ostr);
 	void doSendRequest(Reference<std::iostream> ostr, const String& methodName,
-		const String& ns);
+		const String& ns, const String& cimProtocolVersion);
 	/**
 	 * @throws CIMException
 	 */

@@ -666,24 +666,26 @@ public:
 	};
 
 private:
-	void sendCommonXMLHeader(std::ostream& ostr);
+	void sendCommonXMLHeader(std::ostream& ostr, const String& cimProtocolVersion);
 	void sendIntrinsicXMLHeader(const String &, const String& ns,
-		std::ostream& ostr);
+		std::ostream& ostr, const String& cimProtocolVersion);
 	void sendExtrinsicXMLHeader(const String &, const String& ns,
 		const CIMObjectPath& path,
-		std::ostream& ostr);
+		std::ostream& ostr, const String& cimProtocolVersion);
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
 
 	void doSendRequest(const Reference<std::iostream>& ostr,
 		const String& methodName, const String& cimObject,
 		bool isIntrinsic,
-		ClientOperation& op);
+		ClientOperation& op, 
+		const String& cimProtocolVersion);
 	// throws a CIMException
 	void checkNodeForCIMError(CIMXMLParser& reply,
 		const String& operation, bool isIntrinsic);
 	void intrinsicMethod(
 		const String& ns, const String& operation,
 		ClientOperation& op,
+		const String& cimProtocolVersion,
 		const Array<Param>& params = Array<Param>(),
 		const String& extra = String());
 	

@@ -100,7 +100,8 @@ int main(int argc, char* argv[])
 			hc.setContentType("application/xml");
 			Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
 			*tfsOut << infile.rdbuf();
-			CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "", CIMProtocolIFC::E_CIM_BATCH_OPERATION_REQUEST);
+			// this should extract the version out of the xml...
+			CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "", CIMProtocolIFC::E_CIM_BATCH_OPERATION_REQUEST, "1.0");
 			cout << istr->rdbuf() << endl;
 			istr->checkForError();
 		}
