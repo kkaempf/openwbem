@@ -38,6 +38,7 @@
 #include "OW_HDB.hpp"
 #include "OW_AutoPtr.hpp"
 #include <cstring>
+#include <cerrno>
 
 namespace OpenWBEM
 {
@@ -146,7 +147,7 @@ HDBNode::read(Int32 offset, HDBHandle& hdl)
 {
 	if (offset <= 0 || !hdl)
 	{
-		OW_THROW(HDBException, "Invalid offset to read node from");
+		OW_THROW(HDBException, "Invalid offset to read node from, db is most likely corrupt.");
 	}
 	File file = hdl.getFile();
 	HDBBlock fblk;
@@ -163,7 +164,7 @@ HDBNode::read(Int32 offset, HDBHandle& hdl)
 	if (file.read(kbfr, fblk.keyLength) != size_t(fblk.keyLength))
 	{
 		delete [] kbfr;
-		OW_THROW(HDBException, "Failed to read key for node");
+		OW_THROW_ERRNO_MSG(HDBException, "Failed to read key for node");
 	}
 	// Let String take ownership of the allocated memory. It will
 	// delete it later
@@ -176,7 +177,7 @@ HDBNode::read(Int32 offset, HDBHandle& hdl)
 		if (file.read(bfr, dataLen) != size_t(dataLen))
 		{
 			delete [] bfr;
-			OW_THROW(HDBException, "Failed to data for node");
+			OW_THROW_ERRNO_MSG(HDBException, "Failed to data for node");
 		}
 	}
 	m_pdata = new HDBNodeData;
@@ -355,7 +356,7 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 {
 	if (!m_pdata)
 	{
-		OW_THROW(HDBException, "Cannot write null node");
+		OW_THROW(HDBException, "Internal error: Cannot write null node");
 	}
 	bool newRecord = false;
 	m_pdata->m_blk.keyLength = m_pdata->m_key.length() + 1;
@@ -402,12 +403,12 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 		if (file.write(m_pdata->m_key.c_str(), m_pdata->m_key.length()+1)
 			!= m_pdata->m_key.length()+1)
 		{
-			OW_THROW(HDBException, "Failed to write node key");
+			OW_THROW_ERRNO_MSG(HDBException, "Failed to write node key");
 		}
 		if (file.write(m_pdata->m_bfr, m_pdata->m_bfrLen)
 			!= size_t(m_pdata->m_bfrLen))
 		{
-			OW_THROW(HDBException, "Failed to write node data");
+			OW_THROW_ERRNO_MSG(HDBException, "Failed to write node data");
 		}
 	}
 	m_pdata->m_version = hdl.registerWrite();
@@ -507,7 +508,7 @@ HDBNode::addChild(HDBHandle& hdl, HDBNode& arg)
 			arg.write(hdl);
 			return;
 		}
-		OW_THROW(HDBException, "Child node already has a parent");
+		OW_THROW(HDBException, "Child node already has a parent. db may be corrupt");
 	}
 	arg.m_pdata->m_blk.prevSib = m_pdata->m_blk.lastChild;
 	arg.m_pdata->m_blk.nextSib = -1;
@@ -653,7 +654,7 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 	if (file.read(pbfr.get(), fblk.keyLength, offset + sizeof(fblk))
 		!= size_t(fblk.keyLength))
 	{
-		OW_THROW(HDBException, "Failed to read node's key for removal");
+		OW_THROW_ERRNO_MSG(HDBException, "Failed to read node's key for removal");
 	}
 	// Remove this node's key from the index
 	hdl.removeIndexEntry(reinterpret_cast<const char*>(pbfr.get()));
