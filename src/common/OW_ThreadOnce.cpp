@@ -38,6 +38,8 @@
 
 #if defined(OW_WIN32)
 
+#include <stdio.h>
+
 namespace OW_NAMESPACE
 {
 
@@ -46,11 +48,11 @@ void callOnce(onceFlag& flag, void (*func)())
 	// this is the double-checked locking pattern, but with a bit more strength than normally implemented :-)
     if (InterlockedCompareExchange(&flag, 1, 1) == 0)
     {
-		TCHAR mutexName[MAX_PATH];
-		_sntprintf(mutexName, sizeof(mutexName), _T("%X-%p-587ccea9-c95a-4e81-ac51-ab0ddc6cef63"), GetCurrentProcessId(), &flag);
+		wchar_t mutexName[MAX_PATH];
+		_snwprintf(mutexName, sizeof(mutexName), L"%X-%p-587ccea9-c95a-4e81-ac51-ab0ddc6cef63", GetCurrentProcessId(), &flag);
 		mutexName[sizeof(mutexName) - 1] = 0;
 
-        HANDLE mutex = CreateMutex(NULL, FALSE, mutexName);
+        HANDLE mutex = CreateMutexW(NULL, FALSE, mutexName);
         OW_ASSERT(mutex != NULL);
 
         int res = 0;
