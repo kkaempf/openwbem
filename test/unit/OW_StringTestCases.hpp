@@ -46,6 +46,7 @@ public:
 private:
 	// test methods
 	void testErase();
+	void testEqualsIgnoreCase();
 	void testSubstring();
 	void testNumbers();
 };

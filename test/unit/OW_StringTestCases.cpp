@@ -55,6 +55,14 @@ void OW_StringTestCases::testErase()
 	unitAssert( String("12345").erase(2, 1) == "1245" );
 }
 
+void OW_StringTestCases::testEqualsIgnoreCase()
+{
+	String s = "abc";
+	unitAssert(s.equalsIgnoreCase("abc")); 
+	s = ""; 
+	unitAssert(s.equalsIgnoreCase("")); 
+}
+
 void OW_StringTestCases::testSubstring()
 {
 	String s = "abc";
@@ -95,6 +103,9 @@ Test* OW_StringTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_StringTestCases> 
 			("testNumbers", 
 			&OW_StringTestCases::testNumbers));
+	testSuite->addTest (new TestCaller <OW_StringTestCases> 
+			("testEqualsIgnoreCase", 
+			&OW_StringTestCases::testEqualsIgnoreCase));
 
 	return testSuite;
 }

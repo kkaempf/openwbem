@@ -156,6 +156,19 @@ public:
 	 */
 	CIMProperty getKeyT(const String& keyName) const;
 	/**
+	 * Gets a key's value.
+	 * @param name The name of the key value to retrieve.
+	 * @return The CIMValue of the specified key.  It will be NULL if the
+	 * key doesn't exist or the key's value is NULL.
+	 */
+	CIMValue getKeyValue(const String& name) const;
+	/**
+	 * Test whether a key exists and has a non-NULL value.
+	 * @param name The name of the key to test.
+	 * @return bool true if the key exists and has a non-NULL value.
+	 */
+	bool keyHasValue(const String& name) const;
+	/**
 	 * Set the keys of this object path
 	 * @param newKeys	An CIMPropertyArray that contains the keys for this
 	 * 	object path.

@@ -189,6 +189,32 @@ CIMObjectPath::getKeyT(const String& keyName) const
 	return p;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMValue
+CIMObjectPath::getKeyValue(const String& name) const
+{
+	CIMProperty p = this->getKey(name);
+	if (p)
+	{
+		return p.getValue();
+	}
+	return CIMValue(CIMNULL);
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
+CIMObjectPath::keyHasValue(const String& name) const
+{
+	CIMProperty p = this->getKey(name);
+	if (p)
+	{
+		CIMValue v = p.getValue();
+		if (v)
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
 CIMObjectPath::setKeys(const CIMPropertyArray& newKeys)
 {
