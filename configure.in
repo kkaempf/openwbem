@@ -1,24 +1,13 @@
-
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Makefile.am)
+AC_PREREQ([2.57])
+AC_INIT(OpenWBEM, 3.0.3, openwbem-public@lists.sourceforge.net)
+AM_INIT_AUTOMAKE(openwbem, $PACKAGE_VERSION)
+AC_CONFIG_SRCDIR(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
-#
-# Making releases:
-#   *_MICRO_VERSION += 1;
-#   *_INTERFACE_AGE += 1;
-#   *_BINARY_AGE += 1;
-# if any functions have been added, set *_INTERFACE_AGE to 0.
-# if backwards compatibility has been broken,
-# set *_BINARY_AGE and *_INTERFACE_AGE to 0.
-#
-
-# OpenWBEM
 OPENWBEM_MAJOR_VERSION=3
 OPENWBEM_MINOR_VERSION=0
 OPENWBEM_MICRO_VERSION=3
 
-# OpenWBEM versioning
 OPENWBEM_VERSION=$OPENWBEM_MAJOR_VERSION.$OPENWBEM_MINOR_VERSION.$OPENWBEM_MICRO_VERSION
 AC_SUBST(OPENWBEM_MAJOR_VERSION)
 AC_SUBST(OPENWBEM_MINOR_VERSION)
@@ -26,7 +15,6 @@ AC_SUBST(OPENWBEM_MICRO_VERSION)
 AC_SUBST(OPENWBEM_VERSION)
 
 
-AM_INIT_AUTOMAKE(openwbem, $OPENWBEM_VERSION)
 AM_MAINTAINER_MODE
 #AM_DISABLE_STATIC
 
