@@ -129,8 +129,16 @@ XMLListener::processSimpleExpReq(CIMXMLParser& parser,
 		}
 		parser.mustGetChild(CIMXMLParser::E_EXPMETHODCALL);
 		parser.mustGetNextTag();
-		while (parser.tokenIs(CIMXMLParser::E_EXPPARAMVALUE))
+		while (parser.tokenIs(CIMXMLParser::E_EXPPARAMVALUE)
+			|| parser.tokenIs(CIMXMLParser::E_IPARAMVALUE) // do this because of a bug in the CIMXML 2.1 DTD
+		)
 		{
+			String paramName = parser.getAttribute(CIMXMLParser::A_NAME);
+			if (paramName != "NewIndication")
+			{
+				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+					paramName.c_str());
+			}
 			parser.mustGetChild(CIMXMLParser::E_INSTANCE);
 			CIMInstance inst = XMLCIMFactory::createInstance(parser);
 			m_callback->indicationOccurred(inst, m_path);
