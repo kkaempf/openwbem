@@ -187,7 +187,8 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	CIMInstance rval;
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::getInstance()");
-	if (m_ftable->miVector.instMI->ft->getInstance!= NULL)
+
+	if (m_ftable->miVector.instMI->ft->getInstance != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
@@ -205,7 +206,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		CMPI_ResultOnStack eRes(instrh);
 		if (propertyList)
 		{
-			if (propertyList->size()>0)
+			if (propertyList->size() > 0)
 			{
 				pCount = propertyList->size();
 				props = (const char **) alloca(1+pCount*sizeof(char *));

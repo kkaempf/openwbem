@@ -258,13 +258,13 @@ void CMPIAssociatorProviderProxy::references(
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 		}
 
-		char* _role = const_cast<char*>(role.empty() ? 0 : role.c_str());
+		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
 		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
 			(CMPIValue *)&flgs, CMPI_uint32);
 
-		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
-		rc=m_ftable->miVector.assocMI->ft->references(
-			mi,&eCtx,&eRes,&eRef, aClass, _role, props);
+		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
+		rc=m_ftable->miVector.assocMI->ft->references(mi, &eCtx, &eRes, &eRef,
+			aClass, _role, props);
 
 		if(rc.rc != CMPI_RC_OK)
 		{
