@@ -94,7 +94,8 @@ OW_IndicationExporter::doSendRequest(iostream& ostr, const OW_String& methodName
 		const OW_CIMObjectPath& path)
 {
 	istream& istr = m_protocol->sendRequest(ostr, methodName,
-														 path.getNameSpace());
+		path.getNameSpace());
+
 	// Debug stuff
 	/*
 	OW_TempFileStream buf;

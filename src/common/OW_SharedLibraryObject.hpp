@@ -27,42 +27,37 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_INDICATION_SERVER_HPP_
-#define OW_INDICATION_SERVER_HPP_
+
+#ifndef OW_SHAREDLIBRARYOBJECT_HPP_
+#define OW_SHAREDLIBRARYOBJECT_HPP_
 
 #include "OW_config.h"
-#include "OW_CIMFwd.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Thread.hpp"
-#include "OW_CIMOMEnvironment.hpp"
-#include "OW_SharedLibraryObject.hpp"
+#include "OW_Types.h"
+#include "OW_SharedLibrary.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-class OW_IndicationServer : public OW_Thread, public OW_SharedLibraryObject
+class OW_SharedLibraryObject
 {
 public:
-
-	OW_IndicationServer(OW_SharedLibraryRef lib)
-		: OW_Thread(true)
-		, OW_SharedLibraryObject(lib)
-	{}
-
-	virtual ~OW_IndicationServer() {}
-
-	virtual void init(OW_CIMOMEnvironmentRef env) = 0;
-
-	virtual void shutdown() = 0;
-
-	virtual void processIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS) = 0;
-
-	virtual int getRunCount() = 0;
+	virtual ~OW_SharedLibraryObject() {}
 
 protected:
+	OW_SharedLibraryObject(OW_SharedLibraryRef lib) : m_lib(lib) {}
+	OW_SharedLibraryObject(const OW_SharedLibraryObject& arg)
+		: m_lib(arg.m_lib) {}
+	OW_SharedLibraryObject& operator= (const OW_SharedLibraryObject& arg)
+	{
+		m_lib = arg.m_lib;
+		return *this;
+	}
+
+	OW_SharedLibraryRef m_lib;
+
+private:
+	OW_SharedLibraryObject() {}
 };
 
-typedef OW_Reference<OW_IndicationServer> OW_IndicationServerRef;
+typedef OW_Reference<OW_SharedLibraryObject> OW_SharedLibraryObjectRef;
 
-#endif	// __OW_NOTIFYMANAGER_HPP__
+#endif	// OW_SHAREDLIBRARYOBJECT_HPP_
 
 

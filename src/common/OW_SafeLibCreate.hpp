@@ -44,11 +44,13 @@ template <typename T>
 class OW_SafeLibCreate
 {
 	typedef T* (*createFunc_t)();
+	typedef T* (*createLibObjFunc_t)(OW_SharedLibraryRef);
 	typedef const char* (*versionFunc_t)();
 
 public:
 
 	typedef std::pair<OW_Reference<T>, OW_SharedLibraryRef> return_type;
+	typedef OW_Reference<T> return_obj;
 	
 	static return_type
 	loadAndCreate(OW_String const& libname, OW_String const& createFuncName,
@@ -70,7 +72,102 @@ public:
 		return std::make_pair(OW_Reference<T>(ptr),sl);
 	}
 
+	static return_obj
+	loadAndCreateObject(OW_String const& libname,
+		OW_String const& createFuncName, const OW_LoggerRef& logger)
+	{
+		OW_SharedLibraryLoaderRef sll =
+			OW_SharedLibraryLoader::createSharedLibraryLoader();
+		OW_SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
+		T* ptr = 0;
+		if ( !sl.isNull() )
+		{
+			ptr = createObj(sl, createFuncName, logger);
+		}
+		else
+		{
+			logger->logDebug(format("safeLibCreate::loadAndCreate"
+				" FAILED loading library %1", libname));
+		}
 
+		return return_obj(ptr);
+	}
+
+	static T*
+	createObj(OW_SharedLibraryRef sl, OW_String const& createFuncName,
+		const OW_LoggerRef& logger)
+	{
+		logger->logDebug(format("safeLibCreate::create called.  createFuncName = %1",
+			createFuncName).c_str());
+		
+		try
+		{
+			int sigtype;
+			OW_SignalScope r1( SIGFPE,  theSignalHandler );
+			OW_SignalScope r3( SIGSEGV, theSignalHandler );
+			OW_SignalScope r4( SIGBUS,  theSignalHandler );
+			OW_SignalScope r5( SIGABRT, theSignalHandler );
+			sigtype = setjmp(theLoaderBuf);
+			if ( sigtype == 0 )
+			{
+				versionFunc_t versFunc;
+				if (!OW_SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
+				{
+					logger->logError("safeLibCreate::create failed getting"
+						" function pointer to \"getOWVersion\" from library");
+	
+					return 0;
+				}
+	
+				const char* strVer = (*versFunc)();
+				if(strcmp(strVer, OW_VERSION))
+				{
+					logger->logError("safeLibCreate::create -"
+						" Invalid version returned from \"getOWVersion\"");
+					return 0;
+				}
+				else
+				{
+					createLibObjFunc_t createFunc;
+					if (!OW_SharedLibrary::getFunctionPointer( sl, createFuncName
+						, createFunc ))
+					{
+						logger->logError("safeLibCreate::create failed"
+							" getting function pointer to \"createWQL\" from"
+							" library");
+	
+						return 0;
+					}
+	
+					T* ptr = (*createFunc)(sl);
+					return ptr;
+				}
+			}
+			else
+			{
+				logger->logError("safeLibCreate::create setjmp call"
+					" failed");
+	
+				return 0;
+			}
+		}
+		catch(OW_Exception& e)
+		{
+			logger->logError("safeLibCreate::create");
+			logger->logError(format("File: %1", e.getFile()));
+			logger->logError(format("Line: %1", e.getLine()));
+			logger->logError(format("Msg: %1", e.getMessage()));
+		}
+		catch (...)
+		{
+			logger->logError("safeLibCreate::create caught unknown"
+				" exception");
+		}
+	
+		return 0;
+	}
+
+	// OLD
 	static T*
 	create(OW_SharedLibraryRef sl, OW_String const& createFuncName,
 		const OW_LoggerRef& logger)

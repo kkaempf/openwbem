@@ -88,7 +88,6 @@ OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	, m_configItems(new ConfigMap)
 	, m_providerManager(0)
 	, m_wqlLib(0)
-	, m_indicationServerLib(0)
 	, m_indicationRepLayerLib(0)
 	, m_pollingManager(0)
 	, m_indicationServer(0)
@@ -200,7 +199,6 @@ OW_CIMOMEnvironment::shutdown()
 		m_indicationServer->join();
 		m_indicationServer = 0;
 	}
-	m_indicationServerLib = 0;
 
 	// Shutdown the polling manager
 	if(m_pollingManager)
@@ -295,21 +293,15 @@ OW_CIMOMEnvironment::_createIndicationServer()
 
 		indicationLib += "libowindicationserver.so";
 
-		std::pair<OW_Reference<OW_IndicationServer>, OW_SharedLibraryRef> rv =
-			OW_SafeLibCreate<OW_IndicationServer>::loadAndCreate(indicationLib,
-				"createIndicationServer", getLogger());
+		m_indicationServer = OW_SafeLibCreate<OW_IndicationServer>::loadAndCreateObject(
+				indicationLib, "createIndicationServer", getLogger());
 
-		m_indicationServer = rv.first;
-		m_indicationServerLib = rv.second;
-
-		if (!m_indicationServer || !m_indicationServerLib)
+		if (!m_indicationServer)
 		{
 			m_Logger->logError(format("CIMOM Failed to load indication server"
 				" from library %1. Indication are currently DISABLED!",
 				indicationLib));
 
-			m_indicationServer = 0;
-			m_indicationServerLib = 0;
 			m_indicationsDisabled = true;
 			return;
 		}

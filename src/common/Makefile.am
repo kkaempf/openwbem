@@ -3,7 +3,7 @@ SUBDIRS = socket
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libopenwbem.so
-SHAREDLIBADD = -lpthread
+SHAREDLIBADD = -lpthread -ldl
 
 
 noinst_LIBRARIES = libopenwbem.a
@@ -62,6 +62,8 @@ OW_ThreadEvent.cpp \
 OW_ThreadImpl.cpp \
 OW_TmpFile.cpp \
 OW_URL.cpp \
+OW_dlSharedLibrary.cpp \
+OW_dlSharedLibraryLoader.cpp \
 OW_UnnamedPipe.cpp
 
 pkginclude_HEADERS =	\
@@ -121,6 +123,14 @@ OW_TmpFile.hpp \
 OW_Types.h \
 OW_URL.hpp \
 OW_UnnamedPipe.hpp \
+OW_SafeLibCreate.hpp \
+OW_SharedLibrary.hpp \
+OW_SharedLibraryException.hpp \
+OW_SharedLibraryLoader.hpp \
+OW_SignalScope.hpp \
+OW_dlSharedLibrary.hpp \
+OW_dlSharedLibraryLoader.hpp \
+OW_SharedLibraryObject.hpp \
 OW_config.h
 
 libopenwbem_a_LIBADD = \

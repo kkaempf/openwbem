@@ -128,8 +128,8 @@ OW_Notifier::run()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_IndicationServerImpl::OW_IndicationServerImpl()
-	: OW_IndicationServer()
+OW_IndicationServerImpl::OW_IndicationServerImpl(OW_SharedLibraryRef lib)
+	: OW_IndicationServer(lib)
 	, m_runCount(0)
 	, m_providers()
 	, m_trans()
@@ -461,9 +461,9 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_IndicationServer*
-createIndicationServer()
+createIndicationServer(OW_SharedLibraryRef lib)
 {
-	return new OW_IndicationServerImpl;
+	return new OW_IndicationServerImpl(lib);
 }
 
 //////////////////////////////////////////////////////////////////////////////

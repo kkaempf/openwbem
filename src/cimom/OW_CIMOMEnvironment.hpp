@@ -203,7 +203,6 @@ private:
 	ConfigMapRef m_configItems;
 	OW_ProviderManagerRef m_providerManager;
 	OW_SharedLibraryRef m_wqlLib;
-	OW_SharedLibraryRef m_indicationServerLib;
 	OW_SharedLibraryRef m_indicationRepLayerLib;
 	OW_PollingManagerRef m_pollingManager;
 	OW_IndicationServerRef m_indicationServer;
