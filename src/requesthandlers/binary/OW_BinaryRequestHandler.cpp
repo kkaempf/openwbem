@@ -975,7 +975,7 @@ OW_StringArray
 OW_BinaryRequestHandler::getSupportedContentTypes() const
 {
 	OW_StringArray rval;
-	rval.push_back("application/owbinary");
+	rval.push_back("application/x-owbinary");
 	return rval;
 }
 
@@ -983,7 +983,7 @@ OW_BinaryRequestHandler::getSupportedContentTypes() const
 OW_String
 OW_BinaryRequestHandler::getContentType() const
 {
-	return OW_String("application/owbinary");
+	return OW_String("application/x-owbinary");
 }
 
 //////////////////////////////////////////////////////////////////////////////
