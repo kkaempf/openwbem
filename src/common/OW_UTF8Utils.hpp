@@ -109,6 +109,14 @@ OW_COMMON_API int compareToIgnoreCase(const char* str1, const char* str2);
 OW_COMMON_API Array<UInt16> StringToUCS2(const String& input);
 
 /**
+ * Convert a UTF-8 (or ASCII) string into a UCS2 string. Invalid characters
+ * will be changed to U+FFFD (the Unicode Replacement character)
+ * @param input The UTF-8 string
+ * @return An Array of UCS2 characters
+ */
+OW_COMMON_API Array<UInt16> StringToUCS2ReplaceInvalid(const String& input);
+
+/**
  * Convert a UCS2 string into a UTF-8 (or ASCII) string
  * @param input An Array of UCS2 characters
  * @return The UTF-8 string

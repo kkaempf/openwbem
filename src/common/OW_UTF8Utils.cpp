@@ -227,12 +227,15 @@ void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb)
 	}
 }
 
+namespace
+{
 /////////////////////////////////////////////////////////////////////////////
-Array<UInt16> StringToUCS2(const String& input)
+Array<UInt16> StringToUCS2Common(const String& input, bool throwException)
 {
 	// TODO: Remove the duplication between this function and UTF8toUCS2()
 	Array<UInt16> rval;
 	OW_ASSERT(input.length() == ::strlen(input.c_str()));
+	const UInt16 UCS2ReplacementChar = 0xFFFD;
 	const char* begin = input.c_str();
 	const char* end = begin + input.length();
 
@@ -253,8 +256,16 @@ Array<UInt16> StringToUCS2(const String& input)
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0')
 				{
-					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
-						static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					if (throwException)
+					{
+						OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
+							static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					}
+					else
+					{
+						rval.push_back(UCS2ReplacementChar);
+						p += 2;
+					}
 				}
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				rval.push_back(((c0 & 0x1fu) << 6) | (c1 & 0x3fu));
@@ -266,8 +277,17 @@ Array<UInt16> StringToUCS2(const String& input)
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0' || p[2] == '\0')
 				{
-					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
-						static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					if (throwException)
+					{
+						OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
+							static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+					}
+					else
+					{
+						rval.push_back(UCS2ReplacementChar);
+						p += 3;
+					}
+
 				}
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				const UInt32 c2 = static_cast<UInt8>(p[2]);
@@ -278,28 +298,49 @@ Array<UInt16> StringToUCS2(const String& input)
 			case 4:
 			{
 				// UCS2 can't hold a value this big
-				OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
-					static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				if (throwException)
+				{
+					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
+						static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				}
+				else
+				{
+					rval.push_back(UCS2ReplacementChar);
+					p += 4;
+				}
 
-				// check for short (invalid) utf8 sequence
-//                     if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
-//                         return bad;
-//
-//                     const UInt32 c1 = static_cast<UInt8>(p[1]);
-//                     const UInt32 c2 = static_cast<UInt8>(p[2]);
-//                     const UInt32 c3 = static_cast<UInt8>(p[3]);
-//
-//                     return ((c0 & 0x03u) << 18) | ((c1 & 0x3fu) << 12) | ((c2 & 0x3fu) << 6) | (c3 & 0x3fu);
 			}
 			break;
 			default:
 			{
-				OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
-					static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				if (throwException)
+				{
+					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", 
+						static_cast<int>(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				}
+				else
+				{
+					rval.push_back(UCS2ReplacementChar);
+					++p;
+				}
 			}
 		}
 	}
 	return rval;
+}
+
+} // end anonymous namespace
+
+/////////////////////////////////////////////////////////////////////////////
+Array<UInt16> StringToUCS2ReplaceInvalid(const String& input)
+{
+	return StringToUCS2Common(input, false);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+Array<UInt16> StringToUCS2(const String& input)
+{
+	return StringToUCS2Common(input, true);
 }
 
 /////////////////////////////////////////////////////////////////////////////
