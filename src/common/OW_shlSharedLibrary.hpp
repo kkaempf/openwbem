@@ -27,55 +27,39 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_DL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
-#define OW_DL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
+#ifndef OW_SHL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
+#define OW_SHL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#if defined(OW_USE_DL)
+#if defined(OW_USE_SHL)
 #include "OW_SharedLibrary.hpp"
+
+#include <dl.h> // for shl_t
 
 namespace OpenWBEM
 {
 
 /**
- * dlSharedLibrary loads and queries shared libraries. Using dlsym &
+ * shlSharedLibrary loads and queries shared libraries. Using dlsym &
  * friends.
  */
-class dlSharedLibrary : public SharedLibrary
+class shlSharedLibrary : public SharedLibrary
 {
 public:
-	dlSharedLibrary(void * libhandle, const String& libName)
+	shlSharedLibrary(void * libhandle, const String& libName)
 		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
 	{
 	}
-	virtual ~dlSharedLibrary();
-
-	/** 
-	 * on some platforms (e.g. glibc 2.2.x), there are bugs in the dl* functions, 
-	 * and the workaround is to not call dlclose.  Setting this variable to 0
-	 * will cause dlclose to never be called.  Doing this has some problems:
-	 * memory mapped to the shared library will never be freed up. New versions
-	 * of the library can't be loaded (i.e. a provider is updated)
-	 */
-	static int m_call_dlclose;
+	virtual ~shlSharedLibrary();
 
 protected:
-	/**
-	 * Derived classes have to override this function to implement
-	 * the symbol loading.  The symbol to be looked up is contained in
-	 * functionName, and the pointer to the function should be written
-	 * into *fp.  Return true if the function succeeded, false otherwise.
-	 * @param functionName	The name of the function to resolve.
-	 * @param fp				Where to store the function pointer.
-	 * @return true if function succeeded, false otherwise.
-	 */
 	virtual bool doGetFunctionPointer( const String& functionName,
 											  void** fp ) const;
 private:
-	void* m_libhandle;
+	shl_t m_libhandle;
 	String m_libName;
 };
 
 } // end namespace OpenWBEM
 
-#endif // OW_USE_DL
+#endif // #if defined(OW_USE_SHL)
 #endif

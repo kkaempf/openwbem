@@ -9,11 +9,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.so
-if DONT_NEED_LIBDL
-SHAREDLIBADD = 
-else
-SHAREDLIBADD = -ldl
-endif
+SHAREDLIBADD = $(DL_LIB)
 
 
 
@@ -30,6 +26,12 @@ INCLUDES = \
 
 
 libopenwbem_a_SOURCES =	\
+OW_dlSharedLibrary.cpp \
+OW_dlSharedLibraryLoader.cpp \
+OW_shlSharedLibrary.cpp \
+OW_shlSharedLibraryLoader.cpp \
+OW_dyldSharedLibrary.cpp \
+OW_dyldSharedLibraryLoader.cpp \
 OW_Array.cpp \
 OW_Assertion.cpp \
 OW_AtomicOps.cpp \
@@ -91,13 +93,17 @@ OW_TmpFile.cpp \
 OW_URL.cpp \
 OW_UserInfo.cpp \
 OW_UUID.cpp \
-OW_dlSharedLibrary.cpp \
-OW_dlSharedLibraryLoader.cpp \
 OW_UnnamedPipe.cpp \
 OW_UTF8Utils.cpp \
 OW_UTF8UtilscompareToIgnoreCase.cpp
 
 pkginclude_HEADERS =	\
+OW_dlSharedLibrary.hpp \
+OW_dlSharedLibraryLoader.hpp \
+OW_shlSharedLibrary.hpp \
+OW_shlSharedLibraryLoader.hpp \
+OW_dyldSharedLibrary.hpp \
+OW_dyldSharedLibraryLoader.hpp \
 OW_Array.hpp \
 OW_ArrayImpl.hpp \
 OW_ArrayFwd.hpp \
@@ -191,8 +197,6 @@ OW_SharedLibrary.hpp \
 OW_SharedLibraryException.hpp \
 OW_SharedLibraryLoader.hpp \
 OW_SignalScope.hpp \
-OW_dlSharedLibrary.hpp \
-OW_dlSharedLibraryLoader.hpp \
 OW_SharedLibraryReference.hpp \
 OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \

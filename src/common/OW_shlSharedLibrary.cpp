@@ -27,55 +27,31 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_DL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
-#define OW_DL_SHAREDLIBRARY_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#if defined(OW_USE_DL)
-#include "OW_SharedLibrary.hpp"
+#if defined(OW_USE_SHL)
+#include "OW_shlSharedLibrary.hpp"
+#include <dl.h>
 
 namespace OpenWBEM
 {
 
-/**
- * dlSharedLibrary loads and queries shared libraries. Using dlsym &
- * friends.
- */
-class dlSharedLibrary : public SharedLibrary
+shlSharedLibrary::~shlSharedLibrary()
 {
-public:
-	dlSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+	shl_unload( m_libhandle );
+}
+bool shlSharedLibrary::doGetFunctionPointer(const String& functionName,
+		void** fp) const
+{
+	void *symaddr = NULL;
+    int status = shl_findsym( m_libhandle, functionName.c_str(), TYPE_PROCEDURE, &symaddr );
+	if (status == -1 || symaddr == NULL)
 	{
+		return false;
 	}
-	virtual ~dlSharedLibrary();
-
-	/** 
-	 * on some platforms (e.g. glibc 2.2.x), there are bugs in the dl* functions, 
-	 * and the workaround is to not call dlclose.  Setting this variable to 0
-	 * will cause dlclose to never be called.  Doing this has some problems:
-	 * memory mapped to the shared library will never be freed up. New versions
-	 * of the library can't be loaded (i.e. a provider is updated)
-	 */
-	static int m_call_dlclose;
-
-protected:
-	/**
-	 * Derived classes have to override this function to implement
-	 * the symbol loading.  The symbol to be looked up is contained in
-	 * functionName, and the pointer to the function should be written
-	 * into *fp.  Return true if the function succeeded, false otherwise.
-	 * @param functionName	The name of the function to resolve.
-	 * @param fp				Where to store the function pointer.
-	 * @return true if function succeeded, false otherwise.
-	 */
-	virtual bool doGetFunctionPointer( const String& functionName,
-											  void** fp ) const;
-private:
-	void* m_libhandle;
-	String m_libName;
-};
+	*fp = symaddr;
+	return true;
+}
 
 } // end namespace OpenWBEM
 
-#endif // OW_USE_DL
-#endif
+#endif // #if defined(OW_USE_SHL)

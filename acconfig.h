@@ -101,6 +101,13 @@
 #undef HAVE_PTHREAD_KILL_OTHER_THREADS_NP
 #undef HAVE_PAM
 
+/* Define if system has dlfcn.h */
+#undef USE_DL
+/* Define if system has shl_*() <dl.h> */
+#undef USE_SHL
+/* Define if a system has dyld.h (Mac OS X) */
+#undef USE_DYLD
+
 #undef DISABLE_ACLS
 #undef DISABLE_DIGEST
 #undef DISABLE_ASSOCIATION_TRAVERSAL

@@ -28,30 +28,58 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#if defined(OW_USE_DL)
-#include "OW_dlSharedLibraryLoader.hpp"
-#include "OW_dlSharedLibrary.hpp"
+#if defined(OW_USE_DYLD)
+#include "OW_dyldSharedLibraryLoader.hpp"
+#include "OW_dyldSharedLibrary.hpp"
 #include "OW_Format.hpp"
-#include <dlfcn.h>
 
 namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
-dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
+dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	LoggerRef logger) const
 {
+    NSObjectFileImage image;
+    NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
+	const char* err_msg = NULL;
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
+
+    if (dsoerr == NSObjectFileImageSuccess) 
+	{
+        libhandle = NSLinkModule(image, path, NSLINKMODULE_OPTION_RETURN_ON_ERROR);
+        if (!m_libhandle) 
+		{
+            NSLinkEditErrors errors;
+            int errorNumber;
+            const char *fileName;
+            NSLinkEditError(&errors, &errorNumber, &fileName, &err_msg);
+        }
+        NSDestroyObjectFileImage(image);
+    }
+    else if ((dsoerr == NSObjectFileImageFormat ||
+             dsoerr == NSObjectFileImageInappropriateFile) &&
+             NSAddLibrary(filename.c_str()) == TRUE) 
+	{
+        libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
+    }
+    else 
+	{
+		err_msg = "cannot create object file image or add library";
+    }
+
+
+
 	if (libhandle)
 	{
-		return SharedLibraryRef( new dlSharedLibrary(libhandle,
+		return SharedLibraryRef( new dyldSharedLibrary(libhandle,
 			filename));
 	}
 	else
 	{
-		logger->logError(format("dlSharedLibraryLoader::loadSharedLibrary "
-			"dlopen returned NULL.  Error is: %1", dlerror()));
+		logger->logError(format("dyldSharedLibraryLoader::loadSharedLibrary:"
+			" %1", err_msg));
 		return SharedLibraryRef( 0 );
 	}
 }
@@ -59,13 +87,13 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 SharedLibraryLoaderRef 
 SharedLibraryLoader::createSharedLibraryLoader()
 {
-	return SharedLibraryLoaderRef(new dlSharedLibraryLoader);
+	return SharedLibraryLoaderRef(new dyldSharedLibraryLoader);
 }
 ///////////////////////////////////////////////////////////////////////////////
-dlSharedLibraryLoader::~dlSharedLibraryLoader()
+dyldSharedLibraryLoader::~dyldSharedLibraryLoader()
 {
 }
 
 } // end namespace OpenWBEM
 
-#endif // OW_USE_DL
+#endif // #if defined(OW_USE_DYLD)

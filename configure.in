@@ -244,8 +244,25 @@ AC_FUNC_MMAP
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(strerror strtoll strtoull)
 
-dnl this can be set by any platforms which don't have libdl (currently FreeBSD)
-OW_DONT_NEED_LIBDL=0
+dnl Check for dynamic library loader functionality
+AC_CHECK_FUNCS(NSLinkModule, [ tempdl="dyld" ], [ tempdl="no" ])
+if test "$tempdl" = "no"; then
+  AC_CHECK_LIB(dld, shl_load, [ tempdl="shl"; DL_LIB="-ldld" ], [ tempdl="no" ])
+fi
+if test "$tempdl" = "no"; then
+  AC_CHECK_FUNCS(dlopen, [ tempdl="dlfcn" ], [ tempdl="no" ])
+fi
+if test "$tempdl" = "no"; then
+  AC_CHECK_LIB(dl, dlopen, [ tempdl="dlfcn"; DL_LIB="-ldl" ], [ tempdl="no" ])
+fi
+case "$tempdl" in
+  dlfcn) AC_DEFINE(USE_DL);;
+  shl)   AC_DEFINE(USE_SHL);;
+  dyld)  AC_DEFINE(USE_DYLD);;
+esac
+
+AC_SUBST(DL_LIB)
+
 
 dnl This needs to be before we set any CFLAGS since setting DEBUG screws up perl.h
 HAVE_PERL=no
@@ -353,7 +370,6 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
-	OW_DONT_NEED_LIBDL=1
 	;;
 *-next-*)
 	;;
@@ -545,8 +561,6 @@ if test "$enable_instance_manipulation" = no; then
 	OW_DISABLE_INSTANCE_MANIPULATION=1
 fi
 AM_CONDITIONAL(DISABLE_INSTANCE_MANIPULATION, test x$OW_DISABLE_INSTANCE_MANIPULATION = x1)
-
-AM_CONDITIONAL(DONT_NEED_LIBDL, test x$OW_DONT_NEED_LIBDL = x1)
 
 AC_ARG_WITH(package-prefix,
 	OW_HELP_STRING(--with-package-prefix=PREFIX,Specify an optional prefix for 

@@ -28,6 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
+#if defined(OW_USE_DL)
 #include "OW_dlSharedLibrary.hpp"
 #include "OW_Format.hpp"
 #include "OW_Mutex.hpp"
@@ -61,4 +62,6 @@ bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 }
 
 } // end namespace OpenWBEM
+
+#endif
 

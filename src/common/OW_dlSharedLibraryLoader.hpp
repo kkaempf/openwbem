@@ -27,9 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_LINUX_SHARED_LIBRARY_LOADER_HPP_
-#define OW_LINUX_SHARED_LIBRARY_LOADER_HPP_
+#ifndef OW_DL_SHARED_LIBRARY_LOADER_HPP_INCLUDE_GUARD_
+#define OW_DL_SHARED_LIBRARY_LOADER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#if defined(OW_USE_DL)
 #include "OW_SharedLibraryLoader.hpp"
 
 namespace OpenWBEM
@@ -52,5 +53,7 @@ class dlSharedLibraryLoader : public SharedLibraryLoader
 };
 
 } // end namespace OpenWBEM
+
+#endif // OW_USE_DL
 
 #endif
