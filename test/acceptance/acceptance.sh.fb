@@ -743,6 +743,7 @@ TestAuth()
 	
 	echo "1. Testing Allow Anonymous"
 	RestartDaemon
+	echo "fakeclient http://localhost:30926"
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		>> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "0" ] || ExitWithFail "1. Allow Anonymous Failed"
@@ -754,18 +755,21 @@ TestAuth()
 	#EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
 	echo "2. Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
+	echo "fakeclient http://localhost:30926"
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		>> $RESULTDIR/AuthTest.out 2>&1
 	RVAL=$?
 	[ "$RVAL" = "2" ] || \
 	ExitWithFail "2. Authentication test (simple): fakeclient return wrong code. $RVAL != 2"
 
+	echo "fakeclient http://bad:no_good@localhost:30926"
 	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 		 >> $RESULTDIR/AuthTest.out 2>&1
 	RVAL=$?
 	[ "$RVAL" = "1" ] || \
 	ExitWithFail "3. Authentication test (simple): fakeclient return wrong code. $RVAL != 1"
 
+	echo "fakeclient http://test:test@localhost:30926"
 	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 		 > $RESULTDIR/GetFeatures.out 2>&1 
 	RVAL=$?
@@ -784,30 +788,35 @@ TestAuth()
 		echo "5. Testing Digest Authentication"
 		RestartDaemon
 		
+		echo "fakeclient http://localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 			> $RESULTDIR/AuthTest.out 2>&1
 		RVAL=$?
 		[ "$RVAL" = "2" ] || \
 		ExitWithFail "5. Authentication test (digest): fakeclient return wrong code. $RVAL != 2"
 
+		echo "fakeclient http://bad:no_good@localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
 			 >> $RESULTDIR/AuthTest.out 2>&1
 		RVAL=$?
 		[ "$RVAL" = "1" ] || \
 		ExitWithFail "6. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
 
+		echo "fakeclient http://test:test@localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
 			 > $RESULTDIR/GetFeatures.out 2>&1
 		RVAL=$?
 		[ "$RVAL" = "1" ] || \
 		ExitWithFail "7. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
 
+		echo "fakeclient http://test1:pass1@localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
 			 > $RESULTDIR/GetFeatures.out 2>&1
 		RVAL=$?
 		[ "$RVAL" = "0" ] || \
 		ExitWithFail "8. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
 
+		echo "fakeclient http://test2:pass2@localhost:30926"
 		$BUILDDIR/test/acceptance/progs/fakeclient http://test2:pass2@localhost:30926 \
 			 > $RESULTDIR/GetFeatures.out 2>&1
 		RVAL=$?
@@ -830,6 +839,7 @@ TestAuth()
 		
 		# if we have a pam username/password, then try it out
 		if [ ! -z "$OWPAMUSERNAME" ] && [ ! -z "$OWPAMPASS" ]; then
+			echo "fakeclient http://${OWPAMUSERNAME}:${OWPAMPASS}@localhost:30926"
 			$BUILDDIR/test/acceptance/progs/fakeclient http://${OWPAMUSERNAME}:${OWPAMPASS}@localhost:30926 \
 				 >> $RESULTDIR/AuthTest.out 2>&1
 			RVAL=$?
@@ -849,6 +859,7 @@ TestAuth()
 	
 	echo "11. Testing Local Authentication"
 	RestartDaemon
+	echo "fakeclient http://localhost:30926"
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		>> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "0" ] || ExitWithFail "11. Local Authentication Failed"
