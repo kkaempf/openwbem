@@ -586,11 +586,12 @@ IndicationServerImpl::_processIndicationRange(
 			Subscription& sub = first->second;
 			CIMInstance filterInst = sub.m_filter;
 			String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
-			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
-			{
-				m_env->logDebug("skipping sub because namespace doesn't match");
-				continue;
-			}
+// TODO: Fix this to handle namespace portability problems, such as initial /
+//			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
+//			{
+//				m_env->logDebug(Format("skipping sub because namespace doesn't match. Filter ns = %1, Sub ns = %2", sub.m_filterSourceNameSpace, instNS));
+//				continue;
+//			}
 			//-----------------------------------------------------------------
 			// Here we need to call into the WQL process with the query string
 			// and the indication instance
@@ -879,6 +880,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	// parse the filter
 	// Get query language
 	String queryLanguage = filterInst.getPropertyT("QueryLanguage").getValueT().toString();
+	log->logDebug(Format("Got query statement (%1) in %2", filterQuery, queryLanguage));
 	if (!m_wqlRef->supportsQueryLanguage(queryLanguage))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, format("Filter uses queryLanguage %1, which is"
@@ -888,6 +890,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	WQLCompile compiledStmt(selectStmt);
 	WQLCompile::Tableau& tableau(compiledStmt.getTableau());
 	String indicationClassName = selectStmt.getClassName();
+	log->logDebug(Format("query is for indication class: %1", indicationClassName));
 	// collect up all the class names
 	StringArray isaClassNames;
 	for (size_t i = 0; i < tableau.size(); ++i)
@@ -898,15 +901,17 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 			{
 				WQLOperand& opn1(tableau[i][j].opn1);
 				WQLOperand& opn2(tableau[i][j].opn2);
-				if (opn1.getType() == WQLOperand::PROPERTY_NAME && opn1.getPropertyName() == "SourceInstance")
+				if (opn1.getType() == WQLOperand::PROPERTY_NAME && opn1.getPropertyName().equalsIgnoreCase("SourceInstance"))
 				{
 					if (opn2.getType() == WQLOperand::PROPERTY_NAME)
 					{
 						isaClassNames.push_back(opn2.getPropertyName());
+						log->logDebug(Format("Found ISA class name: %1", opn2.getPropertyName()));
 					}
 					else if (opn2.getType() == WQLOperand::STRING_VALUE)
 					{
 						isaClassNames.push_back(opn2.getStringValue());
+						log->logDebug(Format("Found ISA class name: %1", opn2.getStringValue()));
 					}
 				}
 			}
@@ -915,6 +920,11 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	// get rid of duplicates - unique() requires that the range be sorted
 	std::sort(isaClassNames.begin(), isaClassNames.end());
 	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
+
+	OStringStream ss;
+	std::copy(isaClassNames.begin(), isaClassNames.end(), std::ostream_iterator<String>(ss, ", "));
+	log->logDebug(Format("isaClassNames = %1", ss.toString()));
+
 	// find providers that support this query. If none are found, throw an exception.
 	ProviderManagerRef pm (m_env->getProviderManager());
 	IndicationProviderIFCRefArray providers =
