@@ -164,8 +164,6 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
 	}
 
-	parser.mustGetChild();
-
 	// Find <SIMPLEEXPRSP>
 	//
 	// TODO-NICE: need to look for complex EXPRSPs!!
