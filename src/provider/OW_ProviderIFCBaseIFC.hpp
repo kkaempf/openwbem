@@ -43,6 +43,8 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_Exception.hpp"
 #include "OW_InstanceProviderInfo.hpp"
+#include "OW_AssociatorProviderInfo.hpp"
+#include "OW_MethodProviderInfo.hpp"
 
 DEFINE_EXCEPTION(NoSuchProvider);
 
@@ -93,9 +95,10 @@ public:
 	 */
 	void init(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
-		OW_AssociatorProviderInfoArray& a)
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m)
 	{
-		doInit(env, i, a);
+		doInit(env, i, a, m);
 	}
 	/**
 	 * Locate an Instance provider.
@@ -110,13 +113,7 @@ public:
 	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
-		// ensure we don't return NULL
-		OW_InstanceProviderIFCRef p = doGetInstanceProvider(env, provIdString);
-		if (!p)
-		{
-			OW_THROW(OW_NoSuchProviderException, provIdString);
-		}
-		return p;
+		return doGetInstanceProvider(env, provIdString);
 	}
 
 	/**
@@ -127,7 +124,7 @@ public:
 	 *								being requested.
 	 *
 	 * @returns A ref counted OW_MethodProvider. If the provider is not found,
-	 * then null is returned.
+	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
@@ -143,7 +140,7 @@ public:
 	 *								being requested.
 	 *
 	 * @returns A ref counted OW_PropertyProvider. If the provider is not found,
-	 * then null is returned.
+	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
@@ -164,13 +161,7 @@ public:
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
-		// ensure we don't return NULL
-		OW_AssociatorProviderIFCRef p = doGetAssociatorProvider(env, provIdString);
-		if (!p)
-		{
-			OW_THROW(OW_NoSuchProviderException, provIdString);
-		}
-		return p;
+		return  doGetAssociatorProvider(env, provIdString);
 	}
 
 	/**
@@ -209,7 +200,8 @@ protected:
 	 */
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
-		OW_AssociatorProviderInfoArray& a) = 0;
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m) = 0;
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;

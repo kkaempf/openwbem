@@ -1,3 +1,4 @@
+
 /*******************************************************************************
 * Copyright (C) 2001 Caldera International, Inc All rights reserved.
 *
@@ -28,68 +29,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-#define OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#ifndef OW_ASSOCIATOR_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#define OW_ASSOCIATOR_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
+#include "OW_InstanceProviderInfo.hpp"
 
-class OW_InstanceProviderInfo
-{
-public:
-	struct ClassInfo
-	{
-		explicit ClassInfo(OW_String const& className_)
-			: className(className_)
-		{}
-		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
-			: className(className_)
-			, namespaces(namespaces_)
-		{}
-		OW_String className;
-		OW_StringArray namespaces;
-	};
-
-	typedef OW_Array<ClassInfo> ClassInfoArray;
-
-	/**
-	 * Add a class name to the list of instrumented classes for the provider.
-	 * This will not have a specific namespace associated with it, it will be
-	 * associated to all namespaces.
-	 * @param className The class name.
-	 */
-	void addInstrumentedClass(OW_String const& className)
-	{
-		m_instrumentedClasses.push_back(ClassInfo(className));
-	}
-	void addInstrumentedClass(ClassInfo const& classInfo)
-	{
-		m_instrumentedClasses.push_back(classInfo);
-	}
-	
-	const ClassInfoArray& getClassInfo() const
-	{
-		return m_instrumentedClasses;
-	}
-
-	void setProviderName(OW_String const& name)
-	{
-		m_name = name;
-	}
-
-	OW_String getProviderName() const
-	{
-		return m_name;
-	}
-
-private:
-	ClassInfoArray m_instrumentedClasses;
-	OW_String m_name;
-
-};
-
-typedef OW_Array<OW_InstanceProviderInfo> OW_InstanceProviderInfoArray;
+// may need to make this a separate class
+typedef OW_InstanceProviderInfo OW_AssociatorProviderInfo;
+typedef OW_Array<OW_AssociatorProviderInfo> OW_AssociatorProviderInfoArray;
 
 #endif
 

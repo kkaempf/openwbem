@@ -105,7 +105,8 @@ OW_InternalProviderIFC::addCIMOMProvider(const OW_String& providerNameArg,
 void
 OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instInfos,
-	OW_AssociatorProviderInfoArray& assocInfos)
+	OW_AssociatorProviderInfoArray& assocInfos,
+	OW_MethodProviderInfoArray& methInfos)
 {
 	OW_MutexLock l(m_guard);
 	for (ProviderMap::iterator i =  m_cimomProviders.begin(); i != m_cimomProviders.end(); ++i)
@@ -139,7 +140,16 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			pAP->getProviderInfo(provInfo);
 			assocInfos.push_back(provInfo);
 		}
-		// TODO: Do method and property providers too.
+
+		OW_CppMethodProviderIFC* pMP = it->second.m_pProv->getMethodProvider();
+		if (pMP)
+		{
+			OW_MethodProviderInfo provInfo;
+			provInfo.setProviderName(it->first);
+			pMP->getProviderInfo(provInfo);
+			methInfos.push_back(provInfo);
+		}
+		// TODO: Do property providers too.
 	}
 }
 
@@ -239,8 +249,6 @@ OW_InternalProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef
 		it->second.m_initDone = true;
 	}
 
-
-
 	return OW_InstanceProviderIFCRef(new OW_InstanceProviderProxy(ipRef));
 }
 
@@ -255,7 +263,7 @@ OW_InternalProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& 
 
 	if(it == m_cimomProviders.end())
 	{
-		return OW_MethodProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	OW_CppMethodProviderIFC* pMP = it->second.m_pProv->getMethodProvider();
@@ -264,7 +272,7 @@ OW_InternalProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& 
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not a method provider: %1", provIdString));
-		return OW_MethodProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	if(!it->second.m_initDone)
@@ -290,7 +298,7 @@ OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef
 
 	if(it == m_cimomProviders.end())
 	{
-		return OW_PropertyProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
@@ -298,7 +306,7 @@ OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not a property provider: %1", provIdString));
-		return OW_PropertyProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	if(!it->second.m_initDone)

@@ -10,10 +10,6 @@
 
 class OW_TestLogger : public OW_Logger
 {
-	/**
-	 * To be overridden by derived classes with a function that does the
-	 * actual logging.
-	 */
 protected:
 	virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const {
 		std::cout << message << std::endl;

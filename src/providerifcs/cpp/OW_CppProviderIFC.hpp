@@ -60,7 +60,8 @@ protected:
 	 */
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
-		OW_AssociatorProviderInfoArray& a);
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -103,7 +104,8 @@ private:
 		const char* provIdString, StoreProviderFlag = storeProvider);
 	void loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
-		OW_AssociatorProviderInfoArray& a);
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m);
 
 
 	ProviderMap m_provs;

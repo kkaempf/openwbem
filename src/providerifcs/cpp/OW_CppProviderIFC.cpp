@@ -87,9 +87,10 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 void
 OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
-	OW_AssociatorProviderInfoArray& a)
+	OW_AssociatorProviderInfoArray& a,
+	OW_MethodProviderInfoArray& m)
 {
-	loadProviders(env, i, a);
+	loadProviders(env, i, a, m);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -189,7 +190,7 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 			provIdString));
 	}
 
-	return OW_MethodProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -216,7 +217,7 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 			provIdString));
 	}
 
-	return OW_PropertyProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -250,7 +251,8 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 void
 OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
-	OW_AssociatorProviderInfoArray& associatorProviderInfo)
+	OW_AssociatorProviderInfoArray& associatorProviderInfo,
+	OW_MethodProviderInfoArray& methodProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -354,7 +356,15 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_ap->getProviderInfo(info);
 				associatorProviderInfo.push_back(info);
 			}
-			// TODO: Get info for property and method providers
+			OW_CppMethodProviderIFC* p_mp = p->getMethodProvider();
+			if (p_mp)
+			{
+				OW_MethodProviderInfo info;
+				info.setProviderName(providerid);
+				p_mp->getProviderInfo(info);
+				methodProviderInfo.push_back(info);
+			}
+			// TODO: Get info for property providers
 			continue;
 		}
 

@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
-#include "OW_InstanceProviderInfo.hpp"
+#include "OW_AssociatorProviderInfo.hpp"
 
 /**
  * This interface is implemented by providers of dynamic association

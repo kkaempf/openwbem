@@ -1,3 +1,4 @@
+
 /*******************************************************************************
 * Copyright (C) 2001 Caldera International, Inc All rights reserved.
 *
@@ -28,14 +29,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-#define OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#ifndef OW_METHOD_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#define OW_METHOD_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-class OW_InstanceProviderInfo
+class OW_MethodProviderInfo
 {
 public:
 	struct ClassInfo
@@ -43,12 +44,14 @@ public:
 		explicit ClassInfo(OW_String const& className_)
 			: className(className_)
 		{}
-		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
+		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_, OW_StringArray const& methods_)
 			: className(className_)
 			, namespaces(namespaces_)
+			, methods(methods_)
 		{}
 		OW_String className;
 		OW_StringArray namespaces;
+		OW_StringArray methods;
 	};
 
 	typedef OW_Array<ClassInfo> ClassInfoArray;
@@ -57,12 +60,15 @@ public:
 	 * Add a class name to the list of instrumented classes for the provider.
 	 * This will not have a specific namespace associated with it, it will be
 	 * associated to all namespaces.
+	 * It will not have one method associated with it, it will be assumed that
+	 * the provider handles all the methods in the class
 	 * @param className The class name.
 	 */
 	void addInstrumentedClass(OW_String const& className)
 	{
 		m_instrumentedClasses.push_back(ClassInfo(className));
 	}
+
 	void addInstrumentedClass(ClassInfo const& classInfo)
 	{
 		m_instrumentedClasses.push_back(classInfo);
@@ -89,7 +95,7 @@ private:
 
 };
 
-typedef OW_Array<OW_InstanceProviderInfo> OW_InstanceProviderInfoArray;
+typedef OW_Array<OW_MethodProviderInfo> OW_MethodProviderInfoArray;
 
 #endif
 

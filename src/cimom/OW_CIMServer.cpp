@@ -1899,26 +1899,6 @@ OW_CIMServer::invokeMethod(
 		OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND, methodName.c_str());
 	}
 
-	//
-	// If a provider is defined, go call it to get the real property
-	//
-	OW_CIMQualifier cq = method.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-
-	if(!cq)
-	{
-		//
-		// Look to see if class instance provider can act as
-		// a method provider
-		//
-		cq = cc.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-		if(!cq)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"No method provider");
-		}
-	}
-
 	OW_CIMValue cv;
 	OW_MethodProviderIFCRef methodp;
 
@@ -1929,12 +1909,10 @@ OW_CIMServer::invokeMethod(
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, true);
 		methodp = m_provManager->getMethodProvider(
-			createProvEnvRef(internal_ch), cq);
-		if(methodp.isNull())
+			createProvEnvRef(internal_ch), ns, cc, methodName);
+		if(!methodp)
 		{
-			OW_String msg("Unknown provider: ");
-			msg += cq.getValue().toString();
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, msg.c_str());
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
 		}
 
 		OW_CIMParameterArray methodInParams = method.getINParameters();
@@ -2029,8 +2007,6 @@ OW_CIMServer::invokeMethod(
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
 			methodStr += "OW_CIMServer invoking extrinsic method provider: ";
-			methodStr += cq.getValue().toString();
-			methodStr += '\n';
 			methodStr += ns;
 			methodStr += ':';
 			methodStr += path.toString();
@@ -2074,8 +2050,6 @@ OW_CIMServer::invokeMethod(
 		{
 			methodStr.reset();
 			methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
-			methodStr += cq.getValue().toString();
-			methodStr += '\n';
 			methodStr += ns;
 			methodStr += ':';
 			methodStr += path.toString();
@@ -2103,18 +2077,14 @@ OW_CIMServer::invokeMethod(
 	}
 	catch(OW_Exception& e)
 	{
-		OW_String msg("Got exception: ");
-		msg += e.type();
-		msg += " calling provider: ";
-		msg += cq.getValue().toString() + " MSG: ";
-		msg += e.getMessage();
-		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Caught exception: %1 "
+			"while calling provider for method %2", e, methodName).c_str());
 	}
 	catch(...)
 	{
-		OW_String msg("calling provider: ");
-		msg += cq.getValue().toString();
-		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Caught unknown "
+			"exception while calling provider for method %1", 
+			methodName).c_str());
 	}
 
 	return cv;

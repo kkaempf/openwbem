@@ -120,7 +120,7 @@ public:
 	 *	null is returned.
 	 */
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMQualifier& qual) const;
+		const OW_String& ns, const OW_CIMClass& cc, const OW_String& methodName) const;
 
 	/**
 	 * Locate a Property provider.
@@ -185,6 +185,25 @@ private:
 		const OW_CIMQualifier& qual,
 		OW_String& provStr) const;
 
+	/*
+	void registerInstanceProviderInfo(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& name,
+		const OW_ProviderIFCBaseIFCRef& ifc,
+		const OW_String& providerName);
+
+	void processInstanceProviderClassInfo(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_InstanceProviderInfo::ClassInfo& classInfo,
+		const OW_ProviderIFCBaseIFCRef& ifc,
+		const OW_String& providerName);
+
+	void processInstanceProviderInfo(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_InstanceProviderInfoArray& instanceProviderInfo,
+		const OW_ProviderIFCBaseIFCRef& ifc);
+		*/
+
 	OW_Array<OW_ProviderIFCBaseIFCRef> m_IFCArray;
 
 	// also stored in m_IFCArray.  We keep this here so we can call
@@ -193,6 +212,7 @@ private:
 
 	OW_Mutex m_guard;
 
+public:	// so free functions in cpp file can access them.
 	struct InstProvReg
 	{
 		OW_String provName;
@@ -200,16 +220,19 @@ private:
 	};
 
 	typedef InstProvReg AssocProvReg; // same for now
+	typedef InstProvReg MethProvReg;
 
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
 	typedef OW_HashMap<OW_String, InstProvReg> InstProvRegMap_t;
-	InstProvRegMap_t m_registeredInstProvs;
-
-	// The key must be: a classname if the provider supports any namespace,
-	// or namespace:classname for a specific namespace.
 	typedef OW_HashMap<OW_String, AssocProvReg> AssocProvRegMap_t;
+	// The key must be: [namespace:]className[:methodname]
+	typedef OW_HashMap<OW_String, MethProvReg> MethProvRegMap_t;
+	
+private:
+	InstProvRegMap_t m_registeredInstProvs;
 	AssocProvRegMap_t m_registeredAssocProvs;
+	MethProvRegMap_t m_registeredMethProvs;
 
 };
 

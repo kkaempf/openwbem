@@ -95,6 +95,7 @@ OW_File.hpp \
 OW_FileSystem.hpp \
 OW_Format.hpp \
 OW_FuncNamePrinter.hpp \
+OW_HashMap.hpp \
 OW_IOException.hpp \
 OW_IOIFCStreamBuffer.hpp \
 OW_IstreamBufIterator.hpp \

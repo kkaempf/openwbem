@@ -69,18 +69,9 @@
 // includes for this file
 #include "TestRunner.hpp"
 #include "OW_String.hpp"
-//#include "OW_Environment.hpp"
 
 int main( int argc, char *argv[])
 {
-	//OW_Environment::setConfigItem("owcimomd.config_file",
-	//	"../../etc/openwbem.conf");
-	//OW_Environment::setConfigItem(OW_ConfigOpts::OW_DEBUG_opt,
-	//	"true");
-	//OW_Environment::setConfigItem(OW_ConfigOpts::LOG_LEVEL_opt,
-	//		"debug");
-	//OW_Environment::init(); // needed by some of the test cases.
-
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
@@ -127,7 +118,6 @@ int main( int argc, char *argv[])
 	{
 		runner.run( argv[1] );
 	}
-	//exit(0);
 	return 0;
 }
 

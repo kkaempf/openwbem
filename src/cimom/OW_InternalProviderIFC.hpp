@@ -63,7 +63,8 @@ private:
 
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
-		OW_AssociatorProviderInfoArray& a);
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char *provIdString);

@@ -1,3 +1,7 @@
+Sun Dec  1 22:05:05 MST 2002
+- Got provider self-registration working for associator and method providers.
+- Fleshed out the unit tests for provider self-registration.
+
 Sat Nov 30 11:09:58 MST 2002
 - Moved the hash map stuff from OW_MetaRepository.hpp into OW_HashMap.hpp and
   changed OW_ProviderManager to use it.
