@@ -29,7 +29,7 @@
 *******************************************************************************/
 #ifndef OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
 #define OW_CIMOMENVIRONMENT_HPP_INCLUDE_GUARD_
-#define OW_DAEMON_NAME "owcimomd"
+#define OW_DAEMON_NAME OW_PACKAGE_PREFIX"owcimomd"
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_LogLevel.hpp"
