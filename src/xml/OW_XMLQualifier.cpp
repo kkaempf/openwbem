@@ -43,6 +43,7 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMXMLParser.hpp"
+#include "OW_CIMName.hpp"
 
 namespace OpenWBEM
 {
@@ -58,9 +59,9 @@ processQualifierDecl(CIMXMLParser& parser,
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Expected but did not find <QUALIFIER.DECLARATION>");
 	}
-	String superClassName;
-	String inClassName;
-	String qualName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	CIMName superClassName;
+	CIMName inClassName;
+	CIMName qualName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	cimQualifier.setName(qualName);
 	String qualType = parser.mustGetAttribute(CIMXMLParser::A_TYPE);
 	CIMDataType dt = CIMDataType::getDataType(qualType);
