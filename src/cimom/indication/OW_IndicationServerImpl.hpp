@@ -37,23 +37,20 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
-//#include "OW_HashMap.hpp"
+#include "OW_IfcsFwd.hpp"
 #include "OW_List.hpp"
-//#include "OW_IndicationExportProviderIFC.hpp"
-//#include "OW_IndicationProviderIFC.hpp"
 #include "OW_Condition.hpp"
-//#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMInstance.hpp"
-//#include "OW_CIMNameSpace.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_HashMultiMap.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_WQLCompile.hpp"
-//#include "OW_ThreadPool.hpp"
 #include "OW_ThreadBarrier.hpp"
-//#include "OW_Logger.hpp"
 #include "OW_ProviderFwd.hpp"
+#include "OW_SortedVectorMap.hpp"
+#include "OW_Map.hpp"
+#include "OW_Mutex.hpp"
 
 namespace OpenWBEM
 {
@@ -67,13 +64,13 @@ class IndicationServerImpl : public IndicationServer
 public:
 	IndicationServerImpl();
 	~IndicationServerImpl();
-	virtual void init(CIMOMEnvironmentRef env);
+	virtual void init(const CIMOMEnvironmentRef& env);
 	virtual void waitUntilReady();
 	virtual Int32 run();
 	void shutdown();
 	void processIndication(const CIMInstance& instance,
 		const String& instNS);
-	CIMOMEnvironmentRef getEnvironment() const { return m_env; }
+	CIMOMEnvironmentRef getEnvironment() const;
 	bool getNewTrans(NotifyTrans& outTrans);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
 	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);

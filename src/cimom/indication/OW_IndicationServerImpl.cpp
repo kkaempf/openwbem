@@ -160,7 +160,7 @@ public:
 private:
 	OperationContext m_opctx;
 	CIMOMHandleIFCRef m_ch;
-	ServiceEnvironmentIFCRef m_env;
+	CIMOMEnvironmentRef m_env;
 	CIMOMHandleIFCRef m_repch;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
@@ -272,7 +272,7 @@ private:
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::init(CIMOMEnvironmentRef env)
+IndicationServerImpl::init(const CIMOMEnvironmentRef& env)
 {
 	m_env = env;
 	m_logger = env->getLogger(COMPONENT_NAME);
@@ -334,6 +334,14 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	namespaceEnumerator nsHandler(lch, this);
 	env->getRepository()->enumNameSpace(nsHandler, context);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+CIMOMEnvironmentRef
+IndicationServerImpl::getEnvironment() const
+{
+	return m_env;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 IndicationServerImpl::waitUntilReady()

@@ -57,7 +57,7 @@ public:
 	 */
 	virtual void close() {}
 	/**
-	 * @return A reference to the CIMOMEnvironment this object is using.
+	 * @return A reference to the ServiceEnvironmentIFC this object is using.
 	 */
 	virtual ServiceEnvironmentIFCRef getEnvironment() const;
 	/**

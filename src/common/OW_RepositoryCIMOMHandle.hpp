@@ -61,7 +61,6 @@ public:
 	/**
 	 * Create a new RepositoryCIMOMHandle with a given repository interface
 	 * and user access contol information.
-	 * @param env A reference to an CIMOMEnvironment object.
 	 * @param pRepos A reference to a Repository that will be used by this
 	 *		RepositoryCIMOMHandle.
 	 * @param context The operation context that will be associated with

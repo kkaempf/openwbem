@@ -59,10 +59,11 @@ const String COMPONENT_NAME("ow.owcimomd.PollingManager");
 
 
 //////////////////////////////////////////////////////////////////////////////
-PollingManager::PollingManager(CIMOMEnvironmentRef env)
+PollingManager::PollingManager(const ServiceEnvironmentIFCRef& env, const ProviderManagerRef& providerManager)
 	: Thread()
 	, m_shuttingDown(false)
 	, m_env(env)
+	, m_providerManager(providerManager)
 	, m_logger(env->getLogger(COMPONENT_NAME))
 	, m_startedBarrier(2)
 {
@@ -89,7 +90,7 @@ namespace
 	class PollingManagerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
-		PollingManagerProviderEnvironment(CIMOMEnvironmentRef env)
+		PollingManagerProviderEnvironment(ServiceEnvironmentIFCRef env)
 			: m_context()
 			, m_env(env)
 		{}
@@ -130,7 +131,7 @@ namespace
 		mutable OperationContext m_context;
 		ServiceEnvironmentIFCRef m_env;
 	};
-	ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
+	ProviderEnvironmentIFCRef createProvEnvRef(ServiceEnvironmentIFCRef env)
 	{
 		return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(env));
 	}
@@ -143,11 +144,11 @@ PollingManager::run()
 	m_startedBarrier.wait();
 
 	bool doInit = true;
+
 	// Get all of the indication trigger providers
-	ProviderManagerRef pm = m_env->getProviderManager();
-	
 	PolledProviderIFCRefArray itpra =
-			pm->getPolledProviders(createProvEnvRef(m_env));
+			m_providerManager->getPolledProviders(createProvEnvRef(m_env));
+
 	OW_LOG_DEBUG(m_logger, Format("PollingManager found %1 polled providers",
 		itpra.size()));
 	{
@@ -278,6 +279,7 @@ PollingManager::shutdown()
 	// clear out variables to avoid circular reference counts.
 	m_triggerRunners.clear();
 	m_env = 0;
+	m_providerManager = 0;
 	m_triggerRunnerThreadPool = 0;
 
 }
@@ -307,7 +309,7 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 }
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,
-	CIMOMEnvironmentRef env)
+	ServiceEnvironmentIFCRef env)
 	: Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)

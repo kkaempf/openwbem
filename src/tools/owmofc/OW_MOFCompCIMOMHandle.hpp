@@ -51,7 +51,6 @@ public:
 	/**
 	 * Create a new MOFCompCIMOMHandle with a given repository interface
 	 * and user access control information.
-	 * @param env A reference to an CIMOMEnvironment object.
 	 * @param pRepos A reference to an Repository that will be used by this
 	 *		MOFCompCIMOMHandle.
 	 * @param context The operation context that will be associated with

@@ -50,13 +50,13 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_CIMInstance.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_ResultHandlers.hpp"
 #include "OW_AuthorizerManager.hpp"	
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_ProviderManager.hpp"
 
 #include <iterator>
@@ -99,7 +99,7 @@ namespace
 	{
 	public:
 		CIMServerProviderEnvironment(OperationContext& context,
-			const CIMOMEnvironmentRef& env)
+			const ServiceEnvironmentIFCRef& env)
 			: m_context(context)
 			, m_env(env)
 		{}
@@ -113,7 +113,7 @@ namespace
 			return m_env->getCIMOMHandle(m_context,
 				ServiceEnvironmentIFC::E_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_USE_PROVIDERS,
-				CIMOMEnvironment::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_NO_LOCKING);
 		}
 		
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
@@ -121,7 +121,7 @@ namespace
 			return m_env->getCIMOMHandle(m_context,
 				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS,
-				CIMOMEnvironment::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_NO_LOCKING);
 		}
 		
 		virtual RepositoryIFCRef getRepository() const
@@ -146,11 +146,11 @@ namespace
 		}
 	private:
 		OperationContext& m_context;
-		CIMOMEnvironmentRef m_env;
+		ServiceEnvironmentIFCRef m_env;
 	};
 
 	inline ProviderEnvironmentIFCRef createProvEnvRef(OperationContext& context,
-		const CIMOMEnvironmentRef& env)
+		const ServiceEnvironmentIFCRef& env)
 	{
 		return ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(context, env));
 	}
@@ -178,7 +178,7 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMServer::CIMServer(const CIMOMEnvironmentRef& env,
+CIMServer::CIMServer(const ServiceEnvironmentIFCRef& env,
 	const ProviderManagerRef& provManager,
 	const RepositoryIFCRef& cimRepository,
 	const AuthorizerManagerRef& authorizerMgr)
@@ -524,7 +524,7 @@ namespace
 			const String& ns_,
 			CIMObjectPathResultHandlerIFC& result_,
 			OperationContext& context_,
-			const CIMOMEnvironmentRef& env_,
+			const ServiceEnvironmentIFCRef& env_,
 			CIMServer* server_)
 			: ns(ns_)
 			, result(result_)
@@ -547,7 +547,7 @@ namespace
 		String ns;
 		CIMObjectPathResultHandlerIFC& result;
 		OperationContext& context;
-		const CIMOMEnvironmentRef& m_env;
+		const ServiceEnvironmentIFCRef& m_env;
 		CIMServer* server;
 	};
 }
@@ -610,7 +610,7 @@ namespace
 			const String& ns_,
 			CIMInstanceResultHandlerIFC& result_,
 			OperationContext& context_,
-			const CIMOMEnvironmentRef& env_,
+			const ServiceEnvironmentIFCRef& env_,
 			CIMServer* server_,
 			EDeepFlag deep_,
 			ELocalOnlyFlag localOnly_,
@@ -647,7 +647,7 @@ namespace
 		String ns;
 		CIMInstanceResultHandlerIFC& result;
 		OperationContext& context;
-		const CIMOMEnvironmentRef& m_env;
+		const ServiceEnvironmentIFCRef& m_env;
 		CIMServer* server;
 		EDeepFlag deep;
 		ELocalOnlyFlag localOnly;
@@ -798,7 +798,7 @@ namespace
 	public:
 		SecondaryInstanceProviderHandler(
 			OperationContext& context_,
-			const CIMOMEnvironmentRef& env_,
+			const ServiceEnvironmentIFCRef& env_,
 			const String& ns_,
 			const CIMName& className_,
 			ELocalOnlyFlag localOnly_,
@@ -843,7 +843,7 @@ namespace
 		}
 	private:
 		OperationContext& context;
-		const CIMOMEnvironmentRef& env;
+		const ServiceEnvironmentIFCRef& env;
 		const String& ns;
 		const CIMName& className;
 		ELocalOnlyFlag localOnly;
@@ -1749,7 +1749,7 @@ CIMServer::execQuery(
 		CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context,
 				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 				ServiceEnvironmentIFC::E_USE_PROVIDERS,
-				CIMOMEnvironment::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_NO_LOCKING);
 		try
 		{
 			wql->evaluate(ns, result, query, queryLanguage, lch);
@@ -1790,7 +1790,7 @@ class InstanceAuthorizer : public CIMInstanceResultHandlerIFC
 {
 public:
 	InstanceAuthorizer(
-		CIMOMEnvironmentRef env_,
+		ServiceEnvironmentIFCRef env_,
 		AuthorizerManagerRef authorizerManager_,
 		CIMInstanceResultHandlerIFC& result_,
 		const String& ns_,
@@ -1833,7 +1833,7 @@ protected:
 		}
 	}
 private:
-	CIMOMEnvironmentRef env;
+	ServiceEnvironmentIFCRef env;
 	AuthorizerManagerRef authorizerMgr;
 	CIMInstanceResultHandlerIFC& result;
 	String ns;

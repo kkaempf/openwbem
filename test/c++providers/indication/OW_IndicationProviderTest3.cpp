@@ -44,6 +44,7 @@
 // TODO: Find a way to get rid of these
 #include "OW_PollingManager.hpp"
 #include "OW_CppProxyProvider.hpp"
+#include "OW_CIMOMEnvironment.hpp"
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;

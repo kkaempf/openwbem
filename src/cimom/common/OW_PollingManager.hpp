@@ -45,7 +45,6 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_PolledProviderIFC.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_Condition.hpp"
 #include "OW_ThreadBarrier.hpp"
 #include "OW_ThreadPool.hpp"
@@ -57,7 +56,7 @@ namespace OpenWBEM
 class PollingManager : public Thread
 {
 public:
-	PollingManager(CIMOMEnvironmentRef env);
+	PollingManager(const ServiceEnvironmentIFCRef& env, const ProviderManagerRef& providerManager);
 	virtual ~PollingManager();
 	void shutdown();
 	void waitUntilReady()
@@ -72,14 +71,14 @@ private:
 	{
 	public:
 		TriggerRunner(PollingManager* svr,
-			CIMOMEnvironmentRef env);
+			ServiceEnvironmentIFCRef env);
 		virtual void run();
 		PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
 		bool m_isRunning;
 		Int32 m_pollInterval;
 		PollingManager* m_pollMan;
-		CIMOMEnvironmentRef m_env;
+		ServiceEnvironmentIFCRef m_env;
 		LoggerRef m_logger;
 	private:
 		void doCooperativeCancel();
@@ -90,7 +89,8 @@ private:
 	bool m_shuttingDown;
 	NonRecursiveMutex m_triggerGuard;
 	Condition m_triggerCondition;
-	CIMOMEnvironmentRef m_env;
+	ServiceEnvironmentIFCRef m_env;
+	ProviderManagerRef m_providerManager;
 	LoggerRef m_logger;
 	ThreadBarrier m_startedBarrier;
 	ThreadPoolRef m_triggerRunnerThreadPool;

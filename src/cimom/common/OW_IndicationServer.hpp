@@ -32,13 +32,12 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_INDICATION_SERVER_HPP_
-#define OW_INDICATION_SERVER_HPP_
+#ifndef OW_INDICATION_SERVER_HPP_INCLUDE_GUARD_
+#define OW_INDICATION_SERVER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_Thread.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
@@ -52,7 +51,7 @@ public:
 		: Thread()
 	{}
 	virtual ~IndicationServer();
-	virtual void init(CIMOMEnvironmentRef env) = 0;
+	virtual void init(const CIMOMEnvironmentRef& env) = 0;
 	virtual void shutdown() = 0;
 	virtual void processIndication(const CIMInstance& instance,
 		const String& instNS) = 0;

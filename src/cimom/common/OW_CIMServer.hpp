@@ -65,7 +65,7 @@ public:
 	/**
 	 * Create a new CIMServer object.
 	 */
-	CIMServer(const CIMOMEnvironmentRef& env,
+	CIMServer(const ServiceEnvironmentIFCRef& env,
 		const ProviderManagerRef& providerManager,
 		const RepositoryIFCRef& repository,
 		const AuthorizerManagerRef& authorizerMgr);
@@ -666,7 +666,7 @@ private:
 
 	Mutex m_guard;
 	CIMClass m_nsClass_Namespace;
-	CIMOMEnvironmentRef m_env;
+	ServiceEnvironmentIFCRef m_env;
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;
 	AuthorizerManagerRef m_authorizerMgr;

@@ -90,9 +90,8 @@ public:
 	CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const CIMInstance& inst,
 		OperationContext& context) const;
 
-	WQLIFCRef getWQLRef() const;
-	virtual RequestHandlerIFCRef getRequestHandler(
-		const String &id) const;
+	virtual WQLIFCRef getWQLRef() const;
+	virtual RequestHandlerIFCRef getRequestHandler(const String &id) const;
 	virtual LoggerRef getLogger() const OW_DEPRECATED;
 	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;

@@ -499,8 +499,7 @@ CIMOMEnvironment::_createAuthManager()
 void
 CIMOMEnvironment::_createPollingManager()
 {
-	m_pollingManager = PollingManagerRef(new PollingManager(
-		this));
+	m_pollingManager = PollingManagerRef(new PollingManager(this, m_providerManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 void

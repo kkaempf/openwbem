@@ -39,6 +39,9 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Array.hpp"
+#include "OW_Logger.hpp"
+#include "OW_RequestHandlerIFC.hpp"
+#include "OW_WQLIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -57,7 +60,8 @@ ServiceEnvironmentIFC::getRepository() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
+CIMOMHandleIFCRef
+ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 {
 	return getCIMOMHandle(context, E_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
 }
@@ -95,6 +99,7 @@ RequestHandlerIFCRef
 ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return RequestHandlerIFCRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,6 +107,7 @@ LoggerRef
 ServiceEnvironmentIFC::getLogger() const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return LoggerRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,6 +115,7 @@ LoggerRef
 ServiceEnvironmentIFC::getLogger(const String& componentName) const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return LoggerRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,6 +123,7 @@ bool
 ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String& details, OperationContext& context) const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -126,6 +134,7 @@ ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 	ELockingFlag locking) const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return CIMOMHandleIFCRef();
 }
 
 
@@ -134,6 +143,7 @@ CIMInstanceArray
 ServiceEnvironmentIFC::getInteropInstances(const String& className) const
 {
 	OW_ASSERTMSG(0, "Not Implemented");
+	return CIMInstanceArray();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -143,6 +153,13 @@ ServiceEnvironmentIFC::setInteropInstance(const CIMInstance& inst)
 	OW_ASSERTMSG(0, "Not Implemented");
 }
 
+///////////////////////////////////////////////////////////////////////////////
+WQLIFCRef
+ServiceEnvironmentIFC::getWQLRef() const
+{
+	OW_ASSERTMSG(0, "Not Implemented");
+	return WQLIFCRef();
+}
 
 } // end namespace OpenWBEM
 
