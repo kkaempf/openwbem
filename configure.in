@@ -1,4 +1,4 @@
-Dnl Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
 AC_INIT(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
@@ -65,7 +65,7 @@ AC_SUBST(MOF_RELEASE)
 AC_SUBST(MOF_CURRENT)
 AC_SUBST(MOF_REVISION)
 AC_SUBST(MOF_AGE)
-                     
+ 
 AM_INIT_AUTOMAKE(openwbem, $OPENWBEM_VERSION)
 AM_MAINTAINER_MODE
 #AM_DISABLE_STATIC
@@ -96,13 +96,13 @@ AC_CHECK_HEADER(pth.h, have_pth=1)
 use_pam=1
 AC_CHECK_HEADERS(pam/pam_misc.h pam/pam_appl.h, true, use_pam=0)
 if test x$use_pam = x0; then
-    AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h, 
-	    use_pam=1, use_pam=0)
+	AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h, 
+		use_pam=1, use_pam=0)
 fi
 
 AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
 if test x$use_pam = x1; then
-    AC_DEFINE(HAVE_PAM)
+	AC_DEFINE(HAVE_PAM)
 else
 	AC_MSG_WARN(*** No PAM headers found! The PAM authentication module ***)
 	AC_MSG_WARN(*** will not be built. The config file defaults to      ***)
@@ -117,7 +117,7 @@ AC_ARG_ENABLE(zlib,
 AC_HELP_STRING([--disable-zlib],[disable zlib integration]))
 
 if test "$enable_zlib" != no; then
-  AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
+	AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
 fi
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
@@ -172,35 +172,33 @@ HAVE_PERL=no
 AC_ARG_ENABLE(perl-providerifc,
 AC_HELP_STRING([--enable-perl-providerifc],[enable the perl provider interface]),
 [
-dnl BMMU check for perl
-  #PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
-  PGAC_CHECK_PERL_CONFIG(archlibexp)
-  PGAC_CHECK_PERL_CONFIG(privlibexp)
-  PGAC_CHECK_PERL_CONFIG(useshrplib)
-  PGAC_CHECK_PERL_EMBED_CCFLAGS
-  PGAC_CHECK_PERL_EMBED_LDFLAGS
-  saved_LDFLAGS="$LDFLAGS"
-  saved_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS $perl_embed_ccflags"
-  LDFLAGS="$LDFLAGS $perl_embed_ldflags"
+	dnl BMMU check for perl
+	#PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
+	PGAC_CHECK_PERL_CONFIG(archlibexp)
+	PGAC_CHECK_PERL_CONFIG(privlibexp)
+	PGAC_CHECK_PERL_CONFIG(useshrplib)
+	PGAC_CHECK_PERL_EMBED_CCFLAGS
+	PGAC_CHECK_PERL_EMBED_LDFLAGS
+	saved_LDFLAGS="$LDFLAGS"
+	saved_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS $perl_embed_ccflags"
+	LDFLAGS="$LDFLAGS $perl_embed_ldflags"
 
-  # Basic test to check for compilation success
-  AC_TRY_COMPILE(
-	 [
-#include <EXTERN.h>
-#include <perl.h>
-	 ],
-	 [
-
-	 ],
-	 [
-       AC_DEFINE(PERLIFC)
-       HAVE_PERL=yes
-       break;
-	 ]
-  )
-  CFLAGS="$saved_CFLAGS"
-  LDFLAGS="$saved_LDFLAGS"
+	# Basic test to check for compilation success
+	AC_TRY_COMPILE(
+		[
+		#include <EXTERN.h>
+		#include <perl.h>
+		],
+		[],
+		[
+			AC_DEFINE(PERLIFC)
+			HAVE_PERL=yes
+			break;
+		]
+	)
+	CFLAGS="$saved_CFLAGS"
+	LDFLAGS="$saved_LDFLAGS"
 ])
 AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 
@@ -313,7 +311,7 @@ case "$host" in
 *-*-sco3.2v5*)
 	PLATFORMDIR="posix"
 	AC_DEFINE(OPENSERVER)
-        AC_DEFINE(USE_GNU_PTH)
+		AC_DEFINE(USE_GNU_PTH)
 	LIBS="$LIBS -lpth -lsocket -lstdc++"
 	PLAT_CFLAGS="-fPIC"
 	PLAT_CXXFLAGS="-fPIC"
@@ -343,16 +341,16 @@ AC_SUBST(PLATFORMDIR)
 
 AC_ARG_ENABLE(debug-mode,
 AC_HELP_STRING([--enable-debug-mode],[enable debugging mode]),
-  [
+[
 	AC_DEFINE(DEBUG)
 	CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W"
 	CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
 	#CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
-  ],[
-    CFLAGS="$PLAT_CFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
-    CXXFLAGS="$PLAT_CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
-    #CXXFLAGS="$PLAT_CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
-  ])
+],[
+	CFLAGS="$PLAT_CFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
+	CXXFLAGS="$PLAT_CXXFLAGS -g -DNDEBUG $PLAT_OPTFLAGS"
+	#CXXFLAGS="$PLAT_CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
+])
 
 AC_ARG_ENABLE(openslp,
 AC_HELP_STRING([--disable-openslp],[disable openslp integration]))
@@ -372,37 +370,37 @@ fi
 
 AC_ARG_ENABLE(memory-debug-mode,
 AC_HELP_STRING([--enable-memory-debug-mode],[enable memory debug mode]),
-  [
-    AC_DEFINE(DEBUG_MEMORY)
-  ])
+[
+	AC_DEFINE(DEBUG_MEMORY)
+])
 
 AC_ARG_ENABLE(func-name-debug-mode,
 AC_HELP_STRING([--enable-func-name-debug-mode],[enable func name debug mode]),
-  [
-    AC_DEFINE(PRINT_FUNC_DEBUG)
-  ])
+[
+	AC_DEFINE(PRINT_FUNC_DEBUG)
+])
 
 
 AC_ARG_ENABLE(stack-trace,
-AC_HELP_STRING([--enable-stack-trace],[enable stack trace on exceptions. This 
-	incurs a performance penalty, and so may only be appropriate for 
-	debugging during development.]),
-  [
-    AC_DEFINE(ENABLE_STACK_TRACE_ON_EXCEPTIONS)
-  ])
+	AC_HELP_STRING([--enable-stack-trace],[enable stack trace on exceptions. This 
+		incurs a performance penalty, and so may only be appropriate for 
+		debugging during development.]),
+[
+	AC_DEFINE(ENABLE_STACK_TRACE_ON_EXCEPTIONS)
+])
 
 AC_ARG_ENABLE(check-null-references,
 AC_HELP_STRING([--disable-check-null-references],[disable checking for NULL references]))
 
 if test "$enable_check_null_references" != no; then
-    AC_DEFINE(CHECK_NULL_REFERENCES)
+	AC_DEFINE(CHECK_NULL_REFERENCES)
 fi
 
 AC_ARG_ENABLE(check-array-indexing,
 AC_HELP_STRING([--disable-check-array-indexing],[disable checking valid array indexes]))
 
 if test "$enable_check_array_indexing" != no; then
-    AC_DEFINE(CHECK_ARRAY_INDEXING)
+	AC_DEFINE(CHECK_ARRAY_INDEXING)
 fi
 
 AC_ARG_ENABLE(digest,
@@ -482,8 +480,8 @@ dnl   AC_DEFINE(USE_GNU_PTH)
 dnl 
 dnl   case "$host" in
 dnl   *-*-linux*)
-dnl     PLATFORMDIR="posix"
-dnl 	 CXXBINLINKFLAGS="-lpth $CXXBINLINKFLAGS"
+dnl      PLATFORMDIR="posix"
+dnl      CXXBINLINKFLAGS="-lpth $CXXBINLINKFLAGS"
 dnl   ;;
 dnl   esac
 dnl   ],[
@@ -500,11 +498,11 @@ dnl   ])
 AC_ARG_WITH(search-dir,
 	AC_HELP_STRING([--with-search-dir=PATH],[Specify an additional directory to look for include/ and lib/ sub dirs]),
 	[
-      if test "x$withval" != "xno" ; then
-        	CXXFLAGS="$CXXFLAGS -I$withval/include" 
-        	CFLAGS="$CFLAGS -I$withval/include" 
-        	LDFLAGS="$LDFLAGS -L$withval/lib" 
-      fi
+		if test "x$withval" != "xno" ; then
+			CXXFLAGS="$CXXFLAGS -I$withval/include" 
+			CFLAGS="$CFLAGS -I$withval/include" 
+			LDFLAGS="$LDFLAGS -L$withval/lib" 
+		fi
 	]
 )
 
@@ -515,102 +513,100 @@ if test "$enable_ssl" != no; then
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 AC_ARG_WITH(ssl-dir,
-   AC_HELP_STRING([--with-ssl-dir=PATH],[Specify path to OpenSSL installation ]),
-   [
-      if test "x$withval" != "xno" ; then
-         tryssldir=$withval
-      fi
-   ]
+	AC_HELP_STRING([--with-ssl-dir=PATH],[Specify path to OpenSSL installation ]),
+[
+	if test "x$withval" != "xno" ; then
+		tryssldir=$withval
+	fi
+]
 )
 
 saved_LIBS="$LIBS"
 saved_LDFLAGS="$LDFLAGS"
 saved_CPPFLAGS="$CPPFLAGS"
 if test "x$prefix" != "xNONE" ; then
-   tryssldir="$tryssldir $prefix"
+	tryssldir="$tryssldir $prefix"
 fi
 AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
-   for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl ; do
-      CPPFLAGS="$saved_CPPFLAGS"
-      LDFLAGS="$saved_LDFLAGS"
-      LIBS="$saved_LIBS -lssl -lcrypto"
+	for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl ; do
+		CPPFLAGS="$saved_CPPFLAGS"
+		LDFLAGS="$saved_LDFLAGS"
+		LIBS="$saved_LIBS -lssl -lcrypto"
  
-      # Skip directories if they don't exist
-      if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
-         continue;
-      fi
-      if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-         # Try to use $ssldir/lib if it exists, otherwise
-         # $ssldir
-         if test -d "$ssldir/lib" ; then
-            LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-            if test ! -z "$need_dash_r" ; then
-               LDFLAGS="$LDFLAGS -R$ssldir/lib"
-            fi
-         else
-            LDFLAGS="$saved_LDFLAGS -L$ssldir"
-            if test ! -z "$need_dash_r" ; then
-               LDFLAGS="$LDFLAGS -R$ssldir"
-            fi
-         fi
-         # Try to use $ssldir/include if it exists, otherwise
-         # $ssldir
-         if test -d "$ssldir/include" ; then
-            CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
-         else
-            CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
-         fi
-      fi
+		# Skip directories if they don't exist
+		if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
+			continue;
+		fi
+		if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
+			# Try to use $ssldir/lib if it exists, otherwise
+			# $ssldir
+			if test -d "$ssldir/lib" ; then
+				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
+				if test ! -z "$need_dash_r" ; then
+					LDFLAGS="$LDFLAGS -R$ssldir/lib"
+				fi
+			else
+				LDFLAGS="$saved_LDFLAGS -L$ssldir"
+				if test ! -z "$need_dash_r" ; then
+					LDFLAGS="$LDFLAGS -R$ssldir"
+				fi
+			fi
+			# Try to use $ssldir/include if it exists, otherwise
+			# $ssldir
+			if test -d "$ssldir/include" ; then
+				CPPFLAGS="$saved_CPPFLAGS -I$ssldir/include"
+			else
+				CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
+			fi
+		fi
  
-      # Basic test to check for compatible version and correct linking
-      # *does not* test for RSA - that comes later.
-      AC_TRY_RUN(
-         [
+		# Basic test to check for compatible version and correct linking
+		# *does not* test for RSA - that comes later.
+		AC_TRY_RUN(
+		[
 #include <string.h>
 #include <openssl/rand.h>
 int main(void)
 {
-   char a[2048];
-   memset(a, 0, sizeof(a));
-   RAND_add(a, sizeof(a), sizeof(a));
-   return(RAND_status() <= 0);
+	char a[2048];
+	memset(a, 0, sizeof(a));
+	RAND_add(a, sizeof(a), sizeof(a));
+	return(RAND_status() <= 0);
 }
-         ],
-         [
-            found_crypto=1
-            break;
-         ], 
-         [
-            did_not_find_crypt=0
-         ], 
-         [
-            did_not_find_crypt=0
-         ]
-      )
+		],
+		[
+			found_crypto=1
+			break;
+		], 
+		[
+			did_not_find_crypt=0
+		], 
+		[
+			did_not_find_crypt=0
+		])
  
-      if test ! -z "$found_crypto" ; then
-         break;
-      fi
-   done
+		if test ! -z "$found_crypto" ; then
+			break;
+		fi
+	done
  
-   if test -z "$found_crypto" ; then
-      #AC_MSG_ERROR([Could not find working OpenSSL library, please install or check config.log])
+	if test -z "$found_crypto" ; then
+		#AC_MSG_ERROR([Could not find working OpenSSL library, please install or check config.log])
 		ssldir=""
-   fi
-   if test -z "$ssldir" && test ! -z "$found_crypto"; then
-      ssldir="(system)"
-   fi
+	fi
+	if test -z "$ssldir" && test ! -z "$found_crypto"; then
+		ssldir="(system)"
+	fi
  
 	LIBS="$saved_LIBS"
-   ac_cv_openssldir=$ssldir
+	ac_cv_openssldir=$ssldir
 ])
  
-if (test ! -z "$ac_cv_openssldir") ;
- then
-   AC_DEFINE(HAVE_OPENSSL)
-   LIBS="$LIBS -lssl -lcrypto"
- else
-   AC_DEFINE(NO_SSL)
+if (test ! -z "$ac_cv_openssldir") ; then
+	AC_DEFINE(HAVE_OPENSSL)
+	LIBS="$LIBS -lssl -lcrypto"
+else
+	AC_DEFINE(NO_SSL)
 fi
 
 if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ; then
@@ -641,7 +637,7 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 	LIBS="$saved_LIBS -lssl -lcrypto"
 fi
 else
-   AC_DEFINE(NO_SSL)
+	AC_DEFINE(NO_SSL)
 fi
 
 dnl
@@ -659,18 +655,18 @@ dnl Make sure that pkg-config exists.
 if `pkg-config --version &> /dev/null` 
 then
   
-  if `pkg-config openssl`
-  then
-    EXTRA_SSL_LIBS=`pkg-config openssl --libs`
-    EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
-    LIBS="$LIBS $EXTRA_SSL_LIBS"
-    CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
-    AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
-  else
-    AC_MSG_RESULT("None")
-  fi
+	if `pkg-config openssl`
+	then
+		EXTRA_SSL_LIBS=`pkg-config openssl --libs`
+		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
+		LIBS="$LIBS $EXTRA_SSL_LIBS"
+		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
+		AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
+	else
+		AC_MSG_RESULT("None")
+	fi
 else
-  AC_MSG_RESULT("None \(pkg-config not found\)")
+	AC_MSG_RESULT("None \(pkg-config not found\)")
 fi
 
 dnl End of the ssl check
@@ -680,34 +676,34 @@ OLD_LIBS=$LIBS
 LIBS="-pthread $LIBS"
 AC_MSG_CHECKING("pthread_mutexattr_settype")
 AC_TRY_RUN(
-    [
+	[
 #include <pthread.h>
 #include <assert.h>
 int main()
 {
-    pthread_mutexattr_t attr;
-    pthread_mutex_t mutex;
-    int res = 0;
-    res = pthread_mutexattr_init(&attr);
-    assert(res == 0);
-    res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    assert(res == 0);
-    res = pthread_mutex_init(&mutex, &attr);
-    assert(res == 0);
-    return 0;
+	pthread_mutexattr_t attr;
+	pthread_mutex_t mutex;
+	int res = 0;
+	res = pthread_mutexattr_init(&attr);
+	assert(res == 0);
+	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	assert(res == 0);
+	res = pthread_mutex_init(&mutex, &attr);
+	assert(res == 0);
+	return 0;
 }
-    ],
-    [
-        AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-        AC_MSG_RESULT("yes")
-    ],
-    [ AC_MSG_RESULT("no") ],
-    [ AC_MSG_RESULT("no") ]
+	],
+	[
+		AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+		AC_MSG_RESULT("yes")
+	],
+	[ AC_MSG_RESULT("no") ],
+	[ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_spin_lock")
 AC_TRY_RUN(
- [
+	[
 #include <pthread.h>
 #include <assert.h>
 int main()
@@ -720,18 +716,18 @@ int main()
 		return 1;
 	return 0;
 }
- ],
- [
-    AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
-    AC_MSG_RESULT("yes")
- ],
- [ AC_MSG_RESULT("no") ],
- [ AC_MSG_RESULT("no") ]
+	],
+	[
+		AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
+		AC_MSG_RESULT("yes")
+	],
+	[ AC_MSG_RESULT("no") ],
+	[ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_barrier_init")
 AC_TRY_RUN(
- [
+	[
 #include <pthread.h>
 #include <assert.h>
 int main()
@@ -742,13 +738,13 @@ int main()
 	assert(pthread_barrier_destroy(&barrier) == 0);
 	return 0;
 }
- ],
- [
-    AC_DEFINE(HAVE_PTHREAD_BARRIER)
-    AC_MSG_RESULT("yes")
- ],
- [ AC_MSG_RESULT("no") ],
- [ AC_MSG_RESULT("no") ]
+	],
+	[
+		AC_DEFINE(HAVE_PTHREAD_BARRIER)
+		AC_MSG_RESULT("yes")
+	],
+	[ AC_MSG_RESULT("no") ],
+	[ AC_MSG_RESULT("no") ]
 )
 
 LIBS=$OLD_LIBS
@@ -796,13 +792,13 @@ AC_DEFINE_UNQUOTED(DEFAULT_LIBEXEC_DIR, "${tempDir}")
 #####################################################
 # Set the location of the sysconf dir
 if test "x$sysconfdir" != "x\${prefix}/etc"; then
-  tempDir=$sysconfdir
+	tempDir=$sysconfdir
 else
-  if test "x$prefix" != "xNONE"; then
-    tempDir=${prefix}/etc
-  else
-    tempDir=${ac_default_prefix}/etc
-  fi
+	if test "x$prefix" != "xNONE"; then
+		tempDir=${prefix}/etc
+	else
+		tempDir=${ac_default_prefix}/etc
+	fi
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
 
