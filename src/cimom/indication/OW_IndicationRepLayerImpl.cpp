@@ -124,23 +124,25 @@ OW_IndicationRepLayerImpl::getInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
+OW_IndicationRepLayerImpl::invokeMethod(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMValue rval = m_pServer->invokeMethod(name, methodName, inParams,
+	OW_CIMValue rval = m_pServer->invokeMethod(ns, path, methodName, inParams,
 		outParams, aclInfo);
 
-	if (name.getKeys().size() > 0) // process the indication only if instance.
+	if (path.getKeys().size() > 0) // process the indication only if instance.
 	{
 		OW_ACLInfo intAclInfo;
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+			OW_CIMClass expCC = m_pServer->getClass(ns,
 					"CIM_InstMethodCall", false, true, true, NULL,
 					intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_CIMInstance theInst = m_pServer->getInstance(name.getNameSpace(), name, false,
+			OW_CIMInstance theInst = m_pServer->getInstance(ns, path, false,
 				true, true, NULL, intAclInfo);
 
 			if (!theInst)
@@ -169,7 +171,7 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 			expInst.setProperty("MethodParameters", OW_CIMValue(ParamsEmbed));
 			expInst.setProperty("PreCall", OW_CIMValue(OW_Bool(false)));
 			expInst.setProperty("ReturnValue", OW_CIMValue(rval.toString()));
-			exportIndication(expInst, name.getNameSpace());
+			exportIndication(expInst, ns);
 		}
 		catch (OW_CIMException&)
 		{

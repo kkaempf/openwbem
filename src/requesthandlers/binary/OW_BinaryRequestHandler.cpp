@@ -739,7 +739,8 @@ void
 OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns (OW_BinIfcIO::readString(istrm));
+	OW_CIMObjectPath path(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String methodName(OW_BinIfcIO::readString(istrm));
 	OW_CIMParamValueArray inparms;
 	OW_CIMParamValueArray outparms;
@@ -748,7 +749,7 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_PARAMVALUEARRAY);
 	inparms.readObject(istrm);
 
-	OW_CIMValue cv = chdl->invokeMethod(op, methodName, inparms, outparms);
+	OW_CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	if(cv)
 	{

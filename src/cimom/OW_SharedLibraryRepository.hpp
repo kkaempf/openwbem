@@ -161,11 +161,13 @@ public:
 		m_ref->enumClassNames(ns, className, result, deep, aclInfo);
 	}
 
-	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
+	virtual OW_CIMValue invokeMethod(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->invokeMethod(name, methodName, inParams,
+		return m_ref->invokeMethod(ns, path, methodName, inParams,
 			outParams, aclInfo);
 	}
 

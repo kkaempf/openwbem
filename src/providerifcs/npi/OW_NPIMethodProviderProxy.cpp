@@ -43,7 +43,9 @@
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
-    const OW_CIMObjectPath &cop, const OW_String &methodName,
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String &methodName,
     const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
 {
         OW_CIMValue rval;
@@ -60,7 +62,8 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            OW_CIMObjectPath owcop = cop;
+            OW_CIMObjectPath owcop = path;
+			owcop.setNameSpace(ns);
             CIMObjectPath _cop= {static_cast<void *> (&owcop)};
 
             Vector parm_in = VectorNew(&_npiHandle);

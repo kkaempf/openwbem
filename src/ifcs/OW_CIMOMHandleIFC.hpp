@@ -375,7 +375,9 @@ public:
 	 * Executes the specified method on the specified object. A method is a
 	 * declaration containing the method name, return type, and parameters in
 	 * the method.
-	 * @param name An OW_CIMObjectPath that identifies the method
+	 * @param ns The namespace
+	 * @param path An OW_CIMObjectPath that identifies the class or instance
+	 *  on which to invoke the method.
 	 * @param methodName The string name of the method to be invoked
 	 * @param inParams The input parameters specified as an OW_CIMValueArray.
 	 * @param outParams	The output parameters.
@@ -383,7 +385,8 @@ public:
 	 * @exception OW_CIMException	If the specified method cannot be found
 	 */
 	virtual OW_CIMValue invokeMethod(
-		const OW_CIMObjectPath& name,
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& methodName,
 		const OW_CIMParamValueArray& inParams,
 		OW_CIMParamValueArray& outParams) = 0;

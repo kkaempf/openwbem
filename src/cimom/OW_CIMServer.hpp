@@ -497,7 +497,9 @@ public:
 	 *
 	 * @exception OW_CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath& name,
+	virtual OW_CIMValue invokeMethod(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 		OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo);
 

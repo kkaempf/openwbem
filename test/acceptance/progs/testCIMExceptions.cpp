@@ -1123,7 +1123,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "badNamespace"), "getstate", in, out);
+        hdl->invokeMethod("badNamespace", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1135,7 +1135,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1155,7 +1155,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("pathsBAD", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1176,7 +1176,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1196,7 +1196,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1208,7 +1208,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        hdl->invokeMethod(OW_CIMObjectPath("BADEXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1220,10 +1220,10 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
+        OW_CIMObjectPath cop("EXP_BartComputerSystem");
         cop.addKey("Name", OW_CIMValue("badKey"));
         cop.addKey("CreationClassName", OW_CIMValue("badKey"));
-        hdl->invokeMethod(cop, "getstate", in, out);
+        hdl->invokeMethod("root/testsuite", cop, "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1235,8 +1235,8 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
-        hdl->invokeMethod(cop, "BADgetstate", in, out);
+        OW_CIMObjectPath cop("EXP_BartComputerSystem");
+        hdl->invokeMethod("root/testsuite", cop, "BADgetstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)

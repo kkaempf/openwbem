@@ -229,11 +229,11 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMParamValueArray inParams;
 	OW_CIMParamValueArray outParams;
 
-	OW_CIMObjectPath instancePath = OW_XMLCIMFactory::createObjectPath(parser);
+	OW_CIMObjectPath path = OW_XMLCIMFactory::createObjectPath(parser);
 	
 	getParameters(parser, inParams);
-	OW_CIMValue cv = hdl.invokeMethod(instancePath, methodName, inParams,
-		outParams);
+	OW_CIMValue cv = hdl.invokeMethod(path.getNameSpace(), path, methodName,
+		inParams, outParams);
 
 	if(cv)
 	{

@@ -225,12 +225,14 @@ OW_LocalCIMOMHandle::getInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_LocalCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::invokeMethod(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams)
 {
 	OW_WriteLock wl = getWriteLock();
-	return m_pServer->invokeMethod(name, methodName, inParams, outParams,
+	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
 }
 

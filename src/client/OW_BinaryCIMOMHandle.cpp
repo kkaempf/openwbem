@@ -409,22 +409,26 @@ OW_BinaryCIMOMHandle::getInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
+OW_BinaryCIMOMHandle::invokeMethod(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	const OW_String& methodName,
 	const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		methodName, name.getNameSpace());;
+		methodName, ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_INVMETH);
-	OW_BinIfcIO::writeObjectPath(strm, name);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, methodName);
 
 	OW_BinIfcIO::write(strm, OW_Int32(OW_BINSIG_PARAMVALUEARRAY));
 	inParams.writeObject(strm);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, methodName, name.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		methodName, ns);
 	checkError(in);
 
 	OW_CIMValue cv;

@@ -827,16 +827,18 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
-											  const OW_String& methodName,
-											  const OW_CIMParamValueArray& inParams,
-											  OW_CIMParamValueArray& outParams)
+OW_CIMXMLCIMOMHandle::invokeMethod(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& methodName,
+	const OW_CIMParamValueArray& inParams,
+	OW_CIMParamValueArray& outParams)
 {
 	OW_Reference<std::iostream> iostrRef =
-		m_protocol->beginRequest(methodName, name.getNameSpace());
+		m_protocol->beginRequest(methodName, ns);
 	std::iostream& tfs = *iostrRef;
 
-	sendExtrinsicXMLHeader(methodName, name.getNameSpace(), name, tfs);
+	sendExtrinsicXMLHeader(methodName, ns, path, tfs);
 
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
@@ -864,7 +866,7 @@ OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 
 	OW_CIMValue rval;
 	invokeMethodOp op(rval, outParams);
-	doSendRequest(iostrRef, methodName, name.getNameSpace(), false, op);
+	doSendRequest(iostrRef, methodName, ns, false, op);
 	return rval;
 }
 

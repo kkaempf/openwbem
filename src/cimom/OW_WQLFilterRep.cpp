@@ -322,7 +322,7 @@ OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/,
+OW_WQLFilterRep::invokeMethod(const OW_String&, const OW_CIMObjectPath &/*name*/,
 	const OW_String &/*methodName*/, const OW_CIMParamValueArray &/*inParams*/,
 	OW_CIMParamValueArray &/*outParams*/, const OW_ACLInfo& /*aclInfo*/)
 {

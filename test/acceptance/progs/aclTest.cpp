@@ -626,7 +626,7 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 	cout << "\n\n******* Doing invokeMethod() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root/acltest");
+		OW_CIMObjectPath cop("EXP_BartComputerSystem");
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
@@ -635,7 +635,7 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 		{
 			case 1:
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
-				hdl.invokeMethod(cop, "setstate", in, out);
+				hdl.invokeMethod("/root/acltest", cop, "setstate", in, out);
 				break;
 			default:
 				break;

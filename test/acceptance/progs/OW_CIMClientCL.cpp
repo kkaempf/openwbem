@@ -1191,8 +1191,10 @@ prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
 	uint8array.push_back(0);
 	in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));
 	OW_CIMObjectPathArray paths;
-	paths.push_back(cop);
-	OW_CIMObjectPath cop2(cop);
+	OW_CIMObjectPath copWithNS(cop);
+	copWithNS.setNameSpace("root/testsuite");
+	paths.push_back(copWithNS);
+	OW_CIMObjectPath cop2(copWithNS);
 	cop2.addKey("name", OW_CIMValue("foo"));
 	paths.push_back(cop2);
 	in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
@@ -1207,7 +1209,7 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BartComputerSystem");
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
@@ -1219,13 +1221,13 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
                       OW_CIMValue(OW_String("EXP_BartComputerSystem")));
                 cop.addKey("Name", OW_CIMValue(OW_String("test")));
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
-				hdl.invokeMethod(cop, "setstate", in, out);
+				hdl.invokeMethod("root/testsuite", cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 2:
 			{
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
 				cv.get(rval);
 
 				cout << "invokeMethod: getstate(): " << rval << endl;
@@ -1237,23 +1239,23 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 				break;
 			}
 			case 3:
-				hdl.invokeMethod(cop, "togglestate", in, out);
+				hdl.invokeMethod("root/testsuite", cop, "togglestate", in, out);
 				cout << "invokeMethod: togglestate()" << endl;
 				break;
 			case 4:
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;
 				break;
 			case 5:
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
-				hdl.invokeMethod(cop, "setstate", in, out);
+				hdl.invokeMethod("root/testsuite", cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 6:
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod(cop, "getstate", in, out);
+				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;
 				break;

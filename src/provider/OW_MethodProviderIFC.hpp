@@ -66,7 +66,8 @@ public:
 	 */
 	virtual OW_CIMValue invokeMethod(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
+			const OW_CIMObjectPath& path,
 			const OW_String& methodName,
 			const OW_CIMParamValueArray& in,
 			OW_CIMParamValueArray& out ) = 0;

@@ -1832,12 +1832,14 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
-OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
+OW_CIMServer::invokeMethod(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, name.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, ns, aclInfo);
 
 	// Not creating any read/write locks here because the provider
 	// could call back into the CIM Server for something and then we
@@ -1846,15 +1848,15 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_ACLInfo intAclInfo;
 	OW_CIMMethod method;
 	OW_CIMClass cc;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), cc);
-	checkGetClassRvalAndThrow(rc, name.getNameSpace(), name.getObjectName());
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, path.getObjectName(), cc);
+	checkGetClassRvalAndThrow(rc, ns, path.getObjectName());
 
-	OW_CIMPropertyArray keys = name.getKeys();
+	OW_CIMPropertyArray keys = path.getKeys();
 
 	// If this is an instance, ensure it exists.
 	if(keys.size() > 0)
 	{
-		if(!_instanceExists(name.getNameSpace(), name, aclInfo))
+		if(!_instanceExists(ns, path, aclInfo))
 		{
 			// Dynamic - Get the provider information
 			OW_CIMQualifier cq = cc.getQualifier(
@@ -1862,9 +1864,8 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 
 			if(!cq)
 			{
-				OW_String msg("Instance not found: ");
-				msg += OW_String(name);
-				OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, msg.c_str());
+				OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+					format("Instance not found: %1", path.toString()).c_str());
 			}
 		}
 	}
@@ -2010,7 +2011,9 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 		methodStr += "OW_CIMServer invoking extrinsic method provider: ";
 		methodStr += cq.getValue().toString();
 		methodStr += '\n';
-		methodStr += name.toString();
+		methodStr += ns;
+		methodStr += ':';
+		methodStr += path.toString();
 		methodStr += '.';
 		methodStr += methodName;
 		methodStr += '(';
@@ -2030,7 +2033,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 
 		cv = methodp->invokeMethod(
 			createProvEnvRef(real_ch),
-				name, methodName, orderedParams, outParams);
+				ns, path, methodName, orderedParams, outParams);
 		
 		// make sure the type is right on the outParams
 		for (size_t i = 0; i < methodOutParams.size(); ++i)
@@ -2050,7 +2053,9 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
 		methodStr += cq.getValue().toString();
 		methodStr += '\n';
-		methodStr += name.toString();
+		methodStr += ns;
+		methodStr += ':';
+		methodStr += path.toString();
 		methodStr += '.';
 		methodStr += methodName;
 		methodStr += " OUT Params(";

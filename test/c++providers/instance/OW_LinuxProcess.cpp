@@ -201,18 +201,20 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMValue invokeMethod(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& methodName,
 		const OW_CIMParamValueArray& in,
 		OW_CIMParamValueArray& out )
 	{
 		(void)env;
+		(void)ns;
 		(void)out;
 		if (methodName.equalsIgnoreCase("sendsignal"))
 		{
 			OW_Int32 sig;
 			in[0].getValue().get(sig);
-			OW_CIMPropertyArray keys = cop.getKeys();
+			OW_CIMPropertyArray keys = path.getKeys();
 			pid_t pid = 0;
 			for (OW_CIMPropertyArray::const_iterator iter = keys.begin();
 				iter != keys.end(); iter++)

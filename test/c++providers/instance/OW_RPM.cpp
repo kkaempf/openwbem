@@ -256,17 +256,19 @@ public:
 	OW_CIMValue
 		invokeMethod(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& methodName,
 		const OW_CIMParamValueArray& in,
 		OW_CIMParamValueArray& out )
 	{
 		(void)env;
+		(void)ns;
 		(void)out;
 		(void)in;
 
 		OW_String pkgName;
-		OW_CIMPropertyArray props = cop.getKeys();
+		OW_CIMPropertyArray props = path.getKeys();
 		for (OW_CIMPropertyArray::const_iterator iter = props.begin();
 			iter != props.end(); ++iter)
 		{

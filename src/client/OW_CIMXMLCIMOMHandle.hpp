@@ -284,7 +284,9 @@ public:
 	 * @return A non-null OW_CIMValue on success. Otherwise a null OW_CIMValue.
 	 * @exception OW_CIMException	If the specified method cannot be found
 	 */
-	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
+	virtual OW_CIMValue invokeMethod(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams);
 
