@@ -77,6 +77,7 @@ Network28_RoutingForwarding.mof \
 Network28_SNMP.mof \
 Network28_SwitchingBridging.mof \
 Network28_Systems.mof \
+Network28_VLAN.mof \
 Physical28_Component.mof \
 Physical28_Connector.mof \
 Physical28_Link.mof \
@@ -87,7 +88,6 @@ Physical28_StoragePackage.mof \
 System28_Boot.mof \
 System28_Diagnostics.mof \
 System28_FileElements.mof \
-System28_Help.mof \
 System28_Logs.mof \
 System28_OperatingSystem.mof \
 System28_Processing.mof \
