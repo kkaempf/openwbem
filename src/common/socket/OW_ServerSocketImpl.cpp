@@ -308,7 +308,11 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 			// see Unix Network Programming pages 422-424.
 			if (errno == EWOULDBLOCK
 				 || errno == ECONNABORTED
+#if defined OW_DARWIN
+				 || errno == EPROTOTYPE)
+#else
 				 || errno == EPROTO)
+#endif
 			{
 				OW_THROW(OW_SocketException, "Client aborted TCP connection "
 					"between select() and accept()");
