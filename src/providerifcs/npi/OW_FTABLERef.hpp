@@ -46,9 +46,6 @@
 #include "OW_Array.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-//#include <stdlib.h>
-//#include <dlfcn.h>
-//#include "npi.h"
 
 #include "OW_SharedLibraryReference.hpp"
 #include "npi.h"
@@ -76,6 +73,7 @@ public:
 	OW_Array<void *> garbage;
 	OW_Array<NPIGarbageType> garbageType;
 };
+// my_perl serves as pointer to the perl environment for the perlIFC
 
 class NPIFTABLE {
 
