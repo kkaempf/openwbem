@@ -48,8 +48,8 @@ namespace OpenWBEM
  * This class is a convenience wrapper to make it easier to use all the client
  * pieces together.  All operations will be sent to the cimom identified in
  * the url passed to the constructor.  The namespace passed to the constructor
- * will be used for all calls.  If the scheme in the url begins with "owbinary" 
- * then the openwbem binary protocol will be used, otherwise CIM/XML is the 
+ * will be used for all calls.  If the scheme in the url begins with "owbinary"
+ * then the openwbem binary protocol will be used, otherwise CIM/XML is the
  * default.
  */
 class OW_CLIENT_API CIMClient
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Constructor
 	 * @param url The url identifying the cimom to talk to.  If the scheme portion
-	 *   of the url begins with "owbinary" 
+	 *   of the url begins with "owbinary"
 	 *   (e.g. owbinary.wbem://test1:pass1@localhost:30926/), then the openwbem
 	 *   binary protocol will be used.  Otherwise CIM/XML is the default.
 	 * @param ns The namespace to be used for all CIM operations performed by
@@ -99,7 +99,7 @@ public:
 	 *		cannot be found in the specified namespace.
 	 */
 	StringArray enumNameSpaceE(WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
-	void enumNameSpace(StringResultHandlerIFC& result, 
+	void enumNameSpace(StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
@@ -747,6 +747,8 @@ public:
 	
 private:
 	String m_namespace;
+
+	// TODO: implement SLP integration to fetch the interop namespace so that namespace manipulation can be done correctly.
 
 #ifdef OW_WIN32
 #pragma warning (push)
