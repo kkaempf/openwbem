@@ -158,7 +158,7 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 	if (obj->ftab == (void*)CMPI_Instance_Ftab
 		|| obj->ftab == (void*)CMPI_InstanceOnStack_Ftab)
 	{
-		str.format("** Object not supported (0x%x) **", (int)o);
+		str.format("** Object not supported (%p) **", o);
 		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(str);
 	}
@@ -220,7 +220,7 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 	CMPI_Object *obj=(CMPI_Object*)o;
 	char msg[128];
 	if (obj==NULL) {
-		sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
+		sprintf(msg,"** Null object ptr (%p) **",o);
 		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return 0;
 	}
@@ -245,7 +245,7 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 	 if (obj->ftab!=(void*)CMPI_Array_Ftab &&
 		strcmp(type,"CMPIArray")==0) return 1;
 																				
-	sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
+	sprintf(msg,"** Object not recognized (%p) **",o);
 	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return 0;
 }
@@ -256,7 +256,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 	CMPI_Object *obj=(CMPI_Object*)o;
 	char msg[128];
 	if (obj==NULL) {
-		sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
+		sprintf(msg,"** Null object ptr (%p) **",o);
 		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return NULL; 
 	}
@@ -281,7 +281,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 	if (obj->ftab!=(void*)CMPI_Array_Ftab)
 		return mb->eft->newString(mb,"CMPIArray",rc);
 																				
-	sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
+	sprintf(msg,"** Object not recognized (%p) **",o);
 	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return NULL;
 }
