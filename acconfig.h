@@ -317,35 +317,7 @@ namespace OpenWBEM = OW_NAMESPACE;
 #include "OW_MemTracer.hpp"
 #endif
 
-/* For printing function names during debug */
-#ifdef OW_PRINT_FUNC_DEBUG
-#include "OW_FuncNamePrinter.hpp"
 
-#define PRINT_FUNC_NAME OW_FuncNamePrinter fnp##__LINE__ (__PRETTY_FUNCTION__)
-
-#define PRINT_FUNC_NAME_ARGS1(a) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a)
-#define PRINT_FUNC_NAME_ARGS2(a, b) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b)
-#define PRINT_FUNC_NAME_ARGS3(a, b, c) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c)
-#define PRINT_FUNC_NAME_ARGS4(a, b, c, d) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d)
-#define PRINT_FUNC_NAME_ARGS5(a, b, c, d, e) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e)
-#define PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f)
-#define PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g)
-#define PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h)
-#define PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i)
-#define PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j) OW_FuncNamePrinter fnp##__LINE__ ( __PRETTY_FUNCTION__ , a, b, c, d, e, f, g, h, i, j)
-#else
-#define PRINT_FUNC_NAME_ARGS1(a)
-#define PRINT_FUNC_NAME_ARGS2(a, b)
-#define PRINT_FUNC_NAME_ARGS3(a, b, c)
-#define PRINT_FUNC_NAME_ARGS4(a, b, c, d)
-#define PRINT_FUNC_NAME_ARGS5(a, b, c, d, e)
-#define PRINT_FUNC_NAME_ARGS6(a, b, c, d, e, f)
-#define PRINT_FUNC_NAME_ARGS7(a, b, c, d, e, f, g)
-#define PRINT_FUNC_NAME_ARGS8(a, b, c, d, e, f, g, h)
-#define PRINT_FUNC_NAME_ARGS9(a, b, c, d, e, f, g, h, i)
-#define PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
-#define PRINT_FUNC_NAME
-#endif /* #ifdef OW_PRINT_FUNC_DEBUG */
 
 #endif /* #ifdef __cplusplus */
 
