@@ -36,7 +36,7 @@
 #ifndef OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 #define OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp" // for OW_CIMDataType::INVALID
@@ -412,13 +412,13 @@ private:
 	typedef void (dummy::*safe_bool)();
 public:
 	operator safe_bool () const
-		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+		{  return (m_pdata) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
+		{  return (m_pdata) ? 0: &dummy::nonnull; }
 	
 protected:
 	void _buildKeys();
-	COWReference<INSTData> m_pdata;
+	COWIntrusiveReference<INSTData> m_pdata;
 	
 	friend bool operator<(const CIMInstance& x, const CIMInstance& y);
 };

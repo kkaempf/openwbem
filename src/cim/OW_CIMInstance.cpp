@@ -43,6 +43,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 #include <algorithm> // for std::sort
 
 namespace OpenWBEM
@@ -52,7 +53,7 @@ using std::ostream;
 using std::istream;
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMInstance::INSTData
+struct CIMInstance::INSTData : public COWIntrusiveCountableBase
 {
 	String m_owningClassName;
 	CIMPropertyArray m_keys;
@@ -773,7 +774,7 @@ CIMInstance::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, keys);
 	BinarySerialization::readArray(istrm, properties);
 	BinarySerialization::readArray(istrm, qualifiers);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new INSTData;
 	}
