@@ -86,7 +86,7 @@ public:
 	{
 		if(p_ != 0 && add_ref) COWIntrusiveReferenceAddRef(p_);
 	}
-	template<class U> COWIntrusiveReference(COWIntrusiveReference<U> const & rhs): p_(rhs.get())
+	template<class U> COWIntrusiveReference(COWIntrusiveReference<U> const & rhs): p_(rhs.p_)
 	{
 		if(p_ != 0) COWIntrusiveReferenceAddRef(p_);
 	}
@@ -157,7 +157,13 @@ public:
 		p_ = rhs.p_;
 		rhs.p_ = tmp;
 	}
+
+#if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
+	/* This is so the templated constructor will work */
+	template <class U> friend class COWIntrusiveReference;
 private:
+#endif
+
 	void getWriteLock()
 	{
 		if ((p_ != 0) && !COWIntrusiveReferenceUnique(p_))
@@ -177,19 +183,19 @@ template<class T, class U> inline bool operator!=(COWIntrusiveReference<T> const
 {
 	return a.get() != b.get();
 }
-template<class T> inline bool operator==(COWIntrusiveReference<T> const & a, T * b)
+template<class T> inline bool operator==(COWIntrusiveReference<T> const & a, const T * b)
 {
 	return a.get() == b;
 }
-template<class T> inline bool operator!=(COWIntrusiveReference<T> const & a, T * b)
+template<class T> inline bool operator!=(COWIntrusiveReference<T> const & a, const T * b)
 {
 	return a.get() != b;
 }
-template<class T> inline bool operator==(T * a, COWIntrusiveReference<T> const & b)
+template<class T> inline bool operator==(const T * a, COWIntrusiveReference<T> const & b)
 {
 	return a == b.get();
 }
-template<class T> inline bool operator!=(T * a, COWIntrusiveReference<T> const & b)
+template<class T> inline bool operator!=(const T * a, COWIntrusiveReference<T> const & b)
 {
 	return a != b.get();
 }
@@ -202,24 +208,24 @@ template<class T> inline bool operator!=(COWIntrusiveReference<T> const & a, COW
 #endif
 template<class T> inline bool operator<(COWIntrusiveReference<T> const & a, COWIntrusiveReference<T> const & b)
 {
-	return std::less<T *>()(a.get(), b.get());
+	return std::less<const T *>()(a.get(), b.get());
 }
 template<class T> void swap(COWIntrusiveReference<T> & lhs, COWIntrusiveReference<T> & rhs)
 {
 	lhs.swap(rhs);
 }
-template<class T, class U> COWIntrusiveReference<T> static_pointer_cast(COWIntrusiveReference<U> const & p)
-{
-	return static_cast<T *>(p.get());
-}
-template<class T, class U> COWIntrusiveReference<T> const_pointer_cast(COWIntrusiveReference<U> const & p)
-{
-	return const_cast<T *>(p.get());
-}
-template<class T, class U> COWIntrusiveReference<T> dynamic_pointer_cast(COWIntrusiveReference<U> const & p)
-{
-	return dynamic_cast<T *>(p.get());
-}
+// template<class T, class U> COWIntrusiveReference<T> static_pointer_cast(COWIntrusiveReference<U> const & p)
+// {
+//     return static_cast<T *>(p.get());
+// }
+// template<class T, class U> COWIntrusiveReference<T> const_pointer_cast(COWIntrusiveReference<U> const & p)
+// {
+//     return const_cast<T *>(p.get());
+// }
+// template<class T, class U> COWIntrusiveReference<T> dynamic_pointer_cast(COWIntrusiveReference<U> const & p)
+// {
+//     return dynamic_cast<T *>(p.get());
+// }
 
 } // end namespace OpenWBEM
 
