@@ -51,4 +51,6 @@ OW_WQLFilterRep.hpp \
 OW_IndicationRepLayerMediator.cpp \
 OW_IndicationRepLayerMediator.hpp \
 OW_ProviderManager.cpp \
-OW_ProviderManager.hpp
+OW_ProviderManager.hpp \
+OW_ProviderProxies.cpp \
+OW_ProviderProxies.hpp

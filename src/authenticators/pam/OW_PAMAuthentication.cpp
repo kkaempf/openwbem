@@ -31,7 +31,13 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
+
 #include <string.h>
+
+#ifdef OW_GNU_LINUX
+#include <pwd.h>
+#endif
+
 extern "C"
 {
 #if defined OW_HAVE_PAM_PAM_APPL_H 
@@ -88,7 +94,8 @@ private:
 // See misc_conv.c in libpam for an example.
 //////////////////////////////////////////////////////////////////////////////
 bool
-LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, String &details, OperationContext& context)
+LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
+	String &details, OperationContext& context)
 {
 	if (info.empty())
 	{
@@ -138,7 +145,33 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, Str
 		return false;
 	}
 	free(pUserName);
-	bool retval = ( rval == PAM_SUCCESS ? true : false ); /* indicate success */
+
+	bool retval = ( rval == PAM_SUCCESS ? true : false ); // indicate success 
+
+#ifdef OW_GNU_LINUX
+	if(retval)
+	{
+		uid_t cimomuid = ::getuid();	// Get CIMOM user id
+		uid_t useruid = cimomuid;
+
+		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+		char buf[pwnbufsize];
+		struct passwd pw;
+		struct passwd* ppw = 0;
+	    int rv = ::getpwnam_r(userName.c_str(), &pw, buf, pwnbufsize, &ppw);
+		if (rv == 0 && ppw)
+		{
+			useruid = pw.pw_uid;
+		}
+
+		if(useruid != cimomuid)
+		{
+			context.setStringData(CIMOM_UIDKEY, String(UInt32(cimomuid)));
+			context.setStringData(CURUSER_UIDKEY, String(UInt32(useruid)));
+		}
+	}
+#endif
+
 	return retval;
 }
 

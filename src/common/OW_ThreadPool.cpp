@@ -363,6 +363,12 @@ void runRunnable(const RunnableRef& work)
 		std::cerr << "!!! Exception: " << ex.type() << " caught in ThreadPool worker: " << ex << std::endl;
 #endif
 	}
+	catch(std::exception& ex)
+	{
+#ifdef OW_DEBUG
+		std::cerr << "!!! std::exception what = " << ex.what() << std::endl;
+#endif
+	}
 	catch (...)
 	{
 #ifdef OW_DEBUG		
