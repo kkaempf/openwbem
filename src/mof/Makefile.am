@@ -30,8 +30,8 @@ INCLUDES = \
 
 libowmofc_a_SOURCES = \
 Visitor.cpp \
-mofparser.cpp \
-moflexer.cpp \
+mofparser.cc \
+moflexer.cc \
 mofparser.yy \
 moflexer.ll \
 CIMOMVisitor.cpp \
