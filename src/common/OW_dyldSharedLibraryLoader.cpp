@@ -48,8 +48,8 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 
     if (dsoerr == NSObjectFileImageSuccess) 
 	{
-        libhandle = NSLinkModule(image, path, NSLINKMODULE_OPTION_RETURN_ON_ERROR);
-        if (!m_libhandle) 
+        libhandle = NSLinkModule(image, filename.c_str(), NSLINKMODULE_OPTION_RETURN_ON_ERROR);
+        if (!libhandle) 
 		{
             NSLinkEditErrors errors;
             int errorNumber;
@@ -62,7 +62,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
              dsoerr == NSObjectFileImageInappropriateFile) &&
              NSAddLibrary(filename.c_str()) == TRUE) 
 	{
-        libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
+        // libhandle = (NSModule)DYLD_LIBRARY_HANDLE;
     }
     else 
 	{
@@ -80,7 +80,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 		}
 		catch (...)
 		{
-			NSUnLinkModule(m_libhandle, FALSE);
+			NSUnLinkModule(libhandle, FALSE);
 			throw;
 		}
 	}

@@ -31,7 +31,7 @@
 #if defined(OW_USE_DYLD)
 #include "OW_dyldSharedLibrary.hpp"
 
-#include <dyld.h>
+#include <mach-o/dyld.h>
 
 namespace OpenWBEM
 {
