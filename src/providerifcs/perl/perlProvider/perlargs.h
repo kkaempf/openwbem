@@ -20,13 +20,16 @@
 #include <stdlib.h>
 static inline char * argsforperl(void * arg)
 {
+    //char my_arg[sizeof(void *)/4 + 3];
     char * my_arg;
-    //my_arg = malloc(sizeof(pointer)/4 + 3);
+    my_arg = malloc(sizeof(void *)/4 + 3);
     //my_arg = (char *)malloc(32/4 + 3);
-    my_arg = (char *)alloca(32/4 + 3);
+    //my_arg = (char *)alloca(32/4 + 3);
     sprintf(my_arg,"%8p",arg);
+    //return savepv(my_arg);
     return my_arg;
 }
+   
  
 static inline void * argsfromperl(char * arg)
 {
