@@ -29,8 +29,8 @@ Testing:
 
 Fix problems:
 For 3.1.0:
-    - All libs should be installed in $(libdir) and links created in $(libdir)/openwbem/*/
-      This is necessary for listener and provider agent support.
+    - All non-provider libs should be installed in $(libdir) and links created in 
+      $(libdir)/openwbem/*/ This is necessary for listener and provider agent support.
     - CMAddArg() broken.
     - Add a rw lock to the repositories so that a provider doesn't violate 
       repository integrity if it does a write operation when only the global read lock is held.
