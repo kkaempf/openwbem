@@ -1,5 +1,8 @@
 SUBDIRS = indication
 
+# This causes automake to prepend $(PACKAGE_PREFIX_D) to the beginning of owcimomd when it's installed
+#transform = s,owcimomd,$(PACKAGE_PREFIX_D)owcimomd,
+
 cimombin_PROGRAMS = owcimomd
 cimombindir = $(sbindir)
 
