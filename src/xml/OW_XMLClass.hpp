@@ -28,43 +28,28 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-//------------------------------
-// OW_XMLClass.hpp
-//------------------------------
+#ifndef OW_XMLClass_HPP_
+#define OW_XMLClass_HPP_
 
-#ifndef __OW_XMLClass_HPP__
-#define __OW_XMLClass_HPP__
-
-#include	"OW_config.h"
-#include	"OW_XMLOperationGeneric.hpp"
-#include	"OW_XMLNode.hpp"
+#include "OW_config.h"
+#include "OW_XMLOperationGeneric.hpp"
+#include "OW_XMLNode.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include	"OW_String.hpp"
+#include "OW_String.hpp"
 
 class OW_XMLClass : public OW_XMLOperationGeneric
 {
 public:
 	static OW_String getNameSpace(const OW_XMLNode& localNameNode);
 	static OW_CIMObjectPath getObjectWithPath(OW_XMLNode& node,
-			OW_CIMClassArray& cArray, OW_CIMInstanceArray& iArray)
-		/*throw (OW_CIMException)*/;
-	static OW_CIMClass readClass(OW_XMLNode& childNode,
-			OW_CIMObjectPath& path)
-		/*throw (OW_CIMException)*/;
+			OW_CIMClassArray& cArray, OW_CIMInstanceArray& iArray);
+	static OW_CIMClass readClass(OW_XMLNode& childNode, OW_CIMObjectPath& path);
 	static OW_CIMInstance readInstance(OW_XMLNode& childNode,
-			OW_CIMObjectPath& path)
-		/*throw (OW_CIMException)*/;
+			OW_CIMObjectPath& path);
+	static void getInstanceName(OW_XMLNode& result, OW_CIMObjectPath& cimPath);
 
-	static void getInstanceName(	OW_XMLNode& result,
-			OW_CIMObjectPath& cimPath)
-		/*throw (OW_CIMException)*/;
-
-protected:
-	//static OW_String instanceNameToKey(const OW_CIMObjectPath& path,
-	//		const OW_String& parameterName)
-		/*throw (OW_CIMException)*/;
 };
 
 
-#endif  // __OW_XMLClass_HPP__
+#endif  // OW_XMLClass_HPP_
 

@@ -60,21 +60,6 @@ using std::ostream;
 #define OW_LOGCUSTINFO(msg) this->getEnvironment()->getLogger()->logCustInfo(msg)
 #define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
 
-//typedef void (OW_XMLExecute::*execFuncPtr_t)(ostream& ostr,
-//	OW_XMLNode& qualNode, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-
-//typedef  OW_Map<OW_String, execFuncPtr_t> funcMap_t;
-
-//static funcMap_t g_funcMap;
-
-/*
-struct FuncEntry
-{
-	const char* name;
-	execFuncPtr_t func;
-};
-*/
-
 OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
 {
 	{ "associatornames", &OW_XMLExecute::associatorNames },
@@ -103,7 +88,7 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
 	{ "garbage", 0 }
 };
 
-OW_XMLExecute::FuncEntry* OW_XMLExecute::g_end = &OW_XMLExecute::g_funcs[23];
+OW_XMLExecute::FuncEntry* OW_XMLExecute::g_funcsEnd = &OW_XMLExecute::g_funcs[23];
 
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -265,14 +250,11 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 	OW_LOGDEBUG(format("Got function name. calling function %1",
 		functionNameLC));
 
-	//funcMap_t::const_iterator i = g_funcMap.find(functionNameLC);
-
 	FuncEntry fe = { 0, 0 };
 	fe.name = functionNameLC.c_str();
-	FuncEntry* i = std::lower_bound(g_funcs, g_end, fe, funcEntryCompare);
+	FuncEntry* i = std::lower_bound(g_funcs, g_funcsEnd, fe, funcEntryCompare);
 
-	if(i == g_end)
-	//if (i == g_funcMap.end())
+	if(i == g_funcsEnd)
 	{
 		OW_THROW (OW_CIMException, "CIMException.CIM_ERR_NOT_FOUND");
 	}
@@ -291,7 +273,6 @@ OW_XMLExecute::executeIntrinsic(ostream& ostr,
 void
 OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_XMLNode node,
 	OW_CIMOMHandleIFC& lch)
-// throws OW_IOException					
 {
 	ostr << "<METHODRESPONSE NAME=\"" << m_functionName <<
 		"\"><RETURNVALUE>";

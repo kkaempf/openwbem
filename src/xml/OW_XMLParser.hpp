@@ -54,7 +54,7 @@
  * Class used to parse XML Documents from iostreams, buffers,
  * or files.  Initial implementation based on snia XMLParse
  * class in Java adapted to use a c++ sax parser.
- * 
+ *
  * @author Calvin R. Gaisford
  * @version 1.0
  * @since 1-24-2001
@@ -64,7 +64,7 @@ class OW_XMLParser /*: public HandlerBase*/
 public:
 	/**
 	 * Constructs an OW_XMLParser object setup to parse "fileName"
-	 * 
+	 *
 	 * @param fileName Full path of XML file to parse
 	 */
 	OW_XMLParser(const OW_String& fileName);
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Constructs an OW_XMLParser object initialized to parse from the
 	 * data std::istream
-	 * 
+	 *
 	 * @param data   std::istream containing XML document to be parsed
 	 */
 	OW_XMLParser(std::istream *data);
@@ -89,7 +89,7 @@ public:
 
 	/**
 	 * Parse the XML document contained in the file named fileName
-	 * 
+	 *
 	 * @param fileName The name of the file containing the XML document to parse
 	 * @return OW_XMLNode which is the root of the XML document parsed
 	 */
@@ -97,7 +97,7 @@ public:
 	
 	/**
 	 * Parse the XML document to be read from the std::istream data
-	 * 
+	 *
 	 * @param data   std::istream to read the XML document to be parsed
 	 * @return OW_XMLNode which is the root of the XML document parsed
 	 */
@@ -106,30 +106,11 @@ public:
 	/**
 	 * Parse the XML document from the source that was specified
 	 * in the constructor of the XMLParser
-	 * 
+	 *
 	 * @return OW_XMLNode which is the root of the XML document parsed
 	 */
 	OW_XMLNode parse();
 	
-	/**
-	 * Takes any characters that should be escaped to make valid
-	 * XML and escapes them ie- <tagName> becomes &gt;tagName&lt;
-	 * 
-	 * @param in     The OW_String in UTF-8 encoding to be escaped
-	 * @return OW_String holding the escaped string
-	 */
-	//static OW_String escapeString(const OW_String& in);
-
-	/**
-	 * Takes any characters are escaped for valid XML and 
-	 * converts them back to the actual characters
-	 * ie- &gt;tagName&lt; becomes <tagName>
-	 * 
-	 * @param in     The OW_String in UTF-8 encoding to be unescaped
-	 * @return OW_String holding the unescaped string
-	 */
-	//static OW_String unescapeString(const OW_String& in);
-
 	// -----------------------------------------------------------------------
 	//  Implementations of the SAX DocumentHandler interface
 	// -----------------------------------------------------------------------
@@ -144,7 +125,7 @@ public:
 	// -----------------------------------------------------------------------
 	void warning(const OW_XMLParseException& exception);
 	void error(const OW_XMLParseException& exception);
-	void fatalError(const OW_XMLParseException& exception);                        
+	void fatalError(const OW_XMLParseException& exception);
 
 private :
 	

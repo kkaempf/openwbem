@@ -44,7 +44,6 @@
 class OW_XMLNodeImpl;
 
 typedef OW_Reference<OW_XMLNodeImpl> OW_XMLNodeImplRef;
-typedef OW_Map<OW_String, int> XMLElementMap;
 
 
 /**
@@ -463,6 +462,17 @@ public:
 		XML_ELEMENT_DECLGROUP_WITHPATH			= 10000
 	};
 
+	static tokenId getTokenFromName(const OW_String& name);
+
+	struct ElemEntry
+	{
+		const char* name;
+		tokenId id;
+	};
+	
+	static ElemEntry g_elems[];
+	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
+	static ElemEntry* g_elemsEnd;
 
 
 	OW_StringArray extractParameterStringArray(const OW_String& value,

@@ -32,20 +32,94 @@
 // OW_XMLNode.cpp
 //
 
-#include	"OW_config.h"
-#include	"OW_Mutex.hpp"
-#include	"OW_MutexLock.hpp"
-#include	"OW_XMLParser.hpp"
+#include "OW_config.h"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+#include "OW_XMLParser.hpp"
 #include "OW_XMLParameters.hpp"
-#include	"OW_XMLNode.hpp"
+#include "OW_XMLNode.hpp"
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_Format.hpp"
+#include <algorithm> // for std::lower_bound
 
-static XMLElementMap g_elementMap;
-static OW_Bool g_initElementMap(true);
-static OW_Mutex   g_ElementMapMutex;
+OW_XMLNode::ElemEntry OW_XMLNode::g_elems[62] =
+{
+	{ "CIM", OW_XMLNode::XML_ELEMENT_CIM },
+	{ "CLASS", OW_XMLNode::XML_ELEMENT_CLASS },
+	{ "CLASSNAME", OW_XMLNode::XML_ELEMENT_CLASSNAME },
+	{ "CLASSPATH", OW_XMLNode::XML_ELEMENT_CLASSPATH },
+	{ "DECLARATION", OW_XMLNode::XML_ELEMENT_DECLARATION },
+	{ "DECLGROUP", OW_XMLNode::XML_ELEMENT_DECLGROUP },
+	{ "DECLGROUP.WITHNAME", OW_XMLNode::XML_ELEMENT_DECLGROUP_WITHNAME },
+	{ "DECLGROUP.WITHPATH", OW_XMLNode::XML_ELEMENT_DECLGROUP_WITHPATH },
+	{ "ERROR", OW_XMLNode::XML_ELEMENT_ERROR },
+	{ "EXPMETHODCALL", OW_XMLNode::XML_ELEMENT_EXPMETHODCALL },
+	{ "EXPMETHODRESPONSE", OW_XMLNode::XML_ELEMENT_EXPMETHODRESPONSE },
+	{ "HOST", OW_XMLNode::XML_ELEMENT_HOST },
+	{ "IMETHODCALL", OW_XMLNode::XML_ELEMENT_IMETHODCALL },
+	{ "IMETHODRESPONSE", OW_XMLNode::XML_ELEMENT_IMETHODRESPONSE },
+	{ "IMPLICITKEY", OW_XMLNode::XML_ELEMENT_IMPLICITKEY },
+	{ "INSTANCE", OW_XMLNode::XML_ELEMENT_INSTANCE },
+	{ "INSTANCENAME", OW_XMLNode::XML_ELEMENT_INSTANCENAME },
+	{ "INSTANCEPATH", OW_XMLNode::XML_ELEMENT_INSTANCEPATH },
+	{ "IPARAMVALUE", OW_XMLNode::XML_ELEMENT_IPARAMVALUE },
+	{ "IRETURNVALUE", OW_XMLNode::XML_ELEMENT_IRETURNVALUE },
+	{ "KEYBINDING", OW_XMLNode::XML_ELEMENT_KEYBINDING },
+	{ "KEYVALUE", OW_XMLNode::XML_ELEMENT_KEYVALUE },
+	{ "LOCALCLASSPATH", OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH },
+	{ "LOCALINSTANCEPATH", OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH },
+	{ "LOCALNAMESPACEPATH", OW_XMLNode::XML_ELEMENT_LOCALNAMESPACEPATH },
+	{ "MESSAGE", OW_XMLNode::XML_ELEMENT_MESSAGE },
+	{ "METHOD", OW_XMLNode::XML_ELEMENT_METHOD },
+	{ "METHODCALL", OW_XMLNode::XML_ELEMENT_METHODCALL },
+	{ "METHODRESPONSE", OW_XMLNode::XML_ELEMENT_METHODRESPONSE },
+	{ "MULTIEXPREQ", OW_XMLNode::XML_ELEMENT_MULTIEXPREQ },
+	{ "MULTIEXPRSP", OW_XMLNode::XML_ELEMENT_MULTIEXPRSP },
+	{ "MULTIREQ", OW_XMLNode::XML_ELEMENT_MULTIREQ },
+	{ "MULTIRSP", OW_XMLNode::XML_ELEMENT_MULTIRSP },
+	{ "NAMESPACE", OW_XMLNode::XML_ELEMENT_NAMESPACE },
+	{ "NAMESPACEPATH", OW_XMLNode::XML_ELEMENT_NAMESPACEPATH },
+	{ "OBJECTPATH", OW_XMLNode::XML_ELEMENT_OBJECTPATH },
+	{ "PARAMETER", OW_XMLNode::XML_ELEMENT_PARAMETER },
+	{ "PARAMETER.ARRAY", OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY },
+	{ "PARAMETER.REFARRAY", OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY },
+	{ "PARAMETER.REFERENCE", OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE },
+	{ "PARAMVALUE", OW_XMLNode::XML_ELEMENT_PARAMVALUE },
+	{ "PROPERTY", OW_XMLNode::XML_ELEMENT_PROPERTY },
+	{ "PROPERTY.ARRAY", OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY },
+	{ "PROPERTY.REFERENCE", OW_XMLNode::XML_ELEMENT_PROPERTY_REF },
+	{ "QUALIFIER", OW_XMLNode::XML_ELEMENT_QUALIFIER },
+	{ "QUALIFIER.DECLARATION", OW_XMLNode::XML_ELEMENT_QUALIFIER_DECLARATION },
+	{ "RETURNVALUE", OW_XMLNode::XML_ELEMENT_RETURNVALUE },
+	{ "SCOPE", OW_XMLNode::XML_ELEMENT_SCOPE },
+	{ "SIMPLEEXPREQ", OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ },
+	{ "SIMPLEEXPRSP", OW_XMLNode::XML_ELEMENT_SIMPLEEXPRSP },
+	{ "SIMPLEREQ", OW_XMLNode::XML_ELEMENT_SIMPLEREQ },
+	{ "SIMPLERSP", OW_XMLNode::XML_ELEMENT_SIMPLERSP },
+	{ "VALUE", OW_XMLNode::XML_ELEMENT_VALUE },
+	{ "VALUE.ARRAY", OW_XMLNode::XML_ELEMENT_VALUE_ARRAY },
+	{ "VALUE.NAMEDINSTANCE", OW_XMLNode::XML_ELEMENT_VALUE_NAMEDINSTANCE },
+	{ "VALUE.NAMEDOBJECT", OW_XMLNode::XML_ELEMENT_VALUE_NAMEDOBJECT },
+	{ "VALUE.OBJECT", OW_XMLNode::XML_ELEMENT_VALUE_OBJECT },
+	{ "VALUE.OBJECTWITHLOCALPATH", OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH },
+	{ "VALUE.OBJECTWITHPATH", OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHPATH },
+	{ "VALUE.REFARRAY", OW_XMLNode::XML_ELEMENT_VALUE_REFARRAY },
+	{ "VALUE.REFERENCE", OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE },
+	{ "garbage", OW_XMLNode::XML_ELEMENT_UNKNOWN }
+};
 
-static void initElementMap();
+		
+OW_XMLNode::ElemEntry* OW_XMLNode::g_elemsEnd = &OW_XMLNode::g_elems[61];
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+OW_XMLNode::elemEntryCompare(const OW_XMLNode::ElemEntry& f1,
+	const OW_XMLNode::ElemEntry& f2)
+{
+	return (strcmp(f1.name, f2.name) < 0);
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLNodeImpl::OW_XMLNodeImpl(const OW_String& name,
@@ -53,8 +127,7 @@ OW_XMLNodeImpl::OW_XMLNodeImpl(const OW_String& name,
 	m_nextNode(NULL), m_childNode(NULL), m_lastChildNode(NULL), m_iToken(0),
 	m_iType(0), m_XMLAttrArray(attrArray), m_strName(name), m_strText()
 {
-	initElementMap();
-	m_iToken = g_elementMap[m_strName];
+	m_iToken = OW_XMLNode::getTokenFromName(m_strName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -62,8 +135,7 @@ OW_XMLNodeImpl::OW_XMLNodeImpl(const OW_String& name) :
 	m_nextNode(NULL), m_childNode(NULL), m_lastChildNode(NULL), m_iToken(0),
 	m_iType(0), m_XMLAttrArray(), m_strName(name), m_strText()
 {
-	initElementMap();
-	m_iToken = g_elementMap[m_strName];
+	m_iToken = OW_XMLNode::getTokenFromName(m_strName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,8 +143,7 @@ OW_XMLNodeImpl::OW_XMLNodeImpl() :
 	m_nextNode(NULL), m_childNode(NULL), m_lastChildNode(NULL), m_iToken(0),
 	m_iType(0), m_XMLAttrArray(), m_strName(), m_strText()
 {
-	initElementMap();
-	m_iToken = g_elementMap[m_strName];
+	m_iToken = OW_XMLNode::getTokenFromName(m_strName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -630,7 +701,6 @@ OW_XMLNode::OW_XMLNode(const OW_String& name) : m_impl(new OW_XMLNodeImpl(name))
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLNode::OW_XMLNode() : m_impl(NULL)
 {
-	initElementMap();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -853,11 +923,7 @@ OW_XMLNode::findElementAndParameter(const OW_String& nameOfParameter)
 void
 OW_XMLNode::setNodeType(OW_String nodeName)
 {
-	// We are going to search a global static so we need a little
-	// thread protection here
-	OW_MutexLock myLock(g_ElementMapMutex);
-
-	m_impl->setNodeType(g_elementMap[nodeName]);
+	m_impl->setNodeType(getTokenFromName(nodeName));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -897,87 +963,26 @@ OW_XMLNode::extractParameterValue(const OW_String& value,
 //////////////////////////////////////////////////////////////////////////////
 OW_String
 OW_XMLNode::mustExtractParameterValue(const OW_String& value)
-//throw(OW_CIMException)
 {
 	return m_impl->mustExtractParameterValue(value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static void
-initElementMap()
+OW_XMLNode::tokenId
+OW_XMLNode::getTokenFromName(const OW_String& name)
 {
-	// We are going to search a global static so we need a little
-	// thread protection here
-	OW_MutexLock myLock(g_ElementMapMutex);
-
-	if (g_initElementMap)
+	ElemEntry e = { 0, OW_XMLNode::XML_ELEMENT_UNKNOWN };
+	e.name = name.c_str();
+	ElemEntry* i = std::lower_bound(g_elems, g_elemsEnd, e, elemEntryCompare);
+	if (i == g_elemsEnd)
 	{
-		g_elementMap["CIM"] = OW_XMLNode::XML_ELEMENT_CIM;
-		g_elementMap["MESSAGE"] = OW_XMLNode::XML_ELEMENT_MESSAGE;
-		g_elementMap["SIMPLEREQ"] = OW_XMLNode::XML_ELEMENT_SIMPLEREQ;
-		g_elementMap["IMETHODCALL"] = OW_XMLNode::XML_ELEMENT_IMETHODCALL;
-		g_elementMap["LOCALNAMESPACEPATH"] = OW_XMLNode::XML_ELEMENT_LOCALNAMESPACEPATH;
-		g_elementMap["NAMESPACEPATH"] = OW_XMLNode::XML_ELEMENT_NAMESPACEPATH;
-		g_elementMap["NAMESPACE"] = OW_XMLNode::XML_ELEMENT_NAMESPACE;
-		g_elementMap["PARAMVALUE"] = OW_XMLNode::XML_ELEMENT_PARAMVALUE;
-		g_elementMap["IMETHODRESPONSE"] = OW_XMLNode::XML_ELEMENT_IMETHODRESPONSE;
-		g_elementMap["VALUE"] = OW_XMLNode::XML_ELEMENT_VALUE;
-		g_elementMap["IRETURNVALUE"] = OW_XMLNode::XML_ELEMENT_IRETURNVALUE;
-		g_elementMap["VALUE.NAMEDOBJECT"] = OW_XMLNode::XML_ELEMENT_VALUE_NAMEDOBJECT;
-		g_elementMap["CLASS"] = OW_XMLNode::XML_ELEMENT_CLASS;
-		g_elementMap["QUALIFIER"] = OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		g_elementMap["VALUE.ARRAY"] = OW_XMLNode::XML_ELEMENT_VALUE_ARRAY;
-		g_elementMap["SIMPLERSP"] = OW_XMLNode::XML_ELEMENT_SIMPLERSP;
-		g_elementMap["PROPERTY.ARRAY"] = OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY;
-		g_elementMap["PROPERTY"] = OW_XMLNode::XML_ELEMENT_PROPERTY;
-		g_elementMap["PARAMETER.REFERENCE"] = OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE;
-		g_elementMap["PARAMETER.ARRAY"] = OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY;
-		g_elementMap["PARAMETER.REFARRAY"] = OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY;
-		g_elementMap["PARAMETER"] = OW_XMLNode::XML_ELEMENT_PARAMETER;
-		g_elementMap["METHOD"] = OW_XMLNode::XML_ELEMENT_METHOD;
-		g_elementMap["INSTANCE"] = OW_XMLNode::XML_ELEMENT_INSTANCE;
-		g_elementMap["INSTANCENAME"] = OW_XMLNode::XML_ELEMENT_INSTANCENAME;
-		g_elementMap["KEYBINDING"] = OW_XMLNode::XML_ELEMENT_KEYBINDING;
-		g_elementMap["KEYVALUE"] = OW_XMLNode::XML_ELEMENT_KEYVALUE;
-		g_elementMap["IMPLICITKEY"] = OW_XMLNode::XML_ELEMENT_IMPLICITKEY;
-		g_elementMap["METHODCALL"] = OW_XMLNode::XML_ELEMENT_METHODCALL;
-		g_elementMap["RETURNVALUE"] = OW_XMLNode::XML_ELEMENT_RETURNVALUE;
-		g_elementMap["METHODRESPONSE"] = OW_XMLNode::XML_ELEMENT_METHODRESPONSE;
-		g_elementMap["PROPERTY.REFERENCE"] = OW_XMLNode::XML_ELEMENT_PROPERTY_REF;
-		g_elementMap["ERROR"] = OW_XMLNode::XML_ELEMENT_ERROR;
-		g_elementMap["QUALIFIER.DECLARATION"] = OW_XMLNode::XML_ELEMENT_QUALIFIER_DECLARATION;
-		g_elementMap["SCOPE"] = OW_XMLNode::XML_ELEMENT_SCOPE;
-
-		g_elementMap["VALUE.OBJECT"] = OW_XMLNode::XML_ELEMENT_VALUE_OBJECT;
-		g_elementMap["IPARAMVALUE"] = OW_XMLNode::XML_ELEMENT_IPARAMVALUE;
-		g_elementMap["VALUE.REFERENCE"] = OW_XMLNode::XML_ELEMENT_VALUE_REFERENCE;
-		g_elementMap["VALUE.REFARRAY"] = OW_XMLNode::XML_ELEMENT_VALUE_REFARRAY;
-		g_elementMap["CLASSPATH"] = OW_XMLNode::XML_ELEMENT_CLASSPATH;
-		g_elementMap["LOCALCLASSPATH"] = OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH;
-		g_elementMap["CLASSNAME"] = OW_XMLNode::XML_ELEMENT_CLASSNAME;
-		g_elementMap["INSTANCEPATH"] = OW_XMLNode::XML_ELEMENT_INSTANCEPATH;
-		g_elementMap["LOCALINSTANCEPATH"] = OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH;
-		g_elementMap["HOST"] = OW_XMLNode::XML_ELEMENT_HOST;
-
-		g_elementMap["VALUE.OBJECTWITHLOCALPATH"] = OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH;
-		g_elementMap["VALUE.OBJECTWITHPATH"] = OW_XMLNode::XML_ELEMENT_VALUE_OBJECTWITHPATH;
-		g_elementMap["DECLARATION"] = OW_XMLNode::XML_ELEMENT_DECLARATION;
-		g_elementMap["DECLGROUP"] = OW_XMLNode::XML_ELEMENT_DECLGROUP;
-		g_elementMap["DECLGROUP.WITHNAME"] = OW_XMLNode::XML_ELEMENT_DECLGROUP_WITHNAME;
-		g_elementMap["DECLGROUP.WITHPATH"] = OW_XMLNode::XML_ELEMENT_DECLGROUP_WITHPATH;
-		g_elementMap["OBJECTPATH"] = OW_XMLNode::XML_ELEMENT_OBJECTPATH;
-		g_elementMap["VALUE.NAMEDINSTANCE"] = OW_XMLNode::XML_ELEMENT_VALUE_NAMEDINSTANCE;
-
-		g_elementMap["MULTIREQ"] = OW_XMLNode::XML_ELEMENT_MULTIREQ;
-		g_elementMap["MULTIRSP"] = OW_XMLNode::XML_ELEMENT_MULTIRSP;
-
-		g_elementMap["SIMPLEEXPREQ"] = OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ;
-		g_elementMap["SIMPLEEXPRSP"] = OW_XMLNode::XML_ELEMENT_SIMPLEEXPRSP;
-		g_elementMap["MULTIEXPREQ"] = OW_XMLNode::XML_ELEMENT_MULTIEXPREQ;
-		g_elementMap["MULTIEXPRSP"] = OW_XMLNode::XML_ELEMENT_MULTIEXPRSP;
-		g_elementMap["EXPMETHODCALL"] = OW_XMLNode::XML_ELEMENT_EXPMETHODCALL;
-		g_elementMap["EXPMETHODRESPONSE"] = OW_XMLNode::XML_ELEMENT_EXPMETHODRESPONSE;
-
-		g_initElementMap = false;
+		return OW_XMLNode::XML_ELEMENT_UNKNOWN;
+	}
+	else
+	{
+		return i->id;
 	}
 }
+
+
+

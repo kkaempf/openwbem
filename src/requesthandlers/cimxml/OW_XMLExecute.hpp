@@ -45,8 +45,6 @@ class OW_CIMOMHandleIFC;
 class OW_XMLExecute : public OW_RequestHandlerIFCXML, OW_XMLQualifier
 {
 public:
-	//static void init();
-
 	OW_XMLExecute();
 	virtual ~OW_XMLExecute() {}
 	int executeXML(OW_XMLNode& node, std::ostream* ostrEntity,
@@ -150,7 +148,7 @@ private:
 	
 	static FuncEntry g_funcs[];
 	static bool funcEntryCompare(const FuncEntry& f1, const FuncEntry& f2);
-	static FuncEntry* g_end;
+	static FuncEntry* g_funcsEnd;
 };
 
 
