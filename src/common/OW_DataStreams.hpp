@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_REPOSITORYSTREAMS_HPP_INCLUDE_GUARD_
-#define OW_REPOSITORYSTREAMS_HPP_INCLUDE_GUARD_
+#ifndef OW_DATA_STREAMS_HPP_INCLUDE_GUARD_
+#define OW_DATA_STREAMS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -48,10 +48,10 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryIStreamBuf : public std::streambuf
+class DataIStreamBuf : public std::streambuf
 {
 public:
-	RepositoryIStreamBuf(int dataLen, const unsigned char* data) :
+	DataIStreamBuf(int dataLen, const unsigned char* data) :
 		std::streambuf()
 	{
 		setg(const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)),
@@ -65,24 +65,24 @@ protected:
 	}
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryIStreamBase
+class DataIStreamBase
 {
 protected:
-	RepositoryIStreamBase(int dataLen, const unsigned char* data) : m_strbuf(dataLen, data) {}
-	RepositoryIStreamBuf m_strbuf;
+	DataIStreamBase(int dataLen, const unsigned char* data) : m_strbuf(dataLen, data) {}
+	DataIStreamBuf m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryIStream : private RepositoryIStreamBase, public std::istream
+class DataIStream : private DataIStreamBase, public std::istream
 {
 public:
-	RepositoryIStream(int dataLen, const unsigned char* data)
-	: RepositoryIStreamBase(dataLen, data), std::istream(&m_strbuf)	{}
+	DataIStream(int dataLen, const unsigned char* data)
+	: DataIStreamBase(dataLen, data), std::istream(&m_strbuf)	{}
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryOStreamBuf : public std::streambuf
+class DataOStreamBuf : public std::streambuf
 {
 public:
-	RepositoryOStreamBuf(size_t initialSize = 256);
+	DataOStreamBuf(size_t initialSize = 256);
 	const unsigned char* getData() const { return &m_bfr[0]; }
 	int length() const { return m_bfr.size(); }
 	void clear() { m_bfr.clear(); }
@@ -93,20 +93,20 @@ private:
 	std::vector<unsigned char> m_bfr;
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryOStreamBase
+class DataOStreamBase
 {
 protected:
-	RepositoryOStreamBase(size_t initialSize = 256)
+	DataOStreamBase(size_t initialSize = 256)
 	: m_buf(initialSize) {}
 
-	RepositoryOStreamBuf m_buf;
+	DataOStreamBuf m_buf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class RepositoryOStream : private RepositoryOStreamBase, public std::ostream
+class DataOStream : private DataOStreamBase, public std::ostream
 {
 public:
-	RepositoryOStream(size_t initialSize = 256)
-		: RepositoryOStreamBase(initialSize)
+	DataOStream(size_t initialSize = 256)
+		: DataOStreamBase(initialSize)
 		, std::ostream(&m_buf)
 	{}
 	const unsigned char* getData() const { return m_buf.getData(); }

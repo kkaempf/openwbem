@@ -29,28 +29,28 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_RepositoryStreams.hpp"
+#include "OW_DataStreams.hpp"
 #include <cstring>
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-RepositoryOStreamBuf::RepositoryOStreamBuf(size_t initialSize)
+DataOStreamBuf::DataOStreamBuf(size_t initialSize)
 	: std::streambuf()
 {
 	m_bfr.reserve(initialSize);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-RepositoryOStreamBuf::overflow(int c)
+DataOStreamBuf::overflow(int c)
 {
 	m_bfr.push_back(c);
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 std::streamsize
-RepositoryOStreamBuf::xsputn(const char* s, std::streamsize n)
+DataOStreamBuf::xsputn(const char* s, std::streamsize n)
 {
 	m_bfr.insert(m_bfr.end(), s, s+n);
 	return n;
