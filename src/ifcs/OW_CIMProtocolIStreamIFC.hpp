@@ -32,6 +32,7 @@
 #ifndef _OW_CIMPROTOCOLISTREAMIFC_HPP__
 #define _OW_CIMPROTOCOLISTREAMIFC_HPP__
 
+#include "OW_config.h"
 #include "OW_String.hpp"
 
 #if defined(OW_HAVE_ISTREAM)
