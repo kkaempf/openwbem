@@ -45,6 +45,7 @@ SharedLibraryRepository::SharedLibraryRepository(SharedLibraryRepositoryIFCRef r
 SharedLibraryRepository::~SharedLibraryRepository()
 {}
 void SharedLibraryRepository::close() { m_ref->close(); }
+void SharedLibraryRepository::shutdown() { m_ref->shutdown(); }
 void SharedLibraryRepository::open(const String &path) { m_ref->open(path); }
 ServiceEnvironmentIFCRef SharedLibraryRepository::getEnvironment() const
 {

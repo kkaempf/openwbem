@@ -55,6 +55,22 @@ void ProviderManager::load(const ProviderIFCLoaderRef& IFCLoader)
 	m_IFCArray.push_back(ProviderIFCBaseIFCRef(SharedLibraryRef(0), cpppi));
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void ProviderManager::shutdown()
+{
+	MutexLock lock(m_guard);
+	
+	m_registeredInstProvs.clear();
+	m_registeredSecInstProvs.clear();
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	m_registeredAssocProvs.clear();
+#endif
+	m_registeredMethProvs.clear();
+	m_registeredPropProvs.clear();
+	m_registeredIndProvs.clear();
+	m_IFCArray.clear();
+}
+
 namespace {
 //////////////////////////////////////////////////////////////////////////////
 void registerProviderInfo(

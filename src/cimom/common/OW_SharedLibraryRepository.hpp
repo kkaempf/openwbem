@@ -41,6 +41,7 @@ public:
 	SharedLibraryRepository(SharedLibraryRepositoryIFCRef ref);
 	~SharedLibraryRepository();
 	virtual void close();
+	virtual void shutdown();
 	virtual void open(const String &path);
 	virtual ServiceEnvironmentIFCRef getEnvironment() const;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION

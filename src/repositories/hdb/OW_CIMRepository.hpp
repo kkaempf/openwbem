@@ -67,6 +67,7 @@ public:
 	 */
 	virtual void open(const String& path);
 	virtual void close();
+	virtual void shutdown();
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.

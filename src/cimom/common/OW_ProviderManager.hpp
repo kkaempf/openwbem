@@ -70,6 +70,11 @@ public:
 	 */
 	void init(const ProviderEnvironmentIFCRef& env);
 	/**
+	 * Called when the cimom is shutting down.  All the provider IFCs will be
+	 * unloaded.
+	 */
+	void shutdown();
+	/**
 	 * Locate an Instance provider.
 	 *
 	 * @param ns The namespace of the class.

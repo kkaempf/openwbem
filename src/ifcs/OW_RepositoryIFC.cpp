@@ -52,5 +52,11 @@ RepositoryIFC::exportIndication(const CIMInstance&, const String&)
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void 
+RepositoryIFC::shutdown()
+{
+}
+
 } // end namespace OpenWBEM
 

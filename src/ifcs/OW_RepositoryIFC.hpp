@@ -57,6 +57,13 @@ public:
 	 * Close this RepositoryIFC.
 	 */
 	virtual void close() = 0;
+	/**
+	 * This method will be closed when the server is shutting down.
+	 * Derived classes may override it to implement appropriate
+	 * behavior.  Setting Reference<> member vars to 0 is recommended
+	 * to help break circular dependencies.
+	 */
+	virtual void shutdown();
 	virtual ServiceEnvironmentIFCRef getEnvironment() const = 0;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**

@@ -369,6 +369,7 @@ CIMOMEnvironment::shutdown()
 	// Shutdown the cim server and delete it
 	if(m_cimServer)
 	{
+		m_cimServer->shutdown();
 		m_cimServer = 0;
 	}
 	// Shutdown the cim repository and delete it
@@ -381,10 +382,15 @@ CIMOMEnvironment::shutdown()
 		catch (...)
 		{
 		}
+		m_cimRepository->shutdown();
 		m_cimRepository = 0;
 	}
 	// Delete the provider manager
-	m_providerManager = 0;
+	if (m_providerManager)
+	{
+		m_providerManager->shutdown();
+		m_providerManager = 0;
+	}
 	logDebug("CIMOM Environment has shut down");
 }
 //////////////////////////////////////////////////////////////////////////////

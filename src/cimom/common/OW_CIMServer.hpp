@@ -74,6 +74,10 @@ public:
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close();
+	/**
+	 * Called during cimom shutdown.
+	 */
+	virtual void shutdown();
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
