@@ -1317,6 +1317,15 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 			if(rc != OW_CIMException::SUCCESS)
 			{
+				// check whether the namespace was invalid or not
+				if (rc == OW_CIMException::NOT_FOUND)
+				{
+					if (!m_nStore.nameSpaceExists(cop.getNameSpace()))
+					{
+						rc = OW_CIMException::INVALID_NAMESPACE;
+					}
+				}
+
 				OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
 			}
 		}
@@ -1462,6 +1471,15 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 		if(rc != OW_CIMException::SUCCESS)
 		{
+			// check whether the namespace was invalid or not
+			if (rc == OW_CIMException::NOT_FOUND)
+			{
+				if (!m_nStore.nameSpaceExists(cop.getNameSpace()))
+				{
+					rc = OW_CIMException::INVALID_NAMESPACE;
+				}
+			}
+
 			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
 		}
 
@@ -1584,6 +1602,15 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
 	if(rc != OW_CIMException::SUCCESS)
 	{
+		// check whether the namespace was invalid or not
+		if (rc == OW_CIMException::NOT_FOUND)
+		{
+			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
+			{
+				rc = OW_CIMException::INVALID_NAMESPACE;
+			}
+		}
+
 		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
 	}
 
@@ -1637,6 +1664,15 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, theClass);
 	if(rc != OW_CIMException::SUCCESS)
 	{
+		// check whether the namespace was invalid or not
+		if (rc == OW_CIMException::NOT_FOUND)
+		{
+			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
+			{
+				rc = OW_CIMException::INVALID_NAMESPACE;
+			}
+		}
+
 		OW_THROWCIMMSG(rc, name.getObjectName().c_str());
 	}
 
@@ -1722,6 +1758,15 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name, cc);
 	if(rc != OW_CIMException::SUCCESS)
 	{
+		// check whether the namespace was invalid or not
+		if (rc == OW_CIMException::NOT_FOUND)
+		{
+			if (!m_nStore.nameSpaceExists(name.getNameSpace()))
+			{
+				rc = OW_CIMException::INVALID_NAMESPACE;
+			}
+		}
+
 		OW_THROWCIMMSG(rc, name.toString().c_str());
 	}
 

@@ -45,10 +45,10 @@
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-OW_Int32 
-OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &env)
+OW_Int32
+OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &/*env*/)
 {
-	env->getLogger()->logDebug( "Polling OW_ProviderUnloader");
+	//env->getLogger()->logDebug( "Polling OW_UnloaderProvider");
 	m_pcenv->unloadProviders();
 	m_pcenv->unloadReqHandlers();
 	return -1;
@@ -58,12 +58,12 @@ OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &env)
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-OW_Int32 
-OW_UnloaderProvider::getInitialPollingInterval(const 
+OW_Int32
+OW_UnloaderProvider::getInitialPollingInterval(const
 		OW_ProviderEnvironmentIFCRef &env)
 {
 	env->getLogger()->logDebug(format(
-		"Calling getInitialPollingInterval in OW_ProviderUnloader; returning %1", 
+		"Calling getInitialPollingInterval in OW_ProviderUnloader; returning %1",
 		POLLING_INTERVAL));
 	return POLLING_INTERVAL;
 }

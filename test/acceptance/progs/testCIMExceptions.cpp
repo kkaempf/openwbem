@@ -312,6 +312,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	keyQual.setValue(OW_CIMValue(true));
 	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 	theKeyProp.addQualifier(keyQual);
+	theKeyProp.setValue(OW_CIMValue(true));
 
 	cc.addProperty(theKeyProp);
 
@@ -416,12 +417,60 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
+	// CIM_ERR_ALREADY_EXISTS
+	try
+	{
+		// test adding a class with no keys
+		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		hdl->createClass(cop, baseClass);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
+	}
+
+	// CIM_ERR_INVALID_SUPERCLASS
+	try
+	{
+		OW_CIMClass cc2(baseClass);
+		cc2.setSuperClass("invalid");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->createClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
+	}
+
+
+	// CreateInstance
+
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMInstance ci = baseClass.newInstance();
+		ci.setProperty(theKeyProp);
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		cop.setKeys(ci);
+		hdl->createInstance(cop, ci);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
+	// CIM_ERR_INVALID_PARAMETER
+	// CIM_ERR_INVALID_CLASS
+	// CIM_ERR_ALREADY_EXISTS
+
+	
 	// cleanup
 
 	hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
 
-	// CIM_ERR_ALREADY_EXISTS
-	// CIM_ERR_INVALID_SUPERCLASS
 
 }
 
