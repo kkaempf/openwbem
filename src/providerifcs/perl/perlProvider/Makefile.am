@@ -32,7 +32,7 @@ SHAREDLIBADD = $(perl_embed_ldflags)
 thelibdir = $(pkglibdir)/perlproviders
 
 mostlyclean-compile:
-	-rm -f *.$(OBJEXT) core *.core 
+	-rm -f *.$(OBJEXT) core *.core $(top_srcdir)/src/providerifcs/perl/perlProvider/perlxsi.c
 	-rm -f perlNPI.marker
 
 all-local: perlNPI.marker $(OW_SHARED_LIBS)
