@@ -47,6 +47,7 @@
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_HTTPException.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 using std::ios;
 using std::istream;
