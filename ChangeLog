@@ -1,3 +1,16 @@
+Sat Nov 23 10:38:08 MST 2002
+- Fixed: On startup of UDS if the UDS already exists, SocketImpl need to figure 
+  out if someone else is listening. If so, then fail, otherwise delete it.
+  Uses a lock file for coordination with other OpenWBEM cimoms or listeners.
+- Fixed: OW_File needs to be more C++ish with a destructor, reasonable copy
+  semantics, etc.
+- Fixed a race condition in OW_FileSystem::createFile()
+- Added OW_FileSystem::openOrCreateFile()
+- Fixed a race condition in OW_AssocDb constructor.
+- Fixed a race condition in OW_HDB constructor.
+- Fixed a race condition in OW_CIMServer::open when creating repository dir.
+- Reduced dependencies in some header files.
+
 Fri Nov 22 20:07:54 MST 2002
 - Added system file locking support to OW_File.
 - Moved OW_File into it's own hpp/cpp files.

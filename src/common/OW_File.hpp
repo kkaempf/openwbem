@@ -32,7 +32,10 @@
 #define OW_FILE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_Types.h"
 #include "OW_FileSystem.hpp"
+
+#include <algorithm> // for std::swap
 
 /**
  * The purpose of the OW_File class is to provide an abstraction layer
@@ -45,7 +48,7 @@ public:
 	/**
 	 * Create a NULL OW_File object.
 	 */
-	OW_File() : m_hdl(0)
+	OW_File() : m_hdl(-1)
 	{
 	}
 
@@ -53,8 +56,11 @@ public:
 	 * Copy constructor
 	 * @param x	The OW_File object to copy.
 	 */
-	OW_File(const OW_File& x) : m_hdl(x.m_hdl)
+	OW_File(const OW_File& x);
+
+	~OW_File()
 	{
+		close();
 	}
 
 	/**
@@ -62,10 +68,15 @@ public:
 	 * @param x	The OW_File object to copy.
 	 * @return A reference to this OW_File object.
 	 */
-	OW_File& operator= (const OW_File& x)
+	OW_File& operator= (OW_File x)
 	{
-		m_hdl = x.m_hdl;
+		x.swap(*this);
 		return *this;
+	}
+
+	void swap(OW_File& x)
+	{
+		std::swap(m_hdl, x.m_hdl);
 	}
 
 	/**
@@ -107,7 +118,7 @@ public:
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	int seek(OW_off_t offset, int whence=SEEK_SET)
+	int seek(OW_off_t offset, int whence)
 	{
 		return OW_FileSystem::seek(m_hdl, offset, whence);
 	}
@@ -135,9 +146,13 @@ public:
 	 */
 	int close()
 	{
-		int rv = OW_FileSystem::close(m_hdl);
-		m_hdl = 0;
-		return rv;
+		if (m_hdl != -1)
+		{
+			int rv = OW_FileSystem::close(m_hdl);
+			m_hdl = -1;
+			return rv;
+		}
+		return 0;
 	}
 
 	/**
@@ -195,9 +210,9 @@ private:
 
 public:
 	operator safe_bool () const
-		{  return (m_hdl) ? &dummy::nonnull : 0; }
+		{  return (m_hdl != -1) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
-		{  return (m_hdl) ? 0: &dummy::nonnull; }
+		{  return (m_hdl != -1) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Equality operator.
@@ -211,7 +226,7 @@ public:
 
 private:
 
-	OW_File(OW_FileHandle& hdl) : m_hdl(hdl)
+	OW_File(OW_FileHandle hdl) : m_hdl(hdl)
 	{
 	}
 

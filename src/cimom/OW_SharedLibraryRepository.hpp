@@ -33,6 +33,7 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 class OW_SharedLibraryRepository : public OW_RepositoryIFC
 {

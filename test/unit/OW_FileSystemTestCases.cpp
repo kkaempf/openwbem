@@ -33,6 +33,7 @@
 #include "OW_FileSystemTestCases.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
+#include "OW_String.hpp"
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -124,6 +125,21 @@ void OW_FileSystemTestCases::testunlock()
     unitAssert( rval == 0 );
 }
 
+void OW_FileSystemTestCases::testopenOrCreateFile()
+{
+	// make sure it's gone.
+	OW_FileSystem::removeFile("testfile");
+	// first it should be created
+	OW_File f = OW_FileSystem::openOrCreateFile("testfile");
+	unitAssert(f);
+	unitAssert(f.close() == 0);
+	// now it will be opened
+	f = OW_FileSystem::openOrCreateFile("testfile");
+	unitAssert(f);
+	unitAssert(f.close() == 0);
+	unitAssert(OW_FileSystem::removeFile("testfile"));
+}
+
 Test* OW_FileSystemTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_FileSystem");
@@ -131,6 +147,7 @@ Test* OW_FileSystemTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetLock);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testtryLock);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testunlock);
+	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testopenOrCreateFile);
 
 	return testSuite;
 }

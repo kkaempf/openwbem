@@ -34,6 +34,7 @@
 #include "OW_Format.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_FileSystem.hpp"
+#include "OW_File.hpp"
 
 extern "C"
 {
@@ -58,6 +59,7 @@ OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL)
 	, m_localAddress(OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET))
 	, m_isActive(false)
 	, m_isSSL(isSSL)
+	, m_udsFile()
 {
 }
 
@@ -182,15 +184,30 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 //#endif
 
-// This seems to cause problems sometimes.  We need to figure out a good way
-// to lock the file or see if someone else is using it.
+	OW_String lockfilename = filename + ".lock";
+	m_udsFile = OW_FileSystem::openOrCreateFile(lockfilename);
+	if (!m_udsFile)
+	{
+		OW_THROW(OW_SocketException,
+			format("Unable to open or create Unix Domain Socket lock: %1, errno: %2(%3)",
+				lockfilename, errno, strerror(errno)).c_str());
+	}
+	// if we can't get a lock, someone else has got it open.
+	if (m_udsFile.tryLock() == -1)
+	{
+		OW_THROW(OW_SocketException,
+			format("Unable to lock Unix Domain Socket: %1, errno: %2(%3)",
+				filename, errno, strerror(errno)).c_str());
+	}
+	// We got the lock, so clobber the UDS if it's there so bind will succeed.
+	// If it's not gone, bind will fail.
     if (OW_FileSystem::exists(filename))
     {
-        if (::unlink(filename.c_str()) != 0)
+        if (!OW_FileSystem::removeFile(filename.c_str()))
         {
             OW_THROW(OW_SocketException,
-                format("Unable to unlink Unix Domain Socket: %1, errno: %2",
-                    filename, errno).c_str());
+                format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
+                    filename, strerror(errno)).c_str());
         }
     }
 		
@@ -201,7 +218,6 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
 				strerror(errno)).c_str());
 	}
-
 
 	if(listen(m_sockfd, queueSize) == -1)
 	{
@@ -345,11 +361,28 @@ OW_ServerSocketImpl::close() /*throw (OW_SocketException)*/
 		if (m_localAddress.getType() == OW_SocketAddress::UDS)
 		{
 			OW_String filename = m_localAddress.toString();
-			if (::unlink(filename.c_str()) != 0)
+			if (!OW_FileSystem::removeFile(filename.c_str()))
 			{
 				OW_THROW(OW_SocketException,
 					format("Unable to unlink Unix Domain Socket: %1, errno: %2",
 						filename, errno).c_str());
+			}
+			if (m_udsFile)
+			{
+				OW_String lockfilename = filename + ".lock";
+				if (m_udsFile.unlock() == -1)
+				{
+					OW_THROW(OW_SocketException,
+						format("Failed to unlock Unix Domain Socket: %1, errno: %2(%3)",
+							lockfilename, errno, strerror(errno)).c_str());
+				}
+				m_udsFile.close();
+				if (!OW_FileSystem::removeFile(lockfilename.c_str()))
+				{
+					OW_THROW(OW_SocketException,
+						format("Unable to unlink Unix Domain Socket lock: %1, errno: %2",
+							lockfilename, errno).c_str());
+				}
 			}
 		}
 		m_isActive = false;

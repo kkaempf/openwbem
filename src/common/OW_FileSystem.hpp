@@ -33,9 +33,8 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include <cstdio>
+#include "OW_ArrayFwd.hpp"
+
 #include <sys/param.h>
 
 #ifndef MAXPATHLEN
@@ -43,6 +42,9 @@
 #endif
 
 class OW_File;
+class OW_String;
+class OW_Bool;
+typedef OW_Array<OW_String> OW_StringArray;
 
 /**
  * The purpose of the OW_FileSystem class is to provide an abstraction layer
@@ -65,6 +67,14 @@ public:
 	 * writing. Otherwise a null OW_File object.
 	 */
 	static OW_File createFile(const OW_String& path);
+
+	/**
+	 * Opens or creates the file for the given name.
+	 * @param path	The name of the file to create.
+	 * @return On success an OW_File object that can be used for reading and
+	 * writing. Otherwise a null OW_File object.
+	 */
+	static OW_File openOrCreateFile(const OW_String& path);
 
 	/**
 	 * Change the given file ownership
@@ -187,7 +197,7 @@ public:
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	static int seek(OW_FileHandle& hdl, OW_off_t offset, int whence=SEEK_SET);
+	static int seek(OW_FileHandle& hdl, OW_off_t offset, int whence);
 
 	/**
 	 * @param hdl	The file handle to use in the tell operation.

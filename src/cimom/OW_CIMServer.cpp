@@ -368,14 +368,12 @@ OW_CIMServer::open(const OW_String& path)
 		close();
 	}
 
+	OW_FileSystem::makeDirectory(path);
 	if(!OW_FileSystem::exists(path))
 	{
-		if(!OW_FileSystem::makeDirectory(path))
-		{
-			OW_String msg("failed to create directory: " );
-			msg += path;
-			OW_THROW(OW_IOException, msg.c_str());
-		}
+		OW_String msg("failed to create directory: " );
+		msg += path;
+		OW_THROW(OW_IOException, msg.c_str());
 	}
 	else
 	{

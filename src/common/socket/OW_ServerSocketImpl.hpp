@@ -45,6 +45,7 @@
 #include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_Types.h"
+#include "OW_File.hpp"
 
 class OW_ServerSocketImpl : public OW_SelectableIFC
 {
@@ -80,6 +81,7 @@ private:
 	OW_ServerSocketImpl operator=(const OW_ServerSocketImpl& arg);
 
 	OW_Bool m_isSSL;
+	OW_File m_udsFile;
 };
 
 #endif	// __INETSERVERSOCKETIMPL_HPP__

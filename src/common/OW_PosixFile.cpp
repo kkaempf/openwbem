@@ -32,6 +32,14 @@
 #include "OW_File.hpp"
 
 #include <fcntl.h>
+#include <unistd.h>
+
+/////////////////////////////////////////////////////////////////////////////
+OW_File::OW_File(const OW_File& x) : m_hdl(dup(x.m_hdl))
+{
+}
+
+
 
 namespace {
 /////////////////////////////////////////////////////////////////////////////
@@ -69,6 +77,7 @@ OW_File::unlock()
 {
 	return doLock(m_hdl, F_SETLK, F_UNLCK);
 }
+
 
 
 

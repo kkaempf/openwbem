@@ -38,6 +38,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMClass.hpp"
 
 											
 //////////////////////////////////////////////////////////////////////////////

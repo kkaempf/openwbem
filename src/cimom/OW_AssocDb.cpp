@@ -453,21 +453,11 @@ OW_AssocDb::open(const OW_String& fileName)
 
 	OW_String fname = m_fileName + ".dat";
 
-	if(!OW_FileSystem::canWrite(fname.c_str()))
+	createFile();
+	if(!checkFile())
 	{
-		if(!createFile())
-		{
-			OW_THROW(OW_IOException,
-				format("Failed to create file: %1", fname).c_str());
-		}
-	}
-	else
-	{
-		if(!checkFile())
-		{
-			OW_THROW(OW_IOException,
-				format("Failed to open file: %1", fname).c_str());
-		}
+		OW_THROW(OW_IOException,
+			format("Failed to open file: %1", fname).c_str());
 	}
 
 	m_opened = true;

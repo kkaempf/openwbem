@@ -48,6 +48,7 @@ private:
 	void testgetLock();
 	void testtryLock();
 	void testunlock();
+	void testopenOrCreateFile();
 };
 
 #endif

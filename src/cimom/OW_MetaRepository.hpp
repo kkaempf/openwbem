@@ -33,8 +33,6 @@
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_CIMClassEnumeration.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 

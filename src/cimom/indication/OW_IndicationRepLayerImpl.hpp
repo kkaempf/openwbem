@@ -37,6 +37,7 @@
 #include "OW_IndicationRepLayer.hpp"
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 class OW_IndicationRepLayerImpl : public OW_IndicationRepLayer
 {

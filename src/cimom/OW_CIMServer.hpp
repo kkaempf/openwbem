@@ -36,13 +36,10 @@
 #include "OW_MetaRepository.hpp"
 #include "OW_InstanceRepository.hpp"
 #include "OW_ProviderManager.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMClassEnumeration.hpp"
 #include "OW_AssocDb.hpp"
 #include "OW_Map.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_CIMClass.hpp"
 
 class OW_AccessMgr;
 

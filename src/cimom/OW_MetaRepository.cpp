@@ -36,6 +36,8 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMQualifier.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Array.hpp"

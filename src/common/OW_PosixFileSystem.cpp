@@ -35,6 +35,8 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_File.hpp"
+#include "OW_String.hpp"
+#include "OW_Array.hpp"
 
 extern "C"
 {
@@ -48,8 +50,7 @@ extern "C"
 #endif
 }
 
-#include <cstdio>
-#include <cstring>
+//#include <cstring>
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -65,10 +66,18 @@ OW_FileSystem::changeFileOwner(const OW_String& filename,
 OW_File
 OW_FileSystem::openFile(const OW_String& path)
 {
-	int hdl = ::open(path.c_str(), O_RDWR);
-	if(hdl != -1)
+	return OW_File(::open(path.c_str(), O_RDWR));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+OW_File
+OW_FileSystem::createFile(const OW_String& path)
+{
+	// TODO: Fix up this function, it's subject to race conditions.
+	if(!OW_FileSystem::exists(path))
 	{
-		return OW_File(hdl);
+		return OW_File( ::open(path.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0660));
 	}
 
 	return OW_File();
@@ -77,18 +86,9 @@ OW_FileSystem::openFile(const OW_String& path)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_File
-OW_FileSystem::createFile(const OW_String& path)
+OW_FileSystem::openOrCreateFile(const OW_String& path)
 {
-	if(!OW_FileSystem::exists(path))
-	{
-		int hdl = ::open(path.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0664);
-		if(hdl != -1)
-		{
-			return OW_File(hdl);
-		}
-	}
-
-	return OW_File();
+	return OW_File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
 }
 
 //////////////////////////////////////////////////////////////////////////////
