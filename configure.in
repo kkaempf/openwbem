@@ -1,4 +1,4 @@
-dnl Process this file with autoconf to produce a configure script.
+Dnl Process this file with autoconf to produce a configure script.
 AC_INIT(Makefile.am)
 AM_CONFIG_HEADER(config.h)
 
@@ -79,14 +79,6 @@ AC_PROG_RANLIB
 AM_CONDITIONAL(HAVE_FLEX, test x$LEX = xflex)
 AC_PROG_YACC
 
-# Set up the linker
-if test -z "$CXXLINK" ; then
-  CXXLINK="g++"
-fi
-if test -z "$CLINK" ; then
-  CLINK="gcc"
-fi
-
 AC_PATH_PROG(AR, ar, ar)
 SAVED_AR=$AR
 AR="\$(shell pwd)/\$(top_srcdir)/ow_ar.sh $SAVED_AR --"
@@ -145,6 +137,18 @@ case "$host" in
 *-*-aix*)
 	;;
 *-*-cygwin*)
+	;;
+*-*-darwin*)
+	PLATFORMDIR="posix"
+	AC_DEFINE(DARWIN)
+	PLAT_CFLAGS="-fno-common -D_REENTRANT"
+	PLAT_CXXFLAGS="-fno-common -D_REENTRANT"
+	CXXCOMMONLINKFLAGS=""
+	CXXBINLINKFLAGS="-Wl,-Bdynamic"
+	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version $OPENWBEM_VERSION -current_version $OPENWBEM_VERSION"
+	PLAT_OPTFLAGS="-O3"
+	PIDFILEDIR="/var/run"
+	CXX="c++"
 	;;
 *-*-dgux*)
 	;;
@@ -232,6 +236,14 @@ case "$host" in
 *-dec-osf*)
 	;;
 esac
+
+# Set up the linker
+if test -z "$CXXLINK" ; then
+  CXXLINK="$CXX"
+fi
+if test -z "$CLINK" ; then
+  CLINK="$CC"
+fi
 
 AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILEDIR}")
 

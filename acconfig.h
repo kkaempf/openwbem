@@ -71,6 +71,7 @@
 #undef OPENUNIX
 #undef SOLARIS
 #undef OPENSERVER
+#undef DARWIN
 
 
 #undef u_int8_t

@@ -42,7 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef OW_HAVE_INTTYPES_H
+#if defined (OW_HAVE_INTTYPES_H) && ! defined(OW_DARWIN)
 #include <inttypes.h>
 #else
 #define PRIu32 "u"
