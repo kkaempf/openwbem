@@ -637,6 +637,7 @@ int main()
     assert(res == 0);
     res = pthread_mutex_init(&mutex, &attr);
     assert(res == 0);
+    return 0;
 }
     ],
     [

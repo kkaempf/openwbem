@@ -1,28 +1,15 @@
 SUBDIRS = test
 
 include $(top_srcdir)/Makefile-shared-lib.inc
+include $(top_srcdir)/Makefile-shared-lib-inst.inc
+
 SHAREDLIBADD =
 
 noinst_LIBRARIES = libowclient.a
 
 OW_SHARED_LIBS = libowclient.so
+
 thelibdir = $(libdir)
-
-all-local: $(OW_SHARED_LIBS)
-
-install-exec-local:
-	@INSTALL@ -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-	done
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
-
 
 libowclient_a_SOURCES =	\
 OW_CIMOMLocator.cpp \

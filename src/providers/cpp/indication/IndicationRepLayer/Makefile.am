@@ -1,26 +1,12 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
+include $(top_srcdir)/Makefile-shared-lib-inst.inc
 
 noinst_LIBRARIES = libowprovindIndicationRepLayer.a 
 SHAREDLIBADD =
 
 thelibdir = $(pkglibdir)/c++providers
 
-install-exec-local:
-	@INSTALL@ -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-	done
-
 OW_SHARED_LIBS = libowprovindIndicationRepLayer.so
-
-all-local: $(OW_SHARED_LIBS)
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
 
 libowprovindIndicationRepLayer_a_SOURCES = \
 OW_provindIndicationRepLayer.cpp

@@ -1,5 +1,6 @@
 SUBDIRS = perlProvider
 include $(top_srcdir)/Makefile-shared-lib.inc
+include $(top_srcdir)/Makefile-shared-lib-inst.inc
 
 noinst_LIBRARIES = libperlprovifc.a
 OW_SHARED_LIBS = libperlprovifc.so
@@ -8,20 +9,6 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/wql/common -lowwqlcommon 
 
 thelibdir = $(pkglibdir)/provifcs
-
-all-local: $(OW_SHARED_LIBS)
-
-install-exec-local:
-	@INSTALL@ -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-	done
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_S=

@@ -1,5 +1,32 @@
+dist-hook:
+	mkdir $(distdir)/perlNPI
+	cp $(srcdir)/perlNPI/{Changes,MANIFEST,Makefile.PL,README.1ST,perlNPI.pm,perlNPI.xs,test.pl,typemap} $(distdir)/perlNPI
+
+
 if HAVE_PERL_EMBED
-include $(top_srcdir)/Makefile-shared-lib.inc
+#include $(top_srcdir)/Makefile-shared-lib.inc
+
+# contents of Makefile-shared-lib.inc slightly modified for this special dir.
+SO_EXT = $(OPENWBEM_VERSION)
+SOFILENAME = $@.$(SO_EXT)
+TMPLIBDIR = .$@.libs
+
+
+#.a.so:
+#$(LIBNAME).so : $(LIBNAME).a
+
+%.so : %.a
+	rm -rf $(TMPLIBDIR)
+	mkdir $(TMPLIBDIR)
+	cd $(TMPLIBDIR) && \
+	$(AR) x ../$< 
+	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	rm -rf $@ $(TMPLIBDIR)
+	ln -s $(SOFILENAME) $@
+	chmod +x $(SOFILENAME)
+
+all-local: $(OW_SHARED_LIBS)
+
 
 noinst_LIBRARIES = libperlProvider.a
 OW_SHARED_LIBS = libperlProvider.so
@@ -15,7 +42,8 @@ all-local: perlNPI.marker $(OW_SHARED_LIBS)
 
 perlNPI.marker:
 	touch perlNPI.marker
-	if test -e perlNPI; then true; else cp -a $(top_srcdir)/src/providerifcs/perl/perlProvider/perlNPI $(top_builddir)/src/providerifcs/perl/perlProvider; fi
+	if test -e $(top_builddir)/src/providerifcs/perl/perlProvider/perlNPI; then true; else cp -a $(top_srcdir)/src/providerifcs/perl/perlProvider/perlNPI $(top_builddir)/src/providerifcs/perl/perlProvider; fi
+	chmod -R +w perlNPI
 	if test -e perlNPI/Makefile; then make -C perlNPI clean;fi
 	cd perlNPI;$(PERL) Makefile.PL;cd ..
 	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI

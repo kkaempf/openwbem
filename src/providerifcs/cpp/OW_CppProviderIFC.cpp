@@ -535,7 +535,7 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		iTimeWindow = timeWindow.toInt32();
 	}
-    catch (const OW_StringConversionException&)
+	catch (const OW_StringConversionException&)
 	{
 		iTimeWindow = OW_String(OW_DEFAULT_CPPIFC_PROV_TTL).toInt32();
 	}

@@ -11,6 +11,7 @@ ProviderInterface.HOWTO \
 LICENSE \
 ow_ar.sh \
 Makefile-shared-lib.inc \
+Makefile-shared-lib-inst.inc \
 openwbem.spec \
 openwbem-faq.html
 
