@@ -92,6 +92,10 @@ public:
 	{
 		return &*m_obj;
 	}
+	T get() const
+	{
+		return m_obj;
+	}
 	
 	typedef T SharedLibraryReference::*safe_bool;
 	operator safe_bool () const
