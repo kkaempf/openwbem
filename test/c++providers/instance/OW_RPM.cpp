@@ -166,8 +166,34 @@ public:
 		const OW_CIMClass& /*requestedClass*/,
 		const OW_CIMClass& cimClass )
 	{
-		InstanceCreator handler(result, cimClass);
-		enumInstanceNames(env, ns, className, handler, cimClass );
+		OW_String cmd = "/usr/bin/apt-cache search .*";
+		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+
+		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+
+		sort(lines.begin(), lines.end());
+
+		if (pos.getExitStatus() != 0)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
+		}
+
+
+		OW_CIMInstanceArray insts;
+		for (OW_StringArray::const_iterator iter = lines.begin();
+			iter != lines.end(); ++iter)
+		{
+			OW_CIMObjectPath newCop(className, ns);
+			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
+			OW_CIMInstance rval = cimClass.newInstance();
+			rval.setProperties(newCop.getKeys());
+			insts.push_back(rval);
+		}
+		processPkgs(insts);
+		for (size_t i = 0; i < insts.size(); ++i)
+		{
+			result.handle(insts[i]);
+		}
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -312,7 +338,7 @@ public:
 		inst.getProperty("Name").getValue().get(name);
 
 		// get package details
-		OW_String cmd = "/usr/bin/apt-cache show ";
+		OW_String cmd = "/usr/bin/apt-cache --no-a show ";
 		cmd += name;
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 
@@ -424,6 +450,143 @@ public:
 
 		return OW_Bool(true);
 	}
+
+		/**
+	 * Fill in the information on a package
+	 *
+	 * @param inst The instance to fill out.  Note that the keys
+	 *             must already be present before passing it in.
+	 *
+	 * @return True if successful, false if not (like the instance doesn't
+	 *         exist)
+	 */
+	static OW_Bool
+		processPkgs(OW_CIMInstanceArray& insts)
+	{
+		OW_String cmd = "/usr/bin/apt-cache --no-a show ";
+		for (size_t i = 0; i < insts.size(); ++i)
+		{
+			OW_String name;
+			insts[i].getPropertyT("Name").getValueT().get(name);
+
+			// get package details
+			cmd += name;
+			cmd += " ";
+		}
+		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+
+		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+		if (pos.getExitStatus() != 0)
+		{
+			return OW_Bool(false);
+		}
+		
+		size_t curInst = size_t(-1);
+
+		OW_String curName, value;
+		for (OW_StringArray::const_iterator iter = lines.begin();
+			iter != lines.end(); ++iter)
+		{
+			if ((*iter)[0] == ' ')
+			{
+				if (curName.length())
+				{
+					value += (*iter);
+				}
+				else
+				{
+					continue;
+				}
+			}
+			else
+			{
+				size_t idx = iter->indexOf(':');
+				curName = iter->substring(0, idx);
+				value = iter->substring(idx + 1);
+				value.trim();
+			}
+
+			if (curName.equals("Package"))
+			{
+				++curInst;
+
+				// apt-cache may skip a package or two, so just skip ahead to the current one.
+				while (curInst < insts.size() && insts[curInst].getProperty("Name").getValue().toString() != value)
+					curInst++;
+
+				if (curInst >= insts.size())
+					return false; // we've gone past the end.  Something is horribly wrong :-(
+
+				// determine if package is installed.
+				cmd = _pkgHandler + value;
+				if (OW_Exec::safeSystem(cmd.tokenize()) == 0)
+				{
+					insts[curInst].setProperty("Status", OW_CIMValue(OW_String("Installed")));
+				}
+				else
+				{
+					insts[curInst].setProperty("Status", OW_CIMValue(OW_String("Available")));
+				}
+
+			}
+
+			OW_CIMInstance& inst = insts[curInst];
+
+
+			if (curName.equals("Depends")
+				|| curName.equals("Depends")
+				|| curName.equals("Suggests")
+				|| curName.equals("Provides")
+				|| curName.equals("Conflicts")
+				|| curName.equals("Recommends"))
+			{
+				inst.setProperty(curName, OW_CIMValue(value.tokenize(",")));
+			}
+
+			else if (curName.equals("Size")
+				|| curName.equals("Installed-Size")
+				|| curName.equals("Installed Size"))
+			{
+				if (!curName.equals("Size"))
+				{
+					curName = "Installed_Size";
+				}
+				try
+				{
+					inst.setProperty(curName, OW_CIMValue(value.toUInt32()));
+				}
+				catch (const OW_StringConversionException& e)
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output");
+				}
+			}
+
+			else if (curName.equals("Name")
+				|| curName.equals("Version")
+				|| curName.equals("Architecture")
+				|| curName.equals("Section")
+				|| curName.equals("MD5sum")
+				|| curName.equals("Maintainer")
+				|| curName.equals("Description")
+				|| curName.equals("Priority")
+				|| curName.equals("Filename")
+				|| curName.equals("Status")
+				|| curName.equals("Caption")
+				)
+			{
+				inst.setProperty(curName, OW_CIMValue(value));
+			}
+			else
+			{
+				curName = "";
+				continue;
+			}
+
+		}
+
+		return OW_Bool(true);
+	}
+
 };
 
 OW_String RPMIP::_pkgHandler;
