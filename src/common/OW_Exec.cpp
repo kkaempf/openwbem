@@ -209,6 +209,12 @@ int OW_PopenStreamsImpl::getExitStatus()
 OW_PopenStreamsImpl::~OW_PopenStreamsImpl()
 {
 	// prevent zombie children
+	::kill(pid(), SIGTERM);
+	in()->close();
+	out()->readAll();
+	out()->close();
+	err()->readAll();
+	err()->close();
 	getExitStatus();
 }
 
