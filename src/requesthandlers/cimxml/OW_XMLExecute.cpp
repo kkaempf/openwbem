@@ -1428,6 +1428,7 @@ void
 XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 {
 	setEnvironment(env);
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	LoggerRef logger(env->getLogger(COMPONENT_NAME));
 	// Create the interop instance of CIM_CIMXMLCommunicationMechanism.
 	// There are no properties in it which are dynamic, just it's existence is.
@@ -1539,6 +1540,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 		// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
 		OW_LOG_DEBUG(logger, Format("Failed creating CIM_CIMXMLCommunicationMechanism: %1", e));
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	
 }
 
@@ -1546,6 +1548,7 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 void
 XMLExecute::shutdown()
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	if (m_commMechPath)
 	{
 		// clean up the instance of CIM_CIMXMLCommunicationMechanism we created in init()
@@ -1567,6 +1570,7 @@ XMLExecute::shutdown()
 			OW_LOG_DEBUG(logger, Format("Failed deleting CIM_CIMXMLCommunicationMechanism: %1", e));
 		}
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	// clear the reference to the environment
 	setEnvironment(ServiceEnvironmentIFCRef());
