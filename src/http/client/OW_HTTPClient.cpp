@@ -417,7 +417,7 @@ void HTTPClient::sendAuthorization()
 HTTPClient::EStatusLineSummary
 HTTPClient::checkAndExamineStatusLine()
 {
-	// If there's some input, we need to read the header. If we got anything 
+	// If there's some input, we need to read the header. If we got anything
 	// besides a 100 or 2xx, we need to stop sending!
 	// It's a pretty safe assumption that if the server sent us anything not
 	// in response, but just out of the blue, it's terminating the connection
@@ -555,8 +555,8 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 		// test deflate stuff
 		HTTPChunkedOStream chunkostr(m_ostr);
 		HTTPDeflateOStream deflateostr(chunkostr);
-		deflateostr << tfs->rdbuf();
-//		copyStreams(deflateostr, *tfs);
+//		deflateostr << tfs->rdbuf();
+		copyStreams(deflateostr, *tfs);
 		deflateostr.termOutput();
 		chunkostr.termOutput();
 		// end deflate test stuff
@@ -567,8 +567,8 @@ void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	}
 	else
 	{
-		m_ostr << tfs->rdbuf() << flush;
-//		copyStreams(m_ostr, *tfs);
+//		m_ostr << tfs->rdbuf() << flush;
+		copyStreams(m_ostr, *tfs);
 		m_ostr.flush();
 	}
 	m_requestHeadersNew.clear();
