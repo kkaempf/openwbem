@@ -468,7 +468,6 @@ public:
 	 */
 	void get(OW_CIMInstanceArray& x) const;
 
-	// TODO: Have these functions call ValueCast?
 	OW_CIMObjectPath toCIMObjectPath() const;
 	OW_StringArray toStringArray() const;
 	OW_Bool toBool() const;
