@@ -134,8 +134,8 @@ OW_XMLNode
 OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const OW_String& methodName,
 												const OW_CIMObjectPath& path)
 {
-	istream& istr = m_protocol->endRequest(ostrRef, methodName,
-											 path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
+		ostrRef, methodName, path.getNameSpace());
 	// Debug stuff
 	/*
 	OW_TempFileStream buf;
@@ -147,79 +147,67 @@ OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const O
 	OW_XMLParser parser(&buf);
 	*/
 	// end debug stuff
-	OW_XMLParser parser(&istr);
+	OW_XMLParser parser(istr.getPtr());
 
 	OW_XMLNode retval;
 	try
 	{
 		retval = parser.parse();
+		OW_HTTPUtils::eatEntity(*istr);
 	}
 	catch (OW_XMLException& xmlE)
 	{
-		OW_HTTPUtils::eatEntity(istr);
-		OW_HTTPChunkedIStream* chunkIstr = NULL;
-#ifdef OW_HAVE_ZLIB_H
-		OW_HTTPDeflateIStream* deflateistr = dynamic_cast<OW_HTTPDeflateIStream*>(&istr);
-		if (deflateistr)
+		OW_HTTPUtils::eatEntity(*istr);
+		if (istr->getError().length() == 0)
 		{
-			chunkIstr = dynamic_cast<OW_HTTPChunkedIStream*>
-				(&deflateistr->getInputStreamOrig());
+			throw xmlE;
 		}
-		else
-#endif
+	}
+	OW_String errorStr = istr->getError();
+	if (errorStr.length() > 0)
+	{
+		// The trailer is escaped, so first unescape it
+		OW_TempFileStream error(500);
+		for (size_t i = 0; i < errorStr.length(); ++i)
 		{
-			chunkIstr = dynamic_cast<OW_HTTPChunkedIStream*>(&istr);
-		}
-		if (chunkIstr)
-		{
-			OW_Map<OW_String, OW_String> trailers = chunkIstr->getTrailers();
-			if (trailers.size() == 1)
+			switch (errorStr[i])
 			{
-				// The trailer is escaped, so first unescape it
-				OW_TempFileStream error(500);
-				OW_String trailer = trailers.begin()->second;
-				for (size_t i = 0; i < trailer.length(); ++i)
-				{
-					switch (trailer[i])
+				case '\\':
+					if (i + 1 == errorStr.length())
 					{
-						case '\\':
-							if (i + 1 == trailer.length())
-							{
-								// last char was '\\'
-								OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid Trailer");
-							}
-							switch (trailer[i + 1])
-							{
-								case '0':
-									error << '\0';
-									break;
-								case 'n':
-									error << '\n';
-									break;
-								case 'r':
-									error << '\r';
-									break;
-								case '\\':
-									error << '\\';
-									break;
-								default:
-									OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid escape in trailer");
-							}
-							break;
-
-						default:
-							error << trailer[i];
-							break;
+						// last char was '\\'
+						OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid Trailer");
 					}
-				}
+					switch (errorStr[i + 1])
+					{
+						case '0':
+							error << '\0';
+							break;
+						case 'n':
+							error << '\n';
+							break;
+						case 'r':
+							error << '\r';
+							break;
+						case '\\':
+							error << '\\';
+							break;
+						default:
+							OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid escape in trailer");
+					}
+					break;
 
-				//error << trailers.begin()->second;
-				OW_XMLParser errorParser(&error);
-				OW_XMLNode errNode = errorParser.parse();
-			  	return checkNodeForCIMError(errNode, methodName);
-				// TODO this needs to be more robust.
+				default:
+					error << errorStr[i];
+					break;
 			}
 		}
+
+		//error << trailers.begin()->second;
+		OW_XMLParser errorParser(&error);
+		OW_XMLNode errNode = errorParser.parse();
+		return checkNodeForCIMError(errNode, methodName);
+		// TODO this needs to be more robust.
 	}
 	return checkNodeForCIMError(retval, methodName);
 }

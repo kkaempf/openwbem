@@ -71,7 +71,8 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		 * @exception OW_SocketException
 		 *
 		 */
-		virtual std::istream& endRequest(OW_Reference<std::iostream> request,
+		virtual OW_Reference<OW_CIMProtocolIStreamIFC> 
+			endRequest(OW_Reference<std::iostream> request,
 				const OW_String& methodName, const OW_String& nameSpace);
 
 		/**
@@ -129,7 +130,7 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		OW_HTTPHeaderMap m_responseHeaders;
 		OW_Array<OW_String> m_requestHeadersCommon;
 		OW_Array<OW_String> m_requestHeadersNew;
-		std::istream* m_pIstrReturn;
+		OW_Reference<OW_CIMProtocolIStreamIFC> m_pIstrReturn;
 		mutable OW_Socket m_socket;
 		OW_String m_requestMethod;
 		bool m_authRequired;
@@ -160,7 +161,7 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 			const OW_String& prot);
 		Resp_t processHeaders(OW_String& statusLine);
 
-		std::istream* convertToFiniteStream();
+		OW_Reference<OW_CIMProtocolIStreamIFC> convertToFiniteStream();
 		void prepareForRetry();
 
 		void handleAuth(); // process authorization

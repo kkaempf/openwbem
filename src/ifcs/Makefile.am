@@ -8,6 +8,7 @@ pkginclude_HEADERS = \
 OW_AuthenticatorIFC.hpp \
 OW_CIMOMHandleIFC.hpp \
 OW_CIMProtocolIFC.hpp \
+OW_CIMProtocolIStreamIFC.hpp \
 OW_IOIFC.hpp \
 OW_RequestHandlerIFC.hpp \
 OW_SelectableCallbackIFC.hpp \
@@ -19,3 +20,5 @@ OW_WQLIFC.hpp
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/cim
+
+

@@ -42,7 +42,7 @@
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
 #include "OW_AutoPtr.hpp"
-#include <iostream>
+#include "OW_CIMProtocolIStreamIFC.hpp"
 
 
 class OW_HTTPChunkedIStream;
@@ -81,7 +81,7 @@ public:
 };
 
 class OW_HTTPChunkedIStream : private OW_HTTPChunkedIStreamBase, 
-	public std::istream
+	public OW_CIMProtocolIStreamIFC
 {
 	public:
 		/**
@@ -110,6 +110,8 @@ class OW_HTTPChunkedIStream : private OW_HTTPChunkedIStreamBase,
 		 * Clear the EOF/BAD bits, so that input can continue.
 		 */
 		void resetInput();
+
+		virtual OW_String getError() const;
 
 	private:
 

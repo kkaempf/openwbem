@@ -34,16 +34,10 @@
 #define _OW_HTTPDEFLATEISTREAM_HPP__
 
 #include "OW_config.h"
+#include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
 
-#if defined(OW_HAVE_ISTREAM)
-#include <istream>
-#elif defined(OW_HAVE_ISTREAM_H)
-#include <istream.h>
-#else
-#include <iostream.h>
-#endif
 
 extern "C"
 {
@@ -81,7 +75,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_HTTPDeflateIStream : private OW_HTTPDeflateIStreamBase, 
-	public std::istream
+	public OW_CIMProtocolIStreamIFC
 {
 public:
 	/**
@@ -90,15 +84,17 @@ public:
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	OW_HTTPDeflateIStream(std::istream& istr);
+	OW_HTTPDeflateIStream(OW_Reference<OW_CIMProtocolIStreamIFC> istr);
 
 	/**
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	std::istream& getInputStreamOrig() { return m_istr; };
+	OW_Reference<OW_CIMProtocolIStreamIFC> getInputStreamOrig() { return m_istr; };
+
+	virtual OW_String getError() const { return m_istr->getError(); }
 private:
-	std::istream& m_istr;
+	OW_Reference<OW_CIMProtocolIStreamIFC> m_istr;
 
 	// don't allow copying and assigning
 	OW_HTTPDeflateIStream(const OW_HTTPDeflateIStream&);

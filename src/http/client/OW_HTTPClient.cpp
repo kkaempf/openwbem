@@ -59,7 +59,7 @@ OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
 	, m_serverAddress()
 	, m_url(sURL)
 	, m_responseHeaders(), m_requestHeadersCommon()
-	, m_requestHeadersNew(), m_pIstrReturn(NULL)
+	, m_requestHeadersNew(), m_pIstrReturn(0)
 	, m_socket(m_url.protocol.equalsIgnoreCase("https"))
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_needsConnect(true)
@@ -86,22 +86,8 @@ OW_HTTPClient::cleanUpIStreams()
 	// if there remains bytes from last response, eat them.
 	if (m_pIstrReturn)
 	{
-#ifdef OW_HAVE_ZLIB_H
-		OW_HTTPDeflateIStream* deflateistr =
-			dynamic_cast<OW_HTTPDeflateIStream*>(m_pIstrReturn);
-		if (deflateistr)
-		{
-			m_pIstrReturn = &deflateistr->getInputStreamOrig();
-			delete deflateistr;
-		}
-#endif // #ifdef OW_HAVE_ZLIB_H
-		if (dynamic_cast<OW_HTTPChunkedIStream*>(m_pIstrReturn)
-			 || dynamic_cast<OW_HTTPLenLimitIStream*>(m_pIstrReturn))
-		{
-			OW_HTTPUtils::eatEntity(*m_pIstrReturn);
-			delete m_pIstrReturn;
-			m_pIstrReturn = NULL;
-		}
+		OW_HTTPUtils::eatEntity(*m_pIstrReturn);
+		m_pIstrReturn = 0;
 	}
 
 }
@@ -374,7 +360,7 @@ OW_HTTPClient::beginRequest(const OW_String& methodName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-istream&
+OW_Reference<OW_CIMProtocolIStreamIFC>
 OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& methodName,
 			const OW_String& nameSpace)
 {
@@ -426,7 +412,7 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 
 	m_pIstrReturn = convertToFiniteStream();
 	OW_ASSERT(m_pIstrReturn);
-	return *m_pIstrReturn;
+	return m_pIstrReturn;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -538,11 +524,10 @@ OW_HTTPClient::getFeatures()
 void
 OW_HTTPClient::prepareForRetry()
 {
-	istream* tmpIstr = convertToFiniteStream();
+	OW_Reference<OW_CIMProtocolIStreamIFC> tmpIstr = convertToFiniteStream();
 	if (tmpIstr)
 	{
 		OW_HTTPUtils::eatEntity(*tmpIstr);
-		delete tmpIstr;
 	}
 }
 
@@ -675,10 +660,10 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-istream*
+OW_Reference<OW_CIMProtocolIStreamIFC>
 OW_HTTPClient::convertToFiniteStream()
 {
-	istream* rval = NULL;
+	OW_Reference<OW_CIMProtocolIStreamIFC> rval(0);
 	if (getHeaderValue("Transfer-Encoding").equalsIgnoreCase("chunked"))
 	{
 		rval = new OW_HTTPChunkedIStream(m_istr);
@@ -691,7 +676,7 @@ OW_HTTPClient::convertToFiniteStream()
 	if (getHeaderValue("Content-Encoding").equalsIgnoreCase("deflate"))
 	{
 #ifdef OW_HAVE_ZLIB_H
-		rval = new OW_HTTPDeflateIStream(*rval);
+		rval = new OW_HTTPDeflateIStream(rval);
 #else
 		OW_THROW(OW_HTTPException, "Response is deflated but we're not "
 			"compiled with zlib!");

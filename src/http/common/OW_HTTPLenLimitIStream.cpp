@@ -96,7 +96,7 @@ OW_HTTPLenLimitIStream::resetLen(OW_Int64 len)
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPLenLimitIStream::OW_HTTPLenLimitIStream(istream& istr, OW_Int64 len)
 	: OW_HTTPLenLimitIStreamBase(istr, len)
-	, istream(&m_strbuf)
+	, OW_CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 {
 }

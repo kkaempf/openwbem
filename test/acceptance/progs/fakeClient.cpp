@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
 			hc.setContentType("application/xml");
 			OW_Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
 			*tfsOut << infile.rdbuf();
-			istream& istr = hc.endRequest(tfsOut, "CIMBatch", "");
-			cout << istr.rdbuf() << endl;
+			OW_CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "");
+			cout << istr->rdbuf() << endl;
 		}
 		else
 		{

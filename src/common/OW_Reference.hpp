@@ -291,10 +291,9 @@ void OW_Reference<T>::checkNull() const
 {
 	if (this == 0 || isNull())
 	{
-		//OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
-
-		throw OW_Exception(__BASE_FILE__, __LINE__,
-			"NULL OW_Reference dereferenced");
+		OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
+		//throw OW_Exception(__FILE__, __LINE__,
+			//"NULL OW_Reference dereferenced");
 	}
 }
 #endif

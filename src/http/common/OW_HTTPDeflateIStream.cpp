@@ -127,9 +127,10 @@ OW_HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPDeflateIStream::OW_HTTPDeflateIStream(istream& istr)
-	: OW_HTTPDeflateIStreamBase(istr)
-	, istream(&m_strbuf)
+OW_HTTPDeflateIStream::OW_HTTPDeflateIStream(
+			OW_Reference<OW_CIMProtocolIStreamIFC> istr)
+	: OW_HTTPDeflateIStreamBase(*istr)
+	, OW_CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 {
 }

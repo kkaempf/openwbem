@@ -119,7 +119,7 @@ OW_HTTPChunkedIStreamBuffer::resetInput()
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPChunkedIStream::OW_HTTPChunkedIStream(istream& istr) 
 	: OW_HTTPChunkedIStreamBase(istr, this)
-	, istream(&m_strbuf)
+	, OW_CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 	, m_trailerMap()
 {
@@ -151,4 +151,19 @@ OW_HTTPChunkedIStream::buildTrailerMap()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+
+OW_String 
+OW_HTTPChunkedIStream::getError() const
+{
+	OW_Map<OW_String, OW_String> trailers = getTrailers();
+	for (OW_Map<OW_String, OW_String>::const_iterator iter = trailers.begin();
+		  iter != trailers.end(); ++iter)
+	{
+		if (iter->first.substring(3).equalsIgnoreCase("CIM-Error"))
+		{
+			return iter->second;
+		}
+	}
+	return OW_String("");
+}
 

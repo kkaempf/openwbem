@@ -615,7 +615,7 @@ private:
 	void enumNameSpaceAux(const OW_CIMObjectPath& path, OW_StringArray& rval,
 		OW_Bool deep);
 
-	void checkError(std::istream& istrm);	
+	void checkError(OW_Reference<std::istream> istrm);	
 	OW_CIMProtocolIFCRef m_protocol;
 };
 

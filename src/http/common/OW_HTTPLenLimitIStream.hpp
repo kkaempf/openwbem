@@ -42,8 +42,8 @@
 #include "OW_Types.h"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_CIMProtocolIStreamIFC.hpp"
 
-#include <iostream>
 
 
 class OW_HTTPLengthLimitStreamBuffer : public OW_BaseStreamBuffer
@@ -92,7 +92,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_HTTPLenLimitIStream : private OW_HTTPLenLimitIStreamBase,
-	public std::istream
+	public OW_CIMProtocolIStreamIFC
 {
 public:
 	/**

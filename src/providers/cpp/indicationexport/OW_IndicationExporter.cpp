@@ -95,7 +95,7 @@ OW_XMLNode
 OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_String& methodName,
 		const OW_CIMObjectPath& path)
 {
-	istream& istr = m_protocol->endRequest(ostr, methodName,
+	OW_CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
 		path.getNameSpace());
 
 	// Debug stuff
@@ -110,7 +110,7 @@ OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_Strin
 	*/
 	// end debug stuff
 
-	OW_XMLParser parser(&istr);
+	OW_XMLParser parser(istr.getPtr());
 
 	OW_XMLNode retval = parser.parse();
 	return checkNodeForCIMError(retval, methodName);

@@ -41,6 +41,7 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
+#include "OW_CIMProtocolIStreamIFC.hpp"
 #include <iosfwd>
 #include <fstream>
 
@@ -177,7 +178,7 @@ private:
 	int processRequestLine();
 	int processHeaders();
 	void trace();
-	void options(std::istream& istr);
+	void options();
 	void post(std::istream& istr);
 	void sendError(int resCode);
 	void beginPostResponse();
@@ -186,8 +187,9 @@ private:
 		OW_DataBlockStream& ostrError);
 	int performAuthentication(const OW_String& info);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(std::istream*& istrm);
-	std::istream* convertToFiniteStream(std::istream& istr);
+	void cleanUpIStreams(OW_Reference<OW_CIMProtocolIStreamIFC> istrm);
+	OW_Reference<OW_CIMProtocolIStreamIFC> convertToFiniteStream(
+			std::istream& istr);
 };
 
 #endif	// _OW_HTTPSVRCONNECTION_HPP__

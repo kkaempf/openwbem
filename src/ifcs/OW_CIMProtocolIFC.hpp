@@ -37,6 +37,7 @@
 #include "OW_Reference.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_CIMProtocolIStreamIFC.hpp"
 #include <iosfwd>
 
 DEFINE_EXCEPTION(CIMProtocol);
@@ -63,7 +64,8 @@ public:
 	 * @exception OW_SocketException
 	 *
 	 */
-	virtual std::istream& endRequest(OW_Reference<std::iostream> request,
+	virtual OW_Reference<OW_CIMProtocolIStreamIFC> endRequest(
+		OW_Reference<std::iostream> request,
 			const OW_String& methodName, const OW_String& nameSpace) = 0;
 
 

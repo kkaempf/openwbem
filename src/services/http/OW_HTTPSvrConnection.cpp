@@ -115,7 +115,7 @@ OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 void
 OW_HTTPSvrConnection::run()
 {
-	istream* istrToReadFrom = NULL;
+	OW_Reference<OW_CIMProtocolIStreamIFC> istrToReadFrom(0);
 	OW_SelectTypeArray selArray;
 
 	selArray.push_back(m_upipe->getSelectObj());
@@ -227,10 +227,15 @@ OW_HTTPSvrConnection::run()
 					break;
 				case M_POST:
 				case POST:
+					if (istrToReadFrom.isNull())
+					{
+						OW_THROW(OW_HTTPException, 
+							"POST, but no content-length or chunking");
+					}
 					post(*istrToReadFrom);
 					break;
 				case OPTIONS:
-					options(*istrToReadFrom);
+					options();
 					break;
 				default:
 					// should never happen.
@@ -287,28 +292,11 @@ OW_HTTPSvrConnection::run()
 }
 
 void
-OW_HTTPSvrConnection::cleanUpIStreams(istream*& istrm)
+OW_HTTPSvrConnection::cleanUpIStreams(OW_Reference<OW_CIMProtocolIStreamIFC> istr)
 {
-	if(istrm != NULL)
+	if (!istr.isNull())
 	{
-#ifdef OW_HAVE_ZLIB_H
-		OW_HTTPDeflateIStream* deflateistr = dynamic_cast<
-			OW_HTTPDeflateIStream*>(istrm);
-		if (deflateistr)
-		{
-			istrm = &deflateistr->getInputStreamOrig();
-			delete deflateistr;
-		}
-#endif // #ifdef OW_HAVE_ZLIB_H
-	
-		// move past entity in case method handler did not.
-		if (dynamic_cast<OW_HTTPLenLimitIStream*>(istrm)
-			|| dynamic_cast<OW_HTTPChunkedIStream*>(istrm) )
-		{
-			OW_HTTPUtils::eatEntity(*istrm);
-			delete istrm;
-			istrm = NULL;
-		}
+		OW_HTTPUtils::eatEntity(*istr);
 	}
 }
 
@@ -762,7 +750,12 @@ OW_HTTPSvrConnection::processHeaders()
 
 	if (getHeaderValue("TE").indexOf("trailers") >= 0)
 	{
-		m_chunkedOut = true;
+		// Trailers not standardized yet, so only do it we're talking to 
+		// ourselves. 
+		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) >= 0)
+		{
+			m_chunkedOut = true;
+		}
 	}
 
 //
@@ -1050,10 +1043,9 @@ OW_HTTPSvrConnection::post(istream& istr)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::options(istream& istr)
+OW_HTTPSvrConnection::options()
 {
 
-	(void)istr; // don't do entities at this time.
 	addHeader("Allow","POST, M-POST, OPTIONS, TRACE");
 	OW_String hp = OW_HTTPUtils::getCounterStr();
 	OW_CIMFeatures cf;
@@ -1235,10 +1227,10 @@ OW_HTTPSvrConnection::getHostName()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-istream*
+OW_Reference<OW_CIMProtocolIStreamIFC>
 OW_HTTPSvrConnection::convertToFiniteStream(istream& istr)
 {
-	istream* rval = 0;
+	OW_Reference<OW_CIMProtocolIStreamIFC> rval(0);
 	if (m_chunkedIn)
 	{
 		rval = new OW_HTTPChunkedIStream(istr);
@@ -1249,13 +1241,13 @@ OW_HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	}
 	else
 	{
-		rval = &istr;
+		return rval;
 	}
 
 	if (m_deflateCompressionIn)
 	{
 #ifdef OW_HAVE_ZLIB_H
-		rval = new OW_HTTPDeflateIStream(*rval);
+		rval = new OW_HTTPDeflateIStream(rval);
 #else
 		OW_THROW(OW_HTTPException, "Attempting to deflate request, but "
 				"we're not linked with zlib!  (shouldn't happen)");

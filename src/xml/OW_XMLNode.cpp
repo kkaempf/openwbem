@@ -44,7 +44,7 @@
 
 // It would appear that this needs to be sorted alphabetically,
 // although dan didn't put any such comment here.  :)
-OW_XMLNode::ElemEntry OW_XMLNode::g_elems[63] =
+OW_XMLNode::ElemEntry OW_XMLNode::g_elems[62] =
 {
 	{ "CIM", OW_XMLNode::XML_ELEMENT_CIM },
 	{ "CLASS", OW_XMLNode::XML_ELEMENT_CLASS },

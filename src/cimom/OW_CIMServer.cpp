@@ -1894,6 +1894,7 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 
 		return m_nsClass__Namespace;
 	}
+	/*
 	else if (className.equalsIgnoreCase("CIM_Namespace"))
 	{
 		if (!m_nsClassCIM_Namespace)
@@ -1903,6 +1904,7 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 		}
 		return m_nsClassCIM_Namespace;
 	}
+	*/
 	else
 	{
 		return OW_CIMClass();
