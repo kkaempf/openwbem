@@ -207,7 +207,7 @@ int PopenStreamsImpl::getExitStatus()
 					{
 						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						OW_THROW(ExecErrorException, Format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 					}
 					// give the kernel 1 sec to clean it up, otherwise we bail.
 					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
@@ -218,7 +218,7 @@ int PopenStreamsImpl::getExitStatus()
 					}
 					if (waitpidrv == 0)
 					{
-						OW_THROW(ExecErrorException, Format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
 					}
 				}
 				else if (waitpidrv > 0)
@@ -234,7 +234,7 @@ int PopenStreamsImpl::getExitStatus()
 			{
 				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				OW_THROW(ExecErrorException, Format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 			}
 		}
 		else if (waitpidrv > 0)
@@ -408,16 +408,16 @@ safePopen(const Array<String>& command,
 	{
 		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
 		{
-			OW_THROW(IOException, "Failed writing input to process");
+			OW_THROW(IOException, "Platform::safePopen: Failed writing input to process");
 		}
 	}
 	if (command.size() == 0)
 	{
-		OW_THROW(ExecErrorException, "command is empty");
+		OW_THROW(ExecErrorException, "Platform::safePopen: command is empty");
 	}
 	retval.pid ( fork() );
 	if (retval.pid() == -1)
-		OW_THROW(ExecErrorException, "fork() failed");
+		OW_THROW(ExecErrorException, "Platform::safePopen: fork() failed");
 	if (retval.pid() == 0)
 	{
 		// Close stdin, stdout, and stderr.
@@ -545,7 +545,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 				break;
 			case Select::SELECT_ERROR:
 			{
-				OW_THROW(ExecErrorException, Format("error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, Format("Exec::gatherOutput: error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
 			}
 			break;
 			case Select::SELECT_TIMEOUT:
@@ -562,7 +562,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					++cumulative_timeout;
 					if (timeoutsecs >= 0 && cumulative_timeout >= (timeoutsecs * 10))
 					{
-						OW_THROW(ExecTimeoutException, "timedout");
+						OW_THROW(ExecTimeoutException, "Exec::gatherOutput: timedout");
 					}
 				}
 			}
@@ -593,7 +593,7 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					}
 					else if (readrc == -1)
 					{
-						OW_THROW(ExecErrorException, Format("Error reading stdout from lwcclient: %1(%2)", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, Format("Exec::gatherOutput: read error: %1(%2)", errno, strerror(errno)).c_str());
 					}
 					else
 					{
