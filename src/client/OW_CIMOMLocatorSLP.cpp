@@ -167,7 +167,8 @@ CIMOMLocatorSLP::~CIMOMLocatorSLP()
 {
 	SLPClose(m_hslp);
 }
-#endif // OW_HAVE_SLP_H
 
 } // end namespace OpenWBEM
+
+#endif // OW_HAVE_SLP_H
 
