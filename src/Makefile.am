@@ -48,6 +48,7 @@ $(MOFDIR) \
 tools
 
 # Everything below here belongs to the creation of a static cimom.
+if OW_STATIC_LINKING
 
 install-exec-local : install-ow-static-lib install-ow-static-cimomd
 
@@ -162,4 +163,4 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 
 clean-local:
 	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
-
+endif
