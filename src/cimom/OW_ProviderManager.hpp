@@ -42,7 +42,6 @@
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_Mutex.hpp"
-#include "OW_InternalProviderIFC.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_HashMultiMap.hpp"
 
@@ -64,19 +63,6 @@ public:
 	 * 	OW_ProviderIFCBaseIFC classes.
 	 */
 	void load(const OW_ProviderIFCLoaderRef& ifcLoader);
-
-	/**
-	 * Make a cimom provider available to the provider manager.
-	 * A cimom provider is simply a provider that is provided by the cimom
-	 * itself (i.e. not loaded from a shared library).
-	 * @param providerName	The name this provider will be identified as.
-	 * @param pProv	A pointer to a dynamically allocated provider. This
-	 * provider will be deleted by the provider manager when it is no longer
-	 * needed.
-	 */
-	void addCIMOMProvider(const OW_String& providerName, const OW_CppProviderBaseIFCRef& pProv);
-
-	void addCIMOMProvider(const OW_CppProviderBaseIFCRef& pProv);
 
 	/**
 	 * Initialize the provider interfaces and providers.  This is called after
@@ -180,10 +166,6 @@ private:
 		OW_String& provStr) const;
 
 	OW_Array<OW_ProviderIFCBaseIFCRef> m_IFCArray;
-
-	// also stored in m_IFCArray.  We keep this here so we can call
-	// addCIMOMProvider()
-	OW_InternalProviderIFCRef m_internalIFC;
 
 	OW_Mutex m_guard;
 

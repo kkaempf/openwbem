@@ -51,8 +51,6 @@
 #include "OW_Platform.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_SharedLibraryRepository.hpp"
-#include "OW_UnloaderProvider.hpp"
-#include "OW_NameSpaceProvider.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
 
 #include <fstream>
@@ -279,15 +277,6 @@ OW_CIMOMEnvironment::startServices()
 		m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
 		m_providerManager->load(OW_ProviderIFCLoader::createProviderIFCLoader(
 			g_cimomEnvironment));
-
-		// Add the unloader provider to the provider manager
-		m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
-			OW_SharedLibraryRef(), new OW_UnloaderProvider(g_cimomEnvironment)));
-
-		// Add the name space provider to the provider manager
-		m_providerManager->addCIMOMProvider(OW_CIMServer::NAMESPACE_PROVIDER,
-			OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(),
-			new OW_NameSpaceProvider));
 
 		m_cimRepository = OW_RepositoryIFCRef(new OW_CIMRepository(g_cimomEnvironment));
 		m_cimRepository->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));

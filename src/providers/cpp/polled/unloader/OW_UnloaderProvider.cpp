@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,45 +28,55 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_UNLOADERPROVIDER_HPP_
-#define OW_UNLOADERPROVIDER_HPP_
 
 #include "OW_config.h"
-#include "OW_CppPolledProviderIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_UnloaderProvider.hpp"
+#include "OW_CIMOMEnvironment.hpp"
+#include "OW_Format.hpp"
 
-class OW_CIMOMEnvironment;
-typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
+#define POLLING_INTERVAL 60
 
-class OW_UnloaderProvider : public OW_CppPolledProviderIFC
+OW_UnloaderProvider::OW_UnloaderProvider()
 {
-public:
-	OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv);
-	virtual ~OW_UnloaderProvider();
+}
 
-	/**
-	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
-	 * opportunity to export indications if needed.
-	 * @param lch	A local CIMOM handle the provider can use to export
-	 *					indications if needed.
-	 * @return How many seconds before the next call to the poll method. If this
-	 * method returns -1 then the last polling interval will be used. If it
-	 * returns 0 then the poll method will never be called again.
-	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
-
-	/**
-	 * @return The amount of seconds before the first call to the poll method.
-	 * If this method returns zero, then the poll method is never called.
-	 */
-	virtual OW_Int32 getInitialPollingInterval(const
-		OW_ProviderEnvironmentIFCRef &env);
-
-private:
-	OW_CIMOMEnvironmentRef m_pcenv;
-};
+OW_UnloaderProvider::~OW_UnloaderProvider() 
+{
+}
 
 
+/**
+ * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+ * opportunity to export indications if needed.
+ * @param lch	A local CIMOM handle the provider can use to export
+ *					indications if needed.
+ * @return How many seconds before the next call to the poll method. If this
+ * method returns -1 then the last polling interval will be used. If it
+ * returns 0 then the poll method will never be called again.
+ */
+OW_Int32
+OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &/*env*/)
+{
+	//env->getLogger()->logDebug( "Polling OW_UnloaderProvider");
+	OW_CIMOMEnvironment::g_cimomEnvironment->unloadProviders();
+	OW_CIMOMEnvironment::g_cimomEnvironment->unloadReqHandlers();
+	return -1;
+}
 
-#endif
+/**
+ * @return The amount of seconds before the first call to the poll method.
+ * If this method returns zero, then the poll method is never called.
+ */
+OW_Int32
+OW_UnloaderProvider::getInitialPollingInterval(const
+		OW_ProviderEnvironmentIFCRef &env)
+{
+	env->getLogger()->logDebug(format(
+		"Calling getInitialPollingInterval in OW_ProviderUnloader; returning %1",
+		POLLING_INTERVAL));
+	return POLLING_INTERVAL;
+}
+
+
+OW_NOIDPROVIDERFACTORY(OW_UnloaderProvider)
 

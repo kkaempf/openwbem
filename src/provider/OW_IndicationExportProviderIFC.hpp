@@ -56,7 +56,8 @@ public:
 		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst) = 0;
 };
 
-typedef OW_IntrusiveReference<OW_IndicationExportProviderIFC>
+//typedef OW_IntrusiveReference<OW_IndicationExportProviderIFC>
+typedef OW_Reference<OW_IndicationExportProviderIFC>
 		OW_IndicationExportProviderIFCRef;
 
 typedef OW_Array<OW_IndicationExportProviderIFCRef>

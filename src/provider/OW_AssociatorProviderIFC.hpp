@@ -257,7 +257,8 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 				const OW_String& role ) = 0;
 };
 
-typedef OW_IntrusiveReference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
+typedef OW_Reference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
+//typedef OW_IntrusiveReference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
 
 #endif
 

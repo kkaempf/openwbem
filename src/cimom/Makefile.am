@@ -27,12 +27,8 @@ OW_CIMServer.cpp \
 OW_CIMServer.hpp \
 OW_IndicationRepLayerMediator.cpp \
 OW_IndicationRepLayerMediator.hpp \
-OW_InternalProviderIFC.cpp \
-OW_InternalProviderIFC.hpp \
 OW_LocalCIMOMHandle.cpp \
 OW_LocalCIMOMHandle.hpp \
-OW_NameSpaceProvider.cpp \
-OW_NameSpaceProvider.hpp \
 OW_PollingManager.cpp \
 OW_PollingManager.hpp \
 OW_ProviderIFCLoader.cpp \
@@ -42,8 +38,6 @@ OW_ProviderManager.hpp \
 OW_ProxyProvider.cpp \
 OW_ProxyProvider.hpp \
 OW_SharedLibraryRepository.hpp \
-OW_UnloaderProvider.cpp \
-OW_UnloaderProvider.hpp \
 OW_WQLFilterRep.cpp \
 OW_WQLFilterRep.hpp
 

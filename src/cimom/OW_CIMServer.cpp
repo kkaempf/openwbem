@@ -1681,12 +1681,9 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 		{
 			m_nsClass_Namespace = OW_CIMClass("__Namespace");
 
-			OW_CIMQualifier cimQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-			cimQualifier.setValue(OW_CIMValue(OW_String(NAMESPACE_PROVIDER)));
 			OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
 			cimProp.setDataType(OW_CIMDataType::STRING);
 			cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
-			m_nsClass_Namespace.addQualifier(cimQualifier);
 			m_nsClass_Namespace.addProperty(cimProp);
 		}
 
@@ -2329,4 +2326,5 @@ const char* const OW_CIMServer::NS_REPOS_NAME = "namespaces";
 const char* const OW_CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
 const char* const OW_CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
 #endif
-const char* const OW_CIMServer::NAMESPACE_PROVIDER = "owcimomd::namespace";
+
+

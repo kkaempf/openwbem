@@ -46,10 +46,6 @@
 void OW_ProviderManager::load(const OW_ProviderIFCLoaderRef& IFCLoader)
 {
 	IFCLoader->loadIFCs(m_IFCArray);
-	OW_Reference<OW_ProviderIFCBaseIFC> pi(new OW_InternalProviderIFC);
-	m_internalIFC = pi.cast_to<OW_InternalProviderIFC>();
-	// 0 because there is no shared library.
-	m_IFCArray.push_back(OW_ProviderIFCBaseIFCRef(OW_SharedLibraryRef(0), pi));
 
 	// now the CPP provider is linked to the cimom, not loaded dynamically, So
 	// we have to create it here.
@@ -333,22 +329,6 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
 		processProviderInfo(env, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_ProviderManager::addCIMOMProvider(const OW_CppProviderBaseIFCRef& pProv)
-{
-	m_internalIFC->addCIMOMProvider(pProv);
-	// TODO: Need to add the provider's info the registry if init has already been run.
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_ProviderManager::addCIMOMProvider(const OW_String& providerNameArg,
-	const OW_CppProviderBaseIFCRef& pProv)
-{
-	m_internalIFC->addCIMOMProvider(providerNameArg, pProv);
 }
 
 //////////////////////////////////////////////////////////////////////////////

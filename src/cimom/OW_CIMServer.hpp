@@ -63,8 +63,6 @@ public:
 	static const char* const INST_ASSOC_REPOS_NAME;
 #endif
 
-	static const char* const NAMESPACE_PROVIDER;
-
 	/**
 	 * Create a new OW_CIMServer object.
 	 */

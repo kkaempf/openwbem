@@ -788,6 +788,7 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/indicationexport/Makefile
 ./src/providers/cpp/polled/Makefile
 ./src/providers/cpp/polled/slp/Makefile
+./src/providers/cpp/polled/unloader/Makefile
 ./src/providers/cpp/instance/Makefile
 ./src/providers/cpp/instance/CIM_IndicationSubscription/Makefile
 ./src/providers/cpp/instance/CIM_IndicationFilter/Makefile
@@ -795,6 +796,7 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/instance/CIM_Namespace/Makefile
 ./src/providers/cpp/instance/CIM_NamespaceInManager/Makefile
 ./src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/Makefile
+./src/providers/cpp/instance/OW_NameSpace/Makefile
 ./src/providers/cpp/indication/Makefile
 ./src/providers/cpp/indication/IndicationRepLayer/Makefile
 ./src/repositories/Makefile

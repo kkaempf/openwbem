@@ -39,13 +39,15 @@
 /**
  * This is the base class implemented by all providers.
  */
-class OW_ProviderBaseIFC : public virtual OW_IntrusiveCountableBase
+//class OW_ProviderBaseIFC : public virtual OW_IntrusiveCountableBase
+class OW_ProviderBaseIFC
 {
 	public:
 		virtual ~OW_ProviderBaseIFC();
 };
 
-typedef OW_IntrusiveReference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;
+//typedef OW_IntrusiveReference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;
+typedef OW_Reference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;
 typedef OW_Array<OW_ProviderBaseIFCRef> OW_ProviderBaseIFCRefArray;
 
 #endif

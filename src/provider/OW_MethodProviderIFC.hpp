@@ -71,7 +71,8 @@ public:
 			OW_CIMParamValueArray& out ) = 0;
 };
 
-typedef OW_IntrusiveReference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
+//typedef OW_IntrusiveReference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
+typedef OW_Reference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
 
 #endif
 

@@ -100,7 +100,8 @@ public:
 
 };
 
-typedef OW_IntrusiveReference< OW_IndicationProviderIFC > OW_IndicationProviderIFCRef;
+//typedef OW_IntrusiveReference< OW_IndicationProviderIFC > OW_IndicationProviderIFCRef;
+typedef OW_Reference< OW_IndicationProviderIFC > OW_IndicationProviderIFCRef;
 typedef OW_Array<OW_IndicationProviderIFCRef>
 		OW_IndicationProviderIFCRefArray;
 

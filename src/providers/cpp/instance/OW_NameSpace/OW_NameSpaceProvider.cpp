@@ -381,3 +381,13 @@ OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
 	env->getLogger()->logDebug("OW_NameSpaceProvider initialize called");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_NameSpaceProvider::getProviderInfo(OW_InstanceProviderInfo& info)
+{
+	info.addInstrumentedClass("__Namespace");
+}
+
+OW_PROVIDERFACTORY(OW_NameSpaceProvider, owprovinstOW_NameSpace);
+
+
