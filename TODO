@@ -28,7 +28,6 @@ Testing:
     - Test suite doesn't error on timeout while waiting for log output
 
 Fix problems:
-For 3.1.0:
     - All non-provider libs should be installed in $(libdir) and links created in 
       $(libdir)/openwbem/*/ This is necessary for listener and provider agent support.
     - CMAddArg() broken.
@@ -42,8 +41,6 @@ For 3.1.0:
       interface, so don't forget to tell Jason Long.
     - Provider environments should throw exceptions after they are no longer 
       valid. Indication provider environments can be saved.
-
-Later:
     - The HDB class doesn't consolidate adjacent free blocks, this causes excessive growth
       if a block is gradually resized larger. For instance, creating 1000 associations
       to 1 instance in the repository will easily use 1 GB of disk, and most of it won't
