@@ -15,6 +15,7 @@ if [ "$1" = "vg" ]; then
 	--error-limit=no \
 	--num-callers=99 \
 	--logfile-fd=9 \
+	--suppressions=OpenSSL.supp \
 	9>> valgrind.out \
 	$STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t 
