@@ -705,6 +705,10 @@ OW_HTTPClient::convertToFiniteStream()
 			"compiled with zlib!");
 #endif // #ifdef OW_HAVE_ZLIB_H
 	}
+	if (!rval)
+	{
+		OW_THROW(OW_HTTPException, "OW_HTTPClient::convertToFiniteStream: unable to understand server response!");
+	}
 	return rval;
 }
 
