@@ -28,70 +28,42 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_CPPPROVIDERIFC_HPP_
-#define OW_CPPPROVIDERIFC_HPP_
+#ifndef OW_NPI_PROFIDER_IFC_UTILS_HPP_
+#define OW_NPI_PROFIDER_IFC_UTILS_HPP_
 
 #include "OW_config.h"
-#include "OW_ProviderIFCBaseIFC.hpp"
-#include "OW_Map.hpp"
-#include "OW_MutexLock.hpp"
-#include "OW_FTABLERef.hpp"
+#include "OW_Blob.hpp"
+#include "NPIExternal.hpp"
 
-
-/**
- * This class implements a bridge from the CIMOM's OW_ProviderManager to the
- * C++ providers.  It's main function is location and creation of providers.
- */
-class OW_NPIProviderIFC : public OW_ProviderIFCBaseIFC
+class OW_BlobFreer
 {
 public:
-
-	OW_NPIProviderIFC();
-	~OW_NPIProviderIFC();
-
-protected:
-
-	virtual const char* getName() const { return "npi"; }
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-
-	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-
-	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
-		);
-
-	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
-		);
-
+	OW_BlobFreer(OW_Blob* b) : m_blob(b) {}
+	~OW_BlobFreer()
+	{
+		free(static_cast<void*>(m_blob));
+	}
 private:
-
-	typedef OW_Map<OW_String, OW_FTABLERef> ProviderMap;
-	//typedef OW_Array<OW_SharedLibraryObject<OW_FTABLERef> > LoadedProviderArray;
-
-	OW_FTABLERef getProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-	//void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
-
-	ProviderMap m_provs;
-	OW_Mutex m_guard;
-	//LoadedProviderArray m_noidProviders;
-	OW_Bool m_loadDone;
+	OW_Blob* m_blob;
 };
 
-typedef OW_SharedLibraryReference<OW_NPIProviderIFC> OW_NPIProviderIFCRef;
-#endif
 
+class OW_NPIVectorFreer
+{
+public:
+	OW_NPIVectorFreer(::Vector v) : m_vector(v) {}
+	~OW_NPIVectorFreer()
+	{
+        int n = ::VectorSize(0,m_vector);
+        for (int i=0; i < n; i++)
+		{
+            void * p = ::_VectorGet(0, m_vector, i);
+			free(p);
+        }
+	}
+private:
+	::Vector m_vector;
+};
+
+
+#endif
