@@ -38,7 +38,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Types.hpp"
 #include "OW_Format.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 #include "OW_ExceptionIds.hpp"
 
 #if !defined(OW_WIN32)
@@ -138,12 +138,11 @@ void getCurrentTime(uuid_time_t * timestamp)
 /////////////////////////////////////////////////////////////////////////////
 void getRandomBytes(void* buf, size_t len)
 {
-	RandomNumber rn;
+	CryptographicRandomNumber rn;
 	unsigned char* cp = reinterpret_cast<unsigned char*>(buf);
 	for (size_t i = 0; i < len; ++cp, ++i)
 	{
-		// 13 to just avoid the low order bits
-		*cp = rn.getNextNumber() >> 13;
+		*cp = rn.getNextNumber();
 	}
 }
 /////////////////////////////////////////////////////////////////////////////

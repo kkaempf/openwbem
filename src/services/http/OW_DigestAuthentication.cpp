@@ -44,7 +44,7 @@
 #include "OW_MD5.hpp"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 #include <fstream>
 
 namespace OW_NAMESPACE
@@ -94,8 +94,15 @@ DigestAuthentication::generateNewNonce( void )
 	DateTime.setToCurrent();
 	String sDateTime( static_cast<Int64>(DateTime.get()) );
 	String sPrivateData;
-	RandomNumber rn(0, 0x7FFFFFFF);
+	CryptographicRandomNumber rn(0, 0x7FFFFFFF);
 	sPrivateData.format( "%08x", rn.getNextNumber() );
+	// do this 4 more times, so we get > 128 bits of randomness. Each round only yields 31.
+	for (size_t i = 0; i < 4; ++i)
+	{
+		String randomData;
+		randomData.format("%08x", rn.getNextNumber());
+		sPrivateData += randomData;
+	}
 	
 	MD5 md5;
 	md5.update(sDateTime);

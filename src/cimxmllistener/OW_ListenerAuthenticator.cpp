@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_ListenerAuthenticator.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -85,12 +85,12 @@ String
 ListenerAuthenticator::getNewCredentials()
 {
 	String name, pass;
-	RandomNumber rn('0', 'z');
+	CryptographicRandomNumber rn('0', 'z');
 	MutexLock lock(m_mutex);
 	do
 	{
 		name.erase();
-		for (size_t i = 0; i < 8;)
+		for (size_t i = 0; i < 128;)
 		{
 			int x = rn.getNextNumber();
 			if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))
@@ -101,7 +101,7 @@ ListenerAuthenticator::getNewCredentials()
 			++i;
 		}
 	} while (m_passwdMap.find(name) != m_passwdMap.end());
-	for (size_t i = 0; i < 8;)
+	for (size_t i = 0; i < 128;)
 	{
 		int x = rn.getNextNumber();
 		if ((x > '9' && x < 'A') || (x > 'Z' && x < 'a'))

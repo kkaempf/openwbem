@@ -44,8 +44,6 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_RandomNumber.hpp"
-#include "OW_MD5.hpp"
 #include "OW_HTTPUtils.hpp"
 #ifndef OW_DISABLE_DIGEST
 #include "OW_DigestAuthentication.hpp"

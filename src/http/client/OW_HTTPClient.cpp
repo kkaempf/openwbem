@@ -44,7 +44,7 @@
 #include "OW_Format.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_Select.hpp"
@@ -255,8 +255,15 @@ HTTPClient::receiveAuthentication()
 	m_sRealm = getAuthParam("realm", authInfo);
 
 #ifndef OW_DISABLE_DIGEST
-	RandomNumber rn(0, 0x7FFFFFFF);
+	CryptographicRandomNumber rn(0, 0x7FFFFFFF);
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
+	// do this 4 more times, so we get > 128 bits of randomness. Each round only yields 31.
+	for (size_t i = 0; i < 4; ++i)
+	{
+		String randomData;
+		randomData.format("%08x", rn.getNextNumber());
+		m_sDigestCNonce += randomData;
+	}
 	
 	if (headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{

@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_FileSystem.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_File.hpp"
@@ -447,7 +447,7 @@ initRandomFile(const String& filename)
 {
 #ifdef OW_WIN32
 	char bfr[1024];
-	RandomNumber rnum(0, 0xFF);
+	CryptographicRandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)
 	{
 		bfr[i] = (char)rnum.getNextNumber();
@@ -476,7 +476,7 @@ initRandomFile(const String& filename)
 	{
 		OW_THROW(FileSystemException, Format("Can't open random file %1 for writing", filename).c_str());
 	}
-	RandomNumber rnum(0, 0xFF);
+	CryptographicRandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)
 	{
 		char c = rnum.getNextNumber();

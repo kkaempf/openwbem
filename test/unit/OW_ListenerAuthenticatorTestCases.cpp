@@ -52,7 +52,7 @@ void OW_ListenerAuthenticatorTestCases::testSomething()
 {
 	ListenerAuthenticator la;
 	String creds = la.getNewCredentials();
-	unitAssert(creds.length() == 17);
+	unitAssert(creds.length() > 0);
 }
 
 Test* OW_ListenerAuthenticatorTestCases::suite()

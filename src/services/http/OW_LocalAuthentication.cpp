@@ -36,7 +36,7 @@
 #include "OW_config.h"
 #include "OW_LocalAuthentication.hpp"
 #include "OW_HTTPSvrConnection.hpp"
-#include "OW_RandomNumber.hpp"
+#include "OW_CryptographicRandomNumber.hpp"
 #include "OW_UUID.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
@@ -234,13 +234,13 @@ void
 generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie)
 {
 	// Generate random number to put in file for client to read
-	// TODO: This should use a cryptographic quality random number.
-	RandomNumber rng;
+	CryptographicRandomNumber rng;
 	UInt32 rn1 = rng.getNextNumber();
 	UInt32 rn2 = rng.getNextNumber();
 	UInt32 rn3 = rng.getNextNumber();
 	UInt32 rn4 = rng.getNextNumber();
-	cookie = Format("%1%2%3%4", rn1, rn2, rn3, rn4);
+	UInt32 rn5 = rng.getNextNumber();
+	cookie = Format("%1%2%3%4%5", rn1, rn2, rn3, rn4, rn5);
 
 	if (useHelper())
 	{
