@@ -44,6 +44,19 @@
 namespace OpenWBEM
 {
 
+
+// forward declarations are necessary for template friends.
+template<class Key, class T, class Compare > class Map;
+
+template<class Key, class T, class Compare>
+inline bool operator==(const Map<Key, T, Compare>& x,
+	const Map<Key, T, Compare>& y);
+
+template<class Key, class T, class Compare>
+inline bool operator<(const Map<Key, T, Compare>& x,
+	const Map<Key, T, Compare>& y);
+
+
 template<class Key, class T, class Compare = std::less<Key> > class Map
 {
 	typedef std::map<Key, T, Compare > M;
