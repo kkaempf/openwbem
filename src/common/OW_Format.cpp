@@ -31,21 +31,25 @@
 #include "OW_config.h"
 #include "OW_Format.hpp"
 
+/////////////////////////////////////////////////////////////////////////////
 OW_Format::operator OW_String() const
 {
 	return oss.toString();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 OW_String OW_Format::toString() const
 {
 	return oss.toString();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 const char* OW_Format::c_str() const
 {
 	return oss.c_str();
 }
 
+/////////////////////////////////////////////////////////////////////////////
 char OW_Format::process(OW_String& str, char numArgs)
 {
 	int i, len(str.length());
@@ -95,5 +99,88 @@ char OW_Format::process(OW_String& str, char numArgs)
 	str.erase(0, i);
 	return c;
 } // process
+
+
+/////////////////////////////////////////////////////////////////////////////
+std::ostream&
+operator<<(std::ostream& os, const OW_Format& f)
+{
+	os << f.oss.toString();
+	return os;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void OW_Format::put(const OW_String& t)
+{ // t is inserted into oss
+
+	if (!oss.good())
+		return;
+
+	oss << t;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+#define OW_DEFINE_PUT(type) \
+void OW_Format::put(type t) \
+{ \
+\
+	if (!oss.good()) \
+		return; \
+\
+	oss << t; \
+}
+
+OW_DEFINE_PUT(char);
+OW_DEFINE_PUT(unsigned char);
+OW_DEFINE_PUT(short);
+OW_DEFINE_PUT(unsigned short);
+OW_DEFINE_PUT(int);
+OW_DEFINE_PUT(unsigned int);
+OW_DEFINE_PUT(long);
+OW_DEFINE_PUT(unsigned long);
+OW_DEFINE_PUT(long long);
+OW_DEFINE_PUT(unsigned long long);
+
+
+OW_Format::OW_Format(const char* ca, const OW_String& a) : oss()
+{
+	OW_String fmt(ca);
+	while (!fmt.empty())
+	{
+		switch (process(fmt, '1'))
+		{
+			case '1': put(a); break;
+		}
+	}
+}
+
+
+OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b) : oss()
+{
+	OW_String fmt(ca);
+	while (!fmt.empty())
+	{
+		switch (process(fmt, '2'))
+		{
+			case '1': put(a); break;
+			case '2': put(b); break;
+		}
+	}
+}
+
+
+OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b, const OW_String& c) : oss()
+{
+	OW_String fmt(ca);
+	while (!fmt.empty())
+	{
+		switch (process(fmt, '3'))
+		{
+			case '1': put(a); break;
+			case '2': put(b); break;
+			case '3': put(c); break;
+		}
+	}
+}
 
 
