@@ -2163,7 +2163,7 @@ raToString(const Array<Bool>& ra, bool isString=false)
 String
 CIMValue::CIMValueImpl::toString(bool forMOF) const
 {
-	String out;
+	StringBuffer out;
 	if(m_isArray)
 	{
 		switch(m_type)
@@ -2209,7 +2209,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				out = raToString(*(reinterpret_cast<const StringArray*>(&m_obj)), forMOF);
 				break;
 			case CIMDataType::DATETIME:
-				out = raToString(*(reinterpret_cast<const CIMDateTimeArray*>(&m_obj)));
+				out = raToString(*(reinterpret_cast<const CIMDateTimeArray*>(&m_obj)), forMOF);
 				break;
 			case CIMDataType::REFERENCE:
 				out = raToString(*(reinterpret_cast<const CIMObjectPathArray*>(&m_obj)));
@@ -2279,7 +2279,15 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				}
 				break;
 			case CIMDataType::DATETIME:
-				out = (reinterpret_cast<const CIMDateTime*>(&m_obj))->toString();
+				if (forMOF)
+				{
+					out += "\"";
+				}
+				out += (reinterpret_cast<const CIMDateTime*>(&m_obj))->toString();
+				if (forMOF)
+				{
+					out += "\"";
+				}
 				break;
 			case CIMDataType::REFERENCE:
 				if (forMOF)
@@ -2320,7 +2328,7 @@ CIMValue::CIMValueImpl::toString(bool forMOF) const
 				OW_ASSERT(0);
 		}
 	}
-	return out;
+	return out.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
