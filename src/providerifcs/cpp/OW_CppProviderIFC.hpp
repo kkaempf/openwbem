@@ -105,8 +105,16 @@ private:
 		storeProvider
 	};
 
+	enum InitializeProviderFlag
+	{
+		dontInitializeProvider,
+		initializeProvider
+	};
+
 	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString, StoreProviderFlag = storeProvider);
+		const char* provIdString, StoreProviderFlag = storeProvider,
+		InitializeProviderFlag = initializeProvider);
+
 	void loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

@@ -342,7 +342,8 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			OW_String providerid = dirEntries[i];
 			// chop off lib and .so
 			providerid = providerid.substring(3,providerid.length()-6);
-			OW_CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(), dontStoreProvider);
+			OW_CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(), 
+				dontStoreProvider, dontInitializeProvider);
 			if (!p)
 			{
 				env->getLogger()->logDebug(format("C++ provider ifc: Libary %1 does not load", libName));
@@ -430,7 +431,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 OW_CppProviderBaseIFCRef
 OW_CppProviderIFC::getProvider(
 	const OW_ProviderEnvironmentIFCRef& env, const char* provIdString,
-	StoreProviderFlag storeP)
+	StoreProviderFlag storeP, InitializeProviderFlag initP)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -509,7 +510,10 @@ OW_CppProviderIFC::getProvider(
 	env->getLogger()->logDebug(format("C++ provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, provId));
 
-	pProv->initialize(env);	// Let provider initialize itself
+	if (initP == initializeProvider)
+	{
+		pProv->initialize(env);	// Let provider initialize itself
+	}
 
 	env->getLogger()->logDebug(format("C++ provider ifc: provider %1 loaded and initialized",
 		provId));
