@@ -77,12 +77,16 @@ void OW_UTF8UtilsTestCases::testCharCount()
 
 }
 
+// you can get these numbers by using a hex editor and doing
+// conversions with iconv which comes with glibc. Use utf8 and ucs4 or ucs2
+// for the encodings.
 void OW_UTF8UtilsTestCases::testUTF8toUCS2()
 {
 	unitAssert(UTF8Utils::UTF8toUCS2("a") == 'a');
 	unitAssert(UTF8Utils::UTF8toUCS2("") == 0x80);
 	unitAssert(UTF8Utils::UTF8toUCS2("ࠀ") == 0x800);
 	unitAssert(UTF8Utils::UTF8toUCS2("￿") == 0xFFFF);
+	unitAssert(UTF8Utils::UTF8toUCS2("\xe3\x82\xa6") == 0x30a6);
 }
 
 void OW_UTF8UtilsTestCases::testUCS2toUTF8()
@@ -91,6 +95,7 @@ void OW_UTF8UtilsTestCases::testUCS2toUTF8()
 	unitAssert(UTF8Utils::UCS2toUTF8(0x80) == "");
 	unitAssert(UTF8Utils::UCS2toUTF8(0x800) == "ࠀ");
 	unitAssert(UTF8Utils::UCS2toUTF8(0xFFFF) == "￿");
+	unitAssert(UTF8Utils::UCS2toUTF8(0x30a6) == "\xe3\x82\xa6");
 }
 
 void OW_UTF8UtilsTestCases::testUTF8toUCS4()
@@ -99,7 +104,10 @@ void OW_UTF8UtilsTestCases::testUTF8toUCS4()
 	unitAssert(UTF8Utils::UTF8toUCS4("") == 0x80);
 	unitAssert(UTF8Utils::UTF8toUCS4("ࠀ") == 0x800);
 	unitAssert(UTF8Utils::UTF8toUCS4("￿") == 0xFFFF);
-	// TODO: add some 3&4 byte tests here
+	unitAssert(UTF8Utils::UTF8toUCS4("\xe3\x82\xa6") == 0x30a6);
+	// this is the current largest unicode char 
+	// (according to UnicodeData.txt from Unicode 4.0)
+	unitAssert(UTF8Utils::UTF8toUCS4("\xf0\xaf\xa8\x9d") == 0x02fa1d);
 }
 
 void OW_UTF8UtilsTestCases::testUCS4toUTF8()
@@ -108,11 +116,24 @@ void OW_UTF8UtilsTestCases::testUCS4toUTF8()
 	unitAssert(UTF8Utils::UCS4toUTF8(0x80) == "");
 	unitAssert(UTF8Utils::UCS4toUTF8(0x800) == "ࠀ");
 	unitAssert(UTF8Utils::UCS4toUTF8(0xFFFF) == "￿");
-	// TODO: add some 3&4 byte tests here
+	unitAssert(UTF8Utils::UCS4toUTF8(0x30a6) == "\xe3\x82\xa6");
+	// this is the current largest unicode char 
+	// (according to UnicodeData.txt from Unicode 4.0)
+	unitAssert(UTF8Utils::UCS4toUTF8(0x02fa1d) == "\xf0\xaf\xa8\x9d");
 }
 
 void OW_UTF8UtilsTestCases::testcompareToIgnoreCase()
 {
+	unitAssert(UTF8Utils::compareToIgnoreCase("foo", "foo") == 0);
+	unitAssert(UTF8Utils::compareToIgnoreCase("foo", "Foo") == 0);
+	unitAssert(UTF8Utils::compareToIgnoreCase("foo", "FOO") == 0);
+	unitAssert(UTF8Utils::compareToIgnoreCase("foo", "fooX") < 0);
+	unitAssert(UTF8Utils::compareToIgnoreCase("fooX", "foo") > 0);
+	unitAssert(UTF8Utils::compareToIgnoreCase("I", "i") == 0);
+	// Turkish capital I with a dot on top.
+	unitAssert(UTF8Utils::compareToIgnoreCase("I", "\xc4\xb1") == 0);
+
+
 	unitAssert(UTF8Utils::compareToIgnoreCase("A", "B") < 0)
 	unitAssert(UTF8Utils::compareToIgnoreCase("B", "A") > 0)
 	unitAssert(UTF8Utils::compareToIgnoreCase("AB", "a") > 0)
