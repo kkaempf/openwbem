@@ -738,8 +738,10 @@ private:
 												const String& className) const; 
 	CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider(const String& ns, 
 												const String& className) const; 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	CppAssociatorProviderIFC* getAssociatorProvider(const String& ns, 
 												const String& className) const; 
+#endif
 	CppMethodProviderIFC* getMethodProvider(const String& ns, 
 											const String& className, 
 											const String& methodName) const; 

@@ -708,6 +708,7 @@ ProviderAgentCIMOMHandle::getSecondaryInstanceProvider(const String& ns,
 	}
 	return rval; 
 }
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 CppAssociatorProviderIFC* 
 ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns, 
@@ -735,6 +736,7 @@ ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns,
 	}
 	return rval; 
 }
+#endif
 //////////////////////////////////////////////////////////////////////////////
 CppMethodProviderIFC* 
 ProviderAgentCIMOMHandle::getMethodProvider(const String& ns, 

@@ -125,6 +125,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 				}
 			}
 		}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		CppAssociatorProviderIFC* assocProv = prov->getAssociatorProvider(); 
 		if (assocProv)
 		{
@@ -150,6 +151,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 				}
 			}
 		}
+#endif
 		CppInstanceProviderIFC* instProv = prov->getInstanceProvider(); 
 		if (instProv)
 		{

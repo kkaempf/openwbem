@@ -263,7 +263,9 @@ int main(int argc, char* argv[])
 		{
 			CppInstanceProviderIFC* instProv = (*iter)->getInstanceProvider(); 
 			CppSecondaryInstanceProviderIFC* secInstProv = (*iter)->getSecondaryInstanceProvider(); 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			CppAssociatorProviderIFC* assocProv = (*iter)->getAssociatorProvider(); 
+#endif
 			// MethodProviders don't require the class
 			if (instProv)
 			{
@@ -303,6 +305,7 @@ int main(int argc, char* argv[])
 					cra.push_back(cc); 
 				}
 			}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			if (assocProv)
 			{
 				AssociatorProviderInfo info; 
@@ -322,6 +325,7 @@ int main(int argc, char* argv[])
 					cra.push_back(cc); 
 				}
 			}
+#endif
 		}
 
 		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
