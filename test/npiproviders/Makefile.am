@@ -24,10 +24,10 @@ clean-local:
 libsampleprovider_a_SOURCES = \
 SampleProvider.c
 
-EXTRA_DIST = \
-IndicationTest.mof \
-testind.mof \
-SampleProvider.mof
+#EXTRA_DIST = \
+#IndicationTest.mof \
+#testind.mof \
+#SampleProvider.mof
 
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/npi/common 
