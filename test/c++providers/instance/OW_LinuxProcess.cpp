@@ -129,6 +129,10 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass )
 	{
 		(void)env;
@@ -158,7 +162,7 @@ public:
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output from ps");
 		}
-		return inst;
+		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 
 	////////////////////////////////////////////////////////////////////////////

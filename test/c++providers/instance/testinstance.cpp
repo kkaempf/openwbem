@@ -120,6 +120,10 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
@@ -137,7 +141,8 @@ public:
 				break;
 			}
 		}
-		return rval;
+		return rval.clone(localOnly, includeQualifiers, includeClassOrigin, 
+			propertyList);
 	}
 
 //////////////////////////////////////////////////////////////////////////////

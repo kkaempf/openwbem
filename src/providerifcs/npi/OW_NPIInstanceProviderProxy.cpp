@@ -112,8 +112,6 @@ OW_NPIInstanceProviderProxy::enumInstances(
 	const OW_CIMClass& requestedClass,
 	const OW_CIMClass& cimClass )
 {
-	// TODO: Use these parameters to filter the properties on the returned instance.
-	(void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
 	env->getLogger()->
 	logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
 
@@ -158,7 +156,8 @@ OW_NPIInstanceProviderProxy::enumInstances(
 // FIXME
 		ow_inst.setClassName(cimClass.getName());
 
-		result.handle(ow_inst);
+		result.handle(ow_inst.clone(localOnly,deep,includeQualifiers,
+			includeClassOrigin,propertyList,requestedClass,cimClass));
 	}
 }
 	
@@ -203,6 +202,10 @@ OW_CIMInstance
 OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
+	OW_Bool localOnly,
+	OW_Bool includeQualifiers, 
+	OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList, 
 	const OW_CIMClass& cimClass)
 {
         OW_CIMInstance rval;
@@ -226,7 +229,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 			cop.setNameSpace(ns);
             CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
-            int lo = 0;
+            int lo = localOnly;
 
             CIMInstance my_inst =
                 m_ftable->fp_getInstance(&_npiHandle, _cop, _cc, lo);
@@ -244,6 +247,8 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
             ow_inst.setClassName(cimClass.getName());
 
             rval = ow_inst;
+
+			rval = rval.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
         }
         else
         {

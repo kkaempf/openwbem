@@ -111,16 +111,15 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	OW_CIMInstance
 		getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& cimClass )
+		const OW_ProviderEnvironmentIFCRef&,
+		const OW_String&,
+		const OW_CIMObjectPath&,
+		OW_Bool,
+		OW_Bool, 
+		OW_Bool,
+		const OW_StringArray*, 
+		const OW_CIMClass& )
 	{
-		(void)env;
-		(void)ns;
-		(void)instanceName;
-		(void)cimClass;
-
 		OW_THROWCIM(OW_CIMException::FAILED);
 
 	}

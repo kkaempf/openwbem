@@ -219,12 +219,16 @@ OW_SimpleCppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	(void)ns;
 	OW_CIMInstance ci = m_pProv->getInstance(env, instanceName, cimClass);
-	return ci;
+	return ci.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -169,10 +169,15 @@ OW_CppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, 
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->getInstance(env, ns, instanceName, cimClass);
+	return m_pProv->getInstance(env, ns, instanceName, localOnly, 
+		includeQualifiers, includeClassOrigin, propertyList, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -83,7 +83,12 @@ public:
 	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_CIMClass &)
 	{
 	}
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMClass &)
+	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, 
+		OW_Bool ,
+		OW_Bool , 
+		OW_Bool ,
+		const OW_StringArray* , 
+		const OW_CIMClass &)
 	{
 		return OW_CIMInstance();
 	}

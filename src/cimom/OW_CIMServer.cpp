@@ -975,17 +975,19 @@ OW_CIMServer::getInstance(
 
 		ci = instancep->getInstance(
 			createProvEnvRef(real_ch),
-				ns, instanceName, cc);
+				ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList, cc);
 		if (!ci)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"Provider erroneously returned a NULL CIMInstance");
 		}
 
+		/* don't do this, it's up to the provider ifc/provider to do this correctly.
 		ci.syncWithClass(cc, true);
 
 		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);
+			*/
 
 	}
 	else
@@ -1087,7 +1089,7 @@ OW_CIMServer::createInstance(
 	if(theClass.isAssociation())
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMPropertyArray pra = ci.getProperties(
+		OW_CIMPropertyArray pra = lci.getProperties(
 			OW_CIMDataType::REFERENCE);
 
 		for(size_t j = 0; j < pra.size(); j++)
@@ -1129,12 +1131,12 @@ OW_CIMServer::createInstance(
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
-		rval = instancep->createInstance(createProvEnvRef(real_ch), ns, ci);
+		rval = instancep->createInstance(createProvEnvRef(real_ch), ns, lci);
 	}
 	else
 	{
 		_validatePropagatedKeys(ns, lci, theClass); // TODO: Should we do this for providers too?
-		rval = m_cimRepository->createInstance(ns, ci, aclInfo);
+		rval = m_cimRepository->createInstance(ns, lci, aclInfo);
 	}
 
 	OW_ASSERT(rval);
