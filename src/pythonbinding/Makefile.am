@@ -39,5 +39,33 @@ PyOW_CIMClient.cpp \
 PyOW_Client.cpp \
 PyOW_String.cpp \
 PyOW_CIMOMInfo.cpp \
-PyOW_Array.cpp
+PyOW_Array.cpp \
+PyOW_Array.cpp \
+PyOW_StringArray.cpp \
+PyOW_CIMClassArray.cpp \
+PyOW_CIMDataTypeArray.cpp \
+PyOW_CIMDateTimeArray.cpp \
+PyOW_CIMFlavorArray.cpp \
+PyOW_CIMInstanceArray.cpp \
+PyOW_CIMMethodArray.cpp \
+PyOW_CIMObjectPathArray.cpp \
+PyOW_CIMParamValueArray.cpp \
+PyOW_CIMParameterArray.cpp \
+PyOW_CIMPropertyArray.cpp \
+PyOW_CIMQualifierArray.cpp \
+PyOW_CIMQualifierTypeArray.cpp \
+PyOW_CIMScopeArray.cpp \
+PyOW_CIMValueArray.cpp \
+PyOW_BoolArray.cpp \
+PyOW_Char16Array.cpp \
+PyOW_UInt8Array.cpp \
+PyOW_Int8Array.cpp \
+PyOW_UInt16Array.cpp \
+PyOW_Int16Array.cpp \
+PyOW_UInt32Array.cpp \
+PyOW_Int32Array.cpp \
+PyOW_UInt64Array.cpp \
+PyOW_Int64Array.cpp \
+PyOW_Real32Array.cpp \
+PyOW_Real64Array.cpp
 
