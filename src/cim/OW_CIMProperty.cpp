@@ -171,7 +171,14 @@ CIMProperty::clone(EIncludeQualifiersFlag includeQualifiers,
 	cp.m_pdata->m_sizeDataType = m_pdata->m_sizeDataType;
 	cp.m_pdata->m_name = m_pdata->m_name;
 	cp.m_pdata->m_override = m_pdata->m_override;
-	cp.m_pdata->m_cimValue = m_pdata->m_cimValue;
+	if (m_pdata->m_cimValue && m_pdata->m_cimValue.getType() == CIMDataType::EMBEDDEDINSTANCE)
+	{
+		cp.m_pdata->m_cimValue = CIMValue(m_pdata->m_cimValue.toCIMInstance().clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin));
+	}
+	else
+	{
+		cp.m_pdata->m_cimValue = m_pdata->m_cimValue;
+	}
 	cp.m_pdata->m_propagated = m_pdata->m_propagated;
 	return cp;
 }
@@ -205,7 +212,7 @@ CIMProperty::setOriginClass(const CIMName& originCls)
 CIMProperty&
 CIMProperty::setValue(const CIMValue& val)
 {
-	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType && 
+	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType &&
 		val.getType() != CIMDataType::EMBEDDEDCLASS && val.getType() != CIMDataType::EMBEDDEDINSTANCE)
 	{
 		m_pdata->m_cimValue = CIMValueCast::castValueToDataType(val, m_pdata->m_propertyDataType);
@@ -243,7 +250,7 @@ CIMProperty::setDataType(const CIMDataType& type)
 			|| m_pdata->m_propertyDataType.isArrayType() !=
 			m_pdata->m_cimValue.isArray())
 		{
-			if (m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDCLASS && 
+			if (m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDCLASS &&
 				m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDINSTANCE)
 			{
 				m_pdata->m_cimValue = CIMValueCast::castValueToDataType(
@@ -592,7 +599,7 @@ bool operator<(const CIMProperty& x, const CIMProperty& y)
 	return *x.m_pdata < *y.m_pdata;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 CIMProperty::hasTrueQualifier(const CIMName& name) const
 {
 	CIMQualifier q = getQualifier(name);
