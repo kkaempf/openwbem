@@ -48,7 +48,7 @@ New features:
       have a queue of indications to send. The indication export providers will
       need to be modified to separate connecting and sending indications into
       separate steps.
-      Maybe have a map<subscription,queue of indications>.  When a new
+      Maybe have a map<handler,queue of indications>.  When a new
       indication is generated it's stuck in the correct queue where the
       delivery thread can pick it up. If the subscription isn't in the queue,
       it's added and a new thread is created for it. Unless the thread limit has
@@ -60,6 +60,9 @@ New features:
       This will also allow for exporting a batch of indications.  If there are
       already > 1 indication in the queue for delivery after the connection is
       made, then batch export can be used for greater efficiency.
+      To prevent a set of busy handlers from causing starvation of others 
+      beyond the number of processing threads, set a maximum limit on
+      the time one can stay around.
     - Implement the CIM_Interop build-in providers.
       - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
