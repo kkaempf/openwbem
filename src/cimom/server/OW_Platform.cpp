@@ -126,9 +126,8 @@ daemonize(bool dbgFlg, const String& daemonName)
 			case 0:
 				break;
 			case -1:
-				OW_THROW(DaemonException,
-					Format("FAILED TO DETACH FROM THE TERMINAL - First fork : %1",
-						strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(DaemonException,
+					"FAILED TO DETACH FROM THE TERMINAL - First fork");
 			default:
 				_exit(0);			 // exit the original process
 		}
@@ -143,9 +142,8 @@ daemonize(bool dbgFlg, const String& daemonName)
 			case 0:
 				break;
 			case -1:
-				OW_THROW(DaemonException,
-					Format("FAILED TO DETACH FROM THE TERMINAL - Second fork : %1",
-						strerror(errno)).c_str());
+				OW_THROW_ERRNO_MSG(DaemonException,
+					"FAILED TO DETACH FROM THE TERMINAL - Second fork");
 				exit(0);
 			default:
 				_exit(0);
@@ -275,7 +273,7 @@ void restartDaemon()
 	::execv(g_argv[0], g_argv);
 
 	// If we get here we're pretty much hosed.
-	OW_THROW(DaemonException, Format("execv() failed: %1, %2", errno, strerror(errno)).c_str());
+	OW_THROW_ERRNO_MSG(DaemonException, "execv() failed");
 }
 
 //////////////////////////////////////////////////////////////////////////////
