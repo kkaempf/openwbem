@@ -104,7 +104,18 @@ class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 	private:
 		std::istream& m_istr;
 		// incoming trailer info
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 		Map<String, String> m_trailerMap;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 		/**
 		 * A callback function, invoked by the HTTPChunkingStreamBuffer.
 		 * After a zero length chunk is encountered, this is called to build

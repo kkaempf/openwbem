@@ -64,7 +64,18 @@ public:
 	String& operator[](const String& key);
 private:
 	String m_url;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Map<String, String> m_attributes;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 inline bool operator<(const CIMOMInfo& x, const CIMOMInfo& y)
 {

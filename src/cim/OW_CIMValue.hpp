@@ -553,7 +553,18 @@ public:
 	 */
 	bool isNumericType() const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<CIMValueImpl> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

@@ -318,8 +318,19 @@ public:
 	operator safe_bool () const;
 	bool operator!() const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<DateTimeData> m_dptr;
-	friend bool operator<(const CIMDateTime& x, const CIMDateTime& y);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
 

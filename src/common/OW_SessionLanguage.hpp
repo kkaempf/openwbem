@@ -131,7 +131,17 @@ private:
 	static bool langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 		int level);
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
     LanguageTagArray m_langTags;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	String m_contentLanguage;
 	String m_acceptLanguageString;
 };

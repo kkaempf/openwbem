@@ -199,6 +199,9 @@ SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 	return cc;
 }
 
+#pragma warning (push)
+#pragma warning (disable: 4355)
+
 //////////////////////////////////////////////////////////////////////////////
 SocketBaseImpl::SocketBaseImpl()
 	: SelectableIFC()
@@ -273,6 +276,9 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	OW_ASSERT(m_event != NULL);
 	connect(m_peerAddress);
 }
+
+#pragma warning (pop)
+
 //////////////////////////////////////////////////////////////////////////////
 SocketBaseImpl::~SocketBaseImpl()
 {

@@ -206,9 +206,21 @@ public:
 		{  return m_pdata ? &CIMQualifierType::m_pdata : 0; }
 	bool operator!() const
 		{  return !m_pdata; }
-	friend bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
+
+	friend OW_COMMON_API bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<QUALTData> m_pdata;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

@@ -131,7 +131,18 @@ public:
 	ThreadPool(const ThreadPool& x);
 	ThreadPool& operator=(const ThreadPool& x);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	IntrusiveReference<ThreadPoolImpl> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 

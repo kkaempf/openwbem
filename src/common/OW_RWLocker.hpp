@@ -68,7 +68,18 @@ private:
 	// -1 means writer has lock.  0 means no one has the lock. 
 	// > 0 means readers have the lock.
 	int m_state;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Array<Thread_t> m_readers;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	Thread_t m_writer;
 };
 //////////////////////////////////////////////////////////////////////////////

@@ -410,12 +410,27 @@ public:
 private:
 
 	XMLNode(const XMLNodeImplRef& ref);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	XMLNodeImplRef m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	friend class XMLNodeImpl;
 };
 
 OW_XML_API std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
 
 class OW_XML_API XMLNodeImpl : public IntrusiveCountableBase
 {
@@ -444,6 +459,7 @@ public:
 	XMLNodeImplRef mustChildFindElementChild(const char* elementName) const;
 	
 	void setNext(const XMLNodeImplRef& node);
+
 	XMLNodeImplRef getNext() const;
 	void addChild(const XMLNodeImplRef& node);
 
@@ -462,6 +478,10 @@ protected:
 	String m_strName;
 	String m_strText;
 };
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 } // end namespace OpenWBEM
 

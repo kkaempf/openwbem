@@ -713,9 +713,19 @@ public:
 	static const size_t npos = ~0;  
 #endif // OW_AIX
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	typedef COWIntrusiveReference<ByteBuf> buf_t;
 private:
 	buf_t m_buf;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const String& arg);
 OW_COMMON_API String operator + (const String& s1, const String& s2);

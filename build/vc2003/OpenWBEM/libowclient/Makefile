@@ -1,15 +1,9 @@
-DEBUG = 1
-WARNLEVEL = /W0
+!include ..\common.mk
+
+BASEDIR = ..
 LIBNAME = libowclient
 
-ZLIBBASE = "c:\zlib"
-OPENSSLBASE = C:\openssl
-
-CPP = cl
-LINK = link
-
 SRCDIR = ..\..\..\..\src
-TOOLSDIR = ..\tools
 
 INCS = \
 /I$(BASEDIR) \
@@ -25,18 +19,15 @@ INCS = \
 
 
 !IFDEF DEBUG
-BUILDTYPE = Debug
 CPPDEFS = /D"OW_CLIENT_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
+CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
-BUILDTYPE = Release
 CPPDEFS = /D"OW_CLIENT_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
+CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 LINKDBG = 
 !ENDIF
 
-BASEDIR = ..
 TARGET = $(LIBNAME).dll
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 OBJDIR = $(BUILDTYPE)

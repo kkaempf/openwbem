@@ -187,8 +187,19 @@ public:
 	 */
 	virtual String toMOF() const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<NSData> m_pdata;
-	friend bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs);
 };
 
 } // end namespace OpenWBEM

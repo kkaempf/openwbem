@@ -92,8 +92,15 @@ private:
 	ServerSocketImpl(const ServerSocketImpl& arg);
 	ServerSocketImpl& operator=(const ServerSocketImpl& arg);
 	SocketFlags::ESSLFlag m_isSSL;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	SSLServerCtxRef m_sslCtx; 
 #if defined(OW_WIN32)
+#pragma warning (pop)
 	HANDLE m_event;
 	bool m_shuttingDown;
 #else

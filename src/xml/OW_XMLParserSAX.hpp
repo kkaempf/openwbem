@@ -45,7 +45,7 @@ namespace OpenWBEM
 
 class String;
 class StringBuffer;
-class XMLToken;
+struct XMLToken;
 class XMLParseException;
 
 namespace XMLParserSAX 

@@ -747,7 +747,17 @@ public:
 	
 private:
 	String m_namespace;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	ClientCIMOMHandleRef m_ch;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 	
 };
 

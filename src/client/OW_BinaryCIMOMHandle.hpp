@@ -639,7 +639,18 @@ public:
 		String& valueOut) const;
 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	CIMProtocolIFCRef m_protocol;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

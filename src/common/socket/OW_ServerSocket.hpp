@@ -119,7 +119,18 @@ public:
 	SocketHandle_t getfd() const; 
 	Select_t getSelectObj() const; 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	IntrusiveReference<ServerSocketImpl> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

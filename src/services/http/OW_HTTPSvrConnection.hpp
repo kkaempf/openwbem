@@ -141,6 +141,12 @@ public:
 	String getHostName();
 protected:
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	enum requestMethod_t
 	{
 		BAD = 0,
@@ -189,6 +195,10 @@ private:
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
 	bool m_shutdown;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	int processRequestLine();
 	int processHeaders(OperationContext& context);

@@ -262,8 +262,19 @@ public:
 	bool operator!() const
 		{  return !m_pdata; }
 protected:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<METHData> m_pdata;
-	friend bool operator<(const CIMMethod& x, const CIMMethod& y);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMMethod& x, const CIMMethod& y);
 };
 
 } // end namespace OpenWBEM

@@ -56,8 +56,19 @@ public:
 	void go(); // Throws SelectException on error
 	void stop();
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Array<SelectableIFCRef> m_selectableObjs;
 	Array<SelectableCallbackIFCRef> m_callbacks;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	bool m_stopFlag;
 };
 

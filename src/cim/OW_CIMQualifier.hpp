@@ -297,8 +297,19 @@ public:
 	enum { SERIALIZATION_VERSION = 1 };
 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<QUALData> m_pdata;
-	friend bool operator<(const CIMQualifier& x, const CIMQualifier& y);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMQualifier& x, const CIMQualifier& y);
 };
 
 } // end namespace OpenWBEM

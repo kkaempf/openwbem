@@ -707,8 +707,18 @@ private:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList);
 #endif
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
 	
 	CIMProtocolIFCRef m_protocol;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	UInt32 m_iMessageID;
 	bool m_performStrictChecks;
 

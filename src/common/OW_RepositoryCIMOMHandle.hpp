@@ -227,11 +227,23 @@ virtual void references(
 	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	/**
 	 * A Reference to the Repository interface that this RepositoryCIMOMHandle
 	 * will use.
 	 */
+
 	RepositoryIFCRef m_pServer;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	/**
 	 * If m_lock is E_NO_LOCKING, then this RepositoryCIMOMHandle will never attempt
 	 * to acquire a read/write lock on the cim server, or begin a new transaction.

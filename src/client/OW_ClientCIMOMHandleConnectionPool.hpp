@@ -132,8 +132,18 @@ private:
 	unsigned m_maxConnectionsPerUrl;
 	Mutex m_guard;
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	typedef std::multimap<String, ClientCIMOMHandleRef> pool_t;
 	pool_t m_pool;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 }

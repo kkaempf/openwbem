@@ -103,7 +103,18 @@ private:
 	void connectSSL();
 	SSL* m_ssl;
 	BIO* m_sbio;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	SSLClientCtxRef m_sslCtx; 
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	OWSSLContext m_owctx; 
 
 	SSLSocketImpl(const SSLSocketImpl& arg);

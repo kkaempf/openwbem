@@ -40,6 +40,11 @@
 
 #include <string.h> // for memset
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4355)
+#endif
+
 namespace OpenWBEM
 {
 
@@ -423,4 +428,9 @@ static void Decode (UInt32* output, const unsigned char* input, UInt32 len)
 //}
 
 } // end namespace OpenWBEM
+
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 

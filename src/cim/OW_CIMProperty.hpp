@@ -317,8 +317,19 @@ public:
 	 */
 	bool hasTrueQualifier(const String& name) const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<PROPData> m_pdata;
-	friend bool operator<(const CIMProperty& x, const CIMProperty& y);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMProperty& x, const CIMProperty& y);
 };
 
 } // end namespace OpenWBEM

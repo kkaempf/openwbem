@@ -330,8 +330,19 @@ public:
 	CIMObjectPath& syncWithClass(const CIMClass& theClass);
 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<OPData> m_pdata;
-	friend bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
 };
 
 } // end namespace OpenWBEM

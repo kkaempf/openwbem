@@ -60,7 +60,7 @@ struct OW_XML_API XMLToken
 		DOCTYPE,
 		CONTENT
 	};
-	struct Attribute
+	struct OW_XML_API Attribute
 	{
 		Attribute(): name(64), value(512)
 		{
@@ -109,12 +109,25 @@ private:
 	void getDocType();
 	void getContent(XMLToken& entry);
 	void getElement(XMLToken& entry);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	unsigned int m_line;
 	IstreamBufIterator m_current;
+
+
 	// used to verify elements' begin and end tags match.
 	std::stack<String> m_stack;
 	bool m_foundRoot;
 	bool m_tagIsEmpty;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

@@ -233,7 +233,18 @@ public:
 	 */
 	static bool isNumericType(Type type);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<DTData> m_pdata;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	friend bool operator<(const CIMDataType& x, const CIMDataType& y);
 };
 

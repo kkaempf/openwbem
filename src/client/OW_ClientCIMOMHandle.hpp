@@ -125,7 +125,17 @@ public:
 protected:
 	void getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr);
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Map<String, String> m_trailers;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

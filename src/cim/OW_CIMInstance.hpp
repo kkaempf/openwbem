@@ -426,9 +426,19 @@ public:
 	
 protected:
 	void _buildKeys();
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<INSTData> m_pdata;
 	
-	friend bool operator<(const CIMInstance& x, const CIMInstance& y);
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMInstance& x, const CIMInstance& y);
 };
 
 } // end namespace OpenWBEM

@@ -53,12 +53,11 @@ LIBPATH = \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
 
-#ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
-#ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
 #ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
-#EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
 #REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
+ENUMCLSNAMES = owenumclassnames
+ENUMCLSNAMESEXE = $(TARGETDIR)\$(ENUMCLSNAMES).exe
 CIMLISTENER = owcimindicationlistener
 CIMLISTENEREXE = $(TARGETDIR)\$(CIMLISTENER).exe
 CREATENS = owcreatenamespace
@@ -71,7 +70,10 @@ MOFC = owmofc
 MOFCEXE = $(TARGETDIR)\$(MOFC).exe
 EXECWQL = owexecwql
 EXECWQLEXE = $(TARGETDIR)\$(EXECWQL).exe
-
+ENUMNS = owenumnamespace
+ENUMNSEXE = $(TARGETDIR)\$(ENUMNS).exe
+ENUMQUALS = owenumqualifiers
+ENUMQUALSEXE = $(TARGETDIR)\$(ENUMQUALS).exe
 
 EXES = \
 $(CREATENSEXE) \
@@ -79,9 +81,49 @@ $(DELETENSEXE) \
 $(ENUMCLSEXE) \
 $(CIMLISTENEREXE) \
 $(MOFCEXE) \
-$(EXECWQLEXE)
+$(EXECWQLEXE) \
+$(ENUMCLSNAMESEXE) \
+$(ENUMNSEXE) \
+$(ENUMQUALSEXE)
 
 ALL: $(EXES)
+#
+# owenumqualifiers
+#
+$(ENUMQUALSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
+	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
+	ssleay32.lib
+
+$(OBJDIR)\$(ENUMQUALS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
+#
+# owenumnamespace
+#
+$(ENUMNSEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
+	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
+	ssleay32.lib
+
+$(OBJDIR)\$(ENUMNS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
+
+#
+# owenumclassnames
+#
+$(ENUMCLSNAMESEXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj libowclient.lib \
+	libowxml.lib libowhttp.lib libopenwbem.lib zdll.lib libeay32.lib \
+	ssleay32.lib
+
+$(OBJDIR)\$(ENUMCLSNAMES).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
 
 #
 # owexecwql

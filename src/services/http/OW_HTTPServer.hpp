@@ -134,6 +134,8 @@ private:
 	Mutex m_guard;
 	Options m_options;
 #ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
 	HANDLE m_event;
 #else
 	IntrusiveReference<UnnamedPipe> m_upipe;
@@ -159,6 +161,10 @@ private:
 	SSLOpts m_sslopts; 
 	SSLTrustStoreRef m_trustStore; 
 #endif //  OW_HAVE_SSL
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	friend class HTTPSvrConnection;
 	friend class HTTPListener;

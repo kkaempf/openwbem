@@ -89,7 +89,18 @@ public:
 	CIMProtocolIStreamIFCRef getInputStreamOrig();
 	virtual void checkForError() const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	CIMProtocolIStreamIFCRef m_istr;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	// don't allow copying and assigning
 	HTTPDeflateIStream(const HTTPDeflateIStream&);
 	HTTPDeflateIStream& operator=(HTTPDeflateIStream&);

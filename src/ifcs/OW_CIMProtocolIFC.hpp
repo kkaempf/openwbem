@@ -125,7 +125,18 @@ public:
 	virtual void close() = 0;
 
 protected:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	ClientAuthCBIFCRef m_loginCB;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	String m_contentType;
 };
 typedef IntrusiveReference<CIMProtocolIFC> CIMProtocolIFCRef;

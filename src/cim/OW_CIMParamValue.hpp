@@ -120,8 +120,19 @@ public:
 	 */
 	virtual String toMOF() const;
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<Data> m_pdata;
-	friend bool operator<(const CIMParamValue& x, const CIMParamValue& y);
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
+	friend OW_COMMON_API bool operator<(const CIMParamValue& x, const CIMParamValue& y);
 };
 
 } // end namespace OpenWBEM

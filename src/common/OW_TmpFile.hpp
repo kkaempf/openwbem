@@ -120,7 +120,18 @@ public:
 	long getSize() { return m_impl->getSize(); }
 	String releaseFile() { return m_impl->releaseFile(); }
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	IntrusiveReference<TmpFileImpl> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

@@ -630,6 +630,9 @@ typedef long off_t;
 #define OW_WQLCOMMON_API OW_IMPORT
 #endif
 
+#pragma warning (disable: 4297)
+#pragma warning (disable: 4355)
+
 
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

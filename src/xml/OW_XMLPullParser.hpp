@@ -84,10 +84,22 @@ public:
 	String getData() const;
 	bool isData() const;
 protected:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	AutoPtr<TempFileStream> m_ptfs;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	XMLParserCore m_parser;
 	XMLToken m_curTok;
 	bool m_good;
+
 	void prime();
 	void nextToken();
 	void skipData();

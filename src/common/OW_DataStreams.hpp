@@ -97,7 +97,18 @@ protected:
 	virtual int overflow(int c);
 	virtual std::streamsize xsputn(const char* s, std::streamsize n);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	std::vector<unsigned char> m_bfr;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API DataOStreamBase

@@ -279,7 +279,17 @@ private:
 	 */
 	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
 		SSLServerCtxRef sslCtx); 
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	SocketBaseImplRef m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	static ShutDownMechanism_t s_shutDownMechanism;
 

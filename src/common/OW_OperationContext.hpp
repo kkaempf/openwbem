@@ -67,7 +67,7 @@ class OW_COMMON_API OperationContext
 {
 public:
 	
-	class Data : public IntrusiveCountableBase
+	class OW_COMMON_API Data : public IntrusiveCountableBase
 	{
 	public:
 		virtual ~Data(); // subclasses can clean-up & free memory
@@ -133,8 +133,17 @@ public:
 	UserInfo getUserInfo() const;
 
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	SortedVectorMap<String, DataRef> m_data;
 
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	// non-copyable
 	OperationContext(const OperationContext&);

@@ -135,7 +135,18 @@ private:
 	bool m_hasError;
 	Int32 m_errorCode;
 	String m_errorDescription;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	ServiceEnvironmentIFCRef m_env;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

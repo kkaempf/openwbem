@@ -413,7 +413,18 @@ public:
 private:
 	static String splitName1(const String& inName);
 	static String splitName2(const String& inName);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWIntrusiveReference<CLSData> m_pdata;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	friend bool operator<(const CIMClass& x, const CIMClass& y);
 };
 

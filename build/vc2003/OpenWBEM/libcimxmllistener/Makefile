@@ -1,19 +1,12 @@
-DEBUG = 1
-WARNLEVEL = 0
+!include ..\common.mk
+
 BASEDIR = ..
 
-ZLIBBASE = "c:\zlib"
-OPENSSLBASE = "c:\openssl"
-
-BUILDTYPE = Debug
 LIBNAME = libcimxmllistener
 
 TARGET = $(LIBNAME).dll
 BASEDIR = ..
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-CPP = cl
-LINK = link
 
 SRCDIR = ..\..\..\..\src
 

@@ -79,7 +79,18 @@ public:
 	virtual ~ThreadCountDecrementer();
 private:
 	virtual void doNotifyThreadDone(Thread *);
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	ThreadCounterRef m_counter;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	// noncopyable
 	ThreadCountDecrementer(ThreadCountDecrementer const&);
 	ThreadCountDecrementer& operator=(ThreadCountDecrementer const&);

@@ -251,7 +251,17 @@ private:
 		String user; 
 		String uid; 
 	};
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Map<String, UserInfo> m_map; 
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	void readMap(); 
 	void writeMap(); 

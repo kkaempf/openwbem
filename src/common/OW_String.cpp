@@ -1386,7 +1386,17 @@ String::strtoull(const char* nptr, char** endptr, int base)
 	}
 	if (neg && any > 0)
 	{
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4146)
+#endif
+
 		acc = -acc;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	}
 	if (endptr != 0)
 	{

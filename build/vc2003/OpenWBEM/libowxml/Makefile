@@ -1,11 +1,7 @@
-DEBUG = 1
-WARNLEVEL = 0
+!include ..\common.mk
+
 LIBNAME = libowxml
-OPENSSLBASE = C:\openssl
-
-CPP = cl
-LINK = link
-
+BASEDIR = ..
 SRCDIR = ..\..\..\..\src
 
 !IFDEF DEBUG
@@ -20,7 +16,6 @@ CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 LINKDBG = 
 !ENDIF
 
-BASEDIR = ..
 TARGET = $(LIBNAME).dll
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 OBJDIR = $(BUILDTYPE)

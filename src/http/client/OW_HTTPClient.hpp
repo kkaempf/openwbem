@@ -178,6 +178,11 @@ class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 		void receiveAuthentication();
 		void sendAuthorization();
 		bool receiveOptions( void );
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
 		
 		String m_sAuthorization;
 		String m_sRealm;
@@ -222,6 +227,10 @@ class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 		bool m_uselocalAuthentication;
 		String m_localNonce;
 		String m_localCookieFile;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 		bool headerHasKey(const String& key)
 		{

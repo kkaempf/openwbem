@@ -66,7 +66,18 @@ public:
 	ThreadBarrier(const ThreadBarrier& x);
 	ThreadBarrier& operator=(const ThreadBarrier& x);
 private:
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	IntrusiveReference<ThreadBarrierImpl> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 };
 
 } // end namespace OpenWBEM

@@ -1,8 +1,7 @@
-DEBUG = 1
-LINK = link
-WARNLEVEL = 0
+!include ..\common.mk
+
 LIBNAME = libopenwbem
-OPENSSLBASE = c:\openssl
+#OPENSSLBASE = c:\openssl
 
 BASEDIR = ..
 TARGET = $(LIBNAME).dll
