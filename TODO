@@ -42,4 +42,4 @@ x add a test for the matrix on the bottom of
 
 - change XML parser to be lazy. 
 - Fix? socket write/read also select on shutdown pipe.
-
+- inline the smaller functions in OW_String, OW_Reference, OW_Mutex, OW_MutexLock and other commonly used classes.
