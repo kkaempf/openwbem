@@ -61,6 +61,5 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/ifcs \
--I$(top_srcdir)/src/client
+-I$(top_srcdir)/src/ifcs
 
