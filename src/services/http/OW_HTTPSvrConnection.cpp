@@ -181,30 +181,49 @@ HTTPSvrConnection::run()
 				"no-cache");
 			addHeader("Server",
 				OW_PACKAGE "/" OW_VERSION " (CIMOM)");
-			int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
-			if (selType == Select::SELECT_ERROR)
+
+			// only select if the buffer is empty
+			if (m_istr.rdbuf()->in_avail() == 0)
 			{
-			   OW_THROW(SocketException, "Error occurred during select()");
+				int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
+				if (selType == Select::SELECT_ERROR)
+				{
+				   OW_THROW(SocketException, "Error occurred during select()");
+				}
+				if (selType == Select::SELECT_INTERRUPTED)
+				{
+				   OW_THROW(SocketException, "select() was interrupted.");
+				}
+				if (selType == Select::SELECT_TIMEOUT)
+				{
+				   m_resCode = SC_REQUEST_TIMEOUT;
+				   m_errDetails = "Timeout waiting for request.";
+				   sendError(m_resCode);
+				   return;
+				}
+				if (selType == 0)	// Unnamped pipe/event selected
+				{
+				   m_resCode = SC_SERVICE_UNAVAILABLE;
+				   m_errDetails = "Server is shutting down."
+					   "  Please try again later.";
+				   sendError(m_resCode);
+				   return;
+				}
 			}
-			if (selType == Select::SELECT_INTERRUPTED)
+			else
 			{
-			   OW_THROW(SocketException, "select() was interrupted.");
+				// check for server shutting down message.
+				int selType = Select::select(selArray, 0); // 0 so we don't block
+				if (selType == 0)	// Unnamped pipe/event selected
+				{
+				   m_resCode = SC_SERVICE_UNAVAILABLE;
+				   m_errDetails = "Server is shutting down."
+					   "  Please try again later.";
+				   sendError(m_resCode);
+				   return;
+				}
 			}
-			if (selType == Select::SELECT_TIMEOUT)
-			{
-			   m_resCode = SC_REQUEST_TIMEOUT;
-			   m_errDetails = "Timeout waiting for request.";
-			   sendError(m_resCode);
-			   return;
-			}
-			if (selType == 0)	// Unnamped pipe/event selected
-			{
-			   m_resCode = SC_SERVICE_UNAVAILABLE;
-			   m_errDetails = "Server is shutting down."
-				   "  Please try again later.";
-			   sendError(m_resCode);
-			   return;
-			}
+
 			if (!HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
 			{
 				if (m_shutdown)
