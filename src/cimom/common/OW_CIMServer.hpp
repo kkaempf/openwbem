@@ -43,6 +43,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_SortedVectorSet.hpp" // fwd?
 #include "OW_CIMException.hpp"
+#include "OW_Authorizer2IFC.hpp"
 
 namespace OpenWBEM
 {
@@ -654,7 +655,7 @@ private:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, OperationContext& context);
 
-	ProviderEnvironmentIFCRef _checkNameSpaceAccess(OperationContext& context,
+	void _checkNameSpaceAccess(OperationContext& context,
 		const String& ns, Authorizer2IFC::EAccessType acType);
 
 	ProviderManagerRef m_provManager;

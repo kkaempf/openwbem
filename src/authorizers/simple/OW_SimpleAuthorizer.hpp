@@ -77,11 +77,12 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowReadInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
         const String& ns,
 		const String& className,
 		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList);
+		StringArray& authorizedPropertyList,
+		OperationContext& context);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -97,11 +98,12 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowWriteInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns, 
 		const CIMObjectPath& instanceName, 
 		EDynamicFlag dynamic,
-		EWriteFlag flag);
+		EWriteFlag flag,
+		OperationContext& context);
 #endif
 
 	/**
@@ -111,8 +113,9 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowReadSchema(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context);
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
@@ -124,9 +127,10 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowWriteSchema(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
-		EWriteFlag flag);
+		EWriteFlag flag,
+		OperationContext& context);
 
 #endif
 
@@ -138,9 +142,10 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowAccessToNameSpace(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
-		Authorizer2IFC::EAccessType actype);
+		Authorizer2IFC::EAccessType actype,
+		OperationContext& context);
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
@@ -150,8 +155,9 @@ public:
 	 * @return true if the creation is authorized. Otherwise false.
 	 */
 	virtual bool doAllowCreateNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context);
 
 	/**
 	 * Determine if the user is allow to delete the given namespace.
@@ -160,8 +166,9 @@ public:
 	 * @return true if the deletion is authorized. Otherwise false.
 	 */
 	virtual bool doAllowDeleteNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context);
 #endif
 
 	/**
@@ -170,7 +177,8 @@ public:
 	 * @return true if the enumerate is allowed. Otherwise false.
 	 */
 	virtual bool doAllowEnumNameSpace(
-		const ProviderEnvironmentIFCRef& env);
+		const ServiceEnvironmentIFCRef& env,
+		OperationContext& context);
 
 	/**
 	 * Determine if a method may be invoked. 
@@ -182,16 +190,17 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowMethodInvocation(
-		const ProviderEnvironmentIFCRef& env, 
+		const ServiceEnvironmentIFCRef& env, 
 		const String& ns, 
 		const CIMObjectPath path, 
-		const String& MethodName);
+		const String& MethodName,
+		OperationContext& context);
 
 private:
 
 	bool checkAccess(const String& opType, const String& ns,
-		const ProviderEnvironmentIFCRef& env);
-
+		const ServiceEnvironmentIFCRef& env,
+		OperationContext& context);
 };
 
 } // end namespace OpenWBEM

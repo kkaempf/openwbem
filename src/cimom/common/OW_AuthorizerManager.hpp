@@ -36,7 +36,6 @@
 #define OW_AUTHORIZERMANAGER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_Authorizer2IFC.hpp"
 
 namespace OpenWBEM
@@ -56,9 +55,9 @@ public:
 		m_authorizer = authorizerRef;
 	}
 
-	void turnOff(const ProviderEnvironmentIFCRef& env);
-	void turnOn(const ProviderEnvironmentIFCRef& env);
-	bool isOn(const ProviderEnvironmentIFCRef& env);
+	void turnOff(OperationContext& context);
+	void turnOn(OperationContext& context);
+	bool isOn(OperationContext& context);
 
 	/**
 	 * Determine if a read of the given instance is allowed. The given
@@ -84,11 +83,12 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowReadInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const CIMOMEnvironmentRef& env,
         const String& ns,
 		const String& className,
 		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList);
+		StringArray& authorizedPropertyList,
+		OperationContext& context);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -103,11 +103,12 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowWriteInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const CIMOMEnvironmentRef& env,
 		const String& ns,
 		const CIMObjectPath& op,
 		Authorizer2IFC::EDynamicFlag dynamic,
-		Authorizer2IFC::EWriteFlag flag);
+		Authorizer2IFC::EWriteFlag flag,
+		OperationContext& context);
 #endif
 
 	/**
@@ -117,8 +118,9 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowReadSchema(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const CIMOMEnvironmentRef& env,
+		const String& ns,
+		OperationContext& context);
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -129,9 +131,10 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowWriteSchema(
-		const ProviderEnvironmentIFCRef& env,
+		const CIMOMEnvironmentRef& env,
 		const String& ns, 
-		Authorizer2IFC::EWriteFlag flag);
+		Authorizer2IFC::EWriteFlag flag,
+		OperationContext& context);
 #endif
 
 	/**
@@ -141,9 +144,10 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowAccessToNameSpace(
-		const ProviderEnvironmentIFCRef& env,
+		const CIMOMEnvironmentRef& env,
 		const String& ns,
-		Authorizer2IFC::EAccessType accessType);
+		Authorizer2IFC::EAccessType accessType,
+		OperationContext& context);
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
@@ -153,8 +157,9 @@ public:
 	 * @return true if the creation is authorized. Otherwise false.
 	 */
 	bool allowCreateNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const CIMOMEnvironmentRef& env,
+		const String& ns,
+		OperationContext& context);
 
 	/**
 	 * Determine if the user is allowed to delete the given namespace.
@@ -163,8 +168,9 @@ public:
 	 * @return true if the deletion is authorized. Otherwise false.
 	 */
 	bool allowDeleteNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const CIMOMEnvironmentRef& env,
+		const String& ns,
+		OperationContext& context);
 #endif
 
 	/**
@@ -173,7 +179,8 @@ public:
 	 * @return true if the enumerate is allowed. Otherwise false.
 	 */
 	bool allowEnumNameSpace(
-		const ProviderEnvironmentIFCRef& env);
+		const CIMOMEnvironmentRef& env,
+		OperationContext& context);
 
 	/**
 	 * Determine if a method may be invoked. 
@@ -185,17 +192,17 @@ public:
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	bool allowMethodInvocation(
-		const ProviderEnvironmentIFCRef& env, 
+		const CIMOMEnvironmentRef& env, 
 		const String& ns, 
 		const CIMObjectPath& path, 
-		const String& methodName); 
+		const String& methodName,
+		OperationContext& context);
 
 	/**
 	 * Called by the CIMOMEnvironment after the CIMServer has be loaded and
 	 * initialized.
 	 */
-	void init(ProviderEnvironmentIFCRef& env);
-
+	void init(CIMOMEnvironmentRef& env);
 
 private:
 

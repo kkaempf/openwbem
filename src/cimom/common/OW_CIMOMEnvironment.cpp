@@ -298,7 +298,7 @@ CIMOMEnvironment::startServices()
 		new ProviderEnvironmentServiceEnvironmentWrapper(this));
 
 	m_providerManager->init(penvRef);
-	m_authorizerManager->init(penvRef);
+	m_authorizerManager->init(g_cimomEnvironment);
 
 	for(size_t i = 0; i < m_services.size(); i++)
 	{

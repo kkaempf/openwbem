@@ -52,7 +52,6 @@
 #include "OW_ConfigFile.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_SortedVectorSet.hpp"
-#include "OW_AuthorizerManager.hpp"
 
 namespace OpenWBEM
 {
@@ -102,6 +101,9 @@ typedef SharedLibraryReference<RepositoryIFCRef>
 
 class AuthorizerIFC; 
 typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef; 
+
+class AuthorizerManager;
+typedef Reference<AuthorizerManager> AuthorizerManagerRef;
 
 class IndicationRepLayerMediator;
 typedef Reference<IndicationRepLayerMediator>

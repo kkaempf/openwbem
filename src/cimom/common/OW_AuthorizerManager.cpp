@@ -1,13 +1,12 @@
 #include "OW_config.h"
+#include "OW_CIMOMEnvironment.hpp"
 #include "OW_AuthorizerManager.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_CIMObjectPath.hpp"
-
-#include <iostream>
-using std::cerr;
-using std::endl;
-
-
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_Logger.hpp"
+#include "OW_RequestHandlerIFC.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 
 #define AUTH_ACTIVE_KEY "_aUtHoRiZeR@aCtIvE@kEy_"
 #define DISABLED_KEY "__aUtH@mGr@DiSaBlEd__"
@@ -17,29 +16,104 @@ namespace OpenWBEM
 
 namespace
 {
+class AuthorizerEnvironment : public ServiceEnvironmentIFC
+{
+public:
+
+	AuthorizerEnvironment(const CIMOMEnvironmentRef& env,
+		OperationContext& context)
+		: ServiceEnvironmentIFC()
+		, m_env(env)
+		, m_context(context)
+	{}
+
+	virtual String getConfigItem(const String &name,
+		const String& defRetVal) const
+	{
+		return m_env->getConfigItem(name, defRetVal);
+	}
+	virtual void setConfigItem(const String &item, const String &value,
+		ServiceEnvironmentIFC::EOverwritePreviousFlag overwritePrevious)
+	{
+		m_env->setConfigItem(item, value, overwritePrevious);
+	}
+	virtual RequestHandlerIFCRef getRequestHandler(const String &id)
+	{
+		return m_env->getRequestHandler(id);
+	}
+
+	virtual CIMInstanceArray getInteropInstances(const String &className) const
+	{
+		return m_env->getInteropInstances(className);
+	}
+	virtual void setInteropInstance(const CIMInstance &inst)
+	{
+		m_env->setInteropInstance(inst);
+	}
+	virtual void addSelectable(const SelectableIFCRef &obj,
+		const SelectableCallbackIFCRef &cb)
+	{
+		m_env->addSelectable(obj, cb);
+	}
+	virtual void removeSelectable(const SelectableIFCRef &obj)
+	{
+		m_env->removeSelectable(obj);
+	}
+
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &context,
+		ESendIndicationsFlag doIndications,
+		EBypassProvidersFlag bypassProviders)
+	{
+		return m_env->getCIMOMHandle(m_context, doIndications, bypassProviders,
+			CIMOMEnvironment::E_NO_LOCKING);
+	}
+
+	virtual LoggerRef getLogger() const
+	{
+		return m_env->getLogger();
+	}
+
+	virtual bool authenticate(String &userName, const String &info,
+		String &details, OperationContext &context)
+	{
+		return m_env->authenticate(userName, info, details, context);
+	}
+
+	virtual OperationContext& getOperationContext()
+	{
+		return m_context;
+	}
+private:
+	CIMOMEnvironmentRef m_env;
+	OperationContext& m_context;
+};
+
+inline ServiceEnvironmentIFCRef createAuthEnvRef(OperationContext& context,
+	const CIMOMEnvironmentRef& env)
+{
+	return ServiceEnvironmentIFCRef(new AuthorizerEnvironment(env, context));
+}
+
 //////////////////////////////////////////////////////////////////////////////
 struct AuthorizerMarker
 {
-	const ProviderEnvironmentIFCRef& m_env;
-	AuthorizerMarker(const ProviderEnvironmentIFCRef& env)
-		: m_env(env)
+	OperationContext& m_context;
+	AuthorizerMarker(OperationContext& context)
+		: m_context(context)
 	{
-		m_env->getOperationContext().setStringData(AUTH_ACTIVE_KEY, "1");
+		m_context.setStringData(AUTH_ACTIVE_KEY, "1");
 	}
 	~AuthorizerMarker()
 	{
-		m_env->getOperationContext().removeData(AUTH_ACTIVE_KEY);
+		m_context.removeData(AUTH_ACTIVE_KEY);
 	}
 	
-	static bool active(const ProviderEnvironmentIFCRef& env)
+	static bool active(OperationContext& context)
 	{
 		bool cc = false;
 		try
 		{
-			String val = env->getOperationContext().getStringData(
-				AUTH_ACTIVE_KEY);
-
-			cc = (val == "1");
+			cc = (context.getStringData(AUTH_ACTIVE_KEY) == "1");
 		}
 		catch (ContextDataNotFoundException& e)
 		{
@@ -55,18 +129,20 @@ struct AuthorizerMarker
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-AuthorizerManager::turnOff(const ProviderEnvironmentIFCRef& env)
+AuthorizerManager::turnOff(
+	OperationContext& context)
 {
-	env->getOperationContext().setStringData(DISABLED_KEY, "1");
+	context.setStringData(DISABLED_KEY, "1");
 
 }
 //////////////////////////////////////////////////////////////////////////////
 void 
-AuthorizerManager::turnOn(const ProviderEnvironmentIFCRef& env)
+AuthorizerManager::turnOn(
+	OperationContext& context)
 {
 	try
 	{
-		env->getOperationContext().removeData(DISABLED_KEY);
+		context.removeData(DISABLED_KEY);
 	}
 	catch(...)
 	{
@@ -75,14 +151,13 @@ AuthorizerManager::turnOn(const ProviderEnvironmentIFCRef& env)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-AuthorizerManager::isOn(const ProviderEnvironmentIFCRef& env)
+AuthorizerManager::isOn(
+	OperationContext& context)
 {
 	bool cc = true;
 	try
 	{
-		String val = env->getOperationContext().getStringData(
-			DISABLED_KEY);
-		cc = (val != "1");
+		cc = (context.getStringData(DISABLED_KEY) != "1");
 	}
 	catch (ContextDataNotFoundException& e)
 	{
@@ -110,13 +185,18 @@ AuthorizerManager::~AuthorizerManager()
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-AuthorizerManager::init(ProviderEnvironmentIFCRef& env)
+AuthorizerManager::init(CIMOMEnvironmentRef& env)
 {
 	if(!m_initialized)
 	{
 		if(m_authorizer)
 		{
-			m_authorizer->init(env);
+			OperationContext oc;
+			ServiceEnvironmentIFCRef envref = createAuthEnvRef(oc, env);
+			m_authorizer->init(envref);
+
+			//virtual void init(ServiceEnvironmentIFCRef&) {}
+
 		}
 		m_initialized = true;
 	}
@@ -125,215 +205,219 @@ AuthorizerManager::init(ProviderEnvironmentIFCRef& env)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowReadInstance(
-	const ProviderEnvironmentIFCRef& env,
+	const CIMOMEnvironmentRef& env,
 	const String& ns,
 	const String& className,
 	const StringArray* clientPropertyList,
-	StringArray& authorizedPropertyList)
+	StringArray& authorizedPropertyList,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowReadInstance(env, ns, className,
-		clientPropertyList, authorizedPropertyList);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowReadInstance(
+		createAuthEnvRef(context, env), ns, className,
+		clientPropertyList, authorizedPropertyList, context);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowWriteInstance(
-	const ProviderEnvironmentIFCRef& env,
+	const CIMOMEnvironmentRef& env,
 	const String& ns, 
 	const CIMObjectPath& op,
 	Authorizer2IFC::EDynamicFlag dynamic,
-	Authorizer2IFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowWriteInstance(env, ns, op, dynamic, flag);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowWriteInstance(
+		createAuthEnvRef(context, env), ns, op, dynamic, flag,
+		context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowReadSchema(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const CIMOMEnvironmentRef& env,
+	const String& ns,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowReadSchema(env, ns);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowReadSchema(
+		createAuthEnvRef(context, env), ns, context);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowWriteSchema(
-	const ProviderEnvironmentIFCRef& env,
+	const CIMOMEnvironmentRef& env,
 	const String& ns, 
-	Authorizer2IFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowWriteSchema(env, ns, flag);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowWriteSchema(
+		createAuthEnvRef(context, env), ns, flag, context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowAccessToNameSpace(
-	const ProviderEnvironmentIFCRef& env,
+	const CIMOMEnvironmentRef& env,
 	const String& ns,
-	Authorizer2IFC::EAccessType accessType)
+	Authorizer2IFC::EAccessType accessType,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowAccessToNameSpace(env, ns, accessType);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowAccessToNameSpace(
+		createAuthEnvRef(context, env), ns, accessType, context);
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowCreateNameSpace(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const CIMOMEnvironmentRef& env,
+	const String& ns,
+	OperationContext& context)
 {
-
-	// TEST
-	if(!isOn(env))
-	{
-		cerr << "!!!! AUTHORIZERMANAGER IS OFF !!!" << endl;
-	}
-
-	if(!m_initialized)
-	{
-		cerr << "!!! AUTHORIZERMANAGER IS NOT INITIALIZED !!!" << endl;
-	}
-
-	if(!m_authorizer)
-	{
-		cerr << "!!!! AUTHORIZERMANAGER HAS NO AUTHORIZER !!!" << endl;
-	}
-
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowCreateNameSpace(env, ns);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowCreateNameSpace(
+		createAuthEnvRef(context, env), ns, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowDeleteNameSpace(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const CIMOMEnvironmentRef& env,
+	const String& ns,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-       || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowDeleteNameSpace(env, ns);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowDeleteNameSpace(
+		createAuthEnvRef(context, env), ns, context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool
-AuthorizerManager::allowEnumNameSpace(const ProviderEnvironmentIFCRef& env)
+AuthorizerManager::allowEnumNameSpace(
+	const CIMOMEnvironmentRef& env,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowEnumNameSpace(env);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowEnumNameSpace(
+		createAuthEnvRef(context, env), context);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowMethodInvocation(
-	const ProviderEnvironmentIFCRef& env, 
+	const CIMOMEnvironmentRef& env, 
 	const String& ns, 
 	const CIMObjectPath& path,
-	const String& methodName)
+	const String& methodName,
+	OperationContext& context)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
-	if(AuthorizerMarker::active(env)
+	if(AuthorizerMarker::active(context)
 	   || !m_authorizer
 	   || !m_initialized
-	   || !isOn(env))
+	   || !isOn(context))
 	{
 		return true;
 	}
 
-	AuthorizerMarker am(env);
-	return m_authorizer->doAllowMethodInvocation(env, ns, path, methodName);
+	AuthorizerMarker am(context);
+	return m_authorizer->doAllowMethodInvocation(
+		createAuthEnvRef(context, env), ns, path, methodName,
+		context);
 }
 
 

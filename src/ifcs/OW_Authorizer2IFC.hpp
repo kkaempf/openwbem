@@ -37,7 +37,7 @@
 #define __OW_AUTHORIZER2IFC_HPP__
 
 #include "OW_config.h"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
 namespace OpenWBEM
@@ -76,15 +76,16 @@ public:
 	 * 		authorizedPropertyList contains the property names the client is
 	 * 		allowed to retrieve. In this case, if the property list is empty,
 	 * 		then the client will not get any properties.
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowReadInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
         const String& ns,
 		const String& className,
 		const StringArray* clientPropertyList,
-		StringArray& authorizedPropertyList) = 0;
-
+		StringArray& authorizedPropertyList,
+		OperationContext& context) = 0;
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -97,26 +98,29 @@ public:
 	 * 		through a provider. Otherwise it is being written to the
 	 * 		static repository.
 	 * @param flag Indicates create/modify/delete operation.
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowWriteInstance(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns, 
 		const CIMObjectPath& instanceName, 
 		EDynamicFlag dynamic,
-		EWriteFlag flag) = 0;
-
+		EWriteFlag flag,
+		OperationContext& context) = 0;
 #endif
 
 	/**
 	 * Determine if a read of the schema is allowed in the given namespace.
 	 * @param env A reference to a provider environment
 	 * @param ns The namespace the schema will be read from.
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowReadSchema(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns) = 0;
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context) = 0;
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -124,12 +128,14 @@ public:
 	 * @param env A reference to a provider environment
 	 * @param ns The namespace the schema write will take place in.
 	 * @param flag Indicates create/modify/delete operation
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowWriteSchema(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
-		EWriteFlag flag) = 0;
+		EWriteFlag flag,
+		OperationContext& context) = 0;
 #endif
 
 	/**
@@ -137,42 +143,50 @@ public:
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace that will be accessed.
 	 * @param accessType EREAD, WRITE, EREADWRITE
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowAccessToNameSpace(
-		const ProviderEnvironmentIFCRef& env,
+		const ServiceEnvironmentIFCRef& env,
 		const String& ns,
-		EAccessType accessType) = 0;
+		EAccessType accessType,
+		OperationContext& context) = 0;
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Determine if user is allowed to create the given namespace.
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace that will be created.
+	 * @param context
 	 * @return true if the creation is authorized. Otherwise false.
 	 */
 	virtual bool doAllowCreateNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns) = 0;
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context) = 0;
 
 	/**
 	 * Determine if the user is allow to delete the given namespace.
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace that will be deleted.
+	 * @param context
 	 * @return true if the deletion is authorized. Otherwise false.
 	 */
 	virtual bool doAllowDeleteNameSpace(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns) = 0;
+		const ServiceEnvironmentIFCRef& env,
+		const String& ns,
+		OperationContext& context) = 0;
 #endif
 
 	/**
 	 * Determine if the user is allowed to enumerate namespaces.
 	 * @param env A reference to a provider environment
+	 * @param context
 	 * @return true if the enumerate is allowed. Otherwise false.
 	 */
 	virtual bool doAllowEnumNameSpace(
-		const ProviderEnvironmentIFCRef& env) = 0;
+		const ServiceEnvironmentIFCRef& env,
+		OperationContext& context) = 0;
 
 	/**
 	 * Determine if a method may be invoked. 
@@ -181,15 +195,17 @@ public:
 	 * @param path The name of the instance or class containing
 	 * 		the method. 
 	 * @param methodName The name of the method. 
+	 * @param context
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowMethodInvocation(
-		const ProviderEnvironmentIFCRef& env, 
+		const ServiceEnvironmentIFCRef& env, 
 		const String& ns, 
 		const CIMObjectPath path, 
-		const String& methodName) = 0;
+		const String& methodName,
+		OperationContext& context) = 0;
 
-	virtual void init(ProviderEnvironmentIFCRef&) {}
+	virtual void init(ServiceEnvironmentIFCRef&) {}
 };
 
 typedef SharedLibraryReference<Reference<Authorizer2IFC> > Authorizer2IFCRef;

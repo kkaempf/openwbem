@@ -47,12 +47,9 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
 
 #include <cstring>
-
-#include <iostream>
-using std::cerr;
-using std::endl;
 
 namespace OpenWBEM
 {
@@ -79,23 +76,20 @@ SimpleAuthorizer::~SimpleAuthorizer()
 //////////////////////////////////////////////////////////////////////////////
 bool
 SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
-	const ProviderEnvironmentIFCRef& env)
+	const ServiceEnvironmentIFCRef& env, OperationContext& context)
 {
-cerr << "<<< SimpleAuthorizer::checkAccess called..." << endl;
-
-
 	OW_ASSERT(opType == ACCESS_READ || opType == ACCESS_WRITE
 		|| opType == ACCESS_READWRITE);
 
-	UserInfo userInfo = env->getOperationContext().getUserInfo();
+	UserInfo userInfo = context.getUserInfo();
 	if (userInfo.getInternal())
 	{
-cerr << "<<< SimpleAuthorizer::checkAccess internal user returning" << endl;
-
 		return true;
 	}
 
-	CIMOMHandleIFCRef lch = env->getCIMOMHandle();
+	CIMOMHandleIFCRef lch = env->getCIMOMHandle(context,
+		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
 	LoggerRef lgr = env->getLogger();
 
@@ -105,8 +99,6 @@ cerr << "<<< SimpleAuthorizer::checkAccess internal user returning" << endl;
 			env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 		if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 		{
-cerr << "<<< SimpleAuthorizer::checkAccess is super user. returning" << endl;
-
 			lgr->logDebug("User is SuperUser: checkAccess returning.");
 			return true;
 		}
@@ -130,8 +122,6 @@ cerr << "<<< SimpleAuthorizer::checkAccess is super user. returning" << endl;
 			}
 			catch(CIMException&)
 			{
-cerr << "<<< SimpleAuthorizer::checkAccess no OpenWBEM_UserACL class. returning" << endl;
-
 				lgr->logDebug("OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return true;
@@ -165,9 +155,6 @@ cerr << "<<< SimpleAuthorizer::checkAccess no OpenWBEM_UserACL class. returning"
 				}
 
 				capability.toLowerCase();
-cerr << "<<< SimpleAuthorizer::checkAccess opType = " << opType << endl;
-cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
-
 				if (opType.length() == 1)
 				{
 					if (capability.indexOf(opType) == String::npos)
@@ -230,15 +217,8 @@ cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
 					capability = v.toString();
 				}
 			}
-			else
-			{
-cerr << "<<< SimpleAuthorizer::checkAccess no capability prop" << endl;
-			}
 
 			capability.toLowerCase();
-cerr << "<<< SimpleAuthorizer::checkAccess opType = " << opType << endl;
-cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
-
 			if(opType.length() == 1)
 			{
 				if (capability.indexOf(opType) == String::npos)
@@ -257,7 +237,6 @@ cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
 			}
 
 			// Access to namespace granted for user
-cerr << "<<< SimpleAuthorizer::checkAccess returning true - Bottom" << endl;
 			return true;
 		}
 		size_t idx = lns.lastIndexOf('/');
@@ -276,52 +255,57 @@ cerr << "<<< SimpleAuthorizer::checkAccess returning true - Bottom" << endl;
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowReadInstance(
-	const ProviderEnvironmentIFCRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
 	const StringArray* clientPropertyList,
-	StringArray& authorizedPropertyList)
+	StringArray& authorizedPropertyList,
+	OperationContext& context)
 {
-	return checkAccess(ACCESS_READ, ns, env);
+	return checkAccess(ACCESS_READ, ns, env, context);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-	bool 
+bool 
 SimpleAuthorizer::doAllowWriteInstance(
-	const ProviderEnvironmentIFCRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns, 
 	const CIMObjectPath& instanceName, 
 	Authorizer2IFC::EDynamicFlag dynamic,
-	Authorizer2IFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag,
+	OperationContext& context)
 {
-	return checkAccess(ACCESS_WRITE, ns, env);
+	return checkAccess(ACCESS_WRITE, ns, env, context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowReadSchema(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const ServiceEnvironmentIFCRef& env,
+	const String& ns,
+	OperationContext& context)
 {
-	return checkAccess(ACCESS_READ, ns, env);
+	return checkAccess(ACCESS_READ, ns, env, context);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowWriteSchema(
-	const ProviderEnvironmentIFCRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns, 
-	Authorizer2IFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag,
+	OperationContext& context)
 {
-	return checkAccess(ACCESS_WRITE, ns, env);
+	return checkAccess(ACCESS_WRITE, ns, env, context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowAccessToNameSpace(
-	const ProviderEnvironmentIFCRef& env,
+	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
-	Authorizer2IFC::EAccessType accessType)
+	Authorizer2IFC::EAccessType accessType,
+	OperationContext& context)
 {
 	String actype;
 	switch(accessType)
@@ -337,47 +321,48 @@ SimpleAuthorizer::doAllowAccessToNameSpace(
 			break;
 	}
 
-cerr << "<<< SimpleAuthorizer::doAllowAccessToNameSpace calling checkAccess ns"
-	<< ns << " with access " << actype << endl;
-
-	return checkAccess(actype, ns, env);
+	return checkAccess(actype, ns, env, context);
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowCreateNameSpace(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns_)
+	const ServiceEnvironmentIFCRef& env,
+	const String& ns_,
+	OperationContext& context)
 {
-cerr << "<<< SimpleAuthorizer::doAllowCreateNameSpace called: ns = " << ns_ << endl;
-
-	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE);
+	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE,
+		context);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowDeleteNameSpace(
-	const ProviderEnvironmentIFCRef& env,
-	const String& ns_)
+	const ServiceEnvironmentIFCRef& env,
+	const String& ns_,
+	OperationContext& context)
 {
-	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE);
+	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE,
+		context);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowEnumNameSpace(
-		const ProviderEnvironmentIFCRef& env)
+	const ServiceEnvironmentIFCRef& env,
+	OperationContext& context)
 {
 	return true; // ?
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowMethodInvocation(
-	const ProviderEnvironmentIFCRef& env, 
+	const ServiceEnvironmentIFCRef& env, 
 	const String& ns, 
 	const CIMObjectPath path, 
-	const String& methodName)
+	const String& methodName,
+	OperationContext& context)
 {
-	return checkAccess(ACCESS_READWRITE, ns, env);
+	return checkAccess(ACCESS_READWRITE, ns, env, context);
 }
 
 } // end namespace OpenWBEM
