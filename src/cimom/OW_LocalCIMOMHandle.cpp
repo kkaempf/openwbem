@@ -487,6 +487,8 @@ OW_LocalCIMOMHandle::execQuery(
 	const OW_String& queryLanguage)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
+	// TODO: figure out a way to examine the query so we can know whether
+	// to get a read or write lock here.
 	OW_CIMServerInstanceWriteLocker irl(this);
 	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
 }
