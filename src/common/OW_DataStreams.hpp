@@ -63,7 +63,7 @@ public:
 	DataIStreamBuf(int dataLen, const unsigned char* data) :
 		std::streambuf()
 	{
-		setg(const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)),
+		setg(const_cast<char*>(reinterpret_cast<const char*>(data)),
 			const_cast<char*>(reinterpret_cast<const char*>(data)),
 			const_cast<char*>(reinterpret_cast<const char*>(data+dataLen)));
 	}

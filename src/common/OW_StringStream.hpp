@@ -61,7 +61,7 @@ public:
 		: std::streambuf()
 		, m_buf(s)
 	{
-		setg(const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str()+m_buf.length())),
+		setg(const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str())),
 			const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str())),
 			const_cast<char*>(reinterpret_cast<const char*>(m_buf.c_str()+m_buf.length())));
 	}
@@ -72,7 +72,6 @@ protected:
 	}
 private:
 	String m_buf;
-	friend class OStringStream;
 };
 ///////////////////////////////////////////////////////////////////////////////
 class IStringStreamBase
