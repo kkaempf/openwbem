@@ -12,3 +12,5 @@ owcimclientcl
 fakeclient
 IPCClientTest
 testCIMExceptions
+infiniteClient
+testinstprov
