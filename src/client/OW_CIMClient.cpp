@@ -53,8 +53,7 @@ using namespace WBEMFlags;
 CIMClient::CIMClient(const String& url, const String& ns,
 	const ClientAuthCBIFCRef& authCB)
 {
-	m_ch = ClientCIMOMHandle::createFromURL(url);
-	m_ch->getWBEMProtocolHandler()->setLoginCallBack(authCB);
+	m_ch = ClientCIMOMHandle::createFromURL(url, authCB);
 
 	m_namespace = ns;
 }

@@ -36,9 +36,7 @@
 
 
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
@@ -56,6 +54,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_Bool.hpp"
 
 #include <iostream>
 
@@ -783,22 +782,9 @@ int main(int argc, char* argv[])
 
 		String url(argv[1]);
 
-		URL owurl(url);
-		CIMOMHandleIFCRef rchRef;
+		CIMOMHandleIFCRef chRef = ClientCIMOMHandle::createFromURL(url);
 
-		CIMProtocolIFCRef client;
-		client = new HTTPClient(url);
-
-		if (owurl.scheme.startsWith(URL::OWBINARY))
-		{
-			rchRef = new BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			rchRef = new CIMXMLCIMOMHandle(client);
-		}
-
-		CIMOMHandleIFC& rch = *rchRef;
+		CIMOMHandleIFC& rch = *chRef;
 
 
 		createNameSpace(rch);

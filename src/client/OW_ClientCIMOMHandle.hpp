@@ -37,6 +37,7 @@
 #include "OW_config.h"										
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Reference.hpp"
+#include "OW_ClientAuthCBIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -82,11 +83,14 @@ public:
 	 * in the port, the url escape mechanism must be used, since a / (among 
 	 * other chars) isn't allowed in the port.
 	 * 
+	 * @param authCb If authentication is necessary, and authCb != NULL, then
+	 * authCb->getCredentials() will be called to obtain credentials.
+	 * 
 	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
 	 * @throws MalformedURLException If the url is bad
 	 * @throws std::bad_alloc
 	 */
-	static ClientCIMOMHandleRef createFromURL(const String& url);
+	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 };
 
 } // end namespace OpenWBEM

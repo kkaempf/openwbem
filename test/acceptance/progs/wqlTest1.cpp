@@ -32,9 +32,7 @@
  * @author Dan Nuffer
  */
 
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
@@ -42,6 +40,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLImpl.hpp"
+#include "OW_Bool.hpp"
 
 #include <iostream>
 
@@ -134,19 +133,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		String url = argv[1];
-		CIMProtocolIFCRef httpClient( new HTTPClient(url) );
-
-		URL owurl(url);
-		CIMOMHandleIFCRef rch;
-
-		if (owurl.scheme.startsWith(URL::OWBINARY))
-		{
-			rch = new BinaryCIMOMHandle(httpClient);
-		}
-		else
-		{
-			rch = new CIMXMLCIMOMHandle(httpClient);
-		}
+		
+		CIMOMHandleIFCRef rch = ClientCIMOMHandle::createFromURL(url);
 
 		CIMInstanceArray cia;
 

@@ -38,8 +38,7 @@
 #include "OW_Semaphore.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_HTTPClient.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
@@ -49,6 +48,8 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_Bool.hpp"
+#include "OW_SocketBaseImpl.hpp"
 
 #include <iostream> // for cout and cerr
 
@@ -306,8 +307,8 @@ int main(int argc, char* argv[])
 
 		String ns("/root/testsuite");
 
-		CIMProtocolIFCRef httpClient(new HTTPClient(url));
-		CIMXMLCIMOMHandle rch(httpClient);
+		CIMOMHandleIFCRef chRef = ClientCIMOMHandle::createFromURL(url);
+		CIMOMHandleIFC& rch = *chRef;
 
 		rch.execQueryE("/root/testsuite", "delete from CIM_IndicationSubscription", "wql2");
 

@@ -33,9 +33,7 @@
  */
 
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMClass.hpp"
@@ -88,35 +86,8 @@ int main(int argc, char* argv[])
 		String url = argv[1];
 		String ns = argv[2];
 		String classname = argv[3];
-		URL owurl(url);
-		CIMProtocolIFCRef client;
-		client = new HTTPClient(url);
-		/**********************************************************************
-		 * Create an instance of our authentication callback class.
-		 **********************************************************************/
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-		/**********************************************************************
-		 * Assign our callback to the HTTP Client.
-		 **********************************************************************/
-		client->setLoginCallBack(getLoginInfo);
-		/**********************************************************************
-		 * Here we create a CIMXMLCIMOMHandle and have it use the
-		 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
-		 * a Reference<CIMProtocol> it it's constructor, so
-		 * we have to make a Reference out of our HTTP Client first.
-		 * By doing this, we don't have to worry about deleting our
-		 * HTTPClient.  Reference will delete it for us when the
-		 * last copy goes out of scope (reference count goes to zero).
-		 **********************************************************************/
-		CIMOMHandleIFCRef rch;
-		if (owurl.scheme.startsWith(URL::OWBINARY))
-		{
-			rch = new BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			rch = new CIMXMLCIMOMHandle(client);
-		}
+		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 		classPrinter handler;
 		rch->enumClass(ns, classname, handler, E_DEEP);
 		return 0;

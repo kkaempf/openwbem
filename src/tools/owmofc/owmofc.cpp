@@ -34,10 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_MOFGrammar.hpp"
-#include "OW_HTTPClient.hpp"
-#include "OW_HTTPUtils.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_MOFCIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
@@ -46,9 +43,9 @@
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_MOFCompCIMOMHandle.hpp"
 #include "OW_CIMRepository.hpp"
-#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_URL.hpp"
 
 #include <iostream>
 #ifdef OW_HAVE_GETOPT_H
@@ -102,7 +99,7 @@ protected:
 	}
 };
 
-static const char* const def_url_arg = "http://localhost";
+static const char* const def_url_arg = "http://localhost/root/cimv2";
 static const char* const def_namespace_arg = "root/cimv2";
 static const char* const def_encoding_arg = "cimxml";
 
@@ -144,7 +141,6 @@ processCommandLineOptions(int argc, char** argv)
 {
 	// Set defaults
 	g_url = def_url_arg;
-	g_opts.m_namespace = def_namespace_arg;
 	g_encoding = def_encoding_arg;
 
 	// handle backwards compatible options, which was <URL> <namespace> <file>
@@ -204,6 +200,21 @@ processCommandLineOptions(int argc, char** argv)
 		while (optind < argc)
 			g_filelist.push_back(argv[optind++]);
 	}
+
+	// Set default namespace, this is a bit strange to maintain backward compat.
+	if (g_opts.m_namespace.empty())
+	{
+		URL url(g_url);
+		if (url.namespaceName.empty())
+		{
+			g_opts.m_namespace = def_namespace_arg;
+		}
+		else
+		{
+			g_opts.m_namespace = url.namespaceName;
+		}
+	}
+
 	return 0;
 }
 class coutLogger : public Logger
@@ -257,10 +268,10 @@ void usage()
 	cout << "Usage: owmofc [OPTION] <FILE>...\n";
 	cout << "  -d,--direct <DIR>: create a repository in the specified directory without connecting to a cimom\n";
 	cout << "  -u,--url <URL>: the url of the cimom. Default is " << def_url_arg << " if not specified\n";
-	cout << "  -n,--namespace <NAMESPACE>: The initial namespace to use. Default is " << def_namespace_arg << " if not specified\n";
+	cout << "  -n,--namespace <NAMESPACE>: This option is deprecated in favor of the URL namespace. The initial namespace to use. Default is " << def_namespace_arg << " if not specified via this option or in the URL\n";
 	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it\n";
-	cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. "
-		"This can also be specified by using the owbinary.wbem URI scheme.  Default is " << def_encoding_arg << " if not specified\n";
+	cout << "  -e,--encoding <ENCODING>: This option is deprecated in favor of the URL scheme. Specify the encoding, valid values are cimxml and owbinary. "
+		"This can also be specified by using the owbinary.wbem URI scheme.\n";
 	cout << "  -s,--check-syntax: Only parse the mof, don't actually do anything <UNIMPLEMENTED>\n";
 	cout << "  -x,--dump-xml <FILE>: Write the xml to FILE <UNIMPLEMENTED>\n";
 	cout << "  -r,--remove: Instead of creating classes and instances, remove them <UNIMPLEMENTED>\n";
@@ -298,29 +309,33 @@ int main(int argc, char** argv)
 		else
 		{
 			URL url(g_url);
-			CIMProtocolIFCRef client;
-			client = new HTTPClient(g_url);
-			// TODO: The /owbinary path part is deprecated, remove it post 3.0
-			if(g_encoding == URL::OWBINARY || url.namespaceName.equalsIgnoreCase(URL::OWBINARY) || url.scheme.startsWith(URL::OWBINARY))
+			// override what was in the url - TODO: deprecated. Remove this post 3.0.x
+			if(g_encoding == URL::OWBINARY)
 			{
-				handle = CIMOMHandleIFCRef(new BinaryCIMOMHandle(client));
+				if (url.scheme.endsWith('s'))
+				{
+					url.scheme == URL::OWBINARY_WBEMS;
+				}
+				else
+				{
+					url.scheme == URL::OWBINARY_WBEM;
+				}
 			}
 			else if (g_encoding == "cimxml")
 			{
-				handle = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(client));
+				; // don't do anything
 			}
 			else
 			{
 				cerr << "Invalid encoding.  Valid encodings: cimxml, " << URL::OWBINARY << endl;
 				return 1;
 			}
-			client->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
+			ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+			handle = ClientCIMOMHandle::createFromURL(url.toString(), getLoginInfo);
 		}
 		Compiler theCompiler(handle, g_opts, theErrorHandler);
 		if (g_filelist.empty())
 		{
-			// don't do this, it's too confusing
-			// g_filelist.push_back("-"); // if they didn't specify a file, read from stdin.
 			usage();
 			return 1;
 		}

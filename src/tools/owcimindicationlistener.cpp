@@ -36,17 +36,22 @@
 #include "OW_HTTPXMLCIMListener.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_HTTPClient.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Semaphore.hpp"
+#include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_UnnamedPipe.hpp"
+#include "OW_ClientAuthCBIFC.hpp"
+#include "OW_GetPass.hpp"
+
 #include <iostream> // for cout and cerr
+#include <csignal>
 
 using namespace OpenWBEM;
 
 using std::cout;
+using std::cin;
 using std::endl;
 using std::cerr;
 Mutex coutMutex;
@@ -70,14 +75,29 @@ protected:
 	}
 };
 
-// TODO: Using a Semaphore from a signal handler isn't safe.  It could deadlock.
-// Figure out a better way to do it.
-Semaphore shutdownSem;
+UnnamedPipeRef sigPipe;
 extern "C"
 void sig_handler(int)
 {
-	shutdownSem.signal();
+	sigPipe->writeInt(0);
 }
+
+class GetLoginInfo : public ClientAuthCBIFC
+{
+public:
+	bool getCredentials(const String& realm, String& name,
+			String& passwd, const String& details)
+	{
+		(void)details;
+		cout << "Authentication required for " << realm << endl;
+		cout << "Enter the user name: ";
+		name = String::getLine(cin);
+		passwd = GetPass::getPass("Enter the password for " +
+			name + ": ");
+		return true;
+	}
+};
+
 int main(int argc, char* argv[])
 {
 	try
@@ -87,18 +107,22 @@ int main(int argc, char* argv[])
 			cerr << "Usage: " << argv[0] << " <URL> <namespace> <filter query>" << endl;
 			exit(1);
 		}
-		signal(SIGINT, sig_handler);
+
+		sigPipe = UnnamedPipe::createUnnamedPipe();
+		::signal(SIGINT, sig_handler);
+
 		String url(argv[1]);
 		String ns(argv[2]);
 		String query(argv[3]);
 		CIMListenerCallbackRef mcb(new myCallBack);
 		LoggerRef logger(new ListenerLogger);
 		HTTPXMLCIMListener hxcl(logger);
-		CIMProtocolIFCRef httpClient(new HTTPClient(url));
-		CIMXMLCIMOMHandle rch(httpClient);
-		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb);
+		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb, getLoginInfo);
 		// wait until we get a SIGINT
-		shutdownSem.wait();
+		int dummy;
+		sigPipe->readInt(&dummy);
+		
 		cout << "De-registering and shutting down." << endl;
 		hxcl.shutdownHttpServer();
 		hxcl.deregisterForIndication(handle);

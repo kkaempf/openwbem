@@ -70,10 +70,11 @@ ClientCIMOMHandle::enumNameSpace(const String& ns_,
 //////////////////////////////////////////////////////////////////////////////
 // static
 ClientCIMOMHandleRef
-ClientCIMOMHandle::createFromURL(const String& url)
+ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& authCb)
 {
 	URL owurl(url);
 	CIMProtocolIFCRef client(new HTTPClient(url));
+	client->setLoginCallBack(authCb);
 
 	if (owurl.scheme.startsWith(URL::OWBINARY) 
 		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!

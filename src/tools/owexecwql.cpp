@@ -33,13 +33,11 @@
  */
 
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -76,54 +74,8 @@ int main(int argc, char* argv[])
 		String url = argv[1];
 		String ns = argv[2];
 		String query = argv[3];
-		/*
-		CIMOMHandleIFCRef rch;
-		if(URL(url).protocol.equalsIgnoreCase("IPC"))
-		{
-			IPCCIMOMHandle *ipchdl = new IPCCIMOMHandle(url);
-			ipchdl->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
-			rch = Reference<CIMOMHandleIFC>(ipchdl);
-		}
-		else
-		{
-			HTTPClient* pHttpClient = new HTTPClient(url);
-			pHttpClient->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
-			CIMProtocolIFCRef httpClient(pHttpClient);
-			rch = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(httpClient));
-		}
-		*/
-		URL owurl(url);
-		CIMProtocolIFCRef client;
-		client = new HTTPClient(url);
-		/**********************************************************************
-		 * Create an instance of our authentication callback class.
-		 **********************************************************************/
-		
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-		/**********************************************************************
-		 * Assign our callback to the HTTP Client.
-		 **********************************************************************/
-		client->setLoginCallBack(getLoginInfo);
-		/**********************************************************************
-		 * Here we create a CIMXMLCIMOMHandle and have it use the
-		 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
-		 * a Reference<CIMProtocol> it it's constructor, so
-		 * we have to make a Reference out of our HTTP Client first.
-		 * By doing this, we don't have to worry about deleting our
-		 * HTTPClient.  Reference will delete it for us when the
-		 * last copy goes out of scope (reference count goes to zero).
-		 **********************************************************************/
-		CIMOMHandleIFCRef rch;
-		if (owurl.scheme.startsWith(URL::OWBINARY))
-		{
-			rch = new BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			rch = new CIMXMLCIMOMHandle(client);
-		}
-		// end of stuff cut'n'pasted from client driver.
-		cout << "Executing query (" << query << ") on server" << endl;
+		ClientCIMOMHandleRef rch = ClientCIMOMHandle::createFromURL(url, getLoginInfo);
 		CIMInstanceEnumeration cie = rch->execQueryE(ns, query, "wql2");
 		cout << "Got response: " << cie.numberOfElements() << " CIMInstances\n";
 		for (size_t i = 0; cie.hasMoreElements(); ++i)

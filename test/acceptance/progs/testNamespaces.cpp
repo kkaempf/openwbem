@@ -33,12 +33,11 @@
  */
 
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_SocketBaseImpl.hpp"
 
 #include <iostream>
 #include <algorithm> // for std::find
@@ -91,19 +90,8 @@ main(int argc, char* argv[])
 		}
 
 		String url(argv[1]);
-		URL owurl(url);
 
-		CIMProtocolIFCRef client(new HTTPClient(url));
-
-		CIMOMHandleIFCRef chRef;
-		if (owurl.scheme.startsWith(URL::OWBINARY))
-		{
-			chRef = new BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			chRef = new CIMXMLCIMOMHandle(client);
-		}
+		CIMOMHandleIFCRef chRef = ClientCIMOMHandle::createFromURL(url);
 
 		StringArray namespaces;
 
