@@ -38,6 +38,8 @@
 #include "OW_config.h"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
+#include "OW_String.hpp"
+#include "OW_SortedVectorMap.hpp"
 
 namespace OpenWBEM
 {
@@ -66,6 +68,29 @@ protected:
 #endif
 
 	ClientCIMOMHandleConnectionPoolRef m_connectionPool;
+
+	struct ProvRegInfo
+	{
+		String namespaceName;
+		String className;
+		String url;
+		bool alwaysSendCredentials;
+		bool useConnectionCredentials;
+	};
+	enum EProviderTypes
+	{
+		E_INSTANCE = 1,
+		E_SECONDARY_INSTANCE = 2,
+		E_ASSOCIATION = 3,
+		E_INDICATION = 4,
+		E_METHOD = 5
+	};
+
+	typedef SortedVectorMap<String, ProvRegInfo> ProvRegMap_t;
+	ProvRegMap_t m_instanceProvReg;
+	ProvRegMap_t m_secondaryInstanceProvReg;
+	ProvRegMap_t m_associatorProvReg;
+	ProvRegMap_t m_methodProvReg;
 };
 
 }

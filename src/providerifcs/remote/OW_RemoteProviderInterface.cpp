@@ -40,6 +40,14 @@
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_RemoteAssociatorProvider.hpp"
 #endif
+#include "OW_ConfigOpts.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_NoSuchPropertyException.hpp"
+#include "OW_NULLValueException.hpp"
 
 namespace OpenWBEM
 {
@@ -64,37 +72,189 @@ RemoteProviderInterface::getName() const
 //////////////////////////////////////////////////////////////////////////////
 void
 RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
-		InstanceProviderInfoArray& i,
-		SecondaryInstanceProviderInfoArray& si,
+		InstanceProviderInfoArray& ipia,
+		SecondaryInstanceProviderInfoArray& sipia,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& apia,
 #endif
-		MethodProviderInfoArray& m,
-		IndicationProviderInfoArray& ind)
+		MethodProviderInfoArray& mpia,
+		IndicationProviderInfoArray& indpia)
 {
-	unsigned maxConnectionsPerUrl = 5; // TODO: get this from a config item
+	unsigned maxConnectionsPerUrl = 5;
+	try
+	{
+		maxConnectionsPerUrl = env->getConfigItem(ConfigOpts::REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt, OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL).toUInt32();
+	}
+	catch (StringConversionException& e)
+	{
+	}
 	m_connectionPool = ClientCIMOMHandleConnectionPoolRef(new ClientCIMOMHandleConnectionPool(maxConnectionsPerUrl));
+
+	LoggerRef lgr = env->getLogger();
+	String interopNs = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+	CIMInstanceArray registrations;
+	try
+	{
+		registrations = env->getCIMOMHandle()->enumInstancesA(interopNs, "OpenWBEM_RemoteProviderRegistration");
+	}
+	catch (CIMException& e)
+	{
+		lgr->logDebug(Format("RemoteProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+			"OpenWBEM_RemoteProviderRegistration in namespace %2", e, interopNs));
+	}
+	lgr->logDebug(Format("RemoteProviderInterface::doInit() found %1 registrations", registrations.size()));
+	for (size_t i = 0; i < registrations.size(); ++i)
+	{
+		CIMInstance& curReg = registrations[i];
+		lgr->logDebug(Format("RemoteProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
+		try
+		{
+			String instanceID = curReg.getPropertyT("InstanceID").getValueT().toString();
+			ProvRegInfo info;
+			info.namespaceName = curReg.getPropertyT("Namespace").getValueT().toString();
+			info.className = curReg.getPropertyT("ClassName").getValueT().toString();
+			UInt16Array providerTypes = curReg.getPropertyT("ProviderTypes").getValueT().toUInt16Array();
+			info.url = curReg.getPropertyT("Url").getValueT().toString();
+			info.alwaysSendCredentials = curReg.getPropertyT("AlwaysSendCredentials").getValueT().toBool();
+			info.useConnectionCredentials = curReg.getPropertyT("UseConnectionCredentials").getValueT().toBool();
+
+			if (providerTypes.empty())
+			{
+				lgr->logError("ProviderTypes property value has no entries");
+			}
+			for (size_t j = 0; j < providerTypes.size(); ++j)
+			{
+				switch (providerTypes[j])
+				{
+					case E_INSTANCE:
+						{
+							// keep it for ourselves
+							m_instanceProvReg[instanceID] = info; 
+							// give the info back to the provider manager
+							InstanceProviderInfo ipi;
+							ipi.setProviderName(instanceID);
+							StringArray namespaces;
+							namespaces.push_back(info.namespaceName);
+							InstanceProviderInfo::ClassInfo classInfo(info.className, namespaces);
+							ipi.addInstrumentedClass(classInfo);
+							ipia.push_back(ipi);
+						}
+						break;
+					case E_SECONDARY_INSTANCE:
+						{
+							// keep it for ourselves
+							m_secondaryInstanceProvReg[instanceID] = info; 
+							// give the info back to the provider manager
+							SecondaryInstanceProviderInfo sipi;
+							sipi.setProviderName(instanceID);
+							StringArray namespaces;
+							namespaces.push_back(info.namespaceName);
+							SecondaryInstanceProviderInfo::ClassInfo classInfo(info.className, namespaces);
+							sipi.addInstrumentedClass(classInfo);
+							sipia.push_back(sipi);
+						}
+						break;
+					case E_ASSOCIATION:
+						{
+							// keep it for ourselves
+							m_associatorProvReg[instanceID] = info; 
+							// give the info back to the provider manager
+							AssociatorProviderInfo api;
+							api.setProviderName(instanceID);
+							StringArray namespaces;
+							namespaces.push_back(info.namespaceName);
+							AssociatorProviderInfo::ClassInfo classInfo(info.className, namespaces);
+							api.addInstrumentedClass(classInfo);
+							apia.push_back(api);
+						}
+						break;
+					case E_INDICATION:
+						{
+							lgr->logError("Remote indication providers not supported");
+						}
+						break;
+					case E_METHOD:
+						{
+							// keep it for ourselves
+							m_methodProvReg[instanceID] = info; 
+							// give the info back to the provider manager
+							MethodProviderInfo mpi;
+							mpi.setProviderName(instanceID);
+							StringArray namespaces;
+							namespaces.push_back(info.namespaceName);
+							StringArray methods; // leaving this empty means all methods
+							MethodProviderInfo::ClassInfo classInfo(info.className, namespaces, methods);
+							mpi.addInstrumentedClass(classInfo);
+							mpia.push_back(mpi);
+						}
+						break;
+					default:
+						lgr->logError(Format("Invalid value (%1) in ProviderTypes", providerTypes[j]));
+						break;
+				}
+			}
+		}
+		catch (NoSuchPropertyException& e)
+		{
+			lgr->logError(Format("Registration instance %1 has no property: %2", curReg.toString(), e));
+		}
+		catch (NULLValueException& e)
+		{
+			lgr->logError(Format("Registration instance %1 property has null value: %2", curReg.toString(), e));
+		}
+	}
+
 }
 	
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
 RemoteProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return InstanceProviderIFCRef(new RemoteInstanceProvider(env, provIdString, m_connectionPool, false, false));
+	ProvRegMap_t::const_iterator iter = m_instanceProvReg.find(provIdString);
+	if (iter == m_instanceProvReg.end())
+	{
+		// it wasn't registered, so it must be the provider qualifier.  In that case provIdString is the url.
+		return InstanceProviderIFCRef(new RemoteInstanceProvider(env, provIdString, m_connectionPool, false, false));
+	}
+	else
+	{
+		return InstanceProviderIFCRef(new RemoteInstanceProvider(env, iter->second.url, m_connectionPool, 
+			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRef
 RemoteProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, provIdString, m_connectionPool, false, false));
+	ProvRegMap_t::const_iterator iter = m_secondaryInstanceProvReg.find(provIdString);
+	if (iter == m_secondaryInstanceProvReg.end())
+	{
+		// it wasn't registered, so it must be the provider qualifier.  In that case provIdString is the url.
+		return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, provIdString, m_connectionPool, false, false));
+	}
+	else
+	{
+		return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, iter->second.url, m_connectionPool, 
+			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef
 RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return MethodProviderIFCRef(new RemoteMethodProvider(env, provIdString, m_connectionPool, false, false));
+	ProvRegMap_t::const_iterator iter = m_methodProvReg.find(provIdString);
+	if (iter == m_methodProvReg.end())
+	{
+		// it wasn't registered, so it must be the provider qualifier.  In that case provIdString is the url.
+		return MethodProviderIFCRef(new RemoteMethodProvider(env, provIdString, m_connectionPool, false, false));
+	}
+	else
+	{
+		return MethodProviderIFCRef(new RemoteMethodProvider(env, iter->second.url, m_connectionPool, 
+			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
+	}
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -102,7 +262,17 @@ RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& en
 AssociatorProviderIFCRef
 RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, provIdString, m_connectionPool, false, false));
+	ProvRegMap_t::const_iterator iter = m_associatorProvReg.find(provIdString);
+	if (iter == m_associatorProvReg.end())
+	{
+		// it wasn't registered, so it must be the provider qualifier.  In that case provIdString is the url.
+		return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, provIdString, m_connectionPool, false, false));
+	}
+	else
+	{
+		return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, iter->second.url, m_connectionPool, 
+			iter->second.alwaysSendCredentials, iter->second.useConnectionCredentials));
+	}
 }
 #endif
 
