@@ -34,6 +34,8 @@
 
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
+// dumb aCC requires these to build
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {

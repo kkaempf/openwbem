@@ -38,6 +38,8 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_SocketException.hpp"
+// dumb aCC requires these to build
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {

@@ -42,6 +42,8 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
+// dumb aCC requires these to build
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
