@@ -52,7 +52,7 @@ public:
 
 #define OW_HDBSIGNATURE "OWHIERARCHICALDB"
 const int OW_HDBSIGLEN = 17;
-const OW_UInt32 OW_HDBVERSION = 3000001;
+const OW_UInt32 OW_HDBVERSION = 3000002;
 
 /**
  * The OW_HDBHeaderBlock structure represent the header information for
