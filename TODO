@@ -85,6 +85,8 @@ New features:
       allow for easy scripting or dynamic CIMOM interaction.
     - Write a command line utility to register for and print indications.
     - Add -I flag for mof include search path.
+    - Write a config file provider so the CIMOM config can be programatically
+      changed from remote.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
