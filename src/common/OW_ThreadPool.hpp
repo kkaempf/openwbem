@@ -34,6 +34,7 @@
 #include "OW_Reference.hpp"
 #include "OW_Runnable.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {
@@ -72,9 +73,13 @@ public:
 	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
 	 *  no limit.
 	 *
+	 * @param logger used to log messages if non-NULL.
+	 *
+	 * @param poolName incorporated into log messages to identify the pool.
+	 *
 	 * @throw ThreadPoolException if the underlying implementation fails.
 	 */
-	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize);
+	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const LoggerRef& logger=LoggerRef(), const String& poolName="");
 	/**
 	 * Add an RunnableRef for the pool to execute.
 	 * If the queue is full, this call will block until there is space in the queue.

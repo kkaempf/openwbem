@@ -60,7 +60,7 @@ PollingManager::PollingManager(CIMOMEnvironmentRef env)
 		maxThreads = String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
 	
-	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10));
+	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10, env->getLogger(), "Polling Manager"));
 }
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::~PollingManager()
