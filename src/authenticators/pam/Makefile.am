@@ -17,7 +17,7 @@ noinst_LIBRARIES = \
 thelibdir = $(pkglibdir)/authentication
 
 libpamauthentication_a_SOURCES = \
-OW_LinuxPAMAuthentication.cpp
+OW_PAMAuthentication.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common	\
@@ -28,4 +28,4 @@ clean-local:
 
 
 endif
-EXTRA_DIST = OW_LinuxPAMAuthentication.cpp
+EXTRA_DIST = OW_PAMAuthentication.cpp
