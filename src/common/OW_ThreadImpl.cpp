@@ -271,11 +271,15 @@ unsigned long thread_t_ToUnsignedLong(Thread_t thr)
 {
 	//  This should really be a compile time assert.
 	OW_ASSERTMSG(sizeof(unsigned long) >= sizeof(Thread_t),"  Thread_t truncated!");
+#ifdef OW_NETWARE
+	return static_cast<unsigned long>(thr);
+#else
 	//Posix does not require pthread_t to be an integral type,
 	//  and , guest what, on some platforms, like FreeBSD, it isn't!
 	//  (See http://www.opengroup.org/onlinepubs/009695399/basedefs/sys/types.h.html)
 	//  so this can't be a static_cast<> on all platforms.
 	return reinterpret_cast<unsigned long>(thr);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
