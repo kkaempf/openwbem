@@ -66,6 +66,7 @@ doTest()
 {
 	doATest "" || return 1
 	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
+	doMakeDistCheck || return 1
 	doATest "--disable-zlib" || return 1
 	doATest "--disable-openslp" || return 1
 	doATest "--disable-acls" || return 1
@@ -74,7 +75,11 @@ doTest()
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
 	doATest "--disable-ssl" || return 1
-	doMakeDistCheck || return 1
+	doACompileOnlyTest "--disable-association-traversal" || return 1
+	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
+	doACompileOnlyTest "--disable-schema-manipulation" || return 1
+	doACompileOnlyTest "--disable-instance-manipulation" || return 1
+	doACompileOnlyTest "--disable-association-traversal --disable-qualifier-declaration --disable-schema-manipulation --disable-instance-manipulation" || return 1
 }
 
 ## MAIN ######################################################################
