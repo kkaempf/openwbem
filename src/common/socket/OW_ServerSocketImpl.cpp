@@ -334,16 +334,14 @@ ServerSocketImpl::doListen(UInt16 port,
 	close();
 	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): socket()");
 	}
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocket2Impl failed to set "
-			"close-on-exec flag on listen socket: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): fcntl() failed to set "
+			"close-on-exec flag on listen socket");
 	}
 	// set listen socket to nonblocking; see Unix Network Programming,
 	// pages 422-424.
@@ -375,17 +373,15 @@ ServerSocketImpl::doListen(UInt16 port,
 		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
 	}
 	inetAddr.sin_port = hton16(port);
-	if (bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
+	if (::bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
-				strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): bind");
 	}
-	if (listen(m_sockfd, queueSize) == -1)
+	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): listen");
 	}
 	fillAddrParms();
 	m_isActive = true;
@@ -399,16 +395,14 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	close();
 	if ((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): socket()");
 	}
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl failed to set "
-			"close-on-exec flag on listen socket: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): fcntl() failed to set "
+			"close-on-exec flag on listen socket");
 	}
 
 	// set listen socket to nonblocking; see Unix Network Programming,
@@ -427,16 +421,16 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	m_udsFile = FileSystem::openOrCreateFile(lockfilename);
 	if (!m_udsFile)
 	{
-		OW_THROW(SocketException,
-			Format("Unable to open or create Unix Domain Socket lock: %1, errno: %2(%3)",
-				lockfilename, errno, strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException,
+			Format("ServerSocketImpl::doListen(): Unable to open or create Unix Domain Socket lock: %1",
+				lockfilename).c_str());
 	}
 	// if we can't get a lock, someone else has got it open.
 	if (m_udsFile.tryLock() == -1)
 	{
-		OW_THROW(SocketException,
-			Format("Unable to lock Unix Domain Socket: %1, errno: %2(%3)",
-				filename, errno, strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException,
+			Format("ServerSocketImpl::doListen(): Unable to lock Unix Domain Socket: %1",
+				filename).c_str());
 	}
 	// We got the lock, so clobber the UDS if it's there so bind will succeed.
 	// If it's not gone, bind will fail.
@@ -444,9 +438,9 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	{
 		if (!FileSystem::removeFile(filename.c_str()))
 		{
-			OW_THROW(SocketException,
-				Format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
-					filename, errno, strerror(errno)).c_str());
+			OW_THROW_ERRNO_MSG(SocketException,
+				Format("ServerSocketImpl::doListen(): Unable to unlink Unix Domain Socket: %1",
+					filename).c_str());
 		}
 	}
 		
@@ -454,22 +448,19 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: bind failed: %1",
-				strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): bind()");
 	}
 	// give anybody access to the socket
 	// unfortunately, fchmod() doesn't work on a UDS
 	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: chmod failed: %1",
-				strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): chmod()");
 	}
 	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: listen failed: %1",
-			strerror(errno)).c_str());
+		OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::doListen(): listen()");
 	}
 	fillAddrParms();
 	m_isActive = true;
@@ -495,7 +486,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 {
 	if (!m_isActive)
 	{
-		OW_THROW(SocketException, "ServerSocketImpl::accept: NONE");
+		OW_THROW(SocketException, "ServerSocketImpl::accept(): m_isActive == false");
 	}
 	if (SocketUtils::waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT) == 0)
 	{
@@ -539,7 +530,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 			{
 				Thread::testCancel();
 			}
-			OW_THROW(SocketException, "ServerSocketImpl::accept");
+			OW_THROW_ERRNO_MSG(SocketException, "ServerSocketImpl::accept(): accept()");
 		}
 		// set socket back to blocking; see Unix Network Programming,
 		// pages 422-424.
@@ -582,25 +573,25 @@ ServerSocketImpl::close()
 			String filename = m_localAddress.toString();
 			if (!FileSystem::removeFile(filename.c_str()))
 			{
-				OW_THROW(SocketException,
-					Format("Unable to unlink Unix Domain Socket: %1, errno: %2",
-						filename, errno).c_str());
+				OW_THROW_ERRNO_MSG(SocketException,
+					Format("ServerSocketImpl::close(): Unable to unlink Unix Domain Socket: %1",
+						filename).c_str());
 			}
 			if (m_udsFile)
 			{
 				String lockfilename = filename + ".lock";
 				if (m_udsFile.unlock() == -1)
 				{
-					OW_THROW(SocketException,
-						Format("Failed to unlock Unix Domain Socket: %1, errno: %2(%3)",
-							lockfilename, errno, strerror(errno)).c_str());
+					OW_THROW_ERRNO_MSG(SocketException,
+						Format("ServerSocketImpl::close(): Failed to unlock Unix Domain Socket: %1",
+							lockfilename).c_str());
 				}
 				m_udsFile.close();
 				if (!FileSystem::removeFile(lockfilename.c_str()))
 				{
-					OW_THROW(SocketException,
-						Format("Unable to unlink Unix Domain Socket lock: %1, errno: %2",
-							lockfilename, errno).c_str());
+					OW_THROW_ERRNO_MSG(SocketException,
+						Format("ServerSocketImpl::close(): Unable to unlink Unix Domain Socket lock: %1",
+							lockfilename).c_str());
 				}
 			}
 		}
@@ -620,8 +611,7 @@ ServerSocketImpl::fillAddrParms()
 		len = sizeof(addr);
 		if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
-			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
-				"getsockname");
+			OW_THROW_ERRNO_MSG(SocketException, "SocketImpl::fillAddrParms(): getsockname");
 		}
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
@@ -633,8 +623,7 @@ ServerSocketImpl::fillAddrParms()
 		len = sizeof(addr);
 		if (getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
-			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
-				"getsockname");
+			OW_THROW_ERRNO_MSG(SocketException, "SocketImpl::fillAddrParms(): getsockname");
 		}
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
