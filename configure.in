@@ -205,7 +205,7 @@ case "$host" in
 	esac
 
 	PLAT_OPTFLAGS="-O0"
-	PIDFILEDIR="/var/locks"
+	PIDFILE_DIR="/var/locks"
 	LIB_EXT="so"
 	;;
 #*-*-cygwin*)
@@ -220,7 +220,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version \$(LIBRARY_BINARY_VERSION) -current_version \$(LIBRARY_BINARY_VERSION)"
 	CXXBUNDLELIBLINKFLAGS="-bundle"
 	PLAT_OPTFLAGS="-O2"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	CXX="g++"
 	LIB_EXT="dylib"
 	;;
@@ -238,7 +238,7 @@ case "$host" in
 	CXXBINLINKFLAGS="$LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS="-b -Wl,+h,\$@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	LIB_EXT="sl"
 	RPATH_LINK_FLAG="-Wl,+s -Wl,+b"
 	;;
@@ -255,7 +255,7 @@ case "$host" in
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	LIB_EXT="so"
 	STATIC_LINK_FLAGS="-Wl,-Bstatic"
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
@@ -287,7 +287,7 @@ case "$host" in
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	LIB_EXT="so"
 	;;
 *-*-solaris*)
@@ -299,7 +299,7 @@ case "$host" in
 	CXXBINLINKFLAGS="-Wl,-Bdynamic"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-h -Wl,$@.$(LIBRARY_BINARY_VERSION)'
 	PLAT_OPTFLAGS="-O3"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"
 	;;
@@ -314,7 +314,7 @@ case "$host" in
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(LIBRARY_BINARY_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
-	PIDFILEDIR="/var/run"
+	PIDFILE_DIR="/var/run"
 	LIB_EXT="so"
 	STATIC_LINK_FLAGS="-Wl,-Bstatic"
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
@@ -379,7 +379,7 @@ AC_SUBST(DYNAMIC_EXPORT_FLAG)
 AC_SUBST(LIB_EXT)
 
 AC_SUBST(PIDFILE_DIR)
-AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILEDIR}")
+AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILE_DIR}")
 
 AC_ARG_ENABLE(rpath-link,
 OW_HELP_STRING(--enable-rpath-link,enable the encoding of the destination library path into all executables for runtime linking),
