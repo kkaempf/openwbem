@@ -51,11 +51,11 @@ class TestResult;
 /*
  * A TestSuite is a Composite of Tests.
  * It runs a collection of test cases. Here is an example.
- * 
+ *
  * TestSuite *suite= new TestSuite;
  * suite->addTest(new TestCaller<MathTest> ("testAdd", testAdd));
  * suite->addTest(new TestCaller<MathTest> ("testDivideByZero", testDivideByZero));
- * 
+ *
  * Note that TestSuites assume lifetime
  * control for any tests added to them.
  *
@@ -85,6 +85,10 @@ private:
 
 };
 
+#define ADD_TEST_TO_SUITE(cls, test) \
+	testSuite->addTest (new TestCaller <cls> \
+			(#test, \
+			&cls::test));
 
 
 
