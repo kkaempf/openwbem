@@ -201,9 +201,9 @@
 #endif
 
 #ifdef OW_CLIENT_BUILD
-#define OW_CLIENT_API OW_EXPORT
+#define CLIENT_API OW_EXPORT
 #else
-#define OW_CLIENT_API OW_IMPORT
+#define CLIENT_API OW_IMPORT
 #endif
 
 #ifdef OW_DEBUG_MEMORY
