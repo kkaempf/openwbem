@@ -49,15 +49,35 @@
 #include "OW_ThreadBarrier.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_CimomCommonFwd.hpp"
+#include "OW_ServiceIFC.hpp"
 
 namespace OpenWBEM
 {
+class PollingManagerThread;
 
-class PollingManager : public Thread
+class PollingManager : public ServiceIFC
 {
 public:
-	PollingManager(const ServiceEnvironmentIFCRef& env, const ProviderManagerRef& providerManager);
+	PollingManager(const ProviderManagerRef& providerManager);
 	virtual ~PollingManager();
+	
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void start();
+	virtual void started();
+	virtual void shuttingDown();
+	virtual void shutdown();
+
+	void addPolledProvider(const PolledProviderIFCRef& p);
+private:
+	IntrusiveReference<PollingManagerThread> m_pollingManagerThread;
+};
+
+class PollingManagerThread : public Thread
+{
+public:
+	PollingManagerThread(const ProviderManagerRef& providerManager);
+	virtual ~PollingManagerThread();
+	void init(const ServiceEnvironmentIFCRef& env);
 	void shutdown();
 	void waitUntilReady()
 	{
@@ -70,14 +90,14 @@ private:
 	class TriggerRunner : public Runnable
 	{
 	public:
-		TriggerRunner(PollingManager* svr,
+		TriggerRunner(PollingManagerThread* svr,
 			ServiceEnvironmentIFCRef env);
 		virtual void run();
 		PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
 		bool m_isRunning;
 		Int32 m_pollInterval;
-		PollingManager* m_pollMan;
+		PollingManagerThread* m_pollMan;
 		ServiceEnvironmentIFCRef m_env;
 		LoggerRef m_logger;
 	private:

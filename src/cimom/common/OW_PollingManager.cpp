@@ -57,16 +57,83 @@ namespace
 const String COMPONENT_NAME("ow.owcimomd.PollingManager");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+PollingManager::PollingManager(const ProviderManagerRef& providerManager)
+	: m_pollingManagerThread(new PollingManagerThread(providerManager))
+{
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
-PollingManager::PollingManager(const ServiceEnvironmentIFCRef& env, const ProviderManagerRef& providerManager)
+PollingManager::~PollingManager()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::init(const ServiceEnvironmentIFCRef& env)
+{
+	m_pollingManagerThread->init(env);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::start()
+{
+	// note that we don't actually start the thread here, since the polled providers may depend on other services that may start after us.
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::started()
+{
+	// TODO: Move this to start() when service dependencies are implemented
+	m_pollingManagerThread->start();
+	m_pollingManagerThread->waitUntilReady();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::shuttingDown()
+{
+	// TODO: Move this to shutdown() when service dependencies are implemented
+	// stop the polling before everything else shuts down.
+	m_pollingManagerThread->shutdown();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::shutdown()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
+{
+	m_pollingManagerThread->addPolledProvider(p);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+PollingManagerThread::PollingManagerThread(const ProviderManagerRef& providerManager)
 	: Thread()
 	, m_shuttingDown(false)
-	, m_env(env)
 	, m_providerManager(providerManager)
-	, m_logger(env->getLogger(COMPONENT_NAME))
 	, m_startedBarrier(2)
 {
+}
+//////////////////////////////////////////////////////////////////////////////
+PollingManagerThread::~PollingManagerThread()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManagerThread::init(const ServiceEnvironmentIFCRef& env)
+{
+	m_env = env;
+	m_logger = m_env->getLogger(COMPONENT_NAME);
 	Int32 maxThreads;
 	try
 	{
@@ -80,10 +147,7 @@ PollingManager::PollingManager(const ServiceEnvironmentIFCRef& env, const Provid
 	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10,
 		m_logger, "Polling Manager"));
 }
-//////////////////////////////////////////////////////////////////////////////
-PollingManager::~PollingManager()
-{
-}
+
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -138,7 +202,7 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32
-PollingManager::run()
+PollingManagerThread::run()
 {
 	// let CIMOMEnvironment know we're running and ready to go.
 	m_startedBarrier.wait();
@@ -201,7 +265,7 @@ PollingManager::run()
 }
 //////////////////////////////////////////////////////////////////////////////
 UInt32
-PollingManager::calcSleepTime(bool& rightNow, bool doInit)
+PollingManagerThread::calcSleepTime(bool& rightNow, bool doInit)
 {
 	rightNow = false;
 	DateTime dtm;
@@ -237,7 +301,7 @@ PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::processTriggers()
+PollingManagerThread::processTriggers()
 {
 	DateTime dtm;
 	dtm.setToCurrent();
@@ -266,7 +330,7 @@ PollingManager::processTriggers()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::shutdown()
+PollingManagerThread::shutdown()
 {
 	{
 		NonRecursiveMutexLock l(m_triggerGuard);
@@ -285,7 +349,7 @@ PollingManager::shutdown()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
+PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 {
 	NonRecursiveMutexLock l(m_triggerGuard);
 	if (m_shuttingDown)
@@ -308,7 +372,7 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 	m_triggerCondition.notifyAll();
 }
 //////////////////////////////////////////////////////////////////////////////
-PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,
+PollingManagerThread::TriggerRunner::TriggerRunner(PollingManagerThread* svr,
 	ServiceEnvironmentIFCRef env)
 	: Runnable()
 	, m_itp(0)
@@ -322,7 +386,7 @@ PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::TriggerRunner::run()
+PollingManagerThread::TriggerRunner::run()
 {
 	Int32 nextInterval = 0;
 	try
@@ -364,21 +428,21 @@ PollingManager::TriggerRunner::run()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::TriggerRunner::doCooperativeCancel()
+PollingManagerThread::TriggerRunner::doCooperativeCancel()
 {
 	m_itp->doCooperativeCancel();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::TriggerRunner::doDefinitiveCancel()
+PollingManagerThread::TriggerRunner::doDefinitiveCancel()
 {
 	m_itp->doDefinitiveCancel();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::doCooperativeCancel()
+PollingManagerThread::doCooperativeCancel()
 {
 	NonRecursiveMutexLock l(m_triggerGuard);
 	m_shuttingDown = true;

@@ -265,6 +265,7 @@ CIMOMEnvironment::startServices()
 	_loadRequestHandlers();
 	_loadServices();
 	_createPollingManager();
+	m_pollingManager->init(this);
 	_createIndicationServer();
 
 
@@ -272,9 +273,6 @@ CIMOMEnvironment::startServices()
 		MutexLock l(m_runningGuard);
 		m_running = true;
 	}
-
-//	ProviderEnvironmentIFCRef penvRef = ProviderEnvironmentIFCRef(
-//		new ProviderEnvironmentServiceEnvironmentWrapper(this));
 
 	m_providerManager->init(this);
 	m_authorizerManager->init(this);
@@ -291,7 +289,7 @@ CIMOMEnvironment::startServices()
 			// Start up the polling manager
 			OW_LOG_DEBUG(m_Logger, "CIMOM starting Polling Manager");
 			m_pollingManager->start();
-			m_pollingManager->waitUntilReady();
+			m_pollingManager->started();
 		}
 		if (m_indicationServer)
 		{
@@ -324,6 +322,7 @@ CIMOMEnvironment::shutdown()
 	{
 		try
 		{
+			m_pollingManager->shuttingDown();
 			m_pollingManager->shutdown();
 		}
 		catch (...)
@@ -451,7 +450,7 @@ CIMOMEnvironment::_createAuthManager()
 void
 CIMOMEnvironment::_createPollingManager()
 {
-	m_pollingManager = PollingManagerRef(new PollingManager(this, m_providerManager));
+	m_pollingManager = PollingManagerRef(new PollingManager(m_providerManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
