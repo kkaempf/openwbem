@@ -75,8 +75,7 @@ void
 AuthManager::init(const ServiceEnvironmentIFCRef& env)
 {
 	m_authenticator.setNull();
-	String authLib = env->getConfigItem(
-		ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
+	String authLib = env->getConfigItem(ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
 	LoggerRef logger(env->getLogger(COMPONENT_NAME));
 	OW_LOG_INFO(logger, Format("Authentication Manager: Loading"
 		" authentication module %1", authLib));

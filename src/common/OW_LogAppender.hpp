@@ -67,6 +67,8 @@ public:
 
 	ELogLevel getLogLevel() const;
 
+	typedef SortedVectorMap<String, String> ConfigMap;
+
 	/**
 	 * Create a concrete log appender depending on the type string passed in.
 	 * If type == "syslog" a logger the writes to the syslog
@@ -96,7 +98,7 @@ public:
 		const StringArray& categories,
 		const String& messageFormat,
 		const String& type,
-		const ConfigFile::ConfigMap& configItems);
+		const ConfigMap& configItems);
 
 	/// Pass to createLogAppender to indicate all components.
 	static const StringArray ALL_COMPONENTS;

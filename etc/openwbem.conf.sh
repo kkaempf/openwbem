@@ -12,7 +12,21 @@
 #  "cppprovifc.prov_location" option is meant specifically for the C++ provider
 #  interface. This option is read from the config file by owcimomd and
 #  made available to the C++ provider interface upon request.
+#  Config options may be specified more than once. If the value is singular,
+#  The last read option will take effect. If the value is plural, all values
+#  together will be in effect.
 ###############################################################################
+
+################################################################################
+# For each directory specified, all the files contained in the directory will
+# be loaded and processed as additional config files.
+# Multiple directories can be specified, separated by ':' on Windows or ';' on
+# POSIX platforms.
+# This option will be evaluated after the main config file is parsed, and so
+# additional directories specified in additional config files will not be 
+# examined.
+# The default is "@sysconfdir@/openwbem/openwbem.conf.d"
+owcimomd.additional_config_files_dirs = @sysconfdir@/openwbem/openwbem.conf.d
 
 ################################################################################
 # If owcimomd.allow_anonymous is set to true, anonymous logins are allowed by

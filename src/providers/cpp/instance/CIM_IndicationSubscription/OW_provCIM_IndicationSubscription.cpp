@@ -58,7 +58,7 @@ class provCIM_IndicationSubscription : public CppInstanceProviderIFC
 public:
 	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		indicationsEnabled = !(env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
+		indicationsEnabled = !(env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt, OW_DEFAULT_DISABLE_INDICATIONS).equalsIgnoreCase("true"));
 		// get the indication server and save it.
 		if (indicationsEnabled)
 		{

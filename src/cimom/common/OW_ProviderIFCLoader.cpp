@@ -79,8 +79,7 @@ void
 ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 {
 	ServiceEnvironmentIFCRef env = getEnvironment();
-	String libdir = env->getConfigItem(
-		ConfigOpts::PROVIDER_IFC_LIBS_opt);
+	String libdir = env->getConfigItem(ConfigOpts::PROVIDER_IFC_LIBS_opt, OW_DEFAULT_IFC_LIBS);
 	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
 	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
 	StringArray libs;

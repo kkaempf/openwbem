@@ -226,6 +226,9 @@
 #ifndef OW_DEFAULT_DROP_ROOT_PRIVILEGES
 #define OW_DEFAULT_DROP_ROOT_PRIVILEGES "false"
 #endif
+#ifndef OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS
+#define OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf.d"
+#endif
 
 
 namespace OW_NAMESPACE
@@ -315,6 +318,7 @@ namespace ConfigOpts
 
 	static const char* const PIDFILE_opt = "owcimomd.pidfile";
 	static const char* const DROP_ROOT_PRIVILEGES_opt = "owcimomd.drop_root_privileges";
+	static const char* const ADDITIONAL_CONFIG_FILES_DIRS_opt = "owcimomd.additional_config_files_dirs";
 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.

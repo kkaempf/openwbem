@@ -113,7 +113,7 @@ createLogger(const String& type_)
 	categories.push_back(Logger::STR_FATAL_CATEGORY);
 	categories.push_back(Logger::STR_ERROR_CATEGORY);
 
-	ConfigFile::ConfigMap configItems;
+	LogAppender::ConfigMap configItems;
 
 	// TODO: Fix this to use the new logging configuration scheme
 	String filename = type;

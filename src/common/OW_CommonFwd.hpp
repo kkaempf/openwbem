@@ -76,7 +76,9 @@ class SortedVectorMap;
 
 namespace ConfigFile
 {
-	typedef SortedVectorMap<String, String> ConfigMap;
+	struct ItemData;
+	typedef Array<ItemData> ItemDataArray;
+	typedef SortedVectorMap<String, ItemDataArray> ConfigMap;
 }
 
 class StringBuffer;

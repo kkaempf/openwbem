@@ -97,6 +97,20 @@ private:
 	LoggerRef m_logger;
 };
 
+//////////////////////////////////////////////////////////////////////////////
+LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+{
+	LogAppender::ConfigMap appenderConfig;
+	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
+	{
+		if (iter->first.startsWith("log") && iter->second.size() > 0)
+		{
+			appenderConfig[iter->first] = iter->second.back().value;
+		}
+	}
+	return appenderConfig;
+}
+
 class MyServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
@@ -354,7 +368,7 @@ private:
 			String logFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
 	
 			appenders.push_back(LogAppender::createLogAppender(logName, logComponents.tokenize(), logCategories.tokenize(),
-				logFormat, logType, m_configItems));
+				logFormat, logType, getAppenderConfig(m_configItems)));
 		}
 	
 	

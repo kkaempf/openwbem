@@ -116,16 +116,7 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 String
 ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String &defRetVal) const
 {
-	ConfigFile::ConfigMap::const_iterator i =
-		m_configMap.find(name);
-	if (i != m_configMap.end())
-	{
-		return (*i).second;
-	}
-	else
-	{
-		return defRetVal;
-	}
+	return ConfigFile::getConfigItem(m_configMap, name, defRetVal);
 }
 
 //////////////////////////////////////////////////////////////////////////////

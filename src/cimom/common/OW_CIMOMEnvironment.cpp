@@ -207,42 +207,8 @@ CIMOMEnvironment::init()
 	// init() is called from a single-threaded state
 	_clearSelectables();
 
-	// The config file config item may be set before init() is called.
-	setConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, E_PRESERVE_PREVIOUS);
-	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt));
-
-	// TODO: All these should go away, and the corresponding calls to getConfigItem should use the default.
-	setConfigItem(ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, E_PRESERVE_PREVIOUS);
-	setConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, E_PRESERVE_PREVIOUS);
-	// Location of log file
-	setConfigItem(ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE, E_PRESERVE_PREVIOUS);
-	// Location for data files
-	setConfigItem(ConfigOpts::DATA_DIR_opt,
-		OW_DEFAULT_DATA_DIR, E_PRESERVE_PREVIOUS);
-	// Provider interface location
-	setConfigItem(ConfigOpts::PROVIDER_IFC_LIBS_opt,
-		OW_DEFAULT_IFC_LIBS, E_PRESERVE_PREVIOUS);
-	// This config item should be handled in the C++ provider interface
-	// C++ provider interface - provider location
-	setConfigItem(ConfigOpts::CPPIFC_PROV_LOC_opt,
-		OW_DEFAULT_CPP_PROVIDER_LOCATION, E_PRESERVE_PREVIOUS);
-	// Authorization module
-	setConfigItem(ConfigOpts::AUTH_MOD_opt,
-		OW_DEFAULT_AUTH_MOD, E_PRESERVE_PREVIOUS);
-	// This config item should be handled in the simple auth module
-	setConfigItem(ConfigOpts::SIMPLE_AUTH_FILE_opt,
-		OW_DEFAULT_SIMPLE_PASSWD_FILE, E_PRESERVE_PREVIOUS);
-	setConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt,
-		OW_DEFAULT_DISABLE_INDICATIONS, E_PRESERVE_PREVIOUS);
-	
-	setConfigItem(ConfigOpts::WQL_LIB_opt,
-		OW_DEFAULT_WQL_LIB, E_PRESERVE_PREVIOUS);
-	setConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt,
-		OW_DEFAULT_REQ_HANDLER_TTL, E_PRESERVE_PREVIOUS);
-
-	// Default Content-Language
-	setConfigItem(ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt,
-		OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE, E_PRESERVE_PREVIOUS);
+	// The config file config item may be set by main before init() is called.
+	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE));
 
 	// logger is treated special, so it goes in init() not startServices()
 	_createLogger();
@@ -497,11 +463,11 @@ CIMOMEnvironment::_createIndicationServer()
 {
 	// Determine if user has disabled indication exportation
 	m_indicationsDisabled = getConfigItem(
-		ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true");
+		ConfigOpts::DISABLE_INDICATIONS_opt, OW_DEFAULT_DISABLE_INDICATIONS).equalsIgnoreCase("true");
 	if (!m_indicationsDisabled)
 	{
 		// load the indication server library
-		String indicationLib = getConfigItem(ConfigOpts::OWLIB_DIR_opt);
+		String indicationLib = getConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR);
 		if (!indicationLib.endsWith(OW_FILENAME_SEPARATOR))
 		{
 			indicationLib += OW_FILENAME_SEPARATOR;
@@ -643,6 +609,24 @@ CIMOMEnvironment::_loadServices()
 	OW_LOG_INFO(m_Logger, Format("CIMOM: Number of services loaded: %1",
 		m_services.size()));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+LogAppender::ConfigMap getAppenderConfig(const ConfigFile::ConfigMap& configItems)
+{
+	LogAppender::ConfigMap appenderConfig;
+	for (ConfigFile::ConfigMap::const_iterator iter = configItems.begin(); iter != configItems.end(); ++iter)
+	{
+		if (iter->first.startsWith("log") && iter->second.size() > 0)
+		{
+			appenderConfig[iter->first] = iter->second.back().value;
+		}
+	}
+	return appenderConfig;
+}
+
+} // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMOMEnvironment::_createLogger()
@@ -691,7 +675,7 @@ CIMOMEnvironment::_createLogger()
 		String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
 
 		appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
-			logMainFormat, logMainType, *m_configItems));
+			logMainFormat, logMainType, getAppenderConfig(*m_configItems)));
 	}
 
 
@@ -707,7 +691,7 @@ CIMOMEnvironment::_createLogger()
 	// map the old log_location onto log.main.type and log.main.location if necessary
 	if (logMainType.empty())
 	{
-		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt);
+		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE);
 		if (deprecatedLogLocation.empty() || deprecatedLogLocation.equalsIgnoreCase("syslog"))
 		{
 			logMainType = "syslog";
@@ -770,7 +754,7 @@ CIMOMEnvironment::_createLogger()
 	}
 
 	appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
-		logMainFormat, logMainType, *m_configItems));
+		logMainFormat, logMainType, getAppenderConfig(*m_configItems)));
 
 
 	m_Logger = new AppenderLogger(COMPONENT_NAME, appenders);
@@ -781,6 +765,8 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 {
 	OW_LOG_DEBUG(m_Logger, "\nUsing config file: " + filename);
 	ConfigFile::loadConfigFile(filename, *m_configItems);
+	StringArray configDirs = ConfigFile::getConfigItems(*m_configItems, ConfigOpts::ADDITIONAL_CONFIG_FILES_DIRS_opt, 
+		String(OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS).tokenize(), OW_PATHNAME_SEPARATOR);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -893,7 +879,7 @@ CIMOMEnvironment::getWQLRef() const
 	MutexLock ml(m_monitor);
 	if (!m_wqlLib)
 	{
-		String libname = getConfigItem(ConfigOpts::WQL_LIB_opt);
+		String libname = getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB);
 		OW_LOG_DEBUG(m_Logger, Format("CIMOM loading wql library %1", libname));
 		SharedLibraryLoaderRef sll =
 			SharedLibraryLoader::createSharedLibraryLoader();
@@ -917,7 +903,7 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref) const
 		MutexLock ml(m_indicationLock);
 		if (!m_indicationRepLayerLib)
 		{
-			const String libPath = getConfigItem(ConfigOpts::OWLIB_DIR_opt) + OW_FILENAME_SEPARATOR;
+			const String libPath = getConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR) + OW_FILENAME_SEPARATOR;
 			const String libBase = "libowindicationreplayer";
 			String libname = libPath + libBase + OW_SHAREDLIB_EXTENSION;
 			OW_LOG_DEBUG(m_Logger, Format("CIMOM loading indication libary %1",
@@ -1108,14 +1094,13 @@ CIMOMEnvironment::unloadReqHandlers()
 	Int32 ttl;
 	try
 	{
-		ttl = getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt).toInt32();
+		ttl = getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt, OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
 	}
 	catch (const StringConversionException&)
 	{
-		OW_LOG_ERROR(m_Logger, Format("Invalid value (%1) for %2 config item.  Using default.",
-			getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt),
+		OW_LOG_ERROR(m_Logger, Format("Invalid value (%1) for %2 config item.",
+			getConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt, OW_DEFAULT_REQ_HANDLER_TTL),
 			ConfigOpts::REQ_HANDLER_TTL_opt));
-		ttl = String(OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
 	}
 	if (ttl < 0)
 	{
@@ -1189,7 +1174,8 @@ void
 CIMOMEnvironment::setConfigItem(const String &item,
 	const String &value, EOverwritePreviousFlag overwritePrevious)
 {
-	ConfigFile::setConfigItem(*m_configItems, item, value, ConfigFile::EOverwritePreviousFlag(overwritePrevious));
+	ConfigFile::setConfigItem(*m_configItems, item, value, 
+		overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

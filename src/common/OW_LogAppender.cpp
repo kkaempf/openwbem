@@ -47,8 +47,8 @@
 #include "OW_CerrAppender.hpp"
 #include "OW_FileAppender.hpp"
 #include "OW_Format.hpp"
-#include "OW_ConfigFile.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_SortedVectorMap.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -137,6 +137,24 @@ LogAppender::getLogLevel() const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	String
+	getConfigItem(const LogAppender::ConfigMap& configItems, const String &itemName, const String& defRetVal = "")
+	{
+		LogAppender::ConfigMap::const_iterator i = configItems.find(itemName);
+		if (i != configItems.end())
+		{
+			return i->second;
+		}
+		else
+		{
+			return defRetVal;
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
 LogAppenderRef
 LogAppender::createLogAppender(
 	const String& name,
@@ -144,7 +162,7 @@ LogAppender::createLogAppender(
 	const StringArray& categories,
 	const String& messageFormat,
 	const String& type,
-	const ConfigFile::ConfigMap& configItems)
+	const ConfigMap& configItems)
 {
 	// name and configItems are unused for now, but are provided so if a logger needs to look up configuration, it
 	// can use name to find the appropriate config items.
@@ -167,12 +185,12 @@ LogAppender::createLogAppender(
 	else if (type == TYPE_FILE)
 	{
 		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
-		String filename = ConfigFile::getConfigItem(configItems, configItem);
+		String filename = getConfigItem(configItems, configItem);
 		
 		UInt64 maxFileSize(0);
 		try
 		{
-			maxFileSize = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_FILE_SIZE_opt, name), 
+			maxFileSize = getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_FILE_SIZE_opt, name), 
 				OW_DEFAULT_LOG_1_MAX_FILE_SIZE).toUInt64();
 		}
 		catch (StringConversionException& e)
@@ -185,7 +203,7 @@ LogAppender::createLogAppender(
 		unsigned int maxBackupIndex(0);
 		try
 		{
-			maxBackupIndex = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_BACKUP_INDEX_opt, name), 
+			maxBackupIndex = getConfigItem(configItems, Format(ConfigOpts::LOG_1_MAX_BACKUP_INDEX_opt, name), 
 				OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX).toUnsignedInt();
 		}
 		catch (StringConversionException& e)
@@ -195,7 +213,7 @@ LogAppender::createLogAppender(
 				Logger::E_INVALID_MAX_BACKUP_INDEX, e);
 		}
 
-		bool flushLog = ConfigFile::getConfigItem(configItems, Format(ConfigOpts::LOG_1_FLUSH_opt, name), OW_DEFAULT_LOG_1_FLUSH).equalsIgnoreCase("true");
+		bool flushLog = getConfigItem(configItems, Format(ConfigOpts::LOG_1_FLUSH_opt, name), OW_DEFAULT_LOG_1_FLUSH).equalsIgnoreCase("true");
 		
 		appender = new FileAppender(components, categories, filename.c_str(), messageFormat, maxFileSize, maxBackupIndex, flushLog);
 	}

@@ -40,10 +40,10 @@ namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {
-// keep these sorted.
 const NameAndDefault g_defaults[] = 
 {
 	{ ACL_SUPERUSER_opt ,  "" },
+	{ ADDITIONAL_CONFIG_FILES_DIRS_opt, OW_DEFAULT_ADDITIONAL_CONFIG_FILES_DIRS },
 	{ ADDITIONAL_LOGS_opt ,  "" },
 	{ ALLOW_ANONYMOUS_opt ,  OW_DEFAULT_ALLOW_ANONYMOUS },
 	{ ALLOWED_USERS_opt ,  OW_DEFAULT_ALLOWED_USERS },

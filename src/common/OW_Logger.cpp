@@ -255,7 +255,7 @@ Logger::setLogLevel(ELogLevel logLevel)
 LoggerRef
 Logger::createLogger( const String& type, bool debug )
 {
-	ConfigFile::ConfigMap configItems;
+	LogAppender::ConfigMap configItems;
 
 	Array<LogAppenderRef> appenders;
 	String name("");
@@ -269,7 +269,7 @@ Logger::createLogger( const String& type, bool debug )
 		// we need a special case for filenames in the type, since createLogAppender only handles types it knows about
 		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
 		String filename = type;
-		ConfigFile::setConfigItem(configItems, configItem, filename);
+		configItems[configItem] = filename;
 		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
 			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, LogAppender::TYPE_FILE, configItems));
 	}

@@ -77,11 +77,7 @@ void loadConfigFile(const String& filename, ConfigMap& rval)
 					if (!itemValue.empty())
 					{
 						String item = line.substring(0, idx).trim();
-						ConfigMap::iterator it = rval.find(item);
-						if (it == rval.end())
-						{
-							rval.insert(std::make_pair(item, itemValue));
-						}
+						rval[item].push_back(ItemData(filename, itemValue));
 					}
 				}
 			}
@@ -100,9 +96,38 @@ String
 getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal)
 {
 	ConfigMap::const_iterator i = configItems.find(itemName);
-	if (i != configItems.end())
+	if (i != configItems.end() && i->second.size() > 0)
 	{
-		return i->second;
+		return i->second.back().value;
+	}
+	else
+	{
+		return defRetVal;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+StringArray
+getConfigItems(const ConfigMap& configItems, const String &itemName, const StringArray& defRetVal, const char* tokenizeSeparator)
+{
+	ConfigMap::const_iterator item = configItems.find(itemName);
+	if (item != configItems.end())
+	{
+		StringArray rv;
+		rv.reserve(item->second.size());
+		for (size_t i = 0; i < item->second.size(); ++i)
+		{
+			if (tokenizeSeparator)
+			{
+				StringArray tokenizedValue(item->second[i].value.tokenize(tokenizeSeparator));
+				rv.insert(rv.end(), tokenizedValue.begin(), tokenizedValue.end());
+			}
+			else
+			{
+				rv.push_back(item->second[i].value);
+			}
+		}
+		return rv;
 	}
 	else
 	{
@@ -116,10 +141,17 @@ setConfigItem(ConfigMap& configItems, const String& itemName,
 	const String& value, EOverwritePreviousFlag overwritePrevious)
 {
 	ConfigMap::iterator it = configItems.find(itemName);
-	if (it == configItems.end() || overwritePrevious)
+	if (it == configItems.end())
 	{
-		configItems[itemName] = value;
+		configItems[itemName].push_back(ItemData("", value));
 	}
+	else if (overwritePrevious == E_OVERWRITE_PREVIOUS)
+	{
+		ItemDataArray& values = configItems[itemName];
+		values.clear();
+		values.push_back(ItemData("", value));
+	}
+	// else overwritePrevious == E_PRESERVE_PREVIOUS, and do nothing
 }
 
 

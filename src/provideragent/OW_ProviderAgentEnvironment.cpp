@@ -382,26 +382,15 @@ ProviderAgentEnvironment::removeSelectable(const SelectableIFCRef& obj)
 String
 ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRetVal) const
 {
-	ConfigFile::ConfigMap::const_iterator i =
-		m_configItems.find(name);
-	if (i != m_configItems.end())
-	{
-		return (*i).second;
-	}
-	else
-	{
-		return defRetVal;
-	}
+	return ConfigFile::getConfigItem(m_configItems, name, defRetVal);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 										EOverwritePreviousFlag overwritePrevious)
 {
-	if (overwritePrevious == E_OVERWRITE_PREVIOUS || getConfigItem(item) == "")
-	{
-		m_configItems[item] = value;
-	}
+	ConfigFile::setConfigItem(m_configItems, item, value, 
+		overwritePrevious == E_OVERWRITE_PREVIOUS ? ConfigFile::E_OVERWRITE_PREVIOUS : ConfigFile::E_PRESERVE_PREVIOUS);
 }
 	
 //////////////////////////////////////////////////////////////////////////////
