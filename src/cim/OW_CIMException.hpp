@@ -117,14 +117,13 @@ private:
 	throw CIMException(__FILE__, __LINE__, (errval))
 	
 /**
- * Throw a CIMException with error code errval, a message and a subexception
+ * Throw a CIMException with error code errval, and a subexception
  * @param errval One of the CIMException::ErrNoType enumerated values
- * @param msg A message associated with the exception
  * @param subex A sub-exception. A pointer to it will be passed to the
  *   exception constructor, which should clone() it.
  */
-#define OW_THROWCIM_SUBEX(errval, msg, subex) \
-	throw CIMException(__FILE__, __LINE__, (errval), (msg), (subex))
+#define OW_THROWCIM_SUBEX(errval, subex) \
+	throw CIMException(__FILE__, __LINE__, (errval), "", (subex))
 	
 /**
  * Throw a CIMException with error code errval and a message
@@ -134,6 +133,16 @@ private:
 #define OW_THROWCIMMSG(errval, msg) \
 	throw CIMException(__FILE__, __LINE__, (errval), (msg))
 
+/**
+ * Throw a CIMException with error code errval, a message and a subexception
+ * @param errval One of the CIMException::ErrNoType enumerated values
+ * @param msg A message associated with the exception
+ * @param subex A sub-exception. A pointer to it will be passed to the
+ *   exception constructor, which should clone() it.
+ */
+#define OW_THROWCIMMSG_SUBEX(errval, msg, subex) \
+	throw CIMException(__FILE__, __LINE__, (errval), (msg), (subex))
+	
 } // end namespace OpenWBEM
 
 #endif
