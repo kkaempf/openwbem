@@ -210,7 +210,8 @@ OW_CIMMethod::getINParameters() const
 	OW_CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
-		if (m_pdata->m_parameters[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_IN))
+		OW_CIMQualifier q = m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_IN);
+		if (!q || q.getValue() == OW_CIMValue(true))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
