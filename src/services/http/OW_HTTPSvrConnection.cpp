@@ -307,6 +307,14 @@ OW_HTTPSvrConnection::run()
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
+// gcc 2.x doesn't have ios_base::failure
+#if !defined(__GNUC__) || __GNUC__ > 2
+	catch (std::ios_base::failure& e)
+	{
+		// This happens if the socket is closed, so we don't have to do anything.
+		OW_LOGDEBUG("Caught std::ios_base::failure, client has closed the connection");
+	}
+#endif
 	catch (std::exception& e)
 	{
 		m_errDetails = format("Caught std::exception (%1) in OW_HTTPSvrConnection::run()", e.what());
