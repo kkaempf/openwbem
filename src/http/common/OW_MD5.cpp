@@ -44,7 +44,7 @@ OW_MD5StreamBuffer::OW_MD5StreamBuffer(OW_MD5* md5): _md5(md5) {}
 int 
 OW_MD5StreamBuffer::overflow(int c)
 {
-	char lc = c;
+	unsigned char lc = c;
 	OW_MD5::MD5Update(&(_md5->m_ctx), &lc, 1);
 	return c;
 }
@@ -53,7 +53,8 @@ OW_MD5StreamBuffer::overflow(int c)
 std::streamsize 
 OW_MD5StreamBuffer::xsputn(const char* s, std::streamsize num)
 {
-	OW_MD5::MD5Update(&(_md5->m_ctx), s, num);
+	OW_MD5::MD5Update(&(_md5->m_ctx), 
+							reinterpret_cast<const unsigned char*>(s), num);
 	return num;
 }
 
@@ -85,14 +86,12 @@ OW_MD5::OW_MD5(const OW_String& input)
 void
 OW_MD5::update(const OW_String& input)
 {
-	if (!m_finished)
-	{
-		MD5Update(&m_ctx, input.c_str(), input.length());
-	}
-	else
+	if (m_finished)
 	{
 		OW_THROW(OW_MD5Exception, "Cannot update after a call to toString()");
 	}
+	MD5Update(&m_ctx, reinterpret_cast<const unsigned char*>(input.c_str()), 
+				 input.length());
 }
 
 
@@ -257,7 +256,7 @@ void
   context.
  */ // STATIC
 void
-	OW_MD5::MD5Update(MD5_CTX* context, const char* input,
+	OW_MD5::MD5Update(MD5_CTX* context, const unsigned char* input,
 	unsigned int inputLen)
 {
 	unsigned int i, index, partLen;
@@ -283,7 +282,7 @@ void
 		MD5Transform (context->state, context->buffer);
 
 		for (i = partLen; i + 63 < inputLen; i += 64)
-			MD5Transform (context->state, (const unsigned char*)&input[i]);
+			MD5Transform (context->state, &input[i]);
 
 		index = 0;
 	}
@@ -312,10 +311,10 @@ void
  */
 	index = (unsigned int)((context->count[0] >> 3) & 0x3f);
 	padLen = (index < 56) ? (56 - index) : (120 - index);
-	MD5Update (context, (const char*)PADDING, padLen);
+	MD5Update (context, PADDING, padLen);
 
 	/* Append length (before padding) */
-	MD5Update (context, (const char*)bits, 8);
+	MD5Update (context, bits, 8);
 
 	/* Store state in digest */
 	Encode (digest, context->state, 16);
