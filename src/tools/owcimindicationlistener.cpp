@@ -140,6 +140,7 @@ int main(int argc, char* argv[])
 #else
 		sigPipe = UnnamedPipe::createUnnamedPipe();
 		::signal(SIGINT, sig_handler);
+		::signal(SIGTERM, sig_handler);
 #endif
 
 		String url(argv[1]);
