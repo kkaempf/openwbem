@@ -73,6 +73,64 @@ inline void OW_AtomicDec(OW_Atomic_t &v)
 		:"m" (v.val));
 }
 
+#elif defined(__ppc__) && defined(__GNUC__)
+// use fast inline assembly versions
+typedef struct { volatile int val; } OW_Atomic_t;
+
+#define OW_ATOMIC(i)	{ (i) }
+
+inline void OW_AtomicInc(OW_Atomic_t &v)
+{
+	int t;
+
+	__asm__ __volatile__(
+		"1:	lwarx   %0,0,%2\n"
+		"	addic   %0,%0,1\n"
+		"	stwcx.  %0,0,%2\n"
+		"	bne-    1b"
+		: "=&r" (t), "=m" (v.val)
+		: "r" (&v.val), "m" (v.val)
+		: "cc");
+
+}
+
+inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+{
+	int c;
+
+	__asm__ __volatile__(
+		"1:	lwarx   %0,0,%1\n"
+		"	addic   %0,%0,-1\n"
+		"	stwcx.  %0,0,%1\n"
+		"	bne-    1b\n"
+		"	isync"
+		: "=&r" (c)
+		: "r" (&v.val)
+		: "cc", "memory");
+
+	return c == 0;
+}
+
+inline int OW_AtomicGet(OW_Atomic_t const &v)
+{
+	return v.val;
+}
+
+inline void OW_AtomicDec(OW_Atomic_t &v)
+{
+	int c;
+
+	__asm__ __volatile__(
+		"1:	lwarx   %0,0,%2\n"
+		"	addic   %0,%0,-1\n"
+		"	stwcx.  %0,0,%2\n"
+		"	bne-    1b"
+		: "=&r" (c), "=m" (v.val)
+		: "r" (&v.val), "m" (v.val)
+		: "cc");
+
+}
+
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
 
 #include <pthread.h>
