@@ -46,13 +46,13 @@ class OW_IndicationProviderIFC: public OW_ProviderBaseIFC
 public:
 	virtual ~OW_IndicationProviderIFC() {}
 
+    // TODO: Add docs for these functions.
 	virtual void activateFilter(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool firstActivation
+		const OW_StringArray& classes
 		) = 0;
 
 	virtual void authorizeFilter(
@@ -69,8 +69,7 @@ public:
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool lastActivation
+		const OW_StringArray& classes
 		) = 0;
 
 	// if a provider wishes to be polled, it must return a positive number.

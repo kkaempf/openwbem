@@ -672,6 +672,11 @@ namespace
 			return m_env->getLogger();
 		}
 
+        virtual OW_String getUserName() const
+        {
+            return m_acl.getUserName();
+        }
+
 	private:
 		OW_ACLInfo m_acl;
 		OW_CIMOMEnvironmentRef m_env;

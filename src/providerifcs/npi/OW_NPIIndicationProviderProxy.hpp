@@ -40,6 +40,7 @@ class OW_NPIIndicationProviderProxy : public OW_IndicationProviderIFC
 public:
 	OW_NPIIndicationProviderProxy(const OW_FTABLERef& f)
 	: m_ftable(f)
+    , m_activationCount(0)
 	{
 	}
 
@@ -52,16 +53,14 @@ public:
 		const OW_WQLSelectStatement &filter, 
 		const OW_String &eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool lastActivation); 
+		const OW_StringArray& classes); 
 
 	virtual void activateFilter(
 		const OW_ProviderEnvironmentIFCRef &env, 
 		const OW_WQLSelectStatement &filter, 
 		const OW_String &eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool firstActivation);
+		const OW_StringArray& classes);
 
 	virtual void authorizeFilter(
 		const OW_ProviderEnvironmentIFCRef &env, 
@@ -81,6 +80,7 @@ public:
 
 private:
 	OW_FTABLERef m_ftable;
+    unsigned int m_activationCount;
 };
 
 #endif

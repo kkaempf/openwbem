@@ -27,7 +27,7 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
+#if 0
 #include "OW_config.h"
 #include "OW_NPIPolledProviderProxy.hpp"
 #include "NPIExternal.hpp"
@@ -143,4 +143,4 @@ void OW_NPIPolledProviderProxy::deactivateFilter(
 		}
 	}
 }
-
+#endif

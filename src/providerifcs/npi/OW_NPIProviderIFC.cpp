@@ -157,6 +157,7 @@ OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 	(void)env;
 	loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
+    /*
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
 		//OW_NPIProviderBaseIFCRef pProv = m_noidProviders[i];
@@ -170,6 +171,7 @@ OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 					OW_NPIPolledProviderProxy(pProv)));
 		}
 	}
+    */
 
 	return rvra;
 }

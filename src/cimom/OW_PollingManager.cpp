@@ -38,6 +38,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_ProviderManager.hpp"
 #include "OW_ACLInfo.hpp"
+#include "OW_Platform.hpp"
 
 #include <climits>
 
@@ -88,6 +89,11 @@ namespace
 		{
 			return m_env->getLogger();
 		}
+
+        virtual OW_String getUserName() const
+        {
+            return OW_Platform::getCurrentUserName();
+        }
 
 	private:
 		OW_ACLInfo m_acl;

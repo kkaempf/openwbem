@@ -43,9 +43,10 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
 	const OW_String& nameSpace,
-	const OW_StringArray& classes, 
-	bool lastActivation)
+	const OW_StringArray& classes)
 {
+    bool lastActivation = (--m_activationCount == 0);
+
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
@@ -84,9 +85,9 @@ OW_NPIIndicationProviderProxy::activateFilter(
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
 	const OW_String& nameSpace,
-	const OW_StringArray& classes, 
-	bool firstActivation)
+	const OW_StringArray& classes)
 {
+    bool firstActivation = (m_activationCount++ == 0);
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{

@@ -150,10 +150,10 @@ public:
 class TestIndicationProvider : public OW_IndicationProviderIFC
 {
 public:
-	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, bool ) 
+	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray& ) 
 	{
 	}
-	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, bool ) 
+	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray& ) 
 	{
 	}
 	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
@@ -557,6 +557,11 @@ namespace
 		}
 
 		virtual OW_String getConfigItem(const OW_String &) const
+		{
+			return "";
+		}
+
+		virtual OW_String getUserName() const
 		{
 			return "";
 		}

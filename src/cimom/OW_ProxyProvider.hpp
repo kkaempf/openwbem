@@ -310,9 +310,9 @@ public:
 		const OW_WQLSelectStatement &filter, 
 		const OW_String &eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool lastActivation) 
+		const OW_StringArray& classes) 
 	{
+        bool lastActivation = (--m_activationCount == 0);
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace,classes,lastActivation);
 	}
 
@@ -321,9 +321,9 @@ public:
 		const OW_WQLSelectStatement &filter, 
 		const OW_String &eventType, 
 		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		bool firstActivation) 
+		const OW_StringArray& classes) 
 	{
+        bool firstActivation = (m_activationCount++ == 0);
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
 
@@ -351,6 +351,7 @@ public:
 
 private:
 	OW_CppIndicationProviderIFCRef m_pProv;
+    unsigned int m_activationCount;
 };
 
 #endif

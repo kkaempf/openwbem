@@ -38,6 +38,7 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CIMValue.hpp"
 
 namespace
 {
@@ -68,31 +69,31 @@ public:
 
 	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop)
 	{
+		// delete it from the repository
+		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		rephdl->deleteInstance(ns, cop);
+
 		// tell the indication server it's being deleted.
 		indicationServer->deleteSubscription(ns, cop);
 
-		// delete it from the repository
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		try
-		{
-			rephdl->deleteInstance(ns, cop);
-		}
-		catch (...)
-		{
-			indicationServer->createSubscription(ns, rephdl->getInstance(ns,cop));
-			throw;
-		}
 	}
 
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance)
+	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance_)
 	{
+        // make a copy so we can add the __OW_Subscription_UserName property to it.
+        OW_CIMInstance cimInstance(cimInstance_);
+
+        // we add this property so that if the cimom restarts, we can recover the username of whoever created the subscription.
+        OW_String username = env->getUserName();
+        cimInstance.setProperty("__OW_Subscription_UserName", OW_CIMValue(username));
+
 		if (!indicationsEnabled)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
 
 		// Tell the indication server about the new subscription.  This may throw if the subscription is not allowed.
-		indicationServer->createSubscription(ns, cimInstance);
+		indicationServer->createSubscription(ns, cimInstance, username);
 
 		// now create it in the repository.
 		try

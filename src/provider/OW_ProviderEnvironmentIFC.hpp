@@ -49,6 +49,7 @@ public:
 	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
 	virtual OW_LoggerRef getLogger() const = 0;
 	virtual OW_String getConfigItem(const OW_String &name) const = 0;
+    virtual OW_String getUserName() const = 0;
 };
 
 typedef OW_Reference<OW_ProviderEnvironmentIFC> OW_ProviderEnvironmentIFCRef;

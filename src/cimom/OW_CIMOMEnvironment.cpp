@@ -116,6 +116,11 @@ private:
 			return m_pCenv->getLogger();
 		}
 
+        virtual OW_String getUserName() const
+        {
+            return OW_Platform::getCurrentUserName();
+        }
+
 	private:
 		const OW_CIMOMEnvironment* m_pCenv;
 	};
@@ -257,6 +262,12 @@ public:
 	{
 		return env->getConfigItem(name);
 	}
+
+    virtual OW_String getUserName() const
+    {
+        return OW_Platform::getCurrentUserName();
+    }
+
 private:
 	OW_CIMOMEnvironment* env;
 };

@@ -30,7 +30,7 @@
 
 #ifndef OW_NPI_POLLED_PROVIDER_PROXY_HPP_
 #define OW_NPI_POLLED_PROVIDER_PROXY_HPP_
-
+#if 0
 #include "OW_config.h"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
@@ -77,6 +77,6 @@ private:
 };
 
 //typedef OW_SharedLibraryReference<OW_NPIPolledProviderIFC> OW_NPIPolledProviderIFCRef;
-										
+#endif										
 #endif
 

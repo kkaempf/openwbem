@@ -43,6 +43,7 @@
 #include "OW_NULLValueException.hpp"
 #include "OW_PollingManager.hpp"
 #include "OW_CppProxyProvider.hpp"
+#include "OW_Platform.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -114,6 +115,11 @@ public:
 	{
 		return m_env->getLogger();
 	}
+
+    virtual OW_String getUserName() const
+    {
+        return OW_Platform::getCurrentUserName();
+    }
 
 private:
 	OW_CIMOMHandleIFCRef m_ch;
@@ -199,7 +205,19 @@ public:
 private:
 	void doHandle(const OW_CIMInstance& i)
 	{
-		is->createSubscription(ns, i);
+        // try and get the name of whoever first created the subscription
+        OW_String username;
+        OW_CIMProperty p = i.getProperty("__OW_Subscription_UserName");
+        if (p)
+        {
+            OW_CIMValue v = p.getValue();
+            if (v)
+            {
+                username = v.toString();
+            }
+        }
+
+		is->createSubscription(ns, i, username);
 	}
 	OW_IndicationServerImpl* is;
 	OW_String ns;
@@ -667,19 +685,21 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
+OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 	const OW_String& instNS)
 {
 	m_env->logDebug(format("OW_IndicationServerImpl::_processIndication "
-		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
+		"instanceArg = %1 instNS = %2", instanceArg_.toString(), instNS));
 
-	// TODO: Figure out if we should really set the IndicationTime property
-	// of if it's the provider's responsibility.
-	//OW_CIMInstance instance(instanceArg);
-	//OW_DateTime dtm;
-	//dtm.setToCurrent();
-	//OW_CIMDateTime cdt(dtm);
-	//instance.setProperty("IndicationTime", OW_CIMValue(cdt));
+    // If the provider didn't set the IndicationTime property, then we'll set it.
+	OW_CIMInstance instanceArg(instanceArg_);
+    if (!instanceArg.getProperty("IndicationTime"))
+    {
+        OW_DateTime dtm;
+        dtm.setToCurrent();
+        OW_CIMDateTime cdt(dtm);
+        instanceArg.setProperty("IndicationTime", OW_CIMValue(cdt));
+    }
 
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 
@@ -939,8 +959,7 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 					else
 					{
 						OW_IndicationProviderIFCRef p = sub.m_providers[i];
-						bool lastActivation = false; // TODO: Figure this out
-						p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes, lastActivation);
+						p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes);
 					}
 					
 				}
@@ -984,7 +1003,7 @@ OW_String getSourceNameSpace(const OW_CIMInstance& inst)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst)
+OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst, const OW_String& username)
 {
     OW_LoggerRef log = m_env->getLogger();
     log->logDebug(format("OW_IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
@@ -1089,7 +1108,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	{
         log->logDebug(format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
-			selectStmt, indicationClassName, ns, isaClassNames, ""); // TODO: figure out the user name
+			selectStmt, indicationClassName, ns, isaClassNames, username);
 	}
 
 	// Call mustPoll on all the providers
@@ -1220,11 +1239,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	int successfulActivations = 0;
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
-		bool firstActivation = true; // TODO: Figure out firstActivation
 		try
 		{
 			providers[i]->activateFilter(createProvEnvRef(m_env),
-				selectStmt, indicationClassName, ns, isaClassNames, firstActivation);
+				selectStmt, indicationClassName, ns, isaClassNames);
 			
 			++successfulActivations;
 		}
@@ -1240,7 +1258,24 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 
 	if (successfulActivations == 0)
 	{
-		// TODO: Remove it and throw
+		// Remove it and throw
+        OW_MutexLock l(m_subGuard);
+        if (isaClassNames.empty())
+        {
+            OW_String subKey = indicationClassName;
+            subKey.toLowerCase();
+            m_subscriptions.erase(subKey);
+        }
+        else
+        {
+            for (size_t i = 0; i < isaClassNames.size(); ++i)
+            {
+                OW_String subKey = indicationClassName + ':' + isaClassNames[i];
+                subKey.toLowerCase();
+                m_subscriptions.erase(subKey);
+            }
+        }
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "activateFilter failed for all providers");
 	}
 }
 
