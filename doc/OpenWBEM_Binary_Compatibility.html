@@ -114,7 +114,8 @@ rules will be applied only to the provider interface.<br>
 Advantages:<br>
 <ul>
   <li>Maintain freedom to refactor most OW code.</li>
-  <li>Good separation of the Provider API from the rest of the code.<br>
+  <li>Good separation of the Provider API from the rest of the code.</li>
+  <li>Easy and fast to initially implement.<br>
   </li>
 </ul>
 Disadvantages:<br>
@@ -124,7 +125,13 @@ to be duplicated. We could use some techniques to reduce the
 duplication, but that takes more up front effort, and may be less
 efficient.</li>
   <li>Performance hit in translating to/from the provider APIs vs
-current method.<br>
+current method.</li>
+  <li>Future maintenance overhead needed for factoring out the
+commonalities between the new interface and the internal classes, in
+order to reduce the footprint of OpenWBEM, and increase reliability
+(shared code is more frequently exercised code, and has its bugs shaken
+out faster), and reduce future development effort (changes can be made
+in one place instead of two).<br>
   </li>
 </ul>
 <h2>CMPI</h2>
