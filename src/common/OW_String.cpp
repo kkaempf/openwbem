@@ -186,6 +186,28 @@ String::String(UInt32 val) :
 	::snprintf(bfr.get(), len+1, "%u", val);
 	m_buf = new ByteBuf(bfr, len);
 }
+#if defined(OW_INT32_IS_INT) && defined(OW_INT64_IS_LONG_LONG)
+//////////////////////////////////////////////////////////////////////////////
+String::String(long val) :
+	m_buf(NULL)
+{
+	char tmpbuf[32];
+	int len = snprintf(tmpbuf, sizeof(tmpbuf), "%ld", val);
+	AutoPtrVec<char> bfr(new char[len+1]);
+	::snprintf(bfr.get(), len+1, "%ld", val);
+	m_buf = new ByteBuf(bfr, len);
+}
+//////////////////////////////////////////////////////////////////////////////
+String::String(unsigned long val) :
+	m_buf(NULL)
+{
+	char tmpbuf[32];
+	int len = ::snprintf(tmpbuf, sizeof(tmpbuf), "%lu", val);
+	AutoPtrVec<char> bfr(new char[len+1]);
+	::snprintf(bfr.get(), len+1, "%lu", val);
+	m_buf = new ByteBuf(bfr, len);
+}
+#endif
 #if defined(OW_WIN32)
 #undef snprintf
 #endif

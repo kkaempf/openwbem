@@ -82,6 +82,23 @@ public:
 	 * representation of.
 	 */
 	explicit String(UInt32 val);
+// do this check so we fill in the gaps and have int, long & long long constructors if necessary
+#if defined(OW_INT32_IS_INT) && defined(OW_INT64_IS_LONG_LONG)
+	/**
+	 * Create a new String object that will hold the string representation
+	 * of the given long value.
+	 * @param val	The long value this String will hold the string
+	 * representation of.
+	 */
+	explicit String(long val);
+	/**
+	 * Create a new String object that will hold the string representation
+	 * of the given unsigned long value.
+	 * @param val	The unsigned long value this String will hold the string
+	 * representation of.
+	 */
+	explicit String(unsigned long val);
+#endif
 	/**
 	 * Create a new String object that will hold the string representation
 	 * of the given Int64 value.
