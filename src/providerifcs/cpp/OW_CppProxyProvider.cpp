@@ -202,6 +202,52 @@ CppInstanceProviderProxy::deleteInstance(
 	m_pProv->deleteInstance(env, ns, cop);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////		
+CppSecondaryInstanceProviderProxy::CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv)
+	: SecondaryInstanceProviderIFC()
+	, m_pProv(pProv)
+{
+}
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppSecondaryInstanceProviderProxy::filterInstances(
+	const ProviderEnvironmentIFCRef &env, const String &ns, 
+	const String &className, CIMInstanceArray &instances, 
+	ELocalOnlyFlag localOnly, EDeepFlag deep, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin, 
+	const StringArray *propertyList, const CIMClass &requestedClass, 
+	const CIMClass &cimClass)
+{
+	m_pProv->updateAccessTime();
+	m_pProv->filterInstances(env, ns, className, instances, localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass);
+}
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppSecondaryInstanceProviderProxy::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
+{
+	m_pProv->updateAccessTime();
+	m_pProv->createInstance(env, ns, cimInstance);
+}
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppSecondaryInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, 
+	const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
+{
+	m_pProv->updateAccessTime();
+	m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
+}
+//////////////////////////////////////////////////////////////////////////////		
+void
+CppSecondaryInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
+{
+	m_pProv->updateAccessTime();
+	m_pProv->deleteInstance(env, ns, cop);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 //////////////////////////////////////////////////////////////////////////////		
 CppMethodProviderProxy::CppMethodProviderProxy(CppMethodProviderIFCRef pProv) :
 	MethodProviderIFC(), m_pProv(pProv)

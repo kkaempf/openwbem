@@ -94,6 +94,7 @@ NPIProviderIFC::~NPIProviderIFC()
 void
 NPIProviderIFC::doInit(const ProviderEnvironmentIFCRef&,
 	InstanceProviderInfoArray&,
+	SecondaryInstanceProviderInfoArray&,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderInfoArray&,
 #endif

@@ -29,6 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_ProviderIFCBaseIFC.hpp"
+#include "OW_NoSuchProviderException.hpp"
 
 namespace OpenWBEM
 {
@@ -46,6 +47,7 @@ ProviderIFCBaseIFC::~ProviderIFCBaseIFC()
 void
 ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
 	InstanceProviderInfoArray& i,
+	SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderInfoArray& a,
 #endif
@@ -53,6 +55,7 @@ ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
 	IndicationProviderInfoArray& ind)
 {
 	doInit(env, i, 
+		si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		a, 
 #endif
@@ -65,6 +68,13 @@ ProviderIFCBaseIFC::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return doGetInstanceProvider(env, provIdString);
+}
+///////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFCRef 
+ProviderIFCBaseIFC::getSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	return doGetSecondaryInstanceProvider(env, provIdString);
 }
 ///////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef 
@@ -110,6 +120,68 @@ ProviderIFCBaseIFC::getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 {
 	return  doGetIndicationProvider(env, provIdString);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+InstanceProviderIFCRef
+ProviderIFCBaseIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetInstanceProvider()");
+}
+///////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFCRef
+ProviderIFCBaseIFC::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetSecondaryInstanceProvider()");
+}
+///////////////////////////////////////////////////////////////////////////////
+MethodProviderIFCRef
+ProviderIFCBaseIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetMethodProvider()");
+}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+///////////////////////////////////////////////////////////////////////////////
+AssociatorProviderIFCRef
+ProviderIFCBaseIFC::doGetAssociatorProvider(
+	const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetAssociatorProvider()");
+}
+#endif
+///////////////////////////////////////////////////////////////////////////////
+IndicationExportProviderIFCRefArray
+ProviderIFCBaseIFC::doGetIndicationExportProviders(
+	const ProviderEnvironmentIFCRef& env
+	)
+{
+	return IndicationExportProviderIFCRefArray();
+}
+///////////////////////////////////////////////////////////////////////////////
+PolledProviderIFCRefArray
+ProviderIFCBaseIFC::doGetPolledProviders(
+	const ProviderEnvironmentIFCRef& env
+	)
+{
+	return PolledProviderIFCRefArray();
+}
+///////////////////////////////////////////////////////////////////////////////
+IndicationProviderIFCRef
+ProviderIFCBaseIFC::doGetIndicationProvider(
+	const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_THROW(NoSuchProviderException, "INTERNAL ERROR! Provider IFC didn't override ProviderIFCBaseIFC::doGetIndicationProvider()");
+}
+///////////////////////////////////////////////////////////////////////////////
+void
+ProviderIFCBaseIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
+{
+}
+
 
 } // end namespace OpenWBEM
 

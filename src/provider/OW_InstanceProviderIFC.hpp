@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-4 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,11 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_INSTANCEPROVIDERIFC_HPP_
-#define OW_INSTANCEPROVIDERIFC_HPP_
+#ifndef OW_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
+#define OW_INSTANCEPROVIDERIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
@@ -39,9 +39,8 @@ namespace OpenWBEM
 
 /**
  * Classes wishing to implement an instance provider must derive from this
- * class.
- * All calls to the derived provider will be serialized so that providers need
- * not worry about multi-threading issues.
+ * class.  Provider interfaces will usually create a proxy between this 
+ * interface and their own interface.
  */
 class InstanceProviderIFC: public ProviderBaseIFC
 {
@@ -171,7 +170,6 @@ public:
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };
 typedef Reference<InstanceProviderIFC> InstanceProviderIFCRef;
-//typedef IntrusiveReference<InstanceProviderIFC> InstanceProviderIFCRef;
 
 } // end namespace OpenWBEM
 

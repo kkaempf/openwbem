@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2003 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -45,7 +45,6 @@ public:
 	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
 typedef Array<InstanceProviderInfo> InstanceProviderInfoArray;
-extern template class ProviderInfoBase<InstClassInfo>;
 
 } // end namespace OpenWBEM
 

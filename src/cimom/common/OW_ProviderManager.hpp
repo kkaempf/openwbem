@@ -38,6 +38,7 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_HashMap.hpp"
@@ -81,11 +82,23 @@ public:
 	 * provider.  This function will also return any providers registered for
 	 * the class (without the provider qualifier).
 	 *
-	 * @returns A ref counted InstanceProvider. If no provider is found then
+	 * @return A ref counted InstanceProvider. If no provider is found then
 	 * 	null is returned.
 	 */
 	InstanceProviderIFCRef getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		const String& ns, const CIMClass& cc) const;
+
+	/**
+	 * Locate secondary Instance providers.
+	 *
+	 * @param ns The namespace of the class.
+	 * @param className The name of the class.
+	 *
+	 * @return An array of secondary instance providers which have registered
+	 * for the class identified by the className argument.
+	 */
+	SeconaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
+		const String& ns, const String& className) const;
 	/**
 	 * Locate a Method provider.
 	 *
@@ -161,12 +174,17 @@ public:	// so free functions in cpp file can access them.
 		ProviderIFCBaseIFCRef ifc;
 	};
 	typedef HashMap<String, ProvReg> ProvRegMap_t;
-	typedef HashMultiMap<String, ProvReg> IndProvRegMap_t;
+	typedef HashMultiMap<String, ProvReg> MultiProvRegMap_t;
 	
 private:
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
 	ProvRegMap_t m_registeredInstProvs;
+
+	// The key must be: a classname if the provider supports any namespace,
+	// or namespace:classname for a specific namespace.
+	MultiProvRegMap_t m_registeredSecInstProvs;
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	ProvRegMap_t m_registeredAssocProvs;
 #endif
@@ -176,7 +194,7 @@ private:
 	ProvRegMap_t m_registeredPropProvs;
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
-	IndProvRegMap_t m_registeredIndProvs;
+	MultiProvRegMap_t m_registeredIndProvs;
 };
 typedef Reference<ProviderManager> ProviderManagerRef;
 

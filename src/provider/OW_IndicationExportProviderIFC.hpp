@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Array.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "OW_Reference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 namespace OpenWBEM
@@ -55,7 +55,6 @@ public:
 		const String& ns,
 		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
 };
-//typedef IntrusiveReference<IndicationExportProviderIFC>
 typedef Reference<IndicationExportProviderIFC>
 		IndicationExportProviderIFCRef;
 typedef Array<IndicationExportProviderIFCRef>

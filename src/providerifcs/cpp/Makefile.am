@@ -29,6 +29,7 @@ OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \
+OW_CppSecondaryInstanceProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 
 
@@ -45,6 +46,7 @@ OW_CppProviderBaseIFC.hpp \
 $(ASSOCIATION_H) \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
+OW_CppSecondaryInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppIndicationProviderIFC.hpp \

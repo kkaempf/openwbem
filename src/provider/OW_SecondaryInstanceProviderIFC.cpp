@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,52 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_METHODPROVIDERIFC_HPP_
-#define OW_METHODPROVIDERIFC_HPP_
 #include "OW_config.h"
-#include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
-#include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
 
 namespace OpenWBEM
 {
 
-/**
- * This is the interface implemented by method providers.  These providers are
- * used to provide implementation for all methods of CIM classes.
- */
-class MethodProviderIFC: public ProviderBaseIFC
+///////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFC::~SecondaryInstanceProviderIFC() 
 {
-public:
-	virtual ~MethodProviderIFC();
-	/**
-	 * The CIMOM calls this method when the method specified in the parameters
-	 * is to be invoked.
-	 *
-	 * @param cop Contains the path to the instance whose method must be
-	 * 	invoked.
-	 * @param methodName The name of the method.
-	 * @param inParams An array of CIMValues which are the input parameters
-	 * 	for this method.
-	 * @param outParams An array of CIMValues which are the output
-	 * 	parameters for this method.
-	 *
-	 * @returns CIMValue - The return value of the method.  Must be a
-	 *    valid CIMValue.
-	 *
-	 * @throws CIMException
-	 */
-	virtual CIMValue invokeMethod(
-			const ProviderEnvironmentIFCRef& env,
-			const String& ns,
-			const CIMObjectPath& path,
-			const String& methodName,
-			const CIMParamValueArray& in,
-			CIMParamValueArray& out ) = 0;
-};
-
-typedef Reference< MethodProviderIFC > MethodProviderIFCRef;
+}
 
 } // end namespace OpenWBEM
 
-#endif
+

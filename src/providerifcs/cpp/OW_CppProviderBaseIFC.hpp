@@ -39,6 +39,7 @@ namespace OpenWBEM
 {
 
 class CppInstanceProviderIFC;
+class CppSecondaryInstanceProviderIFC;
 class CppMethodProviderIFC;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class CppAssociatorProviderIFC;
@@ -77,6 +78,7 @@ public:
 	 * when it should return NULL.
 	 */
 	virtual CppInstanceProviderIFC* getInstanceProvider() { return 0; }
+	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider() { return 0; }
 	virtual CppMethodProviderIFC* getMethodProvider() { return 0; }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }

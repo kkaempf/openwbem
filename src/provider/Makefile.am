@@ -23,6 +23,7 @@ libowprovider_a_SOURCES = \
 $(ASSOCIATION_PROVIDER_S) \
 OW_IndicationExportProviderIFC.cpp \
 OW_InstanceProviderIFC.cpp \
+OW_SecondaryInstanceProviderIFC.cpp \
 OW_MethodProviderIFC.cpp \
 OW_PolledProviderIFC.cpp \
 OW_ProviderBaseIFC.cpp \
@@ -44,12 +45,14 @@ pkginclude_HEADERS = \
 $(ASSOCIATION_PROVIDER_H) \
 OW_IndicationExportProviderIFC.hpp \
 OW_InstanceProviderIFC.hpp \
+OW_SecondaryInstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
 OW_PolledProviderIFC.hpp \
 OW_ProviderBaseIFC.hpp \
 OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
 OW_InstanceProviderInfo.hpp \
+OW_SecondaryInstanceProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
 OW_IndicationProviderInfo.hpp \

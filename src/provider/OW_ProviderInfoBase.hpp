@@ -109,6 +109,8 @@ ProviderInfoBase<ClassInfoT>::getProviderName() const
 	return m_name;
 }
 
+extern template class ProviderInfoBase<InstClassInfo>;
+
 } // end namespace OpenWBEM
 
 #endif

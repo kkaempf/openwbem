@@ -34,6 +34,7 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
@@ -42,6 +43,7 @@
 #include "OW_CppAssociatorProviderIFC.hpp"
 #endif
 #include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppSecondaryInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
@@ -152,6 +154,21 @@ public:
 private:
 	CppInstanceProviderIFCRef m_pProv;
 };
+
+class CppSecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
+{
+public:
+	CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv);
+	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+private:
+	CppSecondaryInstanceProviderIFCRef m_pProv;
+};
+
 class CppMethodProviderProxy : public MethodProviderIFC
 {
 public:

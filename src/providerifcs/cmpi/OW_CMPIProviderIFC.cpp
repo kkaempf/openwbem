@@ -148,6 +148,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 void
 CMPIProviderIFC::doInit(const ProviderEnvironmentIFCRef&,
 	InstanceProviderInfoArray&,
+	SecondaryInstanceProviderInfoArray&,
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderInfoArray&,

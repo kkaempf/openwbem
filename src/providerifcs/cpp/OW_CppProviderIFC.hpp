@@ -57,12 +57,16 @@ protected:
 	 */
 	virtual void doInit(const ProviderEnvironmentIFCRef& env,
 		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
 		IndicationProviderInfoArray& ind);
 	virtual InstanceProviderIFCRef doGetInstanceProvider(
+		const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+	virtual SecondaryInstanceProviderIFCRef doGetSecondaryInstanceProvider(
 		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	virtual MethodProviderIFCRef doGetMethodProvider(
@@ -101,6 +105,7 @@ private:
 		InitializeProviderFlag = initializeProvider);
 	void loadProviders(const ProviderEnvironmentIFCRef& env,
 		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray& a,
 #endif

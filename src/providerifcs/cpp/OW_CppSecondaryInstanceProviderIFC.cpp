@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,28 +27,69 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_PROVIDERBASEIFC_HPP_
-#define OW_PROVIDERBASEIFC_HPP_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
-#include "OW_Array.hpp"
-#include "OW_Reference.hpp"
+#include "OW_CppSecondaryInstanceProviderIFC.hpp"
 
 namespace OpenWBEM
 {
 
-/**
- * This is the base class implemented by all providers.
- */
-class ProviderBaseIFC
+///////////////////////////////////////////////////////////////////////////////
+CppSecondaryInstanceProviderIFC::~CppSecondaryInstanceProviderIFC() 
 {
-	public:
-		virtual ~ProviderBaseIFC();
-};
+}
 
-typedef Reference<ProviderBaseIFC> ProviderBaseIFCRef;
-typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
+///////////////////////////////////////////////////////////////////////////////
+void
+CppSecondaryInstanceProviderIFC::filterInstances(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const String& className,
+	CIMInstanceArray& instances,
+	WBEMFlags::ELocalOnlyFlag localOnly, 
+	WBEMFlags::EDeepFlag deep, 
+	WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+	WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	const StringArray* propertyList,
+	const CIMClass& requestedClass,
+	const CIMClass& cimClass )
+{
+}
+
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+///////////////////////////////////////////////////////////////////////////////
+void
+CppSecondaryInstanceProviderIFC::createInstance(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMInstance& cimInstance )
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+CppSecondaryInstanceProviderIFC::modifyInstance(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMInstance& modifiedInstance,
+	const CIMInstance& previousInstance,
+	WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	const StringArray* propertyList,
+	const CIMClass& theClass)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+CppSecondaryInstanceProviderIFC::deleteInstance(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMObjectPath& cop)
+{
+}
+
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 
 } // end namespace OpenWBEM
 
-#endif
+

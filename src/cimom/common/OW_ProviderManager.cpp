@@ -89,7 +89,7 @@ void registerProviderInfo(
 	const String& name_,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
-	ProviderManager::IndProvRegMap_t& regMap)
+	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	String name(name_);
 	name.toLowerCase();
@@ -138,7 +138,7 @@ void processProviderClassExtraInfo(
 	const StringArray& extra,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
-	ProviderManager::IndProvRegMap_t& regMap)
+	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	{
 		registerProviderInfo(env, name, ifc, providerName, regMap);
@@ -234,7 +234,7 @@ void processProviderClassInfo(
 	const IndicationProviderInfo::ClassInfo& classInfo,
 	const ProviderIFCBaseIFCRef& ifc,
 	const String& providerName,
-	ProviderManager::IndProvRegMap_t& regMap)
+	ProviderManager::MultiProvRegMap_t& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
@@ -293,6 +293,7 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 	for (size_t i = 0; i < m_IFCArray.size(); ++i)
 	{
 		InstanceProviderInfoArray instanceProviderInfo;
+		SecondaryInstanceProviderInfoArray secondaryInstanceProviderInfo;
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray associatorProviderInfo;
@@ -301,7 +302,9 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 		MethodProviderInfoArray methodProviderInfo;
 		IndicationProviderInfoArray indicationProviderInfo;
 
-		m_IFCArray[i]->init(env, instanceProviderInfo,
+		m_IFCArray[i]->init(env, 
+			instanceProviderInfo,
+			secondaryInstanceProviderInfo,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			associatorProviderInfo,
 #endif
@@ -309,6 +312,7 @@ void ProviderManager::init(const ProviderEnvironmentIFCRef& env)
 			indicationProviderInfo);
 
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
+		processProviderInfo(env, secondaryInstanceProviderInfo, m_IFCArray[i], m_registeredSecInstProvs);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
@@ -329,6 +333,11 @@ wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
 		return InstanceProviderIFCRef(new InstanceProviderProxy(pref, env));
 }
+inline SecondaryInstanceProviderIFCRef
+wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
+{
+		return SecondaryInstanceProviderIFCRef(new SecondaryInstanceProviderProxy(pref, env));
+}
 inline MethodProviderIFCRef
 wrapProvider(MethodProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
@@ -348,6 +357,12 @@ wrapProvider(AssociatorProviderIFCRef pref,
 
 inline InstanceProviderIFCRef
 wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
+{
+	(void)env;
+	return pref;
+}
+inline SecondaryInstanceProviderIFCRef
+wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
 	(void)env;
 	return pref;
@@ -412,6 +427,45 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	}
 	return InstanceProviderIFCRef(0);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+SeconaryInstanceProviderIFCRefArray 
+ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
+	const String& ns, const String& className) const
+{
+	String lowerName = className;
+	lowerName.toLowerCase();
+	MultiProvRegMap_t::const_iterator lci;
+	MultiProvRegMap_t::const_iterator uci;
+	// lookup just the class name to see if a provider registered for the
+	// class in all namespaces.
+	std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
+		range = m_registeredSecInstProvs.equal_range(lowerName);
+	lci = range.first;
+	uci = range.second;
+	if (lci == m_registeredSecInstProvs.end())
+	{
+		// didn't find any, so
+		// next lookup namespace:classname to see if we've got one for the
+		// specific namespace
+		String nsAndClassName = ns + ':' + lowerName;
+		nsAndClassName.toLowerCase();
+		range = m_registeredSecInstProvs.equal_range(nsAndClassName);
+		lci = range.first;
+		uci = range.second;
+	}
+	SeconaryInstanceProviderIFCRefArray rval;
+	if (lci != m_registeredSecInstProvs.end())
+	{
+		// loop through the matching range and put them in rval
+		for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
+		{
+			rval.push_back(wrapProvider(tci->second.ifc->getSecondaryInstanceProvider(env, tci->second.provName.c_str()), env));
+		}
+	}
+	return rval;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef
 ProviderManager::getMethodProvider(const ProviderEnvironmentIFCRef& env,
@@ -568,13 +622,13 @@ ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 {
 	String lowerName = indicationClassName;
 	lowerName.toLowerCase();
-	IndProvRegMap_t::const_iterator lci;
-	IndProvRegMap_t::const_iterator uci;
+	MultiProvRegMap_t::const_iterator lci;
+	MultiProvRegMap_t::const_iterator uci;
 	if (monitoredClassName.empty())
 	{
 		// lookup just the class name to see if a provider registered for the
 		// class in all namespaces.
-		std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
+		std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
 			range = m_registeredIndProvs.equal_range(lowerName);
 		lci = range.first;
 		uci = range.second;
@@ -595,7 +649,7 @@ ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 		// lookup indicationClassName/monitoredClassName
 		String nsAndClassName = lowerName + '/' + monitoredClassName;
 		nsAndClassName.toLowerCase();
-		std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
+		std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
 			range = m_registeredIndProvs.equal_range(nsAndClassName);
 		lci = range.first;
 		uci = range.second;
@@ -615,7 +669,7 @@ ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
 	if (lci != m_registeredIndProvs.end())
 	{
 		// loop through the matching range and put them in rval
-		for (IndProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
+		for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
 		{
 			rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
 		}

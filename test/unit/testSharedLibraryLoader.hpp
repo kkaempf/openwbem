@@ -216,6 +216,7 @@ class testProviderMux: public ProviderIFCBaseIFC
 		virtual ~testProviderMux() {}
 		virtual void doInit(const ProviderEnvironmentIFCRef&,
 			InstanceProviderInfoArray& ia,
+			SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			AssociatorProviderInfoArray& aa,
 #endif

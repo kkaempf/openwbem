@@ -43,7 +43,6 @@ public:
 	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
 typedef Array<AssociatorProviderInfo> AssociatorProviderInfoArray;
-extern template class ProviderInfoBase<InstClassInfo>;
 
 } // end namespace OpenWBEM
 

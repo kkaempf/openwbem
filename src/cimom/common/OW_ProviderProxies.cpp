@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Novell, Inc All rights reserved.
+* Copyright (C) 2004 Novell, Inc., Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -1111,6 +1111,63 @@ InstanceProviderProxy::deleteInstance(
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	
+//////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderProxy::SecondaryInstanceProviderProxy(SecondaryInstanceProviderIFCRef pProv,
+	const ProviderEnvironmentIFCRef& env)
+	: SecondaryInstanceProviderIFC()
+	, m_pProv(pProv)
+	, m_cimomuid(0)
+	, m_useruid(0)
+{
+	getUIDS(env, m_cimomuid, m_useruid);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+SecondaryInstanceProviderProxy::filterInstances(
+	const ProviderEnvironmentIFCRef &env, const String &ns, 
+	const String &className, CIMInstanceArray &instances, 
+	ELocalOnlyFlag localOnly, EDeepFlag deep, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin, 
+	const StringArray *propertyList, const CIMClass &requestedClass, 
+	const CIMClass &cimClass)
+{
+	UIDManager um(m_useruid, m_cimomuid);
+	m_pProv->filterInstances(env, ns, className, instances, localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass);
+}
+
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+//////////////////////////////////////////////////////////////////////////////
+void
+SecondaryInstanceProviderProxy::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
+{
+	UIDManager um(m_useruid, m_cimomuid);
+	m_pProv->createInstance(env, ns, cimInstance);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+SecondaryInstanceProviderProxy::modifyInstance(
+	const ProviderEnvironmentIFCRef &env, const String &ns, 
+	const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	const StringArray *propertyList, const CIMClass &theClass)
+{
+	UIDManager um(m_useruid, m_cimomuid);
+	m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+SecondaryInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
+{
+	UIDManager um(m_useruid, m_cimomuid);
+	m_pProv->deleteInstance(env, ns, cop);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderProxy::MethodProviderProxy(MethodProviderIFCRef pProv,
 	const ProviderEnvironmentIFCRef& env)

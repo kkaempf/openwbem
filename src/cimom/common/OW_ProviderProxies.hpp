@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Novell, Inc All rights reserved.
+* Copyright (C) 2004 Novell, Inc., Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_PROVIDERPROXIES_HPP__
-#define __OW_PROVIDERPROXIES_HPP__
+#ifndef OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
+#define OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
 
 // Currently this shouldn't even get compiled unless we're on Linux				   
 #ifdef OW_GNU_LINUX
@@ -38,6 +38,7 @@
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -105,6 +106,24 @@ public:
 	
 private:
 	InstanceProviderIFCRef m_pProv;
+	uid_t m_cimomuid;
+	uid_t m_useruid;
+};
+
+class SecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
+{
+public:
+	SecondaryInstanceProviderProxy(SecondaryInstanceProviderIFCRef pProv,
+		const ProviderEnvironmentIFCRef& env);
+	virtual void filterInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceArray &instances, WBEMFlags:: ELocalOnlyFlag localOnly, WBEMFlags:: EDeepFlag deep, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass);
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance);
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass);
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+private:
+	SecondaryInstanceProviderIFCRef m_pProv;
 	uid_t m_cimomuid;
 	uid_t m_useruid;
 };

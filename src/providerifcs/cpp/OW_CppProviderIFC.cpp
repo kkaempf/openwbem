@@ -84,6 +84,7 @@ CppProviderIFC::~CppProviderIFC()
 void
 CppProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 	InstanceProviderInfoArray& i,
+	SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderInfoArray& a,
 #endif
@@ -91,6 +92,7 @@ CppProviderIFC::doInit(const ProviderEnvironmentIFCRef& env,
 	IndicationProviderInfoArray& ind)
 {
 	loadProviders(env, i,
+		si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		a,
 #endif
@@ -115,6 +117,28 @@ CppProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 			return InstanceProviderIFCRef(new CppInstanceProviderProxy(ipRef));
 		}
 		env->getLogger()->logError(format("Provider %1 is not an instance provider",
+			provIdString));
+	}
+	OW_THROW(NoSuchProviderException, provIdString);
+}
+//////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFCRef
+CppProviderIFC::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
+	if(pProv)
+	{
+		CppSecondaryInstanceProviderIFC* pIP = pProv->getSecondaryInstanceProvider();
+		if(pIP)
+		{
+			env->getLogger()->logDebug(format("CPPProviderIFC found secondary instance"
+				" provider %1", provIdString));
+			CppSecondaryInstanceProviderIFCRef ipRef(pProv.getLibRef(), pIP);
+			ipRef.useRefCountOf(pProv);
+			return SecondaryInstanceProviderIFCRef(new CppSecondaryInstanceProviderProxy(ipRef));
+		}
+		env->getLogger()->logError(format("Provider %1 is not a secondary instance provider",
 			provIdString));
 	}
 	OW_THROW(NoSuchProviderException, provIdString);
@@ -235,6 +259,7 @@ CppProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 void
 CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	InstanceProviderInfoArray& instanceProviderInfo,
+	SecondaryInstanceProviderInfoArray& secondaryInstanceProviderInfo,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderInfoArray& associatorProviderInfo,
 #endif
@@ -354,6 +379,14 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				info.setProviderName(providerid);
 				p_ip->getInstanceProviderInfo(info);
 				instanceProviderInfo.push_back(info);
+			}
+			CppSecondaryInstanceProviderIFC* p_sip = p->getSecondaryInstanceProvider();
+			if (p_sip)
+			{
+				SecondaryInstanceProviderInfo info;
+				info.setProviderName(providerid);
+				p_sip->getSecondaryInstanceProviderInfo(info);
+				secondaryInstanceProviderInfo.push_back(info);
 			}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			CppAssociatorProviderIFC* p_ap = p->getAssociatorProvider();

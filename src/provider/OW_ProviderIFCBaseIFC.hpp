@@ -34,6 +34,7 @@
 #include "OW_String.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
+#include "OW_SecondaryInstanceProviderIFC.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
@@ -42,6 +43,7 @@
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_InstanceProviderInfo.hpp"
+#include "OW_SecondaryInstanceProviderInfo.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderInfo.hpp"
 #endif
@@ -91,6 +93,7 @@ public:
 	 */
 	void init(const ProviderEnvironmentIFCRef& env,
 		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray& a,
 #endif
@@ -107,6 +110,18 @@ public:
 	 * then an NoSuchProviderException is thrown.
 	 */
 	InstanceProviderIFCRef getInstanceProvider(const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
+	/**
+	 * Locate an Secondary Instance provider.
+	 *
+	 * @param provIdString	The provider interface specific string. The provider
+	 *								interface will use this to identify the provider
+	 *								being requested.
+	 *
+	 * @returns A ref counted SecondaryInstanceProvider. If the provider is not found,
+	 * then an NoSuchProviderException is thrown.
+	 */
+	SecondaryInstanceProviderIFCRef getSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	/**
 	 * Locate a Method provider.
@@ -168,30 +183,33 @@ protected:
 	 */
 	virtual void doInit(const ProviderEnvironmentIFCRef& env,
 		InstanceProviderInfoArray& i,
+		SecondaryInstanceProviderInfoArray& si,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		AssociatorProviderInfoArray& a,
 #endif
 		MethodProviderInfoArray& m,
 		IndicationProviderInfoArray& ind) = 0;
 	virtual InstanceProviderIFCRef doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
-		const char* provIdString) = 0;
+		const char* provIdString);
+	virtual SecondaryInstanceProviderIFCRef doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env,
+		const char* provIdString);
 	virtual MethodProviderIFCRef doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
-		const char* provIdString) = 0;
+		const char* provIdString);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual AssociatorProviderIFCRef doGetAssociatorProvider(
 		const ProviderEnvironmentIFCRef& env,
-		const char* provIdString) = 0;
+		const char* provIdString);
 #endif
 	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
 		const ProviderEnvironmentIFCRef& env
-		) = 0;
+		);
 	virtual PolledProviderIFCRefArray doGetPolledProviders(
 		const ProviderEnvironmentIFCRef& env
-		) = 0;
+		);
 	virtual IndicationProviderIFCRef doGetIndicationProvider(
 		const ProviderEnvironmentIFCRef& env,
-		const char* provIdString) = 0;
-	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env) = 0;
+		const char* provIdString);
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 };
 
 typedef SharedLibraryReference< Reference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
