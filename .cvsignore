@@ -18,3 +18,8 @@ stamp-h
 config.h
 conftest*
 openwbem-*
+missing
+mkinstalldirs
+config.guess
+config.sub
+depcomp
