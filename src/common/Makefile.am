@@ -45,6 +45,7 @@ OW_CmdLineParser.cpp \
 OW_Condition.cpp \
 OW_ConfigException.cpp \
 OW_ConfigFile.cpp \
+OW_ConfigOpts.cpp \
 OW_COWIntrusiveCountableBase.cpp \
 OW_COWIntrusiveReference.cpp \
 OW_COWReferenceBase.cpp \

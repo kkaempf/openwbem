@@ -1,6 +1,7 @@
 SUBDIRS = \
 CIM_IndicationSubscription \
 CIM_IndicationFilter \
+OpenWBEM_ConfigSettingData \
 OpenWBEM_ObjectManager \
 OpenWBEM_UnitaryComputerSystem \
 CIM_Namespace \

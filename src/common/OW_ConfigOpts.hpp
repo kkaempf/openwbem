@@ -35,6 +35,7 @@
 #ifndef OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_Types.hpp" // for OW_SHAREDLIB_EXTENSION
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -201,6 +202,12 @@
 #ifndef OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE
 #define OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE "false"
 #endif
+#ifndef OW_DEFAULT_HTTP_ALLOW_LOCAL_AUTHENTICATION
+#define OW_DEFAULT_HTTP_ALLOW_LOCAL_AUTHENTICATION "false" 
+#endif
+#ifndef OW_DEFAULT_REUSE_ADDR
+#define OW_DEFAULT_REUSE_ADDR "true" 
+#endif
 
 
 namespace OpenWBEM
@@ -285,6 +292,14 @@ namespace ConfigOpts
 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
+
+
+	struct NameAndDefault {
+		const char* name; 
+		const char* defaultValue; 
+	}; 
+	extern NameAndDefault g_defaults[];
+	extern NameAndDefault* g_defaultsEnd;
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM

@@ -1,0 +1,36 @@
+
+
+class OpenWBEM_ConfigSettingData : CIM_SettingData
+{
+	[ Description(
+		"The value of the ElementName config item.  "
+		"This is the value of from the configuration file " 
+		"and may differ from the value of the current running CIMOM. "
+		) ]
+	string Value; 
+	[ Description(
+		"The current value of the ElementName config item.  "
+		"This may differ from what is in the configuration file. "
+		) ]
+	string CurrentEffectiveValue; 
+}; 
+
+// ===================================================================
+// OpenWBEM_ObjectManagerConfigSettingData
+// ===================================================================
+   [Association, Version ( "2.7.0" ), Description (
+       "ElementSettingData represents the association between "
+       "ManagedElements and applicable setting data. This association "
+       "also describes whether this is a default or current setting.")]
+class OpenWBEM_ObjectManagerConfigSettingData : CIM_ElementSettingData {
+
+      [Key, Description (
+          "The managed element.")]
+   OpenWBEM_ObjectManager REF ManagedElement;
+
+      [Key, Description (
+          "The SettingData object associated with the element.")]
+   OpenWBEM_ConfigSettingData REF SettingData;
+
+};
+
