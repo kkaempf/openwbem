@@ -128,10 +128,11 @@ static struct option   long_options[] =
 	{ "include", required_argument, NULL, 'I' },
 	{ "ignore-double-includes", 0, NULL, 'i' },
 	{ "help", 0, NULL, 'h' },
+	{ "remove-descriptions", 0, NULL, 'm' },
 	{ 0, 0, 0, 0 }
 };
 #endif
-static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ih";
+static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ihm";
 //////////////////////////////////////////////////////////////////////////////
 static int
 processCommandLineOptions(int argc, char** argv)
@@ -143,6 +144,7 @@ processCommandLineOptions(int argc, char** argv)
 		g_url = argv[1];
 		g_opts.m_namespace = argv[2];
 		g_filelist.push_back(argv[3]);
+		cerr << "This cmd line usage is deprecated!\n";
 		return 0;
 	}
 
@@ -178,6 +180,9 @@ processCommandLineOptions(int argc, char** argv)
 				break;
 			case 'c':
 				g_opts.m_createNamespaces = true;
+				break;
+			case 'm':
+				g_opts.m_removeDescriptions = true;
 				break;
 			default:
 				return -1;
@@ -257,6 +262,7 @@ void usage()
 	cout << "  -q,--quiet: Don't print anything <UNIMPLEMENTED>\n";
 	cout << "  -I,--include <DIR>: Add a directory to the include search path <UNIMPLEMENTED>\n";
 	cout << "  -i,--ignore-double-includes: If a mof file has already been included, don't parse it again <UNIMPLEMENTED>\n";
+	cout << "  -m,--remove-descriptions: Remove all the Description qualifiers to save space.\n";
 	cout << "  -h,--help: Print this help message\n";
 }
 

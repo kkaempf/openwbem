@@ -65,11 +65,12 @@ public:
 			, m_preserve(false)
 			, m_upgrade(true)
 			, m_ignoreDoubleIncludes(false)
+			, m_removeDescriptions(false)
 		{}
 		Options(const String& namespace_,
 			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
 			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
-			bool ignoreDoubleIncludes)
+			bool ignoreDoubleIncludes, bool removeDescriptions)
 			: m_namespace(namespace_)
 			, m_createNamespaces(createNamespaces)
 			, m_checkSyntaxOnly(checkSyntaxOnly)
@@ -79,6 +80,7 @@ public:
 			, m_upgrade(upgrade)
 			, m_includeDirs(includeDirs)
 			, m_ignoreDoubleIncludes(ignoreDoubleIncludes)
+			, m_removeDescriptions(removeDescriptions)
 		{
 		}
 
@@ -91,6 +93,7 @@ public:
 		bool m_upgrade;
 		StringArray m_includeDirs;
 		bool m_ignoreDoubleIncludes;
+		bool m_removeDescriptions;
 	};
 
 	Compiler( Reference<CIMOMHandleIFC> ch, const Options& opts, Reference<ParserErrorHandlerIFC> mpeh );

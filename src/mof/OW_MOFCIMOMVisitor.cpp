@@ -177,7 +177,10 @@ void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclarat
 			 i != pClassDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curClass.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curClass.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	if ( pClassDeclaration->pAlias.get() != 0 )
@@ -215,7 +218,10 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 			 ++i )
 		{
 			(*i)->Accept( this );
-			m_curClass.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curClass.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	if ( pAssocDeclaration->pAlias.get() != 0 )
@@ -254,7 +260,10 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 			 ++i )
 		{
 			(*i)->Accept( this );
-			m_curClass.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curClass.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	if ( pIndicDeclaration->pAlias.get() != 0 )
@@ -413,7 +422,10 @@ void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropert
 			 i != pPropertyDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curProperty.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curProperty.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	Int64 arraySize = -1;
@@ -465,7 +477,10 @@ void CIMOMVisitor::VisitReferenceDeclaration( const ReferenceDeclaration *pRefer
 			 i != pReferenceDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curProperty.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curProperty.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	CIMDataType dt(*(pReferenceDeclaration->pObjectRef->pClassName->pClassName));
@@ -485,7 +500,10 @@ void CIMOMVisitor::VisitMethodDeclaration( const MethodDeclaration *pMethodDecla
 			 i != pMethodDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curMethod.addQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curMethod.addQualifier(m_curQualifier);
+			}
 		}
 	}
 	CIMDataType dt = CIMDataType::getDataType(*pMethodDeclaration->pDataType->pDataType);
@@ -532,7 +550,10 @@ void CIMOMVisitor::VisitParameterDataType( const ParameterDataType *pParameterDa
 			 i != pParameterDataType->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			quals.append(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				quals.append(m_curQualifier);
+			}
 		}
 		m_curParameter.setQualifiers(quals);
 	}
@@ -560,7 +581,10 @@ void CIMOMVisitor::VisitParameterObjectRef( const ParameterObjectRef *pParameter
 			  i != pParameterObjectRef->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			quals.append(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				quals.append(m_curQualifier);
+			}
 		}
 		m_curParameter.setQualifiers(quals);
 	}
@@ -858,7 +882,10 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 			  i != pInstanceDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curInstance.setQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curInstance.setQualifier(m_curQualifier);
+			}
 		}
 	}
 	if ( pInstanceDeclaration->pValueInitializer.get() != 0 )
@@ -932,7 +959,10 @@ void CIMOMVisitor::VisitValueInitializer( const ValueInitializer *pValueInitiali
 			  i != pValueInitializer->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
-			m_curProperty.setQualifier(m_curQualifier);
+			if (!m_opts.m_removeDescriptions || !m_curQualifier.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_DESCRIPTION))
+			{
+				m_curProperty.setQualifier(m_curQualifier);
+			}
 		}
 	}
 	pValueInitializer->pDefaultValue->Accept( this );
