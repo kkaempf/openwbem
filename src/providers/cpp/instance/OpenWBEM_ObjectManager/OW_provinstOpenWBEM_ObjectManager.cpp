@@ -88,6 +88,7 @@ public:
 		{
 			if (e.getErrNo() == CIMException::NOT_FOUND)
 			{
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 				omName = OW_PACKAGE_PREFIX ":";
 				if (omName == ":")
 				{
@@ -102,6 +103,9 @@ public:
 				newData.updatePropertyValue("Name", CIMValue(dataKey));
 				newData.updatePropertyValue("Value", CIMValue(omName));
 				rephdl->createInstance(interopNS, newData);
+#else
+				throw;
+#endif
 			}
 			else
 			{
