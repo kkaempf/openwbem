@@ -55,11 +55,6 @@ public:
 	DLLSharedLibrary(HINSTANCE libhandle, const String& libName);
 	virtual ~DLLSharedLibrary();
 
-	/**
-	 * Returns true if the given path is a fake library or not.
-	 */
-	static bool isFakeLibrary(const String& library_path);
-  
 protected:
 	/**
 	 * Derived classes have to override this function to implement

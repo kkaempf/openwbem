@@ -76,11 +76,6 @@ DLLSharedLibrary::doGetFunctionPointer(const String& functionName,
 
 	return true;
 }
-//////////////////////////////////////////////////////////////////////////////
-bool DLLSharedLibrary::isFakeLibrary(const String& library_path)
-{
-  return false;
-}
 
 } // end namespace OpenWBEM
 
