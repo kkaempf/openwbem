@@ -415,6 +415,7 @@ testDynInstances(CIMClient& hdl)
 		String cl;
 		TEST_ASSERT(hdl.getHTTPResponseHeader("Content-Language", cl));
 		TEST_ASSERT(cl == "x-testinst");
+		TEST_ASSERT(ci.getLanguage() == "x-owtest");
 		
 		TempFileStream tfs;
 		tfs << "<CIM>";
@@ -460,6 +461,8 @@ testDynInstances(CIMClient& hdl)
 		CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 2);
+		TEST_ASSERT(hdl.getHTTPResponseHeader("Content-Language", cl));
+		TEST_ASSERT(cl == "x-testinst");
 
 		hdl.deleteInstance( cop1);
 		enu = hdl.enumInstancesE( "testinstance");

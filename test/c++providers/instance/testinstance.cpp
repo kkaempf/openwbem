@@ -121,6 +121,7 @@ public:
 			inst.setProperty("Name", CIMValue(iter->name));
 			inst.setProperty("Params", CIMValue(iter->params));
 			inst.setProperty("AcceptLanguage", CIMValue(al));
+			inst.setLanguage("x-owtest");
 			result.handle(inst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 	}
@@ -152,6 +153,7 @@ public:
 				rval.setProperty("Name", CIMValue(name));
 				rval.setProperty("Params", CIMValue(iter->params));
 				rval.setProperty("AcceptLanguage", CIMValue(al));
+				rval.setLanguage("x-owtest");
 				break;
 			}
 		}

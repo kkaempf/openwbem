@@ -293,6 +293,13 @@ createClass(CIMXMLParser& parser)
 	{
 		rval.setSuperClass(superClassName);
 	}
+
+	String language = parser.getAttribute(CIMXMLParser::A_LANGUAGE, false);
+	if(!language.empty())
+	{
+		rval.setLanguage(language);
+	}
+
 	//
 	// Find qualifier information
 	//
@@ -340,6 +347,13 @@ createInstance(CIMXMLParser& parser)
 	}
 		
 	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASSNAME));
+
+	String language = parser.getAttribute(CIMXMLParser::A_LANGUAGE, false);
+	if(!language.empty())
+	{
+		rval.setLanguage(language);
+	}
+
 	//
 	// Find qualifier information
 	//

@@ -147,6 +147,7 @@ public:
 	static const char* const A_INCLUDECLASSORIGIN;
 	static const char* const A_INCLUDEQUALIFIERS;
 	static const char* const A_INSTANCENAME;
+	static const char* const A_LANGUAGE;
 	static const char* const A_LOCALONLY;
 	static const char* const A_MODIFIEDCLASS;
 	static const char* const A_NAME;

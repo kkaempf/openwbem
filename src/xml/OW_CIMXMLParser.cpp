@@ -162,6 +162,7 @@ const char* const CIMXMLParser::A_DEEPINHERITANCE			= "DEEPINHERITANCE";
 const char* const CIMXMLParser::A_INCLUDECLASSORIGIN	= "INCLUDECLASSORIGIN";
 const char* const CIMXMLParser::A_INCLUDEQUALIFIERS		= "INCLUDEQUALIFIERS";
 const char* const CIMXMLParser::A_INSTANCENAME				= "INSTANCENAME";
+const char* const CIMXMLParser::A_LANGUAGE					= "xml:lang";
 const char* const CIMXMLParser::A_LOCALONLY					= "LOCALONLY";
 const char* const CIMXMLParser::A_MODIFIEDCLASS			= "MODIFIEDCLASS";
 const char* const CIMXMLParser::A_NAME							= "NAME";

@@ -413,6 +413,14 @@ void CIMtoXML(CIMClass const& cc, ostream& ostr)
 		ostr << "\" SUPERCLASS=\"";
 		ostr << cc.getSuperClass();
 	}
+
+	String lang = cc.getLanguage();
+	if(!lang.empty())
+	{
+		ostr << "\" xml:lang=\"";
+		ostr << lang;
+	}
+
 	ostr << "\">";
 	const CIMQualifierArray& ccquals = cc.getQualifiers();
 	for(size_t i = 0; i < ccquals.size(); i++)
@@ -439,7 +447,16 @@ void CIMInstancetoXML(CIMInstance const& ci, ostream& ostr)
 		OW_THROWCIMMSG(CIMException::FAILED, "instance has no class name");
 	}
 	ostr << "<INSTANCE CLASSNAME=\"";
-	ostr << ci.getClassName() << "\">";
+	ostr << ci.getClassName();
+
+	String lang = ci.getLanguage();
+	if(!lang.empty())
+	{
+		ostr << "\" xml:lang=\"";
+		ostr << lang;
+	}
+	ostr << "\">";
+
 	//
 	// Process qualifiers
 	//
