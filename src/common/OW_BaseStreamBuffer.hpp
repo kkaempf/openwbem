@@ -35,9 +35,6 @@
 #define HTTP_BUF_SIZE 4096
 
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_String.hpp"
-#include "OW_Exception.hpp"
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else
@@ -54,7 +51,7 @@ public:
 	 * @param direction "in", "out", or "io"
 	 */
 	OW_BaseStreamBuffer(int bufSize = BASE_BUF_SIZE,
-			const OW_String& direction = "io");
+			const char* direction = "io");
 	~OW_BaseStreamBuffer();
 
 protected:
@@ -79,12 +76,8 @@ protected:
 	 *
 	 * @return -1 if error, 0 if the entire buffer was written.
 	 */
-	virtual int buffer_to_device(const char* c, int n)
-	{
-		OW_THROW(OW_Exception, "Not implemented, should overwrite");
-		(void)c; (void)n;
-		return -1; // make the compiler happy
-	}
+	virtual int buffer_to_device(const char* c, int n);
+	
 	/**
 	 * Fill the buffer from the "device"
 	 * @param c A pointer to the beginning of the buffer
@@ -94,12 +87,7 @@ protected:
 	 *             (for instance, end of input stream).  Otherwise,
 	 *             return the number of bytes read into the buffer.
 	 */
-	virtual int buffer_from_device(char* c, int n)
-	{
-		OW_THROW(OW_Exception, "Not implemented, should overwrite");
-		(void)c; (void)n;
-		return -1; // make the compiler happy
-	}
+	virtual int buffer_from_device(char* c, int n);
 
 private:
 

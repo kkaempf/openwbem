@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_Types.h"
 
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>

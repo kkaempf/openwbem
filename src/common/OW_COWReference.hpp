@@ -43,7 +43,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-void OW_COWRefSwap(T& x, T&y)
+inline void OW_COWRefSwap(T& x, T&y)
 {
     T t = x;
     x = y;
@@ -228,7 +228,7 @@ inline void OW_COWReference<T>::decRef()
 
 //////////////////////////////////////////////////////////////////////////////
 template <class T>
-T* OW_COWReferenceClone(T* obj)
+inline T* OW_COWReferenceClone(T* obj)
 {
     // default implementation.  If a certain class doesn't have clone()
     // (like std::vector), then they can overload this function
@@ -270,7 +270,7 @@ inline OW_COWReference<T>& OW_COWReference<T>::operator= (T* newObj)
 
 //////////////////////////////////////////////////////////////////////////////
 template <class T>
-void OW_COWReference<T>::swap(OW_COWReference<T>& arg)
+inline void OW_COWReference<T>::swap(OW_COWReference<T>& arg)
 {
     OW_COWReferenceBase::swap(arg);
     OW_COWRefSwap(m_pObj, arg.m_pObj);

@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IOIFCStreamBuffer::OW_IOIFCStreamBuffer(OW_IOIFC* dev, int bufSize,
-	const OW_String& direction)
+	const char* direction)
 	: OW_BaseStreamBuffer(bufSize, direction)
 	, m_dev(dev)
 {

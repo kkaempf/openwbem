@@ -40,6 +40,7 @@
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Array.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_String.hpp"
 
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>

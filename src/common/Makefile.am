@@ -82,6 +82,7 @@ OW_UnnamedPipe.cpp
 pkginclude_HEADERS =	\
 OW_ACLInfo.hpp \
 OW_Array.hpp \
+OW_ArrayImpl.hpp \
 OW_ArrayFwd.hpp \
 OW_Assertion.hpp \
 OW_AtomicOps.hpp \

@@ -30,14 +30,17 @@
 
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
+#include "OW_Exception.hpp"
+#include "OW_String.hpp"
 
 #include <iostream> // for cerr
 #include <cstring> // for memcpy
 
 OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize,
-		const OW_String& direction)
+		const char* direction_)
 	: m_bufSize(bufSize), m_inputBuffer(NULL), m_outputBuffer(NULL)
 {
+	OW_String direction(direction_);
 	if (direction.equals("in") || direction.equals("io"))
 	{
 		m_inputBuffer = new char[m_bufSize];
@@ -210,4 +213,21 @@ OW_BaseStreamBuffer::buffer_in()
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+int
+OW_BaseStreamBuffer::buffer_to_device(const char* c, int n)
+{
+	OW_THROW(OW_Exception, "Not implemented, should overwrite");
+	(void)c; (void)n;
+	return -1; // make the compiler happy
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+OW_BaseStreamBuffer::buffer_from_device(char* c, int n)
+{
+	OW_THROW(OW_Exception, "Not implemented, should overwrite");
+	(void)c; (void)n;
+	return -1; // make the compiler happy
+}
 

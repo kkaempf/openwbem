@@ -35,6 +35,7 @@
 
 #include "OW_HTTPDeflateOStream.hpp"
 #include "OW_HTTPException.hpp"
+#include "OW_String.hpp"
 
 using std::ostream;
 

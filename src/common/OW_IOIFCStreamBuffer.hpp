@@ -38,7 +38,7 @@ class OW_IOIFCStreamBuffer : public OW_BaseStreamBuffer
 {
 public:
 	OW_IOIFCStreamBuffer(OW_IOIFC* dev, int bufSize = BASE_BUF_SIZE,
-		const OW_String& direction = "io");
+		const char* direction = "io");
 
 	virtual ~OW_IOIFCStreamBuffer();
 

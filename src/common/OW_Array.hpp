@@ -36,27 +36,18 @@
 
 #include "OW_COWReference.hpp"
 
-#ifdef OW_NEW
-#undef new
-#endif
-
-#include <vector>
-
-#ifdef OW_NEW
-#define new OW_NEW
-#endif
-
 #include "OW_Types.h"
 
-class OW_BinIfcIO;
-
 #include <iosfwd>
-#ifdef OW_DEBUG
-#include <cassert>
-#endif
 
 #include "OW_Exception.hpp"
 DECLARE_EXCEPTION(OutOfBounds);
+
+// std::vector forward declaration.  Do this to avoid having to #include <vector> here.
+namespace std {
+template <class _Tp, class _Alloc>
+class vector;
+}
 
 /**
  * The OW_Array class essentially takes the vector class of the stl and
@@ -64,7 +55,7 @@ DECLARE_EXCEPTION(OutOfBounds);
  */
 template<class T> class OW_Array
 {
-	typedef std::vector<T> V;
+	typedef std::vector<T, std::allocator<T> > V;
 	OW_COWReference<V> m_impl;
 
 public:
@@ -80,171 +71,64 @@ public:
 	typedef typename V::reverse_iterator reverse_iterator;
 	typedef typename V::const_reverse_iterator const_reverse_iterator;
 
-	OW_Array() : m_impl(new V) {}
-	~OW_Array() {}
-	explicit OW_Array(V* toWrap) : m_impl(toWrap) {}
-	OW_Array(size_type n, const T& value) : m_impl(new V(n, value)) {}
-	OW_Array(int n, const T& value) : m_impl(new V(n, value)) {}
-	OW_Array(long n, const T& value) : m_impl(new V(n, value)) {}
-	explicit OW_Array(size_type n) : m_impl(new V(n)) {}
+	OW_Array();
+	~OW_Array();
+	explicit OW_Array(V* toWrap);
+	OW_Array(size_type n, const T& value);
+	OW_Array(int n, const T& value);
+	OW_Array(long n, const T& value);
+	explicit OW_Array(size_type n);
 
 	template<class InputIterator>
-	OW_Array(InputIterator first, InputIterator last) : m_impl(new V(first, last)) { }
+	OW_Array(InputIterator first, InputIterator last);
 
-	iterator begin()
-		{ return m_impl->begin(); }
-	const_iterator begin() const { return m_impl->begin(); }
-	iterator end()
-		{ return m_impl->end(); }
-	const_iterator end() const { return m_impl->end(); }
-	reverse_iterator rbegin()
-		{ return m_impl->rbegin(); }
-	const_reverse_iterator rbegin() const { return m_impl->rbegin(); }
-	reverse_iterator rend()
-		{ return m_impl->rend(); }
-	const_reverse_iterator rend() const { return m_impl->rend(); }
-	size_type size() const { return m_impl->size(); }
-	size_type max_size() const { return m_impl->max_size(); }
-	size_type capacity() const { return m_impl->capacity(); }
-	bool empty() const { return m_impl->empty(); }
-	reference operator[](size_type n)
-	{
-#ifdef OW_CHECK_ARRAY_INDEXING
-		checkValidIndex(n);
-#endif
-		return m_impl->operator[](n);
-	}
-
-	const_reference operator[](size_type n) const
-	{
-#ifdef OW_CHECK_ARRAY_INDEXING
-		checkValidIndex(n);
-#endif
-		return m_impl->operator[](n);
-	}
-
-	OW_Array<T>& operator+= (const T& x)
-	{
-		m_impl->push_back(x);
-	}
-
-	void reserve(size_type n) { m_impl->reserve(n); }
-	reference front() { return m_impl->front(); }
-	const_reference front() const { return m_impl->front(); }
-	reference back() { return m_impl->back(); }
-	const_reference back() const { return m_impl->back(); }
-	void push_back(const T& x) { m_impl->push_back(x); }
-	void append(const T& x) { push_back(x); }
-	void swap(OW_Array<T>& x) { m_impl.swap(x.m_impl); }
-	iterator insert(iterator position, const T& x)
-		{ return m_impl->insert(position, x); }
-
-	void insert(size_type position, const T& x)
-		{ m_impl->insert(m_impl->begin() + position, x); }
-
-	void remove(size_type index)
-	{
-#ifdef OW_CHECK_ARRAY_INDEXING
-		checkValidIndex(index);
-#endif
-		m_impl->erase(m_impl->begin() + index);
-	}
-	void remove(size_type begin, size_type end)
-	{
-#ifdef OW_CHECK_ARRAY_INDEXING
-		checkValidIndex(begin);
-		checkValidIndex(end - 1);
-#endif
-		m_impl->erase(m_impl->begin() + begin, m_impl->begin() + end);
-	}
-
+	iterator begin();
+	const_iterator begin() const;
+	iterator end();
+	const_iterator end() const;
+	reverse_iterator rbegin();
+	const_reverse_iterator rbegin() const;
+	reverse_iterator rend();
+	const_reverse_iterator rend() const;
+	size_type size() const;
+	size_type max_size() const;
+	size_type capacity() const;
+	bool empty() const;
+	reference operator[](size_type n);
+	const_reference operator[](size_type n) const;
+	OW_Array<T>& operator+= (const T& x);
+	void reserve(size_type n);
+	reference front();
+	const_reference front() const;
+	reference back();
+	const_reference back() const;
+	void push_back(const T& x);
+	void append(const T& x);
+	void swap(OW_Array<T>& x);
+	iterator insert(iterator position, const T& x);
+	void insert(size_type position, const T& x);
+	void remove(size_type index);
+	void remove(size_type begin, size_type end);
 	template<class InputIterator>
-	void insert(iterator position, InputIterator first, InputIterator last)
-	{
-		m_impl->insert(position, first, last);
-	}
-
-	void appendArray(const OW_Array<T>& x)
-	{
-		insert(end(), x.begin(), x.end());
-	}
-
-	void pop_back() { m_impl->pop_back(); }
-
-	iterator erase(iterator position) { return m_impl->erase(position); }
-	iterator erase(iterator first, iterator last) { return m_impl->erase(first, last); }
-	void resize(size_type new_size, const T& x) { m_impl->resize(new_size, x); }
-	void resize(size_type new_size) { m_impl->resize(new_size); }
-	void clear() { m_impl->clear(); }
-
-	void readObject(std::istream& istr)
-	{
-		m_impl->clear();
-		OW_UInt32 len;
-		OW_BinIfcIO::read(istr, len);
-		
-		m_impl->reserve(len);
-		for(OW_UInt32 i = 0; i < len; i++)
-		{
-			T x;
-			x.readObject(istr);
-			m_impl->push_back(x);
-		}
-
-	}
-
-	void writeObject(std::ostream& ostrm) const
-	{
-		OW_UInt32 len = m_impl->size();
-		OW_BinIfcIO::write(ostrm, len);
-		for(OW_UInt32 i = 0; i < len; i++)
-		{
-			m_impl->operator[](i).writeObject(ostrm);
-		}
-	}
-
+	void insert(iterator position, InputIterator first, InputIterator last);
+	void appendArray(const OW_Array<T>& x);
+	void pop_back();
+	iterator erase(iterator position);
+	iterator erase(iterator first, iterator last);
+	void resize(size_type new_size, const T& x);
+	void resize(size_type new_size);
+	void clear();
+	void readObject(std::istream& istr);
+	void writeObject(std::ostream& ostrm) const;
 	friend bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
 	friend bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);
 
 private:
 #ifdef OW_CHECK_ARRAY_INDEXING
-	void checkValidIndex(size_type index) const
-	{
-		if (index >= size())
-		{
-#ifdef OW_DEBUG
-			assert(0); // segfault so we can get a core
-#endif
-			OW_THROW(OW_OutOfBoundsException,
-				"Array Index out of bounds");
-		}
-	}
+	void checkValidIndex(size_type index) const;
 #endif
 };
 
-template <class T>
-std::vector<T>* OW_COWReferenceClone(std::vector<T>* obj)
-{
-    return new std::vector<T>(*obj);
-}
-
-template<class T>
-inline bool operator==(const OW_Array<T>& x, const OW_Array<T>& y)
-{
-	return *x.m_impl == *y.m_impl;
-}
-
-template<class T>
-inline bool operator<(const OW_Array<T>& x, const OW_Array<T>& y)
-{
-	return *x.m_impl < *y.m_impl;
-}
-
-template<class T, class Alloc>
-inline void swap(OW_Array<T>& x, OW_Array<T>& y)
-{
-	x.swap(y);
-}
 
 typedef OW_Array<OW_Byte>       OW_ByteArray;
 typedef OW_Array<OW_UInt8>      OW_UInt8Array;
@@ -258,6 +142,7 @@ typedef OW_Array<OW_Int64>      OW_Int64Array;
 typedef OW_Array<OW_Real64>     OW_Real64Array;
 typedef OW_Array<OW_Real32>     OW_Real32Array;
 
+#include "OW_ArrayImpl.hpp"
 
 #endif
 	
