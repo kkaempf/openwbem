@@ -88,7 +88,8 @@ OW_UUID.cpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibraryLoader.cpp \
 OW_UnnamedPipe.cpp \
-OW_UTF8Utils.cpp
+OW_UTF8Utils.cpp \
+OW_UTF8UtilscompareToIgnoreCase.cpp
 
 pkginclude_HEADERS =	\
 OW_Array.hpp \

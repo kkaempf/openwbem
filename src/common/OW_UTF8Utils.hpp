@@ -73,6 +73,16 @@ UInt32 UTF8toUCS4(const char* utf8char);
  * @return The corresponding UTF-8 char.
  */
 String UCS4toUTF8(UInt32 ucs4char);
+/**
+ * Compares 2 UTF8 strings, ignoring any case differences as defined by the
+ * Unicode spec CaseFolding.txt file.
+ * @param str1 first string
+ * @param str2 second string
+ * @return a value less than, equal to, or greater than 0 if str1 is found to
+ * be less than, equal to, or greater than str2
+ */
+int compareToIgnoreCase(const char* str1, const char* str2);
+
 } // end namespace UTF8Utils
 
 } // end namespace OpenWBEM

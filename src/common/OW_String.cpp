@@ -65,27 +65,6 @@ OW_DEFINE_EXCEPTION(StringConversion);
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Move these 2 functions into UTF8Utils
 // TODO: I18N: These don't work right!
-static inline int
-strcmpi(const char* s1, const char* s2)
-{
-	while (true)
-	{
-		char c1 = *s1++;
-		char c2 = *s2++;
-		// short-curcuit evaluation will keep us from calling tolower
-		// unnecessarily
-		if (c1 != 0 && (c1 == c2 || tolower(c1) == tolower(c2)))
-			continue;
-		return static_cast<int>(c1) - static_cast<int>(c2);
-	}
-#if 0
-	String ls1(s1);
-	String ls2(s2);
-	ls1.toUpperCase();
-	ls2.toUpperCase();
-	return ls1.compareTo(ls2);
-#endif
-}
 //////////////////////////////////////////////////////////////////////////////
 static inline int
 strncmpi(const char* s1, const char* s2, size_t n)
@@ -402,7 +381,7 @@ String::compareToIgnoreCase(const char* arg) const
 	{
 		lhs = m_buf->data();
 	}
-	return strcmpi(lhs, arg);
+	return UTF8Utils::compareToIgnoreCase(lhs, arg);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -464,7 +443,7 @@ String::endsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
 	}
 	if(ignoreCase)
 	{
-		cc = (strcmpi(lhs, rhs) == 0);
+		cc = (UTF8Utils::compareToIgnoreCase(lhs, rhs) == 0);
 	}
 	else
 	{
