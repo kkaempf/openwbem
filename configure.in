@@ -678,6 +678,12 @@ AC_CHECK_SIZEOF(double, 8)
 AC_CHECK_SIZEOF(long double, 8)
 AC_CHECK_SIZEOF(char *, 4)
 
+dnl Posix does not require 'pthread_t' to mean anything unless <pthread.h> is
+dnl   #included, so some of our platforms, like FreeBSD, do not provide
+dnl   pthread_t unless <pthread.h> is #included.
+AC_CHECK_SIZEOF(pthread_t, 0, [#include <pthread.h>])
+
+
 AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_CHECK_TYPE(u_int8_t, uint8_t)
