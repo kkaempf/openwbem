@@ -45,6 +45,7 @@ extern "C" {
   CIMParameter CIMParameterNewInteger ( NPIHandle *, const char *, int );
   CIMParameter CIMParameterNewRef ( NPIHandle *, const char *, CIMObjectPath );
   char * CIMParameterGetString ( NPIHandle *, CIMParameter );
+  CIMObjectPath CIMParameterGetRefValue( NPIHandle *, CIMParameter );
 
   /* Instance functions */ 
   CIMInstance CIMClassNewInstance ( NPIHandle *, CIMClass );
