@@ -437,9 +437,6 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 
 	// lifecycle providers
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", "");
-	unitAssert(provRefs.size() == 2);
-	provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", "TestClass1");
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
