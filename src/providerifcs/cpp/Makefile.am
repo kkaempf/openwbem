@@ -21,6 +21,7 @@ OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
+OW_CppInstanceProviderIFC.cpp \
 OW_CppSimpleAssociatorProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 

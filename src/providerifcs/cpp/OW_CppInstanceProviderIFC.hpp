@@ -86,7 +86,9 @@ public:
 	/**
 	 * This method enumerates
 	 * all instances of the class which is specified in className.  The entire
-	 * instances and not just the names are returned.  
+	 * instances and not just the names are returned.  If you don't override
+         * this method, the default implementation will be used which utilizes
+         * enumInstanceNames() and getInstance()
 	 *
 	 * @param cop The object path specifies the class that must be
 	 * 	enumerated.
@@ -112,7 +114,7 @@ public:
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
-			const CIMClass& cimClass ) = 0;
+			const CIMClass& cimClass );
 	/**
 	 * This method retrieves the instance specified in the object path.
 	 *
