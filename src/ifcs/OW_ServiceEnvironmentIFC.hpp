@@ -42,25 +42,15 @@
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ArrayFwd.hpp"
+#include "OW_CommonFwd.hpp"
+#include "OW_IfcsFwd.hpp"
+#include "OW_CIMFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
 namespace OpenWBEM
 {
-
-class CIMOMHandleIFC;
-typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
-class ServiceEnvironmentIFC;
-typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
-class RequestHandlerIFC;
-typedef SharedLibraryReference< IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
-class OperationContext;
-class Logger;
-typedef IntrusiveReference<Logger> LoggerRef;
-class String;
-class CIMInstance;
-typedef Array<CIMInstance> CIMInstanceArray;
 
 /**
  * This is an internal interface which is used by the various OpenWBEM services to interface with their "environment"

@@ -37,11 +37,11 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class SocketBaseImpl;
 class OW_COMMON_API SocketStreamBuffer : public IOIFCStreamBuffer
 {
 public:
@@ -55,4 +55,4 @@ private:
 
 } // end namespace OpenWBEM
 
-#endif 
+#endif

@@ -37,18 +37,17 @@
 #define OW_XMLPARSERSAX_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
 
 namespace OpenWBEM
 {
 
-class String;
-class StringBuffer;
 struct XMLToken;
 class XMLParseException;
 
-namespace XMLParserSAX 
+namespace XMLParserSAX
 {
 
 // -----------------------------------------------------------------------

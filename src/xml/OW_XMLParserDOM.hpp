@@ -38,13 +38,13 @@
 
 #include "OW_config.h"
 #include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
-class String;
 class XMLNode;
 
 OW_DECLARE_APIEXCEPTION(DOM, OW_XML_API)

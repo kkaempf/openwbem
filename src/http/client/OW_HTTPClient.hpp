@@ -42,6 +42,7 @@
 #include "OW_HTTPUtils.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
+#include "OW_CommonFwd.hpp"
 
 #if defined(GOOD)
 #undef GOOD
@@ -50,13 +51,11 @@
 namespace OpenWBEM
 {
 
-class TempFileStream;
-
 /**
  * HTTPClient encapulates the functionality of a CIM HTTP Client.  It handles the details of the HTTP protocol.
- * 
+ *
  * By default the connection timeout is set to 1 minute, and the send and receive timeouts are set to 10 minutes.
- * 
+ *
  * Thread safety: non-reentrant.
  * Copy semantics: Non-copyable.
  * Exception safety: Basic.
@@ -71,18 +70,18 @@ public:
 	 * 		URLs have this form:
 	 * 		[scheme"://"][[<principal>][":"<credential>]"@"]<host>[":"<port>]["/"<namespace name>["/:"<model path>]]
 	 * The only required element is <host>
-	 * 
+	 *
 	 * Standard WBEM schemes are: cimxml.wbem, cimxml.wbems, http, https.
 	 * OW specific WBEM schemes are: owbinary.wbem, owbinary.wbems
-	 * 
+	 *
 	 * A port may be a number to indicate a TCP port, or it may be the special
 	 *  value owipc which indicates the Unix Domain Socket for the system.
-	 * 
+	 *
 	 * example: "https://jdd:test@myhost.com:5989/root/cimv2"
-	 * 
-	 * If (principal == "" && (host == "localhost" || host == "127.0.0.1")) then HTTPClient will attempt to use OWLocal 
+	 *
+	 * If (principal == "" && (host == "localhost" || host == "127.0.0.1")) then HTTPClient will attempt to use OWLocal
 	 * authentication.
-	 * 
+	 *
 	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
 	HTTPClient(const String& url, SSLClientCtxRef sslCtx = SSLClientCtxRef());
@@ -133,16 +132,16 @@ public:
 	 * allocated to the namespace name.  To use a different HTTP path (the
 	 * path the M-POST is sent to), call this function.  An initial / will
 	 * not be prepended.  The default HTTP path is "/cimom"
-	 * 
+	 *
 	 * @param newPath The new HTTP path to use.
 	 */
 	void setHTTPPath(const String& newPath);
 
 	/**
-	 * After calling this function, the next request will (re)connect and 
-	 * send credentials using basic authentication.  This could be a 
+	 * After calling this function, the next request will (re)connect and
+	 * send credentials using basic authentication.  This could be a
 	 * security risk, and should only be used if you understand the
-	 * risks.  Using this avoids the extra round-trip that typically 
+	 * risks.  Using this avoids the extra round-trip that typically
 	 * happens with http authentication.
 	 */
 	void assumeBasicAuth();
@@ -154,12 +153,12 @@ public:
 	virtual void close();
 
 	/**
-	 * Add a custom header to add to requests.  "<name>: <value>" 
-	 * will be added to each request. 
+	 * Add a custom header to add to requests.  "<name>: <value>"
+	 * will be added to each request.
 	 * @param name The header name
 	 * @param value The header value
-	 */ 
-	void addCustomHeader(const String& name, const String& value); 
+	 */
+	void addCustomHeader(const String& name, const String& value);
 
 	/**
 	 * Retrieve a given header value from the server response.
@@ -243,18 +242,18 @@ private:
 	SocketAddress m_serverAddress;
 	URL m_url;
 	HTTPHeaderMap m_responseHeaders;
-	// Persistant headers remain for the life of the 
+	// Persistant headers remain for the life of the
 	// HTTPClient.  They are included in each request
 	Array<String> m_requestHeadersPersistent;
-	// Common headers are used for only a single request, 
-	// but are reused if the request must be repeated (with 
-	// new authentication credentials, for instance). 
+	// Common headers are used for only a single request,
+	// but are reused if the request must be repeated (with
+	// new authentication credentials, for instance).
 	Array<String> m_requestHeadersCommon;
-	// New headers are replaced each time the client repeats 
-	// a request (with new auth credentials, for instance). 
+	// New headers are replaced each time the client repeats
+	// a request (with new auth credentials, for instance).
 	Array<String> m_requestHeadersNew;
 	CIMProtocolIStreamIFCRef m_pIstrReturn;
-	SSLClientCtxRef m_sslCtx; 
+	SSLClientCtxRef m_sslCtx;
 	mutable Socket m_socket;
 	String m_requestMethod;
 	bool m_authRequired;

@@ -45,21 +45,16 @@
 #include "OW_Exception.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_SSLCtxMgr.hpp"
-
-#include <ctime>
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class ServerSocket;
-class IPCHandler;
 class HTTPSvrConnection;
 #ifndef OW_DISABLE_DIGEST
 class DigestAuthentication;
 #endif
-class HTTPServer;
 #ifndef OW_WIN32
-class UnnamedPipe;
 class LocalAuthentication;
 #endif
 
@@ -79,10 +74,10 @@ public:
 	virtual void shutdown();
 
 	/**
-	 * Is the server in the process of shutting down? 
+	 * Is the server in the process of shutting down?
 	 * @return true if shutting down
-	 */ 
-	bool isShuttingDown(); 
+	 */
+	bool isShuttingDown();
 	/**
 	 * Get the URLs associated with this http server.  This is used
 	 * by slp discovery.
@@ -127,7 +122,7 @@ public:
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,
-		String& userName, const String& info, OperationContext& context, 
+		String& userName, const String& info, OperationContext& context,
 					  const Socket& socket);
 	bool isAllowedUser(const String& user) const;
 
@@ -154,12 +149,12 @@ private:
 	IntrusiveReference<ThreadPool> m_threadPool;
 	SortedVectorSet<String> m_allowedUsers;
 	bool m_allowAllUsers;
-	SSLServerCtxRef m_sslCtx; 
-	Mutex m_shutdownGuard; 
+	SSLServerCtxRef m_sslCtx;
+	Mutex m_shutdownGuard;
 	bool m_shuttingDown;
 #ifndef OW_NO_SSL
-	SSLOpts m_sslopts; 
-	SSLTrustStoreRef m_trustStore; 
+	SSLOpts m_sslopts;
+	SSLTrustStoreRef m_trustStore;
 #endif //  OW_HAVE_SSL
 
 #ifdef OW_WIN32

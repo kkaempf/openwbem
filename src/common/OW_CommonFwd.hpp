@@ -80,6 +80,7 @@ template <class T> class Enumeration;
 typedef Enumeration<String> StringEnumeration;
 
 class Thread;
+typedef IntrusiveReference<Thread> ThreadRef;
 class ThreadPool;
 typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
@@ -100,6 +101,13 @@ class UserInfo;
 class SharedLibraryLoader;
 typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
 class TmpFile;
+
+class Socket;
+class SocketBaseImpl;
+typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
+class ServerSocket;
+
+class TempFileStream;
 
 
 } // end namespace OpenWBEM

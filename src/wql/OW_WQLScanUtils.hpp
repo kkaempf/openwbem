@@ -35,6 +35,7 @@
 #ifndef OW_WQL_SCAN_UTILS_HPP_
 #define OW_WQL_SCAN_UTILS_HPP_
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -42,7 +43,6 @@
 namespace OpenWBEM
 {
 
-class String;
 OW_WQL_API String WQLRemoveStringEscapes(const String& str);
 
 } // end namespace OpenWBEM

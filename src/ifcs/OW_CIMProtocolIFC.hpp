@@ -44,6 +44,7 @@
 #include "OW_SocketAddress.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_Reference.hpp"
+#include "OW_IfcsFwd.hpp"
 #include <iosfwd>
 
 // The classes and functions defined in this file are not meant for general
@@ -83,9 +84,9 @@ public:
 	 * @cimObject the CIM object the request applies to.  If this is an
 	 * 	intrinsic method, it must be a namespace.  If an extrinsic
 	 *	method is being invoked, it must be a class or instance path in
-	 *	ObjectPath format. 
+	 *	ObjectPath format.
 	 * @param requestType The type of request, currently must be one of
-	 *	E_CIM_OPERATION_REQUEST, or E_CIM_EXPORT_REQUEST 
+	 *	E_CIM_OPERATION_REQUEST, or E_CIM_EXPORT_REQUEST
 	 * @return a CIMProtocolIstream (istream) reference containing the
 	 *	response from the server.
 	 * @exception HTTPException
@@ -104,7 +105,7 @@ public:
 	/**
 	 * Assigns a login callback object.
 	 * @param loginCB A Reference to a ClientAuthCB object containing the
-	 *	callback method. 
+	 *	callback method.
 	 */
 	void setLoginCallBack(const ClientAuthCBIFCRef& loginCB)
 		{ m_loginCB = loginCB; }

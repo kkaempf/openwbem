@@ -54,16 +54,14 @@
 namespace OpenWBEM
 {
 
-class CIMProtocolIStreamIFC;
-typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
 class OW_COMMON_API CIMProtocolIStreamIFC : public IntrusiveCountableBase, public std::istream
 {
 public:
 	CIMProtocolIStreamIFC(std::streambuf* strbuf);
 	/**
-	 * This function should be called after the end of the stream has 
+	 * This function should be called after the end of the stream has
 	 * been reached.  It will check the trailers for an error, and throw
-	 * an appropriate CIMException (constructed from the info from the 
+	 * an appropriate CIMException (constructed from the info from the
 	 * trailers).
 	 */
 	virtual void checkForError() const;

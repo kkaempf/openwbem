@@ -211,18 +211,21 @@ time and also helps prevent bloat from inline functions.
 Avoid putting forward declarations in the header which needs it.  This
 causes a problem when the type changes, because all the forward declarations
 need to be changed as well.
-The other extreme of creating a forward declaration header for each class.
+The other extreme of creating a forward declaration header for each class
 isn't a good solution either because it's too much work to create and causes
 a proliferation of headers.
-The method we use is to use one forward declaration header per library 
+The method we use is to use one forward declaration header per directory 
 (or sub-set of classes. e.g. OW_CIMFwd.hpp).  When adding a new class, add
 it to the appropriate forward declaration header.  This way, each class is
 defined in exactly one place, and has only one forward declaration.
+When you need a forward declaration, simply include the appropriate header
+instead of duplicating the forward declaration.
 -----------------------------------------------------------------------------
 If a function has unused parameters, don't comment out or omit the parameter
 name to avoid an unused parameter warning.  Cast it to void at the beginning
 of the function.  This makes it possible to search for specific parameters.
-It also avoids problems with nested C-style comments.
+It also avoids problems with nested C-style comments. We don't have the
+unused warning turned on anymore so this isn't really a problem now.
 -----------------------------------------------------------------------------
 Make simple things simple and complex things possible
 -----------------------------------------------------------------------------

@@ -38,6 +38,7 @@
 #include "OW_Types.hpp"
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketFlags.hpp"
+#include "OW_CommonFwd.hpp"
 
 #ifndef ETIMEDOUT
 #define ETIMEDOUT 110
@@ -46,7 +47,6 @@
 namespace OpenWBEM
 {
 
-class String;
 namespace SocketUtils
 {
 #if defined(OW_WIN32)
@@ -57,7 +57,7 @@ namespace SocketUtils
 	 *		be signaled when I/O is available
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @param networkEvents netWork events to wait for
-	 * @return zero if we got input before the timeout expired, 
+	 * @return zero if we got input before the timeout expired,
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
 	OW_COMMON_API int waitForIO(SocketHandle_t fd, HANDLE event,
@@ -69,10 +69,10 @@ namespace SocketUtils
 	 * @param fd the handle of the socket to wait on.
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @param forInput true if we are waiting for input.
-	 * @return zero if we got input before the timeout expired, 
+	 * @return zero if we got input before the timeout expired,
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
-	int waitForIO(SocketHandle_t fd, int timeOutSecs, 
+	int waitForIO(SocketHandle_t fd, int timeOutSecs,
 		SocketFlags::EWaitDirectionFlag forInput);
 #endif
 

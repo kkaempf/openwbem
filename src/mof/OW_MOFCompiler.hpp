@@ -42,6 +42,7 @@
 #include "OW_Array.hpp"
 #include "OW_MOFLineInfo.hpp"
 #include "OW_MOFGrammar.hpp"
+#include "OW_CIMFwd.hpp"
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -57,8 +58,6 @@ namespace OpenWBEM
 
 OW_DECLARE_APIEXCEPTION(MOFCompiler, OW_MOF_API);
 
-class CIMInstance;
-
 namespace MOF
 {
 
@@ -67,7 +66,7 @@ class OW_MOF_API Compiler
 public:
 	struct Options
 	{
-		Options() 
+		Options()
 			: m_createNamespaces(false)
 			, m_checkSyntaxOnly(false)
 			, m_remove(false)

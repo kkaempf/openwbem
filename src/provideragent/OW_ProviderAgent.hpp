@@ -46,14 +46,13 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
 class HTTPServer;
 typedef IntrusiveReference<HTTPServer> HTTPServerRef;
-class Thread;
-typedef IntrusiveReference<Thread> ThreadRef;
 
 class ProviderAgent
 {
@@ -78,9 +77,9 @@ public:
 	static const char* const LockingTimeout_opt;
 
 	// option which specifies whether classes will be retrieved using the callbackURL.
-	// valid values are "true" or "false". 
+	// valid values are "true" or "false".
 	// If not specified the default of "false" is assumed.
-	static const char* const DynamicClassRetrieval_opt; 
+	static const char* const DynamicClassRetrieval_opt;
 
 	// option which specifies whether to use the connection credentials when calling back into the cimom
 	// valid values are "true" or "false".
@@ -88,73 +87,73 @@ public:
 	static const char* const UseConnectionCredentials_opt;
 
 	/**
-	 * Create a new provider agent, and start the HTTP server. 
-	 * The ProviderAgent can be used as a stand alone process by 
-	 * creating a ProviderAgent within a fairly simple main(), or 
+	 * Create a new provider agent, and start the HTTP server.
+	 * The ProviderAgent can be used as a stand alone process by
+	 * creating a ProviderAgent within a fairly simple main(), or
 	 * it can be embedded within an existing daemon or service.
-	 * 
+	 *
 	 * A note about the CIMClasses.
 	 * The ProviderAgent can work in a variety of situations:
-	 * 
-	 * 1. No classes are available. PA ctor params: classes.empty() && 
+	 *
+	 * 1. No classes are available. PA ctor params: classes.empty() &&
 	 * (callbackURL.empty() || configMap[DynamicClassRetrieval_opt] != "true").
 	 * A CIMNULL CIMClass will be passed to the providers.
 	 *
-	 * 2. All classes are provided initially. PA ctor params: classes 
-	 * contains all the CIM classes which may be needed by the providers. 
+	 * 2. All classes are provided initially. PA ctor params: classes
+	 * contains all the CIM classes which may be needed by the providers.
 	 * The appropriate class will be passed to the provider as necessary.
 	 *
-	 * 3. Classes are retrieved as needed. PA ctor params: 
-	 * !callbackURL.empty() && configMap[DynamicClassRetrieval_opt] == "true". 
-	 * When a request comes in, if the appropriate class cannot be found in 
+	 * 3. Classes are retrieved as needed. PA ctor params:
+	 * !callbackURL.empty() && configMap[DynamicClassRetrieval_opt] == "true".
+	 * When a request comes in, if the appropriate class cannot be found in
 	 * the cache, then it will be retrieved from the WBEM server identified
 	 * by callbackURL.
-	 * 
+	 *
 	 * @param configMap The configuration parameters for the ProviderAgent
 	 *        and its embedded HTTP server.  This could possibly come from
-	 *        parsing a config file. 
-	 * @param providers An array of providers to be embedded in the 
-	 *        ProviderAgent.  These should be a CppInstanceProvider, 
+	 *        parsing a config file.
+	 * @param providers An array of providers to be embedded in the
+	 *        ProviderAgent.  These should be a CppInstanceProvider,
 	 *        CppSecondaryInstanceProvider, CppMethodProvider, or
-	 *        CppAssociatorProvider, or a combination of these. 
+	 *        CppAssociatorProvider, or a combination of these.
 	 * @param classes An array of CIMClasses.  If the providers require
-	 *        CIMClasses to be passed into instance and associator calls, 
-	 *        the appropriate classes should be placed in this array. 
-	 *        The ProviderAgent will look up the appropriate class and 
+	 *        CIMClasses to be passed into instance and associator calls,
+	 *        the appropriate classes should be placed in this array.
+	 *        The ProviderAgent will look up the appropriate class and
 	 *        pass it to the provider method calls as needed.  NULL CIMClasses
-	 *        will be passed if the requested class is not found in the 
-	 *        array.  This is only a problem is the provider expects a 
-	 *        real class. 
+	 *        will be passed if the requested class is not found in the
+	 *        array.  This is only a problem is the provider expects a
+	 *        real class.
 	 * @param requestHandlers An array of request handlers.  The appropriate
-	 *        one will be used for each client request depending on the 
+	 *        one will be used for each client request depending on the
 	 *        HTTP headers of the request.  You can just put a single
 	 *        request handler in the array if you only wish to handle one
-	 *        type of encoding (CIM-XML, for example). 
-	 * @param authenticator A reference to the authenticator to be used 
-	 *        by the embedded HTTP server. 
+	 *        type of encoding (CIM-XML, for example).
+	 * @param authenticator A reference to the authenticator to be used
+	 *        by the embedded HTTP server.
 	 * @param logger A reference to a logger to be used by the ProviderAgent
-	 *        (and passed to the embedded Provider). 
+	 *        (and passed to the embedded Provider).
 	 * @param callbackURL A URL to a CIMOM for providers to be able to make
-	 *        "upcalls" to the CIMOM.  If the CIMOM requires authentication, 
-	 *        the authentication credentials must be in the URL.  If no 
+	 *        "upcalls" to the CIMOM.  If the CIMOM requires authentication,
+	 *        the authentication credentials must be in the URL.  If no
 	 *        callbackURL is provided, providers will be unable to callback
-	 *        to the CIMOM. 
+	 *        to the CIMOM.
 	 * @param locker If non-null, this locker will be called to provide
 	 *        seralization for the agent operations. If null, then the config
 	 *        items LockingType_opt and LockingTimeout_opt will be used to
 	 *        control the locking.
 	 */
-	ProviderAgent(const ConfigFile::ConfigMap& configMap, 
-				  const Array<CppProviderBaseIFCRef>& providers, 
-				  const Array<CIMClass>& classes, 
-				  const Array<RequestHandlerIFCRef>& requestHandlers, 
+	ProviderAgent(const ConfigFile::ConfigMap& configMap,
+				  const Array<CppProviderBaseIFCRef>& providers,
+				  const Array<CIMClass>& classes,
+				  const Array<RequestHandlerIFCRef>& requestHandlers,
 				  const AuthenticatorIFCRef& authenticator,
-				  const LoggerRef& logger = LoggerRef(), 
+				  const LoggerRef& logger = LoggerRef(),
 				  const String& callbackURL = String(""),
-				  const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef()); 
+				  const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef());
 	~ProviderAgent();
 	/**
-	 * Shut down the http server embedded within the ProviderAgent. 
+	 * Shut down the http server embedded within the ProviderAgent.
 	 * This function blocks until all threads which may be processing
 	 * requests have terminated.
 	 */

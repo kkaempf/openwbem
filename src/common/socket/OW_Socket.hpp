@@ -61,10 +61,6 @@
 namespace OpenWBEM
 {
 
-class SocketBaseImpl;
-typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
-
-
 OW_DECLARE_APIEXCEPTION(SocketTimeout, OW_COMMON_API)
 class OW_COMMON_API Socket : public SelectableIFC, public IOIFC
 {

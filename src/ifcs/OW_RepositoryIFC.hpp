@@ -43,14 +43,13 @@
 #include "OW_WBEMFlags.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CommonFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
 namespace OpenWBEM
 {
-
-class OperationContext;
 
 class OW_COMMON_API RepositoryIFC : public IntrusiveCountableBase
 {
@@ -162,7 +161,7 @@ public:
 	 * 	method parameters) are returned.
 	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class
 	 * 	origin attribute will be returned on all appropriate
-	 * 	components. 
+	 * 	components.
 	 * @param propertyList If not NULL then it specifies the only
 	 * 	properties that can be returned with the class. If not NULL but
 	 * 	the array is empty, then no properties should be returned. If
@@ -229,7 +228,7 @@ public:
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
 	 * 	the names of all classes derived from the enumerated class.  If
 	 * 	set to E_SHALLOW the enumermation will return only the names of
-	 * 	the first level children of the enumerated class. 
+	 * 	the first level children of the enumerated class.
 	 * @param localOnly If E_LOCAL_ONLY, then only CIM elements
 	 * 	(properties, methods, qualifiers) overriden within the
 	 * 	definition are returned.
@@ -278,7 +277,7 @@ public:
 	 * @param deep If set to E_DEEP, the enumeration returned will contain
 	 * 	the names of all instances of the specified class and all
 	 * 	classes derived from it. If set to E_SHALLOW only names of
-	 * 	instances belonging to the specified class are returned. 
+	 * 	instances belonging to the specified class are returned.
 	 * @param localOnly If set to E_LOCAL_ONLY, only non-inherited
 	 * 	properties/qualifiers are included in the instances.
 	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all
@@ -429,7 +428,7 @@ public:
 	 * Get the specified CIM instance property.
 	 * @param ns The namespace containing the desired instance.
 	 * @param name An CIMObjectPath that identifies the CIM instance to be
-	 * 	accessed 
+	 * 	accessed
 	 * @param propertyName	The name of the property to retrieve.
 	 * @param context ACL object describing user making request.
 	 * @return The CIMvalue for property identified by propertyName.
@@ -461,7 +460,7 @@ public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes
-	 * or Instances) that are associated to a particular CIM Object. 
+	 * or Instances) that are associated to a particular CIM Object.
 	 *
 	 * @param ns The namespace containing the CIM Objects to be enumerated.
 	 * @param objectName Defines the source CIM Object whose associated
@@ -485,7 +484,7 @@ public:
 	 *	associated to the source Object via an Association in which the
 	 *	source Object plays the specified role (i.e. the name of the
 	 *	Property in the Association Class that refers to the source
-	 *	Object MUST match the value of this parameter). 
+	 *	Object MUST match the value of this parameter).
 	 * @param resultRole The ResultRole input parameter, if not empty (""),
 	 * 	MUST be a valid Property name. It acts as a filter on the
 	 * 	returned set of Objects by mandating that each returned Object
@@ -495,7 +494,7 @@ public:
 	 * 	the returned Object MUST match the value of this parameter).
 	 *
 	 * @exception CIMException - as defined in the associators method
-	 */  
+	 */
 	virtual void associatorNames(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -505,7 +504,7 @@ public:
 		const String& resultRole, OperationContext& context) = 0;
 	/**
 	 * This operation is used to enumerate CIM Objects (Classes or
-	 * Instances) that are associated to a particular source CIM Object. 
+	 * Instances) that are associated to a particular source CIM Object.
 	 * @param ns The namspace.
  	 * @param path Defines the path of the source CIM Object whose
 	 * 	associated Objects are to be returned.  This may be a path to
@@ -523,7 +522,7 @@ public:
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 * 	the returned set of Objects by mandating that each returned
 	 * 	Object MUST be either an Instance of this Class (or one of its
-	 * 	subclasses) or be this Class (or one of its subclasses). 
+	 * 	subclasses) or be this Class (or one of its subclasses).
 	 *
 	 * @param role The Role input parameter, if not empty (""), MUST be a
 	 * 	valid Property name. It acts as a filter on the returned set of
@@ -572,7 +571,7 @@ public:
 	 *
 	 *	Clients SHOULD NOT explicitly specify properties in the
 	 *	PropertyList parameter unless they have specified a non-empty
-	 *	("") value for the ResultClass parameter. 
+	 *	("") value for the ResultClass parameter.
 	 *
 	 * @exception CIMException. The following IDs can be expected:
 	 *	CIM_ERR_ACCESS_DENIED, CIM_ERR_NOT_SUPPORTED,
@@ -580,7 +579,7 @@ public:
 	 *	missing, duplicate, unrecognized or otherwise incorrect
 	 *	parameters), CIM_ERR_FAILED (some other unspecified error
 	 *	occurred).
-	 */  
+	 */
 	virtual void associators(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -592,7 +591,7 @@ public:
 		OperationContext& context) = 0;
 	/**
 	 * This operation is used to enumerate CIMClasses that are associated
-	 * to a particular source CIM Object. 
+	 * to a particular source CIM Object.
 	 *
 	 * @param ns The namspace.
  	 * @param path Defines the path of the source CIM Object whose
@@ -606,7 +605,7 @@ public:
 	 * 	MUST be a valid CIM Association Class name. It acts as a filter
 	 * 	on the returned set of Objects by mandating that each returned
 	 * 	Object MUST be associated to the source Object via an Instance
-	 * 	of this Class or one of its subclasses. 
+	 * 	of this Class or one of its subclasses.
 	 *
 	 * @param resultClass The ResultClass input parameter, if not empty
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
@@ -620,7 +619,7 @@ public:
 	 * 	associated to the source Object via an Association in which the
 	 * 	source Object plays the specified role (i.e. the name of the
 	 * 	Property in the Association Class that refers to the source
-	 * 	Object MUST match the value of this parameter). 
+	 * 	Object MUST match the value of this parameter).
 	 *
 	 * @param resultRole The ResultRole input parameter, if not empty (""),
 	 * 	MUST be a valid Property name. It acts as a filter on the
@@ -661,7 +660,7 @@ public:
 	 *
 	 *	Clients SHOULD NOT explicitly specify properties in the
 	 *	PropertyList parameter unless they have specified a non-empty
-	 *	("") value for the ResultClass parameter. 	 
+	 *	("") value for the ResultClass parameter. 	
 	 *
 	 *
 	 * @exception CIMException. The following IDs can be expected:
@@ -669,8 +668,8 @@ public:
 	 *	CIM_ERR_INVALID_NAMESPACE, CIM_ERR_INVALID_PARAMETER (including
 	 *	missing, duplicate, unrecognized or otherwise incorrect
 	 *	parameters), CIM_ERR_FAILED (some other unspecified error
-	 *	occurred) 
-	 */  
+	 *	occurred)
+	 */
 	virtual void associatorsClasses(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -687,7 +686,7 @@ public:
 	 * @param ns The namespace.
 	 * @param path The ObjectName input parameter defines the target CIM
 	 * 	Object path whose referring object names are to be returned. It
-	 * 	may be either a Class name or an Instance name (model path). 
+	 * 	may be either a Class name or an Instance name (model path).
 	 * @param result A callback object to handle the object paths as they
 	 * 	are received.
 	 * @param resultClass  The ResultClass input parameter, if not empty
@@ -704,7 +703,7 @@ public:
 	 * 	Property whose name matches the value of this parameter.
 	 *
 	 * @exception CIMException As defined for associators method.
-	 */  
+	 */
 	virtual void referenceNames(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -713,7 +712,7 @@ public:
 		const String& role, OperationContext& context) = 0;
 	/**
 	 * This operation is used to enumerate the association objects that
-	 * refer to a particular target CIM Object (Class or Instance). 
+	 * refer to a particular target CIM Object (Class or Instance).
 	 *
 	 * @param ns The namespace.
 	 *
@@ -727,7 +726,7 @@ public:
 	 * 	(""), MUST be a valid CIM Class name. It acts as a filter on
 	 * 	the returned set of Objects by mandating that each returned
 	 * 	Object MUST be an Instance of this Class (or one of its
-	 * 	subclasses), or this Class (or one of its subclasses).	 
+	 * 	subclasses), or this Class (or one of its subclasses).	
 	 *
 	 * @param role The Role input parameter, if not empty (""), MUST be a
 	 * 	valid Property name. It acts as a filter on the returned set of
@@ -774,7 +773,7 @@ public:
 	 * Executes a query to retrieve or modify objects.
 	 *
 	 * @param ns CIMNameSpace that identifies the namespace in which to
-	 * 	query. 
+	 * 	query.
 	 *
 	 * @param query A string containing the text of the query. This
 	 * 	parameter cannot be empty..
@@ -801,7 +800,7 @@ public:
 	 * This will cause all CIMListerners that are interested in this type
 	 * of indication to be notified.
 	 * @param instance The indication instance to use in the notification.
-	 */  
+	 */
 	virtual void exportIndication(const CIMInstance&,
 		const String&);
 

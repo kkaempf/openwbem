@@ -42,12 +42,12 @@
 #include "OW_XMLQualifier.hpp"
 #include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_IfcsFwd.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
-class CIMOMHandleIFC;
 class XMLExecute : public RequestHandlerIFCXML
 {
 public:

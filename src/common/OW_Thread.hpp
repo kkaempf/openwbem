@@ -73,10 +73,10 @@ public:
 	 */
 	virtual void start(const ThreadDoneCallbackRef& cb = ThreadDoneCallbackRef(0));
 	/**
-	 * Attempt to cooperatively cancel this Threads execution.  
+	 * Attempt to cooperatively cancel this Threads execution.
 	 * You should still call join() in order to clean up resources allocated
-	 * for this thread.  
-	 * This function will set a flag that the thread has been 
+	 * for this thread.
+	 * This function will set a flag that the thread has been
 	 * cancelled, which can be checked by testCancel().  If the thread does
 	 * not call testCancel(), it may keep running.
 	 * The thread may (probably) still be running after this function returns,
@@ -92,18 +92,18 @@ public:
 	 */
 	void cooperativeCancel();
 	/**
-	 * Attempt to cooperatively and then definitively cancel this Threads 
-	 * execution.  You should still call join() in order to clean up resources 
-	 * allocated for this thread.  
-	 * This function will set a flag that the thread has been 
-	 * cancelled, which can be checked by testCancel().  
+	 * Attempt to cooperatively and then definitively cancel this Threads
+	 * execution.  You should still call join() in order to clean up resources
+	 * allocated for this thread.
+	 * This function will set a flag that the thread has been
+	 * cancelled, which can be checked by testCancel().
 	 * definitiveCancel() wil first try to stop the thread in a cooperative
 	 * manner to avoid leaks or corruption. If the thread has not
-	 * exited after waitForCoopeartiveSecs seconds, this it will be cancelled 
+	 * exited after waitForCoopeartiveSecs seconds, this it will be cancelled
 	 * (pthread_cancel will
 	 * be called)  Note that this will not clean up any objects on the stack,
 	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
-	 * the only system I know of that does C++ stack unwinding on thread 
+	 * the only system I know of that does C++ stack unwinding on thread
 	 * cancellation is Fedora Core 1. & RedHat Enterprise 3.0)
 	 * so it may cause memory leaks or inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
@@ -134,14 +134,14 @@ public:
 	 * given a chance to clean up or override the cancellation.
 	 * DO NOT call this function without first trying definitiveCancel().
 	 *
-	 * You should still call join() in order to clean up resources 
-	 * allocated for this thread.  
+	 * You should still call join() in order to clean up resources
+	 * allocated for this thread.
 	 *
 	 * pthread_cancel will be called.
-	 * Note that using this function will not clean up any objects on the 
+	 * Note that using this function will not clean up any objects on the
 	 * thread's stack,
 	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
-	 * the only system I know of that does C++ stack unwinding on thread 
+	 * the only system I know of that does C++ stack unwinding on thread
 	 * cancellation is Fedora Core 1.)
 	 * so it may cause memory leaks or inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
@@ -153,7 +153,7 @@ public:
 	 */
 	void cancel();
 	/**
-	 * Test if this thread has been cancelled.  If so, a 
+	 * Test if this thread has been cancelled.  If so, a
 	 * ThreadCancelledException will be thrown.  DO NOT catch this exception.
 	 * ThreadCancelledException is not derived from anything.
 	 * Do not write code like this:
@@ -171,7 +171,7 @@ public:
 	 * } catch (std::exception& e) {
 	 *  // handle the exception
 	 * }
-	 * The only place ThreadCancelledException should be caught is in 
+	 * The only place ThreadCancelledException should be caught is in
 	 * Thread::threadRunner(). main() shouldn't need to catch it, as the main
 	 * thread of an application should never be cancelled.  The main thread
 	 * shouldn't need to ever call testCancel.
@@ -192,7 +192,7 @@ private:
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
-	 * or cause a deadlock.  To do this, the thread should throw an 
+	 * or cause a deadlock.  To do this, the thread should throw an
 	 * CancellationDeniedException.  Note that threads are usually only
 	 * cancelled in the event of a system shutdown or restart, so a thread
 	 * should make a best effort to actually shutdown.
@@ -202,7 +202,7 @@ private:
 	virtual void doCooperativeCancel();
 	/**
 	 * See the documentation for doCooperativeCancel().  When definitiveCancel()
-	 * is called on a thread, first doCooperativeCancel() will be called, and 
+	 * is called on a thread, first doCooperativeCancel() will be called, and
 	 * then doDefinitiveCancel() will be called.
 	 *
 	 * @throws CancellationDeniedException
@@ -217,7 +217,7 @@ public:
 		return m_isRunning == true;
 	}
 	/**
-	 * Join with this Thread's execution. This method should be called 
+	 * Join with this Thread's execution. This method should be called
 	 * on all joinable threads. The destructor will call it as well.
 	 * If this Thread object is executing, this method
 	 * will block until this Thread's run method returns.
@@ -283,7 +283,6 @@ private:
 	Thread& operator=(const Thread&);
 	
 };
-typedef IntrusiveReference<Thread> ThreadRef;
 
 } // end namespace OpenWBEM
 

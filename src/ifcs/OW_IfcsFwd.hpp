@@ -81,7 +81,6 @@ class CIMProtocolIStreamIFC;
 typedef IntrusiveReference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
 
 
-
 } // end namespace OpenWBEM
 
 #endif

@@ -46,16 +46,13 @@
 #include "OW_HTTPUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
+#include "OW_CommonFwd.hpp"
 #include <iosfwd>
 #include <fstream>
 
 namespace OpenWBEM
 {
 
-#ifndef OW_WIN32
-class UnnamedPipe;
-#endif
-class TempFileStream;
 class OW_HTTP_API HTTPSvrConnection: public Runnable
 {
 public:
@@ -80,7 +77,7 @@ public:
 	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
 	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
-		IntrusiveReference<UnnamedPipe>& upipe,
+		UnnamedPipeRef& upipe,
 		const HTTPServer::Options& opts);
 #endif
 
@@ -122,7 +119,7 @@ public:
 	 *  example: POST /cimom HTTP/1.1
 	 * @return a string array containing the tokenized request status line.
 	 */
-	Array<String> getRequestLine() const { return m_requestLine; }
+	StringArray getRequestLine() const { return m_requestLine; }
 	/**
 	 * Set the details of the error to be returned.  This is usefull for
 	 * auth modules to be able to describe why authentication failed.
@@ -161,7 +158,7 @@ private:
 		HTTP_VER_10,
 		HTTP_VER_11
 	};
-	Array<String> m_requestLine;
+	StringArray m_requestLine;
 	HTTPHeaderMap m_requestHeaders;
 	HTTPServer* m_pHTTPServer;
 	std::istream* m_pIn;

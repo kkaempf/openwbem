@@ -40,6 +40,7 @@
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_IfcsFwd.hpp"
 #include <zlib.h>
 
 namespace OpenWBEM
@@ -71,12 +72,12 @@ public:
 	HTTPDeflateIStreamBuffer m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTP_API HTTPDeflateIStream : private HTTPDeflateIStreamBase, 
+class OW_HTTP_API HTTPDeflateIStream : private HTTPDeflateIStreamBase,
 	public CIMProtocolIStreamIFC
 {
 public:
 	/**
-	 * Convert an istream to a HTTPDeflateIStream.  This wraps the 
+	 * Convert an istream to a HTTPDeflateIStream.  This wraps the
 	 * istream.  Anything read from the new istream, is first read from
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
