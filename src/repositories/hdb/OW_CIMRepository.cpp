@@ -1836,8 +1836,18 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 void
 CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
+	try
+	{
+		if (context.getStringData(OperationContext::BYPASS_LOCKERKEY) == "true")
+		{
+			return; 
+		}
+	}
+	catch (ContextDataNotFoundException&)
+	{
+	}
 // TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
-const UInt32 LockTimeout = 300; // seconds - 5 mins.
+	const UInt32 LockTimeout = 300; // seconds - 5 mins.
 	switch (op)
 	{
 	case E_CREATE_NAMESPACE:
