@@ -57,6 +57,10 @@ extern "C"
 #include <fcntl.h>
 #include <pwd.h>
 #include <sys/resource.h>
+
+#ifdef OW_NETWARE
+#include <nks/vm.h>
+#endif
 }
 #include <cstring>
 #include <cstdio>
@@ -107,12 +111,14 @@ daemonize(bool dbgFlg, const String& daemonName)
 {
 	initDaemonizePipe(); 
 
+	int pid = -1; 
+#if !defined(OW_NETWARE)
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += OW_PACKAGE_PREFIX;
 	pidFile += daemonName;
 	pidFile += ".pid";
-	int pid = PidFile::checkPid(pidFile.c_str());
+	pid = PidFile::checkPid(pidFile.c_str());
 	// Is there already another instance of the cimom running?
 	if (pid != -1)
 	{
@@ -120,6 +126,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 			Format("Another instance of %1 is already running [%2]",
 				daemonName, pid).c_str());
 	}
+#endif
 	if (!dbgFlg)
 	{
 #if !defined(OW_NETWARE)
@@ -173,7 +180,9 @@ daemonize(bool dbgFlg, const String& daemonName)
 		pid = getpid();
 	}
 	umask(0077); // ensure all files we create are only accessible by us.
+#if !defined(OW_NETWARE)
 	PidFile::writePid(pidFile.c_str());
+#endif
 	initSig();
 	setupSigHandler(dbgFlg);
 }
@@ -181,12 +190,16 @@ daemonize(bool dbgFlg, const String& daemonName)
 int
 daemonShutdown(const String& daemonName)
 {
+#if !defined(OW_NETWARE)
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += OW_PACKAGE_PREFIX;
 	pidFile += daemonName;
 	pidFile += ".pid";
 	PidFile::removePid(pidFile.c_str());
+#else
+	(void)daemonName; 
+#endif
 	shutdownSig();
 	return 0;
 }
@@ -389,6 +402,15 @@ fatalSigHandler(int sig)
 {
 	Platform::rerunDaemon();
 }
+
+#ifdef OW_NETWARE
+static void
+netwareExitHandler(void*)
+{
+	theSigHandler(SIGTERM); 
+}
+#endif
+
 } // extern "C"
 //////////////////////////////////////////////////////////////////////////////
 static void
@@ -460,6 +482,16 @@ setupSigHandler(bool dbgFlg)
 
 	//handleSignal(SIGALRM);
 	//handleSignal(SIGSTKFLT);
+
+#ifdef OW_NETWARE
+	int rv; 
+	if ((rv = NXVmRegisterExitHandler(netwareExitHandler, 0) != 0))
+	{
+		OW_THROW(DaemonException,
+			Format("FAILED TO REGISTER EXIT HANDLER "
+			"NXVmRegisterExitHandler returned %1", rv).c_str()); 
+	}
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
