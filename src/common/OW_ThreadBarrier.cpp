@@ -38,6 +38,9 @@ DEFINE_EXCEPTION(ThreadBarrier);
 
 /////////////////////////////////////////////////////////////////////////////
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
+
+#include <pthread.h>
+
 class OW_ThreadBarrierImpl
 {
 public:
