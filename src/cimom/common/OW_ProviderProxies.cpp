@@ -450,6 +450,12 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->close();
 		}
+		virtual void init(const ServiceEnvironmentIFCRef& env)
+		{
+		}
+		virtual void shutdown()
+		{
+		}
 		virtual ServiceEnvironmentIFCRef getEnvironment() const
 		{
 			// Inst/Assoc/Meth provs don't need one of these
