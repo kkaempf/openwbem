@@ -87,13 +87,13 @@ CMPIStatus testProvCleanup
 CMPIStatus testProvEnumInstanceNames
                 (CMPIInstanceMI* cThis, CMPIContext* ctx,CMPIResult* rslt,
                  CMPIObjectPath* ref) {
-   (void) cThis;
-   (void) ctx;
-
    int i;
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
    CMPIString *k;
+   (void) cThis;
+   (void) ctx;
+
    fprintf(stderr,"+++ testProvEnumInstanceNames()\n");
 
    cop=broker->eft->newObjectPath(broker,
@@ -115,23 +115,24 @@ CMPIStatus testProvEnumInstanceNames
 CMPIStatus testProvEnumInstances
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* ref, char** props) {
-   (void) cThis;
-   (void) ctx;
-   (void) props;
-
    int i;
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
    CMPIInstance * inst;
+   (void) cThis;
+   (void) ctx;
+   (void) props;
+
    fprintf(stderr,"+++ testProvEnumInstances()\n");
    cop=broker->eft->newObjectPath(broker,
 	CMStringCharPtr(ref->ft->getClassName(ref,&rc)),
 	CMStringCharPtr(ref->ft->getNameSpace(ref,&rc)),
 	&rc);
    for (i=0; i<dataNext; i++) {
+	  CMPIString * csh = 0;
       copClone=cop->ft->clone(cop,&rc);
       copClone->ft->addKey(copClone,"Identifier", (CMPIValue*)&store[i].key,CMPI_string);
-      CMPIString * csh = copClone->ft->getClassName(cop,&rc);
+      csh = copClone->ft->getClassName(cop,&rc);
       csh = (CMPIString *)NULL;
       inst=broker->eft->newInstance(broker,copClone,&rc);
       inst->ft->setProperty(inst,"Identifier",(CMPIValue*)&store[i].key,CMPI_string);
@@ -145,14 +146,14 @@ CMPIStatus testProvEnumInstances
 CMPIStatus testProvGetInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, char** props) {
-   (void) cThis;
-   (void) ctx;
-   (void) props;
-
    CMPIString *k;
    struct data *dat;
    CMPIStatus rc;
    CMPIInstance *inst;
+
+   (void) cThis;
+   (void) ctx;
+   (void) props;
 
    k=cop->ft->getKey(cop,"Identifier",&rc).value.string;
    if (!(k->hdl))
@@ -176,14 +177,14 @@ CMPIStatus testProvGetInstance
 CMPIStatus testProvCreateInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, CMPIInstance* inst) {
-   (void) cThis;
-   (void) ctx;
-
    CMPIString *k,*d;
    CMPIArray *a;
    CMPIStatus rc;
    //CMPIData data;
    void * _hdl;
+
+   (void) cThis;
+   (void) ctx;
 
    fprintf(stderr,"+++ testProvCreateInstance()\n");
 
@@ -218,13 +219,13 @@ CMPIStatus testProvSetInstance
 CMPIStatus testProvDeleteInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop) {
-   (void) cThis;
-   (void) rslt;
-
    CMPIString *k;
    CMPIStatus rc;
    //CMPIObjectPath *nx;
    CMPIInstance *inst;
+
+   (void) cThis;
+   (void) rslt;
 
    fprintf(stderr,"+++ testProvDeleteInstance()\n");
 
@@ -279,12 +280,12 @@ static CMPIInstanceMIFT instMIFT={
 };
 
 CMPIInstanceMI* cmpiTestProvider_Create_InstanceMI(CMPIBroker* brkr, CMPIContext *ctx) {
-   (void) ctx;
    static CMPIInstanceMI mi={
       NULL,
       &instMIFT,
       NULL
    };
+   (void) ctx;
    broker=brkr;
    fprintf(stderr,"+++ TestProvider_Create_InstanceMI(): called\n");
    return &mi;
