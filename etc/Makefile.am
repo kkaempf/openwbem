@@ -9,7 +9,7 @@ CLEANFILES = openwbem.conf
 
 SUFFIXES = .sh
 
-.sh:
+.sh: Makefile
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''libdir''@!$(libdir)!g' \
