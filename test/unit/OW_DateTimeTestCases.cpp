@@ -441,7 +441,6 @@ void OW_DateTimeTestCases::testCreation()
 		unitAssert(d.getYear(DateTime::E_UTC_TIME) == 1993);
 		unitAssert(d.getMonth(DateTime::E_UTC_TIME) == 12);
 		unitAssert(d.getDay(DateTime::E_UTC_TIME) == 2);
-		printf("UTC time hour=%d\n", d.getHour(DateTime::E_UTC_TIME));
 		unitAssert(d.getHour(DateTime::E_UTC_TIME) == 12);
 		unitAssert(d.getMinute(DateTime::E_UTC_TIME) == 49);
 		unitAssert(d.getSecond(DateTime::E_UTC_TIME) == 8);
