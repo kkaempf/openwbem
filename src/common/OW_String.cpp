@@ -47,6 +47,7 @@
 #include "OW_Bool.hpp"
 #include "OW_UTF8Utils.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -102,7 +103,7 @@ strncmpi(const char* s1, const char* s2, size_t n)
 }
 
 // class invariant: m_buf points to a null-terminated sequence of characters. m_buf is m_len+1 bytes long.
-class String::ByteBuf
+class String::ByteBuf : public COWIntrusiveCountableBase
 {
 public:
 	ByteBuf(const char* s) :
@@ -110,16 +111,22 @@ public:
 	{
 		strcpy(m_buf, s);
 	}
-	ByteBuf(const ByteBuf& arg) :
-		m_len(arg.m_len), m_buf(new char[m_len+1])
+
+	ByteBuf(const ByteBuf& arg) 
+		: COWIntrusiveCountableBase(arg)
+		, m_len(arg.m_len)
+		, m_buf(new char[m_len+1])
 	{
 		strcpy(m_buf, arg.m_buf);
 	}
+	
 	ByteBuf(AutoPtrVec<char>& s, size_t len)
 		: m_len(len), m_buf(s.release())
 	{
 	}
+	
 	~ByteBuf() { delete [] m_buf; }
+	
 	ByteBuf& operator= (const ByteBuf& arg)
 	{
 		char* buf = new char[arg.m_len+1];
@@ -129,6 +136,7 @@ public:
 		m_len = arg.m_len;
 		return *this;
 	}
+	
 	size_t length() const { return m_len; }
 	char* data() const { return m_buf; }
 	ByteBuf* clone() const { return new ByteBuf(*this); }
@@ -895,7 +903,7 @@ String::toString() const
 }
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-throwStringConversion(const COWReference<String::ByteBuf>& m_buf, const char* type)
+throwStringConversion(const String::buf_t& m_buf, const char* type)
 {
 	OW_THROW(StringConversionException, Format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
 }
@@ -917,7 +925,7 @@ String::toChar16() const
 }
 template <typename T>
 static inline
-T convertToRealType(const COWReference<String::ByteBuf>& m_buf, const char* type)
+T convertToRealType(const String::buf_t& m_buf, const char* type)
 {
 	if (m_buf)
 	{
@@ -969,7 +977,7 @@ String::toBool() const
 }
 template <typename T, typename FP, typename FPRT>
 static inline
-T doConvertToIntType(const COWReference<String::ByteBuf>& m_buf, const char* type, FP fp, int base)
+T doConvertToIntType(const String::buf_t& m_buf, const char* type, FP fp, int base)
 {
 	if (m_buf)
 	{
@@ -995,25 +1003,25 @@ typedef unsigned long long int (*strtoullfp_t)(const char *, char **,int);
 typedef long long int (*strtollfp_t)(const char *, char **,int);
 template <typename T>
 static inline
-T convertToUIntType(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUIntType(const String::buf_t& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul, base);
 }
 template <typename T>
 static inline
-T convertToIntType(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToIntType(const String::buf_t& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol, base);
 }
 template <typename T>
 static inline
-T convertToUInt64Type(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUInt64Type(const String::buf_t& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &String::strtoull, base);
 }
 template <typename T>
 static inline
-T convertToInt64Type(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToInt64Type(const String::buf_t& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &String::strtoll, base);
 }

@@ -37,7 +37,7 @@
 #define OW_STRING_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
 #include <iosfwd>
@@ -45,7 +45,6 @@
 namespace OpenWBEM
 {
 
-//class IOException;
 class Char16;
 typedef Array<Char16> Char16Array;
 class CIMDateTime;
@@ -53,7 +52,9 @@ class CIMObjectPath;
 class String;
 typedef Array<String> StringArray;
 class Bool;
+
 OW_DECLARE_EXCEPTION(StringConversion);
+
 /**
  * This String class is an abstract data type that represents as NULL
  * terminated string of characters. String objects are ref counted and
@@ -703,8 +704,10 @@ public:
 #else
 	static const size_t npos = ~0;  
 #endif // OW_AIX
+
+	typedef COWIntrusiveReference<ByteBuf> buf_t;
 private:
-	COWReference<ByteBuf> m_buf;
+	buf_t m_buf;
 };
 std::ostream& operator<< (std::ostream& ostr, const String& arg);
 String operator + (const String& s1, const String& s2);
