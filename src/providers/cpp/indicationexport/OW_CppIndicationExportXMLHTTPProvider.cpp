@@ -148,5 +148,5 @@ CppIndicationExportXMLHTTPProvider::doCooperativeCancel()
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY_NOID(OpenWBEM::CppIndicationExportXMLHTTPProvider, XMLHTTP);
+OW_PROVIDERFACTORY(OpenWBEM::CppIndicationExportXMLHTTPProvider, cppindicationexportxmlhttpprovider);
 

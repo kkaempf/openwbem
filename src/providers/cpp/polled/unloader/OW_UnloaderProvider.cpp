@@ -87,5 +87,5 @@ UnloaderProvider::getInitialPollingInterval(const
 }
 } // end namespace OpenWBEM
 
-OW_PROVIDERFACTORY_NOID(OpenWBEM::UnloaderProvider,Unloader)
+OW_PROVIDERFACTORY(OpenWBEM::UnloaderProvider,owprovpollUnloader)
 
