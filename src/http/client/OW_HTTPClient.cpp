@@ -158,11 +158,11 @@ OW_HTTPClient::receiveAuthentication()
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
 	
 	OW_String authInfo = getHeaderValue("www-authenticate");
-	OW_Int16 iBeginIndex = authInfo.indexOf( "realm" ) + 7;
+	size_t iBeginIndex = authInfo.indexOf( "realm" ) + 7;
 	if( iBeginIndex >= 7 )
 	{
-		OW_Int16 iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-		if( iEndIndex >= 0 )
+		size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
+		if( iEndIndex != OW_String::npos )
 		{
 			m_sRealm = authInfo.substring( iBeginIndex, iEndIndex -
 				iBeginIndex );
@@ -217,11 +217,11 @@ OW_HTTPClient::receiveAuthentication()
 	if(headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
 		OW_String authInfo = getHeaderValue("authentication-info");
-		OW_UInt16 iBeginIndex = authInfo.indexOf( "nextnonce" ) + 11;
+		size_t iBeginIndex = authInfo.indexOf( "nextnonce" ) + 11;
 		if( iBeginIndex >= 11 )
 		{
-			OW_Int16 iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex >= 0 )
+			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
+			if( iEndIndex != OW_String::npos )
 			{
 				m_sDigestNonce = authInfo.substring( iBeginIndex,
 					iEndIndex - iBeginIndex );
@@ -232,15 +232,15 @@ OW_HTTPClient::receiveAuthentication()
 		m_iDigestNonceCount = 1;
 
 	}
-	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) >= 0 )
+	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) != OW_String::npos )
 	{
 		m_sAuthorization = "Digest";
 		OW_String authInfo = getHeaderValue("www-authenticate");
-		OW_Int16 iBeginIndex = authInfo.indexOf( "nonce" ) + 7;
+		size_t iBeginIndex = authInfo.indexOf( "nonce" ) + 7;
 		if( iBeginIndex >= 7 )
 		{
-			OW_Int16 iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex >= 0 )
+			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
+			if( iEndIndex != OW_String::npos )
 			{
 				m_sDigestNonce = authInfo.substring( iBeginIndex, iEndIndex -
 					iBeginIndex );
@@ -252,7 +252,7 @@ OW_HTTPClient::receiveAuthentication()
 	}
 	else 
 #endif
-	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) >= 0 )
+	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) != OW_String::npos )
 	{
 		m_sAuthorization = "Basic";
 	}
@@ -459,14 +459,14 @@ OW_HTTPClient::getFeatures()
 			statusLine).c_str());
 	}
 
-	if (getHeaderValue("allow").indexOf("M-POST") < 0)
+	if (getHeaderValue("allow").indexOf("M-POST") == OW_String::npos)
 	{
 		m_requestMethod = "POST";
 	}
 
 	OW_String extURL = getHeaderValue("Opt");
-	int idx = extURL.indexOf(';');
-	if (idx < 1)
+	size_t idx = extURL.indexOf(';');
+	if (idx < 1 || idx == OW_String::npos)
 	{
 		OW_THROW(OW_HTTPException, "No \"Opt\" header in OPTIONS response");
 	}
@@ -572,17 +572,17 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 {
 
 	Resp_t rt = FATAL;
-	int idx = statusLine.indexOf(' ');
+	size_t idx = statusLine.indexOf(' ');
 	OW_String respProt;
 	OW_String sc; // http status code
 	int isc = 500; // status code (int)
-	if (idx > 0)
+	if (idx > 0 && idx != OW_String::npos)
 	{
 		respProt = statusLine.substring(0, idx);
 		statusLine = statusLine.substring(idx + 1);
 	}
 	idx = statusLine.indexOf(' ');
-	if (idx > 0)
+	if (idx > 0 && idx != OW_String::npos)
 	{
 		sc = statusLine.substring(0,idx);
 		statusLine = statusLine.substring(idx + 1);

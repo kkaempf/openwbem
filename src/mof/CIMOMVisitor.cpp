@@ -1007,7 +1007,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 					if (cop)
 					{
 						// If the object path doesn't have a : character, then we need to set the namespace on it.
-						if (m_curProperty.getValue().toString().indexOf(':') == -1)
+						if (m_curProperty.getValue().toString().indexOf(':') == OW_String::npos)
 						{
 							cop.setNameSpace(m_namespace);
 							castValue = OW_CIMValue(cop);

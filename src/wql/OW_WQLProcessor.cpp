@@ -2235,7 +2235,7 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 			else
 			{
 				OW_CIMProperty cp(OW_CIMNULL);
-				if (propName.indexOf('.') != -1)
+				if (propName.indexOf('.') != OW_String::npos)
 				{
 					// it's an embedded property
 					OW_String curPropName;

@@ -53,6 +53,9 @@
 /* Defined if we are building gnu pth version */
 #undef USE_GNU_PTH
 
+/* Defined if we are building gnu pthreads version */
+#undef USE_PTHREAD
+
 /* Defined if we want to use custom "new" operator to debug memory leaks */
 #undef DEBUG_MEMORY
 

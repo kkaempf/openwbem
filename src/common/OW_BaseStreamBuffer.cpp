@@ -36,7 +36,7 @@
 #include <iostream> // for cerr
 #include <cstring> // for memcpy
 
-OW_BaseStreamBuffer::OW_BaseStreamBuffer(int bufSize,
+OW_BaseStreamBuffer::OW_BaseStreamBuffer(size_t bufSize,
 		const char* direction_)
 	: m_bufSize(bufSize), m_inputBuffer(NULL), m_outputBuffer(NULL)
 {

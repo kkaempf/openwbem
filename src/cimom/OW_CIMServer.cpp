@@ -227,7 +227,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 				capability.toLowerCase();
 				if (opType.length() == 1)
 				{
-					if (capability.indexOf(opType) < 0)
+					if (capability.indexOf(opType) == OW_String::npos)
 					{
 						m_env->logError(format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
@@ -300,7 +300,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 
 			if (opType.length() == 1)
 			{
-				if (capability.indexOf(opType) < 0)
+				if (capability.indexOf(opType) == OW_String::npos)
 				{
 					m_env->logError(format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",

@@ -323,7 +323,7 @@ public:
 	 * @param ch The character to search for.
 	 * @param fromIndex The index to start the search from.
 	 * @return The index of the given character in the underlying array if it
-	 * was found. -1 if the character was not found at or after the given
+	 * was found. npos if the character was not found at or after the given
 	 * fromIndex.
 	 */
 	size_t indexOf(char ch, size_t fromIndex=0) const;
@@ -333,7 +333,7 @@ public:
 	 * @param arg			The string to search for.
 	 * @param fromIndex	The index to start the search from.
 	 * @return The index of the given string in the underlying array if it
-	 * was found. -1 if the string was not found at or after the fromIndex.
+	 * was found. npos if the string was not found at or after the fromIndex.
 	 */
 	size_t indexOf(const OW_String& arg, size_t fromIndex=0) const;
 
@@ -342,7 +342,7 @@ public:
 	 * @param ch			The character to search for.
 	 * @param fromIndex	The index to start the search from.
 	 * @return The index of the last occurence of the given character in the
-	 * underlying array if it was found. -1 if this OW_String object does not
+	 * underlying array if it was found. npos if this OW_String object does not
 	 * contain the character before the given fromIndex.
 	 */
 	size_t lastIndexOf(char ch, size_t fromIndex=static_cast<size_t>(-1)) const;
@@ -352,7 +352,7 @@ public:
 	 * @param arg			The string to search for.
 	 * @param fromIndex	The index to start the search from.
 	 * @return The index of the last occurence of the string in the underlying
-	 * array if it was found. -1 if the this OW_String does not contain the
+	 * array if it was found. npos if the this OW_String does not contain the
 	 * given substring before the fromIndex.
 	 */
 	size_t lastIndexOf(const OW_String& arg, size_t fromIndex=static_cast<size_t>(-1)) const;
@@ -429,7 +429,7 @@ public:
 	
 	/**
 	 * Erases, at most, len characters of *this, starting at index idx.
-	 * if len == -1, erase to the end of the string.
+	 * if len == npos, erase to the end of the string.
 	 * @return A referernce to this object.
 	 */
 	OW_String& erase( size_t idx, size_t len = size_t(-1) );
@@ -603,6 +603,7 @@ public:
 	 */
 	static OW_String getLine(std::istream& istr);
 
+	static const size_t npos = ~0;
 private:
 
 	OW_COWReference<ByteBuf> m_buf;

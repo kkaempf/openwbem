@@ -57,7 +57,7 @@ OW_DateTime::OW_DateTime(const OW_String& str) :
 	m_time(0), m_isInterval(false)
 {
 	size_t ndx = str.indexOf(':');	// Check for interval
-	if(ndx != -1)
+	if(ndx != OW_String::npos)
 	{
 		m_isInterval = true;
 	}
@@ -276,7 +276,7 @@ OW_DateTime::toStringGMT() const
 #ifdef OW_HAVE_GMTIME_R
 	tm ltime;
 	tm* theTime = &ltime; 
-	gmtime_r(&m_time, &theTime);
+	gmtime_r(&m_time, theTime);
 #else
 	tm* theTime = gmtime(&m_time);
 #endif

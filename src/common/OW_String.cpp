@@ -549,7 +549,7 @@ OW_String::indexOf(char ch, size_t fromIndex) const
 	//	fromIndex = 0;
 	//}
 
-	size_t cc = -1;
+	size_t cc = npos;
 	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
@@ -572,7 +572,7 @@ OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 	//	fromIndex = 0;
 	//}
 
-	int cc = -1;
+	int cc = npos;
 	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
@@ -600,16 +600,16 @@ OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 size_t
 OW_String::lastIndexOf(char ch, size_t fromIndex) const
 {
-	if(fromIndex == static_cast<size_t>(-1))
+	if(fromIndex == npos)
 	{
-		if((fromIndex = length()-1) < 0)
-			return -1;
+		if((fromIndex = length()-1) == npos)
+			return npos;
 	}
 
-	size_t cc = -1;
+	size_t cc = npos;
 	if(static_cast<size_t>(fromIndex) < length())
 	{
-		for(size_t i = fromIndex; i != static_cast<size_t>(-1); i--)
+		for(size_t i = fromIndex; i != npos; i--)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
 			// this code won't be executed.
@@ -627,15 +627,15 @@ OW_String::lastIndexOf(char ch, size_t fromIndex) const
 size_t
 OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
 {
-	if(fromIndex == static_cast<size_t>(-1) || fromIndex >= length())
+	if(fromIndex == npos || fromIndex >= length())
 	{
 		if(static_cast<int>(fromIndex = length()-1) < 0)
-			return -1;
+			return npos;
 	}
 
 	if(static_cast<int>(fromIndex -= arg.length() - 1) < 0)
 	{
-		return -1;
+		return npos;
 	}
 
 	if (!arg.m_buf)
@@ -643,7 +643,7 @@ OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
 		return length() - 1;
 	}
 
-	while(fromIndex != static_cast<size_t>(-1))
+	while(fromIndex != npos)
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
@@ -707,7 +707,7 @@ OW_String::substring(size_t beginIndex, size_t len) const
 	{
 		return nil;
 	}
-	else if(-1 == int(len))
+	else if(len == npos)
 	{
 		count = l - beginIndex;
 	}
@@ -1550,7 +1550,7 @@ OW_String::getLine(istream& is)
 
 	OW_String rstr = rv.releaseString();
 	size_t ndx = rstr.indexOf('\r');
-	if(ndx != -1)
+	if(ndx != npos)
 	{
 		rstr = rstr.substring(0, ndx);
 	}

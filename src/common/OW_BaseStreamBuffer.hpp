@@ -31,15 +31,15 @@
 #ifndef OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 
-const size_t BASE_BUF_SIZE = 256;
-const size_t HTTP_BUF_SIZE = 4096;
-
 #include "OW_config.h"
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else
 #include <streambuf.h>
 #endif
+
+const size_t BASE_BUF_SIZE = 256;
+const size_t HTTP_BUF_SIZE = 4096;
 
 
 class OW_BaseStreamBuffer : public std::streambuf

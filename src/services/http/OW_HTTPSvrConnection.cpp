@@ -708,8 +708,8 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Accept"))
 		{
 			OW_String ac = getHeaderValue("Accept");
-			if (ac.indexOf("text/xml") < 0
-				&& ac.indexOf("application/xml") < 0)
+			if (ac.indexOf("text/xml") == OW_String::npos 
+				&& ac.indexOf("application/xml") == OW_String::npos)
 			{
 				m_errDetails = "Only entities of type \"text/xml\" or "
 					"\"application/xml\" are supported.";
@@ -726,7 +726,7 @@ OW_HTTPSvrConnection::processHeaders()
 	{
 		if (headerHasKey("Accept-Charset"))
 		{
-			if (getHeaderValue("Accept-Charset").indexOf("utf-8") < 0)
+			if (getHeaderValue("Accept-Charset").indexOf("utf-8") == OW_String::npos)
 			{
 				m_errDetails = "Only the utf-8 charset is acceptable.";
 				return SC_NOT_ACCEPTABLE;
@@ -743,7 +743,7 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Accept-Encoding"))
 		{
 
-			if (getHeaderValue("Accept-Encoding").indexOf("deflate") >= 0)
+			if (getHeaderValue("Accept-Encoding").indexOf("deflate") != OW_String::npos)
 			{
 #ifdef OW_HAVE_ZLIB_H
 				m_deflateCompressionOut = m_options.enableDeflate;
@@ -767,11 +767,11 @@ OW_HTTPSvrConnection::processHeaders()
 // Check for TE header
 //
 
-	if (getHeaderValue("TE").indexOf("trailers") >= 0)
+	if (getHeaderValue("TE").indexOf("trailers") != OW_String::npos)
 	{
 		// Trailers not standardized yet, so only do it we're talking to
 		// ourselves.
-		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) >= 0)
+		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) != OW_String::npos)
 		{
 			m_chunkedOut = true;
 		}
@@ -860,20 +860,20 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Man"))
 		{
 			OW_String manLine = getHeaderValue("Man");
-			if (manLine.indexOf("http://www.dmtf.org/cim/mapping/http/v1.0") < 0)
+			if (manLine.indexOf("http://www.dmtf.org/cim/mapping/http/v1.0") == OW_String::npos)
 			{
 				m_errDetails = "Unknown extension URI";
 				return SC_NOT_EXTENDED;
 			}
-			int idx = manLine.indexOf(';');
-			if (idx > 0)
+			size_t idx = manLine.indexOf(';');
+			if (idx > 0 && idx != OW_String::npos)
 			{
 				manLine = manLine.substring(idx + 0);
 				idx = manLine.indexOf("ns");
-				if (idx >= 0)
+				if (idx != OW_String::npos)
 				{
 					idx = manLine.indexOf('=');
-					if (idx > 0)
+					if (idx > 0 && idx != OW_String::npos)
 					{
 						m_reqHeaderPrefix = manLine.substring(idx + 1).trim();
 					}

@@ -46,7 +46,7 @@ void OW_SocketUtilsTestCases::testGetFullyQualifiedHostName()
 {
 	OW_String hn = OW_SocketUtils::getFullyQualifiedHostName();
 	unitAssert(!hn.empty());
-	unitAssert(hn.indexOf('.') != -1);
+	unitAssert(hn.indexOf('.') != OW_String::npos);
 }
 
 Test* OW_SocketUtilsTestCases::suite()
