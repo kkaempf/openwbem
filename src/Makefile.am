@@ -129,7 +129,7 @@ $(top_builddir)/src/providers/cpp/instance/OpenWBEM_ObjectManager/libowprovinstO
 $(top_builddir)/src/providers/cpp/polled/unloader/libowprovpollUnloader.a 
 
 STATIC_SERVICE_FLAGS= \
--lpam $(Z_LIBS) $(DYNAMIC_LINK_FLAGS) $(DL_LIB) $(CURRENT_LINK_MODE_FLAGS)
+$(PAM_LIB) $(Z_LIBS) $(DYNAMIC_LINK_FLAGS) $(DL_LIB) $(CURRENT_LINK_MODE_FLAGS)
 
 # In most cases, this library will be ignored.  However, when static services
 # are used, it will be required! 

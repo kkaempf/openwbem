@@ -396,6 +396,7 @@ fi
 AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
 if test x$use_pam = x1; then
 	AC_DEFINE(HAVE_PAM)
+	PAM_LIB="-lpam"
 else
 	AC_MSG_WARN(*** No PAM headers found! The PAM authentication module ***)
 	AC_MSG_WARN(*** will not be built. The config file defaults to      ***)
@@ -404,6 +405,7 @@ else
 	AC_MSG_WARN(*** authentication module or else the daemon won't start***)
 fi
 AC_SUBST(platform_pamdir)
+AC_SUBST(PAM_LIB)
 
 AM_CONDITIONAL(USE_AIX_AUTHENTICATE, test x$AIX = x1)
 
