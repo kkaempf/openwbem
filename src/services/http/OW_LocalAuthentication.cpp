@@ -120,13 +120,20 @@ namespace
 		{
 			begin = 0;
 		}
-		String fileName = pathToFile.substring(begin);
+		String fileName = pathToFile.substring(begin + 1);
 		runHelper(REMOVE_CMD, fileName + "\n" + cookie + "\n");
 	}
 
 	String createFileHelper(const String& uid, const String& cookie)
 	{
-		return runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
+ 		String filename = runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
+ 		// remove the trailing \n
+ 		if (filename.length() > 0 && filename[filename.length()-1] == '\n')
+ 		{
+ 			filename.erase(filename.length()-1);
+ 		}
+ 		return filename;
+
 	}
 
 }
