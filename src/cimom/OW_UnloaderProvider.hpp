@@ -41,7 +41,9 @@ typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
 class OW_UnloaderProvider : public OW_CppPolledProviderIFC
 {
 public:
-	OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv): m_pcenv(pcenv) {}
+	OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv);
+	~OW_UnloaderProvider();
+
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
 	 * opportunity to export indications if needed.
@@ -57,8 +59,8 @@ public:
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const 
-		OW_ProviderEnvironmentIFCRef &env); 
+	virtual OW_Int32 getInitialPollingInterval(const
+		OW_ProviderEnvironmentIFCRef &env);
 
 private:
 	OW_CIMOMEnvironmentRef m_pcenv;

@@ -37,6 +37,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_IndicationServer.hpp"
+#include "OW_CIMClass.hpp"
 
 namespace
 {
@@ -60,12 +61,12 @@ public:
 		}
 	}
 
-	virtual void getProviderInfo(OW_InstanceProviderInfo& info) 
+	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_IndicationSubscription");
 	}
 
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop) 
+	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop)
 	{
 		// tell the indication server it's being deleted.
 		indicationServer->deleteSubscription(ns, cop);
@@ -75,7 +76,7 @@ public:
 		rephdl->deleteInstance(ns, cop);
 	}
 
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance) 
+	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance)
 	{
 		if (!indicationsEnabled)
 		{
@@ -89,31 +90,31 @@ public:
 		return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 	}
 
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, OW_Bool localOnly, OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass) 
+	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
 	{
 		(void)cimClass;
 		return env->getRepositoryCIMOMHandle()->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
 	
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, OW_Bool localOnly, 
-		OW_Bool deep, OW_Bool includeQualifiers, OW_Bool includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass) 
+	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, OW_Bool localOnly,
+		OW_Bool deep, OW_Bool includeQualifiers, OW_Bool includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass)
 	{
 		(void)requestedClass; (void)cimClass;
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 	
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_CIMClass &cimClass) 
+	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMObjectPathResultHandlerIFC &result,
+		const OW_CIMClass &cimClass)
 	{
 		(void)cimClass;
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstanceNames(ns,className,result);
 	}
 
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance, 
-		OW_Bool includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass) 
+	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
+		OW_Bool includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
 	{
 		(void)previousInstance;
 		(void)theClass;

@@ -36,6 +36,15 @@
 
 #define POLLING_INTERVAL 60
 
+OW_UnloaderProvider::OW_UnloaderProvider(OW_CIMOMEnvironmentRef pcenv)
+: m_pcenv(pcenv)
+{
+}
+
+OW_UnloaderProvider::~OW_UnloaderProvider()
+{
+}
+
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
 	 * opportunity to export indications if needed.

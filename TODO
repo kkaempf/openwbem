@@ -141,6 +141,7 @@ New features:
       - Add -I flag for mof include search path.
       - Specify a file containing a list of MOFs to compile
       - output XML only to stdout.
+    - Deprecate TOINSTANCE (don't send as XML, & ignore on incoming XML)
 
 Refactorings:
     - Create a base class for all the common code in the provider interfaces.

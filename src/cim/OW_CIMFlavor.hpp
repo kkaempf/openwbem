@@ -65,7 +65,7 @@ public:
 		TRANSLATE			= 5,
 
 		/** Qualifier appears in instances */
-		TOINSTANCE			= 6,
+		TOINSTANCE			= 6, // TODO: This isn't valid.  But it needs to be for interop with old code.
 
 		// Mark limit for scopes
 		LASTVALUE			= 7

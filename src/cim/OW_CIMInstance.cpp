@@ -37,6 +37,8 @@
 #include "OW_BinIfcIO.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 
+#include <algorithm> // for std::sort
+
 using std::ostream;
 using std::istream;
 
@@ -578,7 +580,7 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
+OW_CIMInstance
 OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const
@@ -589,7 +591,7 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers
 		includeClassOrigin, propertyList);
 
 	// do processing of deep & localOnly
-	// don't filter anything if (deep == true && localOnly == false) 
+	// don't filter anything if (deep == true && localOnly == false)
 	if (deep != true || localOnly != false)
 	{
 		OW_CIMPropertyArray props = ci.getProperties();
@@ -763,7 +765,7 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
+OW_CIMInstance
 OW_CIMInstance::createModifiedInstance(
 	const OW_CIMInstance& previousInstance,
 	OW_Bool includeQualifiers,
