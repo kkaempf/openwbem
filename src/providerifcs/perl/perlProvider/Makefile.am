@@ -63,11 +63,17 @@ uninstall-local:
 		rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
 		rm -f $(DESTDIR)$(thelibdir)/$$i; \
 	done
+	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI uninstall
 
 clean-local:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -rf $$i* .$$i.libs; \
 	done
+	-make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI clean
+	if [ "$(top_srcdir)" != "$(top_builddir)" ]; then rm -rf perlNPI perlNPI.marker; fi
+
+distclean-local:
+	-make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI distclean
 
 libperlProvider_a_SOURCES = \
 perlProvider.c \

@@ -17,11 +17,9 @@ UNINSTALL = $(PERLRUN) "-MExtUtils::Install" \
 -e 'uninstall($$ARGV[0],1,0);'
 uninstall :: uninstall_from_$(INSTALLDIRS)dirs
  
-uninstall_from_perldirs ::
-        @$(UNINSTALL) $(PERL_ARCHLIB)/auto/$(FULLEXT)/.packlist
- 
-uninstall_from_sitedirs ::
-        @$(UNINSTALL) $(SITEARCHEXP)/auto/$(FULLEXT)/.packlist
+uninstall_from_vendordirs :: 
+	rm -rf $(INSTALLVENDORARCH)/auto/perlNPI
+	rm -rf $(INSTALLVENDORARCH)/perlNPI.pm
 
 MAKE_FRAG
 }
