@@ -124,5 +124,12 @@ AuthManager::authenticate(String& userName,
 	return false;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+AuthManager::shutdown()
+{
+	m_authenticator.setNull();
+}
+
 } // end namespace OpenWBEM
 

@@ -31,7 +31,7 @@
 #define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Exception.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServiceIFC.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_CimomServerFwd.hpp"
 #include "OW_CommonFwd.hpp"
@@ -41,12 +41,13 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(AuthManager)
 
-class AuthManager : public IntrusiveCountableBase
+class AuthManager : public ServiceIFC
 {
 public:
 	AuthManager();
 	~AuthManager();
-	void init(const ServiceEnvironmentIFCRef& env);
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 	bool authenticate(String& userName,
 		const String& info, String& details, OperationContext& context);
 private:
