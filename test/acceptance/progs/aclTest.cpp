@@ -50,6 +50,9 @@
 #include "OW_CIMParamValue.hpp"
 
 #include <iostream>
+#if defined OW_DARWIN
+#include <assert.h>
+#endif
 
 
 using std::cerr;
