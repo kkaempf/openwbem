@@ -556,6 +556,12 @@ public:
 	int getType() const;
 
 	/**
+	 * @return The type for this OW_CIMValue.
+	 * (see class OW_CIMDataType)
+	 */
+	OW_CIMDataType getCIMDataType() const;
+
+	/**
 	 * Determine if another OW_CIMValue has the same data type as this one.
 	 * @param x The OW_CIMValue to compare this object's data type with.
 	 * @return true If the datatypes are the same. Otherwise false.

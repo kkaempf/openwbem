@@ -244,7 +244,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_NPIInstanceProviderProxy::createInstance(
-    const OW_ProviderEnvironmentIFCRef &env, OW_CIMObjectPath cop,
+    const OW_ProviderEnvironmentIFCRef &env, const OW_CIMObjectPath&  cop,
     OW_CIMInstance cimInstance)
 {
         OW_CIMObjectPath rval;
@@ -263,7 +263,7 @@ OW_NPIInstanceProviderProxy::createInstance(
 
             CIMInstance _ci = { static_cast<void *> (&cimInstance)};
 
-            CIMObjectPath _cop = { static_cast<void *> (&cop)};
+            CIMObjectPath _cop = { static_cast<void *> (const_cast<OW_CIMObjectPath*>(&cop))};
 
             CIMObjectPath _rcop =
                 m_ftable->fp_createInstance(&_npiHandle, _cop, _ci);

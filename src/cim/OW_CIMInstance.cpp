@@ -448,12 +448,7 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	cp.setValue(cv);
 	if(cv)
 	{
-		OW_CIMDataType dt(cv.getType());
-		if (cv.isArray())
-		{
-			dt.setToArrayType(cv.getArraySize());
-		}
-		cp.setDataType(dt);
+		cp.setDataType(cv.getCIMDataType());
 	}
 	else
 	{

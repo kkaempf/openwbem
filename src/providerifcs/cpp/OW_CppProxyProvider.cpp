@@ -151,7 +151,7 @@ OW_CppInstanceProviderProxy::getInstance(
 OW_CIMObjectPath
 OW_CppInstanceProviderProxy::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
+		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance)
 {
 	return m_pProv->createInstance(env, cop, cimInstance);

@@ -361,7 +361,7 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
 	if(cc != 0)
 	{
 		//cerr << "OW_MutexImpl::acquireMutex got err on lock: " << cc << endl;
-		return -1;
+		return cc;
 	}
 
 	return 0;

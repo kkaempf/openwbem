@@ -48,7 +48,7 @@ class RPMIP : public OW_CppInstanceProviderIFC, public OW_CppMethodProviderIFC
 
 		virtual OW_CIMObjectPath createInstance(
 				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPath cop,
+				const OW_CIMObjectPath& cop,
 				OW_CIMInstance cimInstance );
 
 		virtual void setInstance(
@@ -341,7 +341,7 @@ RPMIP::processPkg(OW_CIMInstance& inst)
 OW_CIMObjectPath 
 RPMIP::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
+		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance )
 {
 	(void)env;

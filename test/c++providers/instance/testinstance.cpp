@@ -84,7 +84,7 @@ public:
 
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
+		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance );
 
 	virtual void setInstance(
@@ -179,7 +179,7 @@ OW_CIMInstance
 OW_CIMObjectPath 
 	OW_TestInstance::createInstance(
 	const OW_ProviderEnvironmentIFCRef& env,
-	OW_CIMObjectPath cop,
+	const OW_CIMObjectPath& cop,
 	OW_CIMInstance cimInstance )
 {
 
@@ -204,6 +204,7 @@ OW_CIMObjectPath
 	newInst.name = name;
 	newInst.params = params;
 	g_saa.push_back(newInst);
+	return cop;
 }
 
 //////////////////////////////////////////////////////////////////////////////

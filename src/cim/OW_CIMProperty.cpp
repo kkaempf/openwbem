@@ -122,7 +122,7 @@ OW_CIMProperty::OW_CIMProperty(const OW_String& name,
 {
 	m_pdata->m_name = name;
 	m_pdata->m_cimValue = value;
-	m_pdata->m_propertyDataType = value.getType();
+	m_pdata->m_propertyDataType = value.getCIMDataType();
 }
 
 //////////////////////////////////////////////////////////////////////////////

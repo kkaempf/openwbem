@@ -68,9 +68,12 @@ OW_Mutex::acquire()
 {
 	if(!m_isRecursive)
 	{
-		if (OW_MutexImpl::acquireMutex(m_mutex) != 0)
+		int rv = OW_MutexImpl::acquireMutex(m_mutex);
+		if (rv != 0)
 		{
-			OW_THROW(OW_Assertion, "OW_MutexImpl::acquireMutex returned with error");
+			OW_THROW(OW_Assertion, 
+				OW_Format("OW_MutexImpl::acquireMutex returned with error: %1", 
+					rv).c_str());
 		}
 	}
 	else

@@ -613,7 +613,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 
 	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(node);
 	OW_String className = cimInstance.getClassName();
-	OW_CIMObjectPath realPath(className, path.getNameSpace());
+	OW_CIMObjectPath realPath = OW_CIMObjectPath(className, path.getNameSpace());
 
 	// Special treatment for __Namespace class
 	if(className.equals(OW_CIMClass::NAMESPACECLASS))
@@ -659,7 +659,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_XMLNode& node,
 	realPath.setKeys(keys);
 
 	hdl.createInstance(realPath, cimInstance);
-	OW_CIMObjectPath newPath(cimInstance.getClassName(),
+	OW_CIMObjectPath newPath = OW_CIMObjectPath(cimInstance.getClassName(),
 		cimInstance.getKeyValuePairs());
 	newPath.setNameSpace(path.getNameSpace());
 	OW_CIMtoXML(newPath, ostr, OW_CIMtoXMLFlags::isInstanceName);

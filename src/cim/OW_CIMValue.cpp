@@ -153,6 +153,17 @@ public:
 	{
 		return m_type;
 	}
+
+	OW_CIMDataType getCIMDataType() const
+	{
+		OW_CIMDataType rval = OW_CIMDataType(getType());
+		if (m_isArray)
+		{
+			rval.setToArrayType(-1);
+		}
+		return rval;
+	}
+
 	OW_Bool sameType(const OW_CIMValueImpl& arg) const
 	{
 		return(m_type == arg.m_type && m_isArray == arg.m_isArray);
@@ -720,6 +731,8 @@ OW_Bool OW_CIMValue::operator> (const OW_CIMValue& x) const
 //////////////////////////////////////////////////////////////////////////////
 int OW_CIMValue::getType() const {  return m_impl->getType(); }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDataType OW_CIMValue::getCIMDataType() const { return m_impl->getCIMDataType(); }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool OW_CIMValue::sameType(const OW_CIMValue& x) const

@@ -212,6 +212,7 @@ main(int argc, char* argv[])
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
+
 		cout << "** Enumerating instances (0 instances)" << endl;
 		OW_CIMObjectPath ccop("TestInstance", "root");
 		OW_CIMObjectPathEnumeration copEnu = rch.enumInstanceNames(ccop);
@@ -226,7 +227,11 @@ main(int argc, char* argv[])
 		OW_StringArray sa;
 		sa.push_back(OW_String("One"));
 		sa.push_back(OW_String("Two"));
+#if 1
 		inst.setProperty("Params", OW_CIMValue(sa));
+#else
+		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
+#endif
 		OW_CIMObjectPath icop = ccop;
 		icop.addKey("Name", OW_CIMValue(OW_String("One")));
 		rch.createInstance(icop, inst);
@@ -234,6 +239,37 @@ main(int argc, char* argv[])
 		cout << "** Enumerating instances (1 instance)" << endl;
 		copEnu = rch.enumInstanceNames(ccop);
 		OW_ASSERT(copEnu.numberOfElements() == 1);
+
+		cout << "** Getting Instance" << endl;
+		inst = rch.getInstance(icop);
+		sa.clear();
+		cout << "** Checking array property on instance" << endl;
+		inst.getProperty("Params").getValue().get(sa);
+		OW_ASSERT(sa.size() == 2);
+		OW_ASSERT(sa[0] == "One");
+		OW_ASSERT(sa[1] == "Two");
+
+		cout << "** Modifying array property on instance" << endl;
+		sa.push_back(OW_String("Three"));
+
+#if 1
+		inst.setProperty("Params", OW_CIMValue(sa));
+#else
+		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
+#endif
+
+		rch.setInstance(icop, inst);
+
+		cout << "** Getting new instance" << endl;
+		inst = rch.getInstance(icop);
+
+		cout << "** Checking array property on new instance" << endl;
+		sa.clear();
+		inst.getProperty("Params").getValue().get(sa);
+		OW_ASSERT(sa.size() == 3);
+		OW_ASSERT(sa[0] == "One");
+		OW_ASSERT(sa[1] == "Two");
+		OW_ASSERT(sa[2] == "Three");
 
 		return 0;
 	}

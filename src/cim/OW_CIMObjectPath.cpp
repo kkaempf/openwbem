@@ -68,7 +68,7 @@ struct OW_CIMObjectPath::OPData
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath::OW_CIMObjectPath(OW_Bool notNull) :
-	OW_CIMBase(), m_pdata((notNull) ?  new OPData : NULL)
+	OW_CIMBase(), m_pdata((notNull) ?  new OPData : 0)
 {
 }
 

@@ -42,7 +42,7 @@ public:
 
    virtual OW_CIMObjectPath createInstance(
 	  const OW_ProviderEnvironmentIFCRef& env,
-	  OW_CIMObjectPath cop,
+	  const OW_CIMObjectPath& cop,
 	  OW_CIMInstance cimInstance );
 
    virtual void setInstance(
@@ -193,7 +193,7 @@ OW_CIMInstance
 OW_CIMObjectPath 
    LinuxProcess::createInstance(
    const OW_ProviderEnvironmentIFCRef& env,
-   OW_CIMObjectPath cop,
+   const OW_CIMObjectPath& cop,
    OW_CIMInstance cimInstance )
 {
    (void)env;

@@ -1202,9 +1202,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 		if(instancep)
 		{
-			instancep->createInstance(
-				createProvEnvRef(real_ch),
-					cop, ci);
+			instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
 			created = true;
 		}
 	}

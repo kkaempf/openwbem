@@ -66,6 +66,17 @@ void OW_StringArrayPropertyTestCases::testSomething()
 		unitAssert(newSA.size() == 2);
 		unitAssert(newSA[0].equals("one"));
 		unitAssert(newSA[1].equals("two"));
+		newSA.clear();
+		newSA.push_back("ONE");
+		newSA.push_back("TWO");
+		newSA.push_back("THREE");
+		inst.setProperty(OW_CIMProperty(OW_String("SA2"),OW_CIMValue(newSA)));
+		newSA.clear();
+		inst.getProperty("SA2").getValue().get(newSA);
+		unitAssert(newSA.size() == 3);
+		unitAssert(newSA[0].equals("ONE"));
+		unitAssert(newSA[1].equals("TWO"));
+		unitAssert(newSA[2].equals("THREE"));
 	}
 	catch(OW_CIMException& ce)
 	{

@@ -155,7 +155,7 @@ OW_NameSpaceProvider::getInstance(
 OW_CIMObjectPath
 OW_NameSpaceProvider::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPath cop,
+		const OW_CIMObjectPath& cop,
 		OW_CIMInstance cimInstance)
 {
 	OW_CIMProperty cp = cimInstance.getProperty(OW_CIMProperty::NAME_PROPERTY);
