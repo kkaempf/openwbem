@@ -1,5 +1,7 @@
 SUBDIRS = db src etc test mof doc schemas
 
+noinst_SCRIPTS = $(PACKAGE_PREFIX)-openwbem.spec
+
 EXTRA_DIST = \
 Doxyfile.sh \
 ow_ar.sh \
@@ -13,11 +15,14 @@ ow_ar.sh \
 Makefile-shared-lib.inc \
 Makefile-shared-lib-inst.inc \
 openwbem.spec \
+generic-company-openwbem.spec.in \
 openwbem-faq.html
 
 CLEANFILES = Doxyfile
 
-SUFFIXES = .sh
+
+SUFFIXES = .sh 
+
 
 .sh:
 	@RM@ -f $@ $@-t
@@ -25,6 +30,14 @@ SUFFIXES = .sh
 		-e 's!@''srcdir''@!$(srcdir)!g' \
 	$< > $@-t
 	@MV@	$@-t $@
+
+$(PACKAGE_PREFIX)-openwbem.spec: generic-company-openwbem.spec.in
+	@RM@ -f $@ $@-t
+	@SED@ \
+		-e 's!@''GENERIC''@!$(PACKAGE_PREFIX)!g' \
+		-e 's!@''OWVERSION''@!$(OPENWBEM_VERSION)!g' \
+	$< > $@-t
+	@MV@    $@-t $@
 
 docs: Doxyfile
 	doxygen Doxyfile
@@ -36,4 +49,5 @@ DISTCHECK_CONFIGURE_FLAGS= --with-perl=no
 
 rpm: dist
 	rpmbuild -ta $(distdir).tar.gz
+
 

@@ -125,6 +125,12 @@ if test "$with_perl" != no; then
 fi
 AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 
+if test "x$with_package_prefix" != "x"; then
+  PACKAGE_PREFIX=$with_package_prefix
+else
+  PACKAGE_PREFIX=GENERIC
+fi
+  AC_SUBST(PACKAGE_PREFIX)
 
 dnl Checks for header files.
 AC_HEADER_STDC
