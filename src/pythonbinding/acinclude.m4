@@ -153,10 +153,10 @@ dnl use it
 #include <patchlevel.h>
 ],
       [
-#define WANT_PYTHON_VERSION ((WANT_PYTHON_MAJOR << 24) | \
-    (WANT_PYTHON_MINOR << 16 ) | \
-    (WANT_PYTHON_SUB_MINOR << 8 ))
-#if PY_VERSION_HEX >= $WANT_PYTHON_VERSION
+#define WANT_PYTHON_VERSION (($WANT_PYTHON_MAJOR << 24) | \
+    ($WANT_PYTHON_MINOR << 16 ) | \
+    ($WANT_PYTHON_SUB_MINOR << 8 ))
+#if PY_VERSION_HEX >= WANT_PYTHON_VERSION
 // Everything is okay
 #else
 #  error Python version is too old
