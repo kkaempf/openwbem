@@ -20,6 +20,21 @@ Fix problems:
     - Importing mof with SNIA browser is broken.
     - Write a function to read the output of a popened process, and get the
       return code, with a time limit and output limit.
+    - Rewrite the provider manager lookup so it's simpler/less code.
+    - assoc problems:
+      - Demo_OSProcess
+      - snmp ip info assoc
+      - namespace assoc
+    - simplify the provider manager lookup structure
+    - snmp indication provider started twice
+    - 127.0.0.1 in xml
+    - rename cimom to wbem server
+    - remove internal provider ifc
+    - config item for interop namespace
+    - client too inefficient when auth is needed.  client needs to do OPTIONS
+      and/or remember what auth is needed instead of repeatedly sending the
+      request twice
+    - Fix std::exception (basic_ios::clear(iostate) caused exception in OW_HTTPSvrConnection::run()
 
 New features:
     - Modifying existing filters will affect the indication server, and
@@ -37,6 +52,8 @@ New features:
         - Do the rest of them.
     - Update SLP provider to use the new standard template.
     - Don't load the authentication provider if allow_anonymous is turned on.
+    - client batch support
+    - local mof compiler
 
 Post 3.0
     - Add a virtual log message to the thread counter class so we can output
@@ -148,6 +165,7 @@ Documentation:
     - Make a web page that has a list of projects/products that are using 
       OpenWBEM.
     - Update javadoc on header files in ifcs, common, client, and provider.
+	- Document how to create an SSL key+cert
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
