@@ -109,6 +109,7 @@ OW_Select.hpp \
 OW_SelectEngine.hpp \
 OW_Semaphore.hpp \
 OW_SortedVectorMap.hpp \
+OW_SortedVectorSet.hpp \
 OW_Stack.hpp \
 OW_StackTrace.hpp \
 OW_String.hpp \
