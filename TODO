@@ -104,32 +104,33 @@ Post 3.0
       implement references.  The provider interface can easily do the rest.
 
 Refactorings:
+    - Get rid of all the bool parameters and replace them with enums
+      (esp. for cimom handle calls.)
+    - Make OW_Exception constructor protected and fix appropriate code.
+    - Remove *E functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
+      that return OW_Enumeration<T> and OW_Array<T>.
+    - Rename OW_Types.h to OW_Types.hpp
+    - Put common request handlers into a header (e.g. InstanceArrayBuilder)
+
+      Post 3.0
     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
       move OW_Cpp*ProviderIFC classes into the cimom.
     - Create a base class for all the common code in the provider interfaces.
-    - Move some of the XML code around.  Get rid of param* strings.  Move 
-      XMLQualifier::* to XMLCIMFactory.
     - Create a common base class for C++ provider ifcs (internal, c++, 
       simplec++)
+    - Move some of the XML code around.  Get rid of param* strings.  Move 
+      XMLQualifier::* to XMLCIMFactory.
     - inline the smaller functions in OW_String, OW_StringBuffer, and other 
       commonly used classes.
     - XMLExecute has handling of flags like localonly, etc.  remove this
       and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
-    - Get a better separation between OW_CIMServer and OW_*Repository.
-      Have CIMServer do all the CIM Stuff, and have the repository classes just
-      responsible for storage and indexing.
-    - Rename OW_Types.h to OW_Types.hpp
-    - Make OW_Exception constructor protected and fix appropriate code.
-    - Remove *E functions from the CIMOMHandle.  Create 2 wrapper cimom
-      handles that return OW_Enumeration<T> and OW_Array<T>.
-    - Put common request handlers into a header (e.g. InstanceArrayBuilder)
+
+      Interface breaking, but of questionable value.
     - Clean up naming. Create a CIM class/instance path, local object path,
       etc. and use them where appropriate.
     - Put everything into namespace OpenWBEM and remove OW_
     - Make a new header OW_PPconfig.h that is like OW_config.h now.  Make
       OW_config.h to not use PP symbols, use consts derived from the pp symbols.
-    - Get rid of all the bool parameters and replace them with enums
-      (esp. for cimom handle calls.)
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
