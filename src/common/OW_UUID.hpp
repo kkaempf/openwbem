@@ -86,6 +86,8 @@ public:
 	UUID(const String& uuidStr);
 	/**
 	 * Get the string representation of this UUID.
+	 *  The following is an example of the string representation of a UUID:
+	 *       f81d4fae-7dec-11d0-a765-00a0c91e6bf6
 	 */
 	String toString() const;
 private:
