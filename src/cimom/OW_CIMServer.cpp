@@ -2398,14 +2398,14 @@ OW_CIMServer::_commonReferences(
 	}
 
 	// Get all association classes from the repository
-	// If the assoc class was specified, only children of it will be
+	// If the result class was specified, only children of it will be
 	// returned.
 
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, resultClass, assocClassResult, role);
+	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
 	OW_StringArray resultClassNames;
 	for(size_t i = 0; i < staticAssocs.size(); i++)
 	{
@@ -2689,7 +2689,7 @@ OW_CIMServer::_commonAssociators(
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
-	_getAssociationClasses(ns, assocClassName, assocClassResult, role);
+	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
@@ -3026,14 +3026,16 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-	const OW_String& className, OW_CIMClassResultHandlerIFC& result,
-	const OW_String& role)
+		const OW_String& assocClassName, const OW_String& className, 
+		OW_CIMClassResultHandlerIFC& result, const OW_String& role)
 {
-	if(!className.empty())
+	if(!assocClassName.empty())
 	{
-		m_mStore.enumClass(ns, className, result, true, false, true, true);
+		// they gave us a class name so we can use the class association index
+		// to only look at the ones that could provide associations
+		m_mStore.enumClass(ns, assocClassName, result, true, false, true, true);
 		OW_CIMClass cc;
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, assocClassName, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(OW_CIMException::FAILED);
