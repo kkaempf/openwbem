@@ -761,7 +761,8 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 				OW_LOG_INFO(env->getLogger(COMPONENT_NAME), Format("Unloading Provider %1",
 					iter->first));
 				iter->second = 0;
-				m_provs.erase(iter);
+				m_provs.erase(iter++);
+				continue;
 			}
 		}
 
