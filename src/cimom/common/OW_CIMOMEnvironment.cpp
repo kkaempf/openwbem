@@ -297,7 +297,7 @@ CIMOMEnvironment::startServices()
 			OW_LOG_DEBUG(m_Logger, "CIMOM starting IndicationServer");
 			m_indicationServer->init(this);
 			m_indicationServer->start();
-			m_indicationServer->waitUntilReady();
+			//m_indicationServer->waitUntilReady();
 		}
 	}
 }
@@ -473,11 +473,10 @@ CIMOMEnvironment::_createIndicationServer()
 		if (!m_indicationServer)
 		{
 
-			OW_LOG_ERROR(m_Logger, Format("CIMOM Failed to load indication server"
+			OW_LOG_FATAL_ERROR(m_Logger, Format("CIMOM Failed to load indication server"
 				" from library %1. Indication are currently DISABLED!",
 				indicationLib));
-			m_indicationsDisabled = true;
-			return;
+			OW_THROW(CIMOMEnvironmentException, "Failed to load indication server");
 		}
 	
 	}

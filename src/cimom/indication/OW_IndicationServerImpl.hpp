@@ -51,12 +51,14 @@
 #include "OW_SortedVectorMap.hpp"
 #include "OW_Map.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_Thread.hpp"
 
 namespace OpenWBEM
 {
 
 class NotifyTrans;
 class LifecycleIndicationPoller;
+class IndicationServerImplThread;
 
 //////////////////////////////////////////////////////////////////////////////
 class IndicationServerImpl : public IndicationServer
@@ -64,6 +66,32 @@ class IndicationServerImpl : public IndicationServer
 public:
 	IndicationServerImpl();
 	~IndicationServerImpl();
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void start();
+	void shutdown();
+	void processIndication(const CIMInstance& instance,
+		const String& instNS);
+	// these are called by the CIM_IndicationSubscription pass-thru provider.
+	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath);
+	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username);
+	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst);
+	
+	// these are called by the threads started by the previous functions
+	void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
+	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
+	void modifySubscription(const String& ns, const CIMInstance& subInst);
+	
+	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName);
+
+private:
+	IntrusiveReference<IndicationServerImplThread> m_indicationServerThread;
+};
+
+class IndicationServerImplThread : public Thread
+{
+public:
+	IndicationServerImplThread();
+	~IndicationServerImplThread();
 	virtual void init(const CIMOMEnvironmentRef& env);
 	virtual void waitUntilReady();
 	virtual Int32 run();

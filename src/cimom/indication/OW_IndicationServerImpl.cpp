@@ -77,6 +77,77 @@ String COMPONENT_NAME("ow.owcimomd.indication.Server");
 IndicationServer::~IndicationServer()
 {
 }
+
+//////////////////////////////////////////////////////////////////////////////
+IndicationServerImpl::IndicationServerImpl()
+	: m_indicationServerThread(new IndicationServerImplThread)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+IndicationServerImpl::~IndicationServerImpl()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::init(const ServiceEnvironmentIFCRef& env)
+{
+	CIMOMEnvironmentRef cimomEnv(env.cast_to<CIMOMEnvironment>());
+	OW_ASSERT(cimomEnv);
+	m_indicationServerThread->init(cimomEnv);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::start()
+{
+	m_indicationServerThread->start();
+	m_indicationServerThread->waitUntilReady();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::shutdown()
+{
+	m_indicationServerThread->shutdown();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::processIndication(const CIMInstance& instance,const String& instNS)
+{
+	m_indicationServerThread->processIndication(instance, instNS);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectPath& subPath)
+{
+	m_indicationServerThread->startDeleteSubscription(ns, subPath);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
+{
+	m_indicationServerThread->startCreateSubscription(ns, subInst, username);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstance& subInst)
+{
+	m_indicationServerThread->startModifySubscription(ns, subInst);
+}
+	
+//////////////////////////////////////////////////////////////////////////////
+void
+IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
+{
+	m_indicationServerThread->modifyFilter(ns, filterInst, userName);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 struct NotifyTrans
 {
@@ -100,13 +171,13 @@ namespace
 class Notifier : public Runnable
 {
 public:
-	Notifier(IndicationServerImpl* pmgr, NotifyTrans& ntrans) :
+	Notifier(IndicationServerImplThread* pmgr, NotifyTrans& ntrans) :
 		m_pmgr(pmgr), m_trans(ntrans) {}
 	virtual void run();
 private:
 	virtual void doCooperativeCancel();
 	virtual void doDefinitiveCancel();
-	IndicationServerImpl* m_pmgr;
+	IndicationServerImplThread* m_pmgr;
 	NotifyTrans m_trans;
 };
 class IndicationServerProviderEnvironment : public ProviderEnvironmentIFC
@@ -206,9 +277,8 @@ Notifier::doDefinitiveCancel()
 
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-IndicationServerImpl::IndicationServerImpl()
-	: IndicationServer()
-	, m_shuttingDown(false)
+IndicationServerImplThread::IndicationServerImplThread()
+	: m_shuttingDown(false)
 	, m_startedBarrier(2)
 {
 }
@@ -218,7 +288,7 @@ namespace
 class instanceEnumerator : public CIMInstanceResultHandlerIFC
 {
 public:
-	instanceEnumerator(IndicationServerImpl* is_,
+	instanceEnumerator(IndicationServerImplThread* is_,
 		const String& ns_)
 		: is(is_)
 		, ns(ns_)
@@ -240,7 +310,7 @@ private:
 		// TODO: If the provider rejects the subscription, we need to disable it!
 		is->createSubscription(ns, i, username);
 	}
-	IndicationServerImpl* is;
+	IndicationServerImplThread* is;
 	String ns;
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -249,7 +319,7 @@ class namespaceEnumerator : public StringResultHandlerIFC
 public:
 	namespaceEnumerator(
 		const CIMOMHandleIFCRef& ch_,
-		IndicationServerImpl* is_)
+		IndicationServerImplThread* is_)
 		: ch(ch_)
 		, is(is_)
 	{}
@@ -267,12 +337,12 @@ private:
 		}
 	}
 	CIMOMHandleIFCRef ch;
-	IndicationServerImpl* is;
+	IndicationServerImplThread* is;
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::init(const CIMOMEnvironmentRef& env)
+IndicationServerImplThread::init(const CIMOMEnvironmentRef& env)
 {
 	m_env = env;
 	m_logger = env->getLogger(COMPONENT_NAME);
@@ -303,7 +373,7 @@ IndicationServerImpl::init(const CIMOMEnvironmentRef& env)
 	OperationContext context;
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl: %1 export providers found",
+	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: %1 export providers found",
 		pra.size()));
 	for (size_t i = 0; i < pra.size(); i++)
 	{
@@ -311,7 +381,7 @@ IndicationServerImpl::init(const CIMOMEnvironmentRef& env)
 		for (size_t j = 0; j < clsNames.size(); j++)
 		{
 			m_providers[clsNames[j]] = pra[i];
-			OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl: Handling"
+			OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread: Handling"
 				" indication type %1", clsNames[j]));
 		}
 	}
@@ -337,19 +407,19 @@ IndicationServerImpl::init(const CIMOMEnvironmentRef& env)
 
 //////////////////////////////////////////////////////////////////////////////
 CIMOMEnvironmentRef
-IndicationServerImpl::getEnvironment() const
+IndicationServerImplThread::getEnvironment() const
 {
 	return m_env;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::waitUntilReady()
+IndicationServerImplThread::waitUntilReady()
 {
 	m_startedBarrier.wait();
 }
 //////////////////////////////////////////////////////////////////////////////
-IndicationServerImpl::~IndicationServerImpl()
+IndicationServerImplThread::~IndicationServerImplThread()
 {
 	try
 	{
@@ -362,7 +432,7 @@ IndicationServerImpl::~IndicationServerImpl()
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32
-IndicationServerImpl::run()
+IndicationServerImplThread::run()
 {
 	// let CIMOMEnvironment know we're running and ready to go.
 	m_startedBarrier.wait();
@@ -385,7 +455,7 @@ IndicationServerImpl::run()
 			}
 			catch (const Exception& e)
 			{
-				OW_LOG_ERROR(m_logger, Format("IndicationServerImpl::run caught "
+				OW_LOG_ERROR(m_logger, Format("IndicationServerImplThread::run caught "
 					" exception %1", e));
 			}
 			catch(ThreadCancelledException&)
@@ -394,20 +464,20 @@ IndicationServerImpl::run()
 			}
 			catch(...)
 			{
-				OW_LOG_ERROR(m_logger, "IndicationServerImpl::run caught unknown"
+				OW_LOG_ERROR(m_logger, "IndicationServerImplThread::run caught unknown"
 					" exception");
 				// Ignore?
 			}
 		}
 	}
-	OW_LOG_DEBUG(m_logger, "IndicationServerImpl::run shutting down");
+	OW_LOG_DEBUG(m_logger, "IndicationServerImplThread::run shutting down");
 	m_subscriptionPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 5);
 	m_notifierThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::shutdown()
+IndicationServerImplThread::shutdown()
 {
 	{
 		NonRecursiveMutexLock l(m_mainLoopGuard);
@@ -429,7 +499,7 @@ IndicationServerImpl::shutdown()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::processIndication(const CIMInstance& instanceArg,
+IndicationServerImplThread::processIndication(const CIMInstance& instanceArg,
 	const String& instNS)
 {
 	NonRecursiveMutexLock ml(m_mainLoopGuard);
@@ -548,10 +618,10 @@ CIMInstance filterInstance(const CIMInstance& toFilter, const StringArray& props
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
+IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg_,
 	const String& instNS)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl::_processIndication "
+	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::_processIndication "
 		"instanceArg = %1 instNS = %2", instanceArg_.toString(), instNS));
 	
 	// If the provider didn't set the IndicationTime property, then we'll set it.
@@ -627,10 +697,10 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::_processIndicationRange(
+IndicationServerImplThread::_processIndicationRange(
 	const CIMInstance& instanceArg, const String instNS,
-	IndicationServerImpl::subscriptions_iterator first,
-	IndicationServerImpl::subscriptions_iterator last)
+	IndicationServerImplThread::subscriptions_iterator first,
+	IndicationServerImplThread::subscriptions_iterator last)
 {
 	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
@@ -697,7 +767,7 @@ IndicationServerImpl::_processIndicationRange(
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::addTrans(
+IndicationServerImplThread::addTrans(
 	const String& ns,
 	const CIMInstance& indication,
 	const CIMInstance& handler,
@@ -712,7 +782,7 @@ IndicationServerImpl::addTrans(
 }
 //////////////////////////////////////////////////////////////////////////////
 IndicationExportProviderIFCRef
-IndicationServerImpl::getProvider(const CIMName& className)
+IndicationServerImplThread::getProvider(const CIMName& className)
 {
 	IndicationExportProviderIFCRef pref(0);
 	provider_map_t::iterator it =
@@ -725,9 +795,9 @@ IndicationServerImpl::getProvider(const CIMName& className)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::deleteSubscription(const String& ns, const CIMObjectPath& subPath)
+IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObjectPath& subPath)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
+	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
 	CIMObjectPath cop(subPath);
 	cop.setNameSpace(ns);
 	OW_LOG_DEBUG(m_logger, Format("cop = %1", cop));
@@ -836,9 +906,9 @@ class createSubscriptionRunnable : public Runnable
 	String ns;
 	CIMInstance subInst;
 	String username;
-	IndicationServerImpl* is;
+	IndicationServerImplThread* is;
 public:
-	createSubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, const String& username_, IndicationServerImpl* is_)
+	createSubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, const String& username_, IndicationServerImplThread* is_)
 	: ns(ns_)
 	, subInst(subInst_)
 	, username(username_)
@@ -855,9 +925,9 @@ class modifySubscriptionRunnable : public Runnable
 {
 	String ns;
 	CIMInstance subInst;
-	IndicationServerImpl* is;
+	IndicationServerImplThread* is;
 public:
-	modifySubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, IndicationServerImpl* is_)
+	modifySubscriptionRunnable(const String& ns_, const CIMInstance& subInst_, IndicationServerImplThread* is_)
 	: ns(ns_)
 	, subInst(subInst_)
 	, is(is_)
@@ -873,9 +943,9 @@ class deleteSubscriptionRunnable : public Runnable
 {
 	String ns;
 	CIMObjectPath sub;
-	IndicationServerImpl* is;
+	IndicationServerImplThread* is;
 public:
-	deleteSubscriptionRunnable(const String& ns_, const CIMObjectPath& sub_, IndicationServerImpl* is_)
+	deleteSubscriptionRunnable(const String& ns_, const CIMObjectPath& sub_, IndicationServerImplThread* is_)
 	: ns(ns_)
 	, sub(sub_)
 	, is(is_)
@@ -891,7 +961,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
+IndicationServerImplThread::startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
 	RunnableRef rr(new createSubscriptionRunnable(ns, subInst, username, this));
 	m_subscriptionPool->addWork(rr);
@@ -899,7 +969,7 @@ IndicationServerImpl::startCreateSubscription(const String& ns, const CIMInstanc
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstance& subInst)
+IndicationServerImplThread::startModifySubscription(const String& ns, const CIMInstance& subInst)
 {
 	RunnableRef rr(new modifySubscriptionRunnable(ns, subInst, this));
 	m_subscriptionPool->addWork(rr);
@@ -907,7 +977,7 @@ IndicationServerImpl::startModifySubscription(const String& ns, const CIMInstanc
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectPath& sub)
+IndicationServerImplThread::startDeleteSubscription(const String& ns, const CIMObjectPath& sub)
 {
 	RunnableRef rr(new deleteSubscriptionRunnable(ns, sub, this));
 	m_subscriptionPool->addWork(rr);
@@ -915,9 +985,9 @@ IndicationServerImpl::startDeleteSubscription(const String& ns, const CIMObjectP
 
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& subInst, const String& username)
+IndicationServerImplThread::createSubscription(const String& ns, const CIMInstance& subInst, const String& username)
 {
-	OW_LOG_DEBUG(m_logger, Format("IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
+	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
 	
 	// get the filter
 	OperationContext context;
@@ -1222,7 +1292,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& subInst)
+IndicationServerImplThread::modifySubscription(const String& ns, const CIMInstance& subInst)
 {
 	// since you can't modify an instance's path which includes the paths to
 	// the filter and the handler, if a subscription was modified, it will
@@ -1246,7 +1316,7 @@ IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& su
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
+IndicationServerImplThread::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
 {
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Implementation note: This depends on the fact that the indication subscription creation/deletion events are
@@ -1284,7 +1354,7 @@ IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterIn
 }
 
 void
-IndicationServerImpl::doCooperativeCancel()
+IndicationServerImplThread::doCooperativeCancel()
 {
 	NonRecursiveMutexLock l(m_mainLoopGuard);
 	m_shuttingDown = true;

@@ -37,26 +37,23 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_SharedLibraryReference.hpp"
-#include "OW_Thread.hpp"
+#include "OW_ServiceIFC.hpp"
 #include "OW_CimomCommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class IndicationServer : public Thread
+class IndicationServer : public ServiceIFC
 {
 public:
-	IndicationServer()
-		: Thread()
-	{}
+	IndicationServer() {}
 	virtual ~IndicationServer();
-	virtual void init(const CIMOMEnvironmentRef& env) = 0;
-	virtual void shutdown() = 0;
+
 	virtual void processIndication(const CIMInstance& instance,
 		const String& instNS) = 0;
-	virtual void waitUntilReady() = 0;
-	// these functions are call by the CIM_IndicationSubscription pass-thru provider.
+	
+	// these functions are called by the CIM_IndicationSubscription pass-thru provider.
 	virtual void startDeleteSubscription(const String& ns, const CIMObjectPath& subPath) = 0;
 	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
 	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
