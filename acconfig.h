@@ -116,6 +116,9 @@
 #undef DISABLE_INSTANCE_MANIPULATION
 #undef DISABLE_PROPERTY_OPERATIONS
 
+/* Define to enable workarounds so we can work with valgrind */
+#undef VALGRIND_SUPPORT
+
 @BOTTOM@
 
 /* end of autoconf set vars */
