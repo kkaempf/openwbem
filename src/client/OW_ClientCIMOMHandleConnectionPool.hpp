@@ -103,6 +103,8 @@ private:
 	pool_t m_pool;
 };
 
+typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+
 }
 
 #endif
