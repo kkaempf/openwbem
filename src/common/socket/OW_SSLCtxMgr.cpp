@@ -150,7 +150,7 @@ SSLCtxMgr::initCtx(const String& keyfile)
 	}
 	if (!(RAND_load_file(randFile, 1024))) // TODO is this sufficient?
 	{
-		OW_THROW(SSLException, "Couldn't load randomness");
+		OW_THROW(SSLException, Format("Couldn't load randomness from %1, errno=%2(%3)", randFile, errno, strerror(errno)).c_str());
 	}
 	return ctx;
 }
