@@ -25,6 +25,8 @@ Testing:
       - Random syscall failure.  Send SIGUSR1 to owciomd at random intervals
         while hammerClient is running.
       - Do all this while running under valgrind to detect memory leaks, etc.
+    - Migrate the test schema to cim 2.8 (once it's final). Put 2.8 in the
+      distribution as well.
 
 Fix problems:
     - Implement a "compatibility mode" in the client if the server doesn't 
