@@ -1,3 +1,9 @@
+
+
+/**
+ * @author Dan Nuffer
+ */
+
 #include "OW_UTF8Utils.hpp"
 #include "OW_String.hpp"
 #include <iostream>

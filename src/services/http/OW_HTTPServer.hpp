@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 #define OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
@@ -85,6 +91,7 @@ public:
 	{
 		Int32 httpPort;
 		Int32 httpsPort;
+		String UDSFilename;
 		Int32 maxConnections;
 		bool isSepThread;
 		bool enableDeflate;

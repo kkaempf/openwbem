@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #include "OW_config.h"
 #include "OW_XMLParserDOM.hpp"
 #include "OW_XMLParserSAX.hpp"

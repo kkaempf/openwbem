@@ -792,6 +792,10 @@ if (test ! -z "$ac_cv_openssldir") ; then
 	SSL_LIBS="-lssl -lcrypto"
 else
 	AC_DEFINE(NO_SSL)
+	SSL_LIBS=""
+	LDFLAGS="$saved_LDFLAGS"
+	CPPFLAGS="$saved_CPPFLAGS"
+	LIBS="$saved_LIBS"
 fi
 
 if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ; then
@@ -823,10 +827,11 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 fi
 else
 	AC_DEFINE(NO_SSL)
+	SSL_LIBS=""
+	LDFLAGS="$saved_LDFLAGS"
+	CPPFLAGS="$saved_CPPFLAGS"
+	LIBS="$saved_LIBS"
 fi
-
-AC_SUBST(SSL_LIBS)
-AC_SUBST(EXTRA_SSL_LIBS)
 
 dnl
 dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
@@ -856,6 +861,9 @@ then
 else
 	AC_MSG_RESULT("None \(pkg-config not found\)")
 fi
+
+AC_SUBST(SSL_LIBS)
+AC_SUBST(EXTRA_SSL_LIBS)
 
 dnl End of the ssl check
 

@@ -21,7 +21,6 @@ OW_XMLOperationGeneric.cpp \
 OW_Param.cpp \
 OW_XMLClass.cpp \
 OW_XMLQualifier.cpp \
-OW_XMLParameters.cpp \
 OW_XMLEscape.cpp \
 OW_XMLUnescape.cpp \
 OW_XMLCIMFactory.cpp \
@@ -40,7 +39,6 @@ OW_RequestHandlerIFCXML.hpp \
 OW_Param.hpp         \
 OW_XMLClass.hpp \
 OW_XMLOperationGeneric.hpp \
-OW_XMLParameters.hpp \
 OW_XMLParserCore.hpp \
 OW_XMLQualifier.hpp \
 OW_XMLEscape.hpp \

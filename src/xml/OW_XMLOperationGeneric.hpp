@@ -27,13 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
 #define OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Param.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_XMLParameters.hpp"
 
 namespace OpenWBEM
 {

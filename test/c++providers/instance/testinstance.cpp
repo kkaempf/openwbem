@@ -28,6 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_Assertion.hpp"

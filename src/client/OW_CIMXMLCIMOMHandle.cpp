@@ -27,11 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #include "OW_config.h"										
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_XMLParameters.hpp"
 #include "OW_Format.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -91,8 +96,8 @@ CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 		m_iMessageID = 1;
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.2\" DTDVERSION=\"2.1\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
 	ostr << "<SIMPLEREQ>";
 }
 //////////////////////////////////////////////////////////////////////////////

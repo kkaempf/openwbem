@@ -27,6 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Jon Carey
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
 #define OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
 #include "OW_config.h"

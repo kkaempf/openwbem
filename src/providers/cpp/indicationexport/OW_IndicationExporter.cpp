@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #include "OW_config.h"
 #include "OW_IndicationExporter.hpp"
 #include "OW_CIMProperty.hpp"
@@ -74,7 +80,7 @@ IndicationExporter::sendXMLHeader(ostream& ostr)
 		m_iMessageID = 1;
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.2\" DTDVERSION=\"2.1\">";
+	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
 	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
 	ostr << "<SIMPLEEXPREQ>";
 	ostr << "<EXPMETHODCALL NAME=\"ExportIndication\">";

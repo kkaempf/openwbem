@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_SAFE_LIB_CREATE_HPP_INCLUDE_GUARD_
 #define OW_SAFE_LIB_CREATE_HPP_INCLUDE_GUARD_
 

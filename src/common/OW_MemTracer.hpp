@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_MEMTRACER_HPP_INCLUDE_GUARD_
 #define OW_MEMTRACER_HPP_INCLUDE_GUARD_
 #ifdef __cplusplus

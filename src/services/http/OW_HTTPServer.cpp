@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #include "OW_config.h"
 #include "OW_HTTPServer.hpp"
 #include "OW_HTTPSvrConnection.hpp"
@@ -141,6 +147,7 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 		m_options.httpPort = item.toInt32();
 		item = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
 		m_options.httpsPort = item.toInt32();
+		m_options.UDSFilename = env->getConfigItem(ConfigOpts::UDS_FILENAME_opt, OW_DEFAULT_UDS_FILENAME);
 		item = env->getConfigItem(ConfigOpts::USE_UDS_opt, OW_DEFAULT_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
 		item = env->getConfigItem(ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
@@ -295,7 +302,7 @@ HTTPServer::startService()
 		try
 		{
 			m_pUDSServerSocket = new ServerSocket;
-			m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000, m_options.reuseAddr);
+			m_pUDSServerSocket->doListen(m_options.UDSFilename, 1000, m_options.reuseAddr);
 			lgr->logInfo("HTTP server listening on Unix Domain Socket");
 			String theURL = "ipc://localhost/cimom";
 			addURL(URL(theURL));

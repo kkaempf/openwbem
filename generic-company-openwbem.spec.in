@@ -172,7 +172,7 @@ fi
 # create self-signed cert.
 umask 077
 
-if [ ! -f %{@GENERIC}sysconfdir}/openwbem/hostkey+cert.pem ] ; then
+if [ ! -f %{@GENERIC@sysconfdir}/openwbem/hostkey+cert.pem ] ; then
 FQDN=`hostname --fqdn`
 if [ "x${FQDN}" = "x" ]; then
    FQDN=localhost.localdomain

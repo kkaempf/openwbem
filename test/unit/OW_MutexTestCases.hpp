@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_Mutex_TEST_CASES_HPP_
 #define OW_Mutex_TEST_CASES_HPP_
 

@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 %{
 /*************** Includes and Defines *****************************/
 #include <stdio.h> /* for debugging */

@@ -121,6 +121,27 @@ if [ -d /etc/init.d ] && [ -d /etc/init.d/rc3.d ]; then
   done
 fi
 
+# create self-signed cert.
+umask 077
+
+if [ ! -f /etc/openwbem/hostkey+cert.pem ] ; then
+FQDN=`hostname --fqdn`
+if [ "x${FQDN}" = "x" ]; then
+   FQDN=localhost.localdomain
+fi
+
+cat << EOF | sh /etc/openwbem/owgencert > /dev/null 2>&1
+--
+SomeState
+SomeCity
+SomeOrganization
+SomeOrganizationalUnit
+${FQDN}
+root@${FQDN}
+EOF
+fi
+
+
 
 %PreUn
 # if -e operation, not -U 

@@ -27,10 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-// TEST
-#include <iostream>
-using std::cout;
-using std::endl;
+
+/**
+ * @author Jon Carey
+ * @author Dan Nuffer
+ */
 
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"

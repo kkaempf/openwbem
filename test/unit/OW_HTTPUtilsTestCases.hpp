@@ -28,6 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_OW_HTTPUtils_TEST_CASES_HPP_
 #define OW_OW_HTTPUtils_TEST_CASES_HPP_
 

@@ -28,6 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ListenerAuthenticatorTestCases.hpp"

@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
 #define OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
 #include "OW_config.h"

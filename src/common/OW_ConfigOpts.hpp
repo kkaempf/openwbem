@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
@@ -146,6 +151,9 @@
 #ifndef OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE
 #define OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE "root"
 #endif
+#ifndef OW_DEFAULT_UDS_FILENAME
+#define OW_DEFAULT_UDS_FILENAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"OW_PACKAGE_PREFIX
+#endif
 
 
 namespace OpenWBEM
@@ -203,6 +211,7 @@ namespace ConfigOpts
 	static const char* const AUTHORIZATION_LIB_opt = "owcimomd.authorization_lib";
 	static const char* const LISTEN_ADDRESSES_opt = "http_server.listen_addresses";
 	static const char* const INTEROP_SCHEMA_NAMESPACE_opt = "owcimomd.interop_schema_namespace";
+	static const char* const UDS_FILENAME_opt = "http_server.uds_filename";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM

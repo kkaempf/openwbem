@@ -27,6 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Jon Carey
+ * @author Dan Nuffer
+ * @author Bart Whiteley
+ */
+
 #ifndef OW_CIMXMLCIMOMHANDLE_HPP_
 #define OW_CIMXMLCIMOMHANDLE_HPP_
 #include "OW_config.h"

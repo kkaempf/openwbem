@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ */
+
+
 #include "OW_config.h"
 #include "OW_CppSimpleAssociatorProviderIFC.hpp"
 #include "OW_CIMInstance.hpp"

@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
 #define OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
 #include "OW_config.h"

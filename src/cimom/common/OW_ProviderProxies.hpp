@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Jon Carey
+ */
+
 #ifndef OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
 #define OW_PROVIDERPROXIES_HPP_INCLUDE_GUARD_
 
