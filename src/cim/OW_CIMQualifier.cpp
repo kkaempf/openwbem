@@ -98,6 +98,7 @@ OW_CIMQualifier::OW_CIMQualifier(const OW_CIMQualifierType& cgt) :
 {
 	m_pdata->m_name = cgt.getName();
 	m_pdata->m_qualifierType = cgt;
+	m_pdata->m_qualifierValue = cgt.getDefaultValue();
 }
 
 //////////////////////////////////////////////////////////////////////////////
