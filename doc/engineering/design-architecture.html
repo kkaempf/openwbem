@@ -23,42 +23,31 @@
  <table border="1" cellpadding="3" cellspacing="2" class="axial">
   <tr>
    <th>Project:</th> 
-   <td><a href="index.html">PROJECTNAME</a></td> 
-  </tr>
-  <tr>
-   <th>Internal Release Number:</th> 
-   <td>X.Y.Z</td> 
+   <td><a href="index.html">OpenWBEM</a></td> 
   </tr>
   <tr>
    <th>Related Documents:</th> 
    <td>
     <div><a href="srs.html">Software Requirements Specification</a></div>
-<!--    <div><a href="design.html">Design</a> &gt;
-             <a href="design-scalability.html">Scalability Worksheet</a></div> -->
+    <div><a href="design.html">Design</a> &gt;
+         <a href="design-scalability.html">Scalability Worksheet</a></div>
     <div><a href="design.html">Design</a> &gt;
          <a href="design-security.html">Security Worksheet</a></div>
     <div><a href="glossary.html">Glossary</a></div>
-    <div>LINKS TO RELEVANT STANDARDS</div>
-    <div>LINKS TO OTHER DOCUMENTS</div>
+<!--    <div>LINKS TO RELEVANT STANDARDS</div>
+    <div>LINKS TO OTHER DOCUMENTS</div> -->
    </td>
   </tr>
  </table>
  </div> <!-- /releaseinfo -->
 
- <div class="todo">
-  TODO: Answer the questions below to help you define your system
-  architecture.  Some example text is provided.
- </div>
-
-
-
-
  <div id="overview">
  <h3>Conceptual Integrity</h3>
- I will contend that conceptual integrity is <i>the</i> most important consideration in system design.
- It is better to have a system omit certain anomalous features an improvements, but to reflect one set
- of design ideas, than to have one that contains many good but independent and uncoordinated ideas.
- (Brooks, F. <i>The Mythical Man-Month: Essays on Software Engineering</i>)<br />
+ Brooks said:
+ <blockquote>I will contend that conceptual integrity is <i>the</i> most important consideration in system design.
+ It is better to have a system omit certain anomalous features and improvements, but to reflect one set
+ of design ideas, than to have one that contains many good but independent and uncoordinated ideas.</blockquote>
+ (<i>The Mythical Man-Month: Essays on Software Engineering</i>)<br />
  We strive hard to maintain OpenWBEM's conceptual integrity. The 3 engineers who originally
  wrote OpenWBEM still are the core maintainers. No other open-source WBEM framework can say that--all
  their original authors have moved on. Because of this, there is a high degree of consistency in OpenWBEM
@@ -69,39 +58,38 @@
   <dt>What are the most important facts that a developer should know
   about this system architecture?</dt>
 
-  <dd>PARAGRAPH OR BULLETS</dd>
+  <dd>OpenWBEM is a WBEM software suite that consists of the following components:</dd>
+   <ol>
+    <li>owcimomd (WBEM server)</li>
+    <li>CIM model API</li>
+    <li>WBEM client API</li>
+    <li>WBEM listener API</li>
+    <li>MOF compiler utility & API</li>
+    <li>WBEM query language (WQL) API</li>
+    <li>Various command line utilities</li>
+   </ol>
 
 
-  <dt>What software architecture style is being used?</dt>
-
-  <dd class="sample1">Single-process desktop application (with plug-in extension modules).</dd>
-
-  <dd class="sample2">Client-server with a custom thick-clients and server.</dd>
-
-  <dd class="sample3">2-tier web application: webserver/app-server, database.</dd>
-
-  <dd class="sample4">3-tier web application: webserver, app-server, database.</dd>
-
-  <dd class="sample1">Single web service: app-server, database.</dd>
-
-  <dd class="sample2">Network of web services.</dd>
-
-  <dd class="sample3">Peer-to-peer with/without central server.</dd>
-
-  <dd class="sample4">Pipe-and-filter.</dd>
-
-  <dd class="sample1">Computing grid / distributed servers.</dd>
-
-
-  <dt>What are the ranked goals of this architecture?</dt>
+  <dt>What are the goals of this architecture?</dt>
 
   <dd>
    <ol>
-    <li><a class="def" href="glossary-std.html#dg_easy_integration">Ease of integration</a></li>
-
+    <li><a class="def" href="glossary-std.html#dg_data_interop">Interoperability</a></li>
     <li><a class="def" href="glossary-std.html#dg_extensibility">Extensibility</a></li>
-
     <li><a class="def" href="glossary-std.html#dg_cap_match">Capacity matching</a></li>
+    <li><a class="def" href="glossary-std.html#dg_understandability">Understandability</a></li>
+    <li><a class="def" href="glossary-std.html#dg_modularity">Modularity</a></li>
+    <li><a class="def" href="glossary-std.html#dg_data_reliability">Reliability</a></li>
+    <li><a class="def" href="glossary-std.html#dg_data_security">Data security</a></li>
+    <li><a class="def" href="glossary-std.html#dg_no_intrusion">Intrusion prevention</a></li>
+    <li><a class="def" href="glossary-std.html#dg_no_abuse">Abuse prevention</a></li>
+    <li><a class="def" href="glossary-std.html#dg_auditability">Auditability</a></li>
+    <li>Availability</li>
+    <li>Modifiability</li>
+    <li>Performance</li>
+    <li>Security</li>
+    <li>Testability</li>
+    <li>Usability</li>
 
    </ol>
   </dd>
