@@ -289,7 +289,6 @@ OW_CIMInstance::getPropertyT(const OW_String& propertyName) const
 
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE.
-// Assumes writelock has been obtained.
 void
 OW_CIMInstance::_buildKeys()
 {
