@@ -42,6 +42,7 @@
 #include "OW_BinIfcIO.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_Assertion.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -165,12 +166,19 @@ OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 	if(value)
 	{
 		OW_CIMProperty cp(keyname, value);
-		if(cp)
-		{
-			cp.setDataType(value.getCIMDataType());
-			m_pdata->m_keys.append(cp);
-		}
+		cp.setDataType(value.getCIMDataType());
+		m_pdata->m_keys.append(cp);
 	}
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath&
+OW_CIMObjectPath::addKey(const OW_CIMProperty& key)
+{
+	OW_ASSERT(key);
+	OW_ASSERT(key.getValue());
+	m_pdata->m_keys.append(key);
 	return *this;
 }
 
