@@ -22,14 +22,10 @@
 #include "cmpisrv.h"
 
 static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
-   (void) eRes;
-   (void) data;
-   (void) type;
-#if 0
    CMPIrc rc;
-   CIMValue v=value2CIMValue(data,type,&rc);
+   OW_CIMValue v=value2CIMValue(data,type,&rc);
    if (eRes->ft==CMPI_ResultMeth_Ftab) {
-      MethodResultResponseHandler* res=(MethodResultResponseHandler*)eRes->hdl;
+      CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
       if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
          //res->processing();
          ((CMPI_Result*)eRes)->flags|=RESULT_set;
@@ -37,14 +33,13 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType t
       res->handle(v);
    }
    else {
-      ValueResponseHandler* res=(ValueResponseHandler*)eRes->hdl;
+      CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
       if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
          //res->processing();
          ((CMPI_Result*)eRes)->flags|=RESULT_set;
       }
       res->handle(v);
    }
-#endif
    CMReturn(CMPI_RC_OK);
 }
 
@@ -188,6 +183,12 @@ CMPI_ResultOnStack::CMPI_ResultOnStack(
 #endif
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(const CMPIObjectPathValueResultHandler& handler) {
+      hdl= (void *)&handler;
+      ft=CMPI_ResultResponseOnStack_Ftab;
+      flags=RESULT_Response;
+}
+
+CMPI_ResultOnStack::CMPI_ResultOnStack(const CMPIValueValueResultHandler& handler) {
       hdl= (void *)&handler;
       ft=CMPI_ResultResponseOnStack_Ftab;
       flags=RESULT_Response;

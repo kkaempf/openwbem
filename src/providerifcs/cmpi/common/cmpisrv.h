@@ -137,6 +137,11 @@ template<typename T>
 class CMPISingleValueResultHandler : public OW_ResultHandlerIFC<T>
 {
 public:
+	CMPISingleValueResultHandler()
+		: _t(OW_CIMNULL)
+	{
+	}
+
 	T& getValue()
 	{
 		return _t;
@@ -153,6 +158,7 @@ private:
 typedef CMPISingleValueResultHandler<OW_CIMClass> CMPIClassValueResultHandler;
 typedef CMPISingleValueResultHandler<OW_CIMObjectPath> CMPIObjectPathValueResultHandler;
 typedef CMPISingleValueResultHandler<OW_CIMInstance> CMPIInstanceValueResultHandler;
+typedef CMPISingleValueResultHandler<OW_CIMValue> CMPIValueValueResultHandler;
 
 
 struct CMPI_Result : CMPIResult {
@@ -166,6 +172,7 @@ struct CMPI_ResultOnStack : CMPIResult {
    CMPI_ResultOnStack(const OW_CIMObjectPathResultHandlerIFC & handler);
    CMPI_ResultOnStack(const OW_CIMInstanceResultHandlerIFC& handler);
    CMPI_ResultOnStack(const CMPIObjectPathValueResultHandler & handler);
+   CMPI_ResultOnStack(const CMPIValueValueResultHandler & handler);
 #if 0
    CMPI_ResultOnStack(const MethodResultResponseHandler& handler);
    CMPI_ResultOnStack(const ResponseHandler& handler);

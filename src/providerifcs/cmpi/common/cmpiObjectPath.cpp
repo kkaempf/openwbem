@@ -26,7 +26,6 @@
 
 static CMPIStatus refRelease(CMPIObjectPath* eRef) {
 
-   std::cout << "--- refRelease()" << std::endl;
    OW_CIMObjectPath* ref=(OW_CIMObjectPath*)eRef->hdl;
    if (ref) {
       delete ref;
@@ -41,7 +40,6 @@ static CMPIStatus refReleaseNop(CMPIObjectPath* eRef) {
 }
 
 static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc) {
-   std::cout << "--- refClone()" << std::endl;
    OW_CIMObjectPath *ref=(OW_CIMObjectPath*)eRef->hdl;
    //OW_CIMObjectPath *nRef=new OW_CIMObjectPath(ref->getObjectName(),
    //                                       ref->getNameSpace());
@@ -76,7 +74,6 @@ static CMPIStatus refSetClassName(CMPIObjectPath * eRef,char * cl) {
 static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc) {
    OW_CIMObjectPath * ref=(OW_CIMObjectPath*)eRef->hdl;
    const OW_String &cn=ref->getObjectName();
-	std::cout << "cop classname " << cn << std::endl;
    CMPIString* eCn=string2CMPIString(cn);
    CMSetStatus(rc,CMPI_RC_OK);
    return eCn;
@@ -86,7 +83,10 @@ static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc) {
 static long locateKey(const OW_CIMPropertyArray &kb, const OW_String& eName) {
    for (unsigned long i=0,s=kb.size(); i<s; i++) {
       const OW_String &n=kb[i].getName();
-      if (n.compareToIgnoreCase(eName)) return i;
+      if (n.equalsIgnoreCase(eName)) 
+	  {
+		  return i;
+	  }
    }
    return -1;
 }
@@ -113,7 +113,6 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc) {
    OW_CIMObjectPath* ref=(OW_CIMObjectPath*)eRef->hdl;
    const OW_String eName(name);
    OW_CIMProperty cpr = ref->getKey(eName);
-   if (cpr) std::cout << " cop key " << cpr.toMOF() << std::endl;
 
    CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
    CMSetStatus(rc,CMPI_RC_OK);
