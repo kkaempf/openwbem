@@ -47,6 +47,14 @@ SharedLibraryRef
 dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	const LoggerRef& logger) const
 {
+	// There is a reason to use RTLD_NOW.  If some symbols can't be resolved because
+	// the shared library is built incorrectly or missing some symbols or something,
+	// then using RTLD_NOW will cause dlopen() to fail, and then the error can be detected
+	// and handled.  If RTLD_LAZY is specified, dlopen() won't fail, but when code is
+	// executed that tries to use an unresolvable symbol, that will cause a segfault.
+	// RTLD_GLOBAL is necessary for proper exception and rtti support with gcc.
+	// See http://gcc.gnu.org/faq.html#dso, so even though it may cause symbol conflicts,
+	// we have to live with it.
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
 	
 	String first_error = dlerror();
