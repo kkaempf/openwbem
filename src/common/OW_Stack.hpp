@@ -18,10 +18,10 @@ public:
 
 	bool empty() const {   return (size() == 0); }
 
-	reference top() {   return operator[](size()-1); }
-	const_reference top() const {   return operator[](size()-1); }
+	reference top() {   return back(); }
+	const_reference top() const {   return back(); }
 
-	void pop() { remove(size()-1); }
+	void pop() { pop_back(); }
 
 	void push(const T& x) {   push_back(x); }
 
