@@ -646,6 +646,7 @@ namespace
 			// Inst/Assoc/Meth provs don't need one of these
 			return ServiceEnvironmentIFCRef(0);
 		}
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		virtual void enumQualifierTypes(const String &ns, 
 			CIMQualifierTypeResultHandlerIFC &result, OperationContext &context)
 		{
@@ -658,6 +659,14 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->deleteQualifierType(ns, qualName, context);
 		}
+		virtual void setQualifierType(const String &ns,
+			const CIMQualifierType &qt, OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			m_prep->setQualifierType(ns, qt, context);
+		}
+#endif
+
 		virtual void enumNameSpace(StringResultHandlerIFC &result,
 			OperationContext &context)
 		{
@@ -682,13 +691,6 @@ namespace
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->createClass(ns, cimClass, context);
-		}
-
-		virtual void setQualifierType(const String &ns,
-			const CIMQualifierType &qt, OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			m_prep->setQualifierType(ns, qt, context);
 		}
 
 		virtual CIMClass getClass(const String &ns, const String &className,
