@@ -64,7 +64,6 @@ extern "C"
 
 #ifdef OW_USE_PTHREAD
 #include <pthread.h>
-#include <limits.h> // for PTHREAD_KEYS_MAX
 #endif
 
 #ifdef OW_WIN32
@@ -198,8 +197,7 @@ bool default_stack_size::needsSetting(false);
 default_stack_size g_theDefaultStackSize;
 //////////////////////////////////////////////////////////////////////
 pthread_once_t once_control = PTHREAD_ONCE_INIT;
-const pthread_key_t NOKEY = PTHREAD_KEYS_MAX+1;
-pthread_key_t theKey=NOKEY;
+pthread_key_t theKey;
 extern "C" {
 //////////////////////////////////////////////////////////////////////
 static void initializeTheKey()
