@@ -174,7 +174,7 @@ authenticate(const char* userName,
 	};
 	pam_handle_t *pamh=NULL;
 	int rval;
-	rval = pam_start("openwbem", pUserName, &conv, &pamh);
+	rval = pam_start(OW_PACKAGE_PREFIX"openwbem", pUserName, &conv, &pamh);
 	if (rval == PAM_SUCCESS)
 		rval = pam_authenticate(pamh, 0);	 /* is user really user? */
 	if (rval == PAM_SUCCESS)

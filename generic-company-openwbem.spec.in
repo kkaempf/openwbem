@@ -122,7 +122,7 @@ install etc/sysconfig/daemons/owcimomd $RPM_BUILD_ROOT/etc/sysconfig/daemons
 install -d $RPM_BUILD_ROOT/etc/init.d
 install etc/init/owcimomd $RPM_BUILD_ROOT/etc/init.d/%{initname}
 install -d $RPM_BUILD_ROOT/etc/pam.d
-install etc/pam.d/openwbem $RPM_BUILD_ROOT/etc/pam.d
+install etc/pam.d/openwbem $RPM_BUILD_ROOT/etc/pam.d/@GENERIC@openwbem
 
 #install -d $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/openwbem/c++providers
 install -d $RPM_BUILD_ROOT/${@GENERIC@localstatedir}/openwbem
@@ -200,7 +200,7 @@ ldconfig
 %dir %{@GENERIC@localstatedir}/openwbem
 %config %{@GENERIC@sysconfdir}/*
 #%config /etc/sysconfig/daemons/%{daemonname}
-%config /etc/pam.d/openwbem
+%config /etc/pam.d/@GENERIC@openwbem
 %attr(0755,root,root) /etc/init.d/%{initname}
 %{@GENERIC@prefix}/lib/lib*
 %{@GENERIC@prefix}/bin/*
