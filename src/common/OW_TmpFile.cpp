@@ -64,7 +64,7 @@ OW_TmpFileImpl::OW_TmpFileImpl(OW_String const& filename)
 	: m_filename(NULL)
 	, m_hdl(-1)
 {
-	int len = filename.length();
+	size_t len = filename.length();
 	m_filename = new char[len + 1];
 	strncpy(m_filename, filename.c_str(), len);
 	m_filename[len] = '\0';
@@ -106,14 +106,17 @@ OW_TmpFileImpl::open()
 #else
 	OW_String sfname("/tmp/owtmpfileXXXXXX");
 #endif
-	int len = sfname.length();
+	size_t len = sfname.length();
 	m_filename = new char[len + 1];
 	strncpy(m_filename, sfname.c_str(), len);
 	m_filename[len] = '\0';
 	static OW_Mutex tmpfileMutex;
 	OW_MutexLock tmpfileML(tmpfileMutex);
-
+#ifdef OW_WIN32
+	m_hdl = -1;
+#else
 	m_hdl = mkstemp(m_filename);
+#endif
 	if(m_hdl == -1)
 	{
 		delete[] m_filename;

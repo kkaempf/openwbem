@@ -52,7 +52,7 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
 		cc = -1;
 	}
 	return cc;
-#else
+#elif defined OW_USE_PTHREAD
 
     pthread_mutexattr_t attr;
     int res = pthread_mutexattr_init(&attr);
@@ -66,6 +66,10 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
  
     handle.valid_id = false;
 	return 0;
+#elif OW_USE_WIN32_THREADS
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -86,7 +90,7 @@ OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
 	return 0;
-#else
+#elif defined(OW_USE_PTHREAD)
 	switch (pthread_mutex_destroy(&handle.mutex))
 	{
 		case 0:
@@ -104,6 +108,10 @@ OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
 	}
 
 	return 0;
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -123,7 +131,7 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
-#else
+#elif defined (OW_USE_PTHREAD)
 
     pthread_t tid = pthread_self();
     if (handle.valid_id && pthread_equal(handle.thread_id, tid))
@@ -136,6 +144,10 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
     handle.thread_id = tid;
 
 	return res;
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -154,7 +166,7 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 	// TODO: ?!?!
 	(void)handle;
 	return 0;
-#else
+#elif defined (OW_USE_PTHREAD)
     pthread_t tid = pthread_self();
     if (!handle.valid_id)
     {
@@ -173,6 +185,10 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 
 	return res;
  
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 

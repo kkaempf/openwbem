@@ -31,8 +31,8 @@
 #ifndef OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 
-#define BASE_BUF_SIZE 256
-#define HTTP_BUF_SIZE 4096
+const size_t BASE_BUF_SIZE = 256;
+const size_t HTTP_BUF_SIZE = 4096;
 
 #include "OW_config.h"
 #ifdef OW_HAVE_STREAMBUF
@@ -50,7 +50,7 @@ public:
 	 * @param bufSize size of buffer
 	 * @param direction "in", "out", or "io"
 	 */
-	OW_BaseStreamBuffer(int bufSize = BASE_BUF_SIZE,
+	OW_BaseStreamBuffer(size_t bufSize = BASE_BUF_SIZE,
 			const char* direction = "io");
 	~OW_BaseStreamBuffer();
 

@@ -52,7 +52,7 @@ int
 OW_UnnamedPipe::writeString(const OW_String& strData)
 {
 	int rc;
-	int len = strData.length()+1;
+	int len = static_cast<int>(strData.length()+1);
 
 	if((rc = this->writeInt(len)) != -1)
 	{

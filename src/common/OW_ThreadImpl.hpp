@@ -82,9 +82,9 @@ public:
 	static bool sameThreads(const volatile OW_Thread_t& handle1,
 		const volatile OW_Thread_t& handle2)
 	{
-	#ifdef OW_USE_GNU_PTH
+	#if defined(OW_USE_GNU_PTH) || defined(OW_WIN32)
 		return handle1 == handle2;
-	#else
+	#elif OW_HAVE_PTHREAD_H
 		return pthread_equal(handle1, handle2);
 	#endif
 	}
@@ -110,6 +110,8 @@ public:
 	#ifdef OW_USE_GNU_PTH
 		initThreads();
 		return pth_self();
+	#elif defined(OW_WIN32)
+		return GetCurrentThreadId();
 	#else
 		return pthread_self();
 	#endif

@@ -32,6 +32,7 @@
 #define OW_EXEC_HPP_
 
 #include "OW_config.h"
+#include "OW_Types.h"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
 #include "OW_ArrayFwd.hpp"
@@ -89,13 +90,13 @@ public:
 	 * Get the process's pid.  If the process's exit status has already been
 	 * read by calling getExitStatus(), then this will return -1
 	 */
-	pid_t pid() const;
+	OW_ProcId pid() const;
 
 	/**
 	 * Set the process's pid.  This is only usefule when constructing an 
 	 * instance of this class.
 	 */
-	void pid(pid_t newPid);
+	void pid(OW_ProcId newPid);
 
 	/**
 	 * Get the process's exit status.  

@@ -35,7 +35,12 @@
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
 
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef OW_WIN32
+#include <io.h>
+#endif
 
 class OW_TmpFileImpl
 {
@@ -46,12 +51,19 @@ public:
 
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L);
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L);
+#ifdef OW_WIN32
+	int seek(long offset, int whence=SEEK_SET)
+		{ return ::_lseek(m_hdl, offset, whence); }
 
+	long tell() { return ::_lseek(m_hdl, 0, SEEK_CUR); }
+	void rewind() { ::_lseek(m_hdl, 0, SEEK_SET); }
+#else
 	int seek(long offset, int whence=SEEK_SET)
 		{ return ::lseek(m_hdl, offset, whence); }
 
 	long tell() { return ::lseek(m_hdl, 0, SEEK_CUR); }
 	void rewind() { ::lseek(m_hdl, 0, SEEK_SET); }
+#endif
 	int flush() { return 0; }
 	void newFile() { open(); }
 	long getSize();

@@ -69,10 +69,10 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 	OW_String sURL = sUrl;
 	sURL.trim();
 
-	OW_Int16 iBeginIndex = 0;
-	OW_Int16 iEndIndex = sURL.indexOf( "://" );
+	size_t iBeginIndex = 0;
+	size_t iEndIndex = sURL.indexOf( "://" );
 
-	if ( iEndIndex >= 0 )
+	if ( iEndIndex != -1 )
 	{
 		if ( iEndIndex > 0 )
 			protocol = sURL.substring( 0, iEndIndex ).toLowerCase();
@@ -80,11 +80,11 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 	}
 
 	iEndIndex = sURL.indexOf( "@", iBeginIndex );
-	if ( iEndIndex >= 0 )
+	if ( iEndIndex != -1 )
 	{
 		OW_String sNamePass = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
 		iBeginIndex = sNamePass.indexOf( ":" );
-		if ( iBeginIndex >= 0 )
+		if ( iBeginIndex != -1 )
 		{
 			if ( iBeginIndex > 0 )
 				username = sNamePass.substring( 0, iBeginIndex );
@@ -97,7 +97,7 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 	}
 
 	iEndIndex = sURL.indexOf( "/", iBeginIndex );
-	if ( iEndIndex >= 0 )
+	if ( iEndIndex != -1 )
 	{
 		path = sURL.substring( iEndIndex );
 		sURL = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );

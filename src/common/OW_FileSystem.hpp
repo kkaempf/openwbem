@@ -35,7 +35,9 @@
 #include "OW_Types.h"
 #include "OW_ArrayFwd.hpp"
 
+#ifdef OW_HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 1024

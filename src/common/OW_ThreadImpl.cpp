@@ -45,9 +45,13 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <sys/types.h>
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <errno.h>
 #include <signal.h>
 #ifdef OW_USE_GNU_PTH
@@ -55,7 +59,7 @@ extern "C"
 #endif
 }
 
-#ifndef OW_USE_GNU_PTH
+#ifdef OW_USE_PTHREAD
 struct LocalThreadParm
 {
 	OW_ThreadFunction m_func;
@@ -103,6 +107,8 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 	wait.tv_sec = milliSeconds / 1000;
 	wait.tv_nsec = (milliSeconds % 1000) * 1000000;
 	while (nanosleep(&wait, &wait) == -1 && errno == EINTR);
+#elif OW_WIN32
+	Sleep(milliSeconds);
 #else
 	timeval now, end;
 	unsigned long microSeconds = milliSeconds * 1000;
@@ -156,7 +162,9 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
         cc = -1;
     }
     return cc;
-#else
+#elif OW_WIN32
+	return 0;
+#elif OW_USE_PTHREAD
 	int cc = 0;
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -177,6 +185,8 @@ OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
 
 	pthread_attr_destroy(&attr);
 	return cc;
+#elif
+#error "port me!"
 #endif
 }
 
@@ -188,7 +198,7 @@ OW_ThreadImpl::destroyThread(OW_Thread_t& )
 }
 
 //////////////////////////////////////////////////////////////////////////////
-#ifndef OW_USE_GNU_PTH
+#ifdef OW_USE_PTHREAD
 extern "C"
 {
 static void*
@@ -219,8 +229,11 @@ OW_ThreadImpl::exitThread(OW_Thread_t&)
 {
 #ifdef OW_USE_GNU_PTH
     pth_exit(NULL);
-#else
+#elif defined(OW_USE_PTHREAD)
 	pthread_exit(NULL);
+#elif defined(OW_USE_WIN32_THREADS)
+#else
+#error "port me!"
 #endif
 }
 
@@ -245,7 +258,7 @@ OW_ThreadImpl::setThreadDetached(OW_Thread_t& handle)
     int cc = pth_attr_set(attr, PTH_ATTR_JOINABLE, false);
     pth_attr_destroy(attr);
     return cc;
-#else
+#elif defined(OW_USE_PTHREAD)
 	int cc = pthread_detach(handle);
 
 	if (cc != 0)
@@ -257,6 +270,10 @@ OW_ThreadImpl::setThreadDetached(OW_Thread_t& handle)
 	}
 
 	return cc;
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -267,8 +284,12 @@ OW_ThreadImpl::joinThread(OW_Thread_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
     return ((pth_join(handle, NULL)) != -1 ? 0 : -1);
-#else
+#elif defined(OW_USE_PTHREAD)
 	return(((errno = pthread_join(handle, NULL)) == 0) ? 0 : -1);
+#elif defined(OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -279,12 +300,12 @@ OW_ThreadImpl::yield()
 {
 #ifdef OW_USE_GNU_PTH
     pth_yield(NULL);
-#else
-#ifdef OW_HAVE_SCHED_YIELD
+#elif defined(OW_HAVE_SCHED_YIELD)
     sched_yield();
+#elif defined(OW_WIN32)
+	Sleep(0);
 #else
 	OW_ThreadImpl::sleep(1);
-#endif
 #endif
 }
 

@@ -42,9 +42,9 @@ class OW_CIMObjectPath;
 class OW_StringBuffer
 {
 public:
-	static const int DEFAULT_ALLOCATION_UNIT = 128;
+	static const size_t DEFAULT_ALLOCATION_UNIT = 128;
 
-	OW_StringBuffer(int allocSize = DEFAULT_ALLOCATION_UNIT);
+	OW_StringBuffer(size_t allocSize = DEFAULT_ALLOCATION_UNIT);
 	OW_StringBuffer(const char* arg);
 	OW_StringBuffer(const OW_String& arg);
 	OW_StringBuffer(const OW_StringBuffer& arg);
@@ -65,7 +65,7 @@ public:
 
 	OW_StringBuffer& append(const char* str)
 	{
-		int len = ::strlen(str);
+		size_t len = ::strlen(str);
 		checkAvail(len+1);
 		::strcpy(m_bfr+m_len, str);
 		m_len += len;
@@ -107,7 +107,7 @@ public:
 	}
 
 
-	char operator[] (int ndx) const;
+	char operator[] (size_t ndx) const;
 	OW_String toString() const
 			{ return OW_String(m_bfr); }
 
@@ -119,8 +119,8 @@ public:
 		return OW_String(true, bfr, m_len);
 	}
 
-	int length() const {  return m_len; }
-	int allocated() const {  return m_allocated; }
+	size_t length() const {  return m_len; }
+	size_t allocated() const {  return m_allocated; }
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
@@ -128,13 +128,13 @@ public:
 	friend std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b);
 
 private:
-	void checkAvail(int len=1)
+	void checkAvail(size_t len=1)
 	{
-		int freeSpace = m_allocated - (m_len+1);
+		size_t freeSpace = m_allocated - (m_len+1);
 	
 		if(len > freeSpace)
 		{
-			int toalloc = m_allocated * 2 + len;
+			size_t toalloc = m_allocated * 2 + len;
 			char* bfr = new char[toalloc];
 			::memmove(bfr, m_bfr, m_len);
 			delete [] m_bfr;
@@ -144,8 +144,8 @@ private:
 	}
 
 
-	int m_len;
-	int m_allocated;
+	size_t m_len;
+	size_t m_allocated;
 	char* m_bfr;
 };
 

@@ -315,7 +315,7 @@ public:
 	 * @return true if this OW_CIMDateTime object represents an interval type
 	 * of CIM date time.
 	 */
-	OW_Bool isInterval() const {  return OW_Bool(bool(m_dptr->m_isInterval));}
+	OW_Bool isInterval() const {  return OW_Bool(bool(m_dptr->m_isInterval != 0));}
 
 	/**
 	 * Read this object from an input stream.

@@ -40,7 +40,9 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
+#endif
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>

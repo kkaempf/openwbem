@@ -90,15 +90,28 @@ typedef off_t	OW_off_t;
 // synchronous I/O multiplexing (i.e. select). There is a
 // possibility this can be something other than an int on
 // a platform we don't yet support.
-typedef int 						OW_Select_t;
+typedef int OW_Select_t;
 
+#ifdef OW_WIN32
+#define OW_SHAREDLIB_EXTENSION ".dll"
+#define OW_FILENAME_SEPARATOR "\\"
+#define OW_PATHNAME_SEPARATOR ";"
+#else
 #define OW_SHAREDLIB_EXTENSION ".so"
 #define OW_FILENAME_SEPARATOR "/"
 #define OW_PATHNAME_SEPARATOR ":"
+#endif
 
 typedef int		OW_FileHandle;
 
+#ifdef OW_WIN32
+#include <windows.h>
+typedef int OW_UserId;
+typedef DWORD OW_ProcId;
+#else
 typedef uid_t OW_UserId;
+typedef pid_t OW_ProcId;
+#endif
 
 #endif
 

@@ -31,14 +31,20 @@
 #include "OW_config.h"
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_IOException.hpp"
 
 extern "C"
 {
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
+#endif
+#ifdef OW_WIN32
+#include <io.h>
 #endif
 }
 
@@ -73,11 +79,17 @@ void
 OW_PosixUnnamedPipe::setOutputBlocking(OW_Bool outputIsBlocking)
 {
 	// If not opened, ignore?
-	if(m_fds[0] == -1)
+	if(m_fds[1] == -1)
 	{
 		return;
 	}
 
+#ifdef OW_WIN32
+	unsigned long argp = 0;
+	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
+		OW_THROW(OW_IOException, "Failed to set pipe to non-blocking");
+
+#else
 	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
 
 	if(outputIsBlocking)
@@ -91,6 +103,7 @@ OW_PosixUnnamedPipe::setOutputBlocking(OW_Bool outputIsBlocking)
 	}
 
 	fcntl(m_fds[1], F_SETFL, fdflags);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -102,13 +115,24 @@ OW_PosixUnnamedPipe::open()
 		close();
 	}
 
+#ifdef OW_WIN32
+	if(::_pipe(m_fds, 2560, _O_BINARY) == -1)
+#else
 	if(::pipe(m_fds) == -1)
+#endif
 	{
 		m_fds[0] = m_fds[1] = -1;
 		OW_THROW(OW_UnnamedPipeException, ::strerror(errno));
 	}
 
+#ifdef OW_WIN32
+	unsigned long argp = 1;
+	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
+		OW_THROW(OW_IOException, "Failed to set pipe to blocking");
+
+#else
 	fcntl(m_fds[1], F_SETFL, O_NONBLOCK);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////

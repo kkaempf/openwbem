@@ -144,11 +144,14 @@ OW_String::OW_String(const OW_Char16& parm) :
 	m_buf(NULL)
 {
 	char bfr[2];
-	bfr[0] = parm.getValue();
+	bfr[0] = static_cast<char>(parm.getValue());
 	bfr[1] = '\0';
 	m_buf = new ByteBuf(bfr);
 }
 
+#if defined(OW_WIN32)
+#define snprintf _snprintf // stupid windoze...
+#endif
 //////////////////////////////////////////////////////////////////////////////
 OW_String::OW_String(OW_Int32 val) :
 	m_buf(NULL)
@@ -170,6 +173,9 @@ OW_String::OW_String(OW_UInt32 val) :
 	::snprintf(bfr, len+1, "%u", val);
 	m_buf = new ByteBuf(bfr, len);
 }
+#if defined(OW_WIN32)
+#undef snprintf
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String::OW_String(OW_Int64 val) :
@@ -267,13 +273,13 @@ OW_String::OW_String(const OW_CIMObjectPath& parm) :
 OW_String::OW_String(const OW_Char16Array& ra) :
 	m_buf(NULL)
 {
-	int sz = ra.size();
+	size_t sz = ra.size();
 	if(sz > 0)
 	{
 		char* bfr = new char[sz+1];
-		for(int i = 0; i < sz; i++)
+		for(size_t i = 0; i < sz; i++)
 		{
-			bfr[i] = ra[i].getValue();
+			bfr[i] = static_cast<char>(ra[i].getValue());
 		}
 		bfr[sz] = '\0';
 		m_buf = new ByteBuf(bfr, sz);
@@ -332,6 +338,11 @@ OW_String::length() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+
+#ifdef OW_WIN32
+#define vsnprintf _vsnprintf // stupid windoze
+#endif
+
 int
 OW_String::format(const char* fmt, ...)
 {
@@ -373,6 +384,9 @@ OW_String::format(const char* fmt, ...)
 		p = np;
 	}
 }
+#ifdef OW_WIN32
+#undef vsnprintf // stupid windoze
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 char
@@ -456,8 +470,7 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 		return (arg.length() == length());
 	}
 
-	int ndx = length();
-	ndx -= static_cast<int>(arg.length());
+	int ndx = static_cast<int>(length() - arg.length());
 
 	if(ndx < 0)
 	{
@@ -528,7 +541,7 @@ OW_String::hashCode() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+size_t
 OW_String::indexOf(char ch, size_t fromIndex) const
 {
 	//if(fromIndex < 0)
@@ -536,7 +549,7 @@ OW_String::indexOf(char ch, size_t fromIndex) const
 	//	fromIndex = 0;
 	//}
 
-	int cc = -1;
+	size_t cc = -1;
 	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
@@ -551,7 +564,7 @@ OW_String::indexOf(char ch, size_t fromIndex) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+size_t
 OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 {
 	//if(fromIndex < 0)
@@ -576,7 +589,7 @@ OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 
 		if(p != NULL)
 		{
-			cc = p - m_buf->data();
+			cc = static_cast<int>(p - m_buf->data());
 		}
 	}
 
@@ -584,19 +597,19 @@ OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
-OW_String::lastIndexOf(char ch, int fromIndex) const
+size_t
+OW_String::lastIndexOf(char ch, size_t fromIndex) const
 {
-	if(fromIndex < 0)
+	if(fromIndex == static_cast<size_t>(-1))
 	{
 		if((fromIndex = length()-1) < 0)
 			return -1;
 	}
 
-	int cc = -1;
+	size_t cc = -1;
 	if(static_cast<size_t>(fromIndex) < length())
 	{
-		for(int i = fromIndex; i >= 0; i--)
+		for(size_t i = fromIndex; i != static_cast<size_t>(-1); i--)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
 			// this code won't be executed.
@@ -611,16 +624,16 @@ OW_String::lastIndexOf(char ch, int fromIndex) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
-OW_String::lastIndexOf(const OW_String& arg, int fromIndex) const
+size_t
+OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
 {
-	if(fromIndex < 0 || static_cast<size_t>(fromIndex) >= length())
+	if(fromIndex == static_cast<size_t>(-1) || fromIndex >= length())
 	{
-		if((fromIndex = length()-1) < 0)
+		if(static_cast<int>(fromIndex = length()-1) < 0)
 			return -1;
 	}
 
-	if((fromIndex -= arg.length() - 1) < 0)
+	if(static_cast<int>(fromIndex -= arg.length() - 1) < 0)
 	{
 		return -1;
 	}
@@ -630,7 +643,7 @@ OW_String::lastIndexOf(const OW_String& arg, int fromIndex) const
 		return length() - 1;
 	}
 
-	while(fromIndex >= 0)
+	while(fromIndex != static_cast<size_t>(-1))
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
@@ -885,7 +898,7 @@ OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 void
 OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
-	OW_UInt32 len = length();
+	OW_UInt32 len = static_cast<OW_UInt32>(length());
 	OW_BinarySerialization::writeLen(ostrm, len);
 
 	if (len)
@@ -990,7 +1003,7 @@ T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char
 	{
 		char* endptr;
 		double v = ::strtod(m_buf->data(), &endptr);
-		T rv = v;
+		T rv = static_cast<T>(v);
 		if (*endptr != '\0' || errno == ERANGE || rv == HUGE_VAL || rv == -HUGE_VAL)
 		{
 			throwStringConversion(m_buf, type);
@@ -1047,7 +1060,7 @@ T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const cha
 	{
 		char* endptr;
 		FPRT v = fp(m_buf->data(), &endptr, base);
-		T rv = v;
+		T rv = static_cast<T>(v);
 		if (*endptr != '\0' || errno == ERANGE || FPRT(rv) != v)
 		{
 			throwStringConversion(m_buf, type);
@@ -1294,7 +1307,7 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 	// Set any if any `digits' consumed; make it negative to indicate
 	// overflow.
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
-	cutlim = cutoff % base;
+	cutlim = static_cast<int>(cutoff % base);
 	cutoff /= base;
 	if(neg)
 	{
@@ -1536,7 +1549,7 @@ OW_String::getLine(istream& is)
 	}
 
 	OW_String rstr = rv.releaseString();
-	int ndx = rstr.indexOf('\r');
+	size_t ndx = rstr.indexOf('\r');
 	if(ndx != -1)
 	{
 		rstr = rstr.substring(0, ndx);

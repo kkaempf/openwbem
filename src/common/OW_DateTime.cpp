@@ -56,7 +56,7 @@ OW_DateTime::OW_DateTime() :
 OW_DateTime::OW_DateTime(const OW_String& str) :
 	m_time(0), m_isInterval(false)
 {
-	int ndx = str.indexOf(':');	// Check for interval
+	size_t ndx = str.indexOf(':');	// Check for interval
 	if(ndx != -1)
 	{
 		m_isInterval = true;
@@ -257,10 +257,15 @@ OW_String
 OW_DateTime::toString() const
 {
 	tm theTime = getTm();
+#ifdef OW_HAVE_ASCTIME_R
 	char buff[30];
 	asctime_r(&theTime, buff);
 	OW_String s(buff);
 	return s;
+#else
+	// if the c library isn't thread-safe, we'll need a mutex here.
+	return asctime(&theTime);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -268,19 +273,34 @@ OW_DateTime::toString() const
 OW_String
 OW_DateTime::toStringGMT() const
 {
-	tm theTime = getTm();
+#ifdef OW_HAVE_GMTIME_R
+	tm ltime;
+	tm* theTime = &ltime; 
 	gmtime_r(&m_time, &theTime);
+#else
+	tm* theTime = gmtime(&m_time);
+#endif
+#ifdef OW_HAVE_ASCTIME_R
 	char buff[30];
-	asctime_r(&theTime, buff);
+	asctime_r(theTime, buff);
 	OW_String s(buff);
 	return s;
+#else
+	// if the c library isn't thread-safe, we'll need a mutex here.
+	return asctime(theTime);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
 tm
 OW_DateTime::getTm() const
 {
+#ifdef OW_HAVE_LOCALTIME_R
 	tm theTime;
 	localtime_r(&m_time, &theTime);
 	return theTime;
+#else
+	tm* theTime = localtime(&m_time);
+	return *theTime;
+#endif
 }

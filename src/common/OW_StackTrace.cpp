@@ -41,10 +41,12 @@
 #include <execinfo.h>
 #endif
 
+#ifdef OW_HAVE_UNISTD_H
 extern "C"
 {
 #include <unistd.h> // for getpid()
 }
+#endif
 
 using std::ifstream;
 using std::ofstream;
@@ -83,7 +85,7 @@ void OW_StackTrace::getStackTrace()
 		free (strings);
 		
 		retval = new OW_StackTrace(bt);
-
+#elif defined(OW_WIN32)
 #else
 		ifstream file(DEFAULT_GDB_PATH);
 		if (file)
@@ -140,3 +142,8 @@ OW_StackTrace::OW_StackTrace(const OW_String& trace)
 {
 }
 
+std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out)
+{
+	ostr << out.m_trace;
+	return ostr;
+}

@@ -40,7 +40,7 @@
 #include <algorithm> // for std::swap
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(int allocSize) :
+OW_StringBuffer::OW_StringBuffer(size_t allocSize) :
 	m_len(0),
 	m_allocated(allocSize > 0 ? allocSize : DEFAULT_ALLOCATION_UNIT),
 	m_bfr(new char[m_allocated])
@@ -117,7 +117,7 @@ OW_StringBuffer::reset()
 
 //////////////////////////////////////////////////////////////////////////////
 char
-OW_StringBuffer::operator[] (int ndx) const
+OW_StringBuffer::operator[] (size_t ndx) const
 {
 	return (ndx > m_len) ? 0 : m_bfr[ndx];
 }
@@ -144,6 +144,9 @@ OW_StringBuffer::operator += (const OW_CIMObjectPath& arg)
 	return append(arg.toString());
 }
 
+#if defined(OW_WIN32)
+#define snprintf _snprintf // stupid windoze...
+#endif
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt8 v)
@@ -242,6 +245,10 @@ OW_StringBuffer::operator += (OW_Real64 v)
 	return append(bfr);
 }
 
+#if defined(OW_WIN32)
+#undef snprintf
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer&
 OW_StringBuffer::append(const char* str, const size_t len)
@@ -266,3 +273,4 @@ std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b)
 	ostr << b.c_str();
 	return ostr;
 }
+

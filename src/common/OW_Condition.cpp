@@ -37,14 +37,11 @@
 DEFINE_EXCEPTION(ConditionLock);
 DEFINE_EXCEPTION(ConditionResource);
 
+#if defined(OW_USE_PTHREAD)
 /////////////////////////////////////////////////////////////////////////////
 OW_Condition::OW_Condition()
 {
-	#ifdef OW_USE_GNU_PTH
-	int res = pth_cond_init(&m_condition, 0);
-	#else
 	int res = pthread_cond_init(&m_condition, 0);
-	#endif
 	if (res != 0)
 	{
 		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
@@ -54,11 +51,7 @@ OW_Condition::OW_Condition()
 /////////////////////////////////////////////////////////////////////////////
 OW_Condition::~OW_Condition()
 {
-	#ifdef OW_USE_GNU_PTH
-	int res = pth_cond_destroy(&m_condition);
-	#else
 	int res = pthread_cond_destroy(&m_condition);
-	#endif
 	assert(res == 0);
 }
 
@@ -66,11 +59,7 @@ OW_Condition::~OW_Condition()
 void 
 OW_Condition::notifyOne()
 {
-	#ifdef OW_USE_GNU_PTH
-	int res = pth_cond_signal(&m_condition);
-	#else
 	int res = pthread_cond_signal(&m_condition);
-	#endif
 	assert(res == 0);
 }
 
@@ -78,13 +67,162 @@ OW_Condition::notifyOne()
 void 
 OW_Condition::notifyAll()
 {
-	#ifdef OW_USE_GNU_PTH
-	int res = pth_cond_broadcast(&m_condition);
-	#else
 	int res = pthread_cond_broadcast(&m_condition);
-	#endif
 	assert(res == 0);
 }
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+{
+	int res;
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	res = pthread_cond_wait(&m_condition, state.pmutex);
+	mutex.conditionPostWait(state);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool 
+OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+{
+	int res;
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	bool ret = false;
+	timespec ts;
+	ts.tv_sec = time(NULL) + sTimeout;
+	ts.tv_nsec = usTimeout * 1000;
+	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
+	mutex.conditionPostWait(state);
+	assert(res == 0 || res == ETIMEDOUT);
+	ret = res != ETIMEDOUT;
+	return ret;
+}
+
+#elif defined (OW_USE_PTH)
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::OW_Condition()
+{
+	int res = pth_cond_init(&m_condition, 0);
+	if (res != 0)
+	{
+		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::~OW_Condition()
+{
+	int res = pth_cond_destroy(&m_condition);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyOne()
+{
+	int res = pth_cond_signal(&m_condition);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyAll()
+{
+	int res = pth_cond_broadcast(&m_condition);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+{
+	int res;
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	res = pth_cond_wait(&m_condition, state.pmutex);
+	mutex.conditionPostWait(state);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool 
+OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+{
+	int res;
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	bool ret = false;
+	timespec ts;
+	ts.tv_sec = time(NULL) + sTimeout;
+	ts.tv_nsec = usTimeout * 1000;
+	res = pth_cond_timedwait(&m_condition, state.pmutex);
+	mutex.conditionPostWait(state);
+	assert(res == 0 || res == ETIMEDOUT);
+	ret = res != ETIMEDOUT;
+	return ret;
+}
+
+#elif defined (OW_USE_WIN32_THREADS)
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::OW_Condition()
+{
+	//if (res != 0)
+	{
+		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+OW_Condition::~OW_Condition()
+{
+	//assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyOne()
+{
+//	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::notifyAll()
+{
+//	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+{
+	int res;
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	mutex.conditionPostWait(state);
+	assert(res == 0);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool 
+OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+{
+	OW_NonRecursiveMutexLockState state;
+	mutex.conditionPreWait(state);
+	bool ret = false;
+	mutex.conditionPostWait(state);
+	return ret;
+}
+
+#else
+#error "port me!"
+
+#endif
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 void 
@@ -107,44 +245,4 @@ OW_Condition::timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_U
 	}
 	return doTimedWait(*(lock.m_mutex), sTimeout, usTimeout);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-void 
-OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
-{
-	int res;
-	OW_NonRecursiveMutexLockState state;
-	mutex.conditionPreWait(state);
-	#ifdef OW_USE_GNU_PTH
-	res = pth_cond_wait(&m_condition, state.pmutex);
-	#else
-	res = pthread_cond_wait(&m_condition, state.pmutex);
-	#endif
-	mutex.conditionPostWait(state);
-	assert(res == 0);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-bool 
-OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
-{
-	int res;
-	OW_NonRecursiveMutexLockState state;
-	mutex.conditionPreWait(state);
-	bool ret = false;
-	timespec ts;
-	ts.tv_sec = time(NULL) + sTimeout;
-	ts.tv_nsec = usTimeout * 1000;
-	#ifdef OW_USE_GNU_PTH
-	res = pth_cond_timedwait(&m_condition, state.pmutex);
-	#else
-	res = pthread_cond_timedwait(&m_condition, state.pmutex, &ts);
-	#endif
-	mutex.conditionPostWait(state);
-	assert(res == 0 || res == ETIMEDOUT);
-	ret = res != ETIMEDOUT;
-	return ret;
-}
-
-
 

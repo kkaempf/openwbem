@@ -113,13 +113,13 @@ public:
 	 * Create a new OW_Char16 object of an unsigned 64 bit value.
 	 * @param val The unsigned 64 bit value this object will contain.
 	 */
-	OW_Char16(OW_UInt64 val) : m_value(val) {}
+	OW_Char16(OW_UInt64 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object of an signed 64 bit value.
 	 * @param val The signed 64 bit value this object will contain.
 	 */
-	OW_Char16(OW_Int64 val) : m_value(val) {}
+	OW_Char16(OW_Int64 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object from a real 32 value.
@@ -269,7 +269,7 @@ public:
 	/**
 	 * @return The single character value of this object.
 	 */
-	operator char() const { return m_value; }
+	operator char() const { return static_cast<char>(m_value); }
 
 private:
 	struct dummy
@@ -288,12 +288,12 @@ public:
 	/**
 	 * @return The unsigned 8 bit value of this object.
 	 */
-	operator OW_UInt8() const { return m_value; }
+	operator OW_UInt8() const { return static_cast<OW_UInt8>(m_value); }
 
 	/**
 	 * @return The signed 8 bit value of this object.
 	 */
-	operator OW_Int8() const { return m_value; }
+	operator OW_Int8() const { return static_cast<OW_Int8>(m_value); }
 
 	/**
 	 * @return The signed 16 bit value of this object.

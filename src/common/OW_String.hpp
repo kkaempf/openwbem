@@ -326,7 +326,7 @@ public:
 	 * was found. -1 if the character was not found at or after the given
 	 * fromIndex.
 	 */
-	int indexOf(char ch, size_t fromIndex=0) const;
+	size_t indexOf(char ch, size_t fromIndex=0) const;
 
 	/**
 	 * Find the first occurence of a string in this OW_String object.
@@ -335,7 +335,7 @@ public:
 	 * @return The index of the given string in the underlying array if it
 	 * was found. -1 if the string was not found at or after the fromIndex.
 	 */
-	int indexOf(const OW_String& arg, size_t fromIndex=0) const;
+	size_t indexOf(const OW_String& arg, size_t fromIndex=0) const;
 
 	/**
 	 * Find the last occurence of a character in this OW_String object.
@@ -345,7 +345,7 @@ public:
 	 * underlying array if it was found. -1 if this OW_String object does not
 	 * contain the character before the given fromIndex.
 	 */
-	int lastIndexOf(char ch, int fromIndex=-1) const;
+	size_t lastIndexOf(char ch, size_t fromIndex=static_cast<size_t>(-1)) const;
 
 	/**
 	 * Find the last occurence of a string in this OW_String object.
@@ -355,7 +355,7 @@ public:
 	 * array if it was found. -1 if the this OW_String does not contain the
 	 * given substring before the fromIndex.
 	 */
-	int lastIndexOf(const OW_String& arg, int fromIndex=-1) const;
+	size_t lastIndexOf(const OW_String& arg, size_t fromIndex=static_cast<size_t>(-1)) const;
 
 	/**
 	 * Determine if this OW_String object starts with a given substring.

@@ -40,8 +40,12 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef OW_HAVE_DIRENT_H
 #include <dirent.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>

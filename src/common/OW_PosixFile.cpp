@@ -32,7 +32,9 @@
 #include "OW_File.hpp"
 
 #include <fcntl.h>
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 OW_File::OW_File(const OW_File& x) : m_hdl(dup(x.m_hdl))

@@ -125,7 +125,7 @@ public:
 	void get(OW_CIMClassArray& arg) const;
 	void get(OW_CIMInstanceArray& arg) const;
 
-	OW_Int32 getArraySize() const;
+	OW_UInt32 getArraySize() const;
 
 	OW_CIMValueImpl& operator= (const OW_CIMValueImpl& arg);
 	OW_CIMValueImpl& set(const OW_CIMValueImpl& arg);
@@ -419,7 +419,7 @@ OW_CIMValue::OW_CIMValue(const OW_CIMInstanceArray& x)
 	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)) {}
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
+OW_UInt32
 OW_CIMValue::getArraySize() const
 {
 	return m_impl->getArraySize();
@@ -1197,7 +1197,7 @@ OW_CIMValue::OW_CIMValueImpl::~OW_CIMValueImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
+OW_UInt32
 OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 {
 	if(m_type == OW_CIMDataType::CIMNULL)
@@ -1210,7 +1210,7 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 		return 1;
 	}
 
-	OW_Int32 sz = 0;
+	OW_UInt32 sz = 0;
 	switch(m_type)
 	{
 		case OW_CIMDataType::UINT8:
@@ -2407,7 +2407,7 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 		switch(m_type)
 		{
 			case OW_CIMDataType::BOOLEAN:
-				out = OW_Bool(m_obj.m_booleanValue).toString();
+				out = OW_Bool(m_obj.m_booleanValue != 0).toString();
 				break;
 
 			case OW_CIMDataType::UINT8:
@@ -2552,19 +2552,28 @@ readValue(istream& istrm, T& val, int convType)
 
 	switch(convType)
 	{
-		case 3: { val = T(OW_ntoh64(val)); break; }
-		case 2: { val = T(OW_ntoh32(val)); break; }
-		case 1: { val = T(OW_ntoh16(val)); break; }
+		case 3: { val = static_cast<T>(OW_ntoh64(val)); break; }
+		case 2: { val = static_cast<T>(OW_ntoh32(val)); break; }
+		case 1: { val = static_cast<T>(OW_ntoh16(val)); break; }
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 static OW_Real64
-readRealValue(istream& istrm)
+readReal64Value(istream& istrm)
 {
 	OW_String rstr;
 	rstr.readObject(istrm);
 	return rstr.toReal64();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static OW_Real32
+readReal32Value(istream& istrm)
+{
+	OW_String rstr;
+	rstr.readObject(istrm);
+	return rstr.toReal32();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2588,9 +2597,9 @@ readArray(istream& istrm, T& ra, int convType)
 
 		switch(convType)
 		{
-			case 3: v = OW_ntoh64(v); break;
-			case 2: v = OW_ntoh32(v); break;
-			case 1: v = OW_ntoh16(v); break;
+			case 3: v = static_cast<typename T::value_type>(OW_ntoh64(v)); break;
+			case 2: v = static_cast<typename T::value_type>(OW_ntoh32(v)); break;
+			case 1: v = static_cast<typename T::value_type>(OW_ntoh16(v)); break;
 		}
 
 		ra.push_back(v);
@@ -2606,7 +2615,7 @@ readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 	OW_BinarySerialization::readLen(istrm, sz);
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
-		OW_Real32 v = readRealValue(istrm);
+		OW_Real32 v = readReal32Value(istrm);
 		ra.push_back(v);
 	}
 }
@@ -2620,7 +2629,7 @@ readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 	OW_BinarySerialization::readLen(istrm, sz);
 	for(OW_UInt32 i = 0; i < sz; i++)
 	{
-		OW_Real64 v = readRealValue(istrm);
+		OW_Real64 v = readReal64Value(istrm);
 		ra.push_back(v);
 	}
 }
@@ -2788,11 +2797,11 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::REAL32:
-				m_obj.m_real32Value = readRealValue(istrm);
+				m_obj.m_real32Value = readReal32Value(istrm);
 				break;
 
 			case OW_CIMDataType::REAL64:
-				m_obj.m_real64Value = readRealValue(istrm);
+				m_obj.m_real64Value = readReal64Value(istrm);
 				break;
 
 			case OW_CIMDataType::CHAR16:
@@ -2842,9 +2851,9 @@ writeValue(ostream& ostrm, T val, int convType)
 	T v;
 	switch(convType)
 	{
-		case 3: v = T(OW_hton64(val)); break;
-		case 2: v = T(OW_hton32(val)); break;
-		case 1: v = T(OW_hton16(val)); break;
+		case 3: v = static_cast<T>(OW_hton64(val)); break;
+		case 2: v = static_cast<T>(OW_hton32(val)); break;
+		case 1: v = static_cast<T>(OW_hton16(val)); break;
 		default: v = val; break;
 	}
 
@@ -2875,10 +2884,10 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 		typename T::value_type v;
 		switch(convType)
 		{
-			case 3: v = OW_hton64(ra[i]); break;
-			case 2: v = OW_hton32(ra[i]); break;
-			case 1: v = OW_hton16(ra[i]); break;
-			default: v = ra[i]; break;
+			case 3: v = static_cast<typename T::value_type>(OW_hton64(ra[i])); break;
+			case 2: v = static_cast<typename T::value_type>(OW_hton32(ra[i])); break;
+			case 1: v = static_cast<typename T::value_type>(OW_hton16(ra[i])); break;
+			default: v = static_cast<typename T::value_type>(ra[i]); break;
 		}
 
 		OW_BinarySerialization::write(ostrm, &v, sizeof(v));

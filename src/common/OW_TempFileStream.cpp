@@ -235,7 +235,7 @@ OW_TempFileBuffer::buffer_to_device(const char* c, int n)
 	{
 		m_tempFile = new OW_TmpFile;
 	}
-	return m_tempFile->write(c, n);
+	return static_cast<int>(m_tempFile->write(c, n));
 }
 
 
@@ -249,7 +249,7 @@ OW_TempFileBuffer::buffer_from_device(char* c, int n)
 	}
 	else
 	{
-		return m_tempFile->read(c, n);
+		return static_cast<int>(m_tempFile->read(c, n));
 	}
 }
 

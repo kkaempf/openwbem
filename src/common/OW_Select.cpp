@@ -34,9 +34,13 @@
 
 extern "C"
 {
+#ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <sys/types.h>
+#ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <errno.h>
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>

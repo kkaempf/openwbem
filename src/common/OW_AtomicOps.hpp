@@ -131,6 +131,36 @@ inline void OW_AtomicDec(OW_Atomic_t &v)
 
 }
 
+#elif defined(OW_WIN32)
+#include <Windows.h>
+// use fast inline assembly versions
+struct OW_Atomic_t
+{ 
+	OW_Atomic_t() : val(0) {}
+	OW_Atomic_t(int i) : val(i) {}
+	volatile LONG val; 
+};
+
+inline void OW_AtomicInc(OW_Atomic_t &v)
+{
+	InterlockedIncrement(&v.val); 
+}
+
+inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+{
+	return InterlockedDecrement(&v.val) == 0;
+}
+
+inline int OW_AtomicGet(OW_Atomic_t const &v)
+{
+	return v.val;
+}
+
+inline void OW_AtomicDec(OW_Atomic_t &v)
+{
+	InterlockedDecrement(&v.val);
+}
+
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
 
 #include <pthread.h>

@@ -78,7 +78,11 @@ OW_RandomNumber::OW_RandomNumber(int lowVal, int highVal)
 	if (!seed)
 	{
 		time(&seed);
+#ifdef OW_HAVE_SRANDOM
 		srandom(seed);
+#else
+		srand(seed);
+#endif
 	}
 #endif
 }
@@ -87,6 +91,10 @@ int
 OW_RandomNumber::getNextNumber()
 {
 	OW_MutexLock lock(guard);
+#ifdef OW_HAVE_RANDOM
 	return m_lowVal + (random() % (m_highVal - m_lowVal + 1));
+#else
+	return m_lowVal + (rand() % (m_highVal - m_lowVal + 1));
+#endif
 }
 

@@ -52,7 +52,7 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
 		cc = -1;
 	}
 	return cc;
-#else
+#elif defined (OW_USE_PTHREAD)
 
     pthread_mutexattr_t attr;
     int res = pthread_mutexattr_init(&attr);
@@ -84,6 +84,11 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
 #endif
 
 	return 0;
+
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -104,7 +109,7 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
 	return 0;
-#else
+#elif defined (OW_USE_PTHREAD)
 	switch (pthread_mutex_destroy(&handle.mutex))
 	{
 		case 0:
@@ -127,6 +132,10 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
     assert(res == 0);
 #endif
 	return res;
+#elif defined OW_USE_WIN32_THREADS
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -146,7 +155,7 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
-#else
+#elif defined (OW_USE_PTHREAD)
 
     int res = pthread_mutex_lock(&handle.mutex);
     assert(res == 0);
@@ -172,6 +181,10 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
     assert(res == 0);
 #endif
 	return res;
+#elif defined OW_USE_WIN32_THREADS
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 
@@ -190,7 +203,7 @@ OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
 	// TODO: ?!?!
 	(void)handle;
 	return 0;
-#else
+#elif defined (OW_USE_PTHREAD)
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
@@ -221,6 +234,10 @@ OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
     assert(res == 0);
 	return res;
 #endif
+#elif defined (OW_USE_WIN32_THREADS)
+	return 0;
+#else
+#error "port me!"
 #endif
 }
 

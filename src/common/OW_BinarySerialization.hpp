@@ -249,7 +249,7 @@ namespace OW_BinarySerialization
 	inline void
 	writeArray(std::ostream& ostrm, const T& a)
 	{
-		OW_UInt32 len = a.size();
+		OW_UInt32 len = static_cast<OW_UInt32>(a.size());
 		OW_BinarySerialization::writeLen(ostrm, len);
 		for(OW_UInt32 i = 0; i < len; i++)
 		{

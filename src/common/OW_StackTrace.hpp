@@ -42,11 +42,7 @@ class OW_StackTrace
 
 		static void getStackTrace();
 
-		friend std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out)
-		{
-			ostr << out.m_trace;
-			return ostr;
-		}
+		friend std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out);
 
 		const char* c_str() const
 		{

@@ -51,9 +51,7 @@ typedef pth_mutex_t	OW_NonRecursiveMutex_t;
 // Platform specific conditional variable type
 typedef pth_cond_t	OW_ConditionVar_t;
 
-#else
-
-#ifdef OW_HAVE_PTHREAD_H
+#elif OW_HAVE_PTHREAD_H
 
 extern "C"
 {
@@ -94,15 +92,44 @@ struct OW_Mutex_t
 // Platform specific conditional variable type
 typedef pthread_cond_t 			OW_ConditionVar_t;
 
-#endif // #ifdef OW_HAVE_PTHREAD_H
-
-#endif	// #ifdef OW_USE_GNU_PTH
-
 struct OW_NonRecursiveMutexLockState
 {
     pthread_t thread_id;
 	OW_NativeMutex_t* pmutex;
 };
-				
+
+#elif OW_WIN32
+
+#include <Windows.h>
+
+// Platform specific thread type
+typedef DWORD OW_Thread_t;
+
+typedef HANDLE OW_NativeMutex_t;
+struct OW_NonRecursiveMutex_t
+{
+    HANDLE mutex;
+    HANDLE thread_id;
+    bool valid_id;
+};
+
+
+struct OW_Mutex_t
+{
+	void* mutex;
+	unsigned long count;
+};
+
+// Platform specific conditional variable type
+typedef void* 			OW_ConditionVar_t;
+
+struct OW_NonRecursiveMutexLockState
+{
+    void* thread_id;
+	OW_NativeMutex_t* pmutex;
+};
+
+#endif // #ifdef OW_HAVE_PTHREAD_H
+
 #endif	// #ifndef OW_THREAD_TYPES_HPP_
 				
