@@ -115,6 +115,40 @@
 
 /* end of autoconf set vars */
 
+/**
+ * The OW_DEPRECATED macro can be used to trigger compile-time warnings
+ * with gcc >= 3.2 when deprecated functions are used.
+ *
+ * For non-inline functions, the macro is used at the very end of the
+ * function declaration, right before the semicolon, unless it's pure
+ * virtual:
+ *
+ * int deprecatedFunc() const OW_DEPRECATED;
+ * virtual int deprecatedPureVirtualFunc() const OW_DEPRECATED = 0;
+ *
+ * Functions which are implemented inline are handled differently:
+ * the OW_DEPRECATED macro is used at the front, right before the return
+ * type, but after "static" or "virtual":
+ *
+ * OW_DEPRECATED void deprecatedFuncA() { .. }
+ * virtual OW_DEPRECATED int deprecatedFuncB() { .. }
+ * static OW_DEPRECATED bool deprecatedFuncC() { .. }
+ *
+ * You can also mark whole structs or classes as deprecated, by inserting the
+ * OW_DEPRECATED macro after the struct/class keyword, but before the
+ * name of the struct/class:
+ *
+ * class OW_DEPRECATED DeprecatedClass { };
+ * struct OW_DEPRECATED DeprecatedStruct { };
+ *
+ */
+#if __GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2)
+# define OW_DEPRECATED __attribute__ ((deprecated))
+#else
+# define OW_DEPRECATED
+#endif
+
+
 
 #ifdef __cplusplus
 #ifdef OW_DEBUG_MEMORY
@@ -150,40 +184,6 @@
 #define OW_PRINT_FUNC_NAME_ARGS10(a, b, c, d, e, f, g, h, i, j)
 #define OW_PRINT_FUNC_NAME
 #endif /* #ifdef OW_PRINT_FUNC_DEBUG */
-
-/**
- * The OW_DEPRECATED macro can be used to trigger compile-time warnings
- * with gcc >= 3.2 when deprecated functions are used.
- *
- * For non-inline functions, the macro is used at the very end of the
- * function declaration, right before the semicolon, unless it's pure
- * virtual:
- *
- * int deprecatedFunc() const OW_DEPRECATED;
- * virtual int deprecatedPureVirtualFunc() const OW_DEPRECATED = 0;
- *
- * Functions which are implemented inline are handled differently:
- * the OW_DEPRECATED macro is used at the front, right before the return
- * type, but after "static" or "virtual":
- *
- * OW_DEPRECATED void deprecatedFuncA() { .. }
- * virtual OW_DEPRECATED int deprecatedFuncB() { .. }
- * static OW_DEPRECATED bool deprecatedFuncC() { .. }
- *
- * You can also mark whole structs or classes as deprecated, by inserting the
- * OW_DEPRECATED macro after the struct/class keyword, but before the
- * name of the struct/class:
- *
- * class OW_DEPRECATED DeprecatedClass { };
- * struct OW_DEPRECATED DeprecatedStruct { };
- *
- */
-#if __GNUC__ - 0 > 3 || (__GNUC__ - 0 == 3 && __GNUC_MINOR__ - 0 >= 2)
-# define OW_DEPRECATED __attribute__ ((deprecated))
-#else
-# define OW_DEPRECATED
-#endif
-
 
 
 #endif /* #ifdef __cplusplus */
