@@ -99,7 +99,7 @@ CFLAGS="-I/opt/@GENERIC@/include" \
 	--prefix=%{@GENERIC@prefix} \
 	--sysconfdir=%{@GENERIC@sysconfdir} \
 	--localstatedir=%{@GENERIC@localstatedir} \
-   --with-perl=no
+	--disable-perl-providerifc
 
 
 make -j2
