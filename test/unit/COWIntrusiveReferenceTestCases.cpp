@@ -55,7 +55,7 @@ using namespace OpenWBEM;
 
 struct X: public virtual COWIntrusiveCountableBase
 {
-	virtual COWIntrusiveCountableBase* clone() const
+	X* clone() const
 	{
 		return new X(*this);
 	}
@@ -67,7 +67,7 @@ struct X: public virtual COWIntrusiveCountableBase
 
 struct Y: public X
 {
-	virtual COWIntrusiveCountableBase* clone() const
+	Y* clone() const
 	{
 		return new Y(*this);
 	}
@@ -87,19 +87,19 @@ void COWIntrusiveReferenceTestCases::n_element_type()
 void COWIntrusiveReferenceTestCases::default_constructor()
 {
 	COWIntrusiveReference<X> px;
-	unitAssert(px.get() == 0);
+	unitAssert(px.getPtr() == 0);
 }
 
 void COWIntrusiveReferenceTestCases::pointer_constructor()
 {
 	{
 		COWIntrusiveReference<X> px(0);
-		unitAssert(px.get() == 0);
+		unitAssert(px.getPtr() == 0);
 	}
 
 	{
 		COWIntrusiveReference<X> px(0, false);
-		unitAssert(px.get() == 0);
+		unitAssert(px.getPtr() == 0);
 	}
 
 	{
@@ -107,7 +107,7 @@ void COWIntrusiveReferenceTestCases::pointer_constructor()
 		unitAssert(p->use_count() == 0);
 
 		COWIntrusiveReference<X> px(p);
-		unitAssert(px.get() == p);
+		unitAssert(px.getPtr() == p);
 		unitAssert(px->use_count() == 1);
 	}
 
@@ -119,7 +119,7 @@ void COWIntrusiveReferenceTestCases::pointer_constructor()
 		unitAssert(p->use_count() == 1);
 
 		COWIntrusiveReference<X> px(p, false);
-		unitAssert(px.get() == p);
+		unitAssert(px.getPtr() == p);
 		unitAssert(px->use_count() == 1);
 	}
 }
@@ -129,49 +129,49 @@ void COWIntrusiveReferenceTestCases::copy_constructor()
 	{
 		COWIntrusiveReference<X> px;
 		COWIntrusiveReference<X> px2(px);
-		unitAssert(px2.get() == px.get());
+		unitAssert(px2.getPtr() == px.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<Y> py;
 		COWIntrusiveReference<X> px(py);
-		unitAssert(px.get() == py.get());
+		unitAssert(px.getPtr() == py.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<X> px(0);
 		COWIntrusiveReference<X> px2(px);
-		unitAssert(px2.get() == px.get());
+		unitAssert(px2.getPtr() == px.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<Y> py(0);
 		COWIntrusiveReference<X> px(py);
-		unitAssert(px.get() == py.get());
+		unitAssert(px.getPtr() == py.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<X> px(0, false);
 		COWIntrusiveReference<X> px2(px);
-		unitAssert(px2.get() == px.get());
+		unitAssert(px2.getPtr() == px.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<Y> py(0, false);
 		COWIntrusiveReference<X> px(py);
-		unitAssert(px.get() == py.get());
+		unitAssert(px.getPtr() == py.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<X> px(new X);
 		COWIntrusiveReference<X> px2(px);
-		unitAssert(px2.get() == px.get());
+		unitAssert(px2.getPtr() == px.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<Y> py(new Y);
 		COWIntrusiveReference<X> px(py);
-		unitAssert(px.get() == py.get());
+		unitAssert(px.getPtr() == py.getPtr());
 	}
 }
 
@@ -199,7 +199,7 @@ void COWIntrusiveReferenceTestCases::n_access()
 		unitAssert(px? false: true);
 		unitAssert(!px);
 
-		//unitAssert(get_pointer(px) == px.get());
+		//unitAssert(getPtr_pointer(px) == px.getPtr());
 	}
 
 	{
@@ -207,17 +207,17 @@ void COWIntrusiveReferenceTestCases::n_access()
 		unitAssert(px? false: true);
 		unitAssert(!px);
 
-		//unitAssert(get_pointer(px) == px.get());
+		//unitAssert(getPtr_pointer(px) == px.getPtr());
 	}
 
 	{
 		COWIntrusiveReference<X> px(new X);
 		unitAssert(px? true: false);
 		unitAssert(!!px);
-		unitAssert(&*px == px.get());
-		unitAssert(px.operator ->() == px.get());
+		unitAssert(&*px == px.getPtr());
+		unitAssert(px.operator ->() == px.getPtr());
 
-		//unitAssert(get_pointer(px) == px.get());
+		//unitAssert(getPtr_pointer(px) == px.getPtr());
 	}
 }
 
@@ -229,14 +229,14 @@ void COWIntrusiveReferenceTestCases::n_swap()
 
 		px.swap(px2);
 
-		unitAssert(px.get() == 0);
-		unitAssert(px2.get() == 0);
+		unitAssert(px.getPtr() == 0);
+		unitAssert(px2.getPtr() == 0);
 
 		using std::swap;
 		swap(px, px2);
 
-		unitAssert(px.get() == 0);
-		unitAssert(px2.get() == 0);
+		unitAssert(px.getPtr() == 0);
+		unitAssert(px2.getPtr() == 0);
 	}
 
 	{
@@ -247,18 +247,18 @@ void COWIntrusiveReferenceTestCases::n_swap()
 
 		px.swap(px2);
 
-		unitAssert(px.get() == p);
+		unitAssert(px.getPtr() == p);
 		unitAssert(px->use_count() == 1);
-		unitAssert(px2.get() == 0);
-		unitAssert(px3.get() == p);
+		unitAssert(px2.getPtr() == 0);
+		unitAssert(px3.getPtr() == p);
 		unitAssert(px3->use_count() == 1);
 
 		using std::swap;
 		swap(px, px2);
 
-		unitAssert(px.get() == 0);
+		unitAssert(px.getPtr() == 0);
 		unitAssert(px2->use_count() == 1);
-		unitAssert(px3.get() == p);
+		unitAssert(px3.getPtr() == p);
 		unitAssert(px3->use_count() == 1);
 	}
 
@@ -271,43 +271,43 @@ void COWIntrusiveReferenceTestCases::n_swap()
 
 		px.swap(px2);
 
-		unitAssert(px.get() == p2);
+		unitAssert(px.getPtr() == p2);
 		unitAssert(px->use_count() == 1);
-		unitAssert(px2.get() == p1);
+		unitAssert(px2.getPtr() == p1);
 		unitAssert(px2->use_count() == 1);
-		unitAssert(px3.get() == p2);
+		unitAssert(px3.getPtr() == p2);
 		unitAssert(px3->use_count() == 1);
 
 		using std::swap;
 		swap(px, px2);
 
-		unitAssert(px.get() == p1);
+		unitAssert(px.getPtr() == p1);
 		unitAssert(px->use_count() == 1);
-		//unitAssert(px2.get() == p2);
+		//unitAssert(px2.getPtr() == p2);
 		unitAssert(px2->use_count() == 1);
-		unitAssert(px3.get() == p2);
+		unitAssert(px3.getPtr() == p2);
 		unitAssert(px3->use_count() == 1);
 	}
 }
 
 template<class T, class U> void COWIntrusiveReferenceTestCases::test2(COWIntrusiveReference<T> const & p, COWIntrusiveReference<U> const & q)
 {
-	unitAssert((p == q) == (p.get() == q.get()));
-	unitAssert((p != q) == (p.get() != q.get()));
+	unitAssert((p == q) == (p.getPtr() == q.getPtr()));
+	unitAssert((p != q) == (p.getPtr() != q.getPtr()));
 }
 
 template<class T> void COWIntrusiveReferenceTestCases::test3(COWIntrusiveReference<T> const & p, COWIntrusiveReference<T> const & q)
 {
-	unitAssert((p == q) == (p.get() == q.get()));
-	unitAssert((p.get() == q) == (p.get() == q.get()));
-	unitAssert((p == q.get()) == (p.get() == q.get()));
-	unitAssert((p != q) == (p.get() != q.get()));
-	unitAssert((p.get() != q) == (p.get() != q.get()));
-	unitAssert((p != q.get()) == (p.get() != q.get()));
+	unitAssert((p == q) == (p.getPtr() == q.getPtr()));
+	unitAssert((p.getPtr() == q) == (p.getPtr() == q.getPtr()));
+	unitAssert((p == q.getPtr()) == (p.getPtr() == q.getPtr()));
+	unitAssert((p != q) == (p.getPtr() != q.getPtr()));
+	unitAssert((p.getPtr() != q) == (p.getPtr() != q.getPtr()));
+	unitAssert((p != q.getPtr()) == (p.getPtr() != q.getPtr()));
 
 	// 'less' moved here as a g++ 2.9x parse error workaround
 	std::less<const T*> less;
-	unitAssert((p < q) == less(p.get(), q.get()));
+	unitAssert((p < q) == less(p.getPtr(), q.getPtr()));
 }
 
 void COWIntrusiveReferenceTestCases::n_comparison()
@@ -356,7 +356,7 @@ struct X2: public COWIntrusiveCountableBase
 {
 	COWIntrusiveReference<X2> next;
 
-	virtual COWIntrusiveCountableBase* clone() const
+	X2* clone() const
 	{
 		return new X2(*this);
 	}
@@ -388,7 +388,7 @@ public:
 		m_self = 0;
 	}
 
-	virtual COWIntrusiveCountableBase* clone() const
+	foo* clone() const
 	{
 		return new foo(*this);
 	}

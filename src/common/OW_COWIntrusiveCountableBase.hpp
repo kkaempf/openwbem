@@ -54,6 +54,8 @@ namespace OpenWBEM
  * If you want your class to be managed by COWIntrusiveReference, then derive
  * from this class.  Note that if multiple inheritance is used, you must derive
  * "virtual"ly.
+ * 
+ * Derived classes must implement: Derived* clone()
  */
 class COWIntrusiveCountableBase
 {
@@ -68,7 +70,6 @@ protected:
 	COWIntrusiveCountableBase & operator=(COWIntrusiveCountableBase const &x)
 	{
 		m_usecount = RefCount(0);
-		//m_usecount = x.m_usecount;
 		return *this;
 	}
 
@@ -76,12 +77,7 @@ protected:
 	{
 	}
 
-	// TODO: Put this into a .cpp
-	virtual ~COWIntrusiveCountableBase()
-	{
-	}
-
-	virtual COWIntrusiveCountableBase* clone() const = 0;
+	virtual ~COWIntrusiveCountableBase();
 
 	RefCount getRefCount() const
 	{
@@ -110,7 +106,7 @@ public:
 	{
 		// this needs to happen first to avoid a race condition between 
 		// another thread deleting the object and this one making a copy.
-		T* tmp = dynamic_cast<T*>(p->clone());
+		T* tmp = p->clone();
 		if (p->m_usecount.decAndTest())
 		{
 			// only copy--don't need to clone, also not a race condition.

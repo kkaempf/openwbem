@@ -42,14 +42,28 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_COW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
-#define OW_COW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
+#ifndef OW_COW_INTRUSIVE_REFERENCE_HPm_pObjINCLUDE_GUARD_
+#define OW_COW_INTRUSIVE_REFERENCE_HPm_pObjINCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <functional>           // for std::less
 
 namespace OpenWBEM
 {
+
+#ifdef OW_CHECK_NULL_REFERENCES
+namespace COWIntrusiveReferenceHelpers
+{
+	// these are not part of COWIntrusiveReference to try and avoid template bloat.
+	void throwNULLException();
+	inline void checkNull(const void* p)
+	{
+		if (p == 0)
+		{
+			throwNULLException();
+		}
+	}
+}
+#endif
 
 /**
  *
@@ -79,24 +93,24 @@ private:
 public:
 	typedef T element_type;
 
-	COWIntrusiveReference(): p_(0)
+	COWIntrusiveReference(): m_pObj(0)
 	{
 	}
-	COWIntrusiveReference(T * p, bool add_ref = true): p_(p)
+	COWIntrusiveReference(T * p, bool addRef = true): m_pObj(p)
 	{
-		if(p_ != 0 && add_ref) COWIntrusiveReferenceAddRef(p_);
+		if(m_pObj != 0 && addRef) COWIntrusiveReferenceAddRef(m_pObj);
 	}
-	template<class U> COWIntrusiveReference(COWIntrusiveReference<U> const & rhs): p_(rhs.p_)
+	template<class U> COWIntrusiveReference(COWIntrusiveReference<U> const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(p_ != 0) COWIntrusiveReferenceAddRef(p_);
+		if(m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
 	}
-	COWIntrusiveReference(COWIntrusiveReference const & rhs): p_(rhs.p_)
+	COWIntrusiveReference(COWIntrusiveReference const & rhs): m_pObj(rhs.m_pObj)
 	{
-		if(p_ != 0) COWIntrusiveReferenceAddRef(p_);
+		if(m_pObj != 0) COWIntrusiveReferenceAddRef(m_pObj);
 	}
 	~COWIntrusiveReference()
 	{
-		if(p_ != 0) COWIntrusiveReferenceRelease(p_);
+		if(m_pObj != 0) COWIntrusiveReferenceRelease(m_pObj);
 	}
 	template<class U> COWIntrusiveReference & operator=(COWIntrusiveReference<U> const & rhs)
 	{
@@ -113,49 +127,65 @@ public:
 		this_type(rhs).swap(*this);
 		return *this;
 	}
-	const T * get() const
+	const T * getPtr() const
 	{
-		return p_;
+		return m_pObj;
 	}
 	
 	const T & operator*() const
 	{
-		return *p_;
+#ifdef OW_CHECK_NULL_REFERENCES
+		COWIntrusiveReferenceHelpers::checkNull(this);
+		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+#endif
+		return *m_pObj;
 	}
 	
 	const T * operator->() const
 	{
-		return p_;
+#ifdef OW_CHECK_NULL_REFERENCES
+		COWIntrusiveReferenceHelpers::checkNull(this);
+		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+#endif
+		return m_pObj;
 	}
 
 	T & operator*()
 	{
+#ifdef OW_CHECK_NULL_REFERENCES
+		COWIntrusiveReferenceHelpers::checkNull(this);
+		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+#endif
 		getWriteLock();
-		return *p_;
+		return *m_pObj;
 	}
 	
 	T * operator->()
 	{
+#ifdef OW_CHECK_NULL_REFERENCES
+		COWIntrusiveReferenceHelpers::checkNull(this);
+		COWIntrusiveReferenceHelpers::checkNull(m_pObj);
+#endif
 		getWriteLock();
-		return p_;
+		return m_pObj;
 	}
 
 	typedef T * this_type::*unspecified_bool_type;
 	operator unspecified_bool_type () const
 	{
-		return p_ == 0? 0: &this_type::p_;
+		return m_pObj == 0? 0: &this_type::m_pObj;
 	}
 
 	bool operator! () const
 	{
-		return p_ == 0;
+		return m_pObj == 0;
 	}
 	
 	void swap(COWIntrusiveReference & rhs)
 	{
-		T * tmp = p_;
-		p_ = rhs.p_;
-		rhs.p_ = tmp;
+		T * tmp = m_pObj;
+		m_pObj = rhs.m_pObj;
+		rhs.m_pObj = tmp;
 	}
 
 #if !defined(__GNUC__) || __GNUC__ > 2 // causes gcc 2.95 to ICE
@@ -166,49 +196,49 @@ private:
 
 	void getWriteLock()
 	{
-		if ((p_ != 0) && !COWIntrusiveReferenceUnique(p_))
+		if ((m_pObj != 0) && !COWIntrusiveReferenceUnique(m_pObj))
 		{
-			p_ = COWIntrusiveReferenceClone(p_);
+			m_pObj = COWIntrusiveReferenceClone(m_pObj);
 		}
 	}
 
 
-	T * p_;
+	T * m_pObj;
 };
 template<class T, class U> inline bool operator==(COWIntrusiveReference<T> const & a, COWIntrusiveReference<U> const & b)
 {
-	return a.get() == b.get();
+	return a.getPtr() == b.getPtr();
 }
 template<class T, class U> inline bool operator!=(COWIntrusiveReference<T> const & a, COWIntrusiveReference<U> const & b)
 {
-	return a.get() != b.get();
+	return a.getPtr() != b.getPtr();
 }
 template<class T> inline bool operator==(COWIntrusiveReference<T> const & a, const T * b)
 {
-	return a.get() == b;
+	return a.getPtr() == b;
 }
 template<class T> inline bool operator!=(COWIntrusiveReference<T> const & a, const T * b)
 {
-	return a.get() != b;
+	return a.getPtr() != b;
 }
 template<class T> inline bool operator==(const T * a, COWIntrusiveReference<T> const & b)
 {
-	return a == b.get();
+	return a == b.getPtr();
 }
 template<class T> inline bool operator!=(const T * a, COWIntrusiveReference<T> const & b)
 {
-	return a != b.get();
+	return a != b.getPtr();
 }
 #if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 // Resolve the ambiguity between our op!= and the one in rel_ops
 template<class T> inline bool operator!=(COWIntrusiveReference<T> const & a, COWIntrusiveReference<T> const & b)
 {
-	return a.get() != b.get();
+	return a.getPtr() != b.getPtr();
 }
 #endif
 template<class T> inline bool operator<(COWIntrusiveReference<T> const & a, COWIntrusiveReference<T> const & b)
 {
-	return std::less<const T *>()(a.get(), b.get());
+	return a.getPtr() < b.getPtr();
 }
 template<class T> void swap(COWIntrusiveReference<T> & lhs, COWIntrusiveReference<T> & rhs)
 {
@@ -216,15 +246,15 @@ template<class T> void swap(COWIntrusiveReference<T> & lhs, COWIntrusiveReferenc
 }
 // template<class T, class U> COWIntrusiveReference<T> static_pointer_cast(COWIntrusiveReference<U> const & p)
 // {
-//     return static_cast<T *>(p.get());
+//     return static_cast<T *>(p.getPtr());
 // }
 // template<class T, class U> COWIntrusiveReference<T> const_pointer_cast(COWIntrusiveReference<U> const & p)
 // {
-//     return const_cast<T *>(p.get());
+//     return const_cast<T *>(p.getPtr());
 // }
 // template<class T, class U> COWIntrusiveReference<T> dynamic_pointer_cast(COWIntrusiveReference<U> const & p)
 // {
-//     return dynamic_cast<T *>(p.get());
+//     return dynamic_cast<T *>(p.getPtr());
 // }
 
 } // end namespace OpenWBEM
