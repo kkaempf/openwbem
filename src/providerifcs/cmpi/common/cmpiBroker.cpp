@@ -184,6 +184,7 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbCreateInstance()");
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	try
 	{
 		OpenWBEM::CIMObjectPath ncop=CM_CIMOM(mb)->createInstance(
@@ -205,6 +206,7 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbCreateInstance");
 		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	return NULL;
 }
 
@@ -213,6 +215,7 @@ static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
 {
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbSetInstance()");
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	CMPIFlags flgs =
 		ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
 	OpenWBEM::StringArray sProps;
@@ -238,6 +241,7 @@ static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbSetInstance");
 		CMReturn(CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	CMReturn(CMPI_RC_ERR_FAILED);
 }
 
@@ -248,6 +252,7 @@ static CMPIStatus mbDeleteInstance (CMPIBroker *mb, CMPIContext *ctx,
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbDeleteInstance()");
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	OpenWBEM::CIMObjectPath qop( CM_ObjectPath(cop)->getObjectName(),
 			 CM_ObjectPath(cop)->getKeys());
 
@@ -270,6 +275,7 @@ static CMPIStatus mbDeleteInstance (CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbDeleteInstance");
 		CMReturn(CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	CMReturn(CMPI_RC_ERROR);
 }
 
@@ -602,6 +608,7 @@ static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbSetProperty()");
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	CMPIrc rc;
 	OpenWBEM::CIMValue v=value2CIMValue(val,type,&rc);
 
@@ -626,6 +633,7 @@ static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbSetProperty");
 		CMReturn(CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	CMReturn(CMPI_RC_ERR_FAILED);
 }
 

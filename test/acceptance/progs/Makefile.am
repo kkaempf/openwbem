@@ -1,6 +1,15 @@
 if DISABLE_INSTANCE_MANIPULATION
 PROGS=
 else
+if DISABLE_SCHEMA_MANIPULATION
+PROGS=
+else
+if DISABLE_QUALIFIER_DECLARATION
+PROGS=
+else
+if DISABLE_ASSOCIATION_TRAVERSAL
+PROGS=
+else
 PROGS= \
 owcimclientcl \
 testCIMExceptions \
@@ -9,6 +18,9 @@ aclTest \
 cimlistener \
 testNamespaces \
 testMisc
+endif
+endif
+endif
 endif
 
 noinst_PROGRAMS = \
