@@ -188,16 +188,16 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 	Select::SelectObject so(fd); 
 	if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
 	{
-		so.rEvents = true; 
+		so.waitForRead = true; 
 	}
 	else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
 	{
-		so.wEvents = true; 
+		so.waitForWrite = true; 
 	}
 	else
 	{
-		so.rEvents = true; 
-		so.wEvents = true; 
+		so.waitForRead = true; 
+		so.waitForWrite = true; 
 	}
 	Select::SelectObjectArray selarray; 
 	selarray.push_back(so); 
@@ -214,7 +214,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 	if (pipefd != -1)
 	{
 		so = Select::SelectObject(pipefd); 
-		so.rEvents = true; 
+		so.waitForRead = true; 
 		selarray.push_back(so); 
 	}
 
@@ -230,12 +230,12 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 	case 1: 
 		if (pipefd != -1)
 		{
-			if (selarray[1].rAvailable)
+			if (selarray[1].readAvailable)
 			{
 				rc = -1; 
 			}
 		}
-		if (selarray[0].wAvailable || selarray[0].rAvailable)
+		if (selarray[0].writeAvailable || selarray[0].readAvailable)
 		{
 			rc = 0; 
 		}

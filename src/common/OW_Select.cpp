@@ -39,8 +39,6 @@
 #include "OW_Assertion.hpp"
 #include "OW_Thread.hpp" // for testCancel()
 
-#undef OW_HAVE_SYS_EPOLL_H // temporary until the code can handle the fact that the kernel may not support epoll* even though the header is installed.
-
 #if defined(OW_WIN32)
 #include <cassert>
 #endif
@@ -51,12 +49,12 @@ extern "C"
 #ifndef OW_WIN32
  #ifdef OW_HAVE_SYS_EPOLL_H
   #include <sys/epoll.h>
- #elif defined (OW_HAVE_SYS_POLL_H)
+ #endif
+ #if defined (OW_HAVE_SYS_POLL_H)
   #include <sys/poll.h>
- #elif defined (OW_HAVE_SYS_SELECT_H)
+ #endif
+ #if defined (OW_HAVE_SYS_SELECT_H)
   #include <sys/select.h>
- #else
-  #error "port me!"
  #endif
 #endif
 
@@ -146,16 +144,16 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	{
 		if( WaitForSingleObject(selarray[i].s.event, 0) == WAIT_OBJECT_0 )
 		{
-			if( selarray[i].rEvents )
-				selarray[i].rAvailable = true;
-			if( selarray[i].wEvents )
-				selarray[i].wAvailable = true;
+			if( selarray[i].waitForRead )
+				selarray[i].readAvailable = true;
+			if( selarray[i].waitForWrite )
+				selarray[i].writeAvailable = true;
 			++availableCount;
 		}
 		else
 		{
-			selarray[i].rAvailable = false;
-			selarray[i].wAvailable = false;
+			selarray[i].readAvailable = false;
+			selarray[i].writeAvailable = false;
 		}
 	}
 	return availableCount;
@@ -164,18 +162,22 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 
 #else
 
-#ifdef OW_HAVE_SYS_EPOLL_H
 //////////////////////////////////////////////////////////////////////////////
 // epoll version
 int
-selectRW(SelectObjectArray& selarray, UInt32 ms)
+selectRWEpoll(SelectObjectArray& selarray, UInt32 ms)
 {
+#ifdef OW_HAVE_SYS_EPOLL_H
 	int lerrno, ecc = 0;
 	int timeout;
 	AutoPtrVec<epoll_event> events(new epoll_event[selarray.size()]);
 	int epfd = epoll_create(selarray.size());
 	if(epfd == -1)
 	{
+		if (errno == ENOSYS) // kernel doesn't support it
+		{
+			return SELECT_NOT_IMPLEMENTED;
+		}
 		// Need to return something else?
 		return Select::SELECT_ERROR;
 	}
@@ -183,16 +185,16 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	for (size_t i = 0; i < selarray.size(); i++)
 	{
 		OW_ASSERT(selarray[i].s >= 0);
-		selarray[i].rAvailable = false;
-		selarray[i].wAvailable = false;
+		selarray[i].readAvailable = false;
+		selarray[i].writeAvailable = false;
 		selarray[i].wasError = false;
 		events[i].data.u32 = i;
 		events[i].events = 0;
-		if(selarray[i].rEvents)
+		if(selarray[i].waitForRead)
 		{
 			events[i].events |= (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP);
 		}
-		if(selarray[i].wEvents)
+		if(selarray[i].waitForWrite)
 		{
 			events[i].events |= EPOLLOUT;
 		}
@@ -256,21 +258,24 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	for(int i = 0; i < ecc; i++)
 	{
 		int ndx = events[i].data.u32;
-		selarray[ndx].rAvailable = ((events[i].events 
+		selarray[ndx].readAvailable = ((events[i].events 
 			& (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP)) != 0);
-		selarray[ndx].wAvailable = ((events[i].events 
+		selarray[ndx].writeAvailable = ((events[i].events 
 			& (EPOLLOUT | EPOLLERR | EPOLLHUP)) != 0);
 	}
 
 	return ecc;
+#else
+	return SELECT_NOT_IMPLEMENTED;
+#endif
 }
 
-#elif defined (OW_HAVE_SYS_POLL_H)
 //////////////////////////////////////////////////////////////////////////////
 // poll() version
 int
-selectRW(SelectObjectArray& selarray, UInt32 ms)
+selectRWPoll(SelectObjectArray& selarray, UInt32 ms)
 {
+#if defined (OW_HAVE_SYS_POLL_H)
 	int lerrno, rc = 0;
 
 	AutoPtrVec<pollfd> pfds(new pollfd[selarray.size()]);
@@ -288,13 +293,13 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 		for (size_t i = 0; i < selarray.size(); i++)
 		{
 			OW_ASSERT(selarray[i].s >= 0);
-			selarray[i].rAvailable = false;
-			selarray[i].wAvailable = false;
+			selarray[i].readAvailable = false;
+			selarray[i].writeAvailable = false;
 			selarray[i].wasError = false;
 			pfds[i].revents = 0;
 			pfds[i].fd = selarray[i].s;
-			pfds[i].events = selarray[i].rEvents ? (POLLIN | POLLPRI) : 0;
-			if(selarray[i].wEvents)
+			pfds[i].events = selarray[i].waitForRead ? (POLLIN | POLLPRI) : 0;
+			if(selarray[i].waitForWrite)
 				pfds[i].events |= POLLOUT;
 		}
 
@@ -357,28 +362,31 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 		}
 		else
 		{
-			if(selarray[i].rEvents)
+			if(selarray[i].waitForRead)
 			{
-				selarray[i].rAvailable = (pfds[i].revents & 
+				selarray[i].readAvailable = (pfds[i].revents & 
 					(POLLIN | POLLPRI | POLLHUP));
 			}
 
-			if(selarray[i].wEvents)
+			if(selarray[i].waitForWrite)
 			{
-				selarray[i].wAvailable = (pfds[i].revents &
+				selarray[i].writeAvailable = (pfds[i].revents &
 					(POLLOUT | POLLHUP));
 			}
 		}
 	}
 
 	return rc;
+#else
+	return SELECT_NOT_IMPLEMENTED;
+#endif
 }
-#elif defined (OW_HAVE_SYS_SELECT_H)
 //////////////////////////////////////////////////////////////////////////////
 // ::select() version
 int
-selectRW(SelectObjectArray& selarray, UInt32 ms)
+selectRWSelect(SelectObjectArray& selarray, UInt32 ms)
 {
+#if defined (OW_HAVE_SYS_SELECT_H)
 	int lerrno, rc = 0;
 	fd_set ifds;
 	fd_set ofds;
@@ -408,11 +416,11 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 			{
 				return Select::SELECT_ERROR;
 			}
-			if (selarray[i].rEvents)
+			if (selarray[i].waitForRead)
 			{
 				FD_SET(fd, &ifds);
 			}
-			if (selarray[i].wEvents)
+			if (selarray[i].waitForWrite)
 			{
 				FD_SET(fd, &ofds);
 			}
@@ -474,22 +482,22 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 		cval = 0;
 		if (FD_ISSET(selarray[i].s, &ifds))
 		{
-			selarray[i].rAvailable = true;
+			selarray[i].readAvailable = true;
 			cval = 1;
 		}
 		else
 		{
-			selarray[i].rAvailable = false;
+			selarray[i].readAvailable = false;
 		}
 
 		if (FD_ISSET(selarray[i].s, &ofds))
 		{
-			selarray[i].wAvailable = true;
+			selarray[i].writeAvailable = true;
 			cval = 1;
 		}
 		else
 		{
-			selarray[i].wAvailable = false;
+			selarray[i].writeAvailable = false;
 		}
 
 		availableCount += cval;
@@ -497,11 +505,31 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	}
 		
 	return availableCount;
+#else
+	return SELECT_NOT_IMPLEMENTED;
+#endif
 }
 
-#else
-  #error "port me!"
-#endif // # epoll/poll/select
+int
+selectRW(SelectObjectArray& selarray, UInt32 ms)
+{
+	int rv = selectRWEpoll(selarray, ms);
+	if (rv != SELECT_NOT_IMPLEMENTED)
+	{
+		return rv;
+	}
+
+	rv = selectRWPoll(selarray, ms);
+	if (rv != SELECT_NOT_IMPLEMENTED)
+	{
+		return rv;
+	}
+
+	rv = selectRWSelect(selarray, ms);
+	OW_ASSERT(rv != SELECT_NOT_IMPLEMENTED);
+	return rv;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 #endif	// #else OW_WIN32
 
@@ -513,11 +541,11 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	for (size_t i = 0; i < selarray.size(); ++i)
 	{
 		SelectObject curObj(selarray[i]);
-		curObj.rEvents = true;
+		curObj.waitForRead = true;
 		soa.push_back(curObj);
 	}
 	int rv = selectRW(soa, ms);
-	if (rv <= 0)
+	if (rv < 0)
 	{
 		return rv;
 	}
@@ -525,7 +553,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	// find the first selected object
 	for (size_t i = 0; i < soa.size(); ++i)
 	{
-		if (soa[i].rAvailable)
+		if (soa[i].readAvailable)
 		{
 			return i;
 		}

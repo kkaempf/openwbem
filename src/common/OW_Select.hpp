@@ -62,6 +62,10 @@ namespace Select
 	 */
 	const int SELECT_INTERRUPTED = -3;
 	/**
+	 * Used internally, but listed here to prevent conflicts
+	 */
+	const int SELECT_NOT_IMPLEMENTED = -4;
+	/**
 	 * Value that means infinite timeout
 	 */
 	const UInt32 INFINITE_TIMEOUT = ~0U;
@@ -85,19 +89,24 @@ namespace Select
 	{
 		SelectObject(Select_t s_)
 		: s(s_)
-		, rEvents(false)
-		, wEvents(false)
-		, rAvailable(false)
-		, wAvailable(false)
+		, waitForRead(false)
+		, waitForWrite(false)
+		, readAvailable(false)
+		, writeAvailable(false)
 		, wasError(false)
 		{
 		}
 
 		Select_t s;
-		bool rEvents; 
-		bool wEvents; 
-		bool rAvailable;
-		bool wAvailable;
+		/// Input parameter. Set it to true to indicate that waiting for read availability on s is desired.
+		bool waitForRead; 
+		/// Input parameter. Set it to true to indicate that waiting for write availability on s is desired.
+		bool waitForWrite; 
+		/// Ouput parameter. Will be set to true to indicate that s has become available for reading.
+		bool readAvailable;
+		/// Ouput parameter. Will be set to true to indicate that s has become available for writing.
+		bool writeAvailable;
+		/// Ouput parameter. Will be set to true to indicate that s has an error.
 		bool wasError;
 	};
 	typedef Array<SelectObject> SelectObjectArray;

@@ -936,21 +936,21 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 			if (processStates[i].outIsOpen)
 			{
 				Select::SelectObject selObj(streams[i].out()->getSelectObj()); 
-				selObj.rEvents = true; 
+				selObj.waitForRead = true; 
 				selObjs.push_back(selObj); 
 				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].errIsOpen)
 			{
 				Select::SelectObject selObj(streams[i].err()->getSelectObj()); 
-				selObj.rEvents = true; 
+				selObj.waitForRead = true; 
 				selObjs.push_back(selObj); 
 				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].inIsOpen && processStates[i].availableDataLen > 0)
 			{
 				Select::SelectObject selObj(streams[i].in()->getWriteSelectObj()); 
-				selObj.wEvents = true; 
+				selObj.waitForWrite = true; 
 				selObjs.push_back(selObj); 
 				outputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
@@ -1032,7 +1032,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 
 				for (size_t i = 0; i < selObjs.size() && availableToFind > 0; ++i)
 				{
-					if (!selObjs[i].rAvailable)
+					if (!selObjs[i].readAvailable)
 					{
 						continue;
 					}
@@ -1094,7 +1094,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 				// handle stdin for all processes which have data to send to them.
 				for (size_t i = 0; i < selObjs.size() && availableToFind > 0; ++i)
 				{
-					if (!selObjs[i].wAvailable)
+					if (!selObjs[i].writeAvailable)
 					{
 						continue;
 					}
