@@ -291,27 +291,20 @@ int OW_PopenStreamsImpl::getExitStatus()
 				if (waitpidrv == 0)
 				{
 					/* process still didn't terminate after a SIGTERM, so we'll
-					   try sending it SIGKILL a few times */
-					for (int i = 0; i < 10; ++i)
+					   try sending it SIGKILL */
+					if (kill(m_pid, SIGKILL) == -1)
 					{
-						if (kill(m_pid, SIGKILL) == -1)
-						{
-							// call waitpid in case the thing has turned into a zombie.
-							waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-							OW_THROW(OW_ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
-						}
+						// call waitpid in case the thing has turned into a zombie.
+						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+						OW_THROW(OW_ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+					}
 
-						milliSleep(50);
+					milliSleep(50);
 
-						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						if (waitpidrv == 0)
-						{
-							OW_THROW(OW_ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
-						}
-						else
-						{
-							break;
-						}
+					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+					if (waitpidrv == 0)
+					{
+						OW_THROW(OW_ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
 					}
 				}
 				else if (waitpidrv > 0)
