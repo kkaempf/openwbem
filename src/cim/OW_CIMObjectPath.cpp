@@ -491,7 +491,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 		if (ndx == String::npos)
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				Format("Invalid instance name: ", instanceNameArg).c_str());
+				Format("Invalid instance name: %1", instanceNameArg).c_str());
 		}
 		host = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
@@ -529,7 +529,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	if (ndx == String::npos)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			Format("class name not found in instance name:: ",
+			Format("class name not found in instance name: %1",
 				instanceNameArg).c_str());
 	}
 	className = instanceName.substring(0, ndx);
@@ -543,7 +543,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 	if (valuesLen == 0)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			Format("No key values found in instance name: ",
+			Format("No key values found in instance name: %1",
 				instanceNameArg).c_str());
 	}
 	// set singleKey to TRUE if it is intended that a property value can be
