@@ -528,6 +528,7 @@ CIMProperty::toString() const
 String
 CIMProperty::toMOF() const
 {
+	// this outputs a property suitable for a CIM class.
 	StringBuffer rv;
 	if(m_pdata->m_qualifiers.size() > 0)
 	{
@@ -547,6 +548,8 @@ CIMProperty::toMOF() const
 	rv += m_pdata->m_propertyDataType.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;
+	// If it is an array, show it.
+	rv += m_pdata->m_propertyDataType.getArrayMOF();
 	if(m_pdata->m_cimValue)
 	{
 		rv += '=';

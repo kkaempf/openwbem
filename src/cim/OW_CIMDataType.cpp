@@ -322,6 +322,24 @@ CIMDataType::toMOF() const
 		return toString();
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMDataType::getArrayMOF() const
+{
+	if (!isArrayType())
+	{
+		return String();
+	}
+	if (m_pdata->m_sizeRange == SIZE_UNLIMITED)
+	{
+		return "[]";
+	}
+	StringBuffer rv("[");
+	rv += getSize();
+	rv += ']';
+	return rv.releaseString();
+}
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 CIMDataType::Type

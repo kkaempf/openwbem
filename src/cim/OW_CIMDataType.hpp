@@ -218,6 +218,14 @@ public:
 	 */
 	virtual String toMOF() const;
 	/**
+	 * @return The MOF representation of the array element.  This can be either:
+	 * ""
+	 * "[]"
+	 * "[<size>]"
+	 * This is mainly used by CIMProperty::toMOF()
+	 */
+	String getArrayMOF() const;
+	/**
 	 * Determine if a given data type is numeric.
 	 * @param type The data type to check
 	 * @return true if 'type' is a numeric data type.
