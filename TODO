@@ -118,6 +118,7 @@ Post 3.0
     - Add config items and code to do ssl client authentication.
     - Config item for slp renewal time.
     - Create a config item so people can use a custom repository.
+    - Change ACL checking to use the new CIM access schema
 
 Refactorings:
     - Get rid of all the bool parameters and replace them with enums
