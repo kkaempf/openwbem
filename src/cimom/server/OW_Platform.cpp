@@ -112,6 +112,7 @@ static NonRecursiveMutex g_shutdownGuard;
 static void* WarnFuncRef = NULL;
 static rtag_t EventRTag;
 static event_handle_t DownEvent;
+static bool FromEventHandler = false;
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -222,7 +223,10 @@ daemonShutdown(const String& daemonName)
 		g_shutDown = true; 
 		g_shutdownCond.notifyAll(); 
 		pthread_yield();
-		UnRegisterEventNotification(DownEvent);
+		if(!FromEventHandler)
+		{
+			UnRegisterEventNotification(DownEvent);
+		}
 	}
 #else
 	String pidFile(OW_PIDFILE_DIR);
@@ -455,6 +459,7 @@ static int
 netwareShutDownEventHandler(void*,
 	void*, void*)
 {
+	FromEventHandler = true;
 	theSigHandler(SIGTERM); 
 	pthread_yield();
 	NonRecursiveMutexLock l(g_shutdownGuard); 
