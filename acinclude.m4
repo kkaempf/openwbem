@@ -3,7 +3,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: acinclude.m4,v 1.5 2002-12-11 04:34:03 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.6 2003-01-23 20:57:59 bartw Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -123,7 +123,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: acinclude.m4,v 1.5 2002-12-11 04:34:03 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.6 2003-01-23 20:57:59 bartw Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -152,8 +152,9 @@ else
   AC_MSG_RESULT(creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines)
   if test -f $ac_prefix_conf_INP ; then
 #    AC_AS_DIRNAME([/* automatically generated */], $ac_prefix_conf_OUTTMP)
+    echo '/* automatically generated */' > $ac_prefix_conf_OUTTMP
 changequote({, })dnl 
-    echo '#ifndef '$ac_prefix_conf_DEF >$ac_prefix_conf_OUTTMP
+    echo '#ifndef '$ac_prefix_conf_DEF >>$ac_prefix_conf_OUTTMP
     echo '#define '$ac_prefix_conf_DEF' 1' >>$ac_prefix_conf_OUTTMP
     echo ' ' >>$ac_prefix_conf_OUTTMP
     echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$ac_prefix_conf_OUTTMP
@@ -170,8 +171,10 @@ changequote({, })dnl
     echo ' ' >>$ac_prefix_conf_OUTTMP
     echo '/*' $ac_prefix_conf_DEF '*/' >>$ac_prefix_conf_OUTTMP
     echo '#endif' >>$ac_prefix_conf_OUTTMP
-    if cmp -s $ac_prefix_conf_OUT $ac_prefix_conf_OUTTMP 2>/dev/null; then
-      AC_MSG_RESULT($ac_prefix_conf_OUT is unchanged)
+    if cmp -s $ac_prefix_conf_OUT $ac_prefix_conf_OUTTMP 2>/dev/null ; then
+#      AC_MSG_RESULT([$ac_prefix_conf_OUT is unchanged])
+#      doesn't work for some reason
+      echo "$ac_prefix_conf_OUT is unchanged" 
       rm -f $ac_prefix_conf_OUTTMP
     else
       rm -f $ac_prefix_conf_OUT
@@ -193,7 +196,7 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: acinclude.m4,v 1.5 2002-12-11 04:34:03 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.6 2003-01-23 20:57:59 bartw Exp $
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([TYPE_SOCKLEN_T],
