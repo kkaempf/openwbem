@@ -537,6 +537,7 @@ executeProcessAndGatherOutput(const Array<String>& command,
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// TODO: rewrite this to use the other gatherOutput().
 void
 gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
 {
