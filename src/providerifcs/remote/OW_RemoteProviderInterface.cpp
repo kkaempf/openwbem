@@ -156,6 +156,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 						break;
 					case E_ASSOCIATION:
 						{
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 							// keep it for ourselves
 							m_associatorProvReg[instanceID] = info; 
 							// give the info back to the provider manager
@@ -166,6 +167,9 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							AssociatorProviderInfo::ClassInfo classInfo(info.className, namespaces);
 							api.addInstrumentedClass(classInfo);
 							apia.push_back(api);
+#else
+							lgr->logError("Remote associator providers not supported");
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 						}
 						break;
 					case E_INDICATION:
