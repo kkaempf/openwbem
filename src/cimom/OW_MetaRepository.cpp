@@ -435,8 +435,8 @@ OW_MetaRepository::getCIMClass(const OW_CIMObjectPath& op, OW_CIMClass& cc)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className, 
+int
+OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClass& cc)
 {
 	throwIfNotOpen();
@@ -448,7 +448,7 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 		OW_HDBNode node = hdl->getNode(ckey);
 		if(node)
 		{
-			// _getClassFromNode throws if unable to get class. 
+			// _getClassFromNode throws if unable to get class.
 			cc = _getClassFromNode(node, hdl.getHandle());
 			if (!cc)
 			{
@@ -461,7 +461,7 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 			return OW_CIMException::NOT_FOUND;
 		}
 	}
-	return 0;
+	return OW_CIMException::SUCCESS;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1143,8 +1143,8 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 	{
 		OW_String qname = qra[i].getName();
 		OW_CIMValue cv = qra[i].getValue();
-		if(isAbstract == UNSET 
-			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT) 
+		if(isAbstract == UNSET
+			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT)
 			&& cv)
 		{
 			if (cv == OW_CIMValue(OW_Bool(true)))
