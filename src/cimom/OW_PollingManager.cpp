@@ -39,6 +39,7 @@
 #include "OW_ProviderManager.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_Platform.hpp"
+#include "OW_TimeoutException.hpp"
 
 #include <climits>
 
@@ -178,7 +179,7 @@ OW_PollingManager::run()
 	}
 
 	// wait until all the threads exit
-	m_threadCount->waitForAll();
+	m_threadCount->waitForAll(60, 0);
 
 	m_triggerRunners.clear();
 }
@@ -247,8 +248,15 @@ OW_PollingManager::processTriggers()
 
 		if (tm >= m_triggerRunners[i]->m_nextPoll)
 		{
-			m_threadCount->incThreadCount();
-			m_triggerRunners[i]->start(m_triggerRunners[i]);
+			try
+			{
+				m_threadCount->incThreadCount(1, 0); // if we can't run in 1 sec., just skip this poll, and continue
+				m_triggerRunners[i]->start(m_triggerRunners[i]);
+			}
+			catch (const OW_TimeoutException& e)
+			{
+				m_env->logCustInfo("Failed to run polled provider, because there are too many already running!");
+			}
 		}
 	}
 }

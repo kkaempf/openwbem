@@ -369,8 +369,11 @@ OW_IndicationServerImpl::run()
 
 	m_env->logDebug("OW_IndicationServerImpl::run shutting down");
 
-	// Wait for OW_Notifier threads to complete any pending notifications
-	m_threadCounter->waitForAll();
+	// Wait for OW_Notifier threads to complete any pending notifications.
+	// We use a large timeout (10 mins.) because if this does timeout, we'll
+	// probably cause a segfault, since the library will be unloaded soon after
+	// and if a thread is still running, then BOOM!
+	m_threadCounter->waitForAll(600, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -878,7 +881,7 @@ OW_IndicationServerImpl::addTrans(
 		// this may look like a memory leak, but the start method will end
 		// up deleting the thread once it's done running.
 		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_UserInfo());
-		m_threadCounter->incThreadCount();
+		m_threadCounter->incThreadCount(0, 0); // This should never timeout, since we already checked in the above if statement
 		pnotifier->start();
 	}
 	else

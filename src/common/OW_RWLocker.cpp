@@ -32,6 +32,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ThreadImpl.hpp"
+#include "OW_TimeoutException.hpp"
 
 DEFINE_EXCEPTION(RWLocker);
 
@@ -90,7 +91,7 @@ OW_RWLocker::getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 		if (!m_waiting_readers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_readers;
-			OW_THROW(OW_DeadlockException, "Timeout while waiting for read lock.");
+			OW_THROW(OW_TimeoutException, "Timeout while waiting for read lock.");
 		}
         --m_num_waiting_readers;
     }
@@ -132,7 +133,7 @@ OW_RWLocker::getWriteLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
         if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_writers;
-			OW_THROW(OW_DeadlockException, "Timeout while waiting for write lock.");
+			OW_THROW(OW_TimeoutException, "Timeout while waiting for write lock.");
 		}
         --m_num_waiting_writers;
     }

@@ -34,6 +34,7 @@
 #include "OW_RWLocker.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Semaphore.hpp"
+#include "OW_TimeoutException.hpp"
 
 void OW_RWLockerTestCases::setUp()
 {
@@ -114,7 +115,7 @@ void OW_RWLockerTestCases::testTimeout()
 		locker.getWriteLock(0,1);
 		unitAssert(0);
 	}
-	catch (const OW_DeadlockException& e)
+	catch (const OW_TimeoutException& e)
 	{
 	}
 
@@ -126,7 +127,7 @@ void OW_RWLockerTestCases::testTimeout()
 		locker.getReadLock(0,1);
 		unitAssert(0);
 	}
-	catch (const OW_DeadlockException& e)
+	catch (const OW_TimeoutException& e)
 	{
 	}
 

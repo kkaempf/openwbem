@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,61 +27,14 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
-#define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
+
+#ifndef OW_TIMEOUTEXCEPTION_HPP_INCLUDE_GUARD_
+#define OW_TIMEOUTEXCEPTION_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_Condition.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Thread.hpp"
 
-// Note: Do not inline any functions in these classes, the code must
-// be contained in the main library, if a loadable library contains any,
-// it will cause a race-condition that may segfault the cimom.
-class OW_ThreadCounter
-{
-public:
-	OW_ThreadCounter(OW_Int32 maxThreads);
-	~OW_ThreadCounter();
+#include "OW_Exception.hpp"
 
-	// Throws OW_TimeoutException in case of timeout
-	void incThreadCount(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	void decThreadCount();
-	OW_Int32 getThreadCount();
-	// Throws OW_TimeoutException in case of timeout
-	void waitForAll(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	void setMax(OW_Int32 maxThreads);
-
-private:
-	OW_Int32 m_maxThreads;
-	OW_Int32 m_runCount;
-	OW_NonRecursiveMutex m_runCountGuard;
-	OW_Condition m_runCountCondition;
-
-	// noncopyable
-	OW_ThreadCounter(OW_ThreadCounter const&);
-	OW_ThreadCounter& operator=(OW_ThreadCounter const&);
-};
-
-typedef OW_Reference<OW_ThreadCounter> OW_ThreadCounterRef;
-
-class OW_ThreadCountDecrementer : public OW_ThreadDoneCallback
-{
-public:
-	OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x);
-	virtual ~OW_ThreadCountDecrementer();
-
-private:
-	virtual void doNotifyThreadDone(OW_Thread *);
-
-	OW_ThreadCounterRef m_counter;
-
-	// noncopyable
-	OW_ThreadCountDecrementer(OW_ThreadCountDecrementer const&);
-	OW_ThreadCountDecrementer& operator=(OW_ThreadCountDecrementer const&);
-};
+DECLARE_EXCEPTION(Timeout);
 
 #endif
-
-

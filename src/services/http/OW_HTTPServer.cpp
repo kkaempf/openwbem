@@ -234,7 +234,7 @@ public:
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
 
-			m_HTTPServer->m_threadCount->incThreadCount();
+			m_HTTPServer->m_threadCount->incThreadCount(60, 0);
 
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
 			if (m_isIPC)
@@ -478,7 +478,7 @@ OW_HTTPServer::shutdown()
 	{
 		OW_THROW(OW_IOException, "Failed writing to OW_HTTPServer shutdown pipe");
 	}
-	m_threadCount->waitForAll();
+	m_threadCount->waitForAll(60, 0);
 
 	OW_Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;

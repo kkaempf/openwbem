@@ -127,7 +127,6 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
 
     pthread_t tid = pthread_self();
     if (handle.valid_id && pthread_equal(handle.thread_id, tid))
-        //OW_THROW(OW_DeadlockException, "Trying to lock a non-recursive mutex that this thread already has locked");
         return -1;
 
     int res = pthread_mutex_lock(&handle.mutex);

@@ -31,6 +31,7 @@
 #include "OW_ThreadCounter.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_TimeoutException.hpp"
 
 OW_ThreadCounter::OW_ThreadCounter(OW_Int32 maxThreads)
 	: m_maxThreads(maxThreads)
@@ -41,12 +42,13 @@ OW_ThreadCounter::~OW_ThreadCounter()
 {}
 
 void
-OW_ThreadCounter::incThreadCount()
+OW_ThreadCounter::incThreadCount(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
 	OW_NonRecursiveMutexLock l(m_runCountGuard);
 	while (m_runCount >= m_maxThreads)
 	{
-		m_runCountCondition.wait(l);
+		if (!m_runCountCondition.timedWait(l, sTimeout, usTimeout))
+			OW_THROW(OW_TimeoutException, "OW_ThreadCounter::incThreadCount timedout");
 	}
 	++m_runCount;
 }
@@ -68,12 +70,13 @@ OW_ThreadCounter::getThreadCount()
 }
 
 void
-OW_ThreadCounter::waitForAll()
+OW_ThreadCounter::waitForAll(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
 	OW_NonRecursiveMutexLock runCountLock(m_runCountGuard);
 	while(m_runCount > 0)
 	{
-		m_runCountCondition.wait(runCountLock);
+		if (!m_runCountCondition.timedWait(runCountLock, sTimeout, usTimeout))
+			OW_THROW(OW_TimeoutException, "OW_ThreadCounter::waitForAll timedout");
 	}
 }
 
