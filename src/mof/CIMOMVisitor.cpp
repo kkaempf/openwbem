@@ -1213,8 +1213,7 @@ OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualNam
 {
 	try
 	{
-		return m_hdl->getQualifierType(
-				OW_CIMObjectPath(qualName, m_namespace));
+		return m_hdl->getQualifierType(m_namespace, qualName);
 	}
 	catch (const OW_CIMException& ce)
 	{

@@ -399,7 +399,8 @@ public:
 	 * @exception OW_CIMException If the CIM qualifier type cannot be found
 	 */
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath& qualifierName) = 0;
+		const OW_String& ns,
+		const OW_String& qualifierName) = 0;
 
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if

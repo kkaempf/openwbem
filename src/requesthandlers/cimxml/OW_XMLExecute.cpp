@@ -1180,10 +1180,10 @@ void
 OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
+	OW_String qualifierName = getQualifierName(parser);
 
-	path.setObjectName(getQualifierName(parser));
-
-	OW_CIMQualifierType qual = hdl.getQualifierType(path);
+	OW_CIMQualifierType qual = hdl.getQualifierType(ns, qualifierName);
 	if (qual)
 	{
 		OW_CIMtoXML(qual, ostr);

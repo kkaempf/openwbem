@@ -47,9 +47,10 @@ public:
 	virtual void open(const OW_String &path) { m_ref->open(path); }
 
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath &objPath, const OW_ACLInfo &aclInfo)
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getQualifierType(objPath, aclInfo);
+		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
 	}
 
 	virtual OW_CIMOMEnvironmentRef getEnvironment() const

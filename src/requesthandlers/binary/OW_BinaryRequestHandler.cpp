@@ -569,13 +569,9 @@ void
 OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	OW_CIMQualifierType qt = chdl->getQualifierType(op);
-	if(!qt)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Path=%1", op.toString()).c_str());
-	}
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String qualifierName(OW_BinIfcIO::readString(istrm));
+	OW_CIMQualifierType qt = chdl->getQualifierType(ns, qualifierName);
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::writeQual(ostrm, qt);

@@ -56,7 +56,8 @@ OW_WQLFilterRep::getEnvironment() const
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
-OW_WQLFilterRep::getQualifierType(const OW_CIMObjectPath &/*objPath*/,
+OW_WQLFilterRep::getQualifierType(const OW_String&,
+	const OW_String&,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

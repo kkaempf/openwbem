@@ -70,7 +70,8 @@ public:
 	 * @exception OW_IOException
 	 */
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath &objPath, const OW_ACLInfo& aclInfo);
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM

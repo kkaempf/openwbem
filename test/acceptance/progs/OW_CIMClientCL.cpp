@@ -107,8 +107,8 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 	try
 	{
 		OW_CIMObjectPath parentPath(name, "root/testsuite");
-		OW_CIMObjectPath cqtPath("Key", "root/testsuite");
-		OW_CIMQualifierType cqt = hdl.getQualifierType(cqtPath);
+		OW_String cqtPath("Key");
+		OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", cqtPath);
 		OW_CIMQualifier cimQualifierKey(cqt);
 
 		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
@@ -672,9 +672,7 @@ getQualifier(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_String qualType = "borgishness";
-		OW_CIMObjectPath cop(qualType, "root/testsuite");
-		OW_CIMQualifierType qt = hdl.getQualifierType(cop);
+		OW_CIMQualifierType qt = hdl.getQualifierType("root/testsuite", "borgishness");
 		cout << "Got Qualifier: " << qt.getName() << endl;
 		cout << qt.toMOF() << endl;
 		OW_TempFileStream tfs;

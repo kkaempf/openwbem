@@ -229,7 +229,8 @@ public:
 	 * @return An OW_CIMQualifierType identified by name.
 	 * @exception OW_CIMException If the CIM qualifier type cannot be found
 	 */
-	virtual OW_CIMQualifierType getQualifierType(const OW_CIMObjectPath &name);
+	virtual OW_CIMQualifierType getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName);
 
 	/**
 	 * Returns all instances (the the names)

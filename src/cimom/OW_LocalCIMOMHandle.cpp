@@ -238,10 +238,11 @@ OW_LocalCIMOMHandle::invokeMethod(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
-OW_LocalCIMOMHandle::getQualifierType(const OW_CIMObjectPath& name)
+OW_LocalCIMOMHandle::getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getQualifierType(name, m_aclInfo);
+	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -309,7 +309,8 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CreateClass
 
 	OW_CIMClass cc("footest");
-	OW_CIMQualifierType keyQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_KEY, "root/testsuite"));
+	OW_CIMQualifierType keyQualType = hdl->getQualifierType("root/testsuite",
+		OW_CIMQualifier::CIM_QUAL_KEY);
 	OW_CIMQualifier keyQual(keyQualType);
 	keyQual.setValue(OW_CIMValue(true));
 	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
@@ -338,7 +339,8 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	
 	// create a base class that has the associator qualifier, which can't be overridden
 	OW_CIMClass baseClass("invalidTestBase");
-	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root/testsuite"));
+	OW_CIMQualifierType assocQualType = hdl->getQualifierType("root/testsuite",
+		OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
 	OW_CIMQualifier assocQual(assocQualType);
 	assocQual.setValue(OW_CIMValue(true));
 	baseClass.addProperty(theKeyProp);
@@ -1034,7 +1036,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ABSTRACT, "badNamespace"));
+		hdl->getQualifierType("badNamespace", OW_CIMQualifier::CIM_QUAL_ABSTRACT);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -1045,7 +1047,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->getQualifierType(OW_CIMObjectPath("badQualifierType", "root/testsuite"));
+		hdl->getQualifierType("root/testsuite", "badQualifierType");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

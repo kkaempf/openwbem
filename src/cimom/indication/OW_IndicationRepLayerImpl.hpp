@@ -125,9 +125,10 @@ public:
 
 
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath &name, const OW_ACLInfo& aclInfo)
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_ACLInfo& aclInfo)
 	{
-		return m_pServer->getQualifierType(name, aclInfo);
+		return m_pServer->getQualifierType(ns, qualifierName, aclInfo);
 	}
 
 

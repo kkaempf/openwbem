@@ -104,7 +104,8 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMQualifierType getQualifierType(const OW_CIMObjectPath& objPath,
+	virtual OW_CIMQualifierType getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName,
 		const OW_ACLInfo& aclInfo);
 
 	/**

@@ -451,16 +451,17 @@ OW_CIMServer::deleteNameSpace(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
-OW_CIMServer::getQualifierType(const OW_CIMObjectPath& objPath,
+OW_CIMServer::getQualifierType(const OW_String& ns,
+	const OW_String& qualifierName,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get a qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, objPath.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, ns, aclInfo);
 	
-	m_env->logDebug(format("OW_CIMServer getting qualifier type: %1", objPath.toString()));
+	m_env->logDebug(format("OW_CIMServer getting qualifier type: %1",
+		OW_CIMObjectPath(qualifierName,ns).toString()));
 
-	return m_mStore.getQualifierType(objPath.getNameSpace(),
-		objPath.getObjectName());
+	return m_mStore.getQualifierType(ns, qualifierName);
 }
 
 //////////////////////////////////////////////////////////////////////////////

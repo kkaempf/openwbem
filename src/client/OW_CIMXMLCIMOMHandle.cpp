@@ -890,18 +890,18 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
-OW_CIMXMLCIMOMHandle::getQualifierType(const OW_CIMObjectPath& path)
+OW_CIMXMLCIMOMHandle::getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName)
 {
 	static const char* const commandName = "GetQualifier";
 
-	OW_String qualName = path.getObjectName();
 	OW_Array<OW_Param> params;
 
-	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
+	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualifierName));
 
 	OW_CIMQualifierType rval(OW_Bool(true));
 	getQualifierTypeOp op(rval);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params);
+	intrinsicMethod(ns, commandName, op, params);
 	return rval;
 }
 

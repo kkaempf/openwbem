@@ -427,9 +427,7 @@ void getQualifier(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing getQualifier() *******\n" << endl;
 	try
 	{
-		OW_String qualType = "description";
-		OW_CIMObjectPath cop(qualType, "/root/acltest");
-		OW_CIMQualifierType qt = hdl.getQualifierType(cop);
+		OW_CIMQualifierType qt = hdl.getQualifierType("/root/acltest", "description");
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

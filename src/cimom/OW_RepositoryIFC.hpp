@@ -105,7 +105,8 @@ public:
 	 * @exception OW_IOException
 	 */
 	virtual OW_CIMQualifierType getQualifierType(
-		const OW_CIMObjectPath& objPath, const OW_ACLInfo& aclInfo) = 0;
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Enumerate the qualifier types in a name space.

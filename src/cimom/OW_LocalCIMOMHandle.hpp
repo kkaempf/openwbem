@@ -256,7 +256,8 @@ public:
 	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
 	 * @return An OW_CIMQualifierType identified by name.
 	 */
-	virtual OW_CIMQualifierType getQualifierType(const OW_CIMObjectPath &name);
+	virtual OW_CIMQualifierType getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName);
 
 	/**
 	 * Gets the CIM class for the specified CIM object path.
