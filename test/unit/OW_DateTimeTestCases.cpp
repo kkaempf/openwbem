@@ -58,7 +58,11 @@ time_t calcTimeT(int year, int month, int day, int hour, int minute, int second)
 	t.tm_sec = second;
 	t.tm_isdst = 0;
 	// since our input was in ust, adjust for the timezone, since mktime assumes it's input is in local time.
+#ifdef OW_HAVE_TIMEGM
+	time_t rv = timegm(&t);
+#else
 	time_t rv = mktime(&t) - timezone;
+#endif
 	return rv;
 }
 
