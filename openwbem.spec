@@ -30,6 +30,10 @@ Requires	: openwbem
 #Group           : Programming/Library
 #Summary         : Documentation files for OpenWBEM
 
+%package perlNPI
+Group       	: Administration/System
+Summary     	: PerlNPI provider interface for the OpenWBEM CIMOM
+Requires	: openwbem, perl
 
 %description
 The OpenWBEM CIMOM
@@ -40,6 +44,8 @@ Headers files for OpenWBEM
 #%description doc
 #Documentation files for OpenWBEM
 
+%description perlNPI
+PerlNPI provider interface for the OpenWBEM CIMOM
 
 %prep
 
@@ -184,6 +190,11 @@ fi
 #%Files doc
 #%defattr(-,root,root)
 #%doc docs/*
+
+%Files perlNPI
+%{prefix}/lib/perl5/site_perl
+%defattr(-,root,root)
+%{prefix}/share/man/man3
 
 %ChangeLog
 
