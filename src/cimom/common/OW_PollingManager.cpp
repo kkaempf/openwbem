@@ -48,7 +48,27 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-#include <climits>
+//#include <climits>
+#include <limits>
+
+namespace
+{
+	template <bool b> struct compile_time_assert;
+	template <> struct compile_time_assert<true> { };
+	using OpenWBEM::Int32;
+
+	// RETURNS: max(x, min(x+y, TIME_T_MAX)) where TIME_T_MAX is largest time_t
+	time_t safe_add(time_t x, Int32 y)
+	{
+		compile_time_assert<(sizeof(time_t) >= sizeof(Int32))> dummy;
+		time_t const max_time = std::numeric_limits<time_t>::max();
+		return (
+			y <= 0 ? x :
+			x > max_time - y ? max_time :
+			x + y
+		);
+	}
+}
 
 namespace OW_NAMESPACE
 {
@@ -222,8 +242,8 @@ PollingManagerThread::run()
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
 			TriggerRunnerRef tr(new TriggerRunner(this, m_env));
-			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(
-				createProvEnvRef(m_env));
+			tr->m_pollInterval =
+				itpra[i]->getInitialPollingInterval(createProvEnvRef(m_env));
 			OW_LOG_DEBUG(m_logger, Format("PollingManager poll interval for provider"
 				" %1: %2", i, tr->m_pollInterval));
 			if (!tr->m_pollInterval)
@@ -272,8 +292,15 @@ PollingManagerThread::calcSleepTime(bool& rightNow, bool doInit)
 	DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
-	time_t leastTime = LONG_MAX;
+
+	Int32 const int32_max = std::numeric_limits<Int32>::max();
+	time_t const time_t_max = std::numeric_limits<time_t>::max();
+	time_t leastTime = (time_t_max > int32_max ? int32_max : time_t_max);
+	// leastTime is now a large positive time_t value that will fit into an
+	// Int32, and hence into a UInt32.
+
 	int checkedCount = 0;
+	// LOOP INVARIANT: 0 <= leastTime <= int32_max
 	for (size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
 		if (m_triggerRunners[i]->m_isRunning
@@ -284,13 +311,14 @@ PollingManagerThread::calcSleepTime(bool& rightNow, bool doInit)
 		if (doInit)
 		{
 			m_triggerRunners[i]->m_nextPoll =
-				tm + m_triggerRunners[i]->m_pollInterval;
+				safe_add(tm, m_triggerRunners[i]->m_pollInterval);
 		}
 		else if (m_triggerRunners[i]->m_nextPoll <= tm)
 		{
 			rightNow = true;
 			return 0;
 		}
+		// GUARANTEED: m_triggerRunners[i]->m_nextPoll >= tm
 		checkedCount++;
 		time_t diff = m_triggerRunners[i]->m_nextPoll - tm;
 		if (diff < leastTime)
@@ -356,8 +384,8 @@ PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 	if (m_shuttingDown)
 		return;
 	TriggerRunnerRef tr(new TriggerRunner(this, m_env));
-	tr->m_pollInterval = p->getInitialPollingInterval(
-		createProvEnvRef(m_env));
+	tr->m_pollInterval = 
+		p->getInitialPollingInterval(createProvEnvRef(m_env));
 	OW_LOG_DEBUG(m_logger, Format("PollingManager poll interval for provider"
 		" %1", tr->m_pollInterval));
 	if (!tr->m_pollInterval)
@@ -367,7 +395,7 @@ PollingManagerThread::addPolledProvider(const PolledProviderIFCRef& p)
 	DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
-	tr->m_nextPoll = tm + tr->m_pollInterval;
+	tr->m_nextPoll = safe_add(tm, tr->m_pollInterval);
 	tr->m_itp = p;
 	m_triggerRunners.append(tr);
 	m_triggerCondition.notifyAll();
@@ -421,7 +449,7 @@ PollingManagerThread::TriggerRunner::run()
 		}
 		DateTime dtm;
 		dtm.setToCurrent();
-		m_nextPoll = dtm.get() + m_pollInterval;
+		m_nextPoll = safe_add(dtm.get(), m_pollInterval);
 	}
 	m_isRunning = false;
 	m_pollMan->m_triggerCondition.notifyOne();
