@@ -51,40 +51,52 @@ public:
 	{
 		// create the start state
 		m_states.resize(1);
-		m_states[0].first.resize(256, -1);
-		m_states[0].second = -1;
 	}
 	int getTransition(int state, UInt8 input) const
 	{
 		assert(m_states.size() > state);
-		return m_states[state].first[input];
+		return m_states[state].transitions[input];
 	}
 
 	int getStateStr(int state) const
 	{
 		assert(m_states.size() > state);
-		return m_states[state].second;
+		return m_states[state].inputSelection;
 	}
 
 	int addState()
 	{
 		m_states.resize(m_states.size() + 1);
 		int state = m_states.size() - 1;
-		m_states[state].first.resize(256, -1);
-		m_states[state].second = -1;
+		m_states[state].inputSelection = -1;
+		m_states[state].acceptState = false;
 		return state;
 	}
 
-	// val.second == 1, increment the pointer to str1
-	// val.second == 2, increment the pointer to str2
-	void addTransition(int firstState, UInt8 input, int nextState, int stateSelection)
+	void setStateAccept(int state)
 	{
-		assert(m_states.size() > firstState);
+		assert(m_states.size() > state);
+		m_states[state].acceptState = true;
+	}
+	
+	void setStateInputSelection(int state, int inputSelection)
+	{
+		assert(m_states.size() > state);
+		assert(inputSelection == 1 || inputSelection == 2);
+		assert(m_states[state].inputSelection == -1 || 
+			   m_states[state].inputSelection == inputSelection);
+		m_states[state].inputSelection = -1;
+	}
+
+	// val.inputSelection == 1, increment the pointer to str1
+	// val.inputSelection == 2, increment the pointer to str2
+	void addTransition(int transitionsState, UInt8 input, int nextState, int inputSelection)
+	{
+		assert(m_states.size() > transitionsState);
 		assert(m_states.size() > nextState);
-		assert(stateSelection == 1 || stateSelection == 2);
-		assert(m_states[firstState].second == -1 || m_states[firstState].second == stateSelection);
-		m_states[firstState].first[input] = nextState;
-		m_states[firstState].second = stateSelection;
+		assert(inputSelection == 1 || inputSelection == 2);
+		assert(m_states[transitionsState].inputSelection == -1 || m_states[transitionsState].inputSelection == inputSelection);
+		m_states[transitionsState].transitions[input] = nextState;
 	}
 
 	void debug() const
@@ -93,7 +105,20 @@ public:
 	}
 
 	// transitions, and whether state applies to str1 or str2
-	typedef pair<vector<int>, int> state_t;
+	struct state_t
+	{
+		state_t() 
+			: transitions()
+			, inputSelection(-1)
+			, acceptState(false)
+		{
+			transitions.resize(256, -1);
+		}
+		vector<int> transitions;
+		int inputSelection;
+		bool acceptState;
+	};
+	//typedef pair<vector<int>, int> state_t;
 	vector<state_t> m_states;
 };
 
@@ -106,6 +131,7 @@ int followOrAddTransition(int curTransition, UInt8 input, int aux)
 	{
 		// no transition, add one
 		int newState = stateMachine.addState();
+		stateMachine.setStateInputSelection(curTransition, aux);
 		stateMachine.addTransition(curTransition, input, newState, aux);
 		nextTransition = newState;
 	}
@@ -142,7 +168,7 @@ void buildTransitions(const String& str1, const String& str2)
 	}
 	cout << "\"\n";
 
-	// do it first for str1/str2
+	// do it transitions for str1/str2
 	int trans = StateMachine::start;
 	int pos1 = 0;
 	int pos2 = 0;
@@ -166,6 +192,7 @@ void buildTransitions(const String& str1, const String& str2)
 		if (str1[pos1])
 			trans = followOrAddTransition(trans, str1[pos1++], 2);
 	}
+    stateMachine.setStateAccept(trans);
 //	cout << "finished building SM for " << str1 << " " << str2 << "\n";
 }
 
@@ -272,11 +299,11 @@ int main(int argc, char** argv)
 
 	for (int i = 0; i < stateMachine.m_states.size(); ++i)
 	{
-		if (stateMachine.m_states[i].second == -1)
+		if (stateMachine.m_states[i].inputSelection == -1)
 			continue; // it's an acceptance or duplicate state, we don't need to print it
 
 		cout << "state" << i << ":\n";
-		if (stateMachine.m_states[i].second == 1)
+		if (stateMachine.m_states[i].inputSelection == 1)
 		{
 			cout << "\tswitch(*(str1++)){\n";
 		}
@@ -288,14 +315,14 @@ int main(int argc, char** argv)
 		if (i == 0)
 			cout << "\t\tcase 0x0: goto zero;\n";
 
-		for (int j = 0; j < stateMachine.m_states[i].first.size(); ++j)
+		for (int j = 0; j < stateMachine.m_states[i].transitions.size(); ++j)
 		{
-			if (stateMachine.m_states[i].first[j] != -1)
+			if (stateMachine.m_states[i].transitions[j] != -1)
 			{
-				if (stateMachine.m_states[stateMachine.m_states[i].first[j]].second == -1)
+				if (stateMachine.m_states[stateMachine.m_states[i].transitions[j]].inputSelection == -1)
 					cout << "\t\tcase 0x" << hex << j << ": goto state0;\n";
 				else
-					cout << "\t\tcase 0x" << hex << j << ": goto state" << stateMachine.m_states[i].first[j] << ";\n";
+					cout << "\t\tcase 0x" << hex << j << ": goto state" << stateMachine.m_states[i].transitions[j] << ";\n";
 			}
 		}
 		cout << "\t\tdefault: goto no_match;\n\t}\n";
