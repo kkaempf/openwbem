@@ -77,7 +77,7 @@ protected:
 	 * @param c A pointer to the start of the buffer
 	 * @param n the number of bytes to write
 	 *
-	 * @return -1 if error, Otherwise 0.
+	 * @return -1 if error, 0 if the entire buffer was written.
 	 */
 	virtual int buffer_to_device(const char* c, int n)
 	{
