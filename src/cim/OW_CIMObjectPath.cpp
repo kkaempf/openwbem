@@ -659,7 +659,7 @@ CIMObjectPath::getNameSpaceUrl() const
 String
 CIMObjectPath::escape(const String& inString)
 {
-	int valuesLen = int(inString.length());
+	int valuesLen = static_cast<int>(inString.length());
 	if (valuesLen == 0)
 	{
 		return inString;
@@ -695,21 +695,22 @@ CIMObjectPath::escape(const String& inString)
 String
 CIMObjectPath::unEscape(const String& inString)
 {
-	int valuesLen = int(inString.length());
+	int valuesLen = static_cast<int>(inString.length());
 	if (valuesLen == 0)
 	{
 		return inString;
 	}
 	StringBuffer rv(valuesLen);
 	const char* values = inString.c_str();
-	for (int i = 0; i < valuesLen; i++)
+	int i = 0;
+	while (i < valuesLen)
 	{
 		char ch = values[i];
 		if (ch == '\\')
 		{
 			if (i+1 < valuesLen)
 			{
-				i++;
+				++i;
 				rv += values[i];
 			}
 		}
@@ -717,6 +718,7 @@ CIMObjectPath::unEscape(const String& inString)
 		{
 			rv += values[i];
 		}
+		++i;
 	}
 	return rv.releaseString();
 }
@@ -748,13 +750,17 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 	CIMPropertyArray classProps = theClass.getKeys();
 	CIMPropertyArray copProps = getKeys();
 	// Remove properties that are not defined in the class
-	for (size_t i = 0; i < copProps.size(); i++)
+	size_t i = 0;
+	while (i < copProps.size())
 	{
 		propName = copProps[i].getName();
 		if (!theClass.getProperty(propName))
 		{
 			copProps.remove(i);
-			i--;
+		}
+		else
+		{
+			++i;
 		}
 	}
 	// Ensure existing properties have the right type
