@@ -260,6 +260,7 @@ extern Mutex gethostbynameMutex;  // defined in SocketAddress.cpp
 namespace SocketUtils {
 #endif
 
+#ifndef OW_WIN32
 String getFullyQualifiedHostName()
 {
 	char hostName [2048];
@@ -337,6 +338,72 @@ String getFullyQualifiedHostName()
 	}
 	return "";
 }
+#else
+// WIN32 defined
+String getFullyQualifiedHostName()
+{
+	String rv;
+	struct hostent *hostentp;
+	char bfr[1024], ipaddrstr[128];
+	struct in_addr iaHost;
+
+	if(gethostname(bfr, sizeof(bfr)-1) == SOCKET_ERROR)
+	{
+		OW_THROW(SocketException, 
+			Format("SocketUtils::getFullyQualifiedHostName: gethostname failed: %1(%2)", 
+				WSAGetLastError(), getLastErrorMsg()).c_str());
+	}
+
+	if(strchr(bfr, '.'))
+	{
+		// Guess we already have the DNS name
+		return String(bfr);
+	}
+
+	if((hostentp = gethostbyname(bfr)) == NULL)
+	{
+		OW_THROW(SocketException, 
+			Format("SocketUtils::getFullyQualifiedHostName: gethostbyname"
+				" failed: %1(%2)", WSAGetLastError(),
+				getLastErrorMsg()).c_str());
+	}
+
+	if(strchr(hostentp->h_name, '.'))
+	{
+		rv = hostentp->h_name;
+	}
+	else
+	{
+		strcpy(ipaddrstr, 
+			inet_ntoa(*(struct in_addr*) (hostentp->h_addr_list[0])));
+		iaHost.s_addr = inet_addr(ipaddrstr);
+		if(iaHost.s_addr == INADDR_NONE)
+		{
+			// Use the IP addr as the DNS name
+			rv = ipaddrstr;
+		}
+		else
+		{
+			hostentp = gethostbyaddr((const char*)&iaHost,
+				sizeof(struct in_addr), AF_INET);
+			if(!hostentp)
+			{
+				// Use the IP addr as the DNS name
+				rv = ipaddrstr;
+			}
+			else
+			{
+				// GOT IT
+				rv = hostentp->h_name;
+			}
+		}
+	}
+
+	return rv;
+}
+#endif
+
+
 } // end namespace SocketUtils
 
 } // end namespace OpenWBEM

@@ -1,2 +1,5 @@
 *.ncb
 *.suo
+*.obj
+*.dll
+*.lib

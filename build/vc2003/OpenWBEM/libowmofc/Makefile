@@ -5,8 +5,8 @@ BUILDTYPE = Debug
 LIBNAME = libowmofc
 
 TARGET = $(LIBNAME).dll
-TARGETDIR = $(BUILDTYPE)
 BASEDIR = ..
+TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 
 CPP = cl
 LINK = link
@@ -24,7 +24,7 @@ INCS = \
 /I$(SRCDIR)\cim
 
 LIBPATHS = \
-/LIBPATH:$(BASEDIR)\libopenwbem\$(BUILDTYPE)
+/LIBPATH:$(TARGETDIR)
 
 LIBS = \
 ws2_32.lib \
@@ -36,14 +36,12 @@ libopenwbem.lib
 
 !IFDEF DEBUG
 CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-TARGETDIR = Debug
+CPPFLAGS = /GF /EHsc /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 OBJDIR = Debug
 LINKDBG = /DEBUG
 !ELSE
 CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
 CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
-TARGETDIR = Release
 OBJDIR = Release
 LINKDBG = 
 !ENDIF

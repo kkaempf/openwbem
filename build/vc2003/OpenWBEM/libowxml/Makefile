@@ -1,10 +1,7 @@
 DEBUG = 1
 WARNLEVEL = /W0
-
-TARGET = libowxml.dll
-BUILDTYPE = Debug
-TARGETDIR = $(BUILDTYPE)
-BASEDIR = ..
+LIBNAME = libowxml
+OPENSSLBASE = C:\openssl
 
 CPP = cl
 LINK = link
@@ -17,20 +14,35 @@ MAP2DEF = $(TOOLSDIR)\owmap2def.exe
 INCS = /I".." /I$(SRCDIR)\common /I$(SRCDIR)\cim /I$(SRCDIR)\ifcs /I$(SRCDIR)\common\socket /I"C:\OpenSSL\include" /I$(SRCDIR)\client
 
 !IFDEF DEBUG
+BUILDTYPE = Debug
 CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-TARGETDIR = Debug
-OBJDIR = Debug
+CPPFLAGS = /GF /EHsc /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
+BUILDTYPE = Release
 CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
 CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
-TARGETDIR = Release
-OBJDIR = Release
 LINKDBG = 
 !ENDIF
 
-LIBPATHS = /LIBPATH:"C:\OpenSSL\lib\vc" /LIBPATH:$(BASEDIR)\libopenwbem\$(BUILDTYPE)
+BASEDIR = ..
+TARGET = $(LIBNAME).dll
+TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
+OBJDIR = $(BUILDTYPE)
+
+INCS = \
+/I$(BASEDIR) \
+/I$(SRCDIR)\common \
+/I$(SRCDIR)\cim \
+/I$(SRCDIR)\ifcs \
+/I$(SRCDIR)\common\socket \
+/I$(OPENSSLBASE)\include \
+/I$(SRCDIR)\client
+
+
+LIBPATHS = \
+/LIBPATH:$(OPENSSLBASE)\lib\vc \
+/LIBPATH:$(TARGETDIR)
 
 LIBS = \
 ws2_32.lib \

@@ -474,6 +474,8 @@ createThread(Thread_t& handle, ThreadFunction func,
 	if (hThread != 0)
 	{
 		addThreadToMap(threadId, hThread);
+		handle = threadId;
+		cc = 0;
 	}
 
 	return cc;

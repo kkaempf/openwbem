@@ -101,7 +101,8 @@ int convertFile(const string& filename, const string& outfilename)
 	timeString += ::ctime(&curTime);
 
 	// Now we have the filename without an extension
-	int ndx = outfilename.find('.');
+	//int ndx = outfilename.find('.');
+	int ndx = outfilename.find_last_of('.');
 	string libraryName = (ndx != string::npos) ? outfilename.substr(0, ndx) : outfilename;
 	ndx = libraryName.find_last_of('\\');
 	if (ndx != string::npos)

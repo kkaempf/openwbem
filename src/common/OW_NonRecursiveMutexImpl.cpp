@@ -70,15 +70,9 @@ createMutex(NonRecursiveMutex_t& handle)
 	return 0;
 #elif defined(OW_WIN32)
 	int cc = -1;
-	__try
+	if ((handle = CreateMutex(NULL, FALSE, NULL)))
 	{
-		if ((handle = CreateMutex(NULL, FALSE, NULL)))
-		{
-			cc = 0;
-		}
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
+		cc = 0;
 	}
 	return cc;
 #else
@@ -110,17 +104,8 @@ destroyMutex(NonRecursiveMutex_t& handle)
 	}
 	return 0;
 #elif defined (OW_WIN32)
-	int cc;
-	__try
-	{
-		ReleaseMutex(handle);
-		cc = (CloseHandle(handle) == 0) ? -2 : 0;
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		cc = -2;
-	}
-	return cc;
+	ReleaseMutex(handle);
+	return (CloseHandle(handle) == 0) ? -2 : 0;
 #else
 #error "port me!"
 #endif
@@ -142,15 +127,9 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	return res;
 #elif defined (OW_WIN32)
 	int cc = -1;
-	__try
+	if (WaitForSingleObject(handle, INFINITE) != WAIT_FAILED)
 	{
-		if (WaitForSingleObject(handle, INFINITE) != WAIT_FAILED)
-		{
-			cc = 0;
-		}
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
+		cc = 0;
 	}
 	return cc;
 #else
@@ -172,19 +151,7 @@ releaseMutex(NonRecursiveMutex_t& handle)
 	return res;
  
 #elif defined (OW_WIN32)
-	int cc = -1;
-	__try
-	{
-		if (ReleaseMutex(handle))
-		{
-			cc = 0;
-		}
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-	}
-
-	return cc;
+	return (ReleaseMutex(handle)) ? 0 : -1;
 #else
 #error "port me!"
 #endif

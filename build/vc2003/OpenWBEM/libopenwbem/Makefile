@@ -1,8 +1,10 @@
 DEBUG = 1
 WARNLEVEL = /W0
+LIBNAME = libopenwbem
+OPENSSLBASE = c:\openssl
 
-TARGET = libopenwbem.dll
-TARGETDIR = Debug
+BASEDIR = ..
+TARGET = $(LIBNAME).dll
 
 CPP = cl
 LINK = link
@@ -12,21 +14,41 @@ TOOLSDIR = ..\tools
 
 MAP2DEF = $(TOOLSDIR)\owmap2def.exe
 
-INCS = /I".." /I$(SRCDIR)\common /I$(SRCDIR)\cim /I$(SRCDIR)\ifcs /I$(SRCDIR)\common\socket /I"C:\OpenSSL\include"
-
 !IFDEF DEBUG
+BUILDTYPE = Debug
 CPPDEFS = /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
-TARGETDIR = Debug
-OBJDIR = Debug
+CPPFLAGS = /GF /EHsc /RTC1 /Zi /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
+BUILDTYPE = Release
 CPPDEFS = /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
 CPPFLAGS = /GF /EHsc /RTC1 /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
-TARGETDIR = Release
-OBJDIR = Release
 LINKDBG = 
 !ENDIF
+
+OBJDIR = $(BUILDTYPE)
+TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
+
+INCS = \
+/I".." \
+/I$(SRCDIR)\common \
+/I$(SRCDIR)\cim \
+/I$(SRCDIR)\ifcs \
+/I$(SRCDIR)\common\socket \
+/I$(OPENSSLBASE)\include
+
+LIBPATH = \
+/LIBPATH:$(OPENSSLBASE)\lib\vc
+
+LIBS = \
+ws2_32.lib \
+advapi32.lib \
+libeay32.lib \
+ssleay32.lib \
+kernel32.lib \
+user32.lib \
+uuid.lib
+
 
 COMMONSRCDIR = $(SRCDIR)\common
 COMMONOBJS = \
@@ -56,6 +78,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_IOException.obj \
 	$(OBJDIR)\OW_IOIFCStreamBuffer.obj \
 	$(OBJDIR)\OW_Logger.obj \
+	$(OBJDIR)\OW_LoggerImpls.obj \
 	$(OBJDIR)\OW_MemTracer.obj \
 	$(OBJDIR)\OW_Mutex.obj \
 	$(OBJDIR)\OW_MutexImpl.obj \
@@ -168,25 +191,24 @@ IFCOBJS = \
 	$(OBJDIR)\OW_ServiceEnvironmentIFC.obj \
 	$(OBJDIR)\OW_ServiceIFC.obj 
 
-TARGETDIR = Debug
-
 $(TARGETDIR)\$(TARGET): $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) $(MAP2DEF)
-	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO /LIBPATH:"C:\OpenSSL\lib\vc" /DLL /DEBUG \
-		/MAP:"$(TARGETDIR)\libopenwbem.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-		/IMPLIB:"$(TARGETDIR)\libopenwbem.lib" $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) \
-		ws2_32.lib advapi32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
-	$(MAP2DEF) $(TARGETDIR)\libopenwbem.map $(TARGETDIR)\libopenwbem.def
-	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO /LIBPATH:"C:\OpenSSL\lib\vc" /DLL /DEBUG \
-		/MAP:"$(TARGETDIR)\libopenwbem.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-		/IMPLIB:"$(TARGETDIR)\libopenwbem.lib" /DEF:"$(TARGETDIR)\libopenwbem.def" \
-		$(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) \
-		ws2_32.lib advapi32.lib libeay32.lib ssleay32.lib kernel32.lib user32.lib uuid.lib
+	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATH) /DLL /DEBUG \
+		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
+		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(COMMONOBJS) $(CIMOBJS) \
+		$(SOCKETOBJS) $(IFCOBJS) $(LIBS)
+	$(MAP2DEF) $(TARGETDIR)\$(LIBNAME).map $(TARGETDIR)\$(LIBNAME).def
+	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATH) /DLL /DEBUG \
+		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
+		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" /DEF:"$(TARGETDIR)\$(LIBNAME).def" \
+		$(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) $(LIBS)
 
 clean:
-	del $(OBJDIR)\*.obj
-	del $(OBJDIR)\*.map
-	del $(OBJDIR)\*.def
-	del $(OBJDIR)\*.dll
+	-@del $(OBJDIR)\*.obj
+	-@del $(TARGETDIR)\$(LIBNAME).map
+	-@del $(TARGETDIR)\$(LIBNAME).def
+	-@del $(TARGETDIR)\$(LIBNAME).dll
+	-@del $(TARGETDIR)\$(LIBNAME).lib
+	-@del $(TARGETDIR)\$(LIBNAME).pdb
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
@@ -274,6 +296,9 @@ $(OBJDIR)\OW_IOIFCStreamBuffer.obj: $(COMMONSRCDIR)\OW_IOIFCStreamBuffer.cpp
 
 $(OBJDIR)\OW_Logger.obj: $(COMMONSRCDIR)\OW_Logger.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_Logger.cpp
+
+$(OBJDIR)\OW_LoggerImpls.obj: $(COMMONSRCDIR)\OW_LoggerImpls.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_LoggerImpls.cpp
 
 $(OBJDIR)\OW_MemTracer.obj: $(COMMONSRCDIR)\OW_MemTracer.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_MemTracer.cpp

@@ -23,7 +23,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;OW_WIN32"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="TRUE"
@@ -32,10 +32,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib libopenwbem.lib libowxml.lib"
+				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib libopenwbem.lib libowxml.lib libowmofc.lib libowhttp.lib"
 				OutputFile="$(OutDir)/owtest.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\libowxml\Debug;C:\OpenSSL\lib\VC;..\libopenwbem\Debug"
+				AdditionalLibraryDirectories="..\Debug;c:\openssl\lib\vc"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/owtest.pdb"
 				SubSystem="1"
@@ -128,9 +128,6 @@
 				RelativePath="..\..\..\..\test\CppUnit\CppUnitException.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\test\unit\MemTracerTest.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\..\test\unit\MOFCompilerTestCases.cpp">
 			</File>
 			<File
@@ -138,9 +135,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\test\unit\OW_Base64TestCases.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\test\unit\OW_BinarySerializationTestCases.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\test\unit\OW_CIMClassTestCases.cpp">
@@ -188,9 +182,6 @@
 				RelativePath="..\..\..\..\test\unit\OW_LinuxSharedLibraryLoaderTestCases.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\test\unit\OW_ListenerAuthenticatorTestCases.cpp">
-			</File>
-			<File
 				RelativePath="..\..\..\..\test\unit\OW_LoggerTestCases.cpp">
 			</File>
 			<File
@@ -207,9 +198,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\test\unit\OW_RWLockerTestCases.cpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\test\unit\OW_SharedLibraryTestCases.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\test\unit\OW_SocketUtilsTestCases.cpp">

@@ -89,18 +89,10 @@ createMutex(Mutex_t& handle)
 #endif
 	return 0;
 #elif defined (OW_WIN32)
-	int cc = 0;
-	__try
-	{
-		handle = new CRITICAL_SECTION;
-		assert(handle);
-		InitializeCriticalSection(handle);
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		cc = -1;
-	}
-	return cc;
+	handle = new CRITICAL_SECTION;
+	assert(handle);
+	InitializeCriticalSection(handle);
+	return 0;
 #else
 #error "port me!"
 #endif
@@ -135,17 +127,13 @@ destroyMutex(Mutex_t& handle)
 #endif
 	return res;
 #elif defined(OW_WIN32)
-	int cc = 0;
-	__try
+	if(handle)
 	{
 		DeleteCriticalSection(handle);
 		delete handle;
+		handle = 0;
 	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		cc = -1;
-	}
-	return cc;
+	return 0;
 #else
 #error "port me!"
 #endif
@@ -189,16 +177,8 @@ acquireMutex(Mutex_t& handle)
 #endif
 	return res;
 #elif defined(OW_WIN32)
-	int cc = 0;
-	__try
-	{
-		EnterCriticalSection(handle);
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		cc = -1;
-	}
-	return cc;
+	EnterCriticalSection(handle);
+	return 0;
 #else
 #error "port me!"
 #endif
@@ -244,17 +224,8 @@ releaseMutex(Mutex_t& handle)
 	return res;
 #endif
 #elif defined (OW_WIN32)
-	int cc = 0;
-	__try
-	{
-		LeaveCriticalSection(handle);
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		cc = -1;
-	}
-
-	return cc;
+	LeaveCriticalSection(handle);
+	return 0;
 #else
 #error "port me!"
 #endif
