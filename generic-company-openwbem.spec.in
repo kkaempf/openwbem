@@ -136,7 +136,8 @@ rm -f $RPM_BUILD_ROOT/%{@GENERIC@prefix}/libexec/openwbem/OW_PAMAuth
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib \
     $RPM_BUILD_ROOT/%{@GENERIC@prefix}/bin/owmofc -c -n root/cimv2 \
     -d $RPM_BUILD_ROOT/%{@GENERIC@localstatedir}/openwbem \
-    schemas/cim27/CIM_Schema27.mof
+    schemas/cim28/CIM_Schema28.mof mof/OpenWBEM_Interop.mof \
+    mof/OpenWBEM_Acl1.0.mof
 
 # END OF INSTALL
 
