@@ -366,7 +366,16 @@ esac
 CFLAGS="$PLAT_CFLAGS"
 CXXFLAGS="$PLAT_CXXFLAGS"
 
-OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,[CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"])
+OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,
+[
+  # aCC passes the OW_CHECK_COMPILER_FLAG test for
+  # -fno-enforce-eh-specs, because it will build and link if the flag
+  # is givien, but it emits an anoying and useless warning. This
+  # kludge eliminates that warning.
+  if  test $CC!="aCC"  ; then 
+    CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"
+  fi
+])
 
 # Set up the linker
 if test -z "$CXXLINK" ; then
