@@ -10,7 +10,9 @@ uninstall-local : uninstall-ow-shared-libs
 
 owstatlib_LIBRARIES = libowcppprovifc.a
 OW_SHARED_LIBS = libowcppprovifc.$(LIB_EXT)
-SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem -L$(top_builddir)/src/provider -lowprovider
+SHAREDLIBADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provider -lowprovider
 
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
@@ -60,13 +62,9 @@ OW_CppIndicationProviderIFC.hpp \
 OW_CppSimpleInstanceProviderIFC.hpp \
 OW_CppReadOnlyInstanceProviderIFC.hpp
 
-#libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
-#libOW_CppIFC_a_LIBADD = -lOpenWBEM
-
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/cimom/server
+-I$(top_srcdir)/src/provider
 

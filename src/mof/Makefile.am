@@ -41,10 +41,6 @@ OW_MOFCompiler.hpp \
 OW_MOFParserDecls.hpp \
 OW_MOFLineInfo.hpp
 
-#libowmofc_a_LDFLAGS = -L$(top_builddir)/src/common/.libs
-
-#libowmofc_a_LIBADD = -lopenwbem
-
 
 EXTRA_DIST = \
 $(top_builddir)/src/mof/OW_MOFParser.cc \
