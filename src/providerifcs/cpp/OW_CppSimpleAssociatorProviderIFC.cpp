@@ -38,7 +38,8 @@
 
 
 
-using namespace OpenWBEM; 
+namespace OpenWBEM
+{
 
     class AssocHelperResultHandlerIFC : public CIMInstanceResultHandlerIFC 
     {
@@ -234,9 +235,8 @@ void
     _RH rh(result, objectName, resultClass, role, resultRole,
            lch, includeQualifiers, includeClassOrigin, propertyList); 
 
-    doReferences(env, rh, ns, objectName, 
-                 theAssocClass, resultClass, role, resultRole, WBEMFlags::E_EXCLUDE_QUALIFIERS, 
-                 WBEMFlags::E_EXCLUDE_CLASS_ORIGIN, 0); 
+    doReferences(env, rh, ns, objectName, theAssocClass, resultClass, 
+                 role, resultRole); 
 }
 /**
  * For the definition of this operation, refer to
@@ -289,10 +289,8 @@ void
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, assocClass); 
 
-    doReferences(env, rh, ns, objectName, 
-                 theAssocClass, resultClass, role, resultRole, 
-                 WBEMFlags::E_EXCLUDE_QUALIFIERS, 
-                 WBEMFlags::E_EXCLUDE_CLASS_ORIGIN, 0); 
+    doReferences(env, rh, ns, objectName, theAssocClass, resultClass, 
+                 role, resultRole); 
 }
 
 /**
@@ -336,16 +334,43 @@ void
                                                WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
                                                const StringArray *propertyList)
 {
+    class _RH : public CIMInstanceResultHandlerIFC
+    {
+    public: 
+        _RH(CIMInstanceResultHandlerIFC& realHandler, 
+            WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
+            WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
+            const StringArray *propertyList)
+            : _realHandler(realHandler)
+            , _includeQualifiers(includeQualifiers)
+            , _includeClassOrigin(includeClassOrigin)
+            , _propertyList(propertyList)
+        {
+        }
+
+        void doHandle(const CIMInstance& inst)
+        {
+            CIMInstance rval = inst.clone(WBEMFlags::E_NOT_LOCAL_ONLY, 
+                                                  _includeQualifiers, 
+                                                  _includeClassOrigin, 
+                                                  _propertyList); 
+            _realHandler.handle(rval); 
+        }
+    private: 
+        CIMInstanceResultHandlerIFC& _realHandler; 
+        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
+        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin; 
+        const StringArray* _propertyList; 
+    };
+
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, resultClass,
                                            WBEMFlags::E_NOT_LOCAL_ONLY,
                                            includeQualifiers, 
                                            includeClassOrigin); 
-    doReferences(env, result, ns, objectName, 
-                 theAssocClass, "", role, "",
-                 includeQualifiers,
-                 includeClassOrigin,
-                 propertyList ); 
+
+    _RH rh(result,includeQualifiers ,includeClassOrigin ,propertyList ); 
+    doReferences(env, rh, ns, objectName, theAssocClass, "", role, ""); 
 }
 /**
  * For definition of this operation, refer to
@@ -388,8 +413,7 @@ void
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, resultClass); 
     _RH rh(result,ns); 
-    doReferences(env, rh,ns ,objectName , theAssocClass,"",role, "", 
-                 WBEMFlags::E_EXCLUDE_QUALIFIERS, 
-                 WBEMFlags::E_EXCLUDE_CLASS_ORIGIN, 0); 
+    doReferences(env, rh,ns ,objectName , theAssocClass,"",role, ""); 
 }
 
+}

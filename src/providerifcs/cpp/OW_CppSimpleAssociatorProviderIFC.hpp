@@ -88,40 +88,6 @@ namespace OpenWBEM
  * 	Property in the Association Class that refers to the Associated
  * 	Object MUST match the value of this parameter).
  *
- * @param includeQualifiers If the includeQualifiers input parameter
- * 	is true this specifies that all Qualifiers for each Object
- * 	(including Qualifiers on the Object and on any returned Properties)
- * 	MUST be included as elements in the response.   If false no
- * 	elements are present in each returned Object.
- *
- * @param includeClassOrigin If the includeClassOrigin input parameter
- * 	is true, this specifies that the CLASSORIGIN attribute MUST be
- * 	present on all appropriate elements in each returned Object. If
- * 	false, no CLASSORIGIN attributes are present in each returned
- * 	Object.
- *
- * @param propertyList If the propertyList input parameter is not NULL
- * 	the members of the array define one or more Property names.
- * 	Each returned Object MUST NOT include elements for any Properties
- * 	missing from this list.  Note that if localOnly is specified as
- * 	true (or deepInheritance is specified as false) this acts as an
- * 	additional filter on the set or Properties returned (for example,
- * 	if Property A is included in the propertyList but localOnly is set
- * 	to true and A is not local to a returned Instance, then it will
- * 	not be included in that Instance).  If the propertyList input
- * 	parameter is an empty array this signifies that no Properties are
- * 	included in each returned Object.  If the propertyList parameter
- * 	is omitted this specifies that all Properties (subject to the
- * 	conditions expressed by the other parameters) are included in each
- * 	returned Object.  If the propertyList contains duplicate elements,
- * 	the Server ignores the duplicates but otherwise processes the
- * 	request normally.  If the propertyList contains elements which are
- * 	invalid Property names for any target Object, the Server ignores
- * 	such entries but should otherwise process the request normally.
- * 	Clients SHOULD NOT explicitly specify properties in the propertyList
- * 	parameter unless they have specified a non-empty value for the
- * 	resultClass parameter.
- *
  * @returns If successful, the method returns zero or more CIM Instances
  * 	meeting the requested criteria.
  *
@@ -154,10 +120,7 @@ namespace OpenWBEM
                                   const CIMClass &assocClass, 
                                   const String &resultClass, 
                                   const String &role, 
-                                  const String &resultRole, 
-                                  WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-                                  WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-                                  const StringArray *propertyList) = 0; 
+                                  const String &resultRole) = 0; 
 
     public:
         virtual void associators(const ProviderEnvironmentIFCRef &env, 
