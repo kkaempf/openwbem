@@ -57,6 +57,7 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_NullLogger.hpp"
+#include "OW_FileSystem.hpp"
 
 #include <algorithm> // for std::remove
 
@@ -134,14 +135,25 @@ public:
 		IntrusiveReference<ListenerAuthenticator> authenticator,
 		RequestHandlerIFCRef listener,
 		const LoggerRef& logger,
-		Reference<Array<SelectablePair_t> > selectables)
+		Reference<Array<SelectablePair_t> > selectables,
+		const String& certFileName)
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
 	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_selectables(selectables)
 	{
-		m_configItems[ConfigOpts::HTTP_PORT_opt] = String(0);
-		m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(-1);
+		if(certFileName.empty())
+		{
+			m_configItems[ConfigOpts::HTTP_PORT_opt] = String(0);
+			m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(-1);
+		}
+		else
+		{
+			m_configItems[ConfigOpts::HTTP_PORT_opt] = String(-1);
+			m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(0);
+			m_configItems[ConfigOpts::SSL_CERT_opt] = certFileName;
+		}
+
 		m_configItems[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
 		m_configItems[ConfigOpts::SINGLE_THREAD_opt] = "false";
 		m_configItems[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
@@ -280,17 +292,29 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger)
+HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger,
+	const String& certFileName)
 	: m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
 	, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
+	, m_certFileName(certFileName)
 {
+	if(!certFileName.empty())
+	{
+		if(!FileSystem::canRead(certFileName))
+		{
+			OW_THROW(IOException, 
+				Format("Unable to open certificate file %1",
+					certFileName).c_str());
+		}
+	}
+
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
-		m_pLAuthenticator, m_XMLListener, logger, selectables));
+		m_pLAuthenticator, m_XMLListener, logger, selectables, certFileName));
 	m_httpServer->init(env);
 	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -370,34 +394,29 @@ HTTPXMLCIMListener::registerForIndication(
 	reg.cimomUrl = curl;
 	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url, authCb);
 	String ipAddress = hdl->getWBEMProtocolHandler()->getLocalAddress().getAddress();
-	
-	// If we are connecting to the CIMOM via HTTPS, then assume it will
-	// support HTTPS. We'll
-	// first try to get a class of CIM_IndicationHandlerXMLHTTPS
-	// If we can't get HTTPS then try for HTTP
-	// This will be used as the indication handler for all
-	// events subscribed to.
 	CIMClass delivery(CIMNULL);
-	String urlPrefix = "https://";
+	String urlPrefix;
+
 	UInt16 listenerPort = m_httpsListenPort;
-	bool useHttps = reg.cimomUrl.scheme.endsWith('s');
-	if (useHttps)
+	if(!m_certFileName.empty())	// Listener will be recieving over https
 	{
+		urlPrefix = "https://";
 		try
 		{
-			delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
+			delivery = hdl->getClass(ns, "CIM_IndicationHandlerCIMXML");
 		}
 		catch (CIMException& e)
 		{
-			if (e.getErrNo() == CIMException::INVALID_CLASS)
+			if (e.getErrNo() == CIMException::NOT_FOUND)
 			{
-				useHttps = false;
+				// the > 2.6 doesn't exist, try to get the 2.5 class
+				delivery = hdl->getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
 			}
 			else
 				throw;
 		}
 	}
-	if (!useHttps)
+	else
 	{
 		try
 		{

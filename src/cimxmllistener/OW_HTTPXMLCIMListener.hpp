@@ -62,7 +62,8 @@ public:
 	 * @param logger If a logger specified then it will receive log messages, otherwise
 	 *  all log messages will be discarded.
 	 */
-	HTTPXMLCIMListener(const LoggerRef& logger = LoggerRef(0));
+	HTTPXMLCIMListener(const LoggerRef& logger = LoggerRef(0),
+		const String& certFileName = String());
 	~HTTPXMLCIMListener();
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister
@@ -145,6 +146,7 @@ private:
 #else
 #pragma warning (pop)
 #endif
+	String m_certFileName;
 };
 
 } // end namespace OW_NAMESPACE

@@ -102,7 +102,8 @@ enum
 	HELP_OPT,
 	VERSION_OPT,
 	URL_OPT,
-	FILTER_QUERY_OPT
+	FILTER_QUERY_OPT,
+	CERT_FILE_OPT,
 };
 
 CmdLineParser::Option g_options[] =
@@ -112,6 +113,8 @@ CmdLineParser::Option g_options[] =
 	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
 	{FILTER_QUERY_OPT, 'f', "filter_query", CmdLineParser::E_REQUIRED_ARG, 0, "Set the indication filter WQL query."},
+	{CERT_FILE_OPT, 'c', "cert_file", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The fully qualified path to a certificate file in PEM format. If specified the listener will support HTTPS only"},
 	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
@@ -126,9 +129,11 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		bool useHttps;
 		String url;
 		String ns;
 		String query;
+		String certfile;
 		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 		{
 			url = argv[1];
@@ -153,13 +158,16 @@ int main(int argc, char* argv[])
 			}
 			url = parser.getOptionValue(URL_OPT, "http://localhost/root/cimv2");
 			query = parser.mustGetOptionValue(FILTER_QUERY_OPT, "-f, --filter_query");
-			ns = URL(url).namespaceName;
+			URL urlObj(url);
+			bool useHttps = urlObj.scheme.endsWith('s') || urlObj.scheme.endsWith('S');
+			ns = urlObj.namespaceName;
 			if (ns.empty())
 			{
 				cerr << "No namespace given as part of the url." << endl;
 				Usage();
 				return 1;
 			}
+			certfile = parser.getOptionValue(CERT_FILE_OPT);
 		}
 	
 #ifdef OW_WIN32
@@ -184,7 +192,7 @@ int main(int argc, char* argv[])
 		CIMListenerCallbackRef mcb(new myCallBack);
 		LoggerRef logger(new CerrLogger);
 		logger->setLogLevel(E_FATAL_ERROR_LEVEL);
-		HTTPXMLCIMListener hxcl(logger);
+		HTTPXMLCIMListener hxcl(logger, certfile);
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb, getLoginInfo);
 #ifdef OW_WIN32
