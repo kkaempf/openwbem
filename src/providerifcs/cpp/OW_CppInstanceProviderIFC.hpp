@@ -45,8 +45,6 @@ namespace OpenWBEM
 /**
  * Classes wishing to implement an instance provider must derive from this
  * class.
- * All calls to the derived provider will be serialized so that providers need
- * not worry about multi-threading issues.
  */
 class CppInstanceProviderIFC: public virtual CppProviderBaseIFC
 {
