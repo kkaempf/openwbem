@@ -43,14 +43,24 @@
 
 extern "C"
 {
-#ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef OW_WIN32
+	#define _CLOSE ::_close
+	#define _WRITE ::_write
+	#define _READ ::_read
+	#define _OPEN ::_open
+	#include <io.h>
+#else
+	#ifdef OW_HAVE_UNISTD_H
+		#include <unistd.h>
+	#endif
+	#define _CLOSE ::close
+	#define _WRITE ::write
+	#define _READ ::read
+	#define _OPEN ::open
 #endif
+
 #include <fcntl.h>
 #include <errno.h>
-#ifdef OW_WIN32
-#include <io.h>
-#endif
 }
 #include <cstring>
 
@@ -86,18 +96,20 @@ PosixUnnamedPipe::~PosixUnnamedPipe()
 void
 PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 {
+#ifdef OW_WIN32
+	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
+	// Only named pipes can. If this becomes a problem in the future, then
+	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
+	// a problem with the signal handling mechanism that is used in the daemon
+	// code, but I plan on do that differently on Win32
+	OW_ASSERT(outputIsBlocking);
+	return;
+#else
 	// precondition
 	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
 
 	m_blocking = outputIsBlocking;
 
-#ifdef OW_WIN32
-	unsigned long argp = !outputIsBlocking;
-	if (ioctlsocket(m_fds[0], FIONBIO, &argp) != 0)
-		OW_THROW(IOException, "Failed to set pipe to non-blocking");
-	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
-		OW_THROW(IOException, "Failed to set pipe to non-blocking");
-#else
 	for (size_t i = 0; i <= 1; ++i)
 	{
 		int fdflags = fcntl(m_fds[i], F_GETFL, 0);
@@ -125,16 +137,19 @@ PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 void
 PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
+#ifdef OW_WIN32
+	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
+	// Only named pipes can. If this becomes a problem in the future, then
+	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
+	// a problem with the signal handling mechanism that is used in the daemon
+	// code, but I plan on do that differently on Win32
+	OW_ASSERT(outputIsBlocking);
+	return;
+#else
 	// precondition
 	OW_ASSERT(m_fds[1] != -1);
 	
 	m_blocking = outputIsBlocking ? E_BLOCKING : E_NONBLOCKING ;
-
-#ifdef OW_WIN32
-	unsigned long argp = !outputIsBlocking;
-	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
-		OW_THROW(IOException, "Failed to set pipe to non-blocking");
-#else
 	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
 	if (fdflags == -1)
 	{
@@ -179,12 +194,12 @@ PosixUnnamedPipe::close()
 	int rc = -1;
 	if(m_fds[0] != -1)
 	{
-		rc = ::close(m_fds[0]);
+		rc = _CLOSE(m_fds[0]);
 		m_fds[0] = -1;
 	}
 	if(m_fds[1] != -1)
 	{
-		rc = ::close(m_fds[1]);
+		rc = _CLOSE(m_fds[1]);
 		m_fds[1] = -1;
 	}
 	return rc;
@@ -196,7 +211,7 @@ PosixUnnamedPipe::closeInputHandle()
 	int rc = -1;
 	if(m_fds[0] != -1)
 	{
-		rc = ::close(m_fds[0]);
+		rc = _CLOSE(m_fds[0]);
 		m_fds[0] = -1;
 	}
 	return rc;
@@ -208,7 +223,7 @@ PosixUnnamedPipe::closeOutputHandle()
 	int rc = -1;
 	if(m_fds[1] != -1)
 	{
-		rc = ::close(m_fds[1]);
+		rc = _CLOSE(m_fds[1]);
 		m_fds[1] = -1;
 	}
 	return rc;
@@ -220,6 +235,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[1] != -1)
 	{
+#ifndef OW_WIN32
 		if (m_blocking == E_BLOCKING)
 		{
 			rc = SocketUtils::waitForIO(m_fds[1], m_writeTimeout, SocketFlags::E_WAIT_FOR_OUTPUT);
@@ -235,8 +251,8 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 				}
 			}
 		}
-
-		rc = ::write(m_fds[1], data, dataLen);
+#endif
+		rc = _WRITE(m_fds[1], data, dataLen);
 	}
 	if (errorAsException && rc == -1)
 	{
@@ -251,6 +267,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[0] != -1)
 	{
+#ifndef OW_WIN32
 		if (m_blocking == E_BLOCKING)
 		{
 			rc = SocketUtils::waitForIO(m_fds[0], m_readTimeout, SocketFlags::E_WAIT_FOR_INPUT);
@@ -266,8 +283,8 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 				}
 			}
 		}
-
-		rc = ::read(m_fds[0], buffer, bufferLen);
+#endif
+		rc = _READ(m_fds[0], buffer, bufferLen);
 	}
 	if (errorAsException && rc == -1)
 	{
@@ -279,6 +296,11 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 Select_t
 PosixUnnamedPipe::getSelectObj() const
 {
+#ifdef OW_WIN32
+	// Can't select on this in unnamed pipe
+	OW_ASSERT(false);
+#endif
+
 	return m_fds[0];
 }
 
