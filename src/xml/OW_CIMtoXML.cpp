@@ -776,6 +776,8 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				raToXmlSA(out, sa);
 				break;
 			}
+			default:
+				OW_ASSERT(0);
 		}
 	}
 	else if(cv.getType() == OW_CIMDataType::REFERENCE)
@@ -904,6 +906,37 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				out << a.toString();
 				break;
 			}
+			
+			case OW_CIMDataType::EMBEDDEDCLASS:
+			{
+				OW_CIMClass cc;
+				cv.get(cc);
+				OW_String s;
+				OW_StringStream ss;
+				OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
+					OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,
+					OW_StringArray());
+				out << OW_XMLEscape(ss.toString());
+				break;
+			}
+			
+			case OW_CIMDataType::EMBEDDEDINSTANCE:
+			{
+				OW_CIMInstance i;
+				cv.get(i);
+				OW_String s;
+				OW_StringStream ss;
+				OW_CIMtoXML(i,ss,OW_CIMObjectPath(),
+					OW_CIMtoXMLFlags::notLocalOnly,
+					OW_CIMtoXMLFlags::includeQualifiers,
+					OW_CIMtoXMLFlags::includeClassOrigin,
+					OW_StringArray());
+				out << OW_XMLEscape(ss.toString());
+				break;
+			}
+			default:
+				OW_ASSERT(0);
 		}
 
 		out << "</VALUE>\n";
