@@ -50,7 +50,9 @@ namespace XMLParserDOM
 	 * Parse the XML document contained in the string xmlData
 	 *
 	 * @param xmlData The String containing the XML document to parse
-	 * @return OW_XMLNode which is the root of the XML document parsed
+	 * @return OW_XMLNode which is the root of the XML document parsed.
+	 * Guaranteed to not be NULL.
+	 * @throws DOMException if xml is no good.
 	 */
 	XMLNode parse(const String& xmlData);
 	
@@ -59,6 +61,8 @@ namespace XMLParserDOM
 	 *
 	 * @param data   std::istream to read the XML document to be parsed
 	 * @return XMLNode which is the root of the XML document parsed
+	 * Guaranteed to not be NULL.
+	 * @throws DOMException if xml is no good.
 	 */
 	XMLNode parse(std::istream& data);
 	

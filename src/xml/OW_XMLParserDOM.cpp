@@ -148,6 +148,8 @@ public:
 
 } // end unnamed namespace
 
+namespace XMLParserDOM
+{
 
 XMLNode 
 parse(const String& xmlData)
@@ -155,7 +157,12 @@ parse(const String& xmlData)
 	DOMDocumentBuilder docHandler;
 	DOMErrorHandler errHandler;
 	XMLParserSAX::parse(xmlData, docHandler, errHandler);
-	return docHandler.getDocument();
+	XMLNode rv = docHandler.getDocument();
+	if (!rv)
+	{
+		OW_THROW(DOMException, "No document found");
+	}
+	return rv;
 }
 
 XMLNode
@@ -164,9 +171,15 @@ parse(istream& data)
 	DOMDocumentBuilder docHandler;
 	DOMErrorHandler errHandler;
 	XMLParserSAX::parse(data, docHandler, errHandler);
-	return docHandler.getDocument();
+	XMLNode rv = docHandler.getDocument();
+	if (!rv)
+	{
+		OW_THROW(DOMException, "No document found");
+	}
+	return rv;
 }
 
+} // end namespace XMLParserDOM
 } // end namespace OpenWBEM
 
 
