@@ -50,12 +50,13 @@
 #include "OW_ProviderAgentFwd.hpp"
 #include "OW_ProviderAgentLifecycleCallbackIFC.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
 
 namespace OW_NAMESPACE
 {
 
 
-class OW_PROVIDERAGENT_API ProviderAgent
+class OW_PROVIDERAGENT_API ProviderAgent : public IntrusiveCountableBase
 {
 public:
 	// option which specifies the locking strategy.
@@ -154,7 +155,7 @@ public:
 		const String& callbackURL = String(""),
 		const ProviderAgentLockerIFCRef& locker = ProviderAgentLockerIFCRef(),
 		const ProviderAgentLifecycleCallbackIFCRef& lifecycleCB = ProviderAgentLifecycleCallbackIFCRef());
-	~ProviderAgent();
+	virtual ~ProviderAgent();
 	/**
 	 * Shut down the http server embedded within the ProviderAgent.
 	 * This function blocks until all threads which may be processing

@@ -41,6 +41,7 @@ namespace OW_NAMESPACE
 {
 
 class OW_PROVIDERAGENT_API ProviderAgent;
+typedef IntrusiveReference<ProviderAgent> ProviderAgentRef;
 
 class OW_PROVIDERAGENT_API ProviderAgentLockerIFC;
 typedef IntrusiveReference<ProviderAgentLockerIFC> ProviderAgentLockerIFCRef;
