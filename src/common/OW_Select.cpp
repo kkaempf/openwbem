@@ -270,11 +270,11 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-	int rc = 0;
+	int lerrno, rc = 0;
 	int timeout;
 
 	struct epoll_event event;
-	event.events = EPOLLIN | EPOLLPRI;
+	event.events = (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP);
 	int epfd = epoll_create(selarray.size());
 	if(epfd == -1)
 	{
@@ -327,6 +327,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 		Thread::testCancel();
 		rc = epoll_wait(epfd, &event, 1, timeout);
+		lerrno = errno;
 		Thread::testCancel();
 		gettimeofday(&now, NULL);
 	}
@@ -334,14 +335,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	::close(epfd);
 	if (rc < 0)
 	{
-		if (errno == EINTR)
-		{
-			return Select::SELECT_INTERRUPTED;
-		}
-		else
-		{
-			return Select::SELECT_ERROR;
-		}
+		return (lerrno == EINTR) ? Select::SELECT_INTERRUPTED : Select::SELECT_ERROR;
 	}
 	if (rc == 0)
 	{
@@ -365,7 +359,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 selectRW(SelectObjectArray& selarray, UInt32 ms)
 {
-	int ecc = 0;
+	int lerrno, ecc = 0;
 	int timeout;
 	AutoPtrVec<epoll_event> events(new epoll_event[selarray.size()]);
 	int epfd = epoll_create(selarray.size());
@@ -433,6 +427,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 		timeout = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 		Thread::testCancel();
 		ecc = epoll_wait(epfd, events.get(), selarray.size(), timeout);
+		lerrno = errno;
 		Thread::testCancel();
 		gettimeofday(&now, NULL);
 	}
@@ -440,14 +435,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	::close(epfd);
 	if (ecc < 0)
 	{
-		if (errno == EINTR)
-		{
-			return Select::SELECT_INTERRUPTED;
-		}
-		else
-		{
-			return Select::SELECT_ERROR;
-		}
+		return (lerrno == EINTR) ? Select::SELECT_INTERRUPTED : Select::SELECT_ERROR;
 	}
 	if (ecc == 0)
 	{
@@ -470,7 +458,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-	int rc = 0;
+	int lerrno, rc = 0;
 	pollfd pfds[selarray.size()]; 
 	// here we spin checking for thread cancellation every so often.
 	timeval now, end;
@@ -512,6 +500,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 		Thread::testCancel();
 		rc = ::poll(pfds, selarray.size(), loopMSecs); 
+		lerrno = errno;
 		Thread::testCancel();
 
 		gettimeofday(&now, NULL);
@@ -519,7 +508,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	
 	if (rc < 0)
 	{
-		if (errno == EINTR)
+		if (lerrno == EINTR)
 		{
 #ifdef OW_NETWARE
 			// When the NetWare server is shutting down, select will
@@ -555,7 +544,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 selectRW(SelectObjectArray& selarray, UInt32 ms)
 {
-	int rc = 0;
+	int lerrno, rc = 0;
 
 	AutoPtrVec<pollfd> pfds(new pollfd[selarray.size()]);
 
@@ -605,6 +594,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 
 		Thread::testCancel();
 		rc = ::poll(pfds.get(), selarray.size(), loopMSecs); 
+		lerrno = errno;
 		Thread::testCancel();
 
 		gettimeofday(&now, NULL);
@@ -612,7 +602,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	
 	if (rc < 0)
 	{
-		if (errno == EINTR)
+		if (lerrno == EINTR)
 		{
 #ifdef OW_NETWARE
 			// When the NetWare server is shutting down, select will
@@ -660,7 +650,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-	int rc = 0;
+	int lerrno, rc = 0;
 	fd_set rfds;
 	// here we spin checking for thread cancellation every so often.
 	timeval now, end;
@@ -708,6 +698,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 		Thread::testCancel();
 		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
+		lerrno = errno;
 		Thread::testCancel();
 
 		gettimeofday(&now, NULL);
@@ -715,7 +706,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	
 	if (rc < 0)
 	{
-		if (errno == EINTR)
+		if (lerrno == EINTR)
 		{
 #ifdef OW_NETWARE
 			// When the NetWare server is shutting down, select will
@@ -751,7 +742,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 selectRW(SelectObjectArray& selarray, UInt32 ms)
 {
-	int rc = 0;
+	int lerrno, rc = 0;
 	fd_set ifds;
 	fd_set ofds;
 
@@ -810,6 +801,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 
 		Thread::testCancel();
 		rc = ::select(maxfd+1, &ifds, &ofds, NULL, &tv);
+		lerrno = errno;
 		Thread::testCancel();
 
 		gettimeofday(&now, NULL);
@@ -817,7 +809,7 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	
 	if (rc < 0)
 	{
-		if (errno == EINTR)
+		if (lerrno == EINTR)
 		{
 #ifdef OW_NETWARE
 			// When the NetWare server is shutting down, select will

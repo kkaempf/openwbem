@@ -185,7 +185,12 @@ HTTPSvrConnection::run()
 			// only select if the buffer is empty
 			if (m_istr.rdbuf()->in_avail() == 0)
 			{
-				int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
+				int selType = Select::SELECT_INTERRUPTED;
+				while(selType == Select::SELECT_INTERRUPTED)
+				{
+					selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
+				}
+
 				if (selType == Select::SELECT_ERROR)
 				{
 				   OW_THROW(SocketException, "Error occurred during select()");
