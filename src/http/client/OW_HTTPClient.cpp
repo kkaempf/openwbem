@@ -71,6 +71,9 @@ HTTPClient::HTTPClient( const String &sURL )
 	, m_retryCount(0)
 	, m_httpPath("/cimom")
 {
+	// turn off exceptions, since we're not coded to handle them.
+	m_istr.exceptions(std::ios::goodbit);
+	m_ostr.exceptions(std::ios::goodbit);
 	signal(SIGPIPE, SIG_IGN);
 	setUrl();
 	//m_socket.setReceiveTimeout(300);
@@ -333,7 +336,7 @@ void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
 	}
 	// send headers
 	sendHeaders(m_requestMethod, "HTTP/1.1");
-	
+
 	// send entity
 	tfs->rewind();				
 	if (m_doDeflateOut)
