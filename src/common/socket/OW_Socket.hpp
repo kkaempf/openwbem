@@ -66,11 +66,11 @@ public:
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	Socket(SSLClientCtxRef = 0); 
+	Socket(SSLClientCtxRef); 
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	Socket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL)  OW_DEPRECATED;
+	Socket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL) OW_DEPRECATED ;
 	/**
 	 * Allocate a new  Socket based on an existing handle.
 	 * This is used by ServerSocket::accept()
