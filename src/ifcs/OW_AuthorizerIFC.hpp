@@ -53,6 +53,8 @@ public:
 
 }
 
+/*
+
 #if !defined(OW_STATIC_SERVICES)
 #define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
 extern "C" OpenWBEM::AuthorizerIFC* \
@@ -72,6 +74,30 @@ createAuthorizer_##authorizerName() \
 { \
 	return new derived; \
 }
-#endif /* !defined(OW_STATIC_SERVICES) */
+#endif // !defined(OW_STATIC_SERVICES)
+
+*/
+
+//
+// Commented out the old authorizer factory that checked for static services
+// The CIMOMEnvironment doesn't call createAuthorizer_##authorizerName. It
+// has no way of knowing what the name would be.
+// This should be a problem since only one Authorizer is ever loaded and the
+// authorizer is not statically linked if OW_STATIC_SERVICES is specified 
+// anyway.
+//
+
+#define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
+extern "C" OpenWBEM::AuthorizerIFC* \
+createAuthorizer() \
+{ \
+	return new derived; \
+} \
+extern "C" const char* \
+getOWVersion() \
+{ \
+	return OW_VERSION; \
+}
+
 
 #endif
