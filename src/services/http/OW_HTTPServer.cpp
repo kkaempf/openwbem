@@ -78,11 +78,19 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
-		pconn->addHeader("WWW-Authenticate",
+                String authChallenge; 
 #ifndef OW_DISABLE_DIGEST
-			m_options.useDigest ? m_digestAuth->getChallenge(hostname) :
+                if (m_options.useDigest)
+                {
+                    authChallenge = m_digestAuth->getChallenge(hostname); 
+                }
+                else
 #endif			
-			"Basic");
+                {
+                    authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
+                }
+
+		pconn->addHeader("WWW-Authenticate", authChallenge); 
 		return false;
 	}
 	
@@ -94,6 +102,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	else
 	{
 #endif
+                String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
 		try
@@ -104,14 +113,14 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			// decoding failed
 			pconn->setErrorDetails("Problem decoding credentials");
-			pconn->addHeader("WWW-Authenticate", "Basic");
+			pconn->addHeader("WWW-Authenticate", authChallenge); 
 			return false;
 		}
 		String details;
 		if (!m_options.env->authenticate(userName, password, details, context))
 		{
 			pconn->setErrorDetails(details);
-			pconn->addHeader("WWW-Authenticate", "Basic");
+			pconn->addHeader("WWW-Authenticate", authChallenge); 
 			return false;
 		}
 		else
