@@ -487,6 +487,8 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 	OW_DateTime dt;
 	dt.setToCurrent();
+
+	OW_MutexLock l(m_guard);
 	for (ProviderMap::iterator iter = m_provs.begin();
 		  iter != m_provs.end();)
 	{
