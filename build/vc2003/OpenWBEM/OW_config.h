@@ -534,6 +534,19 @@
 #endif
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
 
+// Statements like:
+// #pragma message(Reminder "Fix this problem!")
+// Which will cause messages like:
+// C:\Source\Project\main.cpp(47): Reminder: Fix this problem!
+// to show up during compiles. Note that you can NOT use the
+// words "error" or "warning" in your reminders, since it will
+// make the IDE think it should abort execution. You can double
+// click on these messages and jump to the line in question.
+#define Stringize( L ) #L
+#define MakeString( M, L ) M(L)
+#define $Line MakeString( Stringize, __LINE__ )
+#define Reminder __FILE__ "(" $Line ") : Reminder: "
+
 #define _WIN32_WINNT 0x0400
 #define OW_USE_DLL 1
 #define NO_POSIX_SIGNALS 1

@@ -94,6 +94,10 @@ void
 __dbpanic(dbp)
 	DB *dbp;
 {
+#ifdef OW_WIN32
+#pragma warning(disable : 4113)
+#endif
+
 	/* The only thing that can succeed is a close. */
 	dbp->del = (int (*)())__dberr;
 	dbp->fd = (int (*)())__dberr;
@@ -101,4 +105,8 @@ __dbpanic(dbp)
 	dbp->put = (int (*)())__dberr;
 	dbp->seq = (int (*)())__dberr;
 	dbp->sync = (int (*)())__dberr;
+
+#ifdef OW_WIN32
+#pragma warning(default : 4113)
+#endif
 }

@@ -80,8 +80,9 @@ class FileLogger : public Logger
 		mutable ofstream log;
 };
 
-#ifndef OW_WIN32
-// TODO WIN32 - User the EventLog
+#ifdef OW_WIN32
+#pragma message(Reminder "TODO: SyslogLogger NEEDS to be implemented using the EventLog!")
+#else
 class SyslogLogger : public Logger
 {
 	public:

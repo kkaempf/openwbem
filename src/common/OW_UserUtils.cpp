@@ -58,15 +58,16 @@ namespace OpenWBEM
 		/////////////////////////////////////////////////////////////////////////////
 		String getEffectiveUserId()
 		{
-		#ifdef OW_WIN32
+#ifdef OW_WIN32
+#pragma message(Reminder "TODO: Implement getEffectiveUserID using SID method!")
 			// TODO
 			// The user ID is represented by a SID on Win32. Going to return 0 for
 			// root user until I get through the Win32 CIMOM. Eventually OW will
 			// deal with userid on Win32 the proper way.
 			return String("0");
-		#else
+#else
 			return String(Int64(::geteuid()));
-		#endif
+#endif
 		}
 		
 		//////////////////////////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ namespace OpenWBEM
 		String getUserName(uid_t uid,bool& ok)
 		{
 #ifdef OW_WIN32
+#pragma message(Reminder "TODO: HONOR uid parm in getUserName!")
 			// TODO
 			// Ignore uid for right now. Just return the current User (WRONG!)
 			// Need to come back to this later when the uid_t stuff is worked out.

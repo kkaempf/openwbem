@@ -117,7 +117,7 @@ __bt_split(t, sp, key, data, flags, ilen, argskip)
 	 * Insert the new key/data pair into the leaf page.  (Key inserts
 	 * always cause a leaf page to split first.)
 	 */
-	h->linp[skip] = h->upper -= ilen;
+	h->linp[skip] = h->upper -= (indx_t)ilen;
 	dest = (char *)h + h->upper;
 	if (F_ISSET(t, R_RECNO))
 		WR_RLEAF(dest, data, flags)
