@@ -62,14 +62,18 @@ typedef enum {
   CIM_OBJECTPATH,
   CIM_CLASS
 } NPIGarbageType;
+
+
 class NPIContext {
 public:
-		char * scriptName;
-		void * my_perl;
+	char * scriptName;
+	void * my_perl;
 	Array<void *> garbage;
 	Array<NPIGarbageType> garbageType;
 };
 // my_perl serves as pointer to the perl environment for the perlIFC
+
+
 class NPIFTABLE {
 public:
   //CIMProvider;

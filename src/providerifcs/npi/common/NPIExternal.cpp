@@ -1028,8 +1028,8 @@ CIMOMAttachThread(NPIHandle* npiHandle)
 {
 	if (npiHandle == NULL) return;
 	npiHandle->errorOccurred = 0;
-	((NPIContext *)(npiHandle->context))->garbage = Array<void *>();
-	((NPIContext *)(npiHandle->context))->garbageType = Array<NPIGarbageType>();
+	//((NPIContext *)(npiHandle->context))->garbage = Array<void *>();
+	//((NPIContext *)(npiHandle->context))->garbageType = Array<NPIGarbageType>();
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void

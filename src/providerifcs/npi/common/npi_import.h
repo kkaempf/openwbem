@@ -65,6 +65,13 @@ extern "C" {
 				   const char * ); 
   CIMObjectPath CIMInstanceGetRefValue ( NPIHandle * , CIMInstance, 
 					 const char * ); 
+
+  /* Array functions */
+  char * CIMInstanceAddStringArrayPropertyValue( NPIHandle *, CIMInstance,
+                                                 const char *, const char *);
+
+  char * CIMInstanceGetStringArrayPropertyValue(  NPIHandle *, CIMInstance,
+                                                  const char *, int);
   
   /* Object Path functions */
   CIMObjectPath CIMObjectPathFromCIMInstance ( NPIHandle *, CIMInstance );
