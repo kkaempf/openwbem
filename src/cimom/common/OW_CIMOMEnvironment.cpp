@@ -246,60 +246,74 @@ CIMOMEnvironment::startServices()
 	Socket::createShutDownMechanism();
 
 	// load
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment loading services");
+
 	m_authorizerManager = new AuthorizerManager;
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authorizerManager));
+
 	m_providerManager = new ProviderManager;
 	m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
 		this));
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_providerManager));
+
 	m_cimRepository = new CIMRepository;
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimRepository));
+
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
 		m_providerManager, m_cimRepository, m_authorizerManager));
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_cimServer));
 
-
-	// 2. init
-
-	m_cimRepository->init(this);
-	m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 	_loadAuthorizer();  // old stuff
 	_createAuthorizerManager();  // new stuff
 	_createAuthManager();
 	_loadRequestHandlers();
 	_loadServices();
-	_createPollingManager();
-	m_pollingManager->init(this);
-	_createIndicationServer();
+	if (!getConfigItem(ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
+	{
+		_createPollingManager();
+		_createIndicationServer();
+	}
 
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment finished loading services");
+
+	// init
+
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment initializing services");
 
 	{
 		MutexLock l(m_runningGuard);
 		m_running = true;
 	}
 
-	m_providerManager->init(this);
-	m_authorizerManager->init(this);
-
-	// 3. start
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
+		//OW_LOG_DEBUG(m_Logger, Format("CIMOM initializing service: %1", m_services[i]->getName()));
+		m_services[i]->init(this);
+	}
+
+	for (size_t i = 0; i < m_services.size(); i++)
+	{
+		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling initialized() for service: %1", m_services[i]->getName()));
+		m_services[i]->initialized();
+	}
+
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment finished initializing services");
+
+	// start
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment starting services");
+
+	for (size_t i = 0; i < m_services.size(); i++)
+	{
+		//OW_LOG_DEBUG(m_Logger, Format("CIMOM starting service: %1", m_services[i]->getName()));
 		m_services[i]->start();
 	}
-	if (!getConfigItem(ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
+	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		if (m_pollingManager)
-		{
-			// Start up the polling manager
-			OW_LOG_DEBUG(m_Logger, "CIMOM starting Polling Manager");
-			m_pollingManager->start();
-			m_pollingManager->started();
-		}
-		if (m_indicationServer)
-		{
-			// Start up the indication server
-			OW_LOG_DEBUG(m_Logger, "CIMOM starting IndicationServer");
-			m_indicationServer->init(this);
-			m_indicationServer->start();
-			//m_indicationServer->waitUntilReady();
-		}
+		//OW_LOG_DEBUG(m_Logger, Format("CIMOM calling started() for service: %1", m_services[i]->getName()));
+		m_services[i]->started();
 	}
+
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment finished starting services");
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -444,13 +458,14 @@ void
 CIMOMEnvironment::_createAuthManager()
 {
 	m_authManager = AuthManagerRef(new AuthManager);
-	m_authManager->init(this);
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMOMEnvironment::_createPollingManager()
 {
 	m_pollingManager = PollingManagerRef(new PollingManager(m_providerManager));
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_pollingManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -478,7 +493,7 @@ CIMOMEnvironment::_createIndicationServer()
 				indicationLib));
 			OW_THROW(CIMOMEnvironmentException, "Failed to load indication server");
 		}
-	
+		m_services.push_back(m_indicationServer);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -538,6 +553,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 					"CIMOM associating Content-Type %1 with Request Handler %2",
 					*iter, libName));
 			}
+			m_services.push_back(rh);
 		}
 		else
 		{
@@ -552,7 +568,6 @@ CIMOMEnvironment::_loadRequestHandlers()
 void
 CIMOMEnvironment::_loadServices()
 {
-	m_services.clear();
 	String libPath = getConfigItem(
 		ConfigOpts::CIMOM_SERVICES_LOCATION_opt, OW_DEFAULT_CIMOM_SERVICES_LOCATION);
 	if (!libPath.endsWith(OW_FILENAME_SEPARATOR))
@@ -587,10 +602,7 @@ CIMOMEnvironment::_loadServices()
 				"createService", getLogger(COMPONENT_NAME));
 		if (srv)
 		{
-			// save it first so if init throws it won't get
-			// unloaded until later.
-			m_services.append(srv);
-			srv->init(this);
+			m_services.push_back(srv);
 			OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
 		}
 		else
@@ -969,6 +981,8 @@ CIMOMEnvironment::_loadAuthorizer()
 	}
 	m_authorizer = AuthorizerIFCRef(authorizerLib,
 									AuthorizerIFCRef::element_type(p));
+
+	m_services.push_back(m_authorizer);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1017,6 +1031,8 @@ CIMOMEnvironment::_createAuthorizerManager()
 
 	m_authorizerManager->setAuthorizer(
 		Authorizer2IFCRef(authorizerLib,Authorizer2IFCRef::element_type(p)));
+
+	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authorizerManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
