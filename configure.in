@@ -155,7 +155,7 @@ fi
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h \
-inttypes.h getopt.h sys/sockio.h)
+inttypes.h getopt.h sys/sockio.h sys/time.h sys/param.h dirent.h sys/resource.h)
 
 # check for C++ headers
 AC_LANG_CPLUSPLUS
@@ -165,7 +165,7 @@ ostream.h istream istream.h hash_map ext/hash_map)
 
 AC_LANG_C
 
-AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace nanosleep)
+AC_CHECK_FUNCS(getopt_long gethostbyname_r sched_yield backtrace nanosleep mkstemp snprintf random srandom asctime_r gmtime_r localtime_r)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
