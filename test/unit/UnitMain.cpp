@@ -133,7 +133,14 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_StackTrace", OW_StackTraceTestCases::suite());
 #endif
 	runner.addTest( "OW_Exec", OW_ExecTestCases::suite());
+
+#if !defined(OW_STATIC_SERVICES)
+	// Don't run this test if things are static, as it opens a library that
+	// is statically linked to this executable.  On AIX, doing so causes a
+	// core dump. 	
 	runner.addTest( "OW_LinuxSharedLibraryLoader", OW_LinuxSharedLibraryLoaderTestCases::suite());
+#endif /* !defined(OW_STATIC_SERVICES) */
+
 	runner.addTest( "OW_ProviderMux", OW_ProviderMuxTestCases::suite());
 	runner.addTest( "OW_ProviderMuxLoader", OW_ProviderMuxLoaderTestCases::suite());
 	runner.addTest( "OW_SharedLibraryLoader", OW_SharedLibraryLoaderTestCases::suite());
