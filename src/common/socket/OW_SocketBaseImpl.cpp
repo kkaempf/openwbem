@@ -32,9 +32,10 @@
  * @author Bart Whiteley
  * @author Dan Nuffer
  */
+#include "OW_config.h"
+
 #if !defined(OW_WIN32)
 
-#include "OW_config.h"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_Format.hpp"

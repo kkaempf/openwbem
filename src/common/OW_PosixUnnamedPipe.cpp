@@ -299,9 +299,10 @@ PosixUnnamedPipe::getSelectObj() const
 #ifdef OW_WIN32
 	// Can't select on this in unnamed pipe
 	OW_ASSERT(false);
-#endif
-
+	return HANDLE(NULL);
+#else
 	return m_fds[0];
+#endif
 }
 
 } // end namespace OpenWBEM

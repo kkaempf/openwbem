@@ -34,6 +34,9 @@
  */
 
 #include "OW_config.h"
+
+#if !defined(OW_WIN32)
+
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -298,3 +301,4 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 
 } // end namespace OpenWBEM
 
+#endif	// #if !defined(OW_WIN32)

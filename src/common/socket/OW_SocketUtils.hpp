@@ -56,12 +56,14 @@ namespace SocketUtils
 	 * @param event The event associated with the socket that will
 	 *		be signaled when I/O is available
 	 * @param timeOutSecs the number of seconds to wait.
-	 * @param forInput true if we are waiting for input.
+	 * @param networkEvents netWork events to wait for
 	 * @return zero if we got input before the timeout expired, 
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
 	int waitForIO(SocketHandle_t fd, HANDLE event, int timeOutSecs,
-		  SocketFlags::EWaitDirectionFlag forInput);
+		  long networkEvents=-1L);
+
+	String getLastErrorMsg();
 #else
 	/**
 	 * Wait for input or output on a socket.

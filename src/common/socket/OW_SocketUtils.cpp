@@ -71,6 +71,34 @@ namespace OpenWBEM
 
 namespace SocketUtils 
 {
+#if defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
+String
+getLastErrorMsg()
+{
+	LPVOID lpMsgBuf;
+	if (!::FormatMessage( 
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				FORMAT_MESSAGE_FROM_SYSTEM | 
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				::WSAGetLastError(),
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+				(LPTSTR) &lpMsgBuf,
+				0,
+				NULL ))
+	{
+		return OpenWBEM::String();
+	}
+
+	OpenWBEM::String rmsg((const char*)lpMsgBuf);
+
+	// Free the buffer.
+	::LocalFree(lpMsgBuf);
+	return rmsg;
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 String
 inetAddrToString(UInt64 addr)
@@ -87,7 +115,7 @@ inetAddrToString(UInt64 addr)
 #if defined(OW_WIN32)
 int
 waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
-		  SocketFlags::EWaitDirectionFlag forInput)
+	long networkEvents)
 {
 	OW_ASSERT(Socket::m_SocketsEvent != NULL);
 
@@ -95,13 +123,9 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 		? static_cast<DWORD>(timeOutSecs * 1000)
 		: INFINITE;
 
-	if(forInput == SocketFlags::E_WAIT_FOR_INPUT)
+	if(networkEvents != -1L)
 	{
-		::WSAEventSelect(fd, eventArg, FD_READ);
-	}
-	else
-	{
-		::WSAEventSelect(fd, eventArg, FD_WRITE);
+		::WSAEventSelect(fd, eventArg, networkEvents);
 	}
 
 	HANDLE events[2];
@@ -134,7 +158,8 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 			}
 			else
 			{
-				cc = -1;
+				// Shutdown handle was signaled
+				cc = -2;
 			}
 			break;
 	}

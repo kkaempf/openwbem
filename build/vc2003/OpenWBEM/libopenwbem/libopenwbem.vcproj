@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;OW_WIN32;OW_USE_WIN32_THREADS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,7 +38,9 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib"
+				AdditionalLibraryDirectories="C:\OpenSSL\lib\VC"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

@@ -41,6 +41,9 @@
 #ifndef OW_NWIFACE_HPP_INCLUDE_GUARD_
 #define OW_NWIFACE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+
+#if !defined(OW_WIN32)
+
 #include "OW_SocketException.hpp"
 #include "OW_String.hpp"
 #include "OW_NetworkTypes.hpp"
@@ -81,5 +84,7 @@ private:
 } // end namespace OpenWBEM
 
 typedef OpenWBEM::NwIface OW_NwIface OW_DEPRECATED;
+
+#endif	// #if !defined(OW_WIN32)
 
 #endif

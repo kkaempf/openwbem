@@ -34,9 +34,10 @@
  * @author Jon Carey (Win32)
  */
 
+#include "OW_config.h"
+
 #if defined(OW_WIN32)
 
-#include "OW_config.h"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_Format.hpp"
@@ -49,19 +50,7 @@
 #include "OW_Thread.hpp"
 
 #include <cstdio>
-
-extern "C"
-{
-//#include <sys/types.h>
-//#include <sys/time.h>
-//#include <sys/socket.h>
-//#include <sys/stat.h>
-//#include <netdb.h>
-//#include <arpa/inet.h>
-#include <errno.h>
-//#include <fcntl.h>
-//#include <netinet/in.h>
-}
+#include <cerrno>
 #include <fstream>
 #include <ws2tcpip.h>
 
@@ -133,34 +122,7 @@ getAddrFromIface(OpenWBEM::InetSocketAddress_t& addr)
     return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-OpenWBEM::String
-getLastError(bool isSocket=true)
-{
-	DWORD msgId = (isSocket) ? ::WSAGetLastError() : ::GetLastError();
-	LPVOID lpMsgBuf;
-	if (!::FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				msgId,
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
-				0,
-				NULL ))
-	{
-		return OpenWBEM::String();
-	}
-
-	OpenWBEM::String rmsg((const char*)lpMsgBuf);
-
-	// Free the buffer.
-	::LocalFree(lpMsgBuf);
-	return rmsg;
-}
-
-}
+}	// end of unnamed namespace
 
 namespace OpenWBEM
 {
@@ -262,18 +224,13 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
 {
+	OW_ASSERT(addrType == SocketAddress::INET);
+
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
 	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 	OW_ASSERT(m_event != NULL);
-	if (addrType == SocketAddress::INET)
-	{
-		fillInetAddrParms();
-	}
-	else
-	{
-		OW_ASSERT(0);
-	}
+	fillInetAddrParms();
 }
 //////////////////////////////////////////////////////////////////////////////
 SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
@@ -336,7 +293,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	if(m_sockfd == INVALID_SOCKET)
 	{
 		OW_THROW(SocketException, 
-			Format("Failed to create a socket: %1", getLastError()).c_str());
+			Format("Failed to create a socket: %1",
+			SocketUtils::getLastErrorMsg()).c_str());
 	}
 
 	int cc;
@@ -353,7 +311,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		{
 			_closeSocket(m_sockfd);
 			OW_THROW(SocketException,
-				Format("Failed to connect to: %1: %2(%3)", addr.getAddress(), lastError, getLastError()).c_str());
+				Format("Failed to connect to: %1: %2(%3)", addr.getAddress(),
+				lastError, SocketUtils::getLastErrorMsg()).c_str());
 		}
 
 		// Wait for connection event to come through
@@ -374,7 +333,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 					default:	// Error on wait
 						OW_THROW(SocketException, Format("SocketBaseImpl::"
 							"connect() wait failed: %1(%2)",
-							::WSAGetLastError(), getLastError()).c_str());
+							::WSAGetLastError(),
+							SocketUtils::getLastErrorMsg()).c_str());
 				}
 			}
 
@@ -386,7 +346,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 				OW_THROW(SocketException,
 					Format("SocketBaseImpl::connect()"
 						" failed getting network events: %1(%2)",
-						::WSAGetLastError(), getLastError()).c_str());
+						::WSAGetLastError(),
+						SocketUtils::getLastErrorMsg()).c_str());
 			}
 
 			// Was it a connect event?
@@ -399,7 +360,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 					_closeSocket(m_sockfd);
                     OW_THROW(SocketException,
 						Format("SocketBaseImpl::connect() failed: %1(%2)",
-						::WSAGetLastError(), getLastError()).c_str());
+						::WSAGetLastError(),
+						SocketUtils::getLastErrorMsg()).c_str());
 				}
 				break;
 			}
@@ -575,8 +537,7 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 bool
 SocketBaseImpl::waitForInput(int timeOutSecs)
 {
-	int rval = SocketUtils::waitForIO(m_sockfd, m_event, timeOutSecs,
-		SocketFlags::E_WAIT_FOR_INPUT);
+	int rval = SocketUtils::waitForIO(m_sockfd, m_event, timeOutSecs, FD_READ);
 	if (rval == ETIMEDOUT)
 	{
 		m_recvTimeoutExprd = true;
@@ -588,7 +549,7 @@ bool
 SocketBaseImpl::waitForOutput(int timeOutSecs)
 {
 	return SocketUtils::waitForIO(m_sockfd, m_event, timeOutSecs,
-		SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
+		FD_WRITE) != 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 istream&

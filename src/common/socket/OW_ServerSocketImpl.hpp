@@ -64,9 +64,13 @@ public:
 	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10, 
 		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
+
+#if !defined(OW_WIN32)
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);
 	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput);
+#endif
+
 	Select_t getSelectObj() const;
 private:
 	void fillAddrParms();
@@ -78,7 +82,11 @@ private:
 	ServerSocketImpl(const ServerSocketImpl& arg);
 	ServerSocketImpl operator=(const ServerSocketImpl& arg);
 	SocketFlags::ESSLFlag m_isSSL;
+#if defined(OW_WIN32)
+	HANDLE m_event;
+#else
 	File m_udsFile;
+#endif
 };
 
 } // end namespace OpenWBEM
