@@ -158,7 +158,7 @@ OW_HTTPChunkedIStream::getError() const
 	for (OW_Map<OW_String, OW_String>::const_iterator iter = m_trailerMap.begin();
 		  iter != m_trailerMap.end(); ++iter)
 	{
-		if (iter->first.substring(3).equalsIgnoreCase("CIMError"))
+		if (iter->first.substring(3).equalsIgnoreCase("CIMErrorTrailer"))
 		{
 			return iter->second;
 		}

@@ -332,12 +332,9 @@ OW_HTTPSvrConnection::beginPostResponse()
 
 	if (m_chunkedOut)
 	{
-		addHeader(
-			"Transfer-Encoding", "chunked");
-		addHeader(m_respHeaderPrefix +
-			"CIMOperation", "MethodResponse");
-		addHeader("Trailers",
-			m_respHeaderPrefix + "CIMError");
+		addHeader( "Transfer-Encoding", "chunked");
+		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
+		addHeader("Trailers", m_respHeaderPrefix + "CIMErrorTrailer");
 		sendHeaders(m_resCode);
 	}
 }
@@ -496,7 +493,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				strippedError += errorAr[i] + " ";
 			}
 			*/
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError", escapedError.toString());
+			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer", escapedError.toString());
 		}
 		ostrChunk->termOutput();
 	} // else m_chunkedOut
