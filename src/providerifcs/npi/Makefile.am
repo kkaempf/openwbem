@@ -3,7 +3,8 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libnpiprovifc.a
 OW_SHARED_LIBS = libnpiprovifc.so
-SHAREDLIBADD =
+SHAREDLIBADD = \
+-L$(top_builddir)/src/providerifcs/npi/common -lnpisupport
 
 thelibdir = $(pkglibdir)/provifcs
 
@@ -22,18 +23,16 @@ clean-local:
 	done
 
 
+#NPIAssociationProvider.cpp 
+#NPIAssociationProvider.hpp 
+#NPIBaseProvider.cpp 
+#NPIBaseProvider.hpp 
+#NPIInstanceProvider.cpp 
+#NPIInstanceProvider.hpp 
+#NPIProvider.hpp 
 
 
 libnpiprovifc_a_SOURCES = \
-NPIAssociationProvider.cpp \
-NPIAssociationProvider.hpp \
-NPIBaseProvider.cpp \
-NPIBaseProvider.hpp \
-NPIExternal.cpp \
-NPIExternal.hpp \
-NPIInstanceProvider.cpp \
-NPIInstanceProvider.hpp \
-NPIProvider.hpp \
 OW_FTABLERef.hpp \
 OW_NPIAssociatorProviderProxy.cpp \
 OW_NPIAssociatorProviderProxy.hpp \
@@ -55,4 +54,12 @@ INCLUDES = \
 -I$(top_srcdir)/src/provider \
 -I$(top_srcdir)/src/providerifcs/npi/common \
 -I$(top_srcdir)/src/server
+
+pkginclude_HEADERS = \
+OW_FTABLERef.hpp \
+OW_NPIAssociatorProviderProxy.hpp \
+OW_NPIInstanceProviderProxy.hpp \
+OW_NPIMethodProviderProxy.hpp \
+OW_NPIProviderIFC.hpp \
+OW_NPIProviderIFCUtils.hpp
 

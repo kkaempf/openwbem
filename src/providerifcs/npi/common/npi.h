@@ -17,8 +17,10 @@
 #ifndef _NPI_H_
 #define _NPI_H_
 
+#ifndef _COMPILE_UNIX
 #define _COMPILE_UNIX
 #include "os_compile.h"
+#endif
 
 #ifdef _COMPILE_WIN32
 #define NPIEXPORT __declspec(dllexport)

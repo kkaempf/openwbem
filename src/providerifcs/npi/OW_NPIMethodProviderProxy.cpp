@@ -29,7 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#include "NPIProvider.hpp"
 #include "OW_NPIMethodProviderProxy.hpp"
+#include "NPIExternal.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_Format.hpp"
+#include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 
@@ -39,9 +45,50 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
     const OW_CIMObjectPath &cop, const OW_String &methodName,
     const OW_CIMValueArray &in, OW_CIMValueArray &out)
 {
-	(void)env; (void)cop; (void)methodName; (void)in; (void)out;
-	OW_CIMValue rval;
-	return rval;
+        OW_CIMValue rval;
+
+        env->getLogger()->
+            logDebug("OW_NPIInstanceProviderProxy::invokeMethod()");
+
+        if (m_ftable->fp_invokeMethod != NULL)
+        {
+            ::NPIHandle _npiHandle = { 0,0,0,0};
+
+            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+
+            //  may the arguments must be copied verbatim
+            //  to avoid locking problems
+
+            OW_CIMObjectPath owcop = cop;
+            CIMObjectPath _cop= {static_cast<void *> (&owcop)};
+
+            Vector parm_in = VectorNew(&_npiHandle);
+            Vector parm_out = VectorNew(&_npiHandle);
+
+            for (int i = 0, n = in.size(); i < n; i++)
+            {
+                OW_CIMValue * owpv = new OW_CIMValue(in[i]); 
+                _VectorAddTo(
+                    &_npiHandle, parm_in, static_cast<void *> (owpv) );
+            }
+
+            OW_NPIVectorFreer vf1(parm_in);
+            OW_NPIVectorFreer vf2(parm_out);
+
+            CIMValue cv = m_ftable->fp_invokeMethod(
+                &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
+
+            rval = * static_cast<OW_CIMValue *> (cv.ptr);
+
+            for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
+            {
+                OW_CIMValue owpv = * static_cast<OW_CIMValue *>
+                    (_VectorGet(&_npiHandle, parm_out, i));
+                out.append(owpv);
+            }
+        }
+
+        return rval;
 }
 
 

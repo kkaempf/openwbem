@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "mlogsup.h"
 
@@ -29,7 +30,7 @@
 char debug=1;
 
 static MLogHeader *freeHdrs=NULL;
-static MLogIndex *index=NULL;
+static MLogIndex *lindex=NULL;
 static pthread_mutex_t mutex;
 
 static void newIndex()
@@ -43,24 +44,24 @@ static void newIndex()
    ix->entry.nextFree[IDXS-1]=IDXS+2;
    ix->free=0;
    ix->max=IDXS;
-   index=ix;
+   lindex=ix;
 }
 
 static int growMLogIndex()
 {
    MLogIndex *ix=NULL;
-   int i,ol=sizeof(MLogIndex)+((index->max-1)*sizeof(MLogHeader*));
-   int nl=sizeof(MLogIndex)+(((index->max*2)-1)*sizeof(MLogHeader*));
+   int i,ol=sizeof(MLogIndex)+((lindex->max-1)*sizeof(MLogHeader*));
+   int nl=sizeof(MLogIndex)+(((lindex->max*2)-1)*sizeof(MLogHeader*));
 
    ix=(MLogIndex*)malloc(nl);
-   memcpy(ix,index,ol);
-   ix->max=index->max*2;
-   for (i=index->max; i<ix->max; i++) ix->entry.nextFree[i]=i+1;
+   memcpy(ix,lindex,ol);
+   ix->max=lindex->max*2;
+   for (i=lindex->max; i<ix->max; i++) ix->entry.nextFree[i]=i+1;
    ix->entry.nextFree[ix->max-1]=IDXS+2;
-   ix->entry.nextFree[ix->free]=index->max;
-   free(index);
-   index=ix;
-   return index->free;
+   ix->entry.nextFree[ix->free]=lindex->max;
+   free(lindex);
+   lindex=ix;
+   return lindex->free;
 }
 
 static MLogHeader *newMLogHeader(int s)
@@ -68,7 +69,7 @@ static MLogHeader *newMLogHeader(int s)
    MLogHeader *ah;
    int l;
 
-   if (index==NULL) newIndex();
+   if (lindex==NULL) newIndex();
 
    if (freeHdrs) {
       ah=freeHdrs;
@@ -109,10 +110,10 @@ int makeMLog()
    int idx;
    MLogHeader *ah=newMLogHeader(HDRS);
 
-   idx=index->free;
+   idx=lindex->free;
    if (idx==IDXS+2) idx=growMLogIndex();
-   index->free=index->entry.nextFree[idx];
-   index->entry.hdr[idx]=ah;
+   lindex->free=lindex->entry.nextFree[idx];
+   lindex->entry.hdr[idx]=ah;
    if (debug) printf("--- makeMLog() id: %d\n",idx);
    return idx;
 }
@@ -123,9 +124,9 @@ void *addToMLog(int idx, void *area)
 
    pthread_mutex_lock(&mutex);
 
-   ah=index->entry.hdr[idx];
+   ah=lindex->entry.hdr[idx];
    if (ah->cur>=ah->max)
-      ah=index->entry.hdr[idx]=growMLogHeader(ah);
+      ah=lindex->entry.hdr[idx]=growMLogHeader(ah);
    if (debug) printf("--- addToMLog() id: %d area: %p\n",idx,area);
    ah->area[ah->cur++]=area;
 
@@ -141,14 +142,14 @@ void freeMLog(int idx)
 
    pthread_mutex_lock(&mutex);
 
-   ah=index->entry.hdr[idx];
+   ah=lindex->entry.hdr[idx];
    if (debug) printf("--- freeMLog() id: %d cur: %d max: %d\n",idx,ah->cur,ah->max);
    for (i=ah->cur-1; i>=0; i--) {
       if (debug) if (debug) printf("--- freeing %p\n",ah->area[i]);
       free(ah->area[i]);
    }
-   index->entry.nextFree[idx]=index->free;
-   index->free=idx;
+   lindex->entry.nextFree[idx]=lindex->free;
+   lindex->free=idx;
    freeMLogHeader(ah);
 
    pthread_mutex_unlock(&mutex);
@@ -161,15 +162,15 @@ void freeMLogAll()
    pthread_mutex_lock(&mutex);
 
    if (debug) printf("--- freeMLogALL()\n");
-   if (index==NULL) return;
+   if (lindex==NULL) return;
 
    for (i=0; i<IDXS; i++) {
  //     if (debug) printf("--- trying %d - %d\n",i,index->entry.nextFree[i]);
-      if (index->entry.nextFree[i]>IDXS+2) freeMLog(i);
+      if (lindex->entry.nextFree[i]>IDXS+2) freeMLog(i);
    }
 
-   free(index);
-   index=NULL;
+   free(lindex);
+   lindex=NULL;
 
    pthread_mutex_unlock(&mutex);
 }

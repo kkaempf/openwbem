@@ -378,7 +378,7 @@ OW_NPIProviderIFC::getProvider(
 
 	if(ldr.isNull())
 	{
-		env->getLogger()->logError("C++ provider ifc failed to get shared lib loader");
+		env->getLogger()->logError("NPI:C++ provider ifc failed to get shared lib loader");
 		return OW_FTABLERef();
 	}
 
