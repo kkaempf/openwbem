@@ -50,6 +50,7 @@ docs: Doxyfile
 DISTCHECK_CONFIGURE_FLAGS= --with-perl=no
 
 rpm: dist
-	rpmbuild -ta $(distdir).tar.gz
+	mkdir -p rpmbuild/{SOURCES,SPECS,SRPMS,RPMS,BUILD}
+	rpmbuild --define="_topdir `pwd`/rpmbuild" -ta $(distdir).tar.gz
 
 
