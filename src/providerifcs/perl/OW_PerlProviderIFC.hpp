@@ -90,6 +90,13 @@ protected:
 		const OW_ProviderEnvironmentIFCRef& env
 		);
 
+	void loadProviders(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a,
+		OW_MethodProviderInfoArray& m,
+		OW_PropertyProviderInfoArray& p,
+		OW_IndicationProviderInfoArray& ind);
+
 	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		(void)env;

@@ -95,14 +95,14 @@ OW_PerlProviderIFC::~OW_PerlProviderIFC()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PerlProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
-	OW_InstanceProviderInfoArray&,
-	OW_AssociatorProviderInfoArray&,
-	OW_MethodProviderInfoArray&,
-	OW_PropertyProviderInfoArray&,
-	OW_IndicationProviderInfoArray&)
+OW_PerlProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
+	OW_InstanceProviderInfoArray& i,
+	OW_AssociatorProviderInfoArray& a,
+	OW_MethodProviderInfoArray& m,
+	OW_PropertyProviderInfoArray& p,
+	OW_IndicationProviderInfoArray& ind)
 {
-	return;
+	loadProviders(env, i, a, m, p, ind);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -158,19 +158,19 @@ OW_PolledProviderIFCRefArray
 OW_PerlProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	(void)env;
-	loadNoIdProviders(env);
+	//loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
-	for(size_t i = 0; i < m_noidProviders.size(); i++)
-	{
-		OW_FTABLERef pProv = m_noidProviders[i];
-
-		if(pProv->fp_activateFilter)
-		{
-			rvra.append(
-				OW_PolledProviderIFCRef(new
-					OW_PerlPolledProviderProxy(pProv)));
-		}
-	}
+	//for(size_t i = 0; i < m_noidProviders.size(); i++)
+	//{
+	//	OW_FTABLERef pProv = m_noidProviders[i];
+	//
+	//	if(pProv->fp_activateFilter)
+	//	{
+	//		rvra.append(
+	//			OW_PolledProviderIFCRef(new
+	//				OW_PerlPolledProviderProxy(pProv)));
+	//	}
+	//}
 
 	return rvra;
 }
@@ -285,6 +285,138 @@ OW_PerlProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& 
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
+	OW_InstanceProviderInfoArray& instanceProviderInfo,
+	OW_AssociatorProviderInfoArray& associatorProviderInfo,
+	OW_MethodProviderInfoArray& methodProviderInfo,
+	OW_PropertyProviderInfoArray& propertyProviderInfo,
+	OW_IndicationProviderInfoArray& indicationProviderInfo)
+{
+	(void) propertyProviderInfo;
+
+	OW_MutexLock ml(m_guard);
+
+	if(m_loadDone)
+	{
+		return;
+	}
+
+	m_loadDone = true;
+
+	OW_String libPath = env->getConfigItem(
+		OW_ConfigOpts::PERLIFC_PROV_LOC_opt);
+
+	if(libPath.empty())
+	{
+		libPath = DEFAULT_PERL_PROVIDER_LOCATION;
+	}
+	
+	OW_SharedLibraryLoaderRef ldr =
+		 OW_SharedLibraryLoader::createSharedLibraryLoader();
+
+	if(ldr.isNull())
+	{
+		env->getLogger()->logError("Perl provider ifc failed to get shared lib loader");
+		return;
+	}
+
+	OW_StringArray dirEntries;
+
+   	if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
+	{
+		env->getLogger()->logError(format("Perl provider ifc "
+			"failed getting contents of directory: %1", libPath));
+		return;
+	}
+
+	for(size_t i = 0; i < dirEntries.size(); i++)
+	{
+		if(!dirEntries[i].endsWith(".pl"))
+		{
+			continue;
+		}
+
+		OW_String libName = libPath;
+		libName += OW_FILENAME_SEPARATOR;
+		libName += OW_String("libperlProvider.so");
+		OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+			env->getLogger());
+
+		OW_String guessProvId = dirEntries[i];
+
+		if(theLib.isNull())
+		{
+			env->getLogger()->logError(format("Perl provider %1 "
+				"failed to load library: %2",
+				guessProvId, libName));
+			continue;
+		}
+
+		::NPIFP_INIT_FT createProvider;
+		OW_String creationFuncName = "perlProvider_initFunctionTable";
+
+		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+		{
+			env->getLogger()->logError(format("Perl provider ifc: "
+				"Library %1 does not contain %2 function",
+				libName, creationFuncName));
+			continue;
+		}
+
+		::NPIFTABLE fTable = (*createProvider)();
+		fTable.npicontext = new ::NPIContext;
+
+		fTable.npicontext->scriptName = guessProvId.allocateCString();
+
+		if (!fTable.fp_initialize)
+		{
+			env->getLogger()->logError(format("Perl provider ifc: "
+			"Library %1 - initialize returned null", libName));
+			delete (fTable.npicontext->scriptName);
+			delete ((::NPIContext *)fTable.npicontext);
+			continue;
+		}
+
+		// now register the perl script for every type 
+		// without trying to call 
+		// TODO: implement check for perl subroutines
+
+		OW_InstanceProviderInfo inst_info;
+		inst_info.setProviderName(guessProvId);
+		instanceProviderInfo.push_back(inst_info);
+
+		OW_AssociatorProviderInfo assoc_info;
+		assoc_info.setProviderName(guessProvId);
+		associatorProviderInfo.push_back(assoc_info);
+
+		OW_MethodProviderInfo meth_info;
+		meth_info.setProviderName(guessProvId);
+		methodProviderInfo.push_back(meth_info);
+
+		OW_IndicationProviderInfo ind_info;
+		OW_IndicationProviderInfoEntry e("CIM_InstCreation");
+
+		// BMMU used for testing
+		//e.classes.push_back("CIM_LocalFileSystem");
+		//e.classes.push_back("Linux_Ext2FileSystem");
+		ind_info.addInstrumentedClass(e);
+		e.indicationName = "CIM_InstModification";
+		ind_info.addInstrumentedClass(e);
+		e.indicationName = "CIM_InstDeletion";
+		ind_info.addInstrumentedClass(e);
+		e.indicationName = "CIM_InstIndication";
+		ind_info.addInstrumentedClass(e);
+		e.indicationName = "CIM_Indication";
+		ind_info.addInstrumentedClass(e);
+		ind_info.setProviderName(guessProvId);
+		indicationProviderInfo.push_back(ind_info);
+
+		continue;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_PerlProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
    
@@ -338,7 +470,6 @@ OW_PerlProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
       OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
             env->getLogger());
 
-      //OW_String guessProvId = dirEntries[i].substring(0,dirEntries[i].length()-3);
       OW_String guessProvId = dirEntries[i];
 
       if(theLib.isNull())
