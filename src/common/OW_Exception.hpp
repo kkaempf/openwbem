@@ -64,8 +64,8 @@ std::ostream& operator<< (std::ostream& os, const Exception& e);
 #define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
 #define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
 
-#define OW_DECLARE_EXCEPTION(NAME) \
-class NAME##Exception : public Exception \
+#define OW_DECLARE_EXCEPTION2(NAME, BASE) \
+class NAME##Exception : public BASE \
 { \
 public: \
 	NAME##Exception(const char* file, int line, const char* msg); \
@@ -73,11 +73,15 @@ public: \
 	virtual const char* type() const; \
 };
 
-#define OW_DEFINE_EXCEPTION(NAME) \
+#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, Exception) 
+
+#define OW_DEFINE_EXCEPTION2(NAME, BASE) \
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg) \
-	: Exception(file, line, msg) {} \
+	: BASE(file, line, msg) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; } \
+
+#define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION2(NAME, Exception)
 
 } // end namespace OpenWBEM
 
