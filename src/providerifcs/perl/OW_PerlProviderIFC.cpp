@@ -262,7 +262,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		 SharedLibraryLoader::createSharedLibraryLoader();
-	if (ldr.isNull())
+	if (!ldr)
 	{
 		env->getLogger()->logError("Perl provider ifc failed to get shared lib loader");
 		return;
@@ -286,7 +286,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 		String guessProvId = dirEntries[i];
-		if (theLib.isNull())
+		if (!theLib)
 		{
 			env->getLogger()->logError(Format("Perl provider %1 "
 				"failed to load library: %2",
@@ -372,7 +372,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    String libPath = env->getConfigItem(ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
    SharedLibraryLoaderRef ldr =
 	  SharedLibraryLoader::createSharedLibraryLoader();
-   if (ldr.isNull())
+   if (!ldr)
    {
 	  env->getLogger()->logError("Perl provider ifc failed to get shared lib loader");
 	  return;
@@ -397,7 +397,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 	  String guessProvId = dirEntries[i];
-	  if (theLib.isNull())
+	  if (!theLib)
 	  {
 		 env->getLogger()->logError(Format("Perl provider %1 ifc failed to load"
 				   " library: %2", guessProvId, libName));
@@ -482,7 +482,7 @@ PerlProviderIFC::getProvider(
 		ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 	SharedLibraryLoaderRef ldr =
 		SharedLibraryLoader::createSharedLibraryLoader();
-	if (ldr.isNull())
+	if (!ldr)
 	{
 		env->getLogger()->logError("Perl: provider ifc failed to get shared lib loader");
 		return FTABLERef();
@@ -494,7 +494,7 @@ PerlProviderIFC::getProvider(
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 		env->getLogger());
-	if (theLib.isNull())
+	if (!theLib)
 	{
 		env->getLogger()->logError(Format("Perl provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));
