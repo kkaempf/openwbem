@@ -184,6 +184,9 @@ log.debug.format = [%t] %m
 # log.<log name>.level
 # log.<log name>.format
 # log.<log name>.location
+# log.<log name>.max_file_size
+# log.<log name>.max_backup_index
+#
 ;owcimomd.additional_logs = 
 
 ################################################################################
