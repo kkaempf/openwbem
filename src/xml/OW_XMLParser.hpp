@@ -171,7 +171,7 @@ class  OW_XMLParser
 			_current = OW_IstreamBufIterator(input);
 		}
 
-		OW_Bool next(OW_XMLToken& entry);
+		bool next(OW_XMLToken& entry);
 
 		unsigned int getLine() const
 		{
@@ -182,9 +182,9 @@ class  OW_XMLParser
 
 		void _skipWhitespace();
 
-		OW_Bool _getElementName(OW_XMLToken& entry);
+		bool _getElementName(OW_XMLToken& entry);
 
-		OW_Bool _getOpenElementName(OW_XMLToken& entry, OW_Bool& openCloseElement);
+		bool _getOpenElementName(OW_XMLToken& entry, bool& openCloseElement);
 
 		void _getAttributeNameAndEqual(OW_XMLToken::Attribute& att);
 

@@ -61,7 +61,7 @@ class OW_HTTPChunkedIStreamBuffer : public OW_BaseStreamBuffer
 		int m_inLen;
 		int m_inPos;
 
-		OW_Bool m_isEOF;
+		bool m_isEOF;
 		virtual int buffer_from_device(char* c, int n);
 			/*throw (OW_HTTPChunkException)*/
 

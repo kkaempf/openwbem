@@ -58,8 +58,8 @@ public:
 //	OW_String getMACAddressString();
 	unsigned long getNetmask();
 	OW_String getNetmaskString();
-	OW_Bool sameNetwork(unsigned long addr);
-	OW_Bool sameNetwork(const OW_String& straddr);
+	bool sameNetwork(unsigned long addr);
+	bool sameNetwork(const OW_String& straddr);
 	static unsigned long stringToAddress(const OW_String& straddr);
 
 private:

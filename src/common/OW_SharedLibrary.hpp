@@ -58,12 +58,12 @@ class OW_SharedLibrary
 		 */
 /*
 		template< class fptype >
-			OW_Bool getFunctionPointer( const OW_String& functionName, fptype& retval ) const
+			bool getFunctionPointer( const OW_String& functionName, fptype& retval ) const
 			// throw ()
 			{
 				return doGetFunctionPointer( functionName, &(void*)retval);
 			}
-		OW_Bool getFunctionPointer( const OW_String& functionName, void*& retval ) const
+		bool getFunctionPointer( const OW_String& functionName, void*& retval ) const
 		{
 			return doGetFunctionPointer( functionName, &retval);
 		}
@@ -71,7 +71,7 @@ class OW_SharedLibrary
 */
 
 		template< class fptype >
-			static OW_Bool getFunctionPointer( const OW_Reference<OW_SharedLibrary>& sl, const OW_String& functionName, fptype& retval )
+			static bool getFunctionPointer( const OW_Reference<OW_SharedLibrary>& sl, const OW_String& functionName, fptype& retval )
 			{
 				return sl->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
 			}
@@ -85,7 +85,7 @@ class OW_SharedLibrary
 		 * @param fp				Where to store the function pointer.
 		 * @return true if function succeeded, false otherwise.
 		 */
-		virtual OW_Bool doGetFunctionPointer( const OW_String& functionName,
+		virtual bool doGetFunctionPointer( const OW_String& functionName,
 												  void** fp ) const = 0;
 			// throw ()
 };

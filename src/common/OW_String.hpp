@@ -36,7 +36,6 @@
 #include "OW_COWReference.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Bool.hpp"
 
 #include <iosfwd>
 
@@ -49,6 +48,8 @@ class OW_CIMObjectPath;
 
 class OW_String;
 typedef OW_Array<OW_String> OW_StringArray;
+
+class OW_Bool;
 
 DECLARE_EXCEPTION(StringConversion);
 

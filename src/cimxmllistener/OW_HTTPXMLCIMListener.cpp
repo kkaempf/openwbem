@@ -87,7 +87,7 @@ public:
 
 	virtual ~OW_HTTPXMLCIMListenerServiceEnvironment() {}
 
-	virtual OW_Bool authenticate(OW_String &userName,
+	virtual bool authenticate(OW_String &userName,
 		const OW_String &info, OW_String &details)
 	{
 		return m_pLAuthenticator->authenticate(userName, info, details);
@@ -119,7 +119,7 @@ public:
 		}
 	}
 
-	virtual void setConfigItem(const OW_String& item, const OW_String& value, OW_Bool overwritePrevious)
+	virtual void setConfigItem(const OW_String& item, const OW_String& value, EOverwritePreviousFlag overwritePrevious)
 	{
 		if (overwritePrevious || getConfigItem(item) == "")
 			m_configItems[item] = value;
@@ -132,7 +132,8 @@ public:
 	}
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& /*username*/,
-		const OW_Bool /*doIndications*/, const OW_Bool /*bypassProviders*/)
+		ESendIndicationsFlag /*doIndications*/, 
+		EBypassProvidersFlag /*bypassProviders*/)
 	{
 		OW_THROW(OW_Exception, "Not implemented");
 	}

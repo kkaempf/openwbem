@@ -123,7 +123,7 @@ OW_XMLParseSemanticError::OW_XMLParseSemanticError(
 // OW_XMLParser
 //
 ////////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
+bool OW_XMLParser::next(OW_XMLToken& entry)
 {
 	OW_IstreamBufIterator iterEOF;
 	if (_current == iterEOF || *_current == 0)
@@ -217,7 +217,7 @@ void OW_XMLParser::_skipWhitespace()
 	}
 }
 
-OW_Bool OW_XMLParser::_getElementName(OW_XMLToken& entry)
+bool OW_XMLParser::_getElementName(OW_XMLToken& entry)
 {
 	if (!isalpha(*_current) && *_current != '_')
 		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
@@ -245,7 +245,7 @@ OW_Bool OW_XMLParser::_getElementName(OW_XMLToken& entry)
 	return false;
 }
 
-OW_Bool OW_XMLParser::_getOpenElementName(OW_XMLToken& entry, OW_Bool& openCloseElement)
+bool OW_XMLParser::_getOpenElementName(OW_XMLToken& entry, bool& openCloseElement)
 {
 	openCloseElement = false;
 
@@ -520,7 +520,7 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 	{
 		entry.type = OW_XMLToken::START_TAG;
 
-		OW_Bool openCloseElement;
+		bool openCloseElement;
 
 		if (_getOpenElementName(entry, openCloseElement))
 		{

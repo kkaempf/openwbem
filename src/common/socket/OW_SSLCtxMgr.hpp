@@ -70,7 +70,7 @@ public:
 	 * @param hostname the hostname of the client machine
 	 * @return True if the certificate is good, false otherwise
 	 */
-	static OW_Bool checkClientCert(SSL* ssl, const OW_String& hostName);
+	static bool checkClientCert(SSL* ssl, const OW_String& hostName);
 
 	/**
 	 * Check a certificate based on the callback function for server cert
@@ -79,7 +79,7 @@ public:
 	 * @param hostname the hostname of the server machine
 	 * @return True if the certificate is good, false otherwise
 	 */
-	static OW_Bool checkServerCert(SSL* ssl, const OW_String& hostName);
+	static bool checkServerCert(SSL* ssl, const OW_String& hostName);
 
 	/**
 	 * Initialize for a client
@@ -137,13 +137,13 @@ public:
 	 * Have we been initialized as a client?
 	 * @return true if initialized as a client
 	 */
-	static OW_Bool isClient() { return OW_Bool(m_ctxClient != NULL); }
+	static bool isClient() { return m_ctxClient != NULL; }
 
 	/**
 	 * Have we been initialized as a server?
 	 * @return true if initialized as a server
 	 */
-	static OW_Bool isServer() { return OW_Bool(m_ctxServer != NULL); }
+	static bool isServer() { return m_ctxServer != NULL; }
 
 	/**
 	 * Assign a callback function to be used to verify SSL certificates.
@@ -183,7 +183,7 @@ private:
 	/** 
 	 * This probably needs to say something useful.
 	 */
-	static OW_Bool checkCert(SSL* ssl, const OW_String& hostName, certVerifyFuncPtr_t cbFunc);
+	static bool checkCert(SSL* ssl, const OW_String& hostName, certVerifyFuncPtr_t cbFunc);
 };
 
 #endif // ifdef OW_HAVE_OPENSSL

@@ -127,7 +127,7 @@ private:
 	ProviderMap m_provs;
 	OW_Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
-	OW_Bool m_loadDone;
+	bool m_loadDone;
 };
 
 typedef OW_SharedLibraryReference<OW_CppProviderIFC> OW_CppProviderIFCRef;

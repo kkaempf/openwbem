@@ -50,7 +50,7 @@ char OW_Format::process(OW_String& str, char numArgs)
 {
 	int i, len(str.length());
 	char c(' ');
-	OW_Bool err = false;
+	bool err = false;
 
 
 	for (i=0; i<len && c == ' ' && !err; ++i)

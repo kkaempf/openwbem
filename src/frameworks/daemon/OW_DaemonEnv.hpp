@@ -46,9 +46,9 @@ static const char* const OW_DAEMON_NAME = "newdaemon";
 class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 {
 	public:
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications, const OW_Bool bypassProviders);
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, ESendIndicationsFlag doIndications, EBypassProvidersFlag bypassProviders);
 		virtual OW_LoggerRef getLogger() const;
-		virtual OW_Bool authenticate(OW_String &userName, const OW_String &info, OW_String &details);
+		virtual bool authenticate(OW_String &userName, const OW_String &info, OW_String &details);
 		virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String& id) ;
 		virtual void addSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
 		virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
@@ -58,7 +58,7 @@ class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 		void shutdown();
 
 		virtual void setConfigItem( const OW_String& item,
-				const OW_String& value, OW_Bool overwritePrevious = true );
+				const OW_String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS );
 		virtual OW_String getConfigItem( const OW_String& item ) const;
 
 		void logDebug(const OW_String& message);

@@ -43,6 +43,8 @@
 #include "OW_Array.hpp"
 #include "OW_ConfigOpts.hpp"
 
+using namespace OW_WBEMFlags;
+
 static const OW_String QUAL_CONTAINER("q");
 static const OW_String CLASS_CONTAINER("c");
 
@@ -237,7 +239,7 @@ OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_MetaRepository::deleteQualifierType(const OW_String& ns,
 	const OW_String& qualName)
 {
@@ -350,8 +352,8 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	OW_CIMClass& cc)
 {
@@ -383,7 +385,7 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 	{ // only clone if we have to
 
 		OW_StringArray lpropList;
-		OW_Bool noProps = false;
+		bool noProps = false;
 		if(propertyList)
 		{
 			if(propertyList->size() == 0)
@@ -591,7 +593,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_MetaRepository::deleteClass(const OW_String& ns, const OW_String& className)
 {
 	throwIfNotOpen();
@@ -962,8 +964,8 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 void
 OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
+	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -1016,8 +1018,8 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
-	OW_HDBHandle hdl, OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
+	OW_HDBHandle hdl, EDeepFlag deep, ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
 	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
 	// TODO: Check cimCls for NULL?
@@ -1040,7 +1042,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 void
 OW_MetaRepository::enumClassNames(const OW_String& ns, const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep)
+	EDeepFlag deep)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -1092,7 +1094,7 @@ OW_MetaRepository::enumClassNames(const OW_String& ns, const OW_String& classNam
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::_getClassNameNodes(OW_StringResultHandlerIFC& result, OW_HDBNode node,
-	OW_HDBHandle hdl, OW_WBEMFlags::EDeepFlag deep)
+	OW_HDBHandle hdl, EDeepFlag deep)
 {
 	OW_String cimClsName = _getClassNameFromNode(node);
 	result.handle(cimClsName);

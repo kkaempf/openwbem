@@ -209,7 +209,7 @@ OW_AssocDbHandle::addEntry(const OW_CIMObjectPath& objectName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_AssocDbHandle::hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName)
 {
 	OW_CIMObjectPath pathWithNS(instanceName);
@@ -482,7 +482,7 @@ OW_AssocDb::open(const OW_String& fileName)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_AssocDb::createFile()
 {
 	OW_AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L };
@@ -502,12 +502,12 @@ OW_AssocDb::createFile()
 
 	f.close();
 	m_pIndex = OW_Index::createIndexObject();
-	m_pIndex->open(m_fileName.c_str(), true);
+	m_pIndex->open(m_fileName.c_str(), OW_Index::E_ALLOW_DUPLICATES);
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_AssocDb::checkFile()
 {
 	OW_File f = OW_FileSystem::openFile(m_fileName + ".dat");
@@ -534,7 +534,7 @@ OW_AssocDb::checkFile()
 	}
 
 	m_pIndex = OW_Index::createIndexObject();
-	m_pIndex->open(m_fileName.c_str(), true);
+	m_pIndex->open(m_fileName.c_str(), OW_Index::E_ALLOW_DUPLICATES);
 	return true;
 }
 

@@ -56,7 +56,7 @@ OW_UserInfo::OW_UserInfo() :
 	m_userName(), m_internal(true) {}
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_UserInfo::getInternal() const { return m_internal; }
+bool OW_UserInfo::getInternal() const { return m_internal; }
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_UserInfo::setInternal() { m_internal = true; }

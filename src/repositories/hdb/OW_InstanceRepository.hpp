@@ -124,7 +124,7 @@ public:
 	 * @param classPath	The object path for the class to check.
 	 * @return true if the class specified has instances.
 	 */
-	OW_Bool classHasInstances(const OW_CIMObjectPath& classPath);
+	bool classHasInstances(const OW_CIMObjectPath& classPath);
 
 	/**
 	 * Delete the given namespace and all object contained within it.

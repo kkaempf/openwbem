@@ -76,7 +76,7 @@ public:
 	 * @param key the key to look for
 	 * @return true if the key is found in the request headers.
 	 */
-	OW_Bool headerHasKey(const OW_String& key) const
+	bool headerHasKey(const OW_String& key) const
 	{
 		return OW_HTTPUtils::headerHasKey(m_requestHeaders, key);
 	}
@@ -153,23 +153,23 @@ private:
 	OW_Socket m_socket;
 	std::ostream& m_ostr;
 	int m_resCode;
-	OW_Bool m_needSendError;
+	bool m_needSendError;
 	OW_Array<OW_String> m_responseHeaders;
 
 	httpVerFlag_t m_httpVersion;
 	requestMethod_t m_method;
 	std::istream& m_istr;
-	OW_Bool m_isClose;
+	bool m_isClose;
 	OW_Int64 m_contentLength;
-	OW_Bool m_chunkedIn;
-	OW_Bool m_deflateCompressionIn;
-	OW_Bool m_deflateCompressionOut;
+	bool m_chunkedIn;
+	bool m_deflateCompressionIn;
+	bool m_deflateCompressionOut;
 	OW_String m_errDetails;
 	OW_String m_reqHeaderPrefix;
 	OW_String m_respHeaderPrefix;
-	OW_Bool m_isAuthenticated;
+	bool m_isAuthenticated;
 	OW_Reference<OW_UnnamedPipe> m_upipe;
-	OW_Bool m_chunkedOut;
+	bool m_chunkedOut;
 	OW_String m_userName;
 	OW_RequestHandlerIFCRef m_requestHandler;
 	OW_HTTPServer::Options m_options;

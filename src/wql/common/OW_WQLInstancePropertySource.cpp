@@ -33,6 +33,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_Bool.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////	
 OW_WQLInstancePropertySource::~OW_WQLInstancePropertySource()

@@ -97,6 +97,8 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+using namespace OW_WBEMFlags;
+
 
 //////////////////////////////////////////////////////////////////////////////
 enum RepeatMode
@@ -776,7 +778,7 @@ public:
 	{
 		OW_CIMClient rch(url, m_ns);
 		ClassResultHandler classResultHandler(m_ns);
-		rch.enumClass("", classResultHandler, OW_WBEMFlags::E_DEEP);
+		rch.enumClass("", classResultHandler, E_DEEP);
 	}
 
 private:

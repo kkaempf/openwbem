@@ -51,34 +51,12 @@ using std::ostream;
 OW_Char16::OW_Char16(const OW_String& x) :
 	m_value(0)
 {
+	// TODO: implement this correctly (possibly use iconv())
 	if(!x.empty())
 	{
 		m_value = x.charAt(0);
 	}
 }
-
-//////////////////////////////////////////////////////////////////////////////
-// ATTN: UTF8 support?
-// STATIC
-/*
-const char*
-OW_Char16::xmlExcape(OW_UInt16 c16, char bfr[20])
-{
-	switch (c16)
-	{
-		case '\n': strcpy(bfr, "\\n"); break;
-		case '\t': strcpy(bfr, "\\t"); break;
-		case '"': strcpy(bfr, "&quot;"); break;
-		case '\'': strcpy(bfr, "&apos;"); break;
-		case '<': strcpy(bfr, "&lt;"); break;
-		case '>': strcpy(bfr, "&gt;"); break;
-		case '&': strcpy(bfr, "&amp;"); break;
-		default: bfr[0] = c16; bfr[1] = '\0'; break;
-	}
-
-	return bfr;
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String

@@ -77,15 +77,15 @@ public:
 	void setConnectTimeout(int seconds) { m_connectTimeout = seconds; }
 	int getConnectTimeout() { return m_connectTimeout; }
 	void setTimeouts(int seconds) { m_recvTimeout = m_sendTimeout = m_connectTimeout = seconds; }
-	OW_Bool receiveTimeOutExpired() { return m_recvTimeoutExprd; }
+	bool receiveTimeOutExpired() { return m_recvTimeoutExprd; }
 
 	int write(const void* dataOut, int dataOutLen,
 			bool errorAsException=false);
 	int read(void* dataIn, int dataInLen,
 			bool errorAsException=false);
 
-	OW_Bool waitForInput(int timeOutSecs=-1);
-	OW_Bool waitForOutput(int timeOutSecs=-1);
+	bool waitForInput(int timeOutSecs=-1);
+	bool waitForOutput(int timeOutSecs=-1);
 	std::istream& getInputStream();
 	std::ostream& getOutputStream();
 	std::iostream& getIOStream();
@@ -100,7 +100,7 @@ protected:
 	virtual int readAux(void* dataIn, int dataInLen) = 0;
 	virtual int writeAux(const void* dataOut, int dataOutLen) = 0;
 
-	OW_Bool m_isConnected;
+	bool m_isConnected;
 	OW_SocketHandle_t m_sockfd;
 	OW_SocketAddress m_localAddress;
 	OW_SocketAddress m_peerAddress;
@@ -109,7 +109,7 @@ private:
 	void fillInetAddrParms();
 	void fillUnixAddrParms();
 
-	OW_Bool m_recvTimeoutExprd;
+	bool m_recvTimeoutExprd;
 	OW_SocketStreamBuffer m_streamBuf;
 	std::istream m_in;
 	std::ostream m_out;

@@ -96,11 +96,11 @@ OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
 static OW_Mutex g_pwdLock;
 
 //////////////////////////////////////////////////////////////////////////////
-static OW_Bool
+static bool
 getUserId(const OW_String& userName, OW_UserId& userId)
 {
 	OW_MutexLock ml(g_pwdLock);
-	OW_Bool rv = false;
+	bool rv = false;
 	struct passwd* pwd;
 	pwd = ::getpwnam(userName.c_str());
 	if(pwd)
@@ -132,14 +132,11 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 
 	OW_UInt8 funcNo = 0;
 
-	OW_Bool doIndications = !(getEnvironment()->getConfigItem(
-		OW_ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
-
 	OW_LoggerRef lgr = getEnvironment()->getLogger();
 
 	try
 	{
-		OW_CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName, doIndications);
+		OW_CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName);
 		OW_UInt32 version = 0;
 		OW_BinarySerialization::read(*istrm, version);
 		if (version != OW_BinaryProtocolVersion)
@@ -499,8 +496,8 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	OW_String className(OW_BinarySerialization::readString(istrm));
 	EDeepFlag deep(OW_BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
 	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
 	OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);
@@ -565,8 +562,8 @@ OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
 	OW_String ns(OW_BinarySerialization::readString(istrm));
 	OW_String className(OW_BinarySerialization::readString(istrm));
 	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
@@ -589,8 +586,8 @@ OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 	OW_String ns(OW_BinarySerialization::readString(istrm));
 	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
 	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
@@ -701,7 +698,7 @@ OW_BinaryRequestHandler::modifyInstance(OW_CIMOMHandleIFCRef chdl,
 {
 	OW_String ns(OW_BinarySerialization::readString(istrm));
 	OW_CIMInstance ci(OW_BinarySerialization::readInstance(istrm));
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
@@ -784,8 +781,8 @@ OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleIFCRef chdl,
 	OW_String className(OW_BinarySerialization::readString(istrm));
 	EDeepFlag deep(OW_BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
 	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
@@ -886,8 +883,8 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 	OW_String resultClass(OW_BinarySerialization::readString(istrm));
 	OW_String role(OW_BinarySerialization::readString(istrm));
 	OW_String resultRole(OW_BinarySerialization::readString(istrm));
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
@@ -952,8 +949,8 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
 	OW_String resultClass(OW_BinarySerialization::readString(istrm));
 	OW_String role(OW_BinarySerialization::readString(istrm));
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
@@ -1029,7 +1026,7 @@ OW_BinaryRequestHandler::writeError(std::ostream& ostrm, const char* msg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	const OW_String& fname)
 {

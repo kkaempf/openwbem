@@ -67,7 +67,7 @@ private:
 	std::ostream* m_ostrEntity;
 	std::ostream* m_ostrError;
 
-	OW_Bool m_isIntrinsic;
+	bool m_isIntrinsic;
 	OW_String m_functionName;
 
 

@@ -51,7 +51,7 @@ public:
 	    
     OW_Param(OW_String argname, int mode, OW_String value);
     OW_Param(OW_String argname, OW_String value);
-    OW_Param(OW_String argname, OW_Bool value);
+    OW_Param(OW_String argname, bool value);
 	    
     OW_String getArgName() const;
     OW_String getArgValue() const;

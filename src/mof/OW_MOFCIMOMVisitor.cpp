@@ -41,6 +41,8 @@
 
 #include <assert.h>
 
+using namespace OW_WBEMFlags;
+
 CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns,
 		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler)
 : m_curValue(OW_CIMNULL)
@@ -1254,7 +1256,7 @@ OW_CIMClass CIMOMVisitor::CIMOMgetClass(const OW_String& className, const lineIn
 {
 	try
 	{
-		return m_hdl->getClass(m_namespace, className, OW_WBEMFlags::E_NOT_LOCAL_ONLY);
+		return m_hdl->getClass(m_namespace, className, E_NOT_LOCAL_ONLY);
 	}
 	catch (const OW_CIMException& ce)
 	{

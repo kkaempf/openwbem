@@ -277,7 +277,7 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	//-----------------
 	OW_ProviderManagerRef pProvMgr = m_env->getProviderManager();
 
-	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 
 	OW_IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
@@ -449,7 +449,7 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 {
 	OW_CIMInstance rval(toFilter.clone(E_NOT_LOCAL_ONLY,
 		E_EXCLUDE_QUALIFIERS, 
-		OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN));
+		E_EXCLUDE_CLASS_ORIGIN));
 
 	if (props.empty())
 	{
@@ -619,7 +619,7 @@ OW_IndicationServerImpl::_processIndicationRange(
 	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
 {
 	OW_UserInfo aclInfo;
-	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 
 	for( ;first != last; ++first)
 	{

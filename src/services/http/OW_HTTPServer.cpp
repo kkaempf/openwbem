@@ -64,7 +64,7 @@ OW_HTTPServer::~OW_HTTPServer()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 	OW_String& userName, const OW_String& info)
 {
@@ -337,7 +337,10 @@ OW_HTTPServer::startService()
 		{
 			OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
 			m_pHttpServerSocket = new OW_ServerSocket;
-			m_pHttpServerSocket->doListen(lport, false, 1000, true, m_options.reuseAddr);
+			m_pHttpServerSocket->doListen(lport, 
+				OW_SocketFlags::E_NOT_SSL, 1000, 
+				OW_SocketFlags::E_ALL_INTERFACES, 
+				m_options.reuseAddr ? OW_SocketFlags::E_REUSE_ADDR : OW_SocketFlags::E_DONT_REUSE_ADDR);
 			m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
 
 			lgr->logCustInfo(format("HTTP server listening on port: %1",
@@ -379,7 +382,10 @@ OW_HTTPServer::startService()
 			try
 			{
 				m_pHttpsServerSocket = new OW_ServerSocket;
-				m_pHttpsServerSocket->doListen(lport, true, 1000, true, m_options.reuseAddr);
+				m_pHttpsServerSocket->doListen(lport, 
+				OW_SocketFlags::E_SSL, 1000,
+				OW_SocketFlags::E_ALL_INTERFACES, 
+				m_options.reuseAddr ? OW_SocketFlags::E_REUSE_ADDR : OW_SocketFlags::E_DONT_REUSE_ADDR);
 
 				m_options.httpsPort =
 				   m_pHttpsServerSocket->getLocalAddress().getPort();

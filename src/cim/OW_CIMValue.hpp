@@ -550,7 +550,7 @@ public:
 	 * @param x The OW_CIMValue object to check for equality with.
 	 * @return true If this OW_CIMValue is equal to the given OW_CIMValue.
 	 */
-	OW_Bool equal(const OW_CIMValue& x) const;
+	bool equal(const OW_CIMValue& x) const;
 
 	/**
 	 * Equality operator
@@ -558,7 +558,7 @@ public:
 	 * @return true if the specifed OW_CIMValue is equal to this one. Otherwise
 	 * false.
 	 */
-	OW_Bool operator== (const OW_CIMValue& x) const;
+	bool operator== (const OW_CIMValue& x) const;
 
 	/**
 	 * Inequality operator
@@ -566,7 +566,7 @@ public:
 	 * @return true if the specifed OW_CIMValue is not equal to this one.
 	 * Otherwise false.
 	 */
-	OW_Bool operator!= (const OW_CIMValue& x) const;
+	bool operator!= (const OW_CIMValue& x) const;
 
 	/**
 	 * Less than or equal operator
@@ -574,7 +574,7 @@ public:
 	 * @return true if The specifed OW_CIMValue is less than or equal to this
 	 * one. Otherwise false.
 	 */
-	OW_Bool operator<= (const OW_CIMValue& x) const;
+	bool operator<= (const OW_CIMValue& x) const;
 
 	/**
 	 * Greater than or equal operator
@@ -582,7 +582,7 @@ public:
 	 * @return true if The specifed OW_CIMValue is greater than or equal to this
 	 * one. Otherwise false.
 	 */
-	OW_Bool operator>= (const OW_CIMValue& x) const;
+	bool operator>= (const OW_CIMValue& x) const;
 
 	/**
 	 * Less than operator
@@ -590,7 +590,7 @@ public:
 	 * @return true if The specifed OW_CIMValue is less than this one. Otherwise
 	 * false.
 	 */
-	OW_Bool operator< (const OW_CIMValue& x) const;
+	bool operator< (const OW_CIMValue& x) const;
 
 	/**
 	 * Greater than operator
@@ -598,7 +598,7 @@ public:
 	 * @return true if The specifed OW_CIMValue is greater than this one.
 	 * Otherwise false.
 	 */
-	OW_Bool operator> (const OW_CIMValue& x) const;
+	bool operator> (const OW_CIMValue& x) const;
 
 	/**
 	 * @return The integral representation of the data type for this OW_CIMValue.
@@ -617,12 +617,12 @@ public:
 	 * @param x The OW_CIMValue to compare this object's data type with.
 	 * @return true If the datatypes are the same. Otherwise false.
 	 */
-	OW_Bool sameType(const OW_CIMValue& x) const;
+	bool sameType(const OW_CIMValue& x) const;
 
 	/**
 	 * @return true If this OW_CIMValue contains an array.
 	 */
-	OW_Bool isArray() const;
+	bool isArray() const;
 
 	/**
 	 * Read this object from an input stream.
@@ -649,7 +649,7 @@ public:
 	/**
 	 * @return true if this OW_CIMValue object contains a numeric type.
 	 */
-	OW_Bool isNumericType() const;
+	bool isNumericType() const;
 
 private:
 

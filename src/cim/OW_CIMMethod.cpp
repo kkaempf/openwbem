@@ -40,6 +40,7 @@
 
 using std::ostream;
 using std::istream;
+using namespace OW_WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////													
 struct OW_CIMMethod::METHData
@@ -273,8 +274,8 @@ OW_CIMMethod::getOverridingMethod() const
 
 //////////////////////////////////////////////////////////////////////////////													
 OW_CIMMethod
-OW_CIMMethod::clone(OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const
+OW_CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin) const
 {
 	if(m_pdata.isNull())
 	{

@@ -44,7 +44,7 @@ OW_Param::OW_Param(OW_String argname, OW_String value) : m_argName(argname), m_a
 {
 }
 
-OW_Param::OW_Param(OW_String argname, OW_Bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
+OW_Param::OW_Param(OW_String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
 {
 	if(value)
 	    m_argValue = "TRUE";

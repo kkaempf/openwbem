@@ -46,7 +46,7 @@ OW_String
 OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 {
 	OW_String nameSpace;
-	OW_Bool firstTime = true;
+	bool firstTime = true;
 	while (parser.tokenIs(OW_CIMXMLParser::E_NAMESPACE))
 	{
 		OW_String pname = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);

@@ -103,7 +103,7 @@ public:
 	/**
 	 * @return true if this repository is open. Otherwise false.
 	 */
-	OW_Bool isOpen() { return m_opened; }
+	bool isOpen() { return m_opened; }
 
 	void nodeToCIMObject(OW_CIMBase& cimObj, const OW_HDBNode& node);
 
@@ -161,7 +161,7 @@ protected:
 	}
 
 	OW_HDB m_hdb;
-	OW_Bool m_opened;
+	bool m_opened;
 	OW_Mutex m_guard;
 	OW_Array<OW_HDBHandle> m_handles;
 	OW_ServiceEnvironmentIFCRef m_env;

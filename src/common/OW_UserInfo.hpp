@@ -86,7 +86,7 @@ private:
 	 * @return true if access rights are not to be checked on this OW_UserInfo
 	 * object. Otherwise false.
 	 */
-	OW_Bool getInternal() const;
+	bool getInternal() const;
 
 	/**
 	 * Set this OW_UserInfo object to internal
@@ -97,7 +97,7 @@ private:
 	OW_String m_userName;
 
 	/** Internal flags. If true access rights are not checked. */
-	OW_Bool m_internal;
+	bool m_internal;
 
 	//--------------------------------------------------------------------------
 	// Friend classes that are allowed to construct OW_UserInfo objects that

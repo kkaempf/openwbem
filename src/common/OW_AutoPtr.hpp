@@ -140,6 +140,10 @@ public:
 
 	X& operator*() const {  return *_ptr;}
 	X* operator->() const {  return _ptr;}
+
+	X& operator[](unsigned i) { return _ptr[i]; }
+	const X& operator[](unsigned i) const { return _ptr[i]; }
+
 	X* get() const {  return _ptr;}
 	X* release()
 	{

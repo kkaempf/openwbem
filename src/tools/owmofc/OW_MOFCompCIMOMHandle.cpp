@@ -38,6 +38,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_MOFCompCIMOMHandle::OW_MOFCompCIMOMHandle(OW_RepositoryIFCRef pRepos, const OW_UserInfo& aclInfo)
 	: OW_CIMOMHandleIFC()
@@ -57,8 +59,10 @@ void
 OW_MOFCompCIMOMHandle::enumClass(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, 
-	OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin)
 {
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, m_aclInfo);
@@ -67,9 +71,9 @@ OW_MOFCompCIMOMHandle::enumClass(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MOFCompCIMOMHandle::enumClassNames(const OW_String& ns,
-		const OW_String& className,
-		OW_StringResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep)
+	const OW_String& className,
+	OW_StringResultHandlerIFC& result,
+	EDeepFlag deep)
 {
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
 }
@@ -79,12 +83,15 @@ void
 OW_MOFCompCIMOMHandle::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	OW_CIMInstanceResultHandlerIFC& result, 
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, true, m_aclInfo);
+		includeClassOrigin, propertyList, E_ENUM_SUBCLASSES, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -94,7 +101,7 @@ OW_MOFCompCIMOMHandle::enumInstanceNames(
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
-	return m_pServer->enumInstanceNames(ns, className, result, OW_WBEMFlags::E_DEEP, m_aclInfo);
+	return m_pServer->enumInstanceNames(ns, className, result, E_DEEP, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,8 +143,9 @@ OW_CIMClass
 OW_MOFCompCIMOMHandle::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMClass cls = m_pServer->getClass(ns, className, localOnly,
@@ -150,9 +158,9 @@ OW_CIMInstance
 OW_MOFCompCIMOMHandle::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
@@ -203,7 +211,7 @@ void
 OW_MOFCompCIMOMHandle::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
@@ -268,7 +276,8 @@ OW_MOFCompCIMOMHandle::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
@@ -284,7 +293,8 @@ OW_MOFCompCIMOMHandle::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
@@ -310,7 +320,8 @@ OW_MOFCompCIMOMHandle::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->references(ns, path, result, resultClass, role,
@@ -324,7 +335,8 @@ OW_MOFCompCIMOMHandle::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,

@@ -621,7 +621,7 @@ OW_CIMClass::newInstance() const
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin) const
 {
 	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
 		false);
@@ -629,8 +629,8 @@ OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMClass::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
+OW_CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
 	bool noProps) const
 {
 	if(m_pdata.isNull())
@@ -923,7 +923,7 @@ const char* const OW_CIMClass::NAMESPACECLASS = "__Namespace";
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-OW_CIMClass::getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDeepFlag deep,
+OW_CIMClass::getCloneProps(ELocalOnlyFlag localOnly, EDeepFlag deep,
 	const OW_StringArray* propertyList,
 	const OW_CIMClass& requestedClass) const
 {
@@ -979,7 +979,7 @@ OW_CIMClass::getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags:
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-OW_CIMClass::getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly,
+OW_CIMClass::getCloneProps(ELocalOnlyFlag localOnly,
 	const OW_StringArray* propertyList) const
 {
 	OW_StringArray props;

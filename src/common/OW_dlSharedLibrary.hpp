@@ -59,7 +59,7 @@ class OW_dlSharedLibrary : public OW_SharedLibrary
 		 * @param fp				Where to store the function pointer.
 		 * @return true if function succeeded, false otherwise.
 		 */
-		virtual OW_Bool doGetFunctionPointer( const OW_String& functionName,
+		virtual bool doGetFunctionPointer( const OW_String& functionName,
 												  void** fp ) const;
 			// throw ()
 

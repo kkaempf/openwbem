@@ -629,6 +629,12 @@ public:
 	safe_bool operator!() const
 		{  return (m_pServer) ? 0: &dummy::nonnull; }
 
+	enum ELockingFlag
+	{
+		E_NO_LOCKING,
+		E_LOCKING
+	};
+
 	/**
 	 * Create a new OW_LocalCIMOMHandle with a given repository interface
 	 * and user access contol information.
@@ -641,7 +647,7 @@ public:
 	 *		read/write lock on the OW_CIMServer.
 	 */
 	OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env, OW_RepositoryIFCRef pRepos,
-		const OW_UserInfo& aclInfo, OW_Bool noLock);
+		const OW_UserInfo& aclInfo, ELockingFlag lock);
 
 	void getSchemaReadLock();
 	void getSchemaWriteLock();
@@ -668,10 +674,10 @@ private:
 	OW_UserInfo m_aclInfo;
 
 	/**
-	 * If m_noLock is true, then this OW_LocalCIMOMHandle will never attempt
+	 * If m_lock is E_NO_LOCKING, then this OW_LocalCIMOMHandle will never attempt
 	 * to acquire a read/write lock on the cim server.
 	 */
-	OW_Bool m_noLock;
+	ELockingFlag m_lock;
 
 	OW_CIMOMEnvironmentRef m_env;
 

@@ -57,7 +57,7 @@ using std::istream;
 DEFINE_EXCEPTION(Base64Format);
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map,
 								  OW_Array<OW_String>& array, istream& istr)
 {
@@ -79,14 +79,14 @@ OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map,
 
 //////////////////////////////////////////////////////////////////////////////
 // static
-OW_Bool
+bool
 OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map, istream& istr)
 {
 	return buildMap(map, istr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HTTPUtils::buildMap(OW_HTTPHeaderMap& map, istream& istr)
 {
 	OW_String line;
@@ -634,7 +634,7 @@ void OW_HTTPUtils::DigestCalcResponse(
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_HTTPUtils::headerHasKey(const OW_HTTPHeaderMap& headers,
 									const OW_String& key)
 {

@@ -38,7 +38,7 @@
 class OW_IndexEntry;
 
 /**
- * The OW_Index class is simply an inteface class that helps facilitate a
+ * The OW_Index class is simply an interface class that helps facilitate a
  * pluggable architecture for an indexing scheme on file. All OW_Index
  * objects will be used to maintain an index on some file. The only data ever
  * associated with the key of the index will be a long value that will be
@@ -57,6 +57,12 @@ public:
 	 */
 	virtual ~OW_Index();
 
+	enum EDuplicateKeysFlag
+	{
+		E_NO_DUPLICATES,
+		E_ALLOW_DUPLICATES
+	};
+
 	/**
 	 * Open the given index file.
 	 * @param fileName	The file name for the index file. If the file name
@@ -64,7 +70,7 @@ public:
 	 * be the base of fileName with the extension ".ndx".
 	 * @exception OW_IndexException If the file cannot be created or opened.
 	 */
-	virtual void open(const char* fileName, OW_Bool allowDuplicates=false) = 0;
+	virtual void open(const char* fileName, EDuplicateKeysFlag allowDuplicates = E_NO_DUPLICATES) = 0;
 
 	/**
 	 * Close the underlying index file if it is open.

@@ -41,6 +41,8 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_Assertion.hpp"
 
+using namespace OW_WBEMFlags;
+
 namespace OpenWBEM
 {
 

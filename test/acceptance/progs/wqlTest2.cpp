@@ -35,6 +35,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_Bool.hpp"
 
 #include <iostream>
 #include <assert.h>

@@ -207,10 +207,10 @@ public:
 	{
 		return OW_LoggerRef(new coutLogger);
 	}
-	virtual void setConfigItem(const OW_String &, const OW_String &, OW_Bool) 
+	virtual void setConfigItem(const OW_String &, const OW_String &, EOverwritePreviousFlag) 
 	{
 	}
-	virtual OW_Bool authenticate(OW_String &, const OW_String &, OW_String &) 
+	virtual bool authenticate(OW_String &, const OW_String &, OW_String &) 
 	{
 		return true;
 	}
@@ -226,7 +226,7 @@ public:
 	{
 		OW_THROW(OW_Exception, "Unsupported");
 	}
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, const OW_Bool, const OW_Bool) 
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, ESendIndicationsFlag, EBypassProvidersFlag) 
 	{
 		OW_THROW(OW_Exception, "Unsupported");
 	}

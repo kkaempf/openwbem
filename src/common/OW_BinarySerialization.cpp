@@ -225,7 +225,7 @@ void
 writeStringArray(std::ostream& ostrm,
 	const OW_StringArray* propertyList)
 {
-	OW_Bool nullPropertyList = (propertyList == 0);
+	bool nullPropertyList = (propertyList == 0);
 	writeBool(ostrm, nullPropertyList);
 	if(!nullPropertyList)
 	{

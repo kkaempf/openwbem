@@ -205,8 +205,8 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 	// Write scope information
 	//
 	OW_String scope;
-	OW_Bool scopeWritten = false;
-	OW_Bool any = cqt.hasScope(OW_CIMScope(OW_CIMScope::ANY));
+	bool scopeWritten = false;
+	bool any = cqt.hasScope(OW_CIMScope(OW_CIMScope::ANY));
 	if(any || cqt.hasScope(OW_CIMScope(OW_CIMScope::CLASS)))
 	{
 		ostr << "CLASS=\"true\" ";
@@ -1199,8 +1199,8 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
 	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin)
 {
-	OW_Bool isArray = false;
-	OW_Bool isRef = false;
+	bool isArray = false;
+	bool isRef = false;
 
 	if(cp.getName().empty())
 	{
@@ -1410,7 +1410,7 @@ OW_CIMtoXML(OW_CIMParameter const& cp, ostream& ostr)
 			"parameter must have a valid data type");
 	}
 
-	OW_Bool isArray = cp.getType().isArrayType();
+	bool isArray = cp.getType().isArrayType();
 
 	if(cp.getType().isReferenceType())
 	{

@@ -108,7 +108,7 @@ OW_HDB::open(const char* fileName)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDB::createFile()
 {
 	OW_HDBHeaderBlock b = { OW_HDBSIGNATURE, OW_HDBVERSION, -1L, -1L, -1L };
@@ -133,7 +133,7 @@ OW_HDB::createFile()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDB::checkFile()
 {
 	OW_File f = OW_FileSystem::openFile(m_fileName + ".dat");
@@ -540,7 +540,7 @@ OW_HDB::findIndexEntry(const char* key)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDB::addIndexEntry(const char* key, OW_Int32 offset)
 {
 	if(!m_opened)
@@ -553,7 +553,7 @@ OW_HDB::addIndexEntry(const char* key, OW_Int32 offset)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDB::removeIndexEntry(const char* key)
 {
 	if(!m_opened)
@@ -565,7 +565,7 @@ OW_HDB::removeIndexEntry(const char* key)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDB::updateIndexEntry(const char* key, OW_Int32 newOffset)
 {
 	if(!m_opened)
@@ -762,10 +762,10 @@ OW_HDBHandle::getPrevSibling(OW_HDBNode& node)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::addRootNode(OW_HDBNode& node)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(node)
 	{
 		if(node.getOffset() > 0)
@@ -785,10 +785,10 @@ OW_HDBHandle::addRootNode(OW_HDBNode& node)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(parentNode && childNode)
 	{
 		if(childNode.getOffset() > 0)
@@ -816,7 +816,7 @@ OW_HDBHandle::addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::addChild(const OW_String& parentKey, OW_HDBNode& childNode)
 {
 	if(parentKey.empty())
@@ -834,10 +834,10 @@ OW_HDBHandle::addChild(const OW_String& parentKey, OW_HDBNode& childNode)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::removeNode(OW_HDBNode& node)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(node && node.getOffset() > 0)
 	{
 		if(node.reload(*this))
@@ -850,10 +850,10 @@ OW_HDBHandle::removeNode(OW_HDBNode& node)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::removeNode(const OW_String& key)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(!key.empty())
 	{
 		OW_HDBNode node(key.c_str(), *this);
@@ -867,10 +867,10 @@ OW_HDBHandle::removeNode(const OW_String& key)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(node)
 	{
 		// If node is already on file, then get a writelock on db
@@ -961,21 +961,21 @@ OW_HDBHandle::findIndexEntry(const char* key)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::addIndexEntry(const char* key, OW_Int32 offset)
 {
 	return m_pdata->m_pdb->addIndexEntry(key, offset);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::removeIndexEntry(const char* key)
 {
 	return m_pdata->m_pdb->removeIndexEntry(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBHandle::updateIndexEntry(const char* key, OW_Int32 newOffset)
 {
 	return m_pdata->m_pdb->updateIndexEntry(key, newOffset);

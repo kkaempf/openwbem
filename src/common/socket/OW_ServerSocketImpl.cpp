@@ -55,7 +55,7 @@ extern "C"
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::OW_ServerSocketImpl(OW_Bool isSSL)
+OW_ServerSocketImpl::OW_ServerSocketImpl(OW_SocketFlags::ESSLFlag isSSL)
 	: m_sockfd(-1)
 	, m_localAddress(OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET))
 	, m_isActive(false)
@@ -87,8 +87,9 @@ OW_ServerSocketImpl::getSelectObj() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
-	int queueSize, OW_Bool allInterfaces, bool reuseAddr)
+OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL,
+	int queueSize, OW_SocketFlags::EAllInterfacesFlag allInterfaces, 
+	OW_SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_localAddress = OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
 	m_isSSL = isSSL;
@@ -252,8 +253,9 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reu
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs, OW_Bool forInput)
+bool
+OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
+	OW_SocketFlags::EWaitDirectionFlag forInput)
 {
 	fd_set thefds;
 	fd_set* preadfds = NULL;
@@ -272,7 +274,7 @@ OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs, OW_Bool forInput)
 		ptimeval = &timeout;
 	}
 
-	if(forInput)
+	if(forInput == OW_SocketFlags::E_WAIT_FOR_INPUT)
 	{
 		preadfds = &thefds;
 	}
@@ -313,7 +315,7 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 		OW_THROW(OW_SocketException, "OW_ServerSocketImpl::accept: NONE");
 	}
 
-	if(waitForIO(m_sockfd, timeoutSecs, true))
+	if(waitForIO(m_sockfd, timeoutSecs, OW_SocketFlags::E_WAIT_FOR_INPUT))
 	{
 		int clntfd;
 		socklen_t clntlen;

@@ -36,6 +36,7 @@
 #include "OW_ServerSocketImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Types.h"
+#include "OW_SocketFlags.hpp"
 
 class OW_ServerSocket : public OW_SelectableIFC
 {
@@ -44,7 +45,7 @@ public:
 	/** Allocate a new Inet Server Socket.
 	 * @param isSSL is the Server Socket an SSL socket?
 	 */
-	OW_ServerSocket(OW_Bool isSSL = false)
+	OW_ServerSocket(OW_SocketFlags::ESSLFlag isSSL = OW_SocketFlags::E_NOT_SSL)
 	  : OW_SelectableIFC()
 	  , m_impl(new OW_ServerSocketImpl(isSSL))
    {
@@ -76,8 +77,9 @@ public:
 	 * @param queueSize the size of the listen queue
 	 * @param allInterfaces do we listen on all interfaces?
 	 */
-	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10,
-			OW_Bool allInterfaces=false, bool reuseAddr = true)
+	void doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL, int queueSize=10,
+			OW_SocketFlags::EAllInterfacesFlag allInterfaces = OW_SocketFlags::E_NOT_ALL_INTERFACES, 
+			OW_SocketFlags::EReuseAddrFlag reuseAddr = OW_SocketFlags::E_REUSE_ADDR)
 		/*throw (OW_SocketException)*/
 	{
 		m_impl->doListen(port, isSSL, queueSize, allInterfaces, reuseAddr);

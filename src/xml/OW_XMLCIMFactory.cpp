@@ -47,6 +47,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMXMLParser.hpp"
+#include "OW_Bool.hpp"
 
 #include <algorithm> // for find_if
 

@@ -317,7 +317,7 @@ OW_CIMProperty::getOverridingProperty() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMProperty::isReference() const
 {
 	return m_pdata->m_propertyDataType.isReferenceType();
@@ -394,7 +394,7 @@ OW_CIMProperty::addQualifier(const OW_CIMQualifier& qual)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMProperty::removeQualifier(const OW_String& name)
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
@@ -412,7 +412,7 @@ OW_CIMProperty::removeQualifier(const OW_String& name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMProperty::isKey() const
 {
 	if(getDataType().isReferenceType()
@@ -457,14 +457,14 @@ OW_CIMProperty::filter(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQ
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMProperty&
-OW_CIMProperty::setPropagated(OW_Bool propagated)
+OW_CIMProperty::setPropagated(bool propagated)
 {
 	m_pdata->m_propagated = propagated;
 	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMProperty::getPropagated() const
 {
 	return m_pdata->m_propagated;
@@ -644,7 +644,7 @@ bool operator<(const OW_CIMProperty& x, const OW_CIMProperty& y)
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool 
+bool 
 OW_CIMProperty::hasTrueQualifier(const OW_String& name) const
 {
 	OW_CIMQualifier q = getQualifier(name);

@@ -129,7 +129,7 @@ public:
 		m_obj.useRefCountOf(arg.m_obj);
 	}
 
-	OW_Bool isNull() const
+	bool isNull() const
 	{
 		return m_obj.isNull();
 	}

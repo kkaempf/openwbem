@@ -53,7 +53,7 @@ public:
 
 	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query) = 0;
 
-	virtual OW_Bool supportsQueryLanguage(const OW_String& lang) = 0;
+	virtual bool supportsQueryLanguage(const OW_String& lang) = 0;
 
 };
 

@@ -40,6 +40,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_Bool.hpp"
 
 /**
  * The OW_CIMFeatures structure encapsulates all of the data that comprises

@@ -44,11 +44,12 @@
 #include "OW_SocketAddress.hpp"
 #include "OW_Types.h"
 #include "OW_File.hpp"
+#include "OW_SocketFlags.hpp"
 
 class OW_ServerSocketImpl : public OW_SelectableIFC
 {
 public:
-	OW_ServerSocketImpl(OW_Bool isSSL);
+	OW_ServerSocketImpl(OW_SocketFlags::ESSLFlag isSSL);
 	~OW_ServerSocketImpl();
 	OW_String addrString();
 	OW_Socket accept(int timeoutSecs=-1);
@@ -59,11 +60,12 @@ public:
 
 	OW_SocketAddress getLocalAddress() { return m_localAddress; }
 	OW_SocketHandle_t getfd() const { return m_sockfd; }
-	void doListen(OW_UInt16 port, OW_Bool isSSL, int queueSize=10, 
-		OW_Bool allInterfaces=false, bool reuseAddr = true);
+	void doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL, int queueSize=10, 
+		OW_SocketFlags::EAllInterfacesFlag allInterfaces = OW_SocketFlags::E_NOT_ALL_INTERFACES, 
+		OW_SocketFlags::EReuseAddrFlag reuseAddr = OW_SocketFlags::E_REUSE_ADDR);
 	void doListen(const OW_String& filename, int queueSize=10, 
 		bool reuseAddr = true);
-	OW_Bool waitForIO(int fd, int timeOutSecs, OW_Bool forInput);
+	bool waitForIO(int fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionFlag forInput);
 	OW_Select_t getSelectObj() const;
 
 private:
@@ -74,12 +76,12 @@ private:
 //	unsigned long m_localAddress;
 //	unsigned short m_localPort;
 	OW_SocketAddress m_localAddress;
-	OW_Bool m_isActive;
+	bool m_isActive;
 
 	OW_ServerSocketImpl(const OW_ServerSocketImpl& arg);
 	OW_ServerSocketImpl operator=(const OW_ServerSocketImpl& arg);
 
-	OW_Bool m_isSSL;
+	OW_SocketFlags::ESSLFlag m_isSSL;
 	OW_File m_udsFile;
 };
 

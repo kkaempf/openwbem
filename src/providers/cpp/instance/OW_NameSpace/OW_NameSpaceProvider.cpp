@@ -264,8 +264,8 @@ OW_NameSpaceProvider::enumInstances(
 		OW_CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass)
@@ -282,8 +282,8 @@ OW_NameSpaceProvider::getInstance(
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass)
 {
@@ -370,7 +370,7 @@ OW_NameSpaceProvider::modifyInstance(
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass)
 {

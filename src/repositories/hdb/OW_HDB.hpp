@@ -65,7 +65,7 @@ private:
 	
 		OW_HDB* m_pdb;
 		OW_File m_file;
-		OW_Bool m_writeDone;
+		bool m_writeDone;
 		OW_Int32 m_userVal;	// Handle user can store any long data here
 	};
 
@@ -161,7 +161,7 @@ public:
 	 * @return true if the node was added to the database. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool addRootNode(OW_HDBNode& node);
+	bool addRootNode(OW_HDBNode& node);
 
 	/**
 	 * Add a node as a child to another node.
@@ -170,7 +170,7 @@ public:
 	 * @return true if the child node was added to the parent. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode);
+	bool addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode);
 
 	/**
 	 * Add a node as a child to another node referenced by a given key.
@@ -179,7 +179,7 @@ public:
 	 * @return true if the child node was added to the parent. false if the
 	 * parent does not exist.
 	 */
-	OW_Bool addChild(const OW_String& parentKey, OW_HDBNode& childNode);
+	bool addChild(const OW_String& parentKey, OW_HDBNode& childNode);
 
 	/**
 	 * Remove a node and all of its' children.
@@ -187,7 +187,7 @@ public:
 	 * @return true if the node was removed. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool removeNode(OW_HDBNode& node);
+	bool removeNode(OW_HDBNode& node);
 
 	/**
 	 * Remove the node associated with a given key and all of its' children.
@@ -195,7 +195,7 @@ public:
 	 * @return true if the node was removed. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool removeNode(const OW_String& key);
+	bool removeNode(const OW_String& key);
 
 	/**
 	 * Update the data associated with a node.
@@ -205,7 +205,7 @@ public:
 	 * @return true if the update was successful. Otherwise false.
 	 * @exception OW_HDBException
 	 */
-	OW_Bool updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data);
+	bool updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data);
 
 	/**
 	 * Turn the user defined flags on in this node.
@@ -265,9 +265,9 @@ private:
 	OW_IndexEntry findNextIndexEntry();
 	OW_IndexEntry findPrevIndexEntry();
 	OW_IndexEntry findIndexEntry(const char* key);
-	OW_Bool addIndexEntry(const char* key, OW_Int32 offset);
-	OW_Bool removeIndexEntry(const char* key);
-	OW_Bool updateIndexEntry(const char* key, OW_Int32 newOffset);
+	bool addIndexEntry(const char* key, OW_Int32 offset);
+	bool removeIndexEntry(const char* key);
+	bool updateIndexEntry(const char* key, OW_Int32 newOffset);
 
 	friend class OW_HDB;
 	friend class OW_HDBNode;
@@ -359,8 +359,8 @@ public:
 
 private:
 
-	OW_Bool createFile();
-	OW_Bool checkFile();
+	bool createFile();
+	bool checkFile();
 	void setOffsets(OW_File file, OW_Int32 firstRootOffset, OW_Int32 lastRootOffset,
 		OW_Int32 firstFreeOffset);
 	void setFirstRootOffSet(OW_File file, OW_Int32 offset);
@@ -383,16 +383,16 @@ private:
 	OW_IndexEntry findNextIndexEntry();
 	OW_IndexEntry findPrevIndexEntry();
 	OW_IndexEntry findIndexEntry(const char* key);
-	OW_Bool addIndexEntry(const char* key, OW_Int32 offset);
-	OW_Bool removeIndexEntry(const char* key);
-	OW_Bool updateIndexEntry(const char* key, OW_Int32 newOffset);
+	bool addIndexEntry(const char* key, OW_Int32 offset);
+	bool removeIndexEntry(const char* key);
+	bool updateIndexEntry(const char* key, OW_Int32 newOffset);
 	void flushIndex();
 
 	OW_HDBHeaderBlock m_hdrBlock;
 	OW_String m_fileName;
 	OW_Int32 m_version;
 	int m_hdlCount;
-	OW_Bool m_opened;
+	bool m_opened;
 	OW_IndexRef m_pindex;
 	OW_Mutex m_indexGuard;
 	OW_Mutex m_guard;

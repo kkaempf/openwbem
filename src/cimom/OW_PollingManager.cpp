@@ -131,7 +131,7 @@ OW_PollingManager::run()
 	// let OW_CIMOMEnvironment know we're running and ready to go.
 	m_startedSem->signal();
 
-	OW_Bool doInit = true;
+	bool doInit = true;
 
 	// Get all of the indication trigger providers
 	OW_ProviderManagerRef pm = m_env->getProviderManager();
@@ -170,7 +170,7 @@ OW_PollingManager::run()
 		OW_NonRecursiveMutexLock l(m_triggerGuard);
 		while (!m_shuttingDown)
 		{
-			OW_Bool rightNow;
+			bool rightNow;
 			OW_UInt32 sleepTime = calcSleepTime(rightNow, doInit);
 			doInit = false;
 
@@ -205,7 +205,7 @@ OW_PollingManager::run()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt32
-OW_PollingManager::calcSleepTime(OW_Bool& rightNow, OW_Bool doInit)
+OW_PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 {
 	rightNow = false;
 	OW_DateTime dtm;

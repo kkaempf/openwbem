@@ -641,7 +641,7 @@ enumerateInstanceNames(OW_CIMClient& hdl)
 //////////////////////////////////////////////////////////////////////////////
 void
 enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, EDeepFlag deep, ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
@@ -682,7 +682,7 @@ void
 getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 		ELocalOnlyFlag localOnly = E_NOT_LOCAL_ONLY,
 		EIncludeQualifiersFlag includeQualifiers = E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		EIncludeClassOriginFlag includeClassOrigin = E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList = 0)
 {
 	OW_String pstr;
@@ -1030,7 +1030,7 @@ void
 associators(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
+		EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	OW_String pstr;
 	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
@@ -1083,7 +1083,7 @@ void
 associatorsClasses(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
+		EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	OW_String pstr;
 	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
@@ -1204,7 +1204,7 @@ referenceNamesClass(OW_CIMClient& hdl,
 void
 references(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
-		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
@@ -1255,7 +1255,7 @@ references(OW_CIMClient& hdl,
 void
 referencesClasses(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
-		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;

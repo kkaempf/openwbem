@@ -158,8 +158,8 @@ OW_CIMClass
 OW_WQLFilterRep::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_UserInfo& ai)
 {
 	return m_pCIMServer->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList,
@@ -169,8 +169,8 @@ OW_WQLFilterRep::getClass(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_WQLFilterRep::getInstance(const OW_String&, const OW_CIMObjectPath&,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_UserInfo&)
 {
 	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
@@ -183,10 +183,10 @@ void
 OW_WQLFilterRep::enumClasses(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep, 
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
+	EDeepFlag deep, 
+	ELocalOnlyFlag localOnly, 
+	EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
 {
 	(void)ns; (void)className; (void)result; (void)deep; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)aclInfo;
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -199,7 +199,7 @@ OW_WQLFilterRep::enumClassNames(
 	const OW_String&,
 	const OW_String&,
 	OW_StringResultHandlerIFC&,
-	OW_WBEMFlags::EDeepFlag /*deep*/, const OW_UserInfo& /*aclInfo*/)
+	EDeepFlag /*deep*/, const OW_UserInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
@@ -211,9 +211,9 @@ OW_WQLFilterRep::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_Bool enumSubClasses, const OW_UserInfo& aclInfo)
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
+	const OW_StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, const OW_UserInfo& aclInfo)
 {
 	OW_String superClassName = m_inst.getClassName();
 
@@ -225,7 +225,7 @@ OW_WQLFilterRep::enumInstances(
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 			//	includeClassOrigin, propertyList));
 			(void)deep; (void)localOnly; (void)includeQualifiers;
-			(void)includeClassOrigin; (void)propertyList; (void)enumSubClasses;
+			(void)includeClassOrigin; (void)propertyList; (void)enumSubclasses;
 			// This is more efficient
 			result.handle(m_inst);
 			break;
@@ -243,7 +243,7 @@ OW_WQLFilterRep::enumInstanceNames(
 	const OW_String&,
 	const OW_String&,
 	OW_CIMObjectPathResultHandlerIFC&,
-	OW_WBEMFlags::EDeepFlag deep,
+	EDeepFlag deep,
 	const OW_UserInfo& aclInfo)
 {
 	(void)deep; (void)aclInfo;
@@ -266,7 +266,7 @@ OW_CIMInstance
 OW_WQLFilterRep::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_UserInfo& aclInfo)
 {
@@ -327,7 +327,7 @@ OW_WQLFilterRep::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo& aclInfo)
 {
 	(void)ns; (void)path; (void)result; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)aclInfo;
@@ -343,7 +343,7 @@ OW_WQLFilterRep::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo& aclInfo)
 {
 	(void)ns; (void)path; (void)result; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)aclInfo;
@@ -385,7 +385,7 @@ OW_WQLFilterRep::references(
 	const OW_CIMObjectPath &path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo& aclInfo)
 {
 	(void)ns; (void)path; (void)result; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)aclInfo;
@@ -400,7 +400,7 @@ OW_WQLFilterRep::referencesClasses(
 	const OW_CIMObjectPath &path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo& aclInfo)
 {
 	(void)ns; (void)path; (void)result; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)aclInfo;

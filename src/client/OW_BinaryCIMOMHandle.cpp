@@ -54,6 +54,7 @@
 using std::ostream;
 using std::iostream;
 using std::istream;
+using namespace OW_WBEMFlags;
 
 static inline void
 checkError(std::istream& istrm)
@@ -203,7 +204,7 @@ OW_BinaryCIMOMHandle::enumClassNames(
 	const OW_String& ns_,
 	const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep)
+	EDeepFlag deep)
 {
 	OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
@@ -225,8 +226,8 @@ void
 OW_BinaryCIMOMHandle::enumClass(const OW_String& ns_,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, 
-	OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
@@ -273,8 +274,8 @@ void
 OW_BinaryCIMOMHandle::enumInstances(
 	const OW_String& ns_,
 	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	OW_CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -301,8 +302,8 @@ OW_CIMClass
 OW_BinaryCIMOMHandle::getClass(
 	const OW_String& ns_,
 	const OW_String& className,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-    OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly,
+    EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -329,7 +330,7 @@ OW_CIMInstance
 OW_BinaryCIMOMHandle::getInstance(
 	const OW_String& ns_,
 	const OW_CIMObjectPath& instanceName,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -537,7 +538,7 @@ void
 OW_BinaryCIMOMHandle::modifyInstance(
 	const OW_String& ns_,
 	const OW_CIMInstance& modifiedInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -701,7 +702,7 @@ OW_BinaryCIMOMHandle::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -740,7 +741,7 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -803,7 +804,7 @@ OW_BinaryCIMOMHandle::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
@@ -839,7 +840,7 @@ OW_BinaryCIMOMHandle::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));

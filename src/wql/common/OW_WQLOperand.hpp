@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
@@ -58,7 +57,7 @@ enum WQLDoubleValueTag
 /** Tag used to force invocation of the boolean value form of the OW_WQLOperand
   Constructor.
  */
-enum WQLOW_BoolValueTag 
+enum WQLBoolValueTag 
 { 
 	WQL_BOOLEAN_VALUE_TAG 
 };
@@ -158,7 +157,7 @@ public:
 
 	/** Initializes object as BOOLEAN_VALUE.
 	 */
-	OW_WQLOperand(OW_Bool x, WQLOW_BoolValueTag)
+	OW_WQLOperand(bool x, WQLBoolValueTag)
 	{
 		_booleanValue = x;
 		_type = BOOLEAN_VALUE;
@@ -202,7 +201,7 @@ public:
 
 	/** Sets this object to a BOOLEAN_VALUE.
 	 */
-	void setOW_BoolValue(OW_Bool x)
+	void setBoolValue(bool x)
 	{
 		_booleanValue = x;
 		_type = BOOLEAN_VALUE;
@@ -248,7 +247,7 @@ public:
 	/** Gets this object as an BOOLEAN_VALUE.
 	  @exception TypeMismatchException is not the expected type.
 	 */
-	OW_Bool getBooleanValue() const
+	bool getBooleanValue() const
 	{
 		if (_type != BOOLEAN_VALUE)
 			OW_THROW(OW_TypeMismatchException, "Type mismatch");

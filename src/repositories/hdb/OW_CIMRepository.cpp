@@ -292,8 +292,8 @@ OW_CIMRepository::setQualifierType(
 OW_CIMClass
 OW_CIMRepository::getClass(
 	const OW_String& ns, const OW_String& className, 
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_UserInfo&)
 {
 	try
@@ -428,8 +428,8 @@ OW_CIMRepository::deleteClass(const OW_String& ns, const OW_String& className,
 			);
 		this->enumClasses(ns, className, ccd,
 			E_DEEP, E_LOCAL_ONLY,
-			OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-			OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+			E_EXCLUDE_QUALIFIERS,
+			E_EXCLUDE_CLASS_ORIGIN,
             acl);
 		ccd.handle(cc);
 
@@ -536,8 +536,8 @@ void
 OW_CIMRepository::enumClasses(const OW_String& ns,
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
-		EDeepFlag deep, ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo&)
+		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo&)
 {
 	try
 	{
@@ -688,8 +688,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result_,
 		EDeepFlag deep_,
 		ELocalOnlyFlag localOnly_,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers_,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin_,
+		EIncludeQualifiersFlag includeQualifiers_,
+		EIncludeClassOriginFlag includeClassOrigin_,
 		const OW_StringArray* propertyList_)
 		: rep(rep_)
 		, ns(ns_)
@@ -720,8 +720,8 @@ private:
 	OW_CIMInstanceResultHandlerIFC& result;
 	EDeepFlag deep;
 	ELocalOnlyFlag localOnly;
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers;
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin;
+	EIncludeQualifiersFlag includeQualifiers;
+	EIncludeClassOriginFlag includeClassOrigin;
 	const OW_StringArray* propertyList;
 };
 
@@ -733,8 +733,11 @@ OW_CIMRepository::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
-	ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_Bool enumSubClasses, const OW_UserInfo&)
+	ELocalOnlyFlag localOnly, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
+	const OW_StringArray* propertyList, 
+	EEnumSubclassesFlag enumSubclasses, const OW_UserInfo&)
 {
 	// deep means a different thing here than for enumInstanceNames.  See the spec.
 	try
@@ -750,7 +753,7 @@ OW_CIMRepository::enumInstances(
 				className));
 		}
 
-		if (enumSubClasses)
+		if (enumSubclasses)
 		{
 			instEnumerator ie(*this, ns, theTopClass, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 			m_mStore.enumClassNames(ns, className, ie, E_DEEP);
@@ -790,8 +793,8 @@ OW_CIMRepository::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	return getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
@@ -804,7 +807,7 @@ OW_CIMRepository::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMClass* pOutClass,
 	const OW_UserInfo&)
 {
@@ -991,7 +994,7 @@ OW_CIMInstance
 OW_CIMRepository::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_UserInfo& acl)
 {
@@ -1153,7 +1156,7 @@ OW_CIMRepository::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
@@ -1169,7 +1172,7 @@ OW_CIMRepository::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
@@ -1198,7 +1201,7 @@ OW_CIMRepository::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
@@ -1212,7 +1215,7 @@ OW_CIMRepository::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
@@ -1265,7 +1268,7 @@ OW_CIMRepository::_commonReferences(
 	const OW_String& ns,
 	const OW_CIMObjectPath& path_,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult, const OW_UserInfo& aclInfo)
@@ -1463,7 +1466,7 @@ namespace
 void
 OW_CIMRepository::_staticReferences(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result,
 	const OW_UserInfo& aclInfo)
 {
@@ -1495,7 +1498,7 @@ OW_CIMRepository::_commonAssociators(
 	const OW_CIMObjectPath& path_,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
@@ -1571,7 +1574,7 @@ OW_CIMRepository::_staticAssociators(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* passocClasses,
 	const OW_SortedVectorSet<OW_String>* presultClasses,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result,
 	const OW_UserInfo& aclInfo)
 {
@@ -1671,7 +1674,7 @@ OW_CIMRepository::_staticAssociatorsClass(
 	const OW_SortedVectorSet<OW_String>* assocClassNames,
 	const OW_SortedVectorSet<OW_String>* resultClasses,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult,
 	const OW_UserInfo& aclInfo)
@@ -1717,7 +1720,7 @@ void
 OW_CIMRepository::_staticReferencesClass(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* resultClasses,
 	const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult,

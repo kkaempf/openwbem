@@ -37,7 +37,7 @@
 #include <exception>
 #include <iostream> // for cout
 
-static OW_Bool processCommandLine(int argc, char* argv[],
+static bool processCommandLine(int argc, char* argv[],
 	OW_CIMOMEnvironmentRef env);
 
 static void printUsage(std::ostream& ostrm);
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 		env->logCustInfo("CIMOM is now running!");
 
 		int sig;
-		OW_Bool shuttingDown(false);
+		bool shuttingDown(false);
 		while(!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static OW_Bool
+static bool
 processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 {
 	// Process command line options
@@ -168,14 +168,13 @@ processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 
 	if(opts.debug)
 	{
-		env->setConfigItem(OW_ConfigOpts::OW_DEBUG_opt, "true", true);
+		env->setConfigItem(OW_ConfigOpts::OW_DEBUG_opt, "true", OW_ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
 		env->setConfigItem(OW_ConfigOpts::LOG_LEVEL_opt, "debug");
 	}
 
 	if (opts.configFile)
 	{
-		env->setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, opts.configFilePath,
-			true);
+		env->setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, opts.configFilePath);
 	}
 
 	return  opts.debug;

@@ -43,6 +43,8 @@
 
 #include <fstream>
 
+using namespace OW_WBEMFlags;
+
 namespace
 {
 	// anonymous namespace is to prevent possible linkage problems or identifier
@@ -83,8 +85,8 @@ namespace
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			EIncludeQualifiersFlag includeQualifiers,
+			EIncludeClassOriginFlag includeClassOrigin,
 			const OW_StringArray* propertyList)
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associators called "
@@ -162,8 +164,8 @@ namespace
 			const OW_CIMObjectPath& objectName,
 			const OW_String& resultClass,
 			const OW_String& role,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			EIncludeQualifiersFlag includeQualifiers,
+			EIncludeClassOriginFlag includeClassOrigin,
 			const OW_StringArray* propertyList )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest references called "
@@ -312,7 +314,7 @@ namespace
 			const OW_String& ns,
 			const OW_CIMInstance& modifiedInstance,
 			const OW_CIMInstance& previousInstance,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			EIncludeQualifiersFlag includeQualifiers,
 			const OW_StringArray* propertyList,
 			const OW_CIMClass& theClass)
 		{

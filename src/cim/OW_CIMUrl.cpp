@@ -32,6 +32,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_String.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_Bool.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>

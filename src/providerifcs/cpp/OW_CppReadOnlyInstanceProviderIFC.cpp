@@ -32,6 +32,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+using namespace OW_WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////
 void 
@@ -54,7 +55,7 @@ OW_CppReadOnlyInstanceProviderIFC::modifyInstance(
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass)
 {

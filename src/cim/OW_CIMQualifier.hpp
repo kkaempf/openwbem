@@ -152,12 +152,12 @@ public:
 	/**
 	 * @return true if this is the key qualifier. Otherwise false.
 	 */
-	OW_Bool isKeyQualifier() const;
+	bool isKeyQualifier() const;
 
 	/**
 	 * @return true if this is the association qualifier. Otherwise false.
 	 */
-	OW_Bool isAssociationQualifier() const;
+	bool isAssociationQualifier() const;
 
 	/**
 	 * @return The OW_CIMValue for this qualifier
@@ -195,7 +195,7 @@ public:
 	 * @param flavor Check if the qualifier has this flavor.
 	 * @return true if this qualifier has the specified flavor. Otherwise false.
 	 */
-	OW_Bool hasFlavor(const OW_CIMFlavor& flavor) const;
+	bool hasFlavor(const OW_CIMFlavor& flavor) const;
 
 	/**
 	 * Add an OW_CIMFlavor to this qualifier
@@ -215,7 +215,7 @@ public:
 	/**
 	 * @return true if this qualifier has a value. Otherwise false.
 	 */
-	OW_Bool hasValue() const;
+	bool hasValue() const;
 
 	/**
 	 * Check for equality against another qualifier.
@@ -223,7 +223,7 @@ public:
 	 * @return true if this qualifier has the same name as the given qualifier.
 	 * Otherwise false.
 	 */
-	OW_Bool equals(const OW_CIMQualifier& arg) const;
+	bool equals(const OW_CIMQualifier& arg) const;
 
 	/**
 	 * @return The list of flavors this qualifier has.
@@ -235,12 +235,12 @@ public:
 	 * @param propagated	If true, then qualifier is flagged as propagated.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& setPropagated(OW_Bool propagated=true);
+	OW_CIMQualifier& setPropagated(bool propagated=true);
 
 	/**
 	 * @return true if qualifier is propagated. Otherwise false.
 	 */
-	OW_Bool getPropagated() const;
+	bool getPropagated() const;
 
 private:
 	struct dummy

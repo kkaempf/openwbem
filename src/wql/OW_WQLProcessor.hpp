@@ -39,6 +39,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Array.hpp"
+#include "OW_Bool.hpp"
 
 class OW_WQLProcessor : public OW_WQLVisitor
 {

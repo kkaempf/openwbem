@@ -33,6 +33,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
 
+using namespace OW_WBEMFlags;
+
 namespace {
 
 DECLARE_EXCEPTION(FoundTheInst);
@@ -69,9 +71,9 @@ OW_CppSimpleInstanceProviderIFC::getInstance(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_String &ns, 
 	const OW_CIMObjectPath &instanceName, 
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+	ELocalOnlyFlag localOnly, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin, 
 	const OW_StringArray *propertyList, 
 	const OW_CIMClass &cimClass)
 {
@@ -138,10 +140,10 @@ class EnumInstancesHandler : public OW_CIMInstanceResultHandlerIFC
 {
 public:
 	EnumInstancesHandler(OW_CIMInstanceResultHandlerIFC &result,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly_,
-		OW_WBEMFlags::EDeepFlag deep_, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers_, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin_, 
+		ELocalOnlyFlag localOnly_,
+		EDeepFlag deep_, 
+		EIncludeQualifiersFlag includeQualifiers_, 
+		EIncludeClassOriginFlag includeClassOrigin_, 
 		const OW_StringArray *propertyList_, 
 		const OW_CIMClass &requestedClass_, 
 		const OW_CIMClass &cimClass_)
@@ -165,10 +167,10 @@ public:
 
 private:
 	OW_CIMInstanceResultHandlerIFC& m_result;
-	OW_WBEMFlags::ELocalOnlyFlag localOnly;
-	OW_WBEMFlags::EDeepFlag deep;
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers;
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin;
+	ELocalOnlyFlag localOnly;
+	EDeepFlag deep;
+	EIncludeQualifiersFlag includeQualifiers;
+	EIncludeClassOriginFlag includeClassOrigin;
 	const OW_StringArray *propertyList;
 	const OW_CIMClass &requestedClass;
 	const OW_CIMClass &cimClass;
@@ -183,10 +185,10 @@ OW_CppSimpleInstanceProviderIFC::enumInstances(
 	const OW_String &ns, 
 	const OW_String &className, 
 	OW_CIMInstanceResultHandlerIFC &result, 
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EDeepFlag deep, 
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin, 
 	const OW_StringArray *propertyList, 
 	const OW_CIMClass &requestedClass, 
 	const OW_CIMClass &cimClass)

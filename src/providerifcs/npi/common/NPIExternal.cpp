@@ -50,7 +50,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 			nameSpace, className,
 			E_NOT_LOCAL_ONLY,
 			E_INCLUDE_QUALIFIERS,
-			OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN, NULL);
+			E_INCLUDE_CLASS_ORIGIN, NULL);
 	}
 	catch (...)
 	{
@@ -101,7 +101,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 			E_DEEP,
 			E_NOT_LOCAL_ONLY,
 			E_EXCLUDE_QUALIFIERS,
-			OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN, NULL);
+			E_EXCLUDE_CLASS_ORIGIN, NULL);
 	}
 	catch (...)
 	{
@@ -772,7 +772,7 @@ void _CIMObjectPathAddKey(OW_CIMObjectPath * ref,
 {
    if (ref->getKey(Key))
    {
-      OW_Bool b = false;
+      bool b = false;
       OW_CIMPropertyArray cprops = ref->getKeys();
       for(OW_Int32 i=cprops.size()-1; i >= 0; i--)
       {

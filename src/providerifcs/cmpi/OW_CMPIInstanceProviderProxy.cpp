@@ -44,6 +44,8 @@
 // debugging
 #define DDD(X) // X
 
+using namespace OW_WBEMFlags;
+
 /////////////////////////////////////////////////////////////////////////////
 OW_CMPIInstanceProviderProxy::~OW_CMPIInstanceProviderProxy() 
 {
@@ -111,10 +113,10 @@ void
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-	OW_WBEMFlags::EDeepFlag deep, 
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly, 
+	EDeepFlag deep, 
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	const OW_CIMClass& requestedClass,
 	const OW_CIMClass& cimClass )
@@ -191,9 +193,9 @@ OW_CIMInstance
 	OW_CMPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, 
 	const OW_CIMClass& cimClass)
 {
@@ -379,7 +381,7 @@ void
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
 	const OW_CIMInstance& previousInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_CIMClass& theClass)
 {

@@ -171,45 +171,45 @@ OW_CIMOMEnvironment::init()
 	OW_MutexLock ml(m_monitor);
 
 	_clearSelectables();
-	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, false);
+	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, E_PRESERVE_PREVIOUS);
 
 	_loadConfigItemsFromFile(getConfigItem(OW_ConfigOpts::CONFIG_FILE_opt));
 
-	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, false);
-	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, false);
+	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, E_PRESERVE_PREVIOUS);
+	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, E_PRESERVE_PREVIOUS);
 
 	// Location of log file
-	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE, false);
+	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE, E_PRESERVE_PREVIOUS);
 
 	// Location for data files
 	setConfigItem(OW_ConfigOpts::DATA_DIR_opt,
-		OW_DEFAULT_DATA_DIR, false);
+		OW_DEFAULT_DATA_DIR, E_PRESERVE_PREVIOUS);
 
 	// Provider interface location
 	setConfigItem(OW_ConfigOpts::PROVIDER_IFC_LIBS_opt,
-		OW_DEFAULT_IFC_LIBS, false);
+		OW_DEFAULT_IFC_LIBS, E_PRESERVE_PREVIOUS);
 
 	// This config item should be handled in the C++ provider interface
 	// C++ provider interface - provider location
 	setConfigItem(OW_ConfigOpts::CPPIFC_PROV_LOC_opt,
-		OW_DEFAULT_CPP_PROVIDER_LOCATION, false);
+		OW_DEFAULT_CPP_PROVIDER_LOCATION, E_PRESERVE_PREVIOUS);
 
 	// Authorization module
 	setConfigItem(OW_ConfigOpts::AUTH_MOD_opt,
-		OW_DEFAULT_AUTH_MOD, false);
+		OW_DEFAULT_AUTH_MOD, E_PRESERVE_PREVIOUS);
 
 	// This config item should be handled in the simple auth module
 	setConfigItem(OW_ConfigOpts::SIMPLE_AUTH_FILE_opt,
-		OW_DEFAULT_SIMPLE_PASSWD_FILE, false);
+		OW_DEFAULT_SIMPLE_PASSWD_FILE, E_PRESERVE_PREVIOUS);
 
 	setConfigItem(OW_ConfigOpts::DISABLE_INDICATIONS_opt,
-		OW_DEFAULT_DISABLE_INDICATIONS, false);
+		OW_DEFAULT_DISABLE_INDICATIONS, E_PRESERVE_PREVIOUS);
 	
 	setConfigItem(OW_ConfigOpts::WQL_LIB_opt,
-		OW_DEFAULT_WQL_LIB, false);
+		OW_DEFAULT_WQL_LIB, E_PRESERVE_PREVIOUS);
 
 	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt,
-		OW_DEFAULT_REQ_HANDLER_TTL, false);
+		OW_DEFAULT_REQ_HANDLER_TTL, E_PRESERVE_PREVIOUS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -633,7 +633,7 @@ OW_CIMOMEnvironment::_loadServices()
 void
 OW_CIMOMEnvironment::_createLogger()
 {
-	OW_Bool debugFlag = getConfigItem(
+	bool debugFlag = getConfigItem(
 		OW_ConfigOpts::OW_DEBUG_opt).equalsIgnoreCase("true");
 
 	m_Logger = OW_LoggerRef(OW_Logger::createLogger(getConfigItem(
@@ -681,7 +681,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 					if(!itemValue.empty())
 					{
 						setConfigItem(line.substring(0, idx).trim(), itemValue,
-							false);
+							E_PRESERVE_PREVIOUS);
 					}
 				}
 			}
@@ -698,7 +698,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMOMEnvironment::authenticate(OW_String &userName, const OW_String &info,
 	OW_String &details)
 {
@@ -753,7 +753,9 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_UserInfo& aclInfo,
-	const OW_Bool doIndications, const OW_Bool bypassProviders, const OW_Bool noLocking)
+	ESendIndicationsFlag doIndications, 
+	EBypassProvidersFlag bypassProviders, 
+	ELockingFlag locking)
 {
 	{
 		OW_MutexLock l(m_runningGuard);
@@ -787,18 +789,19 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_UserInfo& aclInfo,
 		{
 			OW_RepositoryIFCRef rref2(new OW_SharedLibraryRepository(irl));
 			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(g_cimomEnvironment, rref2,
-				aclInfo, noLocking));
+				aclInfo, locking == E_LOCKING ? OW_LocalCIMOMHandle::E_LOCKING : OW_LocalCIMOMHandle::E_NO_LOCKING));
 		}
 	}
 
 	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(g_cimomEnvironment, rref,
-		aclInfo, noLocking));
+		aclInfo, locking == E_LOCKING ? OW_LocalCIMOMHandle::E_LOCKING : OW_LocalCIMOMHandle::E_NO_LOCKING));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
-	const OW_Bool doIndications, const OW_Bool bypassProviders)
+	ESendIndicationsFlag doIndications, 
+	EBypassProvidersFlag bypassProviders)
 {
 	return getCIMOMHandle(OW_UserInfo(username), doIndications, bypassProviders);
 }
@@ -807,14 +810,14 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle()
 {
-	return getCIMOMHandle(OW_UserInfo(), false, false);
+	return getCIMOMHandle(OW_UserInfo(), E_DONT_SEND_INDICATIONS, E_USE_PROVIDERS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getRepositoryCIMOMHandle()
 {
-	return getCIMOMHandle(OW_UserInfo(), false, true);
+	return getCIMOMHandle(OW_UserInfo(), E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1028,7 +1031,7 @@ OW_CIMOMEnvironment::clearConfigItems()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::setConfigItem(const OW_String &item,
-	const OW_String &value, OW_Bool overwritePrevious)
+	const OW_String &value, EOverwritePreviousFlag overwritePrevious)
 {
 	ConfigMap::iterator it = m_configItems->find(item);
 	if(it == m_configItems->end() || overwritePrevious)

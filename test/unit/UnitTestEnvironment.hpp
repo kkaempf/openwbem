@@ -60,14 +60,14 @@ public:
 		else
 			return defRetVal;
 	}
-	virtual void setConfigItem(const OW_String &item, const OW_String &value, OW_Bool overwritePrevious=true) {
+	virtual void setConfigItem(const OW_String &item, const OW_String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
 		OW_Map<OW_String, OW_String>::iterator it = config.find(item);
 		if(it == config.end() || overwritePrevious)
 		{
 			config[item] = value;
 		}
 	}
-	virtual OW_Bool authenticate(OW_String &, const OW_String &, OW_String &) {
+	virtual bool authenticate(OW_String &, const OW_String &, OW_String &) {
 		return true;
 	}
 	virtual void addSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) {
@@ -77,7 +77,7 @@ public:
 	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) {
 		return OW_RequestHandlerIFCRef();
 	}
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, const OW_Bool, const OW_Bool) {
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, ESendIndicationsFlag, EBypassProvidersFlag) {
 		OW_THROW(OW_Exception, "Cannot call OW_TestEnvironment::getCIMOMHandle()");
 		//return OW_CIMOMHandleIFCRef();
 	}

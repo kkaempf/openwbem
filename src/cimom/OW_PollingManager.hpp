@@ -86,7 +86,7 @@ private:
 	typedef OW_Reference<TriggerRunner> TriggerRunnerRef;
 
 	OW_Array<TriggerRunnerRef> m_triggerRunners;
-	OW_Bool m_shuttingDown;
+	bool m_shuttingDown;
 	OW_NonRecursiveMutex m_triggerGuard;
 	OW_Condition m_triggerCondition;
 	OW_CIMOMEnvironmentRef m_env;
@@ -94,7 +94,7 @@ private:
 	OW_ThreadPoolRef m_triggerRunnerThreadPool;
 
 	// m_triggerGuard must be locked before calling this function.
-	OW_UInt32 calcSleepTime(OW_Bool& rightNow, OW_Bool doInit);
+	OW_UInt32 calcSleepTime(bool& rightNow, bool doInit);
 	// m_triggerGuard must be locked before calling this function.
 	void processTriggers();
 

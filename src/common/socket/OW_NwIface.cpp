@@ -191,14 +191,14 @@ OW_NwIface::getNetmaskString()
 	return OW_SocketUtils::inetAddrToString(m_netmask);
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_NwIface::sameNetwork(unsigned long addr)
 {
 	return ((addr & m_netmask) == (m_addr & m_netmask));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_NwIface::sameNetwork(const OW_String& straddr)
 {
 	return sameNetwork(stringToAddress(straddr));

@@ -234,7 +234,7 @@ public:
 	/**
 	 * @return true if this property is a reference. Otherwise return false.
 	 */
-	OW_Bool isReference() const;
+	bool isReference() const;
 
 	/**
 	 * Get the qualifier associated with the given name from this property.
@@ -271,12 +271,12 @@ public:
 	 * @param qname	The name of the qualifier to remove.
 	 * @return true if the qualifier was found and removed. Otherwise false.
 	 */
-	OW_Bool removeQualifier(const OW_String& name);
+	bool removeQualifier(const OW_String& name);
 
 	/**
 	 * @return true if this property has the key qualifier on it.
 	 */
-	OW_Bool isKey() const;
+	bool isKey() const;
 
 	/**
 	 * Create a filtered version of this property.
@@ -293,13 +293,13 @@ public:
 	 * @param propagated	If true this property is propagated. Otherwise false.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setPropagated(OW_Bool propagated=true);
+	OW_CIMProperty& setPropagated(bool propagated=true);
 
 	/**
 	 * Get the propagated flag for this property.
 	 * @return true if this property is propagated. Otherwise false.
 	 */
-	OW_Bool getPropagated() const;
+	bool getPropagated() const;
 
 	/**
 	 * Clear all qualifier from property.
@@ -356,7 +356,7 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	OW_Bool hasTrueQualifier(const OW_String& name) const;
+	bool hasTrueQualifier(const OW_String& name) const;
 
 private:
 

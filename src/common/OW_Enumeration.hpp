@@ -87,7 +87,7 @@ public:
 	{
 	}
 
-	OW_Bool hasMoreElements() const
+	bool hasMoreElements() const
 	{
 		
 		return m_size > 0;
@@ -149,7 +149,7 @@ public:
 		return rval;
 	}
 	
-	OW_Bool usingTempFile() const
+	bool usingTempFile() const
 	{
 		return m_Data.usingTempFile();
 	}
@@ -237,7 +237,7 @@ public:
 		return *this;
 	}
 
-	OW_Bool hasMoreElements() const
+	bool hasMoreElements() const
 	{
 		return m_impl->hasMoreElements();
 	}
@@ -274,7 +274,7 @@ public:
 		return m_impl->releaseFile();
 	}
 
-	OW_Bool usingTempFile() const
+	bool usingTempFile() const
 	{
 		return m_impl->usingTempFile();
 	}

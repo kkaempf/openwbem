@@ -39,6 +39,8 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFC::~OW_CIMOMHandleIFC() 
 {
@@ -149,8 +151,8 @@ namespace
 OW_CIMClassEnumeration
 OW_CIMOMHandleIFC::enumClassE(const OW_String& ns,
 	const OW_String& className, 
-	OW_WBEMFlags::EDeepFlag deep,
-	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
 	OW_CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
@@ -164,7 +166,7 @@ OW_StringEnumeration
 OW_CIMOMHandleIFC::enumClassNamesE(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_WBEMFlags::EDeepFlag deep)
+	EDeepFlag deep)
 {
 	OW_StringEnumeration rval;
 	StringEnumBuilder handler(rval);
@@ -177,10 +179,10 @@ OW_CIMInstanceEnumeration
 OW_CIMOMHandleIFC::enumInstancesE(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_WBEMFlags::EDeepFlag deep,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EDeepFlag deep,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_CIMInstanceEnumeration rval;
@@ -242,8 +244,8 @@ OW_CIMOMHandleIFC::associatorsE(
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_CIMInstanceEnumeration rval;
@@ -262,8 +264,8 @@ OW_CIMOMHandleIFC::associatorsClassesE(
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_CIMClassEnumeration rval;
@@ -295,8 +297,8 @@ OW_CIMOMHandleIFC::referencesE(
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass,
 		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_CIMInstanceEnumeration rval;
@@ -313,8 +315,8 @@ OW_CIMOMHandleIFC::referencesClassesE(
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass,
 		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_CIMClassEnumeration rval;

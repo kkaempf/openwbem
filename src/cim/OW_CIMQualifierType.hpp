@@ -147,7 +147,7 @@ public:
 	 * @return true if this OW_CIMQualifierType has the given scope. Otherwise
 	 * false.
 	 */
-	OW_Bool hasScope(const OW_CIMScope& scopeArg) const;
+	bool hasScope(const OW_CIMScope& scopeArg) const;
 
 	/**
 	 * Determine if this OW_CIMQualifierType has a specified flavor.
@@ -155,7 +155,7 @@ public:
 	 * @return true if this OW_CIMQualifierType has the given flavor. Otherwise
 	 * false.
 	 */
-	OW_Bool hasFlavor(const OW_CIMFlavor& flavorArg) const;
+	bool hasFlavor(const OW_CIMFlavor& flavorArg) const;
 
 	/**
 	 * Add a flavor to this OW_CIMQualifierType object.
@@ -180,12 +180,12 @@ public:
 	 * @return true this OW_CIMQualifierType has a default value. Otherwise
 	 * false.
 	 */
-	OW_Bool hasDefaultValue() const;
+	bool hasDefaultValue() const;
 
 	/**
 	 * @return true if the default value is an array type. Otherwise false.
 	 */
-	OW_Bool isDefaultValueArray() const;
+	bool isDefaultValueArray() const;
 
 	/**
 	 * Write this OW_CIMQualifierType object to the given output stream.

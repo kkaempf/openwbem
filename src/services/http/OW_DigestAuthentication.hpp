@@ -42,7 +42,7 @@ public:
 	OW_DigestAuthentication(const OW_String& passwdFile);
 	~OW_DigestAuthentication() {}
 
-	OW_Bool authorize(OW_String& userName,
+	bool authorize(OW_String& userName,
 		const OW_String& info, OW_HTTPSvrConnection* htcon);
 
 	OW_String getChallenge(const OW_String& hostname);

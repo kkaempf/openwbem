@@ -43,11 +43,11 @@ using namespace OW_WBEMFlags;
 #define CM_Context(ctx) (((CMPI_Context*)ctx)->ctx)
 #define CM_Instance(ci) ((OW_CIMInstance*)ci->hdl)
 #define CM_ObjectPath(cop) ((OW_CIMObjectPath*)cop->hdl)
-#define CM_LocalOnly(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_LocalOnly)!=0)
+#define CM_LocalOnly(flgs) (((flgs) & CMPI_FLAG_LocalOnly)!=0)
 #define CM_ClassOrigin(flgs) \
-(OW_Bool)(((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)
+(((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)
 #define CM_IncludeQualifiers(flgs) \
-(OW_Bool)(((flgs) & CMPI_FLAG_IncludeQualifiers) !=0)
+(((flgs) & CMPI_FLAG_IncludeQualifiers) !=0)
 #define CM_DeepInheritance(flgs) (((flgs) & CMPI_FLAG_DeepInheritance)!=0)
 
 

@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_Types.h"
 #include "OW_UnnamedPipe.hpp"
+#include "OW_SocketFlags.hpp"
 
 #define OW_DOMAIN_SOCKET_NAME "/tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q"
 
@@ -51,7 +52,7 @@ public:
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	OW_Socket(OW_Bool isSSL = false);
+	OW_Socket(OW_SocketFlags::ESSLFlag isSSL = OW_SocketFlags::E_NOT_SSL);
 
 	/**
 	 * Allocate a new  Socket based on an existing handle.
@@ -60,7 +61,7 @@ public:
 	 * @param isSSL is it an SSL socket?
 	 */
 	OW_Socket(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType,
-		OW_Bool isSSL= false);
+		OW_SocketFlags::ESSLFlag isSSL = OW_SocketFlags::E_NOT_SSL);
 
 	/**
 	 * Allocate a new OW_Socket and connect it to a peer machine
@@ -68,7 +69,7 @@ public:
 	 * @isSSL is it an SSL socket?
 	 * @exception OW_SocketException
 	 */
-	OW_Socket(const OW_SocketAddress& addr, OW_Bool isSSL = false);
+	OW_Socket(const OW_SocketAddress& addr, OW_SocketFlags::ESSLFlag isSSL = OW_SocketFlags::E_NOT_SSL);
 
 	/**
 	 * Copy ctor
@@ -141,7 +142,7 @@ public:
 	 * Has the receive timeout expired?
 	 * @return true if the receive timeout has expired.
 	 */
-	OW_Bool receiveTimeOutExpired() { return m_impl->receiveTimeOutExpired(); }
+	bool receiveTimeOutExpired() { return m_impl->receiveTimeOutExpired(); }
 
 	/**
 	 * Write some data to the socket.
@@ -169,7 +170,7 @@ public:
 	 * 	-1 means infinite
 	 * @return true if the timeout expired
 	 */
-	OW_Bool waitForInput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+	bool waitForInput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
 		{ return m_impl->waitForInput(timeOutSecs); }
 
 	/**
@@ -178,7 +179,7 @@ public:
 	 * 	-1 means infinite
 	 * @return true if the timeout expired
 	 */
-	OW_Bool waitForOutput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
+	bool waitForOutput(int timeOutSecs=-1) /*throw (OW_SocketException)*/
 		{ return m_impl->waitForOutput(timeOutSecs); }
 
 	/**
@@ -241,7 +242,7 @@ public:
 	 * Have the sockets been shutdown?
 	 * @return true if the sockets have been shutdown
 	 */
-	static OW_Bool gotShutDown();
+	static bool gotShutDown();
 	static void deleteShutDownMechanism();
 
 private:

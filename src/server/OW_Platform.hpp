@@ -59,17 +59,17 @@ public:
 		, error(false)
 		{}
 
-		OW_Bool debug;
-		OW_Bool configFile;
+		bool debug;
+		bool configFile;
 		OW_String configFilePath;
-		OW_Bool help;
-		OW_Bool error;
+		bool help;
+		bool error;
 	};
 
 	static Options daemonInit( int argc, char* argv[] );
 
 	// Throws OW_DaemonException on error
-	static void daemonize(const OW_Bool& dbgFlg, const OW_String& daemonName);
+	static void daemonize(bool dbgFlg, const OW_String& daemonName);
 	static int daemonShutdown(const OW_String& daemonName);
 	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
 	static void pushSig(int sig)

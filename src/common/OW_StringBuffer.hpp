@@ -34,6 +34,8 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
+#include "OW_Bool.hpp"
+
 #include <cstring>
 
 class OW_CIMDateTime;

@@ -54,8 +54,14 @@ public:
 
 	virtual OW_String getConfigItem(const OW_String& name, const OW_String& defRetVal="") const = 0;
 
+	enum EOverwritePreviousFlag
+	{
+		E_PRESERVE_PREVIOUS,
+		E_OVERWRITE_PREVIOUS
+	};
+	
 	virtual void setConfigItem(const OW_String& item,
-		const OW_String& value, OW_Bool overwritePrevious=true) = 0;
+		const OW_String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) = 0;
 
 	virtual void addSelectable(OW_SelectableIFCRef obj,
 		OW_SelectableCallbackIFCRef cb) = 0;
@@ -68,11 +74,24 @@ public:
 
 	virtual OW_LoggerRef getLogger() const = 0;
 
-	virtual OW_Bool authenticate(OW_String& userName,
+	virtual bool authenticate(OW_String& userName,
 		const OW_String& info, OW_String& details) = 0;
 
+	enum ESendIndicationsFlag
+	{
+		E_DONT_SEND_INDICATIONS,
+		E_SEND_INDICATIONS
+	};
+
+	enum EBypassProvidersFlag
+	{
+		E_USE_PROVIDERS,
+		E_BYPASS_PROVIDERS
+	};
+
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& username,
-		const OW_Bool doIndications = true, const OW_Bool bypassProviders = false) = 0;
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) = 0;
 };
 
 #endif

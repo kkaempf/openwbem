@@ -73,7 +73,7 @@ public:
 	void rewind();
 	void reset();
 	OW_String releaseFile();
-	OW_Bool usingTempFile() const;
+	bool usingTempFile() const;
 
 protected:
 	// for input
@@ -119,7 +119,7 @@ public:
 	void rewind();
 	void reset();
 	OW_String releaseFile();
-	OW_Bool usingTempFile() const;
+	bool usingTempFile() const;
 
 private:
 	OW_AutoPtr<OW_TempFileBuffer> m_buffer;

@@ -202,7 +202,7 @@ OW_HDBNode::read(OW_Int32 offset, OW_HDBHandle& hdl)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBNode::reload(OW_HDBHandle& hdl)
 {
 	// If this is a null node, don't attempt to re-load
@@ -291,13 +291,13 @@ OW_HDBNode::reload(OW_HDBHandle& hdl)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBNode::turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags)
 {
 	if(m_pdata.isNull())
 		return false;
 
-	OW_Bool cc = false;
+	bool cc = false;
 	flags |= m_pdata->m_blk.flags;
 	if(flags != m_pdata->m_blk.flags)
 	{
@@ -313,13 +313,13 @@ OW_HDBNode::turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBNode::turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags)
 {
 	if(m_pdata.isNull())
 		return false;
 
-	OW_Bool cc = false;
+	bool cc = false;
 	flags = m_pdata->m_blk.flags & (~flags);
 	if(flags != m_pdata->m_blk.flags)
 	{
@@ -335,10 +335,10 @@ OW_HDBNode::turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBNode::updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	if(!m_pdata.isNull())
 	{
 		// If this node was read from file, make sure we are dealing with
@@ -384,14 +384,14 @@ OW_HDBNode::updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Int32
-OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
+OW_HDBNode::write(OW_HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 {
 	if(m_pdata.isNull())
 	{
 		OW_THROW(OW_HDBException, "Cannot write null node");
 	}
 
-	OW_Bool newRecord = false;
+	bool newRecord = false;
 	m_pdata->m_blk.keyLength = m_pdata->m_key.length() + 1;
 	m_pdata->m_blk.dataLength = m_pdata->m_bfrLen + m_pdata->m_key.length() + 1;
 
@@ -486,7 +486,7 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset)
 	{
 		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 
-		OW_Bool doUpdate = false;
+		bool doUpdate = false;
 		if(fblk.firstChild == m_pdata->m_offset)
 		{
 			fblk.firstChild = offset;
@@ -598,7 +598,7 @@ OW_HDBNode::addChild(OW_HDBHandle& hdl, OW_HDBNode& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_HDBNode::remove(OW_HDBHandle& hdl)
 {
 	// If node hasn't been written yet, don't do anything.
@@ -649,7 +649,7 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 		// Read parent block
 		OW_HDB::readBlock(fblk, file, m_pdata->m_blk.parent);
 
-		OW_Bool changed = false;
+		bool changed = false;
 
 		// If this was the first child in the list, then update the
 		// first child pointer in the parent block

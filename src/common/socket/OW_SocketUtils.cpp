@@ -75,7 +75,7 @@ inetAddrToString(OW_UInt64 addr)
 //////////////////////////////////////////////////////////////////////////////
 
 int
-waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
+waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionFlag forInput)
 /*throw (OW_SocketException)*/
 {
 	fd_set readfds;
@@ -113,7 +113,7 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 		FD_SET(pipefd, &readfds);
 		maxfd = OW_MAX(fd, pipefd);
 	}
-	if (forInput)
+	if (forInput == OW_SocketFlags::E_WAIT_FOR_INPUT)
 	{
 		FD_SET(fd, &readfds);
 	}

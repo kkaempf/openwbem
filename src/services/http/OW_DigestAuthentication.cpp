@@ -172,7 +172,7 @@ parseInfo(const OW_String& pinfo, OW_Map<OW_String, OW_String>& infoMap)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_DigestAuthentication::authorize(OW_String& userName,
 		const OW_String& info, OW_HTTPSvrConnection* htcon)
 {
@@ -181,7 +181,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("You must authenticate to access this resource");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_Map<OW_String, OW_String> infoMap;
@@ -207,7 +207,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("No nonce value was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	userName = infoMap["username"];
@@ -215,7 +215,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("No user name was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_String sRealm = infoMap["realm"];
@@ -223,7 +223,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("No realm was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_String sNonceCount = infoMap["nc"];
@@ -231,7 +231,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("No Nonce Count was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	// TODO isn't cnonce optional?
@@ -240,7 +240,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("No cnonce value provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_String sResponse = infoMap["response"];
@@ -248,7 +248,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	{
 		htcon->setErrorDetails("The response was zero length");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-		return OW_Bool(false);
+		return false;
 	}
 
 
@@ -265,14 +265,14 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 		{
 			htcon->addHeader("Authentication-Info",
 				"qop=\"auth\", nextnonce=\"" + generateNewNonce() + "\"");
-			return OW_Bool(true);
+			return true;
 		}
 		else
 		{
 			htcon->setErrorDetails("Nonce not found.");
 			htcon->addHeader("WWW-Authenticate", getChallenge(hostname)
 				+ ", stale=true");
-			return OW_Bool(false);
+			return false;
 		}
 	}
 
@@ -288,7 +288,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	OW_String errDetails = "User name or password not valid";
 	htcon->setErrorDetails(errDetails);
 	htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
-	return OW_Bool(false);
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

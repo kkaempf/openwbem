@@ -105,7 +105,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if all flags are on in this node. Othewise false.
 	 */
-	OW_Bool areAllFlagsOn(OW_UInt32 flags) const
+	bool areAllFlagsOn(OW_UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) == flags);
 	}
@@ -115,7 +115,7 @@ public:
 	 * @param flags	The user defined flags to check.
 	 * @return true if some flags are on in this node. Othewise false.
 	 */
-	OW_Bool areSomeFlagsOn(OW_UInt32 flags) const
+	bool areSomeFlagsOn(OW_UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) != 0);
 	}
@@ -127,7 +127,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	OW_Bool turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags);
+	bool turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags);
 
 	/**
 	 * Turn the user defined flags off in this node.
@@ -136,7 +136,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	OW_Bool turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags);
+	bool turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags);
 
 	/**
 	 * @return The key associated with this OW_HDBNode.
@@ -156,37 +156,37 @@ public:
 	/**
 	 * @return true if this OW_HDBNode has a parent.
 	 */
-	OW_Bool hasParent() const { return (m_pdata->m_blk.parent != -1); }
+	bool hasParent() const { return (m_pdata->m_blk.parent != -1); }
 
 	/**
 	 * @return true if this OW_HDBNode has a next sibling.
 	 */
-	OW_Bool hasNextSibling() const { return (m_pdata->m_blk.nextSib != -1); }
+	bool hasNextSibling() const { return (m_pdata->m_blk.nextSib != -1); }
 
 	/**
 	 * @return true if this OW_HDBNode has a previous sibling.
 	 */
-	OW_Bool hasPreviousSibling() const { return (m_pdata->m_blk.prevSib != -1); }
+	bool hasPreviousSibling() const { return (m_pdata->m_blk.prevSib != -1); }
 
 	/**
 	 * @return true if this OW_HDBNode has any children.
 	 */
-	OW_Bool hasChildren() const { return (m_pdata->m_blk.firstChild != -1); }
+	bool hasChildren() const { return (m_pdata->m_blk.firstChild != -1); }
 
 	/**
 	 * @return true if this OW_HDBNode is a root node (has no parent).
 	 */
-	OW_Bool isRoot() const { return (hasParent() == false); }
+	bool isRoot() const { return (hasParent() == false); }
 
 	/**
 	 * @return true if this OW_HDBNode is a child.
 	 */
-	OW_Bool isChild() const { return (hasParent() == true); }
+	bool isChild() const { return (hasParent() == true); }
 
 	/**
 	 * @return true if this OW_HDBNode has any siblings.
 	 */
-	OW_Bool isSibling() const
+	bool isSibling() const
 	{
 		return (hasNextSibling() > 0 || hasPreviousSibling() > 0);
 	}
@@ -213,8 +213,15 @@ private:
 	OW_HDBNode(const char* key, OW_HDBHandle& hdl);
 	OW_HDBNode(OW_Int32 offset, OW_HDBHandle& hdl);
 	void read(OW_Int32 offset, OW_HDBHandle& hdl);
-	OW_Bool reload(OW_HDBHandle& hdl);
-	OW_Int32 write(OW_HDBHandle& hdl, OW_Bool onlyHeader=false);
+	bool reload(OW_HDBHandle& hdl);
+
+	enum EWriteHeaderFlag
+	{
+		E_WRITE_ALL,
+		E_WRITE_ONLY_HEADER
+	};
+
+	OW_Int32 write(OW_HDBHandle& hdl, EWriteHeaderFlag onlyHeader = E_WRITE_ALL);
 	void updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset);
 	OW_Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
 	OW_Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
@@ -222,10 +229,10 @@ private:
 	OW_Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
 	OW_Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
 	OW_Int32 getOffset() const { return m_pdata->m_offset; }
-	OW_Bool remove(OW_HDBHandle& hdl);
+	bool remove(OW_HDBHandle& hdl);
 	void removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset);
 	void addChild(OW_HDBHandle& hdl, OW_HDBNode& arg);
-	OW_Bool updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data);
+	bool updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data);
 
 	void setNull() { m_pdata = 0; }
 

@@ -37,7 +37,7 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 
-static OW_Bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
+static bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
 
 static void makeValueArray(OW_CIMValue& theValue);
 
@@ -48,7 +48,7 @@ static OW_CIMValue convertArray(const OW_CIMValue& value,
 	const OW_CIMDataType& dataType);
 
 static OW_StringArray convertToStringArray(const OW_CIMValue& value,
-	OW_Bool onlyOne);
+	bool onlyOne);
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC PUBLIC
@@ -242,7 +242,7 @@ makeValueArray(OW_CIMValue& theValue)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to)
 {
 	if(from == to									// Same data types
@@ -267,8 +267,8 @@ isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to)
 	// REFERENCE or STRING data types
 	//---------
 
-	OW_Bool fromNumeric = OW_CIMDataType::isNumericType(from);
-	OW_Bool toNumeric = OW_CIMDataType::isNumericType(to);
+	bool fromNumeric = OW_CIMDataType::isNumericType(from);
+	bool toNumeric = OW_CIMDataType::isNumericType(to);
 
 	// If we're converting to any numeric data type
 	if(toNumeric
@@ -301,7 +301,7 @@ OW_CIMValue
 convertArray(const OW_CIMValue& value, const OW_CIMDataType& dataType)
 {
 	OW_CIMValue rcv(OW_CIMNULL);
-	OW_Bool onlyOne = !dataType.isArrayType();
+	bool onlyOne = !dataType.isArrayType();
 	OW_StringArray strArray = convertToStringArray(value, onlyOne);
 	size_t sz = strArray.size();
 
@@ -484,7 +484,7 @@ convertArray(const OW_CIMValue& value, const OW_CIMDataType& dataType)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-convertToStringArray(const OW_CIMValue& value, OW_Bool onlyOne)
+convertToStringArray(const OW_CIMValue& value, bool onlyOne)
 {
 	size_t rasize = (onlyOne) ? 1 : value.getArraySize();
 	OW_StringArray rvra(rasize);

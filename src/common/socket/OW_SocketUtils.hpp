@@ -34,9 +34,9 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_NetworkTypes.hpp"
+#include "OW_SocketFlags.hpp"
 
 class OW_String;
-class OW_Bool;
 
 namespace OW_SocketUtils
 {
@@ -48,7 +48,8 @@ namespace OW_SocketUtils
 	 * @return zero if we got input before the timeout expired, non-zero
 	 * 	otherwise.
 	 */
-	int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput);
+	int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, 
+		OW_SocketFlags::EWaitDirectionFlag forInput);
 
 	OW_String inetAddrToString(OW_UInt64 addr);
 

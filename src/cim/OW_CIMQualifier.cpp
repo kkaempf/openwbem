@@ -132,14 +132,14 @@ OW_CIMQualifier::operator= (const OW_CIMQualifier& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::isKeyQualifier() const
 {
 	return m_pdata->m_name.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_KEY);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::isAssociationQualifier() const
 {
 	return m_pdata->m_name.equalsIgnoreCase(
@@ -188,7 +188,7 @@ OW_CIMQualifier::getDefaults() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::hasFlavor(const OW_CIMFlavor& flavor) const
 {
 	if(flavor)
@@ -264,14 +264,14 @@ OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::hasValue() const
 {
 	return (m_pdata->m_qualifierValue) ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::equals(const OW_CIMQualifier& arg) const
 {
 	return m_pdata->m_name.equals(arg.getName());
@@ -286,14 +286,14 @@ OW_CIMQualifier::getFlavor() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifier&
-OW_CIMQualifier::setPropagated(OW_Bool propagated)
+OW_CIMQualifier::setPropagated(bool propagated)
 {
 	m_pdata->m_propagated = propagated;
 	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifier::getPropagated() const
 {
 	return m_pdata->m_propagated;

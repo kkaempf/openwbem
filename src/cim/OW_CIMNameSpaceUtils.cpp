@@ -245,7 +245,7 @@ delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
 
 /////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, OW_WBEMFlags::EDeepFlag deep)
+enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, EDeepFlag deep)
 {
 	OW_StringArray rval;
 	StringArrayBuilder handler(rval);
@@ -259,7 +259,7 @@ namespace
 	void
 	enumNameSpaceAux(const OW_CIMOMHandleIFCRef& hdl,
 		const OW_String& ns,
-		OW_StringResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep)
+		OW_StringResultHandlerIFC& result, EDeepFlag deep)
 	{
 		// can't use the callback version of enumInstances, because the recursion
 		// throws a wrench in the works.  Each CIM Method call has to finish
@@ -305,7 +305,7 @@ namespace
 /////////////////////////////////////////////////////////////////////////////
 void
 enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_,
-	OW_StringResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep)
+	OW_StringResultHandlerIFC& result, EDeepFlag deep)
 {
 	OW_String ns(prepareNamespace(ns_));
 

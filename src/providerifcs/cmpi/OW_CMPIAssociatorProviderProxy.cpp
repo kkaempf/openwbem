@@ -41,6 +41,8 @@
 
 #include <alloca.h>
 
+using namespace OW_WBEMFlags;
+
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_CMPIAssociatorProviderProxy::associatorNames(
@@ -123,8 +125,8 @@ OW_CMPIAssociatorProviderProxy::associators(
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray *propertyList)
 {
 	env->getLogger()->
@@ -217,8 +219,8 @@ OW_CMPIAssociatorProviderProxy::references(
 		const OW_CIMObjectPath& objectName,
 		const OW_String& resultClass,
 		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray *propertyList)
 {
 	env->getLogger()->

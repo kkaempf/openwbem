@@ -40,6 +40,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 
+using namespace OW_WBEMFlags;
+
 namespace
 {
 
@@ -109,7 +111,7 @@ public:
 	}
 
 	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
+		EIncludeQualifiersFlag includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
 	{
 		(void)previousInstance;
 		(void)theClass;
@@ -133,15 +135,15 @@ public:
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
+	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
 	{
 		(void)cimClass;
 		return env->getRepositoryCIMOMHandle()->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
 	
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass)
+	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
+		EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass)
 	{
 		(void)requestedClass; (void)cimClass;
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();

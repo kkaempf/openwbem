@@ -88,7 +88,7 @@ public:
 	explicit OW_CIMValueImpl(const OW_CIMInstanceArray& arg);
 	~OW_CIMValueImpl();
 
-    OW_CIMValueImpl* clone() { return new OW_CIMValueImpl(*this); }
+	OW_CIMValueImpl* clone() { return new OW_CIMValueImpl(*this); }
 
 	void get(OW_Bool& val) const;
 	void get(OW_Char16& arg) const;
@@ -130,25 +130,25 @@ public:
 	OW_CIMValueImpl& operator= (const OW_CIMValueImpl& arg);
 	OW_CIMValueImpl& set(const OW_CIMValueImpl& arg);
 
-	OW_Bool equal(const OW_CIMValueImpl& arg) const;
-	OW_Bool operator== (const OW_CIMValueImpl& arg) const
+	bool equal(const OW_CIMValueImpl& arg) const;
+	bool operator== (const OW_CIMValueImpl& arg) const
 	{
 		return equal(arg);
 	}
-	OW_Bool operator!= (const OW_CIMValueImpl& arg) const
+	bool operator!= (const OW_CIMValueImpl& arg) const
 	{
 		return !(*this == arg);
 	}
-	OW_Bool operator<= (const OW_CIMValueImpl& arg) const
+	bool operator<= (const OW_CIMValueImpl& arg) const
 	{
 		return !(arg < *this);
 	}
-	OW_Bool operator>= (const OW_CIMValueImpl& arg) const
+	bool operator>= (const OW_CIMValueImpl& arg) const
 	{
 		return !(*this < arg);
 	}
-	OW_Bool operator< (const OW_CIMValueImpl& arg) const;
-	OW_Bool operator> (const OW_CIMValueImpl& arg) const
+	bool operator< (const OW_CIMValueImpl& arg) const;
+	bool operator> (const OW_CIMValueImpl& arg) const
 	{
 		return arg < *this;
 	}
@@ -168,19 +168,19 @@ public:
 		return rval;
 	}
 
-	OW_Bool sameType(const OW_CIMValueImpl& arg) const
+	bool sameType(const OW_CIMValueImpl& arg) const
 	{
 		return(m_type == arg.m_type && m_isArray == arg.m_isArray);
 	}
 
-	OW_Bool isArray() const
+	bool isArray() const
 	{
 		return m_isArray;
 	}
 
 	void readObject(std::istream &istrm);
 	void writeObject(std::ostream &ostrm) const;
-	OW_String toString(OW_Bool forMOF=false) const;
+	OW_String toString(bool forMOF=false) const;
 	OW_String toMOF() const;
 
 private:
@@ -224,7 +224,7 @@ private:
 		char bfr23[sizeof(OW_CIMInstanceArray)];
 	};
 
-	void setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, OW_Bool isArray);
+	void setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, bool isArray);
 	void destroyObject();
 
 	OW_CIMDataType::Type m_type;
@@ -914,7 +914,7 @@ OW_CIMValue& OW_CIMValue::operator= (const OW_CIMValue& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::equal(const OW_CIMValue& x) const
+bool OW_CIMValue::equal(const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return true;
@@ -926,13 +926,13 @@ OW_Bool OW_CIMValue::equal(const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator== (const OW_CIMValue& x) const
+bool OW_CIMValue::operator== (const OW_CIMValue& x) const
 {
 	return equal(x);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator!= (const OW_CIMValue& x) const
+bool OW_CIMValue::operator!= (const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return false;
@@ -944,7 +944,7 @@ OW_Bool OW_CIMValue::operator!= (const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator<= (const OW_CIMValue& x) const
+bool OW_CIMValue::operator<= (const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return true;
@@ -959,7 +959,7 @@ OW_Bool OW_CIMValue::operator<= (const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator>= (const OW_CIMValue& x) const
+bool OW_CIMValue::operator>= (const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return true;
@@ -974,7 +974,7 @@ OW_Bool OW_CIMValue::operator>= (const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator< (const OW_CIMValue& x) const
+bool OW_CIMValue::operator< (const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return false;
@@ -989,7 +989,7 @@ OW_Bool OW_CIMValue::operator< (const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::operator> (const OW_CIMValue& x) const
+bool OW_CIMValue::operator> (const OW_CIMValue& x) const
 {
 	if(x.m_impl == m_impl)
 		return false;
@@ -1010,14 +1010,14 @@ OW_CIMDataType::Type OW_CIMValue::getType() const {  return m_impl->getType(); }
 OW_CIMDataType OW_CIMValue::getCIMDataType() const { return m_impl->getCIMDataType(); }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::sameType(const OW_CIMValue& x) const
+bool OW_CIMValue::sameType(const OW_CIMValue& x) const
 {
 	return m_impl->sameType(*x.m_impl);
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool OW_CIMValue::isArray() const {  return m_impl->isArray(); }
+bool OW_CIMValue::isArray() const {  return m_impl->isArray(); }
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_CIMValue::writeObject(std::ostream &ostrm) const
@@ -1043,7 +1043,7 @@ OW_String OW_CIMValue::toMOF() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMValue::isNumericType() const
 {
 	return OW_CIMDataType::isNumericType(getType());
@@ -1488,7 +1488,7 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, OW_Bool isArray)
+OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, bool isArray)
 {
 	destroyObject();
 	m_objDestroyed = false;
@@ -1689,10 +1689,10 @@ OW_CIMValue::OW_CIMValueImpl::operator= (const OW_CIMValueImpl& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	if(sameType(arg))
 	{
@@ -1871,10 +1871,10 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	if(sameType(arg))
 	{
@@ -2428,7 +2428,7 @@ OW_CIMValue::OW_CIMValueImpl::get(OW_CIMInstanceArray& arg) const
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-OW_String raToString(const T& ra, OW_Bool forMOF=false)
+OW_String raToString(const T& ra, bool forMOF=false)
 {
 	OW_StringBuffer out;
 
@@ -2454,7 +2454,7 @@ OW_String raToString(const T& ra, OW_Bool forMOF=false)
 
 //////////////////////////////////////////////////////////////////////////////
 static OW_String
-raToString(const OW_Array<OW_String>& ra, OW_Bool forMOF=false)
+raToString(const OW_Array<OW_String>& ra, bool forMOF=false)
 {
 	OW_StringBuffer out;
 
@@ -2480,7 +2480,7 @@ raToString(const OW_Array<OW_String>& ra, OW_Bool forMOF=false)
 
 //////////////////////////////////////////////////////////////////////////////
 static OW_String
-raToString(const OW_Array<OW_CIMClass>& ra, OW_Bool forMOF=false)
+raToString(const OW_Array<OW_CIMClass>& ra, bool forMOF=false)
 {
 	OW_StringBuffer out;
 
@@ -2506,7 +2506,7 @@ raToString(const OW_Array<OW_CIMClass>& ra, OW_Bool forMOF=false)
 
 //////////////////////////////////////////////////////////////////////////////
 static OW_String
-raToString(const OW_Array<OW_CIMInstance>& ra, OW_Bool forMOF=false)
+raToString(const OW_Array<OW_CIMInstance>& ra, bool forMOF=false)
 {
 	OW_StringBuffer out;
 
@@ -2531,7 +2531,7 @@ raToString(const OW_Array<OW_CIMInstance>& ra, OW_Bool forMOF=false)
 }
 
 static OW_String
-raToString(const OW_Array<OW_Bool>& ra, OW_Bool isString=false)
+raToString(const OW_Array<OW_Bool>& ra, bool isString=false)
 {
 	OW_StringBuffer out;
 
@@ -2554,7 +2554,7 @@ raToString(const OW_Array<OW_Bool>& ra, OW_Bool isString=false)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
+OW_CIMValue::OW_CIMValueImpl::toString(bool forMOF) const
 {
 	OW_String out;
 

@@ -1553,7 +1553,7 @@ OW_XMLExecute::processSimpleReq(OW_CIMXMLParser& parser, ostream& ostrEntity,
 
 		parser.mustGetChild();
 
-		OW_CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName, true);
+		OW_CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName);
 
 		if (m_isIntrinsic)
 		{
@@ -1608,7 +1608,7 @@ void
 OW_XMLExecute::doOptions(OW_CIMFeatures& cf,
 	const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
 {
-	cf = this->getEnvironment()->getCIMOMHandle(OW_String(), false)->getServerFeatures();
+	cf = this->getEnvironment()->getCIMOMHandle(OW_String(), OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS)->getServerFeatures();
 }
 
 //////////////////////////////////////////////////////////////////////////////

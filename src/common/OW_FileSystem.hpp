@@ -45,7 +45,6 @@
 
 class OW_File;
 class OW_String;
-class OW_Bool;
 typedef OW_Array<OW_String> OW_StringArray;
 
 /**
@@ -91,36 +90,36 @@ public:
 	/**
 	 * @return true if the file exists (and false otherwise).
 	 */
-	static OW_Bool exists(const OW_String& path);
+	static bool exists(const OW_String& path);
 
 	/**
 	 * @return true if the file exists and can be read
 	 */
-	static OW_Bool canRead(const OW_String& path);
+	static bool canRead(const OW_String& path);
 
 	/**
 	 * @return true if the file exists and can be written
 	 */
-	static OW_Bool canWrite(const OW_String& path);
+	static bool canWrite(const OW_String& path);
 
 	/**
 	 * @return true if file exists and is a directory
 	 */
-	static OW_Bool isDirectory(const OW_String& path);
+	static bool isDirectory(const OW_String& path);
 
 	/**
 	 * Change to the given directory
 	 * @param path	The directory to change to
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool changeDirectory(const OW_String& path);
+	static bool changeDirectory(const OW_String& path);
 
 	/**
 	 * Create a directory
 	 * @param path	The name of the directory to create.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool makeDirectory(const OW_String& path);
+	static bool makeDirectory(const OW_String& path);
 
 	/**
 	 * Get the size of the file in bytes
@@ -128,21 +127,21 @@ public:
 	 * @param size	Put the size of the file in this variable.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool getFileSize(const OW_String& path, OW_UInt32& size);
+	static bool getFileSize(const OW_String& path, OW_UInt32& size);
 
 	/**
 	 * Remove the given directory
 	 * @param path	The name of the directory to remove
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool removeDirectory(const OW_String& path);
+	static bool removeDirectory(const OW_String& path);
 
 	/**
 	 * Remove the given file
 	 * @param path	The name of the file to remove.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool removeFile(const OW_String& path);
+	static bool removeFile(const OW_String& path);
 
 	/**
 	 * Get the names of the files (and directories) in the given directory
@@ -150,7 +149,7 @@ public:
 	 * @param dirEntries	The directory contents will be placed in this array.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool getDirectoryContents(const OW_String& path,
+	static bool getDirectoryContents(const OW_String& path,
 		OW_StringArray& dirEntries);
 
 	/**
@@ -159,7 +158,7 @@ public:
 	 * @param newFileName	The new name for the olFileName
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static OW_Bool renameFile(const OW_String& oldFileName,
+	static bool renameFile(const OW_String& oldFileName,
 		const OW_String& newFileName);
 
 	/**

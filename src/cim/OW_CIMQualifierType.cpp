@@ -214,7 +214,7 @@ OW_CIMQualifierType::addScope(const OW_CIMScope& newScope)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifierType::hasScope(const OW_CIMScope& scopeArg) const
 {
 	if(scopeArg)
@@ -231,7 +231,7 @@ OW_CIMQualifierType::hasScope(const OW_CIMScope& scopeArg) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifierType::hasFlavor(const OW_CIMFlavor& flavorArg) const
 {
 	if(flavorArg)
@@ -302,17 +302,17 @@ OW_CIMQualifierType::getFlavors() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifierType::hasDefaultValue() const
 {
 	return m_pdata->m_defaultValue ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMQualifierType::isDefaultValueArray() const
 {
-	OW_Bool isra = false;
+	bool isra = false;
 	if(m_pdata->m_defaultValue)
 	{
 		isra = m_pdata->m_defaultValue.isArray();

@@ -329,7 +329,7 @@ OW_TempFileBuffer::releaseFile()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_TempFileBuffer::usingTempFile() const
 {
 	return m_tempFile != 0;
@@ -375,7 +375,7 @@ OW_TempFileStream::releaseFile()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_TempFileStream::usingTempFile() const
 {
 	return m_buffer->usingTempFile();

@@ -56,7 +56,7 @@ class OW_IndexImpl : public OW_Index
 public:
 	OW_IndexImpl();
 	virtual ~OW_IndexImpl();
-	virtual void open(const char* fileName, OW_Bool allowDuplicates=false);
+	virtual void open(const char* fileName, EDuplicateKeysFlag allowDuplicates = E_NO_DUPLICATES);
 	virtual void close();
 	virtual OW_IndexEntry findFirst(const char* key=NULL);
 	virtual OW_IndexEntry findNext();
@@ -104,7 +104,7 @@ OW_IndexImpl::~OW_IndexImpl()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
+OW_IndexImpl::open(const char* fileName, EDuplicateKeysFlag allowDuplicates)
 {
 	close();
 
@@ -114,7 +114,7 @@ OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
 	m_dbFileName += ".ndx";
 
 	::memset(&dbinfo, 0, sizeof(dbinfo));
-	dbinfo.flags = (allowDuplicates) ? R_DUP : 0;
+	dbinfo.flags = (allowDuplicates == E_ALLOW_DUPLICATES) ? R_DUP : 0;
 	dbinfo.compare = recCompare;
 
 	if(OW_FileSystem::canRead(m_dbFileName)

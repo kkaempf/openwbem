@@ -57,7 +57,7 @@ public:
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	static OW_Bool parseHeader(OW_HTTPHeaderMap& map, OW_Array<OW_String>& array,
+	static bool parseHeader(OW_HTTPHeaderMap& map, OW_Array<OW_String>& array,
 									std::istream& istr);
 
 	/**
@@ -67,7 +67,7 @@ public:
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	static OW_Bool parseHeader(OW_HTTPHeaderMap& map, std::istream& istr);
+	static bool parseHeader(OW_HTTPHeaderMap& map, std::istream& istr);
 
 
 	/**
@@ -134,7 +134,7 @@ public:
 	 * @param key the key to look for.
 	 * @return true if the headers contain the key
 	 */
-	static OW_Bool headerHasKey(const OW_HTTPHeaderMap& headers,
+	static bool headerHasKey(const OW_HTTPHeaderMap& headers,
 		const OW_String& key);
 
 	/**
@@ -177,7 +177,7 @@ public:
 	
 private:
 	OW_HTTPUtils();  // Don't allow instantiation
-	static OW_Bool buildMap(OW_HTTPHeaderMap& map, std::istream& istr);
+	static bool buildMap(OW_HTTPHeaderMap& map, std::istream& istr);
 };
 
 

@@ -134,7 +134,7 @@ private:
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
 	OW_List<ProcIndicationTrans> m_procTrans;
-	OW_Bool m_shuttingDown;
+	bool m_shuttingDown;
 	OW_NonRecursiveMutex m_mainLoopGuard;
 	OW_Condition m_mainLoopCondition;
 

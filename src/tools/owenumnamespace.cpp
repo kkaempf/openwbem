@@ -45,6 +45,8 @@ using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
+using namespace OW_WBEMFlags;
+
 
 class GetLoginInfo : public OW_ClientAuthCBIFC
 {
@@ -116,7 +118,7 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_DEEP; // TODO: get this from a command line argument
+		EDeepFlag deep = E_DEEP; // TODO: get this from a command line argument
 		
 		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(rch, ns, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<OW_String>(cout, "\n"));

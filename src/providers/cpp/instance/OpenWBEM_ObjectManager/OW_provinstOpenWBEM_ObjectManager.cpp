@@ -38,6 +38,8 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_SocketAddress.hpp"
 
+using namespace OW_WBEMFlags;
+
 namespace OpenWBEM
 {
 
@@ -116,10 +118,10 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-		OW_WBEMFlags::EDeepFlag deep, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		ELocalOnlyFlag localOnly, 
+		EDeepFlag deep, 
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
@@ -142,9 +144,9 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass )
 	{
@@ -179,7 +181,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass)
 	{

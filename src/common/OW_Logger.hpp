@@ -86,7 +86,7 @@ class OW_Logger
 		 * @return a class that implements the OW_Logger interface.
 		 */
 		static OW_Reference<OW_Logger> createLogger( const OW_String& type,
-			const OW_Bool& debug );
+			bool debug );
 
 		virtual ~OW_Logger();
 

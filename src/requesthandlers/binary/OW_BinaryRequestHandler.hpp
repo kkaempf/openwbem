@@ -141,7 +141,7 @@ private:
 
 	void writeError(std::ostream& ostrm, const char* msg);
 
-	OW_Bool writeFileName(std::ostream& ostrm, const OW_String& fname);
+	bool writeFileName(std::ostream& ostrm, const OW_String& fname);
 
 	OW_UserId m_userId;
 };

@@ -45,6 +45,8 @@ using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
+using namespace OW_WBEMFlags;
+
 
 class GetLoginInfo : public OW_ClientAuthCBIFC
 {
@@ -126,7 +128,7 @@ int main(int argc, char* argv[])
 		}
 
 		classPrinter handler;
-		rch->enumClass(ns, classname, handler, OW_WBEMFlags::E_DEEP);
+		rch->enumClass(ns, classname, handler, E_DEEP);
 
 		return 0;
 	}

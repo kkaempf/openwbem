@@ -86,7 +86,7 @@ class OW_SyslogLogger : public OW_Logger
 	public:
 		OW_SyslogLogger()
 		{
-			static OW_Bool calledOpenLog = false;
+			static bool calledOpenLog = false;
 			if (!calledOpenLog)
 			{
 				openlog( "openwbem", LOG_CONS, LOG_DAEMON );
@@ -190,7 +190,7 @@ protected:
 	}
 };
 
-OW_LoggerRef OW_Logger::createLogger( const OW_String& type, const OW_Bool& debug )
+OW_LoggerRef OW_Logger::createLogger( const OW_String& type, bool debug )
 {
 	OW_LoggerRef retval;
 	if (type.empty() || type.equalsIgnoreCase("null"))

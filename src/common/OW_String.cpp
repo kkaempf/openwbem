@@ -39,6 +39,7 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_Bool.hpp"
 
 #include <cstdio>
 #include <cstdlib>

@@ -277,9 +277,12 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
+		OW_WBEMFlags::EDeepFlag deep, 
+		OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList, 
+		OW_WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
 		const OW_UserInfo& aclInfo) = 0;
 
 	/**

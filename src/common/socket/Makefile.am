@@ -28,7 +28,8 @@ OW_SSLCtxMgr.hpp \
 OW_SSLException.hpp \
 OW_SocketException.hpp \
 OW_SocketStreamBuffer.hpp \
-OW_SocketUtils.hpp
+OW_SocketUtils.hpp \
+OW_SocketFlags.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

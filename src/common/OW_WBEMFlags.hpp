@@ -64,6 +64,13 @@ enum EIncludeClassOriginFlag
 	E_INCLUDE_CLASS_ORIGIN
 };
 
+//////////////////////////////////////////////////////
+enum EEnumSubclassesFlag
+{
+	E_DONT_ENUM_SUBCLASSES,
+	E_ENUM_SUBCLASSES
+};
+
 }
 
 

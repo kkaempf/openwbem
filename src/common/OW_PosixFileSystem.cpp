@@ -97,28 +97,28 @@ OW_FileSystem::openOrCreateFile(const OW_String& path)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::exists(const OW_String& path)
 {
 	return access(path.c_str(), F_OK) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::canRead(const OW_String& path)
 {
 	return access(path.c_str(), R_OK) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::canWrite(const OW_String& path)
 {
 	return access(path.c_str(), W_OK) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::isDirectory(const OW_String& path)
 {
 	struct stat st;
@@ -129,21 +129,21 @@ OW_FileSystem::isDirectory(const OW_String& path)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::changeDirectory(const OW_String& path)
 {
 	return chdir(path.c_str()) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::makeDirectory(const OW_String& path)
 {
 	return mkdir(path.c_str(), 0777) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::getFileSize(const OW_String& path, OW_UInt32& size)
 {
 	struct stat st;
@@ -155,21 +155,21 @@ OW_FileSystem::getFileSize(const OW_String& path, OW_UInt32& size)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::removeDirectory(const OW_String& path)
 {
 	return rmdir(path.c_str()) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::removeFile(const OW_String& path)
 {
 	return unlink(path.c_str()) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::getDirectoryContents(const OW_String& path,
 	OW_StringArray& dirEntries)
 {
@@ -192,7 +192,7 @@ OW_FileSystem::getDirectoryContents(const OW_String& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_FileSystem::renameFile(const OW_String& oldFileName,
 	const OW_String& newFileName)
 {

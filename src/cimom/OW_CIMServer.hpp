@@ -343,9 +343,12 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
+		OW_WBEMFlags::EDeepFlag deep, 
+		OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList, 
+		OW_WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
 		const OW_UserInfo& aclInfo);
 
 	/**
@@ -630,12 +633,12 @@ private:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_Bool _instanceExists(const OW_String& ns, const OW_CIMObjectPath& cop,
+	bool _instanceExists(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_UserInfo& aclInfo);
 
 public:
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	OW_Bool _isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc);
+	bool _isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc);
 #endif
 
 private:

@@ -411,7 +411,7 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsExcept
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
-	OW_Bool isError = false;
+	bool isError = false;
 
 	if(m_isConnected)
 	{
@@ -463,7 +463,7 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	/*throw (OW_SocketException)*/
 {
 	int rc = 0;
-	OW_Bool isError = false;
+	bool isError = false;
 
 	if(m_isConnected)
 	{
@@ -506,10 +506,10 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_SocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
 {
-	int rval = OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, true);
+	int rval = OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_INPUT);
 	if (rval == ETIMEDOUT)
 	{
 		m_recvTimeoutExprd = true;
@@ -518,10 +518,10 @@ OW_SocketBaseImpl::waitForInput(int timeOutSecs) /*throw (OW_SocketException)*/
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_SocketBaseImpl::waitForOutput(int timeOutSecs) /*throw (OW_SocketException)*/
 {
-	return OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, false) != 0;
+	return OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

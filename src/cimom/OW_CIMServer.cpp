@@ -473,7 +473,7 @@ OW_CIMServer::setQualifierType(
 OW_CIMClass
 OW_CIMServer::getClass(
 	const OW_String& ns, const OW_String& className, ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -493,7 +493,7 @@ OW_CIMServer::getClass(
 OW_CIMClass
 OW_CIMServer::_getClass(const OW_String& ns, const OW_String& className, 
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	OW_CIMClass theClass = _getNameSpaceClass(className);
@@ -510,7 +510,7 @@ OW_CIMServer::_getClass(const OW_String& ns, const OW_String& className,
 OW_CIMClass
 OW_CIMServer::_instGetClass(const OW_String& ns, const OW_String& className,
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	OW_CIMClass theClass = _getNameSpaceClass(className);
@@ -586,8 +586,8 @@ void
 OW_CIMServer::enumClasses(const OW_String& ns,
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
-		EDeepFlag deep, ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
+		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, ns, aclInfo);
@@ -706,12 +706,18 @@ namespace
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_acl, false, false, true);
+			return m_env->getCIMOMHandle(m_acl, 
+				OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+				OW_ServiceEnvironmentIFC::E_USE_PROVIDERS, 
+				OW_CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
 		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_acl, false, true, true);
+			return m_env->getCIMOMHandle(m_acl, 
+				OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+				OW_ServiceEnvironmentIFC::E_BYPASS_PROVIDERS, 
+				OW_CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
 		virtual OW_RepositoryIFCRef getRepository() const
@@ -773,8 +779,8 @@ namespace
 			OW_CIMServer* server_, 
 			EDeepFlag deep_,
 			ELocalOnlyFlag localOnly_, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers_, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin_,
+			EIncludeQualifiersFlag includeQualifiers_, 
+			EIncludeClassOriginFlag includeClassOrigin_,
 			const OW_StringArray* propertyList_,
 			const OW_CIMClass& theTopClass_)
 			: ns(ns_)
@@ -809,8 +815,8 @@ namespace
 		OW_CIMServer* server;
 		EDeepFlag deep;
 		ELocalOnlyFlag localOnly;
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers;
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin;
+		EIncludeQualifiersFlag includeQualifiers;
+		EIncludeClassOriginFlag includeClassOrigin;
 		const OW_StringArray* propertyList;
 		const OW_CIMClass& theTopClass;
 	};
@@ -822,8 +828,8 @@ OW_CIMServer::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
-	ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
+	const OW_StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, 
 	const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -839,7 +845,7 @@ OW_CIMServer::enumInstances(
 	ie.handle(theTopClass);
 
 	// If this is the namespace class then only do one class
-	if(theTopClass.getName().equals(OW_CIMClass::NAMESPACECLASS) || enumSubClasses == false)
+	if(theTopClass.getName().equals(OW_CIMClass::NAMESPACECLASS) || enumSubclasses == E_DONT_ENUM_SUBCLASSES)
 	{
 		return;
 	}
@@ -959,7 +965,7 @@ OW_CIMServer::_getCIMInstances(
 	const OW_String& className,
 	const OW_CIMClass& theTopClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, 
-	ELocalOnlyFlag localOnly, EDeepFlag deep, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 
@@ -988,7 +994,7 @@ OW_CIMServer::_getCIMInstances(
 		// can't pass in theTopClass.  We pass false for enumSubClasses, to
 		// only do one class.
 		m_cimRepository->enumInstances(ns, className, handler, E_DEEP, E_NOT_LOCAL_ONLY,
-			includeQualifiers, includeClassOrigin, propertyList, false, aclInfo);
+			includeQualifiers, includeClassOrigin, propertyList, E_DONT_ENUM_SUBCLASSES, aclInfo);
 	}
 }
 
@@ -998,7 +1004,7 @@ OW_CIMServer::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	return getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
@@ -1011,7 +1017,7 @@ OW_CIMServer::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMClass* pOutClass,
 	const OW_UserInfo& aclInfo)
 {
@@ -1021,8 +1027,8 @@ OW_CIMServer::getInstance(
 
 	OW_CIMClass cc = _instGetClass(ns, instanceName.getObjectName(),
 		E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
+		E_INCLUDE_QUALIFIERS,
+		E_INCLUDE_CLASS_ORIGIN,
 		0, aclInfo);
 
 	if(pOutClass)
@@ -1170,7 +1176,7 @@ OW_CIMInstance
 OW_CIMServer::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_UserInfo& aclInfo)
 {
@@ -1209,7 +1215,7 @@ OW_CIMServer::modifyInstance(
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
 	const OW_UserInfo& aclInfo)
 {
@@ -1239,9 +1245,9 @@ OW_CIMServer::getProperty(
 
 	OW_UserInfo intAclInfo;
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		intAclInfo, true);
+		intAclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING);
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-		aclInfo, true);
+		aclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING);
 
 	OW_CIMClass theClass = _instGetClass(ns,name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
 
@@ -1710,7 +1716,7 @@ OW_CIMServer::execQuery(
 	if (wql && wql->supportsQueryLanguage(queryLanguage))
 	{
 		OW_CIMOMHandleIFCRef lch(new OW_LocalCIMOMHandle(m_env,
-			OW_RepositoryIFCRef(this, true), aclInfo, true));
+			OW_RepositoryIFCRef(this, true), aclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING));
 
 		try
 		{
@@ -1753,7 +1759,7 @@ OW_CIMServer::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -1774,7 +1780,7 @@ OW_CIMServer::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -1813,7 +1819,7 @@ OW_CIMServer::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -1832,7 +1838,7 @@ OW_CIMServer::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
@@ -1921,7 +1927,7 @@ OW_CIMServer::_commonReferences(
 	const OW_String& ns,
 	const OW_CIMObjectPath& path_,
 	const OW_String& resultClass, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
 	OW_CIMClassResultHandlerIFC* pcresult,
@@ -2044,7 +2050,7 @@ OW_CIMServer::_commonReferences(
 void
 OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& assocClasses, const OW_String& role,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_UserInfo& aclInfo)
 {
@@ -2115,7 +2121,7 @@ OW_CIMServer::_commonAssociators(
 	const OW_CIMObjectPath& path_,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult,
@@ -2226,7 +2232,7 @@ void
 OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& assocClasses, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_UserInfo& aclInfo)
 {
@@ -2307,7 +2313,7 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMServer::_isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc)
 {
 	return _getAssociatorProvider(ns, cc) ? true : false;

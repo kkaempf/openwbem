@@ -54,7 +54,7 @@ int main( int iArgC, char *asArgV[] )
 
 		pClient = new OW_CIMXMLCIMOMHandle( sURL );
 
-		OW_CIMObjectPath RootPath(OW_Bool(true));
+		OW_CIMObjectPath RootPath;
 		OW_CIMObjectPath ClassPath( "MyClass" );
 		OW_CIMObjectPath InstancePath( "MyClass" );
 		

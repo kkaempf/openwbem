@@ -122,13 +122,17 @@ OW_WQLImpl::createSelectStatement(const OW_String& query)
 	return p.getSelectStatement();
 }
 
-OW_Bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)
+bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)
 {
 	if (lang.equalsIgnoreCase("wql1"))
 	{
 		return true;
 	}
 	else if (lang.equalsIgnoreCase("wql2"))
+	{
+		return true;
+	}
+	else if (lang.equalsIgnoreCase("wql"))
 	{
 		return true;
 	}

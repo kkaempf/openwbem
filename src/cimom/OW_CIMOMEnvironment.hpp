@@ -95,17 +95,25 @@ public:
 	~OW_CIMOMEnvironment();
 	void init();
 
-	virtual OW_Bool authenticate(OW_String &userName, const OW_String &info,
+	virtual bool authenticate(OW_String &userName, const OW_String &info,
 		OW_String &details);
 
 	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const;
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
-		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS);
+
+	enum ELockingFlag
+	{
+		E_NO_LOCKING,
+		E_LOCKING
+	};
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_UserInfo& aclinfo,
-		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false,
-		const OW_Bool noLocking = false);
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
+		ELockingFlag locking = E_LOCKING);
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle();
 
@@ -128,7 +136,7 @@ public:
 	void clearConfigItems();
 
 	virtual void setConfigItem(const OW_String &item, const OW_String &value,
-		OW_Bool overwritePrevious=true);
+		EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 
 	virtual void addSelectable(OW_SelectableIFCRef obj,
 		OW_SelectableCallbackIFCRef cb);
@@ -192,14 +200,14 @@ private:
 	OW_SharedLibraryRef m_indicationRepLayerLib;
 	OW_PollingManagerRef m_pollingManager;
 	OW_IndicationServerRef m_indicationServer;
-	OW_Bool m_indicationsDisabled;
+	bool m_indicationsDisabled;
 	OW_Array<OW_SelectableIFCRef> m_selectables;
 	OW_Array<OW_SelectableCallbackIFCRef> m_selectableCallbacks;
 	OW_Array<OW_ServiceIFCRef> m_services;
 	ReqHandlerMap m_reqHandlers;
 	mutable OW_Mutex m_reqHandlersLock;
 	mutable OW_Mutex m_indicationLock;
-	OW_Bool m_indicationRepLayerDisabled;
+	bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;
 	
 	bool m_running;

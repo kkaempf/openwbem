@@ -52,7 +52,7 @@ public:
 
 	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query);
 
-	virtual OW_Bool supportsQueryLanguage(const OW_String& lang);
+	virtual bool supportsQueryLanguage(const OW_String& lang);
 
 private:
 	static OW_Mutex classLock;

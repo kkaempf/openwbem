@@ -103,7 +103,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_AuthManager::authenticate(OW_String& userName,
 	const OW_String& info, OW_String& details)
 {

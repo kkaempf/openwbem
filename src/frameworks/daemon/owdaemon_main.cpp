@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 		env.startServices();
 
 		int sig;
-		OW_Bool shuttingDown(false);
+		bool shuttingDown(false);
 		while(!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into

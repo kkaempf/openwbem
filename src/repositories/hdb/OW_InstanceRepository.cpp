@@ -294,8 +294,8 @@ OW_InstanceRepository::getCIMInstances(
 	const OW_String& className,
 	const OW_CIMClass& requestedClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
+	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 
@@ -329,8 +329,8 @@ OW_CIMInstance
 OW_InstanceRepository::getCIMInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	const OW_CIMClass& theClass, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	const OW_CIMClass& theClass, ELocalOnlyFlag localOnly,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
@@ -421,10 +421,10 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Is this function actually used?
-OW_Bool
+bool
 OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_String ckey = makeClassKey(classPath.getNameSpace(),
@@ -448,7 +448,7 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
 	const OW_CIMInstance& oldInst,
-	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();

@@ -28,12 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- *
- *
- *
- */
-
 #include "OW_config.h"
 #include "OW_Socket.hpp"
 #include "OW_UnnamedPipe.hpp"
@@ -48,9 +42,9 @@ DEFINE_EXCEPTION(SocketTimeout)
 
 OW_UnnamedPipeRef OW_Socket::m_pUpipe;
 
-OW_Socket::OW_Socket(OW_Bool isSSL)
+OW_Socket::OW_Socket(OW_SocketFlags::ESSLFlag isSSL)
 {
-	if (isSSL)
+	if (isSSL == OW_SocketFlags::E_SSL)
 	{
 #ifndef OW_NO_SSL
 		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl);
@@ -66,10 +60,10 @@ OW_Socket::OW_Socket(OW_Bool isSSL)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Socket::OW_Socket(OW_SocketHandle_t fd,
-	OW_SocketAddress::AddressType addrType, OW_Bool isSSL)
+	OW_SocketAddress::AddressType addrType, OW_SocketFlags::ESSLFlag isSSL)
 		/*throw (OW_SocketException)*/
 {
-	if (isSSL)
+	if (isSSL == OW_SocketFlags::E_SSL)
 	{
 #ifndef OW_NO_SSL
 		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(fd, addrType));
@@ -84,10 +78,10 @@ OW_Socket::OW_Socket(OW_SocketHandle_t fd,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_Bool isSSL)
+OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_SocketFlags::ESSLFlag isSSL)
 		/*throw (OW_SocketException)*/
 {
-	if (isSSL)
+	if (isSSL == OW_SocketFlags::E_SSL)
 #ifndef OW_NO_SSL
 		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(addr));
 #else
@@ -99,7 +93,7 @@ OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_Bool isSSL)
 	}
 }
 
-static OW_Bool b_gotShutDown = false;
+static bool b_gotShutDown = false;
 static OW_Mutex shutdownMutex;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -139,7 +133,7 @@ OW_Socket::deleteShutDownMechanism()
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_Socket::gotShutDown()
 {
 	OW_MutexLock mlock(shutdownMutex);

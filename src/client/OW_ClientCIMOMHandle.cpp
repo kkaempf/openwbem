@@ -32,6 +32,7 @@
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 
+using namespace OW_WBEMFlags;
 
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -53,7 +54,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns_,
-	OW_StringResultHandlerIFC &result, OW_WBEMFlags::EDeepFlag deep)
+	OW_StringResultHandlerIFC &result, EDeepFlag deep)
 {
     OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_, result, deep);
 }

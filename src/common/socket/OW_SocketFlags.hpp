@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001,2002 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,30 +27,44 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_AUTHLOADER_HPP_INCLUDE_GUARD_
-#define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 
+#ifndef OW_SOCKET_FLAGS_HPP_INCLUDE_GUARD_
+#define OW_SOCKET_FLAGS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AuthenticatorIFC.hpp"
-#include "OW_SharedLibraryLoader.hpp"
-#include "OW_Array.hpp"
-#include "OW_ServiceEnvironmentIFC.hpp"
 
-class OW_AuthManager
+namespace OW_SocketFlags
 {
-public:
 
-	OW_AuthManager();
-	~OW_AuthManager();
-	void init(OW_ServiceEnvironmentIFCRef env);
-	bool authenticate(OW_String& userName,
-		const OW_String& info, OW_String& details);
-
-private:
-
-	OW_AuthenticatorIFCRef m_authenticator;
+/////////////////////////////////////////////////////////////////////////////
+enum ESSLFlag
+{
+	E_NOT_SSL,
+	E_SSL
 };
 
-typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
+/////////////////////////////////////////////////////////////////////////////
+enum EAllInterfacesFlag
+{
+	E_NOT_ALL_INTERFACES,
+	E_ALL_INTERFACES
+};
+
+/////////////////////////////////////////////////////////////////////////////
+enum EReuseAddrFlag
+{
+	E_DONT_REUSE_ADDR,
+	E_REUSE_ADDR
+};
+
+/////////////////////////////////////////////////////////////////////////////
+enum EWaitDirectionFlag
+{
+	E_WAIT_FOR_OUTPUT,
+	E_WAIT_FOR_INPUT
+};
+
+} // end namespace OW_SocketFlags
 
 #endif
+
+

@@ -70,7 +70,7 @@ private:
 	OW_Int64 m_pos;
 
 	// keeps track if we are at end of length.
-	OW_Bool m_isEnd;
+	bool m_isEnd;
 
 	// prohibit copying and assigning
 	// NO IMPLEMENTATION

@@ -123,7 +123,7 @@ OW_DaemonEnv::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
-OW_DaemonEnv::getCIMOMHandle(const OW_String& username, const OW_Bool doIndications, const OW_Bool bypassProviders)
+OW_DaemonEnv::getCIMOMHandle(const OW_String& username, ESendIndicationsFlag doIndications, EBypassProvidersFlag bypassProviders)
 {
 	(void)username;
 	(void)doIndications;
@@ -235,7 +235,7 @@ OW_DaemonEnv::deleteConfigMap()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_DaemonEnv::setConfigItem( const OW_String& item,
-		const OW_String& value, OW_Bool overwritePrevious )
+		const OW_String& value, EOverwritePreviousFlag overwritePrevious )
 {
 	if (overwritePrevious || getConfigItem(item) == "")
 		(m_configItems)[item] = value;
@@ -359,7 +359,7 @@ OW_DaemonEnv::getLogger() const
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_DaemonEnv::authenticate(OW_String &userName, const OW_String &info, OW_String &details)
 {
 	return m_authManager->authenticate(userName,info,details);

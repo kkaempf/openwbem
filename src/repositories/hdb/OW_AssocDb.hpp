@@ -61,8 +61,6 @@ public:
 		const OW_String& role,
 		const OW_String& resultRole);
 
-	//OW_Bool operator == (const OW_AssocDbEntry& arg) const;
-
 	struct entry
 	{
 		entry ()
@@ -161,7 +159,7 @@ public:
 	 * @return true if there are association entries in the association
 	 * database for the given target object.
 	 */
-	OW_Bool hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName);
+	bool hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName);
 
 	/**
 	 * Add an OW_AssocDbEntry& to the database.
@@ -378,14 +376,14 @@ private:
 	AssocDbRecHeader getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 		OW_AssocDbHandle& hdl);
 
-	OW_Bool createFile();
-	OW_Bool checkFile();
+	bool createFile();
+	bool checkFile();
 
 	OW_AssocDbHeader m_hdrBlock;
 	OW_IndexRef m_pIndex;
 	OW_String m_fileName;
 	int m_hdlCount;
-	OW_Bool m_opened;
+	bool m_opened;
 	OW_Mutex m_guard;
 	OW_ServiceEnvironmentIFCRef m_env;
 

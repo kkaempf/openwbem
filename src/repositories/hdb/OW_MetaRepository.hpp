@@ -77,7 +77,7 @@ public:
 	 * the qualifier was not found.
 	 * @exception OW_CIMException
 	 */
-	OW_Bool deleteQualifierType(const OW_String& ns, const OW_String& qualName);
+	bool deleteQualifierType(const OW_String& ns, const OW_String& qualName);
 
 
 	/**
@@ -121,7 +121,7 @@ public:
 	 * @return true if the class was deleted. false if class was not found.
 	 * @exception CIMException if class does not exist
 	 */
-	OW_Bool deleteClass(const OW_String& ns, const OW_String& className);
+	bool deleteClass(const OW_String& ns, const OW_String& className);
 
 	/**
 	 * creates a class in the store

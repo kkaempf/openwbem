@@ -2407,6 +2407,6 @@ namespace
 void OW_WQLProcessor::populateInstances()
 {
 	InstanceArrayBuilder handler(instances);
-	m_hdl->enumInstances(m_ns, m_tableRef, handler, OW_WBEMFlags::E_DEEP);
+	m_hdl->enumInstances(m_ns, m_tableRef, handler, E_DEEP);
 }
 

@@ -319,7 +319,7 @@ OW_SSLCtxMgr::pem_passwd_cb(char* buf, int size, int /*rwflag*/,
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_SSLCtxMgr::checkClientCert(SSL* ssl, const OW_String& hostName)
 {
 	return checkCert(ssl, hostName, m_clientCertVerifyCB);
@@ -327,7 +327,7 @@ OW_SSLCtxMgr::checkClientCert(SSL* ssl, const OW_String& hostName)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_SSLCtxMgr::checkServerCert(SSL* ssl, const OW_String& hostName)
 {
 	return checkCert(ssl, hostName, m_serverCertVerifyCB);
@@ -335,7 +335,7 @@ OW_SSLCtxMgr::checkServerCert(SSL* ssl, const OW_String& hostName)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_SSLCtxMgr::checkCert(SSL* ssl, const OW_String& hostName, 
 	certVerifyFuncPtr_t certVerifyCB)
 {

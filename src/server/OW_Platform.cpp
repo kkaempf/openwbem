@@ -67,7 +67,7 @@ OW_Reference<OW_UnnamedPipe> OW_Platform::plat_upipe;
 
 static OW_Platform::Options processCommandLineOptions(int argc, char** argv);
 static void handleSignal(int sig);
-static void setupSigHandler(const OW_Bool& dbgFlg);
+static void setupSigHandler(bool dbgFlg);
 
 extern "C" {
 static void theSigHandler(int sig);
@@ -89,11 +89,8 @@ OW_Platform::daemonInit( int argc, char* argv[] )
  * Throws OW_DaemonException on error.
  */
 void
-OW_Platform::daemonize(const OW_Bool& dbgFlg, const OW_String& daemonName)
+OW_Platform::daemonize(bool dbgFlg, const OW_String& daemonName)
 {
-	//OW_Bool dbgFlg = OW_Environment::getConfigItem(OW_ConfigOpts::OW_DEBUG_opt).
-	//	equalsIgnoreCase("true");
-
 	if(!dbgFlg)
 	{
 		if(getuid() != 0)
@@ -327,7 +324,7 @@ theSigHandler(int sig)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-setupSigHandler(const OW_Bool& dbgFlg)
+setupSigHandler(bool dbgFlg)
 {
 	/* Here's a note from the glibc documentation about signal():
 	 *Compatibility Note:* A problem encountered when working with the

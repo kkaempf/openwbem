@@ -61,7 +61,7 @@ class testSharedLibrary: public OW_SharedLibrary
 		virtual ~testSharedLibrary(){}
 
 	protected:
-		virtual OW_Bool doGetFunctionPointer( const OW_String&, void** fp ) const
+		virtual bool doGetFunctionPointer( const OW_String&, void** fp ) const
 		{
 			*fp = (void*)(&testFunction);
 			return true;
@@ -447,7 +447,7 @@ class testMuxSharedLibrary: public OW_SharedLibrary
 		virtual ~testMuxSharedLibrary(){}
 
 	protected:
-		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -463,7 +463,7 @@ class testMuxSharedLibrary2: public OW_SharedLibrary
 		virtual ~testMuxSharedLibrary2(){}
 
 	protected:
-		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -479,7 +479,7 @@ class testMuxSharedLibrary3: public OW_SharedLibrary
 		virtual ~testMuxSharedLibrary3(){}
 
 	protected:
-		virtual OW_Bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
