@@ -23,6 +23,7 @@ owstatlibdir = $(thelibdir)
 OW_EXTRA_LINK_DIRS=$(pkglibdir)/provifcs
 
 libowowbi1provifc_a_SOURCES = \
+common/OWBI1_OutOfBoundsException.cpp \
 cim/OWBI1_CIMParamValue.cpp \
 common/OWBI1_SessionLanguage.cpp \
 common/OWBI1_Logger.cpp \
