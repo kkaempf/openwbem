@@ -42,6 +42,7 @@
 
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_Map.hpp"
 
 namespace OpenWBEM
 {
@@ -60,8 +61,14 @@ public:
 		SWMR, 
 		SINGLE_THREADED
 	}; 
-	ProviderAgentCIMOMHandle(CppProviderBaseIFCRef provider, 
-							 ProviderEnvironmentIFCRef env); 
+	ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIFCRef> assocProvs, 
+							 Map<String, CppProviderBaseIFCRef> instProvs, 
+							 Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
+							 Map<String, CppProviderBaseIFCRef> methodProvs, 
+							 Map<String, CIMClass> cimclasses,
+							 ProviderEnvironmentIFCRef env,
+							 LockingType lt, 
+							 UInt32 lockingTimeout); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
@@ -719,10 +726,25 @@ private:
 	private: 
 		PALocker* m_locker; 
 	}; 
-	CppProviderBaseIFCRef m_prov; 
+	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
+	Map<String, CppProviderBaseIFCRef> m_instProvs; 
+	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
+	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
+	Map<String, CIMClass> m_cimClasses; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
-	CIMClass m_cimclass;  // TODO assign. 
 	PALockerRef m_locker; 
+
+	CppInstanceProviderIFC* getInstanceProvider(const String& ns, 
+												const String& className) const; 
+	CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider(const String& ns, 
+												const String& className) const; 
+	CppAssociatorProviderIFC* getAssociatorProvider(const String& ns, 
+												const String& className) const; 
+	CppMethodProviderIFC* getMethodProvider(const String& ns, 
+											const String& className, 
+											const String& methodName) const; 
+	CIMClass helperGetClass(const String& className)const ; 
+
 };
 
 

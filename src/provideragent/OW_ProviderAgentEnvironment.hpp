@@ -41,6 +41,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_AuthenticatorIFC.hpp"
+#include "OW_ProviderAgentCIMOMHandle.hpp"
 
 #include "OW_CppProviderBaseIFC.hpp"
 
@@ -53,10 +54,12 @@ class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
-		CppProviderBaseIFCRef provider, 
+		Array<CppProviderBaseIFCRef> providers, 
+		Array<CIMClass> cimClasses, 
 		Reference<AuthenticatorIFC> authenticator,
 		Array<RequestHandlerIFCRef> requestHandlers, 
 		LoggerRef logger,
+        const String& callbackURL, 
 		Reference<Array<SelectablePair_t> > selectables); 
 	virtual ~ProviderAgentEnvironment(); 
 	virtual bool authenticate(String &userName,
@@ -91,9 +94,16 @@ private:
 	Map<String, String> m_configItems;
 	Reference<AuthenticatorIFC> m_authenticator;
 	LoggerRef m_logger;
+	String m_callbackURL; 
 	Array<RequestHandlerIFCRef> m_requestHandlers; 
 	Reference<Array<SelectablePair_t> > m_selectables;
-	CppProviderBaseIFCRef m_prov; 
+	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
+	Map<String, CppProviderBaseIFCRef> m_instProvs; 
+	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
+	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
+	Map<String, CIMClass> m_cimClasses; 
+	ProviderAgentCIMOMHandle::LockingType m_lockingType; 
+	UInt32 m_lockingTimeout; 
 	class DummyLogger : public Logger
 	{
 	protected:

@@ -37,15 +37,20 @@
 #include "OW_config.h"
 #include "OW_ProviderAgentProviderEnvironment.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(LoggerRef logger, 
-								 ConfigFile::ConfigMap configMap)
+								 ConfigFile::ConfigMap configMap,
+								 OperationContext& operationContext, 
+								 const String& callbackURL)
 	: m_logger(logger)
 	, m_configMap(configMap)
+	, m_operationContext(operationContext)
+	, m_callbackURL(callbackURL)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -53,7 +58,12 @@ ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(LoggerRef log
 CIMOMHandleIFCRef 
 ProviderAgentProviderEnvironment::getCIMOMHandle() const
 {
-	OW_ASSERT("not implemented" == 0); 
+	if (m_callbackURL.empty())
+	{
+		return CIMOMHandleIFCRef(0); 
+	}
+	CIMOMHandleIFCRef rval = ClientCIMOMHandle::createFromURL(m_callbackURL); 
+	return rval; 
 }
 //////////////////////////////////////////////////////////////////////////////
 String 
@@ -104,7 +114,7 @@ ProviderAgentProviderEnvironment::getUserName() const
 OperationContext& 
 ProviderAgentProviderEnvironment::getOperationContext()
 {
-	OW_ASSERT("not implemented" == 0); 
+	return m_operationContext; 
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -130,18 +130,21 @@ const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap, 
-							 CppProviderBaseIFCRef provider, 
+							 Array<CppProviderBaseIFCRef> providers, 
+							 Array<CIMClass> cimClasses, 
 							 Array<RequestHandlerIFCRef> requestHandlers, 
 							 Reference<AuthenticatorIFC> authenticator,
-							 LoggerRef logger)
+							 LoggerRef logger, 
+							 const String& callbackURL)
 	: m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
 {
-	Reference<Array<SelectablePair_t> >
-		selectables(new Array<SelectablePair_t>);
+	Reference<Array<SelectablePair_t> > 
+			selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new ProviderAgentEnvironment(configMap,
-		provider, authenticator, requestHandlers, logger, selectables));
+			providers, cimClasses, authenticator, requestHandlers, 
+			logger, callbackURL, selectables));
 	m_httpServer->setServiceEnvironment(env);
 	m_httpServer->startService();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really

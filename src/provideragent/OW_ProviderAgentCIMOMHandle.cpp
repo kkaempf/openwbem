@@ -38,6 +38,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMClass.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -60,43 +61,22 @@ namespace OpenWBEM
 
 //using namespace WBEMFlags;
 
-ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(CppProviderBaseIFCRef provider, 
-												   ProviderEnvironmentIFCRef env)
-	: m_prov(provider)
+ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIFCRef> assocProvs, 
+												   Map<String, CppProviderBaseIFCRef> instProvs, 
+												   Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
+												   Map<String, CppProviderBaseIFCRef> methodProvs, 
+												   Map<String, CIMClass> cimClasses, 
+												   ProviderEnvironmentIFCRef env, 
+												   LockingType lt, 
+												   UInt32 lockingTimeout)
+	: m_assocProvs(assocProvs)
+	, m_instProvs(instProvs)
+	, m_secondaryInstProvs(secondaryInstProvs)
+	, m_methodProvs(methodProvs)
+	, m_cimClasses(cimClasses)
 	, m_PAEnv(env)
-	, m_locker(0)
+	, m_locker(new PALocker(lt, lockingTimeout))
 {
-	String confItem = m_PAEnv->getConfigItem(ProviderAgent::LockingType_opt, "none"); 
-	confItem.toLowerCase(); 
-	LockingType lt = NONE; 
-	if (confItem == "none")
-	{
-		lt = NONE; 
-	}
-	else if (confItem == "swmr")
-	{
-		lt = SWMR; 
-	}
-	else if (confItem == "single_threaded")
-	{
-		lt = SINGLE_THREADED;  
-	}
-	else
-	{
-		OW_THROW(ConfigException, "unknown locking type"); 
-	}
-	confItem = m_PAEnv->getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
-	UInt32 timeout = 300; 
-	try
-	{
-		timeout = confItem.toUInt32(); 
-	}
-	catch (StringConversionException&)
-	{
-		OW_THROW(ConfigException, "invalid locking timeout"); 
-	}
-
-	m_locker = PALockerRef(new PALocker(lt, timeout)); 
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,8 +88,8 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 			WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray *propertyList)
 {
-	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, instanceName.getClassName()); 
+	CppSecondaryInstanceProviderIFC* pSInstProv = getSecondaryInstanceProvider(ns, instanceName.getClassName()); 
 	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -121,7 +101,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 		{
 			rval = pInstProv->getInstance(m_PAEnv,ns ,instanceName ,localOnly ,
 					includeQualifiers ,includeClassOrigin ,
-					propertyList , m_cimclass); 
+					propertyList , helperGetClass(instanceName.getClassName())); 
 		}
 		if (pSInstProv)
 		{
@@ -137,10 +117,11 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 				newInst.setKeys(instanceName.getKeys()); 
 				ia.push_back(newInst); 
 			}
+			CIMClass cc = helperGetClass(instanceName.getClassName()); 
 			pSInstProv->filterInstances(m_PAEnv,ns , instanceName.getClassName(), 
                                         ia,localOnly , OpenWBEM::WBEMFlags::E_SHALLOW, 
 										includeQualifiers, includeClassOrigin, 
-										propertyList, m_cimclass, m_cimclass); 
+										propertyList, cc, cc); // TODO should the classes be different? 
 			OW_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong? 
 			rval = ia[0]; 
 		}
@@ -164,7 +145,7 @@ ProviderAgentCIMOMHandle::invokeMethod(const String &ns,
 			const CIMParamValueArray &inParams, 
 			CIMParamValueArray &outParams)
 {
-	CppMethodProviderIFC* pMethodProv = m_prov->getMethodProvider(); 
+	CppMethodProviderIFC* pMethodProv = getMethodProvider(ns, path.getClassName(), methodName); 
 	if (!pMethodProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -223,8 +204,8 @@ ProviderAgentCIMOMHandle::modifyClass(const String &ns, const CIMClass &cimClass
 void 
 ProviderAgentCIMOMHandle::deleteInstance(const String &ns, const CIMObjectPath &path)
 {
-	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, path.getClassName()); 
+	CppSecondaryInstanceProviderIFC* pSInstProv = getSecondaryInstanceProvider(ns, path.getClassName()); 
 	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -244,7 +225,10 @@ ProviderAgentCIMOMHandle::deleteInstance(const String &ns, const CIMObjectPath &
 
 ///////////////////////////////////////////////////////////////////////////////
 void 
-ProviderAgentCIMOMHandle::setProperty(const String &ns, const CIMObjectPath &instanceName, const String &propertyName, const CIMValue &newValue)
+ProviderAgentCIMOMHandle::setProperty(const String &ns, 
+									  const CIMObjectPath &instanceName, 
+									  const String &propertyName, 
+									  const CIMValue &newValue)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 		// CIMOM will never demand this of us.  It always translates 
@@ -258,27 +242,28 @@ ProviderAgentCIMOMHandle::modifyInstance(const String &ns,
 			WBEMFlags:: EIncludeQualifiersFlag includeQualifiers,
 			const StringArray *propertyList)
 	{
-		CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-		CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+		CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, modifiedInstance.getClassName()); 
+		CppSecondaryInstanceProviderIFC* pSInstProv = getSecondaryInstanceProvider(ns, modifiedInstance.getClassName()); 
 		if (!pInstProv && !pSInstProv)
 		{
 			OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 		}
 		{
 			PAWriteLock wl(m_locker); 
+			CIMClass cc = helperGetClass(modifiedInstance.getClassName()); 
 			if (pInstProv)
 			{
 				pInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
 						CIMInstance(CIMNULL),	// previousInstance unavailable
 						includeQualifiers ,
-						propertyList , m_cimclass); 
+						propertyList , cc); 
 			}
 			if (pSInstProv)
 			{
 				pSInstProv->modifyInstance(m_PAEnv,ns ,modifiedInstance , 
 										   CIMInstance(CIMNULL),
 										   includeQualifiers ,propertyList , 
-										   m_cimclass); 
+										   cc); 
 			}
 		}
 	}
@@ -287,8 +272,8 @@ ProviderAgentCIMOMHandle::modifyInstance(const String &ns,
 CIMObjectPath 
 ProviderAgentCIMOMHandle::createInstance(const String &ns, const CIMInstance &instance)
 {
-	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
-	CppSecondaryInstanceProviderIFC* pSInstProv = m_prov->getSecondaryInstanceProvider(); 
+	CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, instance.getClassName()); 
+	CppSecondaryInstanceProviderIFC* pSInstProv = getSecondaryInstanceProvider(ns, instance.getClassName()); 
 	if (!pInstProv && !pSInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -329,7 +314,7 @@ ProviderAgentCIMOMHandle::associatorNames(const String &ns,
 			const String &role,
 			const String &resultRole)
 {
-	CppAssociatorProviderIFC* pAssocProv = m_prov->getAssociatorProvider(); 
+	CppAssociatorProviderIFC* pAssocProv = getAssociatorProvider(ns, assocClass); 
 	if (!pAssocProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -370,7 +355,7 @@ ProviderAgentCIMOMHandle::associators(const String &ns, const CIMObjectPath &pat
 		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
 		const StringArray *propertyList)
 {
-	CppAssociatorProviderIFC* pAssocProv = m_prov->getAssociatorProvider(); 
+	CppAssociatorProviderIFC* pAssocProv = getAssociatorProvider(ns, assocClass); 
 	if (!pAssocProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -392,7 +377,7 @@ ProviderAgentCIMOMHandle::referenceNames(const String &ns,
 		const String &resultClass,
 		const String &role)
 {
-	CppAssociatorProviderIFC* pAssocProv = m_prov->getAssociatorProvider(); 
+	CppAssociatorProviderIFC* pAssocProv = getAssociatorProvider(ns, resultClass); 
 	if (!pAssocProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -414,7 +399,7 @@ ProviderAgentCIMOMHandle::references(const String &ns,
 		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	CppAssociatorProviderIFC* pAssocProv = m_prov->getAssociatorProvider(); 
+	CppAssociatorProviderIFC* pAssocProv = getAssociatorProvider(ns, resultClass); 
 	if (!pAssocProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
@@ -482,18 +467,17 @@ ProviderAgentCIMOMHandle::enumInstances(const String &ns,
 		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
+	CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, className); 
 	if (!pInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
 	{
 		PAReadLock rl(m_locker); 
+		CIMClass cc = helperGetClass(className); 
 		pInstProv->enumInstances(m_PAEnv,ns ,className ,result ,localOnly ,
 				deep ,includeQualifiers ,includeClassOrigin,
-				propertyList, 
-				CIMClass(CIMNULL),	// requestedClass is unavailable
-				m_cimclass); 
+				propertyList, cc,cc); 
 	}
 }
 
@@ -503,14 +487,15 @@ ProviderAgentCIMOMHandle::enumInstanceNames(const String &ns,
 		const String &className, 
 		CIMObjectPathResultHandlerIFC &result)
 {
-	CppInstanceProviderIFC* pInstProv = m_prov->getInstanceProvider(); 
+	CppInstanceProviderIFC* pInstProv = getInstanceProvider(ns, className); 
 	if (!pInstProv)
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
 	{
 		PAReadLock rl(m_locker); 
-		pInstProv->enumInstanceNames(m_PAEnv,ns ,className ,result , m_cimclass); 
+		pInstProv->enumInstanceNames(m_PAEnv,ns ,className ,result , 
+									 helperGetClass(className)); 
 	}
 }
 
@@ -669,7 +654,132 @@ ProviderAgentCIMOMHandle::PAWriteLock::~PAWriteLock()
 	m_locker->releaseWriteLock(); 
 }
 //////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+CppInstanceProviderIFC* 
+ProviderAgentCIMOMHandle::getInstanceProvider(const String& ns, 
+												const String& className) const
+{
+	CppInstanceProviderIFC* rval = 0; 
+	String key = ns + ":" + className; 
+	key.toLowerCase(); 
+	Map<String, CppProviderBaseIFCRef>::const_iterator iter = 
+			m_instProvs.find(key); 
+	if (iter != m_instProvs.end())
+	{
+		rval = iter->second->getInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	key = String("") + ":" + className; 
+	key.toLowerCase(); 
+	iter = m_instProvs.find(key); 
+	if (iter != m_instProvs.end())
+	{
+		rval = iter->second->getInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	return rval; 
+}
+//////////////////////////////////////////////////////////////////////////////
+CppSecondaryInstanceProviderIFC* 
+ProviderAgentCIMOMHandle::getSecondaryInstanceProvider(const String& ns, 
+												const String& className) const
+{
+	CppSecondaryInstanceProviderIFC* rval = 0; 
+	String key = ns + ":" + className; 
+	key.toLowerCase(); 
+	Map<String, CppProviderBaseIFCRef>::const_iterator iter = 
+			m_secondaryInstProvs.find(key); 
+	if (iter != m_secondaryInstProvs.end())
+	{
+		rval = iter->second->getSecondaryInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	key = String("") + ":" + className; 
+	key.toLowerCase(); 
+	iter = m_secondaryInstProvs.find(key); 
+	if (iter != m_secondaryInstProvs.end())
+	{
+		rval = iter->second->getSecondaryInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	return rval; 
+}
+//////////////////////////////////////////////////////////////////////////////
+CppAssociatorProviderIFC* 
+ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns, 
+												const String& className) const
+{
+	CppAssociatorProviderIFC* rval = 0; 
+	String key = ns + ":" + className; 
+	key.toLowerCase(); 
+	Map<String, CppProviderBaseIFCRef>::const_iterator iter = 
+			m_assocProvs.find(key); 
+	if (iter != m_assocProvs.end())
+	{
+		rval = iter->second->getAssociatorProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	key = String("") + ":" + className; 
+	key.toLowerCase(); 
+	iter = m_assocProvs.find(key); 
+	if (iter != m_assocProvs.end())
+	{
+		rval = iter->second->getAssociatorProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	return rval; 
+}
+//////////////////////////////////////////////////////////////////////////////
+CppMethodProviderIFC* 
+ProviderAgentCIMOMHandle::getMethodProvider(const String& ns, 
+											const String& className, 
+											const String& methodName) const
+{
+	CppMethodProviderIFC* rval = 0; 
+	String key = ns + ":" + className + ":" + methodName; 
+	key.toLowerCase(); 
+	Map<String, CppProviderBaseIFCRef>::const_iterator iter = 
+			m_methodProvs.find(key); 
+	if (iter != m_methodProvs.end())
+	{
+		rval = iter->second->getMethodProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	key = String("") + ":" + className + ":" + methodName; 
+	key.toLowerCase(); 
+	iter = m_methodProvs.find(key); 
+	if (iter != m_methodProvs.end())
+	{
+		rval = iter->second->getMethodProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	return rval; 
+}
 
+//////////////////////////////////////////////////////////////////////////////
+CIMClass
+ProviderAgentCIMOMHandle::helperGetClass(const String& className) const
+{
+	CIMClass rval(CIMNULL); 
+	String lcn = className; 
+	lcn.toLowerCase(); 
+	Map<String, CIMClass>::const_iterator iter = m_cimClasses.find(lcn); 
+	if (iter != m_cimClasses.end())
+	{
+		rval = iter->second; 
+	}
+	return rval; 
+}
 
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 } // end namespace OpenWBEM
 

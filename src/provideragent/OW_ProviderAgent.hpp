@@ -70,10 +70,18 @@ public:
 	 * @param configMap The configuration parameters for the ProviderAgent
 	 *        and its embedded HTTP server.  This could possibly come from
 	 *        parsing a config file. 
-	 * @param provider A reference to the provider to be embedded in the 
-	 *        ProviderAgent.  This should be a CppInstanceProvider, 
+	 * @param providers An array of providers to be embedded in the 
+	 *        ProviderAgent.  These should be a CppInstanceProvider, 
 	 *        CppSecondaryInstanceProvider, CppMethodProvider, or
 	 *        CppAssociatorProvider, or a combination of these. 
+	 * @param classes An array of CIMClasses.  If the providers require
+	 *        CIMClasses to be passed into instance and associator calls, 
+	 *        the appropriate classes should be placed in this array. 
+	 *        The ProviderAgent will look up the appropriate class and 
+	 *        pass it to the provider method calls as needed.  NULL CIMClasses
+	 *        will be passed if the requested class is not found in the 
+	 *        array.  This is only a problem is the provider expects a 
+	 *        real class. 
 	 * @param requestHandlers An array of request handlers.  The appropriate
 	 *        one will be used for each client request depending on the 
 	 *        HTTP headers of the request.  You can just put a single
@@ -83,12 +91,19 @@ public:
 	 *        by the embedded HTTP server. 
 	 * @param logger A reference to a logger to be used by the ProviderAgent
 	 *        (and passed to the embedded Provider). 
+	 * @param callbackURL A URL to a CIMOM for providers to be able to make
+	 *        "upcalls" to the CIMOM.  If the CIMOM requires authentication, 
+	 *        the authentication credentials must be in the URL.  If no 
+	 *        callbackURL is provided, providers will be unable to callback
+	 *        to the CIMOM. 
 	 */
 	ProviderAgent(ConfigFile::ConfigMap configMap, 
-				  CppProviderBaseIFCRef provider, 
+				  Array<CppProviderBaseIFCRef> providers, 
+				  Array<CIMClass> classes, 
 				  Array<RequestHandlerIFCRef> requestHandlers, 
 				  Reference<AuthenticatorIFC> authenticator,
-				  LoggerRef logger = LoggerRef(0)); 
+				  LoggerRef logger = LoggerRef(0), 
+				  const String& callbackURL = String("")); 
 	~ProviderAgent();
 	/**
 	 * Shut down the http server embedded within the ProviderAgent. 

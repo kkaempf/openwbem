@@ -44,6 +44,8 @@
 #include "OW_Semaphore.hpp"
 #include "OW_XMLExecute.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppSecondaryInstanceProviderIFC.hpp"
+#include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMQualifier.hpp"
@@ -55,6 +57,12 @@
 #include "OW_SharedLibrary.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_CppProviderIFC.hpp"
+#include "OW_ClientAuthCBIFC.hpp"
+#include "OW_CIMProtocolIFC.hpp"
+#include "OW_HTTPClient.hpp"
+#include "OW_BinaryCIMOMHandle.hpp"
+#include "OW_CIMXMLCIMOMHandle.hpp"
+#include "OW_GetPass.hpp"
 #include <signal.h>
 #include <iostream> // for cout and cerr
 
@@ -63,10 +71,7 @@
 
 using namespace OpenWBEM;
 using namespace WBEMFlags;
-
-using std::cout;
-using std::endl;
-using std::cerr;
+using namespace std;
 
 class RPALogger : public Logger
 {
@@ -86,224 +91,6 @@ void sig_handler(int)
 	shutdownSem.signal();
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-struct TestInstanceData
-{
-	String name;
-	StringArray params;
-};
-
-static Array<TestInstanceData> g_saa;
-
-class TestInstance: public CppInstanceProviderIFC
-{
-public:
-	virtual ~TestInstance(){}
-
-	void getInstanceProviderInfo(InstanceProviderInfo& info)
-	{
-		info.addInstrumentedClass("TestInstance");
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-	void
-		enumInstanceNames(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
-		CIMObjectPathResultHandlerIFC& result,
-		const CIMClass& cimClass )
-	{
-		(void)env;
-		(void)cimClass;
-		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			CIMObjectPath instCop(className, ns);
-			instCop.setKeyValue("Name", CIMValue(iter->name));
-			result.handle(instCop);
-		}
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-	void
-		enumInstances(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
-		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
-		const CIMClass& requestedClass,
-		const CIMClass& cimClass )
-	{
-		(void)ns;
-		(void)className;
-		(void)env;
-
-		{
-			TestInstanceData tid; 
-			tid.name = "name"; 
-			tid.params.push_back("val1"); 
-			tid.params.push_back("val2"); 
-			g_saa.push_back(tid); 
-		}
-
-		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			//CIMInstance inst = cimClass.newInstance();
-			CIMInstance inst("TestInstance"); 
-			CIMQualifier cq(CIMQualifier::CIM_QUAL_KEY); 
-			cq.setValue(CIMValue(Bool(true))); 
-			CIMProperty prop("Name", CIMDataType::STRING); 
-			prop.addQualifier(cq); 
-			prop.setValue(CIMValue(iter->name)); 
-			inst.setProperty(prop); 
-			prop = CIMProperty("Params", CIMDataType::STRING); 
-			prop.setValue(CIMValue(iter->params)); 
-			inst.setProperty(prop); 
-			result.handle(inst); 
-			//result.handle(inst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
-		}
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-
-	CIMInstance
-		getInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMObjectPath& instanceName,
-		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
-		const CIMClass& cimClass )
-	{
-		(void)ns;
-		(void)env;
-		CIMInstance rval = cimClass.newInstance();
-		String name;
-		instanceName.getKeys()[0].getValue().get(name);
-		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			if (iter->name == name)
-			{
-				rval.setProperty("Name", CIMValue(name));
-				rval.setProperty("Params", CIMValue(iter->params));
-				break;
-			}
-		}
-		return rval.clone(localOnly, includeQualifiers, includeClassOrigin, 
-			propertyList);
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-	CIMObjectPath
-		createInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMInstance& cimInstance )
-	{
-
-		(void)env;
-		(void)ns;
-		String name;
-		StringArray params;
-		cimInstance.getProperty("Name").getValue().get(name);
-
-		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			if (iter->name == name)
-			{
-				OW_THROWCIM(CIMException::ALREADY_EXISTS);
-				break;
-			}
-		}
-
-		cimInstance.getProperty("Params").getValue().get(params);
-		TestInstanceData newInst;
-		newInst.name = name;
-		newInst.params = params;
-		g_saa.push_back(newInst);
-		return CIMObjectPath(ns, cimInstance);
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-	void
-		modifyInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMInstance& modifiedInstance,
-		const CIMInstance& previousInstance,
-		EIncludeQualifiersFlag includeQualifiers,
-		const StringArray* propertyList,
-		const CIMClass& theClass)
-	{
-		env->getLogger()->logDebug("TestInstance::modifyInstance");
-		(void)ns;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
-		String name;
-		StringArray params;
-		modifiedInstance.getProperty("Name").getValue().get(name);
-		modifiedInstance.getProperty("Params").getValue().get(params);
-
-		for (Array<TestInstanceData>::iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			if (iter->name == name)
-			{
-				iter->params = params;
-				return;
-			}
-		}
-		// new instance
-		TestInstanceData newInst;
-		newInst.name = name;
-		newInst.params = params;
-		g_saa.push_back(newInst);
-	}
-
-//////////////////////////////////////////////////////////////////////////////
-	void
-		deleteInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMObjectPath& cop)
-	{
-		(void)env;
-		(void)ns;
-		String name;
-		cop.getKeys()[0].getValue().get(name);
-		for (Array<TestInstanceData>::iterator iter = g_saa.begin();
-			iter != g_saa.end(); iter++)
-		{
-			if (iter->name == name)
-			{
-				g_saa.erase(iter);
-				break;
-			}
-		}
-	}
-
-
-};
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 // TODO stole this stuff from OW_CppProviderIFC.cpp. 
 // need to stick them in a common header. 
@@ -375,17 +162,62 @@ getProvider(const String& libName, LoggerRef logger)
 	return rval;
 }
 
+
+
+class GetLoginInfo : public ClientAuthCBIFC
+{
+	public:
+		bool getCredentials(const String& realm, String& name,
+				String& passwd, const String& details)
+		{
+			(void)details;
+			cout << "Authentication required for " << realm << endl;
+			cout << "Enter the user name: ";
+			name = String::getLine(cin);
+			passwd = GetPass::getPass("Enter the password for " +
+				name + ": ");
+			return true;
+		}
+};
+
+
 int main(int argc, char* argv[])
 {
-	if (argc != 2)
+	if (argc < 3)
 	{
-		cerr << "Usage: " << argv[0] << " <provider_lib>" << endl;
+		cerr << "Usage: " << argv[0] << " <url_to_cimom> <provider_lib> ..." << endl;
 		return 1;
 	}
 	try
 	{
 		signal(SIGINT, sig_handler);
-		String libName(argv[1]);
+		String url(argv[1]);
+		URL owurl(url);
+
+#ifdef OW_HAVE_OPENSSL
+		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
+#endif
+		CIMProtocolIFCRef client(new HTTPClient(url));
+
+
+		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+
+		client->setLoginCallBack(getLoginInfo);
+
+		CIMOMHandleIFCRef chRef;
+		if (owurl.namespaceName.equalsIgnoreCase("/owbinary"))
+		//cout << "owurl.path = " << owurl.path << endl;
+		//if (owurl.path.equalsIgnoreCase("/binary"))
+		{
+			chRef = new BinaryCIMOMHandle(client);
+		}
+		else
+		{
+			chRef = new CIMXMLCIMOMHandle(client);
+		}
+
+		CIMOMHandleIFC& rch = *chRef;
+
 		LoggerRef logger(new RPALogger);
 
 
@@ -404,20 +236,95 @@ int main(int argc, char* argv[])
 		Array<RequestHandlerIFCRef> rha; 
 		rha.push_back(rh); 
 		//CppProviderBaseIFCRef provider(new TestInstance); 
-		CppProviderBaseIFCRef provider = getProvider(libName, logger); 
 
-		if (!provider->getInstanceProvider() 
-			&& !provider->getSecondaryInstanceProvider()
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			&& !provider->getAssociatorProvider()
-#endif
-			&& !provider->getMethodProvider())
+
+		Array<CppProviderBaseIFCRef> pra; 
+		for (int i = 2; i < argc; ++i)
 		{
-			cerr << "Error: Provider " << libName << " is not a supported type" << endl;
-			return 1; 
+			String libName(argv[i]); 
+			CppProviderBaseIFCRef provider = getProvider(libName, logger); 
+			if (!provider->getInstanceProvider() 
+				&& !provider->getSecondaryInstanceProvider()
+	#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+				&& !provider->getAssociatorProvider()
+	#endif
+				&& !provider->getMethodProvider())
+			{
+				cerr << "Error: Provider " << libName << " is not a supported type" << endl;
+				return 1; 
+			}
+			pra.push_back(provider); 
 		}
 
-		ProviderAgent pa(cmap, provider, rha, authenticator, logger);
+		CIMClassArray cra; 
+
+		for (Array<CppProviderBaseIFCRef>::const_iterator iter = pra.begin(); 
+			  iter < pra.end(); ++iter)
+		{
+			CppInstanceProviderIFC* instProv = (*iter)->getInstanceProvider(); 
+			CppSecondaryInstanceProviderIFC* secInstProv = (*iter)->getSecondaryInstanceProvider(); 
+			CppAssociatorProviderIFC* assocProv = (*iter)->getAssociatorProvider(); 
+			// MethodProviders don't require the class
+			if (instProv)
+			{
+				InstanceProviderInfo info; 
+				instProv->getInstanceProviderInfo(info); 
+				InstanceProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
+				for (InstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+					  citer < cia.end(); ++citer)
+				{
+					String className = citer->className; 
+					StringArray nss = citer->namespaces; 
+					String ns = "root/cimv2"; 
+					if (nss.size() > 0)
+					{
+						ns = nss[0]; 
+					}
+					CIMClass cc = rch.getClass(ns,className); 
+					cra.push_back(cc); 
+				}
+			}
+			if (secInstProv)
+			{
+				SecondaryInstanceProviderInfo info; 
+				secInstProv->getSecondaryInstanceProviderInfo(info); 
+				SecondaryInstanceProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
+				for (SecondaryInstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+					  citer < cia.end(); ++citer)
+				{
+					String className = citer->className; 
+					StringArray nss = citer->namespaces; 
+					String ns = "root/cimv2"; 
+					if (nss.size() > 0)
+					{
+						ns = nss[0]; 
+					}
+					CIMClass cc = rch.getClass(ns,className); 
+					cra.push_back(cc); 
+				}
+			}
+			if (assocProv)
+			{
+				AssociatorProviderInfo info; 
+				assocProv->getAssociatorProviderInfo(info); 
+				AssociatorProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
+				for (AssociatorProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+					  citer < cia.end(); ++citer)
+				{
+					String className = citer->className; 
+					StringArray nss = citer->namespaces; 
+					String ns = "root/cimv2"; 
+					if (nss.size() > 0)
+					{
+						ns = nss[0]; 
+					}
+					CIMClass cc = rch.getClass(ns,className); 
+					cra.push_back(cc); 
+				}
+			}
+		}
+
+		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
 		// wait until we get a SIGINT
 		shutdownSem.wait();
 		cout << "Shutting down." << endl;

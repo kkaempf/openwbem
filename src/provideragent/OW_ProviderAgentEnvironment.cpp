@@ -38,7 +38,14 @@
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_ProviderAgentProviderEnvironment.hpp"
 #include "OW_ProviderAgentCIMOMHandle.hpp"
+#include "OW_ProviderAgent.hpp"
+#include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_CppSecondaryInstanceProviderIFC.hpp"
+#include "OW_CppMethodProviderIFC.hpp"
+#include "OW_CppAssociatorProviderIFC.hpp"
+#include "OW_MethodProviderInfo.hpp"
 #include "OW_RequestHandlerIFC.hpp"
+#include "OW_ConfigException.hpp"
 #include "OW_Assertion.hpp"
 
 #include <algorithm> // for std::find
@@ -48,18 +55,180 @@ namespace OpenWBEM
 
 
 ProviderAgentEnvironment::ProviderAgentEnvironment(Map<String,String> configMap,
-		CppProviderBaseIFCRef provider, 
+		Array<CppProviderBaseIFCRef> providers, 
+		Array<CIMClass> cimClasses, 
 		Reference<AuthenticatorIFC> authenticator,
 		Array<RequestHandlerIFCRef> requestHandlers, 
 		LoggerRef logger,
+		const String& callbackURL, 
 		Reference<Array<SelectablePair_t> > selectables)
 	: m_authenticator(authenticator)
 	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
+	, m_callbackURL(callbackURL)
 	, m_requestHandlers(requestHandlers)
 	, m_selectables(selectables)
-	, m_prov(provider)
+	, m_instProvs()
+	, m_secondaryInstProvs()
+	, m_assocProvs()
+	, m_methodProvs()
+	, m_cimClasses()
 	, m_configItems(configMap)
+	, m_lockingType(ProviderAgentCIMOMHandle::NONE)
+	, m_lockingTimeout(300)
 {
+	for (Array<CIMClass>::const_iterator iter = cimClasses.begin(); 
+		  iter < cimClasses.end(); ++iter)
+	{
+		String key = iter->getName(); 
+		key.toLowerCase(); 
+		m_cimClasses[key] = *iter; 
+	}
+
+	for (Array<CppProviderBaseIFCRef>::const_iterator iter = providers.begin(); 
+		  iter < providers.end(); ++iter)
+	{
+		CppProviderBaseIFCRef prov = *iter; 
+
+		OperationContext oc; 
+		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
+																		  m_configItems, 
+																		  oc, 
+																		  m_callbackURL)); 
+		prov->initialize(pe); 
+		CppMethodProviderIFC* methodProv = prov->getMethodProvider(); 
+		if (methodProv)
+		{
+			MethodProviderInfo info; 
+			methodProv->getMethodProviderInfo(info); 
+			MethodProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
+			for (MethodProviderInfo::ClassInfoArray::const_iterator citer  = cia.begin(); 
+				  citer < cia.end(); ++citer)
+			{
+				const MethodProviderInfo::ClassInfo& ci = *citer; 
+				String className = ci.className; 
+				StringArray namespaces = ci.namespaces; 
+				StringArray methods = ci.methods; 
+				if (namespaces.size() == 0)
+				{
+					namespaces.push_back(""); 
+				}
+				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+					  nsiter < namespaces.end(); ++nsiter)
+				{
+					for (StringArray::const_iterator miter = methods.begin(); 
+						  miter < methods.end(); ++miter)
+					{
+						String key = *nsiter + ":" + className + ":" + *miter; 
+						key.toLowerCase(); 
+						m_methodProvs[key] = *iter; 
+					}
+				}
+			}
+		}
+		CppAssociatorProviderIFC* assocProv = prov->getAssociatorProvider(); 
+		if (assocProv)
+		{
+			AssociatorProviderInfo api;  
+			assocProv->getAssociatorProviderInfo(api); 
+			AssociatorProviderInfo::ClassInfoArray cia = api.getClassInfo(); 
+			for (AssociatorProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+				  citer < cia.end(); ++citer)
+			{
+				const AssociatorProviderInfo::ClassInfo& ci = *citer; 
+				String className = ci.className; 
+				StringArray namespaces = ci.namespaces; 
+				if (namespaces.size() == 0)
+				{
+					namespaces.push_back(String("")); 
+				}
+				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+					  nsiter < namespaces.end(); ++nsiter)
+				{
+					String key = *nsiter + ":" + className; 
+					key.toLowerCase(); 
+					m_assocProvs[key] = *iter; 
+				}
+			}
+		}
+		CppInstanceProviderIFC* instProv = prov->getInstanceProvider(); 
+		if (instProv)
+		{
+			InstanceProviderInfo ipi;  
+			instProv->getInstanceProviderInfo(ipi); 
+			InstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo(); 
+			for (InstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+				  citer < cia.end(); ++citer)
+			{
+				const InstanceProviderInfo::ClassInfo& ci = *citer; 
+				String className = ci.className; 
+				StringArray namespaces = ci.namespaces; 
+				if (namespaces.size() == 0)
+				{
+					namespaces.push_back(String("")); 
+				}
+				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+					  nsiter < namespaces.end(); ++nsiter)
+				{
+					String key = *nsiter + ":" + className; 
+					key.toLowerCase(); 
+					m_instProvs[key] = *iter; 
+				}
+			}
+		}
+		CppSecondaryInstanceProviderIFC* secInstProv = prov->getSecondaryInstanceProvider(); 
+		if (secInstProv)
+		{
+			SecondaryInstanceProviderInfo ipi;  
+			secInstProv->getSecondaryInstanceProviderInfo(ipi); 
+			SecondaryInstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo(); 
+			for (SecondaryInstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+				  citer < cia.end(); ++citer)
+			{
+				const SecondaryInstanceProviderInfo::ClassInfo& ci = *citer; 
+				String className = ci.className; 
+				StringArray namespaces = ci.namespaces; 
+				if (namespaces.size() == 0)
+				{
+					namespaces.push_back(String("")); 
+				}
+				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+					  nsiter < namespaces.end(); ++nsiter)
+				{
+					String key = *nsiter + ":" + className; 
+					key.toLowerCase(); 
+					m_secondaryInstProvs[key] = *iter; 
+				}
+			}
+		}
+	}
+
+	String confItem = getConfigItem(ProviderAgent::LockingType_opt, "none"); 
+	confItem.toLowerCase(); 
+	if (confItem == "none")
+	{
+		m_lockingType = ProviderAgentCIMOMHandle::NONE; 
+	}
+	else if (confItem == "swmr")
+	{
+		m_lockingType = ProviderAgentCIMOMHandle::SWMR; 
+	}
+	else if (confItem == "single_threaded")
+	{
+		m_lockingType = ProviderAgentCIMOMHandle::SINGLE_THREADED;  
+	}
+	else
+	{
+		OW_THROW(ConfigException, "unknown locking type"); 
+	}
+	confItem = getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
+	try
+	{
+		m_lockingTimeout = confItem.toUInt32(); 
+	}
+	catch (StringConversionException&)
+	{
+		OW_THROW(ConfigException, "invalid locking timeout"); 
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -129,12 +298,22 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef 
-ProviderAgentEnvironment::getCIMOMHandle(OperationContext&,
+ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/)
 {
-	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, m_configItems)); 
-	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(m_prov, pe)); 
+	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, 
+																	  m_configItems, 
+																	  context, 
+																	  m_callbackURL)); 
+	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(m_assocProvs, 
+														  m_instProvs, 
+														  m_secondaryInstProvs, 
+														  m_methodProvs, 
+														  m_cimClasses, 
+														  pe, 
+														  m_lockingType, 
+														  m_lockingTimeout)); 
 }
 //////////////////////////////////////////////////////////////////////////////
 LoggerRef 

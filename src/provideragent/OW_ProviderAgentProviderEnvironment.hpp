@@ -48,7 +48,9 @@ class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
 	ProviderAgentProviderEnvironment(LoggerRef logger, 
-									 ConfigFile::ConfigMap configMap); 
+									 ConfigFile::ConfigMap configMap,
+									 OperationContext& operationContext, 
+									 const String& callbackURL); 
 		// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const; 
 	virtual String getConfigItem(const String &name, const String &defRetVal="") const; 
@@ -65,6 +67,8 @@ public:
 private: 
 	LoggerRef m_logger; 
 	ConfigFile::ConfigMap m_configMap; 
+	OperationContext& m_operationContext; 
+	String m_callbackURL; 
 };
 
 } // end namespace OpenWBEM
