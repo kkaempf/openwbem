@@ -71,9 +71,12 @@ PerlProviderIFC::~PerlProviderIFC()
 	{
 		ProviderMap::iterator it = m_provs.begin();
 		//Reference<Perlenv> npiHandle(); // TODO: createEnv(...);
+
 		while(it != m_provs.end())
 		{
-			it->second->fp_cleanup(0); // TODO: FIX this. m_npiHandle);
+			::NPIHandle _npiHandle = { 0, 0, 0, 0,
+				it->second->npicontext};
+			it->second->fp_cleanup(&_npiHandle);
 			it->second.setNull();
 			it++;
 		}
@@ -82,7 +85,9 @@ PerlProviderIFC::~PerlProviderIFC()
 	
 		for(size_t i = 0; i < m_noidProviders.size(); i++)
 		{
-			m_noidProviders[i]->fp_cleanup(0);
+			::NPIHandle _npiHandle = { 0, 0, 0, 0,
+				 m_noidProviders[i]->npicontext};
+			m_noidProviders[i]->fp_cleanup(&_npiHandle);
 			m_noidProviders[i].setNull();
 		}
 	
