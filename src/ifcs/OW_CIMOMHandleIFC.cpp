@@ -102,6 +102,19 @@ namespace
 	private:
 		OW_CIMObjectPathEnumeration& m_e;
 	};
+
+	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			m_e.addElement(i);
+		}
+	private:
+		OW_CIMInstanceEnumeration& m_e;
+	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -137,4 +150,20 @@ OW_CIMOMHandleIFC::enumClassNamesE(const OW_CIMObjectPath& path, OW_Bool deep)
 	return rval;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceEnumeration
+OW_CIMOMHandleIFC::enumInstancesE(
+		const OW_CIMObjectPath& path,
+		OW_Bool deep,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumBuilder handler(rval);
+	enumInstances(path,handler,deep,localOnly,includeQualifiers,
+		includeClassOrigin,propertyList);
+	return rval;
+}
 

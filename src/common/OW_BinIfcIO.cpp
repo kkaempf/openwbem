@@ -431,6 +431,28 @@ OW_BinIfcIO::readInstanceEnum(std::istream& istrm)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
+void
+OW_BinIfcIO::readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
+{
+	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_INSTENUM);
+	bool done = false;
+	while (!done)
+	{
+		try
+		{
+			result.handleInstance(OW_BinIfcIO::readInstance(istrm));
+		}
+		catch (const OW_BadCIMSignatureException& e)
+		{
+			// OW_CIMInstance::readObject threw because we've read all the instances
+			OW_BinIfcIO::verifySignature(istrm, OW_END_INSTENUM);
+			done = true;
+		}
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
 OW_CIMQualifierTypeEnumeration
 OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm)
 {

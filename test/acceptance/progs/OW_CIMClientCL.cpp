@@ -452,7 +452,7 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_Bool deep, OW_Bool localOnly,
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
-		OW_CIMInstanceEnumeration enu = hdl.enumInstances(cop, deep, localOnly,
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(cop, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 
 		while (enu.hasMoreElements())

@@ -95,9 +95,10 @@ namespace
 		}
 
 		/////////////////////////////////////////////////////////////////////////
-		virtual OW_CIMInstanceEnumeration enumInstances(
+		virtual void enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass,
 			const OW_Bool& localOnly )
@@ -106,10 +107,8 @@ namespace
 			(void)env;
 			(void)localOnly;
 			(void)deep;
-			OW_CIMInstanceEnumeration rval;
 			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
-			rval.addElement(inst);
-			return rval;
+			result.handleInstance(inst);
 		}
 
 		/////////////////////////////////////////////////////////////////////////

@@ -33,6 +33,8 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 
+// TODO: inline all these pass-thru functions.										
+										
 //////////////////////////////////////////////////////////////////////////////		
 OW_AssociatorProviderProxy::OW_AssociatorProviderProxy(
 	OW_CppAssociatorProviderIFCRef pProv) :
@@ -115,7 +117,7 @@ OW_InstanceProviderProxy::deleteInstance(
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPathEnumeration
-OW_InstanceProviderProxy::enumInstances(
+OW_InstanceProviderProxy::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_Bool& deep,
@@ -125,15 +127,16 @@ OW_InstanceProviderProxy::enumInstances(
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMInstanceEnumeration
+void
 OW_InstanceProviderProxy::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly)
 {
-	return m_pProv->enumInstances(env, cop, deep, cimClass, localOnly);
+	m_pProv->enumInstances(env, cop, result, deep, cimClass, localOnly);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

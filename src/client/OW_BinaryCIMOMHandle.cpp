@@ -50,7 +50,7 @@ using std::ostream;
 using std::iostream;
 using std::istream;
 
-static void
+static inline void
 checkError(std::istream& istrm)
 {
 	OW_Int32 rc;
@@ -80,7 +80,7 @@ checkError(std::istream& istrm)
 	}
 }
 
-static void
+static inline void
 checkError(OW_CIMProtocolIStreamIFCRef istr)
 {
 	try
@@ -105,55 +105,61 @@ checkError(OW_CIMProtocolIStreamIFCRef istr)
 
 
 
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClass& cc)
 {
 	cc = OW_BinIfcIO::readClass(*istr);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassResultHandlerIFC& result)
 {
 	OW_BinIfcIO::readClassEnum(*istr, result);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstance& ci)
 {
 	ci = OW_BinIfcIO::readInstance(*istr);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 {
 	cop = OW_BinIfcIO::readObjectPath(*istr);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& enu)
 {
 	// TODO: remove me
 	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathResultHandlerIFC& result)
 {
 	OW_BinIfcIO::readObjectPathEnum(*istr, result);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
 {
+	// TODO: remove me
 	arg = OW_BinIfcIO::readInstanceEnum(*istr);
 }
-static void
+static inline void
+readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceResultHandlerIFC& result)
+{
+	OW_BinIfcIO::readInstanceEnum(*istr, result);
+}
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierType& arg)
 {
 	arg = OW_BinIfcIO::readQual(*istr);
 }
-static void
+static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readQualifierTypeEnum(*istr);
 }
 
 template<class T>
-static T
+static inline T
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 {
 	T rval;
@@ -182,13 +188,12 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 }
 
 template<class T>
-static void
+static inline void
 readAndDeliver(OW_CIMProtocolIStreamIFCRef& istr, T& result)
 {
 	try
 	{
 		checkError(istr);
-		//OW_BinIfcIO::readClassEnum(*istr, result);
 		readCIMObject(istr,result);
 	}
 	catch (OW_IOException& e)
@@ -211,125 +216,9 @@ readAndDeliver(OW_CIMProtocolIStreamIFCRef& istr, T& result)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
-: OW_CIMOMHandleIFC(), m_protocol(prot)
+: OW_ClientCIMOMHandle(), m_protocol(prot)
 {
 	m_protocol->setContentType("application/x-owbinary");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::createNameSpace(const OW_CIMNameSpace& ns)
-{
-	OW_String nameSpace = ns.getNameSpace();
-	int index = nameSpace.lastIndexOf('/');
-
-	if(index==-1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			"A Namespace must only be created in an existing Namespace");
-	}
-
-	OW_String parentPath = nameSpace.substring(0, index);
-	OW_String newNameSpace = nameSpace.substring(index + 1);
-	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, parentPath);
-
-	OW_CIMClass cimClass = getClass(path, false);
-	if(!cimClass)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Could not find internal class %1",
-				OW_CIMClass::NAMESPACECLASS).c_str());
-	}
-
-	OW_CIMInstance cimInstance = cimClass.newInstance();
-	OW_CIMValue cv(newNameSpace);
-	cimInstance.setProperty("Name", cv);
-
-	OW_CIMObjectPath cimPath(OW_CIMClass::NAMESPACECLASS,
-		cimInstance.getKeyValuePairs());
-
-	cimPath.setNameSpace(parentPath);
-	createInstance(cimPath, cimInstance);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::deleteNameSpace(const OW_CIMNameSpace& ns)
-{
-	OW_String parentPath;
-	OW_String nameSpace = ns.getNameSpace();
-	int index = nameSpace.lastIndexOf('/');
-
-	if(index == -1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			"A Namespace must only be created in an existing Namespace");
-	}
-
-	parentPath = nameSpace.substring(0,index);
-	OW_String newNameSpace = nameSpace.substring(index + 1);
-
-	OW_CIMPropertyArray v;
-	OW_CIMValue cv(newNameSpace);
-	OW_CIMProperty cp("Name", cv);
-	cp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
-	v.push_back(cp);
-
-	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);
-	path.setNameSpace(parentPath);
-	deleteInstance(path);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
-	OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	OW_CIMInstanceEnumeration e = enumInstances(path, deep);
-	while(e.hasMoreElements())
-	{
-		OW_CIMProperty nameProp;
-
-		OW_CIMPropertyArray keys = e.nextElement().getKeyValuePairs();
-		if(keys.size() == 1)
-		{
-			nameProp = keys[0];
-		}
-		else
-		{
-			for(size_t i = 0; i < keys.size(); i++)
-			{
-				if(keys[i].getName().equalsIgnoreCase("Name"))
-				{
-					nameProp = keys[i];
-					break;
-				}
-			}
-
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"Name of namespace not found");
-		}
-
-		OW_String tmp;
-		nameProp.getValue().get(tmp);
-		result.handleString(path.getNameSpace() + "/" + tmp);
-		if(deep)
-		{
-			OW_CIMObjectPath newObjPath(OW_CIMClass::NAMESPACECLASS,
-				path.getNameSpace()+ "/" + tmp);
-			enumNameSpaceAux(newObjPath, result, deep);
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns,
-	OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns.getNameSpace());
-	result.handleString(ns.getNameSpace());
-	enumNameSpaceAux(cop, result, deep);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -427,8 +316,9 @@ OW_BinaryCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
@@ -449,7 +339,7 @@ OW_BinaryCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	}
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateInstances", path.getNameSpace());
-	return readCIMObject<OW_CIMInstanceEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

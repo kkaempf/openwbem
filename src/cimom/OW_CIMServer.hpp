@@ -331,8 +331,10 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMInstanceEnumeration enumInstances(
-		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
+	virtual void enumInstances(
+		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
 
@@ -610,7 +612,7 @@ private:
 	 * instance provider.
 	 */
 	OW_Bool _getCIMInstances(const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass, OW_CIMInstanceEnumeration& en,
+		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
@@ -631,10 +633,12 @@ private:
 		OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
 
+public:
 	void _getProviderProperties(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
 
+private:
 	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
 	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_CIMObjectPath& path);
 

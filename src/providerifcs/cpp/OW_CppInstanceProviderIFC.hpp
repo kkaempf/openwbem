@@ -88,9 +88,10 @@ public:
 	 *
 	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
 	 */
-	virtual OW_CIMInstanceEnumeration enumInstances(
+	virtual void enumInstances(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass,
 			const OW_Bool& localOnly ) = 0;

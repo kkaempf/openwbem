@@ -87,6 +87,22 @@ OW_NameSpaceProvider::deleteInstance(
 	env->getCIMOMHandle()->deleteNameSpace(ns);
 }
 
+namespace
+{
+	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			m_e.addElement(i);
+		}
+	private:
+		OW_CIMInstanceEnumeration& m_e;
+	};
+}
+
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_NameSpaceProvider::enumInstanceNames(
@@ -97,7 +113,11 @@ OW_NameSpaceProvider::enumInstanceNames(
 {
 	OW_String className = cimClass.getName();
 	OW_CIMObjectPathEnumeration openum;
-	OW_CIMInstanceEnumeration ienum = enumInstances(env, cop, deep, cimClass, false);
+
+
+	OW_CIMInstanceEnumeration ienum;
+	CIMInstanceEnumBuilder handler(ienum);
+	enumInstances(env, cop, handler, deep, cimClass, false);
 
 	while(ienum.hasMoreElements())
 	{
@@ -114,9 +134,9 @@ namespace
 	class NameSpaceEnumBuilder : public OW_StringResultHandlerIFC
 	{
 	public:
-		NameSpaceEnumBuilder(OW_CIMInstanceEnumeration& cienum_,
+		NameSpaceEnumBuilder(OW_CIMInstanceResultHandlerIFC& handler_,
 			const OW_CIMClass& cimClass_)
-		: cienum(cienum_)
+		: handler(handler_)
 		, cimClass(cimClass_)
 		{}
 	protected:
@@ -131,28 +151,26 @@ namespace
 
 			OW_CIMInstance ci = cimClass.newInstance();
 			ci.setProperty("Name", OW_CIMValue(nameSpaceName));
-			cienum.addElement(ci);
+			handler.handleInstance(ci);
 		}
 	private:
-		OW_CIMInstanceEnumeration& cienum;
+		OW_CIMInstanceResultHandlerIFC& handler;
 		const OW_CIMClass& cimClass;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_NameSpaceProvider::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& /*deep*/,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& /*localOnly*/)
 {
-	OW_CIMInstanceEnumeration cienum;
-	NameSpaceEnumBuilder handler(cienum, cimClass);
+	NameSpaceEnumBuilder handler(result, cimClass);
 	env->getCIMOMHandle()->enumNameSpace(
 		cop.getFullNameSpace(), handler, false);
-
-	return cienum;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -172,7 +190,9 @@ OW_NameSpaceProvider::getInstance(
 
 	if (nsVal && nsVal.getType() == OW_CIMDataType::STRING)
 	{
-		OW_CIMInstanceEnumeration cie = enumInstances(env,cop,false,cimClass,false);
+		OW_CIMInstanceEnumeration cie;
+		CIMInstanceEnumBuilder handler(cie);
+		enumInstances(env,cop,handler,false,cimClass,false);
 		
 		while (cie.hasMoreElements())
 		{

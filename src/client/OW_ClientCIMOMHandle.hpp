@@ -28,57 +28,22 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_NAMESPACEPROVIDER_HPP_
-#define OW_NAMESPACEPROVIDER_HPP_
+#ifndef OW_CLIENTCIMOMHANDLE_HPP_
+#define OW_CLIENTCIMOMHANDLE_HPP_
 
-#include "OW_config.h"
-#include "OW_CppInstanceProviderIFC.hpp"
+#include "OW_config.h"										
+#include "OW_CIMOMHandleIFC.hpp"
 
-class OW_NameSpaceProvider : public OW_CppInstanceProviderIFC
+// This class is mean to hold common functionality in the client-side CIMOM
+// handles	
+class OW_ClientCIMOMHandle : public OW_CIMOMHandleIFC
 {
 public:
-	OW_NameSpaceProvider() :
-		OW_CppInstanceProviderIFC() {}
-	~OW_NameSpaceProvider();
-
-	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop);
-
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass);
-
-	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_Bool& deep,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly);
-
-	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMClass& cimClass,
-			const OW_Bool& localOnly);
-
-	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance);
-
-	virtual void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
-			const OW_CIMInstance& cimInstance);
-
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
-			);
-	virtual void cleanup();
+	virtual void createNameSpace(const OW_CIMNameSpace &ns);
+	virtual void deleteNameSpace(const OW_CIMNameSpace &ns);
+	virtual void enumNameSpace(const OW_CIMNameSpace &ns,
+		OW_StringResultHandlerIFC &result, OW_Bool deep);
 };
 
 #endif
-
+	

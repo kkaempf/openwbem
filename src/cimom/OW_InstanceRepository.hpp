@@ -50,7 +50,7 @@ public:
 		: OW_GenericHDBRepository(env) {}
 
 	void getCIMInstances(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
-		OW_CIMInstanceEnumeration& en, OW_Bool localOnly=false,
+		OW_CIMInstanceResultHandlerIFC& result, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true,
 		const OW_StringArray* propertyList=NULL, OW_CIMServer* pServer = NULL,
 		const OW_ACLInfo* pACLInfo=NULL);
@@ -60,7 +60,7 @@ public:
 
 	/**
 	 * Retrieve a specific instance
-	 * 
+	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param theClass The CIM class of the instance to retrieve
 	 * @return An OW_CIMInstance object
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Delete an existing instance from the store
-	 * 
+	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param theClass The CIM class of the instance to delete
 	 * @exception OW_HDBException
@@ -85,7 +85,7 @@ public:
 
 	/**
 	 * Creates a instance in the store
-	 * 
+	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param ci The instance that is to be stored with that object path
 	 * @return The object path of the newly added CIMInstance.  This will be
@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * Update an instance
-	 * 
+	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param theClass The class the cim instance belongs to.
 	 * @param ci	The instance with the new values
@@ -112,7 +112,7 @@ public:
 
 	/**
 	 * Determines if an instance already exists
-	 * 
+	 *
 	 * @param cop	The OW_CIMObectPath that specifies the instance
 	 * @param theClass The CIM class the instance belongs to
 	 * @exception OW_HDBException
@@ -143,7 +143,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const OW_StringArray& nameComps, 
+	virtual int createNameSpace(const OW_StringArray& nameComps,
 		OW_Bool rootCheck);
 
 	/**

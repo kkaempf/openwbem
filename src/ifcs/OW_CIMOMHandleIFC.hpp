@@ -256,13 +256,22 @@ public:
 	 * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
-	virtual OW_CIMInstanceEnumeration enumInstances(
+	virtual void enumInstances(
 		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep = DEEP,
 		OW_Bool localOnly = NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin = EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) = 0;
+
+	virtual OW_CIMInstanceEnumeration enumInstancesE(
+		const OW_CIMObjectPath& path,
+		OW_Bool deep = DEEP,
+		OW_Bool localOnly = NOT_LOCAL_ONLY,
+		OW_Bool includeQualifiers = EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin = EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
 
 	/**
 	 * Returns all instance names belonging to the class specified in the path.

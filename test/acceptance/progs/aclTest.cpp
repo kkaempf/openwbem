@@ -286,7 +286,7 @@ void enumerateInstances(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
 		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		OW_CIMInstanceEnumeration enu = hdl.enumInstances(cop, true);
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(cop, true);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

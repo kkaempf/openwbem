@@ -103,7 +103,7 @@ namespace
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
 			// Just assume that all other instances of the other class are associated!
-			return hdl->enumInstances(classOne, true);
+			return hdl->enumInstancesE(classOne, true);
 
 		}
 
@@ -137,7 +137,7 @@ namespace
 			}
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
-			OW_CIMInstanceEnumeration instances = hdl->enumInstances(classOne, true, false);
+			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(classOne, true, false);
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
@@ -177,7 +177,7 @@ namespace
 				return retval;
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstances(classOne, true);
+			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(classOne, true);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
@@ -220,7 +220,7 @@ namespace
 				return retval;
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstances(classOne, true, false);
+			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(classOne, true, false);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())

@@ -61,7 +61,7 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
-: OW_CIMOMHandleIFC(), m_protocol(prot)
+: OW_ClientCIMOMHandle(), m_protocol(prot)
 {
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
@@ -299,122 +299,6 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_XMLNode reply,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::createNameSpace(const OW_CIMNameSpace& ns)
-{
-	OW_String nameSpace = ns.getNameSpace();
-	int index = nameSpace.lastIndexOf('/');
-
-	if (index==-1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-							"A Namespace must only be created in an existing Namespace");
-	}
-
-	OW_String parentPath = nameSpace.substring(0,index);
-
-	OW_String newNameSpace = nameSpace.substring(index + 1);
-
-	OW_CIMObjectPath path("__Namespace", parentPath);
-
-	OW_CIMClass cimClass = getClass(path,false);
-	if (!cimClass)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-							"Could not find internal class __Namespace");
-	}
-	OW_CIMInstance cimInstance = cimClass.newInstance();
-	OW_CIMValue cv(newNameSpace);
-	cimInstance.setProperty("Name",cv);
-
-	OW_CIMObjectPath cimPath("__Namespace", cimInstance.getKeyValuePairs());
-	cimPath.setNameSpace(parentPath);
-
-	createInstance(cimPath,cimInstance) ;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::deleteNameSpace(const OW_CIMNameSpace& ns)
-{
-	OW_String parentPath;
-	OW_String nameSpace = ns.getNameSpace();
-	int index = nameSpace.lastIndexOf('/');
-
-	if (index==-1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-							"A Namespace must only be created in an existing Namespace");
-	}
-
-	parentPath = nameSpace.substring(0,index);
-	OW_String newNameSpace = nameSpace.substring(index + 1);
-
-
-	OW_CIMPropertyArray v;
-	OW_CIMValue cv(newNameSpace);
-	OW_CIMProperty cp("Name", cv);
-	cp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
-	v.push_back(cp);
-
-	OW_CIMObjectPath path("__Namespace",v);
-	path.setNameSpace(parentPath);
-	deleteInstance(path);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
-	OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	OW_CIMInstanceEnumeration e = enumInstances(path, deep);
-
-	while (e.hasMoreElements())
-	{
-		OW_CIMProperty nameProp;
-
-		OW_CIMInstance ci = e.nextElement();
-		OW_CIMPropertyArray keys = ci.getKeyValuePairs();
-		if (keys.size()==1)
-		{
-			nameProp = keys[0];
-		}
-		else
-		{
-			for (size_t i=0; i < keys.size(); i++)
-			{
-				if (keys[i].getName().equalsIgnoreCase("Name"))
-				{
-					nameProp = keys[i];
-					break;
-				}
-			}
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"Server error: No keys found in namespace instance");
-		}
-		OW_String tmp;
-		nameProp.getValue().get(tmp);
-		result.handleString(path.getNameSpace() + "/" + tmp);
-		if (deep)
-		{
-			OW_CIMObjectPath newObjPath("__Namespace",
-												 path.getNameSpace()+ "/" + tmp);
-			enumNameSpaceAux(newObjPath, result, deep);
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& path,
-		OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	OW_CIMObjectPath cop("__Namespace", path.getNameSpace());
-	result.handleString(path.getNameSpace());
-	enumNameSpaceAux(cop, result, deep);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_CIMXMLCIMOMHandle::deleteClass(const OW_CIMObjectPath& path)
 {
 
@@ -604,8 +488,9 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
@@ -647,7 +532,6 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 
-	OW_CIMInstanceEnumeration retVal;
 	node = node.getChild();
 
 	while (node)
@@ -659,12 +543,10 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		{
 			OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
 			ci.setKeys(iop.getKeys());
-			retVal.addElement(ci);
+			result.handleInstance(ci);
 			node = node.getNext();
 		}
 	}
-
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

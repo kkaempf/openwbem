@@ -41,6 +41,8 @@
 class OW_BinIfcIO
 {
 public:
+
+	// TODO: inline these functions, they are used quite heavily.
 	static void write(std::ostream& ostrm, const void* dataOut,
 		int dataOutLen);
 
@@ -109,7 +111,8 @@ public:
 
 	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
 
-	static OW_CIMInstanceEnumeration readInstanceEnum(std::istream& istrm);
+	static OW_CIMInstanceEnumeration readInstanceEnum(std::istream& istrm); // TODO: remove me
+	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
 
 	static OW_CIMQualifierTypeEnumeration readQualifierTypeEnum(std::istream& istrm);
 
@@ -170,6 +173,7 @@ const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
 
 const OW_Int32 OW_END_CLSENUM =			0x00001001;
 const OW_Int32 OW_END_OPENUM =			0x00001002;
+const OW_Int32 OW_END_INSTENUM =		0x00001003;
 
 #endif	// OW_BINIFCIO_HPP_
 

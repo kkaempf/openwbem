@@ -783,17 +783,6 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 	//hdl.enumClass(path, deep, localOnly,
 		//includeQualifiers, includeClassOrigin);
 
-	/*
-	while (enu.hasMoreElements())
-	{
-		OW_CIMClass cimClass = enu.nextElement();
-		OW_CIMtoXML(cimClass, ostr,
-			localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
-			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-			OW_StringArray());
-	}
-	*/
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -819,6 +808,48 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMInstanceXMLOutputter : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceXMLOutputter(
+			std::ostream& ostr_,
+			OW_CIMObjectPath& path_,
+			bool localOnly_, bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
+			OW_StringArray& propertyList_)
+		: ostr(ostr_)
+		, path(path_)
+		, localOnly(localOnly_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, isPropertyList(isPropertyList_)
+		, propertyList(propertyList_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			const OW_CIMInstance& cimInstance = i;
+			OW_CIMObjectPath cop(cimInstance.getClassName(),
+				cimInstance.getKeyValuePairs());
+
+			cop.setNameSpace(path.getNameSpace());
+
+			OW_CIMtoXML(cimInstance, ostr, cop,
+				localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
+				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
+				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
+				propertyList,
+				(isPropertyList && propertyList.size() == 0));
+		}
+		std::ostream& ostr;
+		OW_CIMObjectPath& path;
+		bool localOnly, includeQualifiers, includeClassOrigin, isPropertyList;
+		OW_StringArray& propertyList;
+
+	};
+}
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
@@ -851,25 +882,10 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 
-	OW_CIMInstanceEnumeration enu = hdl.enumInstances(path, deep, localOnly,
+	CIMInstanceXMLOutputter handler(ostr, path, localOnly, includeQualifiers,
+		includeClassOrigin, isPropertyList, propertyList);
+	hdl.enumInstances(path, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, pPropList);
-
-	// Build result
-	while (enu.hasMoreElements())
-	{
-		OW_CIMInstance cimInstance = enu.nextElement();
-		OW_CIMObjectPath cop(cimInstance.getClassName(),
-			cimInstance.getKeyValuePairs());
-
-		cop.setNameSpace(path.getNameSpace());
-
-		OW_CIMtoXML(cimInstance, ostr, cop,
-			localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
-			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-			propertyList,
-			(isPropertyList && propertyList.size() == 0));
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

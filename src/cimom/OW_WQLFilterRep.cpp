@@ -194,16 +194,15 @@ OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMInstanceEnumeration rval;
-
 	if (path.getObjectName().equalsIgnoreCase(m_inst.getClassName()))
 	{
-		rval.addElement(m_inst.clone(localOnly, includeQualifiers,
+		result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 			includeClassOrigin, propertyList));
 	}
 	else if (deep)
@@ -220,7 +219,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 			{
 				if (superClassName.equalsIgnoreCase(path.getObjectName()))
 				{
-					rval.addElement(m_inst.clone(localOnly, includeQualifiers,
+					result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 						includeClassOrigin, propertyList));
 					break;
 				}
@@ -240,8 +239,6 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 			}
 		}
 	}
-
-	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -83,8 +83,10 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration enumInstances(
-		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
+	virtual void enumInstances(
+		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
 

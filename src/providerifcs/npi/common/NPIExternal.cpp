@@ -8,11 +8,17 @@ namespace
 	class OW_CIMParamValue
 	{
 	public:
-		OW_CIMParamValue() : m_name(), m_value() {}
+		OW_CIMParamValue() : m_name(), m_value()
+		{
+		}
 		OW_CIMParamValue(const OW_String& name, const OW_CIMValue& value)
-			: m_name(name), m_value(value) {}
+		: m_name(name), m_value(value)
+		{
+		}
 		OW_CIMParamValue(const OW_CIMParamValue& arg)
-			: m_name(arg.m_name), m_value(arg.m_value) {}
+		: m_name(arg.m_name), m_value(arg.m_value)
+		{
+		}
 
 		const OW_CIMParamValue& operator= (const OW_CIMParamValue& arg)
 		{
@@ -21,10 +27,22 @@ namespace
 			return *this;
 		}
 
-		OW_String getName() const { return m_name; }
-		OW_CIMValue getValue() const { return m_value; }
-		void setName(const OW_String& name) { m_name = name; }
-		void setValue(const OW_CIMValue& value) { m_value = value; }
+		OW_String getName() const
+		{
+			return m_name;
+		}
+		OW_CIMValue getValue() const
+		{
+			return m_value;
+		}
+		void setName(const OW_String& name)
+		{
+			m_name = name;
+		}
+		void setValue(const OW_CIMValue& value)
+		{
+			m_value = value;
+		}
 
 	private:
 		OW_String m_name;
@@ -59,22 +77,22 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 {
 	OW_CIMObjectPath op(className, nameSpace);
 
-        OW_ProviderEnvironmentIFCRef * provenv = 
-            static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
 	OW_CIMClass cc;
-        try
-        {
-            cc = provenv->getPtr()->getCIMOMHandle()->getClass(
-		op, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-                OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-                OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN, NULL);
-        }
-        catch(...)
-        {
-            // cerr << "Class or Namespace do not exist\n";
-            // TODO: log this, and catch the correct exception.
-        }
+	try
+	{
+		cc = provenv->getPtr()->getCIMOMHandle()->getClass(
+			op, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN, NULL);
+	}
+	catch (...)
+	{
+		// cerr << "Class or Namespace do not exist\n";
+		// TODO: log this, and catch the correct exception.
+	}
 
 	return cc;
 }
@@ -86,21 +104,21 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 {
 	OW_CIMObjectPath op(className, nameSpace);
 
-        OW_ProviderEnvironmentIFCRef * provenv = 
-            static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
 	OW_CIMObjectPathEnumeration crefs;
-        try
-        {
-	    crefs =
-                provenv->getPtr()->getCIMOMHandle()->enumInstanceNames(
-		    op, OW_CIMOMHandleIFC::DEEP);
-        }
-        catch(...)
-        {
-            // cerr << "Class or Namespace do not exist\n";
-            // TODO: log this, and catch the correct exception.
-        }
+	try
+	{
+		crefs =
+			provenv->getPtr()->getCIMOMHandle()->enumInstanceNames(
+			op, OW_CIMOMHandleIFC::DEEP);
+	}
+	catch (...)
+	{
+		// cerr << "Class or Namespace do not exist\n";
+		// TODO: log this, and catch the correct exception.
+	}
 	return crefs;
 }
 
@@ -111,23 +129,23 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 {
 	OW_CIMObjectPath op(className, nameSpace);
 
-        OW_ProviderEnvironmentIFCRef * provenv = 
-            static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
 	OW_CIMInstanceEnumeration cinsts;
-        try
-        {
-            cinsts = provenv->getPtr()->getCIMOMHandle()->enumInstances(
-                op, OW_CIMOMHandleIFC::DEEP,
-                OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-                OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-                OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, NULL);
-        }
-        catch(...)
-        {
-            // cerr << "Class or Namespace do not exist\n";
-            // TODO: log this, and catch the correct exception.
-        }
+	try
+	{
+		cinsts = provenv->getPtr()->getCIMOMHandle()->enumInstancesE(
+			op, OW_CIMOMHandleIFC::DEEP,
+			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
+			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, NULL);
+	}
+	catch (...)
+	{
+		// cerr << "Class or Namespace do not exist\n";
+		// TODO: log this, and catch the correct exception.
+	}
 
 	return cinsts;
 }
@@ -135,23 +153,23 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_CIMInstance
 NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
-        const int localOnly)
+	const int localOnly)
 {
-        OW_ProviderEnvironmentIFCRef * provenv = 
-            static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	OW_ProviderEnvironmentIFCRef * provenv =
+		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
 	OW_CIMInstance ci;
 
-        try
-        {
-            ci = provenv->getPtr()->getCIMOMHandle()->getInstance(
-		owcop, localOnly);
-        }
-        catch(...)
-        {
-            // cerr << "Instance does not exist\n";
-            // TODO: log this, and catch the correct exception.
-        }
+	try
+	{
+		ci = provenv->getPtr()->getCIMOMHandle()->getInstance(
+			owcop, localOnly);
+	}
+	catch (...)
+	{
+		// cerr << "Instance does not exist\n";
+		// TODO: log this, and catch the correct exception.
+	}
 
 	return ci;
 }
@@ -196,7 +214,7 @@ _VectorGet(NPIHandle* npiHandle, Vector v, int pos)
 }
 
 
-// CIMValue functions 
+// CIMValue functions
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -206,7 +224,7 @@ CIMValueGetType(NPIHandle*, CIMValue cv)
 	OW_CIMValue* pcv = (OW_CIMValue*)cv.ptr;
 
 	int pct = pcv->getType();
-	switch(pct)
+	switch (pct)
 	{
 		case OW_CIMDataType::BOOLEAN :
 		case OW_CIMDataType::UINT8:
@@ -239,7 +257,7 @@ CIMValueNewString(NPIHandle* npiHandle, const char* val)
 {
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(OW_String(val));
-	CIMValue cv = { (void*) pcv };
+	CIMValue cv = { (void*) pcv};
 	return cv;
 }
 
@@ -249,7 +267,7 @@ CIMValueNewInteger(NPIHandle* npiHandle, int val)
 {
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(val);
-	CIMValue cv = { (void*) pcv };
+	CIMValue cv = { (void*) pcv};
 	return cv;
 }
 
@@ -259,7 +277,7 @@ CIMValueNewRef(NPIHandle* npiHandle, CIMObjectPath cop)
 {
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(*((OW_CIMObjectPath*)cop.ptr));
-	CIMValue cv = { (void*) pcv };
+	CIMValue cv = { (void*) pcv};
 	return cv;
 }
 
@@ -293,7 +311,7 @@ CIMValueGetRef(NPIHandle* npiHandle, CIMValue cv)
 	OW_CIMObjectPath cref;
 	pcv->get(cref);
 	OW_CIMObjectPath* ncop = new OW_CIMObjectPath(cref);
-	CIMObjectPath cop = {(void*) ncop };
+	CIMObjectPath cop = {(void*) ncop};
 	return cop;
 }
 
@@ -307,7 +325,7 @@ CIMParameterGetType(NPIHandle* npiHandle, CIMParameter cp)
 	OW_CIMParamValue* pcp = (OW_CIMParamValue*)cp.ptr;
 	int dt = pcp->getValue().getType();
 	//switch(dt.getType())
-	switch(dt)
+	switch (dt)
 	{
 		case OW_CIMDataType::BOOLEAN :
 		case OW_CIMDataType::UINT8 :
@@ -337,7 +355,7 @@ CIMParameterGetType(NPIHandle* npiHandle, CIMParameter cp)
 //////////////////////////////////////////////////////////////////////////////
 extern "C" char*
 CIMParameterGetName(NPIHandle* npiHandle, CIMParameter cp)
-{	
+{
 	(void)npiHandle;
 	OW_CIMParamValue* pcp = (OW_CIMParamValue*)cp.ptr;
 	return pcp->getName().allocateCString();
@@ -348,13 +366,13 @@ extern "C" CIMParameter
 CIMParameterNewString(NPIHandle* npiHandle, const char* name, const char* value)
 {
 	(void)npiHandle;
-	CIMParameter mycp = { NULL };
+	CIMParameter mycp = { NULL};
 
 	// Sanity check
-	if(name == NULL)
+	if (name == NULL)
 		return mycp;
 
-	if(strlen(name) == 0)
+	if (strlen(name) == 0)
 		return mycp;
 
 	OW_CIMParamValue* pcp = new OW_CIMParamValue(OW_String(name),
@@ -368,13 +386,13 @@ extern "C" CIMParameter
 CIMParameterNewInteger(NPIHandle* npiHandle, const char* name, int value)
 {
 	(void)npiHandle;
-	CIMParameter mycp = { NULL };
+	CIMParameter mycp = { NULL};
 
 	// Sanity check
-	if(name == NULL)
+	if (name == NULL)
 		return mycp;
 
-	if(strlen(name) == 0)
+	if (strlen(name) == 0)
 		return mycp;
 
 	OW_CIMParamValue * pcp = new OW_CIMParamValue(OW_String(name),
@@ -388,13 +406,13 @@ extern "C" CIMParameter
 CIMParameterNewRef(NPIHandle* npiHandle, const char* name, CIMObjectPath value)
 {
 	(void)npiHandle;
-	CIMParameter mycp = { NULL };
+	CIMParameter mycp = { NULL};
 
 	// Sanity check
-	if(name == NULL)
+	if (name == NULL)
 		return mycp;
 
-	if(strlen(name) == 0)
+	if (strlen(name) == 0)
 		return mycp;
 
 	OW_CIMValue val(*((OW_CIMObjectPath*)value.ptr));
@@ -435,7 +453,7 @@ CIMParameterGetRefValue(NPIHandle* npiHandle, CIMParameter cp)
 	OW_CIMValue val = pcpv->getValue();
 	val.get(op);
 	OW_CIMObjectPath * pop = new OW_CIMObjectPath(op);
-	CIMObjectPath cop = { (void*) pop };
+	CIMObjectPath cop = { (void*) pop};
 	return cop;
 }
 
@@ -451,12 +469,12 @@ CIMClassNewInstance(NPIHandle* npiHandle, CIMClass cc)
 
 	OW_CIMInstance * owci = new OW_CIMInstance(owcc->newInstance());
 
-	// stuff below doesn't work.  
+	// stuff below doesn't work.
 	//OW_CIMInstance * owci = new OW_CIMInstance(owcc->getName());
 	//owci->setKeys(owcc->getKeys());
 
 	CIMInstance ci = {static_cast<void *>(owci)};
-        
+
 	return ci;
 }
 
@@ -467,33 +485,33 @@ CIMInstanceSetStringProperty(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return;
-	if(strlen(name) == 0) return;
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
 	OW_String Val;
 
-	if(value)
+	if (value)
 	{
-		if(strlen(value)>0)
+		if (strlen(value)>0)
 		{
-			 Val = OW_String(value);
+			Val = OW_String(value);
 		}
-		else 
+		else
 		{
 			Val = OW_String("-empty-");
 		}
 	}
 	else
 	{
-		 Val = OW_String("-empty-");
+		Val = OW_String("-empty-");
 	}
 
 
 	OW_CIMValue Value(Val);
-   owci->setProperty(Key,Value);
+	owci->setProperty(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -503,8 +521,8 @@ CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return;
-	if(strlen(name) == 0) return;
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
 
 	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
@@ -520,16 +538,16 @@ CIMInstanceSetLongProperty(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return;
-	if(strlen(name) == 0) return;
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
 
 	OW_CIMValue Value(value);
 
-        owci->setProperty(Key,Value);
+	owci->setProperty(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -539,16 +557,16 @@ CIMInstanceSetBooleanProperty(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return;
-	if(strlen(name) == 0) return;
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
 
 	OW_CIMValue Value(OW_Bool((int)value));
 
-        owci->setProperty(Key,Value);
+	owci->setProperty(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -558,18 +576,18 @@ CIMInstanceSetRefProperty(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return;
-	if(strlen(name) == 0) return;
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
-        OW_CIMObjectPath * owcop = static_cast<OW_CIMObjectPath *> (value.ptr);
+	OW_CIMObjectPath * owcop = static_cast<OW_CIMObjectPath *> (value.ptr);
 
 	OW_String Key(name);
 
 	OW_CIMValue Value(*owcop);
 
-        owci->setProperty(Key,Value);
+	owci->setProperty(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -579,21 +597,21 @@ CIMInstanceGetStringValue(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return NULL;
-	if(strlen(name) == 0) return NULL;
+	if (name == NULL) return NULL;
+	if (strlen(name) == 0) return NULL;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
 
-        OW_CIMProperty prop = owci->getProperty(Key);
-        OW_CIMValue cv = prop.getValue();
+	OW_CIMProperty prop = owci->getProperty(Key);
+	OW_CIMValue cv = prop.getValue();
 
-        if (cv.getType() != OW_CIMDataType::STRING) return NULL;
+	if (cv.getType() != OW_CIMDataType::STRING)	return NULL;
 
-        cv.get(Key);
+	cv.get(Key);
 
-        return Key.allocateCString();
+	return Key.allocateCString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -603,27 +621,27 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, CIMInstance ci,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(name == NULL) return 0;
-	if(strlen(name) == 0) return 0;
+	if (name == NULL) return 0;
+	if (strlen(name) == 0) return 0;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
-        OW_CIMProperty prop = owci->getProperty(Key);
-        OW_CIMValue cv = prop.getValue();
+	OW_CIMProperty prop = owci->getProperty(Key);
+	OW_CIMValue cv = prop.getValue();
 
-        switch(cv.getType())
-        {
-         case OW_CIMDataType::UINT8: {OW_UInt8 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::SINT8: {OW_Int8 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::UINT16: {OW_UInt16 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::SINT16: {OW_Int16 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::UINT32: {OW_UInt32 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::SINT32: {OW_Int32 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::UINT64: {OW_UInt64 i; cv.get(i); return i; break;}
-         case OW_CIMDataType::SINT64: {OW_Int64 i; cv.get(i); return i; break;}
-         default: return 0;
-        }
+	switch (cv.getType())
+	{
+		case OW_CIMDataType::UINT8: {OW_UInt8 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::SINT8: {OW_Int8 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::UINT16: {OW_UInt16 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::SINT16: {OW_Int16 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::UINT32: {OW_UInt32 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::SINT32: {OW_Int32 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::UINT64: {OW_UInt64 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::SINT64: {OW_Int64 i; cv.get(i); return i; break;}
+		default: return 0;
+	}
 
 	return 0;
 }
@@ -636,22 +654,22 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, CIMInstance ci, const char* name)
 	CIMObjectPath cop = {NULL};
 
 	// Sanity check
-	if(name == NULL) return cop;
-	if(strlen(name) == 0) return cop;
+	if (name == NULL) return cop;
+	if (strlen(name) == 0) return cop;
 
-        OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
+	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String Key(name);
-        OW_CIMProperty prop = owci->getProperty(Key);
-        OW_CIMValue cv = prop.getValue();
+	OW_CIMProperty prop = owci->getProperty(Key);
+	OW_CIMValue cv = prop.getValue();
 
-        if (cv.getType() != OW_CIMDataType::REFERENCE) return cop;
+	if (cv.getType() != OW_CIMDataType::REFERENCE) return cop;
 
-        OW_CIMObjectPath owcop;
-        cv.get(owcop);
-        
-        //cop.ptr = static_cast<void *>(owcop.toBlob());
-        cop.ptr = static_cast<void *>(&owcop);
+	OW_CIMObjectPath owcop;
+	cv.get(owcop);
+
+	//cop.ptr = static_cast<void *>(owcop.toBlob());
+	cop.ptr = static_cast<void *>(&owcop);
 
 	return cop;
 }
@@ -666,10 +684,10 @@ extern "C" CIMObjectPath
 CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 {
 	(void)npiHandle;
-        OW_String className(classname);
-        OW_CIMObjectPath * ref = new OW_CIMObjectPath(className);
+	OW_String className(classname);
+	OW_CIMObjectPath * ref = new OW_CIMObjectPath(className);
 
-        CIMObjectPath cop = { static_cast<void *> (ref)};
+	CIMObjectPath cop = { static_cast<void *> (ref)};
 	return cop;
 }
 
@@ -678,9 +696,9 @@ extern "C" void
 CIMObjectPathDel(NPIHandle* npiHandle, CIMObjectPath cop)
 {
 	(void)npiHandle;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        delete ref;
+	delete ref;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -703,7 +721,7 @@ CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, CIMInstance ci)
 
 	//CIMObjectPath cop = { static_cast<void *> (ref.toBlob()) };
 
-	CIMObjectPath cop = { static_cast<void *>(ref) };
+	CIMObjectPath cop = { static_cast<void *>(ref)};
 
 	return cop;
 }
@@ -713,9 +731,9 @@ extern "C" char*
 CIMObjectPathGetClassName(NPIHandle* npiHandle, CIMObjectPath cop)
 {
 	(void)npiHandle;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *> (cop.ptr);
-        
-        return ref->getObjectName().allocateCString();
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *> (cop.ptr);
+
+	return ref->getObjectName().allocateCString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -723,9 +741,9 @@ extern "C" char*
 CIMObjectPathGetNameSpace(NPIHandle* npiHandle, CIMObjectPath cop)
 {
 	(void)npiHandle;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-        
-        return ref->getNameSpace().allocateCString();
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+
+	return ref->getNameSpace().allocateCString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -734,9 +752,9 @@ CIMObjectPathSetNameSpace(NPIHandle* npiHandle, CIMObjectPath cop,
 	const char* str)
 {
 	(void)npiHandle;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-        
-        ref->setNameSpace(OW_String(str));
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+
+	ref->setNameSpace(OW_String(str));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -744,10 +762,10 @@ extern "C" void CIMObjectPathSetNameSpaceFromCIMObjectPath(
 	NPIHandle* npiHandle, CIMObjectPath cop, CIMObjectPath src)
 {
 	(void)npiHandle;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-        OW_CIMObjectPath * rsrc = static_cast<OW_CIMObjectPath *>(src.ptr);
-        
-        ref->setNameSpace(rsrc->getNameSpace());
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * rsrc = static_cast<OW_CIMObjectPath *>(src.ptr);
+
+	ref->setNameSpace(rsrc->getNameSpace());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -757,28 +775,28 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(key == NULL)	return NULL;
-	if(strlen(key) == 0) return NULL;
+	if (key == NULL) return NULL;
+	if (strlen(key) == 0) return NULL;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        OW_CIMPropertyArray props = ref->getKeys();
-        OW_String Key(key);
-        
+	OW_CIMPropertyArray props = ref->getKeys();
+	OW_String Key(key);
+
 // FIXME  must I do locking here ??
-        for(int i = 0, n = props.size(); i < n; i++)
-        {
-             OW_CIMProperty cp = props[i];
-             if (cp.getName() == Key)
-             {
-                 OW_CIMValue cv = cp.getValue();
-                 if (cv.getType() != OW_CIMDataType::STRING) return NULL;
-                 cv.get(Key);
-                 return Key.allocateCString();
-             }
-        }
+	for (int i = 0, n = props.size(); i < n; i++)
+	{
+		OW_CIMProperty cp = props[i];
+		if (cp.getName() == Key)
+		{
+			OW_CIMValue cv = cp.getValue();
+			if (cv.getType() != OW_CIMDataType::STRING)	return NULL;
+			cv.get(Key);
+			return Key.allocateCString();
+		}
+	}
 
-        return NULL;
+	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -788,66 +806,66 @@ CIMObjectPathAddStringKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(key == NULL)	return;
-	if(strlen(key) == 0) return;
+	if (key == NULL) return;
+	if (strlen(key) == 0) return;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        OW_String Key(key);
-        OW_String Val(value);
-     
-        OW_CIMValue Value(Val);
-        
-        ref->addKey(Key,Value);
+	OW_String Key(key);
+	OW_String Val(value);
+
+	OW_CIMValue Value(Val);
+
+	ref->addKey(Key,Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
-CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle, 
+CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	CIMObjectPath cop, const char* key)
 {
 	(void)npiHandle;
 	// Sanity check
-	if(key == NULL)	return -1;
-	if(strlen(key) == 0) return -1;
+	if (key == NULL) return -1;
+	if (strlen(key) == 0) return -1;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        OW_CIMPropertyArray props = ref->getKeys();
-        OW_String Key(key);
-        
+	OW_CIMPropertyArray props = ref->getKeys();
+	OW_String Key(key);
+
 // FIXME  must I do locking here ??
-        for(int i = 0, n = props.size(); i < n; i++)
-        {
-             OW_CIMProperty cp = props[i];
-             if (cp.getName() == Key)
-             {
-                 OW_CIMValue cv = cp.getValue();
+	for (int i = 0, n = props.size(); i < n; i++)
+	{
+		OW_CIMProperty cp = props[i];
+		if (cp.getName() == Key)
+		{
+			OW_CIMValue cv = cp.getValue();
 
-                 switch(cv.getType())
-                 {
-                      case OW_CIMDataType::UINT8:
-                          {OW_UInt8 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::SINT8:
-                          {OW_Int8 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::UINT16:
-                          {OW_UInt16 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::SINT16:
-                          {OW_Int16 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::UINT32:
-                          {OW_UInt32 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::SINT32:
-                          {OW_Int32 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::UINT64:
-                          {OW_UInt64 i; cv.get(i); return i; break;}
-                      case OW_CIMDataType::SINT64:
-                          {OW_Int64 i; cv.get(i); return i; break;}
-                      default: return 0;
-                 }
-             }
-        }
+			switch (cv.getType())
+			{
+				case OW_CIMDataType::UINT8:
+					{OW_UInt8 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::SINT8:
+					{OW_Int8 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::UINT16:
+					{OW_UInt16 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::SINT16:
+					{OW_Int16 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::UINT32:
+					{OW_UInt32 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::SINT32:
+					{OW_Int32 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::UINT64:
+					{OW_UInt64 i; cv.get(i); return i; break;}
+				case OW_CIMDataType::SINT64:
+					{OW_Int64 i; cv.get(i); return i; break;}
+				default: return 0;
+			}
+		}
+	}
 
-        return 0;
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -857,16 +875,16 @@ CIMObjectPathAddIntegerKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(key == NULL)	return;
-	if(strlen(key) == 0) return;
+	if (key == NULL) return;
+	if (strlen(key) == 0) return;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        OW_String Key(key);
-     
-        OW_CIMValue Value(value);
-        
-        ref->addKey(Key,Value);
+	OW_String Key(key);
+
+	OW_CIMValue Value(value);
+
+	ref->addKey(Key,Value);
 }
 
 
@@ -879,34 +897,34 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	// Sanity check
 
 	CIMObjectPath cop2 = {NULL};
-	if(key == NULL) return cop2;
-	if(strlen(key) == 0) return cop2;
+	if (key == NULL) return cop2;
+	if (strlen(key) == 0) return cop2;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
-        OW_CIMPropertyArray props = ref->getKeys();
-        OW_String Key(key);
-        
+	OW_CIMPropertyArray props = ref->getKeys();
+	OW_String Key(key);
+
 // FIXME  must I do locking here ??
-        for(int i = 0, n = props.size(); i < n; i++)
-        {
-             OW_CIMProperty cp = props[i];
-             if (cp.getName() == Key)
-             {
-                 OW_CIMValue cv = cp.getValue();
+	for (int i = 0, n = props.size(); i < n; i++)
+	{
+		OW_CIMProperty cp = props[i];
+		if (cp.getName() == Key)
+		{
+			OW_CIMValue cv = cp.getValue();
 
-                 if (cv.getType() != OW_CIMDataType::REFERENCE) return cop2;
+			if (cv.getType() != OW_CIMDataType::REFERENCE) return cop2;
 
-                 OW_CIMObjectPath * ref2 = new OW_CIMObjectPath;
-                 cv.get(*ref2);
-        
-                 cop2.ptr = (void *) ref;
+			OW_CIMObjectPath * ref2 = new OW_CIMObjectPath;
+			cv.get(*ref2);
 
-	         return cop2;
-             }
-        }
+			cop2.ptr = (void *) ref;
 
-        return cop;
+			return cop2;
+		}
+	}
+
+	return cop;
 
 }
 
@@ -917,18 +935,18 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 {
 	(void)npiHandle;
 	// Sanity check
-	if(key == NULL) return;
+	if (key == NULL) return;
 
-	if(strlen(key) == 0) return;
+	if (strlen(key) == 0) return;
 
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-        OW_CIMObjectPath * ref2 = static_cast<OW_CIMObjectPath *>(cop2.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref2 = static_cast<OW_CIMObjectPath *>(cop2.ptr);
 
-        OW_String Key(key);
-     
-        OW_CIMValue Value(*ref2);
-        
-        ref->addKey(Key,Value);
+	OW_String Key(key);
+
+	OW_CIMValue Value(*ref2);
+
+	ref->addKey(Key,Value);
 }
 
 // CIMOM functions
@@ -938,8 +956,8 @@ extern "C" CIMClass
 CIMOMGetClass(NPIHandle* npiHandle, CIMObjectPath cop, int localOnly)
 {
 	(void)localOnly;
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-        //ref.fromBlob(static_cast<OW_Blob *>(cop.ptr));
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	//ref.fromBlob(static_cast<OW_Blob *>(cop.ptr));
 
 	OW_String nameSpace = ref->getNameSpace();
 
@@ -947,13 +965,13 @@ CIMOMGetClass(NPIHandle* npiHandle, CIMObjectPath cop, int localOnly)
 
 	OW_CIMClass cc = NPI_getmyClass(npiHandle, nameSpace, className);
 
-    //    OW_Blob * myblob = cc.toBlob();
+	//    OW_Blob * myblob = cc.toBlob();
 
 	//CIMClass localcc = { static_cast<void *> (cc.toBlob()) };
 
-        OW_CIMClass * my_cc = new OW_CIMClass(cc);
-   //     my_cc->fromBlob(myblob);
-	CIMClass localcc = { static_cast<void *> (my_cc) };
+	OW_CIMClass * my_cc = new OW_CIMClass(cc);
+	//     my_cc->fromBlob(myblob);
+	CIMClass localcc = { static_cast<void *> (my_cc)};
 
 	return localcc;
 }
@@ -963,23 +981,23 @@ extern "C" Vector
 CIMOMEnumInstanceNames(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 {
 	(void)i;
-        OW_CIMObjectPath * ref = (OW_CIMObjectPath *) cop.ptr;
+	OW_CIMObjectPath * ref = (OW_CIMObjectPath *) cop.ptr;
 
 	OW_String nameSpace = ref->getNameSpace();
 
 	OW_String className = ref->getObjectName();
 
-        OW_CIMObjectPathEnumeration instNames =
-	    NPI_enumeratemyInstanceNames(npiHandle,nameSpace,className);
+	OW_CIMObjectPathEnumeration instNames =
+		NPI_enumeratemyInstanceNames(npiHandle,nameSpace,className);
 
-        // Full Copy
+	// Full Copy
 	Vector v = VectorNew(npiHandle);
 
-        while (instNames.hasMoreElements())
-        {
+	while (instNames.hasMoreElements())
+	{
 		OW_CIMObjectPath * cowp = new
-                       OW_CIMObjectPath(instNames.nextElement());
-                _VectorAddTo(npiHandle, v, (void *) cowp);
+			OW_CIMObjectPath(instNames.nextElement());
+		_VectorAddTo(npiHandle, v, (void *) cowp);
 	}
 
 	return v;
@@ -991,21 +1009,21 @@ CIMOMEnumInstances(NPIHandle* npiHandle, CIMObjectPath cop, int i, int j)
 {
 	(void)i;
 	(void)j;
-        OW_CIMObjectPath * ref = (OW_CIMObjectPath *) cop.ptr;
+	OW_CIMObjectPath * ref = (OW_CIMObjectPath *) cop.ptr;
 
 	OW_String nameSpace = ref->getNameSpace();
 
 	OW_String className = ref->getObjectName();
 
-        OW_CIMInstanceEnumeration insts =
-            NPI_enumeratemyInstances(npiHandle,nameSpace,className);
+	OW_CIMInstanceEnumeration insts =
+		NPI_enumeratemyInstances(npiHandle,nameSpace,className);
 
-        // Full Copy
+	// Full Copy
 	Vector v = VectorNew(npiHandle);
-        while (insts.hasMoreElements())
-        {
+	while (insts.hasMoreElements())
+	{
 		OW_CIMInstance * ci = new OW_CIMInstance(insts.nextElement());
-                _VectorAddTo(npiHandle, v, (void *) ci);
+		_VectorAddTo(npiHandle, v, (void *) ci);
 	}
 	return v;
 }
@@ -1014,16 +1032,16 @@ CIMOMEnumInstances(NPIHandle* npiHandle, CIMObjectPath cop, int i, int j)
 extern "C" CIMInstance
 CIMOMGetInstance(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 {
-        OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
+	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
 
 	OW_CIMInstance ci = NPI_getmyInstance(npiHandle, *ref, i);
 
-        //OW_Blob * myblob = ci.toBlob();
+	//OW_Blob * myblob = ci.toBlob();
 
-        OW_CIMInstance * my_ci = new OW_CIMInstance(ci);
-        //my_ci->fromBlob(myblob);
+	OW_CIMInstance * my_ci = new OW_CIMInstance(ci);
+	//my_ci->fromBlob(myblob);
 
-	CIMInstance localci = { static_cast<void *> (my_ci) };
+	CIMInstance localci = { static_cast<void *> (my_ci)};
 
 	return localci;
 }
@@ -1048,12 +1066,12 @@ errorCheck(NPIHandle* npiHandle )
 }
 
 //////////////////////////////////////////////////////////////////////////////
-extern "C" void 
+extern "C" void
 raiseError(NPIHandle* npiHandle, const char* msg)
 {
-	if(npiHandle->providerError != NULL)
+	if (npiHandle->providerError != NULL)
 		//free ( (void*) npiHandle->providerError );
-	npiHandle->providerError = strdup ( msg );
+		npiHandle->providerError = strdup ( msg );
 }
 
 //static void raiseNPIException( void* env, char* msg) {}

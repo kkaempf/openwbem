@@ -42,7 +42,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
-OW_NPIInstanceProviderProxy::enumInstances(
+OW_NPIInstanceProviderProxy::enumInstanceNames(
         const OW_ProviderEnvironmentIFCRef& env,
         const OW_CIMObjectPath& cop,
         const OW_Bool& deep,
@@ -100,16 +100,15 @@ OW_NPIInstanceProviderProxy::enumInstances(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_NPIInstanceProviderProxy::enumInstances(
         const OW_ProviderEnvironmentIFCRef& env,
         const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
         const OW_Bool& deep,
         const OW_CIMClass& cimClass,
         const OW_Bool& localOnly )
 {
-        OW_CIMInstanceEnumeration rval;
-
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::enumInstances()");
 
@@ -152,10 +151,8 @@ OW_NPIInstanceProviderProxy::enumInstances(
 // FIXME
 				 ow_inst.setClassName(cimClass.getName());
 
-				 rval.addElement(ow_inst);
+				 result.handleInstance(ow_inst);
 			}
-
-        return rval;
 }
 	
 /////////////////////////////////////////////////////////////////////////////

@@ -28,6 +28,7 @@ libowclient_a_SOURCES =	\
 OW_CIMOMLocator.cpp \
 OW_CIMOMInfo.cpp	\
 OW_CIMOMLocatorSLP.cpp \
+OW_ClientCIMOMHandle.cpp \
 OW_CIMXMLCIMOMHandle.cpp \
 OW_BinaryCIMOMHandle.cpp
 
@@ -36,6 +37,7 @@ OW_ClientAuthCBIFC.hpp \
 OW_CIMOMLocator.hpp	\
 OW_CIMOMLocatorSLP.hpp	\
 OW_CIMOMInfo.hpp	\
+OW_ClientCIMOMHandle.hpp \
 OW_CIMXMLCIMOMHandle.hpp \
 OW_BinaryCIMOMHandle.hpp 
 

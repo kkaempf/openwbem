@@ -69,9 +69,10 @@ public:
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMInstanceEnumeration enumInstances(
+	virtual void enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
@@ -80,7 +81,6 @@ public:
 		(void)cop;
 		(void)deep;
 		(void)localOnly;
-		OW_CIMInstanceEnumeration rval;
 
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsize,pcpu";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
@@ -116,9 +116,8 @@ public:
 			{
 				OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output from ps");
 			}
-			rval.addElement(newInst);
+			result.handleInstance(newInst);
 		}
-		return rval;
 	}
 
 	////////////////////////////////////////////////////////////////////////////

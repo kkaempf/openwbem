@@ -136,10 +136,11 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstanceEnumeration
+	void
 		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
@@ -148,7 +149,6 @@ public:
 		(void)cop;
 		(void)deep;
 		(void)localOnly;
-		OW_CIMInstanceEnumeration rval;
 
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
@@ -175,9 +175,8 @@ public:
 			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
-			rval.addElement(newInst);
+			result.handleInstance(newInst);
 		}
-		return rval;
 	}
 
 //////////////////////////////////////////////////////////////////////////////

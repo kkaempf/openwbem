@@ -2393,14 +2393,26 @@ void OW_WQLProcessor::populateInstances(const OW_String& className)
 	populateInstances();
 }
 
+namespace
+{
+	class InstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		InstanceArrayBuilder(OW_CIMInstanceArray& cia_)
+		: cia(cia_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			cia.push_back(i);
+		}
+	private:
+		OW_CIMInstanceArray& cia;
+	};
+}
 void OW_WQLProcessor::populateInstances()
 {
-	OW_CIMInstanceEnumeration cie = m_hdl->enumInstances(m_tableRef, true);
-	//OW_LOGDEBUG(format("enumInstances returned %1 instances", cie.numberOfElements()));
-	while (cie.hasMoreElements())
-	{
-		OW_CIMInstance t = cie.nextElement();
-		instances.append(t);
-	}
+	InstanceArrayBuilder handler(instances);
+	m_hdl->enumInstances(m_tableRef, handler, true);
 }
 

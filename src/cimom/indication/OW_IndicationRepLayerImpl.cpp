@@ -182,13 +182,14 @@ OW_IndicationRepLayerImpl::enumClassNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_IndicationRepLayerImpl::enumInstances(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumInstances(path, deep, localOnly, includeQualifiers,
+	m_pServer->enumInstances(path, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, aclInfo);
 }
 

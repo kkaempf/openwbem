@@ -419,6 +419,21 @@ namespace
 	private:
 		std::ostream& ostrm;
 	};
+
+	class BinaryCIMInstanceWriter : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		BinaryCIMInstanceWriter(std::ostream& ostrm_)
+		: ostrm(ostrm_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &cop)
+		{
+			OW_BinIfcIO::writeInstance(ostrm, cop);
+		}
+	private:
+		std::ostream& ostrm;
+	};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -627,7 +642,6 @@ OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -650,11 +664,15 @@ OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleIFCRef chdl,
 		propListPtr = &propList;
 	}
 
-	OW_CIMInstanceEnumeration enu = chdl->enumInstances(op, deep, localOnly,
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+	
+	BinaryCIMInstanceWriter handler(ostrm);
+	chdl->enumInstances(op, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
 
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeInstanceEnum(ostrm, enu);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////

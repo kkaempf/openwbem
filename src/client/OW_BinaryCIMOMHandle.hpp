@@ -32,11 +32,11 @@
 #define OW_BINARYCIMOMHANDLE_HPP_
 
 #include "OW_config.h"
-#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 
 
-class OW_BinaryCIMOMHandle : public OW_CIMOMHandleIFC
+class OW_BinaryCIMOMHandle : public OW_ClientCIMOMHandle
 {
 public:
 	/**
@@ -54,26 +54,10 @@ public:
 	OW_BinaryCIMOMHandle( OW_CIMProtocolIFCRef prot );
 
 	/**
-	 * Create a cim namespace.
-	 * @param ns 	The OW_CIMNameSpace object that specified a string for the
-	 *					host and a string for the namespace.
-	 * @exception OW_CIMException If the namespace already exists.
-	 */
-	virtual void createNameSpace(const OW_CIMNameSpace& ns);
-
-	/**
 	 * Close the connetion to the CIMOM. This will free resources used for the
 	 * client session.
 	 */
 	virtual void close() {}
-
-	/**
-	 * Delete a specified namespace.
-	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
-	 *					to delete.
-	 * @exception OW_CIMException If the namespace does not exist.
-	 */
-	virtual void deleteNameSpace(const OW_CIMNameSpace& ns);
 
 	/**
 	 * Deletes the CIM class for the object specified by the CIM object path.
@@ -92,24 +76,6 @@ public:
 	 * @exception OW_CIMException If the qualifier type does not exist.
 	 */
 	virtual void deleteQualifierType(const OW_CIMObjectPath &path);
-
-	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 * @param path	The OW_CIMObjectPath identifying the namespace to be
-	 *					enumerated.
-	 * @param deep	If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *					contain the entire hierarchy of namespaces present
-	 *             under the enumerated namespace. If set to
-	 *					OW_CIMClient::SHALLOW  the enuermation will return only the
-	 *					first level children of the enumerated namespace.
-	 * @return An Array of namespace names as strings.
-	 * @exception 	OW_CIMException If the namespace does not exist or the object
-	 *					cannot be found in the specified namespace.
-	 */
-	virtual void enumNameSpace(const OW_CIMNameSpace& path,
-		OW_StringResultHandlerIFC& result,
-		OW_Bool deep);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -239,8 +205,10 @@ public:
 	 * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
-	virtual OW_CIMInstanceEnumeration enumInstances(
-		const OW_CIMObjectPath& path, OW_Bool deep=true, OW_Bool localOnly=false,
+	virtual void enumInstances(
+		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool deep=true, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=false, OW_Bool includeClassOrigin=false,
 		const OW_StringArray* propertyList=0);
 
@@ -614,11 +582,6 @@ public:
 		const OW_String &role);
 
 	virtual OW_CIMFeatures getServerFeatures();
-
-private:
-	void enumNameSpaceAux(const OW_CIMObjectPath& path,
-		OW_StringResultHandlerIFC& result,
-		OW_Bool deep);
 
 	OW_CIMProtocolIFCRef m_protocol;
 };

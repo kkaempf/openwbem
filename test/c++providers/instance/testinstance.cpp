@@ -85,10 +85,11 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstanceEnumeration
+	void
 		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
@@ -97,16 +98,14 @@ public:
 		(void)env;
 		(void)localOnly;
 		(void)deep;
-		OW_CIMInstanceEnumeration rval;
 		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			OW_CIMInstance inst = cimClass.newInstance();
 			inst.setProperty("Name", OW_CIMValue(iter->name));
 			inst.setProperty("Params", OW_CIMValue(iter->params));
-			rval.addElement(inst);
+			result.handleInstance(inst);
 		}
-		return rval;
 	}
 
 //////////////////////////////////////////////////////////////////////////////

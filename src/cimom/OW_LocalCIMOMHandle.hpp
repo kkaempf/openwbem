@@ -225,8 +225,10 @@ public:
 	 *
 	 * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
 	 */
-	virtual OW_CIMInstanceEnumeration enumInstances(
-		const OW_CIMObjectPath& path, OW_Bool deep=true, OW_Bool localOnly=false,
+	virtual void enumInstances(
+		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool deep=true, OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=false, OW_Bool includeClassOrigin=false,
 		const OW_StringArray* propertyList=0);
 
