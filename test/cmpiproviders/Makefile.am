@@ -3,23 +3,25 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 noinst_LIBRARIES = \
 libcmpiTestProvider.a 
 
-#libindprovider.a
-
 OW_SHARED_LIBS = \
 libcmpiTestProvider.so 
 
-#libindprovider.so
+thelibdir = $(pkglibdir)/cmpiproviders
 
 all-local: $(OW_SHARED_LIBS)
-	
+
+install-exec-local:
+	@INSTALL@ -d $(DESTDIR)$(thelibdir)
+	for i in $(OW_SHARED_LIBS); do \
+		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
+		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
+	done
+
 clean-local:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -rf $$i* .$$i.libs; \
 	done
 
-
-#libindprovider_a_SOURCES = \
-#IndProvider.c
 
 libcmpiTestProvider_a_SOURCES = \
 cmpiTestProvider.c
