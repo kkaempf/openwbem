@@ -41,12 +41,15 @@
 #include <iostream>
 #endif
 
-// This class is just a replacement for std::istreambuf_iterator<>, since it
-// doesn't exist in the gcc 2.95.x standard lib.
+// This class is mostly just a replacement for std::istreambuf_iterator<>, since it
+// doesn't exist in the gcc 2.95.x standard lib.  We also added/removed some features to make it more efficient.
 
 namespace OpenWBEM
 {
 
+/**
+ * This class differs from a std::istreambuf_iterator in that dereferncing an eof iterator returns 0
+ */
 class IstreamBufIterator
 {
 public:
@@ -56,14 +59,12 @@ public:
 	public:
 		char operator*() {  return m_keep; }
 	private:
-		proxy(char c, std::streambuf* sb) : m_keep(c), m_sbuf(sb) {}
+		proxy(char c) : m_keep(c) {}
 		char m_keep;
-		std::streambuf* m_sbuf;
 	};
 	IstreamBufIterator() : m_sbuf(0) {}
 	IstreamBufIterator(std::istream& s) : m_sbuf(s.rdbuf()) {}
 	IstreamBufIterator(std::streambuf* b) : m_sbuf(b) {}
-	IstreamBufIterator(const proxy& p) : m_sbuf(p.m_sbuf) {}
 	char operator*() const
 	{
 		if (m_sbuf)
@@ -77,44 +78,35 @@ public:
 	}
 	IstreamBufIterator& operator++()
 	{
-		if (m_sbuf)
+		m_sbuf->sbumpc();
+		if (m_sbuf->sgetc() == EOF)
 		{
-			m_sbuf->sbumpc();
-			if (m_sbuf->sgetc() == EOF)
-			{
-				m_sbuf = 0;
-			}
+			m_sbuf = 0;
 		}
 		return *this;
 	}
 	proxy operator++(int)
 	{
-		if (m_sbuf)
+		proxy temp(m_sbuf->sgetc());
+		m_sbuf->sbumpc();
+		if (m_sbuf->sgetc() == EOF)
 		{
-			proxy temp(m_sbuf->sgetc(), m_sbuf);
-			m_sbuf->sbumpc();
-			if (m_sbuf->sgetc() == EOF)
-			{
-				m_sbuf = 0;
-			}
-			return temp;
+			m_sbuf = 0;
 		}
-		else
-		{
-			return proxy(0,0);
-		}
+		return temp;
 	}
 	
 	bool equal(const IstreamBufIterator& b) const
 	{
-		if (((m_sbuf == 0) && (b.m_sbuf == 0)) || ((m_sbuf != 0) && (b.m_sbuf != 0)))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return (m_sbuf == 0) ^ (b.m_sbuf != 0);	// do a little manual strength reduction
+//         if (((m_sbuf == 0) && (b.m_sbuf == 0)) || ((m_sbuf != 0) && (b.m_sbuf != 0)))
+//         {
+//             return true;
+//         }
+//         else
+//         {
+//             return false;
+//         }
 	}
 private:
 	std::streambuf* m_sbuf;
