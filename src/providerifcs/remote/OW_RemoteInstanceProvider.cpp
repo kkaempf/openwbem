@@ -41,8 +41,9 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-RemoteInstanceProvider::RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& provId, const ClientCIMOMHandleConnectionPoolRef& pool)
+RemoteInstanceProvider::RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool)
 	: m_pool(pool)
+	, m_url(url)
 {
 }
 

@@ -109,3 +109,5 @@ RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef
 
 } // end namespace OpenWBEM
 
+OW_PROVIDERIFCFACTORY(OpenWBEM::RemoteProviderInterface, remote)
+

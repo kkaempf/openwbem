@@ -35,13 +35,17 @@
 #include "OW_config.h"
 #include "OW_RemoteMethodProvider.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-RemoteMethodProvider::RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& provId, const ClientCIMOMHandleConnectionPoolRef& pool)
+RemoteMethodProvider::RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool)
 	: m_pool(pool)
+	, m_url(url)
 {
 }
 
@@ -59,6 +63,43 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		const CIMParamValueArray& in,
 		CIMParamValueArray& out )
 {
+	LoggerRef lgr = env->getLogger();
+	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
+	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod getting ClientCIMOMHandleRef for url: %1", m_url));
+	ClientCIMOMHandleRef hdl;
+	try
+	{
+		hdl = m_pool->getConnection(m_url);
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteMethodProvider::invokeMethod failed to get a connection: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
+	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, m_url);
+
+	lgr->logDebug("RemoteMethodProvider::invokeMethod calling remote WBEM server");
+	CIMValue rval(CIMNULL);
+
+	try
+	{
+		rval = hdl->invokeMethod(ns, path, methodName, in, out);
+	}
+	catch (const CIMException& e)
+	{
+		lgr->logInfo(Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
+		throw;
+	}
+	catch (const Exception& e)
+	{
+		String msg = Format("RemoteMethodProvider::invokeMethod failed calling remote WBEM server: %1", e);
+		lgr->logError(msg);
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
+	}
+
+	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod success. Returning: %1", rval));
+	return rval;
 }
 
 

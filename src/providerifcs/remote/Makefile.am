@@ -19,7 +19,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
-thelibdir = $(libdir)
+thelibdir = $(pkglibdir)/provifcs
 
 libowremoteprovifc_a_SOURCES = \
 OW_RemoteProviderInterface.hpp \

@@ -44,7 +44,7 @@ namespace OpenWBEM
 class RemoteInstanceProvider : public InstanceProviderIFC
 {
 public:
-	RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& provId, const ClientCIMOMHandleConnectionPoolRef& pool);
+	RemoteInstanceProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool);
 	virtual ~RemoteInstanceProvider();
 	
 	virtual void enumInstanceNames(
@@ -100,7 +100,7 @@ public:
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-
+	String m_url;
 };
 
 

@@ -44,7 +44,7 @@ namespace OpenWBEM
 class RemoteAssociatorProvider : public AssociatorProviderIFC
 {
 public:
-	RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& provId, const ClientCIMOMHandleConnectionPoolRef& pool);
+	RemoteAssociatorProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool);
 	virtual ~RemoteAssociatorProvider();
 	virtual void references(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &resultClass, const String &role, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList);
 	virtual void associators(const ProviderEnvironmentIFCRef &env, CIMInstanceResultHandlerIFC &result, const String &ns, const CIMObjectPath &objectName, const String &assocClass, const String &resultClass, const String &role, const String &resultRole, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList);
@@ -53,7 +53,7 @@ public:
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
-
+	String m_url;
 };
 
 

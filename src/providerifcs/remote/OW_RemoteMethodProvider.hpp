@@ -44,7 +44,7 @@ namespace OpenWBEM
 class RemoteMethodProvider : public MethodProviderIFC
 {
 public:
-	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& provId, const ClientCIMOMHandleConnectionPoolRef& pool);
+	RemoteMethodProvider(const ProviderEnvironmentIFCRef& env, const String& url, const ClientCIMOMHandleConnectionPoolRef& pool);
 	virtual ~RemoteMethodProvider();
 	virtual CIMValue invokeMethod(
 			const ProviderEnvironmentIFCRef& env,
@@ -57,6 +57,7 @@ public:
 
 private:
 	ClientCIMOMHandleConnectionPoolRef m_pool;
+	String m_url;
 };
 
 
