@@ -97,6 +97,13 @@ public:
 	 *  A NULL DataRef if key is not valid.
 	 */
 	DataRef getData(const String& key) const;
+
+	/**
+	 * Test whether there is data for the key.
+	 * @param key The key to test.
+	 * @return true if there is data for the key.
+	 */
+	bool keyHasData(const String& key) const;
 	
 	/**
 	 * These are for convenience, and are implemented in terms of

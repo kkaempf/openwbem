@@ -1836,7 +1836,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 void
 CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	if (context.getStringDataWithDefault(OperationContext::BYPASS_LOCKERKEY) == "true")
+	if (context.keyHasData(OperationContext::BYPASS_LOCKERKEY))
 	{
 		return; 
 	}
@@ -1894,7 +1894,7 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 void
 CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
-	if (context.getStringDataWithDefault(OperationContext::BYPASS_LOCKERKEY) == "true")
+	if (context.keyHasData(OperationContext::BYPASS_LOCKERKEY))
 	{
 		return; 
 	}

@@ -96,6 +96,13 @@ OperationContext::getData(const String& key) const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+bool
+OperationContext::keyHasData(const String& key) const
+{
+	return m_data.count(key) > 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 namespace 
 {
 struct StringData : public OperationContext::Data
