@@ -58,10 +58,10 @@ void OW_UUIDTestCases::testUnique()
 	// Create 10000, and then make sure they're all different.  
 	// More would be better, but we need to keep the tests fast.
 	const int NUM = 100000;
-	Array<UUID> uuids;
+	Array<OpenWBEM::UUID> uuids;
 	uuids.reserve(NUM); 
 	for (int i = 0; i < NUM; ++i)
-		uuids.push_back(UUID());
+		uuids.push_back(OpenWBEM::UUID());
 
 	std::sort(uuids.begin(), uuids.end());
 	for (int i = 0; i < NUM-1; ++i)
@@ -72,9 +72,9 @@ void OW_UUIDTestCases::testUnique()
 
 void OW_UUIDTestCases::testStringConversion()
 {
-	UUID uuid1;
+	OpenWBEM::UUID uuid1;
 	String suuid1(uuid1.toString());
-	UUID uuid1_2(suuid1);
+	OpenWBEM::UUID uuid1_2(suuid1);
 	unitAssert(uuid1 == uuid1_2);
 
 	// test round-tripping
@@ -82,21 +82,21 @@ void OW_UUIDTestCases::testStringConversion()
 	unitAssert(suuid1 == suuid1_2);
 
 	// construct from invalid make sure it throws.
-	unitAssertThrows(UUID("too short"));
+	unitAssertThrows(OpenWBEM::UUID("too short"));
 	// wrong format
-	unitAssertThrows(UUID("6ba7b810-9dad-11d1-80b40-0c04fd430c8"));
+	unitAssertThrows(OpenWBEM::UUID("6ba7b810-9dad-11d1-80b40-0c04fd430c8"));
 	// non-hex value
-	unitAssertThrows(UUID("6ba7b810-9dad-11d1-80b4-X0c04fd430c8"));
+	unitAssertThrows(OpenWBEM::UUID("6ba7b810-9dad-11d1-80b4-X0c04fd430c8"));
 
 	// construct 2 from the same string, make sure they're equal
-	unitAssert(UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8") ==
-		UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"));
-	unitAssert(UUID("11111111-1111-1111-1111-111111111111") !=
-		UUID("22222222-2222-2222-2222-222222222222"));
+	unitAssert(OpenWBEM::UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8") ==
+		OpenWBEM::UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"));
+	unitAssert(OpenWBEM::UUID("11111111-1111-1111-1111-111111111111") !=
+		OpenWBEM::UUID("22222222-2222-2222-2222-222222222222"));
 
 	// copy 1 and make sure it outputs the same string
-	UUID uuid3;
-	UUID uuid3_2(uuid3);
+	OpenWBEM::UUID uuid3;
+	OpenWBEM::UUID uuid3_2(uuid3);
 	unitAssert(uuid3.toString() == uuid3_2.toString());
 }
 

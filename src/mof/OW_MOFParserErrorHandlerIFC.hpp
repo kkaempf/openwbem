@@ -51,14 +51,18 @@ OW_DECLARE_EXCEPTION(ParseFatalError);
 class ParserErrorHandlerIFC : public IntrusiveCountableBase
 {
 public:
+	enum EParserAction { E_ABORT, E_IGNORE };
+
 	ParserErrorHandlerIFC();
 	virtual ~ParserErrorHandlerIFC();
 	void fatalError( const char* error, const lineInfo& li );
+
 	enum EParserAction
 	{
 		E_ABORT_ACTION,
 		E_IGNORE_ACTION,
 	};
+
 	void recoverableError( const char* error, const lineInfo& li );
 	void progressMessage( const char* message, const lineInfo& li );
 	long errorCount();

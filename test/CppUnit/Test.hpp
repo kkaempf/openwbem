@@ -54,7 +54,9 @@ public:
 
 };
 
-
+#ifdef OW_WIN32
+#define snprintf _snprintf
+#endif
 
 #endif
 

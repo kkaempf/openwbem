@@ -81,6 +81,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_SessionLanguage.obj \
 	$(OBJDIR)\OW_SharedLibrary.obj \
 	$(OBJDIR)\OW_SharedLibraryException.obj \
+	$(OBJDIR)\OW_SharedLibraryLoader.obj \
 	$(OBJDIR)\OW_StackTrace.obj \
 	$(OBJDIR)\OW_String.obj \
 	$(OBJDIR)\OW_StringBuffer.obj \
@@ -345,6 +346,9 @@ $(OBJDIR)\OW_SessionLanguage.obj: $(COMMONSRCDIR)\OW_SessionLanguage.cpp
 
 $(OBJDIR)\OW_SharedLibrary.obj: $(COMMONSRCDIR)\OW_SharedLibrary.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SharedLibrary.cpp
+
+$(OBJDIR)\OW_SharedLibraryLoader.obj: $(COMMONSRCDIR)\OW_SharedLibraryLoader.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SharedLibraryLoader.cpp
 
 $(OBJDIR)\OW_SharedLibraryException.obj: $(COMMONSRCDIR)\OW_SharedLibraryException.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_SharedLibraryException.cpp

@@ -41,9 +41,11 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include <errno.h>
+#ifndef OW_WIN32
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
+#endif
+#include <sys/types.h>
 
 using namespace OpenWBEM;
 
@@ -64,6 +66,7 @@ void OW_FileSystemTestCases::testgetLock()
 
 void OW_FileSystemTestCases::testtryLock()
 {
+#ifndef OW_WIN32	// no fork :(
 	File f = FileSystem::openFile("Makefile");
 	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
@@ -95,10 +98,12 @@ void OW_FileSystemTestCases::testtryLock()
 	}
 	// child should have returned 0 if the test worked.
 	unitAssert( rval == 0 );
+#endif
 }
 
 void OW_FileSystemTestCases::testunlock()
 {
+#ifndef OW_WIN32	// no fork :(
 	File f = FileSystem::openFile("Makefile");
 	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
@@ -131,6 +136,7 @@ void OW_FileSystemTestCases::testunlock()
 	}
 	// child should have returned 0 if the test worked.
 	unitAssert( rval == 0 );
+#endif
 }
 
 void OW_FileSystemTestCases::testopenOrCreateFile()

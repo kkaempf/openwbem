@@ -35,7 +35,7 @@
 
 #include "OW_config.h"
 
-#ifdef OW_DEBUG_MEMORY
+#if defined(OW_DEBUG_MEMORY) && !defined(OW_WIN32)
 #include "OW_MemTracerTestCases.hpp"
 #endif
 
@@ -77,7 +77,9 @@
 #include "OW_XMLUnescapeTestCases.hpp"
 #include "OW_EnumerationTestCases.hpp"
 #include "OW_StackTraceTestCases.hpp"
+#ifndef OW_WIN32
 #include "OW_ExecTestCases.hpp"
+#endif
 #include "OW_LinuxSharedLibraryLoaderTestCases.hpp"
 #include "OW_ProviderMuxTestCases.hpp"
 #include "OW_ProviderMuxLoaderTestCases.hpp"
@@ -126,7 +128,7 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
 	runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
 	runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());
-#ifdef OW_DEBUG_MEMORY
+#if defined(OW_DEBUG_MEMORY) && !defined(OW_WIN32)
 	runner.addTest( "OW_MemTracer", OW_MemTracerTestCases::suite());
 #endif
 	runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
@@ -141,7 +143,10 @@ int main( int argc, char *argv[])
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	runner.addTest( "OW_StackTrace", OW_StackTraceTestCases::suite());
 #endif
+
+#ifndef OW_WIN32
 	runner.addTest( "OW_Exec", OW_ExecTestCases::suite());
+#endif
 
 #if !defined(OW_STATIC_SERVICES)
 	// Don't run this test if things are static, as it opens a library that

@@ -552,6 +552,8 @@
 #define NO_POSIX_SIGNALS 1
 //#define OW_DEBUG_MEMORY 1
 
+#define snprintf _snprintf
+
 // Including winsock2.h should also bring in windows.h
 #include <winsock2.h>
  

@@ -39,8 +39,10 @@
 #include "OW_Thread.hpp"
 
 #include <sys/types.h>
-#include <unistd.h>
 
+#ifndef OW_WIN32
+#include <unistd.h>
+#endif
 
 #include <iostream> 
 
@@ -287,7 +289,7 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 
 namespace {
 
-
+#ifndef OW_WIN32
 class SetUIDThread : public Thread
 {
 private: 
@@ -320,10 +322,13 @@ public:
 	}
 
 };
+#endif
+
 } // end anonymous namespace
 
 void OW_ThreadTestCases::testSetUID()
 {
+#ifndef OW_WIN32
 	SetUIDThread t0(0); 
 	SetUIDThread t1(1); 
 	t0.start(); 
@@ -333,6 +338,7 @@ void OW_ThreadTestCases::testSetUID()
 		Thread::sleep(3000); 
 		cout << "Parent: " << getuid() << endl;
 	}
+#endif
 }
 
 Test* OW_ThreadTestCases::suite()

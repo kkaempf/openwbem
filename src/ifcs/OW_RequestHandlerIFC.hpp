@@ -48,7 +48,7 @@
 namespace OpenWBEM
 {
 
-class CIMFeatures;
+struct CIMFeatures;
 class ServiceEnvironmentIFC;
 typedef IntrusiveReference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 class OperationContext;

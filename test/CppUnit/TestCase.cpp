@@ -145,15 +145,17 @@ void handleSignal(int sigtype, const char* where, TestResult* result, TestCase* 
 
 	switch (sigtype)
 	{
+#ifndef OW_WIN32
 	case SIGTRAP:
 		report += " - SIGTRAP (perhaps integer divide by zero)";
 		break;
+	case SIGBUS:
+#endif
+	case SIGSEGV:
+		report += " - memory access violation";
+		break;
 	case SIGFPE:
 		report += " - SIGFPE (arithmetic exception)";
-		break;
-	case SIGSEGV:
-	case SIGBUS:
-		report += " - memory access violation";
 		break;
 	case SIGABRT:
 		report += " - SIGABRT abort() called or assert failed";
@@ -198,9 +200,11 @@ bool TestCase::runFuncAndCatchErrors( T func, const char* msg, TestResult* resul
 {
 	int sigtype;
 	SignalScope(SIGFPE, &unitTestSignalHandler);
+#ifndef OW_WIN32
 	SignalScope(SIGTRAP, &unitTestSignalHandler);
-	SignalScope(SIGSEGV, &unitTestSignalHandler);
 	SignalScope(SIGBUS, &unitTestSignalHandler);
+#endif
+	SignalScope(SIGSEGV, &unitTestSignalHandler);
 	SignalScope(SIGABRT, &unitTestSignalHandler);
 
 	try
