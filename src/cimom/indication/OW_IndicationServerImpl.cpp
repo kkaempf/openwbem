@@ -327,8 +327,19 @@ private:
 				username = v.toString();
 			}
 		}
-		// TODO: If the provider rejects the subscription, we need to disable it!
-		is->createSubscription(ns, i, username);
+
+		try
+		{
+			// TODO: If the provider rejects the subscription, we need to disable it!
+			is->createSubscription(ns, i, username);
+		}
+		catch(Exception& e)
+		{
+			// Something was wrong with the last subscription.
+			// If we allow this exception to pass through, all subsequent
+			// subscriptions will be ignored at init time.
+			// We'll ignore it here to keep that from happening.
+		}
 	}
 	IndicationServerImplThread* is;
 	String ns;
