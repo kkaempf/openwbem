@@ -14,9 +14,10 @@ SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(EXTRA_SSL_LIBS)
 
 
 
-noinst_LIBRARIES = libopenwbem.a
+owstatlib_LIBRARIES = libopenwbem.a
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!

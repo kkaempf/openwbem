@@ -8,11 +8,12 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowhttpcommon.a
+owstatlib_LIBRARIES = libowhttpcommon.a
 SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem $(Z_LIBS)
 
 OW_SHARED_LIBS = libowhttpcommon.$(LIB_EXT)
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowhttpcommon_a_SOURCES =	\
 OW_HTTPChunkedIStream.cpp \

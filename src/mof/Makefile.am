@@ -8,8 +8,9 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowmofc.a 
+owstatlib_LIBRARIES = libowmofc.a 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 OW_SHARED_LIBS = libowmofc.$(LIB_EXT)
 SHAREDLIBADD = \

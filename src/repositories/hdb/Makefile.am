@@ -11,7 +11,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowrepositoryhdb.$(LIB_EXT)
 
-noinst_LIBRARIES = \
+owstatlib_LIBRARIES = \
 libowrepositoryhdb.a
 
 SHAREDLIBADD = \
@@ -19,6 +19,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/db/db -lowdb
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_S=

@@ -8,11 +8,12 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowxml.a
+owstatlib_LIBRARIES = libowxml.a
 SHAREDLIBADD = -L$(top_builddir)/src/common -lopenwbem
 
 OW_SHARED_LIBS = libowxml.$(LIB_EXT)
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowxml_a_SOURCES = \
 OW_CIMXMLParser.cpp \

@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libnpisupport.a
+owstatlib_LIBRARIES = libnpisupport.a
 OW_SHARED_LIBS = libnpisupport.$(LIB_EXT)
 SHAREDLIBADD =  \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -16,6 +16,7 @@ SHAREDLIBADD =  \
 -L$(top_builddir)/src/wql/common -lowwqlcommon
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libnpisupport_a_SOURCES = \
 NPIExternal.cpp \

@@ -8,11 +8,12 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowdb.a 
+owstatlib_LIBRARIES = libowdb.a 
 OW_SHARED_LIBS = libowdb.$(LIB_EXT)
 
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowdb_a_SOURCES =  db.c
 

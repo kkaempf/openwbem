@@ -9,10 +9,11 @@ uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libowprovider.$(LIB_EXT)
 
-noinst_LIBRARIES = libowprovider.a
+owstatlib_LIBRARIES = libowprovider.a
 SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=

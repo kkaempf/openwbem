@@ -11,13 +11,14 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libcmpisupport.a
+owstatlib_LIBRARIES = libcmpisupport.a
 OW_SHARED_LIBS = libcmpisupport.$(LIB_EXT)
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider 
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libcmpisupport_a_SOURCES = \
 cmpiArray.cpp \

@@ -27,10 +27,13 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
-noinst_LIBRARIES = \
+owstatlib_LIBRARIES = \
 libowservicehttp.a
 
 thelibdir = $(pkglibdir)/services
+
+# We want the static lib in $(libdir), not $(thelibdir) in this case. 
+owstatlibdir = $(libdir)
 
 if DISABLE_DIGEST
 DIGEST_SOURCE_FILES =

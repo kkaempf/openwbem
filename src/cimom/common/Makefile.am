@@ -8,7 +8,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowcimomcommon.a
+owstatlib_LIBRARIES = libowcimomcommon.a
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/cimom/server -lowserver \
@@ -30,6 +30,7 @@ INCLUDES = \
 
 OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 
 libowcimomcommon_a_SOURCES =	\

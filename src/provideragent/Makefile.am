@@ -19,10 +19,11 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/services/http -lowservicehttp 
 
 
-noinst_LIBRARIES = \
+owstatlib_LIBRARIES = \
 libowprovideragent.a
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowprovideragent_a_SOURCES = \
 OW_ProviderAgentCIMOMHandle.hpp \

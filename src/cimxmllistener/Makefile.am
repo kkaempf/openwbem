@@ -17,10 +17,11 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/services/http -lowservicehttp
 
-noinst_LIBRARIES = \
+owstatlib_LIBRARIES = \
 libowhttpxmllistener.a
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowhttpxmllistener_a_SOURCES = \
 OW_CIMListenerCallback.cpp \

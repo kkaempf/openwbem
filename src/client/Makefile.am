@@ -16,11 +16,12 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/xml -lowxml \
 $(SLP_LIB)
 
-noinst_LIBRARIES = libowclient.a
+owstatlib_LIBRARIES = libowclient.a
 
 OW_SHARED_LIBS = libowclient.$(LIB_EXT)
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowclient_a_SOURCES = \
 OW_CIMOMLocator.cpp \

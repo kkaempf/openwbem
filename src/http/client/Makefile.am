@@ -8,13 +8,14 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowhttpclient.a
+owstatlib_LIBRARIES = libowhttpclient.a
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common/ -lopenwbem \
 -L$(top_builddir)/src/http/common -lowhttpcommon
 
 OW_SHARED_LIBS = libowhttpclient.$(LIB_EXT)
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 libowhttpclient_a_SOURCES =	\
 OW_HTTPClient.cpp 

@@ -27,8 +27,9 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/wql/common -lowwqlcommon
 
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
-noinst_LIBRARIES = libowwql.a
+owstatlib_LIBRARIES = libowwql.a
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

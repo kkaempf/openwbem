@@ -8,13 +8,14 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 
-noinst_LIBRARIES = libowserver.a
+owstatlib_LIBRARIES = libowserver.a
 SHAREDLIBADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provider -lowprovider
 
 OW_SHARED_LIBS = libowserver.$(LIB_EXT)
 thelibdir = $(libdir)
+owstatlibdir = $(thelibdir)
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
