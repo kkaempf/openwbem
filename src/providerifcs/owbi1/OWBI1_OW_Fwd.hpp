@@ -37,10 +37,12 @@
 
 #include "OWBI1_config.h"
 
+#ifndef OW_NAMESPACE
 // Need this first macro because ## doesn't expand vars, and we need an intermediate step
 #define OWBI1_NAMESPACE_CAT(ow, ver) ow ## ver 
 #define OWBI1_NAMESPACE_AUX(ver) OWBI1_NAMESPACE_CAT(OpenWBEM, ver) 
 #define OW_NAMESPACE OWBI1_NAMESPACE_AUX(OWBI1_OPENWBEM_LIBRARY_VERSION) 
+#endif
 
 // need this to set up an alias.
 namespace OW_NAMESPACE
@@ -55,9 +57,12 @@ namespace OW_NAMESPACE
 	class TempFileStream;
 }
 
+// If we defined some macros, undef them.
+#ifdef OWBI1_NAMESPACE_CAT
 #undef OW_NAMESPACE
 #undef OWBI1_NAMESPACE_AUX
 #undef OWBI1_NAMESPACE_CAT
+#endif
 
 #endif
 
