@@ -1,7 +1,36 @@
-2003-10-09 12:25  nuffer
+2003-11-03 10:43  nuffer
 
-	* src/cimom/OW_IndexImpl.cpp: Improved the error message when the
-	  index fails to open.
+	* src/requesthandlers/cimxml/OW_XMLExecute.cpp: Fixed a bug where a
+	  CLASSNAME arg is NULL.
+
+2003-10-29 15:53  nuffer
+
+	* src/cimom/: OW_CIMServer.cpp, OW_MetaRepository.cpp,
+	  OW_MetaRepository.hpp: Fixed enumClassNames to be about 10x
+	  faster.
+
+2003-10-28 16:02  nuffer
+
+	* src/cimom/OW_CIMServer.cpp: Changed createInstance to pass a
+	  class-synced-up instance to the provider instead of the raw
+	  instance that comes in from the client.
+
+2003-10-28 15:56  nuffer
+
+	* src/client/OW_CIMXMLCIMOMHandle.cpp: Fixed a problem where the
+	  instance keys may not be correctly set in the associators and
+	  references calls.
+
+2003-10-15 13:23  nuffer
+
+	* src/cimom/OW_CIMServer.cpp: Fixed createInstance in the case
+	  where the incoming instance does not have any KEY qualifiers on
+	  properties.  rval was getting initialized from the instance
+	  before the instance was synced up with the class.
+
+2003-10-12 15:41  nuffer
+
+	* configure.in, openwbem.spec: Version to 2.0.9
 
 2003-10-09 09:04  nuffer
 
