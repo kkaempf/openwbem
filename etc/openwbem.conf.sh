@@ -25,42 +25,6 @@ owcimomd.services_path = @libdir@/openwbem/services
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
 ################################################################################
-# 2.0
-# owcimomd.disable.slp - If set to "true" and the HTTP service has been
-# configured to do slp registration, the slp registration will never take place.
-# If the HTTP service was not configured with slp registration, this config
-# item it ignored.
-# The default is "false"
-;owcimomd.disable.slp = "false"
-
-################################################################################
-# owcimomd.http_port option specifies the port number owcimomd will listen on
-# for all HTTP communications. The default for this option is 5988.
-# Set this to -1 if you do not want to support HTTP connections (for
-# instance, you only want to support HTTPS connections).  If a value of 0
-# is given, a port will be dynamically assigned at run-time.
-;owcimomd.http_port = 5988
-
-################################################################################
-# owcimomd.https_port specifies the port number owcimomd will listen on for all
-# HTTPS communications. The default for this option is 5989
-# Set this to -1 if you do not want to support HTTPS connections.
-# If a value of 0 is given, a port will be dynamically assigned at run-time.
-;owcimomd.https_port = 5989
-
-################################################################################
-# owcimomd.max_connections specifies the maximum number of concurrent
-# connections owcimomd will handle. The default for this option is 30
-;owcimomd.max_connections = 30
-
-################################################################################
-# owcimomd.SSL_cert specifies the location of the file that contains the
-# host's private key and certificate that will be used by Open SSL for HTTPS
-# communications. The default for this option is
-# /etc/ssl/private/hostkey+cert.pem
-owcimomd.SSL_cert = /etc/ssl/private/hostkey+cert.pem
-
-################################################################################
 # owcimomd.libexecdir specifies the locaction of the libexec directory.
 # Binaries that owcimomd relies on are expected to be in this directory
 # the default for is option is "/usr/local/libexec/openwbem"
@@ -146,13 +110,6 @@ owcimomd.wql_lib = @libdir@/libowwql.so
 ;owcimomd.debugflag = false
 
 ################################################################################
-# owcimomd.single_thread specifies whether or not owcimomd process connection
-# in a separate thread or in the same thread as the server. This options is
-# really only for debug purposes and should not be of any use to the
-# typical user. The default for this option is false.
-;owcimomd.single_thread = false
-
-################################################################################
 # 2.0
 # the authentication module to be used by owcimomd.  This should be a
 # an absolute path to the shared library containing the authentication module.
@@ -166,16 +123,6 @@ pam.allowed_users = root
 # If the simple authentication module is used, this needs to be the path to
 # the password file
 simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
-
-################################################################################
-# Tell the http server to use digest authorization
-http_server.use_digest = true
-
-################################################################################
-# If the digest authentication module is used, this needs to be the path to
-# the password file
-digest_auth.password_file = @sysconfdir@/openwbem/digest_auth.passwd
-
 
 ################################################################################
 # When this variable is set to true, the cimom will not attempt to
@@ -194,5 +141,57 @@ digest_auth.password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
 # responses.  This option controls whether it will acutally use it or not.
 # The default is true.
-;owcimomd.enable_deflate = true
+;http_server.enable_deflate = true
+
+################################################################################
+# 2.0
+# http_server.disable.slp - If set to "true" and the HTTP service has been
+# configured to do slp registration, the slp registration will never take place.
+# If the HTTP service was not configured with slp registration, this config
+# item it ignored.
+# The default is false
+;http_server.disable.slp = false
+
+################################################################################
+# http_server.http_port option specifies the port number owcimomd will listen 
+# on for all HTTP communications. The default for this option is 5988.
+# Set this to -1 if you do not want to support HTTP connections (for
+# instance, you only want to support HTTPS connections).  If a value of 0
+# is given, a port will be dynamically assigned at run-time.
+;http_server.http_port = 5988
+
+################################################################################
+# http_server.https_port specifies the port number owcimomd will listen on 
+# for all HTTPS communications. The default for this option is 5989
+# Set this to -1 if you do not want to support HTTPS connections.
+# If a value of 0 is given, a port will be dynamically assigned at run-time.
+;http_server.https_port = 5989
+
+################################################################################
+# http_server.max_connections specifies the maximum number of concurrent
+# connections owcimomd will handle. The default for this option is 30
+;http_server.max_connections = 30
+
+################################################################################
+# http_server.SSL_cert specifies the location of the file that contains the
+# host's private key and certificate that will be used by Open SSL for HTTPS
+# communications. The default for this option is
+# /etc/ssl/private/hostkey+cert.pem
+http_server.SSL_cert = /etc/ssl/private/hostkey+cert.pem
+
+################################################################################
+# Tell the http server to use digest authorization
+http_server.use_digest = true
+
+################################################################################
+# If the digest authentication module is used, this needs to be the path to
+# the password file
+http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
+
+################################################################################
+# http_server.single_thread specifies whether or not owcimomd process connection
+# in a separate thread or in the same thread as the server. This options is
+# really only for debug purposes and should not be of any use to the
+# typical user. The default for this option is false.
+;http_server.single_thread = false
 
