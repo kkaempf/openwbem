@@ -170,8 +170,12 @@ private:
 	static void generateEphRSAKey(SSL_CTX* ctx);
 	static void uninitServer();
 	static void uninitClient();
+
 	// don't allow instantiation
 	SSLCtxMgr();
+	SSLCtxMgr(const SSLCtxMgr&);
+	SSLCtxMgr& operator=(const SSLCtxMgr&);
+
 	/** 
 	 * This probably needs to say something useful.
 	 */
