@@ -104,53 +104,12 @@ size_t charCount(const char* utf8str)
 	size_t count = 0;
 	while (*p)
 	{
-		const OW_UInt32 c0 = static_cast<OW_UInt8>(p[0]);
-		switch (SequenceLengthTable[c0])
-		{
-			case 1:
-			{
-				++p;
-				++count;
-				break;
-			}
-			case 2:
-			{
-				// check for short (invalid) utf8 sequence
-				if (p[1] == '\0')
-					return count;
+		// any chars 0x80-0xBF are extension bytes.  Anything else signals a new char
+		OW_UInt8 c = static_cast<OW_UInt8>(*p);
+		if (c < 0x80 || c > 0xBF)
+			++count;
 
-				p += 2;
-				++count;
-				break;
-			}
-			case 3:
-			{
-				// check for short (invalid) utf8 sequence
-				if (p[1] == '\0' || p[2] == '\0')
-					return count;
-
-				p += 3;
-				++count;
-				break;
-			}
-			case 4:
-			{
-				// check for short (invalid) utf8 sequence
-				if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
-					return count;
-
-				p += 4;
-				++count;
-				break;
-			}
-			default:
-			{
-				// invalid, just skip it
-				++p;
-				++count;
-				break;
-			}
-		}
+		++p;
 	}
 	return count;
 }
