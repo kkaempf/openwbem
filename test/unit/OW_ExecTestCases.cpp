@@ -50,15 +50,74 @@ void OW_ExecTestCases::testSafePopen()
 	OW_PopenStreams rval = OW_Exec::safePopen( command );
 	rval.in()->write("hello world\n", 12);
 	rval.in()->close();
-	rval.getExitStatus();
 	OW_String out = rval.out()->readAll();
+	rval.getExitStatus();
 	unitAssert(out == "hello world\n");
 
 	OW_PopenStreams rval2 = OW_Exec::safePopen( command, "hello to world\n" );
 	rval2.in()->close();
-	rval2.getExitStatus();
 	out = rval2.out()->readAll();
+	rval2.getExitStatus();
 	unitAssert( out == "hello to world\n" );
+}
+
+void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
+{
+	OW_String output;
+	int processstatus(0);
+    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/true").tokenize(), output, processstatus);
+	unitAssert(output.empty());
+	unitAssert(WIFEXITED(processstatus));
+	unitAssert(WEXITSTATUS(processstatus) == 0);
+
+	processstatus = 0;
+	output.erase();
+    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/false").tokenize(), output, processstatus);
+	unitAssert(output.empty());
+	unitAssert(WIFEXITED(processstatus));
+	unitAssert(WEXITSTATUS(processstatus) == 1);
+
+	processstatus = 0;
+	output.erase();
+    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/echo -n false").tokenize(), output, processstatus);
+	unitAssert(output == "false");
+	unitAssert(WIFEXITED(processstatus));
+	unitAssert(WEXITSTATUS(processstatus) == 0);
+
+    // do a timeout
+	processstatus = 0;
+	output.erase();
+	try
+	{
+		OW_StringArray cmd;
+		cmd.push_back("/bin/sh");
+		cmd.push_back("-c");
+		cmd.push_back("echo before; sleep 2; echo after");
+		OW_Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 1);
+		unitAssert(0);
+	}
+	catch (const OW_ExecTimeoutException& e)
+	{
+	}
+	unitAssert(output == "before\n");
+
+    // test output limit
+	processstatus = 0;
+	output.erase();
+	try
+	{
+		OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/echo 12345").tokenize(), output, processstatus, -1, 4);
+		unitAssert(0);
+	}
+	catch (const OW_ExecBufferFullException& e)
+	{
+	}
+	unitAssert(output == "1234");
+
+    // test both
+    //runtest("for x in `seq 10`; do echo $x; sleep $x; done", 5, 100);
+    //runtest("for x in `seq 10`; do echo $x; sleep $x; done", 100, 5);
+
 }
 
 Test* OW_ExecTestCases::suite()
@@ -69,6 +128,9 @@ Test* OW_ExecTestCases::suite()
 			("testSafePopen", 
 			&OW_ExecTestCases::testSafePopen));
 
+	testSuite->addTest (new TestCaller <OW_ExecTestCases> 
+			("testExecuteProcessAndGatherOutput", 
+			&OW_ExecTestCases::testExecuteProcessAndGatherOutput));
 	return testSuite;
 }
 

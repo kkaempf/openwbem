@@ -48,6 +48,7 @@ public:
 private:
 	// test methods
 	void testSafePopen();
+	void testExecuteProcessAndGatherOutput();
 };
 
 #endif
