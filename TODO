@@ -74,3 +74,5 @@ Documentation:
 Optimizations:
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
     - Switch OW_Reference to be intrusive reference counted.
+    - See if using OW_StringBuffer as the OW_String internal representation is 
+      faster than ByteBuf.
