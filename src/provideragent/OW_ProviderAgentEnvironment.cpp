@@ -41,6 +41,8 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Assertion.hpp"
 
+#include <algorithm> // for std::find
+
 namespace OpenWBEM
 {
 
@@ -118,7 +120,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 		  iter != m_requestHandlers.end(); ++iter)
 	{
 		StringArray sa = (*iter)->getSupportedContentTypes(); 
-		if (find(sa.begin(), sa.end(), ct) != sa.end())
+		if (std::find(sa.begin(), sa.end(), ct) != sa.end())
 		{
 			return *iter; 
 		}
