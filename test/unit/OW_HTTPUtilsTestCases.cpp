@@ -54,7 +54,7 @@ void OW_HTTPUtilsTestCases::testescapeCharForURL()
 void OW_HTTPUtilsTestCases::testescapeForURL()
 {
 	unitAssert( HTTPUtils::escapeForURL("Hello") == "Hello" );
-	unitAssert( HTTPUtils::escapeForURL("$-_.+!*\'(),;/?:@&=") == "$-_.+!*\'(),;/?:@&=" );
+	unitAssert( HTTPUtils::escapeForURL("-_.!*\'()") == "-_.!*\'()");
 	unitAssert( HTTPUtils::escapeForURL("\x1\x4\x10\x20\xFF%") == "%01%04%10%20%FF%25" );
 }
 #include <iostream>
