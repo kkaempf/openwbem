@@ -129,7 +129,7 @@ echo "Setting host specific flags..."
 #Figure out which platform dir to compile
 case "$host" in
 *-*-aix*)
-	echo "WARNING: AIX support at this currently experimental."
+	echo "WARNING: AIX support is currently experimental."
 	PLATFORMDIR="posix"
 	AIX=1
 	AC_DEFINE(AIX, $AIX, Target OS is AIX)
