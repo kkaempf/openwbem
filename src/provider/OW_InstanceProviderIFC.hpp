@@ -62,9 +62,10 @@ public:
 	 * @throws OW_CIMException - throws in the CIMObjectPath is incorrect
 	 * 	or does not exist.
 	 */
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
+	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass ) = 0;
 

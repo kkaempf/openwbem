@@ -71,16 +71,16 @@ namespace
 		}
 
 		/////////////////////////////////////////////////////////////////////////
-		virtual OW_CIMObjectPathEnumeration enumInstanceNames(
+		virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_Bool& deep,
 			const OW_CIMClass& cimClass )
 		{
 			(void)env;
 			(void)cimClass;
 			(void)deep;
-			OW_CIMObjectPathEnumeration rval;
 			OW_CIMObjectPath instCop = cop;
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
@@ -90,8 +90,7 @@ namespace
 			instCop.addKey("SystemName", OW_CIMValue(hostname));
 			instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
 			instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
-			rval.addElement(instCop);
-			return rval;
+			result.handleObjectPath(instCop);
 		}
 
 		/////////////////////////////////////////////////////////////////////////

@@ -56,7 +56,7 @@ public:
 		const OW_ACLInfo* pACLInfo=NULL);
 
 	void getInstanceNames(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
-		OW_CIMObjectPathEnumeration& en);
+		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**
 	 * Retrieve a specific instance

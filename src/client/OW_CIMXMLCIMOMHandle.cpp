@@ -440,8 +440,9 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep)
 {
 	static const char* const commandName = "EnumerateInstanceNames";
@@ -465,7 +466,6 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 	{
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-	OW_CIMObjectPathEnumeration retVal;
 	node = node.getChild();
 	while (node)
 	{
@@ -474,17 +474,16 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 		{
 			if(cop.getObjectName().equalsIgnoreCase(className))
 			{
-				retVal.addElement(cop);
+				result.handleObjectPath(cop);
 			}
 		}
 		else
 		{
-			retVal.addElement(cop);
+			result.handleObjectPath(cop);
 		}
 
 		node = node.getNext();
 	}
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

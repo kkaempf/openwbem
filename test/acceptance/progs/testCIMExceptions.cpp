@@ -769,7 +769,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("foo", "badNamespace");
-		hdl->enumInstanceNames(cop);
+		hdl->enumInstanceNamesE(cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -782,7 +782,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("badClass", "root");
-		hdl->enumInstanceNames(cop);
+		hdl->enumInstanceNamesE(cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

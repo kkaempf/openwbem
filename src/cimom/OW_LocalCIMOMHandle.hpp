@@ -247,8 +247,10 @@ public:
 	 * @return An Enumeration of OW_CIMObjectPaths
 	 * 		(OW_CIMObjectPathEnumeration)
 	 */
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_CIMObjectPath& path, OW_Bool deep=true);
+	virtual void enumInstanceNames(
+		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep=true);
 
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.

@@ -682,9 +682,15 @@ OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleIFCRef chdl,
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_Bool deep(OW_BinIfcIO::readBool(istrm));
-	OW_CIMObjectPathEnumeration en = chdl->enumInstanceNames(op, deep);
+
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeObjectPathEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
+	BinaryCIMObjectPathWriter handler(ostrm);
+	chdl->enumInstanceNames(op, handler, deep);
+
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

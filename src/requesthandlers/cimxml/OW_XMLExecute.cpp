@@ -786,6 +786,25 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMInstanceNameXMLOutputter : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		CIMInstanceNameXMLOutputter(ostream& ostr_)
+		: ostr(ostr_)
+		{}
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
+		}
+	private:
+		ostream& ostr;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -800,12 +819,9 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 
 	path.setObjectName(className);
 	
+	CIMInstanceNameXMLOutputter handler(ostr);
 	// Note that while the API allows deep the XML encodings don't.
-	OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(path);
-	while (enu.hasMoreElements())
-	{
-		OW_CIMtoXML(enu.nextElement(), ostr, OW_CIMtoXMLFlags::isInstanceName);
-	}
+	hdl.enumInstanceNames(path, handler);
 }
 
 //////////////////////////////////////////////////////////////////////////////

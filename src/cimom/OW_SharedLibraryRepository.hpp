@@ -163,10 +163,12 @@ public:
 			outParams, aclInfo);
 	}
 
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo &aclInfo)
+	virtual void enumInstanceNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumInstanceNames(path, deep, aclInfo);
+		return m_ref->enumInstanceNames(path, result, deep, aclInfo);
 	}
 
 	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath &cop,

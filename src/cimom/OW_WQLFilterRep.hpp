@@ -335,8 +335,10 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo& aclInfo);
+	virtual void enumInstanceNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Creates a instance in the store

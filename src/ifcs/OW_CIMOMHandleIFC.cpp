@@ -167,3 +167,14 @@ OW_CIMOMHandleIFC::enumInstancesE(
 	return rval;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathEnumeration
+OW_CIMOMHandleIFC::enumInstanceNamesE(
+		const OW_CIMObjectPath& path, OW_Bool deep=DEEP)
+{
+	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumBuilder handler(rval);
+	enumInstanceNames(path, handler, deep);
+	return rval;
+}
+

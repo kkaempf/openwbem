@@ -236,8 +236,10 @@ public:
 	 * 		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_CIMObjectPath& path, OW_Bool deep=true);
+	virtual void enumInstanceNames(
+		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep=true);
 
 	/**
 	 * Gets the CIM class for the specified CIM object path.

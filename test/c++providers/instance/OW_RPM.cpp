@@ -98,10 +98,11 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPathEnumeration
+	void
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
@@ -109,7 +110,6 @@ public:
 		(void)cimClass;
 		(void)env;
 
-		OW_CIMObjectPathEnumeration rval;
 		OW_String cmd = "/usr/bin/apt-cache search .*";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 
@@ -128,10 +128,8 @@ public:
 		{
 			OW_CIMObjectPath newCop = cop;
 			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
-			rval.addElement(newCop);
+			result.handleObjectPath(newCop);
 		}
-
-		return rval;
 	}
 
 

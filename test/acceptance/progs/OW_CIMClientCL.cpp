@@ -405,7 +405,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(cop, true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop, true);
 		while (enu.hasMoreElements())
 		{
 			cout << enu.nextElement().toString() << endl;
@@ -421,7 +421,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(cop, false);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop, false);
 		while (enu.hasMoreElements())
 		{
 			cout << enu.nextElement().toString() << endl;

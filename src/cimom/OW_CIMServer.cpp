@@ -887,8 +887,10 @@ OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
-OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
+void
+OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate instance names
@@ -898,7 +900,6 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	try
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMObjectPathEnumeration en;
 		OW_CIMObjectPath lcop(path);
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
@@ -907,13 +908,13 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 			checkGetClassRvalAndThrowInst(rval, lcop);
 		}
 
-		_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
+		_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
 
 		// If this is the namespace class then just return now
 		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
 			|| !deep)
 		{
-			return en;
+			return;
 		}
 
 		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
@@ -925,10 +926,8 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
 			checkGetClassRvalAndThrowInst(rval, lcop);
 
-			_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
+			_getCIMInstanceNames(lcop, theClass, result, deep, aclInfo);
 		}
-
-		return en;
 	}
 	catch (OW_HDBException&)
 	{
@@ -940,6 +939,7 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class CIMServerProviderEnvironment : public OW_ProviderEnvironmentIFC
@@ -981,8 +981,8 @@ namespace
 // PRIVATE
 void
 OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
-	const OW_CIMClass& theClass, OW_CIMObjectPathEnumeration& en, OW_Bool deep,
-	const OW_ACLInfo& aclInfo)
+	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
+	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
@@ -1010,18 +1010,13 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
-		OW_CIMObjectPathEnumeration theEnum = instancep->enumInstanceNames(
-			createProvEnvRef(real_ch),
-			cop, deep, theClass);
+		instancep->enumInstanceNames(createProvEnvRef(real_ch),
+			cop, result, deep, theClass);
 
-		while(theEnum.hasMoreElements())
-		{
-			en.addElement(theEnum.nextElement());
-		}
 	}
 	else
 	{
-		m_iStore.getInstanceNames(cop, theClass, en);
+		m_iStore.getInstanceNames(cop, theClass, result);
 	}
 }
 
@@ -1184,19 +1179,6 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 			createProvEnvRef(real_ch), cop, handler, deep, theClass, localOnly);
 		deepHonored = true;
 
-		/*
-		while(theEnum.hasMoreElements())
-		{
-			OW_CIMInstance ci = theEnum.nextElement();
-			OW_CIMObjectPath lcop(cop);
-			lcop.setObjectName(ci.getClassName());
-			lcop.setKeys(ci.getKeyValuePairs());
-
-			_getProviderProperties(lcop, ci, theClass, aclInfo);
-			result.handleInstance(ci.clone(localOnly, includeQualifiers,
-				includeClassOrigin, lpropList));
-		}
-		*/
 	}
 	else
 	{

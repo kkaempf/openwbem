@@ -26,16 +26,16 @@ public:
 	}
 
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
+	virtual void enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
 		(void)deep;
 		(void)cimClass;
 		(void)env;
-		OW_CIMObjectPathEnumeration rval;
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsz";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 
@@ -62,10 +62,8 @@ public:
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
 			newCop.addKey(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
-			rval.addElement(newCop);
+			result.handleObjectPath(newCop);
 		}
-
-		return rval;
 	}
 
 	////////////////////////////////////////////////////////////////////////////

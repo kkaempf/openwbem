@@ -119,15 +119,16 @@ OW_CppInstanceProviderProxy::deleteInstance(
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPathEnumeration
+void
 OW_CppInstanceProviderProxy::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
+	return m_pProv->enumInstanceNames(env, cop, result, deep, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -116,14 +116,15 @@ OW_InstanceProviderProxy::deleteInstance(
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPathEnumeration
+void
 OW_InstanceProviderProxy::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
-	return m_pProv->enumInstanceNames(env, cop, deep, cimClass);
+	m_pProv->enumInstanceNames(env, cop, result, deep, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

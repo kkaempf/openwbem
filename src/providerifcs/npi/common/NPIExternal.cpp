@@ -111,7 +111,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	try
 	{
 		crefs =
-			provenv->getPtr()->getCIMOMHandle()->enumInstanceNames(
+			provenv->getPtr()->getCIMOMHandle()->enumInstanceNamesE(
 			op, OW_CIMOMHandleIFC::DEEP);
 	}
 	catch (...)

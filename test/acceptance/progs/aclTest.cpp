@@ -266,7 +266,7 @@ void enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
 		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(cop, true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop, true);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

@@ -207,7 +207,7 @@ main(int argc, char* argv[])
 
 		cout << "** Enumerating instances (0 instances)" << endl;
 		OW_CIMObjectPath ccop("TestInstance", "root");
-		OW_CIMObjectPathEnumeration copEnu = rch.enumInstanceNames(ccop);
+		OW_CIMObjectPathEnumeration copEnu = rch.enumInstanceNamesE(ccop);
 		OW_ASSERT(copEnu.numberOfElements() == 0);
 
 		cout << "** Getting class" << endl;
@@ -229,7 +229,7 @@ main(int argc, char* argv[])
 		rch.createInstance(icop, inst);
 
 		cout << "** Enumerating instances (1 instance)" << endl;
-		copEnu = rch.enumInstanceNames(ccop);
+		copEnu = rch.enumInstanceNamesE(ccop);
 		OW_ASSERT(copEnu.numberOfElements() == 1);
 
 		cout << "** Getting Instance" << endl;

@@ -41,14 +41,14 @@
 #define DDD(X) // X
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_NPIInstanceProviderProxy::enumInstanceNames(
         const OW_ProviderEnvironmentIFCRef& env,
         const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
         const OW_Bool& deep,
         const OW_CIMClass& cimClass )
 {
-        OW_CIMObjectPathEnumeration rval;
 		  (void)deep;
 
         env->getLogger()->
@@ -87,7 +87,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 
 // FIXME
                 ow_cop.setObjectName(cimClass.getName());
-                rval.addElement(ow_cop);
+				result.handleObjectPath(ow_cop);
             }
 
         }
@@ -95,8 +95,6 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
         {
             OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
         }
-
-        return rval;
 }
 
 /////////////////////////////////////////////////////////////////////////////

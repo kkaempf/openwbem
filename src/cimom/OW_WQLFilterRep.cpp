@@ -242,9 +242,11 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_WQLFilterRep::enumInstanceNames(
-	const OW_CIMObjectPath &/*path*/, OW_Bool /*deep*/,
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMObjectPathResultHandlerIFC&,
+	OW_Bool /*deep*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

@@ -194,11 +194,12 @@ OW_IndicationRepLayerImpl::enumInstances(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_IndicationRepLayerImpl::enumInstanceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumInstanceNames(path, deep, aclInfo);
+	return m_pServer->enumInstanceNames(path, result, deep, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -221,7 +221,7 @@ OW_InstanceRepository::makeClassKey(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass, OW_CIMObjectPathEnumeration& en)
+	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result)
 {
 	throwIfNotOpen();
 	OW_String ns = cop.getNameSpace();
@@ -246,7 +246,7 @@ OW_InstanceRepository::getInstanceNames(const OW_CIMObjectPath& cop,
 		nodeToCIMObject(ci, node);
 		OW_CIMObjectPath op(ci.getClassName(), cop.getNameSpace());
 		op.setKeys(ci.getKeyValuePairs());
-		en.addElement(op);
+		result.handleObjectPath(op);
 		node = hdl->getNextSibling(node);
 	}
 }

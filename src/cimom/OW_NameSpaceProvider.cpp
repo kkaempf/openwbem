@@ -89,43 +89,35 @@ OW_NameSpaceProvider::deleteInstance(
 
 namespace
 {
-	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	class CIMInstanceToObjectPath : public OW_CIMInstanceResultHandlerIFC
 	{
 	public:
-		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+		CIMInstanceToObjectPath(OW_CIMObjectPathResultHandlerIFC& h,
+			OW_String& className_) : m_h(h), className(className_) {}
 	protected:
-		virtual void doHandleInstance(const OW_CIMInstance &i)
+		virtual void doHandleInstance(const OW_CIMInstance &ci)
 		{
-			m_e.addElement(i);
+			m_h.handleObjectPath(OW_CIMObjectPath(className, ci.getKeyValuePairs()));
 		}
 	private:
-		OW_CIMInstanceEnumeration& m_e;
+		OW_CIMObjectPathResultHandlerIFC& m_h;
+		OW_String& className;
 	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_NameSpaceProvider::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass)
 {
 	OW_String className = cimClass.getName();
-	OW_CIMObjectPathEnumeration openum;
 
-
-	OW_CIMInstanceEnumeration ienum;
-	CIMInstanceEnumBuilder handler(ienum);
+	CIMInstanceToObjectPath handler(result, className);
 	enumInstances(env, cop, handler, deep, cimClass, false);
-
-	while(ienum.hasMoreElements())
-	{
-		OW_CIMInstance ci = ienum.nextElement();
-		openum.addElement(OW_CIMObjectPath(className, ci.getKeyValuePairs()));
-	}
-
-	return openum;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -156,6 +148,19 @@ namespace
 	private:
 		OW_CIMInstanceResultHandlerIFC& handler;
 		const OW_CIMClass& cimClass;
+	};
+
+	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &ci)
+		{
+			m_e.addElement(ci);
+		}
+	private:
+		OW_CIMInstanceEnumeration& m_e;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////

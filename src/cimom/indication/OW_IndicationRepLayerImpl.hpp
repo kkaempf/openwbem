@@ -90,8 +90,10 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
-		const OW_CIMObjectPath& path, OW_Bool deep, const OW_ACLInfo& aclInfo);
+	virtual void enumInstanceNames(
+		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMQualifierType getQualifierType(
 		const OW_CIMObjectPath &name, const OW_ACLInfo& aclInfo);

@@ -63,10 +63,11 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPathEnumeration
+	void
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
@@ -79,9 +80,8 @@ public:
 		{
 			OW_CIMObjectPath instCop = cop;
 			instCop.addKey("Name", OW_CIMValue(iter->name));
-			rval.addElement(instCop);
+			result.handleObjectPath(instCop);
 		}
-		return rval;
 	}
 
 //////////////////////////////////////////////////////////////////////////////
