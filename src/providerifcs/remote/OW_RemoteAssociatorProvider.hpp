@@ -35,6 +35,7 @@
 #ifndef OW_REMOTE_ASSOCIATOR_PROVIDER_HPP_INCLUDE_GUARD_
 #define OW_REMOTE_ASSOCIATOR_PROVIDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
 
@@ -61,6 +62,8 @@ private:
 
 
 } // end namespace OpenWBEM
+
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 #endif
 

@@ -33,6 +33,7 @@
  */
 
 #include "OW_config.h"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_RemoteAssociatorProvider.hpp"
 #include "OW_RemoteProviderUtils.hpp"
 #include "OW_Format.hpp"
@@ -226,3 +227,4 @@ RemoteAssociatorProvider::referenceNames(const ProviderEnvironmentIFCRef &env, C
 } // end namespace OpenWBEM
 
 
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

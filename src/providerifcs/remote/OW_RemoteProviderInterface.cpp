@@ -80,21 +80,21 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 InstanceProviderIFCRef
 RemoteProviderInterface::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return InstanceProviderIFCRef(new RemoteInstanceProvider(env, provIdString, m_connectionPool));
+	return InstanceProviderIFCRef(new RemoteInstanceProvider(env, provIdString, m_connectionPool, false, false));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 SecondaryInstanceProviderIFCRef
 RemoteProviderInterface::doGetSecondaryInstanceProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, provIdString, m_connectionPool));
+	return SecondaryInstanceProviderIFCRef(new RemoteSecondaryInstanceProvider(env, provIdString, m_connectionPool, false, false));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 MethodProviderIFCRef
 RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return MethodProviderIFCRef(new RemoteMethodProvider(env, provIdString, m_connectionPool));
+	return MethodProviderIFCRef(new RemoteMethodProvider(env, provIdString, m_connectionPool, false, false));
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -102,7 +102,7 @@ RemoteProviderInterface::doGetMethodProvider(const ProviderEnvironmentIFCRef& en
 AssociatorProviderIFCRef
 RemoteProviderInterface::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, provIdString, m_connectionPool));
+	return AssociatorProviderIFCRef(new RemoteAssociatorProvider(env, provIdString, m_connectionPool, false, false));
 }
 #endif
 
