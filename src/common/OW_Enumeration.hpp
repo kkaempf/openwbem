@@ -281,6 +281,10 @@ public:
 	{
 		m_read();
 	}
+
+	// compiler generated copy ctor is what we want.
+	// compiler generated copy-assignment operator= is what we want.
+
 	reference operator*() const
 	{
 		return m_value;
