@@ -46,9 +46,6 @@
 extern "C"
 {
 
-// something goofy with epoll at the moment. 
-#undef OW_HAVE_SYS_EPOLL_H
-
 #ifndef OW_WIN32
  #ifdef OW_HAVE_SYS_EPOLL_H
   #include <sys/epoll.h>
@@ -269,9 +266,6 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 #else
 
-
-
-
 #ifdef OW_HAVE_SYS_EPOLL_H
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
@@ -387,7 +381,6 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 		selarray[i].rAvailable = false;
 		selarray[i].wAvailable = false;
 		selarray[i].wasError = false;
-		events[i].data.fd = selarray[i].s;
 		events[i].data.u32 = i;
 		events[i].events = 0;
 		if(selarray[i].rEvents)
@@ -464,14 +457,10 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	for(int i = 0; i < ecc; i++)
 	{
 		int ndx = events[i].data.u32;
-		selarray[ndx].wasError = ((events[i].events 
-			& (EPOLLERR)) != 0);
-		if(!selarray[ndx].wasError)
-		{
-			selarray[ndx].rAvailable = ((events[i].events 
-				& (EPOLLIN | EPOLLPRI | EPOLLHUP)) != 0);
-			selarray[ndx].wAvailable = ((events[i].events & EPOLLOUT) != 0);
-		}
+		selarray[ndx].rAvailable = ((events[i].events 
+			& (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP)) != 0);
+		selarray[ndx].wAvailable = ((events[i].events 
+			& (EPOLLOUT | EPOLLERR | EPOLLHUP)) != 0);
 	}
 
 	return ecc;
