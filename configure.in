@@ -255,6 +255,8 @@ case "$host" in
 	EXEEXT=".nlm"
 	PLAT_CFLAGS="-DEXPERIMENTAL"
 	PLAT_CXXFLAGS="-DEXPERIMENTAL"
+	CXXBINLINKFLAGS="-lstubs"
+	CXXSHAREDLIBLINKFLAGS="-lstubs"
 	;;
 *-*-netbsd*)
 	;;
