@@ -65,8 +65,6 @@ public:
 	virtual StringArray getDependencies() const;
 	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void start();
-	virtual void started();
-	virtual void shuttingDown();
 	virtual void shutdown();
 
 	void addPolledProvider(const PolledProviderIFCRef& p);

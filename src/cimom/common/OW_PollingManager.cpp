@@ -81,31 +81,15 @@ PollingManager::init(const ServiceEnvironmentIFCRef& env)
 void
 PollingManager::start()
 {
-	// note that we don't actually start the thread here, since the polled providers may depend on other services that may start after us.
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-PollingManager::started()
-{
-	// TODO: Move this to start() when service dependencies are implemented
 	m_pollingManagerThread->start();
 	m_pollingManagerThread->waitUntilReady();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-PollingManager::shuttingDown()
-{
-	// TODO: Move this to shutdown() when service dependencies are implemented
-	// stop the polling before everything else shuts down.
-	m_pollingManagerThread->shutdown();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 PollingManager::shutdown()
 {
+	m_pollingManagerThread->shutdown();
 }
 
 //////////////////////////////////////////////////////////////////////////////
