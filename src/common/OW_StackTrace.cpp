@@ -53,6 +53,7 @@ using std::flush;
 void OW_StackTrace::getStackTrace()
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+	OW_StackTrace* retval = 0;
 	if (getenv("OW_STACKTRACE"))
 	{
 		ifstream file(DEFAULT_GDB_PATH);
