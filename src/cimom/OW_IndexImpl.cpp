@@ -2,6 +2,7 @@
 #include "OW_Index.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Format.hpp"
 
 extern "C"
 {
@@ -10,6 +11,7 @@ extern "C"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 #include "db.h"
 }
 
@@ -92,9 +94,7 @@ OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
 
 		if(m_pDB == NULL)
 		{
-			OW_String msg = "Failed to open index file: ";
-			msg += m_dbFileName;
-			OW_THROW(OW_IndexException, msg.c_str());
+			OW_THROW(OW_IndexException, format("Failed to open index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
 	}
 	else
@@ -104,9 +104,7 @@ OW_IndexImpl::open(const char* fileName, OW_Bool allowDuplicates)
 
 		if(m_pDB == NULL)
 		{
-			OW_String msg = "Failed to create index file: ";
-			msg += m_dbFileName;
-			OW_THROW(OW_IndexException, msg.c_str());
+			OW_THROW(OW_IndexException, format("Failed to create index file: %1, errno =%2(%3)", m_dbFileName, errno, strerror(errno)).c_str());
 		}
 	}
 }
