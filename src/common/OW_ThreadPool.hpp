@@ -92,6 +92,12 @@ public:
 	 */
 	bool tryAddWork(const OW_RunnableRef& work);
 
+	enum EShutdownQueueFlag
+	{
+		E_DISCARD_WORK_IN_QUEUE,
+		E_FINISH_WORK_IN_QUEUE
+	};
+
 	/**
 	 * Instruct all threads to exit and stop working.  After shutdown() is
 	 * called, addWork() and tryAddWork() will return false.
@@ -106,7 +112,7 @@ public:
 	 *  the threads will not be cancelled, and shutdown() will return once
 	 *  all the threads have exited.
 	 */
-	void shutdown(bool finishWorkInQueue=true, int timeoutSecs=-1);
+	void shutdown(EShutdownQueueFlag finishWorkInQueue = E_FINISH_WORK_IN_QUEUE, int timeoutSecs=-1);
 
 	/**
 	 * Wait for the queue to empty out.

@@ -371,7 +371,7 @@ OW_IndicationServerImpl::run()
 
 	m_env->logDebug("OW_IndicationServerImpl::run shutting down");
 
-	m_notifierThreadPool->shutdown(false, 60);
+	m_notifierThreadPool->shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 
 	return 0;
 }

@@ -196,7 +196,7 @@ OW_PollingManager::run()
 	}
 
 	// wait until all the threads exit
-	m_triggerRunnerThreadPool->shutdown(false, 60);
+	m_triggerRunnerThreadPool->shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 
 	m_triggerRunners.clear();
 

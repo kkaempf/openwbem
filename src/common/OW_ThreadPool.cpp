@@ -51,7 +51,7 @@ public:
 	// returns true if work is placed in the queue to be run and false if not.
 	virtual bool addWork(const OW_RunnableRef& work, bool blockWhenFull) = 0;
 
-	virtual void shutdown(bool finishWorkInQueue, int shutdownSecs) = 0;
+	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs) = 0;
 
 	virtual void waitForEmptyQueue() = 0;
 
@@ -104,7 +104,7 @@ protected:
 		return m_shutdown || m_queueClosed;
 	}
 
-	bool finishOffWorkInQueue(bool finishWorkInQueue, int shutdownSecs)
+	bool finishOffWorkInQueue(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
 		OW_NonRecursiveMutexLock l(m_queueLock);
 		// the pool is in the process of being destroyed
@@ -279,7 +279,7 @@ public:
 		return true;
 	}
 
-	virtual void shutdown(bool finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
 		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
 		{
@@ -299,7 +299,7 @@ public:
 		try
 		{
 			// Make sure the pool is shutdown.
-			shutdown(false, 1);
+			shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 		}
 		catch (...)
 		{
@@ -429,7 +429,7 @@ public:
 		return true;
 	}
 
-	virtual void shutdown(bool finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
 		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
 		{
@@ -448,7 +448,7 @@ public:
 		try
 		{
 			// Make sure the pool is shutdown.
-			shutdown(false, 1);
+			shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 		}
 		catch (...)
 		{
@@ -508,7 +508,7 @@ bool OW_ThreadPool::tryAddWork(const OW_RunnableRef& work)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void OW_ThreadPool::shutdown(bool finishWorkInQueue, int shutdownSecs)
+void OW_ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 {
 	m_impl->shutdown(finishWorkInQueue, shutdownSecs);
 }

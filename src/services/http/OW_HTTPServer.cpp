@@ -492,7 +492,7 @@ OW_HTTPServer::shutdown()
 	}
 
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
-	m_threadPool->shutdown(false, 60);
+	m_threadPool->shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 
 	OW_Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;
