@@ -333,7 +333,7 @@ OW_HTTPSvrConnection::beginPostResponse()
 	{
 		addHeader( "Transfer-Encoding", "chunked");
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
-		addHeader("Trailers", 
+		addHeader("Trailers",
 			m_respHeaderPrefix + "CIMError, "
 			+ m_respHeaderPrefix + "CIMErrorCode, "
 			+ m_respHeaderPrefix + "CIMErrorDescription");
@@ -473,11 +473,17 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		OW_ASSERT(ostrChunk);
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode", 
+			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode",
 				OW_String(errCode));
 			if (!errDescr.empty())
 			{
-				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorDescription", 
+				OW_StringArray lines = errDescr.tokenize("\n");
+				errDescr.erase();
+				for (size_t i = 0; i < lines.size(); ++i)
+				{
+					errDescr += lines[i] + " ";
+				}
+				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorDescription",
 					errDescr);
 			}
 			if (!m_requestHandler->getCIMError().empty())
