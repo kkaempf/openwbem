@@ -111,7 +111,7 @@ private:
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 };
-typedef SharedLibraryReference<CppProviderIFC> CppProviderIFCRef;
+typedef SharedLibraryReference< Reference<CppProviderIFC> > CppProviderIFCRef;
 
 } // end namespace OpenWBEM
 

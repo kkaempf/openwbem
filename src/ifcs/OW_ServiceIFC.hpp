@@ -45,7 +45,7 @@ public:
 	virtual void startService() = 0;
 	virtual void shutdown() = 0;
 };
-typedef SharedLibraryReference<ServiceIFC> ServiceIFCRef;
+typedef SharedLibraryReference< Reference<ServiceIFC> > ServiceIFCRef;
 
 } // end namespace OpenWBEM
 

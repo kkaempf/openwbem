@@ -194,7 +194,7 @@ protected:
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env) = 0;
 };
 
-typedef SharedLibraryReference<ProviderIFCBaseIFC> ProviderIFCBaseIFCRef;
+typedef SharedLibraryReference< Reference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
 
 } // end namespace OpenWBEM
 

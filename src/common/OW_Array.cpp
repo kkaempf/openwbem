@@ -27,43 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
-#define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Exception.hpp"
+#include "OW_Array.hpp"
+#include "OW_Format.hpp"
+#ifdef OW_DEBUG
+#include <cassert>
+#endif
 
 namespace OpenWBEM
 {
 
-class ThreadBarrierImpl;
-DECLARE_EXCEPTION(ThreadBarrier);
-/**
- * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
- * This class is freely copyable.  All copies reference the same underlying implementation.
- */
-class ThreadBarrier
+#ifdef OW_CHECK_ARRAY_INDEXING
+void throwArrayOutOfBoundsException(size_t size, size_t idx)
 {
-public:
-	/**
-	 * Constructor
-	 * @param threshold The number of threads that must call wait() before any of them successfully return from the call. The value specified by threshold must be greater than zero.
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	ThreadBarrier(UInt32 threshold);
-	/**
-	 * Synchronize participating threads at the barrier. The calling thread shall block until the required number of threads have called wait().
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	void wait();
-	~ThreadBarrier();
-	ThreadBarrier(const ThreadBarrier& x);
-	ThreadBarrier& operator=(const ThreadBarrier& x);
-private:
-	Reference<ThreadBarrierImpl> m_impl;
-};
+#ifdef OW_DEBUG
+		assert(0); // segfault so we can get a core
+#endif
+		OW_THROW(OutOfBoundsException,
+			format("Array Index out of bounds. size = %1, index = %2", size, idx).c_str());
+}
+#endif
 
 } // end namespace OpenWBEM
 
-#endif

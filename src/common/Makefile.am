@@ -24,6 +24,7 @@ INCLUDES = \
 
 
 libopenwbem_a_SOURCES =	\
+OW_Array.cpp \
 OW_Assertion.cpp \
 OW_AtomicOps.cpp \
 OW_BaseStreamBuffer.cpp \
@@ -32,6 +33,7 @@ OW_Bool.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_Condition.cpp \
+OW_COWReferenceBase.cpp \
 OW_DateTime.cpp \
 OW_EnumerationException.cpp \
 OW_Exception.cpp \
@@ -55,6 +57,7 @@ OW_PosixFileSystem.cpp \
 OW_PosixUnnamedPipe.cpp \
 OW_RWLocker.cpp \
 OW_RandomNumber.cpp \
+OW_ReferenceBase.cpp \
 OW_Runnable.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
@@ -100,6 +103,7 @@ OW_CIMFeatures.hpp \
 OW_Condition.hpp \
 OW_ConfigOpts.hpp \
 OW_COWReference.hpp \
+OW_COWReferenceBase.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \
@@ -133,6 +137,7 @@ OW_RWLocker.hpp \
 OW_RandomNumber.hpp \
 OW_RefCount.hpp \
 OW_Reference.hpp \
+OW_ReferenceBase.hpp \
 OW_Runnable.hpp \
 OW_Select.hpp \
 OW_SelectEngine.hpp \

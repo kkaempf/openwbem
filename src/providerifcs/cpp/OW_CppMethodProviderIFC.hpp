@@ -91,7 +91,7 @@ public:
 			CIMParamValueArray& out ) = 0;
 	virtual CppMethodProviderIFC* getMethodProvider() { return this; }
 };
-typedef SharedLibraryReference< CppMethodProviderIFC > CppMethodProviderIFCRef;
+typedef SharedLibraryReference< Reference<CppMethodProviderIFC> > CppMethodProviderIFCRef;
 
 } // end namespace OpenWBEM
 

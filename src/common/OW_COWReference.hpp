@@ -27,88 +27,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-#ifndef OW_COWREFERENCE_HPP_
-#define OW_COWREFERENCE_HPP_
+#ifndef OW_COWREFERENCE_HPP_INCLUDE_GUARD_
+#define OW_COWREFERENCE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_RefCount.hpp"
-#ifdef OW_CHECK_NULL_REFERENCES
-#include "OW_Exception.hpp"
-#endif
-#ifdef OW_DEBUG
-#include <cassert>
-#endif
+#include "OW_COWReferenceBase.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void COWRefSwap(T& x, T&y)
-{
-    T t = x;
-    x = y;
-    y = t;
-}
-//////////////////////////////////////////////////////////////////////////////
-// This class contains the non-templated code for COWReference, to help 
-// minimize code bloat.
-class COWReferenceBase
-{
-protected:
-    COWReferenceBase()
-        : m_pRefCount(new RefCount) {}
-    COWReferenceBase(const COWReferenceBase& arg)
-        : m_pRefCount(arg.m_pRefCount)
-    {
-        m_pRefCount->inc();
-    }
-    void incRef()
-    {
-    	if(m_pRefCount)
-    	{
-            m_pRefCount->inc();
-    	}
-    }
-	
-    bool decRef()
-    {
-        if (m_pRefCount->decAndTest())
-        {
-            delete m_pRefCount;
-            m_pRefCount = 0;
-            return true;
-        }
-        return false;
-    }
-    // returns true if a copy needs to be made
-    bool getWriteLock()
-    {
-        if (m_pRefCount->decAndTest())
-        {
-            // only copy--don't need to clone
-            incRef();
-            return false;
-        }
-        else
-        {
-            // need to become unique and clone
-    		m_pRefCount = new RefCount;
-            return true;
-        }
-    }
-    
-    void swap(COWReferenceBase& arg)
-    {
-        COWRefSwap(m_pRefCount, arg.m_pRefCount);
-    }
-protected:
-    RefCount* volatile m_pRefCount;
-};
-//////////////////////////////////////////////////////////////////////////////
-template<class T>
 class COWReference : private COWReferenceBase
 {
 	public:
+		typedef T element_type;
+
 		COWReference();
 		explicit COWReference(T* ptr);
 		COWReference(const COWReference<T>& arg);
@@ -123,7 +56,7 @@ class COWReference : private COWReferenceBase
         void swap(COWReference<T>& arg);
 		T* operator->();
 		T& operator*();
-		T* getPtr();
+//		T* getPtr();
 		const T* operator->() const;
 		const T& operator*() const;
 		const T* getPtr() const;
@@ -141,16 +74,15 @@ class COWReference : private COWReferenceBase
 			{  return (!isNull()) ? &dummy::nonnull : 0; }
 		safe_bool operator!() const
 			{  return (!isNull()) ? 0: &dummy::nonnull; }
+		
 		template <class U>
 		COWReference<U> cast_to() const;
+
 	private:
 		T* volatile m_pObj;
 		/* This is so the templated constructor will work */
 		template <class U> friend class COWReference;
 		void decRef();
-#ifdef OW_CHECK_NULL_REFERENCES
-		void checkNull() const;
-#endif
 		void getWriteLock();
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -202,28 +134,16 @@ inline void COWReference<T>::decRef()
         m_pObj = 0;
     }
 }
-//////////////////////////////////////////////////////////////////////////////
-template <class T>
-inline T* COWReferenceClone(T* obj)
-{
-    // default implementation.  If a certain class doesn't have clone()
-    // (like std::vector), then they can overload this function
-    return obj->clone();
-}
+
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline void COWReference<T>::getWriteLock()
 {
-    if (COWReferenceBase::getWriteLock())
+    if (COWReferenceBase::refCountGreaterThanOne())
     {
-        if (m_pObj)
-        {
-            m_pObj = COWReferenceClone(m_pObj);
-        }
-        else
-        {
-            m_pObj = 0;
-        }
+		m_pObj = COWReferenceClone(m_pObj);
+		// this will decrement the count and then make a new one if we're making a copy.
+		COWReferenceBase::getWriteLock();
     }
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -251,10 +171,10 @@ inline void COWReference<T>::swap(COWReference<T>& arg)
 template<class T>
 inline T* COWReference<T>::operator->()
 {
-    getWriteLock();
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
+    getWriteLock();
 	
 	return m_pObj;
 }
@@ -262,10 +182,10 @@ inline T* COWReference<T>::operator->()
 template<class T>
 inline T& COWReference<T>::operator*()
 {
-    getWriteLock();
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
+    getWriteLock();
 	
 	return *(m_pObj);
 }
@@ -274,7 +194,7 @@ template<class T>
 inline const T* COWReference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
 	
 	return m_pObj;
@@ -284,7 +204,7 @@ template<class T>
 inline const T& COWReference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
 	
 	return *(m_pObj);
@@ -296,12 +216,12 @@ inline const T* COWReference<T>::getPtr() const
 	return m_pObj;
 }
 //////////////////////////////////////////////////////////////////////////////
-template<class T>
-inline T* COWReference<T>::getPtr()
-{
-    getWriteLock();
-	return m_pObj;
-}
+//template<class T>
+//inline T* COWReference<T>::getPtr()
+//{
+//    getWriteLock();
+//	return m_pObj;
+//}
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline bool COWReference<T>::isNull() const
@@ -309,19 +229,6 @@ inline bool COWReference<T>::isNull() const
 	return (m_pObj == 0);
 }
 //////////////////////////////////////////////////////////////////////////////
-#ifdef OW_CHECK_NULL_REFERENCES
-template<class T>
-inline void COWReference<T>::checkNull() const
-{
-	if (this == 0 || isNull())
-	{
-#ifdef OW_DEBUG
-		assert(0); // segfault so we can get a core
-#endif
-		OW_THROW(Exception, "NULL COWReference dereferenced");
-	}
-}
-#endif
 template <class T>
 template <class U>
 inline COWReference<U>
@@ -343,15 +250,26 @@ inline bool operator==(const COWReference<T>& a, const COWReference<U>& b)
 {
 	return a.getPtr() == b.getPtr();
 }
+//////////////////////////////////////////////////////////////////////////////
 template <class T, class U>
 inline bool operator!=(const COWReference<T>& a, const COWReference<U>& b)
 {
 	return a.getPtr() != b.getPtr();
 }
+//////////////////////////////////////////////////////////////////////////////
 template <class T, class U>
 inline bool operator<(const COWReference<T>& a, const COWReference<U>& b)
 {
 	return a.getPtr() < b.getPtr();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template <class T>
+inline T* COWReferenceClone(T* obj)
+{
+    // default implementation.  If a certain class doesn't have clone()
+    // (like std::vector), then they can overload this function
+    return obj->clone();
 }
 
 } // end namespace OpenWBEM

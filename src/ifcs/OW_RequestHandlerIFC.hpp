@@ -48,7 +48,7 @@ typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
  * options() functions for this class are called, respectively.
  */
 class RequestHandlerIFC;
-typedef SharedLibraryReference<RequestHandlerIFC> RequestHandlerIFCRef;
+typedef SharedLibraryReference< Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
 class RequestHandlerIFC
 {
 public:

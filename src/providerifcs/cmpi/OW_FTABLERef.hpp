@@ -57,7 +57,7 @@ typedef struct {
 	::CMPI_Broker broker;
 } CompleteMI; 
 
-typedef SharedLibraryReference<CompleteMI> CMPIFTABLERef;
+typedef SharedLibraryReference< Reference<CompleteMI> > CMPIFTABLERef;
 
 } // end namespace OpenWBEM
 

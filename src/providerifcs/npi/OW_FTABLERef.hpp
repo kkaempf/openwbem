@@ -105,7 +105,7 @@ public:
 };
 typedef ::FTABLE (*FP_INIT_FT) (void);
 typedef NPIFTABLE (*NPIFP_INIT_FT) (void);
-typedef SharedLibraryReference< NPIFTABLE> FTABLERef;
+typedef SharedLibraryReference< Reference<NPIFTABLE> > FTABLERef;
 
 } // end namespace OpenWBEM
 

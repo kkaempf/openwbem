@@ -30,7 +30,6 @@
 #ifndef OW_SHARED_LIBRARY_REFERENCE_HPP_
 #define OW_SHARED_LIBRARY_REFERENCE_HPP_
 #include "OW_config.h"
-#include "OW_Reference.hpp"
 #include "OW_SharedLibrary.hpp"
 
 namespace OpenWBEM
@@ -40,11 +39,11 @@ template <class T>
 class SharedLibraryReference
 {
 public:
-	SharedLibraryReference(SharedLibraryRef lib, Reference<T> obj)
+	SharedLibraryReference(SharedLibraryRef lib, T obj)
 	: m_sharedLib(lib), m_obj(obj)
 	{}
-	SharedLibraryReference(SharedLibraryRef lib, T* obj)
-	: m_sharedLib(lib), m_obj(Reference<T>(obj))
+	SharedLibraryReference(SharedLibraryRef lib, typename T::element_type* obj)
+	: m_sharedLib(lib), m_obj(T(obj))
 	{}
 	SharedLibraryReference(const SharedLibraryReference<T>& arg)
 	: m_sharedLib(arg.m_sharedLib), m_obj(arg.m_obj)
@@ -82,7 +81,7 @@ public:
 	{
 		return m_sharedLib;
 	}
-	T* operator->() const
+	typename T::element_type* operator->() const
 	{
 		return &*m_obj;
 	}
@@ -125,7 +124,7 @@ public:
 	template <class U> friend class SharedLibraryReference;
 private:
 	SharedLibraryRef m_sharedLib;
-	Reference<T> m_obj;
+	T m_obj;
 };
 
 } // end namespace OpenWBEM

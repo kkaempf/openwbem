@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2001 Center 7, Inc All rights reserved.
+ * Copyright (C) 2001-3 Center 7, Inc All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -30,105 +30,20 @@
 #ifndef OW_REFERENCE_HPP_
 #define OW_REFERENCE_HPP_
 #include "OW_config.h"
-#include "OW_RefCount.hpp"
-#ifdef OW_CHECK_NULL_REFERENCES
-#include "OW_Exception.hpp"
-#endif
-#ifdef OW_DEBUG
-#include <cassert>
-#endif
+#include "OW_ReferenceBase.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void RefSwap(T& x, T&y)
-{
-	T t = x;
-	x = y;
-	y = t;
-}
-//////////////////////////////////////////////////////////////////////////////
-// This class contains the non-templated code for Reference, to help 
-// minimize code bloat.
-class ReferenceBase
-{
-protected:
-	ReferenceBase()
-		: m_pRefCount(0) {}
-	ReferenceBase(const void* ptr)
-		: m_pRefCount((ptr != 0) ? new RefCount : 0) {}
-	ReferenceBase(const void* ptr, bool noDelete)
-		: m_pRefCount(0) 
-	{
-		if(ptr != 0 && !noDelete)
-		{
-			m_pRefCount = new RefCount;
-		}
-	}
-	ReferenceBase(const ReferenceBase& arg)
-		: m_pRefCount(0)
-	{
-		if(arg.m_pRefCount)
-		{
-			m_pRefCount = arg.m_pRefCount;
-			m_pRefCount->inc();
-		}
-	}
-	void incRef()
-	{
-		if(m_pRefCount)
-		{
-			m_pRefCount->inc();
-		}
-	}
-	
-	bool decRef()
-	{
-		if(m_pRefCount)
-		{
-			if (m_pRefCount->decAndTest())
-			{
-				delete m_pRefCount;
-				// TODO: Measure how much of a performance impact the following line has.
-				m_pRefCount = 0;
-				return true;
-			}
-		}
-		return false;
-	}
-	void swap(ReferenceBase& arg)
-	{
-		RefSwap(m_pRefCount, arg.m_pRefCount);
-	}
-	void useRefCountOf(const ReferenceBase& arg)
-	{
-		/*
-		if(m_pRefCount)
-		{
-			if (m_pRefCount->decAndTest())
-			{
-				delete m_pRefCount;
-				m_pRefCount = 0;
-			}
-		}
-		*/
-		decRef();
-		m_pRefCount = arg.m_pRefCount;
-		incRef();
-	}
-protected:
-	RefCount* volatile m_pRefCount;
-};
-//////////////////////////////////////////////////////////////////////////////
-template<class T>
 class Reference : private ReferenceBase
 {
 	public:
+		typedef T element_type;
+
 		Reference();
 		explicit Reference(T* ptr);
-		Reference(T* ptr, bool noDelete);
 		Reference(const Reference<T>& arg);
 		
 		/* construct out of a reference to a derived type.  U should be
@@ -165,9 +80,6 @@ class Reference : private ReferenceBase
 		T* volatile m_pObj;
 		/* This is so the templated constructor will work */
 		template <class U> friend class Reference;
-#ifdef OW_CHECK_NULL_REFERENCES
-		void checkNull() const;
-#endif
 };
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
@@ -178,13 +90,7 @@ inline Reference<T>::Reference()
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline Reference<T>::Reference(T* ptr)
-	: ReferenceBase(ptr), m_pObj(ptr)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-template<class T>
-inline Reference<T>::Reference(T* ptr, bool noDelete)
-	: ReferenceBase(ptr, noDelete), m_pObj(ptr)
+	: ReferenceBase(), m_pObj(ptr)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -204,14 +110,9 @@ inline Reference<T>::Reference(const Reference<U>& arg)
 template<class T>
 inline Reference<T>::~Reference()
 {
-	try
-	{
-		decRef();
-	}
-	catch (...)
-	{
-		// don't let exceptions escape
-	}
+	// we don't catch(...) here because nothing we do will throw, and any 
+	// class we wrap should have a non-throwing destructor.
+	decRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
@@ -221,8 +122,6 @@ inline void Reference<T>::decRef()
 	if (ReferenceBase::decRef())
 	{
 		delete m_pObj;
-		// TODO: Measure how much of a performance hit the following line has.
-		m_pObj = 0;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -251,7 +150,7 @@ template<class T>
 inline T* Reference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
 	
 	return m_pObj;
@@ -261,7 +160,7 @@ template<class T>
 inline T& Reference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
-	checkNull();
+	checkNull(m_pObj);
 #endif
 	
 	return *(m_pObj);
@@ -279,19 +178,6 @@ inline bool Reference<T>::isNull() const
 	return (m_pObj == 0);
 }
 //////////////////////////////////////////////////////////////////////////////
-#ifdef OW_CHECK_NULL_REFERENCES
-template<class T>
-inline void Reference<T>::checkNull() const
-{
-	if (this == 0 || isNull())
-	{
-#ifdef OW_DEBUG
-		assert(0); // segfault so we can get a core
-#endif
-		OW_THROW(Exception, "NULL Reference dereferenced");
-	}
-}
-#endif
 template <class T>
 template <class U>
 inline Reference<U>
@@ -306,6 +192,7 @@ Reference<T>::cast_to() const
 	}
 	return rval;
 }
+//////////////////////////////////////////////////////////////////////////////
 template <class T>
 template <class U>
 inline void
@@ -320,11 +207,13 @@ inline bool operator==(const Reference<T>& a, const Reference<U>& b)
 {
 	return a.getPtr() == b.getPtr();
 }
+//////////////////////////////////////////////////////////////////////////////
 template <class T, class U>
 inline bool operator!=(const Reference<T>& a, const Reference<U>& b)
 {
 	return a.getPtr() != b.getPtr();
 }
+//////////////////////////////////////////////////////////////////////////////
 #if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 // Resolve the ambiguity between our op!= and the one in rel_ops
 template <class T>
@@ -333,6 +222,7 @@ inline bool operator!=(const Reference<T>& a, const Reference<T>& b)
 	return a.getPtr() != b.getPtr();
 }
 #endif
+//////////////////////////////////////////////////////////////////////////////
 template <class T, class U>
 inline bool operator<(const Reference<T>& a, const Reference<U>& b)
 {

@@ -107,7 +107,7 @@ private:
 	MIs miVector;
 	::CMPI_Broker _broker;
 };
-typedef SharedLibraryReference<CMPIProviderIFC> CMPIProviderIFCRef;
+typedef SharedLibraryReference<Reference<CMPIProviderIFC> > CMPIProviderIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -79,12 +79,12 @@ void CIMClient::createNameSpace(const String& ns)
 {
     try
     {
-        CIMNameSpaceUtils::createCIM_Namespace(m_ch,ns);
+        CIMNameSpaceUtils::createCIM_Namespace(*m_ch,ns);
     }
     catch (const CIMException& e)
     {
         // server doesn't support CIM_Namespace, try __Namespace
-        CIMNameSpaceUtils::create__Namespace(m_ch,ns);
+        CIMNameSpaceUtils::create__Namespace(*m_ch,ns);
     }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,12 +92,12 @@ void CIMClient::deleteNameSpace(const String& ns)
 {
 	try
     {
-        CIMNameSpaceUtils::deleteCIM_Namespace(m_ch,ns);
+        CIMNameSpaceUtils::deleteCIM_Namespace(*m_ch,ns);
     }
     catch (const CIMException& e)
     {
         // server doesn't support CIM_Namespace, try __Namespace
-        CIMNameSpaceUtils::delete__Namespace(m_ch,ns);
+        CIMNameSpaceUtils::delete__Namespace(*m_ch,ns);
     }
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -106,7 +106,7 @@ StringArray
 CIMClient::enumNameSpaceE(EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
-	return CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
+	return CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
 void 
@@ -114,7 +114,7 @@ CIMClient::enumNameSpace(StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
-	CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
+	CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, result, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
 void 

@@ -64,6 +64,7 @@ private:
     typedef IntrusiveReference this_type;
 public:
     typedef T element_type;
+
     IntrusiveReference(): p_(0)
     {
     }

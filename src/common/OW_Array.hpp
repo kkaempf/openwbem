@@ -47,6 +47,10 @@ namespace OpenWBEM
 
 DECLARE_EXCEPTION(OutOfBounds);
 
+#ifdef OW_CHECK_ARRAY_INDEXING
+void throwArrayOutOfBoundsException(size_t size, size_t idx);
+#endif
+
 /**
  * The OW_Array class essentially takes the vector class of the stl and
  * adds ref counting and copy on write capability.

@@ -67,7 +67,7 @@ namespace CIMNameSpaceUtils
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace already exists.
 	 */
-	void createCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, 
+	void createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, 
 		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = "root");
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
@@ -82,7 +82,7 @@ namespace CIMNameSpaceUtils
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	void deleteCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, const String& interopNs = "root");
+	void deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, const String& interopNs = "root");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -97,7 +97,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	StringArray enumCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& interopNs = "root");
+	StringArray enumCIM_Namespace(CIMOMHandleIFC& hdl, const String& interopNs = "root");
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
@@ -112,7 +112,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	void enumCIM_Namespace(const CIMOMHandleIFCRef& hdl,
+	void enumCIM_Namespace(CIMOMHandleIFC& hdl,
 		StringResultHandlerIFC& result, const String& interopNs = "root");
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -124,7 +124,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns 	The namespace name to be created.
 	 * @exception CIMException If the namespace already exists.
 	 */
-	void create__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns);
+	void create__Namespace(CIMOMHandleIFC& hdl, const String& ns);
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -134,7 +134,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns	The namespace to delete.
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	void delete__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns);
+	void delete__Namespace(CIMOMHandleIFC& hdl, const String& ns);
 #endif
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -151,7 +151,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	StringArray enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+	StringArray enum__Namespace(CIMOMHandleIFC& hdl, const String& ns, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -168,7 +168,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	void enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns,
+	void enum__Namespace(CIMOMHandleIFC& hdl, const String& ns,
 		StringResultHandlerIFC& result, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * This function creates a "normalized" namespace.  Because of differing 

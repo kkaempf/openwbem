@@ -31,9 +31,6 @@
 #define OW_ARRAY_IMPL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Array.hpp"
-#ifdef OW_DEBUG
-#include <cassert>
-#endif
 
 namespace OpenWBEM
 {
@@ -354,11 +351,7 @@ Array<T>::checkValidIndex(size_type index) const
 {
 	if (index >= size())
 	{
-#ifdef OW_DEBUG
-		assert(0); // segfault so we can get a core
-#endif
-		OW_THROW(OutOfBoundsException,
-			"Array Index out of bounds");
+		throwArrayOutOfBoundsException(size(), index);
 	}
 }
 #endif

@@ -339,7 +339,7 @@ CIMServer::CIMServer(CIMOMEnvironmentRef env,
 	, m_nsClass_Namespace(CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
-	, m_realRepository(m_cimRepository.cast_to<CIMRepository>())
+	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
 {
 }
 //////////////////////////////////////////////////////////////////////////////

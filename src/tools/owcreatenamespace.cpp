@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 		}
 		String toCreate(ns);
 		cout << "Creating namespace (" << ns << ")" << endl;
-		CIMNameSpaceUtils::create__Namespace(rch, toCreate);
+		CIMNameSpaceUtils::create__Namespace(*rch, toCreate);
 		return 0;
 	}
 	catch(const Exception& e)

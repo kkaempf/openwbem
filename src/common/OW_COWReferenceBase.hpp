@@ -27,43 +27,93 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
-#define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
+#ifndef OW_COW_REFERENCE_BASE_HPP_INCLUDE_GUARD_
+#define OW_COW_REFERENCE_BASE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Types.hpp"
-#include "OW_Reference.hpp"
-#include "OW_Exception.hpp"
+#include "OW_RefCount.hpp"
 
 namespace OpenWBEM
 {
 
-class ThreadBarrierImpl;
-DECLARE_EXCEPTION(ThreadBarrier);
-/**
- * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
- * This class is freely copyable.  All copies reference the same underlying implementation.
- */
-class ThreadBarrier
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline void COWRefSwap(T& x, T&y)
 {
-public:
-	/**
-	 * Constructor
-	 * @param threshold The number of threads that must call wait() before any of them successfully return from the call. The value specified by threshold must be greater than zero.
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	ThreadBarrier(UInt32 threshold);
-	/**
-	 * Synchronize participating threads at the barrier. The calling thread shall block until the required number of threads have called wait().
-	 * @throw ThreadBarrierException if the underlying implementation fails.
-	 */
-	void wait();
-	~ThreadBarrier();
-	ThreadBarrier(const ThreadBarrier& x);
-	ThreadBarrier& operator=(const ThreadBarrier& x);
-private:
-	Reference<ThreadBarrierImpl> m_impl;
+    T t = x;
+    x = y;
+    y = t;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// This class contains the non-templated code for COWReference, to help 
+// minimize code bloat.
+class COWReferenceBase
+{
+protected:
+    COWReferenceBase()
+        : m_pRefCount(new RefCount) {}
+    COWReferenceBase(const COWReferenceBase& arg)
+        : m_pRefCount(arg.m_pRefCount)
+    {
+        m_pRefCount->inc();
+    }
+    void incRef()
+    {
+        m_pRefCount->inc();
+    }
+	
+    bool decRef()
+    {
+        if (m_pRefCount->decAndTest())
+        {
+            delete m_pRefCount;
+            m_pRefCount = 0;
+            return true;
+        }
+        return false;
+    }
+
+	bool refCountGreaterThanOne() const
+	{
+		return m_pRefCount->get() > 1;
+	}
+    
+    void getWriteLock()
+    {
+        if (m_pRefCount->decAndTest())
+        {
+            // only copy--don't need to clone, also not a race condition
+            incRef();
+        }
+        else
+        {
+            // need to become unique
+    		m_pRefCount = new RefCount;
+        }
+    }
+    
+    void swap(COWReferenceBase& arg)
+    {
+        COWRefSwap(m_pRefCount, arg.m_pRefCount);
+    }
+
+#ifdef OW_CHECK_NULL_REFERENCES
+	void throwNULLException() const;
+	void checkNull(void* p) const
+	{
+		if (p == 0)
+		{
+			throwNULLException();
+		}
+	}
+#endif
+
+protected:
+    RefCount* volatile m_pRefCount;
 };
 
 } // end namespace OpenWBEM
 
 #endif
+
+

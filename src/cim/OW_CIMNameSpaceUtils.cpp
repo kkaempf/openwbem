@@ -96,12 +96,12 @@ prepareNamespace(String ns)
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-createCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, UInt16 classInfo, const String& descriptionOfClassInfo, const String& interopNs)
+createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns_, UInt16 classInfo, const String& descriptionOfClassInfo, const String& interopNs)
 {
 	String ns(prepareNamespace(ns_));
-	CIMClass theCIM_NamespaceClass = hdl->getClass(interopNs, "CIM_Namespace");
-	CIMClass theAssocCls = hdl->getClass(interopNs, "CIM_NamespaceInManager");
-	CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
+	CIMClass theCIM_NamespaceClass = hdl.getClass(interopNs, "CIM_Namespace");
+	CIMClass theAssocCls = hdl.getClass(interopNs, "CIM_NamespaceInManager");
+	CIMObjectPathEnumeration e = hdl.enumInstanceNamesE(interopNs, "CIM_ObjectManager");
 	if (e.numberOfElements() != 1)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Failed to get one instance of "
@@ -120,18 +120,18 @@ createCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, UInt16 clas
 	{
 		cimInstance.setProperty("DescriptionOfClassInfo", CIMValue(descriptionOfClassInfo));
 	}
-	CIMObjectPath theNewNsPath = hdl->createInstance(interopNs, cimInstance);
+	CIMObjectPath theNewNsPath = hdl.createInstance(interopNs, cimInstance);
 	CIMInstance theAssoc = theAssocCls.newInstance();
 	theAssoc.setProperty("Antecedent", CIMValue(theObjectManager));
 	theAssoc.setProperty("Dependent", CIMValue(theNewNsPath));
-	hdl->createInstance(interopNs, theAssoc);
+	hdl.createInstance(interopNs, theAssoc);
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-deleteCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, const String& interopNs)
+deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns_, const String& interopNs)
 {
 	String ns(prepareNamespace(ns_));
-	CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
+	CIMObjectPathEnumeration e = hdl.enumInstanceNamesE(interopNs, "CIM_ObjectManager");
 	if (e.numberOfElements() != 1)
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Failed to get one instance of "
@@ -148,13 +148,13 @@ deleteCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, const Strin
 	CIMObjectPath theAssoc("CIM_NamespaceInManager", interopNs);
 	theAssoc.addKey("Antecedent", CIMValue(theObjectManager));
 	theAssoc.addKey("Dependent", CIMValue(nsPath));
-	hdl->deleteInstance(interopNs, theAssoc);
-	hdl->deleteInstance(interopNs, nsPath);
+	hdl.deleteInstance(interopNs, theAssoc);
+	hdl.deleteInstance(interopNs, nsPath);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 StringArray
-enumCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& interopNs)
+enumCIM_Namespace(CIMOMHandleIFC& hdl, const String& interopNs)
 {
 	StringArray rval;
 	StringArrayBuilder handler(rval);
@@ -163,16 +163,16 @@ enumCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& interopNs)
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-enumCIM_Namespace(const CIMOMHandleIFCRef& hdl,
+enumCIM_Namespace(CIMOMHandleIFC& hdl,
 	StringResultHandlerIFC& result, const String& interopNs)
 {
 	NamespaceObjectPathToStringHandler handler(result);
-	hdl->enumInstanceNames(interopNs, "CIM_Namespace", handler);
+	hdl.enumInstanceNames(interopNs, "CIM_Namespace", handler);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-create__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
+create__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 {
 	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
@@ -189,11 +189,11 @@ create__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
 	CIMInstance cimInstance = the__NamespaceClass.newInstance();
 	CIMValue cv(newNameSpace);
 	cimInstance.setProperty("Name", cv);
-	hdl->createInstance(parentPath, cimInstance);
+	hdl.createInstance(parentPath, cimInstance);
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-delete__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
+delete__Namespace(CIMOMHandleIFC& hdl, const String& ns_)
 {
 	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
@@ -205,12 +205,12 @@ delete__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
 	cp.setDataType(CIMDataType::STRING);
 	v.push_back(cp);
 	CIMObjectPath path(CIMClass::NAMESPACECLASS, v);
-	hdl->deleteInstance(parentPath, path);
+	hdl.deleteInstance(parentPath, path);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 StringArray
-enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, EDeepFlag deep)
+enum__Namespace(CIMOMHandleIFC& hdl, const String& ns, EDeepFlag deep)
 {
 	StringArray rval;
 	StringArrayBuilder handler(rval);
@@ -221,14 +221,14 @@ namespace
 {
 //////////////////////////////////////////////////////////////////////////////
 	void
-	enumNameSpaceAux(const CIMOMHandleIFCRef& hdl,
+	enumNameSpaceAux(CIMOMHandleIFC& hdl,
 		const String& ns,
 		StringResultHandlerIFC& result, EDeepFlag deep)
 	{
 		// can't use the callback version of enumInstances, because the recursion
 		// throws a wrench in the works.  Each CIM Method call has to finish
 		// before another one can begin.
-		CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
+		CIMInstanceEnumeration en = hdl.enumInstancesE(ns,
 			String(CIMClass::NAMESPACECLASS), E_SHALLOW, E_LOCAL_ONLY);
 		while (en.hasMoreElements())
 		{
@@ -264,7 +264,7 @@ namespace
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_,
+enum__Namespace(CIMOMHandleIFC& hdl, const String& ns_,
 	StringResultHandlerIFC& result, EDeepFlag deep)
 {
 	String ns(prepareNamespace(ns_));

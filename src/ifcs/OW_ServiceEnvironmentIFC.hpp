@@ -45,7 +45,7 @@ typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
 class ServiceEnvironmentIFC;
 typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 class RequestHandlerIFC;
-typedef SharedLibraryReference<RequestHandlerIFC> RequestHandlerIFCRef;
+typedef SharedLibraryReference< Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
 class ServiceEnvironmentIFC
 {
 public:

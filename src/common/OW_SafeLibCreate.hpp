@@ -51,7 +51,7 @@ class SafeLibCreate
 	typedef const char* (*versionFunc_t)();
 public:
 	typedef std::pair<Reference<T>, SharedLibraryRef> return_type;
-	typedef SharedLibraryReference<T> return_obj;
+	typedef SharedLibraryReference<Reference<T> > return_obj;
 	
 	static return_type
 	loadAndCreate(String const& libname, String const& createFuncName,

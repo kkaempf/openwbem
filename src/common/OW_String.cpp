@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -792,10 +792,7 @@ String::writeObject(ostream& ostrm) const
 String&
 String::operator= (const String& arg)
 {
-	if(m_buf.getPtr() != arg.m_buf.getPtr())
-	{
-		m_buf = arg.m_buf;
-	}
+	m_buf = arg.m_buf;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////

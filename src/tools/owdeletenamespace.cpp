@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 			rch = new CIMXMLCIMOMHandle(client);
 		}
 		cout << "Deleting namespace (" << ns << ")" << endl;
-		CIMNameSpaceUtils::delete__Namespace(rch, ns);
+		CIMNameSpaceUtils::delete__Namespace(*rch, ns);
 		return 0;
 	}
 	catch(const Exception& e)

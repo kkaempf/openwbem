@@ -101,7 +101,7 @@ protected:
 	virtual void doInit(ServiceEnvironmentIFCRef) {}
 	Mutex m_mutex;
 };
-typedef SharedLibraryReference<AuthenticatorIFC> AuthenticatorIFCRef;
+typedef SharedLibraryReference<Reference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
 #define OW_AUTHENTICATOR_FACTORY(derived) \
 extern "C" OpenWBEM::AuthenticatorIFC* \

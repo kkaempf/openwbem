@@ -662,7 +662,7 @@ private:
 	//CIMClass m_nsClassCIM_Namespace;
 	CIMOMEnvironmentRef m_env;
 	RepositoryIFCRef m_cimRepository;
-	Reference<CIMRepository> m_realRepository;
+	IntrusiveReference<CIMRepository> m_realRepository;
 };
 
 } // end namespace OpenWBEM

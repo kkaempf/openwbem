@@ -95,7 +95,7 @@ private:
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 };
-typedef SharedLibraryReference<NPIProviderIFC> NPIProviderIFCRef;
+typedef SharedLibraryReference< Reference<NPIProviderIFC> > NPIProviderIFCRef;
 
 } // end namespace OpenWBEM
 

@@ -87,7 +87,7 @@ private:
 	DateTime m_dt;
 };
 
-typedef SharedLibraryReference<CppProviderBaseIFC> CppProviderBaseIFCRef;
+typedef SharedLibraryReference< Reference<CppProviderBaseIFC> > CppProviderBaseIFCRef;
 
 } // end namespace OpenWBEM
 

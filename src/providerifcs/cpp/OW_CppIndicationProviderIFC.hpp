@@ -119,7 +119,7 @@ public:
 		);
 	virtual CppIndicationProviderIFC* getIndicationProvider();
 };
-typedef SharedLibraryReference< CppIndicationProviderIFC > CppIndicationProviderIFCRef;
+typedef SharedLibraryReference< Reference<CppIndicationProviderIFC> > CppIndicationProviderIFCRef;
 
 } // end namespace OpenWBEM
 

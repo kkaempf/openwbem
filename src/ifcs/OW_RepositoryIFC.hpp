@@ -35,12 +35,14 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
 
 class UserInfo;
-class RepositoryIFC
+
+class RepositoryIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~RepositoryIFC();
@@ -468,8 +470,8 @@ public:
 	virtual void releaseInstanceReadLock() = 0;
 	virtual void releaseInstanceWriteLock() = 0;
 };
-typedef Reference<RepositoryIFC> RepositoryIFCRef;
-typedef SharedLibraryReference<RepositoryIFC>
+typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
+typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 
 } // end namespace OpenWBEM

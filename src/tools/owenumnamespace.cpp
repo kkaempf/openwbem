@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
 		}
 		EDeepFlag deep = E_DEEP; // TODO: get this from a command line argument
 		
-		StringArray rval = CIMNameSpaceUtils::enum__Namespace(rch, ns, deep);
+		StringArray rval = CIMNameSpaceUtils::enum__Namespace(*rch, ns, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<String>(cout, "\n"));
 		return 0;
 	}

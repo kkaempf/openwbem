@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2001 Center 7, Inc All rights reserved.
+ * Copyright (C) 2003 Center 7, Inc All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -26,43 +26,78 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-#ifndef OW_REF_COUNT_HPP_
-#define OW_REF_COUNT_HPP_
+ *******************************************************************************/
+#ifndef OW_REFERENCE_BASE_HPP_INCLUDE_GUARD_
+#define OW_REFERENCE_BASE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AtomicOps.hpp"
+#include "OW_RefCount.hpp"
 
 namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class RefCount
+template<class T>
+inline void RefSwap(T& x, T&y)
 {
-public:
-	RefCount()
-		: m_count(1)
+	T t = x;
+	x = y;
+	y = t;
+}
+//////////////////////////////////////////////////////////////////////////////
+// This class contains the non-templated code for Reference, to help 
+// minimize code bloat.
+class ReferenceBase
+{
+protected:
+	ReferenceBase()
+		: m_pRefCount(new RefCount) {}
+	ReferenceBase(const ReferenceBase& arg)
+		: m_pRefCount(0)
 	{
+		m_pRefCount = arg.m_pRefCount;
+		m_pRefCount->inc();
 	}
-	RefCount(Atomic_t c)
-		: m_count(c)
+	void incRef()
 	{
+		m_pRefCount->inc();
 	}
-	void inc()
+	
+	bool decRef()
 	{
-		AtomicInc(m_count);
+		if (m_pRefCount->decAndTest())
+		{
+			delete m_pRefCount;
+			return true;
+		}
+		return false;
 	}
-	bool decAndTest()
+	void swap(ReferenceBase& arg)
 	{
-		return AtomicDecAndTest(m_count);
+		RefSwap(m_pRefCount, arg.m_pRefCount);
 	}
-	int get() const
+	void useRefCountOf(const ReferenceBase& arg)
 	{
-		return AtomicGet(m_count);
+		decRef();
+		m_pRefCount = arg.m_pRefCount;
+		incRef();
 	}
-private:
-	Atomic_t m_count;
+	
+#ifdef OW_CHECK_NULL_REFERENCES
+	void throwNULLException() const;
+	void checkNull(void *p) const
+	{
+		if (p == 0)
+		{
+			throwNULLException();
+		}
+	}
+#endif
+
+protected:
+	RefCount* volatile m_pRefCount;
 };
 
 } // end namespace OpenWBEM
 
 #endif
+

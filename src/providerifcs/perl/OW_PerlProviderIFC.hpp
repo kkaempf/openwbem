@@ -102,7 +102,7 @@ private:
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 };
-typedef SharedLibraryReference<PerlProviderIFC> PerlProviderIFCRef;
+typedef SharedLibraryReference< Reference<PerlProviderIFC> > PerlProviderIFCRef;
 
 } // end namespace OpenWBEM
 

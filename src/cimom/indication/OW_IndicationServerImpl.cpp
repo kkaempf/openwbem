@@ -272,7 +272,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	// CIM_IndicationSubscription in all namespaces.
 	// TODO: If the provider rejects the subscription, we need to delete it!
 	namespaceEnumerator nsHandler(lch, this);
-	CIMNameSpaceUtils::enum__Namespace(lch, "root", nsHandler);
+	CIMNameSpaceUtils::enum__Namespace(*lch, "root", nsHandler);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

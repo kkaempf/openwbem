@@ -52,7 +52,7 @@ public:
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };
-typedef SharedLibraryReference<WQLIFC> WQLIFCRef;
+typedef SharedLibraryReference< Reference<WQLIFC> > WQLIFCRef;
 		
 #define OW_WQLFACTORY(derived) \
 extern "C" const char* \

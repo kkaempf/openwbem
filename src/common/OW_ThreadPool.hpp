@@ -33,6 +33,7 @@
 #include "OW_Types.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Runnable.hpp"
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
@@ -95,8 +96,8 @@ public:
 	 * Instruct all threads to exit and stop working.  After shutdown() is
 	 * called, addWork() and tryAddWork() will return false.
 	 *
-	 * @param finishWorkInQueue If true, threads will continue to process the
-	 *  current work in the queue, before shutting down.  If false, the work in
+	 * @param finishWorkInQueue If E_FINISH_WORK_IN_QUEUE, threads will continue to process the
+	 *  current work in the queue, before shutting down.  If E_DISCARD_WORK_IN_QUEUE, the work in
 	 *  the queue will be discarded.
 	 *
 	 * @param timeoutSecs The number of seconds to wait for the threads to finish
@@ -111,7 +112,7 @@ public:
 	 */
 	void waitForEmptyQueue();
 	/**
-	 * Destructor.  This will call shutdown(false) when the last copy is
+	 * Destructor.  This will call shutdown(E_DISCARD_WORK_IN_QUEUE, 1) when the last copy is
 	 * destroyed
 	 */
 	~ThreadPool();

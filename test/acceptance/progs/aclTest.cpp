@@ -645,7 +645,7 @@ void createNameSpace(CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing createNameSpace() *******\n" << endl;
 	try
 	{
-		CIMNameSpaceUtils::create__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
+		CIMNameSpaceUtils::create__Namespace(hdl, "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -663,7 +663,7 @@ void enumNameSpace(CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
 	{
-		StringArray rval = CIMNameSpaceUtils::enum__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest", E_DEEP);
+		StringArray rval = CIMNameSpaceUtils::enum__Namespace(hdl, "/root/acltest", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -681,7 +681,7 @@ void deleteNameSpace(CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing deleteNameSpace() *******\n" << endl;
 	try
 	{
-		CIMNameSpaceUtils::delete__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
+		CIMNameSpaceUtils::delete__Namespace(hdl, "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}

@@ -42,6 +42,7 @@
 #include "OW_DateTime.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
@@ -72,15 +73,15 @@ typedef Reference<SelectableIFC> SelectableIFCRef;
 typedef Reference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 typedef Reference<Logger> LoggerRef;
 typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
-typedef SharedLibraryReference<WQLIFC> WQLIFCRef;
+typedef SharedLibraryReference<Reference<WQLIFC> > WQLIFCRef;
 typedef Reference<ProviderManager> ProviderManagerRef;
-typedef Reference<RepositoryIFC> RepositoryIFCRef;
+typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef Reference<AuthManager> AuthManagerRef;
 typedef Reference<PollingManager> PollingManagerRef;
-typedef SharedLibraryReference<IndicationServer> IndicationServerRef;
-typedef SharedLibraryReference<ServiceIFC> ServiceIFCRef;
-typedef SharedLibraryReference<RequestHandlerIFC> RequestHandlerIFCRef;
-typedef SharedLibraryReference<RepositoryIFC>
+typedef SharedLibraryReference<Reference<IndicationServer> > IndicationServerRef;
+typedef SharedLibraryReference<Reference<ServiceIFC> > ServiceIFCRef;
+typedef SharedLibraryReference<Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
+typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 typedef Reference<IndicationRepLayerMediator> 
 	IndicationRepLayerMediatorRef;
