@@ -34,6 +34,9 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
 
+#include <iostream>
+using namespace std;
+
 // anonymous namespace to prevent symbol conflicts
 namespace
 {
