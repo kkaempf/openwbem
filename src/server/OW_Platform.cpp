@@ -60,17 +60,26 @@ namespace OpenWBEM
 
 using std::ostream;
 using std::endl;
+
 DEFINE_EXCEPTION(Daemon);
-Reference<UnnamedPipe> Platform::plat_upipe;
-static Platform::Options processCommandLineOptions(int argc, char** argv);
-static void handleSignal(int sig);
-static void setupSigHandler(bool dbgFlg);
+
+namespace Platform
+{
+
 extern "C" {
 static void theSigHandler(int sig);
 }
+
+
+static Options processCommandLineOptions(int argc, char** argv);
+static void handleSignal(int sig);
+static void setupSigHandler(bool dbgFlg);
+
+static Reference<UnnamedPipe> plat_upipe;
+
 //////////////////////////////////////////////////////////////////////////////
-Platform::Options
-Platform::daemonInit( int argc, char* argv[] )
+Options
+daemonInit( int argc, char* argv[] )
 {
 	return processCommandLineOptions(argc, argv);
 }
@@ -79,7 +88,7 @@ Platform::daemonInit( int argc, char* argv[] )
  * Throws DaemonException on error.
  */
 void
-Platform::daemonize(bool dbgFlg, const String& daemonName)
+daemonize(bool dbgFlg, const String& daemonName)
 {
 	if(!dbgFlg)
 	{
@@ -154,7 +163,7 @@ Platform::daemonize(bool dbgFlg, const String& daemonName)
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-Platform::daemonShutdown(const String& daemonName)
+daemonShutdown(const String& daemonName)
 {
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
@@ -176,10 +185,10 @@ static struct option   long_options[] =
 #endif
 static const char* const short_options = "dc:h";
 //////////////////////////////////////////////////////////////////////////////
-static Platform::Options
+static Options
 processCommandLineOptions(int argc, char** argv)
 {
-	Platform::Options rval;
+	Options rval;
 #ifdef OW_HAVE_GETOPT_LONG
 	int optndx = 0;
 	optind = 1;
@@ -264,10 +273,10 @@ theSigHandler(int sig)
 		{
 			case SIGTERM:
 			case SIGINT:
-				Platform::pushSig(Platform::SHUTDOWN);
+				pushSig(SHUTDOWN);
 				break;
 			case SIGHUP:
-				Platform::pushSig(Platform::REINIT);
+				pushSig(REINIT);
 				break;
 		}
 	}
@@ -334,8 +343,7 @@ setupSigHandler(bool dbgFlg)
 	//handleSignal(SIGSTKFLT);
 }
 //////////////////////////////////////////////////////////////////////////////
-// static
-String Platform::getCurrentUserName()
+String getCurrentUserName()
 {
 	uid_t uid = getuid();
 	struct passwd* p = getpwuid(uid);
@@ -346,5 +354,37 @@ String Platform::getCurrentUserName()
 	return "";
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void initSig() 
+{ 
+	plat_upipe = UnnamedPipe::createUnnamedPipe(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+void pushSig(int sig)
+{
+	plat_upipe->writeInt(sig);
+	// don't throw from this function, it may cause a segfault or deadlock.
+}
+//////////////////////////////////////////////////////////////////////////////
+int popSig()
+{
+	int tmp = -2;
+	if (plat_upipe->readInt(&tmp) < 0)
+		return -1;
+	return tmp;
+}
+//////////////////////////////////////////////////////////////////////////////
+void shutdownSig() 
+{ 
+	plat_upipe = 0; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+SelectableIFCRef getSigSelectable()
+{
+	return plat_upipe;
+}
+
+} // end namespace Platform
 } // end namespace OpenWBEM
 

@@ -181,38 +181,42 @@ CIMXMLParser::getTokenFromName(const char* name)
 		return i->id;
 	}
 }
-const char* const CIMXMLParser::A_ARRAY_SIZE					= "ARRAYSIZE";
-const char* const CIMXMLParser::A_ASSOC_CLASS				= "ASSOCCLASS";
-const char* const CIMXMLParser::A_CLASS_NAME					= "CLASSNAME";
-const char* const CIMXMLParser::A_CLASS_ORIGIN				= "CLASSORIGIN";
-const char* const CIMXMLParser::A_DEEP_INHERITANCE			= "DEEPINHERITANCE";
-const char* const CIMXMLParser::A_INCLUDE_CLASS_ORIGIN	= "INCLUDECLASSORIGIN";
-const char* const CIMXMLParser::A_INCLUDE_QUALIFIERS		= "INCLUDEQUALIFIERS";
-const char* const CIMXMLParser::A_INSTANCE_NAME				= "INSTANCENAME";
-const char* const CIMXMLParser::A_LOCAL_ONLY					= "LOCALONLY";
-const char* const CIMXMLParser::A_MODIFIED_CLASS			= "MODIFIEDCLASS";
+
+const char* const CIMXMLParser::A_ARRAYSIZE					= "ARRAYSIZE";
+const char* const CIMXMLParser::A_ASSOCCLASS				= "ASSOCCLASS";
+const char* const CIMXMLParser::A_CLASSNAME					= "CLASSNAME";
+const char* const CIMXMLParser::A_CLASSORIGIN				= "CLASSORIGIN";
+const char* const CIMXMLParser::A_DEEPINHERITANCE			= "DEEPINHERITANCE";
+const char* const CIMXMLParser::A_INCLUDECLASSORIGIN	= "INCLUDECLASSORIGIN";
+const char* const CIMXMLParser::A_INCLUDEQUALIFIERS		= "INCLUDEQUALIFIERS";
+const char* const CIMXMLParser::A_INSTANCENAME				= "INSTANCENAME";
+const char* const CIMXMLParser::A_LOCALONLY					= "LOCALONLY";
+const char* const CIMXMLParser::A_MODIFIEDCLASS			= "MODIFIEDCLASS";
 const char* const CIMXMLParser::A_NAME							= "NAME";
-const char* const CIMXMLParser::A_NEW_VALUE					= "NEWVALUE";
-const char* const CIMXMLParser::A_OBJECT_NAME				= "OBJECTNAME";
+const char* const CIMXMLParser::A_NEWVALUE					= "NEWVALUE";
+const char* const CIMXMLParser::A_OBJECTNAME				= "OBJECTNAME";
 const char* const CIMXMLParser::A_OVERRIDABLE				= "OVERRIDABLE";
 const char* const CIMXMLParser::A_PARAMTYPE							= "PARAMTYPE";
 const char* const CIMXMLParser::A_PROPAGATED					= "PROPAGATED";
-const char* const CIMXMLParser::A_PROPERTY_LIST				= "PROPERTYLIST";
-const char* const CIMXMLParser::A_PROPERTY_NAME				= "PROPERTYNAME";
-const char* const CIMXMLParser::A_REFERENCE_CLASS			= "REFERENCECLASS";
-const char* const CIMXMLParser::A_RESULT_CLASS				= "RESULTCLASS";
-const char* const CIMXMLParser::A_RESULT_ROLE				= "RESULTROLE";
+const char* const CIMXMLParser::A_PROPERTYLIST				= "PROPERTYLIST";
+const char* const CIMXMLParser::A_PROPERTYNAME				= "PROPERTYNAME";
+const char* const CIMXMLParser::A_REFERENCECLASS			= "REFERENCECLASS";
+const char* const CIMXMLParser::A_RESULTCLASS				= "RESULTCLASS";
+const char* const CIMXMLParser::A_RESULTROLE				= "RESULTROLE";
 const char* const CIMXMLParser::A_ROLE							= "ROLE";
-const char* const CIMXMLParser::A_SUPER_CLASS				= "SUPERCLASS";
+const char* const CIMXMLParser::A_SUPERCLASS				= "SUPERCLASS";
 const char* const CIMXMLParser::A_TOINSTANCE					= "TOINSTANCE"; // This is a bug in the spec
 const char* const CIMXMLParser::A_TOSUBCLASS					= "TOSUBCLASS";
 const char* const CIMXMLParser::A_TRANSLATABLE				= "TRANSLATABLE";
 const char* const CIMXMLParser::A_TYPE							= "TYPE";
-const char* const CIMXMLParser::A_VALUE_TYPE					= "VALUETYPE";
+const char* const CIMXMLParser::A_VALUETYPE					= "VALUETYPE";
 const char* const CIMXMLParser::A_CIMVERSION = "CIMVERSION";
 const char* const CIMXMLParser::A_DTDVERSION = "DTDVERSION";
-const char* const CIMXMLParser::A_MSG_ID = "ID";
+const char* const CIMXMLParser::A_ID = "ID";
 const char* const CIMXMLParser::A_PROTOCOLVERSION = "PROTOCOLVERSION";
+const char* const CIMXMLParser::A_CODE		= "CODE";
+const char* const CIMXMLParser::A_DESCRIPTION		= "DESCRIPTION";
+const char* const CIMXMLParser::A_ISARRAY="ISARRAY";
 const char* const CIMXMLParser::AV_CIMVERSION20_VALUE = "2.0";
 const char* const CIMXMLParser::AV_CIMVERSION21_VALUE = "2.1";
 const char* const CIMXMLParser::AV_CIMVERSION22_VALUE = "2.2";
@@ -220,8 +224,32 @@ const char* const CIMXMLParser::AV_DTDVERSION20_VALUE = "2.0";
 const char* const CIMXMLParser::AV_DTDVERSION21_VALUE = "2.1";
 const char* const CIMXMLParser::AV_PROTOCOLVERSION10_VALUE = "1.0";
 const char* const CIMXMLParser::AV_PROTOCOLVERSION11_VALUE = "1.1";
-const char* const CIMXMLParser::A_PARAMERRORCODE = "CODE";
-const char* const CIMXMLParser::A_PARAMERRORDESCRIPTION = "DESCRIPTION";
+const char* const CIMXMLParser::P_ClassName     	= "ClassName";
+const char* const CIMXMLParser::P_PropertyList  	= "PropertyList";
+const char* const CIMXMLParser::P_DeepInheritance       		= "DeepInheritance";
+const char* const CIMXMLParser::P_LocalOnly         	= "LocalOnly";
+const char* const CIMXMLParser::P_IncludeQualifiers       		= "IncludeQualifiers";
+const char* const CIMXMLParser::P_IncludeClassOrigin     		= "IncludeClassOrigin";
+const char* const CIMXMLParser::P_ModifiedClass	= "ModifiedClass";
+const char* const CIMXMLParser::P_ModifiedInstance	= "ModifiedInstance";
+const char* const CIMXMLParser::P_InstanceName	= "InstanceName";
+const char* const CIMXMLParser::P_PropertyName	= "PropertyName";
+const char* const CIMXMLParser::P_NewValue			= "NewValue";
+const char* const CIMXMLParser::P_Role				= "Role";
+const char* const CIMXMLParser::P_ResultRole		= "ResultRole";
+const char* const CIMXMLParser::P_ObjectName		= "ObjectName";
+const char* const CIMXMLParser::P_AssocClass		= "AssocClass";
+const char* const CIMXMLParser::P_ResultClass		= "ResultClass";
+const char* const CIMXMLParser::P_QueryLanguage = "QueryLanguage";
+const char* const CIMXMLParser::P_Query = "Query";
+const char* const CIMXMLParser::P_QualifierName = "QualifierName";
+const char* const CIMXMLParser::P_QualifierDeclaration = "QualifierDeclaration";
+
+
+
+
+
+
 String
 CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
 {

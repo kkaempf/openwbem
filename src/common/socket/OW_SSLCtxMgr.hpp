@@ -171,11 +171,12 @@ private:
 	 */
 	static bool checkCert(SSL* ssl, const String& hostName, certVerifyFuncPtr_t cbFunc);
 };
-#endif // ifdef OW_HAVE_OPENSSL
 
 } // end namespace OpenWBEM
 
 typedef OpenWBEM::SSLCtxMgr OW_SSLCtxMgr;
 typedef OpenWBEM::certVerifyFuncPtr_t OW_certVerifyFuncPtr_t;
+
+#endif // ifdef OW_HAVE_OPENSSL
 
 #endif

@@ -39,9 +39,8 @@ namespace OpenWBEM
 //////////////////////////////////////////////////////////////////////////////
 DECLARE_EXCEPTION(ValueCast);
 //////////////////////////////////////////////////////////////////////////////
-class CIMValueCast
+namespace CIMValueCast
 {
-public:
 	/**
 	 * Converts a given CIMValue object to an CIMValue object that
 	 * represents the given CIMDataType.
@@ -49,13 +48,14 @@ public:
 	 * @param dataType	The data type to convert the value to.
 	 * @throws ValueCastException if the convertion is not possible.
 	 */
-	static CIMValue castValueToDataType(const CIMValue& value,
+	CIMValue castValueToDataType(const CIMValue& value,
 		const CIMDataType& dataType);
-};
+
+} // end namespace CIMValueCast
 
 } // end namespace OpenWBEM
 
 typedef OpenWBEM::ValueCastException OW_ValueCastException;
-typedef OpenWBEM::CIMValueCast OW_CIMValueCast;
+namespace OW_CIMValueCast = OpenWBEM::CIMValueCast;
 
 #endif

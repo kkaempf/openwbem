@@ -37,19 +37,19 @@ namespace OpenWBEM
 {
 
 class CIMXMLParser;
-class XMLClass : public XMLOperationGeneric
+
+namespace XMLClass
 {
-public:
-	static String getNameSpace(CIMXMLParser& parser);
-	static CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
+	String getNameSpace(CIMXMLParser& parser);
+	CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
 			CIMClass& c, CIMInstance& i);
-	static CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);
-	static CIMInstance readInstance(CIMXMLParser& parser,
+	CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);
+	CIMInstance readInstance(CIMXMLParser& parser,
 			CIMObjectPath& path);
-};
+} // end namespace XMLClass
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::XMLClass OW_XMLClass;
+namespace OW_XMLClass = OpenWBEM::XMLClass;
 
 #endif  // OW_XMLClass_HPP_

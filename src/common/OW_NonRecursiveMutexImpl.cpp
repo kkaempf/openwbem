@@ -35,14 +35,16 @@
 namespace OpenWBEM
 {
 
+namespace NonRecursiveMutexImpl
+{
+
 /**
  * Create a platform specific mutext handle.
  * @param handle	The mutex handle that should be initialized by this method
  * @return 0 on success. Otherwise -1.
  */
-// static 
 int
-NonRecursiveMutexImpl::createMutex(NonRecursiveMutex_t& handle)
+createMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	ThreadImpl::initThreads();
@@ -79,9 +81,8 @@ NonRecursiveMutexImpl::createMutex(NonRecursiveMutex_t& handle)
  *				locked.
  *		-2:	All other error conditions
  */
-// static
 int
-NonRecursiveMutexImpl::destroyMutex(NonRecursiveMutex_t& handle)
+destroyMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
@@ -115,9 +116,8 @@ NonRecursiveMutexImpl::destroyMutex(NonRecursiveMutex_t& handle)
  * @param handle The mutex to acquire.
  * @return 0 on success. -1 indicates a critical error.
  */
-// static
 int
-NonRecursiveMutexImpl::acquireMutex(NonRecursiveMutex_t& handle)
+acquireMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
@@ -138,9 +138,8 @@ NonRecursiveMutexImpl::acquireMutex(NonRecursiveMutex_t& handle)
  * @param handle The handle to the mutex that is being released.
  * @return 0 on success. -1 indicates a critical error.
  */
-// static
 int
-NonRecursiveMutexImpl::releaseMutex(NonRecursiveMutex_t& handle)
+releaseMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	// TODO: ?!?!
@@ -157,20 +156,19 @@ NonRecursiveMutexImpl::releaseMutex(NonRecursiveMutex_t& handle)
 #error "port me!"
 #endif
 }
-// static
 int
-NonRecursiveMutexImpl::conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
+conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
 	state.pmutex = &handle.mutex;
 	return 0;
 }
-// static
 int
-NonRecursiveMutexImpl::conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
+conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
 	(void)handle; (void)state;
 	return 0;
 }
 
+} // end namespace NonRecursiveMutexImpl
 } // end namespace OpenWBEM
 

@@ -42,18 +42,17 @@ namespace OpenWBEM
 class HTTPCounter
 {
 public:
+	HTTPCounter();
 	/** 
 	 * Get the next count number.  This is usefull getting a two digit
 	 * number to use as a prefix for M-POST style headers.
 	 * @return the next two digit number.
 	 */
-	static int getCounter();
+	int getNextCounter();
 private:
-	static int m_counter;
+	int m_counter;
 	static const int m_maxValue = 99;
-	static Mutex m_mutex;
-	// don't allow instantiation.
-	HTTPCounter();
+	Mutex m_mutex;
 };
 
 } // end namespace OpenWBEM

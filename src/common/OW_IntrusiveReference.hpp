@@ -179,9 +179,12 @@ template<class T, class U> IntrusiveReference<T> dynamic_pointer_cast(IntrusiveR
 {
     return dynamic_cast<T *>(p.get());
 }
-// If you want your class to be managed by IntrusiveReference, then derive
-// from this class.  Note that if multiple inheritance is used, you must derive
-// "virtual"ly.
+
+/**
+ * If you want your class to be managed by IntrusiveReference, then derive
+ * from this class.  Note that if multiple inheritance is used, you must derive
+ * "virtual"ly.
+ */
 class IntrusiveCountableBase
 {
 private:

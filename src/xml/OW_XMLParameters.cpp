@@ -32,38 +32,5 @@
 namespace OpenWBEM
 {
 
-const char* const XMLParameters::paramName        	= "NAME";
-const char* const XMLParameters::paramSuperName   	= "SUPERCLASS";
-const char* const XMLParameters::paramClassOrigin		= "CLASSORIGIN";
-const char* const XMLParameters::paramErrorCode		= "CODE";
-const char* const XMLParameters::paramErrorDescription		= "DESCRIPTION";
-const char* const XMLParameters::paramPropagated 		= "PROPAGATED";
-const char* const XMLParameters::paramArraySize     	= "ARRAYSIZE";
-const char* const XMLParameters::paramRefClass      	= "REFERENCECLASS";
-const char* const XMLParameters::paramTypeAssign 		= "TYPE";
-const char* const XMLParameters::paramOverridable   	= "OVERRIDABLE";
-const char* const XMLParameters::paramToSubClass 		= "TOSUBCLASS";
-const char* const XMLParameters::paramTranslatable  	= "TRANSLATABLE";
-const char* const XMLParameters::paramReferenceClass	= "REFERENCECLASS";
-const char* const XMLParameters::classParamName     	= "CLASSNAME";
-const char* const XMLParameters::XMLP_CLASSNAME     	= "ClassName";
-const char* const XMLParameters::XMLP_PROPERTYLIST  	= "PropertyList";
-const char* const XMLParameters::XMLP_DEEP       		= "DeepInheritance";
-const char* const XMLParameters::XMLP_LOCAL         	= "LocalOnly";
-const char* const XMLParameters::XMLP_INCLUDEQUALIFIERS       		= "IncludeQualifiers";
-const char* const XMLParameters::XMLP_INCLUDECLASSORIGIN     		= "IncludeClassOrigin";
-const char* const XMLParameters::XMLP_MODIFIED_CLASS	= "ModifiedClass";
-const char* const XMLParameters::XMLP_MODIFIED_INSTANCE	= "ModifiedInstance";
-const char* const XMLParameters::XMLP_INSTANCENAME	= "InstanceName";
-const char* const XMLParameters::XMLP_PROPERTYNAME	= "PropertyName";
-const char* const XMLParameters::XMLP_NEWVALUE			= "NewValue";
-const char* const XMLParameters::XMLP_ROLE				= "Role";
-const char* const XMLParameters::XMLP_RESULTROLE		= "ResultRole";
-const char* const XMLParameters::XMLP_OBJECTNAME		= "ObjectName";
-const char* const XMLParameters::XMLP_ASSOCCLASS		= "AssocClass";
-const char* const XMLParameters::XMLP_RESULTCLASS		= "ResultClass";
-const char* const XMLParameters::XMLP_QUERYLANGUAGE = "QueryLanguage";
-const char* const XMLParameters::XMLP_QUERY = "Query";
-
 } // end namespace OpenWBEM
 

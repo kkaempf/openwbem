@@ -52,9 +52,11 @@ extern "C"
 namespace OpenWBEM
 {
 
+namespace Select
+{
 //////////////////////////////////////////////////////////////////////////////
 int
-Select::select(const SelectTypeArray& selarray, UInt32 ms)
+select(const SelectTypeArray& selarray, UInt32 ms)
 {
    fd_set rfds;
    struct timeval tv;
@@ -106,6 +108,8 @@ Select::select(const SelectTypeArray& selarray, UInt32 ms)
    OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
    return Select::SELECT_ERROR;
 }
+
+} // end namespace Select
 
 } // end namespace OpenWBEM
 

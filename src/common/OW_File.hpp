@@ -203,12 +203,11 @@ public:
 	{
 		return m_hdl == rhs.m_hdl;
 	}
-private:
+
 	File(FileHandle hdl) : m_hdl(hdl)
 	{
 	}
 	FileHandle	m_hdl;
-	friend class FileSystem;
 };
 
 } // end namespace OpenWBEM

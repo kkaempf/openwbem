@@ -229,10 +229,12 @@ HTTPUtils::status2String(int code)
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+static HTTPCounter theCounter;
+//////////////////////////////////////////////////////////////////////////////
 String
 HTTPUtils::getCounterStr()
 {
-	int count = HTTPCounter::getCounter();
+	int count = theCounter.getNextCounter();
 	// string should always be two digits.
 	if ( count < 10 )
 	{
@@ -243,6 +245,8 @@ HTTPUtils::getCounterStr()
 		return String(count);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
 static const char* const Base64 =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char Pad64 = '=';

@@ -280,28 +280,10 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
                    " library: %2", guessProvId, libName));
          continue;
       }
-#if 0
-      versionFunc_t versFunc;
-      if(!SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
-             versFunc))
-      {
-         env->getLogger()->logError(format("NPI provider ifc failed getting"
-                 " function pointer to \"getOWVersion\" from library: %1",
-                 libName));
-         continue;
-      }
-      const char* strVer = (*versFunc)();
-      if(strcmp(strVer, VERSION))
-      {
-         env->getLogger()->logError(format("NPI provider ifc got invalid version from "
-                 "provider: %1", strVer));
-         continue;
-      }
-#endif
 	::FP_INIT_FT createProvider;
 	String creationFuncName = guessProvId + "_initFunctionTable";
    env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
@@ -387,7 +369,7 @@ NPIProviderIFC::getProvider(
 	}
 	::FP_INIT_FT createProvider;
 	String creationFuncName = provId + "_initFunctionTable";
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));

@@ -37,32 +37,27 @@ namespace OpenWBEM
 {
 
 class CIMXMLParser;
-class XMLQualifier : public XMLClass
+
+namespace XMLQualifier
 {
-public:
-	static const char* const XMLP_QUALIFIERNAME;
-	static const char* const XMLP_QUALIFIERDECL;
-	static const char* const paramISARRAY;
-	static const char* const paramQualifierFlavor;
-	static const char* const paramArraySize;
-	static void processQualifierDecl(CIMXMLParser& result,
+	void processQualifierDecl(CIMXMLParser& result,
 		CIMQualifierType& cimQualifier);
-protected:
+
 	/**
 	 * @throws CIMException
 	 */
-	static String getQualifierName(CIMXMLParser& node);
-private:
+	String getQualifierName(CIMXMLParser& node);
+
 	/**
 	 * @throws CIMException
 	 */
-	static void processScope(CIMXMLParser& parser,
+	void processScope(CIMXMLParser& parser,
 		CIMQualifierType& cqt, const char* attrName,
 		CIMScope::Scope scopeValue);
-};
+} // end namespace XMLQualifiers
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::XMLQualifier OW_XMLQualifier;
+namespace OW_XMLQualifiers = OpenWBEM::XMLQualifier;
 
 #endif

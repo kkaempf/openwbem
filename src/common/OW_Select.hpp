@@ -38,21 +38,20 @@ namespace OpenWBEM
 {
 
 typedef Array<Select_t> SelectTypeArray;
-class Select
+namespace Select
 {
-public:
    /**
     * The value returned from select when the timeout value has expired
 	*/
-   static const int SELECT_TIMEOUT = -2;
+   const int SELECT_TIMEOUT = -2;
    /**
     * The value returned from select when any error occurs other than timeout.
 	*/
-   static const int SELECT_ERROR = -1;
+   const int SELECT_ERROR = -1;
    /**
     * The value returned from select when select is interrupted by a signal.
 	*/
-   static const int SELECT_INTERRUPTED = -3;
+   const int SELECT_INTERRUPTED = -3;
    /**
 	* Select returns as soon as input is available on any of Select_t
 	* objects that are in given array.
@@ -66,14 +65,12 @@ public:
 	* object that input has become available on. SELECT_ERROR on error.
 	* SELECT_TIMEOUT if the given timeout value has expired.
 	*/
-   static int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
-private:
-	Select(); // don't allow instantiation.
-};
+   int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
+} // end namespace Select
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::Select OW_Select;
+namespace OW_Select = OpenWBEM::Select;
 typedef OpenWBEM::SelectTypeArray OW_SelectTypeArray;
 
 #endif // OW_SELECT_HPP_

@@ -302,57 +302,6 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
                    " library: %2", guessProvId, libName));
          continue;
       }
-#if 0
-      versionFunc_t versFunc;
-      if(!SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
-             versFunc))
-      {
-         env->getLogger()->logError(format("CMPI provider ifc failed getting"
-                 " function pointer to \"getOWVersion\" from library: %1",
-                 libName));
-         continue;
-      }
-      const char* strVer = (*versFunc)();
-      if(strcmp(strVer, VERSION))
-      {
-         env->getLogger()->logError(format("CMPI provider ifc got invalid version from "
-                 "provider: %1", strVer));
-         continue;
-      }
-#endif
-#if 0
-	::FP_INIT_FT createProvider;
-	String creationFuncName = guessProvId + "_initFunctionTable";
-   env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
-	{
-		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		continue;
-	}
-   env->getLogger()->logError("LoadNoIDproviders 5");
-	::FTABLE fTable = (*createProvider)();
-	if(!fTable.fp_initialize)
-	{
-		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 - %2 returned null"
-			" initialize function pointer in function table", libName, creationFuncName));
-		continue;
-	}
-        // only initialize polled and indicationexport providers
-	// since CMPI doesn't support indicationexport providers ....
-   env->getLogger()->logError("LoadNoIDproviders 6");
-        if (!fTable.fp_activateFilter) continue;
-        // else it must be a polled provider - initialize it 
-	env->getLogger()->logDebug(format("CMPI provider ifc loaded library %1. Calling initialize"
-		" for provider %2", libName, guessProvId));
-	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
-	// nothing the provider can do with it, so we'll just pass in 0
-	//Reference<CMPIEnv> npiHandle(); // TODO: createEnv(...);
-	fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
-	env->getLogger()->logDebug(format("CMPI provider ifc: provider %1 loaded and initialized",
-		guessProvId));
-        m_noidProviders.append(FTABLERef(theLib, new ::FTABLE(fTable)));
-#endif
     }
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -395,7 +344,7 @@ CMPIProviderIFC::getProvider(
         miVector.genericMode = 0;
 	int specificMode = 0;
 	// find InstanceProvider entry points
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		"_Generic_Create_InstanceMI", miVector.createGenInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
@@ -403,83 +352,69 @@ CMPIProviderIFC::getProvider(
 	}
 	String creationFuncName = provId.substring(4) + "_Create_InstanceMI";
 	env->getLogger()->logError(format("CMPI provider ifc: Library %1 should contain %2", provId, creationFuncName));
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
  		specificMode = 1;
 	}
 	// find AssociationProvider entry points
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		"_Generic_Create_AssociationMI", miVector.createGenAssocMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Association;
         	miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_AssociationMI";
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createAssocMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Association;
  		specificMode = 1;
 	}
 	// find MethodProvider entry points
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		"_Generic_Create_MethodMI", miVector.createGenMethMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Method;
         	miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_MethodMI";
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createMethMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Method;
  		specificMode = 1;
 	}
 	// find PropertyProvider entry points
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		"_Generic_Create_PropertyMI", miVector.createGenPropMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Property;
         	miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_PropertyMI";
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createPropMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Property;
  		specificMode = 1;
 	}
 	// find IndicationProvider entry points
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		"_Generic_Create_IndicationMI", miVector.createGenIndMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Indication;
         	miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_IndicationMI";
-	if (SharedLibrary::getFunctionPointer(theLib,
+	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createIndMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Indication;
  		specificMode = 1;
 	}
                 
-#if 0
-	String creationFuncName = provId + "_Create_InstanceMI";
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIInstanceMI))
-	{
-		env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
-			" %2 function", libName, creationFuncName));
-		creationFuncName = provId.substring(4) + "_Create_InstanceMI";
-		if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createCMPIInstanceMI))
-		{
-			env->getLogger()->logError(format("CMPI provider ifc: Libary %1 does not contain"
-				" %2 function", libName, creationFuncName));
-		}
-	}
-#endif
 	if (miVector.miTypes == 0)
 	{
 		env->getLogger()->logError(format("CMPI provider ifc: Library %1 does not contain"

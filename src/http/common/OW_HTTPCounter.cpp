@@ -27,27 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-/**
- *
- *
- */
 #include "OW_config.h"
 #include "OW_HTTPCounter.hpp"
 
 namespace OpenWBEM
 {
 
-int HTTPCounter::m_counter = 0;
-Mutex HTTPCounter::m_mutex;
+
 //////////////////////////////////////////////////////////////////////////////
-/*HTTPCounter::HTTPCounter(int maxValue)
-	: m_counter(0), m_maxValue(maxValue), m_mutex()
+HTTPCounter::HTTPCounter()
+	: m_counter(0)
 {
-} */
+}
+
 //////////////////////////////////////////////////////////////////////////////
-// static
 int
-HTTPCounter::getCounter()
+HTTPCounter::getNextCounter()
 {
 	MutexLock myLock(m_mutex);
 	m_counter++;
@@ -55,7 +50,6 @@ HTTPCounter::getCounter()
 		m_counter = 0;
 	return m_counter;
 }
-//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM
 

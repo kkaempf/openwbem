@@ -37,7 +37,7 @@
 namespace OpenWBEM
 {
 
-class IndicationExporter : XMLQualifier
+class IndicationExporter
 {
 public:
 	IndicationExporter( CIMProtocolIFCRef prot );

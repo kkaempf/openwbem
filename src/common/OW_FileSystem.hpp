@@ -49,14 +49,13 @@ typedef Array<String> StringArray;
  * The purpose of the FileSystem class is to provide an abstraction layer
  * over the platform dependant functionality related to a file system.
  */
-class FileSystem
+namespace FileSystem
 {
-public:
 	/**
 	 * Open a file for read/write and return an File object that can be used
 	 * for reading and writing.
 	 */
-	static File openFile(const String& path);
+	File openFile(const String& path);
 	/**
 	 * Create the file for the given name.
 	 * @param path	The name of the file to create.
@@ -64,76 +63,76 @@ public:
 	 * writing. Otherwise a NULL File object.  If the file exists, a NULL
 	 * File object will be returned.
 	 */
-	static File createFile(const String& path);
+	File createFile(const String& path);
 	/**
 	 * Opens or creates the file for the given name.
 	 * @param path	The name of the file to create.
 	 * @return On success an File object that can be used for reading and
 	 * writing. Otherwise a null File object.
 	 */
-	static File openOrCreateFile(const String& path);
+	File openOrCreateFile(const String& path);
 	/**
 	 * Change the given file ownership
 	 * @param filename The name of the file to change ownership on.
 	 * @param userId The user id to change ownership to
 	 * @return 0 on success. Otherwise -1
 	 */
-	static int changeFileOwner(const String& filename,
+	int changeFileOwner(const String& filename,
 		const UserId& userId);
 	/**
 	 * @return true if the file exists (and false otherwise).
 	 */
-	static bool exists(const String& path);
+	bool exists(const String& path);
 	/**
 	 * @return true if the file exists and can be read
 	 */
-	static bool canRead(const String& path);
+	bool canRead(const String& path);
 	/**
 	 * @return true if the file exists and can be written
 	 */
-	static bool canWrite(const String& path);
+	bool canWrite(const String& path);
 	/**
 	 * @return true if file exists and is a directory
 	 */
-	static bool isDirectory(const String& path);
+	bool isDirectory(const String& path);
 	/**
 	 * Change to the given directory
 	 * @param path	The directory to change to
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool changeDirectory(const String& path);
+	bool changeDirectory(const String& path);
 	/**
 	 * Create a directory
 	 * @param path	The name of the directory to create.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool makeDirectory(const String& path);
+	bool makeDirectory(const String& path);
 	/**
 	 * Get the size of the file in bytes
 	 * @param path	The name of the file to get the size for.
 	 * @param size	Put the size of the file in this variable.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool getFileSize(const String& path, UInt32& size);
+	bool getFileSize(const String& path, UInt32& size);
 	/**
 	 * Remove the given directory
 	 * @param path	The name of the directory to remove
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool removeDirectory(const String& path);
+	bool removeDirectory(const String& path);
 	/**
 	 * Remove the given file
 	 * @param path	The name of the file to remove.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool removeFile(const String& path);
+	bool removeFile(const String& path);
 	/**
 	 * Get the names of the files (and directories) in the given directory
 	 * @param path			The name of the directory to get the contents of.
 	 * @param dirEntries	The directory contents will be placed in this array.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool getDirectoryContents(const String& path,
+	bool getDirectoryContents(const String& path,
 		StringArray& dirEntries);
 	/**
 	 * Rename the given file to the new name
@@ -141,7 +140,7 @@ public:
 	 * @param newFileName	The new name for the olFileName
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	static bool renameFile(const String& oldFileName,
+	bool renameFile(const String& oldFileName,
 		const String& newFileName);
 	/**
 	 * Read data from file.
@@ -154,7 +153,7 @@ public:
 	 * @return The number of bytes read. If EOF or an error occurs, a short
 	 * count or zero is returned.
 	 */
-	static size_t read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
+	size_t read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 		long offset=-1L);
 	/**
 	 * Write data to a file.
@@ -166,7 +165,7 @@ public:
 	 * @return The number of bytes written. If an error occurs, a short count
 	 * or zero is returned.
 	 */
-	static size_t write(FileHandle& hdl, const void* bfr,
+	size_t write(FileHandle& hdl, const void* bfr,
 		size_t numberOfBytes, long offset=-1L);
 	/**
 	 * Seek to a given offset within the file.
@@ -179,39 +178,40 @@ public:
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	static int seek(FileHandle& hdl, off_t offset, int whence);
+	int seek(FileHandle& hdl, off_t offset, int whence);
 	/**
 	 * @param hdl	The file handle to use in the tell operation.
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	static off_t tell(FileHandle& hdl);
+	off_t tell(FileHandle& hdl);
 	/**
 	 * Position the file pointer associated with the given file handle to the
 	 * beginning of the file.
 	 * @param hdl	The file handle to use in the rewind operation.
 	 */
-	static void rewind(FileHandle& hdl);
+	void rewind(FileHandle& hdl);
 	/**
 	 * Close file handle.
 	 * @param hdl	The file handle to close.
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int close(FileHandle& hdl);
+	int close(FileHandle& hdl);
 	/**
 	 * Flush any buffered data to the file if buffering supported.
 	 * @param hdl	The file handle to flush the buffer on.
 	 */
-	static int flush(FileHandle& hdl);
+	int flush(FileHandle& hdl);
 	/**
 	 * Create a file with random data suitable for use with SSL initialization
 	 * @param filename  The name of the file to write the random data to
 	 */
-	static void initRandomFile(const String& file);
-};
+	void initRandomFile(const String& file);
+
+} // end namespace FileSystem
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::FileSystem OW_FileSystem;
+//namespace OW_FileSystem = OpenWBEM::FileSystem;
 
 #endif

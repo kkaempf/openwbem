@@ -188,38 +188,46 @@ public:
 		{  return m_good ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return m_good ? 0: &dummy::nonnull; }
-	static const char* const A_ARRAY_SIZE;
-	static const char* const A_ASSOC_CLASS;
-	static const char* const A_CLASS_NAME;
-	static const char* const A_CLASS_ORIGIN;
-	static const char* const A_DEEP_INHERITANCE;
-	static const char* const A_INCLUDE_CLASS_ORIGIN;
-	static const char* const A_INCLUDE_QUALIFIERS;
-	static const char* const A_INSTANCE_NAME;
-	static const char* const A_LOCAL_ONLY;
-	static const char* const A_MODIFIED_CLASS;
+
+	// naming convention:
+	// A_ for attribute name
+	// AV_ for attribute value (expected)
+	// P_ for {I,E}PARAMVALUE NAME attribute value
+	static const char* const A_ASSOCCLASS;
+	static const char* const A_CLASSNAME;
+	static const char* const A_CLASSORIGIN;
+	static const char* const A_DEEPINHERITANCE;
+	static const char* const A_INCLUDECLASSORIGIN;
+	static const char* const A_INCLUDEQUALIFIERS;
+	static const char* const A_INSTANCENAME;
+	static const char* const A_LOCALONLY;
+	static const char* const A_MODIFIEDCLASS;
 	static const char* const A_NAME;
-	static const char* const A_NEW_VALUE;
-	static const char* const A_OBJECT_NAME;
+	static const char* const A_NEWVALUE;
+	static const char* const A_OBJECTNAME;
 	static const char* const A_OVERRIDABLE;
 	static const char* const A_PARAMTYPE;
 	static const char* const A_PROPAGATED;
-	static const char* const A_PROPERTY_LIST;
-	static const char* const A_PROPERTY_NAME;
-	static const char* const A_REFERENCE_CLASS;
-	static const char* const A_RESULT_CLASS;
-	static const char* const A_RESULT_ROLE;
+	static const char* const A_PROPERTYLIST;
+	static const char* const A_PROPERTYNAME;
+	static const char* const A_REFERENCECLASS;
+	static const char* const A_RESULTCLASS;
+	static const char* const A_RESULTROLE;
 	static const char* const A_ROLE;
-	static const char* const A_SUPER_CLASS;
+	static const char* const A_SUPERCLASS;
 	static const char* const A_TOINSTANCE; // This is a bug in the spec, but we still support it for backward compatibility.
 	static const char* const A_TOSUBCLASS;
 	static const char* const A_TRANSLATABLE;
 	static const char* const A_TYPE;
-	static const char* const A_VALUE_TYPE;
+	static const char* const A_VALUETYPE;
 	static const char* const A_CIMVERSION;
 	static const char* const A_DTDVERSION;
-	static const char* const A_MSG_ID;
+	static const char* const A_ID;
 	static const char* const A_PROTOCOLVERSION;
+	static const char* const A_CODE;
+	static const char* const A_DESCRIPTION;
+	static const char* const A_ARRAYSIZE;
+	static const char* const A_ISARRAY;
 	static const char* const AV_CIMVERSION20_VALUE;
 	static const char* const AV_CIMVERSION21_VALUE;
 	static const char* const AV_CIMVERSION22_VALUE;
@@ -227,8 +235,28 @@ public:
 	static const char* const AV_DTDVERSION21_VALUE;
 	static const char* const AV_PROTOCOLVERSION10_VALUE;
 	static const char* const AV_PROTOCOLVERSION11_VALUE;
-	static const char* const A_PARAMERRORCODE;
-	static const char* const A_PARAMERRORDESCRIPTION;
+	static const char* const P_ClassName;
+	static const char* const P_PropertyList;
+	static const char* const P_DeepInheritance;
+	static const char* const P_LocalOnly;
+	static const char* const P_IncludeQualifiers;
+	static const char* const P_IncludeClassOrigin;
+	static const char* const P_ModifiedClass;
+	static const char* const P_ModifiedInstance;
+	static const char* const P_InstanceName;
+	static const char* const P_PropertyName;
+	static const char* const P_NewValue;
+	static const char* const P_Role;
+	static const char* const P_ResultRole;
+	static const char* const P_ObjectName;
+	static const char* const P_AssocClass;
+	static const char* const P_ResultClass;
+	static const char* const P_QueryLanguage;
+	static const char* const P_Query;
+	static const char* const P_QualifierName;
+	static const char* const P_QualifierDeclaration;
+
+
 	friend std::ostream& operator<<(std::ostream& ostr, const CIMXMLParser& p);
 };
 

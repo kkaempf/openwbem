@@ -325,7 +325,7 @@ namespace BinarySerialization
 	void readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result);
 	void readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result);
 	void readStringEnum(std::istream& istrm, StringResultHandlerIFC& result);
-}
+} // end namespace BinarySerialization
 
 } // end namespace OpenWBEM
 

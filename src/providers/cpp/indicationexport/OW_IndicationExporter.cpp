@@ -142,7 +142,7 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	// Find <MESSAGE>
 	//
 	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
-	cimattr=parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	cimattr=parser.mustGetAttribute(CIMXMLParser::A_ID);
 	if (!cimattr.equals(String(m_iMessageID)))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -183,9 +183,9 @@ IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
 	if (parser.tokenIs(CIMXMLParser::E_ERROR))
 	{
 		String errCode = parser.mustGetAttribute(
-			XMLParameters::paramErrorCode);
+			CIMXMLParser::A_CODE);
 		String description = parser.mustGetAttribute(
-			XMLParameters::paramErrorDescription);
+			CIMXMLParser::A_DESCRIPTION);
 		Int32 iErrCode;
 		try
 		{

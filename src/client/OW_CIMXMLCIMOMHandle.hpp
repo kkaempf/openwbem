@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-class CIMXMLCIMOMHandle : public ClientCIMOMHandle, XMLQualifier
+class CIMXMLCIMOMHandle : public ClientCIMOMHandle
 {
 public:
 	/**

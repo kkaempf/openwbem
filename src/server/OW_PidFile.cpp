@@ -43,13 +43,15 @@
 namespace OpenWBEM
 {
 
+namespace PidFile
+{
 /**
  * Read the contents of a pid file and return the results.
  * @param pidfile	The fully qualified path to the pid file.
  * @return	The process id on success. Otherwise -1
  */
 int 
-PidFile::readPid(const char *pidfile)
+readPid(const char *pidfile)
 {
 	FILE *f;
 	int pid = -1;
@@ -65,7 +67,7 @@ PidFile::readPid(const char *pidfile)
  * @return	The process id on success. Otherwise -1
  */
 int 
-PidFile::checkPid(const char *pidfile)
+checkPid(const char *pidfile)
 {
 	int pid = readPid(pidfile);
 	// Amazing ! _I_ am already holding the pid file...
@@ -83,7 +85,7 @@ PidFile::checkPid(const char *pidfile)
  *				the error encountered by this function
  */
 int 
-PidFile::writePid(const char *pidfile)
+writePid(const char *pidfile)
 {
 	FILE *f;
 	int fd;
@@ -100,6 +102,7 @@ PidFile::writePid(const char *pidfile)
 		errno = lerrno;
 		return -1;
 	}
+	// TODO: replace this with the locking code in OW_File
 #ifdef OW_GNU_LINUX
     if(flock(fd, LOCK_EX|LOCK_NB) == -1)
 #elif defined(OW_OPENSERVER)
@@ -151,10 +154,11 @@ PidFile::writePid(const char *pidfile)
  * @return	The results of the unlink call.
  */
 int 
-PidFile::removePid(const char *pidfile)
+removePid(const char *pidfile)
 {
 	return unlink(pidfile);
 }
 
+} // end namespace PidFile
 } // end namespace OpenWBEM
 

@@ -39,45 +39,10 @@
 namespace OpenWBEM
 {
 
-class XMLParameters
+namespace XMLParameters
 {
-public:
-	static const char* const paramName;
-	static const char* const paramSuperName;
-	static const char* const paramClassOrigin;
-	static const char* const paramErrorCode;
-	static const char* const paramErrorDescription;
-	static const char* const paramPropagated 	;
-	static const char* const paramArraySize     ;
-	static const char* const paramRefClass      ;
-	static const char* const paramTypeAssign 	;
-	static const char* const paramOverridable   ;
-	static const char* const paramToSubClass 	;
-	static const char* const paramTranslatable  ;
-	static const char* const paramReferenceClass;
-	static const char* const classParamName     ;
-	static const char* const XMLP_CLASSNAME     ;
-	static const char* const XMLP_PROPERTYLIST  ;
-	static const char* const XMLP_DEEP       	;
-	static const char* const XMLP_LOCAL         ;
-	static const char* const XMLP_INCLUDEQUALIFIERS       	;
-	static const char* const XMLP_INCLUDECLASSORIGIN     	;
-	static const char* const XMLP_MODIFIED_CLASS;
-	static const char* const XMLP_MODIFIED_INSTANCE;
-	static const char* const XMLP_INSTANCENAME;
-	static const char* const XMLP_PROPERTYNAME;
-	static const char* const XMLP_NEWVALUE		;
-	static const char* const XMLP_ROLE			;
-	static const char* const XMLP_RESULTROLE	;
-	static const char* const XMLP_OBJECTNAME	;
-	static const char* const XMLP_ASSOCCLASS	;
-	static const char* const XMLP_RESULTCLASS	;
-	static const char* const XMLP_QUERYLANGUAGE;
-	static const char* const XMLP_QUERY;
-};
+} // end namespace XMLParameters
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::XMLParameters OW_XMLParameters;
 
 #endif

@@ -39,18 +39,15 @@ namespace OpenWBEM
 {
 
 class CIMXMLParser;
-class XMLOperationGeneric : public XMLParameters
+
+namespace XMLOperationGeneric
 {
-	public:
-		/**
-		 * @throws CIMException
-		 */
-		static void XMLGetCIMElement(CIMXMLParser& node);
-	private:
-};
+	/**
+	 * @throws CIMException
+	 */
+	void XMLGetCIMElement(CIMXMLParser& node);
+} // end namespace XMLOperationGeneric
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::XMLOperationGeneric OW_XMLOperationGeneric;
 
 #endif

@@ -185,7 +185,7 @@ namespace ConfigOpts
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
-};
+} // end namespace ConfigOpts
 
 } // end namespace OpenWBEM
 

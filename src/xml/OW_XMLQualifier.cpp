@@ -44,9 +44,11 @@
 namespace OpenWBEM
 {
 
-// Static
+namespace XMLQualifier
+{
+
 void
-XMLQualifier::processQualifierDecl(CIMXMLParser& parser,
+processQualifierDecl(CIMXMLParser& parser,
 	CIMQualifierType& cimQualifier)
 {
 	if (!parser.tokenIs(CIMXMLParser::E_QUALIFIER_DECLARATION))
@@ -55,14 +57,14 @@ XMLQualifier::processQualifierDecl(CIMXMLParser& parser,
 	}
 	String superClassName;
 	String inClassName;
-	String qualName = parser.mustGetAttribute(paramName);
+	String qualName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	cimQualifier.setName(qualName);
-	String qualType = parser.mustGetAttribute(paramTypeAssign);
+	String qualType = parser.mustGetAttribute(CIMXMLParser::A_TYPE);
 	CIMDataType dt = CIMDataType::getDataType(qualType);
-	String qualISARRAY = parser.getAttribute(paramISARRAY);
+	String qualISARRAY = parser.getAttribute(CIMXMLParser::A_ISARRAY);
 	if(qualISARRAY.equalsIgnoreCase("true"))
 	{
-		String qualArraySize = parser.getAttribute(paramArraySize);
+		String qualArraySize = parser.getAttribute(CIMXMLParser::A_ARRAYSIZE);
 		if(!qualArraySize.empty())
 		{
 			try
@@ -151,7 +153,7 @@ XMLQualifier::processQualifierDecl(CIMXMLParser& parser,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLQualifier::processScope(CIMXMLParser& parser,
+processScope(CIMXMLParser& parser,
 		CIMQualifierType& cqt, const char* attrName,
 		CIMScope::Scope scopeValue)
 {
@@ -169,15 +171,15 @@ XMLQualifier::processScope(CIMXMLParser& parser,
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-XMLQualifier::getQualifierName(CIMXMLParser& parser)
+getQualifierName(CIMXMLParser& parser)
 {
 	if(!parser.tokenIs(CIMXMLParser::E_IPARAMVALUE))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"Expected IPARAMVALUE to lead into QualifierName");
 	}
-	String propertyName = parser.mustGetAttribute(paramName);
-	if(!propertyName.equalsIgnoreCase(XMLP_QUALIFIERNAME))
+	String propertyName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	if(!propertyName.equalsIgnoreCase(CIMXMLParser::P_QualifierName))
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find qualifier name");
 	parser.getChild();
@@ -195,11 +197,7 @@ XMLQualifier::getQualifierName(CIMXMLParser& parser)
 	parser.mustGetEndTag();
 	return name;
 }
-const char* const XMLQualifier::XMLP_QUALIFIERNAME = "QualifierName";
-const char* const XMLQualifier::XMLP_QUALIFIERDECL = "QualifierDeclaration";
-const char* const XMLQualifier::paramISARRAY="ISARRAY";
-const char* const XMLQualifier::paramQualifierFlavor="QualifierFlavor";
-const char* const XMLQualifier::paramArraySize="ArraySize";
 
+} // end namespace XMLQualifier
 } // end namespace OpenWBEM
 

@@ -42,7 +42,7 @@ namespace OpenWBEM
 {
 
 class CIMOMHandleIFC;
-class XMLExecute : public RequestHandlerIFCXML, XMLQualifier
+class XMLExecute : public RequestHandlerIFCXML
 {
 public:
 	XMLExecute();

@@ -117,7 +117,9 @@ private:
 	const SharedLibraryLoaderRef m_sll;
 	ServiceEnvironmentIFCRef m_env;
 };
+
 typedef Reference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
+
 class ProviderIFCLoader : public ProviderIFCLoaderBase
 {
 public:
@@ -126,6 +128,8 @@ public:
 		: ProviderIFCLoaderBase(sll, env) {}
 	virtual ~ProviderIFCLoader();
 	virtual void loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const;
+
+	/// Factory function
 	static ProviderIFCLoaderRef createProviderIFCLoader(
 		ServiceEnvironmentIFCRef env);
 };

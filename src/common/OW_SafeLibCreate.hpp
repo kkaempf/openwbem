@@ -109,7 +109,7 @@ public:
 			if ( sigtype == 0 )
 			{
 				versionFunc_t versFunc;
-				if (!SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
+				if (!sl->getFunctionPointer( "getOWVersion", versFunc))
 				{
 					logger->logError("safeLibCreate::create failed getting"
 						" function pointer to \"getOWVersion\" from library");
@@ -128,7 +128,7 @@ public:
 				else
 				{
 					createFunc_t createFunc;
-					if (!SharedLibrary::getFunctionPointer( sl, createFuncName
+					if (!sl->getFunctionPointer( createFuncName
 						, createFunc ))
 					{
 						logger->logError(format("safeLibCreate::create failed"

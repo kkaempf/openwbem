@@ -109,7 +109,7 @@ getNameSpacePathAndSet(CIMObjectPath& cop, CIMXMLParser& parser)
 }
 static void getKeyValue(CIMXMLParser& parser, CIMValue& value)
 {
-	String valuetype = parser.mustGetAttribute(CIMXMLParser::A_VALUE_TYPE);
+	String valuetype = parser.mustGetAttribute(CIMXMLParser::A_VALUETYPE);
 	parser.mustGetNext();
 	if (!parser.isData())
 	{
@@ -146,7 +146,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 	CIMPropertyArray propertyArray;
 	CIMProperty cp(CIMNULL);
 	OW_ASSERT(parser.tokenIs(CIMXMLParser::E_INSTANCENAME));
-	String thisClassName = parser.getAttribute(CIMXMLParser::A_CLASS_NAME);
+	String thisClassName = parser.getAttribute(CIMXMLParser::A_CLASSNAME);
 	cimPath.setObjectName(thisClassName);
 	//parser.getChild();
 	parser.getNextTag();
@@ -279,9 +279,9 @@ createClass(CIMXMLParser& parser)
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not class XML");
 	}
 	
-	String inClassName = parser.mustGetAttribute(XMLParameters::paramName);
+	String inClassName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	rval.setName(inClassName);
-	superClassName = parser.getAttribute(XMLParameters::paramSuperName);
+	superClassName = parser.getAttribute(CIMXMLParser::A_SUPERCLASS);
 	if(!superClassName.empty())
 	{
 		rval.setSuperClass(superClassName);
@@ -332,7 +332,7 @@ createInstance(CIMXMLParser& parser)
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not instance XML");
 	}
 		
-	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASS_NAME));
+	rval.setClassName(parser.mustGetAttribute(CIMXMLParser::A_CLASSNAME));
 	//
 	// Find qualifier information
 	//
@@ -674,16 +674,16 @@ createQualifier(CIMXMLParser& parser)
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not qualifier XML");
 	}
 	CIMDataType dt(CIMNULL);
-	String name = parser.mustGetAttribute(XMLParameters::paramName);
-	String cimType = parser.getAttribute(XMLParameters::paramTypeAssign);
-	String propagate = parser.getAttribute(XMLParameters::paramPropagated);
-	String tosubclass = parser.getAttribute(XMLParameters::paramToSubClass);
+	String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	String cimType = parser.getAttribute(CIMXMLParser::A_TYPE);
+	String propagate = parser.getAttribute(CIMXMLParser::A_PROPAGATED);
+	String tosubclass = parser.getAttribute(CIMXMLParser::A_TOSUBCLASS);
 	String overridable = parser.getAttribute(
-		XMLParameters::paramOverridable);
+		CIMXMLParser::A_OVERRIDABLE);
 	//String toinstance = parser.getAttribute(
 	//	XMLParameters::paramToInstance);
 	String translatable = parser.getAttribute(
-		XMLParameters::paramTranslatable);
+		CIMXMLParser::A_TRANSLATABLE);
 	//
 	// Build qualifier
 	//
@@ -743,11 +743,11 @@ createMethod(CIMXMLParser& parser)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Not method XML");
 	}
-	String methodName = parser.mustGetAttribute(XMLParameters::paramName);
-	String cimType = parser.getAttribute(XMLParameters::paramTypeAssign);
+	String methodName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	String cimType = parser.getAttribute(CIMXMLParser::A_TYPE);
 	String classOrigin = parser.getAttribute(
-		XMLParameters::paramClassOrigin);
-	String propagate = parser.getAttribute(XMLParameters::paramPropagated);
+		CIMXMLParser::A_CLASSORIGIN);
+	String propagate = parser.getAttribute(CIMXMLParser::A_PROPAGATED);
 	//
 	// A method name must be given
 	//
@@ -874,11 +874,11 @@ createProperty(CIMXMLParser& parser)
 	}
 	String superClassName;
 	String inClassName;
-	String propName = parser.mustGetAttribute(XMLParameters::paramName);
-	String cimType = parser.getAttribute(XMLParameters::paramTypeAssign);
+	String propName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	String cimType = parser.getAttribute(CIMXMLParser::A_TYPE);
 	String classOrigin = parser.getAttribute(
-		XMLParameters::paramClassOrigin);
-	String propagate = parser.getAttribute(XMLParameters::paramPropagated);
+		CIMXMLParser::A_CLASSORIGIN);
+	String propagate = parser.getAttribute(CIMXMLParser::A_PROPAGATED);
 	CIMProperty rval(propName);
 	//
 	// If no return data type, then property isn't properly defined
@@ -886,7 +886,7 @@ createProperty(CIMXMLParser& parser)
 	if(token == CIMXMLParser::E_PROPERTY_REFERENCE)
 	{
 		rval.setDataType(CIMDataType(parser.getAttribute(
-			XMLParameters::paramReferenceClass)));
+			CIMXMLParser::A_REFERENCECLASS)));
 	}
 	else if(!cimType.empty())
 	{
@@ -903,7 +903,7 @@ createProperty(CIMXMLParser& parser)
 	if(token == CIMXMLParser::E_PROPERTY_ARRAY)
 	{
 		String arraySize = parser.getAttribute(
-			XMLParameters::paramArraySize);
+			CIMXMLParser::A_ARRAYSIZE);
 		CIMDataType dt = rval.getDataType();
 		if (!arraySize.empty())
 		{
@@ -1046,7 +1046,7 @@ createParameter(CIMXMLParser& parser)
 	//
 	// Fetch name
 	//
-	CIMParameter rval(parser.mustGetAttribute(XMLParameters::paramName));
+	CIMParameter rval(parser.mustGetAttribute(CIMXMLParser::A_NAME));
 	
 	//
 	// Get parameter type
@@ -1056,21 +1056,21 @@ createParameter(CIMXMLParser& parser)
 		case CIMXMLParser::E_PARAMETER:
 		{
 			rval.setDataType(CIMDataType::getDataType(
-				parser.mustGetAttribute(XMLParameters::paramTypeAssign)));
+				parser.mustGetAttribute(CIMXMLParser::A_TYPE)));
 			break;
 		}
 	
 		case CIMXMLParser::E_PARAMETER_REFERENCE:
 		{
 			rval.setDataType(CIMDataType(
-				parser.getAttribute(XMLParameters::paramRefClass)));
+				parser.getAttribute(CIMXMLParser::A_REFERENCECLASS)));
 			break;
 		}
 	
 		case CIMXMLParser::E_PARAMETER_ARRAY:
 		{
 			CIMDataType dt = CIMDataType::getDataType(
-				parser.mustGetAttribute(XMLParameters::paramTypeAssign));
+				parser.mustGetAttribute(CIMXMLParser::A_TYPE));
 	
 			if(!dt)
 			{
@@ -1081,7 +1081,7 @@ createParameter(CIMXMLParser& parser)
 			try
 			{
 				dt.setToArrayType(
-					parser.getAttribute(XMLParameters::paramArraySize).toInt32());
+					parser.getAttribute(CIMXMLParser::A_ARRAYSIZE).toInt32());
 			}
 			catch (const StringConversionException&)
 			{
@@ -1094,12 +1094,12 @@ createParameter(CIMXMLParser& parser)
 		case CIMXMLParser::E_PARAMETER_REFARRAY:
 		{
 			CIMDataType dt = CIMDataType(
-				parser.getAttribute(XMLParameters::paramRefClass));
+				parser.getAttribute(CIMXMLParser::A_REFERENCECLASS));
 	
 			try
 			{
 				dt.setToArrayType(
-					parser.getAttribute(XMLParameters::paramArraySize).toInt32());
+					parser.getAttribute(CIMXMLParser::A_ARRAYSIZE).toInt32());
 			}
 			catch (const StringConversionException&)
 			{

@@ -232,7 +232,7 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	// Find <MESSAGE>
 	//
 	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
-	String cimattr = parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	String cimattr = parser.mustGetAttribute(CIMXMLParser::A_ID);
 	if (!cimattr.equals(String(m_iMessageID)))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -277,9 +277,9 @@ CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
 	if (parser.tokenIs(CIMXMLParser::E_ERROR))
 	{
 		String errCode = parser.mustGetAttribute(
-			XMLParameters::paramErrorCode);
+			CIMXMLParser::A_CODE);
 		String description = parser.mustGetAttribute(
-			XMLParameters::paramErrorDescription);
+			CIMXMLParser::A_DESCRIPTION);
 		Int32 iErrCode;
 		try
 		{
@@ -354,10 +354,10 @@ CIMXMLCIMOMHandle::enumClassNames(
 	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
+		params.push_back(Param(CIMXMLParser::P_ClassName,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
-	params.push_back(Param(XMLP_DEEP,deep));
+	params.push_back(Param(CIMXMLParser::P_DeepInheritance,deep));
 	enumClassNamesOp op(result);
 	intrinsicMethod(ns, commandName, op, params);
 }
@@ -394,13 +394,13 @@ CIMXMLCIMOMHandle::enumClass(const String& ns,
 	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
+		params.push_back(Param(CIMXMLParser::P_ClassName,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
-	params.push_back(Param(XMLP_LOCAL,localOnly));
-	params.push_back(Param(XMLP_DEEP,deep));
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_LocalOnly,localOnly));
+	params.push_back(Param(CIMXMLParser::P_DeepInheritance,deep));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	enumClassOp op(result);
 	intrinsicMethod(ns, commandName, op, params);
 }
@@ -439,7 +439,7 @@ CIMXMLCIMOMHandle::enumInstanceNames(
 	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(Param(XMLP_CLASSNAME, Param::VALUESET,
+		params.push_back(Param(CIMXMLParser::P_ClassName, Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
@@ -456,7 +456,7 @@ static inline void generatePropertyListXML(std::ostream& ostr,
 {
 	if (propertyList)
 	{
-		ostr << "<IPARAMVALUE NAME=\"" << XMLParameters::XMLP_PROPERTYLIST <<
+		ostr << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_PropertyList <<
 		"\"><VALUE.ARRAY>";
 		for (size_t i = 0;i < propertyList->size(); i++)
 		{
@@ -506,12 +506,12 @@ CIMXMLCIMOMHandle::enumInstances(
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, "Class Name was empty in "
 			"EnumerateInstances");
 	}
-	params.push_back(Param(XMLP_CLASSNAME, Param::VALUESET,
+	params.push_back(Param(CIMXMLParser::P_ClassName, Param::VALUESET,
 		"<CLASSNAME NAME=\""+className+"\"/>"));
-	params.push_back(Param(XMLP_DEEP, deep));
-	params.push_back(Param(XMLP_LOCAL, localOnly));
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_DeepInheritance, deep));
+	params.push_back(Param(CIMXMLParser::P_LocalOnly, localOnly));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
 	enumInstancesOp op(result);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
@@ -545,7 +545,7 @@ CIMXMLCIMOMHandle::getClass(
 	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
+		params.push_back(Param(CIMXMLParser::P_ClassName,Param::VALUESET,
 			"<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
@@ -553,9 +553,9 @@ CIMXMLCIMOMHandle::getClass(
 		OW_THROWCIMMSG(CIMException::INVALID_CLASS, "no class given for "
 			"GetClass()");
 	}
-	params.push_back(Param(XMLP_LOCAL, localOnly));
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_LocalOnly, localOnly));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	StringStream extra;
 	generatePropertyListXML(extra,propertyList);
 	CIMClass rval(CIMNULL);
@@ -590,9 +590,9 @@ CIMXMLCIMOMHandle::getInstance(
 	static const char* const commandName = "GetInstance";
 	StringStream extra(1000);
 	Array<Param> params;
-	params.push_back(Param(XMLP_LOCAL, localOnly));
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_LocalOnly, localOnly));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	CIMObjectPath path(instanceName);
 	path.setNameSpace(ns);
 	extra << instanceNameToKey(path, "InstanceName");
@@ -737,7 +737,7 @@ CIMXMLCIMOMHandle::getQualifierType(const String& ns,
 {
 	static const char* const commandName = "GetQualifier";
 	Array<Param> params;
-	params.push_back(Param(XMLP_QUALIFIERNAME, qualifierName));
+	params.push_back(Param(CIMXMLParser::P_QualifierName, qualifierName));
 	CIMQualifierType rval;
 	getQualifierTypeOp op(rval);
 	intrinsicMethod(ns, commandName, op, params);
@@ -764,7 +764,7 @@ CIMXMLCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 {
 	static const char* const commandName = "DeleteQualifier";
 	Array<Param> params;
-	params.push_back(Param(XMLP_QUALIFIERNAME, qualName));
+	params.push_back(Param(CIMXMLParser::P_QualifierName, qualName));
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, params);
 }
@@ -808,7 +808,7 @@ CIMXMLCIMOMHandle::modifyClass(const String &ns,
 {
 	static const char* const commandName = "ModifyClass";
 	StringStream extra(1024);
-	extra << "<IPARAMVALUE NAME=\"" << XMLP_MODIFIED_CLASS << "\">";
+	extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ModifiedClass << "\">";
 	CIMtoXML(cc, extra);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
@@ -837,7 +837,7 @@ CIMXMLCIMOMHandle::deleteClass(const String& nameSpace, const String& className)
 	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
+		params.push_back(Param(CIMXMLParser::P_ClassName,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
@@ -872,7 +872,7 @@ CIMXMLCIMOMHandle::modifyInstance(
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	
 	Array<Param> params;
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
 	
 	generatePropertyListXML(ostr, propertyList);
 	
@@ -943,10 +943,10 @@ CIMXMLCIMOMHandle::setProperty(
 {
 	static const char* const commandName = "SetProperty";
 	Array<Param> params;
-	params.push_back(Param(XMLP_PROPERTYNAME, propName));
+	params.push_back(Param(CIMXMLParser::P_PropertyName, propName));
 	StringStream ostr;
 	CIMtoXML(cv, ostr);
-	params.push_back(Param(XMLP_NEWVALUE, Param::VALUESET, ostr.toString()));
+	params.push_back(Param(CIMXMLParser::P_NewValue, Param::VALUESET, ostr.toString()));
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
@@ -982,7 +982,7 @@ CIMXMLCIMOMHandle::getProperty(
 {
 	static const char* const commandName = "GetProperty";
 	Array<Param> params;
-	params.push_back(Param(XMLP_PROPERTYNAME, propName));
+	params.push_back(Param(CIMXMLParser::P_PropertyName, propName));
 	CIMValue rval(CIMNULL);
 	getPropertyOp op(rval);
 	intrinsicMethod(ns, commandName, op, params,
@@ -1084,33 +1084,33 @@ CIMXMLCIMOMHandle::associatorNames(
 	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(Param(XMLP_ROLE, role));
+		params.push_back(Param(CIMXMLParser::P_Role, role));
 	}
 	if (!resultRole.empty())
 	{
-		params.push_back(Param(XMLP_RESULTROLE, resultRole));
+		params.push_back(Param(CIMXMLParser::P_ResultRole, resultRole));
 	}
 	if (path.isInstancePath())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">";
 		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!assocClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_AssocClass << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ResultClass << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"/></IPARAMVALUE>";
 	}
@@ -1173,36 +1173,36 @@ CIMXMLCIMOMHandle::associatorsCommon(
 	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(Param(XMLP_ROLE, role));
+		params.push_back(Param(CIMXMLParser::P_Role, role));
 	}
 	if (!resultRole.empty())
 	{
-		params.push_back(Param(XMLP_RESULTROLE, resultRole));
+		params.push_back(Param(CIMXMLParser::P_ResultRole, resultRole));
 	}
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
 	if (path.isInstancePath())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">";
 		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!assocClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_AssocClass << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ResultClass << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"/></IPARAMVALUE>";
 	}
@@ -1223,23 +1223,23 @@ CIMXMLCIMOMHandle::referenceNames(
 	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(Param(XMLP_ROLE, role));
+		params.push_back(Param(CIMXMLParser::P_Role, role));
 	}
 	if (path.isInstancePath())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">";
 		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ResultClass << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
@@ -1299,26 +1299,26 @@ CIMXMLCIMOMHandle::referencesCommon(
 	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(Param(XMLP_ROLE, role));
+		params.push_back(Param(CIMXMLParser::P_Role, role));
 	}
-	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	params.push_back(Param(CIMXMLParser::P_IncludeQualifiers, includeQualifiers));
+	params.push_back(Param(CIMXMLParser::P_IncludeClassOrigin, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
 	if (path.isInstancePath())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">";
 		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">"
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">"
 		<< "<CLASSNAME NAME=\"" << path.getObjectName()
 		<< "\"></CLASSNAME></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
 	{
-		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">"
+		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ResultClass << "\">"
 		<< "<CLASSNAME NAME=\"" << resultClass <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
@@ -1344,8 +1344,8 @@ CIMXMLCIMOMHandle::execQuery(
 {
 	static const char* const commandName = "ExecQuery";
 	Array<Param> params;
-	params.push_back(Param(XMLP_QUERYLANGUAGE, XMLEscape(queryLanguage)));
-	params.push_back(Param(XMLP_QUERY, XMLEscape(query)));
+	params.push_back(Param(CIMXMLParser::P_QueryLanguage, XMLEscape(queryLanguage)));
+	params.push_back(Param(CIMXMLParser::P_Query, XMLEscape(query)));
 	objectWithPathOp op(&result, 0, ns);
 	intrinsicMethod(ns, commandName, op, params);
 }

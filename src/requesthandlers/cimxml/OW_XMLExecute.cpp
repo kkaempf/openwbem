@@ -153,7 +153,7 @@ XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	m_ostrEntity = ostrEntity;
 	m_ostrError = ostrError;
 	m_isIntrinsic = false;
-	String messageId = parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	String messageId = parser.mustGetAttribute(CIMXMLParser::A_ID);
 	parser.getChild();
 	if (!parser)
 	{
@@ -554,11 +554,11 @@ XMLExecute::associatorNames(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
-	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_RESULTCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_ROLE, true, param::STRING, CIMValue("")));
-	params.push_back(param(XMLP_RESULTROLE, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_ObjectName, false, param::OBJECTNAME));
+	params.push_back(param(CIMXMLParser::P_AssocClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_ResultClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_Role, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_ResultRole, true, param::STRING, CIMValue("")));
 	getParameterValues(parser, params);
 	CIMObjectPath objectName = params[0].val.toCIMObjectPath();
 	String assocClass;
@@ -636,14 +636,14 @@ void XMLExecute::associators(ostream& ostr,
 	CIMXMLParser& parser, const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
-	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_RESULTCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_ROLE, true, param::STRING, CIMValue("")));
-	params.push_back(param(XMLP_RESULTROLE, true, param::STRING, CIMValue("")));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_ObjectName, false, param::OBJECTNAME));
+	params.push_back(param(CIMXMLParser::P_AssocClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_ResultClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_Role, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_ResultRole, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	getParameterValues(parser, params);
 	CIMObjectPath objectName = params[0].val.toCIMObjectPath();
 	String assocClass;
@@ -706,8 +706,8 @@ void
 XMLExecute::modifyClass(ostream&	/*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
-	String name = parser.mustGetAttribute(paramName);
-	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
+	String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	if (!name.equalsIgnoreCase(CIMXMLParser::P_ModifiedClass))
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			format("Parameter name was %1", name).c_str());
 	parser.mustGetChild();
@@ -722,7 +722,7 @@ void XMLExecute::deleteClass(ostream& /*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_ClassName, false, param::CLASSNAME));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
 	hdl.deleteClass(ns, className);
@@ -768,9 +768,9 @@ XMLExecute::modifyInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_ModifiedInstance, false, param::NAMEDINSTANCE));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	
 	getParameterValues(parser, params);
 	
@@ -794,7 +794,7 @@ void
 XMLExecute::deleteInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
-	String name = parser.getAttribute( paramName );
+	String name = parser.getAttribute( CIMXMLParser::A_NAME );
 	if ( !name.equalsIgnoreCase( "InstanceName" ) )
 		OW_THROWCIMMSG( CIMException::INVALID_PARAMETER,
 			String( "Parameter name was " + name ).c_str() );
@@ -808,9 +808,9 @@ XMLExecute::setProperty(ostream&	/*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
-	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, CIMValue("")));
-	params.push_back(param(XMLP_NEWVALUE, true, param::PROPERTYVALUE));
+	params.push_back(param(CIMXMLParser::P_InstanceName, false, param::INSTANCENAME));
+	params.push_back(param(CIMXMLParser::P_PropertyName, false, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_NewValue, true, param::PROPERTYVALUE));
 	getParameterValues(parser, params);
 	CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 	hdl.setProperty(ns, instpath, params[1].val.toString(), params[2].val);
@@ -822,8 +822,8 @@ void
 XMLExecute::setQualifier(ostream& /*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
-	String argName = parser.mustGetAttribute(paramName);
-	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
+	String argName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+	if (!argName.equalsIgnoreCase(CIMXMLParser::P_QualifierDeclaration))
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"invalid qualifier xml");
@@ -840,7 +840,7 @@ void
 XMLExecute::deleteQualifier(ostream& /*ostr*/, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
-	String qualName = getQualifierName(parser);
+	String qualName = XMLQualifier::getQualifierName(parser);
 	hdl.deleteQualifierType(ns, qualName);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -897,8 +897,8 @@ XMLExecute::enumerateClassNames(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, true, param::CLASSNAME, CIMValue("")));
-	params.push_back(param(XMLP_DEEP, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_ClassName, true, param::CLASSNAME, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_DeepInheritance, true, param::BOOLEAN, CIMValue(false)));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
 	EDeepFlag deepInheritance(
@@ -934,11 +934,11 @@ XMLExecute::enumerateClasses( ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, true, param::CLASSNAME));
-	params.push_back(param(XMLP_DEEP, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_ClassName, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_DeepInheritance, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_LocalOnly, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
 	getParameterValues(parser, params);
 	String className;
 	if (params[0].isSet)
@@ -983,7 +983,7 @@ XMLExecute::enumerateInstanceNames(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_ClassName, false, param::CLASSNAME));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
 	
@@ -1024,12 +1024,12 @@ XMLExecute::enumerateInstances(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
-	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_DEEP, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_ClassName, false, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_LocalOnly, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_DeepInheritance, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
 	StringArray propertyList;
@@ -1059,11 +1059,11 @@ XMLExecute::getClass(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
-	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_ClassName, false, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_LocalOnly, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	getParameterValues(parser, params);
 	String className = params[0].val.toString();
 	StringArray propertyList;
@@ -1092,11 +1092,11 @@ XMLExecute::getInstance(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
-	params.push_back(param(XMLP_LOCAL, true, param::BOOLEAN, CIMValue(true)));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_InstanceName, false, param::INSTANCENAME));
+	params.push_back(param(CIMXMLParser::P_LocalOnly, true, param::BOOLEAN, CIMValue(true)));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	getParameterValues(parser, params);
 	CIMObjectPath instancePath = params[0].val.toCIMObjectPath();
 	StringArray propertyList;
@@ -1124,8 +1124,8 @@ XMLExecute::getProperty(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
-	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_InstanceName, false, param::INSTANCENAME));
+	params.push_back(param(CIMXMLParser::P_PropertyName, false, param::STRING, CIMValue("")));
 	getParameterValues(parser, params);
 	CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 	ostr << "<IRETURNVALUE>";
@@ -1139,7 +1139,7 @@ void
 XMLExecute::getQualifier(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
-	String qualifierName = getQualifierName(parser);
+	String qualifierName = XMLQualifier::getQualifierName(parser);
 	ostr << "<IRETURNVALUE>";
 	CIMQualifierType qual = hdl.getQualifierType(ns, qualifierName);
 	CIMtoXML(qual, ostr);
@@ -1152,9 +1152,9 @@ XMLExecute::referenceNames(ostream& ostr, CIMXMLParser& parser,
 	const String& ns,CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
-	params.push_back(param(XMLP_RESULTCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_ROLE, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_ObjectName, false, param::OBJECTNAME));
+	params.push_back(param(CIMXMLParser::P_ResultClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_Role, true, param::STRING, CIMValue("")));
 	getParameterValues(parser, params);
 	CIMObjectPath path = params[0].val.toCIMObjectPath();
 	String resultClass;
@@ -1173,12 +1173,12 @@ XMLExecute::references(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
-	params.push_back(param(XMLP_RESULTCLASS, true, param::CLASSNAME));
-	params.push_back(param(XMLP_ROLE, true, param::STRING, CIMValue("")));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_INCLUDECLASSORIGIN, true, param::BOOLEAN, CIMValue(false)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, CIMValue(CIMNULL)));
+	params.push_back(param(CIMXMLParser::P_ObjectName, false, param::OBJECTNAME));
+	params.push_back(param(CIMXMLParser::P_ResultClass, true, param::CLASSNAME));
+	params.push_back(param(CIMXMLParser::P_Role, true, param::STRING, CIMValue("")));
+	params.push_back(param(CIMXMLParser::P_IncludeQualifiers, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_IncludeClassOrigin, true, param::BOOLEAN, CIMValue(false)));
+	params.push_back(param(CIMXMLParser::P_PropertyList, true, param::STRINGARRAY, CIMValue(CIMNULL)));
 	getParameterValues(parser, params);
 	CIMObjectPath path = params[0].val.toCIMObjectPath();
 	String resultClass;
@@ -1252,8 +1252,8 @@ XMLExecute::execQuery(ostream& ostr, CIMXMLParser& parser,
 	const String& ns, CIMOMHandleIFC& hdl)
 {
 	Array<param> params;
-	params.push_back(param(XMLP_QUERYLANGUAGE, false, param::STRING));
-	params.push_back(param(XMLP_QUERY, false, param::STRING));
+	params.push_back(param(CIMXMLParser::P_QueryLanguage, false, param::STRING));
+	params.push_back(param(CIMXMLParser::P_Query, false, param::STRING));
 	getParameterValues(parser, params);
 	ostr << "<IRETURNVALUE>";
 	execQueryXMLOutputter handler(ostr, ns);

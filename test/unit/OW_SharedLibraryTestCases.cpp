@@ -50,7 +50,7 @@ void OW_SharedLibraryTestCases::testGetFunctionPointer()
 {
 	Reference<SharedLibrary> sl(new testSharedLibrary);
 	fptype fp;
-	SharedLibrary::getFunctionPointer( sl, "testFunction", fp );
+	sl->getFunctionPointer( "testFunction", fp );
 	unitAssert( fp );
 	unitAssert( fp(3) == 4 );
 }

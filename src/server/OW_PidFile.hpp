@@ -34,16 +34,13 @@
 namespace OpenWBEM
 {
 
-class PidFile
+namespace PidFile
 {
-public:
-	static int readPid(const char *pidfile);
-	static int checkPid(const char *pidfile);
-	static int writePid(const char *pidfile);
-	static int removePid(const char *pidfile);
-private:
-	PidFile() {}	// Don't allow instances of PidFile
-};
+	int readPid(const char *pidfile);
+	int checkPid(const char *pidfile);
+	int writePid(const char *pidfile);
+	int removePid(const char *pidfile);
+} // end namespace PidFile
 
 } // end namespace OpenWBEM
 

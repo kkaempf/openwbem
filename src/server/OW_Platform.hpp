@@ -39,9 +39,8 @@ namespace OpenWBEM
 {
 
 DECLARE_EXCEPTION(Daemon);
-class Platform
+namespace Platform
 {
-public:
 	enum
 	{
 		SHUTDOWN,
@@ -62,34 +61,18 @@ public:
 		bool help;
 		bool error;
 	};
-	static Options daemonInit( int argc, char* argv[] );
+	Options daemonInit( int argc, char* argv[] );
 	/**
 	 * @throws DaemonException on error
 	 */
-	static void daemonize(bool dbgFlg, const String& daemonName);
-	static int daemonShutdown(const String& daemonName);
-	static void initSig() { plat_upipe = UnnamedPipe::createUnnamedPipe(); }
-	static void pushSig(int sig)
-	{
-		plat_upipe->writeInt(sig);
-		// don't throw from this function, it may cause a segfault or deadlock.
-	}
-	static int popSig()
-	{
-		int tmp = -2;
-		if (plat_upipe->readInt(&tmp) < 0)
-			return -1;
-		return tmp;
-	}
-	static void shutdownSig() { plat_upipe = 0; }
-	static SelectableIFCRef getSigSelectable()
-	{
-		return plat_upipe;
-	}
-    static String getCurrentUserName();
-private:
-	Platform(); // prevent instantiation.
-	static Reference<UnnamedPipe> plat_upipe;
+	void daemonize(bool dbgFlg, const String& daemonName);
+	int daemonShutdown(const String& daemonName);
+	void initSig();
+	void pushSig(int sig);
+	int popSig();
+	void shutdownSig();
+	SelectableIFCRef getSigSelectable();
+    String getCurrentUserName();
 };
 
 } // end namespace OpenWBEM

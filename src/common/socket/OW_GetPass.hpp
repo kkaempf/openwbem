@@ -27,10 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-/**
- *
- *
- */
 #ifndef OW_GETPASS_HPP_INCLUDE_GUARD_
 #define OW_GETPASS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
@@ -39,9 +35,8 @@
 namespace OpenWBEM
 {
 
-class GetPass
+namespace GetPass
 {
-public:
 	/**
 	 * The  getpass  function  displays  a prompt to the standard
 	 * error output, and reads in a password from  /dev/tty.   If
@@ -58,14 +53,13 @@ public:
 	 * @param prompt The prompt to be displayed
 	 * @return the password
 	 */
-	static String getPass(const String& prompt);
-private:
-	GetPass(); // don't allow instantiation.
-};
+	String getPass(const String& prompt);
+
+} // end namespace GetPass
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::GetPass OW_GetPass;
+namespace OW_GetPass = OpenWBEM::GetPass;
 
 #endif
 	

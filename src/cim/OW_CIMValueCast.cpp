@@ -48,10 +48,13 @@ static CIMValue convertArray(const CIMValue& value,
 	const CIMDataType& dataType);
 static StringArray convertToStringArray(const CIMValue& value,
 	bool onlyOne);
+
 //////////////////////////////////////////////////////////////////////////////
-// STATIC PUBLIC
+namespace CIMValueCast
+{
+
 CIMValue
-CIMValueCast::castValueToDataType(const CIMValue& value,
+castValueToDataType(const CIMValue& value,
 		const CIMDataType& dataType)
 {
 	try
@@ -95,6 +98,8 @@ CIMValueCast::castValueToDataType(const CIMValue& value,
 		OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
 	}
 }
+} // end namespace CIMValueCast
+
 //////////////////////////////////////////////////////////////////////////////
 void
 makeValueArray(CIMValue& theValue)

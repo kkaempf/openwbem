@@ -280,7 +280,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			continue;
 		}
 		versionFunc_t versFunc;
-		if(!SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
+		if(!theLib->getFunctionPointer("getOWVersion",
 			versFunc))
 		{
 			env->getLogger()->logError(format("C++ provider ifc failed getting"
@@ -297,7 +297,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		}
 		ProviderCreationFunc createProvider;
 		String creationFuncName = String(CREATIONFUNC) + "NO_ID";
-		if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName,
+		if(!theLib->getFunctionPointer(creationFuncName,
 			createProvider))
 		{
 			// it's not a no-id provider
@@ -419,7 +419,7 @@ CppProviderIFC::getProvider(
 		return CppProviderBaseIFCRef();
 	}
 	versionFunc_t versFunc;
-	if (!SharedLibrary::getFunctionPointer(theLib, "getOWVersion", versFunc))
+	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
 	{
 		env->getLogger()->logError("C++ provider ifc failed getting"
 			" function pointer to \"getOWVersion\" from library");
@@ -434,7 +434,7 @@ CppProviderIFC::getProvider(
 	}
 	ProviderCreationFunc createProvider;
 	String creationFuncName = String(CREATIONFUNC) + provId;
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));

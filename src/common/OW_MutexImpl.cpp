@@ -35,14 +35,16 @@
 namespace OpenWBEM
 {
 
+namespace MutexImpl
+{
+
 /**
  * Create a platform specific mutext handle.
  * @param handle	The mutex handle that should be initialized by this method
  * @return 0 on success. Otherwise -1.
  */
-// static 
 int
-MutexImpl::createMutex(Mutex_t& handle)
+createMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	ThreadImpl::initThreads();
@@ -97,9 +99,8 @@ MutexImpl::createMutex(Mutex_t& handle)
  *				locked.
  *		-2:	All other error conditions
  */
-// static
 int
-MutexImpl::destroyMutex(Mutex_t& handle)
+destroyMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
@@ -138,9 +139,8 @@ MutexImpl::destroyMutex(Mutex_t& handle)
  * @param handle The mutex to acquire.
  * @return 0 on success. -1 indicates a critical error.
  */
-// static
 int
-MutexImpl::acquireMutex(Mutex_t& handle)
+acquireMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
@@ -182,9 +182,8 @@ MutexImpl::acquireMutex(Mutex_t& handle)
  * @param handle The handle to the mutex that is being released.
  * @return 0 on success. -1 indicates a critical error.
  */
-// static
 int
-MutexImpl::releaseMutex(Mutex_t& handle)
+releaseMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	// TODO: ?!?!
@@ -228,5 +227,6 @@ MutexImpl::releaseMutex(Mutex_t& handle)
 #endif
 }
 
+} // end namespace MutexImpl
 } // end namespace OpenWBEM
 

@@ -51,17 +51,18 @@ public:
 	 * This function should be called like this:
 	 * typedef ReturnType (*func_t)(param_t p1, ...);
 	 * func_t theFunction;
-	 * SharedLibrary::getFunctionPointer(sharedLibrary, "FunctionName", theFunction);
+	 * sharedLibrary->getFunctionPointer(sharedLibrary, "FunctionName", theFunction);
 	 *
 	 * @param functionName	The name of the function to resolve.
 	 * @param retval			Will be set to the function pointer.
 	 * @return true if function succeeded, false otherwise.
 	 */
 	template< class fptype >
-	static bool getFunctionPointer( const Reference<SharedLibrary>& sl, const String& functionName, fptype& retval )
+	bool getFunctionPointer(const String& functionName, fptype& retval )
 	{
-		return sl->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
+		return this->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
 	}
+
 protected:
 	/**
 	 * Derived classes have to override this function to implement

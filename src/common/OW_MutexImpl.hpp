@@ -36,21 +36,20 @@ namespace OpenWBEM
 {
 
 /**
- * The MutexImpl class represents the functionality needed by the
- * OpenWbem Mutex class (Mutex). The implementation for this class
+ * The MutexImpl namespace represents the functionality needed by the
+ * OpenWbem Mutex class (Mutex). The implementation for these functions
  * must be provided on all platforms that OpenWbem runs on. It is essentially
  * an abstraction layer over another mutex implementation.
  */
-class MutexImpl
+namespace MutexImpl
 {
-public:
 	/**
 	 * Create a platform specific mutext handle.
 	 * @param handle	The mutex handle that should be initialized by this method
 	 * @param isRecursive Specified whether to create a recursive mutex
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int createMutex(Mutex_t& handle);
+	int createMutex(Mutex_t& handle);
 	/**
 	 * Destroy a mutex previously created with createMutex.
 	 * @param handle The handle to the mutex that will be destroyed.
@@ -60,7 +59,7 @@ public:
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	static int destroyMutex(Mutex_t& handle);
+	int destroyMutex(Mutex_t& handle);
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
 	 * block until the desired mutex can be acquired. The error return value is
@@ -69,16 +68,16 @@ public:
 	 * @param handle The mutex to acquire.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int acquireMutex(Mutex_t& handle);
+	int acquireMutex(Mutex_t& handle);
 	/**
 	 * Release a mutex that was previously acquired with the acquireMutex
 	 * method.
 	 * @param handle The handle to the mutex that is being released.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int releaseMutex(Mutex_t& handle);
+	int releaseMutex(Mutex_t& handle);
 	
-};
+} // end namespace MutexImpl
 
 } // end namespace OpenWBEM
 

@@ -60,7 +60,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const String& /*userName*/)
 {
 	clearError();
-	String messageId = parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	String messageId = parser.mustGetAttribute(CIMXMLParser::A_ID);
 	parser.getChild();
 	if (!parser)
 	{

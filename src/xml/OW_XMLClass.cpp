@@ -43,9 +43,11 @@
 namespace OpenWBEM
 {
 
+namespace XMLClass
+{
 //////////////////////////////////////////////////////////////////////////////		
 String
-XMLClass::getNameSpace(CIMXMLParser& parser)
+getNameSpace(CIMXMLParser& parser)
 {
 	String nameSpace;
 	bool firstTime = true;
@@ -74,7 +76,7 @@ XMLClass::getNameSpace(CIMXMLParser& parser)
 }
 //////////////////////////////////////////////////////////////////////////////		
 CIMObjectPath
-XMLClass::getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
+getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 	CIMInstance& i)
 {
 	CIMXMLParser::tokenId token = parser.getToken();
@@ -134,7 +136,7 @@ XMLClass::getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 }
 //////////////////////////////////////////////////////////////////////////////		
 CIMClass
-XMLClass::readClass(CIMXMLParser& childNode, CIMObjectPath& path)
+readClass(CIMXMLParser& childNode, CIMObjectPath& path)
 {
 	CIMClass cimClass = XMLCIMFactory::createClass(childNode);
 	path.setObjectName(cimClass.getName());
@@ -142,12 +144,13 @@ XMLClass::readClass(CIMXMLParser& childNode, CIMObjectPath& path)
 }
 //////////////////////////////////////////////////////////////////////////////		
 CIMInstance
-XMLClass::readInstance(CIMXMLParser& childNode, CIMObjectPath& path)
+readInstance(CIMXMLParser& childNode, CIMObjectPath& path)
 {
 	(void)path;
 	CIMInstance cimInstance = XMLCIMFactory::createInstance(childNode);
 	return cimInstance;
 }
 
+} // end namespace XMLClass
 } // end namespace OpenWBEM
 
