@@ -135,6 +135,15 @@ static const char* const short_options = "d:u:n:ce:sx:rpwqI:ih";
 static int
 processCommandLineOptions(int argc, char** argv)
 {
+	// handle backwards compatible options, which was <URL> <namespace> <file>
+	// TODO: This is deprecated, remove it post 3.0
+	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
+	{
+		url_arg = argv[1];
+		namespace_arg = argv[2];
+		filelist.push_back(argv[3]);
+		return 0;
+	}
 
 #ifdef OW_HAVE_GETOPT_LONG
     int optndx = 0;
@@ -265,6 +274,7 @@ int main(int argc, char** argv)
 			OW_CIMProtocolIFCRef client;
 			client = new OW_HTTPClient(url_arg);
 
+			// TODO: The /owbinary path part is deprecated, remove it post 3.0
 			if(encoding_arg == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
 			{
 				handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
