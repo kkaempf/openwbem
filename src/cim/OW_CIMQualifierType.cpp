@@ -170,6 +170,13 @@ OW_CIMQualifierType::setDataType(const OW_CIMDataType& dataType)
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_CIMQualifierType::setDataType(const OW_CIMDataType::Type& dataType)
+{
+	setDataType(OW_CIMDataType(dataType));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_CIMQualifierType::setDefaultValue(const OW_CIMValue& defValue)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();

@@ -31,10 +31,10 @@
 #include "OW_config.h"
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
-#include "OW_CIMException.hpp"
 #include "OW_CIM.hpp"
 #include "OW_IOException.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_Assertion.hpp"
 #include <iostream>
 
 using std::istream;
@@ -43,7 +43,7 @@ using std::ostream;
 struct OW_CIMDataType::DTData
 {
 	DTData() :
-		m_type(0), m_numberOfElements(0), m_sizeRange(0), m_reference() {}
+		m_type(OW_CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0), m_reference() {}
 
 	DTData(const DTData& x) :
 		m_type(x.m_type), m_numberOfElements(x.m_numberOfElements),
@@ -58,7 +58,7 @@ struct OW_CIMDataType::DTData
 		return *this;
 	}
 
-	int m_type;
+	OW_CIMDataType::Type m_type;
 	int m_numberOfElements;
 	int m_sizeRange;
 	OW_String m_reference;
@@ -77,16 +77,10 @@ OW_CIMDataType::OW_CIMDataType(OW_Bool notNull) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(int type) :
+OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type) :
 	OW_CIMBase(), m_pdata(NULL)
 {
-	if(type < CIMNULL || type >= MAXDATATYPE)
-	{
-		OW_String msg;
-		msg.format("Invalid data type for new OW_CIMDataType: %d", type);
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, msg.c_str());
-	}
-
+	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 	m_pdata = new DTData;
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = 1;
@@ -94,14 +88,10 @@ OW_CIMDataType::OW_CIMDataType(int type) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(int type, int size) :
+OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type, int size) :
 	OW_CIMBase(), m_pdata(NULL)
 {
-	if(type < CIMNULL || type >= MAXDATATYPE)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"Invalid data type for new OW_CIMDataType");
-	}
+	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 
 	m_pdata = new DTData;
 	m_pdata->m_type = type;
@@ -151,7 +141,7 @@ OW_CIMDataType::isNumericType() const
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_Bool
-OW_CIMDataType::isNumericType(int type)
+OW_CIMDataType::isNumericType(OW_CIMDataType::Type type)
 {
 	switch(type)
 	{
@@ -166,6 +156,8 @@ OW_CIMDataType::isNumericType(int type)
 		case REAL32:
 		case REAL64:
 			return true;
+		default:
+			return false;
 	}
 
 	return false;
@@ -179,7 +171,7 @@ OW_CIMDataType::isReferenceType() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int
+OW_CIMDataType::Type
 OW_CIMDataType::getType() const
 {
 	return m_pdata->m_type;
@@ -314,7 +306,7 @@ OW_CIMDataType::readObject(istream &istrm)
 	}
 
 	OW_MutexLock l = m_pdata.getWriteLock();
-	m_pdata->m_type = OW_ntoh32(type);
+	m_pdata->m_type = OW_CIMDataType::Type(OW_ntoh32(type));
 	m_pdata->m_numberOfElements = OW_ntoh32(numberOfElements);
 	m_pdata->m_sizeRange = OW_ntoh32(sizeRange);
 	m_pdata->m_reference = ref;
@@ -326,7 +318,7 @@ OW_CIMDataType::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
 
-	int nl = OW_hton32(m_pdata->m_type);
+	OW_UInt32 nl = OW_hton32(m_pdata->m_type);
 	if(!ostrm.write((const char*)&nl, sizeof(nl)))
 	{
 		OW_THROW(OW_IOException, "Unable to write type for OW_CIMDataType");
@@ -384,7 +376,7 @@ OW_CIMDataType::toMOF() const
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-int
+OW_CIMDataType::Type
 OW_CIMDataType::strToSimpleType(const OW_String& strType)
 {
 	if(strType.length() == 0)
@@ -450,7 +442,7 @@ OW_CIMDataType::getDataType(const OW_String& strType)
 		return OW_CIMDataType(true);
 	}
 
-	int type = strToSimpleType(strType);
+	Type type = strToSimpleType(strType);
 	if(type != INVALID)
 	{
 		return OW_CIMDataType(type);

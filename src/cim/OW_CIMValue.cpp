@@ -33,6 +33,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_Assertion.hpp"
 
 #include <new>
 
@@ -149,7 +150,7 @@ public:
 		return arg < *this;
 	}
 
-	int getType() const
+	OW_CIMDataType::Type getType() const
 	{
 		return m_type;
 	}
@@ -220,10 +221,10 @@ private:
 		char bfr23[sizeof(OW_CIMInstanceArray)];
 	};
 
-	void setupObject(const OW_CIMValueData& odata, int type, OW_Bool isArray);
+	void setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, OW_Bool isArray);
 	void destroyObject();
 
-	int m_type;
+	OW_CIMDataType::Type m_type;
 	OW_Bool m_isArray;
 	OW_Bool m_objDestroyed;
 	OW_CIMValueData m_obj;
@@ -729,7 +730,7 @@ OW_Bool OW_CIMValue::operator> (const OW_CIMValue& x) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int OW_CIMValue::getType() const {  return m_impl->getType(); }
+OW_CIMDataType::Type OW_CIMValue::getType() const {  return m_impl->getType(); }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMDataType OW_CIMValue::getCIMDataType() const { return m_impl->getCIMDataType(); }
@@ -1191,6 +1192,8 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 			sz = ((OW_CIMClassArray*)&m_obj)->size(); break;
 		case OW_CIMDataType::EMBEDDEDINSTANCE:
 			sz = ((OW_CIMInstanceArray*)&m_obj)->size(); break;
+		default:
+			sz = 0;
 	}
 
 	return sz;
@@ -1204,7 +1207,7 @@ OW_CIMValue::OW_CIMValueImpl::operator void*() const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, int type, OW_Bool isArray)
+OW_CIMValue::OW_CIMValueImpl::setupObject(const OW_CIMValueData& odata, OW_CIMDataType::Type type, OW_Bool isArray)
 {
 	destroyObject();
 	m_objDestroyed = false;
@@ -1352,6 +1355,8 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 				((OW_CIMClassArray*)&m_obj)->~OW_CIMClassArray(); break;
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				((OW_CIMInstanceArray*)&m_obj)->~OW_CIMInstanceArray(); break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 	else
@@ -1388,6 +1393,8 @@ OW_CIMValue::OW_CIMValueImpl::destroyObject()
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				((OW_CIMInstance*)&m_obj)->~OW_CIMInstance();
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 
@@ -1504,6 +1511,8 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 					cc = *((OW_CIMInstanceArray*)&m_obj) ==
 						*((OW_CIMInstanceArray*)&arg.m_obj);
 					break;
+				default:
+					OW_ASSERT(0);
 			}
 		}
 		else
@@ -1581,6 +1590,8 @@ OW_CIMValue::OW_CIMValueImpl::equal(const OW_CIMValueImpl& arg) const
 					cc = *((OW_CIMInstance*)&m_obj) ==
 						*((OW_CIMInstance*)&arg.m_obj);
 					break;
+				default:
+					OW_ASSERT(0);
 			}
 		}
 	}
@@ -1682,6 +1693,8 @@ OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 					cc = *((OW_CIMInstanceArray*)&m_obj) <
 						*((OW_CIMInstanceArray*)&arg.m_obj);
 					break;
+				default:
+					OW_ASSERT(0);
 			}
 		}
 		else
@@ -1759,6 +1772,8 @@ OW_CIMValue::OW_CIMValueImpl::operator<(const OW_CIMValueImpl& arg) const
 					cc = *((OW_CIMInstance*)&m_obj) <
 						*((OW_CIMInstance*)&arg.m_obj);
 					break;
+				default:
+					OW_ASSERT(0);
 			}
 		}
 	}
@@ -2344,6 +2359,8 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				out = raToString(*((OW_CIMInstanceArray*)&m_obj));
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 	else
@@ -2452,6 +2469,8 @@ OW_CIMValue::OW_CIMValueImpl::toString(OW_Bool forMOF) const
 					out = ((OW_CIMInstance*)&m_obj)->toString();
 				}
 				break;
+			default:
+				OW_ASSERT(0);
 
 		}
 	}
@@ -2498,9 +2517,9 @@ readValue(istream& istrm, T& val, int line, int convType)
 
 	switch(convType)
 	{
-		case 3: { val = OW_ntoh64(val); break; }
-		case 2: { val = OW_ntoh32(val); break; }
-		case 1: { val = OW_ntoh16(val); break; }
+		case 3: { val = T(OW_ntoh64(val)); break; }
+		case 2: { val = T(OW_ntoh32(val)); break; }
+		case 1: { val = T(OW_ntoh16(val)); break; }
 	}
 }
 
@@ -2691,6 +2710,8 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				readObjectArray(istrm, *((OW_CIMInstanceArray*)&m_obj),
 					__LINE__);
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 	else
@@ -2770,6 +2791,8 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				new(&m_obj) OW_CIMInstance;
 				((OW_CIMInstance*)&m_obj)->readObject(istrm);
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 }
@@ -2786,9 +2809,9 @@ writeValue(ostream& ostrm, T val, int line, int convType)
 	T v;
 	switch(convType)
 	{
-		case 3: v = OW_hton64(val); break;
-		case 2: v = OW_hton32(val); break;
-		case 1: v = OW_hton16(val); break;
+		case 3: v = T(OW_hton64(val)); break;
+		case 2: v = T(OW_hton32(val)); break;
+		case 1: v = T(OW_hton16(val)); break;
 		default: v = val; break;
 	}
 
@@ -2953,6 +2976,8 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 				writeObjectArray(ostrm, *((OW_CIMInstanceArray*)&m_obj),
 					__LINE__);
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 	else
@@ -3027,6 +3052,8 @@ OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 				((OW_CIMInstance*)&m_obj)->writeObject(ostrm);
 				break;
+			default:
+				OW_ASSERT(0);
 		}
 	}
 }

@@ -35,6 +35,7 @@
 #include "OW_CIMElement.hpp"
 #include "OW_Reference.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMDataType.hpp"
 
 /**
  * The OW_CIMQualifierType class encapsulates the data and functionality
@@ -115,6 +116,12 @@ public:
 	 * @param dataType	The OW_CIMDataType for this OW_CIMQualifierType object.
 	 */
 	void setDataType(const OW_CIMDataType& dataType);
+
+	/**
+	 * Set the data type for this OW_CIMQualifierType object.
+	 * @param dataType	The OW_CIMDataType::Type for this OW_CIMQualifierType object.
+	 */
+	void setDataType(const OW_CIMDataType::Type& dataType);
 
 	/**
 	 * Set the default value for this OW_CIMQualifierType object.

@@ -29,11 +29,14 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMMethod.hpp"
 #include "OW_StringBuffer.hpp"
-//#include "OW_XMLNode.hpp"
-//#include "OW_XMLParameters.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMQualifier.hpp"
+#include "OW_CIMParameter.hpp"
+#include "OW_Array.hpp"
+#include "OW_IOException.hpp"
 
 using std::ostream;
 using std::istream;
@@ -96,83 +99,6 @@ OW_CIMMethod::OW_CIMMethod(const OW_String& name) :
 	m_pdata->m_name = name;
 }
 
-//////////////////////////////////////////////////////////////////////////////													
-/*
-OW_CIMMethod::OW_CIMMethod(const OW_XMLNode& node)
-	: OW_CIMElement(), m_pdata(new METHData)
-{
-	if(!node || node.getToken() != OW_XMLNode::XML_ELEMENT_METHOD)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not method XML");
-	}
-
-	OW_XMLNode nextchild;
-
-	OW_String methodName = node.getAttribute(OW_XMLParameters::paramName);
-	OW_String cimType = node.getAttribute(OW_XMLParameters::paramTypeAssign);
-
-	OW_String classOrigin = node.getAttribute(
-		OW_XMLParameters::paramClassOrigin);
-
-	OW_String propagate = node.getAttribute(OW_XMLParameters::paramPropagated);
-
-	//
-	// A method name must be given
-	//
-	if(methodName.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"No method name in XML");
-	}
-
-	//
-	// If no return data type, then method returns nothing (void)
-	//
-	if(cimType.length() != 0)
-	{
-		m_pdata->m_returnDatatype = OW_CIMDataType::getDataType(cimType);
-	}
-
-	m_pdata->m_name = methodName;
-
-	if(classOrigin.length() != 0)
-	{
-		m_pdata->m_originClass = classOrigin;
-	}
-
-	m_pdata->m_propagated = propagate.equalsIgnoreCase("true");
-
-	//
-	// See if there are qualifiers
-	//
-	for(nextchild = node.getChild();
-		 nextchild && nextchild.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 nextchild = nextchild.getNext())
-	{
-		m_pdata->m_qualifiers.append(OW_CIMQualifier(nextchild));
-	}
-
-	//
-	// Handle parameters
-	//OW_XMLCreateClass::execute
-	for(;nextchild; nextchild = nextchild.getNext())
-	{
-		int paramToken = nextchild.getToken();
-
-		if(paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_REFERENCE
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_ARRAY
-			|| paramToken == OW_XMLNode::XML_ELEMENT_PARAMETER_REFARRAY)
-		{
-			m_pdata->m_parameters.append(OW_CIMParameter(nextchild));
-		}
-		else
-		{
-			break;
-		}
-	}
-}
-*/
 //////////////////////////////////////////////////////////////////////////////													
 OW_CIMMethod::OW_CIMMethod(const OW_CIMMethod& x)
 	: OW_CIMElement(), m_pdata(x.m_pdata)
@@ -343,72 +269,6 @@ OW_CIMMethod::clone(OW_Bool includeQualifiers,
 
 	return theMethod;
 }
-
-//////////////////////////////////////////////////////////////////////////////													
-/*
-void
-OW_CIMMethod::toXML(ostream& ostr, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin) const
-{
-	//
-	// If only local definitions are required and this is a propagated
-	// method then nothing to return
-	//
-	if(localOnly && m_pdata->m_propagated)
-	{
-		return;
-	}
-
-	ostr << "<METHOD ";
-
-	if(m_pdata->m_name.length() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "method must have a name");
-	}
-
-	ostr
-		<< "NAME=\""
-		<< m_pdata->m_name
-		<< "\" ";
-
-	if(m_pdata->m_returnDatatype)
-	{
-		ostr << "TYPE=\"";
-		m_pdata->m_returnDatatype.toXML(ostr);
-		ostr << "\" ";
-	}
-
-	if(includeClassOrigin && m_pdata->m_originClass.length() > 0)
-	{
-		ostr
-			<< "CLASSORIGIN=\""
-         << m_pdata->m_originClass
-			<< "\" ";
-	}
-
-	if(m_pdata->m_propagated)
-	{
-		ostr << "PROPAGATED=\"true\" ";
-	}
-
-	ostr << '>';
-
-	if(includeQualifiers)
-	{
-		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-		{
-			m_pdata->m_qualifiers[i].toXML(ostr);
-		}
-	}
-
-	for(size_t i = 0; i < m_pdata->m_parameters.size(); i++)
-	{
-		m_pdata->m_parameters[i].toXML(ostr);
-	}
-
-	ostr << "</METHOD>";
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////													
 void

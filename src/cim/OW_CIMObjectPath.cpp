@@ -28,11 +28,19 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMObjectPath.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Format.hpp"
-//#include "OW_XMLEscape.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMUrl.hpp"
+#include "OW_Array.hpp"
+#include "OW_IOException.hpp"
+#include "OW_CIMException.hpp"
 
 #include <cstring>
 #include <cctype>
@@ -107,52 +115,6 @@ OW_CIMObjectPath::OW_CIMObjectPath(const OW_String& className,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-OW_CIMObjectPath::OW_CIMObjectPath(const OW_XMLNode& pnode) :
-	OW_CIMBase(), m_pdata(NULL)
-{
-	if(!pnode)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"NULL XML node on constructor");
-	}
-
-	m_pdata = new OPData;
-	OW_XMLNode node = pnode;
-
-	int token = node.getToken();
-
-	switch(token)
-	{
-		case OW_XMLNode::XML_ELEMENT_LOCALCLASSPATH:
-			getLocalNameSpacePathAndSet(node);
-			node = node.mustChildFindElement(OW_XMLNode::XML_ELEMENT_CLASSNAME);
-			setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME));
-			return;
-		case OW_XMLNode::XML_ELEMENT_CLASSPATH:
-			getNameSpacePathAndSet(node); return;
-		case OW_XMLNode::XML_ELEMENT_CLASSNAME:
-			setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME)); return;
-		case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
-			OW_XMLClass::getInstanceName(node, *this); return;
-		case OW_XMLNode::XML_ELEMENT_LOCALINSTANCEPATH:
-			getLocalNameSpacePathAndSet(node); break;
-		case OW_XMLNode::XML_ELEMENT_INSTANCEPATH:
-				getNameSpacePathAndSet(node); break;
-		default:
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					format("Invalid XMLNode for Object path construction.  Node "
-						"name = %1", node.getNodeName()).c_str());
-				break;
-	}
-
-	node = node.mustChildFindElement(OW_XMLNode::XML_ELEMENT_INSTANCENAME);
-
-	OW_XMLClass::getInstanceName(node, *this);
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath::OW_CIMObjectPath(const OW_CIMObjectPath& arg) :
 	OW_CIMBase(), m_pdata(arg.m_pdata)
 {
@@ -179,54 +141,6 @@ OW_CIMObjectPath::operator= (const OW_CIMObjectPath& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMObjectPath::getLocalNameSpacePathAndSet(const OW_XMLNode& node)
-{
-	OW_XMLNode lnode = node.mustChildFindElement(
-		OW_XMLNode::XML_ELEMENT_LOCALNAMESPACEPATH);
-
-	lnode = lnode.mustChildElement(OW_XMLNode::XML_ELEMENT_NAMESPACE);
-
-	OW_String ns;
-	while(lnode)	
-	{
-		OW_String nscomp = lnode.mustGetAttribute(OW_XMLAttribute::NAME);
-		if(nscomp.length() > 0)
-		{
-			if(ns.length() != 0)
-			{
-				ns += "/";
-			}
-
-			ns += nscomp;
-		}
-
-		lnode = lnode.getNext();
-	}
-
-	if(ns.length() == 0)
-	{
-		ns = "root";
-	}
-
-	setNameSpace(ns);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMObjectPath::getNameSpacePathAndSet(const OW_XMLNode& node)
-{
-	OW_XMLNode lnode = node.mustChildElement(
-		OW_XMLNode::XML_ELEMENT_NAMESPACEPATH);
-
-	OW_XMLNode cnode = lnode.mustChildElement(OW_XMLNode::XML_ELEMENT_HOST);
-	setHost(cnode.getText());
-	getLocalNameSpacePathAndSet(lnode);
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 {
@@ -235,7 +149,7 @@ OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 		OW_CIMProperty cp(keyname, value);
 		if(cp)
 		{
-			cp.setDataType(value.getType());
+			cp.setDataType(value.getCIMDataType());
 			OW_MutexLock l = m_pdata.getWriteLock();
 			m_pdata->m_keys.append(cp);
 		}
@@ -367,58 +281,6 @@ OW_CIMObjectPath::equals(const OW_CIMObjectPath& cop,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// STATIC
-/*
-void
-OW_CIMObjectPath::outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
-{
-	OW_CIMDataType dtype = cp.getDataType();
-	OW_String type;
-
-	if(dtype.isArrayType())
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"An array cannot be a KEY");
-	}
-
-	if(dtype.isReferenceType())
-	{
-		cp.getValue().toXML(ostr);
-		return;
-	}
-
-	//
-	// Regular key value
-	switch(dtype.getType())
-	{
-		case OW_CIMDataType::CHAR16:
-		case OW_CIMDataType::DATETIME:
-		case OW_CIMDataType::STRING:
-			type = "string";
-			break;
-		case OW_CIMDataType::BOOLEAN:
-			type = "boolean";
-			break;
-		default:
-			type = "numeric";
-	}
-
-	OW_CIMValue keyValue = cp.getValue();
-	if(!keyValue)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "No key value");
-	}
-
-	ostr
-		<< "<KEYVALUE VALUETYPE=\""
-      <<  type
-		<< "\">"
-		<< OW_XMLEscape(keyValue.toString())
-		<< "</KEYVALUE>";
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMNameSpace
 OW_CIMObjectPath::getFullNameSpace() const
 {
@@ -507,78 +369,6 @@ OW_CIMObjectPath::toMOF() const
 {
 	return OW_String("*** UNIMPLEMENTED ***");
 }
-
-//////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMObjectPath::toXML(ostream& ostr) const
-{
-	toXML(ostr, false);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMObjectPath::toXML(ostream& ostr, OW_Bool isInstanceName) const
-{
-	//
-	// Instance path
-	//
-	if (!isInstanceName)
-	{
-		ostr << "<INSTANCEPATH>";
-		m_pdata->m_nameSpace.toXML(ostr, false);
-	}
-
-	ostr << "<INSTANCENAME CLASSNAME=\"";
-	ostr << m_pdata->m_objectName << "\">";
-
-
-	if(m_pdata->m_keys.size() == 0)
-	{
-		//
-		// TODO
-		// This only supports writing instance paths.
-		// Do we need to support writing class paths?
-		//
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"No keys available in object path");
-	}
-
-	size_t numkeys = m_pdata->m_keys.size();
-
-	//
-	// If keys > 1 then must use KEYBINDING - we also use it for
-	// the key == 1 case - most implementations can't cope with
-	// a single KEYVALUE without a KEYBINDING element
-	//
-	if(numkeys > 0)
-	{
-		for(size_t i = 0; i < numkeys; i++)
-		{
-			OW_CIMProperty cp = m_pdata->m_keys[i];
-			ostr << "<KEYBINDING NAME=\"";
-			ostr << cp.getName() << "\">";
-			outputKEYVALUE(ostr, cp);
-			ostr << "</KEYBINDING>";
-		}
-	}
-	else
-	{
-		//
-		// No keys, so no instances
-		//
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"No instance path because no keys");
-	}
-
-	ostr << "</INSTANCENAME>";
-
-	if (!isInstanceName)
-	{
-		ostr << "</INSTANCEPATH>";
-	}
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -841,7 +631,7 @@ OW_CIMObjectPath::getNameSpaceUrl() const
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_String 
+OW_String
 OW_CIMObjectPath::escape(const OW_String& inString)
 {
 
@@ -879,11 +669,11 @@ OW_CIMObjectPath::escape(const OW_String& inString)
 	}
 
 	return rv.toString();
-}     
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_String 
+OW_String
 OW_CIMObjectPath::unEscape(const OW_String& inString)
 {
 

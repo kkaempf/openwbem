@@ -58,7 +58,7 @@ private:
 
 public:
 
-	enum
+	enum Type
 	{
 		CIMNULL			= 0,		// Null type
 		UINT8				= 1,		// Unsigned 8-bit integer  				(SUPPORTED)
@@ -94,7 +94,7 @@ public:
 	 * This constructor is for non-array and non-reference types.
 	 * @param type	An integer specifying the data type of this object.
 	 */
-	OW_CIMDataType(int type);
+	explicit OW_CIMDataType(Type type);
 
 	/**
 	 * Create a new OW_CIMDataType object representing the given type.
@@ -102,13 +102,13 @@ public:
 	 * @param size		The size of the type if it is an array type.
 	 * @exception OW_CIMException if the type is invalid for this method.
 	 */
-	OW_CIMDataType(int type, int size);
+	OW_CIMDataType(Type type, int size);
 
 	/**
 	 * Create a new OW_CIMDataType object that represents a REFERENCE data type.
 	 * @param refClassName	The name of the reference class.
 	 */
-	OW_CIMDataType(const OW_String& refClassName);
+	explicit OW_CIMDataType(const OW_String& refClassName);
 
 	/**
 	 * Copy constructor
@@ -169,7 +169,7 @@ public:
 	/**
 	 * @return the type of this OW_CIMDataType
 	 */
-	int getType() const;
+	Type getType() const;
 
 	/**
 	 * @return the number of elements for this OW_CIMDataType
@@ -201,7 +201,7 @@ public:
 	 * @return An integer representation of the data type (i.e. UINT8, SINT8,
 	 * REAL32, etc...)
 	 */
-	static int strToSimpleType(const OW_String& strType);
+	static Type strToSimpleType(const OW_String& strType);
 
 	/**
 	 * Check a given OW_CIMDataType with this one for equality.
@@ -233,17 +233,11 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMDataType to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
 	 * Determine if a given data type is numeric.
 	 * @param type The data type to check
 	 * @return true if 'type' is a numeric data type.
 	 */
-	static OW_Bool isNumericType(int type);
+	static OW_Bool isNumericType(Type type);
 
 private:
 

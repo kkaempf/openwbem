@@ -95,51 +95,6 @@ OW_CIMInstance::OW_CIMInstance(const OW_String& name) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-OW_CIMInstance::OW_CIMInstance(const OW_XMLNode& node) :
-	OW_CIMElement(), m_pdata(new INSTData)
-{
-	if(node.getToken() != OW_XMLNode::XML_ELEMENT_INSTANCE)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not instance XML");
-	}
-		
-	m_pdata->m_owningClassName = node.mustGetAttribute(
-		OW_XMLAttribute::CLASS_NAME);
-
-	//
-	// Find qualifier information
-	//
-	OW_XMLNode valueNode = node.getChild();
-	for(; valueNode && valueNode.getToken() == OW_XMLNode::XML_ELEMENT_QUALIFIER;
-		 valueNode = valueNode.getNext())
-	{
-		m_pdata->m_qualifiers.append(OW_CIMQualifier(valueNode));
-	}
-
-	//
-	// Load properties
-	//
-	for(;valueNode; valueNode = valueNode.getNext())
-	{
-		int token = valueNode.getToken();
-
-		if(token == OW_XMLNode::XML_ELEMENT_PROPERTY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_ARRAY
-			|| token == OW_XMLNode::XML_ELEMENT_PROPERTY_REF)
-		{
-			OW_CIMProperty cp(valueNode);
-			m_pdata->m_properties.append(cp);
-		}
-		else
-		{
-			break;
-		}
-	}
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance::OW_CIMInstance(const OW_CIMInstance& x) :
 		OW_CIMElement(), m_pdata(x.m_pdata)
 {

@@ -33,7 +33,7 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_Format.hpp"
 
-static OW_Bool isCompatible(int from, int to);
+static OW_Bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
 
 static void makeValueArray(OW_CIMValue& theValue);
 
@@ -50,7 +50,7 @@ static OW_StringArray convertToStringArray(const OW_CIMValue& value,
 // STATIC PUBLIC
 OW_CIMValue
 OW_CIMValueCast::castValueToDataType(const OW_CIMValue& value,
-		const OW_CIMDataType& dataType) 
+		const OW_CIMDataType& dataType)
 {
 	// If NULL data type, then return NULL value.
 	if(!dataType || !value)
@@ -230,7 +230,7 @@ makeValueArray(OW_CIMValue& theValue)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-isCompatible(int from, int to)
+isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to)
 {
 	if(from == to									// Same data types
 		|| from == OW_CIMDataType::STRING	// String can convert to anything

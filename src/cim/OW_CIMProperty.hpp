@@ -37,6 +37,7 @@
 #include "OW_Reference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
+#include "OW_CIMDataType.hpp"
 
 /**
  * The OW_CIMProperty class encapsulates all data and functionality petinent to
@@ -161,6 +162,12 @@ public:
 	 * @param type	The OW_CIMDataType for this property
 	 */
 	void setDataType(const OW_CIMDataType& type);
+
+	/**
+	 * Set the data type for this property.
+	 * @param type	The OW_CIMDataType::Type for this property
+	 */
+	void setDataType(const OW_CIMDataType::Type& type);
 
 	/**
 	 * @return The OW_CIMDataType for this property.

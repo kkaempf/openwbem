@@ -243,6 +243,13 @@ OW_CIMProperty::setDataType(const OW_CIMDataType& type)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMProperty::setDataType(const OW_CIMDataType::Type& type)
+{
+	setDataType(OW_CIMDataType(type));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMDataType
 OW_CIMProperty::getDataType() const
 {

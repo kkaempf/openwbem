@@ -37,6 +37,7 @@
 #include "OW_Exception.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Array.hpp"
+#include "OW_CIMDataType.hpp"
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -553,7 +554,7 @@ public:
 	 * @return The integral representation of the data type for this OW_CIMValue.
 	 * (see class OW_CIMDataType)
 	 */
-	int getType() const;
+	OW_CIMDataType::Type getType() const;
 
 	/**
 	 * @return The type for this OW_CIMValue.
