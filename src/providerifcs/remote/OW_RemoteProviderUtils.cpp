@@ -41,7 +41,7 @@
 #include "OW_Format.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_HTTPClient.hpp"
-
+#include "OW_Assertion.hpp"
 
 namespace OpenWBEM
 {

@@ -43,6 +43,10 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef OW_HAVE_OPENSSL
+#include <openssl/ssl.h>
+#endif
+
 using std::cerr;
 using std::endl;
 using std::cout;

@@ -42,6 +42,8 @@
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_SocketImpl.hpp"
+#include "OW_SSLSocketImpl.hpp"
 
 namespace OpenWBEM
 {

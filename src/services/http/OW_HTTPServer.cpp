@@ -57,6 +57,8 @@
 #include "OW_ThreadPool.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_LocalAuthentication.hpp"
+#include "OW_SSLException.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 namespace OpenWBEM
 {
