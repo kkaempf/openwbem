@@ -18,49 +18,14 @@ Fix problems:
     - Man pages aren't getting included in the rpm.
 
 New features:
-    - Create intrinsic providers for
-      CIM_IndicationSubscription that interfaces with the providers.
-      X Create a polling class, so if the provider is lazy, the
-        cimom will check for differences (by calling enumInstances) and send 
-        out the appropriate lifecycle indications.  This will be used if the 
-        provider responds true to the mustPoll() call.
-        X Polling manager needs capability to add/remove or start/stop a polled 
-          provider
-      X Indication providers must also indicate what class they are 
-        instrumenting if they are a lifecycle type.
-      X Add tests for provider manager getIndicationProvider
-      X Add a command line event listener.
-      X polled providers need a way to indicate they provide indications.
-        I decided that the way for them to do that is to implement the
-        OW_CppIndicationProviderIFC.  A "pure" polled provider should not
-        deliver indications.
-      X Indication/polled providers need a way to stop/restart polling.
-        To stop: return 0 from poll().  To start: call addPolledProvider().
-      X OW_IndicationServerImpl::deleteSubscription
-      X OW_IndicationServerImpl::createSubscription
-        X Only allow subscriptions if a) There is a provider capable of
-          generating the requested Indication in the filter. And
-          b) There is a provider that can handle the requested 
-             IndicationHandler.
-      X OW_IndicationServerImpl::modifySubscription
-      X OW_IndicationServerImpl::_processIndication
-        X Create a wql filter property source.
-      X Add example of types of indication providers: 
-        X indication (mustPoll = true) OW_IndicationProviderTest1
-        X indication (mustPoll = false) w/ extra thread
-        X indication/polled (mustPoll = false) and no extra thread.
-        X Remove OW_TriggerProviderTest*.
-      X OW_IndicationRepLayer needs an indication provider to interface with
-        it to indicate whether it should generate intrinsic indications.
-      X Fix cimListener.cpp to use the new indication providers.
-      - Modifying existing filters will affect the indication server, and
-        may mean that indication providers need to be notified, etc. So:
-        Create an CIM_IndicationFilter pass-thru provider so we can either:
-        1. Prevent modifications to existing filters, or
-        2. Do the work to re-initialize everything correctly in 
-           OW_IndicationServerImpl.
-      - Handle the various options in the CIM_IndicationSubscription and
-        CIM_IndicationHandler classes.
+    - Modifying existing filters will affect the indication server, and
+      may mean that indication providers need to be notified, etc. So:
+      Create an CIM_IndicationFilter pass-thru provider so we can either:
+      1. Prevent modifications to existing filters, or
+      2. Do the work to re-initialize everything correctly in 
+         OW_IndicationServerImpl.
+    - Handle the various options in the CIM_IndicationSubscription and
+      CIM_IndicationHandler classes.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -147,8 +112,8 @@ New features:
     - Validate the "Required" qualifier on properties during create & modifyInstance.
 
 Refactorings:
-     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
-       move OW_Cpp*ProviderIFC classes into the cimom.
+    - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
+      move OW_Cpp*ProviderIFC classes into the cimom.
     - Create a base class for all the common code in the provider interfaces.
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
