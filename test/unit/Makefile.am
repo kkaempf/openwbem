@@ -39,8 +39,8 @@ $(top_builddir)/src/cimom/OW_ProviderManager.o \
 $(top_builddir)/src/cimom/OW_PollingManager.o \
 $(top_builddir)/src/cimom/OW_ProviderIFCLoader.o \
 $(top_builddir)/src/cimom/OW_CIMServer.o \
-$(top_builddir)/src/cimom/OW_ProxyProvider.o \
 $(top_builddir)/src/cimom/OW_WQLFilterRep.o \
+$(top_builddir)/src/cimom/OW_SharedLibraryRepository.o \
 $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
