@@ -88,7 +88,7 @@ namespace
 		appenders.push_back
 			( LogAppenderRef
 				( new FileAppender
-					(components, categories, components[0].c_str(), messageFormat)
+					(components, categories, (String("results/") + components[0]).c_str(), messageFormat)
 			  )
 		  );
 
