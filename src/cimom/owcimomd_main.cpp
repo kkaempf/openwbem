@@ -70,12 +70,14 @@ int main(int argc, char* argv[])
 		// only do this in production mode. During development we want it to crash!
 #if !defined(OW_DEBUG)
 		// Do this after initialization to prevent an infinite loop.
+		std::unexpected_handler oldUnexpectedHandler = 0;
+		std::terminate_handler oldTerminateHandler = 0;
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
 			Platform::installFatalSignalHandlers();
+			std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
+			std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
 		}
-		std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
-		std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
 #endif
 
 		int sig;
@@ -93,9 +95,15 @@ int main(int argc, char* argv[])
 
 #if !defined(OW_DEBUG)
 					// need to remove them so we don't restart while shutting down.
-					Platform::removeFatalSignalHandlers(); 
-					std::set_unexpected(oldUnexpectedHandler);
-					std::set_terminate(oldTerminateHandler);
+					Platform::removeFatalSignalHandlers();
+					if (oldUnexpectedHandler)
+					{
+						std::set_unexpected(oldUnexpectedHandler);
+					}
+					if (oldTerminateHandler)
+					{
+						std::set_terminate(oldTerminateHandler);
+					}
 #endif
 
 					env->logInfo("CIMOM received shutdown notification."
