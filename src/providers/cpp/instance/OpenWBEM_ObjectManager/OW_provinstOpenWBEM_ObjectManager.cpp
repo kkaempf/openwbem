@@ -49,11 +49,12 @@ namespace
 	const String dataKey("OpenWBEM_ObjectManager.Name");
 	const String CLASS_CIM_InstModification("CIM_InstModification");
 	const String CLASS_OpenWBEM_HostedObjectManager("OpenWBEM_HostedObjectManager");
-	const String PROP_Antecedent("Antecedent");
-	const String PROP_SystemCreationClassName("SystemCreationClassName");
-	const String PROP_CreationClassName("CreationClassName");
-	const String PROP_Name("Name");
-	const String PROP_SystemName("SystemName");
+	const CIMName PROP_Antecedent("Antecedent");
+	const CIMName PROP_Dependent("Dependent");
+	const CIMName PROP_SystemCreationClassName("SystemCreationClassName");
+	const CIMName PROP_CreationClassName("CreationClassName");
+	const CIMName PROP_Name("Name");
+	const CIMName PROP_SystemName("SystemName");
 }
 
 using namespace WBEMFlags;
@@ -78,6 +79,7 @@ public:
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass(CLASS_OpenWBEM_ObjectManager);
+		info.addInstrumentedClass(CLASS_OpenWBEM_HostedObjectManager);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -248,7 +250,23 @@ public:
 		CIMInstanceResultHandlerIFC &result,
 		EPropertiesFlag propertiesFlag)
 	{
-		result.handle(m_inst);
+		if (cimClass.getName() == CLASS_OpenWBEM_ObjectManager)
+		{
+			result.handle(m_inst);
+		}
+		else if (cimClass.getName() == CLASS_OpenWBEM_HostedObjectManager)
+		{
+			CIMInstance ci(cimClass.newInstance());
+			ci.updatePropertyValue(PROP_Dependent, CIMValue(CIMObjectPath(ns, m_inst)));
+
+			String systemCreationClassName(m_inst.getPropertyValue(PROP_SystemCreationClassName).toString());
+			CIMObjectPath csPath(systemCreationClassName, ns);
+			csPath.setKeyValue(PROP_CreationClassName, CIMValue(systemCreationClassName));
+			csPath.setKeyValue(PROP_Name, m_inst.getPropertyValue(PROP_SystemName));
+
+			ci.updatePropertyValue(PROP_Antecedent, CIMValue(csPath));
+			result.handle(ci);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -261,20 +279,7 @@ public:
 		const String &role,
 		const String &resultRole)
 	{
-		if (role.equalsIgnoreCase(PROP_Antecedent))
-		{
-			// need to return the ObjectManager
-			result.handle(m_inst);
-		}
-		else
-		{
-			// return the ComputerSystem
-			String systemCreationClassName(m_inst.getPropertyValue(PROP_SystemCreationClassName).toString());
-			CIMObjectPath csPath(systemCreationClassName, ns);
-			csPath.setKeyValue(PROP_CreationClassName, CIMValue(systemCreationClassName));
-			csPath.setKeyValue(PROP_Name, m_inst.getPropertyValue(PROP_SystemName));
-			result.handle(env->getCIMOMHandle()->getInstance(ns, csPath));
-		}
+		doSimpleEnumInstances(env, ns, assocClass, result, E_ALL_PROPERTIES);
 	}
 };
 
