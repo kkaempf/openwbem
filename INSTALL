@@ -36,9 +36,9 @@ CONTENTS
          If you want the CIMOM to provide HTTPS access
          (see http://www.openssl.org).
 
-      GNU Pth - (Optional on Linux. Required on Caldera OpenServer)
+      GNU Pth - (Optional on Linux. Required on SCO OpenServer)
          The GNU portable threads library (libpth) if you are building
-         on Caldera International OpenServer or you wish to use cooperative
+         on SCO OpenServer or you wish to use cooperative
          threads on Linux (see http://www.gnu.org).
 
       zlib - (optional)
