@@ -22,7 +22,7 @@ doMakeDistCheck()
 	make -j3 distcheck
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
-		echo "doMakeDistCheck failed!  CONFIGOPTS=$CONFIGOPTS"
+		echo "doMakeDistCheck failed!"
 	fi
 	return $RVAL
 }
