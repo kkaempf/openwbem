@@ -48,6 +48,11 @@
 namespace OpenWBEM
 {
 
+namespace CIMRepositoryImpl
+{
+	class instEnumerator;
+}
+
 // This class is responsible for storing/retrieving the static CIM data.
 class CIMRepository : public RepositoryIFC
 {
@@ -556,7 +561,7 @@ public:
 
 	ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
-//private:
+private:
 	CIMClass _getClass(const String& ns, const String& className);
 	CIMClass _instGetClass(const String& ns, const String& className);
 	void checkGetClassRvalAndThrow(CIMException::ErrNoType rval,
@@ -630,6 +635,8 @@ public:
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void _validatePropagatedKeys(const String& ns,
 		const CIMInstance& ci, const CIMClass& theClass);
+
+private:
 	GenericHDBRepository m_nStore;
 	InstanceRepository m_iStore;
 	MetaRepository m_mStore;
@@ -643,6 +650,7 @@ public:
 	RWLocker m_instanceLock;
 
 	friend class CIMServer;
+	friend class CIMRepositoryImpl::instEnumerator;
 };
 
 } // end namespace OpenWBEM

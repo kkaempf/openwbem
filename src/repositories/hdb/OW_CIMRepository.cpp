@@ -630,7 +630,9 @@ CIMRepository::enumInstanceNames(
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-namespace {
+namespace CIMRepositoryImpl
+{
+
 class instEnumerator : public StringResultHandlerIFC
 {
 public:
@@ -674,7 +676,8 @@ private:
 	EIncludeClassOriginFlag includeClassOrigin;
 	const StringArray* propertyList;
 };
-} // end unnamed namespace
+} // end namespace CIMRepositoryImpl
+
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::enumInstances(
@@ -701,24 +704,8 @@ CIMRepository::enumInstances(
 		}
 		if (enumSubclasses)
 		{
-			instEnumerator ie(*this, ns, theTopClass, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+			CIMRepositoryImpl::instEnumerator ie(*this, ns, theTopClass, result, deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 			m_mStore.enumClassNames(ns, className, ie, E_DEEP);
-			// TODO: Switch this to use the callback interface.
-/*
-			StringArray classNames = m_mStore.getClassChildren(ns,
-				className);
-			for (size_t i = 0; i < classNames.size(); i++)
-			{
-				CIMClass theClass = _instGetClass(ns, classNames[i]);
-				m_iStore.getCIMInstances(ns, classNames[i], theTopClass, theClass, result,
-					deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
-				if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
-				{
-					m_env->getLogger()->logDebug(Format("CIMRepository Enumerated derived instances: %1:%2", ns,
-						classNames[i]));
-				}
-			}
-*/
 		}
 	}
 	catch (HDBException&)

@@ -55,9 +55,8 @@ class HDB;
 class HDBHandle
 {
 private:
-	class HDBHandleData : public IntrusiveCountableBase
+	struct HDBHandleData : public IntrusiveCountableBase
 	{
-	public:
 		HDBHandleData(HDB* pdb, File file) :
 			m_pdb(pdb), m_file(file), m_writeDone(false),
 			m_userVal(0L) {}
