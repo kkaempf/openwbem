@@ -26,6 +26,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_ResultHandlers.hpp"
 
 using namespace OpenWBEM::WBEMFlags;
 //extern int traceAdapter;
@@ -44,47 +45,6 @@ using namespace OpenWBEM::WBEMFlags;
 #define CM_IncludeQualifiers(flgs) \
 (((flgs) & CMPI_FLAG_IncludeQualifiers) !=0)
 #define CM_DeepInheritance(flgs) (((flgs) & CMPI_FLAG_DeepInheritance)!=0)
-
-
-// TODO: put these in a common header
-namespace OpenWBEM
-{
-
-	class CIMObjectPathArrayBuilder :  public OpenWBEM::CIMObjectPathResultHandlerIFC
-	{
-	public:
-		CIMObjectPathArrayBuilder(OpenWBEM::CIMObjectPathArray& a_)
-		: a(a_)
-		{
-		}
-
-	private:
-		void doHandle(const OpenWBEM::CIMObjectPath& x)
-		{
-			a.push_back(x);
-		}
-
-		OpenWBEM::CIMObjectPathArray &a;
-	};
-
-
-	class CIMInstanceArrayBuilder : public OpenWBEM::CIMInstanceResultHandlerIFC
-	{
-	public:
-		CIMInstanceArrayBuilder(OpenWBEM::CIMInstanceArray& a_)
-		: a(a_)
-		{
-		}
-	private:
-		void doHandle(const OpenWBEM::CIMInstance& x)
-		{
-			a.push_back(x);
-		}
-
-		OpenWBEM::CIMInstanceArray &a;
-	};
-
-}
 
 
 #define DDD(X) X
