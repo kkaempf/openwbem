@@ -90,7 +90,7 @@ OW_NPIAssociatorProviderProxy::associatorNames(
     }
     else
     {
-        OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support associatorNames");
     }
 }
 
@@ -176,7 +176,7 @@ OW_NPIAssociatorProviderProxy::associators(
     }
     else
     {
-        OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support associators");
     }
 }
 
@@ -258,7 +258,7 @@ OW_NPIAssociatorProviderProxy::references(
     }
     else
     {
-        OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support references");
     }
 }
 
@@ -317,7 +317,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
     }
     else
     {
-        OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support referenceNames");
     }
 }
 

@@ -77,7 +77,7 @@ OW_SimpleCppInstanceProviderIFC::enumInstances(
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_CIMClass&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ OW_SimpleCppInstanceProviderIFC::getInstance(
 	const OW_CIMObjectPath&,
 	const OW_CIMClass&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support getInstance");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ OW_SimpleCppInstanceProviderIFC::createInstance(
 	const OW_ProviderEnvironmentIFCRef&,
 	const OW_CIMInstance&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ OW_SimpleCppInstanceProviderIFC::modifyInstance(
 	const OW_ProviderEnvironmentIFCRef&,
 	const OW_CIMInstance&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ OW_SimpleCppInstanceProviderIFC::deleteInstance(
 	const OW_ProviderEnvironmentIFCRef&,
 	const OW_CIMObjectPath&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
 }
 
 

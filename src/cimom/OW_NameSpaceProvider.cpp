@@ -269,7 +269,7 @@ OW_NameSpaceProvider::modifyInstance(
 		OW_Bool,
 		OW_StringArray*)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,7 @@ OW_SimpleCppAssociatorProviderIFC::associators(
 		const OW_CIMObjectPath&,
 		OW_CIMInstanceResultHandlerIFC&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support associators");
 }
 
 //////////////////////////////////////////////////////////////////////////////										
@@ -87,7 +87,7 @@ OW_SimpleCppAssociatorProviderIFC::references(
 		const OW_CIMObjectPath&,
 		OW_CIMInstanceResultHandlerIFC&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support references");
 }
 
 //////////////////////////////////////////////////////////////////////////////										

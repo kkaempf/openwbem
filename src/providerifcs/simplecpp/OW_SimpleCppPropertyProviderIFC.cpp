@@ -39,7 +39,7 @@ OW_CIMValue OW_SimpleCppPropertyProviderIFC::getPropertyValue(
 	const OW_CIMObjectPath&,
 	const OW_String&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support getPropertyValue");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,6 +50,6 @@ OW_SimpleCppPropertyProviderIFC::setPropertyValue(
 	const OW_String&,
 	const OW_CIMValue&)
 {
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support setPropertyValue");
 }
 

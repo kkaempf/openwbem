@@ -170,7 +170,7 @@ public:
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ public:
 		(void)modifiedInstance;
 		(void)includeQualifiers;
 		(void)propertyList;
-		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ public:
 		(void)env;
 		(void)ns;
 		(void)cop;
-		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
 	}
 
 

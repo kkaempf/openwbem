@@ -27,6 +27,9 @@ x pretty-print the XML in the test suites.
 x add a test for extrinsic methods with OUT and IN/OUT parameters
 x Add executeMethod fail tests to testCIMExceptions
 x Add empty() call to OW_String and change all length() == 0 to empty()
+x split out namespace parameters to cimom handle calls.
+x Intrinsic indications are fetched from root namespace.  Less than optimal.
+x Remove any bad NOT_SUPPORTED exceptions.
 
 
 Testing:
@@ -45,8 +48,6 @@ Testing:
 
 Fix problems:
     - Fix CIM Server so that an instance provider can provide associations.
-    - Intrinsic indications are fetched from root namespace.  Less than optimal.
-    - Remove any bad NOT_SUPPORTED exceptions.
     - Trailers need to strip newlines from error description.
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
       out if someone else is listening. If so, then fail, otherwise delete it.
@@ -66,7 +67,6 @@ New features:
         - New model for provider registration .
 
 Refactorings:
-    - split out namespace parameters to cimom handle calls.
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
     - Split out the internal provider ifc from the Provider Manager.  Create a 

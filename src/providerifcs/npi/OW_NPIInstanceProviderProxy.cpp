@@ -95,7 +95,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
         }
         else
         {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstanceNames");
         }
 }
 
@@ -115,7 +115,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 
         if (m_ftable->fp_enumInstances == NULL)
 		  {
-			  OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 		  }
 	
 			::NPIHandle _npiHandle = { 0,0,0,0};
@@ -188,7 +188,7 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
         }
         else
         {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
         }
 }
 
@@ -240,7 +240,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
         }
         else
         {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support getInstance");
         }
 
         return rval;
@@ -285,7 +285,7 @@ OW_NPIInstanceProviderProxy::createInstance(
         }
         else
         {
-            OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
         }
 
         return rval;
@@ -331,7 +331,7 @@ OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &
 	}
 	else
 	{
-		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 }
 
