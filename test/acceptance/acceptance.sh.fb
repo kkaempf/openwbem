@@ -667,6 +667,11 @@ TestIndications()
 		2>&1 > $RESULTDIR/indicationTest.out || \
 		ExitWithFail "Indication test: cimlistener exited with error"
 
+	echo "Executing indication test suite, saving output in " $RESULTDIR/indicationTest.out
+	$BUILDDIR/test/acceptance/progs/cimlistener owbinary.wbem://test1:pass1@localhost:owipc \
+		2>&1 > $RESULTDIR/indicationTest.out || \
+		ExitWithFail "Indication test: cimlistener exited with error"
+
 	echo "Indication Testsuite Passed"
 
 	# TODO: delete the mof
