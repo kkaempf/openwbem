@@ -214,7 +214,7 @@ private:
 		attributes += ')';
 
 		// CommunicationMechanism
-		attributes += ",(CommunicationMechanism=cim-xml),";
+		attributes += ",(CommunicationMechanism=cim-xml)";
 
 		// OtherCommunicationMechanismDescription
         
@@ -224,7 +224,7 @@ private:
 		attributes += ')';
 
 		// ProtocolVersion
-		attributes += ",(ProtocolVersion=1.1),";
+		attributes += ",(ProtocolVersion=1.1)";
 
 		// FunctionalProfilesSupported
 		attributes += ",(FunctionalProfilesSupported=";
