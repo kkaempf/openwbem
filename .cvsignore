@@ -17,6 +17,7 @@ stamp-h
 config.h
 conftest*
 openwbem-*.gz
+openwbem-*.bz2
 autom4te.cache
 stamp-h1
 missing
