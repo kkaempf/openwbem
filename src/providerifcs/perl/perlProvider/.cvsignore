@@ -5,3 +5,5 @@ Makefile
 *.lo
 *.la
 lib*so*
+perlNPI.marker
+perlxsi.c
