@@ -36,6 +36,8 @@
 #include <iostream>
 #endif
 
+#include <algorithm> // for std::unique
+
 //
 // Terminal element methods 
 //
