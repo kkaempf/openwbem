@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ ! "$2" = "" ]; then
+if [ "$2" = "" ]; then
 	echo "Usage: $0 <path_to_executable> <core_file_or_pid> ..."
 	exit 1
 else
