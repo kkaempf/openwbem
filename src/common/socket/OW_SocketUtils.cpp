@@ -54,9 +54,12 @@ extern "C"
 #endif
 }
 
+namespace OW_SocketUtils 
+{
+
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_SocketUtils::inetAddrToString(OW_UInt64 addr)
+inetAddrToString(OW_UInt64 addr)
 {
 	struct in_addr iaddr;
 	iaddr.s_addr = addr;
@@ -71,7 +74,7 @@ OW_SocketUtils::inetAddrToString(OW_UInt64 addr)
 typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
 
 int
-OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
+waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 /*throw (OW_SocketException)*/
 {
 	fd_set readfds;
@@ -158,3 +161,40 @@ OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInpu
 	return rc;
 }
 
+#ifndef OW_HAVE_GETHOSTBYNAME_R
+extern OW_Mutex OW_gethostbynameMutex;  // defined in OW_SocketAddress.cpp
+#endif
+
+OW_String getFullyQualifiedHostName()
+{
+    char hostName [2048];
+
+    if (gethostname (hostName, sizeof(hostName)) == 0)
+    {
+#ifndef OW_HAVE_GETHOSTBYNAME_R
+		OW_MutexLock lock(OW_gethostbynameMutex);
+		struct hostent *he;
+		if ((he = gethostbyname (hostName)) != 0)
+		{
+		   return he->h_name;
+		}
+#else
+		hostent hostbuf;
+		hostent* host = &hostbuf;
+		char buf[2048];
+		int h_err = 0;
+
+		if (gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf),
+					&host, &h_err) == -1)
+			host = NULL;
+		if (host)
+		{
+			return host->h_name;
+		}
+#endif
+    }
+
+    return "";
+}
+
+}

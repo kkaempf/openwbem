@@ -38,23 +38,25 @@
 class OW_String;
 class OW_Bool;
 
-class OW_SocketUtils
+namespace OW_SocketUtils
 {
-public:
-
 	/**
 	 * Wait for input or output on a socket.
 	 * @param fd the handle of the socket to wait on.
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @param forInput true if we are waiting for input.
-	 * return zero if we got input before the timeout expired, non-zero
+	 * @return zero if we got input before the timeout expired, non-zero
 	 * 	otherwise.
 	 */
-	static int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput);
-	static OW_String inetAddrToString(OW_UInt64 addr);
-private:
-	OW_SocketUtils();	// don't allow instantiation.
-};
+	int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput);
+
+	OW_String inetAddrToString(OW_UInt64 addr);
+
+	/**
+	 * Get the fully qualified domain name.
+	 */
+	OW_String getFullyQualifiedHostName();
+}
 
 
 #endif
