@@ -64,7 +64,8 @@ public:
 	 * Create the file for the given name.
 	 * @param path	The name of the file to create.
 	 * @return On success an OW_File object that can be used for reading and
-	 * writing. Otherwise a null OW_File object.
+	 * writing. Otherwise a NULL OW_File object.  If the file exists, a NULL
+	 * OW_File object will be returned.
 	 */
 	static OW_File createFile(const OW_String& path);
 

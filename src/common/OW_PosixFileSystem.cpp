@@ -74,10 +74,10 @@ OW_FileSystem::openFile(const OW_String& path)
 OW_File
 OW_FileSystem::createFile(const OW_String& path)
 {
-	// TODO: Fix up this function, it's subject to race conditions.
-	if(!OW_FileSystem::exists(path))
+	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
+	if(fd != -1)
 	{
-		return OW_File( ::open(path.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0660));
+		return OW_File(fd);
 	}
 
 	return OW_File();
