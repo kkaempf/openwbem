@@ -35,6 +35,7 @@
 #include <map>
 #include <cstdio>
 #include <cstdlib>
+#include <cassert>
 #include <errno.h>
 #include <unistd.h>
 #define OW_MEM_SIG 0xaaaaaaaa
