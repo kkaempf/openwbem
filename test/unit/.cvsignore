@@ -10,3 +10,4 @@ MemTracerTest
 *.exp
 *.nlm
 *.nlm.*
+exitWithSignal

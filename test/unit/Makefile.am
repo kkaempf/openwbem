@@ -10,7 +10,7 @@ else
 if DISABLE_NAMESPACE_MANIPULATION
 PROGS=
 else
-PROGS= MemTracerTest unitMain
+PROGS= MemTracerTest unitMain exitWithSignal
 endif
 endif
 endif
@@ -193,4 +193,14 @@ check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = $(check_SCRIPTS)
 
 TESTS = run_make_check.sh
+
+exitWithSignal_LDADD = \
+$(BINLINKAPPENDFLAGS)
+
+exitWithSignal_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o exitWithSignal$(EXEEXT)
+
+exitWithSignal_SOURCES = \
+exitWithSignal.cpp
 

@@ -38,6 +38,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
+#include "OW_FileSystem.hpp"
 
 #include <utility> // for pair
 #include <cassert>
@@ -151,6 +152,13 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 5, 100);
 	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 100, 5);
 
+	// test a process that dies from a signal. SIGTERM == 15
+	processstatus = 0;
+	output.erase();
+	Exec::executeProcessAndGatherOutput(String(FileSystem::Path::getCurrentWorkingDirectory() + "/exitWithSignal 15").tokenize(), output, processstatus);
+	unitAssert(!WIFEXITED(processstatus));
+	unitAssert(WIFSIGNALED(processstatus));
+	unitAssert(WTERMSIG(processstatus) == 15);
 }
 
 class TestOutputGatherer : public Exec::OutputCallback
