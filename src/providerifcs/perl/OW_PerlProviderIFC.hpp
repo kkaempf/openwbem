@@ -88,7 +88,6 @@ protected:
 		IndicationProviderInfoArray& ind);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	{
-		(void)env;
 		// TODO
 	}
 private:

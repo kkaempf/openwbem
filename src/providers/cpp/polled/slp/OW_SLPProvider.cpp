@@ -77,7 +77,6 @@ static
 void
 slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 {
-	(void)hdl;
 	if(errArg < SLP_OK)
 	{
 		LoggerRef* pLogger = (LoggerRef*)cookie;

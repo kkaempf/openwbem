@@ -199,7 +199,6 @@ conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 int
 conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
-	(void)handle; (void)state;
 	return 0;
 }
 

@@ -71,7 +71,6 @@ public:
 protected:
 	virtual void doSelected(SelectableIFCRef& selectedObject)
 	{
-		(void)selectedObject;
 		m_engine.stop();
 	}
 private:

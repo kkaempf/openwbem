@@ -67,9 +67,9 @@ CIMException::CIMException(const CIMException& x)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMException&
-CIMException::operator=(CIMException x)
+CIMException::operator=(const CIMException& x)
 {
-	x.swap(*this);
+	CIMException(x).swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////

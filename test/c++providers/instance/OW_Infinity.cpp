@@ -75,9 +75,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)cimClass;
-		(void)env;
-
 		UInt64 count = 0;
 		for (;;++count)
 		{
@@ -103,10 +100,6 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		(void)env;
-		(void)ns;
-		(void)className;
-
 		UInt64 count = 0;
 		CIMInstance newInst = cimClass.newInstance();
 		for (;;++count)
@@ -129,7 +122,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
 		OW_THROWCIM(CIMException::FAILED);
 
 	}
@@ -146,9 +138,6 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		(void)env;
-		(void)ns;
-		(void)cimInstance;
 		OW_THROWCIM(CIMException::FAILED);
 	}
 
@@ -163,13 +152,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		OW_THROWCIM(CIMException::FAILED);
 	}
 
@@ -180,9 +162,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)env;
-		(void)ns;
-		(void)cop;
 		OW_THROWCIM(CIMException::FAILED);
 	}
 

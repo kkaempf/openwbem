@@ -388,7 +388,6 @@ SimpleAuthorizer::clone() const
 void
 SimpleAuthorizer::open(const String& path)
 {
-	(void)path;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

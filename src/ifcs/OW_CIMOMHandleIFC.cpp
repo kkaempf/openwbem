@@ -66,8 +66,6 @@ CIMOMHandleIFC::exportIndication(const CIMInstance& instance,
 		const String& instNS)
 {
 	OW_THROWCIM(CIMException::FAILED);
-	(void)instance;
-	(void)instNS;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClassEnumeration

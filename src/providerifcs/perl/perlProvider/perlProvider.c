@@ -53,7 +53,7 @@ static inline int perl_strlen(const char * s)
 //PROVIDER_NAME(perlProvider)
 
 
-EXTERN_C NPIEXPORT PerlFTABLE NPICALL perlProvider_initFunctionTable (void) {
+EXTERN_C NPIEXPORT PerlFTABLE NPICALL perlProvider_initFunctionTable () {
    PerlFTABLE ftable = {
 	  initialize, cleanup,
           _INCLUDE_INSTANCE_PROVIDER_METHODS
@@ -98,7 +98,6 @@ static char * initialize ( NPIHandle *nh, CIMOMHandle ch)
 
     PerlInterpreter * my_perl;
 
-    (void) ch;
     fprintf(stderr,"--- perlProvider(): initialize\n");
 
     if ((args[1]=setPath(nh,script))==NULL) return;
@@ -198,7 +197,6 @@ static Vector enumInstanceNames(NPIHandle *nh,CIMObjectPath cop,
     PerlInterpreter * my_perl;
 
     Vector vec = {NULL};
-    (void) bool_deep;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): enumInstanceNames\n");
@@ -522,10 +520,6 @@ static void deleteInstance(NPIHandle *nh,CIMObjectPath cop)
 static Vector execQuery(NPIHandle *nh,CIMObjectPath cop,
                         const char * str,int i,CIMClass cc)
 {
-  (void) cop;
-  (void) str;
-  (void) i;
-  (void) cc;
   return VectorNew(nh);
 }
 
@@ -541,8 +535,6 @@ static Vector associators(NPIHandle *nh, CIMObjectPath assoc,
     PerlInterpreter * my_perl;
  
     Vector vec = {NULL};
-  (void) propertyList;
-  (void) plLen;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): associators\n");
@@ -682,8 +674,6 @@ static Vector references ( NPIHandle * nh, CIMObjectPath assoc,
     PerlInterpreter * my_perl;
  
     Vector vec = VectorNew(nh);
-  (void) propertyList;
-  (void) plLen;
     if (nh->errorOccurred) return vec;
 
     fprintf(stderr,"--- perlProvider(): references\n");
@@ -798,11 +788,6 @@ static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
                                const char * a, Vector av, Vector a2v)
 {
     CIMValue cv = {NULL};
-   (void) nh;
-   (void) cop;
-   (void) a;
-   (void) av;
-   (void) a2v;
 
     fprintf(stderr,"--- perlProvider(): invokeMethod\n");
 
@@ -813,12 +798,6 @@ static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
 static void authorizeFilter( NPIHandle * nh, SelectExp exp,
                  const char * eventType, CIMObjectPath cop, const char * owner)
 {
-    (void) nh;
-    (void) exp;
-    (void) eventType;
-    (void) cop;
-    (void) owner;
-
     fprintf(stderr,"--- perlProvider(): authorizeFilter\n");
     return;
 }
@@ -826,10 +805,6 @@ static void authorizeFilter( NPIHandle * nh, SelectExp exp,
 static int mustPoll( NPIHandle * nh, SelectExp exp,
                  const char * eventType, CIMObjectPath cop)
 {
-    (void) nh;
-    (void) exp;
-    (void) eventType;
-    (void) cop;
     fprintf(stderr,"--- perlProvider(): mustPoll\n");
     return 0;
 }

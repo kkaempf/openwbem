@@ -470,7 +470,6 @@ Reference<std::iostream>
 HTTPClient::beginRequest(const String& methodName,
 	const String& cimObject)
 {
-	(void)methodName; (void)cimObject;
 	return Reference<std::iostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////

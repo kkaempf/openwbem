@@ -78,8 +78,6 @@ int remFromStore(CMPIString *k)
 
 CMPIStatus testProvCleanup
                 (CMPIInstanceMI* cThis, CMPIContext *ctx) {
-   (void) cThis;
-   (void) ctx;
 
    CMReturn(CMPI_RC_OK);
 }
@@ -91,8 +89,6 @@ CMPIStatus testProvEnumInstanceNames
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
    CMPIString *k;
-   (void) cThis;
-   (void) ctx;
 
    fprintf(stderr,"+++ testProvEnumInstanceNames()\n");
 
@@ -119,9 +115,6 @@ CMPIStatus testProvEnumInstances
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
    CMPIInstance * inst;
-   (void) cThis;
-   (void) ctx;
-   (void) props;
 
    fprintf(stderr,"+++ testProvEnumInstances()\n");
    cop=broker->eft->newObjectPath(broker,
@@ -151,10 +144,6 @@ CMPIStatus testProvGetInstance
    CMPIStatus rc;
    CMPIInstance *inst;
 
-   (void) cThis;
-   (void) ctx;
-   (void) props;
-
    k=cop->ft->getKey(cop,"Identifier",&rc).value.string;
    if (!(k->hdl))
    fprintf(stderr,"+++ testProvGetInstance() %s as %d\n",CMStringCharPtr(k),
@@ -183,9 +172,6 @@ CMPIStatus testProvCreateInstance
    /*CMPIData data;*/
    void * _hdl;
 
-   (void) cThis;
-   (void) ctx;
-
    fprintf(stderr,"+++ testProvCreateInstance()\n");
 
    _hdl = inst->hdl;
@@ -206,13 +192,6 @@ CMPIStatus testProvCreateInstance
 CMPIStatus testProvSetInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, CMPIInstance* inst, char ** msg) {
-   (void) cThis;
-   (void) ctx;
-   (void) rslt;
-   (void) cop;
-   (void) inst;
-   (void) msg;
-
    CMReturn(CMPI_RC_OK);
 }
 
@@ -223,9 +202,6 @@ CMPIStatus testProvDeleteInstance
    CMPIStatus rc;
    /*CMPIObjectPath *nx; */
    CMPIInstance *inst;
-
-   (void) cThis;
-   (void) rslt;
 
    fprintf(stderr,"+++ testProvDeleteInstance()\n");
 
@@ -248,13 +224,6 @@ CMPIStatus testProvDeleteInstance
 CMPIStatus testProvExecQuery
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, char* lang, char* query) {
-   (void) cThis;
-   (void) ctx;
-   (void) rslt;
-   (void) cop;
-   (void) lang;
-   (void) query;
-
    CMReturn(CMPI_RC_OK);
 }
 
@@ -289,7 +258,6 @@ CMPIInstanceMI* cmpiTestProvider_Create_InstanceMI(CMPIBroker* brkr, CMPIContext
       &instMIFT
       /*,NULL */
    };
-   (void) ctx;
    broker=brkr;
    fprintf(stderr,"+++ TestProvider_Create_InstanceMI(): called\n");
    return &mi;

@@ -138,7 +138,6 @@ public:
 		const StringArray *propertyList, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)cimClass;
 		env->getLogger()->logDebug("IndicationProviderTest1::getInstance");
 		Int32 id = 0;
 		try
@@ -170,7 +169,6 @@ public:
 		const CIMClass &requestedClass, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)className;
 		env->getLogger()->logDebug("IndicationProviderTest1::enumInstances");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
@@ -188,7 +186,6 @@ public:
 		CIMObjectPathResultHandlerIFC &result, 
 		const CIMClass &cimClass) 
 	{
-		(void)className;
 		env->getLogger()->logDebug("IndicationProviderTest1::enumInstanceNames");
 		// we will simulate changing external conditions by calling updateInstances() every time enumInstances is called.
 		// the changes will cause the cimom to send lifecycle indications.
@@ -208,7 +205,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Modify not supported");
 	}
 

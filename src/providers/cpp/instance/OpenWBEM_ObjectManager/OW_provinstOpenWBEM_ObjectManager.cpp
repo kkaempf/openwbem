@@ -76,7 +76,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)className;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
 		if (!m_inst)
 		{
@@ -126,8 +125,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)ns;
-		(void)instanceName;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
 		if (!m_inst)
 		{

@@ -135,7 +135,6 @@ static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc)
 
 static CMPIUint64 dtGetBinaryFormat(CMPIDateTime* eDt, CMPIStatus* rc) 
 {
-	(void) rc;
 	OpenWBEM::CIMDateTime* dt = (OpenWBEM::CIMDateTime*)eDt->hdl;
 	CMPIUint64 days,hours,mins,secs,usecs,utc,lTime;
 	struct tm tm,tmt;

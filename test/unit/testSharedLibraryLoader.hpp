@@ -92,7 +92,6 @@ public:
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass )
 	{
-		(void)env; (void)ns; (void)className; (void)result; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass; (void)cimClass;
 	}
 	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &, const String &, const String &, CIMObjectPathResultHandlerIFC &, const CIMClass &)
 	{
@@ -107,7 +106,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
 		return CIMInstance(CIMNULL);
 	}
 	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
@@ -123,7 +121,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	}
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 	{
@@ -165,7 +162,6 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList)
 	{
-		(void)env; (void)result; (void)ns; (void)objectName; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 	virtual void referenceNames(
 		const ProviderEnvironmentIFCRef &,
@@ -189,7 +185,6 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList)
 	{
-		(void)env; (void)result; (void)ns; (void)objectName; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 };
 #endif
@@ -227,7 +222,6 @@ class testProviderMux: public ProviderIFCBaseIFC
 			MethodProviderInfoArray& ma,
 			IndicationProviderInfoArray& inda)
 		{
-			(void) si;
 			if (m_name == "lib1")
 			{
 				// instance provider registration
@@ -667,7 +661,6 @@ static ProviderIFCLoaderRef testCreateMuxLoader()
 
 static SharedLibraryLoaderRef testCreateSharedLibraryLoader()
 {
-	(void)testCreateMuxLoader; // to prevent silly compiler warnings
 	return SharedLibraryLoaderRef( new testSharedLibraryLoader );
 }
 

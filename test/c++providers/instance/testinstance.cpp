@@ -84,8 +84,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)env;
-		(void)cimClass;
 		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
@@ -110,9 +108,6 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		(void)ns;
-		(void)className;
-		(void)env;
 		String al = procAcceptLanguage(env);
 		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
@@ -139,8 +134,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)ns;
-		(void)env;
 		String al = procAcceptLanguage(env);
 		CIMInstance rval = cimClass.newInstance();
 		String name;
@@ -169,8 +162,6 @@ public:
 		const CIMInstance& cimInstance )
 	{
 
-		(void)env;
-		(void)ns;
 		String name;
 		StringArray params;
 		cimInstance.getProperty("Name").getValue().get(name);
@@ -205,11 +196,6 @@ public:
 		const CIMClass& theClass)
 	{
 		env->getLogger()->logDebug("TestInstance::modifyInstance");
-		(void)ns;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		String name;
 		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
@@ -238,8 +224,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)env;
-		(void)ns;
 		String name;
 		cop.getKeys()[0].getValue().get(name);
 		for (Array<TestInstanceData>::iterator iter = g_saa.begin();

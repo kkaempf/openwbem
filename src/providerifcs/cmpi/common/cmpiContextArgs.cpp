@@ -26,13 +26,11 @@
 
 static CMPIStatus argsRelease(CMPIArgs* eArg)
 {
-	(void) eArg;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus argsReleaseNop(CMPIArgs* eArg)
 {
-	(void) eArg;
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -166,7 +164,6 @@ CMPIArgsFT *CMPI_ArgsOnStack_Ftab=&argsOnStack_FT;
 
 static CMPIStatus contextReleaseNop(CMPIContext* eCtx)
 {
-	(void) eCtx;
 	CMReturn(CMPI_RC_OK);
 }
 

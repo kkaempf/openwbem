@@ -211,7 +211,6 @@ int
 BaseStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	OW_ASSERT("Not implemented, should overwrite" == 0);
-	(void)c; (void)n;
 	return -1; // make the compiler happy
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -219,7 +218,6 @@ int
 BaseStreamBuffer::buffer_from_device(char* c, int n)
 {
 	OW_ASSERT("Not implemented, should overwrite" == 0);
-	(void)c; (void)n;
 	return -1; // make the compiler happy
 }
 

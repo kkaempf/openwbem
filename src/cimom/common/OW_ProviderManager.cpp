@@ -380,19 +380,16 @@ wrapProvider(AssociatorProviderIFCRef pref,
 inline InstanceProviderIFCRef
 wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	return pref;
 }
 inline SecondaryInstanceProviderIFCRef
 wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	return pref;
 }
 inline MethodProviderIFCRef
 wrapProvider(MethodProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	return pref;
 }
 
@@ -401,7 +398,6 @@ inline AssociatorProviderIFCRef
 wrapProvider(AssociatorProviderIFCRef pref,
 	const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	return pref;
 }
 #endif

@@ -79,8 +79,6 @@ public:
 	virtual bool evaluateISA(const String &propertyName, const String &className) const 
 	{
 		// TODO
-		(void)propertyName;
-		(void)className;
 		return false;
 	}
 	virtual bool getValue(const String &propertyName, WQLOperand &value) const 

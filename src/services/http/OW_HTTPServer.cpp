@@ -295,7 +295,6 @@ public:
 	{
 		try
 		{
-			(void)selectedObject;
 			IntrusiveReference<ServerSocket> pServerSocket;
 			if (m_isIPC)
 			{

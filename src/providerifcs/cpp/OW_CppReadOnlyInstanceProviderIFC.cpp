@@ -66,7 +66,6 @@ CppReadOnlyInstanceProviderIFC::modifyInstance(
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 {
-	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
 }
 

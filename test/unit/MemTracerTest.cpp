@@ -102,7 +102,6 @@ int main(int argc, char* argv[])
 			buf = new char[10];
 			buf[10] = 's';
 			buf2 = new char[10];
-			(void)buf2;
 			break;
 		default:
 			Usage(argv[0]);

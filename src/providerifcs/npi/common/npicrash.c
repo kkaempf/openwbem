@@ -43,9 +43,6 @@ static void segv_handler(int signum, siginfo_t * info, void * obscure)
 	struct stackframe * sfp;
 	void ** stackitems=obscure;
 
-	(void)signum;
-	(void)info;
-
 	if (stackitems==NULL)
 	{
 		fprintf(stderr,
@@ -121,8 +118,6 @@ void  restoreCrashHandler(void *oldac)
 			oldaction->sa_flags);
 		free(oldaction);
 	}
-#else
-	(void)oldac;
 #endif /* #if defined(i386) && defined(__GNUC__) */
 }
 

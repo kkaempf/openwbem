@@ -110,7 +110,6 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		EPropertiesFlag propertiesFlag)
 	{
-		(void)propertiesFlag;
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
@@ -178,13 +177,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		// This is just a no-op since we don't really care about any properties
 		// other than the keys (which can't change.)
 		//OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
@@ -195,7 +187,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)ns;
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::createInstance");
 #if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		try

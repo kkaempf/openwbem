@@ -62,7 +62,6 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	(void) cimClass;
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::enumInstanceNames()");
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
@@ -112,11 +111,6 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	(void) localOnly;
-	(void) deep;
-	(void) requestedClass;
-	(void) cimClass;
-
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::enumInstances()");
 
@@ -184,8 +178,6 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const StringArray* propertyList,
 	const CIMClass& cimClass)
 {
-	(void) localOnly;
-	(void) cimClass;
 	CIMInstance rval;
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::getInstance()");
@@ -347,9 +339,6 @@ void
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	(void) includeQualifiers;
-	(void) propertyList;
-	(void) theClass;
 	env->getLogger()->
 		logDebug("CMPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)

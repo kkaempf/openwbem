@@ -139,7 +139,7 @@ typedef struct {
 }FTABLE;
 
 /* the <LIBNAME>_initFunctionTable() pointer */
-typedef FTABLE (*FP_INIT_FT) (void);
+typedef FTABLE (*FP_INIT_FT) ();
 
 /* structure for the cache{Instance/Static}MethodNames arrays */
 typedef struct {

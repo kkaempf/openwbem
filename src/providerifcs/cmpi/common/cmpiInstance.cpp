@@ -44,7 +44,6 @@ static CMPIStatus instRelease(CMPIInstance* eInst)
 
 static CMPIStatus instReleaseNop(CMPIInstance* eInst)
 {
-	(void) eInst;
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -212,9 +211,6 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 	char** propertyList, char **keys)
 {
-	(void)eInst;
-	(void)propertyList;
-	(void)keys;
 	CMReturn(CMPI_RC_OK);
 }
 

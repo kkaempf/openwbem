@@ -40,7 +40,6 @@ static CMPIStatus enumRelease(CMPIEnumeration* eEnum)
 
 static CMPIEnumeration* enumClone(CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
-	(void)eEnum; (void)rc;
 //   CIMInstance* enm=(CIMInstance*)eEnum->hdl;
 //   CIMInstance* cInst=new CIMInstance(enum->clone());
 //   CMPIEnumeration* neEnum=(CMPIEnumeration*)new CMPI_Object(cInst,CMPI_Instance_Ftab);
@@ -128,7 +127,6 @@ CMPIBoolean enumHasNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 
 CMPIArray* enumToArray(CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
-	(void)eEnum; (void)rc;
 	return NULL;
 }
 

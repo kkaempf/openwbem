@@ -138,7 +138,6 @@ PerlProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 IndicationExportProviderIFCRefArray
 PerlProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	//loadNoIdProviders(env);
 	IndicationExportProviderIFCRefArray rvra;
 	//for(size_t i = 0; i < m_noidProviders.size(); i++)
@@ -158,7 +157,6 @@ PerlProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&
 PolledProviderIFCRefArray
 PerlProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	//loadNoIdProviders(env);
 	PolledProviderIFCRefArray rvra;
 	//for(size_t i = 0; i < m_noidProviders.size(); i++)

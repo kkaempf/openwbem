@@ -118,7 +118,6 @@ String getState()
 
 void setState(const String& newState)
 {
-	(void)newState;
 	ofstream ofstr(fileName.c_str(), std::ios::out | std::ios::trunc);
 	ofstr << newState << endl;
 }
@@ -145,8 +144,6 @@ MethodProviderTest::invokeMethod(
 		const CIMParamValueArray &in,
 		CIMParamValueArray &out)
 {
-	(void)ns;
-	(void)path;
 	if (methodName.equalsIgnoreCase("getstate"))
 	{
 		// MOF of this method:
@@ -206,7 +203,6 @@ MethodProviderTest::invokeMethod(
 		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, Format("Cannot find "
 			"method: %1", methodName).c_str());
 	}
-	(void)out;
 }
 
 } // end anonymous namespace

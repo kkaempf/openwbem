@@ -127,30 +127,25 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
 
 static CMPIStatus resultReturnInstDone(CMPIResult* eRes) 
 {
-	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnRefDone(CMPIResult* eRes)
 {
-	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnDataDone(CMPIResult* eRes)
 {
-	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIStatus resultReturnMethDone(CMPIResult* eRes)
 {
-	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
 {
-	(void) eRes;
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -158,25 +153,18 @@ static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
 static CMPIStatus resultBadReturnData(CMPIResult* eRes,
 	CMPIValue* data, CMPIType type)
 {
-	(void) eRes;
-	(void) data;
-	(void) type;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
 static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
 	CMPIInstance* eInst)
 {
-	(void) eRes;
-	(void) eInst;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
 static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
 	CMPIObjectPath* eRef)
 {
-	(void) eRes;
-	(void) eRef;
 	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 

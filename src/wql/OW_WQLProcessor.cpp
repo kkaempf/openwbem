@@ -107,13 +107,11 @@ void WQLProcessor::visit_optSemicolon_empty(
 	const optSemicolon_empty* poptSemicolon_empty
 	)
 {
-	(void)poptSemicolon_empty;
 }
 void WQLProcessor::visit_optSemicolon_SEMICOLON(
 	const optSemicolon_SEMICOLON* poptSemicolon_SEMICOLON
 	)
 {
-	(void)poptSemicolon_SEMICOLON;
 }
 void WQLProcessor::visit_insertStmt(
 	const insertStmt* pinsertStmt
@@ -184,7 +182,6 @@ void WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	instances.clear();
 	instances.push_back(ci);
 #else
-	(void)pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 }
@@ -193,7 +190,6 @@ void WQLProcessor::visit_insertRest_DEFAULT_VALUES(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "You must specify key values to create an instance.");
-	(void)pinsertRest_DEFAULT_VALUES;
 }
 void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	const insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN
@@ -265,7 +261,6 @@ void WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTP
 	instances.clear();
 	instances.push_back(ci);
 #else
-	(void)pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 }
@@ -287,7 +282,6 @@ void WQLProcessor::visit_deleteStmt(
 		m_hdl->deleteInstance(m_ns, cop);
 	}
 #else
-	(void)pdeleteStmt;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 }
@@ -368,7 +362,6 @@ void WQLProcessor::visit_updateStmt(
 		m_hdl->modifyInstance(m_ns, ci);
 	}
 #else
-	(void)pupdateStmt;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	
@@ -451,14 +444,12 @@ void WQLProcessor::visit_optDistinct_empty(
 	const optDistinct_empty* poptDistinct_empty
 	)
 {
-	(void)poptDistinct_empty;
 }
 void WQLProcessor::visit_optDistinct_DISTINCT(
 	const optDistinct_DISTINCT* poptDistinct_DISTINCT
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)poptDistinct_DISTINCT;
 }
 void WQLProcessor::visit_optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN(
 	const optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN* poptDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN
@@ -472,7 +463,6 @@ void WQLProcessor::visit_optDistinct_ALL(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)poptDistinct_ALL;
 }
 void WQLProcessor::visit_sortClause(
 	const sortClause* psortClause
@@ -490,7 +480,6 @@ void WQLProcessor::visit_optSortClause_empty(
 	const optSortClause_empty* poptSortClause_empty
 	)
 {
-	(void)poptSortClause_empty;
 }
 void WQLProcessor::visit_optSortClause_sortClause(
 	const optSortClause_sortClause* poptSortClause_sortClause
@@ -510,7 +499,6 @@ void WQLProcessor::visit_optGroupClause_empty(
 	const optGroupClause_empty* poptGroupClause_empty
 	)
 {
-	(void)poptGroupClause_empty;
 }
 void WQLProcessor::visit_optGroupClause_GROUP_BY_exprSeq(
 	const optGroupClause_GROUP_BY_exprSeq* poptGroupClause_GROUP_BY_exprSeq
@@ -524,7 +512,6 @@ void WQLProcessor::visit_optHavingClause_empty(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)poptHavingClause_empty;
 }
 void WQLProcessor::visit_optHavingClause_HAVING_aExpr(
 	const optHavingClause_HAVING_aExpr* poptHavingClause_HAVING_aExpr
@@ -537,7 +524,6 @@ void WQLProcessor::visit_optFromClause_empty(
 	const optFromClause_empty* poptFromClause_empty
 	)
 {
-	(void)poptFromClause_empty;
 }
 void WQLProcessor::visit_optFromClause_FROM_fromList(
 	const optFromClause_FROM_fromList* poptFromClause_FROM_fromList
@@ -655,7 +641,6 @@ void WQLProcessor::visit_aliasClause_AS_strColId(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)paliasClause_AS_strColId;
 }
 void WQLProcessor::visit_aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN(
 	const aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN* paliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN
@@ -673,35 +658,30 @@ void WQLProcessor::visit_aliasClause_strColId(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)paliasClause_strColId;
 }
 void WQLProcessor::visit_joinType_FULL_strOptJoinOuter(
 	const joinType_FULL_strOptJoinOuter* pjoinType_FULL_strOptJoinOuter
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pjoinType_FULL_strOptJoinOuter;
 }
 void WQLProcessor::visit_joinType_LEFT_strOptJoinOuter(
 	const joinType_LEFT_strOptJoinOuter* pjoinType_LEFT_strOptJoinOuter
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pjoinType_LEFT_strOptJoinOuter;
 }
 void WQLProcessor::visit_joinType_RIGHT_strOptJoinOuter(
 	const joinType_RIGHT_strOptJoinOuter* pjoinType_RIGHT_strOptJoinOuter
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pjoinType_RIGHT_strOptJoinOuter;
 }
 void WQLProcessor::visit_joinType_INNERP(
 	const joinType_INNERP* pjoinType_INNERP
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pjoinType_INNERP;
 }
 void WQLProcessor::visit_joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN(
 	const joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN* pjoinQual_USING_LEFTPAREN_nameList_RIGHTPAREN
@@ -733,20 +713,17 @@ void WQLProcessor::visit_relationExpr_strRelationName_ASTERISK(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)prelationExpr_strRelationName_ASTERISK;
 }
 void WQLProcessor::visit_relationExpr_ONLY_strRelationName(
 	const relationExpr_ONLY_strRelationName* prelationExpr_ONLY_strRelationName
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)prelationExpr_ONLY_strRelationName;
 }
 void WQLProcessor::visit_optWhereClause_empty(
 	const optWhereClause_empty* poptWhereClause_empty
 	)
 {
-	(void)poptWhereClause_empty;
 }
 void WQLProcessor::visit_optWhereClause_WHERE_aExpr(
 	const optWhereClause_WHERE_aExpr* poptWhereClause_WHERE_aExpr
@@ -1551,7 +1528,6 @@ void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_strFuncName_LEFTPAREN_RIGHTPAREN;
 }
 void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN
@@ -1579,63 +1555,54 @@ void WQLProcessor::visit_cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN(
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN;
 }
 void WQLProcessor::visit_cExpr_CURRENTDATE(
 	const cExpr_CURRENTDATE* pcExpr_CURRENTDATE
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTDATE;
 }
 void WQLProcessor::visit_cExpr_CURRENTTIME(
 	const cExpr_CURRENTTIME* pcExpr_CURRENTTIME
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTTIME;
 }
 void WQLProcessor::visit_cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN(
 	const cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN* pcExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN;
 }
 void WQLProcessor::visit_cExpr_CURRENTTIMESTAMP(
 	const cExpr_CURRENTTIMESTAMP* pcExpr_CURRENTTIMESTAMP
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTTIMESTAMP;
 }
 void WQLProcessor::visit_cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN(
 	const cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN* pcExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN;
 }
 void WQLProcessor::visit_cExpr_CURRENTUSER(
 	const cExpr_CURRENTUSER* pcExpr_CURRENTUSER
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_CURRENTUSER;
 }
 void WQLProcessor::visit_cExpr_SESSIONUSER(
 	const cExpr_SESSIONUSER* pcExpr_SESSIONUSER
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_SESSIONUSER;
 }
 void WQLProcessor::visit_cExpr_USER(
 	const cExpr_USER* pcExpr_USER
 	)
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
-	(void)pcExpr_USER;
 }
 void WQLProcessor::visit_cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN(
 	const cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN* pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN
@@ -1685,7 +1652,6 @@ void WQLProcessor::visit_optIndirection_empty(
 	const optIndirection_empty* poptIndirection_empty
 	)
 {
-	(void)poptIndirection_empty;
 }
 void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET(
 	const optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET* poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET
@@ -1710,7 +1676,6 @@ void WQLProcessor::visit_optExtract_empty(
 	const optExtract_empty* poptExtract_empty
 	)
 {
-	(void)poptExtract_empty;
 }
 void WQLProcessor::visit_optExtract_strExtractArg_FROM_aExpr(
 	const optExtract_strExtractArg_FROM_aExpr* poptExtract_strExtractArg_FROM_aExpr
@@ -1731,13 +1696,11 @@ void WQLProcessor::visit_positionExpr_empty(
 	const positionExpr_empty* ppositionExpr_empty
 	)
 {
-	(void)ppositionExpr_empty;
 }
 void WQLProcessor::visit_optSubstrExpr_empty(
 	const optSubstrExpr_empty* poptSubstrExpr_empty
 	)
 {
-	(void)poptSubstrExpr_empty;
 }
 void WQLProcessor::visit_optSubstrExpr_aExpr_substrFrom_substrFor(
 	const optSubstrExpr_aExpr_substrFrom_substrFor* poptSubstrExpr_aExpr_substrFrom_substrFor
@@ -1881,7 +1844,6 @@ void WQLProcessor::visit_targetEl_ASTERISK(
 	const targetEl_ASTERISK* ptargetEl_ASTERISK
 	)
 {
-	(void)ptargetEl_ASTERISK;
 	m_propertyArray.push_back("*");
 }
 void WQLProcessor::visit_updateTargetEl(
@@ -1962,14 +1924,12 @@ void WQLProcessor::visit_aExprConst_TRUEP(
 	const aExprConst_TRUEP* paExprConst_TRUEP
 	)
 {
-	(void)paExprConst_TRUEP;
 	m_exprValue = DataType(Bool(true));
 }
 void WQLProcessor::visit_aExprConst_FALSEP(
 	const aExprConst_FALSEP* paExprConst_FALSEP
 	)
 {
-	(void)paExprConst_FALSEP;
 	m_exprValue = DataType(Bool(false));
 }
 void WQLProcessor::visit_aExprConst_NULLP(
@@ -1977,7 +1937,6 @@ void WQLProcessor::visit_aExprConst_NULLP(
 	)
 {
 	m_exprValue = DataType(DataType::NullType);
-	(void)paExprConst_NULLP;
 }
 CIMInstanceArray
 WQLProcessor::filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare)

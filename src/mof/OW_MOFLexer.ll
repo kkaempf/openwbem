@@ -299,8 +299,5 @@ void lexIncludeFile( void* context, const String& filename )
 
 	owmof_switch_to_buffer( owmof_create_buffer( owmofin, YY_BUF_SIZE ) );
 
-
-	(void)yyunput; // To get rid of compiler warning about unused variable.
-	(void)yy_fatal_error;
 }
 

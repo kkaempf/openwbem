@@ -83,8 +83,6 @@ namespace
 			CIMObjectPathResultHandlerIFC& result,
 			const CIMClass& cimClass )
 		{
-			(void)env;
-			(void)cimClass;
 			CIMObjectPath instCop = CIMObjectPath(className, ns);
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
@@ -111,9 +109,6 @@ namespace
 			const CIMClass& requestedClass,
 			const CIMClass& cimClass )
 		{
-			(void)ns;
-			(void)className;
-			(void)env;
 			CIMInstance inst = this->createLaptopBatInst(cimClass);
 			result.handle(inst.clone(localOnly, deep, includeQualifiers, 
 				includeClassOrigin, propertyList, requestedClass, cimClass));
@@ -130,9 +125,6 @@ namespace
 			const StringArray* propertyList, 
 			const CIMClass& cimClass )
 		{
-			(void)ns;
-			(void)instanceName;
-			(void)env;
 			CIMInstance rval = this->createLaptopBatInst(cimClass);
 			return rval.clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
 		}
@@ -144,9 +136,6 @@ namespace
 			const CIMInstance& cimInstance )
 		{
 
-			(void)env;
-			(void)ns;
-			(void)cimInstance;
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 		}
 
@@ -160,13 +149,6 @@ namespace
 			const StringArray* propertyList,
 			const CIMClass& theClass)
 		{
-			(void)env;
-			(void)ns;
-			(void)modifiedInstance;
-			(void)previousInstance;
-			(void)includeQualifiers;
-			(void)propertyList;
-			(void)theClass;
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 		}
 
@@ -176,9 +158,6 @@ namespace
 			const String& ns,
 			const CIMObjectPath& cop)
 		{
-			(void)env;
-			(void)ns;
-			(void)cop;
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 		}
 

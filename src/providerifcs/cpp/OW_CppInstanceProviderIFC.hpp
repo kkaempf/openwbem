@@ -66,7 +66,6 @@ public:
 	 */
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
-		(void)info;
 	}
 	/**
 	 * This method enumerates all names of instances of the class which is

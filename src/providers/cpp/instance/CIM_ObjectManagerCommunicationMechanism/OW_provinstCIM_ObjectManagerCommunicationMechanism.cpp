@@ -68,7 +68,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)cimClass;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
@@ -99,7 +98,6 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		(void)ns;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
@@ -128,7 +126,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)ns;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		inst.updatePropertyValues(instanceName.getKeys());
@@ -161,9 +158,6 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		(void)env;
-		(void)ns;
-		(void)cimInstance;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
 	////////////////////////////////////////////////////////////////////////////
@@ -176,13 +170,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 	////////////////////////////////////////////////////////////////////////////
@@ -191,9 +178,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)env;
-		(void)ns;
-		(void)cop;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 	}
 };

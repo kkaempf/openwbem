@@ -75,13 +75,11 @@ void WQLSelectStatementGen::visit_optSemicolon_empty(
 	const optSemicolon_empty* poptSemicolon_empty
 	)
 {
-	(void)poptSemicolon_empty;
 }
 void WQLSelectStatementGen::visit_optSemicolon_SEMICOLON(
 	const optSemicolon_SEMICOLON* poptSemicolon_SEMICOLON
 	)
 {
-	(void)poptSemicolon_SEMICOLON;
 }
 void WQLSelectStatementGen::visit_insertStmt(
 	const insertStmt*
@@ -175,7 +173,6 @@ void WQLSelectStatementGen::visit_optDistinct_empty(
 	const optDistinct_empty* poptDistinct_empty
 	)
 {
-	(void)poptDistinct_empty;
 }
 void WQLSelectStatementGen::visit_optDistinct_DISTINCT(
 	const optDistinct_DISTINCT*
@@ -205,7 +202,6 @@ void WQLSelectStatementGen::visit_optSortClause_empty(
 	const optSortClause_empty* poptSortClause_empty
 	)
 {
-	(void)poptSortClause_empty;
 }
 void WQLSelectStatementGen::visit_optSortClause_sortClause(
 	const optSortClause_sortClause*
@@ -223,7 +219,6 @@ void WQLSelectStatementGen::visit_optGroupClause_empty(
 	const optGroupClause_empty* poptGroupClause_empty
 	)
 {
-	(void)poptGroupClause_empty;
 }
 void WQLSelectStatementGen::visit_optGroupClause_GROUP_BY_exprSeq(
 	const optGroupClause_GROUP_BY_exprSeq*
@@ -414,7 +409,6 @@ void WQLSelectStatementGen::visit_optWhereClause_empty(
 	const optWhereClause_empty* poptWhereClause_empty
 	)
 {
-	(void)poptWhereClause_empty;
 }
 void WQLSelectStatementGen::visit_optWhereClause_WHERE_aExpr(
 	const optWhereClause_WHERE_aExpr* poptWhereClause_WHERE_aExpr
@@ -856,7 +850,6 @@ void WQLSelectStatementGen::visit_cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
 	)
 {
 	OW_THROWCIM(CIMException::INVALID_QUERY);
-	(void)pcExpr_strFuncName_LEFTPAREN_RIGHTPAREN;
 }
 void WQLSelectStatementGen::visit_cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN*
@@ -970,7 +963,6 @@ void WQLSelectStatementGen::visit_optIndirection_empty(
 	const optIndirection_empty* poptIndirection_empty
 	)
 {
-	(void)poptIndirection_empty;
 }
 void WQLSelectStatementGen::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET(
 	const optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET*
@@ -988,7 +980,6 @@ void WQLSelectStatementGen::visit_optExtract_empty(
 	const optExtract_empty* poptExtract_empty
 	)
 {
-	(void)poptExtract_empty;
 }
 void WQLSelectStatementGen::visit_optExtract_strExtractArg_FROM_aExpr(
 	const optExtract_strExtractArg_FROM_aExpr*
@@ -1006,13 +997,11 @@ void WQLSelectStatementGen::visit_positionExpr_empty(
 	const positionExpr_empty* ppositionExpr_empty
 	)
 {
-	(void)ppositionExpr_empty;
 }
 void WQLSelectStatementGen::visit_optSubstrExpr_empty(
 	const optSubstrExpr_empty* poptSubstrExpr_empty
 	)
 {
-	(void)poptSubstrExpr_empty;
 }
 void WQLSelectStatementGen::visit_optSubstrExpr_aExpr_substrFrom_substrFor(
 	const optSubstrExpr_aExpr_substrFrom_substrFor*

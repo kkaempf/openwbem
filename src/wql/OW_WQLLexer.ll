@@ -79,7 +79,7 @@ static int myinput(char* buf, int max);
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, \
 			Format("Fatal Parser Error: %1", msg).c_str())
 
-#define YY_DECL extern "C" int yylex(void)        /* return the next token */ 
+#define YY_DECL extern "C" int yylex()        /* return the next token */ 
 #else /* !FLEX_SCANNER */
 
 #undef input
@@ -529,7 +529,7 @@ owwqlerror(const char *message)
 	called by postgres before any actual parsing is done
 */
 void
-WQLscanner_init(void)
+WQLscanner_init()
 {
 	/* it's important to set this to NULL
 	   because input()/myinput() checks the non-nullness of parseCh
@@ -592,8 +592,6 @@ myinput(char* buf, int max)
 		memcpy(buf, parseCh, len);
 	parseCh += len;
 	return len;
-
-	(void)yy_fatal_error;
 
 }
 

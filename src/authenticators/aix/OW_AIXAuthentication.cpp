@@ -86,7 +86,6 @@ private:
 bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 	String &details, OperationContext& context)
 {
-	(void) context;
 	bool successful = false;
 #if defined(OW_AIX)
 	if (info.empty())
@@ -159,8 +158,6 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 	
 	successful = !reenter && !result;
 #else
-	(void) userName;
-	(void) info;
 	details = "Authentication type (AIX) not supported on this platform.";
 #endif /* OW_AIX */
 	return successful;

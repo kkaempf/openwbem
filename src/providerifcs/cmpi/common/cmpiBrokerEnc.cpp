@@ -196,8 +196,6 @@ static CMPIString* mbEncToString(CMPIBroker *, void * o, CMPIStatus * rc)
 static CMPIBoolean mbEncClassPathIsA(CMPIBroker *, CMPIObjectPath *eCp,
 					char *type, CMPIStatus *rc)
 {
-	(void) rc;
-
 	OpenWBEM::CIMObjectPath* cop=static_cast<OpenWBEM::CIMObjectPath *>(eCp->hdl);
 
 	OpenWBEM::String tcn(type);

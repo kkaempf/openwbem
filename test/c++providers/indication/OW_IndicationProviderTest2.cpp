@@ -225,7 +225,6 @@ public:
 
 		WQLCompile comp(filter);
 		// do something with comp
-		(void)comp;
 
 		// start the thread now that someone is listening for our events.
 		if (m_threadStarted == false)
@@ -296,7 +295,6 @@ public:
 
 		WQLCompile comp(filter);
 		// do something with comp
-		(void)comp;
 		
 	}
 
@@ -365,7 +363,6 @@ public:
 		const StringArray *propertyList, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)cimClass;
 		env->getLogger()->logDebug("IndicationProviderTest2::getInstance");
 		Int32 id = 0;
 		try
@@ -399,7 +396,6 @@ public:
 		const CIMClass &requestedClass, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)className;
 		env->getLogger()->logDebug("IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
@@ -416,7 +412,6 @@ public:
 		CIMObjectPathResultHandlerIFC &result, 
 		const CIMClass &cimClass) 
 	{
-		(void)className; (void)cimClass;
 		env->getLogger()->logDebug("IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
@@ -435,7 +430,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Modify not supported");
 	}
 

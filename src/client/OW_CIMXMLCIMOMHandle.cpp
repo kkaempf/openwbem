@@ -328,7 +328,6 @@ namespace
 	public:
 		virtual void operator ()(CIMXMLParser &parser)
 		{
-			(void)parser;
 			return;
 		}
 	};

@@ -38,7 +38,6 @@ static CMPIStatus refRelease(CMPIObjectPath* eRef)
 
 static CMPIStatus refReleaseNop(CMPIObjectPath* eRef)
 {
-	(void) eRef;
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -188,9 +187,6 @@ static CMPIStatus refSetNameSpaceFromObjectPath(CMPIObjectPath* eRef,
 static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
 	char * classname, CMPIStatus * rc)
 {
-	(void) eRef;
-	(void) classname;
-	(void) rc;
 	return false;
 }
 #endif

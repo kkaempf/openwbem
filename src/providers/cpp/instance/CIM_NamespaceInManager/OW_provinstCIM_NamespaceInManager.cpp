@@ -76,7 +76,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)cimClass;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
@@ -111,8 +110,6 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		(void)ns;
-		(void)className;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
@@ -145,7 +142,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)ns;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		try
@@ -194,8 +190,6 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		(void)env;
-		(void)cimInstance;
 		// just ignore createInstance.
 		return CIMObjectPath(ns, cimInstance);
 	}
@@ -209,13 +203,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		// just ignore, since there nothing they can modify.
 	}
 	////////////////////////////////////////////////////////////////////////////
@@ -224,9 +211,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)env;
-		(void)ns;
-		(void)cop;
 		// just ignore deleteInstance.
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -347,7 +331,6 @@ public:
 		EIncludeClassOriginFlag includeClassOrigin, 
 		const StringArray *propertyList) 
 	{
-		(void)resultClass;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::associators");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.

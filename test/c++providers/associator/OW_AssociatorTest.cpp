@@ -264,7 +264,6 @@ namespace
 			CIMInstanceResultHandlerIFC &result,
 			EPropertiesFlag propertiesFlag)
 		{
-			(void)propertiesFlag;
 			env->getLogger()->logDebug("AssociatorTest doSimpleEnumInstances called ");
 
 			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
@@ -324,7 +323,6 @@ namespace
 			const StringArray* propertyList,
 			const CIMClass& theClass)
 		{
-			(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 			// do nothing.
 		}
 	};

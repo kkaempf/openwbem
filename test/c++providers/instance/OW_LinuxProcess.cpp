@@ -75,8 +75,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)cimClass;
-		(void)env;
 		String cmd = "/bin/ps ax --no-heading -eo pid,comm,vsz";
 		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
@@ -121,9 +119,6 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		(void)env;
-		(void)ns;
-
 		String cmd = "/bin/ps ax --no-heading -eo pid,vsize,pcpu,comm";
 		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 		String output = pos.out()->readAll();
@@ -174,9 +169,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)env;
-		(void)ns;
-		(void)cimClass;
 		CIMInstance inst = cimClass.newInstance();
 		inst.updatePropertyValues(instanceName.getKeys());
 		String pid;
@@ -210,9 +202,6 @@ public:
 		const String& ns,
 		const CIMInstance& cimInstance )
 	{
-		(void)env;
-		(void)ns;
-		(void)cimInstance;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
 
@@ -226,13 +215,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 
@@ -242,9 +224,6 @@ public:
 		const String& ns,
 		const CIMObjectPath& cop)
 	{
-		(void)env;
-		(void)ns;
-		(void)cop;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 	}
 
@@ -258,9 +237,6 @@ public:
 		const CIMParamValueArray& in,
 		CIMParamValueArray& out )
 	{
-		(void)env;
-		(void)ns;
-		(void)out;
 		if (methodName.equalsIgnoreCase("sendsignal"))
 		{
 			Int32 sig;

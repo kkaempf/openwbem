@@ -57,7 +57,7 @@ public:
 		WQLOperand opn1;
 		WQLOperand opn2;
 	
-		void negate(void);
+		void negate();
 	};
 	
 	enum el_type
@@ -114,7 +114,7 @@ public:
 	
 		// Ordering operators, so that op1 > op2 for all non-terminals
 		// and terminals appear in the second operand first
-		void order(void);
+		void order();
 	};
 	
 	typedef Array<term_el> TableauRow;
@@ -140,8 +140,8 @@ public:
 	void printTableau(std::ostream& ostr);
 protected:
 	void _buildEvalHeap(const WQLSelectStatement * wqs);
-	void _pushNOTDown(void);
-	void _factoring(void);
+	void _pushNOTDown();
+	void _factoring();
 	void _gatherDisj(Array<stack_el>& stk);
 	void _gatherConj(Array<stack_el>& stk, stack_el sel);
 	void _gather(Array<stack_el>& stk, stack_el sel, bool or_flag);

@@ -123,7 +123,6 @@ CppSimpleInstanceProviderIFC::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC &result, 
 	const CIMClass &cimClass)
 {
-	(void)className;
 	EnumInstanceNamesHandler handler(result, ns);
 	this->doSimpleEnumInstances(env,ns,cimClass,handler, E_KEY_PROPERTIES_ONLY);
 }
@@ -182,7 +181,6 @@ CppSimpleInstanceProviderIFC::enumInstances(
 	const CIMClass &requestedClass, 
 	const CIMClass &cimClass)
 {
-	(void)className;
 	EnumInstancesHandler handler(result, localOnly, deep, includeQualifiers,
 		includeClassOrigin, propertyList, requestedClass, cimClass);
 	this->doSimpleEnumInstances(env,ns,cimClass,handler, E_ALL_PROPERTIES);

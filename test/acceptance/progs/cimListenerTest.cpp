@@ -74,7 +74,6 @@ protected:
 	virtual void doIndicationOccurred(CIMInstance &ci,
 		const String &listenerPath)
 	{
-		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
@@ -96,7 +95,6 @@ protected:
 	virtual void doIndicationOccurred(CIMInstance &ci,
 		const String &listenerPath)
 	{
-		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
@@ -115,7 +113,6 @@ protected:
 	virtual void doIndicationOccurred(CIMInstance &ci,
 		const String &listenerPath)
 	{
-		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");

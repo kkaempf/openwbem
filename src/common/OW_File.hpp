@@ -70,9 +70,9 @@ public:
 	 * @param x	The File object to copy.
 	 * @return A reference to this File object.
 	 */
-	File& operator= (File x)
+	File& operator= (const File& x)
 	{
-		x.swap(*this);
+		File(x).swap(*this);
 		return *this;
 	}
 	void swap(File& x)

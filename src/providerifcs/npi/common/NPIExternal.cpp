@@ -130,7 +130,6 @@ using namespace OpenWBEM;
 extern "C" Vector
 VectorNew(NPIHandle* npiHandle)
 {
-	(void)npiHandle;
 	Vector v;
 	v.ptr = (void*) new charVect;
 	_NPIGarbageCan(npiHandle, v.ptr, VECTOR);
@@ -140,21 +139,18 @@ VectorNew(NPIHandle* npiHandle)
 extern "C" void
 _VectorAddTo(NPIHandle* npiHandle, Vector v, void* obj)
 {
-	(void)npiHandle;
 	((charVect*)v.ptr)->append((char*)obj);
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
 VectorSize(NPIHandle* npiHandle, Vector v)
 {
-	(void)npiHandle;
 	return((charVect*)v.ptr)->size();
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void*
 _VectorGet(NPIHandle* npiHandle, Vector v, int pos)
 {
-	(void)npiHandle;
 	void* result = NULL;
 	result = (void*) ((*((charVect*)v.ptr))[pos]);
 	return result;
@@ -193,7 +189,6 @@ CIMValueGetType(NPIHandle*, ::CIMValue cv)
 extern "C" ::CIMValue
 CIMValueNewString(NPIHandle* npiHandle, const char* val)
 {
-	(void)npiHandle;
 	OpenWBEM::CIMValue* pcv = new OpenWBEM::CIMValue(String(val));
 	::CIMValue cv = { (void*) pcv};
 	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
@@ -203,7 +198,6 @@ CIMValueNewString(NPIHandle* npiHandle, const char* val)
 extern "C" ::CIMValue
 CIMValueNewInteger(NPIHandle* npiHandle, int val)
 {
-	(void)npiHandle;
 	OpenWBEM::CIMValue* pcv = new OpenWBEM::CIMValue(val);
 	::CIMValue cv = { (void*) pcv};
 	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
@@ -213,7 +207,6 @@ CIMValueNewInteger(NPIHandle* npiHandle, int val)
 extern "C" ::CIMValue
 CIMValueNewRef(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
-	(void)npiHandle;
 	OpenWBEM::CIMValue* pcv = new OpenWBEM::CIMValue(*((OpenWBEM::CIMObjectPath*)cop.ptr));
 	::CIMValue cv = { (void*) pcv};
 	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
@@ -223,7 +216,6 @@ CIMValueNewRef(NPIHandle* npiHandle, ::CIMObjectPath cop)
 extern "C" char*
 CIMValueGetString(NPIHandle* npiHandle, ::CIMValue cv)
 {
-	(void)npiHandle;
 	try {
 		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
 		String mystring = pcv->toString();
@@ -237,7 +229,6 @@ CIMValueGetString(NPIHandle* npiHandle, ::CIMValue cv)
 extern "C" int
 CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv)
 {
-	(void)npiHandle;
 	int retval;
 	try {
 		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
@@ -251,7 +242,6 @@ CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv)
 extern "C" ::CIMObjectPath
 CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv)
 {
-	(void)npiHandle;
 	::CIMObjectPath cop = { NULL};
 	try {
 		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*) cv.ptr;
@@ -270,7 +260,6 @@ CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv)
 extern "C" ::CIMType
 CIMParameterGetType(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	(void)npiHandle;
 	int dt;
 	try {
 		OpenWBEM::CIMParamValue* pcp = (OpenWBEM::CIMParamValue*)cp.ptr;
@@ -307,7 +296,6 @@ CIMParameterGetType(NPIHandle* npiHandle, ::CIMParameter cp)
 extern "C" char*
 CIMParameterGetName(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	(void)npiHandle;
 	try {
 		CIMParamValue* pcp = (CIMParamValue*)cp.ptr;
 		return pcp->getName().allocateCString();
@@ -321,7 +309,6 @@ CIMParameterGetName(NPIHandle* npiHandle, ::CIMParameter cp)
 extern "C" ::CIMParameter
 CIMParameterNewString(NPIHandle* npiHandle, const char* name, const char* value)
 {
-	(void)npiHandle;
 	::CIMParameter mycp = { NULL};
 	// Sanity check
 	if (name == NULL)
@@ -338,7 +325,6 @@ CIMParameterNewString(NPIHandle* npiHandle, const char* name, const char* value)
 extern "C" ::CIMParameter
 CIMParameterNewInteger(NPIHandle* npiHandle, const char* name, int value)
 {
-	(void)npiHandle;
 	::CIMParameter mycp = { NULL};
 	// Sanity check
 	if (name == NULL)
@@ -355,7 +341,6 @@ CIMParameterNewInteger(NPIHandle* npiHandle, const char* name, int value)
 extern "C" ::CIMParameter
 CIMParameterNewRef(NPIHandle* npiHandle, const char* name, ::CIMObjectPath value)
 {
-	(void)npiHandle;
 	::CIMParameter mycp = { NULL};
 	// Sanity check
 	if (name == NULL)
@@ -371,7 +356,6 @@ CIMParameterNewRef(NPIHandle* npiHandle, const char* name, ::CIMObjectPath value
 extern "C" char*
 CIMParameterGetString(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	(void)npiHandle;
 	try {
 		CIMParamValue* pcpv = static_cast<CIMParamValue *> (cp.ptr);
 		String value = pcpv->getValue().toString();
@@ -386,7 +370,6 @@ CIMParameterGetString(NPIHandle* npiHandle, ::CIMParameter cp)
 extern "C" int
 CIMParameterGetIntegerValue(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	(void)npiHandle;
 	int value;
 	try {
 		CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
@@ -401,7 +384,6 @@ CIMParameterGetIntegerValue(NPIHandle* npiHandle, ::CIMParameter cp)
 extern "C" ::CIMObjectPath
 CIMParameterGetRefValue(NPIHandle* npiHandle, ::CIMParameter cp)
 {
-	(void)npiHandle;
 	::CIMObjectPath cop = { NULL};
 	try {
 		CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
@@ -422,7 +404,6 @@ CIMParameterGetRefValue(NPIHandle* npiHandle, ::CIMParameter cp)
 extern "C" ::CIMInstance
 CIMClassNewInstance(NPIHandle* npiHandle, ::CIMClass cc)
 {
-	(void)npiHandle;
 	::CIMInstance ci ={ NULL};
 	try {
 		OpenWBEM::CIMClass * owcc = static_cast<OpenWBEM::CIMClass *>(cc.ptr);
@@ -440,7 +421,6 @@ extern "C" void
 CIMInstanceSetStringProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const char* value )
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 
@@ -477,7 +457,6 @@ extern "C" void
 CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const int value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 	
@@ -496,7 +475,6 @@ extern "C" void
 CIMInstanceSetLongProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const long long value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 	try {
@@ -515,7 +493,6 @@ extern "C" void
 CIMInstanceSetBooleanProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const unsigned char value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 	try {
@@ -534,7 +511,6 @@ extern "C" void
 CIMInstanceSetRefProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, ::CIMObjectPath value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 	try {
@@ -573,7 +549,6 @@ extern "C" void
 CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const char* value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
 	try {
@@ -607,7 +582,6 @@ extern "C" char*
 CIMInstanceGetStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name, const int pos)
 {
-	(void)npiHandle;
 	char * result = NULL;
 	// Sanity check
 	if (name == NULL) return result;
@@ -633,7 +607,6 @@ extern "C" int
 CIMInstanceGetStringArrayPropertySize(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return -1;
 	if (strlen(name) == 0) return -1;
@@ -660,7 +633,6 @@ extern "C" char*
 CIMInstanceGetStringValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return NULL;
 	try {	
@@ -684,7 +656,6 @@ extern "C" int
 CIMInstanceGetIntegerValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return 0;
 	if (strlen(name) == 0) return 0;
@@ -717,7 +688,6 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, ::CIMInstance ci,
 extern "C" ::CIMObjectPath
 CIMInstanceGetRefValue(NPIHandle* npiHandle, ::CIMInstance ci, const char* name)
 {
-	(void)npiHandle;
 	::CIMObjectPath cop = {NULL};
 	// Sanity check
 	if (name == NULL) return cop;
@@ -742,7 +712,6 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, ::CIMInstance ci, const char* name)
 extern "C" ::CIMObjectPath
 CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 {
-	(void)npiHandle;
 	::CIMObjectPath cop = {NULL};	
 	try {
 		String className(classname);
@@ -761,7 +730,6 @@ CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 extern "C" ::CIMObjectPath
 CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, ::CIMInstance ci)
 {
-	(void)npiHandle;
 	::CIMObjectPath cop = {NULL};
 	try {
 		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
@@ -778,7 +746,6 @@ CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, ::CIMInstance ci)
 extern "C" char*
 CIMObjectPathGetClassName(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
-	(void)npiHandle;
 	try {
 		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *> (cop.ptr);
 		return ref->getClassName().allocateCString();
@@ -791,7 +758,6 @@ CIMObjectPathGetClassName(NPIHandle* npiHandle, ::CIMObjectPath cop)
 extern "C" char*
 CIMObjectPathGetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
-	(void)npiHandle;
 	try {
 		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 		return ref->getNameSpace().allocateCString();
@@ -805,7 +771,6 @@ extern "C" void
 CIMObjectPathSetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* str)
 {
-	(void)npiHandle;
 	try {	
 		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 		ref->setNameSpace(String(str));
@@ -819,7 +784,6 @@ CIMObjectPathSetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop,
 extern "C" void CIMObjectPathSetNameSpaceFromCIMObjectPath(
 	NPIHandle* npiHandle, ::CIMObjectPath cop, ::CIMObjectPath src)
 {
-	(void)npiHandle;
 	try {
 		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 		OpenWBEM::CIMObjectPath * rsrc = static_cast<OpenWBEM::CIMObjectPath *>(src.ptr);
@@ -835,7 +799,6 @@ extern "C" char*
 CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	::CIMObjectPath cop, const char* key)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (key == NULL) return NULL;
 	if (strlen(key) == 0) return NULL;
@@ -892,7 +855,6 @@ extern "C" void
 CIMObjectPathAddStringKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* key, const char* value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
@@ -913,7 +875,6 @@ extern "C" int
 CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	::CIMObjectPath cop, const char* key)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (key == NULL) return -1;
 	if (strlen(key) == 0) return -1;
@@ -961,7 +922,6 @@ extern "C" void
 CIMObjectPathAddIntegerKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* key, const int value)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
@@ -981,7 +941,6 @@ extern "C" ::CIMObjectPath
 CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* key)
 {
-	(void)npiHandle;
 	// Sanity check
 	::CIMObjectPath cop2 = {NULL};
 	if (key == NULL) return cop2;
@@ -1016,7 +975,6 @@ extern "C" void
 CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* key, ::CIMObjectPath cop2)
 {
-	(void)npiHandle;
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
@@ -1036,7 +994,6 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 extern "C" char * 
 SelectExpGetSelectString(NPIHandle* npiHandle, ::SelectExp sxp)
 {
-	(void)npiHandle;
 	try {
 		WQLSelectStatement * wf =
 			 static_cast<WQLSelectStatement *>(sxp.ptr);
@@ -1052,7 +1009,6 @@ SelectExpGetSelectString(NPIHandle* npiHandle, ::SelectExp sxp)
 extern "C" ::CIMClass
 CIMOMGetClass(NPIHandle* npiHandle, ::CIMObjectPath cop, int localOnly)
 {
-	(void)localOnly;
 	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 	String nameSpace = ref->getNameSpace();
 	String className = ref->getClassName();
@@ -1066,7 +1022,6 @@ CIMOMGetClass(NPIHandle* npiHandle, ::CIMObjectPath cop, int localOnly)
 extern "C" ::Vector
 CIMOMEnumInstanceNames(NPIHandle* npiHandle, ::CIMObjectPath cop, int i)
 {
-	(void)i;
 	Vector v = VectorNew(npiHandle);
 	try {
 		OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
@@ -1091,8 +1046,6 @@ CIMOMEnumInstanceNames(NPIHandle* npiHandle, ::CIMObjectPath cop, int i)
 extern "C" ::Vector
 CIMOMEnumInstances(NPIHandle* npiHandle, ::CIMObjectPath cop, int i, int j)
 {
-	(void)i;
-	(void)j;
 	Vector v = VectorNew(npiHandle);
 	try {
 		OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
@@ -1133,7 +1086,6 @@ extern "C" void
 CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
 		::CIMInstance indication)
 {
-	(void)ns;
 	ProviderEnvironmentIFCRef * provenv =
 		static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 	OpenWBEM::CIMInstance * ow_indication =
@@ -1156,7 +1108,6 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 			::CIMInstance indication, 
 						  ::CIMInstance source, ::CIMInstance previous)
 {
-	(void)ns;
 	ProviderEnvironmentIFCRef * provenv =
 		static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 	OpenWBEM::CIMInstance * ow_indication =
@@ -1234,8 +1185,6 @@ CIMOMDetachThread(NPIHandle* npiHandle)
 extern "C" char*
 _ObjectToString(NPIHandle* npiHandle, void* co)
 {
-	(void)npiHandle;
-	(void)co;
 	return 0;
 // is not supported
 }

@@ -51,7 +51,6 @@ void WQLImpl::evaluate(const String& nameSpace,
 	const String& query, const String& queryLanguage,
 	CIMOMHandleIFCRef hdl)
 {
-	(void)queryLanguage;
 	MutexLock lock(classLock);
 	// set up the parser's input
 	parserInput = query.c_str();

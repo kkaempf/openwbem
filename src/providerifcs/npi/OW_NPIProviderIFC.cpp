@@ -129,7 +129,6 @@ NPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 IndicationExportProviderIFCRefArray
 NPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	//loadNoIdProviders(env);
 	IndicationExportProviderIFCRefArray rvra;
 	//for(size_t i = 0; i < m_noidProviders.size(); i++)
@@ -149,7 +148,6 @@ NPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& 
 PolledProviderIFCRefArray
 NPIProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	loadNoIdProviders(env);
 	PolledProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)

@@ -422,7 +422,6 @@ public:
 
 	void doHandle(const CIMObjectPath& cop)
 	{
-		(void)cop;
 	}
 private:
 	String m_ns;
@@ -438,7 +437,6 @@ public:
 
 	void doHandle(const CIMInstance& inst)
 	{
-		(void)inst;
 	}
 private:
 	String m_ns;
@@ -761,7 +759,6 @@ public:
 
 	void doHandle(const CIMClass& cls)
 	{
-		(void)cls;
 	}
 
 	void doHandle(const String& clsName)

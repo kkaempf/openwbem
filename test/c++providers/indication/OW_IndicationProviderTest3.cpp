@@ -145,7 +145,6 @@ public:
 
 		WQLCompile comp(filter);
 		// do something with comp
-		(void)comp;
 
 		if (firstActivation)
 		{
@@ -202,7 +201,6 @@ public:
 
 		WQLCompile comp(filter);
 		// do something with comp
-		(void)comp;
 		
 		if (lastActivation)
 		{
@@ -278,7 +276,6 @@ public:
 		const StringArray *propertyList, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)cimClass;
 		env->getLogger()->logDebug("IndicationProviderTest3::getInstance");
 		Int32 id = 0;
 		try
@@ -312,7 +309,6 @@ public:
 		const CIMClass &requestedClass, 
 		const CIMClass &cimClass) 
 	{
-		(void)ns; (void)className;
 		env->getLogger()->logDebug("IndicationProviderTest3::enumInstances");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
@@ -329,7 +325,6 @@ public:
 		CIMObjectPathResultHandlerIFC &result, 
 		const CIMClass &cimClass) 
 	{
-		(void)className; (void)cimClass;
 		env->getLogger()->logDebug("IndicationProviderTest3::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
@@ -348,7 +343,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Modify not supported");
 	}
 

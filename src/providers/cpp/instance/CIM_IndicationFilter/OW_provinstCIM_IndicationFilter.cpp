@@ -101,8 +101,6 @@ public:
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
 			EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 	{
-		(void)previousInstance;
-		(void)theClass;
 		if (!indicationsEnabled)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
@@ -116,20 +114,17 @@ public:
 	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &cimClass)
 	{
-		(void)cimClass;
 		return env->getRepositoryCIMOMHandle()->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
 	virtual void enumInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
 			EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 	{
-		(void)requestedClass; (void)cimClass;
 		RepositoryIFCRef rephdl = env->getRepository();
 		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList, E_DONT_ENUM_SUBCLASSES, env->getOperationContext());
 	}
 	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMObjectPathResultHandlerIFC &result,
 			const CIMClass &cimClass)
 	{
-		(void)cimClass;
 		RepositoryIFCRef rephdl = env->getRepository();
 		rephdl->enumInstanceNames(ns,className,result, E_SHALLOW, env->getOperationContext());
 	}

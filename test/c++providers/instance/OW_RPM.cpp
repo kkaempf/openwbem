@@ -115,9 +115,6 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		(void)cimClass;
-		(void)env;
-
 		String cmd = "/usr/bin/apt-cache search .*";
 		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
@@ -218,10 +215,6 @@ public:
 		const StringArray* propertyList, 
 		const CIMClass& cimClass )
 	{
-		(void)env;
-		(void)ns;
-		(void)cimClass;
-
 		CIMInstance rval = cimClass.newInstance();
 		rval.setProperties(instanceName.getKeys());
 
@@ -249,9 +242,6 @@ public:
 		const CIMInstance& cimInstance )
 	{
 		// not applicable with our apt implementation.
-		(void)env;
-		(void)ns;
-		(void)cimInstance;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
 
@@ -266,13 +256,6 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		(void)env;
-		(void)ns;
-		(void)modifiedInstance;
-		(void)previousInstance;
-		(void)includeQualifiers;
-		(void)propertyList;
-		(void)theClass;
 		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 
@@ -284,9 +267,6 @@ public:
 		const CIMObjectPath& cop)
 	{
 		// not applicable with our apt implementation.
-		(void)env;
-		(void)ns;
-		(void)cop;
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -299,11 +279,6 @@ public:
 		const CIMParamValueArray& in,
 		CIMParamValueArray& out )
 	{
-		(void)env;
-		(void)ns;
-		(void)out;
-		(void)in;
-
 		String pkgName;
 		CIMPropertyArray props = path.getKeys();
 		for (CIMPropertyArray::const_iterator iter = props.begin();

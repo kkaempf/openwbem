@@ -94,7 +94,6 @@ public:
 	// name is not unescaped (implementation has to do it if necessary)
 	virtual void endElement(const StringBuffer &name)
 	{
-		(void)name;
 		// at the end of the element, we just need to pop a node
 		// off the stack
 		m_nodeArray.pop_back();

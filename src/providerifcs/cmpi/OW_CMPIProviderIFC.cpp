@@ -185,7 +185,6 @@ CMPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 IndicationExportProviderIFCRefArray
 CMPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	//loadNoIdProviders(env);
 	IndicationExportProviderIFCRefArray rvra;
 	//for(size_t i = 0; i < m_noidProviders.size(); i++)
@@ -206,7 +205,6 @@ CMPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef&
 PolledProviderIFCRefArray
 CMPIProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
-	(void)env;
 	//loadNoIdProviders(env);
 	PolledProviderIFCRefArray rvra;
 
@@ -277,9 +275,6 @@ IndicationProviderIFCRef
 CMPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	(void) env;
-	(void) provIdString;
-
 #if 0
 	CMPIFTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)

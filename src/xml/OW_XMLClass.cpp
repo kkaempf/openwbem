@@ -153,7 +153,6 @@ readClass(CIMXMLParser& childNode, CIMObjectPath& path)
 CIMInstance
 readInstance(CIMXMLParser& childNode, CIMObjectPath& path)
 {
-	(void)path;
 	CIMInstance cimInstance = XMLCIMFactory::createInstance(childNode);
 	return cimInstance;
 }

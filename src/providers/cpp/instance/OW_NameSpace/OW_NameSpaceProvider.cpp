@@ -257,7 +257,6 @@ NameSpaceProvider::enumInstances(
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass)
 {
-	(void)className; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
 	NameSpaceEnumBuilder handler(result, cimClass);
 	enumNameSpace(env, ns, handler, false);
 }
@@ -273,7 +272,6 @@ NameSpaceProvider::getInstance(
 		const StringArray* propertyList,
 		const CIMClass& cimClass)
 {
-	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	CIMProperty cp = instanceName.getKey(CIMProperty::NAME_PROPERTY);
 	CIMValue nsVal(CIMNULL);
 	if (cp)
@@ -351,7 +349,6 @@ NameSpaceProvider::modifyInstance(
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 {
-	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	OW_THROWCIMMSG(CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

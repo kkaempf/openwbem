@@ -42,7 +42,7 @@ namespace OpenWBEM
 //
 // Terminal element methods 
 //
-void WQLCompile::term_el::negate(void)
+void WQLCompile::term_el::negate()
 {
 	switch (op)
 	{
@@ -98,7 +98,7 @@ void WQLCompile::eval_el::assign_unary_to_second(const WQLCompile::eval_el & ass
 }
 // Ordering operators, so that op1 > op2 for all non-terminals
 // and terminals appear in the second operand first
-void WQLCompile::eval_el::order(void)
+void WQLCompile::eval_el::order()
 {
 	if ((is_terminal1 == EVAL_HEAP) && (is_terminal2 == EVAL_HEAP))
 	{
@@ -474,7 +474,7 @@ void WQLCompile::_pushNOTDown()
 		}
 	}
 }
-void WQLCompile::_factoring(void)
+void WQLCompile::_factoring()
 {
 	int i = 0,n = eval_heap.size();
 	//for (int i=eval_heap.size()-1; i >= 0; i--)

@@ -168,7 +168,6 @@ WQLFilterRep::getInstance(const String&, const CIMObjectPath&,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
 	OperationContext&)
 {
-	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -182,7 +181,6 @@ WQLFilterRep::enumClasses(const String& ns,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, OperationContext&)
 {
-	(void)ns; (void)className; (void)result; (void)deep; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -215,8 +213,6 @@ WQLFilterRep::enumInstances(
 			// Don't need to do correct localOnly & deep processing.
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 			//	includeClassOrigin, propertyList));
-			(void)deep; (void)localOnly; (void)includeQualifiers;
-			(void)includeClassOrigin; (void)propertyList; (void)enumSubclasses;
 			// This is more efficient
 			result.handle(m_inst);
 			break;
@@ -257,7 +253,6 @@ WQLFilterRep::modifyInstance(
 	const StringArray* propertyList,
 	OperationContext&)
 {
-	(void)ns; (void)modifiedInstance; (void)includeQualifiers; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -316,7 +311,6 @@ WQLFilterRep::associators(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList, OperationContext&)
 {
-	(void)ns; (void)path; (void)result; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -331,7 +325,6 @@ WQLFilterRep::associatorsClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList, OperationContext&)
 {
-	(void)ns; (void)path; (void)result; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -370,7 +363,6 @@ WQLFilterRep::references(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList, OperationContext&)
 {
-	(void)ns; (void)path; (void)result; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
@@ -384,7 +376,6 @@ WQLFilterRep::referencesClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList, OperationContext&)
 {
-	(void)ns; (void)path; (void)result; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }

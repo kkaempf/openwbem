@@ -108,8 +108,8 @@ public:
 	return *this;
   }
 };
-typedef ::FTABLE (*FP_INIT_FT) (void);
-typedef NPIFTABLE (*NPIFP_INIT_FT) (void);
+typedef ::FTABLE (*FP_INIT_FT) ();
+typedef NPIFTABLE (*NPIFP_INIT_FT) ();
 typedef SharedLibraryReference< Reference<NPIFTABLE> > FTABLERef;
 
 } // end namespace OpenWBEM

@@ -66,7 +66,6 @@ void TestResult::addFailure (Test *test, CppUnitException *e)
 // Informs the result that a test will be started.
 void TestResult::startTest (Test *test)
 {
-	(void)test;
 	ExclusiveZone zone (m_syncObject); 
 	m_runTests++;
 }
@@ -75,7 +74,6 @@ void TestResult::startTest (Test *test)
 // Informs the result that a test was completed.
 void TestResult::endTest (Test *test)
 {
-	(void)test;
 	ExclusiveZone zone (m_syncObject);
 }
 

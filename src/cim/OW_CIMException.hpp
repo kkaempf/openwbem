@@ -98,7 +98,7 @@ public:
 	~CIMException() throw();
 	void swap(CIMException& x);
 	CIMException(const CIMException& x);
-	CIMException& operator=(CIMException x);
+	CIMException& operator=(const CIMException& x);
 	
 	ErrNoType getErrNo() const {  return ErrNoType(getErrorCode()); }
 	void setErrNo(ErrNoType e) { setErrorCode(e); }

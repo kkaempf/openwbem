@@ -1176,7 +1176,6 @@ IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& su
 void
 IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst)
 {
-	(void)ns;(void)filterInst;
 	// If this were to update the filters, it would be quite a bit of work.
 	// Basically all the subscriptions that use the old filter would have to
 	// be unregistered, and then re-registered with the new filter.  If any

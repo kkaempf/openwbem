@@ -55,7 +55,6 @@ class GetLoginInfo : public ClientAuthCBIFC
 		bool getCredentials(const String& realm, String& name,
 				String& passwd, const String& details)
 		{
-			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
 			name = String::getLine(cin);
