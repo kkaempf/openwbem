@@ -49,6 +49,11 @@
 #include <fstream>
 #include <unistd.h>
 
+// NetWare's LIBC defined gethostname in netdb.h instead of unistd.h
+#ifdef OW_NETWARE
+#include <netdb.h>
+#endif
+
 using namespace OpenWBEM;
 using namespace WBEMFlags;
 
