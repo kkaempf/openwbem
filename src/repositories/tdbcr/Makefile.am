@@ -15,22 +15,29 @@ libowrepositorytdbcr.a
 
 thelibdir = $(libdir)
 
+SHAREDLIBADD = \
+-ldb
+
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_S=
 else
 ASSOCIATION_S= \
-OW_AssocDb.cpp \
-OW_AssocDb.hpp
+OW_AssocDb2.cpp \
+OW_AssocDb2.hpp
 endif
 
 libowrepositorytdbcr_a_SOURCES = \
 $(ASSOCIATION_S) \
-OW_CIMRepository.cpp \
-OW_CIMRepository.hpp \
-OW_InstanceRepository.cpp \
-OW_InstanceRepository.hpp \
-OW_MetaRepository.cpp \
-OW_MetaRepository.hpp
+OW_CIMRepository2.cpp \
+OW_CIMRepository2.hpp \
+OW_InstanceRepository2.cpp \
+OW_InstanceRepository2.hpp \
+OW_MetaRepository2.cpp \
+OW_MetaRepository2.hpp \
+OW_dbDatabase.hpp \
+OW_dbDatabase.cpp \
+OW_dbUtils.hpp \
+OW_dbUtils.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
