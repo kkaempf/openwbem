@@ -51,6 +51,7 @@ static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc)
 	//nRef->setKeys(ref->getKeys());
 	OpenWBEM::CIMObjectPath *nRef = new OpenWBEM::CIMObjectPath(* ref);
 	CMPIObjectPath* neRef=(CMPIObjectPath*)new CMPI_Object(nRef,CMPI_ObjectPath_Ftab);
+
 	CMSetStatus(rc,CMPI_RC_OK);
 	return neRef;
 }
@@ -127,10 +128,7 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc)
 	OpenWBEM::CIMProperty cpr = ref->getKey(eName);
 	CMPIData data = {(CMPIType) 0, CMPI_nullValue, CMPIValue()};
 
-	if(rc)
-	{
-		CMSetStatus(rc,CMPI_RC_OK);
-	}
+	CMSetStatus(rc,CMPI_RC_OK);
 
 	if(cpr)
 	{

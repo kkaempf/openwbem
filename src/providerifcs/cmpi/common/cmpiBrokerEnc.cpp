@@ -62,7 +62,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 
 	CMPIInstance * neInst = (CMPIInstance *)new CMPI_Object(
 					new OpenWBEM::CIMInstance(ci));
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return neInst;
 }
 
@@ -77,7 +77,7 @@ static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *ns, char *cls,
 	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
 
 	CMPIObjectPath * nePath = (CMPIObjectPath*)new CMPI_Object(cop);
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return nePath;
 }
 
@@ -85,7 +85,7 @@ static CMPIArgs* mbEncNewArgs(CMPIBroker* mb, CMPIStatus *rc)
 {
 	(void) mb;
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIArgs*)new CMPI_Object(new OpenWBEM::Array<OpenWBEM::CIMParamValue>());
 }
 
@@ -93,7 +93,7 @@ static CMPIString* mbEncNewString(CMPIBroker* mb, char *cStr, CMPIStatus *rc)
 {
 	(void) mb;
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return (CMPIString*)new CMPI_Object(cStr);
 }
 
@@ -107,7 +107,7 @@ static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
 	(void) mb;
 
 	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewArray()");
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
 	dta->value.uint32 = count;
@@ -125,7 +125,7 @@ static CMPIDateTime* mbEncNewDateTime(CMPIBroker* mb, CMPIStatus *rc)
 {
 	(void) mb;
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime();
 }
 
@@ -136,7 +136,7 @@ static CMPIDateTime* mbEncNewDateTimeFromBinary(CMPIBroker* mb,
 {
 	(void) mb;
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(time,interval);
 }
 
@@ -147,7 +147,7 @@ static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker* mb,
 {
 	(void) mb;
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return newDateTime(t);
 }
 
@@ -161,14 +161,14 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	if (obj==NULL)
 	{
 		sprintf(msg,"** Null object ptr (0x%p) **",o);
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*)new CMPI_Object(msg);
 	}
 
 	if (obj->hdl == NULL)
 	{
 		sprintf(msg,"** Null object hdl (0x%p) **",o);
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*)new CMPI_Object(msg);
 	}
 
@@ -177,7 +177,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	{
 		str = ((OpenWBEM::CIMInstance*)obj->hdl)->toString();
 		sprintf(msg,"** Object not supported (0x%x) **",(int)o);
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(msg);
 	}
 	else if (obj->ftab==(void*)CMPI_ObjectPath_Ftab ||
@@ -192,13 +192,13 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 		obj->ftab==(void*)CMPI_Predicate_Ftab)
 	{
 		sprintf(msg,"** Object not supported (0x%p) **",o);
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(msg);
 	} */
 	else 
 	{
 		sprintf(msg,"** Object not recognized (0x%p) **",o);
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(msg);
 	}
 
@@ -236,11 +236,11 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 	char msg[128];
 	if (obj==NULL) {
 		sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
-		if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return 0;
 	}
 																				
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
  
 	if (obj->ftab==(void*)CMPI_Instance_Ftab &&
 		strcmp(type,"CMPIInstance")==0) return 1;
@@ -261,7 +261,7 @@ CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc)
 		strcmp(type,"CMPIArray")==0) return 1;
 																				
 	sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
-	if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return 0;
 }
 
@@ -272,11 +272,11 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 	char msg[128];
 	if (obj==NULL) {
 		sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
-		if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+		CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 		return NULL; 
 	}
 																				
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 																				
 	if (obj->ftab==(void*)CMPI_Instance_Ftab)
 		return mb->eft->newString(mb,"CMPIInstance",rc);
@@ -297,7 +297,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 		return mb->eft->newString(mb,"CMPIArray",rc);
 																				
 	sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
-	if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);
 	return NULL;
 }
 
@@ -306,7 +306,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
 																				
    CMPIValue *val=va_arg(*argptr,CMPIValue*);
    CMPIType type=va_arg(*argptr,int);
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
 																				
    if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_UINT) {
 	 CMPIUint64 u64;
@@ -336,7 +336,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
    else if (type==CMPI_real64)  return Formatter::Arg(val->real64);
    else if (type==CMPI_boolean) return Formatter::Arg((Boolean)val->boolean);
 																				
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
+   CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
    return Formatter::Arg((Boolean)0);
 }
  

@@ -44,7 +44,7 @@ static CMPIEnumeration* enumClone(CMPIEnumeration* eEnum, CMPIStatus* rc)
 //   CIMInstance* enm=(CIMInstance*)eEnum->hdl;
 //   CIMInstance* cInst=new CIMInstance(enum->clone());
 //   CMPIEnumeration* neEnum=(CMPIEnumeration*)new CMPI_Object(cInst,CMPI_Instance_Ftab);
-//   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+//   CMSetStatus(rc,CMPI_RC_OK);
 //   return neEnum;
 	return NULL;
 }
@@ -61,9 +61,12 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 		{
 			data.value.inst=(CMPIInstance*)
 			new CMPI_Object(new OpenWBEM::CIMInstance((*ia)[ie->cursor++]));
-			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
+			CMSetStatus(rc,CMPI_RC_OK);
 		}
-		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		else
+		{
+			CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		}
 	}
 
 	else if ((void*)eEnum->ft==(void*)CMPI_InstEnumeration_Ftab)
@@ -75,9 +78,12 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 		{
 			data.value.inst=(CMPIInstance*)
 			new CMPI_Object(new OpenWBEM::CIMInstance((*ia)[ie->cursor++]));
-			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
+			CMSetStatus(rc,CMPI_RC_OK);
 		}
-		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		else
+		{
+			CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		}
 	}
 
 	else
@@ -89,16 +95,19 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 		{
 			data.value.ref=(CMPIObjectPath*)
 			new CMPI_Object(new OpenWBEM::CIMObjectPath((*opa)[oe->cursor++]));
-			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
+			CMSetStatus(rc,CMPI_RC_OK);
 		}
-		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		else
+		{
+			CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+		}
 	}
 	return data;
 }
 
 CMPIBoolean enumHasNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 {
-	if (rc)	CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	if ((void*)eEnum->ft==(void*)CMPI_ObjEnumeration_Ftab)
 	{
 		CMPI_ObjEnumeration* ie=(CMPI_ObjEnumeration*)eEnum;

@@ -44,7 +44,7 @@ static CMPIInstance* instClone(CMPIInstance* eInst, CMPIStatus* rc) {
    OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    OpenWBEM::CIMInstance* cInst=new OpenWBEM::CIMInstance(inst->clone(E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
    CMPIInstance* neInst=(CMPIInstance*)new CMPI_Object(cInst,CMPI_Instance_Ftab);
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return neInst;
 }
 
@@ -56,7 +56,7 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
    const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
 
    if (pos >= p.size()) {
-	 if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+	 CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 	  return data;
    }
 
@@ -65,14 +65,14 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
 
    CMPIType t=type2CMPIType(pType,v.isArray());
 
-   CMPIrc rrc=value2CMPIData(v,t,&data);
+   CMPIrc rrc = value2CMPIData(v,t,&data);
 
    if (name) {
 	  OpenWBEM::String str=p[pos].getName();
 	  *name=string2CMPIString(str);
    }
 
-   if (rrc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc, rrc);
    return data;
 }
 
@@ -88,10 +88,10 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 	  CMPIType t=type2CMPIType(pType,v.isArray());
 
 	  CMPIrc rrc=value2CMPIData(v,t,&data);
-	  if (rrc) CMSetStatus(rc,CMPI_RC_OK);
+	  CMSetStatus(rc,rrc);
 	  return data;
    }
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+   CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
    return data;
 }
 
@@ -99,7 +99,7 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
 static CMPICount instGetPropertyCount(CMPIInstance* eInst, CMPIStatus* rc) {
    OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return p.size();
 }
 
@@ -129,7 +129,7 @@ static CMPIObjectPath* instGetObjectPath(CMPIInstance* eInst, CMPIStatus* rc) {
    OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    OpenWBEM::CIMObjectPath ref("", *inst);
    CMPIObjectPath *cop=(CMPIObjectPath*)new CMPI_Object(new OpenWBEM::CIMObjectPath(ref));
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return cop;
 }
 

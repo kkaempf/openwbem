@@ -86,20 +86,20 @@ static CMPIDateTime* dtClone(CMPIDateTime* eDt, CMPIStatus* rc) {
    OpenWBEM::CIMDateTime * cDt = new OpenWBEM::CIMDateTime(*dt);
 
    CMPIDateTime* neDt=(CMPIDateTime*)new CMPI_Object(cDt,CMPI_DateTime_Ftab);
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return neDt;
 }
 
 static CMPIBoolean dtIsInterval(CMPIDateTime* eDt, CMPIStatus* rc) {
    OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return dt->isInterval();
 }
 
 static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
    OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    CMPIString *str=(CMPIString*)new CMPI_Object(dt->toString());
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return str;
 }
 

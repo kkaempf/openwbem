@@ -42,13 +42,13 @@ static CMPIString* stringClone(CMPIString *eStr, CMPIStatus* rc) {
    char* newstr=::strdup(str);
    CMPI_Object * obj=new CMPI_Object(newstr,CMPI_String_Ftab);
 //   CMPIRefs::localRefs().addRef(obj,CMPIRefs::TypeString);
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return (CMPIString*)obj;
 }
 
 static char * stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc) {
    char* ptr=(char*)eStr->hdl;
-   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+   CMSetStatus(rc,CMPI_RC_OK);
    return ptr;
 }
 

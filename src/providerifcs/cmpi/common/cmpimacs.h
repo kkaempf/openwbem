@@ -67,11 +67,11 @@
       @param msg the message as character string
       @return This macro contains a return statement and leaves the function.
    */
- noReturn CMReturnWithChars(CMPIBroker *mb, CMPIrc rc, char *msg);
+noReturn CMReturnWithChars(CMPIBroker *mb, CMPIrc rc, char *msg);
 #else
 #define CMReturnWithChars(b,rc,chars) \
-      { CMPIStatus stat={(rc),NULL}; \
-         stat.msg=(b)->eft->newString((b),(chars),NULL); \
+      { CMPIStatus stat = {(rc),NULL}; \
+         stat.msg = (b)->eft->newString((b),(chars),NULL); \
          return stat; }
 #endif
 
@@ -82,10 +82,20 @@
       @param rcp CMPI return code
   */
 inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
-      { (st)->rc=(rcp); (st)->msg=NULL; }
+{
+	if(st)
+	{
+		st->rc = rcp;
+		st->msg = NULL;
+	}
+}
+
 #else
 #define CMSetStatus(st,rcp) \
-      { (st)->rc=(rcp); (st)->msg=NULL; }
+if((st)) { \
+	(st)->rc=(rcp); \
+	(st)->msg=NULL; \
+}
 #endif
 
 
@@ -96,12 +106,21 @@ inline static  void CMSetStatus(CMPIStatus* st, CMPIrc rcp)
       @param rcp CMPI return code
       @param string Message string
   */
-inline static   void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st, CMPIrc rcp,
-                                  CMPIString *string)
-      { (st)->rc=(rcp); (st)->msg=(string); }
+inline static void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st,
+	CMPIrc rcp, CMPIString *str)
+{
+	if(st)
+	{
+		st->rc = rcp;
+		st->msg = str;
+	}
+}
 #else
 #define CMSetStatusWithString(st,rcp,string) \
-      { (st)->rc=(rcp); (st)->msg=(string); }
+if((st)) { \
+	(st)->rc=(rcp); \
+	(st)->msg=(string); \
+}
 #endif
 
 
@@ -112,14 +131,21 @@ inline static   void CMSetStatusWithString(CMPIBroker *mb, CMPIStatus *st, CMPIr
       @param rcp CMPI return code
       @param chars Message character string
   */
-inline static   void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st, CMPIrc rcp,
-                                 char* chars)
-      { (st)->rc=(rcp);
-        (st)->msg=(mb)->eft->newString((mb),(chars),NULL); }
+inline static void CMSetStatusWithChars(CMPIBroker *mb, CMPIStatus* st,
+	CMPIrc rcp, char* chars)
+{
+	if(st)
+	{
+		st->rc = rcp;
+		st->msg= mb->eft->newString(mb,(chars),NULL);
+	}
+}
 #else
 #define CMSetStatusWithChars(mb,st,rcp,chars) \
-      { (st)->rc=(rcp); \
-        (st)->msg=(mb)->eft->newString((mb),(chars),NULL); }
+if((st)) { \
+	(st)->rc=(rcp); \
+    (st)->msg=(mb)->eft->newString((mb),(chars),NULL); \
+}
 #endif
 
 #ifndef DOC_ONLY

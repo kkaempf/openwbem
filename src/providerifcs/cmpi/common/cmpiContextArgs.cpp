@@ -49,7 +49,7 @@ static CMPIArgs* argsClone(CMPIArgs* eArg, CMPIStatus* rc)
 		cArg->append(pv);
 	}
 	CMPIArgs* neArg=(CMPIArgs*)new CMPI_Object(cArg,CMPI_ObjectPath_Ftab);
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return neArg;
 }
 
@@ -86,7 +86,7 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 
 	if (pos > arg->size())
 	{
-		if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+		CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 		return data;
 	}
 
@@ -102,7 +102,7 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 		*name=string2CMPIString(n);
 	}
 
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return data;
 }
 
@@ -115,14 +115,14 @@ static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 	if (i>=0) return argsGetArgAt(eArg,i,NULL,rc);
 
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
-	if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+	CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
 	return data;
 }
 
 static CMPICount argsGetArgCount(CMPIArgs* eArg, CMPIStatus* rc)
 {
 	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return arg->size();
 }
 

@@ -185,10 +185,7 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 			pProps
 			);
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
+		CMSetStatus(rc,CMPI_RC_OK);
 
 		return (CMPIInstance*) new CMPI_Object(new OpenWBEM::CIMInstance(ci));
 	}
@@ -198,19 +195,12 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 			"mbGetInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbGetInstance");
-
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
 
 	return NULL;
@@ -221,11 +211,7 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 {
 	(void) ctx;
 
-	if(rc)
-	{
-		CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-	}
-
+	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbCreateInstance()");
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -235,10 +221,7 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ObjectPath(cop)->getNameSpace(),
 			*CM_Instance(ci));
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
+		CMSetStatus(rc,CMPI_RC_OK);
 
 		return (CMPIObjectPath*)
 			new CMPI_Object(new OpenWBEM::CIMObjectPath(ncop));
@@ -249,19 +232,13 @@ static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
 			"mCreateInstance code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbCreateInstance");
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
 
 #endif
@@ -359,8 +336,7 @@ static CMPIEnumeration* mbExecQuery(CMPIBroker *mb, CMPIContext *ctx,
 			OpenWBEM::String(query),
 			OpenWBEM::String(lang));
 
-		if(rc)
-			CMSetStatus(rc,CMPI_RC_OK);
+		CMSetStatus(rc,CMPI_RC_OK);
 
 		return new CMPI_ObjEnumeration(
 			new OpenWBEM::Array<OpenWBEM::CIMInstance>(cia));
@@ -371,15 +347,13 @@ static CMPIEnumeration* mbExecQuery(CMPIBroker *mb, CMPIContext *ctx,
 			"mbExecQuery code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbExecQuery");
 
-		if(rc)
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
 	return NULL;
 }
@@ -411,11 +385,7 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 			pProps
 			);
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_InstEnumeration( new OpenWBEM::CIMInstanceArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -424,27 +394,17 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 			"mbEnumInstances code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbEnumInstances");
-		if(rc)
-		{
-			CMSetStatus(rc, CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc, CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
-	if(rc)
-	{
-		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
-	}
-
+	CMSetStatus(rc, CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -465,11 +425,7 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ObjectPath(cop)->getClassName(),
 			result);
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_OpEnumeration( new OpenWBEM::CIMObjectPathArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -477,27 +433,17 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbEnumInstanceNames code: %1, msg %2",
 			e.type(), e.getMessage()));
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbEnumInstanceNames");
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
-	if(rc)
-	{
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-	}
-
+	CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -532,11 +478,7 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pProps);
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_ObjEnumeration( new OpenWBEM::CIMInstanceArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -545,29 +487,19 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 			"mbAssociators code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbAssociators");
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
 #endif
 
-	if (rc)
-	{
-		CMSetStatus(rc, CMPI_RC_ERR_FAILED);
-	}
-
+	CMSetStatus(rc, CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -594,9 +526,7 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
 			OpenWBEM::String(role),
 			OpenWBEM::String(resultRole));
 
-		if(rc)
-			CMSetStatus(rc,CMPI_RC_OK);
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_OpEnumeration(new OpenWBEM::CIMObjectPathArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -605,30 +535,20 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
 			"mbAssociatorNames code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbAssociatorNames");
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
 #endif
 
-	if (rc)
-	{
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-	}
-
+	CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -661,11 +581,7 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			pProps);
 
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_OK);
-		}
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_ObjEnumeration(new OpenWBEM::CIMInstanceArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -674,31 +590,20 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 			"mbReferences code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbReferences");
-
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
 
 #endif
 
-	if (rc)
-	{
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-	}
-
+	CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -723,9 +628,7 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
 			OpenWBEM::String(resultClass),
 			OpenWBEM::String(role));
 
-		if(rc)
-			CMSetStatus(rc,CMPI_RC_OK);
-
+		CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_OpEnumeration(new OpenWBEM::CIMObjectPathArray(cia));
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -734,28 +637,19 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
 			"mbReferenceNames code: %1, msg %2",
 			e.type(), e.getMessage()));
 
-		if(rc)
-		{
-			CMSetStatus(rc,(CMPIrc)e.getErrNo());
-			rc = NULL;
-		}
-
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbReferenceNames");
-		if(rc)
-		{
-			CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
-			rc = NULL;
-		}
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		rc = NULL;	// Ensure rc doesn't get changed later
 	}
 
 #endif
 
-	if (rc)
-		CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-
+	CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
 
@@ -771,12 +665,8 @@ static CMPIData mbInvokeMethod(CMPIBroker *mb, CMPIContext *ctx,
 	(void) out;
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbInvokeMethod()");
-
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue()};
-
-	if(rc)
-		CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-
+	CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
 	return data;
 }
 
@@ -837,7 +727,7 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 		OpenWBEM::CIMDataType vType=v.getType();
 		CMPIType t=type2CMPIType(vType,v.isArray());
 		value2CMPIData(v,t,&data);
-		if(rc) CMSetStatus(rc,CMPI_RC_OK);
+		CMSetStatus(rc,CMPI_RC_OK);
 		return data;
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -845,12 +735,12 @@ static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbGetProperty code: %1, msg %2",
 			e.type(), e.getMessage()));
-		if(rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		CMSetStatus(rc,(CMPIrc)e.getErrNo());
 	}
 	catch(...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbGetProperty");
-		if(rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
 	return data;
 }

@@ -70,7 +70,8 @@ static CMPIArray* arrayClone(CMPIArray* eArray, CMPIStatus* rc)
 			}
 		}
 	}
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+
+	CMSetStatus(rc, CMPI_RC_OK);
 	return nArray;
 }
 
@@ -78,11 +79,11 @@ static CMPIData arrayGetElementAt(CMPIArray* eArray, CMPICount pos,
 					 CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc, CMPI_RC_OK);
 	if (pos<dta->value.uint32) return dta[pos+1];
 
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
-	if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+	CMSetStatus(rc, CMPI_RC_ERR_NOT_FOUND);
 	return data;
 }
 
@@ -111,14 +112,14 @@ static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
 static CMPICount arrayGetSize(CMPIArray* eArray, CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return dta->value.uint32;
 }
 
 static CMPIType arrayGetType(CMPIArray* eArray, CMPIStatus* rc)
 {
 	CMPIData * dta=(CMPIData *)eArray->hdl;
-	if (rc) CMSetStatus(rc,CMPI_RC_OK);
+	CMSetStatus(rc,CMPI_RC_OK);
 	return dta->type;
 }
 
