@@ -44,7 +44,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-void OW_RefSwap(T& x, T&y)
+inline void OW_RefSwap(T& x, T&y)
 {
     T t = x;
     x = y;
