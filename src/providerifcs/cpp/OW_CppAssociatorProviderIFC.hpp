@@ -32,7 +32,7 @@
 #define OW_CPP_ASSOCIATORPROVIDERIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_CppProviderBaseIFC.hpp"
+#include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 
@@ -43,7 +43,7 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
+class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 {
 	public:
 		virtual ~OW_CppAssociatorProviderIFC();

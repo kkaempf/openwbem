@@ -30,7 +30,8 @@
 
 #include "OW_config.h"
 #include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_Exception.hpp"
+#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
+#include "OW_CppSimpleInstanceProviderIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_String.hpp"
 #include "OW_Bool.hpp"
@@ -39,6 +40,7 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_CIMException.hpp"
 
 #include <fstream>
 
@@ -67,7 +69,7 @@ namespace
 		}
 	}
 
-	class OW_AssociatorTest : public OW_CppAssociatorProviderIFC
+	class OW_AssociatorTest : public OW_CppAssociatorProviderIFC, public OW_CppSimpleInstanceProviderIFC
 	{
 	public:
 		~OW_AssociatorTest();
@@ -248,6 +250,68 @@ namespace
 
 		virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
 
+		virtual void doSimpleEnumInstances(
+			const OW_ProviderEnvironmentIFCRef &env, 
+			const OW_String &ns, 
+			const OW_CIMClass &cimClass, 
+			OW_CIMInstanceResultHandlerIFC &result,
+			EPropertiesFlag propertiesFlag)
+		{
+			(void)propertiesFlag;
+			env->getLogger()->logDebug("OW_AssociatorTest doSimpleEnumInstances called ");
+
+			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+
+			try
+			{
+				OW_CIMInstanceEnumeration insts1e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem", true, false);
+				OW_CIMInstanceArray insts1;
+				while (insts1e.hasMoreElements())
+				{
+					insts1.push_back(insts1e.nextElement());
+				}
+				OW_CIMInstanceEnumeration insts2e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem2", true, false);
+				OW_CIMInstanceArray insts2;
+				while (insts2e.hasMoreElements())
+				{
+					insts2.push_back(insts2e.nextElement());
+				}
+
+				// Just assume that all instances are associated!
+				for (size_t i = 0; i < insts1.size(); ++i)
+				{
+					for (size_t j = 0; j < insts2.size(); ++j)
+					{
+						OW_CIMInstance newInstance(cimClass.newInstance());
+						newInstance.setProperty("GroupComponent", OW_CIMValue(OW_CIMObjectPath(ns, insts1[i])));
+
+						newInstance.setProperty("PartComponent", OW_CIMValue(OW_CIMObjectPath(ns, insts2[j])));
+						env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newInstance.toMOF()));
+						result.handle(newInstance);
+					}
+				}
+			}
+			catch (OW_CIMException&)
+			{
+				// just ignore errors for the test.
+			}
+		}
+
+		void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+		{
+			// do nothing.
+		}
+
+		OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &ns, const OW_CIMInstance &inst)
+		{
+			// do nothing.
+			return OW_CIMObjectPath(ns, inst);
+		}
+
+		void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &, const OW_CIMInstance &, OW_Bool , const OW_StringArray *, const OW_CIMClass &)
+		{
+			// do nothing.
+		}
 	};
 
 //////////////////////////////////////////////////////////////////////////////
