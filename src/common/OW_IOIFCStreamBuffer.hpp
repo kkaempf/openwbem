@@ -40,22 +40,15 @@ public:
 	OW_IOIFCStreamBuffer(OW_IOIFC* dev, int bufSize = BASE_BUF_SIZE,
 		const OW_String& direction = "io");
 
-	OW_IOIFCStreamBuffer(const OW_IOIFCStreamBuffer& arg)
-		: OW_BaseStreamBuffer(), m_dev(arg.m_dev) {}
-
 	virtual ~OW_IOIFCStreamBuffer();
 
 	virtual void reset() { initBuffers(); }
 
-	OW_IOIFCStreamBuffer& operator= (const OW_IOIFCStreamBuffer& arg)
-	{
-		m_dev = arg.m_dev;
-		return *this;
-	}
+private:
+	// unimplemented
+	OW_IOIFCStreamBuffer(const OW_IOIFCStreamBuffer& arg);
+	OW_IOIFCStreamBuffer& operator= (const OW_IOIFCStreamBuffer& arg);
 
-	OW_IOIFC* getDevice() const { return m_dev; }
-
-protected:
 	virtual int buffer_to_device(const char* c, int n);
 	virtual int buffer_from_device(char* c, int n);
 

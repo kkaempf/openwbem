@@ -62,7 +62,7 @@ protected:
 	virtual int buffer_to_device(const char *c, int n)
 	{
 		m_buf.append(c, n);
-		return n;
+		return 0;
 	}
 
 private:

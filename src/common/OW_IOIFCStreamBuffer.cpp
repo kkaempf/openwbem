@@ -49,16 +49,23 @@ OW_IOIFCStreamBuffer::~OW_IOIFCStreamBuffer()
 int
 OW_IOIFCStreamBuffer::buffer_from_device(char* c, int n)
 {
-	return m_dev->read(c, n);
+	return m_dev->read(c,n);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
 {
-	if(m_dev->write(c, n) != n)
-		return -1;
-	else
-		return 0;
+	while (n > 0)
+	{
+		int cnt = m_dev->write(c, n);
+		if (cnt == -1) // failure
+		{
+			return -1;
+		}
+		c += cnt;
+		n -= cnt;
+	}
+	return 0;
 }
 
