@@ -100,6 +100,9 @@ typedef SharedLibraryReference<Reference<RequestHandlerIFC> > RequestHandlerIFCR
 typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 
+class AuthorizerIFC; 
+typedef SharedLibraryReference<Reference<AuthorizerIFC> > AuthorizerIFCRef; 
+
 class IndicationRepLayerMediator;
 typedef Reference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
@@ -176,6 +179,7 @@ private:
 	void _createIndicationServer();
 	SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const RepositoryIFCRef& rref);
 	void _clearSelectables();
+	void _loadAuthorizer();
 	void _createAuthorizerManager();
 
 	// Types
@@ -191,6 +195,7 @@ private:
 	mutable Mutex m_monitor;
 	RepositoryIFCRef m_cimRepository;
 	RepositoryIFCRef m_cimServer;
+	AuthorizerIFCRef m_authorizer;
 
 	AuthorizerManagerRef m_authorizerManager;
 	//AuthorizerIFCRef m_authorizer;

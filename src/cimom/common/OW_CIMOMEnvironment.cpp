@@ -63,6 +63,7 @@
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_AuthorizerManager.hpp"
+#include "OW_AuthorizerIFC.hpp"
 
 #include <iostream>
 
@@ -280,7 +281,8 @@ CIMOMEnvironment::startServices()
 		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
 			m_providerManager, m_cimRepository));
-		_createAuthorizerManager();
+		_loadAuthorizer();  // old stuff
+		_createAuthorizerManager();  // new stuff
 		_createAuthManager();
 		_loadRequestHandlers();
 		_loadServices();
@@ -709,6 +711,12 @@ CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
 			rref = RepositoryIFCRef(new SharedLibraryRepository(irl));
 		}
 	}
+	if (m_authorizer)
+	{
+		AuthorizerIFC* p = m_authorizer->clone();
+		p->setSubRepositoryIFC(rref);
+		rref = RepositoryIFCRef(new SharedLibraryRepository(SharedLibraryRepositoryIFCRef(m_authorizer.getLibRef(), RepositoryIFCRef(p))));
+	}
 
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref,
 		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
@@ -801,12 +809,57 @@ CIMOMEnvironment::_getIndicationRepLayer(const RepositoryIFCRef& rref)
 
 //////////////////////////////////////////////////////////////////////////////
 void
+CIMOMEnvironment::_loadAuthorizer()
+{
+	OW_ASSERT(!m_authorizer);
+	String libname = getConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt);
+
+	// no authorization requested
+	if (libname.empty())
+	{
+		return;
+	}
+
+	logDebug(Format("CIMOM loading authorization libary %1",
+					libname));
+	SharedLibraryLoaderRef sll =
+		SharedLibraryLoader::createSharedLibraryLoader();
+	if(!sll)
+	{
+		String msg = Format("CIMOM failed to create SharedLibraryLoader."
+							" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	SharedLibraryRef authorizerLib = sll->loadSharedLibrary(libname, m_Logger);
+	if(!authorizerLib)
+	{
+		String msg = Format("CIMOM failed to load authorization"
+							" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	AuthorizerIFC* p =
+		SafeLibCreate<AuthorizerIFC>::create(
+			authorizerLib, "createAuthorizer", m_Logger);
+	if(!p)
+	{
+		String msg = Format("CIMOM failed to load authorization"
+							" library %1", libname);
+		logFatalError(msg);
+		OW_THROW(CIMOMEnvironmentException, msg.c_str());
+	}
+	m_authorizer = AuthorizerIFCRef(authorizerLib,
+									Reference<AuthorizerIFC>(p));
+}
+//////////////////////////////////////////////////////////////////////////////
+void
 CIMOMEnvironment::_createAuthorizerManager()
 {
 	// m_authorizerManager should actually be a valid AuthorizerManager
 	// already, but it doesn't have a authorizer loaded yet.
 
-	String libname = getConfigItem(ConfigOpts::AUTHORIZATION_LIB_opt);
+	String libname = getConfigItem(ConfigOpts::AUTHORIZATION2_LIB_opt);
 
 	// no authorization requested
 	if (libname.empty())
