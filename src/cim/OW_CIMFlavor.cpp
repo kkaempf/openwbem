@@ -83,12 +83,20 @@ CIMFlavor::readObject(istream &istrm)
 	BinarySerialization::readLen(istrm, f);
 	m_flavor = f;
 }
+
 //////////////////////////////////////////////////////////////////////////////		
 void
 CIMFlavor::writeObject(ostream &ostrm) const
 {
 	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMFLAVORSIG );
 	BinarySerialization::writeLen(ostrm, m_flavor);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+void
+CIMFlavor::setNull()
+{
+	m_flavor = INVALID;
 }
 
 } // end namespace OpenWBEM

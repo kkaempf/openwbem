@@ -90,7 +90,7 @@ public:
 	/**
 	 * Set this to a null object.
 	 */
-	virtual void setNull() {  m_val = BAD; }
+	virtual void setNull();
 	/**
 	 * Assignment operator
 	 * @param arg The CIMScopy to assign to this object.

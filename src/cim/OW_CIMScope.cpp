@@ -85,5 +85,12 @@ CIMScope::writeObject(ostream &ostrm) const
 	BinarySerialization::writeLen(ostrm, m_val);
 }
 
+//////////////////////////////////////////////////////////////////////////////					
+void
+CIMScope::setNull() 
+{
+	m_val = BAD;
+}
+
 } // end namespace OpenWBEM
 

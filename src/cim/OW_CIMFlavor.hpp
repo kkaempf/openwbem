@@ -121,7 +121,7 @@ public:
 	/**
 	 * Set this to a null object.
 	 */
-	virtual void setNull() {  m_flavor = INVALID; }
+	virtual void setNull();
 	/**
 	 * Assign the values from a given CIMFlavor object to this one.
 	 * @param arg	The CIMFlavor object to assign values from.
