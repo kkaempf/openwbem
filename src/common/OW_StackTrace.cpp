@@ -35,9 +35,15 @@
 #include "OW_Array.hpp"
 #include <fstream>
 #include <iostream>	// for cerr
+
 #if defined(OW_HAVE_BACKTRACE)
 #include <execinfo.h>
 #endif
+
+#if defined(OW_HAVE_CXXABI_H)
+#include <cxxabi.h>
+#endif
+
 #ifdef OW_HAVE_UNISTD_H
 extern "C"
 {
@@ -59,7 +65,7 @@ using std::flush;
 // static
 void StackTrace::printStackTrace()
 {
-	if (getenv("STACKTRACE"))
+	if (getenv("OW_STACKTRACE"))
 	{
 		// if we have the GNU backtrace functions we use them.  They don't give
 		// as good information as gdb does, but they are orders of magnitude
@@ -77,7 +83,23 @@ void StackTrace::printStackTrace()
 		
 		for (i = 0; i < size; i++)
 		{
+#if defined(OW_HAVE_CXXABI_H)
 			bt += strings[i];
+			int status;
+			// extract the identifier from strings[i].  It's inside of parens.
+			char* firstparen = ::strchr(strings[i], '(');
+			char* lastparen = ::strchr(strings[i], '+');
+			if (firstparen != 0 && lastparen != 0 && firstparen < lastparen)
+			{
+				bt += ": ";
+				*lastparen = '\0';
+				char* realname = abi::__cxa_demangle(firstparen+1, 0, 0, &status);
+				bt += realname;
+				free(realname);
+			}
+#else
+			bt += strings[i];
+#endif
 			bt += "\n";
 		}
 		

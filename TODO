@@ -45,6 +45,9 @@ Fix problems:
     - To prevent DNS attacks, set a limit on incoming data.
     - Fix uri handling to be consistent with the new spec (once it's done.  
       company review version has problems.)
+    - Have various subscription operation in IndicationServer run in separate
+      threads to help prevent deadlock.  Don't throw error if a subscription
+      can't be supported, set it to disabled.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -86,9 +89,11 @@ New features:
     - Add a function for providers to store/retrieve data(OW_Array<OW_UInt8>).
     - Create provider base classes which will make writing providers easier
       - Have the simple associator providers only have to
-        implement references.  The base class can easily do the rest.
+        implement references (or instance provider functions).  
+        The base class can easily do the rest.
       - Template method base class for weak to ComputerSystem(anything?) providers (almost all hardware)
       - Use ideas from SBLIM: http://oss.software.ibm.com/developerworks/oss/sblim/doc/ProviderArchitecture.pdf
+      - Review all providers and simplify & re-use & move any ideas into common functionality.
     - Add log messages to the thread pool class so we can output
       information about threads starting and exiting.
     - create static CIMQualifiers for standard qualifiers.

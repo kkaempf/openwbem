@@ -128,7 +128,7 @@ inttypes.h getopt.h sys/sockio.h sys/time.h sys/param.h dirent.h sys/resource.h 
 AC_LANG_CPLUSPLUS
 
 AC_CHECK_HEADERS(streambuf streambuf.h ostream \
-ostream.h istream istream.h hash_map ext/hash_map)
+ostream.h istream istream.h hash_map ext/hash_map cxxabi.h)
 
 AC_LANG_C
 
