@@ -1,0 +1,14 @@
+
+// ===================================================================
+// Battery
+// ===================================================================
+   [Description (
+       "A laptop battery."),
+   	provider("c++::laptopbat") ]
+class LaptopBattery : CIM_Battery
+{
+	[Description ( "Boolean indicating if the battery is charging") ]
+	boolean Charging;
+};
+
+

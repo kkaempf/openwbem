@@ -1,0 +1,21 @@
+
+// ===================================================================
+// Linux Process
+// ===================================================================
+   [Description (
+       "A Linux Process"),
+   	provider("c++::linuxprocess") ]
+class LinuxProcess : CIM_Process
+{
+        [ Description("Send a signal to a running process"),
+                provider("c++::linuxprocess") ]
+        string SendSignal([IN] sint32 signal);
+
+        [Description ("Virtual memory size in KBytes") ]
+        sint32 VirtualMemorySize;
+
+	[Description ("Percentage of CPU used by process") ]
+	sint32 PercentCPU;
+};
+
+

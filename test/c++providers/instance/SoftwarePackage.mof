@@ -1,0 +1,74 @@
+
+// ===================================================================
+// Software Package
+// ===================================================================
+[Description (
+		"A software package"),
+		provider("c++::rpmip") ]
+		class SoftwarePackage : CIM_LogicalElement
+{
+	[ Description("Remove an installed software package"),
+	provider("c++::rpmip") ]
+		sint32 install();
+
+	[ Description("Install an available software package"),
+	provider("c++::rpmip") ]
+		sint32 remove();
+
+	[ Key, Description ("The name of the package") ]
+		string Name;
+
+	[ Description ("The version of the package") ]
+		string Version;
+
+	[ Description ("Architecture supported by the package") ]
+		string Architecture;
+
+	[ Description ("The MD5 checksum of the package") ]
+		string MD5sum;
+
+	[Description ("The group the package belongs in") ]
+		string Section;
+
+	[Description ("The size of the package after installation") ]
+		uint32 Installed_Size;
+
+	[Description ("The maintainer of the package") ]
+		string Maintainer;
+
+	[Description ("The size of the package file (compressed)") ]
+		uint32 Size;
+
+	[Description ("Package Description") ]
+		string Description;
+
+	[ Description ("Package Requirements") ]
+		string Depends[];
+
+	[ Description ("Things provided by this package") ]
+		string Provides[];
+
+	[ Description ("Packages replaced by this one") ]
+		string Replaces[];
+
+	[ Description ("Packages conflicting with this one") ]
+		string Conflicts[];
+
+	[ Description ("Other packages recommended") ]
+		string Recommends[];
+
+	[ Description ("Other Suggested packages") ]
+		string Suggests[];
+
+	[Description ("The install priority") ]
+		string Priority;
+
+	[Description ("The Name of the package file") ]
+		string Filename;
+
+	[Description ("The State of this package") ]
+		string State;
+
+};
+
+

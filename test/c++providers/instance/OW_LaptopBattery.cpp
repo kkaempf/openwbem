@@ -1,0 +1,356 @@
+/*******************************************************************************
+* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Caldera International nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL CALDERA INTERNATIONAL OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
+#include "OW_config.h"
+#include "OW_CppInstanceProvider.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_Format.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMProperty.hpp"
+
+#include <fstream>
+#include <unistd.h>
+#include <strstream>
+
+using std::ifstream;
+using std::ofstream;
+using std::endl;
+
+
+class OW_LaptopBattery: public OW_CppInstanceProvider
+{
+public:
+	virtual ~OW_LaptopBattery() {}
+
+	/**
+	 * This method enumerates all names of instances of the class which is
+	 * specified in cop.
+	 *
+	 * @param cop The object path specifies the class that must be enumerated.
+	 * @param deep If true, deep enumeration is done, otherwise shallow.
+	 * @param cimClass The class reference
+	 *
+	 * @returns An array of OW_CIMObjectPath containing names of the
+	 * 	enumerated instances.
+	 * @throws OW_CIMException - throws in the CIMObjectPath is incorrect
+	 * 	or does not exist.
+	 */
+	virtual OW_CIMObjectPathEnumeration enumInstances( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_Bool deep, 
+			OW_CIMClass cimClass );
+
+	/**
+	 * This method enumerates
+	 * all instances of the class which is specified in cop.  The entire
+	 * instances and not just the names are returned.  Deep or shallow
+	 * enumeration is possible.
+	 *
+	 * @param cop The object path specifies the class that must be
+	 * 	enumerated.
+	 *
+	 * @param deep If true, deep enumeration must be done, otherwise shallow.
+	 *
+	 * @param cimClass The class reference.
+	 *
+	 * @param localOnly If true, only the non-inherited properties are to be
+	 * 	returned, otherwise all properties are required.
+	 *
+	 * @returns An array of OW_CIMInstance containing names of the enumerated
+	 * 	instances.
+	 *
+	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
+	 */
+	virtual OW_CIMInstanceEnumeration enumInstances( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_Bool deep, 
+			OW_CIMClass cimClass, 
+			OW_Bool localOnly );
+
+	/**
+	 * This method retrieves the instance specified in the object path.
+	 *
+	 * @param cop The name of the instance to be retrieved.
+	 *
+	 * @param cimClass The class to which the instance belongs.  This is
+	 * 	useful for providers which do not want to create instances from
+	 * 	scratch.  They can call the class newInstance() routine to create
+	 * 	a template for the new instance.
+	 *
+	 * @param localOnly If true, only the non-inherited properties are to be
+	 * 	returned, otherwise all properties are required.
+	 *
+	 * @returns The retrieved instance
+	 *
+	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist
+	 */
+	virtual OW_CIMInstance getInstance( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMClass cimClass, 
+			OW_Bool localOnly );
+
+	/**
+	 * This method creates the instance specified in the object path.  If the
+	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
+	 * must be thrown.  The parameter should be the instance name.
+	 *
+	 * @param cop The path to the instance to be set.  The import part in
+	 * 	this parameter is the namespace component.
+	 *
+	 * @param cimInstance The instance to be set
+	 *
+	 * @returns A CIM ObjectPath of the instance that was created.
+	 *
+	 * @throws OW_CIMException
+	 */
+	virtual OW_CIMObjectPath createInstance( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMInstance cimInstance );
+
+	/**
+	 * This method sets the instance specified in the object path.  If the
+	 * instance does not exist an OW_CIMException with ID CIM_ERR_NOT_FOUND
+	 * must be thrown.  The parameter should be the instance name.
+	 *
+	 * @param cop The path of the instance to be set.  The important part in
+	 * 	this parameter is the namespace component.
+	 *
+	 * @param cimInstance The instance to be set.
+	 *
+	 * @throws OW_CIMException
+	 */
+	virtual void setInstance(
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMInstance cimInstance);
+
+	/**
+	 * This method deletes the instance specified in the object path
+	 *
+	 * @param cop The instance to be deleted
+	 *
+	 * @throws OW_CIMException
+	 */
+	virtual void deleteInstance(
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop);
+
+	/** 
+	 * Fill in the params for a laptop battery instance
+	 *
+	 * @param cc a LaptopBattery CIMClass
+	 *
+	 * @return The laptop batter cim instance
+	 */
+	OW_CIMInstance createLaptopBatInst(const OW_CIMClass& cc);
+};
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathEnumeration 
+OW_LaptopBattery::enumInstances( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_Bool deep, 
+			OW_CIMClass cimClass )
+{
+	(void)hdl;
+	(void)cimClass;
+	(void)deep;
+	OW_CIMObjectPathEnumeration rval;
+	OW_CIMObjectPath instCop = cop;
+	char hostbuf[256];
+	gethostname(hostbuf, 256);
+	OW_String hostname(hostbuf);
+	instCop.addKey("SystemCreationClassName", 
+		OW_CIMValue(OW_String("CIM_System")));
+	instCop.addKey("SystemName", OW_CIMValue(hostname));
+	instCop.addKey("CreationClassName", OW_CIMValue(cop.getObjectName()));
+	instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
+	rval.addElement(instCop);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceEnumeration 
+OW_LaptopBattery::enumInstances( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_Bool deep, 
+			OW_CIMClass cimClass, 
+			OW_Bool localOnly )
+{
+	(void)cop;
+	(void)hdl;
+	(void)localOnly;
+	(void)deep;
+	OW_CIMInstanceEnumeration rval;
+	OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
+	rval.addElement(inst);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+#define STAT_Other 1
+#define STAT_Unknown 2
+#define STAT_Fully_Charged 3
+#define STAT_Low 4
+#define STAT_Critical 5
+#define STAT_Charging 6
+#define STAT_Charging_and_High 7
+#define STAT_Charging_and_Low 8
+#define STAT_Charging_and_Critical 9
+#define STAT_Undefined 10
+#define STAT_Partially_Charge 11
+
+OW_CIMInstance 
+OW_LaptopBattery::getInstance( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMClass cimClass, 
+			OW_Bool localOnly )
+{
+	(void)cop;
+	(void)hdl;
+	(void)localOnly;
+	OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath 
+OW_LaptopBattery::createInstance( 
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMInstance cimInstance )
+{
+
+	(void)hdl;
+	(void)cop;
+	(void)cimInstance;
+	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+OW_LaptopBattery::setInstance(
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop,
+			OW_CIMInstance cimInstance)
+{
+
+	(void)hdl;
+	(void)cop;
+	(void)cimInstance;
+	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+OW_LaptopBattery::deleteInstance(
+			OW_LocalCIMOMHandle& hdl,
+			OW_CIMObjectPath cop)
+{
+	(void)hdl;
+	(void)cop;
+	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance
+OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
+{
+	OW_CIMInstance rval = cc.newInstance();
+	rval.setProperty("SystemCreationClassName", 
+		OW_CIMValue(OW_String("CIM_System")));
+	char hostbuf[256];
+	gethostname(hostbuf, 256);
+	OW_String hostname(hostbuf);
+	rval.setProperty("SystemName", OW_CIMValue(hostname));
+	rval.setProperty("CreationClassName", OW_CIMValue(cc.getName()));
+	rval.setProperty("DeviceID", OW_CIMValue(OW_String("bat01")));
+
+	// /proc/apm typically looks like:
+	// 1.16 1.2 0x03 0x00 0x00 0x01 72% 183 min
+	// or 
+	// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
+	ifstream infile("/proc/apm", std::ios::in);
+	ostrstream oss;
+	oss << infile.rdbuf() << std::ends;
+	infile.close();
+	OW_String fileContents = oss.str();
+	oss.freeze(false);
+	OW_StringArray toks = fileContents.tokenize();
+	OW_Int32 minutes = toks[7].toInt32();
+	OW_UInt16 percent = toks[6].toUInt16();
+	OW_UInt16 status = STAT_Unknown;
+	OW_Bool charging = false;
+	if (minutes == -1)
+	{
+		status = STAT_Charging;
+		charging = true;
+		minutes = 0;
+	}
+	else
+	{
+		if (percent > 80)
+		{
+			status = STAT_Fully_Charged;
+		}
+		else if (percent > 30)
+		{
+			status = STAT_Low;
+		}
+		else
+		{
+			status = STAT_Critical;
+		}
+	}
+	rval.setProperty("EstimatedChargeRemaining", OW_CIMValue(percent));
+	rval.setProperty("EstimatedRunTime", OW_CIMValue((OW_UInt32)minutes));
+	rval.setProperty("BatteryStatus", OW_CIMValue(status));
+	rval.setProperty("Charging", OW_CIMValue(charging));
+	return rval;
+}
+
+
+
+OW_PROVIDERFACTORY(OW_LaptopBattery)
+
