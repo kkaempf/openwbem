@@ -336,7 +336,8 @@ void
 TempFileStream::rewind()
 {
 	m_buffer->rewind();
-	clear();
+	// clear eof bit
+	clear(rdstate() & ~std::ios::eofbit);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
