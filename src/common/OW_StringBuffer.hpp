@@ -60,7 +60,7 @@ public:
 	StringBuffer(const String& arg);
 	StringBuffer(const StringBuffer& arg);
 	~StringBuffer() { delete [] m_bfr; }
-	StringBuffer& operator= (StringBuffer arg);
+	StringBuffer& operator= (const StringBuffer& arg);
 	StringBuffer& operator= (const String& arg);
 	StringBuffer& operator= (const char* str);
 	void swap(StringBuffer& x);

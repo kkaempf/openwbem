@@ -103,9 +103,9 @@ StringBuffer::operator= (const char* str)
 }
 //////////////////////////////////////////////////////////////////////////////
 StringBuffer&
-StringBuffer::operator =(StringBuffer arg)
+StringBuffer::operator =(const StringBuffer& arg)
 {
-	arg.swap(*this);
+	StringBuffer(arg).swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
