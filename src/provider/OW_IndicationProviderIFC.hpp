@@ -46,7 +46,6 @@ class OW_IndicationProviderIFC: public OW_ProviderBaseIFC
 public:
 	virtual ~OW_IndicationProviderIFC();
 
-    // TODO: Add docs for these functions.
 	virtual void activateFilter(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
@@ -72,23 +71,6 @@ public:
 		const OW_StringArray& classes
 		) = 0;
 
-	// if a provider wishes to be polled, it must return a positive number.
-	// The int returned will be the number of seconds between polls.
-	// The cimom performs polling by calling enumInstances() each polling
-	// cycle and comparing the results with the previous cycle.  It will
-	// generate CIM_Inst{Creation,Modification,Deletion} indications based
-	// on the difference in the instances.
-	// The namespace/classname that will be passed into enumInstances is
-	// the same one that is passed as the classPath parameter to mustPoll().
-	// If an event provider does not want to be polled, it should return 0.
-	// If the provider is going to start a thread that will wait for some
-	// external event, it should do it the first time activateFilter is called
-	// firstActivation will == true.
-	// If a provider may take a long time to generate all instances in 
-	// enumInstances, it should not be polled and have a short poll interval.
-	// Also, a provider that is polled can only do lifecycle indications.
-	// If the provider doesn't do lifecycle indications, then it must return
-	// 0 from mustPoll, and has to generate indications by another means.
 	virtual int mustPoll(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
