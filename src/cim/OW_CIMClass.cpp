@@ -925,3 +925,104 @@ bool operator<(const OW_CIMClass& x, const OW_CIMClass& y)
 
 //////////////////////////////////////////////////////////////////////////////
 const char* const OW_CIMClass::NAMESPACECLASS = "__Namespace";
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray
+OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
+	const OW_StringArray* propertyList,
+	const OW_CIMClass& requestedClass) const
+{
+	if (propertyList && propertyList->size() == 0)
+	{
+		return OW_StringArray();
+	}
+
+	OW_StringArray rv = this->getCloneProps(false, propertyList);
+
+	// do processing of deep & localOnly
+	// don't filter anything if (deep == true && localOnly == false)
+	if (deep != true || localOnly != false)
+	{
+		OW_CIMPropertyArray props = this->getAllProperties();
+		OW_String requestedClassName = requestedClass.getName();
+		for (size_t i = 0; i < props.size(); ++i)
+		{
+			OW_CIMProperty p = props[i];
+			OW_CIMProperty clsp = requestedClass.getProperty(p.getName());
+			if (clsp)
+			{
+				if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
+				{
+					rv.push_back(p.getName());
+					continue;
+				}
+			}
+			if (deep == true)
+			{
+				if (!clsp
+					|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
+				{
+					// the property is from a derived class
+					rv.push_back(p.getName());
+					continue;
+				}
+			}
+			if (localOnly == false)
+			{
+				if (clsp)
+				{
+					// the property has to be from a superclass
+					rv.push_back(p.getName());
+					continue;
+				}
+			}
+
+		}
+	}
+	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray
+OW_CIMClass::getCloneProps(OW_Bool localOnly,
+	const OW_StringArray* propertyList) const
+{
+	OW_StringArray props;
+	if (propertyList && propertyList->size() == 0)
+	{
+		return props;
+	}
+
+	for(size_t i = 0; i < this->getAllProperties().size(); i++)
+	{
+		OW_CIMProperty prop = this->getAllProperties()[i];
+		if(localOnly && prop.getPropagated())
+		{
+			continue;
+		}
+
+		//
+		// If propertyList is not NULL then check this is a request property
+		//
+		if(propertyList)
+		{
+			OW_String pName = prop.getName();
+			for(size_t j = 0; j < propertyList->size(); j++)
+			{
+				if(pName.equalsIgnoreCase((*propertyList)[j]))
+				{
+					props.push_back(prop.getName());
+					break;
+				}
+			}
+		}
+		else
+		{
+			props.append(prop.getName());
+		}
+	}
+
+	return props;
+}
+
+

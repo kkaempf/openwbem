@@ -339,7 +339,7 @@ public:
 	 * @param localOnly If true, only include local elements.
 	 * @param includeQualifiers If true, include the qualifiers for this class.
 	 * @param includeClassOrigin If true, include the class origin.
-	 * @param propertList A list that specifies the properties to allow in the
+	 * @param propertyList A list that specifies the properties to allow in the
 	 *		XML.
 	 * @param noProps If true, no properties will be included in the xml
 	 * @return A new OW_CIMClass object that is based on this one, with the
@@ -354,7 +354,7 @@ public:
 	 * Create a OW_CIMClass that contains properties from this OW_CIMClass that
 	 * are found in the given list of property names. Optionally include
 	 * qualifiers and the class origin.
-	 * @param propertList An OW_StringArray that contains the property names of
+	 * @param propertyList An OW_StringArray that contains the property names of
 	 *		the properties that should be copied from this OW_CIMClass.
 	 * @param includeQualifiers	Include the qualifiers if this is true.
 	 * @param includeClassOrigin	Include the class origin if this is true.
@@ -362,6 +362,35 @@ public:
 	 */
 	OW_CIMClass filterProperties(const OW_StringArray& propertyList,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin) const;
+
+	/**
+	 * Return a list of all the properties that will be required to clone an
+	 * instance.  This is also useful for indication providers to get a list
+	 * of the properties that the client requested, so it can avoid doing
+	 * expensive operations needlessly.
+	 * @param localOnly If true, don't include superclass properties.
+	 * @param deep If true, include subclass properties.
+	 * @param propertyList A list that specifies the properties list of 
+	 *		properties that can be returned.
+	 * @param requestedClass The class that was requested in enumInstances.
+	 * @return A list of properties that are requested based on the parameters.
+	 */
+	OW_StringArray getCloneProps(OW_Bool localOnly, OW_Bool deep,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass) const;
+	
+	/**
+	 * Return a list of all the properties that will be required to clone an
+	 * instance.  This is also useful for indication providers to get a list
+	 * of the properties that the client requested, so it can avoid doing
+	 * expensive operations needlessly.
+	 * @param localOnly If true, don't include superclass properties.
+	 * @param propertyList A list that specifies the properties list of 
+	 *		properties that can be returned.
+	 * @return A list of properties that are requested based on the parameters.
+	 */
+	OW_StringArray getCloneProps(OW_Bool localOnly,
+		const OW_StringArray* propertyList) const;
 
 	//////////////////////////////////////////////////////////////////////
 	// OW_CIMElement implementation
