@@ -41,7 +41,6 @@
 
 namespace OpenWBEM
 {
-
     class AssocHelperResultHandlerIFC : public CIMInstanceResultHandlerIFC 
     {
     public:
@@ -97,6 +96,111 @@ namespace OpenWBEM
         String _resultClass; 
         String _role; 
         String _resultRole; 
+    };
+
+
+////////////////////////////////////////////////////////////////////////////
+    class _RHAssociators : public AssocHelperResultHandlerIFC
+    {
+    public:
+        _RHAssociators(CIMInstanceResultHandlerIFC& result, 
+            const CIMObjectPath& objectName, 
+            const String& resultClass, 
+            const String& role, 
+            const String& resultRole, 
+            const CIMOMHandleIFCRef& lch,
+            WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
+            WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
+            const StringArray *propertyList)
+        : AssocHelperResultHandlerIFC(objectName,resultClass ,role ,resultRole)
+        , _realHandler(result)
+        , _lch(lch) 
+        , _includeQualifiers(_includeQualifiers)
+        , _includeClassOrigin(_includeClassOrigin)
+        , _propertyList(propertyList)
+        {}
+    protected:
+        virtual void assocAuxHandler(const CIMObjectPath &cop)
+        {
+            CIMInstance inst = _lch->getInstance(cop.getFullNameSpace().getNameSpace(), 
+                              cop, WBEMFlags::E_NOT_LOCAL_ONLY, 
+                              _includeQualifiers, _includeClassOrigin, 
+                              _propertyList); 
+            _realHandler.handle(inst); 
+        }
+    private: 
+        CIMInstanceResultHandlerIFC& _realHandler; 
+        const CIMOMHandleIFCRef& _lch; 
+        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
+        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin; 
+        const StringArray* _propertyList; 
+    };
+
+////////////////////////////////////////////////////////////////////////////
+    class _RHAssociatorNames : public AssocHelperResultHandlerIFC
+    {
+    public:
+        _RHAssociatorNames(CIMObjectPathResultHandlerIFC& result, 
+            const CIMObjectPath& objectName, 
+            const String& resultClass, 
+            const String& role, 
+            const String& resultRole)
+        : AssocHelperResultHandlerIFC(objectName,resultClass ,role ,resultRole)
+        , _realHandler(result) { }
+    protected:
+        virtual void assocAuxHandler(const CIMObjectPath &cop)
+        {
+            _realHandler.handle(cop); 
+        }
+    private: 
+        CIMObjectPathResultHandlerIFC& _realHandler; 
+    };
+
+////////////////////////////////////////////////////////////////////////////
+    class _RHReferences : public CIMInstanceResultHandlerIFC
+    {
+    public: 
+        _RHReferences(CIMInstanceResultHandlerIFC& realHandler, 
+            WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
+            WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
+            const StringArray *propertyList)
+            : _realHandler(realHandler)
+            , _includeQualifiers(includeQualifiers)
+            , _includeClassOrigin(includeClassOrigin)
+            , _propertyList(propertyList)
+        {
+        }
+
+        void doHandle(const CIMInstance& inst)
+        {
+            CIMInstance rval = inst.clone(WBEMFlags::E_NOT_LOCAL_ONLY, 
+                                                  _includeQualifiers, 
+                                                  _includeClassOrigin, 
+                                                  _propertyList); 
+            _realHandler.handle(rval); 
+        }
+    private: 
+        CIMInstanceResultHandlerIFC& _realHandler; 
+        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
+        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin; 
+        const StringArray* _propertyList; 
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+    class _RHReferenceNames : public CIMInstanceResultHandlerIFC
+    {
+    public:
+        _RHReferenceNames(CIMObjectPathResultHandlerIFC& realHandler, const String& ns)
+            : _realHandler(realHandler)
+            , _ns(ns) {}
+        void doHandle(const CIMInstance& inst)
+        {
+            CIMObjectPath cop(_ns, inst); 
+            _realHandler.handle(cop); 
+        }
+    private:
+        CIMObjectPathResultHandlerIFC& _realHandler; 
+        String _ns; 
     };
 /**
  * This method is invoked in order to do the Associators operation as
@@ -195,45 +299,10 @@ void
                                                 WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
                                                 const StringArray *propertyList)
 {
-    class _RH : public AssocHelperResultHandlerIFC
-    {
-    public:
-        _RH(CIMInstanceResultHandlerIFC& result, 
-            const CIMObjectPath& objectName, 
-            const String& resultClass, 
-            const String& role, 
-            const String& resultRole, 
-            const CIMOMHandleIFCRef& lch,
-            WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-            WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-            const StringArray *propertyList)
-        : AssocHelperResultHandlerIFC(objectName,resultClass ,role ,resultRole)
-        , _realHandler(result)
-        , _lch(lch) 
-        , _includeQualifiers(_includeQualifiers)
-        , _includeClassOrigin(_includeClassOrigin)
-        , _propertyList(propertyList)
-        {}
-    protected:
-        virtual void assocAuxHandler(const CIMObjectPath &cop)
-        {
-            CIMInstance inst = _lch->getInstance(cop.getFullNameSpace().getNameSpace(), 
-                              cop, WBEMFlags::E_NOT_LOCAL_ONLY, 
-                              _includeQualifiers, _includeClassOrigin, 
-                              _propertyList); 
-            _realHandler.handle(inst); 
-        }
-    private: 
-        CIMInstanceResultHandlerIFC& _realHandler; 
-        const CIMOMHandleIFCRef& _lch; 
-        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
-        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin; 
-        const StringArray* _propertyList; 
-    };
 
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, assocClass); 
-    _RH rh(result, objectName, resultClass, role, resultRole,
+    _RHAssociators rh(result, objectName, resultClass, role, resultRole,
            lch, includeQualifiers, includeClassOrigin, propertyList); 
 
     doReferences(env, rh, ns, objectName, theAssocClass, resultClass, 
@@ -266,26 +335,8 @@ void
                                                     const String &resultRole)
 {
 
-    class _RH : public AssocHelperResultHandlerIFC
-    {
-    public:
-        _RH(CIMObjectPathResultHandlerIFC& result, 
-            const CIMObjectPath& objectName, 
-            const String& resultClass, 
-            const String& role, 
-            const String& resultRole)
-        : AssocHelperResultHandlerIFC(objectName,resultClass ,role ,resultRole)
-        , _realHandler(result) { }
-    protected:
-        virtual void assocAuxHandler(const CIMObjectPath &cop)
-        {
-            _realHandler.handle(cop); 
-        }
-    private: 
-        CIMObjectPathResultHandlerIFC& _realHandler; 
-    };
 
-    _RH rh(result, objectName, resultClass, role, resultRole); 
+    _RHAssociatorNames rh(result, objectName, resultClass, role, resultRole); 
 
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, assocClass); 
@@ -335,34 +386,6 @@ void
                                                WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
                                                const StringArray *propertyList)
 {
-    class _RH : public CIMInstanceResultHandlerIFC
-    {
-    public: 
-        _RH(CIMInstanceResultHandlerIFC& realHandler, 
-            WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, 
-            WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin, 
-            const StringArray *propertyList)
-            : _realHandler(realHandler)
-            , _includeQualifiers(includeQualifiers)
-            , _includeClassOrigin(includeClassOrigin)
-            , _propertyList(propertyList)
-        {
-        }
-
-        void doHandle(const CIMInstance& inst)
-        {
-            CIMInstance rval = inst.clone(WBEMFlags::E_NOT_LOCAL_ONLY, 
-                                                  _includeQualifiers, 
-                                                  _includeClassOrigin, 
-                                                  _propertyList); 
-            _realHandler.handle(rval); 
-        }
-    private: 
-        CIMInstanceResultHandlerIFC& _realHandler; 
-        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
-        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin; 
-        const StringArray* _propertyList; 
-    };
 
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, resultClass,
@@ -370,7 +393,7 @@ void
                                            includeQualifiers, 
                                            includeClassOrigin); 
 
-    _RH rh(result,includeQualifiers ,includeClassOrigin ,propertyList ); 
+    _RHReferences rh(result,includeQualifiers ,includeClassOrigin ,propertyList ); 
     doReferences(env, rh, ns, objectName, theAssocClass, "", role, ""); 
 }
 /**
@@ -395,25 +418,10 @@ void
                                                    const String &resultClass, 
                                                    const String &role)
 {
-    class _RH : public CIMInstanceResultHandlerIFC
-    {
-    public:
-        _RH(CIMObjectPathResultHandlerIFC& realHandler, const String& ns)
-            : _realHandler(realHandler)
-            , _ns(ns) {}
-        void doHandle(const CIMInstance& inst)
-        {
-            CIMObjectPath cop(_ns, inst); 
-            _realHandler.handle(cop); 
-        }
-    private:
-        CIMObjectPathResultHandlerIFC& _realHandler; 
-        String _ns; 
-    };
 
     CIMOMHandleIFCRef lch = env->getCIMOMHandle(); 
     CIMClass theAssocClass = lch->getClass(ns, resultClass); 
-    _RH rh(result,ns); 
+    _RHReferenceNames rh(result,ns); 
     doReferences(env, rh,ns ,objectName , theAssocClass,"",role, ""); 
 }
 

@@ -34,6 +34,50 @@
 namespace OpenWBEM
 {
 
+    class _RHEnumInstances : public CIMObjectPathResultHandlerIFC
+    {
+    public: 
+        _RHEnumInstances(
+          CppInstanceProviderIFC& ip, 
+          const ProviderEnvironmentIFCRef& env,
+          const String& ns,
+          CIMInstanceResultHandlerIFC& result,
+          WBEMFlags::ELocalOnlyFlag localOnly, 
+          WBEMFlags::EDeepFlag deep, 
+          WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+          WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+          const StringArray* propertyList,
+          const CIMClass& cimClass )
+            : _ip(ip)
+            , _env(env)
+            , _ns(ns)
+            , _realHandler(result)
+            , _localOnly(localOnly)
+            , _includeQualifiers(includeQualifiers)
+            , _includeClassOrigin(includeClassOrigin)
+            , _propertyList(propertyList)
+            , _cimClass(cimClass)
+        {}
+
+        void doHandle(const CIMObjectPath& cop)
+        {
+            CIMInstance inst = _ip.getInstance(_env,_ns, cop,_localOnly,
+                                                _includeQualifiers,
+                                                _includeClassOrigin,
+                                                _propertyList, _cimClass); 
+            _realHandler.handle(inst); 
+        }
+    private: 
+        CppInstanceProviderIFC& _ip; 
+        const ProviderEnvironmentIFCRef& _env; 
+        const String& _ns; 
+        CIMInstanceResultHandlerIFC& _realHandler; 
+        WBEMFlags::ELocalOnlyFlag _localOnly; 
+        WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
+        WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin;
+        const StringArray* _propertyList;
+        const CIMClass& _cimClass;
+    };
 ///////////////////////////////////////////////////////////////////////////////
 
     void
@@ -50,51 +94,7 @@ namespace OpenWBEM
                                       const CIMClass& requestedClass,
                                       const CIMClass& cimClass )
     {
-        class RH : public CIMObjectPathResultHandlerIFC
-        {
-        public: 
-            RH(
-              CppInstanceProviderIFC& ip, 
-              const ProviderEnvironmentIFCRef& env,
-              const String& ns,
-              CIMInstanceResultHandlerIFC& result,
-              WBEMFlags::ELocalOnlyFlag localOnly, 
-              WBEMFlags::EDeepFlag deep, 
-              WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-              WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-              const StringArray* propertyList,
-              const CIMClass& cimClass )
-                : _ip(ip)
-                , _env(env)
-                , _ns(ns)
-                , _realHandler(result)
-                , _localOnly(localOnly)
-                , _includeQualifiers(includeQualifiers)
-                , _includeClassOrigin(includeClassOrigin)
-                , _propertyList(propertyList)
-                , _cimClass(cimClass)
-            {}
-
-            void doHandle(const CIMObjectPath& cop)
-            {
-                CIMInstance inst = _ip.getInstance(_env,_ns, cop,_localOnly,
-                                                    _includeQualifiers,
-                                                    _includeClassOrigin,
-                                                    _propertyList, _cimClass); 
-                _realHandler.handle(inst); 
-            }
-        private: 
-            CppInstanceProviderIFC& _ip; 
-            const ProviderEnvironmentIFCRef& _env; 
-            const String& _ns; 
-            CIMInstanceResultHandlerIFC& _realHandler; 
-            WBEMFlags::ELocalOnlyFlag _localOnly; 
-            WBEMFlags::EIncludeQualifiersFlag _includeQualifiers; 
-            WBEMFlags::EIncludeClassOriginFlag _includeClassOrigin;
-            const StringArray* _propertyList;
-            const CIMClass& _cimClass;
-        };
-        RH rh(*this,env , ns,result ,localOnly ,deep ,includeQualifiers ,
+        _RHEnumInstances rh(*this,env , ns,result ,localOnly ,deep ,includeQualifiers ,
               includeClassOrigin ,propertyList , cimClass); 
         enumInstanceNames(env,ns ,className , rh,cimClass); 
     }
