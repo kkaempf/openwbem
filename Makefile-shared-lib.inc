@@ -39,7 +39,7 @@ CREATE_IMPORTS=nm -Bpg $(TMPLIBDIR)/*.o | \
 				   ($$2 == "B")) && \
 				  (substr($$3,1,1) != ".")) \
 				{ print $$3 } }' | \
-			sort -u > $(@:%.nlm=%.imp)
+			sort -u | $(SED) '$$!s/$$/,/' > $(@:%.nlm=%.imp)
 
 %.nlm : %.a
 	rm -rf $(TMPLIBDIR)
