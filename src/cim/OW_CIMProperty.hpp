@@ -328,6 +328,14 @@ public:
 	 */
 	virtual OW_String toMOF() const;
 	
+	/**
+	 * Test if this property has a qualifier that is a boolean type with a
+	 * value of true.
+	 * @param name	The name of the qualifier to test.
+	 * @return true if the qualifier exists and has a value of true.
+	 */
+	OW_Bool hasTrueQualifier(const OW_String& name) const;
+
 private:
 
 	OW_COWReference<PROPData> m_pdata;

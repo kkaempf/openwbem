@@ -216,7 +216,7 @@ OW_CIMMethod::getINParameters() const
 	OW_CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
-		if (m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_IN))
+		if (m_pdata->m_parameters[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_IN))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
@@ -231,7 +231,7 @@ OW_CIMMethod::getOUTParameters() const
 	OW_CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
-		if (m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+		if (m_pdata->m_parameters[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}

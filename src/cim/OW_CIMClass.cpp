@@ -339,7 +339,7 @@ OW_CIMClass::getProperties() const
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		OW_CIMProperty cp = m_pdata->m_properties[i];
-		if(cp.getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
+		if(cp.hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 		{
 			prop.append(cp);
 		}

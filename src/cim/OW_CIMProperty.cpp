@@ -402,7 +402,7 @@ OW_Bool
 OW_CIMProperty::isKey() const
 {
 	if(getDataType().isReferenceType()
-	   || getQualifier(OW_CIMQualifier::CIM_QUAL_KEY))
+	   || hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_KEY))
 	{
 		return true;
 	}
@@ -620,9 +620,28 @@ OW_CIMProperty::toMOF() const
 	return rv.releaseString();
 }
 
+//////////////////////////////////////////////////////////////////////////////
 const char* const OW_CIMProperty::NAME_PROPERTY = "Name";
 
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const OW_CIMProperty& x, const OW_CIMProperty& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool 
+OW_CIMProperty::hasTrueQualifier(const OW_String& name) const
+{
+	OW_CIMQualifier q = getQualifier(name);
+	if (!q)
+	{
+		return false;
+	}
+	// it's okay to compare NULL OW_CIMValues.
+	return q.getValue() == OW_CIMValue(true);
+}
+
+
+

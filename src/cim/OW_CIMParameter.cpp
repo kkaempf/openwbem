@@ -261,3 +261,16 @@ bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+OW_Bool 
+OW_CIMParameter::hasTrueQualifier(const OW_String& name) const
+{
+	OW_CIMQualifier q = getQualifier(name);
+	if (!q)
+	{
+		return false;
+	}
+	// it's okay to compare NULL OW_CIMValues.
+	return q.getValue() == OW_CIMValue(true);
+}
