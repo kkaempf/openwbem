@@ -1241,39 +1241,56 @@ CIMValue::CIMValueImpl::getArraySize() const
 	switch(m_type)
 	{
 		case CIMDataType::UINT8:
-			sz = (reinterpret_cast<const UInt8Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const UInt8Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::SINT8:
-			sz = (reinterpret_cast<const Int8Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Int8Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::UINT16:
-			sz = (reinterpret_cast<const UInt16Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const UInt16Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::SINT16:
-			sz = (reinterpret_cast<const Int16Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Int16Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::UINT32:
-			sz = (reinterpret_cast<const UInt32Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const UInt32Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::SINT32:
-			sz = (reinterpret_cast<const Int32Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Int32Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::UINT64:
-			sz = (reinterpret_cast<const UInt64Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const UInt64Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::SINT64:
-			sz = (reinterpret_cast<const Int64Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Int64Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::BOOLEAN:
-			sz = (reinterpret_cast<const BoolArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const BoolArray*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::REAL32:
-			sz = (reinterpret_cast<const Real32Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Real32Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::REAL64:
-			sz = (reinterpret_cast<const Real64Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Real64Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::CHAR16:
-			sz = (reinterpret_cast<const Char16Array*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const Char16Array*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::DATETIME:
-			sz = (reinterpret_cast<const CIMDateTimeArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const CIMDateTimeArray*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::STRING:
-			sz = (reinterpret_cast<const StringArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const StringArray*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::REFERENCE:
-			sz = (reinterpret_cast<const CIMObjectPathArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const CIMObjectPathArray*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::EMBEDDEDCLASS:
-			sz = (reinterpret_cast<const CIMClassArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const CIMClassArray*>(&m_obj))->size(); 
+		break;
 		case CIMDataType::EMBEDDEDINSTANCE:
-			sz = (reinterpret_cast<const CIMInstanceArray*>(&m_obj))->size(); break;
+			sz = (reinterpret_cast<const CIMInstanceArray*>(&m_obj))->size(); 
+		break;
 		default:
 			sz = 0;
 	}
@@ -1292,39 +1309,56 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 		switch(m_type)
 		{
 			case CIMDataType::UINT8:
-				new(&m_obj) UInt8Array(*(reinterpret_cast<const UInt8Array*>(&odata))); break;
+				new(&m_obj) UInt8Array(*(reinterpret_cast<const UInt8Array*>(&odata))); 
+			break;
 			case CIMDataType::SINT8:
-				new(&m_obj) Int8Array(*(reinterpret_cast<const Int8Array*>(&odata))); break;
+				new(&m_obj) Int8Array(*(reinterpret_cast<const Int8Array*>(&odata))); 
+			break;
 			case CIMDataType::UINT16:
-				new(&m_obj) UInt16Array(*(reinterpret_cast<const UInt16Array*>(&odata))); break;
+				new(&m_obj) UInt16Array(*(reinterpret_cast<const UInt16Array*>(&odata))); 
+			break;
 			case CIMDataType::SINT16:
-				new(&m_obj) Int16Array(*(reinterpret_cast<const Int16Array*>(&odata))); break;
+				new(&m_obj) Int16Array(*(reinterpret_cast<const Int16Array*>(&odata))); 
+			break;
 			case CIMDataType::UINT32:
-				new(&m_obj) UInt32Array(*(reinterpret_cast<const UInt32Array*>(&odata))); break;
+				new(&m_obj) UInt32Array(*(reinterpret_cast<const UInt32Array*>(&odata))); 
+			break;
 			case CIMDataType::SINT32:
-				new(&m_obj) Int32Array(*(reinterpret_cast<const Int32Array*>(&odata))); break;
+				new(&m_obj) Int32Array(*(reinterpret_cast<const Int32Array*>(&odata))); 
+			break;
 			case CIMDataType::UINT64:
-				new(&m_obj) UInt64Array(*(reinterpret_cast<const UInt64Array*>(&odata))); break;
+				new(&m_obj) UInt64Array(*(reinterpret_cast<const UInt64Array*>(&odata))); 
+			break;
 			case CIMDataType::SINT64:
-				new(&m_obj) Int64Array(*(reinterpret_cast<const Int64Array*>(&odata))); break;
+				new(&m_obj) Int64Array(*(reinterpret_cast<const Int64Array*>(&odata))); 
+			break;
 			case CIMDataType::BOOLEAN:
-				new(&m_obj) BoolArray(*(reinterpret_cast<const BoolArray*>(&odata))); break;
+				new(&m_obj) BoolArray(*(reinterpret_cast<const BoolArray*>(&odata))); 
+			break;
 			case CIMDataType::REAL32:
-				new(&m_obj) Real32Array(*(reinterpret_cast<const Real32Array*>(&odata))); break;
+				new(&m_obj) Real32Array(*(reinterpret_cast<const Real32Array*>(&odata))); 
+			break;
 			case CIMDataType::REAL64:
-				new(&m_obj) Real64Array(*(reinterpret_cast<const Real64Array*>(&odata))); break;
+				new(&m_obj) Real64Array(*(reinterpret_cast<const Real64Array*>(&odata))); 
+			break;
 			case CIMDataType::CHAR16:
-				new(&m_obj) Char16Array(*(reinterpret_cast<const Char16Array*>(&odata))); break;
+				new(&m_obj) Char16Array(*(reinterpret_cast<const Char16Array*>(&odata))); 
+			break;
 			case CIMDataType::DATETIME:
-				new(&m_obj) CIMDateTimeArray(*(reinterpret_cast<const CIMDateTimeArray*>(&odata))); break;
+				new(&m_obj) CIMDateTimeArray(*(reinterpret_cast<const CIMDateTimeArray*>(&odata))); 
+			break;
 			case CIMDataType::STRING:
-				new(&m_obj) StringArray(*(reinterpret_cast<const StringArray*>(&odata))); break;
+				new(&m_obj) StringArray(*(reinterpret_cast<const StringArray*>(&odata))); 
+			break;
 			case CIMDataType::REFERENCE:
-				new(&m_obj) CIMObjectPathArray(*(reinterpret_cast<const CIMObjectPathArray*>(&odata))); break;
+				new(&m_obj) CIMObjectPathArray(*(reinterpret_cast<const CIMObjectPathArray*>(&odata))); 
+			break;
 			case CIMDataType::EMBEDDEDCLASS:
-				new(&m_obj) CIMClassArray(*(reinterpret_cast<const CIMClassArray*>(&odata))); break;
+				new(&m_obj) CIMClassArray(*(reinterpret_cast<const CIMClassArray*>(&odata))); 
+			break;
 			case CIMDataType::EMBEDDEDINSTANCE:
-				new(&m_obj) CIMInstanceArray(*(reinterpret_cast<const CIMInstanceArray*>(&odata))); break;
+				new(&m_obj) CIMInstanceArray(*(reinterpret_cast<const CIMInstanceArray*>(&odata))); 
+			break;
 			default:
 				m_objDestroyed = true;
 				m_type = CIMDataType::CIMNULL;
@@ -1349,17 +1383,23 @@ CIMValue::CIMValueImpl::setupObject(const CIMValueData& odata, CIMDataType::Type
 				::memmove(&m_obj, &odata, sizeof(m_obj));
 				break;
 			case CIMDataType::CHAR16:
-				new(&m_obj) Char16(*(reinterpret_cast<const Char16*>(&odata))); break;
+				new(&m_obj) Char16(*(reinterpret_cast<const Char16*>(&odata))); 
+			break;
 			case CIMDataType::REFERENCE:
-				new(&m_obj) CIMObjectPath(*(reinterpret_cast<const CIMObjectPath*>(&odata))); break;
+				new(&m_obj) CIMObjectPath(*(reinterpret_cast<const CIMObjectPath*>(&odata))); 
+			break;
 			case CIMDataType::DATETIME:
-				new(&m_obj) CIMDateTime(*(reinterpret_cast<const CIMDateTime*>(&odata))); break;
+				new(&m_obj) CIMDateTime(*(reinterpret_cast<const CIMDateTime*>(&odata))); 
+			break;
 			case CIMDataType::STRING:
-				new(&m_obj) String(*(reinterpret_cast<const String*>(&odata))); break;
+				new(&m_obj) String(*(reinterpret_cast<const String*>(&odata))); 
+			break;
 			case CIMDataType::EMBEDDEDCLASS:
-				new(&m_obj) CIMClass(*(reinterpret_cast<const CIMClass*>(&odata))); break;
+				new(&m_obj) CIMClass(*(reinterpret_cast<const CIMClass*>(&odata))); 
+			break;
 			case CIMDataType::EMBEDDEDINSTANCE:
-				new(&m_obj) CIMInstance(*(reinterpret_cast<const CIMInstance*>(&odata))); break;
+				new(&m_obj) CIMInstance(*(reinterpret_cast<const CIMInstance*>(&odata))); 
+			break;
 			default:
 				m_objDestroyed = true;
 				m_type = CIMDataType::CIMNULL;
@@ -1381,39 +1421,56 @@ CIMValue::CIMValueImpl::destroyObject()
 		switch(m_type)
 		{
 			case CIMDataType::UINT8:
-				(reinterpret_cast<UInt8Array*>(&m_obj))->~UInt8Array(); break;
+				(reinterpret_cast<UInt8Array*>(&m_obj))->~UInt8Array(); 
+			break;
 			case CIMDataType::SINT8:
-				(reinterpret_cast<Int8Array*>(&m_obj))->~Int8Array(); break;
+				(reinterpret_cast<Int8Array*>(&m_obj))->~Int8Array(); 
+			break;
 			case CIMDataType::UINT16:
-				(reinterpret_cast<UInt16Array*>(&m_obj))->~UInt16Array(); break;
+				(reinterpret_cast<UInt16Array*>(&m_obj))->~UInt16Array(); 
+			break;
 			case CIMDataType::SINT16:
-				(reinterpret_cast<Int16Array*>(&m_obj))->~Int16Array(); break;
+				(reinterpret_cast<Int16Array*>(&m_obj))->~Int16Array(); 
+			break;
 			case CIMDataType::UINT32:
-				(reinterpret_cast<UInt32Array*>(&m_obj))->~UInt32Array(); break;
+				(reinterpret_cast<UInt32Array*>(&m_obj))->~UInt32Array(); 
+			break;
 			case CIMDataType::SINT32:
-				(reinterpret_cast<Int32Array*>(&m_obj))->~Int32Array(); break;
+				(reinterpret_cast<Int32Array*>(&m_obj))->~Int32Array(); 
+			break;
 			case CIMDataType::UINT64:
-				(reinterpret_cast<UInt64Array*>(&m_obj))->~UInt64Array(); break;
+				(reinterpret_cast<UInt64Array*>(&m_obj))->~UInt64Array(); 
+			break;
 			case CIMDataType::SINT64:
-				(reinterpret_cast<Int64Array*>(&m_obj))->~Int64Array(); break;
+				(reinterpret_cast<Int64Array*>(&m_obj))->~Int64Array(); 
+			break;
 			case CIMDataType::BOOLEAN:
-				(reinterpret_cast<BoolArray*>(&m_obj))->~BoolArray(); break;
+				(reinterpret_cast<BoolArray*>(&m_obj))->~BoolArray(); 
+			break;
 			case CIMDataType::REAL32:
-				(reinterpret_cast<Real32Array*>(&m_obj))->~Real32Array(); break;
+				(reinterpret_cast<Real32Array*>(&m_obj))->~Real32Array(); 
+			break;
 			case CIMDataType::REAL64:
-				(reinterpret_cast<Real64Array*>(&m_obj))->~Real64Array(); break;
+				(reinterpret_cast<Real64Array*>(&m_obj))->~Real64Array(); 
+			break;
 			case CIMDataType::CHAR16:
-				(reinterpret_cast<Char16Array*>(&m_obj))->~Char16Array(); break;
+				(reinterpret_cast<Char16Array*>(&m_obj))->~Char16Array(); 
+			break;
 			case CIMDataType::DATETIME:
-				(reinterpret_cast<CIMDateTimeArray*>(&m_obj))->~CIMDateTimeArray(); break;
+				(reinterpret_cast<CIMDateTimeArray*>(&m_obj))->~CIMDateTimeArray(); 
+			break;
 			case CIMDataType::STRING:
-				(reinterpret_cast<StringArray*>(&m_obj))->~StringArray(); break;
+				(reinterpret_cast<StringArray*>(&m_obj))->~StringArray(); 
+			break;
 			case CIMDataType::REFERENCE:
-				(reinterpret_cast<CIMObjectPathArray*>(&m_obj))->~CIMObjectPathArray(); break;
+				(reinterpret_cast<CIMObjectPathArray*>(&m_obj))->~CIMObjectPathArray(); 
+			break;
 			case CIMDataType::EMBEDDEDCLASS:
-				(reinterpret_cast<CIMClassArray*>(&m_obj))->~CIMClassArray(); break;
+				(reinterpret_cast<CIMClassArray*>(&m_obj))->~CIMClassArray(); 
+			break;
 			case CIMDataType::EMBEDDEDINSTANCE:
-				(reinterpret_cast<CIMInstanceArray*>(&m_obj))->~CIMInstanceArray(); break;
+				(reinterpret_cast<CIMInstanceArray*>(&m_obj))->~CIMInstanceArray(); 
+			break;
 			default:
 				assert(0); // don't want to throw from a destructor, just segfault
 		}
@@ -2515,9 +2572,17 @@ readValue(istream& istrm, T& val, int convType)
 	BinarySerialization::read(istrm, &val, sizeof(val));
 	switch(convType)
 	{
-		case 3: { val = static_cast<T>(ntoh64(val)); break; }
-		case 2: { val = static_cast<T>(ntoh32(val)); break; }
-		case 1: { val = static_cast<T>(ntoh16(val)); break; }
+		case 3: 
+		val = static_cast<T>(ntoh64(val)); 
+		break;
+
+		case 2:
+		val = static_cast<T>(ntoh32(val)); 
+		break;
+
+		case 1:
+		val = static_cast<T>(ntoh16(val)); 
+		break;
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -2554,9 +2619,17 @@ readArray(istream& istrm, T& ra, int convType)
 		BinarySerialization::read(istrm, &v, sizeof(v));
 		switch(convType)
 		{
-			case 3: v = static_cast<typename T::value_type>(ntoh64(v)); break;
-			case 2: v = static_cast<typename T::value_type>(ntoh32(v)); break;
-			case 1: v = static_cast<typename T::value_type>(ntoh16(v)); break;
+			case 3: 
+			v = static_cast<typename T::value_type>(ntoh64(v)); 
+			break;
+
+			case 2: 
+			v = static_cast<typename T::value_type>(ntoh32(v)); 
+			break;
+			
+			case 1: 
+			v = static_cast<typename T::value_type>(ntoh16(v)); 
+			break;
 		}
 		ra.push_back(v);
 	}
@@ -2766,10 +2839,21 @@ writeValue(ostream& ostrm, T val, int convType)
 	T v;
 	switch(convType)
 	{
-		case 3: v = static_cast<T>(hton64(val)); break;
-		case 2: v = static_cast<T>(hton32(val)); break;
-		case 1: v = static_cast<T>(hton16(val)); break;
-		default: v = val; break;
+		case 3:
+		v = static_cast<T>(hton64(val)); 
+		break;
+		
+		case 2: 
+		v = static_cast<T>(hton32(val)); 
+		break;
+		
+		case 1: 
+		v = static_cast<T>(hton16(val)); 
+		break;
+		
+		default: 
+		v = val; 
+		break;
 	}
 	BinarySerialization::write(ostrm, &v, sizeof(v));
 }
@@ -2795,10 +2879,21 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 		typename T::value_type v;
 		switch(convType)
 		{
-			case 3: v = static_cast<typename T::value_type>(hton64(ra[i])); break;
-			case 2: v = static_cast<typename T::value_type>(hton32(ra[i])); break;
-			case 1: v = static_cast<typename T::value_type>(hton16(ra[i])); break;
-			default: v = static_cast<typename T::value_type>(ra[i]); break;
+			case 3: 
+			v = static_cast<typename T::value_type>(hton64(ra[i])); 
+			break;
+			
+			case 2: 
+			v = static_cast<typename T::value_type>(hton32(ra[i])); 
+			break;
+			
+			case 1: 
+			v = static_cast<typename T::value_type>(hton16(ra[i])); 
+			break;
+			
+			default: 
+			v = static_cast<typename T::value_type>(ra[i]); 
+			break;
 		}
 		BinarySerialization::write(ostrm, &v, sizeof(v));
 	}
