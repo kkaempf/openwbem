@@ -617,42 +617,46 @@ TestAuth()
 
 	echo "Simple Authentication module and GetFeatures Passed"
 	
-	EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
-	echo "5. Testing Digest Authentication"
-	RestartDaemon
-	
-	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-		> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "2" ] || \
-	ExitWithFail "5. Authentication test (digest): fakeclient return wrong code. $RVAL != 2"
+	if grep "define OW_DISABLE_DIGEST" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
+		:
+	else
+		EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
+		echo "5. Testing Digest Authentication"
+		RestartDaemon
+		
+		$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
+			> $RESULTDIR/AuthTest.out 2>&1
+		RVAL=$?
+		[ "$RVAL" = "2" ] || \
+		ExitWithFail "5. Authentication test (digest): fakeclient return wrong code. $RVAL != 2"
 
-	$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
-		 >> $RESULTDIR/AuthTest.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "1" ] || \
-	ExitWithFail "6. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
+		$BUILDDIR/test/acceptance/progs/fakeclient http://bad:no_good@localhost:30926 \
+			 >> $RESULTDIR/AuthTest.out 2>&1
+		RVAL=$?
+		[ "$RVAL" = "1" ] || \
+		ExitWithFail "6. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
 
-	$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
-		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "1" ] || \
-	ExitWithFail "7. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
+		$BUILDDIR/test/acceptance/progs/fakeclient http://test:test@localhost:30926 \
+			 > $RESULTDIR/GetFeatures.out 2>&1
+		RVAL=$?
+		[ "$RVAL" = "1" ] || \
+		ExitWithFail "7. Authentication test (digest): fakeclient return wrong code. $RVAL != 1"
 
-	$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
-		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "0" ] || \
-	ExitWithFail "8. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
+		$BUILDDIR/test/acceptance/progs/fakeclient http://test1:pass1@localhost:30926 \
+			 > $RESULTDIR/GetFeatures.out 2>&1
+		RVAL=$?
+		[ "$RVAL" = "0" ] || \
+		ExitWithFail "8. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
 
-	$BUILDDIR/test/acceptance/progs/fakeclient http://test2:pass2@localhost:30926 \
-		 > $RESULTDIR/GetFeatures.out 2>&1
-	RVAL=$?
-	[ "$RVAL" = "0" ] || \
-	ExitWithFail "9. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
+		$BUILDDIR/test/acceptance/progs/fakeclient http://test2:pass2@localhost:30926 \
+			 > $RESULTDIR/GetFeatures.out 2>&1
+		RVAL=$?
+		[ "$RVAL" = "0" ] || \
+		ExitWithFail "9. Authentication test (digest): fakeclient return wrong code. $RVAL != 0"
 
-	Diff GetFeatures.out GetFeatures.out "Authentication test (digest): Diff failed."
-	echo "Digest Authentication passed"
+		Diff GetFeatures.out GetFeatures.out "Authentication test (digest): Diff failed."
+		echo "Digest Authentication passed"
+	fi
 
 	if grep "define OW_HAVE_PAM" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
         # just start with the pam authentication module to make sure it can be loaded.
