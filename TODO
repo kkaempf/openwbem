@@ -30,14 +30,9 @@ Fix problems:
     - Add tests in configure.in for -W flags supported.
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
-    - CIMExport and CIMExportMethod headers should be used for indications.
     - Name dirs/libs such that OW 2.0 and 3.0 can coexist on the same machine.
     - To prevent DNS attacks, set a limit on incoming data.
-    - Fix uri handling to be consistent with the new spec (once it's done.  
-      company review version has problems.)
     - Add the version to the PACKAGE_PREFIX (for install paths, etc.)
-    - Validate & sync incoming object paths to the class: fix types, all/only
-      keys present.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
