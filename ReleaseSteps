@@ -25,9 +25,10 @@ run make distcheck.
 		build RPMS with docs on OL
 		make a doc tarball called openwbem-doc-<version>.tar.gz
 		build RH RPMS.
-		release on sourceforge.
-		update docs on openwbem website
+		release on sourceforge. ftp://upload.sf.net:/incoming
+		update front page (& docs if need be) on openwbem website
 		release on freshmeat.
-		send email to openwbem_public and others.
+		send email to openwbem-public, openwbem-announce, wbemsource@wbemsource.org
+		create a news item on sf & wbemsource.org.
 
 
