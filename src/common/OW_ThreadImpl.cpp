@@ -277,6 +277,7 @@ joinThread(Thread_t& handle, Int32& rval)
 void
 testCancel()
 {
+	pthread_once(&once_control, &initializeTheKey);
 	Thread* theThread = reinterpret_cast<Thread*>(pthread_getspecific(theKey));
 	if (theThread == 0)
 	{
@@ -296,6 +297,7 @@ testCancel()
 //////////////////////////////////////////////////////////////////////
 void saveThreadInTLS(void* pTheThread)
 {
+	pthread_once(&once_control, &initializeTheKey);
 	int rc;
 	if ((rc = pthread_setspecific(theKey, pTheThread)) != 0)
 	{
