@@ -56,6 +56,7 @@
 #include "OW_Reference.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_CerrLogger.hpp"
+#include "OW_ConfigOpts.hpp"
 
 #include <iostream>
 
@@ -319,6 +320,15 @@ public:
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
 		return getLogger();
+	}
+	virtual String getConfigItem(const String& name, const String& defRetVal) const
+	{
+		// CIMRepository may query for this.
+		if (name == ConfigOpts::DATA_DIR_opt)
+		{
+			return g_repositoryDir;
+		}
+		return defRetVal;
 	}
 };
 
