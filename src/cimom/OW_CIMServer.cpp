@@ -1265,12 +1265,8 @@ CIMServer::invokeMethod(
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
 	}
 	CIMParameterArray methodInParams = method.getINParameters();
-	if (inParams.size() != methodInParams.size())
-	{
-		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-			"Incorrect number of parameters");
-	}
 	CIMParameterArray methodOutParams = method.getOUTParameters();
+
 	outParams.resize(methodOutParams.size());
 	// set the names on outParams
 	for (size_t i = 0; i < methodOutParams.size(); ++i)

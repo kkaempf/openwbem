@@ -1081,7 +1081,7 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_NAMESPACE);
 	}
 
-	// CIM_ERR_INVALID_PARAMETER - wrong number of params
+	// CIM_ERR_INVALID_PARAMETER - missing a required parameter
 	try
 	{
 		CIMParamValueArray in, out;

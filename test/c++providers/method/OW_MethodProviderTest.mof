@@ -3,7 +3,7 @@ class EXP_BartComputerSystem : CIM_ComputerSystem
 {
   [ provider("c++::methodtest") ]
    string GetState(
-		[in] string s,
+		[in, required] string s,
 		[in] uint8 uint8array[],
 		[in(false), out] boolean b,
 		[in(false), out] real64 r64,

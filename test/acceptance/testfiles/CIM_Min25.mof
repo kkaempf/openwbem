@@ -28,6 +28,10 @@ Qualifier Aggregate: boolean = false, Scope (reference),
 	Flavor(DisableOverride);
 Qualifier Out : boolean = false, Scope(parameter),
 	Flavor(DisableOverride);
+Qualifier Required : boolean = false, 
+    Scope(property, reference, parameter),
+    Flavor(DisableOverride);
+
 
 
 
