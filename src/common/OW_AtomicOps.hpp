@@ -145,7 +145,7 @@ namespace OpenWBEM
 {
 
 // use fast inline assembly versions
-struct Atomic_t
+struct OW_COMMON_API Atomic_t
 { 
 	Atomic_t() : val(0) {}
 	Atomic_t(int i) : val(i) {}

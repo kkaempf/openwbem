@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 /////////////////////////////////////////////////////////////////////////////
-struct XMLToken
+struct OW_XML_API XMLToken
 {
 	XMLToken() : type(INVALID), text(8096), attributeCount(0)
 	{}

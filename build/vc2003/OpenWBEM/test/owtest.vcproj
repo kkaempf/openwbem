@@ -18,10 +18,12 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/GX"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\..\src\mof;..\..\..\..\src\http;..\..\..\..\src\http\common;..\..\..\..\src\cimom\common;..\..\..\..\src\provider;..\..\..\..\src\xml;..\..\..\..\src\cimxmllistener;..\..\..\..\test\unit;..\..\..\..\test\CppUnit;c:\OpenSSL\include;..\..\..\..\src\ifcs;..\..\..\..\src\cim;..\..\..\..\src\common\socket;..\..\..\..\src\common;.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;OW_WIN32"
 				MinimalRebuild="TRUE"
+				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				ForceConformanceInForLoopScope="TRUE"

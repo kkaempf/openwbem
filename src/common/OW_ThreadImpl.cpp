@@ -547,7 +547,7 @@ joinThread(Thread_t& threadId, Int32& rvalArg)
 			}
 		}
 	}
-	return 0;
+	return cc;
 }
 
 //////////////////////////////////////////////////////////////////////

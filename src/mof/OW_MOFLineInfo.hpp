@@ -43,7 +43,7 @@ namespace OpenWBEM
 namespace MOF
 {
 
-struct lineInfo
+struct OW_MOF_API lineInfo
 {
 	lineInfo()
 		: filename(), lineNum(1) {}
