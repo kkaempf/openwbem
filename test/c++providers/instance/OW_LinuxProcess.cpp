@@ -285,7 +285,7 @@ public:
 		}
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND, format("Cannot find "
+			OW_THROWCIMMSG(OW_CIMException::FAILED, format("Provider does not support "
 				"method: %1", methodName).c_str());
 		}
 		return OW_CIMValue(OW_String("Fail"));
