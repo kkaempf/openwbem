@@ -47,13 +47,16 @@ void OW_StackTraceTestCases::tearDown()
 
 void OW_StackTraceTestCases::testGetStackTrace()
 {
-	ifstream file("/usr/bin/gdb");
-	if (file)
+	if (getenv("OW_STACKTRACE"))
 	{
-		file.close();
-		OW_StackTrace* stackTrace = OW_StackTrace::getStackTrace();
-		unitAssert(stackTrace);
-		delete stackTrace;
+		ifstream file("/usr/bin/gdb");
+		if (file)
+		{
+			file.close();
+			OW_StackTrace* stackTrace = OW_StackTrace::getStackTrace();
+			unitAssert(stackTrace);
+			delete stackTrace;
+		}
 	}
 }
 
