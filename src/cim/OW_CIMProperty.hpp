@@ -61,14 +61,14 @@ public:
 	 * Create an OW_CIMProperty object with a given name.
 	 * @param name	The name for this OW_CIMProperty object
 	 */
-	OW_CIMProperty(const OW_String& name);
+	explicit OW_CIMProperty(const OW_String& name);
 
 	/**
 	 * Create an OW_CIMProperty object with a given name.
 	 * @param name	The name for this OW_CIMProperty object as a NULL terminated
 	 *		string.
 	 */
-	OW_CIMProperty(const char* name);
+	explicit OW_CIMProperty(const char* name);
 
 	/**
 	 * Create an OW_CIMProperty object with a name and a value.
