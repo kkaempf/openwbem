@@ -1583,41 +1583,16 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 	OW_InstanceProviderIFCRef instancep;
 	OW_CIMClass cc(cc_);
 
-	// we need to query for providers for this class and all base classes.
-	// One provider may instrument an entire hierarchy of classes.
-	// loop until we've got a provider or hit a root class
-	while (true)
+	try
 	{
-		try
-		{
-			instancep =
-				m_provManager->getInstanceProvider(createProvEnvRef(intAclInfo, m_env), ns, cc);
-		}
-		catch (const OW_NoSuchProviderException& e)
-		{
-			// if it's not an instance or associator provider, then ERROR!
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			try
-			{
-				m_provManager->getAssociatorProvider(
-					createProvEnvRef(intAclInfo, m_env), ns, cc);
-			}
-			catch (const OW_NoSuchProviderException& e)
-			{
-#endif
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					format("Invalid provider: %1", e.getMessage()).c_str());
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			}
-#endif
-		}
-		OW_String parentClassName = cc.getSuperClass();
-		if (parentClassName.empty() || instancep)
-		{
-			// loop until we've got a provider or hit a root class
-			break;
-		}
-		cc = _getClass(ns, parentClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+		instancep =
+			m_provManager->getInstanceProvider(createProvEnvRef(intAclInfo, m_env), ns, cc);
+	}
+	catch (const OW_NoSuchProviderException& e)
+	{
+		// This will only happen if the provider qualifier is incorrect
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			format("Invalid provider: %1", e.getMessage()).c_str());
 	}
 
 	return instancep;
@@ -1632,37 +1607,25 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_
 	OW_AssociatorProviderIFCRef ap;
 	OW_CIMClass cc(cc_);
 
-	// we need to query for providers for this class and all base classes.
-	// One provider may instrument an entire hierarchy of classes.
-	// loop until we've got a provider or hit a root class
-	while (true)
+	try
 	{
+		ap =  m_provManager->getAssociatorProvider(
+			createProvEnvRef(intAclInfo, m_env), ns, cc);
+	}
+	catch (const OW_NoSuchProviderException&)
+	{
+		// if it's not an instance or associator provider, then ERROR!
 		try
 		{
-			ap =  m_provManager->getAssociatorProvider(
+			m_provManager->getInstanceProvider(
 				createProvEnvRef(intAclInfo, m_env), ns, cc);
 		}
-		catch (const OW_NoSuchProviderException&)
+		catch (const OW_NoSuchProviderException& e)
 		{
-			// if it's not an instance or associator provider, then ERROR!
-			try
-			{
-				m_provManager->getInstanceProvider(
-					createProvEnvRef(intAclInfo, m_env), ns, cc);
-			}
-			catch (const OW_NoSuchProviderException& e)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					format("Invalid provider: %1", e.getMessage()).c_str());
-			}
+			// This will only happen if the provider qualifier is incorrect
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				format("Invalid provider: %1", e.getMessage()).c_str());
 		}
-		OW_String parentClassName = cc.getSuperClass();
-		if (parentClassName.empty() || ap)
-		{
-			// loop until we've got a provider or hit a root class
-			break;
-		}
-		cc = _getClass(ns, parentClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
 	}
 	return ap;
 }
