@@ -29,6 +29,7 @@ doMakeDistCheck()
 
 doATest()
 {
+# TODO: test make rpm in here.
 	CONFIGOPTS=$1
 	make distclean
 	./cvsbootstrap.sh
