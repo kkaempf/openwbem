@@ -251,6 +251,11 @@ case "$host" in
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
 	PLATFORMDIR="posix"
+	AC_DEFINE(USE_FAKE_LIBS, 1, Fake libraries are enabled)
+	STATIC_SERVICES=1
+	AC_DEFINE(STATIC_SERVICES, 1, Static services are enabled)
+	CURRENT_LINK_MODE_FLAGS="$STATIC_LINK_FLAGS"
+	BINLINKAPPENDFLAGS="$DYNAMIC_LINK_FLAGS"
 	LIB_EXT="nlm"
 	EXEEXT=".nlm"
 	PLAT_CFLAGS="-DEXPERIMENTAL"
@@ -443,6 +448,7 @@ alloca.h \
 sys/types.h \
 sys/stat.h \
 pwd.h \
+sys/wait.h \
 )
 
 # check for C++ headers
