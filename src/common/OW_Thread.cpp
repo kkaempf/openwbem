@@ -124,8 +124,6 @@ Thread::start(Reference<ThreadDoneCallback> cb)
 	}
 	m_isStarting = false;
 	barrier.wait();
-	// Note that you can't do *anything* with the this pointer after barrier.wait()
-	// returns, because it may have been deleted already by the thread itself.
 }
 //////////////////////////////////////////////////////////////////////////////
 // Wait for this object's thread execution (if any) to complete.

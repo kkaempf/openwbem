@@ -97,7 +97,7 @@ public:
 	 * be called)  Note that this will not clean up any objects on the stack,
 	 * (except for on some Linux systems newer than Nov. 2003.  Right now,
 	 * the only system I know of that does C++ stack unwinding on thread 
-	 * cancellation is Fedora Core 1.)
+	 * cancellation is Fedora Core 1. & RedHat Enterprise 3.0)
 	 * so it may cause memory leaks or inconsistent state or even memory corruption.
 	 * Also note that this still may not stop the thread, since a thread can
 	 * make itself non-cancellable, or it may not every call any cancellation
