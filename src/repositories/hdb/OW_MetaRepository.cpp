@@ -734,7 +734,9 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						}
 						else
 						{
-							OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Error: %1.%2: qualifier %3 was "
+							// TODO: look at this message, it seems the dmtf cim schema causes it quite often.
+							// maybe we should only output it if the value is different?
+							OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Warning: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),
