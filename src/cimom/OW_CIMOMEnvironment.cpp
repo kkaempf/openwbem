@@ -68,24 +68,6 @@ OW_CIMOMEnvironmentRef OW_CIMOMEnvironment::g_cimomEnvironment;
 
 namespace
 {
-class OW_EnvSelectable : public OW_SelectableCallbackIFC
-{
-public:
-	OW_EnvSelectable(OW_SelectEngine& engine)
-	: OW_SelectableCallbackIFC()
-	, m_engine(engine)
-	{}
-
-protected:
-	virtual void doSelected(OW_SelectableIFCRef& selectedObject)
-	{
-		(void)selectedObject;
-		m_engine.stop();
-	}
-
-private:
-	OW_SelectEngine& m_engine;
-};
 
 
 	class CIMOMProviderEnvironment : public OW_ProviderEnvironmentIFC
@@ -1086,7 +1068,7 @@ OW_CIMOMEnvironment::runSelectEngine()
 
 	// Insure the signal pipe is at the front of the select list
 	engine.addSelectableObject(OW_Platform::getSigSelectable(),
-		OW_SelectableCallbackIFCRef(new OW_EnvSelectable(engine)));
+		OW_SelectableCallbackIFCRef(new OW_SelectEngineStopper(engine)));
 	
 	for(size_t i = 0; i < m_selectables.size(); ++i)
 	{
