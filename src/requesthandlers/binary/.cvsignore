@@ -6,3 +6,4 @@ Makefile
 *.la
 lib*so*
 OW_config.h
+lib*dylib*

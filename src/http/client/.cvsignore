@@ -6,3 +6,4 @@ Makefile
 *.la
 lib*so*
 .libowhttpclient.so.libs
+lib*dylib*

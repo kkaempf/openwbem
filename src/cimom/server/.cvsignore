@@ -7,3 +7,4 @@ Makefile
 *.swp
 lib*so*
 OW_config.h
+lib*dylib*

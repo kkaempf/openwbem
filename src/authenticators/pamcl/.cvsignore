@@ -7,3 +7,4 @@ Makefile
 lib*so*
 OW_config.h
 OW_PAMAuth
+lib*dylib*

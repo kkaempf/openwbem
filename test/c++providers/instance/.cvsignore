@@ -5,3 +5,8 @@ Makefile
 *.lo
 *.la
 lib*so*
+lib*dylib*
+lib*dylib*
+lib*dylib*
+lib*dylib*
+lib*dylib*
