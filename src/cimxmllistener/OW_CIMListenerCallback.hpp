@@ -46,7 +46,7 @@ class String;
 /**
  * An abstract base class for CIM Listener callbacks.
  */
-class CIMListenerCallback : public IntrusiveCountableBase
+class OW_LISTENER_API CIMListenerCallback : public IntrusiveCountableBase
 {
 public:
 	virtual ~CIMListenerCallback();

@@ -31,15 +31,6 @@ LINKDBG =
 OBJDIR = $(BUILDTYPE)
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 
-#CIMLISTENEREXE = $(TARGETDIR)\owcimindicationlistener.exe
-#CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
-#DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
-#ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
-#ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
-#ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
-#ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
-#EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
-#REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
 INCS = \
 /I".." \
@@ -51,7 +42,7 @@ INCS = \
 /I$(SRCDIR)\xml \
 /I$(SRCDIR)\cim \
 /I$(SRCDIR)\client \
-/I$(SRCDIR)\cimlistener \
+/I$(SRCDIR)\cimxmllistener \
 /I$(SRCDIR)\repositories\hdb \
 /I$(OPENSSLBASE)\include
 
@@ -59,6 +50,16 @@ LIBPATH = \
 /LIBPATH:$(OPENSSLBASE)\lib\vc \
 /LIBPATH:$(ZLIBBASE)\lib \
 /LIBPATH:$(TARGETDIR)
+
+#CIMLISTENEREXE = $(TARGETDIR)\owcimindicationlistener.exe
+#CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
+#DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
+#ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
+#ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
+#ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
+#ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
+#EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
+#REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
 CIMLISTENER = owcimindicationlistener
 CIMLISTENEREXE = $(TARGETDIR)\$(CIMLISTENER).exe
@@ -69,22 +70,27 @@ DELETENSEXE = $(TARGETDIR)\$(DELETENS).exe
 ENUMCLS = owenumclasses
 ENUMCLSEXE = $(TARGETDIR)\$(ENUMCLS).exe
 
-#CIMLISTENEREXE = $(TARGETDIR)\owcimindicationlistener.exe
-CREATENSEXE = $(TARGETDIR)\owcreatenamespace.exe
-DELETENSEXE = $(TARGETDIR)\owdeletenamespace.exe
-ENUMCLSEXE = $(TARGETDIR)\owenumclasses.exe
-ENUMCLSNAMESEXE = $(TARGETDIR)\owenumclassnames.exe
-ENUMNSEXE = $(TARGETDIR)\owenumnamespace.exe
-ENUMQUALSEXE = $(TARGETDIR)\owenumqualifiers.exe
-EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
-#REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
 EXES = \
 $(CREATENSEXE) \
 $(DELETENSEXE) \
-$(ENUMCLSEXE)
+$(ENUMCLSEXE) \
+$(CIMLISTENEREXE)
 
 ALL: $(EXES)
+
+#
+# owcimindicationlistener
+#
+$(CIMLISTENEREXE): $(OBJDIR)\$(@B).obj $(TARGETDIR) 
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj \
+	libowhttp.lib libowclient.lib libowxml.lib libopenwbem.lib \
+	libcimxmllistener.lib zdll.lib libeay32.lib ssleay32.lib
+	
+$(OBJDIR)\$(CIMLISTENER).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\$(@B).cpp
 
 #
 # owcreatenamespace

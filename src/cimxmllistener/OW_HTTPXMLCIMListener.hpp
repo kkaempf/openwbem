@@ -54,7 +54,7 @@ class HTTPServer;
 class ListenerAuthenticator;
 class Thread;
 
-class HTTPXMLCIMListener : public CIMListenerCallback
+class OW_LISTENER_API HTTPXMLCIMListener : public CIMListenerCallback
 {
 public:
 	/**

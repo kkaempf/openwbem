@@ -598,6 +598,12 @@
 #define OW_CLIENT_API OW_IMPORT
 #endif
 
+#ifdef OW_LISTENER_BUILD
+#define OW_LISTENER_API OW_EXPORT
+#else
+#define OW_LISTENER_API OW_IMPORT
+#endif
+
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

@@ -200,6 +200,13 @@
 #define HTTP_API OW_IMPORT
 #endif
 
+#ifdef OW_LISTENER_BUILD
+#define LISTENER_API OW_EXPORT
+#else
+#define LISTENER_API OW_IMPORT
+#endif
+
+
 #ifdef OW_CLIENT_BUILD
 #define CLIENT_API OW_EXPORT
 #else

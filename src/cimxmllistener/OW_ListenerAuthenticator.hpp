@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class ListenerAuthenticator : public AuthenticatorIFC
+class OW_LISTENER_API ListenerAuthenticator : public AuthenticatorIFC
 {
 public:
 	/**
