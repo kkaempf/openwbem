@@ -144,8 +144,17 @@ protected:
 		logDebug("Queue empty: the wait is over");
 	}
 	
-	void shutdownThreads(int shutdownSecs)
+	void shutdownThreads(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
+		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
+		{
+			return;
+		}
+
+		// Wake up any workers so they recheck shutdown flag
+		m_queueNotEmpty.notifyAll();
+		m_queueNotFull.notifyAll();
+
 		if (shutdownSecs >= 0)
 		{
 			// Set cooperative thread cancellation flag
@@ -304,16 +313,11 @@ public:
 		logDebug("Work has been added to the queue");
 		return true;
 	}
+
+	// we keep this around so it can be called in the destructor
 	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
-		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
-		{
-			return;
-		}
-		// Wake up any workers so they recheck shutdown flag
-		m_queueNotEmpty.notifyAll();
-		m_queueNotFull.notifyAll();
-		shutdownThreads(shutdownSecs);
+		shutdownThreads(finishWorkInQueue, shutdownSecs);
 	}
 	virtual ~FixedSizePoolImpl()
 	{
@@ -457,15 +461,11 @@ public:
 		}
 		return true;
 	}
+
+	// we keep this around so it can be called in the destructor
 	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
-		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
-		{
-			return;
-		}
-		// Wake up any workers so they recheck shutdown flag
-		m_queueNotFull.notifyAll();
-		shutdownThreads(shutdownSecs);
+		shutdownThreads(finishWorkInQueue, shutdownSecs);
 	}
 	virtual ~DynamicSizePoolImpl()
 	{
