@@ -108,24 +108,6 @@ getUserId(const OW_String& userName, OW_UserId& userId)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static OW_Bool
-getUserName(const OW_UserId& userId, OW_String& userName)
-{
-	OW_MutexLock ml(g_pwdLock);
-	OW_Bool rv = false;
-	struct passwd* pwd;
-	pwd = ::getpwuid(userId);
-	if(pwd)
-	{
-		userName = pwd->pw_name;
-		rv = true;
-	}
-	return rv;
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
