@@ -163,6 +163,9 @@
 #ifndef OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION
 #define OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION "false"
 #endif
+#ifndef OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL
+#define OW_DEFAULT_REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL "5"
+#endif
 
 namespace OpenWBEM
 {
@@ -221,6 +224,7 @@ namespace ConfigOpts
 	static const char* const INTEROP_SCHEMA_NAMESPACE_opt = "owcimomd.interop_schema_namespace";
 	static const char* const UDS_FILENAME_opt = "http_server.uds_filename";
 	static const char* const HTTP_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
+	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
