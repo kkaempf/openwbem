@@ -57,7 +57,9 @@ extern "C"
 #include <stropts.h>
 #include <net/if.h>
 #include <netinet/in.h>
+#if defined (OW_HAVE_SYS_SOCKIO_H)
 #include <sys/sockio.h>
+#endif
 #include <strings.h>
 #include <fcntl.h>
 #endif
