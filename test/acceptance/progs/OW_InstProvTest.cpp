@@ -234,7 +234,7 @@ main(int argc, char* argv[])
 		OW_ASSERT(copEnu.numberOfElements() == 1);
 
 		cout << "** Getting Instance" << endl;
-		inst = rch.getInstance(icop);
+		inst = rch.getInstance(icop.getNameSpace(), icop);
 		sa.clear();
 		cout << "** Checking array property on instance" << endl;
 		inst.getProperty("Params").getValue().get(sa);
@@ -254,7 +254,7 @@ main(int argc, char* argv[])
 		rch.modifyInstance(icop, inst);
 
 		cout << "** Getting new instance" << endl;
-		inst = rch.getInstance(icop);
+		inst = rch.getInstance(icop.getNameSpace(), icop);
 
 		cout << "** Checking array property on new instance" << endl;
 		sa.clear();

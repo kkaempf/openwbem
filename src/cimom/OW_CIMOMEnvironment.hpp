@@ -129,7 +129,7 @@ public:
 	void logDebug(const OW_String& s) const;
 	void logError(const OW_String& s) const;
 	void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_String& instNS);
 	void unloadReqHandlers();
 
 private:

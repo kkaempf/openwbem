@@ -116,16 +116,17 @@ public:
 	OW_CIMInstance
 		getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
-		(void)cop;
+		(void)ns;
 		(void)env;
 		(void)localOnly;
 		OW_CIMInstance rval = cimClass.newInstance();
 		OW_String name;
-		cop.getKeys()[0].getValue().get(name);
+		instanceName.getKeys()[0].getValue().get(name);
 		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{

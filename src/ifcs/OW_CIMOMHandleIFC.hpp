@@ -340,7 +340,8 @@ public:
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
-	 * @param name The OW_CIMObjectPath that identifies this CIM instance
+	 * @param ns The namespace.
+	 * @param instanceName The OW_CIMObjectPath that identifies this CIM instance
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		are returned, otherwise all properties are returned.
 	 *
@@ -363,7 +364,8 @@ public:
 	 *										found
 	 */
 	virtual OW_CIMInstance getInstance(
-		const OW_CIMObjectPath& name,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly = NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin = EXCLUDE_CLASS_ORIGIN,
@@ -852,7 +854,7 @@ public:
 	 * @param instance	The indication instance to use in the notification.
 	 */
 	virtual void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_String& instNS);
 
 	
 };

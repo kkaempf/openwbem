@@ -195,7 +195,9 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
-    const OW_CIMObjectPath &cop, const OW_CIMClass& cimClass, const OW_Bool& localOnly)
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
+	const OW_CIMClass& cimClass, const OW_Bool& localOnly)
 {
         OW_CIMInstance rval;
 
@@ -213,6 +215,8 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 
             CIMClass _cc = { (void*)static_cast<const void *> (&cimClass)};
 
+			OW_CIMObjectPath cop(instanceName);
+			cop.setNameSpace(ns);
             CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
             int lo = localOnly;

@@ -55,7 +55,7 @@ OW_CIMOMHandleIFC::getServerFeatures()
 
 void
 OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS)
+		const OW_String& instNS)
 {
 	OW_THROWCIM(OW_CIMException::FAILED);
 	(void)instance;

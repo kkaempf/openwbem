@@ -545,6 +545,7 @@ OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_Bool localOnly(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
@@ -556,7 +557,7 @@ OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
 		propListPtr = &propList;
 	}
 
-	OW_CIMInstance cimInstance = chdl->getInstance(op, localOnly,
+	OW_CIMInstance cimInstance = chdl->getInstance(ns, op, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);

@@ -186,13 +186,13 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 				return;
 			}
 			
-			OW_CIMObjectPath cop("OpenWBEM_UserACL", "root/security");
+			OW_CIMObjectPath cop("OpenWBEM_UserACL");
 			cop.addKey("username", OW_CIMValue(aclInfo.getUserName()));
 			cop.addKey("nspace", OW_CIMValue(lns));
 			OW_CIMInstance ci;
 			try
 			{
-				ci = m_pServer->getInstance(cop, false, true, true, NULL,
+				ci = m_pServer->getInstance("root/security", cop, false, true, true, NULL,
 					NULL, intACLInfo);
 			}
 			catch(const OW_CIMException&)
@@ -248,12 +248,12 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
-		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL", "root/security");
+		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL");
 		cop.addKey("nspace", OW_CIMValue(lns));
 		OW_CIMInstance ci;
 		try
 		{
-			ci = m_pServer->getInstance(cop, false, true, true, NULL,
+			ci = m_pServer->getInstance("root/security", cop, false, true, true, NULL,
 				NULL, intACLInfo);
 		}
 		catch(const OW_CIMException& ce)
@@ -1227,17 +1227,23 @@ OW_CIMServer::_getCIMInstances(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
+OW_CIMServer::getInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
+	OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	return getInstance(cop, localOnly, includeQualifiers, includeClassOrigin,
+	return getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, NULL, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
+OW_CIMServer::getInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
+	OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, OW_CIMClass* pOutClass,
 	const OW_ACLInfo& aclInfo)
@@ -1249,7 +1255,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	}
 
 	// Check to see if user has rights to get the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::GETINSTANCE, cop.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETINSTANCE, ns, aclInfo);
 
 	OW_CIMClass cc;
 	OW_CIMInstance ci;
@@ -1259,7 +1265,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	try
 	{
 		// this doesn't use m_mStore because of __Namespace
-		cc = getClass(cop.getNameSpace(), cop.getObjectName(),
+		cc = getClass(ns, instanceName.getObjectName(),
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
@@ -1276,13 +1282,15 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 
 
 	OW_ASSERT(cc);
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, aclInfo);
+	// TODO: This gets the class again.  Make it more efficient.
+	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns,
+		instanceName.getObjectName(), aclInfo);
 
 	if(instancep)
 	{
 		ci = instancep->getInstance(
 			createProvEnvRef(real_ch),
-				cop, cc, localOnly);
+				ns, instanceName, cc, localOnly);
 		if (!ci)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
@@ -1293,7 +1301,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	{
 		try
 		{
-			ci = m_iStore.getCIMInstance(cop, cc);
+			ci = m_iStore.getCIMInstance(ns, instanceName, cc);
 		}
 		catch (OW_IOException&)
 		{
@@ -1308,7 +1316,7 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	}
 
 	ci.syncWithClass(cc, true);
-	_getProviderProperties(cop.getNameSpace(), cop, ci, cc, aclInfo);
+	_getProviderProperties(ns, instanceName, ci, cc, aclInfo);
 	ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 		propertyList);
 
@@ -1339,16 +1347,13 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 	try
 	{
 		OW_CIMClass theClass;
-		OW_CIMObjectPath copWithNS(cop); // TODO: Remove this var once getInstance is fixed
-		copWithNS.setNameSpace(ns);
-		OW_CIMInstance oldInst = getInstance(copWithNS, false, true, true, NULL,
+		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, intAclInfo);
 
 		OW_AssocDbHandle hdl = m_assocDb.getHandle();
 
 		// Ensure no associations exist for this instance
-		OW_String instStr = copWithNS.toString();
-		if(hdl.hasAssocEntries(instStr))
+		if(hdl.hasAssocEntries(ns, cop))
 		{
 			// TODO: Revisit this.  Instead of throwing, it is allowed in the
 			// spec to to delete the associations that reference the instance.
@@ -1357,7 +1362,7 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 			// It would also to good to check for Min(1) relationships to the
 			// instance.
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				format("Instance has associations: %1", instStr).c_str());
+				format("Instance %1 has associations", cop.toString()).c_str());
 		}
 
 		// If we're deleting an association instance, then remove all
@@ -1499,9 +1504,11 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 					if(rc == OW_CIMException::SUCCESS)
 					{
-						OW_CIMInstance rci = m_iStore.getCIMInstance(op, rcc);
-
-						if(!rci)
+						try
+						{
+							OW_CIMInstance rci = m_iStore.getCIMInstance(op.getNameSpace(), op, rcc);
+						}
+						catch (OW_CIMException&)
 						{
 							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 								format("Association references an invalid instance:"
@@ -1560,20 +1567,22 @@ OW_CIMInstance
 OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
+	OW_String ns = cop.getNameSpace();
 	// Check to see if user has rights to modify the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, cop.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, ns, aclInfo);
 
 	try
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
+		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			NULL, intAclInfo);
 
+		// TODO: Fix this.  This is the third time we get the class!
 		OW_CIMClass theClass;
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(),
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, ci.getClassName(),
 			theClass);
 
-		checkGetClassRvalAndThrowInst(rc, cop.getNameSpace(), cop.getObjectName());
+		checkGetClassRvalAndThrowInst(rc, ns, cop.getObjectName());
 
 		OW_CIMQualifier cq = theClass.getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROVIDER);
@@ -1581,7 +1590,7 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 		OW_InstanceProviderIFCRef instancep(0);
 		if(cq)
 		{
-			instancep = _getInstanceProvider(cop, aclInfo);
+			instancep = _getInstanceProvider(ns, cop.getObjectName(), aclInfo);
 		}
 
 		if(!instancep)
@@ -1612,8 +1621,8 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			if(!assocP)
 			{
 				OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
-				adbHdl.deleteEntries(cop.getNameSpace(), oldInst);
-				adbHdl.addEntries(cop.getNameSpace(), ci);
+				adbHdl.deleteEntries(ns, oldInst);
+				adbHdl.addEntries(ns, ci);
 			}
 		}
 
@@ -1634,16 +1643,16 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
+OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_InstanceProviderIFCRef ip = _getInstanceProvider(icop, aclInfo);
 	OW_String classname = icop.getObjectName();
+	OW_InstanceProviderIFCRef ip = _getInstanceProvider(ns, classname, aclInfo);
 
 	OW_CIMClass cc;
 	try
 	{
-		cc = getClass(icop.getNameSpace(), icop.getObjectName(),
+		cc = getClass(ns, classname,
 			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
@@ -1662,19 +1671,19 @@ OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, true);
 
-		return OW_Bool((ip->getInstance(createProvEnvRef(real_ch), icop, cc,
+		return OW_Bool((ip->getInstance(createProvEnvRef(real_ch), ns, icop, cc,
 			false)) != 0);
 	}
 	else
 	{
-		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(icop.getNameSpace(), icop.getObjectName(), cc);
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, icop.getObjectName(), cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
 			return false;
 		}
 	}
 
-	return m_iStore.instanceExists(icop, cc);
+	return m_iStore.instanceExists(ns, icop, cc);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1705,7 +1714,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getInstance(name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(name.getNameSpace(), name, false, true, true, NULL,
 			NULL, aclInfo);
 		OW_CIMProperty prop = ci.getProperty(propertyName);
 		if(!prop)
@@ -1775,7 +1784,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getInstance(name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(name.getNameSpace(), name, false, true, true, NULL,
 			NULL, intAclInfo);
 
 		if(!ci)
@@ -1845,7 +1854,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	// If this is an instance, ensure it exists.
 	if(keys.size() > 0)
 	{
-		if(!_instanceExists(name, aclInfo))
+		if(!_instanceExists(name.getNameSpace(), name, aclInfo))
 		{
 			// Dynamic - Get the provider information
 			OW_CIMQualifier cq = cc.getQualifier(
@@ -2080,19 +2089,6 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 	}
 
 	return cv;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// Get the instance provider information - we locate the provider by traversing
-// up the class hierarchy to find the provider closest to the class that is
-// identified by the instance
-// TODO: Remove this function
-OW_InstanceProviderIFCRef
-OW_CIMServer::_getInstanceProvider(const OW_CIMObjectPath cop,
-	const OW_ACLInfo& aclInfo)
-{
-	return _getInstanceProvider(cop.getNameSpace(), cop.getObjectName(),
-		aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2587,9 +2583,12 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath op = e.getAssociatedObject();
-			OW_CIMClass cc;
-			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
-				&cc, intAclInfo);
+			// TODO: Switch this to 			
+			//OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op, false,includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
+			//result.handle(ci);
+
+			OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op,
+				false, true, true, NULL, intAclInfo);
 
 			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, propertyList));
@@ -2622,9 +2621,14 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath op = e.getAssociationPath();
-			OW_CIMClass cc;
-			OW_CIMInstance ci = server.getInstance(op, false, true, true, NULL,
-				&cc, intAclInfo);
+
+			// TODO: Switch this to 			
+			//OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op, false,includeQualifiers,includeClassOrigin,propertyList,intAclInfo);
+			//result.handle(ci);
+
+
+			OW_CIMInstance ci = server.getInstance(op.getNameSpace(), op,
+				false, true, true, NULL, intAclInfo);
 
 			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, propertyList));
@@ -3196,7 +3200,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 					ns + "/" + clsname, it->first, err).c_str());
 		}
 
-		if(!m_iStore.instanceExists(op, cc))
+		if(!m_iStore.instanceExists(ns, op, cc))
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Propagated keys refer to non-existent object: %1",

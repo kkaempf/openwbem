@@ -198,8 +198,16 @@ OW_AssocDbHandle::addEntry(const OW_AssocDbEntry& newEntry)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_AssocDbHandle::hasAssocEntries(const OW_String& targetObject)
+OW_AssocDbHandle::hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName)
 {
+	OW_String ns2(ns);
+	while (!ns2.empty() && ns2[0] == '/')
+	{
+		ns2 = ns2.substring(1);
+	}
+	OW_CIMObjectPath pathWithNS(instanceName);
+	pathWithNS.setNameSpace(ns);
+	OW_String targetObject = pathWithNS.toString();
 	return (m_pdata->m_pdb->findEntry(targetObject, *this)) ? true : false;
 }
 

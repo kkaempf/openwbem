@@ -63,14 +63,16 @@ public:
 	/**
 	 * Retrieve a specific instance
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param ns The namespace
+	 * @param instanceName The OW_CIMObectPath that specifies the instance
 	 * @param theClass The CIM class of the instance to retrieve
 	 * @return An OW_CIMInstance object
 	 * @exception OW_HDBException
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_CIMInstance getCIMInstance(const OW_CIMObjectPath& cop,
+	OW_CIMInstance getCIMInstance(const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& theClass);
 
 	/**
@@ -121,7 +123,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_Bool instanceExists(const OW_CIMObjectPath& cop,
+	OW_Bool instanceExists(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass);
 
 	/**

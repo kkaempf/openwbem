@@ -300,16 +300,20 @@ OW_InstanceRepository::getCIMInstances(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_InstanceRepository::getCIMInstance(const OW_CIMObjectPath& cop,
+OW_InstanceRepository::getCIMInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
 	const OW_CIMClass& theClass)
 {
 	throwIfNotOpen();
-	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
+	OW_String instanceKey = makeInstanceKey(ns, instanceName, theClass);
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
+		OW_CIMObjectPath cop(instanceName);
+		cop.setNameSpace(ns);
 		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
 	}
 
@@ -487,12 +491,13 @@ OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_InstanceRepository::instanceExists(const OW_CIMObjectPath& cop,
+OW_InstanceRepository::instanceExists(const OW_String& ns,
+	const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
 	throwIfNotOpen();
 	OW_Bool cc = false;
-	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
+	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)

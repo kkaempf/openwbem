@@ -712,7 +712,9 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMXMLCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::getInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
@@ -724,6 +726,8 @@ OW_CIMXMLCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 
+	OW_CIMObjectPath path(instanceName);
+	path.setNameSpace(ns);
 	extra << instanceNameToKey(path, "InstanceName");
 
 	if (propertyList)
@@ -739,7 +743,7 @@ OW_CIMXMLCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 
 	OW_CIMInstance rval;
 	getInstanceOp op(rval);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 	return rval;
 }
 

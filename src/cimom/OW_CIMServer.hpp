@@ -391,12 +391,16 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_INVALID_PARAMETER
 	 */
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		OW_CIMClass* pOutClass, const OW_ACLInfo& aclInfo);
@@ -581,7 +585,7 @@ private:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	OW_Bool _instanceExists(const OW_CIMObjectPath& cop,
+	OW_Bool _instanceExists(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_ACLInfo& aclInfo);
 
 public:
@@ -684,9 +688,6 @@ private:
 
 	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 		OW_HDBNode node);
-
-	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_CIMObjectPath cop,
-		const OW_ACLInfo& aclInfo);
 
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
 		const OW_String& className, const OW_ACLInfo& aclInfo);

@@ -303,11 +303,11 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance(cop, false);
+		OW_CIMInstance in = hdl.getInstance("/root/acltest", cop, false);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

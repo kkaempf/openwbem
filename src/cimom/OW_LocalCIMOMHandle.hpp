@@ -188,7 +188,9 @@ public:
 	 *
 	 * @return The OW_CIMInstance identified by the OW_CIMObjectPath
 	 */
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& name,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly=false, OW_Bool includeQualifiers=false,
 		OW_Bool includeClassOrigin=false,
 		const OW_StringArray* propertyList=0);
@@ -613,7 +615,7 @@ public:
 	 * @param instance	The indication instance to use in the notification.
 	 */
 	void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_String& instNS);
 
 private:
 	struct dummy

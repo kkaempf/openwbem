@@ -1141,7 +1141,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeQualifiers = params[2].val.toBool();
 	bool includeClassOrigin = params[3].val.toBool();
 
-	OW_CIMInstance cimInstance = hdl.getInstance(path, localOnly,
+	OW_CIMInstance cimInstance = hdl.getInstance(ns, path, localOnly,
 		includeQualifiers, includeClassOrigin,
 		pPropList);
 

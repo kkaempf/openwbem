@@ -974,7 +974,7 @@ OW_CIMOMEnvironment::removeSelectable(OW_SelectableIFCRef obj,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::exportIndication(const OW_CIMInstance& instance,
-	const OW_CIMNameSpace& instNS)
+	const OW_String& instNS)
 {
 	logDebug("OW_CIMOMEnvironment::exportIndication");
 	if(m_indicationServer && !m_indicationsDisabled)

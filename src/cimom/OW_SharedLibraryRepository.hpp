@@ -178,12 +178,14 @@ public:
 		return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
 	}
 
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath &cop,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getInstance(cop, localOnly, includeQualifiers,
+		return m_ref->getInstance(ns, instanceName, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 

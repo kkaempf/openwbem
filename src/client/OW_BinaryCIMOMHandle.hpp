@@ -166,7 +166,9 @@ public:
 	 * @exception OW_CIMException If the specified OW_CIMObjectPath cannot be
 	 *										found
 	 */
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& name,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly=false, OW_Bool includeQualifiers=false,
 		OW_Bool includeClassOrigin=false,
 		const OW_StringArray* propertyList=0);

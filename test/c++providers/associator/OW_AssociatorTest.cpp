@@ -93,9 +93,8 @@ namespace
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
-			OW_CIMInstance ci = hdl->getInstance(objectName, false);
-			if (!ci)
-				return;
+			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -123,11 +122,8 @@ namespace
 				role, resultRole));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName, false);
-			if (!ci)
-			{
-				return;
-			}
+			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -164,9 +160,8 @@ namespace
 				includeQualifiers, includeClassOrigin, propertyList));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName, false);
-			if (!ci)
-				return;
+			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -206,9 +201,8 @@ namespace
 				assocName.toString(), objectName.toString(), role));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName, false);
-			if (!ci)
-				return;
+			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
 

@@ -379,15 +379,18 @@ OW_BinaryCIMOMHandle::getClass(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_BinaryCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::getInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"GetInstance", path.getNameSpace());;
+		"GetInstance", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_GETINST);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeObjectPath(strm, instanceName);
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
@@ -398,7 +401,8 @@ OW_BinaryCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 		OW_BinIfcIO::writeStringArray(strm, *propertyList);
 	}
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "GetInstance", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"GetInstance", ns);
 
 	return readCIMObject<OW_CIMInstance>(in);
 }

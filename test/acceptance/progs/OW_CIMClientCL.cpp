@@ -513,11 +513,11 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance(cop, localOnly, includeQualifiers,
+		OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(),
@@ -548,7 +548,7 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance(cop, false);
+		OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
 
 		in.setProperty(OW_CIMProperty("BrandNewProperty",
 			OW_CIMValue(OW_String("true"))));

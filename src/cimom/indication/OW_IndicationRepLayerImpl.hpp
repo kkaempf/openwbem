@@ -94,7 +94,9 @@ public:
 	}
 
 
-	virtual OW_CIMInstance getInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance getInstance(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
@@ -336,7 +338,7 @@ public:
 private:
 
 	void exportIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS)
+		const OW_String& instNS)
 	{
 		getEnvironment()->exportIndication(instance, instNS);
 	}

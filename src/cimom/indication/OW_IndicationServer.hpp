@@ -52,7 +52,7 @@ public:
 	virtual void shutdown() = 0;
 
 	virtual void processIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS) = 0;
+		const OW_String& instNS) = 0;
 
 	virtual int getRunCount() = 0;
 

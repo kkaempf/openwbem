@@ -210,14 +210,16 @@ OW_LocalCIMOMHandle::getClass(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_LocalCIMOMHandle::getInstance(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::getInstance(
+	const OW_String& ns,
+	const OW_CIMObjectPath& instanceName,
 	OW_Bool localOnly,
 	OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->getInstance(name, localOnly, includeQualifiers,
+	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
 
@@ -421,7 +423,7 @@ OW_LocalCIMOMHandle::getServerFeatures()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::exportIndication(const OW_CIMInstance& instance,
-	const OW_CIMNameSpace& instNS)
+	const OW_String& instNS)
 {
 	m_env->exportIndication(instance, instNS);
 }

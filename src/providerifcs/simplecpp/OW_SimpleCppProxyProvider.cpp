@@ -227,12 +227,13 @@ OW_SimpleCppInstanceProviderProxy::enumInstances(
 OW_CIMInstance
 OW_SimpleCppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly)
 {
 	m_pProv->updateAccessTime();
-	OW_CIMInstance ci = m_pProv->getInstance(env, cop, cimClass);
+	OW_CIMInstance ci = m_pProv->getInstance(env, ns, instanceName, cimClass);
 	ci = ci.clone(localOnly,true,true);
 	return ci;
 }

@@ -156,12 +156,13 @@ OW_CppInstanceProviderProxy::enumInstances(
 OW_CIMInstance
 OW_CppInstanceProviderProxy::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->getInstance(env, cop, cimClass, localOnly);
+	return m_pProv->getInstance(env, ns, instanceName, cimClass, localOnly);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

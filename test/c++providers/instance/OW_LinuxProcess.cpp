@@ -125,16 +125,17 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMInstance getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
-		(void)cop;
+		(void)ns;
 		(void)cimClass;
 		(void)localOnly;
 		OW_CIMInstance inst = cimClass.newInstance();
-		inst.setProperties(cop.getKeys());
+		inst.setProperties(instanceName.getKeys());
 		OW_String pid;
 		inst.getProperty("Handle").getValue().get(pid);
 		OW_String cmd("/bin/ps p ");

@@ -109,7 +109,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 
 	try
 	{
-		ci = provenv->getPtr()->getCIMOMHandle()->getInstance(
+		ci = provenv->getPtr()->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
 			owcop, localOnly);
 	}
 	catch (...)

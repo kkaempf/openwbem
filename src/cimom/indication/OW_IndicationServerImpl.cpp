@@ -266,10 +266,10 @@ OW_IndicationServerImpl::shutdown()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
-	const OW_CIMNameSpace& instNS)
+	const OW_String& instNS)
 {
 	OW_MutexLock ml(m_procTransGuard);
-	ProcIndicationTrans trans(instanceArg, instNS.getNameSpace());
+	ProcIndicationTrans trans(instanceArg, instNS);
 	m_procTrans.push_back(trans);
 	m_wakeEvent.signal();
 }
@@ -353,7 +353,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 
 			// Get object path to filter object
 			subscription.getProperty("Filter").getValue().get(cop);
-			OW_CIMInstance filter = hdl->getInstance(cop);
+			OW_CIMInstance filter = hdl->getInstance(cop.getNameSpace(), cop);
 
 			// Get query string
 			OW_String query;
@@ -416,7 +416,8 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			}
 
 			cv.get(handlerCOP);
-			OW_CIMInstance handler = hdl->getInstance(handlerCOP);
+			OW_CIMInstance handler = hdl->getInstance(handlerCOP.getNameSpace(),
+				handlerCOP);
 
 			if(!handler)
 			{

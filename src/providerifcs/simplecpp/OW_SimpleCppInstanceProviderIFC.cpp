@@ -89,6 +89,7 @@ OW_SimpleCppInstanceProviderIFC::enumInstances(
 OW_CIMInstance
 OW_SimpleCppInstanceProviderIFC::getInstance(
 	const OW_ProviderEnvironmentIFCRef&,
+	const OW_String&,
 	const OW_CIMObjectPath&,
 	const OW_CIMClass&)
 {

@@ -116,11 +116,13 @@ namespace
 		/////////////////////////////////////////////////////////////////////////
 		virtual OW_CIMInstance getInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
+			const OW_CIMObjectPath& instanceName,
 			const OW_CIMClass& cimClass,
 			const OW_Bool& localOnly )
 		{
-			(void)cop;
+			(void)ns;
+			(void)instanceName;
 			(void)env;
 			(void)localOnly;
 			OW_CIMInstance rval = this->createLaptopBatInst(cimClass);

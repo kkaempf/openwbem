@@ -189,7 +189,7 @@ public:
 	 * @return true if there are association entries in the association
 	 * database for the given target object.
 	 */
-	OW_Bool hasAssocEntries(const OW_String& objectName);
+	OW_Bool hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName);
 
 	/**
 	 * Add an OW_AssocDbEntry& to the database.

@@ -110,7 +110,7 @@ public:
 	void shutdown();
 
 	void processIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_String& instNS);
 
 	int getRunCount() { OW_MutexLock ml(m_runCountGuard); return m_runCount; }
 	void incRunCount() { OW_MutexLock ml(m_runCountGuard); ++m_runCount; }

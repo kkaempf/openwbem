@@ -182,11 +182,12 @@ OW_NameSpaceProvider::enumInstances(
 OW_CIMInstance
 OW_NameSpaceProvider::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
 		const OW_CIMClass& cimClass,
 		const OW_Bool& /*localOnly*/)
 {
-	OW_CIMProperty cp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
+	OW_CIMProperty cp = instanceName.getKey(OW_CIMProperty::NAME_PROPERTY);
 	OW_CIMValue nsVal;
 	if (cp)
 	{
@@ -197,7 +198,8 @@ OW_NameSpaceProvider::getInstance(
 	{
 		OW_CIMInstanceEnumeration cie;
 		CIMInstanceEnumBuilder handler(cie);
-		enumInstances(env,cop.getNameSpace(), cop.getObjectName(), handler,false,cimClass,false);
+		enumInstances(env, ns, instanceName.getObjectName(), handler, false,
+			cimClass, false);
 		
 		while (cie.hasMoreElements())
 		{

@@ -214,11 +214,11 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass, "root/testsuite");
+	OW_CIMObjectPath cop(ofClass);
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance(cop, false);
+	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
 	//cout << in.toMOF();
 }
 
@@ -229,7 +229,7 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance(cop, false);
+	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
 
 	in.setProperty(OW_CIMProperty("BrandNewProperty",
 											OW_CIMValue(OW_Bool(true))));
