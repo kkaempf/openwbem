@@ -302,6 +302,13 @@ OW_HTTPSvrConnection::run()
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
+	catch (std::exception& e)
+	{
+		m_errDetails = format("Caught std::exception (%1) in OW_HTTPSvrConnection::run()", e.what());
+		OW_LOGERROR(m_errDetails);
+		cleanUpIStreams(istrToReadFrom);
+		sendError(SC_INTERNAL_SERVER_ERROR);
+	}
 	catch (...)
 	{
 		OW_LOGERROR("Got Unknown Exception in OW_HTTPSvrConnection::run()");
