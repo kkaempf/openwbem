@@ -189,10 +189,21 @@ OW_String getFullyQualifiedHostName()
 		char buf[2048];
 		int h_err = 0;
 
-		if (gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf),
-					&host, &h_err) == -1)
-			host = NULL;
-		if (host)
+		// gethostbyname_r will randomly fail on some platforms/networks
+		// maybe the DNS server is overloaded or something.  So we'll
+		// give it a few tries to see if it can get it right.
+		bool worked = false;
+		for (int i = 0; i < 10 && (!worked || host == 0); ++i)
+		{
+			if (gethostbyname_r(hostName, &hostbuf, buf, sizeof(buf),
+						&host, &h_err) != -1)
+			{
+				worked = true;
+				break;
+			}
+		}
+
+		if (worked && host != 0)
 		{
 			return host->h_name;
 		}
