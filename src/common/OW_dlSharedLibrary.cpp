@@ -40,7 +40,7 @@
 #include "OW_MutexLock.hpp"
 #include <dlfcn.h>
 
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 #if defined(OW_USE_FAKE_LIBS)
 /////////////////////////////////////////////////////////////////////////////

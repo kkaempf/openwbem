@@ -36,14 +36,15 @@
 #ifndef OW_TYPES_HPP_INCLUDE_GUARD_
 #define OW_TYPES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#ifdef __cplusplus
+
+#ifndef __cplusplus
+#error "OW_Types.hpp can only be included by c++ files"
+#endif
+
 extern "C"
 {
-#endif
 #include <sys/types.h>
-#ifdef __cplusplus
 }
-#endif
 
 namespace OpenWBEM
 {
@@ -92,7 +93,6 @@ typedef off_t	off_t;
 #define OW_PATHNAME_SEPARATOR ";"
 // OW_Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select).
-#ifdef __cplusplus
 struct Select_t
 {
 	Select_t() 
@@ -110,7 +110,6 @@ struct Select_t
 	HANDLE event;
 	SOCKET sockfd;
 };
-#endif
 
 //typedef HANDLE Select_t;
 #else

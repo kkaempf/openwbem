@@ -38,7 +38,7 @@
 #if defined(OW_USE_DL)
 #include "OW_SharedLibrary.hpp"
 
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 #if defined(OW_USE_FAKE_LIBS)
 #include "OW_Map.hpp"

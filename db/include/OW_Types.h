@@ -37,16 +37,12 @@
 
 #include "OW_config.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include <sys/types.h>
 
-#ifdef __cplusplus
-}
-#endif
+/**
+ * This file is intended to provide some size specific types for the db C-code.
+ * Don't bother putting C++ stuff in it.  C++ code should use src/common/OW_Types.hpp
+ */
 
 typedef unsigned char      			OW_UInt8;
 typedef signed char        			OW_Int8;
@@ -95,30 +91,6 @@ typedef off_t	OW_off_t;
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
 #define OW_PATHNAME_SEPARATOR ";"
-/* OW_Select_t is the type of object that can be used in
- * synchronous I/O multiplexing (i.e. select). On Win32
- * this is a HANDLE. The intention is to call
- * WaitForMultipleObjects on arrays of this type.
- */
-#ifdef __cplusplus
-struct OW_Select_t
-{
-	OW_Select_t() 
-		: event(NULL)
-		, sockfd(INVALID_SOCKET)
-	{
-	}
-
-	OW_Select_t(const OW_Select_t& arg)
-		: event(arg.event)
-		, sockfd(arg.sockfd)
-	{
-	}
-	
-	HANDLE event;
-	SOCKET sockfd;
-};
-#endif
 
 //typedef HANDLE OW_Select_t;
 #else

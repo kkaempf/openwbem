@@ -36,7 +36,7 @@
 #ifndef OW_REQUESTHANDLERIFC_HPP_
 #define OW_REQUESTHANDLERIFC_HPP_
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SortedVectorMap.hpp"

@@ -218,7 +218,6 @@ OW_ThreadPool.hpp \
 OW_ThreadTypes.hpp \
 OW_TimeoutException.hpp \
 OW_TmpFile.hpp \
-OW_Types.h \
 OW_Types.hpp \
 OW_UnnamedPipe.hpp \
 OW_URL.hpp \
