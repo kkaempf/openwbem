@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
 // The Open Group, Tivoli Systems
-// Portions Copyright (C) 2003 Vintela, Inc. All rights reserved.
+// Portions Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003 Vintela, Inc All rights reserved.
+* Copyright (C) 2003-2004 Vintela, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -273,7 +273,7 @@ struct isForInput : public unary_function<StateMachine::transition_t, bool>
 void outputHeader()
 {
 	cout << "/*******************************************************************************\n";
-	cout << "* Copyright (C) 2003 Vintela, Inc All rights reserved.\n";
+	cout << "* Copyright (C) 2003-2004 Vintela, Inc All rights reserved.\n";
 	cout << "*\n";
 	cout << "* Redistribution and use in source and binary forms, with or without\n";
 	cout << "* modification, are permitted provided that the following conditions are met:\n";

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2002 Vintela, Inc. All rights reserved.
+* Copyright (C) 2002-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
