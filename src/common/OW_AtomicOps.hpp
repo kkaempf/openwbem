@@ -39,7 +39,7 @@
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
-#if defined(__i386__) && defined(__GNUC__)
+#if (defined(OW_ARCH_X86) || defined(__i386__)) && defined(__GNUC__)
 
 namespace OpenWBEM
 {
@@ -81,7 +81,7 @@ inline void AtomicDec(Atomic_t &v)
 
 } // end namespace OpenWBEM
 
-#elif defined(__ppc__) && defined(__GNUC__)
+#elif (defined(OW_ARCH_PPC) || defined(__ppc__)) && defined(__GNUC__)
 
 namespace OpenWBEM
 {
