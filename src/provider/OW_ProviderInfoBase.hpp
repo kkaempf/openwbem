@@ -35,6 +35,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
+///////////////////////////////////////////////////////////////////////////////
 struct OW_InstClassInfo
 {
 	explicit OW_InstClassInfo(OW_String const& className_);
@@ -44,6 +45,7 @@ struct OW_InstClassInfo
 	OW_StringArray namespaces;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 class OW_ProviderInfoBase
 {
@@ -71,6 +73,52 @@ private:
 	OW_String m_name;
 
 };
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+OW_ProviderInfoBase<ClassInfoT>::~OW_ProviderInfoBase() 
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+void 
+OW_ProviderInfoBase<ClassInfoT>::addInstrumentedClass(OW_String const& className)
+{
+	m_instrumentedClasses.push_back(ClassInfoT(className));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+void 
+OW_ProviderInfoBase<ClassInfoT>::addInstrumentedClass(ClassInfoT const& classInfo)
+{
+	m_instrumentedClasses.push_back(classInfo);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+const typename OW_ProviderInfoBase<ClassInfoT>::ClassInfoArray& 
+OW_ProviderInfoBase<ClassInfoT>::getClassInfo() const
+{
+	return m_instrumentedClasses;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+void 
+OW_ProviderInfoBase<ClassInfoT>::setProviderName(OW_String const& name)
+{
+	m_name = name;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template <class ClassInfoT>
+OW_String 
+OW_ProviderInfoBase<ClassInfoT>::getProviderName() const
+{
+	return m_name;
+}
 
 
 #endif
