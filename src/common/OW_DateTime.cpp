@@ -1290,5 +1290,15 @@ DateTime::set(time_t t, UInt32 microseconds)
 	m_microseconds = microseconds;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// static
+DateTime
+DateTime::getCurrent()
+{
+	DateTime current;
+	current.setToCurrent();
+	return current;
+}
+
 } // end namespace OpenWBEM
 

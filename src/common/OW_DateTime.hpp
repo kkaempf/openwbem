@@ -537,6 +537,11 @@ public:
 		return  DateTime::localTimeAndOffset(m_time, tt);
 	}
 
+	/**
+	 * Gets a DateTime instance set to the current system time
+	 */
+	static DateTime getCurrent();
+
 private:
 	time_t	m_time;
 	UInt32	m_microseconds;
