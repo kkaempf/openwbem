@@ -474,5 +474,10 @@ Using this pattern prevents many of the common bugs in assignment operators.
 -----------------------------------------------------------------------------
 In a for() loop, don't modify the counter in the body of the loop.  If you
 need to modify the counter, use a while loop instead.
+-----------------------------------------------------------------------------
+Naming:
+m_memberVariable
+s_staticClassMemberVariable
+
 
 
