@@ -65,9 +65,10 @@ public:
 	/**
 	 * Create a new CIMServer object.
 	 */
-	CIMServer(CIMOMEnvironmentRef env,
+	CIMServer(const CIMOMEnvironmentRef& env,
 		const ProviderManagerRef& providerManager,
-		const RepositoryIFCRef& repository);
+		const RepositoryIFCRef& repository,
+		const AuthorizerManagerRef& authorizerMgr);
 	/**
 	 * Destroy this CIMServer object.
 	 */

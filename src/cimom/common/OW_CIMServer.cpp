@@ -67,7 +67,7 @@ namespace
 	class AuthorizerEnabler
 	{
 	public:
-		AuthorizerEnabler(AuthorizerManagerRef& authorizerMgr,
+		AuthorizerEnabler(const AuthorizerManagerRef& authorizerMgr,
 			OperationContext& context, bool turnOff=false)
 		: m_authorizerMgr(authorizerMgr)
 		, m_context(context)
@@ -167,16 +167,17 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMServer::CIMServer(CIMOMEnvironmentRef env,
+CIMServer::CIMServer(const CIMOMEnvironmentRef& env,
 	const ProviderManagerRef& provManager,
-	const RepositoryIFCRef& cimRepository)
+	const RepositoryIFCRef& cimRepository,
+	const AuthorizerManagerRef& authorizerMgr)
 	: RepositoryIFC()
 	, m_provManager(provManager)
 	, m_nsClass_Namespace(CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
 	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
-	, m_authorizerMgr(env->getAuthorizerManager())
+	, m_authorizerMgr(authorizerMgr)
 {
 }
 //////////////////////////////////////////////////////////////////////////////

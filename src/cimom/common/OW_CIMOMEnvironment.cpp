@@ -286,7 +286,7 @@ CIMOMEnvironment::startServices()
 		m_cimRepository = RepositoryIFCRef(new CIMRepository(g_cimomEnvironment));
 		m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 		m_cimServer = RepositoryIFCRef(new CIMServer(g_cimomEnvironment,
-			m_providerManager, m_cimRepository));
+			m_providerManager, m_cimRepository, m_authorizerManager));
 		_loadAuthorizer();  // old stuff
 		_createAuthorizerManager();  // new stuff
 		_createAuthManager();
