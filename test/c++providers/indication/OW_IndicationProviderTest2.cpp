@@ -176,11 +176,11 @@ public:
 	{
 		env->getLogger()->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
+		NonRecursiveMutexLock l(m_mtx);
 		// create the thread now that someone is listening for our events.
-		if (m_threadStarted == false)
+		if (m_threadStarted == false && !m_thread)
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter creating helper thread");
-			NonRecursiveMutexLock l(m_mtx);
 			m_thread = new TestProviderThread(this);
 		}
 		// eventType contains the name of the indication the listener subscribed to.
@@ -226,7 +226,6 @@ public:
 		if (m_threadStarted == false)
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
-			NonRecursiveMutexLock l(m_mtx);
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -242,11 +241,11 @@ public:
 	{
 		env->getLogger()->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
+		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
-		if (lastActivation && m_threadStarted == true)
+		if (lastActivation && m_thread && m_threadStarted == true)
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
-			NonRecursiveMutexLock l(m_mtx);
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
