@@ -36,7 +36,7 @@
 #ifndef OW_CIMCLASS_HPP_INCLUDE_GUARD_
 #define OW_CIMCLASS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
@@ -402,16 +402,16 @@ private:
 public:
 	operator safe_bool () const
 	{
-		return (this->m_pdata.isNull()) ? 0 : &dummy::nonnull;
+		return (this->m_pdata) ? &dummy::nonnull : 0;
 	}
 	safe_bool operator!() const
 	{
-		return (this->m_pdata.isNull()) ? &dummy::nonnull : 0;
+		return (this->m_pdata) ? 0 : &dummy::nonnull;
 	}
 private:
 	static String splitName1(const String& inName);
 	static String splitName2(const String& inName);
-	COWReference<CLSData> m_pdata;
+	COWIntrusiveReference<CLSData> m_pdata;
 	friend bool operator<(const CIMClass& x, const CIMClass& y);
 };
 

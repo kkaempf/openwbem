@@ -39,6 +39,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
 {
@@ -46,7 +47,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMDataType::DTData
+struct CIMDataType::DTData : public COWIntrusiveCountableBase
 {
 	DTData() :
 		m_type(CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0)
@@ -180,7 +181,7 @@ CIMDataType::getRefClassName() const
 CIMDataType::operator CIMDataType::safe_bool () const
 {
 	safe_bool cc = 0;
-	if(!m_pdata.isNull())
+	if(m_pdata)
 	{
 		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
 			? &dummy::nonnull : 0;
@@ -192,7 +193,7 @@ CIMDataType::safe_bool
 CIMDataType::operator!() const
 {
 	safe_bool cc = &dummy::nonnull;
-	if(!m_pdata.isNull())
+	if(m_pdata)
 	{
 		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
 			? 0: &dummy::nonnull;
@@ -215,7 +216,7 @@ CIMDataType::syncWithValue(const CIMValue& value)
 	if(!value && !(*this))
 		return false;
 	bool rv(false);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new DTData;
 		m_pdata->m_type = CIMNULL;
@@ -270,7 +271,7 @@ CIMDataType::readObject(istream &istrm)
 	BinarySerialization::readLen(istrm, numberOfElements);
 	BinarySerialization::readLen(istrm, sizeRange);
 	ref.readObject(istrm);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new DTData;
 	}

@@ -36,7 +36,7 @@
 #ifndef OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 #define OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_Types.hpp"
@@ -238,7 +238,7 @@ public:
 	 */
 	static bool isNumericType(Type type);
 private:
-	COWReference<DTData> m_pdata;
+	COWIntrusiveReference<DTData> m_pdata;
 	friend bool operator<(const CIMDataType& x, const CIMDataType& y);
 };
 

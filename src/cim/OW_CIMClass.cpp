@@ -46,6 +46,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_COWIntrusiveCountableBase.hpp"
 
 #include <algorithm>
 
@@ -57,7 +58,7 @@ using std::ostream;
 using namespace WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////
-struct CIMClass::CLSData
+struct CIMClass::CLSData : public COWIntrusiveCountableBase
 {
 	CLSData() :
 		m_associationFlag(false), m_isKeyed(false){  }
@@ -568,7 +569,7 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray& propertyList,
 	bool noProps) const
 {
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		return CIMClass(CIMNULL);
 	}
@@ -660,7 +661,7 @@ CIMClass::readObject(istream &istrm)
 	BinarySerialization::readArray(istrm, qra);
 	BinarySerialization::readArray(istrm, pra);
 	BinarySerialization::readArray(istrm, mra);
-	if(m_pdata.isNull())
+	if(!m_pdata)
 	{
 		m_pdata = new CLSData;
 	}
