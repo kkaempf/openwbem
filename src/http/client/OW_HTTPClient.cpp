@@ -220,36 +220,6 @@ HTTPClient::receiveAuthentication()
 	String authInfo = getHeaderValue("www-authenticate");
 	m_sRealm = getAuthParam("realm", authInfo);
 
-	if (m_url.principal.empty() && !m_uselocalAuthentication) // local authentication doesn't use a principal/credential
-	{
-		if (!m_loginCB)
-		{
-			OW_THROW(HTTPException, "No login/password to send");
-		}
-		else
-		{
-			String realm;
-			if (m_sRealm.empty())
-			{
-				realm = m_url.toString();
-			}
-			else
-			{
-				realm = m_sRealm;
-			}
-			String name, passwd;
-			if (m_loginCB->getCredentials(realm, name, passwd, ""))
-			{
-				m_url.principal = name;
-				m_url.credential = passwd;
-			}
-			else
-			{
-				OW_THROW(HTTPException, "No login/password to send");
-			}
-		}
-	}
-
 #ifndef OW_DISABLE_DIGEST
 	RandomNumber rn(0, 0x7FFFFFFF);
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
@@ -291,6 +261,39 @@ HTTPClient::receiveAuthentication()
 	{
 		OW_THROW(HTTPException, "No known authentication schemes");
 	}
+
+	// do this after processing the headers so that m_uselocalAuthentication will be set
+	if (m_url.principal.empty() && !m_uselocalAuthentication) // local authentication doesn't use a principal/credential
+	{
+		if (!m_loginCB)
+		{
+			OW_THROW(HTTPException, "No login/password to send");
+		}
+		else
+		{
+			String realm;
+			if (m_sRealm.empty())
+			{
+				realm = m_url.toString();
+			}
+			else
+			{
+				realm = m_sRealm;
+			}
+			String name, passwd;
+			if (m_loginCB->getCredentials(realm, name, passwd, ""))
+			{
+				m_url.principal = name;
+				m_url.credential = passwd;
+			}
+			else
+			{
+				OW_THROW(HTTPException, "No login/password to send");
+			}
+		}
+	}
+
+
 }
 				
 //////////////////////////////////////////////////////////////////////////////
