@@ -181,7 +181,7 @@ OW_String getFullyQualifiedHostName()
 		}
 		else
 		{
-			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname failed: %1(%2)", h_errno, strerror(h_errno)).c_str());
+			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname failed: %1", h_errno).c_str());
 		}
 #else
 		hostent hostbuf;
@@ -198,7 +198,7 @@ OW_String getFullyQualifiedHostName()
 		}
 		else
 		{
-			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname_r failed: %1(%2)", h_err, strerror(h_err)).c_str());
+			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname_r(%1) failed: %2", hostName, h_err).c_str());
 		}
 #endif
 	}
